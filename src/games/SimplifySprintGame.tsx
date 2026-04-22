@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ChevronLeft, CircleDollarSign } from 'lucide-react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
@@ -393,7 +393,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
         <div className="w-full max-w-[44rem] px-1">
           <div className="mt-2">
             <GameQuestionCard title="Simplify Sprint" className="max-w-[44rem]">
-              Reduce the fraction to its smallest form by tapping the correct factor
+              Reduce the fraction to its smallest form by tapping the correct factor.
             </GameQuestionCard>
           </div>
         </div>
@@ -483,7 +483,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
                 <img
                   src={roundResult.kind === 'success' ? successRoundBackground : failureRoundBackground}
                   alt=""
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-contain"
                   draggable={false}
                 />
                 <div
@@ -559,4 +559,6 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
 };
 
 export default SimplifySprintGame;
+
+
 

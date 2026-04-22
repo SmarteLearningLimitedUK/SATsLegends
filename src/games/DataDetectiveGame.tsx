@@ -304,9 +304,10 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             </header>
           ) : null}
           <GameQuestionCard
-            className="z-30 mt-0 w-full max-w-[780px] max-[480px]:px-2 max-[480px]:py-1.5"
+            className="z-30 mt-0 w-full max-w-[620px] rounded-[1.2rem] px-3 py-2 text-center shadow-[0_10px_20px_rgba(2,6,23,0.38)] max-[480px]:px-2 max-[480px]:py-1.25"
+            titleClassName="text-[9px] tracking-[0.26em] text-cyan-50/85"
             title={caseMode === 'whodunnit' ? 'Who took the loot?' : 'Match the evidence totals.'}
-            subtitle={caseBrief}
+            subtitle={<span className="text-[10px] leading-snug text-stone-200/88">{caseBrief}</span>}
           >
             {''}
           </GameQuestionCard>
@@ -314,192 +315,195 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
       )}
         main={(
           <main className="relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden">
-          <section className="z-10 flex min-h-0 w-full flex-1 flex-col gap-2 overflow-hidden border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(12,32,74,0.2),rgba(6,20,48,0.24))] px-2 pb-1 pt-1 sm:px-3 sm:pb-2 sm:pt-2 md:gap-3 md:border-b md:border-cyan-200/12 md:px-5 md:pb-3 md:pt-3 max-[480px]:gap-1 max-[480px]:px-1.5 max-[480px]:pb-0.5 max-[480px]:pt-0.5">
-          <div className="mb-1 flex items-center justify-between">
-            <div className="flex items-center gap-2 text-amber-500">
-              <FileText className="h-5 w-5" />
-              <h2 className="text-xs font-black uppercase tracking-widest">
-                {caseMode === 'whodunnit' ? 'Clue Board' : 'Evidence: Stolen Items'}
-              </h2>
-            </div>
-            <div className="flex items-center gap-2 rounded-full border border-stone-700 bg-stone-800 px-3 py-1">
-              {chartType === 'bar'
-                ? <BarChart3 className="h-3 w-3 text-amber-400" />
-                : <PieChartIcon className="h-3 w-3 text-amber-400" />}
-              <span className="text-[10px] font-bold uppercase text-stone-400">{chartType} Chart</span>
-            </div>
-          </div>
-
-          <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(255,255,255,0.11),rgba(7,18,44,0.72))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:p-3 md:p-4 max-[480px]:p-1.5">
-            <div className="pointer-events-none absolute inset-0 bg-slate-950/20" />
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.3)_1px,transparent_1px)] opacity-7 [background-size:20px_20px]" />
-
-            <div className="relative w-full" style={{ height: 'clamp(8.5rem, 19vh, 14rem)' }}>
-              <ResponsiveContainer width="100%" height="100%">
-                {chartType === 'bar' ? (
-                    <BarChart data={currentCase} margin={{ top: 12, right: 10, left: -6, bottom: 6 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
-                      <XAxis
-                        dataKey="name"
-                        stroke="#a8a29e"
-                        fontSize={18}
-                        tick={false}
-                        tickLine={false}
-                        axisLine={false}
-                        interval={0}
-                      />
-                    <YAxis
-                      ticks={barTicks}
-                      domain={[0, barAxisMax]}
-                      stroke="#a8a29e"
-                      fontSize={18}
-                      tickLine={false}
-                      axisLine={false}
-                      allowDecimals={false}
-                      width={38}
-                    />
-                    <Tooltip
-                      contentStyle={{ backgroundColor: '#1c1917', border: '1px solid #444', borderRadius: '8px', fontSize: '18px' }}
-                      itemStyle={{ color: '#fff' }}
-                    />
-                    <Bar dataKey="amount" radius={[4, 4, 0, 0]} isAnimationActive={false}>
-                      {currentCase.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                ) : (
-                  <PieChart margin={{ top: 4, right: 4, left: 4, bottom: 4 }}>
-                  <Pie
-                    data={currentCase}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius="34%"
-                    outerRadius="68%"
-                    paddingAngle={3}
-                    labelLine={false}
-                    dataKey="amount"
-                    isAnimationActive={false}
-                    label={({ cx, cy, midAngle, innerRadius, outerRadius, value }) => {
-                        const radius = innerRadius + (outerRadius - innerRadius) * 0.68;
-                        const rad = (-midAngle * Math.PI) / 180;
-                        const x = cx + radius * Math.cos(rad);
-                        const y = cy + radius * Math.sin(rad);
-                        return (
-                          <text
-                            x={x}
-                            y={y}
-                            fill="#f8fafc"
-                            fontSize={18}
-                            fontWeight={700}
-                            textAnchor="middle"
-                            dominantBaseline="central"
-                          >
-                            {value}
-                          </text>
-                        );
-                      }}
-                    >
-                      {currentCase.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      contentStyle={{ backgroundColor: '#1c1917', border: '1px solid #444', borderRadius: '8px', fontSize: '10px' }}
-                    />
-                  </PieChart>
-                )}
-              </ResponsiveContainer>
-            </div>
-
-            <div className="mt-1.5 grid grid-cols-2 gap-1 sm:gap-1.5 max-[480px]:mt-1 max-[480px]:gap-0.5">
-              {currentCase.map(item => (
-                <div key={item.name} className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/8 px-2 py-1">
-                  <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
-                  <span className="min-w-0 truncate text-[16px] font-bold uppercase tracking-wide text-stone-300 max-[480px]:text-[13px]">
-                    {item.name}
-                  </span>
+            <section className="z-10 flex min-h-0 w-full flex-1 flex-col gap-2 overflow-hidden border-b border-cyan-200/12 bg-[linear-gradient(180deg,rgba(12,32,74,0.2),rgba(6,20,48,0.24))] px-2 pb-1 pt-1 sm:px-3 sm:pb-2 sm:pt-2 md:gap-3 md:border-b md:border-cyan-200/12 md:px-5 md:pb-3 md:pt-3 max-[480px]:gap-1 max-[480px]:px-1.5 max-[480px]:pb-0.5 max-[480px]:pt-0.5">
+              <div className="mb-1 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-amber-500">
+                  <FileText className="h-5 w-5" />
+                  <h2 className="text-[11px] font-black uppercase tracking-[0.26em]">
+                    {caseMode === 'whodunnit' ? 'Clue Board' : 'Evidence: Stolen Items'}
+                  </h2>
                 </div>
-              ))}
-            </div>
-          </div>
-        </section>
+                <div className="flex items-center gap-2 rounded-full border border-stone-700 bg-stone-800 px-3 py-1">
+                  {chartType === 'bar'
+                    ? <BarChart3 className="h-3 w-3 text-amber-400" />
+                    : <PieChartIcon className="h-3 w-3 text-amber-400" />}
+                  <span className="text-[10px] font-bold uppercase text-stone-400">{chartType} Chart</span>
+                </div>
+              </div>
 
-          <section className="z-10 flex w-full flex-col gap-2 bg-[linear-gradient(180deg,rgba(8,18,40,0.16),rgba(5,12,28,0.24))] px-2 pb-0 pt-1 sm:px-3 sm:pb-1 sm:pt-1 md:gap-3 md:px-5 md:pb-2 md:pt-2 max-[480px]:-mt-2 max-[480px]:gap-1 max-[480px]:px-1.5 max-[480px]:pb-0 max-[480px]:pt-0.5">
-          <div className="mb-1 flex items-center gap-2 text-amber-500">
-            <Users className="h-5 w-5" />
-            <h2 className="text-xs font-black uppercase tracking-widest">Suspect Lineup</h2>
-          </div>
+              <div className="relative flex min-h-0 flex-[1.25] flex-col overflow-hidden rounded-2xl border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(255,255,255,0.11),rgba(7,18,44,0.72))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:p-3 md:p-4 max-[480px]:p-1.5">
+                <div className="pointer-events-none absolute inset-0 bg-slate-950/20" />
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.3)_1px,transparent_1px)] opacity-7 [background-size:20px_20px]" />
 
-          <div className="relative">
-            <div className={`grid grid-cols-4 items-start gap-1 max-[480px]:gap-0.5 ${selectedSuspect ? 'pointer-events-none opacity-0' : ''}`}>
-              {suspects.map((suspect) => (
-                <motion.button
-                  key={suspect.id}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => handleSuspectClick(suspect.id)}
-                  transition={{ duration: 0.35 }}
-                  className={`group relative flex w-full aspect-[4/3] items-center justify-center rounded-[1.2rem] border-2 p-1 transition-all duration-300 sm:aspect-[3/4] max-[480px]:aspect-[1/1.7] max-[480px]:rounded-lg max-[480px]:p-0.25 ${
-                    gameState === 'success' && suspect.id === guiltyId
-                      ? 'border-emerald-400 bg-emerald-400/14 shadow-[0_0_24px_rgba(16,185,129,0.3)]'
-                      : incorrectSuspectIds.includes(suspect.id)
-                        ? 'pointer-events-none border-stone-700 bg-stone-950/80 opacity-35 grayscale'
-                        : selectedSuspectId === suspect.id
-                          ? 'border-amber-400 bg-amber-400/14 shadow-[0_0_20px_rgba(251,191,36,0.22)]'
-                          : 'border-stone-800 bg-stone-900/50 hover:border-amber-500/50'
-                  }`}
-                >
-                  <div className="relative flex h-full w-full items-center justify-center overflow-visible rounded-[1.05rem] border border-white/16 bg-slate-950/40 p-1 shadow-lg max-[480px]:rounded-[0.9rem] max-[480px]:p-0.25">
-                    {suspect.portrait ? (
-                      <img
-                        src={suspect.portrait}
-                        alt=""
-                        draggable={false}
-                        className="suspect-portrait block h-full w-full max-h-full max-w-full translate-y-[20px] object-contain object-center"
-                        data-suspect-portrait="true"
-                      />
-                    ) : (
-                      <div className={`flex h-full w-full translate-y-[20px] items-center justify-center ${suspect.color}/20`}>
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-white/10 text-lg font-black text-white">
-                          {suspect.name.split(' ').map((part) => part[0]).join('')}
-                        </div>
-                      </div>
-                    )}
+                <div className="flex min-h-0 flex-1 flex-col">
+                  <div className="relative w-full flex-[1.15]" style={{ minHeight: 'clamp(9.5rem, 22vh, 15.5rem)' }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      {chartType === 'bar' ? (
+                        <BarChart data={currentCase} margin={{ top: 12, right: 10, left: -6, bottom: 6 }}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
+                          <XAxis
+                            dataKey="name"
+                            stroke="#a8a29e"
+                            fontSize={17}
+                            tick={false}
+                            tickLine={false}
+                            axisLine={false}
+                            interval={0}
+                          />
+                          <YAxis
+                            ticks={barTicks}
+                            domain={[0, barAxisMax]}
+                            stroke="#a8a29e"
+                            fontSize={17}
+                            tickLine={false}
+                            axisLine={false}
+                            allowDecimals={false}
+                            width={38}
+                          />
+                          <Tooltip
+                            contentStyle={{ backgroundColor: '#1c1917', border: '1px solid #444', borderRadius: '8px', fontSize: '17px' }}
+                            itemStyle={{ color: '#fff' }}
+                          />
+                          <Bar dataKey="amount" radius={[4, 4, 0, 0]} isAnimationActive={false}>
+                            {currentCase.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Bar>
+                        </BarChart>
+                      ) : (
+                        <PieChart margin={{ top: 4, right: 4, left: 4, bottom: 4 }}>
+                          <Pie
+                            data={currentCase}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius="34%"
+                            outerRadius="68%"
+                            paddingAngle={3}
+                            labelLine={false}
+                            dataKey="amount"
+                            isAnimationActive={false}
+                            label={({ cx, cy, midAngle, innerRadius, outerRadius, value }) => {
+                              const radius = innerRadius + (outerRadius - innerRadius) * 0.68;
+                              const rad = (-midAngle * Math.PI) / 180;
+                              const x = cx + radius * Math.cos(rad);
+                              const y = cy + radius * Math.sin(rad);
+                              return (
+                                <text
+                                  x={x}
+                                  y={y}
+                                  fill="#f8fafc"
+                                  fontSize={17}
+                                  fontWeight={700}
+                                  textAnchor="middle"
+                                  dominantBaseline="central"
+                                >
+                                  {value}
+                                </text>
+                              );
+                            }}
+                          >
+                            {currentCase.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          <Tooltip
+                            contentStyle={{ backgroundColor: '#1c1917', border: '1px solid #444', borderRadius: '8px', fontSize: '10px' }}
+                          />
+                        </PieChart>
+                      )}
+                    </ResponsiveContainer>
                   </div>
 
-                  {gameState === 'success' && suspect.id === guiltyId && (
-                    <div className="absolute right-2 top-2">
-                      <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                  <div className="mt-auto pt-2">
+                    <div className="grid grid-cols-2 gap-1 sm:gap-1.5 max-[480px]:gap-0.5">
+                      {currentCase.map(item => (
+                        <div key={item.name} className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/8 px-2 py-1">
+                          <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
+                          <span className="min-w-0 truncate text-[16px] font-bold uppercase tracking-wide text-stone-300 max-[480px]:text-[13px]">
+                            {item.name}
+                          </span>
+                        </div>
+                      ))}
                     </div>
-                  )}
-                  {incorrectSuspectIds.includes(suspect.id) && (
-                    <div className="absolute inset-0 rounded-[1.1rem] border border-stone-200/10 bg-stone-950/35" />
-                  )}
-                </motion.button>
-              ))}
+                  </div>
+                </div>
+              </div>
+            </section>
+          </main>
+        )} 
+        bottom={(
+          <div className="flex h-full min-h-0 flex-col justify-end gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.35rem)] sm:px-3 md:px-5">
+            <div className="rounded-[1.2rem] border border-cyan-200/14 bg-[linear-gradient(180deg,rgba(8,16,36,0.66),rgba(4,10,24,0.78))] px-3 pt-2 pb-2.5 shadow-[0_14px_30px_rgba(0,0,0,0.34)] backdrop-blur-md">
+              <div className="mb-1 flex items-center gap-2 text-cyan-100/75">
+                <Users className="h-4.5 w-4.5" />
+                <h2 className="text-[10px] font-black uppercase tracking-[0.2em]">Choose the thief</h2>
+              </div>
+              <div className={`grid grid-cols-4 items-start gap-1.5 max-[480px]:gap-0.75 ${selectedSuspect ? 'pointer-events-none opacity-0' : ''}`}>
+                {suspects.map((suspect) => (
+                  <motion.button
+                    key={suspect.id}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => handleSuspectClick(suspect.id)}
+                    transition={{ duration: 0.35 }}
+                    className={`group relative flex w-full aspect-[5/4] items-center justify-center rounded-[1rem] border p-1 transition-all duration-300 sm:aspect-[4/5] max-[480px]:aspect-[4/5] max-[480px]:rounded-lg max-[480px]:p-0.25 ${
+                      gameState === 'success' && suspect.id === guiltyId
+                        ? 'border-emerald-400 bg-emerald-400/14 shadow-[0_0_24px_rgba(16,185,129,0.3)]'
+                        : incorrectSuspectIds.includes(suspect.id)
+                          ? 'pointer-events-none border-stone-700 bg-stone-950/80 opacity-35 grayscale'
+                          : selectedSuspectId === suspect.id
+                            ? 'border-amber-400 bg-amber-400/14 shadow-[0_0_20px_rgba(251,191,36,0.22)]'
+                            : 'border-stone-800 bg-stone-900/50 hover:border-amber-500/50'
+                    }`}
+                  >
+                    <div className="relative flex h-full w-full items-center justify-center overflow-visible rounded-[0.95rem] border border-white/16 bg-slate-950/40 p-0.75 shadow-lg max-[480px]:rounded-[0.85rem] max-[480px]:p-0.25">
+                      {suspect.portrait ? (
+                        <img
+                          src={suspect.portrait}
+                          alt=""
+                          draggable={false}
+                          className="suspect-portrait block h-full w-full max-h-full max-w-full translate-y-[8px] object-contain object-center"
+                          data-suspect-portrait="true"
+                        />
+                      ) : (
+                        <div className={`flex h-full w-full translate-y-[8px] items-center justify-center ${suspect.color}/20`}>
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-white/10 text-lg font-black text-white">
+                            {suspect.name.split(' ').map((part) => part[0]).join('')}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {gameState === 'success' && suspect.id === guiltyId && (
+                      <div className="absolute right-2 top-2">
+                        <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                      </div>
+                    )}
+                    {incorrectSuspectIds.includes(suspect.id) && (
+                      <div className="absolute inset-0 rounded-[1rem] border border-stone-200/10 bg-stone-950/35" />
+                    )}
+                  </motion.button>
+                ))}
+              </div>
+
+              <div className="mt-2 flex flex-col gap-1.5 pt-0">
+                <AnimatePresence mode="wait">
+                  {gameState === 'success' ? (
+                    <motion.button
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      onClick={nextCase}
+                      className="ui-button-success flex w-full items-center justify-center gap-2 rounded-xl py-4 text-sm font-black uppercase tracking-widest max-[480px]:py-3"
+                    >
+                      Next Case File <ChevronRight className="h-4 w-4" />
+                    </motion.button>
+                  ) : null}
+                </AnimatePresence>
+              </div>
             </div>
-
           </div>
-
-          <div className="mt-0.5 flex flex-col gap-1.5 pt-0">
-            <AnimatePresence mode="wait">
-              {gameState === 'success' ? (
-                <motion.button
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  onClick={nextCase}
-                  className="ui-button-success flex w-full items-center justify-center gap-2 rounded-xl py-4 text-sm font-black uppercase tracking-widest max-[480px]:py-3"
-                >
-                  Next Case File <ChevronRight className="h-4 w-4" />
-                </motion.button>
-              ) : null}
-            </AnimatePresence>
-          </div>
-        </section>
-        </main>
-      )} 
+        )}
       overlay={(
         <>
           <AnimatePresence>

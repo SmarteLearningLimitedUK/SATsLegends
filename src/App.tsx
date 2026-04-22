@@ -1,5 +1,6 @@
 ﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { TreePine } from 'lucide-react';
 import { GAME_META, GameRuleSet } from './gameMeta';
 import { getLevelGameTitle } from './utils/gameNames';
 import { GAME_HUD_RESTART_EVENT } from './gameHudEvents';
@@ -378,7 +379,6 @@ const App: React.FC = () => {
   ]);
 
   const handleGameOver = useCallback((XP: number) => {
-    playGameSound('fail');
     triggerHaptic('error');
     if (selectedLevel?.isPractice) {
       if (!selectedIsland || !selectedLevel) return;
@@ -564,6 +564,13 @@ const App: React.FC = () => {
           bullets: [],
         };
       }
+      if (selectedLevel.blueprintKey === 'percent_power') {
+        return {
+          title: 'Percent Power',
+          summary: 'Practice finding parts of a whole and working backwards from a percentage clue. Use the hints to spot simple percentage facts before you answer.',
+          bullets: [],
+        };
+      }
       if (selectedLevel.blueprintKey === 'polygon_palace') {
         return {
           title: 'Polygon Palace',
@@ -623,14 +630,14 @@ const App: React.FC = () => {
       if (selectedLevel.blueprintKey === 'angle_arena') {
         return {
           title: 'Angle Arena',
-          summary: "Greetings! We've managed to build our cannon here to destroy the Monster Mind's look-out towers. We need your maths skills to work out the angle of launch. Select the correct angle and let's blast them.",
+          summary: "Greetings! We've built our cannon here to destroy the Monster Mind's look-out towers. Use your maths skills to work out the angle and blast them.",
           bullets: [],
         };
       }
       if (selectedLevel.blueprintKey === 'simplify_sprint') {
         return {
           title: 'Simplify Sprint',
-          summary: "The Monster Mind has encrypted the values to make them as large as possible. That makes it harder for our researchers to solve. Help the researchers by simplifying the fraction to its smallest form.",
+          summary: 'The Monster Mind has scrambled the fractions to make them look bigger than they are. Spot a common factor, reduce each fraction to its simplest form, and keep the sprint moving.',
           bullets: [],
         };
       }
@@ -1050,15 +1057,15 @@ const App: React.FC = () => {
     const mapHudDock = screen === 'world_map'
       ? (
         <div className="mt-0.5 flex w-full max-w-[calc(100vw-0.7rem)] shrink-0 items-center justify-center overflow-hidden">
-          <div className="relative w-full max-w-full shrink-0 rounded-[1.15rem] border border-cyan-100/26 bg-[linear-gradient(180deg,rgba(16,40,96,0.84)_0%,rgba(9,24,64,0.88)_100%)] px-2 py-1.5 shadow-[0_10px_18px_rgba(2,6,23,0.38),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-[2px]">
+          <div className="relative inline-flex w-auto max-w-full shrink-0 flex-nowrap items-center justify-center rounded-[1.15rem] border border-cyan-100/26 bg-[linear-gradient(180deg,rgba(16,40,96,0.84)_0%,rgba(9,24,64,0.88)_100%)] px-2 py-1.5 shadow-[0_10px_18px_rgba(2,6,23,0.38),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-[2px]">
             <div className="pointer-events-none absolute inset-[1px] rounded-[1.05rem] border border-cyan-100/14" />
             <div className="pointer-events-none absolute inset-x-3 top-[3px] h-3 rounded-full bg-cyan-200/10 blur-[2px]" />
 
-            <div className="relative grid grid-cols-2 gap-1.5 sm:grid-cols-4">
+            <div className="relative flex flex-nowrap items-center justify-center gap-1.5">
               <button
                 type="button"
                 onClick={goToProfile}
-                className={mapDockButtonClass}
+                className={`${mapDockButtonClass} shrink-0`}
                 aria-label="Open player profile"
               >
                 <AssetIcon name="user" className={mapDockIconClass} />
@@ -1066,7 +1073,7 @@ const App: React.FC = () => {
               <button
                 type="button"
                 onClick={goToAchievements}
-                className={mapDockButtonClass}
+                className={`${mapDockButtonClass} shrink-0`}
                 aria-label="Open achievements"
               >
                 <AssetIcon name="trophy" className={mapDockIconClass} />
@@ -1074,7 +1081,7 @@ const App: React.FC = () => {
               <button
                 type="button"
                 onClick={goToParentDashboard}
-                className={mapDockButtonClass}
+                className={`${mapDockButtonClass} shrink-0`}
                 aria-label="Open parent portal"
               >
                 <AssetIcon name="doc" className={mapDockIconClass} />
@@ -1082,11 +1089,11 @@ const App: React.FC = () => {
               <button
                 type="button"
                 onClick={() => openWellbeingHub({ origin: 'world_map', islandId: selectedIsland?.id ?? null })}
-                className="flex h-[42px] w-full min-w-0 items-center justify-center gap-2 rounded-[0.85rem] border border-emerald-100/35 bg-[linear-gradient(180deg,rgba(18,78,58,0.92)_0%,rgba(9,44,32,0.95)_100%)] px-2 text-[9px] font-black uppercase tracking-[0.14em] text-emerald-50 shadow-[0_4px_0_rgba(6,95,70,0.65)] sm:px-3"
+                className={`${mapDockButtonClass} shrink-0`}
                 aria-label="Open Calm Grove"
+                title="Open Calm Grove"
               >
-                <AssetIcon name="heart" className={mapDockIconClass} />
-                <span>Calm Grove</span>
+                <TreePine className={mapDockIconClass} />
               </button>
             </div>
           </div>
@@ -1204,11 +1211,13 @@ const App: React.FC = () => {
                 bonuses: levelResult.bonuses,
                 previousLevel: levelResult.previousLevel,
                 newLevel: levelResult.newLevel,
-                previousXp: levelResult.previousXp,
-                currentXp: levelResult.currentXp,
-                xpRequiredForNextLevel: levelResult.xpRequiredForNextLevel,
-                leveledUp: levelResult.leveledUp,
-              } : null}
+              previousXp: levelResult.previousXp,
+              currentXp: levelResult.currentXp,
+              xpRequiredForNextLevel: levelResult.xpRequiredForNextLevel,
+              leveledUp: levelResult.leveledUp,
+              accuracy: levelResult.accuracy,
+              timeMs: levelResult.timeMs,
+            } : null}
               onRetry={handleRetryLevel}
               onNext={levelResult?.type === 'victory' ? handleAdvanceAfterVictory : undefined}
               onMap={handleCloseLevelResult}

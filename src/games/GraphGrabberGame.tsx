@@ -399,13 +399,13 @@ const matchesAnswer = (selected: string[], expected: string[]) => {
 const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
   if (round.kind === 'bar' && round.bars) {
     return (
-      <div className="flex h-full min-h-0 flex-col rounded-[1.2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(9,19,42,0.58),rgba(7,14,32,0.74))] p-2 shadow-[0_18px_30px_rgba(2,6,23,0.18)]">
+      <div className="flex h-full min-h-0 flex-col rounded-[1rem] border border-white/8 bg-[linear-gradient(180deg,rgba(9,19,42,0.5),rgba(7,14,32,0.66))] p-1.5 shadow-[0_14px_24px_rgba(2,6,23,0.16)]">
         <div className="flex items-center justify-between px-1 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/75">
           <span>X</span>
           {round.chartCaption}
           <span>Y</span>
         </div>
-        <div className="mt-1.5 h-[clamp(13.5rem,32vh,19.5rem)] w-full">
+        <div className="mt-1.5 h-[clamp(11rem,26vh,15.5rem)] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={round.bars!} margin={{ top: 18, right: 16, left: 10, bottom: 12 }}>
               <CartesianGrid stroke="rgba(255,255,255,0.12)" strokeDasharray="3 3" vertical={false} />
@@ -440,13 +440,13 @@ const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
 
   if (round.kind === 'line' && round.line) {
     return (
-      <div className="flex h-full min-h-0 flex-col rounded-[1.2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(9,19,42,0.58),rgba(7,14,32,0.74))] p-2 shadow-[0_18px_30px_rgba(2,6,23,0.18)]">
+      <div className="flex h-full min-h-0 flex-col rounded-[1rem] border border-white/8 bg-[linear-gradient(180deg,rgba(9,19,42,0.5),rgba(7,14,32,0.66))] p-1.5 shadow-[0_14px_24px_rgba(2,6,23,0.16)]">
         <div className="flex items-center justify-between px-1 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/75">
           <span>X</span>
           {round.chartCaption}
           <span>Y</span>
         </div>
-        <div className="mt-1.5 h-[clamp(13.5rem,32vh,19.5rem)] w-full">
+        <div className="mt-1.5 h-[clamp(11rem,26vh,15.5rem)] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={round.line!} margin={{ top: 18, right: 16, left: 10, bottom: 12 }}>
               <CartesianGrid stroke="rgba(255,255,255,0.12)" strokeDasharray="3 3" />
@@ -477,14 +477,14 @@ const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
   const total = round.pie?.reduce((sum, slice) => sum + slice.value, 0) || 1;
 
   return (
-    <div className="flex h-full min-h-0 flex-col rounded-[1.2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(9,19,42,0.58),rgba(7,14,32,0.74))] p-2 shadow-[0_18px_30px_rgba(2,6,23,0.18)]">
+    <div className="flex h-full min-h-0 flex-col rounded-[1rem] border border-white/8 bg-[linear-gradient(180deg,rgba(9,19,42,0.5),rgba(7,14,32,0.66))] p-1.5 shadow-[0_14px_24px_rgba(2,6,23,0.16)]">
       <div className="flex items-center justify-between px-1 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/75">
         <span>X</span>
         {round.chartCaption}
         <span>Y</span>
       </div>
-      <div className="mt-1.5 grid min-h-0 flex-1 gap-2.5 md:grid-cols-[1.08fr_0.92fr]">
-        <div className="h-[clamp(13.5rem,32vh,19.5rem)]">
+      <div className="mt-1.5 grid min-h-0 flex-1 gap-2 md:grid-cols-[1.08fr_0.92fr]">
+        <div className="h-[clamp(11rem,26vh,15.5rem)]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Tooltip
@@ -492,13 +492,13 @@ const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
               />
               <Pie data={round.pie!} dataKey="value" nameKey="label" cx="50%" cy="50%" innerRadius={52} outerRadius={90} paddingAngle={3}>
                 {round.pie!.map((slice) => (
-                  <Cell key={slice.label} fill={slice.color} />
+                <Cell key={slice.label} fill={slice.color} />
                 ))}
               </Pie>
             </PieChart>
           </ResponsiveContainer>
         </div>
-        <div className="flex flex-col justify-center gap-2 rounded-[1rem] border border-white/8 bg-white/4 p-2.5">
+        <div className="flex flex-col justify-center gap-2 rounded-[0.95rem] border border-white/8 bg-white/3 p-2">
           <div className="text-[9px] font-black uppercase tracking-[0.18em] text-amber-100/70">Slice labels</div>
           <div className="grid gap-2">
             {round.pie!.map((slice) => (
@@ -704,7 +704,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden bg-transparent select-none text-slate-100">
       <div
-        className="pointer-events-none absolute inset-0 bg-cover bg-center bg-no-repeat opacity-100"
+        className="pointer-events-none absolute inset-0 bg-contain bg-center bg-no-repeat opacity-100"
         style={{ backgroundImage: `url(${graphGrabberBackground})` }}
         aria-hidden="true"
       />
@@ -717,62 +717,66 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
         onAction={() => setShowPracticeIntro(false)}
       />
 
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.65rem)] pt-2 md:gap-3 md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+0.8rem)] md:pt-3">
-        <div className="flex min-h-0 flex-1 flex-col gap-2 md:gap-3">
-          <div className="flex justify-center">
-            <GameQuestionCard title={round.title}>
-              {formatFantasyPrompt(round.prompt)}
-            </GameQuestionCard>
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col px-2 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] pt-2 md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+0.65rem)] md:pt-3">
+        <div className="flex flex-1" />
+
+        <div className="mx-auto flex w-full max-w-[56rem] flex-col gap-1.5 md:gap-2">
+          <GameQuestionCard
+            title={round.title}
+            className="w-full !mb-0"
+            style={{
+              ['--question-card-width' as any]: 'min(100%, 56rem)',
+              ['--question-card-padding' as any]: '8px 10px',
+            }}
+          >
+            {formatFantasyPrompt(round.prompt)}
+          </GameQuestionCard>
+
+          <div className="min-h-0">
+            <GraphBoard round={round} />
           </div>
 
-          <div className="grid min-h-0 flex-1 gap-2 md:grid-rows-[minmax(0,1fr)_auto] md:gap-3">
-            <div className="min-h-0 translate-y-[15px]">
-              <GraphBoard round={round} />
+          <section className="rounded-[1rem] border border-white/8 bg-[linear-gradient(180deg,rgba(15,23,42,0.62),rgba(10,17,37,0.76))] p-2 shadow-[0_14px_24px_rgba(2,6,23,0.16)] md:p-2.5">
+            <div className="mb-1.5 flex items-center justify-start gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/70">
+              <span>{round.support}</span>
             </div>
-
-            <section className="translate-y-[20px] rounded-[1.15rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(10,17,37,0.84))] p-2.5 shadow-[0_18px_30px_rgba(2,6,23,0.18)] md:p-3">
-              <div className="mb-2 flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/70">
-                <span>{round.support}</span>
-                <span>{round.xLabel} vs {round.yLabel}</span>
-              </div>
-              <div className={`grid gap-2 ${optionGridClass}`}>
-                {round.options.map((choice) => {
-                  const selected = selectedIds.includes(choice.id);
-                  const isCorrect = feedback?.type === 'success' && round.correctAnswers.includes(choice.id);
-                  return (
-                    <motion.button
-                      key={choice.id}
-                      whileTap={{ scale: 0.97 }}
-                      onClick={() => handleOptionClick(choice)}
-                      disabled={feedback !== null || isFinished}
-                      className={[
-                        'rounded-[1rem] px-3 py-3 text-center text-[clamp(0.92rem,3vw,1.25rem)] font-black transition disabled:opacity-45',
-                        isCorrect
-                          ? 'ui-button-success'
-                          : selected
-                            ? 'ui-button-primary'
-                            : 'ui-button-secondary',
-                      ].join(' ')}
-                    >
-                      {choice.label}
-                    </motion.button>
-                  );
-                })}
-              </div>
-              {round.answerMode === 'multi' ? (
-                <div className="mt-3 flex justify-center">
-                  <button
-                    type="button"
-                    onClick={handleMultiSubmit}
+            <div className={`grid gap-2 ${optionGridClass}`}>
+              {round.options.map((choice) => {
+                const selected = selectedIds.includes(choice.id);
+                const isCorrect = feedback?.type === 'success' && round.correctAnswers.includes(choice.id);
+                return (
+                  <motion.button
+                    key={choice.id}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => handleOptionClick(choice)}
                     disabled={feedback !== null || isFinished}
-                    className="ui-button-primary min-w-[11rem] rounded-[1rem] px-4 py-3 text-sm font-black uppercase tracking-[0.16em] disabled:opacity-45"
+                    className={[
+                      'rounded-[0.95rem] px-3 py-2.5 text-center text-[clamp(0.88rem,2.7vw,1.12rem)] font-black transition disabled:opacity-45',
+                      isCorrect
+                        ? 'ui-button-success'
+                        : selected
+                          ? 'ui-button-primary'
+                          : 'ui-button-secondary',
+                    ].join(' ')}
                   >
-                    Submit Answers
-                  </button>
-                </div>
-              ) : null}
-            </section>
-          </div>
+                    {choice.label}
+                  </motion.button>
+                );
+              })}
+            </div>
+            {round.answerMode === 'multi' ? (
+              <div className="mt-2.5 flex justify-center">
+                <button
+                  type="button"
+                  onClick={handleMultiSubmit}
+                  disabled={feedback !== null || isFinished}
+                  className="ui-button-primary min-w-[10rem] rounded-[0.95rem] px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.16em] disabled:opacity-45"
+                >
+                  Submit Answers
+                </button>
+              </div>
+            ) : null}
+          </section>
         </div>
 
         <AnimatePresence mode="wait">

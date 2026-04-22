@@ -301,7 +301,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
     return Array.from({ length: 6 }, (_, index) => Math.round((top / 5) * index));
   }, [round]);
 
-    return (
+  return (
     <GameUiShell backgroundImage={lineGraphLabBackground} overlayDisabled className="bg-transparent">
       <PracticeIntroPopup
         open={showPracticeIntro}
@@ -312,76 +312,76 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
       />
       <GameScreenLayout
         className="relative h-full w-full min-h-0 select-none gap-0 text-slate-100"
-        topClassName="flex items-start justify-center px-2 pt-0 sm:px-3 md:px-4"
-        top={(
-          <GameQuestionCard className="w-full max-w-[780px]" title="Line Graph Lab" subtitle={round?.helper || ''}>
-            {round?.question ?? ''}
-          </GameQuestionCard>
-        )}
         main={(
-          <section className="flex min-h-0 flex-1 flex-col gap-2 px-2 pb-3 sm:gap-3 sm:px-3 sm:pb-4 md:px-4 md:pb-5">
-            <div className="mt-0.5 min-h-0 flex-1 rounded-[1.75rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(8,24,54,0.55),rgba(4,12,28,0.38))] p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_18px_40px_rgba(2,6,23,0.18)] backdrop-blur-[2px] sm:p-4 md:p-5">
-              <div
-                ref={chartWrapRef}
-                className="relative w-full overflow-hidden rounded-2xl border border-slate-200/12 bg-[linear-gradient(180deg,rgba(7,18,38,0.68),rgba(4,10,24,0.42))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
-                style={{ height: 'clamp(10.5rem, 28vh, 17rem)' }}
-              >
-                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(125,211,252,0.12),transparent_58%)]" />
-                <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),transparent_30%,rgba(255,255,255,0.02))]" />
-                {round && chartSize.width > 0 && chartSize.height > 0 && (
-                  <div className="relative z-10 h-full w-full">
-                  <LineChart
-                    width={chartSize.width}
-                    height={chartSize.height}
-                    data={round.graph}
-                    margin={{ top: 18, right: 16, left: 0, bottom: 16 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.22)" />
-                    <XAxis
-                      dataKey="label"
-                      tick={{ fill: '#dbeafe', fontSize: 12, fontWeight: 700 }}
-                      axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
-                      tickLine={{ stroke: 'rgba(191,219,254,0.45)' }}
-                      label={{ value: 'X Axis', position: 'insideBottom', offset: -6, fill: '#93c5fd', fontSize: 12, fontWeight: 800 }}
-                    />
-                    <YAxis
-                      ticks={yTicks}
-                      domain={[0, yTicks[yTicks.length - 1]]}
-                      tick={{ fill: '#dbeafe', fontSize: 12, fontWeight: 700 }}
-                      axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
-                      tickLine={{ stroke: 'rgba(191,219,254,0.45)' }}
-                      label={{ value: 'Y Axis', angle: -90, position: 'insideLeft', fill: '#93c5fd', fontSize: 12, fontWeight: 800 }}
-                      width={42}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="value"
-                      stroke="#34d399"
-                      strokeWidth={4}
-                      dot={(props) => {
-                        const { cx, cy, payload } = props as { cx?: number; cy?: number; payload?: DataPoint; index?: number };
-                        if (cx == null || cy == null || !payload) return null;
-                        return (
-                          <circle
-                            cx={cx}
-                            cy={cy}
-                            r={5}
-                            fill="#34d399"
-                            stroke="#ecfeff"
-                            strokeWidth={2}
-                          />
-                        );
-                      }}
-                      activeDot={{ r: 7, fill: '#6ee7b7', stroke: '#f0fdfa', strokeWidth: 2 }}
-                      animationDuration={350}
-                    />
-                  </LineChart>
-                  </div>
-                )}
-              </div>
-            </div>
+          <section className="flex min-h-0 flex-1 flex-col px-2 pb-[calc(env(safe-area-inset-bottom)+0.55rem)] pt-2 sm:px-3 md:px-4">
+            <div className="flex flex-1" />
 
-            <div className="mt-auto flex flex-col gap-2 pt-2 pb-1 sm:pb-2">
+            <div className="mx-auto flex w-full max-w-[780px] flex-col gap-2 sm:gap-2.5">
+              <GameQuestionCard className="w-full" title="Line Graph Lab" subtitle={round?.helper || ''}>
+                {round?.question ?? ''}
+              </GameQuestionCard>
+
+              <div className="rounded-[1.2rem] border border-cyan-100/12 bg-[linear-gradient(180deg,rgba(8,24,54,0.5),rgba(4,12,28,0.32))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_14px_28px_rgba(2,6,23,0.16)] backdrop-blur-[2px] sm:p-3">
+                <div
+                  ref={chartWrapRef}
+                  className="relative w-full overflow-hidden rounded-[1rem] border border-slate-200/10 bg-[linear-gradient(180deg,rgba(7,18,38,0.66),rgba(4,10,24,0.4))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
+                  style={{ height: 'clamp(9.75rem, 24vh, 15.5rem)' }}
+                >
+                  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(125,211,252,0.12),transparent_58%)]" />
+                  <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),transparent_30%,rgba(255,255,255,0.02))]" />
+                  {round && chartSize.width > 0 && chartSize.height > 0 && (
+                    <div className="relative z-10 h-full w-full">
+                      <LineChart
+                        width={chartSize.width}
+                        height={chartSize.height}
+                        data={round.graph}
+                        margin={{ top: 18, right: 16, left: 0, bottom: 16 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.22)" />
+                        <XAxis
+                          dataKey="label"
+                          tick={{ fill: '#dbeafe', fontSize: 12, fontWeight: 700 }}
+                          axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
+                          tickLine={{ stroke: 'rgba(191,219,254,0.45)' }}
+                          label={{ value: 'X Axis', position: 'insideBottom', offset: -6, fill: '#93c5fd', fontSize: 12, fontWeight: 800 }}
+                        />
+                        <YAxis
+                          ticks={yTicks}
+                          domain={[0, yTicks[yTicks.length - 1]]}
+                          tick={{ fill: '#dbeafe', fontSize: 12, fontWeight: 700 }}
+                          axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
+                          tickLine={{ stroke: 'rgba(191,219,254,0.45)' }}
+                          label={{ value: 'Y Axis', angle: -90, position: 'insideLeft', fill: '#93c5fd', fontSize: 12, fontWeight: 800 }}
+                          width={42}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="value"
+                          stroke="#34d399"
+                          strokeWidth={4}
+                          dot={(props) => {
+                            const { cx, cy, payload } = props as { cx?: number; cy?: number; payload?: DataPoint; index?: number };
+                            if (cx == null || cy == null || !payload) return null;
+                            return (
+                              <circle
+                                cx={cx}
+                                cy={cy}
+                                r={5}
+                                fill="#34d399"
+                                stroke="#ecfeff"
+                                strokeWidth={2}
+                              />
+                            );
+                          }}
+                          activeDot={{ r: 7, fill: '#6ee7b7', stroke: '#f0fdfa', strokeWidth: 2 }}
+                          animationDuration={350}
+                        />
+                      </LineChart>
+                    </div>
+                  )}
+                </div>
+              </div>
+
               <div className="answer-choice-surface grid grid-cols-2 gap-2">
                 {round?.options.map(option => {
                   const isSelected = selectedAnswer === option;

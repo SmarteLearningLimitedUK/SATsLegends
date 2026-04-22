@@ -205,64 +205,66 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
-      <div className="flex h-full min-h-0 flex-col gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+3.5rem)] pt-3 text-white">
-        <section className="shrink-0">
-          <div className="mx-auto w-full max-w-[44rem]">
-            <div className="mt-2">
+      <div className="flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+1.1rem)] pt-3 text-white">
+        <div className="flex-1" />
+
+        <section className="mx-auto w-full max-w-[44rem] shrink-0">
+          <div className="rounded-[1.6rem] border border-white/14 bg-black/28 p-3 shadow-[0_18px_34px_rgba(15,23,42,0.34)] backdrop-blur-sm">
+            <div className="space-y-2">
               <GameQuestionCard title="Area Architect">
                 {question.prompt}
               </GameQuestionCard>
+
+              <div className="rounded-[1.25rem] border border-white/10 bg-slate-950/35 p-2">
+                <div
+                  className="mx-auto grid w-full max-w-[18rem] gap-1.5 rounded-[1rem] border border-white/10 bg-slate-900/20 p-2"
+                  style={{ gridTemplateColumns: `repeat(${question.gridSize}, minmax(0, 1fr))` }}
+                >
+                  {Array.from({ length: question.gridSize * question.gridSize }).map((_, index) => {
+                    const x = (index % question.gridSize) + 1;
+                    const y = Math.floor(index / question.gridSize) + 1;
+                    const key = `${x}-${y}`;
+                    const filled = cellSet.has(key);
+                    return (
+                      <div
+                        key={key}
+                        className={`aspect-square rounded-[0.22rem] border ${
+                          filled ? 'border-amber-200/80 bg-amber-300/45' : 'border-white/10 bg-slate-900/50'
+                        }`}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+
+              <section className="answer-choice-surface grid grid-cols-2 gap-2">
+                {question.options.map((option) => (
+                  <motion.button
+                    key={option}
+                    whileTap={{ scale: 0.96 }}
+                    onClick={() => handleAnswer(option)}
+                    disabled={locked}
+                    className={`h-12 rounded-[1rem] text-lg font-black ${
+                      selected === option
+                        ? option === question.correct
+                          ? 'ui-button-success'
+                          : 'ui-button-primary'
+                        : 'ui-button-secondary'
+                    }`}
+                  >
+                    {option} sq units
+                  </motion.button>
+                ))}
+              </section>
+
+              {feedback ? (
+                <FeedbackStrip tone={feedbackTone === 'good' ? 'success' : feedbackTone === 'bad' ? 'warning' : 'neutral'}>
+                  {feedback}
+                </FeedbackStrip>
+              ) : null}
             </div>
           </div>
         </section>
-
-        <section className="shrink-0 rounded-[1.4rem] border border-white/14 bg-black/25 p-3 shadow-[0_16px_30px_rgba(15,23,42,0.28)]">
-          <div
-            className="mx-auto grid aspect-square w-full max-w-[22rem] place-content-center gap-1 rounded-[1rem] border border-white/12 bg-slate-900/50 p-2"
-            style={{ gridTemplateColumns: `repeat(${question.gridSize}, minmax(0, 1fr))` }}
-          >
-            {Array.from({ length: question.gridSize * question.gridSize }).map((_, index) => {
-              const x = (index % question.gridSize) + 1;
-              const y = Math.floor(index / question.gridSize) + 1;
-              const key = `${x}-${y}`;
-              const filled = cellSet.has(key);
-              return (
-                <div
-                  key={key}
-                  className={`aspect-square rounded-[0.3rem] border ${filled ? 'border-amber-200/80 bg-amber-300/45' : 'border-white/12 bg-slate-900/60'}`}
-                />
-              );
-            })}
-          </div>
-        </section>
-
-        <section className="answer-choice-surface shrink-0 grid grid-cols-2 gap-2">
-          {question.options.map((option) => (
-            <motion.button
-              key={option}
-              whileTap={{ scale: 0.96 }}
-              onClick={() => handleAnswer(option)}
-              disabled={locked}
-              className={`h-12 rounded-[1rem] text-lg font-black ${
-                selected === option
-                  ? option === question.correct
-                    ? 'ui-button-success'
-                    : 'ui-button-primary'
-                  : 'ui-button-secondary'
-              }`}
-            >
-              {option} sq units
-            </motion.button>
-          ))}
-        </section>
-
-        {feedback ? (
-          <section className="shrink-0">
-            <FeedbackStrip tone={feedbackTone === 'good' ? 'success' : feedbackTone === 'bad' ? 'warning' : 'neutral'}>
-              {feedback}
-            </FeedbackStrip>
-          </section>
-        ) : null}
       </div>
     </GameUiShell>
   );

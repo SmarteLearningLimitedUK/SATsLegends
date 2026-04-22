@@ -42,7 +42,7 @@ const START_OFFSET = 0;
 const RACER_LERP = 0.16;
 const BASE_XP = 160;
 const PLAYER_KART_SCALE = 2.08;
-const PLAYER_KART_RAISE = '54pt';
+const PLAYER_KART_RAISE = '84pt';
 const PLAYER_TRACK_LINE_Y = 80.8;
 const FINISH_Y_SHIFT = -200;
 const FINISH_X_SHIFT = -100;
@@ -395,7 +395,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
           return;
         }
 
-        const nextTier = getQuestionTier(Math.min(1, playerPosRef.current / tuning.trackLength));
+        const nextTier = getQuestionTier(playerPosRef.current / tuning.trackLength);
         setQuestion(advanceQuestionForTier(nextTier));
         questionStartRef.current = Date.now();
         setSelected(null);
@@ -413,7 +413,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
       playerTargetRef.current = Math.min(tuning.trackLength, playerTargetRef.current + stumble);
     }
     window.setTimeout(() => {
-      const nextTier = getQuestionTier(Math.min(1, playerPosRef.current / tuning.trackLength));
+      const nextTier = getQuestionTier(playerPosRef.current / tuning.trackLength);
       setQuestion(advanceQuestionForTier(nextTier));
       questionStartRef.current = Date.now();
       setSelected(null);
@@ -437,9 +437,6 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
     100,
   );
   const raceProgress = clamp(playerPosRef.current / trackSpan, 0, 1);
-  const backgroundPositionX = Math.round(clamp(18 + (raceProgress * 64), 18, 82));
-  const skyDriftX = Math.round(raceProgress * 180);
-  const roadDriftX = Math.round(raceProgress * 520);
   const playerBobOffset = Math.sin(playerBobPhaseRef.current) * PLAYER_BOB_AMPLITUDE;
   const playerLean = clamp((playerTargetRef.current - playerPosRef.current) * 0.9, -PLAYER_ROLL_MAX, PLAYER_ROLL_MAX);
 
@@ -474,23 +471,10 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
         />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 select-none bg-cover bg-center bg-no-repeat"
+          className="pointer-events-none absolute inset-0 select-none bg-contain bg-center bg-no-repeat"
           style={{
             backgroundImage: `url(${ratioBackdrop})`,
-            backgroundPosition: `${backgroundPositionX}% center`,
-          }}
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[1] opacity-70"
-          style={{
-            backgroundImage: `
-              linear-gradient(90deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.04) 50%, rgba(255,255,255,0.0) 100%),
-              repeating-linear-gradient(90deg, rgba(255,255,255,0.0) 0 42px, rgba(255,255,255,0.09) 42px 47px)
-            `,
-            backgroundSize: '180px 100%, 220px 100%',
-            backgroundPosition: `${-skyDriftX}px 0, ${-roadDriftX}px 0`,
-            mixBlendMode: 'screen',
+            backgroundPosition: 'center center',
           }}
         />
 
@@ -559,7 +543,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
         >
           <div className="mx-auto flex w-full max-w-[56rem] flex-col gap-2 px-2 sm:px-3 md:px-4">
             <GameQuestionCard
-              title="Ratio Rapids"
+              title="Ratio Racer"
               className="w-full !mb-0"
               style={{
                 ['--question-card-width' as any]: 'min(100%, 56rem)',

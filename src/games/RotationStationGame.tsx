@@ -269,12 +269,12 @@ const ShapeCard: React.FC<{
       : 'border-cyan-100/26 bg-slate-950/46';
 
   return (
-    <div className={`relative flex h-[8.6rem] w-[8.6rem] items-center justify-center rounded-[1.05rem] border ${borderClass}`}>
+    <div className={`relative flex h-[7.2rem] w-[7.2rem] items-center justify-center rounded-[1.05rem] border ${borderClass}`}>
       <motion.svg
         viewBox="-64 -64 128 128"
         animate={{ rotate: orientationToDegrees(orientation) }}
         transition={{ type: 'spring', stiffness: 220, damping: 23 }}
-        className="h-[6.2rem] w-[6.2rem]"
+        className="h-[5.3rem] w-[5.3rem]"
         style={{ filter: 'drop-shadow(0 10px 14px rgba(2,6,23,0.48))' }}
       >
         <defs>
@@ -465,13 +465,13 @@ const RotationStationGame: React.FC<RotationStationGameProps> = ({
         alt=""
         aria-hidden="true"
         draggable={false}
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
+        className="pointer-events-none absolute inset-0 h-full w-full object-contain object-center"
       />
 
       <main
         className={`relative z-20 flex h-full w-full flex-col items-center ${topPaddingClass} px-[max(0.75rem,env(safe-area-inset-left))] pb-[calc(env(safe-area-inset-bottom)+0.8rem)]`}
       >
-        <div className="flex h-full w-full max-w-[30rem] min-h-0 flex-col gap-2">
+        <div className="flex h-full w-full max-w-[30rem] min-h-0 flex-col gap-1.5">
           {!useSharedTopHud ? (
             <header className="rounded-[1.15rem] border border-cyan-100/26 bg-slate-950/55 px-3 py-2 shadow-[0_12px_22px_rgba(2,6,23,0.44)]">
               <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2.5">
@@ -503,16 +503,16 @@ const RotationStationGame: React.FC<RotationStationGameProps> = ({
             </GameQuestionCard>
           </section>
 
-          <section className="min-h-0 flex-1 rounded-[1.35rem] border border-cyan-100/18 bg-slate-950/46 p-2.5 shadow-[0_10px_20px_rgba(2,6,23,0.38)]">
-            <div className="flex h-full min-h-0 flex-col gap-3">
+          <section className="min-h-0 flex-1 rounded-[1.35rem] border border-cyan-100/18 bg-slate-950/46 p-2 shadow-[0_10px_20px_rgba(2,6,23,0.38)]">
+            <div className="flex h-full min-h-0 flex-col gap-2">
               {question.mode === 'rotate_match' ? (
-                <div className={`grid min-h-0 flex-1 grid-cols-2 items-center gap-2.5 ${shapePulseClass}`}>
-                  <div className="flex flex-col items-center gap-1.5">
+                <div className={`grid min-h-0 flex-1 grid-cols-2 items-center gap-2 ${shapePulseClass}`}>
+                  <div className="flex flex-col items-center gap-1">
                     <div className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/72">Target</div>
                     <ShapeCard shape={question.shape} orientation={question.targetOrientation} tone="target" />
                     <div className="text-[10px] font-bold text-cyan-100/80">{orientationLabel(question.targetOrientation)}</div>
                   </div>
-                  <div className="flex flex-col items-center gap-1.5">
+                  <div className="flex flex-col items-center gap-1">
                     <div className="text-[10px] font-black uppercase tracking-[0.14em] text-amber-100/72">Your shape</div>
                     <ShapeCard shape={question.shape} orientation={playerOrientation} tone="player" />
                     <div className="text-[10px] font-bold text-amber-100/80">{orientationLabel(playerOrientation)}</div>
@@ -521,8 +521,8 @@ const RotationStationGame: React.FC<RotationStationGameProps> = ({
               ) : null}
 
               {question.mode === 'predict_result' ? (
-                <div className={`grid min-h-0 flex-1 grid-rows-[auto_1fr] gap-2.5 ${shapePulseClass}`}>
-                  <div className="flex items-center justify-center gap-3">
+                <div className={`grid min-h-0 flex-1 grid-rows-[auto_1fr] gap-2 ${shapePulseClass}`}>
+                  <div className="flex items-center justify-center gap-2.5">
                     <ShapeCard shape={question.shape} orientation={question.startOrientation} tone="neutral" />
                     <span className="text-2xl font-black text-cyan-100/75">?</span>
                   </div>
@@ -533,10 +533,10 @@ const RotationStationGame: React.FC<RotationStationGameProps> = ({
                         type="button"
                         disabled={isLocked || roundOver}
                         onClick={() => handleChoiceTap(option.id)}
-                        className="inline-flex min-h-[7.25rem] flex-col items-center justify-center gap-1.5 rounded-[0.85rem] border border-white/16 bg-slate-950/58 px-1.5 py-1.5 text-center text-[11px] font-black text-white shadow-[0_10px_18px_rgba(2,6,23,0.18)] disabled:opacity-55"
+                        className="inline-flex min-h-[5.5rem] flex-col items-center justify-center gap-1 rounded-[0.82rem] border border-white/16 bg-slate-950/58 px-1 py-1 text-center text-[10px] font-black text-white shadow-[0_10px_18px_rgba(2,6,23,0.18)] disabled:opacity-55"
                       >
                         <div className="flex items-center justify-center pb-1.5">
-                          <div className="scale-[0.72]">
+                          <div className="scale-[0.58]">
                             <ShapeCard shape={question.shape} orientation={option.orientation || 0} showPivot={false} />
                           </div>
                         </div>
@@ -548,8 +548,8 @@ const RotationStationGame: React.FC<RotationStationGameProps> = ({
               ) : null}
 
               {question.mode === 'identify_turn' ? (
-                <div className={`grid min-h-0 flex-1 grid-rows-[auto_1fr] gap-2.5 ${shapePulseClass}`}>
-                  <div className="flex items-center justify-center gap-3">
+                <div className={`grid min-h-0 flex-1 grid-rows-[auto_1fr] gap-2 ${shapePulseClass}`}>
+                  <div className="flex items-center justify-center gap-2.5">
                     <ShapeCard shape={question.shape} orientation={question.startOrientation} tone="neutral" />
                     <span className="text-2xl font-black text-cyan-100/75">to</span>
                     <ShapeCard shape={question.shape} orientation={question.targetOrientation} tone="target" />
@@ -561,7 +561,7 @@ const RotationStationGame: React.FC<RotationStationGameProps> = ({
                         type="button"
                         disabled={isLocked || roundOver}
                         onClick={() => handleChoiceTap(option.id)}
-                        className="inline-flex min-h-[3.6rem] items-center justify-center rounded-[0.85rem] border border-white/16 bg-slate-950/58 px-2 py-1.5 text-center text-[11px] font-black text-white shadow-[0_10px_18px_rgba(2,6,23,0.18)] disabled:opacity-55"
+                        className="inline-flex min-h-[3rem] items-center justify-center rounded-[0.82rem] border border-white/16 bg-slate-950/58 px-2 py-1.25 text-center text-[10px] font-black text-white shadow-[0_10px_18px_rgba(2,6,23,0.18)] disabled:opacity-55"
                       >
                         {option.label}
                       </button>
@@ -573,8 +573,8 @@ const RotationStationGame: React.FC<RotationStationGameProps> = ({
           </section>
 
           {question.mode === 'rotate_match' ? (
-            <section className="shrink-0 rounded-[1.35rem] border border-cyan-100/18 bg-slate-950/48 p-2.5 shadow-[0_10px_20px_rgba(2,6,23,0.38)]">
-              <div className="grid grid-cols-3 gap-2.5">
+            <section className="shrink-0 rounded-[1.35rem] border border-cyan-100/18 bg-slate-950/48 p-2 shadow-[0_10px_20px_rgba(2,6,23,0.38)]">
+              <div className="grid grid-cols-3 gap-2">
                 <button
                   type="button"
                   disabled={isLocked || roundOver}

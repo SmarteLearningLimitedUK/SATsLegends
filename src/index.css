@@ -98,9 +98,9 @@ body {
   overflow: hidden;
   user-select: none;
   background:
-    radial-gradient(circle at top, rgba(255,241,196,0.18), transparent 24%),
-    radial-gradient(circle at 50% 28%, rgba(96,165,250,0.14), transparent 22%),
-    linear-gradient(180deg, #3a5b93 0%, #22365f 42%, #101827 76%, #070b13 100%);
+    radial-gradient(circle at top, rgba(255,241,196,0.08), transparent 24%),
+    radial-gradient(circle at 50% 28%, rgba(251,191,36,0.06), transparent 22%),
+    linear-gradient(180deg, #181f2b 0%, #10151f 42%, #0a0f18 76%, #04070d 100%);
   overscroll-behavior: none;
   touch-action: none;
 }
@@ -3063,12 +3063,40 @@ button:disabled {
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  gap: clamp(0.3rem, 1vh, 0.75rem);
+  gap: clamp(0.4rem, 1.2vh, 0.9rem);
   overflow: hidden;
 }
 
 .game-screen-region {
   min-height: 0;
+}
+
+.answer-choice-surface {
+  margin-top: auto !important;
+  width: 100%;
+  flex: 0 0 auto;
+}
+
+.game-submit-dock {
+  margin-top: auto !important;
+  width: 100%;
+  flex: 0 0 auto;
+}
+
+.game-submit-dock-fixed {
+  position: fixed;
+  inset-inline: 0;
+  bottom: calc(env(safe-area-inset-bottom) + 0.9rem);
+  z-index: 40;
+  display: flex;
+  justify-content: center;
+  padding-inline: 0.75rem;
+  pointer-events: none;
+}
+
+.game-submit-dock-fixed > * {
+  pointer-events: auto;
+  width: 100%;
 }
 
 .game-screen-top {
@@ -3084,7 +3112,8 @@ button:disabled {
 
 .game-screen-bottom {
   flex: 0 0 auto;
-  min-height: clamp(3.4rem, 17vh, 7.4rem);
+  min-height: clamp(3.4rem, 16vh, 7.2rem);
+  margin-top: auto;
 }
 
 .structured-game-layout > * {
@@ -3160,6 +3189,21 @@ button:disabled {
 
 .structured-game-layout .game-shell-zone-actions {
   margin-top: clamp(0.2rem, 0.9vh, 0.7rem);
+}
+
+.screen-gameplay .game-screen-layout .game-screen-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.screen-gameplay .game-screen-layout .game-screen-main > * {
+  min-height: 0;
+}
+
+.screen-gameplay .game-screen-layout .game-screen-main > .answer-choice-surface,
+.screen-gameplay .game-screen-layout .game-screen-main > .game-submit-dock,
+.screen-gameplay .game-screen-layout .game-screen-main > .game-submit-dock-fixed {
+  margin-top: auto !important;
 }
 
 .screen-gameplay .game-shell-contract > * > * {
@@ -3478,10 +3522,11 @@ button:disabled {
   border-radius: clamp(0.9rem, 2.8vw, 1.2rem);
   border: 1px solid rgba(191, 219, 254, 0.24);
   background:
-    linear-gradient(180deg, rgba(9, 26, 50, 0.72), rgba(8, 17, 34, 0.84));
+    radial-gradient(circle at 50% 0%, rgba(125, 211, 252, 0.14), rgba(125, 211, 252, 0) 44%),
+    linear-gradient(180deg, rgba(9, 26, 50, 0.76), rgba(8, 17, 34, 0.88));
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    0 12px 24px rgba(2, 6, 23, 0.24);
+    0 14px 28px rgba(2, 6, 23, 0.28);
   overflow: hidden;
 }
 
@@ -4460,7 +4505,7 @@ button.avatar-hero-arrow:not(:disabled):active {
 .pvp-bg-layer {
   background-repeat: no-repeat;
   background-position: center;
-  background-size: cover;
+  background-size: contain;
   transition: transform 0.28s ease-out;
 }
 
@@ -4822,6 +4867,12 @@ button.avatar-hero-arrow:not(:disabled):active {
   -webkit-overflow-scrolling: auto !important;
 }
 
+.game-background-layer {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0) 28%),
+    linear-gradient(180deg, rgba(8, 17, 38, 0.18), rgba(2, 6, 23, 0.52));
+}
+
 .screen-gameplay .unified-minigame-hud-enabled .mini-game-top-bar {
   display: none !important;
 }
@@ -4840,6 +4891,73 @@ button.avatar-hero-arrow:not(:disabled):active {
 .screen-gameplay .unified-minigame-hud-enabled [class*="max-w-5xl"],
 .screen-gameplay .unified-minigame-hud-enabled [class*="max-w-4xl"] {
   max-width: 100% !important;
+}
+
+/* Final override so the new asset skin wins over older card rules further up the file. */
+.game-question-card {
+  position: fixed;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  overflow: hidden !important;
+  isolation: isolate;
+}
+
+.game-question-card::before,
+.game-question-card::after {
+  content: none !important;
+}
+
+.game-question-card-shell {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+
+.game-question-card-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.25rem;
+}
+
+.game-question-card-title-strip {
+  width: min(100%, 38rem);
+  min-height: 2.15rem;
+  margin: 0 auto 0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+}
+
+.game-question-card-title-strip .question-title {
+  margin: 0;
+  padding: 0;
+  color: #fff6de;
+  text-align: center;
+  text-wrap: balance;
+  text-shadow:
+    0 1px 0 rgba(2, 6, 23, 0.55),
+    0 0 12px rgba(255, 236, 179, 0.15);
+}
+
+.game-question-card-copy {
+  padding-inline: 0.1rem;
+}
+
+.game-question-card .question-subtitle {
+  margin-top: 0.4rem;
 }
 
 .screen-gameplay .unified-minigame-hud-enabled .game-shell-zone-actions,
@@ -5079,7 +5197,7 @@ button.avatar-hero-arrow:not(:disabled):active {
 .app-screen {
   background-position: center center !important;
   background-repeat: no-repeat !important;
-  background-size: cover !important;
+  background-size: contain !important;
 }
 
 /* ============================================================
@@ -5409,12 +5527,11 @@ button.avatar-hero-arrow:not(:disabled):active {
   top: calc(env(safe-area-inset-top) + 4px);
   left: 0;
   right: 0;
-  /* Match the blue translucent question banner used in Number Line Ninja + Place Value Panic. */
-  border: 1px solid rgba(96, 165, 250, 0.4);
-  border-radius: 1.05rem;
-  background: rgba(23, 37, 84, 0.7);
-  box-shadow: 0 10px 22px rgba(2, 6, 23, 0.35);
-  backdrop-filter: blur(6px);
+  border: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
   width: var(--question-card-width, min(100%, 780px));
   margin-left: auto;
   margin-right: auto;
@@ -5429,10 +5546,10 @@ button.avatar-hero-arrow:not(:disabled):active {
 }
 
 .game-question-card.game-question-card--dock-bottom {
-  position: static;
-  top: auto;
-  left: auto;
-  right: auto;
+  position: fixed;
+  top: calc(env(safe-area-inset-top) + 4px);
+  left: 0;
+  right: 0;
   margin-bottom: 0;
 }
 
@@ -5495,7 +5612,6 @@ button.avatar-hero-arrow:not(:disabled):active {
 
 /* Shared question surface:
    keeps all learner-facing question cards on one consistent blue/gold panel style. */
-.app-viewport.sat-theme-bluegold .game-question-card,
 .screen-gameplay .game-shell-host .mission-panel-shell,
 .screen-gameplay .game-shell-host .licensed-game-card,
 .screen-gameplay .game-shell-host .licensed-game-card-dark,

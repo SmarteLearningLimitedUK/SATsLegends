@@ -52,8 +52,9 @@ const BossPortrait: React.FC<BossPortraitProps> = ({ encounter, pose, className 
   }, [pose, poseSequence]);
 
   return (
-    <div className={`relative overflow-hidden rounded-[1.5rem] border border-white/16 bg-[linear-gradient(180deg,rgba(12,18,28,0.88),rgba(5,10,18,0.94))] shadow-[0_16px_34px_rgba(0,0,0,0.28)] ${className}`}>
+    <div className={`relative overflow-hidden rounded-[1.5rem] border border-white/16 bg-[linear-gradient(180deg,rgba(12,18,28,0.9),rgba(5,10,18,0.96))] shadow-[0_18px_38px_rgba(0,0,0,0.34)] ${className}`}>
       <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${encounter.glowClass}`} />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(255,255,255,0.2),rgba(255,255,255,0)_40%),linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0)_22%,rgba(2,6,23,0.16))]" />
       <motion.div
         className="pointer-events-none absolute inset-x-5 top-0 h-12 rounded-full bg-white/12 blur-2xl"
         animate={{ opacity: [0.28, 0.6, 0.28], scaleX: [0.96, 1.08, 0.96] }}
@@ -83,7 +84,7 @@ const BossPortrait: React.FC<BossPortraitProps> = ({ encounter, pose, className 
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -4, scale: 1.03 }}
               transition={{ duration: 0.26, ease: 'easeOut' }}
-              className="relative z-10 h-full max-h-[7rem] w-full object-contain drop-shadow-[0_12px_22px_rgba(0,0,0,0.36)]"
+              className="relative z-10 h-full max-h-[7rem] w-full object-contain drop-shadow-[0_14px_24px_rgba(0,0,0,0.42)]"
               draggable={false}
             />
           </AnimatePresence>
@@ -93,7 +94,7 @@ const BossPortrait: React.FC<BossPortraitProps> = ({ encounter, pose, className 
             {encounter.title}
           </div>
           <div className="mt-1.5 truncate text-sm font-black text-white md:text-lg">{encounter.name}</div>
-          <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white/55 md:text-[11px]">
+          <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white/65 md:text-[11px]">
             {displayedPose === 'defeat' ? 'Boss broken' : displayedPose === 'victory' ? 'Boss dominant' : displayedPose === 'dazed' ? 'Boss staggered' : displayedPose === 'attack' ? 'Boss attacking' : 'Boss waiting'}
           </div>
         </div>

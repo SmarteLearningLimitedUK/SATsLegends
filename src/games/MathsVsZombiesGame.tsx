@@ -5,7 +5,6 @@ import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
 import zombieFallback from '../assets/zombies/zombie.png';
 import zombiePlayfield from '../assets/zombies/zombiebkground.png';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
-import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import { formatMultiplicationDisplay } from '../utils/mathDisplay';
 
@@ -566,25 +565,39 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 
         </div>
 
-        <div className="mx-4 mt-4 rounded-3xl border border-blue-400/40 bg-blue-950/70 p-4 shadow-xl">
-          <div className="my-3 h-px w-full bg-white/10" />
-          <GameQuestionCard title="Mission" className="game-question-card--dock-bottom" style={{ ['--question-card-width' as any]: '100%' }}>
-            {question.prompt}
-          </GameQuestionCard>
+        <div className="mx-4 mt-3 rounded-[1.35rem] border border-amber-300/35 bg-slate-950/74 px-4 py-3 shadow-[0_20px_48px_rgba(2,6,23,0.45)]">
           <div
-            className={`mt-2 min-h-[16px] text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-cyan-100/80 ${feedback ? 'opacity-100' : 'opacity-0'}`}
+            className={`min-h-[16px] text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-cyan-100/80 ${feedback ? 'opacity-100' : 'opacity-0'}`}
             aria-hidden={!feedback}
           >
             {feedback || '\u00A0'}
           </div>
-          <div className="mt-3 grid grid-cols-2 gap-2">
+          <div className="flex items-center justify-center gap-3 text-[0.66rem] font-black uppercase tracking-[0.24em] text-amber-100/90">
+            <span className="h-px w-8 bg-amber-200/75" />
+            Mission
+            <span className="h-px w-8 bg-amber-200/75" />
+          </div>
+          <div className="mt-2 text-center text-[clamp(0.84rem,2.1vw,1.02rem)] font-semibold leading-snug text-white/94">
+            the monster minds have sent their minions - solve the sum to defeat them
+          </div>
+          <div className="mt-2 flex items-center justify-center">
+            <div className="rounded-[0.95rem] border border-cyan-200/40 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(23,37,84,0.95))] px-4 py-2.5 shadow-[0_10px_24px_rgba(2,6,23,0.4)]">
+              <div className="text-[clamp(1.35rem,4vw,2.1rem)] font-black leading-none tracking-[0.03em] text-white drop-shadow-[0_2px_8px_rgba(2,6,23,0.7)]">
+                {question.prompt.split('\n\n').slice(-1)[0]}
+              </div>
+            </div>
+          </div>
+          <div className="mt-3 text-center text-[0.68rem] font-black uppercase tracking-[0.24em] text-amber-100/90">
+            Choose the correct answer
+          </div>
+          <div className="mt-2 grid grid-cols-4 gap-2">
             {question.options.map((option, index) => (
               <button
                 key={`${option}-${index}`}
                 type="button"
                 onClick={() => handleAnswer(index)}
                 disabled={locked}
-                className={`rounded-2xl px-3 py-3 text-lg font-black ${
+                className={`h-[clamp(2.6rem,6.5vh,3.15rem)] rounded-[0.95rem] px-2 text-[clamp(0.88rem,3vw,1.12rem)] font-black shadow-[0_10px_18px_rgba(2,6,23,0.24)] ${
                   locked && selectedAnswer === index
                     ? index === question.correctIndex
                       ? 'ui-button-success'

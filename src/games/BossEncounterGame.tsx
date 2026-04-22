@@ -2,17 +2,15 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { AVATARS } from '../constants';
-import { getBossEncounter } from '../bossMeta';
+import { getBossEncounter, resolveBossPose } from '../bossMeta';
 import { BossPose } from '../assets/bosses';
 import { triggerHaptic } from '../haptics';
 import AnimatedAvatar from '../components/AnimatedAvatar';
-import BossPortrait from '../components/BossPortrait';
-import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
-import AssetIcon from '../components/AssetIcon';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { isBossEncounterGameType, SupportedBossGameType } from './bossEncounterTypes';
+import { AnimationState } from '../types';
 
 interface BossEncounterGameProps {
   gameType: SupportedBossGameType;
@@ -38,13 +36,8 @@ interface BossQuestion {
 }
 
 const TOTAL_QUESTIONS = 30;
-const RUN_TIME_SECONDS = 15 * 60;
-const BOSS_HEALTH_MAX = 30;
-const HIGH_SCORE_STARS = {
-  bronze: 1800,
-  silver: 3000,
-  gold: 4500,
-} as const;
+const BOSS_HEALTH_MAX = 20;
+const HERO_HEALTH_MAX = 5;
 
 export { isBossEncounterGameType };
 
@@ -92,6 +85,76 @@ const makeTrueFalseOptions = (isTrue: boolean) => {
     correctOptionIndices: [options.indexOf(isTrue ? 'True' : 'False')],
   };
 };
+
+type BattleGaugeProps = {
+  label: string;
+  value: number;
+  max: number;
+  toneClass: string;
+  align?: 'left' | 'right';
+};
+
+const BattleGauge: React.FC<BattleGaugeProps> = ({ label, value, max, toneClass, align = 'left' }) => {
+  const percent = Math.max(0, Math.min(100, (value / max) * 100));
+
+  return (
+    <div className={`min-w-0 ${align === 'right' ? 'text-right' : 'text-left'}`}>
+      <div className="mb-1 flex items-center justify-between gap-2 text-[9px] font-black uppercase tracking-[0.24em] text-white/60">
+        <span>{label}</span>
+        <span className="text-white/80">{value}/{max}</span>
+      </div>
+      <div className="h-2.5 overflow-hidden rounded-full border border-white/10 bg-black/35">
+        <motion.div
+          initial={{ width: `${percent}%` }}
+          animate={{ width: `${percent}%` }}
+          transition={{ type: 'spring', stiffness: 95, damping: 18 }}
+          className={`h-full rounded-full ${toneClass}`}
+        />
+      </div>
+    </div>
+  );
+};
+
+type BattleUnitCardProps = {
+  side: 'hero' | 'boss';
+  label: string;
+  health: number;
+  maxHealth: number;
+  children: React.ReactNode;
+  className?: string;
+};
+
+const BattleUnitCard: React.FC<BattleUnitCardProps> = ({
+  side,
+  label,
+  health,
+  maxHealth,
+  children,
+  className = '',
+}) => (
+  <div
+    className={`relative w-[min(20rem,44vw)] rounded-[1.5rem] border border-white/10 bg-[linear-gradient(180deg,rgba(9,13,24,0.8),rgba(4,8,16,0.92))] p-3 shadow-[0_18px_36px_rgba(0,0,0,0.24)] backdrop-blur-xl ${className}`.trim()}
+  >
+    <div className={`absolute inset-0 rounded-[1.5rem] opacity-70 ${side === 'boss' ? 'bg-[radial-gradient(circle_at_top_right,rgba(248,113,113,0.14),transparent_46%)]' : 'bg-[radial-gradient(circle_at_top_left,rgba(96,165,250,0.16),transparent_46%)]'}`} />
+    <div className={`relative flex items-end gap-3 ${side === 'boss' ? 'flex-row-reverse text-right' : ''}`}>
+      {children}
+      <div className={`min-w-0 flex-1 ${side === 'boss' ? 'items-end' : ''}`}>
+        <div className="mb-2 text-[9px] font-black uppercase tracking-[0.26em] text-white/58">
+          {label}
+        </div>
+        <BattleGauge
+          label="HP"
+          value={health}
+          max={maxHealth}
+          align={side === 'boss' ? 'right' : 'left'}
+          toneClass={side === 'boss'
+            ? 'bg-[linear-gradient(90deg,#ef4444_0%,#fb7185_45%,#f59e0b_100%)] shadow-[0_0_12px_rgba(248,113,113,0.38)]'
+            : 'bg-[linear-gradient(90deg,#38bdf8_0%,#60a5fa_45%,#93c5fd_100%)] shadow-[0_0_12px_rgba(96,165,250,0.34)]'}
+        />
+      </div>
+    </div>
+  </div>
+);
 
 const generateFactorsQuestion = (): BossQuestion => {
   const mode = randomInt(0, 2);
@@ -454,15 +517,6 @@ const QUESTION_GENERATORS: Record<SupportedBossGameType, () => BossQuestion> = {
   matrix_match: generateReasoningBossQuestion,
 };
 
-const REACTION_COPY: Record<'idle' | 'correct' | 'wrong' | 'warning' | 'victory' | 'defeat', string> = {
-  idle: 'Answer carefully. Thirty questions stand between you and the boss.',
-  correct: 'Direct hit. The boss is taking damage.',
-  wrong: 'The boss holds firm. Keep your focus on the next question.',
-  warning: 'The boss is close to breaking.',
-  victory: 'Boss defeated. The island challenge is cleared.',
-  defeat: 'Time ran out. The boss survives this attempt.',
-};
-
 const normalizeSelection = (values: number[]) => Array.from(new Set(values)).sort((a, b) => a - b);
 
 const areSelectionsEqual = (left: number[], right: number[]) => {
@@ -482,7 +536,6 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
 }) => {
   const avatar = AVATARS.find(item => item.id === avatarId) || AVATARS[0];
   const encounter = getBossEncounter(gameType);
-  const reactionCopy = REACTION_COPY;
   const questions = useMemo(
     () => Array.from({ length: TOTAL_QUESTIONS }, () => {
       const base = QUESTION_GENERATORS[gameType]();
@@ -494,22 +547,18 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [XP, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(RUN_TIME_SECONDS);
+  const [bossHealth, setBossHealth] = useState(BOSS_HEALTH_MAX);
+  const [heroHealth, setHeroHealth] = useState(HERO_HEALTH_MAX);
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
   const [submittedIndices, setSubmittedIndices] = useState<number[] | null>(null);
   const [bossPose, setBossPose] = useState<BossPose>('neutral');
-  const [reaction, setReaction] = useState(reactionCopy.idle);
-  const [resolveState, setResolveState] = useState<'idle' | 'correct' | 'wrong' | 'warning' | 'victory' | 'defeat'>('idle');
+  const [heroPose, setHeroPose] = useState<AnimationState>('idle');
   const [showPracticeIntro, setShowPracticeIntro] = useState(true);
   const timeoutRef = useRef<number | null>(null);
-  const timeLimitRef = useRef<number | null>(null);
 
   useEffect(() => () => {
     if (timeoutRef.current) {
       window.clearTimeout(timeoutRef.current);
-    }
-    if (timeLimitRef.current) {
-      window.clearInterval(timeLimitRef.current);
     }
   }, []);
 
@@ -520,102 +569,57 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   const question = questions[currentIndex];
   const isMultiSelect = question.selectionMode === 'multi';
   const isTrueFalse = question.selectionMode === 'true_false';
-  const answeredCount = currentIndex + (submittedIndices !== null ? 1 : 0);
   const activeSelection = submittedIndices ?? selectedIndices;
-  const misses = answeredCount - correctAnswers;
-  const bossHealthRemaining = Math.max(0, BOSS_HEALTH_MAX - correctAnswers);
-  const progress = Math.round((answeredCount / TOTAL_QUESTIONS) * 100);
-  const healthProgress = Math.round((bossHealthRemaining / BOSS_HEALTH_MAX) * 100);
-  const accuracy = answeredCount > 0 ? Math.round((correctAnswers / answeredCount) * 100) : 100;
-  const elapsedSeconds = RUN_TIME_SECONDS - timeLeft;
-  const score = XP;
-
-  const finishEncounter = (finalCorrect: number, finalScore: number) => {
-    const stars = finalScore >= HIGH_SCORE_STARS.gold
-      ? 3
-      : finalScore >= HIGH_SCORE_STARS.silver
-        ? 2
-        : 1;
-    setResolveState('victory');
-    setReaction(reactionCopy.victory);
-    setBossPose('defeat');
+  const finishEncounter = (finalScore: number) => {
+    const stars = heroHealth >= 4 ? 3 : heroHealth >= 2 ? 2 : 1;
     triggerHaptic('success');
-    confetti({ particleCount: 90, spread: 70, origin: { y: 0.45 } });
+    confetti({ particleCount: 56, spread: 62, origin: { y: 0.42 } });
     timeoutRef.current = window.setTimeout(() => {
       onVictory(stars, finalScore);
-    }, 980);
+    }, 720);
   };
-
-  useEffect(() => {
-    if (resolveState === 'victory' || resolveState === 'defeat') return undefined;
-
-    const timerId = window.setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          window.clearInterval(timerId);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    timeLimitRef.current = timerId;
-    return () => window.clearInterval(timerId);
-  }, [resolveState]);
-
-  useEffect(() => {
-    if (timeLeft > 0 || resolveState !== 'idle') return;
-    setResolveState('defeat');
-    setReaction(reactionCopy.defeat);
-    setBossPose('victory');
+  const endBattle = (finalScore: number) => {
     triggerHaptic('error');
     timeoutRef.current = window.setTimeout(() => {
-      onGameOver(XP);
-    }, 980);
-  }, [XP, reactionCopy.defeat, resolveState, timeLeft, onGameOver]);
+      onGameOver(finalScore);
+    }, 720);
+  };
 
   const advanceQuestion = (isCorrect: boolean, nextCorrect: number, nextScore: number) => {
-    const nextBossHealth = Math.max(0, BOSS_HEALTH_MAX - nextCorrect);
+    const nextBossHealth = isCorrect ? Math.max(0, bossHealth - 1) : bossHealth;
+    const nextHeroHealth = isCorrect ? heroHealth : Math.max(0, heroHealth - 1);
     const finalQuestion = currentIndex === TOTAL_QUESTIONS - 1;
 
     setCorrectAnswers(nextCorrect);
     setScore(nextScore);
+    setBossHealth(nextBossHealth);
+    setHeroHealth(nextHeroHealth);
+    setBossPose(isCorrect ? (nextBossHealth <= 0 ? 'defeat' : 'attack') : 'attack');
+    setHeroPose(isCorrect ? 'victory' : 'hit');
 
     if (isCorrect) {
       triggerHaptic('success');
-      if (finalQuestion) {
-        setResolveState('victory');
-        setReaction(reactionCopy.victory);
-        setBossPose('defeat');
-      } else if (nextBossHealth <= 4) {
-        setResolveState('warning');
-        setReaction(reactionCopy.warning);
-        setBossPose('dazed');
-      } else {
-        setResolveState('correct');
-        setReaction(reactionCopy.correct);
-        setBossPose('attack');
-      }
     } else {
       triggerHaptic('warning');
-      setResolveState('wrong');
-      setReaction(reactionCopy.wrong);
-      setBossPose(encounter.assetId === 'jelly' ? 'victory' : 'happy');
     }
 
     timeoutRef.current = window.setTimeout(() => {
-      if (finalQuestion) {
-        finishEncounter(nextCorrect, nextScore);
+      if (nextBossHealth <= 0) {
+        finishEncounter(nextScore);
+        return;
+      }
+
+      if (nextHeroHealth <= 0 || finalQuestion) {
+        endBattle(nextScore);
         return;
       }
 
       setCurrentIndex((prev) => prev + 1);
       setSelectedIndices([]);
       setSubmittedIndices(null);
-      setResolveState('idle');
-      setReaction(reactionCopy.idle);
-      setBossPose(nextBossHealth <= 4 ? 'dazed' : 'neutral');
-    }, 1180);
+      setBossPose('neutral');
+      setHeroPose('idle');
+    }, 720);
   };
 
   const submitSelection = (selection: number[]) => {
@@ -625,9 +629,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
     const normalizedCorrect = normalizeSelection(question.correctOptionIndices);
     const isCorrect = areSelectionsEqual(normalizedSelection, normalizedCorrect);
     const nextCorrect = isCorrect ? correctAnswers + 1 : correctAnswers;
-    const nextScore = isCorrect
-      ? XP + 120 + Math.max(0, Math.floor(timeLeft / 12))
-      : XP;
+    const nextScore = isCorrect ? XP + 120 : XP;
 
     setSubmittedIndices(normalizedSelection);
     advanceQuestion(isCorrect, nextCorrect, nextScore);
@@ -653,127 +655,122 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   };
 
   return (
-    <div className="relative flex h-full w-full overflow-hidden font-sans">
-      <GameplaySceneBackdrop gameType={gameType} />
+    <div className="relative flex h-full w-full overflow-hidden bg-[radial-gradient(circle_at_top,#152036_0%,#0a1120_48%,#030611_100%)] font-sans">
 
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Core of Calculation"
-        body="The Monster Minds have fortified the final boss.\nAnswer 30 questions before the timer runs out.\nKeep going until the boss health drops to zero."
+        body="The final boss is waiting.\nAnswer correctly to hit the boss.\nWrong answers damage your hero.\nReduce the boss HP to zero to win."
         onAction={() => setShowPracticeIntro(false)}
       />
 
-      <div className="relative z-10 flex h-full w-full flex-col gap-2 px-2 pb-2.5 pt-[calc(0.45rem+env(safe-area-inset-top))] lg:gap-3 lg:px-4 lg:pb-4 lg:pt-4">
-        <div className="licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col gap-2 overflow-hidden rounded-[2rem] p-2 lg:gap-3 lg:rounded-[2.6rem] lg:p-3">
-          <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
-            <GameQuestionCard title="Question">
-              {formatFantasyPrompt(question.prompt)}
-            </GameQuestionCard>
+      <div className="relative z-10 flex h-full w-full flex-col gap-3 px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-[calc(env(safe-area-inset-top)+0.75rem)] lg:gap-4 lg:px-6 lg:pb-6 lg:pt-6">
+        <div className="flex shrink-0 justify-center">
+          <GameQuestionCard
+            title="Question"
+            className="w-full max-w-[52rem] rounded-[1.6rem] bg-[linear-gradient(180deg,rgba(10,15,28,0.88),rgba(4,8,18,0.95))] shadow-[0_18px_42px_rgba(0,0,0,0.26)]"
+          >
+            {formatFantasyPrompt(question.prompt)}
+          </GameQuestionCard>
+        </div>
+
+        <div className="flex min-h-0 flex-1 flex-col justify-between gap-4 py-1 lg:gap-6 lg:py-2">
+          <div className="ml-auto flex w-full max-w-[22rem] justify-end">
+            <BattleUnitCard
+              side="boss"
+              label="Boss"
+              health={bossHealth}
+              maxHealth={BOSS_HEALTH_MAX}
+              className="w-full"
+            >
+              <div className="relative h-[5.6rem] w-[5.6rem] shrink-0 rounded-[1.15rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.16),rgba(255,255,255,0.02))]">
+                <div className="pointer-events-none absolute inset-[10%] rounded-full bg-white/10 blur-xl" />
+                <motion.img
+                  key={`${encounter.assetId}-${bossPose}`}
+                  src={resolveBossPose(encounter.assetId, bossPose)}
+                  alt={encounter.name}
+                  initial={{ opacity: 0, scale: 0.96, y: 4 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ duration: 0.24, ease: 'easeOut' }}
+                  className="relative z-10 h-full w-full object-contain drop-shadow-[0_10px_18px_rgba(0,0,0,0.38)]"
+                  draggable={false}
+                />
+              </div>
+            </BattleUnitCard>
           </div>
 
-          <div className="mt-[clamp(5.25rem,13vh,7rem)] grid shrink-0 grid-cols-3 gap-2 lg:gap-3">
-            <div className="rounded-[1.1rem] border border-white/14 bg-slate-950/55 px-3 py-2 text-center text-white shadow-[0_12px_26px_rgba(2,6,23,0.18)] backdrop-blur-xl lg:rounded-[1.5rem] lg:px-4 lg:py-3">
-              <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/50 lg:text-[9px]">Question</div>
-              <div className="mt-1 text-sm font-black text-cyan-100 lg:text-xl">{Math.min(currentIndex + 1, TOTAL_QUESTIONS)}/{TOTAL_QUESTIONS}</div>
-            </div>
-            <div className="rounded-[1.1rem] border border-white/14 bg-slate-950/55 px-3 py-2 text-center text-white shadow-[0_12px_26px_rgba(2,6,23,0.18)] backdrop-blur-xl lg:rounded-[1.5rem] lg:px-4 lg:py-3">
-              <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/50 lg:text-[9px]">Timer</div>
-              <div className="mt-1 text-sm font-black text-amber-100 lg:text-xl">{Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}</div>
-            </div>
-            <div className="rounded-[1.1rem] border border-white/14 bg-slate-950/55 px-3 py-2 text-center text-white shadow-[0_12px_26px_rgba(2,6,23,0.18)] backdrop-blur-xl lg:rounded-[1.5rem] lg:px-4 lg:py-3">
-              <div className="text-[8px] font-black uppercase tracking-[0.2em] text-white/50 lg:text-[9px]">Score</div>
-              <div className="mt-1 text-sm font-black text-emerald-100 lg:text-xl">{score}</div>
-            </div>
-          </div>
-
-          <div className="shrink-0 rounded-[1.2rem] border border-white/14 bg-slate-950/55 px-3 py-2 text-white shadow-[0_16px_36px_rgba(2,6,23,0.22)] backdrop-blur-xl lg:rounded-[1.8rem] lg:px-4 lg:py-3">
-            <div className="flex items-center justify-between gap-3 text-[9px] font-black uppercase tracking-[0.22em] lg:text-[9px]">
-              <span className="text-white/58">Boss health</span>
-              <span className="text-white/82">{bossHealthRemaining}/30</span>
-            </div>
-            <div className="mt-2 h-4 overflow-hidden rounded-full border border-white/12 bg-black/32 lg:h-5">
-              <motion.div
-                initial={{ width: '100%' }}
-                animate={{ width: `${healthProgress}%` }}
-                transition={{ type: 'spring', stiffness: 85, damping: 18 }}
-                className="h-full rounded-full bg-[linear-gradient(90deg,#ef4444_0%,#fb7185_38%,#f59e0b_78%,#fde68a_100%)] shadow-[0_0_18px_rgba(248,113,113,0.34)]"
+          <div className="mr-auto flex w-full max-w-[18rem] justify-start">
+            <BattleUnitCard
+              side="hero"
+              label="Hero"
+              health={heroHealth}
+              maxHealth={HERO_HEALTH_MAX}
+              className="w-full"
+            >
+              <AnimatedAvatar
+                avatar={avatar}
+                pose={heroPose}
+                className="h-[5.8rem] w-[5.8rem] shrink-0"
+                imageClassName="object-contain drop-shadow-[0_10px_18px_rgba(0,0,0,0.32)]"
+                showBackdropGlow={false}
               />
-            </div>
-            <div className="mt-2 flex items-center justify-between gap-3 text-[9px] font-bold text-white/72 lg:text-[9px]">
-              <span>{reaction}</span>
-              <span>{Math.max(0, 2 - misses)} safe misses left</span>
-            </div>
-          </div>
-
-          <div className="grid min-h-0 flex-1 gap-2 lg:gap-3">
-            <div className="relative flex min-h-[15rem] items-center justify-center overflow-hidden rounded-[1.25rem] border border-white/16 bg-slate-950/58 p-3 text-white shadow-[0_18px_48px_rgba(2,6,23,0.24)] backdrop-blur-xl lg:min-h-[18rem] lg:rounded-[2rem] lg:p-4">
-              <div className="absolute inset-x-6 bottom-4 h-4 rounded-full bg-black/35 blur-[10px]" />
-              <div className="relative flex flex-col items-center gap-2">
-                <BossPortrait encounter={encounter} pose={bossPose} className="h-[8.2rem] lg:h-[11.5rem]" />
-                <div className="w-full max-w-[26rem] rounded-full border border-amber-200/28 bg-black/25 px-3 py-2 text-center text-[9px] font-black uppercase tracking-[0.16em] text-white/78">
-                  {isMultiSelect ? 'Select all that apply' : isTrueFalse ? 'Choose true or false' : 'Choose one answer'}
-                </div>
-              </div>
-            </div>
-
-            <div className="answer-choice-surface grid min-h-0 flex-1 grid-cols-2 gap-2 lg:gap-3">
-              {question.options.map((option, index) => {
-                const isCorrect = question.correctOptionIndices.includes(index);
-                const isSelected = activeSelection.includes(index);
-                const isRevealed = submittedIndices !== null;
-
-                const toneClass = !isRevealed
-                  ? isSelected
-                    ? 'border-cyan-200/55 bg-cyan-300/18 text-cyan-50 shadow-[0_0_0_1px_rgba(165,243,252,0.28)]'
-                    : 'border-white/14 bg-slate-950/52 text-white hover:border-cyan-200/35 hover:bg-cyan-300/10'
-                  : isCorrect
-                    ? 'border-emerald-300/45 bg-emerald-300/16 text-emerald-50'
-                    : isSelected
-                      ? 'border-rose-300/45 bg-rose-300/16 text-amber-50'
-                      : 'border-white/10 bg-slate-950/36 text-white/42';
-
-                return (
-                  <button
-                    key={`${option}-${index}`}
-                    onClick={() => handleOptionClick(index)}
-                    disabled={submittedIndices !== null}
-                    aria-pressed={isSelected}
-                    className={`relative flex min-h-[4.1rem] items-center justify-center rounded-[1.2rem] px-3 py-2 text-center text-sm font-black leading-tight lg:min-h-[5.7rem] lg:rounded-[1.7rem] lg:px-4 lg:text-lg ${toneClass} ${isCorrect ? 'ui-button-success' : isSelected ? 'ui-button-primary' : 'ui-button-secondary'}`}
-                  >
-                    <span className="pointer-events-none absolute left-2 top-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/10 text-[9px] font-black text-white/70 lg:left-3 lg:top-3 lg:h-6 lg:w-6 lg:text-xs">
-                      {String.fromCharCode(65 + index)}
-                    </span>
-                    <span className="max-w-[10rem] lg:max-w-none">{option}</span>
-                    {isRevealed && isCorrect && (
-                      <AssetIcon name="check" className="absolute bottom-2 right-2 h-4 w-4 text-emerald-100 lg:h-5 lg:w-5" />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-
-            {isMultiSelect ? (
-              <div className="mt-1 flex flex-wrap justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={clearSelection}
-                  disabled={submittedIndices !== null || selectedIndices.length === 0}
-                  className="ui-button-secondary rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] disabled:cursor-not-allowed disabled:opacity-35"
-                >
-                  Clear
-                </button>
-                <button
-                  type="button"
-                  onClick={() => submitSelection(selectedIndices)}
-                  disabled={submittedIndices !== null || selectedIndices.length === 0}
-                  className="ui-button-success rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] disabled:cursor-not-allowed disabled:opacity-35"
-                >
-                  Check answers
-                </button>
-              </div>
-            ) : null}
+            </BattleUnitCard>
           </div>
         </div>
+
+        <div className="answer-choice-surface grid shrink-0 grid-cols-2 gap-2 lg:gap-3">
+          {question.options.map((option, index) => {
+            const isCorrect = question.correctOptionIndices.includes(index);
+            const isSelected = activeSelection.includes(index);
+            const isRevealed = submittedIndices !== null;
+
+            const toneClass = !isRevealed
+              ? isSelected
+                ? 'border-cyan-200/55 bg-cyan-300/18 text-cyan-50 shadow-[0_0_0_1px_rgba(165,243,252,0.28)]'
+                : 'border-white/14 bg-slate-950/52 text-white hover:border-cyan-200/35 hover:bg-cyan-300/10'
+              : isCorrect
+                ? 'border-emerald-300/45 bg-emerald-300/16 text-emerald-50'
+                : isSelected
+                  ? 'border-rose-300/45 bg-rose-300/16 text-amber-50'
+                  : 'border-white/10 bg-slate-950/36 text-white/42';
+
+            return (
+              <button
+                key={`${option}-${index}`}
+                onClick={() => handleOptionClick(index)}
+                disabled={submittedIndices !== null}
+                aria-pressed={isSelected}
+                className={`relative flex min-h-[4rem] items-center justify-center rounded-[1.15rem] px-3 py-2 text-center text-sm font-black leading-tight lg:min-h-[5.2rem] lg:rounded-[1.55rem] lg:px-4 lg:text-lg ${toneClass}`}
+              >
+                <span className="pointer-events-none absolute left-2 top-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/10 text-[9px] font-black text-white/70 lg:left-3 lg:top-3 lg:h-6 lg:w-6 lg:text-xs">
+                  {String.fromCharCode(65 + index)}
+                </span>
+                <span className="max-w-[10rem] lg:max-w-none">{option}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {isMultiSelect ? (
+          <div className="game-submit-dock mt-1 flex flex-wrap justify-end gap-2">
+            <button
+              type="button"
+              onClick={clearSelection}
+              disabled={submittedIndices !== null || selectedIndices.length === 0}
+              className="ui-button-secondary rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] disabled:cursor-not-allowed disabled:opacity-35"
+            >
+              Clear
+            </button>
+            <button
+              type="button"
+              onClick={() => submitSelection(selectedIndices)}
+              disabled={submittedIndices !== null || selectedIndices.length === 0}
+              className="ui-button-success rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] disabled:cursor-not-allowed disabled:opacity-35"
+            >
+              Check answers
+            </button>
+          </div>
+        ) : null}
       </div>
     </div>
   );

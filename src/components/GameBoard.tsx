@@ -148,9 +148,10 @@ const GameBoard: React.FC<GameBoardProps> = ({ level, onScoreUpdate, onMatch }) 
         height: 'min(96vw, calc(100dvh - 13.5rem), 680px)',
       }}
     >
+      <div className="pointer-events-none absolute inset-0 rounded-[inherit] bg-[radial-gradient(circle_at_50%_18%,rgba(255,255,255,0.16),rgba(255,255,255,0)_28%),radial-gradient(circle_at_50%_82%,rgba(34,211,238,0.12),rgba(34,211,238,0)_42%),linear-gradient(180deg,rgba(3,7,18,0.06),rgba(3,7,18,0.26))] shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_28px_60px_rgba(2,6,23,0.42)]" />
       <img src={boardBg} alt="" className="absolute inset-0 h-full w-full object-fill" draggable={false} />
-      <img src={boardGradient} alt="" className="absolute inset-0 h-full w-full object-fill opacity-90" draggable={false} />
-      <img src={boardInnerBorder} alt="" className="absolute inset-0 h-full w-full object-fill opacity-95" draggable={false} />
+      <img src={boardGradient} alt="" className="absolute inset-0 h-full w-full object-fill opacity-100 mix-blend-screen" draggable={false} />
+      <img src={boardInnerBorder} alt="" className="absolute inset-0 h-full w-full object-fill opacity-100" draggable={false} />
       <img src={boardBorder} alt="" className="absolute inset-0 h-full w-full object-fill opacity-100" draggable={false} />
 
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-[74%] w-[74%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(125,211,252,0.12),rgba(96,165,250,0.06)_34%,rgba(2,6,23,0)_72%)] blur-xl" />
@@ -179,8 +180,8 @@ const GameBoard: React.FC<GameBoardProps> = ({ level, onScoreUpdate, onMatch }) 
           width: `${innerSize}%`,
           height: `${innerSize}%`,
           background:
-            'linear-gradient(180deg, rgba(53,182,108,0.92), rgba(94,198,110,0.94) 30%, rgba(138,209,88,0.94) 72%, rgba(82,160,68,0.94))',
-          boxShadow: 'inset 0 0 0 2px rgba(255,255,255,0.18), inset 0 0 24px rgba(255,255,255,0.12)',
+            'radial-gradient(circle at 50% 14%, rgba(255,255,255,0.16), rgba(255,255,255,0) 30%), linear-gradient(180deg, rgba(53,182,108,0.98), rgba(94,198,110,0.96) 30%, rgba(138,209,88,0.94) 72%, rgba(82,160,68,0.98))',
+          boxShadow: 'inset 0 0 0 2px rgba(255,255,255,0.18), inset 0 0 30px rgba(255,255,255,0.14), 0 0 0 1px rgba(4,120,87,0.18)',
         }}
       >
         {Array.from({ length: level.gridSize + 1 }).map((_, index) => (

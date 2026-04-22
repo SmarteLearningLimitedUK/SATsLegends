@@ -73,6 +73,9 @@ export const GAME_UI_TOKENS = {
 
 const cn = (...parts: Array<string | false | null | undefined>) => parts.filter(Boolean).join(' ');
 
+const QUESTION_CARD_SHELL = '/reference-assets/new-sheet-2026-04-22/slice_01_x21_y39_w301_h188.png';
+const QUESTION_CARD_TITLE_STRIP = '/reference-assets/new-sheet-2026-04-22/slice_15_x709_y396_w338_h68.png';
+
 type GameQuestionCardProps = {
   title?: string;
   subtitle?: React.ReactNode;
@@ -82,6 +85,59 @@ type GameQuestionCardProps = {
   bodyClassName?: string;
   style?: React.CSSProperties;
 };
+
+type QuestionCardFrameProps = WrapperProps & {
+  title?: React.ReactNode;
+  subtitle?: React.ReactNode;
+  titleClassName?: string;
+  bodyClassName?: string;
+  style?: React.CSSProperties;
+};
+
+const QuestionCardFrame: React.FC<QuestionCardFrameProps> = ({
+  children,
+  className,
+  title,
+  subtitle,
+  titleClassName,
+  bodyClassName,
+  style,
+}) => (
+  <div className={cn('game-question-card', className)} style={style}>
+    <img
+      className="game-question-card-shell"
+      src={QUESTION_CARD_SHELL}
+      alt=""
+      aria-hidden="true"
+      draggable={false}
+    />
+    <div className="game-question-card-inner">
+      {title ? (
+        <div
+          className="game-question-card-title-strip"
+          style={{
+            backgroundImage: `url(${QUESTION_CARD_TITLE_STRIP})`,
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: '100% 100%',
+          }}
+        >
+          <div className={cn('question-title text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90', titleClassName)}>
+            {title}
+          </div>
+        </div>
+      ) : null}
+      <div className={cn('game-question-copy game-question-card-copy whitespace-pre-line text-white', bodyClassName)}>
+        {children}
+      </div>
+      {subtitle ? (
+        <div className="question-subtitle mt-1 text-xs font-semibold text-white/75 md:text-sm">
+          {subtitle}
+        </div>
+      ) : null}
+    </div>
+  </div>
+);
 
 /**
  * Standard question/prompt surface used across mini-games.
@@ -96,21 +152,16 @@ export const GameQuestionCard: React.FC<GameQuestionCardProps> = ({
   bodyClassName,
   style,
 }) => (
-  <div className={cn('game-question-card', className)} style={style}>
-    {title ? (
-      <div className={cn('question-title text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90', titleClassName)}>
-        {title}
-      </div>
-    ) : null}
-    <div className={cn('game-question-copy mt-0.5 whitespace-pre-line text-white', bodyClassName)}>
-      {children}
-    </div>
-    {subtitle ? (
-      <div className="question-subtitle mt-1 text-xs font-semibold text-white/75 md:text-sm">
-        {subtitle}
-      </div>
-    ) : null}
-  </div>
+  <QuestionCardFrame
+    className={className}
+    title={title}
+    subtitle={subtitle}
+    titleClassName={titleClassName}
+    bodyClassName={bodyClassName}
+    style={style}
+  >
+    {children}
+  </QuestionCardFrame>
 );
 
 export const IconButton: React.FC<IconButtonProps> = ({ icon, label, onClick, disabled }) => (
@@ -161,7 +212,7 @@ export const GameUiShell: React.FC<GameUiShellProps> = ({
       {backgroundImage ? (
         <div
           data-game-background-layer="true"
-          className="game-background-layer pointer-events-none absolute inset-0 bg-cover bg-center"
+          className="game-background-layer pointer-events-none absolute inset-0 bg-contain bg-center bg-no-repeat"
           style={{
             backgroundImage: `url(${backgroundImage})`,
             opacity: backgroundOpacity,
@@ -220,25 +271,19 @@ export const SecondaryButton: React.FC<ButtonProps> = ({ children, className, on
 );
 
 export const StoryCard: React.FC<WrapperProps> = ({ children, className }) => (
-  <div
-    className={cn(
-      'game-question-card text-center text-slate-100',
-      className,
-    )}
+  <QuestionCardFrame
+    className={cn('text-center text-slate-100', className)}
   >
     {children}
-  </div>
+  </QuestionCardFrame>
 );
 
 export const TaskCard: React.FC<WrapperProps> = ({ children, className }) => (
-  <div
-    className={cn(
-      'game-question-card text-slate-100',
-      className,
-    )}
+  <QuestionCardFrame
+    className={cn('text-slate-100', className)}
   >
     {children}
-  </div>
+  </QuestionCardFrame>
 );
 
 export const FeedbackStrip: React.FC<{ tone?: FeedbackTone; children: React.ReactNode; className?: string }> = ({

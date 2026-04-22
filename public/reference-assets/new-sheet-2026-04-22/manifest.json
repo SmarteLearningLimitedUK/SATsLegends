@@ -1,0 +1,771 @@
+{
+  "source_image": "C:\\Users\\samva\\Downloads\\3231aa6a-2981-4788-84c8-a0a29194650e.png",
+  "sheet_size": [
+    1774,
+    887
+  ],
+  "foreground_threshold": "max(rgb) > 20",
+  "slice_count": 38,
+  "slices": [
+    {
+      "file": "slice_01_x21_y39_w301_h188.png",
+      "source_bbox": [
+        23,
+        41,
+        319,
+        224
+      ],
+      "export_bbox_with_padding": [
+        21,
+        39,
+        321,
+        226
+      ],
+      "area": 53770,
+      "size": [
+        297,
+        184
+      ]
+    },
+    {
+      "file": "slice_02_x333_y39_w302_h188.png",
+      "source_bbox": [
+        335,
+        41,
+        632,
+        224
+      ],
+      "export_bbox_with_padding": [
+        333,
+        39,
+        634,
+        226
+      ],
+      "area": 53929,
+      "size": [
+        298,
+        184
+      ]
+    },
+    {
+      "file": "slice_03_x647_y39_w286_h188.png",
+      "source_bbox": [
+        649,
+        41,
+        930,
+        224
+      ],
+      "export_bbox_with_padding": [
+        647,
+        39,
+        932,
+        226
+      ],
+      "area": 38562,
+      "size": [
+        282,
+        184
+      ]
+    },
+    {
+      "file": "slice_04_x947_y56_w234_h133.png",
+      "source_bbox": [
+        949,
+        58,
+        1178,
+        186
+      ],
+      "export_bbox_with_padding": [
+        947,
+        56,
+        1180,
+        188
+      ],
+      "area": 29109,
+      "size": [
+        230,
+        129
+      ]
+    },
+    {
+      "file": "slice_05_x1193_y56_w267_h133.png",
+      "source_bbox": [
+        1195,
+        58,
+        1457,
+        186
+      ],
+      "export_bbox_with_padding": [
+        1193,
+        56,
+        1459,
+        188
+      ],
+      "area": 33493,
+      "size": [
+        263,
+        129
+      ]
+    },
+    {
+      "file": "slice_06_x1471_y56_w282_h133.png",
+      "source_bbox": [
+        1473,
+        58,
+        1750,
+        186
+      ],
+      "export_bbox_with_padding": [
+        1471,
+        56,
+        1752,
+        188
+      ],
+      "area": 29397,
+      "size": [
+        278,
+        129
+      ]
+    },
+    {
+      "file": "slice_07_x21_y257_w291_h103.png",
+      "source_bbox": [
+        23,
+        259,
+        309,
+        357
+      ],
+      "export_bbox_with_padding": [
+        21,
+        257,
+        311,
+        359
+      ],
+      "area": 27971,
+      "size": [
+        287,
+        99
+      ]
+    },
+    {
+      "file": "slice_08_x332_y257_w298_h103.png",
+      "source_bbox": [
+        334,
+        259,
+        627,
+        357
+      ],
+      "export_bbox_with_padding": [
+        332,
+        257,
+        629,
+        359
+      ],
+      "area": 28623,
+      "size": [
+        294,
+        99
+      ]
+    },
+    {
+      "file": "slice_09_x650_y257_w273_h103.png",
+      "source_bbox": [
+        652,
+        259,
+        920,
+        357
+      ],
+      "export_bbox_with_padding": [
+        650,
+        257,
+        922,
+        359
+      ],
+      "area": 20936,
+      "size": [
+        269,
+        99
+      ]
+    },
+    {
+      "file": "slice_10_x945_y257_w190_h103.png",
+      "source_bbox": [
+        947,
+        259,
+        1132,
+        357
+      ],
+      "export_bbox_with_padding": [
+        945,
+        257,
+        1134,
+        359
+      ],
+      "area": 18055,
+      "size": [
+        186,
+        99
+      ]
+    },
+    {
+      "file": "slice_11_x1146_y257_w189_h103.png",
+      "source_bbox": [
+        1148,
+        259,
+        1332,
+        357
+      ],
+      "export_bbox_with_padding": [
+        1146,
+        257,
+        1334,
+        359
+      ],
+      "area": 17997,
+      "size": [
+        185,
+        99
+      ]
+    },
+    {
+      "file": "slice_12_x1345_y257_w189_h103.png",
+      "source_bbox": [
+        1347,
+        259,
+        1531,
+        357
+      ],
+      "export_bbox_with_padding": [
+        1345,
+        257,
+        1533,
+        359
+      ],
+      "area": 14281,
+      "size": [
+        185,
+        99
+      ]
+    },
+    {
+      "file": "slice_13_x24_y396_w336_h69.png",
+      "source_bbox": [
+        26,
+        398,
+        357,
+        462
+      ],
+      "export_bbox_with_padding": [
+        24,
+        396,
+        359,
+        464
+      ],
+      "area": 17441,
+      "size": [
+        332,
+        65
+      ]
+    },
+    {
+      "file": "slice_14_x372_y396_w319_h68.png",
+      "source_bbox": [
+        374,
+        398,
+        688,
+        461
+      ],
+      "export_bbox_with_padding": [
+        372,
+        396,
+        690,
+        463
+      ],
+      "area": 16521,
+      "size": [
+        315,
+        64
+      ]
+    },
+    {
+      "file": "slice_15_x709_y396_w338_h68.png",
+      "source_bbox": [
+        711,
+        398,
+        1044,
+        461
+      ],
+      "export_bbox_with_padding": [
+        709,
+        396,
+        1046,
+        463
+      ],
+      "area": 17483,
+      "size": [
+        334,
+        64
+      ]
+    },
+    {
+      "file": "slice_16_x1413_y396_w335_h68.png",
+      "source_bbox": [
+        1415,
+        398,
+        1745,
+        461
+      ],
+      "export_bbox_with_padding": [
+        1413,
+        396,
+        1747,
+        463
+      ],
+      "area": 17350,
+      "size": [
+        331,
+        64
+      ]
+    },
+    {
+      "file": "slice_17_x1063_y397_w337_h67.png",
+      "source_bbox": [
+        1065,
+        399,
+        1397,
+        461
+      ],
+      "export_bbox_with_padding": [
+        1063,
+        397,
+        1399,
+        463
+      ],
+      "area": 17130,
+      "size": [
+        333,
+        63
+      ]
+    },
+    {
+      "file": "slice_18_x1169_y500_w185_h194.png",
+      "source_bbox": [
+        1171,
+        502,
+        1351,
+        691
+      ],
+      "export_bbox_with_padding": [
+        1169,
+        500,
+        1353,
+        693
+      ],
+      "area": 32539,
+      "size": [
+        181,
+        190
+      ]
+    },
+    {
+      "file": "slice_19_x1364_y500_w189_h194.png",
+      "source_bbox": [
+        1366,
+        502,
+        1550,
+        691
+      ],
+      "export_bbox_with_padding": [
+        1364,
+        500,
+        1552,
+        693
+      ],
+      "area": 33315,
+      "size": [
+        185,
+        190
+      ]
+    },
+    {
+      "file": "slice_20_x1564_y500_w188_h194.png",
+      "source_bbox": [
+        1566,
+        502,
+        1749,
+        691
+      ],
+      "export_bbox_with_padding": [
+        1564,
+        500,
+        1751,
+        693
+      ],
+      "area": 26687,
+      "size": [
+        184,
+        190
+      ]
+    },
+    {
+      "file": "slice_21_x595_y502_w180_h190.png",
+      "source_bbox": [
+        597,
+        504,
+        772,
+        689
+      ],
+      "export_bbox_with_padding": [
+        595,
+        502,
+        774,
+        691
+      ],
+      "area": 31483,
+      "size": [
+        176,
+        186
+      ]
+    },
+    {
+      "file": "slice_22_x790_y502_w176_h190.png",
+      "source_bbox": [
+        792,
+        504,
+        963,
+        689
+      ],
+      "export_bbox_with_padding": [
+        790,
+        502,
+        965,
+        691
+      ],
+      "area": 30985,
+      "size": [
+        172,
+        186
+      ]
+    },
+    {
+      "file": "slice_23_x982_y502_w175_h190.png",
+      "source_bbox": [
+        984,
+        504,
+        1154,
+        689
+      ],
+      "export_bbox_with_padding": [
+        982,
+        502,
+        1156,
+        691
+      ],
+      "area": 22161,
+      "size": [
+        171,
+        186
+      ]
+    },
+    {
+      "file": "slice_24_x20_y503_w183_h187.png",
+      "source_bbox": [
+        22,
+        505,
+        200,
+        687
+      ],
+      "export_bbox_with_padding": [
+        20,
+        503,
+        202,
+        689
+      ],
+      "area": 32373,
+      "size": [
+        179,
+        183
+      ]
+    },
+    {
+      "file": "slice_25_x214_y503_w179_h187.png",
+      "source_bbox": [
+        216,
+        505,
+        390,
+        687
+      ],
+      "export_bbox_with_padding": [
+        214,
+        503,
+        392,
+        689
+      ],
+      "area": 31708,
+      "size": [
+        175,
+        183
+      ]
+    },
+    {
+      "file": "slice_26_x404_y503_w179_h187.png",
+      "source_bbox": [
+        406,
+        505,
+        580,
+        687
+      ],
+      "export_bbox_with_padding": [
+        404,
+        503,
+        582,
+        689
+      ],
+      "area": 25670,
+      "size": [
+        175,
+        183
+      ]
+    },
+    {
+      "file": "slice_27_x887_y735_w144_h101.png",
+      "source_bbox": [
+        889,
+        737,
+        1028,
+        833
+      ],
+      "export_bbox_with_padding": [
+        887,
+        735,
+        1030,
+        835
+      ],
+      "area": 12981,
+      "size": [
+        140,
+        97
+      ]
+    },
+    {
+      "file": "slice_28_x1039_y735_w144_h101.png",
+      "source_bbox": [
+        1041,
+        737,
+        1180,
+        833
+      ],
+      "export_bbox_with_padding": [
+        1039,
+        735,
+        1182,
+        835
+      ],
+      "area": 13357,
+      "size": [
+        140,
+        97
+      ]
+    },
+    {
+      "file": "slice_29_x1192_y735_w141_h101.png",
+      "source_bbox": [
+        1194,
+        737,
+        1330,
+        833
+      ],
+      "export_bbox_with_padding": [
+        1192,
+        735,
+        1332,
+        835
+      ],
+      "area": 1199,
+      "size": [
+        137,
+        97
+      ]
+    },
+    {
+      "file": "slice_30_x1341_y735_w135_h101.png",
+      "source_bbox": [
+        1343,
+        737,
+        1473,
+        833
+      ],
+      "export_bbox_with_padding": [
+        1341,
+        735,
+        1475,
+        835
+      ],
+      "area": 12166,
+      "size": [
+        131,
+        97
+      ]
+    },
+    {
+      "file": "slice_31_x1484_y735_w134_h101.png",
+      "source_bbox": [
+        1486,
+        737,
+        1615,
+        833
+      ],
+      "export_bbox_with_padding": [
+        1484,
+        735,
+        1617,
+        835
+      ],
+      "area": 12373,
+      "size": [
+        130,
+        97
+      ]
+    },
+    {
+      "file": "slice_32_x1625_y735_w132_h101.png",
+      "source_bbox": [
+        1627,
+        737,
+        1754,
+        833
+      ],
+      "export_bbox_with_padding": [
+        1625,
+        735,
+        1756,
+        835
+      ],
+      "area": 1150,
+      "size": [
+        128,
+        97
+      ]
+    },
+    {
+      "file": "slice_33_x1199_y739_w127_h93.png",
+      "source_bbox": [
+        1201,
+        741,
+        1323,
+        829
+      ],
+      "export_bbox_with_padding": [
+        1199,
+        739,
+        1325,
+        831
+      ],
+      "area": 10174,
+      "size": [
+        123,
+        89
+      ]
+    },
+    {
+      "file": "slice_34_x1632_y739_w121_h93.png",
+      "source_bbox": [
+        1634,
+        741,
+        1750,
+        829
+      ],
+      "export_bbox_with_padding": [
+        1632,
+        739,
+        1752,
+        831
+      ],
+      "area": 9727,
+      "size": [
+        117,
+        89
+      ]
+    },
+    {
+      "file": "slice_35_x448_y740_w69_h83.png",
+      "source_bbox": [
+        450,
+        742,
+        514,
+        820
+      ],
+      "export_bbox_with_padding": [
+        448,
+        740,
+        516,
+        822
+      ],
+      "area": 1872,
+      "size": [
+        65,
+        79
+      ]
+    },
+    {
+      "file": "slice_36_x538_y740_w68_h82.png",
+      "source_bbox": [
+        540,
+        742,
+        603,
+        819
+      ],
+      "export_bbox_with_padding": [
+        538,
+        740,
+        605,
+        821
+      ],
+      "area": 1860,
+      "size": [
+        64,
+        78
+      ]
+    },
+    {
+      "file": "slice_37_x626_y740_w67_h82.png",
+      "source_bbox": [
+        628,
+        742,
+        690,
+        819
+      ],
+      "export_bbox_with_padding": [
+        626,
+        740,
+        692,
+        821
+      ],
+      "area": 1841,
+      "size": [
+        63,
+        78
+      ]
+    },
+    {
+      "file": "slice_38_x712_y740_w68_h83.png",
+      "source_bbox": [
+        714,
+        742,
+        777,
+        820
+      ],
+      "export_bbox_with_padding": [
+        712,
+        740,
+        779,
+        822
+      ],
+      "area": 1808,
+      "size": [
+        64,
+        79
+      ]
+    }
+  ]
+}

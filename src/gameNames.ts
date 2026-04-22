@@ -35,11 +35,10 @@ export const CANONICAL_GAME_LABELS: Partial<Record<MiniGameType, string>> = {
   ratio_fractions: 'Ratio Racer',
   formula_forge: 'Formula Forge',
   unit_mixer: 'Lava Path',
-  change_counter: 'Change Counter',
+  change_counter: 'Monster Market',
   reasoning_quest: 'Reasoning Quest',
 };
 
 export const getCanonicalGameLabel = (gameType?: MiniGameType | null) => (
   gameType ? CANONICAL_GAME_LABELS[gameType] ?? gameType.replace(/_/g, ' ') : ''
 );
-

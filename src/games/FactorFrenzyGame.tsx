@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { AnimatePresence, motion } from 'motion/react';
 import {
@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import factorFrenzyBackground from '../assets/maps/backgroundsforgames/Factor Frenzy.jpg';
-import zombieBoss from '../assets/zombies/zombie.png';
+import meanEnemy from '../assets/mean.png';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
 
@@ -82,6 +82,22 @@ const shuffle = <T,>(items: T[]): T[] => {
   return clone;
 };
 
+const buildOptions = (correctAnswers: number[], distractors: number[], minimumCount = 4) => {
+  const options = [...new Set([...correctAnswers, ...distractors])];
+  let offset = 1;
+
+  while (options.length < minimumCount) {
+    const base = correctAnswers[0] ?? 1;
+    const candidate = Math.max(1, base + offset * 2);
+    if (!options.includes(candidate)) {
+      options.push(candidate);
+    }
+    offset += 1;
+  }
+
+  return shuffle(options);
+};
+
 const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   levelId: _levelId,
   avatarId: _avatarId,
@@ -96,7 +112,6 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   const [successTone, setSuccessTone] = useState<'success' | 'praise'>('success');
   const [successMessage, setSuccessMessage] = useState('Direct hit!');
   const problemStartRef = useRef<number>(Date.now());
-  const factorFrenzyEnemy = useMemo(() => zombieBoss, []);
 
   const timerRef = useRef<number | null>(null);
   const advanceRef = useRef<number | null>(null);
@@ -151,7 +166,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
       const factor = factors[Math.floor(Math.random() * factors.length)];
       const answer = number / factor;
       const distractors = [answer + 2, answer - 1, answer + 5, answer - 3].filter((value) => value > 0);
-      const options = [...new Set([answer, ...distractors])].sort(() => Math.random() - 0.5).slice(0, 4);
+      const options = buildOptions([answer], distractors, 4);
 
       return {
         id,
@@ -167,8 +182,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
       const number = [12, 16, 20, 24, 30, 36, 48][Math.floor(Math.random() * 7)];
       const correctAnswers = getFactors(number);
       const extras = [number + 1, number - 2, 7, 9, 11, 13, 14, 15].filter((value) => value > 0 && !correctAnswers.includes(value));
-      const optionPool = [...correctAnswers, ...extras].sort(() => Math.random() - 0.5);
-      const options = [...new Set(optionPool)].slice(0, Math.max(8, correctAnswers.length)).sort((a, b) => a - b);
+      const options = buildOptions(correctAnswers, extras, Math.max(4, correctAnswers.length));
 
       return {
         id,
@@ -193,7 +207,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
       const factorsTwo = getFactors(number2);
       const commonAnswers = factorsOne.filter((value) => factorsTwo.includes(value));
       const extras = [5, 7, 9, 11, 13, 14, 15].filter((value) => !commonAnswers.includes(value));
-      const options = [...new Set([...commonAnswers, ...extras])].sort((a, b) => a - b).slice(0, Math.max(8, commonAnswers.length));
+      const options = buildOptions(commonAnswers, extras, Math.max(4, commonAnswers.length));
 
       return {
         id,
@@ -208,7 +222,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
     const number = [12, 20, 30, 42, 60, 72, 84][Math.floor(Math.random() * 7)];
     const correctAnswers = getPrimeFactors(number);
-    const options = shuffle([2, 3, 5, 7, 11, 13, 4, 6, 8, 9]).slice(0, 8).sort((a, b) => a - b);
+    const options = buildOptions(correctAnswers, [2, 3, 5, 7, 11, 13, 4, 6, 8, 9], 4);
 
     return {
       id,
@@ -381,7 +395,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
   return (
     <div
-      className="relative h-full w-full overflow-hidden bg-cover bg-center bg-no-repeat text-white"
+      className="relative h-full w-full overflow-hidden bg-contain bg-center bg-no-repeat text-white"
       style={{ backgroundImage: `url(${factorFrenzyBackground})` }}
     >
       <div className="pointer-events-none fixed left-0 right-0 top-[max(0.5rem,env(safe-area-inset-top))] z-50 flex justify-center px-3">
@@ -452,7 +466,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                     </div>
 
                     <div className="relative mt-3 flex min-h-0 flex-1 flex-col items-center justify-center">
-                      <div className="w-full max-w-[17rem] rounded-2xl border border-amber-200/24 bg-[linear-gradient(180deg,rgba(15,23,42,0.22),rgba(15,23,42,0.1))] px-3 py-2 shadow-[0_12px_24px_rgba(2,6,23,0.18)]">
+                      <div className="w-full max-w-[13rem] rounded-2xl border border-amber-200/24 bg-[linear-gradient(180deg,rgba(15,23,42,0.22),rgba(15,23,42,0.1))] px-3 py-2 shadow-[0_12px_24px_rgba(2,6,23,0.18)]">
                         <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.18em] text-amber-200">
                           Monster Mind
                         </div>
@@ -467,7 +481,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
                       <div className="mt-3 flex w-full justify-center">
                         <motion.div
-                          className="relative w-[min(46vw,13.5rem)] max-w-full"
+                          className="relative w-[min(36vw,10rem)] max-w-full"
                           animate={
                             showHitFx
                               ? { x: [0, -8, 8, -6, 6, 0], rotate: [0, -2, 2, -1, 1, 0] }
@@ -476,7 +490,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                           transition={{ duration: 0.42, ease: 'easeInOut' }}
                         >
                           <motion.img
-                            src={factorFrenzyEnemy}
+                            src={meanEnemy}
                             alt=""
                             aria-hidden="true"
                             draggable={false}
@@ -530,8 +544,8 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
         </main>
 
         {state.status !== 'complete' && (
-      <div className="fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+4.5rem)] z-40 px-3">
-            <div className="answer-choice-surface mx-auto grid w-full max-w-[780px] grid-cols-4 gap-2.5 sm:gap-3 md:gap-4">
+          <div className="fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+4.5rem)] z-40 px-3">
+            <div className="answer-choice-surface mx-auto grid w-full max-w-[780px] grid-cols-4 gap-2 sm:gap-2.5 md:gap-3">
               {state.currentProblem?.options.map((option, idx) => (
                 <motion.button
                   type="button"
@@ -540,7 +554,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{ delay: idx * 0.03 }}
                   onClick={() => toggleOption(option)}
-                  className={`relative flex h-[clamp(62px,8.8vh,88px)] items-center justify-center rounded-2xl border text-[clamp(1.1rem,3.8vw,2rem)] font-black transition ${
+                  className={`relative flex h-[clamp(50px,7.2vh,68px)] items-center justify-center rounded-2xl border text-[clamp(0.95rem,3vw,1.55rem)] font-black transition ${
                     state.status === 'correct' && selectedOptions.includes(option)
                       ? 'ui-button-success'
                       : selectedOptions.includes(option)

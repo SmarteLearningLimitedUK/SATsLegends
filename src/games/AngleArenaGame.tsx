@@ -4,6 +4,7 @@ import {
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
 import { triggerHaptic } from '../haptics';
+import { GAME_AUDIO_STORAGE_KEY } from '../gameHudEvents';
 import {
   FeedbackStrip,
   GameTopBar,
@@ -16,6 +17,18 @@ import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import cannonFacingLeftSrc from '../assets/angle_arena/cannonanglearena/1.png';
 import cannonFacingRightSrc from '../assets/angle_arena/cannonanglearena/2.png';
 import cannonFacingUpSrc from '../assets/angle_arena/cannonanglearena/3.png';
+import angryBackgroundSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Background/1.png';
+import angryParallaxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Background/INGAME_PARALLAX_1.png';
+import angryGroundsSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Background/INGAME_GROUNDS_1.png';
+import angryBlocksSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Buildings/blocks.png';
+import angryProps1Src from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Buildings/props1.png';
+import angryProps2Src from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Buildings/props2.png';
+import angryLogoSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Menu/Angry_Birds_logos.png';
+import angleArenaLaunchSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/bird shot-a1.wav';
+import angleArenaHitSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/pig/piglette destroyed.wav';
+import angleArenaWoodSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/8d82b5_Angry_Birds_Wood_Damage_Sound_Effect.mp3';
+import angleArenaFailSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/Level/level failed piglets a1.mp3';
+import angleArenaCompleteSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/Level/level clear military 1.mp3';
 import { BOSS_ART_LIBRARY } from '../assets/bosses/library';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
 import { angleToVector, clamp, degreesToRadians, distance, lerp, worldToScreen } from './angleArena/math';
@@ -45,6 +58,8 @@ type GameState =
 
 type ImpactResult = 'hit' | 'miss';
 
+type AngleArenaSfxKey = 'launch' | 'hit' | 'wood' | 'fail' | 'complete';
+
 type ProjectileState = {
   x: number;
   y: number;
@@ -70,6 +85,7 @@ const MAX_FLIGHT_DISTANCE = 980;
 const CANNON_ANCHOR_X_RATIO = 0.5;
 const CANNON_ANCHOR_Y_RATIO = 0.5;
 const CAMERA_LEAD_DISTANCE = 340;
+const CAMERA_ACTIVE_LERP = 0.22;
 const ENEMY_FOREGROUND_LEAD = 110;
 const SKY_DRIFT_FACTOR = 0.14;
 const GROUND_DRIFT_FACTOR = 0.28;
@@ -90,6 +106,63 @@ const ANGLE_CLOUDS: CloudLayer[] = [
   { x: 940, y: 0.14, scale: 1.05, speed: 0.31, alpha: 0.58 },
   { x: 1180, y: 0.21, scale: 1.34, speed: 0.18, alpha: 0.66 },
 ];
+
+const makeImage = (src: string) => {
+  const img = new Image();
+  img.decoding = 'async';
+  img.src = src;
+  return img;
+};
+
+const drawGlowingBallProjectile = (ctx: CanvasRenderingContext2D, radius: number, pulse = 0) => {
+  ctx.save();
+  const glow = ctx.createRadialGradient(0, 0, radius * 0.08, 0, 0, radius * 2.1);
+  glow.addColorStop(0, 'rgba(255,255,255,0.98)');
+  glow.addColorStop(0.28 + pulse * 0.04, 'rgba(236,255,170,0.95)');
+  glow.addColorStop(0.58, 'rgba(74,222,128,0.85)');
+  glow.addColorStop(1, 'rgba(20,83,45,0)');
+  ctx.fillStyle = glow;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius * 2.1, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = '#f8fafc';
+  ctx.beginPath();
+  ctx.arc(0, 0, radius, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = 'rgba(255,255,255,0.42)';
+  ctx.beginPath();
+  ctx.arc(-radius * 0.3, -radius * 0.28, radius * 0.42, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = 'rgba(34,197,94,0.55)';
+  ctx.beginPath();
+  ctx.moveTo(radius * 0.72, -radius * 0.16);
+  ctx.lineTo(radius * 1.28, 0);
+  ctx.lineTo(radius * 0.72, radius * 0.18);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = '#0f172a';
+  ctx.beginPath();
+  ctx.arc(radius * 0.06, -radius * 0.22, radius * 0.1, 0, Math.PI * 2);
+  ctx.arc(radius * 0.32, -radius * 0.22, radius * 0.1, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.strokeStyle = 'rgba(34,197,94,0.58)';
+  ctx.lineWidth = Math.max(1.5, radius * 0.08);
+  ctx.beginPath();
+  ctx.arc(-radius * 0.1, radius * 0.22, radius * 0.42, Math.PI * 0.08, Math.PI * 0.92);
+  ctx.stroke();
+
+  ctx.globalAlpha = 0.45 + pulse * 0.2;
+  ctx.fillStyle = '#a7f3d0';
+  ctx.beginPath();
+  ctx.arc(0, 0, radius * 1.12, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+};
 
 const drawCloud = (
   ctx: CanvasRenderingContext2D,
@@ -255,6 +328,61 @@ const drawSkyBackground = (
   ctx.fillRect(0, height * 0.72, width, 2);
   ctx.fillStyle = 'rgba(251,191,36,0.28)';
   ctx.fillRect(0, height * 0.78, width, 2);
+  ctx.restore();
+};
+
+const drawContainImage = (
+  ctx: CanvasRenderingContext2D,
+  image: HTMLImageElement,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  opacity = 1,
+) => {
+  const iw = image.naturalWidth || image.width;
+  const ih = image.naturalHeight || image.height;
+  if (!iw || !ih) return;
+  const scale = Math.min(width / iw, height / ih);
+  const dw = iw * scale;
+  const dh = ih * scale;
+  ctx.save();
+  ctx.globalAlpha = opacity;
+  ctx.drawImage(image, x + (width - dw) / 2, y + (height - dh) / 2, dw, dh);
+  ctx.restore();
+};
+
+const drawImageSlice = (
+  ctx: CanvasRenderingContext2D,
+  image: HTMLImageElement,
+  sx: number,
+  sy: number,
+  sw: number,
+  sh: number,
+  dx: number,
+  dy: number,
+  dw: number,
+  dh: number,
+  opacity = 1,
+) => {
+  if (!image.complete) return;
+  ctx.save();
+  ctx.globalAlpha = opacity;
+  ctx.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
+  ctx.restore();
+};
+
+const drawSpriteSlice = (
+  ctx: CanvasRenderingContext2D,
+  image: HTMLImageElement,
+  source: { x: number; y: number; w: number; h: number },
+  target: { x: number; y: number; w: number; h: number },
+  opacity = 1,
+) => {
+  if (!image.complete) return;
+  ctx.save();
+  ctx.globalAlpha = opacity;
+  ctx.drawImage(image, source.x, source.y, source.w, source.h, target.x, target.y, target.w, target.h);
   ctx.restore();
 };
 
@@ -482,6 +610,209 @@ const drawEnemyPortrait = (ctx: CanvasRenderingContext2D, image: HTMLImageElemen
   ctx.restore();
 };
 
+const drawWoodenTower = (
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  accent = 1,
+) => {
+  ctx.save();
+  ctx.translate(-width / 2, -height);
+
+  const woodGrad = ctx.createLinearGradient(0, 0, 0, height);
+  woodGrad.addColorStop(0, '#d79a52');
+  woodGrad.addColorStop(0.35, '#b57032');
+  woodGrad.addColorStop(0.75, '#7a461c');
+  woodGrad.addColorStop(1, '#4a2a11');
+
+  // Main timber stack.
+  ctx.fillStyle = woodGrad;
+  drawRoundedRectPath(ctx, width * 0.18, height * 0.08, width * 0.64, height * 0.74, width * 0.06);
+  ctx.fill();
+
+  // Cross braces.
+  ctx.strokeStyle = 'rgba(77, 39, 14, 0.88)';
+  ctx.lineWidth = Math.max(2, width * 0.04);
+  ctx.beginPath();
+  ctx.moveTo(width * 0.22, height * 0.2);
+  ctx.lineTo(width * 0.78, height * 0.68);
+  ctx.moveTo(width * 0.78, height * 0.2);
+  ctx.lineTo(width * 0.22, height * 0.68);
+  ctx.stroke();
+
+  // Side posts.
+  ctx.fillStyle = 'rgba(97, 56, 22, 0.95)';
+  ctx.fillRect(width * 0.12, height * 0.1, width * 0.08, height * 0.7);
+  ctx.fillRect(width * 0.8, height * 0.1, width * 0.08, height * 0.7);
+
+  // Planks.
+  ctx.fillStyle = 'rgba(158, 92, 38, 0.96)';
+  for (let i = 0; i < 4; i += 1) {
+    const plankY = height * (0.16 + i * 0.16);
+    ctx.fillRect(width * 0.16, plankY, width * 0.68, height * 0.06);
+  }
+
+  // Top platform.
+  ctx.fillStyle = 'rgba(191, 124, 63, 0.98)';
+  ctx.fillRect(width * 0.1, height * 0.04, width * 0.8, height * 0.08);
+  ctx.fillStyle = 'rgba(85, 48, 19, 0.8)';
+  ctx.fillRect(width * 0.14, height * 0.01, width * 0.72, height * 0.04);
+
+  // Decorative rope / lashings to sell the timber look.
+  ctx.strokeStyle = 'rgba(245, 220, 173, 0.42)';
+  ctx.lineWidth = Math.max(1.5, width * 0.018);
+  for (let i = 0; i < 3; i += 1) {
+    const wrapY = height * (0.2 + i * 0.2);
+    ctx.beginPath();
+    ctx.moveTo(width * 0.2, wrapY);
+    ctx.lineTo(width * 0.8, wrapY);
+    ctx.stroke();
+  }
+
+  // Keep the tower readable without drawing full sprite sheets over the playfield.
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+  ctx.fillRect(width * 0.22, height * 0.12, width * 0.1, height * 0.62);
+  ctx.fillRect(width * 0.66, height * 0.18, width * 0.08, height * 0.52);
+
+  ctx.fillStyle = `rgba(34, 20, 12, ${0.18 * accent})`;
+  ctx.fillRect(width * 0.1, height * 0.86, width * 0.8, height * 0.1);
+
+  ctx.restore();
+};
+
+const drawLevelDressing = (
+  ctx: CanvasRenderingContext2D,
+  parallax: HTMLImageElement | null,
+  grounds: HTMLImageElement | null,
+  blocks: HTMLImageElement | null,
+  props1: HTMLImageElement | null,
+  props2: HTMLImageElement | null,
+  width: number,
+  height: number,
+  cameraX: number,
+  cameraY: number,
+  timestamp: number,
+) => {
+  if (parallax?.complete) {
+    const pw = parallax.naturalWidth || parallax.width;
+    const ph = parallax.naturalHeight || parallax.height;
+    const drift = (cameraX * 0.03) % width;
+
+    ctx.save();
+    for (let i = -1; i <= 1; i += 1) {
+      const dx = (i * width) - drift;
+      drawImageSlice(ctx, parallax, 0, 0, pw, ph * 0.46, dx, height * 0.14, width, height * 0.2, 0.72);
+    }
+    for (let i = -1; i <= 2; i += 1) {
+      const dx = (i * width * 0.58) - ((cameraX * 0.06) % (width * 0.58));
+      drawImageSlice(ctx, parallax, 0, ph * 0.54, pw, ph * 0.18, dx, height * 0.62, width * 0.5, height * 0.08, 0.8);
+    }
+    for (let i = -1; i <= 2; i += 1) {
+      const dx = (i * width * 0.72) - ((cameraX * 0.09) % (width * 0.72));
+      drawImageSlice(ctx, parallax, 0, ph * 0.76, pw, ph * 0.12, dx, height * 0.72, width * 0.68, height * 0.06, 0.72);
+    }
+    ctx.restore();
+  }
+
+  if (grounds?.complete) {
+    const gw = grounds.naturalWidth || grounds.width;
+    const gh = grounds.naturalHeight || grounds.height;
+    const dirtSliceY = gh * 0.22;
+    const dirtSliceH = gh * 0.18;
+    const grassSliceY = 0;
+    const grassSliceH = gh * 0.12;
+    const baseY = height * 0.77;
+    const groundDrift = (cameraX * 0.12) % width;
+
+    ctx.save();
+    for (let i = -1; i <= 2; i += 1) {
+      const dx = (i * width * 0.52) - groundDrift;
+      drawImageSlice(ctx, grounds, 0, grassSliceY, gw, grassSliceH, dx, baseY - height * 0.03, width * 0.56, height * 0.08, 0.96);
+      drawImageSlice(ctx, grounds, 0, dirtSliceY, gw, dirtSliceH, dx, baseY + height * 0.01, width * 0.56, height * 0.14, 0.96);
+    }
+    ctx.restore();
+  }
+
+  if (blocks?.complete || props1?.complete || props2?.complete) {
+    const blockW = blocks?.naturalWidth || blocks?.width || 0;
+    const blockH = blocks?.naturalHeight || blocks?.height || 0;
+    const props1W = props1?.naturalWidth || props1?.width || 0;
+    const props1H = props1?.naturalHeight || props1?.height || 0;
+    const props2W = props2?.naturalWidth || props2?.width || 0;
+    const props2H = props2?.naturalHeight || props2?.height || 0;
+    const stageY = height * 0.78;
+    const dr = (cameraX * 0.16) % width;
+
+    ctx.save();
+    ctx.globalAlpha = 0.95;
+
+    if (blocks?.complete && blockW && blockH) {
+      for (let i = -1; i <= 2; i += 1) {
+        const x = (i * width * 0.62) - dr;
+        drawSpriteSlice(
+          ctx,
+          blocks,
+          { x: 3140, y: 3090, w: 620, h: 240 },
+          { x, y: stageY - height * 0.02, w: width * 0.6, h: height * 0.1 },
+          0.85,
+        );
+        drawSpriteSlice(
+          ctx,
+          blocks,
+          { x: 3010, y: 3810, w: 760, h: 190 },
+          { x: x + width * 0.01, y: stageY + height * 0.04, w: width * 0.56, h: height * 0.06 },
+          0.9,
+        );
+      }
+    }
+
+    if (props1?.complete && props1W && props1H) {
+      drawSpriteSlice(
+        ctx,
+        props1,
+        { x: 510, y: 520, w: 250, h: 150 },
+        { x: width * 0.12 - dr * 0.4, y: height * 0.56, w: width * 0.24, h: height * 0.1 },
+        0.95,
+      );
+      drawSpriteSlice(
+        ctx,
+        props1,
+        { x: 0, y: 0, w: 260, h: 190 },
+        { x: width * 0.62 - dr * 0.2, y: height * 0.48, w: width * 0.16, h: height * 0.18 },
+        0.82,
+      );
+    }
+
+    if (props2?.complete && props2W && props2H) {
+      drawSpriteSlice(
+        ctx,
+        props2,
+        { x: 320, y: 470, w: 390, h: 210 },
+        { x: width * 0.74 - dr * 0.18, y: height * 0.57, w: width * 0.2, h: height * 0.08 },
+        0.92,
+      );
+      drawSpriteSlice(
+        ctx,
+        props2,
+        { x: 440, y: 690, w: 220, h: 140 },
+        { x: width * 0.39 - dr * 0.14, y: height * 0.52, w: width * 0.13, h: height * 0.08 },
+        0.9,
+      );
+    }
+
+    ctx.restore();
+  }
+
+  ctx.save();
+  ctx.globalAlpha = 0.16;
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  ctx.beginPath();
+  ctx.ellipse(width * 0.18, height * 0.21 + Math.sin(timestamp * 0.00045) * 4, 84, 22, -0.2, 0, Math.PI * 2);
+  ctx.ellipse(width * 0.82, height * 0.18 + Math.cos(timestamp * 0.00038) * 3, 104, 26, 0.12, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+};
+
 const formatTime = (seconds: number) => {
   const clamped = Math.max(0, Math.floor(seconds));
   const mins = Math.floor(clamped / 60);
@@ -521,6 +852,18 @@ const normalizeVector = (x: number, y: number) => {
   return { x: x / magnitude, y: y / magnitude };
 };
 
+const playAngleArenaSfx = (audioRefs: Partial<Record<AngleArenaSfxKey, HTMLAudioElement>>, key: AngleArenaSfxKey) => {
+  const audio = audioRefs[key];
+  if (!audio) return;
+  try {
+    if (localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true') return;
+    audio.currentTime = 0;
+    void audio.play();
+  } catch {
+    // Ignore autoplay failures; the level still works without SFX.
+  }
+};
+
 const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   levelId,
   useSharedTopHud: _useSharedTopHud = true,
@@ -549,6 +892,14 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const aimTimeoutRef = useRef<number | null>(null);
   const cannonSpritesRef = useRef<CannonSprites>({});
   const enemySpritesRef = useRef<HTMLImageElement[]>([]);
+  const angryBackgroundRef = useRef<HTMLImageElement | null>(null);
+  const angryParallaxRef = useRef<HTMLImageElement | null>(null);
+  const angryGroundsRef = useRef<HTMLImageElement | null>(null);
+  const angryBlocksRef = useRef<HTMLImageElement | null>(null);
+  const angryProps1Ref = useRef<HTMLImageElement | null>(null);
+  const angryProps2Ref = useRef<HTMLImageElement | null>(null);
+  const angryLogoRef = useRef<HTMLImageElement | null>(null);
+  const angleArenaSfxRef = useRef<Partial<Record<AngleArenaSfxKey, HTMLAudioElement>>>({});
 
   const [gameState, setGameState] = useState<GameState>('intro');
   const [questionIndex, setQuestionIndex] = useState(0);
@@ -644,6 +995,40 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     });
   }, []);
 
+  useEffect(() => {
+    const loadTexture = (src: string, assign: (img: HTMLImageElement) => void) => {
+      const img = new Image();
+      img.decoding = 'async';
+      img.src = src;
+      img.onload = () => assign(img);
+      return img;
+    };
+    loadTexture(angryBackgroundSrc, (img) => { angryBackgroundRef.current = img; });
+    loadTexture(angryParallaxSrc, (img) => { angryParallaxRef.current = img; });
+    loadTexture(angryGroundsSrc, (img) => { angryGroundsRef.current = img; });
+    loadTexture(angryBlocksSrc, (img) => { angryBlocksRef.current = img; });
+    loadTexture(angryProps1Src, (img) => { angryProps1Ref.current = img; });
+    loadTexture(angryProps2Src, (img) => { angryProps2Ref.current = img; });
+    loadTexture(angryLogoSrc, (img) => { angryLogoRef.current = img; });
+  }, []);
+
+  useEffect(() => {
+    const isMuted = localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true';
+    const loadAudio = (key: AngleArenaSfxKey, src: string, volume = 0.8) => {
+      const audio = new Audio(src);
+      audio.preload = 'auto';
+      audio.volume = volume;
+      audio.muted = isMuted;
+      angleArenaSfxRef.current[key] = audio;
+    };
+
+    loadAudio('launch', angleArenaLaunchSfxSrc, 0.85);
+    loadAudio('wood', angleArenaWoodSfxSrc, 0.65);
+    loadAudio('hit', angleArenaHitSfxSrc, 0.8);
+    loadAudio('fail', angleArenaFailSfxSrc, 0.75);
+    loadAudio('complete', angleArenaCompleteSfxSrc, 0.75);
+  }, []);
+
   const resetForNext = () => {
     setSelectedAnswer(null);
     selectedAnswerRef.current = null;
@@ -659,6 +1044,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     const earnedStars = Math.min(3, Math.max(1, Math.floor(finalScore / 450)));
     setStars(earnedStars);
     setGameState('levelComplete');
+    playAngleArenaSfx(angleArenaSfxRef.current, 'complete');
     emitMiniGameSessionEvent(sessionEvents, 'game_complete', {
       score: finalScore,
       stars: earnedStars,
@@ -679,6 +1065,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     }, 680);
 
     if (result === 'hit') {
+      playAngleArenaSfx(angleArenaSfxRef.current, 'hit');
+      playAngleArenaSfx(angleArenaSfxRef.current, 'wood');
       const nextScore = scoreRef.current + POINTS_PER_HIT;
       scoreRef.current = nextScore;
       setScore(nextScore);
@@ -695,6 +1083,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       if (!sessionState) {
         setLocalLives((prev) => Math.max(0, prev - 1));
       }
+      playAngleArenaSfx(angleArenaSfxRef.current, 'fail');
       setGameState('resolvedIncorrect');
     }
 
@@ -708,6 +1097,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     const resolvedAngle = Number.isFinite(angleDeg) ? (angleDeg as number) : desiredAngleRef.current;
     const speed = activeQuestion.launchSpeed || PROJECTILE_SPEED;
     projectileRef.current = buildProjectile(resolvedAngle, speed);
+    playAngleArenaSfx(angleArenaSfxRef.current, 'launch');
     cameraTargetRef.current = { x: 0, y: 0 };
     setGameState('projectileFlight');
   };
@@ -794,15 +1184,14 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       }
 
       if (projectile?.active) {
-        const travel = normalizeVector(projectile.vx, projectile.vy);
         cameraTargetRef.current = {
-          x: projectile.x - (travel.x * CAMERA_LEAD_DISTANCE),
-          y: projectile.y - (travel.y * CAMERA_LEAD_DISTANCE),
+          x: projectile.x,
+          y: projectile.y,
         };
       }
 
       const camera = cameraRef.current;
-      const followStrength = projectile?.active ? CAMERA_LERP : RETURN_LERP;
+      const followStrength = projectile?.active ? CAMERA_ACTIVE_LERP : RETURN_LERP;
       camera.x = lerp(camera.x, cameraTargetRef.current.x, followStrength);
       camera.y = lerp(camera.y, cameraTargetRef.current.y, followStrength);
       camera.x = clamp(camera.x, -WORLD_RADIUS, WORLD_RADIUS);
@@ -821,16 +1210,39 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
       ctx.translate(shakeX, shakeY);
       ctx.clearRect(0, 0, viewWidth, viewHeight);
-      drawSkyBackground(ctx, viewWidth, viewHeight, timestamp, camera.x, camera.y, Boolean(projectile?.active));
+      const bg = angryBackgroundRef.current;
+      if (bg) {
+        ctx.drawImage(bg, 0, 0, viewWidth, viewHeight);
+      } else {
+        drawSkyBackground(ctx, viewWidth, viewHeight, timestamp, camera.x, camera.y, Boolean(projectile?.active));
+      }
+      drawLevelDressing(
+        ctx,
+        angryParallaxRef.current,
+        angryGroundsRef.current,
+        angryBlocksRef.current,
+        angryProps1Ref.current,
+        angryProps2Ref.current,
+        viewWidth,
+        viewHeight,
+        camera.x,
+        camera.y,
+        timestamp,
+      );
+
+      const logo = angryLogoRef.current;
+      if (logo) {
+        drawContainImage(ctx, logo, viewWidth * 0.05, viewHeight * 0.04, viewWidth * 0.32, viewHeight * 0.1, 0.88);
+      }
 
       const cannonAnchor = { x: viewWidth * CANNON_ANCHOR_X_RATIO, y: viewHeight * CANNON_ANCHOR_Y_RATIO };
-      const screenOffset = { x: cannonAnchor.x - viewWidth / 2, y: cannonAnchor.y - viewHeight / 2 };
+      const screenOffset = projectile?.active ? { x: 0, y: 0 } : { x: cannonAnchor.x - viewWidth / 2, y: cannonAnchor.y - viewHeight / 2 };
       const toScreen = (x: number, y: number) => {
         const base = worldToScreen(x, y, camera.x, camera.y, viewWidth, viewHeight);
         return { x: base.x + screenOffset.x, y: base.y + screenOffset.y };
       };
 
-      const originScreen = cannonAnchor;
+      const originScreen = toScreen(0, 0);
       const travel = projectile?.active ? normalizeVector(projectile.vx, projectile.vy) : { x: 0, y: 0 };
       const enemyVisualWorld = projectile?.active
         ? {
@@ -839,8 +1251,6 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
           }
         : enemyWorld;
       const enemyScreen = toScreen(enemyVisualWorld.x, enemyVisualWorld.y);
-      const skyOffsetX = camera.x * SKY_DRIFT_FACTOR;
-      const skyOffsetY = camera.y * SKY_DRIFT_FACTOR * 0.45;
       const groundOffsetX = camera.x * GROUND_DRIFT_FACTOR;
       const groundOffsetY = camera.y * GROUND_DRIFT_FACTOR * 0.2;
 
@@ -850,25 +1260,15 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.arc(originScreen.x, originScreen.y, WORLD_RADIUS * 0.35, 0, Math.PI * 2);
       ctx.stroke();
 
+      const cannonTowerWidth = viewWidth * 0.17;
+      const cannonTowerHeight = viewHeight * 0.24;
+      const cannonTowerPos = {
+        x: originScreen.x,
+        y: originScreen.y + (cannonTowerHeight * 0.96),
+      };
       ctx.save();
-      ctx.globalAlpha = projectile?.active ? 0.32 : 0.14;
-      ctx.fillStyle = 'rgba(255,255,255,0.45)';
-      ctx.fillRect((viewWidth * 0.1) - skyOffsetX, (viewHeight * 0.11) - skyOffsetY, viewWidth * 0.11, 4);
-      ctx.fillRect((viewWidth * 0.44) - (skyOffsetX * 0.7), (viewHeight * 0.17) - (skyOffsetY * 0.6), viewWidth * 0.08, 3);
-      ctx.fillRect((viewWidth * 0.75) - (skyOffsetX * 0.55), (viewHeight * 0.22) - (skyOffsetY * 0.45), viewWidth * 0.09, 4);
-      ctx.restore();
-
-      ctx.save();
-      ctx.globalAlpha = projectile?.active ? 0.28 : 0.12;
-      ctx.strokeStyle = 'rgba(255,255,255,0.28)';
-      ctx.lineWidth = 1.5;
-      for (let i = -1; i <= 4; i += 1) {
-        const y = (viewHeight * 0.76) + (i * 18) + groundOffsetY;
-        ctx.beginPath();
-        ctx.moveTo(((-60 + groundOffsetX) % 120) - 120, y);
-        ctx.lineTo(viewWidth + 120, y);
-        ctx.stroke();
-      }
+      ctx.translate(cannonTowerPos.x, cannonTowerPos.y);
+      drawWoodenTower(ctx, cannonTowerWidth, cannonTowerHeight, 1);
       ctx.restore();
 
       if ((gameState === 'aiming' || gameState === 'awaitingAnswer') && selectedAnswerRef.current !== null) {
@@ -889,7 +1289,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       }
 
       ctx.save();
-      ctx.translate(originScreen.x, originScreen.y + 6);
+      ctx.translate(originScreen.x, originScreen.y - (cannonTowerHeight * 0.08));
       drawCannonSprite(ctx, desiredAngleRef.current, cannonSpritesRef.current, Math.min(viewWidth, viewHeight) * 0.22);
       ctx.restore();
 
@@ -897,41 +1297,63 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       if (projectile?.active) {
         ctx.translate(Math.sin(timestamp * 0.02) * 2, Math.cos(timestamp * 0.018) * 1.5);
       }
-      ctx.translate(enemyScreen.x, enemyScreen.y);
       const enemySize = Math.min(viewWidth, viewHeight) * 0.26;
-      const platform: EnemyPlatform = questionIndex % 2 === 0 ? 'podium' : 'cloud';
-      drawEnemyPlatform(ctx, platform, enemySize);
+      const enemyTowerWidth = enemySize * 0.7;
+      const enemyTowerHeight = enemySize * 0.8;
+      ctx.save();
+      ctx.translate(enemyScreen.x, enemyScreen.y + (enemyTowerHeight * 0.96));
+      drawWoodenTower(ctx, enemyTowerWidth, enemyTowerHeight, 0.95);
+      ctx.restore();
+      if (questionIndex % 2 === 1) {
+        ctx.save();
+        ctx.translate(enemyScreen.x, enemyScreen.y + enemySize * 0.08);
+        drawEnemyPlatform(ctx, 'cloud', enemySize);
+        ctx.restore();
+      }
 
       const enemies = enemySpritesRef.current;
       const enemyIndex = enemies.length ? (questionIndex % enemies.length) : 0;
       const enemy = enemies[enemyIndex];
       if (enemy) {
         ctx.save();
-        ctx.translate(0, -enemySize * 0.12);
+        ctx.translate(enemyScreen.x, enemyScreen.y - (enemyTowerHeight * 0.18));
         drawEnemyPortrait(ctx, enemy, enemySize);
         ctx.restore();
       } else {
+        ctx.save();
+        ctx.translate(enemyScreen.x, enemyScreen.y - (enemyTowerHeight * 0.18));
         ctx.fillStyle = 'rgba(250,204,21,0.85)';
         ctx.beginPath();
         ctx.arc(0, -enemySize * 0.1, enemySize * 0.12, 0, Math.PI * 2);
         ctx.fill();
+        ctx.restore();
       }
       ctx.restore();
 
       if (projectile) {
         projectile.trail.forEach((point) => {
           const trailScreen = toScreen(point.x, point.y);
-          ctx.fillStyle = `rgba(125,211,252,${0.35 * point.alpha})`;
+          ctx.fillStyle = `rgba(248,113,113,${0.34 * point.alpha})`;
           ctx.beginPath();
-          ctx.arc(trailScreen.x, trailScreen.y, 6 * point.alpha, 0, Math.PI * 2);
+          ctx.arc(trailScreen.x, trailScreen.y, 5.5 * point.alpha, 0, Math.PI * 2);
           ctx.fill();
         });
 
         const projectileScreen = toScreen(projectile.x, projectile.y);
-        ctx.fillStyle = '#f8fafc';
+        const pulse = Math.sin(timestamp * 0.012) * 0.5 + 0.5;
+        ctx.save();
+        ctx.translate(projectileScreen.x, projectileScreen.y);
+        drawGlowingBallProjectile(ctx, PROJECTILE_RADIUS + 2, pulse);
+        ctx.restore();
+
+        ctx.save();
+        ctx.globalAlpha = projectile.active ? 0.16 : 0.08;
+        ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+        ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.arc(projectileScreen.x, projectileScreen.y, PROJECTILE_RADIUS, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.arc(projectileScreen.x, projectileScreen.y, 28, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
       }
 
       if (impactResultRef.current === 'hit') {
@@ -1022,10 +1444,10 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
               <GameQuestionCard
                 title="Angle Arena"
-                subtitle="Choose the correct angle to clear the lookout."
+                subtitle="Choose the correct angle and fire the glowing ball."
                 className="w-full"
               >
-                {activeQuestion?.prompt ?? 'Choose the correct angle to hit the Monster Mind.'}
+                {activeQuestion?.prompt ?? 'Choose the correct angle for the glowing ball.'}
               </GameQuestionCard>
             </div>
           )}
@@ -1059,7 +1481,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
                 ) : null}
               </div>
               <FeedbackStrip className="w-full" tone={gameState === 'resolvedCorrect' ? 'success' : gameState === 'resolvedIncorrect' ? 'warning' : 'neutral'}>
-                {feedback || (selectedAnswer !== null ? `Angle ${selectedAnswer}° locked in.` : 'Choose an angle to strike the Monster Mind.')}
+                {feedback || (selectedAnswer !== null ? `Angle ${selectedAnswer}° locked in.` : 'Choose an angle to fire the cannon.')}
               </FeedbackStrip>
               {gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? (
                 <div className="flex w-full items-center gap-2">
