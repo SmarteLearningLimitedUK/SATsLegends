@@ -1054,7 +1054,7 @@ const App: React.FC = () => {
             <div className="pointer-events-none absolute inset-[1px] rounded-[1.05rem] border border-cyan-100/14" />
             <div className="pointer-events-none absolute inset-x-3 top-[3px] h-3 rounded-full bg-cyan-200/10 blur-[2px]" />
 
-            <div className="relative grid grid-cols-4 gap-1">
+            <div className="relative grid grid-cols-4 gap-1.5 sm:gap-2">
               <button
                 type="button"
                 onClick={goToProfile}
