@@ -907,7 +907,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           alt=""
           aria-hidden="true"
           draggable={false}
-          className="absolute inset-0 h-full w-full object-cover object-center"
+          className="absolute inset-0 h-full w-full object-contain object-center"
         />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,14,24,0.18)_0%,rgba(7,14,24,0.24)_44%,rgba(7,14,24,0.56)_100%)]" />
       </div>
@@ -939,7 +939,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                       src={selectedAvatar.portrait || selectedAvatar.image}
                       alt={selectedAvatar.name}
                       draggable={false}
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-contain"
                     />
                   </div>
                 </div>

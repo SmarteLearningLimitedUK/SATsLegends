@@ -395,7 +395,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
   return (
     <div
-      className="relative h-full w-full overflow-hidden bg-cover bg-center bg-no-repeat text-white"
+      className="relative h-full w-full overflow-hidden bg-contain bg-center bg-no-repeat text-white"
       style={{ backgroundImage: `url(${factorFrenzyBackground})` }}
     >
       <div className="pointer-events-none fixed left-0 right-0 top-[max(0.5rem,env(safe-area-inset-top))] z-50 flex justify-center px-3">

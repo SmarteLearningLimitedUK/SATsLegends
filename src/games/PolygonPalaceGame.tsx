@@ -1061,7 +1061,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
         alt=""
         aria-hidden="true"
         draggable={false}
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
+        className="pointer-events-none absolute inset-0 h-full w-full object-contain object-center"
       />
 
       <main

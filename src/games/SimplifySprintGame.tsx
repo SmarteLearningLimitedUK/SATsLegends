@@ -483,7 +483,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
                 <img
                   src={roundResult.kind === 'success' ? successRoundBackground : failureRoundBackground}
                   alt=""
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-contain"
                   draggable={false}
                 />
                 <div

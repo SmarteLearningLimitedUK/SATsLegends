@@ -551,7 +551,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       <img
         src={dojoBackground}
         alt="Number line dojo backdrop"
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full object-contain object-center"
         draggable={false}
       />
       <div className="absolute inset-0 bg-slate-950/25" />
