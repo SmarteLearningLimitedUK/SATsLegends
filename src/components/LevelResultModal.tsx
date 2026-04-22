@@ -25,6 +25,8 @@ interface LevelResultModalProps {
     stars: number;
     coinsEarned: number;
     xpEarned: number;
+    accuracy: number;
+    timeMs: number;
     islandUnlockedName?: string;
     achievementsUnlocked?: string[];
     primaryLabel: string;
@@ -37,6 +39,15 @@ interface LevelResultModalProps {
 }
 
 const cn = (...parts: Array<string | false | null | undefined>) => parts.filter(Boolean).join(' ');
+
+const formatAccuracy = (accuracy: number): string => `${Math.round(Math.max(0, Math.min(1, accuracy)) * 100)}%`;
+
+const formatTime = (timeMs: number): string => {
+  const totalSeconds = Math.max(0, Math.round(timeMs / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${String(seconds).padStart(2, '0')}`;
+};
 
 const StatTile: React.FC<{ label: string; value: React.ReactNode; tone?: 'XP' | 'coins' | 'xp' }> = ({
   label,
@@ -127,7 +138,7 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
               animate={{ y: 0, scale: 1, opacity: 1 }}
               exit={{ y: 18, scale: 0.97, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 220, damping: 22 }}
-              className="app-modal-panel premium-modal-shell licensed-game-card-dark relative z-10 flex w-full max-w-md flex-col overflow-hidden rounded-[1.45rem] border border-white/15 shadow-[0_32px_95px_rgba(0,0,0,0.48)] backdrop-blur-md md:max-w-lg md:rounded-[1.9rem]"
+              className="app-modal-panel premium-modal-shell licensed-game-card-dark relative z-10 flex h-[min(92vh,58rem)] w-full max-w-md flex-col overflow-hidden rounded-[1.45rem] border border-white/15 shadow-[0_32px_95px_rgba(0,0,0,0.48)] backdrop-blur-md md:max-w-2xl md:rounded-[1.9rem]"
               role="dialog"
               aria-modal="true"
               aria-label={isVictory ? 'Victory result' : 'Level result'}
@@ -177,7 +188,8 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
               </div>
             )}
 
-            <div className="relative z-10 flex flex-col gap-3 p-3.5 md:gap-5 md:p-7">
+            <div className="relative z-10 flex h-full min-h-0 flex-col gap-3 p-3.5 md:gap-5 md:p-7">
+              <div className="flex-1 min-h-0 overflow-y-auto pr-1">
               <div className="mx-auto flex flex-col items-center gap-2 text-center md:gap-3">
                 {isVictory && (
                   <span className={cn(
@@ -245,6 +257,17 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
                 </p>
               </div>
 
+              <div className="grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-3">
+                <StatTile label="Accuracy" value={formatAccuracy(result.accuracy)} tone="xp" />
+                <StatTile
+                  label="Time Taken"
+                  value={isVictory ? formatTime(result.timeMs) : 'N/A'}
+                  tone="coins"
+                />
+                <StatTile label="XP Earned" value={`+${result.xpEarned}`} tone="XP" />
+                <StatTile label="Coins" value={<span className="inline-flex items-center gap-1"><AssetIcon name="coin" className="h-4 w-4" /> +{result.coinsEarned}</span>} tone="coins" />
+              </div>
+
               <div className="flex items-center justify-center gap-1.5 md:gap-2">
                 {[1, 2, 3].map((star, index) => (
                   <motion.div
@@ -260,20 +283,6 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
                     />
                   </motion.div>
                 ))}
-              </div>
-
-              <div className="grid grid-cols-3 gap-2 md:gap-3">
-                <StatTile label="XP" value={result.XP} tone="XP" />
-                <StatTile
-                  label="Coins"
-                  value={<span className="inline-flex items-center gap-1"><AssetIcon name="coin" className="h-4 w-4" /> +{result.coinsEarned}</span>}
-                  tone="coins"
-                />
-                <StatTile
-                  label="XP"
-                  value={<span className="inline-flex items-center gap-1"><AssetIcon name="brainpowerToken" className="h-4 w-4" /> +{result.xpEarned}</span>}
-                  tone="xp"
-                />
               </div>
 
               {(result.islandUnlockedName || (result.achievementsUnlocked?.length || 0) > 0) && (
@@ -313,8 +322,9 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
                   </p>
                 </OverlaySurface>
               )}
+              </div>
 
-              <div className="mt-1 flex flex-col gap-2">
+              <div className="mt-auto flex flex-col gap-2 pt-2">
                 {result.onTertiary && result.tertiaryLabel ? (
                   <SecondaryActionButton
                     onClick={() => {

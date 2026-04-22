@@ -1211,11 +1211,13 @@ const App: React.FC = () => {
                 bonuses: levelResult.bonuses,
                 previousLevel: levelResult.previousLevel,
                 newLevel: levelResult.newLevel,
-                previousXp: levelResult.previousXp,
-                currentXp: levelResult.currentXp,
-                xpRequiredForNextLevel: levelResult.xpRequiredForNextLevel,
-                leveledUp: levelResult.leveledUp,
-              } : null}
+              previousXp: levelResult.previousXp,
+              currentXp: levelResult.currentXp,
+              xpRequiredForNextLevel: levelResult.xpRequiredForNextLevel,
+              leveledUp: levelResult.leveledUp,
+              accuracy: levelResult.accuracy,
+              timeMs: levelResult.timeMs,
+            } : null}
               onRetry={handleRetryLevel}
               onNext={levelResult?.type === 'victory' ? handleAdvanceAfterVictory : undefined}
               onMap={handleCloseLevelResult}

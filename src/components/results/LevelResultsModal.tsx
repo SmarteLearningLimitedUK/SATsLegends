@@ -26,6 +26,8 @@ interface LevelResultsModalProps {
     currentXp: number;
     xpRequiredForNextLevel: number;
     leveledUp: boolean;
+    accuracy: number;
+    timeMs: number;
   } | null;
   onRetry: () => void;
   onNext?: () => void;
@@ -81,6 +83,35 @@ const buildXpSegments = (
   }
 
   return segments;
+};
+
+const formatAccuracy = (accuracy: number): string => `${Math.round(Math.max(0, Math.min(1, accuracy)) * 100)}%`;
+
+const formatTime = (timeMs: number): string => {
+  const totalSeconds = Math.max(0, Math.round(timeMs / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${String(seconds).padStart(2, '0')}`;
+};
+
+const ResultStatTile: React.FC<{ label: string; value: React.ReactNode; tone?: 'cyan' | 'emerald' | 'amber' }> = ({
+  label,
+  value,
+  tone = 'cyan',
+}) => {
+  const toneClass =
+    tone === 'emerald'
+      ? 'border-emerald-200/25 bg-emerald-400/8 text-emerald-100'
+      : tone === 'amber'
+        ? 'border-amber-200/25 bg-amber-400/8 text-amber-100'
+        : 'border-cyan-200/25 bg-cyan-400/8 text-cyan-100';
+
+  return (
+    <div className={`rounded-[1rem] border px-3 py-2.5 text-center shadow-[0_10px_20px_rgba(2,6,23,0.18)] ${toneClass}`}>
+      <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/58">{label}</div>
+      <div className="mt-1 text-base font-black md:text-lg">{value}</div>
+    </div>
+  );
 };
 
 const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
@@ -178,7 +209,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
             animate={{ y: 0, scale: 1, opacity: 1 }}
             exit={{ y: 16, scale: 0.98, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 220, damping: 20 }}
-            className="relative z-10 w-full max-w-md overflow-visible rounded-[1.6rem] border border-white/15 bg-[linear-gradient(180deg,rgba(7,21,52,0.78),rgba(5,17,45,0.9))] p-4 shadow-[0_28px_80px_rgba(0,0,0,0.5)] backdrop-blur-md md:max-w-lg md:rounded-[2rem] md:p-6"
+            className="relative z-10 flex h-[min(92vh,58rem)] w-full max-w-md flex-col overflow-hidden rounded-[1.6rem] border border-white/15 bg-[linear-gradient(180deg,rgba(7,21,52,0.78),rgba(5,17,45,0.9))] p-4 shadow-[0_28px_80px_rgba(0,0,0,0.5)] backdrop-blur-md md:max-w-2xl md:rounded-[2rem] md:p-6"
           >
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(56,189,248,0.18),transparent_55%),radial-gradient(circle_at_50%_100%,rgba(251,191,36,0.18),transparent_60%)]" />
             <button
@@ -189,7 +220,8 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
               <span aria-hidden="true">×</span>
             </button>
 
-            <div className="relative z-10 flex flex-col gap-4">
+            <div className="relative z-10 flex h-full min-h-0 flex-col gap-4">
+              <div className="flex-1 min-h-0 overflow-y-auto pr-1">
               <div className="flex flex-col items-center text-center">
                 <span className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] ${isPractice ? 'border-cyan-200/50 bg-cyan-400/20 text-cyan-100' : isVictory ? 'border-emerald-200/50 bg-emerald-400/20 text-emerald-100' : 'border-rose-200/45 bg-rose-400/20 text-amber-100'}`}>
                   {isPractice ? (isVictory ? 'Practice Complete' : 'Practice Run Over') : isVictory ? 'Level Complete' : 'Try Again'}
@@ -198,14 +230,33 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
                 <p className="mt-1 text-sm font-semibold text-white/80 md:text-base">{result.subtitle}</p>
               </div>
 
+              <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+                <ResultStatTile label="Accuracy" value={formatAccuracy(result.accuracy)} tone="emerald" />
+                <ResultStatTile
+                  label="Time Taken"
+                  value={isVictory ? formatTime(result.timeMs) : 'N/A'}
+                  tone="amber"
+                />
+                <ResultStatTile
+                  label="XP Earned"
+                  value={`+${result.xpGained}`}
+                  tone="cyan"
+                />
+                <ResultStatTile
+                  label="Stars"
+                  value={`${result.stars}/3`}
+                  tone="emerald"
+                />
+              </div>
+
               {isPractice ? (
                 <div className="rounded-[1.2rem] border border-cyan-200/18 bg-cyan-400/10 px-4 py-3 text-center">
                   <div className="text-xs font-black uppercase tracking-[0.18em] text-cyan-100/85">
                     No XP or brainpower awarded
                   </div>
                 </div>
-              ) : (
-                <>
+                ) : (
+                  <>
                   <div className="flex flex-col items-center gap-2">
                     <AnimatedStarDisplay stars={result.stars} play={playStars} />
                     {result.stars === 3 ? (
@@ -236,11 +287,12 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
                     </div>
                   </div>
 
-                  <BonusBreakdown bonuses={result.bonuses} />
-                </>
-              )}
+                    <BonusBreakdown bonuses={result.bonuses} />
+                  </>
+                )}
+              </div>
 
-              <div className={`mt-2 grid gap-2 ${showButtons ? 'opacity-100' : 'opacity-0 pointer-events-none'} transition-opacity duration-300 ${isVictory ? 'grid-cols-2' : 'grid-cols-2'}`}>
+              <div className={`mt-auto grid gap-2 pt-2 ${showButtons ? 'opacity-100' : 'pointer-events-none opacity-0'} transition-opacity duration-300 ${isVictory ? 'grid-cols-2' : 'grid-cols-2'}`}>
                 {isPractice ? (
                   <>
                     <button

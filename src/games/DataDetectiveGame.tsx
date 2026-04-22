@@ -440,7 +440,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleSuspectClick(suspect.id)}
                   transition={{ duration: 0.35 }}
-                  className={`group relative flex w-full aspect-[4/3] items-center justify-center rounded-[1.2rem] border-2 p-1 transition-all duration-300 sm:aspect-[3/4] max-[480px]:aspect-[1/1.7] max-[480px]:rounded-lg max-[480px]:p-0.25 ${
+                  className={`group relative flex w-full aspect-[5/4] items-center justify-center rounded-[1.2rem] border-2 p-1 transition-all duration-300 sm:aspect-[4/5] max-[480px]:aspect-[4/5] max-[480px]:rounded-lg max-[480px]:p-0.25 ${
                     gameState === 'success' && suspect.id === guiltyId
                       ? 'border-emerald-400 bg-emerald-400/14 shadow-[0_0_24px_rgba(16,185,129,0.3)]'
                       : incorrectSuspectIds.includes(suspect.id)
@@ -450,17 +450,17 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                           : 'border-stone-800 bg-stone-900/50 hover:border-amber-500/50'
                   }`}
                 >
-                  <div className="relative flex h-full w-full items-center justify-center overflow-visible rounded-[1.05rem] border border-white/16 bg-slate-950/40 p-1 shadow-lg max-[480px]:rounded-[0.9rem] max-[480px]:p-0.25">
+                  <div className="relative flex h-full w-full items-center justify-center overflow-visible rounded-[1.05rem] border border-white/16 bg-slate-950/40 p-0.75 shadow-lg max-[480px]:rounded-[0.9rem] max-[480px]:p-0.25">
                     {suspect.portrait ? (
                       <img
                         src={suspect.portrait}
                         alt=""
                         draggable={false}
-                        className="suspect-portrait block h-full w-full max-h-full max-w-full translate-y-[20px] object-contain object-center"
+                        className="suspect-portrait block h-full w-full max-h-full max-w-full translate-y-[12px] object-contain object-center"
                         data-suspect-portrait="true"
                       />
                     ) : (
-                      <div className={`flex h-full w-full translate-y-[20px] items-center justify-center ${suspect.color}/20`}>
+                      <div className={`flex h-full w-full translate-y-[12px] items-center justify-center ${suspect.color}/20`}>
                         <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-white/10 text-lg font-black text-white">
                           {suspect.name.split(' ').map((part) => part[0]).join('')}
                         </div>

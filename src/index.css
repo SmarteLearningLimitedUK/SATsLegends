@@ -5148,7 +5148,7 @@ button.avatar-hero-arrow:not(:disabled):active {
 .app-screen {
   background-position: center center !important;
   background-repeat: no-repeat !important;
-  background-size: cover !important;
+  background-size: contain !important;
 }
 
 /* ============================================================

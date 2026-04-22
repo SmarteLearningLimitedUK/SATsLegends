@@ -7,6 +7,7 @@ interface FoodGameShellProps {
   backgroundImage?: string;
   overlayDisabled?: boolean;
   backgroundOpacity?: number;
+  backgroundPosition?: string;
   children: React.ReactNode;
 }
 
@@ -15,6 +16,7 @@ const FoodGameShell: React.FC<FoodGameShellProps> = ({
   backgroundImage,
   overlayDisabled,
   backgroundOpacity,
+  backgroundPosition,
   children,
 }) => {
   const resolvedBackground = backgroundImage || GAME_SCENE_META[gameType]?.background;
@@ -24,6 +26,7 @@ const FoodGameShell: React.FC<FoodGameShellProps> = ({
       backgroundImage={resolvedBackground}
       overlayDisabled={overlayDisabled}
       backgroundOpacity={backgroundOpacity}
+      backgroundPosition={backgroundPosition}
     >
       <div className="relative flex h-full w-full flex-col px-2 pb-2 pt-1 md:px-4 md:pb-4">
         <div className="relative z-10 flex h-full min-h-0 flex-col gap-2 md:gap-3">
