@@ -16,6 +16,10 @@ import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import cannonFacingLeftSrc from '../assets/angle_arena/cannonanglearena/1.png';
 import cannonFacingRightSrc from '../assets/angle_arena/cannonanglearena/2.png';
 import cannonFacingUpSrc from '../assets/angle_arena/cannonanglearena/3.png';
+import angryBackgroundSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Background/1.png';
+import angryBlocksSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Buildings/blocks.png';
+import angryProps1Src from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Buildings/props1.png';
+import angryProps2Src from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Buildings/props2.png';
 import { BOSS_ART_LIBRARY } from '../assets/bosses/library';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
 import { angleToVector, clamp, degreesToRadians, distance, lerp, worldToScreen } from './angleArena/math';
@@ -99,49 +103,50 @@ const makeImage = (src: string) => {
   return img;
 };
 
-const drawAngryBirdProjectile = (ctx: CanvasRenderingContext2D, radius: number, pulse = 0) => {
+const drawGlowingBallProjectile = (ctx: CanvasRenderingContext2D, radius: number, pulse = 0) => {
   ctx.save();
-  const glow = ctx.createRadialGradient(0, -radius * 0.15, radius * 0.08, 0, 0, radius * 1.9);
-  glow.addColorStop(0, 'rgba(255,255,255,0.95)');
-  glow.addColorStop(0.45, 'rgba(248,113,113,0.96)');
-  glow.addColorStop(1, 'rgba(127,29,29,0)');
+  const glow = ctx.createRadialGradient(0, 0, radius * 0.08, 0, 0, radius * 2.1);
+  glow.addColorStop(0, 'rgba(255,255,255,0.98)');
+  glow.addColorStop(0.28 + pulse * 0.04, 'rgba(236,255,170,0.95)');
+  glow.addColorStop(0.58, 'rgba(74,222,128,0.85)');
+  glow.addColorStop(1, 'rgba(20,83,45,0)');
   ctx.fillStyle = glow;
   ctx.beginPath();
-  ctx.arc(0, 0, radius * 1.9, 0, Math.PI * 2);
+  ctx.arc(0, 0, radius * 2.1, 0, Math.PI * 2);
   ctx.fill();
 
-  ctx.fillStyle = '#d91f26';
+  ctx.fillStyle = '#f8fafc';
   ctx.beginPath();
   ctx.arc(0, 0, radius, 0, Math.PI * 2);
   ctx.fill();
 
-  ctx.fillStyle = 'rgba(255,255,255,0.12)';
+  ctx.fillStyle = 'rgba(255,255,255,0.42)';
   ctx.beginPath();
   ctx.arc(-radius * 0.3, -radius * 0.28, radius * 0.42, 0, Math.PI * 2);
   ctx.fill();
 
-  ctx.fillStyle = '#ffd12e';
+  ctx.fillStyle = 'rgba(34,197,94,0.55)';
   ctx.beginPath();
-  ctx.moveTo(radius * 0.9, -radius * 0.08);
-  ctx.lineTo(radius * 1.5, 0);
-  ctx.lineTo(radius * 0.92, radius * 0.18);
+  ctx.moveTo(radius * 0.72, -radius * 0.16);
+  ctx.lineTo(radius * 1.28, 0);
+  ctx.lineTo(radius * 0.72, radius * 0.18);
   ctx.closePath();
   ctx.fill();
 
-  ctx.fillStyle = '#111827';
+  ctx.fillStyle = '#0f172a';
   ctx.beginPath();
-  ctx.arc(radius * 0.08, -radius * 0.22, radius * 0.11, 0, Math.PI * 2);
-  ctx.arc(radius * 0.36, -radius * 0.22, radius * 0.11, 0, Math.PI * 2);
+  ctx.arc(radius * 0.06, -radius * 0.22, radius * 0.1, 0, Math.PI * 2);
+  ctx.arc(radius * 0.32, -radius * 0.22, radius * 0.1, 0, Math.PI * 2);
   ctx.fill();
 
-  ctx.strokeStyle = '#1f2937';
+  ctx.strokeStyle = 'rgba(34,197,94,0.58)';
   ctx.lineWidth = Math.max(1.5, radius * 0.08);
   ctx.beginPath();
-  ctx.arc(-radius * 0.1, radius * 0.22, radius * 0.42, Math.PI * 0.06, Math.PI * 0.94);
+  ctx.arc(-radius * 0.1, radius * 0.22, radius * 0.42, Math.PI * 0.08, Math.PI * 0.92);
   ctx.stroke();
 
   ctx.globalAlpha = 0.45 + pulse * 0.2;
-  ctx.fillStyle = '#86efac';
+  ctx.fillStyle = '#a7f3d0';
   ctx.beginPath();
   ctx.arc(0, 0, radius * 1.12, 0, Math.PI * 2);
   ctx.fill();
@@ -312,6 +317,27 @@ const drawSkyBackground = (
   ctx.fillRect(0, height * 0.72, width, 2);
   ctx.fillStyle = 'rgba(251,191,36,0.28)';
   ctx.fillRect(0, height * 0.78, width, 2);
+  ctx.restore();
+};
+
+const drawContainImage = (
+  ctx: CanvasRenderingContext2D,
+  image: HTMLImageElement,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  opacity = 1,
+) => {
+  const iw = image.naturalWidth || image.width;
+  const ih = image.naturalHeight || image.height;
+  if (!iw || !ih) return;
+  const scale = Math.min(width / iw, height / ih);
+  const dw = iw * scale;
+  const dh = ih * scale;
+  ctx.save();
+  ctx.globalAlpha = opacity;
+  ctx.drawImage(image, x + (width - dw) / 2, y + (height - dh) / 2, dw, dh);
   ctx.restore();
 };
 
@@ -606,6 +632,10 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const aimTimeoutRef = useRef<number | null>(null);
   const cannonSpritesRef = useRef<CannonSprites>({});
   const enemySpritesRef = useRef<HTMLImageElement[]>([]);
+  const angryBackgroundRef = useRef<HTMLImageElement | null>(null);
+  const angryBlocksRef = useRef<HTMLImageElement | null>(null);
+  const angryProps1Ref = useRef<HTMLImageElement | null>(null);
+  const angryProps2Ref = useRef<HTMLImageElement | null>(null);
 
   const [gameState, setGameState] = useState<GameState>('intro');
   const [questionIndex, setQuestionIndex] = useState(0);
@@ -699,6 +729,20 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         enemySpritesRef.current = next;
       };
     });
+  }, []);
+
+  useEffect(() => {
+    const loadTexture = (src: string, assign: (img: HTMLImageElement) => void) => {
+      const img = new Image();
+      img.decoding = 'async';
+      img.src = src;
+      img.onload = () => assign(img);
+      return img;
+    };
+    loadTexture(angryBackgroundSrc, (img) => { angryBackgroundRef.current = img; });
+    loadTexture(angryBlocksSrc, (img) => { angryBlocksRef.current = img; });
+    loadTexture(angryProps1Src, (img) => { angryProps1Ref.current = img; });
+    loadTexture(angryProps2Src, (img) => { angryProps2Ref.current = img; });
   }, []);
 
   const resetForNext = () => {
@@ -877,7 +921,12 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
       ctx.translate(shakeX, shakeY);
       ctx.clearRect(0, 0, viewWidth, viewHeight);
-      drawSkyBackground(ctx, viewWidth, viewHeight, timestamp, camera.x, camera.y, Boolean(projectile?.active));
+      const bg = angryBackgroundRef.current;
+      if (bg) {
+        ctx.drawImage(bg, 0, 0, viewWidth, viewHeight);
+      } else {
+        drawSkyBackground(ctx, viewWidth, viewHeight, timestamp, camera.x, camera.y, Boolean(projectile?.active));
+      }
 
       const cannonAnchor = { x: viewWidth * CANNON_ANCHOR_X_RATIO, y: viewHeight * CANNON_ANCHOR_Y_RATIO };
       const screenOffset = projectile?.active ? { x: 0, y: 0 } : { x: cannonAnchor.x - viewWidth / 2, y: cannonAnchor.y - viewHeight / 2 };
@@ -895,8 +944,6 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
           }
         : enemyWorld;
       const enemyScreen = toScreen(enemyVisualWorld.x, enemyVisualWorld.y);
-      const skyOffsetX = camera.x * SKY_DRIFT_FACTOR;
-      const skyOffsetY = camera.y * SKY_DRIFT_FACTOR * 0.45;
       const groundOffsetX = camera.x * GROUND_DRIFT_FACTOR;
       const groundOffsetY = camera.y * GROUND_DRIFT_FACTOR * 0.2;
 
@@ -906,26 +953,19 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.arc(originScreen.x, originScreen.y, WORLD_RADIUS * 0.35, 0, Math.PI * 2);
       ctx.stroke();
 
-      ctx.save();
-      ctx.globalAlpha = projectile?.active ? 0.32 : 0.14;
-      ctx.fillStyle = 'rgba(255,255,255,0.45)';
-      ctx.fillRect((viewWidth * 0.1) - skyOffsetX, (viewHeight * 0.11) - skyOffsetY, viewWidth * 0.11, 4);
-      ctx.fillRect((viewWidth * 0.44) - (skyOffsetX * 0.7), (viewHeight * 0.17) - (skyOffsetY * 0.6), viewWidth * 0.08, 3);
-      ctx.fillRect((viewWidth * 0.75) - (skyOffsetX * 0.55), (viewHeight * 0.22) - (skyOffsetY * 0.45), viewWidth * 0.09, 4);
-      ctx.restore();
-
-      ctx.save();
-      ctx.globalAlpha = projectile?.active ? 0.28 : 0.12;
-      ctx.strokeStyle = 'rgba(255,255,255,0.28)';
-      ctx.lineWidth = 1.5;
-      for (let i = -1; i <= 4; i += 1) {
-        const y = (viewHeight * 0.76) + (i * 18) + groundOffsetY;
-        ctx.beginPath();
-        ctx.moveTo(((-60 + groundOffsetX) % 120) - 120, y);
-        ctx.lineTo(viewWidth + 120, y);
-        ctx.stroke();
+      const blocks = angryBlocksRef.current;
+      const props1 = angryProps1Ref.current;
+      const props2 = angryProps2Ref.current;
+      if (blocks) {
+        drawContainImage(ctx, blocks, viewWidth * 0.02, viewHeight * 0.62, viewWidth * 0.26, viewHeight * 0.22, 0.95);
+        drawContainImage(ctx, blocks, viewWidth * 0.70, viewHeight * 0.60, viewWidth * 0.24, viewHeight * 0.24, 0.9);
       }
-      ctx.restore();
+      if (props1) {
+        drawContainImage(ctx, props1, viewWidth * 0.12, viewHeight * 0.68, viewWidth * 0.16, viewHeight * 0.12, 0.88);
+      }
+      if (props2) {
+        drawContainImage(ctx, props2, viewWidth * 0.80, viewHeight * 0.66, viewWidth * 0.14, viewHeight * 0.12, 0.88);
+      }
 
       if ((gameState === 'aiming' || gameState === 'awaitingAnswer') && selectedAnswerRef.current !== null) {
         const aimingAngle = selectedAnswerRef.current ?? desiredAngleRef.current;
@@ -987,7 +1027,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         const pulse = Math.sin(timestamp * 0.012) * 0.5 + 0.5;
         ctx.save();
         ctx.translate(projectileScreen.x, projectileScreen.y);
-        drawAngryBirdProjectile(ctx, PROJECTILE_RADIUS + 2, pulse);
+        drawGlowingBallProjectile(ctx, PROJECTILE_RADIUS + 2, pulse);
         ctx.restore();
 
         ctx.save();
@@ -1088,10 +1128,10 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
               <GameQuestionCard
                 title="Angle Arena"
-                subtitle="Pull back and launch the bird at the correct angle."
+                subtitle="Pull back and launch the glowing ball at the correct angle."
                 className="w-full"
               >
-                {activeQuestion?.prompt ?? 'Choose the correct angle to launch the bird.'}
+                {activeQuestion?.prompt ?? 'Choose the correct angle to launch the glowing ball.'}
               </GameQuestionCard>
             </div>
           )}
@@ -1125,7 +1165,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
                 ) : null}
               </div>
               <FeedbackStrip className="w-full" tone={gameState === 'resolvedCorrect' ? 'success' : gameState === 'resolvedIncorrect' ? 'warning' : 'neutral'}>
-                {feedback || (selectedAnswer !== null ? `Angle ${selectedAnswer}° locked in.` : 'Choose an angle to launch the bird.')}
+                {feedback || (selectedAnswer !== null ? `Angle ${selectedAnswer}° locked in.` : 'Choose an angle to launch the glowing ball.')}
               </FeedbackStrip>
               {gameState === 'resolvedCorrect' || gameState === 'resolvedIncorrect' ? (
                 <div className="flex w-full items-center gap-2">
