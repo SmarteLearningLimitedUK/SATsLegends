@@ -563,11 +563,11 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
         className="qa-question-card pointer-events-none fixed left-0 right-0 z-[60]"
         style={{ top: 'calc(env(safe-area-inset-top) + 4px)' }}
       >
-        <GameQuestionCard
+      <GameQuestionCard
           title="Number Line Ninja"
-          className="mx-auto w-[min(92vw,42rem)] rounded-[1rem] px-4 py-3 text-center"
-          titleClassName="text-[10px] tracking-[0.26em] md:text-[11px]"
-          bodyClassName="mt-1 text-[clamp(0.92rem,1.9vw,1.08rem)] leading-tight md:text-[clamp(1rem,2vw,1.12rem)]"
+          className="mx-auto w-[min(88vw,38rem)] rounded-[0.95rem] px-3.5 py-2.5 text-center"
+          titleClassName="text-[9px] tracking-[0.28em] md:text-[10px]"
+          bodyClassName="mt-1 text-[clamp(0.84rem,1.7vw,0.98rem)] leading-snug md:text-[clamp(0.92rem,1.8vw,1rem)]"
         >
           {question.prompt}
         </GameQuestionCard>
@@ -577,19 +577,19 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
         className="relative z-10 flex h-full min-h-0 flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+5.2rem)]"
         style={{
           // Keep the number line docked below the fixed question card (even when the text wraps).
-          // Requirement: number line should be 20px below the question card.
-          paddingTop: `${Math.max(0, questionDockBottom + 20)}px`,
+          // Requirement: number line should be below the question card without touching it.
+          paddingTop: `${Math.max(0, questionDockBottom + 14)}px`,
         }}
       >
         <div className="flex min-h-0 flex-1 flex-col items-center justify-start pt-0">
           <motion.div
             animate={lineShake ? { x: [0, -10, 10, -8, 8, -4, 4, 0] } : { x: 0 }}
             transition={{ duration: 0.34, ease: 'easeInOut' }}
-            className="qa-number-line relative mt-0 flex h-[27%] min-h-[172px] w-full max-w-[760px] items-center justify-center"
-            style={{ marginTop: 18 }}
+            className="qa-number-line relative mt-0 flex h-[24%] min-h-[156px] w-full max-w-[760px] items-center justify-center"
+            style={{ marginTop: 12 }}
           >
-            <div className="relative w-full rounded-[1.4rem] border border-cyan-100/18 bg-slate-950/32 px-4 py-4 shadow-[0_16px_34px_rgba(2,6,23,0.28)] backdrop-blur-[8px] md:px-5 md:py-5">
-              <div className="mb-2 flex items-center justify-center gap-3 px-2 text-[clamp(0.64rem,1.45vw,0.78rem)] font-black uppercase tracking-[0.28em] text-amber-200/92">
+            <div className="relative w-full rounded-[1.3rem] border border-cyan-100/18 bg-slate-950/30 px-3.5 py-3.5 shadow-[0_16px_34px_rgba(2,6,23,0.28)] backdrop-blur-[8px] md:px-4 md:py-4">
+              <div className="mb-2 flex items-center justify-center gap-3 px-2 text-[clamp(0.6rem,1.25vw,0.72rem)] font-black uppercase tracking-[0.28em] text-amber-200/92">
                 <span className="h-px flex-1 max-w-12 bg-gradient-to-r from-transparent via-amber-200/65 to-transparent" />
                 <span>Find the missing number</span>
                 <span className="h-px flex-1 max-w-12 bg-gradient-to-r from-transparent via-amber-200/65 to-transparent" />
@@ -601,7 +601,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                 className="pointer-events-none absolute inset-0 rounded-[1.4rem] bg-[radial-gradient(circle_at_50%_50%,rgba(56,189,248,0.2),rgba(30,41,59,0.08)_58%,transparent_80%)]"
               />
 
-              <div className="relative mx-auto w-[88%] max-w-[610px]">
+              <div className="relative mx-auto w-[88%] max-w-[610px] pt-1">
                 <motion.div
                   animate={{
                     boxShadow: [
@@ -668,7 +668,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                 <motion.div
                   animate={{ y: [0, 10, 0], opacity: [0.55, 1, 0.55] }}
                   transition={{ duration: 1.05, repeat: Infinity, ease: 'easeInOut' }}
-                  className="pointer-events-none absolute top-[-2px] -translate-x-1/2"
+                  className="pointer-events-none absolute top-[-10px] -translate-x-1/2"
                   style={{ left: `${focusPct}%` }}
                 >
                   <ChevronDown className="h-7 w-7 text-amber-200 drop-shadow-[0_0_12px_rgba(251,191,36,0.96)]" />
@@ -848,7 +848,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
           <div className="mb-2 text-center text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/88">
             Reveal the missing marker
           </div>
-          <div className="mx-auto flex w-full max-w-[640px] flex-wrap items-center justify-center gap-4 sm:gap-5">
+          <div className="mx-auto flex w-full max-w-[620px] flex-wrap items-center justify-center gap-3.5 sm:gap-4">
             {question.options.map((option, index) => {
               const isSelected = selectedAnswer === option;
               const isCorrect = feedbackState === 'correct' && isSelected;
@@ -870,7 +870,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                     rotateX: isCorrect ? [0, 90, 180, 270, 360, 540, 720] : 0,
                   }}
                   transition={{ duration: isCorrect ? 0.72 : 0.4, ease: 'easeInOut' }}
-                  className="group relative h-[80px] w-[80px] sm:h-[88px] sm:w-[88px]"
+                  className="group relative h-[66px] w-[66px] sm:h-[74px] sm:w-[74px]"
                   style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
                 >
                   <div
@@ -892,7 +892,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                       y: isWrong ? [0, -3, 3, -2, 0] : 0,
                     }}
                     transition={{ duration: isWrong ? 0.35 : 0.4 }}
-                    className={`relative flex h-full items-center justify-center px-1 text-center text-[clamp(16px,1.95vw,24px)] font-black leading-none tracking-tight drop-shadow-[0_3px_3px_rgba(0,0,0,0.42)] ${
+                    className={`relative flex h-full items-center justify-center px-1 text-center text-[clamp(14px,1.7vw,20px)] font-black leading-none tracking-tight drop-shadow-[0_3px_3px_rgba(0,0,0,0.42)] ${
                       isCorrect ? 'text-emerald-50' : isWrong ? 'text-amber-100' : isSelected ? 'text-slate-900' : 'text-white'
                     }`}
                   >
@@ -931,12 +931,12 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
             }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.58, ease: [0.2, 0.85, 0.24, 1] }}
-            className="pointer-events-none absolute z-30 h-[72px] w-[72px]"
+            className="pointer-events-none absolute z-30 h-[60px] w-[60px]"
             style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
           >
             <div className="absolute inset-0 rounded-full border-[2px] border-emerald-100/95 bg-gradient-to-b from-emerald-300 to-green-600 shadow-[0_10px_0_rgba(20,83,45,0.82),0_0_28px_rgba(74,222,128,0.78)]" />
             <div className="pointer-events-none absolute inset-[9%] rounded-full bg-gradient-to-b from-white/30 via-transparent to-transparent" />
-            <div className="relative flex h-full items-center justify-center px-1 text-center text-[clamp(16px,1.95vw,24px)] font-black leading-none tracking-tight text-emerald-50 drop-shadow-[0_3px_3px_rgba(0,0,0,0.42)]">
+            <div className="relative flex h-full items-center justify-center px-1 text-center text-[clamp(14px,1.7vw,20px)] font-black leading-none tracking-tight text-emerald-50 drop-shadow-[0_3px_3px_rgba(0,0,0,0.42)]">
               {flyingAnswer.value}
             </div>
           </motion.div>
