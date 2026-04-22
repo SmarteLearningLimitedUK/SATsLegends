@@ -42,7 +42,7 @@ const START_OFFSET = 0;
 const RACER_LERP = 0.16;
 const BASE_XP = 160;
 const PLAYER_KART_SCALE = 2.08;
-const PLAYER_KART_RAISE = '54pt';
+const PLAYER_KART_BOTTOM_PADDING = '10pt';
 const PLAYER_TRACK_LINE_Y = 80.8;
 const FINISH_Y_SHIFT = -200;
 const FINISH_X_SHIFT = -100;
@@ -426,7 +426,6 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
 
   const trackSpan = Math.max(1, tuning.trackLength);
   const cameraWorldPosition = playerPosRef.current;
-  const playerLeft = 50;
   const finishLeft = 50 + ((tuning.trackLength - cameraWorldPosition) / trackSpan) * 100;
   const showBoost = raceState === 'correctBoost';
   const showStall = raceState === 'incorrectStall';
@@ -444,10 +443,10 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
   const playerLean = clamp((playerTargetRef.current - playerPosRef.current) * 0.9, -PLAYER_ROLL_MAX, PLAYER_ROLL_MAX);
 
   const playerStyle = {
-    transform: `translate3d(-50%, calc(-100% + ${playerBobOffset}px - ${PLAYER_KART_RAISE}), 0) rotate(${playerLean}deg) scale(${PLAYER_KART_SCALE})`,
+    transform: `translate3d(-50%, calc(-100% + ${playerBobOffset}px), 0) rotate(${playerLean}deg) scale(${PLAYER_KART_SCALE})`,
     transformOrigin: '50% 100%',
-    top: `${playerLineY}%`,
-    left: `${playerLeft - 2.5}%`,
+    left: '50%',
+    bottom: PLAYER_KART_BOTTOM_PADDING,
   };
 
   const finishLineInView = finishLeft <= FINISH_SCREEN_THRESHOLD;
@@ -474,10 +473,10 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
         />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 select-none bg-cover bg-center bg-no-repeat"
+          className="pointer-events-none absolute inset-0 select-none bg-contain bg-bottom bg-no-repeat"
           style={{
             backgroundImage: `url(${ratioBackdrop})`,
-            backgroundPosition: `${backgroundPositionX}% center`,
+            backgroundPosition: `${backgroundPositionX}% bottom`,
           }}
         />
         <div

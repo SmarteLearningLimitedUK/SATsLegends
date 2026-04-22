@@ -38,7 +38,8 @@ interface GemCell {
 type BoardCell = GemCell | null;
 
 const GEM_TYPES: GemType[] = ['red', 'blue', 'green', 'yellow', 'purple'];
-const GRID_SIZE = 6;
+const BOARD_COLUMNS = 5;
+const BOARD_ROWS = 6;
 const ROUND_SECONDS = 60;
 const BASE_TARGET_SCORE = 900;
 const TARGET_SCORE_STEP = 140;
@@ -88,14 +89,14 @@ const sleep = (ms: number) => new Promise<void>((resolve) => {
   window.setTimeout(resolve, ms);
 });
 
-const indexFor = (row: number, col: number) => (row * GRID_SIZE) + col;
+const indexFor = (row: number, col: number) => (row * BOARD_COLUMNS) + col;
 
 const findMatches = (board: BoardCell[]): number[] => {
   const matches = new Set<number>();
 
   // Horizontal scan.
-  for (let row = 0; row < GRID_SIZE; row += 1) {
-    for (let col = 0; col < GRID_SIZE - 2; col += 1) {
+  for (let row = 0; row < BOARD_ROWS; row += 1) {
+    for (let col = 0; col < BOARD_COLUMNS - 2; col += 1) {
       const idx = indexFor(row, col);
       const cell = board[idx];
       if (!cell) continue;
@@ -108,8 +109,8 @@ const findMatches = (board: BoardCell[]): number[] => {
   }
 
   // Vertical scan.
-  for (let col = 0; col < GRID_SIZE; col += 1) {
-    for (let row = 0; row < GRID_SIZE - 2; row += 1) {
+  for (let col = 0; col < BOARD_COLUMNS; col += 1) {
+    for (let row = 0; row < BOARD_ROWS - 2; row += 1) {
       const idx = indexFor(row, col);
       const cell = board[idx];
       if (!cell) continue;
@@ -155,10 +156,10 @@ const buildCell = (type: GemType, includeDecimals: boolean): GemCell => ({
 });
 
 const createInitialBoard = (includeDecimals: boolean): BoardCell[] => {
-  const board: BoardCell[] = Array.from({ length: GRID_SIZE * GRID_SIZE }, () => null);
+  const board: BoardCell[] = Array.from({ length: BOARD_ROWS * BOARD_COLUMNS }, () => null);
 
-  for (let row = 0; row < GRID_SIZE; row += 1) {
-    for (let col = 0; col < GRID_SIZE; col += 1) {
+  for (let row = 0; row < BOARD_ROWS; row += 1) {
+    for (let col = 0; col < BOARD_COLUMNS; col += 1) {
       const candidates = GEM_TYPES.filter((gemType) => !wouldCreateImmediateMatch(board, row, col, gemType));
       const chosenPool = candidates.length > 0 ? candidates : GEM_TYPES;
       const chosenType = chosenPool[Math.floor(Math.random() * chosenPool.length)];
@@ -170,10 +171,10 @@ const createInitialBoard = (includeDecimals: boolean): BoardCell[] => {
 };
 
 const isAdjacent = (first: number, second: number) => {
-  const rowA = Math.floor(first / GRID_SIZE);
-  const colA = first % GRID_SIZE;
-  const rowB = Math.floor(second / GRID_SIZE);
-  const colB = second % GRID_SIZE;
+  const rowA = Math.floor(first / BOARD_COLUMNS);
+  const colA = first % BOARD_COLUMNS;
+  const rowB = Math.floor(second / BOARD_COLUMNS);
+  const colB = second % BOARD_COLUMNS;
   return Math.abs(rowA - rowB) + Math.abs(colA - colB) === 1;
 };
 
@@ -341,7 +342,7 @@ const MatchGameShell: React.FC<{
              </div>
            ) : null}
 
-           <div className={`relative z-10 flex h-full w-full items-start justify-center px-2 pb-[calc(env(safe-area-inset-bottom)+0.9rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+9.5rem)]' : 'pt-2'} sm:px-4`}>
+           <div className={`relative z-10 flex h-full w-full items-start justify-center px-2 pb-[calc(env(safe-area-inset-bottom)+0.9rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+10rem)]' : 'pt-2'} sm:px-4`}>
              <AnimatePresence>
                {fireActive ? (
                  <motion.div
@@ -447,7 +448,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       if (boardWidth <= 0) return;
 
       const gapPx = 10; // sync with responsive gap-2 / gap-2.5
-      const rawSize = Math.floor((boardWidth - (gapPx * (GRID_SIZE - 1))) / GRID_SIZE);
+      const rawSize = Math.floor((boardWidth - (gapPx * (BOARD_COLUMNS - 1))) / BOARD_COLUMNS);
       const clampedSize = Math.max(42, Math.min(122, rawSize));
 
       setGemSize((prev) => (prev === clampedSize ? prev : clampedSize));
@@ -547,10 +548,10 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       if (endedRef.current) return;
 
       // Gravity.
-      for (let col = 0; col < GRID_SIZE; col += 1) {
-        let writeRow = GRID_SIZE - 1;
+      for (let col = 0; col < BOARD_COLUMNS; col += 1) {
+        let writeRow = BOARD_ROWS - 1;
 
-        for (let row = GRID_SIZE - 1; row >= 0; row -= 1) {
+        for (let row = BOARD_ROWS - 1; row >= 0; row -= 1) {
           const readIdx = indexFor(row, col);
           if (workingBoard[readIdx] === null) continue;
 
@@ -646,7 +647,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
             boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.06), inset 0 0 30px rgba(0,0,0,0.45)',
           }}
         />
-        <div ref={boardGridRef} className="relative z-10 grid w-full grid-cols-6 gap-2 sm:gap-2.5">
+        <div ref={boardGridRef} className="relative z-10 grid w-full grid-cols-5 gap-2 sm:gap-2.5">
           {board.map((cell, idx) => (
             <div
               key={idx}
