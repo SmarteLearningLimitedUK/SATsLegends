@@ -5,7 +5,6 @@ import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
 import zombieFallback from '../assets/zombies/zombie.png';
 import zombiePlayfield from '../assets/zombies/zombiebkground.png';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
-import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import { formatMultiplicationDisplay } from '../utils/mathDisplay';
 
@@ -591,6 +590,9 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           >
             {feedback || '\u00A0'}
           </div>
+          <div className="mt-2 text-center text-[0.72rem] font-black uppercase tracking-[0.28em] text-amber-100/90">
+            Choose the correct answer
+          </div>
           <div className="mt-3 grid grid-cols-2 gap-3">
             {question.options.map((option, index) => (
               <button
@@ -598,7 +600,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
                 type="button"
                 onClick={() => handleAnswer(index)}
                 disabled={locked}
-                className={`rounded-2xl px-3 py-3 text-lg font-black ${
+                className={`h-[clamp(3.1rem,8vh,3.85rem)] rounded-[1rem] px-3 text-[clamp(1.05rem,4vw,1.35rem)] font-black shadow-[0_10px_22px_rgba(2,6,23,0.28)] ${
                   locked && selectedAnswer === index
                     ? index === question.correctIndex
                       ? 'ui-button-success'

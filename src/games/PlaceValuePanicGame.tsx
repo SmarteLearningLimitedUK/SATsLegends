@@ -883,9 +883,9 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   };
 
   const topHudLayout = useMemo(() => ({
-    rowHeight: 'clamp(3.1rem, 8.35vh, 4.35rem)',
-    profileWidth: 'clamp(10.4rem, 46vw, 14.6rem)',
-    timerWidth: 'clamp(11.2rem, 45vw, 17rem)',
+    rowHeight: 'clamp(2.8rem, 7.4vh, 3.9rem)',
+    profileWidth: 'clamp(9.6rem, 42vw, 13.4rem)',
+    timerWidth: 'clamp(10.6rem, 42vw, 15.6rem)',
   }), []);
 
   return (
@@ -989,12 +989,12 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         </div>
       ) : null}
 
-      <div className="pointer-events-none fixed left-1/2 z-[60] w-[min(92vw,42rem)] -translate-x-1/2" style={{ top: '6px' }}>
+      <div className="pointer-events-none fixed left-1/2 z-[60] w-[min(88vw,36rem)] -translate-x-1/2" style={{ top: '4px' }}>
         <GameQuestionCard
           title="Place Value Panic"
-          className="mx-auto rounded-[1rem] px-4 py-3 text-center"
-          titleClassName="text-[10px] tracking-[0.26em] md:text-[11px]"
-          bodyClassName="mt-1 text-[clamp(0.92rem,1.9vw,1.1rem)] leading-tight md:text-[clamp(1rem,2vw,1.15rem)]"
+          className="mx-auto rounded-[0.95rem] px-3.5 py-2.5 text-center"
+          titleClassName="text-[9px] tracking-[0.28em] md:text-[10px]"
+          bodyClassName="mt-1 text-[clamp(0.84rem,1.7vw,1rem)] leading-snug md:text-[clamp(0.92rem,1.8vw,1.06rem)]"
         >
           {questionPrompt}
         </GameQuestionCard>
@@ -1007,17 +1007,17 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         transition={{ duration: 0.34, ease: 'easeInOut' }}
       >
         <div
-          className="pointer-events-none absolute left-1/2 top-[17.5%] z-10 -translate-x-1/2"
-          style={{ width: 'min(82vw, 42rem)' }}
+          className="pointer-events-none absolute left-1/2 top-[15.8%] z-10 -translate-x-1/2"
+          style={{ width: 'min(84vw, 42rem)' }}
         >
-          <div className="mx-auto rounded-[1.6rem] border border-cyan-100/20 bg-slate-950/32 p-3 shadow-[0_18px_40px_rgba(2,6,23,0.34)] backdrop-blur-[8px] md:p-4">
-            <div className="mb-2 flex items-center justify-center gap-3 px-2 text-[clamp(0.65rem,1.5vw,0.8rem)] font-black uppercase tracking-[0.28em] text-amber-200/92">
+          <div className="mx-auto rounded-[1.4rem] border border-cyan-100/20 bg-slate-950/30 p-2.5 shadow-[0_18px_40px_rgba(2,6,23,0.34)] backdrop-blur-[8px] md:p-3.5">
+            <div className="mb-2 flex items-center justify-center gap-3 px-2 text-[clamp(0.62rem,1.35vw,0.76rem)] font-black uppercase tracking-[0.28em] text-amber-200/92">
               <span className="h-px flex-1 max-w-12 bg-gradient-to-r from-transparent via-amber-200/65 to-transparent" />
               <span>Number Stones</span>
               <span className="h-px flex-1 max-w-12 bg-gradient-to-r from-transparent via-amber-200/65 to-transparent" />
             </div>
-            <div className="relative mx-auto flex min-h-[8.25rem] items-center justify-center rounded-[1.35rem] border border-white/12 bg-[radial-gradient(circle_at_50%_18%,rgba(103,232,249,0.16),rgba(15,23,42,0.16)_42%,rgba(2,6,23,0.52)_100%)] px-3 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:min-h-[9.2rem] md:px-4 md:py-5">
-              <div className="relative flex w-full items-center justify-center gap-[0.55rem] md:gap-3">
+            <div className="relative mx-auto flex min-h-[7.8rem] items-center justify-center rounded-[1.2rem] border border-white/12 bg-[radial-gradient(circle_at_50%_18%,rgba(103,232,249,0.16),rgba(15,23,42,0.16)_42%,rgba(2,6,23,0.52)_100%)] px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:min-h-[8.6rem] md:px-4 md:py-4">
+              <div className="relative flex w-full items-center justify-center gap-[0.48rem] md:gap-2.5">
                 {activeTargetAnchors.map((anchor, idx) => {
               const token = targetSlots[idx];
               const isDraggingThis = dragState?.fromLocation === 'target' && dragState.fromIndex === idx;
@@ -1085,16 +1085,16 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         </div>
 
         <div
-          className="pointer-events-none absolute left-1/2 top-[42.5%] z-10 -translate-x-1/2"
+          className="pointer-events-none absolute left-1/2 top-[39.6%] z-10 -translate-x-1/2"
           style={{ width: 'min(86vw, 46rem)' }}
         >
-          <div className="rounded-[1.4rem] border border-cyan-100/16 bg-slate-950/28 p-3 shadow-[0_16px_36px_rgba(2,6,23,0.28)] backdrop-blur-[8px] md:p-4">
-            <div className="mb-2 flex items-center justify-center gap-3 px-2 text-[clamp(0.65rem,1.5vw,0.8rem)] font-black uppercase tracking-[0.28em] text-cyan-100/90">
+          <div className="rounded-[1.35rem] border border-cyan-100/16 bg-slate-950/26 p-2.5 shadow-[0_16px_36px_rgba(2,6,23,0.28)] backdrop-blur-[8px] md:p-3.5">
+            <div className="mb-2 flex items-center justify-center gap-3 px-2 text-[clamp(0.62rem,1.35vw,0.76rem)] font-black uppercase tracking-[0.28em] text-cyan-100/90">
               <span className="h-px flex-1 max-w-14 bg-gradient-to-r from-transparent via-cyan-100/55 to-transparent" />
               <span>Choose the Missing Digits</span>
               <span className="h-px flex-1 max-w-14 bg-gradient-to-r from-transparent via-cyan-100/55 to-transparent" />
             </div>
-            <div className="relative flex flex-wrap items-center justify-center gap-[0.55rem] md:gap-3">
+            <div className="relative flex flex-wrap items-center justify-center gap-[0.48rem] md:gap-2.5">
               {activeSourceAnchors.map((anchor, idx) => {
               const token = sourceSlots[idx];
               const isDraggingThis = dragState?.fromLocation === 'source' && dragState.fromIndex === idx;
@@ -1137,7 +1137,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         </div>
 
         <div
-          className="pointer-events-none absolute left-[68.5%] top-[60.5%] z-30 -translate-x-1/2"
+          className="pointer-events-none absolute left-[68.5%] top-[57.4%] z-30 -translate-x-1/2"
           style={{ width: `${layout.enemyWidth}%` }}
         >
           <div className="relative">
