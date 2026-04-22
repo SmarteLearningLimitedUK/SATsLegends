@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import AssetIcon from '../components/AssetIcon';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import fractionForgeBackground from '../assets/maps/backgroundsforgames/fraction forge map.jpg';
 import { triggerHaptic } from '../haptics';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
@@ -234,8 +235,8 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     const usableBottom = Math.max(usableTop + 340, viewport.height - hudBottomReserve);
     const usableHeight = Math.max(340, usableBottom - usableTop);
 
-    const targetTop = usableTop + (usableHeight * (isTablet ? 0.41 : 0.39));
-    const sourceTop = targetTop - cardHeight - (isTablet ? 10 : 8);
+    const targetTop = usableTop + (usableHeight * (isTablet ? 0.43 : 0.41));
+    const sourceTop = targetTop + slotHeight + (isTablet ? 18 : 14);
     const pedestalTop = targetTop + (slotHeight * 0.5);
 
     const goblinWidth = Math.round(
@@ -601,14 +602,15 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
           className="pointer-events-none fixed left-0 right-0 z-[60]"
           style={{ top: useSharedTopHud ? '4px' : '8px' }}
         >
-          <div className="mx-auto w-full max-w-[760px] rounded-[1rem] bg-slate-950/72 px-[15px] py-[11px] text-center backdrop-blur-sm">
-            <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90">Fraction Forge</div>
-            <div className="mt-0.5 text-[clamp(1rem,3.8vw,1.35rem)] font-black text-white">
+          <div className="mx-auto flex w-full max-w-[26rem] justify-center px-3">
+            <GameQuestionCard
+              className="w-full"
+              bodyClassName="text-[clamp(0.95rem,3.3vw,1.15rem)] font-semibold leading-tight text-white"
+            >
               {round.prompt}
-            </div>
-            <div className="mt-1 text-[10px] font-semibold text-cyan-100/90">
+              {'\n'}
               Place the fractions in order.
-            </div>
+            </GameQuestionCard>
           </div>
         </div>
 

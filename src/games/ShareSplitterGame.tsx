@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { Check, RefreshCcw } from 'lucide-react';
@@ -11,7 +11,6 @@ import {
 } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import shareSplitterBackground from '../assets/maps/backgroundsforgames/tableshresplit.png';
-import shareSplitterPlate from '../assets/maps/backgroundsforgames/platesharesplit.png';
 import cakeSliceAsset from '../assets/cakeslice.png';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import CelebrationSplash from '../components/CelebrationSplash';
@@ -60,27 +59,16 @@ const BASE_XP_PER_ROUND = 120;
 const CAKE_SLICE_ASSET = cakeSliceAsset;
 const DRAG_SLICE_SIZE = 48;
 const SHARE_SPLITTER_BACKGROUND_SIZE = { width: 2500, height: 5000 };
-const SHARE_SPLITTER_PLATE_DIAMETER_PX = 540;
+const SHARE_SPLITTER_PLATE_DIAMETER_PX = 600;
 const CAKE_SOURCE_POSITION = { x: 1250, y: 3750 };
 const CAKE_SOURCE_SIZE_PX = 660;
-const SHARE_SPLITTER_TABLE_CENTER = { x: 1250, y: 2940 };
-const SHARE_SPLITTER_TABLE_PLATE_RADIUS = 760;
 const SHARE_SPLITTER_PLATE_ICON_SCALE = 1.06;
-
-const makeRingPoint = (center: { x: number; y: number }, radius: number, angleDegrees: number) => {
-  const angle = (angleDegrees * Math.PI) / 180;
-  return {
-    x: center.x + (Math.cos(angle) * radius),
-    y: center.y + (Math.sin(angle) * radius),
-  };
-};
-
 const SHARE_SPLITTER_TABLE_PLATE_POSITIONS = [
-  makeRingPoint(SHARE_SPLITTER_TABLE_CENTER, SHARE_SPLITTER_TABLE_PLATE_RADIUS, -90),
-  makeRingPoint(SHARE_SPLITTER_TABLE_CENTER, SHARE_SPLITTER_TABLE_PLATE_RADIUS, -18),
-  makeRingPoint(SHARE_SPLITTER_TABLE_CENTER, SHARE_SPLITTER_TABLE_PLATE_RADIUS, 54),
-  makeRingPoint(SHARE_SPLITTER_TABLE_CENTER, SHARE_SPLITTER_TABLE_PLATE_RADIUS, 126),
-  makeRingPoint(SHARE_SPLITTER_TABLE_CENTER, SHARE_SPLITTER_TABLE_PLATE_RADIUS, 198),
+  { x: 1250, y: 120 },
+  { x: 900, y: 520 },
+  { x: 1600, y: 520 },
+  { x: 1080, y: 920 },
+  { x: 1420, y: 920 },
 ];
 
 const RATIO_PATTERNS_BY_COUNT: Record<number, number[][]> = {
@@ -108,24 +96,25 @@ const RATIO_PATTERNS_BY_COUNT: Record<number, number[][]> = {
     [1, 1, 2, 2, 3],
     [1, 2, 2, 3, 3],
     [2, 1, 2, 3, 4],
+    [5, 3, 3, 3, 1],
   ],
 };
 
 const PLATE_POSITIONS_BY_COUNT: Record<number, Array<{ x: number; y: number }>> = {
   2: [
     SHARE_SPLITTER_TABLE_PLATE_POSITIONS[1],
-    SHARE_SPLITTER_TABLE_PLATE_POSITIONS[3],
+    SHARE_SPLITTER_TABLE_PLATE_POSITIONS[2],
   ],
   3: [
     SHARE_SPLITTER_TABLE_PLATE_POSITIONS[0],
     SHARE_SPLITTER_TABLE_PLATE_POSITIONS[1],
-    SHARE_SPLITTER_TABLE_PLATE_POSITIONS[3],
+    SHARE_SPLITTER_TABLE_PLATE_POSITIONS[2],
   ],
   4: [
     SHARE_SPLITTER_TABLE_PLATE_POSITIONS[0],
     SHARE_SPLITTER_TABLE_PLATE_POSITIONS[1],
     SHARE_SPLITTER_TABLE_PLATE_POSITIONS[2],
-    SHARE_SPLITTER_TABLE_PLATE_POSITIONS[4],
+    SHARE_SPLITTER_TABLE_PLATE_POSITIONS[3],
   ],
   5: SHARE_SPLITTER_TABLE_PLATE_POSITIONS,
 };
@@ -156,6 +145,12 @@ const shareModeForLevel = (levelId: number): ShareChallenge['mode'] => {
   return 'exam_share';
 };
 
+const plateCountForMode = (mode: ShareChallenge['mode']) => {
+  if (mode === 'direct_share') return 3;
+  if (mode === 'scaled_share') return 4;
+  return 5;
+};
+
 const buildSharePrompt = () => {
   return [
     "Welcome to the Monster Mind's party.",
@@ -167,14 +162,13 @@ const buildSharePrompt = () => {
 
 const createChallenge = (levelId: number, solved: number): ShareChallenge => {
   const mode = shareModeForLevel(levelId);
-  const plateCount = MAX_PLATE_COUNT;
+  const plateCount = plateCountForMode(mode);
   const patternOptions = RATIO_PATTERNS_BY_COUNT[plateCount] || RATIO_PATTERNS_BY_COUNT[2];
   const pattern = [...randomPick(patternOptions)];
   const totalUnits = pattern.reduce((sum, value) => sum + value, 0);
   const unitValue = mode === 'direct_share' ? 1 : mode === 'scaled_share' ? 2 : 3;
   const totalSlices = totalUnits * unitValue;
   const targetCounts = pattern.map((value) => value * unitValue);
-  const ratioText = pattern.join(':');
 
   return {
     id: nextChallengeId(),
@@ -756,7 +750,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                           <div
                             key={plate.id}
                             data-testid={`share-splitter-plate-${index + 1}`}
-                            className="pointer-events-none absolute relative flex -translate-x-1/2 -translate-y-1/2 items-center justify-center p-0 text-center transition"
+                            className="pointer-events-none absolute flex -translate-x-1/2 -translate-y-1/2 items-center justify-center p-0 text-center transition"
                             style={{
                               left: `${center.x}px`,
                               top: `${center.y}px`,
@@ -764,14 +758,13 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                               height: `${plateSizePx}px`,
                             }}
                           >
-                            <img
-                              src={shareSplitterPlate}
-                              alt=""
-                              draggable={false}
-                              className="pointer-events-none absolute inset-0 h-full w-full object-contain drop-shadow-[0_12px_18px_rgba(0,0,0,0.22)]"
-                              style={{
-                                transform: `scale(${SHARE_SPLITTER_PLATE_ICON_SCALE})`,
-                              }}
+                            <div
+                              aria-hidden="true"
+                              className="pointer-events-none absolute inset-[4%] rounded-full border border-white/90 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,1),rgba(255,255,255,0.98)_34%,rgba(248,250,252,0.96)_58%,rgba(226,232,240,0.92)_100%)] shadow-[0_14px_26px_rgba(15,23,42,0.22),inset_0_2px_4px_rgba(255,255,255,0.98),inset_0_-8px_16px_rgba(148,163,184,0.28)]"
+                            />
+                            <div
+                              aria-hidden="true"
+                              className="pointer-events-none absolute inset-[9%] rounded-full border border-slate-200/90 bg-white/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.95)]"
                             />
                             <div className="pointer-events-none absolute inset-0">
                               {plates[index].map((sliceId, sliceIndex) => {

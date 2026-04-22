@@ -511,14 +511,14 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           <TopBar XP={XP} brainPoints={zombiesDefeated} health={health} timer={timerLabel} onBack={onBack} />
         ) : null}
 
-        <div className={`mx-4 mt-4 flex-shrink-0 ${useSharedTopHud ? 'mt-2' : 'mt-4'}`}>
+        <div className={`mx-4 mt-3 flex-shrink-0 ${useSharedTopHud ? 'mt-1.5' : 'mt-3'}`}>
           <GameQuestionCard className="mx-auto w-full max-w-[54rem]">
             {question.prompt}
           </GameQuestionCard>
         </div>
 
         <div
-          className={`relative mx-4 mt-4 flex-1 overflow-hidden rounded-3xl border-4 border-blue-400/30 bg-blue-900/10 shadow-2xl ${useSharedTopHud ? 'mt-2' : 'mt-4'}`}
+          className={`relative mx-4 mt-6 flex-[1.3] overflow-hidden rounded-3xl border-4 border-blue-400/30 bg-blue-900/10 shadow-2xl ${useSharedTopHud ? 'mt-4' : 'mt-6'}`}
           style={{ backgroundImage: `url(${zombiePlayfield})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}
         >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_85%,rgba(56,189,248,0.06),transparent_48%)]" />
@@ -572,21 +572,21 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 
         </div>
 
-        <div className="mx-4 mt-4 rounded-3xl border border-blue-400/40 bg-blue-950/70 p-4 shadow-xl">
+        <div className="mx-4 mt-2 rounded-3xl border border-blue-400/40 bg-blue-950/70 p-2 shadow-xl">
           <div
-            className={`mt-2 min-h-[16px] text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-cyan-100/80 ${feedback ? 'opacity-100' : 'opacity-0'}`}
+            className={`mt-0.5 min-h-[8px] text-center text-[9px] font-semibold uppercase tracking-[0.12em] text-cyan-100/80 ${feedback ? 'opacity-100' : 'opacity-0'}`}
             aria-hidden={!feedback}
           >
             {feedback || '\u00A0'}
           </div>
-          <div className="mt-3 grid grid-cols-2 gap-2">
+          <div className="mt-1 grid grid-cols-4 gap-1">
             {question.options.map((option, index) => (
               <button
                 key={`${option}-${index}`}
                 type="button"
                 onClick={() => handleAnswer(index)}
                 disabled={locked}
-                className={`rounded-2xl px-3 py-3 text-lg font-black ${
+                className={`rounded-2xl px-2 py-2 text-[clamp(0.8rem,2vw,0.95rem)] font-black leading-none ${
                   locked && selectedAnswer === index
                     ? index === question.correctIndex
                       ? 'ui-button-success'
