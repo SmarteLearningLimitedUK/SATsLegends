@@ -39,7 +39,7 @@ type BoardCell = GemCell | null;
 
 const GEM_TYPES: GemType[] = ['red', 'blue', 'green', 'yellow', 'purple'];
 const GRID_COLS = 5;
-const GRID_ROWS = 10;
+const GRID_ROWS = 6;
 const ROUND_SECONDS = 60;
 const BASE_TARGET_SCORE = 900;
 const TARGET_SCORE_STEP = 140;
@@ -632,7 +632,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
-      <div className="relative box-border w-[min(88vw,27rem)] rounded-[2rem] border border-cyan-100/20 bg-[linear-gradient(180deg,rgba(4,16,44,0.9),rgba(3,10,28,0.96))] p-3 shadow-[0_18px_40px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:p-4">
+      <div className="relative box-border w-[min(86vw,24.5rem)] rounded-[2rem] border border-cyan-100/20 bg-[linear-gradient(180deg,rgba(4,16,44,0.9),rgba(3,10,28,0.96))] p-3 shadow-[0_18px_40px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:p-4">
         <div
           className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-[0.24]"
           style={{

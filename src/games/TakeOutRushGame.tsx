@@ -592,32 +592,32 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
           </header>
         ) : null}
 
-        <main className="relative mt-1.5 flex min-h-0 flex-1 flex-col gap-2 pb-[calc(env(safe-area-inset-bottom)+3.9rem)]">
+        <main className="relative mt-1.5 flex min-h-0 flex-1 flex-col gap-2 pb-[calc(env(safe-area-inset-bottom)+2.1rem)]">
           <section className="relative flex min-h-[16rem] flex-1 items-start justify-center">
-            <div className="absolute left-1/2 top-[calc(11%+20px)] w-[min(70vw,16.5rem)] -translate-x-1/2 text-center">
-              <div className="text-[9px] font-black uppercase tracking-[0.18em] text-amber-100/80 drop-shadow-[0_2px_6px_rgba(2,6,23,0.8)]">
-                Order Target
-              </div>
-              <div className="mt-1 text-[clamp(1.3rem,5.6vw,2rem)] font-black text-amber-100 drop-shadow-[0_3px_10px_rgba(2,6,23,0.8)]">
-                {asDisplayFraction(order.target)}
+            <div className="absolute left-1/2 top-[calc(8%+8px)] w-[min(84vw,18.5rem)] -translate-x-1/2 text-center">
+              <div className="rounded-[1.35rem] border border-orange-300/38 bg-[linear-gradient(180deg,rgba(15,18,32,0.94),rgba(10,12,24,0.98))] px-4 py-3 shadow-[0_18px_34px_rgba(2,6,23,0.56)]">
+                <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/88 drop-shadow-[0_2px_6px_rgba(2,6,23,0.8)]">
+                  Order Target
+                </div>
+                <div className="mt-1 text-[clamp(1.65rem,7vw,2.45rem)] font-black leading-none text-white drop-shadow-[0_3px_10px_rgba(2,6,23,0.9)]">
+                  {asDisplayFraction(order.target)}
+                </div>
               </div>
             </div>
-            <div className="pointer-events-none absolute left-1/2 bottom-[calc(3%_-_8pt)] h-[50%] w-[min(80vw,21rem)] -translate-x-1/2 overflow-hidden max-[480px]:h-[52%]">
+            <div className="pointer-events-none absolute left-1/2 bottom-[calc(4%_-_8pt)] h-[46%] w-[min(82vw,21rem)] -translate-x-1/2 overflow-hidden max-[480px]:h-[48%]">
               <img
                 src={orderMonster}
                 alt=""
                 draggable={false}
-                className="absolute bottom-0 h-full w-full scale-[1.08] object-contain drop-shadow-[0_12px_22px_rgba(2,6,23,0.45)] md:scale-[1.18]"
+                className="absolute bottom-0 h-full w-full scale-[1.04] object-contain drop-shadow-[0_12px_22px_rgba(2,6,23,0.45)] md:scale-[1.12]"
                 style={{ transformOrigin: 'bottom center' }}
               />
             </div>
           </section>
 
-          <div className="h-2" />
-
           <div className="flex flex-col gap-2">
-            <section className="rounded-[1.25rem] border border-black/25 bg-slate-950/65 p-2 -mt-6 shadow-[0_14px_26px_rgba(2,6,23,0.42)]">
-              <div className="mt-1 grid grid-cols-5 items-center justify-center gap-2">
+            <section className="rounded-[1.35rem] border border-black/25 bg-[linear-gradient(180deg,rgba(11,13,24,0.74),rgba(8,10,18,0.88))] p-2.5 shadow-[0_14px_26px_rgba(2,6,23,0.42)]">
+              <div className="mt-1 grid grid-cols-4 items-center justify-center gap-2">
                 {availableItems.map((item) => {
                   const isBanned = activeConstraints.bannedIds.has(item.id);
                   return (
@@ -627,9 +627,9 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                        data-button-skin="none"
                        onClick={() => addItem(item.id)}
                        disabled={isResolvingOrder || roundFinished || isBanned}
-                       className={`group flex flex-col items-center justify-center rounded-[0.9rem] border px-2.5 py-2 text-[10px] font-semibold text-white shadow-[0_10px_18px_rgba(0,0,0,0.28)] transition hover:border-white/28 active:scale-[0.98] disabled:opacity-50 ${isBanned ? 'border-white/10 bg-slate-950/30 grayscale' : 'border-white/18 bg-slate-950/65'}`}
+                       className={`group flex min-h-[5.2rem] flex-col items-center justify-center rounded-[1rem] border px-2.5 py-2 text-[10px] font-semibold text-white shadow-[0_10px_18px_rgba(0,0,0,0.28)] transition hover:border-white/28 active:scale-[0.98] disabled:opacity-50 ${isBanned ? 'border-white/10 bg-slate-950/30 grayscale' : 'border-white/18 bg-slate-950/65'}`}
                      >
-                       <FoodSprite item={item} className="h-10 w-10 object-contain" />
+                       <FoodSprite item={item} className="h-11 w-11 object-contain" />
                        <div className="mt-1 whitespace-nowrap text-[10px] font-black text-amber-100 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
                          {asDisplayFraction(item.value)}
                        </div>
@@ -641,15 +641,17 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
 
             <section className="game-submit-dock rounded-[1.25rem] border border-cyan-100/20 bg-slate-950/72 px-3 py-2 shadow-[0_12px_22px_rgba(2,6,23,0.5)]">
               <div className="flex flex-col items-center gap-2 text-center">
-                <div className="min-w-0 text-[11px] font-semibold text-cyan-100/70">
-                  {feedback?.text ?? (isExact && constraintsMet ? 'Ready to send!' : '')}
-                </div>
-                <div className="flex items-center justify-center gap-2">
+                {feedback?.text ? (
+                  <div className="min-w-0 text-[11px] font-semibold text-cyan-100/70">
+                    {feedback.text}
+                  </div>
+                ) : null}
+                <div className="flex w-full items-center justify-center gap-2">
                   <button
                     type="button"
                     onClick={clearTray}
                     disabled={selectedIds.length === 0 || isResolvingOrder}
-                    className="ui-button-secondary px-3 py-2 text-[10px] font-black uppercase disabled:opacity-50"
+                    className="ui-button-secondary w-[min(7.5rem,34vw)] px-3 py-2 text-[10px] font-black uppercase disabled:opacity-50"
                   >
                     Reset
                   </button>
@@ -657,7 +659,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                     type="button"
                     onClick={() => submitOrder(false)}
                     disabled={!canSubmit}
-                    className="ui-button-primary relative inline-flex h-11 w-[min(11rem,46vw)] items-center justify-center border-0 bg-transparent px-4 py-0 text-[11px] font-black uppercase tracking-[0.12em] text-[#16233d] disabled:opacity-50"
+                    className="ui-button-primary relative inline-flex h-12 w-[min(12.5rem,56vw)] items-center justify-center border-0 bg-transparent px-4 py-0 text-[11px] font-black uppercase tracking-[0.12em] text-[#16233d] disabled:opacity-50"
                   >
                     Send Order
                   </button>

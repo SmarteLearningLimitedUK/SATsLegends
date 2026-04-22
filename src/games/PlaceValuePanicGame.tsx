@@ -408,21 +408,21 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const isTallPhone = !isTablet && ratio > 1.95;
 
     return {
-      submitY: isTablet ? 88.2 : (isTallPhone ? 88.8 : 88.5),
-      submitWidth: isTablet ? 30 : 46,
-      submitHeight: isTablet ? 8.6 : 9.2,
-      targetY: isTablet ? 79.2 : (isTallPhone ? 80.3 : 79.9),
-      sourceY: isTablet ? 32.8 : (isTallPhone ? 33.8 : 33.5),
-      targetWidth: isTablet ? '12.8%' : '16.9%',
-      sourceWidth: isTablet ? '9.8%' : '12.2%',
-      targetHeight: isTablet ? '12.2%' : '14.8%',
-      sourceHeight: isTablet ? '8.8%' : '10.2%',
-      targetFont: isTablet ? 'clamp(2.2rem,4.9vw,3.8rem)' : 'clamp(2.1rem,5.5vw,3.55rem)',
-      sourceFont: isTablet ? 'clamp(2.05rem,4.5vw,3.45rem)' : 'clamp(1.95rem,5.1vw,3.15rem)',
-      healthTop: isTablet ? 58.6 : (isTallPhone ? 59.2 : 58.9),
-      healthWidth: isTablet ? 16 : 21,
-      healthLeft: isTablet ? 66.4 : 68.8,
-      enemyWidth: isTablet ? 46 : 54,
+      submitY: isTablet ? 89.4 : (isTallPhone ? 90.1 : 89.8),
+      submitWidth: isTablet ? 34 : 50,
+      submitHeight: isTablet ? 9.4 : 10.2,
+      targetY: isTablet ? 73.4 : (isTallPhone ? 74.2 : 73.8),
+      sourceY: isTablet ? 45.1 : (isTallPhone ? 46.0 : 45.5),
+      targetWidth: isTablet ? '14.6%' : '19.8%',
+      sourceWidth: isTablet ? '11.8%' : '15.0%',
+      targetHeight: isTablet ? '13.8%' : '17.0%',
+      sourceHeight: isTablet ? '10.8%' : '12.2%',
+      targetFont: isTablet ? 'clamp(2.6rem,5.8vw,4.35rem)' : 'clamp(2.45rem,6.5vw,4rem)',
+      sourceFont: isTablet ? 'clamp(2.35rem,5.0vw,3.95rem)' : 'clamp(2.2rem,5.8vw,3.55rem)',
+      healthTop: isTablet ? 63.9 : (isTallPhone ? 64.4 : 64.1),
+      healthWidth: isTablet ? 15.6 : 19.8,
+      healthLeft: isTablet ? 66.8 : 69.4,
+      enemyWidth: isTablet ? 40 : 46,
     };
   }, [viewport.height, viewport.width]);
 
@@ -989,8 +989,13 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         </div>
       ) : null}
 
-      <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
-        <GameQuestionCard title="Place Value Panic">
+      <div className="pointer-events-none fixed left-1/2 z-[60] w-[min(92vw,42rem)] -translate-x-1/2" style={{ top: '6px' }}>
+        <GameQuestionCard
+          title="Place Value Panic"
+          className="mx-auto rounded-[1rem] px-4 py-3 text-center"
+          titleClassName="text-[10px] tracking-[0.26em] md:text-[11px]"
+          bodyClassName="mt-1 text-[clamp(0.92rem,1.9vw,1.1rem)] leading-tight md:text-[clamp(1rem,2vw,1.15rem)]"
+        >
           {questionPrompt}
         </GameQuestionCard>
       </div>
@@ -1002,27 +1007,18 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         transition={{ duration: 0.34, ease: 'easeInOut' }}
       >
         <div
-          className="absolute z-30 rounded-lg border border-amber-200/35 bg-slate-900/76 p-1.5 shadow-[0_10px_20px_rgba(2,6,23,0.46)]"
-          style={{
-            top: `${layout.healthTop}%`,
-            left: `min(calc(50% + ${Math.max(10, layout.enemyWidth * 0.5)}%), calc(100% - max(0.75rem, env(safe-area-inset-right)) - ${layout.healthWidth}%))`,
-            width: `${layout.healthWidth}%`,
-          }}
+          className="pointer-events-none absolute left-1/2 top-[17.5%] z-10 -translate-x-1/2"
+          style={{ width: 'min(82vw, 42rem)' }}
         >
-          <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.12em] text-amber-200 md:text-[9px]">
-            Monster Mind
-          </div>
-          <div className="relative h-2 overflow-hidden rounded-full border border-slate-700/80 bg-slate-950/80">
-            <motion.div
-              className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-rose-500 via-rose-400 to-orange-300 shadow-[0_0_12px_rgba(251,113,133,0.75)]"
-              animate={{ width: `${(goblinHealth / GOBLIN_MAX_HEALTH) * 100}%` }}
-              transition={{ type: 'spring', stiffness: 210, damping: 26 }}
-            />
-            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.14)_1px,transparent_1px)] bg-[length:10%_100%]" />
-          </div>
-        </div>
-
-            {activeTargetAnchors.map((anchor, idx) => {
+          <div className="mx-auto rounded-[1.6rem] border border-cyan-100/20 bg-slate-950/32 p-3 shadow-[0_18px_40px_rgba(2,6,23,0.34)] backdrop-blur-[8px] md:p-4">
+            <div className="mb-2 flex items-center justify-center gap-3 px-2 text-[clamp(0.65rem,1.5vw,0.8rem)] font-black uppercase tracking-[0.28em] text-amber-200/92">
+              <span className="h-px flex-1 max-w-12 bg-gradient-to-r from-transparent via-amber-200/65 to-transparent" />
+              <span>Number Stones</span>
+              <span className="h-px flex-1 max-w-12 bg-gradient-to-r from-transparent via-amber-200/65 to-transparent" />
+            </div>
+            <div className="relative mx-auto flex min-h-[8.25rem] items-center justify-center rounded-[1.35rem] border border-white/12 bg-[radial-gradient(circle_at_50%_18%,rgba(103,232,249,0.16),rgba(15,23,42,0.16)_42%,rgba(2,6,23,0.52)_100%)] px-3 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:min-h-[9.2rem] md:px-4 md:py-5">
+              <div className="relative flex w-full items-center justify-center gap-[0.55rem] md:gap-3">
+                {activeTargetAnchors.map((anchor, idx) => {
               const token = targetSlots[idx];
               const isDraggingThis = dragState?.fromLocation === 'target' && dragState.fromIndex === idx;
               return (
@@ -1083,8 +1079,23 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
             </motion.button>
           );
         })}
+              </div>
+            </div>
+          </div>
+        </div>
 
-            {activeSourceAnchors.map((anchor, idx) => {
+        <div
+          className="pointer-events-none absolute left-1/2 top-[42.5%] z-10 -translate-x-1/2"
+          style={{ width: 'min(86vw, 46rem)' }}
+        >
+          <div className="rounded-[1.4rem] border border-cyan-100/16 bg-slate-950/28 p-3 shadow-[0_16px_36px_rgba(2,6,23,0.28)] backdrop-blur-[8px] md:p-4">
+            <div className="mb-2 flex items-center justify-center gap-3 px-2 text-[clamp(0.65rem,1.5vw,0.8rem)] font-black uppercase tracking-[0.28em] text-cyan-100/90">
+              <span className="h-px flex-1 max-w-14 bg-gradient-to-r from-transparent via-cyan-100/55 to-transparent" />
+              <span>Choose the Missing Digits</span>
+              <span className="h-px flex-1 max-w-14 bg-gradient-to-r from-transparent via-cyan-100/55 to-transparent" />
+            </div>
+            <div className="relative flex flex-wrap items-center justify-center gap-[0.55rem] md:gap-3">
+              {activeSourceAnchors.map((anchor, idx) => {
               const token = sourceSlots[idx];
               const isDraggingThis = dragState?.fromLocation === 'source' && dragState.fromIndex === idx;
               return (
@@ -1121,20 +1132,13 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
             </motion.button>
           );
         })}
+            </div>
+          </div>
+        </div>
 
         <div
-          className="pointer-events-none absolute left-1/2 z-[16] -translate-x-1/2 -translate-y-1/2 rounded-[2px] border border-cyan-200/30 bg-slate-900/34 shadow-[0_10px_24px_rgba(2,6,23,0.42)]"
-          style={{
-            top: `calc(${layout.sourceY}% - ${SOURCE_ROW_Y_OFFSET_PX}px)`,
-            width: `calc(${sourceTokenBackdropWidth} + ${sourceTokenBackdropPadding} + ${sourceTokenBackdropPadding})`,
-            height: `calc(${sourceTokenBackdropHeight} + ${sourceTokenBackdropPadding} + ${sourceTokenBackdropPadding})`,
-            backdropFilter: 'blur(2.5px)',
-          }}
-        />
-
-        <div
-          className="pointer-events-none absolute left-1/2 z-30 -translate-x-1/2"
-          style={{ bottom: enemyBottomFromPlayfield, width: `${layout.enemyWidth}%` }}
+          className="pointer-events-none absolute left-[68.5%] top-[60.5%] z-30 -translate-x-1/2"
+          style={{ width: `${layout.enemyWidth}%` }}
         >
           <div className="relative">
             <AnimatePresence>
@@ -1153,7 +1157,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                       animate={{ opacity: [0.5, 0.9, 0.5], scale: [0.96, 1.04, 0.96] }}
                       transition={{ duration: 0.7, repeat: Infinity, ease: 'easeInOut' }}
                     />
-                    <div className="relative rounded-full border border-amber-200/70 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.96),rgba(254,243,199,0.94)_42%,rgba(254,215,170,0.92)_100%)] px-3.5 py-1.5 text-[clamp(0.62rem,1.8vw,0.9rem)] font-black uppercase tracking-[0.05em] text-slate-800 shadow-[0_10px_18px_rgba(2,6,23,0.45)]">
+                    <div className="relative rounded-full border border-amber-200/70 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.96),rgba(254,243,199,0.94)_42%,rgba(254,215,170,0.92)_100%)] px-3.5 py-1.5 text-[clamp(0.58rem,1.5vw,0.82rem)] font-black uppercase tracking-[0.05em] text-slate-800 shadow-[0_10px_18px_rgba(2,6,23,0.45)]">
                       {enemySpeech}
                     </div>
                     <div className="absolute left-1/2 top-[100%] h-2.5 w-2.5 -translate-x-1/2 rotate-45 border-b border-r border-amber-200/70 bg-amber-100/95" />
@@ -1280,7 +1284,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         <div
           className="game-submit-dock-fixed"
           style={{
-            bottom: 'calc(env(safe-area-inset-bottom) + 1rem)',
+            bottom: 'calc(env(safe-area-inset-bottom) + 0.85rem)',
           }}
         >
           <button
@@ -1294,7 +1298,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
             }}
           >
             <span
-              className="pointer-events-none absolute inset-x-[16%] top-1/2 -translate-y-1/2 text-center text-[clamp(0.82rem,2.2vw,1.06rem)] font-black uppercase tracking-[0.08em] text-[#16233d]"
+              className="pointer-events-none absolute inset-x-[14%] top-1/2 -translate-y-1/2 text-center text-[clamp(0.9rem,2.5vw,1.18rem)] font-black uppercase tracking-[0.08em] text-[#16233d]"
             >
               Submit
             </span>
