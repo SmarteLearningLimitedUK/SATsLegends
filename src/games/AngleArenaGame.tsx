@@ -566,6 +566,50 @@ const drawEnemyPortrait = (ctx: CanvasRenderingContext2D, image: HTMLImageElemen
   ctx.restore();
 };
 
+const drawWoodenTower = (
+  ctx: CanvasRenderingContext2D,
+  blocks: HTMLImageElement | null,
+  props1: HTMLImageElement | null,
+  props2: HTMLImageElement | null,
+  width: number,
+  height: number,
+  accent = 1,
+) => {
+  ctx.save();
+  ctx.translate(-width / 2, -height);
+
+  ctx.fillStyle = `rgba(34, 20, 12, ${0.22 * accent})`;
+  ctx.fillRect(width * 0.16, height * 0.88, width * 0.68, height * 0.12);
+
+  if (blocks) {
+    drawContainImage(ctx, blocks, width * 0.06, height * 0.1, width * 0.88, height * 0.7, 0.95);
+  } else {
+    const woodGrad = ctx.createLinearGradient(0, 0, 0, height * 0.78);
+    woodGrad.addColorStop(0, '#c0843d');
+    woodGrad.addColorStop(0.5, '#8b5a2b');
+    woodGrad.addColorStop(1, '#5b3414');
+    ctx.fillStyle = woodGrad;
+    ctx.fillRect(width * 0.1, height * 0.12, width * 0.8, height * 0.68);
+  }
+
+  if (props1) {
+    drawContainImage(ctx, props1, width * 0.12, height * 0.02, width * 0.76, height * 0.38, 0.9);
+  }
+  if (props2) {
+    drawContainImage(ctx, props2, width * 0.22, height * 0.4, width * 0.56, height * 0.42, 0.88);
+  }
+
+  ctx.fillStyle = 'rgba(251, 191, 36, 0.14)';
+  ctx.fillRect(width * 0.14, height * 0.18, width * 0.18, height * 0.58);
+  ctx.fillRect(width * 0.68, height * 0.18, width * 0.12, height * 0.58);
+
+  ctx.fillStyle = 'rgba(69, 43, 20, 0.42)';
+  ctx.fillRect(width * 0.02, height * 0.02, width * 0.96, height * 0.08);
+  ctx.fillRect(width * 0.06, height * 0.78, width * 0.88, height * 0.06);
+
+  ctx.restore();
+};
+
 const formatTime = (seconds: number) => {
   const clamped = Math.max(0, Math.floor(seconds));
   const mins = Math.floor(clamped / 60);
@@ -975,6 +1019,19 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         drawContainImage(ctx, props2, viewWidth * 0.80, viewHeight * 0.66, viewWidth * 0.14, viewHeight * 0.12, 0.88);
       }
 
+      const cannonTowerWidth = viewWidth * 0.17;
+      const cannonTowerHeight = viewHeight * 0.24;
+      const cannonTowerPos = {
+        x: originScreen.x - viewWidth * 0.02,
+        y: originScreen.y + viewHeight * 0.17,
+      };
+      if (blocks || props1 || props2) {
+        ctx.save();
+        ctx.translate(cannonTowerPos.x, cannonTowerPos.y);
+        drawWoodenTower(ctx, blocks, props1, props2, cannonTowerWidth, cannonTowerHeight, 1);
+        ctx.restore();
+      }
+
       if ((gameState === 'aiming' || gameState === 'awaitingAnswer') && selectedAnswerRef.current !== null) {
         const aimingAngle = selectedAnswerRef.current ?? desiredAngleRef.current;
         const aimVector = angleToVector(aimingAngle);
@@ -1004,6 +1061,12 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.translate(enemyScreen.x, enemyScreen.y);
       const enemySize = Math.min(viewWidth, viewHeight) * 0.26;
       const platform: EnemyPlatform = questionIndex % 2 === 0 ? 'podium' : 'cloud';
+      if (blocks || props1 || props2) {
+        ctx.save();
+        ctx.translate(0, enemySize * 0.16);
+        drawWoodenTower(ctx, blocks, props1, props2, enemySize * 0.7, enemySize * 0.8, 0.95);
+        ctx.restore();
+      }
       drawEnemyPlatform(ctx, platform, enemySize);
 
       const enemies = enemySpritesRef.current;
