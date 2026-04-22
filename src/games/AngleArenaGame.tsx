@@ -20,6 +20,7 @@ import angryBackgroundSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUn
 import angryBlocksSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Buildings/blocks.png';
 import angryProps1Src from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Buildings/props1.png';
 import angryProps2Src from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Buildings/props2.png';
+import angryLogoSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Menu/Angry_Birds_logos.png';
 import { BOSS_ART_LIBRARY } from '../assets/bosses/library';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
 import { angleToVector, clamp, degreesToRadians, distance, lerp, worldToScreen } from './angleArena/math';
@@ -636,6 +637,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const angryBlocksRef = useRef<HTMLImageElement | null>(null);
   const angryProps1Ref = useRef<HTMLImageElement | null>(null);
   const angryProps2Ref = useRef<HTMLImageElement | null>(null);
+  const angryLogoRef = useRef<HTMLImageElement | null>(null);
 
   const [gameState, setGameState] = useState<GameState>('intro');
   const [questionIndex, setQuestionIndex] = useState(0);
@@ -743,6 +745,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     loadTexture(angryBlocksSrc, (img) => { angryBlocksRef.current = img; });
     loadTexture(angryProps1Src, (img) => { angryProps1Ref.current = img; });
     loadTexture(angryProps2Src, (img) => { angryProps2Ref.current = img; });
+    loadTexture(angryLogoSrc, (img) => { angryLogoRef.current = img; });
   }, []);
 
   const resetForNext = () => {
@@ -926,6 +929,11 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         ctx.drawImage(bg, 0, 0, viewWidth, viewHeight);
       } else {
         drawSkyBackground(ctx, viewWidth, viewHeight, timestamp, camera.x, camera.y, Boolean(projectile?.active));
+      }
+
+      const logo = angryLogoRef.current;
+      if (logo) {
+        drawContainImage(ctx, logo, viewWidth * 0.06, viewHeight * 0.05, viewWidth * 0.36, viewHeight * 0.11, 0.9);
       }
 
       const cannonAnchor = { x: viewWidth * CANNON_ANCHOR_X_RATIO, y: viewHeight * CANNON_ANCHOR_Y_RATIO };
