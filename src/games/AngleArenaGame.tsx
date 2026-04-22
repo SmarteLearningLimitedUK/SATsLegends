@@ -16,8 +16,6 @@ import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import cannonFacingLeftSrc from '../assets/angle_arena/cannonanglearena/1.png';
 import cannonFacingRightSrc from '../assets/angle_arena/cannonanglearena/2.png';
 import cannonFacingUpSrc from '../assets/angle_arena/cannonanglearena/3.png';
-import angryGroundSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Background/INGAME_GROUNDS_1.png';
-import angryParallaxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Background/INGAME_PARALLAX_1.png';
 import { BOSS_ART_LIBRARY } from '../assets/bosses/library';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
 import { angleToVector, clamp, degreesToRadians, distance, lerp, worldToScreen } from './angleArena/math';
@@ -72,7 +70,7 @@ const MAX_FLIGHT_DISTANCE = 980;
 const CANNON_ANCHOR_X_RATIO = 0.5;
 const CANNON_ANCHOR_Y_RATIO = 0.5;
 const CAMERA_LEAD_DISTANCE = 340;
-const CAMERA_ACTIVE_LERP = 0.18;
+const CAMERA_ACTIVE_LERP = 0.22;
 const ENEMY_FOREGROUND_LEAD = 110;
 const SKY_DRIFT_FACTOR = 0.14;
 const GROUND_DRIFT_FACTOR = 0.28;
@@ -94,35 +92,11 @@ const ANGLE_CLOUDS: CloudLayer[] = [
   { x: 1180, y: 0.21, scale: 1.34, speed: 0.18, alpha: 0.66 },
 ];
 
-type LoadedTexture = HTMLImageElement;
-
 const makeImage = (src: string) => {
   const img = new Image();
   img.decoding = 'async';
   img.src = src;
   return img;
-};
-
-const drawTiledImage = (
-  ctx: CanvasRenderingContext2D,
-  image: LoadedTexture,
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  opacity = 1,
-) => {
-  const iw = image.naturalWidth || image.width;
-  const ih = image.naturalHeight || image.height;
-  if (!iw || !ih) return;
-  ctx.save();
-  ctx.globalAlpha = opacity;
-  for (let px = x; px < x + width; px += iw) {
-    for (let py = y; py < y + height; py += ih) {
-      ctx.drawImage(image, px, py, iw, ih);
-    }
-  }
-  ctx.restore();
 };
 
 const drawAngryBirdProjectile = (ctx: CanvasRenderingContext2D, radius: number, pulse = 0) => {
@@ -632,8 +606,6 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const aimTimeoutRef = useRef<number | null>(null);
   const cannonSpritesRef = useRef<CannonSprites>({});
   const enemySpritesRef = useRef<HTMLImageElement[]>([]);
-  const parallaxTextureRef = useRef<HTMLImageElement | null>(null);
-  const groundTextureRef = useRef<HTMLImageElement | null>(null);
 
   const [gameState, setGameState] = useState<GameState>('intro');
   const [questionIndex, setQuestionIndex] = useState(0);
@@ -727,17 +699,6 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         enemySpritesRef.current = next;
       };
     });
-  }, []);
-
-  useEffect(() => {
-    const parallax = makeImage(angryParallaxSrc);
-    const ground = makeImage(angryGroundSrc);
-    parallax.onload = () => {
-      parallaxTextureRef.current = parallax;
-    };
-    ground.onload = () => {
-      groundTextureRef.current = ground;
-    };
   }, []);
 
   const resetForNext = () => {
@@ -890,10 +851,9 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       }
 
       if (projectile?.active) {
-        const travel = normalizeVector(projectile.vx, projectile.vy);
         cameraTargetRef.current = {
-          x: projectile.x - (travel.x * CAMERA_LEAD_DISTANCE * 0.45),
-          y: projectile.y - (travel.y * CAMERA_LEAD_DISTANCE * 0.45),
+          x: projectile.x,
+          y: projectile.y,
         };
       }
 
@@ -919,21 +879,14 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.clearRect(0, 0, viewWidth, viewHeight);
       drawSkyBackground(ctx, viewWidth, viewHeight, timestamp, camera.x, camera.y, Boolean(projectile?.active));
 
-      const parallaxTexture = parallaxTextureRef.current;
-      if (parallaxTexture) {
-        const px = -((camera.x * 0.18) % Math.max(1, parallaxTexture.naturalWidth * 1.4));
-        const py = viewHeight * 0.05 - (camera.y * 0.05);
-        drawTiledImage(ctx, parallaxTexture, px, py, viewWidth + parallaxTexture.naturalWidth * 2, viewHeight * 0.64, 0.34);
-      }
-
       const cannonAnchor = { x: viewWidth * CANNON_ANCHOR_X_RATIO, y: viewHeight * CANNON_ANCHOR_Y_RATIO };
-      const screenOffset = { x: cannonAnchor.x - viewWidth / 2, y: cannonAnchor.y - viewHeight / 2 };
+      const screenOffset = projectile?.active ? { x: 0, y: 0 } : { x: cannonAnchor.x - viewWidth / 2, y: cannonAnchor.y - viewHeight / 2 };
       const toScreen = (x: number, y: number) => {
         const base = worldToScreen(x, y, camera.x, camera.y, viewWidth, viewHeight);
         return { x: base.x + screenOffset.x, y: base.y + screenOffset.y };
       };
 
-      const originScreen = cannonAnchor;
+      const originScreen = toScreen(0, 0);
       const travel = projectile?.active ? normalizeVector(projectile.vx, projectile.vy) : { x: 0, y: 0 };
       const enemyVisualWorld = projectile?.active
         ? {
@@ -973,20 +926,6 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         ctx.stroke();
       }
       ctx.restore();
-
-      const groundTexture = groundTextureRef.current;
-      if (groundTexture) {
-        const tileW = groundTexture.naturalWidth || 1;
-        const tileH = groundTexture.naturalHeight || 1;
-        const groundBaseY = viewHeight * 0.82;
-        const groundOffset = -((camera.x * 0.4) % tileW);
-        ctx.save();
-        ctx.globalAlpha = 0.75;
-        for (let x = groundOffset - tileW; x < viewWidth + tileW; x += tileW) {
-          ctx.drawImage(groundTexture, x, groundBaseY, tileW, Math.max(tileH * 0.55, viewHeight * 0.18));
-        }
-        ctx.restore();
-      }
 
       if ((gameState === 'aiming' || gameState === 'awaitingAnswer') && selectedAnswerRef.current !== null) {
         const aimingAngle = selectedAnswerRef.current ?? desiredAngleRef.current;
