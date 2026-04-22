@@ -599,9 +599,6 @@ const drawEnemyPortrait = (ctx: CanvasRenderingContext2D, image: HTMLImageElemen
 
 const drawWoodenTower = (
   ctx: CanvasRenderingContext2D,
-  blocks: HTMLImageElement | null,
-  props1: HTMLImageElement | null,
-  props2: HTMLImageElement | null,
   width: number,
   height: number,
   accent = 1,
@@ -659,15 +656,10 @@ const drawWoodenTower = (
     ctx.stroke();
   }
 
-  if (blocks) {
-    drawContainImage(ctx, blocks, width * 0.26, height * 0.1, width * 0.48, height * 0.64, 0.22 * accent);
-  }
-  if (props1) {
-    drawContainImage(ctx, props1, width * 0.16, height * 0.06, width * 0.68, height * 0.2, 0.18 * accent);
-  }
-  if (props2) {
-    drawContainImage(ctx, props2, width * 0.18, height * 0.5, width * 0.64, height * 0.18, 0.16 * accent);
-  }
+  // Keep the tower readable without drawing full sprite sheets over the playfield.
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+  ctx.fillRect(width * 0.22, height * 0.12, width * 0.1, height * 0.62);
+  ctx.fillRect(width * 0.66, height * 0.18, width * 0.08, height * 0.52);
 
   ctx.fillStyle = `rgba(34, 20, 12, ${0.18 * accent})`;
   ctx.fillRect(width * 0.1, height * 0.86, width * 0.8, height * 0.1);
@@ -1181,32 +1173,16 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.arc(originScreen.x, originScreen.y, WORLD_RADIUS * 0.35, 0, Math.PI * 2);
       ctx.stroke();
 
-      const blocks = angryBlocksRef.current;
-      const props1 = angryProps1Ref.current;
-      const props2 = angryProps2Ref.current;
-      if (blocks) {
-        drawContainImage(ctx, blocks, viewWidth * 0.03, viewHeight * 0.61, viewWidth * 0.22, viewHeight * 0.22, 0.92);
-        drawContainImage(ctx, blocks, viewWidth * 0.68, viewHeight * 0.58, viewWidth * 0.26, viewHeight * 0.26, 0.88);
-      }
-      if (props1) {
-        drawContainImage(ctx, props1, viewWidth * 0.11, viewHeight * 0.67, viewWidth * 0.17, viewHeight * 0.12, 0.82);
-      }
-      if (props2) {
-        drawContainImage(ctx, props2, viewWidth * 0.79, viewHeight * 0.65, viewWidth * 0.15, viewHeight * 0.13, 0.82);
-      }
-
       const cannonTowerWidth = viewWidth * 0.17;
       const cannonTowerHeight = viewHeight * 0.24;
       const cannonTowerPos = {
         x: originScreen.x,
         y: originScreen.y + (cannonTowerHeight * 0.96),
       };
-      if (blocks || props1 || props2) {
-        ctx.save();
-        ctx.translate(cannonTowerPos.x, cannonTowerPos.y);
-        drawWoodenTower(ctx, blocks, props1, props2, cannonTowerWidth, cannonTowerHeight, 1);
-        ctx.restore();
-      }
+      ctx.save();
+      ctx.translate(cannonTowerPos.x, cannonTowerPos.y);
+      drawWoodenTower(ctx, cannonTowerWidth, cannonTowerHeight, 1);
+      ctx.restore();
 
       if ((gameState === 'aiming' || gameState === 'awaitingAnswer') && selectedAnswerRef.current !== null) {
         const aimingAngle = selectedAnswerRef.current ?? desiredAngleRef.current;
@@ -1237,12 +1213,10 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       const enemySize = Math.min(viewWidth, viewHeight) * 0.26;
       const enemyTowerWidth = enemySize * 0.7;
       const enemyTowerHeight = enemySize * 0.8;
-      if (blocks || props1 || props2) {
-        ctx.save();
-        ctx.translate(enemyScreen.x, enemyScreen.y + (enemyTowerHeight * 0.96));
-        drawWoodenTower(ctx, blocks, props1, props2, enemyTowerWidth, enemyTowerHeight, 0.95);
-        ctx.restore();
-      }
+      ctx.save();
+      ctx.translate(enemyScreen.x, enemyScreen.y + (enemyTowerHeight * 0.96));
+      drawWoodenTower(ctx, enemyTowerWidth, enemyTowerHeight, 0.95);
+      ctx.restore();
       if (questionIndex % 2 === 1) {
         ctx.save();
         ctx.translate(enemyScreen.x, enemyScreen.y + enemySize * 0.08);
