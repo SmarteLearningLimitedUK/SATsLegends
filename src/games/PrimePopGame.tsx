@@ -576,14 +576,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
   }, [isPractice]);
 
   return (
-    <div
-      className="relative z-20 h-full min-h-0 w-full overflow-hidden bg-no-repeat select-none"
-      style={{
-        backgroundImage: `url(${primePopBackground})`,
-        backgroundSize: '100% 100%',
-        backgroundPosition: 'center top',
-      }}
-    >
+    <div className="relative z-20 flex h-full min-h-0 w-full flex-col overflow-hidden select-none">
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Prime Pop"
@@ -606,7 +599,12 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
       <motion.div
         animate={screenShake ? { x: [0, -8, 8, -5, 5, -2, 0], y: [0, 2, -2, 0] } : { x: 0, y: 0 }}
         transition={{ duration: 0.28 }}
-        className="absolute inset-x-0 bottom-0 top-0 min-h-0 overflow-hidden bg-transparent pt-[calc(env(safe-area-inset-top)+8.4rem)]"
+        className="relative flex-1 min-h-0 overflow-hidden bg-no-repeat"
+        style={{
+          backgroundImage: `url(${primePopBackground})`,
+          backgroundSize: '100% 100%',
+          backgroundPosition: 'center top',
+        }}
       >
         <div
           className="pointer-events-none absolute left-0 right-0 z-20 flex items-center justify-center"
