@@ -4913,11 +4913,7 @@ button.avatar-hero-arrow:not(:disabled):active {
   --shared-minigame-dock-gap: 0.5rem;
   --shared-minigame-dock-buffer: 0rem;
   --shared-question-card-top-gap: 10px;
-  --shared-minigame-reserved-bottom: calc(
-    var(--shared-minigame-dock-height)
-    + var(--shared-minigame-dock-gap)
-    + var(--shared-minigame-dock-buffer)
-  );
+  --shared-minigame-reserved-bottom: 0rem;
   --shared-minigame-hud-reserved-top: calc(
     0.5rem
     + (var(--shared-minigame-hud-padding-y) * 2)
@@ -4989,7 +4985,7 @@ button.avatar-hero-arrow:not(:disabled):active {
 }
 
 .screen-gameplay .unified-minigame-hud-enabled .maths-vs-zombies-answer-surface {
-  bottom: 2px !important;
+  bottom: calc(env(safe-area-inset-bottom) / var(--game-stage-scale, 1)) !important;
 }
 
 .screen-gameplay .unified-minigame-hud-enabled .structured-game-layout > * {

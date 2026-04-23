@@ -170,6 +170,16 @@ const buildQuestion = (levelId: number): Question => {
   };
 };
 
+const getOpeningReferenceQuestion = (levelId: number): Question | null => {
+  if (levelId !== 41) return null;
+
+  return {
+    prompt: 'Help! Minions are attacking.\nSolve the sum to defeat them.\n829 + 1165',
+    options: [1994, 1989, 2002, 1999],
+    correctIndex: 0,
+  };
+};
+
 const TopBar = ({ XP, brainPoints, health, timer, onBack }: { XP: number; brainPoints: number; health: number; timer: string; onBack: () => void }) => (
   <div className="z-50 w-full px-4 pt-4">
     <div className="flex items-center justify-between">
@@ -232,7 +242,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
   const [health, setHealth] = useState(3);
   const [timeLeft, setTimeLeft] = useState(roundSeconds);
   const [zombies, setZombies] = useState<Zombie[]>([]);
-  const [question, setQuestion] = useState<Question>(() => buildQuestion(levelId));
+  const [question, setQuestion] = useState<Question>(() => getOpeningReferenceQuestion(levelId) ?? buildQuestion(levelId));
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [feedback, setFeedback] = useState('');
   const [locked, setLocked] = useState(false);
@@ -315,7 +325,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     setTimeLeft(roundSeconds);
     setZombies([]);
     zombiesRef.current = [];
-    setQuestion(buildQuestion(levelId));
+    setQuestion(getOpeningReferenceQuestion(levelId) ?? buildQuestion(levelId));
     setSelectedAnswer(null);
     setFeedback('');
     setLocked(false);
@@ -523,12 +533,12 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           </GameQuestionCard>
         </div>
 
-        <div className={`mx-4 flex min-h-0 flex-[1.9] flex-col gap-2 pb-[5rem] ${useSharedTopHud ? 'mt-1' : 'mt-2'}`}>
+        <div className={`mx-4 flex min-h-0 flex-[1.9] flex-col gap-2 pb-0 ${useSharedTopHud ? 'mt-1' : 'mt-2'}`}>
           <div
             className="relative min-h-0 flex-1 overflow-hidden rounded-3xl border-4 border-blue-400/30 bg-blue-900/10 shadow-2xl"
             style={{
               backgroundImage: `url(${zombiePlayfield})`,
-              backgroundSize: 'cover',
+              backgroundSize: '80% auto',
               backgroundPosition: 'center bottom',
               backgroundRepeat: 'no-repeat',
             }}
@@ -590,23 +600,23 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           </div>
 
           <div
-            className="answer-choice-surface maths-vs-zombies-answer-surface mx-4 mt-2 flex flex-col rounded-3xl border border-blue-400/40 bg-blue-950/92 px-2 py-1.5 shadow-xl"
-            style={{ ['--sat-pill-height' as '--sat-pill-height']: '2.35rem' }}
+            className="answer-choice-surface maths-vs-zombies-answer-surface mx-4 mt-2 flex h-[clamp(7rem,13.5vh,7.7rem)] flex-col rounded-3xl border border-blue-400/40 bg-blue-950/92 px-2.5 pb-2.5 pt-1.5 shadow-xl"
+            style={{ ['--sat-pill-height' as '--sat-pill-height']: '2.2rem' }}
           >
             <div
-              className={`min-h-[0.7rem] text-center text-[7px] font-semibold uppercase tracking-[0.12em] text-cyan-100/80 ${feedback ? 'opacity-100' : 'opacity-0'}`}
+              className={`min-h-[1rem] text-center text-[9px] font-semibold uppercase tracking-[0.12em] text-cyan-100/80 ${feedback ? 'opacity-100' : 'opacity-0'}`}
               aria-hidden={!feedback}
             >
               {feedback || '\u00A0'}
             </div>
-            <div className="mx-auto grid w-full max-w-[44rem] grid-cols-4 gap-1">
+            <div className="mt-auto grid grid-cols-4 gap-1">
               {question.options.map((option, index) => (
                 <button
                   key={`${option}-${index}`}
                   type="button"
                   onClick={() => handleAnswer(index)}
                   disabled={locked}
-                  className={`rounded-2xl px-1.5 py-1.5 text-[clamp(0.72rem,1.65vw,0.88rem)] font-black leading-none whitespace-nowrap ${
+                  className={`rounded-2xl px-1.5 py-1.5 text-[clamp(0.75rem,1.9vw,0.9rem)] font-black leading-none whitespace-nowrap ${
                     locked && selectedAnswer === index
                       ? index === question.correctIndex
                         ? 'ui-button-success'
