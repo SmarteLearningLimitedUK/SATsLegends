@@ -51,6 +51,8 @@ const TARGET_X = 22;
 const ZOMBIE_SIZE = 38;
 const ANIM_FPS = 8;
 const ZOMBIE_MOVE_MULTIPLIER = 0.1;
+const ZOMBIE_PLAYFIELD_CACHE_BUSTER = '2026-04-23-1';
+const zombiePlayfieldUrl = `${zombiePlayfield}?v=${ZOMBIE_PLAYFIELD_CACHE_BUSTER}`;
 
 const loadFrames = (record: Record<string, string>) => (
   Object.entries(record)
@@ -537,7 +539,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           <div
             className="relative min-h-0 flex-1 overflow-hidden rounded-3xl border-4 border-blue-400/30 bg-blue-900/10 shadow-2xl"
             style={{
-              backgroundImage: `url(${zombiePlayfield})`,
+              backgroundImage: `url(${zombiePlayfieldUrl})`,
               backgroundSize: '80% auto',
               backgroundPosition: 'center bottom',
               backgroundRepeat: 'no-repeat',
