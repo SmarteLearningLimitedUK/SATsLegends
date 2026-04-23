@@ -523,7 +523,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           </GameQuestionCard>
         </div>
 
-        <div className={`mx-4 flex min-h-0 flex-[1.9] flex-col gap-2 ${useSharedTopHud ? 'mt-1' : 'mt-2'}`}>
+        <div className={`mx-4 flex min-h-0 flex-[1.9] flex-col gap-2 pb-[5rem] ${useSharedTopHud ? 'mt-1' : 'mt-2'}`}>
           <div
             className="relative min-h-0 flex-1 overflow-hidden rounded-3xl border-4 border-blue-400/30 bg-blue-900/10 shadow-2xl"
             style={{
@@ -535,14 +535,15 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           >
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_85%,rgba(56,189,248,0.06),transparent_48%)]" />
             <div
-              className="absolute bottom-4 left-5 flex flex-col items-center gap-1.5"
+              className="absolute left-5 flex flex-col items-center gap-1.5"
+              style={{ bottom: 'clamp(5.75rem, 11vh, 7rem)' }}
             >
               <div className="text-[11px] font-black uppercase tracking-[0.18em] text-cyan-100">You</div>
               {avatarImage ? (
                 <img
                   src={avatarImage}
                   alt=""
-                  className="h-[182px] w-auto object-contain drop-shadow-[0_10px_20px_rgba(2,6,23,0.45)]"
+                  className="h-[clamp(104px,20vh,150px)] w-auto object-contain drop-shadow-[0_10px_20px_rgba(2,6,23,0.45)]"
                   draggable={false}
                 />
               ) : null}
@@ -588,21 +589,24 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
             </AnimatePresence>
           </div>
 
-          <div className="answer-choice-surface mx-4 mt-2 flex flex-col rounded-3xl border border-blue-400/40 bg-blue-950/70 p-2 shadow-xl">
+          <div
+            className="answer-choice-surface maths-vs-zombies-answer-surface mx-4 mt-2 flex flex-col rounded-3xl border border-blue-400/40 bg-blue-950/92 px-2 py-1.5 shadow-xl"
+            style={{ ['--sat-pill-height' as '--sat-pill-height']: '2.35rem' }}
+          >
             <div
-              className={`min-h-[1rem] text-center text-[9px] font-semibold uppercase tracking-[0.12em] text-cyan-100/80 ${feedback ? 'opacity-100' : 'opacity-0'}`}
+              className={`min-h-[0.7rem] text-center text-[7px] font-semibold uppercase tracking-[0.12em] text-cyan-100/80 ${feedback ? 'opacity-100' : 'opacity-0'}`}
               aria-hidden={!feedback}
             >
               {feedback || '\u00A0'}
             </div>
-            <div className="grid grid-cols-2 gap-1 sm:grid-cols-4">
+            <div className="mx-auto grid w-full max-w-[44rem] grid-cols-4 gap-1">
               {question.options.map((option, index) => (
                 <button
                   key={`${option}-${index}`}
                   type="button"
                   onClick={() => handleAnswer(index)}
                   disabled={locked}
-                  className={`rounded-2xl px-2 py-2 text-[clamp(0.8rem,2vw,0.95rem)] font-black leading-none ${
+                  className={`rounded-2xl px-1.5 py-1.5 text-[clamp(0.72rem,1.65vw,0.88rem)] font-black leading-none whitespace-nowrap ${
                     locked && selectedAnswer === index
                       ? index === question.correctIndex
                         ? 'ui-button-success'

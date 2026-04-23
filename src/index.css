@@ -4988,6 +4988,10 @@ button.avatar-hero-arrow:not(:disabled):active {
   width: 100%;
 }
 
+.screen-gameplay .unified-minigame-hud-enabled .maths-vs-zombies-answer-surface {
+  bottom: 2px !important;
+}
+
 .screen-gameplay .unified-minigame-hud-enabled .structured-game-layout > * {
   min-height: 0 !important;
 }
