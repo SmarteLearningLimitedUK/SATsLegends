@@ -519,95 +519,99 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           <TopBar XP={XP} brainPoints={zombiesDefeated} health={health} timer={timerLabel} onBack={onBack} />
         ) : null}
 
-        <div className={`mx-4 mt-2 flex-shrink-0 ${useSharedTopHud ? 'mt-1' : 'mt-2'}`}>
+        <div className={`mx-2 mt-1 flex-shrink-0 ${useSharedTopHud ? 'mt-1' : 'mt-2'}`}>
           <GameQuestionCard className="mx-auto w-full max-w-[54rem]">
             {question.prompt}
           </GameQuestionCard>
         </div>
 
-        <div
-          className={`relative mx-4 mt-2 min-h-0 flex-[1.9] overflow-hidden rounded-3xl border-4 border-blue-400/30 bg-blue-900/10 shadow-2xl ${useSharedTopHud ? 'mt-1.5' : 'mt-2'}`}
-           style={{ backgroundImage: `url(${zombiePlayfield})`, backgroundSize: 'contain', backgroundPosition: 'center bottom', backgroundRepeat: 'no-repeat' }}
-        >
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_85%,rgba(56,189,248,0.06),transparent_48%)]" />
-          <div className="absolute bottom-4 left-5 flex -translate-x-1.5 flex-col items-center gap-2">
-            <div className="text-[11px] font-black uppercase tracking-[0.18em] text-cyan-100">You</div>
-            {avatarImage ? (
-              <img
-                src={avatarImage}
-                alt=""
-                className="h-[182px] w-auto object-contain drop-shadow-[0_10px_20px_rgba(2,6,23,0.45)]"
-                draggable={false}
-              />
-            ) : null}
-          </div>
-
-          <AnimatePresence>
-            {zombies.map((zombie) => {
-              const frameList = FRAMES_BY_STATE[zombie.state] ?? zombieWalkFrames;
-              const safeFrameList = frameList.length ? frameList : [zombieFallback];
-              const frame = safeFrameList[zombie.frameIndex % safeFrameList.length];
-              return (
-                <motion.div
-                  key={zombie.id}
-                  initial={{ opacity: 1 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.2 }}
-                  exit={{ opacity: 1 }}
-                  className="absolute flex flex-col items-center gap-1"
-                  style={{
-                    top: `${zombie.y}%`,
-                    left: `${zombie.x}%`,
-                    width: `${ZOMBIE_SIZE}px`,
-                    transform: zombie.state === 'appear'
-                      ? `translate(-50%, ${Math.max(8, (1 - zombie.riseProgress) * 30)}px) scale(${0.68 + (zombie.riseProgress * 0.32)})`
-                      : 'translate(-50%, -50%)',
-                  }}
-                >
-                  <img
-                    src={frame}
-                    alt=""
-                    className="h-[40px] w-auto object-contain drop-shadow-[0_8px_14px_rgba(2,6,23,0.45)]"
-                    draggable={false}
-                  />
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-black/40">
-                    <div
-                      className="h-full bg-emerald-300"
-                      style={{ width: `${Math.max(0, Math.min(100, (zombie.health / zombie.maxHealth) * 100))}%` }}
-                    />
-                  </div>
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
-
-        </div>
-
-        <div className="answer-choice-surface mx-4 mt-2 rounded-3xl border border-blue-400/40 bg-blue-950/70 p-2 shadow-xl">
+        <div className={`mx-2 mt-1.5 flex min-h-0 flex-1 flex-col gap-2 ${useSharedTopHud ? 'mt-1' : 'mt-2'}`}>
           <div
-            className={`mt-0.5 min-h-[8px] text-center text-[9px] font-semibold uppercase tracking-[0.12em] text-cyan-100/80 ${feedback ? 'opacity-100' : 'opacity-0'}`}
-            aria-hidden={!feedback}
+            className="relative min-h-0 flex-[2.2] overflow-hidden rounded-3xl border-4 border-blue-400/30 bg-blue-900/10 shadow-2xl"
+            style={{ backgroundImage: `url(${zombiePlayfield})`, backgroundSize: 'cover', backgroundPosition: 'center bottom', backgroundRepeat: 'no-repeat' }}
           >
-            {feedback || '\u00A0'}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_85%,rgba(56,189,248,0.06),transparent_48%)]" />
+            <div
+              className="absolute left-4 flex flex-col items-center gap-1.5"
+              style={{ bottom: 'clamp(11rem, 22vh, 13rem)' }}
+            >
+              <div className="text-[11px] font-black uppercase tracking-[0.18em] text-cyan-100">You</div>
+              {avatarImage ? (
+                <img
+                  src={avatarImage}
+                  alt=""
+                  className="h-[clamp(96px,18vh,148px)] w-auto object-contain drop-shadow-[0_10px_20px_rgba(2,6,23,0.45)]"
+                  draggable={false}
+                />
+              ) : null}
+            </div>
+
+            <AnimatePresence>
+              {zombies.map((zombie) => {
+                const frameList = FRAMES_BY_STATE[zombie.state] ?? zombieWalkFrames;
+                const safeFrameList = frameList.length ? frameList : [zombieFallback];
+                const frame = safeFrameList[zombie.frameIndex % safeFrameList.length];
+                return (
+                  <motion.div
+                    key={zombie.id}
+                    initial={{ opacity: 1 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.2 }}
+                    exit={{ opacity: 1 }}
+                    className="absolute flex flex-col items-center gap-1"
+                    style={{
+                      top: `${zombie.y}%`,
+                      left: `${zombie.x}%`,
+                      width: `${ZOMBIE_SIZE}px`,
+                      transform: zombie.state === 'appear'
+                        ? `translate(-50%, ${Math.max(8, (1 - zombie.riseProgress) * 30)}px) scale(${0.68 + (zombie.riseProgress * 0.32)})`
+                        : 'translate(-50%, -50%)',
+                    }}
+                  >
+                    <img
+                      src={frame}
+                      alt=""
+                      className="h-[40px] w-auto object-contain drop-shadow-[0_8px_14px_rgba(2,6,23,0.45)]"
+                      draggable={false}
+                    />
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-black/40">
+                      <div
+                        className="h-full bg-emerald-300"
+                        style={{ width: `${Math.max(0, Math.min(100, (zombie.health / zombie.maxHealth) * 100))}%` }}
+                      />
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
           </div>
-          <div className="mt-1 grid grid-cols-4 gap-1">
-            {question.options.map((option, index) => (
-              <button
-                key={`${option}-${index}`}
-                type="button"
-                onClick={() => handleAnswer(index)}
-                disabled={locked}
-                className={`rounded-2xl px-2 py-2 text-[clamp(0.8rem,2vw,0.95rem)] font-black leading-none ${
-                  locked && selectedAnswer === index
-                    ? index === question.correctIndex
-                      ? 'ui-button-success'
-                      : 'ui-button-primary'
-                    : 'ui-button-secondary'
-                }`}
-              >
-                {option}
-              </button>
-            ))}
+
+          <div className="answer-choice-surface mx-auto flex w-full min-h-[9.25rem] flex-col rounded-[2rem] border border-blue-400/40 bg-blue-950/98 px-3 pb-4 pt-3 shadow-xl">
+            <div
+              className={`min-h-[1rem] text-center text-[9px] font-semibold uppercase tracking-[0.12em] text-cyan-100/80 ${feedback ? 'opacity-100' : 'opacity-0'}`}
+              aria-hidden={!feedback}
+            >
+              {feedback || '\u00A0'}
+            </div>
+            <div className="mt-auto grid grid-cols-4 gap-1.5">
+              {question.options.map((option, index) => (
+                <button
+                  key={`${option}-${index}`}
+                  type="button"
+                  onClick={() => handleAnswer(index)}
+                  disabled={locked}
+                  className={`rounded-2xl px-2 py-2 text-[clamp(0.8rem,2vw,0.95rem)] font-black leading-none ${
+                    locked && selectedAnswer === index
+                      ? index === question.correctIndex
+                        ? 'ui-button-success'
+                        : 'ui-button-primary'
+                      : 'ui-button-secondary'
+                  }`}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
