@@ -599,13 +599,17 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
       <motion.div
         animate={screenShake ? { x: [0, -8, 8, -5, 5, -2, 0], y: [0, 2, -2, 0] } : { x: 0, y: 0 }}
         transition={{ duration: 0.28 }}
-        className="relative flex-1 min-h-0 overflow-hidden bg-no-repeat"
-        style={{
-          backgroundImage: `url(${primePopBackground})`,
-          backgroundSize: '100% 100%',
-          backgroundPosition: 'center top',
-        }}
+        className="relative flex-1 min-h-0 overflow-hidden bg-[#070b14]"
       >
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-0 bg-no-repeat"
+          style={{
+            top: '42%',
+            backgroundImage: `url(${primePopBackground})`,
+            backgroundSize: '100% 100%',
+            backgroundPosition: 'center top',
+          }}
+        />
         <div
           className="pointer-events-none absolute left-0 right-0 z-20 flex items-center justify-center"
           style={{ top: `${DANGER_LINE_Y}%` }}
