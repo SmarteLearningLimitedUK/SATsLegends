@@ -101,14 +101,14 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
 ];
 
 const ISLAND_ACCENT_FRAMES: Partial<Record<number, IslandAccentFrame>> = {
-  1: { left: '46%', top: '45%', width: '70%', height: '72%' },
-  2: { left: '50%', top: '54%', width: '68%', height: '68%' },
-  3: { left: '50%', top: '48%', width: '66%', height: '70%' },
-  4: { left: '50%', top: '52%', width: '66%', height: '68%' },
-  5: { left: '50%', top: '45%', width: '74%', height: '64%' },
-  6: { left: '50%', top: '40%', width: '60%', height: '74%' },
-  7: { left: '50%', top: '48%', width: '70%', height: '66%' },
-  8: { left: '50%', top: '42%', width: '62%', height: '78%' },
+  1: { left: '46%', top: '49%', width: '66%', height: '68%' },
+  2: { left: '54%', top: '57%', width: '64%', height: '64%' },
+  3: { left: '50%', top: '52%', width: '62%', height: '66%' },
+  4: { left: '50%', top: '56%', width: '62%', height: '64%' },
+  5: { left: '50%', top: '49%', width: '70%', height: '60%' },
+  6: { left: '50%', top: '45%', width: '56%', height: '70%' },
+  7: { left: '52%', top: '52%', width: '66%', height: '62%' },
+  8: { left: '50%', top: '46%', width: '58%', height: '74%' },
 };
 
 const getIslandAccentFrame = (islandId: number): IslandAccentFrame => (
@@ -202,7 +202,7 @@ const renderIslandAccent = (islandId: number) => {
               key={`fraction-butterfly-${index}`}
               className="world-map-butterfly"
               style={{
-                left: `${18 + index * 19}%`,
+                left: `${22 + index * 19}%`,
                 top: `${22 - index * 2}%`,
                 animationDelay: `${index * 0.85}s`,
                 animationDuration: `${5.2 + index * 0.4}s`,
@@ -214,7 +214,7 @@ const renderIslandAccent = (islandId: number) => {
               key={`fraction-bubble-${index}`}
               className="world-map-bubble"
               style={{
-                left: `${24 + index * 18}%`,
+                left: `${28 + index * 18}%`,
                 bottom: `${8 + index * 2}%`,
                 animationDelay: `${index * 0.7}s`,
                 animationDuration: `${4.4 + index * 0.4}s`,
