@@ -176,8 +176,8 @@ const getOpeningReferenceQuestion = (levelId: number): Question | null => {
   if (levelId !== 41) return null;
 
   return {
-    prompt: 'Help! Minions are attacking.\nSolve the sum to defeat them.\n829 + 1165',
-    options: [1994, 1989, 2002, 1999],
+    prompt: 'Help! Minions are attacking.\nSolve the sum to defeat them.\n1719 + 1141',
+    options: [2865, 2862, 2860, 2864],
     correctIndex: 0,
   };
 };
@@ -602,8 +602,8 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           </div>
 
           <div
-            className="answer-choice-surface maths-vs-zombies-answer-surface mx-4 mt-2 flex h-[clamp(7rem,13.5vh,7.7rem)] flex-col rounded-3xl border border-blue-400/40 bg-blue-950/92 px-2.5 pb-2.5 pt-1.5 shadow-xl"
-            style={{ ['--sat-pill-height' as '--sat-pill-height']: '2.2rem' }}
+            className="answer-choice-surface maths-vs-zombies-answer-surface mx-4 mt-2 flex h-[clamp(6.4rem,12vh,6.9rem)] flex-col rounded-3xl border border-blue-400/40 bg-blue-950/92 px-2.5 pb-2.25 pt-1 shadow-xl"
+            style={{ ['--sat-pill-height' as '--sat-pill-height']: '2rem' }}
           >
             <div
               className={`min-h-[1rem] text-center text-[9px] font-semibold uppercase tracking-[0.12em] text-cyan-100/80 ${feedback ? 'opacity-100' : 'opacity-0'}`}
@@ -611,14 +611,14 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
             >
               {feedback || '\u00A0'}
             </div>
-            <div className="mt-auto grid grid-cols-4 gap-1">
+            <div className="mt-auto grid grid-cols-4 gap-[0.35rem]">
               {question.options.map((option, index) => (
                 <button
                   key={`${option}-${index}`}
                   type="button"
                   onClick={() => handleAnswer(index)}
                   disabled={locked}
-                  className={`rounded-2xl px-1.5 py-1.5 text-[clamp(0.75rem,1.9vw,0.9rem)] font-black leading-none whitespace-nowrap ${
+                  className={`rounded-2xl border border-cyan-100/40 bg-[linear-gradient(180deg,rgba(75,137,232,0.9)_0%,rgba(45,102,194,0.9)_54%,rgba(29,75,153,0.92)_100%)] px-1.25 py-1.25 text-[clamp(0.7rem,1.8vw,0.88rem)] font-black leading-none whitespace-nowrap text-white shadow-[0_6px_12px_rgba(2,6,23,0.28),inset_0_1px_0_rgba(255,255,255,0.26)] ${
                     locked && selectedAnswer === index
                       ? index === question.correctIndex
                         ? 'ui-button-success'

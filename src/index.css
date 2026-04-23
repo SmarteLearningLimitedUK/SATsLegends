@@ -4985,7 +4985,7 @@ button.avatar-hero-arrow:not(:disabled):active {
 }
 
 .screen-gameplay .unified-minigame-hud-enabled .maths-vs-zombies-answer-surface {
-  bottom: calc(env(safe-area-inset-bottom) / var(--game-stage-scale, 1)) !important;
+  bottom: calc(3.6rem + max(0.5rem, env(safe-area-inset-bottom))) !important;
 }
 
 .screen-gameplay .unified-minigame-hud-enabled .structured-game-layout > * {

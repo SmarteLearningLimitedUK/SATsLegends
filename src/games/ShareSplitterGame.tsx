@@ -64,11 +64,11 @@ const CAKE_SOURCE_POSITION = { x: 1250, y: 3750 };
 const CAKE_SOURCE_SIZE_PX = 660;
 const SHARE_SPLITTER_PLATE_ICON_SCALE = 1.06;
 const SHARE_SPLITTER_TABLE_PLATE_POSITIONS = [
-  { x: 1250, y: 120 },
-  { x: 900, y: 520 },
-  { x: 1600, y: 520 },
-  { x: 1080, y: 920 },
-  { x: 1420, y: 920 },
+  { x: 980, y: 3600 },
+  { x: 1520, y: 3600 },
+  { x: 760, y: 4080 },
+  { x: 1250, y: 4080 },
+  { x: 1740, y: 4080 },
 ];
 
 const RATIO_PATTERNS_BY_COUNT: Record<number, number[][]> = {
@@ -419,7 +419,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       if (dragHasBeenRevealed) return;
       dragHasBeenRevealed = true;
       updatePosition(clientX, clientY);
-      setFeedback('Drop the cake onto the correct plate.');
       setFeedbackTone('neutral');
       setValidationActive(false);
       setHoverPlateIndex(null);

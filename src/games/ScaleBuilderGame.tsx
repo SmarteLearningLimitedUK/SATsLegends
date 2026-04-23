@@ -338,7 +338,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
           style={{
             backgroundImage: `url(${scaleBuilderBackground})`,
             backgroundSize: 'contain',
-            backgroundPosition: 'center center',
+            backgroundPosition: 'center 72%',
           }}
         />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,47,73,0.18)_0%,rgba(7,89,133,0.14)_38%,rgba(8,47,73,0.28)_100%)]" />
@@ -366,7 +366,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
         </div>
       </div>
 
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-[10px] px-2 pb-[calc(env(safe-area-inset-bottom)+4.4rem)] pt-[calc(env(safe-area-inset-top)+0.95rem)] md:px-3">
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-[10px] px-2 pb-[calc(env(safe-area-inset-bottom)+8.4rem)] pt-[calc(env(safe-area-inset-top)+0.95rem)] md:px-3">
         <div className="relative mx-auto flex h-full w-full max-w-[780px] min-h-0 flex-1 flex-col overflow-visible">
           <div className="relative z-10 grid h-full min-h-0 w-full grid-rows-[auto_minmax(0,1fr)] gap-[10px] p-0 md:p-0">
             <GameQuestionCard className="w-full">
@@ -419,7 +419,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
             </div>
 
             <div className="px-1 pb-0 pt-0">
-              <div className="mb-2 flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/82">
+              <div className="flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/82">
                 <span>Rebuild the blueprint</span>
                 <button
                   onClick={() => setShowBase((previous) => !previous)}
@@ -428,58 +428,56 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                   {showBase ? 'Hide guide' : 'Show guide'}
                 </button>
               </div>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  onClick={() => adjustDimension('width', -0.25)}
-                  disabled={gameState !== 'playing'}
-                  className="ui-button-secondary rounded-lg px-2 py-2 text-xs font-black uppercase tracking-[0.12em] disabled:opacity-45"
-                >
-                  {isDimensionMode
-                    ? 'L-0.25'
-                    : '-0.25'}
-                </button>
-                <button
-                  onClick={() => adjustDimension('height', 0.25)}
-                  disabled={gameState !== 'playing'}
-                  className="ui-button-secondary rounded-lg px-2 py-2 text-xs font-black uppercase tracking-[0.12em] disabled:opacity-45"
-                >
-                  {isDimensionMode
-                    ? 'W+0.25'
-                    : '+0.25'}
-                </button>
-              </div>
             </div>
           </div>
 
           <div
             className="fixed left-0 right-0 z-30"
-            style={{ bottom: 'calc(env(safe-area-inset-bottom) + 4.1rem)' }}
+            style={{ bottom: 'calc(env(safe-area-inset-bottom) + 0.5rem)' }}
           >
-            <div className="mx-auto flex w-full max-w-[780px] items-center gap-2 px-2 md:px-3">
-              <button
-                onClick={resetLevel}
-                disabled={gameState !== 'playing'}
-                className="ui-button-secondary inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] disabled:opacity-45"
-              >
-                Rest
-              </button>
-              {gameState === 'success' ? (
+            <div className="mx-auto flex w-full max-w-[780px] flex-col gap-2 px-2 md:px-3">
+              <div className="grid grid-cols-2 gap-2">
                 <button
-                  onClick={proceed}
-                  className="ui-button-success inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em]"
-                >
-                  Next project <ChevronRight className="h-4 w-4" />
-                </button>
-              ) : (
-                <PrimaryButton
-                  onClick={verifyScale}
+                  onClick={() => adjustDimension('width', -0.25)}
                   disabled={gameState !== 'playing'}
-                  className="flex-1"
+                  className="ui-button-secondary inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] disabled:opacity-45"
                 >
-                  <Ruler className="h-4 w-4" />
-                  Check Scale
-                </PrimaryButton>
-              )}
+                  {isDimensionMode ? 'L -0.25' : 'Size -'}
+                </button>
+                <button
+                  onClick={() => adjustDimension('height', 0.25)}
+                  disabled={gameState !== 'playing'}
+                  className="ui-button-secondary inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] disabled:opacity-45"
+                >
+                  {isDimensionMode ? 'W +0.25' : 'Size +'}
+                </button>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={resetLevel}
+                  disabled={gameState !== 'playing'}
+                  className="ui-button-secondary inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] disabled:opacity-45"
+                >
+                  Reset
+                </button>
+                {gameState === 'success' ? (
+                  <button
+                    onClick={proceed}
+                    className="ui-button-success inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em]"
+                  >
+                    Next project <ChevronRight className="h-4 w-4" />
+                  </button>
+                ) : (
+                  <PrimaryButton
+                    onClick={verifyScale}
+                    disabled={gameState !== 'playing'}
+                    className="min-h-[44px]"
+                  >
+                    <Ruler className="h-4 w-4" />
+                    Check Scale
+                  </PrimaryButton>
+                )}
+              </div>
             </div>
           </div>
 
