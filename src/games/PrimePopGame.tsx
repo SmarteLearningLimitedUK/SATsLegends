@@ -577,7 +577,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
 
   return (
     <div
-      className="relative z-20 flex h-full min-h-0 w-full flex-col overflow-hidden bg-no-repeat select-none"
+      className="relative z-20 h-full min-h-0 w-full overflow-hidden bg-no-repeat select-none"
       style={{
         backgroundImage: `url(${primePopBackground})`,
         backgroundSize: '118% 118%',
@@ -597,76 +597,73 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-col pt-[env(safe-area-inset-top)]">
-        <div className={`pointer-events-none px-3 ${usesSharedHud ? 'pt-[calc(env(safe-area-inset-top)+3.9rem)]' : 'pt-3'}`}>
-          <GameQuestionCard title="Prime Pop" className="max-w-[22rem]">
-            Pick out the <b>PRIME</b> numbers before they cross the line.
-          </GameQuestionCard>
-        </div>
+      <div className={`pointer-events-none absolute inset-x-0 top-0 z-30 px-3 ${usesSharedHud ? 'pt-[calc(env(safe-area-inset-top)+3.9rem)]' : 'pt-3'}`}>
+        <GameQuestionCard title="Prime Pop" className="max-w-[22rem]">
+          Pick out the <b>PRIME</b> numbers before they cross the line.
+        </GameQuestionCard>
+      </div>
 
-        <motion.div
-          animate={screenShake ? { x: [0, -8, 8, -5, 5, -2, 0], y: [0, 2, -2, 0] } : { x: 0, y: 0 }}
-          transition={{ duration: 0.28 }}
-          className="relative min-h-0 flex-1 overflow-hidden bg-transparent pt-1"
+      <motion.div
+        animate={screenShake ? { x: [0, -8, 8, -5, 5, -2, 0], y: [0, 2, -2, 0] } : { x: 0, y: 0 }}
+        transition={{ duration: 0.28 }}
+        className="absolute inset-x-0 bottom-0 top-0 min-h-0 overflow-hidden bg-transparent pt-[calc(env(safe-area-inset-top)+8.4rem)]"
+      >
+        <div
+          className="pointer-events-none absolute left-0 right-0 z-20 flex items-center justify-center"
+          style={{ top: `${DANGER_LINE_Y}%` }}
         >
-          <div
-            className="pointer-events-none absolute left-0 right-0 z-20 flex items-center justify-center"
-            style={{ top: `${DANGER_LINE_Y}%` }}
-          >
-            <div className="relative flex h-4 w-[88%] items-center justify-center overflow-hidden rounded-full border border-white/20 bg-[repeating-linear-gradient(135deg,#0b0f1a_0px,#0b0f1a_10px,#f9fafb_10px,#f9fafb_20px)] shadow-[0_0_12px_rgba(15,23,42,0.45)]">
-              <span className="rounded-full bg-red-600 px-3 py-0.5 text-[9px] font-black uppercase tracking-[0.26em] text-white shadow-[0_0_12px_rgba(220,38,38,0.6)]">
-                DANGER
-              </span>
-            </div>
+          <div className="relative flex h-4 w-[88%] items-center justify-center overflow-hidden rounded-full border border-white/20 bg-[repeating-linear-gradient(135deg,#0b0f1a_0px,#0b0f1a_10px,#f9fafb_10px,#f9fafb_20px)] shadow-[0_0_12px_rgba(15,23,42,0.45)]">
+            <span className="rounded-full bg-red-600 px-3 py-0.5 text-[9px] font-black uppercase tracking-[0.26em] text-white shadow-[0_0_12px_rgba(220,38,38,0.6)]">
+              DANGER
+            </span>
           </div>
-          <div className="absolute inset-0 z-10 overflow-hidden">
-            
+        </div>
+        <div className="absolute inset-0 z-10 overflow-hidden">
 
-            <AnimatePresence>
-              {bubbles.map((bubble) => (
-                <motion.div
-                  key={bubble.id}
-                  className="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer"
-                  style={{ left: `${bubble.x}%`, top: `${bubble.y}%` }}
-                  initial={{ scale: 0.5, opacity: 0 }}
-                  animate={
-                    mistakeBubbleId === bubble.id
-                      ? { scale: [1, 0.88, 0.56], opacity: [1, 0.86, 0], x: [0, -6, 6, -4, 0], filter: ['brightness(1)', 'brightness(0.7)', 'brightness(0.5)'] }
-                      : pressedBubbleId === bubble.id
-                        ? { scale: [1, 1.16, 1.08], y: [0, -5, -2], filter: ['brightness(1)', 'brightness(1.18)', 'brightness(1.06)'] }
-                        : { scale: 1, opacity: 1 }
-                  }
-                  exit={{ scale: 0.28, opacity: 0, rotate: 30 }}
-                  transition={{ duration: 0.12 }}
-                  onPointerDown={(event) => {
-                    event.stopPropagation();
-                    tapBubble(bubble.id);
-                  }}
-                  onPointerLeave={cancelHeldPop}
-                  onPointerCancel={cancelHeldPop}
-                >
-                  <PrimeBubble bubble={bubble} isPhone={isPhone} />
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
 
           <AnimatePresence>
-            {feedback ? (
+            {bubbles.map((bubble) => (
               <motion.div
-                key={feedback}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                className="absolute bottom-[calc(env(safe-area-inset-bottom)+4.85rem)] left-1/2 z-30 -translate-x-1/2 rounded-full border border-cyan-100/60 bg-slate-900/70 px-4 py-1.5 text-xs font-black uppercase tracking-[0.12em] text-cyan-100 shadow-[0_10px_24px_rgba(2,6,23,0.48)]"
+                key={bubble.id}
+                className="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+                style={{ left: `${bubble.x}%`, top: `${bubble.y}%` }}
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={
+                  mistakeBubbleId === bubble.id
+                    ? { scale: [1, 0.88, 0.56], opacity: [1, 0.86, 0], x: [0, -6, 6, -4, 0], filter: ['brightness(1)', 'brightness(0.7)', 'brightness(0.5)'] }
+                    : pressedBubbleId === bubble.id
+                      ? { scale: [1, 1.16, 1.08], y: [0, -5, -2], filter: ['brightness(1)', 'brightness(1.18)', 'brightness(1.06)'] }
+                      : { scale: 1, opacity: 1 }
+                }
+                exit={{ scale: 0.28, opacity: 0, rotate: 30 }}
+                transition={{ duration: 0.12 }}
+                onPointerDown={(event) => {
+                  event.stopPropagation();
+                  tapBubble(bubble.id);
+                }}
+                onPointerLeave={cancelHeldPop}
+                onPointerCancel={cancelHeldPop}
               >
-                {feedback}
+                <PrimeBubble bubble={bubble} isPhone={isPhone} />
               </motion.div>
-            ) : null}
+            ))}
           </AnimatePresence>
-        </motion.div>
+        </div>
 
-      </div>
+        <AnimatePresence>
+          {feedback ? (
+            <motion.div
+              key={feedback}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              className="absolute bottom-[calc(env(safe-area-inset-bottom)+4.85rem)] left-1/2 z-30 -translate-x-1/2 rounded-full border border-cyan-100/60 bg-slate-900/70 px-4 py-1.5 text-xs font-black uppercase tracking-[0.12em] text-cyan-100 shadow-[0_10px_24px_rgba(2,6,23,0.48)]"
+            >
+              {feedback}
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+      </motion.div>
     </div>
   );
 };
