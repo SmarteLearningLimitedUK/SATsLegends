@@ -101,7 +101,7 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
 ];
 
 const ISLAND_ACCENT_FRAMES: Partial<Record<number, IslandAccentFrame>> = {
-  1: { left: '50%', top: '50%', width: '70%', height: '72%' },
+  1: { left: '46%', top: '45%', width: '70%', height: '72%' },
   2: { left: '50%', top: '54%', width: '68%', height: '68%' },
   3: { left: '50%', top: '48%', width: '66%', height: '70%' },
   4: { left: '50%', top: '52%', width: '66%', height: '68%' },
@@ -290,8 +290,8 @@ const renderIslandAccent = (islandId: number) => {
               key={`acro-symbol-${index}`}
               className="absolute text-[0.95rem] font-black text-amber-100 drop-shadow-[0_2px_8px_rgba(15,23,42,0.45)]"
               style={{
-                left: `${22 + index * 18}%`,
-                top: `${12 + (index % 2) * 9}%`,
+                left: `${18 + index * 18}%`,
+                top: `${8 + (index % 2) * 8}%`,
                 animationDelay: `${index * 0.7}s`,
                 animationDuration: `${4.4 + index * 0.45}s`,
               }}
