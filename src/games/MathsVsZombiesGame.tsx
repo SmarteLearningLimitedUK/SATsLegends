@@ -503,9 +503,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
   }, [timeLeft]);
 
   return (
-    <div
-      className="relative flex h-full w-full flex-col items-center overflow-hidden font-sans text-white select-none"
-    >
+    <div className="relative flex h-full w-full flex-col items-center overflow-hidden font-sans text-white select-none">
       <PracticeIntroPopup
         open={showPracticeIntro}
         title={gameTitle || 'Maths vs Zombies'}
@@ -519,28 +517,32 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           <TopBar XP={XP} brainPoints={zombiesDefeated} health={health} timer={timerLabel} onBack={onBack} />
         ) : null}
 
-        <div className={`mx-2 mt-1 flex-shrink-0 ${useSharedTopHud ? 'mt-1' : 'mt-2'}`}>
+        <div className={`mx-4 flex-shrink-0 ${useSharedTopHud ? 'mt-1' : 'mt-2'}`}>
           <GameQuestionCard className="mx-auto w-full max-w-[54rem]">
             {question.prompt}
           </GameQuestionCard>
         </div>
 
-        <div className={`mx-2 mt-1.5 flex min-h-0 flex-1 flex-col gap-2 ${useSharedTopHud ? 'mt-1' : 'mt-2'}`}>
+        <div className={`mx-4 flex min-h-0 flex-[1.9] flex-col gap-2 ${useSharedTopHud ? 'mt-1' : 'mt-2'}`}>
           <div
-            className="relative min-h-0 flex-[2.2] overflow-hidden rounded-3xl border-4 border-blue-400/30 bg-blue-900/10 shadow-2xl"
-            style={{ backgroundImage: `url(${zombiePlayfield})`, backgroundSize: 'cover', backgroundPosition: 'center bottom', backgroundRepeat: 'no-repeat' }}
+            className="relative min-h-0 flex-1 overflow-hidden rounded-3xl border-4 border-blue-400/30 bg-blue-900/10 shadow-2xl"
+            style={{
+              backgroundImage: `url(${zombiePlayfield})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center bottom',
+              backgroundRepeat: 'no-repeat',
+            }}
           >
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_85%,rgba(56,189,248,0.06),transparent_48%)]" />
             <div
-              className="absolute left-4 flex flex-col items-center gap-1.5"
-              style={{ bottom: 'clamp(11rem, 22vh, 13rem)' }}
+              className="absolute bottom-4 left-5 flex flex-col items-center gap-1.5"
             >
               <div className="text-[11px] font-black uppercase tracking-[0.18em] text-cyan-100">You</div>
               {avatarImage ? (
                 <img
                   src={avatarImage}
                   alt=""
-                  className="h-[clamp(96px,18vh,148px)] w-auto object-contain drop-shadow-[0_10px_20px_rgba(2,6,23,0.45)]"
+                  className="h-[182px] w-auto object-contain drop-shadow-[0_10px_20px_rgba(2,6,23,0.45)]"
                   draggable={false}
                 />
               ) : null}
@@ -586,14 +588,14 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
             </AnimatePresence>
           </div>
 
-          <div className="answer-choice-surface mx-auto flex w-full min-h-[9.25rem] flex-col rounded-[2rem] border border-blue-400/40 bg-blue-950/98 px-3 pb-4 pt-3 shadow-xl">
+          <div className="answer-choice-surface mx-4 mt-2 flex flex-col rounded-3xl border border-blue-400/40 bg-blue-950/70 p-2 shadow-xl">
             <div
               className={`min-h-[1rem] text-center text-[9px] font-semibold uppercase tracking-[0.12em] text-cyan-100/80 ${feedback ? 'opacity-100' : 'opacity-0'}`}
               aria-hidden={!feedback}
             >
               {feedback || '\u00A0'}
             </div>
-            <div className="mt-auto grid grid-cols-4 gap-1.5">
+            <div className="grid grid-cols-2 gap-1 sm:grid-cols-4">
               {question.options.map((option, index) => (
                 <button
                   key={`${option}-${index}`}
