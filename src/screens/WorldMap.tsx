@@ -403,15 +403,18 @@ const WorldMap: React.FC<WorldMapProps> = ({
   );
 
   return (
-    <div className="relative w-full overflow-visible">
+    <div className="relative w-full overflow-hidden pb-[calc(env(safe-area-inset-bottom)+5.5rem)]">
       <div
         className="relative mx-auto w-full overflow-hidden"
-        style={{ aspectRatio: `${MAP_WIDTH_PX} / ${MAP_HEIGHT_PX}` }}
+        style={{
+          height: 'calc(100dvh - (env(safe-area-inset-bottom) + 6rem))',
+          maxHeight: 'calc(100dvh - (env(safe-area-inset-bottom) + 6rem))',
+        }}
       >
         <img
           src={universalMapPoster}
           alt="Island select map"
-           className="absolute inset-0 h-full w-full object-contain object-center"
+          className="absolute inset-0 h-full w-full object-contain object-center"
           draggable={false}
         />
 

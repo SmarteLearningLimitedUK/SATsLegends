@@ -49,8 +49,8 @@ interface PrimePopConfig {
 
 const INITIAL_LIVES = 10;
 const BUBBLE_PIXEL_SCALE = 7.2;
-const DANGER_LINE_Y = 31;
-const PRIME_POP_BACKDROP_START_Y = 30;
+const DANGER_LINE_Y = 24;
+const PRIME_POP_BACKDROP_START_Y = 56;
 const PRIME_SPEED_MULTIPLIER = 1.22;
 
 const BUBBLE_TINTS: BubbleTint[] = ['blue', 'green', 'purple', 'gold', 'red'];
@@ -603,13 +603,6 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
         className="relative flex-1 min-h-0 overflow-hidden bg-[#070b14]"
       >
         <div
-          className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[42%]"
-          style={{
-            background:
-              'linear-gradient(180deg, rgba(2,6,23,0.98) 0%, rgba(2,6,23,0.88) 28%, rgba(2,6,23,0.42) 68%, rgba(2,6,23,0) 100%)',
-          }}
-        />
-        <div
           className="pointer-events-none absolute inset-x-0 bottom-0 z-0 bg-no-repeat"
           style={{
             top: `${PRIME_POP_BACKDROP_START_Y}%`,
@@ -622,8 +615,8 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
           className="pointer-events-none absolute left-0 right-0 z-20 flex items-center justify-center"
           style={{ top: `${DANGER_LINE_Y}%` }}
         >
-          <div className="relative flex h-5 w-[90%] items-center justify-center overflow-hidden rounded-full border border-white/25 bg-[repeating-linear-gradient(135deg,#0b0f1a_0px,#0b0f1a_10px,#f9fafb_10px,#f9fafb_20px)] shadow-[0_0_16px_rgba(15,23,42,0.62)]">
-            <span className="rounded-full bg-red-600 px-3 py-0.5 text-[10px] font-black uppercase tracking-[0.28em] text-white shadow-[0_0_14px_rgba(220,38,38,0.78)]">
+          <div className="relative flex h-4 w-[88%] items-center justify-center overflow-hidden rounded-full border border-white/20 bg-[repeating-linear-gradient(135deg,#0b0f1a_0px,#0b0f1a_10px,#f9fafb_10px,#f9fafb_20px)] shadow-[0_0_12px_rgba(15,23,42,0.45)]">
+            <span className="rounded-full bg-red-600 px-3 py-0.5 text-[9px] font-black uppercase tracking-[0.26em] text-white shadow-[0_0_12px_rgba(220,38,38,0.6)]">
               DANGER
             </span>
           </div>
