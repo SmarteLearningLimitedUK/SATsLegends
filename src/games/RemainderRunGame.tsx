@@ -265,7 +265,8 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
   onGameOver: _onGameOver,
   onBack: _onBack,
 }) => {
-  const baseLevel = Math.max(1, Math.min(12, miniGameLevel || levelId || 1));
+  const campaignLevel = Math.max(1, levelId || 1);
+  const baseLevel = Math.max(1, Math.min(12, miniGameLevel || Math.ceil(campaignLevel / 2)));
   const initialRoundTime = useMemo(() => roundSecondsForLevel(baseLevel), [baseLevel]);
 
   const [timeLeft, setTimeLeft] = useState(initialRoundTime);
