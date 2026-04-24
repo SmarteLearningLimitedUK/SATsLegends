@@ -12,6 +12,7 @@ import DailyQuestsModal from './components/modals/DailyQuestsModal';
 import AchievementsModal from './components/modals/AchievementsModal';
 import LevelResultsModal from './components/results/LevelResultsModal';
 import UnifiedMiniGameHud from './components/UnifiedMiniGameHud';
+import GameActionDock from './components/GameActionDock';
 import AssetIcon from './components/AssetIcon';
 import { IslandData, LevelData, PlayerData } from './types';
 import { AppRouter } from './app/AppRouter';
@@ -26,10 +27,6 @@ import { GameplaySessionEventHandlers, GameplaySessionEventPayload, GameplaySess
 import { useMiniGameLifecycle } from './app/useMiniGameLifecycle';
 import { LevelResultState } from './app/types';
 import {
-  IPHONE_STAGE_HEIGHT,
-  IPHONE_STAGE_WIDTH,
-  IPAD_STAGE_HEIGHT,
-  IPAD_STAGE_WIDTH,
   MAP_LAYOUT_SCREENS,
   QUESTION_MATCH_FRAME_GAMES,
   SCREEN_BEHAVIOR,
@@ -49,10 +46,6 @@ import { CACHE_BUSTER } from './cacheBuster';
 import { playGameSound } from './audio/gameAudio';
 
 const App: React.FC = () => {
-  const [stageScale, setStageScale] = useState(1);
-  const [stageRenderMultiplier, setStageRenderMultiplier] = useState(1);
-  const [questionCardScale, setQuestionCardScale] = useState(1);
-  const [potionCauldronShift, setPotionCauldronShift] = useState('0px');
   const buildId = import.meta.env.VITE_BUILD_ID ?? CACHE_BUSTER;
 
   const {
@@ -708,44 +701,8 @@ const App: React.FC = () => {
   }, [player.playerName, screen, setDraftName]);
 
   useEffect(() => {
-    const updateStageScale = () => {
-      const viewportWidth = window.visualViewport?.width ?? window.innerWidth;
-      const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
-      const baseWidth = IPHONE_STAGE_WIDTH;
-      const baseHeight = IPHONE_STAGE_HEIGHT;
-      const isTabletViewport = Math.min(viewportWidth, viewportHeight) >= 700;
-      const isDesktopViewport = Math.min(viewportWidth, viewportHeight) >= 1100;
-      const renderMultiplier = isDesktopViewport ? 1.25 : isTabletViewport ? 1.12 : 1;
-      const rawScale = Math.min(
-        viewportWidth / (baseWidth * renderMultiplier),
-        viewportHeight / (baseHeight * renderMultiplier),
-      );
-      const scale = rawScale * (isTabletViewport ? 0.95 : 1);
-      setStageScale(Number.isFinite(scale) && scale > 0 ? scale : 1);
-      setStageRenderMultiplier(renderMultiplier);
-      setQuestionCardScale(isTabletViewport ? 0.92 : 1);
-      setPotionCauldronShift(isTabletViewport ? '28px' : '0px');
-    };
-
-    const visualViewport = window.visualViewport;
-    updateStageScale();
-    window.addEventListener('resize', updateStageScale);
-    window.addEventListener('orientationchange', updateStageScale);
-    visualViewport?.addEventListener('resize', updateStageScale);
-    visualViewport?.addEventListener('scroll', updateStageScale);
-
-    return () => {
-      window.removeEventListener('resize', updateStageScale);
-      window.removeEventListener('orientationchange', updateStageScale);
-      visualViewport?.removeEventListener('resize', updateStageScale);
-      visualViewport?.removeEventListener('scroll', updateStageScale);
-    };
-  }, []);
-
-  useEffect(() => {
-    const allowVerticalPan = screen === 'world_map' || screen === 'island_levels';
-    document.body.style.touchAction = allowVerticalPan ? 'pan-y' : 'none';
-    document.body.style.overscrollBehaviorY = allowVerticalPan ? 'contain' : 'none';
+    document.body.style.touchAction = 'none';
+    document.body.style.overscrollBehaviorY = 'none';
   }, [screen]);
 
   useEffect(() => {
@@ -1004,26 +961,16 @@ const App: React.FC = () => {
   const isWorldMapScreen = screen === 'world_map';
   const selectedGameType = selectedLevel?.gameType;
   const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
-  const gameplayBlueprintClass = isGameplayScreen && selectedLevel?.blueprintKey
-    ? `game-blueprint-${selectedLevel.blueprintKey.replace(/_/g, '-')}`
-    : '';
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
-  const useUnboundedStageShell = false;
-  const globalDockOffsetClass = screen !== 'splash' && !isGameplayScreen && screen !== 'avatar_selection' && screen !== 'profile_setup'
-    ? 'pb-[calc((4.35rem+env(safe-area-inset-bottom))/var(--game-stage-scale))] md:pb-[calc((4.65rem+env(safe-area-inset-bottom))/var(--game-stage-scale))]'
-    : '';
+  const globalDockOffsetClass = '';
   const viewportShellClass = isGameplayScreen
     ? 'sat-shell-standard bg-transparent'
     : isWorldMapScreen
-    ? 'sat-shell-map licensed-playfield-bg bg-transparent pt-3 pb-3'
-    : useUnboundedStageShell
-      ? 'sat-shell-standard licensed-playfield-bg bg-transparent'
-      : isMapLayoutScreen
+    ? 'sat-shell-map licensed-playfield-bg bg-transparent'
+    : isMapLayoutScreen
       ? 'sat-shell-map licensed-playfield-bg bg-transparent pt-3 pb-3'
-      : 'sat-shell-standard licensed-playfield-bg bg-transparent px-3 pt-3 pb-3 md:px-8 md:pt-4 md:pb-4';
+      : 'sat-shell-standard licensed-playfield-bg bg-transparent px-3 py-3 md:px-8 md:py-4';
   const contentShellClass = isGameplayScreen
-    ? 'sat-screen-full-bleed items-stretch'
-    : useUnboundedStageShell
     ? 'sat-screen-full-bleed items-stretch'
     : isWorldMapScreen
       ? 'sat-screen-full-bleed items-stretch'
@@ -1095,24 +1042,28 @@ const App: React.FC = () => {
         </div>
       )
     : null;
-  const stageWidth = IPHONE_STAGE_WIDTH;
-  const stageHeight = IPHONE_STAGE_HEIGHT;
-  const stageStyle = {
-    '--game-stage-width': `${Math.round(stageWidth * stageRenderMultiplier)}px`,
-    '--game-stage-height': `${Math.round(stageHeight * stageRenderMultiplier)}px`,
-    '--game-stage-scale': `${stageScale}`,
-    '--game-stage-scale-inverse': `${stageScale > 0 ? 1 / stageScale : 1}`,
-    '--question-card-scale': `${questionCardScale}`,
-    '--potion-cauldron-shift': potionCauldronShift,
-  } as React.CSSProperties;
 
   return (
-    <div className="iphone-game-viewport">
-      <div className={`iphone-game-stage${useUnboundedStageShell ? ' iphone-game-stage-unbounded' : ''}${isGameplayScreen ? ' iphone-game-stage-gameplay' : ''}`} style={useUnboundedStageShell ? undefined : stageStyle}>
-        <div className="iphone-game-stage-inner">
+    <div className="game-viewport">
+      <header className="top-hud">
+        {!isStartScreen && !(screen === 'world_map' || screen === 'island_levels' || screen === 'profile' || screen === 'achievements_tracker' || screen === 'parent_dashboard') ? (
+          <UnifiedMiniGameHud
+            avatarId={player.avatarId}
+            timeLeft={globalMiniGameHudTimeLeft}
+            totalTime={GLOBAL_MINIGAME_HUD_DURATION_SECONDS}
+            gameTitle={canonicalGameTitle}
+            lives={globalMiniGameLives}
+            hideTimer={hideShellTimer}
+            onBack={isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
+            variant={isGameplayScreen ? 'gameplay' : 'hub'}
+            showActions={false}
+          />
+        ) : null}
+      </header>
+      <main className="game-stage">
           <div
             data-screen-family={screenBehavior.family}
-            className={`app-viewport sat-theme-bluegold app-background-intensity ${backgroundIntensityClass} app-shell-family-${screenBehavior.family} screen-${screen.replace(/_/g, '-')} ${isGameplayScreen ? `${gameplayTypeClass} ${gameplayBlueprintClass}` : ''} relative w-full flex flex-col items-center overflow-hidden ${viewportShellClass}`}
+            className={`app-viewport sat-theme-bluegold app-background-intensity ${backgroundIntensityClass} app-shell-family-${screenBehavior.family} screen-${screen.replace(/_/g, '-')} ${isGameplayScreen ? gameplayTypeClass : ''} relative w-full flex flex-col items-center overflow-hidden ${viewportShellClass}`}
           >
             <AnimatePresence mode="wait">
               <motion.div
@@ -1122,9 +1073,8 @@ const App: React.FC = () => {
                 exit={{ opacity: 0, scale: screenExitScale }}
                 data-qa-root="screen"
                 data-qa-screen={screen}
-                data-qa-scrollable={screenBehavior.scrollable ? 'true' : 'false'}
-                className={`app-screen-content relative z-10 flex min-h-0 w-full flex-1 justify-center pointer-events-auto ${screenBehavior.scrollable ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden'} ${contentShellClass} ${globalDockOffsetClass}`}
-                style={screenBehavior.scrollable ? { WebkitOverflowScrolling: 'touch' } : undefined}
+                data-qa-scrollable="false"
+                className={`app-screen-content relative z-10 flex h-full min-h-0 w-full flex-1 justify-center overflow-hidden pointer-events-auto ${contentShellClass} ${globalDockOffsetClass}`}
               >
                 <AppRouter
                   screen={screen}
@@ -1168,21 +1118,6 @@ const App: React.FC = () => {
                 {null}
               </motion.div>
             </AnimatePresence>
-
-            {!isStartScreen ? (
-              <UnifiedMiniGameHud
-                avatarId={player.avatarId}
-                timeLeft={globalMiniGameHudTimeLeft}
-                totalTime={GLOBAL_MINIGAME_HUD_DURATION_SECONDS}
-                gameTitle={canonicalGameTitle}
-                lives={globalMiniGameLives}
-                hideTimer={hideShellTimer}
-                hideTopBar={screen === 'world_map' || screen === 'island_levels' || screen === 'profile' || screen === 'achievements_tracker' || screen === 'parent_dashboard'}
-                onBack={isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
-                variant={isGameplayScreen ? 'gameplay' : 'hub'}
-                bottomContent={mapHudDock || undefined}
-              />
-            ) : null}
 
             <DailyQuestsModal
               isOpen={showQuests}
@@ -1242,8 +1177,18 @@ const App: React.FC = () => {
             {null}
 
           </div>
-        </div>
-      </div>
+      </main>
+      <footer className="bottom-hud">
+        {!isStartScreen ? (
+          mapHudDock || (
+            <GameActionDock
+              onBack={isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
+              compact
+              variant="global"
+            />
+          )
+        ) : null}
+      </footer>
     </div>
   );
 };

@@ -84,23 +84,28 @@
 html,
 body,
 #root {
-  height: 100%;
   width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
   overflow: hidden;
+  background: #050914;
   -webkit-text-size-adjust: 100%;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
+  padding: 0;
   position: fixed;
   inset: 0;
   font-family: var(--font-fredoka);
   overflow: hidden;
   user-select: none;
-  background:
-    radial-gradient(circle at top, rgba(255,241,196,0.08), transparent 24%),
-    radial-gradient(circle at 50% 28%, rgba(251,191,36,0.06), transparent 22%),
-    linear-gradient(180deg, #181f2b 0%, #10151f 42%, #0a0f18 76%, #04070d 100%);
+  background: #050914;
   overscroll-behavior: none;
   touch-action: none;
 }
@@ -115,29 +120,80 @@ body {
   position: relative;
 }
 
-.iphone-game-viewport {
-  position: fixed;
-  inset: 0;
+.game-viewport {
+  width: 100vw;
   height: 100dvh;
-  max-height: 100dvh;
   overflow: hidden;
-  background: #020617;
+  display: grid;
+  grid-template-rows:
+    calc(56px + env(safe-area-inset-top))
+    minmax(0, 1fr)
+    calc(72px + env(safe-area-inset-bottom));
+  background: #050914;
+}
+
+.top-hud {
+  grid-row: 1;
+  width: 100%;
+  height: calc(56px + env(safe-area-inset-top));
+  padding-top: env(safe-area-inset-top);
+  position: relative;
+  z-index: 50;
+  overflow: hidden;
+}
+
+.game-stage {
+  grid-row: 2;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.bottom-hud {
+  grid-row: 3;
+  width: 100%;
+  height: calc(72px + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  position: relative;
+  z-index: 50;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-background {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.iphone-game-viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  background: #050914;
 }
 
 .iphone-game-stage {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: var(--game-stage-width, 390px);
-  height: var(--game-stage-height, 844px);
-  transform: translate(-50%, -50%) scale(var(--game-stage-scale, 1));
-  transform-origin: center center;
+  position: relative;
+  left: auto;
+  top: auto;
+  width: 100%;
+  height: 100%;
+  transform: none;
   overflow: hidden;
-  background: #020617;
+  background: #050914;
 }
 
 .iphone-game-stage-gameplay {
-  width: calc(100vw * var(--game-stage-scale-inverse, 1));
+  width: 100%;
 }
 
 .iphone-game-stage-unbounded {
@@ -703,12 +759,6 @@ button:disabled {
 .app-viewport.screen-gameplay {
   position: relative;
   isolation: isolate;
-}
-
-.app-viewport.screen-gameplay.game-blueprint-place-value-panic {
-  height: var(--game-stage-height, 844px) !important;
-  min-height: var(--game-stage-height, 844px) !important;
-  max-height: var(--game-stage-height, 844px) !important;
 }
 
 .app-viewport.screen-gameplay::before,
@@ -4797,8 +4847,8 @@ button.avatar-hero-arrow:not(:disabled):active {
 .screen-gameplay .game-shell-host {
   display: flex;
   flex-direction: column;
-  height: 100dvh;
-  max-height: 100dvh;
+  height: 100%;
+  max-height: 100%;
   min-height: 0;
   overflow: hidden;
 }
@@ -4938,8 +4988,8 @@ button.avatar-hero-arrow:not(:disabled):active {
 
 .screen-gameplay .unified-minigame-hud-enabled .structured-game-layout {
   position: relative;
-  padding-top: var(--shared-minigame-hud-reserved-top) !important;
-  padding-bottom: var(--shared-minigame-reserved-bottom) !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
   box-sizing: border-box;
 }
 
@@ -4974,15 +5024,15 @@ button.avatar-hero-arrow:not(:disabled):active {
 .screen-gameplay .unified-minigame-hud-enabled .game-screen-bottom,
 .screen-gameplay .unified-minigame-hud-enabled .game-shell-zone-actions,
 .screen-gameplay .unified-minigame-hud-enabled .shared-game-actions {
-  position: fixed !important;
+  position: relative !important;
   top: auto !important;
-  left: 50% !important;
+  left: auto !important;
   right: auto !important;
-  bottom: max(0.5rem, env(safe-area-inset-bottom)) !important;
-  transform: translateX(-50%) !important;
-  width: min(calc(100% - 1rem), calc(100vw - 1rem), 56rem) !important;
+  bottom: auto !important;
+  transform: none !important;
+  width: 100% !important;
   margin: 0 !important;
-  z-index: 55 !important;
+  z-index: 20 !important;
 }
 
 .screen-gameplay .unified-minigame-hud-enabled .game-screen-bottom,
@@ -5000,7 +5050,7 @@ button.avatar-hero-arrow:not(:disabled):active {
 }
 
 .screen-gameplay .unified-minigame-hud-enabled .maths-vs-zombies-answer-surface {
-  bottom: max(0.5rem, env(safe-area-inset-bottom)) !important;
+  bottom: auto !important;
 }
 
 .screen-gameplay .unified-minigame-hud-enabled .structured-game-layout > * {
@@ -5018,12 +5068,12 @@ button.avatar-hero-arrow:not(:disabled):active {
    Force those roots below the shared HUD so gameplay never sits behind timer/avatar. */
 .screen-gameplay .unified-minigame-hud-enabled .fixed.inset-0 {
   position: absolute !important;
-  top: var(--shared-minigame-hud-reserved-top) !important;
+  top: 0 !important;
   right: 0 !important;
-  bottom: var(--shared-minigame-reserved-bottom) !important;
+  bottom: 0 !important;
   left: 0 !important;
-  height: auto !important;
-  max-height: calc(100% - var(--shared-minigame-hud-reserved-top) - var(--shared-minigame-reserved-bottom)) !important;
+  height: 100% !important;
+  max-height: 100% !important;
   min-height: 0 !important;
   overflow: hidden !important;
 }
@@ -5458,10 +5508,10 @@ button.avatar-hero-arrow:not(:disabled):active {
 }
 
 .game-question-card {
-  position: fixed;
-  top: calc(env(safe-area-inset-top) + 4px);
-  left: 0;
-  right: 0;
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
   border: 0;
   border-radius: 0;
   background:
@@ -5476,9 +5526,9 @@ button.avatar-hero-arrow:not(:disabled):active {
   font-size: clamp(0.95rem, 2.95vw, 1.12rem);
   font-weight: 400;
   line-height: 1.12;
-  transform: scale(var(--question-card-scale, 1));
+  transform: none;
   transform-origin: top center;
-  z-index: 60;
+  z-index: 20;
 }
 
 .game-question-card.game-question-card--dock-bottom {
@@ -5528,6 +5578,59 @@ button.avatar-hero-arrow:not(:disabled):active {
   font-size: 12px;
   font-weight: 700;
   color: rgba(224, 242, 254, 0.78);
+}
+
+@media (max-width: 640px) and (max-height: 720px) {
+  .screen-gameplay .game-question-card {
+    --question-card-padding: clamp(1.2rem, 2.8vh, 1.75rem) 1rem clamp(0.72rem, 1.8vh, 0.95rem);
+    width: var(--question-card-width, min(100%, 36rem));
+    max-height: 18vh;
+    overflow: hidden;
+    font-size: clamp(0.78rem, 2.45vw, 0.92rem);
+    line-height: 1.05;
+  }
+
+  .screen-gameplay .game-question-card .game-question-copy {
+    margin-top: 0.05rem;
+  }
+
+  .screen-gameplay .game-question-card .question-subtitle {
+    margin-top: 0.14rem;
+    font-size: 10px;
+  }
+
+  .screen-gameplay .unified-minigame-hud-enabled :has(> .game-question-card) {
+    padding-top: 4px !important;
+  }
+
+  .screen-gameplay .unified-minigame-hud-enabled .answer-choice-surface,
+  .screen-gameplay .unified-minigame-hud-enabled .game-screen-bottom,
+  .screen-gameplay .unified-minigame-hud-enabled .game-shell-zone-actions,
+  .screen-gameplay .unified-minigame-hud-enabled .shared-game-actions {
+    gap: 0.35rem !important;
+  }
+
+  .screen-gameplay:not(.game-type-place-value-peaks) .unified-minigame-hud-enabled [data-gameplay-content-viewport='true'] > .relative {
+    width: calc(100% / 0.82) !important;
+    height: calc(100% / 0.82) !important;
+    max-width: none !important;
+    transform: scale(0.82);
+    transform-origin: top center;
+  }
+}
+
+.screen-gameplay.game-type-place-value-peaks .game-shell-host,
+.screen-gameplay.game-type-place-value-peaks .game-shell-contract,
+.screen-gameplay.game-type-place-value-peaks .structured-game-layout,
+.screen-gameplay.game-type-place-value-peaks [data-gameplay-content-viewport='true'],
+.screen-gameplay.game-type-place-value-peaks [data-gameplay-content-viewport='true'] > .relative,
+.screen-gameplay.game-type-place-value-peaks .place-value-game-viewport,
+.screen-gameplay.game-type-place-value-peaks .place-value-playable-frame {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: 100% !important;
+  transform: none !important;
 }
 .screen-gameplay .game-shell-host .mission-panel-shell,
 .screen-gameplay .game-shell-host .licensed-slice-paper-panel,

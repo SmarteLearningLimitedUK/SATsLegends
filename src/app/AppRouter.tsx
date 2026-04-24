@@ -26,7 +26,6 @@ import { isBossEncounterGameType } from '../games/bossEncounterTypes';
 import { GameScreen, IslandData, LevelData, PlayerData } from '../types';
 import { getLevelGameTitle } from '../utils/gameNames';
 import splashPoster from '../assets/casual_ui/splashrep1.png';
-import { LEVEL_TIMERS_DISABLED } from './testingFlags';
 import {
   bindMiniGameSessionHandlers,
   emitMiniGameSessionEvent,
@@ -512,31 +511,16 @@ export const AppRouter: React.FC<AppRouterProps> = ({
     }
 
     case 'gameplay':
-      const hideMiniGameTimer = useMemo(() => {
-        if (screen !== 'gameplay' || !selectedLevel) return false;
-        if (LEVEL_TIMERS_DISABLED) return true;
-        return selectedLevel.gameType === 'basketball_rebounder';
-      }, [screen, selectedLevel]);
-
-    const shellStyle = {
-        '--game-shell-top-inset': '0.8rem',
-        '--game-shell-bottom-inset': hideMiniGameTimer || LEVEL_TIMERS_DISABLED ? '3.6rem' : '4rem',
-      } as React.CSSProperties;
-
       return (
         <div
-          className={`game-shell-host unified-minigame-hud-enabled ${gameplayTypeClass} ${usesQuestionMatchFrame ? 'question-match-shell' : ''} relative flex h-[100dvh] max-h-[100dvh] w-full min-h-0 flex-col overflow-hidden md:h-full md:max-h-full`.trim()}
-          style={shellStyle}
+          className={`game-shell-host unified-minigame-hud-enabled ${gameplayTypeClass} ${usesQuestionMatchFrame ? 'question-match-shell' : ''} relative flex h-full max-h-full w-full min-h-0 flex-col overflow-hidden`.trim()}
         >
             <div className="game-shell-contract relative z-[2] flex h-full max-h-full w-full min-h-0 flex-col overflow-hidden">
 
             <div
               className="structured-game-layout relative flex h-full max-h-full w-full min-h-0 flex-1 flex-col overflow-hidden"
               style={{
-                paddingTop: 'var(--game-shell-top-inset)',
-                paddingBottom: 'var(--game-shell-bottom-inset)',
-                paddingLeft: '0.3rem',
-                paddingRight: '0.3rem',
+                padding: 0,
               }}
             >
               <GameplayContentViewport>

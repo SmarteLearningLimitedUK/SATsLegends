@@ -46,7 +46,7 @@ export const GameScreenShell: React.FC<GameScreenShellProps> = ({
   >
     <section
       className={cn(
-        'app-screen app-screen-fixed premium-page-root game-shell-root relative flex h-[100dvh] max-h-[100dvh] w-full min-h-0 flex-col overflow-hidden md:h-full md:max-h-full',
+        'app-screen app-screen-fixed premium-page-root game-shell-root relative flex h-full max-h-full w-full min-h-0 flex-col overflow-hidden',
         className,
       )}
     >
