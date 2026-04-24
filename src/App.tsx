@@ -68,6 +68,8 @@ const App: React.FC = () => {
 
   const canonicalGameTitle = screen === 'ratio_racer'
     ? 'Ratio Racer'
+    : screen === 'scale_builder'
+      ? 'Scale Builder'
     : screen === 'share_splitter'
       ? 'Share Splitter'
       : getLevelGameTitle(selectedLevel);
@@ -959,12 +961,13 @@ const App: React.FC = () => {
   const isWellbeingScreen = screen === 'wellbeing_hub' || screen === 'wellbeing_activity';
   const isSplashScreen = screen === 'splash';
   const isStartScreen = isSplashScreen || screen === 'profile_setup' || screen === 'avatar_selection';
-  const isGameplayScreen = screen === 'gameplay' || screen === 'ratio_racer' || screen === 'share_splitter';
+  const isGameplayScreen = screen === 'gameplay' || screen === 'ratio_racer' || screen === 'scale_builder' || screen === 'share_splitter';
   const isStandaloneRatioRacer = screen === 'ratio_racer';
+  const isStandaloneScaleBuilder = screen === 'scale_builder';
   const isStandaloneShareSplitter = screen === 'share_splitter';
   const isMapLayoutScreen = MAP_LAYOUT_SCREENS.includes(screen);
   const isWorldMapScreen = screen === 'world_map';
-  const selectedGameType = isStandaloneRatioRacer ? 'ratio_fractions' : isStandaloneShareSplitter ? 'ratio_rapids' : selectedLevel?.gameType;
+  const selectedGameType = isStandaloneRatioRacer ? 'ratio_fractions' : isStandaloneScaleBuilder ? 'scale_safari' : isStandaloneShareSplitter ? 'ratio_rapids' : selectedLevel?.gameType;
   const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
   const globalDockOffsetClass = '';
@@ -989,6 +992,7 @@ const App: React.FC = () => {
   const hideShellTimer = LEVEL_TIMERS_DISABLED
     || !isGameplayScreen
     || isStandaloneRatioRacer
+    || isStandaloneScaleBuilder
     || isStandaloneShareSplitter
     || selectedLevel?.isPractice
     || selectedLevel?.gameType === 'potion_pour';
@@ -1062,7 +1066,7 @@ const App: React.FC = () => {
             gameTitle={canonicalGameTitle}
             lives={globalMiniGameLives}
             hideTimer={hideShellTimer}
-            onBack={isStandaloneRatioRacer || isStandaloneShareSplitter ? goToHome : isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
+            onBack={isStandaloneRatioRacer || isStandaloneScaleBuilder || isStandaloneShareSplitter ? goToHome : isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
             variant={isGameplayScreen ? 'gameplay' : 'hub'}
             showActions={false}
           />
@@ -1190,7 +1194,7 @@ const App: React.FC = () => {
         {!isStartScreen ? (
           mapHudDock || (
             <GameActionDock
-              onBack={isStandaloneRatioRacer || isStandaloneShareSplitter ? goToHome : isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
+              onBack={isStandaloneRatioRacer || isStandaloneScaleBuilder || isStandaloneShareSplitter ? goToHome : isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
               compact
               variant="global"
             />

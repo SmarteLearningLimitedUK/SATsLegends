@@ -164,6 +164,54 @@ export const AppRouter: React.FC<AppRouterProps> = ({
     );
   };
 
+  const renderStandaloneScaleBuilder = () => {
+    const standaloneLevelId = 5;
+    const gameTitle = 'Scale Builder';
+    const sessionContext = {
+      gameType: 'scale_safari' as const,
+      levelId: standaloneLevelId,
+    };
+
+    const sharedProps = {
+      levelId: standaloneLevelId,
+      avatarId: player.avatarId,
+      useSharedTopHud: true,
+      isPractice: false,
+      practiceBriefing: null,
+      gameTitle,
+      onVictory: () => undefined,
+      onGameOver: () => undefined,
+      onBack: onGoHome,
+      sessionState,
+      sessionEvents: bindMiniGameSessionHandlers(sessionEvents, sessionContext),
+    };
+
+    return (
+      <GameLoadBoundary
+        key={`ScaleBuilderGame-standalone-${gameplayRestartKey}`}
+        onBack={onGoHome}
+        context={{
+          title: gameTitle,
+          gameType: sessionContext.gameType,
+          levelId: standaloneLevelId,
+          blueprintKey: 'scale_builder',
+        }}
+      >
+        <Suspense
+          fallback={(
+            <div className="flex h-full w-full items-center justify-center rounded-[2rem] border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(10,31,83,0.72),rgba(6,19,56,0.86))] text-center shadow-[0_18px_36px_rgba(2,6,23,0.35)]">
+              <div className="px-6 py-8 text-sm font-black uppercase tracking-[0.2em] text-cyan-100/80">
+                Loading game...
+              </div>
+            </div>
+          )}
+        >
+          {getMiniGame('ScaleBuilderGame').render(sharedProps)}
+        </Suspense>
+      </GameLoadBoundary>
+    );
+  };
+
   const renderStandaloneShareSplitter = () => {
     const standaloneLevelId = 3;
     const gameTitle = 'Share Splitter';
@@ -638,6 +686,22 @@ export const AppRouter: React.FC<AppRouterProps> = ({
             >
               <GameplayContentViewport>
                 {renderStandaloneRatioRacer()}
+              </GameplayContentViewport>
+            </div>
+          </div>
+        </div>
+      );
+
+    case 'scale_builder':
+      return (
+        <div className="game-shell-host unified-minigame-hud-enabled game-type-scale-safari relative flex h-full max-h-full w-full min-h-0 flex-col overflow-hidden">
+          <div className="game-shell-contract relative z-[2] flex h-full max-h-full w-full min-h-0 flex-col overflow-hidden">
+            <div
+              className="structured-game-layout relative flex h-full max-h-full w-full min-h-0 flex-1 flex-col overflow-hidden"
+              style={{ padding: 0 }}
+            >
+              <GameplayContentViewport>
+                {renderStandaloneScaleBuilder()}
               </GameplayContentViewport>
             </div>
           </div>

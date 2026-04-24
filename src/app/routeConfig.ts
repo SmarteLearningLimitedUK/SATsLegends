@@ -47,6 +47,9 @@ export const parseRoute = (pathname: string): RouteState => {
       if (first === 'ratio-racer' || first === 'ratio_racer') {
         return { screen: 'ratio_racer' };
       }
+      if (first === 'scale-builder' || first === 'scale_builder') {
+        return { screen: 'scale_builder' };
+      }
       if (first === 'share-splitter' || first === 'share_splitter') {
         return { screen: 'share_splitter' };
       }
@@ -54,6 +57,9 @@ export const parseRoute = (pathname: string): RouteState => {
     case 'ratio-racer':
     case 'ratio_racer':
       return { screen: 'ratio_racer' };
+    case 'scale-builder':
+    case 'scale_builder':
+      return { screen: 'scale_builder' };
     case 'share-splitter':
     case 'share_splitter':
       return { screen: 'share_splitter' };
@@ -96,6 +102,8 @@ export const buildRouteForScreen = (
       return islandId && levelId ? `/game/${islandId}/${levelId}` : '/map';
     case 'ratio_racer':
       return '/minigame/ratio-racer';
+    case 'scale_builder':
+      return '/minigame/scale-builder';
     case 'share_splitter':
       return '/minigame/share-splitter';
     case 'wellbeing_hub':

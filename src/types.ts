@@ -249,6 +249,7 @@ export type GameScreen =
   | 'island_levels'
   | 'gameplay'
   | 'ratio_racer'
+  | 'scale_builder'
   | 'share_splitter'
   | 'wellbeing_hub'
   | 'wellbeing_activity'
