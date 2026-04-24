@@ -14,6 +14,8 @@ import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { isBossEncounterGameType, SupportedBossGameType } from './bossEncounterTypes';
 import type { AnimationState } from '../types';
+import type { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gameplaySessionContract';
+import { emitMiniGameSessionEvent } from '../app/gameplaySessionContract';
 
 interface BossEncounterGameProps {
   gameType: SupportedBossGameType;
@@ -22,6 +24,8 @@ interface BossEncounterGameProps {
   onVictory: (stars: number, XP: number) => void;
   onGameOver: (XP: number) => void;
   onBack: () => void;
+  sessionState?: GameplaySessionState;
+  sessionEvents?: GameplaySessionEventHandlers;
 }
 
 type QuestionKind = 'fluency' | 'reasoning';
@@ -40,7 +44,7 @@ interface BossQuestion {
 
 const TOTAL_QUESTIONS = 30;
 const BOSS_HEALTH_MAX = 20;
-const HERO_HEALTH_MAX = 5;
+const HERO_HEALTH_MAX = 3;
 const HIGH_SCORE_STARS = {
   bronze: 1800,
   silver: 3000,
@@ -510,6 +514,8 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   onVictory,
   onGameOver,
   onBack,
+  sessionState,
+  sessionEvents,
 }) => {
   const avatar = AVATARS.find(item => item.id === avatarId) || AVATARS[0];
   const encounter = getBossEncounter(gameType);
@@ -549,7 +555,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   const isTrueFalse = question.selectionMode === 'true_false';
   const activeSelection = submittedIndices ?? selectedIndices;
   const bossHealthRemaining = bossHealth;
-  const heroHealthRemaining = heroHealth;
+  const heroHealthRemaining = sessionState?.lives ?? heroHealth;
   const heroPose: AnimationState = resolveState === 'defeat'
     ? 'sad'
     : resolveState === 'victory'
@@ -641,7 +647,22 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
       ? XP + 120
       : XP;
     const nextBossHealth = isCorrect ? Math.max(0, bossHealth - 1) : bossHealth;
-    const nextHeroHealth = isCorrect ? heroHealth : Math.max(0, heroHealth - 1);
+    const currentHeroHealth = sessionState?.lives ?? heroHealth;
+    const nextHeroHealth = isCorrect ? currentHeroHealth : Math.max(0, currentHeroHealth - 1);
+
+    emitMiniGameSessionEvent(sessionEvents, isCorrect ? 'correct_answer' : 'incorrect_answer', {
+      score: nextScore,
+      metadata: {
+        gameType,
+        levelId,
+        boss: encounter.name,
+        questionIndex: currentIndex,
+        selected: normalizedSelection,
+        expected: normalizedCorrect,
+        livesBefore: currentHeroHealth,
+        livesLost: isCorrect ? 0 : 1,
+      },
+    });
 
     setSubmittedIndices(normalizedSelection);
     advanceQuestion(isCorrect, nextScore, nextBossHealth, nextHeroHealth);
@@ -677,16 +698,16 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
         onAction={() => setShowPracticeIntro(false)}
       />
 
-      <div className="relative z-10 flex h-full w-full flex-col gap-2 px-2 pb-2.5 pt-[calc(0.45rem+env(safe-area-inset-top))] lg:gap-3 lg:px-4 lg:pb-4 lg:pt-4">
-        <div className="licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col gap-2 overflow-hidden rounded-[2rem] p-2 lg:gap-3 lg:rounded-[2.6rem] lg:p-3">
-          <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
+      <div className="relative z-10 flex h-full w-full flex-col px-2 pb-2 pt-2 lg:px-4 lg:pb-3 lg:pt-3">
+        <div className="licensed-board-frame structured-playfield-frame relative flex min-h-0 flex-1 flex-col gap-2 overflow-hidden rounded-[1.65rem] p-2 lg:gap-3 lg:rounded-[2.2rem] lg:p-3">
+          <div className="pointer-events-none relative z-20 shrink-0">
             <GameQuestionCard>
               {formatFantasyPrompt(question.prompt)}
             </GameQuestionCard>
           </div>
 
-          <div className="mt-[clamp(5.25rem,13vh,7rem)] flex min-h-0 flex-1 flex-col gap-2 lg:gap-3">
-            <div className="battle-arena-panel relative flex min-h-0 flex-1 overflow-hidden rounded-[1.4rem] border border-white/14 bg-slate-950/58 px-3 py-3 text-white shadow-[0_18px_48px_rgba(2,6,23,0.24)] backdrop-blur-xl lg:rounded-[2rem] lg:px-4 lg:py-4">
+          <div className="flex min-h-0 flex-1 flex-col gap-2 lg:gap-3">
+            <div className="battle-arena-panel relative flex min-h-0 flex-1 overflow-hidden rounded-[1.1rem] border border-white/14 bg-slate-950/58 px-2 py-2 text-white shadow-[0_18px_48px_rgba(2,6,23,0.24)] backdrop-blur-xl lg:rounded-[1.6rem] lg:px-4 lg:py-4">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(34,197,94,0.12),transparent_40%),radial-gradient(circle_at_bottom,rgba(59,130,246,0.12),transparent_44%)]" />
               <div className="relative grid min-h-0 flex-1 gap-3 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.1fr)] lg:gap-4">
                 <div className="flex min-h-0 flex-col justify-end gap-2 rounded-[1.25rem] border border-cyan-200/12 bg-[linear-gradient(180deg,rgba(8,15,30,0.28),rgba(8,15,30,0.05))] p-3 lg:rounded-[1.8rem] lg:p-4">
