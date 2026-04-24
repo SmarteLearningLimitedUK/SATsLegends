@@ -1011,6 +1011,14 @@ export const reasoningAnswersMatch = (userAnswer: any, correctAnswer: any, accep
   return possibleAnswers.some((answer) => {
     if (Array.isArray(answer)) {
       if (Array.isArray(userAnswer)) {
+        if (
+          answer.length === 2
+          && userAnswer.length === 2
+          && answer.every((item) => typeof item === 'number')
+          && userAnswer.every((item) => Number.isFinite(Number(item)))
+        ) {
+          return Number(userAnswer[0]) === answer[0] && Number(userAnswer[1]) === answer[1];
+        }
         const left = userAnswer.map(normaliseReasoningAnswer).sort();
         const right = answer.map(normaliseReasoningAnswer).sort();
         return left.length === right.length && left.every((item, index) => item === right[index]);
@@ -1141,7 +1149,10 @@ export const getReasoning1DebugInfo = (paper: ReasoningPaper) => {
     duplicateChecks: {
       questionTexts: new Set(paper.questions.map((question) => question.question)).size === paper.questions.length,
       signatures: new Set(paper.questions.map((question) => question.signature)).size === paper.questions.length,
-      visualData: new Set(paper.questions.map(questionVisualKey)).size === paper.questions.length,
+      visualData: (() => {
+        const visualKeys = paper.questions.map(questionVisualKey).filter((key) => key !== '{}');
+        return new Set(visualKeys).size === visualKeys.length;
+      })(),
     },
   };
 };
