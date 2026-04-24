@@ -91,7 +91,7 @@ const makeMultiOptions = (correctAnswers: string[], wrongs: string[]) => {
 };
 
 const makeTrueFalseOptions = (isTrue: boolean) => {
-  const options = shuffle(['True', 'False']);
+  const options = shuffle(['True', 'False', 'Cannot tell', 'Both']);
   return {
     options,
     correctOptionIndices: [options.indexOf(isTrue ? 'True' : 'False')],
@@ -519,6 +519,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
 }) => {
   const avatar = AVATARS.find(item => item.id === avatarId) || AVATARS[0];
   const encounter = getBossEncounter(gameType);
+  const isArithmeticPaper = gameType === 'crystal_core';
   const reactionCopy = REACTION_COPY;
   const questions = useMemo(
     () => Array.from({ length: TOTAL_QUESTIONS }, () => {
@@ -552,10 +553,8 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
 
   const question = questions[currentIndex % questions.length];
   const isMultiSelect = question.selectionMode === 'multi';
-  const isTrueFalse = question.selectionMode === 'true_false';
   const activeSelection = submittedIndices ?? selectedIndices;
   const bossHealthRemaining = bossHealth;
-  const heroHealthRemaining = sessionState?.lives ?? heroHealth;
   const heroPose: AnimationState = resolveState === 'defeat'
     ? 'sad'
     : resolveState === 'victory'
@@ -694,7 +693,10 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Core of Calculation"
-        body="The Monster Minds have fortified the final boss.\nAnswer correctly to damage the enemy.\nKeep the hero standing until the boss falls."
+        body={isArithmeticPaper
+          ? "The Monster Minds have fortified the arithmetic core.\nAnswer correctly to damage the enemy.\nUse the top HUD hearts to track your lives."
+          : "The Monster Minds have fortified the final boss.\nAnswer correctly to damage the enemy.\nKeep the hero standing until the boss falls."
+        }
         onAction={() => setShowPracticeIntro(false)}
       />
 
@@ -709,29 +711,47 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
           <div className="flex min-h-0 flex-1 flex-col gap-2 lg:gap-3">
             <div className="battle-arena-panel relative flex min-h-0 flex-1 overflow-hidden rounded-[1.1rem] border border-white/14 bg-slate-950/58 px-2 py-2 text-white shadow-[0_18px_48px_rgba(2,6,23,0.24)] backdrop-blur-xl lg:rounded-[1.6rem] lg:px-4 lg:py-4">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(34,197,94,0.12),transparent_40%),radial-gradient(circle_at_bottom,rgba(59,130,246,0.12),transparent_44%)]" />
-              <div className="relative grid min-h-0 flex-1 gap-3 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.1fr)] lg:gap-4">
-                <div className="flex min-h-0 flex-col justify-end gap-2 rounded-[1.25rem] border border-cyan-200/12 bg-[linear-gradient(180deg,rgba(8,15,30,0.28),rgba(8,15,30,0.05))] p-3 lg:rounded-[1.8rem] lg:p-4">
-                  <div className="inline-flex w-fit rounded-full border border-cyan-200/20 bg-cyan-300/10 px-3 py-1 text-[9px] font-black uppercase tracking-[0.22em] text-cyan-50">
-                    Hero
+              {isArithmeticPaper ? (
+                <div className="relative flex min-h-0 flex-1 flex-col items-center justify-between gap-2 rounded-[0.95rem] border border-white/12 bg-[linear-gradient(180deg,rgba(8,15,30,0.34),rgba(8,15,30,0.06))] p-2 lg:rounded-[1.8rem] lg:p-4">
+                  <div className="flex w-full items-start justify-between gap-2">
+                    <div className="inline-flex rounded-full border border-rose-200/20 bg-rose-300/10 px-3 py-1 text-[9px] font-black uppercase tracking-[0.22em] text-rose-50">
+                      Enemy
+                    </div>
+                    <div className="inline-flex rounded-full border border-amber-100/20 bg-amber-300/10 px-3 py-1 text-[9px] font-black uppercase tracking-[0.2em] text-amber-50">
+                      {reaction}
+                    </div>
                   </div>
-                  <div className="flex min-h-0 flex-1 items-end justify-center">
-                    <AnimatedAvatar
-                      avatar={avatar}
-                      pose={heroPose}
-                      className="h-[9.5rem] w-[9.5rem] lg:h-[12.5rem] lg:w-[12.5rem]"
-                      floating={false}
-                      showBackdropGlow={true}
-                    />
+                  <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2">
+                    <BossPortrait encounter={encounter} pose={bossPose} className="h-[clamp(10.5rem,34vh,17.5rem)] w-full max-w-[21rem] lg:h-[22rem] lg:max-w-[27rem]" />
+                    <div className="w-full max-w-[20rem] rounded-[1rem] border border-white/12 bg-black/24 px-3 py-2 text-center text-[9px] font-black uppercase tracking-[0.16em] text-white/72 lg:max-w-[24rem]">
+                      {isMultiSelect ? 'Select all that apply' : 'Choose one answer'}
+                    </div>
                   </div>
                   <BattleHealthBar
-                    label="Hero HP"
-                    current={heroHealthRemaining}
-                    max={HERO_HEALTH_MAX}
-                    toneClass="border-cyan-200/30 bg-cyan-300/16 text-cyan-50"
+                    label={`${encounter.name} HP`}
+                    current={bossHealthRemaining}
+                    max={BOSS_HEALTH_MAX}
+                    toneClass="w-full max-w-[24rem] border-rose-200/30 bg-rose-300/16 text-rose-50"
                   />
                 </div>
+              ) : (
+                <div className="relative grid min-h-0 flex-1 grid-cols-[minmax(0,0.86fr)_minmax(0,1.14fr)] gap-2 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.1fr)] lg:gap-4">
+                  <div className="flex min-h-0 flex-col justify-end gap-1 rounded-[0.95rem] border border-cyan-200/12 bg-[linear-gradient(180deg,rgba(8,15,30,0.28),rgba(8,15,30,0.05))] p-2 lg:rounded-[1.8rem] lg:p-4">
+                    <div className="inline-flex w-fit rounded-full border border-cyan-200/20 bg-cyan-300/10 px-3 py-1 text-[9px] font-black uppercase tracking-[0.22em] text-cyan-50">
+                      Hero
+                    </div>
+                    <div className="flex min-h-0 flex-1 items-end justify-center">
+                      <AnimatedAvatar
+                        avatar={avatar}
+                        pose={heroPose}
+                        className="h-[clamp(6.5rem,20vh,9.5rem)] w-[clamp(6.5rem,20vh,9.5rem)] lg:h-[12.5rem] lg:w-[12.5rem]"
+                        floating={false}
+                        showBackdropGlow={true}
+                      />
+                    </div>
+                  </div>
 
-                <div className="flex min-h-0 flex-col justify-between gap-3 rounded-[1.25rem] border border-rose-200/12 bg-[linear-gradient(180deg,rgba(8,15,30,0.38),rgba(8,15,30,0.08))] p-3 lg:rounded-[1.8rem] lg:p-4">
+                  <div className="flex min-h-0 flex-col justify-between gap-2 rounded-[0.95rem] border border-rose-200/12 bg-[linear-gradient(180deg,rgba(8,15,30,0.38),rgba(8,15,30,0.08))] p-2 lg:rounded-[1.8rem] lg:p-4">
                   <div className="flex items-start justify-between gap-2">
                     <div className="inline-flex rounded-full border border-rose-200/20 bg-rose-300/10 px-3 py-1 text-[9px] font-black uppercase tracking-[0.22em] text-rose-50">
                       Enemy
@@ -741,9 +761,9 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
                     </div>
                   </div>
                   <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-3">
-                    <BossPortrait encounter={encounter} pose={bossPose} className="h-[10.25rem] w-full max-w-[18rem] lg:h-[13.5rem] lg:max-w-[21rem]" />
+                    <BossPortrait encounter={encounter} pose={bossPose} className="h-[clamp(7.2rem,22vh,10.25rem)] w-full max-w-[18rem] lg:h-[13.5rem] lg:max-w-[21rem]" />
                     <div className="w-full max-w-[19rem] rounded-[1rem] border border-white/12 bg-black/22 px-3 py-2 text-center text-[9px] font-black uppercase tracking-[0.16em] text-white/72 lg:max-w-[22rem]">
-                      {isMultiSelect ? 'Select all that apply' : isTrueFalse ? 'Choose true or false' : 'Choose one answer'}
+                      {isMultiSelect ? 'Select all that apply' : 'Choose one answer'}
                     </div>
                   </div>
                   <BattleHealthBar
@@ -754,9 +774,10 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
                   />
                 </div>
               </div>
+              )}
             </div>
 
-            <div className="answer-choice-surface grid min-h-0 shrink-0 grid-cols-2 gap-2 lg:gap-3">
+            <div className="answer-choice-surface grid min-h-0 shrink-0 grid-cols-4 gap-1.5 lg:gap-3">
               {question.options.map((option, index) => {
                 const isCorrect = question.correctOptionIndices.includes(index);
                 const isSelected = activeSelection.includes(index);
@@ -778,14 +799,14 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
                     onClick={() => handleOptionClick(index)}
                     disabled={submittedIndices !== null}
                     aria-pressed={isSelected}
-                    className={`relative flex min-h-[4.1rem] items-center justify-center rounded-[1.2rem] px-3 py-2 text-center text-sm font-black leading-tight lg:min-h-[5.7rem] lg:rounded-[1.7rem] lg:px-4 lg:text-lg ${toneClass} ${isCorrect ? 'ui-button-success' : isSelected ? 'ui-button-primary' : 'ui-button-secondary'}`}
+                    className={`relative flex h-[clamp(3.2rem,8.2vh,4.5rem)] min-w-0 items-center justify-center rounded-[0.85rem] px-1.5 py-2 text-center text-[clamp(0.62rem,2.6vw,0.95rem)] font-black leading-tight lg:h-[5.7rem] lg:rounded-[1.35rem] lg:px-4 lg:text-lg ${toneClass} ${isCorrect ? 'ui-button-success' : isSelected ? 'ui-button-primary' : 'ui-button-secondary'}`}
                   >
-                    <span className="pointer-events-none absolute left-2 top-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/10 text-[9px] font-black text-white/70 lg:left-3 lg:top-3 lg:h-6 lg:w-6 lg:text-xs">
+                    <span className="pointer-events-none absolute left-1 top-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-white/10 text-[8px] font-black text-white/70 lg:left-3 lg:top-3 lg:h-6 lg:w-6 lg:text-xs">
                       {String.fromCharCode(65 + index)}
                     </span>
-                    <span className="max-w-[10rem] lg:max-w-none">{option}</span>
+                    <span className="max-w-full break-words px-0.5 lg:px-0">{option}</span>
                     {isRevealed && isCorrect && (
-                      <AssetIcon name="check" className="absolute bottom-2 right-2 h-4 w-4 text-emerald-100 lg:h-5 lg:w-5" />
+                      <AssetIcon name="check" className="absolute bottom-1 right-1 h-3.5 w-3.5 text-emerald-100 lg:bottom-2 lg:right-2 lg:h-5 lg:w-5" />
                     )}
                   </button>
                 );
