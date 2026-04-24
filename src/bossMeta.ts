@@ -26,8 +26,8 @@ export const BOSS_ENCOUNTERS: Partial<Record<MiniGameType, BossEncounter>> = {
   },
   matrix_match: {
     assetId: 'cyclops_slime',
-    name: 'SATs Paper 3: Reasoning',
-    title: 'SATs Paper 3: Reasoning',
+    name: 'Reasoning 2',
+    title: 'Reasoning 2',
     glowClass: 'from-sky-300/22 via-cyan-300/10 to-transparent',
     chipClass: 'border-sky-200/35 bg-sky-100/14 text-sky-100',
   },

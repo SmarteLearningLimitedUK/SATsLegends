@@ -104,6 +104,7 @@ type ReasoningTemplate =
   | 'money_change'
   | 'time_duration'
   | 'geometry_symmetry'
+  | 'geometry_angle_x'
   | 'coordinates_read'
   | 'stats_bar'
   | 'volume_count'
@@ -445,19 +446,65 @@ const draftQuestion = (rng: () => number, template: ReasoningTemplate): DraftRea
       };
     }
     case 'geometry_symmetry': {
+      const knownAngle = pick(rng, [42, 55, 63, 68, 72, 78, 84, 105, 118, 126]);
+      const answer = 180 - knownAngle;
+      const wrongs = [
+        knownAngle,
+        Math.max(10, answer + 10),
+        Math.max(10, answer - 10),
+        180,
+      ].filter((value, index, list) => value !== answer && list.indexOf(value) === index);
       return {
-        question: 'Select all statements that are true for a rectangle.',
-        answer: ['Opposite sides are equal', 'It has 4 right angles'],
-        choices: ['Opposite sides are equal', 'It has 4 right angles', 'All sides must be equal', 'It has exactly 1 line of symmetry'],
+        question: 'Look at the diagram.\n\nWhat is the size of angle x?\n\nChoose the correct answer.',
+        answer: `${answer}°`,
+        acceptedAnswers: [answer, `${answer}`, `${answer} degrees`],
+        choices: withChoices(rng, `${answer}°`, wrongs.map((value) => `${value}°`)),
         marks: 1,
         type: 'geometry',
-        responseMode: 'multiSelect',
-        difficulty: 'easy',
-        signature: signature('geometry', template, ['rectangle'], 'easy'),
-        shapeData: { shapeType: 'rectangle', labels: ['right angle', 'opposite sides'], values: {} },
-        numberSet: ['rectangle'],
-        contextKey: 'rectangle_properties',
-        curriculumTags: ['geometry', 'explanation'],
+        responseMode: 'multipleChoice',
+        difficulty: 'medium',
+        signature: signature('geometry', template, [knownAngle, answer], 'medium'),
+        shapeData: {
+          shapeType: 'angleLine',
+          knownAngle,
+          targetLabel: 'x',
+          targetAngle: answer,
+          relationship: 'anglesOnStraightLine',
+        },
+        numberSet: [knownAngle, answer],
+        contextKey: 'angle_x_straight_line',
+        curriculumTags: ['geometry', 'measurement', 'explanation'],
+      };
+    }
+    case 'geometry_angle_x': {
+      const knownAngle = pick(rng, [42, 55, 63, 68, 72, 78, 84, 105, 118, 126]);
+      const answer = 180 - knownAngle;
+      const wrongs = [
+        knownAngle,
+        Math.max(10, answer + 10),
+        Math.max(10, answer - 10),
+        180,
+      ].filter((value, index, list) => value !== answer && list.indexOf(value) === index);
+      return {
+        question: 'Look at the diagram.\n\nWhat is the size of angle x?\n\nChoose the correct answer.',
+        answer: `${answer}°`,
+        acceptedAnswers: [answer, `${answer}`, `${answer} degrees`],
+        choices: withChoices(rng, `${answer}°`, wrongs.map((value) => `${value}°`)),
+        marks: 1,
+        type: 'geometry',
+        responseMode: 'multipleChoice',
+        difficulty: 'medium',
+        signature: signature('geometry', template, [knownAngle, answer], 'medium'),
+        shapeData: {
+          shapeType: 'angleLine',
+          knownAngle,
+          targetLabel: 'x',
+          targetAngle: answer,
+          relationship: 'anglesOnStraightLine',
+        },
+        numberSet: [knownAngle, answer],
+        contextKey: 'angle_x_straight_line',
+        curriculumTags: ['geometry', 'measurement'],
       };
     }
     case 'coordinates_read': {

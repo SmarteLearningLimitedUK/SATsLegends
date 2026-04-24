@@ -34,7 +34,7 @@ const THEME_STYLES: Record<CelebrationTheme, { backdrop: string; ribbon: string;
 };
 
 const VictorySwooshField: React.FC = () => (
-  <div className="absolute inset-0 overflow-hidden">
+  <div className="absolute inset-0 z-0 overflow-hidden">
     <motion.div
       className="absolute left-1/2 top-[24%] h-4 w-[180%] -translate-x-1/2 rounded-full bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.86)_12%,rgba(56,189,248,0.92)_34%,rgba(251,191,36,0.94)_58%,rgba(255,255,255,0.86)_80%,transparent)] blur-[2px]"
       animate={{ x: ['-34%', '34%'], rotate: [-10, 8, -10], opacity: [0.16, 0.95, 0.18] }}
@@ -46,8 +46,8 @@ const VictorySwooshField: React.FC = () => (
       transition={{ duration: 1.22, ease: 'easeInOut', repeat: Infinity, repeatType: 'mirror', delay: 0.18 }}
     />
     <motion.div
-      className="absolute left-1/2 top-1/2 h-[42%] w-[42%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.96)_0%,rgba(255,255,255,0.38)_22%,rgba(56,189,248,0.2)_44%,rgba(56,189,248,0)_74%)] blur-2xl"
-      animate={{ scale: [0.88, 1.08, 0.92], opacity: [0.26, 0.85, 0.28] }}
+      className="absolute left-1/2 top-1/2 h-[42%] w-[42%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.68)_0%,rgba(255,255,255,0.24)_22%,rgba(56,189,248,0.18)_44%,rgba(56,189,248,0)_74%)] blur-2xl"
+      animate={{ scale: [0.88, 1.08, 0.92], opacity: [0.18, 0.48, 0.2] }}
       transition={{ duration: 1.05, ease: 'easeInOut', repeat: Infinity, repeatType: 'mirror' }}
     />
   </div>
@@ -91,21 +91,21 @@ const FlameField: React.FC = () => (
 
 const CelebrationSplash: React.FC<CelebrationSplashProps> = ({ active, message, theme, sweepDuration }) => {
   const styles = THEME_STYLES[theme];
-  const duration = sweepDuration ?? (theme === 'takeout' ? 1.25 : theme === 'party' ? 0.72 : theme === 'victory' ? 0.98 : 0.82);
+  const duration = sweepDuration ?? (theme === 'takeout' ? 1.25 : theme === 'party' ? 0.72 : theme === 'victory' ? 1.5 : 0.82);
 
   return (
     <AnimatePresence>
       {active ? (
         <motion.div
           aria-hidden="true"
-          className={`pointer-events-none fixed inset-0 z-[90] overflow-hidden ${styles.backdrop}`}
+          className={`pointer-events-none fixed inset-0 z-[1] overflow-hidden ${styles.backdrop}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.18, ease: 'easeOut' }}
         >
           <motion.div
-            className={`absolute inset-0 ${styles.glow}`}
+            className={`absolute inset-0 z-0 ${styles.glow}`}
             animate={{ opacity: [0.35, 0.75, 0.42] }}
             transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut' }}
           />
@@ -114,13 +114,13 @@ const CelebrationSplash: React.FC<CelebrationSplashProps> = ({ active, message, 
           {theme === 'forge' ? <FlameField /> : null}
 
           <motion.div
-            className={`absolute left-1/2 top-1/2 flex w-[min(196vw,86rem)] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border px-5 py-4 text-center shadow-[0_26px_52px_rgba(2,6,23,0.45)] ${styles.ribbon}`}
+            className={`absolute left-1/2 top-1/2 z-10 flex w-[min(196vw,86rem)] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border px-5 py-4 text-center shadow-[0_26px_52px_rgba(2,6,23,0.45)] ${styles.ribbon}`}
             initial={theme === 'victory' ? { x: '-152%', rotate: -9, scale: 0.95 } : { x: '-138%', rotate: -8, scale: 0.96 }}
             animate={theme === 'victory' ? { x: '152%', rotate: 9, scale: 1.02 } : { x: '138%', rotate: -8, scale: 1 }}
             exit={theme === 'victory' ? { x: '180%', opacity: 0 } : { x: '168%', opacity: 0 }}
             transition={{ duration, ease: 'easeInOut' }}
           >
-            <span className="text-[clamp(1.85rem,7.1vw,4.5rem)] font-black uppercase tracking-[0.16em] text-white drop-shadow-[0_4px_10px_rgba(7,15,35,0.56)]">
+            <span className="relative z-20 text-[clamp(1.85rem,7.1vw,4.5rem)] font-black uppercase tracking-[0.16em] text-white drop-shadow-[0_4px_10px_rgba(7,15,35,0.56)]">
               {message}
             </span>
           </motion.div>

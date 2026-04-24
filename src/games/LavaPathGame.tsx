@@ -40,17 +40,17 @@ const MAX_WRONGS = 3;
 const STEP_XP = 140;
 
 const LAVA_PATH_STOPS = [
-  { x: 49.5, y: 89.5 },
-  { x: 55.5, y: 82.5 },
-  { x: 46.5, y: 75.0 },
-  { x: 57.0, y: 66.0 },
-  { x: 43.5, y: 57.0 },
-  { x: 57.0, y: 48.0 },
-  { x: 44.0, y: 39.0 },
-  { x: 58.5, y: 29.5 },
-  { x: 45.5, y: 20.5 },
-  { x: 56.0, y: 11.5 },
-  { x: 51.0, y: 5.0 },
+  { x: 55.5, y: 96.0 },
+  { x: 66.0, y: 87.0 },
+  { x: 58.0, y: 79.0 },
+  { x: 43.0, y: 71.0 },
+  { x: 30.0, y: 61.5 },
+  { x: 43.5, y: 53.0 },
+  { x: 56.5, y: 44.5 },
+  { x: 68.0, y: 36.5 },
+  { x: 58.0, y: 27.0 },
+  { x: 46.0, y: 18.0 },
+  { x: 52.0, y: 9.5 },
 ] as const;
 
 const getLavaPathPosition = (stepIndex: number) => {
@@ -297,14 +297,15 @@ const LavaPathGame: React.FC<LavaPathGameProps> = ({
           <motion.div
             animate={{ left: `${currentPosition.x}%`, top: `${currentPosition.y}%` }}
             transition={{ type: 'spring', stiffness: 130, damping: 20, mass: 0.85 }}
-            className="absolute z-20 -translate-x-1/2 -translate-y-1/2"
+            className="absolute z-20 -translate-x-1/2 -translate-y-full"
           >
-            <div className="relative h-[clamp(4rem,7vw,6.2rem)] w-[clamp(4rem,7vw,6.2rem)]">
-              <div className="absolute inset-0 rounded-full bg-amber-300/16 blur-xl" />
+            <div className="relative h-[clamp(3.35rem,6.1vw,5.25rem)] w-[clamp(3.35rem,6.1vw,5.25rem)]">
+              <div className="absolute left-1/2 bottom-0 h-[22%] w-[58%] -translate-x-1/2 rounded-full bg-amber-300/22 blur-md" />
               <img
                 src={playerAvatarImage}
                 alt={playerAvatar.name}
-                className="relative z-10 h-full w-full object-contain drop-shadow-[0_16px_22px_rgba(0,0,0,0.32)]"
+                className="relative z-10 h-full w-full object-contain object-bottom drop-shadow-[0_16px_22px_rgba(0,0,0,0.32)]"
+                data-player-avatar="true"
                 draggable={false}
               />
             </div>

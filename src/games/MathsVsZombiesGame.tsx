@@ -264,10 +264,12 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     setShowPracticeIntro(Boolean(isPractice));
   }, [isPractice]);
 
-  const avatarImage = useMemo(() => (
-    CHARACTER_AVATARS.find((avatar) => avatar.id === avatarId)?.image
-      ?? CHARACTER_AVATARS.find((avatar) => avatar.id === DEFAULT_AVATAR_ID)?.image
+  const playerAvatar = useMemo(() => (
+    CHARACTER_AVATARS.find((avatar) => avatar.id === avatarId)
+      ?? CHARACTER_AVATARS.find((avatar) => avatar.id === DEFAULT_AVATAR_ID)
+      ?? CHARACTER_AVATARS[0]
   ), [avatarId]);
+  const avatarImage = playerAvatar?.portrait || playerAvatar?.image;
 
   const spawnZombie = useCallback(() => {
     const lane = Math.floor(Math.random() * LANES);
@@ -554,7 +556,8 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
               {avatarImage ? (
                 <img
                   src={avatarImage}
-                  alt=""
+                  alt={playerAvatar?.name || 'Player avatar'}
+                  data-player-avatar="true"
                   className="h-[clamp(104px,20vh,150px)] w-auto object-contain drop-shadow-[0_10px_20px_rgba(2,6,23,0.45)]"
                   draggable={false}
                 />

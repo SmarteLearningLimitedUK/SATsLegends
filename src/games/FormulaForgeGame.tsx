@@ -259,6 +259,14 @@ const scoreToStars = (correct: number, rounds: number, lives: number) => {
 };
 
 const FormulaShapePanel: React.FC<{ round: FormulaRound }> = ({ round }) => {
+  const givenMap = new Map(round.given.map(({ label, value }) => [label, value]));
+  const labelValue = (label: string) => (
+    givenMap.has(label)
+      ? String(givenMap.get(label))
+      : round.targetLabel === label
+        ? '?'
+        : ''
+  );
   const valuePills = round.given.map(({ label, value }) => (
     <div
       key={`${round.id}-${label}`}
@@ -270,16 +278,46 @@ const FormulaShapePanel: React.FC<{ round: FormulaRound }> = ({ round }) => {
   ));
 
   return (
-    <div className="rounded-[1.15rem] border border-cyan-200/14 bg-[linear-gradient(180deg,rgba(8,18,36,0.42),rgba(15,23,42,0.18))] p-2.5 shadow-[0_12px_22px_rgba(2,6,23,0.12)] md:p-3">
-      <div className="rounded-[0.95rem] border border-white/10 bg-black/14 px-3 py-2 text-sm font-semibold text-cyan-50/88">
-        {round.prompt}
-      </div>
-      <div className="mt-2 grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2">
+    <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] gap-2 rounded-[1.15rem] border border-cyan-200/14 bg-[linear-gradient(180deg,rgba(8,18,36,0.42),rgba(15,23,42,0.18))] p-2.5 shadow-[0_12px_22px_rgba(2,6,23,0.12)] md:p-3">
+      <div className="grid min-h-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+        <div className="flex min-h-0 items-center justify-center rounded-[1rem] border border-cyan-100/16 bg-slate-950/22 p-2">
+          {round.diagram === 'rectangle' ? (
+            <svg viewBox="0 0 260 170" className="h-full max-h-[15rem] w-full max-w-[23rem]" role="img" aria-label={round.title}>
+              <rect x="45" y="38" width="170" height="92" rx="6" fill="rgba(56,189,248,0.16)" stroke="#facc15" strokeWidth="6" />
+              <text x="130" y="88" textAnchor="middle" dominantBaseline="middle" fill="#ffffff" fontSize="22" fontWeight="900">{round.targetLabel === 'A' ? '?' : round.targetLabel === 'P' ? 'P?' : ''}</text>
+              <text x="130" y="154" textAnchor="middle" fill="#bfdbfe" fontSize="18" fontWeight="900">l = {labelValue('l')}</text>
+              <text x="228" y="88" textAnchor="middle" dominantBaseline="middle" fill="#bfdbfe" fontSize="18" fontWeight="900">w = {labelValue('w')}</text>
+            </svg>
+          ) : round.diagram === 'triangle' ? (
+            <svg viewBox="0 0 260 180" className="h-full max-h-[15rem] w-full max-w-[23rem]" role="img" aria-label={round.title}>
+              <path d="M42 138 L218 138 L130 30 Z" fill="rgba(56,189,248,0.16)" stroke="#facc15" strokeWidth="6" strokeLinejoin="round" />
+              <line x1="130" y1="34" x2="130" y2="138" stroke="#93c5fd" strokeWidth="3" strokeDasharray="7 7" />
+              <text x="130" y="92" textAnchor="middle" dominantBaseline="middle" fill="#ffffff" fontSize="22" fontWeight="900">{round.targetLabel === 'A' ? '?' : ''}</text>
+              <text x="130" y="166" textAnchor="middle" fill="#bfdbfe" fontSize="18" fontWeight="900">b = {labelValue('b')}</text>
+              <text x="154" y="86" fill="#bfdbfe" fontSize="18" fontWeight="900">h = {labelValue('h')}</text>
+            </svg>
+          ) : (
+            <svg viewBox="0 0 270 190" className="h-full max-h-[15rem] w-full max-w-[23rem]" role="img" aria-label={round.title}>
+              <path d="M55 70 L165 70 L215 35 L105 35 Z" fill="rgba(125,211,252,0.24)" stroke="#facc15" strokeWidth="5" strokeLinejoin="round" />
+              <path d="M165 70 L215 35 L215 125 L165 160 Z" fill="rgba(34,211,238,0.18)" stroke="#facc15" strokeWidth="5" strokeLinejoin="round" />
+              <path d="M55 70 L165 70 L165 160 L55 160 Z" fill="rgba(56,189,248,0.16)" stroke="#facc15" strokeWidth="5" strokeLinejoin="round" />
+              <text x="110" y="118" textAnchor="middle" fill="#ffffff" fontSize="22" fontWeight="900">{round.targetLabel === 'V' ? '?' : ''}</text>
+              <text x="110" y="182" textAnchor="middle" fill="#bfdbfe" fontSize="16" fontWeight="900">l = {labelValue('l')}</text>
+              <text x="228" y="82" fill="#bfdbfe" fontSize="16" fontWeight="900">w = {labelValue('w')}</text>
+              <text x="28" y="118" fill="#bfdbfe" fontSize="16" fontWeight="900">h = {labelValue('h')}</text>
+            </svg>
+          )}
+        </div>
         <div className="rounded-[1rem] border border-cyan-100/18 bg-slate-950/32 px-3 py-2 text-center shadow-[0_10px_18px_rgba(2,6,23,0.14)]">
           <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/70">Formula</div>
           <div className="mt-1 text-lg font-black text-white md:text-2xl">{round.formula}</div>
         </div>
-        <div className={`grid gap-2 text-white ${round.given.length >= 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
+      </div>
+      <div>
+        <div className="rounded-[0.95rem] border border-white/10 bg-black/14 px-3 py-2 text-sm font-semibold text-cyan-50/88">
+          {round.prompt}
+        </div>
+        <div className={`mt-2 grid gap-2 text-white ${round.given.length >= 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
           {valuePills}
         </div>
       </div>
@@ -424,17 +462,16 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
             <div className="flex justify-center">
               <GameQuestionCard
                 title="Formula Forge"
-                subtitle={`Question ${roundNumber} of ${totalRounds}`}
                 className="max-w-[860px] border border-cyan-200/22 bg-[linear-gradient(180deg,rgba(8,18,36,0.42),rgba(8,18,36,0.18))] shadow-[0_12px_26px_rgba(2,6,23,0.12)]"
               >
                 {formatFantasyPrompt(buildQuestionStem(round))}
               </GameQuestionCard>
             </div>
 
-            <div className="mt-3 grid min-h-0 flex-1 grid-rows-[auto_auto_auto] content-start gap-2 md:gap-3">
+            <div className="mt-3 grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto_auto] gap-2 md:gap-3">
               <FormulaShapePanel round={round} />
 
-              <div className="answer-choice-surface min-h-0 rounded-[1.15rem] border border-white/12 bg-[linear-gradient(180deg,rgba(30,64,175,0.08),rgba(15,23,42,0.46))] p-2.5 shadow-[0_14px_26px_rgba(2,6,23,0.12)] md:p-3">
+              <div className="answer-choice-surface mt-auto min-h-0 rounded-[1.15rem] border border-white/12 bg-[linear-gradient(180deg,rgba(30,64,175,0.08),rgba(15,23,42,0.46))] p-2.5 shadow-[0_14px_26px_rgba(2,6,23,0.12)] md:p-3">
                 <div className="text-[11px] font-black uppercase tracking-[0.16em] text-amber-100/85 md:text-xs">Restore the correct value for {round.targetLabel}</div>
                 <div className="mt-2.5 grid grid-cols-2 gap-1.5 md:gap-2.5">
                   {round.options.map((option) => (

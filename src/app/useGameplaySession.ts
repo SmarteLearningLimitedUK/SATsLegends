@@ -7,6 +7,7 @@ import { LEVEL_TIMERS_DISABLED } from './testingFlags';
 export const GLOBAL_MINIGAME_HUD_DURATION_SECONDS = 90;
 export const ARITHMETIC_BOSS_DURATION_SECONDS = 1800;
 export const REASONING_1_BOSS_DURATION_SECONDS = 2400;
+export const REASONING_2_BOSS_DURATION_SECONDS = 2400;
 export const GLOBAL_MINIGAME_LIVES = 3;
 
 interface GameplaySessionArgs {
@@ -37,12 +38,16 @@ export const useGameplaySession = ({
   const [globalMiniGameTimeLock, setGlobalMiniGameTimeLock] = useState(false);
   const [restartNonce, setRestartNonce] = useState(0);
   const [isMuted, setIsMuted] = useState(() => localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true');
-  const isExamBoss = selectedLevel?.gameType === 'crystal_core' || selectedLevel?.gameType === 'mirror_gate';
+  const isExamBoss = selectedLevel?.gameType === 'crystal_core'
+    || selectedLevel?.gameType === 'mirror_gate'
+    || selectedLevel?.gameType === 'matrix_match';
   const globalMiniGameHudDurationSeconds = selectedLevel?.gameType === 'crystal_core'
     ? ARITHMETIC_BOSS_DURATION_SECONDS
     : selectedLevel?.gameType === 'mirror_gate'
       ? REASONING_1_BOSS_DURATION_SECONDS
-      : GLOBAL_MINIGAME_HUD_DURATION_SECONDS;
+      : selectedLevel?.gameType === 'matrix_match'
+        ? REASONING_2_BOSS_DURATION_SECONDS
+        : GLOBAL_MINIGAME_HUD_DURATION_SECONDS;
   const shouldDisableTimer = LEVEL_TIMERS_DISABLED && !isExamBoss;
   const handlesOwnTimerExpiry = isExamBoss;
   const isUntimedGameplay =

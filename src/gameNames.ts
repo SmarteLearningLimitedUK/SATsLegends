@@ -4,7 +4,7 @@ export const CANONICAL_GAME_LABELS: Partial<Record<MiniGameType, string>> = {
   potion_pour: 'Potion Panic',
   cloud_collapse: 'Crystal Match',
   logic_sort: 'Logic Sort',
-  matrix_match: 'SATs Paper 3',
+  matrix_match: 'Reasoning 2',
   take_out_rush: 'Take-Out Rush',
   fraction_match: 'Crystal Match',
   crystal_core: 'SATs Paper 1',

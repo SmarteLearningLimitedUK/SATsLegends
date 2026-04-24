@@ -307,9 +307,9 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           <GameQuestionCard
             className="z-30 mt-0 w-full max-w-[780px] max-[480px]:px-2 max-[480px]:py-1.5"
             title={caseMode === 'whodunnit' ? 'Who took the loot?' : 'Match the evidence totals.'}
-            subtitle={CASE_REVIEW_PROMPT}
+            subtitle={caseBrief}
           >
-            {caseBrief}
+            {CASE_REVIEW_PROMPT}
           </GameQuestionCard>
         </div>
       )}

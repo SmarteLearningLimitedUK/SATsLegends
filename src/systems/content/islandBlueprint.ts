@@ -975,7 +975,7 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
     satsCoverage: [
       'SATs Paper 1 arithmetic',
       'SATs Paper 2 reasoning',
-      'SATs Paper 3 reasoning',
+      'Reasoning 2 paper',
     ],
     tierFramework: [
       {
@@ -1060,7 +1060,7 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
       },
       {
         key: 'matrix_match',
-        name: 'SATs Paper 3: Reasoning',
+        name: 'Reasoning 2',
         role: 'mixed_mastery',
         gameplayRoles: ['mixed_mastery', 'pressure_timing'],
         mechanicSummary: 'Mixed reasoning paper trial that blends clues, patterns and data under pressure.',

@@ -13,6 +13,7 @@ import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
+import bossPaperBackground from '../assets/maps/backgroundsforgames/forestbackground.png';
 import { isBossEncounterGameType, SupportedBossGameType } from './bossEncounterTypes';
 import type { AnimationState } from '../types';
 import type { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gameplaySessionContract';
@@ -109,6 +110,59 @@ const formatReasoningAnswer = (value: any): string => {
   return String(value ?? '');
 };
 
+const makeReasoningChoices = (question: ReasoningQuestion): any[] => {
+  if (question.choices?.length) return question.choices;
+
+  const correct = formatReasoningAnswer(question.answer);
+  const numericAnswer = Number(String(correct).replace(/[£,a-zA-Z\s]/g, ''));
+
+  if (Array.isArray(question.answer) && question.answer.length === 2) {
+    const [x, y] = question.answer.map(Number);
+    return [`(${x}, ${y})`, `(${y}, ${x})`, `(${x + 1}, ${y})`, `(${x}, ${Math.max(0, y - 1)})`];
+  }
+
+  if (String(correct).includes('/')) {
+    const [numerator, denominator] = String(correct).split('/').map(Number);
+    return Array.from(new Set([
+      correct,
+      `${numerator + 1}/${denominator}`,
+      `${Math.max(1, numerator - 1)}/${denominator}`,
+      `${numerator}/${denominator + 1}`,
+    ])).slice(0, 4);
+  }
+
+  if (Number.isFinite(numericAnswer)) {
+    const prefix = String(correct).trim().startsWith('£') ? '£' : '';
+    const suffix = String(correct).replace(/[0-9.,£\-\s]/g, '').trim();
+    const formatOption = (value: number) => {
+      if (prefix) return `${prefix}${value.toFixed(2)}`;
+      return `${value}${suffix ? ` ${suffix}` : ''}`;
+    };
+    const step = Math.max(1, Math.round(Math.abs(numericAnswer) * 0.1));
+    return Array.from(new Set([
+      formatOption(numericAnswer),
+      formatOption(numericAnswer + step),
+      formatOption(Math.max(0, numericAnswer - step)),
+      formatOption(numericAnswer + step * 2),
+    ])).slice(0, 4);
+  }
+
+  return Array.from(new Set([correct, `${correct} 1`, `${correct} 2`, `${correct} 3`])).slice(0, 4);
+};
+
+const BossVisualFrame: React.FC<{ title?: string; children: React.ReactNode; className?: string }> = ({ title, children, className = '' }) => (
+  <div className={`mx-auto flex h-full max-w-4xl flex-col justify-center rounded-[1.15rem] border border-amber-300/50 bg-[linear-gradient(180deg,rgba(8,32,72,0.94),rgba(3,15,35,0.96))] p-3 shadow-[inset_0_0_0_1px_rgba(251,191,36,0.18),0_0_24px_rgba(0,0,0,0.28)] ${className}`}>
+    {title ? (
+      <div className="relative mx-auto mb-[-0.6rem] flex min-h-[2.45rem] w-[min(82%,28rem)] items-center justify-center rounded-[0.85rem] border border-amber-300/45 bg-[linear-gradient(180deg,#0758bd,#042d73)] px-5 py-2 text-center text-[clamp(0.95rem,3vw,1.45rem)] font-black uppercase tracking-[0.08em] text-white shadow-[0_8px_0_rgba(3,13,35,0.72)]">
+        {title}
+      </div>
+    ) : null}
+    <div className="min-h-0 rounded-[1rem] border-[6px] border-stone-500/80 bg-[radial-gradient(circle_at_50%_15%,rgba(255,255,255,0.08),transparent_34%),linear-gradient(180deg,#102133,#07101e)] p-3 shadow-[inset_0_0_0_2px_rgba(255,255,255,0.12),inset_0_0_24px_rgba(0,0,0,0.68)]">
+      {children}
+    </div>
+  </div>
+);
+
 const ReasoningVisual: React.FC<{ question: ReasoningQuestion }> = ({ question }) => {
   if (question.chartData) {
     const labels = question.chartData.labels as string[];
@@ -117,30 +171,28 @@ const ReasoningVisual: React.FC<{ question: ReasoningQuestion }> = ({ question }
 
     if (question.chartData.chartType === 'table') {
       return (
-        <div className="rounded-xl border border-slate-300 bg-slate-50 p-3">
-          <div className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-slate-500">Data Table</div>
-          <div className="grid overflow-hidden rounded-lg border border-slate-300 bg-white text-sm font-bold text-slate-800" style={{ gridTemplateColumns: '1fr 1fr' }}>
-            <div className="bg-slate-100 px-3 py-2">Item</div>
-            <div className="bg-slate-100 px-3 py-2">Value</div>
+        <BossVisualFrame title="Data Table">
+          <div className="grid overflow-hidden rounded-lg border border-cyan-100/35 bg-slate-950/38 text-sm font-bold text-white" style={{ gridTemplateColumns: '1fr 1fr' }}>
+            <div className="bg-cyan-300/12 px-3 py-2">Item</div>
+            <div className="bg-cyan-300/12 px-3 py-2">Value</div>
             {labels.map((label, index) => (
               <React.Fragment key={label}>
-                <div className="border-t border-slate-200 px-3 py-2">{label}</div>
-                <div className="border-t border-slate-200 px-3 py-2">{values[index]}</div>
+                <div className="border-t border-cyan-100/20 px-3 py-2">{label}</div>
+                <div className="border-t border-cyan-100/20 px-3 py-2">{values[index]}</div>
               </React.Fragment>
             ))}
           </div>
-        </div>
+        </BossVisualFrame>
       );
     }
 
     if (question.chartData.chartType === 'line') {
       const points = values.map((value, index) => `${(index / Math.max(1, values.length - 1)) * 100},${100 - (value / maxValue) * 84 - 8}`).join(' ');
       return (
-        <div className="rounded-xl border border-slate-300 bg-[#f8fbff] p-3">
-          <div className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-slate-500">Line Graph Lab</div>
-          <svg viewBox="0 0 100 70" className="h-44 w-full rounded-lg bg-white">
-            <line x1="8" y1="8" x2="8" y2="62" stroke="#94a3b8" strokeWidth="1.5" />
-            <line x1="8" y1="62" x2="96" y2="62" stroke="#94a3b8" strokeWidth="1.5" />
+        <BossVisualFrame title="Line Graph Lab">
+          <svg viewBox="0 0 100 70" className="h-[clamp(10rem,31vh,18rem)] w-full rounded-lg bg-slate-950/32">
+            <line x1="8" y1="8" x2="8" y2="62" stroke="#ffffff" strokeWidth="1.5" />
+            <line x1="8" y1="62" x2="96" y2="62" stroke="#ffffff" strokeWidth="1.5" />
             <polyline points={points} fill="none" stroke="#0ea5e9" strokeWidth="3" />
             {values.map((value, index) => {
               const x = (index / Math.max(1, values.length - 1)) * 100;
@@ -148,39 +200,45 @@ const ReasoningVisual: React.FC<{ question: ReasoningQuestion }> = ({ question }
               return <circle key={labels[index]} cx={x} cy={y} r="3" fill="#f59e0b" />;
             })}
           </svg>
-          <div className="mt-2 flex justify-between text-xs font-black text-slate-600">
+          <div className="mt-2 flex justify-between text-xs font-black text-white">
             {labels.map((label) => <span key={label}>{label}</span>)}
           </div>
-        </div>
+        </BossVisualFrame>
       );
     }
 
     return (
-      <div className="rounded-xl border border-slate-300 bg-[#fff8ed] p-3">
-        <div className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-slate-500">Graph Grabber</div>
-        <div className="flex h-44 items-end gap-3 rounded-lg bg-white p-3">
+      <BossVisualFrame title={String(question.chartData.yLabel ?? 'Points Scored')}>
+        <div className="relative flex h-[clamp(10rem,32vh,19rem)] items-end gap-3 rounded-lg bg-slate-950/32 p-3 pl-8">
+          <div className="absolute bottom-8 left-8 right-3 top-3 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.45)_1px,transparent_1px)] bg-[length:100%_20%]" />
+          <div className="absolute bottom-8 left-8 top-3 w-px bg-white" />
+          <div className="absolute bottom-8 left-8 right-3 h-px bg-white" />
           {labels.map((label, index) => (
-            <div key={label} className="flex h-full flex-1 flex-col justify-end gap-2">
-              <div className="rounded-t-lg bg-sky-500 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]" style={{ height: `${Math.max(12, (values[index] / maxValue) * 100)}%` }} />
-              <div className="text-center text-[0.65rem] font-black text-slate-600">{label}</div>
+            <div key={label} className="relative z-10 flex h-full flex-1 flex-col justify-end gap-2">
+              <div className="rounded-t-sm border border-violet-200/50 bg-[linear-gradient(180deg,#8b5cf6,#1d4ed8)] shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_0_18px_rgba(124,58,237,0.36)]" style={{ height: `${Math.max(12, (values[index] / maxValue) * 100)}%` }} />
+              <div className="text-center text-[0.65rem] font-black text-white md:text-sm">{label}</div>
             </div>
           ))}
         </div>
-      </div>
+      </BossVisualFrame>
     );
   }
 
   if (question.gridData) {
     const { xMin, xMax, yMin, yMax, points } = question.gridData;
     return (
-      <div className="rounded-xl border border-slate-300 bg-slate-50 p-3">
-        <div className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-slate-500">Coordinates Quest Grid</div>
-        <div className="relative mx-auto aspect-square max-h-56 rounded-lg border-2 border-slate-400 bg-white">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(148,163,184,0.35)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.35)_1px,transparent_1px)] bg-[length:16.66%_16.66%]" />
+      <BossVisualFrame title="Coordinates">
+        <div className="relative mx-auto aspect-square h-[clamp(13rem,35vh,22rem)] rounded-lg border-2 border-cyan-100/70 bg-slate-950/45">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(125,211,252,0.42)_1px,transparent_1px),linear-gradient(to_bottom,rgba(125,211,252,0.42)_1px,transparent_1px)] bg-[length:16.66%_16.66%]" />
+          <div className="absolute bottom-2 left-2 top-2 w-px bg-white/90" />
+          <div className="absolute bottom-2 left-2 right-2 h-px bg-white/90" />
+          <span className="absolute right-2 bottom-5 text-sm font-black text-white">x</span>
+          <span className="absolute bottom-2 left-5 text-sm font-black text-white">0</span>
+          <span className="absolute left-5 top-1 text-sm font-black text-white">y</span>
           {points.map((point: { label: string; x: number; y: number }) => (
             <div
               key={point.label}
-              className="absolute flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-amber-400 text-sm font-black text-slate-950 shadow"
+              className="absolute flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-amber-400 text-lg font-black text-slate-950 shadow-[0_0_14px_rgba(251,191,36,0.75)]"
               style={{
                 left: `${((point.x - xMin) / (xMax - xMin)) * 100}%`,
                 top: `${100 - ((point.y - yMin) / (yMax - yMin)) * 100}%`,
@@ -190,95 +248,189 @@ const ReasoningVisual: React.FC<{ question: ReasoningQuestion }> = ({ question }
             </div>
           ))}
         </div>
-      </div>
+      </BossVisualFrame>
     );
   }
 
   if (question.areaData) {
     const width = Math.min(12, Math.max(2, question.areaData.gridWidth));
     const height = Math.min(10, Math.max(2, question.areaData.gridHeight));
-    const shaded = new Set((question.areaData.shadedCells ?? []).map((cell: { x: number; y: number }) => `${cell.x}-${cell.y}`));
+    const rawShaded = question.areaData.shadedCells ?? [];
+    const shaded = new Set((rawShaded.length ? rawShaded : Array.from({ length: width * height }, (_, index) => ({ x: index % width, y: Math.floor(index / width) }))).map((cell: { x: number; y: number }) => `${cell.x}-${cell.y}`));
     return (
-      <div className="rounded-xl border border-slate-300 bg-[#eef6ff] p-3">
-        <div className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-slate-500">Blueprint Grid</div>
-        <div className="mx-auto grid max-w-sm rounded-lg border border-slate-300 bg-white p-2" style={{ gridTemplateColumns: `repeat(${width}, minmax(0, 1fr))` }}>
+      <BossVisualFrame title="Find the Area">
+        <div className="mb-2 flex items-center gap-3 text-xs font-black text-white">
+          <span className="rounded bg-slate-950/55 px-2 py-1">1 cm</span>
+          <span className="rounded bg-slate-950/55 px-2 py-1">1 cm</span>
+        </div>
+        <div className="mx-auto grid h-[clamp(12rem,32vh,20rem)] max-w-[min(95%,32rem)] rounded-lg border border-cyan-100/35 bg-slate-950/45 p-2" style={{ gridTemplateColumns: `repeat(${width}, minmax(0, 1fr))` }}>
           {Array.from({ length: width * height }, (_, index) => {
             const x = index % width;
             const y = Math.floor(index / width);
-            return <div key={`${x}-${y}`} className={`aspect-square border border-slate-200 ${shaded.has(`${x}-${y}`) ? 'bg-sky-400' : 'bg-white'}`} />;
+            return <div key={`${x}-${y}`} className={`aspect-square border border-cyan-100/25 ${shaded.has(`${x}-${y}`) ? 'bg-violet-600/82 shadow-[inset_0_0_14px_rgba(255,255,255,0.15)]' : 'bg-slate-900/35'}`} />;
           })}
         </div>
-      </div>
+      </BossVisualFrame>
     );
   }
 
   if (question.perimeterData) {
+    const widthLabel = question.perimeterData.sides?.[0]?.value ?? 6;
+    const heightLabel = question.perimeterData.sides?.[1]?.value ?? question.perimeterData.sides?.[3]?.value ?? 4;
+    const perimeterLabel = question.perimeterData.perimeter ?? '?';
     return (
-      <div className="rounded-xl border border-slate-300 bg-[#f7fff1] p-3">
-        <div className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-slate-500">Perimeter Path</div>
-        <div className="mx-auto flex h-40 w-56 items-center justify-center">
-          <div className="relative h-28 w-44 border-4 border-amber-400 bg-emerald-100">
-            <span className="absolute -top-7 left-1/2 -translate-x-1/2 text-sm font-black text-slate-700">{question.perimeterData.sides?.[0]?.value ?? '?'} cm</span>
-            <span className="absolute -right-12 top-1/2 -translate-y-1/2 text-sm font-black text-slate-700">?</span>
-            <span className="absolute -bottom-7 left-1/2 -translate-x-1/2 text-sm font-black text-slate-700">{question.perimeterData.sides?.[2]?.value ?? '?'} cm</span>
-          </div>
+      <BossVisualFrame title="Perimeter Path">
+        <div className="mx-auto flex h-[clamp(12rem,32vh,20rem)] w-full items-center justify-center">
+          <svg aria-label="Perimeter diagram" className="h-full w-full max-w-xl" viewBox="0 0 420 240" role="img">
+            <rect x="112" y="60" width="196" height="118" fill="#365c19" opacity="0.72" stroke="#d9f99d" strokeWidth="4" />
+            <text x="210" y="45" fill="#ffffff" fontSize="18" fontWeight="900" textAnchor="middle">{widthLabel} cm</text>
+            <text x="92" y="124" fill="#ffffff" fontSize="18" fontWeight="900" textAnchor="middle">{heightLabel} cm</text>
+            <text x="210" y="210" fill="#ffffff" fontSize="18" fontWeight="900" textAnchor="middle">perimeter {perimeterLabel} cm</text>
+          </svg>
         </div>
-      </div>
+      </BossVisualFrame>
     );
   }
 
   if (question.volumeData) {
     const dimensions = question.volumeData.dimensions ?? { length: 3, width: 2, height: 2 };
     return (
-      <div className="rounded-xl border border-slate-300 bg-[#f5f3ff] p-3">
-        <div className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-slate-500">Volume Vault Cubes</div>
-        <div className="flex h-40 items-center justify-center gap-1">
-          {Array.from({ length: dimensions.length * dimensions.width }, (_, index) => (
-            <div key={index} className="flex flex-col-reverse gap-1">
-              {Array.from({ length: dimensions.height }, (_, z) => (
-                <div key={z} className="h-6 w-6 rounded border border-indigo-300 bg-indigo-400 shadow" />
-              ))}
-            </div>
-          ))}
+      <BossVisualFrame title="Volume Vault">
+        <div className="relative flex h-[clamp(12rem,32vh,20rem)] items-center justify-center">
+          <div className="grid rotate-[-8deg] gap-1" style={{ gridTemplateColumns: `repeat(${dimensions.length * dimensions.width}, minmax(0, 1fr))` }}>
+            {Array.from({ length: dimensions.length * dimensions.width }, (_, index) => (
+              <div key={index} className="flex flex-col-reverse gap-1">
+                {Array.from({ length: dimensions.height }, (_, z) => (
+                  <div key={z} className="h-[clamp(1.7rem,5.2vw,3rem)] w-[clamp(1.7rem,5.2vw,3rem)] rounded border border-cyan-100/75 bg-[linear-gradient(135deg,#60a5fa,#1d4ed8)] shadow-[inset_0_2px_0_rgba(255,255,255,0.4),0_6px_12px_rgba(2,6,23,0.45)]" />
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      </BossVisualFrame>
     );
   }
 
   if (question.ratioData) {
     const isPotion = question.ratioData.context === 'potion';
     return (
-      <div className="rounded-xl border border-slate-300 bg-[#fff7ed] p-3">
-        <div className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-slate-500">{isPotion ? 'Potion Panic Ratio' : 'Share Splitter Ratio'}</div>
-        <div className="flex items-center justify-center gap-4 rounded-lg bg-white p-4">
+      <BossVisualFrame title={isPotion ? 'Potion Ratio' : 'Share Ratio'}>
+        <div className="flex h-[clamp(12rem,32vh,20rem)] items-center justify-center gap-[clamp(1rem,5vw,3rem)] rounded-lg bg-slate-950/24 p-4">
           {question.ratioData.ratio.map((value: number, index: number) => (
-            <div key={index} className={`flex h-20 w-20 items-center justify-center rounded-full border-4 text-2xl font-black ${index === 0 ? 'border-rose-300 bg-rose-100 text-rose-700' : 'border-sky-300 bg-sky-100 text-sky-700'}`}>
-              {value}
+            <div key={index} className="flex flex-col items-center gap-2">
+              <div className={`relative h-[clamp(6.5rem,20vw,10rem)] w-[clamp(4.2rem,13vw,6.5rem)] rounded-b-[2rem] rounded-t-[0.6rem] border-4 ${index === 0 ? 'border-rose-200 bg-[linear-gradient(180deg,rgba(255,255,255,0.22),rgba(220,38,38,0.7))]' : 'border-sky-200 bg-[linear-gradient(180deg,rgba(255,255,255,0.22),rgba(37,99,235,0.75))]'} shadow-[inset_0_0_22px_rgba(255,255,255,0.25),0_8px_18px_rgba(0,0,0,0.35)]`}>
+                <span className="absolute inset-x-0 top-[42%] text-center text-[clamp(1.5rem,5vw,2.5rem)] font-black text-white">{value}</span>
+              </div>
+              <span className="text-sm font-black uppercase tracking-[0.08em] text-white">{question.ratioData.labels?.[index] ?? (index === 0 ? 'red' : 'blue')}</span>
             </div>
           ))}
         </div>
-      </div>
+      </BossVisualFrame>
     );
   }
 
   if (question.scaleData) {
     const marker = ((question.scaleData.marker - question.scaleData.min) / (question.scaleData.max - question.scaleData.min)) * 100;
     return (
-      <div className="rounded-xl border border-slate-300 bg-slate-50 p-3">
-        <div className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-slate-500">Measurement Scale</div>
-        <div className="relative h-20 rounded-lg bg-white p-4">
-          <div className="absolute left-4 right-4 top-1/2 h-2 -translate-y-1/2 rounded bg-slate-300" />
-          <div className="absolute top-1/2 h-8 w-3 -translate-y-1/2 rounded bg-amber-500" style={{ left: `${Math.min(92, Math.max(4, marker))}%` }} />
+      <BossVisualFrame title="Read the Scale">
+        <div className="relative h-[clamp(10rem,30vh,18rem)] rounded-lg bg-slate-950/35 p-4">
+          <div className="absolute left-8 right-8 top-1/2 h-3 -translate-y-1/2 rounded bg-cyan-100/35" />
+          <div className="absolute top-1/2 h-14 w-4 -translate-y-1/2 rounded bg-amber-400 shadow-[0_0_16px_rgba(251,191,36,0.75)]" style={{ left: `${Math.min(88, Math.max(8, marker))}%` }} />
+          <div className="absolute bottom-4 left-8 right-8 flex justify-between text-xs font-black text-white">
+            <span>{question.scaleData.min}</span>
+            <span>{question.scaleData.max} {question.scaleData.unit}</span>
+          </div>
         </div>
-      </div>
+      </BossVisualFrame>
+    );
+  }
+
+  if (question.type === 'money') {
+    const amounts = question.question.match(/£\d+(?:\.\d{2})?/g) ?? ['£3.45', '£2.80'];
+    return (
+      <BossVisualFrame title="Monster Market">
+        <div className="grid h-[clamp(12rem,32vh,20rem)] grid-cols-2 gap-3">
+          {amounts.slice(0, 2).map((amount, index) => (
+            <div key={`${amount}-${index}`} className="flex flex-col items-center justify-center rounded-[0.9rem] border border-amber-300/70 bg-[linear-gradient(180deg,rgba(82,47,13,0.9),rgba(28,18,7,0.92))] p-3 text-center shadow-[inset_0_0_16px_rgba(251,191,36,0.15)]">
+              <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-lg border border-amber-200/60 bg-slate-950/35 text-3xl">
+                {index === 0 ? 'S' : 'P'}
+              </div>
+              <div className="text-sm font-black text-amber-100">{index === 0 ? 'Shield' : 'Potion'}</div>
+              <div className="mt-1 text-[clamp(1.4rem,5vw,2.4rem)] font-black text-white">{amount}</div>
+            </div>
+          ))}
+        </div>
+      </BossVisualFrame>
     );
   }
 
   if (question.shapeData) {
+    if (question.shapeData.shapeType === 'angleLine') {
+      const knownAngle = Number(question.shapeData.knownAngle ?? 78);
+      const targetLabel = String(question.shapeData.targetLabel ?? 'x');
+
+      return (
+        <div className="mx-auto flex h-full max-w-4xl flex-col justify-center rounded-[1.15rem] border border-amber-300/50 bg-[linear-gradient(180deg,rgba(8,32,72,0.94),rgba(3,15,35,0.96))] p-3 shadow-[inset_0_0_0_1px_rgba(251,191,36,0.18),0_0_24px_rgba(0,0,0,0.28)]">
+          <div className="relative mx-auto mb-[-0.6rem] flex min-h-[2.55rem] w-[min(82%,28rem)] items-center justify-center rounded-[0.85rem] border border-amber-300/45 bg-[linear-gradient(180deg,#0758bd,#042d73)] px-5 py-2 text-center text-[clamp(1rem,3.2vw,1.55rem)] font-black uppercase tracking-[0.08em] text-white shadow-[0_8px_0_rgba(3,13,35,0.72)]">
+            Find the Angle
+          </div>
+          <div className="rounded-[1rem] border-[6px] border-stone-500/80 bg-[radial-gradient(circle_at_50%_15%,rgba(255,255,255,0.08),transparent_34%),linear-gradient(180deg,#1f2425,#101517)] p-3 shadow-[inset_0_0_0_2px_rgba(255,255,255,0.12),inset_0_0_24px_rgba(0,0,0,0.68)]">
+            <svg
+              aria-label={`Angle diagram. One angle is ${knownAngle} degrees and the other is ${targetLabel} degrees.`}
+              className="h-[clamp(12rem,34vh,20rem)] w-full"
+              role="img"
+              viewBox="0 0 420 250"
+            >
+              <defs>
+                <radialGradient id="bossAngleGlow" cx="50%" cy="45%" r="60%">
+                  <stop offset="0%" stopColor="#f8fafc" stopOpacity="0.18" />
+                  <stop offset="100%" stopColor="#0f172a" stopOpacity="0" />
+                </radialGradient>
+                <filter id="bossAngleShadow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="2" floodColor="#000000" floodOpacity="0.45" stdDeviation="2" />
+                </filter>
+              </defs>
+              <rect width="420" height="250" fill="url(#bossAngleGlow)" />
+              <path d="M 153 89 A 70 46 0 0 1 267 89 L 210 125 Z" fill="#0ea5e9" opacity="0.7" />
+              <path d="M 267 89 A 70 46 0 0 1 267 161 L 210 125 Z" fill="#7e22ce" opacity="0.82" />
+              <ellipse cx="210" cy="125" rx="70" ry="46" fill="none" stroke="#f8fafc" strokeOpacity="0.95" strokeWidth="2.5" />
+              <line x1="82" y1="42" x2="338" y2="208" stroke="#f8fafc" strokeLinecap="round" strokeWidth="4" />
+              <line x1="82" y1="208" x2="338" y2="42" stroke="#f8fafc" strokeLinecap="round" strokeWidth="4" />
+              <text
+                filter="url(#bossAngleShadow)"
+                fill="#ffffff"
+                fontFamily="inherit"
+                fontSize="28"
+                fontWeight="900"
+                textAnchor="middle"
+                x="210"
+                y="76"
+              >
+                {knownAngle}°
+              </text>
+              <text
+                filter="url(#bossAngleShadow)"
+                fill="#ffffff"
+                fontFamily="inherit"
+                fontSize="28"
+                fontStyle="italic"
+                fontWeight="900"
+                textAnchor="middle"
+                x="318"
+                y="130"
+              >
+                {targetLabel}°
+              </text>
+            </svg>
+          </div>
+        </div>
+      );
+    }
+
     return (
-      <div className="rounded-xl border border-slate-300 bg-white p-3">
-        <div className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-slate-500">Geometry Diagram</div>
-        <div className="mx-auto h-32 w-48 rounded-lg border-4 border-slate-500 bg-slate-100" />
+      <div className="mx-auto flex h-full max-w-3xl flex-col justify-center rounded-[1rem] border border-amber-300/45 bg-[linear-gradient(180deg,rgba(6,32,78,0.92),rgba(3,18,48,0.92))] p-3">
+        <div className="mb-2 text-center text-xs font-black uppercase tracking-[0.14em] text-amber-100">Geometry Diagram</div>
+        <div className="mx-auto h-32 w-48 rounded-lg border-4 border-slate-300/70 bg-slate-950/45" />
       </div>
     );
   }
@@ -819,6 +971,95 @@ const BattleHealthBar: React.FC<BattleHealthBarProps> = ({ label, current, max, 
   );
 };
 
+const BossPaperStage: React.FC<{
+  title: string;
+  questionNumber: number;
+  questionText: React.ReactNode;
+  visual: React.ReactNode;
+  answers: React.ReactNode;
+  nav: React.ReactNode;
+  warning?: string | null;
+}> = ({ title, questionNumber, questionText, visual, answers, nav, warning }) => (
+  <div className="relative h-full w-full overflow-hidden bg-[#050914] font-sans text-white">
+    <img
+      src={bossPaperBackground}
+      alt=""
+      aria-hidden="true"
+      draggable={false}
+      className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
+    />
+    <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.1)_0%,rgba(2,6,23,0.2)_42%,rgba(2,6,23,0.72)_100%)]" />
+    <div className="relative z-10 grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)_auto_auto] gap-[clamp(0.35rem,1.1vh,0.7rem)] px-[clamp(0.55rem,2.2vw,1.2rem)] pb-[clamp(0.45rem,1.3vh,0.85rem)] pt-[clamp(0.3rem,1vh,0.65rem)]">
+      <section className="relative overflow-hidden rounded-[clamp(1.1rem,4vw,1.9rem)] border border-amber-300/70 bg-[linear-gradient(180deg,rgba(4,20,52,0.96),rgba(4,15,38,0.93))] px-[clamp(0.9rem,3vw,2rem)] py-[clamp(0.8rem,2.5vh,1.55rem)] shadow-[0_10px_24px_rgba(2,6,23,0.48),inset_0_0_0_1px_rgba(125,211,252,0.22)]">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(56,189,248,0.16),transparent_54%)]" />
+        <div className="relative flex items-center justify-between gap-3">
+          <span className="relative inline-flex shrink-0 items-center rounded-[0.65rem] border border-amber-400/80 bg-slate-950/24 px-3 py-1.5 text-[clamp(0.66rem,1.8vw,0.9rem)] font-black uppercase tracking-[0.08em] text-amber-200">
+            Question {questionNumber}
+          </span>
+          <div className="hidden flex-1 items-center justify-center gap-3 opacity-90 sm:flex">
+            <span className="h-px w-24 bg-[linear-gradient(90deg,transparent,#f59e0b)]" />
+            <span className="h-5 w-5 rotate-45 border-2 border-amber-300 bg-amber-500/20 shadow-[0_0_12px_rgba(245,158,11,0.7)]" />
+            <span className="h-px w-24 bg-[linear-gradient(90deg,#f59e0b,transparent)]" />
+          </div>
+          <span className="shrink-0 text-[clamp(0.58rem,1.5vw,0.72rem)] font-black uppercase tracking-[0.16em] text-cyan-100/70">{title}</span>
+        </div>
+        <div className="relative mt-[clamp(0.7rem,2vh,1.25rem)] text-[clamp(1.08rem,3.6vw,2rem)] font-black leading-[1.24] text-white md:leading-[1.32]">
+          {questionText}
+        </div>
+        {warning ? (
+          <div className="relative mt-2 rounded-full border border-amber-200/50 bg-amber-300/15 px-3 py-1 text-center text-xs font-black uppercase tracking-[0.12em] text-amber-100">
+            {warning}
+          </div>
+        ) : null}
+      </section>
+
+      <section className="min-h-0 overflow-hidden">
+        {visual}
+      </section>
+
+      <section className="grid shrink-0 grid-cols-2 gap-[clamp(0.45rem,1.4vw,0.85rem)]">
+        {answers}
+      </section>
+
+      <section className="shrink-0">
+        {nav}
+      </section>
+    </div>
+  </div>
+);
+
+const BossAnswerCard: React.FC<{
+  label: string;
+  selected?: boolean;
+  onClick?: () => void;
+  children: React.ReactNode;
+}> = ({ label, selected = false, onClick, children }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className={`relative flex h-[clamp(3.75rem,10vh,5.55rem)] min-w-0 items-center gap-[clamp(0.65rem,2vw,1.2rem)] overflow-hidden rounded-[0.85rem] border px-[clamp(0.65rem,2.2vw,1.2rem)] text-left shadow-[0_8px_18px_rgba(2,6,23,0.36)] transition ${
+      selected
+        ? 'border-amber-200 bg-[linear-gradient(180deg,rgba(15,54,109,0.98),rgba(10,34,81,0.98))] ring-2 ring-amber-300/60'
+        : 'border-amber-400/70 bg-[linear-gradient(180deg,rgba(4,28,70,0.94),rgba(5,20,52,0.94))] hover:border-cyan-200/80'
+    }`}
+  >
+    <span className="flex h-[clamp(2.25rem,6.5vh,3.5rem)] w-[clamp(2.25rem,6.5vh,3.5rem)] shrink-0 items-center justify-center bg-[linear-gradient(180deg,#9b3cff,#5b16d8)] text-[clamp(1.25rem,4vw,2rem)] font-black text-white shadow-[0_6px_12px_rgba(50,12,117,0.5)] [clip-path:polygon(50%_0%,90%_20%,90%_75%,50%_100%,10%_75%,10%_20%)]">
+      {label}
+    </span>
+    <span className="min-w-0 flex-1 break-words text-[clamp(1.2rem,4vw,2rem)] font-black leading-tight text-white">
+      {children}
+    </span>
+  </button>
+);
+
+const BossPaperNav: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <div className="mx-auto flex w-full max-w-3xl items-center justify-center gap-2 rounded-[1rem] border border-cyan-200/30 bg-slate-950/72 p-2 shadow-[0_10px_22px_rgba(2,6,23,0.45)]">
+    {children}
+  </div>
+);
+
+const bossNavButtonClass = 'rounded-[0.75rem] border border-cyan-100/35 bg-[linear-gradient(180deg,#1fb6ff,#0b6cff)] px-3 py-2 text-[10px] font-black uppercase tracking-[0.1em] text-white shadow-[0_6px_12px_rgba(2,6,23,0.34)] disabled:cursor-not-allowed disabled:opacity-40';
+
 const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   gameType,
   levelId,
@@ -833,16 +1074,19 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   const encounter = getBossEncounter(gameType);
   const isArithmeticPaper = gameType === 'crystal_core';
   const isReasoning1Paper = gameType === 'mirror_gate';
+  const isReasoning2Paper = gameType === 'matrix_match';
+  const isReasoningPaper = isReasoning1Paper || isReasoning2Paper;
+  const reasoningDisplayTitle = isReasoning2Paper ? 'Reasoning 2' : 'Reasoning 1';
   const reactionCopy = REACTION_COPY;
   const [paperSeed, setPaperSeed] = useState<string | number>(() => `arithmetic-${Date.now()}-${Math.random()}`);
   const arithmeticPaper = useMemo(
     () => (isArithmeticPaper ? generateArithmeticBossPaper(paperSeed) : null),
     [isArithmeticPaper, paperSeed],
   );
-  const [reasoningSeed, setReasoningSeed] = useState<string | number>(() => `reasoning-1-${Date.now()}-${Math.random()}`);
+  const [reasoningSeed, setReasoningSeed] = useState<string | number>(() => `reasoning-${Date.now()}-${Math.random()}`);
   const reasoningPaper = useMemo(
-    () => (isReasoning1Paper ? generateReasoning1Paper(reasoningSeed) : null),
-    [isReasoning1Paper, reasoningSeed],
+    () => (isReasoningPaper ? generateReasoning1Paper(reasoningSeed) : null),
+    [isReasoningPaper, reasoningSeed],
   );
   const [arithmeticAnswers, setArithmeticAnswers] = useState<Record<number, string>>({});
   const [arithmeticResult, setArithmeticResult] = useState<ArithmeticPaperResult | null>(null);
@@ -851,12 +1095,12 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   const [reasoningResult, setReasoningResult] = useState<ReasoningPaperResult | null>(null);
   const [reasoningScreen, setReasoningScreen] = useState<'intro' | 'active' | 'confirm' | 'results' | 'review'>('intro');
   const questions = useMemo(
-    () => (isArithmeticPaper || isReasoning1Paper ? [] : Array.from({ length: TOTAL_QUESTIONS }, () => {
+    () => (isArithmeticPaper || isReasoningPaper ? [] : Array.from({ length: TOTAL_QUESTIONS }, () => {
       const base = QUESTION_GENERATORS[gameType]();
       const kind: QuestionKind = base.kind ?? (gameType === 'matrix_match' ? 'reasoning' : 'fluency');
       return { ...base, kind };
     })),
-    [gameType, isArithmeticPaper, isReasoning1Paper, levelId],
+    [gameType, isArithmeticPaper, isReasoningPaper, levelId],
   );
   const [currentIndex, setCurrentIndex] = useState(0);
   const [XP, setScore] = useState(0);
@@ -867,7 +1111,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   const [bossPose, setBossPose] = useState<BossPose>('neutral');
   const [reaction, setReaction] = useState(reactionCopy.idle);
   const [resolveState, setResolveState] = useState<'idle' | 'correct' | 'wrong' | 'warning' | 'victory' | 'defeat'>('idle');
-  const [showPracticeIntro, setShowPracticeIntro] = useState(!isArithmeticPaper && !isReasoning1Paper);
+  const [showPracticeIntro, setShowPracticeIntro] = useState(!isArithmeticPaper && !isReasoningPaper);
   const timeoutRef = useRef<number | null>(null);
 
   useEffect(() => () => {
@@ -880,7 +1124,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
     return null;
   }
 
-  const question = isArithmeticPaper || isReasoning1Paper ? null : questions[currentIndex % questions.length];
+  const question = isArithmeticPaper || isReasoningPaper ? null : questions[currentIndex % questions.length];
   const arithmeticQuestion = arithmeticPaper?.questions[currentIndex] ?? null;
   const reasoningQuestion = reasoningPaper?.questions[currentIndex] ?? null;
   const isMultiSelect = question?.selectionMode === 'multi';
@@ -1093,17 +1337,17 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   };
 
   useEffect(() => {
-    if (!isReasoning1Paper || reasoningResult || !reasoningPaper || reasoningScreen === 'intro') return;
+    if (!isReasoningPaper || reasoningResult || !reasoningPaper || reasoningScreen === 'intro') return;
     if ((sessionState?.timeLeft ?? reasoningPaper.timeLimitSeconds) <= 0) {
       submitReasoningPaper(false);
     }
-  }, [isReasoning1Paper, reasoningPaper, reasoningResult, reasoningScreen, sessionState?.timeLeft]);
+  }, [isReasoningPaper, reasoningPaper, reasoningResult, reasoningScreen, sessionState?.timeLeft]);
 
   const retryReasoningPaper = () => {
     if (timeoutRef.current) {
       window.clearTimeout(timeoutRef.current);
     }
-    setReasoningSeed(`reasoning-1-${Date.now()}-${Math.random()}`);
+    setReasoningSeed(`reasoning-${Date.now()}-${Math.random()}`);
     setReasoningAnswers({});
     setReasoningResult(null);
     setReasoningScreen('intro');
@@ -1154,11 +1398,11 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
     return `${minutes}:${String(remainder).padStart(2, '0')}`;
   };
 
-  if (isReasoning1Paper) {
+  if (isReasoningPaper) {
     if (!reasoningPaper) {
       return (
         <div className="flex h-full w-full items-center justify-center bg-[#f7f4ea] text-slate-900">
-          Loading Reasoning 1 paper...
+          Loading {reasoningDisplayTitle} paper...
         </div>
       );
     }
@@ -1168,7 +1412,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
         <div className="flex h-full w-full items-center justify-center overflow-hidden bg-[#f7f4ea] px-4 py-4 font-sans text-slate-950">
           <section className="w-full max-w-3xl rounded-[1.1rem] border border-slate-300 bg-[#fffdf6] p-5 shadow-[0_12px_28px_rgba(15,23,42,0.16)] md:p-8">
             <div className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">Final Boss Island</div>
-            <h2 className="mt-2 text-3xl font-black text-slate-950 md:text-5xl">Reasoning 1</h2>
+            <h2 className="mt-2 text-3xl font-black text-slate-950 md:text-5xl">{reasoningDisplayTitle}</h2>
             <div className="mt-5 grid gap-3 text-sm font-bold text-slate-700 md:grid-cols-2">
               <div className="rounded-xl border border-slate-200 bg-white p-4">35 marks</div>
               <div className="rounded-xl border border-slate-200 bg-white p-4">40 minutes</div>
@@ -1180,7 +1424,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
               onClick={startReasoningPaper}
               className="mt-6 w-full rounded-xl border-2 border-slate-950 bg-slate-950 px-5 py-4 text-sm font-black uppercase tracking-[0.14em] text-white"
             >
-              Start Reasoning 1
+              Start {reasoningDisplayTitle}
             </button>
           </section>
         </div>
@@ -1192,7 +1436,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
         <div className="relative flex h-full w-full overflow-hidden bg-[#f7f4ea] px-3 py-3 font-sans text-slate-950 md:px-6 md:py-5">
           <section className="mx-auto flex h-full w-full max-w-4xl flex-col overflow-hidden rounded-[1.1rem] border border-slate-300 bg-[#fffdf6] shadow-[0_12px_28px_rgba(15,23,42,0.16)]">
             <div className="border-b border-slate-300 bg-white px-5 py-4">
-              <div className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">Reasoning 1</div>
+              <div className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">{reasoningDisplayTitle}</div>
               <h2 className="mt-1 text-2xl font-black text-slate-950 md:text-4xl">Paper Complete</h2>
             </div>
             <div className="grid min-h-0 flex-1 gap-3 overflow-hidden p-4 md:grid-cols-[1fr_1fr] md:p-6">
@@ -1272,7 +1516,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
       return (
         <div className="flex h-full w-full items-center justify-center overflow-hidden bg-[#f7f4ea] px-4 py-4 font-sans text-slate-950">
           <section className="w-full max-w-xl rounded-[1.1rem] border border-slate-300 bg-[#fffdf6] p-5 text-center shadow-[0_12px_28px_rgba(15,23,42,0.16)]">
-            <h2 className="text-2xl font-black">Submit Reasoning 1?</h2>
+            <h2 className="text-2xl font-black">Submit {reasoningDisplayTitle}?</h2>
             <p className="mt-3 text-sm font-bold text-slate-600">
               You have answered {reasoningAnsweredCount} of {reasoningQuestionCount} questions. Results will only be shown after submission.
             </p>
@@ -1299,94 +1543,52 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
         : timeLeft <= 600
           ? '10 minute warning'
           : null;
+    const reasoningChoiceItems = makeReasoningChoices(reasoningQuestion);
 
     return (
-      <div className="relative flex h-full w-full overflow-hidden bg-[#f7f4ea] font-sans text-slate-950">
-        <div className="relative z-10 flex h-full w-full flex-col gap-2 px-3 pb-2 pt-3 md:px-6 md:pb-4 md:pt-5">
-          <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.1rem] border border-slate-300 bg-[#fffdf6] shadow-[0_12px_28px_rgba(15,23,42,0.16)]">
-            <div className="shrink-0 border-b border-slate-300 bg-white px-4 py-3 md:px-6">
-              <div className="flex items-center justify-between gap-3 text-[0.68rem] font-black uppercase tracking-[0.16em] text-slate-500 md:text-sm">
-                <span>Reasoning 1</span>
-                <span>Question {currentIndex + 1} of {reasoningQuestionCount}</span>
-              </div>
-              {warningText ? <div className="mt-2 rounded-full bg-amber-100 px-3 py-1 text-center text-xs font-black uppercase tracking-[0.12em] text-amber-800">{warningText}</div> : null}
-            </div>
-
-            <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4 md:px-8">
-              <div className="mx-auto flex w-full max-w-4xl flex-col gap-3">
-                <div className="rounded-[0.75rem] border border-slate-300 bg-white px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
-                  <div className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-slate-500">{reasoningQuestion.marks} mark{reasoningQuestion.marks > 1 ? 's' : ''}</div>
-                  <div className="text-[clamp(1.15rem,4.4vw,2.15rem)] font-black leading-tight tracking-normal text-slate-950">
-                    {reasoningQuestion.question}
-                  </div>
-                </div>
-
-                <ReasoningVisual question={reasoningQuestion} />
-
-                <div className="rounded-[0.75rem] border border-slate-300 bg-white p-3">
-                  {reasoningQuestion.responseMode === 'multipleChoice' && reasoningQuestion.choices ? (
-                    <div className="grid gap-2 sm:grid-cols-2">
-                      {reasoningQuestion.choices.map((choice) => {
-                        const isSelected = String(currentReasoningAnswer) === String(choice);
-                        return (
-                          <button
-                            key={String(choice)}
-                            type="button"
-                            onClick={() => setReasoningAnswer(choice)}
-                            className={`rounded-xl border-2 px-4 py-3 text-left text-sm font-black ${isSelected ? 'border-sky-700 bg-sky-100' : 'border-slate-300 bg-white'}`}
-                          >
-                            {String(choice)}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  ) : reasoningQuestion.responseMode === 'multiSelect' && reasoningQuestion.choices ? (
-                    <div className="grid gap-2 sm:grid-cols-2">
-                      {reasoningQuestion.choices.map((choice) => {
-                        const selected = Array.isArray(currentReasoningAnswer) && currentReasoningAnswer.includes(choice);
-                        return (
-                          <button
-                            key={String(choice)}
-                            type="button"
-                            onClick={() => toggleReasoningChoice(String(choice))}
-                            className={`rounded-xl border-2 px-4 py-3 text-left text-sm font-black ${selected ? 'border-sky-700 bg-sky-100' : 'border-slate-300 bg-white'}`}
-                          >
-                            {String(choice)}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <input
-                      value={String(currentReasoningAnswer)}
-                      onChange={(event) => setReasoningAnswer(event.target.value)}
-                      inputMode={reasoningQuestion.responseMode === 'numericInput' ? 'decimal' : 'text'}
-                      placeholder={reasoningQuestion.responseMode === 'coordinateInput' ? 'e.g. (2,4)' : 'Type your answer'}
-                      className="h-14 w-full rounded-xl border-2 border-slate-300 bg-slate-50 px-4 text-lg font-black text-slate-950 outline-none focus:border-sky-600"
-                    />
-                  )}
-                </div>
-
-                <div className="min-h-[4.5rem] rounded-[0.75rem] border border-dashed border-slate-300 bg-slate-50 p-3 text-sm font-bold text-slate-500">
-                  Working area
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <div className="grid shrink-0 grid-cols-[auto_1fr_auto_auto] items-center gap-2 rounded-xl border border-slate-300 bg-white p-2 shadow-[0_6px_14px_rgba(15,23,42,0.12)]">
+      <BossPaperStage
+        title={reasoningDisplayTitle}
+        questionNumber={currentIndex + 1}
+        questionText={reasoningQuestion.question}
+        warning={warningText}
+        visual={<ReasoningVisual question={reasoningQuestion} />}
+        answers={(
+          reasoningChoiceItems.slice(0, 4).map((choice, index) => {
+            const isSelected = reasoningQuestion.responseMode === 'multiSelect'
+              ? Array.isArray(currentReasoningAnswer) && currentReasoningAnswer.includes(choice)
+              : String(currentReasoningAnswer) === String(choice);
+            return (
+              <BossAnswerCard
+                key={String(choice)}
+                label={String.fromCharCode(65 + index)}
+                selected={isSelected}
+                onClick={() => {
+                  if (reasoningQuestion.responseMode === 'multiSelect') {
+                    toggleReasoningChoice(String(choice));
+                  } else {
+                    setReasoningAnswer(choice);
+                  }
+                }}
+              >
+                {String(choice)}
+              </BossAnswerCard>
+            );
+          })
+        )}
+        nav={(
+          <BossPaperNav>
             <button
               type="button"
               onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
               disabled={currentIndex === 0}
-              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-slate-950 disabled:opacity-40"
+              className={bossNavButtonClass}
             >
               Previous
             </button>
             <select
               value={currentIndex}
               onChange={(event) => setCurrentIndex(Number(event.target.value))}
-              className="min-w-0 rounded-lg border border-slate-300 bg-slate-50 px-2 py-2 text-center text-xs font-black uppercase tracking-[0.08em] text-slate-700"
+              className="min-w-0 flex-1 rounded-[0.75rem] border border-cyan-100/35 bg-slate-950/68 px-2 py-2 text-center text-xs font-black uppercase tracking-[0.08em] text-white"
               aria-label="Question navigator"
             >
               {reasoningPaper.questions.map((item, index) => (
@@ -1397,23 +1599,23 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
               type="button"
               onClick={() => setCurrentIndex((prev) => Math.min(reasoningQuestionCount - 1, prev + 1))}
               disabled={currentIndex >= reasoningQuestionCount - 1}
-              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-slate-950 disabled:opacity-40"
+              className={bossNavButtonClass}
             >
               Next
             </button>
             <button
               type="button"
               onClick={() => setReasoningScreen('confirm')}
-              className="rounded-lg border border-slate-950 bg-slate-950 px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-white"
+              className={bossNavButtonClass}
             >
               Submit
             </button>
-          </div>
-          <div className="shrink-0 text-center text-[0.65rem] font-black uppercase tracking-[0.12em] text-slate-500">
-            {reasoningAnsweredCount}/{reasoningQuestionCount} answered
-          </div>
-        </div>
-      </div>
+            <span className="hidden text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100/75 sm:inline">
+              {reasoningAnsweredCount}/{reasoningQuestionCount}
+            </span>
+          </BossPaperNav>
+        )}
+      />
     );
   }
 
@@ -1509,82 +1711,60 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
 
     const selectedAnswer = arithmeticAnswers[arithmeticQuestion.id];
     return (
-      <div className="relative flex h-full w-full overflow-hidden bg-[#f7f4ea] font-sans text-slate-950">
-        <div className="relative z-10 flex h-full w-full flex-col gap-3 px-3 pb-3 pt-3 md:px-6 md:pb-5 md:pt-5">
-          <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.1rem] border border-slate-300 bg-[#fffdf6] shadow-[0_12px_28px_rgba(15,23,42,0.16)]">
-            <div className="shrink-0 border-b border-slate-300 bg-white px-4 py-3 md:px-6 md:py-4">
-              <div className="flex items-center justify-between gap-3 text-[0.68rem] font-black uppercase tracking-[0.16em] text-slate-500 md:text-sm">
-                <span>SATs Paper 1: Arithmetic</span>
-                <span>Question {currentIndex + 1} of {arithmeticQuestionCount}</span>
+      <BossPaperStage
+        title="Arithmetic"
+        questionNumber={currentIndex + 1}
+        questionText={<><span className="block text-[clamp(0.9rem,2.6vw,1.2rem)]">Calculate the value of:</span><span className="mt-2 block text-center text-[clamp(2rem,7vw,4.25rem)]">{arithmeticQuestion.question}</span><span className="mt-2 block text-[clamp(0.85rem,2.2vw,1.05rem)]">Choose the correct answer.</span></>}
+        visual={(
+          <BossVisualFrame>
+            <div className="mx-auto flex h-[clamp(11rem,30vh,18rem)] max-w-2xl items-center justify-center rounded-[0.85rem] bg-slate-950/24 px-4 py-6 text-center">
+              <div className="text-[clamp(2.75rem,13vw,6.5rem)] font-black leading-none text-white drop-shadow-[0_5px_12px_rgba(0,0,0,0.5)]">
+                {arithmeticQuestion.question}
               </div>
             </div>
-
-            <div className="flex min-h-0 flex-1 flex-col justify-center px-5 py-5 md:px-10 md:py-8">
-              <div className="mx-auto w-full max-w-3xl">
-                <div className="mb-4 text-sm font-bold text-slate-600 md:text-base">
-                  Choose the correct answer. {arithmeticQuestion.marks} mark
-                </div>
-                <div className="rounded-[0.75rem] border border-slate-300 bg-white px-5 py-6 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] md:px-8 md:py-10">
-                  <div className="text-[clamp(2.3rem,10vw,5rem)] font-black leading-none tracking-normal text-slate-950">
-                    {arithmeticQuestion.question}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <div className="grid shrink-0 grid-cols-2 gap-2 md:grid-cols-4 md:gap-3">
-            {arithmeticQuestion.choices.map((option, index) => {
-              const isSelected = String(option) === selectedAnswer;
-              const toneClass = isSelected
-                ? 'border-sky-700 bg-sky-100 text-slate-950'
-                : 'border-slate-300 bg-white text-slate-950 hover:border-sky-500 hover:bg-sky-50';
-
-              return (
-                <button
-                  key={`${option}-${index}`}
-                  type="button"
-                  onClick={() => handleArithmeticChoice(option)}
-                  className={`relative flex h-[clamp(4.25rem,10vh,5.6rem)] min-w-0 items-center justify-center rounded-[0.85rem] border-2 px-3 text-center text-[clamp(1.35rem,5vw,2.1rem)] font-black shadow-[0_6px_14px_rgba(15,23,42,0.12)] transition disabled:cursor-default md:h-[6.25rem] ${toneClass}`}
-                >
-                  <span className="absolute left-2 top-2 flex h-6 w-6 items-center justify-center rounded-full border border-slate-300 bg-slate-100 text-xs font-black text-slate-600 md:left-3 md:top-3 md:h-7 md:w-7 md:text-sm">
-                    {String.fromCharCode(65 + index)}
-                  </span>
-                  <span className="max-w-full break-words px-5">{option}</span>
-                </button>
-              );
-            })}
-          </div>
-          <div className="grid shrink-0 grid-cols-[auto_1fr_auto_auto] items-center gap-2">
+          </BossVisualFrame>
+        )}
+        answers={arithmeticQuestion.choices.slice(0, 4).map((option, index) => (
+          <BossAnswerCard
+            key={`${option}-${index}`}
+            label={String.fromCharCode(65 + index)}
+            selected={String(option) === selectedAnswer}
+            onClick={() => handleArithmeticChoice(option)}
+          >
+            {option}
+          </BossAnswerCard>
+        ))}
+        nav={(
+          <BossPaperNav>
             <button
               type="button"
               onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
               disabled={currentIndex === 0}
-              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-slate-950 disabled:opacity-40"
+              className={bossNavButtonClass}
             >
               Previous
             </button>
-            <div className="text-center text-xs font-black uppercase tracking-[0.12em] text-slate-600">
-              {arithmeticAnsweredCount}/{arithmeticQuestionCount} answered
+            <div className="min-w-0 flex-1 text-center text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100/75">
+              {arithmeticAnsweredCount}/{arithmeticQuestionCount}
             </div>
             <button
               type="button"
               onClick={() => setCurrentIndex((prev) => Math.min(arithmeticQuestionCount - 1, prev + 1))}
               disabled={currentIndex >= arithmeticQuestionCount - 1}
-              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-slate-950 disabled:opacity-40"
+              className={bossNavButtonClass}
             >
               Next
             </button>
             <button
               type="button"
               onClick={() => submitArithmeticPaper((sessionState?.timeLeft ?? 0) > 0)}
-              className="rounded-lg border border-slate-950 bg-slate-950 px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-white"
+              className={bossNavButtonClass}
             >
               Submit paper
             </button>
-          </div>
-        </div>
-      </div>
+          </BossPaperNav>
+        )}
+      />
     );
   }
 

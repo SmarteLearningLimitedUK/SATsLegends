@@ -79,11 +79,11 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   matrix_match: {
-    label: 'SATs Paper 3',
+    label: 'Reasoning 2',
     focus: 'Reasoning paper boss duel',
     mode: 'boss',
     rules: makeBossRules(
-      'SATs Paper 3: Reasoning',
+      'Reasoning 2',
       'Enter the final reasoning paper and complete each pattern before the Oracle Slime overwhelms the forest.',
       'Look for colour, size, number and rotation rules before you commit.'
     ),

@@ -989,7 +989,9 @@ const App: React.FC = () => {
   const appScreenOverflowClass = isWorldMapScreen ? 'overflow-visible' : 'overflow-hidden';
   const screenEnterScale = 1;
   const screenExitScale = 1;
-  const isExamBoss = selectedLevel?.gameType === 'crystal_core' || selectedLevel?.gameType === 'mirror_gate';
+  const isExamBoss = selectedLevel?.gameType === 'crystal_core'
+    || selectedLevel?.gameType === 'mirror_gate'
+    || selectedLevel?.gameType === 'matrix_match';
   const hideShellTimer = (LEVEL_TIMERS_DISABLED && !isExamBoss)
     || !isGameplayScreen
     || isStandaloneRatioRacer
@@ -998,7 +1000,7 @@ const App: React.FC = () => {
     || selectedLevel?.isPractice
     || selectedLevel?.gameType === 'potion_pour';
   const hideShellLives = isExamBoss;
-  const hideGlobalBottomDock = isExamBoss;
+  const hideGlobalBottomDock = false;
   const goToProfile = useCallback(() => {
     setScreen('profile');
   }, [setScreen]);
@@ -1070,7 +1072,7 @@ const App: React.FC = () => {
             lives={globalMiniGameLives}
             hideTimer={hideShellTimer}
             forceTimer={isExamBoss}
-            hideAvatar={isExamBoss}
+            hideAvatar={false}
             hideLives={hideShellLives}
             onBack={isStandaloneRatioRacer || isStandaloneScaleBuilder || isStandaloneShareSplitter ? goToHome : isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
             variant={isGameplayScreen ? 'gameplay' : 'hub'}

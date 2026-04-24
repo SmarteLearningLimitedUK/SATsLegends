@@ -53,9 +53,9 @@ const FINISH_SCREEN_THRESHOLD = 91;
 const REQUIRED_CORRECT_TO_FINISH = 5;
 const FINISH_CROSS_BUFFER = 90;
 const PLAYER_KARTS: Record<string, string> = {
-  barratt: kartBran,
-  bran: kartMochi,
-  mochi: kartBarratt,
+  barratt: kartBarratt,
+  bran: kartBran,
+  mochi: kartMochi,
   vex: kartVex,
 };
 
@@ -529,7 +529,8 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
               >
                 <img
                   src={playerKart}
-                  alt="Player kart"
+                  alt="Player character kart"
+                  data-player-kart="true"
                   className="relative z-10 h-full w-full object-contain drop-shadow-[0_0_20px_rgba(56,189,248,0.72)]"
                   style={{
                     imageRendering: 'auto',
