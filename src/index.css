@@ -5610,13 +5610,6 @@ button.avatar-hero-arrow:not(:disabled):active {
     gap: 0.35rem !important;
   }
 
-  .screen-gameplay:not(.game-type-place-value-peaks) .unified-minigame-hud-enabled [data-gameplay-content-viewport='true'] > .relative {
-    width: calc(100% / 0.82) !important;
-    height: calc(100% / 0.82) !important;
-    max-width: none !important;
-    transform: scale(0.82);
-    transform-origin: top center;
-  }
 }
 
 .screen-gameplay.game-type-place-value-peaks .game-shell-host,
@@ -5631,6 +5624,35 @@ button.avatar-hero-arrow:not(:disabled):active {
   max-width: none !important;
   max-height: 100% !important;
   transform: none !important;
+}
+
+@media (max-width: 640px) and (max-height: 720px) {
+  .screen-gameplay.game-type-area-architect .area-architect-content {
+    gap: 0.35rem !important;
+    padding-inline: 0.55rem !important;
+    padding-top: 0.35rem !important;
+    padding-bottom: 0.35rem !important;
+  }
+
+  .screen-gameplay.game-type-area-architect .area-architect-grid-shell {
+    padding: 0.45rem !important;
+  }
+
+  .screen-gameplay.game-type-area-architect .area-architect-grid-shell > div {
+    max-width: min(100%, 17.5rem) !important;
+  }
+
+  .screen-gameplay.game-type-area-architect .answer-choice-surface button {
+    height: 2.35rem !important;
+    font-size: 0.95rem !important;
+  }
+
+  .screen-gameplay.game-type-formula-forge .formula-forge-content {
+    width: 100% !important;
+    height: calc(100% / 0.7) !important;
+    transform: scale(0.7);
+    transform-origin: top center;
+  }
 }
 .screen-gameplay .game-shell-host .mission-panel-shell,
 .screen-gameplay .game-shell-host .licensed-slice-paper-panel,

@@ -955,7 +955,6 @@ const App: React.FC = () => {
   const isWellbeingScreen = screen === 'wellbeing_hub' || screen === 'wellbeing_activity';
   const isSplashScreen = screen === 'splash';
   const isStartScreen = isSplashScreen || screen === 'profile_setup' || screen === 'avatar_selection';
-  const isAvatarSelectionScreen = screen === 'avatar_selection';
   const isGameplayScreen = screen === 'gameplay';
   const isMapLayoutScreen = MAP_LAYOUT_SCREENS.includes(screen);
   const isWorldMapScreen = screen === 'world_map';
@@ -977,9 +976,8 @@ const App: React.FC = () => {
       : isMapLayoutScreen
       ? 'sat-screen-map-content'
       : 'sat-screen-standard-content items-stretch';
-  const useFlatScreenScaleTransition = isAvatarSelectionScreen || screen === 'profile_setup';
-  const screenEnterScale = useFlatScreenScaleTransition ? 1 : 0.98;
-  const screenExitScale = useFlatScreenScaleTransition ? 1 : 1.02;
+  const screenEnterScale = 1;
+  const screenExitScale = 1;
   const hideShellTimer = LEVEL_TIMERS_DISABLED
     || !isGameplayScreen
     || selectedLevel?.isPractice

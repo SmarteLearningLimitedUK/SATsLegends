@@ -205,7 +205,7 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
-      <div className="flex h-full min-h-0 flex-col gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+3.5rem)] pt-3 text-white">
+      <div className="area-architect-content flex h-full min-h-0 flex-col gap-2 px-3 pb-2 pt-3 text-white">
         <section className="shrink-0">
           <div className="mx-auto w-full max-w-[44rem]">
             <div className="mt-2">
@@ -216,7 +216,7 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
           </div>
         </section>
 
-        <section className="shrink-0 rounded-[1.4rem] border border-white/14 bg-black/25 p-3 shadow-[0_16px_30px_rgba(15,23,42,0.28)]">
+        <section className="area-architect-grid-shell shrink-0 rounded-[1.4rem] border border-white/14 bg-black/25 p-3 shadow-[0_16px_30px_rgba(15,23,42,0.28)]">
           <div
             className="mx-auto grid aspect-square w-full max-w-[22rem] place-content-center gap-1 rounded-[1rem] border border-white/12 bg-slate-900/50 p-2"
             style={{ gridTemplateColumns: `repeat(${question.gridSize}, minmax(0, 1fr))` }}

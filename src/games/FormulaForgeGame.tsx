@@ -488,7 +488,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
       overlayDisabled
     >
 
-      <div className={`relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-2 ${useSharedTopHud ? 'pt-1 md:pt-2' : 'pt-[calc(env(safe-area-inset-top)+2.5rem)]'}`}>
+      <div className={`formula-forge-content relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-2 ${useSharedTopHud ? 'pt-1 md:pt-2' : 'pt-[calc(env(safe-area-inset-top)+2.5rem)]'}`}>
         <div className="relative flex w-full max-w-6xl min-h-0 flex-1 flex-col overflow-hidden rounded-[1.7rem] p-2 md:rounded-[2rem] md:p-3">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.12),rgba(15,23,42,0.02)_36%,rgba(15,23,42,0.08)_100%)]" />
 
