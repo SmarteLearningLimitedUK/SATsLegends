@@ -694,8 +694,8 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
           <div
               className="pointer-events-none absolute z-50"
               style={{
-              left: dragState.clientX - (dragState.width / 2),
-              top: dragState.clientY - (dragState.height / 2),
+              left: dragState.clientX - (playfieldRef.current?.getBoundingClientRect().left ?? 0) - (dragState.width / 2),
+              top: dragState.clientY - (playfieldRef.current?.getBoundingClientRect().top ?? 0) - (dragState.height / 2),
                 width: dragState.width,
                 height: dragState.height,
               }}

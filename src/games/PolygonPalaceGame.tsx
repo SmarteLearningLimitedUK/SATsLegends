@@ -789,17 +789,26 @@ const ShapePreview: React.FC<{
   pulseTone: 'success' | 'error' | null;
 }> = ({ question, pulseTone }) => {
   const { shape, shapeRotation } = question;
+  const polygonStrokeProps = {
+    strokeLinejoin: 'round' as const,
+    strokeLinecap: 'round' as const,
+    strokeMiterlimit: 2,
+  };
+  const lineStrokeProps = {
+    strokeLinecap: 'butt' as const,
+    strokeMiterlimit: 1,
+  };
 
   const renderSolid = () => {
     if (shape.solidType === 'cube') {
       return (
         <>
-          <polygon points="-18,-6 10,-24 38,-6 10,12" fill="url(#shapeFill)" stroke={shape.stroke} strokeWidth="3.8" />
-          <polygon points="-18,-6 10,12 10,42 -18,24" fill="rgba(255,255,255,0.14)" stroke={shape.stroke} strokeWidth="3.8" />
-          <polygon points="10,12 38,-6 38,24 10,42" fill="rgba(255,255,255,0.2)" stroke={shape.stroke} strokeWidth="3.8" />
-          <line x1="-18" y1="-6" x2="-18" y2="24" stroke={shape.stroke} strokeWidth="2.5" />
-          <line x1="38" y1="-6" x2="38" y2="24" stroke={shape.stroke} strokeWidth="2.5" />
-          <line x1="10" y1="-24" x2="10" y2="12" stroke={shape.stroke} strokeWidth="2.5" />
+          <polygon points="-18,-6 10,-24 38,-6 10,12" fill="url(#shapeFill)" stroke={shape.stroke} strokeWidth="3.8" {...polygonStrokeProps} />
+          <polygon points="-18,-6 10,12 10,42 -18,24" fill="rgba(255,255,255,0.14)" stroke={shape.stroke} strokeWidth="3.8" {...polygonStrokeProps} />
+          <polygon points="10,12 38,-6 38,24 10,42" fill="rgba(255,255,255,0.2)" stroke={shape.stroke} strokeWidth="3.8" {...polygonStrokeProps} />
+          <line x1="-18" y1="-6" x2="-18" y2="24" stroke={shape.stroke} strokeWidth="2.5" {...lineStrokeProps} />
+          <line x1="38" y1="-6" x2="38" y2="24" stroke={shape.stroke} strokeWidth="2.5" {...lineStrokeProps} />
+          <line x1="10" y1="-24" x2="10" y2="12" stroke={shape.stroke} strokeWidth="2.5" {...lineStrokeProps} />
         </>
       );
     }
@@ -807,12 +816,12 @@ const ShapePreview: React.FC<{
     if (shape.solidType === 'cuboid') {
       return (
         <>
-          <polygon points="-26,-8 12,-24 42,-10 4,8" fill="url(#shapeFill)" stroke={shape.stroke} strokeWidth="3.8" />
-          <polygon points="-26,-8 4,8 4,38 -26,20" fill="rgba(255,255,255,0.14)" stroke={shape.stroke} strokeWidth="3.8" />
-          <polygon points="4,8 42,-10 42,20 4,38" fill="rgba(255,255,255,0.18)" stroke={shape.stroke} strokeWidth="3.8" />
-          <line x1="-26" y1="-8" x2="-26" y2="20" stroke={shape.stroke} strokeWidth="2.5" />
-          <line x1="42" y1="-10" x2="42" y2="20" stroke={shape.stroke} strokeWidth="2.5" />
-          <line x1="12" y1="-24" x2="12" y2="8" stroke={shape.stroke} strokeWidth="2.5" />
+          <polygon points="-26,-8 12,-24 42,-10 4,8" fill="url(#shapeFill)" stroke={shape.stroke} strokeWidth="3.8" {...polygonStrokeProps} />
+          <polygon points="-26,-8 4,8 4,38 -26,20" fill="rgba(255,255,255,0.14)" stroke={shape.stroke} strokeWidth="3.8" {...polygonStrokeProps} />
+          <polygon points="4,8 42,-10 42,20 4,38" fill="rgba(255,255,255,0.18)" stroke={shape.stroke} strokeWidth="3.8" {...polygonStrokeProps} />
+          <line x1="-26" y1="-8" x2="-26" y2="20" stroke={shape.stroke} strokeWidth="2.5" {...lineStrokeProps} />
+          <line x1="42" y1="-10" x2="42" y2="20" stroke={shape.stroke} strokeWidth="2.5" {...lineStrokeProps} />
+          <line x1="12" y1="-24" x2="12" y2="8" stroke={shape.stroke} strokeWidth="2.5" {...lineStrokeProps} />
         </>
       );
     }
@@ -820,24 +829,24 @@ const ShapePreview: React.FC<{
     if (shape.solidType === 'triangularPrism') {
       return (
         <>
-          <polygon points="-28,10 -8,-24 16,8" fill="url(#shapeFill)" stroke={shape.stroke} strokeWidth="3.8" />
-          <polygon points="-12,6 12,-10 36,12 12,28" fill="rgba(255,255,255,0.18)" stroke={shape.stroke} strokeWidth="3.8" />
-          <line x1="-28" y1="10" x2="-12" y2="6" stroke={shape.stroke} strokeWidth="2.5" />
-          <line x1="-8" y1="-24" x2="12" y2="-10" stroke={shape.stroke} strokeWidth="2.5" />
-          <line x1="16" y1="8" x2="36" y2="12" stroke={shape.stroke} strokeWidth="2.5" />
-          <line x1="-28" y1="10" x2="12" y2="28" stroke={shape.stroke} strokeWidth="2.5" />
-          <line x1="-8" y1="-24" x2="36" y2="12" stroke={shape.stroke} strokeWidth="2.5" />
+          <polygon points="-28,10 -8,-24 16,8" fill="url(#shapeFill)" stroke={shape.stroke} strokeWidth="3.8" {...polygonStrokeProps} />
+          <polygon points="-12,6 12,-10 36,12 12,28" fill="rgba(255,255,255,0.18)" stroke={shape.stroke} strokeWidth="3.8" {...polygonStrokeProps} />
+          <line x1="-28" y1="10" x2="-12" y2="6" stroke={shape.stroke} strokeWidth="2.5" {...lineStrokeProps} />
+          <line x1="-8" y1="-24" x2="12" y2="-10" stroke={shape.stroke} strokeWidth="2.5" {...lineStrokeProps} />
+          <line x1="16" y1="8" x2="36" y2="12" stroke={shape.stroke} strokeWidth="2.5" {...lineStrokeProps} />
+          <line x1="-28" y1="10" x2="12" y2="28" stroke={shape.stroke} strokeWidth="2.5" {...lineStrokeProps} />
+          <line x1="-8" y1="-24" x2="36" y2="12" stroke={shape.stroke} strokeWidth="2.5" {...lineStrokeProps} />
         </>
       );
     }
 
     return (
       <>
-        <polygon points="-24,20 0,-30 24,20" fill="url(#shapeFill)" stroke={shape.stroke} strokeWidth="3.8" />
-        <polygon points="-24,20 24,20 24,40 -24,40" fill="rgba(255,255,255,0.14)" stroke={shape.stroke} strokeWidth="3.8" />
-        <line x1="0" y1="-30" x2="-24" y2="20" stroke={shape.stroke} strokeWidth="2.5" />
-        <line x1="0" y1="-30" x2="24" y2="20" stroke={shape.stroke} strokeWidth="2.5" />
-        <line x1="0" y1="-30" x2="0" y2="40" stroke={shape.stroke} strokeWidth="2.5" />
+        <polygon points="-24,20 0,-30 24,20" fill="url(#shapeFill)" stroke={shape.stroke} strokeWidth="3.8" {...polygonStrokeProps} />
+        <polygon points="-24,20 24,20 24,40 -24,40" fill="rgba(255,255,255,0.14)" stroke={shape.stroke} strokeWidth="3.8" {...polygonStrokeProps} />
+        <line x1="0" y1="-30" x2="-24" y2="20" stroke={shape.stroke} strokeWidth="2.5" {...lineStrokeProps} />
+        <line x1="0" y1="-30" x2="24" y2="20" stroke={shape.stroke} strokeWidth="2.5" {...lineStrokeProps} />
+        <line x1="0" y1="-30" x2="0" y2="40" stroke={shape.stroke} strokeWidth="2.5" {...lineStrokeProps} />
       </>
     );
   };
@@ -871,7 +880,7 @@ const ShapePreview: React.FC<{
       {shape.kind === 'solid' ? renderSolid() : shape.kind === 'circle' ? (
         <circle cx="0" cy="0" r="38" fill="url(#shapeFill)" stroke={shape.stroke} strokeWidth="4.2" />
       ) : (
-        <polygon points={shape.points} fill="url(#shapeFill)" stroke={shape.stroke} strokeWidth="4.2" />
+        <polygon points={shape.points} fill="url(#shapeFill)" stroke={shape.stroke} strokeWidth="4.2" {...polygonStrokeProps} />
       )}
     </motion.svg>
   );

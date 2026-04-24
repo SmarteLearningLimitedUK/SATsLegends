@@ -266,17 +266,18 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
         </div>
 
         <div className="relative flex min-h-0 flex-1 items-center justify-center">
-          <div className="relative aspect-square w-[min(82vw,31rem)] overflow-hidden rounded-[1.5rem] border border-cyan-100/26 shadow-[0_18px_36px_rgba(2,6,23,0.4)]">
+          <div className="relative aspect-square w-[min(92vw,34rem)] overflow-hidden rounded-[1.5rem] border border-cyan-100/26 shadow-[0_18px_36px_rgba(2,6,23,0.4)]">
             <img
               src={coordinateQuestBoard}
               alt=""
               aria-hidden="true"
               draggable={false}
-              className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
+              className="pointer-events-none absolute left-1/2 top-1/2 h-[205%] w-[205%] object-cover"
+              style={{ transform: 'translate(-52.4%, -47.1%)' }}
             />
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-3 rounded-[1.2rem]"
+              className="pointer-events-none absolute inset-0 rounded-[1.35rem]"
               style={{
                 backgroundImage: [
                   'linear-gradient(to right, rgba(191,219,254,0.38) 1px, transparent 1px)',
@@ -288,16 +289,16 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
             />
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute left-3 top-3 h-[calc(100%-1.5rem)] w-[calc(100%-1.5rem)] rounded-[1.2rem] border border-cyan-100/14"
+              className="pointer-events-none absolute inset-0 rounded-[1.35rem] border border-cyan-100/14"
             />
-            <div className="absolute left-3 top-3 z-0 flex h-[calc(100%-1.5rem)] w-[calc(100%-1.5rem)] items-center justify-between px-1 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/72">
+            <div className="absolute inset-x-2 top-2 z-0 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/78 drop-shadow-[0_2px_4px_rgba(2,6,23,0.8)]">
               <span>x-axis</span>
               <span>left to right</span>
             </div>
-            <div className="absolute bottom-4 left-1 z-0 -rotate-90 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/72">
+            <div className="absolute bottom-4 left-1 z-0 -rotate-90 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/78 drop-shadow-[0_2px_4px_rgba(2,6,23,0.8)]">
               y-axis
             </div>
-            <div className="absolute inset-3 z-10 grid grid-cols-7 grid-rows-7 overflow-hidden rounded-[1.2rem]">
+            <div className="absolute inset-0 z-10 grid grid-cols-7 grid-rows-7 overflow-hidden rounded-[1.35rem]">
               {cells.map((cell) => {
                 const key = coordinateKey(cell.x, cell.y);
                 const isStart = cell.x === round.start.x && cell.y === round.start.y;
@@ -319,7 +320,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                     {isStart && (
                       <motion.div
                         layout
-                        className="absolute left-1/2 top-1/2 flex h-[66%] w-[66%] -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full border border-white/22 bg-[linear-gradient(180deg,rgba(245,158,11,0.95),rgba(194,65,12,0.95))] shadow-[0_10px_20px_rgba(0,0,0,0.24)]"
+                        className="absolute left-1/2 top-1/2 flex h-[88%] w-[88%] -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full border border-white/28 bg-[linear-gradient(180deg,rgba(245,158,11,0.95),rgba(194,65,12,0.95))] shadow-[0_12px_24px_rgba(0,0,0,0.3)]"
                       >
                         {playerAvatar?.image ? (
                           <img

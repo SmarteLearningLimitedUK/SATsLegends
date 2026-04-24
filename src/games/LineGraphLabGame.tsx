@@ -334,7 +334,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                     width={chartSize.width}
                     height={chartSize.height}
                     data={round.graph}
-                    margin={{ top: 18, right: 16, left: 0, bottom: 16 }}
+                    margin={{ top: 28, right: 18, left: 0, bottom: 16 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.22)" />
                     <XAxis
@@ -359,17 +359,45 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                       stroke="#34d399"
                       strokeWidth={4}
                       dot={(props) => {
-                        const { cx, cy, payload } = props as { cx?: number; cy?: number; payload?: DataPoint; index?: number };
+                        const { cx, cy, payload, index } = props as { cx?: number; cy?: number; payload?: DataPoint; index?: number };
                         if (cx == null || cy == null || !payload) return null;
+                        const isMarkedPoint = round.highlightIndex === index;
                         return (
-                          <circle
-                            cx={cx}
-                            cy={cy}
-                            r={5}
-                            fill="#34d399"
-                            stroke="#ecfeff"
-                            strokeWidth={2}
-                          />
+                          <g>
+                            {isMarkedPoint ? (
+                              <>
+                                <circle
+                                  cx={cx}
+                                  cy={cy}
+                                  r={11}
+                                  fill="rgba(251, 191, 36, 0.22)"
+                                  stroke="#fde68a"
+                                  strokeWidth={3}
+                                />
+                                <text
+                                  x={cx}
+                                  y={Math.max(14, cy - 16)}
+                                  textAnchor="middle"
+                                  fill="#fef3c7"
+                                  fontSize={13}
+                                  fontWeight={900}
+                                  paintOrder="stroke"
+                                  stroke="rgba(15, 23, 42, 0.92)"
+                                  strokeWidth={4}
+                                >
+                                  A
+                                </text>
+                              </>
+                            ) : null}
+                            <circle
+                              cx={cx}
+                              cy={cy}
+                              r={isMarkedPoint ? 7 : 5}
+                              fill={isMarkedPoint ? '#fbbf24' : '#34d399'}
+                              stroke="#ecfeff"
+                              strokeWidth={2}
+                            />
+                          </g>
                         );
                       }}
                       activeDot={{ r: 7, fill: '#6ee7b7', stroke: '#f0fdfa', strokeWidth: 2 }}

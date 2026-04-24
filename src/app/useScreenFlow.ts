@@ -31,6 +31,7 @@ export const useScreenFlow = (): ScreenFlowController => {
   const location = useLocation();
   const navigate = useNavigate();
   const syncFromRouteRef = useRef(false);
+  const preserveCurrentPathRef = useRef(false);
 
   const resolveIsland = useCallback((islandId?: number) => {
     if (!islandId) return null;
@@ -52,6 +53,7 @@ export const useScreenFlow = (): ScreenFlowController => {
 
   useEffect(() => {
     const routeState = parseRoute(location.pathname);
+    preserveCurrentPathRef.current = Boolean(routeState.preservePath);
     const routeIsland = routeState.islandId !== undefined ? resolveIsland(routeState.islandId) : undefined;
     const routeLevel = routeState.levelId !== undefined ? resolveLevel(routeIsland ?? null, routeState.levelId) : undefined;
 
@@ -94,7 +96,7 @@ export const useScreenFlow = (): ScreenFlowController => {
     }
 
     const expectedPath = buildRouteForScreen(nextScreen, nextIsland?.id, nextLevel?.id);
-    if (location.pathname !== expectedPath) {
+    if (!routeState.preservePath && location.pathname !== expectedPath) {
       navigate(expectedPath, { replace: true });
     }
 
@@ -107,6 +109,7 @@ export const useScreenFlow = (): ScreenFlowController => {
 
   useEffect(() => {
     if (syncFromRouteRef.current) return;
+    if (preserveCurrentPathRef.current && parseRoute(location.pathname).preservePath) return;
     const nextPath = buildRouteForScreen(screen, selectedIsland?.id, selectedLevel?.id);
     if (location.pathname !== nextPath) {
       navigate(nextPath);

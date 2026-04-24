@@ -9,6 +9,7 @@ import gemRed from '../assets/place_value/jewels/diamond_red.png';
 import gemYellow from '../assets/place_value/jewels/diamond_yellow.png';
 import gemEmerald from '../assets/place_value/jewels/emerald.png';
 import gemSapphire from '../assets/place_value/jewels/sapphire.png';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { useTrimmedImageSource, useTrimmedImageSources } from '../utils/trimTransparentImage';
 
 interface ConversionCanyonGameProps {
@@ -209,53 +210,36 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
       />
       <div className="relative z-10 flex h-full w-full min-h-0 flex-col">
         <div className="flex min-h-0 flex-1 flex-col items-center justify-start gap-3 px-4 pt-[calc(env(safe-area-inset-top)+0.6rem)]">
-          <div className="w-full max-w-[34rem] rounded-[1.35rem] border border-white/12 bg-[linear-gradient(180deg,rgba(12,24,45,0.72),rgba(8,14,28,0.78))] px-4 py-2 text-center shadow-[0_16px_30px_rgba(2,6,23,0.35)]">
-            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-200/90">Conversion Canyon</div>
-            <div className="mt-1 text-[clamp(1rem,3.8vw,1.35rem)] font-black text-white">
-              The Monster Minds have disrupted the canyon supplies. Rebuild the shipment so it totals {toKgLabel(round.targetGrams)}.
-            </div>
-            <div className="mt-1 text-[11px] font-semibold text-cyan-100/90">
-              Use the available weights to match the target exactly.
-            </div>
-          </div>
+          <GameQuestionCard
+            title="Conversion Canyon"
+            subtitle="Use the available weights to match the target exactly."
+            className="mx-auto max-w-[min(96%,22rem)]"
+          >
+            The Monster Minds have disrupted the canyon supplies. Rebuild the shipment so it totals {toKgLabel(round.targetGrams)}.
+          </GameQuestionCard>
 
           <motion.div
             animate={successPulse ? { scale: [1, 1.02, 1] } : { scale: 1 }}
             transition={{ duration: 0.36, ease: 'easeOut' }}
-            className="relative flex w-full max-w-[35rem] flex-1 min-h-[19rem] items-center justify-center p-1 md:max-w-[40rem]"
+            className="relative flex w-full max-w-[35rem] min-h-[18rem] flex-1 items-center justify-center p-1 md:max-w-[40rem]"
           >
             <div
-              className={`flex w-full flex-col gap-2 rounded-[1.35rem] px-3 py-2 text-center sm:flex-row sm:items-center sm:justify-between ${
-                successPulse ? 'bg-emerald-400/18' : 'bg-slate-950/24'
+              className={`relative flex h-full min-h-[17.5rem] w-full items-center justify-center overflow-visible rounded-[1.35rem] ${
+                successPulse ? 'bg-emerald-400/12' : 'bg-slate-950/10'
               }`}
             >
-              <div className="w-full text-center sm:w-auto sm:text-left">
-                <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/80">Target Load</div>
-                <div className="text-[clamp(0.9rem,2.2vw,1.1rem)] font-black leading-tight text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]">
-                  {toKgLabel(round.targetGrams)}
-                </div>
-              </div>
-              <div className="w-full text-center sm:w-auto sm:text-right">
-                <div className="text-[9px] font-black uppercase tracking-[0.16em] text-white/80">Current Load</div>
-                <div className="text-[clamp(0.9rem,2.2vw,1.1rem)] font-black leading-tight text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]">
-                  {toGramLabel(currentGrams)}
-                </div>
-              </div>
-            </div>
-
-            <div className="relative mt-3 flex min-h-[19rem] flex-1 items-center justify-center">
-              <div className="pointer-events-none absolute left-1/2 top-[48%] z-10 flex w-full max-w-[26rem] -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+              <div className="pointer-events-none absolute left-1/2 top-1/2 z-10 flex w-[min(96%,27rem)] -translate-x-1/2 -translate-y-1/2 items-center justify-center">
                 <img
                   src={trimmedScaleImage}
                   alt=""
                   aria-hidden="true"
                   draggable={false}
-                  className="pointer-events-none relative z-10 h-auto w-full object-contain object-center drop-shadow-[0_18px_24px_rgba(2,6,23,0.38)]"
+                  className="pointer-events-none relative z-10 h-auto w-full object-contain object-center drop-shadow-[0_18px_24px_rgba(2,6,23,0.42)]"
                 />
-                <div className="pointer-events-none absolute left-1/2 top-[56%] z-20 -translate-x-1/2 -translate-y-1/2">
-                  <div className="flex min-w-[8.4rem] flex-col items-center rounded-[0.95rem] border border-cyan-200/58 bg-[#07162b]/92 px-3 py-1.5 text-center shadow-[0_10px_18px_rgba(2,6,23,0.55)]">
-                    <div className="text-[8px] font-black uppercase tracking-[0.28em] text-cyan-100/80">Load Meter</div>
-                    <div className="mt-0.5 font-mono text-[1.1rem] font-black tracking-[0.12em] text-emerald-200">
+                <div className="pointer-events-none absolute left-1/2 top-[58%] z-30 -translate-x-1/2 -translate-y-1/2">
+                  <div className="flex min-w-[8.7rem] flex-col items-center rounded-[0.9rem] border border-cyan-200/62 bg-[#061426]/94 px-3 py-1.5 text-center shadow-[0_10px_18px_rgba(2,6,23,0.58)]">
+                    <div className="text-[8px] font-black uppercase tracking-[0.25em] text-cyan-100/82">Digital Weight</div>
+                    <div className="mt-0.5 font-mono text-[1.12rem] font-black tracking-[0.1em] text-emerald-200">
                       {toGramLabel(currentGrams)}
                     </div>
                   </div>
@@ -263,18 +247,25 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
               </div>
               <div
                 ref={dropRef}
-                className="absolute left-1/2 top-[43%] z-20 flex min-h-[4.5rem] w-[70%] -translate-x-1/2 items-center justify-center gap-2 rounded-[1.1rem] px-2 py-1.5"
+                className="absolute left-1/2 top-[34%] z-40 flex min-h-[5.2rem] w-[min(78%,22rem)] -translate-x-1/2 items-end justify-center gap-1.5 rounded-[1.1rem] px-2 py-1.5"
+                aria-label="Weights on scale"
               >
-                {placedTokens.map((token) => (
-                  <button
-                    key={token.id}
-                    onClick={() => removePlacedToken(token.id)}
-                    className="relative z-10 flex min-w-[2.4rem] flex-col items-center rounded-xl bg-[#0b2d68]/82 px-1 py-0.5 text-white ring-1 ring-white/28"
-                  >
-                    <img src={gemImageMap.get(token.gem) ?? token.gem} alt="" className="h-5 w-5 object-contain" draggable={false} />
-                    <span className="text-[9px] font-black leading-none">{getMeasurementDisplay(token.grams).primary}</span>
-                  </button>
-                ))}
+                {placedTokens.length > 0 ? (
+                  placedTokens.map((token) => (
+                    <button
+                      key={token.id}
+                      onClick={() => removePlacedToken(token.id)}
+                      className="relative z-10 flex min-w-[2.45rem] flex-col items-center rounded-xl bg-[#0b2d68]/88 px-1 py-0.5 text-white shadow-[0_8px_14px_rgba(2,6,23,0.34)] ring-1 ring-white/30"
+                    >
+                      <img src={gemImageMap.get(token.gem) ?? token.gem} alt="" className="h-6 w-6 object-contain" draggable={false} />
+                      <span className="text-[8.5px] font-black leading-none">{getMeasurementDisplay(token.grams).primary}</span>
+                    </button>
+                  ))
+                ) : (
+                  <div className="rounded-full border border-white/16 bg-slate-950/34 px-3 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/72">
+                    Tap weights below
+                  </div>
+                )}
               </div>
             </div>
           </motion.div>

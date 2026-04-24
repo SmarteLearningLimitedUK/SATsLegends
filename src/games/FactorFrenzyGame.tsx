@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import factorFrenzyBackground from '../assets/maps/backgroundsforgames/Factor Frenzy.jpg';
-import goblinWizard from '../assets/bosses/goblinwiz.jpg';
+import krakenBoss from '../assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_create_me_a_kracken-1.jpg';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
 
@@ -73,6 +73,46 @@ const scoreToStars = (XP: number) => {
   return 1;
 };
 
+const createTransparentBossFrame = (src: string): Promise<string> =>
+  new Promise((resolve) => {
+    const image = new Image();
+    image.crossOrigin = 'anonymous';
+    image.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(src);
+          return;
+        }
+
+        ctx.drawImage(image, 0, 0);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const { data } = imageData;
+        for (let index = 0; index < data.length; index += 4) {
+          const r = data[index];
+          const g = data[index + 1];
+          const b = data[index + 2];
+          const brightness = Math.max(r, g, b);
+          const spread = brightness - Math.min(r, g, b);
+          if (brightness < 26 && spread < 20) {
+            data[index + 3] = 0;
+          } else if (brightness < 46 && spread < 28) {
+            data[index + 3] = Math.round(data[index + 3] * 0.18);
+          }
+        }
+        ctx.putImageData(imageData, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      } catch {
+        resolve(src);
+      }
+    };
+    image.onerror = () => resolve(src);
+    image.src = src;
+  });
+
 const shuffle = <T,>(items: T[]): T[] => {
   const clone = [...items];
   for (let index = clone.length - 1; index > 0; index -= 1) {
@@ -134,7 +174,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   const [successTone, setSuccessTone] = useState<'success' | 'praise'>('success');
   const [successMessage, setSuccessMessage] = useState('Direct hit!');
   const problemStartRef = useRef<number>(Date.now());
-const factorFrenzyEnemy = useMemo(() => goblinWizard, []);
+  const [factorFrenzyEnemy, setFactorFrenzyEnemy] = useState(krakenBoss);
 
   const timerRef = useRef<number | null>(null);
   const advanceRef = useRef<number | null>(null);
@@ -153,6 +193,16 @@ const factorFrenzyEnemy = useMemo(() => goblinWizard, []);
       advanceRef.current = null;
     }
   };
+
+  useEffect(() => {
+    let mounted = true;
+    createTransparentBossFrame(krakenBoss).then((source) => {
+      if (mounted) setFactorFrenzyEnemy(source);
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const getFactors = (number: number): number[] => {
     const factors: number[] = [];
@@ -421,7 +471,7 @@ const factorFrenzyEnemy = useMemo(() => goblinWizard, []);
       className="relative h-full w-full overflow-hidden bg-cover bg-center bg-no-repeat text-white"
       style={{ backgroundImage: `url(${factorFrenzyBackground})` }}
     >
-      <div className="pointer-events-none fixed left-0 right-0 top-[max(0.5rem,env(safe-area-inset-top))] z-50 flex justify-center px-3">
+      <div className="pointer-events-none absolute left-0 right-0 top-[clamp(5px,1vh,10px)] z-50 flex justify-center px-3">
         <div className="w-full max-w-[780px]">
           <GameQuestionCard
             title="Factor Frenzy"
@@ -434,7 +484,7 @@ const factorFrenzyEnemy = useMemo(() => goblinWizard, []);
         </div>
       </div>
 
-      <div className="relative z-10 flex h-full flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+11rem)] pt-[calc(env(safe-area-inset-top)+7.4rem)] sm:px-4 sm:pb-[calc(env(safe-area-inset-bottom)+11.5rem)] sm:pt-[calc(env(safe-area-inset-top)+7.8rem)] md:px-5 md:pb-[calc(env(safe-area-inset-bottom)+12rem)] md:pt-[calc(env(safe-area-inset-top)+8.1rem)]">
+      <div className="relative z-10 flex h-full flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+11rem)] pt-[calc(env(safe-area-inset-top)+7.9rem)] sm:px-4 sm:pb-[calc(env(safe-area-inset-bottom)+11.5rem)] sm:pt-[calc(env(safe-area-inset-top)+8.2rem)] md:px-5 md:pb-[calc(env(safe-area-inset-bottom)+12rem)] md:pt-[calc(env(safe-area-inset-top)+8.4rem)]">
         <main className="relative flex min-h-0 flex-1 flex-col">
           <AnimatePresence mode="wait">
             {state.status === 'complete' ? (
@@ -479,10 +529,7 @@ const factorFrenzyEnemy = useMemo(() => goblinWizard, []);
               >
                 <div className="relative min-h-0 flex-1 overflow-hidden rounded-3xl border border-cyan-100/16 bg-transparent p-3 sm:p-4">
                   <div className="flex h-full min-h-0 flex-col">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/80 sm:text-xs">
-                        Strike every correct factor
-                      </div>
+                    <div className="flex items-start justify-end gap-3">
                       <div className="rounded-full border border-cyan-100/25 bg-slate-950/50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/90">
                         {state.timeLeft}s left
                       </div>
@@ -504,7 +551,7 @@ const factorFrenzyEnemy = useMemo(() => goblinWizard, []);
 
                       <div className="mt-3 flex w-full justify-center">
                         <motion.div
-                          className="relative w-[min(46vw,13.5rem)] max-w-full"
+                          className="relative w-[min(56vw,15rem)] max-w-full"
                           animate={
                             showHitFx
                               ? { x: [0, -8, 8, -6, 6, 0], rotate: [0, -2, 2, -1, 1, 0] }

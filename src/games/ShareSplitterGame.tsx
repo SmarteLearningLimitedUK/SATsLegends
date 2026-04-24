@@ -59,7 +59,7 @@ const ROUNDS_TO_WIN = 5;
 const BASE_XP_PER_ROUND = 120;
 const BIRTHDAY_CAKE_ASSET = birthdayCakeAsset;
 const CAKE_SLICE_ASSET = cakeSliceAsset;
-const DRAG_SLICE_SIZE = 48;
+const DRAG_SLICE_SIZE = 64;
 const SHARE_SPLITTER_BACKGROUND_SIZE = { width: 2500, height: 5000 };
 const SHARE_SPLITTER_PLATE_DIAMETER_PX = 600;
 const CAKE_SOURCE_POSITION = { x: 1250, y: 3750 };
@@ -482,10 +482,11 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     let dragHasBeenRevealed = false;
 
     const updatePosition = (clientX: number, clientY: number) => {
+      const layerRect = playfieldRootRef.current?.getBoundingClientRect();
       setDragSlice({
         id: sliceId,
-        x: clientX - DRAG_SLICE_SIZE / 2,
-        y: clientY - DRAG_SLICE_SIZE / 2,
+        x: clientX - (layerRect?.left ?? 0) - DRAG_SLICE_SIZE / 2,
+        y: clientY - (layerRect?.top ?? 0) - DRAG_SLICE_SIZE / 2,
       });
     };
 

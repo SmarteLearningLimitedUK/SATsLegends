@@ -274,6 +274,20 @@ const getEdgeLabelPosition = (edge: ShapeEdge) => {
 
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 
+const distanceToSegment = (point: Point, from: Point, to: Point) => {
+  const segmentX = to.x - from.x;
+  const segmentY = to.y - from.y;
+  const lengthSquared = (segmentX * segmentX) + (segmentY * segmentY);
+  if (lengthSquared === 0) {
+    return Math.hypot(point.x - from.x, point.y - from.y);
+  }
+
+  const t = clamp(((point.x - from.x) * segmentX + (point.y - from.y) * segmentY) / lengthSquared, 0, 1);
+  const projectedX = from.x + (t * segmentX);
+  const projectedY = from.y + (t * segmentY);
+  return Math.hypot(point.x - projectedX, point.y - projectedY);
+};
+
 const PerimeterShapeRenderer: React.FC<{
   shape: ShapeModel;
   highlightedEdgeId: string | null;
@@ -286,9 +300,68 @@ const PerimeterShapeRenderer: React.FC<{
   labelFontSize: number;
 }> = ({ shape, highlightedEdgeId, tracedEdgeIds, onHighlightEdge, onTraceEdge, onTraceStart, onTraceEnd, zoom, labelFontSize }) => {
   const pointsAttr = shape.points.map((point) => `${point.x},${point.y}`).join(' ');
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const tracingRef = useRef(false);
+
+  const traceNearestEdge = (event: React.PointerEvent<SVGSVGElement>) => {
+    const rect = svgRef.current?.getBoundingClientRect();
+    if (!rect) return;
+
+    const svgPoint = {
+      x: ((event.clientX - rect.left) / rect.width) * 100,
+      y: ((event.clientY - rect.top) / rect.height) * 100,
+    };
+    const modelPoint = {
+      x: 50 + ((svgPoint.x - 50) / zoom),
+      y: 50 + ((svgPoint.y - 50) / zoom),
+    };
+
+    const nearest = shape.edges.reduce<{ edge: ShapeEdge | null; distance: number }>(
+      (best, edge) => {
+        const distance = distanceToSegment(modelPoint, edge.from, edge.to);
+        return distance < best.distance ? { edge, distance } : best;
+      },
+      { edge: null, distance: Number.POSITIVE_INFINITY },
+    );
+
+    if (nearest.edge && nearest.distance <= 7.5) {
+      onHighlightEdge(nearest.edge.id);
+      onTraceEdge(nearest.edge.id);
+    }
+  };
+
+  const beginTrace = (event: React.PointerEvent<SVGSVGElement>) => {
+    tracingRef.current = true;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    onTraceStart();
+    traceNearestEdge(event);
+  };
+
+  const continueTrace = (event: React.PointerEvent<SVGSVGElement>) => {
+    if (!tracingRef.current) return;
+    traceNearestEdge(event);
+  };
+
+  const endTrace = (event: React.PointerEvent<SVGSVGElement>) => {
+    tracingRef.current = false;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    onHighlightEdge(null);
+    onTraceEnd();
+  };
 
   return (
-    <svg viewBox="0 0 100 100" className="h-full w-full" onPointerUp={onTraceEnd} onPointerLeave={onTraceEnd}>
+    <svg
+      ref={svgRef}
+      viewBox="0 0 100 100"
+      className="h-full w-full touch-none"
+      onPointerDown={beginTrace}
+      onPointerMove={continueTrace}
+      onPointerUp={endTrace}
+      onPointerCancel={endTrace}
+      onPointerLeave={endTrace}
+    >
       <g transform={`translate(50 50) scale(${zoom}) translate(-50 -50)`}>
         <polygon points={pointsAttr} fill="rgba(56, 189, 248, 0.16)" stroke="rgba(125, 211, 252, 0.42)" strokeWidth="0.4" />
         {shape.edges.map((edge) => {
@@ -302,21 +375,18 @@ const PerimeterShapeRenderer: React.FC<{
           return (
             <g
               key={edge.id}
-              onPointerDown={() => {
-                onTraceStart();
-                onHighlightEdge(edge.id);
-                onTraceEdge(edge.id);
-              }}
-              onPointerEnter={() => {
-                onHighlightEdge(edge.id);
-                onTraceEdge(edge.id);
-              }}
+              onPointerEnter={() => onHighlightEdge(edge.id)}
               onPointerLeave={() => onHighlightEdge(null)}
-              onTouchStart={() => {
-                onHighlightEdge(edge.id);
-                onTraceEdge(edge.id);
-              }}
             >
+              <line
+                x1={edge.from.x}
+                y1={edge.from.y}
+                x2={edge.to.x}
+                y2={edge.to.y}
+                stroke="transparent"
+                strokeWidth={10}
+                strokeLinecap="round"
+              />
               <line
                 x1={edge.from.x}
                 y1={edge.from.y}
@@ -406,10 +476,9 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
   };
 
   const traceComplete = tracedEdgeIds.length === question.shape.edges.length;
-  const tracingRequired = currentLevel < 7;
 
   const handleTraceEdge = (edgeId: string) => {
-    if (locked || !isTracing) return;
+    if (locked) return;
     setTracedEdgeIds((prev) => (prev.includes(edgeId) ? prev : [...prev, edgeId]));
   };
 
@@ -458,7 +527,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
   };
 
   const submitAnswer = (rawAnswer: number) => {
-    if (locked || feedback || (tracingRequired && !traceComplete)) return;
+    if (locked || feedback) return;
     if (rawAnswer === question.correctPerimeter) {
       handleCorrect(rawAnswer);
       return;
@@ -467,7 +536,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
   };
 
   const handleOptionTap = (option: number) => {
-    if (locked || (tracingRequired && !traceComplete)) return;
+    if (locked) return;
     setSelectedOption(option);
     submitAnswer(option);
   };
@@ -501,12 +570,12 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
             <div className="relative h-full w-full p-0.5 sm:p-1">
               <PerimeterShapeRenderer
                 shape={question.shape}
-                highlightedEdgeId={tracingRequired ? highlightedEdgeId : null}
+                highlightedEdgeId={highlightedEdgeId}
                 tracedEdgeIds={tracedEdgeIds}
-                onHighlightEdge={tracingRequired ? setHighlightedEdgeId : () => undefined}
-                onTraceEdge={tracingRequired ? handleTraceEdge : () => undefined}
-                onTraceStart={tracingRequired ? () => setIsTracing(true) : () => undefined}
-                onTraceEnd={tracingRequired ? () => setIsTracing(false) : () => undefined}
+                onHighlightEdge={setHighlightedEdgeId}
+                onTraceEdge={handleTraceEdge}
+                onTraceStart={() => setIsTracing(true)}
+                onTraceEnd={() => setIsTracing(false)}
                 zoom={shapeZoom}
                 labelFontSize={labelFontSize}
               />
@@ -519,7 +588,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
                 key={option}
                 whileTap={{ scale: 0.96 }}
                 onClick={() => handleOptionTap(option)}
-                disabled={locked || (tracingRequired && !traceComplete)}
+                disabled={locked}
                 className={`flex h-10 items-center justify-center rounded-[0.4rem] px-3 py-2 text-base font-black leading-none sm:h-11 sm:rounded-[0.45rem] sm:text-lg md:h-13 md:text-xl ${
                   selectedOption === option
                     ? 'ui-button-primary'
@@ -538,9 +607,11 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
               ? 'border-rose-300/45 bg-rose-400/16 text-amber-100'
               : 'border-white/18 bg-slate-950/44 text-white/72'
           }`}>
-            {feedback ? feedback.message : tracingRequired
-              ? (traceComplete ? 'Boundary traced. Choose the correct perimeter.' : `Trace the full outer boundary first (${tracedEdgeIds.length}/${question.shape.edges.length}).`)
-              : 'Choose the correct perimeter to restore the path.'}
+            {feedback
+              ? feedback.message
+              : traceComplete
+                ? 'Boundary traced in yellow. Choose the correct perimeter.'
+                : `${isTracing ? 'Keep tracing' : 'Trace the object'} to turn the boundary yellow (${tracedEdgeIds.length}/${question.shape.edges.length}), then choose the perimeter.`}
           </div>
         </main>
       </div>

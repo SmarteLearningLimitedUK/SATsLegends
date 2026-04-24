@@ -51,6 +51,9 @@ type ProjectileState = {
   vx: number;
   vy: number;
   active: boolean;
+  shouldHit: boolean;
+  targetX: number;
+  targetY: number;
   trail: { x: number; y: number; alpha: number }[];
 };
 
@@ -62,17 +65,17 @@ const INITIAL_TIMER = 90;
 const INITIAL_LIVES = 3;
 const POINTS_PER_HIT = 250;
 const WORLD_RADIUS = 720;
-const ENEMY_DISTANCE = 520;
 const CAMERA_LERP = 0.08;
 const RETURN_LERP = 0.12;
-const PROJECTILE_SPEED = 520;
 const MAX_FLIGHT_DISTANCE = 980;
 const CAMERA_LEAD_DISTANCE = 340;
 const LAUNCHER_SCREEN_X_RATIO = 0.2;
 const LAUNCHER_SCREEN_Y_RATIO = 0.76;
-const ENEMY_FOREGROUND_LEAD = 110;
 const SKY_DRIFT_FACTOR = 0.14;
 const GROUND_DRIFT_FACTOR = 0.28;
+const PROJECTILE_GRAVITY = 760;
+const MIN_SIDE_LAUNCH_ANGLE = 18;
+const MAX_SIDE_LAUNCH_ANGLE = 72;
 
 type CloudLayer = {
   x: number;
@@ -534,28 +537,61 @@ const formatTime = (seconds: number) => {
 
 // Angle convention: 0° = right, 90° = up, 180° = left, 270° = down.
 // Uses screen-space Y axis (down is positive), so we invert Y in vector conversion.
-const buildProjectile = (angleDeg: number, speed: number): ProjectileState => {
-  const dir = angleToVector(angleDeg);
+const getSideLaunchAngle = (angleDeg: number) => {
+  const foldedAngle = angleDeg > 90 ? 180 - angleDeg : angleDeg;
+  return clamp(foldedAngle, MIN_SIDE_LAUNCH_ANGLE, MAX_SIDE_LAUNCH_ANGLE);
+};
+
+const solveSideLaunchSpeed = (angleDeg: number, targetX: number, targetY: number) => {
+  const radians = degreesToRadians(angleDeg);
+  const cos = Math.max(0.18, Math.cos(radians));
+  const tan = Math.tan(radians);
+  const denominator = 2 * cos * cos * ((targetX * tan) - targetY);
+  if (denominator <= 0) return 520;
+  return Math.sqrt((PROJECTILE_GRAVITY * targetX * targetX) / denominator);
+};
+
+const getSideTargetWorld = (viewWidth: number, viewHeight: number) => ({
+  x: clamp(viewWidth * 0.68, 250, 620),
+  y: -clamp(viewHeight * 0.2, 96, 170),
+});
+
+const buildProjectile = (
+  answerAngleDeg: number,
+  targetX: number,
+  targetY: number,
+  shouldHit: boolean,
+): ProjectileState => {
+  const launchAngle = getSideLaunchAngle(answerAngleDeg);
+  const dir = angleToVector(launchAngle);
+  const solvedSpeed = solveSideLaunchSpeed(launchAngle, targetX, targetY);
+  const missBias = answerAngleDeg % 2 === 0 ? 0.78 : 1.18;
+  const speed = shouldHit ? solvedSpeed : solvedSpeed * missBias;
   return {
     x: 0,
     y: 0,
     vx: dir.x * speed,
     vy: dir.y * speed,
     active: true,
+    shouldHit,
+    targetX,
+    targetY,
     trail: [],
   };
 };
 
 const stepProjectile = (projectile: ProjectileState, dt: number) => {
   if (!projectile.active) return projectile;
-  const nextX = projectile.x + projectile.vx * (dt / 1000);
-  const nextY = projectile.y + projectile.vy * (dt / 1000);
+  const seconds = dt / 1000;
+  const nextVY = projectile.vy + (PROJECTILE_GRAVITY * seconds);
+  const nextX = projectile.x + projectile.vx * seconds;
+  const nextY = projectile.y + projectile.vy * seconds + (0.5 * PROJECTILE_GRAVITY * seconds * seconds);
   const trail = [...projectile.trail, { x: nextX, y: nextY, alpha: 1 }].slice(-18);
   const faded = trail.map((point, index) => ({
     ...point,
     alpha: (index + 1) / trail.length,
   }));
-  return { ...projectile, x: nextX, y: nextY, trail: faded };
+  return { ...projectile, x: nextX, y: nextY, vy: nextVY, trail: faded };
 };
 
 const normalizeVector = (x: number, y: number) => {
@@ -756,8 +792,16 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const fireProjectile = (angleDeg?: number) => {
     if (!activeQuestion) return;
     const resolvedAngle = Number.isFinite(angleDeg) ? (angleDeg as number) : desiredAngleRef.current;
-    const speed = activeQuestion.launchSpeed || PROJECTILE_SPEED;
-    projectileRef.current = buildProjectile(resolvedAngle, speed);
+    const canvas = canvasRef.current;
+    const viewWidth = canvas ? canvas.width / window.devicePixelRatio : 390;
+    const viewHeight = canvas ? canvas.height / window.devicePixelRatio : 560;
+    const targetWorld = getSideTargetWorld(viewWidth, viewHeight);
+    projectileRef.current = buildProjectile(
+      resolvedAngle,
+      targetWorld.x,
+      targetWorld.y,
+      resolvedAngle === activeQuestion.correctAnswer,
+    );
     cameraTargetRef.current = { ...cameraHomeRef.current };
     isFollowingProjectileRef.current = true;
     setGameState('projectileFlight');
@@ -830,14 +874,24 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
       const projectile = projectileRef.current;
       const correctAnswer = activeQuestion?.correctAnswer ?? 0;
-      const enemyAngle = ((correctAnswer % 360) + 360) % 360;
       const allowHit = selectedAnswerRef.current === correctAnswer;
-      const enemyRadius = ENEMY_DISTANCE + ((questionIndex % 3) * 40);
-      const enemyVector = angleToVector(enemyAngle);
-      const enemyWorld = { x: enemyVector.x * enemyRadius, y: enemyVector.y * enemyRadius };
+      const enemyWorld = getSideTargetWorld(viewWidth, viewHeight);
+      const showSideSetup = !projectile?.active && !impactResultRef.current;
+      if (showSideSetup) {
+        cameraRef.current = { ...cameraHomeRef.current };
+        cameraTargetRef.current = { ...cameraHomeRef.current };
+      }
 
       if (projectile?.active) {
-        const hit = allowHit && distance(projectile.x, projectile.y, enemyWorld.x, enemyWorld.y) <= TARGET_RADIUS + PROJECTILE_RADIUS;
+        const crossedTarget = projectile.shouldHit && projectile.x >= projectile.targetX;
+        if (crossedTarget) {
+          projectile.x = projectile.targetX;
+          projectile.y = projectile.targetY;
+        }
+        const hit = allowHit && (
+          crossedTarget ||
+          distance(projectile.x, projectile.y, enemyWorld.x, enemyWorld.y) <= TARGET_RADIUS + PROJECTILE_RADIUS
+        );
         if (hit) {
           projectile.active = false;
           impactPositionRef.current = { ...enemyWorld };
@@ -845,7 +899,9 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         }
 
         const flightDistance = Math.hypot(projectile.x, projectile.y);
-        if (projectile.active && flightDistance > MAX_FLIGHT_DISTANCE) {
+        const hasLandedPastTarget = projectile.x > enemyWorld.x + 130 && projectile.y > 36;
+        const hasDroppedBelowGround = projectile.y > Math.max(96, viewHeight * 0.22);
+        if (projectile.active && (flightDistance > MAX_FLIGHT_DISTANCE || hasLandedPastTarget || hasDroppedBelowGround)) {
           projectile.active = false;
           impactPositionRef.current = { x: projectile.x, y: projectile.y };
           handleResolve('miss');
@@ -858,7 +914,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
           x: projectile.x - (travel.x * CAMERA_LEAD_DISTANCE) + cameraHomeRef.current.x,
           y: projectile.y - (travel.y * CAMERA_LEAD_DISTANCE) + cameraHomeRef.current.y,
         };
-      } else if (!projectile?.active && isFollowingProjectileRef.current) {
+      } else if (!projectile?.active && isFollowingProjectileRef.current && !impactResultRef.current) {
         isFollowingProjectileRef.current = false;
         cameraTargetRef.current = { ...cameraHomeRef.current };
       }
@@ -888,14 +944,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       const toScreen = (x: number, y: number) => worldToScreen(x, y, camera.x, camera.y, viewWidth, viewHeight);
 
       const originScreen = toScreen(0, 0);
-      const travel = projectile?.active ? normalizeVector(projectile.vx, projectile.vy) : { x: 0, y: 0 };
-      const enemyVisualWorld = projectile?.active
-        ? {
-            x: enemyWorld.x + (travel.x * ENEMY_FOREGROUND_LEAD),
-            y: enemyWorld.y + (travel.y * ENEMY_FOREGROUND_LEAD),
-          }
-        : enemyWorld;
-      const enemyScreen = toScreen(enemyVisualWorld.x, enemyVisualWorld.y);
+      const enemyScreen = toScreen(enemyWorld.x, enemyWorld.y);
       const skyOffsetX = camera.x * SKY_DRIFT_FACTOR;
       const skyOffsetY = camera.y * SKY_DRIFT_FACTOR * 0.45;
       const groundOffsetX = camera.x * GROUND_DRIFT_FACTOR;
@@ -929,7 +978,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.restore();
 
       if ((gameState === 'aiming' || gameState === 'awaitingAnswer') && selectedAnswerRef.current !== null) {
-        const aimingAngle = selectedAnswerRef.current ?? desiredAngleRef.current;
+        const aimingAngle = getSideLaunchAngle(selectedAnswerRef.current ?? desiredAngleRef.current);
         const aimVector = angleToVector(aimingAngle);
         const aimEndWorld = { x: aimVector.x * 160, y: aimVector.y * 160 };
         const aimEndScreen = toScreen(aimEndWorld.x, aimEndWorld.y);
@@ -952,7 +1001,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
       ctx.save();
       ctx.translate(originScreen.x, originScreen.y + 4);
-      drawCannonSprite(ctx, desiredAngleRef.current, cannonSpritesRef.current, Math.min(viewWidth, viewHeight) * 0.22);
+      drawCannonSprite(ctx, getSideLaunchAngle(desiredAngleRef.current), cannonSpritesRef.current, Math.min(viewWidth, viewHeight) * 0.22);
       ctx.restore();
 
       ctx.save();

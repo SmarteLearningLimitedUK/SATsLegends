@@ -39,7 +39,7 @@ type BoardCell = GemCell | null;
 
 const GEM_TYPES: GemType[] = ['red', 'blue', 'green', 'yellow', 'purple'];
 const BOARD_COLUMNS = 5;
-const BOARD_ROWS = 6;
+const BOARD_ROWS = 7;
 const ROUND_SECONDS = 60;
 const BASE_TARGET_SCORE = 900;
 const TARGET_SCORE_STEP = 140;
@@ -342,7 +342,7 @@ const MatchGameShell: React.FC<{
              </div>
            ) : null}
 
-            <div className={`relative z-10 flex h-full w-full items-start justify-center px-2 pb-[calc(env(safe-area-inset-bottom)+0.9rem)] ${useSharedTopHud ? 'match-mastery-board-stage pt-[calc(env(safe-area-inset-top)+11.2rem)]' : 'pt-2'} sm:px-4`}>
+            <div className={`relative z-10 flex h-full w-full items-start justify-center px-2 pb-[calc(env(safe-area-inset-bottom)+0.9rem)] ${useSharedTopHud ? 'match-mastery-board-stage pt-[calc(env(safe-area-inset-top)+11.2rem+10pt)]' : 'pt-[calc(0.5rem+10pt)]'} sm:px-4`}>
              <AnimatePresence>
                {fireActive ? (
                  <motion.div
@@ -448,8 +448,13 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       if (boardWidth <= 0) return;
 
       const gapPx = 10; // sync with responsive gap-2 / gap-2.5
-      const rawSize = Math.floor((boardWidth - (gapPx * (BOARD_COLUMNS - 1))) / BOARD_COLUMNS);
-      const clampedSize = Math.max(42, Math.min(122, rawSize));
+      const rawWidthSize = Math.floor((boardWidth - (gapPx * (BOARD_COLUMNS - 1))) / BOARD_COLUMNS);
+      const rect = node.getBoundingClientRect();
+      const reservedBottom = Math.max(88, window.innerHeight * 0.12);
+      const availableGridHeight = Math.max(220, window.innerHeight - rect.top - reservedBottom);
+      const rawHeightSize = Math.floor((availableGridHeight - (gapPx * (BOARD_ROWS - 1))) / BOARD_ROWS);
+      const rawSize = Math.min(rawWidthSize, rawHeightSize);
+      const clampedSize = Math.max(34, Math.min(122, rawSize));
 
       setGemSize((prev) => (prev === clampedSize ? prev : clampedSize));
     };

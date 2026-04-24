@@ -218,7 +218,7 @@ const stageFromProgress = (baseLevel: number, ordersServed: number, timeLeft: nu
 
 const allowedIdsByStage = (stage: number): string[] => {
   if (stage <= 3) {
-    return ['rice_bowl', 'pizza_slice', 'fries', 'burger_meal'];
+    return ['rice_bowl', 'burger_meal', 'ribs_plate', 'berry_dessert', 'salad_bowl'];
   }
   if (stage <= 7) {
     return ['rice_bowl', 'pizza_slice', 'fries', 'salad_bowl', 'hotdog_combo', 'roast_chicken', 'berry_dessert'];
@@ -238,21 +238,22 @@ const generateOrder = (stage: number): TakeOutOrder => {
     const pool = allowedIdsByStage(stage);
     const shuffledPool = shuffle(pool);
 
-    let bannedItemId: string | undefined;
-    if (stage >= 5 && Math.random() < 0.44 && pool.length >= 5) {
-      bannedItemId = pick(pool);
-    }
-
-    const trayIds = shuffledPool.filter((id) => id !== bannedItemId);
-    const traySize = Math.min(stage <= 3 ? 4 : 5, trayIds.length);
-    const trayItemIds = trayIds.slice(0, traySize);
+    const traySize = Math.min(5, shuffledPool.length);
+    const trayItemIds = shuffledPool.slice(0, traySize);
     if (trayItemIds.length < 2) continue;
 
+    let bannedItemId: string | undefined;
+    if (stage >= 5 && Math.random() < 0.44 && trayItemIds.length >= 5) {
+      bannedItemId = pick(trayItemIds);
+    }
+
     const minItems = stage >= 8 ? 3 : stage >= 5 ? 2 : 1;
-    const maxItems = stage >= 9 ? 6 : stage >= 5 ? 5 : 4;
+    const maxItems = stage >= 9 ? 4 : stage >= 5 ? 4 : 3;
     const itemCount = Math.floor(Math.random() * (maxItems - minItems + 1)) + minItems;
 
-    const selectionIds = Array.from({ length: itemCount }, () => pick(trayItemIds));
+    const contributingIds = trayItemIds.filter((id) => id !== bannedItemId);
+    if (contributingIds.length < 2) continue;
+    const selectionIds = Array.from({ length: itemCount }, () => pick(contributingIds));
 
     let target = normalize({ n: 0, d: 1 });
     selectionIds.forEach((id) => {
@@ -284,13 +285,13 @@ const generateOrder = (stage: number): TakeOutOrder => {
     };
   }
 
-  return {
-    id: makeId(),
-    target: { n: 3, d: 4 },
-    constraints: [{ kind: 'min_items', minItems: 2 }],
-    stage,
+    return {
+      id: makeId(),
+      target: { n: 3, d: 4 },
+      constraints: [{ kind: 'min_items', minItems: 2 }],
+      stage,
       text: 'Complete the order.\nTarget fraction: 3/4.',
-    trayItemIds: ['rice_bowl', 'pizza_slice', 'fries', 'burger_meal'],
+      trayItemIds: ['rice_bowl', 'burger_meal', 'ribs_plate', 'berry_dessert', 'salad_bowl'],
   };
 };
 
@@ -594,12 +595,15 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
 
         <main className="relative mt-1.5 flex min-h-0 flex-1 flex-col gap-2 pb-[calc(env(safe-area-inset-bottom)+3.9rem)]">
           <section className="relative flex min-h-[16rem] flex-1 items-start justify-center">
-            <div className="absolute left-1/2 top-[calc(11%+20px)] w-[min(70vw,16.5rem)] -translate-x-1/2 text-center">
+            <div className="absolute left-1/2 top-[calc(4%+6px)] w-[min(74vw,18rem)] -translate-x-1/2 text-center">
               <div className="text-[9px] font-black uppercase tracking-[0.18em] text-amber-100/80 drop-shadow-[0_2px_6px_rgba(2,6,23,0.8)]">
                 Order Target
               </div>
-              <div className="mt-1 text-[clamp(1.3rem,5.6vw,2rem)] font-black text-amber-100 drop-shadow-[0_3px_10px_rgba(2,6,23,0.8)]">
+              <div className="mt-0.5 text-[clamp(1.25rem,5.2vw,1.85rem)] font-black text-amber-100 drop-shadow-[0_3px_10px_rgba(2,6,23,0.8)]">
                 {asDisplayFraction(order.target)}
+              </div>
+              <div className="mx-auto mt-1.5 w-fit rounded-full border border-amber-100/30 bg-slate-950/62 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100 shadow-[0_8px_16px_rgba(2,6,23,0.34)]">
+                Selected: <span className="text-amber-100">{asDisplayFraction(runningTotal)}</span>
               </div>
             </div>
             <div className="pointer-events-none absolute left-1/2 bottom-[calc(3%_-_8pt)] h-[50%] w-[min(80vw,21rem)] -translate-x-1/2 overflow-hidden max-[480px]:h-[52%]">

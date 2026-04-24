@@ -261,7 +261,7 @@ const ShapeCard: React.FC<{
   showPivot?: boolean;
   className?: string;
   svgClassName?: string;
-}> = ({ shape, orientation, tone = 'neutral', showPivot = true }) => {
+}> = ({ shape, orientation, tone = 'neutral', showPivot = true, className = '', svgClassName = '' }) => {
   const borderClass = tone === 'target'
     ? 'border-cyan-100/34 bg-blue-950/48'
     : tone === 'player'
@@ -269,12 +269,12 @@ const ShapeCard: React.FC<{
       : 'border-cyan-100/26 bg-slate-950/46';
 
   return (
-    <div className={`relative flex h-[8.6rem] w-[8.6rem] items-center justify-center rounded-[1.05rem] border ${borderClass}`}>
+    <div className={`relative flex h-[8.6rem] w-[8.6rem] items-center justify-center rounded-[1.05rem] border ${borderClass} ${className}`}>
       <motion.svg
         viewBox="-64 -64 128 128"
         animate={{ rotate: orientationToDegrees(orientation) }}
         transition={{ type: 'spring', stiffness: 220, damping: 23 }}
-        className="h-[6.2rem] w-[6.2rem]"
+        className={`h-[6.2rem] w-[6.2rem] ${svgClassName}`}
         style={{ filter: 'drop-shadow(0 10px 14px rgba(2,6,23,0.48))' }}
       >
         <defs>
@@ -521,24 +521,28 @@ const RotationStationGame: React.FC<RotationStationGameProps> = ({
               ) : null}
 
               {question.mode === 'predict_result' ? (
-                <div className={`grid min-h-0 flex-1 grid-rows-[auto_1fr] gap-2.5 ${shapePulseClass}`}>
-                  <div className="flex items-center justify-center gap-3">
+                <div className={`grid min-h-0 flex-1 content-center grid-rows-[auto_auto] gap-1.5 ${shapePulseClass}`}>
+                  <div className="flex items-center justify-center gap-2">
                     <ShapeCard shape={question.shape} orientation={question.startOrientation} tone="neutral" />
                     <span className="text-2xl font-black text-cyan-100/75">?</span>
                   </div>
-                  <div className="answer-choice-surface grid grid-cols-2 gap-1.5">
+                  <div className="answer-choice-surface grid auto-rows-min grid-cols-2 content-start gap-1 p-1">
                     {question.options.map((option) => (
                       <button
                         key={option.id}
                         type="button"
                         disabled={isLocked || roundOver}
                         onClick={() => handleChoiceTap(option.id)}
-                        className="inline-flex min-h-[7.25rem] flex-col items-center justify-center gap-1.5 rounded-[0.85rem] border border-white/16 bg-slate-950/58 px-1.5 py-1.5 text-center text-[11px] font-black text-white shadow-[0_10px_18px_rgba(2,6,23,0.18)] disabled:opacity-55"
+                        className="inline-flex min-h-[4.6rem] flex-col items-center justify-center gap-0.5 rounded-[0.75rem] border border-white/16 bg-slate-950/58 px-1 py-1 text-center text-[11px] font-black text-white shadow-[0_8px_14px_rgba(2,6,23,0.16)] disabled:opacity-55"
                       >
-                        <div className="flex items-center justify-center pb-1.5">
-                          <div className="scale-[0.72]">
-                            <ShapeCard shape={question.shape} orientation={option.orientation || 0} showPivot={false} />
-                          </div>
+                        <div className="flex items-center justify-center">
+                          <ShapeCard
+                            shape={question.shape}
+                            orientation={option.orientation || 0}
+                            showPivot={false}
+                            className="!h-[3.25rem] !w-[3.25rem] !rounded-[0.65rem]"
+                            svgClassName="!h-[2.35rem] !w-[2.35rem]"
+                          />
                         </div>
                         {option.label}
                       </button>
@@ -548,20 +552,20 @@ const RotationStationGame: React.FC<RotationStationGameProps> = ({
               ) : null}
 
               {question.mode === 'identify_turn' ? (
-                <div className={`grid min-h-0 flex-1 grid-rows-[auto_1fr] gap-2.5 ${shapePulseClass}`}>
-                  <div className="flex items-center justify-center gap-3">
+                <div className={`grid min-h-0 flex-1 content-center grid-rows-[auto_auto] gap-1.5 ${shapePulseClass}`}>
+                  <div className="flex items-center justify-center gap-2">
                     <ShapeCard shape={question.shape} orientation={question.startOrientation} tone="neutral" />
                     <span className="text-2xl font-black text-cyan-100/75">to</span>
                     <ShapeCard shape={question.shape} orientation={question.targetOrientation} tone="target" />
                   </div>
-                  <div className="answer-choice-surface grid grid-cols-2 gap-1.5">
+                  <div className="answer-choice-surface grid auto-rows-min grid-cols-2 content-start gap-1 p-1">
                     {question.options.map((option) => (
                       <button
                         key={option.id}
                         type="button"
                         disabled={isLocked || roundOver}
                         onClick={() => handleChoiceTap(option.id)}
-                        className="inline-flex min-h-[3.6rem] items-center justify-center rounded-[0.85rem] border border-white/16 bg-slate-950/58 px-2 py-1.5 text-center text-[11px] font-black text-white shadow-[0_10px_18px_rgba(2,6,23,0.18)] disabled:opacity-55"
+                        className="inline-flex min-h-[2.45rem] items-center justify-center rounded-[0.7rem] border border-white/16 bg-slate-950/58 px-1.5 py-0.5 text-center text-[10px] font-black leading-tight text-white shadow-[0_8px_14px_rgba(2,6,23,0.16)] disabled:opacity-55"
                       >
                         {option.label}
                       </button>
@@ -573,13 +577,13 @@ const RotationStationGame: React.FC<RotationStationGameProps> = ({
           </section>
 
           {question.mode === 'rotate_match' ? (
-            <section className="shrink-0 rounded-[1.35rem] border border-cyan-100/18 bg-slate-950/48 p-2.5 shadow-[0_10px_20px_rgba(2,6,23,0.38)]">
-              <div className="grid grid-cols-3 gap-2.5">
+            <section className="shrink-0 rounded-[1.05rem] border border-cyan-100/18 bg-slate-950/48 p-1.5 shadow-[0_8px_16px_rgba(2,6,23,0.32)]">
+              <div className="grid grid-cols-3 gap-1.5">
                 <button
                   type="button"
                   disabled={isLocked || roundOver}
                   onClick={() => handleRotate('acw')}
-                  className="ui-button-secondary rounded-[0.95rem] px-2 py-2.5 text-center text-sm font-black disabled:opacity-55"
+                  className="ui-button-secondary min-h-[2.65rem] rounded-[0.75rem] px-1.5 py-1 text-center text-xs font-black leading-tight disabled:opacity-55"
                 >
                   Rotate left 90
                 </button>
@@ -587,7 +591,7 @@ const RotationStationGame: React.FC<RotationStationGameProps> = ({
                   type="button"
                   disabled={isLocked || roundOver}
                   onClick={() => handleRotate('cw')}
-                  className="ui-button-secondary rounded-[0.95rem] px-2 py-2.5 text-center text-sm font-black disabled:opacity-55"
+                  className="ui-button-secondary min-h-[2.65rem] rounded-[0.75rem] px-1.5 py-1 text-center text-xs font-black leading-tight disabled:opacity-55"
                 >
                   Rotate right 90
                 </button>
@@ -595,7 +599,7 @@ const RotationStationGame: React.FC<RotationStationGameProps> = ({
                   type="button"
                   disabled={isLocked || roundOver}
                   onClick={submitRotationMatch}
-                  className="ui-button-primary rounded-[0.95rem] px-2 py-2.5 text-center text-sm font-black disabled:opacity-55"
+                  className="ui-button-primary min-h-[2.65rem] rounded-[0.75rem] px-1.5 py-1 text-center text-xs font-black leading-tight disabled:opacity-55"
                 >
                   Submit
                 </button>

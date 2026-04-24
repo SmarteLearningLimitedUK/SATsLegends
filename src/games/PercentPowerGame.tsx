@@ -381,7 +381,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
                 className="absolute left-1/2 top-1/2 rounded-full bg-[radial-gradient(circle,rgba(134,239,172,0.96),rgba(34,197,94,0.72)_60%,rgba(16,185,129,0.22)_100%)] shadow-[0_0_20px_rgba(34,197,94,0.55)]"
                 animate={{
                   x: '-50%',
-                  y: 'calc(-50% + 40px)',
+                  y: '-50%',
                   width: `${Math.max(30, coreFill * 58)}%`,
                   height: `${Math.max(30, coreFill * 58)}%`,
                   scale: [1, 1.03, 1],

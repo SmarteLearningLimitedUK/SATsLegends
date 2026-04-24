@@ -1,9 +1,12 @@
 import { GameScreen } from '../types';
+import { ISLANDS } from '../constants';
+import { getLevelGameTitle, getLevelGroupKey } from '../utils/gameNames';
 
 export type RouteState = {
   screen: GameScreen;
   islandId?: number;
   levelId?: number;
+  preservePath?: boolean;
 };
 
 const normalizePath = (pathname: string) => {
@@ -16,6 +19,48 @@ const parseNumericSegment = (value: string | undefined) => {
   if (!value) return undefined;
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : undefined;
+};
+
+const slugify = (value: string | undefined | null) => (
+  (value || '')
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+);
+
+const buildMiniGameRouteEntries = () => {
+  const entries = new Map<string, { islandId: number; levelId: number }>();
+
+  ISLANDS.forEach((island) => {
+    island.levels.forEach((level) => {
+      const route = { islandId: island.id, levelId: level.id };
+      [
+        level.displayName,
+        level.blueprintKey,
+        level.miniGameKey,
+        level.gameType,
+        getLevelGroupKey(level),
+        getLevelGameTitle(level),
+      ].forEach((candidate) => {
+        const slug = slugify(candidate);
+        if (slug && !entries.has(slug)) {
+          entries.set(slug, route);
+        }
+      });
+    });
+  });
+
+  return entries;
+};
+
+export const MINI_GAME_ROUTE_ENTRIES = buildMiniGameRouteEntries();
+
+export const getMiniGameRouteSlugs = () => Array.from(MINI_GAME_ROUTE_ENTRIES.keys()).sort();
+
+const parseMiniGameRoute = (slug: string | undefined): RouteState | null => {
+  const route = MINI_GAME_ROUTE_ENTRIES.get(slugify(slug));
+  return route ? { screen: 'gameplay', ...route, preservePath: true } : null;
 };
 
 export const parseRoute = (pathname: string): RouteState => {
@@ -44,6 +89,10 @@ export const parseRoute = (pathname: string): RouteState => {
       return { screen: 'gameplay', islandId, levelId };
     }
     case 'minigame':
+      {
+        const miniGameRoute = parseMiniGameRoute(first);
+        if (miniGameRoute) return miniGameRoute;
+      }
       if (first === 'ratio-racer' || first === 'ratio_racer') {
         return { screen: 'ratio_racer' };
       }
