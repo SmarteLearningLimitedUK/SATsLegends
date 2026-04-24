@@ -12,10 +12,13 @@ import AssetIcon from '../components/AssetIcon';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
+import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import { isBossEncounterGameType, SupportedBossGameType } from './bossEncounterTypes';
 import type { AnimationState } from '../types';
 import type { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gameplaySessionContract';
 import { emitMiniGameSessionEvent } from '../app/gameplaySessionContract';
+import { generateArithmeticBossPaper, markArithmeticPaper } from './arithmeticBossPaper';
+import type { ArithmeticPaperResult } from './arithmeticBossPaper';
 
 interface BossEncounterGameProps {
   gameType: SupportedBossGameType;
@@ -166,6 +169,130 @@ const fractionSets = [
   { fraction: '3/5', decimal: '0.6', percent: '60%' },
   { fraction: '3/8', decimal: '0.375', percent: '37.5%' },
 ];
+
+const generateSatsArithmeticQuestion = (): BossQuestion => {
+  const mode = randomInt(0, 5);
+
+  if (mode === 0) {
+    const a = randomInt(28, 96);
+    const b = randomInt(12, 78);
+    const correct = a + b;
+    const { options, answerIndex } = makeOptions(String(correct), [
+      String(correct + 10),
+      String(correct - 10),
+      String(correct + randomInt(1, 4)),
+      String(correct - randomInt(1, 4)),
+    ]);
+    return {
+      prompt: `${a} + ${b} =`,
+      clue: 'Add carefully.',
+      options,
+      correctOptionIndices: [answerIndex],
+      dataPoints: [],
+      selectionMode: 'single',
+    };
+  }
+
+  if (mode === 1) {
+    const a = randomInt(72, 180);
+    const b = randomInt(18, 68);
+    const correct = a - b;
+    const { options, answerIndex } = makeOptions(String(correct), [
+      String(correct + 10),
+      String(correct - 10),
+      String(correct + randomInt(1, 5)),
+      String(correct - randomInt(1, 5)),
+    ]);
+    return {
+      prompt: `${a} - ${b} =`,
+      clue: 'Subtract carefully.',
+      options,
+      correctOptionIndices: [answerIndex],
+      dataPoints: [],
+      selectionMode: 'single',
+    };
+  }
+
+  if (mode === 2) {
+    const a = randomInt(6, 12);
+    const b = randomInt(4, 12);
+    const correct = a * b;
+    const { options, answerIndex } = makeOptions(String(correct), [
+      String(correct + a),
+      String(correct - a),
+      String(correct + b),
+      String(Math.max(1, correct - b)),
+    ]);
+    return {
+      prompt: `${a} x ${b} =`,
+      clue: 'Use multiplication facts.',
+      options,
+      correctOptionIndices: [answerIndex],
+      dataPoints: [],
+      selectionMode: 'single',
+    };
+  }
+
+  if (mode === 3) {
+    const divisor = randomInt(3, 12);
+    const quotient = randomInt(4, 15);
+    const dividend = divisor * quotient;
+    const { options, answerIndex } = makeOptions(String(quotient), [
+      String(quotient + 1),
+      String(Math.max(1, quotient - 1)),
+      String(quotient + divisor),
+      String(divisor),
+    ]);
+    return {
+      prompt: `${dividend} ÷ ${divisor} =`,
+      clue: 'Use inverse multiplication.',
+      options,
+      correctOptionIndices: [answerIndex],
+      dataPoints: [],
+      selectionMode: 'single',
+    };
+  }
+
+  if (mode === 4) {
+    const percent = pick([10, 20, 25, 50, 75]);
+    const amount = pick([40, 60, 80, 100, 120, 160, 200]);
+    const correct = (percent * amount) / 100;
+    const { options, answerIndex } = makeOptions(String(correct), [
+      String(correct + 5),
+      String(Math.max(1, correct - 5)),
+      String(amount / 10),
+      String(amount / 2),
+    ]);
+    return {
+      prompt: `${percent}% of ${amount} =`,
+      clue: 'Use the common percentage fact.',
+      options,
+      correctOptionIndices: [answerIndex],
+      dataPoints: [],
+      selectionMode: 'single',
+    };
+  }
+
+  const denominator = pick([2, 3, 4, 5, 8, 10]);
+  const whole = denominator * randomInt(3, 12);
+  const possibleNumerators = [1, Math.floor(denominator / 2)].filter((value, index, arr) => value > 0 && arr.indexOf(value) === index);
+  const numerator = pick(possibleNumerators);
+  const correct = (whole / denominator) * numerator;
+  const { options, answerIndex } = makeOptions(String(correct), [
+    String(correct + numerator),
+    String(Math.max(1, correct - numerator)),
+    String(whole / denominator),
+    String(whole - correct),
+  ]);
+  return {
+    prompt: `${numerator}/${denominator} of ${whole} =`,
+    clue: 'Divide by the denominator, then multiply by the numerator.',
+    options,
+    correctOptionIndices: [answerIndex],
+    dataPoints: [],
+    selectionMode: 'single',
+  };
+};
 
 const generateFractionBossQuestion = (): BossQuestion => {
   const mode = randomInt(0, 2);
@@ -454,7 +581,7 @@ const generateReasoningBossQuestion = (): BossQuestion => {
 };
 
 const QUESTION_GENERATORS: Record<SupportedBossGameType, () => BossQuestion> = {
-  crystal_core: generateFractionBossQuestion,
+  crystal_core: generateSatsArithmeticQuestion,
   mirror_gate: generateGeometryBossQuestion,
   matrix_match: generateReasoningBossQuestion,
 };
@@ -521,13 +648,21 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   const encounter = getBossEncounter(gameType);
   const isArithmeticPaper = gameType === 'crystal_core';
   const reactionCopy = REACTION_COPY;
+  const [paperSeed, setPaperSeed] = useState<string | number>(() => `arithmetic-${Date.now()}-${Math.random()}`);
+  const arithmeticPaper = useMemo(
+    () => (isArithmeticPaper ? generateArithmeticBossPaper(paperSeed) : null),
+    [isArithmeticPaper, paperSeed],
+  );
+  const [arithmeticAnswers, setArithmeticAnswers] = useState<Record<number, string>>({});
+  const [arithmeticResult, setArithmeticResult] = useState<ArithmeticPaperResult | null>(null);
+  const [isReviewingArithmetic, setIsReviewingArithmetic] = useState(false);
   const questions = useMemo(
-    () => Array.from({ length: TOTAL_QUESTIONS }, () => {
+    () => (isArithmeticPaper ? [] : Array.from({ length: TOTAL_QUESTIONS }, () => {
       const base = QUESTION_GENERATORS[gameType]();
       const kind: QuestionKind = base.kind ?? (gameType === 'matrix_match' ? 'reasoning' : 'fluency');
       return { ...base, kind };
-    }),
-    [gameType, levelId],
+    })),
+    [gameType, isArithmeticPaper, levelId],
   );
   const [currentIndex, setCurrentIndex] = useState(0);
   const [XP, setScore] = useState(0);
@@ -538,7 +673,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   const [bossPose, setBossPose] = useState<BossPose>('neutral');
   const [reaction, setReaction] = useState(reactionCopy.idle);
   const [resolveState, setResolveState] = useState<'idle' | 'correct' | 'wrong' | 'warning' | 'victory' | 'defeat'>('idle');
-  const [showPracticeIntro, setShowPracticeIntro] = useState(true);
+  const [showPracticeIntro, setShowPracticeIntro] = useState(!isArithmeticPaper);
   const timeoutRef = useRef<number | null>(null);
 
   useEffect(() => () => {
@@ -551,8 +686,9 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
     return null;
   }
 
-  const question = questions[currentIndex % questions.length];
-  const isMultiSelect = question.selectionMode === 'multi';
+  const question = isArithmeticPaper ? null : questions[currentIndex % questions.length];
+  const arithmeticQuestion = arithmeticPaper?.questions[currentIndex] ?? null;
+  const isMultiSelect = question?.selectionMode === 'multi';
   const activeSelection = submittedIndices ?? selectedIndices;
   const bossHealthRemaining = bossHealth;
   const heroPose: AnimationState = resolveState === 'defeat'
@@ -637,7 +773,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   };
 
   const submitSelection = (selection: number[]) => {
-    if (submittedIndices !== null) return;
+    if (submittedIndices !== null || !question) return;
 
     const normalizedSelection = normalizeSelection(selection);
     const normalizedCorrect = normalizeSelection(question.correctOptionIndices);
@@ -645,6 +781,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
     const nextScore = isCorrect
       ? XP + 120
       : XP;
+
     const nextBossHealth = isCorrect ? Math.max(0, bossHealth - 1) : bossHealth;
     const currentHeroHealth = sessionState?.lives ?? heroHealth;
     const nextHeroHealth = isCorrect ? currentHeroHealth : Math.max(0, currentHeroHealth - 1);
@@ -686,6 +823,242 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
     setSelectedIndices([]);
   };
 
+  const submitArithmeticPaper = (completedBeforeTimer: boolean) => {
+    if (!arithmeticPaper || arithmeticResult) return;
+    const result = markArithmeticPaper(arithmeticPaper, arithmeticAnswers, completedBeforeTimer);
+    setArithmeticResult(result);
+    setScore(result.xpAwarded);
+    sessionEvents?.onEvent?.({
+      type: 'game_complete',
+      score: result.xpAwarded,
+      stars: result.stars,
+      metadata: {
+        paperId: arithmeticPaper.paperId,
+        rawScore: result.score,
+        totalMarks: result.totalMarks,
+        percentage: result.percentage,
+        correctCount: result.correctCount,
+      },
+    });
+    triggerHaptic(result.passed ? 'success' : 'warning');
+  };
+
+  useEffect(() => {
+    if (!isArithmeticPaper || arithmeticResult || !arithmeticPaper) return;
+    if ((sessionState?.timeLeft ?? arithmeticPaper.timeLimitSeconds) <= 0) {
+      submitArithmeticPaper(false);
+    }
+  }, [arithmeticPaper, arithmeticResult, isArithmeticPaper, sessionState?.timeLeft]);
+
+  const retryArithmeticPaper = () => {
+    if (timeoutRef.current) {
+      window.clearTimeout(timeoutRef.current);
+    }
+    setPaperSeed(`arithmetic-${Date.now()}-${Math.random()}`);
+    setArithmeticAnswers({});
+    setArithmeticResult(null);
+    setIsReviewingArithmetic(false);
+    setCurrentIndex(0);
+    setScore(0);
+    window.dispatchEvent(new Event(GAME_HUD_RESTART_EVENT));
+  };
+
+  const handleArithmeticChoice = (value: string | number) => {
+    if (!arithmeticQuestion || arithmeticResult) return;
+    setArithmeticAnswers((previous) => ({
+      ...previous,
+      [arithmeticQuestion.id]: String(value),
+    }));
+  };
+
+  const arithmeticAnsweredCount = arithmeticPaper
+    ? arithmeticPaper.questions.filter((item) => arithmeticAnswers[item.id]?.trim()).length
+    : 0;
+  const arithmeticTimeTakenSeconds = arithmeticPaper
+    ? Math.max(0, arithmeticPaper.timeLimitSeconds - (sessionState?.timeLeft ?? arithmeticPaper.timeLimitSeconds))
+    : 0;
+  const formatTime = (seconds: number) => {
+    const safeSeconds = Math.max(0, Math.floor(seconds));
+    const minutes = Math.floor(safeSeconds / 60);
+    const remainder = safeSeconds % 60;
+    return `${minutes}:${String(remainder).padStart(2, '0')}`;
+  };
+
+  if (isArithmeticPaper) {
+    if (!arithmeticPaper || !arithmeticQuestion) {
+      return (
+        <div className="flex h-full w-full items-center justify-center bg-[#f7f4ea] text-slate-900">
+          Loading arithmetic paper...
+        </div>
+      );
+    }
+
+    if (arithmeticResult && !isReviewingArithmetic) {
+      return (
+        <div className="relative flex h-full w-full overflow-hidden bg-[#f7f4ea] px-3 py-3 font-sans text-slate-950 md:px-6 md:py-5">
+          <section className="mx-auto flex h-full w-full max-w-4xl flex-col overflow-hidden rounded-[1.1rem] border border-slate-300 bg-[#fffdf6] shadow-[0_12px_28px_rgba(15,23,42,0.16)]">
+            <div className="border-b border-slate-300 bg-white px-5 py-4">
+              <div className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">SATs Paper 1: Arithmetic</div>
+              <h2 className="mt-1 text-2xl font-black text-slate-950 md:text-4xl">Paper Complete</h2>
+            </div>
+            <div className="grid min-h-0 flex-1 gap-3 overflow-hidden p-4 md:grid-cols-[1fr_1fr] md:p-6">
+              <div className="rounded-[0.9rem] border border-slate-300 bg-white p-4">
+                <div className="text-sm font-bold uppercase tracking-[0.12em] text-slate-500">Final score</div>
+                <div className="mt-2 text-5xl font-black text-slate-950">{arithmeticResult.score}/40</div>
+                <div className="mt-2 text-lg font-black text-slate-700">{arithmeticResult.percentage}%</div>
+                <div className="mt-4 grid grid-cols-2 gap-2 text-sm font-bold text-slate-700">
+                  <div className="rounded-lg bg-slate-100 p-3">Stars<br /><span className="text-xl text-slate-950">{arithmeticResult.stars}</span></div>
+                  <div className="rounded-lg bg-slate-100 p-3">XP<br /><span className="text-xl text-slate-950">{arithmeticResult.xpAwarded}</span></div>
+                  <div className="rounded-lg bg-slate-100 p-3">Time<br /><span className="text-xl text-slate-950">{formatTime(arithmeticTimeTakenSeconds)}</span></div>
+                  <div className="rounded-lg bg-slate-100 p-3">Correct<br /><span className="text-xl text-slate-950">{arithmeticResult.correctCount}/40</span></div>
+                </div>
+              </div>
+              <div className="rounded-[0.9rem] border border-slate-300 bg-white p-4">
+                <div className="text-sm font-bold uppercase tracking-[0.12em] text-slate-500">Breakdown</div>
+                <div className="mt-3 space-y-2 text-sm font-bold text-slate-700">
+                  <div className="flex justify-between border-b border-slate-200 py-2"><span>Correct</span><span>{arithmeticResult.correctCount}</span></div>
+                  <div className="flex justify-between border-b border-slate-200 py-2"><span>Incorrect or blank</span><span>{40 - arithmeticResult.correctCount}</span></div>
+                  <div className="flex justify-between border-b border-slate-200 py-2"><span>Pass threshold</span><span>24 marks</span></div>
+                  <div className="flex justify-between py-2"><span>Paper seed</span><span className="max-w-[12rem] truncate text-right">{String(arithmeticPaper.seed)}</span></div>
+                </div>
+              </div>
+            </div>
+            <div className="grid shrink-0 gap-2 border-t border-slate-300 bg-white p-3 md:grid-cols-3 md:p-4">
+              <button type="button" onClick={retryArithmeticPaper} className="rounded-xl border-2 border-slate-300 bg-slate-950 px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-white">
+                Retry with new paper
+              </button>
+              <button type="button" onClick={() => setIsReviewingArithmetic(true)} className="rounded-xl border-2 border-slate-300 bg-white px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-slate-950">
+                Review answers
+              </button>
+              <button type="button" onClick={onBack} className="rounded-xl border-2 border-slate-300 bg-white px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-slate-950">
+                Return to Boss Island
+              </button>
+            </div>
+          </section>
+        </div>
+      );
+    }
+
+    if (arithmeticResult && isReviewingArithmetic) {
+      return (
+        <div className="relative flex h-full w-full overflow-hidden bg-[#f7f4ea] px-3 py-3 font-sans text-slate-950 md:px-6 md:py-5">
+          <section className="mx-auto flex h-full w-full max-w-5xl flex-col overflow-hidden rounded-[1.1rem] border border-slate-300 bg-[#fffdf6] shadow-[0_12px_28px_rgba(15,23,42,0.16)]">
+            <div className="flex shrink-0 items-center justify-between gap-3 border-b border-slate-300 bg-white px-4 py-3">
+              <div>
+                <div className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">Review answers</div>
+                <h2 className="text-xl font-black text-slate-950">Score {arithmeticResult.score}/40</h2>
+              </div>
+              <button type="button" onClick={() => setIsReviewingArithmetic(false)} className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-black uppercase tracking-[0.12em]">
+                Results
+              </button>
+            </div>
+            <div className="min-h-0 flex-1 overflow-y-auto p-3">
+              <div className="grid gap-2 md:grid-cols-2">
+                {arithmeticPaper.questions.map((item) => {
+                  const result = arithmeticResult.results.find((entry) => entry.questionId === item.id);
+                  return (
+                    <div key={item.id} className={`rounded-xl border p-3 ${result?.isCorrect ? 'border-emerald-300 bg-emerald-50' : 'border-rose-300 bg-rose-50'}`}>
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="font-black">Q{item.id}. {item.question}</div>
+                        <div className="text-sm font-black">{result?.marksAwarded}/{item.marks}</div>
+                      </div>
+                      <div className="mt-2 text-sm font-bold text-slate-700">Your answer: {result?.userAnswer || 'blank'}</div>
+                      <div className="text-sm font-bold text-slate-700">Correct answer: {item.answer}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        </div>
+      );
+    }
+
+    const selectedAnswer = arithmeticAnswers[arithmeticQuestion.id];
+    return (
+      <div className="relative flex h-full w-full overflow-hidden bg-[#f7f4ea] font-sans text-slate-950">
+        <div className="relative z-10 flex h-full w-full flex-col gap-3 px-3 pb-3 pt-3 md:px-6 md:pb-5 md:pt-5">
+          <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.1rem] border border-slate-300 bg-[#fffdf6] shadow-[0_12px_28px_rgba(15,23,42,0.16)]">
+            <div className="shrink-0 border-b border-slate-300 bg-white px-4 py-3 md:px-6 md:py-4">
+              <div className="flex items-center justify-between gap-3 text-[0.68rem] font-black uppercase tracking-[0.16em] text-slate-500 md:text-sm">
+                <span>SATs Paper 1: Arithmetic</span>
+                <span>Question {currentIndex + 1} of 40</span>
+              </div>
+            </div>
+
+            <div className="flex min-h-0 flex-1 flex-col justify-center px-5 py-5 md:px-10 md:py-8">
+              <div className="mx-auto w-full max-w-3xl">
+                <div className="mb-4 text-sm font-bold text-slate-600 md:text-base">
+                  Choose the correct answer. {arithmeticQuestion.marks} mark
+                </div>
+                <div className="rounded-[0.75rem] border border-slate-300 bg-white px-5 py-6 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] md:px-8 md:py-10">
+                  <div className="text-[clamp(2.3rem,10vw,5rem)] font-black leading-none tracking-normal text-slate-950">
+                    {arithmeticQuestion.question}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div className="grid shrink-0 grid-cols-2 gap-2 md:grid-cols-4 md:gap-3">
+            {arithmeticQuestion.choices.map((option, index) => {
+              const isSelected = String(option) === selectedAnswer;
+              const toneClass = isSelected
+                ? 'border-sky-700 bg-sky-100 text-slate-950'
+                : 'border-slate-300 bg-white text-slate-950 hover:border-sky-500 hover:bg-sky-50';
+
+              return (
+                <button
+                  key={`${option}-${index}`}
+                  type="button"
+                  onClick={() => handleArithmeticChoice(option)}
+                  className={`relative flex h-[clamp(4.25rem,10vh,5.6rem)] min-w-0 items-center justify-center rounded-[0.85rem] border-2 px-3 text-center text-[clamp(1.35rem,5vw,2.1rem)] font-black shadow-[0_6px_14px_rgba(15,23,42,0.12)] transition disabled:cursor-default md:h-[6.25rem] ${toneClass}`}
+                >
+                  <span className="absolute left-2 top-2 flex h-6 w-6 items-center justify-center rounded-full border border-slate-300 bg-slate-100 text-xs font-black text-slate-600 md:left-3 md:top-3 md:h-7 md:w-7 md:text-sm">
+                    {String.fromCharCode(65 + index)}
+                  </span>
+                  <span className="max-w-full break-words px-5">{option}</span>
+                </button>
+              );
+            })}
+          </div>
+          <div className="grid shrink-0 grid-cols-[auto_1fr_auto_auto] items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
+              disabled={currentIndex === 0}
+              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-slate-950 disabled:opacity-40"
+            >
+              Previous
+            </button>
+            <div className="text-center text-xs font-black uppercase tracking-[0.12em] text-slate-600">
+              {arithmeticAnsweredCount}/40 answered
+            </div>
+            <button
+              type="button"
+              onClick={() => setCurrentIndex((prev) => Math.min(39, prev + 1))}
+              disabled={currentIndex === 39}
+              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-slate-950 disabled:opacity-40"
+            >
+              Next
+            </button>
+            <button
+              type="button"
+              onClick={() => submitArithmeticPaper((sessionState?.timeLeft ?? 0) > 0)}
+              className="rounded-lg border border-slate-950 bg-slate-950 px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-white"
+            >
+              Submit paper
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!question) {
+    return null;
+  }
+
   return (
     <div className="relative flex h-full w-full overflow-hidden font-sans">
       <GameplaySceneBackdrop gameType={gameType} />
@@ -694,7 +1067,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
         open={showPracticeIntro}
         title="Core of Calculation"
         body={isArithmeticPaper
-          ? "The Monster Minds have fortified the arithmetic core.\nAnswer correctly to damage the enemy.\nUse the top HUD hearts to track your lives."
+          ? "Work through the arithmetic paper.\nChoose the answer that matches the calculation.\nThere is no combat here, just questions and answers."
           : "The Monster Minds have fortified the final boss.\nAnswer correctly to damage the enemy.\nKeep the hero standing until the boss falls."
         }
         onAction={() => setShowPracticeIntro(false)}

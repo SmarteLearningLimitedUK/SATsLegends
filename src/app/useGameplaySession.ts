@@ -1,10 +1,11 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
-import { GAME_HUD_MUTE_EVENT, GAME_HUD_MUTE_SYNC_EVENT } from '../gameHudEvents';
+import { GAME_HUD_MUTE_EVENT, GAME_HUD_MUTE_SYNC_EVENT, GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import { GAME_AUDIO_STORAGE_KEY } from '../gameHudEvents';
 import { GameScreen, LevelData } from '../types';
 import { LEVEL_TIMERS_DISABLED } from './testingFlags';
 
 export const GLOBAL_MINIGAME_HUD_DURATION_SECONDS = 90;
+export const ARITHMETIC_BOSS_DURATION_SECONDS = 1800;
 export const GLOBAL_MINIGAME_LIVES = 3;
 
 interface GameplaySessionArgs {
@@ -16,6 +17,7 @@ interface GameplaySessionArgs {
 
 export interface GameplaySessionController {
   globalMiniGameHudTimeLeft: number;
+  globalMiniGameHudDurationSeconds: number;
   globalMiniGameLives: number;
   isMuted: boolean;
   setIsMuted: Dispatch<SetStateAction<boolean>>;
@@ -32,7 +34,13 @@ export const useGameplaySession = ({
   const [globalMiniGameLives, setGlobalMiniGameLives] = useState(GLOBAL_MINIGAME_LIVES);
   const [globalMiniGameLifeLock, setGlobalMiniGameLifeLock] = useState(false);
   const [globalMiniGameTimeLock, setGlobalMiniGameTimeLock] = useState(false);
+  const [restartNonce, setRestartNonce] = useState(0);
   const [isMuted, setIsMuted] = useState(() => localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true');
+  const globalMiniGameHudDurationSeconds = selectedLevel?.gameType === 'crystal_core'
+    ? ARITHMETIC_BOSS_DURATION_SECONDS
+    : GLOBAL_MINIGAME_HUD_DURATION_SECONDS;
+  const shouldDisableTimer = LEVEL_TIMERS_DISABLED && selectedLevel?.gameType !== 'crystal_core';
+  const handlesOwnTimerExpiry = selectedLevel?.gameType === 'crystal_core';
   const isUntimedGameplay =
     screen === 'gameplay'
     && (
@@ -47,18 +55,18 @@ export const useGameplaySession = ({
 
   useEffect(() => {
     if (screen !== 'gameplay' || !selectedLevel) return undefined;
-    setGlobalMiniGameHudTimeLeft(GLOBAL_MINIGAME_HUD_DURATION_SECONDS);
+    setGlobalMiniGameHudTimeLeft(globalMiniGameHudDurationSeconds);
     setGlobalMiniGameLives(GLOBAL_MINIGAME_LIVES);
     setGlobalMiniGameLifeLock(false);
     setGlobalMiniGameTimeLock(false);
-    if (isUntimedGameplay || LEVEL_TIMERS_DISABLED) return undefined;
+    if (isUntimedGameplay || shouldDisableTimer) return undefined;
     const timerId = window.setInterval(() => {
       setGlobalMiniGameHudTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
     return () => {
       window.clearInterval(timerId);
     };
-  }, [isUntimedGameplay, screen, selectedLevel?.id, selectedLevel?.isPractice]);
+  }, [globalMiniGameHudDurationSeconds, isUntimedGameplay, restartNonce, screen, selectedLevel?.id, selectedLevel?.isPractice, shouldDisableTimer]);
 
   useEffect(() => {
     if (screen !== 'gameplay' || globalMiniGameLives > 0 || globalMiniGameLifeLock) return;
@@ -69,12 +77,12 @@ export const useGameplaySession = ({
   }, [globalMiniGameLifeLock, globalMiniGameLives, onLifeDepleted, screen]);
 
   useEffect(() => {
-    if (screen !== 'gameplay' || isUntimedGameplay || LEVEL_TIMERS_DISABLED || globalMiniGameHudTimeLeft > 0 || globalMiniGameTimeLock) return;
+    if (screen !== 'gameplay' || isUntimedGameplay || shouldDisableTimer || handlesOwnTimerExpiry || globalMiniGameHudTimeLeft > 0 || globalMiniGameTimeLock) return;
     setGlobalMiniGameTimeLock(true);
     window.setTimeout(() => {
       onTimeDepleted();
     }, 140);
-  }, [globalMiniGameHudTimeLeft, globalMiniGameTimeLock, isUntimedGameplay, onTimeDepleted, screen]);
+  }, [globalMiniGameHudTimeLeft, globalMiniGameTimeLock, handlesOwnTimerExpiry, isUntimedGameplay, onTimeDepleted, screen, shouldDisableTimer]);
 
   useEffect(() => {
     localStorage.setItem(GAME_AUDIO_STORAGE_KEY, String(isMuted));
@@ -96,8 +104,20 @@ export const useGameplaySession = ({
     };
   }, []);
 
+  useEffect(() => {
+    const handleRestart = () => {
+      setRestartNonce((previous) => previous + 1);
+    };
+
+    window.addEventListener(GAME_HUD_RESTART_EVENT, handleRestart as EventListener);
+    return () => {
+      window.removeEventListener(GAME_HUD_RESTART_EVENT, handleRestart as EventListener);
+    };
+  }, []);
+
   return {
     globalMiniGameHudTimeLeft,
+    globalMiniGameHudDurationSeconds,
     globalMiniGameLives,
     isMuted,
     setIsMuted,

@@ -20,7 +20,6 @@ import { useScreenFlow } from './app/useScreenFlow';
 import { useOverlayState } from './app/useOverlayState';
 import { usePlayerProgression } from './app/usePlayerProgression';
 import {
-  GLOBAL_MINIGAME_HUD_DURATION_SECONDS,
   useGameplaySession,
 } from './app/useGameplaySession';
 import { GameplaySessionEventHandlers, GameplaySessionEventPayload, GameplaySessionState } from './app/gameplaySessionContract';
@@ -287,6 +286,7 @@ const App: React.FC = () => {
 
   const {
     globalMiniGameHudTimeLeft,
+    globalMiniGameHudDurationSeconds,
     globalMiniGameLives,
     consumeLife,
   } = useGameplaySession({
@@ -321,9 +321,9 @@ const App: React.FC = () => {
 
   const sessionState: GameplaySessionState = useMemo(() => ({
     timeLeft: globalMiniGameHudTimeLeft,
-    totalTime: GLOBAL_MINIGAME_HUD_DURATION_SECONDS,
+    totalTime: globalMiniGameHudDurationSeconds,
     lives: globalMiniGameLives,
-  }), [globalMiniGameHudTimeLeft, globalMiniGameLives]);
+  }), [globalMiniGameHudDurationSeconds, globalMiniGameHudTimeLeft, globalMiniGameLives]);
 
   const resolveLevelTitle = useCallback(() => {
     if (!selectedLevel) return 'Level over';
@@ -995,7 +995,6 @@ const App: React.FC = () => {
     || isStandaloneScaleBuilder
     || isStandaloneShareSplitter
     || selectedLevel?.isPractice
-    || selectedLevel?.gameType === 'crystal_core'
     || selectedLevel?.gameType === 'potion_pour';
   const hideShellLives = selectedLevel?.gameType === 'crystal_core';
   const hideGlobalBottomDock = selectedLevel?.gameType === 'crystal_core';
@@ -1065,10 +1064,12 @@ const App: React.FC = () => {
           <UnifiedMiniGameHud
             avatarId={player.avatarId}
             timeLeft={globalMiniGameHudTimeLeft}
-            totalTime={GLOBAL_MINIGAME_HUD_DURATION_SECONDS}
+            totalTime={globalMiniGameHudDurationSeconds}
             gameTitle={canonicalGameTitle}
             lives={globalMiniGameLives}
             hideTimer={hideShellTimer}
+            forceTimer={selectedLevel?.gameType === 'crystal_core'}
+            hideAvatar={selectedLevel?.gameType === 'crystal_core'}
             hideLives={hideShellLives}
             onBack={isStandaloneRatioRacer || isStandaloneScaleBuilder || isStandaloneShareSplitter ? goToHome : isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
             variant={isGameplayScreen ? 'gameplay' : 'hub'}
@@ -1106,7 +1107,7 @@ const App: React.FC = () => {
                   usesQuestionMatchFrame={usesQuestionMatchFrame}
                   globalMiniGameHudTimeLeft={globalMiniGameHudTimeLeft}
                   globalMiniGameLives={globalMiniGameLives}
-                  globalMiniGameHudDurationSeconds={GLOBAL_MINIGAME_HUD_DURATION_SECONDS}
+                  globalMiniGameHudDurationSeconds={globalMiniGameHudDurationSeconds}
                   sessionState={sessionState}
                   sessionEvents={sessionEvents}
                   onStartAdventure={handleStartAdventure}

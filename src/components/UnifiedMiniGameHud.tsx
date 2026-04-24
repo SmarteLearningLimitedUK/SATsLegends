@@ -13,6 +13,8 @@ interface UnifiedMiniGameHudProps {
   gameTitle?: string;
   hidden?: boolean;
   hideTimer?: boolean;
+  forceTimer?: boolean;
+  hideAvatar?: boolean;
   hideLives?: boolean;
   hideTopBar?: boolean;
   lives?: number;
@@ -29,6 +31,8 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
   gameTitle,
   hidden = false,
   hideTimer = false,
+  forceTimer = false,
+  hideAvatar = false,
   hideLives = false,
   hideTopBar = false,
   lives = 3,
@@ -37,12 +41,15 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
   showActions = true,
   bottomContent,
 }) => {
-  const shouldHideTimer = hideTimer || LEVEL_TIMERS_DISABLED;
+  const shouldHideTimer = hideTimer || (LEVEL_TIMERS_DISABLED && !forceTimer);
   const timerProgress = useMemo(
     () => Math.max(0, Math.min(1, totalTime > 0 ? timeLeft / totalTime : 0)),
     [timeLeft, totalTime],
   );
   const timeValue = Math.max(0, Math.floor(timeLeft));
+  const timeLabel = totalTime >= 600
+    ? `${Math.floor(timeValue / 60)}:${String(timeValue % 60).padStart(2, '0')}`
+    : `${timeValue}s`;
   const isLowTime = timerProgress <= 0.3;
 
   const avatar = useMemo(() => (
@@ -88,9 +95,9 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
         >
           <div
             className={`relative ${topBarWidthClass} grid items-center gap-2 ${rootPaddingClass} ${
-              shouldHideTimer && hideLives
+              hideAvatar && shouldHideTimer && hideLives
                 ? 'grid-cols-[auto] justify-start'
-                : shouldHideTimer || hideLives
+                : (hideAvatar && hideLives) || shouldHideTimer || hideLives
                   ? 'grid-cols-[auto_auto] justify-between'
                   : 'grid-cols-[auto_1fr_auto]'
             }`}
@@ -109,6 +116,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
               </div>
             ) : null}
 
+            {hideAvatar ? null : (
             <div className="relative flex min-w-0 items-center gap-2.5 pl-1">
               <div
                 className={`relative ${sharedHudHeightClass} ${avatarSizeClass} shrink-0 ${variant === 'hub' ? 'rounded-[0.8rem]' : 'rounded-[0.95rem]'} border-2 border-amber-300/95 bg-[linear-gradient(180deg,#2d63b7_0%,#1b3f86_100%)] shadow-[0_9px_18px_rgba(2,6,23,0.46)]`}
@@ -125,6 +133,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
                 <div className={`pointer-events-none absolute inset-0 ${variant === 'hub' ? 'rounded-[0.75rem]' : 'rounded-[0.9rem]'} bg-[linear-gradient(180deg,rgba(255,255,255,0.16),rgba(255,255,255,0)_45%)]`} />
               </div>
             </div>
+            )}
 
             <div className={`relative min-w-0 items-center justify-center px-1 ${shouldHideTimer ? 'hidden' : 'flex'}`}>
               <div
@@ -160,7 +169,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
                   </div>
                 </div>
                 <span className={`ml-1.5 shrink-0 font-black uppercase text-slate-100 [text-shadow:0_1px_0_rgba(0,0,0,0.35)] ${variant === 'hub' ? 'text-[clamp(0.6rem,1.6vw,0.8rem)]' : 'text-[clamp(0.68rem,1.8vw,0.9rem)]'}`}>
-                  {timeValue}s
+                  {timeLabel}
                 </span>
               </div>
             </div>
