@@ -89,7 +89,7 @@ const formatBlueprintValue = (value: number) => {
 };
 
 const BlueprintGrid: React.FC = () => (
-  <div className="pointer-events-none absolute inset-0 opacity-22">
+  <div className="pointer-events-none absolute inset-0 opacity-16">
     <div
       className="absolute inset-0"
       style={{
@@ -320,6 +320,9 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
   return (
     <GameScreenShell
       className="overflow-hidden pt-[env(safe-area-inset-top)] pb-[calc(env(safe-area-inset-bottom)+0.25rem)] scale-builder-full-wrap"
+      backgroundImage={scaleBuilderBackground}
+      backgroundOpacity={1}
+      overlayDisabled
     >
       <PracticeIntroPopup
         open={showPracticeIntro}
@@ -338,12 +341,12 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
           style={{
             backgroundImage: `url(${scaleBuilderBackground})`,
             backgroundSize: 'cover',
-            backgroundPosition: 'center 72%',
+            backgroundPosition: '28% center',
           }}
         />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,47,73,0.18)_0%,rgba(7,89,133,0.14)_38%,rgba(8,47,73,0.28)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,47,73,0.04)_0%,rgba(7,89,133,0.03)_38%,rgba(8,47,73,0.08)_100%)]" />
         <div
-          className="absolute inset-0 opacity-72"
+          className="absolute inset-0 opacity-20"
           style={{
             backgroundImage: [
               'linear-gradient(to right, rgba(186,230,253,0.22) 1px, transparent 1px)',
@@ -354,7 +357,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
             backgroundSize: '22px 22px, 22px 22px, 110px 110px, 110px 110px',
           }}
         />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(191,219,254,0.28),transparent_52%),radial-gradient(circle_at_20%_20%,rgba(147,197,253,0.22),transparent_28%),radial-gradient(circle_at_80%_70%,rgba(56,189,248,0.18),transparent_24%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(191,219,254,0.08),transparent_52%),radial-gradient(circle_at_20%_20%,rgba(147,197,253,0.06),transparent_28%),radial-gradient(circle_at_80%_70%,rgba(56,189,248,0.05),transparent_24%)]" />
       </div>
       <div className="pointer-events-none absolute left-2 top-[calc(env(safe-area-inset-top)+0.5rem)] z-20">
         <div className="pointer-events-auto">
@@ -366,7 +369,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
         </div>
       </div>
 
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-[10px] px-2 pb-[calc(env(safe-area-inset-bottom)+8.4rem)] pt-[calc(env(safe-area-inset-top)+0.95rem)] md:px-3">
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-[10px] px-2 pb-[calc(env(safe-area-inset-bottom)+11.8rem)] pt-[calc(env(safe-area-inset-top)+0.95rem)] md:px-3">
         <div className="relative mx-auto flex h-full w-full max-w-[780px] min-h-0 flex-1 flex-col overflow-visible">
           <div className="relative z-10 grid h-full min-h-0 w-full grid-rows-[auto_minmax(0,1fr)] gap-[10px] p-0 md:p-0">
             <GameQuestionCard className="w-full">
@@ -378,7 +381,16 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
             <div className="relative min-h-0 flex-1 overflow-visible pt-[10px]">
               <div className="relative z-10 h-full w-full">
                 <div
-                  className="absolute left-1/2 flex aspect-square -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-[0.9rem]"
+                  aria-hidden="true"
+                  className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-[1.2rem] bg-slate-950/72 shadow-[0_18px_38px_rgba(2,6,23,0.34)] backdrop-blur-[1px]"
+                  style={{
+                    top: BLUEPRINT_BOARD_TOP,
+                    width: 'min(92vw, 34rem, 58vh)',
+                    height: 'min(92vw, 34rem, 58vh)',
+                  }}
+                />
+                <div
+                  className="absolute left-1/2 flex aspect-square -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-[0.9rem] bg-slate-950/42"
                   style={{
                     top: BLUEPRINT_BOARD_TOP,
                     width: BLUEPRINT_BOARD_SIZE,
@@ -386,7 +398,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                   }}
                 >
                   <BlueprintGrid />
-                  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(125,211,252,0.16),rgba(59,130,246,0.04)_65%,transparent_100%)]" />
+                  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(125,211,252,0.08),rgba(59,130,246,0.02)_65%,transparent_100%)]" />
                   <div className="pointer-events-none absolute left-3 top-3 z-20 rounded-full border border-cyan-100/35 bg-slate-950/65 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-50 shadow-[0_0_18px_rgba(2,6,23,0.25)] backdrop-blur-sm md:text-[11px]">
                     L {formatBlueprintValue(blueprintLength)}
                   </div>
@@ -433,37 +445,37 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
 
           <div
             className="fixed left-0 right-0 z-30"
-            style={{ bottom: 'calc(env(safe-area-inset-bottom) + 0.5rem)' }}
+            style={{ bottom: 'calc(env(safe-area-inset-bottom) + 4.9rem)' }}
           >
             <div className="mx-auto flex w-full max-w-[780px] flex-col gap-2 px-2 md:px-3">
               <div className="grid grid-cols-2 gap-2">
                 <button
-                  onClick={() => adjustDimension('width', -0.25)}
+                  onClick={() => adjustScale(-0.25)}
                   disabled={gameState !== 'playing'}
-                  className="ui-button-secondary inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] disabled:opacity-45"
+                  className="ui-button-secondary inline-flex min-h-[40px] items-center justify-center gap-2 rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] disabled:opacity-45"
                 >
-                  {isDimensionMode ? 'L -0.25' : 'Size -'}
+                  Scale -0.25
                 </button>
                 <button
-                  onClick={() => adjustDimension('height', 0.25)}
+                  onClick={() => adjustScale(0.25)}
                   disabled={gameState !== 'playing'}
-                  className="ui-button-secondary inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] disabled:opacity-45"
+                  className="ui-button-secondary inline-flex min-h-[40px] items-center justify-center gap-2 rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] disabled:opacity-45"
                 >
-                  {isDimensionMode ? 'W +0.25' : 'Size +'}
+                  Scale +0.25
                 </button>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <button
                   onClick={resetLevel}
                   disabled={gameState !== 'playing'}
-                  className="ui-button-secondary inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] disabled:opacity-45"
+                  className="ui-button-secondary inline-flex min-h-[40px] items-center justify-center gap-2 rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] disabled:opacity-45"
                 >
                   Reset
                 </button>
                 {gameState === 'success' ? (
                   <button
                     onClick={proceed}
-                    className="ui-button-success inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em]"
+                    className="ui-button-success inline-flex min-h-[40px] items-center justify-center gap-2 rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em]"
                   >
                     Next project <ChevronRight className="h-4 w-4" />
                   </button>
@@ -471,7 +483,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                   <PrimaryButton
                     onClick={verifyScale}
                     disabled={gameState !== 'playing'}
-                    className="min-h-[44px]"
+                    className="min-h-[40px]"
                   >
                     <Ruler className="h-4 w-4" />
                     Check Scale

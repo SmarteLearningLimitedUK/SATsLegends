@@ -338,7 +338,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     const y = Math.max(
       isCompactViewport ? 158 : plateSizePx * 0.5,
       (viewportRect.height * (isCompactViewport ? 0.17 : 0.28)) - 30,
-    );
+    ) + 20;
 
     return Array.from({ length: MAX_PLATE_COUNT }, (_, index) => ({
       x: sidePadding + (usableWidth * (index / Math.max(1, MAX_PLATE_COUNT - 1))),

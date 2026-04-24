@@ -42,7 +42,7 @@ const START_OFFSET = 0;
 const RACER_LERP = 0.16;
 const BASE_XP = 160;
 const PLAYER_KART_SCALE = 2.08;
-const PLAYER_KART_BOTTOM_PADDING = '10pt';
+const PLAYER_KART_BOTTOM_PADDING = '20pt';
 const PLAYER_TRACK_LINE_Y = 80.8;
 const FINISH_Y_SHIFT = -200;
 const FINISH_X_SHIFT = -100;
@@ -563,11 +563,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
                     ? 'rounded-full border border-amber-100/70 bg-[linear-gradient(135deg,rgba(255,241,166,0.96),rgba(125,211,252,0.9))] px-3 py-1 text-slate-950 shadow-[0_0_22px_rgba(251,191,36,0.55)]'
                     : 'text-amber-100'
                 }`}>{feedback}</div>
-              ) : (
-                <div className="text-[11px] font-semibold text-amber-100 md:text-[13px]">
-                  The Monster Minds have thrown the fuel ratios off. Fix the mix to keep your kart moving.
-                </div>
-              )}
+              ) : undefined}
               titleClassName="text-[12px] md:text-[14px] tracking-[0.28em]"
               bodyClassName="text-[clamp(1.15rem,4vw,1.7rem)] font-black leading-[1.08] tracking-tight md:text-[clamp(1.3rem,2.4vw,2rem)]"
             >
@@ -578,7 +574,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
 
         <div
           className="fixed left-0 right-0 z-[60]"
-          style={{ bottom: 'calc(env(safe-area-inset-bottom) + 0.45rem)' }}
+          style={{ top: 'calc(env(safe-area-inset-top) + 8.4rem)' }}
         >
           <div className="mx-auto w-full max-w-[52rem] px-2 sm:px-3 md:px-4">
             <div className="answer-choice-surface grid grid-cols-4 gap-2 rounded-[1.15rem] border border-white/12 bg-slate-950/24 px-2 py-2 shadow-[0_14px_28px_rgba(2,6,23,0.22)] backdrop-blur-[4px]">

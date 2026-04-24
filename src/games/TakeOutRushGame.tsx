@@ -595,7 +595,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
 
         <main className="relative mt-1.5 flex min-h-0 flex-1 flex-col gap-2 pb-[calc(env(safe-area-inset-bottom)+3.9rem)]">
           <section className="relative flex min-h-[16rem] flex-1 items-start justify-center">
-            <div className="absolute left-1/2 top-[calc(4%+6px)] w-[min(74vw,18rem)] -translate-x-1/2 text-center">
+            <div className="absolute left-1/2 top-[calc(16%+10px)] w-[min(74vw,18rem)] -translate-x-1/2 text-center">
               <div className="text-[9px] font-black uppercase tracking-[0.18em] text-amber-100/80 drop-shadow-[0_2px_6px_rgba(2,6,23,0.8)]">
                 Order Target
               </div>

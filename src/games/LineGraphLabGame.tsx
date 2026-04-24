@@ -2,8 +2,6 @@ import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useSta
 import {
   AlertCircle,
   CheckCircle2,
-  ChevronRight,
-  Info,
   Trophy,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
@@ -272,16 +270,18 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
     setSelectedAnswer(answer);
 
     if (answer === round.correctAnswer) {
+      const nextXP = XP + 100 + level * 10;
       setFeedback({ type: 'success', message: 'Data recovered!' });
-      setXP(prev => prev + 100 + level * 10);
+      setXP(nextXP);
       setGameState('success');
+      window.setTimeout(() => nextLevel(nextXP), 520);
       return;
     }
 
     setFeedback({ type: 'error', message: `Not quite. ${round.helper}` });
   };
 
-  const nextLevel = () => {
+  const nextLevel = (scoreOverride = XP) => {
     if (level < MAX_LEVEL) {
       const next = level + 1;
       setLevel(next);
@@ -290,7 +290,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
     }
 
     setGameState('complete');
-    onVictory(scoreToStars(XP), XP);
+    onVictory(scoreToStars(scoreOverride), scoreOverride);
   };
 
   const yTicks = useMemo(() => {
@@ -320,11 +320,10 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
         )}
         main={(
           <section className="flex min-h-0 flex-1 flex-col gap-2 px-2 pb-3 sm:gap-3 sm:px-3 sm:pb-4 md:px-4 md:pb-5">
-            <div className="mt-0.5 min-h-0 flex-1 rounded-[1.75rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(8,24,54,0.55),rgba(4,12,28,0.38))] p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_18px_40px_rgba(2,6,23,0.18)] backdrop-blur-[2px] sm:p-4 md:p-5">
+            <div className="mt-0.5 flex min-h-0 flex-1 flex-col rounded-[1.75rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(8,24,54,0.55),rgba(4,12,28,0.38))] p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_18px_40px_rgba(2,6,23,0.18)] backdrop-blur-[2px] sm:p-4 md:p-5">
               <div
                 ref={chartWrapRef}
-                className="relative w-full overflow-hidden rounded-2xl border border-slate-200/12 bg-[linear-gradient(180deg,rgba(7,18,38,0.68),rgba(4,10,24,0.42))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
-                style={{ height: 'clamp(10.5rem, 28vh, 17rem)' }}
+                className="relative min-h-0 w-full flex-1 overflow-hidden rounded-2xl border border-slate-200/12 bg-[linear-gradient(180deg,rgba(7,18,38,0.68),rgba(4,10,24,0.42))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
               >
                 <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(125,211,252,0.12),transparent_58%)]" />
                 <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),transparent_30%,rgba(255,255,255,0.02))]" />
@@ -409,7 +408,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
               </div>
             </div>
 
-            <div className="mt-auto flex flex-col gap-2 pt-2 pb-1 sm:pb-2">
+            <div className="mt-auto flex shrink-0 flex-col gap-2 pt-2 pb-1 sm:pb-2">
               <div className="answer-choice-surface grid grid-cols-2 gap-2">
                 {round?.options.map(option => {
                   const isSelected = selectedAnswer === option;
@@ -436,23 +435,6 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                     </motion.button>
                   );
                 })}
-              </div>
-
-              <div className="min-h-[3rem]">
-                <AnimatePresence mode="wait">
-                  {gameState === 'success' ? (
-                    <motion.button
-                      key="next"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      onClick={nextLevel}
-                      className="ui-button-success flex w-full items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-black uppercase tracking-widest"
-                    >
-                      Next Graph <ChevronRight className="h-4 w-4" />
-                    </motion.button>
-                  ) : null}
-                </AnimatePresence>
               </div>
 
               {feedback && (

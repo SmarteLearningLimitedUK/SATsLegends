@@ -7,6 +7,7 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { RotateCcw, Plus, Minus } from 'lucide-react';
 import missionBackground from '../assets/maps/backgroundsforgames/Chrono Dash Time Trial.jpg';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 
 interface ChronoDashGameProps {
   levelId: number;
@@ -193,9 +194,18 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({
         className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
       />
 
-      <div className={`relative z-10 flex h-full min-h-0 w-full flex-col items-center ${topPadding} px-4 pb-[calc(env(safe-area-inset-bottom)+4.8rem)]`}>
+      <div className={`relative z-10 flex h-full min-h-0 w-full flex-col items-center ${topPadding} px-3 pb-[calc(env(safe-area-inset-bottom)+4.8rem)]`}>
         <div className="w-full max-w-md min-h-0">
-          <main className="flex w-full flex-col items-center gap-3">
+          <main className="flex w-full flex-col items-center gap-2.5">
+            <GameQuestionCard
+              title="Chrono Dash"
+              subtitle="Match the analogue clock to the digital time."
+              className="w-full"
+              bodyClassName="text-[clamp(0.95rem,3vw,1.15rem)] font-black leading-tight"
+            >
+              Restore the island timekeeper.
+            </GameQuestionCard>
+
             <motion.div
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -221,10 +231,6 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({
                   {targetTime.minutes.toString().padStart(2, '0')}
                 </span>
               </div>
-
-              <p className="mx-auto mt-2 max-w-[16rem] text-center text-[11px] font-bold leading-tight text-orange-100/90 md:max-w-[18rem] md:text-[12px]">
-                The Monster Minds have disrupted the island timekeeper. Match the clock to restore the correct time.
-              </p>
             </motion.div>
 
             <div className="relative">

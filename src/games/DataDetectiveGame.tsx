@@ -334,7 +334,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             <div className="pointer-events-none absolute inset-0 bg-slate-950/20" />
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.3)_1px,transparent_1px)] opacity-7 [background-size:20px_20px]" />
 
-            <div className="relative w-full" style={{ height: 'clamp(8.5rem, 19vh, 14rem)' }}>
+            <div className="relative w-full" style={{ height: 'clamp(11rem, 29vh, 20rem)' }}>
               <ResponsiveContainer width="100%" height="100%">
                 {chartType === 'bar' ? (
                     <BarChart data={currentCase} margin={{ top: 12, right: 10, left: -6, bottom: 6 }}>
@@ -440,17 +440,17 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleSuspectClick(suspect.id)}
                   transition={{ duration: 0.35 }}
-                  className={`group relative flex w-full aspect-[4/3] items-center justify-center rounded-[1.2rem] border-2 p-1 transition-all duration-300 sm:aspect-[3/4] max-[480px]:aspect-[1/1.7] max-[480px]:rounded-lg max-[480px]:p-0.25 ${
+                  className={`group relative flex w-full aspect-[4/3] items-center justify-center rounded-[1.2rem] border p-[2px] transition-all duration-300 sm:aspect-[3/4] max-[480px]:aspect-[1/1.7] max-[480px]:rounded-lg ${
                     gameState === 'success' && suspect.id === guiltyId
                       ? 'border-emerald-400 bg-emerald-400/14 shadow-[0_0_24px_rgba(16,185,129,0.3)]'
                       : incorrectSuspectIds.includes(suspect.id)
                         ? 'pointer-events-none border-stone-700 bg-stone-950/80 opacity-35 grayscale'
                         : selectedSuspectId === suspect.id
-                          ? 'border-amber-400 bg-amber-400/14 shadow-[0_0_20px_rgba(251,191,36,0.22)]'
-                          : 'border-stone-800 bg-stone-900/50 hover:border-amber-500/50'
+                          ? 'border-cyan-200 bg-cyan-100/10 shadow-[0_0_18px_rgba(125,211,252,0.2)]'
+                          : 'border-white/14 bg-slate-950/32 hover:border-cyan-200/55'
                   }`}
                 >
-                  <div className="relative flex h-full w-full items-center justify-center overflow-visible rounded-[1.05rem] border border-white/16 bg-slate-950/40 p-1 shadow-lg max-[480px]:rounded-[0.9rem] max-[480px]:p-0.25">
+                  <div className="relative flex h-full w-full items-center justify-center overflow-visible rounded-[1.05rem] border border-white/12 bg-slate-950/32 p-[2px] shadow-lg max-[480px]:rounded-[0.9rem]">
                     {suspect.portrait ? (
                       <img
                         src={suspect.portrait}
