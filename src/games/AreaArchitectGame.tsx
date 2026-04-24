@@ -23,7 +23,8 @@ interface AreaArchitectGameProps extends MiniGameShellContractProps {
   onBack: () => void;
 }
 
-type Cell = { x: number; y: number };
+type HalfTriangle = 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
+type Cell = { x: number; y: number; half?: HalfTriangle };
 
 interface AreaQuestion {
   id: string;
@@ -48,8 +49,10 @@ const rectCells = (xStart: number, yStart: number, width: number, height: number
   return cells;
 };
 
+const halfCell = (x: number, y: number, half: HalfTriangle): Cell => ({ x, y, half });
+
 const buildQuestion = (gridSize: number, cells: Cell[], prompt: string): AreaQuestion => {
-  const correct = cells.length;
+  const correct = cells.reduce((total, cell) => total + (cell.half ? 0.5 : 1), 0);
   const step = Math.max(2, Math.round(correct * 0.2));
   const options = shuffle([
     correct,
@@ -63,7 +66,7 @@ const buildQuestion = (gridSize: number, cells: Cell[], prompt: string): AreaQue
   }
 
   return {
-    id: `${gridSize}-${correct}-${Math.random().toString(36).slice(2, 6)}`,
+    id: `${gridSize}-${correct}-${cells.map((cell) => `${cell.x}-${cell.y}-${cell.half || 'full'}`).join('_')}`,
     kind: 'fluency',
     prompt,
     gridSize,
@@ -74,16 +77,16 @@ const buildQuestion = (gridSize: number, cells: Cell[], prompt: string): AreaQue
 };
 
 const QUESTION_BANK: AreaQuestion[] = [
-  buildQuestion(6, rectCells(1, 1, 3, 2), 'Find the area of the shaded rectangle.'),
-  buildQuestion(6, rectCells(1, 1, 4, 3), 'Find the area of the shaded shape.'),
-  buildQuestion(6, rectCells(2, 2, 2, 3), 'Count the squares to find the area.'),
+  buildQuestion(6, rectCells(1, 1, 3, 2), 'Calculate the red area.'),
+  buildQuestion(6, rectCells(1, 1, 4, 3), 'Calculate the area.'),
+  buildQuestion(6, rectCells(2, 2, 2, 3), 'Calculate the red area.'),
   buildQuestion(
     6,
     [
       ...rectCells(1, 1, 3, 2),
       ...rectCells(3, 3, 2, 2),
     ],
-    'Find the area of the L-shaped floor.',
+    'Calculate the red area.',
   ),
   buildQuestion(
     6,
@@ -91,7 +94,7 @@ const QUESTION_BANK: AreaQuestion[] = [
       ...rectCells(1, 1, 2, 4),
       ...rectCells(3, 3, 2, 2),
     ],
-    'What is the area of the shaded shape?',
+    'Calculate the area.',
   ),
   buildQuestion(
     7,
@@ -99,7 +102,25 @@ const QUESTION_BANK: AreaQuestion[] = [
       ...rectCells(2, 2, 3, 3),
       ...rectCells(5, 2, 1, 2),
     ],
-    'Find the area using square units.',
+    'Calculate the red area.',
+  ),
+  buildQuestion(
+    6,
+    [
+      ...rectCells(1, 2, 3, 2),
+      halfCell(4, 2, 'topLeft'),
+      halfCell(4, 3, 'bottomLeft'),
+    ],
+    'Calculate the red area.',
+  ),
+  buildQuestion(
+    6,
+    [
+      ...rectCells(2, 2, 2, 3),
+      halfCell(1, 2, 'topRight'),
+      halfCell(4, 4, 'bottomLeft'),
+    ],
+    'Calculate the area.',
   ),
 ];
 
@@ -109,6 +130,15 @@ const buildQuestionDeck = (previousLast: AreaQuestion | null) => (
     options: shuffleOptionsWithCorrect(question.options, question.correct).options,
   }))
 );
+
+const halfTriangleClipPath: Record<HalfTriangle, string> = {
+  topLeft: 'polygon(0 0, 100% 0, 0 100%)',
+  topRight: 'polygon(0 0, 100% 0, 100% 100%)',
+  bottomLeft: 'polygon(0 0, 0 100%, 100% 100%)',
+  bottomRight: 'polygon(100% 0, 0 100%, 100% 100%)',
+};
+
+const formatAreaOption = (value: number) => Number.isInteger(value) ? `${value}` : `${value.toFixed(1)}`;
 
 const starsForAccuracy = (correct: number, attempts: number) => {
   if (attempts === 0) return 0;
@@ -139,7 +169,7 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
     () => questionOrder[roundIndex % questionOrder.length],
     [questionOrder, roundIndex],
   );
-  const cellSet = useMemo(() => new Set(question.cells.map((cell) => `${cell.x}-${cell.y}`)), [question.cells]);
+  const cellMap = useMemo(() => new Map(question.cells.map((cell) => [`${cell.x}-${cell.y}`, cell])), [question.cells]);
   const lastQuestion = questionOrder.length ? questionOrder[questionOrder.length - 1] : null;
 
   useEffect(() => {
@@ -201,7 +231,7 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Area Architect"
-        body="The Monster Minds have scrambled the floor plan.\nDrag the shapes into the right spaces to rebuild the area.\nCheck the footprint carefully."
+        body="The Monster Minds have scrambled the area grid.\nCalculate the red area carefully.\nHalf squares count as triangular halves."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
@@ -225,12 +255,28 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
               const x = (index % question.gridSize) + 1;
               const y = Math.floor(index / question.gridSize) + 1;
               const key = `${x}-${y}`;
-              const filled = cellSet.has(key);
+              const cell = cellMap.get(key);
+              const filled = Boolean(cell);
               return (
                 <div
                   key={key}
-                  className={`aspect-square rounded-[0.3rem] border ${filled ? 'border-amber-200/80 bg-amber-300/45' : 'border-white/12 bg-slate-900/60'}`}
-                />
+                  className={`relative aspect-square overflow-hidden rounded-[0.3rem] border ${
+                    filled ? 'border-rose-100/85 bg-rose-950/20' : 'border-white/12 bg-slate-900/60'
+                  }`}
+                >
+                  {cell?.half ? (
+                    <span
+                      aria-hidden="true"
+                      className="absolute inset-0 bg-red-500/78 shadow-[inset_0_0_10px_rgba(255,255,255,0.16)]"
+                      style={{ clipPath: halfTriangleClipPath[cell.half] }}
+                    />
+                  ) : filled ? (
+                    <span
+                      aria-hidden="true"
+                      className="absolute inset-0 bg-red-500/72 shadow-[inset_0_0_10px_rgba(255,255,255,0.16)]"
+                    />
+                  ) : null}
+                </div>
               );
             })}
           </div>
@@ -251,7 +297,7 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
                   : 'ui-button-secondary'
               }`}
             >
-              {option} sq units
+              {formatAreaOption(option)} sq units
             </motion.button>
           ))}
         </section>

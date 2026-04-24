@@ -29,6 +29,81 @@ const slugify = (value: string | undefined | null) => (
     .replace(/^-+|-+$/g, '')
 );
 
+const getLevelRouteSlugCandidates = (level: typeof ISLANDS[number]['levels'][number]) => {
+  const seen = new Set<string>();
+  return [
+    getLevelGroupKey(level),
+    getLevelGameTitle(level),
+    level.displayName,
+    level.blueprintKey,
+    level.miniGameKey,
+    level.gameType,
+  ]
+    .map(slugify)
+    .filter((slug) => {
+      if (!slug || seen.has(slug)) return false;
+      seen.add(slug);
+      return true;
+    });
+};
+
+export const getLevelRouteSlug = (level: typeof ISLANDS[number]['levels'][number]) => (
+  getLevelRouteSlugCandidates(level)[0] || slugify(level.displayName) || `${level.id}`
+);
+
+const getSiblingLevelsForSlug = (
+  island: typeof ISLANDS[number],
+  level: typeof ISLANDS[number]['levels'][number],
+) => {
+  const primarySlug = getLevelRouteSlug(level);
+  return island.levels
+    .filter((candidate) => getLevelRouteSlug(candidate) === primarySlug)
+    .sort((a, b) => a.id - b.id);
+};
+
+export const getLevelRouteNumber = (
+  island: typeof ISLANDS[number],
+  level: typeof ISLANDS[number]['levels'][number],
+) => {
+  if (Number.isFinite(level.miniGameLevel)) {
+    return level.miniGameLevel as number;
+  }
+
+  const siblingIndex = getSiblingLevelsForSlug(island, level)
+    .findIndex((candidate) => candidate.id === level.id);
+  return siblingIndex >= 0 ? siblingIndex + 1 : level.id;
+};
+
+export const buildRouteForLevel = (
+  island: typeof ISLANDS[number] | null | undefined,
+  level: typeof ISLANDS[number]['levels'][number] | null | undefined,
+) => {
+  if (!island || !level) return '/map';
+  return `/game/${island.id}/${getLevelRouteSlug(level)}/${getLevelRouteNumber(island, level)}`;
+};
+
+const resolveLevelByRouteSlug = (
+  islandId: number | undefined,
+  slug: string | undefined,
+  routeLevelNumber: number | undefined,
+) => {
+  if (!islandId || !slug) return null;
+  const island = ISLANDS.find((candidate) => candidate.id === islandId);
+  if (!island) return null;
+
+  const normalizedSlug = slugify(slug);
+  const candidates = island.levels
+    .filter((level) => getLevelRouteSlugCandidates(level).includes(normalizedSlug))
+    .sort((a, b) => a.id - b.id);
+
+  if (candidates.length === 0) return null;
+  if (!routeLevelNumber) return candidates[0];
+
+  return candidates.find((level) => level.miniGameLevel === routeLevelNumber)
+    ?? candidates[routeLevelNumber - 1]
+    ?? null;
+};
+
 const buildMiniGameRouteEntries = () => {
   const entries = new Map<string, { islandId: number; levelId: number }>();
 
@@ -84,9 +159,15 @@ export const parseRoute = (pathname: string): RouteState => {
     }
     case 'game': {
       const islandId = parseNumericSegment(first);
+      if (!islandId) return { screen: 'world_map' };
+
       const levelId = parseNumericSegment(second);
-      if (!islandId || !levelId) return { screen: 'world_map' };
-      return { screen: 'gameplay', islandId, levelId };
+      if (levelId) return { screen: 'gameplay', islandId, levelId };
+
+      const routedLevelNumber = parseNumericSegment(segments[3]);
+      const routedLevel = resolveLevelByRouteSlug(islandId, second, routedLevelNumber);
+      if (!routedLevel) return { screen: 'island_levels', islandId };
+      return { screen: 'gameplay', islandId, levelId: routedLevel.id };
     }
     case 'minigame':
       {

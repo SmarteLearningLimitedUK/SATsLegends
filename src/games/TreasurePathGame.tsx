@@ -34,6 +34,12 @@ interface TreasureRound {
 }
 
 const GRID_SIZE = 7;
+const CHECKERBOARD_INSET = {
+  left: '27.9%',
+  top: '22.6%',
+  right: '24.0%',
+  bottom: '28.3%',
+};
 const randomInt = (max: number) => Math.floor(Math.random() * max) + 1;
 
 const coordinateKey = (x: number, y: number) => `${x}-${y}`;
@@ -259,26 +265,30 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
           <GameQuestionCard
             title={gameTitle || 'Coordinates Quest'}
             subtitle={round.promptText}
-            bodyClassName="mt-1 text-[1.35rem] font-black leading-none text-white md:text-[1.8rem]"
+            className="min-h-[8.75rem]"
+            style={{
+              ['--question-card-padding' as any]: '18px 20px',
+            }}
+            bodyClassName="mt-2 text-[1.35rem] font-black leading-tight text-white md:text-[1.8rem]"
           >
             {round.promptTitle}
           </GameQuestionCard>
         </div>
 
         <div className="relative flex min-h-0 flex-1 items-center justify-center">
-          <div className="relative aspect-square w-[min(92vw,34rem)] overflow-hidden rounded-[1.5rem] border border-cyan-100/26 shadow-[0_18px_36px_rgba(2,6,23,0.4)]">
+          <div className="relative aspect-square w-[min(90vw,55vh,33rem)] overflow-visible rounded-[1.5rem] border border-cyan-100/26 shadow-[0_18px_36px_rgba(2,6,23,0.4)]">
             <img
               src={coordinateQuestBoard}
               alt=""
               aria-hidden="true"
               draggable={false}
-              className="pointer-events-none absolute left-1/2 top-1/2 h-[205%] w-[205%] object-cover"
-              style={{ transform: 'translate(-52.4%, -47.1%)' }}
+              className="pointer-events-none absolute inset-0 h-full w-full rounded-[1.5rem] object-contain"
             />
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 rounded-[1.35rem]"
+              className="pointer-events-none absolute rounded-[0.45rem]"
               style={{
+                ...CHECKERBOARD_INSET,
                 backgroundImage: [
                   'linear-gradient(to right, rgba(191,219,254,0.38) 1px, transparent 1px)',
                   'linear-gradient(to bottom, rgba(191,219,254,0.38) 1px, transparent 1px)',
@@ -289,16 +299,37 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
             />
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 rounded-[1.35rem] border border-cyan-100/14"
+              className="pointer-events-none absolute inset-0 rounded-[1.5rem] border border-cyan-100/14"
             />
-            <div className="absolute inset-x-2 top-2 z-0 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/78 drop-shadow-[0_2px_4px_rgba(2,6,23,0.8)]">
-              <span>x-axis</span>
-              <span>left to right</span>
+            <div
+              className="pointer-events-none absolute z-30 flex items-center justify-center"
+              style={{
+                left: CHECKERBOARD_INSET.left,
+                right: CHECKERBOARD_INSET.right,
+                top: CHECKERBOARD_INSET.top,
+                transform: 'translateY(-62%)',
+              }}
+            >
+              <div className="rounded-full border border-cyan-100/55 bg-slate-950/72 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-50 shadow-[0_8px_18px_rgba(2,6,23,0.45)] backdrop-blur-sm">
+                X axis ↓
+              </div>
             </div>
-            <div className="absolute bottom-4 left-1 z-0 -rotate-90 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/78 drop-shadow-[0_2px_4px_rgba(2,6,23,0.8)]">
-              y-axis
+            <div
+              className="pointer-events-none absolute z-30 flex items-center justify-start"
+              style={{
+                left: CHECKERBOARD_INSET.left,
+                top: CHECKERBOARD_INSET.top,
+                transform: 'translate(-10%, -168%)',
+              }}
+            >
+              <div className="rounded-full border border-emerald-100/55 bg-slate-950/72 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-emerald-50 shadow-[0_8px_18px_rgba(2,6,23,0.45)] backdrop-blur-sm">
+                Y axis →
+              </div>
             </div>
-            <div className="absolute inset-0 z-10 grid grid-cols-7 grid-rows-7 overflow-hidden rounded-[1.35rem]">
+            <div
+              className="absolute z-10 grid grid-cols-7 grid-rows-7 overflow-hidden rounded-[0.45rem]"
+              style={CHECKERBOARD_INSET}
+            >
               {cells.map((cell) => {
                 const key = coordinateKey(cell.x, cell.y);
                 const isStart = cell.x === round.start.x && cell.y === round.start.y;

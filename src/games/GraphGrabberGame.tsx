@@ -18,7 +18,6 @@ import {
 import graphGrabberBackground from '../assets/maps/backgroundsforgames/graph grabber.jpg';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
-import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 
 interface GraphGrabberGameProps {
   levelId: number;
@@ -400,27 +399,26 @@ const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
   if (round.kind === 'bar' && round.bars) {
     return (
       <div className="flex h-full min-h-0 flex-col rounded-[1.2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(9,19,42,0.58),rgba(7,14,32,0.74))] p-2 shadow-[0_18px_30px_rgba(2,6,23,0.18)]">
-        <div className="flex items-center justify-between px-1 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/75">
-          <span>X</span>
+        <div className="px-1 text-center text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/75">
           {round.chartCaption}
-          <span>Y</span>
         </div>
         <div className="mt-1.5 h-[clamp(13.5rem,32vh,19.5rem)] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={round.bars!} margin={{ top: 18, right: 16, left: 10, bottom: 12 }}>
+            <BarChart data={round.bars!} margin={{ top: 18, right: 16, left: 0, bottom: 16 }}>
               <CartesianGrid stroke="rgba(255,255,255,0.12)" strokeDasharray="3 3" vertical={false} />
               <XAxis
                 dataKey="label"
                 tick={{ fill: '#fff8ec', fontSize: 11, fontWeight: 800 }}
                 axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
                 tickLine={false}
-                label={{ value: round.xLabel, position: 'insideBottom', offset: -2, fill: '#fff8ec', fontSize: 11, fontWeight: 800 } as never}
+                label={{ value: 'X Axis', position: 'insideBottom', offset: -6, fill: '#93c5fd', fontSize: 12, fontWeight: 800 } as never}
               />
               <YAxis
                 tick={{ fill: '#fff8ec', fontSize: 11, fontWeight: 800 }}
                 axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
                 tickLine={false}
-                label={{ value: round.yLabel, angle: -90, position: 'insideLeft', fill: '#fff8ec', fontSize: 11, fontWeight: 800 } as never}
+                label={{ value: 'Y Axis', angle: -90, position: 'insideLeft', fill: '#93c5fd', fontSize: 12, fontWeight: 800 } as never}
+                width={42}
               />
               <Tooltip
                 cursor={{ fill: 'rgba(255,255,255,0.08)' }}
@@ -441,27 +439,26 @@ const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
   if (round.kind === 'line' && round.line) {
     return (
       <div className="flex h-full min-h-0 flex-col rounded-[1.2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(9,19,42,0.58),rgba(7,14,32,0.74))] p-2 shadow-[0_18px_30px_rgba(2,6,23,0.18)]">
-        <div className="flex items-center justify-between px-1 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/75">
-          <span>X</span>
+        <div className="px-1 text-center text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/75">
           {round.chartCaption}
-          <span>Y</span>
         </div>
         <div className="mt-1.5 h-[clamp(13.5rem,32vh,19.5rem)] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={round.line!} margin={{ top: 18, right: 16, left: 10, bottom: 12 }}>
+            <LineChart data={round.line!} margin={{ top: 18, right: 16, left: 0, bottom: 16 }}>
               <CartesianGrid stroke="rgba(255,255,255,0.12)" strokeDasharray="3 3" />
               <XAxis
                 dataKey="label"
                 tick={{ fill: '#fff8ec', fontSize: 11, fontWeight: 800 }}
                 axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
                 tickLine={false}
-                label={{ value: round.xLabel, position: 'insideBottom', offset: -2, fill: '#fff8ec', fontSize: 11, fontWeight: 800 } as never}
+                label={{ value: 'X Axis', position: 'insideBottom', offset: -6, fill: '#93c5fd', fontSize: 12, fontWeight: 800 } as never}
               />
               <YAxis
                 tick={{ fill: '#fff8ec', fontSize: 11, fontWeight: 800 }}
                 axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
                 tickLine={false}
-                label={{ value: round.yLabel, angle: -90, position: 'insideLeft', fill: '#fff8ec', fontSize: 11, fontWeight: 800 } as never}
+                label={{ value: 'Y Axis', angle: -90, position: 'insideLeft', fill: '#93c5fd', fontSize: 12, fontWeight: 800 } as never}
+                width={42}
               />
               <Tooltip
                 contentStyle={{ background: 'rgba(8,15,32,0.95)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '14px', color: '#fff8ec' }}
@@ -478,10 +475,8 @@ const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
 
   return (
     <div className="flex h-full min-h-0 flex-col rounded-[1.2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(9,19,42,0.58),rgba(7,14,32,0.74))] p-2 shadow-[0_18px_30px_rgba(2,6,23,0.18)]">
-      <div className="flex items-center justify-between px-1 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/75">
-        <span>X</span>
+      <div className="px-1 text-center text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/75">
         {round.chartCaption}
-        <span>Y</span>
       </div>
       <div className="mt-1.5 grid min-h-0 flex-1 gap-2.5 md:grid-cols-[1.08fr_0.92fr]">
         <div className="h-[clamp(13.5rem,32vh,19.5rem)]">
@@ -508,9 +503,6 @@ const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
                 <div className="text-xs font-black text-cyan-200">{slice.value}%</div>
               </div>
             ))}
-          </div>
-          <div className="mt-1 text-[10px] font-bold leading-relaxed text-white/72">
-            Pie charts are labelled clearly here so the learner can match the slice to the statement.
           </div>
         </div>
       </div>
@@ -721,7 +713,8 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
         <div className="flex min-h-0 flex-1 flex-col gap-2 md:gap-3">
           <div className="flex justify-center">
             <GameQuestionCard title={round.title}>
-              {formatFantasyPrompt(round.prompt)}
+              <span>The Monster Minds have corrupted the manifest.</span>
+              <span className="mt-1 block">{round.prompt}</span>
             </GameQuestionCard>
           </div>
 
@@ -731,10 +724,6 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
             </div>
 
             <section className="translate-y-[20px] rounded-[1.15rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(10,17,37,0.84))] p-2.5 shadow-[0_18px_30px_rgba(2,6,23,0.18)] md:p-3">
-              <div className="mb-2 flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/70">
-                <span>{round.support}</span>
-                <span>{round.xLabel} vs {round.yLabel}</span>
-              </div>
               <div className={`grid gap-2 ${optionGridClass}`}>
                 {round.options.map((choice) => {
                   const selected = selectedIds.includes(choice.id);

@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } fr
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ISLANDS } from '../constants';
 import { GameScreen, IslandData, LevelData } from '../types';
-import { buildRouteForScreen, parseRoute } from './routeConfig';
+import { buildRouteForLevel, buildRouteForScreen, parseRoute } from './routeConfig';
 
 export interface ScreenFlowController {
   screen: GameScreen;
@@ -66,7 +66,9 @@ export const useScreenFlow = (): ScreenFlowController => {
     }
 
     if (nextScreen === 'gameplay' && (!routeIsland || !routeLevel)) {
-      nextScreen = 'world_map';
+      nextScreen = routeIsland ? 'island_levels' : 'world_map';
+      nextIsland = routeIsland ?? null;
+      nextLevel = null;
     }
 
     syncFromRouteRef.current = true;
@@ -95,7 +97,9 @@ export const useScreenFlow = (): ScreenFlowController => {
       setSelectedIsland(null);
     }
 
-    const expectedPath = buildRouteForScreen(nextScreen, nextIsland?.id, nextLevel?.id);
+    const expectedPath = nextScreen === 'gameplay'
+      ? buildRouteForLevel(nextIsland, nextLevel)
+      : buildRouteForScreen(nextScreen, nextIsland?.id, nextLevel?.id);
     if (!routeState.preservePath && location.pathname !== expectedPath) {
       navigate(expectedPath, { replace: true });
     }
@@ -110,7 +114,9 @@ export const useScreenFlow = (): ScreenFlowController => {
   useEffect(() => {
     if (syncFromRouteRef.current) return;
     if (preserveCurrentPathRef.current && parseRoute(location.pathname).preservePath) return;
-    const nextPath = buildRouteForScreen(screen, selectedIsland?.id, selectedLevel?.id);
+    const nextPath = screen === 'gameplay'
+      ? buildRouteForLevel(selectedIsland, selectedLevel)
+      : buildRouteForScreen(screen, selectedIsland?.id, selectedLevel?.id);
     if (location.pathname !== nextPath) {
       navigate(nextPath);
     }

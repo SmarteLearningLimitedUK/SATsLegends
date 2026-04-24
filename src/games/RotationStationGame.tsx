@@ -510,12 +510,10 @@ const RotationStationGame: React.FC<RotationStationGameProps> = ({
                   <div className="flex flex-col items-center gap-1.5">
                     <div className="text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/72">Target</div>
                     <ShapeCard shape={question.shape} orientation={question.targetOrientation} tone="target" />
-                    <div className="text-[10px] font-bold text-cyan-100/80">{orientationLabel(question.targetOrientation)}</div>
                   </div>
                   <div className="flex flex-col items-center gap-1.5">
                     <div className="text-[10px] font-black uppercase tracking-[0.14em] text-amber-100/72">Your shape</div>
                     <ShapeCard shape={question.shape} orientation={playerOrientation} tone="player" />
-                    <div className="text-[10px] font-bold text-amber-100/80">{orientationLabel(playerOrientation)}</div>
                   </div>
                 </div>
               ) : null}

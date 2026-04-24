@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import factorFrenzyBackground from '../assets/maps/backgroundsforgames/Factor Frenzy.jpg';
-import krakenBoss from '../assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_create_me_a_kracken-1.jpg';
+import factorFrenzyBoss from '../assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_but_different_colours_create_me_an_evil_pink_and_light_pur-2.jpg';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
 
@@ -174,7 +174,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   const [successTone, setSuccessTone] = useState<'success' | 'praise'>('success');
   const [successMessage, setSuccessMessage] = useState('Direct hit!');
   const problemStartRef = useRef<number>(Date.now());
-  const [factorFrenzyEnemy, setFactorFrenzyEnemy] = useState(krakenBoss);
+  const [factorFrenzyEnemy, setFactorFrenzyEnemy] = useState(factorFrenzyBoss);
 
   const timerRef = useRef<number | null>(null);
   const advanceRef = useRef<number | null>(null);
@@ -196,7 +196,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
   useEffect(() => {
     let mounted = true;
-    createTransparentBossFrame(krakenBoss).then((source) => {
+    createTransparentBossFrame(factorFrenzyBoss).then((source) => {
       if (mounted) setFactorFrenzyEnemy(source);
     });
     return () => {

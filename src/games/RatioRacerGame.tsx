@@ -50,6 +50,8 @@ const PLAYER_BOB_BASE_SPEED = 5.1;
 const PLAYER_BOB_AMPLITUDE = 4.5;
 const PLAYER_ROLL_MAX = 5;
 const FINISH_SCREEN_THRESHOLD = 91;
+const REQUIRED_CORRECT_TO_FINISH = 5;
+const FINISH_CROSS_BUFFER = 90;
 const PLAYER_KARTS: Record<string, string> = {
   barratt: kartBran,
   bran: kartMochi,
@@ -248,6 +250,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
   const raceViewportRef = useRef<HTMLDivElement | null>(null);
   const playerPosRef = useRef(START_OFFSET);
   const playerTargetRef = useRef(START_OFFSET);
+  const finishPendingRef = useRef(false);
   const reportedResultRef = useRef(false);
   const playerBobPhaseRef = useRef(0);
 
@@ -280,6 +283,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
     questionStartRef.current = Date.now();
     playerPosRef.current = START_OFFSET;
     playerTargetRef.current = START_OFFSET;
+    finishPendingRef.current = false;
     playerBobPhaseRef.current = 0;
   }, [levelId]);
 
@@ -296,6 +300,21 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
 
       playerPosRef.current = playerX + (playerTarget - playerX) * RACER_LERP;
       playerBobPhaseRef.current += dt * (PLAYER_BOB_BASE_SPEED + Math.abs(playerTarget - playerX) * 0.14);
+
+      if (
+        finishPendingRef.current
+        && !reportedResultRef.current
+        && playerPosRef.current >= tuning.trackLength + FINISH_CROSS_BUFFER * 0.55
+      ) {
+        finishPendingRef.current = false;
+        setRaceState('playerWin');
+        confetti({
+          particleCount: 60,
+          spread: 55,
+          origin: { y: 0.6 },
+          colors: ['#facc15', '#38bdf8', '#4ade80'],
+        });
+      }
 
       setRenderTick((prev) => prev + 1);
       frameId = requestAnimationFrame(tick);
@@ -367,30 +386,31 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
     setLocked(true);
     setRaceState('evaluatingAnswer');
 
-    const playerStep = tuning.playerAdvanceDistance;
     const stumble = tuning.playerStumbleDistance;
     const boostDelay = tuning.playerBoostAnticipationMs;
     const moveDuration = tuning.playerMoveDurationMs + boostDelay;
 
     if (option === question.correctAnswer) {
-      setCorrectCount((prev) => prev + 1);
+      const nextCorrectCount = correctCount + 1;
+      const isFinishingAnswer = nextCorrectCount >= REQUIRED_CORRECT_TO_FINISH;
+      const nextTarget = isFinishingAnswer
+        ? tuning.trackLength + FINISH_CROSS_BUFFER
+        : tuning.trackLength * (nextCorrectCount / REQUIRED_CORRECT_TO_FINISH);
+
+      setCorrectCount(nextCorrectCount);
       const elapsedMs = Date.now() - questionStartRef.current;
       const isPraise = shouldShowPraise(1, elapsedMs);
-      setFeedback(isPraise ? buildPraiseMessage() : 'Fuel mix fixed!');
+      setFeedback(isFinishingAnswer ? 'Finish line in sight!' : isPraise ? buildPraiseMessage() : 'Fuel mix fixed!');
       setRaceState('correctBoost');
       window.setTimeout(() => {
-        playerTargetRef.current = Math.min(tuning.trackLength, playerTargetRef.current + playerStep);
+        playerTargetRef.current = nextTarget;
+        if (isFinishingAnswer) {
+          finishPendingRef.current = true;
+        }
       }, boostDelay);
 
       window.setTimeout(() => {
-        if (playerTargetRef.current >= tuning.trackLength) {
-          setRaceState('playerWin');
-          confetti({
-            particleCount: 60,
-            spread: 55,
-            origin: { y: 0.6 },
-            colors: ['#facc15', '#38bdf8', '#4ade80'],
-          });
+        if (isFinishingAnswer) {
           return;
         }
 

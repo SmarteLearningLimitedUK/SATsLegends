@@ -85,6 +85,13 @@ type CloudLayer = {
   alpha: number;
 };
 
+type WorldDecoration = {
+  x: number;
+  y: number;
+  scale: number;
+  variant: number;
+};
+
 const ANGLE_CLOUDS: CloudLayer[] = [
   { x: 40, y: 0.16, scale: 1.12, speed: 0.45, alpha: 0.68 },
   { x: 220, y: 0.12, scale: 0.92, speed: 0.28, alpha: 0.52 },
@@ -92,6 +99,39 @@ const ANGLE_CLOUDS: CloudLayer[] = [
   { x: 680, y: 0.24, scale: 0.82, speed: 0.22, alpha: 0.48 },
   { x: 940, y: 0.14, scale: 1.05, speed: 0.31, alpha: 0.58 },
   { x: 1180, y: 0.21, scale: 1.34, speed: 0.18, alpha: 0.66 },
+];
+
+const ANGLE_TREES: WorldDecoration[] = [
+  { x: -260, y: 0.72, scale: 1.2, variant: 0 },
+  { x: -110, y: 0.74, scale: 0.86, variant: 1 },
+  { x: 280, y: 0.71, scale: 1.05, variant: 2 },
+  { x: 520, y: 0.75, scale: 0.78, variant: 0 },
+  { x: 880, y: 0.72, scale: 1.18, variant: 1 },
+  { x: 1260, y: 0.74, scale: 0.92, variant: 2 },
+  { x: 1660, y: 0.71, scale: 1.28, variant: 0 },
+  { x: 2060, y: 0.73, scale: 0.98, variant: 1 },
+];
+
+const ANGLE_BUSHES: WorldDecoration[] = [
+  { x: -170, y: 0.84, scale: 0.9, variant: 0 },
+  { x: 90, y: 0.86, scale: 1.12, variant: 1 },
+  { x: 410, y: 0.85, scale: 0.8, variant: 2 },
+  { x: 720, y: 0.87, scale: 1.18, variant: 0 },
+  { x: 1090, y: 0.85, scale: 0.92, variant: 1 },
+  { x: 1480, y: 0.86, scale: 1.04, variant: 2 },
+  { x: 1840, y: 0.84, scale: 1.2, variant: 0 },
+  { x: 2240, y: 0.87, scale: 0.86, variant: 1 },
+];
+
+const ANGLE_ROCKS: WorldDecoration[] = [
+  { x: -40, y: 0.93, scale: 0.9, variant: 0 },
+  { x: 210, y: 0.91, scale: 0.58, variant: 1 },
+  { x: 470, y: 0.94, scale: 0.78, variant: 2 },
+  { x: 790, y: 0.92, scale: 0.64, variant: 0 },
+  { x: 1160, y: 0.94, scale: 0.84, variant: 1 },
+  { x: 1510, y: 0.91, scale: 0.62, variant: 2 },
+  { x: 1930, y: 0.93, scale: 0.95, variant: 0 },
+  { x: 2320, y: 0.92, scale: 0.7, variant: 1 },
 ];
 
 const drawCloud = (
@@ -113,6 +153,118 @@ const drawCloud = (
   ctx.ellipse(x + (22 * scale), y + (10 * scale), 38 * scale, 20 * scale, 0, 0, Math.PI * 2);
   ctx.ellipse(x + (72 * scale), y + (10 * scale), 42 * scale, 20 * scale, 0, 0, Math.PI * 2);
   ctx.fill();
+  ctx.restore();
+};
+
+const wrapDecorationX = (worldX: number, cameraX: number, parallax: number, width: number) => {
+  const span = Math.max(900, width + 780);
+  return ((((worldX - cameraX * parallax) % span) + span) % span) - 240;
+};
+
+const drawBird = (
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  scale: number,
+  flap: number,
+) => {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(scale, scale);
+  ctx.strokeStyle = 'rgba(15,23,42,0.58)';
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(-10, 0);
+  ctx.quadraticCurveTo(-4, -7 - flap, 0, -1);
+  ctx.quadraticCurveTo(5, -8 + flap, 12, 0);
+  ctx.stroke();
+  ctx.restore();
+};
+
+const drawTree = (
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  scale: number,
+  variant: number,
+) => {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(scale, scale);
+  ctx.fillStyle = '#5b3414';
+  drawRoundedRectPath(ctx, -8, -55, 16, 58, 7);
+  ctx.fill();
+  ctx.fillStyle = variant === 1 ? '#14532d' : variant === 2 ? '#166534' : '#0f3f2e';
+  [-45, -72, -96].forEach((top, index) => {
+    ctx.beginPath();
+    ctx.moveTo(0, top - (variant * 2));
+    ctx.lineTo(-44 + index * 8, -22 + index * 6);
+    ctx.lineTo(44 - index * 8, -22 + index * 6);
+    ctx.closePath();
+    ctx.fill();
+  });
+  ctx.fillStyle = 'rgba(132,204,22,0.26)';
+  ctx.beginPath();
+  ctx.ellipse(-12, -60, 10, 24, -0.4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+};
+
+const drawBush = (
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  scale: number,
+  variant: number,
+) => {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(scale, scale);
+  ctx.fillStyle = variant === 1 ? '#15803d' : variant === 2 ? '#166534' : '#0f766e';
+  [-26, 0, 27].forEach((offset, index) => {
+    ctx.beginPath();
+    ctx.ellipse(offset, -10 - index * 3, 27, 20, 0, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.fillStyle = 'rgba(190,242,100,0.32)';
+  ctx.beginPath();
+  ctx.ellipse(-18, -18, 9, 6, -0.3, 0, Math.PI * 2);
+  ctx.ellipse(18, -15, 8, 5, 0.2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+};
+
+const drawRock = (
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  scale: number,
+  variant: number,
+) => {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(scale, scale);
+  ctx.fillStyle = variant === 1 ? '#64748b' : variant === 2 ? '#475569' : '#334155';
+  ctx.beginPath();
+  ctx.moveTo(-32, 3);
+  ctx.quadraticCurveTo(-25, -18, -8, -22);
+  ctx.quadraticCurveTo(14, -31, 31, -7);
+  ctx.quadraticCurveTo(38, 7, 20, 13);
+  ctx.lineTo(-21, 13);
+  ctx.quadraticCurveTo(-36, 11, -32, 3);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = 'rgba(226,232,240,0.22)';
+  ctx.beginPath();
+  ctx.ellipse(-8, -12, 13, 5, -0.35, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = 'rgba(15,23,42,0.3)';
+  for (let i = 0; i < 3; i += 1) {
+    ctx.beginPath();
+    ctx.ellipse(44 + i * 14, 9 + (i % 2) * 4, 5, 3, 0.2, 0, Math.PI * 2);
+    ctx.fill();
+  }
   ctx.restore();
 };
 
@@ -167,6 +319,12 @@ const drawSkyBackground = (
     const y = height * cloud.y + Math.sin((timestamp * 0.00045) + index) * 5 - (cameraY * 0.03 * cloud.speed);
     drawCloud(ctx, baseX, y, cloud.scale, cloud.alpha);
   });
+
+  for (let i = 0; i < 9; i += 1) {
+    const x = ((i * 154) + (timestamp * 0.026) - (cameraX * 0.07)) % (width + 260) - 130;
+    const y = height * (0.18 + ((i % 4) * 0.055)) + Math.sin(timestamp * 0.0011 + i) * 7;
+    drawBird(ctx, x, y, 0.72 + (i % 3) * 0.22, Math.sin(timestamp * 0.009 + i) * 2);
+  }
 
   const mountainShift = cameraX * 0.08;
   const farRidgeY = height * 0.56 + (cameraY * 0.02);
@@ -238,6 +396,45 @@ const drawSkyBackground = (
     ctx.closePath();
     ctx.fill();
   }
+  ctx.restore();
+
+  ctx.save();
+  ctx.globalAlpha = 0.72;
+  ANGLE_TREES.forEach((tree) => {
+    drawTree(
+      ctx,
+      wrapDecorationX(tree.x, cameraX, 0.34, width),
+      height * tree.y + cameraY * 0.03,
+      tree.scale,
+      tree.variant,
+    );
+  });
+  ctx.restore();
+
+  ctx.save();
+  ctx.globalAlpha = 0.88;
+  ANGLE_BUSHES.forEach((bush) => {
+    drawBush(
+      ctx,
+      wrapDecorationX(bush.x, cameraX, 0.46, width),
+      height * bush.y + cameraY * 0.045,
+      bush.scale,
+      bush.variant,
+    );
+  });
+  ctx.restore();
+
+  ctx.save();
+  ctx.globalAlpha = 0.82;
+  ANGLE_ROCKS.forEach((rock) => {
+    drawRock(
+      ctx,
+      wrapDecorationX(rock.x, cameraX, 0.58, width),
+      height * rock.y + cameraY * 0.05,
+      rock.scale,
+      rock.variant,
+    );
+  });
   ctx.restore();
 
   ctx.save();
@@ -555,6 +752,18 @@ const getSideTargetWorld = (viewWidth: number, viewHeight: number) => ({
   x: clamp(viewWidth * 3.65, 1280, 2200),
   y: -clamp(viewHeight * 0.2, 96, 170),
 });
+
+const getEnemySize = (viewWidth: number, viewHeight: number) => Math.min(viewWidth, viewHeight) * 0.26;
+
+const getEnemyPortraitOffsetY = (viewWidth: number, viewHeight: number) => -getEnemySize(viewWidth, viewHeight) * 0.12;
+
+const getEnemyPortraitTargetWorld = (viewWidth: number, viewHeight: number) => {
+  const enemyWorld = getSideTargetWorld(viewWidth, viewHeight);
+  return {
+    x: enemyWorld.x,
+    y: enemyWorld.y + getEnemyPortraitOffsetY(viewWidth, viewHeight),
+  };
+};
 
 const buildProjectile = (
   answerAngleDeg: number,

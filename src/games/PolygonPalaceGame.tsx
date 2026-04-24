@@ -853,8 +853,8 @@ const ShapePreview: React.FC<{
 
   return (
     <motion.svg
-      viewBox="-62 -62 124 124"
-      className="h-[10.8rem] w-[10.8rem] md:h-[12.4rem] md:w-[12.4rem]"
+      viewBox="-56 -56 112 112"
+      className="h-[12.8rem] w-[12.8rem] max-h-full max-w-full md:h-[14.8rem] md:w-[14.8rem]"
       initial={{ opacity: 0, scale: 0.93 }}
       animate={{
         opacity: 1,

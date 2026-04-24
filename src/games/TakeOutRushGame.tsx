@@ -595,14 +595,14 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
 
         <main className="relative mt-1.5 flex min-h-0 flex-1 flex-col gap-2 pb-[calc(env(safe-area-inset-bottom)+3.9rem)]">
           <section className="relative flex min-h-[16rem] flex-1 items-start justify-center">
-            <div className="absolute left-1/2 top-[calc(16%+10px)] w-[min(74vw,18rem)] -translate-x-1/2 text-center">
+            <div className="absolute left-1/2 top-[23%] flex w-[min(74vw,18rem)] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-[1rem] border border-amber-100/22 bg-slate-950/34 px-3 py-2 text-center shadow-[0_10px_22px_rgba(2,6,23,0.28)]">
               <div className="text-[9px] font-black uppercase tracking-[0.18em] text-amber-100/80 drop-shadow-[0_2px_6px_rgba(2,6,23,0.8)]">
                 Order Target
               </div>
               <div className="mt-0.5 text-[clamp(1.25rem,5.2vw,1.85rem)] font-black text-amber-100 drop-shadow-[0_3px_10px_rgba(2,6,23,0.8)]">
                 {asDisplayFraction(order.target)}
               </div>
-              <div className="mx-auto mt-1.5 w-fit rounded-full border border-amber-100/30 bg-slate-950/62 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100 shadow-[0_8px_16px_rgba(2,6,23,0.34)]">
+              <div className="mt-1 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100 drop-shadow-[0_2px_6px_rgba(2,6,23,0.8)]">
                 Selected: <span className="text-amber-100">{asDisplayFraction(runningTotal)}</span>
               </div>
             </div>

@@ -14,7 +14,7 @@ const AVATAR_FOOT_ANCHOR_MAIN_Y_PX: Record<string, number> = {
 };
 
 const AVATAR_MAIN_GLOBAL_LIFT_PX = -28;
-const AVATAR_MAIN_VISUAL_SCALE = 2.16;
+const AVATAR_MAIN_VISUAL_SCALE = 1.72;
 
 interface AvatarSelectProps {
   selectedId: string;
@@ -77,10 +77,10 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({
               triggerHaptic('tap');
               onBackToSplash();
             }}
-            className="ui-icon-button absolute left-3 top-[calc(env(safe-area-inset-top)+0.75rem)] z-40 flex h-11 w-11 items-center justify-center rounded-full p-0 text-white shadow-xl sm:left-5 sm:h-12 sm:w-12"
+            className="ui-icon-button absolute left-3 top-[calc(env(safe-area-inset-top)+0.35rem)] z-40 flex h-10 w-10 items-center justify-center rounded-full p-0 text-white shadow-xl sm:left-5 sm:h-11 sm:w-11"
             aria-label="Back to islands"
           >
-            <AssetIcon name="back" className="h-6 w-6 sm:h-8 sm:w-8" />
+            <AssetIcon name="back" className="h-5 w-5 sm:h-7 sm:w-7" />
           </button>
 
           <div className="avatar-carousel-header">
@@ -95,8 +95,8 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({
             </div>
           </div>
 
-            <div className="avatar-name-panel relative z-30 mx-auto flex w-full max-w-3xl flex-col gap-3 rounded-[1.35rem] border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(8,21,58,0.82),rgba(4,15,44,0.88))] px-4 py-4 text-center shadow-[0_18px_32px_rgba(2,6,23,0.32)] backdrop-blur-md sm:px-5 sm:py-5">
-              <div className="text-[0.68rem] font-black uppercase tracking-[0.22em] text-cyan-100/80 sm:text-xs">
+            <div className="avatar-name-panel relative z-30 mx-auto flex w-[min(78vw,19rem)] flex-col gap-1.5 rounded-[1rem] border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(8,21,58,0.82),rgba(4,15,44,0.88))] px-3 py-2 text-center shadow-[0_12px_24px_rgba(2,6,23,0.28)] backdrop-blur-md sm:w-[min(54vw,22rem)] sm:px-3.5 sm:py-2.5">
+              <div className="text-[0.56rem] font-black uppercase tracking-[0.16em] text-cyan-100/80 sm:text-[0.64rem]">
                 Enter your name and select your Hero.
               </div>
               <input
@@ -104,9 +104,9 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({
                 onChange={(event) => onDraftNameChange(event.target.value.slice(0, 18))}
                 onKeyDown={(event) => {
                 if (event.key === 'Enter') onConfirm();
-                }}
+              }}
               placeholder="Explorer"
-              className="aaa-name-input w-full rounded-[1.15rem] border border-white/20 bg-slate-950/65 px-5 py-3 text-center text-base font-black text-white shadow-[0_14px_28px_rgba(0,0,0,0.2)] outline-none placeholder:text-white/45 focus:ring-2 focus:ring-amber-300/45 md:rounded-[1.5rem] md:px-6 md:py-4 md:text-2xl"
+              className="aaa-name-input w-full rounded-[0.85rem] border border-white/20 bg-slate-950/65 px-3 py-1.5 text-center text-sm font-black text-white shadow-[0_10px_20px_rgba(0,0,0,0.18)] outline-none placeholder:text-white/45 focus:ring-2 focus:ring-amber-300/45 md:rounded-[1rem] md:px-4 md:py-2 md:text-base"
             />
           </div>
 
@@ -136,7 +136,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({
                   <img
                     src={getAvatarImage(selectedAvatar)}
                     alt={selectedAvatar.name}
-                    className="pointer-events-none h-[2240%] w-auto object-contain object-bottom"
+                    className="pointer-events-none h-[1780%] w-auto object-contain object-bottom"
                     style={getMainFootOffsetStyle(selectedAvatar.id)}
                     draggable={false}
                   />

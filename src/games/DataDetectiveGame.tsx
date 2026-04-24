@@ -93,6 +93,7 @@ const WHODUNNIT_BRIEFS = [
   'Spot the thief by reading the evidence graph.',
   'Find the culprit hiding in the numbers.',
 ];
+const CASE_REVIEW_PROMPT = "Good evening detective - here's the evidence I'd like you to review.";
 
 const MAX_CASES = 10;
 
@@ -306,9 +307,9 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           <GameQuestionCard
             className="z-30 mt-0 w-full max-w-[780px] max-[480px]:px-2 max-[480px]:py-1.5"
             title={caseMode === 'whodunnit' ? 'Who took the loot?' : 'Match the evidence totals.'}
-            subtitle={caseBrief}
+            subtitle={CASE_REVIEW_PROMPT}
           >
-            {''}
+            {caseBrief}
           </GameQuestionCard>
         </div>
       )}
@@ -440,23 +441,23 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleSuspectClick(suspect.id)}
                   transition={{ duration: 0.35 }}
-                  className={`group relative flex w-full aspect-[4/3] items-center justify-center rounded-[1.2rem] border p-[2px] transition-all duration-300 sm:aspect-[3/4] max-[480px]:aspect-[1/1.7] max-[480px]:rounded-lg ${
+                  className={`group relative flex w-full aspect-[4/3] items-center justify-center rounded-[1.2rem] border-0 bg-transparent p-0 transition-all duration-300 sm:aspect-[3/4] max-[480px]:aspect-[1/1.7] max-[480px]:rounded-lg ${
                     gameState === 'success' && suspect.id === guiltyId
-                      ? 'border-emerald-400 bg-emerald-400/14 shadow-[0_0_24px_rgba(16,185,129,0.3)]'
+                      ? 'drop-shadow-[0_0_18px_rgba(16,185,129,0.65)]'
                       : incorrectSuspectIds.includes(suspect.id)
-                        ? 'pointer-events-none border-stone-700 bg-stone-950/80 opacity-35 grayscale'
+                        ? 'pointer-events-none opacity-35 grayscale'
                         : selectedSuspectId === suspect.id
-                          ? 'border-cyan-200 bg-cyan-100/10 shadow-[0_0_18px_rgba(125,211,252,0.2)]'
-                          : 'border-white/14 bg-slate-950/32 hover:border-cyan-200/55'
+                          ? 'drop-shadow-[0_0_18px_rgba(125,211,252,0.75)]'
+                          : 'hover:drop-shadow-[0_0_14px_rgba(125,211,252,0.42)]'
                   }`}
                 >
-                  <div className="relative flex h-full w-full items-center justify-center overflow-visible rounded-[1.05rem] border border-white/12 bg-slate-950/32 p-[2px] shadow-lg max-[480px]:rounded-[0.9rem]">
+                  <div className="relative flex h-full w-full items-center justify-center overflow-visible rounded-[1.05rem] bg-transparent p-0 max-[480px]:rounded-[0.9rem]">
                     {suspect.portrait ? (
                       <img
                         src={suspect.portrait}
                         alt=""
                         draggable={false}
-                        className="suspect-portrait block h-full w-full max-h-full max-w-full translate-y-[20px] object-contain object-center"
+                        className="suspect-portrait block h-full w-full max-h-full max-w-full translate-y-[20px] object-contain object-center drop-shadow-[0_10px_16px_rgba(2,6,23,0.45)]"
                         data-suspect-portrait="true"
                       />
                     ) : (
@@ -474,7 +475,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                     </div>
                   )}
                   {incorrectSuspectIds.includes(suspect.id) && (
-                    <div className="absolute inset-0 rounded-[1.1rem] border border-stone-200/10 bg-stone-950/35" />
+                    <div className="absolute inset-0 rounded-[1.1rem] bg-stone-950/10" />
                   )}
                 </motion.button>
               ))}
@@ -512,13 +513,13 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
               >
                 <div className="w-full max-w-[20rem] max-h-[calc(100%-0.75rem)] overflow-y-auto overflow-x-hidden rounded-2xl border border-white/18 bg-[linear-gradient(180deg,rgba(9,24,58,0.96),rgba(4,12,28,0.98))] p-4 shadow-[0_24px_48px_rgba(0,0,0,0.45)] max-[480px]:max-w-[calc(100%-0.5rem)] max-[480px]:max-h-[calc(100%-0.5rem)] max-[480px]:p-3">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-20 w-20 items-center justify-center overflow-visible rounded-2xl border border-white/20 bg-slate-950/40 p-1.5 max-[480px]:h-20 max-[480px]:w-20 max-[480px]:p-1">
+                    <div className="flex h-20 w-20 items-center justify-center overflow-visible bg-transparent p-0 max-[480px]:h-20 max-[480px]:w-20">
                       {selectedSuspect.portrait && (
                         <img
                           src={selectedSuspect.portrait}
                           alt=""
                           draggable={false}
-                          className="suspect-portrait block h-full w-full max-h-full max-w-full object-contain object-center"
+                          className="suspect-portrait block h-full w-full max-h-full max-w-full object-contain object-center drop-shadow-[0_10px_16px_rgba(2,6,23,0.45)]"
                           data-suspect-portrait="true"
                         />
                       )}

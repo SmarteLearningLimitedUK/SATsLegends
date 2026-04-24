@@ -212,7 +212,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
         <div className="flex min-h-0 flex-1 flex-col items-center justify-start gap-3 px-4 pt-[calc(env(safe-area-inset-top)+0.6rem)]">
           <GameQuestionCard
             title="Conversion Canyon"
-            subtitle="Use the available weights to match the target exactly."
+            subtitle="Use the available weights to match the target exactly. Tap weights below to place them on the scale."
             className="mx-auto max-w-[min(96%,22rem)]"
           >
             The Monster Minds have disrupted the canyon supplies. Rebuild the shipment so it totals {toKgLabel(round.targetGrams)}.
@@ -221,14 +221,14 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
           <motion.div
             animate={successPulse ? { scale: [1, 1.02, 1] } : { scale: 1 }}
             transition={{ duration: 0.36, ease: 'easeOut' }}
-            className="relative flex w-full max-w-[35rem] min-h-[18rem] flex-1 items-center justify-center p-1 md:max-w-[40rem]"
+            className="relative flex w-full max-w-[28rem] min-h-[13rem] flex-1 items-center justify-center p-1 md:max-w-[31rem]"
           >
             <div
-              className={`relative flex h-full min-h-[17.5rem] w-full items-center justify-center overflow-visible rounded-[1.35rem] ${
-                successPulse ? 'bg-emerald-400/12' : 'bg-slate-950/10'
+              className={`relative flex h-full min-h-[12.75rem] w-full items-center justify-center overflow-visible rounded-[1.35rem] ${
+                successPulse ? 'shadow-[0_0_36px_rgba(52,211,153,0.28)]' : ''
               }`}
             >
-              <div className="pointer-events-none absolute left-1/2 top-1/2 z-10 flex w-[min(96%,27rem)] -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+              <div className="pointer-events-none absolute left-1/2 top-1/2 z-10 flex w-[min(82%,20rem)] -translate-x-1/2 -translate-y-1/2 items-center justify-center md:w-[min(78%,22rem)]">
                 <img
                   src={trimmedScaleImage}
                   alt=""
@@ -247,7 +247,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
               </div>
               <div
                 ref={dropRef}
-                className="absolute left-1/2 top-[34%] z-40 flex min-h-[5.2rem] w-[min(78%,22rem)] -translate-x-1/2 items-end justify-center gap-1.5 rounded-[1.1rem] px-2 py-1.5"
+                className="absolute left-1/2 top-[29%] z-40 flex min-h-[4.2rem] w-[min(68%,18rem)] -translate-x-1/2 items-end justify-center gap-1.5 rounded-[1.1rem] px-2 py-1.5"
                 aria-label="Weights on scale"
               >
                 {placedTokens.length > 0 ? (
@@ -261,11 +261,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
                       <span className="text-[8.5px] font-black leading-none">{getMeasurementDisplay(token.grams).primary}</span>
                     </button>
                   ))
-                ) : (
-                  <div className="rounded-full border border-white/16 bg-slate-950/34 px-3 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/72">
-                    Tap weights below
-                  </div>
-                )}
+                ) : null}
               </div>
             </div>
           </motion.div>
@@ -307,7 +303,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
               })}
             </div>
 
-            <div className="mt-2 flex flex-col items-center gap-2 px-1">
+            <div className="mt-2 flex flex-col items-center gap-1.5 px-1">
               {feedback ? (
                 <div
                   className={`w-full rounded-[1.1rem] border px-3 py-2 text-center text-[11px] font-black uppercase tracking-[0.12em] shadow-[0_10px_20px_rgba(2,6,23,0.2)] ${
@@ -319,11 +315,11 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
                   {feedback.text}
                 </div>
               ) : null}
-              <div className="grid w-full grid-cols-2 gap-2">
+              <div className="grid w-full grid-cols-2 gap-1.5">
                 <button
                   type="button"
                   onClick={handleResetScale}
-                  className="ui-button-secondary w-full rounded-[1.35rem] py-3 text-sm font-black uppercase tracking-[0.16em]"
+                  className="ui-button-secondary inline-flex w-full !min-h-[2.35rem] items-center justify-center whitespace-nowrap rounded-[0.95rem] !py-1.5 !text-[10px] font-black uppercase !leading-none tracking-[0.04em]"
                 >
                   Reset Weights
                 </button>
@@ -331,7 +327,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
                   type="button"
                   onClick={handleSubmit}
                   disabled={successPulse}
-                  className="ui-button-primary w-full rounded-[1.35rem] py-3 text-sm font-black uppercase tracking-[0.18em] disabled:opacity-60"
+                  className="ui-button-primary inline-flex w-full !min-h-[2.35rem] items-center justify-center whitespace-nowrap rounded-[0.95rem] !py-1.5 !text-[10px] font-black uppercase !leading-none tracking-[0.04em] disabled:opacity-60"
                 >
                   Submit Shipment
                 </button>

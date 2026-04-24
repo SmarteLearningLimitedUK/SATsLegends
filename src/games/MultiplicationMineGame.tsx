@@ -3,7 +3,10 @@ import { AnimatePresence, motion } from 'motion/react';
 import { MAIN_PNG_SKIN } from '../assets/reskin/mainPng';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import mineBackground from '../assets/maps/backgroundsforgames/multiplication mine background.jpg';
-import rockAsset from '../assets/mine/18.png';
+import rockSolidAsset from '../assets/mine/18.png';
+import rockCrackedAsset from '../assets/mine/19.png';
+import rockSplitAsset from '../assets/mine/20.png';
+import rockRubbleAsset from '../assets/mine/21.png';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { triggerHaptic } from '../haptics';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
@@ -29,6 +32,7 @@ interface MultiplicationQuestion {
 type Phase = 'playing' | 'exploding' | 'treasure';
 
 const ROCK_BREAK_GOAL = 10;
+const ROCK_DECAY_FRAMES = [rockSolidAsset, rockCrackedAsset, rockSplitAsset, rockRubbleAsset];
 
 const makeOptions = (correct: number) => {
   const spread = Math.max(3, Math.round(correct * 0.18));
@@ -140,6 +144,12 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
     }, 700);
   };
 
+  const rockFrameIndex = Math.min(
+    ROCK_DECAY_FRAMES.length - 1,
+    Math.floor((correctCount / ROCK_BREAK_GOAL) * ROCK_DECAY_FRAMES.length),
+  );
+  const currentRockAsset = ROCK_DECAY_FRAMES[rockFrameIndex];
+
   return (
     <div className="relative h-full w-full overflow-hidden text-white">
       <GameplaySceneBackdrop gameType="calculation_clash" backgroundOverride={mineBackground} />
@@ -199,44 +209,13 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
                 className="relative h-[240px] w-[240px] overflow-hidden bg-transparent"
               >
                 <img
-                  src={rockAsset}
+                  src={currentRockAsset}
                   alt="Multiplication Mine rock"
                   draggable={false}
                   className={`absolute inset-0 h-full w-full object-contain object-center drop-shadow-[0_18px_28px_rgba(0,0,0,0.28)] ${
                     feedback?.tone === 'praise' ? 'animate-pulse saturate-125' : ''
                   }`}
                 />
-                <svg
-                  viewBox="0 0 100 100"
-                  aria-hidden="true"
-                  className="pointer-events-none absolute inset-0 h-full w-full"
-                >
-                  {[
-                    'M50 22 L45 38 L51 48 L43 66',
-                    'M54 25 L62 39 L58 53 L69 72',
-                    'M42 39 L29 47 L21 63',
-                    'M58 51 L75 55 L87 66',
-                    'M46 61 L37 78 L26 86',
-                    'M54 64 L59 79 L70 90',
-                    'M35 33 L24 28 L16 34',
-                    'M65 34 L79 30 L88 37',
-                    'M49 48 L36 52 L31 58',
-                    'M52 49 L66 47 L75 51',
-                  ].slice(0, correctCount).map((pathData, idx) => (
-                    <motion.path
-                      key={`rock-crack-${pathData}`}
-                      d={pathData}
-                      fill="none"
-                      stroke={idx >= correctCount - 1 ? '#fde047' : '#1f2937'}
-                      strokeWidth={idx >= correctCount - 1 ? 2.6 : 2}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      initial={{ pathLength: 0, opacity: 0 }}
-                      animate={{ pathLength: 1, opacity: idx >= correctCount - 1 ? [0.6, 1, 0.85] : 0.85 }}
-                      transition={{ duration: 0.28, ease: 'easeOut' }}
-                    />
-                  ))}
-                </svg>
                 <div className="absolute left-1/2 top-3 flex -translate-x-1/2 items-center rounded-full border border-amber-200/50 bg-slate-950/52 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-amber-100">
                   {correctCount}/{ROCK_BREAK_GOAL}
                 </div>
@@ -267,7 +246,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
                   className="absolute h-[230px] w-[230px] rounded-full bg-yellow-300/35 blur-3xl"
                 />
                 <motion.img
-                  src={rockAsset}
+                  src={rockSplitAsset}
                   alt=""
                   aria-hidden="true"
                   className="absolute z-0 w-[160px] max-w-[42vw] -translate-x-[72px] translate-y-[42px] object-contain opacity-90 drop-shadow-[0_14px_18px_rgba(0,0,0,0.45)]"
@@ -278,7 +257,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
                   draggable={false}
                 />
                 <motion.img
-                  src={rockAsset}
+                  src={rockRubbleAsset}
                   alt=""
                   aria-hidden="true"
                   className="absolute z-0 w-[160px] max-w-[42vw] translate-x-[72px] translate-y-[42px] object-contain opacity-90 drop-shadow-[0_14px_18px_rgba(0,0,0,0.45)]"

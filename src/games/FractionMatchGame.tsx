@@ -39,7 +39,7 @@ type BoardCell = GemCell | null;
 
 const GEM_TYPES: GemType[] = ['red', 'blue', 'green', 'yellow', 'purple'];
 const BOARD_COLUMNS = 5;
-const BOARD_ROWS = 7;
+const BOARD_ROWS = 6;
 const ROUND_SECONDS = 60;
 const BASE_TARGET_SCORE = 900;
 const TARGET_SCORE_STEP = 140;
@@ -227,7 +227,6 @@ const BevelledGem: React.FC<{
 
 const MatchGameShell: React.FC<{
   children: React.ReactNode;
-  XP: number;
   completionProgress: number;
   timeLeft: number;
   levelName: string;
@@ -239,7 +238,6 @@ const MatchGameShell: React.FC<{
   onBack: () => void;
 }> = ({
   children,
-  XP,
   completionProgress,
   timeLeft,
   levelName,
@@ -286,10 +284,6 @@ const MatchGameShell: React.FC<{
                 <span className="truncate text-sm font-black uppercase tracking-[0.12em] text-cyan-50 sm:text-base">
                   {levelName}
                 </span>
-                <div className="flex items-center gap-1 rounded-lg border border-yellow-200/55 bg-[#0a1f56]/92 px-2 py-1 text-xs font-black text-yellow-100">
-                  <span>XP</span>
-                  <span>{XP}</span>
-                </div>
               </div>
               <div className={`relative h-3 overflow-hidden rounded-full border border-cyan-200/45 bg-[#04102c]/90 ${fireActive ? 'shadow-[0_0_18px_rgba(251,146,60,0.85)]' : ''}`}>
                 <motion.div
@@ -332,17 +326,13 @@ const MatchGameShell: React.FC<{
                      <div className="rounded-lg border border-cyan-100/26 bg-[#0a1f56]/70 px-2 py-1 text-[11px] font-black tabular-nums text-cyan-50">
                        {timeLeft}s
                      </div>
-                     <div className="flex items-center gap-1 rounded-lg border border-yellow-200/55 bg-[#0a1f56]/70 px-2 py-1 text-[11px] font-black text-yellow-100">
-                       <span>XP</span>
-                       <span>{XP}</span>
-                     </div>
                    </div>
                  </div>
                </div>
              </div>
            ) : null}
 
-            <div className={`relative z-10 flex h-full w-full items-start justify-center px-2 pb-[calc(env(safe-area-inset-bottom)+0.9rem)] ${useSharedTopHud ? 'match-mastery-board-stage pt-[calc(env(safe-area-inset-top)+11.2rem+10pt)]' : 'pt-[calc(0.5rem+10pt)]'} sm:px-4`}>
+            <div className={`relative z-10 flex h-full w-full items-end justify-center px-2 pb-[calc(env(safe-area-inset-bottom)+1.15rem)] ${useSharedTopHud ? 'match-mastery-board-stage pt-[calc(env(safe-area-inset-top)+11.2rem+10pt)]' : 'pt-[calc(0.5rem+10pt)]'} sm:px-4`}>
              <AnimatePresence>
                {fireActive ? (
                  <motion.div
@@ -619,7 +609,6 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
 
   return (
     <MatchGameShell
-      XP={XP}
       completionProgress={completionProgress}
       timeLeft={timeLeft}
       levelName={levelName}
