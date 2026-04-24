@@ -19,6 +19,7 @@ export interface ScreenFlowController {
   goToGameplay: () => void;
   goToWellbeingHub: () => void;
   goToWellbeingActivity: () => void;
+  goToMathsHelpHub: () => void;
   goToShop: () => void;
   goToAchievements: () => void;
   goToParentDashboard: () => void;
@@ -134,6 +135,7 @@ export const useScreenFlow = (): ScreenFlowController => {
   const goToGameplay = useCallback(() => setScreen('gameplay'), []);
   const goToWellbeingHub = useCallback(() => setScreen('wellbeing_hub'), []);
   const goToWellbeingActivity = useCallback(() => setScreen('wellbeing_activity'), []);
+  const goToMathsHelpHub = useCallback(() => setScreen('maths_help_hub'), []);
   const goToShop = useCallback(() => setScreen('shop'), []);
   const goToAchievements = useCallback(() => setScreen('achievements_tracker'), []);
   const goToParentDashboard = useCallback(() => setScreen('parent_dashboard'), []);
@@ -160,7 +162,7 @@ export const useScreenFlow = (): ScreenFlowController => {
       return;
     }
 
-    if (screen === 'shop' || screen === 'profile' || screen === 'settings' || screen === 'parent_dashboard' || screen === 'achievements_tracker') {
+    if (screen === 'shop' || screen === 'profile' || screen === 'settings' || screen === 'parent_dashboard' || screen === 'achievements_tracker' || screen === 'maths_help_hub') {
       goToHome();
       return;
     }
@@ -188,6 +190,7 @@ export const useScreenFlow = (): ScreenFlowController => {
     goToGameplay,
     goToWellbeingHub,
     goToWellbeingActivity,
+    goToMathsHelpHub,
     goToShop,
     goToAchievements,
     goToParentDashboard,

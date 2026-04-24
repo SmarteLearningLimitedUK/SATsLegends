@@ -7,6 +7,7 @@ import ParentDashboard from '../screens/ParentDashboard';
 import PlayerProfile from '../screens/PlayerProfile';
 import CharacterShop from '../screens/CharacterShop';
 import AchievementTracker from '../screens/AchievementTracker';
+import MathsHelpHub from '../screens/MathsHelpHub';
 import WellbeingHub from '../wellbeing/WellbeingHub';
 import { WELLBEING_ACTIVITIES, WELLBEING_ACTIVITY_BY_ISLAND, WELLBEING_BY_ID } from '../wellbeing/data';
 import { WellbeingActivityId } from '../wellbeing/types';
@@ -620,6 +621,9 @@ export const AppRouter: React.FC<AppRouterProps> = ({
 
     case 'achievements_tracker':
       return <AchievementTracker player={player} onBack={onGoHome} />;
+
+    case 'maths_help_hub':
+      return <MathsHelpHub onBack={onGoHome} />;
 
     case 'wellbeing_hub':
       return (

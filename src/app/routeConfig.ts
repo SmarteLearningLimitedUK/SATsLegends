@@ -195,6 +195,9 @@ export const parseRoute = (pathname: string): RouteState => {
       return { screen: 'share_splitter' };
     case 'wellbeing':
       return { screen: first === 'activity' ? 'wellbeing_activity' : 'wellbeing_hub' };
+    case 'glossary':
+    case 'maths-help':
+      return { screen: 'maths_help_hub' };
     case 'shop':
       return { screen: 'shop' };
     case 'achievements':
@@ -240,6 +243,8 @@ export const buildRouteForScreen = (
       return '/wellbeing';
     case 'wellbeing_activity':
       return '/wellbeing/activity';
+    case 'maths_help_hub':
+      return '/glossary';
     case 'shop':
       return '/shop';
     case 'achievements_tracker':

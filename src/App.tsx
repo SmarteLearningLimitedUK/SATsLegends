@@ -61,6 +61,7 @@ const App: React.FC = () => {
     handleIslandSelect: selectIslandInFlow,
     handleLevelSelect: selectLevelInFlow,
     handleGlobalDockBack,
+    goToMathsHelpHub,
     goToAchievements,
     goToParentDashboard,
   } = useScreenFlow();
@@ -1040,6 +1041,15 @@ const App: React.FC = () => {
               </button>
               <button
                 type="button"
+                onClick={goToMathsHelpHub}
+                className={mapDockButtonClass}
+                aria-label="Open glossary"
+                title="Glossary"
+              >
+                <AssetIcon name="question" className={mapDockIconClass} />
+              </button>
+              <button
+                type="button"
                 onClick={goToParentDashboard}
                 className={mapDockButtonClass}
                 aria-label="Open parent portal"
@@ -1063,7 +1073,7 @@ const App: React.FC = () => {
   return (
     <div className="game-viewport">
       <header className="top-hud">
-        {!isStartScreen && !(screen === 'world_map' || screen === 'island_levels' || screen === 'profile' || screen === 'achievements_tracker' || screen === 'parent_dashboard') ? (
+        {!isStartScreen && !(screen === 'world_map' || screen === 'island_levels' || screen === 'profile' || screen === 'achievements_tracker' || screen === 'parent_dashboard' || screen === 'maths_help_hub') ? (
           <UnifiedMiniGameHud
             avatarId={player.avatarId}
             timeLeft={globalMiniGameHudTimeLeft}

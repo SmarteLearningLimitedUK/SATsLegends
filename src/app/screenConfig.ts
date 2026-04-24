@@ -52,6 +52,7 @@ export const SCREEN_BEHAVIOR: Record<GameScreen, {
   share_splitter: { scrollable: false, shell: 'playfield', family: 'game' },
   wellbeing_hub: { scrollable: false, shell: 'playfield', family: 'hub' },
   wellbeing_activity: { scrollable: false, shell: 'playfield', family: 'hub' },
+  maths_help_hub: { scrollable: true, shell: 'playfield', family: 'hub' },
   level_result: { scrollable: false, shell: 'playfield', family: 'overlay' },
   shop: { scrollable: false, shell: 'compact', family: 'hub' },
   achievements_tracker: { scrollable: true, shell: 'compact', family: 'hub' },
