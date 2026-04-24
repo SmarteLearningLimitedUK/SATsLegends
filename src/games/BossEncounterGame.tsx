@@ -19,6 +19,8 @@ import type { GameplaySessionEventHandlers, GameplaySessionState } from '../app/
 import { emitMiniGameSessionEvent } from '../app/gameplaySessionContract';
 import { generateArithmeticBossPaper, markArithmeticPaper } from './arithmeticBossPaper';
 import type { ArithmeticPaperResult } from './arithmeticBossPaper';
+import { generateReasoning1Paper, markReasoning1Paper } from './reasoning1Paper';
+import type { ReasoningPaperResult, ReasoningQuestion } from './reasoning1Paper';
 
 interface BossEncounterGameProps {
   gameType: SupportedBossGameType;
@@ -99,6 +101,189 @@ const makeTrueFalseOptions = (isTrue: boolean) => {
     options,
     correctOptionIndices: [options.indexOf(isTrue ? 'True' : 'False')],
   };
+};
+
+const formatReasoningAnswer = (value: any): string => {
+  if (Array.isArray(value)) return value.join(', ');
+  if (value && typeof value === 'object') return JSON.stringify(value);
+  return String(value ?? '');
+};
+
+const ReasoningVisual: React.FC<{ question: ReasoningQuestion }> = ({ question }) => {
+  if (question.chartData) {
+    const labels = question.chartData.labels as string[];
+    const values = question.chartData.values as number[];
+    const maxValue = Math.max(...values, 1);
+
+    if (question.chartData.chartType === 'table') {
+      return (
+        <div className="rounded-xl border border-slate-300 bg-slate-50 p-3">
+          <div className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-slate-500">Data Table</div>
+          <div className="grid overflow-hidden rounded-lg border border-slate-300 bg-white text-sm font-bold text-slate-800" style={{ gridTemplateColumns: '1fr 1fr' }}>
+            <div className="bg-slate-100 px-3 py-2">Item</div>
+            <div className="bg-slate-100 px-3 py-2">Value</div>
+            {labels.map((label, index) => (
+              <React.Fragment key={label}>
+                <div className="border-t border-slate-200 px-3 py-2">{label}</div>
+                <div className="border-t border-slate-200 px-3 py-2">{values[index]}</div>
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    if (question.chartData.chartType === 'line') {
+      const points = values.map((value, index) => `${(index / Math.max(1, values.length - 1)) * 100},${100 - (value / maxValue) * 84 - 8}`).join(' ');
+      return (
+        <div className="rounded-xl border border-slate-300 bg-[#f8fbff] p-3">
+          <div className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-slate-500">Line Graph Lab</div>
+          <svg viewBox="0 0 100 70" className="h-44 w-full rounded-lg bg-white">
+            <line x1="8" y1="8" x2="8" y2="62" stroke="#94a3b8" strokeWidth="1.5" />
+            <line x1="8" y1="62" x2="96" y2="62" stroke="#94a3b8" strokeWidth="1.5" />
+            <polyline points={points} fill="none" stroke="#0ea5e9" strokeWidth="3" />
+            {values.map((value, index) => {
+              const x = (index / Math.max(1, values.length - 1)) * 100;
+              const y = 100 - (value / maxValue) * 84 - 8;
+              return <circle key={labels[index]} cx={x} cy={y} r="3" fill="#f59e0b" />;
+            })}
+          </svg>
+          <div className="mt-2 flex justify-between text-xs font-black text-slate-600">
+            {labels.map((label) => <span key={label}>{label}</span>)}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="rounded-xl border border-slate-300 bg-[#fff8ed] p-3">
+        <div className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-slate-500">Graph Grabber</div>
+        <div className="flex h-44 items-end gap-3 rounded-lg bg-white p-3">
+          {labels.map((label, index) => (
+            <div key={label} className="flex h-full flex-1 flex-col justify-end gap-2">
+              <div className="rounded-t-lg bg-sky-500 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]" style={{ height: `${Math.max(12, (values[index] / maxValue) * 100)}%` }} />
+              <div className="text-center text-[0.65rem] font-black text-slate-600">{label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (question.gridData) {
+    const { xMin, xMax, yMin, yMax, points } = question.gridData;
+    return (
+      <div className="rounded-xl border border-slate-300 bg-slate-50 p-3">
+        <div className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-slate-500">Coordinates Quest Grid</div>
+        <div className="relative mx-auto aspect-square max-h-56 rounded-lg border-2 border-slate-400 bg-white">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(148,163,184,0.35)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.35)_1px,transparent_1px)] bg-[length:16.66%_16.66%]" />
+          {points.map((point: { label: string; x: number; y: number }) => (
+            <div
+              key={point.label}
+              className="absolute flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-amber-400 text-sm font-black text-slate-950 shadow"
+              style={{
+                left: `${((point.x - xMin) / (xMax - xMin)) * 100}%`,
+                top: `${100 - ((point.y - yMin) / (yMax - yMin)) * 100}%`,
+              }}
+            >
+              {point.label}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (question.areaData) {
+    const width = Math.min(12, Math.max(2, question.areaData.gridWidth));
+    const height = Math.min(10, Math.max(2, question.areaData.gridHeight));
+    const shaded = new Set((question.areaData.shadedCells ?? []).map((cell: { x: number; y: number }) => `${cell.x}-${cell.y}`));
+    return (
+      <div className="rounded-xl border border-slate-300 bg-[#eef6ff] p-3">
+        <div className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-slate-500">Blueprint Grid</div>
+        <div className="mx-auto grid max-w-sm rounded-lg border border-slate-300 bg-white p-2" style={{ gridTemplateColumns: `repeat(${width}, minmax(0, 1fr))` }}>
+          {Array.from({ length: width * height }, (_, index) => {
+            const x = index % width;
+            const y = Math.floor(index / width);
+            return <div key={`${x}-${y}`} className={`aspect-square border border-slate-200 ${shaded.has(`${x}-${y}`) ? 'bg-sky-400' : 'bg-white'}`} />;
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  if (question.perimeterData) {
+    return (
+      <div className="rounded-xl border border-slate-300 bg-[#f7fff1] p-3">
+        <div className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-slate-500">Perimeter Path</div>
+        <div className="mx-auto flex h-40 w-56 items-center justify-center">
+          <div className="relative h-28 w-44 border-4 border-amber-400 bg-emerald-100">
+            <span className="absolute -top-7 left-1/2 -translate-x-1/2 text-sm font-black text-slate-700">{question.perimeterData.sides?.[0]?.value ?? '?'} cm</span>
+            <span className="absolute -right-12 top-1/2 -translate-y-1/2 text-sm font-black text-slate-700">?</span>
+            <span className="absolute -bottom-7 left-1/2 -translate-x-1/2 text-sm font-black text-slate-700">{question.perimeterData.sides?.[2]?.value ?? '?'} cm</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (question.volumeData) {
+    const dimensions = question.volumeData.dimensions ?? { length: 3, width: 2, height: 2 };
+    return (
+      <div className="rounded-xl border border-slate-300 bg-[#f5f3ff] p-3">
+        <div className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-slate-500">Volume Vault Cubes</div>
+        <div className="flex h-40 items-center justify-center gap-1">
+          {Array.from({ length: dimensions.length * dimensions.width }, (_, index) => (
+            <div key={index} className="flex flex-col-reverse gap-1">
+              {Array.from({ length: dimensions.height }, (_, z) => (
+                <div key={z} className="h-6 w-6 rounded border border-indigo-300 bg-indigo-400 shadow" />
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (question.ratioData) {
+    const isPotion = question.ratioData.context === 'potion';
+    return (
+      <div className="rounded-xl border border-slate-300 bg-[#fff7ed] p-3">
+        <div className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-slate-500">{isPotion ? 'Potion Panic Ratio' : 'Share Splitter Ratio'}</div>
+        <div className="flex items-center justify-center gap-4 rounded-lg bg-white p-4">
+          {question.ratioData.ratio.map((value: number, index: number) => (
+            <div key={index} className={`flex h-20 w-20 items-center justify-center rounded-full border-4 text-2xl font-black ${index === 0 ? 'border-rose-300 bg-rose-100 text-rose-700' : 'border-sky-300 bg-sky-100 text-sky-700'}`}>
+              {value}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (question.scaleData) {
+    const marker = ((question.scaleData.marker - question.scaleData.min) / (question.scaleData.max - question.scaleData.min)) * 100;
+    return (
+      <div className="rounded-xl border border-slate-300 bg-slate-50 p-3">
+        <div className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-slate-500">Measurement Scale</div>
+        <div className="relative h-20 rounded-lg bg-white p-4">
+          <div className="absolute left-4 right-4 top-1/2 h-2 -translate-y-1/2 rounded bg-slate-300" />
+          <div className="absolute top-1/2 h-8 w-3 -translate-y-1/2 rounded bg-amber-500" style={{ left: `${Math.min(92, Math.max(4, marker))}%` }} />
+        </div>
+      </div>
+    );
+  }
+
+  if (question.shapeData) {
+    return (
+      <div className="rounded-xl border border-slate-300 bg-white p-3">
+        <div className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-slate-500">Geometry Diagram</div>
+        <div className="mx-auto h-32 w-48 rounded-lg border-4 border-slate-500 bg-slate-100" />
+      </div>
+    );
+  }
+
+  return null;
 };
 
 const generateFactorsQuestion = (): BossQuestion => {
@@ -647,22 +832,31 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   const avatar = AVATARS.find(item => item.id === avatarId) || AVATARS[0];
   const encounter = getBossEncounter(gameType);
   const isArithmeticPaper = gameType === 'crystal_core';
+  const isReasoning1Paper = gameType === 'mirror_gate';
   const reactionCopy = REACTION_COPY;
   const [paperSeed, setPaperSeed] = useState<string | number>(() => `arithmetic-${Date.now()}-${Math.random()}`);
   const arithmeticPaper = useMemo(
     () => (isArithmeticPaper ? generateArithmeticBossPaper(paperSeed) : null),
     [isArithmeticPaper, paperSeed],
   );
+  const [reasoningSeed, setReasoningSeed] = useState<string | number>(() => `reasoning-1-${Date.now()}-${Math.random()}`);
+  const reasoningPaper = useMemo(
+    () => (isReasoning1Paper ? generateReasoning1Paper(reasoningSeed) : null),
+    [isReasoning1Paper, reasoningSeed],
+  );
   const [arithmeticAnswers, setArithmeticAnswers] = useState<Record<number, string>>({});
   const [arithmeticResult, setArithmeticResult] = useState<ArithmeticPaperResult | null>(null);
   const [isReviewingArithmetic, setIsReviewingArithmetic] = useState(false);
+  const [reasoningAnswers, setReasoningAnswers] = useState<Record<number, any>>({});
+  const [reasoningResult, setReasoningResult] = useState<ReasoningPaperResult | null>(null);
+  const [reasoningScreen, setReasoningScreen] = useState<'intro' | 'active' | 'confirm' | 'results' | 'review'>('intro');
   const questions = useMemo(
-    () => (isArithmeticPaper ? [] : Array.from({ length: TOTAL_QUESTIONS }, () => {
+    () => (isArithmeticPaper || isReasoning1Paper ? [] : Array.from({ length: TOTAL_QUESTIONS }, () => {
       const base = QUESTION_GENERATORS[gameType]();
       const kind: QuestionKind = base.kind ?? (gameType === 'matrix_match' ? 'reasoning' : 'fluency');
       return { ...base, kind };
     })),
-    [gameType, isArithmeticPaper, levelId],
+    [gameType, isArithmeticPaper, isReasoning1Paper, levelId],
   );
   const [currentIndex, setCurrentIndex] = useState(0);
   const [XP, setScore] = useState(0);
@@ -673,7 +867,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   const [bossPose, setBossPose] = useState<BossPose>('neutral');
   const [reaction, setReaction] = useState(reactionCopy.idle);
   const [resolveState, setResolveState] = useState<'idle' | 'correct' | 'wrong' | 'warning' | 'victory' | 'defeat'>('idle');
-  const [showPracticeIntro, setShowPracticeIntro] = useState(!isArithmeticPaper);
+  const [showPracticeIntro, setShowPracticeIntro] = useState(!isArithmeticPaper && !isReasoning1Paper);
   const timeoutRef = useRef<number | null>(null);
 
   useEffect(() => () => {
@@ -686,8 +880,9 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
     return null;
   }
 
-  const question = isArithmeticPaper ? null : questions[currentIndex % questions.length];
+  const question = isArithmeticPaper || isReasoning1Paper ? null : questions[currentIndex % questions.length];
   const arithmeticQuestion = arithmeticPaper?.questions[currentIndex] ?? null;
+  const reasoningQuestion = reasoningPaper?.questions[currentIndex] ?? null;
   const isMultiSelect = question?.selectionMode === 'multi';
   const activeSelection = submittedIndices ?? selectedIndices;
   const bossHealthRemaining = bossHealth;
@@ -871,12 +1066,86 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
     }));
   };
 
+  const startReasoningPaper = () => {
+    setReasoningScreen('active');
+    setCurrentIndex(0);
+  };
+
+  const submitReasoningPaper = (completedBeforeTimer: boolean) => {
+    if (!reasoningPaper || reasoningResult) return;
+    const result = markReasoning1Paper(reasoningPaper, reasoningAnswers, completedBeforeTimer);
+    setReasoningResult(result);
+    setReasoningScreen('results');
+    setScore(result.xpAwarded);
+    sessionEvents?.onEvent?.({
+      type: 'game_complete',
+      score: result.xpAwarded,
+      stars: result.stars,
+      metadata: {
+        paperId: reasoningPaper.paperId,
+        rawScore: result.score,
+        totalMarks: result.totalMarks,
+        percentage: result.percentage,
+        correctCount: result.correctCount,
+      },
+    });
+    triggerHaptic(result.passed ? 'success' : 'warning');
+  };
+
+  useEffect(() => {
+    if (!isReasoning1Paper || reasoningResult || !reasoningPaper || reasoningScreen === 'intro') return;
+    if ((sessionState?.timeLeft ?? reasoningPaper.timeLimitSeconds) <= 0) {
+      submitReasoningPaper(false);
+    }
+  }, [isReasoning1Paper, reasoningPaper, reasoningResult, reasoningScreen, sessionState?.timeLeft]);
+
+  const retryReasoningPaper = () => {
+    if (timeoutRef.current) {
+      window.clearTimeout(timeoutRef.current);
+    }
+    setReasoningSeed(`reasoning-1-${Date.now()}-${Math.random()}`);
+    setReasoningAnswers({});
+    setReasoningResult(null);
+    setReasoningScreen('intro');
+    setCurrentIndex(0);
+    setScore(0);
+    window.dispatchEvent(new Event(GAME_HUD_RESTART_EVENT));
+  };
+
+  const setReasoningAnswer = (value: any) => {
+    if (!reasoningQuestion || reasoningResult) return;
+    setReasoningAnswers((previous) => ({
+      ...previous,
+      [reasoningQuestion.id]: value,
+    }));
+  };
+
+  const toggleReasoningChoice = (value: string) => {
+    if (!reasoningQuestion || reasoningResult) return;
+    const current = Array.isArray(reasoningAnswers[reasoningQuestion.id])
+      ? reasoningAnswers[reasoningQuestion.id] as string[]
+      : [];
+    setReasoningAnswer(current.includes(value)
+      ? current.filter((item) => item !== value)
+      : [...current, value]);
+  };
+
   const arithmeticAnsweredCount = arithmeticPaper
     ? arithmeticPaper.questions.filter((item) => arithmeticAnswers[item.id]?.trim()).length
     : 0;
   const arithmeticQuestionCount = arithmeticPaper?.questions.length ?? 0;
+  const reasoningAnsweredCount = reasoningPaper
+    ? reasoningPaper.questions.filter((item) => {
+      const answer = reasoningAnswers[item.id];
+      return Array.isArray(answer) ? answer.length > 0 : String(answer ?? '').trim().length > 0;
+    }).length
+    : 0;
+  const reasoningQuestionCount = reasoningPaper?.questions.length ?? 0;
   const arithmeticTimeTakenSeconds = arithmeticPaper
     ? Math.max(0, arithmeticPaper.timeLimitSeconds - (sessionState?.timeLeft ?? arithmeticPaper.timeLimitSeconds))
+    : 0;
+  const reasoningTimeTakenSeconds = reasoningPaper
+    ? Math.max(0, reasoningPaper.timeLimitSeconds - (sessionState?.timeLeft ?? reasoningPaper.timeLimitSeconds))
     : 0;
   const formatTime = (seconds: number) => {
     const safeSeconds = Math.max(0, Math.floor(seconds));
@@ -884,6 +1153,269 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
     const remainder = safeSeconds % 60;
     return `${minutes}:${String(remainder).padStart(2, '0')}`;
   };
+
+  if (isReasoning1Paper) {
+    if (!reasoningPaper) {
+      return (
+        <div className="flex h-full w-full items-center justify-center bg-[#f7f4ea] text-slate-900">
+          Loading Reasoning 1 paper...
+        </div>
+      );
+    }
+
+    if (reasoningScreen === 'intro') {
+      return (
+        <div className="flex h-full w-full items-center justify-center overflow-hidden bg-[#f7f4ea] px-4 py-4 font-sans text-slate-950">
+          <section className="w-full max-w-3xl rounded-[1.1rem] border border-slate-300 bg-[#fffdf6] p-5 shadow-[0_12px_28px_rgba(15,23,42,0.16)] md:p-8">
+            <div className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">Final Boss Island</div>
+            <h2 className="mt-2 text-3xl font-black text-slate-950 md:text-5xl">Reasoning 1</h2>
+            <div className="mt-5 grid gap-3 text-sm font-bold text-slate-700 md:grid-cols-2">
+              <div className="rounded-xl border border-slate-200 bg-white p-4">35 marks</div>
+              <div className="rounded-xl border border-slate-200 bg-white p-4">40 minutes</div>
+              <div className="rounded-xl border border-slate-200 bg-white p-4">No calculator</div>
+              <div className="rounded-xl border border-slate-200 bg-white p-4">Mixed reasoning questions</div>
+            </div>
+            <button
+              type="button"
+              onClick={startReasoningPaper}
+              className="mt-6 w-full rounded-xl border-2 border-slate-950 bg-slate-950 px-5 py-4 text-sm font-black uppercase tracking-[0.14em] text-white"
+            >
+              Start Reasoning 1
+            </button>
+          </section>
+        </div>
+      );
+    }
+
+    if (reasoningResult && reasoningScreen === 'results') {
+      return (
+        <div className="relative flex h-full w-full overflow-hidden bg-[#f7f4ea] px-3 py-3 font-sans text-slate-950 md:px-6 md:py-5">
+          <section className="mx-auto flex h-full w-full max-w-4xl flex-col overflow-hidden rounded-[1.1rem] border border-slate-300 bg-[#fffdf6] shadow-[0_12px_28px_rgba(15,23,42,0.16)]">
+            <div className="border-b border-slate-300 bg-white px-5 py-4">
+              <div className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">Reasoning 1</div>
+              <h2 className="mt-1 text-2xl font-black text-slate-950 md:text-4xl">Paper Complete</h2>
+            </div>
+            <div className="grid min-h-0 flex-1 gap-3 overflow-hidden p-4 md:grid-cols-[1fr_1fr] md:p-6">
+              <div className="rounded-[0.9rem] border border-slate-300 bg-white p-4">
+                <div className="text-sm font-bold uppercase tracking-[0.12em] text-slate-500">Final score</div>
+                <div className="mt-2 text-5xl font-black text-slate-950">{reasoningResult.score}/35</div>
+                <div className="mt-2 text-lg font-black text-slate-700">{reasoningResult.percentage}%</div>
+                <div className="mt-4 grid grid-cols-2 gap-2 text-sm font-bold text-slate-700">
+                  <div className="rounded-lg bg-slate-100 p-3">Stars<br /><span className="text-xl text-slate-950">{reasoningResult.stars}</span></div>
+                  <div className="rounded-lg bg-slate-100 p-3">XP<br /><span className="text-xl text-slate-950">{reasoningResult.xpAwarded}</span></div>
+                  <div className="rounded-lg bg-slate-100 p-3">Time<br /><span className="text-xl text-slate-950">{formatTime(reasoningTimeTakenSeconds)}</span></div>
+                  <div className="rounded-lg bg-slate-100 p-3">Correct<br /><span className="text-xl text-slate-950">{reasoningResult.correctCount}/{reasoningQuestionCount}</span></div>
+                </div>
+              </div>
+              <div className="rounded-[0.9rem] border border-slate-300 bg-white p-4">
+                <div className="text-sm font-bold uppercase tracking-[0.12em] text-slate-500">Breakdown</div>
+                <div className="mt-3 space-y-2 text-sm font-bold text-slate-700">
+                  <div className="flex justify-between border-b border-slate-200 py-2"><span>Marks available</span><span>35</span></div>
+                  <div className="flex justify-between border-b border-slate-200 py-2"><span>Questions</span><span>{reasoningQuestionCount}</span></div>
+                  <div className="flex justify-between border-b border-slate-200 py-2"><span>Pass threshold</span><span>21 marks</span></div>
+                  <div className="flex justify-between py-2"><span>Paper seed</span><span className="max-w-[12rem] truncate text-right">{String(reasoningPaper.seed)}</span></div>
+                </div>
+              </div>
+            </div>
+            <div className="grid shrink-0 gap-2 border-t border-slate-300 bg-white p-3 md:grid-cols-3 md:p-4">
+              <button type="button" onClick={retryReasoningPaper} className="rounded-xl border-2 border-slate-300 bg-slate-950 px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-white">
+                Retry New Paper
+              </button>
+              <button type="button" onClick={() => setReasoningScreen('review')} className="rounded-xl border-2 border-slate-300 bg-white px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-slate-950">
+                Review Answers
+              </button>
+              <button type="button" onClick={onBack} className="rounded-xl border-2 border-slate-300 bg-white px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-slate-950">
+                Return to Boss Island
+              </button>
+            </div>
+          </section>
+        </div>
+      );
+    }
+
+    if (reasoningResult && reasoningScreen === 'review') {
+      return (
+        <div className="relative flex h-full w-full overflow-hidden bg-[#f7f4ea] px-3 py-3 font-sans text-slate-950 md:px-6 md:py-5">
+          <section className="mx-auto flex h-full w-full max-w-5xl flex-col overflow-hidden rounded-[1.1rem] border border-slate-300 bg-[#fffdf6] shadow-[0_12px_28px_rgba(15,23,42,0.16)]">
+            <div className="flex shrink-0 items-center justify-between gap-3 border-b border-slate-300 bg-white px-4 py-3">
+              <div>
+                <div className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">Review Answers</div>
+                <h2 className="text-xl font-black text-slate-950">Score {reasoningResult.score}/35</h2>
+              </div>
+              <button type="button" onClick={() => setReasoningScreen('results')} className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-black uppercase tracking-[0.12em]">
+                Results
+              </button>
+            </div>
+            <div className="min-h-0 flex-1 overflow-y-auto p-3">
+              <div className="grid gap-2 md:grid-cols-2">
+                {reasoningPaper.questions.map((item) => {
+                  const result = reasoningResult.results.find((entry) => entry.questionId === item.id);
+                  return (
+                    <div key={item.id} className={`rounded-xl border p-3 ${result?.isCorrect ? 'border-emerald-300 bg-emerald-50' : 'border-rose-300 bg-rose-50'}`}>
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="font-black">Q{item.id}. {item.question}</div>
+                        <div className="text-sm font-black">{result?.marksAwarded}/{item.marks}</div>
+                      </div>
+                      <div className="mt-2 text-sm font-bold text-slate-700">Your answer: {formatReasoningAnswer(result?.userAnswer) || 'blank'}</div>
+                      <div className="text-sm font-bold text-slate-700">Correct answer: {formatReasoningAnswer(item.answer)}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        </div>
+      );
+    }
+
+    if (reasoningScreen === 'confirm') {
+      return (
+        <div className="flex h-full w-full items-center justify-center overflow-hidden bg-[#f7f4ea] px-4 py-4 font-sans text-slate-950">
+          <section className="w-full max-w-xl rounded-[1.1rem] border border-slate-300 bg-[#fffdf6] p-5 text-center shadow-[0_12px_28px_rgba(15,23,42,0.16)]">
+            <h2 className="text-2xl font-black">Submit Reasoning 1?</h2>
+            <p className="mt-3 text-sm font-bold text-slate-600">
+              You have answered {reasoningAnsweredCount} of {reasoningQuestionCount} questions. Results will only be shown after submission.
+            </p>
+            <div className="mt-5 grid gap-2 sm:grid-cols-2">
+              <button type="button" onClick={() => setReasoningScreen('active')} className="rounded-xl border-2 border-slate-300 bg-white px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-slate-950">
+                Keep Working
+              </button>
+              <button type="button" onClick={() => submitReasoningPaper((sessionState?.timeLeft ?? 0) > 0)} className="rounded-xl border-2 border-slate-950 bg-slate-950 px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-white">
+                Submit Paper
+              </button>
+            </div>
+          </section>
+        </div>
+      );
+    }
+
+    if (!reasoningQuestion) return null;
+    const currentReasoningAnswer = reasoningAnswers[reasoningQuestion.id] ?? '';
+    const timeLeft = sessionState?.timeLeft ?? reasoningPaper.timeLimitSeconds;
+    const warningText = timeLeft <= 60
+      ? '1 minute left'
+      : timeLeft <= 300
+        ? '5 minute warning'
+        : timeLeft <= 600
+          ? '10 minute warning'
+          : null;
+
+    return (
+      <div className="relative flex h-full w-full overflow-hidden bg-[#f7f4ea] font-sans text-slate-950">
+        <div className="relative z-10 flex h-full w-full flex-col gap-2 px-3 pb-2 pt-3 md:px-6 md:pb-4 md:pt-5">
+          <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.1rem] border border-slate-300 bg-[#fffdf6] shadow-[0_12px_28px_rgba(15,23,42,0.16)]">
+            <div className="shrink-0 border-b border-slate-300 bg-white px-4 py-3 md:px-6">
+              <div className="flex items-center justify-between gap-3 text-[0.68rem] font-black uppercase tracking-[0.16em] text-slate-500 md:text-sm">
+                <span>Reasoning 1</span>
+                <span>Question {currentIndex + 1} of {reasoningQuestionCount}</span>
+              </div>
+              {warningText ? <div className="mt-2 rounded-full bg-amber-100 px-3 py-1 text-center text-xs font-black uppercase tracking-[0.12em] text-amber-800">{warningText}</div> : null}
+            </div>
+
+            <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4 md:px-8">
+              <div className="mx-auto flex w-full max-w-4xl flex-col gap-3">
+                <div className="rounded-[0.75rem] border border-slate-300 bg-white px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
+                  <div className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-slate-500">{reasoningQuestion.marks} mark{reasoningQuestion.marks > 1 ? 's' : ''}</div>
+                  <div className="text-[clamp(1.15rem,4.4vw,2.15rem)] font-black leading-tight tracking-normal text-slate-950">
+                    {reasoningQuestion.question}
+                  </div>
+                </div>
+
+                <ReasoningVisual question={reasoningQuestion} />
+
+                <div className="rounded-[0.75rem] border border-slate-300 bg-white p-3">
+                  {reasoningQuestion.responseMode === 'multipleChoice' && reasoningQuestion.choices ? (
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      {reasoningQuestion.choices.map((choice) => {
+                        const isSelected = String(currentReasoningAnswer) === String(choice);
+                        return (
+                          <button
+                            key={String(choice)}
+                            type="button"
+                            onClick={() => setReasoningAnswer(choice)}
+                            className={`rounded-xl border-2 px-4 py-3 text-left text-sm font-black ${isSelected ? 'border-sky-700 bg-sky-100' : 'border-slate-300 bg-white'}`}
+                          >
+                            {String(choice)}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ) : reasoningQuestion.responseMode === 'multiSelect' && reasoningQuestion.choices ? (
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      {reasoningQuestion.choices.map((choice) => {
+                        const selected = Array.isArray(currentReasoningAnswer) && currentReasoningAnswer.includes(choice);
+                        return (
+                          <button
+                            key={String(choice)}
+                            type="button"
+                            onClick={() => toggleReasoningChoice(String(choice))}
+                            className={`rounded-xl border-2 px-4 py-3 text-left text-sm font-black ${selected ? 'border-sky-700 bg-sky-100' : 'border-slate-300 bg-white'}`}
+                          >
+                            {String(choice)}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <input
+                      value={String(currentReasoningAnswer)}
+                      onChange={(event) => setReasoningAnswer(event.target.value)}
+                      inputMode={reasoningQuestion.responseMode === 'numericInput' ? 'decimal' : 'text'}
+                      placeholder={reasoningQuestion.responseMode === 'coordinateInput' ? 'e.g. (2,4)' : 'Type your answer'}
+                      className="h-14 w-full rounded-xl border-2 border-slate-300 bg-slate-50 px-4 text-lg font-black text-slate-950 outline-none focus:border-sky-600"
+                    />
+                  )}
+                </div>
+
+                <div className="min-h-[4.5rem] rounded-[0.75rem] border border-dashed border-slate-300 bg-slate-50 p-3 text-sm font-bold text-slate-500">
+                  Working area
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div className="grid shrink-0 grid-cols-[auto_1fr_auto_auto] items-center gap-2 rounded-xl border border-slate-300 bg-white p-2 shadow-[0_6px_14px_rgba(15,23,42,0.12)]">
+            <button
+              type="button"
+              onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
+              disabled={currentIndex === 0}
+              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-slate-950 disabled:opacity-40"
+            >
+              Previous
+            </button>
+            <select
+              value={currentIndex}
+              onChange={(event) => setCurrentIndex(Number(event.target.value))}
+              className="min-w-0 rounded-lg border border-slate-300 bg-slate-50 px-2 py-2 text-center text-xs font-black uppercase tracking-[0.08em] text-slate-700"
+              aria-label="Question navigator"
+            >
+              {reasoningPaper.questions.map((item, index) => (
+                <option key={item.id} value={index}>Q{item.id} {reasoningAnswers[item.id] ? 'done' : ''}</option>
+              ))}
+            </select>
+            <button
+              type="button"
+              onClick={() => setCurrentIndex((prev) => Math.min(reasoningQuestionCount - 1, prev + 1))}
+              disabled={currentIndex >= reasoningQuestionCount - 1}
+              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-slate-950 disabled:opacity-40"
+            >
+              Next
+            </button>
+            <button
+              type="button"
+              onClick={() => setReasoningScreen('confirm')}
+              className="rounded-lg border border-slate-950 bg-slate-950 px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-white"
+            >
+              Submit
+            </button>
+          </div>
+          <div className="shrink-0 text-center text-[0.65rem] font-black uppercase tracking-[0.12em] text-slate-500">
+            {reasoningAnsweredCount}/{reasoningQuestionCount} answered
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (isArithmeticPaper) {
     if (!arithmeticPaper || !arithmeticQuestion) {

@@ -19,8 +19,8 @@ export const BOSS_ENCOUNTERS: Partial<Record<MiniGameType, BossEncounter>> = {
   },
   mirror_gate: {
     assetId: 'cyclops_slime',
-    name: 'SATs Paper 2: Reasoning',
-    title: 'SATs Paper 2: Reasoning',
+    name: 'Reasoning 1',
+    title: 'Reasoning 1',
     glowClass: 'from-amber-300/24 via-orange-300/12 to-transparent',
     chipClass: 'border-amber-200/35 bg-amber-100/14 text-amber-100',
   },

@@ -66,7 +66,7 @@ const RATIO_RACER_LEVELS: LevelData[] = [
 
 const CALCULATION_CORE_LEVELS: LevelData[] = [
   { id: 1, stars: 0, isLocked: false, blueprintKey: 'crystal_core', displayName: 'SATs Paper 1: Arithmetic', gameType: 'crystal_core', isBoss: true, bossUnlockCoins: 0, isPractice: false },
-  { id: 2, stars: 0, isLocked: false, blueprintKey: 'mirror_gate', displayName: 'SATs Paper 2: Reasoning', gameType: 'mirror_gate', isBoss: true, bossUnlockCoins: 0, isPractice: false },
+  { id: 2, stars: 0, isLocked: false, blueprintKey: 'mirror_gate', displayName: 'Reasoning 1', gameType: 'mirror_gate', isBoss: true, bossUnlockCoins: 0, isPractice: false },
   { id: 3, stars: 0, isLocked: false, blueprintKey: 'matrix_match', displayName: 'SATs Paper 3: Reasoning', gameType: 'matrix_match', isBoss: true, bossUnlockCoins: 0, isPractice: false },
 ];
 
