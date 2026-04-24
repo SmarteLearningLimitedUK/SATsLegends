@@ -601,17 +601,16 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
             </AnimatePresence>
           </div>
 
-          <div
-            className="answer-choice-surface maths-vs-zombies-answer-surface mx-4 mt-2 flex h-[clamp(6.4rem,12vh,6.9rem)] flex-col rounded-3xl border border-blue-400/40 bg-blue-950/92 px-2.5 pb-2.25 pt-1 shadow-xl"
-            style={{ ['--sat-pill-height' as '--sat-pill-height']: '2rem' }}
-          >
-            <div
-              className={`min-h-[1rem] text-center text-[9px] font-semibold uppercase tracking-[0.12em] text-cyan-100/80 ${feedback ? 'opacity-100' : 'opacity-0'}`}
-              aria-hidden={!feedback}
-            >
-              {feedback || '\u00A0'}
+        <div
+          className="answer-choice-surface maths-vs-zombies-answer-surface mx-4 mt-2 flex shrink-0 flex-col gap-1 rounded-3xl border border-blue-400/40 bg-blue-950/92 px-2.5 py-2 shadow-xl"
+          style={{ ['--sat-pill-height' as '--sat-pill-height']: '2rem' }}
+        >
+          {feedback ? (
+            <div className="text-center text-[9px] font-semibold uppercase tracking-[0.12em] text-cyan-100/80">
+              {feedback}
             </div>
-            <div className="mt-auto grid grid-cols-4 gap-[0.35rem]">
+          ) : null}
+          <div className="grid grid-cols-4 gap-[0.35rem]">
               {question.options.map((option, index) => (
                 <button
                   key={`${option}-${index}`}
