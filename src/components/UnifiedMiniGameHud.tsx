@@ -13,6 +13,7 @@ interface UnifiedMiniGameHudProps {
   gameTitle?: string;
   hidden?: boolean;
   hideTimer?: boolean;
+  hideLives?: boolean;
   hideTopBar?: boolean;
   lives?: number;
   onBack?: () => void;
@@ -28,6 +29,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
   gameTitle,
   hidden = false,
   hideTimer = false,
+  hideLives = false,
   hideTopBar = false,
   lives = 3,
   onBack,
@@ -86,7 +88,11 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
         >
           <div
             className={`relative ${topBarWidthClass} grid items-center gap-2 ${rootPaddingClass} ${
-              shouldHideTimer ? 'grid-cols-[auto_auto] justify-between' : 'grid-cols-[auto_1fr_auto]'
+              shouldHideTimer && hideLives
+                ? 'grid-cols-[auto] justify-start'
+                : shouldHideTimer || hideLives
+                  ? 'grid-cols-[auto_auto] justify-between'
+                  : 'grid-cols-[auto_1fr_auto]'
             }`}
           >
             <div className={`pointer-events-none absolute inset-0 ${shellRadiusClass} ${variant === 'hub' ? 'bg-[linear-gradient(180deg,rgba(20,46,96,0.55)_0%,rgba(7,21,58,0.5)_100%)]' : 'bg-[linear-gradient(180deg,rgba(20,46,96,0.75)_0%,rgba(7,21,58,0.68)_100%)]'} shadow-[0_12px_24px_rgba(2,6,23,0.45)]`} />
@@ -159,6 +165,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
               </div>
             </div>
 
+            {hideLives ? null : (
             <div className="relative flex shrink-0 items-center justify-end pr-1">
               <div
                 className={`relative inline-flex ${sharedHudHeightClass} ${variant === 'hub' ? 'w-[clamp(52px,12vw,66px)]' : 'w-[clamp(58px,13vw,74px)]'} shrink-0 items-center justify-center gap-1 rounded-full border-2 border-cyan-100/65 bg-[linear-gradient(180deg,#245db3_0%,#1e3f89_100%)] px-2 font-black text-slate-100 shadow-[0_9px_18px_rgba(2,6,23,0.4)] ${variant === 'hub' ? 'text-[clamp(0.7rem,1.8vw,0.85rem)]' : 'text-[clamp(0.8rem,2vw,0.96rem)]'}`}
@@ -174,6 +181,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
                 <span className="relative [text-shadow:0_1px_0_rgba(0,0,0,0.35)]">{lives}</span>
               </div>
             </div>
+            )}
           </div>
         </div>
       )}
