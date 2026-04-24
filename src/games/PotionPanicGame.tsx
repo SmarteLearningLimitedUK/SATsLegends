@@ -56,6 +56,7 @@ interface Challenge {
   baseRatio: number[];
   scale: number;
   targetCounts: number[];
+  availableCounts: number[];
   startCounts: number[];
   totalDrops: number;
   revealTargets: boolean;
@@ -377,6 +378,37 @@ const buildOrderFlavor = (stage: number) => {
   return 'Hard: Missing both parts / word problems';
 };
 
+const buildAvailableCounts = (
+  levelId: number,
+  activeIndices: number[],
+  targetCounts: number[],
+) => {
+  const availableCounts = Array.from({ length: INGREDIENTS.length }, () => 0);
+
+  activeIndices.forEach((ingredientIndex, ratioIndex) => {
+    availableCounts[ingredientIndex] = targetCounts[ratioIndex] || 0;
+  });
+
+  if (levelId < 7) return availableCounts;
+
+  const leftovers = targetCounts.map((targetCount) => (
+    targetCount > 1 ? Math.floor(Math.random() * targetCount) : 0
+  ));
+
+  if (leftovers.every((leftover) => leftover === 0)) {
+    const refillIndex = targetCounts.findIndex((targetCount) => targetCount > 1);
+    if (refillIndex >= 0) {
+      leftovers[refillIndex] = 1;
+    }
+  }
+
+  activeIndices.forEach((ingredientIndex, ratioIndex) => {
+    availableCounts[ingredientIndex] = (targetCounts[ratioIndex] || 0) + (leftovers[ratioIndex] || 0);
+  });
+
+  return availableCounts;
+};
+
 const generateChallenge = (levelId: number, solved: number, previousTitle?: string): Challenge => {
   let challenge: Challenge;
   let attempts = 0;
@@ -463,6 +495,7 @@ const generateChallenge = (levelId: number, solved: number, previousTitle?: stri
     }
 
     const targetCounts = baseRatio.map((value) => Math.round(value * scale));
+    const availableCounts = buildAvailableCounts(levelId, activeIndices, targetCounts);
     const totalDrops = targetCounts.reduce((sum, value) => sum + value, 0);
     const activeIngredients = activeIndices.map((index) => INGREDIENTS[index]);
 
@@ -505,6 +538,7 @@ const generateChallenge = (levelId: number, solved: number, previousTitle?: stri
       baseRatio,
       scale,
       targetCounts,
+      availableCounts,
       startCounts,
       totalDrops,
       revealTargets,
@@ -588,14 +622,15 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
       ingredient: INGREDIENTS[idx],
       current: counts[idx] || 0,
       target: targetByIngredient.get(idx) ?? 0,
+      available: challenge.availableCounts[idx] ?? (targetByIngredient.get(idx) ?? 0),
       remaining: Math.max(0, (targetByIngredient.get(idx) ?? 0) - (counts[idx] || 0)),
     })),
-    [challenge.activeIndices, counts, targetByIngredient],
+    [challenge.activeIndices, challenge.availableCounts, counts, targetByIngredient],
   );
   const lockedIngredientIds = useMemo(() => {
     const locked = new Set<number>();
-    activeTargets.forEach(({ index, target }) => {
-      if ((challenge.startCounts[index] || 0) >= target && target > 0) {
+    activeTargets.forEach(({ available, index }) => {
+      if ((challenge.startCounts[index] || 0) >= available && available > 0) {
         locked.add(index);
       }
     });
@@ -659,6 +694,9 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
     if (locked || endedRef.current || !activeSet.has(index) || lockedIngredientIds.has(index)) return;
 
     setCounts((prev) => {
+      const available = challenge.availableCounts[index] ?? 0;
+      if (available > 0 && (prev[index] || 0) >= available) return prev;
+
       const next = [...prev];
       next[index] += 1;
       return next;
@@ -773,7 +811,7 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
         <div className="relative z-[35] min-h-0 overflow-visible bg-transparent">
           <div
             className="absolute inset-0 z-[70]"
-            style={{ transform: 'translateY(calc(var(--potion-cauldron-shift, 0px) + 48px))' }}
+            style={{ transform: 'translateY(calc(var(--potion-cauldron-shift, 0px) + 43px))' }}
           >
             <div className="pointer-events-none absolute left-1/2 top-[84%] z-0 h-14 w-[72%] -translate-x-1/2 rounded-full bg-black/55 blur-md" />
             <div className="pointer-events-none absolute left-1/2 top-[76%] z-10 h-[24%] w-[58%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
@@ -890,9 +928,10 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
 
             <div className="mx-auto w-full max-w-[780px] rounded-[1.1rem] border border-white/12 bg-black/38 px-2 py-1.5 shadow-[0_10px_18px_rgba(2,6,23,0.2)]">
               <div className={`grid ${ingredientGridClass} gap-1.5`}>
-                {activeTargets.map(({ ingredient, index, current, target }) => {
+                {activeTargets.map(({ available, ingredient, index, current, target }) => {
                   const isActive = activeSet.has(index);
                   const isLockedIngredient = lockedIngredientIds.has(index);
+                  const isOutOfStock = available > 0 && current >= available;
                   const bottleArt = POTION_BOTTLE_ART[ingredient.id];
                   return (
                     <motion.button
@@ -900,10 +939,10 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
                       type="button"
                       whileTap={isActive ? { scale: 0.96, y: 2 } : undefined}
                       onClick={() => addIngredient(index)}
-                      disabled={locked || !isActive || isLockedIngredient}
-                      aria-label={isActive ? `Add ${ingredient.name} to the potion` : `${ingredient.name} is not needed for this recipe`}
-                      className={`relative flex h-[clamp(68px,9.2vh,88px)] flex-col items-center justify-between rounded-[1.1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.35),rgba(15,23,42,0.6))] px-1 py-1 shadow-[0_10px_14px_rgba(2,6,23,0.24)] transition ${locked || !isActive || isLockedIngredient ? 'opacity-60 grayscale' : ''}`}
-                      style={isActive && !isLockedIngredient ? { boxShadow: `0 12px 22px rgba(2,6,23,0.28), 0 0 18px ${ingredient.glow}` } : undefined}
+                      disabled={locked || !isActive || isLockedIngredient || isOutOfStock}
+                      aria-label={isActive ? `Add ${ingredient.name} to the potion. ${available - current} available.` : `${ingredient.name} is not needed for this recipe`}
+                      className={`relative flex h-[clamp(68px,9.2vh,88px)] flex-col items-center justify-between rounded-[1.1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.35),rgba(15,23,42,0.6))] px-1 py-1 shadow-[0_10px_14px_rgba(2,6,23,0.24)] transition ${locked || !isActive || isLockedIngredient || isOutOfStock ? 'opacity-60 grayscale' : ''}`}
+                      style={isActive && !isLockedIngredient && !isOutOfStock ? { boxShadow: `0 12px 22px rgba(2,6,23,0.28), 0 0 18px ${ingredient.glow}` } : undefined}
                     >
                       <div className="pointer-events-none flex h-[38px] w-full items-center justify-center">
                         {bottleArt ? (
@@ -921,6 +960,9 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
                       <span className="relative z-10 text-[9px] font-black uppercase tracking-[0.02em] text-cyan-50">{ingredient.name}</span>
                       <span className="relative z-10 text-[10px] font-black text-cyan-100">
                         {current}/{target}
+                        {available > target ? (
+                          <span className="ml-1 text-[8px] text-amber-100">stock {available}</span>
+                        ) : null}
                       </span>
                     </motion.button>
                   );

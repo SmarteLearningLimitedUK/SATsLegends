@@ -10,6 +10,7 @@ set "PLAYTEST_DIR=%CD%\playtest"
 set "SERVER_OUT=%PLAYTEST_DIR%\manual-local-server.out.log"
 set "SERVER_ERR=%PLAYTEST_DIR%\manual-local-server.err.log"
 set "PID_FILE=%PLAYTEST_DIR%\manual-local-server.pid"
+set "NETWORK_IP="
 
 if /I "%~1"=="--help" goto help
 if /I "%~1"=="/?" goto help
@@ -25,6 +26,11 @@ echo.
 if not exist "package.json" (
   echo ERROR: package.json was not found. Run this batch file from the SATs Legends repo root.
   exit /b 1
+)
+
+for /f "usebackq delims=" %%I in (`powershell -NoProfile -ExecutionPolicy Bypass -Command "Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.IPAddress -notlike '127.*' -and $_.IPAddress -notlike '169.254.*' -and $_.InterfaceAlias -match 'Wi-?Fi|Wireless' } | Select-Object -First 1 -ExpandProperty IPAddress"`) do set "NETWORK_IP=%%I"
+if not defined NETWORK_IP (
+  for /f "usebackq delims=" %%I in (`powershell -NoProfile -ExecutionPolicy Bypass -Command "Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.IPAddress -notlike '127.*' -and $_.IPAddress -notlike '169.254.*' -and $_.InterfaceAlias -match 'Ethernet' } | Select-Object -First 1 -ExpandProperty IPAddress"`) do set "NETWORK_IP=%%I"
 )
 
 echo Choose local app mode:
@@ -58,12 +64,21 @@ if "%DEVICE_CHOICE%"=="2" (
 )
 
 set "LOCAL_APP_URL=http://127.0.0.1:%APP_PORT%/"
+if defined NETWORK_IP (
+  set "PHONE_APP_URL=http://%NETWORK_IP%:%APP_PORT%/"
+) else (
+  set "PHONE_APP_URL=Unable to detect Wi-Fi/Ethernet IP"
+)
 
 echo.
 echo Selected:
 echo   App mode:     %APP_MODE%
 echo   Device mode:  %DEVICE_MODE%
 echo   Local URL:    %LOCAL_APP_URL%
+echo   Phone URL:    %PHONE_APP_URL%
+echo.
+echo For real phone testing, connect your phone to the same Wi-Fi and open the Phone URL above.
+echo If it does not load, allow Node.js through Windows Firewall when prompted.
 echo.
 pause
 
@@ -134,10 +149,20 @@ if exist "%SERVER_ERR%" del "%SERVER_ERR%" >nul 2>nul
 set "SERVER_MODE=%~1"
 set "SERVER_PORT=%~2"
 
+echo       Opening Windows Firewall for TCP port %SERVER_PORT% if allowed...
+powershell -NoProfile -ExecutionPolicy Bypass -Command "try { if (-not (Get-NetFirewallRule -DisplayName 'SATs Legends local app %SERVER_PORT%' -ErrorAction SilentlyContinue)) { New-NetFirewallRule -DisplayName 'SATs Legends local app %SERVER_PORT%' -Direction Inbound -Action Allow -Protocol TCP -LocalPort %SERVER_PORT% -ErrorAction Stop | Out-Null }; exit 0 } catch { Write-Host '       Firewall rule was not added automatically. If your phone cannot load the app, run this batch as Administrator once.'; exit 0 }"
+
+echo       Clearing any stale listener on port %SERVER_PORT%...
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$ErrorActionPreference='SilentlyContinue'; Get-NetTCPConnection -LocalPort %SERVER_PORT% | Where-Object { $_.State -eq 'Listen' } | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force }"
+
 if "%SERVER_MODE%"=="dev" (
   powershell -NoProfile -ExecutionPolicy Bypass -Command "$ErrorActionPreference='Stop'; $p = Start-Process -FilePath 'npm.cmd' -ArgumentList @('run','dev','--','--host',$env:HOST,'--port',$env:SERVER_PORT) -WorkingDirectory (Get-Location) -RedirectStandardOutput $env:SERVER_OUT -RedirectStandardError $env:SERVER_ERR -PassThru; Set-Content -LiteralPath $env:PID_FILE -Value $p.Id"
 ) else (
   powershell -NoProfile -ExecutionPolicy Bypass -Command "$ErrorActionPreference='Stop'; $p = Start-Process -FilePath 'npm.cmd' -ArgumentList @('run','preview','--','--host',$env:HOST,'--port',$env:SERVER_PORT,'--strictPort') -WorkingDirectory (Get-Location) -RedirectStandardOutput $env:SERVER_OUT -RedirectStandardError $env:SERVER_ERR -PassThru; Set-Content -LiteralPath $env:PID_FILE -Value $p.Id"
+)
+timeout /t 2 /nobreak >nul
+if defined NETWORK_IP (
+  powershell -NoProfile -ExecutionPolicy Bypass -Command "try { $r = Invoke-WebRequest -Uri ('http://%NETWORK_IP%:%SERVER_PORT%/') -UseBasicParsing -TimeoutSec 5; Write-Host ('       Network check: http://%NETWORK_IP%:%SERVER_PORT%/ returned HTTP ' + $r.StatusCode) } catch { Write-Host ('       Network check failed from this PC: ' + $_.Exception.Message) }"
 )
 exit /b %ERRORLEVEL%
 

@@ -85,10 +85,12 @@ export const useScreenFlow = (): ScreenFlowController => {
 
     if (nextScreen !== 'gameplay') {
       nextLevel = null;
+      setSelectedLevel(null);
     }
 
     if (nextScreen !== 'gameplay' && nextScreen !== 'island_levels') {
       nextIsland = null;
+      setSelectedIsland(null);
     }
 
     const expectedPath = buildRouteForScreen(nextScreen, nextIsland?.id, nextLevel?.id);

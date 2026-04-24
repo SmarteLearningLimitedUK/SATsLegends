@@ -66,7 +66,11 @@ const App: React.FC = () => {
     goToParentDashboard,
   } = useScreenFlow();
 
-  const canonicalGameTitle = getLevelGameTitle(selectedLevel);
+  const canonicalGameTitle = screen === 'ratio_racer'
+    ? 'Ratio Racer'
+    : screen === 'share_splitter'
+      ? 'Share Splitter'
+      : getLevelGameTitle(selectedLevel);
 
   const {
     player,
@@ -955,10 +959,12 @@ const App: React.FC = () => {
   const isWellbeingScreen = screen === 'wellbeing_hub' || screen === 'wellbeing_activity';
   const isSplashScreen = screen === 'splash';
   const isStartScreen = isSplashScreen || screen === 'profile_setup' || screen === 'avatar_selection';
-  const isGameplayScreen = screen === 'gameplay';
+  const isGameplayScreen = screen === 'gameplay' || screen === 'ratio_racer' || screen === 'share_splitter';
+  const isStandaloneRatioRacer = screen === 'ratio_racer';
+  const isStandaloneShareSplitter = screen === 'share_splitter';
   const isMapLayoutScreen = MAP_LAYOUT_SCREENS.includes(screen);
   const isWorldMapScreen = screen === 'world_map';
-  const selectedGameType = selectedLevel?.gameType;
+  const selectedGameType = isStandaloneRatioRacer ? 'ratio_fractions' : isStandaloneShareSplitter ? 'ratio_rapids' : selectedLevel?.gameType;
   const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
   const globalDockOffsetClass = '';
@@ -976,10 +982,14 @@ const App: React.FC = () => {
       : isMapLayoutScreen
       ? 'sat-screen-map-content'
       : 'sat-screen-standard-content items-stretch';
+  const appViewportOverflowClass = isWorldMapScreen ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden';
+  const appScreenOverflowClass = isWorldMapScreen ? 'overflow-visible' : 'overflow-hidden';
   const screenEnterScale = 1;
   const screenExitScale = 1;
   const hideShellTimer = LEVEL_TIMERS_DISABLED
     || !isGameplayScreen
+    || isStandaloneRatioRacer
+    || isStandaloneShareSplitter
     || selectedLevel?.isPractice
     || selectedLevel?.gameType === 'potion_pour';
   const goToProfile = useCallback(() => {
@@ -998,11 +1008,11 @@ const App: React.FC = () => {
     const mapHudDock = screen === 'world_map'
       ? (
         <div className="mt-0.5 flex w-full max-w-[calc(100vw-0.7rem)] shrink-0 items-center justify-center overflow-hidden">
-          <div className="relative w-full max-w-full shrink-0 rounded-[1.15rem] border border-cyan-100/26 bg-[linear-gradient(180deg,rgba(16,40,96,0.84)_0%,rgba(9,24,64,0.88)_100%)] px-2 py-1.5 shadow-[0_10px_18px_rgba(2,6,23,0.38),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-[2px]">
+          <div className="relative w-fit max-w-full shrink-0 rounded-[1.15rem] border border-cyan-100/26 bg-[linear-gradient(180deg,rgba(16,40,96,0.84)_0%,rgba(9,24,64,0.88)_100%)] px-2 py-1.5 shadow-[0_10px_18px_rgba(2,6,23,0.38),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-[2px]">
             <div className="pointer-events-none absolute inset-[1px] rounded-[1.05rem] border border-cyan-100/14" />
             <div className="pointer-events-none absolute inset-x-3 top-[3px] h-3 rounded-full bg-cyan-200/10 blur-[2px]" />
 
-            <div className="relative grid grid-cols-4 gap-1.5 sm:gap-2">
+            <div className="relative flex items-center gap-1.5 sm:gap-2">
               <button
                 type="button"
                 onClick={goToProfile}
@@ -1052,7 +1062,7 @@ const App: React.FC = () => {
             gameTitle={canonicalGameTitle}
             lives={globalMiniGameLives}
             hideTimer={hideShellTimer}
-            onBack={isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
+            onBack={isStandaloneRatioRacer || isStandaloneShareSplitter ? goToHome : isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
             variant={isGameplayScreen ? 'gameplay' : 'hub'}
             showActions={false}
           />
@@ -1061,7 +1071,7 @@ const App: React.FC = () => {
       <main className="game-stage">
           <div
             data-screen-family={screenBehavior.family}
-            className={`app-viewport sat-theme-bluegold app-background-intensity ${backgroundIntensityClass} app-shell-family-${screenBehavior.family} screen-${screen.replace(/_/g, '-')} ${isGameplayScreen ? gameplayTypeClass : ''} relative w-full flex flex-col items-center overflow-hidden ${viewportShellClass}`}
+            className={`app-viewport sat-theme-bluegold app-background-intensity ${backgroundIntensityClass} app-shell-family-${screenBehavior.family} screen-${screen.replace(/_/g, '-')} ${isGameplayScreen ? gameplayTypeClass : ''} relative w-full flex flex-col items-center ${appViewportOverflowClass} ${viewportShellClass}`}
           >
             <AnimatePresence mode="wait">
               <motion.div
@@ -1071,8 +1081,8 @@ const App: React.FC = () => {
                 exit={{ opacity: 0, scale: screenExitScale }}
                 data-qa-root="screen"
                 data-qa-screen={screen}
-                data-qa-scrollable="false"
-                className={`app-screen-content relative z-10 flex h-full min-h-0 w-full flex-1 justify-center overflow-hidden pointer-events-auto ${contentShellClass} ${globalDockOffsetClass}`}
+                data-qa-scrollable={screenBehavior.scrollable ? 'true' : 'false'}
+                className={`app-screen-content relative z-10 flex ${isWorldMapScreen ? 'min-h-full' : 'h-full min-h-0'} w-full flex-1 justify-center ${appScreenOverflowClass} pointer-events-auto ${contentShellClass} ${globalDockOffsetClass}`}
               >
                 <AppRouter
                   screen={screen}
@@ -1180,7 +1190,7 @@ const App: React.FC = () => {
         {!isStartScreen ? (
           mapHudDock || (
             <GameActionDock
-              onBack={isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
+              onBack={isStandaloneRatioRacer || isStandaloneShareSplitter ? goToHome : isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
               compact
               variant="global"
             />

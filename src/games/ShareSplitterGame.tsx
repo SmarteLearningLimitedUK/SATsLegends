@@ -872,17 +872,32 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                     aria-hidden="true"
                     className="pointer-events-none fixed z-[24] -translate-x-1/2 -translate-y-1/2 rounded-full"
                     initial={{ opacity: 0.46, scale: 0.96 }}
-                    animate={{ opacity: [0.42, 0.88, 0.42], scale: [0.98, 1.14, 0.98] }}
-                    transition={{ duration: 1.9, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }}
+                    animate={{ opacity: [0.5, 0.96, 0.5], scale: [0.96, 1.18, 0.96] }}
+                    transition={{ duration: 1.45, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }}
                     style={{
                       left: `${cakeSourceCenter.x}px`,
                       top: `${cakeVisualY}px`,
-                      width: `${cakeVisualSizePx * 1.18}px`,
-                      height: `${cakeVisualSizePx * 1.18}px`,
-                      background: 'radial-gradient(circle, rgba(255,255,222,0.5) 0%, rgba(255,218,86,0.34) 34%, rgba(251,146,60,0.16) 58%, rgba(0,0,0,0) 78%)',
-                      boxShadow: '0 0 34px rgba(255,232,128,0.46), 0 0 74px rgba(250,204,21,0.36), 0 0 112px rgba(251,146,60,0.22)',
+                      width: `${cakeVisualSizePx * 1.26}px`,
+                      height: `${cakeVisualSizePx * 1.26}px`,
+                      background: 'radial-gradient(circle, rgba(255,255,222,0.68) 0%, rgba(255,218,86,0.44) 34%, rgba(251,146,60,0.24) 58%, rgba(0,0,0,0) 78%)',
+                      boxShadow: '0 0 38px rgba(255,244,168,0.66), 0 0 86px rgba(250,204,21,0.5), 0 0 128px rgba(251,146,60,0.34)',
                       filter: 'blur(1.5px)',
                       mixBlendMode: 'screen',
+                    }}
+                  />
+
+                  <motion.div
+                    aria-hidden="true"
+                    className="pointer-events-none fixed z-[27] -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-amber-200/80"
+                    initial={{ opacity: 0.72, scale: 0.92 }}
+                    animate={{ opacity: [0.78, 0.18, 0.78], scale: [0.9, 1.12, 0.9] }}
+                    transition={{ duration: 1.45, repeat: Number.POSITIVE_INFINITY, ease: 'easeOut' }}
+                    style={{
+                      left: `${cakeSourceCenter.x}px`,
+                      top: `${cakeVisualY}px`,
+                      width: `${cakeVisualSizePx * 0.84}px`,
+                      height: `${cakeVisualSizePx * 0.84}px`,
+                      boxShadow: '0 0 18px rgba(255,255,210,0.9), 0 0 36px rgba(250,204,21,0.72), inset 0 0 18px rgba(255,255,210,0.36)',
                     }}
                   />
 
@@ -902,6 +917,26 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                       height: `${cakeVisualSizePx}px`,
                     }}
                   />
+
+                  <motion.div
+                    aria-live="polite"
+                    className="pointer-events-none fixed z-[29] -translate-y-1/2 rounded-xl border border-amber-100/80 bg-slate-950/82 px-3 py-2 text-center shadow-[0_10px_18px_rgba(15,23,42,0.32)] backdrop-blur-sm"
+                    initial={{ opacity: 0, x: 8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.22, ease: 'easeOut' }}
+                    style={{
+                      left: `${cakeSourceCenter.x + (cakeVisualSizePx * 0.34)}px`,
+                      top: `${cakeVisualY - (cakeVisualSizePx * 0.25)}px`,
+                      width: `${Math.max(72, cakeVisualSizePx * 0.46)}px`,
+                    }}
+                  >
+                    <div className="text-[9px] font-black uppercase leading-none tracking-[0.08em] text-amber-200">
+                      Slices
+                    </div>
+                    <div className="mt-1 text-lg font-black leading-none text-white">
+                      {remainingSlices}/{challenge.totalSlices}
+                    </div>
+                  </motion.div>
 
                   <button
                     ref={cakeSourceButtonRef}

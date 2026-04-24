@@ -47,6 +47,8 @@ export const SCREEN_BEHAVIOR: Record<GameScreen, {
   world_map: { scrollable: true, shell: 'playfield', family: 'hub' },
   island_levels: { scrollable: true, shell: 'playfield', family: 'hub' },
   gameplay: { scrollable: false, shell: 'playfield', family: 'game' },
+  ratio_racer: { scrollable: false, shell: 'playfield', family: 'game' },
+  share_splitter: { scrollable: false, shell: 'playfield', family: 'game' },
   wellbeing_hub: { scrollable: false, shell: 'playfield', family: 'hub' },
   wellbeing_activity: { scrollable: false, shell: 'playfield', family: 'hub' },
   level_result: { scrollable: false, shell: 'playfield', family: 'overlay' },

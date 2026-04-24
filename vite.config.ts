@@ -5,15 +5,15 @@ import { defineConfig, loadEnv } from 'vite';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
-  const isVercel = process.env.VERCEL === '1';
+  const useRelativeBase = env.VITE_RELATIVE_BASE === '1' || process.env.VITE_RELATIVE_BASE === '1';
   const geminiApiKey = env.GEMINI_API_KEY ?? process.env.GEMINI_API_KEY ?? '';
   const buildId = env.VITE_BUILD_ID ?? process.env.VITE_BUILD_ID ?? new Date().toISOString();
 
   return {
     plugins: [react(), tailwindcss()],
-    // Use absolute paths on Vercel to avoid asset resolution issues on rewritten routes.
-    // Keep relative paths for non-Vercel static uploads.
-    base: isVercel ? '/' : './',
+    // Deep links such as /minigame/share-splitter need absolute asset paths.
+    // Set VITE_RELATIVE_BASE=1 only for static file uploads that require relative assets.
+    base: useRelativeBase ? './' : '/',
     define: {
       'process.env.GEMINI_API_KEY': JSON.stringify(geminiApiKey),
       'import.meta.env.VITE_BUILD_ID': JSON.stringify(buildId),
@@ -24,9 +24,19 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
+      host: '0.0.0.0',
+      port: 3000,
+      strictPort: true,
+      allowedHosts: true,
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
       // Do not modify - file watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
+    },
+    preview: {
+      host: '0.0.0.0',
+      port: 4173,
+      strictPort: true,
+      allowedHosts: true,
     },
     build: {
       rollupOptions: {

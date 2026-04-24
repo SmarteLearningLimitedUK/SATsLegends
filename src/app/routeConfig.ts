@@ -43,6 +43,20 @@ export const parseRoute = (pathname: string): RouteState => {
       if (!islandId || !levelId) return { screen: 'world_map' };
       return { screen: 'gameplay', islandId, levelId };
     }
+    case 'minigame':
+      if (first === 'ratio-racer' || first === 'ratio_racer') {
+        return { screen: 'ratio_racer' };
+      }
+      if (first === 'share-splitter' || first === 'share_splitter') {
+        return { screen: 'share_splitter' };
+      }
+      return { screen: 'world_map' };
+    case 'ratio-racer':
+    case 'ratio_racer':
+      return { screen: 'ratio_racer' };
+    case 'share-splitter':
+    case 'share_splitter':
+      return { screen: 'share_splitter' };
     case 'wellbeing':
       return { screen: first === 'activity' ? 'wellbeing_activity' : 'wellbeing_hub' };
     case 'shop':
@@ -80,6 +94,10 @@ export const buildRouteForScreen = (
       return islandId ? `/island/${islandId}` : '/map';
     case 'gameplay':
       return islandId && levelId ? `/game/${islandId}/${levelId}` : '/map';
+    case 'ratio_racer':
+      return '/minigame/ratio-racer';
+    case 'share_splitter':
+      return '/minigame/share-splitter';
     case 'wellbeing_hub':
       return '/wellbeing';
     case 'wellbeing_activity':

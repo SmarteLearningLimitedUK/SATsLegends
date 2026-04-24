@@ -3077,6 +3077,19 @@ button:disabled {
   min-height: 0;
 }
 
+.screen-world-map.app-viewport {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.screen-world-map .app-screen-content {
+  height: auto !important;
+  min-height: 100%;
+  overflow: visible !important;
+}
+
 .app-shell-family-game .app-screen-content {
   overflow: hidden !important;
 }
