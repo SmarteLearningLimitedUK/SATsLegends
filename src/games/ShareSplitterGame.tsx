@@ -10,7 +10,8 @@ import {
   SecondaryButton,
 } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
-import shareSplitterBackground from '../assets/maps/backgroundsforgames/tableshresplit.png';
+import shareSplitterBackground from '../assets/maps/backgroundsforgames/sharespitbackground.png';
+import birthdayCakeAsset from '../assets/maps/backgroundsforgames/birthdaycake.png';
 import cakeSliceAsset from '../assets/cakeslice.png';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import CelebrationSplash from '../components/CelebrationSplash';
@@ -53,9 +54,10 @@ type SlicePlacement = {
   y: number;
 };
 
-const MAX_PLATE_COUNT = 5;
+const MAX_PLATE_COUNT = 4;
 const ROUNDS_TO_WIN = 5;
 const BASE_XP_PER_ROUND = 120;
+const BIRTHDAY_CAKE_ASSET = birthdayCakeAsset;
 const CAKE_SLICE_ASSET = cakeSliceAsset;
 const DRAG_SLICE_SIZE = 48;
 const SHARE_SPLITTER_BACKGROUND_SIZE = { width: 2500, height: 5000 };
@@ -146,9 +148,8 @@ const shareModeForLevel = (levelId: number): ShareChallenge['mode'] => {
 };
 
 const plateCountForMode = (mode: ShareChallenge['mode']) => {
-  if (mode === 'direct_share') return 3;
-  if (mode === 'scaled_share') return 4;
-  return 5;
+  void mode;
+  return MAX_PLATE_COUNT;
 };
 
 const buildSharePrompt = () => {
@@ -315,7 +316,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const hasMoves = moveHistory.length > 0;
   const allSlicesUsed = remainingSlices === 0;
   const allCorrect = plateViews.every((plate) => plate.isCorrect);
-  const platePositions = PLATE_POSITIONS_BY_COUNT[challenge.plateCount] || PLATE_POSITIONS_BY_COUNT[5];
   const isCompactViewport = viewportRect.width < 520;
   const plateLayoutScale = isCompactViewport ? 0.68 : 1;
   const cakeSourceLayoutScale = isCompactViewport ? 0.76 : 1;
@@ -325,7 +325,26 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   );
   const backgroundOffsetX = (viewportRect.width - (SHARE_SPLITTER_BACKGROUND_SIZE.width * backgroundScale)) / 2;
   const backgroundOffsetY = viewportRect.height - (SHARE_SPLITTER_BACKGROUND_SIZE.height * backgroundScale);
-  const plateSizePx = SHARE_SPLITTER_PLATE_DIAMETER_PX * backgroundScale * plateLayoutScale;
+  const plateSizePx = Math.max(
+    isCompactViewport ? 68 : 78,
+    Math.min(
+      isCompactViewport ? 78 : 104,
+      ((viewportRect.width - (isCompactViewport ? 44 : 64)) / MAX_PLATE_COUNT) * plateLayoutScale,
+    ),
+  );
+  const platePositions = useMemo(() => {
+    const sidePadding = isCompactViewport ? 54 : 42;
+    const usableWidth = Math.max(1, viewportRect.width - sidePadding * 2);
+    const y = Math.max(
+      isCompactViewport ? 158 : plateSizePx * 0.5,
+      (viewportRect.height * (isCompactViewport ? 0.17 : 0.28)) - 30,
+    );
+
+    return Array.from({ length: MAX_PLATE_COUNT }, (_, index) => ({
+      x: sidePadding + (usableWidth * (index / Math.max(1, MAX_PLATE_COUNT - 1))),
+      y,
+    }));
+  }, [isCompactViewport, plateSizePx, viewportRect.height, viewportRect.width]);
   const promptText = isPractice
     ? `Quick! share the cake to avoid a riot!\nTarget ratio: ${challenge.ratios.join(':')}`
     : `Quick! share the cake to avoid a riot!\nThere are ${challenge.totalSlices} slices of brainpower cake.\nThe Monster Mind demands it is shared in a ratio of ${challenge.ratios.join(':')}.`;
@@ -361,6 +380,9 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     cakeSourceCenter.y,
     cakeSourceSafeBottom - (cakeSourceButtonSizePx / 2),
   );
+  const cakeVisualScale = isCompactViewport ? 1.9 : 1.55;
+  const cakeVisualSizePx = cakeSourceButtonSizePx * cakeVisualScale;
+  const cakeVisualY = cakeSourceY - (isCompactViewport ? 71 : 57);
 
   const getCakeSourceHitRect = useCallback(() => {
     const cakeButton = cakeSourceButtonRef.current;
@@ -479,7 +501,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     const getPlateCenter = (index: number) => {
       const position = platePositions[index];
       if (!position) return null;
-      return mapBackgroundPointToViewport(position);
+      return position;
     };
 
     const getNearestPlate = (clientX: number, clientY: number) => {
@@ -785,12 +807,12 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                   onMouseDown={handleSourceAreaPointerDown}
                   onTouchStart={handleSourceAreaPointerDown}
                 >
-                  <div className="pointer-events-none fixed inset-0 z-[20]">
+                  <div className="pointer-events-none fixed inset-0 z-[80]">
                     <div className="relative h-full w-full">
                       <CelebrationSplash active={showCelebrationSplash} message="Party Time!" theme="party" />
                       {plateViews.map((plate, index) => {
                         const position = platePositions[index] || { x: 0, y: 0 };
-                        const center = mapBackgroundPointToViewport(position);
+                        const center = position;
                         const sliceCount = plates[index].length;
                         const sliceBaseSizePx = Math.max(
                           22,
@@ -801,7 +823,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                           <div
                             key={plate.id}
                             data-testid={`share-splitter-plate-${index + 1}`}
-                            className="pointer-events-none absolute flex -translate-x-1/2 -translate-y-1/2 items-center justify-center p-0 text-center transition"
+                            className="pointer-events-none fixed z-[90] flex -translate-x-1/2 -translate-y-1/2 items-center justify-center p-0 text-center transition"
                             style={{
                               left: `${center.x}px`,
                               top: `${center.y}px`,
@@ -849,17 +871,35 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                   <motion.div
                     aria-hidden="true"
                     className="pointer-events-none fixed z-[24] -translate-x-1/2 -translate-y-1/2 rounded-full"
-                    initial={{ opacity: 0.4, scale: 0.94 }}
-                    animate={{ opacity: [0.35, 0.72, 0.35], scale: [0.96, 1.05, 0.96] }}
-                    transition={{ duration: 2.4, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }}
+                    initial={{ opacity: 0.46, scale: 0.96 }}
+                    animate={{ opacity: [0.42, 0.88, 0.42], scale: [0.98, 1.14, 0.98] }}
+                    transition={{ duration: 1.9, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }}
                     style={{
                       left: `${cakeSourceCenter.x}px`,
-                      top: `${cakeSourceY}px`,
-                      width: `${cakeSourceButtonSizePx * 1.08}px`,
-                      height: `${cakeSourceButtonSizePx * 1.08}px`,
-                      background: 'radial-gradient(circle, rgba(255,244,191,0.28) 0%, rgba(250,204,21,0.16) 36%, rgba(251,146,60,0.06) 58%, rgba(0,0,0,0) 76%)',
-                      boxShadow: '0 0 28px rgba(250,204,21,0.28), 0 0 58px rgba(251,146,60,0.18)',
-                      filter: 'blur(1px)',
+                      top: `${cakeVisualY}px`,
+                      width: `${cakeVisualSizePx * 1.18}px`,
+                      height: `${cakeVisualSizePx * 1.18}px`,
+                      background: 'radial-gradient(circle, rgba(255,255,222,0.5) 0%, rgba(255,218,86,0.34) 34%, rgba(251,146,60,0.16) 58%, rgba(0,0,0,0) 78%)',
+                      boxShadow: '0 0 34px rgba(255,232,128,0.46), 0 0 74px rgba(250,204,21,0.36), 0 0 112px rgba(251,146,60,0.22)',
+                      filter: 'blur(1.5px)',
+                      mixBlendMode: 'screen',
+                    }}
+                  />
+
+                  <motion.img
+                    aria-hidden="true"
+                    src={BIRTHDAY_CAKE_ASSET}
+                    alt=""
+                    draggable={false}
+                    className="pointer-events-none fixed z-[28] -translate-x-1/2 -translate-y-1/2 object-contain drop-shadow-[0_18px_24px_rgba(29,16,8,0.32)]"
+                    initial={{ opacity: 0, scale: 0.96 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.28, ease: 'easeOut' }}
+                    style={{
+                      left: `${cakeSourceCenter.x}px`,
+                      top: `${cakeVisualY}px`,
+                      width: `${cakeVisualSizePx}px`,
+                      height: `${cakeVisualSizePx}px`,
                     }}
                   />
 
@@ -873,9 +913,9 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                     className="pointer-events-auto fixed z-[30] -translate-x-1/2 -translate-y-1/2 rounded-full bg-transparent p-0 touch-none"
                     style={{
                       left: `${cakeSourceCenter.x}px`,
-                      top: `${cakeSourceY}px`,
-                      width: `${cakeSourceButtonSizePx}px`,
-                      height: `${cakeSourceButtonSizePx}px`,
+                      top: `${cakeVisualY}px`,
+                      width: `${cakeVisualSizePx}px`,
+                      height: `${cakeVisualSizePx}px`,
                     }}
                     aria-label={remainingSlices > 0 ? 'Drag a slice from the cake' : 'No cake slices left'}
                   />

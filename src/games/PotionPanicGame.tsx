@@ -299,61 +299,27 @@ const buildOrderPrompt = (
   storyLead: string,
   mode?: ChallengeMode
 ) => {
+  const concisePrompt = `The potion is unstable - restore it to the recipe of ${ratioText}.`;
+
   switch (mode) {
     case 'missing_value':
-      return [
-        'The potion is unstable.',
-        'Balance the ingredients.',
-        storyLead,
-        `Restore the missing drops using the ratio: ${ratioText}`,
-        'One ingredient is already set.',
-      ].join('\n');
+      return concisePrompt;
 
     case 'fix_mistake':
-      return [
-        'The potion is unstable.',
-        'Balance the ingredients.',
-        storyLead,
-        `Fix the potion so the ratio is correct: ${ratioText}`,
-        'One ingredient is wrong.',
-      ].join('\n');
+      return concisePrompt;
 
     case 'scale_recipe':
-      return [
-        'The potion is unstable.',
-        'Balance the ingredients.',
-        storyLead,
-        `Scale the potion to keep the ratio correct: ${ratioText}`,
-        'Check the total before you brew.',
-      ].join('\n');
+      return concisePrompt;
 
     case 'multi_step':
-      return [
-        'The potion is unstable.',
-        'Balance the ingredients.',
-        storyLead,
-        'Use the total and ratio to rebuild the potion.',
-        'Solve it step by step.',
-      ].join('\n');
+      return concisePrompt;
 
     case 'word_problem':
-      return [
-        'The potion is unstable.',
-        'Balance the ingredients.',
-        storyLead,
-        'Use the clue to restore the potion mix.',
-        'Then complete the brew.',
-      ].join('\n');
+      return concisePrompt;
 
     case 'direct_recipe':
     default:
-      return [
-        'The potion is unstable.',
-        'Balance the ingredients.',
-        storyLead,
-        `Restore the correct potion ratio: ${ratioText}`,
-        'Add the drops, then brew.',
-      ].join('\n');
+      return concisePrompt;
   }
 };
 
@@ -786,8 +752,9 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
 
   return (
     <GameUiShell backgroundImage={potionPanicBackdrop} backgroundOpacity={1} overlayDisabled>
-      <GameScreenLayout
+        <GameScreenLayout
         className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-0 text-white"
+        mainClassName="relative z-[35] overflow-visible"
         top={(
           <div className="relative">
             <div className="relative z-10">
@@ -803,10 +770,10 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
         )}
         main={(
           <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2">
-        <div className="relative min-h-0 overflow-visible bg-transparent">
+        <div className="relative z-[35] min-h-0 overflow-visible bg-transparent">
           <div
-            className="absolute inset-0"
-            style={{ transform: 'translateY(calc(var(--potion-cauldron-shift, 0px) + 30px))' }}
+            className="absolute inset-0 z-[70]"
+            style={{ transform: 'translateY(calc(var(--potion-cauldron-shift, 0px) + 48px))' }}
           >
             <div className="pointer-events-none absolute left-1/2 top-[84%] z-0 h-14 w-[72%] -translate-x-1/2 rounded-full bg-black/55 blur-md" />
             <div className="pointer-events-none absolute left-1/2 top-[76%] z-10 h-[24%] w-[58%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
@@ -824,9 +791,9 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
               src={cauldrenAndPotionArt}
               alt=""
               aria-hidden="true"
-              className="pointer-events-none absolute left-1/2 bottom-[4%] z-30 h-[41.5%] max-w-none -translate-x-1/2 object-contain md:bottom-[3%]"
+              className="pointer-events-none absolute left-1/2 bottom-[13%] z-[90] h-[31%] max-w-none -translate-x-1/2 translate-y-[40px] object-contain md:bottom-[11%]"
             />
-            <div className="absolute left-1/2 bottom-[24%] z-20 h-[16%] w-[34%] -translate-x-1/2 translate-y-[5px] overflow-hidden rounded-[46%]">
+            <div className="absolute left-1/2 bottom-[28.5%] z-20 h-[12.5%] w-[27.5%] -translate-x-1/2 translate-y-[45px] overflow-hidden rounded-[46%]">
               <motion.div
                 className="absolute inset-x-[8%] bottom-[8%] rounded-[42%]"
                 style={{
