@@ -79,13 +79,15 @@ Use this checklist during design/QA review passes to catch visual, UX, and consi
 
 ### Review Questions
 - Does everything fit in viewport (no required scrolling during gameplay)?
-- Is hierarchy clear: mission -> playfield -> answers -> primary CTA?
+- Is hierarchy clear and docked in this order: top HUD -> question -> interaction -> answers -> bottom HUD?
 - Is there exactly one top HUD and one shared bottom utility dock (except map rules)?
+- Are backgrounds contained to the gameplay frame and not extending under the shared bottom HUD?
 
 ### Pass/Fail Checks
 - [ ] PASS if all gameplay-critical elements are visible simultaneously in portrait.
 - [ ] PASS if no duplicate top HUD or pseudo-HUD inside game content.
 - [ ] PASS if spacing communicates clear priority (no equal-weight panel stacking).
+- [ ] PASS if answer containers are tight, even, and consistently aligned.
 
 ### Common Snags
 - Submit/confirm button hidden behind bottom dock.

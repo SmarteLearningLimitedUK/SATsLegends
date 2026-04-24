@@ -461,11 +461,11 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
             </div>
           </section>
 
-          <section className="shrink-0 rounded-[1.1rem] border border-white/16 bg-[linear-gradient(180deg,rgba(16,25,49,0.72),rgba(8,12,25,0.84))] p-2 shadow-[0_10px_18px_rgba(2,6,23,0.16)] backdrop-blur-sm">
+          <section className="answer-choice-surface shrink-0 rounded-[1.1rem] border border-white/16 bg-[linear-gradient(180deg,rgba(16,25,49,0.72),rgba(8,12,25,0.84))] p-2 shadow-[0_10px_18px_rgba(2,6,23,0.16)] backdrop-blur-sm">
             <div className="text-center text-[9px] font-black uppercase tracking-[0.16em] text-amber-100/80">
               Tap the correct quotient and remainder
             </div>
-            <div className="answer-choice-surface mt-2 grid grid-cols-4 gap-1.5">
+            <div className="mt-2 grid grid-cols-4 gap-1.5">
               {problem.options.map((option, index) => (
                 <button
                   key={`${problem.id}-${option}-${index}`}

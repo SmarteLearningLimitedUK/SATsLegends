@@ -342,7 +342,7 @@ const MatchGameShell: React.FC<{
              </div>
            ) : null}
 
-           <div className={`relative z-10 flex h-full w-full items-start justify-center px-2 pb-[calc(env(safe-area-inset-bottom)+0.9rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+10rem)]' : 'pt-2'} sm:px-4`}>
+            <div className={`relative z-10 flex h-full w-full items-start justify-center px-2 pb-[calc(env(safe-area-inset-bottom)+0.9rem)] ${useSharedTopHud ? 'match-mastery-board-stage pt-[calc(env(safe-area-inset-top)+11.2rem)]' : 'pt-2'} sm:px-4`}>
              <AnimatePresence>
                {fireActive ? (
                  <motion.div
@@ -632,7 +632,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
-      <div className="relative box-border w-[min(94vw,94vh)] rounded-[2rem] border border-cyan-100/20 bg-[#04102c]/86 p-3 shadow-[0_18px_40px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:p-4">
+      <div className="relative box-border mx-auto w-[min(calc(100vw-1rem),24rem)] rounded-[2rem] border border-cyan-100/20 bg-[#04102c]/86 p-3 shadow-[0_18px_40px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:p-4">
         <div
           className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-[0.24]"
           style={{

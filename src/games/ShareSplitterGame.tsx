@@ -206,10 +206,17 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const [showCelebrationSplash, setShowCelebrationSplash] = useState(false);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
   const trimmedCakeSliceAsset = useTrimmedImageSource(CAKE_SLICE_ASSET);
-  const [viewportRect, setViewportRect] = useState({ width: 0, height: 0 });
+  const [viewportRect, setViewportRect] = useState({
+    left: 0,
+    top: 0,
+    width: 0,
+    height: 0,
+  });
+  const [dockTop, setDockTop] = useState<number | null>(null);
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const endedRef = useRef(false);
+  const playfieldRootRef = useRef<HTMLDivElement | null>(null);
   const cakeSourceButtonRef = useRef<HTMLButtonElement | null>(null);
   const sliceSeedRef = useRef(0);
   const dragActiveRef = useRef(false);
@@ -243,19 +250,51 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   }, [isPractice]);
 
   useLayoutEffect(() => {
+    const getMeasurementNode = () => (
+      playfieldRootRef.current
+      ?? document.querySelector<HTMLElement>('[data-gameplay-content-viewport="true"]')
+      ?? document.documentElement
+    );
+
     const update = () => {
-      setViewportRect({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
+      const measurementNode = getMeasurementNode();
+      const rect = measurementNode.getBoundingClientRect();
+      const localWidth = measurementNode.clientWidth || rect.width;
+      const localHeight = measurementNode.clientHeight || rect.height;
+      const scaleY = localHeight > 0 ? rect.height / localHeight : 1;
+      setViewportRect(rect
+        ? {
+          left: 0,
+          top: 0,
+          width: localWidth,
+          height: localHeight,
+        }
+        : {
+          left: 0,
+          top: 0,
+          width: window.innerWidth,
+          height: window.innerHeight,
+        });
+      const dockRects = Array.from(document.querySelectorAll<HTMLButtonElement>(
+        'button[aria-label="Back"], button[aria-label="Mute audio"], button[aria-label="Unmute audio"]',
+      ))
+        .map((button) => button.getBoundingClientRect())
+        .filter((dockRect) => dockRect.width > 0 && dockRect.height > 0);
+      setDockTop(dockRects.length > 0
+        ? (Math.min(...dockRects.map((dockRect) => dockRect.top)) - rect.top) / Math.max(0.001, scaleY)
+        : null);
     };
 
     update();
     const ro = new ResizeObserver(update);
-    ro.observe(document.documentElement);
+    ro.observe(getMeasurementNode());
+    const settleFrame = window.requestAnimationFrame(update);
+    const settleTimeout = window.setTimeout(update, 250);
     window.addEventListener('resize', update);
 
     return () => {
+      window.cancelAnimationFrame(settleFrame);
+      window.clearTimeout(settleTimeout);
       ro.disconnect();
       window.removeEventListener('resize', update);
     };
@@ -306,9 +345,22 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   }, [levelId]);
 
   const mapBackgroundPointToViewport = useCallback((point: { x: number; y: number }) => ({
-    x: backgroundOffsetX + (point.x * backgroundScale),
-    y: backgroundOffsetY + (point.y * backgroundScale),
-  }), [backgroundOffsetX, backgroundOffsetY, backgroundScale]);
+    x: viewportRect.left + backgroundOffsetX + (point.x * backgroundScale),
+    y: viewportRect.top + backgroundOffsetY + (point.y * backgroundScale),
+  }), [backgroundOffsetX, backgroundOffsetY, backgroundScale, viewportRect.left, viewportRect.top]);
+  const cakeSourceCenter = mapBackgroundPointToViewport(CAKE_SOURCE_POSITION);
+  const cakeSourceButtonSizePx = CAKE_SOURCE_SIZE_PX * backgroundScale * cakeSourceLayoutScale;
+  const fallbackDockSafeBottom = typeof window !== 'undefined'
+    ? window.innerHeight - Math.max(96, window.innerHeight * 0.12)
+    : viewportRect.top + viewportRect.height - 8;
+  const cakeSourceSafeBottom = Math.min(
+    viewportRect.top + viewportRect.height - 8,
+    dockTop !== null ? dockTop - 8 : fallbackDockSafeBottom,
+  );
+  const cakeSourceY = Math.min(
+    cakeSourceCenter.y,
+    cakeSourceSafeBottom - (cakeSourceButtonSizePx / 2),
+  );
 
   const getCakeSourceHitRect = useCallback(() => {
     const cakeButton = cakeSourceButtonRef.current;
@@ -703,7 +755,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         onAction={() => setShowPracticeIntro(false)}
       />
 
-      <div className="relative h-full w-full">
+      <div ref={playfieldRootRef} className="relative h-full w-full" data-share-splitter-root="true">
         <div
           className="pointer-events-none fixed left-0 right-0 z-[60]"
           style={{ top: 'calc(env(safe-area-inset-top) + 4px)' }}
@@ -801,10 +853,10 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                     animate={{ opacity: [0.35, 0.72, 0.35], scale: [0.96, 1.05, 0.96] }}
                     transition={{ duration: 2.4, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }}
                     style={{
-                      left: `${mapBackgroundPointToViewport(CAKE_SOURCE_POSITION).x}px`,
-                      top: `${mapBackgroundPointToViewport(CAKE_SOURCE_POSITION).y}px`,
-                      width: `${CAKE_SOURCE_SIZE_PX * backgroundScale * cakeSourceLayoutScale * 1.08}px`,
-                      height: `${CAKE_SOURCE_SIZE_PX * backgroundScale * cakeSourceLayoutScale * 1.08}px`,
+                      left: `${cakeSourceCenter.x}px`,
+                      top: `${cakeSourceY}px`,
+                      width: `${cakeSourceButtonSizePx * 1.08}px`,
+                      height: `${cakeSourceButtonSizePx * 1.08}px`,
                       background: 'radial-gradient(circle, rgba(255,244,191,0.28) 0%, rgba(250,204,21,0.16) 36%, rgba(251,146,60,0.06) 58%, rgba(0,0,0,0) 76%)',
                       boxShadow: '0 0 28px rgba(250,204,21,0.28), 0 0 58px rgba(251,146,60,0.18)',
                       filter: 'blur(1px)',
@@ -820,10 +872,10 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                     disabled={locked || remainingSlices <= 0}
                     className="pointer-events-auto fixed z-[30] -translate-x-1/2 -translate-y-1/2 rounded-full bg-transparent p-0 touch-none"
                     style={{
-                      left: `${mapBackgroundPointToViewport(CAKE_SOURCE_POSITION).x}px`,
-                      top: `${mapBackgroundPointToViewport(CAKE_SOURCE_POSITION).y}px`,
-                      width: `${CAKE_SOURCE_SIZE_PX * backgroundScale * cakeSourceLayoutScale}px`,
-                      height: `${CAKE_SOURCE_SIZE_PX * backgroundScale * cakeSourceLayoutScale}px`,
+                      left: `${cakeSourceCenter.x}px`,
+                      top: `${cakeSourceY}px`,
+                      width: `${cakeSourceButtonSizePx}px`,
+                      height: `${cakeSourceButtonSizePx}px`,
                     }}
                     aria-label={remainingSlices > 0 ? 'Drag a slice from the cake' : 'No cake slices left'}
                   />

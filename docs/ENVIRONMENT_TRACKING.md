@@ -377,7 +377,8 @@ Consolidated summary: D:\\BrainZilla\\SATsLegends\\reports\\interaction-sweep-su
    - Confirm drag, tap, and hover behavior across targets.
 
 4. Minigame layout normalization
-   - Apply "top question standard" where required.
+   - Apply the required docked order on every mini-game unless a screen has an explicitly documented custom exception.
+   - Review every island and every mini-game in the affected set, not just the visible outlier.
    - Fix iPad issues in order of priority (see Issue Backlog).
 
 5. PWA readiness
@@ -386,6 +387,7 @@ Consolidated summary: D:\\BrainZilla\\SATsLegends\\reports\\interaction-sweep-su
 6. QA validation pass
    - Re-run iPad capture on all minigames.
    - Run smartphone and desktop verification passes.
+   - Record any intentional layout exceptions directly in the relevant spec or backlog entry.
 
 ---
 

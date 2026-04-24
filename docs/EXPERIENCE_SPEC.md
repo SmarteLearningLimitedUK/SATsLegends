@@ -1,4 +1,4 @@
-# SATs Legends Experience Spec
+﻿# SATs Legends Experience Spec
 
 ## 1. Purpose
 This document is the canonical visual and interaction specification for SATs Legends.
@@ -109,6 +109,13 @@ Every mini-game screen should follow this order:
 5. **Primary CTA** (one clear action)
 6. **Shared bottom utility dock** (shell-owned secondary controls)
 
+Section docking rule:
+- Top HUD stays docked above the question strip.
+- The question strip stays above the interaction area.
+- The interaction area stays above the answer cluster.
+- The answer cluster stays above the shared bottom utility dock.
+- Background art may fill the gameplay stage behind these sections, but it must stop at the bottom edge of the shared bottom utility dock and never continue beneath it.
+
 Reference primitive roles in `src/layout/ScreenPrimitives.tsx`:
 - `MissionStrip`
 - `HeroPlayfieldCard`
@@ -138,6 +145,11 @@ Do not stack many similarly-styled cards with no priority contrast.
 - Mission strip = medium-high
 - Answer cluster = medium
 - Utility info = light
+
+### Answer cluster shape rule
+- Answer containers should be compact, balanced, and consistently spaced.
+- Use matched sizing and alignment across sibling answers unless a screen-specific layout exception is documented.
+- Avoid wide, floating, or uneven answer wrappers that weaken the docked section order.
 
 ---
 
@@ -260,7 +272,7 @@ Rule: do not use high-intensity effects for every correct answer.
 "The map makes me curious and clearly points to my next meaningful destination."
 
 ### Bad tendency
-"The map feels beautiful but unclear; I can�t tell what to do next."
+"The map feels beautiful but unclear; I can’t tell what to do next."
 
 ### Good tendency
 "Controls are big, playful, and obvious for touch."
@@ -276,6 +288,7 @@ Rule: do not use high-intensity effects for every correct answer.
 - If a screen requires scrolling to complete normal gameplay, redesign layout.
 - Keep one primary CTA visible in answer flow.
 - Keep question/puzzle/input hierarchy obvious at first glance.
+- Background art should support the section stack instead of competing with it or extending beyond the gameplay frame.
 
 ---
 
