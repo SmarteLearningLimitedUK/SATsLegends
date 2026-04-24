@@ -874,6 +874,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   const arithmeticAnsweredCount = arithmeticPaper
     ? arithmeticPaper.questions.filter((item) => arithmeticAnswers[item.id]?.trim()).length
     : 0;
+  const arithmeticQuestionCount = arithmeticPaper?.questions.length ?? 0;
   const arithmeticTimeTakenSeconds = arithmeticPaper
     ? Math.max(0, arithmeticPaper.timeLimitSeconds - (sessionState?.timeLeft ?? arithmeticPaper.timeLimitSeconds))
     : 0;
@@ -910,14 +911,14 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
                   <div className="rounded-lg bg-slate-100 p-3">Stars<br /><span className="text-xl text-slate-950">{arithmeticResult.stars}</span></div>
                   <div className="rounded-lg bg-slate-100 p-3">XP<br /><span className="text-xl text-slate-950">{arithmeticResult.xpAwarded}</span></div>
                   <div className="rounded-lg bg-slate-100 p-3">Time<br /><span className="text-xl text-slate-950">{formatTime(arithmeticTimeTakenSeconds)}</span></div>
-                  <div className="rounded-lg bg-slate-100 p-3">Correct<br /><span className="text-xl text-slate-950">{arithmeticResult.correctCount}/40</span></div>
+                  <div className="rounded-lg bg-slate-100 p-3">Correct<br /><span className="text-xl text-slate-950">{arithmeticResult.correctCount}/{arithmeticQuestionCount}</span></div>
                 </div>
               </div>
               <div className="rounded-[0.9rem] border border-slate-300 bg-white p-4">
                 <div className="text-sm font-bold uppercase tracking-[0.12em] text-slate-500">Breakdown</div>
                 <div className="mt-3 space-y-2 text-sm font-bold text-slate-700">
                   <div className="flex justify-between border-b border-slate-200 py-2"><span>Correct</span><span>{arithmeticResult.correctCount}</span></div>
-                  <div className="flex justify-between border-b border-slate-200 py-2"><span>Incorrect or blank</span><span>{40 - arithmeticResult.correctCount}</span></div>
+                  <div className="flex justify-between border-b border-slate-200 py-2"><span>Incorrect or blank</span><span>{arithmeticQuestionCount - arithmeticResult.correctCount}</span></div>
                   <div className="flex justify-between border-b border-slate-200 py-2"><span>Pass threshold</span><span>24 marks</span></div>
                   <div className="flex justify-between py-2"><span>Paper seed</span><span className="max-w-[12rem] truncate text-right">{String(arithmeticPaper.seed)}</span></div>
                 </div>
@@ -982,7 +983,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
             <div className="shrink-0 border-b border-slate-300 bg-white px-4 py-3 md:px-6 md:py-4">
               <div className="flex items-center justify-between gap-3 text-[0.68rem] font-black uppercase tracking-[0.16em] text-slate-500 md:text-sm">
                 <span>SATs Paper 1: Arithmetic</span>
-                <span>Question {currentIndex + 1} of 40</span>
+                <span>Question {currentIndex + 1} of {arithmeticQuestionCount}</span>
               </div>
             </div>
 
@@ -1032,12 +1033,12 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
               Previous
             </button>
             <div className="text-center text-xs font-black uppercase tracking-[0.12em] text-slate-600">
-              {arithmeticAnsweredCount}/40 answered
+              {arithmeticAnsweredCount}/{arithmeticQuestionCount} answered
             </div>
             <button
               type="button"
-              onClick={() => setCurrentIndex((prev) => Math.min(39, prev + 1))}
-              disabled={currentIndex === 39}
+              onClick={() => setCurrentIndex((prev) => Math.min(arithmeticQuestionCount - 1, prev + 1))}
+              disabled={currentIndex >= arithmeticQuestionCount - 1}
               className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-slate-950 disabled:opacity-40"
             >
               Next

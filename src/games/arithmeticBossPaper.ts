@@ -121,6 +121,12 @@ const PAPER_TEMPLATE: QuestionTemplate[] = [
   'hard_fraction_of_amount',
 ];
 
+const DROPPABLE_TEMPLATE_INDEXES = [27, 33, 37, 38];
+const MIN_QUESTION_COUNT = 36;
+const MAX_QUESTION_COUNT = 38;
+const MIN_ACCEPTED_QUESTION_COUNT = 36;
+const MAX_ACCEPTED_QUESTION_COUNT = 40;
+
 const hashSeed = (value: string | number) => {
   const text = String(value);
   let hash = 2166136261;
@@ -546,8 +552,21 @@ const buildQuestion = (rng: () => number, template: QuestionTemplate, id: number
   };
 };
 
+const buildPaperTemplate = (rng: () => number) => {
+  const questionCount = randomInt(rng, MIN_QUESTION_COUNT, MAX_QUESTION_COUNT);
+  const extraMarksNeeded = 40 - questionCount;
+  const dropIndexes = new Set<number>(
+    DROPPABLE_TEMPLATE_INDEXES
+      .slice()
+      .sort(() => rng() - 0.5)
+      .slice(0, extraMarksNeeded),
+  );
+
+  return PAPER_TEMPLATE.filter((_, index) => !dropIndexes.has(index));
+};
+
 export const validateArithmeticPaper = (paper: ArithmeticPaper): boolean => {
-  if (paper.questions.length !== 40) return false;
+  if (paper.questions.length < MIN_ACCEPTED_QUESTION_COUNT || paper.questions.length > MAX_ACCEPTED_QUESTION_COUNT) return false;
   if (paper.totalMarks !== 40) return false;
   if (paper.timeLimitSeconds !== 1800) return false;
   if (paper.questions.reduce((sum, question) => sum + question.marks, 0) !== 40) return false;
@@ -564,6 +583,7 @@ export const validateArithmeticPaper = (paper: ArithmeticPaper): boolean => {
     decimal: 0,
     fractionOfAmount: 0,
     percentage: 0,
+    twoMarkFormal: 0,
   };
 
   for (let index = 0; index < paper.questions.length; index += 1) {
@@ -581,6 +601,14 @@ export const validateArithmeticPaper = (paper: ArithmeticPaper): boolean => {
     if (question.type === 'fraction' || question.type === 'decimal' || question.type === 'percentage') counts.fractionDecimalPercentage += 1;
     if (question.signature.startsWith('long_multiplication')) counts.longMultiplication += 1;
     if (question.signature.startsWith('long_division')) counts.longDivision += 1;
+    if (
+      question.marks === 2
+      && (
+        question.signature.startsWith('long_multiplication')
+        || question.signature.startsWith('long_division')
+      )
+    ) counts.twoMarkFormal += 1;
+    if (question.marks === 2 && !question.signature.startsWith('long_multiplication') && !question.signature.startsWith('long_division')) return false;
     if (question.type === 'decimal') counts.decimal += 1;
     if (question.signature.startsWith('fraction_of_amount')) counts.fractionOfAmount += 1;
     if (question.type === 'percentage') counts.percentage += 1;
@@ -594,7 +622,8 @@ export const validateArithmeticPaper = (paper: ArithmeticPaper): boolean => {
     && counts.longDivision >= 2
     && counts.decimal >= 4
     && counts.fractionOfAmount >= 3
-    && counts.percentage >= 2;
+    && counts.percentage >= 2
+    && counts.twoMarkFormal === 40 - paper.questions.length;
 };
 
 export const generateArithmeticBossPaper = (seed: string | number = `${Date.now()}-${Math.random()}`): ArithmeticPaper => {
@@ -605,8 +634,9 @@ export const generateArithmeticBossPaper = (seed: string | number = `${Date.now(
     const usedQuestions = new Set<string>();
     const usedNumberPairs = new Set<string>();
     const questions: ArithmeticQuestion[] = [];
+    const paperTemplate = buildPaperTemplate(rng);
 
-    for (const template of PAPER_TEMPLATE) {
+    for (const template of paperTemplate) {
       let question: ArithmeticQuestion | null = null;
       for (let guard = 0; guard < 80 && !question; guard += 1) {
         const candidate = buildQuestion(rng, template, questions.length + 1);
@@ -625,6 +655,18 @@ export const generateArithmeticBossPaper = (seed: string | number = `${Date.now(
       }
       if (question) questions.push(question);
     }
+
+    const twoMarkQuestionCount = 40 - questions.length;
+    questions
+      .filter((question) => (
+        question.signature.startsWith('long_multiplication')
+        || question.signature.startsWith('long_division')
+      ))
+      .sort(() => rng() - 0.5)
+      .slice(0, twoMarkQuestionCount)
+      .forEach((question) => {
+        question.marks = 2;
+      });
 
     const paper: ArithmeticPaper = {
       paperId: `arithmetic-boss-${hashSeed(attemptSeed).toString(36)}`,
