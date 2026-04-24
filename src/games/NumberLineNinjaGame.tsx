@@ -8,7 +8,7 @@ import {
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import dojoBackground from '../assets/maps/backgroundsforgames/numberlineninja.jpg';
-import { pickBossArt } from '../assets/bosses/library';
+import octopusMonster from '../assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_create_me_a_kracken-1.jpg';
 interface NumberLineNinjaGameProps {
   levelId: number;
   avatarId: string;
@@ -280,8 +280,8 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   const [monsterSmokeFx, setMonsterSmokeFx] = useState(false);
   const [monsterSpeech, setMonsterSpeech] = useState<string | null>(null);
   const [monsterHitAnimationIndex, setMonsterHitAnimationIndex] = useState(0);
-  const monsterHitA = useMemo(() => pickBossArt(`number-line-ninja-${levelId}-a`), [levelId]);
-  const monsterHitB = useMemo(() => pickBossArt(`number-line-ninja-${levelId}-b`), [levelId]);
+  const monsterHitA = octopusMonster;
+  const monsterHitB = octopusMonster;
   const [idleMonsterSrc, setIdleMonsterSrc] = useState<string>(monsterHitA);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
@@ -549,7 +549,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
           <motion.div
             animate={lineShake ? { x: [0, -10, 10, -8, 8, -4, 4, 0] } : { x: 0 }}
             transition={{ duration: 0.34, ease: 'easeInOut' }}
-            className="qa-number-line relative mt-0 flex h-[22%] min-h-[140px] w-full max-w-[680px] items-center justify-center"
+            className="qa-number-line relative mt-0 flex h-[22%] min-h-[140px] w-full max-w-[680px] -translate-y-[50px] items-center justify-center"
           >
             <motion.div
               animate={{ opacity: [0.26, 0.54, 0.26], scale: [0.985, 1.025, 0.985] }}
@@ -633,7 +633,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
           </motion.div>
 
           <div className="relative mt-1 flex h-[30%] min-h-[200px] w-full max-w-[520px] shrink-0 translate-y-0 items-end justify-center">
-            <div className="qa-enemy-cluster pointer-events-none relative mx-auto flex w-full max-w-[520px] translate-y-[5px] flex-col items-center justify-end gap-3">
+            <div className="qa-enemy-cluster pointer-events-none relative mx-auto flex w-full max-w-[520px] -translate-y-[25px] flex-col items-center justify-end gap-3">
                 <div className="w-[132px] self-center translate-y-[70px] rounded-lg border border-amber-200/35 bg-slate-900/76 p-1.5 shadow-[0_10px_20px_rgba(2,6,23,0.46)] sm:w-[150px]">
                 <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.12em] text-amber-200 md:text-[9px]">
                   Monster Mind

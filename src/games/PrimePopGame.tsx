@@ -50,7 +50,6 @@ interface PrimePopConfig {
 const INITIAL_LIVES = 10;
 const BUBBLE_PIXEL_SCALE = 7.2;
 const DANGER_LINE_Y = 24;
-const PRIME_POP_BACKDROP_START_Y = 56;
 const PRIME_SPEED_MULTIPLIER = 1.22;
 
 const BUBBLE_TINTS: BubbleTint[] = ['blue', 'green', 'purple', 'gold', 'red'];
@@ -591,7 +590,10 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
-      <div className={`pointer-events-none absolute inset-x-0 top-0 z-30 px-3 ${usesSharedHud ? 'pt-[calc(env(safe-area-inset-top)+3.9rem)]' : 'pt-3'}`}>
+      <div
+        className="prime-pop-question-card pointer-events-none absolute z-30 px-3"
+        style={{ left: 0, right: 0, top: '0.5rem' }}
+      >
         <GameQuestionCard title="Prime Pop" className="max-w-[22rem]">
           Pick out the <b>PRIME</b> numbers before they cross the line.
         </GameQuestionCard>
@@ -603,9 +605,8 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
         className="relative flex-1 min-h-0 overflow-hidden bg-[#070b14]"
       >
         <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-0 bg-no-repeat"
+          className="game-background pointer-events-none z-0 bg-no-repeat"
           style={{
-            top: `${PRIME_POP_BACKDROP_START_Y}%`,
             backgroundImage: `url(${primePopBackground})`,
             backgroundSize: '100% 100%',
             backgroundPosition: 'center top',
