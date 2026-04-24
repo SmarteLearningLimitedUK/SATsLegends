@@ -469,10 +469,10 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
         />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 select-none bg-contain bg-bottom bg-no-repeat"
+          className="pointer-events-none absolute inset-0 select-none bg-cover bg-bottom bg-no-repeat"
           style={{
             backgroundImage: `url(${ratioBackdrop})`,
-            backgroundSize: 'auto 108%',
+            backgroundSize: 'cover',
             backgroundPosition: `${backgroundPositionX}% bottom`,
           }}
         />

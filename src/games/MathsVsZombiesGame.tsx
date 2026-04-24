@@ -540,7 +540,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
             className="relative min-h-0 flex-1 overflow-hidden rounded-3xl border-4 border-blue-400/30 bg-blue-900/10 shadow-2xl"
             style={{
               backgroundImage: `url(${zombiePlayfieldUrl})`,
-              backgroundSize: '80% auto',
+              backgroundSize: 'cover',
               backgroundPosition: 'center bottom',
               backgroundRepeat: 'no-repeat',
             }}

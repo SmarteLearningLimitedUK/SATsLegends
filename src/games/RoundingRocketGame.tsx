@@ -370,7 +370,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
         alt=""
         aria-hidden="true"
         draggable={false}
-        className="pointer-events-none absolute inset-0 h-full w-full object-contain object-center opacity-85 grayscale-[0.15] saturate-75"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-85 grayscale-[0.15] saturate-75"
       />
 
       <PracticeIntroPopup

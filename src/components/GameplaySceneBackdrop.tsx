@@ -28,7 +28,7 @@ const GameplaySceneBackdrop: React.FC<GameplaySceneBackdropProps> = ({
         <img
           src={backgroundImage}
           alt=""
-          className="absolute inset-0 h-full w-full object-contain object-center"
+          className="absolute inset-0 h-full w-full object-cover object-center"
           draggable={false}
         />
       ) : null}

@@ -153,8 +153,10 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       </GameLoadBoundary>
     );
 
+    const gameplayLevelId = selectedLevel.miniGameLevel || selectedLevel.id;
+
     const sharedProps = {
-      levelId: selectedLevel.id,
+      levelId: gameplayLevelId,
       avatarId: player.avatarId,
       useSharedTopHud: true,
       isPractice: Boolean(selectedLevel.isPractice),

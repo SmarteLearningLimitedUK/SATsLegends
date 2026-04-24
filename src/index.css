@@ -136,6 +136,10 @@ body {
   background: #020617;
 }
 
+.iphone-game-stage-gameplay {
+  width: calc(100vw * var(--game-stage-scale-inverse, 1));
+}
+
 .iphone-game-stage-unbounded {
   left: 0;
   top: 0;
@@ -699,6 +703,12 @@ button:disabled {
 .app-viewport.screen-gameplay {
   position: relative;
   isolation: isolate;
+}
+
+.app-viewport.screen-gameplay.game-blueprint-place-value-panic {
+  height: var(--game-stage-height, 844px) !important;
+  min-height: var(--game-stage-height, 844px) !important;
+  max-height: var(--game-stage-height, 844px) !important;
 }
 
 .app-viewport.screen-gameplay::before,

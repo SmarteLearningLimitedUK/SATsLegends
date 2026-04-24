@@ -1004,6 +1004,9 @@ const App: React.FC = () => {
   const isWorldMapScreen = screen === 'world_map';
   const selectedGameType = selectedLevel?.gameType;
   const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
+  const gameplayBlueprintClass = isGameplayScreen && selectedLevel?.blueprintKey
+    ? `game-blueprint-${selectedLevel.blueprintKey.replace(/_/g, '-')}`
+    : '';
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
   const useUnboundedStageShell = false;
   const globalDockOffsetClass = screen !== 'splash' && !isGameplayScreen && screen !== 'avatar_selection' && screen !== 'profile_setup'
@@ -1098,17 +1101,18 @@ const App: React.FC = () => {
     '--game-stage-width': `${Math.round(stageWidth * stageRenderMultiplier)}px`,
     '--game-stage-height': `${Math.round(stageHeight * stageRenderMultiplier)}px`,
     '--game-stage-scale': `${stageScale}`,
+    '--game-stage-scale-inverse': `${stageScale > 0 ? 1 / stageScale : 1}`,
     '--question-card-scale': `${questionCardScale}`,
     '--potion-cauldron-shift': potionCauldronShift,
   } as React.CSSProperties;
 
   return (
     <div className="iphone-game-viewport">
-      <div className={`iphone-game-stage${useUnboundedStageShell ? ' iphone-game-stage-unbounded' : ''}`} style={useUnboundedStageShell ? undefined : stageStyle}>
+      <div className={`iphone-game-stage${useUnboundedStageShell ? ' iphone-game-stage-unbounded' : ''}${isGameplayScreen ? ' iphone-game-stage-gameplay' : ''}`} style={useUnboundedStageShell ? undefined : stageStyle}>
         <div className="iphone-game-stage-inner">
           <div
             data-screen-family={screenBehavior.family}
-            className={`app-viewport sat-theme-bluegold app-background-intensity ${backgroundIntensityClass} app-shell-family-${screenBehavior.family} screen-${screen.replace(/_/g, '-')} ${isGameplayScreen ? gameplayTypeClass : ''} relative w-full flex flex-col items-center overflow-hidden ${viewportShellClass}`}
+            className={`app-viewport sat-theme-bluegold app-background-intensity ${backgroundIntensityClass} app-shell-family-${screenBehavior.family} screen-${screen.replace(/_/g, '-')} ${isGameplayScreen ? `${gameplayTypeClass} ${gameplayBlueprintClass}` : ''} relative w-full flex flex-col items-center overflow-hidden ${viewportShellClass}`}
           >
             <AnimatePresence mode="wait">
               <motion.div

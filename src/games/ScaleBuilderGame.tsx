@@ -337,7 +337,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
           className="absolute inset-0 bg-center bg-no-repeat"
           style={{
             backgroundImage: `url(${scaleBuilderBackground})`,
-            backgroundSize: 'contain',
+            backgroundSize: 'cover',
             backgroundPosition: 'center 72%',
           }}
         />

@@ -201,7 +201,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
         alt=""
         aria-hidden="true"
         draggable={false}
-        className="pointer-events-none absolute inset-0 h-full w-full object-contain object-center"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
       />
       <div
         aria-hidden="true"

@@ -889,10 +889,16 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
   return (
     <div
-      className="relative z-20 h-full w-full min-h-0 overflow-hidden select-none"
-      style={{ touchAction: 'manipulation' }}
+      className="place-value-game-viewport relative z-20 grid h-full w-full min-h-0 overflow-hidden select-none"
+      style={{
+        gridTemplateRows: useSharedTopHud ? '56px minmax(0, 1fr) 0px' : 'minmax(0, 1fr)',
+        touchAction: 'manipulation',
+      }}
     >
-      <div className="relative z-10 h-full w-full">
+      <div
+        className="playable-frame place-value-playable-frame relative z-10 mx-auto h-full min-h-0 w-full max-w-[430px] overflow-hidden"
+        style={{ gridRow: useSharedTopHud ? '2' : '1' }}
+      >
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Place Value Panic"
@@ -906,7 +912,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           alt=""
           aria-hidden="true"
           draggable={false}
-           className="absolute inset-0 h-full w-full object-contain object-center"
+          className="absolute inset-0 h-full w-full object-cover object-center"
         />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,14,24,0.18)_0%,rgba(7,14,24,0.24)_44%,rgba(7,14,24,0.56)_100%)]" />
       </div>
@@ -988,8 +994,15 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         </div>
       ) : null}
 
-      <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
-        <GameQuestionCard title="Place Value Panic" subtitle="Rebuild the number.">
+      <div
+        className="pointer-events-none absolute inset-x-0 z-[60] px-2"
+        style={{ top: useSharedTopHud ? 'clamp(8px, 1.45vh, 12px)' : 'clamp(4.6rem, 12vh, 6.4rem)' }}
+      >
+        <GameQuestionCard
+          title="Place Value Panic"
+          subtitle="Rebuild the number."
+          className="mx-auto max-w-[min(96%,22rem)]"
+        >
           {questionPrompt}
         </GameQuestionCard>
       </div>

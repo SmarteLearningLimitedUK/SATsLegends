@@ -228,7 +228,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
 
   return (
     <div
-      className="relative h-full w-full overflow-hidden bg-contain bg-center bg-no-repeat text-white"
+      className="relative h-full w-full overflow-hidden bg-cover bg-center bg-no-repeat text-white"
       style={{ backgroundImage: `url(${calculationClashBackground})` }}
     >
       <PracticeIntroPopup
