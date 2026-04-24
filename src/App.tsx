@@ -1109,7 +1109,7 @@ const App: React.FC = () => {
                   onAvatarSelect={(id) => setPlayer(prev => ({ ...prev, avatarId: id }))}
                   onAvatarConfirm={handleAvatarConfirm}
                   onGoHome={goToHome}
-                  onBackToSplash={() => setScreen('splash')}
+                  onBackToSplash={goToHome}
                   onSelectIsland={handleIslandSelect}
                   onSelectLevel={handleLevelSelect}
                   onBackToIslandLevels={goToIslandLevels}

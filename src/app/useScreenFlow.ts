@@ -150,7 +150,7 @@ export const useScreenFlow = (): ScreenFlowController => {
     }
 
     if (screen === 'avatar_selection' || screen === 'profile_setup') {
-      setScreen('splash');
+      goToHome();
       return;
     }
 

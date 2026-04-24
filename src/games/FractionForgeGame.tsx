@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import confetti from 'canvas-confetti';
 import { AnimatePresence, motion } from 'motion/react';
+import { Skull } from 'lucide-react';
 import AssetIcon from '../components/AssetIcon';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
@@ -194,10 +196,12 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
   const [isResolving, setIsResolving] = useState(false);
   const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; message: string } | null>(null);
   const [forgeGlow, setForgeGlow] = useState(false);
+  const [forgeEffect, setForgeEffect] = useState<'success' | 'error' | null>(null);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
   const playfieldRef = useRef<HTMLDivElement | null>(null);
   const forgeGlowTimeoutRef = useRef<number | null>(null);
+  const forgeEffectTimeoutRef = useRef<number | null>(null);
   const endedRef = useRef(false);
   const scoreRef = useRef(0);
   scoreRef.current = XP;
@@ -235,8 +239,11 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     const usableBottom = Math.max(usableTop + 340, viewport.height - hudBottomReserve);
     const usableHeight = Math.max(340, usableBottom - usableTop);
 
-    const targetTop = usableTop + (usableHeight * (isTablet ? 0.43 : 0.41));
-    const sourceTop = targetTop + slotHeight + (isTablet ? 18 : 14);
+    const sourceTop = usableTop + (isTablet ? 158 : 146);
+    const targetTop = Math.min(
+      usableBottom - (slotHeight * 0.68),
+      usableTop + (usableHeight * (isTablet ? 0.86 : 0.9)),
+    );
     const pedestalTop = targetTop + (slotHeight * 0.5);
 
     const goblinWidth = Math.round(
@@ -310,6 +317,17 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     if (forgeGlowTimeoutRef.current !== null) {
       window.clearTimeout(forgeGlowTimeoutRef.current);
     }
+    if (forgeEffectTimeoutRef.current !== null) {
+      window.clearTimeout(forgeEffectTimeoutRef.current);
+    }
+  }, []);
+
+  const triggerForgeEffect = useCallback((tone: 'success' | 'error') => {
+    setForgeEffect(tone);
+    if (forgeEffectTimeoutRef.current !== null) {
+      window.clearTimeout(forgeEffectTimeoutRef.current);
+    }
+    forgeEffectTimeoutRef.current = window.setTimeout(() => setForgeEffect(null), tone === 'success' ? 980 : 1150);
   }, []);
 
   const beginDrag = useCallback((
@@ -459,6 +477,15 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
       setCorrectAnswers(nextCorrect);
       setFeedback({ tone: 'success', message: 'Perfect order forged!' });
       setForgeGlow(true);
+      triggerForgeEffect('success');
+      confetti({
+        particleCount: 80,
+        spread: 52,
+        startVelocity: 38,
+        gravity: 0.9,
+        origin: { x: 0.5, y: 0.62 },
+        colors: ['#facc15', '#f59e0b', '#fde68a', '#ffffff'],
+      });
       triggerHaptic('success');
 
       if (forgeGlowTimeoutRef.current !== null) {
@@ -488,6 +515,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     setLives(nextLives);
     setTimeLeft((prev) => Math.max(0, prev - 4));
     setFeedback({ tone: 'error', message: 'Not quite. Reforge the order.' });
+    triggerForgeEffect('error');
     triggerHaptic('error');
 
     if (nextLives <= 0) {
@@ -514,6 +542,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     targetSlots,
     timeLeft,
     totalRounds,
+    triggerForgeEffect,
   ]);
 
   const showSmoke = feedback?.tone === 'error';
@@ -576,7 +605,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
         </AnimatePresence>
 
         <AnimatePresence>
-          {showSmoke && (
+          {(showSmoke || forgeEffect === 'error') && (
             <motion.div
               key="forge-smoke"
               initial={{ opacity: 0, scale: 0.96 }}
@@ -585,8 +614,9 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
               transition={{ duration: 0.28, ease: 'easeOut' }}
               className="pointer-events-none absolute inset-0 z-[2]"
               style={{
-                background:
-                  'radial-gradient(circle at 50% 70%, rgba(15,23,42,0.18) 0%, rgba(15,23,42,0.48) 22%, rgba(2,6,23,0.68) 50%, rgba(2,6,23,0.86) 82%)',
+                background: forgeEffect === 'error'
+                  ? 'radial-gradient(circle at 50% 70%, rgba(168,85,247,0.28) 0%, rgba(34,197,94,0.2) 20%, rgba(15,23,42,0.58) 50%, rgba(2,6,23,0.82) 82%)'
+                  : 'radial-gradient(circle at 50% 70%, rgba(15,23,42,0.18) 0%, rgba(15,23,42,0.48) 22%, rgba(2,6,23,0.68) 50%, rgba(2,6,23,0.86) 82%)',
               }}
             >
               <motion.div
@@ -594,6 +624,70 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
                 transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
                 className="absolute inset-x-0 bottom-[18%] h-[28%] bg-[radial-gradient(circle_at_25%_80%,rgba(148,163,184,0.4),transparent_45%),radial-gradient(circle_at_55%_65%,rgba(15,23,42,0.62),transparent_46%),radial-gradient(circle_at_78%_82%,rgba(100,116,139,0.34),transparent_42%)] blur-2xl"
               />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {forgeEffect === 'success' && (
+            <motion.div
+              key="forge-success-burst"
+              className="pointer-events-none absolute left-1/2 top-[63%] z-[18] h-1 w-1"
+              initial={{ opacity: 1 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              {Array.from({ length: 16 }, (_, index) => {
+                const angle = (Math.PI * 2 * index) / 16;
+                const distance = 58 + ((index % 4) * 13);
+                return (
+                  <motion.span
+                    key={`spark-${index}`}
+                    className="absolute h-2.5 w-2.5 rounded-full bg-yellow-300 shadow-[0_0_14px_rgba(250,204,21,0.95)]"
+                    initial={{ x: 0, y: 0, scale: 0.4, opacity: 1 }}
+                    animate={{
+                      x: Math.cos(angle) * distance,
+                      y: (Math.sin(angle) * distance) - 36,
+                      scale: [0.6, 1.25, 0.25],
+                      opacity: [1, 1, 0],
+                    }}
+                    transition={{ duration: 0.86, ease: 'easeOut' }}
+                  />
+                );
+              })}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {forgeEffect === 'error' && (
+            <motion.div
+              key="forge-error-skulls"
+              className="pointer-events-none absolute left-1/2 top-[64%] z-[19] h-1 w-1"
+              initial={{ opacity: 1 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              {Array.from({ length: 7 }, (_, index) => {
+                const drift = (index - 3) * 34;
+                return (
+                  <motion.span
+                    key={`skull-${index}`}
+                    className="absolute flex h-8 w-8 items-center justify-center rounded-full border border-lime-200/40 bg-purple-950/72 text-lime-100 shadow-[0_0_18px_rgba(168,85,247,0.7),0_0_24px_rgba(34,197,94,0.42)]"
+                    initial={{ x: 0, y: 0, scale: 0.35, rotate: -18, opacity: 0 }}
+                    animate={{
+                      x: drift,
+                      y: [-8, -78 - ((index % 3) * 22)],
+                      scale: [0.35, 1.08, 0.76],
+                      rotate: [-18, index % 2 ? 28 : -32],
+                      opacity: [0, 1, 0],
+                    }}
+                    transition={{ duration: 1.08, ease: 'easeOut' }}
+                  >
+                    <Skull className="h-5 w-5" />
+                  </motion.span>
+                );
+              })}
             </motion.div>
           )}
         </AnimatePresence>

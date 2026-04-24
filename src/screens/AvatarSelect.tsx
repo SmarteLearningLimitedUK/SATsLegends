@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { AVATARS } from '../constants';
 import { triggerHaptic } from '../haptics';
+import AssetIcon from '../components/AssetIcon';
 import avatarSelectBackground from '../assets/maps/backgroundsforgames/charselect.jpg';
 import chooseBanner from '../assets/characters/chooseheroes.png';
 
@@ -12,7 +13,7 @@ const AVATAR_FOOT_ANCHOR_MAIN_Y_PX: Record<string, number> = {
   mochi: 55,
 };
 
-const AVATAR_MAIN_GLOBAL_LIFT_PX = -57;
+const AVATAR_MAIN_GLOBAL_LIFT_PX = -28;
 const AVATAR_MAIN_VISUAL_SCALE = 2.16;
 
 interface AvatarSelectProps {
@@ -70,7 +71,19 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({
 
       <div className="relative z-10 flex h-full w-full items-center justify-center">
         <div className="avatar-select-layout relative flex h-full w-full flex-col">
-          <div className="avatar-carousel-header translate-y-[20px]">
+          <button
+            type="button"
+            onClick={() => {
+              triggerHaptic('tap');
+              onBackToSplash();
+            }}
+            className="ui-icon-button absolute left-3 top-[calc(env(safe-area-inset-top)+0.75rem)] z-40 flex h-11 w-11 items-center justify-center rounded-full p-0 text-white shadow-xl sm:left-5 sm:h-12 sm:w-12"
+            aria-label="Back to islands"
+          >
+            <AssetIcon name="back" className="h-6 w-6 sm:h-8 sm:w-8" />
+          </button>
+
+          <div className="avatar-carousel-header">
             <div className="avatar-carousel-banner">
               <img
                 src={bannerSrc}
@@ -82,7 +95,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({
             </div>
           </div>
 
-            <div className="relative z-30 mx-auto mt-2 flex w-full max-w-3xl flex-col gap-3 rounded-[1.35rem] border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(8,21,58,0.82),rgba(4,15,44,0.88))] px-4 py-4 text-center shadow-[0_18px_32px_rgba(2,6,23,0.32)] backdrop-blur-md sm:px-5 sm:py-5">
+            <div className="avatar-name-panel relative z-30 mx-auto flex w-full max-w-3xl flex-col gap-3 rounded-[1.35rem] border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(8,21,58,0.82),rgba(4,15,44,0.88))] px-4 py-4 text-center shadow-[0_18px_32px_rgba(2,6,23,0.32)] backdrop-blur-md sm:px-5 sm:py-5">
               <div className="text-[0.68rem] font-black uppercase tracking-[0.22em] text-cyan-100/80 sm:text-xs">
                 Enter your name and select your Hero.
               </div>

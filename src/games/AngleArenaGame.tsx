@@ -64,11 +64,11 @@ const TARGET_RADIUS = 34;
 const INITIAL_TIMER = 90;
 const INITIAL_LIVES = 3;
 const POINTS_PER_HIT = 250;
-const WORLD_RADIUS = 720;
-const CAMERA_LERP = 0.08;
+const WORLD_RADIUS = 2600;
+const CAMERA_LERP = 0.14;
 const RETURN_LERP = 0.12;
-const MAX_FLIGHT_DISTANCE = 980;
-const CAMERA_LEAD_DISTANCE = 340;
+const MAX_FLIGHT_DISTANCE = 2800;
+const CAMERA_LEAD_DISTANCE = 120;
 const LAUNCHER_SCREEN_X_RATIO = 0.2;
 const LAUNCHER_SCREEN_Y_RATIO = 0.76;
 const SKY_DRIFT_FACTOR = 0.14;
@@ -552,7 +552,7 @@ const solveSideLaunchSpeed = (angleDeg: number, targetX: number, targetY: number
 };
 
 const getSideTargetWorld = (viewWidth: number, viewHeight: number) => ({
-  x: clamp(viewWidth * 0.68, 250, 620),
+  x: clamp(viewWidth * 3.65, 1280, 2200),
   y: -clamp(viewHeight * 0.2, 96, 170),
 });
 
@@ -762,7 +762,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     settleTimeoutRef.current = window.setTimeout(() => {
       cameraTargetRef.current = { ...cameraHomeRef.current };
       isFollowingProjectileRef.current = false;
-    }, 680);
+    }, result === 'hit' ? 1350 : 680);
 
     if (result === 'hit') {
       const nextScore = scoreRef.current + POINTS_PER_HIT;
@@ -945,6 +945,10 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
       const originScreen = toScreen(0, 0);
       const enemyScreen = toScreen(enemyWorld.x, enemyWorld.y);
+      const revealEnemy = Boolean(
+        impactResultRef.current === 'hit'
+        || (projectile && (projectile.x > enemyWorld.x - (viewWidth * 0.95) || enemyScreen.x < viewWidth * 1.12))
+      );
       const skyOffsetX = camera.x * SKY_DRIFT_FACTOR;
       const skyOffsetY = camera.y * SKY_DRIFT_FACTOR * 0.45;
       const groundOffsetX = camera.x * GROUND_DRIFT_FACTOR;
@@ -968,7 +972,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.globalAlpha = projectile?.active ? 0.28 : 0.12;
       ctx.strokeStyle = 'rgba(255,255,255,0.28)';
       ctx.lineWidth = 1.5;
-      for (let i = -1; i <= 4; i += 1) {
+      for (let i = -1; i <= 5; i += 1) {
         const y = (viewHeight * 0.76) + (i * 18) + groundOffsetY;
         ctx.beginPath();
         ctx.moveTo(((-60 + groundOffsetX) % 120) - 120, y);
@@ -976,6 +980,22 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         ctx.stroke();
       }
       ctx.restore();
+
+      if (projectile?.active) {
+        ctx.save();
+        ctx.globalAlpha = 0.18;
+        ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+        ctx.lineWidth = 2;
+        for (let i = 0; i < 10; i += 1) {
+          const streakX = ((timestamp * 0.42) + (i * 97) - (camera.x * 0.9)) % (viewWidth + 260) - 180;
+          const streakY = (viewHeight * 0.18) + ((i % 7) * viewHeight * 0.085);
+          ctx.beginPath();
+          ctx.moveTo(streakX, streakY);
+          ctx.lineTo(streakX + 70, streakY - 10);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
 
       if ((gameState === 'aiming' || gameState === 'awaitingAnswer') && selectedAnswerRef.current !== null) {
         const aimingAngle = getSideLaunchAngle(selectedAnswerRef.current ?? desiredAngleRef.current);
@@ -1004,30 +1024,32 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       drawCannonSprite(ctx, getSideLaunchAngle(desiredAngleRef.current), cannonSpritesRef.current, Math.min(viewWidth, viewHeight) * 0.22);
       ctx.restore();
 
-      ctx.save();
-      if (projectile?.active) {
-        ctx.translate(Math.sin(timestamp * 0.02) * 2, Math.cos(timestamp * 0.018) * 1.5);
-      }
-      ctx.translate(enemyScreen.x, enemyScreen.y);
-      const enemySize = Math.min(viewWidth, viewHeight) * 0.26;
-      const platform: EnemyPlatform = questionIndex % 2 === 0 ? 'podium' : 'cloud';
-      drawEnemyPlatform(ctx, platform, enemySize);
-
-      const enemies = enemySpritesRef.current;
-      const enemyIndex = enemies.length ? (questionIndex % enemies.length) : 0;
-      const enemy = enemies[enemyIndex];
-      if (enemy) {
+      if (revealEnemy) {
         ctx.save();
-        ctx.translate(0, -enemySize * 0.12);
-        drawEnemyPortrait(ctx, enemy, enemySize);
+        if (projectile?.active) {
+          ctx.translate(Math.sin(timestamp * 0.02) * 2, Math.cos(timestamp * 0.018) * 1.5);
+        }
+        ctx.translate(enemyScreen.x, enemyScreen.y);
+        const enemySize = Math.min(viewWidth, viewHeight) * 0.26;
+        const platform: EnemyPlatform = questionIndex % 2 === 0 ? 'podium' : 'cloud';
+        drawEnemyPlatform(ctx, platform, enemySize);
+
+        const enemies = enemySpritesRef.current;
+        const enemyIndex = enemies.length ? (questionIndex % enemies.length) : 0;
+        const enemy = enemies[enemyIndex];
+        if (enemy) {
+          ctx.save();
+          ctx.translate(0, -enemySize * 0.12);
+          drawEnemyPortrait(ctx, enemy, enemySize);
+          ctx.restore();
+        } else {
+          ctx.fillStyle = 'rgba(250,204,21,0.85)';
+          ctx.beginPath();
+          ctx.arc(0, -enemySize * 0.1, enemySize * 0.12, 0, Math.PI * 2);
+          ctx.fill();
+        }
         ctx.restore();
-      } else {
-        ctx.fillStyle = 'rgba(250,204,21,0.85)';
-        ctx.beginPath();
-        ctx.arc(0, -enemySize * 0.1, enemySize * 0.12, 0, Math.PI * 2);
-        ctx.fill();
       }
-      ctx.restore();
 
       if (projectile) {
         projectile.trail.forEach((point) => {
@@ -1045,7 +1067,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         ctx.fill();
       }
 
-      if (impactResultRef.current === 'hit') {
+      if (impactResultRef.current === 'hit' && revealEnemy) {
         ctx.fillStyle = 'rgba(250,204,21,0.45)';
         ctx.beginPath();
         ctx.arc(enemyScreen.x, enemyScreen.y, 34, 0, Math.PI * 2);
@@ -1089,7 +1111,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     if (autoAdvanceTimeoutRef.current) window.clearTimeout(autoAdvanceTimeoutRef.current);
     autoAdvanceTimeoutRef.current = window.setTimeout(() => {
       handleNext();
-    }, 900);
+    }, gameState === 'resolvedCorrect' ? 1500 : 900);
   }, [gameState]);
 
   const showPromptAndAnswers = gameState === 'awaitingAnswer';

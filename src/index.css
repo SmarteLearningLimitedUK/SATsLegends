@@ -4226,15 +4226,15 @@ button:disabled {
   justify-content: center;
   align-items: center;
   width: 100%;
-  margin-top: calc(env(safe-area-inset-top) + 40px);
+  margin-top: calc(env(safe-area-inset-top) + 28px);
   pointer-events: none;
 }
 
 .avatar-carousel-banner {
   position: relative;
   width: 100%;
-  max-width: clamp(20rem, 92vw, 56rem);
-  height: clamp(5.5rem, 12vh, 9rem);
+  max-width: clamp(22rem, 96vw, 62rem);
+  height: clamp(6.5rem, 14vh, 10.5rem);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4246,8 +4246,8 @@ button:disabled {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: clamp(18rem, 78vw, 42rem);
-  transform: translate(calc(-50% - 12px), -50%);
+  width: clamp(21rem, 88vw, 49rem);
+  transform: translate(calc(-50% - 10px), -50%);
   height: auto;
   max-width: none;
   max-height: none;
@@ -4255,6 +4255,11 @@ button:disabled {
   transform-origin: center;
   object-position: center center;
   filter: drop-shadow(0 8px 14px rgba(2, 6, 23, 0.3));
+}
+
+.avatar-name-panel {
+  margin-top: clamp(-0.65rem, -1.4vh, -0.25rem);
+  padding-block: clamp(0.65rem, 1.5vh, 1rem);
 }
 
 .avatar-carousel-title {
@@ -4440,22 +4445,22 @@ button.avatar-hero-arrow:not(:disabled):active {
 }
 
 .iphone-game-stage .avatar-carousel-header {
-  margin-top: calc(env(safe-area-inset-top) + 40px);
+  margin-top: calc(env(safe-area-inset-top) + 26px);
 }
 
 .iphone-game-stage .avatar-carousel-banner {
-  max-width: calc(var(--game-stage-width, 390px) * 0.9);
-  height: calc(var(--game-stage-height, 844px) * 0.12);
+  max-width: calc(var(--game-stage-width, 390px) * 0.98);
+  height: calc(var(--game-stage-height, 844px) * 0.14);
 }
 
 .iphone-game-stage .avatar-carousel-banner-art {
-  width: calc(var(--game-stage-width, 390px) * 1.2);
+  width: calc(var(--game-stage-width, 390px) * 1.36);
   top: 50%;
 }
 
 .iphone-game-stage .avatar-carousel-track {
   width: calc(var(--game-stage-width, 390px) * 0.85);
-  transform: translateY(calc(var(--game-stage-height, 844px) * -0.03));
+  transform: translateY(calc(var(--game-stage-height, 844px) * -0.01));
 }
 
 .iphone-game-stage .avatar-hero-arrow {
