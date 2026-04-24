@@ -995,7 +995,10 @@ const App: React.FC = () => {
     || isStandaloneScaleBuilder
     || isStandaloneShareSplitter
     || selectedLevel?.isPractice
+    || selectedLevel?.gameType === 'crystal_core'
     || selectedLevel?.gameType === 'potion_pour';
+  const hideShellLives = selectedLevel?.gameType === 'crystal_core';
+  const hideGlobalBottomDock = selectedLevel?.gameType === 'crystal_core';
   const goToProfile = useCallback(() => {
     setScreen('profile');
   }, [setScreen]);
@@ -1066,6 +1069,7 @@ const App: React.FC = () => {
             gameTitle={canonicalGameTitle}
             lives={globalMiniGameLives}
             hideTimer={hideShellTimer}
+            hideLives={hideShellLives}
             onBack={isStandaloneRatioRacer || isStandaloneScaleBuilder || isStandaloneShareSplitter ? goToHome : isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
             variant={isGameplayScreen ? 'gameplay' : 'hub'}
             showActions={false}
@@ -1191,7 +1195,7 @@ const App: React.FC = () => {
           </div>
       </main>
       <footer className="bottom-hud">
-        {!isStartScreen ? (
+        {!isStartScreen && !hideGlobalBottomDock ? (
           mapHudDock || (
             <GameActionDock
               onBack={isStandaloneRatioRacer || isStandaloneScaleBuilder || isStandaloneShareSplitter ? goToHome : isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
