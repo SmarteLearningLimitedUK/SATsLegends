@@ -7,6 +7,8 @@ import {
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import sceneBackground from '../../range rodeo.jpg';
+import rodeoStaticOverlay from '../assets/rodeo static.png';
+import rodeoSuccessAnim from '../assets/rodeo anim.gif';
 import enemySprite from '../assets/maps/ezgif-261d69e7ae90ee8c.webp';
 import {
   generateRangeRodeoRound,
@@ -56,6 +58,7 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
   const [didComplete, setDidComplete] = useState(false);
   const [hasSignalledFailure, setHasSignalledFailure] = useState(false);
   const [inputLocked, setInputLocked] = useState(false);
+  const [showCorrectAnimation, setShowCorrectAnimation] = useState(false);
   const previousLivesRef = useRef<number | null>(null);
   const lostLifeRecentlyRef = useRef(false);
   const timeoutRef = useRef<number | null>(null);
@@ -91,6 +94,7 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
     setDidComplete(false);
     setHasSignalledFailure(false);
     setInputLocked(false);
+    setShowCorrectAnimation(false);
     previousLivesRef.current = sessionState.lives;
     lostLifeRecentlyRef.current = false;
   }, [levelId, sessionState, sessionState?.timeLeft, sessionState?.totalTime]);
@@ -124,6 +128,7 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
     setSelectedOptionIndex(null);
     setFeedback(null);
     setInputLocked(false);
+    setShowCorrectAnimation(false);
   };
 
   const completeGame = (finalXP: number, totalCorrect: number, totalAttempts: number) => {
@@ -156,6 +161,7 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
     setCorrectAnswers(nextCorrect);
     setCorrectStreak(nextStreak);
     setXP(nextXP);
+    setShowCorrectAnimation(isCorrect);
 
     emitMiniGameSessionEvent(sessionEvents, isCorrect ? 'correct_answer' : 'incorrect_answer', {
       score: nextXP,
@@ -176,6 +182,7 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
 
     timeoutRef.current = window.setTimeout(() => {
       timeoutRef.current = null;
+      setShowCorrectAnimation(false);
       if (isCorrect && roundIndex + 1 >= roundsGoal) {
         completeGame(nextXP, nextCorrect, nextAttempts);
         return;
@@ -220,8 +227,28 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
         </GameQuestionCard>
 
         <div className="relative mt-2 flex min-h-0 flex-1 flex-col justify-between">
+          {showCorrectAnimation ? (
+            <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
+              <img
+                src={rodeoSuccessAnim}
+                alt="Correct answer celebration"
+                className="h-[36%] min-h-[130px] max-h-[260px] w-auto object-contain drop-shadow-[0_12px_24px_rgba(2,6,23,0.45)]"
+                draggable={false}
+              />
+            </div>
+          ) : null}
+
+          <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-[1rem]">
+            <img
+              src={rodeoStaticOverlay}
+              alt=""
+              draggable={false}
+              className="h-full w-full object-cover opacity-95"
+            />
+          </div>
+
           {question.values && question.questionType !== 'word_problem' ? (
-            <div className="mx-auto flex w-full max-w-[520px] shrink-0 flex-wrap items-center justify-center gap-2 rounded-[1rem] border border-white/25 bg-slate-900/55 px-3 py-3 shadow-[0_14px_28px_rgba(2,6,23,0.34)]">
+            <div className="relative z-[1] mx-auto flex w-full max-w-[520px] shrink-0 flex-wrap items-center justify-center gap-2 rounded-[1rem] border border-white/25 bg-slate-900/55 px-3 py-3 shadow-[0_14px_28px_rgba(2,6,23,0.34)]">
               {question.values.map((value, index) => (
                 <div
                   key={`${question.id}-${index}-${value}`}
@@ -233,7 +260,7 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
             </div>
           ) : null}
 
-          <div className="pointer-events-none relative mx-auto mt-3 flex h-[30%] min-h-[120px] w-full max-w-[520px] items-end justify-center">
+          <div className="pointer-events-none relative z-[1] mx-auto mt-3 flex h-[30%] min-h-[120px] w-full max-w-[520px] items-end justify-center">
             <img
               src={enemySprite}
               alt=""
@@ -242,7 +269,7 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
             />
           </div>
 
-          <div className="mx-auto mb-1 mt-2 grid w-full max-w-[520px] grid-cols-2 gap-2">
+          <div className="relative z-[1] mx-auto mb-1 mt-2 grid w-full max-w-[520px] grid-cols-2 gap-2">
             {question.answers.map((answer, answerIndex) => {
               const isSelected = selectedOptionIndex === answerIndex;
               const isCorrectSelection = isSelected && feedback?.tone === 'success';
