@@ -1321,7 +1321,12 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
 
   const submitArithmeticPaper = (completedBeforeTimer: boolean) => {
     if (!arithmeticPaper || arithmeticResult) return;
-    const result = markArithmeticPaper(arithmeticPaper, arithmeticAnswers, completedBeforeTimer);
+    const result = markArithmeticPaper(
+      arithmeticPaper,
+      arithmeticAnswers,
+      completedBeforeTimer,
+      sessionState?.timeLeft ?? (completedBeforeTimer ? arithmeticPaper.timeLimitSeconds : 0),
+    );
     setArithmeticResult(result);
     setScore(result.xpAwarded);
     sessionEvents?.onEvent?.({
@@ -1380,8 +1385,18 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   const submitReasoningPaper = (completedBeforeTimer: boolean) => {
     if (!reasoningPaper || reasoningResult) return;
     const result = isReasoning2Paper
-      ? markReasoning2Paper(reasoningPaper, reasoningAnswers, completedBeforeTimer)
-      : markReasoning1Paper(reasoningPaper, reasoningAnswers, completedBeforeTimer);
+      ? markReasoning2Paper(
+          reasoningPaper,
+          reasoningAnswers,
+          completedBeforeTimer,
+          sessionState?.timeLeft ?? (completedBeforeTimer ? reasoningPaper.timeLimitSeconds : 0),
+        )
+      : markReasoning1Paper(
+          reasoningPaper,
+          reasoningAnswers,
+          completedBeforeTimer,
+          sessionState?.timeLeft ?? (completedBeforeTimer ? reasoningPaper.timeLimitSeconds : 0),
+        );
     setReasoningResult(result);
     setReasoningScreen('results');
     setScore(result.xpAwarded);

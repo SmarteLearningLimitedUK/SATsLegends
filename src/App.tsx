@@ -354,6 +354,14 @@ const App: React.FC = () => {
     lives: globalMiniGameLives,
   }), [globalMiniGameHudDurationSeconds, globalMiniGameHudTimeLeft, globalMiniGameLives]);
 
+  const resolveXpDifficulty = useCallback((): XpDifficulty => {
+    if (selectedLevel?.isBoss) return 'boss';
+    const levelNumber = selectedLevel?.miniGameLevel ?? selectedLevel?.id ?? 1;
+    if (levelNumber >= 7) return 'hard';
+    if (levelNumber >= 4) return 'medium';
+    return 'easy';
+  }, [selectedLevel?.id, selectedLevel?.isBoss, selectedLevel?.miniGameLevel]);
+
   const resolveLevelTitle = useCallback(() => {
     if (!selectedLevel) return 'Level over';
     if (canonicalGameTitle) return canonicalGameTitle;
@@ -442,6 +450,9 @@ const App: React.FC = () => {
     const totalAttempts = sessionMetrics.correct + sessionMetrics.incorrect;
     const accuracy = totalAttempts > 0 ? sessionMetrics.correct / totalAttempts : 0;
     const timeMs = Math.max(0, (sessionState.totalTime - sessionState.timeLeft) * 1000);
+    const questionXP = sessionMetrics.questionXP.length > 0
+      ? sessionMetrics.questionXP
+      : undefined;
     const progressionResult = completeProgressionLevel({
       levelId: levelKey!,
       completed: false,
@@ -451,6 +462,12 @@ const App: React.FC = () => {
       livesRemaining: sessionState.lives,
       mistakes: sessionMetrics.incorrect,
       timeMs,
+      questionXP,
+      correctAnswers: sessionMetrics.correct,
+      totalQuestions: totalAttempts,
+      timeRemaining: sessionState.timeLeft,
+      totalTime: sessionState.totalTime,
+      difficulty: resolveXpDifficulty(),
     });
 
     const achievementsUnlocked: string[] = [];
@@ -501,7 +518,7 @@ const App: React.FC = () => {
       achievementsUnlocked,
       wellbeingSuggested,
     });
-  }, [buildPracticeLevelResult, completeProgressionLevel, resolveLevelTitle, selectedIsland, selectedLevel, sessionMetrics.correct, sessionMetrics.hintsUsed, sessionMetrics.incorrect, sessionState.lives, sessionState.timeLeft, sessionState.totalTime, setLevelResult]);
+  }, [buildPracticeLevelResult, completeProgressionLevel, resolveLevelTitle, resolveXpDifficulty, selectedIsland, selectedLevel, sessionMetrics.correct, sessionMetrics.hintsUsed, sessionMetrics.incorrect, sessionMetrics.questionXP, sessionState.lives, sessionState.timeLeft, sessionState.totalTime, setLevelResult]);
 
   useEffect(() => {
     handleGameOverRef.current = handleGameOver;
@@ -821,6 +838,9 @@ const App: React.FC = () => {
     const accuracy = totalAttempts > 0 ? sessionMetrics.correct / totalAttempts : fallbackAccuracy;
     const timeMs = Math.max(0, (sessionState.totalTime - sessionState.timeLeft) * 1000);
     const levelKey = `${selectedIsland.id}-${selectedLevel.id}`;
+    const questionXP = sessionMetrics.questionXP.length > 0
+      ? sessionMetrics.questionXP
+      : undefined;
     const progressionResult = completeProgressionLevel({
       levelId: levelKey,
       completed: true,
@@ -830,6 +850,12 @@ const App: React.FC = () => {
       livesRemaining: sessionState.lives,
       mistakes: sessionMetrics.incorrect,
       timeMs,
+      questionXP,
+      correctAnswers: sessionMetrics.correct || Math.round(accuracy * Math.max(totalAttempts, 1)),
+      totalQuestions: Math.max(totalAttempts, sessionMetrics.correct, 1),
+      timeRemaining: sessionState.timeLeft,
+      totalTime: sessionState.totalTime,
+      difficulty: resolveXpDifficulty(),
     });
 
     const totalStarsEarned = useProgressionStore.getState().totalStars;
@@ -977,17 +1003,52 @@ const App: React.FC = () => {
     });
   }, [buildTelemetryContext, setPlayer]);
 
+  const getExpectedSecondsPerQuestion = useCallback(() => {
+    const answeredQuestions = sessionMetrics.correct + sessionMetrics.incorrect + 1;
+    if (sessionState.totalTime <= 0) return 20;
+    return Math.max(1, sessionState.totalTime / Math.max(1, answeredQuestions));
+  }, [sessionMetrics.correct, sessionMetrics.incorrect, sessionState.totalTime]);
+
   const sessionEvents: GameplaySessionEventHandlers = useMemo(() => ({
     onCorrectAnswer: (event) => {
       playGameSound('correct', undefined, selectedLevel?.blueprintKey);
       triggerHaptic('selection');
-      setSessionMetrics((prev) => ({ ...prev, correct: prev.correct + 1 }));
+      const now = Date.now();
+      const secondsTaken = Math.max(0, (now - questionStartedAtRef.current) / 1000);
+      const firstTry = !currentQuestionHadIncorrectRef.current;
+      questionStartedAtRef.current = now;
+      currentQuestionHadIncorrectRef.current = false;
+      setSessionMetrics((prev) => {
+        const streakCount = prev.streakCount + 1;
+        const questionXP = calculateQuestionXP({
+          isCorrect: true,
+          difficulty: resolveXpDifficulty(),
+          secondsTaken,
+          expectedSeconds: getExpectedSecondsPerQuestion(),
+          streakCount,
+          firstTry,
+          mode: selectedLevel?.isBoss ? 'boss' : 'normal',
+        });
+        return {
+          ...prev,
+          correct: prev.correct + 1,
+          streakCount,
+          questionXP: [...prev.questionXP, questionXP],
+        };
+      });
       recordTelemetryEvent('correct_answer', event);
     },
     onIncorrectAnswer: (event) => {
       playGameSound('incorrect', undefined, selectedLevel?.blueprintKey);
       triggerHaptic('error');
-      setSessionMetrics((prev) => ({ ...prev, incorrect: prev.incorrect + 1 }));
+      questionStartedAtRef.current = Date.now();
+      currentQuestionHadIncorrectRef.current = true;
+      setSessionMetrics((prev) => ({
+        ...prev,
+        incorrect: prev.incorrect + 1,
+        streakCount: 0,
+        questionXP: [...prev.questionXP, 0],
+      }));
       recordTelemetryEvent('incorrect_answer', event);
       if (screen === 'gameplay') {
         const metadataKey = JSON.stringify(event.metadata ?? {});
@@ -1012,7 +1073,7 @@ const App: React.FC = () => {
     onGameFailed: (event) => {
       recordTelemetryEvent('game_failed', event);
     },
-  }), [consumeLife, recordTelemetryEvent, screen, setSessionMetrics]);
+  }), [consumeLife, getExpectedSecondsPerQuestion, recordTelemetryEvent, resolveXpDifficulty, screen, selectedLevel?.blueprintKey, selectedLevel?.isBoss, setSessionMetrics]);
 
   const screenBehavior = SCREEN_BEHAVIOR[screen];
   const backgroundIntensityClass = screenBehavior.family === 'hub'

@@ -1,3 +1,5 @@
+import { calculateBossXP } from '../lib/progression/calculateXp';
+
 export type ArithmeticQuestionType =
   | 'addition'
   | 'subtraction'
@@ -716,6 +718,8 @@ export const markArithmeticPaper = (
   paper: ArithmeticPaper,
   userAnswers: Record<number, string | number | undefined>,
   completedBeforeTimer = false,
+  timeRemaining = completedBeforeTimer ? paper.timeLimitSeconds : 0,
+  isBestAttemptToday = true,
 ): ArithmeticPaperResult => {
   const results = paper.questions.map((question) => {
     const userAnswer = userAnswers[question.id] ?? '';
@@ -734,10 +738,15 @@ export const markArithmeticPaper = (
   const percentage = Math.round((score / paper.totalMarks) * 100);
   const correctCount = results.filter((result) => result.isCorrect).length;
   const stars = score >= 34 ? 3 : score >= 24 ? 2 : 1;
-  const xpAwarded = (score * 10)
-    + (completedBeforeTimer ? 100 : 0)
-    + (score >= 34 ? 150 : 0)
-    + (score === 40 ? 250 : 0);
+  const passed = score >= 24;
+  const xpAwarded = calculateBossXP({
+    score,
+    totalMarks: paper.totalMarks,
+    timeRemaining,
+    totalTime: paper.timeLimitSeconds,
+    passed,
+    isBestAttemptToday,
+  });
 
   return {
     score,
@@ -747,6 +756,6 @@ export const markArithmeticPaper = (
     results,
     stars,
     xpAwarded,
-    passed: score >= 24,
+    passed,
   };
 };

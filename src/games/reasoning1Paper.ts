@@ -1,3 +1,5 @@
+import { calculateBossXP } from '../lib/progression/calculateXp';
+
 export type ReasoningQuestionType =
   | 'number'
   | 'fractionsDecimalsPercentages'
@@ -1238,6 +1240,8 @@ export const markReasoning1Paper = (
   paper: ReasoningPaper,
   userAnswers: Record<number, any>,
   completedBeforeTimer = false,
+  timeRemaining = completedBeforeTimer ? paper.timeLimitSeconds : 0,
+  isBestAttemptToday = true,
 ): ReasoningPaperResult => {
   const results = paper.questions.map((question) => {
     const userAnswer = userAnswers[question.id] ?? '';
@@ -1256,10 +1260,15 @@ export const markReasoning1Paper = (
   const percentage = Math.round((score / paper.totalMarks) * 100);
   const correctCount = results.filter((result) => result.isCorrect).length;
   const stars: 0 | 1 | 2 | 3 = score >= 30 ? 3 : score >= 21 ? 2 : score > 0 ? 1 : 0;
-  const xpAwarded = (score * 12)
-    + (completedBeforeTimer ? 100 : 0)
-    + (score >= 30 ? 150 : 0)
-    + (score === 35 ? 250 : 0);
+  const passed = score >= 21;
+  const xpAwarded = calculateBossXP({
+    score,
+    totalMarks: paper.totalMarks,
+    timeRemaining,
+    totalTime: paper.timeLimitSeconds,
+    passed,
+    isBestAttemptToday,
+  });
 
   return {
     score,
@@ -1269,7 +1278,7 @@ export const markReasoning1Paper = (
     results,
     stars,
     xpAwarded,
-    passed: score >= 21,
+    passed,
   };
 };
 
