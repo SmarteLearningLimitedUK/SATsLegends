@@ -182,7 +182,14 @@ const App: React.FC = () => {
         || (prev.stats?.totalStars || 0) !== (next.stats?.totalStars || 0)
       );
 
-      return shouldUpdate ? next : prev;
+      if (!shouldUpdate) return prev;
+
+      const achievementState = reconcileAchievementState(next);
+      return {
+        ...next,
+        achievementState,
+        achievements: achievementState.earned,
+      };
     });
   }, [mapProgressionToPlayer, progressionLevels, progressionPlayer.currentXp, progressionPlayer.level, setPlayer]);
 
@@ -1100,8 +1107,9 @@ const App: React.FC = () => {
                 onClick={() => openWellbeingHub({ origin: 'world_map', islandId: selectedIsland?.id ?? null })}
                 className={mapDockButtonClass}
                 aria-label="Open Calm Grove"
+                title="Calm Grove"
               >
-                <AssetIcon name="heart" className={mapDockIconClass} />
+                <AssetIcon name="tree" className={mapDockIconClass} />
               </button>
             </div>
           </div>

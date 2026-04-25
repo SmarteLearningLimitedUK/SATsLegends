@@ -16,6 +16,7 @@ import iconRefresh from '../assets/licensed/slices/icon_refresh.png';
 import iconSetting from '../assets/licensed/slices/icon_gear.png';
 import iconSound from '../assets/fantasy_hero/icons/sound.svg';
 import iconSoundMute from '../assets/fantasy_hero/icons/sound_mute.svg';
+import iconTree from '../assets/fantasy_hero/icons/tree.svg';
 import iconTimer from '../assets/licensed/slices/icon_timer.png';
 import iconStopwatch from '../assets/licensed/slices/icon_stopwatch.png';
 import iconTrophy from '../assets/licensed/slices/icon_trophy.png';
@@ -63,6 +64,7 @@ const ICONS = {
   plusSquare: iconPlusSquare,
   sound: iconSound,
   soundMute: iconSoundMute,
+  tree: iconTree,
 } as const;
 
 export type AssetIconName = keyof typeof ICONS;

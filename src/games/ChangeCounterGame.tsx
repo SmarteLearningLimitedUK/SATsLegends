@@ -62,8 +62,9 @@ const SALE_ITEMS = [
   { label: 'wizard hat', src: item7 },
   { label: 'mirror', src: item8 },
 ] as const;
+type SaleItemLabel = typeof SALE_ITEMS[number]['label'];
 const MARKET_CUSTOMERS = ['Grok', 'Vex', 'Bran', 'Mochi', 'Rook', 'Zuri'];
-const SALE_ITEM_BY_LABEL = new Map(SALE_ITEMS.map((item) => [item.label, item]));
+const SALE_ITEM_BY_LABEL = new Map<SaleItemLabel, typeof SALE_ITEMS[number]>(SALE_ITEMS.map((item) => [item.label, item]));
 
 const formatMoney = (pence: number) => (
   pence >= 100
@@ -241,7 +242,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
     const startIndex = currentIndex >= 0 ? currentIndex : 0;
     return Array.from({ length: 5 }, (_, index) => {
       const bankItem = QUESTION_BANK[(startIndex + index) % QUESTION_BANK.length];
-      const saleItem = SALE_ITEM_BY_LABEL.get(bankItem.item) ?? SALE_ITEMS[(startIndex + index) % SALE_ITEMS.length];
+      const saleItem = SALE_ITEM_BY_LABEL.get(bankItem.item as SaleItemLabel) ?? SALE_ITEMS[(startIndex + index) % SALE_ITEMS.length];
       return {
         id: `${question.id}-${index}`,
         label: bankItem.item,

@@ -260,7 +260,9 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({
 
             <div className="grid w-full grid-cols-2 gap-3 md:gap-4">
               <div className="flex flex-col items-center gap-2">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-300">Hour Hand</p>
+                <p className="rounded-md border border-blue-200/20 bg-slate-950/55 px-2 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-blue-200 shadow-[0_2px_10px_rgba(15,23,42,0.32)] backdrop-blur-[2px]">
+                  Hour Hand
+                </p>
                 <div className="flex items-center gap-3">
                   <ControlButton onClick={() => adjustTime('hours', -1)} icon={<Minus size={20} />} color="blue" />
                   <ControlButton onClick={() => adjustTime('hours', 1)} icon={<Plus size={20} />} color="blue" />
@@ -268,7 +270,9 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({
               </div>
 
               <div className="flex flex-col items-center gap-2">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-purple-300">Minute Hand</p>
+                <p className="rounded-md border border-purple-200/20 bg-slate-950/55 px-2 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-purple-200 shadow-[0_2px_10px_rgba(15,23,42,0.32)] backdrop-blur-[2px]">
+                  Minute Hand
+                </p>
                 <div className="flex items-center gap-3">
                   <ControlButton onClick={() => adjustTime('minutes', -5)} icon={<Minus size={20} />} color="purple" />
                   <ControlButton onClick={() => adjustTime('minutes', 5)} icon={<Plus size={20} />} color="purple" />

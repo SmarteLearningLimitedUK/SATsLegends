@@ -391,11 +391,12 @@ const buildAvailableCounts = (
 
   if (levelId < 7) return availableCounts;
 
-  const leftovers = targetCounts.map((targetCount) => (
+  const leftovers: number[] = targetCounts.map((targetCount) => (
     targetCount > 1 ? Math.floor(Math.random() * targetCount) : 0
   ));
 
-  if (leftovers.every((leftover) => leftover === 0)) {
+  const hasLeftovers = leftovers.some((leftover) => leftover > 0);
+  if (!hasLeftovers) {
     const refillIndex = targetCounts.findIndex((targetCount) => targetCount > 1);
     if (refillIndex >= 0) {
       leftovers[refillIndex] = 1;

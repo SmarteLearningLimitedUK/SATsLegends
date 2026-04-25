@@ -135,10 +135,16 @@ const renderIslandAccent = (islandId: number) => {
     case 6:
       return (
         <div className="world-map-volcano-accent pointer-events-none absolute inset-0 z-10">
-          <div className="world-map-volcano-flame world-map-volcano-flame-primary" />
-          <div className="world-map-volcano-flame world-map-volcano-flame-secondary" />
-          <div className="world-map-volcano-flame world-map-volcano-flame-tertiary" />
-          <div className="world-map-volcano-smoke" />
+          {[0, 1, 2, 3, 4].map(index => (
+            <span
+              key={`measurement-lava-rock-${index}`}
+              className={`world-map-lava-rock world-map-lava-rock-${index + 1}`}
+              style={{
+                animationDelay: `${index * 0.32}s`,
+                animationDuration: `${2.2 + (index % 3) * 0.22}s`,
+              }}
+            />
+          ))}
         </div>
       );
     case 5:
@@ -421,12 +427,12 @@ const WorldMap: React.FC<WorldMapProps> = ({
                   transform: 'translate(-50%, -50%)',
                 }}
               >
-                <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                <div className={`pointer-events-none absolute inset-0 ${hotspot.islandId === 6 ? 'overflow-visible' : 'overflow-hidden'}`}>
                   {(() => {
                     const accentFrame = getIslandAccentFrame(hotspot.islandId);
                     return (
                   <div
-                    className="absolute overflow-hidden"
+                    className={`absolute ${hotspot.islandId === 6 ? 'overflow-visible' : 'overflow-hidden'}`}
                     style={{
                       ...accentFrame,
                       transform: 'translate(-50%, -50%)',

@@ -316,12 +316,13 @@ const PerimeterShapeRenderer: React.FC<{
       y: 50 + ((svgPoint.y - 50) / zoom),
     };
 
-    const nearest = shape.edges.reduce<{ edge: ShapeEdge | null; distance: number }>(
+    const initialNearest: { edge: ShapeEdge | null; distance: number } = { edge: null, distance: Number.POSITIVE_INFINITY };
+    const nearest = shape.edges.reduce(
       (best, edge) => {
         const distance = distanceToSegment(modelPoint, edge.from, edge.to);
         return distance < best.distance ? { edge, distance } : best;
       },
-      { edge: null, distance: Number.POSITIVE_INFINITY },
+      initialNearest,
     );
 
     if (nearest.edge && nearest.distance <= 7.5) {

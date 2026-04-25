@@ -389,7 +389,7 @@ export const isRangeRodeoAnswerCorrect = (
 
 if (import.meta.env.DEV && typeof window !== 'undefined') {
   const flag = '__rangeRodeoGeneratorExamplesLogged__';
-  const globalWindow = window as Window & { [key: string]: unknown };
+  const globalWindow = window as unknown as Window & { [key: string]: unknown };
   if (!globalWindow[flag]) {
     globalWindow[flag] = true;
     // Inline examples for quick QA visibility.

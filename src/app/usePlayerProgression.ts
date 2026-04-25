@@ -205,6 +205,18 @@ export const usePlayerProgression = (): PlayerProgressionController => {
       const unlockedIslands = prev.unlockedIslands.includes(nextIslandId) || !selectedLevel.isBoss
         ? prev.unlockedIslands
         : [...prev.unlockedIslands, nextIslandId].filter(id => id <= ISLANDS.length);
+      const completedLevelsForIsland = prev.completedLevels[islandId] || [];
+      const nextCompletedLevels = {
+        ...prev.completedLevels,
+        [islandId]: completedLevelsForIsland.includes(levelId)
+          ? completedLevelsForIsland
+          : [...completedLevelsForIsland, levelId],
+      };
+      const levelStarKey = `${islandId}-${levelId}`;
+      const nextLevelStars = {
+        ...prev.levelStars,
+        [levelStarKey]: Math.max(prev.levelStars[levelStarKey] || 0, stars),
+      };
 
       const nextBase: PlayerData = {
         ...prev,
@@ -212,6 +224,8 @@ export const usePlayerProgression = (): PlayerProgressionController => {
         xp: progressionResult.currentXp,
         level: progressionResult.newLevel,
         unlockedIslands,
+        completedLevels: nextCompletedLevels,
+        levelStars: nextLevelStars,
         dailyQuests: updatedQuests,
         stats,
         achievements: prev.achievements || [],

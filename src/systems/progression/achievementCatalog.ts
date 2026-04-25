@@ -15,9 +15,13 @@ export type AchievementMetric =
   | 'sessions_played'
   | 'best_streak'
   | 'total_correct'
+  | 'total_answered'
   | 'topic_mastery'
   | 'game_mastery'
+  | 'perfect_levels'
   | 'island_completion'
+  | 'islands_completed'
+  | 'boss_levels_completed'
   | 'coins_earned'
   | 'shop_items_owned';
 
@@ -37,97 +41,58 @@ export interface AchievementDefinition {
 
 export const ACHIEVEMENT_CATALOG: AchievementDefinition[] = [
   {
-    id: 'first-session',
-    name: 'First Signal',
-    description: 'Play your first session.',
-    category: 'sessions',
-    metric: 'sessions_played',
-    target: 1,
+    id: 'answered-100',
+    name: 'Hundred Hero',
+    description: 'Answer 100 questions.',
+    category: 'gameplay',
+    metric: 'total_answered',
+    target: 100,
     iconKey: 'star',
   },
   {
-    id: 'ten-sessions',
-    name: 'Seasoned Explorer',
-    description: 'Play 10 sessions.',
-    category: 'sessions',
-    metric: 'sessions_played',
-    target: 10,
+    id: 'answered-500',
+    name: 'Question Champion',
+    description: 'Answer 500 questions.',
+    category: 'gameplay',
+    metric: 'total_answered',
+    target: 500,
+    iconKey: 'trophy',
+  },
+  {
+    id: 'answered-1000',
+    name: 'Legendary Solver',
+    description: 'Answer 1000 questions.',
+    category: 'gameplay',
+    metric: 'total_answered',
+    target: 1000,
+    iconKey: 'trophy',
+  },
+  {
+    id: 'island-completed',
+    name: 'Island Complete',
+    description: 'Complete every level on any island.',
+    category: 'island',
+    metric: 'islands_completed',
+    target: 1,
+    iconKey: 'trophy',
+  },
+  {
+    id: 'boss-level-completed',
+    name: 'Boss Breaker',
+    description: 'Complete a boss level.',
+    category: 'gameplay',
+    metric: 'boss_levels_completed',
+    target: 1,
     iconKey: 'medal',
   },
   {
-    id: 'streak-5',
-    name: 'Combo Keeper',
-    description: 'Reach a 5-answer correct streak.',
-    category: 'streak',
-    metric: 'best_streak',
-    target: 5,
-    iconKey: 'trophy',
-  },
-  {
-    id: 'streak-10',
-    name: 'Unbroken Chain',
-    description: 'Reach a 10-answer correct streak.',
-    category: 'streak',
-    metric: 'best_streak',
-    target: 10,
-    iconKey: 'trophy',
-  },
-  {
-    id: 'correct-100',
-    name: 'Hundred Hits',
-    description: 'Answer 100 questions correctly.',
+    id: 'perfect-score',
+    name: 'Perfect Score',
+    description: 'Earn a 100% score on a level.',
     category: 'accuracy',
-    metric: 'total_correct',
-    target: 100,
-    iconKey: 'star',
-  },
-  {
-    id: 'topic-fractions',
-    name: 'Fraction Focus',
-    description: 'Reach 80% accuracy in fractions.',
-    category: 'topic',
-    metric: 'topic_mastery',
-    target: 80,
-    topicId: 'fractions',
-    iconKey: 'gem',
-  },
-  {
-    id: 'topic-ratio',
-    name: 'Ratio Ready',
-    description: 'Reach 80% accuracy in ratio.',
-    category: 'topic',
-    metric: 'topic_mastery',
-    target: 80,
-    topicId: 'ratio',
-    iconKey: 'gem',
-  },
-  {
-    id: 'island-1',
-    name: 'Acropolis Clear',
-    description: 'Complete every level in Arithmetic Acropolis.',
-    category: 'island',
-    metric: 'island_completion',
-    target: 100,
-    islandId: 1,
-    iconKey: 'trophy',
-  },
-  {
-    id: 'shop-first',
-    name: 'First Outfit',
-    description: 'Own your first cosmetic item.',
-    category: 'shop',
-    metric: 'shop_items_owned',
+    metric: 'perfect_levels',
     target: 1,
-    iconKey: 'coin',
-  },
-  {
-    id: 'coins-2000',
-    name: 'Coin Collector',
-    description: 'Earn 2000 coins total.',
-    category: 'currency',
-    metric: 'coins_earned',
-    target: 2000,
-    iconKey: 'coin',
+    iconKey: 'gem',
   },
 ];
 
@@ -159,6 +124,29 @@ const computeGameCompletion = (player: PlayerData, islandId?: number) => {
   return Math.round((completed / total) * 100);
 };
 
+const countAnsweredQuestions = (telemetry: PlayerTelemetry | null) => (
+  (telemetry?.correctAnswers ?? 0) + (telemetry?.incorrectAnswers ?? 0)
+);
+
+const countPerfectLevels = (player: PlayerData) => (
+  Object.values(player.levelStars || {}).filter((stars) => stars >= 3).length
+);
+
+const countCompletedIslands = (player: PlayerData) => (
+  ISLANDS.filter((island) => {
+    const completed = new Set(player.completedLevels[island.id] || []);
+    return island.levels.length > 0 && island.levels.every((level) => completed.has(level.id));
+  }).length
+);
+
+const countCompletedBossLevels = (player: PlayerData) => (
+  ISLANDS.reduce((total, island) => {
+    const completed = new Set(player.completedLevels[island.id] || []);
+    const completedBosses = island.levels.filter((level) => level.isBoss && completed.has(level.id)).length;
+    return total + completedBosses;
+  }, 0)
+);
+
 export const computeAchievementProgress = (player: PlayerData, achievement: AchievementDefinition): number => {
   const telemetry = getTelemetry(player);
 
@@ -169,6 +157,8 @@ export const computeAchievementProgress = (player: PlayerData, achievement: Achi
       return telemetry?.bestCorrectStreak ?? 0;
     case 'total_correct':
       return telemetry?.correctAnswers ?? 0;
+    case 'total_answered':
+      return countAnsweredQuestions(telemetry);
     case 'topic_mastery':
       return computeTopicAccuracy(telemetry, achievement.topicId);
     case 'game_mastery':
@@ -176,8 +166,14 @@ export const computeAchievementProgress = (player: PlayerData, achievement: Achi
       return telemetry.gameStats[achievement.gameId]?.accuracy
         ? Math.round(telemetry.gameStats[achievement.gameId].accuracy * 100)
         : 0;
+    case 'perfect_levels':
+      return countPerfectLevels(player);
     case 'island_completion':
       return computeGameCompletion(player, achievement.islandId);
+    case 'islands_completed':
+      return countCompletedIslands(player);
+    case 'boss_levels_completed':
+      return countCompletedBossLevels(player);
     case 'coins_earned':
       return player.stats?.totalCoinsEarned ?? 0;
     case 'shop_items_owned':
@@ -189,11 +185,12 @@ export const computeAchievementProgress = (player: PlayerData, achievement: Achi
 
 export const reconcileAchievementState = (player: PlayerData): PlayerAchievementState => {
   const current = player.achievementState ?? defaultAchievementState();
+  const catalogIds = new Set(ACHIEVEMENT_CATALOG.map((achievement) => achievement.id));
   const next: PlayerAchievementState = {
     ...current,
-    earned: [...current.earned],
+    earned: current.earned.filter((id) => catalogIds.has(id)),
     progress: { ...current.progress },
-    claimed: [...current.claimed],
+    claimed: current.claimed.filter((id) => catalogIds.has(id)),
     updatedAt: Date.now(),
   };
 

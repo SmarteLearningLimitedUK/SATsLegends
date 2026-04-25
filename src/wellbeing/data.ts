@@ -1,6 +1,5 @@
 import AffirmationStation from './activities/AffirmationStation';
 import BreathingBloom from './activities/BreathingBloom';
-import CandleCalm from './activities/CandleCalm';
 import ConstellationConnect from './activities/ConstellationConnect';
 import LeafDrift from './activities/LeafDrift';
 import PeacefulPond from './activities/PeacefulPond';
@@ -27,16 +26,6 @@ export const WELLBEING_ACTIVITIES: WellbeingActivityMeta[] = [
     description: 'Spend one calm minute in a blue pond. Tap to scatter the school, then sweep your finger to guide them with soft currents.',
     icon: 'Pond',
     component: PeacefulPond,
-  },
-  {
-    id: 'candle_calm',
-    title: 'Sleepy Room',
-    subtitle: 'Clear the room and tuck the baby monster in',
-    type: 'Grounding',
-    durationEstimate: '35 sec',
-    description: 'Clear the bedroom clutter, then tap the crib to help the baby monster settle.',
-    icon: 'Rest',
-    component: CandleCalm,
   },
   {
     id: 'constellation_connect',
@@ -91,6 +80,6 @@ export const WELLBEING_ACTIVITY_BY_ISLAND: Record<number, WellbeingActivityId> =
   3: 'constellation_connect',
   4: 'peaceful_pond',
   5: 'thought_sort',
-  6: 'candle_calm',
+  6: 'peaceful_pond',
   7: 'affirmation_station',
 };
