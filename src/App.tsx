@@ -45,6 +45,7 @@ import { calculateQuestionXP, XpDifficulty } from './lib/progression/calculateXp
 import { CACHE_BUSTER } from './cacheBuster';
 import { playGameSound } from './audio/gameAudio';
 import { useLevelBackgroundAudio } from './audio/useLevelBackgroundAudio';
+import { useWelcomeBackgroundAudio } from './audio/useWelcomeBackgroundAudio';
 import { playClickSound } from './utils/soundManager';
 
 type SessionMetricsState = {
@@ -1084,6 +1085,7 @@ const App: React.FC = () => {
   const isWellbeingScreen = screen === 'wellbeing_hub' || screen === 'wellbeing_activity';
   const isSplashScreen = screen === 'splash';
   const isStartScreen = isSplashScreen || screen === 'profile_setup' || screen === 'avatar_selection';
+  const shouldPlayWelcomeBackgroundAudio = isSplashScreen || screen === 'profile_setup' || screen === 'avatar_selection';
   const isGameplayScreen = screen === 'gameplay' || screen === 'ratio_racer' || screen === 'scale_builder' || screen === 'share_splitter';
   const isStandaloneRatioRacer = screen === 'ratio_racer';
   const isStandaloneScaleBuilder = screen === 'scale_builder';
@@ -1115,6 +1117,7 @@ const App: React.FC = () => {
   const isExamBoss = selectedLevel?.gameType === 'crystal_core'
     || selectedLevel?.gameType === 'mirror_gate'
     || selectedLevel?.gameType === 'matrix_match';
+  useWelcomeBackgroundAudio(shouldPlayWelcomeBackgroundAudio);
   useLevelBackgroundAudio(
     screen === 'gameplay' && Boolean(selectedLevel) && !levelResult,
     selectedLevel ? `${selectedIsland?.id ?? 'unknown'}-${selectedLevel.id}-${gameplayRestartKey}` : null,
