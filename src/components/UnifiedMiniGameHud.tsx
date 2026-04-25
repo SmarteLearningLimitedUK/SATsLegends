@@ -70,6 +70,15 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
   const timerHeightClass = compactBossTimer
     ? 'h-[clamp(32px,8vw,40px)]'
     : sharedHudHeightClass;
+  const timerShellClass = compactBossTimer
+    ? 'border border-amber-200/45 bg-[linear-gradient(180deg,rgba(244,197,70,0.18),rgba(8,18,43,0.78))] shadow-[0_4px_10px_rgba(2,6,23,0.24)]'
+    : 'border-2 border-cyan-100/60 bg-[linear-gradient(180deg,#2f67ba_0%,#1f458f_100%)] shadow-[0_9px_18px_rgba(2,6,23,0.42)]';
+  const timerIconShellClass = compactBossTimer
+    ? 'border border-amber-100/60 bg-[linear-gradient(180deg,#f8d86d_0%,#f59e0b_100%)]'
+    : 'border border-amber-100/70 bg-[linear-gradient(180deg,#f8d86d_0%,#f59e0b_100%)]';
+  const timerTextClass = compactBossTimer
+    ? 'text-amber-50'
+    : 'text-slate-100';
   const timerWidthClass = hideTimerBar
     ? compactBossTimer
       ? 'w-[clamp(88px,20vw,112px)]'
@@ -240,14 +249,3 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
 };
 
 export default UnifiedMiniGameHud;
-  const timerShellClass = compactBossTimer
-    ? 'border border-amber-200/45 bg-[linear-gradient(180deg,rgba(244,197,70,0.18),rgba(8,18,43,0.78))] shadow-[0_4px_10px_rgba(2,6,23,0.24)]'
-    : 'border-2 border-cyan-100/60 bg-[linear-gradient(180deg,#2f67ba_0%,#1f458f_100%)] shadow-[0_9px_18px_rgba(2,6,23,0.42)]';
-
-  const timerIconShellClass = compactBossTimer
-    ? 'border border-amber-100/60 bg-[linear-gradient(180deg,#f8d86d_0%,#f59e0b_100%)]'
-    : 'border border-amber-100/70 bg-[linear-gradient(180deg,#f8d86d_0%,#f59e0b_100%)]';
-
-  const timerTextClass = compactBossTimer
-    ? 'text-amber-50'
-    : 'text-slate-100';
