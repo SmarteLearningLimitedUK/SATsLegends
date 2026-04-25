@@ -44,6 +44,7 @@ import { getXpRequiredForLevel } from './lib/progression/getXpRequiredForLevel';
 import { calculateQuestionXP, XpDifficulty } from './lib/progression/calculateXp';
 import { CACHE_BUSTER } from './cacheBuster';
 import { playGameSound } from './audio/gameAudio';
+import { useLevelBackgroundAudio } from './audio/useLevelBackgroundAudio';
 import { playClickSound } from './utils/soundManager';
 
 type SessionMetricsState = {
@@ -1114,6 +1115,10 @@ const App: React.FC = () => {
   const isExamBoss = selectedLevel?.gameType === 'crystal_core'
     || selectedLevel?.gameType === 'mirror_gate'
     || selectedLevel?.gameType === 'matrix_match';
+  useLevelBackgroundAudio(
+    screen === 'gameplay' && Boolean(selectedLevel) && !levelResult,
+    selectedLevel ? `${selectedIsland?.id ?? 'unknown'}-${selectedLevel.id}-${gameplayRestartKey}` : null,
+  );
   const hideShellTimer = (LEVEL_TIMERS_DISABLED && !isExamBoss)
     || !isGameplayScreen
     || isStandaloneRatioRacer
