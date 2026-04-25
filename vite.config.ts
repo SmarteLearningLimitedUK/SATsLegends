@@ -5,7 +5,10 @@ import { defineConfig, loadEnv } from 'vite';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
-  const useRelativeBase = env.VITE_RELATIVE_BASE === '1' || process.env.VITE_RELATIVE_BASE === '1';
+  const useRelativeBase = (
+    mode === 'development'
+    && (env.VITE_RELATIVE_BASE === '1' || process.env.VITE_RELATIVE_BASE === '1')
+  );
   const geminiApiKey = env.GEMINI_API_KEY ?? process.env.GEMINI_API_KEY ?? '';
   const buildId = env.VITE_BUILD_ID ?? process.env.VITE_BUILD_ID ?? new Date().toISOString();
 
