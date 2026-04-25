@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
+import AssetIcon from '../components/AssetIcon';
 import WellbeingShell from './WellbeingShell';
 import { WellbeingActivityMeta } from './types';
 
@@ -20,53 +21,76 @@ const WellbeingHub: React.FC<WellbeingHubProps> = ({ activities, calmTokens, onS
       <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden px-4 pb-4 pt-4" data-calm-tokens={calmTokens}>
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_30%,rgba(30,27,75,1)_0%,rgba(15,12,46,1)_60%,rgba(6,4,15,1)_100%)]" />
         <div className="absolute inset-0 opacity-50 [background-image:radial-gradient(rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:24px_24px]" />
-        <div className="relative z-10 flex min-h-0 flex-1 flex-col items-center overflow-hidden pt-3">
+        <div className="relative z-10 flex min-h-0 flex-1 flex-col items-center overflow-hidden pt-2">
+          <div className="mb-3 flex w-full max-w-[960px] items-center justify-end">
+            <div className="licensed-board-frame flex min-w-[132px] shrink-0 flex-col items-end gap-1 rounded-xl px-3 py-2 text-white md:min-w-[164px]">
+              <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-[10px]">
+                Calm Tokens
+              </div>
+              <div className="flex items-center gap-1.5 text-sm font-black md:text-base">
+                <AssetIcon name="brainpowerToken" className="h-4 w-4 md:h-5 md:w-5" />
+                <span>{calmTokens}</span>
+              </div>
+            </div>
+          </div>
 
-          <div className="grid w-full max-w-[960px] grid-cols-1 gap-4 overflow-y-auto pb-2 pr-1 md:grid-cols-2 lg:grid-cols-3" style={{ WebkitOverflowScrolling: 'touch' }}>
-            {activities.map((activity, index) => (
-              <motion.button
-                key={activity.id}
-                type="button"
-                onClick={() => onSelect(activity.id)}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.04, duration: 0.2 }}
-                className="relative overflow-hidden rounded-[20px] border border-white/10 bg-[rgba(255,255,255,0.05)] p-4 text-left transition hover:-translate-y-1 hover:bg-[rgba(255,255,255,0.09)]"
-              >
-                <div
-                  className={`absolute inset-0 opacity-0 transition-opacity duration-300 hover:opacity-100 ${
-                    index % 5 === 0
-                      ? 'bg-[linear-gradient(135deg,rgba(162,155,254,0.3),transparent)]'
-                      : index % 5 === 1
-                        ? 'bg-[linear-gradient(135deg,rgba(0,210,211,0.3),transparent)]'
-                        : index % 5 === 2
-                          ? 'bg-[linear-gradient(135deg,rgba(253,121,168,0.3),transparent)]'
-                          : index % 5 === 3
-                            ? 'bg-[linear-gradient(135deg,rgba(85,239,196,0.3),transparent)]'
-                            : 'bg-[linear-gradient(135deg,rgba(253,203,110,0.3),transparent)]'
+          <div className="w-full max-w-[960px] min-h-0 flex-1 overflow-y-auto pb-2 pr-1" style={{ WebkitOverflowScrolling: 'touch' }}>
+            <div className="flex flex-col gap-2.5 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] md:gap-3">
+              {activities.map((activity, index) => (
+                <motion.button
+                  key={activity.id}
+                  type="button"
+                  onClick={() => onSelect(activity.id)}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.04, duration: 0.2 }}
+                  className={`licensed-board-frame w-full rounded-2xl border px-3 py-3 text-left transition md:px-4 md:py-3.5 ${
+                    index === 0
+                      ? 'border-amber-200/60 shadow-[0_0_0_1px_rgba(251,191,36,0.25),0_16px_28px_rgba(234,179,8,0.18)]'
+                      : 'border-white/14'
                   }`}
-                />
-                <div className="relative z-10 flex items-start gap-3">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(180deg,rgba(162,155,254,0.28),rgba(253,121,168,0.18))] text-2xl shadow-[0_0_18px_rgba(125,211,252,0.16)]">
-                    {activity.icon}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="whitespace-normal break-words text-[0.95rem] font-bold leading-snug text-white">{activity.title}</div>
-                      <div className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-white/70">
-                        {activity.durationEstimate}
+                >
+                  <div className="flex items-center gap-3 md:gap-4">
+                    <div className={`relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 text-2xl md:h-12 md:w-12 ${
+                      index === 0
+                        ? 'border-amber-200 bg-amber-500/25'
+                        : 'border-cyan-200/60 bg-cyan-500/20'
+                    }`}>
+                      {activity.icon}
+                      {index === 0 ? (
+                        <span className="absolute -right-0.5 -top-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-amber-300 text-[9px] font-black text-amber-950">
+                          !
+                        </span>
+                      ) : null}
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate text-sm font-black text-cyan-100 md:text-base">{activity.title}</div>
+                      <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
+                        <span className="inline-flex items-center rounded-full border border-white/12 bg-white/5 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/80 md:text-[11px]">
+                          {activity.type}
+                        </span>
+                        <span className="inline-flex items-center rounded-full border border-white/12 bg-white/5 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/80 md:text-[11px]">
+                          {activity.durationEstimate}
+                        </span>
+                        {index === 0 ? (
+                          <span className="inline-flex items-center rounded-full border border-amber-200/50 bg-amber-400/15 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.14em] text-amber-100 md:text-[11px]">
+                            Next
+                          </span>
+                        ) : null}
                       </div>
+                      <p className="mt-2 text-xs font-semibold leading-relaxed text-cyan-50/90 md:text-sm">
+                        {activity.description}
+                      </p>
                     </div>
-                    <div className="mt-1 text-[0.72rem] font-black uppercase tracking-[0.14em] text-white/45">
-                      {activity.type}
-                    </div>
-                    <div className="mt-2 text-sm leading-relaxed text-white/70">
-                      {activity.description}
-                    </div>
+
+                    <span className="ml-1 shrink-0 rounded-lg border border-cyan-200/50 bg-cyan-500/20 px-2 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-cyan-50 md:text-[11px]">
+                      Play
+                    </span>
                   </div>
-                </div>
-              </motion.button>
-            ))}
+                </motion.button>
+              ))}
+            </div>
           </div>
         </div>
       </div>

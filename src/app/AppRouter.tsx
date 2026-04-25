@@ -68,6 +68,7 @@ interface AppRouterProps {
   onOpenWellbeingHub: () => void;
   onOpenWellbeingActivity: (activityId: WellbeingActivityId) => void;
   onExitWellbeing: () => void;
+  onExitWellbeingActivity: () => void;
   onCompleteWellbeingActivity: () => void;
   wellbeingActivityId: WellbeingActivityId | null;
   calmTokens: number;
@@ -107,6 +108,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
   onOpenWellbeingHub,
   onOpenWellbeingActivity,
   onExitWellbeing,
+  onExitWellbeingActivity,
   onCompleteWellbeingActivity,
   wellbeingActivityId,
   calmTokens,
@@ -645,7 +647,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       if (!wellbeingActivityId) return null;
       const SelectedWellbeingActivity = WELLBEING_BY_ID[wellbeingActivityId]?.component;
       return SelectedWellbeingActivity ? (
-        <SelectedWellbeingActivity onComplete={onCompleteWellbeingActivity} onExit={onExitWellbeing} />
+        <SelectedWellbeingActivity onComplete={onCompleteWellbeingActivity} onExit={onExitWellbeingActivity} />
       ) : null;
     }
 

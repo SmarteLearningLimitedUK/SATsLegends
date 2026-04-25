@@ -122,6 +122,13 @@ const formatReasoningAnswer = (value: any): string => {
   return String(value ?? '').replace(/\|/g, ', ');
 };
 
+const formatBossResultAnswer = (value: any): string => {
+  if (value === null || value === undefined) return '';
+  if (Array.isArray(value)) return value.join(', ');
+  if (typeof value === 'object') return JSON.stringify(value);
+  return String(value).replace(/\|/g, ', ');
+};
+
 const makeReasoningChoices = (question: ReasoningQuestion): any[] => {
   if (question.choices?.length) return question.choices;
 
@@ -455,22 +462,12 @@ const BossPaperFallbackVisual: React.FC<{
   bossPose: BossPose;
   title: string;
 }> = ({ encounter, bossPose }) => (
-  <div className="relative h-[clamp(12rem,32vh,20rem)] w-full overflow-hidden rounded-[1rem] border border-white/18">
-    <img
-      src={bossPaperBackground}
-      alt=""
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 h-full w-full object-cover"
-      draggable={false}
+  <div className="relative flex h-[clamp(12rem,32vh,20rem)] w-full items-end justify-center overflow-visible">
+    <BossPortrait
+      encounter={encounter}
+      pose={bossPose}
+      className="h-[clamp(9.8rem,30vh,15.8rem)] w-full max-w-[18rem] lg:max-w-[20rem]"
     />
-    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,255,255,0.14),transparent_42%),linear-gradient(180deg,rgba(4,18,44,0.05),rgba(4,18,44,0.3))]" />
-    <div className="absolute inset-x-0 bottom-[2%] flex items-end justify-center">
-      <BossPortrait
-        encounter={encounter}
-        pose={bossPose}
-        className="h-[clamp(8.8rem,27vh,14.4rem)] w-full max-w-[18rem] lg:max-w-[20rem]"
-      />
-    </div>
   </div>
 );
 
@@ -1579,33 +1576,65 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
     }
 
     if (reasoningResult && reasoningScreen === 'results') {
+      const incorrectReasoningAnswers = reasoningResult.results
+        .filter((entry) => !entry.isCorrect)
+        .map((entry) => {
+          const question = reasoningPaper.questions.find((item) => item.id === entry.questionId);
+          return {
+            ...entry,
+            questionText: question?.question ?? entry.question,
+          };
+        });
+
       return (
-        <div className="relative flex h-full w-full overflow-hidden bg-[#f7f4ea] px-3 py-3 font-sans text-slate-950 md:px-6 md:py-5">
-          <section className="mx-auto flex h-full w-full max-w-4xl flex-col overflow-hidden rounded-[1.1rem] border border-slate-300 bg-[#fffdf6] shadow-[0_12px_28px_rgba(15,23,42,0.16)]">
+        <div className="relative flex h-full w-full overflow-y-auto bg-[#f7f4ea] px-3 py-3 font-sans text-slate-950 md:px-6 md:py-5">
+          <section className="mx-auto flex h-full min-h-full w-full max-w-4xl flex-col overflow-hidden rounded-[1.1rem] border border-slate-300 bg-[#fffdf6] shadow-[0_12px_28px_rgba(15,23,42,0.16)]">
             <div className="border-b border-slate-300 bg-white px-5 py-4">
               <div className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">{reasoningDisplayTitle}</div>
               <h2 className="mt-1 text-2xl font-black text-slate-950 md:text-4xl">Paper Complete</h2>
             </div>
-            <div className="grid min-h-0 flex-1 gap-3 overflow-hidden p-4 md:grid-cols-[1fr_1fr] md:p-6">
-              <div className="rounded-[0.9rem] border border-slate-300 bg-white p-4">
-                <div className="text-sm font-bold uppercase tracking-[0.12em] text-slate-500">Final score</div>
-                <div className="mt-2 text-5xl font-black text-slate-950">{reasoningResult.score}/35</div>
-                <div className="mt-2 text-lg font-black text-slate-700">{reasoningResult.percentage}%</div>
-                <div className="mt-4 grid grid-cols-2 gap-2 text-sm font-bold text-slate-700">
-                  <div className="rounded-lg bg-slate-100 p-3">Stars<br /><span className="text-xl text-slate-950">{reasoningResult.stars}</span></div>
-                  <div className="rounded-lg bg-slate-100 p-3">XP<br /><span className="text-xl text-slate-950">{reasoningResult.xpAwarded}</span></div>
-                  <div className="rounded-lg bg-slate-100 p-3">Time<br /><span className="text-xl text-slate-950">{formatTime(reasoningTimeTakenSeconds)}</span></div>
-                  <div className="rounded-lg bg-slate-100 p-3">Correct<br /><span className="text-xl text-slate-950">{reasoningResult.correctCount}/{reasoningQuestionCount}</span></div>
+            <div className="min-h-0 flex-1 overflow-y-auto p-4 md:p-6">
+              <div className="grid gap-3 md:grid-cols-[1fr_1fr]">
+                <div className="rounded-[0.9rem] border border-slate-300 bg-white p-4">
+                  <div className="text-sm font-bold uppercase tracking-[0.12em] text-slate-500">Final score</div>
+                  <div className="mt-2 text-5xl font-black text-slate-950">{reasoningResult.score}/35</div>
+                  <div className="mt-2 text-lg font-black text-slate-700">{reasoningResult.percentage}%</div>
+                  <div className="mt-4 grid grid-cols-2 gap-2 text-sm font-bold text-slate-700">
+                    <div className="rounded-lg bg-slate-100 p-3">Stars<br /><span className="text-xl text-slate-950">{reasoningResult.stars}</span></div>
+                    <div className="rounded-lg bg-slate-100 p-3">XP<br /><span className="text-xl text-slate-950">{reasoningResult.xpAwarded}</span></div>
+                    <div className="rounded-lg bg-slate-100 p-3">Time<br /><span className="text-xl text-slate-950">{formatTime(reasoningTimeTakenSeconds)}</span></div>
+                    <div className="rounded-lg bg-slate-100 p-3">Correct<br /><span className="text-xl text-slate-950">{reasoningResult.correctCount}/{reasoningQuestionCount}</span></div>
+                  </div>
+                </div>
+                <div className="rounded-[0.9rem] border border-slate-300 bg-white p-4">
+                  <div className="text-sm font-bold uppercase tracking-[0.12em] text-slate-500">Breakdown</div>
+                  <div className="mt-3 space-y-2 text-sm font-bold text-slate-700">
+                    <div className="flex justify-between border-b border-slate-200 py-2"><span>Marks available</span><span>35</span></div>
+                    <div className="flex justify-between border-b border-slate-200 py-2"><span>Questions</span><span>{reasoningQuestionCount}</span></div>
+                    <div className="flex justify-between border-b border-slate-200 py-2"><span>Incorrect or blank</span><span>{incorrectReasoningAnswers.length}</span></div>
+                    <div className="flex justify-between border-b border-slate-200 py-2"><span>Pass threshold</span><span>21 marks</span></div>
+                    <div className="flex justify-between py-2"><span>Paper seed</span><span className="max-w-[12rem] truncate text-right">{String(reasoningPaper.seed)}</span></div>
+                  </div>
                 </div>
               </div>
-              <div className="rounded-[0.9rem] border border-slate-300 bg-white p-4">
-                <div className="text-sm font-bold uppercase tracking-[0.12em] text-slate-500">Breakdown</div>
-                <div className="mt-3 space-y-2 text-sm font-bold text-slate-700">
-                  <div className="flex justify-between border-b border-slate-200 py-2"><span>Marks available</span><span>35</span></div>
-                  <div className="flex justify-between border-b border-slate-200 py-2"><span>Questions</span><span>{reasoningQuestionCount}</span></div>
-                  <div className="flex justify-between border-b border-slate-200 py-2"><span>Pass threshold</span><span>21 marks</span></div>
-                  <div className="flex justify-between py-2"><span>Paper seed</span><span className="max-w-[12rem] truncate text-right">{String(reasoningPaper.seed)}</span></div>
-                </div>
+              <div className="mt-3 rounded-[0.9rem] border border-slate-300 bg-white p-4">
+                <div className="text-sm font-bold uppercase tracking-[0.12em] text-slate-500">Incorrect answers feedback</div>
+                {incorrectReasoningAnswers.length === 0 ? (
+                  <div className="mt-3 rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm font-bold text-emerald-900">
+                    Perfect run. No incorrect answers in this paper.
+                  </div>
+                ) : (
+                  <div className="mt-3 space-y-2">
+                    {incorrectReasoningAnswers.map((entry) => (
+                      <div key={`reasoning-incorrect-${entry.questionId}`} className="rounded-lg border border-rose-300 bg-rose-50 px-3 py-2 text-sm text-slate-800">
+                        <div className="font-black text-slate-950">Q{entry.questionId}. {entry.questionText}</div>
+                        <div className="mt-1 font-bold">Your answer: {formatBossResultAnswer(entry.userAnswer) || 'blank'}</div>
+                        <div className="font-bold">Correct answer: {formatBossResultAnswer(entry.correctAnswer) || 'n/a'}</div>
+                        {entry.feedback ? <div className="text-xs font-bold text-rose-900">{entry.feedback}</div> : null}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
             <div className="grid shrink-0 gap-2 border-t border-slate-300 bg-white p-3 md:grid-cols-3 md:p-4">
@@ -1701,21 +1730,13 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
           : Array.from({ length: orderingChoices.length }, () => '')
       )
       : [];
-    const hasReasoningVisual = Boolean(
-      reasoningQuestion.shapeData
-      || reasoningQuestion.gridData
-      || reasoningQuestion.chartData
-      || reasoningQuestion.tableData
-      || reasoningQuestion.numberLineData
-      || reasoningQuestion.scaleData
-      || reasoningQuestion.areaData
-      || reasoningQuestion.perimeterData
-      || reasoningQuestion.volumeData
-      || reasoningQuestion.ratioData
+    const reasoningVisual = (
+      <BossPaperFallbackVisual
+        encounter={encounter}
+        bossPose={bossPose}
+        title={`${reasoningDisplayTitle} Boss`}
+      />
     );
-    const reasoningVisual = hasReasoningVisual
-      ? <ReasoningVisual question={reasoningQuestion} />
-      : <BossPaperFallbackVisual encounter={encounter} bossPose={bossPose} title={`${reasoningDisplayTitle} Boss`} />;
 
     return (
       <BossPaperStage
@@ -1846,33 +1867,63 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
     }
 
     if (arithmeticResult && !isReviewingArithmetic) {
+      const incorrectArithmeticAnswers = arithmeticResult.results
+        .filter((entry) => !entry.isCorrect)
+        .map((entry) => {
+          const question = arithmeticPaper.questions.find((item) => item.id === entry.questionId);
+          return {
+            ...entry,
+            questionText: question?.question ?? `Question ${entry.questionId}`,
+          };
+        });
+
       return (
-        <div className="relative flex h-full w-full overflow-hidden bg-[#f7f4ea] px-3 py-3 font-sans text-slate-950 md:px-6 md:py-5">
-          <section className="mx-auto flex h-full w-full max-w-4xl flex-col overflow-hidden rounded-[1.1rem] border border-slate-300 bg-[#fffdf6] shadow-[0_12px_28px_rgba(15,23,42,0.16)]">
+        <div className="relative flex h-full w-full overflow-y-auto bg-[#f7f4ea] px-3 py-3 font-sans text-slate-950 md:px-6 md:py-5">
+          <section className="mx-auto flex h-full min-h-full w-full max-w-4xl flex-col overflow-hidden rounded-[1.1rem] border border-slate-300 bg-[#fffdf6] shadow-[0_12px_28px_rgba(15,23,42,0.16)]">
             <div className="border-b border-slate-300 bg-white px-5 py-4">
               <div className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">Arithmetic Showdown</div>
               <h2 className="mt-1 text-2xl font-black text-slate-950 md:text-4xl">Paper Complete</h2>
             </div>
-            <div className="grid min-h-0 flex-1 gap-3 overflow-hidden p-4 md:grid-cols-[1fr_1fr] md:p-6">
-              <div className="rounded-[0.9rem] border border-slate-300 bg-white p-4">
-                <div className="text-sm font-bold uppercase tracking-[0.12em] text-slate-500">Final score</div>
-                <div className="mt-2 text-5xl font-black text-slate-950">{arithmeticResult.score}/40</div>
-                <div className="mt-2 text-lg font-black text-slate-700">{arithmeticResult.percentage}%</div>
-                <div className="mt-4 grid grid-cols-2 gap-2 text-sm font-bold text-slate-700">
-                  <div className="rounded-lg bg-slate-100 p-3">Stars<br /><span className="text-xl text-slate-950">{arithmeticResult.stars}</span></div>
-                  <div className="rounded-lg bg-slate-100 p-3">XP<br /><span className="text-xl text-slate-950">{arithmeticResult.xpAwarded}</span></div>
-                  <div className="rounded-lg bg-slate-100 p-3">Time<br /><span className="text-xl text-slate-950">{formatTime(arithmeticTimeTakenSeconds)}</span></div>
-                  <div className="rounded-lg bg-slate-100 p-3">Correct<br /><span className="text-xl text-slate-950">{arithmeticResult.correctCount}/{arithmeticQuestionCount}</span></div>
+            <div className="min-h-0 flex-1 overflow-y-auto p-4 md:p-6">
+              <div className="grid gap-3 md:grid-cols-[1fr_1fr]">
+                <div className="rounded-[0.9rem] border border-slate-300 bg-white p-4">
+                  <div className="text-sm font-bold uppercase tracking-[0.12em] text-slate-500">Final score</div>
+                  <div className="mt-2 text-5xl font-black text-slate-950">{arithmeticResult.score}/40</div>
+                  <div className="mt-2 text-lg font-black text-slate-700">{arithmeticResult.percentage}%</div>
+                  <div className="mt-4 grid grid-cols-2 gap-2 text-sm font-bold text-slate-700">
+                    <div className="rounded-lg bg-slate-100 p-3">Stars<br /><span className="text-xl text-slate-950">{arithmeticResult.stars}</span></div>
+                    <div className="rounded-lg bg-slate-100 p-3">XP<br /><span className="text-xl text-slate-950">{arithmeticResult.xpAwarded}</span></div>
+                    <div className="rounded-lg bg-slate-100 p-3">Time<br /><span className="text-xl text-slate-950">{formatTime(arithmeticTimeTakenSeconds)}</span></div>
+                    <div className="rounded-lg bg-slate-100 p-3">Correct<br /><span className="text-xl text-slate-950">{arithmeticResult.correctCount}/{arithmeticQuestionCount}</span></div>
+                  </div>
+                </div>
+                <div className="rounded-[0.9rem] border border-slate-300 bg-white p-4">
+                  <div className="text-sm font-bold uppercase tracking-[0.12em] text-slate-500">Breakdown</div>
+                  <div className="mt-3 space-y-2 text-sm font-bold text-slate-700">
+                    <div className="flex justify-between border-b border-slate-200 py-2"><span>Correct</span><span>{arithmeticResult.correctCount}</span></div>
+                    <div className="flex justify-between border-b border-slate-200 py-2"><span>Incorrect or blank</span><span>{incorrectArithmeticAnswers.length}</span></div>
+                    <div className="flex justify-between border-b border-slate-200 py-2"><span>Pass threshold</span><span>24 marks</span></div>
+                    <div className="flex justify-between py-2"><span>Paper seed</span><span className="max-w-[12rem] truncate text-right">{String(arithmeticPaper.seed)}</span></div>
+                  </div>
                 </div>
               </div>
-              <div className="rounded-[0.9rem] border border-slate-300 bg-white p-4">
-                <div className="text-sm font-bold uppercase tracking-[0.12em] text-slate-500">Breakdown</div>
-                <div className="mt-3 space-y-2 text-sm font-bold text-slate-700">
-                  <div className="flex justify-between border-b border-slate-200 py-2"><span>Correct</span><span>{arithmeticResult.correctCount}</span></div>
-                  <div className="flex justify-between border-b border-slate-200 py-2"><span>Incorrect or blank</span><span>{arithmeticQuestionCount - arithmeticResult.correctCount}</span></div>
-                  <div className="flex justify-between border-b border-slate-200 py-2"><span>Pass threshold</span><span>24 marks</span></div>
-                  <div className="flex justify-between py-2"><span>Paper seed</span><span className="max-w-[12rem] truncate text-right">{String(arithmeticPaper.seed)}</span></div>
-                </div>
+              <div className="mt-3 rounded-[0.9rem] border border-slate-300 bg-white p-4">
+                <div className="text-sm font-bold uppercase tracking-[0.12em] text-slate-500">Incorrect answers feedback</div>
+                {incorrectArithmeticAnswers.length === 0 ? (
+                  <div className="mt-3 rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm font-bold text-emerald-900">
+                    Perfect run. No incorrect answers in this paper.
+                  </div>
+                ) : (
+                  <div className="mt-3 space-y-2">
+                    {incorrectArithmeticAnswers.map((entry) => (
+                      <div key={`arithmetic-incorrect-${entry.questionId}`} className="rounded-lg border border-rose-300 bg-rose-50 px-3 py-2 text-sm text-slate-800">
+                        <div className="font-black text-slate-950">Q{entry.questionId}. {entry.questionText}</div>
+                        <div className="mt-1 font-bold">Your answer: {formatBossResultAnswer(entry.userAnswer) || 'blank'}</div>
+                        <div className="font-bold">Correct answer: {formatBossResultAnswer(entry.correctAnswer) || 'n/a'}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
             <div className="grid shrink-0 gap-2 border-t border-slate-300 bg-white p-3 md:grid-cols-3 md:p-4">

@@ -264,6 +264,12 @@ const App: React.FC = () => {
     setScreen('world_map');
   }, [selectedIsland, setLevelResult, setScreen, setSelectedLevel, storedLevelResult, wellbeingLaunchContext.origin]);
 
+  const backToWellbeingHub = useCallback(() => {
+    setWellbeingActivityId(null);
+    setWellbeingCompletion(null);
+    setScreen('wellbeing_hub');
+  }, [setScreen]);
+
   const handleWellbeingComplete = useCallback(() => {
     if (!wellbeingActivityId) return;
 
@@ -1168,6 +1174,7 @@ const App: React.FC = () => {
                   onOpenWellbeingHub={() => openWellbeingHub({ origin: screen === 'world_map' ? 'world_map' : 'manual', islandId: selectedIsland?.id ?? null })}
                   onOpenWellbeingActivity={(activityId) => openWellbeingActivity(activityId, { origin: screen === 'island_levels' ? 'island_levels' : wellbeingLaunchContext.origin, islandId: selectedIsland?.id ?? null })}
                   onExitWellbeing={returnFromWellbeing}
+                  onExitWellbeingActivity={backToWellbeingHub}
                   onCompleteWellbeingActivity={handleWellbeingComplete}
                   wellbeingActivityId={wellbeingActivityId}
                   calmTokens={player.calmTokens || 0}

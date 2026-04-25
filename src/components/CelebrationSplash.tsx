@@ -91,7 +91,7 @@ const FlameField: React.FC = () => (
 
 const CelebrationSplash: React.FC<CelebrationSplashProps> = ({ active, message, theme, sweepDuration }) => {
   const styles = THEME_STYLES[theme];
-  const duration = sweepDuration ?? (theme === 'takeout' ? 1.25 : theme === 'party' ? 0.72 : theme === 'victory' ? 1.5 : 0.82);
+  const duration = sweepDuration ?? 1.5;
 
   return (
     <AnimatePresence>

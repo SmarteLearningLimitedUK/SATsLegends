@@ -41,9 +41,10 @@ const BreathingBloom: React.FC<WellbeingActivityComponentProps> = ({ onComplete,
   return (
     <WellbeingShell title="Bubble Breath" subtitle={subtitle} type="Breathing" progress={progress} onExit={onExit}>
       <div className="relative flex flex-1 items-center justify-center overflow-hidden px-6 py-5">
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,#86d8ff_0%,#bdeeff_40%,#eef8ff_100%)]" />
-        <div className="absolute inset-x-0 top-0 h-[42%] bg-[radial-gradient(circle_at_18%_20%,rgba(255,255,255,0.95),transparent_12%),radial-gradient(circle_at_42%_16%,rgba(255,255,255,0.9),transparent_11%),radial-gradient(circle_at_70%_22%,rgba(255,255,255,0.9),transparent_12%),radial-gradient(circle_at_86%_18%,rgba(255,255,255,0.82),transparent_10%)]" />
-        <div className="absolute inset-x-0 bottom-0 h-[26%] bg-[linear-gradient(180deg,rgba(249,250,251,0),rgba(255,255,255,0.36)_42%,rgba(226,232,240,0.66)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,#4fb6ff_0%,#2392ef_46%,#176dd3_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_22%,rgba(255,255,255,0.34),transparent_18%),radial-gradient(circle_at_74%_16%,rgba(255,255,255,0.26),transparent_20%),radial-gradient(circle_at_52%_68%,rgba(56,189,248,0.22),transparent_38%)]" />
+        <div className="absolute inset-x-0 top-0 h-[42%] bg-[radial-gradient(circle_at_18%_20%,rgba(255,255,255,0.9),transparent_12%),radial-gradient(circle_at_42%_16%,rgba(255,255,255,0.86),transparent_11%),radial-gradient(circle_at_70%_22%,rgba(255,255,255,0.84),transparent_12%),radial-gradient(circle_at_86%_18%,rgba(255,255,255,0.78),transparent_10%)]" />
+        <div className="absolute inset-x-0 bottom-0 h-[26%] bg-[linear-gradient(180deg,rgba(14,116,144,0),rgba(14,116,144,0.22)_42%,rgba(8,47,73,0.44)_100%)]" />
 
         {Array.from({ length: 12 }).map((_, index) => (
           <motion.span
@@ -64,15 +65,15 @@ const BreathingBloom: React.FC<WellbeingActivityComponentProps> = ({ onComplete,
           animate={{
             scale: currentPhase.scale,
             filter: [
-              'drop-shadow(0 0 18px rgba(147,197,253,0.22))',
-              'drop-shadow(0 0 34px rgba(191,219,254,0.36))',
-              'drop-shadow(0 0 18px rgba(147,197,253,0.22))',
+              'drop-shadow(0 0 20px rgba(125,211,252,0.38))',
+              'drop-shadow(0 0 38px rgba(186,230,253,0.58))',
+              'drop-shadow(0 0 20px rgba(125,211,252,0.38))',
             ],
           }}
           transition={{ duration: currentPhase.beats * 0.76, ease: 'easeInOut' }}
           className="relative flex h-[18rem] w-[18rem] items-center justify-center"
         >
-          <div className="absolute inset-0 rounded-full border border-white/55 bg-[radial-gradient(circle_at_30%_26%,rgba(255,255,255,0.9),rgba(255,255,255,0.28)_20%,rgba(191,219,254,0.22)_42%,rgba(186,230,253,0.16)_64%,rgba(125,211,252,0.12)_100%)]" />
+          <div className="absolute inset-0 rounded-full border border-white/72 bg-[radial-gradient(circle_at_30%_26%,rgba(255,255,255,0.96),rgba(255,255,255,0.42)_18%,rgba(224,242,254,0.34)_38%,rgba(191,219,254,0.26)_62%,rgba(125,211,252,0.2)_100%)]" />
           <div className="absolute inset-[8%] rounded-full border border-white/28" />
           <div className="absolute inset-[16%] rounded-full border border-sky-100/24" />
           <div className="absolute left-[24%] top-[20%] h-14 w-14 rounded-full bg-white/38 blur-lg" />
