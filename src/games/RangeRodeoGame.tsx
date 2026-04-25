@@ -7,9 +7,7 @@ import {
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import sceneBackground from '../../range rodeo.jpg';
-import rodeoStaticOverlay from '../assets/rodeo static.png';
 import rodeoSuccessAnim from '../assets/rodeo anim.gif';
-import enemySprite from '../assets/maps/ezgif-261d69e7ae90ee8c.webp';
 import {
   generateRangeRodeoRound,
   isRangeRodeoAnswerCorrect,
@@ -228,24 +226,16 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
 
         <div className="relative mt-2 flex min-h-0 flex-1 flex-col justify-between">
           {showCorrectAnimation ? (
-            <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
+            <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center bg-transparent">
               <img
                 src={rodeoSuccessAnim}
                 alt="Correct answer celebration"
-                className="h-[36%] min-h-[130px] max-h-[260px] w-auto object-contain drop-shadow-[0_12px_24px_rgba(2,6,23,0.45)]"
+                className="h-[36%] min-h-[130px] max-h-[260px] w-auto bg-transparent object-contain"
+                style={{ mixBlendMode: 'screen' }}
                 draggable={false}
               />
             </div>
           ) : null}
-
-          <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-[1rem]">
-            <img
-              src={rodeoStaticOverlay}
-              alt=""
-              draggable={false}
-              className="h-full w-full object-cover opacity-95"
-            />
-          </div>
 
           {question.values && question.questionType !== 'word_problem' ? (
             <div className="relative z-[1] mx-auto flex w-full max-w-[520px] shrink-0 flex-wrap items-center justify-center gap-2 rounded-[1rem] border border-white/25 bg-slate-900/55 px-3 py-3 shadow-[0_14px_28px_rgba(2,6,23,0.34)]">
@@ -259,15 +249,6 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
               ))}
             </div>
           ) : null}
-
-          <div className="pointer-events-none relative z-[1] mx-auto mt-3 flex h-[30%] min-h-[120px] w-full max-w-[520px] items-end justify-center">
-            <img
-              src={enemySprite}
-              alt=""
-              className="max-h-full w-auto object-contain drop-shadow-[0_14px_18px_rgba(2,6,23,0.55)]"
-              draggable={false}
-            />
-          </div>
 
           <div className="relative z-[1] mx-auto mb-1 mt-2 grid w-full max-w-[520px] grid-cols-2 gap-2">
             {question.answers.map((answer, answerIndex) => {
