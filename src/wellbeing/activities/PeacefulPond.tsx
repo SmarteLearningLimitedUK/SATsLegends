@@ -1,7 +1,18 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
+import fish22 from '../../assets/calm/fish/22.png';
+import fish23 from '../../assets/calm/fish/23.png';
+import fish24 from '../../assets/calm/fish/24.png';
+import fish25 from '../../assets/calm/fish/25.png';
+import fish26 from '../../assets/calm/fish/26.png';
 import WellbeingShell from '../WellbeingShell';
 import { WellbeingActivityComponentProps } from '../types';
+
+type FishSprite = {
+  src: string;
+  width: number;
+  hue: number;
+};
 
 type Fish = {
   id: number;
@@ -9,217 +20,304 @@ type Fish = {
   y: number;
   vx: number;
   vy: number;
-  color: string;
+  spriteIndex: number;
+  size: number;
+  flip: boolean;
+  settledFrames: number;
 };
 
-type Pad = {
-  id: number;
-  x: number;
-  y: number;
-  targetX: number;
-  targetY: number;
-  placed: boolean;
-  dragging: boolean;
-};
+const FISH_SPRITES: FishSprite[] = [
+  { src: fish22, width: 56, hue: 0 },
+  { src: fish23, width: 62, hue: 16 },
+  { src: fish24, width: 54, hue: -10 },
+  { src: fish25, width: 66, hue: 8 },
+  { src: fish26, width: 58, hue: -18 },
+];
 
-const pondColors = ['#60a5fa', '#f472b6', '#f59e0b', '#34d399', '#a78bfa', '#f87171', '#22d3ee', '#fde047'];
+const SANCTUARY = { x: 74, y: 52, rx: 18, ry: 24 };
 
 const makeFish = (id: number): Fish => ({
   id,
-  x: 10 + (id % 5) * 15 + (id * 7) % 11,
-  y: 12 + (id % 6) * 11 + (id * 5) % 9,
-  vx: (id % 2 === 0 ? 0.16 : -0.14) * (1 + (id % 3) * 0.15),
-  vy: (id % 3 === 0 ? 0.08 : -0.07) * (1 + (id % 4) * 0.1),
-  color: pondColors[id % pondColors.length],
+  x: 14 + (id % 4) * 13 + ((id * 9) % 7),
+  y: 14 + (id % 5) * 13 + ((id * 11) % 6),
+  vx: 0.1 + (id % 3) * 0.018,
+  vy: (id % 2 === 0 ? 0.06 : -0.06) + (id % 4) * 0.01,
+  spriteIndex: id % FISH_SPRITES.length,
+  size: 0.92 + (id % 4) * 0.08,
+  flip: id % 2 === 0,
+  settledFrames: 0,
 });
 
-const PeacefulPond: React.FC<WellbeingActivityComponentProps> = ({ onComplete, onExit }) => {
-  const [message, setMessage] = useState('Drag the lilypads or tap the water to guide the fish');
-  const [pulse, setPulse] = useState({ x: 50, y: 50, dx: 0, dy: 0, active: false });
-  const [fish, setFish] = useState<Fish[]>(() => Array.from({ length: 16 }, (_, index) => makeFish(index)));
-  const [pads, setPads] = useState<Pad[]>(() => [
-    { id: 0, x: 18, y: 26, targetX: 16, targetY: 24, placed: false, dragging: false },
-    { id: 1, x: 72, y: 22, targetX: 78, targetY: 21, placed: false, dragging: false },
-    { id: 2, x: 38, y: 66, targetX: 34, targetY: 70, placed: false, dragging: false },
-    { id: 3, x: 66, y: 64, targetX: 69, targetY: 72, placed: false, dragging: false },
-  ]);
-  const pondRef = useRef<HTMLDivElement | null>(null);
-  const dragRef = useRef<{ id: number | null; offsetX: number; offsetY: number }>({ id: null, offsetX: 0, offsetY: 0 });
-  const finishedRef = useRef(false);
+const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 
-  const completeCount = useMemo(() => pads.filter((pad) => pad.placed).length, [pads]);
-  const progress = Math.round(((completeCount * 2) + fish.filter((item) => Math.abs(item.vx) + Math.abs(item.vy) > 0.12).length / 4) * 10);
+const PeacefulPond: React.FC<WellbeingActivityComponentProps> = ({ onComplete, onExit }) => {
+  const [message, setMessage] = useState('Draw gentle currents to herd the fish into the glowing blue cove');
+  const [fish, setFish] = useState<Fish[]>(() => Array.from({ length: 12 }, (_, index) => makeFish(index)));
+  const [current, setCurrent] = useState({ x: 24, y: 48, dx: 0, dy: 0, active: false });
+  const [draggingWater, setDraggingWater] = useState(false);
+  const pondRef = useRef<HTMLDivElement | null>(null);
+  const finishedRef = useRef(false);
+  const releaseTimerRef = useRef<number | null>(null);
+
+  const getPoint = (clientX: number, clientY: number) => {
+    const rect = pondRef.current?.getBoundingClientRect();
+    if (!rect) {
+      return { x: 50, y: 50 };
+    }
+    const x = ((clientX - rect.left) / rect.width) * 100;
+    const y = ((clientY - rect.top) / rect.height) * 100;
+    return {
+      x: clamp(x, 0, 100),
+      y: clamp(y, 0, 100),
+    };
+  };
+
+  const schoolCount = useMemo(
+    () =>
+      fish.filter((item) => {
+        const dx = (item.x - SANCTUARY.x) / SANCTUARY.rx;
+        const dy = (item.y - SANCTUARY.y) / SANCTUARY.ry;
+        return dx * dx + dy * dy <= 1;
+      }).length,
+    [fish],
+  );
 
   useEffect(() => {
     if (finishedRef.current) return undefined;
+
     const interval = window.setInterval(() => {
-      setFish((current) => current.map((item) => {
-        let nx = item.x + item.vx;
-        let ny = item.y + item.vy;
-        let vx = item.vx;
-        let vy = item.vy;
+      setFish((currentFish) =>
+        currentFish.map((item) => {
+          const toSanctuaryX = SANCTUARY.x - item.x;
+          const toSanctuaryY = SANCTUARY.y - item.y;
+          const toSanctuaryDistance = Math.max(1, Math.hypot(toSanctuaryX, toSanctuaryY));
 
-        if (pulse.active) {
-          const dx = nx - pulse.x;
-          const dy = ny - pulse.y;
-          const dist = Math.max(1, Math.hypot(dx, dy));
-          const influence = Math.max(0, 11 - dist) / 11;
-          vx += (pulse.dx * 0.08 + dx / dist * 0.03) * influence;
-          vy += (pulse.dy * 0.08 + dy / dist * 0.03) * influence;
-        }
+          let vx = item.vx + (toSanctuaryX / toSanctuaryDistance) * 0.012;
+          let vy = item.vy + (toSanctuaryY / toSanctuaryDistance) * 0.01;
 
-        pads.forEach((pad) => {
-          const dx = nx - pad.x;
-          const dy = ny - pad.y;
-          const dist = Math.max(1, Math.hypot(dx, dy));
-          if (dist < 8) {
-            vx += dx / dist * 0.04;
-            vy += dy / dist * 0.04;
+          if (current.active) {
+            const dx = current.x - item.x;
+            const dy = current.y - item.y;
+            const distance = Math.max(1, Math.hypot(dx, dy));
+            const pull = Math.max(0, 26 - distance) / 26;
+            vx += (dx / distance) * (0.12 + Math.abs(current.dx) * 0.03) * pull;
+            vy += (dy / distance) * (0.11 + Math.abs(current.dy) * 0.03) * pull;
           }
-        });
 
-        if (nx < 3 || nx > 97) vx *= -1;
-        if (ny < 3 || ny > 97) vy *= -1;
-        nx = Math.max(3, Math.min(97, nx));
-        ny = Math.max(3, Math.min(97, ny));
+          const orbitAngle = ((item.id * 41) % 360) * (Math.PI / 180);
+          vx += Math.cos(orbitAngle) * 0.0028;
+          vy += Math.sin(orbitAngle) * 0.0024;
 
-        vx *= 0.99;
-        vy *= 0.99;
-        return { ...item, x: nx, y: ny, vx, vy };
-      }));
-    }, 30);
+          let nextX = item.x + vx;
+          let nextY = item.y + vy;
+
+          if (nextX < 6 || nextX > 94) {
+            vx *= -0.78;
+            nextX = clamp(nextX, 6, 94);
+          }
+          if (nextY < 8 || nextY > 92) {
+            vy *= -0.78;
+            nextY = clamp(nextY, 8, 92);
+          }
+
+          const inSanctuary =
+            (((nextX - SANCTUARY.x) / SANCTUARY.rx) ** 2) + (((nextY - SANCTUARY.y) / SANCTUARY.ry) ** 2) <= 1;
+          const settledFrames = inSanctuary ? item.settledFrames + 1 : 0;
+
+          if (inSanctuary) {
+            vx *= 0.88;
+            vy *= 0.88;
+          } else {
+            vx *= 0.982;
+            vy *= 0.982;
+          }
+
+          return {
+            ...item,
+            x: nextX,
+            y: nextY,
+            vx,
+            vy,
+            flip: vx >= 0,
+            settledFrames,
+          };
+        }),
+      );
+    }, 34);
+
     return () => window.clearInterval(interval);
-  }, [pads, pulse.active, pulse.dx, pulse.dy, pulse.x, pulse.y]);
+  }, [current.active, current.dx, current.dy, current.x, current.y]);
 
   useEffect(() => {
     if (finishedRef.current) return;
-    if (pads.every((pad) => pad.placed) && fish.length > 0) {
-      setMessage('The pond has settled beautifully');
+    if (schoolCount >= 10) {
       finishedRef.current = true;
+      setMessage('The school has gathered in the calm cove');
       window.setTimeout(() => onComplete(), 1200);
+    } else if (schoolCount >= 7) {
+      setMessage('Lovely. Keep guiding a few more fish into the glow');
+    } else if (schoolCount >= 4) {
+      setMessage('The fish are following your current now');
     }
-  }, [fish.length, onComplete, pads]);
+  }, [onComplete, schoolCount]);
 
-  const getPoint = (event: React.PointerEvent<HTMLDivElement>) => {
-    const rect = pondRef.current?.getBoundingClientRect() ?? event.currentTarget.getBoundingClientRect();
-    const x = ((event.clientX - rect.left) / rect.width) * 100;
-    const y = ((event.clientY - rect.top) / rect.height) * 100;
-    return { x: Math.max(0, Math.min(100, x)), y: Math.max(0, Math.min(100, y)) };
+  useEffect(
+    () => () => {
+      if (releaseTimerRef.current !== null) {
+        window.clearTimeout(releaseTimerRef.current);
+      }
+    },
+    [],
+  );
+
+  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    const point = getPoint(event.clientX, event.clientY);
+    setDraggingWater(true);
+    setCurrent({ x: point.x, y: point.y, dx: 0, dy: 0, active: true });
+    setMessage('Sweep the water gently so the fish drift together');
   };
 
-  const handlePondPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    const target = event.target as HTMLElement;
-    if (target.closest('[data-pad]')) return;
-    const point = getPoint(event);
-    setPulse({ x: point.x, y: point.y, dx: 0, dy: 0, active: true });
-    setMessage('A gentle current is moving through the pond');
-    setTimeout(() => setPulse((current) => ({ ...current, active: false })), 800);
-  };
-
-  const handleDragStart = (event: React.PointerEvent<HTMLButtonElement>, id: number) => {
-    const point = getPoint(event);
-    dragRef.current = { id, offsetX: 0, offsetY: 0 };
-    setPads((current) => current.map((pad) => (pad.id === id ? { ...pad, dragging: true } : pad)));
-    setMessage('Move the lilypads into their calm places');
-    const rect = (event.currentTarget.parentElement?.parentElement ?? event.currentTarget).getBoundingClientRect();
-    dragRef.current.offsetX = ((event.clientX - rect.left) / rect.width) * 100 - point.x;
-    dragRef.current.offsetY = ((event.clientY - rect.top) / rect.height) * 100 - point.y;
-  };
-
-  const handleDragMove = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (dragRef.current.id === null) return;
-    const point = getPoint(event);
-    const nextX = Math.max(8, Math.min(92, point.x + dragRef.current.offsetX));
-    const nextY = Math.max(8, Math.min(92, point.y + dragRef.current.offsetY));
-    setPads((current) => current.map((pad) => {
-      if (pad.id !== dragRef.current.id) return pad;
-      const placed = Math.abs(nextX - pad.targetX) < 4 && Math.abs(nextY - pad.targetY) < 4;
-      return { ...pad, x: nextX, y: nextY, placed };
+  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!draggingWater) return;
+    const point = getPoint(event.clientX, event.clientY);
+    setCurrent((previous) => ({
+      x: point.x,
+      y: point.y,
+      dx: point.x - previous.x,
+      dy: point.y - previous.y,
+      active: true,
     }));
   };
 
-  const handleDragEnd = () => {
-    if (dragRef.current.id === null) return;
-    setPads((current) => current.map((pad) => {
-      if (pad.id !== dragRef.current.id) return pad;
-      const placed = Math.abs(pad.x - pad.targetX) < 4 && Math.abs(pad.y - pad.targetY) < 4;
-      return placed ? { ...pad, x: pad.targetX, y: pad.targetY, placed, dragging: false } : { ...pad, dragging: false };
-    }));
-    dragRef.current = { id: null, offsetX: 0, offsetY: 0 };
+  const releaseCurrent = () => {
+    setDraggingWater(false);
+    if (releaseTimerRef.current !== null) {
+      window.clearTimeout(releaseTimerRef.current);
+    }
+    releaseTimerRef.current = window.setTimeout(() => {
+      setCurrent((previous) => ({ ...previous, active: false, dx: 0, dy: 0 }));
+    }, 360);
   };
 
-  const calmFish = fish.filter((item) => Math.hypot(item.vx, item.vy) < 0.18).length;
+  const progress = Math.min(100, Math.round((schoolCount / fish.length) * 100));
 
   return (
-    <WellbeingShell title="Peaceful Pond" subtitle={message} type="Grounding" progress={Math.min(100, completeCount * 25 + calmFish * 2)} onExit={onExit}>
+    <WellbeingShell
+      title="Peaceful Pond"
+      subtitle={message}
+      type="Grounding"
+      progress={progress}
+      onExit={onExit}
+    >
       <div className="relative flex flex-1 items-center justify-center overflow-hidden p-5">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(59,130,246,0.2),transparent_28%),linear-gradient(180deg,#0b3b4d_0%,#0e5561_40%,#0f766e_100%)]" />
-        <div className="absolute inset-0 opacity-55 [background-image:radial-gradient(rgba(255,255,255,0.14)_1px,transparent_1px)] [background-size:28px_28px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-8%,rgba(255,255,255,0.24),transparent_28%),linear-gradient(180deg,#07294d_0%,#0e4d88_36%,#0a74c4_72%,#1188e5_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_18%,rgba(147,197,253,0.18),transparent_16%),radial-gradient(circle_at_76%_22%,rgba(125,211,252,0.16),transparent_18%),radial-gradient(circle_at_18%_82%,rgba(191,219,254,0.12),transparent_15%),radial-gradient(circle_at_78%_78%,rgba(103,232,249,0.14),transparent_16%)]" />
         <div
           ref={pondRef}
-          className="relative h-full w-full overflow-hidden rounded-[2rem] border border-cyan-100/14 bg-[radial-gradient(circle_at_50%_42%,rgba(45,212,191,0.28),rgba(6,95,70,0.76)_55%,rgba(8,47,73,0.96)_100%)] shadow-[0_18px_40px_rgba(2,6,23,0.35)]"
-          onPointerDown={handlePondPointerDown}
-          onPointerMove={handleDragMove}
-          onPointerUp={handleDragEnd}
-          onPointerLeave={handleDragEnd}
+          className="relative h-full w-full overflow-hidden rounded-[2rem] border border-sky-100/20 bg-[radial-gradient(circle_at_50%_28%,rgba(191,219,254,0.35),rgba(12,74,146,0.28)_16%,rgba(7,89,133,0.88)_46%,rgba(8,47,73,0.98)_100%)] shadow-[0_24px_48px_rgba(3,7,18,0.4)]"
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={releaseCurrent}
+          onPointerLeave={releaseCurrent}
         >
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_16%,rgba(255,255,255,0.12),transparent_12%),radial-gradient(circle_at_84%_20%,rgba(255,255,255,0.1),transparent_10%),radial-gradient(circle_at_24%_78%,rgba(255,255,255,0.08),transparent_10%),radial-gradient(circle_at_74%_74%,rgba(255,255,255,0.08),transparent_9%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.18),transparent_18%,transparent_72%,rgba(2,132,199,0.15)_100%)]" />
+          <div className="absolute inset-0 opacity-35 [background-image:radial-gradient(rgba(255,255,255,0.16)_1px,transparent_1px)] [background-size:30px_30px]" />
+          <div className="absolute inset-0 opacity-25 [background-image:linear-gradient(120deg,transparent_0%,rgba(255,255,255,0.14)_36%,transparent_72%)] [background-size:250px_180px]" />
 
-          <div className="absolute inset-0">
-            {Array.from({ length: 22 }).map((_, index) => (
-              <motion.span
-                key={`spark-${index}`}
-                className="absolute rounded-full bg-white/80"
-                style={{ left: `${6 + (index * 17) % 88}%`, top: `${8 + (index * 11) % 76}%`, width: `${1 + (index % 3)}px`, height: `${1 + (index % 3)}px` }}
-                animate={{ opacity: [0.18, 0.85, 0.2], scale: [1, 1.4, 1] }}
-                transition={{ duration: 2.5 + (index % 5) * 0.4, repeat: Infinity, ease: 'easeInOut' }}
+          <div className="pointer-events-none absolute inset-0">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <motion.div
+                key={`ripple-${index}`}
+                className="absolute rounded-full border border-sky-100/18"
+                style={{
+                  left: `${18 + index * 13}%`,
+                  top: `${22 + ((index * 17) % 44)}%`,
+                  width: `${120 + index * 18}px`,
+                  height: `${42 + index * 8}px`,
+                }}
+                animate={{ opacity: [0.12, 0.32, 0.1], scaleX: [0.96, 1.04, 0.98], scaleY: [0.94, 1.08, 0.96] }}
+                transition={{ duration: 4 + index * 0.4, repeat: Infinity, ease: 'easeInOut' }}
               />
             ))}
           </div>
 
-          {pads.map((pad) => (
-            <button
-              key={pad.id}
-              type="button"
-              data-pad
-              onPointerDown={(event) => handleDragStart(event, pad.id)}
-              className="absolute h-14 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full border border-emerald-100/24 bg-[radial-gradient(circle_at_40%_35%,rgba(190,242,100,0.7),rgba(22,101,52,0.92)_60%,rgba(5,46,22,1)_100%)] shadow-[0_0_22px_rgba(134,239,172,0.22)]"
-              style={{ left: `${pad.x}%`, top: `${pad.y}%` }}
-            >
-              <span className="absolute inset-2 rounded-full border border-white/10" />
-              <span className="absolute left-1/2 top-1/2 h-7 w-7 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/8 bg-[radial-gradient(circle_at_35%_32%,rgba(255,255,255,0.55),rgba(34,197,94,0.16)_45%,transparent_72%)]" />
-            </button>
-          ))}
+          <div className="pointer-events-none absolute inset-0">
+            {Array.from({ length: 18 }).map((_, index) => (
+              <motion.span
+                key={`bubble-${index}`}
+                className="absolute rounded-full bg-white/70"
+                style={{
+                  left: `${8 + ((index * 13) % 82)}%`,
+                  bottom: `${-6 - (index % 4) * 12}%`,
+                  width: `${4 + (index % 3)}px`,
+                  height: `${4 + (index % 3)}px`,
+                }}
+                animate={{ y: [-10, -220 - (index % 5) * 26], opacity: [0, 0.55, 0], scale: [0.9, 1.2, 0.8] }}
+                transition={{ duration: 4.2 + (index % 5) * 0.55, repeat: Infinity, delay: index * 0.18, ease: 'easeOut' }}
+              />
+            ))}
+          </div>
 
-          {fish.map((item) => (
-            <motion.div
-              key={item.id}
-              className="absolute h-3.5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full"
-              style={{ left: `${item.x}%`, top: `${item.y}%`, background: item.color }}
-              animate={{ rotate: [0, item.vx >= 0 ? 8 : -8, 0], scale: [1, 1.05, 1] }}
-              transition={{ duration: 1.6 + (item.id % 4) * 0.25, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              <span className="absolute -right-1 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full" style={{ background: item.color }} />
-              <span className="absolute left-0 top-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/80" />
-            </motion.div>
-          ))}
+          <div className="pointer-events-none absolute right-[7%] top-[22%] h-[38%] w-[32%] rounded-[50%] border border-cyan-100/25 bg-[radial-gradient(circle_at_42%_45%,rgba(186,230,253,0.32),rgba(34,211,238,0.15)_38%,rgba(8,145,178,0.16)_62%,rgba(8,47,73,0.02)_100%)] shadow-[0_0_40px_rgba(103,232,249,0.24)]" />
 
-          {pulse.active ? (
+          <div className="pointer-events-none absolute left-[2%] top-[16%] h-[70%] w-[15%] rounded-r-[3rem] bg-[linear-gradient(180deg,rgba(2,132,199,0.25),rgba(14,165,233,0.08),transparent)] blur-[1px]" />
+          <div className="pointer-events-none absolute left-[4%] top-[58%] h-[26%] w-[13%] rounded-full bg-[radial-gradient(circle_at_50%_45%,rgba(254,240,138,0.18),rgba(14,165,233,0.02)_72%)]" />
+
+          <div className="pointer-events-none absolute inset-0">
+            {fish.map((item) => {
+              const sprite = FISH_SPRITES[item.spriteIndex];
+              const sanctuaryGlow = item.settledFrames > 18 ? 'drop-shadow(0 0 10px rgba(186,230,253,0.8))' : 'drop-shadow(0 3px 6px rgba(0,0,0,0.28))';
+              return (
+                <motion.div
+                  key={item.id}
+                  className="absolute -translate-x-1/2 -translate-y-1/2"
+                  style={{
+                    left: `${item.x}%`,
+                    top: `${item.y}%`,
+                    width: `${sprite.width * item.size}px`,
+                    filter: `${sanctuaryGlow} hue-rotate(${sprite.hue}deg) saturate(1.05)`,
+                  }}
+                  animate={{
+                    rotate: [item.flip ? -3 : 3, item.flip ? 4 : -4, item.flip ? -2 : 2],
+                    y: [0, -3, 0],
+                    scale: [1, 1.04, 1],
+                  }}
+                  transition={{ duration: 1.8 + (item.id % 4) * 0.22, repeat: Infinity, ease: 'easeInOut' }}
+                >
+                  <img
+                    src={sprite.src}
+                    alt=""
+                    className="pointer-events-none block w-full select-none"
+                    draggable={false}
+                    style={{ transform: item.flip ? 'scaleX(1)' : 'scaleX(-1)' }}
+                  />
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {current.active ? (
             <motion.div
-              className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-50/60 bg-cyan-100/10"
-              style={{ left: `${pulse.x}%`, top: `${pulse.y}%` }}
-              initial={{ width: 0, height: 0, opacity: 0.8 }}
-              animate={{ width: 210, height: 210, opacity: 0 }}
-              transition={{ duration: 0.8, ease: 'easeOut' }}
+              className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-100/75 bg-cyan-100/12 shadow-[0_0_28px_rgba(103,232,249,0.35)]"
+              style={{ left: `${current.x}%`, top: `${current.y}%` }}
+              initial={{ width: 20, height: 20, opacity: 0.85 }}
+              animate={{ width: 220, height: 220, opacity: 0 }}
+              transition={{ duration: 0.72, ease: 'easeOut' }}
             />
           ) : null}
 
-          <div className="absolute left-4 top-4 rounded-full border border-white/12 bg-black/25 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-white/80">
-            Lilypads placed {completeCount}/4
+          <div className="absolute left-4 top-4 rounded-full border border-white/14 bg-slate-950/28 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-white/84">
+            Fish gathered {schoolCount}/{fish.length}
           </div>
 
-          <div className="absolute bottom-4 left-1/2 w-[min(90%,34rem)] -translate-x-1/2 rounded-[1.4rem] border border-white/10 bg-black/30 px-4 py-3 text-center text-sm font-semibold text-white/88 backdrop-blur-sm">
-            {completeCount < 4 ? 'Place the lilypads, then tap or drag the water to nudge the fish into calm patterns.' : 'The pond is settling. Watch the fish drift together.'}
+          <div className="absolute right-4 top-4 rounded-full border border-cyan-100/18 bg-cyan-100/10 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-cyan-50">
+            Calm cove
+          </div>
+
+          <div className="absolute bottom-4 left-1/2 w-[min(92%,34rem)] -translate-x-1/2 rounded-[1.4rem] border border-white/12 bg-slate-950/30 px-4 py-3 text-center text-sm font-semibold text-white/90 backdrop-blur-md">
+            {schoolCount < 10
+              ? 'Stroke the water with your finger and guide the school into the glowing blue sanctuary.'
+              : 'Beautiful. The fish are calm, close together, and safely resting in the cove.'}
           </div>
         </div>
       </div>

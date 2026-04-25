@@ -252,8 +252,8 @@ const MatchGameShell: React.FC<{
     <div className="relative h-full w-full select-none overflow-hidden font-sans text-white">
       <GameplaySceneBackdrop
         gameType={variantGameType}
-        backgroundOverride={TRANSPARENT_BACKDROP_PIXEL}
-        className="opacity-0"
+        backgroundOverride={factorFrenzyBackground}
+        className="opacity-100"
       />
 
       <div className="pointer-events-none absolute inset-0">
@@ -440,11 +440,11 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       const gapPx = 10; // sync with responsive gap-2 / gap-2.5
       const rawWidthSize = Math.floor((boardWidth - (gapPx * (BOARD_COLUMNS - 1))) / BOARD_COLUMNS);
       const rect = node.getBoundingClientRect();
-      const reservedBottom = Math.max(88, window.innerHeight * 0.12);
-      const availableGridHeight = Math.max(220, window.innerHeight - rect.top - reservedBottom);
+      const reservedBottom = Math.max(72, window.innerHeight * 0.08);
+      const availableGridHeight = Math.max(260, window.innerHeight - rect.top - reservedBottom);
       const rawHeightSize = Math.floor((availableGridHeight - (gapPx * (BOARD_ROWS - 1))) / BOARD_ROWS);
       const rawSize = Math.min(rawWidthSize, rawHeightSize);
-      const clampedSize = Math.max(34, Math.min(122, rawSize));
+      const clampedSize = Math.max(46, Math.min(132, rawSize));
 
       setGemSize((prev) => (prev === clampedSize ? prev : clampedSize));
     };
@@ -626,7 +626,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
-      <div className="relative box-border mx-auto w-[min(calc(100vw-1rem),24rem)] rounded-[2rem] border border-cyan-100/20 bg-[#04102c]/86 p-3 shadow-[0_18px_40px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:p-4">
+      <div className="relative box-border mx-auto w-[min(calc(100vw-0.5rem),27rem)] rounded-[2rem] border border-cyan-100/18 bg-[#04102c]/66 p-2.5 shadow-[0_18px_40px_rgba(0,0,0,0.45)] backdrop-blur-[2px] sm:p-3">
         <div
           className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-[0.24]"
           style={{
@@ -641,11 +641,11 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
             boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.06), inset 0 0 30px rgba(0,0,0,0.45)',
           }}
         />
-        <div ref={boardGridRef} className="relative z-10 grid w-full grid-cols-5 gap-2 sm:gap-2.5">
+        <div ref={boardGridRef} className="relative z-10 grid w-full grid-cols-5 gap-1.5 sm:gap-2">
           {board.map((cell, idx) => (
             <div
               key={idx}
-              className="relative flex items-center justify-center rounded-2xl border border-cyan-100/16 bg-[#020816]/50 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.35)]"
+              className="relative flex items-center justify-center rounded-2xl border border-cyan-100/12 bg-[#020816]/36 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.22)]"
               style={{ width: gemSize, height: gemSize }}
             >
               <AnimatePresence mode="popLayout">
@@ -654,7 +654,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
                     key={`${idx}-${cell.type}-${cell.label}`}
                     type={cell.type}
                     label={cell.label}
-                    size={Math.max(34, gemSize - 8)}
+                    size={Math.max(42, gemSize - 3)}
                     isSelected={selectedIdx === idx}
                     onClick={() => {
                       void handleGemClick(idx);

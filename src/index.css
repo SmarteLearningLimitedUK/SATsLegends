@@ -4226,15 +4226,15 @@ button:disabled {
   justify-content: center;
   align-items: center;
   width: 100%;
-  margin-top: calc(env(safe-area-inset-top) + 18px);
+  margin-top: calc(env(safe-area-inset-top) + 12px);
   pointer-events: none;
 }
 
 .avatar-carousel-banner {
   position: relative;
   width: 100%;
-  max-width: clamp(22rem, 96vw, 62rem);
-  height: clamp(8.4rem, 19vh, 15rem);
+  max-width: clamp(17rem, 90vw, 42rem);
+  height: clamp(4.8rem, 10vh, 8.1rem);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4246,7 +4246,7 @@ button:disabled {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: clamp(38rem, 158vw, 90rem);
+  width: clamp(19rem, 92vw, 42rem);
   transform: translate(calc(-50% - 10px), -50%);
   height: auto;
   max-width: none;
@@ -4258,7 +4258,7 @@ button:disabled {
 }
 
 .avatar-name-panel {
-  margin-top: clamp(-1.1rem, -2.1vh, -0.5rem);
+  margin-top: clamp(-0.65rem, -1.25vh, -0.2rem);
   padding-block: clamp(0.35rem, 0.9vh, 0.65rem);
 }
 
@@ -4445,16 +4445,16 @@ button.avatar-hero-arrow:not(:disabled):active {
 }
 
 .iphone-game-stage .avatar-carousel-header {
-  margin-top: calc(env(safe-area-inset-top) + 12px);
+  margin-top: calc(env(safe-area-inset-top) + 8px);
 }
 
 .iphone-game-stage .avatar-carousel-banner {
-  max-width: calc(var(--game-stage-width, 390px) * 0.98);
-  height: calc(var(--game-stage-height, 844px) * 0.19);
+  max-width: calc(var(--game-stage-width, 390px) * 0.92);
+  height: calc(var(--game-stage-height, 844px) * 0.105);
 }
 
 .iphone-game-stage .avatar-carousel-banner-art {
-  width: calc(var(--game-stage-width, 390px) * 2.38);
+  width: calc(var(--game-stage-width, 390px) * 1.28);
   top: 50%;
 }
 
@@ -5586,6 +5586,9 @@ button.avatar-hero-arrow:not(:disabled):active {
   color: #ffffff;
   display: block;
   overflow: visible;
+  font-size: clamp(0.96rem, 2.95vw, 1.12rem);
+  font-weight: 600;
+  line-height: 1.22;
 }
 
 .practice-briefing-copy {
@@ -5614,6 +5617,8 @@ button.avatar-hero-arrow:not(:disabled):active {
 
   .screen-gameplay .game-question-card .game-question-copy {
     margin-top: 0.05rem;
+    font-size: clamp(0.84rem, 2.45vw, 0.96rem);
+    line-height: 1.15;
   }
 
   .screen-gameplay .game-question-card .question-subtitle {

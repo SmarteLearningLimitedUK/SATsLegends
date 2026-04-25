@@ -142,20 +142,20 @@ const MatrixMatch: React.FC<MatrixMatchProps> = ({ onVictory, onGameOver, onBack
   };
 
   return (
-    <div className="relative h-full w-full bg-white rounded-[2rem] lg:rounded-[3rem] p-3 lg:p-8 shadow-[0_40px_100px_rgba(0,0,0,0.1)] border-8 border-gray-100 overflow-hidden">
+    <div className="relative flex h-full w-full flex-col overflow-hidden rounded-[2rem] border border-cyan-100/18 bg-[radial-gradient(circle_at_50%_0%,rgba(56,189,248,0.14),transparent_34%),linear-gradient(180deg,rgba(8,21,58,0.92),rgba(5,16,42,0.96))] p-3 shadow-[0_24px_60px_rgba(2,6,23,0.38)] lg:rounded-[3rem] lg:p-6">
       {/* Header */}
       <div className="flex justify-between items-center mb-2.5 lg:mb-4">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-[1.5rem] licensed-answer-chip">
+        <div className="flex items-center gap-2 rounded-[1.5rem] border border-cyan-100/18 bg-slate-950/42 px-3 py-1.5">
           <Trophy className="text-yellow-500 w-5 h-5" />
-          <span className="text-lg font-black text-gray-800">{XP}</span>
+          <span className="text-lg font-black text-white">{XP}</span>
         </div>
         <div className="text-center">
-          <h2 className="text-lg font-black text-gray-800 tracking-tight">MATRIX MATCH</h2>
-          <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Level {level} / 5</div>
+          <h2 className="text-lg font-black tracking-tight text-white">MATRIX MATCH</h2>
+          <div className="mt-1 text-xs font-bold uppercase tracking-widest text-cyan-100/70">Level {level} / 5</div>
         </div>
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-[1.5rem] licensed-answer-chip">
+        <div className="flex items-center gap-2 rounded-[1.5rem] border border-cyan-100/18 bg-slate-950/42 px-3 py-1.5">
           <Timer className="text-blue-500 w-5 h-5" />
-          <span className="text-lg font-black text-gray-800">{timeLeft}s</span>
+          <span className="text-lg font-black text-white">{timeLeft}s</span>
         </div>
       </div>
 
@@ -166,7 +166,7 @@ const MatrixMatch: React.FC<MatrixMatchProps> = ({ onVictory, onGameOver, onBack
       )}
 
       {/* Visual Timer Bar */}
-      <div className="w-full h-2 bg-gray-100 rounded-full mb-3 lg:mb-8 overflow-hidden">
+      <div className="mb-3 h-2 w-full overflow-hidden rounded-full bg-white/10 lg:mb-5">
         <motion.div 
           initial={{ width: '100%' }}
           animate={{ width: `${(timeLeft / 60) * 100}%` }}
@@ -177,7 +177,7 @@ const MatrixMatch: React.FC<MatrixMatchProps> = ({ onVictory, onGameOver, onBack
       {/* Matrix Grid */}
       <motion.div 
         animate={shake ? { x: [-10, 10, -10, 10, 0] } : {}}
-        className="grid grid-cols-3 gap-2 lg:gap-5 mb-3 lg:mb-8 aspect-square max-w-[min(100%,20rem)] mx-auto"
+        className="mb-3 grid flex-1 grid-cols-3 grid-rows-3 gap-2 rounded-[1.6rem] border border-cyan-100/14 bg-slate-950/36 p-2 lg:mb-5 lg:gap-3 lg:p-3"
       >
         {grid.map((item, i) => (
           <motion.div
@@ -185,21 +185,21 @@ const MatrixMatch: React.FC<MatrixMatchProps> = ({ onVictory, onGameOver, onBack
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             className={`
-              aspect-square rounded-[1.4rem] flex items-center justify-center text-2xl lg:text-5xl shadow-lg border-b-6 transition-all
-              ${item ? `${item.color} border-black/10` : 'bg-gray-100 border-dashed border-4 border-gray-300 shadow-inner'}
+              flex min-h-0 items-center justify-center rounded-[1.4rem] text-[clamp(2rem,5.2vw,3.75rem)] shadow-lg transition-all
+              ${item ? `${item.color} border border-white/16` : 'border-2 border-dashed border-cyan-100/24 bg-slate-900/55 shadow-inner'}
             `}
           >
             {item ? (
               <span className="filter drop-shadow-md">{item.shape}</span>
             ) : (
-              <HelpCircle className="w-8 h-8 text-gray-300 animate-pulse" />
+              <HelpCircle className="h-8 w-8 animate-pulse text-cyan-100/40" />
             )}
           </motion.div>
         ))}
       </motion.div>
 
       {/* Options */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-4 mb-3 lg:mb-4">
+      <div className="mb-3 grid grid-cols-2 gap-2 lg:mb-4 lg:grid-cols-4 lg:gap-3">
         {options.map((option, i) => {
           const isCorrect = correctItem && option.shape === correctItem.shape && option.color === correctItem.color;
           return (
@@ -209,8 +209,8 @@ const MatrixMatch: React.FC<MatrixMatchProps> = ({ onVictory, onGameOver, onBack
               whileTap={{ scale: 0.95 }}
               onClick={() => checkAnswer(option)}
               className={`
-                aspect-square rounded-[1.5rem] flex items-center justify-center text-2xl shadow-xl border-b-6 transition-all relative
-                ${option.color} border-black/10
+                relative aspect-square rounded-[1.5rem] border border-white/16 text-[clamp(1.9rem,4.6vw,3rem)] shadow-xl transition-all
+                ${option.color}
                 ${showHint && isCorrect ? 'ring-4 ring-yellow-400 ring-offset-1 scale-110 z-10' : ''}
               `}
             >

@@ -131,6 +131,10 @@ export const ACHIEVEMENT_CATALOG: AchievementDefinition[] = [
   },
 ];
 
+export const getAchievementDefinition = (achievementId: string) => (
+  ACHIEVEMENT_CATALOG.find((achievement) => achievement.id === achievementId) ?? null
+);
+
 const defaultAchievementState = (): PlayerAchievementState => ({
   earned: [],
   progress: {},

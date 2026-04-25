@@ -14,7 +14,7 @@ const AVATAR_FOOT_ANCHOR_MAIN_Y_PX: Record<string, number> = {
 };
 
 const AVATAR_MAIN_GLOBAL_LIFT_PX = -28;
-const AVATAR_MAIN_VISUAL_SCALE = 1.72;
+const AVATAR_MAIN_VISUAL_SCALE = 1.42;
 
 interface AvatarSelectProps {
   selectedId: string;
@@ -136,7 +136,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({
                   <img
                     src={getAvatarImage(selectedAvatar)}
                     alt={selectedAvatar.name}
-                    className="pointer-events-none h-[1780%] w-auto object-contain object-bottom"
+                    className="pointer-events-none h-[1180%] w-auto object-contain object-bottom"
                     style={getMainFootOffsetStyle(selectedAvatar.id)}
                     draggable={false}
                   />

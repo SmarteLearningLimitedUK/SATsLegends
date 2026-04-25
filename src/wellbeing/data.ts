@@ -20,10 +20,10 @@ export const WELLBEING_ACTIVITIES: WellbeingActivityMeta[] = [
   {
     id: 'peaceful_pond',
     title: 'Peaceful Pond',
-    subtitle: 'Guide the lilypads and fish',
+    subtitle: 'Herd the fish into the calm blue cove',
     type: 'Grounding',
     durationEstimate: '50 sec',
-    description: 'Push lilypads across the pond and guide the fish into calmer waters.',
+    description: 'Sweep gentle currents through the bright blue water and guide the fish into a glowing sanctuary.',
     icon: '🪷',
     component: PeacefulPond,
   },

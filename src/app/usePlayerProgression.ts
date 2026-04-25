@@ -6,6 +6,7 @@ import { LevelResultState } from './types';
 import { getLevelGameTitle } from '../utils/gameNames';
 import { createTelemetryState } from '../systems/progression/telemetry';
 import { getStarterItemIds } from '../systems/progression/shopCatalog';
+import { reconcileAchievementState } from '../systems/progression/achievementCatalog';
 import { useProgressionStore } from '../store/useProgressionStore';
 
 export const PLAYER_STORAGE_KEY = 'maths_quest_player_v2';
@@ -183,6 +184,7 @@ export const usePlayerProgression = (): PlayerProgressionController => {
     const achievementsUnlocked: string[] = [];
 
     setPlayer(prev => {
+      const previousEarned = prev.achievementState?.earned ?? prev.achievements ?? [];
       const updatedQuests = prev.dailyQuests.map(quest => {
         if (quest.id === 'q1') {
           return { ...quest, current: Math.min(quest.target, quest.current + 1) };
@@ -204,7 +206,7 @@ export const usePlayerProgression = (): PlayerProgressionController => {
         ? prev.unlockedIslands
         : [...prev.unlockedIslands, nextIslandId].filter(id => id <= ISLANDS.length);
 
-      return {
+      const nextBase: PlayerData = {
         ...prev,
         coins: nextCoinTotal,
         xp: progressionResult.currentXp,
@@ -213,6 +215,16 @@ export const usePlayerProgression = (): PlayerProgressionController => {
         dailyQuests: updatedQuests,
         stats,
         achievements: prev.achievements || [],
+      };
+
+      const achievementState = reconcileAchievementState(nextBase);
+      const newlyUnlocked = achievementState.earned.filter((id) => !previousEarned.includes(id));
+      achievementsUnlocked.splice(0, achievementsUnlocked.length, ...newlyUnlocked);
+
+      return {
+        ...nextBase,
+        achievementState,
+        achievements: achievementState.earned,
       };
     });
 

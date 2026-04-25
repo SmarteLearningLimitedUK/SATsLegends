@@ -35,10 +35,10 @@ interface TreasureRound {
 
 const GRID_SIZE = 7;
 const CHECKERBOARD_INSET = {
-  left: '27.9%',
-  top: '22.6%',
-  right: '24.0%',
-  bottom: '28.3%',
+  left: '22.4%',
+  top: '18.8%',
+  right: '18.8%',
+  bottom: '22.8%',
 };
 const randomInt = (max: number) => Math.floor(Math.random() * max) + 1;
 
@@ -276,7 +276,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
         </div>
 
         <div className="relative flex min-h-0 flex-1 items-center justify-center">
-          <div className="relative aspect-square w-[min(90vw,55vh,33rem)] overflow-visible rounded-[1.5rem] border border-cyan-100/26 shadow-[0_18px_36px_rgba(2,6,23,0.4)]">
+          <div className="relative aspect-square w-[min(96vw,62vh,37rem)] overflow-visible rounded-[1.5rem] border border-cyan-100/26 shadow-[0_18px_36px_rgba(2,6,23,0.4)]">
             <img
               src={coordinateQuestBoard}
               alt=""
@@ -306,12 +306,12 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
               style={{
                 left: CHECKERBOARD_INSET.left,
                 right: CHECKERBOARD_INSET.right,
-                top: CHECKERBOARD_INSET.top,
-                transform: 'translateY(-62%)',
+                bottom: `calc(${CHECKERBOARD_INSET.bottom} - 0.2rem)`,
+                transform: 'translateY(145%)',
               }}
             >
               <div className="rounded-full border border-cyan-100/55 bg-slate-950/72 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-50 shadow-[0_8px_18px_rgba(2,6,23,0.45)] backdrop-blur-sm">
-                X axis ↓
+                X Axis →
               </div>
             </div>
             <div
@@ -319,11 +319,12 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
               style={{
                 left: CHECKERBOARD_INSET.left,
                 top: CHECKERBOARD_INSET.top,
-                transform: 'translate(-10%, -168%)',
+                bottom: CHECKERBOARD_INSET.bottom,
+                transform: 'translateX(calc(-100% - 0.55rem))',
               }}
             >
-              <div className="rounded-full border border-emerald-100/55 bg-slate-950/72 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-emerald-50 shadow-[0_8px_18px_rgba(2,6,23,0.45)] backdrop-blur-sm">
-                Y axis →
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-90 rounded-full border border-emerald-100/55 bg-slate-950/72 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-emerald-50 shadow-[0_8px_18px_rgba(2,6,23,0.45)] backdrop-blur-sm">
+                Y Axis ↑
               </div>
             </div>
             <div

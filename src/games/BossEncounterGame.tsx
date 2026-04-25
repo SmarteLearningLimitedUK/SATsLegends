@@ -48,6 +48,16 @@ interface BossQuestion {
   selectionMode?: SelectionMode;
 }
 
+type OrderingDragState = {
+  value: string;
+  fromIndex: number;
+  pointerId: number;
+  clientX: number;
+  clientY: number;
+  width: number;
+  height: number;
+};
+
 const TOTAL_QUESTIONS = 30;
 const BOSS_HEALTH_MAX = 20;
 const HERO_HEALTH_MAX = 3;
@@ -107,7 +117,7 @@ const makeTrueFalseOptions = (isTrue: boolean) => {
 const formatReasoningAnswer = (value: any): string => {
   if (Array.isArray(value)) return value.join(', ');
   if (value && typeof value === 'object') return JSON.stringify(value);
-  return String(value ?? '');
+  return String(value ?? '').replace(/\|/g, ', ');
 };
 
 const makeReasoningChoices = (question: ReasoningQuestion): any[] => {
@@ -990,9 +1000,8 @@ const BossPaperStage: React.FC<{
     />
     <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.1)_0%,rgba(2,6,23,0.2)_42%,rgba(2,6,23,0.72)_100%)]" />
     <div className="relative z-10 grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)_auto_auto] gap-[clamp(0.35rem,1.1vh,0.7rem)] px-[clamp(0.55rem,2.2vw,1.2rem)] pb-[clamp(0.45rem,1.3vh,0.85rem)] pt-[clamp(0.3rem,1vh,0.65rem)]">
-      <section className="relative overflow-hidden rounded-[clamp(1.1rem,4vw,1.9rem)] border border-amber-300/70 bg-[linear-gradient(180deg,rgba(4,20,52,0.96),rgba(4,15,38,0.93))] px-[clamp(0.9rem,3vw,2rem)] py-[clamp(0.8rem,2.5vh,1.55rem)] shadow-[0_10px_24px_rgba(2,6,23,0.48),inset_0_0_0_1px_rgba(125,211,252,0.22)]">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(56,189,248,0.16),transparent_54%)]" />
-        <div className="relative flex items-center justify-between gap-3">
+      <section className="relative">
+        <div className="relative mb-2 flex items-center justify-between gap-3 px-1">
           <span className="relative inline-flex shrink-0 items-center rounded-[0.65rem] border border-amber-400/80 bg-slate-950/24 px-3 py-1.5 text-[clamp(0.66rem,1.8vw,0.9rem)] font-black uppercase tracking-[0.08em] text-amber-200">
             Question {questionNumber}
           </span>
@@ -1003,9 +1012,9 @@ const BossPaperStage: React.FC<{
           </div>
           <span className="shrink-0 text-[clamp(0.58rem,1.5vw,0.72rem)] font-black uppercase tracking-[0.16em] text-cyan-100/70">{title}</span>
         </div>
-        <div className="relative mt-[clamp(0.7rem,2vh,1.25rem)] text-[clamp(1.08rem,3.6vw,2rem)] font-black leading-[1.24] text-white md:leading-[1.32]">
+        <GameQuestionCard className="w-full max-w-none" bodyClassName="text-[clamp(0.96rem,2.95vw,1.12rem)] font-semibold leading-[1.22]">
           {questionText}
-        </div>
+        </GameQuestionCard>
         {warning ? (
           <div className="relative mt-2 rounded-full border border-amber-200/50 bg-amber-300/15 px-3 py-1 text-center text-xs font-black uppercase tracking-[0.12em] text-amber-100">
             {warning}
@@ -1048,6 +1057,23 @@ const BossAnswerCard: React.FC<{
     </span>
     <span className="min-w-0 flex-1 break-words text-[clamp(1.2rem,4vw,2rem)] font-black leading-tight text-white">
       {children}
+    </span>
+  </button>
+);
+
+const BossOrderingCard: React.FC<{
+  value: string;
+  hidden?: boolean;
+  onPointerDown?: (event: React.PointerEvent<HTMLButtonElement>) => void;
+}> = ({ value, hidden = false, onPointerDown }) => (
+  <button
+    type="button"
+    onPointerDown={onPointerDown}
+    className={`relative flex h-[clamp(4.2rem,11vh,5.6rem)] w-full items-center justify-center overflow-hidden rounded-[0.95rem] border border-amber-400/70 bg-[linear-gradient(180deg,rgba(4,28,70,0.94),rgba(5,20,52,0.94))] px-2 text-center shadow-[0_8px_18px_rgba(2,6,23,0.36)] transition ${hidden ? 'opacity-0' : 'opacity-100'}`}
+  >
+    <div className="pointer-events-none absolute inset-0 rounded-[0.95rem] bg-gradient-to-br from-white/10 via-transparent to-transparent" />
+    <span className="relative text-[clamp(1rem,3.4vw,1.5rem)] font-black leading-tight text-white">
+      {value}
     </span>
   </button>
 );
@@ -1113,6 +1139,9 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   const [resolveState, setResolveState] = useState<'idle' | 'correct' | 'wrong' | 'warning' | 'victory' | 'defeat'>('idle');
   const [showPracticeIntro, setShowPracticeIntro] = useState(!isArithmeticPaper && !isReasoningPaper);
   const timeoutRef = useRef<number | null>(null);
+  const orderingBoardRef = useRef<HTMLDivElement | null>(null);
+  const orderingSlotRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const [orderingDragState, setOrderingDragState] = useState<OrderingDragState | null>(null);
 
   useEffect(() => () => {
     if (timeoutRef.current) {
@@ -1308,6 +1337,11 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
       ...previous,
       [arithmeticQuestion.id]: String(value),
     }));
+    if (currentIndex >= arithmeticQuestionCount - 1) {
+      submitArithmeticPaper((sessionState?.timeLeft ?? 0) > 0);
+      return;
+    }
+    setCurrentIndex((previous) => Math.min(arithmeticQuestionCount - 1, previous + 1));
   };
 
   const startReasoningPaper = () => {
@@ -1373,6 +1407,94 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
       ? current.filter((item) => item !== value)
       : [...current, value]);
   };
+
+  useEffect(() => {
+    if (!reasoningQuestion || reasoningQuestion.responseMode !== 'ordering' || reasoningResult) return;
+    const orderingChoices = makeReasoningChoices(reasoningQuestion).map((choice) => String(choice));
+    const current = String(reasoningAnswers[reasoningQuestion.id] ?? '');
+    if (current.trim().length > 0) return;
+    setReasoningAnswers((previous) => ({
+      ...previous,
+      [reasoningQuestion.id]: orderingChoices.join('|'),
+    }));
+  }, [reasoningAnswers, reasoningQuestion, reasoningResult]);
+
+  const beginOrderingDrag = (index: number, event: React.PointerEvent<HTMLButtonElement>) => {
+    if (!reasoningQuestion || reasoningQuestion.responseMode !== 'ordering' || reasoningResult) return;
+    const orderedValues = String(reasoningAnswers[reasoningQuestion.id] ?? '')
+      .split('|')
+      .map((value) => value.trim())
+      .filter(Boolean);
+    const value = orderedValues[index];
+    if (!value) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    setOrderingDragState({
+      value,
+      fromIndex: index,
+      pointerId: event.pointerId,
+      clientX: event.clientX,
+      clientY: event.clientY,
+      width: rect.width,
+      height: rect.height,
+    });
+    triggerHaptic('selection');
+  };
+
+  useEffect(() => {
+    if (!orderingDragState || !reasoningQuestion || reasoningQuestion.responseMode !== 'ordering') return undefined;
+
+    const onMove = (event: PointerEvent) => {
+      if (event.pointerId !== orderingDragState.pointerId) return;
+      setOrderingDragState((current) => {
+        if (!current || current.pointerId !== event.pointerId) return current;
+        return { ...current, clientX: event.clientX, clientY: event.clientY };
+      });
+    };
+
+    const onFinish = (event: PointerEvent) => {
+      if (event.pointerId !== orderingDragState.pointerId) return;
+      const orderedValues = String(reasoningAnswers[reasoningQuestion.id] ?? '')
+        .split('|')
+        .map((value) => value.trim())
+        .filter(Boolean);
+      if (orderedValues.length === 0) {
+        setOrderingDragState(null);
+        return;
+      }
+
+      let targetIndex = orderingDragState.fromIndex;
+      let bestDistance = Number.POSITIVE_INFINITY;
+      orderingSlotRefs.current.forEach((slot, index) => {
+        const rect = slot?.getBoundingClientRect();
+        if (!rect) return;
+        const centerX = rect.left + (rect.width / 2);
+        const centerY = rect.top + (rect.height / 2);
+        const distance = Math.hypot(event.clientX - centerX, event.clientY - centerY);
+        if (distance < bestDistance) {
+          bestDistance = distance;
+          targetIndex = index;
+        }
+      });
+
+      const nextOrder = [...orderedValues];
+      const [moved] = nextOrder.splice(orderingDragState.fromIndex, 1);
+      nextOrder.splice(targetIndex, 0, moved);
+      setReasoningAnswer(nextOrder.join('|'));
+      setOrderingDragState(null);
+      triggerHaptic('selection');
+    };
+
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onFinish);
+    window.addEventListener('pointercancel', onFinish);
+
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onFinish);
+      window.removeEventListener('pointercancel', onFinish);
+    };
+  }, [orderingDragState, reasoningAnswers, reasoningQuestion, reasoningResult]);
 
   const arithmeticAnsweredCount = arithmeticPaper
     ? arithmeticPaper.questions.filter((item) => arithmeticAnswers[item.id]?.trim()).length
@@ -1544,6 +1666,12 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
           ? '10 minute warning'
           : null;
     const reasoningChoiceItems = makeReasoningChoices(reasoningQuestion);
+    const orderingValues = reasoningQuestion.responseMode === 'ordering'
+      ? String(currentReasoningAnswer || reasoningChoiceItems.map((choice) => String(choice)).join('|'))
+        .split('|')
+        .map((value) => value.trim())
+        .filter(Boolean)
+      : [];
 
     return (
       <BossPaperStage
@@ -1553,27 +1681,71 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
         warning={warningText}
         visual={<ReasoningVisual question={reasoningQuestion} />}
         answers={(
-          reasoningChoiceItems.slice(0, 4).map((choice, index) => {
-            const isSelected = reasoningQuestion.responseMode === 'multiSelect'
-              ? Array.isArray(currentReasoningAnswer) && currentReasoningAnswer.includes(choice)
-              : String(currentReasoningAnswer) === String(choice);
-            return (
-              <BossAnswerCard
-                key={String(choice)}
-                label={String.fromCharCode(65 + index)}
-                selected={isSelected}
-                onClick={() => {
-                  if (reasoningQuestion.responseMode === 'multiSelect') {
-                    toggleReasoningChoice(String(choice));
-                  } else {
-                    setReasoningAnswer(choice);
-                  }
-                }}
-              >
-                {String(choice)}
-              </BossAnswerCard>
-            );
-          })
+          reasoningQuestion.responseMode === 'ordering' ? (
+            <div ref={orderingBoardRef} className="relative col-span-2 rounded-[1rem] border border-amber-300/45 bg-[linear-gradient(180deg,rgba(4,20,52,0.92),rgba(4,15,38,0.86))] p-3 shadow-[0_8px_18px_rgba(2,6,23,0.36)]">
+              <div className="mb-3 text-center text-[0.72rem] font-black uppercase tracking-[0.14em] text-cyan-100/82">
+                Drag the cards to put them in order
+              </div>
+              <div className="grid grid-cols-4 gap-2">
+                {orderingValues.map((value, index) => {
+                  const hidden = orderingDragState?.fromIndex === index;
+                  return (
+                    <div
+                      key={`${value}-${index}`}
+                      ref={(node) => {
+                        orderingSlotRefs.current[index] = node;
+                      }}
+                      className="relative min-h-[clamp(4.2rem,11vh,5.6rem)]"
+                    >
+                      <div className="pointer-events-none absolute inset-0 rounded-[0.95rem] border border-dashed border-cyan-200/36 bg-cyan-200/10" />
+                      <div className="absolute inset-0">
+                        <BossOrderingCard
+                          value={value}
+                          hidden={hidden}
+                          onPointerDown={(event) => beginOrderingDrag(index, event)}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              {orderingDragState ? (
+                <div
+                  className="pointer-events-none absolute z-50"
+                  style={{
+                    left: orderingDragState.clientX - (orderingBoardRef.current?.getBoundingClientRect().left ?? 0) - (orderingDragState.width / 2),
+                    top: orderingDragState.clientY - (orderingBoardRef.current?.getBoundingClientRect().top ?? 0) - (orderingDragState.height / 2),
+                    width: orderingDragState.width,
+                    height: orderingDragState.height,
+                  }}
+                >
+                  <BossOrderingCard value={orderingDragState.value} />
+                </div>
+              ) : null}
+            </div>
+          ) : (
+            reasoningChoiceItems.slice(0, 4).map((choice, index) => {
+              const isSelected = reasoningQuestion.responseMode === 'multiSelect'
+                ? Array.isArray(currentReasoningAnswer) && currentReasoningAnswer.includes(choice)
+                : String(currentReasoningAnswer) === String(choice);
+              return (
+                <BossAnswerCard
+                  key={String(choice)}
+                  label={String.fromCharCode(65 + index)}
+                  selected={isSelected}
+                  onClick={() => {
+                    if (reasoningQuestion.responseMode === 'multiSelect') {
+                      toggleReasoningChoice(String(choice));
+                    } else {
+                      setReasoningAnswer(choice);
+                    }
+                  }}
+                >
+                  {String(choice)}
+                </BossAnswerCard>
+              );
+            })
+          )
         )}
         nav={(
           <BossPaperNav>
@@ -1714,54 +1886,33 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
       <BossPaperStage
         title="Arithmetic"
         questionNumber={currentIndex + 1}
-        questionText={<><span className="block text-[clamp(0.9rem,2.6vw,1.2rem)]">Calculate the value of:</span><span className="mt-2 block text-center text-[clamp(2rem,7vw,4.25rem)]">{arithmeticQuestion.question}</span><span className="mt-2 block text-[clamp(0.85rem,2.2vw,1.05rem)]">Choose the correct answer.</span></>}
-        visual={(
-          <BossVisualFrame>
-            <div className="mx-auto flex h-[clamp(11rem,30vh,18rem)] max-w-2xl items-center justify-center rounded-[0.85rem] bg-slate-950/24 px-4 py-6 text-center">
-              <div className="text-[clamp(2.75rem,13vw,6.5rem)] font-black leading-none text-white drop-shadow-[0_5px_12px_rgba(0,0,0,0.5)]">
-                {arithmeticQuestion.question}
-              </div>
-            </div>
-          </BossVisualFrame>
-        )}
+        questionText={`Calculate the value of: ${arithmeticQuestion.question}\nChoose the correct answer.`}
+        visual={null}
         answers={arithmeticQuestion.choices.slice(0, 4).map((option, index) => (
-          <BossAnswerCard
+          <button
             key={`${option}-${index}`}
-            label={String.fromCharCode(65 + index)}
-            selected={String(option) === selectedAnswer}
+            type="button"
             onClick={() => handleArithmeticChoice(option)}
+            aria-pressed={String(option) === selectedAnswer}
+            className={`relative flex h-[clamp(3.75rem,10vh,5.55rem)] min-w-0 items-center gap-[clamp(0.65rem,2vw,1.2rem)] overflow-hidden rounded-[0.85rem] border px-[clamp(0.65rem,2.2vw,1.2rem)] text-left shadow-[0_8px_18px_rgba(2,6,23,0.36)] transition ${
+              String(option) === selectedAnswer
+                ? 'ui-button-primary border-cyan-200/55 bg-cyan-300/18 text-cyan-50 shadow-[0_0_0_1px_rgba(165,243,252,0.28)]'
+                : 'ui-button-secondary border-white/14 bg-slate-950/52 text-white hover:border-cyan-200/35 hover:bg-cyan-300/10'
+            }`}
           >
-            {option}
-          </BossAnswerCard>
+            <span className="pointer-events-none inline-flex h-[clamp(2.25rem,6.5vh,3.5rem)] w-[clamp(2.25rem,6.5vh,3.5rem)] shrink-0 items-center justify-center rounded-full bg-white/10 text-[clamp(1.05rem,3.5vw,1.55rem)] font-black text-white/82">
+              {String.fromCharCode(65 + index)}
+            </span>
+            <span className="min-w-0 flex-1 break-words text-[clamp(1.05rem,3.5vw,1.7rem)] font-black leading-tight text-white">
+              {option}
+            </span>
+          </button>
         ))}
         nav={(
           <BossPaperNav>
-            <button
-              type="button"
-              onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
-              disabled={currentIndex === 0}
-              className={bossNavButtonClass}
-            >
-              Previous
-            </button>
             <div className="min-w-0 flex-1 text-center text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100/75">
-              {arithmeticAnsweredCount}/{arithmeticQuestionCount}
+              Question {currentIndex + 1} of {arithmeticQuestionCount}
             </div>
-            <button
-              type="button"
-              onClick={() => setCurrentIndex((prev) => Math.min(arithmeticQuestionCount - 1, prev + 1))}
-              disabled={currentIndex >= arithmeticQuestionCount - 1}
-              className={bossNavButtonClass}
-            >
-              Next
-            </button>
-            <button
-              type="button"
-              onClick={() => submitArithmeticPaper((sessionState?.timeLeft ?? 0) > 0)}
-              className={bossNavButtonClass}
-            >
-              Submit paper
-            </button>
           </BossPaperNav>
         )}
       />

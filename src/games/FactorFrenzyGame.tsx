@@ -160,6 +160,19 @@ const buildOptions = (correctAnswers: number[], candidatePool: number[]) => {
   return shuffle(chosen.slice(0, 4));
 };
 
+const pickDisplayedAnswers = (answers: number[], minAnswers = 1, maxAnswers = 3) => {
+  const uniqueAnswers = Array.from(new Set(answers)).sort((a, b) => a - b);
+  if (uniqueAnswers.length <= maxAnswers) return uniqueAnswers;
+
+  const clampedMin = Math.max(1, Math.min(minAnswers, maxAnswers));
+  const targetCount = Math.min(
+    uniqueAnswers.length,
+    clampedMin + Math.floor(Math.random() * (maxAnswers - clampedMin + 1)),
+  );
+
+  return shuffle(uniqueAnswers).slice(0, targetCount).sort((a, b) => a - b);
+};
+
 const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   levelId: _levelId,
   avatarId: _avatarId,
@@ -253,15 +266,16 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
     if (type === 'all_factors') {
       const number = [14, 15, 21, 22, 26, 33, 34, 35, 39, 46, 51, 55][Math.floor(Math.random() * 12)];
-      const correctAnswers = getFactors(number);
-      const extras = [number + 1, number - 2, 7, 9, 11, 13, 17, 19].filter((value) => value > 0 && !correctAnswers.includes(value));
-      const options = buildOptions(correctAnswers, [...correctAnswers, ...extras]);
+      const allFactors = getFactors(number);
+      const correctAnswers = pickDisplayedAnswers(allFactors, 2, 3);
+      const extras = [number + 1, number - 2, 7, 9, 11, 13, 17, 19].filter((value) => value > 0 && !allFactors.includes(value));
+      const options = buildOptions(correctAnswers, [...allFactors, ...extras]);
 
       return {
         id,
         type,
         number,
-        question: `Strike all factors of ${number} to clear the swarm.`,
+        question: `Strike every factor of ${number} shown below to clear the swarm.`,
         options,
         correctAnswers,
       };
@@ -278,30 +292,32 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
       const [number, number2] = pairs[Math.floor(Math.random() * pairs.length)];
       const factorsOne = getFactors(number);
       const factorsTwo = getFactors(number2);
-      const commonAnswers = factorsOne.filter((value) => factorsTwo.includes(value));
-      const extras = [5, 7, 9, 11, 13, 14, 15, 16].filter((value) => !commonAnswers.includes(value));
-      const options = buildOptions(commonAnswers, [...commonAnswers, ...extras]);
+      const allCommonAnswers = factorsOne.filter((value) => factorsTwo.includes(value));
+      const commonAnswers = pickDisplayedAnswers(allCommonAnswers, 2, 3);
+      const extras = [5, 7, 9, 11, 13, 14, 15, 16].filter((value) => !allCommonAnswers.includes(value));
+      const options = buildOptions(commonAnswers, [...allCommonAnswers, ...extras]);
 
       return {
         id,
         type,
         number,
         number2,
-        question: `Find all common factors of ${number} and ${number2} to break the Monster Minds' defence.`,
+        question: `Find every common factor shown for ${number} and ${number2} to break the Monster Minds' defence.`,
         options,
         correctAnswers: commonAnswers,
       };
     }
 
     const number = [12, 20, 30, 42, 60, 72, 84][Math.floor(Math.random() * 7)];
-    const correctAnswers = getPrimeFactors(number);
+    const allPrimeFactors = getPrimeFactors(number);
+    const correctAnswers = pickDisplayedAnswers(allPrimeFactors, 2, 3);
     const options = buildOptions(correctAnswers, shuffle([2, 3, 4, 5, 6, 7, 8, 9, 11, 13]));
 
     return {
       id,
       type,
       number,
-      question: `Find all prime factors of ${number} to disrupt the Monster Minds.`,
+      question: `Find every prime factor of ${number} shown below to disrupt the Monster Minds.`,
       options,
       correctAnswers,
     };

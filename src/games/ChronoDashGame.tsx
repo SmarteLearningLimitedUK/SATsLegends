@@ -245,13 +245,13 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({
                 <motion.div
                   animate={{ rotate: rotationHours }}
                   transition={{ type: 'spring', stiffness: 100, damping: 15 }}
-                  className="absolute left-1/2 top-1/2 z-20 h-[23%] w-[2.4%] origin-bottom -translate-x-1/2 -translate-y-full rounded-full bg-[linear-gradient(180deg,rgba(255,248,200,0.95),rgba(255,180,64,0.9)_42%,rgba(255,106,0,0.95)_82%,rgba(110,20,0,0.98))] shadow-[0_0_16px_rgba(255,162,55,0.4)]"
+                  className="absolute left-1/2 top-1/2 z-20 h-[23%] w-[2.4%] origin-bottom -translate-x-1/2 -translate-y-full rounded-full bg-black shadow-[0_0_10px_rgba(0,0,0,0.25)]"
                 />
 
                 <motion.div
                   animate={{ rotate: rotationMinutes }}
                   transition={{ type: 'spring', stiffness: 120, damping: 12 }}
-                  className="absolute left-1/2 top-1/2 z-30 h-[33%] w-[1.2%] origin-bottom -translate-x-1/2 -translate-y-full rounded-full bg-[linear-gradient(180deg,rgba(255,250,210,0.98),rgba(255,198,86,0.96)_34%,rgba(255,122,24,0.98)_72%,rgba(135,24,0,0.98))] shadow-[0_0_18px_rgba(255,138,0,0.46)]"
+                  className="absolute left-1/2 top-1/2 z-30 h-[33%] w-[1.2%] origin-bottom -translate-x-1/2 -translate-y-full rounded-full bg-black shadow-[0_0_10px_rgba(0,0,0,0.25)]"
                 />
 
                 <div className="absolute left-1/2 top-1/2 z-40 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border border-yellow-100/20 bg-[radial-gradient(circle_at_35%_35%,rgba(255,255,255,0.9),rgba(255,223,154,0.9)_34%,rgba(255,140,0,0.96)_74%,rgba(112,24,0,1)_100%)] shadow-[0_0_14px_rgba(255,166,0,0.55)]" />

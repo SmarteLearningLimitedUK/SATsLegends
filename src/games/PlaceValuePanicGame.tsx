@@ -42,6 +42,7 @@ interface Token {
 interface QuestionState {
   id: string;
   prompt: string;
+  targetNumberDisplay: string;
   expectedDigits: number[];
   tokenValues: number[];
   placeHints: string[];
@@ -337,7 +338,8 @@ const makeQuestion = (level: number): QuestionState => {
   const placeHints = FULL_PLACE_VALUE_HINTS.slice(FULL_PLACE_VALUE_HINTS.length - slotCount);
   return {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    prompt: 'The Monster Minds scrambled the stones.',
+    prompt: `The Monster Minds scrambled the stones. Rebuild ${new Intl.NumberFormat('en-GB').format(promptNumber)}.`,
+    targetNumberDisplay: new Intl.NumberFormat('en-GB').format(promptNumber),
     expectedDigits,
     tokenValues,
     placeHints,
@@ -998,7 +1000,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       >
         <GameQuestionCard
           title="Place Value Panic"
-          subtitle="Rebuild the number."
+          subtitle={`Rebuild ${question.targetNumberDisplay}.`}
           className="mx-auto max-w-[min(96%,22rem)]"
         >
           {questionPrompt}

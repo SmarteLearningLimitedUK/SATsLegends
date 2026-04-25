@@ -17,6 +17,7 @@ interface UnifiedMiniGameHudProps {
   hideAvatar?: boolean;
   hideLives?: boolean;
   hideTopBar?: boolean;
+  hideTimerBar?: boolean;
   lives?: number;
   onBack?: () => void;
   variant?: 'gameplay' | 'hub';
@@ -35,6 +36,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
   hideAvatar = false,
   hideLives = false,
   hideTopBar = false,
+  hideTimerBar = false,
   lives = 3,
   onBack,
   variant = 'gameplay',
@@ -149,24 +151,26 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
                       className="h-[70%] w-[70%] object-contain"
                     />
                   </div>
-                  <div className="relative ml-1.5 h-[44%] min-w-0 flex-1 overflow-hidden rounded-full border border-cyan-100/35 bg-slate-950/60">
-                    <div className="pointer-events-none absolute inset-[1px] rounded-full bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0))]" />
-                    <motion.div
-                      className={`absolute inset-y-[2px] left-[2px] rounded-full shadow-[0_0_10px_rgba(74,222,128,0.58)] ${
-                        isLowTime
-                          ? 'bg-[linear-gradient(90deg,#f59e0b_0%,#ef4444_100%)]'
-                          : 'bg-[linear-gradient(90deg,#5cf44a_0%,#22d34e_58%,#11bfa8_100%)]'
-                      }`}
-                      animate={{ width: `max(0px, calc(${timerProgress * 100}% - 4px))` }}
-                      transition={{ duration: 0.25, ease: 'easeOut' }}
-                    />
-                    <motion.div
-                      className="pointer-events-none absolute inset-y-[2px] w-10 rounded-full bg-[linear-gradient(90deg,rgba(255,255,255,0)_0%,rgba(255,255,255,0.42)_50%,rgba(255,255,255,0)_100%)]"
-                      animate={{ x: ['-35%', '115%'] }}
-                      transition={{ duration: 1.4, repeat: Infinity, ease: 'linear' }}
-                    />
-                    <div className="pointer-events-none absolute inset-[1px] rounded-full bg-[linear-gradient(to_right,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:12%_100%]" />
-                  </div>
+                  {hideTimerBar ? null : (
+                    <div className="relative ml-1.5 h-[44%] min-w-0 flex-1 overflow-hidden rounded-full border border-cyan-100/35 bg-slate-950/60">
+                      <div className="pointer-events-none absolute inset-[1px] rounded-full bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0))]" />
+                      <motion.div
+                        className={`absolute inset-y-[2px] left-[2px] rounded-full shadow-[0_0_10px_rgba(74,222,128,0.58)] ${
+                          isLowTime
+                            ? 'bg-[linear-gradient(90deg,#f59e0b_0%,#ef4444_100%)]'
+                            : 'bg-[linear-gradient(90deg,#5cf44a_0%,#22d34e_58%,#11bfa8_100%)]'
+                        }`}
+                        animate={{ width: `max(0px, calc(${timerProgress * 100}% - 4px))` }}
+                        transition={{ duration: 0.25, ease: 'easeOut' }}
+                      />
+                      <motion.div
+                        className="pointer-events-none absolute inset-y-[2px] w-10 rounded-full bg-[linear-gradient(90deg,rgba(255,255,255,0)_0%,rgba(255,255,255,0.42)_50%,rgba(255,255,255,0)_100%)]"
+                        animate={{ x: ['-35%', '115%'] }}
+                        transition={{ duration: 1.4, repeat: Infinity, ease: 'linear' }}
+                      />
+                      <div className="pointer-events-none absolute inset-[1px] rounded-full bg-[linear-gradient(to_right,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:12%_100%]" />
+                    </div>
+                  )}
                 </div>
                 <span className={`ml-1.5 shrink-0 font-black uppercase text-slate-100 [text-shadow:0_1px_0_rgba(0,0,0,0.35)] ${variant === 'hub' ? 'text-[clamp(0.6rem,1.6vw,0.8rem)]' : 'text-[clamp(0.68rem,1.8vw,0.9rem)]'}`}>
                   {timeLabel}

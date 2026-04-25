@@ -98,6 +98,11 @@ const scoreToStars = (XP: number) => {
   return 1;
 };
 
+const buildAxisTicks = (maxValue: number) => {
+  const safeMax = Math.max(4, Math.ceil(maxValue));
+  return Array.from({ length: safeMax + 1 }, (_, index) => index);
+};
+
 const createBarRound = (levelId: number, variant: number): ChartRound => {
   const base = 4 + levelId + variant;
   const bars: BarDatum[] = [
@@ -378,12 +383,8 @@ const IvyLabel = (pie: PieDatum[]) => pie.find((slice) => slice.label === 'Ivy')
 
 const buildRound = (levelId: number, roundIndex: number): ChartRound => {
   const variant = roundIndex % 6;
-  if (variant <= 2) {
-    return createBarRound(levelId, roundIndex);
-  }
-  if (variant === 3 || variant === 4) {
-    return createLineRound(levelId, roundIndex);
-  }
+  if (variant === 0 || variant === 3) return createBarRound(levelId, roundIndex);
+  if (variant === 1 || variant === 4) return createLineRound(levelId, roundIndex);
   return createPieRound(levelId, roundIndex);
 };
 
@@ -397,6 +398,7 @@ const matchesAnswer = (selected: string[], expected: string[]) => {
 
 const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
   if (round.kind === 'bar' && round.bars) {
+    const yTicks = buildAxisTicks(Math.max(...round.bars.map((bar) => bar.value)));
     return (
       <div className="flex h-full min-h-0 flex-col rounded-[1.2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(9,19,42,0.58),rgba(7,14,32,0.74))] p-2 shadow-[0_18px_30px_rgba(2,6,23,0.18)]">
         <div className="px-1 text-center text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/75">
@@ -410,13 +412,15 @@ const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
                 dataKey="label"
                 tick={{ fill: '#fff8ec', fontSize: 11, fontWeight: 800 }}
                 axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
-                tickLine={false}
+                tickLine={{ stroke: 'rgba(255,255,255,0.55)', strokeWidth: 1 } as never}
                 label={{ value: 'X Axis', position: 'insideBottom', offset: -6, fill: '#93c5fd', fontSize: 12, fontWeight: 800 } as never}
               />
               <YAxis
+                domain={[0, Math.max(...round.bars.map((bar) => bar.value))]}
+                ticks={yTicks}
                 tick={{ fill: '#fff8ec', fontSize: 11, fontWeight: 800 }}
                 axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
-                tickLine={false}
+                tickLine={{ stroke: 'rgba(255,255,255,0.75)', strokeWidth: 1.25, length: 8 } as never}
                 label={{ value: 'Y Axis', angle: -90, position: 'insideLeft', fill: '#93c5fd', fontSize: 12, fontWeight: 800 } as never}
                 width={42}
               />
@@ -450,13 +454,14 @@ const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
                 dataKey="label"
                 tick={{ fill: '#fff8ec', fontSize: 11, fontWeight: 800 }}
                 axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
-                tickLine={false}
+                tickLine={{ stroke: 'rgba(255,255,255,0.55)', strokeWidth: 1 } as never}
                 label={{ value: 'X Axis', position: 'insideBottom', offset: -6, fill: '#93c5fd', fontSize: 12, fontWeight: 800 } as never}
               />
               <YAxis
                 tick={{ fill: '#fff8ec', fontSize: 11, fontWeight: 800 }}
                 axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
-                tickLine={false}
+                tickLine={{ stroke: 'rgba(255,255,255,0.55)', strokeWidth: 1 } as never}
+                tickCount={6}
                 label={{ value: 'Y Axis', angle: -90, position: 'insideLeft', fill: '#93c5fd', fontSize: 12, fontWeight: 800 } as never}
                 width={42}
               />

@@ -311,7 +311,7 @@ const App: React.FC = () => {
       if (button.hasAttribute('data-ui-sound')) return;
       if (button.hasAttribute('disabled')) return;
 
-      playGameSound('tap');
+      playGameSound('tap', undefined, selectedLevel?.blueprintKey);
     };
 
     document.addEventListener('click', handleGameplayClick, true);
@@ -378,7 +378,7 @@ const App: React.FC = () => {
   ]);
 
   const handleGameOver = useCallback((XP: number) => {
-    playGameSound('fail');
+    playGameSound('fail', undefined, selectedLevel?.blueprintKey);
     triggerHaptic('error');
     if (selectedLevel?.isPractice) {
       if (!selectedIsland || !selectedLevel) return;
@@ -425,6 +425,28 @@ const App: React.FC = () => {
       timeMs,
     });
 
+    const achievementsUnlocked: string[] = [];
+    setPlayer((prev) => {
+      const previousEarned = prev.achievementState?.earned ?? prev.achievements ?? [];
+      const nextBase: PlayerData = {
+        ...prev,
+        level: progressionResult.newLevel,
+        xp: progressionResult.currentXp,
+        stats: {
+          ...prev.stats,
+          totalGamesPlayed: (prev.stats?.totalGamesPlayed || 0) + 1,
+        },
+      };
+      const achievementState = reconcileAchievementState(nextBase);
+      const newlyUnlocked = achievementState.earned.filter((id) => !previousEarned.includes(id));
+      achievementsUnlocked.splice(0, achievementsUnlocked.length, ...newlyUnlocked);
+      return {
+        ...nextBase,
+        achievementState,
+        achievements: achievementState.earned,
+      };
+    });
+
     const levelTitle = resolveLevelTitle();
     setLevelResult({
       type: 'gameover',
@@ -448,7 +470,7 @@ const App: React.FC = () => {
       completed: false,
       coinsEarned: 0,
       xpEarned: progressionResult.xpGained,
-      achievementsUnlocked: [],
+      achievementsUnlocked,
       wellbeingSuggested,
     });
   }, [buildPracticeLevelResult, completeProgressionLevel, resolveLevelTitle, selectedIsland, selectedLevel, sessionMetrics.correct, sessionMetrics.hintsUsed, sessionMetrics.incorrect, sessionState.lives, sessionState.timeLeft, sessionState.totalTime, setLevelResult]);
@@ -746,7 +768,7 @@ const App: React.FC = () => {
   };
 
   const handleGameVictory = (stars: number, XP: number) => {
-    playGameSound('complete');
+    playGameSound('complete', undefined, selectedLevel?.blueprintKey);
     triggerHaptic('success');
     if (selectedLevel?.isPractice) {
       const totalAttempts = sessionMetrics.correct + sessionMetrics.incorrect;
@@ -826,6 +848,7 @@ const App: React.FC = () => {
     );
 
     const isPlaceValuePanic = selectedLevel.blueprintKey === 'place_value_panic';
+    const isPotionPanic = selectedLevel.blueprintKey === 'potion_panic';
 
     const laneNextLevel = selectedLevel.miniGameKey && selectedLevel.miniGameLevel
       ? selectedIsland.levels.find((level) => (
@@ -844,8 +867,18 @@ const App: React.FC = () => {
           ))
       : undefined;
 
+    const potionPanicNextLevel = isPotionPanic
+      ? selectedIsland.levels
+          .filter((level) => level.blueprintKey === 'potion_panic')
+          .sort((a, b) => ((a.miniGameLevel || a.id) - (b.miniGameLevel || b.id)))
+          .find((level) => (
+            (level.miniGameLevel || level.id)
+            > (selectedLevel.miniGameLevel || selectedLevel.id)
+          ))
+      : undefined;
+
     const sequentialNextLevel = selectedIsland.levels.find(level => level.id === selectedLevel.id + 1);
-    const nextLevel = placeValueNextLevel || laneNextLevel || sequentialNextLevel;
+    const nextLevel = placeValueNextLevel || potionPanicNextLevel || laneNextLevel || sequentialNextLevel;
     setLevelResult(null);
 
     if (nextLevel) {
@@ -918,13 +951,13 @@ const App: React.FC = () => {
 
   const sessionEvents: GameplaySessionEventHandlers = useMemo(() => ({
     onCorrectAnswer: (event) => {
-      playGameSound('correct');
+      playGameSound('correct', undefined, selectedLevel?.blueprintKey);
       triggerHaptic('selection');
       setSessionMetrics((prev) => ({ ...prev, correct: prev.correct + 1 }));
       recordTelemetryEvent('correct_answer', event);
     },
     onIncorrectAnswer: (event) => {
-      playGameSound('incorrect');
+      playGameSound('incorrect', undefined, selectedLevel?.blueprintKey);
       triggerHaptic('error');
       setSessionMetrics((prev) => ({ ...prev, incorrect: prev.incorrect + 1 }));
       recordTelemetryEvent('incorrect_answer', event);
@@ -1082,6 +1115,7 @@ const App: React.FC = () => {
             lives={globalMiniGameLives}
             hideTimer={hideShellTimer}
             forceTimer={isExamBoss}
+            hideTimerBar={isExamBoss}
             hideAvatar={false}
             hideLives={hideShellLives}
             onBack={isStandaloneRatioRacer || isStandaloneScaleBuilder || isStandaloneShareSplitter ? goToHome : isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
@@ -1177,6 +1211,7 @@ const App: React.FC = () => {
                 currentXp: levelResult.currentXp,
                 xpRequiredForNextLevel: levelResult.xpRequiredForNextLevel,
                 leveledUp: levelResult.leveledUp,
+                achievementsUnlocked: levelResult.achievementsUnlocked,
               } : null}
               onRetry={handleRetryLevel}
               onNext={levelResult?.type === 'victory' ? handleAdvanceAfterVictory : undefined}

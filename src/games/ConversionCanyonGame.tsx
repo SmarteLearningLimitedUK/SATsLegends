@@ -10,7 +10,7 @@ import gemYellow from '../assets/place_value/jewels/diamond_yellow.png';
 import gemEmerald from '../assets/place_value/jewels/emerald.png';
 import gemSapphire from '../assets/place_value/jewels/sapphire.png';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
-import { useTrimmedImageSource, useTrimmedImageSources } from '../utils/trimTransparentImage';
+import { useTrimmedImageSources } from '../utils/trimTransparentImage';
 
 interface ConversionCanyonGameProps {
   levelId: number;
@@ -120,7 +120,6 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
 
   const rootRef = useRef<HTMLDivElement>(null);
   const dropRef = useRef<HTMLDivElement>(null);
-  const trimmedScaleImage = useTrimmedImageSource(weighScale);
   const trimmedGemImages = useTrimmedImageSources(GEM_IMAGES);
   const gemImageMap = useMemo(
     () => new Map(GEM_IMAGES.map((src, index) => [src, trimmedGemImages[index] ?? src])),
@@ -221,20 +220,20 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
           <motion.div
             animate={successPulse ? { scale: [1, 1.02, 1] } : { scale: 1 }}
             transition={{ duration: 0.36, ease: 'easeOut' }}
-            className="relative flex w-full max-w-[28rem] min-h-[13rem] flex-1 items-center justify-center p-1 md:max-w-[31rem]"
+            className="relative flex w-full max-w-[24rem] min-h-[11.2rem] flex-1 items-center justify-center p-1 md:max-w-[26rem]"
           >
             <div
-              className={`relative flex h-full min-h-[12.75rem] w-full items-center justify-center overflow-visible rounded-[1.35rem] ${
+              className={`relative flex h-full min-h-[11rem] w-full items-center justify-center overflow-visible rounded-[1.35rem] ${
                 successPulse ? 'shadow-[0_0_36px_rgba(52,211,153,0.28)]' : ''
               }`}
             >
-              <div className="pointer-events-none absolute left-1/2 top-1/2 z-10 flex w-[min(82%,20rem)] -translate-x-1/2 -translate-y-1/2 items-center justify-center md:w-[min(78%,22rem)]">
+              <div className="pointer-events-none absolute left-1/2 top-1/2 z-10 flex w-[min(72%,15rem)] -translate-x-1/2 -translate-y-1/2 items-center justify-center md:w-[min(70%,16.5rem)]">
                 <img
-                  src={trimmedScaleImage}
+                  src={weighScale}
                   alt=""
                   aria-hidden="true"
                   draggable={false}
-                  className="pointer-events-none relative z-10 h-auto w-full object-contain object-center drop-shadow-[0_18px_24px_rgba(2,6,23,0.42)]"
+                  className="pointer-events-none relative z-10 h-auto w-full object-contain object-center drop-shadow-[0_12px_16px_rgba(2,6,23,0.28)]"
                 />
                 <div className="pointer-events-none absolute left-1/2 top-[58%] z-30 -translate-x-1/2 -translate-y-1/2">
                   <div className="flex min-w-[8.7rem] flex-col items-center rounded-[0.9rem] border border-cyan-200/62 bg-[#061426]/94 px-3 py-1.5 text-center shadow-[0_10px_18px_rgba(2,6,23,0.58)]">
@@ -247,7 +246,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
               </div>
               <div
                 ref={dropRef}
-                className="absolute left-1/2 top-[29%] z-40 flex min-h-[4.2rem] w-[min(68%,18rem)] -translate-x-1/2 items-end justify-center gap-1.5 rounded-[1.1rem] px-2 py-1.5"
+                className="absolute left-1/2 top-[28%] z-40 flex min-h-[3.6rem] w-[min(58%,13.5rem)] -translate-x-1/2 items-end justify-center gap-1 rounded-[1.1rem] px-1.5 py-1"
                 aria-label="Weights on scale"
               >
                 {placedTokens.length > 0 ? (

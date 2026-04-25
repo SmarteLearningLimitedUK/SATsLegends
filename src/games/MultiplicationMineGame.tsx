@@ -1,12 +1,12 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { MAIN_PNG_SKIN } from '../assets/reskin/mainPng';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import mineBackground from '../assets/maps/backgroundsforgames/multiplication mine background.jpg';
 import rockSolidAsset from '../assets/mine/18.png';
 import rockCrackedAsset from '../assets/mine/19.png';
 import rockSplitAsset from '../assets/mine/20.png';
 import rockRubbleAsset from '../assets/mine/21.png';
+import treasureChestAsset from '../assets/mine/treasurechest.png';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { triggerHaptic } from '../haptics';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
@@ -268,7 +268,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
                   draggable={false}
                 />
                 <img
-                  src={MAIN_PNG_SKIN.treasureChest}
+                  src={treasureChestAsset}
                   alt="Treasure chest"
                   className="relative z-10 w-[230px] max-w-[65vw] object-contain drop-shadow-[0_18px_24px_rgba(0,0,0,0.65)]"
                   draggable={false}

@@ -3,7 +3,7 @@ import confetti from 'canvas-confetti';
 import { motion } from 'motion/react';
 import changeCounterBackground from '../assets/maps/backgroundsforgames/changecounter.jpg';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
-import { FeedbackStrip } from '../components/game-ui/GameUiKit';
+import { FeedbackStrip, GameQuestionCard } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { triggerHaptic } from '../haptics';
 import {
@@ -63,6 +63,7 @@ const SALE_ITEMS = [
   { label: 'mirror', src: item8 },
 ] as const;
 const MARKET_CUSTOMERS = ['Grok', 'Vex', 'Bran', 'Mochi', 'Rook', 'Zuri'];
+const SALE_ITEM_BY_LABEL = new Map(SALE_ITEMS.map((item) => [item.label, item]));
 
 const formatMoney = (pence: number) => (
   pence >= 100
@@ -240,7 +241,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
     const startIndex = currentIndex >= 0 ? currentIndex : 0;
     return Array.from({ length: 5 }, (_, index) => {
       const bankItem = QUESTION_BANK[(startIndex + index) % QUESTION_BANK.length];
-      const saleItem = SALE_ITEMS[(startIndex + index) % SALE_ITEMS.length];
+      const saleItem = SALE_ITEM_BY_LABEL.get(bankItem.item) ?? SALE_ITEMS[(startIndex + index) % SALE_ITEMS.length];
       return {
         id: `${question.id}-${index}`,
         label: bankItem.item,
@@ -360,39 +361,37 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
 
       <div className={`relative z-10 flex h-full min-h-0 w-full flex-1 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+4.6rem)] md:pt-[calc(env(safe-area-inset-top)+4.9rem)]' : 'pt-[calc(env(safe-area-inset-top)+2.4rem)]'}`}>
         <PuzzleStage className="flex h-full min-h-0 flex-1 flex-col gap-2 md:gap-3">
-          <div className="mx-auto w-full max-w-[44rem] px-1 text-center">
-            <div className="text-[11px] font-black uppercase tracking-[0.22em] text-amber-100/90 md:text-[12px]">
-              {resolvedLevel >= 5 ? 'Market Order' : 'Change Counter'}
-            </div>
-            <div className="mt-1 text-[clamp(1rem,2.9vw,1.5rem)] font-black leading-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)] md:text-[clamp(1.1rem,2.2vw,1.85rem)]">
+          <div className="mx-auto w-full max-w-[44rem] px-1">
+            <GameQuestionCard
+              title="Change Counter"
+              className="w-full"
+              bodyClassName="text-[clamp(1rem,2.9vw,1.5rem)] font-black leading-tight text-white md:text-[clamp(1.1rem,2.2vw,1.85rem)]"
+            >
               {resolvedLevel >= 5 ? (
                 <>
-                  {question.customer} wants {question.quantity}x {question.item}.
-                  {' '}
-                  {question.customer} has {formatMoney(question.paidPence)}.
+                  {question.customer} wants {question.quantity}x {question.item}. {question.customer} pays with {formatMoney(question.paidPence)}.
+                  <div className="mt-1 text-[11px] font-semibold text-cyan-100/88 md:text-sm">
+                    How much change should {question.customer} receive?
+                  </div>
                 </>
               ) : (
                 <>
-                  The Monster Minds have disrupted this market order.
-                  {' '}
-                  A {question.item} costs {formatMoney(question.costPence)} and you pay with {formatMoney(question.paidPence)}.
+                  The Monster Minds have disrupted this market order. A {question.item} costs {formatMoney(question.costPence)} and you pay with {formatMoney(question.paidPence)}.
+                  <div className="mt-1 text-[11px] font-semibold text-cyan-100/88 md:text-sm">
+                    How much change restores the trade?
+                  </div>
                 </>
               )}
-            </div>
-            <div className="mt-1 text-[11px] font-semibold text-cyan-100/88 md:text-sm">
-              {resolvedLevel >= 5
-                ? `How much change should ${question.customer} receive?`
-                : 'How much change restores the trade?'}
-            </div>
+            </GameQuestionCard>
           </div>
 
-          <div className="mx-auto grid w-full max-w-[44rem] grid-cols-2 gap-2 md:grid-cols-5 md:gap-3">
+          <div className="mx-auto grid w-full max-w-[38rem] grid-cols-3 gap-1.5 md:max-w-[44rem] md:grid-cols-5 md:gap-2.5">
             {questionGallery.map((entry) => (
               <div
                 key={entry.id}
-                className="casual-panel-surface flex min-h-0 flex-col items-center gap-1.5 overflow-hidden rounded-[1.15rem] border border-white/10 px-2 py-2 text-center shadow-[0_12px_24px_rgba(0,0,0,0.16)] md:rounded-[1.35rem] md:px-3 md:py-3"
+                className="flex min-h-0 flex-col items-center gap-1 overflow-hidden rounded-[0.95rem] border border-white/8 bg-slate-950/18 px-1.5 py-1.5 text-center shadow-[0_8px_16px_rgba(0,0,0,0.12)] backdrop-blur-[1px] md:rounded-[1.15rem] md:px-2.5 md:py-2"
               >
-                <div className="flex h-18 w-full items-center justify-center overflow-hidden rounded-[0.9rem] bg-black/18 md:h-24">
+                <div className="flex h-14 w-full items-center justify-center overflow-hidden rounded-[0.75rem] bg-black/10 md:h-20 md:rounded-[0.9rem]">
                   <img
                     src={entry.src}
                     alt={entry.label}
@@ -400,11 +399,11 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
                     draggable={false}
                   />
                 </div>
-                <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/76 md:text-[10px]">
+                <div className="text-[8px] font-black uppercase tracking-[0.14em] text-white/76 md:text-[10px]">
                   {entry.label}
                 </div>
                 {resolvedLevel >= 5 ? (
-                  <div className="rounded-full border border-amber-100/25 bg-amber-200/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.16em] text-amber-50 md:text-[10px]">
+                  <div className="rounded-full border border-amber-100/18 bg-amber-200/8 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-[0.12em] text-amber-50 md:px-2 md:text-[10px]">
                     {entry.price} each
                   </div>
                 ) : null}
@@ -434,9 +433,11 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
             </div>
           </div>
 
-          <FeedbackStrip tone={feedbackTone}>
-            {feedbackText}
-          </FeedbackStrip>
+          {feedbackText ? (
+            <FeedbackStrip tone={feedbackTone}>
+              {feedbackText}
+            </FeedbackStrip>
+          ) : null}
         </PuzzleStage>
       </div>
     </GameScreenShell>

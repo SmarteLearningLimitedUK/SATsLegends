@@ -583,7 +583,7 @@ const RotationStationGame: React.FC<RotationStationGameProps> = ({
                   onClick={() => handleRotate('acw')}
                   className="ui-button-secondary min-h-[2.65rem] rounded-[0.75rem] px-1.5 py-1 text-center text-xs font-black leading-tight disabled:opacity-55"
                 >
-                  Rotate left 90
+                  Rotate anticlockwise 90
                 </button>
                 <button
                   type="button"
@@ -591,7 +591,7 @@ const RotationStationGame: React.FC<RotationStationGameProps> = ({
                   onClick={() => handleRotate('cw')}
                   className="ui-button-secondary min-h-[2.65rem] rounded-[0.75rem] px-1.5 py-1 text-center text-xs font-black leading-tight disabled:opacity-55"
                 >
-                  Rotate right 90
+                  Rotate clockwise 90
                 </button>
                 <button
                   type="button"

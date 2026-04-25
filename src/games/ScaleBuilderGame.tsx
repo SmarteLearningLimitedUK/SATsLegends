@@ -77,8 +77,8 @@ const LEVELS: Level[] = [
 ];
 
 const GRID_SIZE = 20;
-const BLUEPRINT_BOARD_TOP = '49%';
-const BLUEPRINT_BOARD_SIZE = 'min(82vw, 31rem, 52vh)';
+const BLUEPRINT_BOARD_TOP = '56%';
+const BLUEPRINT_BOARD_SIZE = 'min(84vw, 27rem, 42vh)';
 const SCALE_BUILDER_INTRO = `The Monster Minds have damaged the island structures.\nUse the scale factor to rebuild each blueprint to the correct size.\nMultiply each length correctly.`;
 
 const formatBlueprintValue = (value: number) => {
@@ -240,12 +240,12 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
     const heightDiff = Math.abs(heightScale - currentLevel.targetScale);
     const difference = Math.max(widthDiff, heightDiff);
     if (difference < 0.01) {
-      setFeedback({ type: 'success', message: '🏗️ “Structure restored!”\n\nThe tower is rebuilt to 15 metres.' });
+      setFeedback({ type: 'success', message: 'Structure restored. Blueprint scaled correctly.' });
       setGameState('success');
       return;
     }
 
-    setFeedback({ type: 'error', message: '⚠️ “Structure unstable!”' });
+    setFeedback({ type: 'error', message: 'Structure unstable. Adjust the scale and try again.' });
     setMistakeCount((previous) => previous + 1);
   };
 
@@ -345,18 +345,6 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
           }}
         />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,47,73,0.04)_0%,rgba(7,89,133,0.03)_38%,rgba(8,47,73,0.08)_100%)]" />
-        <div
-          className="absolute inset-0 opacity-20"
-          style={{
-            backgroundImage: [
-              'linear-gradient(to right, rgba(186,230,253,0.22) 1px, transparent 1px)',
-              'linear-gradient(to bottom, rgba(186,230,253,0.22) 1px, transparent 1px)',
-              'linear-gradient(to right, rgba(96,165,250,0.22) 2px, transparent 2px)',
-              'linear-gradient(to bottom, rgba(96,165,250,0.22) 2px, transparent 2px)',
-            ].join(', '),
-            backgroundSize: '22px 22px, 22px 22px, 110px 110px, 110px 110px',
-          }}
-        />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(191,219,254,0.08),transparent_52%),radial-gradient(circle_at_20%_20%,rgba(147,197,253,0.06),transparent_28%),radial-gradient(circle_at_80%_70%,rgba(56,189,248,0.05),transparent_24%)]" />
       </div>
       <div className="pointer-events-none absolute left-2 top-[calc(env(safe-area-inset-top)+0.5rem)] z-20">
@@ -369,7 +357,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
         </div>
       </div>
 
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-[10px] px-2 pb-[calc(env(safe-area-inset-bottom)+11.8rem)] pt-[calc(env(safe-area-inset-top)+0.95rem)] md:px-3">
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-[10px] px-2 pb-[calc(env(safe-area-inset-bottom)+10.4rem)] pt-[calc(env(safe-area-inset-top)+0.95rem)] md:px-3">
         <div className="relative mx-auto flex h-full w-full max-w-[780px] min-h-0 flex-1 flex-col overflow-visible">
           <div className="relative z-10 grid h-full min-h-0 w-full grid-rows-[auto_minmax(0,1fr)] gap-[10px] p-0 md:p-0">
             <GameQuestionCard className="w-full">
@@ -381,24 +369,16 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
             <div className="relative min-h-0 flex-1 overflow-visible pt-[10px]">
               <div className="relative z-10 h-full w-full">
                 <div
-                  aria-hidden="true"
-                  className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-[1.2rem] bg-slate-950/72 shadow-[0_18px_38px_rgba(2,6,23,0.34)] backdrop-blur-[1px]"
-                  style={{
-                    top: BLUEPRINT_BOARD_TOP,
-                    width: 'min(92vw, 34rem, 58vh)',
-                    height: 'min(92vw, 34rem, 58vh)',
-                  }}
-                />
-                <div
-                  className="absolute left-1/2 flex aspect-square -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-[0.9rem] bg-slate-950/42"
+                  className="absolute left-1/2 flex aspect-square -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-[0.9rem] bg-transparent"
                   style={{
                     top: BLUEPRINT_BOARD_TOP,
                     width: BLUEPRINT_BOARD_SIZE,
                     height: BLUEPRINT_BOARD_SIZE,
                   }}
                 >
-                  <BlueprintGrid />
-                  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(125,211,252,0.08),rgba(59,130,246,0.02)_65%,transparent_100%)]" />
+                  <div className="absolute inset-0 opacity-60">
+                    <BlueprintGrid />
+                  </div>
                   <div className="pointer-events-none absolute left-3 top-3 z-20 rounded-full border border-cyan-100/35 bg-slate-950/65 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-50 shadow-[0_0_18px_rgba(2,6,23,0.25)] backdrop-blur-sm md:text-[11px]">
                     L {formatBlueprintValue(blueprintLength)}
                   </div>
@@ -445,7 +425,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
 
           <div
             className="fixed left-0 right-0 z-30"
-            style={{ bottom: 'calc(env(safe-area-inset-bottom) + 4.9rem)' }}
+            style={{ bottom: 'calc(env(safe-area-inset-bottom) + 5.1rem)' }}
           >
             <div className="mx-auto flex w-full max-w-[780px] flex-col gap-2 px-2 md:px-3">
               <div className="grid grid-cols-2 gap-2">
@@ -499,7 +479,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className={`absolute bottom-[calc(env(safe-area-inset-bottom)+4.6rem)] left-1/2 z-20 -translate-x-1/2 rounded-full border px-5 py-2 shadow-2xl ${
+                className={`absolute bottom-[calc(env(safe-area-inset-bottom)+10.25rem)] left-1/2 z-20 w-[min(92vw,30rem)] -translate-x-1/2 rounded-[1rem] border px-4 py-2 text-center shadow-2xl ${
                   feedback.type === 'success'
                     ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-100'
                     : 'border-rose-500/50 bg-rose-500/10 text-amber-100'

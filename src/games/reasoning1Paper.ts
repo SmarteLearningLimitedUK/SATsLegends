@@ -223,11 +223,13 @@ const draftQuestion = (rng: () => number, template: ReasoningTemplate): DraftRea
   switch (template) {
     case 'number_order': {
       const values = shuffle(rng, [randomInt(rng, 1200, 2400), randomInt(rng, 2600, 3900), randomInt(rng, 4100, 5600), randomInt(rng, 5800, 7600)]);
-      const ordered = [...values].sort((a, b) => a - b).join(', ');
+      const orderedValues = [...values].sort((a, b) => a - b).map(String);
+      const ordered = orderedValues.join('|');
       return {
         question: `Put these numbers in order from smallest to largest: ${values.join(', ')}`,
         answer: ordered,
-        acceptedAnswers: [ordered.replace(/\s/g, '')],
+        acceptedAnswers: [orderedValues.join(', ')],
+        choices: values.map(String),
         marks: 1,
         type: 'number',
         responseMode: 'ordering',

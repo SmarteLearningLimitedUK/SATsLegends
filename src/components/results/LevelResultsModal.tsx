@@ -9,6 +9,7 @@ import { BonusBreakdown as BonusBreakdownType, StarCount } from '../../lib/progr
 import CelebrationSplash from '../CelebrationSplash';
 import successRoundBackground from '../../assets/end of round screen/success screen.jpg';
 import failureRoundBackground from '../../assets/end of round screen/failure screen.jpg';
+import { getAchievementDefinition } from '../../systems/progression/achievementCatalog';
 
 interface LevelResultsModalProps {
   isOpen: boolean;
@@ -26,6 +27,7 @@ interface LevelResultsModalProps {
     currentXp: number;
     xpRequiredForNextLevel: number;
     leveledUp: boolean;
+    achievementsUnlocked?: string[];
   } | null;
   onRetry: () => void;
   onNext?: () => void;
@@ -132,6 +134,9 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
   if (!result) return null;
 
   const isVictory = result.type === 'victory';
+  const unlockedAchievements = (result.achievementsUnlocked || [])
+    .map((id) => getAchievementDefinition(id))
+    .filter((achievement): achievement is NonNullable<typeof achievement> => Boolean(achievement));
   const resultBackground = isVictory ? successRoundBackground : failureRoundBackground;
   const celebrationMessage = isPractice
     ? 'Practice Complete!'
@@ -237,6 +242,25 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
                   </div>
 
                   <BonusBreakdown bonuses={result.bonuses} />
+
+                  {unlockedAchievements.length ? (
+                    <div className="rounded-[1.2rem] border border-amber-200/30 bg-amber-300/10 p-3 md:p-4">
+                      <div className="text-center text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/90">
+                        Achievement Unlocked
+                      </div>
+                      <div className="mt-3 grid gap-2">
+                        {unlockedAchievements.map((achievement) => (
+                          <div
+                            key={achievement.id}
+                            className="rounded-[1rem] border border-white/12 bg-white/6 px-3 py-2 text-left"
+                          >
+                            <div className="text-sm font-black text-amber-100">{achievement.name}</div>
+                            <div className="mt-0.5 text-xs font-semibold text-white/78">{achievement.description}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
                 </>
               )}
 

@@ -60,7 +60,7 @@ type ProjectileState = {
 const AIM_DELAY = 360;
 const HIT_SHAKE_DURATION = 520;
 const PROJECTILE_RADIUS = 10;
-const TARGET_RADIUS = 34;
+const TARGET_RADIUS = 42;
 const INITIAL_TIMER = 90;
 const INITIAL_LIVES = 3;
 const POINTS_PER_HIT = 250;
@@ -1004,7 +1004,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     const canvas = canvasRef.current;
     const viewWidth = canvas ? canvas.width / window.devicePixelRatio : 390;
     const viewHeight = canvas ? canvas.height / window.devicePixelRatio : 560;
-    const targetWorld = getSideTargetWorld(viewWidth, viewHeight);
+    const targetWorld = getEnemyPortraitTargetWorld(viewWidth, viewHeight);
     projectileRef.current = buildProjectile(
       resolvedAngle,
       targetWorld.x,
@@ -1084,7 +1084,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       const projectile = projectileRef.current;
       const correctAnswer = activeQuestion?.correctAnswer ?? 0;
       const allowHit = selectedAnswerRef.current === correctAnswer;
-      const enemyWorld = getSideTargetWorld(viewWidth, viewHeight);
+      const enemyPlatformWorld = getSideTargetWorld(viewWidth, viewHeight);
+      const enemyWorld = getEnemyPortraitTargetWorld(viewWidth, viewHeight);
       const showSideSetup = !projectile?.active && !impactResultRef.current;
       if (showSideSetup) {
         cameraRef.current = { ...cameraHomeRef.current };
@@ -1153,10 +1154,11 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       const toScreen = (x: number, y: number) => worldToScreen(x, y, camera.x, camera.y, viewWidth, viewHeight);
 
       const originScreen = toScreen(0, 0);
-      const enemyScreen = toScreen(enemyWorld.x, enemyWorld.y);
+      const enemyScreen = toScreen(enemyPlatformWorld.x, enemyPlatformWorld.y);
+      const enemyPortraitScreen = toScreen(enemyWorld.x, enemyWorld.y);
       const revealEnemy = Boolean(
         impactResultRef.current === 'hit'
-        || (projectile && (projectile.x > enemyWorld.x - (viewWidth * 0.95) || enemyScreen.x < viewWidth * 1.12))
+        || (projectile && (projectile.x > enemyWorld.x - (viewWidth * 0.95) || enemyPortraitScreen.x < viewWidth * 1.12))
       );
       const skyOffsetX = camera.x * SKY_DRIFT_FACTOR;
       const skyOffsetY = camera.y * SKY_DRIFT_FACTOR * 0.45;
@@ -1246,15 +1248,19 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         const enemies = enemySpritesRef.current;
         const enemyIndex = enemies.length ? (questionIndex % enemies.length) : 0;
         const enemy = enemies[enemyIndex];
+        ctx.restore();
+
+        ctx.save();
+        if (projectile?.active) {
+          ctx.translate(Math.sin(timestamp * 0.02) * 2, Math.cos(timestamp * 0.018) * 1.5);
+        }
+        ctx.translate(enemyPortraitScreen.x, enemyPortraitScreen.y);
         if (enemy) {
-          ctx.save();
-          ctx.translate(0, -enemySize * 0.12);
           drawEnemyPortrait(ctx, enemy, enemySize);
-          ctx.restore();
         } else {
           ctx.fillStyle = 'rgba(250,204,21,0.85)';
           ctx.beginPath();
-          ctx.arc(0, -enemySize * 0.1, enemySize * 0.12, 0, Math.PI * 2);
+          ctx.arc(0, 0, enemySize * 0.12, 0, Math.PI * 2);
           ctx.fill();
         }
         ctx.restore();
@@ -1279,7 +1285,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       if (impactResultRef.current === 'hit' && revealEnemy) {
         ctx.fillStyle = 'rgba(250,204,21,0.45)';
         ctx.beginPath();
-        ctx.arc(enemyScreen.x, enemyScreen.y, 34, 0, Math.PI * 2);
+        ctx.arc(enemyPortraitScreen.x, enemyPortraitScreen.y, 38, 0, Math.PI * 2);
         ctx.fill();
       }
 

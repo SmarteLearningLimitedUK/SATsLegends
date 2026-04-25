@@ -513,7 +513,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   const focusPct = (question.focusIndex / (question.labels.length - 1)) * 100;
   const monsterRemainingHealth = Math.max(0, goalCorrect - correctCount);
   const monsterHealthPct = (monsterRemainingHealth / goalCorrect) * 100;
-  const activeMonsterHitSrc = monsterHitAnimationIndex === 0 ? monsterHitA : monsterHitB;
+  const activeMonsterHitSrc = idleMonsterSrc;
 
   return (
     <div ref={playfieldRef} className="relative h-full w-full overflow-hidden">
