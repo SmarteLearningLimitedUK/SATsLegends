@@ -1,7 +1,6 @@
 import React from 'react';
 import { GUI_SLICES } from '../assets/reskin/guiSlices.ts';
 import { GameUiShell } from '../components/game-ui/GameUiKit';
-import { playGameSound } from '../audio/gameAudio';
 
 type WrapperProps = {
   children: React.ReactNode;
@@ -219,11 +218,9 @@ export const PrimaryActionCTA: React.FC<ActionButtonProps> = ({
     type={type}
     onClick={() => {
       if (disabled) return;
-      playGameSound('click');
       onClick?.();
     }}
     disabled={disabled}
-    data-ui-sound="handled"
     className={cn(
       'ui-button-primary gameplay-cta-primary mission-action-btn mission-action-btn-primary',
       'inline-flex min-h-[48px] items-center justify-center border-0 bg-transparent',
@@ -257,11 +254,9 @@ export const SecondaryUtilityButton: React.FC<ActionButtonProps> = ({
     type={type}
     onClick={() => {
       if (disabled) return;
-      playGameSound('click');
       onClick?.();
     }}
     disabled={disabled}
-    data-ui-sound="handled"
     className={cn(
       'ui-button-secondary gameplay-cta-secondary mission-action-btn mission-action-btn-secondary',
       'inline-flex min-h-[48px] items-center justify-center border-0 bg-transparent',

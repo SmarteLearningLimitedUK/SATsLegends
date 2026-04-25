@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import AssetIcon from './AssetIcon';
 import { triggerHaptic } from '../haptics';
-import { playGameSound } from '../audio/gameAudio';
 import {
   GAME_AUDIO_STORAGE_KEY,
   GAME_HUD_MUTE_EVENT,
@@ -43,7 +42,6 @@ const GameActionDock: React.FC<GameActionDockProps> = ({
 
   const handleToggleMute = () => {
     const nextMuted = !isMuted;
-    playGameSound('click', isMuted);
     triggerHaptic('tap');
     setIsMuted(nextMuted);
     window.dispatchEvent(
@@ -76,11 +74,9 @@ const GameActionDock: React.FC<GameActionDockProps> = ({
           <button
             type="button"
             onClick={() => {
-              playGameSound('click', isMuted);
               triggerHaptic('tap');
               onBack();
             }}
-            data-ui-sound="handled"
             className={dockButtonClass}
             aria-label="Back"
             title="Back to map"
@@ -90,7 +86,6 @@ const GameActionDock: React.FC<GameActionDockProps> = ({
           <button
             type="button"
             onClick={handleToggleMute}
-            data-ui-sound="handled"
             className={dockButtonClass}
             aria-label={isMuted ? 'Unmute audio' : 'Mute audio'}
             aria-pressed={isMuted}

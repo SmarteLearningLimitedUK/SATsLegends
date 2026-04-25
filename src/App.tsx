@@ -44,6 +44,7 @@ import { getXpRequiredForLevel } from './lib/progression/getXpRequiredForLevel';
 import { calculateQuestionXP, XpDifficulty } from './lib/progression/calculateXp';
 import { CACHE_BUSTER } from './cacheBuster';
 import { playGameSound } from './audio/gameAudio';
+import { playClickSound } from './utils/soundManager';
 
 type SessionMetricsState = {
   correct: number;
@@ -328,25 +329,23 @@ const App: React.FC = () => {
   useMiniGameLifecycle({ screen, selectedLevel });
 
   useEffect(() => {
-    if (screen !== 'gameplay') return undefined;
-
-    const handleGameplayClick = (event: MouseEvent) => {
+    const handleGlobalButtonClick = (event: MouseEvent) => {
       const target = event.target;
       if (!(target instanceof Element)) return;
 
       const button = target.closest('button');
       if (!button) return;
-      if (button.hasAttribute('data-ui-sound')) return;
       if (button.hasAttribute('disabled')) return;
+      if (button.getAttribute('aria-disabled') === 'true') return;
 
-      playGameSound('click', undefined, selectedLevel?.blueprintKey);
+      playClickSound();
     };
 
-    document.addEventListener('click', handleGameplayClick, true);
+    document.addEventListener('click', handleGlobalButtonClick, true);
     return () => {
-      document.removeEventListener('click', handleGameplayClick, true);
+      document.removeEventListener('click', handleGlobalButtonClick, true);
     };
-  }, [screen]);
+  }, []);
 
   const sessionState: GameplaySessionState = useMemo(() => ({
     timeLeft: globalMiniGameHudTimeLeft,

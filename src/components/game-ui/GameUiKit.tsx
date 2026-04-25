@@ -8,7 +8,6 @@ import {
   Volume2,
   VolumeX,
 } from 'lucide-react';
-import { playGameSound } from '../../audio/gameAudio';
 
 type WrapperProps = {
   children: React.ReactNode;
@@ -113,11 +112,9 @@ export const IconButton: React.FC<IconButtonProps> = ({ icon, label, onClick, di
     type="button"
     onClick={() => {
       if (disabled) return;
-      playGameSound('click');
       onClick?.();
     }}
     disabled={disabled}
-    data-ui-sound="handled"
     aria-label={label}
     className={cn(
       'ui-icon-button inline-flex h-11 w-11 items-center justify-center p-0',
@@ -177,11 +174,9 @@ export const PrimaryButton: React.FC<ButtonProps> = ({ children, className, onCl
     type={type}
     onClick={() => {
       if (disabled) return;
-      playGameSound('click');
       onClick?.();
     }}
     disabled={disabled}
-    data-ui-sound="handled"
     className={cn(
       'ui-button-primary inline-flex h-[48px] w-full items-center justify-center gap-2 border-0 bg-transparent',
       'px-4 text-[clamp(14px,2vh,18px)] font-black tracking-[0.01em]',
@@ -198,11 +193,9 @@ export const SecondaryButton: React.FC<ButtonProps> = ({ children, className, on
     type={type}
     onClick={() => {
       if (disabled) return;
-      playGameSound('click');
       onClick?.();
     }}
     disabled={disabled}
-    data-ui-sound="handled"
     className={cn(
       'ui-button-secondary inline-flex h-[48px] items-center justify-center border-0 bg-transparent',
       'px-3 text-[10px] font-black uppercase tracking-[0.1em]',

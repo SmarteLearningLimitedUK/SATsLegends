@@ -69,6 +69,19 @@ const HIGH_SCORE_STARS = {
   gold: 4500,
 } as const;
 
+const BOSS_PAPER_DAILY_BEST_PREFIX = 'sats-legends-boss-paper-best';
+
+const getTodayKey = () => new Date().toISOString().slice(0, 10);
+
+const isBestBossPaperAttemptToday = (gameType: SupportedBossGameType, score: number) => {
+  if (typeof window === 'undefined') return true;
+  const storageKey = `${BOSS_PAPER_DAILY_BEST_PREFIX}:${gameType}:${getTodayKey()}`;
+  const previousBest = Number(window.localStorage.getItem(storageKey) ?? -1);
+  if (Number.isFinite(previousBest) && score <= previousBest) return false;
+  window.localStorage.setItem(storageKey, String(score));
+  return true;
+};
+
 export { isBossEncounterGameType };
 
 const shuffle = <T,>(items: T[]) => [...items].sort(() => Math.random() - 0.5);
@@ -1321,11 +1334,18 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
 
   const submitArithmeticPaper = (completedBeforeTimer: boolean) => {
     if (!arithmeticPaper || arithmeticResult) return;
+    const preliminaryResult = markArithmeticPaper(
+      arithmeticPaper,
+      arithmeticAnswers,
+      completedBeforeTimer,
+      sessionState?.timeLeft ?? (completedBeforeTimer ? arithmeticPaper.timeLimitSeconds : 0),
+    );
     const result = markArithmeticPaper(
       arithmeticPaper,
       arithmeticAnswers,
       completedBeforeTimer,
       sessionState?.timeLeft ?? (completedBeforeTimer ? arithmeticPaper.timeLimitSeconds : 0),
+      isBestBossPaperAttemptToday(gameType, preliminaryResult.score),
     );
     setArithmeticResult(result);
     setScore(result.xpAwarded);
@@ -1384,7 +1404,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
 
   const submitReasoningPaper = (completedBeforeTimer: boolean) => {
     if (!reasoningPaper || reasoningResult) return;
-    const result = isReasoning2Paper
+    const preliminaryResult = isReasoning2Paper
       ? markReasoning2Paper(
           reasoningPaper,
           reasoningAnswers,
@@ -1396,6 +1416,21 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
           reasoningAnswers,
           completedBeforeTimer,
           sessionState?.timeLeft ?? (completedBeforeTimer ? reasoningPaper.timeLimitSeconds : 0),
+        );
+    const result = isReasoning2Paper
+      ? markReasoning2Paper(
+          reasoningPaper,
+          reasoningAnswers,
+          completedBeforeTimer,
+          sessionState?.timeLeft ?? (completedBeforeTimer ? reasoningPaper.timeLimitSeconds : 0),
+          isBestBossPaperAttemptToday(gameType, preliminaryResult.score),
+        )
+      : markReasoning1Paper(
+          reasoningPaper,
+          reasoningAnswers,
+          completedBeforeTimer,
+          sessionState?.timeLeft ?? (completedBeforeTimer ? reasoningPaper.timeLimitSeconds : 0),
+          isBestBossPaperAttemptToday(gameType, preliminaryResult.score),
         );
     setReasoningResult(result);
     setReasoningScreen('results');
