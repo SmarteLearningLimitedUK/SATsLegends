@@ -7,7 +7,7 @@ import {
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import sceneBackground from '../../range rodeo.jpg';
-import rodeoSuccessAnim from '../assets/rodeo anim.gif';
+import rodeoSuccessAnim from '../assets/rodeo anim.webp';
 import {
   generateRangeRodeoRound,
   isRangeRodeoAnswerCorrect,
