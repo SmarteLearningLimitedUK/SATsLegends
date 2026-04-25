@@ -158,6 +158,11 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
               <div
                 className={`relative flex ${timerHeightClass} ${timerWidthClass} items-center rounded-full ${compactBossTimer ? 'backdrop-blur-[2px]' : ''} ${timerShellClass} ${compactBossTimer ? 'px-1' : 'px-1.5'}`}
               >
+                {hideTimerBar ? (
+                  <span className={`pointer-events-none absolute inset-0 flex items-center justify-center font-black uppercase ${timerTextClass} [text-shadow:0_1px_0_rgba(0,0,0,0.35)] ${compactBossTimer ? 'text-[clamp(0.62rem,1.55vw,0.8rem)]' : 'text-[clamp(0.72rem,1.85vw,0.94rem)]'}`}>
+                    {timeLabel}
+                  </span>
+                ) : null}
                 <div className="flex min-w-0 flex-1 items-center">
                   <div className={`inline-flex h-[76%] ${compactBossTimer ? 'w-[clamp(20px,5.2vw,26px)]' : 'w-[clamp(24px,6.2vw,32px)]'} shrink-0 items-center justify-center rounded-full ${timerIconShellClass} text-slate-900 shadow-[0_3px_8px_rgba(2,6,23,0.38)]`}>
                     <img
@@ -189,9 +194,11 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
                     </div>
                   )}
                 </div>
-                <span className={`${hideTimerBar ? (compactBossTimer ? 'ml-0.5' : 'ml-1') : 'ml-1.5'} shrink-0 font-black uppercase ${timerTextClass} [text-shadow:0_1px_0_rgba(0,0,0,0.35)] ${hideTimerBar ? (compactBossTimer ? 'text-[clamp(0.62rem,1.55vw,0.8rem)]' : 'text-[clamp(0.72rem,1.85vw,0.94rem)]') : variant === 'hub' ? 'text-[clamp(0.6rem,1.6vw,0.8rem)]' : 'text-[clamp(0.68rem,1.8vw,0.9rem)]'}`}>
-                  {timeLabel}
-                </span>
+                {hideTimerBar ? null : (
+                  <span className={`ml-1.5 shrink-0 font-black uppercase ${timerTextClass} [text-shadow:0_1px_0_rgba(0,0,0,0.35)] ${variant === 'hub' ? 'text-[clamp(0.6rem,1.6vw,0.8rem)]' : 'text-[clamp(0.68rem,1.8vw,0.9rem)]'}`}>
+                    {timeLabel}
+                  </span>
+                )}
               </div>
             </div>
 

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import welcomeHeroSelectSrc from '../assets/sounds/calmsounds/silk-swordlight-char-start-select.mp3.mpeg';
 import { GAME_AUDIO_STORAGE_KEY, GAME_HUD_MUTE_SYNC_EVENT } from '../gameHudEvents';
+import { addPageAudioFocusListeners, isPageAudioAllowed } from './audioFocus';
 
 const WELCOME_BACKGROUND_VOLUME = 0.26;
 
@@ -20,7 +21,7 @@ export const useWelcomeBackgroundAudio = (enabled: boolean) => {
     audio.muted = isAudioMuted();
 
     const tryPlay = () => {
-      if (disposed || audio.muted) return;
+      if (disposed || audio.muted || !isPageAudioAllowed()) return;
 
       try {
         void audio.play().catch(() => {});
@@ -42,6 +43,15 @@ export const useWelcomeBackgroundAudio = (enabled: boolean) => {
       tryPlay();
     };
 
+    const handleAudioFocusChange = () => {
+      if (disposed) return;
+      if (!isPageAudioAllowed()) {
+        audio.pause();
+        return;
+      }
+      tryPlay();
+    };
+
     const handleUserGesture = () => {
       tryPlay();
     };
@@ -49,6 +59,7 @@ export const useWelcomeBackgroundAudio = (enabled: boolean) => {
     window.addEventListener(GAME_HUD_MUTE_SYNC_EVENT, handleMuteSync as EventListener);
     window.addEventListener('pointerdown', handleUserGesture, { capture: true });
     window.addEventListener('keydown', handleUserGesture, { capture: true });
+    const removePageAudioFocusListeners = addPageAudioFocusListeners(handleAudioFocusChange);
 
     tryPlay();
 
@@ -57,6 +68,7 @@ export const useWelcomeBackgroundAudio = (enabled: boolean) => {
       window.removeEventListener(GAME_HUD_MUTE_SYNC_EVENT, handleMuteSync as EventListener);
       window.removeEventListener('pointerdown', handleUserGesture, { capture: true });
       window.removeEventListener('keydown', handleUserGesture, { capture: true });
+      removePageAudioFocusListeners();
       audio.pause();
       audio.src = '';
     };

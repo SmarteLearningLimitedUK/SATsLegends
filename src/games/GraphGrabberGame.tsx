@@ -714,8 +714,8 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
         onAction={() => setShowPracticeIntro(false)}
       />
 
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.65rem)] pt-2 md:gap-3 md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+0.8rem)] md:pt-3">
-        <div className="flex min-h-0 flex-1 flex-col gap-2 md:gap-3">
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+5.25rem)] pt-2 md:gap-3 md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+5.6rem)] md:pt-3">
+        <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pr-1 md:gap-3">
           <div className="flex justify-center">
             <GameQuestionCard title={round.title}>
               <span>The Monster Minds have corrupted the manifest.</span>
@@ -723,12 +723,12 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
             </GameQuestionCard>
           </div>
 
-          <div className="grid min-h-0 flex-1 gap-2 md:grid-rows-[minmax(0,1fr)_auto] md:gap-3">
-            <div className="min-h-0 translate-y-[15px]">
+          <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] gap-2 md:gap-3">
+            <div className="min-h-0 overflow-hidden pt-2">
               <GraphBoard round={round} />
             </div>
 
-            <section className="translate-y-[20px] rounded-[1.15rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(10,17,37,0.84))] p-2.5 shadow-[0_18px_30px_rgba(2,6,23,0.18)] md:p-3">
+            <section className="rounded-[1.15rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(10,17,37,0.84))] p-2.5 shadow-[0_18px_30px_rgba(2,6,23,0.18)] md:p-3">
               <div className={`grid gap-2 ${optionGridClass}`}>
                 {round.options.map((choice) => {
                   const selected = selectedIds.includes(choice.id);

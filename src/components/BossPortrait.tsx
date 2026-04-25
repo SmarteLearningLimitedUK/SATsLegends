@@ -8,9 +8,10 @@ interface BossPortraitProps {
   pose: BossPose;
   className?: string;
   compact?: boolean;
+  framed?: boolean;
 }
 
-const BossPortrait: React.FC<BossPortraitProps> = ({ encounter, pose, className = '', compact = false }) => {
+const BossPortrait: React.FC<BossPortraitProps> = ({ encounter, pose, className = '', compact = false, framed = true }) => {
   const availablePoses = useMemo(
     () => Object.keys(BOSS_ASSETS[encounter.assetId].poses) as BossPose[],
     [encounter.assetId],
@@ -50,6 +51,26 @@ const BossPortrait: React.FC<BossPortraitProps> = ({ encounter, pose, className 
 
     return () => window.clearInterval(timeoutId);
   }, [pose, poseSequence]);
+
+  if (!framed) {
+    return (
+      <div className={`relative flex items-end justify-center ${className}`}>
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.img
+            key={`${encounter.assetId}-${displayedPose}-${poseIndex}`}
+            src={image}
+            alt={encounter.name}
+            initial={{ opacity: 0, y: 4, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -4, scale: 1.02 }}
+            transition={{ duration: 0.26, ease: 'easeOut' }}
+            className="relative z-10 h-full w-full object-contain drop-shadow-[0_18px_28px_rgba(0,0,0,0.35)]"
+            draggable={false}
+          />
+        </AnimatePresence>
+      </div>
+    );
+  }
 
   return (
     <div className={`relative overflow-hidden rounded-[1.5rem] border border-white/16 bg-[linear-gradient(180deg,rgba(12,18,28,0.88),rgba(5,10,18,0.94))] shadow-[0_16px_34px_rgba(0,0,0,0.28)] ${className}`}>

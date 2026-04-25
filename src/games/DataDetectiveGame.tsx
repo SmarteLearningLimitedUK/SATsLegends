@@ -28,6 +28,7 @@ import {
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import dataDetectiveBackground from '../assets/maps/backgroundsforgames/data detective.jpg';
+import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 
 interface StolenItem {
   name: string;
@@ -43,7 +44,7 @@ interface Suspect {
   portrait?: string;
 }
 
-interface DataDetectiveGameProps {
+interface DataDetectiveGameProps extends MiniGameShellContractProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
@@ -104,6 +105,8 @@ const scoreToStars = (XP: number) => {
 };
 
 const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
+  isPractice,
+  practiceBriefing,
   useSharedTopHud = false,
   onVictory,
   onGameOver,
@@ -122,7 +125,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
   const [selectedSuspectId, setSelectedSuspectId] = useState<number | null>(null);
   const [lives, setLives] = useState(3);
   const [incorrectSuspectIds, setIncorrectSuspectIds] = useState<number[]>([]);
-  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(useSharedTopHud));
+  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
   const maxCaseValue = Math.max(...currentCase.map((item) => item.amount), 0);
   const barAxisMax = Math.max(1, maxCaseValue);
@@ -195,8 +198,8 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
   }, [generateCase]);
 
   useEffect(() => {
-    setShowPracticeIntro(Boolean(useSharedTopHud));
-  }, [useSharedTopHud]);
+    setShowPracticeIntro(Boolean(isPractice));
+  }, [isPractice]);
 
   const handleSuspectClick = (id: number) => {
     if (gameState !== 'playing') return;
@@ -256,6 +259,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
         open={showPracticeIntro}
         title="Data Detective"
         body="The Monster Minds have scrambled the evidence board.\nCompare the chart with each suspect and find who matches.\nRead the totals carefully before you accuse."
+        briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
       <GameScreenLayout

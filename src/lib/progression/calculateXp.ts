@@ -40,11 +40,6 @@ export const xpConfig = {
     quarterRemaining: 40,
     someRemaining: 15,
   },
-  starsBonuses: {
-    stars3: 100,
-    stars2: 50,
-    stars1: 20,
-  },
   replayMultipliers: {
     completedReplay: 0.5,
     dailyReplayLimitExceeded: 0.25,
@@ -82,7 +77,6 @@ export type CalculateLevelXPArgs = {
   totalQuestions: number;
   timeRemaining: number;
   totalTime: number;
-  stars: number;
   replayCount: number;
 };
 
@@ -162,13 +156,6 @@ const getLevelTimeBonus = (timeRemaining: number, totalTime: number) => {
   return 0;
 };
 
-const getStarsBonus = (stars: number) => {
-  if (stars >= 3) return xpConfig.starsBonuses.stars3;
-  if (stars >= 2) return xpConfig.starsBonuses.stars2;
-  if (stars >= 1) return xpConfig.starsBonuses.stars1;
-  return 0;
-};
-
 const applyReplayMultiplier = (xp: number, replayCount: number) => {
   if (replayCount > 3) return xp * xpConfig.replayMultipliers.dailyReplayLimitExceeded;
   if (replayCount > 0) return xp * xpConfig.replayMultipliers.completedReplay;
@@ -181,7 +168,6 @@ export const calculateLevelXP = ({
   totalQuestions,
   timeRemaining,
   totalTime,
-  stars,
   replayCount,
 }: CalculateLevelXPArgs): { xpGained: number; bonuses: BonusBreakdown[] } => {
   const safeTotalQuestions = Math.max(0, Math.floor(clampFinite(totalQuestions)));
@@ -190,14 +176,12 @@ export const calculateLevelXP = ({
   const questionTotal = questionXP.reduce((total, xp) => total + Math.max(0, Math.round(clampFinite(xp))), 0);
   const completionBonus = getCompletionBonus(accuracyPercent);
   const timeBonus = getLevelTimeBonus(clampFinite(timeRemaining), clampFinite(totalTime));
-  const starsBonus = getStarsBonus(stars);
-  const rawTotal = questionTotal + completionBonus + timeBonus + starsBonus;
+  const rawTotal = questionTotal + completionBonus + timeBonus;
   const xpGained = Math.max(0, Math.round(applyReplayMultiplier(rawTotal, Math.max(0, Math.floor(replayCount)))));
   const bonuses: BonusBreakdown[] = [];
 
   if (completionBonus > 0) bonuses.push({ label: 'Accuracy Bonus', amount: completionBonus });
   if (timeBonus > 0) bonuses.push({ label: 'Time Bonus', amount: timeBonus });
-  if (starsBonus > 0) bonuses.push({ label: 'Stars Bonus', amount: starsBonus });
   if (replayCount > 3) {
     bonuses.push({ label: 'Daily Replay Adjustment', amount: xpGained - Math.round(rawTotal) });
   } else if (replayCount > 0) {

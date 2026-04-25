@@ -123,6 +123,33 @@ const PLATE_POSITIONS_BY_COUNT: Record<number, Array<{ x: number; y: number }>> 
 
 const createEmptyPlates = (plateCount: number) => Array.from({ length: plateCount }, () => [] as string[]);
 
+// Deterministic "drop points" for slices on a plate (normalized to plate size).
+// These make placements feel intentional and consistent instead of drifting/random scatter.
+const SHARE_SPLITTER_PLATE_DROP_POINTS: SlicePlacement[] = (() => {
+  const points: SlicePlacement[] = [];
+  // Center anchor first.
+  points.push({ x: 0, y: -0.02 });
+
+  const addRing = (count: number, radius: number, angleOffset: number) => {
+    for (let i = 0; i < count; i += 1) {
+      const angle = angleOffset + (i / count) * Math.PI * 2;
+      const stretchX = 1.04;
+      const stretchY = 0.78;
+      points.push({
+        x: Math.cos(angle) * radius * stretchX,
+        y: Math.sin(angle) * radius * stretchY,
+      });
+    }
+  };
+
+  // Two rings is plenty for the typical slice counts; extra slices fall back to the compact spiral.
+  addRing(6, 0.11, -Math.PI / 6);
+  addRing(10, 0.175, 0);
+  addRing(14, 0.235, Math.PI / 14);
+
+  return points;
+})();
+
 let challengeSeed = 0;
 const nextChallengeId = () => {
   challengeSeed += 1;
@@ -429,6 +456,9 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   }, [isPointInsideCakeSource, locked, remainingSlices]);
 
   const getPlateSlicePlacement = useCallback((index: number) => {
+    const snapped = SHARE_SPLITTER_PLATE_DROP_POINTS[index];
+    if (snapped) return snapped;
+
     // Stack slices in a compact spiral so they read as sitting on the plate.
     const angleDegrees = index * 137.50776405;
     const angle = (angleDegrees * Math.PI) / 180;

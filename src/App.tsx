@@ -889,87 +889,6 @@ const App: React.FC = () => {
     goToGameplay();
   };
 
-  const handleAdvanceAfterVictory = () => {
-    if (!selectedIsland || !selectedLevel) {
-      setLevelResult(null);
-      goToHome();
-      return;
-    }
-
-    const completedInIsland = player.completedLevels[selectedIsland.id] || [];
-    const isSequentialIsland = selectedIsland.id === 1;
-    const isLevelConsideredComplete = (levelId: number) => (
-      completedInIsland.includes(levelId) || levelId === selectedLevel.id
-    );
-
-    const isPlaceValuePanic = selectedLevel.blueprintKey === 'place_value_panic';
-    const isPotionPanic = selectedLevel.blueprintKey === 'potion_panic';
-
-    const laneNextLevel = selectedLevel.miniGameKey && selectedLevel.miniGameLevel
-      ? selectedIsland.levels.find((level) => (
-        level.miniGameKey === selectedLevel.miniGameKey
-        && level.miniGameLevel === selectedLevel.miniGameLevel! + 1
-      ))
-      : undefined;
-
-    const placeValueNextLevel = isPlaceValuePanic
-      ? selectedIsland.levels
-          .filter((level) => level.blueprintKey === 'place_value_panic')
-          .sort((a, b) => ((a.miniGameLevel || a.id) - (b.miniGameLevel || b.id)))
-          .find((level) => (
-            (level.miniGameLevel || level.id)
-            > (selectedLevel.miniGameLevel || selectedLevel.id)
-          ))
-      : undefined;
-
-    const potionPanicNextLevel = isPotionPanic
-      ? selectedIsland.levels
-          .filter((level) => level.blueprintKey === 'potion_panic')
-          .sort((a, b) => ((a.miniGameLevel || a.id) - (b.miniGameLevel || b.id)))
-          .find((level) => (
-            (level.miniGameLevel || level.id)
-            > (selectedLevel.miniGameLevel || selectedLevel.id)
-          ))
-      : undefined;
-
-    const sequentialNextLevel = selectedIsland.levels.find(level => level.id === selectedLevel.id + 1);
-    const nextLevel = placeValueNextLevel || potionPanicNextLevel || laneNextLevel || sequentialNextLevel;
-    setLevelResult(null);
-
-    if (nextLevel) {
-      const canEnterNextLevel = nextLevel.isBoss
-        ? selectedIsland.levels
-            .filter(level => level.id < nextLevel.id)
-            .every(level => isLevelConsideredComplete(level.id))
-          && (player.stats?.totalCoinsEarned || 0) >= (nextLevel.bossUnlockCoins || 0)
-        : isSequentialIsland
-          ? nextLevel.miniGameKey && nextLevel.miniGameLevel
-            ? selectedIsland.levels
-                .filter((level) => (
-                  level.miniGameKey === nextLevel.miniGameKey
-                  && (level.miniGameLevel || 0) < (nextLevel.miniGameLevel || 0)
-                ))
-                .every(level => isLevelConsideredComplete(level.id))
-            : selectedIsland.levels
-                .filter(level => level.id < nextLevel.id)
-                .every(level => isLevelConsideredComplete(level.id))
-          : true;
-
-      if (!canEnterNextLevel) {
-        setSelectedLevel(null);
-        goToIslandLevels();
-        return;
-      }
-
-      setSelectedLevel(nextLevel);
-      goToGameplay();
-      return;
-    }
-
-    setSelectedLevel(null);
-    goToHome();
-  };
-
   const handleClaimQuest = (questId: string) => {
     const quest = player.dailyQuests.find(q => q.id === questId);
     if (!quest || quest.isClaimed || quest.current < quest.target) return;
@@ -1132,6 +1051,7 @@ const App: React.FC = () => {
     || selectedLevel?.gameType === 'potion_pour';
   const hideShellLives = isExamBoss;
   const hideGlobalBottomDock = false;
+  const gameplayBackHandler = levelResult ? handleCloseLevelResult : goToIslandLevels;
   const goToProfile = useCallback(() => {
     setScreen('profile');
   }, [setScreen]);
@@ -1216,7 +1136,7 @@ const App: React.FC = () => {
             hideTimerBar={isExamBoss}
             hideAvatar={false}
             hideLives={hideShellLives}
-            onBack={isStandaloneRatioRacer || isStandaloneScaleBuilder || isStandaloneShareSplitter ? goToHome : isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
+            onBack={isStandaloneRatioRacer || isStandaloneScaleBuilder || isStandaloneShareSplitter ? goToHome : isGameplayScreen ? gameplayBackHandler : handleGlobalDockBack}
             variant={isGameplayScreen ? 'gameplay' : 'hub'}
             showActions={false}
           />
@@ -1313,8 +1233,6 @@ const App: React.FC = () => {
                 achievementsUnlocked: levelResult.achievementsUnlocked,
               } : null}
               onRetry={handleRetryLevel}
-              onNext={levelResult?.type === 'victory' ? handleAdvanceAfterVictory : undefined}
-              onMap={handleCloseLevelResult}
               calmBreakLabel={levelResult?.type === 'gameover' && levelResult.wellbeingSuggested ? 'Take A Calm Break' : undefined}
               onCalmBreak={levelResult?.type === 'gameover' && levelResult.wellbeingSuggested
                 ? () => openWellbeingHub({ origin: 'post_fail', islandId: selectedIsland?.id ?? null, suggested: true })
@@ -1346,7 +1264,7 @@ const App: React.FC = () => {
         {!isStartScreen && !hideGlobalBottomDock ? (
           mapHudDock || (
             <GameActionDock
-              onBack={isStandaloneRatioRacer || isStandaloneScaleBuilder || isStandaloneShareSplitter ? goToHome : isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
+              onBack={isStandaloneRatioRacer || isStandaloneScaleBuilder || isStandaloneShareSplitter ? goToHome : isGameplayScreen ? gameplayBackHandler : handleGlobalDockBack}
               compact
               variant="global"
             />

@@ -1,4 +1,5 @@
 import { GAME_AUDIO_STORAGE_KEY } from '../gameHudEvents';
+import { isPageAudioAllowed } from './audioFocus';
 import angleArenaShootSrc from '../assets/sounds/angle arena shoot.mp3';
 import bossDeathSrc from '../assets/sounds/boss death.mp3';
 import changeCounterCorrectSrc from '../assets/sounds/change counter correct.mp3';
@@ -201,7 +202,7 @@ const scheduleTone = (ctx: AudioContext, step: ToneStep, startAt: number) => {
 };
 
 export const playGameSound = (effect: GameSoundEffect, mutedOverride?: boolean, context?: GameSoundContext) => {
-  if (typeof window === 'undefined' || isMuted(mutedOverride)) return false;
+  if (typeof window === 'undefined' || isMuted(mutedOverride) || !isPageAudioAllowed()) return false;
 
   const asset = getAudioAsset(effect, context);
   if (asset && playAudioAsset(asset)) {

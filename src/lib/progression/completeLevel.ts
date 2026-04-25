@@ -103,7 +103,6 @@ export const completeLevel = (
         totalQuestions,
         timeRemaining: args.timeRemaining ?? 0,
         totalTime: args.totalTime ?? 0,
-        stars,
         replayCount,
       });
 

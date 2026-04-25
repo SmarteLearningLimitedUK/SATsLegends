@@ -1,4 +1,5 @@
 import buttonClickSrc from '../assets/button click.ogg';
+import { isPageAudioAllowed } from '../audio/audioFocus';
 
 const createClickSound = () => {
   if (typeof Audio === 'undefined') return null;
@@ -12,7 +13,7 @@ const createClickSound = () => {
 const clickSound = createClickSound();
 
 export function playClickSound() {
-  if (!clickSound) return;
+  if (!clickSound || !isPageAudioAllowed()) return;
 
   try {
     clickSound.currentTime = 0;

@@ -4,7 +4,7 @@ export const loadSortedImages = (record: Record<string, string>): string[] => (
     .map(([, value]) => value)
 );
 
-const bossImageModules = import.meta.glob('./**/*.{png,jpg,jpeg,webp,svg}', {
+const bossImageModules = import.meta.glob('./**/*.png', {
   eager: true,
   import: 'default',
 }) as Record<string, string>;

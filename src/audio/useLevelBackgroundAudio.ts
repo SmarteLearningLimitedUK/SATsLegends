@@ -8,6 +8,7 @@ import saffronSirensSrc from '../assets/sounds/level/saffron-sirens load screen.
 import sunlitDuelSrc from '../assets/sounds/level/sunlit-duel.mp3.mpeg';
 import velvetTruceSrc from '../assets/sounds/level/velvet-truce.mp3.mpeg';
 import { GAME_AUDIO_STORAGE_KEY, GAME_HUD_MUTE_SYNC_EVENT } from '../gameHudEvents';
+import { addPageAudioFocusListeners, isPageAudioAllowed } from './audioFocus';
 
 const LEVEL_BACKGROUND_TRACKS = [
   brassWatersparkSrc,
@@ -50,7 +51,7 @@ export const useLevelBackgroundAudio = (
     audio.muted = isAudioMuted();
 
     const tryPlay = () => {
-      if (disposed || audio.muted) return;
+      if (disposed || audio.muted || !isPageAudioAllowed()) return;
 
       try {
         void audio.play().catch(() => {});
@@ -72,6 +73,15 @@ export const useLevelBackgroundAudio = (
       tryPlay();
     };
 
+    const handleAudioFocusChange = () => {
+      if (disposed) return;
+      if (!isPageAudioAllowed()) {
+        audio.pause();
+        return;
+      }
+      tryPlay();
+    };
+
     const handleUserGesture = () => {
       tryPlay();
     };
@@ -79,6 +89,7 @@ export const useLevelBackgroundAudio = (
     window.addEventListener(GAME_HUD_MUTE_SYNC_EVENT, handleMuteSync as EventListener);
     window.addEventListener('pointerdown', handleUserGesture, { capture: true });
     window.addEventListener('keydown', handleUserGesture, { capture: true });
+    const removePageAudioFocusListeners = addPageAudioFocusListeners(handleAudioFocusChange);
 
     tryPlay();
 
@@ -87,6 +98,7 @@ export const useLevelBackgroundAudio = (
       window.removeEventListener(GAME_HUD_MUTE_SYNC_EVENT, handleMuteSync as EventListener);
       window.removeEventListener('pointerdown', handleUserGesture, { capture: true });
       window.removeEventListener('keydown', handleUserGesture, { capture: true });
+      removePageAudioFocusListeners();
       audio.pause();
       audio.src = '';
     };

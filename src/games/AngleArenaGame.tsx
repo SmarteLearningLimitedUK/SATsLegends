@@ -18,7 +18,7 @@ import cannonFacingRightSrc from '../assets/angle_arena/cannonanglearena/2.png';
 import cannonFacingUpSrc from '../assets/angle_arena/cannonanglearena/3.png';
 import { BOSS_ART_LIBRARY } from '../assets/bosses/library';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
-import { angleToVector, clamp, degreesToRadians, distance, lerp, worldToScreen } from './angleArena/math';
+import { angleToVector, clamp, degreesToRadians, lerp, worldToScreen } from './angleArena/math';
 
 interface AngleArenaGameProps {
   levelId: number;
@@ -60,7 +60,6 @@ type ProjectileState = {
 const AIM_DELAY = 360;
 const HIT_SHAKE_DURATION = 520;
 const PROJECTILE_RADIUS = 10;
-const TARGET_RADIUS = 42;
 const INITIAL_TIMER = 90;
 const INITIAL_LIVES = 3;
 const POINTS_PER_HIT = 250;
@@ -743,7 +742,7 @@ const solveSideLaunchSpeed = (angleDeg: number, targetX: number, targetY: number
   const radians = degreesToRadians(angleDeg);
   const cos = Math.max(0.18, Math.cos(radians));
   const tan = Math.tan(radians);
-  const denominator = 2 * cos * cos * ((targetX * tan) - targetY);
+  const denominator = 2 * cos * cos * (targetY + (targetX * tan));
   if (denominator <= 0) return 520;
   return Math.sqrt((PROJECTILE_GRAVITY * targetX * targetX) / denominator);
 };
@@ -1098,13 +1097,10 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
           projectile.x = projectile.targetX;
           projectile.y = projectile.targetY;
         }
-        const hit = allowHit && (
-          crossedTarget ||
-          distance(projectile.x, projectile.y, enemyWorld.x, enemyWorld.y) <= TARGET_RADIUS + PROJECTILE_RADIUS
-        );
+        const hit = allowHit && crossedTarget;
         if (hit) {
           projectile.active = false;
-          impactPositionRef.current = { ...enemyWorld };
+          impactPositionRef.current = { x: projectile.targetX, y: projectile.targetY };
           handleResolve('hit');
         }
 

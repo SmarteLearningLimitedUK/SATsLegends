@@ -3,6 +3,7 @@ import bubblesRainbowSrc from '../assets/sounds/calmsounds/bubbles-rainbow.mp3.m
 import kiteBalloonSilenceAltSrc from '../assets/sounds/calmsounds/kite-balloon-silence 2.mp3.mpeg';
 import kiteBalloonSilenceSrc from '../assets/sounds/calmsounds/kite-balloon-silence.mp3.mpeg';
 import { GAME_AUDIO_STORAGE_KEY, GAME_HUD_MUTE_SYNC_EVENT } from '../gameHudEvents';
+import { addPageAudioFocusListeners, isPageAudioAllowed } from '../audio/audioFocus';
 
 const CALM_BACKGROUND_TRACKS = [
   bubblesRainbowSrc,
@@ -35,7 +36,7 @@ export const useCalmBackgroundAudio = () => {
     audio.muted = isAudioMuted();
 
     const tryPlay = () => {
-      if (disposed || audio.muted) return;
+      if (disposed || audio.muted || !isPageAudioAllowed()) return;
 
       try {
         void audio.play().catch(() => {});
@@ -57,6 +58,15 @@ export const useCalmBackgroundAudio = () => {
       tryPlay();
     };
 
+    const handleAudioFocusChange = () => {
+      if (disposed) return;
+      if (!isPageAudioAllowed()) {
+        audio.pause();
+        return;
+      }
+      tryPlay();
+    };
+
     const handleUserGesture = () => {
       tryPlay();
     };
@@ -64,6 +74,7 @@ export const useCalmBackgroundAudio = () => {
     window.addEventListener(GAME_HUD_MUTE_SYNC_EVENT, handleMuteSync as EventListener);
     window.addEventListener('pointerdown', handleUserGesture, { capture: true });
     window.addEventListener('keydown', handleUserGesture, { capture: true });
+    const removePageAudioFocusListeners = addPageAudioFocusListeners(handleAudioFocusChange);
 
     tryPlay();
 
@@ -72,6 +83,7 @@ export const useCalmBackgroundAudio = () => {
       window.removeEventListener(GAME_HUD_MUTE_SYNC_EVENT, handleMuteSync as EventListener);
       window.removeEventListener('pointerdown', handleUserGesture, { capture: true });
       window.removeEventListener('keydown', handleUserGesture, { capture: true });
+      removePageAudioFocusListeners();
       audio.pause();
       audio.src = '';
     };

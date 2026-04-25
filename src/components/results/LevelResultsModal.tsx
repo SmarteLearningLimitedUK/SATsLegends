@@ -30,8 +30,6 @@ interface LevelResultsModalProps {
     achievementsUnlocked?: string[];
   } | null;
   onRetry: () => void;
-  onNext?: () => void;
-  onMap: () => void;
   calmBreakLabel?: string;
   onCalmBreak?: () => void;
 }
@@ -89,8 +87,6 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
   isOpen,
   result,
   onRetry,
-  onNext,
-  onMap,
   calmBreakLabel,
   onCalmBreak,
 }) => {
@@ -154,7 +150,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[140] flex items-center justify-center overflow-hidden bg-slate-950/88"
+          className="absolute inset-0 z-30 flex items-center justify-center overflow-hidden bg-slate-950/88 p-2 sm:p-3"
         >
           <div className="pointer-events-none absolute inset-0">
             <img
@@ -183,24 +179,24 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
             animate={{ y: 0, scale: 1, opacity: 1 }}
             exit={{ y: 16, scale: 0.98, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 220, damping: 20 }}
-            className="relative z-10 w-full max-w-md overflow-visible rounded-[1.6rem] border border-white/15 bg-[linear-gradient(180deg,rgba(7,21,52,0.78),rgba(5,17,45,0.9))] p-4 shadow-[0_28px_80px_rgba(0,0,0,0.5)] backdrop-blur-md md:max-w-lg md:rounded-[2rem] md:p-6"
+            className="relative z-10 flex max-h-full w-full max-w-md flex-col overflow-hidden rounded-[1.1rem] border border-white/15 bg-[linear-gradient(180deg,rgba(7,21,52,0.78),rgba(5,17,45,0.9))] p-3 shadow-[0_28px_80px_rgba(0,0,0,0.5)] backdrop-blur-md md:max-w-lg md:rounded-[1.4rem] md:p-4"
           >
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(56,189,248,0.18),transparent_55%),radial-gradient(circle_at_50%_100%,rgba(251,191,36,0.18),transparent_60%)]" />
             <button
-              onClick={onMap}
-              className="ui-close-button absolute right-4 top-4 z-20 md:right-5 md:top-5"
+              type="button"
+              className="hidden"
               aria-label="Close results"
             >
               <span aria-hidden="true">×</span>
             </button>
 
-            <div className="relative z-10 flex flex-col gap-4">
+            <div className="relative z-10 flex min-h-0 flex-col gap-3 overflow-y-auto overscroll-contain pr-1">
               <div className="flex flex-col items-center text-center">
                 <span className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] ${isPractice ? 'border-cyan-200/50 bg-cyan-400/20 text-cyan-100' : isVictory ? 'border-emerald-200/50 bg-emerald-400/20 text-emerald-100' : 'border-rose-200/45 bg-rose-400/20 text-amber-100'}`}>
                   {isPractice ? (isVictory ? 'Practice Complete' : 'Practice Run Over') : isVictory ? 'Level Complete' : 'Try Again'}
                 </span>
-                <h2 className="mt-2 text-2xl font-black text-amber-100 md:text-3xl">{result.title}</h2>
-                <p className="mt-1 text-sm font-semibold text-white/80 md:text-base">{result.subtitle}</p>
+                <h2 className="mt-2 text-xl font-black text-amber-100 md:text-2xl">{result.title}</h2>
+                <p className="mt-1 text-sm font-semibold text-white/80">{result.subtitle}</p>
               </div>
 
               {isPractice ? (
@@ -264,33 +260,29 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
                 </>
               )}
 
-              <div className={`mt-2 grid gap-2 ${showButtons ? 'opacity-100' : 'opacity-0 pointer-events-none'} transition-opacity duration-300 ${isVictory ? 'grid-cols-2' : 'grid-cols-2'}`}>
-                {isPractice ? (
-                  <>
+              {showButtons && (isPractice || !isVictory || (calmBreakLabel && onCalmBreak)) ? (
+                <div className="mt-1 grid gap-2 transition-opacity duration-300 sm:grid-cols-2">
+                  {isPractice || !isVictory ? (
                     <button
                       type="button"
                       className="ui-button-primary py-3 text-sm font-black uppercase tracking-[0.18em]"
                       onClick={onRetry}
                     >
-                      Retry Practice
+                      {isPractice ? 'Retry Practice' : 'Retry'}
                     </button>
+                  ) : null}
+                  {calmBreakLabel && onCalmBreak ? (
                     <button
                       type="button"
-                      className="ui-button-secondary py-2 text-xs font-black uppercase tracking-[0.18em]"
-                      onClick={onMap}
+                      className="ui-button-success py-2 text-xs font-black uppercase tracking-[0.18em]"
+                      onClick={onCalmBreak}
                     >
-                      Map
+                      {calmBreakLabel}
                     </button>
-                  </>
-                ) : isVictory ? (
-                  <button
-                    type="button"
-                    className="ui-button-primary py-3 text-sm font-black uppercase tracking-[0.18em]"
-                    onClick={onNext || onMap}
-                  >
-                    {onNext ? 'Next Level' : 'Return to Map'}
-                  </button>
-                ) : (
+                  ) : null}
+                </div>
+              ) : (
+                <div className="mt-1 grid gap-2 opacity-0 pointer-events-none transition-opacity duration-300">
                   <button
                     type="button"
                     className="ui-button-primary py-3 text-sm font-black uppercase tracking-[0.18em]"
@@ -298,24 +290,8 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
                   >
                     Retry
                   </button>
-                )}
-                <button
-                  type="button"
-                  className="ui-button-secondary py-2 text-xs font-black uppercase tracking-[0.18em]"
-                  onClick={onMap}
-                >
-                  Map
-                </button>
-                {calmBreakLabel && onCalmBreak ? (
-                  <button
-                    type="button"
-                    className="ui-button-success py-2 text-xs font-black uppercase tracking-[0.18em]"
-                    onClick={onCalmBreak}
-                  >
-                    {calmBreakLabel}
-                  </button>
-                ) : null}
-              </div>
+                </div>
+              )}
             </div>
           </motion.div>
         </motion.div>

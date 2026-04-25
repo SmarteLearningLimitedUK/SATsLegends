@@ -6,7 +6,8 @@ import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { AVATARS } from '../constants';
 import primePopBackground from '../assets/maps/backgroundsforgames/primepopbkground.jpg';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
-import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
+import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
+import { playGameSound } from '../audio/gameAudio';
 
 interface PrimePopGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -223,6 +224,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
   onBack,
   isPractice,
   practiceBriefing,
+  sessionEvents,
 }) => {
   const config = useMemo(() => getConfig(levelId), [levelId]);
   const avatar = AVATARS.find((item) => item.id === avatarId) || AVATARS[0];
@@ -331,6 +333,19 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     }
     onGameOverRef.current(finalScore);
   }, [clearLoops, targetScore]);
+
+  const reportIncorrectBubble = useCallback((metadata: Record<string, unknown>) => {
+    if (sessionEvents?.onIncorrectAnswer || sessionEvents?.onEvent) {
+      emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
+        gameType: 'prime_pop',
+        levelId,
+        metadata,
+      });
+      return;
+    }
+
+    playGameSound('incorrect', undefined, 'prime_pop');
+  }, [levelId, sessionEvents]);
 
   const makeBubble = useCallback((existing: Bubble[]) => {
     const radius = randomBetween(bubbleRuntime.minRadius, bubbleRuntime.maxRadius);
@@ -443,6 +458,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     totalPopsRef.current += 1;
 
     if (target.isPrime) {
+      playGameSound('correct', undefined, 'prime_pop');
       primePopsRef.current += 1;
       const earned = Math.round(config.primePoints * (1 + comboNext * config.comboStep));
       scoreNext += earned;
@@ -467,6 +483,12 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     } else {
       comboNext = 0;
       livesNext -= 1;
+      reportIncorrectBubble({
+        reason: 'non_prime_bubble',
+        bubbleId,
+        value: target.value,
+        eventTime: Date.now(),
+      });
       setMistakeBubbleId(bubbleId);
       setScreenShake(true);
       setFeedback('-1 life');
@@ -494,7 +516,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     if (livesRef.current <= 0) {
       finalize(scoreRef.current);
     }
-  }, [config.comboStep, config.primePoints, finalize, targetScore]);
+  }, [config.comboStep, config.primePoints, finalize, reportIncorrectBubble, targetScore]);
 
   const cancelHeldPop = useCallback(() => {
     setPressedBubbleId(null);
@@ -528,9 +550,21 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
 
       return { ...bubble, x, y, drift };
     });
-    const movedWithoutOverlap = resolveBubbleCollisions(movedBubbles);
+    const movedById = new Map<number, Bubble>(movedBubbles.map((bubble) => [bubble.id, bubble]));
+    const movedWithoutOverlap = resolveBubbleCollisions(movedBubbles).map((bubble) => {
+      const naturalPosition = movedById.get(bubble.id);
+      if (
+        naturalPosition
+        && naturalPosition.y - naturalPosition.radius > DANGER_LINE_Y
+        && bubble.y - bubble.radius <= DANGER_LINE_Y
+      ) {
+        return { ...bubble, y: DANGER_LINE_Y + bubble.radius + 0.5 };
+      }
+      return bubble;
+    });
 
-    const dangerPrimeHits = movedWithoutOverlap.filter((bubble) => bubble.isPrime && (bubble.y - bubble.radius) <= DANGER_LINE_Y).length;
+    const missedPrimeBubbles = movedWithoutOverlap.filter((bubble) => bubble.isPrime && (bubble.y - bubble.radius) <= DANGER_LINE_Y);
+    const dangerPrimeHits = missedPrimeBubbles.length;
     const nextBubbles = movedWithoutOverlap.filter((bubble) => {
       if ((bubble.y - bubble.radius) <= DANGER_LINE_Y && bubble.isPrime) return false;
       return bubble.y >= -(bubble.radius + 3);
@@ -540,6 +574,12 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     let livesNext = livesRef.current;
 
     if (dangerPrimeHits > 0) {
+      missedPrimeBubbles.forEach((bubble) => reportIncorrectBubble({
+        reason: 'missed_prime_line',
+        bubbleId: bubble.id,
+        value: bubble.value,
+        eventTime: ts,
+      }));
       livesNext -= dangerPrimeHits;
       comboNext = 0;
       setFeedback(`-${dangerPrimeHits} life${dangerPrimeHits > 1 ? 's' : ''}`);
@@ -561,7 +601,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     }
 
     rafRef.current = requestAnimationFrame(loop);
-  }, [finalize, targetScore]);
+  }, [finalize, reportIncorrectBubble]);
 
   useEffect(() => {
     if (overRef.current) return;

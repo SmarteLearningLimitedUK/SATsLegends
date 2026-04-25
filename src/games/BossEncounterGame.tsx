@@ -16,7 +16,7 @@ import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import bossPaperBackground from '../assets/maps/backgroundsforgames/forestbackground.png';
 import { isBossEncounterGameType, SupportedBossGameType } from './bossEncounterTypes';
 import type { AnimationState } from '../types';
-import type { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gameplaySessionContract';
+import type { GameplaySessionEventHandlers, GameplaySessionState, MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import { emitMiniGameSessionEvent } from '../app/gameplaySessionContract';
 import { generateArithmeticBossPaper, markArithmeticPaper } from './arithmeticBossPaper';
 import type { ArithmeticPaperResult } from './arithmeticBossPaper';
@@ -24,7 +24,7 @@ import { generateReasoning1Paper, markReasoning1Paper } from './reasoning1Paper'
 import type { ReasoningPaperResult, ReasoningQuestion } from './reasoning1Paper';
 import { generateReasoning2Paper, markReasoning2Paper } from './reasoning2Paper';
 
-interface BossEncounterGameProps {
+interface BossEncounterGameProps extends MiniGameShellContractProps {
   gameType: SupportedBossGameType;
   levelId: number;
   avatarId: string;
@@ -479,6 +479,7 @@ const BossPaperFallbackVisual: React.FC<{
     <BossPortrait
       encounter={encounter}
       pose={bossPose}
+      framed={false}
       className="h-[clamp(9.8rem,30vh,15.8rem)] w-full max-w-[18rem] lg:max-w-[20rem]"
     />
   </div>
@@ -1130,6 +1131,8 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   onBack,
   sessionState,
   sessionEvents,
+  isPractice,
+  practiceBriefing,
 }) => {
   const avatar = AVATARS.find(item => item.id === avatarId) || AVATARS[0];
   const encounter = getBossEncounter(gameType);
@@ -1158,6 +1161,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   const [arithmeticAnswers, setArithmeticAnswers] = useState<Record<number, string>>({});
   const [arithmeticResult, setArithmeticResult] = useState<ArithmeticPaperResult | null>(null);
   const [isReviewingArithmetic, setIsReviewingArithmetic] = useState(false);
+  const [arithmeticScreen, setArithmeticScreen] = useState<'intro' | 'active'>('intro');
   const [reasoningAnswers, setReasoningAnswers] = useState<Record<number, any>>({});
   const [reasoningResult, setReasoningResult] = useState<ReasoningPaperResult | null>(null);
   const [reasoningScreen, setReasoningScreen] = useState<'intro' | 'active' | 'confirm' | 'results' | 'review'>('intro');
@@ -1178,11 +1182,17 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   const [bossPose, setBossPose] = useState<BossPose>('neutral');
   const [reaction, setReaction] = useState(reactionCopy.idle);
   const [resolveState, setResolveState] = useState<'idle' | 'correct' | 'wrong' | 'warning' | 'victory' | 'defeat'>('idle');
-  const [showPracticeIntro, setShowPracticeIntro] = useState(!isArithmeticPaper && !isReasoningPaper);
+  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice) || (!isArithmeticPaper && !isReasoningPaper));
   const timeoutRef = useRef<number | null>(null);
   const orderingBoardRef = useRef<HTMLDivElement | null>(null);
   const orderingSlotRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [orderingDragState, setOrderingDragState] = useState<OrderingDragState | null>(null);
+
+  useEffect(() => {
+    if (isPractice) {
+      setShowPracticeIntro(true);
+    }
+  }, [isPractice]);
 
   useEffect(() => () => {
     if (timeoutRef.current) {
@@ -1364,12 +1374,17 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
     triggerHaptic(result.passed ? 'success' : 'warning');
   };
 
+  const startArithmeticPaper = () => {
+    setArithmeticScreen('active');
+    setCurrentIndex(0);
+  };
+
   useEffect(() => {
-    if (!isArithmeticPaper || arithmeticResult || !arithmeticPaper) return;
+    if (!isArithmeticPaper || arithmeticResult || !arithmeticPaper || arithmeticScreen === 'intro') return;
     if ((sessionState?.timeLeft ?? arithmeticPaper.timeLimitSeconds) <= 0) {
       submitArithmeticPaper(false);
     }
-  }, [arithmeticPaper, arithmeticResult, isArithmeticPaper, sessionState?.timeLeft]);
+  }, [arithmeticPaper, arithmeticResult, isArithmeticPaper, arithmeticScreen, sessionState?.timeLeft]);
 
   const retryArithmeticPaper = () => {
     if (timeoutRef.current) {
@@ -1379,6 +1394,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
     setArithmeticAnswers({});
     setArithmeticResult(null);
     setIsReviewingArithmetic(false);
+    setArithmeticScreen('intro');
     setCurrentIndex(0);
     setScore(0);
     window.dispatchEvent(new Event(GAME_HUD_RESTART_EVENT));
@@ -1781,11 +1797,23 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
       )
       : [];
     const reasoningVisual = (
-      <BossPaperFallbackVisual
-        encounter={encounter}
-        bossPose={bossPose}
-        title={`${reasoningDisplayTitle} Boss`}
-      />
+      reasoningQuestion.chartData
+      || reasoningQuestion.gridData
+      || reasoningQuestion.areaData
+      || reasoningQuestion.perimeterData
+      || reasoningQuestion.volumeData
+      || reasoningQuestion.ratioData
+      || reasoningQuestion.scaleData
+      || reasoningQuestion.shapeData
+      || reasoningQuestion.type === 'money'
+        ? <ReasoningVisual question={reasoningQuestion} />
+        : (
+          <BossPaperFallbackVisual
+            encounter={encounter}
+            bossPose={bossPose}
+            title={`${reasoningDisplayTitle} Boss`}
+          />
+        )
     );
 
     return (
@@ -1912,6 +1940,30 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
       return (
         <div className="flex h-full w-full items-center justify-center bg-[#f7f4ea] text-slate-900">
           Loading arithmetic paper...
+        </div>
+      );
+    }
+
+    if (arithmeticScreen === 'intro') {
+      return (
+        <div className="flex h-full w-full items-center justify-center overflow-hidden bg-[#f7f4ea] px-4 py-4 font-sans text-slate-950">
+          <section className="w-full max-w-3xl rounded-[1.1rem] border border-slate-300 bg-[#fffdf6] p-5 shadow-[0_12px_28px_rgba(15,23,42,0.16)] md:p-8">
+            <div className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">Final Boss Island</div>
+            <h2 className="mt-2 text-3xl font-black text-slate-950 md:text-5xl">Arithmetic Showdown</h2>
+            <div className="mt-5 grid gap-3 text-sm font-bold text-slate-700 md:grid-cols-2">
+              <div className="rounded-xl border border-slate-200 bg-white p-4">40 marks</div>
+              <div className="rounded-xl border border-slate-200 bg-white p-4">30 minutes</div>
+              <div className="rounded-xl border border-slate-200 bg-white p-4">No calculator</div>
+              <div className="rounded-xl border border-slate-200 bg-white p-4">Mixed arithmetic fluency questions</div>
+            </div>
+            <button
+              type="button"
+              onClick={startArithmeticPaper}
+              className="mt-6 w-full rounded-xl border-2 border-slate-950 bg-slate-950 px-5 py-4 text-sm font-black uppercase tracking-[0.14em] text-white"
+            >
+              Start Arithmetic Showdown
+            </button>
+          </section>
         </div>
       );
     }
@@ -2080,6 +2132,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
           ? "Work through the arithmetic paper.\nChoose the answer that matches the calculation.\nThere is no combat here, just questions and answers."
           : "The Monster Minds have fortified the final boss.\nAnswer correctly to damage the enemy.\nKeep the hero standing until the boss falls."
         }
+        briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
 
@@ -2105,7 +2158,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
                     </div>
                   </div>
                   <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2">
-                    <BossPortrait encounter={encounter} pose={bossPose} className="h-[clamp(10.5rem,34vh,17.5rem)] w-full max-w-[21rem] lg:h-[22rem] lg:max-w-[27rem]" />
+                    <BossPortrait encounter={encounter} pose={bossPose} framed={false} className="h-[clamp(10.5rem,34vh,17.5rem)] w-full max-w-[21rem] lg:h-[22rem] lg:max-w-[27rem]" />
                     <div className="w-full max-w-[20rem] rounded-[1rem] border border-white/12 bg-black/24 px-3 py-2 text-center text-[9px] font-black uppercase tracking-[0.16em] text-white/72 lg:max-w-[24rem]">
                       {isMultiSelect ? 'Select all that apply' : 'Choose one answer'}
                     </div>
@@ -2144,7 +2197,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
                     </div>
                   </div>
                   <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-3">
-                    <BossPortrait encounter={encounter} pose={bossPose} className="h-[clamp(7.2rem,22vh,10.25rem)] w-full max-w-[18rem] lg:h-[13.5rem] lg:max-w-[21rem]" />
+                    <BossPortrait encounter={encounter} pose={bossPose} framed={false} className="h-[clamp(7.2rem,22vh,10.25rem)] w-full max-w-[18rem] lg:h-[13.5rem] lg:max-w-[21rem]" />
                     <div className="w-full max-w-[19rem] rounded-[1rem] border border-white/12 bg-black/22 px-3 py-2 text-center text-[9px] font-black uppercase tracking-[0.16em] text-white/72 lg:max-w-[22rem]">
                       {isMultiSelect ? 'Select all that apply' : 'Choose one answer'}
                     </div>
