@@ -1118,6 +1118,7 @@ const App: React.FC = () => {
   useLevelBackgroundAudio(
     screen === 'gameplay' && Boolean(selectedLevel) && !levelResult,
     selectedLevel ? `${selectedIsland?.id ?? 'unknown'}-${selectedLevel.id}-${gameplayRestartKey}` : null,
+    Boolean(selectedLevel?.isBoss) || isExamBoss,
   );
   const hideShellTimer = (LEVEL_TIMERS_DISABLED && !isExamBoss)
     || !isGameplayScreen

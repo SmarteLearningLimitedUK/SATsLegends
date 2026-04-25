@@ -1,11 +1,11 @@
 import { useEffect, useMemo } from 'react';
+import bossLevelSrc from '../assets/sounds/level/boss level.mpeg';
 import brassWatersparkSrc from '../assets/sounds/level/brass-waterspark.mp3.mpeg';
 import citrusSteelSrc from '../assets/sounds/level/citrus-steel.mp3.mpeg';
 import citrusSteelAltSrc from '../assets/sounds/level/citrus-steel2.mp3.mpeg';
 import oarTireFireworksSrc from '../assets/sounds/level/oar-tire-fireworks.mp3.mpeg';
 import saffronSirensSrc from '../assets/sounds/level/saffron-sirens load screen.mp3.mpeg';
 import sunlitDuelSrc from '../assets/sounds/level/sunlit-duel.mp3.mpeg';
-import tinCompassSongsSrc from '../assets/sounds/level/tin-compass-songs.mp3.mpeg';
 import velvetTruceSrc from '../assets/sounds/level/velvet-truce.mp3.mpeg';
 import { GAME_AUDIO_STORAGE_KEY, GAME_HUD_MUTE_SYNC_EVENT } from '../gameHudEvents';
 
@@ -16,7 +16,6 @@ const LEVEL_BACKGROUND_TRACKS = [
   oarTireFireworksSrc,
   saffronSirensSrc,
   sunlitDuelSrc,
-  tinCompassSongsSrc,
   velvetTruceSrc,
 ] as const;
 
@@ -31,8 +30,14 @@ const chooseRandomTrack = () => (
   ?? LEVEL_BACKGROUND_TRACKS[0]
 );
 
-export const useLevelBackgroundAudio = (enabled: boolean, sessionKey: string | number | null | undefined) => {
-  const track = useMemo(() => chooseRandomTrack(), [sessionKey]);
+export const useLevelBackgroundAudio = (
+  enabled: boolean,
+  sessionKey: string | number | null | undefined,
+  isBossBattle = false,
+) => {
+  const track = useMemo(() => (
+    isBossBattle ? bossLevelSrc : chooseRandomTrack()
+  ), [isBossBattle, sessionKey]);
 
   useEffect(() => {
     if (!enabled || typeof Audio === 'undefined') return undefined;
