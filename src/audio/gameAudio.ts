@@ -6,7 +6,7 @@ import correctShareSplitterSrc from '../assets/sounds/correct share splitter.mp3
 import monsterGrowl12Src from '../assets/sounds/floraphonic-scary-monster-growl-roar-12-202958.mp3';
 import monsterGrowl13Src from '../assets/sounds/floraphonic-scary-monster-growl-roar-13-202959.mp3';
 import monsterGrowl5Src from '../assets/sounds/floraphonic-scary-monster-growl-roar-5-199378.mp3';
-import hudButtonPressSrc from '../assets/sounds/hud button press.mp3';
+import hudButtonPressSrc from '../assets/button click.ogg';
 import incorrectAnswerShareSplitterSrc from '../assets/sounds/incorrect answer share splitter.mp3';
 import incorrectAnswerSrc from '../assets/sounds/incorrect answer.mp3';
 import levelFailSrc from '../assets/sounds/level fail.mp3';

@@ -6,7 +6,10 @@ import {
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import sceneBackground from '../../range rodeo.jpg';
-import bossGoblin from '../assets/bosses/goblin.png';
+import rodeoBossOne from '../assets/rodeo boss/rodeo1.png';
+import rodeoBossTwo from '../assets/rodeo boss/rodeo2.png';
+import rodeoBossThree from '../assets/rodeo boss/rodeo3.png';
+import rodeoBossFour from '../assets/rodeo boss/rodeo4.png';
 import {
   generateRangeRodeoRound,
   isRangeRodeoAnswerCorrect,
@@ -24,6 +27,7 @@ interface RangeRodeoGameProps {
 type RangeRodeoGameShellProps = RangeRodeoGameProps & MiniGameShellContractProps;
 
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
+const RODEO_BOSS_IMAGES = [rodeoBossOne, rodeoBossTwo, rodeoBossThree, rodeoBossFour] as const;
 
 const starsFromAccuracy = (correct: number, attempts: number) => {
   const accuracy = attempts > 0 ? correct / attempts : 0;
@@ -60,6 +64,11 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
   const timeoutRef = useRef<number | null>(null);
 
   const roundsGoal = useMemo(() => clamp(6 + Math.floor(levelId / 2), 6, 10), [levelId]);
+  const bossDamageStage = Math.min(
+    RODEO_BOSS_IMAGES.length - 1,
+    Math.floor((correctAnswers / Math.max(1, roundsGoal)) * RODEO_BOSS_IMAGES.length),
+  );
+  const bossImage = RODEO_BOSS_IMAGES[bossDamageStage];
 
   const lives = sessionState?.lives ?? 3;
   const timeLeft = sessionState?.timeLeft ?? 1;
@@ -247,7 +256,7 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
               </div>
               <div className="absolute left-1/2 top-[60%] h-[28%] w-[56%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-400/20 blur-2xl" />
               <img
-                src={bossGoblin}
+                src={bossImage}
                 alt=""
                 aria-hidden="true"
                 draggable={false}
