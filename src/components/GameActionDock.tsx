@@ -43,7 +43,7 @@ const GameActionDock: React.FC<GameActionDockProps> = ({
 
   const handleToggleMute = () => {
     const nextMuted = !isMuted;
-    playGameSound('tap', isMuted);
+    playGameSound('click', isMuted);
     triggerHaptic('tap');
     setIsMuted(nextMuted);
     window.dispatchEvent(
@@ -76,7 +76,7 @@ const GameActionDock: React.FC<GameActionDockProps> = ({
           <button
             type="button"
             onClick={() => {
-              playGameSound('tap', isMuted);
+              playGameSound('click', isMuted);
               triggerHaptic('tap');
               onBack();
             }}

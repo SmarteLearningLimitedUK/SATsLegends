@@ -66,9 +66,11 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
   const rootPaddingClass = variant === 'hub'
     ? 'px-[6px] py-[clamp(0.22rem,0.5vh,0.4rem)]'
     : 'px-[8px] py-[clamp(0.28rem,0.7vh,0.55rem)]';
-  const timerWidthClass = variant === 'hub'
-    ? 'w-[clamp(160px,38vw,220px)]'
-    : 'w-[clamp(190px,44vw,240px)]';
+  const timerWidthClass = hideTimerBar
+    ? 'w-[clamp(108px,24vw,142px)]'
+    : variant === 'hub'
+      ? 'w-[clamp(160px,38vw,220px)]'
+      : 'w-[clamp(190px,44vw,240px)]';
   const avatarSizeClass = variant === 'hub'
     ? 'w-[clamp(34px,7.8vw,44px)]'
     : 'w-[clamp(40px,10vw,54px)]';
@@ -172,7 +174,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
                     </div>
                   )}
                 </div>
-                <span className={`ml-1.5 shrink-0 font-black uppercase text-slate-100 [text-shadow:0_1px_0_rgba(0,0,0,0.35)] ${variant === 'hub' ? 'text-[clamp(0.6rem,1.6vw,0.8rem)]' : 'text-[clamp(0.68rem,1.8vw,0.9rem)]'}`}>
+                <span className={`${hideTimerBar ? 'ml-1' : 'ml-1.5'} shrink-0 font-black uppercase text-slate-100 [text-shadow:0_1px_0_rgba(0,0,0,0.35)] ${hideTimerBar ? 'text-[clamp(0.72rem,1.85vw,0.94rem)]' : variant === 'hub' ? 'text-[clamp(0.6rem,1.6vw,0.8rem)]' : 'text-[clamp(0.68rem,1.8vw,0.9rem)]'}`}>
                   {timeLabel}
                 </span>
               </div>

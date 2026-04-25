@@ -1,3 +1,4 @@
+import AffirmationStation from './activities/AffirmationStation';
 import BreathingBloom from './activities/BreathingBloom';
 import CandleCalm from './activities/CandleCalm';
 import ConstellationConnect from './activities/ConstellationConnect';
@@ -10,11 +11,11 @@ export const WELLBEING_ACTIVITIES: WellbeingActivityMeta[] = [
   {
     id: 'breathing_bloom',
     title: 'Bubble Breath',
-    subtitle: 'Breathe with the 4-7-8 rhythm',
+    subtitle: 'Inflate the calm bubble with each slow breath',
     type: 'Breathing',
     durationEstimate: '45 sec',
-    description: 'Grow the glowing orb with a steady breath and let it drift back down.',
-    icon: '🫧',
+    description: 'Watch a clear bubble swell on the in-breath and soften on the out-breath beneath a sunny sky.',
+    icon: 'Bubble',
     component: BreathingBloom,
   },
   {
@@ -24,7 +25,7 @@ export const WELLBEING_ACTIVITIES: WellbeingActivityMeta[] = [
     type: 'Grounding',
     durationEstimate: '50 sec',
     description: 'Sweep gentle currents through the bright blue water and guide the fish into a glowing sanctuary.',
-    icon: '🪷',
+    icon: 'Pond',
     component: PeacefulPond,
   },
   {
@@ -34,38 +35,48 @@ export const WELLBEING_ACTIVITIES: WellbeingActivityMeta[] = [
     type: 'Grounding',
     durationEstimate: '35 sec',
     description: 'Clear the bedroom clutter, then tap the crib to help the baby monster settle.',
-    icon: '🛏️',
+    icon: 'Rest',
     component: CandleCalm,
   },
   {
     id: 'constellation_connect',
     title: 'Star Path',
-    subtitle: 'Trace the stars in order',
+    subtitle: 'Trace three constellations across the night sky',
     type: 'Focus',
-    durationEstimate: '40 sec',
-    description: 'Connect the glowing stars in order and reveal the full path.',
-    icon: '✨',
+    durationEstimate: '30 sec',
+    description: 'Follow multiple constellations in order and stay with the sky long enough to settle into the moment.',
+    icon: 'Stars',
     component: ConstellationConnect,
   },
   {
     id: 'leaf_drift',
     title: 'Leaf Drift',
-    subtitle: 'Guide leaves into the glow',
+    subtitle: 'Guide the grove leaves into the golden resting place',
     type: 'Grounding',
     durationEstimate: '35 sec',
-    description: 'Guide drifting leaves into a soft glow with light, easy touches.',
-    icon: '🍃',
+    description: 'Use the new drifting leaf shapes from the calm grove and guide them gently into the warm glow.',
+    icon: 'Leaves',
     component: LeafDrift,
   },
   {
     id: 'thought_sort',
     title: 'Worry Balloon',
-    subtitle: 'Let worries float away',
+    subtitle: 'Choose a few feelings and let them float away',
     type: 'Thought Reset',
     durationEstimate: '45 sec',
-    description: 'Type a worry, release it, and watch it drift upward out of the way.',
-    icon: '🎈',
+    description: 'Choose the feelings that fit, then send the balloon into a bright, cloud-filled sky.',
+    icon: 'Balloon',
     component: ThoughtSort,
+  },
+  {
+    id: 'affirmation_station',
+    title: 'Affirmation Station',
+    subtitle: 'Pop positive affirmations in the calm sky',
+    type: 'Focus',
+    durationEstimate: '40 sec',
+    description: 'Listen to gentle calm music and pop floating affirmation bubbles in a soothing Prime Pop-style activity.',
+    icon: 'Glow',
+    component: AffirmationStation,
   },
 ];
 
@@ -81,5 +92,5 @@ export const WELLBEING_ACTIVITY_BY_ISLAND: Record<number, WellbeingActivityId> =
   4: 'peaceful_pond',
   5: 'thought_sort',
   6: 'candle_calm',
-  7: 'peaceful_pond',
+  7: 'affirmation_station',
 };

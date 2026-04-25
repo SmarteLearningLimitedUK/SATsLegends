@@ -6,7 +6,8 @@ export type WellbeingActivityId =
   | 'candle_calm'
   | 'constellation_connect'
   | 'leaf_drift'
-  | 'thought_sort';
+  | 'thought_sort'
+  | 'affirmation_station';
 
 export type WellbeingActivityType = 'Breathing' | 'Focus' | 'Grounding' | 'Thought Reset';
 

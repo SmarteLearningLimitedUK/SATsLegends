@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import WellbeingShell from '../WellbeingShell';
 import { WellbeingActivityComponentProps } from '../types';
@@ -9,153 +9,63 @@ const feelingWords = [
   'tired',
   'nervous',
   'sad',
-  'calm',
+  'overwhelmed',
   'steady',
   'brave',
 ];
 
 const ThoughtSort: React.FC<WellbeingActivityComponentProps> = ({ onComplete, onExit }) => {
   const [selected, setSelected] = useState<string[]>([]);
-  const [message, setMessage] = useState('Choose words that match how you feel');
-  const [micReady, setMicReady] = useState(false);
-  const [micLevel, setMicLevel] = useState(0);
   const [released, setReleased] = useState(false);
   const [balloonRise, setBalloonRise] = useState(false);
 
-  const audioCtxRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const streamRef = useRef<MediaStream | null>(null);
-  const rafRef = useRef<number | null>(null);
-  const stableBlowRef = useRef(0);
-
-  const balloonText = useMemo(() => selected.join(' / ') || 'choose words', [selected]);
+  const balloonText = useMemo(() => selected.join(' • ') || 'let it go', [selected]);
+  const message = useMemo(() => {
+    if (released) return 'Watch the balloon lift your worries into the sunny sky';
+    if (selected.length >= 3) return 'When you are ready, send the balloon off';
+    return 'Choose a few feelings, then release the balloon when you are ready';
+  }, [released, selected.length]);
   const progress = Math.min(100, (selected.length / 4) * 70 + (released ? 30 : 0));
 
-  useEffect(() => () => {
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    streamRef.current?.getTracks().forEach((track) => track.stop());
-    audioCtxRef.current?.close().catch(() => {});
-  }, []);
-
   useEffect(() => {
-    if (!released || selected.length < 2) return undefined;
-    if (balloonRise) return undefined;
+    if (!released) return undefined;
     const timeout = window.setTimeout(() => {
       setBalloonRise(true);
-      window.setTimeout(() => onComplete(), 1200);
-    }, 400);
+      window.setTimeout(() => onComplete(), 1300);
+    }, 220);
     return () => window.clearTimeout(timeout);
-  }, [balloonRise, onComplete, released, selected.length]);
+  }, [onComplete, released]);
 
-  const handleSelectWord = (word: string) => {
+  const toggleWord = (word: string) => {
     if (released) return;
     setSelected((current) => {
       if (current.includes(word)) {
-        setMessage('Keep the balloon light');
         return current.filter((item) => item !== word);
       }
-      const next = [...current, word];
-      setMessage(next.length >= 3 ? 'The balloon is filling up nicely' : 'Add a few words to fill the balloon');
-      return next.slice(0, 4);
+      return [...current, word].slice(0, 4);
     });
   };
 
-  const stopMic = () => {
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    rafRef.current = null;
-    streamRef.current?.getTracks().forEach((track) => track.stop());
-    streamRef.current = null;
-    audioCtxRef.current?.close().catch(() => {});
-    audioCtxRef.current = null;
-    analyserRef.current = null;
-    setMicReady(false);
-  };
-
-  const startMic = async () => {
-    if (released || micReady) return;
-    if (!navigator.mediaDevices?.getUserMedia) {
-      setMessage('Microphone not available. Use the words, then tap release.');
-      return;
-    }
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const AudioContextCtor = window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-      if (!AudioContextCtor) {
-        setMessage('Microphone not available. Use the words, then tap release.');
-        stream.getTracks().forEach((track) => track.stop());
-        return;
-      }
-      const audioCtx = new AudioContextCtor();
-      const analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 512;
-      const source = audioCtx.createMediaStreamSource(stream);
-      source.connect(analyser);
-      streamRef.current = stream;
-      audioCtxRef.current = audioCtx;
-      analyserRef.current = analyser;
-      setMicReady(true);
-      setMessage('Blow to send the balloon away');
-
-      const buffer = new Uint8Array(analyser.frequencyBinCount);
-      const tick = () => {
-        const node = analyserRef.current;
-        if (!node) return;
-        node.getByteTimeDomainData(buffer);
-        let total = 0;
-        for (let i = 0; i < buffer.length; i += 1) {
-          const centered = buffer[i] - 128;
-          total += centered * centered;
-        }
-        const rms = Math.sqrt(total / buffer.length) / 128;
-        setMicLevel(rms);
-        if (rms > 0.12) {
-          stableBlowRef.current += 1;
-        } else {
-          stableBlowRef.current = 0;
-        }
-        if (stableBlowRef.current >= 10 && !released) {
-          setReleased(true);
-          setMessage('Let it go');
-          stopMic();
-          return;
-        }
-        rafRef.current = requestAnimationFrame(tick);
-      };
-      rafRef.current = requestAnimationFrame(tick);
-    } catch {
-      setMessage('Microphone blocked. Use the words, then tap release.');
-      stopMic();
-    }
-  };
-
-  const handleRelease = () => {
-    if (released) return;
-    if (!micReady) {
-      setMessage('Tap the microphone first, then blow');
-      return;
-    }
-    setReleased(true);
-    setBalloonRise(true);
-    setMessage('Let it float away');
-    window.setTimeout(() => onComplete(), 1200);
-  };
-
   return (
-    <WellbeingShell title="Let It Go" subtitle={message} type="Thought Reset" progress={progress} onExit={onExit}>
-      <div className="relative flex flex-1 flex-col items-center justify-between overflow-hidden px-5 py-4">
-        <div className="relative flex w-full max-w-3xl flex-wrap items-center justify-center gap-2">
+    <WellbeingShell title="Worry Balloon" subtitle={message} type="Thought Reset" progress={progress} onExit={onExit}>
+      <div className="relative flex flex-1 flex-col overflow-hidden px-4 pb-4 pt-4">
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,#7dd3fc_0%,#c7f0ff_44%,#eff8ff_100%)]" />
+        <div className="absolute inset-x-0 top-0 h-[48%] bg-[radial-gradient(circle_at_18%_18%,rgba(255,255,255,0.95),transparent_12%),radial-gradient(circle_at_38%_26%,rgba(255,255,255,0.86),transparent_11%),radial-gradient(circle_at_67%_15%,rgba(255,255,255,0.92),transparent_13%),radial-gradient(circle_at_82%_24%,rgba(255,255,255,0.82),transparent_10%)]" />
+        <div className="absolute inset-x-0 bottom-0 h-[26%] bg-[linear-gradient(180deg,rgba(34,197,94,0),rgba(34,197,94,0.18)_38%,rgba(21,128,61,0.42)_100%)]" />
+
+        <div className="relative z-10 flex flex-wrap items-center justify-center gap-2">
           {feelingWords.map((word) => {
             const active = selected.includes(word);
             return (
               <motion.button
                 key={word}
                 type="button"
-                onClick={() => handleSelectWord(word)}
-                whileTap={{ scale: 0.95 }}
+                onClick={() => toggleWord(word)}
+                whileTap={{ scale: 0.96 }}
                 className={`rounded-full border px-4 py-2 text-sm font-black uppercase tracking-[0.12em] transition ${
                   active
-                    ? 'border-emerald-100/60 bg-emerald-300/25 text-emerald-50'
-                    : 'border-white/12 bg-white/8 text-white/82 hover:bg-white/14'
+                    ? 'border-sky-100/65 bg-sky-300/28 text-slate-950'
+                    : 'border-white/45 bg-white/34 text-slate-900 hover:bg-white/46'
                 }`}
               >
                 {word}
@@ -164,39 +74,35 @@ const ThoughtSort: React.FC<WellbeingActivityComponentProps> = ({ onComplete, on
           })}
         </div>
 
-        <div className="relative flex w-full flex-1 items-center justify-center">
+        <div className="relative z-10 flex min-h-0 flex-1 items-center justify-center overflow-hidden">
           <motion.div
-            animate={balloonRise ? { y: [-10, -250], opacity: [1, 0.1] } : { y: [0, -8, 0], scale: [1, 1.03, 1] }}
-            transition={balloonRise ? { duration: 1.2, ease: 'easeOut' } : { duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
+            animate={balloonRise ? { y: [-10, -360], opacity: [1, 0], scale: [1, 1.06, 1.1] } : { y: [0, -10, 0], scale: [1, 1.03, 1] }}
+            transition={balloonRise ? { duration: 1.35, ease: 'easeOut' } : { duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
             className="relative flex flex-col items-center"
           >
-            <div className="relative flex h-48 w-48 items-center justify-center rounded-full border border-white/12 bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,0.26),rgba(147,197,253,0.14)_28%,rgba(15,23,42,0.08)_70%)] shadow-[0_24px_50px_rgba(15,23,42,0.35)]">
-              <div className="absolute inset-4 rounded-full border border-cyan-100/10" />
-              <div className="absolute inset-8 rounded-full border border-emerald-100/10" />
-              <div className="relative z-10 max-w-[9.5rem] text-center text-lg font-black leading-tight text-white drop-shadow-[0_2px_10px_rgba(2,6,23,0.35)]">
+            <div className="relative flex h-44 w-40 items-center justify-center rounded-[48%_52%_50%_50%/56%_56%_44%_44%] border border-white/45 bg-[radial-gradient(circle_at_30%_24%,rgba(255,255,255,0.92),rgba(253,186,116,0.48)_18%,rgba(251,146,60,0.58)_46%,rgba(244,114,182,0.78)_100%)] shadow-[0_24px_40px_rgba(15,23,42,0.22)]">
+              <div className="absolute inset-5 rounded-[48%_52%_50%_50%/56%_56%_44%_44%] border border-white/24" />
+              <div className="relative z-10 max-w-[9rem] text-center text-base font-black leading-tight text-white drop-shadow-[0_2px_10px_rgba(2,6,23,0.36)]">
                 {balloonText}
               </div>
             </div>
-            <div className="h-16 w-1 rounded-full bg-white/24" />
-            <div className="h-5 w-5 rounded-full bg-rose-200/70 shadow-[0_0_18px_rgba(253,164,175,0.25)]" />
+            <div className="h-16 w-1 rounded-full bg-slate-900/30" />
+            <div className="h-4 w-4 rounded-full bg-amber-100/88 shadow-[0_0_12px_rgba(255,255,255,0.4)]" />
           </motion.div>
         </div>
 
-        <div className="flex w-full max-w-3xl flex-col items-center gap-3">
-          <div className="w-full rounded-[1.4rem] border border-white/10 bg-[linear-gradient(180deg,rgba(13,33,65,0.75),rgba(8,20,42,0.85))] px-4 py-3 text-center text-sm font-semibold text-white/82">
-            {selected.length === 0 ? 'Pick a few words to fill the balloon.' : 'Blow into the microphone or tap release to send it away.'}
+        <div className="relative z-10 flex shrink-0 flex-col items-center gap-3 pb-2">
+          <div className="w-full rounded-[1.35rem] border border-white/40 bg-white/34 px-4 py-3 text-center text-sm font-semibold text-slate-900 backdrop-blur-sm">
+            Pick up to four feelings, then send the balloon away when you are ready.
           </div>
-          <div className="flex w-full flex-wrap items-center justify-center gap-2">
-            <button type="button" onClick={startMic} className="ui-button-primary rounded-full px-5 py-3 text-sm font-black uppercase tracking-[0.14em]">
-              {micReady ? 'Microphone ready' : 'Turn on microphone'}
-            </button>
-            <button type="button" onClick={handleRelease} className="ui-button-secondary rounded-full px-5 py-3 text-sm font-black uppercase tracking-[0.14em]">
-              Release balloon
-            </button>
-          </div>
-          <div className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-100/65">
-            Mic level {Math.round(micLevel * 100)}
-          </div>
+          <button
+            type="button"
+            onClick={() => setReleased(true)}
+            disabled={released || selected.length === 0}
+            className="ui-button-primary min-h-[3.2rem] w-full max-w-[18rem] rounded-full px-6 py-3 text-sm font-black uppercase tracking-[0.14em] disabled:cursor-not-allowed disabled:opacity-55"
+          >
+            {released ? 'Balloon released' : 'Send balloon'}
+          </button>
         </div>
       </div>
     </WellbeingShell>
@@ -204,4 +110,3 @@ const ThoughtSort: React.FC<WellbeingActivityComponentProps> = ({ onComplete, on
 };
 
 export default ThoughtSort;
-

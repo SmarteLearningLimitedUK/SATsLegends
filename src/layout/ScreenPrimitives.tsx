@@ -219,7 +219,7 @@ export const PrimaryActionCTA: React.FC<ActionButtonProps> = ({
     type={type}
     onClick={() => {
       if (disabled) return;
-      playGameSound('tap');
+      playGameSound('click');
       onClick?.();
     }}
     disabled={disabled}
@@ -257,7 +257,7 @@ export const SecondaryUtilityButton: React.FC<ActionButtonProps> = ({
     type={type}
     onClick={() => {
       if (disabled) return;
-      playGameSound('tap');
+      playGameSound('click');
       onClick?.();
     }}
     disabled={disabled}

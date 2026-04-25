@@ -22,7 +22,7 @@ import takeOutRushSrc from '../assets/sounds/takeoutrush.mp3';
 import timeUpSrc from '../assets/sounds/time up.mp3';
 import wrongAnswerMeanMachineSrc from '../assets/sounds/wrong answer mean machine.mp3';
 
-export type GameSoundEffect = 'tap' | 'correct' | 'incorrect' | 'complete' | 'fail';
+export type GameSoundEffect = 'tap' | 'click' | 'correct' | 'incorrect' | 'complete' | 'fail';
 export type GameSoundContext = string | null | undefined;
 
 type ToneStep = {
@@ -88,6 +88,10 @@ const getAudioAsset = (effect: GameSoundEffect, context?: GameSoundContext) => {
     return hudButtonPressSrc;
   }
 
+  if (effect === 'click') {
+    return hudButtonPressSrc;
+  }
+
   if (effect === 'correct') {
     if (gameKey === 'place_value_panic') return placeValuePanicCorrectSrc;
     if (gameKey === 'number_line_ninja') return numberLineNinjaCorrectSrc;
@@ -145,6 +149,9 @@ const playAudioAsset = (src: string) => {
 const tonePatterns: Record<GameSoundEffect, ToneStep[]> = {
   tap: [
     { frequency: 680, durationMs: 55, gain: 0.06, type: 'triangle' },
+  ],
+  click: [
+    { frequency: 610, durationMs: 42, gain: 0.05, type: 'triangle' },
   ],
   correct: [
     { frequency: 660, durationMs: 80, gain: 0.085, type: 'sine' },

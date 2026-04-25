@@ -64,7 +64,7 @@ export type ReasoningQuestion = {
 export type ReasoningPaper = {
   paperId: string;
   seed: string | number;
-  title: 'Reasoning 1';
+  title: 'Reasoning 2';
   totalMarks: 35;
   timeLimitSeconds: 2400;
   questions: ReasoningQuestion[];
@@ -136,39 +136,60 @@ const SUPPORTED_RESPONSE_MODES: ReasoningResponseMode[] = [
   'dragDrop',
 ];
 
-// Reasoning 1 should open accessibly, then build into broader multi-step reasoning.
+// Reasoning 2 should ramp earlier: still fair, but with trickier reasoning and
+// more multi-step pressure appearing near the start of the paper.
 const BASE_PLAN: ReasoningTemplate[] = [
-  'number_order',
-  'fdp_equivalent',
-  'measure_convert',
   'number_round',
-  'money_change',
-  'read_scale',
-  'number_missing_digit',
-  'temperature_negative',
-  'fraction_shape',
-  'fdp_missing_decimal',
-  'time_duration',
-  'algebra_function',
-  'geometry_symmetry',
-  'coordinates_read',
-  'stats_bar',
-  'percent_context',
-  'volume_count',
+  'measure_convert',
   'ratio_share',
-  'fraction_context',
+  'fdp_equivalent',
+  'money_change',
+  'coordinates_read',
+  'algebra_function',
+  'stats_bar',
+  'geometry_angle_x',
+  'time_duration',
+  'read_scale',
   'ratio_recipe',
-  'algebra_sequence',
   'area_rectangle',
+  'fdp_missing_decimal',
+  'volume_count',
+  'algebra_sequence',
   'perimeter_missing',
   'stats_table',
+  'fraction_context',
+  'percent_context',
+  'geometry_symmetry',
   'graph_explain',
+  'number_order',
+  'temperature_negative',
   'time_table_explain',
 ];
 
 const SHORT_PLAN: ReasoningTemplate[] = [
-  ...BASE_PLAN.filter((template) => template !== 'stats_table' && template !== 'volume_count'),
+  'measure_convert',
+  'ratio_share',
+  'fdp_equivalent',
+  'money_change',
+  'coordinates_read',
+  'algebra_function',
+  'stats_bar',
   'geometry_angle_x',
+  'time_duration',
+  'read_scale',
+  'ratio_recipe',
+  'area_rectangle',
+  'fdp_missing_decimal',
+  'volume_count',
+  'algebra_sequence',
+  'perimeter_missing',
+  'stats_table',
+  'fraction_context',
+  'percent_context',
+  'geometry_symmetry',
+  'graph_explain',
+  'time_table_explain',
+  'number_missing_digit',
 ];
 
 const TEMPLATE_TYPE_MAP: Record<ReasoningTemplate, ReasoningQuestionType> = {
@@ -871,7 +892,7 @@ const draftQuestion = (rng: () => number, template: ReasoningTemplate): DraftRea
       };
     }
     default:
-      throw new Error(`Unhandled Reasoning 1 template: ${template}`);
+      throw new Error(`Unhandled Reasoning 2 template: ${template}`);
   }
 };
 
@@ -946,9 +967,9 @@ const answerExists = (answer: any) => {
   return true;
 };
 
-export const validateReasoning1Paper = (paper: ReasoningPaper): { valid: boolean; errors: string[] } => {
+export const validateReasoning2Paper = (paper: ReasoningPaper): { valid: boolean; errors: string[] } => {
   const errors: string[] = [];
-  if (paper.title !== 'Reasoning 1') errors.push('Title must be Reasoning 1.');
+  if (paper.title !== 'Reasoning 2') errors.push('Title must be Reasoning 2.');
   if (paper.totalMarks !== 35) errors.push('Total marks must be 35.');
   if (paper.timeLimitSeconds !== 2400) errors.push('Time limit must be 2400 seconds.');
   if (paper.questions.length < 23 || paper.questions.length > 30) errors.push('Question count must be between 23 and 30.');
@@ -1006,23 +1027,27 @@ export const validateReasoning1Paper = (paper: ReasoningPaper): { valid: boolean
     });
   });
 
-  if (counts.number < 4) errors.push('Needs at least 4 number/place value questions.');
+  if (counts.number < 3) errors.push('Needs at least 3 number/place value questions.');
   if (counts.fractionsDecimalsPercentages < 4) errors.push('Needs at least 4 fractions/decimals/percentages questions.');
-  if (counts.ratio < 2) errors.push('Needs at least 2 ratio/proportion questions.');
+  if (counts.ratio < 3) errors.push('Needs at least 3 ratio/proportion questions.');
   if (counts.algebra < 2) errors.push('Needs at least 2 missing-value/algebra questions.');
   if (counts.measurement < 5) errors.push('Needs at least 5 measurement questions.');
-  if (counts.geometry < 3) errors.push('Needs at least 3 geometry questions.');
+  if (counts.geometry < 4) errors.push('Needs at least 4 geometry questions.');
   if (counts.statistics < 3) errors.push('Needs at least 3 statistics/data questions.');
   if (counts.time + counts.money < 2) errors.push('Needs at least 2 time or money questions.');
   if (counts.coordinates < 1) errors.push('Needs at least 1 coordinates question.');
   if (counts.area < 1) errors.push('Needs at least 1 area question.');
   if (counts.perimeter < 1) errors.push('Needs at least 1 perimeter question.');
   if (counts.volume < 1) errors.push('Needs at least 1 volume/capacity/mass question.');
-  if (counts.multiStep < 4) errors.push('Needs at least 4 multi-step questions.');
-  if (counts.explanation < 2) errors.push('Needs at least 2 explanation/justify questions.');
-  if (markCounts[1] < 14 || markCounts[1] > 17) errors.push('One-mark spread is outside the target range.');
-  if (markCounts[2] < 7 || markCounts[2] > 9) errors.push('Two-mark spread is outside the target range.');
-  if (markCounts[3] < 1 || markCounts[3] > 3) errors.push('Three-mark spread is outside the target range.');
+  if (counts.multiStep < 5) errors.push('Needs at least 5 multi-step questions.');
+  if (counts.explanation < 3) errors.push('Needs at least 3 explanation/justify questions.');
+  if (markCounts[1] < 12 || markCounts[1] > 15) errors.push('One-mark spread is outside the target range.');
+  if (markCounts[2] < 8 || markCounts[2] > 10) errors.push('Two-mark spread is outside the target range.');
+  if (markCounts[3] < 2 || markCounts[3] > 4) errors.push('Three-mark spread is outside the target range.');
+  const earlyMultiStepIndex = paper.questions.findIndex((question) => question.type === 'multiStep' || (question.curriculumTags ?? []).includes('multiStep'));
+  if (earlyMultiStepIndex < 0 || earlyMultiStepIndex > 9) {
+    errors.push('Needs at least one multi-step question before Q10.');
+  }
   if (paper.questions.every((question) => ['number', 'fractionsDecimalsPercentages'].includes(question.type))) {
     errors.push('Paper is arithmetic-only.');
   }
@@ -1030,12 +1055,12 @@ export const validateReasoning1Paper = (paper: ReasoningPaper): { valid: boolean
   return { valid: errors.length === 0, errors };
 };
 
-export const generateReasoning1Paper = (seed: string | number = `${Date.now()}-${Math.random()}`): ReasoningPaper => {
+export const generateReasoning2Paper = (seed: string | number = `${Date.now()}-${Math.random()}`): ReasoningPaper => {
   for (let attempt = 0; attempt < 40; attempt += 1) {
     const attemptSeed = `${seed}-${attempt}`;
     const rng = createRandom(attemptSeed);
-    const basePlan = rng() > 0.45 ? BASE_PLAN : SHORT_PLAN;
-    const plan = createProfiledTemplateOrder(rng, basePlan, 6, 4);
+    const basePlan = rng() > 0.52 ? BASE_PLAN : SHORT_PLAN;
+    const plan = createProfiledTemplateOrder(rng, basePlan, 10, 3);
     const usedTexts = new Set<string>();
     const usedSignatures = new Set<string>();
     const usedNumberSets = new Set<string>();
@@ -1075,22 +1100,22 @@ export const generateReasoning1Paper = (seed: string | number = `${Date.now()}-$
     }
 
     const paper: ReasoningPaper = {
-      paperId: `reasoning-1-${hashSeed(attemptSeed).toString(36)}`,
+      paperId: `reasoning-2-${hashSeed(attemptSeed).toString(36)}`,
       seed: attemptSeed,
-      title: 'Reasoning 1',
+      title: 'Reasoning 2',
       totalMarks: 35,
       timeLimitSeconds: 2400,
       questions,
     };
-    const validation = validateReasoning1Paper(paper);
+    const validation = validateReasoning2Paper(paper);
     if (validation.valid) return paper;
     if (typeof window !== 'undefined' && window.localStorage.getItem('sats_legends_debug_reasoning') === 'true') {
       // Debug-only diagnostics for paper generation; learners never see this.
-      console.debug('Reasoning 1 validation failed', { seed: attemptSeed, errors: validation.errors });
+      console.debug('Reasoning 2 validation failed', { seed: attemptSeed, errors: validation.errors });
     }
   }
 
-  throw new Error('Unable to generate a valid Reasoning 1 paper.');
+  throw new Error('Unable to generate a valid Reasoning 2 paper.');
 };
 
 const unicodeFractions: Record<string, string> = {
@@ -1234,7 +1259,7 @@ const markQuestion = (question: ReasoningQuestion, userAnswer: any) => {
   };
 };
 
-export const markReasoning1Paper = (
+export const markReasoning2Paper = (
   paper: ReasoningPaper,
   userAnswers: Record<number, any>,
   completedBeforeTimer = false,
@@ -1273,8 +1298,8 @@ export const markReasoning1Paper = (
   };
 };
 
-export const getReasoning1DebugInfo = (paper: ReasoningPaper) => {
-  const validation = validateReasoning1Paper(paper);
+export const getReasoning2DebugInfo = (paper: ReasoningPaper) => {
+  const validation = validateReasoning2Paper(paper);
   const typeDistribution = paper.questions.reduce<Record<string, number>>((counts, question) => {
     counts[question.type] = (counts[question.type] ?? 0) + 1;
     return counts;

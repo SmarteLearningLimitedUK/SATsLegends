@@ -311,7 +311,7 @@ const App: React.FC = () => {
       if (button.hasAttribute('data-ui-sound')) return;
       if (button.hasAttribute('disabled')) return;
 
-      playGameSound('tap', undefined, selectedLevel?.blueprintKey);
+      playGameSound('click', undefined, selectedLevel?.blueprintKey);
     };
 
     document.addEventListener('click', handleGameplayClick, true);

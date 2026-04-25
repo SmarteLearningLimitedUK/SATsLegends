@@ -101,7 +101,7 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
 ];
 
 const ISLAND_ACCENT_FRAMES: Partial<Record<number, IslandAccentFrame>> = {
-  1: { left: '46%', top: '49%', width: '66%', height: '68%' },
+  1: { left: '50%', top: '18%', width: '58%', height: '42%' },
   2: { left: '54%', top: '57%', width: '64%', height: '64%' },
   3: { left: '50%', top: '52%', width: '62%', height: '66%' },
   4: { left: '50%', top: '56%', width: '62%', height: '64%' },
@@ -125,6 +125,8 @@ const renderIslandAccent = (islandId: number) => {
     case 8:
       return (
         <div className="world-map-core-smoke pointer-events-none absolute inset-0 z-10">
+          <div className="world-map-core-smoke-ring world-map-core-smoke-ring-a" />
+          <div className="world-map-core-smoke-ring world-map-core-smoke-ring-b" />
           <div className="world-map-core-smoke-puff world-map-core-smoke-puff-a" />
           <div className="world-map-core-smoke-puff world-map-core-smoke-puff-b" />
           <div className="world-map-core-smoke-puff world-map-core-smoke-puff-c" />
@@ -135,6 +137,7 @@ const renderIslandAccent = (islandId: number) => {
         <div className="world-map-volcano-accent pointer-events-none absolute inset-0 z-10">
           <div className="world-map-volcano-flame world-map-volcano-flame-primary" />
           <div className="world-map-volcano-flame world-map-volcano-flame-secondary" />
+          <div className="world-map-volcano-flame world-map-volcano-flame-tertiary" />
           <div className="world-map-volcano-smoke" />
         </div>
       );
@@ -284,31 +287,13 @@ const renderIslandAccent = (islandId: number) => {
       );
     case 1:
       return (
-        <>
-          {[0, 1, 2].map(index => (
-            <span
-              key={`acro-symbol-${index}`}
-              className="absolute text-[0.95rem] font-black text-amber-100 drop-shadow-[0_2px_8px_rgba(15,23,42,0.45)]"
-              style={{
-                left: `${18 + index * 18}%`,
-                top: `${8 + (index % 2) * 8}%`,
-                animationDelay: `${index * 0.7}s`,
-                animationDuration: `${4.4 + index * 0.45}s`,
-              }}
-            >
-              {['+', '÷', '%'][index]}
-            </span>
-          ))}
-          {[0, 1, 2].map(index => (
-            <span
-              key={`acro-star-${index}`}
-              className="world-map-orbit world-map-orbit-stars"
-              style={{ animationDelay: `${index * 0.68}s`, animationDuration: `${6.2 + index * 0.4}s` }}
-            >
-              <span className="world-map-star" />
-            </span>
-          ))}
-        </>
+        <div className="world-map-acropolis-swirl pointer-events-none absolute inset-0 z-10">
+          <span className="world-map-acropolis-swirl-ring world-map-acropolis-swirl-ring-a" />
+          <span className="world-map-acropolis-swirl-ring world-map-acropolis-swirl-ring-b" />
+          <span className="world-map-acropolis-swirl-spark world-map-acropolis-swirl-spark-a">+</span>
+          <span className="world-map-acropolis-swirl-spark world-map-acropolis-swirl-spark-b">&divide;</span>
+          <span className="world-map-acropolis-swirl-spark world-map-acropolis-swirl-spark-c">%</span>
+        </div>
       );
     default:
       return (

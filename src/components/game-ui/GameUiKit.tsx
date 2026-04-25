@@ -113,7 +113,7 @@ export const IconButton: React.FC<IconButtonProps> = ({ icon, label, onClick, di
     type="button"
     onClick={() => {
       if (disabled) return;
-      playGameSound('tap');
+      playGameSound('click');
       onClick?.();
     }}
     disabled={disabled}
@@ -177,7 +177,7 @@ export const PrimaryButton: React.FC<ButtonProps> = ({ children, className, onCl
     type={type}
     onClick={() => {
       if (disabled) return;
-      playGameSound('tap');
+      playGameSound('click');
       onClick?.();
     }}
     disabled={disabled}
@@ -198,7 +198,7 @@ export const SecondaryButton: React.FC<ButtonProps> = ({ children, className, on
     type={type}
     onClick={() => {
       if (disabled) return;
-      playGameSound('tap');
+      playGameSound('click');
       onClick?.();
     }}
     disabled={disabled}

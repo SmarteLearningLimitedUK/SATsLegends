@@ -17,11 +17,6 @@ import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import AssetIcon from '../components/AssetIcon';
 import { Star } from '../components/GameIcons';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
-import answerActionBg from '../assets/casual_ui/inputs/btn_1.png';
-import answerOrangeBg from '../assets/casual_ui/inputs/btn_7.png';
-import answerGreenBg from '../assets/casual_ui/inputs/btn_2.png';
-import answerBlueBg from '../assets/casual_ui/inputs/btn_4.png';
-import answerYellowBg from '../assets/casual_ui/inputs/btn_1.png';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 import { formatMultiplicationDisplay } from '../utils/mathDisplay';
 
@@ -1214,7 +1209,6 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
   const isRuleRunner = gameType === 'rule_runner';
   const isChartGrabber = gameType === 'graph_grabber';
   const showSceneBackdrop = !isChartGrabber;
-  const usesBlueAnswers = isScaleBuilder || isCalculationClash || isRuleRunner || isChartGrabber;
   const avatar = AVATARS.find((item) => item.id === avatarId) || AVATARS[0];
   const targetScore = 780 + (levelId * 180);
   const progress = Math.min((XP / targetScore) * 100, 100);
@@ -1397,7 +1391,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
               </div>
             )}
 
-            <div className={`flex min-h-0 ${isChartGrabber ? 'mt-auto flex-1 justify-end' : 'flex-1'} flex-col ${
+            <div className={`answer-choice-surface flex min-h-0 ${isChartGrabber ? 'mt-auto flex-1 justify-end' : 'flex-1'} flex-col ${
               isPlaceValuePeaks ? 'gap-2 md:gap-3' : isChartGrabber ? 'gap-1 md:gap-2 pb-1' : 'gap-1.5 md:gap-2.5'
             }`}>
               {question.options.map((option, index) => {
@@ -1407,46 +1401,32 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                 const displayOption = isChartGrabber
                   ? option.replace(/^choice\s*[:\-]?\s*/i, '').trim()
                   : option;
-
-                const answerBackground = isCorrect
-                  ? answerGreenBg
-                  : isWrongSelected
-                    ? (usesBlueAnswers ? answerYellowBg : answerOrangeBg)
-                    : (usesBlueAnswers ? answerBlueBg : answerActionBg);
+                const answerToneClass = isCorrect
+                  ? 'ui-button-success answer-choice-card--correct'
+                  : isSelected || isWrongSelected
+                    ? 'ui-button-primary answer-choice-card--selected'
+                    : 'ui-button-secondary answer-choice-card--default';
 
                 return (
                   <motion.button
                     key={`${question.prompt}-${option}`}
                     onClick={() => handleAnswer(index)}
                     disabled={Boolean(feedback) || isVictory || isGameOver}
-                    className={`relative flex w-full shrink-0 items-center justify-center overflow-hidden px-3 py-2 text-center shadow-[0_16px_26px_rgba(0,0,0,0.24)] transition-transform ${
+                    className={`answer-choice-card relative flex w-full shrink-0 items-center justify-center overflow-hidden border px-3 py-2 text-center shadow-[0_16px_26px_rgba(0,0,0,0.24)] transition-transform ${answerToneClass} ${
                       isPlaceValuePeaks
-                        ? 'min-h-[3.55rem] rounded-[1.1rem] border border-stone-400/24 bg-[linear-gradient(180deg,rgba(132,94,64,0.92),rgba(84,58,40,0.98))] shadow-[inset_0_2px_0_rgba(255,255,255,0.12),0_10px_0_rgba(41,24,14,0.72),0_18px_26px_rgba(0,0,0,0.24)] md:min-h-[4.7rem] md:rounded-[1.35rem] md:px-5 md:py-3'
+                        ? 'min-h-[3.55rem] rounded-[1.1rem] shadow-[inset_0_2px_0_rgba(255,255,255,0.12),0_10px_0_rgba(41,24,14,0.72),0_18px_26px_rgba(0,0,0,0.24)] md:min-h-[4.7rem] md:rounded-[1.35rem] md:px-5 md:py-3'
                         : isScaleBuilder || isRuleRunner
-                          ? 'min-h-[3.55rem] rounded-[1.05rem] border border-sky-100/26 shadow-[0_16px_26px_rgba(0,0,0,0.24)] md:min-h-[4.7rem] md:rounded-[1.2rem] md:px-5 md:py-3'
+                          ? 'min-h-[3.55rem] rounded-[1.05rem] md:min-h-[4.7rem] md:rounded-[1.2rem] md:px-5 md:py-3'
                           : isCalculationClash
-                          ? 'min-h-[3.55rem] rounded-[1.05rem] border border-sky-100/24 shadow-[0_16px_26px_rgba(0,0,0,0.24)] md:min-h-[4.7rem] md:rounded-[1.2rem] md:px-5 md:py-3'
+                          ? 'min-h-[3.55rem] rounded-[1.05rem] md:min-h-[4.7rem] md:rounded-[1.2rem] md:px-5 md:py-3'
                   : isChartGrabber
-                            ? 'min-h-[2.35rem] rounded-[0.95rem] border border-white/12 bg-[linear-gradient(180deg,rgba(15,23,42,0.42),rgba(2,6,23,0.74))] md:min-h-[3.1rem] md:px-4 md:py-2'
+                            ? 'min-h-[2.35rem] rounded-[0.95rem] md:min-h-[3.1rem] md:px-4 md:py-2'
                             : 'min-h-[3.55rem] rounded-[999px] md:min-h-[4.7rem] md:px-5 md:py-3'
                     }`}
                   >
-                    {!isPlaceValuePeaks && !isChartGrabber && <img src={answerBackground} alt="" className="gold-pill-art rounded-[inherit] object-fill" draggable={false} />}
-                    {isPlaceValuePeaks && (
-                      <div className={`absolute inset-0 ${
-                        isCorrect
-                          ? 'bg-[linear-gradient(180deg,rgba(34,197,94,0.52),rgba(22,163,74,0.28))]'
-                          : isWrongSelected
-                            ? 'bg-[linear-gradient(180deg,rgba(251,146,60,0.48),rgba(220,38,38,0.24))]'
-                            : 'bg-transparent'
-                      }`} />
-                    )}
-                    {isSelected && !isCorrect && !isWrongSelected && (
-                      <div className={`absolute inset-0 bg-gradient-to-br ${theme.answerActive} opacity-40`} />
-                    )}
                     <div className={`absolute inset-x-[8%] top-[10%] h-[34%] ${isPlaceValuePeaks ? 'rounded-[0.9rem]' : 'rounded-full'} bg-white/18 blur-md`} />
                     <div className="relative z-10 flex w-full items-center gap-2.5 md:gap-3">
-                      <div className={`flex h-7 w-7 shrink-0 items-center justify-center border text-[9px] font-black uppercase md:h-8 md:w-8 md:text-[11px] ${isPlaceValuePeaks ? 'rounded-[0.7rem] border-amber-100/14 bg-black/14 text-amber-50' : usesBlueAnswers ? `rounded-[0.65rem] ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/45 text-slate-900' : 'border-white/16 bg-white/12 text-white'}` : `rounded-full ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/35 text-slate-900' : 'border-white/14 bg-white/10 text-white'}`}`}>
+                      <div className={`flex h-7 w-7 shrink-0 items-center justify-center border text-[9px] font-black uppercase md:h-8 md:w-8 md:text-[11px] ${isPlaceValuePeaks ? 'rounded-[0.7rem] border-amber-100/14 bg-black/14 text-amber-50' : `rounded-[0.65rem] ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/45 text-slate-900' : 'border-white/16 bg-white/12 text-white'}`}`}>
                         {String.fromCharCode(65 + index)}
                       </div>
                       <div className={`flex-1 text-center ${isPlaceValuePeaks ? 'text-[1.1rem] md:text-[1.7rem] text-amber-50' : isScaleBuilder || isCalculationClash || isRuleRunner ? 'text-[1rem] md:text-[1.35rem] text-white' : 'text-[1.02rem] md:text-[1.45rem] text-white'} font-black leading-none tracking-[-0.02em] drop-shadow-[0_2px_2px_rgba(0,0,0,0.42)]`}>
