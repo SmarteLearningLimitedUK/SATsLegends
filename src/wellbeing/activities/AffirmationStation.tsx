@@ -49,48 +49,6 @@ const affirmationToFeedback = (text: string): string => {
   return `Nice! ${trimmed}!`;
 };
 
-const createAmbientLoop = () => {
-  if (typeof window === 'undefined') return null;
-  const Ctor = window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-  if (!Ctor) return null;
-
-  const context = new Ctor();
-  const master = context.createGain();
-  master.gain.value = 0.04;
-  master.connect(context.destination);
-
-  const notes = [261.63, 329.63, 392.0, 523.25];
-  let noteIndex = 0;
-
-  const playNote = () => {
-    const osc = context.createOscillator();
-    const gain = context.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(notes[noteIndex % notes.length], context.currentTime);
-    gain.gain.setValueAtTime(0.0001, context.currentTime);
-    gain.gain.linearRampToValueAtTime(0.08, context.currentTime + 0.18);
-    gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 1.6);
-    osc.connect(gain);
-    gain.connect(master);
-    osc.start();
-    osc.stop(context.currentTime + 1.7);
-    noteIndex += 1;
-  };
-
-  playNote();
-  const interval = window.setInterval(playNote, 1400);
-
-  return {
-    resume: () => {
-      if (context.state === 'suspended') void context.resume().catch(() => {});
-    },
-    stop: () => {
-      window.clearInterval(interval);
-      void context.close().catch(() => {});
-    },
-  };
-};
-
 const AffirmationStation: React.FC<WellbeingActivityComponentProps> = ({ onComplete, onExit }) => {
   const [bubbles, setBubbles] = useState(() => Array.from({ length: STARTING_BUBBLES }, (_, index) => makeBubble(index)));
   const [popped, setPopped] = useState(0);
@@ -98,17 +56,6 @@ const AffirmationStation: React.FC<WellbeingActivityComponentProps> = ({ onCompl
   const [popFeedback, setPopFeedback] = useState<{ id: number; message: string } | null>(null);
   const feedbackIdRef = useRef(0);
   const feedbackTimerRef = useRef<number | null>(null);
-  const audioRef = useRef<ReturnType<typeof createAmbientLoop> | null>(null);
-
-  useEffect(() => {
-    const audio = createAmbientLoop();
-    audioRef.current = audio;
-    audio?.resume();
-    return () => {
-      audio?.stop();
-      audioRef.current = null;
-    };
-  }, []);
 
   useEffect(() => {
     if (popped < TOTAL_TO_POP) return undefined;
@@ -158,7 +105,6 @@ const AffirmationStation: React.FC<WellbeingActivityComponentProps> = ({ onCompl
     <WellbeingShell title="Affirmation Station" subtitle={subtitle} type="Focus" progress={(popped / TOTAL_TO_POP) * 100} onExit={onExit}>
       <div
         className="relative flex flex-1 items-center justify-center overflow-hidden p-5"
-        onPointerDown={() => audioRef.current?.resume()}
       >
         <div className="absolute inset-0 bg-[linear-gradient(180deg,#7dd3fc_0%,#dbeafe_40%,#eff6ff_100%)]" />
         <div className="absolute inset-x-0 bottom-0 h-[26%] bg-[linear-gradient(180deg,rgba(34,197,94,0),rgba(34,197,94,0.18)_36%,rgba(21,128,61,0.46)_100%)]" />

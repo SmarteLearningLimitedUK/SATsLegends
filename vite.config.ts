@@ -14,6 +14,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react(), tailwindcss()],
+    assetsInclude: ['**/*.mpeg'],
     // Deep links such as /minigame/share-splitter need absolute asset paths.
     // Set VITE_RELATIVE_BASE=1 only for static file uploads that require relative assets.
     base: useRelativeBase ? './' : '/',

@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
 import {
   emitMiniGameSessionEvent,
   MiniGameShellContractProps,
@@ -7,7 +6,7 @@ import {
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import sceneBackground from '../../range rodeo.jpg';
-import rodeoSuccessAnim from '../assets/rodeo anim.webp';
+import bossGoblin from '../assets/bosses/goblin.png';
 import {
   generateRangeRodeoRound,
   isRangeRodeoAnswerCorrect,
@@ -56,7 +55,6 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
   const [didComplete, setDidComplete] = useState(false);
   const [hasSignalledFailure, setHasSignalledFailure] = useState(false);
   const [inputLocked, setInputLocked] = useState(false);
-  const [showCorrectAnimation, setShowCorrectAnimation] = useState(false);
   const previousLivesRef = useRef<number | null>(null);
   const lostLifeRecentlyRef = useRef(false);
   const timeoutRef = useRef<number | null>(null);
@@ -92,7 +90,6 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
     setDidComplete(false);
     setHasSignalledFailure(false);
     setInputLocked(false);
-    setShowCorrectAnimation(false);
     previousLivesRef.current = sessionState.lives;
     lostLifeRecentlyRef.current = false;
   }, [levelId, sessionState, sessionState?.timeLeft, sessionState?.totalTime]);
@@ -126,7 +123,6 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
     setSelectedOptionIndex(null);
     setFeedback(null);
     setInputLocked(false);
-    setShowCorrectAnimation(false);
   };
 
   const completeGame = (finalXP: number, totalCorrect: number, totalAttempts: number) => {
@@ -159,7 +155,6 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
     setCorrectAnswers(nextCorrect);
     setCorrectStreak(nextStreak);
     setXP(nextXP);
-    setShowCorrectAnimation(isCorrect);
 
     emitMiniGameSessionEvent(sessionEvents, isCorrect ? 'correct_answer' : 'incorrect_answer', {
       score: nextXP,
@@ -180,7 +175,6 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
 
     timeoutRef.current = window.setTimeout(() => {
       timeoutRef.current = null;
-      setShowCorrectAnimation(false);
       if (isCorrect && roundIndex + 1 >= roundsGoal) {
         completeGame(nextXP, nextCorrect, nextAttempts);
         return;
@@ -196,16 +190,14 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
 
   return (
     <div className="relative h-full w-full overflow-hidden bg-[#050914] text-white">
-      <AnimatePresence>
-        {showPracticeIntro ? (
-          <PracticeIntroPopup
-            title="Range Rodeo"
-            body="The Monster Minds scrambled the score cards.\nFind the range of each number set.\nRemember: range = largest - smallest."
-            briefing={practiceBriefing}
-            onAction={() => setShowPracticeIntro(false)}
-          />
-        ) : null}
-      </AnimatePresence>
+      {showPracticeIntro ? (
+        <PracticeIntroPopup
+          title="Range Rodeo"
+          body="The Monster Minds scrambled the score cards.\nFind the range of each number set.\nRemember: range = largest - smallest."
+          briefing={practiceBriefing}
+          onAction={() => setShowPracticeIntro(false)}
+        />
+      ) : null}
 
       <div className="game-background absolute inset-0">
         <img src={sceneBackground} alt="" className="h-full w-full object-cover" />
@@ -224,19 +216,7 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
           </div>
         </GameQuestionCard>
 
-        <div className="relative mt-2 flex min-h-0 flex-1 flex-col justify-between">
-          {showCorrectAnimation ? (
-            <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center bg-transparent">
-              <img
-                src={rodeoSuccessAnim}
-                alt="Correct answer celebration"
-                className="h-[41.4%] min-h-[150px] max-h-[300px] w-auto bg-transparent object-contain"
-                style={{ mixBlendMode: 'multiply' }}
-                draggable={false}
-              />
-            </div>
-          ) : null}
-
+        <div className="relative mt-2 flex min-h-0 flex-1 flex-col justify-between gap-2">
           {question.values && question.questionType !== 'word_problem' ? (
             <div className="relative z-[1] mx-auto flex w-full max-w-[520px] shrink-0 flex-wrap items-center justify-center gap-2 rounded-[1rem] border border-white/25 bg-slate-900/55 px-3 py-3 shadow-[0_14px_28px_rgba(2,6,23,0.34)]">
               {question.values.map((value, index) => (
@@ -250,7 +230,33 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
             </div>
           ) : null}
 
-          <div className="relative z-[1] mx-auto mb-1 mt-2 grid w-full max-w-[520px] grid-cols-2 gap-2">
+          <div className="relative z-[1] mx-auto flex min-h-0 w-full max-w-[520px] flex-1 items-center justify-center">
+            <div className="relative h-full min-h-[9rem] w-full max-h-[17rem]">
+              <div className="absolute left-1/2 top-[14%] z-10 -translate-x-1/2 rounded-lg border border-amber-200/35 bg-slate-900/76 p-1.5 shadow-[0_10px_20px_rgba(2,6,23,0.46)]">
+                <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.12em] text-amber-200 md:text-[9px]">
+                  Range Boss
+                </div>
+                <div className="relative h-2 w-[clamp(7rem,32vw,12rem)] overflow-hidden rounded-full border border-slate-700/80 bg-slate-950/80">
+                  <div
+                    className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-rose-500 via-rose-400 to-orange-300 shadow-[0_0_12px_rgba(251,113,133,0.75)]"
+                    style={{
+                      width: `${Math.max(10, 100 - (correctAnswers / Math.max(1, roundsGoal)) * 100)}%`,
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="absolute left-1/2 top-[60%] h-[28%] w-[56%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-400/20 blur-2xl" />
+              <img
+                src={bossGoblin}
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+                className="absolute left-1/2 bottom-0 h-[86%] max-h-[15.5rem] -translate-x-1/2 object-contain drop-shadow-[0_18px_26px_rgba(2,6,23,0.58)]"
+              />
+            </div>
+          </div>
+
+          <div className="relative z-[1] mx-auto mb-1 grid w-full max-w-[520px] grid-cols-2 gap-2">
             {question.answers.map((answer, answerIndex) => {
               const isSelected = selectedOptionIndex === answerIndex;
               const isCorrectSelection = isSelected && feedback?.tone === 'success';
@@ -261,16 +267,15 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
                   : 'ui-button-secondary';
 
               return (
-                <motion.button
+                <button
                   key={`${question.id}-option-${answer}`}
                   type="button"
-                  whileTap={{ scale: 0.97 }}
                   onClick={() => handleOptionTap(answerIndex)}
                   disabled={inputLocked || didComplete || !isSessionActive}
                   className={`min-h-[3.1rem] rounded-[0.95rem] px-2 py-2 text-[clamp(15px,2.5vh,22px)] font-black ${buttonClass} disabled:opacity-55`}
                 >
                   {answer}
-                </motion.button>
+                </button>
               );
             })}
           </div>

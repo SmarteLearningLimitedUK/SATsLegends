@@ -14,3 +14,8 @@ declare module '*.jpg' {
   const value: string;
   export default value;
 }
+
+declare module '*.mpeg' {
+  const value: string;
+  export default value;
+}

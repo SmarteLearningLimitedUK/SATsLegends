@@ -311,6 +311,11 @@ const numberToWords = (value: number) => {
   return spellUnderThousand(remainder);
 };
 
+const formatTargetNumberWords = (value: number) => {
+  const words = numberToWords(value);
+  return words.charAt(0).toUpperCase() + words.slice(1);
+};
+
 const makeQuestion = (level: number): QuestionState => {
   const slotCount = slotCountForLevel(level);
   let promptNumber: number;
@@ -338,8 +343,8 @@ const makeQuestion = (level: number): QuestionState => {
   const placeHints = FULL_PLACE_VALUE_HINTS.slice(FULL_PLACE_VALUE_HINTS.length - slotCount);
   return {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    prompt: `The Monster Minds scrambled the stones. Rebuild ${new Intl.NumberFormat('en-GB').format(promptNumber)}.`,
-    targetNumberDisplay: new Intl.NumberFormat('en-GB').format(promptNumber),
+    prompt: 'The Monster Minds scrambled the stones.',
+    targetNumberDisplay: formatTargetNumberWords(promptNumber),
     expectedDigits,
     tokenValues,
     placeHints,
