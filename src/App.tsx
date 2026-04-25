@@ -41,8 +41,17 @@ import { reconcileAchievementState } from './systems/progression/achievementCata
 import { useProgressionStore } from './store/useProgressionStore';
 import { LevelProgress } from './lib/progression/types';
 import { getXpRequiredForLevel } from './lib/progression/getXpRequiredForLevel';
+import { calculateQuestionXP, XpDifficulty } from './lib/progression/calculateXp';
 import { CACHE_BUSTER } from './cacheBuster';
 import { playGameSound } from './audio/gameAudio';
+
+type SessionMetricsState = {
+  correct: number;
+  incorrect: number;
+  hintsUsed: number;
+  questionXP: number[];
+  streakCount: number;
+};
 
 const App: React.FC = () => {
   const buildId = import.meta.env.VITE_BUILD_ID ?? CACHE_BUSTER;
@@ -93,14 +102,20 @@ const App: React.FC = () => {
     setAvatarId: setProgressionAvatarId,
   } = useProgressionStore();
 
-  const [sessionMetrics, setSessionMetrics] = useState({
+  const [sessionMetrics, setSessionMetrics] = useState<SessionMetricsState>({
     correct: 0,
     incorrect: 0,
     hintsUsed: 0,
+    questionXP: [],
+    streakCount: 0,
   });
+  const questionStartedAtRef = useRef(Date.now());
+  const currentQuestionHadIncorrectRef = useRef(false);
 
   const resetSessionMetrics = useCallback(() => {
-    setSessionMetrics({ correct: 0, incorrect: 0, hintsUsed: 0 });
+    questionStartedAtRef.current = Date.now();
+    currentQuestionHadIncorrectRef.current = false;
+    setSessionMetrics({ correct: 0, incorrect: 0, hintsUsed: 0, questionXP: [], streakCount: 0 });
   }, []);
 
   const mapProgressionToPlayer = useCallback((levels: Record<string, LevelProgress>) => {
