@@ -198,15 +198,15 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
             {hideLives ? null : (
             <div className="relative flex shrink-0 items-center justify-end pr-1">
               <div
-                className={`relative inline-flex ${sharedHudHeightClass} ${variant === 'hub' ? 'w-[clamp(52px,12vw,66px)]' : 'w-[clamp(58px,13vw,74px)]'} shrink-0 items-center justify-center gap-1 rounded-full border-2 border-cyan-100/65 bg-[linear-gradient(180deg,#245db3_0%,#1e3f89_100%)] px-2 font-black text-slate-100 shadow-[0_9px_18px_rgba(2,6,23,0.4)] ${variant === 'hub' ? 'text-[clamp(0.7rem,1.8vw,0.85rem)]' : 'text-[clamp(0.8rem,2vw,0.96rem)]'}`}
+                className={`relative inline-flex ${sharedHudHeightClass} ${variant === 'hub' ? 'w-[clamp(48px,10.4vw,58px)] rounded-[0.8rem] px-1.5' : 'w-[clamp(52px,11.6vw,64px)] rounded-[0.95rem] px-1.5'} shrink-0 items-center justify-center gap-0.5 border-2 border-cyan-100/65 bg-[linear-gradient(180deg,#245db3_0%,#1e3f89_100%)] font-black text-slate-100 shadow-[0_9px_18px_rgba(2,6,23,0.4)] ${variant === 'hub' ? 'text-[clamp(0.68rem,1.75vw,0.82rem)]' : 'text-[clamp(0.76rem,1.92vw,0.9rem)]'}`}
               >
-                <div className={`pointer-events-none absolute inset-[2px] ${variant === 'hub' ? 'rounded-[0.9rem]' : 'rounded-full'} bg-[linear-gradient(180deg,rgba(255,255,255,0.2),rgba(255,255,255,0)_45%)]`} />
+                <div className={`pointer-events-none absolute inset-[2px] ${variant === 'hub' ? 'rounded-[0.62rem]' : 'rounded-[0.74rem]'} bg-[linear-gradient(180deg,rgba(255,255,255,0.2),rgba(255,255,255,0)_45%)]`} />
                 <img
                   src={heartIcon}
                   alt=""
                   aria-hidden="true"
                   draggable={false}
-                  className="h-[clamp(14px,3.8vw,18px)] w-[clamp(14px,3.8vw,18px)] object-contain"
+                  className="h-[clamp(12px,3.2vw,16px)] w-[clamp(12px,3.2vw,16px)] object-contain"
                 />
                 <span className="relative [text-shadow:0_1px_0_rgba(0,0,0,0.35)]">{lives}</span>
               </div>

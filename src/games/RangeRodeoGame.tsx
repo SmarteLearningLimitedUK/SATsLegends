@@ -230,8 +230,8 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
               <img
                 src={rodeoSuccessAnim}
                 alt="Correct answer celebration"
-                className="h-[36%] min-h-[130px] max-h-[260px] w-auto bg-transparent object-contain"
-                style={{ mixBlendMode: 'screen' }}
+                className="h-[41.4%] min-h-[150px] max-h-[300px] w-auto bg-transparent object-contain"
+                style={{ mixBlendMode: 'multiply' }}
                 draggable={false}
               />
             </div>
