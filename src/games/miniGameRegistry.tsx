@@ -47,6 +47,7 @@ const LavaPathGame = lazy(() => import('./LavaPathGame'));
 const LogicSort = lazy(() => import('./reasoning/LogicSort'));
 const MatrixMatch = lazy(() => import('./reasoning/MatrixMatch'));
 const ReasoningGame = lazy(() => import('./reasoning/ReasoningGame'));
+const RangeRodeoGame = lazy(() => import('./RangeRodeoGame'));
 import { createMiniGame, MiniGame } from './MiniGame';
 
 export type MiniGameRegistryKey =
@@ -97,7 +98,8 @@ export type MiniGameRegistryKey =
   | 'LavaPathGame'
   | 'ReasoningGame'
   | 'LogicSort'
-  | 'MatrixMatch';
+  | 'MatrixMatch'
+  | 'RangeRodeoGame';
 
 const asMiniGame = <P extends Record<string, unknown>>(
   id: string,
@@ -157,6 +159,7 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   ReasoningGame: asMiniGame('reasoning', ReasoningGame),
   LogicSort: asMiniGame('logic_sort', LogicSort),
   MatrixMatch: asMiniGame('matrix_match', MatrixMatch),
+  RangeRodeoGame: asMiniGame('graph_grabber', RangeRodeoGame),
 };
 
 export const getMiniGame = (key: MiniGameRegistryKey): MiniGame<any> => MINI_GAME_REGISTRY[key];

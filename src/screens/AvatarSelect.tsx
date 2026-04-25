@@ -77,7 +77,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({
               triggerHaptic('tap');
               onBackToSplash();
             }}
-            className="ui-icon-button absolute left-3 top-[calc(env(safe-area-inset-top)+0.35rem)] z-40 flex h-10 w-10 items-center justify-center rounded-full p-0 text-white shadow-xl sm:left-5 sm:h-11 sm:w-11"
+            className="ui-icon-button absolute bottom-[7.5%] left-3 z-40 flex h-10 w-10 items-center justify-center rounded-full p-0 text-white shadow-xl sm:left-5 sm:h-11 sm:w-11"
             aria-label="Back to islands"
           >
             <AssetIcon name="back" className="h-5 w-5 sm:h-7 sm:w-7" />
@@ -165,9 +165,9 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({
                 onConfirm();
               }}
               aria-label="Begin adventure"
-              className="ui-button-primary flex h-full w-full items-center justify-center border-0 bg-transparent px-4 py-0 text-lg font-black uppercase tracking-[0.12em] text-[#16233d] sm:text-xl"
+              className="ui-button-primary flex h-full w-full items-center justify-center border-0 bg-transparent px-4 py-0 text-lg !font-black uppercase tracking-[0.12em] text-[#16233d] sm:text-xl"
             >
-              Begin Adventure
+              <span className="font-black">Begin Adventure</span>
             </button>
           </div>
         </div>

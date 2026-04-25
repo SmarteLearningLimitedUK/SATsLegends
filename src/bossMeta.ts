@@ -12,22 +12,22 @@ export interface BossEncounter {
 export const BOSS_ENCOUNTERS: Partial<Record<MiniGameType, BossEncounter>> = {
   crystal_core: {
     assetId: 'jelly',
-    name: 'SATs Paper 1: Arithmetic',
-    title: 'SATs Paper 1: Arithmetic',
+    name: 'Arithmetic Showdown',
+    title: 'Arithmetic Showdown',
     glowClass: 'from-cyan-300/24 via-sky-300/12 to-transparent',
     chipClass: 'border-cyan-200/35 bg-cyan-100/14 text-cyan-100',
   },
   mirror_gate: {
     assetId: 'cyclops_slime',
-    name: 'Reasoning 1',
-    title: 'Reasoning 1',
+    name: 'Reasoning Trial',
+    title: 'Reasoning Trial',
     glowClass: 'from-amber-300/24 via-orange-300/12 to-transparent',
     chipClass: 'border-amber-200/35 bg-amber-100/14 text-amber-100',
   },
   matrix_match: {
     assetId: 'cyclops_slime',
-    name: 'Reasoning 2',
-    title: 'Reasoning 2',
+    name: 'Reasoning Summit',
+    title: 'Reasoning Summit',
     glowClass: 'from-sky-300/22 via-cyan-300/10 to-transparent',
     chipClass: 'border-sky-200/35 bg-sky-100/14 text-sky-100',
   },

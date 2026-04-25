@@ -66,8 +66,14 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
   const rootPaddingClass = variant === 'hub'
     ? 'px-[6px] py-[clamp(0.22rem,0.5vh,0.4rem)]'
     : 'px-[8px] py-[clamp(0.28rem,0.7vh,0.55rem)]';
+  const compactBossTimer = forceTimer && hideTimerBar;
+  const timerHeightClass = compactBossTimer
+    ? 'h-[clamp(32px,8vw,40px)]'
+    : sharedHudHeightClass;
   const timerWidthClass = hideTimerBar
-    ? 'w-[clamp(108px,24vw,142px)]'
+    ? compactBossTimer
+      ? 'w-[clamp(88px,20vw,112px)]'
+      : 'w-[clamp(108px,24vw,142px)]'
     : variant === 'hub'
       ? 'w-[clamp(160px,38vw,220px)]'
       : 'w-[clamp(190px,44vw,240px)]';
@@ -141,10 +147,10 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
 
             <div className={`relative min-w-0 items-center justify-center px-1 ${shouldHideTimer ? 'hidden' : 'flex'}`}>
               <div
-                className={`relative flex ${sharedHudHeightClass} ${timerWidthClass} items-center rounded-full border-2 border-cyan-100/60 bg-[linear-gradient(180deg,#2f67ba_0%,#1f458f_100%)] px-1.5 shadow-[0_9px_18px_rgba(2,6,23,0.42)]`}
+                className={`relative flex ${timerHeightClass} ${timerWidthClass} items-center rounded-full ${compactBossTimer ? 'backdrop-blur-[2px]' : ''} ${timerShellClass} ${compactBossTimer ? 'px-1' : 'px-1.5'}`}
               >
                 <div className="flex min-w-0 flex-1 items-center">
-                  <div className="inline-flex h-[76%] w-[clamp(24px,6.2vw,32px)] shrink-0 items-center justify-center rounded-full border border-amber-100/70 bg-[linear-gradient(180deg,#f8d86d_0%,#f59e0b_100%)] text-slate-900 shadow-[0_3px_8px_rgba(2,6,23,0.38)]">
+                  <div className={`inline-flex h-[76%] ${compactBossTimer ? 'w-[clamp(20px,5.2vw,26px)]' : 'w-[clamp(24px,6.2vw,32px)]'} shrink-0 items-center justify-center rounded-full ${timerIconShellClass} text-slate-900 shadow-[0_3px_8px_rgba(2,6,23,0.38)]`}>
                     <img
                       src={hourglassIcon}
                       alt=""
@@ -174,7 +180,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
                     </div>
                   )}
                 </div>
-                <span className={`${hideTimerBar ? 'ml-1' : 'ml-1.5'} shrink-0 font-black uppercase text-slate-100 [text-shadow:0_1px_0_rgba(0,0,0,0.35)] ${hideTimerBar ? 'text-[clamp(0.72rem,1.85vw,0.94rem)]' : variant === 'hub' ? 'text-[clamp(0.6rem,1.6vw,0.8rem)]' : 'text-[clamp(0.68rem,1.8vw,0.9rem)]'}`}>
+                <span className={`${hideTimerBar ? (compactBossTimer ? 'ml-0.5' : 'ml-1') : 'ml-1.5'} shrink-0 font-black uppercase ${timerTextClass} [text-shadow:0_1px_0_rgba(0,0,0,0.35)] ${hideTimerBar ? (compactBossTimer ? 'text-[clamp(0.62rem,1.55vw,0.8rem)]' : 'text-[clamp(0.72rem,1.85vw,0.94rem)]') : variant === 'hub' ? 'text-[clamp(0.6rem,1.6vw,0.8rem)]' : 'text-[clamp(0.68rem,1.8vw,0.9rem)]'}`}>
                   {timeLabel}
                 </span>
               </div>
@@ -234,3 +240,14 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
 };
 
 export default UnifiedMiniGameHud;
+  const timerShellClass = compactBossTimer
+    ? 'border border-amber-200/45 bg-[linear-gradient(180deg,rgba(244,197,70,0.18),rgba(8,18,43,0.78))] shadow-[0_4px_10px_rgba(2,6,23,0.24)]'
+    : 'border-2 border-cyan-100/60 bg-[linear-gradient(180deg,#2f67ba_0%,#1f458f_100%)] shadow-[0_9px_18px_rgba(2,6,23,0.42)]';
+
+  const timerIconShellClass = compactBossTimer
+    ? 'border border-amber-100/60 bg-[linear-gradient(180deg,#f8d86d_0%,#f59e0b_100%)]'
+    : 'border border-amber-100/70 bg-[linear-gradient(180deg,#f8d86d_0%,#f59e0b_100%)]';
+
+  const timerTextClass = compactBossTimer
+    ? 'text-amber-50'
+    : 'text-slate-100';

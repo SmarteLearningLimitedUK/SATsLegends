@@ -415,6 +415,12 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         }
         return renderFromRegistry('DecimalSniperGame', { ...sharedProps, isBoss: Boolean(selectedLevel.isBoss) });
       case 'graph_grabber':
+        if (selectedLevel.blueprintKey === 'range_rodeo') {
+          return renderFromRegistry('RangeRodeoGame', {
+            ...sharedProps,
+            isPractice: Boolean(selectedLevel.isPractice),
+          });
+        }
         if (selectedLevel.blueprintKey === 'line_graph_lab') {
           return renderFromRegistry('LineGraphLabGame', sharedProps);
         }
@@ -565,9 +571,9 @@ export const AppRouter: React.FC<AppRouterProps> = ({
               type="button"
               onClick={onStartAdventure}
               aria-label="Start"
-              className="ui-button-primary flex h-full w-full items-center justify-center border-0 bg-transparent px-4 py-0 text-lg font-black uppercase tracking-[0.12em] text-[#16233d] sm:text-xl"
+              className="ui-button-primary flex h-full w-full items-center justify-center border-0 bg-transparent px-4 py-0 text-lg !font-black uppercase tracking-[0.12em] text-[#16233d] sm:text-xl"
             >
-              Start
+              <span className="font-black">Start</span>
             </button>
           </div>
         </div>

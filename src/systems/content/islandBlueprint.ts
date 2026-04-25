@@ -1032,7 +1032,7 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
     miniGames: [
       {
         key: 'crystal_core',
-        name: 'SATs Paper 1: Arithmetic',
+        name: 'Arithmetic Showdown',
         role: 'fluency',
         gameplayRoles: ['fluency', 'application'],
         mechanicSummary: 'Fast arithmetic paper trial focused on calculation accuracy and steady control.',
@@ -1046,7 +1046,7 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
       },
       {
         key: 'mirror_gate',
-        name: 'SATs Paper 2: Reasoning',
+        name: 'Reasoning Trial',
         role: 'strategy',
         gameplayRoles: ['strategy', 'mixed_mastery'],
         mechanicSummary: 'Reasoning paper trial built from transformations, shape properties and coordinate thinking.',
@@ -1060,7 +1060,7 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
       },
       {
         key: 'matrix_match',
-        name: 'Reasoning 2',
+        name: 'Reasoning Summit',
         role: 'mixed_mastery',
         gameplayRoles: ['mixed_mastery', 'pressure_timing'],
         mechanicSummary: 'Mixed reasoning paper trial that blends clues, patterns and data under pressure.',

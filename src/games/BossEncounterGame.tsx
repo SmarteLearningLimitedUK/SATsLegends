@@ -454,19 +454,24 @@ const BossPaperFallbackVisual: React.FC<{
   encounter: ReturnType<typeof getBossEncounter>;
   bossPose: BossPose;
   title: string;
-}> = ({ encounter, bossPose, title }) => (
-  <BossVisualFrame title={title}>
-    <div className="flex h-[clamp(12rem,32vh,20rem)] flex-col items-center justify-center gap-3 rounded-lg bg-[radial-gradient(circle_at_50%_24%,rgba(168,85,247,0.22),transparent_38%),linear-gradient(180deg,rgba(2,6,23,0.12),rgba(2,6,23,0.35))] p-4">
+}> = ({ encounter, bossPose }) => (
+  <div className="relative h-[clamp(12rem,32vh,20rem)] w-full overflow-hidden rounded-[1rem] border border-white/18">
+    <img
+      src={bossPaperBackground}
+      alt=""
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+      draggable={false}
+    />
+    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,255,255,0.14),transparent_42%),linear-gradient(180deg,rgba(4,18,44,0.05),rgba(4,18,44,0.3))]" />
+    <div className="absolute inset-x-0 bottom-[2%] flex items-end justify-center">
       <BossPortrait
         encounter={encounter}
         pose={bossPose}
-        className="h-[clamp(8.5rem,26vh,14rem)] w-full max-w-[18rem] lg:max-w-[20rem]"
+        className="h-[clamp(8.8rem,27vh,14.4rem)] w-full max-w-[18rem] lg:max-w-[20rem]"
       />
-      <div className="rounded-[0.9rem] border border-white/14 bg-slate-950/34 px-4 py-2 text-center text-[0.72rem] font-black uppercase tracking-[0.14em] text-cyan-50/82">
-        Face the boss and choose the best answer.
-      </div>
     </div>
-  </BossVisualFrame>
+  </div>
 );
 
 const generateFactorsQuestion = (): BossQuestion => {
@@ -1122,7 +1127,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   const isReasoning1Paper = gameType === 'mirror_gate';
   const isReasoning2Paper = gameType === 'matrix_match';
   const isReasoningPaper = isReasoning1Paper || isReasoning2Paper;
-  const reasoningDisplayTitle = isReasoning2Paper ? 'Reasoning 2' : 'Reasoning 1';
+  const reasoningDisplayTitle = isReasoning2Paper ? 'Reasoning Summit' : 'Reasoning Trial';
   const reactionCopy = REACTION_COPY;
   const [paperSeed, setPaperSeed] = useState<string | number>(() => `arithmetic-${Date.now()}-${Math.random()}`);
   const arithmeticPaper = useMemo(
@@ -1845,7 +1850,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
         <div className="relative flex h-full w-full overflow-hidden bg-[#f7f4ea] px-3 py-3 font-sans text-slate-950 md:px-6 md:py-5">
           <section className="mx-auto flex h-full w-full max-w-4xl flex-col overflow-hidden rounded-[1.1rem] border border-slate-300 bg-[#fffdf6] shadow-[0_12px_28px_rgba(15,23,42,0.16)]">
             <div className="border-b border-slate-300 bg-white px-5 py-4">
-              <div className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">SATs Paper 1: Arithmetic</div>
+              <div className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">Arithmetic Showdown</div>
               <h2 className="mt-1 text-2xl font-black text-slate-950 md:text-4xl">Paper Complete</h2>
             </div>
             <div className="grid min-h-0 flex-1 gap-3 overflow-hidden p-4 md:grid-cols-[1fr_1fr] md:p-6">
@@ -1924,10 +1929,10 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
     const selectedAnswer = arithmeticAnswers[arithmeticQuestion.id];
     return (
       <BossPaperStage
-        title="Arithmetic"
+        title="Arithmetic Showdown"
         questionNumber={currentIndex + 1}
         questionText={`Calculate the value of: ${arithmeticQuestion.question}\nChoose the correct answer.`}
-          visual={<BossPaperFallbackVisual encounter={encounter} bossPose={bossPose} title="Arithmetic Boss" />}
+          visual={<BossPaperFallbackVisual encounter={encounter} bossPose={bossPose} title="Arithmetic Showdown Boss" />}
           answers={arithmeticQuestion.choices.slice(0, 4).map((option, index) => (
             <button
               key={`${option}-${index}`}

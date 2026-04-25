@@ -65,9 +65,9 @@ const RATIO_RACER_LEVELS: LevelData[] = [
 ];
 
 const CALCULATION_CORE_LEVELS: LevelData[] = [
-  { id: 1, stars: 0, isLocked: false, blueprintKey: 'crystal_core', displayName: 'SATs Paper 1: Arithmetic', gameType: 'crystal_core', isBoss: true, bossUnlockCoins: 0, isPractice: false },
-  { id: 2, stars: 0, isLocked: false, blueprintKey: 'mirror_gate', displayName: 'Reasoning 1', gameType: 'mirror_gate', isBoss: true, bossUnlockCoins: 0, isPractice: false },
-  { id: 3, stars: 0, isLocked: false, blueprintKey: 'matrix_match', displayName: 'Reasoning 2', gameType: 'matrix_match', isBoss: true, bossUnlockCoins: 0, isPractice: false },
+  { id: 1, stars: 0, isLocked: false, blueprintKey: 'crystal_core', displayName: 'Arithmetic Showdown', gameType: 'crystal_core', isBoss: true, bossUnlockCoins: 0, isPractice: false },
+  { id: 2, stars: 0, isLocked: false, blueprintKey: 'mirror_gate', displayName: 'Reasoning Trial', gameType: 'mirror_gate', isBoss: true, bossUnlockCoins: 0, isPractice: false },
+  { id: 3, stars: 0, isLocked: false, blueprintKey: 'matrix_match', displayName: 'Reasoning Summit', gameType: 'matrix_match', isBoss: true, bossUnlockCoins: 0, isPractice: false },
 ];
 
 export const ISLANDS: IslandData[] = [
@@ -151,6 +151,7 @@ export const ISLANDS: IslandData[] = [
         { id: 1, stars: 0, isLocked: false, blueprintKey: 'graph_grabber', displayName: 'Graph Grabber', gameType: 'graph_grabber' },
         { id: 2, stars: 0, isLocked: false, blueprintKey: 'line_graph_lab', displayName: 'Line Graph Lab', gameType: 'graph_grabber' },
         { id: 3, stars: 0, isLocked: false, blueprintKey: 'data_detective', displayName: 'Data Detective', gameType: 'data_dungeon' },
+        { id: 4, stars: 0, isLocked: false, blueprintKey: 'range_rodeo', displayName: 'Range Rodeo', gameType: 'graph_grabber' },
       ],
     ),
   },

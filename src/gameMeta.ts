@@ -79,11 +79,11 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   matrix_match: {
-    label: 'Reasoning 2',
+    label: 'Reasoning Summit',
     focus: 'Reasoning paper boss duel',
     mode: 'boss',
     rules: makeBossRules(
-      'Reasoning 2',
+      'Reasoning Summit',
       'Enter the final reasoning paper and complete each pattern before the Oracle Slime overwhelms the forest.',
       'Look for colour, size, number and rotation rules before you commit.'
     ),
@@ -115,11 +115,11 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   crystal_core: {
-    label: 'SATs Paper 1',
+    label: 'Arithmetic Showdown',
     focus: 'Arithmetic paper boss duel',
     mode: 'boss',
     rules: makeBossRules(
-      'SATs Paper 1: Arithmetic',
+      'Arithmetic Showdown',
       'Stabilise the arithmetic paper by proving calculation fluency under pressure.',
       'Wrong answers feed the unstable core, so accuracy matters more than rushing.'
     ),
@@ -307,11 +307,11 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   mirror_gate: {
-    label: 'SATs Paper 2',
+    label: 'Reasoning Trial',
     focus: 'Reasoning paper boss duel',
     mode: 'boss',
     rules: makeBossRules(
-      'SATs Paper 2: Reasoning',
+      'Reasoning Trial',
       'Survive the reasoning paper by mastering transformations, shape properties and coordinate thinking.',
       'Paper errors give the warden control of the gate, so read each move carefully.'
     ),

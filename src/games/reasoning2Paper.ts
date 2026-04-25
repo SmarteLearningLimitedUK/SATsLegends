@@ -64,7 +64,7 @@ export type ReasoningQuestion = {
 export type ReasoningPaper = {
   paperId: string;
   seed: string | number;
-  title: 'Reasoning 2';
+  title: 'Reasoning Summit';
   totalMarks: 35;
   timeLimitSeconds: 2400;
   questions: ReasoningQuestion[];
@@ -969,7 +969,7 @@ const answerExists = (answer: any) => {
 
 export const validateReasoning2Paper = (paper: ReasoningPaper): { valid: boolean; errors: string[] } => {
   const errors: string[] = [];
-  if (paper.title !== 'Reasoning 2') errors.push('Title must be Reasoning 2.');
+  if (paper.title !== 'Reasoning Summit') errors.push('Title must be Reasoning Summit.');
   if (paper.totalMarks !== 35) errors.push('Total marks must be 35.');
   if (paper.timeLimitSeconds !== 2400) errors.push('Time limit must be 2400 seconds.');
   if (paper.questions.length < 23 || paper.questions.length > 30) errors.push('Question count must be between 23 and 30.');
@@ -1102,7 +1102,7 @@ export const generateReasoning2Paper = (seed: string | number = `${Date.now()}-$
     const paper: ReasoningPaper = {
       paperId: `reasoning-2-${hashSeed(attemptSeed).toString(36)}`,
       seed: attemptSeed,
-      title: 'Reasoning 2',
+      title: 'Reasoning Summit',
       totalMarks: 35,
       timeLimitSeconds: 2400,
       questions,

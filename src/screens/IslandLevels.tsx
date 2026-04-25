@@ -69,6 +69,7 @@ const GAME_SUMMARY_BY_KEY: Record<string, string> = {
   reasoning_quest: 'Solve multi-step scenarios that combine key SATs skills.',
   perimeter_path: 'Trace exact boundary lengths on irregular paths.',
   graph_grabber: 'Extract exact values from graphs before they disappear.',
+  range_rodeo: 'Find the range of each number set by subtracting the smallest from the largest value.',
   table_trouble: 'Read tables quickly and answer under time pressure.',
   line_graph_lab: 'Interpret trends, intervals, and key points on line graphs.',
   chart_challenge: 'Lock the median quickly from charted data sets.',
