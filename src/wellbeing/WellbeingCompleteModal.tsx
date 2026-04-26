@@ -25,6 +25,7 @@ const WellbeingCompleteModal: React.FC<WellbeingCompleteModalProps> = ({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
+        data-testid="wellbeing-complete-modal"
         className="fixed inset-0 z-[250] flex items-center justify-center bg-slate-950/72 px-4 backdrop-blur-lg"
         style={{
           paddingTop: 'calc(env(safe-area-inset-top) + 10px)',

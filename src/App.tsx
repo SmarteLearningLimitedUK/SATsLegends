@@ -48,6 +48,11 @@ import { useLevelBackgroundAudio } from './audio/useLevelBackgroundAudio';
 import { useWelcomeBackgroundAudio } from './audio/useWelcomeBackgroundAudio';
 import { playClickSound } from './utils/soundManager';
 import FeedbackToast, { FeedbackToastState } from './components/feedback/FeedbackToast';
+import { getVisualTestSeed, isVisualTestMode } from './utils/visualTestMode';
+import { makeSeededRandom } from './utils/seededRandom';
+import VisualPauseModal from './components/visual/VisualPauseModal';
+import { WELLBEING_ACTIVITIES } from './wellbeing/data';
+import { getLevelRouteNumber, getLevelRouteSlug } from './app/routeConfig';
 
 type SessionMetricsState = {
   correct: number;
@@ -59,6 +64,17 @@ type SessionMetricsState = {
 
 const App: React.FC = () => {
   const buildId = import.meta.env.VITE_BUILD_ID ?? CACHE_BUSTER;
+  const visualTestMode = isVisualTestMode();
+
+  // Patch randomness for deterministic screenshot exports (visual test mode only).
+  useMemo(() => {
+    if (!visualTestMode) return;
+    const seed = getVisualTestSeed();
+    if (seed === null) return;
+    const seeded = makeSeededRandom(seed);
+    // eslint-disable-next-line no-global-assign
+    Math.random = seeded;
+  }, [visualTestMode]);
 
   const {
     screen,
@@ -118,6 +134,7 @@ const App: React.FC = () => {
     tone: 'success',
     message: 'Correct!',
   });
+  const [visualPauseOpen, setVisualPauseOpen] = useState(false);
   const questionStartedAtRef = useRef(Date.now());
   const currentQuestionHadIncorrectRef = useRef(false);
 
@@ -928,6 +945,76 @@ const App: React.FC = () => {
     goToIslandLevels();
   };
 
+  const buildVisualLevelResult = (kind: 'victory' | 'gameover'): LevelResultState => ({
+    type: kind,
+    title: kind === 'victory' ? 'Level Complete!' : 'Try Again',
+    subtitle: kind === 'victory' ? 'Visual review capture.' : 'Visual review capture.',
+    score: kind === 'victory' ? 1234 : 350,
+    practice: false,
+    stars: kind === 'victory' ? 3 : 0,
+    xpGained: kind === 'victory' ? 180 : 20,
+    bonuses: [],
+    previousLevel: 4,
+    newLevel: kind === 'victory' ? 5 : 4,
+    previousXp: 120,
+    currentXp: 300,
+    xpRequiredForNextLevel: 500,
+    leveledUp: false,
+    accuracy: kind === 'victory' ? 1 : 0.6,
+    hintsUsed: 0,
+    mistakes: kind === 'victory' ? 0 : 3,
+    timeMs: 42000,
+    completed: kind === 'victory',
+    xpEarned: kind === 'victory' ? 180 : 20,
+  });
+
+  useEffect(() => {
+    if (!visualTestMode) return;
+    window.__SAT_VISUAL__ = {
+      getLevelRoutes: () => {
+        return ISLANDS.flatMap((island) =>
+          island.levels.map((level) => {
+            const slug = getLevelRouteSlug(level);
+            const num = getLevelRouteNumber(island, level);
+            const label = level.displayName || slug;
+            return {
+              islandId: island.id,
+              levelId: level.id,
+              path: `/game/${island.id}/${slug}/${num}`,
+              label,
+              isBoss: Boolean(level.isBoss),
+            };
+          }),
+        );
+      },
+      getWellbeingActivities: () => WELLBEING_ACTIVITIES.map((activity) => activity.id),
+      openWellbeingActivity: (id: string) => {
+        setWellbeingActivityId(id as any);
+        setScreen('wellbeing_activity');
+      },
+      showCorrectFeedback: () => setFeedbackToast({ isOpen: true, tone: 'success', message: 'Correct!' }),
+      showWrongFeedback: () => setFeedbackToast({ isOpen: true, tone: 'warning', message: 'Not quite' }),
+      openPauseModal: () => setVisualPauseOpen(true),
+      closePauseModal: () => setVisualPauseOpen(false),
+      openEndLevel: (kind: 'victory' | 'gameover') => setLevelResult(buildVisualLevelResult(kind)),
+      closeEndLevel: () => setLevelResult(null),
+      openWellbeingComplete: (titleOverride?: string) => {
+        setWellbeingCompletion({
+          activityId: (wellbeingActivityId ?? WELLBEING_ACTIVITIES[0]?.id ?? 'bubble_breath') as any,
+          rewardLabel: createWellbeingRewardLabel((player.calmTokens || 0) + 1),
+          title: titleOverride,
+        } as any);
+      },
+      closeWellbeingComplete: () => setWellbeingCompletion(null),
+    };
+
+    return () => {
+      if (window.__SAT_VISUAL__) {
+        delete window.__SAT_VISUAL__;
+      }
+    };
+  }, [createWellbeingRewardLabel, player.calmTokens, setScreen, visualTestMode, wellbeingActivityId]);
+
   const handleClaimQuest = (questId: string) => {
     const quest = player.dailyQuests.find(q => q.id === questId);
     if (!quest || quest.isClaimed || quest.current < quest.target) return;
@@ -1303,6 +1390,11 @@ const App: React.FC = () => {
                 setWellbeingActivityId(null);
                 setScreen('wellbeing_hub');
               }}
+            />
+
+            <VisualPauseModal
+              isOpen={visualTestMode && visualPauseOpen}
+              onClose={() => setVisualPauseOpen(false)}
             />
 
             {null}

@@ -151,6 +151,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
     <AnimatePresence>
       {isOpen && (
         <motion.div
+          data-testid={isVictory ? 'level-complete-modal' : 'fail-modal'}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

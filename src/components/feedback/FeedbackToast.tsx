@@ -51,12 +51,15 @@ const FeedbackToast: React.FC<FeedbackToastProps> = ({ toast, onDismiss, placeme
 
   return (
     <div
+      data-testid="feedback-toast-layer"
       className="pointer-events-none fixed inset-0 z-[120]"
       aria-hidden={!toast.isOpen}
     >
       <AnimatePresence>
         {toast.isOpen ? (
           <motion.div
+            data-testid="feedback-toast"
+            data-tone={toast.tone}
             initial={{ opacity: 0, scale: 0.96, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: 4 }}
@@ -82,4 +85,3 @@ const FeedbackToast: React.FC<FeedbackToastProps> = ({ toast, onDismiss, placeme
 };
 
 export default FeedbackToast;
-
