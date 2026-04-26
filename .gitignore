@@ -19,4 +19,5 @@ deploy.config.bat
 .verify_deployroot/
 qa-artifacts/
 playtest/
+visual-review/
 src/assets/importedassets/screen comparison/SATsLegendsendofcodex.zip
