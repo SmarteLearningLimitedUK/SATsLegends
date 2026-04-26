@@ -39,6 +39,22 @@ const firstSentence = (value: string) => {
   return sentence.trim();
 };
 
+const toGameyCopy = (value: string) => {
+  const v = value.trim();
+  if (!v) return v;
+
+  return v
+    .replace(/Select all statements that are true\./i, 'Pick the true ones.')
+    .replace(/Select (the )?correct/gi, 'Pick the right')
+    .replace(/Answer the following\./gi, 'Solve it.')
+    .replace(/Read the question/gi, 'Read the mission')
+    .replace(/Use the Number Line/gi, 'Slice the number line')
+    .replace(/Use long division/gi, 'Run the division')
+    .replace(/Choose the correct/gi, 'Pick the right')
+    .replace(/Tap the main button/gi, 'Tap the button')
+    .replace(/\bpractice run\b/gi, 'warm-up');
+};
+
 type SkillMeta = {
   label: string;
   icon: AssetIconName;
@@ -93,12 +109,12 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
   if (!open || locallyDismissed) return null;
 
   const resolvedTitle = briefing?.title || title;
-  const resolvedSummary = briefing?.summary ? firstSentence(briefing.summary) : undefined;
-  const resolvedBodySentence = typeof body === 'string' ? firstSentence(body) : undefined;
+  const resolvedSummary = briefing?.summary ? toGameyCopy(firstSentence(briefing.summary)) : undefined;
+  const resolvedBodySentence = typeof body === 'string' ? toGameyCopy(firstSentence(body)) : undefined;
   const instruction = clampWords(resolvedSummary || resolvedBodySentence || 'Ready? Beat this challenge.', 12);
 
   const resolvedBullets = (briefing?.bullets ?? [])
-    .map((bullet) => clampWords(firstSentence(bullet), 4))
+    .map((bullet) => clampWords(toGameyCopy(firstSentence(bullet)), 4))
     .filter(Boolean);
 
   const fallbackHints = [
