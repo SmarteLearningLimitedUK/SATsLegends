@@ -2,6 +2,7 @@ import { chromium, type Browser, type BrowserContext, type Page } from 'playwrig
 import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 type ViewportPreset = {
   key: string;
@@ -17,6 +18,8 @@ type LevelRoute = {
   isBoss?: boolean;
 };
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, '..');
 const outDir = path.resolve(repoRoot, 'visual-review', 'screenshots');
 const indexHtmlPath = path.resolve(repoRoot, 'visual-review', 'index.html');
