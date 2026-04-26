@@ -1115,12 +1115,12 @@ const BossOrderingCard: React.FC<{
 );
 
 const BossPaperNav: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className="mx-auto flex w-full max-w-3xl items-center justify-center gap-2 rounded-[1rem] border border-cyan-200/30 bg-slate-950/72 p-2 shadow-[0_10px_22px_rgba(2,6,23,0.45)]">
+  <div className="mx-auto flex w-full max-w-3xl flex-wrap items-center justify-center gap-2 rounded-[1rem] border border-cyan-200/30 bg-slate-950/72 p-2 shadow-[0_10px_22px_rgba(2,6,23,0.45)] sm:flex-nowrap">
     {children}
   </div>
 );
 
-const bossNavButtonClass = 'rounded-[0.75rem] border border-cyan-100/35 bg-[linear-gradient(180deg,#1fb6ff,#0b6cff)] px-3 py-2 text-[10px] font-black uppercase tracking-[0.1em] text-white shadow-[0_6px_12px_rgba(2,6,23,0.34)] disabled:cursor-not-allowed disabled:opacity-40';
+const bossNavButtonClass = 'whitespace-nowrap rounded-[0.75rem] border border-cyan-100/35 bg-[linear-gradient(180deg,#1fb6ff,#0b6cff)] px-3 py-2 text-[10px] font-black uppercase tracking-[0.1em] text-white shadow-[0_6px_12px_rgba(2,6,23,0.34)] disabled:cursor-not-allowed disabled:opacity-40';
 
 const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   gameType,
@@ -1160,8 +1160,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   );
   const [arithmeticAnswers, setArithmeticAnswers] = useState<Record<number, string>>({});
   const [arithmeticResult, setArithmeticResult] = useState<ArithmeticPaperResult | null>(null);
-  const [isReviewingArithmetic, setIsReviewingArithmetic] = useState(false);
-  const [arithmeticScreen, setArithmeticScreen] = useState<'intro' | 'active'>('intro');
+  const [arithmeticScreen, setArithmeticScreen] = useState<'intro' | 'active' | 'confirm' | 'results' | 'review'>('intro');
   const [reasoningAnswers, setReasoningAnswers] = useState<Record<number, any>>({});
   const [reasoningResult, setReasoningResult] = useState<ReasoningPaperResult | null>(null);
   const [reasoningScreen, setReasoningScreen] = useState<'intro' | 'active' | 'confirm' | 'results' | 'review'>('intro');
@@ -1358,6 +1357,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
       isBestBossPaperAttemptToday(gameType, preliminaryResult.score),
     );
     setArithmeticResult(result);
+    setArithmeticScreen('results');
     setScore(result.xpAwarded);
     sessionEvents?.onEvent?.({
       type: 'game_complete',
@@ -1381,6 +1381,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
 
   useEffect(() => {
     if (!isArithmeticPaper || arithmeticResult || !arithmeticPaper || arithmeticScreen === 'intro') return;
+    if (arithmeticScreen !== 'active' && arithmeticScreen !== 'confirm') return;
     if ((sessionState?.timeLeft ?? arithmeticPaper.timeLimitSeconds) <= 0) {
       submitArithmeticPaper(false);
     }
@@ -1393,7 +1394,6 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
     setPaperSeed(`arithmetic-${Date.now()}-${Math.random()}`);
     setArithmeticAnswers({});
     setArithmeticResult(null);
-    setIsReviewingArithmetic(false);
     setArithmeticScreen('intro');
     setCurrentIndex(0);
     setScore(0);
@@ -1406,11 +1406,6 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
       ...previous,
       [arithmeticQuestion.id]: String(value),
     }));
-    if (currentIndex >= arithmeticQuestionCount - 1) {
-      submitArithmeticPaper((sessionState?.timeLeft ?? 0) > 0);
-      return;
-    }
-    setCurrentIndex((previous) => Math.min(arithmeticQuestionCount - 1, previous + 1));
   };
 
   const startReasoningPaper = () => {
@@ -1484,6 +1479,16 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
     setCurrentIndex(0);
     setScore(0);
     window.dispatchEvent(new Event(GAME_HUD_RESTART_EVENT));
+  };
+
+  const goPrevPaperQuestion = (questionCount: number) => {
+    if (questionCount <= 0) return;
+    setCurrentIndex((previous) => Math.max(0, Math.min(questionCount - 1, previous - 1)));
+  };
+
+  const goNextPaperQuestion = (questionCount: number) => {
+    if (questionCount <= 0) return;
+    setCurrentIndex((previous) => Math.max(0, Math.min(questionCount - 1, previous + 1)));
   };
 
   const setReasoningAnswer = (value: any) => {
@@ -1919,9 +1924,25 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
         )}
         nav={(
           <BossPaperNav>
+            <button
+              type="button"
+              onClick={() => goPrevPaperQuestion(reasoningQuestionCount)}
+              disabled={currentIndex <= 0}
+              className={bossNavButtonClass}
+            >
+              Prev
+            </button>
             <div className="min-w-0 flex-1 rounded-[0.75rem] border border-cyan-100/35 bg-slate-950/68 px-3 py-2 text-center text-xs font-black uppercase tracking-[0.12em] text-white">
               Question {currentIndex + 1} of {reasoningQuestionCount}
             </div>
+            <button
+              type="button"
+              onClick={() => goNextPaperQuestion(reasoningQuestionCount)}
+              disabled={currentIndex >= reasoningQuestionCount - 1}
+              className={bossNavButtonClass}
+            >
+              Next
+            </button>
             <button
               type="button"
               onClick={() => setReasoningScreen('confirm')}
@@ -1968,7 +1989,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
       );
     }
 
-    if (arithmeticResult && !isReviewingArithmetic) {
+    if (arithmeticResult && arithmeticScreen === 'results') {
       const incorrectArithmeticAnswers = arithmeticResult.results
         .filter((entry) => !entry.isCorrect)
         .map((entry) => {
@@ -2032,8 +2053,8 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
               <button type="button" onClick={retryArithmeticPaper} className="rounded-xl border-2 border-slate-300 bg-slate-950 px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-white">
                 Retry with new paper
               </button>
-              <button type="button" onClick={() => setIsReviewingArithmetic(true)} className="rounded-xl border-2 border-slate-300 bg-white px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-slate-950">
-                Review answers
+              <button type="button" onClick={() => setArithmeticScreen('review')} className="rounded-xl border-2 border-slate-300 bg-white px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-slate-950">
+                Review Answers
               </button>
               <button type="button" onClick={onBack} className="rounded-xl border-2 border-slate-300 bg-white px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-slate-950">
                 Return to Boss Island
@@ -2044,16 +2065,16 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
       );
     }
 
-    if (arithmeticResult && isReviewingArithmetic) {
+    if (arithmeticResult && arithmeticScreen === 'review') {
       return (
         <div className="relative flex h-full w-full overflow-hidden bg-[#f7f4ea] px-3 py-3 font-sans text-slate-950 md:px-6 md:py-5">
           <section className="mx-auto flex h-full w-full max-w-5xl flex-col overflow-hidden rounded-[1.1rem] border border-slate-300 bg-[#fffdf6] shadow-[0_12px_28px_rgba(15,23,42,0.16)]">
             <div className="flex shrink-0 items-center justify-between gap-3 border-b border-slate-300 bg-white px-4 py-3">
               <div>
-                <div className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">Review answers</div>
+                <div className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">Review Answers</div>
                 <h2 className="text-xl font-black text-slate-950">Score {arithmeticResult.score}/40</h2>
               </div>
-              <button type="button" onClick={() => setIsReviewingArithmetic(false)} className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-black uppercase tracking-[0.12em]">
+              <button type="button" onClick={() => setArithmeticScreen('results')} className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-black uppercase tracking-[0.12em]">
                 Results
               </button>
             </div>
@@ -2073,6 +2094,27 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
                   );
                 })}
               </div>
+            </div>
+          </section>
+        </div>
+      );
+    }
+
+    if (arithmeticScreen === 'confirm') {
+      return (
+        <div className="flex h-full w-full items-center justify-center overflow-hidden bg-[#f7f4ea] px-4 py-4 font-sans text-slate-950">
+          <section className="w-full max-w-xl rounded-[1.1rem] border border-slate-300 bg-[#fffdf6] p-5 text-center shadow-[0_12px_28px_rgba(15,23,42,0.16)]">
+            <h2 className="text-2xl font-black">Submit Arithmetic Showdown?</h2>
+            <p className="mt-3 text-sm font-bold text-slate-600">
+              You have answered {arithmeticAnsweredCount} of {arithmeticQuestionCount} questions. Results will only be shown after submission.
+            </p>
+            <div className="mt-5 grid gap-2 sm:grid-cols-2">
+              <button type="button" onClick={() => setArithmeticScreen('active')} className="rounded-xl border-2 border-slate-300 bg-white px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-slate-950">
+                Keep Working
+              </button>
+              <button type="button" onClick={() => submitArithmeticPaper((sessionState?.timeLeft ?? 0) > 0)} className="rounded-xl border-2 border-slate-950 bg-slate-950 px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-white">
+                Submit Paper
+              </button>
             </div>
           </section>
         </div>
@@ -2108,9 +2150,32 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
           ))}
         nav={(
           <BossPaperNav>
-            <div className="min-w-0 flex-1 text-center text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100/75">
+            <button
+              type="button"
+              onClick={() => goPrevPaperQuestion(arithmeticQuestionCount)}
+              disabled={currentIndex <= 0}
+              className={bossNavButtonClass}
+            >
+              Prev
+            </button>
+            <div className="min-w-0 flex-1 rounded-[0.75rem] border border-cyan-100/35 bg-slate-950/68 px-3 py-2 text-center text-xs font-black uppercase tracking-[0.12em] text-white">
               Question {currentIndex + 1} of {arithmeticQuestionCount}
             </div>
+            <button
+              type="button"
+              onClick={() => goNextPaperQuestion(arithmeticQuestionCount)}
+              disabled={currentIndex >= arithmeticQuestionCount - 1}
+              className={bossNavButtonClass}
+            >
+              Next
+            </button>
+            <button
+              type="button"
+              onClick={() => setArithmeticScreen('confirm')}
+              className={bossNavButtonClass}
+            >
+              Submit
+            </button>
           </BossPaperNav>
         )}
       />
