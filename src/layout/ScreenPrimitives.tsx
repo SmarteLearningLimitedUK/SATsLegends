@@ -80,9 +80,11 @@ export const ShellHUDRow: React.FC<ShellHUDRowProps> = ({ eyebrow, title, traili
   <div className={cn('flex items-center justify-between gap-3', className)}>
     <div className="min-w-0">
       {eyebrow ? (
-        <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/64">{eyebrow}</div>
+        <div className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/58 md:text-[10px]">{eyebrow}</div>
       ) : null}
-      <div className="min-w-0 truncate text-lg font-black tracking-tight text-white md:text-3xl">{title}</div>
+      <div className="min-w-0 truncate text-[clamp(1.05rem,3.6vw,1.7rem)] font-black tracking-tight text-white drop-shadow-[0_6px_16px_rgba(2,6,23,0.45)] md:text-[clamp(1.3rem,2.6vw,2rem)]">
+        {title}
+      </div>
     </div>
     {trailing ? <div className="shrink-0">{trailing}</div> : null}
   </div>
@@ -224,9 +226,9 @@ export const PrimaryActionCTA: React.FC<ActionButtonProps> = ({
     className={cn(
       'ui-button-primary gameplay-cta-primary mission-action-btn mission-action-btn-primary',
       'inline-flex min-h-[48px] items-center justify-center border-0 bg-transparent',
-      'px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em]',
+      'px-4 py-2 text-sm font-black uppercase tracking-[0.12em]',
       'disabled:cursor-not-allowed disabled:opacity-60',
-      'md:min-h-[48px] md:px-5 md:py-2.5 md:text-xs',
+      'md:min-h-[48px] md:px-5 md:py-2.5 md:text-base',
       className,
     )}
     style={fillSlice(GUI_SLICES.buttonPrimary)}
@@ -260,9 +262,9 @@ export const SecondaryUtilityButton: React.FC<ActionButtonProps> = ({
     className={cn(
       'ui-button-secondary gameplay-cta-secondary mission-action-btn mission-action-btn-secondary',
       'inline-flex min-h-[48px] items-center justify-center border-0 bg-transparent',
-      'px-3 py-1.5 text-[9.5px] font-black uppercase tracking-[0.14em]',
+      'px-3 py-1.5 text-xs font-black uppercase tracking-[0.12em]',
       'disabled:cursor-not-allowed disabled:opacity-60',
-      'md:min-h-[48px] md:px-4 md:py-2 md:text-[10px]',
+      'md:min-h-[48px] md:px-4 md:py-2 md:text-sm',
       className,
     )}
     style={fillSlice(GUI_SLICES.buttonSecondary)}
