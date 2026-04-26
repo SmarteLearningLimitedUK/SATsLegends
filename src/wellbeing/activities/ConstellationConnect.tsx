@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import WellbeingShell from '../WellbeingShell';
 import { WellbeingActivityComponentProps } from '../types';
+import HintChip from '../../components/mission/HintChip';
 
 type Point = { x: number; y: number };
 type Constellation = {
@@ -210,9 +211,11 @@ const ConstellationConnect: React.FC<WellbeingActivityComponentProps> = ({ onCom
             </>
           ) : (
             <>
-              <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/70">How to play</div>
-              <div className="mt-2 text-sm font-semibold leading-relaxed text-cyan-50/84">
-                Tap the glowing stars in order. Complete all three constellations to finish the sky path.
+              <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/70">Sky Quest</div>
+              <div className="mt-2 flex flex-wrap justify-center gap-2">
+                <HintChip label="Tap stars" />
+                <HintChip label="Follow order" />
+                <HintChip label="Trace 3" />
               </div>
             </>
           )}

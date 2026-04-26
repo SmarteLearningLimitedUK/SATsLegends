@@ -31,11 +31,11 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     mode: 'special',
     rules: {
       title: 'Quiz',
-      summary: 'A flexible revision mode for mixed SATs questions and practice runs.',
+      summary: 'A quick mixed challenge. Perfect for warm-ups and bonus runs.',
       bullets: [
-        'Use it for daily review, warm-ups, or catch-up revision.',
-        'Questions can mix domains instead of staying on one island topic.',
-        'It is best suited to side modes rather than the core campaign route.',
+        'Jump in fast and keep your streak alive.',
+        'Questions can mix topics across islands.',
+        'Great for a quick quest between levels.',
       ],
     },
   },

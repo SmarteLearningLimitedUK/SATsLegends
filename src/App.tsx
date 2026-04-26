@@ -581,40 +581,40 @@ const App: React.FC = () => {
   const buildKidRules = useCallback((rules: GameRuleSet | null) => {
     if (!rules) return null;
     const combined = `${rules.summary} ${rules.bullets.join(' ')}`.toLowerCase();
-    const line1 = 'Read the question at the top.';
-    let line2 = 'Use the tools on screen to find the answer.';
-    let line3 = 'Tap the main button when you are ready.';
+    const line1 = 'Read mission';
+    let line2 = 'Use tools';
+    let line3 = 'Tap when ready';
 
     if (combined.includes('drag') || combined.includes('drop') || combined.includes('place')) {
-      line2 = 'Drag items to the right spot.';
+      line2 = 'Drag to slot';
     } else if (combined.includes('swap') || combined.includes('match')) {
-      line2 = 'Swap tiles to make a match.';
+      line2 = 'Match the tiles';
     } else if (combined.includes('tap') && !combined.includes('drag')) {
-      line2 = 'Tap the right choice.';
+      line2 = 'Tap the answer';
     }
 
     if (combined.includes('angle') || combined.includes('launch') || combined.includes('fire')) {
-      line2 = 'Choose the angle, then fire.';
+      line2 = 'Choose angle';
     }
     if (combined.includes('ratio')) {
-      line2 = 'Use the ratio to build the correct mix.';
+      line2 = 'Build the ratio';
     }
     if (combined.includes('graph') || combined.includes('chart')) {
-      line2 = 'Read the chart, then choose the correct answer.';
+      line2 = 'Read the chart';
     }
     if (combined.includes('time')) {
-      line2 = 'Set the time to match the question.';
+      line2 = 'Set the time';
     }
     if (combined.includes('measure') || combined.includes('scale') || combined.includes('weight')) {
-      line2 = 'Add the right amounts to match the target.';
+      line2 = 'Match the target';
     }
     if (combined.includes('check')) {
-      line3 = 'Tap Check when you are ready.';
+      line3 = 'Press Check';
     }
 
     return {
       title: rules.title,
-      summary: `Here is how to play ${rules.title}.`,
+      summary: `Ready? Take on ${rules.title}.`,
       bullets: [line1, line2, line3],
     };
   }, []);
@@ -625,129 +625,129 @@ const App: React.FC = () => {
       if (selectedLevel.blueprintKey === 'place_value_panic') {
         return {
           title: 'Place Value Panic',
-          summary: 'Place value is the value of a digit based on its position within a number.\nRead the question and then drag each number to its corresponding place.',
-          bullets: [],
+          summary: 'Build the number. Drag digits into the right slot.',
+          bullets: ['Build the number', 'Drag to slot', 'Tap when ready'],
         };
       }
       if (selectedLevel.blueprintKey === 'number_line_ninja') {
         return {
           title: 'Number Line Ninja',
-          summary: 'Use the Number Line to identify and choose the correct answer.',
-          bullets: [],
+          summary: 'Slice the number line. Tap the correct value.',
+          bullets: ['Read mission', 'Use tools', 'Tap the answer'],
         };
       }
       if (selectedLevel.blueprintKey === 'mean_machine') {
         return {
           title: 'Mean Machine',
-          summary: "The Mean Machine must be tamed. It's the source of all fun for the Monster Mind. Spin the reels and follow the instructions to identify MEAN, MODE, and MEDIAN.",
-          bullets: [],
+          summary: 'Tame the Mean Machine. Find mean, mode, and median.',
+          bullets: ['Spin reels', 'Spot the mean', 'Tap the answer'],
         };
       }
       if (selectedLevel.blueprintKey === 'multiplication_mine') {
         return {
           title: 'Multiplication Mine',
-          summary: "You've made it to the Mines but there are boulders in the way. Solve the multiplication problems and smash your way through!",
-          bullets: [],
+          summary: 'Smash the boulders. Solve each multiplication strike.',
+          bullets: ['Read mission', 'Solve the strike', 'Tap the answer'],
         };
       }
       if (selectedLevel.blueprintKey === 'data_detective' || selectedLevel.blueprintKey === 'whodunnit_data') {
         return {
           title: 'Data Detective',
-          summary: "Stop! Show me some ID.. oh, sorry, I'm a seargent down today and we could use your help. There have been thefts, and I need some help looking through the evidence to find our suspect. Can you help?",
-          bullets: [],
+          summary: 'Scan the evidence. Catch the thief.',
+          bullets: ['Read the chart', 'Spot the clue', 'Tap the answer'],
         };
       }
       if (selectedLevel.blueprintKey === 'take_out_rush') {
         return {
           title: 'Take-Out Rush',
-          summary: 'Welcome to Monster Munch Diner. These monster Mnds are sure impatient. Complete their order in time to keep them happy.',
-          bullets: [],
+          summary: 'Serve the rush. Complete the order before time runs out.',
+          bullets: ['Read mission', 'Build the order', 'Press Check'],
         };
       }
       if (selectedLevel.blueprintKey === 'polygon_palace') {
         return {
           title: 'Polygon Palace',
-          summary: 'Welcome traveller! I need a hand to categorise these shapes. Read the question and select the correct answer, or answers, as there may be more than one. Some of the later shapes are 3D, so be ready to count faces, edges, and vertices too!',
-          bullets: [],
+          summary: 'Sort the shapes. Some have more than one answer.',
+          bullets: ['Read mission', 'Check the shape', 'Tap the answer'],
         };
       }
       if (selectedLevel.blueprintKey === 'area_architect') {
         return {
           title: 'Area Architect',
-          summary: 'We need to figure out the area of the underground tunnels beneath Monster Mind headquarters. Using the blueprints, can you help us work out the dimensions?',
-          bullets: [],
+          summary: 'Build the blueprint. Find the area.',
+          bullets: ['Read mission', 'Use the grid', 'Tap the answer'],
         };
       }
       if (selectedLevel.blueprintKey === 'perimeter_path') {
         return {
           title: 'Perimeter Path',
-          summary: 'We are mapping out the castle tunnels. We need to make sure we have enough fuse to run the dynamite. Can you help us calculate the perimeter? Remember... Perimeter is defined as the total distance around a two-dimensional shape.',
-          bullets: [],
+          summary: 'Trace the edge. Find the perimeter.',
+          bullets: ['Read mission', 'Count the sides', 'Tap the answer'],
         };
       }
       if (selectedLevel.blueprintKey === 'order_ops_arena') {
         return {
           title: 'Order Ops Arena',
-          summary: 'HALT! Who goes there. I require order... order of operatons that is! The BIDMAS rule is an acronym to help us remember the order of operations in calculations. Let\'s duel!',
-          bullets: [],
+          summary: 'BIDMAS duel. Solve the strike in the right order.',
+          bullets: ['Follow BIDMAS', 'Solve the strike', 'Tap the answer'],
         };
       }
       if (selectedLevel.blueprintKey === 'formula_forge') {
         return {
           title: 'Formula Forge',
-          summary: 'Algebra is like a puzzle where letters stand for numbers we don’t know yet, helping us solve problems step by step. Can you complete the formula?',
-          bullets: [],
+          summary: 'Complete the formula. Crack the missing value.',
+          bullets: ['Read mission', 'Solve for x', 'Tap the answer'],
         };
       }
       if (selectedLevel.blueprintKey === 'factor_frenzy') {
         return {
           title: 'Factor Frenzy',
-          summary: 'A factor is a number that divides another number exactly, without leaving any remainder. Factors can also be seen as pairs of numbers that, when multiplied together, result in the original number. Help find the hidden factors.',
-          bullets: [],
+          summary: 'Find the hidden factors. Break the number apart.',
+          bullets: ['Read mission', 'Find factor pairs', 'Tap the answer'],
         };
       }
       if (selectedLevel.blueprintKey === 'remainder_run') {
         return {
           title: 'Remainder Run',
-          summary: 'Use long division to work out the quotient, remainder, or decimal answer. Look at the visual, then pick the correct answer.',
-          bullets: [],
+          summary: 'Run the division. Find quotient, remainder, or decimal.',
+          bullets: ['Read mission', 'Use the steps', 'Tap the answer'],
         };
       }
       if (selectedLevel.blueprintKey === 'coordinate_quest') {
         return {
           title: 'Coordinate Quest',
-          summary: "We can't get through! That Monster Mind has hidden traps. Navigate the map from the co-ordinates given, and make it through the pass safely. Remember: the X axis runs left to right â†’, and the Y axis runs bottom to top â†‘.",
-          bullets: [],
+          summary: 'Follow the coordinates. Escape the traps.',
+          bullets: ['X left-right', 'Y down-up', 'Tap the answer'],
         };
       }
       if (selectedLevel.blueprintKey === 'angle_arena') {
         return {
           title: 'Angle Arena',
-          summary: "Greetings! We've managed to build our cannon here to destroy the Monster Mind's look-out towers. We need your maths skills to work out the angle of launch. Select the correct angle and let's blast them.",
-          bullets: [],
+          summary: 'Find the angle. Fire the cannon.',
+          bullets: ['Read mission', 'Choose angle', 'Press fire'],
         };
       }
       if (selectedLevel.blueprintKey === 'simplify_sprint') {
         return {
           title: 'Simplify Sprint',
-          summary: "The Monster Mind has encrypted the values to make them as large as possible. That makes it harder for our researchers to solve. Help the researchers by simplifying the fraction to its smallest form.",
-          bullets: [],
+          summary: 'Shrink the fraction. Simplify to the smallest form.',
+          bullets: ['Read mission', 'Cancel factors', 'Tap the answer'],
         };
       }
       if (selectedLevel.blueprintKey === 'rotation_reflection') {
         return {
           title: 'Rotation Station',
-          summary: 'We need to pack our caravan, but some of the items wont fit unless we are smart with the packing. can you take a look at our shapes and help us out? we may need to flip, mirror or rotate.',
-          bullets: [],
+          summary: 'Flip it. Mirror it. Rotate it. Match the shape.',
+          bullets: ['Read mission', 'Match the shape', 'Tap the answer'],
         };
       }
       const baseRules = selectedRuleSet || {
-        title: canonicalGameTitle || 'Practice',
-        summary: `This is the practice run for ${canonicalGameTitle || 'this game'}. Use it to learn the controls before the real level.`,
+        title: canonicalGameTitle || 'Warm-up',
+        summary: `Warm-up for ${canonicalGameTitle || 'this game'}. Learn the controls.`,
         bullets: [
-          'Read the mission at the top before you begin.',
-          'Use the on-screen tools to learn how the game works.',
-          'Tap help any time you want a reminder.',
+          'Read mission',
+          'Use tools',
+          'Tap help',
         ],
       };
       if (!baseRules) return null;
@@ -760,7 +760,7 @@ const App: React.FC = () => {
       if (selectedLevel?.isPractice) {
         return {
           ...kidRules,
-          summary: `Practice run for ${kidRules.title}. Learn the controls here, then skip or start level one.`,
+          summary: `Warm-up for ${kidRules.title}. Learn the controls.`,
         };
       }
       return kidRules;

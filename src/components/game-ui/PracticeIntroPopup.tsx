@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { MiniGamePracticeBriefing } from '../../app/gameplaySessionContract';
-import { FramedPanel, PrimaryActionButton, RewardPanel } from '../../layout/ScreenPrimitives';
+import AssetIcon, { AssetIconName } from '../AssetIcon';
+import MissionCard from '../mission/MissionCard';
+import VisualCuePanel from '../mission/VisualCuePanel';
 
 type PracticeIntroPopupProps = {
   open: boolean;
@@ -20,15 +22,58 @@ const normalizeBriefingText = (value: string) => (
     .replace(/\/n/g, '\n')
 );
 
-const renderBody = (body: React.ReactNode) => {
-  if (typeof body !== 'string') return body;
+const clampWords = (value: string, maxWords: number) => {
+  const cleaned = value
+    .replace(/\s+/g, ' ')
+    .replace(/[.!?]+$/g, '')
+    .trim();
+  if (!cleaned) return '';
+  const words = cleaned.split(' ').filter(Boolean);
+  if (words.length <= maxWords) return cleaned;
+  return `${words.slice(0, maxWords).join(' ')}…`;
+};
 
-  const normalized = normalizeBriefingText(body);
-  return normalized.split('\n').map((line, index) => (
-    <p key={`${line}-${index}`} className="leading-relaxed text-white/92">
-      {line}
-    </p>
-  ));
+const firstSentence = (value: string) => {
+  const normalized = normalizeBriefingText(value);
+  const sentence = normalized.split(/(?<=[.!?])\s+/)[0] ?? normalized;
+  return sentence.trim();
+};
+
+type SkillMeta = {
+  label: string;
+  icon: AssetIconName;
+  tone?: 'cyan' | 'amber' | 'emerald' | 'rose';
+};
+
+const detectSkill = (titleValue: string, hintText: string): SkillMeta | null => {
+  const haystack = `${titleValue} ${hintText}`.toLowerCase();
+
+  if (haystack.includes('boss') || haystack.includes('trial') || haystack.includes('encounter')) {
+    return { label: 'Boss Trial', icon: 'medal', tone: 'amber' };
+  }
+  if (haystack.includes('calm') || haystack.includes('breathe') || haystack.includes('grove')) {
+    return { label: 'Calm', icon: 'tree', tone: 'emerald' };
+  }
+  if (haystack.includes('fraction') || haystack.includes('numerator') || haystack.includes('denominator')) {
+    return { label: 'Fractions', icon: 'gem', tone: 'cyan' };
+  }
+  if (haystack.includes('ratio')) {
+    return { label: 'Ratio', icon: 'plusSquare', tone: 'cyan' };
+  }
+  if (haystack.includes('angle')) {
+    return { label: 'Angles', icon: 'timer', tone: 'amber' };
+  }
+  if (haystack.includes('place value') || haystack.includes('digit') || haystack.includes('hundreds') || haystack.includes('tens')) {
+    return { label: 'Place Value', icon: 'plusSquare', tone: 'cyan' };
+  }
+  if (haystack.includes('graph') || haystack.includes('chart') || haystack.includes('data')) {
+    return { label: 'Data', icon: 'doc', tone: 'cyan' };
+  }
+  if (haystack.includes('add') || haystack.includes('subtract') || haystack.includes('multiply') || haystack.includes('divide') || haystack.includes('bidmas')) {
+    return { label: 'Arithmetic', icon: 'gamepad', tone: 'amber' };
+  }
+
+  return null;
 };
 
 const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
@@ -48,66 +93,54 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
   if (!open || locallyDismissed) return null;
 
   const resolvedTitle = briefing?.title || title;
-  const resolvedSummary = briefing?.summary ? normalizeBriefingText(briefing.summary) : undefined;
-  const resolvedBullets = (briefing?.bullets ?? []).map((bullet) => normalizeBriefingText(bullet));
+  const resolvedSummary = briefing?.summary ? firstSentence(briefing.summary) : undefined;
+  const resolvedBodySentence = typeof body === 'string' ? firstSentence(body) : undefined;
+  const instruction = clampWords(resolvedSummary || resolvedBodySentence || 'Ready? Beat this challenge.', 12);
+
+  const resolvedBullets = (briefing?.bullets ?? [])
+    .map((bullet) => clampWords(firstSentence(bullet), 4))
+    .filter(Boolean);
+
+  const fallbackHints = [
+    'Read mission',
+    'Tap answer',
+    'Press check',
+  ];
+
+  const skill = detectSkill(resolvedTitle, `${resolvedSummary ?? ''} ${(briefing?.bullets ?? []).join(' ')}`);
 
   const overlay = (
     <div
       data-testid="practice-intro-overlay"
       className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/72 px-4 py-6 backdrop-blur-[6px]"
     >
-      <FramedPanel
-        variant="surface"
-        className="flex w-full max-w-[22rem] min-h-0 max-h-[calc(100svh-3rem)] flex-col gap-4 overflow-hidden p-4 text-left md:max-w-[28rem] md:gap-5 md:p-5"
-      >
-        <div className="shrink-0 space-y-3">
-          <div className="text-[11px] font-black uppercase tracking-[0.24em] text-cyan-100/70">
-            Mission Briefing
-          </div>
-          <h2 className="text-[1.45rem] font-black leading-none tracking-[0.03em] text-white md:text-[1.7rem]">
-            {resolvedTitle}
-          </h2>
-        </div>
-
-        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
-          <RewardPanel className="space-y-2 text-sm leading-relaxed md:text-[0.95rem]">
-            {resolvedSummary ? (
-              <p className="whitespace-pre-line font-bold text-amber-950/90">{resolvedSummary}</p>
-            ) : null}
-            <div className="space-y-2 text-slate-900">
-              {renderBody(body)}
-            </div>
-          </RewardPanel>
-
-          {resolvedBullets.length > 0 ? (
-            <div className="rounded-[1rem] border border-cyan-100/18 bg-slate-950/40 px-3 py-3 text-sm text-white/92 shadow-[0_12px_24px_rgba(2,6,23,0.28)]">
-              <div className="mb-2 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/72">
-                Remember
+      <MissionCard
+        eyebrow="Mission Briefing"
+        title={resolvedTitle}
+        instruction={instruction}
+        skillLabel={skill?.label}
+        skillIcon={skill?.icon}
+        skillTone={skill?.tone}
+        hintChips={(resolvedBullets.length ? resolvedBullets : fallbackHints).slice(0, 3)}
+        visual={(
+          <VisualCuePanel className="h-[160px] w-full md:h-[190px]">
+            <div className="relative flex items-center justify-center">
+              <div className="pointer-events-none absolute -inset-6 rounded-full bg-cyan-200/15 blur-[22px]" />
+              <div className="pointer-events-none absolute -inset-10 rounded-full bg-amber-200/10 blur-[28px]" />
+              <div className="relative flex h-[104px] w-[104px] items-center justify-center rounded-[1.25rem] border border-white/10 bg-white/5 shadow-[0_18px_40px_rgba(2,6,23,0.42)] md:h-[118px] md:w-[118px]">
+                <AssetIcon name={skill?.icon ?? 'gamepad'} className="h-14 w-14 opacity-95 md:h-16 md:w-16" alt="" />
               </div>
-              <ul className="space-y-2">
-                {resolvedBullets.map((bullet, index) => (
-                  <li key={`${bullet}-${index}`} className="flex items-start gap-2">
-                    <span className="mt-[0.4rem] h-1.5 w-1.5 shrink-0 rounded-full bg-amber-300" />
-                    <span>{bullet}</span>
-                  </li>
-                ))}
-              </ul>
             </div>
-          ) : null}
-        </div>
-
-        <PrimaryActionButton
-          onClick={() => {
-            // Defensive: some screens can remount rapidly or have practice-mode props that
-            // accidentally re-open the overlay. Always allow the CTA to dismiss locally.
-            setLocallyDismissed(true);
-            onAction();
-          }}
-          className="w-full shrink-0 py-3 text-sm md:text-base"
-        >
-          {actionLabel}
-        </PrimaryActionButton>
-      </FramedPanel>
+          </VisualCuePanel>
+        )}
+        ctaLabel={actionLabel}
+        onCta={() => {
+          // Defensive: some screens can remount rapidly or have practice-mode props that
+          // accidentally re-open the overlay. Always allow the CTA to dismiss locally.
+          setLocallyDismissed(true);
+          onAction();
+        }}
+      />
     </div>
   );
 
