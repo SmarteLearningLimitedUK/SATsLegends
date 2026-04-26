@@ -323,7 +323,25 @@ const main = async () => {
   await ensureCleanDir(outDir);
   const server = await tryStartDevServer();
 
-  const browser = await chromium.launch();
+  // eslint-disable-next-line no-console
+  console.log('Launching Playwright Chromium…');
+
+  let browser: Browser;
+  try {
+    browser = await chromium.launch();
+  } catch (error: any) {
+    const message = String(error?.message || error);
+    if (/executable doesn't exist|browserType\.launch/i.test(message)) {
+      // eslint-disable-next-line no-console
+      console.log('Chromium not installed for Playwright. Installing…');
+      const { spawnSync } = await import('node:child_process');
+      const npx = process.platform === 'win32' ? 'npx.cmd' : 'npx';
+      spawnSync(npx, ['playwright', 'install', 'chromium'], { cwd: repoRoot, stdio: 'inherit' });
+      browser = await chromium.launch();
+    } else {
+      throw error;
+    }
+  }
   const bootstrapContext = await browser.newContext({ viewport: { width: 900, height: 700 } });
   const bootstrapPage = await bootstrapContext.newPage();
 
@@ -336,6 +354,8 @@ const main = async () => {
     : viewports;
 
   for (const viewport of selectedViewports) {
+    // eslint-disable-next-line no-console
+    console.log(`Capturing ${viewport.key} (${viewport.width}x${viewport.height})…`);
     await runForViewport(browser, viewport, routes, wellbeingIds);
   }
 
