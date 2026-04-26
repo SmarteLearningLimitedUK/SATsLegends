@@ -1,5 +1,7 @@
 import React from 'react';
 import { useCalmBackgroundAudio } from './useCalmBackgroundAudio';
+import CalmBackground from './ui/CalmBackground';
+import AssetIcon from '../components/AssetIcon';
 
 interface WellbeingShellProps {
   title: string;
@@ -10,26 +12,67 @@ interface WellbeingShellProps {
   children: React.ReactNode;
 }
 
-const WellbeingShell: React.FC<WellbeingShellProps> = ({ children }) => {
+const WellbeingShell: React.FC<WellbeingShellProps> = ({ title, subtitle, type, progress, onExit, children }) => {
   useCalmBackgroundAudio();
 
   return (
-    <div className="relative flex h-full min-h-0 w-full flex-col overflow-hidden bg-[radial-gradient(circle_at_top,rgba(167,243,208,0.22),transparent_34%),linear-gradient(180deg,#071c16_0%,#0b2d23_48%,#12382b_100%)] text-white">
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute left-[12%] top-[10%] h-24 w-24 rounded-full bg-emerald-300/12 blur-3xl" />
-        <div className="absolute right-[8%] top-[22%] h-20 w-20 rounded-full bg-lime-300/10 blur-3xl" />
-        {Array.from({ length: 9 }).map((_, index) => (
-          <span
-            key={`wellbeing-particle-${index}`}
-            className="absolute h-1.5 w-1.5 rounded-full bg-emerald-100/45"
-            style={{ left: `${12 + index * 9}%`, top: `${18 + (index % 4) * 16}%` }}
-          />
-        ))}
-      </div>
+    <div className="relative flex h-full min-h-0 w-full flex-col overflow-hidden text-white">
+      <CalmBackground />
 
-      <div className="relative z-10 min-h-0 flex-1 px-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-[calc(env(safe-area-inset-top)+1.15rem)]">
-        <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-[1.9rem] border border-cyan-100/14 bg-[linear-gradient(180deg,rgba(13,33,65,0.68),rgba(8,20,42,0.76))] shadow-[0_20px_40px_rgba(2,6,23,0.32)] backdrop-blur-sm">
-          {children}
+      <div className="relative z-10 min-h-0 flex-1 p-3 md:p-4">
+        <div
+          className="flex h-full min-h-0 flex-col overflow-hidden rounded-[1.9rem] border border-cyan-100/14 shadow-[0_20px_40px_rgba(2,6,23,0.32)] backdrop-blur-sm"
+          style={{ background: 'var(--sat-calm-panel)' }}
+        >
+          <div className="flex items-start justify-between gap-3 px-4 pb-2 pt-4 md:px-5 md:pt-5">
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                {type ? (
+                  <span className="game-chip border-white/10 bg-white/6 text-cyan-50/80">
+                    {type}
+                  </span>
+                ) : null}
+                {typeof progress === 'number' ? (
+                  <span className="game-chip border-white/10 bg-white/6 text-cyan-50/80">
+                    {Math.max(0, Math.min(100, Math.round(progress)))}%
+                  </span>
+                ) : null}
+              </div>
+              <div className="mt-2 truncate text-lg font-black text-cyan-50 md:text-xl">{title}</div>
+              {subtitle ? (
+                <div className="mt-1 line-clamp-2 text-sm font-semibold text-cyan-50/80 md:text-base">
+                  {subtitle}
+                </div>
+              ) : null}
+            </div>
+
+            <button
+              type="button"
+              onClick={onExit}
+              className="ui-icon-button shrink-0"
+              aria-label="Exit calm activity"
+              title="Exit"
+            >
+              <AssetIcon name="back" className="h-5 w-5" alt="" />
+            </button>
+          </div>
+
+          {typeof progress === 'number' ? (
+            <div className="px-4 pb-3 md:px-5">
+              <div className="h-2 w-full overflow-hidden rounded-full bg-white/10">
+                <div
+                  className="h-full rounded-full bg-cyan-200/85"
+                  style={{ width: `${Math.max(0, Math.min(100, progress))}%` }}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="pb-2" />
+          )}
+
+          <div className="relative flex min-h-0 flex-1 overflow-hidden">
+            {children}
+          </div>
         </div>
       </div>
     </div>

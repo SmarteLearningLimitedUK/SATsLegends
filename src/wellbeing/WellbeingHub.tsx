@@ -16,6 +16,7 @@ const WellbeingHub: React.FC<WellbeingHubProps> = ({ activities, calmTokens, onS
     <WellbeingShell
       title="Calm Grove"
       subtitle="Gentle reset games"
+      type="Wellbeing"
       onExit={onExit}
     >
       <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden px-4 pb-4 pt-4" data-calm-tokens={calmTokens}>
@@ -34,7 +35,7 @@ const WellbeingHub: React.FC<WellbeingHubProps> = ({ activities, calmTokens, onS
             </div>
           </div>
 
-          <div className="w-full max-w-[960px] min-h-0 flex-1 overflow-y-auto pb-2 pr-1" style={{ WebkitOverflowScrolling: 'touch' }}>
+          <div className="hide-scrollbar w-full max-w-[960px] min-h-0 flex-1 overflow-y-auto overscroll-contain pb-2 pr-1 [touch-action:pan-y]">
             <div className="flex flex-col gap-2.5 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] md:gap-3">
               {activities.map((activity, index) => (
                 <motion.button

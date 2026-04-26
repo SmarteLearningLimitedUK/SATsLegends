@@ -89,6 +89,34 @@
   --sat-sheen-inset: inset 0 1px 0 rgba(255, 255, 255, 0.14);
   --sat-light-top-left: radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 58%);
   --sat-soft-ramp: linear-gradient(135deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0) 52%);
+
+  /* Calm / wellbeing tokens (visual direction: soft, saturated, toy-like, no harsh contrast). */
+  --sat-calm-bg: radial-gradient(circle at 18% 18%, rgba(167, 243, 208, 0.18), rgba(8, 47, 73, 0) 42%),
+    radial-gradient(circle at 82% 24%, rgba(56, 189, 248, 0.14), rgba(2, 6, 23, 0) 44%),
+    linear-gradient(180deg, #071c16 0%, #07203a 48%, #0b2d23 100%);
+  --sat-calm-panel: linear-gradient(180deg, rgba(13, 33, 65, 0.68), rgba(8, 20, 42, 0.76));
+  --sat-calm-glow: radial-gradient(circle at 50% 40%, rgba(167, 243, 208, 0.16), rgba(56, 189, 248, 0.0) 60%);
+  --sat-calm-accent: rgba(167, 243, 208, 0.9);
+  --sat-calm-text: rgba(236, 254, 255, 0.92);
+}
+
+@keyframes sat-calm-drift {
+  0% { transform: translate3d(0, 0, 0); opacity: 0.22; }
+  50% { transform: translate3d(8px, -10px, 0); opacity: 0.38; }
+  100% { transform: translate3d(0, 0, 0); opacity: 0.22; }
+}
+
+@keyframes sat-calm-breathe {
+  0% { transform: scale(0.98); opacity: 0.18; }
+  50% { transform: scale(1.02); opacity: 0.26; }
+  100% { transform: scale(0.98); opacity: 0.18; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sat-calm-drift,
+  .sat-calm-breathe {
+    animation: none !important;
+  }
 }
 
 html,

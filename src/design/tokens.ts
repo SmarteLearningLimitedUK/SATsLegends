@@ -47,5 +47,16 @@ export const tokens = {
       standard: 'cubic-bezier(0.2, 0.0, 0.0, 1)',
     },
   },
+  calm: {
+    backgroundGradient: 'var(--sat-calm-bg)',
+    panelGradient: 'var(--sat-calm-panel)',
+    glow: 'var(--sat-calm-glow)',
+    accent: 'var(--sat-calm-accent)',
+    text: 'var(--sat-calm-text)',
+    particleOpacity: 0.38,
+    timingsMs: {
+      drift: 5200,
+      breathe: 3200,
+    },
+  },
 } as const;
-
