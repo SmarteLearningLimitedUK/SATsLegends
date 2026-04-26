@@ -4,6 +4,7 @@ import { IslandData, PlayerData } from '../types';
 import { ISLANDS } from '../constants';
 import universalMapPoster from '../assets/maps/mapselect.png';
 import AssetIcon from '../components/AssetIcon';
+import AmbientParticlesCanvas from '../components/ambient/AmbientParticlesCanvas';
 import ParentGateOverlay from '../components/ParentGateOverlay';
 import { UNLOCK_ALL_LEVELS } from '../app/testingFlags';
 
@@ -40,6 +41,25 @@ type IslandAccentFrame = {
 
 const MAP_WIDTH_PX = 768;
 const MAP_HEIGHT_PX = 2500;
+
+const buildJourneyPath = (points: Array<{ x: number; y: number }>) => {
+  if (points.length < 2) return '';
+  const start = points[0];
+  let d = `M ${start.x} ${start.y}`;
+
+  for (let i = 1; i < points.length - 1; i += 1) {
+    const current = points[i];
+    const next = points[i + 1];
+    const midX = (current.x + next.x) / 2;
+    const midY = (current.y + next.y) / 2;
+    d += ` Q ${current.x} ${current.y} ${midX} ${midY}`;
+  }
+
+  const penultimate = points[points.length - 2];
+  const last = points[points.length - 1];
+  d += ` Q ${penultimate.x} ${penultimate.y} ${last.x} ${last.y}`;
+  return d;
+};
 
 const ISLAND_HOTSPOTS: IslandHotspot[] = [
   {
@@ -360,6 +380,14 @@ const WorldMap: React.FC<WorldMapProps> = ({
   ), [player]);
 
   const selectedIslandState = islandStates.find(entry => entry.island.id === selectedIslandId) ?? null;
+  const journeyPoints = useMemo(() => (
+    ISLAND_HOTSPOTS
+      .slice()
+      // The hotspots array is authored in journey order already; keep it stable explicitly.
+      .sort((a, b) => a.y - b.y)
+      .map((hotspot) => ({ x: hotspot.x, y: hotspot.y }))
+  ), []);
+  const journeyPath = useMemo(() => buildJourneyPath(journeyPoints), [journeyPoints]);
   const useUnifiedHud = typeof document !== 'undefined'
     && Boolean(document.querySelector('[data-unified-minigame-hud="true"]'));
   const hasGlobalBottomHud = typeof document !== 'undefined'
@@ -411,6 +439,61 @@ const WorldMap: React.FC<WorldMapProps> = ({
           alt="Island select map"
           className="absolute inset-0 h-full w-full object-cover object-center"
           draggable={false}
+        />
+
+        {/* Ambient journey energy (non-interactive): connects islands + fills vertical space without touching layout. */}
+        <svg
+          className="world-map-journey-layer pointer-events-none absolute inset-0 z-10"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <defs>
+            <linearGradient id="satJourneyStroke" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="rgba(125,211,252,0.0)" />
+              <stop offset="22%" stopColor="rgba(125,211,252,0.75)" />
+              <stop offset="68%" stopColor="rgba(251,191,36,0.55)" />
+              <stop offset="100%" stopColor="rgba(251,191,36,0.0)" />
+            </linearGradient>
+          </defs>
+
+          <path
+            d={journeyPath}
+            className="world-map-journey-path-glow"
+            fill="none"
+            stroke="url(#satJourneyStroke)"
+            strokeWidth="2.6"
+            strokeLinecap="round"
+          />
+          <path
+            d={journeyPath}
+            className="world-map-journey-path"
+            fill="none"
+            stroke="url(#satJourneyStroke)"
+            strokeWidth="1.15"
+            strokeLinecap="round"
+            strokeDasharray="7 11"
+          />
+
+          {journeyPoints.map((point, index) => (
+            <circle
+              key={`journey-node-${index}`}
+              cx={point.x}
+              cy={point.y}
+              r="1.18"
+              className="world-map-journey-node"
+              fill="rgba(255,255,255,0.35)"
+            />
+          ))}
+        </svg>
+        <AmbientParticlesCanvas
+          className="z-[15]"
+          density={22}
+          opacity={0.18}
+          maxRadius={2.2}
+          minRadius={0.9}
+          speed={0.11}
+          color="rgba(186,230,253,0.95)"
         />
 
         <div className="absolute inset-0 z-20">

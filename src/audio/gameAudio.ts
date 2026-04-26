@@ -127,7 +127,7 @@ const getAudioAsset = (effect: GameSoundEffect, context?: GameSoundContext) => {
   return null;
 };
 
-const playAudioAsset = (src: string) => {
+const playAudioAsset = (src: string, volume = 0.82) => {
   if (typeof window === 'undefined') return false;
 
   let audio = audioElementCache.get(src);
@@ -139,7 +139,7 @@ const playAudioAsset = (src: string) => {
 
   try {
     const playback = audio.cloneNode(true) as HTMLAudioElement;
-    playback.volume = 0.82;
+    playback.volume = volume;
     playback.play().catch(() => {});
     return true;
   } catch {
@@ -205,7 +205,8 @@ export const playGameSound = (effect: GameSoundEffect, mutedOverride?: boolean, 
   if (typeof window === 'undefined' || isMuted(mutedOverride) || !isPageAudioAllowed()) return false;
 
   const asset = getAudioAsset(effect, context);
-  if (asset && playAudioAsset(asset)) {
+  const volume = (effect === 'click' || effect === 'tap') ? 0.35 : 0.82;
+  if (asset && playAudioAsset(asset, volume)) {
     return true;
   }
 

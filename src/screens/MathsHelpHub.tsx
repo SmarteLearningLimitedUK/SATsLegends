@@ -245,9 +245,9 @@ const MathsHelpHub: React.FC<MathsHelpHubProps> = ({ onBack }) => {
         <div className="rounded-[1.15rem] border border-amber-300/60 bg-[linear-gradient(180deg,rgba(5,25,67,0.96),rgba(4,15,38,0.94))] p-4 shadow-[0_12px_24px_rgba(2,6,23,0.42)]">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-200">Glossary</div>
-              <h1 className="mt-1 text-2xl font-black uppercase tracking-[0.08em] text-white">Maths Help Hub</h1>
-              <p className="mt-1 text-sm font-bold text-cyan-100/80">Quick meanings, examples and tricks for SATs maths.</p>
+              <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-200">Runebook</div>
+              <h1 className="mt-1 text-2xl font-black uppercase tracking-[0.08em] text-white">Math Codex</h1>
+              <p className="mt-1 text-sm font-bold text-cyan-100/80">Fast spell-notes, examples and battle hints.</p>
             </div>
             <button
               type="button"
@@ -260,7 +260,7 @@ const MathsHelpHub: React.FC<MathsHelpHubProps> = ({ onBack }) => {
           </div>
 
           <label className="mt-4 block">
-            <span className="sr-only">Search glossary</span>
+            <span className="sr-only">Search runebook</span>
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}

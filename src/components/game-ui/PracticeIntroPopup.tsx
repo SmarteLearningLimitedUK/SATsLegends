@@ -62,7 +62,7 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
       >
         <div className="shrink-0 space-y-3">
           <div className="text-[11px] font-black uppercase tracking-[0.24em] text-cyan-100/70">
-            Practice Briefing
+            Mission Briefing
           </div>
           <h2 className="text-[1.45rem] font-black leading-none tracking-[0.03em] text-white md:text-[1.7rem]">
             {resolvedTitle}

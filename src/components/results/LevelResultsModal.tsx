@@ -139,7 +139,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
     .filter((achievement): achievement is NonNullable<typeof achievement> => Boolean(achievement));
   const resultBackground = isVictory ? successRoundBackground : failureRoundBackground;
   const celebrationMessage = isPractice
-    ? 'Practice Complete!'
+    ? 'Warm-up Complete!'
     : result.stars === 3
       ? 'Brilliant!'
       : result.stars === 2
@@ -196,7 +196,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
             <div className="relative z-10 flex min-h-0 flex-col gap-3 overflow-y-auto overscroll-contain pr-1">
               <div className="flex flex-col items-center text-center">
                 <span className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] ${isPractice ? 'border-cyan-200/50 bg-cyan-400/20 text-cyan-100' : isVictory ? 'border-emerald-200/50 bg-emerald-400/20 text-emerald-100' : 'border-rose-200/45 bg-rose-400/20 text-amber-100'}`}>
-                  {isPractice ? (isVictory ? 'Practice Complete' : 'Practice Run Over') : isVictory ? 'Level Complete' : 'Try Again'}
+                  {isPractice ? (isVictory ? 'Warm-up Complete' : 'Warm-up Over') : isVictory ? 'Level Complete' : 'Try Again'}
                 </span>
                 <h2 className="mt-2 text-xl font-black text-amber-100 md:text-2xl">{result.title}</h2>
                 <p className="mt-1 text-sm font-semibold text-white/80">{result.subtitle}</p>
@@ -283,7 +283,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
                     className="ui-button-primary py-3 text-sm font-black uppercase tracking-[0.18em]"
                     onClick={onRetry}
                   >
-                    {isPractice ? 'Retry Practice' : 'Retry'}
+                    {isPractice ? 'Retry Warm-up' : 'Retry'}
                   </button>
                 )}
 

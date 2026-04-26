@@ -354,21 +354,30 @@ const App: React.FC = () => {
   useMiniGameLifecycle({ screen, selectedLevel });
 
   useEffect(() => {
-    const handleGlobalButtonClick = (event: MouseEvent) => {
+    const handleGlobalPress = (event: PointerEvent) => {
       const target = event.target;
       if (!(target instanceof Element)) return;
 
-      const button = target.closest('button');
-      if (!button) return;
-      if (button.hasAttribute('disabled')) return;
-      if (button.getAttribute('aria-disabled') === 'true') return;
+      const pressable = target.closest('button, [role="button"], a');
+      if (!pressable) return;
 
+      // Allow explicit opt-out for gameplay surfaces that already manage bespoke audio.
+      if (pressable.closest('[data-no-click-sound="true"]')) return;
+      if (pressable.getAttribute('data-no-click-sound') === 'true') return;
+
+      // Respect disabled state.
+      if (pressable instanceof HTMLButtonElement && pressable.disabled) return;
+      if (pressable.getAttribute('aria-disabled') === 'true') return;
+
+      // iOS/Safari is stricter than desktop: ensure the sound is triggered on the initial gesture,
+      // not the delayed click event.
       playClickSound();
+      triggerHaptic('selection');
     };
 
-    document.addEventListener('click', handleGlobalButtonClick, true);
+    document.addEventListener('pointerdown', handleGlobalPress, true);
     return () => {
-      document.removeEventListener('click', handleGlobalButtonClick, true);
+      document.removeEventListener('pointerdown', handleGlobalPress, true);
     };
   }, []);
 
@@ -404,8 +413,8 @@ const App: React.FC = () => {
       type,
       title: resolveLevelTitle(),
       subtitle: type === 'victory'
-        ? 'Practice complete. No XP or brainpower earned.'
-        : 'Practice session over. No XP or brainpower earned.',
+        ? 'Warm-up complete. No XP or brainpower earned.'
+        : 'Warm-up ended. No XP or brainpower earned.',
       score,
       practice: true,
       stars: 0,
@@ -1221,8 +1230,8 @@ const App: React.FC = () => {
                 type="button"
                 onClick={goToMathsHelpHub}
                 className={mapDockButtonClass}
-                aria-label="Open glossary"
-                title="Glossary"
+                aria-label="Open runebook"
+                title="Runebook"
               >
                 <AssetIcon name="question" className={mapDockIconClass} />
               </button>

@@ -351,7 +351,7 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
       bullets: [
         'Read the bar chart carefully before you choose an answer.',
         'Some questions ask for a single caravan, some ask for a comparison, and some ask for a total.',
-        'The practice briefing shows the full story before the level starts.',
+        'The mission briefing shows the full story before the level starts.',
       ],
     },
   },
