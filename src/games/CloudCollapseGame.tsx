@@ -160,7 +160,7 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
       </div>
 
       <AnimatePresence>
-        {(isGameOver || isVictory) && (
+        {false && (isGameOver || isVictory) && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

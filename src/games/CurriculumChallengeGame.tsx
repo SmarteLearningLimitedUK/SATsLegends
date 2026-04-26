@@ -1441,7 +1441,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
         </div>
 
         <AnimatePresence>
-          {(isVictory || isGameOver) && (
+          {false && (isVictory || isGameOver) && (
             <motion.div
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}

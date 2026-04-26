@@ -396,7 +396,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
         </div>
 
         <AnimatePresence>
-          {(isGameOver || isVictory) && (
+          {false && (isGameOver || isVictory) && (
             <motion.div
               initial={{ opacity: 0, scale: 0.88 }}
               animate={{ opacity: 1, scale: 1 }}
