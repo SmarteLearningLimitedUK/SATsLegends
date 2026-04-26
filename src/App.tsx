@@ -47,6 +47,7 @@ import { playGameSound } from './audio/gameAudio';
 import { useLevelBackgroundAudio } from './audio/useLevelBackgroundAudio';
 import { useWelcomeBackgroundAudio } from './audio/useWelcomeBackgroundAudio';
 import { playClickSound } from './utils/soundManager';
+import FeedbackToast, { FeedbackToastState } from './components/feedback/FeedbackToast';
 
 type SessionMetricsState = {
   correct: number;
@@ -111,6 +112,11 @@ const App: React.FC = () => {
     hintsUsed: 0,
     questionXP: [],
     streakCount: 0,
+  });
+  const [feedbackToast, setFeedbackToast] = useState<FeedbackToastState>({
+    isOpen: false,
+    tone: 'success',
+    message: 'Correct!',
   });
   const questionStartedAtRef = useRef(Date.now());
   const currentQuestionHadIncorrectRef = useRef(false);
@@ -889,6 +895,39 @@ const App: React.FC = () => {
     goToGameplay();
   };
 
+  const handleReturnToMapFromResults = () => {
+    setLevelResult(null);
+    setSelectedLevel(null);
+    if (selectedIsland) {
+      goToIslandLevels();
+      return;
+    }
+    goToWorldMap();
+  };
+
+  const handleContinueFromResults = () => {
+    setLevelResult(null);
+    if (!selectedIsland || !selectedLevel) {
+      goToWorldMap();
+      return;
+    }
+
+    const levels = selectedIsland.levels ?? [];
+    const index = levels.findIndex((level) => level.id === selectedLevel.id);
+    const next = index >= 0 ? levels[index + 1] : null;
+
+    if (next) {
+      setSelectedLevel(next);
+      setGameplayRestartKey((prev) => prev + 1);
+      goToGameplay();
+      return;
+    }
+
+    // No next level: return to island selection.
+    setSelectedLevel(null);
+    goToIslandLevels();
+  };
+
   const handleClaimQuest = (questId: string) => {
     const quest = player.dailyQuests.find(q => q.id === questId);
     if (!quest || quest.isClaimed || quest.current < quest.target) return;
@@ -933,6 +972,7 @@ const App: React.FC = () => {
     onCorrectAnswer: (event) => {
       playGameSound('correct', undefined, selectedLevel?.blueprintKey);
       triggerHaptic('selection');
+      setFeedbackToast({ isOpen: true, tone: 'success', message: 'Correct!' });
       const now = Date.now();
       const secondsTaken = Math.max(0, (now - questionStartedAtRef.current) / 1000);
       const firstTry = !currentQuestionHadIncorrectRef.current;
@@ -961,6 +1001,7 @@ const App: React.FC = () => {
     onIncorrectAnswer: (event) => {
       playGameSound('incorrect', undefined, selectedLevel?.blueprintKey);
       triggerHaptic('error');
+      setFeedbackToast({ isOpen: true, tone: 'warning', message: 'Not quite' });
       questionStartedAtRef.current = Date.now();
       currentQuestionHadIncorrectRef.current = true;
       setSessionMetrics((prev) => ({
@@ -1233,10 +1274,18 @@ const App: React.FC = () => {
                 achievementsUnlocked: levelResult.achievementsUnlocked,
               } : null}
               onRetry={handleRetryLevel}
+              onContinue={handleContinueFromResults}
+              onMap={handleReturnToMapFromResults}
               calmBreakLabel={levelResult?.type === 'gameover' && levelResult.wellbeingSuggested ? 'Take A Calm Break' : undefined}
               onCalmBreak={levelResult?.type === 'gameover' && levelResult.wellbeingSuggested
                 ? () => openWellbeingHub({ origin: 'post_fail', islandId: selectedIsland?.id ?? null, suggested: true })
                 : undefined}
+            />
+
+            <FeedbackToast
+              toast={feedbackToast}
+              onDismiss={() => setFeedbackToast((prev) => (prev.isOpen ? { ...prev, isOpen: false } : prev))}
+              placement="aboveAnswers"
             />
 
             <WellbeingCompleteModal
