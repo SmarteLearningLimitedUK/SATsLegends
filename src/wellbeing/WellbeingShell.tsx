@@ -71,7 +71,23 @@ const WellbeingShell: React.FC<WellbeingShellProps> = ({ title, subtitle, type, 
           )}
 
           <div className="relative flex min-h-0 flex-1 overflow-hidden">
-            {children}
+            <div
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  'radial-gradient(circle at 50% 30%, rgba(186, 230, 253, 0.12), rgba(2, 6, 23, 0) 62%)',
+              }}
+            />
+            <div
+              className="sat-calm-fog pointer-events-none absolute inset-x-0 bottom-0 h-[62%]"
+              style={{
+                background: 'var(--sat-calm-fog)',
+                animation: 'sat-calm-fog 9800ms ease-in-out infinite',
+              }}
+            />
+            <div className="relative z-10 flex min-h-0 flex-1 overflow-hidden">
+              {children}
+            </div>
           </div>
         </div>
       </div>

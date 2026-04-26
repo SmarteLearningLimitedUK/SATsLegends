@@ -56,6 +56,43 @@
   text-shadow: 0 2px 0 rgba(0,0,0,0.3);
 }
 
+/* Material language: Gold buttons = glossy enchanted metal (no layout changes). */
+.ui-button-primary,
+.game-button-primary,
+.licensed-submit-button,
+.fantasy-cta-button,
+.gold-pill-shell {
+  position: relative;
+  isolation: isolate;
+}
+
+.ui-button-primary::before,
+.game-button-primary::before,
+.licensed-submit-button::before,
+.fantasy-cta-button::before,
+.gold-pill-shell::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    var(--sat-mat-gold-spark),
+    var(--sat-mat-gold-gloss),
+    linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0) 46%);
+  opacity: 0.42;
+  mix-blend-mode: screen;
+}
+
+.ui-button-primary > *,
+.game-button-primary > *,
+.licensed-submit-button > *,
+.fantasy-cta-button > *,
+.gold-pill-shell > * {
+  position: relative;
+  z-index: 1;
+}
+
   .game-button-secondary {
     @apply border border-white/15 text-white font-black shadow-[0_8px_24px_rgba(0,0,0,0.12)] transition-all;
     min-height: var(--sat-pill-height);
@@ -91,13 +128,26 @@
   --sat-soft-ramp: linear-gradient(135deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0) 52%);
 
   /* Calm / wellbeing tokens (visual direction: soft, saturated, toy-like, no harsh contrast). */
-  --sat-calm-bg: radial-gradient(circle at 18% 18%, rgba(167, 243, 208, 0.18), rgba(8, 47, 73, 0) 42%),
-    radial-gradient(circle at 82% 24%, rgba(56, 189, 248, 0.14), rgba(2, 6, 23, 0) 44%),
-    linear-gradient(180deg, #071c16 0%, #07203a 48%, #0b2d23 100%);
-  --sat-calm-panel: linear-gradient(180deg, rgba(13, 33, 65, 0.68), rgba(8, 20, 42, 0.76));
-  --sat-calm-glow: radial-gradient(circle at 50% 40%, rgba(167, 243, 208, 0.16), rgba(56, 189, 248, 0.0) 60%);
+  --sat-calm-bg:
+    radial-gradient(circle at 22% 16%, rgba(167, 243, 208, 0.20), rgba(8, 47, 73, 0) 42%),
+    radial-gradient(circle at 82% 22%, rgba(56, 189, 248, 0.18), rgba(2, 6, 23, 0) 46%),
+    radial-gradient(circle at 58% 72%, rgba(250, 204, 21, 0.07), rgba(2, 6, 23, 0) 44%),
+    linear-gradient(180deg, #071c16 0%, #071a2f 44%, #0b2d23 100%);
+  --sat-calm-panel: linear-gradient(180deg, rgba(12, 30, 58, 0.74), rgba(7, 18, 40, 0.82));
+  --sat-calm-glow: radial-gradient(circle at 50% 38%, rgba(186, 230, 253, 0.18), rgba(167, 243, 208, 0.10) 34%, rgba(56, 189, 248, 0.0) 60%);
+  --sat-calm-fog:
+    radial-gradient(circle at 20% 70%, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0) 52%),
+    radial-gradient(circle at 70% 78%, rgba(56, 189, 248, 0.10), rgba(2, 6, 23, 0) 56%),
+    linear-gradient(180deg, rgba(2, 6, 23, 0), rgba(2, 6, 23, 0.46));
   --sat-calm-accent: rgba(167, 243, 208, 0.9);
   --sat-calm-text: rgba(236, 254, 255, 0.92);
+
+  /* Material language tokens */
+  --sat-mat-gold-gloss: linear-gradient(180deg, rgba(255,255,255,0.42), rgba(255,255,255,0) 42%);
+  --sat-mat-gold-spark: radial-gradient(circle at 22% 26%, rgba(255,255,255,0.38), rgba(255,255,255,0) 42%);
+  --sat-mat-stone-rim: linear-gradient(180deg, rgba(236, 254, 255, 0.12), rgba(236, 254, 255, 0) 52%);
+  --sat-mat-stone-depth: radial-gradient(circle at 18% 18%, rgba(56, 189, 248, 0.10), rgba(2, 6, 23, 0) 52%);
+  --sat-mat-runic: radial-gradient(circle at 18% 20%, rgba(56, 189, 248, 0.22), rgba(56, 189, 248, 0) 34%);
 }
 
 @keyframes sat-calm-drift {
@@ -112,9 +162,23 @@
   100% { transform: scale(0.98); opacity: 0.18; }
 }
 
+@keyframes sat-calm-fog {
+  0% { transform: translate3d(-2%, 0, 0); opacity: 0.22; }
+  50% { transform: translate3d(2%, -2%, 0); opacity: 0.30; }
+  100% { transform: translate3d(-2%, 0, 0); opacity: 0.22; }
+}
+
+@keyframes sat-runic-shimmer {
+  0% { opacity: 0.10; transform: translate3d(-2%, 0, 0); }
+  50% { opacity: 0.18; transform: translate3d(2%, 0, 0); }
+  100% { opacity: 0.10; transform: translate3d(-2%, 0, 0); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .sat-calm-drift,
-  .sat-calm-breathe {
+  .sat-calm-breathe,
+  .sat-calm-fog,
+  .sat-runic-shimmer {
     animation: none !important;
   }
 }
@@ -354,6 +418,21 @@ button {
   pointer-events: none;
   background:
     linear-gradient(180deg, rgba(10, 24, 58, 0.98) 0%, rgba(7, 18, 45, 0.94) 76%, rgba(7, 18, 45, 0.85) 100%);
+}
+
+/* HUD material language: "runic energy interface" (subtle shimmer, no flashing). */
+.top-hud::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    var(--sat-mat-runic),
+    radial-gradient(circle at 50% 0%, rgba(255,255,255,0.10), rgba(255,255,255,0) 52%),
+    linear-gradient(90deg, rgba(2,6,23,0.0), rgba(2,6,23,0.22), rgba(2,6,23,0.0));
+  opacity: 0.14;
+  animation: sat-runic-shimmer 8200ms ease-in-out infinite;
 }
 
 .top-hud > * {

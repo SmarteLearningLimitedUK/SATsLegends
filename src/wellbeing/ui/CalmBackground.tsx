@@ -22,6 +22,15 @@ const CalmBackground: React.FC<CalmBackgroundProps> = ({ className }) => {
         }}
       />
 
+      <div
+        className="sat-calm-fog absolute inset-x-0 bottom-0 h-[58%]"
+        style={{
+          background: 'var(--sat-calm-fog)',
+          filter: 'blur(0px)',
+          animation: 'sat-calm-fog 9200ms ease-in-out infinite',
+        }}
+      />
+
       <div className="absolute inset-0">
         <div
           className="sat-calm-drift absolute left-[10%] top-[16%] h-28 w-28 rounded-full blur-3xl"
@@ -59,10 +68,25 @@ const CalmBackground: React.FC<CalmBackgroundProps> = ({ className }) => {
         />
       ))}
 
+      {Array.from({ length: 10 }).map((_, index) => (
+        <span
+          key={`calm-dust-${index}`}
+          className="sat-calm-fog absolute rounded-full"
+          style={{
+            left: `${8 + (index * 9) % 86}%`,
+            top: `${22 + (index * 8) % 64}%`,
+            width: `${10 + (index % 4) * 6}px`,
+            height: `${10 + (index % 4) * 6}px`,
+            background: 'rgba(255, 255, 255, 0.06)',
+            filter: 'blur(6px)',
+            animation: `sat-calm-fog ${9800 + (index % 5) * 520}ms ease-in-out infinite`,
+          }}
+        />
+      ))}
+
       <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/40 to-transparent" />
     </div>
   );
 };
 
 export default CalmBackground;
-
