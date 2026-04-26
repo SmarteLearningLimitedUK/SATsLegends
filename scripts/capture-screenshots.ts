@@ -31,6 +31,18 @@ const viewports: ViewportPreset[] = [
   { key: 'ipad', width: 768, height: 1024 },
 ];
 
+const viewportFilter = (process.env.SATS_SCREENSHOT_VIEWPORTS || '').trim();
+const levelLimitRaw = (process.env.SATS_SCREENSHOT_LEVEL_LIMIT || '').trim();
+const minigameLimitRaw = (process.env.SATS_SCREENSHOT_MINIGAME_LIMIT || '').trim();
+
+const parseLimit = (value: string) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : null;
+};
+
+const levelLimit = parseLimit(levelLimitRaw);
+const minigameLimit = parseLimit(minigameLimitRaw);
+
 const sanitize = (value: string) =>
   value
     .toLowerCase()
@@ -166,10 +178,13 @@ const capturePerLevel = async (page: Page, viewportKey: string, routes: LevelRou
 
 const captureSharedStatesPerMinigame = async (page: Page, viewportKey: string, routes: LevelRoute[]) => {
   const seen = new Set<string>();
+  let captured = 0;
   for (const route of routes) {
     const slug = sanitize(route.path.split('/')[3] || route.label || `level-${route.levelId}`);
     if (seen.has(slug)) continue;
     seen.add(slug);
+    captured += 1;
+    if (minigameLimit !== null && captured > minigameLimit) break;
 
     const prefix = `${viewportKey}-${slug}`;
     await page.goto(withQuery(route.path, visualQuery));
@@ -290,7 +305,7 @@ const runForViewport = async (browser: Browser, viewport: ViewportPreset, routes
   await captureIslands(page, viewport.key, routes);
 
   // Every level: start + active for level-by-level review.
-  await capturePerLevel(page, viewport.key, routes);
+  await capturePerLevel(page, viewport.key, levelLimit !== null ? routes.slice(0, levelLimit) : routes);
 
   // Shared states: once per minigame slug.
   await captureSharedStatesPerMinigame(page, viewport.key, routes);
@@ -313,7 +328,11 @@ const main = async () => {
   const wellbeingIds = await getWellbeingActivities(bootstrapPage);
   await bootstrapContext.close();
 
-  for (const viewport of viewports) {
+  const selectedViewports = viewportFilter
+    ? viewports.filter((vp) => viewportFilter.split(',').map((s) => s.trim()).includes(vp.key))
+    : viewports;
+
+  for (const viewport of selectedViewports) {
     await runForViewport(browser, viewport, routes, wellbeingIds);
   }
 
