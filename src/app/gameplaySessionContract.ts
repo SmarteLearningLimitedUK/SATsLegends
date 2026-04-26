@@ -1,4 +1,5 @@
 import { MiniGameType } from '../types';
+import { playCorrectAnswerJuice, playWrongAnswerJuice } from '../utils/answerJuice';
 
 /**
  * Shell-owned mini-game session state (single source of truth).
@@ -82,6 +83,15 @@ export const emitMiniGameSessionEvent = (
   type: MiniGameSessionEventType,
   payload: Omit<MiniGameSessionEvent, 'type'> = {},
 ) => {
+  // Global "juice" feedback: never blocks gameplay and runs even if no handlers are provided.
+  if (typeof document !== 'undefined') {
+    const inGameplay = Boolean(document.querySelector('.app-viewport.screen-gameplay'));
+    if (inGameplay) {
+      if (type === 'correct_answer') playCorrectAnswerJuice();
+      if (type === 'incorrect_answer') playWrongAnswerJuice();
+    }
+  }
+
   if (!handlers) return;
 
   const event: MiniGameSessionEvent = { type, ...payload };

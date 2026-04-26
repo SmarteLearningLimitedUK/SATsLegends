@@ -1122,7 +1122,7 @@ const App: React.FC = () => {
     : null;
 
   return (
-    <div className="game-viewport">
+    <div className={`game-viewport ${isGameplayScreen ? 'game-viewport--gameplay' : 'game-viewport--shell'}`}>
       <header className="top-hud">
         {!isStartScreen && !(screen === 'world_map' || screen === 'island_levels' || screen === 'profile' || screen === 'achievements_tracker' || screen === 'parent_dashboard' || screen === 'maths_help_hub') ? (
           <UnifiedMiniGameHud

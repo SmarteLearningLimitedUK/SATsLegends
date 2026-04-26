@@ -8,6 +8,7 @@ import { createTelemetryState } from '../systems/progression/telemetry';
 import { getStarterItemIds } from '../systems/progression/shopCatalog';
 import { reconcileAchievementState } from '../systems/progression/achievementCatalog';
 import { useProgressionStore } from '../store/useProgressionStore';
+import { localFirstStorage } from '../storage/localFirstStorage';
 
 export const PLAYER_STORAGE_KEY = 'maths_quest_player_v2';
 const ALL_ISLAND_IDS = ISLANDS.map(island => island.id);
@@ -94,7 +95,7 @@ export interface PlayerProgressionController {
 export const usePlayerProgression = (): PlayerProgressionController => {
   const grantProgressionXp = useProgressionStore((state) => state.grantXp);
   const [player, setPlayer] = useState<PlayerData>(() => {
-    const saved = localStorage.getItem(PLAYER_STORAGE_KEY);
+    const saved = localFirstStorage.getItem(PLAYER_STORAGE_KEY);
     const parsed = saved ? JSON.parse(saved) : null;
     return createDefaultPlayer(parsed);
   });
@@ -106,7 +107,7 @@ export const usePlayerProgression = (): PlayerProgressionController => {
   );
 
   useEffect(() => {
-    localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify(player));
+    localFirstStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify(player));
   }, [player]);
 
   useEffect(() => {

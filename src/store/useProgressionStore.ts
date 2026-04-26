@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
 import {
   CompleteLevelArgs,
@@ -10,6 +10,7 @@ import {
 } from '../lib/progression/types';
 import { completeLevel } from '../lib/progression/completeLevel';
 import { applyXpGain } from '../lib/progression/applyXpGain';
+import { localFirstStorage } from '../storage/localFirstStorage';
 
 const STORAGE_KEY = 'sats-legends-save';
 
@@ -141,6 +142,7 @@ export const useProgressionStore = create<ProgressionState>()(
     {
       name: STORAGE_KEY,
       version: 2,
+      storage: createJSONStorage(() => localFirstStorage),
       migrate: (persistedState: any) => {
         if (!persistedState || typeof persistedState !== 'object') return persistedState;
         const nextState = { ...persistedState };

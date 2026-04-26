@@ -2,7 +2,7 @@
 
 @theme {
   --font-fredoka: "Fredoka", sans-serif;
-  --font-display: "Baloo 2", "Fredoka", sans-serif;
+  --font-display: "Fredoka", sans-serif;
 }
 
 @layer utilities {
@@ -79,6 +79,16 @@
   --sat-button-secondary-skin: url('./assets/casual_ui/inputs/btn_4.png');
   --sat-button-accent-skin: url('./assets/casual_ui/inputs/btn_5.png');
   --sat-button-cta-skin: url('./assets/casual_ui/inputs/btn_1.png');
+
+  /* Art direction tokens (global): thick outlines, soft ambient shadows, light from upper-left. */
+  --sat-outline-width: 2px;
+  --sat-outline-soft: rgba(198, 230, 255, 0.26);
+  --sat-outline-strong: rgba(198, 230, 255, 0.34);
+  --sat-shadow-ambient: 0 18px 34px rgba(2, 6, 23, 0.22);
+  --sat-shadow-raised: 0 12px 26px rgba(2, 6, 23, 0.2);
+  --sat-sheen-inset: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  --sat-light-top-left: radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 58%);
+  --sat-soft-ramp: linear-gradient(135deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0) 52%);
 }
 
 html,
@@ -105,9 +115,94 @@ body {
   font-family: var(--font-fredoka);
   overflow: hidden;
   user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
   background: #050914;
   overscroll-behavior: none;
   touch-action: none;
+}
+
+/* ============================================================
+   Shared "juice" feedback (correct / wrong)
+   ============================================================ */
+
+.app-viewport.sat-juice-correct::after,
+.app-viewport.sat-juice-wrong::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 90;
+  opacity: 0;
+}
+
+.app-viewport.sat-juice-correct::after {
+  background:
+    radial-gradient(circle at 45% 58%, rgba(253, 224, 71, 0.22), rgba(125, 211, 252, 0.0) 55%),
+    radial-gradient(circle at 55% 62%, rgba(134, 239, 172, 0.16), rgba(134, 239, 172, 0.0) 60%);
+  animation: sat-correct-pulse 420ms ease-out both;
+}
+
+.app-viewport.sat-juice-wrong::after {
+  background:
+    radial-gradient(circle at 50% 58%, rgba(244, 63, 94, 0.16), rgba(244, 63, 94, 0.0) 60%),
+    radial-gradient(circle at 50% 58%, rgba(248, 113, 113, 0.10), rgba(248, 113, 113, 0.0) 70%);
+  animation: sat-wrong-flash 320ms ease-out both;
+}
+
+.game-stage.sat-juice-shake {
+  animation: sat-shake 280ms ease-in-out both;
+}
+
+@keyframes sat-correct-pulse {
+  0% { opacity: 0; }
+  30% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes sat-wrong-flash {
+  0% { opacity: 0; }
+  25% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes sat-shake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+  100% { transform: translateX(0); }
+}
+
+/* Native-game input hygiene: disable selection/callouts globally, but keep form fields usable. */
+.app-viewport,
+.game-viewport,
+#root {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+  overscroll-behavior: none;
+  overflow: hidden;
+}
+
+input,
+textarea,
+select,
+[contenteditable="true"] {
+  user-select: text;
+  -webkit-user-select: text;
+  -webkit-touch-callout: default;
+  touch-action: manipulation;
+}
+
+a,
+button {
+  -webkit-tap-highlight-color: transparent;
 }
 
 .app-viewport [class*="text-amber-"],
@@ -166,6 +261,53 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* ============================================================
+   Fixed iPhone-first gameplay frame (portrait, no-scroll)
+   Only applies on gameplay screens (shell sets .game-viewport--gameplay).
+   ============================================================ */
+
+.game-viewport--gameplay {
+  /* Reserve safe-area insets outside the 10/80/10 split so HUD text/buttons never sit under notch/home indicator. */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  grid-template-rows: 10fr 80fr 10fr;
+}
+
+.game-viewport--gameplay .top-hud,
+.game-viewport--gameplay .bottom-hud {
+  height: 100%;
+}
+
+.game-viewport--gameplay .top-hud {
+  padding-top: 0;
+}
+
+.game-viewport--gameplay .bottom-hud {
+  padding-bottom: 0;
+}
+
+/* Lock to portrait: in Safari the device can still rotate even if the PWA is portrait-only. */
+@media (orientation: landscape) {
+  .game-viewport--gameplay::after {
+    content: 'Portrait only';
+    position: absolute;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 900;
+    letter-spacing: 0;
+    font-size: clamp(1.1rem, 4.5vw, 1.6rem);
+    color: rgba(255, 255, 255, 0.92);
+    background: rgba(5, 9, 20, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    pointer-events: auto;
+  }
 }
 
 .game-background {
@@ -3170,26 +3312,31 @@ button:disabled {
 .hero-nav-button,
 .hero-arrow-button,
 .hero-arrow-button-clean {
-  border: 1px solid rgba(151, 209, 255, 0.48) !important;
+  border: var(--sat-outline-width) solid rgba(151, 209, 255, 0.48) !important;
   border-radius: 1rem !important;
   color: #eff9ff !important;
   background:
+    var(--sat-light-top-left),
+    var(--sat-soft-ramp),
     var(--sat-button-accent-skin) center/100% 100% no-repeat !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.34),
+    inset 0 1px 0 rgba(255,255,255,0.28),
     0 5px 0 rgba(15, 48, 110, 0.74),
-    0 12px 20px rgba(15,23,42,0.2) !important;
+    0 12px 20px rgba(2, 6, 23, 0.16) !important;
 }
 
 .licensed-game-card,
 .ui-panel-unified,
 .casual-panel-surface,
 .licensed-game-card {
-  border: 1px solid rgba(198, 230, 255, 0.24) !important;
-  background: url('./assets/casual_ui/dialogs_panels/panel_3.png') center/100% 100% no-repeat !important;
+  border: var(--sat-outline-width) solid rgba(198, 230, 255, 0.24) !important;
+  background:
+    var(--sat-light-top-left),
+    var(--sat-soft-ramp),
+    url('./assets/casual_ui/dialogs_panels/panel_3.png') center/100% 100% no-repeat !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.12),
-    0 16px 32px rgba(2,6,23,0.28) !important;
+    var(--sat-sheen-inset),
+    var(--sat-shadow-ambient) !important;
 }
 
 .licensed-game-card-dark,
@@ -3199,27 +3346,36 @@ button:disabled {
 .fantasy-hud-shell,
 .fantasy-dock-shell,
 .hero-screen-shell {
-  border: 1px solid rgba(176, 220, 255, 0.24) !important;
-  background: url('./assets/casual_ui/dialogs_panels/panel.png') center/100% 100% no-repeat !important;
+  border: var(--sat-outline-width) solid rgba(176, 220, 255, 0.24) !important;
+  background:
+    var(--sat-light-top-left),
+    var(--sat-soft-ramp),
+    url('./assets/casual_ui/dialogs_panels/panel.png') center/100% 100% no-repeat !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.1),
-    0 16px 32px rgba(2,6,23,0.3) !important;
+    var(--sat-sheen-inset),
+    0 18px 34px rgba(2, 6, 23, 0.24) !important;
 }
 
 .licensed-slice-paper-panel,
 .reward-panel,
 .ui-paper-panel {
-  border: 1px solid rgba(255, 235, 168, 0.38) !important;
-  background: url('./assets/casual_ui/dialogs_panels/dialog__popup_1.png') center/100% 100% no-repeat !important;
+  border: var(--sat-outline-width) solid rgba(255, 235, 168, 0.38) !important;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 62%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0) 55%),
+    url('./assets/casual_ui/dialogs_panels/dialog__popup_1.png') center/100% 100% no-repeat !important;
 }
 
 .licensed-overlay-card,
 .app-modal-panel {
-  border: 1px solid rgba(176, 220, 255, 0.28) !important;
-  background: url('./assets/casual_ui/dialogs_panels/dialog__popup_1.png') center/100% 100% no-repeat !important;
+  border: var(--sat-outline-width) solid rgba(176, 220, 255, 0.28) !important;
+  background:
+    var(--sat-light-top-left),
+    var(--sat-soft-ramp),
+    url('./assets/casual_ui/dialogs_panels/dialog__popup_1.png') center/100% 100% no-repeat !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.12),
-    0 16px 30px rgba(2,6,23,0.28) !important;
+    var(--sat-sheen-inset),
+    0 18px 34px rgba(2, 6, 23, 0.24) !important;
 }
 
 .licensed-input-panel {
@@ -3405,6 +3561,31 @@ button:disabled {
 .game-screen-bottom {
   flex: 0 0 auto;
   min-height: clamp(3rem, 13vh, 6.4rem);
+}
+
+/* Strict 3-slot gameplay division inside the playable middle area:
+   Question = 20%, Gameplay = 55%, Answers = 25% (maps to 16/44/20 of full screen).
+   Only applies to gameplay screens to avoid breaking map/profile layouts. */
+.screen-gameplay .game-screen-layout {
+  display: grid;
+  grid-template-rows:
+    minmax(clamp(3.4rem, 10.5vh, 7rem), 20fr)
+    minmax(0, 55fr)
+    minmax(clamp(4.4rem, 13vh, 9.25rem), 25fr);
+  gap: clamp(0.25rem, 0.9vh, 0.65rem);
+}
+
+.screen-gameplay .game-screen-top,
+.screen-gameplay .game-screen-main,
+.screen-gameplay .game-screen-bottom {
+  min-height: 0;
+}
+
+.screen-gameplay .game-screen-main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .structured-game-layout > * {

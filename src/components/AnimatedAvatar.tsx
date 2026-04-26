@@ -79,12 +79,12 @@ const AnimatedAvatar: React.FC<AnimatedAvatarProps> = ({
       className={`relative overflow-visible ${className}`.trim()}
       animate={
         floating
-          ? { y: [0, -5, -2, 0], x: [0, 1, 0, -1, 0], scale: [1, 1.018, 1.012, 1] }
-          : { y: [0, -1.5, 0], scale: [1, 1.01, 1] }
+          ? { y: [0, -4, 0], scale: [1, 1.012, 1] }
+          : { y: [0, -2, 0], scale: [1, 1.01, 1] }
       }
       transition={
         floating
-          ? { duration: 4.8, repeat: Infinity, ease: 'easeInOut' }
+          ? { duration: 3.6, repeat: Infinity, ease: 'easeInOut' }
           : { duration: 4.4, repeat: Infinity, ease: 'easeInOut' }
       }
     >
