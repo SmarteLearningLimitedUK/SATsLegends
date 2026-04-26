@@ -1,4 +1,5 @@
 import React from 'react';
+import GameShell from '../../layout/shell/GameShell';
 
 type GameScreenLayoutProps = {
   top?: React.ReactNode;
@@ -23,25 +24,13 @@ const GameScreenLayout: React.FC<GameScreenLayoutProps> = ({
   mainClassName,
   bottomClassName,
 }) => (
-  <div
-    className={cn('game-screen-layout structured-game-layout', className)}
-    data-preserve-shell-zones="true"
-  >
-    {top ? (
-      <div className={cn('game-screen-region game-screen-top game-shell-zone-hud', topClassName)}>
-        {top}
-      </div>
-    ) : null}
-    <div className={cn('game-screen-region game-screen-main game-shell-zone-playfield', mainClassName)}>
-      {main}
-    </div>
-    {bottom ? (
-      <div className={cn('game-screen-region game-screen-bottom game-shell-zone-actions', bottomClassName)}>
-        {bottom}
-      </div>
-    ) : null}
-    {overlay}
-  </div>
+  <GameShell
+    className={cn(className)}
+    question={top ? <div className={cn(topClassName)}>{top}</div> : undefined}
+    gameplay={<div className={cn(mainClassName)}>{main}</div>}
+    answers={bottom ? <div className={cn(bottomClassName)}>{bottom}</div> : undefined}
+    overlay={overlay}
+  />
 );
 
 export default GameScreenLayout;
