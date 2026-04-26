@@ -30,6 +30,8 @@ interface LevelResultsModalProps {
     achievementsUnlocked?: string[];
   } | null;
   onRetry: () => void;
+  onContinue: () => void;
+  onMap: () => void;
   calmBreakLabel?: string;
   onCalmBreak?: () => void;
 }
@@ -87,6 +89,8 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
   isOpen,
   result,
   onRetry,
+  onContinue,
+  onMap,
   calmBreakLabel,
   onCalmBreak,
 }) => {
@@ -150,7 +154,11 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="absolute inset-0 z-30 flex items-center justify-center overflow-hidden bg-slate-950/88 p-2 sm:p-3"
+          className="fixed inset-0 z-[220] flex items-center justify-center overflow-hidden bg-slate-950/88 p-2 sm:p-3"
+          style={{
+            paddingTop: 'calc(env(safe-area-inset-top) + 8px)',
+            paddingBottom: 'calc(env(safe-area-inset-bottom) + 8px)',
+          }}
         >
           <div className="pointer-events-none absolute inset-0">
             <img
@@ -182,13 +190,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
             className="relative z-10 flex max-h-full w-full max-w-md flex-col overflow-hidden rounded-[1.1rem] border border-white/15 bg-[linear-gradient(180deg,rgba(7,21,52,0.78),rgba(5,17,45,0.9))] p-3 shadow-[0_28px_80px_rgba(0,0,0,0.5)] backdrop-blur-md md:max-w-lg md:rounded-[1.4rem] md:p-4"
           >
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(56,189,248,0.18),transparent_55%),radial-gradient(circle_at_50%_100%,rgba(251,191,36,0.18),transparent_60%)]" />
-            <button
-              type="button"
-              className="hidden"
-              aria-label="Close results"
-            >
-              <span aria-hidden="true">×</span>
-            </button>
+            {/* Close button intentionally hidden in current UX (navigation comes from action buttons). */}
 
             <div className="relative z-10 flex min-h-0 flex-col gap-3 overflow-y-auto overscroll-contain pr-1">
               <div className="flex flex-col items-center text-center">
@@ -260,38 +262,48 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
                 </>
               )}
 
-              {showButtons && (isPractice || !isVictory || (calmBreakLabel && onCalmBreak)) ? (
-                <div className="mt-1 grid gap-2 transition-opacity duration-300 sm:grid-cols-2">
-                  {isPractice || !isVictory ? (
-                    <button
-                      type="button"
-                      className="ui-button-primary py-3 text-sm font-black uppercase tracking-[0.18em]"
-                      onClick={onRetry}
-                    >
-                      {isPractice ? 'Retry Practice' : 'Retry'}
-                    </button>
-                  ) : null}
-                  {calmBreakLabel && onCalmBreak ? (
-                    <button
-                      type="button"
-                      className="ui-button-success py-2 text-xs font-black uppercase tracking-[0.18em]"
-                      onClick={onCalmBreak}
-                    >
-                      {calmBreakLabel}
-                    </button>
-                  ) : null}
-                </div>
-              ) : (
-                <div className="mt-1 grid gap-2 opacity-0 pointer-events-none transition-opacity duration-300">
+              <div
+                className={[
+                  'mt-1 grid gap-2 transition-opacity duration-300',
+                  showButtons ? 'opacity-100' : 'opacity-0 pointer-events-none',
+                ].join(' ')}
+              >
+                {isVictory && !isPractice ? (
+                  <button
+                    type="button"
+                    className="ui-button-primary py-3 text-sm font-black uppercase tracking-[0.18em]"
+                    onClick={onContinue}
+                  >
+                    Continue
+                  </button>
+                ) : (
                   <button
                     type="button"
                     className="ui-button-primary py-3 text-sm font-black uppercase tracking-[0.18em]"
                     onClick={onRetry}
                   >
-                    Retry
+                    {isPractice ? 'Retry Practice' : 'Retry'}
                   </button>
-                </div>
-              )}
+                )}
+
+                {calmBreakLabel && onCalmBreak && !isVictory ? (
+                  <button
+                    type="button"
+                    className="ui-button-success py-3 text-sm font-black uppercase tracking-[0.18em]"
+                    onClick={onCalmBreak}
+                  >
+                    {calmBreakLabel}
+                  </button>
+                ) : null}
+
+                <button
+                  type="button"
+                  className="ui-button-secondary py-3 text-sm font-black uppercase tracking-[0.18em]"
+                  onClick={onMap}
+                >
+                  Map
+                </button>
+              </div>
             </div>
           </motion.div>
         </motion.div>

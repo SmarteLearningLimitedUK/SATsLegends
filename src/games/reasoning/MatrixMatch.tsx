@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Trophy, Timer, HelpCircle, CheckCircle2, XCircle, Lightbulb } from '../../components/GameIcons';
+import { motion } from 'motion/react';
+import { Trophy, Timer, HelpCircle, Lightbulb } from '../../components/GameIcons';
 import BossPortrait from '../../components/BossPortrait';
 import { getBossEncounter } from '../../bossMeta';
 
@@ -240,28 +240,6 @@ const MatrixMatch: React.FC<MatrixMatchProps> = ({ onVictory, onGameOver, onBack
           <span>HINT (-100)</span>
         </button>
       </div>
-
-      {/* Feedback Overlay */}
-      <AnimatePresence>
-        {feedback && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.5 }}
-            className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none"
-          >
-            {feedback === 'correct' ? (
-              <div className="bg-emerald-500 p-12 rounded-full shadow-2xl border-8 border-white">
-                <CheckCircle2 size={100} className="text-white" />
-              </div>
-            ) : (
-              <div className="bg-red-500 p-12 rounded-full shadow-2xl border-8 border-white">
-                <XCircle size={100} className="text-white" />
-              </div>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Background Decor */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-[0.02]">

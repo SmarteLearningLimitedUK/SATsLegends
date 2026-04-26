@@ -348,7 +348,7 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
                     </div>
 
                     {/* Feedback Overlay */}
-                    {feedback && (
+                    {false && feedback && (
                       <div className={`absolute inset-0 flex items-center justify-center rounded-xl backdrop-blur-sm ${feedback === 'correct' ? 'bg-green-500/20' : 'bg-red-500/20'}`}>
                         <span className={`text-2xl md:text-4xl font-black drop-shadow-lg ${feedback === 'correct' ? 'text-green-500' : 'text-amber-500'}`}>
                           {feedback === 'correct' ? 'CORRECT!' : 'INCORRECT!'}
@@ -389,7 +389,7 @@ const DataDungeonGame: React.FC<DataDungeonGameProps> = ({
 
         {/* Game Over / Victory Modals */}
         <AnimatePresence>
-        {(isGameOver || isVictory) && (
+        {false && (isGameOver || isVictory) && (
           <motion.div 
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
