@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { MiniGamePracticeBriefing } from '../../app/gameplaySessionContract';
 import { FramedPanel, PrimaryActionButton, RewardPanel } from '../../layout/ScreenPrimitives';
 
@@ -38,14 +39,23 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
   actionLabel = 'Start',
   onAction,
 }) => {
-  if (!open) return null;
+  const [locallyDismissed, setLocallyDismissed] = useState(false);
+
+  useEffect(() => {
+    if (open) setLocallyDismissed(false);
+  }, [open]);
+
+  if (!open || locallyDismissed) return null;
 
   const resolvedTitle = briefing?.title || title;
   const resolvedSummary = briefing?.summary ? normalizeBriefingText(briefing.summary) : undefined;
   const resolvedBullets = (briefing?.bullets ?? []).map((bullet) => normalizeBriefingText(bullet));
 
-  return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/72 px-4 py-6 backdrop-blur-[6px]">
+  const overlay = (
+    <div
+      data-testid="practice-intro-overlay"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/72 px-4 py-6 backdrop-blur-[6px]"
+    >
       <FramedPanel
         variant="surface"
         className="flex w-full max-w-[22rem] min-h-0 max-h-[calc(100svh-3rem)] flex-col gap-4 overflow-hidden p-4 text-left md:max-w-[28rem] md:gap-5 md:p-5"
@@ -86,12 +96,29 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
           ) : null}
         </div>
 
-        <PrimaryActionButton onClick={onAction} className="w-full shrink-0 py-3 text-sm md:text-base">
+        <PrimaryActionButton
+          onClick={() => {
+            // Defensive: some screens can remount rapidly or have practice-mode props that
+            // accidentally re-open the overlay. Always allow the CTA to dismiss locally.
+            setLocallyDismissed(true);
+            onAction();
+          }}
+          className="w-full shrink-0 py-3 text-sm md:text-base"
+        >
           {actionLabel}
         </PrimaryActionButton>
       </FramedPanel>
     </div>
   );
+
+  // Render via portal so the overlay is not trapped inside transformed/scaled gameplay stages.
+  // Prefer the React root container so events are still delegated correctly.
+  if (typeof document !== 'undefined') {
+    const root = document.getElementById('root');
+    return createPortal(overlay, root ?? document.body);
+  }
+
+  return overlay;
 };
 
 export default PracticeIntroPopup;

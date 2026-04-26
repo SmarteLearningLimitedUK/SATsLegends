@@ -264,9 +264,12 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
         style={{
           flex: '1 1 auto',
           minHeight: 0,
+          // Ensure scrollable level cards can never sit under the global bottom HUD,
+          // even when the browser doesn't honour grid track sizing perfectly on iOS.
+          paddingBottom: 'calc(72px + env(safe-area-inset-bottom) + 1.25rem)',
         }}
       >
-        <div className="mb-3 flex flex-wrap items-start justify-between gap-2 md:mb-4">
+        <div className="mb-2 flex flex-wrap items-start justify-between gap-2 md:mb-4">
           <button
             onClick={onBack}
             className="ui-icon-button flex h-11 w-11 items-center justify-center rounded-full p-0 text-white shadow-xl md:h-12 md:w-12"
@@ -293,7 +296,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
         </div>
 
         {nextPlayableRow ? (
-          <div className="mb-3 rounded-2xl border border-amber-200/70 bg-[linear-gradient(180deg,rgba(251,191,36,0.24),rgba(234,179,8,0.1),rgba(15,23,42,0.4))] p-3 shadow-[0_14px_28px_rgba(234,179,8,0.22)] md:mb-4 md:p-3.5">
+          <div className="mb-2 rounded-2xl border border-amber-200/70 bg-[linear-gradient(180deg,rgba(251,191,36,0.24),rgba(234,179,8,0.1),rgba(15,23,42,0.4))] p-3 shadow-[0_14px_28px_rgba(234,179,8,0.22)] md:mb-4 md:p-3.5">
             <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
                 <div className="mt-1 truncate text-sm font-black text-cyan-100 md:text-base">
@@ -311,8 +314,8 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
           </div>
         ) : null}
 
-        <div className="min-h-0 flex-1 overflow-y-auto pr-1" style={{ WebkitOverflowScrolling: 'touch' }}>
-          <div className="flex flex-col gap-2.5 pb-[calc(env(safe-area-inset-bottom)+1rem)] md:gap-3 md:pb-[calc(env(safe-area-inset-bottom)+1.2rem)]">
+        <div className="min-h-0 flex-1 overflow-y-auto pr-1 pb-4 md:pb-5" style={{ WebkitOverflowScrolling: 'touch' }}>
+          <div className="flex flex-col gap-2 pb-2 md:gap-3 md:pb-4">
             {gameGroups.map((group) => {
               const isExpanded = expandedGameId === group.id;
               const totalPossibleBrainpowerTokens = group.levels.filter((row) => row.level.isPractice !== true).length * TOKENS_PER_LEVEL;
@@ -320,7 +323,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
               return (
                 <div
                   key={group.id}
-                  className={`licensed-board-frame w-full rounded-2xl px-3 py-3 text-left transition md:px-4 md:py-3.5 ${
+                  className={`licensed-board-frame w-full rounded-2xl px-3 py-2 text-left transition md:px-4 md:py-3.5 ${
                     group.hasNextPlayable
                       ? 'border border-amber-200/60 shadow-[0_0_0_1px_rgba(251,191,36,0.25),0_16px_28px_rgba(234,179,8,0.18)]'
                       : 'border border-white/14'

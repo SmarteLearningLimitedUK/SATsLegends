@@ -425,6 +425,11 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
   useEffect(() => {
     const handleGlobalPointerDown = (event: PointerEvent) => {
+      // When the practice briefing is open, never interfere with taps/clicks.
+      // (Calling preventDefault on pointerdown can suppress the subsequent click event on iOS.)
+      if (showPracticeIntro) return;
+      const target = event.target as Element | null;
+      if (target?.closest?.('[data-testid="practice-intro-overlay"]')) return;
       if (locked || remainingSlices <= 0) return;
       if ((event as PointerEvent & { __shareSplitterForwarded?: boolean }).__shareSplitterForwarded) return;
 
@@ -453,7 +458,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
     window.addEventListener('pointerdown', handleGlobalPointerDown, true);
     return () => window.removeEventListener('pointerdown', handleGlobalPointerDown, true);
-  }, [isPointInsideCakeSource, locked, remainingSlices]);
+  }, [isPointInsideCakeSource, locked, remainingSlices, showPracticeIntro]);
 
   const getPlateSlicePlacement = useCallback((index: number) => {
     const snapped = SHARE_SPLITTER_PLATE_DROP_POINTS[index];

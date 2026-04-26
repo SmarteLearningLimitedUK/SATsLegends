@@ -362,6 +362,8 @@ const WorldMap: React.FC<WorldMapProps> = ({
   const selectedIslandState = islandStates.find(entry => entry.island.id === selectedIslandId) ?? null;
   const useUnifiedHud = typeof document !== 'undefined'
     && Boolean(document.querySelector('[data-unified-minigame-hud="true"]'));
+  const hasGlobalBottomHud = typeof document !== 'undefined'
+    && Boolean(document.querySelector('footer.bottom-hud'));
   const actionDock = (
     <div className="pointer-events-none fixed inset-x-0 bottom-[env(safe-area-inset-bottom)] z-50 flex justify-center">
       <div className="pointer-events-auto flex items-center gap-2 rounded-[1.2rem] border border-cyan-100/30 bg-slate-950/70 px-3 py-2 shadow-[0_12px_24px_rgba(2,6,23,0.4)]">
@@ -394,12 +396,14 @@ const WorldMap: React.FC<WorldMapProps> = ({
   );
 
   return (
-    <div className="relative min-h-full w-full overflow-visible pb-4">
+    <div className="relative min-h-full w-full overflow-visible pb-[calc(env(safe-area-inset-bottom)+5.25rem)]">
       <div
         className="relative mx-auto w-full overflow-hidden"
         style={{
           aspectRatio: `${MAP_WIDTH_PX} / ${MAP_HEIGHT_PX}`,
-          maxWidth: `${MAP_WIDTH_PX}px`,
+          // Keep the full map interactive area above the global top+bottom HUD zones on small iPhone heights.
+          // This prevents island hotspot buttons from landing under the bottom utility dock.
+          maxWidth: `min(${MAP_WIDTH_PX}px, calc(100vw - 1.5rem), calc((100dvh - (56px + env(safe-area-inset-top)) - (72px + env(safe-area-inset-bottom)) - 1.25rem) * ${MAP_WIDTH_PX} / ${MAP_HEIGHT_PX}))`,
         }}
       >
         <img
@@ -458,7 +462,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
       </div>
 
       {selectedIslandState ? (
-        <div className="pointer-events-none fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+4.8rem)] z-40 flex justify-center px-4">
+        <div className="pointer-events-none fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+5.25rem)] z-40 flex justify-center px-4">
           <div className="pointer-events-auto relative w-full max-w-[20rem] px-4 py-4 text-white backdrop-blur-sm licensed-overlay-card">
             <button
               type="button"
@@ -501,7 +505,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
         </div>
       ) : null}
 
-      {useUnifiedHud ? null : actionDock}
+      {useUnifiedHud || hasGlobalBottomHud ? null : actionDock}
 
       <ParentGateOverlay
         isOpen={showParentGate}
