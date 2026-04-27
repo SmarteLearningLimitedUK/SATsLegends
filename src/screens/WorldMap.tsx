@@ -426,12 +426,12 @@ const WorldMap: React.FC<WorldMapProps> = ({
   return (
     <div className="relative min-h-full w-full overflow-visible pb-[calc(env(safe-area-inset-bottom)+5.25rem)]">
       <div
-        className="relative mx-auto w-full overflow-hidden"
+        className="relative w-full overflow-hidden"
         style={{
           aspectRatio: `${MAP_WIDTH_PX} / ${MAP_HEIGHT_PX}`,
-          // Keep the full map interactive area above the global top+bottom HUD zones on small iPhone heights.
-          // This prevents island hotspot buttons from landing under the bottom utility dock.
-          maxWidth: `min(${MAP_WIDTH_PX}px, calc(100vw - 1.5rem), calc((100dvh - (56px + env(safe-area-inset-top)) - (72px + env(safe-area-inset-bottom)) - 1.25rem) * ${MAP_WIDTH_PX} / ${MAP_HEIGHT_PX}))`,
+          // Fill the available width on mobile/tablet and allow vertical scroll when the map is taller than the viewport.
+          // (The App shell already enables overflow-y scrolling on the world map screen.)
+          maxWidth: `min(${MAP_WIDTH_PX}px, 100vw)`,
         }}
       >
         <img

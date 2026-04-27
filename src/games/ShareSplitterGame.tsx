@@ -43,12 +43,6 @@ type MoveRecord = {
   sliceId: string;
 };
 
-type DragSlice = {
-  id: string;
-  x: number;
-  y: number;
-};
-
 type SlicePlacement = {
   x: number;
   y: number;
@@ -59,7 +53,6 @@ const ROUNDS_TO_WIN = 5;
 const BASE_XP_PER_ROUND = 120;
 const BIRTHDAY_CAKE_ASSET = birthdayCakeAsset;
 const CAKE_SLICE_ASSET = cakeSliceAsset;
-const DRAG_SLICE_SIZE = 64;
 const SHARE_SPLITTER_BACKGROUND_SIZE = { width: 2500, height: 5000 };
 const SHARE_SPLITTER_PLATE_DIAMETER_PX = 600;
 const CAKE_SOURCE_POSITION = { x: 1250, y: 3750 };
@@ -224,8 +217,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const [challenge, setChallenge] = useState<ShareChallenge>(() => createChallenge(levelId, 0));
   const [plates, setPlates] = useState<string[][]>(() => createEmptyPlates(challenge.plateCount));
   const [remainingSlices, setRemainingSlices] = useState(challenge.totalSlices);
-  const [dragSlice, setDragSlice] = useState<DragSlice | null>(null);
-  const [hoverPlateIndex, setHoverPlateIndex] = useState<number | null>(null);
   const [feedback, setFeedback] = useState('');
   const [feedbackTone, setFeedbackTone] = useState<FeedbackTone>('neutral');
   const [validationActive, setValidationActive] = useState(false);
@@ -245,9 +236,9 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const endedRef = useRef(false);
   const playfieldRootRef = useRef<HTMLDivElement | null>(null);
+  const stageRef = useRef<HTMLDivElement | null>(null);
   const cakeSourceButtonRef = useRef<HTMLButtonElement | null>(null);
   const sliceSeedRef = useRef(0);
-  const dragActiveRef = useRef(false);
 
   useEffect(() => () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -263,8 +254,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setChallenge(firstChallenge);
     setPlates(createEmptyPlates(firstChallenge.plateCount));
     setRemainingSlices(firstChallenge.totalSlices);
-    setDragSlice(null);
-    setHoverPlateIndex(null);
     setFeedback('');
     setFeedbackTone('neutral');
     setValidationActive(false);
@@ -279,7 +268,8 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
   useLayoutEffect(() => {
     const getMeasurementNode = () => (
-      playfieldRootRef.current
+      stageRef.current
+      ?? playfieldRootRef.current
       ?? document.querySelector<HTMLElement>('[data-gameplay-content-viewport="true"]')
       ?? document.documentElement
     );
@@ -381,8 +371,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setChallenge(next);
     setPlates(createEmptyPlates(next.plateCount));
     setRemainingSlices(next.totalSlices);
-    setDragSlice(null);
-    setHoverPlateIndex(null);
     setValidationActive(false);
     setMoveHistory([]);
     setLocked(false);
@@ -485,8 +473,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       index === plateIndex ? [...plate, sliceId] : plate
     )));
     setMoveHistory((previous) => [...previous, { plateIndex, sliceId }]);
-    setDragSlice(null);
-    setHoverPlateIndex(null);
     setFeedback('Nice sharing. Keep matching the ratio card.');
     setFeedbackTone('neutral');
     setValidationActive(false);
@@ -497,243 +483,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     const sliceId = `${challenge.id}-slice-${sliceSeedRef.current}`;
     sliceSeedRef.current += 1;
     placeOnPlate(plateIndex, sliceId);
-  };
-
-  const getClientPoint = (evt: PointerEvent | TouchEvent | MouseEvent | React.PointerEvent | React.MouseEvent | React.TouchEvent) => {
-    const anyEvt = evt as TouchEvent;
-    if ('touches' in anyEvt && anyEvt.touches.length > 0) {
-      return { x: anyEvt.touches[0].clientX, y: anyEvt.touches[0].clientY };
-    }
-    if ('changedTouches' in anyEvt && anyEvt.changedTouches.length > 0) {
-      return { x: anyEvt.changedTouches[0].clientX, y: anyEvt.changedTouches[0].clientY };
-    }
-    const pointerEvt = evt as PointerEvent;
-    return { x: pointerEvt.clientX || 0, y: pointerEvt.clientY || 0 };
-  };
-
-  const handleSourcePointerDown = (event: React.PointerEvent | React.MouseEvent | React.TouchEvent) => {
-    if (locked || remainingSlices <= 0) return;
-    if (dragActiveRef.current || dragSlice) return;
-    const sliceId = `${challenge.id}-slice-${sliceSeedRef.current}`;
-    sliceSeedRef.current += 1;
-    const pointerId = 'pointerId' in event ? event.pointerId : 1;
-    dragActiveRef.current = true;
-    const dragRevealThresholdPx = 6;
-    let dragOriginX = 0;
-    let dragOriginY = 0;
-    let dragHasBeenRevealed = false;
-
-    const updatePosition = (clientX: number, clientY: number) => {
-      const layerRect = playfieldRootRef.current?.getBoundingClientRect();
-      setDragSlice({
-        id: sliceId,
-        x: clientX - (layerRect?.left ?? 0) - DRAG_SLICE_SIZE / 2,
-        y: clientY - (layerRect?.top ?? 0) - DRAG_SLICE_SIZE / 2,
-      });
-    };
-
-    const revealDragSlice = (clientX: number, clientY: number) => {
-      if (dragHasBeenRevealed) return;
-      dragHasBeenRevealed = true;
-      updatePosition(clientX, clientY);
-      setFeedbackTone('neutral');
-      setValidationActive(false);
-      setHoverPlateIndex(null);
-    };
-
-    const getPlateCenter = (index: number) => {
-      const position = platePositions[index];
-      if (!position) return null;
-      return position;
-    };
-
-    const getNearestPlate = (clientX: number, clientY: number) => {
-      let nearestIndex = -1;
-      let nearestDistance = Number.POSITIVE_INFINITY;
-      platePositions.forEach((_, index) => {
-        const center = getPlateCenter(index);
-        if (!center) return;
-        const centerX = center.x;
-        const centerY = center.y;
-        const dx = clientX - centerX;
-        const dy = clientY - centerY;
-        const distance = Math.hypot(dx, dy);
-        if (distance < nearestDistance) {
-          nearestDistance = distance;
-          nearestIndex = index;
-        }
-      });
-      return { index: nearestIndex, distance: nearestDistance };
-    };
-
-    const getHitPlateIndex = (clientX: number, clientY: number) => {
-      let hitIndex = -1;
-      platePositions.forEach((_, index) => {
-        const center = getPlateCenter(index);
-        if (!center) return;
-        const centerX = center.x;
-        const centerY = center.y;
-        const radius = plateSizePx * 0.5;
-        const distance = Math.hypot(clientX - centerX, clientY - centerY);
-        if (distance <= radius) {
-          hitIndex = index;
-        }
-      });
-      return hitIndex;
-    };
-
-    const finishDrag = (clientX: number, clientY: number) => {
-      if (!dragActiveRef.current) return;
-      dragActiveRef.current = false;
-      if (!dragHasBeenRevealed) {
-        setDragSlice(null);
-        setHoverPlateIndex(null);
-        window.removeEventListener('pointermove', handlePointerMove);
-        window.removeEventListener('pointerup', handlePointerUp);
-        window.removeEventListener('pointercancel', handlePointerCancel);
-        window.removeEventListener('touchmove', handleTouchMove);
-        window.removeEventListener('touchend', handleTouchEnd);
-        window.removeEventListener('touchcancel', handleTouchEnd);
-        window.removeEventListener('mousemove', handleMouseMove);
-        window.removeEventListener('mouseup', handleMouseUp);
-        window.removeEventListener('blur', handleMouseCancel);
-        return;
-      }
-      const { index, distance } = getNearestPlate(clientX, clientY);
-      const snapRadius = plateSizePx * 0.56;
-      const hitIndex = getHitPlateIndex(clientX, clientY);
-      const targetPlateIndex = hitIndex >= 0 ? hitIndex : distance <= snapRadius ? index : -1;
-
-      if (targetPlateIndex >= 0) {
-        placeOnPlate(targetPlateIndex, sliceId);
-      } else {
-        setDragSlice(null);
-        setHoverPlateIndex(null);
-      }
-
-      window.removeEventListener('pointermove', handlePointerMove);
-      window.removeEventListener('pointerup', handlePointerUp);
-      window.removeEventListener('pointercancel', handlePointerCancel);
-      window.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('touchend', handleTouchEnd);
-      window.removeEventListener('touchcancel', handleTouchEnd);
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-      window.removeEventListener('blur', handleMouseCancel);
-    };
-
-    const handlePointerMove = (moveEvent: PointerEvent) => {
-      const point = getClientPoint(moveEvent);
-      if (!dragHasBeenRevealed) {
-        const distanceFromOrigin = Math.hypot(point.x - dragOriginX, point.y - dragOriginY);
-        if (distanceFromOrigin >= dragRevealThresholdPx) {
-          revealDragSlice(point.x, point.y);
-        } else {
-          return;
-        }
-      }
-      updatePosition(point.x, point.y);
-      const hitIndex = getHitPlateIndex(point.x, point.y);
-      if (hitIndex >= 0) {
-        setHoverPlateIndex(hitIndex);
-        return;
-      }
-      const { index, distance } = getNearestPlate(point.x, point.y);
-      setHoverPlateIndex(distance <= 62 ? index : null);
-    };
-
-    const handlePointerUp = (upEvent: PointerEvent) => {
-      const point = getClientPoint(upEvent);
-      finishDrag(point.x, point.y);
-    };
-
-    const handleTouchMove = (touchEvent: TouchEvent) => {
-      const point = getClientPoint(touchEvent);
-      if (!dragHasBeenRevealed) {
-        const distanceFromOrigin = Math.hypot(point.x - dragOriginX, point.y - dragOriginY);
-        if (distanceFromOrigin >= dragRevealThresholdPx) {
-          revealDragSlice(point.x, point.y);
-        } else {
-          return;
-        }
-      }
-      updatePosition(point.x, point.y);
-      const hitIndex = getHitPlateIndex(point.x, point.y);
-      if (hitIndex >= 0) {
-        setHoverPlateIndex(hitIndex);
-        return;
-      }
-      const { index, distance } = getNearestPlate(point.x, point.y);
-      setHoverPlateIndex(distance <= 62 ? index : null);
-      touchEvent.preventDefault();
-    };
-
-    const handleTouchEnd = (touchEvent: TouchEvent) => {
-      const point = getClientPoint(touchEvent);
-      finishDrag(point.x, point.y);
-    };
-
-    const handleMouseMove = (mouseEvent: MouseEvent) => {
-      const point = getClientPoint(mouseEvent);
-      if (!dragHasBeenRevealed) {
-        const distanceFromOrigin = Math.hypot(point.x - dragOriginX, point.y - dragOriginY);
-        if (distanceFromOrigin >= dragRevealThresholdPx) {
-          revealDragSlice(point.x, point.y);
-        } else {
-          return;
-        }
-      }
-      updatePosition(point.x, point.y);
-      const hitIndex = getHitPlateIndex(point.x, point.y);
-      if (hitIndex >= 0) {
-        setHoverPlateIndex(hitIndex);
-        return;
-      }
-      const { index, distance } = getNearestPlate(point.x, point.y);
-      setHoverPlateIndex(distance <= 62 ? index : null);
-    };
-
-    const handleMouseUp = (mouseEvent: MouseEvent) => {
-      const point = getClientPoint(mouseEvent);
-      finishDrag(point.x, point.y);
-    };
-
-    const handleMouseCancel = () => {
-      dragActiveRef.current = false;
-      setDragSlice(null);
-      setHoverPlateIndex(null);
-      window.removeEventListener('pointermove', handlePointerMove);
-      window.removeEventListener('pointerup', handlePointerUp);
-      window.removeEventListener('pointercancel', handlePointerCancel);
-      window.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('touchend', handleTouchEnd);
-      window.removeEventListener('touchcancel', handleTouchEnd);
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-      window.removeEventListener('blur', handleMouseCancel);
-    };
-
-    const handlePointerCancel = () => {
-      handleMouseCancel();
-    };
-
-    const startPoint = getClientPoint(event);
-    dragOriginX = startPoint.x;
-    dragOriginY = startPoint.y;
-    const currentTarget = event.currentTarget as HTMLElement & { setPointerCapture?: (pointerId: number) => void };
-    if ('setPointerCapture' in currentTarget && 'pointerId' in event) {
-      currentTarget.setPointerCapture?.(pointerId);
-    }
-
-    window.addEventListener('pointermove', handlePointerMove);
-    window.addEventListener('pointerup', handlePointerUp);
-    window.addEventListener('pointercancel', handlePointerCancel);
-    window.addEventListener('touchmove', handleTouchMove, { passive: false });
-    window.addEventListener('touchend', handleTouchEnd);
-    window.addEventListener('touchcancel', handleTouchEnd);
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
-    window.addEventListener('blur', handleMouseCancel);
   };
 
   const handleCakeTap = () => {
@@ -748,8 +497,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setPlates(createEmptyPlates(challenge.plateCount));
     setRemainingSlices(challenge.totalSlices);
     setMoveHistory([]);
-    setDragSlice(null);
-    setHoverPlateIndex(null);
     setFeedback('');
     setFeedbackTone('neutral');
     setValidationActive(false);
@@ -821,7 +568,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
       <div ref={playfieldRootRef} className="relative h-full w-full" data-share-splitter-root="true">
         <div
-          className="pointer-events-none fixed left-0 right-0 z-[60]"
+          className="pointer-events-none absolute left-0 right-0 z-[60]"
           style={{ top: 'calc(env(safe-area-inset-top) + 4px)' }}
         >
           <div className="flex justify-center px-2">
@@ -844,9 +591,10 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
             main={(
               <div className={`mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] ${isCompactViewport ? 'gap-1' : 'gap-2'}`}>
                 <div
+                  ref={stageRef}
                   className={`relative min-h-0 overflow-hidden rounded-[1.6rem] ${isCompactViewport ? 'px-2 py-2' : 'px-2 py-3 md:px-3'}`}
                 >
-                  <div className="pointer-events-none fixed inset-0 z-[80]">
+                  <div className="pointer-events-none absolute inset-0 z-[80]">
                     <div className="relative h-full w-full">
                       <CelebrationSplash active={showCelebrationSplash} message="Party Time!" theme="party" />
                       {plateViews.map((plate, index) => {
@@ -862,7 +610,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                           <div
                             key={plate.id}
                             data-testid={`share-splitter-plate-${index + 1}`}
-                            className="pointer-events-none fixed z-[90] flex -translate-x-1/2 -translate-y-1/2 items-center justify-center p-0 text-center transition"
+                            className="pointer-events-none absolute z-[90] flex -translate-x-1/2 -translate-y-1/2 items-center justify-center p-0 text-center transition"
                             style={{
                               left: `${center.x}px`,
                               top: `${center.y}px`,
@@ -907,7 +655,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                     </div>
                   </div>
 
-                  <div className="fixed inset-0 z-[96]">
+                  <div className="absolute inset-0 z-[96]">
                     {plateViews.map((plate, index) => {
                       const center = platePositions[index] || { x: 0, y: 0 };
                       return (
@@ -916,7 +664,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                           type="button"
                           onClick={() => handlePlateTap(index)}
                           disabled={locked || remainingSlices <= 0}
-                          className="pointer-events-auto fixed -translate-x-1/2 -translate-y-1/2 rounded-full bg-transparent touch-manipulation disabled:opacity-50"
+                          className="pointer-events-auto absolute -translate-x-1/2 -translate-y-1/2 rounded-full bg-transparent touch-manipulation disabled:opacity-50"
                           style={{
                             left: `${center.x}px`,
                             top: `${center.y}px`,
@@ -931,7 +679,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
                   <motion.div
                     aria-hidden="true"
-                    className="pointer-events-none fixed z-[24] -translate-x-1/2 -translate-y-1/2 rounded-full"
+                    className="pointer-events-none absolute z-[24] -translate-x-1/2 -translate-y-1/2 rounded-full"
                     initial={{ opacity: 0.46, scale: 0.96 }}
                     animate={{ opacity: [0.5, 0.96, 0.5], scale: [0.96, 1.18, 0.96] }}
                     transition={{ duration: 1.45, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }}
@@ -949,7 +697,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
                   <motion.div
                     aria-hidden="true"
-                    className="pointer-events-none fixed z-[27] -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-amber-200/80"
+                    className="pointer-events-none absolute z-[27] -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-amber-200/80"
                     initial={{ opacity: 0.72, scale: 0.92 }}
                     animate={{ opacity: [0.78, 0.18, 0.78], scale: [0.9, 1.12, 0.9] }}
                     transition={{ duration: 1.45, repeat: Number.POSITIVE_INFINITY, ease: 'easeOut' }}
@@ -967,7 +715,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                     src={BIRTHDAY_CAKE_ASSET}
                     alt=""
                     draggable={false}
-                    className="pointer-events-none fixed z-[28] -translate-x-1/2 -translate-y-1/2 object-contain drop-shadow-[0_18px_24px_rgba(29,16,8,0.32)]"
+                    className="pointer-events-none absolute z-[28] -translate-x-1/2 -translate-y-1/2 object-contain drop-shadow-[0_18px_24px_rgba(29,16,8,0.32)]"
                     initial={{ opacity: 0, scale: 0.96 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.28, ease: 'easeOut' }}
@@ -981,7 +729,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
                   <motion.div
                     aria-live="polite"
-                    className="pointer-events-none fixed z-[29] -translate-y-1/2 rounded-xl border border-amber-100/80 bg-slate-950/82 px-3 py-2 text-center shadow-[0_10px_18px_rgba(15,23,42,0.32)] backdrop-blur-sm"
+                    className="pointer-events-none absolute z-[29] -translate-y-1/2 rounded-xl border border-amber-100/80 bg-slate-950/82 px-3 py-2 text-center shadow-[0_10px_18px_rgba(15,23,42,0.32)] backdrop-blur-sm"
                     initial={{ opacity: 0, x: 8 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.22, ease: 'easeOut' }}
@@ -1004,7 +752,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                     type="button"
                     onClick={handleCakeTap}
                     disabled={locked || remainingSlices <= 0}
-                    className="pointer-events-auto fixed z-[30] -translate-x-1/2 -translate-y-1/2 rounded-full bg-transparent p-0 touch-none"
+                    className="pointer-events-auto absolute z-[30] -translate-x-1/2 -translate-y-1/2 rounded-full bg-transparent p-0 touch-manipulation"
                     style={{
                       left: `${cakeSourceCenter.x}px`,
                       top: `${cakeVisualY}px`,
@@ -1051,28 +799,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                   </PrimaryButton>
                 </section>
               </div>
-            )}
-            overlay={(
-              <AnimatePresence>
-                {dragSlice ? (
-                  <motion.div
-                    key={dragSlice.id}
-                    initial={{ scale: 0.92, opacity: 0.9 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ opacity: 0, scale: 0.86 }}
-                    transition={{ duration: 0.08, ease: 'linear' }}
-                    className="pointer-events-none fixed z-[60] h-16 w-16 rounded-full border border-amber-200/70 bg-[linear-gradient(180deg,rgba(250,204,21,0.3),rgba(180,83,9,0.2))] p-1 shadow-[0_14px_24px_rgba(217,119,6,0.35)]"
-                    style={{ left: dragSlice.x, top: dragSlice.y }}
-                  >
-                    <img
-                      src={trimmedCakeSliceAsset}
-                      alt=""
-                      className="h-full w-full object-contain"
-                      draggable={false}
-                    />
-                  </motion.div>
-                ) : null}
-              </AnimatePresence>
             )}
           />
         </div>

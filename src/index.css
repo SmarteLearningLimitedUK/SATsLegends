@@ -969,6 +969,28 @@ html.sat-ipad.sat-browser .game-viewport {
   min-height: 100% !important;
 }
 
+/* iOS/iPadOS Safari (browser mode): stabilize dvh/svh classes using the measured innerHeight var. */
+html.sat-ios.sat-browser .h-\[100dvh\],
+html.sat-ios.sat-browser .h-\[100vh\],
+html.sat-ios.sat-browser .h-\[100svh\],
+html.sat-ios.sat-browser .h-\[100lvh\] {
+  height: var(--sat-viewport-height, 100dvh) !important;
+}
+
+html.sat-ios.sat-browser .max-h-\[100dvh\],
+html.sat-ios.sat-browser .max-h-\[100vh\],
+html.sat-ios.sat-browser .max-h-\[100svh\],
+html.sat-ios.sat-browser .max-h-\[100lvh\] {
+  max-height: var(--sat-viewport-height, 100dvh) !important;
+}
+
+html.sat-ios.sat-browser .min-h-\[100dvh\],
+html.sat-ios.sat-browser .min-h-\[100vh\],
+html.sat-ios.sat-browser .min-h-\[100svh\],
+html.sat-ios.sat-browser .min-h-\[100lvh\] {
+  min-height: var(--sat-viewport-height, 100dvh) !important;
+}
+
 .iphone-game-stage .w-screen {
   width: 100% !important;
 }
