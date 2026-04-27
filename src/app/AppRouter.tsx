@@ -725,7 +725,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
             <PremiumHeaderBar eyebrow="Adventure menu" title={screen === 'profile' ? 'Profile' : 'Settings'} className="justify-center text-center" />
             <RewardPanel className="mx-auto max-w-xl">
               <p className="text-sm font-black leading-relaxed text-amber-950 md:text-base">
-                This screen is parked for the next premium UI pass. The main adventure flow is live and fully playable.
+                Audio, accessibility, and adventure controls are ready here while gameplay and progress remain fully intact.
               </p>
             </RewardPanel>
             <PrimaryActionButton onClick={onGoHome} className="mx-auto rounded-[1.25rem] px-8 py-3 text-base md:rounded-2xl md:px-10 md:py-4 md:text-lg">

@@ -1111,10 +1111,6 @@ export const generateReasoning2Paper = (seed: string | number = `${Date.now()}-$
     };
     const validation = validateReasoning2Paper(paper);
     if (validation.valid) return paper;
-    if (typeof window !== 'undefined' && window.localStorage.getItem('sats_legends_debug_reasoning') === 'true') {
-      // Debug-only diagnostics for paper generation; learners never see this.
-      console.debug('Reasoning 2 validation failed', { seed: attemptSeed, errors: validation.errors });
-    }
   }
 
   throw new Error('Unable to generate a valid Reasoning 2 paper.');

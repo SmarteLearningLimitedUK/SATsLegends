@@ -386,22 +386,3 @@ export const isRangeRodeoAnswerCorrect = (
   const parsed = parseAnswerValue(question.answers[answerIndex] ?? '');
   return parsed !== null && Math.abs(parsed - question.correctAnswer) < EPSILON;
 };
-
-if (import.meta.env.DEV && typeof window !== 'undefined') {
-  const flag = '__rangeRodeoGeneratorExamplesLogged__';
-  const globalWindow = window as unknown as Window & { [key: string]: unknown };
-  if (!globalWindow[flag]) {
-    globalWindow[flag] = true;
-    // Inline examples for quick QA visibility.
-    // eslint-disable-next-line no-console
-    console.log('Range Rodeo Example 1', generateRangeRodeoQuestion(1));
-    // eslint-disable-next-line no-console
-    console.log('Range Rodeo Example 2', generateRangeRodeoQuestion(2));
-    // eslint-disable-next-line no-console
-    console.log('Range Rodeo Example 3', generateRangeRodeoQuestion(3));
-    // eslint-disable-next-line no-console
-    console.log('Range Rodeo Example 4', generateRangeRodeoQuestion(4));
-    // eslint-disable-next-line no-console
-    console.log('Range Rodeo Example 5', generateRangeRodeoQuestion(5));
-  }
-}
