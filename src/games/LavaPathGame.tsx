@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { motion } from 'motion/react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
@@ -9,6 +9,10 @@ import { GameScreenShell } from '../layout/ScreenPrimitives';
 import { getSatsInspiredChallengeQuestion } from '../systems/content/satsInspiredQuestionBanks';
 import { triggerHaptic } from '../haptics';
 import lavaPathBackground from '../assets/maps/backgroundsforgames/lava-path.jpg';
+import {
+  buildAnswerOptions,
+  pickNextQuestionAvoidingImmediateRepeat,
+} from '../utils/answerOptions';
 import {
   GameplaySessionEventHandlers,
   GameplaySessionState,
@@ -85,15 +89,6 @@ const fallbackQuestions: LavaPathQuestion[] = [
   },
 ];
 
-const shuffle = <T,>(items: T[]) => {
-  const copy = [...items];
-  for (let i = copy.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-};
-
 const sanitizeText = (text: string) => (
   text
     .replace(/Ãƒâ€”/g, 'x')
@@ -103,16 +98,21 @@ const sanitizeText = (text: string) => (
 
 const resolveQuestion = (levelId: number): LavaPathQuestion => {
   const question = getSatsInspiredChallengeQuestion('unit_mixer', levelId);
-  if (!question) return fallbackQuestions[Math.floor(Math.random() * fallbackQuestions.length)];
-
-  const options = shuffle(question.options);
-  const correct = question.options[question.answerIndex];
+  const source = question ?? fallbackQuestions[Math.floor(Math.random() * fallbackQuestions.length)];
+  const correct = source.options[source.answerIndex] ?? source.options[0] ?? '';
+  const built = buildAnswerOptions<string>({
+    correctAnswer: correct,
+    distractors: source.options.filter((_, index) => index !== source.answerIndex),
+    optionCount: 4,
+    questionId: `lava-path-${sanitizeText(source.prompt)}`,
+  });
+  const options = built.options.map((option) => option.label);
 
   return {
-    prompt: sanitizeText(question.prompt),
-    sublabel: sanitizeText(question.sublabel),
+    prompt: sanitizeText(source.prompt),
+    sublabel: sanitizeText(source.sublabel),
     options,
-    answerIndex: Math.max(0, options.indexOf(correct)),
+    answerIndex: Math.max(0, built.options.findIndex((option) => option.isCorrect)),
   };
 };
 
@@ -178,9 +178,18 @@ const LavaPathGame: React.FC<LavaPathGameProps> = ({
     finishedRef.current = false;
   }, [resolvedLevel]);
 
+  const questionKey = (entry: LavaPathQuestion) => `${entry.prompt}|${entry.options.join('|')}`;
+  const getNextQuestion = useCallback((previous?: LavaPathQuestion | null) => (
+    pickNextQuestionAvoidingImmediateRepeat(
+      () => resolveQuestion(resolvedLevel),
+      previous ?? null,
+      questionKey,
+    )
+  ), [resolvedLevel]);
+
   const loadNextQuestion = () => {
     const timeoutId = window.setTimeout(() => {
-      setQuestion(resolveQuestion(resolvedLevel));
+      setQuestion((previousQuestion) => getNextQuestion(previousQuestion));
       setSelectedIndex(null);
       setFeedbackTone('neutral');
       setFeedbackText('');
@@ -224,7 +233,9 @@ const LavaPathGame: React.FC<LavaPathGameProps> = ({
     setSelectedIndex(index);
     setLocked(true);
 
-    if (index === question.answerIndex) {
+    const selectedValue = question.options[index] ?? '';
+    const correctValue = question.options[question.answerIndex] ?? question.options[0] ?? '';
+    if (selectedValue === correctValue) {
       const gained = STEP_XP + resolvedLevel * 12;
       const updatedScore = score + gained;
       const nextCorrect = correctCount + 1;
@@ -322,7 +333,7 @@ const LavaPathGame: React.FC<LavaPathGameProps> = ({
                 disabled={locked || finishedRef.current}
                 className={`flex min-h-[3.4rem] items-center justify-center rounded-[1.05rem] px-2 py-2 text-base font-black md:min-h-[3.85rem] md:text-xl ${
                   selectedIndex === index
-                    ? index === question.answerIndex
+                    ? option === (question.options[question.answerIndex] ?? question.options[0] ?? '')
                       ? 'ui-button-success'
                       : 'ui-button-primary'
                     : 'ui-button-secondary'

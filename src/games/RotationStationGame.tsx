@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { triggerHaptic } from '../haptics';
 import gameplayBackground from '../assets/maps/backgroundsforgames/rotationstation.jpg';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
+import { shuffle } from '../utils/questionShuffle';
 
 interface RotationStationGameProps {
   levelId: number;
@@ -146,7 +147,7 @@ const buildTurnLabel = (turns: number, direction: TurnDirection) => {
 
 const createPredictOptions = (correctOrientation: number): Array<{ id: string; label: string; orientation: number }> => {
   const candidates = [0, 1, 2, 3];
-  const shuffled = candidates.sort(() => Math.random() - 0.5);
+  const shuffled = shuffle(candidates);
   const selected = [...new Set([correctOrientation, ...shuffled])].slice(0, 4);
   return selected.map((orientation) => ({
     id: `o-${orientation}`,
@@ -164,8 +165,8 @@ const createIdentifyTurnOptions = (direction: TurnDirection, turns: number) => {
     '270 deg clockwise',
     '270 deg anticlockwise',
   ];
-  const distractors = pool.filter((item) => item !== correct).sort(() => Math.random() - 0.5).slice(0, 3);
-  const options = [correct, ...distractors].sort(() => Math.random() - 0.5);
+  const distractors = shuffle(pool.filter((item) => item !== correct)).slice(0, 3);
+  const options = shuffle([correct, ...distractors]);
   return { correct, options };
 };
 

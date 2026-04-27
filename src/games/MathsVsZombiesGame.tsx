@@ -8,6 +8,11 @@ import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import { formatMultiplicationDisplay } from '../utils/mathDisplay';
+import {
+  type AnswerOption,
+  buildAnswerOptions,
+  pickNextQuestionAvoidingImmediateRepeat,
+} from '../utils/answerOptions';
 
 interface MathsVsZombiesGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -36,9 +41,10 @@ interface Zombie {
 }
 
 interface Question {
+  id: string;
   prompt: string;
-  options: number[];
-  correctIndex: number;
+  options: AnswerOption<number>[];
+  correctValue: number;
 }
 
 const LANES = 4;
@@ -164,11 +170,17 @@ const buildQuestion = (levelId: number): Question => {
     const candidate = Math.random() < 0.5 ? answer + delta : answer - delta;
     if (candidate !== answer) options.add(candidate);
   }
-  const shuffled = Array.from(options).sort(() => Math.random() - 0.5);
+  const builtOptions = buildAnswerOptions<number>({
+    correctAnswer: answer,
+    distractors: Array.from(options).filter((option) => option !== answer),
+    optionCount: 4,
+    questionId: `maths-vs-zombies-${levelId}-${equation}`,
+  });
   return {
+    id: `${equation}-${answer}`,
     prompt: `Help! Minions are attacking.\nSolve the sum to defeat them.\n${formatMultiplicationDisplay(equation)}`,
-    options: shuffled,
-    correctIndex: shuffled.indexOf(answer),
+    options: builtOptions.options,
+    correctValue: answer,
   };
 };
 
@@ -176,9 +188,15 @@ const getOpeningReferenceQuestion = (levelId: number): Question | null => {
   if (levelId !== 41) return null;
 
   return {
+    id: 'opening-reference-41',
     prompt: 'Help! Minions are attacking.\nSolve the sum to defeat them.\n1719 + 1141',
-    options: [2865, 2862, 2860, 2864],
-    correctIndex: 0,
+    options: buildAnswerOptions<number>({
+      correctAnswer: 2865,
+      distractors: [2862, 2860, 2864],
+      optionCount: 4,
+      questionId: 'maths-vs-zombies-opening-41',
+    }).options,
+    correctValue: 2865,
   };
 };
 
@@ -238,14 +256,21 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
   const victoryTargetScore = useMemo(() => 1200 + (levelId * 220), [levelId]);
   const baseZombieHealth = useMemo(() => 1, []);
   const spawnDelayMs = useMemo(() => Math.max(2600, 5200 - (levelId * 220)), [levelId]);
+  const makeNextQuestion = useCallback((previousQuestion?: Question | null) => (
+    pickNextQuestionAvoidingImmediateRepeat(
+      () => buildQuestion(levelId),
+      previousQuestion ?? null,
+      (item) => item.id,
+    )
+  ), [levelId]);
 
   const [XP, setScore] = useState(0);
   const [zombiesDefeated, setZombiesDefeated] = useState(0);
   const [health, setHealth] = useState(3);
   const [timeLeft, setTimeLeft] = useState(roundSeconds);
   const [zombies, setZombies] = useState<Zombie[]>([]);
-  const [question, setQuestion] = useState<Question>(() => getOpeningReferenceQuestion(levelId) ?? buildQuestion(levelId));
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [question, setQuestion] = useState<Question>(() => getOpeningReferenceQuestion(levelId) ?? makeNextQuestion(null));
+  const [selectedAnswerId, setSelectedAnswerId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState('');
   const [locked, setLocked] = useState(false);
   const [gameActive, setGameActive] = useState(true);
@@ -329,14 +354,14 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     setTimeLeft(roundSeconds);
     setZombies([]);
     zombiesRef.current = [];
-    setQuestion(getOpeningReferenceQuestion(levelId) ?? buildQuestion(levelId));
-    setSelectedAnswer(null);
+    setQuestion(getOpeningReferenceQuestion(levelId) ?? makeNextQuestion(null));
+    setSelectedAnswerId(null);
     setFeedback('');
     setLocked(false);
     idRef.current = 1;
     spawnTimerRef.current = spawnDelayMs;
     lastTimeRef.current = 0;
-  }, [levelId, roundSeconds, spawnDelayMs]);
+  }, [levelId, makeNextQuestion, roundSeconds, spawnDelayMs]);
 
   useEffect(() => {
     if (isPractice || !gameActive || endedRef.current) return;
@@ -462,11 +487,11 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     };
   }, [gameActive, updateFrame]);
 
-  const handleAnswer = (index: number) => {
+  const handleAnswer = (option: AnswerOption<number>) => {
     if (!gameActive || endedRef.current || locked) return;
     setLocked(true);
-    setSelectedAnswer(index);
-    if (index === question.correctIndex) {
+    setSelectedAnswerId(option.id);
+    if (option.value === question.correctValue) {
       setFeedback('Zombie down!');
       const targetZombie = zombiesRef.current.reduce((closest, zombie) => (
         zombie.y > (closest?.y ?? -Infinity) ? zombie : closest
@@ -503,8 +528,8 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       }
     }
     window.setTimeout(() => {
-      setQuestion(buildQuestion(levelId));
-      setSelectedAnswer(null);
+      setQuestion((currentQuestion) => makeNextQuestion(currentQuestion));
+      setSelectedAnswerId(null);
       setFeedback('');
       setLocked(false);
     }, 750);
@@ -614,21 +639,21 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
             </div>
           ) : null}
           <div className="grid grid-cols-4 gap-[0.35rem]">
-              {question.options.map((option, index) => (
+              {question.options.map((option) => (
                 <button
-                  key={`${option}-${index}`}
+                  key={option.id}
                   type="button"
-                  onClick={() => handleAnswer(index)}
+                  onClick={() => handleAnswer(option)}
                   disabled={locked}
                   className={`rounded-2xl border border-cyan-100/40 bg-[linear-gradient(180deg,rgba(75,137,232,0.9)_0%,rgba(45,102,194,0.9)_54%,rgba(29,75,153,0.92)_100%)] px-1.25 py-1.25 text-[clamp(0.7rem,1.8vw,0.88rem)] font-black leading-none whitespace-nowrap text-white shadow-[0_6px_12px_rgba(2,6,23,0.28),inset_0_1px_0_rgba(255,255,255,0.26)] ${
-                    locked && selectedAnswer === index
-                      ? index === question.correctIndex
+                    locked && selectedAnswerId === option.id
+                      ? option.isCorrect
                         ? 'ui-button-success'
                         : 'ui-button-primary'
                       : 'ui-button-secondary'
                   }`}
                 >
-                  {option}
+                  {option.label}
                 </button>
               ))}
             </div>

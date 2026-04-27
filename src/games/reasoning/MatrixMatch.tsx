@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { Trophy, Timer, HelpCircle, Lightbulb } from '../../components/GameIcons';
 import BossPortrait from '../../components/BossPortrait';
 import { getBossEncounter } from '../../bossMeta';
+import { shuffle } from '../../utils/questionShuffle';
 
 interface MatrixMatchProps {
   onVictory: (stars: number, XP: number) => void;
@@ -93,7 +94,7 @@ const MatrixMatch: React.FC<MatrixMatchProps> = ({ onVictory, onGameOver, onBack
 
     setGrid(newGrid);
     setCorrectItem(target);
-    setOptions(opts.sort(() => Math.random() - 0.5));
+    setOptions(shuffle(opts));
     setFeedback(null);
     setShowHint(false);
   };

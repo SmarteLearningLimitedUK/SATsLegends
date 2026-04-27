@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Trophy, Timer, RefreshCw } from '../../components/GameIcons';
+import { shuffle } from '../../utils/questionShuffle';
 
 interface LogicSortProps {
   onVictory: (stars: number, XP: number) => void;
@@ -36,7 +37,7 @@ const LogicSort: React.FC<LogicSortProps> = ({ onVictory, onGameOver, onBack }) 
       { label: 'Square Numbers', fn: (n: number) => Math.sqrt(n) % 1 === 0 },
     ];
 
-    const selectedConditions = conditions.sort(() => Math.random() - 0.5).slice(0, 3);
+    const selectedConditions = shuffle(conditions).slice(0, 3);
     const allNumbers: number[] = [];
     
     selectedConditions.forEach(cond => {
@@ -50,7 +51,7 @@ const LogicSort: React.FC<LogicSortProps> = ({ onVictory, onGameOver, onBack }) 
       }
     });
 
-    const shuffledNumbers = allNumbers.sort(() => Math.random() - 0.5);
+    const shuffledNumbers = shuffle(allNumbers);
     
     const newTubes: Tube[] = [
       { id: 0, label: 'Source', items: shuffledNumbers, capacity: 12, condition: () => true },

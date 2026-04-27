@@ -7,6 +7,7 @@ import { triggerHaptic } from '../haptics';
 import { formatMultiplicationDisplay } from '../utils/mathDisplay';
 import { pickBossArt } from '../assets/bosses/library';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
+import { shuffle } from '../utils/questionShuffle';
 
 interface OrderOpsArenaGameProps {
   levelId: number;
@@ -40,7 +41,6 @@ const ENEMY_HEALTH_BY_LEVEL: Record<number, number> = {
 };
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
-const shuffle = <T,>(items: T[]) => [...items].sort(() => Math.random() - 0.5);
 
 const makeOptions = (correct: number) => {
   const pool = new Set<number>([correct]);

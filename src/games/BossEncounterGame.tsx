@@ -26,6 +26,7 @@ import type { ArithmeticPaperResult } from './arithmeticBossPaper';
 import { generateReasoning1Paper, markReasoning1Paper } from './reasoning1Paper';
 import type { ReasoningPaperResult, ReasoningQuestion } from './reasoning1Paper';
 import { generateReasoning2Paper, markReasoning2Paper } from './reasoning2Paper';
+import { shuffle } from '../utils/questionShuffle';
 
 interface BossEncounterGameProps extends MiniGameShellContractProps {
   gameType: SupportedBossGameType;
@@ -87,7 +88,6 @@ const isBestBossPaperAttemptToday = (gameType: SupportedBossGameType, score: num
 
 export { isBossEncounterGameType };
 
-const shuffle = <T,>(items: T[]) => [...items].sort(() => Math.random() - 0.5);
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 const pick = <T,>(items: T[]) => items[randomInt(0, items.length - 1)];
 
@@ -1168,10 +1168,10 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   );
   const [arithmeticAnswers, setArithmeticAnswers] = useState<Record<number, string>>({});
   const [arithmeticResult, setArithmeticResult] = useState<ArithmeticPaperResult | null>(null);
-  const [arithmeticScreen, setArithmeticScreen] = useState<'intro' | 'active' | 'confirm' | 'results' | 'review'>('intro');
+  const [arithmeticScreen, setArithmeticScreen] = useState<'intro' | 'active' | 'results' | 'review'>('intro');
   const [reasoningAnswers, setReasoningAnswers] = useState<Record<number, any>>({});
   const [reasoningResult, setReasoningResult] = useState<ReasoningPaperResult | null>(null);
-  const [reasoningScreen, setReasoningScreen] = useState<'intro' | 'active' | 'confirm' | 'results' | 'review'>('intro');
+  const [reasoningScreen, setReasoningScreen] = useState<'intro' | 'active' | 'results' | 'review'>('intro');
   const questions = useMemo(
     () => (isArithmeticPaper || isReasoningPaper ? [] : Array.from({ length: TOTAL_QUESTIONS }, () => {
       const base = QUESTION_GENERATORS[gameType]();
@@ -1389,7 +1389,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
 
   useEffect(() => {
     if (!isArithmeticPaper || arithmeticResult || !arithmeticPaper || arithmeticScreen === 'intro') return;
-    if (arithmeticScreen !== 'active' && arithmeticScreen !== 'confirm') return;
+    if (arithmeticScreen !== 'active') return;
     if ((sessionState?.timeLeft ?? arithmeticPaper.timeLimitSeconds) <= 0) {
       submitArithmeticPaper(false);
     }
@@ -1767,27 +1767,6 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
       );
     }
 
-    if (reasoningScreen === 'confirm') {
-      return (
-        <div className="flex h-full w-full items-center justify-center overflow-hidden bg-[#f7f4ea] px-4 py-4 font-sans text-slate-950">
-          <section className="w-full max-w-xl rounded-[1.1rem] border border-slate-300 bg-[#fffdf6] p-5 text-center shadow-[0_12px_28px_rgba(15,23,42,0.16)]">
-            <h2 className="text-2xl font-black">Submit {reasoningDisplayTitle}?</h2>
-            <p className="mt-3 text-sm font-bold text-slate-600">
-              You have answered {reasoningAnsweredCount} of {reasoningQuestionCount} questions. Results will only be shown after submission.
-            </p>
-            <div className="mt-5 grid gap-2 sm:grid-cols-2">
-              <button type="button" onClick={() => setReasoningScreen('active')} className="rounded-xl border-2 border-slate-300 bg-white px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-slate-950">
-                Keep Working
-              </button>
-              <button type="button" onClick={() => submitReasoningPaper((sessionState?.timeLeft ?? 0) > 0)} className="rounded-xl border-2 border-slate-950 bg-slate-950 px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-white">
-                Submit Paper
-              </button>
-            </div>
-          </section>
-        </div>
-      );
-    }
-
     if (!reasoningQuestion) return null;
     const currentReasoningAnswer = reasoningAnswers[reasoningQuestion.id] ?? '';
     const timeLeft = sessionState?.timeLeft ?? reasoningPaper.timeLimitSeconds;
@@ -1947,18 +1926,16 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
             </div>
             <button
               type="button"
-              onClick={() => goNextPaperQuestion(reasoningQuestionCount)}
-              disabled={currentIndex >= reasoningQuestionCount - 1}
+              onClick={() => {
+                if (currentIndex >= reasoningQuestionCount - 1) {
+                  submitReasoningPaper((sessionState?.timeLeft ?? 0) > 0);
+                  return;
+                }
+                goNextPaperQuestion(reasoningQuestionCount);
+              }}
               className={bossNavButtonClass}
             >
-              Next
-            </button>
-            <button
-              type="button"
-              onClick={() => setReasoningScreen('confirm')}
-              className={bossNavButtonClass}
-            >
-              Submit
+              {currentIndex >= reasoningQuestionCount - 1 ? 'Finish' : 'Next'}
             </button>
           </BossPaperNav>
         )}
@@ -2110,27 +2087,6 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
       );
     }
 
-    if (arithmeticScreen === 'confirm') {
-      return (
-        <div className="flex h-full w-full items-center justify-center overflow-hidden bg-[#f7f4ea] px-4 py-4 font-sans text-slate-950">
-          <section className="w-full max-w-xl rounded-[1.1rem] border border-slate-300 bg-[#fffdf6] p-5 text-center shadow-[0_12px_28px_rgba(15,23,42,0.16)]">
-            <h2 className="text-2xl font-black">Submit Arithmetic Showdown?</h2>
-            <p className="mt-3 text-sm font-bold text-slate-600">
-              You have answered {arithmeticAnsweredCount} of {arithmeticQuestionCount} questions. Results will only be shown after submission.
-            </p>
-            <div className="mt-5 grid gap-2 sm:grid-cols-2">
-              <button type="button" onClick={() => setArithmeticScreen('active')} className="rounded-xl border-2 border-slate-300 bg-white px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-slate-950">
-                Keep Working
-              </button>
-              <button type="button" onClick={() => submitArithmeticPaper((sessionState?.timeLeft ?? 0) > 0)} className="rounded-xl border-2 border-slate-950 bg-slate-950 px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-white">
-                Submit Paper
-              </button>
-            </div>
-          </section>
-        </div>
-      );
-    }
-
     const selectedAnswer = arithmeticAnswers[arithmeticQuestion.id];
     return (
       <BossPaperStage
@@ -2175,18 +2131,16 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
             </div>
             <button
               type="button"
-              onClick={() => goNextPaperQuestion(arithmeticQuestionCount)}
-              disabled={currentIndex >= arithmeticQuestionCount - 1}
+              onClick={() => {
+                if (currentIndex >= arithmeticQuestionCount - 1) {
+                  submitArithmeticPaper((sessionState?.timeLeft ?? 0) > 0);
+                  return;
+                }
+                goNextPaperQuestion(arithmeticQuestionCount);
+              }}
               className={bossNavButtonClass}
             >
-              Next
-            </button>
-            <button
-              type="button"
-              onClick={() => setArithmeticScreen('confirm')}
-              className={bossNavButtonClass}
-            >
-              Submit
+              {currentIndex >= arithmeticQuestionCount - 1 ? 'Finish' : 'Next'}
             </button>
           </BossPaperNav>
         )}

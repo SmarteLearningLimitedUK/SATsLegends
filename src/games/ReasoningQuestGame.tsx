@@ -13,8 +13,8 @@ import {
 } from '../app/gameplaySessionContract';
 import {
   reshuffleAvoidingRepeat,
-  shuffleOptionsWithAnswerIndex,
 } from '../utils/questionShuffle';
+import { buildAnswerOptions } from '../utils/answerOptions';
 
 interface ReasoningQuestGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -37,6 +37,7 @@ interface ReasoningQuestion {
   prompt: string;
   options: string[];
   correctIndex: number;
+  correctValue?: string;
   shortHint: string;
 }
 
@@ -158,11 +159,19 @@ const QUESTION_BANK: ReasoningQuestion[] = [
 
 const buildQuestionDeck = (previousLast: ReasoningQuestion | null) => (
   reshuffleAvoidingRepeat(QUESTION_BANK, previousLast, (question) => question.id).map((question) => {
-    const shuffled = shuffleOptionsWithAnswerIndex(question.options, question.correctIndex);
+    const built = buildAnswerOptions<string>({
+      correctAnswer: question.options[question.correctIndex] ?? question.options[0] ?? '',
+      distractors: question.options.filter((_, index) => index !== question.correctIndex),
+      optionCount: 4,
+      questionId: `reasoning-quest-${question.id}`,
+    });
+    const options = built.options.map((option) => option.label);
+    const correctValue = built.options.find((option) => option.isCorrect)?.value ?? options[0] ?? '';
     return {
       ...question,
-      options: shuffled.options,
-      correctIndex: shuffled.answerIndex,
+      options,
+      correctValue,
+      correctIndex: Math.max(0, options.findIndex((option) => option === correctValue)),
     };
   })
 );
@@ -262,7 +271,9 @@ const ReasoningQuestGame: React.FC<ReasoningQuestGameProps> = ({
     setSelectedIndex(index);
     setLocked(true);
 
-    if (index === activeQuestion.correctIndex) {
+    const selectedOption = activeQuestion.options[index] ?? '';
+    const correctValue = activeQuestion.correctValue ?? activeQuestion.options[activeQuestion.correctIndex] ?? '';
+    if (selectedOption === correctValue) {
       const gained = 180 + resolvedLevel * 18;
       const updatedScore = score + gained;
       const nextCorrect = correctCount + 1;
@@ -336,7 +347,7 @@ const ReasoningQuestGame: React.FC<ReasoningQuestGameProps> = ({
                 disabled={locked}
               className={`flex min-h-[3.6rem] items-center justify-center rounded-[1.1rem] text-base font-black md:min-h-[4.1rem] md:text-xl ${
                 selectedIndex === index
-                  ? index === activeQuestion.correctIndex
+                  ? option === (activeQuestion.correctValue ?? activeQuestion.options[activeQuestion.correctIndex] ?? '')
                     ? 'ui-button-success'
                     : 'ui-button-primary'
                   : 'ui-button-secondary'

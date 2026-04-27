@@ -11,6 +11,10 @@ import {
   emitMiniGameSessionEvent,
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
+import {
+  buildAnswerOptions,
+  pickNextQuestionAvoidingImmediateRepeat,
+} from '../utils/answerOptions';
 
 interface PercentPowerGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -38,33 +42,17 @@ const FALLBACK_TIMER = 80;
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-const shuffle = <T,>(items: T[]): T[] => {
-  const clone = [...items];
-  for (let index = clone.length - 1; index > 0; index -= 1) {
-    const swapIndex = Math.floor(Math.random() * (index + 1));
-    [clone[index], clone[swapIndex]] = [clone[swapIndex], clone[index]];
-  }
-  return clone;
-};
-
 const makeOptions = (correct: string, wrongValues: string[]) => {
-  const unique = Array.from(new Set([correct, ...wrongValues]));
-  const filtered = unique.filter((value) => value !== correct);
-  const options = [correct, ...filtered.slice(0, 3)];
-
-  let pad = 1;
-  while (options.length < 4) {
-    const candidate = `${Number(correct) + pad}`;
-    if (!options.includes(candidate)) {
-      options.push(candidate);
-    }
-    pad += 1;
-  }
-
-  const shuffled = shuffle(options);
+  const built = buildAnswerOptions<string>({
+    correctAnswer: correct,
+    distractors: wrongValues,
+    optionCount: 4,
+    questionId: `percent-power-${correct}`,
+  });
+  const shuffled = built.options.map((option) => option.label);
   return {
     options: shuffled,
-    answerIndex: shuffled.indexOf(correct),
+    answerIndex: Math.max(0, built.options.findIndex((option) => option.isCorrect)),
   };
 };
 
@@ -146,6 +134,8 @@ const buildQuestion = (level: number, round: number): PercentPowerQuestion => {
   }
   return [buildDirectQuestion, buildReverseQuestion, buildIncreaseQuestion][round % 3]();
 };
+
+const percentQuestionKey = (question: PercentPowerQuestion) => `${question.prompt}|${question.options.join('|')}`;
 
 const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
   levelId,
@@ -230,6 +220,16 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
     onGameOver(scoreRef.current);
   }, [lives, onGameOver, sessionEvents, timeLeft]);
 
+  const getNextQuestion = useCallback((
+    nextLevel: number,
+    nextRound: number,
+    previousQuestion?: PercentPowerQuestion | null,
+  ) => pickNextQuestionAvoidingImmediateRepeat(
+    () => buildQuestion(nextLevel, nextRound),
+    previousQuestion ?? null,
+    percentQuestionKey,
+  ), []);
+
   const finishVictory = useCallback((finalScore: number, finalAttempts: number, finalCorrect: number, remainingLives: number) => {
     if (didEndRef.current) return;
     didEndRef.current = true;
@@ -250,20 +250,21 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
   }, [onVictory, sessionEvents]);
 
   const advanceQuestion = useCallback((nextRound: number) => {
-    const nextQuestion = buildQuestion(resolvedLevel, nextRound);
     setRoundNumber(nextRound);
-    setQuestion(nextQuestion);
+    setQuestion((previousQuestion) => getNextQuestion(resolvedLevel, nextRound, previousQuestion));
     setSelectedIndex(null);
     setFeedback(null);
     setLocked(false);
-  }, [resolvedLevel]);
+  }, [getNextQuestion, resolvedLevel]);
 
   const handleAnswer = (index: number) => {
     if (isLocked || didEndRef.current) return;
     setLocked(true);
     setSelectedIndex(index);
 
-    const isCorrect = index === question.answerIndex;
+    const selectedValue = question.options[index] ?? '';
+    const correctValue = question.options[question.answerIndex] ?? question.options[0] ?? '';
+    const isCorrect = selectedValue === correctValue;
     const nextAttempts = attempts + 1;
     setAttempts(nextAttempts);
 
@@ -414,7 +415,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
         <div className="answer-choice-surface mt-4 grid w-full max-w-[44rem] grid-cols-2 gap-3">
           {question.options.map((option, index) => {
             const isSelected = index === selectedIndex;
-            const isCorrect = feedback === 'correct' && index === question.answerIndex;
+            const isCorrect = feedback === 'correct' && option === (question.options[question.answerIndex] ?? question.options[0] ?? '');
             const isIncorrect = feedback === 'incorrect' && isSelected;
 
             return (

@@ -15,6 +15,7 @@ import {
   isRangeRodeoAnswerCorrect,
   RangeRodeoQuestion,
 } from './rangeRodeoGenerator';
+import { pickNextQuestionAvoidingImmediateRepeat } from '../utils/answerOptions';
 
 interface RangeRodeoGameProps {
   levelId: number;
@@ -35,6 +36,7 @@ const starsFromAccuracy = (correct: number, attempts: number) => {
   if (accuracy >= 0.64) return 2;
   return 1;
 };
+const rangeQuestionKey = (question: RangeRodeoQuestion) => `${question.question}|${question.answers.join('|')}`;
 
 const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
   levelId,
@@ -47,8 +49,18 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
   isPractice,
   practiceBriefing,
 }) => {
+  const buildNextQuestion = (
+    score: number,
+    answered: number,
+    context: { correctStreak?: number; lostLifeRecently?: boolean } = {},
+    previousQuestion?: RangeRodeoQuestion | null,
+  ) => pickNextQuestionAvoidingImmediateRepeat(
+    () => generateRangeRodeoRound(score, answered, context),
+    previousQuestion ?? null,
+    rangeQuestionKey,
+  );
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
-  const [question, setQuestion] = useState<RangeRodeoQuestion>(() => generateRangeRodeoRound(0, 0));
+  const [question, setQuestion] = useState<RangeRodeoQuestion>(() => buildNextQuestion(0, 0));
   const [selectedOptionIndex, setSelectedOptionIndex] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; text: string } | null>(null);
   const [correctAnswers, setCorrectAnswers] = useState(0);
@@ -88,7 +100,7 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
   useEffect(() => {
     if (!sessionState) return;
     if (sessionState.timeLeft !== sessionState.totalTime) return;
-    setQuestion(generateRangeRodeoRound(0, 0));
+    setQuestion(buildNextQuestion(0, 0, {}, null));
     setSelectedOptionIndex(null);
     setFeedback(null);
     setCorrectAnswers(0);
@@ -149,10 +161,10 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
     onVictory(stars, finalXP);
   };
 
-  const handleOptionTap = (answerIndex: number) => {
+  const handleOptionTap = (answerIndex: number, answerValue: string) => {
     if (inputLocked || didComplete || !isSessionActive) return;
 
-    const isCorrect = isRangeRodeoAnswerCorrect(question, answerIndex);
+    const isCorrect = isRangeRodeoAnswerCorrect(question, answerValue);
     const nextAttempts = attempts + 1;
     const nextCorrect = correctAnswers + (isCorrect ? 1 : 0);
     const nextStreak = isCorrect ? correctStreak + 1 : 0;
@@ -188,10 +200,10 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
         completeGame(nextXP, nextCorrect, nextAttempts);
         return;
       }
-      setQuestion(generateRangeRodeoRound(nextXP, roundIndex + 1, {
+      setQuestion((previousQuestion) => buildNextQuestion(nextXP, roundIndex + 1, {
         correctStreak: nextStreak,
         lostLifeRecently: lostLifeForNextRound,
-      }));
+      }, previousQuestion));
       lostLifeRecentlyRef.current = false;
       moveToNextQuestion();
     }, isCorrect ? 720 : 820);
@@ -279,7 +291,7 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
                 <button
                   key={`${question.id}-option-${answer}`}
                   type="button"
-                  onClick={() => handleOptionTap(answerIndex)}
+                  onClick={() => handleOptionTap(answerIndex, answer)}
                   disabled={inputLocked || didComplete || !isSessionActive}
                   className={`min-h-[3.1rem] rounded-[0.95rem] px-2 py-2 text-[clamp(15px,2.5vh,22px)] font-black ${buttonClass} disabled:opacity-55`}
                 >

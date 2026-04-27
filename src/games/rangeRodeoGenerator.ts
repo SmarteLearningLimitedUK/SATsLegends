@@ -1,3 +1,5 @@
+import { buildAnswerOptions } from '../utils/answerOptions';
+
 export type RangeRodeoDifficulty = 1 | 2 | 3 | 4 | 5;
 
 export interface RangeRodeoQuestion {
@@ -123,11 +125,15 @@ const buildQuestionPayload = (
   distractors: number[],
   explanation: string,
   questionType: string,
-  rng: Rng,
 ): RangeRodeoQuestion => {
   const answerPool = uniqueAnswers(correctAnswer, distractors);
-  const shuffledAnswers = shuffleArray(answerPool, rng);
-  const answerStrings = shuffledAnswers.map(formatNumber);
+  const built = buildAnswerOptions<number>({
+    correctAnswer: roundToOne(correctAnswer),
+    distractors: answerPool.filter((value) => Math.abs(value - correctAnswer) > EPSILON),
+    optionCount: 4,
+    questionId: `${difficulty}:${question}`,
+  });
+  const answerStrings = built.options.map((option) => formatNumber(option.value));
   const correctString = formatNumber(correctAnswer);
   const correctIndex = answerStrings.findIndex((answer) => answer === correctString);
 
@@ -159,7 +165,6 @@ const buildDifficulty1 = (rng: Rng): RangeRodeoQuestion => {
     distractors,
     `Highest value is ${formatNumber(maxValue)} and lowest value is ${formatNumber(minValue)}, so ${formatNumber(maxValue)} - ${formatNumber(minValue)} = ${formatNumber(correct)}.`,
     'direct_range',
-    rng,
   );
 };
 
@@ -183,7 +188,6 @@ const buildDifficulty2 = (rng: Rng): RangeRodeoQuestion => {
     distractors,
     `Highest value is ${formatNumber(maxValue)} and lowest value is ${formatNumber(minValue)}, so ${formatNumber(maxValue)} - ${formatNumber(minValue)} = ${formatNumber(correct)}.`,
     'unordered_values',
-    rng,
   );
 };
 
@@ -217,7 +221,6 @@ const buildDifficulty3 = (rng: Rng): RangeRodeoQuestion => {
     distractors,
     `Range is highest minus lowest. To make a range of ${formatNumber(range)}, the missing value must be ${formatNumber(missingValue)} so ${formatNumber(maxShown)} - ${formatNumber(minShown)} = ${formatNumber(range)}.`,
     'missing_value',
-    rng,
   );
 };
 
@@ -253,7 +256,6 @@ const buildDifficulty4 = (rng: Rng): RangeRodeoQuestion => {
     distractors,
     `Highest value is ${formatNumber(maxValue)} ${context.unit} and lowest value is ${formatNumber(minValue)} ${context.unit}, so ${formatNumber(maxValue)} - ${formatNumber(minValue)} = ${formatNumber(correct)}.`,
     'word_problem',
-    rng,
   );
 };
 
@@ -275,7 +277,6 @@ const buildDifficulty5 = (rng: Rng): RangeRodeoQuestion => {
       distractors,
       `Highest value is ${formatNumber(maxValue)} and lowest value is ${formatNumber(minValue)}, so ${formatNumber(maxValue)} - (${formatNumber(minValue)}) = ${formatNumber(correct)}.`,
       'advanced_decimals_negatives',
-      rng,
     );
   }
 
@@ -303,7 +304,6 @@ const buildDifficulty5 = (rng: Rng): RangeRodeoQuestion => {
       distractors,
       `Range is highest minus lowest. The missing endpoint must be ${formatNumber(missingValue)} so the range stays ${formatNumber(range)}.`,
       'advanced_missing_value',
-      rng,
     );
   }
 
@@ -321,7 +321,6 @@ const buildDifficulty5 = (rng: Rng): RangeRodeoQuestion => {
     distractors,
     `Highest value is ${formatNumber(maxValue)} and lowest value is ${formatNumber(minValue)}, so ${formatNumber(maxValue)} - ${formatNumber(minValue)} = ${formatNumber(correct)}.`,
     'large_dataset',
-    rng,
   );
 };
 
@@ -379,10 +378,11 @@ export const generateRangeRodeoRound = (
 };
 
 export const isRangeRodeoAnswerCorrect = (
-  question: Pick<RangeRodeoQuestion, 'answers' | 'correctAnswer' | 'correctIndex'>,
-  answerIndex: number,
+  question: Pick<RangeRodeoQuestion, 'correctAnswer'>,
+  selectedAnswer: string | number | null | undefined,
 ): boolean => {
-  if (answerIndex === question.correctIndex) return true;
-  const parsed = parseAnswerValue(question.answers[answerIndex] ?? '');
+  const parsed = typeof selectedAnswer === 'number'
+    ? roundToOne(selectedAnswer)
+    : parseAnswerValue(String(selectedAnswer ?? ''));
   return parsed !== null && Math.abs(parsed - question.correctAnswer) < EPSILON;
 };

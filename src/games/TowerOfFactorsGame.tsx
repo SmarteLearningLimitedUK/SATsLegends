@@ -7,6 +7,7 @@ import { getBossEncounter } from '../bossMeta';
 import { triggerHaptic } from '../haptics';
 import { Castle, Star } from '../components/GameIcons';
 import AssetIcon from '../components/AssetIcon';
+import { shuffle } from '../utils/questionShuffle';
 
 interface TowerOfFactorsGameProps {
   levelId: number;
@@ -59,7 +60,7 @@ const generateFactorProblem = (levelId: number): FactorProblem => {
 
   const options = new Set<number>();
   const numCorrect = Math.min(factors.length, Math.floor(Math.random() * 3) + 3);
-  const shuffledFactors = [...factors].sort(() => Math.random() - 0.5);
+  const shuffledFactors = shuffle(factors);
 
   for (let index = 0; index < numCorrect; index += 1) {
     options.add(shuffledFactors[index]);
@@ -75,7 +76,7 @@ const generateFactorProblem = (levelId: number): FactorProblem => {
     }
   }
 
-  const shuffledDistractors = distractorPool.sort(() => Math.random() - 0.5);
+  const shuffledDistractors = shuffle(distractorPool);
   const desiredOptionCount = Math.min(12, options.size + shuffledDistractors.length);
   for (const distractor of shuffledDistractors) {
     if (options.size >= desiredOptionCount) break;
@@ -85,7 +86,7 @@ const generateFactorProblem = (levelId: number): FactorProblem => {
   return {
     target,
     factors,
-    options: Array.from(options).sort(() => Math.random() - 0.5),
+    options: shuffle(Array.from(options)),
   };
 };
 

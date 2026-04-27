@@ -5,6 +5,7 @@ import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { triggerHaptic } from '../haptics';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
+import { shuffle } from '../utils/questionShuffle';
 
 interface RemainderRunGameProps {
   levelId: number;
@@ -41,7 +42,6 @@ interface DecimalTemplate {
 }
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
-const shuffle = <T,>(items: T[]) => [...items].sort(() => Math.random() - 0.5);
 const formatDecimalAnswer = (value: number, decimalPlaces: number) => value.toFixed(decimalPlaces).replace(/\.?0+$/, '');
 
 const roundSecondsForLevel = (level: number) => {

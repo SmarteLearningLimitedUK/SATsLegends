@@ -19,6 +19,11 @@ import { Star } from '../components/GameIcons';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 import { formatMultiplicationDisplay } from '../utils/mathDisplay';
+import {
+  buildAnswerOptions,
+  pickNextQuestionAvoidingImmediateRepeat,
+} from '../utils/answerOptions';
+import { shuffle } from '../utils/questionShuffle';
 
 interface CurriculumChallengeGameProps {
   gameType: SupportedChallengeGameType;
@@ -206,16 +211,45 @@ const CHALLENGE_THEMES: Record<SupportedChallengeGameType, ChallengeTheme> = {
 };
 
 const pick = <T,>(items: T[]) => items[Math.floor(Math.random() * items.length)];
-const shuffle = <T,>(items: T[]) => [...items].sort(() => Math.random() - 0.5);
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 const formatCoordinate = (point: { x: number; y: number }) => `(${point.x}, ${point.y})`;
 const formatChallengeNumber = (value: number) => value.toLocaleString('en-GB', { maximumFractionDigits: 2 });
 const makeOptions = (correct: string, wrongOptions: string[]) => {
-  const options = shuffle([correct, ...wrongOptions.slice(0, 3)]);
+  const built = buildAnswerOptions<string>({
+    correctAnswer: correct,
+    distractors: wrongOptions,
+    optionCount: 4,
+    questionId: `curriculum-options-${correct}`,
+  });
+  const options = built.options.map((option) => option.label);
   return {
     options,
     answerIndex: options.indexOf(correct),
+  };
+};
+
+const challengeQuestionKey = (question: ChallengeQuestion) => (
+  `${question.prompt}|${question.sublabel}|${question.options.join('|')}`
+);
+
+const normalizeChallengeQuestion = (
+  question: ChallengeQuestion,
+  questionId: string,
+): ChallengeQuestion => {
+  const correct = question.options[question.answerIndex] ?? question.options[0] ?? '';
+  const built = buildAnswerOptions<string>({
+    correctAnswer: correct,
+    distractors: question.options.filter((_, index) => index !== question.answerIndex),
+    optionCount: 4,
+    questionId,
+  });
+  const options = built.options.map((option) => option.label);
+  const answerIndex = Math.max(0, built.options.findIndex((option) => option.isCorrect));
+  return {
+    ...question,
+    options,
+    answerIndex,
   };
 };
 
@@ -1144,41 +1178,48 @@ const generateChangeCounterQuestion = (): ChallengeQuestion => {
   return bank[Math.floor(Math.random() * bank.length)];
 };
 
-const generateQuestion = (gameType: SupportedChallengeGameType, levelId: number): ChallengeQuestion => {
+const generateQuestionCandidate = (
+  gameType: SupportedChallengeGameType,
+  levelId: number,
+): ChallengeQuestion => {
   const shouldUseSats = Math.random() < 0.7;
   const satsInspiredQuestion = shouldUseSats
     ? getSatsInspiredChallengeQuestion(gameType, levelId)
     : null;
 
-  if (satsInspiredQuestion) {
-    return satsInspiredQuestion;
-  }
+  if (satsInspiredQuestion) return satsInspiredQuestion;
 
   switch (gameType) {
-    case 'place_value_peaks':
-      return generatePlaceValueQuestion();
-    case 'calculation_clash':
-      return generateCalculationQuestion();
-    case 'coordinate_quest':
-      return generateCoordinateQuestion();
-    case 'transform_temple':
-      return generateTransformQuestion();
-    case 'scale_safari':
-      return generateScaleQuestion();
-    case 'unit_mixer':
-  return generateLavaPathQuestion();
-    case 'graph_grabber':
-      return generateChartQuestion();
-    case 'mean_machine':
-      return generateMeanQuestion();
-    case 'equation_grove':
-      return generateEquationQuestion();
-    case 'formula_forge':
-      return generateFormulaForgeQuestion();
+    case 'place_value_peaks': return generatePlaceValueQuestion();
+    case 'calculation_clash': return generateCalculationQuestion();
+    case 'coordinate_quest': return generateCoordinateQuestion();
+    case 'transform_temple': return generateTransformQuestion();
+    case 'scale_safari': return generateScaleQuestion();
+    case 'unit_mixer': return generateLavaPathQuestion();
+    case 'graph_grabber': return generateChartQuestion();
+    case 'mean_machine': return generateMeanQuestion();
+    case 'equation_grove': return generateEquationQuestion();
+    case 'formula_forge': return generateFormulaForgeQuestion();
     case 'rule_runner':
     default:
       return generateRuleRunnerQuestion();
   }
+};
+
+const generateQuestion = (
+  gameType: SupportedChallengeGameType,
+  levelId: number,
+  previousQuestion?: ChallengeQuestion | null,
+): ChallengeQuestion => {
+  const next = pickNextQuestionAvoidingImmediateRepeat(
+    () => normalizeChallengeQuestion(
+      generateQuestionCandidate(gameType, levelId),
+      `curriculum-${gameType}-${levelId}`,
+    ),
+    previousQuestion ?? null,
+    challengeQuestionKey,
+  );
+  return next;
 };
 
 const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
@@ -1194,7 +1235,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
   const [XP, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(95 + (levelId * QUESTION_TIME_BONUS));
   const [Combo, setStreak] = useState(0);
-  const [question, setQuestion] = useState<ChallengeQuestion>(() => generateQuestion(gameType, levelId));
+  const [question, setQuestion] = useState<ChallengeQuestion>(() => generateQuestion(gameType, levelId, null));
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
   const [statusMessage, setStatusMessage] = useState('Keep your Combo alive and stay accurate.');
@@ -1213,6 +1254,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
   const targetScore = 780 + (levelId * 180);
   const progress = Math.min((XP / targetScore) * 100, 100);
   const visualCaption = 'caption' in question.visual ? question.visual.caption : undefined;
+  const correctAnswerValue = question.options[question.answerIndex] ?? question.options[0] ?? '';
   const bossEncounter = isBoss ? getBossEncounter(gameType) : undefined;
   const bossPose = !bossEncounter
     ? 'neutral'
@@ -1235,7 +1277,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
     setStreak(0);
     setSelectedIndex(null);
     setFeedback(null);
-    setQuestion(generateQuestion(gameType, levelId));
+    setQuestion(generateQuestion(gameType, levelId, null));
     setStatusMessage('Keep your Combo alive and stay accurate.');
     setIsVictory(false);
     setIsGameOver(false);
@@ -1272,7 +1314,8 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
   const handleAnswer = (index: number) => {
     if (feedback || isVictory || isGameOver) return;
 
-    const isCorrect = index === question.answerIndex;
+    const selectedValue = question.options[index] ?? '';
+    const isCorrect = selectedValue === correctAnswerValue;
     setSelectedIndex(index);
     setFeedback(isCorrect ? 'correct' : 'incorrect');
 
@@ -1307,7 +1350,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
     }
 
     setTimeout(() => {
-      setQuestion(generateQuestion(gameType, levelId));
+      setQuestion((previousQuestion) => generateQuestion(gameType, levelId, previousQuestion));
       setSelectedIndex(null);
       setFeedback(null);
     }, 650);
@@ -1396,7 +1439,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
             }`}>
               {question.options.map((option, index) => {
                 const isSelected = index === selectedIndex;
-                const isCorrect = feedback === 'correct' && index === question.answerIndex;
+                const isCorrect = feedback === 'correct' && option === correctAnswerValue;
                 const isWrongSelected = feedback === 'incorrect' && isSelected;
                 const displayOption = isChartGrabber
                   ? option.replace(/^choice\s*[:\-]?\s*/i, '').trim()

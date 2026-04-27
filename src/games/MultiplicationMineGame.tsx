@@ -10,6 +10,7 @@ import treasureChestAsset from '../assets/mine/treasurechest.png';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { triggerHaptic } from '../haptics';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
+import { shuffle } from '../utils/questionShuffle';
 
 interface MultiplicationMineGameProps {
   levelId: number;
@@ -45,7 +46,7 @@ const makeOptions = (correct: number) => {
     }
   }
 
-  return [...wrongs, correct].sort(() => Math.random() - 0.5);
+  return shuffle([...wrongs, correct]);
 };
 
 const makeQuestion = (level: number, solved: number): MultiplicationQuestion => {

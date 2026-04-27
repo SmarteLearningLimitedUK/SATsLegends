@@ -8,6 +8,7 @@ import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { Star, Timer, Lock, Unlock } from '../components/GameIcons';
 import AssetIcon from '../components/AssetIcon';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
+import { shuffle } from '../utils/questionShuffle';
 
 interface DataDungeonGameProps {
   levelId: number;
@@ -95,8 +96,7 @@ const generatePuzzle = (levelId: number): Puzzle => {
       }
     }
 
-    // Shuffle
-    data.sort(() => Math.random() - 0.5);
+    data = shuffle(data);
 
     switch (type) {
       case 'mean':
@@ -120,7 +120,7 @@ const generatePuzzle = (levelId: number): Puzzle => {
         } else {
           answer = sorted[Math.floor(dataSize / 2)];
         }
-        data = sorted.sort(() => Math.random() - 0.5); // reshuffle for display
+        data = shuffle(sorted); // reshuffle for display
         question = `What is the MEDIAN (middle) of these numbers?`;
         break;
       case 'mode':
@@ -157,7 +157,7 @@ const generatePuzzle = (levelId: number): Puzzle => {
     id: Math.random().toString(36).substr(2, 9),
     type,
     question,
-    options: Array.from(options).sort(() => Math.random() - 0.5),
+    options: shuffle(Array.from(options)),
     answer,
     data,
     chartData
