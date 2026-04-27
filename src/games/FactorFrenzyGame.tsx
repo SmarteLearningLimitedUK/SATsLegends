@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { AnimatePresence, motion } from 'motion/react';
 import {
@@ -11,18 +11,8 @@ import factorFrenzyBackground from '../assets/maps/backgroundsforgames/Factor Fr
 import factorFrenzyBoss from '../assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_but_different_colours_create_me_an_evil_pink_and_light_pur-2.jpg';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
-
-type FactorProblemType = 'missing_factor' | 'all_factors' | 'common_factors' | 'prime_factors';
-
-interface FactorProblem {
-  id: number;
-  type: FactorProblemType;
-  number: number;
-  number2?: number;
-  options: number[];
-  correctAnswers: number[];
-  question: string;
-}
+import { generateValidatedProblem } from './factorFrenzy/generator';
+import type { FactorProblem } from './factorFrenzy/generator';
 
 interface FrenzyLevel {
   name: string;
@@ -113,66 +103,6 @@ const createTransparentBossFrame = (src: string): Promise<string> =>
     image.src = src;
   });
 
-const shuffle = <T,>(items: T[]): T[] => {
-  const clone = [...items];
-  for (let index = clone.length - 1; index > 0; index -= 1) {
-    const swapIndex = Math.floor(Math.random() * (index + 1));
-    [clone[index], clone[swapIndex]] = [clone[swapIndex], clone[index]];
-  }
-  return clone;
-};
-
-const buildOptions = (correctAnswers: number[], candidatePool: number[]) => {
-  const correctSet = new Set(correctAnswers);
-  const uniqueCandidates = Array.from(new Set(candidatePool.filter((value) => value > 0)));
-  const chosen: number[] = [];
-
-  for (const value of shuffle(uniqueCandidates)) {
-    if (correctSet.has(value) && !chosen.includes(value)) {
-      chosen.push(value);
-    }
-  }
-
-  for (const value of shuffle(uniqueCandidates)) {
-    if (!correctSet.has(value) && !chosen.includes(value)) {
-      chosen.push(value);
-    }
-    if (chosen.length >= 4) break;
-  }
-
-  if (chosen.length < 4) {
-    const seeds = correctAnswers.length > 0 ? correctAnswers : [10, 12, 15, 18];
-    const fallback = shuffle([
-      ...seeds.map((value) => value + 1),
-      ...seeds.map((value) => Math.max(1, value - 1)),
-      ...seeds.map((value) => value + 2),
-      ...seeds.map((value) => value + 3),
-    ]);
-
-    for (const value of fallback) {
-      if (!chosen.includes(value)) {
-        chosen.push(value);
-      }
-      if (chosen.length >= 4) break;
-    }
-  }
-
-  return shuffle(chosen.slice(0, 4));
-};
-
-const pickDisplayedAnswers = (answers: number[], minAnswers = 1, maxAnswers = 3) => {
-  const uniqueAnswers = Array.from(new Set(answers)).sort((a, b) => a - b);
-  if (uniqueAnswers.length <= maxAnswers) return uniqueAnswers;
-
-  const clampedMin = Math.max(1, Math.min(minAnswers, maxAnswers));
-  const targetCount = Math.min(
-    uniqueAnswers.length,
-    clampedMin + Math.floor(Math.random() * (maxAnswers - clampedMin + 1)),
-  );
-
-  return shuffle(uniqueAnswers).slice(0, targetCount).sort((a, b) => a - b);
-};
-
 const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   levelId: _levelId,
   avatarId: _avatarId,
@@ -217,112 +147,6 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     };
   }, []);
 
-  const getFactors = (number: number): number[] => {
-    const factors: number[] = [];
-    for (let factor = 1; factor <= number; factor += 1) {
-      if (number % factor === 0) factors.push(factor);
-    }
-    return factors;
-  };
-
-  const getPrimeFactors = (number: number): number[] => {
-    const factors: number[] = [];
-    let divisor = 2;
-    let remaining = number;
-
-    while (remaining > 1) {
-      while (remaining % divisor === 0) {
-        factors.push(divisor);
-        remaining /= divisor;
-      }
-      divisor += 1;
-    }
-
-    return [...new Set(factors)];
-  };
-
-  const generateProblem = useCallback((level: number): FactorProblem => {
-    const problemTypes: FactorProblemType[] = ['missing_factor', 'all_factors', 'common_factors', 'prime_factors'];
-    const type = problemTypes[Math.min(level - 1, problemTypes.length - 1)];
-    const id = Date.now() + Math.floor(Math.random() * 1000);
-
-    if (type === 'missing_factor') {
-      const number = Math.floor(Math.random() * 50) + 10;
-      const factors = getFactors(number);
-      const factor = factors[Math.floor(Math.random() * factors.length)];
-      const answer = number / factor;
-      const distractors = [answer + 2, answer - 1, answer + 5, answer - 3, answer + 7, answer - 4].filter((value) => value > 0);
-      const options = buildOptions([answer], distractors);
-
-      return {
-        id,
-        type,
-        number,
-        question: `The Monster Minds broke the factor chain. Find the missing factor: ${factor} x ? = ${number}`,
-        options,
-        correctAnswers: [answer],
-      };
-    }
-
-    if (type === 'all_factors') {
-      const number = [14, 15, 21, 22, 26, 33, 34, 35, 39, 46, 51, 55][Math.floor(Math.random() * 12)];
-      const allFactors = getFactors(number);
-      const correctAnswers = pickDisplayedAnswers(allFactors, 2, 3);
-      const extras = [number + 1, number - 2, 7, 9, 11, 13, 17, 19].filter((value) => value > 0 && !allFactors.includes(value));
-      const options = buildOptions(correctAnswers, [...allFactors, ...extras]);
-
-      return {
-        id,
-        type,
-        number,
-        question: `Strike every factor of ${number} shown below to clear the swarm.`,
-        options,
-        correctAnswers,
-      };
-    }
-
-    if (type === 'common_factors') {
-      const pairs: Array<[number, number]> = [
-        [12, 18],
-        [18, 24],
-        [24, 36],
-        [20, 30],
-        [30, 45],
-      ];
-      const [number, number2] = pairs[Math.floor(Math.random() * pairs.length)];
-      const factorsOne = getFactors(number);
-      const factorsTwo = getFactors(number2);
-      const allCommonAnswers = factorsOne.filter((value) => factorsTwo.includes(value));
-      const commonAnswers = pickDisplayedAnswers(allCommonAnswers, 2, 3);
-      const extras = [5, 7, 9, 11, 13, 14, 15, 16].filter((value) => !allCommonAnswers.includes(value));
-      const options = buildOptions(commonAnswers, [...allCommonAnswers, ...extras]);
-
-      return {
-        id,
-        type,
-        number,
-        number2,
-        question: `Find every common factor shown for ${number} and ${number2} to break the Monster Minds' defence.`,
-        options,
-        correctAnswers: commonAnswers,
-      };
-    }
-
-    const number = [12, 20, 30, 42, 60, 72, 84][Math.floor(Math.random() * 7)];
-    const allPrimeFactors = getPrimeFactors(number);
-    const correctAnswers = pickDisplayedAnswers(allPrimeFactors, 2, 3);
-    const options = buildOptions(correctAnswers, shuffle([2, 3, 4, 5, 6, 7, 8, 9, 11, 13]));
-
-    return {
-      id,
-      type,
-      number,
-      question: `Find every prime factor of ${number} shown below to disrupt the Monster Minds.`,
-      options,
-      correctAnswers,
-    };
-  }, []);
-
   const getLevelFromScore = useCallback((XP: number) => {
     const currentLevel = [...FRENZY_LEVELS].reverse().find((level) => XP >= level.threshold) || FRENZY_LEVELS[0];
     return {
@@ -333,7 +157,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
   const startGame = () => {
     endedRef.current = false;
-    const firstProblem = generateProblem(1);
+    const firstProblem = generateValidatedProblem(1, null);
     problemStartRef.current = Date.now();
     setSuccessTone('success');
     setSuccessMessage('Direct hit!');
@@ -349,7 +173,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
   useEffect(() => {
     if (state.currentProblem) return;
-    const firstProblem = generateProblem(1);
+    const firstProblem = generateValidatedProblem(1, null);
     problemStartRef.current = Date.now();
     setSuccessTone('success');
     setSuccessMessage('Direct hit!');
@@ -360,7 +184,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
       timeLeft: FRENZY_LEVELS[0].timeLimit,
       enemyHealth: ENEMY_MAX_HEALTH,
     }));
-  }, [state.currentProblem, generateProblem]);
+  }, [state.currentProblem]);
 
   useEffect(() => {
     clearTimer();
@@ -400,7 +224,10 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   const checkAnswer = () => {
     if (!state.currentProblem || state.status !== 'playing') return;
 
-    const correct = [...state.currentProblem.correctAnswers].sort((a, b) => a - b);
+    const correct = state.currentProblem.options
+      .filter((option) => option.isCorrect)
+      .map((option) => option.value)
+      .sort((a, b) => a - b);
     const selected = [...selectedOptions].sort((a, b) => a - b);
     const isCorrect = correct.length === selected.length && correct.every((value, index) => value === selected[index]);
 
@@ -440,7 +267,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
   const nextProblem = () => {
     const { levelConfig, levelIndex } = getLevelFromScore(state.XP);
-    const problem = generateProblem(levelIndex);
+    const problem = generateValidatedProblem(levelIndex, state.currentProblem);
     problemStartRef.current = Date.now();
     setSuccessTone('success');
     setSuccessMessage('Direct hit!');
@@ -480,7 +307,6 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   };
 
   const enemyHealthPercent = (state.enemyHealth / ENEMY_MAX_HEALTH) * 100;
-  const playingState = state.status === 'playing' || state.status === 'correct' || state.status === 'incorrect';
 
   return (
     <div
@@ -635,20 +461,20 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
               {state.currentProblem?.options.map((option, idx) => (
                 <motion.button
                   type="button"
-                  key={`${state.currentProblem?.id}-${option}-${idx}`}
+                  key={option.id}
                   initial={{ opacity: 0, y: 6, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{ delay: idx * 0.03 }}
-                  onClick={() => toggleOption(option)}
+                  onClick={() => toggleOption(option.value)}
                   className={`relative flex h-[clamp(54px,7.4vh,72px)] items-center justify-center rounded-xl border text-[clamp(0.95rem,3.1vw,1.55rem)] font-black transition ${
-                    state.status === 'correct' && selectedOptions.includes(option)
+                    state.status === 'correct' && selectedOptions.includes(option.value)
                       ? 'ui-button-success'
-                      : selectedOptions.includes(option)
+                      : selectedOptions.includes(option.value)
                         ? 'ui-button-primary'
                         : 'ui-button-secondary'
                   }`}
                 >
-                  {option}
+                  {option.label}
                 </motion.button>
               ))}
             </div>

@@ -132,7 +132,7 @@ export const pickNextQuestionAvoidingImmediateRepeat = <T,>(
   return generator();
 };
 
-if (import.meta.env.DEV) {
+if ((import.meta as unknown as { env?: { DEV?: boolean } }).env?.DEV) {
   const sample = buildAnswerOptions({
     correctAnswer: 24,
     distractors: [20, 22, 24, 26, 20],

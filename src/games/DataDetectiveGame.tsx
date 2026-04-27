@@ -98,6 +98,47 @@ const CASE_REVIEW_PROMPT = "Good evening detective - here's the evidence I'd lik
 
 const MAX_CASES = 10;
 
+type AxisTickProps = {
+  x?: number;
+  y?: number;
+  payload?: { value: number | string };
+};
+
+const GraphYAxisTick: React.FC<AxisTickProps> = ({ x = 0, y = 0, payload }) => {
+  const rawValue = payload?.value;
+  const value = typeof rawValue === 'number' ? rawValue : Number(rawValue);
+  const isMajor = Number.isFinite(value) && value % 5 === 0;
+  const tickLength = isMajor ? 12 : 7;
+  const strokeWidth = isMajor ? 2.2 : 1.2;
+  const showLabel = isMajor || value === 0;
+
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <line
+        x1={0}
+        y1={0}
+        x2={tickLength}
+        y2={0}
+        stroke="rgba(255,255,255,0.8)"
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+      />
+      {showLabel ? (
+        <text
+          x={-8}
+          y={4}
+          textAnchor="end"
+          fill="#ffffff"
+          fontSize={11}
+          fontWeight={900}
+        >
+          {value}
+        </text>
+      ) : null}
+    </g>
+  );
+};
+
 const scoreToStars = (XP: number) => {
   if (XP >= 900) return 3;
   if (XP >= 700) return 2;
@@ -146,12 +187,9 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
     setCurrentCase(caseData);
 
     const correctIdx = Math.floor(Math.random() * 4);
-    const mugshotPool = MUGSHOT_IMAGES.length
-      ? shuffle(MUGSHOT_IMAGES)
-      : [];
-    const shuffledMugshots = mugshotPool.length >= 4
-      ? mugshotPool.slice(0, 4)
-      : Array.from({ length: 4 }, (_, index) => mugshotPool[index % Math.max(1, mugshotPool.length)]);
+    const getPortraitForSuspect = (index: number) => (
+      MUGSHOT_IMAGES.length ? MUGSHOT_IMAGES[index % MUGSHOT_IMAGES.length] : undefined
+    );
     const newSuspects = Array.from({ length: 4 }, (_, i) => {
       if (i === correctIdx) {
         return {
@@ -159,7 +197,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           name: MONSTER_NAMES[i],
           items: caseData.map(d => d.amount),
           color: MONSTER_COLORS[i],
-          portrait: shuffledMugshots[i],
+          portrait: getPortraitForSuspect(i),
         };
       }
 
@@ -173,7 +211,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
         name: MONSTER_NAMES[i],
         items: randomItems,
         color: MONSTER_COLORS[i],
-        portrait: shuffledMugshots[i],
+        portrait: getPortraitForSuspect(i),
       };
     });
 
@@ -356,8 +394,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                     <YAxis
                       ticks={barTicks}
                       domain={[0, barAxisMax]}
-                      stroke="#a8a29e"
-                      fontSize={18}
+                      tick={GraphYAxisTick as never}
                       tickLine={false}
                       axisLine={false}
                       allowDecimals={false}

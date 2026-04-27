@@ -183,7 +183,7 @@ const buildSharePrompt = () => {
   return [
     "Welcome to the Monster Mind's party.",
     'They are fighting over a Brainpower cake.',
-    'Drag the slices from the cake to each plate to match the target ratio.',
+    'Tap a plate to place a slice and match the target ratio.',
     'Keep the ratio balanced to stop their greed.',
   ].join('\n');
 };
@@ -492,6 +492,13 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setValidationActive(false);
   };
 
+  const handlePlateTap = (plateIndex: number) => {
+    if (locked || remainingSlices <= 0) return;
+    const sliceId = `${challenge.id}-slice-${sliceSeedRef.current}`;
+    sliceSeedRef.current += 1;
+    placeOnPlate(plateIndex, sliceId);
+  };
+
   const getClientPoint = (evt: PointerEvent | TouchEvent | MouseEvent | React.PointerEvent | React.MouseEvent | React.TouchEvent) => {
     const anyEvt = evt as TouchEvent;
     if ('touches' in anyEvt && anyEvt.touches.length > 0) {
@@ -729,12 +736,11 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     window.addEventListener('blur', handleMouseCancel);
   };
 
-  const handleSourceAreaPointerDown = (event: React.PointerEvent | React.MouseEvent | React.TouchEvent) => {
+  const handleCakeTap = () => {
     if (locked || remainingSlices <= 0) return;
-    if (dragActiveRef.current || dragSlice) return;
-    const point = getClientPoint(event);
-    if (!isPointInsideCakeSource(point.x, point.y)) return;
-    handleSourcePointerDown(event);
+    setFeedback('Tap a plate to place a slice.');
+    setFeedbackTone('neutral');
+    setValidationActive(false);
   };
 
   const resetAllocation = () => {
@@ -808,7 +814,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Share Splitter"
-        body="The Monster Minds have started a greedy cake party.\nDrag the cake to each plate in the ratios shown.\nKeep the parts in the correct proportion."
+        body="The Monster Minds have started a greedy cake party.\nTap a plate to place slices in the ratios shown.\nKeep the parts in the correct proportion."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
@@ -839,9 +845,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
               <div className={`mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] ${isCompactViewport ? 'gap-1' : 'gap-2'}`}>
                 <div
                   className={`relative min-h-0 overflow-hidden rounded-[1.6rem] ${isCompactViewport ? 'px-2 py-2' : 'px-2 py-3 md:px-3'}`}
-                  onPointerDown={handleSourceAreaPointerDown}
-                  onMouseDown={handleSourceAreaPointerDown}
-                  onTouchStart={handleSourceAreaPointerDown}
                 >
                   <div className="pointer-events-none fixed inset-0 z-[80]">
                     <div className="relative h-full w-full">
@@ -902,6 +905,28 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                         );
                       })}
                     </div>
+                  </div>
+
+                  <div className="fixed inset-0 z-[96]">
+                    {plateViews.map((plate, index) => {
+                      const center = platePositions[index] || { x: 0, y: 0 };
+                      return (
+                        <button
+                          key={`${plate.id}-tap`}
+                          type="button"
+                          onClick={() => handlePlateTap(index)}
+                          disabled={locked || remainingSlices <= 0}
+                          className="pointer-events-auto fixed -translate-x-1/2 -translate-y-1/2 rounded-full bg-transparent touch-manipulation disabled:opacity-50"
+                          style={{
+                            left: `${center.x}px`,
+                            top: `${center.y}px`,
+                            width: `${plateSizePx}px`,
+                            height: `${plateSizePx}px`,
+                          }}
+                          aria-label={`Place slice on plate ${index + 1}`}
+                        />
+                      );
+                    })}
                   </div>
 
                   <motion.div
@@ -977,9 +1002,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                   <button
                     ref={cakeSourceButtonRef}
                     type="button"
-                    onPointerDown={handleSourcePointerDown}
-                    onMouseDown={handleSourcePointerDown}
-                    onTouchStart={handleSourcePointerDown}
+                    onClick={handleCakeTap}
                     disabled={locked || remainingSlices <= 0}
                     className="pointer-events-auto fixed z-[30] -translate-x-1/2 -translate-y-1/2 rounded-full bg-transparent p-0 touch-none"
                     style={{
@@ -988,7 +1011,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                       width: `${cakeVisualSizePx}px`,
                       height: `${cakeVisualSizePx}px`,
                     }}
-                    aria-label={remainingSlices > 0 ? 'Drag a slice from the cake' : 'No cake slices left'}
+                    aria-label={remainingSlices > 0 ? 'Tap to see how to place slices' : 'No cake slices left'}
                   />
                 </div>
 

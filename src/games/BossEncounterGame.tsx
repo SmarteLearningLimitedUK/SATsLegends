@@ -1597,16 +1597,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
     };
   }, [orderingDragState, reasoningAnswers, reasoningQuestion, reasoningResult]);
 
-  const arithmeticAnsweredCount = arithmeticPaper
-    ? arithmeticPaper.questions.filter((item) => arithmeticAnswers[item.id]?.trim()).length
-    : 0;
   const arithmeticQuestionCount = arithmeticPaper?.questions.length ?? 0;
-  const reasoningAnsweredCount = reasoningPaper
-    ? reasoningPaper.questions.filter((item) => {
-      const answer = reasoningAnswers[item.id];
-      return Array.isArray(answer) ? answer.length > 0 : String(answer ?? '').trim().length > 0;
-    }).length
-    : 0;
   const reasoningQuestionCount = reasoningPaper?.questions.length ?? 0;
   const arithmeticTimeTakenSeconds = arithmeticPaper
     ? Math.max(0, arithmeticPaper.timeLimitSeconds - (sessionState?.timeLeft ?? arithmeticPaper.timeLimitSeconds))

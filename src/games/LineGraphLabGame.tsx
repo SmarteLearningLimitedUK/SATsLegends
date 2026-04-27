@@ -46,6 +46,47 @@ const MAX_LEVEL = 10;
 const X_AXIS_LABELS = ['1', '2', '3', '4', '5'];
 const QUESTION_TYPES = ['basic_reading', 'reading_point', 'interpretation', 'comparison'] as const;
 
+type AxisTickProps = {
+  x?: number;
+  y?: number;
+  payload?: { value: number | string };
+};
+
+const GraphYAxisTick: React.FC<AxisTickProps> = ({ x = 0, y = 0, payload }) => {
+  const rawValue = payload?.value;
+  const value = typeof rawValue === 'number' ? rawValue : Number(rawValue);
+  const isMajor = Number.isFinite(value) && value % 5 === 0;
+  const tickLength = isMajor ? 12 : 7;
+  const strokeWidth = isMajor ? 2.2 : 1.2;
+  const showLabel = isMajor;
+
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <line
+        x1={0}
+        y1={0}
+        x2={tickLength}
+        y2={0}
+        stroke="rgba(219,234,254,0.78)"
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+      />
+      {showLabel ? (
+        <text
+          x={-8}
+          y={4}
+          textAnchor="end"
+          fill="#dbeafe"
+          fontSize={12}
+          fontWeight={800}
+        >
+          {value}
+        </text>
+      ) : null}
+    </g>
+  );
+};
+
 const scoreToStars = (XP: number) => {
   if (XP >= 1400) return 3;
   if (XP >= 950) return 2;
@@ -294,11 +335,10 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   };
 
   const yTicks = useMemo(() => {
-    if (!round) return [0, 20, 40, 60, 80, 100];
-    const maxValue = Math.max(...round.graph.map(point => point.value));
-    const ceiling = Math.ceil((maxValue + 8) / 10) * 10;
-    const top = clamp(ceiling, 40, 100);
-    return Array.from({ length: 6 }, (_, index) => Math.round((top / 5) * index));
+    if (!round) return Array.from({ length: 41 }, (_, index) => index);
+    const maxValue = Math.max(...round.graph.map((point) => point.value));
+    const top = clamp(Math.ceil((maxValue + 3) / 5) * 5, 20, 60);
+    return Array.from({ length: top + 1 }, (_, index) => index);
   }, [round]);
 
     return (
@@ -346,9 +386,9 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                     <YAxis
                       ticks={yTicks}
                       domain={[0, yTicks[yTicks.length - 1]]}
-                      tick={{ fill: '#dbeafe', fontSize: 12, fontWeight: 700 }}
+                      tick={GraphYAxisTick as never}
+                      tickLine={false}
                       axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
-                      tickLine={{ stroke: 'rgba(191,219,254,0.45)' }}
                       label={{ value: 'Y Axis', angle: -90, position: 'insideLeft', fill: '#93c5fd', fontSize: 12, fontWeight: 800 }}
                       width={42}
                     />

@@ -103,6 +103,47 @@ const buildAxisTicks = (maxValue: number) => {
   return Array.from({ length: safeMax + 1 }, (_, index) => index);
 };
 
+type AxisTickProps = {
+  x?: number;
+  y?: number;
+  payload?: { value: number | string };
+};
+
+const GraphYAxisTick: React.FC<AxisTickProps> = ({ x = 0, y = 0, payload }) => {
+  const rawValue = payload?.value;
+  const value = typeof rawValue === 'number' ? rawValue : Number(rawValue);
+  const isMajor = Number.isFinite(value) && value % 5 === 0;
+  const tickLength = isMajor ? 12 : 7;
+  const strokeWidth = isMajor ? 2.2 : 1.2;
+  const showLabel = isMajor || value === 0;
+
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <line
+        x1={0}
+        y1={0}
+        x2={tickLength}
+        y2={0}
+        stroke="rgba(255,248,236,0.75)"
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+      />
+      {showLabel ? (
+        <text
+          x={-8}
+          y={4}
+          textAnchor="end"
+          fill="#fff8ec"
+          fontSize={11}
+          fontWeight={900}
+        >
+          {value}
+        </text>
+      ) : null}
+    </g>
+  );
+};
+
 const createBarRound = (levelId: number, variant: number): ChartRound => {
   const base = 4 + levelId + variant;
   const bars: BarDatum[] = [
@@ -418,9 +459,9 @@ const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
               <YAxis
                 domain={[0, Math.max(...round.bars.map((bar) => bar.value))]}
                 ticks={yTicks}
-                tick={{ fill: '#fff8ec', fontSize: 11, fontWeight: 800 }}
+                tick={GraphYAxisTick as never}
+                tickLine={false}
                 axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
-                tickLine={{ stroke: 'rgba(255,255,255,0.75)', strokeWidth: 1.25, length: 8 } as never}
                 label={{ value: 'Y Axis', angle: -90, position: 'insideLeft', fill: '#93c5fd', fontSize: 12, fontWeight: 800 } as never}
                 width={42}
               />
@@ -458,9 +499,9 @@ const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
                 label={{ value: 'X Axis', position: 'insideBottom', offset: -6, fill: '#93c5fd', fontSize: 12, fontWeight: 800 } as never}
               />
               <YAxis
-                tick={{ fill: '#fff8ec', fontSize: 11, fontWeight: 800 }}
+                tick={GraphYAxisTick as never}
+                tickLine={false}
                 axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
-                tickLine={{ stroke: 'rgba(255,255,255,0.55)', strokeWidth: 1 } as never}
                 tickCount={6}
                 label={{ value: 'Y Axis', angle: -90, position: 'insideLeft', fill: '#93c5fd', fontSize: 12, fontWeight: 800 } as never}
                 width={42}
