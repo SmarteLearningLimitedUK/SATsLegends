@@ -6,10 +6,12 @@ import './index.css';
 import { installNativeGameGuards } from './utils/nativeGameGuards';
 import { installNativeSyncDrain } from './storage/syncQueue';
 import { installPressScale } from './utils/pressScale';
+import { installSatBrowserAutoDetect } from './utils/deviceEnv';
 
 installNativeGameGuards();
 installNativeSyncDrain();
 installPressScale();
+installSatBrowserAutoDetect();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

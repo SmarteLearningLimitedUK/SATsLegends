@@ -762,7 +762,7 @@ button {
 */
 .game-viewport {
   width: 100vw;
-  height: 100dvh;
+  height: var(--sat-viewport-height, 100dvh);
   overflow: hidden;
   display: grid;
   grid-template-rows:
@@ -770,6 +770,11 @@ button {
     minmax(0, 1fr)
     calc(72px + env(safe-area-inset-bottom));
   background: #050914;
+}
+
+/* iPad browser: keep the stage stable when Safari UI bars animate. */
+html.sat-ipad.sat-browser .game-viewport {
+  height: var(--sat-viewport-height, 100dvh);
 }
 
 .top-hud {
