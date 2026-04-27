@@ -47,6 +47,7 @@ import { playGameSound } from './audio/gameAudio';
 import { useLevelBackgroundAudio } from './audio/useLevelBackgroundAudio';
 import { useWelcomeBackgroundAudio } from './audio/useWelcomeBackgroundAudio';
 import { playClickSound } from './utils/soundManager';
+import { useUiAudioBridge } from './audio/useUiAudioBridge';
 import FeedbackToast, { FeedbackToastState } from './components/feedback/FeedbackToast';
 import { getVisualTestSeed, isVisualTestMode } from './utils/visualTestMode';
 import { makeSeededRandom } from './utils/seededRandom';
@@ -63,6 +64,7 @@ type SessionMetricsState = {
 };
 
 const App: React.FC = () => {
+  useUiAudioBridge();
   const buildId = import.meta.env.VITE_BUILD_ID ?? CACHE_BUSTER;
   const visualTestMode = isVisualTestMode();
 
@@ -321,10 +323,12 @@ const App: React.FC = () => {
   const handleWellbeingComplete = useCallback(() => {
     if (!wellbeingActivityId) return;
 
-    const nextCalmTokenCount = (player.calmTokens || 0) + 1;
+    const nextTokenCount = (player.brainpowerTokens || 0) + 1;
     setPlayer((prev) => ({
       ...prev,
-      calmTokens: nextCalmTokenCount,
+      brainpowerTokens: nextTokenCount,
+      // Keep legacy key in sync for older saves/components.
+      calmTokens: nextTokenCount,
     }));
     setWellbeingSignals((prev) => ({
       ...prev,
@@ -335,9 +339,9 @@ const App: React.FC = () => {
     }));
     setWellbeingCompletion({
       activityId: wellbeingActivityId,
-      rewardLabel: createWellbeingRewardLabel(nextCalmTokenCount),
+      rewardLabel: createWellbeingRewardLabel(nextTokenCount),
     });
-  }, [player.calmTokens, setPlayer, wellbeingActivityId]);
+  }, [player.brainpowerTokens, setPlayer, wellbeingActivityId]);
 
   const {
     globalMiniGameHudTimeLeft,
@@ -431,7 +435,7 @@ const App: React.FC = () => {
       mistakes: sessionMetrics.incorrect,
       timeMs,
       completed: type === 'victory',
-      coinsEarned: 0,
+      brainpowerTokensEarned: 0,
       xpEarned: 0,
       achievementsUnlocked: [],
       wellbeingSuggested: false,
@@ -546,7 +550,7 @@ const App: React.FC = () => {
       mistakes: sessionMetrics.incorrect,
       timeMs,
       completed: false,
-      coinsEarned: 0,
+      brainpowerTokensEarned: 0,
       xpEarned: progressionResult.xpGained,
       achievementsUnlocked,
       wellbeingSuggested,
@@ -1062,7 +1066,7 @@ const App: React.FC = () => {
       openWellbeingComplete: (titleOverride?: string) => {
         setWellbeingCompletion({
           activityId: (wellbeingActivityId ?? WELLBEING_ACTIVITIES[0]?.id ?? 'bubble_breath') as any,
-          rewardLabel: createWellbeingRewardLabel((player.calmTokens || 0) + 1),
+          rewardLabel: createWellbeingRewardLabel((player.brainpowerTokens || 0) + 1),
           title: titleOverride,
         } as any);
       },
@@ -1074,7 +1078,7 @@ const App: React.FC = () => {
         delete window.__SAT_VISUAL__;
       }
     };
-  }, [createWellbeingRewardLabel, player.calmTokens, setScreen, visualTestMode, wellbeingActivityId]);
+  }, [createWellbeingRewardLabel, player.brainpowerTokens, setScreen, visualTestMode, wellbeingActivityId]);
 
   const handleClaimQuest = (questId: string) => {
     const quest = player.dailyQuests.find(q => q.id === questId);
@@ -1312,6 +1316,12 @@ const App: React.FC = () => {
 
   return (
     <div className={`game-viewport ${isGameplayScreen ? 'game-viewport--gameplay' : 'game-viewport--shell'}`}>
+      {/*
+        LOCKED SHELL CONTRACT (polish only):
+        - Order must remain: Top HUD -> Gameplay Stage -> Bottom HUD
+        - Do not change viewport maths, safe-area handling, or section stacking.
+        - Mini-games must not recreate HUD chrome; they render inside the stage only.
+      */}
       <header className="top-hud">
         {!isStartScreen && !(screen === 'world_map' || screen === 'island_levels' || screen === 'profile' || screen === 'achievements_tracker' || screen === 'parent_dashboard' || screen === 'maths_help_hub') ? (
           <UnifiedMiniGameHud
@@ -1332,6 +1342,7 @@ const App: React.FC = () => {
         ) : null}
       </header>
       <main className="game-stage">
+        {/* Gameplay Stage: must remain scroll-locked and fit between the fixed HUDs. */}
           <div
             data-screen-family={screenBehavior.family}
             className={`app-viewport sat-theme-bluegold app-background-intensity ${backgroundIntensityClass} app-shell-family-${screenBehavior.family} screen-${screen.replace(/_/g, '-')} ${isGameplayScreen ? gameplayTypeClass : ''} relative w-full flex flex-col items-center ${appViewportOverflowClass} ${viewportShellClass}`}
@@ -1339,9 +1350,10 @@ const App: React.FC = () => {
             <AnimatePresence mode="wait">
               <motion.div
                 key={screen}
-                initial={{ opacity: 0, scale: screenEnterScale }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: screenExitScale }}
+                initial={{ opacity: 0, y: 10, scale: screenEnterScale }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -8, scale: screenExitScale }}
+                transition={{ duration: 0.22, ease: 'easeOut' }}
                 data-qa-root="screen"
                 data-qa-screen={screen}
                 data-qa-scrollable={screenBehavior.scrollable ? 'true' : 'false'}
@@ -1378,13 +1390,13 @@ const App: React.FC = () => {
                   onExitWellbeingActivity={backToWellbeingHub}
                   onCompleteWellbeingActivity={handleWellbeingComplete}
                   wellbeingActivityId={wellbeingActivityId}
-                  calmTokens={player.calmTokens || 0}
-                  onGameplayVictory={handleGameVictory}
-                  onGameplayOver={handleGameOver}
-                  onOpenShop={goToProfile}
-                  onOpenAchievements={goToAchievements}
-                  onOpenParentReport={goToParentDashboard}
-                  onUpdatePlayer={handleUpdatePlayer}
+                    calmTokens={player.brainpowerTokens}
+                    onGameplayVictory={handleGameVictory}
+                    onGameplayOver={handleGameOver}
+                    onOpenProfile={goToProfile}
+                    onOpenAchievements={goToAchievements}
+                    onOpenParentReport={goToParentDashboard}
+                    onUpdatePlayer={handleUpdatePlayer}
                 />
 
                 {null}
@@ -1463,6 +1475,7 @@ const App: React.FC = () => {
           </div>
       </main>
       <footer className="bottom-hud">
+        {/* Bottom HUD: fixed utility dock. Gameplay content must never extend beneath it. */}
         {!isStartScreen && !hideGlobalBottomDock ? (
           mapHudDock || (
             <GameActionDock

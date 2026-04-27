@@ -108,8 +108,8 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
             // The whole app is rendered inside a scaled "phone stage". Compensate safe-area padding
             // so it remains correct after stage scaling.
             paddingTop: 'calc((env(safe-area-inset-top) + 0.35rem) / var(--game-stage-scale, 1))',
-            paddingLeft: '0.4rem',
-            paddingRight: '0.4rem',
+            paddingLeft: 'calc(var(--sat-safe-inset, 12px) / var(--game-stage-scale, 1))',
+            paddingRight: 'calc(var(--sat-safe-inset, 12px) / var(--game-stage-scale, 1))',
           }}
         >
           <div
@@ -229,8 +229,8 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
           style={{
             // Match map dock placement: sit on the safe-area inset (no extra float gap).
             paddingBottom: 'calc(env(safe-area-inset-bottom) / var(--game-stage-scale, 1))',
-            paddingLeft: '0.35rem',
-            paddingRight: '0.35rem',
+            paddingLeft: 'calc(var(--sat-safe-inset, 12px) / var(--game-stage-scale, 1))',
+            paddingRight: 'calc(var(--sat-safe-inset, 12px) / var(--game-stage-scale, 1))',
           }}
         >
           <div className="pointer-events-auto max-w-[calc(100vw-0.7rem)] overflow-hidden">
@@ -242,8 +242,8 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
           className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center"
           style={{
             paddingBottom: 'calc(env(safe-area-inset-bottom) / var(--game-stage-scale, 1))',
-            paddingLeft: '0.35rem',
-            paddingRight: '0.35rem',
+            paddingLeft: 'calc(var(--sat-safe-inset, 12px) / var(--game-stage-scale, 1))',
+            paddingRight: 'calc(var(--sat-safe-inset, 12px) / var(--game-stage-scale, 1))',
           }}
         >
           <div className="pointer-events-auto max-w-[calc(100vw-0.7rem)] overflow-hidden">

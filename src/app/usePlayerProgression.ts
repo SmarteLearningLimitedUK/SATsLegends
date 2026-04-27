@@ -5,7 +5,6 @@ import { IslandData, LevelData, PlayerData } from '../types';
 import { LevelResultState } from './types';
 import { getLevelGameTitle } from '../utils/gameNames';
 import { createTelemetryState } from '../systems/progression/telemetry';
-import { getStarterItemIds } from '../systems/progression/shopCatalog';
 import { reconcileAchievementState } from '../systems/progression/achievementCatalog';
 import { useProgressionStore } from '../store/useProgressionStore';
 import { localFirstStorage } from '../storage/localFirstStorage';
@@ -22,29 +21,15 @@ const createDefaultPlayer = (parsed?: Partial<PlayerData> | null): PlayerData =>
   avatarId: resolveAvatarId(parsed?.avatarId),
   level: parsed?.level || 1,
   xp: parsed?.xp || 0,
-  coins: parsed?.coins || 100,
-  gems: parsed?.gems || 10,
+  brainpowerTokens: parsed?.brainpowerTokens ?? parsed?.calmTokens ?? 0,
   unlockedIslands: ALL_ISLAND_IDS,
   completedLevels: parsed?.completedLevels || {},
   levelStars: parsed?.levelStars || {},
   dailyQuests: parsed?.dailyQuests || INITIAL_DAILY_QUESTS,
   achievements: parsed?.achievements || [],
   customSpriteUrl: parsed?.customSpriteUrl,
-  calmTokens: parsed?.calmTokens || 0,
-  shopState: {
-    ownedItemIds: Array.from(new Set([
-      ...getStarterItemIds(),
-      ...(parsed?.shopState?.ownedItemIds || []),
-    ])),
-    equippedByCategory: parsed?.shopState?.equippedByCategory || {
-      outfit: null,
-      hat: null,
-      accessory: null,
-      handheld: null,
-      trail: null,
-      skin: null,
-    },
-  },
+  // Legacy save field. Keep in sync for older stored profiles.
+  calmTokens: parsed?.calmTokens,
   telemetry: createTelemetryState(parsed?.telemetry),
   achievementState: parsed?.achievementState || {
     earned: parsed?.achievements || [],
@@ -55,7 +40,7 @@ const createDefaultPlayer = (parsed?: Partial<PlayerData> | null): PlayerData =>
   stats: {
     totalStars: parsed?.stats?.totalStars || 0,
     totalGamesPlayed: parsed?.stats?.totalGamesPlayed || 0,
-    totalCoinsEarned: parsed?.stats?.totalCoinsEarned || 0,
+    totalBrainpowerTokensEarned: parsed?.stats?.totalBrainpowerTokensEarned || 0,
   },
 });
 
@@ -135,12 +120,18 @@ export const usePlayerProgression = (): PlayerProgressionController => {
 
       return {
         ...prev,
-        coins: quest.reward.type === 'coins' ? prev.coins + quest.reward.amount : prev.coins,
-        gems: quest.reward.type === 'gems' ? prev.gems + quest.reward.amount : prev.gems,
+        brainpowerTokens: quest.reward.type === 'brainpower'
+          ? prev.brainpowerTokens + quest.reward.amount
+          : prev.brainpowerTokens,
+        // Maintain legacy key for existing wellbeing screens until they are fully renamed.
+        calmTokens: quest.reward.type === 'brainpower'
+          ? (prev.calmTokens ?? prev.brainpowerTokens) + quest.reward.amount
+          : prev.calmTokens,
         xp: quest.reward.type === 'xp' ? prev.xp + quest.reward.amount : prev.xp,
         stats: {
           ...prev.stats,
-          totalCoinsEarned: (prev.stats?.totalCoinsEarned || 0) + (quest.reward.type === 'coins' ? quest.reward.amount : 0),
+          totalBrainpowerTokensEarned: (prev.stats?.totalBrainpowerTokensEarned || 0)
+            + (quest.reward.type === 'brainpower' ? quest.reward.amount : 0),
         },
         dailyQuests: prev.dailyQuests.map(q =>
           q.id === questId ? { ...q, isClaimed: true } : q,
@@ -175,7 +166,7 @@ export const usePlayerProgression = (): PlayerProgressionController => {
     if (!selectedIsland || !selectedLevel) return null;
 
     const stars = progressionResult.stars;
-    const earnedCoins = stars * 50;
+    const earnedBrainpowerTokens = selectedLevel.isPractice ? 0 : stars;
     const islandId = selectedIsland.id;
     const levelId = selectedLevel.id;
     const nextIslandId = islandId + 1;
@@ -199,10 +190,9 @@ export const usePlayerProgression = (): PlayerProgressionController => {
       const stats = {
         totalStars: totalStarsEarned,
         totalGamesPlayed: (prev.stats?.totalGamesPlayed || 0) + 1,
-        totalCoinsEarned: (prev.stats?.totalCoinsEarned || 0) + earnedCoins,
+        totalBrainpowerTokensEarned: (prev.stats?.totalBrainpowerTokensEarned || 0) + earnedBrainpowerTokens,
       };
 
-      const nextCoinTotal = prev.coins + earnedCoins;
       const unlockedIslands = prev.unlockedIslands.includes(nextIslandId) || !selectedLevel.isBoss
         ? prev.unlockedIslands
         : [...prev.unlockedIslands, nextIslandId].filter(id => id <= ISLANDS.length);
@@ -221,9 +211,10 @@ export const usePlayerProgression = (): PlayerProgressionController => {
 
       const nextBase: PlayerData = {
         ...prev,
-        coins: nextCoinTotal,
         xp: progressionResult.currentXp,
         level: progressionResult.newLevel,
+        brainpowerTokens: prev.brainpowerTokens + earnedBrainpowerTokens,
+        calmTokens: (prev.calmTokens ?? prev.brainpowerTokens) + earnedBrainpowerTokens,
         unlockedIslands,
         completedLevels: nextCompletedLevels,
         levelStars: nextLevelStars,
@@ -266,7 +257,7 @@ export const usePlayerProgression = (): PlayerProgressionController => {
       mistakes: metrics.mistakes,
       timeMs: metrics.timeMs,
       completed: true,
-      coinsEarned: earnedCoins,
+      brainpowerTokensEarned: earnedBrainpowerTokens,
       xpEarned: progressionResult.xpGained,
       islandUnlockedName,
       achievementsUnlocked,

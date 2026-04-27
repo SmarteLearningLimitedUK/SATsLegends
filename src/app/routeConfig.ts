@@ -198,8 +198,6 @@ export const parseRoute = (pathname: string): RouteState => {
     case 'glossary':
     case 'maths-help':
       return { screen: 'maths_help_hub' };
-    case 'shop':
-      return { screen: 'shop' };
     case 'achievements':
       return { screen: 'achievements_tracker' };
     case 'parent':
@@ -245,8 +243,6 @@ export const buildRouteForScreen = (
       return '/wellbeing/activity';
     case 'maths_help_hub':
       return '/glossary';
-    case 'shop':
-      return '/shop';
     case 'achievements_tracker':
       return '/achievements';
     case 'parent_dashboard':

@@ -1,7 +1,6 @@
 ﻿import React, { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import { Coins } from '../components/GameIcons';
 import AssetIcon from '../components/AssetIcon';
 import { GameScreenShell } from '../layout/ScreenPrimitives';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
@@ -423,7 +422,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                   onClick={onBack}
                   className="ui-button-primary licensed-submit-button flex w-full items-center justify-center gap-2 py-4 text-lg font-black uppercase tracking-[0.14em] text-white"
                 >
-                  <Coins className="h-5 w-5" />
+                  <AssetIcon name="brainpowerToken" className="h-5 w-5" />
                   Continue
                 </button>
               </div>

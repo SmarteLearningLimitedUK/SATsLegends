@@ -1,4 +1,4 @@
-import { AvatarData, IslandData, LevelData, ShopItem, DailyQuest, MathFamily, CloudCollapseLevelConfig, PotionPanicLevelConfig, Achievement } from "./types";
+import { AvatarData, IslandData, LevelData, DailyQuest, MathFamily, CloudCollapseLevelConfig, PotionPanicLevelConfig, Achievement } from "./types";
 import { CHARACTER_AVATARS } from './assets/characters';
 import world01Map from './assets/maps/forect.jpg';
 import world02Map from './assets/maps/reef2.jpg';
@@ -35,16 +35,16 @@ const pickLevelsByBlueprint = (levels: LevelData[], blueprintKeys: string[]): Le
 export const ACHIEVEMENTS: Achievement[] = [
   { id: 'first_win', title: 'First Victory', description: 'Complete your first level', icon: '\u{1F3C6}', type: 'levels', target: 1 },
   { id: 'star_collector', title: 'Star Collector', description: 'Earn 10 total stars', icon: '\u2B50', type: 'stars', target: 10 },
-  { id: 'rich', title: 'Money Maker', description: 'Accumulate 1000 coins', icon: '\u{1F4B0}', type: 'coins', target: 1000 },
+  { id: 'brainpower_10', title: 'Brainpower Seeker', description: 'Collect 10 Brainpower Tokens', icon: '\u{1F9E0}', type: 'brainpower', target: 10 },
   { id: 'math_master', title: 'Math Master', description: 'Complete 10 levels', icon: '\u{1F9E0}', type: 'levels', target: 10 },
   { id: 'star_champion', title: 'Star Champion', description: 'Earn 50 total stars', icon: '\u{1F31F}', type: 'stars', target: 50 },
-  { id: 'gem_hoarder', title: 'Gem Hoarder', description: 'Accumulate 100 gems', icon: '\u{1F48E}', type: 'coins', target: 100 },
+  { id: 'brainpower_50', title: 'Mastery Collector', description: 'Collect 50 Brainpower Tokens', icon: '\u{2728}', type: 'brainpower', target: 50 },
 ];
 
 export const INITIAL_DAILY_QUESTS: DailyQuest[] = [
-  { id: 'q1', description: 'Complete 2 levels', target: 2, current: 0, reward: { type: 'coins', amount: 150 }, isClaimed: false },
+  { id: 'q1', description: 'Complete 2 levels', target: 2, current: 0, reward: { type: 'brainpower', amount: 2 }, isClaimed: false },
   { id: 'q2', description: 'Earn 3 stars in a level', target: 1, current: 0, reward: { type: 'xp', amount: 50 }, isClaimed: false },
-  { id: 'q3', description: 'Visit the shop', target: 1, current: 0, reward: { type: 'gems', amount: 2 }, isClaimed: false },
+  { id: 'q3', description: 'Complete a calm activity', target: 1, current: 0, reward: { type: 'brainpower', amount: 1 }, isClaimed: false },
 ];
 export const AVATARS: AvatarData[] = CHARACTER_AVATARS;
 
@@ -65,9 +65,9 @@ const RATIO_RACER_LEVELS: LevelData[] = [
 ];
 
 const CALCULATION_CORE_LEVELS: LevelData[] = [
-  { id: 1, stars: 0, isLocked: false, blueprintKey: 'crystal_core', displayName: 'Arithmetic Showdown', gameType: 'crystal_core', isBoss: true, bossUnlockCoins: 0, isPractice: false },
-  { id: 2, stars: 0, isLocked: false, blueprintKey: 'mirror_gate', displayName: 'Reasoning Trial', gameType: 'mirror_gate', isBoss: true, bossUnlockCoins: 0, isPractice: false },
-  { id: 3, stars: 0, isLocked: false, blueprintKey: 'matrix_match', displayName: 'Reasoning Summit', gameType: 'matrix_match', isBoss: true, bossUnlockCoins: 0, isPractice: false },
+  { id: 1, stars: 0, isLocked: false, blueprintKey: 'crystal_core', displayName: 'Arithmetic Showdown', gameType: 'crystal_core', isBoss: true, isPractice: false },
+  { id: 2, stars: 0, isLocked: false, blueprintKey: 'mirror_gate', displayName: 'Reasoning Trial', gameType: 'mirror_gate', isBoss: true, isPractice: false },
+  { id: 3, stars: 0, isLocked: false, blueprintKey: 'matrix_match', displayName: 'Reasoning Summit', gameType: 'matrix_match', isBoss: true, isPractice: false },
 ];
 
 export const ISLANDS: IslandData[] = [
@@ -224,13 +224,6 @@ export const ISLANDS: IslandData[] = [
     decorations: [],
       levels: mergeIslandLevels(RATIO_RACER_LEVELS),
   },
-];
-
-export const SHOP_ITEMS: ShopItem[] = [
-  { id: 'hat_1', name: 'Wizard Hat', type: 'hat', price: 100, currency: 'coins', isLocked: false },
-  { id: 'costume_1', name: 'Hero Cape', type: 'costume', price: 50, currency: 'gems', isLocked: false },
-  { id: 'acc_1', name: 'Magic Wand', type: 'accessory', price: 250, currency: 'coins', isLocked: true, levelRequired: 5 },
-  { id: 'effect_1', name: 'Sparkle Trail', type: 'effect', price: 100, currency: 'gems', isLocked: true, levelRequired: 10 },
 ];
 
 // SATs Legends specific constants

@@ -116,7 +116,6 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
   const [expandedGameId, setExpandedGameId] = useState<string | null>(null);
 
   const completedLevels = player.completedLevels[island.id] || [];
-  const totalCoinsEarned = player.stats?.totalCoinsEarned || 0;
   const usesSequentialUnlock = island.id === 1;
 
   useEffect(() => {
@@ -137,11 +136,8 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
           .filter((candidate) => candidate.id < level.id)
           .every((candidate) => completedLevels.includes(candidate.id));
 
-      const bossCoinsNeeded = level.bossUnlockCoins || 0;
-      const hasBossCoins = totalCoinsEarned >= bossCoinsNeeded;
-
       let isUnlocked = level.isBoss
-        ? previousRequiredComplete && hasBossCoins
+        ? previousRequiredComplete
         : usesSequentialUnlock
           ? previousRequiredComplete
           : true;
@@ -158,9 +154,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
       const isCompleted = completedLevels.includes(level.id);
 
       let lockReason: string | undefined;
-      if (!isUnlocked && level.isBoss && !hasBossCoins) {
-        lockReason = `Need ${bossCoinsNeeded} total coins`;
-      } else if (!isUnlocked) {
+      if (!isUnlocked) {
         lockReason = 'Complete earlier levels first';
       }
 
@@ -184,7 +178,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
     }
 
     return rows;
-  }, [completedLevels, island.id, island.levels, player.levelStars, totalCoinsEarned, usesSequentialUnlock]);
+  }, [completedLevels, island.id, island.levels, player.levelStars, usesSequentialUnlock]);
 
   const gameGroups = useMemo<GameGroupState[]>(() => {
     const groups = new Map<string, GameGroupState>();

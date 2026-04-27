@@ -5,7 +5,6 @@ import WorldMap from '../screens/WorldMap';
 import IslandLevels from '../screens/IslandLevels';
 import ParentDashboard from '../screens/ParentDashboard';
 import PlayerProfile from '../screens/PlayerProfile';
-import CharacterShop from '../screens/CharacterShop';
 import AchievementTracker from '../screens/AchievementTracker';
 import MathsHelpHub from '../screens/MathsHelpHub';
 import WellbeingHub from '../wellbeing/WellbeingHub';
@@ -75,7 +74,7 @@ interface AppRouterProps {
   calmTokens: number;
   onGameplayVictory: (stars: number, XP: number) => void;
   onGameplayOver: (XP: number) => void;
-  onOpenShop: () => void;
+  onOpenProfile: () => void;
   onOpenAchievements: () => void;
   onOpenParentReport: () => void;
   onUpdatePlayer: (updater: (prev: PlayerData) => PlayerData) => void;
@@ -115,7 +114,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
   calmTokens,
   onGameplayVictory,
   onGameplayOver,
-  onOpenShop,
+  onOpenProfile,
   onOpenAchievements,
   onOpenParentReport,
   onUpdatePlayer,
@@ -599,7 +598,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         <WorldMap
           player={player}
           onSelectIsland={onSelectIsland}
-          onOpenShop={onOpenShop}
+          onOpenProfile={onOpenProfile}
           onOpenAchievements={onOpenAchievements}
           onOpenParentReport={onOpenParentReport}
         />
@@ -618,15 +617,6 @@ export const AppRouter: React.FC<AppRouterProps> = ({
           onOpenWellbeing={() => onOpenWellbeingActivity(WELLBEING_ACTIVITY_BY_ISLAND[selectedIsland.id])}
         />
       ) : null;
-
-    case 'shop':
-      return (
-        <CharacterShop
-          player={player}
-          onBack={onGoHome}
-          onUpdatePlayer={onUpdatePlayer}
-        />
-      );
 
     case 'achievements_tracker':
       return <AchievementTracker player={player} onBack={onGoHome} />;

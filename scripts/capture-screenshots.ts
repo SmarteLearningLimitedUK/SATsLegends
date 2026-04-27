@@ -139,7 +139,6 @@ const captureStaticScreens = async (page: Page, viewportKey: string) => {
     { name: 'character-select', path: '/avatar' },
     { name: 'world-map', path: '/map' },
     { name: 'achievements', path: '/achievements' },
-    { name: 'shop', path: '/shop' },
     { name: 'profile', path: '/profile' },
     { name: 'settings', path: '/settings' },
     { name: 'glossary', path: '/glossary' },

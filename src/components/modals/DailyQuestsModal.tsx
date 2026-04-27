@@ -70,8 +70,7 @@ const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({ isOpen, onClose, qu
                               <div className="mt-1 flex items-center gap-2">
                                 <span className="text-[9px] font-black uppercase tracking-[0.18em] text-white/40">Reward</span>
                                 <div className="licensed-slice-paper-panel flex items-center gap-1 rounded-lg px-2 py-0.5 text-amber-950">
-                                  {quest.reward.type === 'coins' && <AssetIcon name="coin" className="h-3 w-3" />}
-                                  {quest.reward.type === 'gems' && <AssetIcon name="gem" className="h-3 w-3" />}
+                                  {quest.reward.type === 'brainpower' && <AssetIcon name="brainpowerToken" className="h-3 w-3" />}
                                   {quest.reward.type === 'xp' && <AssetIcon name="brainpowerToken" className="h-3 w-3" />}
                                   <span className="text-[10px] font-black md:text-xs">{quest.reward.amount}</span>
                                 </div>

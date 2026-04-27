@@ -65,10 +65,10 @@ const shuffle = <T,>(items: T[]): T[] => {
 };
 
 const ITEMS = [
-  { name: 'Shiny Gems', color: '#60a5fa' },
+  { name: 'Shiny Crystals', color: '#60a5fa' },
   { name: 'Magic Cookies', color: '#f59e0b' },
   { name: 'Stinky Socks', color: '#10b981' },
-  { name: 'Gold Coins', color: '#facc15' },
+  { name: 'Ancient Runes', color: '#facc15' },
 ];
 
 const MONSTER_COLORS = ['bg-emerald-500', 'bg-blue-500', 'bg-purple-500', 'bg-rose-500'];

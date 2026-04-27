@@ -23,7 +23,7 @@ interface LevelResultModalProps {
     subtitle: string;
     XP: number;
     stars: number;
-    coinsEarned: number;
+    brainpowerTokensEarned: number;
     xpEarned: number;
     islandUnlockedName?: string;
     achievementsUnlocked?: string[];
@@ -38,12 +38,12 @@ interface LevelResultModalProps {
 
 const cn = (...parts: Array<string | false | null | undefined>) => parts.filter(Boolean).join(' ');
 
-const StatTile: React.FC<{ label: string; value: React.ReactNode; tone?: 'XP' | 'coins' | 'xp' }> = ({
+const StatTile: React.FC<{ label: string; value: React.ReactNode; tone?: 'XP' | 'brainpower' | 'xp' }> = ({
   label,
   value,
   tone = 'XP',
 }) => {
-  const valueClass = tone === 'coins'
+  const valueClass = tone === 'brainpower'
     ? 'text-amber-200'
     : tone === 'xp'
       ? 'text-cyan-200'
@@ -265,9 +265,9 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
               <div className="grid grid-cols-3 gap-2 md:gap-3">
                 <StatTile label="XP" value={result.XP} tone="XP" />
                 <StatTile
-                  label="Coins"
-                  value={<span className="inline-flex items-center gap-1"><AssetIcon name="coin" className="h-4 w-4" /> +{result.coinsEarned}</span>}
-                  tone="coins"
+                  label="Brainpower"
+                  value={<span className="inline-flex items-center gap-1"><AssetIcon name="brainpowerToken" className="h-4 w-4" /> +{result.brainpowerTokensEarned}</span>}
+                  tone="brainpower"
                 />
                 <StatTile
                   label="XP"

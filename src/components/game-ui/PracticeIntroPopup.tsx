@@ -4,6 +4,7 @@ import { MiniGamePracticeBriefing } from '../../app/gameplaySessionContract';
 import AssetIcon, { AssetIconName } from '../AssetIcon';
 import MissionCard from '../mission/MissionCard';
 import VisualCuePanel from '../mission/VisualCuePanel';
+import { emitUiAudio } from '../../audio/uiAudioEvents';
 
 type PracticeIntroPopupProps = {
   open: boolean;
@@ -30,7 +31,7 @@ const clampWords = (value: string, maxWords: number) => {
   if (!cleaned) return '';
   const words = cleaned.split(' ').filter(Boolean);
   if (words.length <= maxWords) return cleaned;
-  return `${words.slice(0, maxWords).join(' ')}…`;
+  return `${words.slice(0, maxWords).join(' ')}...`;
 };
 
 const firstSentence = (value: string) => {
@@ -103,7 +104,9 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
   const [locallyDismissed, setLocallyDismissed] = useState(false);
 
   useEffect(() => {
-    if (open) setLocallyDismissed(false);
+    if (!open) return;
+    setLocallyDismissed(false);
+    emitUiAudio('modal_open', { name: 'practice_intro' });
   }, [open]);
 
   if (!open || locallyDismissed) return null;
@@ -136,18 +139,17 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
       <MissionCard
         eyebrow="Mission Briefing"
         title={resolvedTitle}
-        instruction={instruction}
-        supportingText={howToPlay}
+        instruction={howToPlay || instruction}
         skillLabel={skill?.label}
         skillIcon={skill?.icon}
         skillTone={skill?.tone}
-        hintChips={(resolvedBullets.length ? resolvedBullets : fallbackHints).slice(0, 3)}
+        hintChips={[]}
         visual={(
           <VisualCuePanel className="h-[160px] w-full md:h-[190px]">
             <div className="relative flex items-center justify-center">
               <div className="pointer-events-none absolute -inset-6 rounded-full bg-cyan-200/15 blur-[22px]" />
               <div className="pointer-events-none absolute -inset-10 rounded-full bg-amber-200/10 blur-[28px]" />
-              <div className="relative flex h-[104px] w-[104px] items-center justify-center rounded-[1.25rem] border border-white/10 bg-white/5 shadow-[0_18px_40px_rgba(2,6,23,0.42)] md:h-[118px] md:w-[118px]">
+              <div className="relative flex h-[104px] w-[104px] items-center justify-center rounded-[1.25rem] border border-white/10 bg-white/5 shadow-[0_18px_40px_rgba(2,6,23,0.42)] md:h-[118px] md:w-[118px] sat-calm-breathe">
                 <AssetIcon name={skill?.icon ?? 'gamepad'} className="h-14 w-14 opacity-95 md:h-16 md:w-16" alt="" />
               </div>
             </div>
@@ -157,6 +159,7 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
         onCta={() => {
           // Defensive: some screens can remount rapidly or have practice-mode props that
           // accidentally re-open the overlay. Always allow the CTA to dismiss locally.
+          emitUiAudio('modal_close', { name: 'practice_intro' });
           setLocallyDismissed(true);
           onAction();
         }}

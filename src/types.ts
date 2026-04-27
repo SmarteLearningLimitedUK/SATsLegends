@@ -53,7 +53,6 @@ export interface LevelData {
   difficultyTier?: 1 | 2 | 3 | 4 | 5;
   skillTags?: string[];
   isBoss?: boolean;
-  bossUnlockCoins?: number;
   gameType?: MiniGameType;
 }
 
@@ -87,36 +86,6 @@ export interface AvatarData {
     frames: number;
   };
   poses?: Partial<Record<AnimationState, string[]>>;
-}
-
-export interface ShopItem {
-  id: string;
-  name: string;
-  type: 'costume' | 'hat' | 'accessory' | 'effect';
-  price: number;
-  currency: 'coins' | 'gems';
-  isLocked: boolean;
-  levelRequired?: number;
-}
-
-export type ShopCategory = 'outfit' | 'hat' | 'accessory' | 'handheld' | 'trail' | 'skin';
-export type ShopUnlockType = 'currency' | 'event' | 'starter';
-export type ShopRarity = 'Common' | 'Rare' | 'Epic' | 'Legendary';
-
-export interface CosmeticShopItem {
-  itemId: string;
-  name: string;
-  category: ShopCategory;
-  price: number;
-  rarity?: ShopRarity;
-  iconKey?: string;
-  unlockType: ShopUnlockType;
-  characterCompatibility?: string[];
-}
-
-export interface PlayerShopState {
-  ownedItemIds: string[];
-  equippedByCategory: Record<ShopCategory, string | null>;
 }
 
 export interface TopicStat {
@@ -188,7 +157,7 @@ export interface Achievement {
   title: string;
   description: string;
   icon: string;
-  type: 'stars' | 'streak' | 'levels' | 'coins';
+  type: 'stars' | 'streak' | 'levels' | 'brainpower';
   target: number;
 }
 
@@ -197,7 +166,7 @@ export interface DailyQuest {
   description: string;
   target: number;
   current: number;
-  reward: { type: 'coins' | 'gems' | 'xp', amount: number };
+  reward: { type: 'brainpower' | 'xp', amount: number };
   isClaimed: boolean;
 }
 
@@ -206,23 +175,22 @@ export interface PlayerData {
   avatarId: string;
   level: number;
   xp: number;
-  coins: number;
-  gems: number;
+  brainpowerTokens: number;
   unlockedIslands: number[];
   completedLevels: Record<number, number[]>; // islandId -> levelIds
   levelStars: Record<string, number>; // islandId-levelId -> best stars
   dailyQuests: DailyQuest[];
   customSpriteUrl?: string;
   achievements: string[];
+  // Legacy save key (pre-Brainpower rename). Keep optional for backwards compatibility.
   calmTokens?: number;
-  shopState?: PlayerShopState;
   telemetry?: PlayerTelemetry;
   achievementState?: PlayerAchievementState;
   reportCache?: ParentReportSummary;
   stats: {
     totalStars: number;
     totalGamesPlayed: number;
-    totalCoinsEarned: number;
+    totalBrainpowerTokensEarned: number;
   };
 }
 
@@ -255,7 +223,6 @@ export type GameScreen =
     | 'wellbeing_activity'
     | 'maths_help_hub'
     | 'level_result'
-  | 'shop'
   | 'achievements_tracker'
   | 'profile'
   | 'settings'

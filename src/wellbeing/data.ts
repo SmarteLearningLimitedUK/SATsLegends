@@ -23,7 +23,7 @@ export const WELLBEING_ACTIVITIES: WellbeingActivityMeta[] = [
     subtitle: 'Tap to scatter fish, then sweep to gently herd them',
     type: 'Grounding',
     durationEstimate: '60 sec',
-    description: 'Spend one calm minute in a blue pond. Tap to scatter the school, then sweep your finger to guide them with soft currents.',
+    description: 'Take one calm minute in a blue pond. Tap to scatter the school, then sweep your finger to guide them with soft currents.',
     icon: 'Pond',
     component: PeacefulPond,
   },

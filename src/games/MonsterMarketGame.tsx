@@ -1,8 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Check,
-  CircleDollarSign,
-  Gem as GemIcon,
   Timer as TimerIcon,
   Trophy,
   X,
@@ -10,7 +8,6 @@ import {
 import { AnimatePresence, motion } from 'motion/react';
 import FoodGameShell from '../components/FoodGameShell';
 import AssetIcon from '../components/AssetIcon';
-import coinAsset from '../assets/fantasy_hero/ui/coin.png';
 import takeOutLevelBg from '../assets/maps/backgroundsforgames/Monster Market.png';
 import food1 from '../assets/take_out/food/1.png';
 import food2 from '../assets/take_out/food/2.png';
@@ -62,10 +59,8 @@ const ITEMS: Item[] = [
 const PATIENCE_DECAY_MS = 220;
 const PATIENCE_DECAY_STEP = 2;
 
-const TopBar: React.FC<{ XP: number; coins: number; gems: number; timer: string; customersServed: number }> = ({
+const TopBar: React.FC<{ XP: number; timer: string; customersServed: number }> = ({
   XP,
-  coins,
-  gems,
   timer,
   customersServed,
 }) => (
@@ -76,16 +71,8 @@ const TopBar: React.FC<{ XP: number; coins: number; gems: number; timer: string;
     </button>
     <div className="flex items-center gap-1.5 md:gap-2">
       <div className="flex items-center gap-1 rounded-full bg-white/14 px-2 py-1 md:px-3">
-        <img src={coinAsset} alt="" className="h-4 w-4 md:h-5 md:w-5" draggable={false} />
+        <AssetIcon name="brainpowerToken" className="h-4 w-4 md:h-5 md:w-5" />
         <span className="text-xs font-black md:text-sm">{XP}</span>
-      </div>
-      <div className="hidden items-center gap-1 rounded-full bg-white/14 px-2 py-1 md:flex md:px-3">
-        <CircleDollarSign className="h-4 w-4 text-yellow-300" />
-        <span className="text-xs font-black md:text-sm">{coins}</span>
-      </div>
-      <div className="hidden items-center gap-1 rounded-full bg-white/14 px-2 py-1 md:flex md:px-3">
-        <GemIcon className="h-4 w-4 text-cyan-200" />
-        <span className="text-xs font-black md:text-sm">{gems}</span>
       </div>
       <div className="flex items-center gap-1 rounded-full bg-white/14 px-2 py-1 md:px-3">
         <AssetIcon name="timer" className="h-4 w-4 md:h-5 md:w-5" />
@@ -150,8 +137,6 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
   const targetScore = 1600 + (levelId * 260);
 
   const [XP, setScore] = useState(0);
-  const [coins, setCoins] = useState(0);
-  const [gems, setGems] = useState(0);
   const [timer, setTimer] = useState(baseRoundTime);
   const [currentOrder, setCurrentOrder] = useState<Item[]>([]);
   const [customer, setCustomer] = useState<Customer | null>(null);
@@ -193,8 +178,6 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
   useEffect(() => {
     endedRef.current = false;
     setScore(0);
-    setCoins(0);
-    setGems(0);
     setTimer(baseRoundTime);
     setCurrentOrder([]);
     setCustomer(null);
@@ -263,8 +246,6 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
       setFeedback('correct');
       const earned = 900 + Math.floor(customer.patience * 8) + (Math.max(0, currentOrder.length - 2) * 40);
       setScore((value) => value + earned);
-      setCoins((value) => value + 100);
-      setGems((value) => value + (customer.patience >= 80 ? 1 : 0));
       setCustomersServed((value) => value + 1);
       window.setTimeout(() => {
         if (!endedRef.current) generateCustomer();
@@ -286,8 +267,6 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
       {!useSharedTopHud ? (
         <TopBar
           XP={XP}
-          coins={coins}
-          gems={gems}
           timer={`${timer.toString().padStart(2, '0')}s`}
           customersServed={customersServed}
         />

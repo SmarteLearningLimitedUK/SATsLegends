@@ -11,7 +11,7 @@ import { UNLOCK_ALL_LEVELS } from '../app/testingFlags';
 interface WorldMapProps {
   player: PlayerData;
   onSelectIsland: (island: IslandData) => void;
-  onOpenShop: () => void;
+  onOpenProfile: () => void;
   onOpenAchievements: () => void;
   onOpenParentReport: () => void;
 }
@@ -345,7 +345,7 @@ const renderIslandAccent = (islandId: number) => {
 const WorldMap: React.FC<WorldMapProps> = ({
   player,
   onSelectIsland,
-  onOpenShop,
+  onOpenProfile,
   onOpenAchievements,
   onOpenParentReport,
 }) => {
@@ -397,7 +397,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
       <div className="pointer-events-auto flex items-center gap-2 rounded-[1.2rem] border border-cyan-100/30 bg-slate-950/70 px-3 py-2 shadow-[0_12px_24px_rgba(2,6,23,0.4)]">
         <button
           type="button"
-          onClick={onOpenShop}
+          onClick={onOpenProfile}
           className="ui-icon-button flex h-12 w-12 items-center justify-center text-white"
           aria-label="Open player profile"
         >

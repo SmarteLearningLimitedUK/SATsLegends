@@ -30,7 +30,7 @@ const WellbeingHub: React.FC<WellbeingHubProps> = ({ activities, calmTokens, onS
           <div className="mb-3 flex w-full max-w-[960px] items-center justify-end">
             <div className="licensed-board-frame flex min-w-[132px] shrink-0 flex-col items-end gap-1 rounded-xl px-3 py-2 text-white md:min-w-[164px]">
               <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-[10px]">
-                Calm Tokens
+                Brainpower Tokens
               </div>
               <div className="flex items-center gap-1.5 text-sm font-black md:text-base">
                 <AssetIcon name="brainpowerToken" className="h-4 w-4 md:h-5 md:w-5" />

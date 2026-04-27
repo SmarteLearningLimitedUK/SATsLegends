@@ -10,6 +10,9 @@ import BossPortrait from '../components/BossPortrait';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import AssetIcon from '../components/AssetIcon';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
+import BossAtmosphereLayer from '../components/boss/BossAtmosphereLayer';
+import BossParallaxLayer from '../components/boss/BossParallaxLayer';
+import { getBossThemeVariant } from '../components/boss/bossAtmospherePresets';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
@@ -1025,8 +1028,10 @@ const BossPaperStage: React.FC<{
   visual: React.ReactNode;
   answers: React.ReactNode;
   nav: React.ReactNode;
+  theme?: ReturnType<typeof getBossThemeVariant>;
   warning?: string | null;
-}> = ({ title, questionNumber, questionText, visual, answers, nav, warning }) => (
+  atmosphereDensity?: 'low' | 'medium' | 'high';
+}> = ({ title, questionNumber, questionText, visual, answers, nav, theme = 'dark', atmosphereDensity = 'medium', warning }) => (
   <div className="relative h-full w-full overflow-hidden bg-[#050914] font-sans text-white">
     <img
       src={bossPaperBackground}
@@ -1036,6 +1041,8 @@ const BossPaperStage: React.FC<{
       className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
     />
     <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.1)_0%,rgba(2,6,23,0.2)_42%,rgba(2,6,23,0.72)_100%)]" />
+    <BossParallaxLayer theme={theme} />
+    <BossAtmosphereLayer theme={theme} density={atmosphereDensity} />
     <div className="relative z-10 grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)_auto_auto] gap-[clamp(0.35rem,1.1vh,0.7rem)] px-[clamp(0.55rem,2.2vw,1.2rem)] pb-[clamp(0.45rem,1.3vh,0.85rem)] pt-[clamp(0.3rem,1vh,0.65rem)]">
       <section className="relative">
         <div className="relative mb-2 flex items-center justify-between gap-3 px-1">
@@ -1136,6 +1143,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
 }) => {
   const avatar = AVATARS.find(item => item.id === avatarId) || AVATARS[0];
   const encounter = getBossEncounter(gameType);
+  const bossTheme = getBossThemeVariant(gameType);
   const isArithmeticPaper = gameType === 'crystal_core';
   const isReasoning1Paper = gameType === 'mirror_gate';
   const isReasoning2Paper = gameType === 'matrix_match';
@@ -1827,6 +1835,8 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
         questionNumber={currentIndex + 1}
         questionText={reasoningQuestion.question}
         warning={warningText}
+        theme={bossTheme}
+        atmosphereDensity={bossTheme === 'crystal' ? 'high' : 'medium'}
         visual={reasoningVisual}
         answers={(
           reasoningQuestion.responseMode === 'ordering' ? (
@@ -2127,27 +2137,29 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
         title="Arithmetic Showdown"
         questionNumber={currentIndex + 1}
         questionText={`Calculate the value of: ${arithmeticQuestion.question}\nChoose the correct answer.`}
-          visual={<BossPaperFallbackVisual encounter={encounter} bossPose={bossPose} title="Arithmetic Showdown Boss" />}
-          answers={arithmeticQuestion.choices.slice(0, 4).map((option, index) => (
-            <button
-              key={`${option}-${index}`}
-              type="button"
-              onClick={() => handleArithmeticChoice(option)}
-              aria-pressed={String(option) === selectedAnswer}
-              className={`answer-choice-card relative flex h-[clamp(3rem,8.2vh,4.55rem)] min-w-0 items-center gap-[clamp(0.45rem,1.5vw,0.9rem)] overflow-hidden rounded-[0.78rem] border px-[clamp(0.55rem,1.7vw,0.95rem)] text-left shadow-[0_8px_18px_rgba(2,6,23,0.36)] transition ${
-                String(option) === selectedAnswer
-                  ? 'ui-button-primary answer-choice-card--selected'
-                  : 'ui-button-secondary answer-choice-card--default'
-              }`}
-            >
-              <span className="pointer-events-none inline-flex h-[clamp(1.9rem,5.4vh,2.8rem)] w-[clamp(1.9rem,5.4vh,2.8rem)] shrink-0 items-center justify-center rounded-full bg-white/10 text-[clamp(0.9rem,2.8vw,1.25rem)] font-black text-white/82">
-                {String.fromCharCode(65 + index)}
-              </span>
-              <span className="min-w-0 flex-1 break-words text-[clamp(0.92rem,2.9vw,1.35rem)] font-black leading-tight text-white">
-                {option}
-              </span>
-            </button>
-          ))}
+        theme={bossTheme}
+        atmosphereDensity={bossTheme === 'crystal' ? 'high' : 'medium'}
+        visual={<BossPaperFallbackVisual encounter={encounter} bossPose={bossPose} title="Arithmetic Showdown Boss" />}
+        answers={arithmeticQuestion.choices.slice(0, 4).map((option, index) => (
+          <button
+            key={`${option}-${index}`}
+            type="button"
+            onClick={() => handleArithmeticChoice(option)}
+            aria-pressed={String(option) === selectedAnswer}
+            className={`answer-choice-card relative flex h-[clamp(3rem,8.2vh,4.55rem)] min-w-0 items-center gap-[clamp(0.45rem,1.5vw,0.9rem)] overflow-hidden rounded-[0.78rem] border px-[clamp(0.55rem,1.7vw,0.95rem)] text-left shadow-[0_8px_18px_rgba(2,6,23,0.36)] transition ${
+              String(option) === selectedAnswer
+                ? 'ui-button-primary answer-choice-card--selected'
+                : 'ui-button-secondary answer-choice-card--default'
+            }`}
+          >
+            <span className="pointer-events-none inline-flex h-[clamp(1.9rem,5.4vh,2.8rem)] w-[clamp(1.9rem,5.4vh,2.8rem)] shrink-0 items-center justify-center rounded-full bg-white/10 text-[clamp(0.9rem,2.8vw,1.25rem)] font-black text-white/82">
+              {String.fromCharCode(65 + index)}
+            </span>
+            <span className="min-w-0 flex-1 break-words text-[clamp(0.92rem,2.9vw,1.35rem)] font-black leading-tight text-white">
+              {option}
+            </span>
+          </button>
+        ))}
         nav={(
           <BossPaperNav>
             <button
@@ -2189,6 +2201,8 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   return (
     <div className="relative flex h-full w-full overflow-hidden font-sans">
       <GameplaySceneBackdrop gameType={gameType} />
+      <BossParallaxLayer theme={bossTheme} />
+      <BossAtmosphereLayer theme={bossTheme} density="medium" />
 
       <PracticeIntroPopup
         open={showPracticeIntro}

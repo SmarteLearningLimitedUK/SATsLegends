@@ -20,6 +20,14 @@ export default defineConfig({
   },
   projects: [
     {
+      name: 'Desktop',
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'iPhone SE',
+      use: { ...devices['iPhone SE'] },
+    },
+    {
       name: 'iPhone',
       use: { ...devices['iPhone 13'] },
     },

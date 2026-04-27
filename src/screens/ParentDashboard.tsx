@@ -114,7 +114,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
           <div className="mt-2 text-2xl font-black tracking-tight md:text-4xl">One page, four answers.</div>
           <div className="mt-1 max-w-3xl text-sm leading-relaxed text-white/72 md:text-base">
             Quickly see where your child is excelling, where they need more practice, and which games they are
-            spending the most and least time on.
+            logging the most and least time on.
           </div>
           <div className="mt-4 grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-3">
             <SummaryTile label="Sessions" value={gamesPlayed} icon="gamepad" />

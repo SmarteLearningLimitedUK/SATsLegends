@@ -8,6 +8,7 @@ import {
   Volume2,
   VolumeX,
 } from 'lucide-react';
+import { emitUiAudio } from '../../audio/uiAudioEvents';
 
 type WrapperProps = {
   children: React.ReactNode;
@@ -112,6 +113,7 @@ export const IconButton: React.FC<IconButtonProps> = ({ icon, label, onClick, di
     type="button"
     onClick={() => {
       if (disabled) return;
+      emitUiAudio('button_press', { label });
       onClick?.();
     }}
     disabled={disabled}
@@ -174,6 +176,7 @@ export const PrimaryButton: React.FC<ButtonProps> = ({ children, className, onCl
     type={type}
     onClick={() => {
       if (disabled) return;
+      emitUiAudio('button_press');
       onClick?.();
     }}
     disabled={disabled}
@@ -193,6 +196,7 @@ export const SecondaryButton: React.FC<ButtonProps> = ({ children, className, on
     type={type}
     onClick={() => {
       if (disabled) return;
+      emitUiAudio('button_press');
       onClick?.();
     }}
     disabled={disabled}

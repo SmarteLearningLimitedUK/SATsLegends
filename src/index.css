@@ -79,8 +79,9 @@
   background:
     var(--sat-mat-gold-spark),
     var(--sat-mat-gold-gloss),
+    radial-gradient(circle at 26% 22%, rgba(255,255,255,0.26), rgba(255,255,255,0) 44%),
     linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0) 46%);
-  opacity: 0.42;
+  opacity: 0.62;
   mix-blend-mode: screen;
 }
 
@@ -91,6 +92,204 @@
 .gold-pill-shell > * {
   position: relative;
   z-index: 1;
+}
+
+.ui-button-secondary > *,
+.ui-button-success > *,
+.game-button-secondary > *,
+.licensed-answer-button > *,
+.licensed-wood-button-secondary > *,
+.casual-action-button > *,
+.licensed-slice-cyan-pill > *,
+.licensed-slice-orange-pill > *,
+.licensed-slice-green-pill > *,
+.mission-action-btn-success > *,
+.ui-action-button > *,
+.licensed-wood-button > *,
+.hero-cta-button > *,
+.splash-continue-button > *,
+.licensed-slice-yellow-plank > *,
+.potion-brew-button > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Shared button specular + rim depth (covers secondary/success + generic skinned buttons). */
+.ui-button-secondary,
+.ui-button-success,
+.game-button-secondary,
+.licensed-answer-button,
+.licensed-wood-button-secondary,
+.casual-action-button,
+.licensed-slice-cyan-pill,
+.licensed-slice-orange-pill,
+.licensed-slice-green-pill,
+.mission-action-btn-success,
+.ui-action-button,
+.licensed-wood-button,
+.hero-cta-button,
+.splash-continue-button,
+.licensed-slice-yellow-plank,
+.potion-brew-button {
+  position: relative;
+  isolation: isolate;
+}
+
+.ui-button-secondary::before,
+.ui-button-success::before,
+.game-button-secondary::before,
+.licensed-answer-button::before,
+.licensed-wood-button-secondary::before,
+.casual-action-button::before,
+.licensed-slice-cyan-pill::before,
+.licensed-slice-orange-pill::before,
+.licensed-slice-green-pill::before,
+.mission-action-btn-success::before,
+.ui-action-button::before,
+.licensed-wood-button::before,
+.hero-cta-button::before,
+.splash-continue-button::before,
+.licensed-slice-yellow-plank::before,
+.potion-brew-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 22% 22%, rgba(255,255,255,0.28), rgba(255,255,255,0) 46%),
+    linear-gradient(180deg, rgba(255,255,255,0.32), rgba(255,255,255,0) 44%),
+    linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0) 52%);
+  opacity: 0.56;
+  mix-blend-mode: screen;
+}
+
+.ui-button-secondary::after,
+.ui-button-success::after,
+.ui-button-primary::after,
+.game-button-primary::after,
+.game-button-secondary::after,
+.licensed-submit-button::after,
+.fantasy-cta-button::after,
+.licensed-answer-button::after,
+.licensed-wood-button::after,
+.licensed-wood-button-secondary::after,
+.casual-action-button::after,
+.mission-action-btn-success::after,
+.ui-action-button::after,
+.hero-cta-button::after,
+.splash-continue-button::after,
+.licensed-slice-yellow-plank::after,
+.licensed-slice-cyan-pill::after,
+.licensed-slice-orange-pill::after,
+.licensed-slice-green-pill::after,
+.potion-brew-button::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.26),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    inset 0 -12px 18px rgba(2, 6, 23, 0.22);
+  opacity: 0.95;
+}
+
+.app-viewport button[type='submit']:not(.ui-icon-button):not(.game-dock-button),
+.app-viewport button[class*='submit']:not(.ui-icon-button):not(.game-dock-button),
+.app-viewport button[class*='confirm']:not(.ui-icon-button):not(.game-dock-button),
+.app-viewport button[class*='next']:not(.ui-icon-button):not(.game-dock-button),
+.app-viewport button[class*='primary']:not(.ui-icon-button):not(.game-dock-button) {
+  position: relative;
+  isolation: isolate;
+}
+
+.app-viewport button[type='submit']:not(.ui-icon-button):not(.game-dock-button)::before,
+.app-viewport button[class*='submit']:not(.ui-icon-button):not(.game-dock-button)::before,
+.app-viewport button[class*='confirm']:not(.ui-icon-button):not(.game-dock-button)::before,
+.app-viewport button[class*='next']:not(.ui-icon-button):not(.game-dock-button)::before,
+.app-viewport button[class*='primary']:not(.ui-icon-button):not(.game-dock-button)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 22% 22%, rgba(255,255,255,0.28), rgba(255,255,255,0) 46%),
+    linear-gradient(180deg, rgba(255,255,255,0.32), rgba(255,255,255,0) 44%),
+    linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0) 52%);
+  opacity: 0.56;
+  mix-blend-mode: screen;
+}
+
+.app-viewport button[type='submit']:not(.ui-icon-button):not(.game-dock-button)::after,
+.app-viewport button[class*='submit']:not(.ui-icon-button):not(.game-dock-button)::after,
+.app-viewport button[class*='confirm']:not(.ui-icon-button):not(.game-dock-button)::after,
+.app-viewport button[class*='next']:not(.ui-icon-button):not(.game-dock-button)::after,
+.app-viewport button[class*='primary']:not(.ui-icon-button):not(.game-dock-button)::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.26),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    inset 0 -12px 18px rgba(2, 6, 23, 0.22);
+  opacity: 0.95;
+}
+
+.ui-button-primary:active::before,
+.game-button-primary:active::before,
+.licensed-submit-button:active::before,
+.fantasy-cta-button:active::before,
+.ui-button-secondary:active::before,
+.ui-button-success:active::before,
+.game-button-secondary:active::before,
+.licensed-answer-button:active::before,
+.licensed-wood-button:active::before,
+.licensed-wood-button-secondary:active::before,
+.casual-action-button:active::before,
+.mission-action-btn-success:active::before,
+.ui-action-button:active::before,
+.hero-cta-button:active::before,
+.splash-continue-button:active::before,
+.licensed-slice-yellow-plank:active::before,
+.licensed-slice-cyan-pill:active::before,
+.licensed-slice-orange-pill:active::before,
+.licensed-slice-green-pill:active::before,
+.potion-brew-button:active::before {
+  opacity: 0.24;
+}
+
+.ui-button-primary:active::after,
+.game-button-primary:active::after,
+.licensed-submit-button:active::after,
+.fantasy-cta-button:active::after,
+.ui-button-secondary:active::after,
+.ui-button-success:active::after,
+.game-button-secondary:active::after,
+.licensed-answer-button:active::after,
+.licensed-wood-button:active::after,
+.licensed-wood-button-secondary:active::after,
+.casual-action-button:active::after,
+.mission-action-btn-success:active::after,
+.ui-action-button:active::after,
+.hero-cta-button:active::after,
+.splash-continue-button:active::after,
+.licensed-slice-yellow-plank:active::after,
+.licensed-slice-cyan-pill:active::after,
+.licensed-slice-orange-pill:active::after,
+.licensed-slice-green-pill:active::after,
+.potion-brew-button:active::after {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.10),
+    inset 0 -18px 26px rgba(2, 6, 23, 0.34),
+    inset 0 14px 26px rgba(2, 6, 23, 0.18);
 }
 
   .game-button-secondary {
@@ -148,6 +347,46 @@
   --sat-mat-stone-rim: linear-gradient(180deg, rgba(236, 254, 255, 0.12), rgba(236, 254, 255, 0) 52%);
   --sat-mat-stone-depth: radial-gradient(circle at 18% 18%, rgba(56, 189, 248, 0.10), rgba(2, 6, 23, 0) 52%);
   --sat-mat-runic: radial-gradient(circle at 18% 20%, rgba(56, 189, 248, 0.22), rgba(56, 189, 248, 0) 34%);
+
+  /* Button elevation language (global): stronger separation + clearer press. */
+  --sat-btn-filter-raised:
+    drop-shadow(0 18px 22px rgba(2, 6, 23, 0.42))
+    drop-shadow(0 8px 12px rgba(2, 6, 23, 0.26))
+    drop-shadow(0 0 14px rgba(125, 211, 252, 0.18))
+    brightness(1) saturate(1);
+  --sat-btn-filter-hover:
+    drop-shadow(0 22px 26px rgba(2, 6, 23, 0.46))
+    drop-shadow(0 10px 14px rgba(2, 6, 23, 0.28))
+    drop-shadow(0 0 18px rgba(125, 211, 252, 0.22))
+    brightness(1.01) saturate(1.02);
+  --sat-btn-filter-pressed:
+    drop-shadow(0 10px 14px rgba(2, 6, 23, 0.28))
+    drop-shadow(0 0 12px rgba(125, 211, 252, 0.14))
+    brightness(0.98) saturate(1.05);
+
+  /* Shell spacing tokens (polish-only; must not change shell order or viewport maths). */
+  --sat-shell-min-inline-pad: 16px;
+  --sat-shell-major-gap: 12px;
+  --sat-shell-bottom-breath: 12px;
+  --sat-safe-inset: 12px;
+
+  /* Shared playfield sizing (reduce overly-tall gameplay zones ~8-12% where applicable). */
+  --sat-shell-playfield-vh: 37vh;
+
+  /* Surface material tokens (panels/cards). */
+  --sat-surface-specular: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0) 48%);
+  --sat-surface-rim: linear-gradient(180deg, rgba(236, 254, 255, 0.16), rgba(236, 254, 255, 0) 56%);
+  --sat-surface-depth: inset 0 -18px 28px rgba(2, 6, 23, 0.30);
+  --sat-surface-noise:
+    repeating-linear-gradient(135deg, rgba(255,255,255,0.025) 0 1px, rgba(255,255,255,0) 1px 7px);
+}
+
+/* Ultra-fine spacing: small phones need a touch more breathing room. */
+@media (max-width: 390px) and (max-height: 740px) {
+  :root {
+    --sat-shell-min-inline-pad: 20px;
+    --sat-safe-inset: 16px;
+  }
 }
 
 @keyframes sat-calm-drift {
@@ -174,12 +413,220 @@
   100% { opacity: 0.10; transform: translate3d(-2%, 0, 0); }
 }
 
+/* ============================================================
+   Boss Atmosphere / Parallax (boss screens only)
+   - lightweight CSS motion (transform + opacity)
+   - theme via CSS variables
+   ============================================================ */
+
+.boss-theme {
+  --boss-glow-a: rgba(125, 211, 252, 0.14);
+  --boss-glow-b: rgba(56, 189, 248, 0.10);
+  --boss-mote-a: rgba(236, 254, 255, 0.72);
+  --boss-mote-b: rgba(125, 211, 252, 0.52);
+  --boss-fog: rgba(2, 6, 23, 0.44);
+  --boss-parallax-a: rgba(125, 211, 252, 0.08);
+  --boss-parallax-b: rgba(236, 254, 255, 0.06);
+}
+
+.boss-theme-fire {
+  --boss-glow-a: rgba(251, 191, 36, 0.16);
+  --boss-glow-b: rgba(249, 115, 22, 0.12);
+  --boss-mote-a: rgba(253, 230, 138, 0.76);
+  --boss-mote-b: rgba(251, 146, 60, 0.62);
+  --boss-fog: rgba(2, 6, 23, 0.50);
+  --boss-parallax-a: rgba(249, 115, 22, 0.08);
+  --boss-parallax-b: rgba(251, 191, 36, 0.06);
+}
+
+.boss-theme-crystal {
+  --boss-glow-a: rgba(34, 211, 238, 0.14);
+  --boss-glow-b: rgba(168, 85, 247, 0.12);
+  --boss-mote-a: rgba(236, 254, 255, 0.76);
+  --boss-mote-b: rgba(147, 197, 253, 0.56);
+  --boss-fog: rgba(2, 6, 23, 0.44);
+  --boss-parallax-a: rgba(168, 85, 247, 0.08);
+  --boss-parallax-b: rgba(34, 211, 238, 0.06);
+}
+
+.boss-theme-electric {
+  --boss-glow-a: rgba(99, 102, 241, 0.14);
+  --boss-glow-b: rgba(34, 211, 238, 0.12);
+  --boss-mote-a: rgba(224, 231, 255, 0.74);
+  --boss-mote-b: rgba(56, 189, 248, 0.60);
+  --boss-fog: rgba(2, 6, 23, 0.46);
+  --boss-parallax-a: rgba(99, 102, 241, 0.08);
+  --boss-parallax-b: rgba(34, 211, 238, 0.06);
+}
+
+@keyframes sat-boss-drift {
+  0% { transform: translate3d(0, 0, 0); opacity: 0.18; }
+  50% { transform: translate3d(var(--boss-dx, 10px), var(--boss-dy, -16px), 0); opacity: 0.44; }
+  100% { transform: translate3d(0, 0, 0); opacity: 0.18; }
+}
+
+@keyframes sat-boss-fog {
+  0% { transform: translate3d(-2%, 0, 0) scale(1); opacity: 0.20; }
+  50% { transform: translate3d(2.5%, -1.5%, 0) scale(1.02); opacity: 0.30; }
+  100% { transform: translate3d(-2%, 0, 0) scale(1); opacity: 0.20; }
+}
+
+@keyframes sat-boss-pulse {
+  0% { opacity: 0.18; transform: scale(0.99); }
+  50% { opacity: 0.32; transform: scale(1.01); }
+  100% { opacity: 0.18; transform: scale(0.99); }
+}
+
+@keyframes sat-boss-parallax-far {
+  0% { transform: translate3d(-1.2%, -0.6%, 0) scale(1.06); opacity: 0.62; }
+  50% { transform: translate3d(1.2%, 0.8%, 0) scale(1.06); opacity: 0.78; }
+  100% { transform: translate3d(-1.2%, -0.6%, 0) scale(1.06); opacity: 0.62; }
+}
+
+@keyframes sat-boss-parallax-mid {
+  0% { transform: translate3d(1.4%, 0.2%, 0) scale(1.06); opacity: 0.60; }
+  50% { transform: translate3d(-1.4%, -0.8%, 0) scale(1.06); opacity: 0.78; }
+  100% { transform: translate3d(1.4%, 0.2%, 0) scale(1.06); opacity: 0.60; }
+}
+
+@keyframes sat-boss-parallax-fore {
+  0% { transform: translate3d(-2.2%, 0.8%, 0) scale(1.06); opacity: 0.46; }
+  50% { transform: translate3d(2.0%, -0.6%, 0) scale(1.06); opacity: 0.62; }
+  100% { transform: translate3d(-2.2%, 0.8%, 0) scale(1.06); opacity: 0.46; }
+}
+
+.boss-parallax-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.boss-parallax {
+  position: absolute;
+  inset: -10%;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 20% 18%, var(--boss-parallax-b), rgba(255,255,255,0) 52%),
+    radial-gradient(circle at 78% 24%, var(--boss-parallax-a), rgba(255,255,255,0) 56%),
+    radial-gradient(circle at 50% 62%, rgba(2,6,23,0.0), rgba(2,6,23,0.32) 68%),
+    repeating-radial-gradient(circle at 32% 34%, rgba(255,255,255,0.07) 0 1px, rgba(255,255,255,0) 1px 16px);
+  mix-blend-mode: screen;
+}
+
+.boss-parallax--far {
+  opacity: 0.62;
+  animation: sat-boss-parallax-far 22s ease-in-out infinite;
+}
+
+.boss-parallax--mid {
+  opacity: 0.56;
+  animation: sat-boss-parallax-mid 18s ease-in-out infinite;
+}
+
+.boss-parallax--fore {
+  opacity: 0.46;
+  animation: sat-boss-parallax-fore 14s ease-in-out infinite;
+  mix-blend-mode: soft-light;
+}
+
+.boss-atmosphere-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  overflow: hidden;
+}
+
+.boss-atmo-vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 55%, rgba(2,6,23,0) 36%, rgba(2,6,23,0.34) 78%),
+    linear-gradient(180deg, rgba(2,6,23,0.10) 0%, rgba(2,6,23,0.18) 42%, rgba(2,6,23,0.50) 100%);
+  opacity: 0.75;
+}
+
+.boss-atmo-radial {
+  position: absolute;
+  inset: -6%;
+  background:
+    radial-gradient(circle at 68% 38%, var(--boss-glow-a), rgba(2,6,23,0) 55%),
+    radial-gradient(circle at 34% 46%, var(--boss-glow-b), rgba(2,6,23,0) 62%);
+  opacity: 0.75;
+  animation: sat-boss-pulse 10s ease-in-out infinite;
+}
+
+.boss-atmo-fog {
+  position: absolute;
+  inset: -12% -8%;
+  background:
+    radial-gradient(circle at 18% 78%, rgba(255,255,255,0.08), rgba(255,255,255,0) 58%),
+    radial-gradient(circle at 72% 84%, rgba(56,189,248,0.10), rgba(2,6,23,0) 62%),
+    linear-gradient(180deg, rgba(2,6,23,0) 0%, var(--boss-fog) 88%);
+  opacity: 0.34;
+  filter: blur(6px);
+  animation: sat-boss-fog 16s ease-in-out infinite;
+}
+
+.boss-atmo-fog--mid {
+  opacity: 0.22;
+  filter: blur(10px);
+  animation-duration: 22s;
+}
+
+.boss-atmo-particles {
+  position: absolute;
+  inset: 0;
+}
+
+.boss-atmo-particle {
+  position: absolute;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 40% 35%, var(--boss-mote-a), rgba(255,255,255,0) 62%),
+    radial-gradient(circle at 60% 65%, var(--boss-mote-b), rgba(255,255,255,0) 72%);
+  animation: sat-boss-drift 14s ease-in-out infinite;
+  transform: translateZ(0);
+}
+
+.boss-atmo-particle--spark {
+  border-radius: 10px;
+  transform: rotate(12deg);
+  background:
+    radial-gradient(circle at 38% 36%, rgba(255,255,255,0.92), rgba(255,255,255,0) 48%),
+    radial-gradient(circle at 65% 66%, var(--boss-mote-b), rgba(255,255,255,0) 62%);
+  mix-blend-mode: screen;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .sat-calm-drift,
   .sat-calm-breathe,
   .sat-calm-fog,
-  .sat-runic-shimmer {
+  .sat-runic-shimmer,
+  .boss-parallax--far,
+  .boss-parallax--mid,
+  .boss-parallax--fore,
+  .boss-atmo-fog,
+  .boss-atmo-radial,
+  .boss-atmo-particle {
     animation: none !important;
+  }
+
+  .boss-parallax {
+    opacity: 0.35;
+  }
+
+  .boss-atmo-fog {
+    opacity: 0.22;
+    filter: blur(8px);
+  }
+
+  .screen-world-map.app-viewport::before,
+  .screen-world-map.app-viewport::after {
+    animation: none !important;
+    opacity: 0.18;
   }
 }
 
@@ -307,6 +754,12 @@ button {
   position: relative;
 }
 
+/*
+  LOCKED SHELL LAYOUT (do not redesign):
+  - Grid rows = Top HUD / Stage / Bottom HUD.
+  - Stage must be scroll-locked; content must never extend under the Bottom HUD.
+  - Safe-area insets must remain applied via these containers (do not reimplement per screen).
+*/
 .game-viewport {
   width: 100vw;
   height: 100dvh;
@@ -1512,12 +1965,6 @@ button:disabled {
     radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0) 56%),
     linear-gradient(180deg, #3f73ef, #234bb8);
   box-shadow: 0 3px 8px rgba(2, 6, 23, 0.22);
-}
-
-.world-map-stat-icon-coin {
-  background:
-    radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0) 56%),
-    linear-gradient(180deg, #f8d447, #f59e0b);
 }
 
 .world-map-stat-icon-heart {
@@ -3327,8 +3774,11 @@ button:disabled {
   border-radius: 0 !important;
   box-shadow: none !important;
   text-shadow: none !important;
-  filter: none !important;
-  transform: none !important;
+  filter: var(--sat-btn-filter-raised) !important;
+  transform: translateY(0) scale(1) !important;
+  transition: transform 140ms ease, filter 140ms ease !important;
+  will-change: transform, filter;
+  overflow: hidden !important;
 }
 
 .potion-brew-button {
@@ -3355,8 +3805,11 @@ button:disabled {
   background-color: transparent !important;
   box-shadow: none !important;
   text-shadow: none !important;
-  filter: none !important;
-  transform: none !important;
+  filter: var(--sat-btn-filter-raised) !important;
+  transform: translateY(0) scale(1) !important;
+  transition: transform 140ms ease, filter 140ms ease !important;
+  will-change: transform, filter;
+  overflow: hidden !important;
 }
 
 .ui-button-secondary,
@@ -3374,8 +3827,11 @@ button:disabled {
   background-color: transparent !important;
   box-shadow: none !important;
   text-shadow: none !important;
-  filter: none !important;
-  transform: none !important;
+  filter: var(--sat-btn-filter-raised) !important;
+  transform: translateY(0) scale(1) !important;
+  transition: transform 140ms ease, filter 140ms ease !important;
+  will-change: transform, filter;
+  overflow: hidden !important;
 }
 
 .licensed-slice-cyan-pill,
@@ -3402,7 +3858,7 @@ button:disabled {
 .casual-action-button:hover,
 .licensed-slice-cyan-pill:hover,
 .licensed-slice-orange-pill:hover {
-  filter: none !important;
+  filter: var(--sat-btn-filter-hover) !important;
 }
 
 .ui-button-primary:active,
@@ -3423,8 +3879,8 @@ button:disabled {
 .licensed-slice-cyan-pill:active,
 .licensed-slice-orange-pill:active {
   /* Global tactile press language (AAA): squash + gentle drop. */
-  transform: translateY(1px) scale(0.96) !important;
-  filter: brightness(0.985) saturate(1.02);
+  transform: translateY(3px) scale(0.97) !important;
+  filter: var(--sat-btn-filter-pressed) !important;
 }
 
 .gold-pill-shell {
@@ -3629,6 +4085,35 @@ button:disabled {
   -webkit-overflow-scrolling: touch;
 }
 
+/* World map atmosphere: subtle ambient life (no UI interference). */
+.screen-world-map.app-viewport::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0.40;
+  background:
+    radial-gradient(circle at 14% 22%, rgba(125, 211, 252, 0.12), rgba(2, 6, 23, 0) 44%),
+    radial-gradient(circle at 84% 18%, rgba(251, 191, 36, 0.08), rgba(2, 6, 23, 0) 52%),
+    radial-gradient(circle at 28% 72%, rgba(34, 211, 238, 0.08), rgba(2, 6, 23, 0) 56%),
+    radial-gradient(circle at 70% 78%, rgba(99, 102, 241, 0.06), rgba(2, 6, 23, 0) 58%);
+  animation: sat-calm-drift 12s ease-in-out infinite;
+}
+
+.screen-world-map.app-viewport::after {
+  content: '';
+  position: fixed;
+  inset: -10%;
+  pointer-events: none;
+  z-index: 4;
+  opacity: 0.24;
+  background:
+    repeating-radial-gradient(circle at 25% 22%, rgba(255,255,255,0.08) 0 1px, rgba(255,255,255,0) 1px 18px),
+    repeating-radial-gradient(circle at 78% 36%, rgba(255,255,255,0.06) 0 1px, rgba(255,255,255,0) 1px 22px);
+  animation: sat-runic-shimmer 18s ease-in-out infinite;
+}
+
 .screen-world-map .app-screen-content {
   height: auto !important;
   min-height: 100%;
@@ -3646,6 +4131,99 @@ button:disabled {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+/* Gameplay density: keep consistent breathing room + safe edge padding without per-screen nudging. */
+.screen-gameplay .game-shell-content,
+.screen-gameplay .aaa-game-stage {
+  gap: max(var(--sat-shell-major-gap), clamp(0.75rem, 1.2vh, 1rem)) !important;
+  padding-left: max(var(--sat-shell-min-inline-pad), env(safe-area-inset-left)) !important;
+  padding-right: max(var(--sat-shell-min-inline-pad), env(safe-area-inset-right)) !important;
+  padding-bottom: max(var(--sat-shell-bottom-breath), 0.65rem) !important;
+  box-sizing: border-box;
+}
+
+/* Premium surface material (shared panels/cards only; no layout changes). */
+.licensed-board-frame,
+.licensed-game-card,
+.licensed-game-card-dark,
+.licensed-overlay-card,
+.mission-strip,
+.overlay-surface,
+.shared-game-interaction-panel,
+.mission-objective-shell,
+.mission-playfield-shell,
+.aaa-objective-shell,
+.aaa-playfield-shell,
+.structured-playfield-frame {
+  position: relative;
+  isolation: isolate;
+}
+
+.licensed-board-frame::before,
+.licensed-game-card::before,
+.licensed-game-card-dark::before,
+.licensed-overlay-card::before,
+.mission-strip::before,
+.overlay-surface::before,
+.shared-game-interaction-panel::before,
+.mission-objective-shell::before,
+.mission-playfield-shell::before,
+.aaa-objective-shell::before,
+.aaa-playfield-shell::before,
+.structured-playfield-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255,255,255,0.18), rgba(255,255,255,0) 52%),
+    var(--sat-surface-specular),
+    var(--sat-surface-noise);
+  opacity: 0.55;
+  mix-blend-mode: screen;
+}
+
+.licensed-board-frame::after,
+.licensed-game-card::after,
+.licensed-game-card-dark::after,
+.licensed-overlay-card::after,
+.mission-strip::after,
+.overlay-surface::after,
+.shared-game-interaction-panel::after,
+.mission-objective-shell::after,
+.mission-playfield-shell::after,
+.aaa-objective-shell::after,
+.aaa-playfield-shell::after,
+.structured-playfield-frame::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.14),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.10),
+    var(--sat-surface-depth);
+  opacity: 0.95;
+}
+
+.licensed-board-frame > *,
+.licensed-game-card > *,
+.licensed-game-card-dark > *,
+.licensed-overlay-card > *,
+.mission-strip > *,
+.overlay-surface > *,
+.shared-game-interaction-panel > *,
+.mission-objective-shell > *,
+.mission-playfield-shell > *,
+.aaa-objective-shell > *,
+.aaa-playfield-shell > *,
+.structured-playfield-frame > * {
+  position: relative;
+  z-index: 1;
 }
 
 .game-shell-contract {
@@ -3755,7 +4333,7 @@ button:disabled {
 
 .structured-playfield-frame {
   flex: 1 1 auto;
-  min-height: clamp(14rem, 42vh, 34rem);
+  min-height: clamp(14rem, var(--sat-shell-playfield-vh), 34rem);
   width: 100%;
   max-width: min(1180px, 100%);
   margin-inline: auto;
@@ -3808,7 +4386,7 @@ button:disabled {
 }
 
 .structured-game-layout .game-shell-zone-actions {
-  margin-top: clamp(0.2rem, 0.9vh, 0.7rem);
+  margin-top: clamp(0.75rem, 1.2vh, 1rem);
 }
 
 .screen-gameplay .game-shell-contract > * > * {
@@ -4151,7 +4729,7 @@ button:disabled {
 }
 
 .screen-gameplay .game-shell-host .mission-game-stage {
-  gap: clamp(0.36rem, 1.1vh, 0.78rem);
+  gap: clamp(0.75rem, 1.2vh, 1rem);
 }
 
 .single-shell-briefing-card,
@@ -5641,6 +6219,8 @@ button.avatar-hero-arrow:not(:disabled):active {
   width: 100% !important;
   margin: 0 !important;
   z-index: 20 !important;
+  padding-left: max(var(--sat-shell-min-inline-pad), env(safe-area-inset-left)) !important;
+  padding-right: max(var(--sat-shell-min-inline-pad), env(safe-area-inset-right)) !important;
 }
 
 .screen-gameplay .unified-minigame-hud-enabled .game-screen-bottom,
@@ -5742,8 +6322,11 @@ button.avatar-hero-arrow:not(:disabled):active {
   background-color: transparent !important;
   border-radius: 0 !important;
   box-shadow: none !important;
-  filter: none !important;
-  transform: none !important;
+  filter: var(--sat-btn-filter-raised) !important;
+  transform: translateY(0) scale(1) !important;
+  transition: transform 140ms ease, filter 140ms ease !important;
+  will-change: transform, filter;
+  overflow: hidden !important;
 }
 
 .app-viewport button[type='submit']:not(.ui-icon-button):not(.game-dock-button):hover,
@@ -5754,7 +6337,7 @@ button.avatar-hero-arrow:not(:disabled):active {
 .app-viewport .ui-button-primary:hover,
 .app-viewport .game-button-primary:hover,
 .app-viewport .licensed-submit-button:hover {
-  filter: none !important;
+  filter: var(--sat-btn-filter-hover) !important;
 }
 
 .app-viewport button[type='submit']:not(.ui-icon-button):not(.game-dock-button):active,
@@ -5765,8 +6348,8 @@ button.avatar-hero-arrow:not(:disabled):active {
 .app-viewport .ui-button-primary:active,
 .app-viewport .game-button-primary:active,
 .app-viewport .licensed-submit-button:active {
-  transform: translateY(1px) scale(0.96) !important;
-  filter: brightness(0.985) saturate(1.02);
+  transform: translateY(3px) scale(0.97) !important;
+  filter: var(--sat-btn-filter-pressed) !important;
 }
 
 .app-viewport .licensed-board-frame,
@@ -6184,6 +6767,9 @@ button.avatar-hero-arrow:not(:disabled):active {
   font-size: clamp(0.96rem, 2.95vw, 1.12rem);
   font-weight: 600;
   line-height: 1.22;
+  max-width: min(60ch, 100%);
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .practice-briefing-copy {
@@ -6213,7 +6799,7 @@ button.avatar-hero-arrow:not(:disabled):active {
   .screen-gameplay .game-question-card .game-question-copy {
     margin-top: 0.05rem;
     font-size: clamp(0.84rem, 2.45vw, 0.96rem);
-    line-height: 1.15;
+    line-height: 1.18;
   }
 
   .screen-gameplay .game-question-card .question-subtitle {
@@ -6229,7 +6815,7 @@ button.avatar-hero-arrow:not(:disabled):active {
   .screen-gameplay .unified-minigame-hud-enabled .game-screen-bottom,
   .screen-gameplay .unified-minigame-hud-enabled .game-shell-zone-actions,
   .screen-gameplay .unified-minigame-hud-enabled .shared-game-actions {
-    gap: 0.35rem !important;
+    gap: clamp(0.75rem, 1.2vh, 1rem) !important;
   }
 
 }
@@ -6371,10 +6957,22 @@ button.avatar-hero-arrow:not(:disabled):active {
   background-color: transparent !important;
   box-shadow: none !important;
   text-shadow: none !important;
-  filter: none !important;
-  transition: none !important;
+  filter: var(--sat-btn-filter-raised) !important;
+  transition: transform 140ms ease, filter 140ms ease !important;
+  will-change: transform, filter;
   color: #16341a !important;
   overflow: hidden !important;
+}
+
+.ui-button-success:hover,
+.mission-action-btn-success:hover {
+  filter: var(--sat-btn-filter-hover) !important;
+}
+
+.ui-button-success:active,
+.mission-action-btn-success:active {
+  transform: translateY(3px) scale(0.97) !important;
+  filter: var(--sat-btn-filter-pressed) !important;
 }
 
 .answer-choice-surface .ui-button-secondary,
@@ -6387,7 +6985,9 @@ button.avatar-hero-arrow:not(:disabled):active {
   box-shadow: none !important;
   text-shadow: none !important;
   color: #eff7ff !important;
-  filter: none !important;
+  filter: var(--sat-btn-filter-raised) !important;
+  transition: transform 140ms ease, filter 140ms ease !important;
+  will-change: transform, filter;
 }
 
 .answer-choice-surface .ui-button-primary,
@@ -6400,7 +7000,9 @@ button.avatar-hero-arrow:not(:disabled):active {
   box-shadow: none !important;
   text-shadow: none !important;
   color: #16233d !important;
-  filter: none !important;
+  filter: var(--sat-btn-filter-raised) !important;
+  transition: transform 140ms ease, filter 140ms ease !important;
+  will-change: transform, filter;
 }
 
 .answer-choice-surface .ui-button-success,
@@ -6413,7 +7015,9 @@ button.avatar-hero-arrow:not(:disabled):active {
   box-shadow: none !important;
   text-shadow: none !important;
   color: #16341a !important;
-  filter: none !important;
+  filter: var(--sat-btn-filter-raised) !important;
+  transition: transform 140ms ease, filter 140ms ease !important;
+  will-change: transform, filter;
 }
 
 .answer-choice-surface .ui-button-success {
@@ -6511,10 +7115,20 @@ button.avatar-hero-arrow:not(:disabled):active {
   background-color: transparent !important;
   box-shadow: none !important;
   text-shadow: none !important;
-  filter: none !important;
-  transition: none !important;
+  filter: var(--sat-btn-filter-raised) !important;
+  transition: transform 140ms ease, filter 140ms ease !important;
+  will-change: transform, filter;
   color: #eff7ff !important;
   overflow: hidden !important;
+}
+
+.app-viewport button:not([data-button-skin='none']):not(.ui-button-primary):not(.ui-button-secondary):not(.ui-button-success):not(.ui-icon-button):not(.ui-close-button):not(.game-dock-button):not(.hero-nav-button):not(.fantasy-cta-button):not(.licensed-submit-button):not(.licensed-answer-button):not([class*='bg-transparent']):hover {
+  filter: var(--sat-btn-filter-hover) !important;
+}
+
+.app-viewport button:not([data-button-skin='none']):not(.ui-button-primary):not(.ui-button-secondary):not(.ui-button-success):not(.ui-icon-button):not(.ui-close-button):not(.game-dock-button):not(.hero-nav-button):not(.fantasy-cta-button):not(.licensed-submit-button):not(.licensed-answer-button):not([class*='bg-transparent']):active {
+  transform: translateY(3px) scale(0.97) !important;
+  filter: var(--sat-btn-filter-pressed) !important;
 }
 
 .app-viewport button:not([data-button-skin='none']):not(.ui-button-primary):not(.ui-button-secondary):not(.ui-button-success):not(.ui-icon-button):not(.ui-close-button):not(.game-dock-button):not(.hero-nav-button):not(.fantasy-cta-button):not(.licensed-submit-button):not(.licensed-answer-button):not([class*='bg-transparent'])[class*='emerald'],

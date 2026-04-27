@@ -20,7 +20,7 @@ export interface LevelResultState {
   mistakes: number;
   timeMs: number;
   completed: boolean;
-  coinsEarned?: number;
+  brainpowerTokensEarned?: number;
   xpEarned: number;
   islandUnlockedName?: string;
   achievementsUnlocked?: string[];

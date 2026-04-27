@@ -7,9 +7,7 @@ export type AchievementCategory =
   | 'accuracy'
   | 'topic'
   | 'gameplay'
-  | 'island'
-  | 'shop'
-  | 'currency';
+  | 'island';
 
 export type AchievementMetric =
   | 'sessions_played'
@@ -21,9 +19,7 @@ export type AchievementMetric =
   | 'perfect_levels'
   | 'island_completion'
   | 'islands_completed'
-  | 'boss_levels_completed'
-  | 'coins_earned'
-  | 'shop_items_owned';
+  | 'boss_levels_completed';
 
 export interface AchievementDefinition {
   id: string;
@@ -174,10 +170,6 @@ export const computeAchievementProgress = (player: PlayerData, achievement: Achi
       return countCompletedIslands(player);
     case 'boss_levels_completed':
       return countCompletedBossLevels(player);
-    case 'coins_earned':
-      return player.stats?.totalCoinsEarned ?? 0;
-    case 'shop_items_owned':
-      return player.shopState?.ownedItemIds.length ?? 0;
     default:
       return 0;
   }

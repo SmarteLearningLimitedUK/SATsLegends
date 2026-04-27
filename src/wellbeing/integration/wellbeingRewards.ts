@@ -1,1 +1,1 @@
-export const createWellbeingRewardLabel = (count: number) => `Leaf token +1 � ${count} collected`;
+﻿export const createWellbeingRewardLabel = (count: number) => `Brainpower Token +1 • ${count} collected`;
