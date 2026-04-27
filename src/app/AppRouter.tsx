@@ -37,6 +37,7 @@ import {
 interface RuleSet {
   title: string;
   summary: string;
+  howToPlay?: string;
   bullets: string[];
 }
 

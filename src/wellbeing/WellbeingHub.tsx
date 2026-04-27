@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import AssetIcon from '../components/AssetIcon';
 import WellbeingShell from './WellbeingShell';
@@ -12,6 +12,10 @@ interface WellbeingHubProps {
 }
 
 const WellbeingHub: React.FC<WellbeingHubProps> = ({ activities, calmTokens, onSelect, onExit }) => {
+  const [expandedActivityId, setExpandedActivityId] = useState<WellbeingActivityMeta['id']>(
+    activities[0]?.id ?? 'breathing_bloom',
+  );
+
   return (
     <WellbeingShell
       title="Calm Grove"
@@ -38,15 +42,25 @@ const WellbeingHub: React.FC<WellbeingHubProps> = ({ activities, calmTokens, onS
           <div className="hide-scrollbar w-full max-w-[960px] min-h-0 flex-1 overflow-y-auto overscroll-contain pb-2 pr-1 [touch-action:pan-y]">
             <div className="flex flex-col gap-2.5 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] md:gap-3">
               {activities.map((activity, index) => (
-                <motion.button
+                <motion.div
                   key={activity.id}
-                  type="button"
-                  onClick={() => onSelect(activity.id)}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setExpandedActivityId(activity.id)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      setExpandedActivityId(activity.id);
+                    }
+                  }}
+                  aria-expanded={expandedActivityId === activity.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.04, duration: 0.2 }}
-                  className={`licensed-board-frame w-full rounded-2xl border px-3 py-3 text-left transition md:px-4 md:py-3.5 ${
-                    index === 0
+                  className={`licensed-board-frame w-full cursor-pointer rounded-2xl border px-3 py-3 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-100/80 md:px-4 md:py-3.5 ${
+                    expandedActivityId === activity.id
+                      ? 'border-cyan-100/70 shadow-[0_0_0_1px_rgba(186,230,253,0.24),0_16px_28px_rgba(14,165,233,0.16)]'
+                      : index === 0
                       ? 'border-amber-200/60 shadow-[0_0_0_1px_rgba(251,191,36,0.25),0_16px_28px_rgba(234,179,8,0.18)]'
                       : 'border-white/14'
                   }`}
@@ -57,7 +71,9 @@ const WellbeingHub: React.FC<WellbeingHubProps> = ({ activities, calmTokens, onS
                         ? 'border-amber-200 bg-amber-500/25'
                         : 'border-cyan-200/60 bg-cyan-500/20'
                     }`}>
-                      {activity.icon}
+                      <span className="max-w-[2.4rem] truncate text-center text-[10px] font-black leading-none text-cyan-50 md:max-w-[2.65rem] md:text-[11px]">
+                        {activity.icon}
+                      </span>
                       {index === 0 ? (
                         <span className="absolute -right-0.5 -top-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-amber-300 text-[9px] font-black text-amber-950">
                           !
@@ -80,16 +96,39 @@ const WellbeingHub: React.FC<WellbeingHubProps> = ({ activities, calmTokens, onS
                           </span>
                         ) : null}
                       </div>
-                      <p className="mt-2 text-xs font-semibold leading-relaxed text-cyan-50/90 md:text-sm">
-                        {activity.description}
-                      </p>
+                      {expandedActivityId === activity.id ? (
+                        <motion.p
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          className="mt-2 text-xs font-semibold leading-relaxed text-cyan-50/90 md:text-sm"
+                        >
+                          {activity.description}
+                        </motion.p>
+                      ) : (
+                        <p className="mt-1 truncate text-xs font-semibold text-cyan-50/65 md:text-sm">
+                          {activity.subtitle}
+                        </p>
+                      )}
                     </div>
 
-                    <span className="ml-1 shrink-0 rounded-lg border border-cyan-200/50 bg-cyan-500/20 px-2 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-cyan-50 md:text-[11px]">
-                      Play
-                    </span>
+                    {expandedActivityId === activity.id ? (
+                      <button
+                        type="button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onSelect(activity.id);
+                        }}
+                        className="ml-1 shrink-0 rounded-lg border border-cyan-200/50 bg-cyan-500/20 px-2 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-cyan-50 md:text-[11px]"
+                      >
+                        Play
+                      </button>
+                    ) : (
+                      <span className="ml-1 shrink-0 rounded-lg border border-white/12 bg-white/5 px-2 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-cyan-50/70 md:text-[11px]">
+                        View
+                      </span>
+                    )}
                   </div>
-                </motion.button>
+                </motion.div>
               ))}
             </div>
           </div>

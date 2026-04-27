@@ -578,6 +578,40 @@ const App: React.FC = () => {
     [selectedLevel?.blueprintKey, selectedLevel?.gameType],
   );
 
+  const buildHowToPlay = useCallback((rules: GameRuleSet) => {
+    const combined = `${rules.title} ${rules.summary} ${rules.bullets.join(' ')}`.toLowerCase();
+
+    if (combined.includes('drag') || combined.includes('drop') || combined.includes('place')) {
+      return 'Drag each item into the right place, then check your answer.';
+    }
+    if (combined.includes('swap') || combined.includes('match')) {
+      return 'Swap or tap matching pieces to make the correct set.';
+    }
+    if (combined.includes('angle') || combined.includes('launch') || combined.includes('fire')) {
+      return 'Choose the angle that solves the mission, then fire.';
+    }
+    if (combined.includes('ratio')) {
+      return 'Build the exact ratio shown in the mission before you submit.';
+    }
+    if (combined.includes('graph') || combined.includes('chart') || combined.includes('data')) {
+      return 'Read the chart values carefully, then choose the matching answer.';
+    }
+    if (combined.includes('time')) {
+      return 'Set the clock or time value to match the mission.';
+    }
+    if (combined.includes('measure') || combined.includes('scale') || combined.includes('weight')) {
+      return 'Adjust the measure until it matches the target exactly.';
+    }
+    if (combined.includes('mean') || combined.includes('average')) {
+      return 'Use the data values to find the requested average.';
+    }
+    if (combined.includes('factor')) {
+      return 'Find the factor pair or multiple that fits the mission.';
+    }
+
+    return 'Read the mission, use the game controls, then submit your answer.';
+  }, []);
+
   const buildKidRules = useCallback((rules: GameRuleSet | null) => {
     if (!rules) return null;
     const combined = `${rules.summary} ${rules.bullets.join(' ')}`.toLowerCase();
@@ -615,9 +649,10 @@ const App: React.FC = () => {
     return {
       title: rules.title,
       summary: `Ready? Take on ${rules.title}.`,
+      howToPlay: buildHowToPlay(rules),
       bullets: [line1, line2, line3],
     };
-  }, []);
+  }, [buildHowToPlay]);
 
   const hintRuleSet = useMemo(
     () => {
@@ -626,6 +661,7 @@ const App: React.FC = () => {
         return {
           title: 'Place Value Panic',
           summary: 'Build the number. Drag digits into the right slot.',
+          howToPlay: 'Drag each digit into the matching place-value slot, then check the number.',
           bullets: ['Build the number', 'Drag to slot', 'Tap when ready'],
         };
       }
@@ -633,6 +669,7 @@ const App: React.FC = () => {
         return {
           title: 'Number Line Ninja',
           summary: 'Slice the number line. Tap the correct value.',
+          howToPlay: 'Use the number line clues to find the value, then tap the answer.',
           bullets: ['Read mission', 'Use tools', 'Tap the answer'],
         };
       }
@@ -640,6 +677,7 @@ const App: React.FC = () => {
         return {
           title: 'Mean Machine',
           summary: 'Tame the Mean Machine. Find mean, mode, and median.',
+          howToPlay: 'Use the data values to find the requested average or middle value.',
           bullets: ['Spin reels', 'Spot the mean', 'Tap the answer'],
         };
       }
@@ -647,6 +685,7 @@ const App: React.FC = () => {
         return {
           title: 'Multiplication Mine',
           summary: 'Smash the boulders. Solve each multiplication strike.',
+          howToPlay: 'Solve the multiplication strike and tap the answer that matches.',
           bullets: ['Read mission', 'Solve the strike', 'Tap the answer'],
         };
       }
@@ -654,6 +693,7 @@ const App: React.FC = () => {
         return {
           title: 'Data Detective',
           summary: 'Scan the evidence. Catch the thief.',
+          howToPlay: 'Read the chart or evidence, compare the clues, then choose the answer.',
           bullets: ['Read the chart', 'Spot the clue', 'Tap the answer'],
         };
       }
@@ -661,6 +701,7 @@ const App: React.FC = () => {
         return {
           title: 'Take-Out Rush',
           summary: 'Serve the rush. Complete the order before time runs out.',
+          howToPlay: 'Build the order from the choices, then press Check before time runs out.',
           bullets: ['Read mission', 'Build the order', 'Press Check'],
         };
       }
@@ -668,6 +709,7 @@ const App: React.FC = () => {
         return {
           title: 'Polygon Palace',
           summary: 'Sort the shapes. Some have more than one answer.',
+          howToPlay: 'Check the shape clues and select every answer that fits.',
           bullets: ['Read mission', 'Check the shape', 'Tap the answer'],
         };
       }
@@ -675,6 +717,7 @@ const App: React.FC = () => {
         return {
           title: 'Area Architect',
           summary: 'Build the blueprint. Find the area.',
+          howToPlay: 'Use the grid dimensions to find the area, then tap the answer.',
           bullets: ['Read mission', 'Use the grid', 'Tap the answer'],
         };
       }
@@ -682,6 +725,7 @@ const App: React.FC = () => {
         return {
           title: 'Perimeter Path',
           summary: 'Trace the edge. Find the perimeter.',
+          howToPlay: 'Add the outside side lengths to find the perimeter.',
           bullets: ['Read mission', 'Count the sides', 'Tap the answer'],
         };
       }
@@ -689,6 +733,7 @@ const App: React.FC = () => {
         return {
           title: 'Order Ops Arena',
           summary: 'BIDMAS duel. Solve the strike in the right order.',
+          howToPlay: 'Follow BIDMAS from left to right where needed, then choose the result.',
           bullets: ['Follow BIDMAS', 'Solve the strike', 'Tap the answer'],
         };
       }
@@ -696,6 +741,7 @@ const App: React.FC = () => {
         return {
           title: 'Formula Forge',
           summary: 'Complete the formula. Crack the missing value.',
+          howToPlay: 'Substitute the values into the formula and solve the missing part.',
           bullets: ['Read mission', 'Solve for x', 'Tap the answer'],
         };
       }
@@ -703,6 +749,7 @@ const App: React.FC = () => {
         return {
           title: 'Factor Frenzy',
           summary: 'Find the hidden factors. Break the number apart.',
+          howToPlay: 'Find the factor pair or multiple that matches the target.',
           bullets: ['Read mission', 'Find factor pairs', 'Tap the answer'],
         };
       }
@@ -710,6 +757,7 @@ const App: React.FC = () => {
         return {
           title: 'Remainder Run',
           summary: 'Run the division. Find quotient, remainder, or decimal.',
+          howToPlay: 'Divide carefully and choose the quotient, remainder, or decimal asked for.',
           bullets: ['Read mission', 'Use the steps', 'Tap the answer'],
         };
       }
@@ -717,6 +765,7 @@ const App: React.FC = () => {
         return {
           title: 'Coordinate Quest',
           summary: 'Follow the coordinates. Escape the traps.',
+          howToPlay: 'Move across for x and up or down for y, then choose the point.',
           bullets: ['X left-right', 'Y down-up', 'Tap the answer'],
         };
       }
@@ -724,6 +773,7 @@ const App: React.FC = () => {
         return {
           title: 'Angle Arena',
           summary: 'Find the angle. Fire the cannon.',
+          howToPlay: 'Choose the angle that aims at the target, then fire.',
           bullets: ['Read mission', 'Choose angle', 'Press fire'],
         };
       }
@@ -731,6 +781,7 @@ const App: React.FC = () => {
         return {
           title: 'Simplify Sprint',
           summary: 'Shrink the fraction. Simplify to the smallest form.',
+          howToPlay: 'Divide the top and bottom by common factors until the fraction is simplest.',
           bullets: ['Read mission', 'Cancel factors', 'Tap the answer'],
         };
       }
@@ -738,6 +789,7 @@ const App: React.FC = () => {
         return {
           title: 'Rotation Station',
           summary: 'Flip it. Mirror it. Rotate it. Match the shape.',
+          howToPlay: 'Compare the transformed shape and choose the matching move or result.',
           bullets: ['Read mission', 'Match the shape', 'Tap the answer'],
         };
       }

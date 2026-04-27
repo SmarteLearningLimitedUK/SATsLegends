@@ -56,9 +56,10 @@ const LeafDrift: React.FC<WellbeingActivityComponentProps> = ({ onComplete, onEx
   return (
     <WellbeingShell title="Leaf Drift" subtitle={message} type="Grounding" progress={(guided / INITIAL_LEAVES.length) * 100} onExit={onExit}>
       <div className="relative flex flex-1 items-center justify-center overflow-hidden p-5">
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,#89d7ff_0%,#dff6ff_40%,#fef3c7_100%)]" />
-        <div className="absolute inset-x-0 top-0 h-[44%] bg-[radial-gradient(circle_at_20%_18%,rgba(255,255,255,0.9),transparent_14%),radial-gradient(circle_at_62%_14%,rgba(255,255,255,0.85),transparent_12%),radial-gradient(circle_at_84%_24%,rgba(255,255,255,0.82),transparent_10%)]" />
-        <div className="absolute inset-x-0 bottom-0 h-[38%] bg-[linear-gradient(180deg,rgba(58,123,54,0),rgba(58,123,54,0.2)_28%,rgba(58,123,54,0.55)_70%,rgba(33,78,36,0.82)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,#d7f5d7_0%,#ecf8d7_46%,#7ea868_100%)]" />
+        <div className="absolute inset-x-0 top-0 h-[48%] bg-[radial-gradient(circle_at_18%_18%,rgba(255,255,255,0.74),transparent_15%),radial-gradient(circle_at_68%_12%,rgba(255,255,255,0.58),transparent_13%),radial-gradient(circle_at_86%_26%,rgba(255,255,255,0.48),transparent_11%)]" />
+        <div className="absolute inset-x-0 bottom-0 h-[46%] bg-[linear-gradient(180deg,rgba(90,138,70,0),rgba(90,138,70,0.22)_24%,rgba(70,118,55,0.58)_72%,rgba(35,82,38,0.86)_100%)]" />
+        <div className="absolute inset-0 opacity-25 [background-image:radial-gradient(rgba(18,83,45,0.24)_1px,transparent_1px)] [background-size:26px_26px]" />
         <div className="absolute bottom-[9%] left-1/2 h-36 w-36 -translate-x-1/2 rounded-full bg-amber-200/45 blur-2xl" />
         <div className="absolute bottom-[10%] left-1/2 h-32 w-32 -translate-x-1/2 rounded-full border border-amber-100/55 bg-[radial-gradient(circle,rgba(255,251,235,0.86),rgba(253,224,71,0.38)_56%,rgba(250,204,21,0.04)_100%)]" />
 
@@ -82,7 +83,7 @@ const LeafDrift: React.FC<WellbeingActivityComponentProps> = ({ onComplete, onEx
             key={leaf.id}
             type="button"
             onPointerDown={() => guideLeaf(leaf.id)}
-            className="absolute -translate-x-1/2 -translate-y-1/2"
+            className="absolute -translate-x-1/2 -translate-y-1/2 appearance-none border-0 bg-transparent p-0"
             style={{ left: `${leaf.x}%`, top: `${leaf.y}%`, width: `${leaf.size}px` }}
             animate={{
               y: [0, 20, 44],

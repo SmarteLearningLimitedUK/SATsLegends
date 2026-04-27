@@ -9,6 +9,7 @@ type MissionCardProps = {
   eyebrow?: string;
   title: string;
   instruction: string;
+  supportingText?: string;
   visual: React.ReactNode;
   skillLabel?: string;
   skillIcon?: AssetIconName;
@@ -25,6 +26,7 @@ const MissionCard: React.FC<MissionCardProps> = ({
   eyebrow = 'Mission',
   title,
   instruction,
+  supportingText,
   visual,
   skillLabel,
   skillIcon,
@@ -72,6 +74,11 @@ const MissionCard: React.FC<MissionCardProps> = ({
           <div className="text-center text-[clamp(0.95rem,3.1vw,1.05rem)] font-black text-white/92">
             {instruction}
           </div>
+          {supportingText ? (
+            <div className="mx-auto max-w-[18rem] text-center text-[0.78rem] font-extrabold leading-snug text-cyan-50/82 md:max-w-[21rem] md:text-[0.86rem]">
+              {supportingText}
+            </div>
+          ) : null}
           {chips.length ? (
             <div className="flex flex-wrap justify-center gap-2">
               {chips.map((chip) => (

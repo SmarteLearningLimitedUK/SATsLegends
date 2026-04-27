@@ -51,6 +51,7 @@ export interface MiniGameSessionEventHandlers {
 export interface MiniGamePracticeBriefing {
   title: string;
   summary: string;
+  howToPlay?: string;
   bullets: string[];
 }
 

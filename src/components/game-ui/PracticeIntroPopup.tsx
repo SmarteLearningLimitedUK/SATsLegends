@@ -112,6 +112,9 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
   const resolvedSummary = briefing?.summary ? toGameyCopy(firstSentence(briefing.summary)) : undefined;
   const resolvedBodySentence = typeof body === 'string' ? toGameyCopy(firstSentence(body)) : undefined;
   const instruction = clampWords(resolvedSummary || resolvedBodySentence || 'Ready? Beat this challenge.', 12);
+  const howToPlay = briefing?.howToPlay
+    ? clampWords(toGameyCopy(firstSentence(briefing.howToPlay)), 18)
+    : undefined;
 
   const resolvedBullets = (briefing?.bullets ?? [])
     .map((bullet) => clampWords(toGameyCopy(firstSentence(bullet)), 4))
@@ -134,6 +137,7 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
         eyebrow="Mission Briefing"
         title={resolvedTitle}
         instruction={instruction}
+        supportingText={howToPlay}
         skillLabel={skill?.label}
         skillIcon={skill?.icon}
         skillTone={skill?.tone}
