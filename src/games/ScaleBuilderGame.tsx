@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ChevronRight, Layers, Ruler, Trophy } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { AVATARS } from '../constants';
@@ -38,6 +38,12 @@ interface FeedbackState {
   type: 'success' | 'error';
   message: string;
 }
+
+type SizeAnswerOption = {
+  id: string;
+  length: number;
+  width: number;
+};
 
 const LEVELS: Level[] = [
   {
@@ -80,13 +86,27 @@ const LEVELS: Level[] = [
 const GRID_SIZE = 20;
 const BLUEPRINT_BOARD_TOP = '56%';
 const BLUEPRINT_BOARD_SIZE = 'min(84vw, 27rem, 42vh)';
-const SCALE_BUILDER_INTRO = `The Monster Minds have damaged the island structures.\nUse the scale factor to rebuild each blueprint to the correct size.\nMultiply each length correctly.`;
+const SCALE_BUILDER_INTRO = `The Monster Minds have damaged the island structures.\nUse the scale factor to restore each structure to the correct size.\nMultiply each length correctly.`;
 
 const formatBlueprintValue = (value: number) => {
   const normalized = Math.round(value * 100) / 100;
   return Number.isInteger(normalized)
     ? String(normalized)
     : normalized.toFixed(2).replace(/\.?0+$/, '');
+};
+
+const formatSizePair = (length: number, width: number) => (
+  `L: ${formatBlueprintValue(length)}  W: ${formatBlueprintValue(width)}`
+);
+
+const uniqueBy = <T,>(items: T[], getKey: (item: T) => string) => {
+  const seen = new Set<string>();
+  return items.filter((item) => {
+    const key = getKey(item);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 };
 
 const BlueprintGrid: React.FC = () => (
@@ -205,14 +225,13 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
   const avatar = useMemo(() => AVATARS.find((item) => item.id === avatarId) || AVATARS[0], [avatarId]);
 
   const [currentLevelIdx, setCurrentLevelIdx] = useState(0);
-  const [currentScale, setCurrentScale] = useState(1.0);
-  const [widthScale, setWidthScale] = useState(1.0);
-  const [heightScale, setHeightScale] = useState(1.0);
   const [gameState, setGameState] = useState<'playing' | 'success' | 'complete'>('playing');
   const [feedback, setFeedback] = useState<FeedbackState | null>(null);
   const [showBase, setShowBase] = useState(true);
   const [mistakeCount, setMistakeCount] = useState(0);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
+  const [answerOptions, setAnswerOptions] = useState<SizeAnswerOption[]>([]);
+  const [selectedAnswerId, setSelectedAnswerId] = useState<string | null>(null);
 
   const currentLevel = LEVELS[currentLevelIdx];
   const completedLevels = currentLevelIdx + (gameState === 'complete' ? 1 : 0);
@@ -231,81 +250,104 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
   }, [mistakeCount]);
 
   const isDimensionMode = currentLevel.id >= 4;
-  const activeScaleX = isDimensionMode ? widthScale : currentScale;
-  const activeScaleY = isDimensionMode ? heightScale : currentScale;
+  const activeScaleX = currentLevel.targetScale;
+  const activeScaleY = currentLevel.targetScale;
   const blueprintLength = currentLevel.shape.baseWidth * activeScaleX;
   const blueprintWidth = currentLevel.shape.baseHeight * activeScaleY;
+  const selectedOption = useMemo(
+    () => (selectedAnswerId ? answerOptions.find((option) => option.id === selectedAnswerId) ?? null : null),
+    [answerOptions, selectedAnswerId],
+  );
+  const displayedLength = selectedOption?.length ?? null;
+  const displayedWidth = selectedOption?.width ?? null;
 
-  const verifyScale = () => {
-    const widthDiff = Math.abs(widthScale - currentLevel.targetScale);
-    const heightDiff = Math.abs(heightScale - currentLevel.targetScale);
-    const difference = Math.max(widthDiff, heightDiff);
-    if (difference < 0.01) {
-      setFeedback({ type: 'success', message: 'Structure restored. Blueprint scaled correctly.' });
-      setGameState('success');
-      return;
+  const correctAnswer = useMemo<SizeAnswerOption>(() => ({
+    id: 'correct',
+    length: blueprintLength,
+    width: blueprintWidth,
+  }), [blueprintLength, blueprintWidth]);
+
+  const buildAnswerOptions = useCallback((level: Level) => {
+    const baseLength = level.shape.baseWidth;
+    const baseWidth = level.shape.baseHeight;
+    const correctScale = level.targetScale;
+
+    const candidateScales = [
+      correctScale,
+      correctScale + 0.25,
+      Math.max(0.1, correctScale - 0.25),
+      correctScale + 0.5,
+      Math.max(0.1, correctScale - 0.5),
+      correctScale === 0 ? 1 : 1 / correctScale,
+      1,
+    ].filter((value) => Number.isFinite(value) && value > 0);
+
+    const candidates: SizeAnswerOption[] = candidateScales.map((scale, idx) => ({
+      id: `opt-${idx}-${scale.toFixed(2)}`,
+      length: baseLength * scale,
+      width: baseWidth * scale,
+    }));
+
+    const unique = uniqueBy(candidates, (opt) => `${formatBlueprintValue(opt.length)}:${formatBlueprintValue(opt.width)}`);
+    const withCorrectFirst = unique.sort((a, b) => {
+      const aIsCorrect = Math.abs(a.length - (baseLength * correctScale)) < 0.001 && Math.abs(a.width - (baseWidth * correctScale)) < 0.001;
+      const bIsCorrect = Math.abs(b.length - (baseLength * correctScale)) < 0.001 && Math.abs(b.width - (baseWidth * correctScale)) < 0.001;
+      return Number(bIsCorrect) - Number(aIsCorrect);
+    });
+
+    const trimmed = withCorrectFirst.slice(0, 4);
+    while (trimmed.length < 4) {
+      const bump = correctScale + 0.75 + trimmed.length * 0.25;
+      trimmed.push({
+        id: `opt-extra-${trimmed.length}`,
+        length: baseLength * bump,
+        width: baseWidth * bump,
+      });
     }
 
-    setFeedback({ type: 'error', message: 'Structure unstable. Adjust the scale and try again.' });
-    setMistakeCount((previous) => previous + 1);
-  };
+    // Shuffle but keep deterministic order per level id.
+    const seed = level.id * 97;
+    const shuffled = [...trimmed].sort((a, b) => {
+      const aKey = `${a.length}:${a.width}:${a.id}`;
+      const bKey = `${b.length}:${b.width}:${b.id}`;
+      const aHash = Array.from(aKey).reduce((acc, ch) => acc + ch.charCodeAt(0), seed);
+      const bHash = Array.from(bKey).reduce((acc, ch) => acc + ch.charCodeAt(0), seed);
+      return aHash - bHash;
+    });
+
+    return shuffled;
+  }, []);
 
   const proceed = () => {
     if (currentLevelIdx < LEVELS.length - 1) {
       setCurrentLevelIdx((previous) => previous + 1);
-      setCurrentScale(1.0);
       setFeedback(null);
       setGameState('playing');
+      setSelectedAnswerId(null);
       return;
     }
 
     setGameState('complete');
   };
 
-  const adjustScale = (delta: number) => {
-    setCurrentScale((previous) => Math.max(0.1, Math.min(4.0, parseFloat((previous + delta).toFixed(2)))));
-    setWidthScale((previous) => Math.max(0.1, Math.min(4.0, parseFloat((previous + delta).toFixed(2)))));
-    setHeightScale((previous) => Math.max(0.1, Math.min(4.0, parseFloat((previous + delta).toFixed(2)))));
-    setFeedback(null);
-  };
-
-  const adjustDimension = (dimension: 'width' | 'height', delta: number) => {
-    if (!isDimensionMode) {
-      adjustScale(delta);
-      return;
-    }
-    if (dimension === 'width') {
-      setWidthScale((previous) => Math.max(0.1, Math.min(4.0, parseFloat((previous + delta).toFixed(2)))));
-    } else {
-      setHeightScale((previous) => Math.max(0.1, Math.min(4.0, parseFloat((previous + delta).toFixed(2)))));
-    }
-    setFeedback(null);
-  };
-
   const resetLevel = () => {
-    setCurrentScale(1.0);
-    setWidthScale(1.0);
-    setHeightScale(1.0);
     setFeedback(null);
+    setSelectedAnswerId(null);
   };
 
   const restartProject = () => {
     setCurrentLevelIdx(0);
-    setCurrentScale(1.0);
-    setWidthScale(1.0);
-    setHeightScale(1.0);
     setFeedback(null);
     setGameState('playing');
     setMistakeCount(0);
+    setSelectedAnswerId(null);
   };
 
   useEffect(() => {
     setCurrentLevelIdx(0);
-    setCurrentScale(1.0);
-    setWidthScale(1.0);
-    setHeightScale(1.0);
     setFeedback(null);
     setGameState('playing');
+    setSelectedAnswerId(null);
 
     // Visual-test helper: allow screenshot tooling to jump to a specific internal stage
     // without playing through the interaction. This does not affect normal gameplay.
@@ -320,6 +362,29 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
       }
     }
   }, []);
+
+  useEffect(() => {
+    setAnswerOptions(buildAnswerOptions(currentLevel));
+    setSelectedAnswerId(null);
+    setFeedback(null);
+  }, [buildAnswerOptions, currentLevel]);
+
+  const submitAnswer = (option: SizeAnswerOption) => {
+    if (gameState !== 'playing') return;
+    setSelectedAnswerId(option.id);
+
+    const isCorrect = Math.abs(option.length - correctAnswer.length) < 0.01
+      && Math.abs(option.width - correctAnswer.width) < 0.01;
+
+    if (isCorrect) {
+      setFeedback({ type: 'success', message: 'Structure restored. Blueprint scaled correctly.' });
+      setGameState('success');
+      return;
+    }
+
+    setFeedback({ type: 'error', message: 'Not quite. Re-check the scale factor and try again.' });
+    setMistakeCount((previous) => previous + 1);
+  };
 
   useEffect(() => {
     setShowPracticeIntro(Boolean(isPractice));
@@ -393,11 +458,11 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                   <div className="absolute inset-0 opacity-60">
                     <BlueprintGrid />
                   </div>
-                  <div className="pointer-events-none absolute left-3 top-3 z-20 rounded-full border border-cyan-100/35 bg-slate-950/65 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-50 shadow-[0_0_18px_rgba(2,6,23,0.25)] backdrop-blur-sm md:text-[11px]">
-                    L {formatBlueprintValue(blueprintLength)}
+                  <div className="pointer-events-none absolute left-[-0.15rem] top-1/2 z-30 -translate-x-full -translate-y-1/2 rounded-full border border-cyan-100/35 bg-slate-950/65 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-50 shadow-[0_0_18px_rgba(2,6,23,0.25)] backdrop-blur-sm md:text-[11px]">
+                    L {displayedLength !== null ? formatBlueprintValue(displayedLength) : '?'}
                   </div>
-                  <div className="pointer-events-none absolute right-3 bottom-3 z-20 rounded-full border border-cyan-100/35 bg-slate-950/65 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-50 shadow-[0_0_18px_rgba(2,6,23,0.25)] backdrop-blur-sm md:text-[11px]">
-                    W {formatBlueprintValue(blueprintWidth)}
+                  <div className="pointer-events-none absolute right-[-0.15rem] top-1/2 z-30 translate-x-full -translate-y-1/2 rounded-full border border-cyan-100/35 bg-slate-950/65 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-50 shadow-[0_0_18px_rgba(2,6,23,0.25)] backdrop-blur-sm md:text-[11px]">
+                    W {displayedWidth !== null ? formatBlueprintValue(displayedWidth) : '?'}
                   </div>
                   {showBase ? (
                     <div className="absolute opacity-40">
@@ -410,23 +475,25 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                       />
                     </div>
                   ) : null}
-                  <ShapeRenderer
-                    shape={currentLevel.shape}
-                    scaleX={isDimensionMode ? widthScale : currentScale}
-                    scaleY={isDimensionMode ? heightScale : currentScale}
-                    strokeClass={
-                      gameState === 'success'
-                        ? 'border-emerald-300 shadow-[0_0_24px_rgba(52,211,153,0.36)]'
-                        : 'border-sky-300 shadow-[0_0_24px_rgba(56,189,248,0.3)]'
-                    }
-                  />
+                  <div className="absolute inset-0 z-10">
+                    <ShapeRenderer
+                      shape={currentLevel.shape}
+                      scaleX={activeScaleX}
+                      scaleY={activeScaleY}
+                      strokeClass={
+                        gameState === 'success'
+                          ? 'border-emerald-300 shadow-[0_0_24px_rgba(52,211,153,0.36)]'
+                          : 'border-sky-200 shadow-[0_0_26px_rgba(56,189,248,0.38)]'
+                      }
+                    />
+                  </div>
                 </div>
               </div>
             </div>
 
             <div className="px-1 pb-0 pt-0">
               <div className="flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/82">
-                <span>Rebuild the blueprint</span>
+                <span aria-hidden="true">&nbsp;</span>
                 <button
                   onClick={() => setShowBase((previous) => !previous)}
                   className="ui-button-secondary rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em]"
@@ -443,20 +510,25 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
           >
             <div className="mx-auto flex w-full max-w-[780px] flex-col gap-2 px-2 md:px-3">
               <div className="grid grid-cols-2 gap-2">
-                <button
-                  onClick={() => adjustScale(-0.25)}
-                  disabled={gameState !== 'playing'}
-                  className="ui-button-secondary inline-flex min-h-[40px] items-center justify-center gap-2 rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] disabled:opacity-45"
-                >
-                  Scale -0.25
-                </button>
-                <button
-                  onClick={() => adjustScale(0.25)}
-                  disabled={gameState !== 'playing'}
-                  className="ui-button-secondary inline-flex min-h-[40px] items-center justify-center gap-2 rounded-xl px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] disabled:opacity-45"
-                >
-                  Scale +0.25
-                </button>
+                {answerOptions.slice(0, 4).map((option) => {
+                  const isSelected = selectedAnswerId === option.id;
+                  const isLocked = gameState !== 'playing';
+                  return (
+                    <button
+                      key={option.id}
+                      type="button"
+                      onClick={() => submitAnswer(option)}
+                      disabled={isLocked}
+                      className={[
+                        'inline-flex min-h-[40px] items-center justify-center rounded-xl px-3 py-2 text-center text-[11px] font-black uppercase tracking-[0.1em] transition',
+                        isSelected ? 'ui-button-primary' : 'ui-button-secondary',
+                        isLocked ? 'opacity-45' : 'hover:brightness-110',
+                      ].join(' ')}
+                    >
+                      {formatSizePair(option.length, option.width)}
+                    </button>
+                  );
+                })}
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <button
@@ -474,13 +546,9 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                     Next project <ChevronRight className="h-4 w-4" />
                   </button>
                 ) : (
-                  <PrimaryButton
-                    onClick={verifyScale}
-                    disabled={gameState !== 'playing'}
-                    className="min-h-[40px]"
-                  >
+                  <PrimaryButton disabled className="min-h-[40px] opacity-60">
                     <Ruler className="h-4 w-4" />
-                    Check Scale
+                    Choose an answer
                   </PrimaryButton>
                 )}
               </div>

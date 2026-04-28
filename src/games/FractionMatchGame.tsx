@@ -440,11 +440,13 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       const gapPx = 6;
       const rawWidthSize = Math.floor((boardWidth - (gapPx * (BOARD_COLUMNS - 1))) / BOARD_COLUMNS);
       const rect = node.getBoundingClientRect();
-      const reservedBottom = Math.max(48, window.innerHeight * 0.04);
-      const availableGridHeight = Math.max(260, window.innerHeight - rect.top - reservedBottom);
+      // Leave extra breathing room so the tile grid never collides with the shared HUD
+      // (timer + progress bar) on shorter viewports.
+      const reservedBottom = Math.max(96, window.innerHeight * 0.12);
+      const availableGridHeight = Math.max(220, window.innerHeight - rect.top - reservedBottom);
       const rawHeightSize = Math.floor((availableGridHeight - (gapPx * (BOARD_ROWS - 1))) / BOARD_ROWS);
       const rawSize = Math.min(rawWidthSize, rawHeightSize);
-      const clampedSize = Math.max(56, Math.min(148, rawSize));
+      const clampedSize = Math.max(44, Math.min(128, rawSize));
 
       setGemSize((prev) => (prev === clampedSize ? prev : clampedSize));
     };

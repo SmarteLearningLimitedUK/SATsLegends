@@ -95,6 +95,8 @@ const getAudioAsset = (effect: GameSoundEffect, context?: GameSoundContext) => {
   }
 
   if (effect === 'correct') {
+    // Angle Arena uses a long growl for "correct" via ENEMY_BATTLE_GAMES; keep hits silent.
+    if (gameKey === 'angle_arena') return null;
     if (gameKey === 'place_value_panic') return placeValuePanicCorrectSrc;
     if (gameKey === 'number_line_ninja') return numberLineNinjaCorrectSrc;
     if (gameKey === 'share_splitter') return correctShareSplitterSrc;
@@ -204,6 +206,9 @@ const scheduleTone = (ctx: AudioContext, step: ToneStep, startAt: number) => {
 
 export const playGameSound = (effect: GameSoundEffect, mutedOverride?: boolean, context?: GameSoundContext) => {
   if (typeof window === 'undefined' || isMuted(mutedOverride) || !isPageAudioAllowed()) return false;
+
+  // Some minigames run silent by design.
+  if (normalizeGameKey(context) === 'percent_power') return false;
 
   const asset = getAudioAsset(effect, context);
   const volume = (effect === 'click' || effect === 'tap') ? 0.35 : 0.82;

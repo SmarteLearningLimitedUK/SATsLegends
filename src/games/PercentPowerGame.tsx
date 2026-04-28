@@ -412,7 +412,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
           </AnimatePresence>
         </div>
 
-        <div className="answer-choice-surface mt-4 grid w-full max-w-[44rem] grid-cols-2 gap-3">
+        <div className="answer-choice-surface mt-4 grid w-full max-w-[44rem] grid-cols-4 gap-2 sm:gap-3">
           {question.options.map((option, index) => {
             const isSelected = index === selectedIndex;
             const isCorrect = feedback === 'correct' && option === (question.options[question.answerIndex] ?? question.options[0] ?? '');
@@ -425,7 +425,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
                 whileTap={{ scale: 0.985 }}
                 onClick={() => handleAnswer(index)}
                 disabled={isLocked || didEndRef.current}
-                className={`relative min-h-[2.8rem] overflow-hidden rounded-[1rem] px-2.5 py-1.5 text-center ${
+                className={`relative min-h-[2.9rem] overflow-hidden rounded-[1rem] px-2 py-1.5 text-center ${
                   isCorrect
                     ? 'ui-button-success'
                     : isIncorrect
@@ -436,15 +436,15 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
                 }`}
               >
                 <div className="absolute inset-x-[8%] top-[12%] h-[30%] rounded-full bg-white/12 blur-md" />
-                <div className="relative z-10 flex items-center gap-2">
-                  <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-[0.65rem] border ${
+                <div className="relative z-10 flex w-full items-center justify-center">
+                  <div className={`absolute left-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-[0.65rem] border ${
                     isCorrect || isIncorrect || isSelected
                       ? 'border-black/10 bg-white/36 text-slate-900'
                       : 'border-white/16 bg-white/10 text-white'
                   }`}>
                     <Zap className={`h-3.5 w-3.5 ${index === 0 ? 'rotate-12' : index === 1 ? '-rotate-12' : index === 2 ? 'rotate-6' : '-rotate-6'}`} />
                   </div>
-                  <div className="flex-1 text-center text-[0.9rem] font-black leading-none text-white md:text-[1.08rem]">
+                  <div className="w-full px-8 text-center text-[clamp(0.84rem,2.3vw,1.05rem)] font-black leading-none text-white">
                     {option}
                   </div>
                 </div>

@@ -285,18 +285,36 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   }, [isPractice]);
 
   useLayoutEffect(() => {
-    if (!chartWrapRef.current || typeof ResizeObserver === 'undefined') return undefined;
-    const observer = new ResizeObserver((entries) => {
-      const entry = entries[0];
-      if (!entry) return;
-      const nextWidth = Math.floor(entry.contentRect.width);
-      const nextHeight = Math.floor(entry.contentRect.height);
+    const node = chartWrapRef.current;
+    if (!node) return undefined;
+
+    const measure = () => {
+      const rect = node.getBoundingClientRect();
+      const nextWidth = Math.floor(rect.width);
+      const nextHeight = Math.floor(rect.height);
       if (nextWidth > 0 && nextHeight > 0) {
         setChartSize({ width: nextWidth, height: nextHeight });
       }
-    });
-    observer.observe(chartWrapRef.current);
-    return () => observer.disconnect();
+    };
+
+    measure();
+    const settleFrame = window.requestAnimationFrame(measure);
+    window.addEventListener('resize', measure);
+
+    if (typeof ResizeObserver === 'undefined') {
+      return () => {
+        window.cancelAnimationFrame(settleFrame);
+        window.removeEventListener('resize', measure);
+      };
+    }
+
+    const observer = new ResizeObserver(() => measure());
+    observer.observe(node);
+    return () => {
+      window.cancelAnimationFrame(settleFrame);
+      window.removeEventListener('resize', measure);
+      observer.disconnect();
+    };
   }, []);
 
   const startGame = () => {
@@ -447,52 +465,52 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                 )}
               </div>
             </div>
-
-            <div className="mt-auto flex shrink-0 flex-col gap-2 pt-2 pb-1 sm:pb-2">
-              <div className="answer-choice-surface grid grid-cols-2 gap-2">
-                {round?.options.map(option => {
-                  const isSelected = selectedAnswer === option;
-                  const isCorrect = gameState === 'success' && option === round.correctAnswer;
-                  const isWrongSelected = selectedAnswer === option && feedback?.type === 'error';
-
-                  return (
-                    <motion.button
-                      key={option}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => handleAnswer(option)}
-                      disabled={gameState === 'success'}
-                      className={`min-h-[3rem] rounded-2xl px-3 py-2.25 text-center sm:min-h-[3.2rem] sm:px-4 ${
-                        isCorrect
-                          ? 'ui-button-success'
-                          : isWrongSelected
-                            ? 'ui-button-primary'
-                            : isSelected
-                              ? 'ui-button-primary'
-                              : 'ui-button-secondary'
-                      } ${gameState === 'success' ? 'cursor-default' : ''}`}
-                    >
-                      <span className="text-[0.88rem] font-black leading-tight sm:text-base">{option}</span>
-                    </motion.button>
-                  );
-                })}
-              </div>
-
-              {feedback && (
-                <div
-                  className={`flex w-full items-center justify-center gap-3 rounded-full border px-5 py-3 text-center text-[11px] font-bold uppercase tracking-wide shadow-2xl sm:text-xs ${
-                    feedback.type === 'success'
-                      ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-300'
-                      : 'border-rose-500/50 bg-rose-500/10 text-amber-300'
-                  }`}
-                >
-                  {feedback.type === 'success' ? <CheckCircle2 className="h-4 w-4 shrink-0" /> : <AlertCircle className="h-4 w-4 shrink-0" />}
-                  <span>{feedback.message}</span>
-                </div>
-              )}
-            </div>
           </section>
         )}
-        bottom={null}
+        bottom={(
+          <div className="mx-auto flex w-full max-w-[780px] flex-col gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.25rem)] sm:px-3 md:px-4">
+            <div className="answer-choice-surface grid grid-cols-2 gap-2">
+              {round?.options.map(option => {
+                const isSelected = selectedAnswer === option;
+                const isCorrect = gameState === 'success' && option === round.correctAnswer;
+                const isWrongSelected = selectedAnswer === option && feedback?.type === 'error';
+
+                return (
+                  <motion.button
+                    key={option}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => handleAnswer(option)}
+                    disabled={gameState === 'success'}
+                    className={`min-h-[3rem] rounded-2xl px-3 py-2.25 text-center sm:min-h-[3.2rem] sm:px-4 ${
+                      isCorrect
+                        ? 'ui-button-success'
+                        : isWrongSelected
+                          ? 'ui-button-primary'
+                          : isSelected
+                            ? 'ui-button-primary'
+                            : 'ui-button-secondary'
+                    } ${gameState === 'success' ? 'cursor-default' : ''}`}
+                  >
+                    <span className="text-[0.88rem] font-black leading-tight sm:text-base">{option}</span>
+                  </motion.button>
+                );
+              })}
+            </div>
+
+            {feedback && (
+              <div
+                className={`flex w-full items-center justify-center gap-3 rounded-full border px-5 py-3 text-center text-[11px] font-bold uppercase tracking-wide shadow-2xl sm:text-xs ${
+                  feedback.type === 'success'
+                    ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-300'
+                    : 'border-rose-500/50 bg-rose-500/10 text-amber-300'
+                }`}
+              >
+                {feedback.type === 'success' ? <CheckCircle2 className="h-4 w-4 shrink-0" /> : <AlertCircle className="h-4 w-4 shrink-0" />}
+                <span>{feedback.message}</span>
+              </div>
+            )}
+          </div>
+        )}
         overlay={(
           <>
             <AnimatePresence>

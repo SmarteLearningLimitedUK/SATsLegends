@@ -272,12 +272,12 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
                 alt=""
                 aria-hidden="true"
                 draggable={false}
-                className="absolute left-1/2 bottom-0 h-[86%] max-h-[15.5rem] -translate-x-1/2 object-contain drop-shadow-[0_18px_26px_rgba(2,6,23,0.58)]"
+                className="absolute left-1/2 bottom-0 h-[96%] max-h-[18rem] -translate-x-1/2 object-contain drop-shadow-[0_18px_26px_rgba(2,6,23,0.58)]"
               />
             </div>
           </div>
 
-          <div className="relative z-[1] mx-auto mb-1 grid w-full max-w-[520px] grid-cols-2 gap-2">
+          <div className="relative z-[1] mx-auto mb-1 grid w-full max-w-[520px] grid-cols-4 gap-2">
             {question.answers.map((answer, answerIndex) => {
               const isSelected = selectedOptionIndex === answerIndex;
               const isCorrectSelection = isSelected && feedback?.tone === 'success';
@@ -293,7 +293,7 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
                   type="button"
                   onClick={() => handleOptionTap(answerIndex, answer)}
                   disabled={inputLocked || didComplete || !isSessionActive}
-                  className={`min-h-[3.1rem] rounded-[0.95rem] px-2 py-2 text-[clamp(15px,2.5vh,22px)] font-black ${buttonClass} disabled:opacity-55`}
+                  className={`min-h-[3.1rem] rounded-[0.95rem] px-1.5 py-2 text-[clamp(14px,2.2vh,20px)] font-black ${buttonClass} disabled:opacity-55`}
                 >
                   {answer}
                 </button>

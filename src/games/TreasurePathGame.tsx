@@ -270,40 +270,87 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
             style={{
               ['--question-card-padding' as any]: '18px 20px',
             }}
-            bodyClassName="text-[clamp(0.95rem,2.9vw,1.3rem)] font-black leading-snug tracking-[0.01em] text-white md:text-[clamp(1.05rem,2.2vw,1.4rem)]"
+            bodyClassName="pt-1.5 text-[clamp(0.95rem,2.9vw,1.3rem)] font-black leading-snug tracking-[0.01em] text-white md:pt-2 md:text-[clamp(1.05rem,2.2vw,1.4rem)]"
           >
             {round.promptText}
           </GameQuestionCard>
         </div>
 
         <div className="relative flex min-h-0 flex-1 items-center justify-center">
-          <div className="relative aspect-square w-[min(98vw,70vh,42rem)] overflow-visible rounded-[1.5rem] border border-cyan-100/26 shadow-[0_18px_36px_rgba(2,6,23,0.4)] md:w-[min(92vw,68vh,44rem)]">
-            <img
-              src={coordinateQuestBoard}
-              alt=""
-              aria-hidden="true"
-              draggable={false}
-              className="pointer-events-none absolute inset-0 h-full w-full rounded-[1.5rem] object-cover"
+          <div className="relative aspect-square w-[min(98vw,70vh,42rem)] overflow-hidden rounded-[1.5rem] border border-cyan-100/26 shadow-[0_18px_36px_rgba(2,6,23,0.4)] md:w-[min(92vw,68vh,44rem)]">
+            <div
+              className="absolute inset-0"
               style={{
                 // Zoom the authored board so the chequerboard fills the play area.
-                // (Matches the prior inset tuning: ~56% usable grid area.)
+                // Apply the same transform to the grid overlay so it stays anchored to the art.
                 transform: 'scale(1.8)',
                 transformOrigin: 'center',
               }}
-            />
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute rounded-[0.45rem]"
-              style={{
-                ...CHECKERBOARD_INSET,
-                backgroundImage: [
-                  'linear-gradient(to right, rgba(191,219,254,0.38) 1px, transparent 1px)',
-                  'linear-gradient(to bottom, rgba(191,219,254,0.38) 1px, transparent 1px)',
-                ].join(', '),
-                backgroundSize: 'calc(100% / 7) calc(100% / 7)',
-                backgroundPosition: '0 0',
-              }}
-            />
+            >
+              <img
+                src={coordinateQuestBoard}
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+                className="pointer-events-none absolute inset-0 h-full w-full rounded-[1.5rem] object-cover"
+              />
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute rounded-[0.45rem]"
+                style={{
+                  ...CHECKERBOARD_INSET,
+                  backgroundImage: [
+                    'linear-gradient(to right, rgba(191,219,254,0.38) 1px, transparent 1px)',
+                    'linear-gradient(to bottom, rgba(191,219,254,0.38) 1px, transparent 1px)',
+                  ].join(', '),
+                  backgroundSize: 'calc(100% / 7) calc(100% / 7)',
+                  backgroundPosition: '0 0',
+                }}
+              />
+              <div
+                className="absolute z-10 grid grid-cols-7 grid-rows-7 overflow-hidden rounded-[0.45rem]"
+                style={CHECKERBOARD_INSET}
+              >
+                {cells.map((cell) => {
+                  const key = coordinateKey(cell.x, cell.y);
+                  const isStart = cell.x === round.start.x && cell.y === round.start.y;
+                  const isSelected = selectedTile === key;
+
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => handleTileTap(cell.x, cell.y)}
+                      disabled={!!feedback}
+                      className={`relative text-left transition-all focus:outline-none ${
+                        isSelected
+                          ? feedback === 'correct'
+                            ? 'bg-emerald-400/24 ring-2 ring-emerald-200/80'
+                            : 'bg-rose-500/22 ring-2 ring-rose-200/80'
+                          : 'bg-transparent hover:bg-white/10'
+                      }`}
+                    >
+                      {isStart && (
+                        <motion.div
+                          layout
+                          className="absolute left-1/2 top-1/2 flex h-[96%] w-[96%] -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full border border-white/28 bg-[linear-gradient(180deg,rgba(245,158,11,0.95),rgba(194,65,12,0.95))] shadow-[0_12px_24px_rgba(0,0,0,0.3)]"
+                        >
+                          {playerAvatar?.image ? (
+                            <img
+                              src={playerAvatar.image}
+                              alt=""
+                              draggable={false}
+                              className="h-full w-full object-cover"
+                            />
+                          ) : (
+                            <span className="text-[10px] font-black text-white">You</span>
+                          )}
+                        </motion.div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
             <div
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 rounded-[1.5rem] border border-cyan-100/14"
@@ -311,10 +358,9 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
             <div
               className="pointer-events-none absolute z-30 flex items-center justify-center"
               style={{
-                left: CHECKERBOARD_INSET.left,
-                right: CHECKERBOARD_INSET.right,
-                bottom: `calc(${CHECKERBOARD_INSET.bottom} - 0.2rem)`,
-                transform: 'translateY(145%)',
+                left: '0.75rem',
+                right: '0.75rem',
+                bottom: '0.55rem',
               }}
             >
               <div className="rounded-full border border-cyan-100/55 bg-slate-950/72 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-50 shadow-[0_8px_18px_rgba(2,6,23,0.45)] backdrop-blur-sm">
@@ -324,58 +370,14 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
             <div
               className="pointer-events-none absolute z-30 flex items-center justify-start"
               style={{
-                left: CHECKERBOARD_INSET.left,
-                top: CHECKERBOARD_INSET.top,
-                bottom: CHECKERBOARD_INSET.bottom,
-                transform: 'translateX(calc(-100% - 0.55rem))',
+                left: '0.55rem',
+                top: '0.75rem',
+                bottom: '0.75rem',
               }}
             >
               <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-90 rounded-full border border-emerald-100/55 bg-slate-950/72 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-emerald-50 shadow-[0_8px_18px_rgba(2,6,23,0.45)] backdrop-blur-sm">
                 Y Axis ↑
               </div>
-            </div>
-            <div
-              className="absolute z-10 grid grid-cols-7 grid-rows-7 overflow-hidden rounded-[0.45rem]"
-              style={CHECKERBOARD_INSET}
-            >
-              {cells.map((cell) => {
-                const key = coordinateKey(cell.x, cell.y);
-                const isStart = cell.x === round.start.x && cell.y === round.start.y;
-                const isSelected = selectedTile === key;
-
-                return (
-                  <button
-                    key={key}
-                    onClick={() => handleTileTap(cell.x, cell.y)}
-                    disabled={!!feedback}
-                    className={`relative text-left transition-all focus:outline-none ${
-                      isSelected
-                        ? feedback === 'correct'
-                          ? 'bg-emerald-400/24 ring-2 ring-emerald-200/80'
-                          : 'bg-rose-500/22 ring-2 ring-rose-200/80'
-                        : 'bg-transparent hover:bg-white/10'
-                    }`}
-                  >
-                    {isStart && (
-                      <motion.div
-                        layout
-                        className="absolute left-1/2 top-1/2 flex h-[96%] w-[96%] -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full border border-white/28 bg-[linear-gradient(180deg,rgba(245,158,11,0.95),rgba(194,65,12,0.95))] shadow-[0_12px_24px_rgba(0,0,0,0.3)]"
-                      >
-                        {playerAvatar?.image ? (
-                          <img
-                            src={playerAvatar.image}
-                            alt=""
-                            draggable={false}
-                            className="h-full w-full object-cover"
-                          />
-                        ) : (
-                          <span className="text-[10px] font-black text-white">You</span>
-                        )}
-                      </motion.div>
-                    )}
-                  </button>
-                );
-              })}
             </div>
 
             <AnimatePresence>

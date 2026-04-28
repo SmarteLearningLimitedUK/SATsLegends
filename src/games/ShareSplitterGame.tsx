@@ -352,16 +352,13 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const platePositions = useMemo(() => {
     const sidePadding = isCompactViewport ? 54 : 42;
     const usableWidth = Math.max(1, viewportRect.width - sidePadding * 2);
-    const y = Math.max(
-      isCompactViewport ? 158 : plateSizePx * 0.5,
-      (viewportRect.height * (isCompactViewport ? 0.17 : 0.28)) - 30,
-    ) + 20;
+    const y = (plateSizePx * (isCompactViewport ? 0.6 : 0.7)) + (isCompactViewport ? 10 : 14);
 
     return Array.from({ length: MAX_PLATE_COUNT }, (_, index) => ({
       x: sidePadding + (usableWidth * (index / Math.max(1, MAX_PLATE_COUNT - 1))),
       y,
     }));
-  }, [isCompactViewport, plateSizePx, viewportRect.height, viewportRect.width]);
+  }, [isCompactViewport, plateSizePx, viewportRect.width]);
   const promptText = isPractice
     ? `Quick! share the cake to avoid a riot!\nTarget ratio: ${challenge.ratios.join(':')}`
     : `Quick! share the cake to avoid a riot!\nThere are ${challenge.totalSlices} slices of brainpower cake.\nThe Monster Mind demands it is shared in a ratio of ${challenge.ratios.join(':')}.`;
@@ -561,7 +558,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Share Splitter"
-        body="The Monster Minds have started a greedy cake party.\nTap a plate to place slices in the ratios shown.\nKeep the parts in the correct proportion."
+        body="tap each plate to serve a slice of the cake"
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />

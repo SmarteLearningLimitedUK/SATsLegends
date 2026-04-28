@@ -1336,7 +1336,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           style={{ top: `${layout.submitY}%`, width: `${layout.submitWidth}%`, height: `${layout.submitHeight}%` }}
         >
           <span
-            className="pointer-events-none absolute inset-x-[16%] top-1/2 -translate-y-1/2 text-center text-[clamp(0.82rem,2.2vw,1.06rem)] font-black uppercase tracking-[0.08em] text-[#16233d]"
+            className="pointer-events-none absolute inset-0 flex items-center justify-center px-[16%] text-center text-[clamp(0.82rem,2.2vw,1.06rem)] font-black uppercase tracking-[0.08em] text-[#16233d] whitespace-nowrap"
           >
             Submit
           </span>

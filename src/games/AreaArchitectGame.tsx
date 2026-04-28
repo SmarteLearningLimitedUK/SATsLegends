@@ -24,7 +24,8 @@ interface AreaArchitectGameProps extends MiniGameShellContractProps {
 }
 
 type HalfTriangle = 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
-type Cell = { x: number; y: number; half?: HalfTriangle };
+type CellColor = 'red' | 'blue';
+type Cell = { x: number; y: number; half?: HalfTriangle; color?: CellColor };
 
 interface AreaQuestion {
   id: string;
@@ -32,6 +33,7 @@ interface AreaQuestion {
   prompt: string;
   gridSize: number;
   cells: Cell[];
+  targetColor: CellColor;
   correct: number;
   options: number[];
 }
@@ -51,9 +53,11 @@ const rectCells = (xStart: number, yStart: number, width: number, height: number
 
 const halfCell = (x: number, y: number, half: HalfTriangle): Cell => ({ x, y, half });
 
-const buildQuestion = (gridSize: number, cells: Cell[], prompt: string): AreaQuestion => {
-  const correct = cells.reduce((total, cell) => total + (cell.half ? 0.5 : 1), 0);
-  const step = Math.max(2, Math.round(correct * 0.2));
+const buildQuestion = (gridSize: number, cells: Cell[], prompt: string, targetColor: CellColor = 'red'): AreaQuestion => {
+  const correct = cells
+    .filter((cell) => (cell.color ?? 'red') === targetColor)
+    .reduce((total, cell) => total + (cell.half ? 0.5 : 1), 0);
+  const step = Math.max(1, Math.round(correct * 0.2));
   const options = shuffle([
     correct,
     Math.max(1, correct - step),
@@ -66,17 +70,18 @@ const buildQuestion = (gridSize: number, cells: Cell[], prompt: string): AreaQue
   }
 
   return {
-    id: `${gridSize}-${correct}-${cells.map((cell) => `${cell.x}-${cell.y}-${cell.half || 'full'}`).join('_')}`,
+    id: `${gridSize}-${targetColor}-${correct}-${cells.map((cell) => `${cell.x}-${cell.y}-${cell.half || 'full'}-${cell.color ?? 'red'}`).join('_')}`,
     kind: 'fluency',
     prompt,
     gridSize,
     cells,
+    targetColor,
     correct,
     options: shuffle(options),
   };
 };
 
-const QUESTION_BANK: AreaQuestion[] = [
+const BASE_QUESTION_BANK: AreaQuestion[] = [
   buildQuestion(6, rectCells(1, 1, 3, 2), 'Calculate the red area.'),
   buildQuestion(6, rectCells(1, 1, 4, 3), 'Calculate the area.'),
   buildQuestion(6, rectCells(2, 2, 2, 3), 'Calculate the red area.'),
@@ -124,12 +129,40 @@ const QUESTION_BANK: AreaQuestion[] = [
   ),
 ];
 
-const buildQuestionDeck = (previousLast: AreaQuestion | null) => (
-  reshuffleAvoidingRepeat(QUESTION_BANK, previousLast, (question) => question.id).map((question) => ({
+const scatterBlueCells = (cells: Cell[], seed: number) => {
+  const withIndex = cells.map((cell, index) => ({ cell, index }));
+  const sorted = withIndex.sort((a, b) => {
+    const aKey = ((a.cell.x * 31) + (a.cell.y * 17) + seed + (a.index * 13)) % 997;
+    const bKey = ((b.cell.x * 31) + (b.cell.y * 17) + seed + (b.index * 13)) % 997;
+    return aKey - bKey;
+  });
+  const blueCount = Math.max(2, Math.min(cells.length - 1, Math.round(cells.length * 0.38)));
+  const blueKeys = new Set(sorted.slice(0, blueCount).map(({ cell }) => `${cell.x}-${cell.y}`));
+  return cells.map((cell) => ({
+    ...cell,
+    color: (blueKeys.has(`${cell.x}-${cell.y}`) ? 'blue' : 'red') as CellColor,
+  }));
+};
+
+const buildQuestionDeck = (levelId: number, previousLast: AreaQuestion | null) => {
+  const higherLevel = levelId >= 4;
+  const mixedColourQuestions = higherLevel
+    ? BASE_QUESTION_BANK.slice(0, 6).map((base, index) => (
+      buildQuestion(
+        base.gridSize,
+        scatterBlueCells(base.cells, (levelId * 101) + index * 37),
+        'Calculate the blue area.',
+        'blue',
+      )
+    ))
+    : [];
+
+  const bank = higherLevel ? [...BASE_QUESTION_BANK, ...mixedColourQuestions] : BASE_QUESTION_BANK;
+  return reshuffleAvoidingRepeat(bank, previousLast, (question) => question.id).map((question) => ({
     ...question,
     options: shuffleOptionsWithCorrect(question.options, question.correct).options,
-  }))
-);
+  }));
+};
 
 const halfTriangleClipPath: Record<HalfTriangle, string> = {
   topLeft: 'polygon(0 0, 100% 0, 0 100%)',
@@ -162,7 +195,7 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
   const [locked, setLocked] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [feedbackTone, setFeedbackTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
-  const [questionOrder, setQuestionOrder] = useState<AreaQuestion[]>(() => buildQuestionDeck(null));
+  const [questionOrder, setQuestionOrder] = useState<AreaQuestion[]>(() => buildQuestionDeck(levelId, null));
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
   const question = useMemo(
@@ -173,11 +206,22 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
   const lastQuestion = questionOrder.length ? questionOrder[questionOrder.length - 1] : null;
 
   useEffect(() => {
+    setRoundIndex(0);
+    setAttempts(0);
+    setCorrectCount(0);
+    setSelected(null);
+    setLocked(false);
+    setFeedback('');
+    setFeedbackTone('neutral');
+    setQuestionOrder(buildQuestionDeck(levelId, null));
+  }, [levelId]);
+
+  useEffect(() => {
     if (!questionOrder.length) return;
     if (roundIndex > 0 && roundIndex % questionOrder.length === 0) {
-      setQuestionOrder(buildQuestionDeck(lastQuestion));
+      setQuestionOrder(buildQuestionDeck(levelId, lastQuestion));
     }
-  }, [lastQuestion, questionOrder.length, roundIndex]);
+  }, [lastQuestion, levelId, questionOrder.length, roundIndex]);
 
   useEffect(() => {
     setShowPracticeIntro(Boolean(isPractice));
@@ -190,7 +234,9 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
 
     if (value === question.correct) {
       setCorrectCount((prev) => prev + 1);
-      setFeedback('Great measuring! That area is correct.');
+      setFeedback(question.targetColor === 'blue'
+        ? 'Great measuring! That blue area is correct.'
+        : 'Great measuring! That area is correct.');
       setFeedbackTone('good');
       setLocked(true);
       confetti({
@@ -214,7 +260,9 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
       return;
     }
 
-    setFeedback('Not quite. Recount the square units.');
+    setFeedback(question.targetColor === 'blue'
+      ? 'Not quite. Recount the blue square units.'
+      : 'Not quite. Recount the square units.');
     setFeedbackTone('bad');
     setLocked(true);
     window.setTimeout(() => {
@@ -231,7 +279,10 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Area Architect"
-        body="The Monster Minds have scrambled the area grid.\nCalculate the red area carefully.\nHalf squares count as triangular halves."
+        body={levelId >= 4
+          ? "The Monster Minds have scrambled the area grid.\nCalculate the red area carefully.\nIn harder missions, blue blocks appear too.\nHalf squares count as triangular halves."
+          : "The Monster Minds have scrambled the area grid.\nCalculate the red area carefully.\nHalf squares count as triangular halves."
+        }
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
@@ -257,23 +308,33 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
               const key = `${x}-${y}`;
               const cell = cellMap.get(key);
               const filled = Boolean(cell);
+              const color = (cell?.color ?? 'red') as CellColor;
+              const isBlue = color === 'blue';
               return (
                 <div
                   key={key}
                   className={`relative aspect-square overflow-hidden rounded-[0.3rem] border ${
-                    filled ? 'border-rose-100/85 bg-rose-950/20' : 'border-white/12 bg-slate-900/60'
+                    filled
+                      ? isBlue
+                        ? 'border-sky-100/85 bg-sky-950/20'
+                        : 'border-rose-100/85 bg-rose-950/20'
+                      : 'border-white/12 bg-slate-900/60'
                   }`}
                 >
                   {cell?.half ? (
                     <span
                       aria-hidden="true"
-                      className="absolute inset-0 bg-red-500/78 shadow-[inset_0_0_10px_rgba(255,255,255,0.16)]"
+                      className={`absolute inset-0 shadow-[inset_0_0_10px_rgba(255,255,255,0.16)] ${
+                        isBlue ? 'bg-sky-400/78' : 'bg-red-500/78'
+                      }`}
                       style={{ clipPath: halfTriangleClipPath[cell.half] }}
                     />
                   ) : filled ? (
                     <span
                       aria-hidden="true"
-                      className="absolute inset-0 bg-red-500/72 shadow-[inset_0_0_10px_rgba(255,255,255,0.16)]"
+                      className={`absolute inset-0 shadow-[inset_0_0_10px_rgba(255,255,255,0.16)] ${
+                        isBlue ? 'bg-sky-400/72' : 'bg-red-500/72'
+                      }`}
                     />
                   ) : null}
                 </div>

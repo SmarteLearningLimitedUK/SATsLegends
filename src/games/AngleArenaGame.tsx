@@ -752,10 +752,10 @@ const solveSideLaunchSpeed = (angleDeg: number, targetX: number, targetY: number
 const getSideTargetWorld = (viewWidth: number, viewHeight: number) => ({
   x: clamp(viewWidth * 3.65, 1280, 2200),
   // Lift the boss/target platform so it stays fully visible on tall portrait crops.
-  y: -clamp(viewHeight * 0.28, 120, 240),
+  y: -clamp(viewHeight * 0.34, 160, 340),
 });
 
-const getEnemySize = (viewWidth: number, viewHeight: number) => Math.min(viewWidth, viewHeight) * 0.26;
+const getEnemySize = (_viewWidth: number, viewHeight: number) => clamp(viewHeight * 0.82, 320, 720);
 
 const getEnemyPortraitOffsetY = (viewWidth: number, viewHeight: number) => -getEnemySize(viewWidth, viewHeight) * 0.18;
 

@@ -466,14 +466,16 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             </div>
           </div>
         </section>
-
-          <section className="z-10 flex w-full flex-col gap-2 bg-[linear-gradient(180deg,rgba(8,18,40,0.16),rgba(5,12,28,0.24))] px-2 pb-0 pt-1 sm:px-3 sm:pb-1 sm:pt-1 md:gap-3 md:px-5 md:pb-2 md:pt-2 max-[480px]:-mt-2 max-[480px]:gap-1 max-[480px]:px-1.5 max-[480px]:pb-0 max-[480px]:pt-0.5">
+        </main>
+      )}
+      bottom={(
+        <section className="z-10 flex w-full flex-col gap-2 bg-[linear-gradient(180deg,rgba(8,18,40,0.16),rgba(5,12,28,0.24))] px-2 pb-[calc(env(safe-area-inset-bottom)+0.25rem)] pt-1 sm:px-3 sm:pb-[calc(env(safe-area-inset-bottom)+0.35rem)] sm:pt-1 md:gap-3 md:px-5 md:pb-[calc(env(safe-area-inset-bottom)+0.5rem)] md:pt-2 max-[480px]:gap-1 max-[480px]:px-1.5 max-[480px]:pt-0.5">
           <div className="mb-1 flex items-center gap-2 text-amber-500">
             <Users className="h-5 w-5" />
             <h2 className="text-xs font-black uppercase tracking-widest">Suspect Lineup</h2>
           </div>
 
-          <div className="relative">
+          <div className="relative overflow-visible">
             <div className={`grid grid-cols-4 items-start gap-1 max-[480px]:gap-0.5 ${selectedSuspect ? 'pointer-events-none opacity-0' : ''}`}>
               {suspects.map((suspect) => (
                 <motion.button
@@ -498,11 +500,11 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                         src={suspect.portrait}
                         alt=""
                         draggable={false}
-                        className="suspect-portrait block h-full w-full max-h-full max-w-full translate-y-[20px] object-contain object-center drop-shadow-[0_10px_16px_rgba(2,6,23,0.45)]"
+                        className="suspect-portrait block h-full w-full max-h-full max-w-full object-contain object-bottom drop-shadow-[0_10px_16px_rgba(2,6,23,0.45)]"
                         data-suspect-portrait="true"
                       />
                     ) : (
-                      <div className={`flex h-full w-full translate-y-[20px] items-center justify-center ${suspect.color}/20`}>
+                      <div className={`flex h-full w-full items-center justify-center ${suspect.color}/20`}>
                         <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-white/10 text-lg font-black text-white">
                           {suspect.name.split(' ').map((part) => part[0]).join('')}
                         </div>
@@ -521,7 +523,6 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                 </motion.button>
               ))}
             </div>
-
           </div>
 
           <div className="mt-0.5 flex flex-col gap-1.5 pt-0">
@@ -540,8 +541,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             </AnimatePresence>
           </div>
         </section>
-        </main>
-      )} 
+      )}
       overlay={(
         <>
           <AnimatePresence>

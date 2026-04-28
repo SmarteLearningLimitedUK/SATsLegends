@@ -260,65 +260,67 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
           >
             Rebuild the shipment so it totals {toKgLabel(round.targetGrams)}.
           </GameQuestionCard>
-
-          <motion.div
-            animate={successPulse ? { scale: [1, 1.02, 1] } : { scale: 1 }}
-            transition={{ duration: 0.36, ease: 'easeOut' }}
-            className="relative flex w-full max-w-[24rem] min-h-[11.2rem] flex-1 items-end justify-center pb-0 md:max-w-[26rem]"
-          >
-            <div
-              className={`relative flex h-full min-h-[11rem] w-full items-center justify-center overflow-visible rounded-[1.35rem] ${
-                successPulse ? 'shadow-[0_0_36px_rgba(52,211,153,0.28)]' : ''
-              }`}
-            >
-              <div className="pointer-events-none absolute left-1/2 bottom-0 z-10 flex w-[min(76%,16.5rem)] -translate-x-1/2 items-end justify-center md:w-[min(74%,18rem)]">
-                <img
-                  src={scaleImageSrc}
-                  alt=""
-                  aria-hidden="true"
-                  draggable={false}
-                  className="pointer-events-none relative z-10 h-auto w-full object-contain object-center drop-shadow-[0_12px_16px_rgba(2,6,23,0.28)]"
-                />
-                <div className="pointer-events-none absolute left-1/2 bottom-[28%] z-30 -translate-x-1/2">
-                  <div className="flex min-w-[10.2rem] flex-col items-center rounded-[0.95rem] border border-cyan-200/62 bg-[#061426]/94 px-3.5 py-1.5 text-center shadow-[0_10px_18px_rgba(2,6,23,0.58)]">
-                    <div className="text-[8px] font-black uppercase tracking-[0.25em] text-cyan-100/82">Digital Weight</div>
-                    <div className="mt-0.5 font-mono text-[1.28rem] font-black tracking-[0.1em] text-emerald-200">
-                      {toGramLabel(currentGrams)}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div
-                ref={dropRef}
-                className="absolute left-1/2 bottom-[22%] z-40 flex min-h-[4.35rem] w-[min(66%,15.5rem)] -translate-x-1/2 items-end justify-center gap-1 rounded-[1.1rem] px-1.5 py-1"
-                aria-label="Weights on scale"
-              >
-                {placedTokens.length > 0 ? (
-                  placedTokens.map((token) => (
-                    <button
-                      key={token.id}
-                      onClick={() => removePlacedToken(token.id)}
-                      className="relative z-10 flex min-w-[3.7rem] flex-col items-center rounded-xl bg-[#0b2d68]/88 px-1.5 py-1.5 text-white shadow-[0_10px_18px_rgba(2,6,23,0.36)] ring-1 ring-white/30"
-                    >
-                      <img
-                        src={gemImageMap.get(token.gem) ?? token.gem}
-                        alt=""
-                        className="h-9 w-9 object-contain"
-                        draggable={false}
-                      />
-                      <span className="max-w-[4.4rem] text-center text-[11px] font-black leading-tight tracking-[0.01em]">
-                        {getMeasurementDisplay(token.grams).primary}
-                      </span>
-                    </button>
-                  ))
-                ) : null}
-              </div>
-            </div>
-          </motion.div>
         </div>
 
         <div className="w-full shrink-0 px-4 pb-[calc(env(safe-area-inset-bottom)+0.9rem)] pt-0">
           <div className="mx-auto w-full max-w-[32rem] rounded-[1.6rem] border border-white/14 bg-slate-950/45 p-2 shadow-[0_18px_44px_rgba(2,6,23,0.55)] backdrop-blur-sm">
+            <motion.div
+              animate={successPulse ? { scale: [1, 1.01, 1] } : { scale: 1 }}
+              transition={{ duration: 0.32, ease: 'easeOut' }}
+              className="relative mx-auto w-full max-w-[26rem] overflow-visible px-1 pt-1"
+            >
+              <div
+                className={`relative w-full overflow-visible rounded-[1.35rem] ${
+                  successPulse ? 'shadow-[0_0_36px_rgba(52,211,153,0.22)]' : ''
+                }`}
+              >
+                <div className="pointer-events-none relative mx-auto flex w-[min(84%,18rem)] items-end justify-center sm:w-[min(82%,19rem)]">
+                  <img
+                    src={scaleImageSrc}
+                    alt=""
+                    aria-hidden="true"
+                    draggable={false}
+                    className="pointer-events-none relative z-10 h-auto w-full object-contain object-center drop-shadow-[0_12px_16px_rgba(2,6,23,0.28)]"
+                  />
+                  <div className="pointer-events-none absolute left-1/2 top-[12%] z-30 -translate-x-1/2">
+                    <div className="flex min-w-[10.2rem] flex-col items-center rounded-[0.95rem] border border-cyan-200/62 bg-[#061426]/94 px-3.5 py-1.5 text-center shadow-[0_10px_18px_rgba(2,6,23,0.58)]">
+                      <div className="text-[8px] font-black uppercase tracking-[0.25em] text-cyan-100/82">Digital Weight</div>
+                      <div className="mt-0.5 font-mono text-[1.28rem] font-black tracking-[0.1em] text-emerald-200">
+                        {toGramLabel(currentGrams)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  ref={dropRef}
+                  className="absolute left-1/2 top-[26%] z-40 flex max-h-[6.1rem] w-[min(80%,20rem)] -translate-x-1/2 flex-wrap items-end justify-center gap-1.5 overflow-y-auto rounded-[1.1rem] px-2 py-1.5"
+                  aria-label="Weights on scale"
+                >
+                  {placedTokens.length > 0 ? (
+                    placedTokens.map((token) => (
+                      <button
+                        key={token.id}
+                        onClick={() => removePlacedToken(token.id)}
+                        className="relative z-10 flex w-[3.35rem] flex-col items-center justify-center rounded-xl bg-[#0b2d68]/88 px-1 py-1 text-white shadow-[0_10px_18px_rgba(2,6,23,0.36)] ring-1 ring-white/30"
+                        title={getMeasurementDisplay(token.grams).primary}
+                      >
+                        <img
+                          src={gemImageMap.get(token.gem) ?? token.gem}
+                          alt=""
+                          className="h-7 w-7 object-contain"
+                          draggable={false}
+                        />
+                        <span className="mt-0.5 max-w-[3.35rem] text-center text-[9px] font-black leading-none tracking-[0.01em]">
+                          {getMeasurementDisplay(token.grams).primary}
+                        </span>
+                      </button>
+                    ))
+                  ) : null}
+                </div>
+              </div>
+            </motion.div>
+
             <div className="grid grid-cols-4 gap-2 px-1 pb-1 pt-1">
               {allTokens.map((token) => {
                 const isPlaced = placedIds.includes(token.id);
@@ -331,6 +333,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
                     whileTap={{ scale: 1.06 }}
                     onClick={() => placeToken(token.id)}
                     onPointerUp={() => placeToken(token.id)}
+                    aria-label="Weight option"
                     onDragEnd={(_, info) => {
                       if (isInsideDrop(info.point.x, info.point.y)) {
                         placeToken(token.id);
