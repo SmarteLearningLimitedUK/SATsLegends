@@ -5,6 +5,7 @@ import AssetIcon, { AssetIconName } from '../AssetIcon';
 import MissionCard from '../mission/MissionCard';
 import VisualCuePanel from '../mission/VisualCuePanel';
 import { emitUiAudio } from '../../audio/uiAudioEvents';
+import CurriculumCategoryIcon, { type CurriculumCategory } from '../CurriculumCategoryIcon';
 
 type PracticeIntroPopupProps = {
   open: boolean;
@@ -60,6 +61,63 @@ type SkillMeta = {
   label: string;
   icon: AssetIconName;
   tone?: 'cyan' | 'amber' | 'emerald' | 'rose';
+};
+
+const CATEGORY_BY_GAME_TITLE: Record<string, CurriculumCategory> = {
+  'Angle Arena': 'Geometry',
+  'Area Architect': 'Measure',
+  'Calculation Clash': 'Number',
+  'Calculation Cup': 'Number',
+  'Change Counter': 'Measure',
+  'Crystal Match': 'Fractions',
+  'Coordinates Quest': 'Geometry',
+  'Coordinate Quest': 'Geometry',
+  'Arithmetic Showdown': 'SATs Practice',
+  'Data Dungeon': 'Statistics',
+  'Order Ops Arena': 'Algebra',
+  'Equation Grove': 'Algebra',
+  'Formula Forge': 'Algebra',
+  'Fraction Match': 'Fractions',
+  'Graph Grabber': 'Statistics',
+  'Logic Sort': 'Reasoning',
+  'Matrix Match': 'Reasoning',
+  'Mean Machine': 'Statistics',
+  'Conversion Canyon': 'Measure',
+  'Measurement Forge': 'Measure',
+  'Reasoning Trial': 'Reasoning',
+  'Monster Market': 'Measure',
+  'Observatory Overload': 'Statistics',
+  'Percent Power': 'Fractions',
+  'Place Value Peaks': 'Number',
+  'Decimal Sniper': 'Number',
+  'Polygon Palace': 'Geometry',
+  'Potion Panic': 'Ratio',
+  'Prime Pop': 'Number',
+  Quiz: 'SATs Practice',
+  'Ratio Racer': 'Ratio',
+  'Ratio Rapids': 'Ratio',
+  'Reasoning Quest': 'Reasoning',
+  'Remainder Run': 'Number',
+  'Rule Runner': 'Algebra',
+  'Scale Builder': 'Ratio',
+  'Scale Master': 'Measure',
+  'Take-Out Rush': 'Fractions',
+  'Chrono Dash: Time Trial': 'Measure',
+  'Chrono Dash': 'Measure',
+  'Tower of Factors': 'Number',
+  'Factor Forge': 'Number',
+  'Rotation Station': 'Geometry',
+  'Lava Path': 'Measure',
+};
+
+const resolveCategory = (titleValue: string): CurriculumCategory | null => {
+  const cleaned = titleValue.trim();
+  if (!cleaned) return null;
+  if (CATEGORY_BY_GAME_TITLE[cleaned]) return CATEGORY_BY_GAME_TITLE[cleaned];
+
+  const lowered = cleaned.toLowerCase();
+  const found = Object.entries(CATEGORY_BY_GAME_TITLE).find(([key]) => key.toLowerCase() === lowered);
+  return found ? found[1] : null;
 };
 
 const detectSkill = (titleValue: string, hintText: string): SkillMeta | null => {
@@ -130,6 +188,7 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
   ];
 
   const skill = detectSkill(resolvedTitle, `${resolvedSummary ?? ''} ${(briefing?.bullets ?? []).join(' ')}`);
+  const category = resolveCategory(resolvedTitle);
 
   const overlay = (
     <div
@@ -150,7 +209,11 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({
               <div className="pointer-events-none absolute -inset-6 rounded-full bg-cyan-200/15 blur-[22px]" />
               <div className="pointer-events-none absolute -inset-10 rounded-full bg-amber-200/10 blur-[28px]" />
               <div className="relative flex h-[104px] w-[104px] items-center justify-center rounded-[1.25rem] border border-white/10 bg-white/5 shadow-[0_18px_40px_rgba(2,6,23,0.42)] md:h-[118px] md:w-[118px] sat-calm-breathe">
-                <AssetIcon name={skill?.icon ?? 'gamepad'} className="h-14 w-14 opacity-95 md:h-16 md:w-16" alt="" />
+                {category ? (
+                  <CurriculumCategoryIcon category={category} size={84} className="opacity-95 md:scale-[1.03]" />
+                ) : (
+                  <AssetIcon name={skill?.icon ?? 'gamepad'} className="h-14 w-14 opacity-95 md:h-16 md:w-16" alt="" />
+                )}
               </div>
             </div>
           </VisualCuePanel>

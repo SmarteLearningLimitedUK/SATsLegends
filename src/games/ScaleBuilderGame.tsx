@@ -9,6 +9,7 @@ import { GameQuestionCard, IconButton, PrimaryButton } from '../components/game-
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
+import { isVisualTestMode } from '../utils/visualTestMode';
 
 interface ScaleBuilderGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -305,6 +306,19 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
     setHeightScale(1.0);
     setFeedback(null);
     setGameState('playing');
+
+    // Visual-test helper: allow screenshot tooling to jump to a specific internal stage
+    // without playing through the interaction. This does not affect normal gameplay.
+    if (isVisualTestMode() && typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const stageRaw = params.get('sbStage') ?? params.get('stage');
+      const stage = stageRaw ? Number(stageRaw) : NaN;
+      if (Number.isFinite(stage) && stage >= 1) {
+        const idx = Math.min(LEVELS.length - 1, Math.max(0, Math.floor(stage) - 1));
+        setCurrentLevelIdx(idx);
+        setShowPracticeIntro(false);
+      }
+    }
   }, []);
 
   useEffect(() => {
