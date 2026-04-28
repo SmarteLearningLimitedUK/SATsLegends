@@ -601,19 +601,17 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
             ))}
           </div>
 
-          <div className={`shrink-0 rounded-xl border px-3 py-2 text-center text-[12px] font-bold leading-tight sm:text-sm ${
-            feedback?.type === 'correct'
-              ? 'border-emerald-300/45 bg-emerald-400/16 text-emerald-100'
-              : feedback?.type === 'incorrect'
-              ? 'border-rose-300/45 bg-rose-400/16 text-amber-100'
-              : 'border-white/18 bg-slate-950/44 text-white/72'
-          }`}>
-            {feedback
-              ? feedback.message
-              : traceComplete
-                ? 'Boundary traced in yellow. Choose the correct perimeter.'
-                : `${isTracing ? 'Keep tracing' : 'Trace the object'} to turn the boundary yellow (${tracedEdgeIds.length}/${question.shape.edges.length}), then choose the perimeter.`}
-          </div>
+          {feedback && (
+            <div
+              className={`shrink-0 rounded-xl border px-3 py-2 text-center text-[12px] font-bold leading-tight sm:text-sm ${
+                feedback.type === 'correct'
+                  ? 'border-emerald-300/45 bg-emerald-400/16 text-emerald-100'
+                  : 'border-rose-300/45 bg-rose-400/16 text-amber-100'
+              }`}
+            >
+              {feedback.message}
+            </div>
+          )}
         </main>
       </div>
     </div>

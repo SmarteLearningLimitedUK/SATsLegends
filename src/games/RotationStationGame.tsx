@@ -96,7 +96,11 @@ const createId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
 
 const normalizeOrientation = (orientation: number) => ((orientation % 4) + 4) % 4;
 
-const orientationToDegrees = (orientation: number) => normalizeOrientation(orientation) * 90;
+// Important: keep rotation motion consistent with the button direction.
+// We allow the orientation counter to accumulate beyond 0-3 so the learner can
+// spin the shape continuously through 360 degrees (and beyond) in 90-degree steps.
+// Correctness checks still normalize to a 0-3 orientation bucket.
+const orientationToDegrees = (orientation: number) => orientation * 90;
 
 const orientationLabel = (orientation: number) => {
   const normalized = normalizeOrientation(orientation);
@@ -108,8 +112,11 @@ const orientationLabel = (orientation: number) => {
 
 const applyQuarterTurns = (orientation: number, direction: TurnDirection, turns: number) => {
   const delta = direction === 'cw' ? turns : -turns;
-  return normalizeOrientation(orientation + delta);
+  return orientation + delta;
 };
+
+const applyQuarterTurnsNormalized = (orientation: number, direction: TurnDirection, turns: number) =>
+  normalizeOrientation(applyQuarterTurns(orientation, direction, turns));
 
 const roundSecondsForLevel = (level: number) => {
   if (level <= 3) return 90;
@@ -180,7 +187,7 @@ const createQuestion = (baseLevel: number, solvedCount: number, timeLeft: number
   const direction: TurnDirection = Math.random() < 0.5 ? 'cw' : 'acw';
   const allowedTurns = stage <= 3 ? [1] : stage <= 7 ? [1, 2, 3] : [1, 2, 3];
   const quarterTurns = speedRound ? 1 : allowedTurns[randomInt(0, allowedTurns.length - 1)];
-  const targetOrientation = applyQuarterTurns(startOrientation, direction, quarterTurns);
+  const targetOrientation = applyQuarterTurnsNormalized(startOrientation, direction, quarterTurns);
   const turnText = buildTurnLabel(quarterTurns, direction);
 
   if (mode === 'rotate_match') {

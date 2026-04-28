@@ -615,7 +615,9 @@ const drawEnemyPlatform = (ctx: CanvasRenderingContext2D, platform: EnemyPlatfor
     return;
   }
 
-  drawWoodTower(ctx, sizePx);
+  // Ensure the Monster Mind podium reads as a proper "boss stand":
+  // at least ~2x the perceived height of the launcher tower the cannon sits on.
+  drawWoodTower(ctx, sizePx * 2.2);
 };
 
 const drawWoodTower = (ctx: CanvasRenderingContext2D, sizePx: number) => {

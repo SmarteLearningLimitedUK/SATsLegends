@@ -34,10 +34,12 @@ interface TreasureRound {
 
 const GRID_SIZE = 7;
 const CHECKERBOARD_INSET = {
-  left: '22.4%',
-  top: '18.8%',
-  right: '18.8%',
-  bottom: '22.8%',
+  // The board art has a decorative frame around the chequerboard. We crop/scale the art
+  // so the chequerboard fills the full play area, then the grid can be inset-0.
+  left: '0%',
+  top: '0%',
+  right: '0%',
+  bottom: '0%',
 };
 const randomInt = (max: number) => Math.floor(Math.random() * max) + 1;
 
@@ -263,25 +265,31 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
         <div className="relative z-10 mb-2">
           <GameQuestionCard
             title={gameTitle || 'Coordinates Quest'}
-            subtitle={round.promptText}
-            className="min-h-[8.75rem]"
+            subtitle={undefined}
+            className="min-h-[7.75rem]"
             style={{
               ['--question-card-padding' as any]: '18px 20px',
             }}
-            bodyClassName="mt-2 text-[1.35rem] font-black leading-tight text-white md:text-[1.8rem]"
+            bodyClassName="text-[clamp(0.95rem,2.9vw,1.3rem)] font-black leading-snug tracking-[0.01em] text-white md:text-[clamp(1.05rem,2.2vw,1.4rem)]"
           >
-            {round.promptTitle}
+            {round.promptText}
           </GameQuestionCard>
         </div>
 
         <div className="relative flex min-h-0 flex-1 items-center justify-center">
-          <div className="relative aspect-square w-[min(96vw,62vh,37rem)] overflow-visible rounded-[1.5rem] border border-cyan-100/26 shadow-[0_18px_36px_rgba(2,6,23,0.4)]">
+          <div className="relative aspect-square w-[min(98vw,70vh,42rem)] overflow-visible rounded-[1.5rem] border border-cyan-100/26 shadow-[0_18px_36px_rgba(2,6,23,0.4)] md:w-[min(92vw,68vh,44rem)]">
             <img
               src={coordinateQuestBoard}
               alt=""
               aria-hidden="true"
               draggable={false}
-              className="pointer-events-none absolute inset-0 h-full w-full rounded-[1.5rem] object-contain"
+              className="pointer-events-none absolute inset-0 h-full w-full rounded-[1.5rem] object-cover"
+              style={{
+                // Zoom the authored board so the chequerboard fills the play area.
+                // (Matches the prior inset tuning: ~56% usable grid area.)
+                transform: 'scale(1.8)',
+                transformOrigin: 'center',
+              }}
             />
             <div
               aria-hidden="true"
@@ -340,18 +348,18 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                     key={key}
                     onClick={() => handleTileTap(cell.x, cell.y)}
                     disabled={!!feedback}
-                    className={`relative border text-left transition-all ${
+                    className={`relative text-left transition-all focus:outline-none ${
                       isSelected
                         ? feedback === 'correct'
-                          ? 'border-emerald-300 bg-emerald-400/30'
-                          : 'border-rose-300 bg-rose-500/26'
-                        : 'border-cyan-100/12 bg-transparent hover:bg-white/10'
+                          ? 'bg-emerald-400/24 ring-2 ring-emerald-200/80'
+                          : 'bg-rose-500/22 ring-2 ring-rose-200/80'
+                        : 'bg-transparent hover:bg-white/10'
                     }`}
                   >
                     {isStart && (
                       <motion.div
                         layout
-                        className="absolute left-1/2 top-1/2 flex h-[88%] w-[88%] -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full border border-white/28 bg-[linear-gradient(180deg,rgba(245,158,11,0.95),rgba(194,65,12,0.95))] shadow-[0_12px_24px_rgba(0,0,0,0.3)]"
+                        className="absolute left-1/2 top-1/2 flex h-[96%] w-[96%] -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full border border-white/28 bg-[linear-gradient(180deg,rgba(245,158,11,0.95),rgba(194,65,12,0.95))] shadow-[0_12px_24px_rgba(0,0,0,0.3)]"
                       >
                         {playerAvatar?.image ? (
                           <img

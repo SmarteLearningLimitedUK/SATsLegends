@@ -44,7 +44,7 @@ const MissionCard: React.FC<MissionCardProps> = ({
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 10, scale: 0.985 }}
       transition={{ type: 'spring', stiffness: 240, damping: 22 }}
-      className={cn('w-full', className)}
+      className={cn('w-full flex justify-center', className)}
     >
       <FramedPanel
         variant="surface"

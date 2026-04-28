@@ -424,14 +424,16 @@ const WorldMap: React.FC<WorldMapProps> = ({
   );
 
   return (
-    <div className="relative min-h-full w-full overflow-visible pb-[calc(env(safe-area-inset-bottom)+5.25rem)]">
+    <div
+      className="world-map-scroll relative h-full min-h-0 w-full overflow-y-auto overflow-x-hidden pb-[calc(env(safe-area-inset-bottom)+5.25rem)]"
+      style={{ WebkitOverflowScrolling: 'touch' }}
+    >
       <div
-        className="relative w-full overflow-hidden"
+        className="relative w-full max-w-none overflow-hidden"
         style={{
           aspectRatio: `${MAP_WIDTH_PX} / ${MAP_HEIGHT_PX}`,
-          // Fill the available width on mobile/tablet and allow vertical scroll when the map is taller than the viewport.
-          // (The App shell already enables overflow-y scrolling on the world map screen.)
-          maxWidth: `min(${MAP_WIDTH_PX}px, 100vw)`,
+          // World map should be full-bleed and vertically scrollable (iPhone/iPad Safari).
+          maxWidth: '100vw',
         }}
       >
         <img

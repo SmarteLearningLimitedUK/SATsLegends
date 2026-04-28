@@ -350,7 +350,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
   };
 
   return (
-    <GameScreenShell className="overflow-hidden" backgroundImage={changeCounterBackground} backgroundOpacity={1}>
+    <GameScreenShell className="overflow-hidden" overlayDisabled backgroundOpacity={1}>
 
       <PracticeIntroPopup
         open={showPracticeIntro}
@@ -360,9 +360,15 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
         onAction={() => setShowPracticeIntro(false)}
       />
 
-      <div className={`relative z-10 flex h-full min-h-0 w-full flex-1 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+4.6rem)] md:pt-[calc(env(safe-area-inset-top)+4.9rem)]' : 'pt-[calc(env(safe-area-inset-top)+2.4rem)]'}`}>
+      <div
+        className={`relative z-10 flex h-full min-h-0 w-full flex-1 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+4.6rem)] md:pt-[calc(env(safe-area-inset-top)+4.9rem)]' : 'pt-[calc(env(safe-area-inset-top)+2.4rem)]'}`}
+        style={{
+          // Remove the blue gameplay backdrop for Change Counter specifically.
+          background: 'radial-gradient(circle at 50% 10%, rgba(30,41,59,0.72) 0%, rgba(2,6,23,0.88) 46%, rgba(2,6,23,0.96) 100%)',
+        }}
+      >
         <PuzzleStage className="flex h-full min-h-0 flex-1 flex-col gap-2 md:gap-3">
-          <div className="mx-auto w-full max-w-[44rem] px-1">
+          <div className="mx-auto w-full max-w-[44rem] px-1 shrink-0">
             <GameQuestionCard
               title="Change Counter"
               className="w-full"
@@ -386,7 +392,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
             </GameQuestionCard>
           </div>
 
-          <div className="mx-auto grid w-full max-w-[38rem] grid-cols-3 gap-1.5 md:max-w-[44rem] md:grid-cols-5 md:gap-2.5">
+          <div className="mx-auto grid w-full max-w-[38rem] grid-cols-3 gap-1.5 md:max-w-[44rem] md:grid-cols-5 md:gap-2.5 flex-1 min-h-0 content-start">
             {questionGallery.map((entry) => (
               <div
                 key={entry.id}
@@ -412,7 +418,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
             ))}
           </div>
 
-          <div className="flex min-h-0 flex-col gap-2 md:gap-3">
+          <div className="mt-auto flex min-h-0 flex-col gap-2 md:gap-3 shrink-0">
             <div className="answer-choice-surface mx-auto grid w-full max-w-[32rem] grid-cols-2 gap-1.5 md:gap-2">
               {question.options.map((option) => (
                 <motion.button

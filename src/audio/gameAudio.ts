@@ -6,7 +6,6 @@ import changeCounterCorrectSrc from '../assets/sounds/change counter correct.mp3
 import correctShareSplitterSrc from '../assets/sounds/correct share splitter.mp3';
 import monsterGrowl12Src from '../assets/sounds/floraphonic-scary-monster-growl-roar-12-202958.mp3';
 import monsterGrowl13Src from '../assets/sounds/floraphonic-scary-monster-growl-roar-13-202959.mp3';
-import monsterGrowl5Src from '../assets/sounds/floraphonic-scary-monster-growl-roar-5-199378.mp3';
 import hudButtonPressSrc from '../assets/button click.ogg';
 import incorrectAnswerShareSplitterSrc from '../assets/sounds/incorrect answer share splitter.mp3';
 import incorrectAnswerSrc from '../assets/sounds/incorrect answer.mp3';
@@ -38,7 +37,8 @@ type ToneStep = {
 let audioContext: AudioContext | null = null;
 const audioElementCache = new Map<string, HTMLAudioElement>();
 
-const MONSTER_GROWLS = [monsterGrowl12Src, monsterGrowl13Src, monsterGrowl5Src] as const;
+// Do not include long growls that read as looping/overbearing in gameplay.
+const MONSTER_GROWLS = [monsterGrowl12Src, monsterGrowl13Src] as const;
 const ENEMY_BATTLE_GAMES = new Set([
   'place_value_panic',
   'number_line_ninja',

@@ -30,6 +30,7 @@ type LoopHandle = {
   id: SoundId;
   element: HTMLAudioElement;
   kind: SoundKind;
+  src: string;
 };
 
 const readMuted = () => (
@@ -50,6 +51,15 @@ class SatAudioManager {
       return false;
     }
   })();
+
+  private normalizeSrc(src: string) {
+    try {
+      if (typeof window === 'undefined') return src;
+      return new URL(src, window.location.href).toString();
+    } catch {
+      return src;
+    }
+  }
 
   setMuted(next: boolean) {
     this.muted = next;
@@ -123,6 +133,8 @@ class SatAudioManager {
     if (this.muted || readMuted()) return false;
     if (!isPageAudioAllowed()) return false;
 
+    const normalizedSrc = this.normalizeSrc(src);
+
     const now = Date.now();
     const cooldownMs = typeof opts.cooldownMs === 'number'
       ? opts.cooldownMs
@@ -137,7 +149,7 @@ class SatAudioManager {
     // Loops: ensure single instance per id.
     if (opts.loop) {
       const existing = this.activeLoops.get(id);
-      if (existing && existing.element.src === src) {
+      if (existing && existing.src === normalizedSrc) {
         // Ensure it's playing if focus returns.
         if (!existing.element.muted) void existing.element.play().catch(() => {});
         return true;
@@ -145,14 +157,14 @@ class SatAudioManager {
 
       if (existing) this.stopSound(id);
 
-      const audio = new Audio(src);
+      const audio = new Audio(normalizedSrc);
       audio.preload = 'auto';
       audio.loop = true;
       audio.muted = this.muted;
       audio.volume = typeof opts.volume === 'number' ? opts.volume : 0.26;
 
-      this.activeLoops.set(id, { id, element: audio, kind: opts.kind ?? 'music' });
-      this.log('play', id, { looped: true, src, ...opts });
+      this.activeLoops.set(id, { id, element: audio, kind: opts.kind ?? 'music', src: normalizedSrc });
+      this.log('play', id, { looped: true, src: normalizedSrc, ...opts });
       try {
         void audio.play().catch(() => {});
       } catch {

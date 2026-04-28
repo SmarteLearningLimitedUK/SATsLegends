@@ -7,6 +7,7 @@ import { buildAnswerOptions } from '../../utils/answerOptions';
 import externalCalculationClash from './externalQuestionBanks/calculationClashQuestions.json';
 import externalScaleBuilder from './externalQuestionBanks/scaleBuilderQuestions.json';
 import externalGraphGrabber from './externalQuestionBanks/graphGrabberQuestions.json';
+import { pickNextAnswerKeyedQuestion } from './answerKeyedSatsBank';
 
 type ExternalMultipleChoiceRow = {
   id: string;
@@ -239,6 +240,54 @@ const buildExternalChallengeQuestion = (
     options,
     answerIndex,
     visual: { type: 'tokens', items: options, accent: 'cyan' },
+  };
+};
+
+type AnswerKeyedMultipleChoiceRow = {
+  id: string;
+  gameKey: string;
+  question: string;
+  answerMode: 'multipleChoice';
+  correctAnswer: string;
+  answers: string[];
+  needsReview?: boolean;
+};
+
+const buildAnswerKeyedChallengeQuestion = (
+  gameType: SupportedChallengeGameType,
+  row: AnswerKeyedMultipleChoiceRow,
+): ChallengeQuestion => {
+  const rawOptions = Array.isArray(row.answers) ? row.answers : [];
+  const seen = new Set<string>();
+  const options = rawOptions
+    .map((value) => String(value).trim())
+    .filter((value) => value.length > 0)
+    .filter((value) => {
+      if (seen.has(value)) return false;
+      seen.add(value);
+      return true;
+    });
+
+  const normalizedCorrect = String(row.correctAnswer ?? '').trim();
+  const correct = normalizedCorrect.length ? normalizedCorrect : options[0] ?? '';
+  const distractors = options.filter((value) => value !== correct);
+
+  const built = buildAnswerOptions<string>({
+    correctAnswer: correct,
+    distractors,
+    optionCount: Math.max(4, Math.min(6, options.length || 4)),
+    questionId: `${gameType}:${row.id}`,
+  });
+
+  const labels = built.options.map((option) => option.label);
+  const answerIndex = Math.max(0, built.options.findIndex((option) => option.isCorrect));
+
+  return {
+    prompt: row.question.trim(),
+    sublabel: 'Choose the correct answer.',
+    options: labels,
+    answerIndex,
+    visual: { type: 'tokens', items: labels, accent: 'cyan' },
   };
 };
 
@@ -1492,6 +1541,17 @@ export const getSatsInspiredChallengeQuestion = (
   gameType: SupportedChallengeGameType,
   levelId: number,
 ): ChallengeQuestion | null => {
+  // Prefer the mapped SATs 2017-2025 answer-keyed bank when it contains reviewed MCQ content.
+  const keyed = pickNextAnswerKeyedQuestion({
+    gameKey: gameType,
+    mode: 'multipleChoice',
+    queueKey: `sats-2017-2025:${gameType}`,
+    onlyReviewed: true,
+  }) as AnswerKeyedMultipleChoiceRow | null;
+  if (keyed && keyed.answerMode === 'multipleChoice') {
+    return buildAnswerKeyedChallengeQuestion(gameType, keyed);
+  }
+
   const bank = EXTERNAL_CHALLENGE_BANKS[gameType] ?? CHALLENGE_BANKS[gameType];
   return selectBankValue(bank, levelId, `challenge:${gameType}`, shuffleChallengeOptions);
 };

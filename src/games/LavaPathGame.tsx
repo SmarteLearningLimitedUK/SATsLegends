@@ -44,17 +44,18 @@ const MAX_WRONGS = 3;
 const STEP_XP = 140;
 
 const LAVA_PATH_STOPS = [
-  { x: 50.5, y: 95.2 },
-  { x: 58.2, y: 84.2 },
-  { x: 43.8, y: 74.4 },
-  { x: 53.0, y: 64.2 },
-  { x: 40.5, y: 55.4 },
-  { x: 29.0, y: 47.4 },
-  { x: 44.4, y: 39.6 },
-  { x: 56.2, y: 31.0 },
-  { x: 67.4, y: 23.0 },
-  { x: 79.0, y: 16.2 },
-  { x: 72.5, y: 8.8 },
+  // Authored against lava-path.jpg: keep the avatar on rock/bridge "safe" areas, not on lava.
+  { x: 71.5, y: 92.0 },
+  { x: 56.0, y: 83.4 },
+  { x: 38.0, y: 72.5 },
+  { x: 31.5, y: 63.0 },
+  { x: 54.5, y: 54.2 },
+  { x: 72.5, y: 50.2 },
+  { x: 50.5, y: 41.8 },
+  { x: 34.5, y: 33.0 },
+  { x: 56.0, y: 27.2 },
+  { x: 73.0, y: 20.4 },
+  { x: 63.5, y: 12.2 },
 ] as const;
 
 const getLavaPathPosition = (stepIndex: number) => {
@@ -310,7 +311,7 @@ const LavaPathGame: React.FC<LavaPathGameProps> = ({
             transition={{ type: 'spring', stiffness: 130, damping: 20, mass: 0.85 }}
             className="absolute z-20 -translate-x-1/2 -translate-y-full"
           >
-            <div className="relative h-[clamp(4.2rem,7.4vw,6.3rem)] w-[clamp(4.2rem,7.4vw,6.3rem)]">
+            <div className="relative h-[clamp(5.1rem,9vw,7.4rem)] w-[clamp(5.1rem,9vw,7.4rem)]">
               <div className="absolute left-1/2 bottom-0 h-[22%] w-[58%] -translate-x-1/2 rounded-full bg-amber-300/22 blur-md" />
               <img
                 src={playerAvatarImage}

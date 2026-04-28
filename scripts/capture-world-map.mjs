@@ -56,7 +56,7 @@ const tryStartDevServer = async () => {
 const safeScreenshot = async (page, filePath) => {
   await page.waitForLoadState('domcontentloaded');
   await page.waitForLoadState('networkidle').catch(() => {});
-  await page.waitForTimeout(600);
+  await page.waitForTimeout(800);
   await page.screenshot({ path: filePath, type: 'png', fullPage: false });
 };
 
@@ -74,45 +74,18 @@ const main = async () => {
   const page = await context.newPage();
 
   await page.goto(withQuery('/map', visualQuery));
-  await page.waitForFunction(() => Boolean(window.__SAT_VISUAL__?.getLevelRoutes));
-  const routes = await page.evaluate(() => window.__SAT_VISUAL__.getLevelRoutes());
+  await safeScreenshot(page, path.join(outDir, 'iphone-world-map.png'));
 
-  const wanted = [
-    {
-      key: 'angle_arena',
-      out: 'iphone-angle-arena.png',
-      match: (r) => /angle arena/i.test(String(r.label ?? '')) || /angle-arena/i.test(String(r.path ?? '')),
-    },
-    {
-      key: 'conversion_canyon',
-      out: 'iphone-conversion-canyon.png',
-      match: (r) => /conversion canyon/i.test(String(r.label ?? '')) || /conversion-canyon/i.test(String(r.path ?? '')),
-    },
-    {
-      key: 'unit_mixer',
-      out: 'iphone-lava-path.png',
-      match: (r) => /lava path/i.test(String(r.label ?? '')) || /unit-mixer/i.test(String(r.path ?? '')),
-    },
-  ];
-
-  for (const item of wanted) {
-    const route = routes.find((r) => item.match(r));
-    if (!route) {
-      const available = routes
-        .map((r) => `${r.label ?? ''} :: ${r.path ?? ''}`.trim())
-        .filter(Boolean)
-        .slice(0, 40)
-        .join('\n');
-      throw new Error(`Could not find route for ${item.key}. Sample routes:\n${available}`);
-    }
-    await page.goto(withQuery(route.path, visualQuery));
-    await safeScreenshot(page, path.join(outDir, item.out));
-  }
+  // Scroll a bit to prove it is scrollable.
+  await page.mouse.wheel(0, 900);
+  await page.waitForTimeout(600);
+  await safeScreenshot(page, path.join(outDir, 'iphone-world-map-scrolled.png'));
 
   await browser.close();
   if (devServer) devServer.kill('SIGTERM');
   // eslint-disable-next-line no-console
-  console.log(`Saved 3 screenshots to: ${outDir}`);
+  console.log(`Saved world map screenshots to: ${outDir}`);
 };
 
 await main();
+
