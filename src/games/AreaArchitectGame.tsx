@@ -58,16 +58,21 @@ const buildQuestion = (gridSize: number, cells: Cell[], prompt: string, targetCo
     .filter((cell) => (cell.color ?? 'red') === targetColor)
     .reduce((total, cell) => total + (cell.half ? 0.5 : 1), 0);
   const step = Math.max(1, Math.round(correct * 0.2));
-  const options = shuffle([
+  const optionPool = [
     correct,
     Math.max(1, correct - step),
     correct + step,
     Math.max(1, correct - Math.max(1, Math.round(step / 2))),
-  ]).slice(0, 4);
-
-  if (!options.includes(correct)) {
-    options[0] = correct;
+    correct + Math.max(1, Math.round(step / 2)),
+    Math.max(1, correct - (step + 1)),
+  ];
+  const options = Array.from(new Set(optionPool.map((value) => Number(value.toFixed(1)))));
+  while (options.length < 4) {
+    const fallback = Number((correct + options.length + 1).toFixed(1));
+    if (!options.includes(fallback)) options.push(fallback);
   }
+  const finalOptions = shuffle(options.filter((value) => value !== correct)).slice(0, 3);
+  finalOptions.push(correct);
 
   return {
     id: `${gridSize}-${targetColor}-${correct}-${cells.map((cell) => `${cell.x}-${cell.y}-${cell.half || 'full'}-${cell.color ?? 'red'}`).join('_')}`,
@@ -77,7 +82,7 @@ const buildQuestion = (gridSize: number, cells: Cell[], prompt: string, targetCo
     cells,
     targetColor,
     correct,
-    options: shuffle(options),
+    options: shuffle(finalOptions),
   };
 };
 
@@ -286,7 +291,7 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
-      <div className="area-architect-content flex h-full min-h-0 flex-col gap-2 px-3 pb-2 pt-3 text-white">
+      <div className="area-architect-content flex h-full min-h-0 flex-col gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-3 text-white">
         <section className="shrink-0">
           <div className="mx-auto w-full max-w-[44rem]">
             <div className="mt-2">
@@ -297,7 +302,7 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
           </div>
         </section>
 
-        <section className="area-architect-grid-shell shrink-0 rounded-[1.4rem] border border-white/14 bg-black/25 p-3 shadow-[0_16px_30px_rgba(15,23,42,0.28)]">
+        <section className="area-architect-grid-shell min-h-0 flex-1 rounded-[1.4rem] border border-white/14 bg-black/25 p-3 shadow-[0_16px_30px_rgba(15,23,42,0.28)]">
           <div
             className="mx-auto grid aspect-square w-full max-w-[22rem] place-content-center gap-1 rounded-[1rem] border border-white/12 bg-slate-900/50 p-2"
             style={{ gridTemplateColumns: `repeat(${question.gridSize}, minmax(0, 1fr))` }}
@@ -343,14 +348,14 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
           </div>
         </section>
 
-        <section className="answer-choice-surface shrink-0 grid grid-cols-2 gap-2">
+        <section className="answer-choice-surface mt-auto shrink-0 grid grid-cols-2 gap-2">
           {question.options.map((option) => (
             <motion.button
               key={option}
               whileTap={{ scale: 0.96 }}
               onClick={() => handleAnswer(option)}
               disabled={locked}
-              className={`h-12 rounded-[1rem] text-lg font-black ${
+              className={`min-h-[3rem] rounded-[1rem] px-2 py-2 text-[0.98rem] font-black leading-tight ${
                 selected === option
                   ? option === question.correct
                     ? 'ui-button-success'

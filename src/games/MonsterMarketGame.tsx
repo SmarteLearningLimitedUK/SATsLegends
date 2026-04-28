@@ -263,7 +263,7 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
   };
 
   return (
-    <FoodGameShell gameType="monster_market" backgroundImage={takeOutLevelBg}>
+    <FoodGameShell gameType="monster_market" backgroundImage={takeOutLevelBg} overlayDisabled backgroundOpacity={1}>
       {!useSharedTopHud ? (
         <TopBar
           XP={XP}
@@ -355,13 +355,13 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
       </div>
 
       {!gameActive && (
-        <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-blue-950/90 p-8 text-center">
+        <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-slate-950/74 p-8 text-center backdrop-blur-sm">
           <Trophy className="mb-4 h-24 w-24 animate-bounce text-yellow-400" />
           <h2 className="mb-2 text-5xl font-black italic">TIME'S UP!</h2>
-          <div className="w-full max-w-xs rounded-2xl border-2 border-blue-400 bg-blue-900/60 p-6">
-            <p className="mb-1 text-sm font-bold uppercase tracking-widest text-blue-200">Final XP</p>
+          <div className="w-full max-w-xs rounded-2xl border-2 border-amber-300/45 bg-black/45 p-6">
+            <p className="mb-1 text-sm font-bold uppercase tracking-widest text-amber-100">Final XP</p>
             <p className="text-4xl font-black text-white">{XP.toLocaleString()}</p>
-            <p className="mt-2 text-xs font-bold uppercase tracking-wider text-blue-300">
+            <p className="mt-2 text-xs font-bold uppercase tracking-wider text-amber-200/85">
               Served: {customersServed}
             </p>
           </div>

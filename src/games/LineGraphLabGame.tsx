@@ -56,9 +56,11 @@ const GraphYAxisTick: React.FC<AxisTickProps> = ({ x = 0, y = 0, payload }) => {
   const rawValue = payload?.value;
   const value = typeof rawValue === 'number' ? rawValue : Number(rawValue);
   const isMajor = Number.isFinite(value) && value % 5 === 0;
-  const tickLength = isMajor ? 12 : 7;
-  const strokeWidth = isMajor ? 2.2 : 1.2;
-  const showLabel = isMajor;
+  const tickLength = isMajor ? 13 : 8;
+  const strokeWidth = isMajor ? 2.4 : 1.1;
+  const fontSize = isMajor ? 12 : 10;
+  const fontWeight = isMajor ? 900 : 700;
+  const labelOpacity = isMajor ? 1 : 0.82;
 
   return (
     <g transform={`translate(${x},${y})`}>
@@ -67,22 +69,21 @@ const GraphYAxisTick: React.FC<AxisTickProps> = ({ x = 0, y = 0, payload }) => {
         y1={0}
         x2={tickLength}
         y2={0}
-        stroke="rgba(219,234,254,0.78)"
+        stroke={isMajor ? 'rgba(219,234,254,0.9)' : 'rgba(219,234,254,0.65)'}
         strokeWidth={strokeWidth}
         strokeLinecap="round"
       />
-      {showLabel ? (
-        <text
-          x={-8}
-          y={4}
-          textAnchor="end"
-          fill="#dbeafe"
-          fontSize={12}
-          fontWeight={800}
-        >
-          {value}
-        </text>
-      ) : null}
+      <text
+        x={-8}
+        y={4}
+        textAnchor="end"
+        fill="#dbeafe"
+        fontSize={fontSize}
+        fontWeight={fontWeight}
+        opacity={labelOpacity}
+      >
+        {value}
+      </text>
     </g>
   );
 };
@@ -358,6 +359,10 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
     const top = clamp(Math.ceil((maxValue + 3) / 5) * 5, 20, 60);
     return Array.from({ length: top + 1 }, (_, index) => index);
   }, [round]);
+  const chartFrameSize = useMemo(() => ({
+    width: Math.max(0, chartSize.width - 12),
+    height: Math.max(0, chartSize.height - 12),
+  }), [chartSize.height, chartSize.width]);
 
     return (
     <GameUiShell backgroundImage={lineGraphLabBackground} overlayDisabled className="bg-transparent">
@@ -381,17 +386,17 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
             <div className="mt-0.5 flex min-h-0 flex-1 flex-col rounded-[1.75rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(8,24,54,0.55),rgba(4,12,28,0.38))] p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_18px_40px_rgba(2,6,23,0.18)] backdrop-blur-[2px] sm:p-4 md:p-5">
               <div
                 ref={chartWrapRef}
-                className="relative min-h-0 w-full flex-1 overflow-hidden rounded-2xl border border-slate-200/12 bg-[linear-gradient(180deg,rgba(7,18,38,0.68),rgba(4,10,24,0.42))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
+                className="relative min-h-0 w-full flex-1 overflow-hidden rounded-2xl border border-slate-200/12 bg-[linear-gradient(180deg,rgba(7,18,38,0.68),rgba(4,10,24,0.42))] p-3 pb-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
               >
                 <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(125,211,252,0.12),transparent_58%)]" />
                 <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),transparent_30%,rgba(255,255,255,0.02))]" />
-                {round && chartSize.width > 0 && chartSize.height > 0 && (
+                {round && chartFrameSize.width > 0 && chartFrameSize.height > 0 && (
                   <div className="relative z-10 h-full w-full">
                   <LineChart
-                    width={chartSize.width}
-                    height={chartSize.height}
+                    width={chartFrameSize.width}
+                    height={chartFrameSize.height}
                     data={round.graph}
-                    margin={{ top: 28, right: 18, left: 0, bottom: 16 }}
+                    margin={{ top: 24, right: 18, left: 4, bottom: 28 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.22)" />
                     <XAxis
@@ -408,7 +413,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                       tickLine={false}
                       axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
                       label={{ value: 'Y Axis', angle: -90, position: 'insideLeft', fill: '#93c5fd', fontSize: 12, fontWeight: 800 }}
-                      width={42}
+                      width={48}
                     />
                     <Line
                       type="monotone"

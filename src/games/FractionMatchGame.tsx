@@ -39,7 +39,7 @@ type BoardCell = GemCell | null;
 
 const GEM_TYPES: GemType[] = ['red', 'blue', 'green', 'yellow', 'purple'];
 const BOARD_COLUMNS = 5;
-const BOARD_ROWS = 6;
+const BOARD_ROWS = 5;
 const ROUND_SECONDS = 60;
 const BASE_TARGET_SCORE = 900;
 const TARGET_SCORE_STEP = 140;
@@ -332,7 +332,7 @@ const MatchGameShell: React.FC<{
              </div>
            ) : null}
 
-            <div className={`relative z-10 flex h-full w-full items-center justify-center px-1.5 pb-[calc(env(safe-area-inset-bottom)+0.9rem)] ${useSharedTopHud ? 'match-mastery-board-stage pt-[calc(env(safe-area-inset-top)+10.6rem+10pt)]' : 'pt-[calc(0.35rem+10pt)]'} sm:px-3`}>
+            <div className={`relative z-10 flex h-full w-full items-end justify-center px-1.5 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] ${useSharedTopHud ? 'match-mastery-board-stage pt-[calc(env(safe-area-inset-top)+10.6rem+10pt)]' : 'pt-[calc(0.35rem+10pt)]'} sm:px-3`}>
              <AnimatePresence>
                {fireActive ? (
                  <motion.div
@@ -442,11 +442,11 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       const rect = node.getBoundingClientRect();
       // Leave extra breathing room so the tile grid never collides with the shared HUD
       // (timer + progress bar) on shorter viewports.
-      const reservedBottom = Math.max(96, window.innerHeight * 0.12);
+      const reservedBottom = Math.max(118, window.innerHeight * 0.16);
       const availableGridHeight = Math.max(220, window.innerHeight - rect.top - reservedBottom);
       const rawHeightSize = Math.floor((availableGridHeight - (gapPx * (BOARD_ROWS - 1))) / BOARD_ROWS);
       const rawSize = Math.min(rawWidthSize, rawHeightSize);
-      const clampedSize = Math.max(44, Math.min(128, rawSize));
+      const clampedSize = Math.max(40, Math.min(112, rawSize));
 
       setGemSize((prev) => (prev === clampedSize ? prev : clampedSize));
     };
@@ -628,7 +628,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
-      <div className="relative box-border mx-auto w-[min(calc(100vw-0.15rem),34rem)] rounded-[2rem] border border-cyan-100/18 bg-[#04102c]/54 p-1.5 shadow-[0_18px_40px_rgba(0,0,0,0.45)] backdrop-blur-[2px] sm:p-2">
+      <div className="relative box-border mx-auto w-[min(calc(100vw-0.75rem),31rem)] rounded-[2rem] border border-cyan-100/18 bg-[#04102c]/54 p-1.5 shadow-[0_18px_40px_rgba(0,0,0,0.45)] backdrop-blur-[2px] sm:p-2">
         <div
           className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-[0.24]"
           style={{

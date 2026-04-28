@@ -251,8 +251,8 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
             </div>
           ) : null}
 
-          <div className="relative z-[1] mx-auto flex min-h-0 w-full max-w-[520px] flex-1 items-center justify-center">
-            <div className="relative h-full min-h-[9rem] w-full max-h-[17rem]">
+          <div className="relative z-[1] mx-auto flex min-h-0 w-full max-w-[520px] flex-1 items-end justify-center pb-[5px]">
+            <div className="relative h-full min-h-[10rem] w-full max-h-[18.5rem]">
               <div className="absolute left-1/2 top-[14%] z-10 -translate-x-1/2 rounded-lg border border-amber-200/35 bg-slate-900/76 p-1.5 shadow-[0_10px_20px_rgba(2,6,23,0.46)]">
                 <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.12em] text-amber-200 md:text-[9px]">
                   Range Boss
@@ -272,7 +272,7 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
                 alt=""
                 aria-hidden="true"
                 draggable={false}
-                className="absolute left-1/2 bottom-0 h-[96%] max-h-[18rem] -translate-x-1/2 object-contain drop-shadow-[0_18px_26px_rgba(2,6,23,0.58)]"
+                className="absolute left-1/2 bottom-[5px] h-[108%] max-h-[19.4rem] -translate-x-1/2 object-contain drop-shadow-[0_18px_26px_rgba(2,6,23,0.58)]"
               />
             </div>
           </div>

@@ -227,7 +227,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
   const [currentLevelIdx, setCurrentLevelIdx] = useState(0);
   const [gameState, setGameState] = useState<'playing' | 'success' | 'complete'>('playing');
   const [feedback, setFeedback] = useState<FeedbackState | null>(null);
-  const [showBase, setShowBase] = useState(true);
+  const showBase = true;
   const [mistakeCount, setMistakeCount] = useState(0);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
   const [answerOptions, setAnswerOptions] = useState<SizeAnswerOption[]>([]);
@@ -419,7 +419,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
           className="absolute inset-0 bg-center bg-no-repeat"
           style={{
             backgroundImage: `url(${scaleBuilderBackground})`,
-            backgroundSize: 'cover',
+            backgroundSize: 'contain',
             backgroundPosition: '28% center',
           }}
         />
@@ -439,8 +439,13 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
       <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-[10px] px-2 pb-[calc(env(safe-area-inset-bottom)+10.4rem)] pt-[calc(env(safe-area-inset-top)+0.95rem)] md:px-3">
         <div className="relative mx-auto flex h-full w-full max-w-[780px] min-h-0 flex-1 flex-col overflow-visible">
           <div className="relative z-10 grid h-full min-h-0 w-full grid-rows-[auto_minmax(0,1fr)] gap-[10px] p-0 md:p-0">
-            <GameQuestionCard className="w-full">
-              <div className="game-question-copy mt-1 whitespace-pre-line text-[10px] font-black leading-snug text-white md:text-[11px]">
+            <GameQuestionCard
+              className="w-full"
+              style={{
+                ['--question-card-padding' as any]: '12px 14px',
+              }}
+            >
+              <div className="game-question-copy mt-0 whitespace-pre-line text-[9.5px] font-black leading-snug text-white md:text-[10px]">
                 {instructionsText}
               </div>
             </GameQuestionCard>
@@ -491,17 +496,6 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
               </div>
             </div>
 
-            <div className="px-1 pb-0 pt-0">
-              <div className="flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/82">
-                <span aria-hidden="true">&nbsp;</span>
-                <button
-                  onClick={() => setShowBase((previous) => !previous)}
-                  className="ui-button-secondary rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em]"
-                >
-                  {showBase ? 'Hide guide' : 'Show guide'}
-                </button>
-              </div>
-            </div>
           </div>
 
           <div

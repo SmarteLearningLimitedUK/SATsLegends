@@ -194,7 +194,7 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({
         className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
       />
 
-      <div className={`relative z-10 flex h-full min-h-0 w-full flex-col items-center ${topPadding} px-3 pb-[calc(env(safe-area-inset-bottom)+4.8rem)]`}>
+      <div className={`relative z-10 flex h-full min-h-0 w-full flex-col items-center ${topPadding} px-3 pb-[calc(env(safe-area-inset-bottom)+1.6rem)]`}>
         <div className="w-full max-w-md min-h-0">
           <main className="flex w-full flex-col items-center gap-2.5">
             <GameQuestionCard
@@ -295,7 +295,7 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({
               </AnimatePresence>
             </div>
 
-            <div className="flex w-full flex-col gap-3">
+            <div className="mt-auto flex w-full flex-col gap-2">
               {gameState === 'playing' && (
                 <motion.button
                   whileHover={{ scale: 1.02 }}
@@ -309,7 +309,7 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({
 
               <button
                 onClick={resetRun}
-                className="ui-button-secondary mt-2.5 flex min-h-[1.8rem] items-center justify-center gap-2 px-4 py-2 text-[10px] font-bold tracking-widest"
+                className="ui-button-secondary flex min-h-[2.6rem] items-center justify-center gap-2 px-4 py-2 text-[10px] font-bold tracking-widest"
               >
                 <RotateCcw size={14} /> RESET TIMEKEEPER
               </button>

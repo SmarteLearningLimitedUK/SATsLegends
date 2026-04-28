@@ -99,8 +99,9 @@ const scoreToStars = (XP: number) => {
 };
 
 const buildAxisTicks = (maxValue: number) => {
-  const safeMax = Math.max(4, Math.ceil(maxValue));
-  return Array.from({ length: safeMax + 1 }, (_, index) => index);
+  const safeMax = Math.max(5, Math.ceil(maxValue));
+  const roundedMax = Math.ceil(safeMax / 5) * 5;
+  return Array.from({ length: roundedMax + 1 }, (_, index) => index);
 };
 
 type AxisTickProps = {
@@ -113,9 +114,11 @@ const GraphYAxisTick: React.FC<AxisTickProps> = ({ x = 0, y = 0, payload }) => {
   const rawValue = payload?.value;
   const value = typeof rawValue === 'number' ? rawValue : Number(rawValue);
   const isMajor = Number.isFinite(value) && value % 5 === 0;
-  const tickLength = isMajor ? 12 : 7;
-  const strokeWidth = isMajor ? 2.2 : 1.2;
-  const showLabel = isMajor || value === 0;
+  const tickLength = isMajor ? 13 : 8;
+  const strokeWidth = isMajor ? 2.4 : 1.1;
+  const fontSize = isMajor ? 12 : 10;
+  const fontWeight = isMajor ? 900 : 700;
+  const labelOpacity = isMajor ? 1 : 0.84;
 
   return (
     <g transform={`translate(${x},${y})`}>
@@ -124,22 +127,21 @@ const GraphYAxisTick: React.FC<AxisTickProps> = ({ x = 0, y = 0, payload }) => {
         y1={0}
         x2={tickLength}
         y2={0}
-        stroke="rgba(255,248,236,0.75)"
+        stroke={isMajor ? 'rgba(255,248,236,0.9)' : 'rgba(255,248,236,0.62)'}
         strokeWidth={strokeWidth}
         strokeLinecap="round"
       />
-      {showLabel ? (
-        <text
-          x={-8}
-          y={4}
-          textAnchor="end"
-          fill="#fff8ec"
-          fontSize={11}
-          fontWeight={900}
-        >
-          {value}
-        </text>
-      ) : null}
+      <text
+        x={-8}
+        y={4}
+        textAnchor="end"
+        fill="#fff8ec"
+        fontSize={fontSize}
+        fontWeight={fontWeight}
+        opacity={labelOpacity}
+      >
+        {value}
+      </text>
     </g>
   );
 };
@@ -457,13 +459,13 @@ const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
                 label={{ value: 'X Axis', position: 'insideBottom', offset: -6, fill: '#93c5fd', fontSize: 12, fontWeight: 800 } as never}
               />
               <YAxis
-                domain={[0, Math.max(...round.bars.map((bar) => bar.value))]}
+                domain={[0, yTicks[yTicks.length - 1]]}
                 ticks={yTicks}
                 tick={GraphYAxisTick as never}
                 tickLine={false}
                 axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
                 label={{ value: 'Y Axis', angle: -90, position: 'insideLeft', fill: '#93c5fd', fontSize: 12, fontWeight: 800 } as never}
-                width={42}
+                width={48}
               />
               <Tooltip
                 cursor={{ fill: 'rgba(255,255,255,0.08)' }}
@@ -482,6 +484,7 @@ const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
   }
 
   if (round.kind === 'line' && round.line) {
+    const yTicks = buildAxisTicks(Math.max(...round.line.map((point) => point.value)));
     return (
       <div className="flex h-full min-h-0 flex-col rounded-[1.2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(9,19,42,0.58),rgba(7,14,32,0.74))] p-2 shadow-[0_18px_30px_rgba(2,6,23,0.18)]">
         <div className="px-1 text-center text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/75">
@@ -499,12 +502,13 @@ const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
                 label={{ value: 'X Axis', position: 'insideBottom', offset: -6, fill: '#93c5fd', fontSize: 12, fontWeight: 800 } as never}
               />
               <YAxis
+                ticks={yTicks}
+                domain={[0, yTicks[yTicks.length - 1]]}
                 tick={GraphYAxisTick as never}
                 tickLine={false}
                 axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
-                tickCount={6}
                 label={{ value: 'Y Axis', angle: -90, position: 'insideLeft', fill: '#93c5fd', fontSize: 12, fontWeight: 800 } as never}
-                width={42}
+                width={48}
               />
               <Tooltip
                 contentStyle={{ background: 'rgba(8,15,32,0.95)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '14px', color: '#fff8ec' }}

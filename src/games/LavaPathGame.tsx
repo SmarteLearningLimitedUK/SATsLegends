@@ -44,18 +44,14 @@ const MAX_WRONGS = 3;
 const STEP_XP = 140;
 
 const LAVA_PATH_STOPS = [
-  // Authored against lava-path.jpg: keep the avatar on rock/bridge "safe" areas, not on lava.
-  { x: 71.5, y: 92.0 },
-  { x: 56.0, y: 83.4 },
-  { x: 38.0, y: 72.5 },
-  { x: 31.5, y: 63.0 },
-  { x: 54.5, y: 54.2 },
-  { x: 72.5, y: 50.2 },
-  { x: 50.5, y: 41.8 },
-  { x: 34.5, y: 33.0 },
-  { x: 56.0, y: 27.2 },
-  { x: 73.0, y: 20.4 },
-  { x: 63.5, y: 12.2 },
+  // Authored against lava-path.jpg to follow the safe stepping stones/bridges only.
+  { x: 22.0, y: 88.0 },
+  { x: 37.5, y: 79.5 },
+  { x: 74.0, y: 73.0 },
+  { x: 55.0, y: 54.5 },
+  { x: 33.0, y: 30.5 },
+  { x: 60.0, y: 22.5 },
+  { x: 77.5, y: 14.5 },
 ] as const;
 
 const getLavaPathPosition = (stepIndex: number) => {

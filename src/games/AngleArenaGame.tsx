@@ -751,8 +751,8 @@ const solveSideLaunchSpeed = (angleDeg: number, targetX: number, targetY: number
 
 const getSideTargetWorld = (viewWidth: number, viewHeight: number) => ({
   x: clamp(viewWidth * 3.65, 1280, 2200),
-  // Lift the boss/target platform so it stays fully visible on tall portrait crops.
-  y: -clamp(viewHeight * 0.34, 160, 340),
+  // Hold the enemy nearer the middle of the playfield instead of drifting too low.
+  y: -clamp(viewHeight * 0.46, 220, 430),
 });
 
 const getEnemySize = (_viewWidth: number, viewHeight: number) => clamp(viewHeight * 0.82, 320, 720);
@@ -860,7 +860,15 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     }),
     [levelId, questionsProp],
   );
-  const questions = useMemo(() => rawQuestions, [rawQuestions]);
+  const questions = useMemo(() => {
+    const seen = new Set<string>();
+    return rawQuestions.filter((question) => {
+      const key = `${question.prompt}|${question.correctAnswer}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [rawQuestions]);
   const activeQuestion = questions[questionIndex];
 
   const lives = sessionState?.lives ?? localLives;

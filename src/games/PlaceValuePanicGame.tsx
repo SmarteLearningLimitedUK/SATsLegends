@@ -1031,10 +1031,14 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       >
         <GameQuestionCard
           title="Place Value Panic"
-          subtitle={`Rebuild ${question.targetNumberDisplay}.`}
           className="mx-auto max-w-[min(96%,22rem)]"
         >
-          {questionPrompt}
+          <div className="text-[clamp(0.98rem,2.75vw,1.22rem)] font-black leading-snug text-amber-100/95">
+            Rebuild {question.targetNumberDisplay}.
+          </div>
+          <div className="mt-1 text-[clamp(0.98rem,2.75vw,1.22rem)] font-black leading-snug text-white">
+            {questionPrompt}
+          </div>
         </GameQuestionCard>
       </div>
 

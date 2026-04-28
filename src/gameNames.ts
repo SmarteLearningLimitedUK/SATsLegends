@@ -16,7 +16,7 @@ export const CANONICAL_GAME_LABELS: Partial<Record<MiniGameType, string>> = {
   tower_of_factors: 'Factor Forge',
   measurement_forge: 'Conversion Canyon',
   timekeeper_temple: 'Chrono Dash: Time Trial',
-  ratio_rapids: 'Ratio Racer',
+  ratio_rapids: 'Ratio Rapids',
   remainder_run: 'Remainder Run',
   place_value_peaks: 'Decimal Sniper',
   calculation_clash: 'Calculation Cup',

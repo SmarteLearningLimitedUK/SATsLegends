@@ -258,9 +258,9 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
         style={{
           flex: '1 1 auto',
           minHeight: 0,
-          // Ensure scrollable level cards can never sit under the global bottom HUD,
-          // even when the browser doesn't honour grid track sizing perfectly on iOS.
-          paddingBottom: 'calc(72px + env(safe-area-inset-bottom) + 1.25rem)',
+          // Let the viewport extend to the bottom HUD; the scrollable list
+          // handles its own bottom-safe padding so the final rows remain reachable.
+          paddingBottom: 'calc(env(safe-area-inset-bottom) + 0.75rem)',
         }}
       >
         <div className="mb-2 flex flex-wrap items-start justify-between gap-2 md:mb-4">
@@ -308,7 +308,10 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
           </div>
         ) : null}
 
-        <div className="min-h-0 flex-1 overflow-y-auto pr-1 pb-4 md:pb-5" style={{ WebkitOverflowScrolling: 'touch' }}>
+        <div
+          className="min-h-0 flex-1 overflow-y-auto pr-1 pb-[calc(72px+env(safe-area-inset-bottom)+1.25rem)]"
+          style={{ WebkitOverflowScrolling: 'touch' }}
+        >
           <div className="flex flex-col gap-2 pb-2 md:gap-3 md:pb-4">
             {gameGroups.map((group) => {
               const isExpanded = expandedGameId === group.id;

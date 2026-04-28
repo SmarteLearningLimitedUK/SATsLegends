@@ -104,13 +104,38 @@ type AxisTickProps = {
   payload?: { value: number | string };
 };
 
+const GraphXAxisTick: React.FC<AxisTickProps> = ({ x = 0, y = 0, payload }) => {
+  const label = String(payload?.value ?? '');
+  const parts = label.split(' ');
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text
+        x={0}
+        y={16}
+        textAnchor="middle"
+        fill="#d6d3d1"
+        fontSize={10}
+        fontWeight={800}
+      >
+        {parts.map((part, index) => (
+          <tspan key={`${label}-${part}-${index}`} x={0} dy={index === 0 ? 0 : 12}>
+            {part}
+          </tspan>
+        ))}
+      </text>
+    </g>
+  );
+};
+
 const GraphYAxisTick: React.FC<AxisTickProps> = ({ x = 0, y = 0, payload }) => {
   const rawValue = payload?.value;
   const value = typeof rawValue === 'number' ? rawValue : Number(rawValue);
   const isMajor = Number.isFinite(value) && value % 5 === 0;
-  const tickLength = isMajor ? 12 : 7;
-  const strokeWidth = isMajor ? 2.2 : 1.2;
-  const showLabel = isMajor || value === 0;
+  const tickLength = isMajor ? 13 : 8;
+  const strokeWidth = isMajor ? 2.4 : 1.1;
+  const fontSize = isMajor ? 12 : 10;
+  const fontWeight = isMajor ? 900 : 700;
+  const labelOpacity = isMajor ? 1 : 0.84;
 
   return (
     <g transform={`translate(${x},${y})`}>
@@ -119,22 +144,21 @@ const GraphYAxisTick: React.FC<AxisTickProps> = ({ x = 0, y = 0, payload }) => {
         y1={0}
         x2={tickLength}
         y2={0}
-        stroke="rgba(255,255,255,0.8)"
+        stroke={isMajor ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.7)'}
         strokeWidth={strokeWidth}
         strokeLinecap="round"
       />
-      {showLabel ? (
-        <text
-          x={-8}
-          y={4}
-          textAnchor="end"
-          fill="#ffffff"
-          fontSize={11}
-          fontWeight={900}
-        >
-          {value}
-        </text>
-      ) : null}
+      <text
+        x={-8}
+        y={4}
+        textAnchor="end"
+        fill="#ffffff"
+        fontSize={fontSize}
+        fontWeight={fontWeight}
+        opacity={labelOpacity}
+      >
+        {value}
+      </text>
     </g>
   );
 };
@@ -169,7 +193,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
   const maxCaseValue = Math.max(...currentCase.map((item) => item.amount), 0);
-  const barAxisMax = Math.max(1, maxCaseValue);
+  const barAxisMax = Math.max(5, Math.ceil(maxCaseValue / 5) * 5);
   const barTicks = Array.from({ length: barAxisMax + 1 }, (_, index) => index);
 
   const generateCase = useCallback(() => {
@@ -377,19 +401,19 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             <div className="pointer-events-none absolute inset-0 bg-slate-950/20" />
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.3)_1px,transparent_1px)] opacity-7 [background-size:20px_20px]" />
 
-            <div className="relative w-full" style={{ height: 'clamp(11rem, 29vh, 20rem)' }}>
+            <div className="relative w-full" style={{ height: 'clamp(12.5rem, 31vh, 21rem)' }}>
               <ResponsiveContainer width="100%" height="100%">
                 {chartType === 'bar' ? (
-                    <BarChart data={currentCase} margin={{ top: 12, right: 10, left: -6, bottom: 6 }}>
+                    <BarChart data={currentCase} margin={{ top: 12, right: 10, left: -4, bottom: 28 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
                       <XAxis
                         dataKey="name"
                         stroke="#a8a29e"
-                        fontSize={18}
-                        tick={false}
+                        tick={GraphXAxisTick as never}
                         tickLine={false}
                         axisLine={false}
                         interval={0}
+                        height={52}
                       />
                     <YAxis
                       ticks={barTicks}
@@ -398,7 +422,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                       tickLine={false}
                       axisLine={false}
                       allowDecimals={false}
-                      width={38}
+                      width={46}
                     />
                     <Tooltip
                       contentStyle={{ backgroundColor: '#1c1917', border: '1px solid #444', borderRadius: '8px', fontSize: '18px' }}

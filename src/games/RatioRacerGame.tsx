@@ -576,7 +576,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
               className="w-full !mb-0"
               style={{
                 ['--question-card-width' as any]: 'min(100%, 56rem)',
-                ['--question-card-padding' as any]: '16px 18px',
+                ['--question-card-padding' as any]: '26px 18px',
               }}
               subtitle={feedback ? (
                 <div className={`text-[11px] font-semibold md:text-[13px] ${
@@ -586,7 +586,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
                 }`}>{feedback}</div>
               ) : undefined}
               titleClassName="text-[12px] md:text-[14px] tracking-[0.28em]"
-              bodyClassName="text-[clamp(1.15rem,4vw,1.7rem)] font-black leading-[1.08] tracking-tight md:text-[clamp(1.3rem,2.4vw,2rem)]"
+              bodyClassName="pt-1 text-[clamp(1.15rem,4vw,1.7rem)] font-black leading-[1.08] tracking-tight md:text-[clamp(1.3rem,2.4vw,2rem)]"
             >
               {question.prompt}
             </GameQuestionCard>
