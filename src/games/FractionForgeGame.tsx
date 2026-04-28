@@ -188,6 +188,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
   const [targetSlots, setTargetSlots] = useState<Array<FractionCard | null>>([]);
   const [sourceSlots, setSourceSlots] = useState<Array<FractionCard | null>>([]);
   const [dragState, setDragState] = useState<DragState | null>(null);
+  const [hoverCandidate, setHoverCandidate] = useState<{ location: TokenLocation; index: number } | null>(null);
   const [timeLeft, setTimeLeft] = useState(() => Math.max(40, 58 - (Math.max(1, levelId) * 2)));
   const [lives, setLives] = useState(10);
   const [XP, setScore] = useState(0);
@@ -361,13 +362,15 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
       height: rect.height,
     });
     triggerHaptic('selection');
+    setHoverCandidate(null);
   }, [dragState, isResolving, sourceSlots, targetSlots]);
 
   const findDropCandidate = useCallback((clientX: number, clientY: number): { location: TokenLocation; index: number } | null => {
     const rect = playfieldRef.current?.getBoundingClientRect();
     if (!rect) return null;
 
-    const threshold = Math.max(50, rect.width * 0.09);
+    // Mobile-first tolerance: allow overlap without requiring overshoot.
+    const threshold = Math.max(62, rect.width * 0.105) + 18;
     let best: { location: TokenLocation; index: number; distance: number } | null = null;
 
     activeTargetAnchors.forEach((anchor, index) => {
@@ -438,13 +441,25 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
         if (!current || current.pointerId !== event.pointerId) return current;
         return { ...current, clientX: event.clientX, clientY: event.clientY };
       });
+
+      const centerClientX = (event.clientX - dragState.offsetX) + (dragState.width / 2);
+      const centerClientY = (event.clientY - dragState.offsetY) + (dragState.height / 2);
+      setHoverCandidate(findDropCandidate(centerClientX, centerClientY));
     };
 
     const onFinish = (event: PointerEvent) => {
       if (event.pointerId !== dragState.pointerId) return;
-      const candidate = findDropCandidate(event.clientX, event.clientY);
+      // Use dragged card center (accounts for finger offset).
+      const rect = playfieldRef.current?.getBoundingClientRect();
+      const centerClientX = (event.clientX - dragState.offsetX) + (dragState.width / 2);
+      const centerClientY = (event.clientY - dragState.offsetY) + (dragState.height / 2);
+      const candidate = findDropCandidate(
+        rect ? centerClientX : event.clientX,
+        rect ? centerClientY : event.clientY,
+      );
       placeTokenInArrays(candidate);
       setDragState(null);
+      setHoverCandidate(null);
       triggerHaptic('selection');
     };
 
@@ -731,10 +746,11 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
         {activeTargetAnchors.map((anchor, index) => {
           const token = targetSlots[index];
           const hidden = dragState?.token.id === token?.id;
+          const isHover = hoverCandidate?.location === 'target' && hoverCandidate.index === index;
           return (
             <React.Fragment key={`target-${round.id}-${index}`}>
               <div
-                className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-[0.85rem] border border-dashed border-cyan-200/45 bg-cyan-200/12"
+                className={`pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-[0.85rem] border border-dashed bg-cyan-200/12 ${isHover ? 'border-amber-200/80 shadow-[0_0_22px_rgba(251,191,36,0.30)]' : 'border-cyan-200/45'}`}
                 style={{
                   left: `${anchor.x}%`,
                   top: layout.targetTop,

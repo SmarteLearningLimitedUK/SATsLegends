@@ -588,11 +588,13 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         >
           <GameScreenLayout
             className={`px-3 pb-[calc(env(safe-area-inset-bottom)+${isCompactViewport ? '0.35rem' : '0.6rem'})] pt-0 text-white`}
+            mainClassName="h-full min-h-0"
             main={(
-              <div className={`mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] ${isCompactViewport ? 'gap-1' : 'gap-2'}`}>
+              <div className={`mx-auto flex h-full w-full max-w-[780px] min-h-0 flex-col ${isCompactViewport ? 'gap-1' : 'gap-2'}`}>
                 <div
                   ref={stageRef}
-                  className={`relative min-h-0 overflow-hidden rounded-[1.6rem] ${isCompactViewport ? 'px-2 py-2' : 'px-2 py-3 md:px-3'}`}
+                  data-share-splitter-stage="true"
+                  className={`relative flex-1 min-h-[18rem] overflow-hidden rounded-[1.6rem] ${isCompactViewport ? 'px-2 py-2' : 'px-2 py-3 md:px-3'}`}
                 >
                   <div className="pointer-events-none absolute inset-0 z-[80]">
                     <div className="relative h-full w-full">

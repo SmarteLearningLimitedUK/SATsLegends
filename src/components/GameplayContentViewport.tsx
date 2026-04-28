@@ -76,7 +76,7 @@ const GameplayContentViewport: React.FC<GameplayContentViewportProps> = ({ child
             height: '100%',
             width: '100%',
           }}
-          className="flex h-full w-full flex-col"
+          className="minigame-scale-stage flex h-full w-full flex-col"
         >
           {children}
         </div>

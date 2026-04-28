@@ -3,6 +3,18 @@ import {
   shuffleOptionsWithAnswerIndex,
   shuffleOptionsWithCorrect,
 } from '../../utils/questionShuffle';
+import { buildAnswerOptions } from '../../utils/answerOptions';
+import externalCalculationClash from './externalQuestionBanks/calculationClashQuestions.json';
+import externalScaleBuilder from './externalQuestionBanks/scaleBuilderQuestions.json';
+import externalGraphGrabber from './externalQuestionBanks/graphGrabberQuestions.json';
+
+type ExternalMultipleChoiceRow = {
+  id: string;
+  question: string;
+  correctAnswer: string;
+  answers: string[];
+  difficulty?: 'easy' | 'medium' | 'hard';
+};
 
 export type SupportedChallengeGameType =
   | 'place_value_peaks'
@@ -135,6 +147,110 @@ const shuffleChallengeOptions = (question: ChallengeQuestion): ChallengeQuestion
 const shuffleAnswerOptions = <T extends { options: V[]; answer: V }, V>(value: T): T => {
   const shuffled = shuffleOptionsWithCorrect(value.options, value.answer);
   return { ...value, options: shuffled.options };
+};
+
+const difficultyToMinLevel = (difficulty?: ExternalMultipleChoiceRow['difficulty']): number => {
+  switch (difficulty) {
+    case 'medium':
+      return 2;
+    case 'hard':
+      return 3;
+    default:
+      return 1;
+  }
+};
+
+const parseInlineObjectLiteral = (input: string): { prompt: string; object: Record<string, unknown> | null } => {
+  const openIndex = input.indexOf('{');
+  const closeIndex = input.lastIndexOf('}');
+  if (openIndex === -1 || closeIndex === -1 || closeIndex <= openIndex) return { prompt: input.trim(), object: null };
+
+  const prompt = input.slice(0, openIndex).trim();
+  const rawLiteral = input.slice(openIndex, closeIndex + 1);
+  try {
+    // The external banks embed python-style dicts using single quotes.
+    const normalized = rawLiteral.replace(/'/g, '"');
+    const parsed = JSON.parse(normalized) as Record<string, unknown>;
+    return { prompt, object: parsed };
+  } catch {
+    return { prompt: input.trim(), object: null };
+  }
+};
+
+const buildExternalChallengeQuestion = (
+  gameType: SupportedChallengeGameType,
+  row: ExternalMultipleChoiceRow,
+): ChallengeQuestion => {
+  const result = buildAnswerOptions<string>({
+    correctAnswer: row.correctAnswer,
+    distractors: row.answers.filter((answer) => answer !== row.correctAnswer),
+    optionCount: 4,
+    questionId: `${gameType}:${row.id}`,
+  });
+
+  const options = result.options.map((option) => option.label);
+  const answerIndex = Math.max(0, result.options.findIndex((option) => option.isCorrect));
+
+  if (gameType === 'calculation_clash') {
+    return {
+      prompt: row.question.trim(),
+      sublabel: 'Choose the correct answer.',
+      options,
+      answerIndex,
+      visual: { type: 'equation', lines: [row.question.trim(), '= ?'], badge: 'Clash', variant: 'clash' },
+    };
+  }
+
+  if (gameType === 'scale_safari') {
+    return {
+      prompt: row.question.trim(),
+      sublabel: 'Scale carefully, then select the answer.',
+      options,
+      answerIndex,
+      visual: { type: 'equation', lines: [row.question.trim()], badge: 'Scale' },
+    };
+  }
+
+  if (gameType === 'graph_grabber') {
+    const parsed = parseInlineObjectLiteral(row.question);
+    const entries = parsed.object ? Object.entries(parsed.object) : [];
+    const palette = ['#60a5fa', '#fbbf24', '#34d399', '#f472b6', '#a78bfa', '#fb7185'];
+    const bars: BarDatum[] = entries
+      .filter(([, value]) => typeof value === 'number' && Number.isFinite(value))
+      .map(([label, value], index) => ({ label, value: value as number, color: palette[index % palette.length] }));
+
+    return {
+      prompt: parsed.prompt || row.question.trim(),
+      sublabel: 'Read the chart and pick the matching value.',
+      options,
+      answerIndex,
+      visual: bars.length ? { type: 'bars', bars } : { type: 'tokens', items: options, accent: 'cyan' },
+    };
+  }
+
+  // Default: keep the prompt, avoid special visuals.
+  return {
+    prompt: row.question.trim(),
+    sublabel: 'Choose the correct answer.',
+    options,
+    answerIndex,
+    visual: { type: 'tokens', items: options, accent: 'cyan' },
+  };
+};
+
+const EXTERNAL_CHALLENGE_BANKS: Partial<Record<SupportedChallengeGameType, BankEntry<ChallengeQuestion>[]>> = {
+  calculation_clash: externalCalculationClash.map((row) => ({
+    minLevel: difficultyToMinLevel(row.difficulty),
+    value: buildExternalChallengeQuestion('calculation_clash', row),
+  })),
+  scale_safari: externalScaleBuilder.map((row) => ({
+    minLevel: difficultyToMinLevel(row.difficulty),
+    value: buildExternalChallengeQuestion('scale_safari', row),
+  })),
+  graph_grabber: externalGraphGrabber.map((row) => ({
+    minLevel: difficultyToMinLevel(row.difficulty),
+    value: buildExternalChallengeQuestion('graph_grabber', row),
+  })),
 };
 
 const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQuestion>[]> = {
@@ -1371,12 +1487,10 @@ const TIMEKEEPER_BANK: BankEntry<TimeProblem>[] = [
 export const getSatsInspiredChallengeQuestion = (
   gameType: SupportedChallengeGameType,
   levelId: number,
-): ChallengeQuestion | null => selectBankValue(
-  CHALLENGE_BANKS[gameType],
-  levelId,
-  `challenge:${gameType}`,
-  shuffleChallengeOptions,
-);
+): ChallengeQuestion | null => {
+  const bank = EXTERNAL_CHALLENGE_BANKS[gameType] ?? CHALLENGE_BANKS[gameType];
+  return selectBankValue(bank, levelId, `challenge:${gameType}`, shuffleChallengeOptions);
+};
 
 export const getSatsInspiredDataDungeonPuzzle = (levelId: number): DataDungeonPuzzle | null =>
   selectBankValue(DATA_DUNGEON_BANK, levelId, 'data_dungeon', shuffleAnswerOptions);

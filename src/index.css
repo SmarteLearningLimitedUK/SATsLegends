@@ -5,6 +5,15 @@
   --font-display: "Fredoka", sans-serif;
 }
 
+:root {
+  --top-hud-height: clamp(72px, 10dvh, 104px);
+  --bottom-hud-height: clamp(84px, 11dvh, 118px);
+  --shell-padding: clamp(8px, 2vw, 18px);
+  --question-area-height: 22%;
+  --interaction-area-height: 53%;
+  --answer-area-height: 25%;
+}
+
 @layer utilities {
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
@@ -764,11 +773,8 @@ button {
   width: 100vw;
   height: var(--sat-viewport-height, 100dvh);
   overflow: hidden;
-  display: grid;
-  grid-template-rows:
-    calc(56px + env(safe-area-inset-top))
-    minmax(0, 1fr)
-    calc(72px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
   background: #050914;
 }
 
@@ -778,9 +784,9 @@ html.sat-ipad.sat-browser .game-viewport {
 }
 
 .top-hud {
-  grid-row: 1;
   width: 100%;
-  height: calc(56px + env(safe-area-inset-top));
+  height: calc(var(--top-hud-height) + env(safe-area-inset-top));
+  flex: 0 0 calc(var(--top-hud-height) + env(safe-area-inset-top));
   padding-top: env(safe-area-inset-top);
   position: relative;
   z-index: 300;
@@ -789,8 +795,8 @@ html.sat-ipad.sat-browser .game-viewport {
 }
 
 .game-stage {
-  grid-row: 2;
   width: 100%;
+  flex: 1 1 auto;
   height: auto;
   max-height: 100%;
   min-height: 0;
@@ -800,10 +806,29 @@ html.sat-ipad.sat-browser .game-viewport {
   overflow: hidden;
 }
 
-.bottom-hud {
-  grid-row: 3;
+/* GameplayFrame: the one fixed viewport between HUDs. Nothing may render outside this frame. */
+.screen-gameplay .gameplay-frame {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
   width: 100%;
-  height: calc(72px + env(safe-area-inset-bottom));
+  overflow: hidden;
+  padding:
+    max(16px, var(--shell-padding))
+    max(16px, var(--shell-padding));
+  box-sizing: border-box;
+}
+
+/* Prevent "screen-fixed" elements from escaping the gameplay frame on gameplay screens. */
+.screen-gameplay [data-gameplay-content-viewport="true"] .fixed {
+  position: absolute !important;
+}
+
+.bottom-hud {
+  width: 100%;
+  height: calc(var(--bottom-hud-height) + env(safe-area-inset-bottom));
+  flex: 0 0 calc(var(--bottom-hud-height) + env(safe-area-inset-bottom));
   padding-bottom: env(safe-area-inset-bottom);
   position: relative;
   z-index: 50;
@@ -819,10 +844,8 @@ html.sat-ipad.sat-browser .game-viewport {
    ============================================================ */
 
 .game-viewport--gameplay {
-  /* Reserve safe-area insets outside the 10/80/10 split so HUD text/buttons never sit under notch/home indicator. */
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-  grid-template-rows: 10fr 80fr 10fr;
+  /* Gameplay screens still use the locked HUD heights from `.game-viewport`.
+     This class exists as a semantic switch (and for portrait lock), not to change the shell maths. */
 }
 
 .game-viewport--gameplay .top-hud,
@@ -4319,9 +4342,9 @@ button:disabled {
 .screen-gameplay .game-screen-layout {
   display: grid;
   grid-template-rows:
-    minmax(clamp(3.4rem, 10.5vh, 7rem), 20fr)
-    minmax(0, 55fr)
-    minmax(clamp(4.4rem, 13vh, 9.25rem), 25fr);
+    var(--question-area-height)
+    var(--interaction-area-height)
+    var(--answer-area-height);
   gap: clamp(0.25rem, 0.9vh, 0.65rem);
 }
 

@@ -650,7 +650,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
             <div className="game-shell-contract relative z-[2] flex h-full max-h-full w-full min-h-0 flex-col overflow-hidden">
 
             <div
-              className="structured-game-layout relative flex h-full max-h-full w-full min-h-0 flex-1 flex-col overflow-hidden"
+              className="gameplay-frame structured-game-layout relative flex h-full max-h-full w-full min-h-0 flex-1 flex-col overflow-hidden"
               style={{
                 padding: 0,
               }}
@@ -669,7 +669,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         <div className="game-shell-host unified-minigame-hud-enabled game-type-ratio-fractions relative flex h-full max-h-full w-full min-h-0 flex-col overflow-hidden">
           <div className="game-shell-contract relative z-[2] flex h-full max-h-full w-full min-h-0 flex-col overflow-hidden">
             <div
-              className="structured-game-layout relative flex h-full max-h-full w-full min-h-0 flex-1 flex-col overflow-hidden"
+              className="gameplay-frame structured-game-layout relative flex h-full max-h-full w-full min-h-0 flex-1 flex-col overflow-hidden"
               style={{ padding: 0 }}
             >
               <GameplayContentViewport>
@@ -685,7 +685,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         <div className="game-shell-host unified-minigame-hud-enabled game-type-scale-safari relative flex h-full max-h-full w-full min-h-0 flex-col overflow-hidden">
           <div className="game-shell-contract relative z-[2] flex h-full max-h-full w-full min-h-0 flex-col overflow-hidden">
             <div
-              className="structured-game-layout relative flex h-full max-h-full w-full min-h-0 flex-1 flex-col overflow-hidden"
+              className="gameplay-frame structured-game-layout relative flex h-full max-h-full w-full min-h-0 flex-1 flex-col overflow-hidden"
               style={{ padding: 0 }}
             >
               <GameplayContentViewport>
@@ -701,7 +701,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         <div className="game-shell-host unified-minigame-hud-enabled game-type-ratio-rapids relative flex h-full max-h-full w-full min-h-0 flex-col overflow-hidden">
           <div className="game-shell-contract relative z-[2] flex h-full max-h-full w-full min-h-0 flex-col overflow-hidden">
             <div
-              className="structured-game-layout relative flex h-full max-h-full w-full min-h-0 flex-1 flex-col overflow-hidden"
+              className="gameplay-frame structured-game-layout relative flex h-full max-h-full w-full min-h-0 flex-1 flex-col overflow-hidden"
               style={{ padding: 0 }}
             >
               <GameplayContentViewport>

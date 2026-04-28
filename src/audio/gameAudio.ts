@@ -22,6 +22,7 @@ import rockBreakSrc from '../assets/sounds/rock break.mp3';
 import takeOutRushSrc from '../assets/sounds/takeoutrush.mp3';
 import timeUpSrc from '../assets/sounds/time up.mp3';
 import wrongAnswerMeanMachineSrc from '../assets/sounds/wrong answer mean machine.mp3';
+import { audioManager } from './audioManager';
 
 export type GameSoundEffect = 'tap' | 'click' | 'correct' | 'incorrect' | 'complete' | 'fail';
 export type GameSoundContext = string | null | undefined;
@@ -127,24 +128,24 @@ const getAudioAsset = (effect: GameSoundEffect, context?: GameSoundContext) => {
   return null;
 };
 
-const playAudioAsset = (src: string, volume = 0.82) => {
+const playAudioAsset = (src: string, volume = 0.82, effect?: GameSoundEffect) => {
   if (typeof window === 'undefined') return false;
 
-  let audio = audioElementCache.get(src);
-  if (!audio) {
-    audio = new Audio(src);
-    audio.preload = 'auto';
-    audioElementCache.set(src, audio);
-  }
+  // Use the central manager for one-shots so we never accidentally inherit loop=true
+  // from a shared element, and we get basic cooldown de-dupe.
+  const id = (effect === 'tap' || effect === 'click')
+    ? 'ui_click'
+    : effect === 'correct'
+      ? 'correct'
+      : effect === 'incorrect'
+        ? 'wrong'
+        : effect === 'complete'
+          ? 'victory'
+          : effect === 'fail'
+            ? 'defeat'
+            : 'tap';
 
-  try {
-    const playback = audio.cloneNode(true) as HTMLAudioElement;
-    playback.volume = volume;
-    playback.play().catch(() => {});
-    return true;
-  } catch {
-    return false;
-  }
+  return audioManager.playSfx(id as any, src, { volume, cooldownMs: 120, source: 'gameAudio' });
 };
 
 const tonePatterns: Record<GameSoundEffect, ToneStep[]> = {
@@ -206,7 +207,7 @@ export const playGameSound = (effect: GameSoundEffect, mutedOverride?: boolean, 
 
   const asset = getAudioAsset(effect, context);
   const volume = (effect === 'click' || effect === 'tap') ? 0.35 : 0.82;
-  if (asset && playAudioAsset(asset, volume)) {
+  if (asset && playAudioAsset(asset, volume, effect)) {
     return true;
   }
 

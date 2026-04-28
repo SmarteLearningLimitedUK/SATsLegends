@@ -437,6 +437,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const [sourceSlots, setSourceSlots] = useState<Array<Token | null>>([]);
   const [initialSourceSlots, setInitialSourceSlots] = useState<Array<Token | null>>([]);
   const [dragState, setDragState] = useState<DragState | null>(null);
+  const [hoverCandidate, setHoverCandidate] = useState<{ location: TokenLocation; index: number } | null>(null);
   const [goblinHealth, setGoblinHealth] = useState<number>(GOBLIN_MAX_HEALTH);
   const [XP, setScore] = useState<number>(0);
   const [matchTimeLeft, setMatchTimeLeft] = useState<number>(MATCH_DURATION_SECONDS);
@@ -672,6 +673,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     });
 
     triggerHaptic('selection');
+    setHoverCandidate(null);
   }, [dragState, isResolving, sourceSlots, targetSlots]);
 
   const findDropCandidate = useCallback((
@@ -684,8 +686,10 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
     const targetPct = targetSocketSizing.widthValue / 100;
     const sourcePct = Number.parseFloat(layout.sourceWidth) / 100;
-    const targetRadius = Math.max(50, rect.width * Math.max(0.085, targetPct * 0.88));
-    const sourceRadius = Math.max(38, rect.width * Math.max(0.065, sourcePct * 0.66));
+    // Mobile-first tolerance: the learner should not need to overshoot a socket.
+    const dropTolerancePx = 18;
+    const targetRadius = Math.max(56, rect.width * Math.max(0.095, targetPct * 0.98)) + dropTolerancePx;
+    const sourceRadius = Math.max(44, rect.width * Math.max(0.072, sourcePct * 0.74)) + dropTolerancePx;
 
     let bestTarget: { index: number; distance: number } | null = null;
     let bestSource: { index: number; distance: number } | null = null;
@@ -706,7 +710,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
     // Prefer target sockets when dragging answer tokens downward from the source row.
     if (fromLocation === 'source') {
-      if (bestTarget && bestTarget.distance <= targetRadius * 1.12) {
+      if (bestTarget && bestTarget.distance <= targetRadius * 1.18) {
         return { location: 'target', index: bestTarget.index };
       }
       if (bestSource && bestSource.distance <= sourceRadius) {
@@ -718,10 +722,10 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       return null;
     }
 
-    if (bestTarget && bestTarget.distance <= targetRadius * 0.92) {
+    if (bestTarget && bestTarget.distance <= targetRadius * 0.98) {
       return { location: 'target', index: bestTarget.index };
     }
-    if (bestSource && bestSource.distance <= sourceRadius * 0.9) {
+    if (bestSource && bestSource.distance <= sourceRadius * 0.96) {
       return { location: 'source', index: bestSource.index };
     }
     return null;
@@ -782,13 +786,34 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           clientY: event.clientY,
         };
       });
+
+      // Update hover highlight using dragged token center (forgiving on touch).
+      const rect = playfieldRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const scale = getPlayfieldScale();
+      const local = getRelativePoint(event.clientX, event.clientY);
+      const centerLocalX = (local.x - dragState.offsetX) + (dragState.width / 2);
+      const centerLocalY = (local.y - dragState.offsetY) + (dragState.height / 2);
+      const centerClientX = rect.left + (centerLocalX * scale.x);
+      const centerClientY = rect.top + (centerLocalY * scale.y);
+      setHoverCandidate(findDropCandidate(centerClientX, centerClientY, dragState.fromLocation));
     };
 
     const onFinish = (event: PointerEvent) => {
       if (event.pointerId !== dragState.pointerId) return;
-      const candidate = findDropCandidate(event.clientX, event.clientY, dragState.fromLocation);
+      // Use the dragged token's center for hit testing (more forgiving than finger position).
+      const rect = playfieldRef.current?.getBoundingClientRect();
+      const scale = getPlayfieldScale();
+      const local = getRelativePoint(event.clientX, event.clientY);
+      const centerLocalX = (local.x - dragState.offsetX) + (dragState.width / 2);
+      const centerLocalY = (local.y - dragState.offsetY) + (dragState.height / 2);
+      const centerClientX = rect ? rect.left + (centerLocalX * scale.x) : event.clientX;
+      const centerClientY = rect ? rect.top + (centerLocalY * scale.y) : event.clientY;
+
+      const candidate = findDropCandidate(centerClientX, centerClientY, dragState.fromLocation);
       placeTokenInArrays(candidate);
       setDragState(null);
+      setHoverCandidate(null);
       triggerHaptic('selection');
     };
 
@@ -898,7 +923,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     <div
       className="place-value-game-viewport relative z-20 h-full w-full min-h-0 overflow-hidden select-none"
       style={{
-        touchAction: 'manipulation',
+        // Drag surfaces must opt out of browser gestures.
+        touchAction: 'none',
       }}
     >
       <div
@@ -1042,6 +1068,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
             {activeTargetAnchors.map((anchor, idx) => {
               const token = targetSlots[idx];
               const isDraggingThis = dragState?.fromLocation === 'target' && dragState.fromIndex === idx;
+              const isHover = hoverCandidate?.location === 'target' && hoverCandidate.index === idx;
               return (
             <motion.button
               key={`target-${idx}`}
@@ -1066,6 +1093,9 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 height: targetSocketSizing.height,
               }}
             >
+              {isHover && !isDraggingThis ? (
+                <span className="pointer-events-none absolute inset-0 rounded-xl border-4 border-amber-200/70 shadow-[0_0_22px_rgba(251,191,36,0.35)]" />
+              ) : null}
               <img
                 src={getSocketAsset(question.placeHints[idx], idx, question.placeHints)}
                 alt=""
@@ -1104,6 +1134,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
             {activeSourceAnchors.map((anchor, idx) => {
               const token = sourceSlots[idx];
               const isDraggingThis = dragState?.fromLocation === 'source' && dragState.fromIndex === idx;
+              const isHover = hoverCandidate?.location === 'source' && hoverCandidate.index === idx;
               return (
             <motion.button
               key={`source-${idx}`}
@@ -1121,6 +1152,9 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 height: layout.sourceHeight,
               }}
             >
+              {isHover && !isDraggingThis ? (
+                <span className="pointer-events-none absolute inset-0 rounded-xl border-4 border-cyan-100/60 shadow-[0_0_22px_rgba(34,211,238,0.22)]" />
+              ) : null}
               {token ? (
                 <>
                   <span className="pointer-events-none absolute left-1/2 top-1/2 z-[8] h-[56%] w-[66%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/24 blur-[11px]" />

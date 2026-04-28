@@ -4,6 +4,7 @@ import kiteBalloonSilenceAltSrc from '../assets/sounds/calmsounds/kite-balloon-s
 import kiteBalloonSilenceSrc from '../assets/sounds/calmsounds/kite-balloon-silence.mp3.mpeg';
 import { GAME_AUDIO_STORAGE_KEY, GAME_HUD_MUTE_SYNC_EVENT } from '../gameHudEvents';
 import { addPageAudioFocusListeners, isPageAudioAllowed } from '../audio/audioFocus';
+import { audioManager } from '../audio/audioManager';
 
 const CALM_BACKGROUND_TRACKS = [
   bubblesRainbowSrc,
@@ -26,42 +27,30 @@ export const useCalmBackgroundAudio = () => {
   const track = useMemo(() => chooseRandomTrack(), []);
 
   useEffect(() => {
-    if (typeof Audio === 'undefined') return undefined;
-
-    const audio = new Audio(track);
     let disposed = false;
-    audio.loop = true;
-    audio.preload = 'auto';
-    audio.volume = CALM_BACKGROUND_VOLUME;
-    audio.muted = isAudioMuted();
+    audioManager.setMuted(isAudioMuted());
 
     const tryPlay = () => {
-      if (disposed || audio.muted || !isPageAudioAllowed()) return;
-
-      try {
-        void audio.play().catch(() => {});
-      } catch {
-        // Background audio should never interrupt calm activities.
-      }
+      if (disposed || audioManager.getMuted() || !isPageAudioAllowed()) return;
+      audioManager.playLoop('calm_music', track, {
+        volume: CALM_BACKGROUND_VOLUME,
+        kind: 'music',
+        allowOverlap: false,
+        source: 'useCalmBackgroundAudio',
+      });
     };
 
     const handleMuteSync = (event: Event) => {
       const detail = (event as CustomEvent<{ muted?: boolean }>).detail;
       const nextMuted = typeof detail?.muted === 'boolean' ? detail.muted : isAudioMuted();
-      audio.muted = nextMuted;
-
-      if (nextMuted) {
-        audio.pause();
-        return;
-      }
-
-      tryPlay();
+      audioManager.setMuted(nextMuted);
+      if (!nextMuted) tryPlay();
     };
 
     const handleAudioFocusChange = () => {
       if (disposed) return;
       if (!isPageAudioAllowed()) {
-        audio.pause();
+        audioManager.stopSound('calm_music');
         return;
       }
       tryPlay();
@@ -84,8 +73,7 @@ export const useCalmBackgroundAudio = () => {
       window.removeEventListener('pointerdown', handleUserGesture, { capture: true });
       window.removeEventListener('keydown', handleUserGesture, { capture: true });
       removePageAudioFocusListeners();
-      audio.pause();
-      audio.src = '';
+      audioManager.stopSound('calm_music');
     };
   }, [track]);
 };

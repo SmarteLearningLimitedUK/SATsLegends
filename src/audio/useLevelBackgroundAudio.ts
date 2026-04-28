@@ -9,6 +9,7 @@ import sunlitDuelSrc from '../assets/sounds/level/sunlit-duel.mp3.mpeg';
 import velvetTruceSrc from '../assets/sounds/level/velvet-truce.mp3.mpeg';
 import { GAME_AUDIO_STORAGE_KEY, GAME_HUD_MUTE_SYNC_EVENT } from '../gameHudEvents';
 import { addPageAudioFocusListeners, isPageAudioAllowed } from './audioFocus';
+import { audioManager } from './audioManager';
 
 const LEVEL_BACKGROUND_TRACKS = [
   brassWatersparkSrc,
@@ -41,42 +42,34 @@ export const useLevelBackgroundAudio = (
   ), [isBossBattle, sessionKey]);
 
   useEffect(() => {
-    if (!enabled || typeof Audio === 'undefined') return undefined;
+    if (!enabled) {
+      audioManager.stopSound('level_music');
+      return undefined;
+    }
 
-    const audio = new Audio(track);
     let disposed = false;
-    audio.loop = true;
-    audio.preload = 'auto';
-    audio.volume = LEVEL_BACKGROUND_VOLUME;
-    audio.muted = isAudioMuted();
-
+    audioManager.setMuted(isAudioMuted());
     const tryPlay = () => {
-      if (disposed || audio.muted || !isPageAudioAllowed()) return;
-
-      try {
-        void audio.play().catch(() => {});
-      } catch {
-        // Level background audio should never interrupt gameplay.
-      }
+      if (disposed || audioManager.getMuted() || !isPageAudioAllowed()) return;
+      audioManager.playLoop('level_music', track, {
+        volume: LEVEL_BACKGROUND_VOLUME,
+        kind: 'music',
+        allowOverlap: false,
+        source: 'useLevelBackgroundAudio',
+      });
     };
 
     const handleMuteSync = (event: Event) => {
       const detail = (event as CustomEvent<{ muted?: boolean }>).detail;
       const nextMuted = typeof detail?.muted === 'boolean' ? detail.muted : isAudioMuted();
-      audio.muted = nextMuted;
-
-      if (nextMuted) {
-        audio.pause();
-        return;
-      }
-
-      tryPlay();
+      audioManager.setMuted(nextMuted);
+      if (!nextMuted) tryPlay();
     };
 
     const handleAudioFocusChange = () => {
       if (disposed) return;
       if (!isPageAudioAllowed()) {
-        audio.pause();
+        audioManager.stopSound('level_music');
         return;
       }
       tryPlay();
@@ -99,8 +92,7 @@ export const useLevelBackgroundAudio = (
       window.removeEventListener('pointerdown', handleUserGesture, { capture: true });
       window.removeEventListener('keydown', handleUserGesture, { capture: true });
       removePageAudioFocusListeners();
-      audio.pause();
-      audio.src = '';
+      audioManager.stopSound('level_music');
     };
   }, [enabled, track]);
 };

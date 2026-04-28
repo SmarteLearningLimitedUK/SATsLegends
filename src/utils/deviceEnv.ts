@@ -51,21 +51,26 @@ export const installSatBrowserAutoDetect = () => {
   root.classList.toggle('sat-browser', env.displayMode === 'browser');
   root.classList.toggle('sat-standalone', env.displayMode === 'standalone');
 
-  // iOS Safari (including iPad browser) can mis-report dvh during URL bar show/hide.
-  // Use an explicit pixel height CSS var as the source of truth for layout.
+  // iOS Safari (including iPad) can mis-report dvh/svh during URL bar show/hide.
+  // Use an explicit pixel height CSS var as the source of truth for shell layout.
   const applyViewportHeight = () => {
-    root.style.setProperty('--sat-viewport-height', `${window.innerHeight}px`);
+    const vv = window.visualViewport;
+    const height = Math.round((vv?.height ?? window.innerHeight) || 0);
+    if (height > 0) root.style.setProperty('--sat-viewport-height', `${height}px`);
   };
 
-  if (env.isIOS && env.displayMode === 'browser') {
+  if (env.isIOS) {
     applyViewportHeight();
     window.addEventListener('resize', applyViewportHeight, { passive: true });
     window.addEventListener('orientationchange', applyViewportHeight, { passive: true });
+    window.visualViewport?.addEventListener('resize', applyViewportHeight, { passive: true });
+    window.visualViewport?.addEventListener('scroll', applyViewportHeight, { passive: true });
   }
 
   return () => {
     window.removeEventListener('resize', applyViewportHeight);
     window.removeEventListener('orientationchange', applyViewportHeight);
+    window.visualViewport?.removeEventListener('resize', applyViewportHeight);
+    window.visualViewport?.removeEventListener('scroll', applyViewportHeight);
   };
 };
-

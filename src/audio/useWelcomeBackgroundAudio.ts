@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import welcomeHeroSelectSrc from '../assets/sounds/calmsounds/silk-swordlight-char-start-select.mp3.mpeg';
 import { GAME_AUDIO_STORAGE_KEY, GAME_HUD_MUTE_SYNC_EVENT } from '../gameHudEvents';
 import { addPageAudioFocusListeners, isPageAudioAllowed } from './audioFocus';
+import { audioManager } from './audioManager';
 
 const WELCOME_BACKGROUND_VOLUME = 0.26;
 
@@ -11,42 +12,34 @@ const isAudioMuted = () => (
 
 export const useWelcomeBackgroundAudio = (enabled: boolean) => {
   useEffect(() => {
-    if (!enabled || typeof Audio === 'undefined') return undefined;
+    if (!enabled) {
+      audioManager.stopSound('welcome_music');
+      return undefined;
+    }
 
-    const audio = new Audio(welcomeHeroSelectSrc);
     let disposed = false;
-    audio.loop = true;
-    audio.preload = 'auto';
-    audio.volume = WELCOME_BACKGROUND_VOLUME;
-    audio.muted = isAudioMuted();
-
+    audioManager.setMuted(isAudioMuted());
     const tryPlay = () => {
-      if (disposed || audio.muted || !isPageAudioAllowed()) return;
-
-      try {
-        void audio.play().catch(() => {});
-      } catch {
-        // Welcome music should never block navigation.
-      }
+      if (disposed || audioManager.getMuted() || !isPageAudioAllowed()) return;
+      audioManager.playLoop('welcome_music', welcomeHeroSelectSrc, {
+        volume: WELCOME_BACKGROUND_VOLUME,
+        kind: 'music',
+        allowOverlap: false,
+        source: 'useWelcomeBackgroundAudio',
+      });
     };
 
     const handleMuteSync = (event: Event) => {
       const detail = (event as CustomEvent<{ muted?: boolean }>).detail;
       const nextMuted = typeof detail?.muted === 'boolean' ? detail.muted : isAudioMuted();
-      audio.muted = nextMuted;
-
-      if (nextMuted) {
-        audio.pause();
-        return;
-      }
-
-      tryPlay();
+      audioManager.setMuted(nextMuted);
+      if (!nextMuted) tryPlay();
     };
 
     const handleAudioFocusChange = () => {
       if (disposed) return;
       if (!isPageAudioAllowed()) {
-        audio.pause();
+        audioManager.stopSound('welcome_music');
         return;
       }
       tryPlay();
@@ -69,8 +62,7 @@ export const useWelcomeBackgroundAudio = (enabled: boolean) => {
       window.removeEventListener('pointerdown', handleUserGesture, { capture: true });
       window.removeEventListener('keydown', handleUserGesture, { capture: true });
       removePageAudioFocusListeners();
-      audio.pause();
-      audio.src = '';
+      audioManager.stopSound('welcome_music');
     };
   }, [enabled]);
 };

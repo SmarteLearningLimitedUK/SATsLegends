@@ -48,6 +48,7 @@ import { useLevelBackgroundAudio } from './audio/useLevelBackgroundAudio';
 import { useWelcomeBackgroundAudio } from './audio/useWelcomeBackgroundAudio';
 import { playClickSound } from './utils/soundManager';
 import { useUiAudioBridge } from './audio/useUiAudioBridge';
+import { audioManager } from './audio/audioManager';
 import FeedbackToast, { FeedbackToastState } from './components/feedback/FeedbackToast';
 import { getVisualTestSeed, isVisualTestMode } from './utils/visualTestMode';
 import { makeSeededRandom } from './utils/seededRandom';
@@ -65,6 +66,10 @@ type SessionMetricsState = {
 
 const App: React.FC = () => {
   useUiAudioBridge();
+
+  // Keep the central audio manager in sync with the shell mute state.
+  useEffect(() => audioManager.installMuteSyncListener(), []);
+
   const buildId = import.meta.env.VITE_BUILD_ID ?? CACHE_BUSTER;
   const visualTestMode = isVisualTestMode();
 
@@ -375,6 +380,7 @@ const App: React.FC = () => {
 
       // iOS/Safari is stricter than desktop: ensure the sound is triggered on the initial gesture,
       // not the delayed click event.
+      // De-dupe is handled centrally (UI event bridge also emits click sounds).
       playClickSound();
       triggerHaptic('selection');
     };
@@ -384,6 +390,12 @@ const App: React.FC = () => {
       document.removeEventListener('pointerdown', handleGlobalPress, true);
     };
   }, []);
+
+  // Safety: when leaving gameplay, ensure any gameplay loops are stopped immediately.
+  useEffect(() => {
+    if (screen === 'gameplay') return;
+    audioManager.stopSound('level_music');
+  }, [screen]);
 
   const sessionState: GameplaySessionState = useMemo(() => ({
     timeLeft: globalMiniGameHudTimeLeft,
@@ -1243,7 +1255,9 @@ const App: React.FC = () => {
     || selectedLevel?.isPractice
     || selectedLevel?.gameType === 'potion_pour';
   const hideShellLives = isExamBoss;
-  const hideGlobalBottomDock = false;
+  // Standalone minigame routes render their own answer/action UI inside the GameShell.
+  // The global bottom dock would overlap those controls on small viewports.
+  const hideGlobalBottomDock = isStandaloneRatioRacer || isStandaloneScaleBuilder || isStandaloneShareSplitter;
   const gameplayBackHandler = levelResult ? handleCloseLevelResult : goToIslandLevels;
   const goToProfile = useCallback(() => {
     setScreen('profile');

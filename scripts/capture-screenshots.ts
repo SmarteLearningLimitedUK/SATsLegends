@@ -31,6 +31,7 @@ const visualQuery = 'visualTest=1&seed=1';
 const viewports: ViewportPreset[] = [
   { key: 'iphone-se', width: 375, height: 667 },
   { key: 'iphone', width: 393, height: 852 },
+  { key: 'iphone-pro-max', width: 430, height: 932 },
   { key: 'ipad', width: 768, height: 1024 },
 ];
 

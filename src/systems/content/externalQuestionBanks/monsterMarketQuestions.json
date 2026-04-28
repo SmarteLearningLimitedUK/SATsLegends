@@ -1,0 +1,2202 @@
+[
+  {
+    "id": "mm-001",
+    "question": "An item costs \u00a36.92. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a313.08",
+    "answers": [
+      "\u00a313.08",
+      "\u00a312.08",
+      "\u00a315.08",
+      "\u00a314.08"
+    ]
+  },
+  {
+    "id": "mm-002",
+    "question": "An item costs \u00a34.27. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a315.73",
+    "answers": [
+      "\u00a316.73",
+      "\u00a317.73",
+      "\u00a314.73",
+      "\u00a315.73"
+    ]
+  },
+  {
+    "id": "mm-003",
+    "question": "An item costs \u00a35.22. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a34.78",
+    "answers": [
+      "\u00a33.78",
+      "\u00a34.78",
+      "\u00a36.78",
+      "\u00a35.78"
+    ]
+  },
+  {
+    "id": "mm-004",
+    "question": "An item costs \u00a34.99. You pay with \u00a35. How much change do you get?",
+    "correctAnswer": "\u00a30.01",
+    "answers": [
+      "\u00a31.01",
+      "\u00a30.01",
+      "\u00a30.00",
+      "\u00a32.01"
+    ]
+  },
+  {
+    "id": "mm-005",
+    "question": "An item costs \u00a32.48. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a347.52",
+    "answers": [
+      "\u00a348.52",
+      "\u00a346.52",
+      "\u00a347.52",
+      "\u00a349.52"
+    ]
+  },
+  {
+    "id": "mm-006",
+    "question": "An item costs \u00a33.05. You pay with \u00a35. How much change do you get?",
+    "correctAnswer": "\u00a31.95",
+    "answers": [
+      "\u00a30.95",
+      "\u00a32.95",
+      "\u00a31.95",
+      "\u00a33.95"
+    ]
+  },
+  {
+    "id": "mm-007",
+    "question": "An item costs \u00a31.82. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a318.18",
+    "answers": [
+      "\u00a319.18",
+      "\u00a317.18",
+      "\u00a320.18",
+      "\u00a318.18"
+    ]
+  },
+  {
+    "id": "mm-008",
+    "question": "An item costs \u00a318.48. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a31.52",
+    "answers": [
+      "\u00a30.52",
+      "\u00a33.52",
+      "\u00a31.52",
+      "\u00a32.52"
+    ]
+  },
+  {
+    "id": "mm-009",
+    "question": "An item costs \u00a31.56. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a38.44",
+    "answers": [
+      "\u00a38.44",
+      "\u00a39.44",
+      "\u00a310.44",
+      "\u00a37.44"
+    ]
+  },
+  {
+    "id": "mm-010",
+    "question": "An item costs \u00a37.69. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a32.31",
+    "answers": [
+      "\u00a33.31",
+      "\u00a31.31",
+      "\u00a34.31",
+      "\u00a32.31"
+    ]
+  },
+  {
+    "id": "mm-011",
+    "question": "An item costs \u00a311.05. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a38.95",
+    "answers": [
+      "\u00a39.95",
+      "\u00a310.95",
+      "\u00a38.95",
+      "\u00a37.95"
+    ]
+  },
+  {
+    "id": "mm-012",
+    "question": "An item costs \u00a319.50. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a30.50",
+    "answers": [
+      "\u00a30.50",
+      "\u00a32.50",
+      "\u00a30.00",
+      "\u00a31.50"
+    ]
+  },
+  {
+    "id": "mm-013",
+    "question": "An item costs \u00a37.96. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a32.04",
+    "answers": [
+      "\u00a33.04",
+      "\u00a32.04",
+      "\u00a31.04",
+      "\u00a34.04"
+    ]
+  },
+  {
+    "id": "mm-014",
+    "question": "An item costs \u00a34.44. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a315.56",
+    "answers": [
+      "\u00a314.56",
+      "\u00a315.56",
+      "\u00a316.56",
+      "\u00a317.56"
+    ]
+  },
+  {
+    "id": "mm-015",
+    "question": "An item costs \u00a310.77. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a339.23",
+    "answers": [
+      "\u00a338.23",
+      "\u00a341.23",
+      "\u00a340.23",
+      "\u00a339.23"
+    ]
+  },
+  {
+    "id": "mm-016",
+    "question": "An item costs \u00a39.85. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a30.15",
+    "answers": [
+      "\u00a30.15",
+      "\u00a30.00",
+      "\u00a31.15",
+      "\u00a32.15"
+    ]
+  },
+  {
+    "id": "mm-017",
+    "question": "An item costs \u00a311.59. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a38.41",
+    "answers": [
+      "\u00a310.41",
+      "\u00a37.41",
+      "\u00a39.41",
+      "\u00a38.41"
+    ]
+  },
+  {
+    "id": "mm-018",
+    "question": "An item costs \u00a33.20. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a316.80",
+    "answers": [
+      "\u00a316.80",
+      "\u00a317.80",
+      "\u00a315.80",
+      "\u00a318.80"
+    ]
+  },
+  {
+    "id": "mm-019",
+    "question": "An item costs \u00a314.05. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a335.95",
+    "answers": [
+      "\u00a335.95",
+      "\u00a337.95",
+      "\u00a334.95",
+      "\u00a336.95"
+    ]
+  },
+  {
+    "id": "mm-020",
+    "question": "An item costs \u00a36.52. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a343.48",
+    "answers": [
+      "\u00a342.48",
+      "\u00a345.48",
+      "\u00a343.48",
+      "\u00a344.48"
+    ]
+  },
+  {
+    "id": "mm-021",
+    "question": "An item costs \u00a318.84. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a31.16",
+    "answers": [
+      "\u00a30.16",
+      "\u00a33.16",
+      "\u00a31.16",
+      "\u00a32.16"
+    ]
+  },
+  {
+    "id": "mm-022",
+    "question": "An item costs \u00a313.77. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a336.23",
+    "answers": [
+      "\u00a337.23",
+      "\u00a336.23",
+      "\u00a335.23",
+      "\u00a338.23"
+    ]
+  },
+  {
+    "id": "mm-023",
+    "question": "An item costs \u00a33.27. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a346.73",
+    "answers": [
+      "\u00a347.73",
+      "\u00a346.73",
+      "\u00a345.73",
+      "\u00a348.73"
+    ]
+  },
+  {
+    "id": "mm-024",
+    "question": "An item costs \u00a315.09. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a34.91",
+    "answers": [
+      "\u00a33.91",
+      "\u00a36.91",
+      "\u00a35.91",
+      "\u00a34.91"
+    ]
+  },
+  {
+    "id": "mm-025",
+    "question": "An item costs \u00a37.43. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a342.57",
+    "answers": [
+      "\u00a341.57",
+      "\u00a343.57",
+      "\u00a344.57",
+      "\u00a342.57"
+    ]
+  },
+  {
+    "id": "mm-026",
+    "question": "An item costs \u00a314.78. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a35.22",
+    "answers": [
+      "\u00a35.22",
+      "\u00a36.22",
+      "\u00a37.22",
+      "\u00a34.22"
+    ]
+  },
+  {
+    "id": "mm-027",
+    "question": "An item costs \u00a37.77. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a342.23",
+    "answers": [
+      "\u00a342.23",
+      "\u00a343.23",
+      "\u00a341.23",
+      "\u00a344.23"
+    ]
+  },
+  {
+    "id": "mm-028",
+    "question": "An item costs \u00a33.80. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a346.20",
+    "answers": [
+      "\u00a345.20",
+      "\u00a347.20",
+      "\u00a348.20",
+      "\u00a346.20"
+    ]
+  },
+  {
+    "id": "mm-029",
+    "question": "An item costs \u00a310.30. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a39.70",
+    "answers": [
+      "\u00a311.70",
+      "\u00a38.70",
+      "\u00a39.70",
+      "\u00a310.70"
+    ]
+  },
+  {
+    "id": "mm-030",
+    "question": "An item costs \u00a315.02. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a34.98",
+    "answers": [
+      "\u00a35.98",
+      "\u00a34.98",
+      "\u00a33.98",
+      "\u00a36.98"
+    ]
+  },
+  {
+    "id": "mm-031",
+    "question": "An item costs \u00a319.47. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a330.53",
+    "answers": [
+      "\u00a332.53",
+      "\u00a331.53",
+      "\u00a330.53",
+      "\u00a329.53"
+    ]
+  },
+  {
+    "id": "mm-032",
+    "question": "An item costs \u00a312.82. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a37.18",
+    "answers": [
+      "\u00a39.18",
+      "\u00a38.18",
+      "\u00a36.18",
+      "\u00a37.18"
+    ]
+  },
+  {
+    "id": "mm-033",
+    "question": "An item costs \u00a316.06. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a33.94",
+    "answers": [
+      "\u00a33.94",
+      "\u00a34.94",
+      "\u00a35.94",
+      "\u00a32.94"
+    ]
+  },
+  {
+    "id": "mm-034",
+    "question": "An item costs \u00a310.31. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a39.69",
+    "answers": [
+      "\u00a310.69",
+      "\u00a39.69",
+      "\u00a311.69",
+      "\u00a38.69"
+    ]
+  },
+  {
+    "id": "mm-035",
+    "question": "An item costs \u00a319.10. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a30.90",
+    "answers": [
+      "\u00a30.00",
+      "\u00a31.90",
+      "\u00a30.90",
+      "\u00a32.90"
+    ]
+  },
+  {
+    "id": "mm-036",
+    "question": "An item costs \u00a39.55. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a340.45",
+    "answers": [
+      "\u00a339.45",
+      "\u00a340.45",
+      "\u00a341.45",
+      "\u00a342.45"
+    ]
+  },
+  {
+    "id": "mm-037",
+    "question": "An item costs \u00a31.62. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a318.38",
+    "answers": [
+      "\u00a318.38",
+      "\u00a317.38",
+      "\u00a320.38",
+      "\u00a319.38"
+    ]
+  },
+  {
+    "id": "mm-038",
+    "question": "An item costs \u00a33.56. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a346.44",
+    "answers": [
+      "\u00a345.44",
+      "\u00a347.44",
+      "\u00a346.44",
+      "\u00a348.44"
+    ]
+  },
+  {
+    "id": "mm-039",
+    "question": "An item costs \u00a313.54. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a336.46",
+    "answers": [
+      "\u00a337.46",
+      "\u00a336.46",
+      "\u00a335.46",
+      "\u00a338.46"
+    ]
+  },
+  {
+    "id": "mm-040",
+    "question": "An item costs \u00a310.63. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a339.37",
+    "answers": [
+      "\u00a339.37",
+      "\u00a341.37",
+      "\u00a340.37",
+      "\u00a338.37"
+    ]
+  },
+  {
+    "id": "mm-041",
+    "question": "An item costs \u00a312.72. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a37.28",
+    "answers": [
+      "\u00a39.28",
+      "\u00a37.28",
+      "\u00a38.28",
+      "\u00a36.28"
+    ]
+  },
+  {
+    "id": "mm-042",
+    "question": "An item costs \u00a31.53. You pay with \u00a35. How much change do you get?",
+    "correctAnswer": "\u00a33.47",
+    "answers": [
+      "\u00a33.47",
+      "\u00a32.47",
+      "\u00a35.47",
+      "\u00a34.47"
+    ]
+  },
+  {
+    "id": "mm-043",
+    "question": "An item costs \u00a316.38. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a33.62",
+    "answers": [
+      "\u00a35.62",
+      "\u00a33.62",
+      "\u00a34.62",
+      "\u00a32.62"
+    ]
+  },
+  {
+    "id": "mm-044",
+    "question": "An item costs \u00a39.13. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a310.87",
+    "answers": [
+      "\u00a39.87",
+      "\u00a310.87",
+      "\u00a311.87",
+      "\u00a312.87"
+    ]
+  },
+  {
+    "id": "mm-045",
+    "question": "An item costs \u00a313.56. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a36.44",
+    "answers": [
+      "\u00a36.44",
+      "\u00a38.44",
+      "\u00a35.44",
+      "\u00a37.44"
+    ]
+  },
+  {
+    "id": "mm-046",
+    "question": "An item costs \u00a312.26. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a37.74",
+    "answers": [
+      "\u00a39.74",
+      "\u00a38.74",
+      "\u00a37.74",
+      "\u00a36.74"
+    ]
+  },
+  {
+    "id": "mm-047",
+    "question": "An item costs \u00a34.23. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a315.77",
+    "answers": [
+      "\u00a317.77",
+      "\u00a314.77",
+      "\u00a316.77",
+      "\u00a315.77"
+    ]
+  },
+  {
+    "id": "mm-048",
+    "question": "An item costs \u00a311.79. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a338.21",
+    "answers": [
+      "\u00a340.21",
+      "\u00a339.21",
+      "\u00a338.21",
+      "\u00a337.21"
+    ]
+  },
+  {
+    "id": "mm-049",
+    "question": "An item costs \u00a312.17. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a37.83",
+    "answers": [
+      "\u00a37.83",
+      "\u00a38.83",
+      "\u00a36.83",
+      "\u00a39.83"
+    ]
+  },
+  {
+    "id": "mm-050",
+    "question": "An item costs \u00a37.13. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a32.87",
+    "answers": [
+      "\u00a33.87",
+      "\u00a31.87",
+      "\u00a32.87",
+      "\u00a34.87"
+    ]
+  },
+  {
+    "id": "mm-051",
+    "question": "An item costs \u00a37.38. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a312.62",
+    "answers": [
+      "\u00a312.62",
+      "\u00a314.62",
+      "\u00a311.62",
+      "\u00a313.62"
+    ]
+  },
+  {
+    "id": "mm-052",
+    "question": "An item costs \u00a37.90. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a342.10",
+    "answers": [
+      "\u00a341.10",
+      "\u00a342.10",
+      "\u00a344.10",
+      "\u00a343.10"
+    ]
+  },
+  {
+    "id": "mm-053",
+    "question": "An item costs \u00a316.97. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a33.03",
+    "answers": [
+      "\u00a35.03",
+      "\u00a33.03",
+      "\u00a34.03",
+      "\u00a32.03"
+    ]
+  },
+  {
+    "id": "mm-054",
+    "question": "An item costs \u00a36.65. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a343.35",
+    "answers": [
+      "\u00a345.35",
+      "\u00a343.35",
+      "\u00a342.35",
+      "\u00a344.35"
+    ]
+  },
+  {
+    "id": "mm-055",
+    "question": "An item costs \u00a314.64. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a35.36",
+    "answers": [
+      "\u00a37.36",
+      "\u00a35.36",
+      "\u00a36.36",
+      "\u00a34.36"
+    ]
+  },
+  {
+    "id": "mm-056",
+    "question": "An item costs \u00a311.76. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a338.24",
+    "answers": [
+      "\u00a337.24",
+      "\u00a339.24",
+      "\u00a338.24",
+      "\u00a340.24"
+    ]
+  },
+  {
+    "id": "mm-057",
+    "question": "An item costs \u00a316.12. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a33.88",
+    "answers": [
+      "\u00a33.88",
+      "\u00a35.88",
+      "\u00a34.88",
+      "\u00a32.88"
+    ]
+  },
+  {
+    "id": "mm-058",
+    "question": "An item costs \u00a34.80. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a345.20",
+    "answers": [
+      "\u00a345.20",
+      "\u00a346.20",
+      "\u00a347.20",
+      "\u00a344.20"
+    ]
+  },
+  {
+    "id": "mm-059",
+    "question": "An item costs \u00a313.76. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a36.24",
+    "answers": [
+      "\u00a37.24",
+      "\u00a38.24",
+      "\u00a35.24",
+      "\u00a36.24"
+    ]
+  },
+  {
+    "id": "mm-060",
+    "question": "An item costs \u00a311.96. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a38.04",
+    "answers": [
+      "\u00a38.04",
+      "\u00a37.04",
+      "\u00a39.04",
+      "\u00a310.04"
+    ]
+  },
+  {
+    "id": "mm-061",
+    "question": "An item costs \u00a318.76. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a31.24",
+    "answers": [
+      "\u00a31.24",
+      "\u00a30.24",
+      "\u00a33.24",
+      "\u00a32.24"
+    ]
+  },
+  {
+    "id": "mm-062",
+    "question": "An item costs \u00a33.81. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a36.19",
+    "answers": [
+      "\u00a36.19",
+      "\u00a38.19",
+      "\u00a37.19",
+      "\u00a35.19"
+    ]
+  },
+  {
+    "id": "mm-063",
+    "question": "An item costs \u00a37.05. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a32.95",
+    "answers": [
+      "\u00a32.95",
+      "\u00a31.95",
+      "\u00a34.95",
+      "\u00a33.95"
+    ]
+  },
+  {
+    "id": "mm-064",
+    "question": "An item costs \u00a316.65. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a33.35",
+    "answers": [
+      "\u00a34.35",
+      "\u00a33.35",
+      "\u00a35.35",
+      "\u00a32.35"
+    ]
+  },
+  {
+    "id": "mm-065",
+    "question": "An item costs \u00a38.71. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a31.29",
+    "answers": [
+      "\u00a33.29",
+      "\u00a30.29",
+      "\u00a31.29",
+      "\u00a32.29"
+    ]
+  },
+  {
+    "id": "mm-066",
+    "question": "An item costs \u00a35.67. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a314.33",
+    "answers": [
+      "\u00a314.33",
+      "\u00a313.33",
+      "\u00a315.33",
+      "\u00a316.33"
+    ]
+  },
+  {
+    "id": "mm-067",
+    "question": "An item costs \u00a39.02. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a30.98",
+    "answers": [
+      "\u00a30.00",
+      "\u00a32.98",
+      "\u00a30.98",
+      "\u00a31.98"
+    ]
+  },
+  {
+    "id": "mm-068",
+    "question": "An item costs \u00a33.59. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a316.41",
+    "answers": [
+      "\u00a317.41",
+      "\u00a316.41",
+      "\u00a318.41",
+      "\u00a315.41"
+    ]
+  },
+  {
+    "id": "mm-069",
+    "question": "An item costs \u00a313.24. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a36.76",
+    "answers": [
+      "\u00a37.76",
+      "\u00a35.76",
+      "\u00a36.76",
+      "\u00a38.76"
+    ]
+  },
+  {
+    "id": "mm-070",
+    "question": "An item costs \u00a317.33. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a32.67",
+    "answers": [
+      "\u00a32.67",
+      "\u00a33.67",
+      "\u00a34.67",
+      "\u00a31.67"
+    ]
+  },
+  {
+    "id": "mm-071",
+    "question": "An item costs \u00a317.48. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a332.52",
+    "answers": [
+      "\u00a333.52",
+      "\u00a332.52",
+      "\u00a334.52",
+      "\u00a331.52"
+    ]
+  },
+  {
+    "id": "mm-072",
+    "question": "An item costs \u00a38.54. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a31.46",
+    "answers": [
+      "\u00a33.46",
+      "\u00a30.46",
+      "\u00a31.46",
+      "\u00a32.46"
+    ]
+  },
+  {
+    "id": "mm-073",
+    "question": "An item costs \u00a310.92. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a39.08",
+    "answers": [
+      "\u00a310.08",
+      "\u00a38.08",
+      "\u00a39.08",
+      "\u00a311.08"
+    ]
+  },
+  {
+    "id": "mm-074",
+    "question": "An item costs \u00a312.40. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a37.60",
+    "answers": [
+      "\u00a37.60",
+      "\u00a38.60",
+      "\u00a39.60",
+      "\u00a36.60"
+    ]
+  },
+  {
+    "id": "mm-075",
+    "question": "An item costs \u00a316.31. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a33.69",
+    "answers": [
+      "\u00a34.69",
+      "\u00a32.69",
+      "\u00a33.69",
+      "\u00a35.69"
+    ]
+  },
+  {
+    "id": "mm-076",
+    "question": "An item costs \u00a33.03. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a36.97",
+    "answers": [
+      "\u00a36.97",
+      "\u00a38.97",
+      "\u00a37.97",
+      "\u00a35.97"
+    ]
+  },
+  {
+    "id": "mm-077",
+    "question": "An item costs \u00a35.83. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a34.17",
+    "answers": [
+      "\u00a34.17",
+      "\u00a35.17",
+      "\u00a33.17",
+      "\u00a36.17"
+    ]
+  },
+  {
+    "id": "mm-078",
+    "question": "An item costs \u00a314.29. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a35.71",
+    "answers": [
+      "\u00a35.71",
+      "\u00a36.71",
+      "\u00a37.71",
+      "\u00a34.71"
+    ]
+  },
+  {
+    "id": "mm-079",
+    "question": "An item costs \u00a310.02. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a39.98",
+    "answers": [
+      "\u00a311.98",
+      "\u00a310.98",
+      "\u00a39.98",
+      "\u00a38.98"
+    ]
+  },
+  {
+    "id": "mm-080",
+    "question": "An item costs \u00a310.03. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a39.97",
+    "answers": [
+      "\u00a310.97",
+      "\u00a311.97",
+      "\u00a39.97",
+      "\u00a38.97"
+    ]
+  },
+  {
+    "id": "mm-081",
+    "question": "An item costs \u00a316.99. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a33.01",
+    "answers": [
+      "\u00a33.01",
+      "\u00a32.01",
+      "\u00a35.01",
+      "\u00a34.01"
+    ]
+  },
+  {
+    "id": "mm-082",
+    "question": "An item costs \u00a36.88. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a313.12",
+    "answers": [
+      "\u00a314.12",
+      "\u00a315.12",
+      "\u00a312.12",
+      "\u00a313.12"
+    ]
+  },
+  {
+    "id": "mm-083",
+    "question": "An item costs \u00a317.30. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a332.70",
+    "answers": [
+      "\u00a334.70",
+      "\u00a331.70",
+      "\u00a333.70",
+      "\u00a332.70"
+    ]
+  },
+  {
+    "id": "mm-084",
+    "question": "An item costs \u00a36.72. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a33.28",
+    "answers": [
+      "\u00a34.28",
+      "\u00a35.28",
+      "\u00a33.28",
+      "\u00a32.28"
+    ]
+  },
+  {
+    "id": "mm-085",
+    "question": "An item costs \u00a318.40. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a31.60",
+    "answers": [
+      "\u00a30.60",
+      "\u00a32.60",
+      "\u00a31.60",
+      "\u00a33.60"
+    ]
+  },
+  {
+    "id": "mm-086",
+    "question": "An item costs \u00a317.46. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a332.54",
+    "answers": [
+      "\u00a332.54",
+      "\u00a333.54",
+      "\u00a331.54",
+      "\u00a334.54"
+    ]
+  },
+  {
+    "id": "mm-087",
+    "question": "An item costs \u00a318.60. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a31.40",
+    "answers": [
+      "\u00a32.40",
+      "\u00a30.40",
+      "\u00a31.40",
+      "\u00a33.40"
+    ]
+  },
+  {
+    "id": "mm-088",
+    "question": "An item costs \u00a314.27. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a35.73",
+    "answers": [
+      "\u00a35.73",
+      "\u00a37.73",
+      "\u00a36.73",
+      "\u00a34.73"
+    ]
+  },
+  {
+    "id": "mm-089",
+    "question": "An item costs \u00a39.61. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a30.39",
+    "answers": [
+      "\u00a31.39",
+      "\u00a32.39",
+      "\u00a30.00",
+      "\u00a30.39"
+    ]
+  },
+  {
+    "id": "mm-090",
+    "question": "An item costs \u00a312.97. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a37.03",
+    "answers": [
+      "\u00a36.03",
+      "\u00a39.03",
+      "\u00a38.03",
+      "\u00a37.03"
+    ]
+  },
+  {
+    "id": "mm-091",
+    "question": "An item costs \u00a312.94. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a37.06",
+    "answers": [
+      "\u00a38.06",
+      "\u00a36.06",
+      "\u00a39.06",
+      "\u00a37.06"
+    ]
+  },
+  {
+    "id": "mm-092",
+    "question": "An item costs \u00a35.74. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a34.26",
+    "answers": [
+      "\u00a34.26",
+      "\u00a33.26",
+      "\u00a35.26",
+      "\u00a36.26"
+    ]
+  },
+  {
+    "id": "mm-093",
+    "question": "An item costs \u00a310.09. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a39.91",
+    "answers": [
+      "\u00a311.91",
+      "\u00a310.91",
+      "\u00a39.91",
+      "\u00a38.91"
+    ]
+  },
+  {
+    "id": "mm-094",
+    "question": "An item costs \u00a316.19. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a33.81",
+    "answers": [
+      "\u00a35.81",
+      "\u00a32.81",
+      "\u00a34.81",
+      "\u00a33.81"
+    ]
+  },
+  {
+    "id": "mm-095",
+    "question": "An item costs \u00a34.46. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a345.54",
+    "answers": [
+      "\u00a347.54",
+      "\u00a344.54",
+      "\u00a345.54",
+      "\u00a346.54"
+    ]
+  },
+  {
+    "id": "mm-096",
+    "question": "An item costs \u00a318.54. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a31.46",
+    "answers": [
+      "\u00a30.46",
+      "\u00a33.46",
+      "\u00a32.46",
+      "\u00a31.46"
+    ]
+  },
+  {
+    "id": "mm-097",
+    "question": "An item costs \u00a35.97. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a34.03",
+    "answers": [
+      "\u00a36.03",
+      "\u00a33.03",
+      "\u00a35.03",
+      "\u00a34.03"
+    ]
+  },
+  {
+    "id": "mm-098",
+    "question": "An item costs \u00a312.41. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a37.59",
+    "answers": [
+      "\u00a36.59",
+      "\u00a39.59",
+      "\u00a38.59",
+      "\u00a37.59"
+    ]
+  },
+  {
+    "id": "mm-099",
+    "question": "An item costs \u00a319.00. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a31.00",
+    "answers": [
+      "\u00a33.00",
+      "\u00a32.00",
+      "\u00a30.00",
+      "\u00a31.00"
+    ]
+  },
+  {
+    "id": "mm-100",
+    "question": "An item costs \u00a315.69. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a334.31",
+    "answers": [
+      "\u00a335.31",
+      "\u00a333.31",
+      "\u00a334.31",
+      "\u00a336.31"
+    ]
+  },
+  {
+    "id": "mm-101",
+    "question": "An item costs \u00a314.56. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a35.44",
+    "answers": [
+      "\u00a35.44",
+      "\u00a37.44",
+      "\u00a36.44",
+      "\u00a34.44"
+    ]
+  },
+  {
+    "id": "mm-102",
+    "question": "An item costs \u00a38.26. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a341.74",
+    "answers": [
+      "\u00a343.74",
+      "\u00a341.74",
+      "\u00a340.74",
+      "\u00a342.74"
+    ]
+  },
+  {
+    "id": "mm-103",
+    "question": "An item costs \u00a319.91. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a30.09",
+    "answers": [
+      "\u00a30.00",
+      "\u00a30.09",
+      "\u00a32.09",
+      "\u00a31.09"
+    ]
+  },
+  {
+    "id": "mm-104",
+    "question": "An item costs \u00a38.76. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a31.24",
+    "answers": [
+      "\u00a33.24",
+      "\u00a30.24",
+      "\u00a32.24",
+      "\u00a31.24"
+    ]
+  },
+  {
+    "id": "mm-105",
+    "question": "An item costs \u00a35.47. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a344.53",
+    "answers": [
+      "\u00a344.53",
+      "\u00a343.53",
+      "\u00a346.53",
+      "\u00a345.53"
+    ]
+  },
+  {
+    "id": "mm-106",
+    "question": "An item costs \u00a32.63. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a347.37",
+    "answers": [
+      "\u00a347.37",
+      "\u00a346.37",
+      "\u00a349.37",
+      "\u00a348.37"
+    ]
+  },
+  {
+    "id": "mm-107",
+    "question": "An item costs \u00a314.05. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a335.95",
+    "answers": [
+      "\u00a335.95",
+      "\u00a336.95",
+      "\u00a334.95",
+      "\u00a337.95"
+    ]
+  },
+  {
+    "id": "mm-108",
+    "question": "An item costs \u00a32.39. You pay with \u00a35. How much change do you get?",
+    "correctAnswer": "\u00a32.61",
+    "answers": [
+      "\u00a31.61",
+      "\u00a34.61",
+      "\u00a33.61",
+      "\u00a32.61"
+    ]
+  },
+  {
+    "id": "mm-109",
+    "question": "An item costs \u00a39.95. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a310.05",
+    "answers": [
+      "\u00a39.05",
+      "\u00a311.05",
+      "\u00a312.05",
+      "\u00a310.05"
+    ]
+  },
+  {
+    "id": "mm-110",
+    "question": "An item costs \u00a310.59. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a339.41",
+    "answers": [
+      "\u00a339.41",
+      "\u00a341.41",
+      "\u00a340.41",
+      "\u00a338.41"
+    ]
+  },
+  {
+    "id": "mm-111",
+    "question": "An item costs \u00a33.51. You pay with \u00a35. How much change do you get?",
+    "correctAnswer": "\u00a31.49",
+    "answers": [
+      "\u00a30.49",
+      "\u00a31.49",
+      "\u00a33.49",
+      "\u00a32.49"
+    ]
+  },
+  {
+    "id": "mm-112",
+    "question": "An item costs \u00a310.57. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a39.43",
+    "answers": [
+      "\u00a310.43",
+      "\u00a38.43",
+      "\u00a39.43",
+      "\u00a311.43"
+    ]
+  },
+  {
+    "id": "mm-113",
+    "question": "An item costs \u00a37.03. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a342.97",
+    "answers": [
+      "\u00a341.97",
+      "\u00a342.97",
+      "\u00a344.97",
+      "\u00a343.97"
+    ]
+  },
+  {
+    "id": "mm-114",
+    "question": "An item costs \u00a36.95. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a33.05",
+    "answers": [
+      "\u00a33.05",
+      "\u00a32.05",
+      "\u00a34.05",
+      "\u00a35.05"
+    ]
+  },
+  {
+    "id": "mm-115",
+    "question": "An item costs \u00a318.60. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a31.40",
+    "answers": [
+      "\u00a31.40",
+      "\u00a32.40",
+      "\u00a33.40",
+      "\u00a30.40"
+    ]
+  },
+  {
+    "id": "mm-116",
+    "question": "An item costs \u00a310.82. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a339.18",
+    "answers": [
+      "\u00a339.18",
+      "\u00a338.18",
+      "\u00a341.18",
+      "\u00a340.18"
+    ]
+  },
+  {
+    "id": "mm-117",
+    "question": "An item costs \u00a315.51. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a34.49",
+    "answers": [
+      "\u00a35.49",
+      "\u00a33.49",
+      "\u00a34.49",
+      "\u00a36.49"
+    ]
+  },
+  {
+    "id": "mm-118",
+    "question": "An item costs \u00a33.82. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a36.18",
+    "answers": [
+      "\u00a35.18",
+      "\u00a38.18",
+      "\u00a36.18",
+      "\u00a37.18"
+    ]
+  },
+  {
+    "id": "mm-119",
+    "question": "An item costs \u00a35.94. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a344.06",
+    "answers": [
+      "\u00a343.06",
+      "\u00a345.06",
+      "\u00a344.06",
+      "\u00a346.06"
+    ]
+  },
+  {
+    "id": "mm-120",
+    "question": "An item costs \u00a31.78. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a318.22",
+    "answers": [
+      "\u00a318.22",
+      "\u00a317.22",
+      "\u00a319.22",
+      "\u00a320.22"
+    ]
+  },
+  {
+    "id": "mm-121",
+    "question": "An item costs \u00a33.14. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a36.86",
+    "answers": [
+      "\u00a35.86",
+      "\u00a38.86",
+      "\u00a37.86",
+      "\u00a36.86"
+    ]
+  },
+  {
+    "id": "mm-122",
+    "question": "An item costs \u00a34.87. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a315.13",
+    "answers": [
+      "\u00a314.13",
+      "\u00a317.13",
+      "\u00a315.13",
+      "\u00a316.13"
+    ]
+  },
+  {
+    "id": "mm-123",
+    "question": "An item costs \u00a311.70. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a38.30",
+    "answers": [
+      "\u00a39.30",
+      "\u00a310.30",
+      "\u00a37.30",
+      "\u00a38.30"
+    ]
+  },
+  {
+    "id": "mm-124",
+    "question": "An item costs \u00a38.91. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a31.09",
+    "answers": [
+      "\u00a30.09",
+      "\u00a31.09",
+      "\u00a33.09",
+      "\u00a32.09"
+    ]
+  },
+  {
+    "id": "mm-125",
+    "question": "An item costs \u00a317.86. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a32.14",
+    "answers": [
+      "\u00a33.14",
+      "\u00a32.14",
+      "\u00a34.14",
+      "\u00a31.14"
+    ]
+  },
+  {
+    "id": "mm-126",
+    "question": "An item costs \u00a38.49. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a31.51",
+    "answers": [
+      "\u00a32.51",
+      "\u00a33.51",
+      "\u00a31.51",
+      "\u00a30.51"
+    ]
+  },
+  {
+    "id": "mm-127",
+    "question": "An item costs \u00a32.54. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a347.46",
+    "answers": [
+      "\u00a347.46",
+      "\u00a348.46",
+      "\u00a346.46",
+      "\u00a349.46"
+    ]
+  },
+  {
+    "id": "mm-128",
+    "question": "An item costs \u00a312.29. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a37.71",
+    "answers": [
+      "\u00a39.71",
+      "\u00a38.71",
+      "\u00a37.71",
+      "\u00a36.71"
+    ]
+  },
+  {
+    "id": "mm-129",
+    "question": "An item costs \u00a37.17. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a32.83",
+    "answers": [
+      "\u00a31.83",
+      "\u00a34.83",
+      "\u00a32.83",
+      "\u00a33.83"
+    ]
+  },
+  {
+    "id": "mm-130",
+    "question": "An item costs \u00a37.14. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a32.86",
+    "answers": [
+      "\u00a34.86",
+      "\u00a33.86",
+      "\u00a31.86",
+      "\u00a32.86"
+    ]
+  },
+  {
+    "id": "mm-131",
+    "question": "An item costs \u00a32.76. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a317.24",
+    "answers": [
+      "\u00a316.24",
+      "\u00a319.24",
+      "\u00a317.24",
+      "\u00a318.24"
+    ]
+  },
+  {
+    "id": "mm-132",
+    "question": "An item costs \u00a32.69. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a37.31",
+    "answers": [
+      "\u00a37.31",
+      "\u00a36.31",
+      "\u00a39.31",
+      "\u00a38.31"
+    ]
+  },
+  {
+    "id": "mm-133",
+    "question": "An item costs \u00a36.41. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a33.59",
+    "answers": [
+      "\u00a35.59",
+      "\u00a32.59",
+      "\u00a34.59",
+      "\u00a33.59"
+    ]
+  },
+  {
+    "id": "mm-134",
+    "question": "An item costs \u00a316.22. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a33.78",
+    "answers": [
+      "\u00a32.78",
+      "\u00a33.78",
+      "\u00a35.78",
+      "\u00a34.78"
+    ]
+  },
+  {
+    "id": "mm-135",
+    "question": "An item costs \u00a316.81. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a33.19",
+    "answers": [
+      "\u00a33.19",
+      "\u00a32.19",
+      "\u00a34.19",
+      "\u00a35.19"
+    ]
+  },
+  {
+    "id": "mm-136",
+    "question": "An item costs \u00a310.05. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a339.95",
+    "answers": [
+      "\u00a341.95",
+      "\u00a338.95",
+      "\u00a340.95",
+      "\u00a339.95"
+    ]
+  },
+  {
+    "id": "mm-137",
+    "question": "An item costs \u00a312.66. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a337.34",
+    "answers": [
+      "\u00a338.34",
+      "\u00a336.34",
+      "\u00a337.34",
+      "\u00a339.34"
+    ]
+  },
+  {
+    "id": "mm-138",
+    "question": "An item costs \u00a310.75. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a339.25",
+    "answers": [
+      "\u00a341.25",
+      "\u00a339.25",
+      "\u00a338.25",
+      "\u00a340.25"
+    ]
+  },
+  {
+    "id": "mm-139",
+    "question": "An item costs \u00a318.68. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a31.32",
+    "answers": [
+      "\u00a31.32",
+      "\u00a33.32",
+      "\u00a32.32",
+      "\u00a30.32"
+    ]
+  },
+  {
+    "id": "mm-140",
+    "question": "An item costs \u00a32.50. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a347.50",
+    "answers": [
+      "\u00a348.50",
+      "\u00a349.50",
+      "\u00a347.50",
+      "\u00a346.50"
+    ]
+  },
+  {
+    "id": "mm-141",
+    "question": "An item costs \u00a314.00. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a36.00",
+    "answers": [
+      "\u00a36.00",
+      "\u00a38.00",
+      "\u00a35.00",
+      "\u00a37.00"
+    ]
+  },
+  {
+    "id": "mm-142",
+    "question": "An item costs \u00a36.61. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a33.39",
+    "answers": [
+      "\u00a34.39",
+      "\u00a32.39",
+      "\u00a35.39",
+      "\u00a33.39"
+    ]
+  },
+  {
+    "id": "mm-143",
+    "question": "An item costs \u00a310.70. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a339.30",
+    "answers": [
+      "\u00a341.30",
+      "\u00a338.30",
+      "\u00a340.30",
+      "\u00a339.30"
+    ]
+  },
+  {
+    "id": "mm-144",
+    "question": "An item costs \u00a37.75. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a32.25",
+    "answers": [
+      "\u00a31.25",
+      "\u00a33.25",
+      "\u00a34.25",
+      "\u00a32.25"
+    ]
+  },
+  {
+    "id": "mm-145",
+    "question": "An item costs \u00a34.41. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a35.59",
+    "answers": [
+      "\u00a36.59",
+      "\u00a34.59",
+      "\u00a35.59",
+      "\u00a37.59"
+    ]
+  },
+  {
+    "id": "mm-146",
+    "question": "An item costs \u00a38.91. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a311.09",
+    "answers": [
+      "\u00a311.09",
+      "\u00a312.09",
+      "\u00a313.09",
+      "\u00a310.09"
+    ]
+  },
+  {
+    "id": "mm-147",
+    "question": "An item costs \u00a315.39. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a334.61",
+    "answers": [
+      "\u00a336.61",
+      "\u00a334.61",
+      "\u00a335.61",
+      "\u00a333.61"
+    ]
+  },
+  {
+    "id": "mm-148",
+    "question": "An item costs \u00a35.01. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a34.99",
+    "answers": [
+      "\u00a35.99",
+      "\u00a34.99",
+      "\u00a36.99",
+      "\u00a33.99"
+    ]
+  },
+  {
+    "id": "mm-149",
+    "question": "An item costs \u00a39.24. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a30.76",
+    "answers": [
+      "\u00a30.00",
+      "\u00a32.76",
+      "\u00a31.76",
+      "\u00a30.76"
+    ]
+  },
+  {
+    "id": "mm-150",
+    "question": "An item costs \u00a31.25. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a348.75",
+    "answers": [
+      "\u00a348.75",
+      "\u00a349.75",
+      "\u00a347.75",
+      "\u00a350.75"
+    ]
+  },
+  {
+    "id": "mm-151",
+    "question": "An item costs \u00a317.51. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a332.49",
+    "answers": [
+      "\u00a332.49",
+      "\u00a333.49",
+      "\u00a334.49",
+      "\u00a331.49"
+    ]
+  },
+  {
+    "id": "mm-152",
+    "question": "An item costs \u00a314.12. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a335.88",
+    "answers": [
+      "\u00a336.88",
+      "\u00a337.88",
+      "\u00a335.88",
+      "\u00a334.88"
+    ]
+  },
+  {
+    "id": "mm-153",
+    "question": "An item costs \u00a33.57. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a36.43",
+    "answers": [
+      "\u00a37.43",
+      "\u00a35.43",
+      "\u00a38.43",
+      "\u00a36.43"
+    ]
+  },
+  {
+    "id": "mm-154",
+    "question": "An item costs \u00a317.32. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a32.68",
+    "answers": [
+      "\u00a33.68",
+      "\u00a32.68",
+      "\u00a31.68",
+      "\u00a34.68"
+    ]
+  },
+  {
+    "id": "mm-155",
+    "question": "An item costs \u00a313.35. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a336.65",
+    "answers": [
+      "\u00a335.65",
+      "\u00a338.65",
+      "\u00a336.65",
+      "\u00a337.65"
+    ]
+  },
+  {
+    "id": "mm-156",
+    "question": "An item costs \u00a315.62. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a34.38",
+    "answers": [
+      "\u00a33.38",
+      "\u00a34.38",
+      "\u00a35.38",
+      "\u00a36.38"
+    ]
+  },
+  {
+    "id": "mm-157",
+    "question": "An item costs \u00a33.21. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a36.79",
+    "answers": [
+      "\u00a36.79",
+      "\u00a35.79",
+      "\u00a37.79",
+      "\u00a38.79"
+    ]
+  },
+  {
+    "id": "mm-158",
+    "question": "An item costs \u00a31.37. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a348.63",
+    "answers": [
+      "\u00a347.63",
+      "\u00a350.63",
+      "\u00a348.63",
+      "\u00a349.63"
+    ]
+  },
+  {
+    "id": "mm-159",
+    "question": "An item costs \u00a311.82. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a338.18",
+    "answers": [
+      "\u00a337.18",
+      "\u00a340.18",
+      "\u00a339.18",
+      "\u00a338.18"
+    ]
+  },
+  {
+    "id": "mm-160",
+    "question": "An item costs \u00a32.95. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a347.05",
+    "answers": [
+      "\u00a347.05",
+      "\u00a346.05",
+      "\u00a348.05",
+      "\u00a349.05"
+    ]
+  },
+  {
+    "id": "mm-161",
+    "question": "An item costs \u00a31.70. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a348.30",
+    "answers": [
+      "\u00a348.30",
+      "\u00a349.30",
+      "\u00a347.30",
+      "\u00a350.30"
+    ]
+  },
+  {
+    "id": "mm-162",
+    "question": "An item costs \u00a35.41. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a34.59",
+    "answers": [
+      "\u00a36.59",
+      "\u00a33.59",
+      "\u00a35.59",
+      "\u00a34.59"
+    ]
+  },
+  {
+    "id": "mm-163",
+    "question": "An item costs \u00a311.51. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a38.49",
+    "answers": [
+      "\u00a37.49",
+      "\u00a38.49",
+      "\u00a39.49",
+      "\u00a310.49"
+    ]
+  },
+  {
+    "id": "mm-164",
+    "question": "An item costs \u00a310.40. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a39.60",
+    "answers": [
+      "\u00a39.60",
+      "\u00a310.60",
+      "\u00a38.60",
+      "\u00a311.60"
+    ]
+  },
+  {
+    "id": "mm-165",
+    "question": "An item costs \u00a31.40. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a318.60",
+    "answers": [
+      "\u00a318.60",
+      "\u00a317.60",
+      "\u00a320.60",
+      "\u00a319.60"
+    ]
+  },
+  {
+    "id": "mm-166",
+    "question": "An item costs \u00a39.32. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a30.68",
+    "answers": [
+      "\u00a30.68",
+      "\u00a31.68",
+      "\u00a32.68",
+      "\u00a30.00"
+    ]
+  },
+  {
+    "id": "mm-167",
+    "question": "An item costs \u00a33.49. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a316.51",
+    "answers": [
+      "\u00a316.51",
+      "\u00a315.51",
+      "\u00a317.51",
+      "\u00a318.51"
+    ]
+  },
+  {
+    "id": "mm-168",
+    "question": "An item costs \u00a316.12. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a33.88",
+    "answers": [
+      "\u00a32.88",
+      "\u00a33.88",
+      "\u00a35.88",
+      "\u00a34.88"
+    ]
+  },
+  {
+    "id": "mm-169",
+    "question": "An item costs \u00a313.67. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a36.33",
+    "answers": [
+      "\u00a38.33",
+      "\u00a35.33",
+      "\u00a36.33",
+      "\u00a37.33"
+    ]
+  },
+  {
+    "id": "mm-170",
+    "question": "An item costs \u00a312.51. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a37.49",
+    "answers": [
+      "\u00a37.49",
+      "\u00a36.49",
+      "\u00a38.49",
+      "\u00a39.49"
+    ]
+  },
+  {
+    "id": "mm-171",
+    "question": "An item costs \u00a35.46. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a34.54",
+    "answers": [
+      "\u00a36.54",
+      "\u00a33.54",
+      "\u00a35.54",
+      "\u00a34.54"
+    ]
+  },
+  {
+    "id": "mm-172",
+    "question": "An item costs \u00a37.78. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a32.22",
+    "answers": [
+      "\u00a34.22",
+      "\u00a32.22",
+      "\u00a31.22",
+      "\u00a33.22"
+    ]
+  },
+  {
+    "id": "mm-173",
+    "question": "An item costs \u00a316.33. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a33.67",
+    "answers": [
+      "\u00a34.67",
+      "\u00a32.67",
+      "\u00a33.67",
+      "\u00a35.67"
+    ]
+  },
+  {
+    "id": "mm-174",
+    "question": "An item costs \u00a33.29. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a36.71",
+    "answers": [
+      "\u00a36.71",
+      "\u00a35.71",
+      "\u00a37.71",
+      "\u00a38.71"
+    ]
+  },
+  {
+    "id": "mm-175",
+    "question": "An item costs \u00a315.91. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a34.09",
+    "answers": [
+      "\u00a35.09",
+      "\u00a36.09",
+      "\u00a34.09",
+      "\u00a33.09"
+    ]
+  },
+  {
+    "id": "mm-176",
+    "question": "An item costs \u00a314.42. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a335.58",
+    "answers": [
+      "\u00a336.58",
+      "\u00a334.58",
+      "\u00a335.58",
+      "\u00a337.58"
+    ]
+  },
+  {
+    "id": "mm-177",
+    "question": "An item costs \u00a315.85. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a34.15",
+    "answers": [
+      "\u00a35.15",
+      "\u00a36.15",
+      "\u00a33.15",
+      "\u00a34.15"
+    ]
+  },
+  {
+    "id": "mm-178",
+    "question": "An item costs \u00a34.17. You pay with \u00a35. How much change do you get?",
+    "correctAnswer": "\u00a30.83",
+    "answers": [
+      "\u00a30.00",
+      "\u00a30.83",
+      "\u00a32.83",
+      "\u00a31.83"
+    ]
+  },
+  {
+    "id": "mm-179",
+    "question": "An item costs \u00a314.84. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a335.16",
+    "answers": [
+      "\u00a336.16",
+      "\u00a335.16",
+      "\u00a334.16",
+      "\u00a337.16"
+    ]
+  },
+  {
+    "id": "mm-180",
+    "question": "An item costs \u00a33.93. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a316.07",
+    "answers": [
+      "\u00a317.07",
+      "\u00a318.07",
+      "\u00a316.07",
+      "\u00a315.07"
+    ]
+  },
+  {
+    "id": "mm-181",
+    "question": "An item costs \u00a317.12. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a332.88",
+    "answers": [
+      "\u00a333.88",
+      "\u00a331.88",
+      "\u00a332.88",
+      "\u00a334.88"
+    ]
+  },
+  {
+    "id": "mm-182",
+    "question": "An item costs \u00a316.86. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a333.14",
+    "answers": [
+      "\u00a335.14",
+      "\u00a333.14",
+      "\u00a334.14",
+      "\u00a332.14"
+    ]
+  },
+  {
+    "id": "mm-183",
+    "question": "An item costs \u00a32.62. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a317.38",
+    "answers": [
+      "\u00a316.38",
+      "\u00a317.38",
+      "\u00a318.38",
+      "\u00a319.38"
+    ]
+  },
+  {
+    "id": "mm-184",
+    "question": "An item costs \u00a33.88. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a346.12",
+    "answers": [
+      "\u00a345.12",
+      "\u00a348.12",
+      "\u00a346.12",
+      "\u00a347.12"
+    ]
+  },
+  {
+    "id": "mm-185",
+    "question": "An item costs \u00a38.85. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a341.15",
+    "answers": [
+      "\u00a341.15",
+      "\u00a342.15",
+      "\u00a340.15",
+      "\u00a343.15"
+    ]
+  },
+  {
+    "id": "mm-186",
+    "question": "An item costs \u00a318.93. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a331.07",
+    "answers": [
+      "\u00a333.07",
+      "\u00a330.07",
+      "\u00a331.07",
+      "\u00a332.07"
+    ]
+  },
+  {
+    "id": "mm-187",
+    "question": "An item costs \u00a32.61. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a317.39",
+    "answers": [
+      "\u00a316.39",
+      "\u00a318.39",
+      "\u00a317.39",
+      "\u00a319.39"
+    ]
+  },
+  {
+    "id": "mm-188",
+    "question": "An item costs \u00a32.17. You pay with \u00a35. How much change do you get?",
+    "correctAnswer": "\u00a32.83",
+    "answers": [
+      "\u00a34.83",
+      "\u00a32.83",
+      "\u00a31.83",
+      "\u00a33.83"
+    ]
+  },
+  {
+    "id": "mm-189",
+    "question": "An item costs \u00a319.58. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a30.42",
+    "answers": [
+      "\u00a30.42",
+      "\u00a30.00",
+      "\u00a31.42",
+      "\u00a32.42"
+    ]
+  },
+  {
+    "id": "mm-190",
+    "question": "An item costs \u00a314.71. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a35.29",
+    "answers": [
+      "\u00a37.29",
+      "\u00a36.29",
+      "\u00a35.29",
+      "\u00a34.29"
+    ]
+  },
+  {
+    "id": "mm-191",
+    "question": "An item costs \u00a318.10. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a31.90",
+    "answers": [
+      "\u00a30.90",
+      "\u00a31.90",
+      "\u00a32.90",
+      "\u00a33.90"
+    ]
+  },
+  {
+    "id": "mm-192",
+    "question": "An item costs \u00a317.86. You pay with \u00a350. How much change do you get?",
+    "correctAnswer": "\u00a332.14",
+    "answers": [
+      "\u00a332.14",
+      "\u00a333.14",
+      "\u00a334.14",
+      "\u00a331.14"
+    ]
+  },
+  {
+    "id": "mm-193",
+    "question": "An item costs \u00a315.73. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a34.27",
+    "answers": [
+      "\u00a33.27",
+      "\u00a35.27",
+      "\u00a36.27",
+      "\u00a34.27"
+    ]
+  },
+  {
+    "id": "mm-194",
+    "question": "An item costs \u00a38.41. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a31.59",
+    "answers": [
+      "\u00a32.59",
+      "\u00a33.59",
+      "\u00a31.59",
+      "\u00a30.59"
+    ]
+  },
+  {
+    "id": "mm-195",
+    "question": "An item costs \u00a310.72. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a39.28",
+    "answers": [
+      "\u00a310.28",
+      "\u00a39.28",
+      "\u00a311.28",
+      "\u00a38.28"
+    ]
+  },
+  {
+    "id": "mm-196",
+    "question": "An item costs \u00a31.45. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a318.55",
+    "answers": [
+      "\u00a318.55",
+      "\u00a317.55",
+      "\u00a320.55",
+      "\u00a319.55"
+    ]
+  },
+  {
+    "id": "mm-197",
+    "question": "An item costs \u00a319.75. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a30.25",
+    "answers": [
+      "\u00a32.25",
+      "\u00a30.00",
+      "\u00a31.25",
+      "\u00a30.25"
+    ]
+  },
+  {
+    "id": "mm-198",
+    "question": "An item costs \u00a312.91. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a37.09",
+    "answers": [
+      "\u00a38.09",
+      "\u00a36.09",
+      "\u00a39.09",
+      "\u00a37.09"
+    ]
+  },
+  {
+    "id": "mm-199",
+    "question": "An item costs \u00a39.53. You pay with \u00a310. How much change do you get?",
+    "correctAnswer": "\u00a30.47",
+    "answers": [
+      "\u00a30.00",
+      "\u00a30.47",
+      "\u00a31.47",
+      "\u00a32.47"
+    ]
+  },
+  {
+    "id": "mm-200",
+    "question": "An item costs \u00a316.30. You pay with \u00a320. How much change do you get?",
+    "correctAnswer": "\u00a33.70",
+    "answers": [
+      "\u00a33.70",
+      "\u00a35.70",
+      "\u00a34.70",
+      "\u00a32.70"
+    ]
+  }
+]

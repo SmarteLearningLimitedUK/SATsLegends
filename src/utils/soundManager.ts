@@ -1,5 +1,6 @@
 import buttonClickSrc from '../assets/button click.ogg';
 import { isPageAudioAllowed } from '../audio/audioFocus';
+import { audioManager } from '../audio/audioManager';
 
 const createClickSound = () => {
   if (typeof Audio === 'undefined') return null;
@@ -14,11 +15,6 @@ const clickSound = createClickSound();
 
 export function playClickSound() {
   if (!clickSound || !isPageAudioAllowed()) return;
-
-  try {
-    clickSound.currentTime = 0;
-    void clickSound.play().catch(() => {});
-  } catch {
-    // fail silently
-  }
+  // Route through the central manager for cooldown de-dupe and StrictMode safety.
+  audioManager.playSfx('ui_click', buttonClickSrc, { volume: 0.35, cooldownMs: 80, source: 'soundManager' });
 }
