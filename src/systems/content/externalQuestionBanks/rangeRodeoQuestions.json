@@ -1,458 +1,645 @@
 [
   {
-    "id": "rr-001",
-    "question": "Find the range: 5, 33, 61, 70, 97",
-    "correctAnswer": "92",
-    "answers": [
-      "92",
-      "90",
-      "97",
-      "94"
-    ]
-  },
-  {
-    "id": "rr-002",
-    "question": "Find the range: 7, 16, 35, 43, 84",
-    "correctAnswer": "77",
-    "answers": [
-      "77",
-      "82",
-      "79",
-      "75"
-    ]
-  },
-  {
-    "id": "rr-003",
-    "question": "Find the range: 24, 44, 50, 57, 96",
-    "correctAnswer": "72",
-    "answers": [
-      "72",
-      "74",
-      "70",
-      "77"
-    ]
-  },
-  {
-    "id": "rr-004",
-    "question": "Find the range: 11, 35, 48, 67, 94",
-    "correctAnswer": "83",
-    "answers": [
-      "81",
-      "85",
-      "83",
-      "88"
-    ]
-  },
-  {
-    "id": "rr-005",
-    "question": "Find the range: 24, 38, 42, 70, 78",
-    "correctAnswer": "54",
-    "answers": [
-      "52",
-      "56",
-      "59",
-      "54"
-    ]
-  },
-  {
-    "id": "rr-006",
-    "question": "Find the range: 38, 40, 58, 78, 85",
-    "correctAnswer": "47",
-    "answers": [
-      "45",
-      "49",
-      "47",
-      "52"
-    ]
-  },
-  {
-    "id": "rr-007",
-    "question": "Find the range: 6, 45, 46, 58, 94",
-    "correctAnswer": "88",
-    "answers": [
-      "86",
-      "88",
-      "90",
-      "93"
-    ]
-  },
-  {
-    "id": "rr-008",
-    "question": "Find the range: 10, 47, 52, 82, 86",
-    "correctAnswer": "76",
-    "answers": [
-      "81",
-      "74",
-      "76",
-      "78"
-    ]
-  },
-  {
-    "id": "rr-009",
-    "question": "Find the range: 5, 17, 57, 78, 87",
-    "correctAnswer": "82",
-    "answers": [
-      "80",
-      "84",
-      "87",
-      "82"
-    ]
-  },
-  {
-    "id": "rr-010",
-    "question": "Find the range: 5, 47, 50, 73, 78",
-    "correctAnswer": "73",
-    "answers": [
-      "73",
-      "78",
-      "71",
-      "75"
-    ]
-  },
-  {
-    "id": "rr-011",
-    "question": "Find the range: 10, 48, 57, 74, 98",
-    "correctAnswer": "88",
-    "answers": [
-      "88",
-      "93",
-      "86",
-      "90"
-    ]
-  },
-  {
-    "id": "rr-012",
-    "question": "Find the range: 32, 36, 41, 51, 84",
+    "id": "rangerodeo-001",
+    "question": "Find the range: 9, 12, 19, 39, 61",
     "correctAnswer": "52",
     "answers": [
       "54",
-      "50",
       "57",
-      "52"
+      "52",
+      "50"
     ]
   },
   {
-    "id": "rr-013",
-    "question": "Find the range: 16, 50, 64, 67, 72",
-    "correctAnswer": "56",
+    "id": "rangerodeo-002",
+    "question": "Find the range: 22, 37, 38, 65, 87",
+    "correctAnswer": "65",
     "answers": [
-      "56",
-      "61",
-      "58",
-      "54"
-    ]
-  },
-  {
-    "id": "rr-014",
-    "question": "Find the range: 28, 37, 63, 79, 89",
-    "correctAnswer": "61",
-    "answers": [
-      "66",
-      "59",
-      "61",
-      "63"
-    ]
-  },
-  {
-    "id": "rr-015",
-    "question": "Find the range: 10, 23, 57, 58, 92",
-    "correctAnswer": "82",
-    "answers": [
-      "87",
-      "84",
-      "80",
-      "82"
-    ]
-  },
-  {
-    "id": "rr-016",
-    "question": "Find the range: 9, 45, 71, 86, 91",
-    "correctAnswer": "82",
-    "answers": [
-      "87",
-      "82",
-      "84",
-      "80"
-    ]
-  },
-  {
-    "id": "rr-017",
-    "question": "Find the range: 23, 82, 90, 91, 92",
-    "correctAnswer": "69",
-    "answers": [
-      "71",
-      "69",
-      "74",
+      "63",
+      "65",
+      "70",
       "67"
     ]
   },
   {
-    "id": "rr-018",
-    "question": "Find the range: 16, 18, 26, 31, 64",
-    "correctAnswer": "48",
+    "id": "rangerodeo-003",
+    "question": "Find the range: 6, 22, 39, 59, 73",
+    "correctAnswer": "67",
     "answers": [
-      "53",
-      "46",
+      "65",
+      "69",
+      "67",
+      "72"
+    ]
+  },
+  {
+    "id": "rangerodeo-004",
+    "question": "Find the range: 4, 22, 39, 76, 88",
+    "correctAnswer": "84",
+    "answers": [
+      "84",
+      "82",
+      "89",
+      "86"
+    ]
+  },
+  {
+    "id": "rangerodeo-005",
+    "question": "Find the range: 13, 46, 63, 78, 87",
+    "correctAnswer": "74",
+    "answers": [
+      "79",
+      "72",
+      "76",
+      "74"
+    ]
+  },
+  {
+    "id": "rangerodeo-006",
+    "question": "Find the range: 5, 51, 65, 78, 92",
+    "correctAnswer": "87",
+    "answers": [
+      "92",
+      "87",
+      "89",
+      "85"
+    ]
+  },
+  {
+    "id": "rangerodeo-007",
+    "question": "Find the range: 57, 65, 72, 81, 86",
+    "correctAnswer": "29",
+    "answers": [
+      "31",
+      "29",
+      "34",
+      "27"
+    ]
+  },
+  {
+    "id": "rangerodeo-008",
+    "question": "Find the range: 7, 14, 17, 37, 65",
+    "correctAnswer": "58",
+    "answers": [
+      "58",
+      "60",
+      "56",
+      "63"
+    ]
+  },
+  {
+    "id": "rangerodeo-009",
+    "question": "Find the range: 8, 9, 26, 50, 53",
+    "correctAnswer": "45",
+    "answers": [
+      "45",
+      "43",
+      "47",
+      "50"
+    ]
+  },
+  {
+    "id": "rangerodeo-010",
+    "question": "Find the range: 44, 48, 74, 92, 98",
+    "correctAnswer": "54",
+    "answers": [
+      "56",
+      "59",
+      "52",
+      "54"
+    ]
+  },
+  {
+    "id": "rangerodeo-011",
+    "question": "Find the range: 4, 70, 71, 83, 86",
+    "correctAnswer": "82",
+    "answers": [
+      "80",
+      "84",
+      "87",
+      "82"
+    ]
+  },
+  {
+    "id": "rangerodeo-012",
+    "question": "Find the range: 10, 51, 77, 82, 99",
+    "correctAnswer": "89",
+    "answers": [
+      "89",
+      "87",
+      "91",
+      "94"
+    ]
+  },
+  {
+    "id": "rangerodeo-013",
+    "question": "Find the range: 20, 22, 24, 31, 36",
+    "correctAnswer": "16",
+    "answers": [
+      "18",
+      "21",
+      "14",
+      "16"
+    ]
+  },
+  {
+    "id": "rangerodeo-014",
+    "question": "Find the range: 30, 40, 76, 88, 90",
+    "correctAnswer": "60",
+    "answers": [
+      "65",
+      "62",
+      "60",
+      "58"
+    ]
+  },
+  {
+    "id": "rangerodeo-015",
+    "question": "Find the range: 10, 13, 19, 33, 35",
+    "correctAnswer": "25",
+    "answers": [
+      "30",
+      "27",
+      "23",
+      "25"
+    ]
+  },
+  {
+    "id": "rangerodeo-016",
+    "question": "Find the range: 37, 63, 72, 86, 87",
+    "correctAnswer": "50",
+    "answers": [
+      "55",
+      "52",
       "50",
       "48"
     ]
   },
   {
-    "id": "rr-019",
-    "question": "Find the range: 12, 17, 60, 71, 79",
-    "correctAnswer": "67",
+    "id": "rangerodeo-017",
+    "question": "Find the range: 55, 56, 63, 76, 88",
+    "correctAnswer": "33",
     "answers": [
-      "72",
-      "65",
-      "69",
-      "67"
+      "35",
+      "33",
+      "31",
+      "38"
     ]
   },
   {
-    "id": "rr-020",
-    "question": "Find the range: 53, 62, 68, 92, 93",
-    "correctAnswer": "40",
+    "id": "rangerodeo-018",
+    "question": "Find the range: 1, 17, 26, 44, 91",
+    "correctAnswer": "90",
     "answers": [
-      "42",
-      "40",
-      "38",
-      "45"
+      "88",
+      "90",
+      "95",
+      "92"
     ]
   },
   {
-    "id": "rr-021",
-    "question": "Find the range: 10, 17, 41, 58, 83",
-    "correctAnswer": "73",
+    "id": "rangerodeo-019",
+    "question": "Find the range: 30, 34, 42, 59, 87",
+    "correctAnswer": "57",
     "answers": [
-      "73",
-      "75",
-      "71",
-      "78"
+      "55",
+      "57",
+      "59",
+      "62"
     ]
   },
   {
-    "id": "rr-022",
-    "question": "Find the range: 17, 24, 71, 76, 82",
+    "id": "rangerodeo-020",
+    "question": "Find the range: 34, 35, 36, 48, 87",
+    "correctAnswer": "53",
+    "answers": [
+      "58",
+      "51",
+      "53",
+      "55"
+    ]
+  },
+  {
+    "id": "rangerodeo-021",
+    "question": "Find the range: 2, 8, 14, 16, 55",
+    "correctAnswer": "53",
+    "answers": [
+      "53",
+      "58",
+      "55",
+      "51"
+    ]
+  },
+  {
+    "id": "rangerodeo-022",
+    "question": "Find the range: 13, 20, 37, 81, 95",
+    "correctAnswer": "82",
+    "answers": [
+      "82",
+      "80",
+      "84",
+      "87"
+    ]
+  },
+  {
+    "id": "rangerodeo-023",
+    "question": "Find the range: 25, 29, 56, 58, 90",
     "correctAnswer": "65",
     "answers": [
-      "63",
-      "65",
       "70",
+      "65",
+      "63",
       "67"
     ]
   },
   {
-    "id": "rr-023",
-    "question": "Find the range: 16, 20, 22, 39, 67",
-    "correctAnswer": "51",
+    "id": "rangerodeo-024",
+    "question": "Find the range: 12, 16, 21, 49, 94",
+    "correctAnswer": "82",
     "answers": [
-      "49",
-      "51",
-      "56",
+      "82",
+      "80",
+      "87",
+      "84"
+    ]
+  },
+  {
+    "id": "rangerodeo-025",
+    "question": "Find the range: 33, 44, 45, 50, 75",
+    "correctAnswer": "42",
+    "answers": [
+      "47",
+      "40",
+      "42",
+      "44"
+    ]
+  },
+  {
+    "id": "rangerodeo-026",
+    "question": "Find the range: 48, 84, 88, 93, 96",
+    "correctAnswer": "48",
+    "answers": [
+      "46",
+      "50",
+      "48",
       "53"
     ]
   },
   {
-    "id": "rr-024",
-    "question": "Find the range: 11, 33, 37, 45, 67",
-    "correctAnswer": "56",
+    "id": "rangerodeo-027",
+    "question": "Find the range: 31, 38, 41, 53, 84",
+    "correctAnswer": "53",
     "answers": [
-      "56",
-      "61",
-      "54",
-      "58"
-    ]
-  },
-  {
-    "id": "rr-025",
-    "question": "Find the range: 17, 39, 69, 79, 81",
-    "correctAnswer": "64",
-    "answers": [
-      "66",
-      "69",
-      "62",
-      "64"
-    ]
-  },
-  {
-    "id": "rr-026",
-    "question": "Find the range: 20, 22, 75, 76, 85",
-    "correctAnswer": "65",
-    "answers": [
-      "67",
-      "65",
-      "70",
-      "63"
-    ]
-  },
-  {
-    "id": "rr-027",
-    "question": "Find the range: 4, 6, 11, 83, 99",
-    "correctAnswer": "95",
-    "answers": [
-      "97",
-      "95",
-      "100",
-      "93"
-    ]
-  },
-  {
-    "id": "rr-028",
-    "question": "Find the range: 54, 74, 80, 82, 99",
-    "correctAnswer": "45",
-    "answers": [
-      "50",
-      "43",
-      "47",
-      "45"
-    ]
-  },
-  {
-    "id": "rr-029",
-    "question": "Find the range: 32, 39, 62, 83, 88",
-    "correctAnswer": "56",
-    "answers": [
-      "56",
-      "54",
+      "53",
       "58",
-      "61"
+      "55",
+      "51"
     ]
   },
   {
-    "id": "rr-030",
-    "question": "Find the range: 8, 10, 21, 57, 89",
-    "correctAnswer": "81",
+    "id": "rangerodeo-028",
+    "question": "Find the range: 2, 4, 17, 35, 37",
+    "correctAnswer": "35",
     "answers": [
-      "81",
-      "79",
-      "83",
-      "86"
+      "33",
+      "37",
+      "40",
+      "35"
     ]
   },
   {
-    "id": "rr-031",
-    "question": "Find the range: 19, 27, 41, 44, 78",
-    "correctAnswer": "59",
+    "id": "rangerodeo-029",
+    "question": "Find the range: 2, 46, 47, 59, 84",
+    "correctAnswer": "82",
     "answers": [
-      "59",
-      "61",
-      "64",
+      "80",
+      "87",
+      "82",
+      "84"
+    ]
+  },
+  {
+    "id": "rangerodeo-030",
+    "question": "Find the range: 41, 51, 66, 80, 90",
+    "correctAnswer": "49",
+    "answers": [
+      "47",
+      "49",
+      "54",
+      "51"
+    ]
+  },
+  {
+    "id": "rangerodeo-031",
+    "question": "Find the range: 13, 15, 25, 36, 68",
+    "correctAnswer": "55",
+    "answers": [
+      "55",
+      "60",
+      "53",
       "57"
     ]
   },
   {
-    "id": "rr-032",
-    "question": "Find the range: 17, 48, 52, 66, 98",
+    "id": "rangerodeo-032",
+    "question": "Find the range: 11, 13, 19, 20, 61",
+    "correctAnswer": "50",
+    "answers": [
+      "50",
+      "55",
+      "52",
+      "48"
+    ]
+  },
+  {
+    "id": "rangerodeo-033",
+    "question": "Find the range: 47, 49, 53, 54, 92",
+    "correctAnswer": "45",
+    "answers": [
+      "45",
+      "43",
+      "50",
+      "47"
+    ]
+  },
+  {
+    "id": "rangerodeo-034",
+    "question": "Find the range: 7, 11, 13, 21, 85",
+    "correctAnswer": "78",
+    "answers": [
+      "83",
+      "80",
+      "78",
+      "76"
+    ]
+  },
+  {
+    "id": "rangerodeo-035",
+    "question": "Find the range: 3, 11, 16, 33, 67",
+    "correctAnswer": "64",
+    "answers": [
+      "64",
+      "66",
+      "69",
+      "62"
+    ]
+  },
+  {
+    "id": "rangerodeo-036",
+    "question": "Find the range: 15, 16, 30, 67, 82",
+    "correctAnswer": "67",
+    "answers": [
+      "69",
+      "67",
+      "65",
+      "72"
+    ]
+  },
+  {
+    "id": "rangerodeo-037",
+    "question": "Find the range: 35, 42, 52, 55, 77",
+    "correctAnswer": "42",
+    "answers": [
+      "47",
+      "42",
+      "40",
+      "44"
+    ]
+  },
+  {
+    "id": "rangerodeo-038",
+    "question": "Find the range: 1, 6, 17, 20, 66",
+    "correctAnswer": "65",
+    "answers": [
+      "63",
+      "70",
+      "67",
+      "65"
+    ]
+  },
+  {
+    "id": "rangerodeo-039",
+    "question": "Find the range: 2, 22, 42, 57, 92",
+    "correctAnswer": "90",
+    "answers": [
+      "88",
+      "95",
+      "92",
+      "90"
+    ]
+  },
+  {
+    "id": "rangerodeo-040",
+    "question": "Find the range: 7, 27, 40, 43, 88",
     "correctAnswer": "81",
     "answers": [
       "79",
       "86",
-      "83",
-      "81"
+      "81",
+      "83"
     ]
   },
   {
-    "id": "rr-033",
-    "question": "Find the range: 16, 32, 35, 58, 60",
+    "id": "rangerodeo-041",
+    "question": "Find the range: 5, 10, 34, 56, 74",
+    "correctAnswer": "69",
+    "answers": [
+      "69",
+      "74",
+      "67",
+      "71"
+    ]
+  },
+  {
+    "id": "rangerodeo-042",
+    "question": "Find the range: 3, 39, 43, 53, 90",
+    "correctAnswer": "87",
+    "answers": [
+      "92",
+      "89",
+      "87",
+      "85"
+    ]
+  },
+  {
+    "id": "rangerodeo-043",
+    "question": "Find the range: 59, 74, 76, 83, 91",
+    "correctAnswer": "32",
+    "answers": [
+      "34",
+      "30",
+      "32",
+      "37"
+    ]
+  },
+  {
+    "id": "rangerodeo-044",
+    "question": "Find the range: 22, 26, 31, 37, 83",
+    "correctAnswer": "61",
+    "answers": [
+      "66",
+      "63",
+      "61",
+      "59"
+    ]
+  },
+  {
+    "id": "rangerodeo-045",
+    "question": "Find the range: 9, 15, 25, 54, 95",
+    "correctAnswer": "86",
+    "answers": [
+      "88",
+      "86",
+      "84",
+      "91"
+    ]
+  },
+  {
+    "id": "rangerodeo-046",
+    "question": "Find the range: 29, 49, 50, 77, 82",
+    "correctAnswer": "53",
+    "answers": [
+      "51",
+      "55",
+      "58",
+      "53"
+    ]
+  },
+  {
+    "id": "rangerodeo-047",
+    "question": "Find the range: 49, 59, 72, 93, 97",
+    "correctAnswer": "48",
+    "answers": [
+      "46",
+      "53",
+      "50",
+      "48"
+    ]
+  },
+  {
+    "id": "rangerodeo-048",
+    "question": "Find the range: 16, 24, 49, 63, 72",
+    "correctAnswer": "56",
+    "answers": [
+      "61",
+      "54",
+      "56",
+      "58"
+    ]
+  },
+  {
+    "id": "rangerodeo-049",
+    "question": "Find the range: 20, 23, 26, 30, 64",
     "correctAnswer": "44",
     "answers": [
+      "46",
       "49",
       "42",
-      "44",
+      "44"
+    ]
+  },
+  {
+    "id": "rangerodeo-050",
+    "question": "Find the range: 41, 49, 61, 74, 90",
+    "correctAnswer": "49",
+    "answers": [
+      "47",
+      "54",
+      "49",
+      "51"
+    ]
+  },
+  {
+    "id": "rangerodeo-051",
+    "question": "Find the range: 9, 32, 41, 54, 57",
+    "correctAnswer": "48",
+    "answers": [
+      "50",
+      "53",
+      "48",
       "46"
     ]
   },
   {
-    "id": "rr-034",
-    "question": "Find the range: 32, 38, 50, 54, 79",
-    "correctAnswer": "47",
-    "answers": [
-      "47",
-      "45",
-      "52",
-      "49"
-    ]
-  },
-  {
-    "id": "rr-035",
-    "question": "Find the range: 21, 25, 64, 66, 98",
-    "correctAnswer": "77",
-    "answers": [
-      "77",
-      "75",
-      "79",
-      "82"
-    ]
-  },
-  {
-    "id": "rr-036",
-    "question": "Find the range: 3, 12, 51, 64, 65",
-    "correctAnswer": "62",
+    "id": "rangerodeo-052",
+    "question": "Find the range: 10, 21, 41, 67, 74",
+    "correctAnswer": "64",
     "answers": [
       "64",
-      "60",
       "62",
-      "67"
+      "69",
+      "66"
     ]
   },
   {
-    "id": "rr-037",
-    "question": "Find the range: 7, 37, 46, 64, 75",
+    "id": "rangerodeo-053",
+    "question": "Find the range: 23, 40, 43, 60, 92",
+    "correctAnswer": "69",
+    "answers": [
+      "69",
+      "67",
+      "74",
+      "71"
+    ]
+  },
+  {
+    "id": "rangerodeo-054",
+    "question": "Find the range: 2, 15, 34, 67, 93",
+    "correctAnswer": "91",
+    "answers": [
+      "93",
+      "96",
+      "91",
+      "89"
+    ]
+  },
+  {
+    "id": "rangerodeo-055",
+    "question": "Find the range: 15, 31, 51, 94, 96",
+    "correctAnswer": "81",
+    "answers": [
+      "83",
+      "79",
+      "86",
+      "81"
+    ]
+  },
+  {
+    "id": "rangerodeo-056",
+    "question": "Find the range: 1, 17, 34, 50, 69",
     "correctAnswer": "68",
     "answers": [
-      "66",
-      "68",
       "70",
-      "73"
+      "66",
+      "73",
+      "68"
     ]
   },
   {
-    "id": "rr-038",
-    "question": "Find the range: 14, 18, 34, 56, 94",
-    "correctAnswer": "80",
+    "id": "rangerodeo-057",
+    "question": "Find the range: 5, 22, 62, 74, 87",
+    "correctAnswer": "82",
     "answers": [
-      "80",
-      "85",
+      "84",
       "82",
-      "78"
+      "80",
+      "87"
     ]
   },
   {
-    "id": "rr-039",
-    "question": "Find the range: 6, 7, 52, 72, 73",
-    "correctAnswer": "67",
+    "id": "rangerodeo-058",
+    "question": "Find the range: 29, 39, 72, 77, 87",
+    "correctAnswer": "58",
     "answers": [
-      "67",
-      "65",
-      "72",
-      "69"
+      "60",
+      "58",
+      "63",
+      "56"
     ]
   },
   {
-    "id": "rr-040",
-    "question": "Find the range: 10, 50, 58, 65, 98",
-    "correctAnswer": "88",
-    "answers": [
-      "90",
-      "88",
-      "93",
-      "86"
-    ]
-  },
-  {
-    "id": "rr-041",
-    "question": "Find the range: 13, 17, 44, 48, 51",
-    "correctAnswer": "38",
-    "answers": [
-      "40",
-      "43",
-      "38",
-      "36"
-    ]
-  },
-  {
-    "id": "rr-042",
-    "question": "Find the range: 6, 52, 65, 66, 78",
+    "id": "rangerodeo-059",
+    "question": "Find the range: 12, 32, 38, 48, 84",
     "correctAnswer": "72",
     "answers": [
       "74",
@@ -462,349 +649,195 @@
     ]
   },
   {
-    "id": "rr-043",
-    "question": "Find the range: 43, 59, 61, 67, 92",
-    "correctAnswer": "49",
+    "id": "rangerodeo-060",
+    "question": "Find the range: 7, 23, 82, 88, 93",
+    "correctAnswer": "86",
     "answers": [
-      "54",
-      "49",
-      "47",
-      "51"
-    ]
-  },
-  {
-    "id": "rr-044",
-    "question": "Find the range: 21, 41, 42, 51, 79",
-    "correctAnswer": "58",
-    "answers": [
-      "58",
-      "60",
-      "63",
-      "56"
-    ]
-  },
-  {
-    "id": "rr-045",
-    "question": "Find the range: 63, 65, 66, 69, 91",
-    "correctAnswer": "28",
-    "answers": [
-      "33",
-      "28",
-      "30",
-      "26"
-    ]
-  },
-  {
-    "id": "rr-046",
-    "question": "Find the range: 15, 43, 48, 54, 87",
-    "correctAnswer": "72",
-    "answers": [
-      "74",
-      "72",
-      "77",
-      "70"
-    ]
-  },
-  {
-    "id": "rr-047",
-    "question": "Find the range: 34, 61, 75, 77, 84",
-    "correctAnswer": "50",
-    "answers": [
-      "55",
-      "50",
-      "48",
-      "52"
-    ]
-  },
-  {
-    "id": "rr-048",
-    "question": "Find the range: 22, 62, 68, 75, 81",
-    "correctAnswer": "59",
-    "answers": [
-      "61",
-      "57",
-      "59",
-      "64"
-    ]
-  },
-  {
-    "id": "rr-049",
-    "question": "Find the range: 5, 15, 25, 74, 90",
-    "correctAnswer": "85",
-    "answers": [
-      "90",
-      "83",
-      "87",
-      "85"
-    ]
-  },
-  {
-    "id": "rr-050",
-    "question": "Find the range: 20, 27, 53, 54, 89",
-    "correctAnswer": "69",
-    "answers": [
-      "69",
-      "71",
-      "67",
-      "74"
-    ]
-  },
-  {
-    "id": "rr-051",
-    "question": "Find the range: 8, 18, 91, 94, 95",
-    "correctAnswer": "87",
-    "answers": [
-      "87",
-      "92",
-      "85",
-      "89"
-    ]
-  },
-  {
-    "id": "rr-052",
-    "question": "Find the range: 41, 49, 62, 68, 85",
-    "correctAnswer": "44",
-    "answers": [
-      "44",
-      "42",
-      "49",
-      "46"
-    ]
-  },
-  {
-    "id": "rr-053",
-    "question": "Find the range: 46, 70, 87, 93, 99",
-    "correctAnswer": "53",
-    "answers": [
-      "53",
-      "55",
-      "58",
-      "51"
-    ]
-  },
-  {
-    "id": "rr-054",
-    "question": "Find the range: 25, 32, 36, 39, 72",
-    "correctAnswer": "47",
-    "answers": [
-      "47",
-      "45",
-      "52",
-      "49"
-    ]
-  },
-  {
-    "id": "rr-055",
-    "question": "Find the range: 27, 41, 63, 89, 91",
-    "correctAnswer": "64",
-    "answers": [
-      "64",
-      "62",
-      "66",
-      "69"
-    ]
-  },
-  {
-    "id": "rr-056",
-    "question": "Find the range: 16, 37, 70, 74, 87",
-    "correctAnswer": "71",
-    "answers": [
-      "71",
-      "69",
-      "73",
-      "76"
-    ]
-  },
-  {
-    "id": "rr-057",
-    "question": "Find the range: 6, 19, 37, 38, 99",
-    "correctAnswer": "93",
-    "answers": [
-      "98",
+      "86",
+      "84",
       "91",
-      "95",
-      "93"
+      "88"
     ]
   },
   {
-    "id": "rr-058",
-    "question": "Find the range: 28, 33, 62, 84, 96",
-    "correctAnswer": "68",
+    "id": "rangerodeo-061",
+    "question": "Find the range: 42, 43, 48, 74, 88",
+    "correctAnswer": "46",
     "answers": [
-      "68",
-      "73",
-      "66",
-      "70"
+      "46",
+      "51",
+      "44",
+      "48"
     ]
   },
   {
-    "id": "rr-059",
-    "question": "Find the range: 14, 18, 35, 72, 90",
-    "correctAnswer": "76",
-    "answers": [
-      "81",
-      "74",
-      "76",
-      "78"
-    ]
-  },
-  {
-    "id": "rr-060",
-    "question": "Find the range: 29, 30, 68, 82, 86",
-    "correctAnswer": "57",
-    "answers": [
-      "55",
-      "59",
-      "62",
-      "57"
-    ]
-  },
-  {
-    "id": "rr-061",
-    "question": "Find the range: 13, 43, 61, 88, 92",
+    "id": "rangerodeo-062",
+    "question": "Find the range: 17, 36, 46, 60, 96",
     "correctAnswer": "79",
     "answers": [
       "84",
-      "77",
       "79",
+      "77",
       "81"
     ]
   },
   {
-    "id": "rr-062",
-    "question": "Find the range: 26, 53, 61, 62, 84",
-    "correctAnswer": "58",
+    "id": "rangerodeo-063",
+    "question": "Find the range: 36, 44, 47, 57, 88",
+    "correctAnswer": "52",
     "answers": [
-      "58",
-      "63",
-      "60",
-      "56"
-    ]
-  },
-  {
-    "id": "rr-063",
-    "question": "Find the range: 8, 12, 83, 84, 99",
-    "correctAnswer": "91",
-    "answers": [
-      "96",
-      "91",
-      "89",
-      "93"
-    ]
-  },
-  {
-    "id": "rr-064",
-    "question": "Find the range: 5, 23, 51, 54, 64",
-    "correctAnswer": "59",
-    "answers": [
-      "59",
-      "64",
       "57",
-      "61"
+      "52",
+      "50",
+      "54"
     ]
   },
   {
-    "id": "rr-065",
-    "question": "Find the range: 2, 5, 39, 73, 78",
-    "correctAnswer": "76",
+    "id": "rangerodeo-064",
+    "question": "Find the range: 5, 54, 64, 66, 91",
+    "correctAnswer": "86",
     "answers": [
-      "81",
+      "91",
+      "88",
+      "86",
+      "84"
+    ]
+  },
+  {
+    "id": "rangerodeo-065",
+    "question": "Find the range: 25, 58, 61, 90, 94",
+    "correctAnswer": "69",
+    "answers": [
+      "69",
+      "67",
       "74",
-      "78",
-      "76"
-    ]
-  },
-  {
-    "id": "rr-066",
-    "question": "Find the range: 59, 64, 68, 70, 83",
-    "correctAnswer": "24",
-    "answers": [
-      "24",
-      "29",
-      "22",
-      "26"
-    ]
-  },
-  {
-    "id": "rr-067",
-    "question": "Find the range: 15, 21, 25, 35, 43",
-    "correctAnswer": "28",
-    "answers": [
-      "28",
-      "30",
-      "26",
-      "33"
-    ]
-  },
-  {
-    "id": "rr-068",
-    "question": "Find the range: 2, 24, 44, 92, 95",
-    "correctAnswer": "93",
-    "answers": [
-      "95",
-      "93",
-      "98",
-      "91"
-    ]
-  },
-  {
-    "id": "rr-069",
-    "question": "Find the range: 23, 52, 55, 79, 82",
-    "correctAnswer": "59",
-    "answers": [
-      "64",
-      "61",
-      "59",
-      "57"
-    ]
-  },
-  {
-    "id": "rr-070",
-    "question": "Find the range: 13, 18, 24, 62, 86",
-    "correctAnswer": "73",
-    "answers": [
-      "75",
-      "78",
-      "73",
       "71"
     ]
   },
   {
-    "id": "rr-071",
-    "question": "Find the range: 31, 34, 50, 58, 97",
-    "correctAnswer": "66",
+    "id": "rangerodeo-066",
+    "question": "Find the range: 15, 32, 48, 65, 71",
+    "correctAnswer": "56",
     "answers": [
-      "66",
-      "71",
+      "54",
+      "56",
+      "58",
+      "61"
+    ]
+  },
+  {
+    "id": "rangerodeo-067",
+    "question": "Find the range: 28, 33, 34, 48, 91",
+    "correctAnswer": "63",
+    "answers": [
+      "65",
+      "61",
       "68",
-      "64"
+      "63"
     ]
   },
   {
-    "id": "rr-072",
-    "question": "Find the range: 2, 34, 74, 75, 93",
-    "correctAnswer": "91",
+    "id": "rangerodeo-068",
+    "question": "Find the range: 6, 21, 39, 59, 70",
+    "correctAnswer": "64",
     "answers": [
-      "93",
-      "91",
-      "96",
-      "89"
+      "69",
+      "62",
+      "64",
+      "66"
     ]
   },
   {
-    "id": "rr-073",
-    "question": "Find the range: 8, 16, 40, 60, 86",
-    "correctAnswer": "78",
+    "id": "rangerodeo-069",
+    "question": "Find the range: 19, 44, 50, 71, 76",
+    "correctAnswer": "57",
     "answers": [
-      "78",
-      "76",
+      "57",
+      "55",
+      "59",
+      "62"
+    ]
+  },
+  {
+    "id": "rangerodeo-070",
+    "question": "Find the range: 4, 20, 30, 48, 69",
+    "correctAnswer": "65",
+    "answers": [
+      "70",
+      "63",
+      "65",
+      "67"
+    ]
+  },
+  {
+    "id": "rangerodeo-071",
+    "question": "Find the range: 7, 45, 47, 69, 92",
+    "correctAnswer": "85",
+    "answers": [
       "83",
-      "80"
+      "87",
+      "85",
+      "90"
     ]
   },
   {
-    "id": "rr-074",
-    "question": "Find the range: 16, 38, 48, 82, 89",
+    "id": "rangerodeo-072",
+    "question": "Find the range: 10, 14, 53, 72, 79",
+    "correctAnswer": "69",
+    "answers": [
+      "67",
+      "69",
+      "71",
+      "74"
+    ]
+  },
+  {
+    "id": "rangerodeo-073",
+    "question": "Find the range: 12, 14, 76, 93, 98",
+    "correctAnswer": "86",
+    "answers": [
+      "88",
+      "86",
+      "91",
+      "84"
+    ]
+  },
+  {
+    "id": "rangerodeo-074",
+    "question": "Find the range: 24, 30, 65, 72, 85",
+    "correctAnswer": "61",
+    "answers": [
+      "61",
+      "59",
+      "63",
+      "66"
+    ]
+  },
+  {
+    "id": "rangerodeo-075",
+    "question": "Find the range: 46, 56, 67, 92, 94",
+    "correctAnswer": "48",
+    "answers": [
+      "50",
+      "48",
+      "53",
+      "46"
+    ]
+  },
+  {
+    "id": "rangerodeo-076",
+    "question": "Find the range: 31, 47, 81, 83, 85",
+    "correctAnswer": "54",
+    "answers": [
+      "54",
+      "59",
+      "56",
+      "52"
+    ]
+  },
+  {
+    "id": "rangerodeo-077",
+    "question": "Find the range: 14, 20, 28, 57, 87",
     "correctAnswer": "73",
     "answers": [
       "78",
@@ -814,767 +847,118 @@
     ]
   },
   {
-    "id": "rr-075",
-    "question": "Find the range: 20, 59, 62, 78, 96",
-    "correctAnswer": "76",
+    "id": "rangerodeo-078",
+    "question": "Find the range: 8, 39, 46, 55, 67",
+    "correctAnswer": "59",
     "answers": [
-      "76",
-      "81",
-      "78",
-      "74"
-    ]
-  },
-  {
-    "id": "rr-076",
-    "question": "Find the range: 28, 69, 86, 97, 98",
-    "correctAnswer": "70",
-    "answers": [
-      "75",
-      "70",
-      "68",
-      "72"
-    ]
-  },
-  {
-    "id": "rr-077",
-    "question": "Find the range: 10, 47, 58, 68, 91",
-    "correctAnswer": "81",
-    "answers": [
-      "83",
-      "79",
-      "86",
-      "81"
-    ]
-  },
-  {
-    "id": "rr-078",
-    "question": "Find the range: 20, 22, 42, 69, 74",
-    "correctAnswer": "54",
-    "answers": [
-      "56",
-      "52",
-      "54",
-      "59"
-    ]
-  },
-  {
-    "id": "rr-079",
-    "question": "Find the range: 12, 63, 66, 75, 92",
-    "correctAnswer": "80",
-    "answers": [
-      "78",
-      "82",
-      "80",
-      "85"
-    ]
-  },
-  {
-    "id": "rr-080",
-    "question": "Find the range: 17, 54, 59, 66, 73",
-    "correctAnswer": "56",
-    "answers": [
+      "59",
       "61",
-      "58",
-      "54",
-      "56"
+      "64",
+      "57"
     ]
   },
   {
-    "id": "rr-081",
-    "question": "Find the range: 3, 40, 51, 87, 93",
-    "correctAnswer": "90",
-    "answers": [
-      "92",
-      "95",
-      "90",
-      "88"
-    ]
-  },
-  {
-    "id": "rr-082",
-    "question": "Find the range: 6, 10, 45, 55, 75",
-    "correctAnswer": "69",
-    "answers": [
-      "71",
-      "74",
-      "67",
-      "69"
-    ]
-  },
-  {
-    "id": "rr-083",
-    "question": "Find the range: 5, 9, 37, 53, 61",
-    "correctAnswer": "56",
-    "answers": [
-      "54",
-      "61",
-      "56",
-      "58"
-    ]
-  },
-  {
-    "id": "rr-084",
-    "question": "Find the range: 11, 48, 49, 58, 88",
-    "correctAnswer": "77",
-    "answers": [
-      "77",
-      "82",
-      "75",
-      "79"
-    ]
-  },
-  {
-    "id": "rr-085",
-    "question": "Find the range: 16, 23, 51, 68, 69",
-    "correctAnswer": "53",
-    "answers": [
-      "58",
-      "53",
-      "51",
-      "55"
-    ]
-  },
-  {
-    "id": "rr-086",
-    "question": "Find the range: 1, 3, 39, 60, 97",
+    "id": "rangerodeo-079",
+    "question": "Find the range: 1, 20, 41, 47, 97",
     "correctAnswer": "96",
     "answers": [
-      "96",
       "98",
+      "96",
       "94",
       "101"
     ]
   },
   {
-    "id": "rr-087",
-    "question": "Find the range: 20, 30, 32, 45, 59",
-    "correctAnswer": "39",
-    "answers": [
-      "41",
-      "44",
-      "39",
-      "37"
-    ]
-  },
-  {
-    "id": "rr-088",
-    "question": "Find the range: 5, 54, 79, 85, 99",
+    "id": "rangerodeo-080",
+    "question": "Find the range: 2, 15, 30, 72, 96",
     "correctAnswer": "94",
     "answers": [
       "96",
-      "92",
+      "94",
       "99",
-      "94"
-    ]
-  },
-  {
-    "id": "rr-089",
-    "question": "Find the range: 5, 9, 13, 58, 77",
-    "correctAnswer": "72",
-    "answers": [
-      "74",
-      "70",
-      "77",
-      "72"
-    ]
-  },
-  {
-    "id": "rr-090",
-    "question": "Find the range: 28, 30, 52, 57, 70",
-    "correctAnswer": "42",
-    "answers": [
-      "40",
-      "44",
-      "47",
-      "42"
-    ]
-  },
-  {
-    "id": "rr-091",
-    "question": "Find the range: 30, 41, 74, 77, 94",
-    "correctAnswer": "64",
-    "answers": [
-      "69",
-      "66",
-      "64",
-      "62"
-    ]
-  },
-  {
-    "id": "rr-092",
-    "question": "Find the range: 19, 29, 53, 67, 85",
-    "correctAnswer": "66",
-    "answers": [
-      "71",
-      "66",
-      "68",
-      "64"
-    ]
-  },
-  {
-    "id": "rr-093",
-    "question": "Find the range: 23, 72, 76, 81, 95",
-    "correctAnswer": "72",
-    "answers": [
-      "72",
-      "74",
-      "70",
-      "77"
-    ]
-  },
-  {
-    "id": "rr-094",
-    "question": "Find the range: 7, 45, 49, 83, 86",
-    "correctAnswer": "79",
-    "answers": [
-      "79",
-      "81",
-      "84",
-      "77"
-    ]
-  },
-  {
-    "id": "rr-095",
-    "question": "Find the range: 20, 24, 39, 49, 53",
-    "correctAnswer": "33",
-    "answers": [
-      "35",
-      "31",
-      "33",
-      "38"
-    ]
-  },
-  {
-    "id": "rr-096",
-    "question": "Find the range: 8, 19, 39, 60, 91",
-    "correctAnswer": "83",
-    "answers": [
-      "81",
-      "83",
-      "85",
-      "88"
-    ]
-  },
-  {
-    "id": "rr-097",
-    "question": "Find the range: 27, 32, 33, 43, 50",
-    "correctAnswer": "23",
-    "answers": [
-      "28",
-      "21",
-      "25",
-      "23"
-    ]
-  },
-  {
-    "id": "rr-098",
-    "question": "Find the range: 7, 12, 25, 69, 93",
-    "correctAnswer": "86",
-    "answers": [
-      "91",
-      "86",
-      "88",
-      "84"
-    ]
-  },
-  {
-    "id": "rr-099",
-    "question": "Find the range: 10, 25, 76, 93, 98",
-    "correctAnswer": "88",
-    "answers": [
-      "86",
-      "88",
-      "93",
-      "90"
-    ]
-  },
-  {
-    "id": "rr-100",
-    "question": "Find the range: 2, 25, 28, 39, 43",
-    "correctAnswer": "41",
-    "answers": [
-      "46",
-      "43",
-      "39",
-      "41"
-    ]
-  },
-  {
-    "id": "rr-101",
-    "question": "Find the range: 27, 32, 78, 90, 91",
-    "correctAnswer": "64",
-    "answers": [
-      "62",
-      "66",
-      "64",
-      "69"
-    ]
-  },
-  {
-    "id": "rr-102",
-    "question": "Find the range: 37, 49, 60, 69, 84",
-    "correctAnswer": "47",
-    "answers": [
-      "47",
-      "52",
-      "49",
-      "45"
-    ]
-  },
-  {
-    "id": "rr-103",
-    "question": "Find the range: 13, 47, 60, 64, 66",
-    "correctAnswer": "53",
-    "answers": [
-      "51",
-      "53",
-      "55",
-      "58"
-    ]
-  },
-  {
-    "id": "rr-104",
-    "question": "Find the range: 6, 41, 48, 53, 73",
-    "correctAnswer": "67",
-    "answers": [
-      "72",
-      "67",
-      "65",
-      "69"
-    ]
-  },
-  {
-    "id": "rr-105",
-    "question": "Find the range: 3, 34, 71, 75, 93",
-    "correctAnswer": "90",
-    "answers": [
-      "88",
-      "90",
-      "92",
-      "95"
-    ]
-  },
-  {
-    "id": "rr-106",
-    "question": "Find the range: 26, 30, 43, 49, 73",
-    "correctAnswer": "47",
-    "answers": [
-      "47",
-      "45",
-      "52",
-      "49"
-    ]
-  },
-  {
-    "id": "rr-107",
-    "question": "Find the range: 33, 63, 83, 93, 98",
-    "correctAnswer": "65",
-    "answers": [
-      "63",
-      "65",
-      "67",
-      "70"
-    ]
-  },
-  {
-    "id": "rr-108",
-    "question": "Find the range: 18, 22, 46, 93, 94",
-    "correctAnswer": "76",
-    "answers": [
-      "78",
-      "74",
-      "76",
-      "81"
-    ]
-  },
-  {
-    "id": "rr-109",
-    "question": "Find the range: 5, 7, 10, 68, 86",
-    "correctAnswer": "81",
-    "answers": [
-      "79",
-      "86",
-      "83",
-      "81"
-    ]
-  },
-  {
-    "id": "rr-110",
-    "question": "Find the range: 9, 20, 30, 81, 91",
-    "correctAnswer": "82",
-    "answers": [
-      "80",
-      "84",
-      "87",
-      "82"
-    ]
-  },
-  {
-    "id": "rr-111",
-    "question": "Find the range: 8, 48, 80, 82, 86",
-    "correctAnswer": "78",
-    "answers": [
-      "78",
-      "80",
-      "76",
-      "83"
-    ]
-  },
-  {
-    "id": "rr-112",
-    "question": "Find the range: 1, 3, 53, 69, 71",
-    "correctAnswer": "70",
-    "answers": [
-      "68",
-      "72",
-      "75",
-      "70"
-    ]
-  },
-  {
-    "id": "rr-113",
-    "question": "Find the range: 3, 37, 65, 69, 90",
-    "correctAnswer": "87",
-    "answers": [
-      "89",
-      "85",
-      "87",
       "92"
     ]
   },
   {
-    "id": "rr-114",
-    "question": "Find the range: 13, 20, 25, 31, 68",
-    "correctAnswer": "55",
+    "id": "rangerodeo-081",
+    "question": "Find the range: 3, 14, 39, 41, 99",
+    "correctAnswer": "96",
     "answers": [
-      "55",
-      "60",
-      "57",
-      "53"
+      "101",
+      "98",
+      "96",
+      "94"
     ]
   },
   {
-    "id": "rr-115",
-    "question": "Find the range: 11, 48, 51, 52, 59",
-    "correctAnswer": "48",
-    "answers": [
-      "53",
-      "48",
-      "46",
-      "50"
-    ]
-  },
-  {
-    "id": "rr-116",
-    "question": "Find the range: 11, 39, 84, 88, 98",
-    "correctAnswer": "87",
-    "answers": [
-      "85",
-      "89",
-      "92",
-      "87"
-    ]
-  },
-  {
-    "id": "rr-117",
-    "question": "Find the range: 8, 49, 61, 71, 82",
-    "correctAnswer": "74",
+    "id": "rangerodeo-082",
+    "question": "Find the range: 14, 35, 74, 83, 90",
+    "correctAnswer": "76",
     "answers": [
       "76",
-      "79",
-      "72",
-      "74"
-    ]
-  },
-  {
-    "id": "rr-118",
-    "question": "Find the range: 11, 43, 56, 64, 83",
-    "correctAnswer": "72",
-    "answers": [
       "74",
-      "77",
-      "70",
-      "72"
-    ]
-  },
-  {
-    "id": "rr-119",
-    "question": "Find the range: 28, 30, 61, 73, 89",
-    "correctAnswer": "61",
-    "answers": [
-      "63",
-      "66",
-      "61",
-      "59"
-    ]
-  },
-  {
-    "id": "rr-120",
-    "question": "Find the range: 36, 70, 73, 85, 88",
-    "correctAnswer": "52",
-    "answers": [
-      "50",
-      "54",
-      "57",
-      "52"
-    ]
-  },
-  {
-    "id": "rr-121",
-    "question": "Find the range: 3, 19, 27, 76, 97",
-    "correctAnswer": "94",
-    "answers": [
-      "92",
-      "96",
-      "94",
-      "99"
-    ]
-  },
-  {
-    "id": "rr-122",
-    "question": "Find the range: 21, 31, 50, 73, 87",
-    "correctAnswer": "66",
-    "answers": [
-      "71",
-      "66",
-      "68",
-      "64"
-    ]
-  },
-  {
-    "id": "rr-123",
-    "question": "Find the range: 11, 65, 89, 93, 96",
-    "correctAnswer": "85",
-    "answers": [
-      "87",
-      "90",
-      "85",
-      "83"
-    ]
-  },
-  {
-    "id": "rr-124",
-    "question": "Find the range: 10, 30, 44, 56, 78",
-    "correctAnswer": "68",
-    "answers": [
-      "66",
-      "68",
-      "70",
-      "73"
-    ]
-  },
-  {
-    "id": "rr-125",
-    "question": "Find the range: 30, 35, 58, 63, 82",
-    "correctAnswer": "52",
-    "answers": [
-      "52",
-      "54",
-      "57",
-      "50"
-    ]
-  },
-  {
-    "id": "rr-126",
-    "question": "Find the range: 24, 56, 75, 85, 88",
-    "correctAnswer": "64",
-    "answers": [
-      "62",
-      "66",
-      "64",
-      "69"
-    ]
-  },
-  {
-    "id": "rr-127",
-    "question": "Find the range: 10, 11, 32, 35, 92",
-    "correctAnswer": "82",
-    "answers": [
-      "80",
-      "82",
-      "87",
-      "84"
-    ]
-  },
-  {
-    "id": "rr-128",
-    "question": "Find the range: 14, 41, 47, 50, 95",
-    "correctAnswer": "81",
-    "answers": [
-      "79",
-      "83",
-      "86",
+      "78",
       "81"
     ]
   },
   {
-    "id": "rr-129",
-    "question": "Find the range: 14, 35, 47, 57, 98",
-    "correctAnswer": "84",
+    "id": "rangerodeo-083",
+    "question": "Find the range: 28, 31, 44, 90, 99",
+    "correctAnswer": "71",
     "answers": [
-      "89",
-      "82",
-      "84",
-      "86"
+      "73",
+      "76",
+      "69",
+      "71"
     ]
   },
   {
-    "id": "rr-130",
-    "question": "Find the range: 53, 56, 58, 66, 72",
-    "correctAnswer": "19",
+    "id": "rangerodeo-084",
+    "question": "Find the range: 9, 13, 32, 58, 94",
+    "correctAnswer": "85",
     "answers": [
-      "21",
-      "17",
+      "90",
+      "83",
+      "85",
+      "87"
+    ]
+  },
+  {
+    "id": "rangerodeo-085",
+    "question": "Find the range: 53, 59, 62, 63, 75",
+    "correctAnswer": "22",
+    "answers": [
       "24",
-      "19"
+      "20",
+      "27",
+      "22"
     ]
   },
   {
-    "id": "rr-131",
-    "question": "Find the range: 12, 42, 46, 71, 77",
-    "correctAnswer": "65",
+    "id": "rangerodeo-086",
+    "question": "Find the range: 52, 57, 59, 69, 85",
+    "correctAnswer": "33",
     "answers": [
-      "63",
-      "67",
-      "65",
-      "70"
+      "31",
+      "38",
+      "33",
+      "35"
     ]
   },
   {
-    "id": "rr-132",
-    "question": "Find the range: 11, 50, 53, 72, 93",
-    "correctAnswer": "82",
-    "answers": [
-      "87",
-      "82",
-      "80",
-      "84"
-    ]
-  },
-  {
-    "id": "rr-133",
-    "question": "Find the range: 18, 22, 35, 49, 88",
-    "correctAnswer": "70",
-    "answers": [
-      "70",
-      "75",
-      "72",
-      "68"
-    ]
-  },
-  {
-    "id": "rr-134",
-    "question": "Find the range: 9, 19, 22, 36, 56",
-    "correctAnswer": "47",
-    "answers": [
-      "47",
-      "45",
-      "49",
-      "52"
-    ]
-  },
-  {
-    "id": "rr-135",
-    "question": "Find the range: 10, 32, 33, 47, 93",
+    "id": "rangerodeo-087",
+    "question": "Find the range: 1, 12, 23, 54, 84",
     "correctAnswer": "83",
     "answers": [
-      "85",
       "83",
+      "85",
       "81",
       "88"
     ]
   },
   {
-    "id": "rr-136",
-    "question": "Find the range: 1, 14, 18, 39, 59",
-    "correctAnswer": "58",
-    "answers": [
-      "58",
-      "56",
-      "60",
-      "63"
-    ]
-  },
-  {
-    "id": "rr-137",
-    "question": "Find the range: 43, 56, 57, 77, 84",
-    "correctAnswer": "41",
-    "answers": [
-      "41",
-      "39",
-      "46",
-      "43"
-    ]
-  },
-  {
-    "id": "rr-138",
-    "question": "Find the range: 26, 41, 62, 78, 89",
-    "correctAnswer": "63",
-    "answers": [
-      "63",
-      "61",
-      "68",
-      "65"
-    ]
-  },
-  {
-    "id": "rr-139",
-    "question": "Find the range: 38, 63, 82, 89, 95",
-    "correctAnswer": "57",
-    "answers": [
-      "57",
-      "55",
-      "62",
-      "59"
-    ]
-  },
-  {
-    "id": "rr-140",
-    "question": "Find the range: 15, 36, 47, 51, 73",
-    "correctAnswer": "58",
-    "answers": [
-      "63",
-      "58",
-      "56",
-      "60"
-    ]
-  },
-  {
-    "id": "rr-141",
-    "question": "Find the range: 4, 71, 88, 94, 99",
-    "correctAnswer": "95",
-    "answers": [
-      "97",
-      "95",
-      "93",
-      "100"
-    ]
-  },
-  {
-    "id": "rr-142",
-    "question": "Find the range: 9, 38, 53, 57, 89",
-    "correctAnswer": "80",
-    "answers": [
-      "78",
-      "82",
-      "80",
-      "85"
-    ]
-  },
-  {
-    "id": "rr-143",
-    "question": "Find the range: 20, 31, 33, 85, 92",
-    "correctAnswer": "72",
-    "answers": [
-      "70",
-      "72",
-      "74",
-      "77"
-    ]
-  },
-  {
-    "id": "rr-144",
-    "question": "Find the range: 52, 58, 62, 75, 77",
+    "id": "rangerodeo-088",
+    "question": "Find the range: 33, 41, 45, 53, 58",
     "correctAnswer": "25",
     "answers": [
       "27",
@@ -1584,162 +968,173 @@
     ]
   },
   {
-    "id": "rr-145",
-    "question": "Find the range: 47, 69, 77, 82, 90",
-    "correctAnswer": "43",
-    "answers": [
-      "45",
-      "41",
-      "48",
-      "43"
-    ]
-  },
-  {
-    "id": "rr-146",
-    "question": "Find the range: 22, 46, 83, 85, 86",
-    "correctAnswer": "64",
-    "answers": [
-      "69",
-      "66",
-      "62",
-      "64"
-    ]
-  },
-  {
-    "id": "rr-147",
-    "question": "Find the range: 2, 14, 43, 56, 97",
-    "correctAnswer": "95",
-    "answers": [
-      "93",
-      "100",
-      "97",
-      "95"
-    ]
-  },
-  {
-    "id": "rr-148",
-    "question": "Find the range: 66, 67, 72, 75, 96",
-    "correctAnswer": "30",
-    "answers": [
-      "30",
-      "28",
-      "35",
-      "32"
-    ]
-  },
-  {
-    "id": "rr-149",
-    "question": "Find the range: 51, 60, 76, 87, 99",
-    "correctAnswer": "48",
-    "answers": [
-      "46",
-      "48",
-      "53",
-      "50"
-    ]
-  },
-  {
-    "id": "rr-150",
-    "question": "Find the range: 11, 14, 38, 54, 62",
-    "correctAnswer": "51",
-    "answers": [
-      "53",
-      "56",
-      "49",
-      "51"
-    ]
-  },
-  {
-    "id": "rr-151",
-    "question": "Find the range: 27, 40, 44, 45, 59",
-    "correctAnswer": "32",
-    "answers": [
-      "32",
-      "30",
-      "34",
-      "37"
-    ]
-  },
-  {
-    "id": "rr-152",
-    "question": "Find the range: 13, 57, 58, 90, 93",
-    "correctAnswer": "80",
-    "answers": [
-      "85",
-      "82",
-      "80",
-      "78"
-    ]
-  },
-  {
-    "id": "rr-153",
-    "question": "Find the range: 3, 6, 15, 44, 91",
-    "correctAnswer": "88",
-    "answers": [
-      "90",
-      "93",
-      "86",
-      "88"
-    ]
-  },
-  {
-    "id": "rr-154",
-    "question": "Find the range: 23, 32, 67, 71, 95",
-    "correctAnswer": "72",
-    "answers": [
-      "72",
-      "70",
-      "77",
-      "74"
-    ]
-  },
-  {
-    "id": "rr-155",
-    "question": "Find the range: 24, 30, 52, 60, 81",
-    "correctAnswer": "57",
-    "answers": [
-      "57",
-      "62",
-      "55",
-      "59"
-    ]
-  },
-  {
-    "id": "rr-156",
-    "question": "Find the range: 4, 26, 51, 79, 95",
+    "id": "rangerodeo-089",
+    "question": "Find the range: 4, 18, 32, 63, 95",
     "correctAnswer": "91",
     "answers": [
-      "91",
-      "93",
+      "96",
       "89",
-      "96"
+      "93",
+      "91"
     ]
   },
   {
-    "id": "rr-157",
-    "question": "Find the range: 1, 27, 28, 50, 91",
-    "correctAnswer": "90",
+    "id": "rangerodeo-090",
+    "question": "Find the range: 22, 64, 66, 79, 95",
+    "correctAnswer": "73",
     "answers": [
-      "92",
-      "90",
-      "95",
-      "88"
+      "71",
+      "75",
+      "78",
+      "73"
     ]
   },
   {
-    "id": "rr-158",
-    "question": "Find the range: 14, 24, 47, 69, 74",
+    "id": "rangerodeo-091",
+    "question": "Find the range: 6, 19, 47, 49, 55",
+    "correctAnswer": "49",
+    "answers": [
+      "51",
+      "49",
+      "47",
+      "54"
+    ]
+  },
+  {
+    "id": "rangerodeo-092",
+    "question": "Find the range: 44, 49, 71, 94, 97",
+    "correctAnswer": "53",
+    "answers": [
+      "55",
+      "51",
+      "53",
+      "58"
+    ]
+  },
+  {
+    "id": "rangerodeo-093",
+    "question": "Find the range: 10, 26, 53, 61, 65",
+    "correctAnswer": "55",
+    "answers": [
+      "55",
+      "60",
+      "53",
+      "57"
+    ]
+  },
+  {
+    "id": "rangerodeo-094",
+    "question": "Find the range: 20, 44, 47, 65, 83",
+    "correctAnswer": "63",
+    "answers": [
+      "61",
+      "63",
+      "65",
+      "68"
+    ]
+  },
+  {
+    "id": "rangerodeo-095",
+    "question": "Find the range: 10, 14, 45, 57, 96",
+    "correctAnswer": "86",
+    "answers": [
+      "91",
+      "86",
+      "88",
+      "84"
+    ]
+  },
+  {
+    "id": "rangerodeo-096",
+    "question": "Find the range: 34, 56, 63, 75, 94",
     "correctAnswer": "60",
     "answers": [
-      "65",
+      "60",
       "62",
+      "58",
+      "65"
+    ]
+  },
+  {
+    "id": "rangerodeo-097",
+    "question": "Find the range: 12, 19, 32, 80, 90",
+    "correctAnswer": "78",
+    "answers": [
+      "78",
+      "76",
+      "80",
+      "83"
+    ]
+  },
+  {
+    "id": "rangerodeo-098",
+    "question": "Find the range: 39, 65, 67, 78, 95",
+    "correctAnswer": "56",
+    "answers": [
+      "61",
+      "54",
+      "56",
+      "58"
+    ]
+  },
+  {
+    "id": "rangerodeo-099",
+    "question": "Find the range: 6, 29, 35, 42, 66",
+    "correctAnswer": "60",
+    "answers": [
+      "62",
+      "65",
       "60",
       "58"
     ]
   },
   {
-    "id": "rr-159",
-    "question": "Find the range: 15, 34, 63, 68, 86",
+    "id": "rangerodeo-100",
+    "question": "Find the range: 32, 46, 61, 72, 94",
+    "correctAnswer": "62",
+    "answers": [
+      "64",
+      "60",
+      "62",
+      "67"
+    ]
+  },
+  {
+    "id": "rangerodeo-101",
+    "question": "Find the range: 12, 36, 46, 93, 97",
+    "correctAnswer": "85",
+    "answers": [
+      "83",
+      "90",
+      "87",
+      "85"
+    ]
+  },
+  {
+    "id": "rangerodeo-102",
+    "question": "Find the range: 25, 59, 68, 76, 93",
+    "correctAnswer": "68",
+    "answers": [
+      "66",
+      "68",
+      "73",
+      "70"
+    ]
+  },
+  {
+    "id": "rangerodeo-103",
+    "question": "Find the range: 5, 41, 42, 56, 93",
+    "correctAnswer": "88",
+    "answers": [
+      "93",
+      "86",
+      "90",
+      "88"
+    ]
+  },
+  {
+    "id": "rangerodeo-104",
+    "question": "Find the range: 2, 6, 61, 72, 73",
     "correctAnswer": "71",
     "answers": [
       "71",
@@ -1749,107 +1144,591 @@
     ]
   },
   {
-    "id": "rr-160",
-    "question": "Find the range: 15, 45, 51, 76, 79",
-    "correctAnswer": "64",
+    "id": "rangerodeo-105",
+    "question": "Find the range: 27, 52, 72, 83, 85",
+    "correctAnswer": "58",
     "answers": [
-      "69",
-      "64",
-      "66",
-      "62"
-    ]
-  },
-  {
-    "id": "rr-161",
-    "question": "Find the range: 39, 76, 79, 87, 91",
-    "correctAnswer": "52",
-    "answers": [
-      "54",
-      "57",
-      "50",
-      "52"
-    ]
-  },
-  {
-    "id": "rr-162",
-    "question": "Find the range: 15, 16, 31, 40, 41",
-    "correctAnswer": "26",
-    "answers": [
-      "24",
-      "26",
-      "31",
-      "28"
-    ]
-  },
-  {
-    "id": "rr-163",
-    "question": "Find the range: 18, 50, 54, 66, 77",
-    "correctAnswer": "59",
-    "answers": [
-      "57",
-      "59",
-      "61",
-      "64"
-    ]
-  },
-  {
-    "id": "rr-164",
-    "question": "Find the range: 63, 69, 82, 83, 89",
-    "correctAnswer": "26",
-    "answers": [
-      "31",
-      "26",
-      "24",
-      "28"
-    ]
-  },
-  {
-    "id": "rr-165",
-    "question": "Find the range: 18, 24, 37, 41, 63",
-    "correctAnswer": "45",
-    "answers": [
-      "47",
-      "45",
-      "43",
-      "50"
-    ]
-  },
-  {
-    "id": "rr-166",
-    "question": "Find the range: 2, 18, 25, 46, 63",
-    "correctAnswer": "61",
-    "answers": [
-      "61",
       "63",
-      "59",
-      "66"
+      "56",
+      "58",
+      "60"
     ]
   },
   {
-    "id": "rr-167",
-    "question": "Find the range: 53, 54, 63, 88, 91",
-    "correctAnswer": "38",
+    "id": "rangerodeo-106",
+    "question": "Find the range: 7, 35, 53, 55, 78",
+    "correctAnswer": "71",
     "answers": [
-      "36",
-      "38",
-      "40",
-      "43"
+      "71",
+      "76",
+      "69",
+      "73"
     ]
   },
   {
-    "id": "rr-168",
-    "question": "Find the range: 4, 11, 29, 73, 98",
+    "id": "rangerodeo-107",
+    "question": "Find the range: 25, 29, 45, 66, 92",
+    "correctAnswer": "67",
+    "answers": [
+      "67",
+      "69",
+      "65",
+      "72"
+    ]
+  },
+  {
+    "id": "rangerodeo-108",
+    "question": "Find the range: 5, 16, 21, 57, 73",
+    "correctAnswer": "68",
+    "answers": [
+      "70",
+      "73",
+      "66",
+      "68"
+    ]
+  },
+  {
+    "id": "rangerodeo-109",
+    "question": "Find the range: 3, 10, 15, 48, 89",
+    "correctAnswer": "86",
+    "answers": [
+      "91",
+      "86",
+      "84",
+      "88"
+    ]
+  },
+  {
+    "id": "rangerodeo-110",
+    "question": "Find the range: 4, 8, 42, 77, 98",
     "correctAnswer": "94",
     "answers": [
-      "99",
       "96",
+      "99",
       "94",
       "92"
     ]
   },
   {
-    "id": "rr-169",
-    "question": "Find the range: 22, 29, 37, 59, 69",
+    "id": "rangerodeo-111",
+    "question": "Find the range: 6, 60, 70, 81, 97",
+    "correctAnswer": "91",
+    "answers": [
+      "89",
+      "96",
+      "91",
+      "93"
+    ]
+  },
+  {
+    "id": "rangerodeo-112",
+    "question": "Find the range: 6, 13, 19, 22, 53",
+    "correctAnswer": "47",
+    "answers": [
+      "49",
+      "45",
+      "52",
+      "47"
+    ]
+  },
+  {
+    "id": "rangerodeo-113",
+    "question": "Find the range: 13, 55, 62, 67, 98",
+    "correctAnswer": "85",
+    "answers": [
+      "83",
+      "87",
+      "85",
+      "90"
+    ]
+  },
+  {
+    "id": "rangerodeo-114",
+    "question": "Find the range: 5, 23, 63, 64, 70",
+    "correctAnswer": "65",
+    "answers": [
+      "65",
+      "70",
+      "63",
+      "67"
+    ]
+  },
+  {
+    "id": "rangerodeo-115",
+    "question": "Find the range: 33, 46, 48, 71, 72",
+    "correctAnswer": "39",
+    "answers": [
+      "37",
+      "39",
+      "44",
+      "41"
+    ]
+  },
+  {
+    "id": "rangerodeo-116",
+    "question": "Find the range: 1, 11, 28, 88, 89",
+    "correctAnswer": "88",
+    "answers": [
+      "88",
+      "90",
+      "93",
+      "86"
+    ]
+  },
+  {
+    "id": "rangerodeo-117",
+    "question": "Find the range: 2, 15, 19, 35, 59",
+    "correctAnswer": "57",
+    "answers": [
+      "57",
+      "62",
+      "59",
+      "55"
+    ]
+  },
+  {
+    "id": "rangerodeo-118",
+    "question": "Find the range: 11, 44, 53, 59, 62",
+    "correctAnswer": "51",
+    "answers": [
+      "56",
+      "49",
+      "53",
+      "51"
+    ]
+  },
+  {
+    "id": "rangerodeo-119",
+    "question": "Find the range: 33, 34, 79, 83, 88",
+    "correctAnswer": "55",
+    "answers": [
+      "53",
+      "55",
+      "60",
+      "57"
+    ]
+  },
+  {
+    "id": "rangerodeo-120",
+    "question": "Find the range: 1, 58, 76, 91, 96",
+    "correctAnswer": "95",
+    "answers": [
+      "95",
+      "93",
+      "97",
+      "100"
+    ]
+  },
+  {
+    "id": "rangerodeo-121",
+    "question": "Find the range: 11, 17, 49, 85, 98",
+    "correctAnswer": "87",
+    "answers": [
+      "85",
+      "92",
+      "87",
+      "89"
+    ]
+  },
+  {
+    "id": "rangerodeo-122",
+    "question": "Find the range: 24, 57, 77, 83, 95",
+    "correctAnswer": "71",
+    "answers": [
+      "73",
+      "69",
+      "71",
+      "76"
+    ]
+  },
+  {
+    "id": "rangerodeo-123",
+    "question": "Find the range: 11, 15, 52, 77, 91",
+    "correctAnswer": "80",
+    "answers": [
+      "85",
+      "82",
+      "78",
+      "80"
+    ]
+  },
+  {
+    "id": "rangerodeo-124",
+    "question": "Find the range: 21, 24, 55, 74, 88",
+    "correctAnswer": "67",
+    "answers": [
+      "72",
+      "65",
+      "69",
+      "67"
+    ]
+  },
+  {
+    "id": "rangerodeo-125",
+    "question": "Find the range: 2, 14, 78, 91, 95",
+    "correctAnswer": "93",
+    "answers": [
+      "95",
+      "98",
+      "93",
+      "91"
+    ]
+  },
+  {
+    "id": "rangerodeo-126",
+    "question": "Find the range: 18, 34, 75, 79, 96",
+    "correctAnswer": "78",
+    "answers": [
+      "76",
+      "80",
+      "83",
+      "78"
+    ]
+  },
+  {
+    "id": "rangerodeo-127",
+    "question": "Find the range: 6, 42, 52, 96, 97",
+    "correctAnswer": "91",
+    "answers": [
+      "93",
+      "96",
+      "91",
+      "89"
+    ]
+  },
+  {
+    "id": "rangerodeo-128",
+    "question": "Find the range: 2, 8, 28, 43, 65",
+    "correctAnswer": "63",
+    "answers": [
+      "63",
+      "68",
+      "61",
+      "65"
+    ]
+  },
+  {
+    "id": "rangerodeo-129",
+    "question": "Find the range: 7, 24, 44, 58, 78",
+    "correctAnswer": "71",
+    "answers": [
+      "73",
+      "71",
+      "69",
+      "76"
+    ]
+  },
+  {
+    "id": "rangerodeo-130",
+    "question": "Find the range: 2, 40, 71, 87, 91",
+    "correctAnswer": "89",
+    "answers": [
+      "87",
+      "89",
+      "91",
+      "94"
+    ]
+  },
+  {
+    "id": "rangerodeo-131",
+    "question": "Find the range: 32, 49, 51, 82, 97",
+    "correctAnswer": "65",
+    "answers": [
+      "67",
+      "70",
+      "65",
+      "63"
+    ]
+  },
+  {
+    "id": "rangerodeo-132",
+    "question": "Find the range: 15, 29, 43, 57, 69",
+    "correctAnswer": "54",
+    "answers": [
+      "52",
+      "59",
+      "54",
+      "56"
+    ]
+  },
+  {
+    "id": "rangerodeo-133",
+    "question": "Find the range: 10, 59, 73, 82, 90",
+    "correctAnswer": "80",
+    "answers": [
+      "85",
+      "80",
+      "78",
+      "82"
+    ]
+  },
+  {
+    "id": "rangerodeo-134",
+    "question": "Find the range: 9, 31, 38, 50, 58",
+    "correctAnswer": "49",
+    "answers": [
+      "51",
+      "54",
+      "49",
+      "47"
+    ]
+  },
+  {
+    "id": "rangerodeo-135",
+    "question": "Find the range: 13, 14, 19, 59, 80",
+    "correctAnswer": "67",
+    "answers": [
+      "67",
+      "72",
+      "69",
+      "65"
+    ]
+  },
+  {
+    "id": "rangerodeo-136",
+    "question": "Find the range: 25, 36, 57, 59, 64",
+    "correctAnswer": "39",
+    "answers": [
+      "39",
+      "44",
+      "41",
+      "37"
+    ]
+  },
+  {
+    "id": "rangerodeo-137",
+    "question": "Find the range: 3, 22, 56, 69, 97",
+    "correctAnswer": "94",
+    "answers": [
+      "94",
+      "96",
+      "99",
+      "92"
+    ]
+  },
+  {
+    "id": "rangerodeo-138",
+    "question": "Find the range: 8, 21, 67, 88, 96",
+    "correctAnswer": "88",
+    "answers": [
+      "90",
+      "86",
+      "88",
+      "93"
+    ]
+  },
+  {
+    "id": "rangerodeo-139",
+    "question": "Find the range: 5, 6, 14, 67, 68",
+    "correctAnswer": "63",
+    "answers": [
+      "68",
+      "63",
+      "61",
+      "65"
+    ]
+  },
+  {
+    "id": "rangerodeo-140",
+    "question": "Find the range: 2, 39, 51, 70, 79",
+    "correctAnswer": "77",
+    "answers": [
+      "77",
+      "79",
+      "75",
+      "82"
+    ]
+  },
+  {
+    "id": "rangerodeo-141",
+    "question": "Find the range: 9, 20, 29, 31, 65",
+    "correctAnswer": "56",
+    "answers": [
+      "61",
+      "54",
+      "56",
+      "58"
+    ]
+  },
+  {
+    "id": "rangerodeo-142",
+    "question": "Find the range: 3, 7, 20, 27, 91",
+    "correctAnswer": "88",
+    "answers": [
+      "88",
+      "93",
+      "90",
+      "86"
+    ]
+  },
+  {
+    "id": "rangerodeo-143",
+    "question": "Find the range: 6, 39, 61, 73, 87",
+    "correctAnswer": "81",
+    "answers": [
+      "83",
+      "86",
+      "79",
+      "81"
+    ]
+  },
+  {
+    "id": "rangerodeo-144",
+    "question": "Find the range: 7, 9, 42, 59, 91",
+    "correctAnswer": "84",
+    "answers": [
+      "86",
+      "84",
+      "82",
+      "89"
+    ]
+  },
+  {
+    "id": "rangerodeo-145",
+    "question": "Find the range: 3, 29, 67, 89, 97",
+    "correctAnswer": "94",
+    "answers": [
+      "96",
+      "99",
+      "94",
+      "92"
+    ]
+  },
+  {
+    "id": "rangerodeo-146",
+    "question": "Find the range: 25, 47, 56, 79, 83",
+    "correctAnswer": "58",
+    "answers": [
+      "60",
+      "63",
+      "58",
+      "56"
+    ]
+  },
+  {
+    "id": "rangerodeo-147",
+    "question": "Find the range: 3, 24, 77, 78, 94",
+    "correctAnswer": "91",
+    "answers": [
+      "91",
+      "89",
+      "93",
+      "96"
+    ]
+  },
+  {
+    "id": "rangerodeo-148",
+    "question": "Find the range: 44, 45, 81, 83, 98",
+    "correctAnswer": "54",
+    "answers": [
+      "54",
+      "59",
+      "56",
+      "52"
+    ]
+  },
+  {
+    "id": "rangerodeo-149",
+    "question": "Find the range: 43, 46, 58, 63, 65",
+    "correctAnswer": "22",
+    "answers": [
+      "22",
+      "27",
+      "20",
+      "24"
+    ]
+  },
+  {
+    "id": "rangerodeo-150",
+    "question": "Find the range: 6, 9, 35, 39, 50",
+    "correctAnswer": "44",
+    "answers": [
+      "42",
+      "44",
+      "46",
+      "49"
+    ]
+  },
+  {
+    "id": "rangerodeo-151",
+    "question": "Find the range: 4, 13, 25, 63, 65",
+    "correctAnswer": "61",
+    "answers": [
+      "66",
+      "59",
+      "63",
+      "61"
+    ]
+  },
+  {
+    "id": "rangerodeo-152",
+    "question": "Find the range: 8, 13, 58, 60, 93",
+    "correctAnswer": "85",
+    "answers": [
+      "85",
+      "87",
+      "90",
+      "83"
+    ]
+  },
+  {
+    "id": "rangerodeo-153",
+    "question": "Find the range: 20, 33, 74, 76, 81",
+    "correctAnswer": "61",
+    "answers": [
+      "59",
+      "63",
+      "66",
+      "61"
+    ]
+  },
+  {
+    "id": "rangerodeo-154",
+    "question": "Find the range: 16, 17, 27, 54, 80",
+    "correctAnswer": "64",
+    "answers": [
+      "66",
+      "62",
+      "64",
+      "69"
+    ]
+  },
+  {
+    "id": "rangerodeo-155",
+    "question": "Find the range: 31, 36, 69, 80, 95",
+    "correctAnswer": "64",
+    "answers": [
+      "62",
+      "66",
+      "69",
+      "64"
+    ]
+  },
+  {
+    "id": "rangerodeo-156",
+    "question": "Find the range: 5, 11, 23, 34, 81",
+    "correctAnswer": "76",
+    "answers": [
+      "74",
+      "76",
+      "81",
+      "78"
+    ]
+  },
+  {
+    "id": "rangerodeo-157",
+    "question": "Find the range: 5, 8, 24, 35, 68",
+    "correctAnswer": "63",
+    "answers": [
+      "68",
+      "61",
+      "65",
+      "63"
+    ]
+  },
+  {
+    "id": "rangerodeo-158",
+    "question": "Find the range: 37, 48, 63, 69, 84",
     "correctAnswer": "47",
     "answers": [
       "49",
@@ -1859,338 +1738,459 @@
     ]
   },
   {
-    "id": "rr-170",
-    "question": "Find the range: 15, 35, 47, 70, 74",
-    "correctAnswer": "59",
+    "id": "rangerodeo-159",
+    "question": "Find the range: 7, 20, 56, 64, 70",
+    "correctAnswer": "63",
     "answers": [
-      "64",
       "61",
-      "57",
-      "59"
+      "68",
+      "63",
+      "65"
     ]
   },
   {
-    "id": "rr-171",
-    "question": "Find the range: 14, 28, 55, 70, 95",
-    "correctAnswer": "81",
+    "id": "rangerodeo-160",
+    "question": "Find the range: 11, 22, 25, 41, 69",
+    "correctAnswer": "58",
     "answers": [
-      "79",
-      "81",
-      "86",
-      "83"
-    ]
-  },
-  {
-    "id": "rr-172",
-    "question": "Find the range: 12, 34, 45, 57, 58",
-    "correctAnswer": "46",
-    "answers": [
-      "48",
-      "44",
-      "51",
-      "46"
-    ]
-  },
-  {
-    "id": "rr-173",
-    "question": "Find the range: 45, 76, 89, 91, 95",
-    "correctAnswer": "50",
-    "answers": [
-      "52",
-      "48",
-      "50",
-      "55"
-    ]
-  },
-  {
-    "id": "rr-174",
-    "question": "Find the range: 8, 27, 45, 69, 73",
-    "correctAnswer": "65",
-    "answers": [
-      "67",
-      "65",
-      "70",
+      "56",
+      "60",
+      "58",
       "63"
     ]
   },
   {
-    "id": "rr-175",
-    "question": "Find the range: 35, 38, 42, 74, 91",
-    "correctAnswer": "56",
-    "answers": [
-      "54",
-      "58",
-      "61",
-      "56"
-    ]
-  },
-  {
-    "id": "rr-176",
-    "question": "Find the range: 8, 17, 36, 84, 90",
-    "correctAnswer": "82",
-    "answers": [
-      "87",
-      "80",
-      "82",
-      "84"
-    ]
-  },
-  {
-    "id": "rr-177",
-    "question": "Find the range: 32, 42, 87, 92, 98",
-    "correctAnswer": "66",
+    "id": "rangerodeo-161",
+    "question": "Find the range: 16, 71, 75, 77, 80",
+    "correctAnswer": "64",
     "answers": [
       "64",
       "66",
-      "68",
-      "71"
-    ]
-  },
-  {
-    "id": "rr-178",
-    "question": "Find the range: 35, 49, 54, 74, 81",
-    "correctAnswer": "46",
-    "answers": [
-      "48",
-      "44",
-      "46",
-      "51"
-    ]
-  },
-  {
-    "id": "rr-179",
-    "question": "Find the range: 36, 52, 66, 89, 96",
-    "correctAnswer": "60",
-    "answers": [
-      "60",
-      "65",
-      "62",
-      "58"
-    ]
-  },
-  {
-    "id": "rr-180",
-    "question": "Find the range: 1, 12, 42, 75, 94",
-    "correctAnswer": "93",
-    "answers": [
-      "93",
-      "95",
-      "91",
-      "98"
-    ]
-  },
-  {
-    "id": "rr-181",
-    "question": "Find the range: 9, 28, 51, 55, 69",
-    "correctAnswer": "60",
-    "answers": [
-      "60",
-      "58",
-      "65",
+      "69",
       "62"
     ]
   },
   {
-    "id": "rr-182",
-    "question": "Find the range: 37, 42, 44, 71, 74",
-    "correctAnswer": "37",
+    "id": "rangerodeo-162",
+    "question": "Find the range: 35, 39, 67, 86, 98",
+    "correctAnswer": "63",
     "answers": [
-      "37",
-      "42",
-      "35",
-      "39"
-    ]
-  },
-  {
-    "id": "rr-183",
-    "question": "Find the range: 6, 7, 44, 88, 98",
-    "correctAnswer": "92",
-    "answers": [
-      "97",
-      "94",
-      "90",
-      "92"
-    ]
-  },
-  {
-    "id": "rr-184",
-    "question": "Find the range: 3, 16, 21, 57, 59",
-    "correctAnswer": "56",
-    "answers": [
-      "54",
+      "65",
+      "68",
       "61",
-      "58",
-      "56"
+      "63"
     ]
   },
   {
-    "id": "rr-185",
-    "question": "Find the range: 17, 21, 39, 84, 89",
-    "correctAnswer": "72",
+    "id": "rangerodeo-163",
+    "question": "Find the range: 55, 58, 69, 86, 99",
+    "correctAnswer": "44",
     "answers": [
-      "77",
-      "74",
-      "72",
-      "70"
+      "46",
+      "42",
+      "44",
+      "49"
     ]
   },
   {
-    "id": "rr-186",
-    "question": "Find the range: 11, 33, 48, 84, 86",
-    "correctAnswer": "75",
-    "answers": [
-      "73",
-      "80",
-      "75",
-      "77"
-    ]
-  },
-  {
-    "id": "rr-187",
-    "question": "Find the range: 40, 81, 90, 93, 97",
+    "id": "rangerodeo-164",
+    "question": "Find the range: 24, 56, 61, 74, 81",
     "correctAnswer": "57",
     "answers": [
-      "55",
-      "57",
+      "59",
       "62",
-      "59"
+      "55",
+      "57"
     ]
   },
   {
-    "id": "rr-188",
-    "question": "Find the range: 1, 13, 28, 62, 91",
-    "correctAnswer": "90",
+    "id": "rangerodeo-165",
+    "question": "Find the range: 7, 40, 48, 67, 78",
+    "correctAnswer": "71",
     "answers": [
-      "92",
-      "88",
-      "95",
+      "71",
+      "73",
+      "76",
+      "69"
+    ]
+  },
+  {
+    "id": "rangerodeo-166",
+    "question": "Find the range: 30, 33, 44, 74, 93",
+    "correctAnswer": "63",
+    "answers": [
+      "68",
+      "65",
+      "63",
+      "61"
+    ]
+  },
+  {
+    "id": "rangerodeo-167",
+    "question": "Find the range: 22, 30, 39, 44, 50",
+    "correctAnswer": "28",
+    "answers": [
+      "30",
+      "33",
+      "26",
+      "28"
+    ]
+  },
+  {
+    "id": "rangerodeo-168",
+    "question": "Find the range: 12, 60, 69, 84, 97",
+    "correctAnswer": "85",
+    "answers": [
+      "83",
+      "85",
+      "87",
       "90"
     ]
   },
   {
-    "id": "rr-189",
-    "question": "Find the range: 2, 57, 67, 88, 90",
-    "correctAnswer": "88",
+    "id": "rangerodeo-169",
+    "question": "Find the range: 33, 34, 67, 79, 87",
+    "correctAnswer": "54",
     "answers": [
-      "93",
-      "90",
-      "88",
-      "86"
-    ]
-  },
-  {
-    "id": "rr-190",
-    "question": "Find the range: 10, 17, 30, 62, 89",
-    "correctAnswer": "79",
-    "answers": [
-      "81",
-      "77",
-      "79",
-      "84"
-    ]
-  },
-  {
-    "id": "rr-191",
-    "question": "Find the range: 14, 18, 39, 41, 48",
-    "correctAnswer": "34",
-    "answers": [
-      "36",
-      "32",
-      "34",
-      "39"
-    ]
-  },
-  {
-    "id": "rr-192",
-    "question": "Find the range: 2, 9, 68, 73, 79",
-    "correctAnswer": "77",
-    "answers": [
-      "77",
-      "75",
-      "82",
-      "79"
-    ]
-  },
-  {
-    "id": "rr-193",
-    "question": "Find the range: 20, 28, 81, 93, 96",
-    "correctAnswer": "76",
-    "answers": [
-      "76",
-      "78",
-      "74",
-      "81"
-    ]
-  },
-  {
-    "id": "rr-194",
-    "question": "Find the range: 12, 13, 18, 28, 97",
-    "correctAnswer": "85",
-    "answers": [
-      "90",
-      "87",
-      "83",
-      "85"
-    ]
-  },
-  {
-    "id": "rr-195",
-    "question": "Find the range: 18, 32, 41, 45, 55",
-    "correctAnswer": "37",
-    "answers": [
-      "39",
-      "37",
-      "42",
-      "35"
-    ]
-  },
-  {
-    "id": "rr-196",
-    "question": "Find the range: 32, 71, 77, 78, 93",
-    "correctAnswer": "61",
-    "answers": [
-      "63",
-      "61",
-      "66",
+      "54",
+      "52",
+      "56",
       "59"
     ]
   },
   {
-    "id": "rr-197",
-    "question": "Find the range: 27, 39, 67, 78, 85",
-    "correctAnswer": "58",
+    "id": "rangerodeo-170",
+    "question": "Find the range: 15, 32, 51, 63, 82",
+    "correctAnswer": "67",
     "answers": [
-      "58",
-      "63",
-      "56",
+      "69",
+      "72",
+      "65",
+      "67"
+    ]
+  },
+  {
+    "id": "rangerodeo-171",
+    "question": "Find the range: 1, 31, 78, 81, 84",
+    "correctAnswer": "83",
+    "answers": [
+      "83",
+      "81",
+      "88",
+      "85"
+    ]
+  },
+  {
+    "id": "rangerodeo-172",
+    "question": "Find the range: 2, 14, 71, 76, 77",
+    "correctAnswer": "75",
+    "answers": [
+      "75",
+      "77",
+      "73",
+      "80"
+    ]
+  },
+  {
+    "id": "rangerodeo-173",
+    "question": "Find the range: 21, 41, 63, 77, 92",
+    "correctAnswer": "71",
+    "answers": [
+      "76",
+      "71",
+      "69",
+      "73"
+    ]
+  },
+  {
+    "id": "rangerodeo-174",
+    "question": "Find the range: 11, 55, 67, 79, 80",
+    "correctAnswer": "69",
+    "answers": [
+      "69",
+      "71",
+      "67",
+      "74"
+    ]
+  },
+  {
+    "id": "rangerodeo-175",
+    "question": "Find the range: 4, 31, 39, 41, 42",
+    "correctAnswer": "38",
+    "answers": [
+      "36",
+      "43",
+      "40",
+      "38"
+    ]
+  },
+  {
+    "id": "rangerodeo-176",
+    "question": "Find the range: 12, 15, 50, 66, 74",
+    "correctAnswer": "62",
+    "answers": [
+      "67",
+      "64",
+      "62",
       "60"
     ]
   },
   {
-    "id": "rr-198",
-    "question": "Find the range: 7, 31, 38, 64, 83",
-    "correctAnswer": "76",
+    "id": "rangerodeo-177",
+    "question": "Find the range: 29, 36, 39, 78, 93",
+    "correctAnswer": "64",
     "answers": [
-      "78",
-      "74",
+      "62",
+      "64",
+      "66",
+      "69"
+    ]
+  },
+  {
+    "id": "rangerodeo-178",
+    "question": "Find the range: 34, 64, 66, 94, 99",
+    "correctAnswer": "65",
+    "answers": [
+      "63",
+      "65",
+      "70",
+      "67"
+    ]
+  },
+  {
+    "id": "rangerodeo-179",
+    "question": "Find the range: 43, 76, 78, 80, 89",
+    "correctAnswer": "46",
+    "answers": [
+      "51",
+      "44",
+      "48",
+      "46"
+    ]
+  },
+  {
+    "id": "rangerodeo-180",
+    "question": "Find the range: 29, 56, 60, 70, 71",
+    "correctAnswer": "42",
+    "answers": [
+      "40",
+      "44",
+      "42",
+      "47"
+    ]
+  },
+  {
+    "id": "rangerodeo-181",
+    "question": "Find the range: 7, 17, 36, 41, 78",
+    "correctAnswer": "71",
+    "answers": [
       "76",
+      "71",
+      "69",
+      "73"
+    ]
+  },
+  {
+    "id": "rangerodeo-182",
+    "question": "Find the range: 28, 34, 64, 79, 97",
+    "correctAnswer": "69",
+    "answers": [
+      "67",
+      "74",
+      "71",
+      "69"
+    ]
+  },
+  {
+    "id": "rangerodeo-183",
+    "question": "Find the range: 16, 20, 37, 77, 98",
+    "correctAnswer": "82",
+    "answers": [
+      "82",
+      "87",
+      "80",
+      "84"
+    ]
+  },
+  {
+    "id": "rangerodeo-184",
+    "question": "Find the range: 8, 10, 28, 45, 69",
+    "correctAnswer": "61",
+    "answers": [
+      "63",
+      "59",
+      "66",
+      "61"
+    ]
+  },
+  {
+    "id": "rangerodeo-185",
+    "question": "Find the range: 18, 24, 28, 61, 88",
+    "correctAnswer": "70",
+    "answers": [
+      "72",
+      "68",
+      "75",
+      "70"
+    ]
+  },
+  {
+    "id": "rangerodeo-186",
+    "question": "Find the range: 9, 14, 25, 29, 89",
+    "correctAnswer": "80",
+    "answers": [
+      "85",
+      "78",
+      "80",
+      "82"
+    ]
+  },
+  {
+    "id": "rangerodeo-187",
+    "question": "Find the range: 21, 46, 49, 82, 86",
+    "correctAnswer": "65",
+    "answers": [
+      "63",
+      "65",
+      "70",
+      "67"
+    ]
+  },
+  {
+    "id": "rangerodeo-188",
+    "question": "Find the range: 15, 23, 39, 70, 86",
+    "correctAnswer": "71",
+    "answers": [
+      "73",
+      "71",
+      "76",
+      "69"
+    ]
+  },
+  {
+    "id": "rangerodeo-189",
+    "question": "Find the range: 16, 28, 35, 41, 63",
+    "correctAnswer": "47",
+    "answers": [
+      "52",
+      "49",
+      "47",
+      "45"
+    ]
+  },
+  {
+    "id": "rangerodeo-190",
+    "question": "Find the range: 4, 13, 27, 38, 41",
+    "correctAnswer": "37",
+    "answers": [
+      "35",
+      "37",
+      "42",
+      "39"
+    ]
+  },
+  {
+    "id": "rangerodeo-191",
+    "question": "Find the range: 3, 22, 51, 61, 80",
+    "correctAnswer": "77",
+    "answers": [
+      "77",
+      "79",
+      "75",
+      "82"
+    ]
+  },
+  {
+    "id": "rangerodeo-192",
+    "question": "Find the range: 9, 27, 32, 34, 68",
+    "correctAnswer": "59",
+    "answers": [
+      "64",
+      "59",
+      "57",
+      "61"
+    ]
+  },
+  {
+    "id": "rangerodeo-193",
+    "question": "Find the range: 13, 21, 29, 43, 67",
+    "correctAnswer": "54",
+    "answers": [
+      "52",
+      "54",
+      "59",
+      "56"
+    ]
+  },
+  {
+    "id": "rangerodeo-194",
+    "question": "Find the range: 15, 38, 65, 76, 85",
+    "correctAnswer": "70",
+    "answers": [
+      "70",
+      "72",
+      "75",
+      "68"
+    ]
+  },
+  {
+    "id": "rangerodeo-195",
+    "question": "Find the range: 14, 23, 31, 72, 93",
+    "correctAnswer": "79",
+    "answers": [
+      "79",
+      "77",
+      "84",
       "81"
     ]
   },
   {
-    "id": "rr-199",
-    "question": "Find the range: 10, 64, 68, 77, 82",
-    "correctAnswer": "72",
+    "id": "rangerodeo-196",
+    "question": "Find the range: 16, 51, 58, 64, 69",
+    "correctAnswer": "53",
     "answers": [
-      "77",
-      "70",
-      "74",
-      "72"
+      "55",
+      "58",
+      "53",
+      "51"
     ]
   },
   {
-    "id": "rr-200",
-    "question": "Find the range: 17, 47, 50, 54, 73",
+    "id": "rangerodeo-197",
+    "question": "Find the range: 15, 20, 75, 77, 98",
+    "correctAnswer": "83",
+    "answers": [
+      "83",
+      "85",
+      "81",
+      "88"
+    ]
+  },
+  {
+    "id": "rangerodeo-198",
+    "question": "Find the range: 21, 22, 71, 72, 88",
+    "correctAnswer": "67",
+    "answers": [
+      "67",
+      "72",
+      "69",
+      "65"
+    ]
+  },
+  {
+    "id": "rangerodeo-199",
+    "question": "Find the range: 8, 18, 26, 67, 86",
+    "correctAnswer": "78",
+    "answers": [
+      "83",
+      "76",
+      "80",
+      "78"
+    ]
+  },
+  {
+    "id": "rangerodeo-200",
+    "question": "Find the range: 19, 33, 38, 53, 75",
     "correctAnswer": "56",
     "answers": [
       "54",

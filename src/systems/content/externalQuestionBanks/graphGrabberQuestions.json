@@ -1,51 +1,18 @@
 [
   {
-    "id": "gg-001",
-    "question": "How many crates did Ship B deliver? {'Ship A': 47, 'Ship B': 50, 'Ship C': 41, 'Ship D': 48}",
-    "correctAnswer": "50",
-    "answers": [
-      "52",
-      "50",
-      "48",
-      "55"
-    ]
-  },
-  {
-    "id": "gg-002",
-    "question": "How many crates did Ship B deliver? {'Ship A': 11, 'Ship B': 25, 'Ship C': 38, 'Ship D': 42}",
-    "correctAnswer": "25",
-    "answers": [
-      "30",
-      "25",
-      "27",
-      "23"
-    ]
-  },
-  {
-    "id": "gg-003",
-    "question": "How many crates did Ship A deliver? {'Ship A': 14, 'Ship B': 50, 'Ship C': 32, 'Ship D': 31}",
+    "id": "graphgrabber-001",
+    "question": "How many crates were delivered?",
     "correctAnswer": "14",
     "answers": [
-      "12",
-      "16",
       "19",
-      "14"
+      "14",
+      "12",
+      "16"
     ]
   },
   {
-    "id": "gg-004",
-    "question": "How many crates did Ship A deliver? {'Ship A': 13, 'Ship B': 35, 'Ship C': 18, 'Ship D': 33}",
-    "correctAnswer": "13",
-    "answers": [
-      "13",
-      "15",
-      "18",
-      "11"
-    ]
-  },
-  {
-    "id": "gg-005",
-    "question": "How many crates did Ship C deliver? {'Ship A': 42, 'Ship B': 40, 'Ship C': 38, 'Ship D': 30}",
+    "id": "graphgrabber-002",
+    "question": "How many crates were delivered?",
     "correctAnswer": "38",
     "answers": [
       "38",
@@ -55,8 +22,195 @@
     ]
   },
   {
-    "id": "gg-006",
-    "question": "How many crates did Ship B deliver? {'Ship A': 33, 'Ship B': 49, 'Ship C': 36, 'Ship D': 31}",
+    "id": "graphgrabber-003",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "50",
+    "answers": [
+      "48",
+      "55",
+      "52",
+      "50"
+    ]
+  },
+  {
+    "id": "graphgrabber-004",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "46",
+    "answers": [
+      "48",
+      "44",
+      "46",
+      "51"
+    ]
+  },
+  {
+    "id": "graphgrabber-005",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "45",
+    "answers": [
+      "45",
+      "47",
+      "50",
+      "43"
+    ]
+  },
+  {
+    "id": "graphgrabber-006",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "43",
+    "answers": [
+      "45",
+      "41",
+      "43",
+      "48"
+    ]
+  },
+  {
+    "id": "graphgrabber-007",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "11",
+    "answers": [
+      "11",
+      "9",
+      "16",
+      "13"
+    ]
+  },
+  {
+    "id": "graphgrabber-008",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "13",
+    "answers": [
+      "15",
+      "11",
+      "18",
+      "13"
+    ]
+  },
+  {
+    "id": "graphgrabber-009",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "42",
+    "answers": [
+      "42",
+      "47",
+      "44",
+      "40"
+    ]
+  },
+  {
+    "id": "graphgrabber-010",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "31",
+    "answers": [
+      "29",
+      "31",
+      "33",
+      "36"
+    ]
+  },
+  {
+    "id": "graphgrabber-011",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "42",
+    "answers": [
+      "40",
+      "42",
+      "47",
+      "44"
+    ]
+  },
+  {
+    "id": "graphgrabber-012",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "12",
+    "answers": [
+      "14",
+      "10",
+      "12",
+      "17"
+    ]
+  },
+  {
+    "id": "graphgrabber-013",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "5",
+    "answers": [
+      "3",
+      "10",
+      "5",
+      "7"
+    ]
+  },
+  {
+    "id": "graphgrabber-014",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "17",
+    "answers": [
+      "17",
+      "22",
+      "15",
+      "19"
+    ]
+  },
+  {
+    "id": "graphgrabber-015",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "9",
+    "answers": [
+      "9",
+      "11",
+      "7",
+      "14"
+    ]
+  },
+  {
+    "id": "graphgrabber-016",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "48",
+    "answers": [
+      "50",
+      "46",
+      "53",
+      "48"
+    ]
+  },
+  {
+    "id": "graphgrabber-017",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "15",
+    "answers": [
+      "13",
+      "20",
+      "15",
+      "17"
+    ]
+  },
+  {
+    "id": "graphgrabber-018",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "43",
+    "answers": [
+      "43",
+      "48",
+      "41",
+      "45"
+    ]
+  },
+  {
+    "id": "graphgrabber-019",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "10",
+    "answers": [
+      "8",
+      "12",
+      "10",
+      "15"
+    ]
+  },
+  {
+    "id": "graphgrabber-020",
+    "question": "How many crates were delivered?",
     "correctAnswer": "49",
     "answers": [
       "54",
@@ -66,305 +220,206 @@
     ]
   },
   {
-    "id": "gg-007",
-    "question": "How many crates did Ship A deliver? {'Ship A': 36, 'Ship B': 50, 'Ship C': 34, 'Ship D': 13}",
-    "correctAnswer": "36",
+    "id": "graphgrabber-021",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "27",
     "answers": [
-      "36",
-      "34",
-      "41",
-      "38"
-    ]
-  },
-  {
-    "id": "gg-008",
-    "question": "How many crates did Ship A deliver? {'Ship A': 7, 'Ship B': 15, 'Ship C': 40, 'Ship D': 28}",
-    "correctAnswer": "7",
-    "answers": [
-      "9",
-      "5",
-      "7",
-      "12"
-    ]
-  },
-  {
-    "id": "gg-009",
-    "question": "How many crates did Ship B deliver? {'Ship A': 28, 'Ship B': 41, 'Ship C': 23, 'Ship D': 7}",
-    "correctAnswer": "41",
-    "answers": [
-      "46",
-      "39",
-      "43",
-      "41"
-    ]
-  },
-  {
-    "id": "gg-010",
-    "question": "How many crates did Ship A deliver? {'Ship A': 28, 'Ship B': 24, 'Ship C': 23, 'Ship D': 36}",
-    "correctAnswer": "28",
-    "answers": [
-      "26",
-      "33",
-      "28",
-      "30"
-    ]
-  },
-  {
-    "id": "gg-011",
-    "question": "How many crates did Ship B deliver? {'Ship A': 8, 'Ship B': 24, 'Ship C': 23, 'Ship D': 18}",
-    "correctAnswer": "24",
-    "answers": [
-      "26",
-      "22",
-      "24",
+      "27",
+      "32",
+      "25",
       "29"
     ]
   },
   {
-    "id": "gg-012",
-    "question": "How many crates did Ship D deliver? {'Ship A': 40, 'Ship B': 27, 'Ship C': 9, 'Ship D': 7}",
-    "correctAnswer": "7",
+    "id": "graphgrabber-022",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "31",
     "answers": [
-      "7",
-      "9",
-      "5",
-      "12"
-    ]
-  },
-  {
-    "id": "gg-013",
-    "question": "How many crates did Ship D deliver? {'Ship A': 41, 'Ship B': 33, 'Ship C': 26, 'Ship D': 29}",
-    "correctAnswer": "29",
-    "answers": [
-      "27",
-      "34",
-      "29",
-      "31"
-    ]
-  },
-  {
-    "id": "gg-014",
-    "question": "How many crates did Ship C deliver? {'Ship A': 33, 'Ship B': 47, 'Ship C': 33, 'Ship D': 14}",
-    "correctAnswer": "33",
-    "answers": [
-      "38",
-      "35",
-      "31",
-      "33"
-    ]
-  },
-  {
-    "id": "gg-015",
-    "question": "How many crates did Ship A deliver? {'Ship A': 29, 'Ship B': 19, 'Ship C': 30, 'Ship D': 26}",
-    "correctAnswer": "29",
-    "answers": [
-      "29",
-      "31",
-      "27",
-      "34"
-    ]
-  },
-  {
-    "id": "gg-016",
-    "question": "How many crates did Ship A deliver? {'Ship A': 46, 'Ship B': 10, 'Ship C': 15, 'Ship D': 50}",
-    "correctAnswer": "46",
-    "answers": [
-      "48",
-      "46",
-      "51",
-      "44"
-    ]
-  },
-  {
-    "id": "gg-017",
-    "question": "How many crates did Ship A deliver? {'Ship A': 46, 'Ship B': 40, 'Ship C': 10, 'Ship D': 17}",
-    "correctAnswer": "46",
-    "answers": [
-      "44",
-      "46",
-      "51",
-      "48"
-    ]
-  },
-  {
-    "id": "gg-018",
-    "question": "How many crates did Ship A deliver? {'Ship A': 12, 'Ship B': 47, 'Ship C': 39, 'Ship D': 16}",
-    "correctAnswer": "12",
-    "answers": [
-      "14",
-      "17",
-      "12",
-      "10"
-    ]
-  },
-  {
-    "id": "gg-019",
-    "question": "How many crates did Ship C deliver? {'Ship A': 50, 'Ship B': 42, 'Ship C': 33, 'Ship D': 10}",
-    "correctAnswer": "33",
-    "answers": [
-      "35",
       "33",
-      "31",
-      "38"
-    ]
-  },
-  {
-    "id": "gg-020",
-    "question": "How many crates did Ship B deliver? {'Ship A': 36, 'Ship B': 6, 'Ship C': 26, 'Ship D': 32}",
-    "correctAnswer": "6",
-    "answers": [
-      "4",
-      "8",
-      "6",
-      "11"
-    ]
-  },
-  {
-    "id": "gg-021",
-    "question": "How many crates did Ship A deliver? {'Ship A': 29, 'Ship B': 21, 'Ship C': 10, 'Ship D': 12}",
-    "correctAnswer": "29",
-    "answers": [
-      "27",
       "29",
-      "34",
+      "36",
       "31"
     ]
   },
   {
-    "id": "gg-022",
-    "question": "How many crates did Ship C deliver? {'Ship A': 16, 'Ship B': 21, 'Ship C': 10, 'Ship D': 14}",
-    "correctAnswer": "10",
-    "answers": [
-      "12",
-      "10",
-      "8",
-      "15"
-    ]
-  },
-  {
-    "id": "gg-023",
-    "question": "How many crates did Ship A deliver? {'Ship A': 8, 'Ship B': 44, 'Ship C': 25, 'Ship D': 16}",
-    "correctAnswer": "8",
-    "answers": [
-      "13",
-      "6",
-      "10",
-      "8"
-    ]
-  },
-  {
-    "id": "gg-024",
-    "question": "How many crates did Ship C deliver? {'Ship A': 11, 'Ship B': 25, 'Ship C': 14, 'Ship D': 31}",
-    "correctAnswer": "14",
+    "id": "graphgrabber-023",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "21",
     "answers": [
       "19",
-      "14",
-      "16",
-      "12"
+      "26",
+      "23",
+      "21"
     ]
   },
   {
-    "id": "gg-025",
-    "question": "How many crates did Ship B deliver? {'Ship A': 8, 'Ship B': 17, 'Ship C': 20, 'Ship D': 43}",
-    "correctAnswer": "17",
-    "answers": [
-      "17",
-      "19",
-      "15",
-      "22"
-    ]
-  },
-  {
-    "id": "gg-026",
-    "question": "How many crates did Ship D deliver? {'Ship A': 12, 'Ship B': 22, 'Ship C': 8, 'Ship D': 25}",
+    "id": "graphgrabber-024",
+    "question": "How many crates were delivered?",
     "correctAnswer": "25",
     "answers": [
+      "25",
       "23",
       "27",
-      "25",
       "30"
     ]
   },
   {
-    "id": "gg-027",
-    "question": "How many crates did Ship A deliver? {'Ship A': 6, 'Ship B': 31, 'Ship C': 45, 'Ship D': 19}",
+    "id": "graphgrabber-025",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "11",
+    "answers": [
+      "11",
+      "13",
+      "16",
+      "9"
+    ]
+  },
+  {
+    "id": "graphgrabber-026",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "43",
+    "answers": [
+      "43",
+      "41",
+      "45",
+      "48"
+    ]
+  },
+  {
+    "id": "graphgrabber-027",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "45",
+    "answers": [
+      "45",
+      "47",
+      "43",
+      "50"
+    ]
+  },
+  {
+    "id": "graphgrabber-028",
+    "question": "How many crates were delivered?",
     "correctAnswer": "6",
     "answers": [
-      "8",
-      "6",
+      "4",
       "11",
-      "4"
+      "8",
+      "6"
     ]
   },
   {
-    "id": "gg-028",
-    "question": "How many crates did Ship C deliver? {'Ship A': 20, 'Ship B': 40, 'Ship C': 46, 'Ship D': 13}",
-    "correctAnswer": "46",
+    "id": "graphgrabber-029",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "30",
     "answers": [
-      "44",
-      "46",
-      "48",
-      "51"
-    ]
-  },
-  {
-    "id": "gg-029",
-    "question": "How many crates did Ship C deliver? {'Ship A': 45, 'Ship B': 37, 'Ship C': 18, 'Ship D': 14}",
-    "correctAnswer": "18",
-    "answers": [
-      "16",
-      "23",
-      "18",
-      "20"
-    ]
-  },
-  {
-    "id": "gg-030",
-    "question": "How many crates did Ship D deliver? {'Ship A': 40, 'Ship B': 33, 'Ship C': 7, 'Ship D': 5}",
-    "correctAnswer": "5",
-    "answers": [
-      "7",
-      "5",
-      "10",
-      "3"
-    ]
-  },
-  {
-    "id": "gg-031",
-    "question": "How many crates did Ship C deliver? {'Ship A': 5, 'Ship B': 8, 'Ship C': 35, 'Ship D': 22}",
-    "correctAnswer": "35",
-    "answers": [
-      "33",
+      "30",
       "35",
-      "37",
-      "40"
+      "28",
+      "32"
     ]
   },
   {
-    "id": "gg-032",
-    "question": "How many crates did Ship B deliver? {'Ship A': 42, 'Ship B': 37, 'Ship C': 23, 'Ship D': 7}",
-    "correctAnswer": "37",
+    "id": "graphgrabber-030",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "50",
     "answers": [
-      "35",
-      "42",
-      "39",
-      "37"
+      "52",
+      "50",
+      "55",
+      "48"
     ]
   },
   {
-    "id": "gg-033",
-    "question": "How many crates did Ship C deliver? {'Ship A': 30, 'Ship B': 49, 'Ship C': 12, 'Ship D': 13}",
+    "id": "graphgrabber-031",
+    "question": "How many crates were delivered?",
     "correctAnswer": "12",
     "answers": [
-      "10",
-      "14",
       "12",
+      "14",
+      "10",
       "17"
     ]
   },
   {
-    "id": "gg-034",
-    "question": "How many crates did Ship D deliver? {'Ship A': 48, 'Ship B': 26, 'Ship C': 45, 'Ship D': 21}",
+    "id": "graphgrabber-032",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "33",
+    "answers": [
+      "31",
+      "33",
+      "35",
+      "38"
+    ]
+  },
+  {
+    "id": "graphgrabber-033",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "32",
+    "answers": [
+      "37",
+      "34",
+      "30",
+      "32"
+    ]
+  },
+  {
+    "id": "graphgrabber-034",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "30",
+    "answers": [
+      "32",
+      "30",
+      "35",
+      "28"
+    ]
+  },
+  {
+    "id": "graphgrabber-035",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "17",
+    "answers": [
+      "15",
+      "22",
+      "19",
+      "17"
+    ]
+  },
+  {
+    "id": "graphgrabber-036",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "41",
+    "answers": [
+      "46",
+      "43",
+      "41",
+      "39"
+    ]
+  },
+  {
+    "id": "graphgrabber-037",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "13",
+    "answers": [
+      "15",
+      "11",
+      "13",
+      "18"
+    ]
+  },
+  {
+    "id": "graphgrabber-038",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "50",
+    "answers": [
+      "48",
+      "52",
+      "50",
+      "55"
+    ]
+  },
+  {
+    "id": "graphgrabber-039",
+    "question": "How many crates were delivered?",
     "correctAnswer": "21",
     "answers": [
       "26",
@@ -374,393 +429,316 @@
     ]
   },
   {
-    "id": "gg-035",
-    "question": "How many crates did Ship C deliver? {'Ship A': 26, 'Ship B': 18, 'Ship C': 34, 'Ship D': 43}",
-    "correctAnswer": "34",
+    "id": "graphgrabber-040",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "25",
     "answers": [
-      "36",
-      "39",
-      "32",
-      "34"
-    ]
-  },
-  {
-    "id": "gg-036",
-    "question": "How many crates did Ship A deliver? {'Ship A': 46, 'Ship B': 5, 'Ship C': 43, 'Ship D': 35}",
-    "correctAnswer": "46",
-    "answers": [
-      "48",
-      "51",
-      "44",
-      "46"
-    ]
-  },
-  {
-    "id": "gg-037",
-    "question": "How many crates did Ship D deliver? {'Ship A': 31, 'Ship B': 40, 'Ship C': 49, 'Ship D': 50}",
-    "correctAnswer": "50",
-    "answers": [
-      "52",
-      "50",
-      "48",
-      "55"
-    ]
-  },
-  {
-    "id": "gg-038",
-    "question": "How many crates did Ship A deliver? {'Ship A': 46, 'Ship B': 46, 'Ship C': 9, 'Ship D': 39}",
-    "correctAnswer": "46",
-    "answers": [
-      "48",
-      "46",
-      "44",
-      "51"
-    ]
-  },
-  {
-    "id": "gg-039",
-    "question": "How many crates did Ship D deliver? {'Ship A': 27, 'Ship B': 29, 'Ship C': 43, 'Ship D': 27}",
-    "correctAnswer": "27",
-    "answers": [
-      "32",
       "27",
+      "30",
       "25",
-      "29"
+      "23"
     ]
   },
   {
-    "id": "gg-040",
-    "question": "How many crates did Ship D deliver? {'Ship A': 12, 'Ship B': 34, 'Ship C': 28, 'Ship D': 17}",
-    "correctAnswer": "17",
+    "id": "graphgrabber-041",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "18",
     "answers": [
-      "19",
-      "15",
-      "22",
-      "17"
+      "20",
+      "23",
+      "18",
+      "16"
     ]
   },
   {
-    "id": "gg-041",
-    "question": "How many crates did Ship B deliver? {'Ship A': 22, 'Ship B': 48, 'Ship C': 50, 'Ship D': 27}",
-    "correctAnswer": "48",
+    "id": "graphgrabber-042",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "43",
     "answers": [
-      "53",
-      "50",
-      "46",
+      "41",
+      "43",
+      "45",
       "48"
     ]
   },
   {
-    "id": "gg-042",
-    "question": "How many crates did Ship C deliver? {'Ship A': 50, 'Ship B': 19, 'Ship C': 19, 'Ship D': 36}",
-    "correctAnswer": "19",
+    "id": "graphgrabber-043",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "15",
     "answers": [
-      "24",
+      "20",
       "17",
-      "21",
-      "19"
-    ]
-  },
-  {
-    "id": "gg-043",
-    "question": "How many crates did Ship A deliver? {'Ship A': 50, 'Ship B': 50, 'Ship C': 43, 'Ship D': 18}",
-    "correctAnswer": "50",
-    "answers": [
-      "50",
-      "55",
-      "48",
-      "52"
-    ]
-  },
-  {
-    "id": "gg-044",
-    "question": "How many crates did Ship D deliver? {'Ship A': 12, 'Ship B': 22, 'Ship C': 41, 'Ship D': 37}",
-    "correctAnswer": "37",
-    "answers": [
-      "42",
-      "37",
-      "35",
-      "39"
-    ]
-  },
-  {
-    "id": "gg-045",
-    "question": "How many crates did Ship B deliver? {'Ship A': 47, 'Ship B': 41, 'Ship C': 48, 'Ship D': 48}",
-    "correctAnswer": "41",
-    "answers": [
-      "43",
-      "46",
-      "39",
-      "41"
-    ]
-  },
-  {
-    "id": "gg-046",
-    "question": "How many crates did Ship B deliver? {'Ship A': 9, 'Ship B': 13, 'Ship C': 21, 'Ship D': 41}",
-    "correctAnswer": "13",
-    "answers": [
-      "15",
-      "18",
       "13",
-      "11"
-    ]
-  },
-  {
-    "id": "gg-047",
-    "question": "How many crates did Ship C deliver? {'Ship A': 49, 'Ship B': 48, 'Ship C': 39, 'Ship D': 44}",
-    "correctAnswer": "39",
-    "answers": [
-      "37",
-      "41",
-      "39",
-      "44"
-    ]
-  },
-  {
-    "id": "gg-048",
-    "question": "How many crates did Ship C deliver? {'Ship A': 46, 'Ship B': 48, 'Ship C': 46, 'Ship D': 8}",
-    "correctAnswer": "46",
-    "answers": [
-      "46",
-      "44",
-      "48",
-      "51"
-    ]
-  },
-  {
-    "id": "gg-049",
-    "question": "How many crates did Ship D deliver? {'Ship A': 12, 'Ship B': 48, 'Ship C': 38, 'Ship D': 34}",
-    "correctAnswer": "34",
-    "answers": [
-      "36",
-      "34",
-      "39",
-      "32"
-    ]
-  },
-  {
-    "id": "gg-050",
-    "question": "How many crates did Ship D deliver? {'Ship A': 19, 'Ship B': 8, 'Ship C': 22, 'Ship D': 31}",
-    "correctAnswer": "31",
-    "answers": [
-      "36",
-      "33",
-      "31",
-      "29"
-    ]
-  },
-  {
-    "id": "gg-051",
-    "question": "How many crates did Ship A deliver? {'Ship A': 17, 'Ship B': 26, 'Ship C': 10, 'Ship D': 41}",
-    "correctAnswer": "17",
-    "answers": [
-      "17",
-      "22",
-      "15",
-      "19"
-    ]
-  },
-  {
-    "id": "gg-052",
-    "question": "How many crates did Ship C deliver? {'Ship A': 9, 'Ship B': 20, 'Ship C': 17, 'Ship D': 15}",
-    "correctAnswer": "17",
-    "answers": [
-      "19",
-      "22",
-      "17",
       "15"
     ]
   },
   {
-    "id": "gg-053",
-    "question": "How many crates did Ship C deliver? {'Ship A': 6, 'Ship B': 35, 'Ship C': 32, 'Ship D': 6}",
-    "correctAnswer": "32",
+    "id": "graphgrabber-044",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "27",
     "answers": [
-      "34",
-      "37",
+      "25",
       "32",
-      "30"
+      "27",
+      "29"
     ]
   },
   {
-    "id": "gg-054",
-    "question": "How many crates did Ship C deliver? {'Ship A': 35, 'Ship B': 20, 'Ship C': 26, 'Ship D': 8}",
-    "correctAnswer": "26",
+    "id": "graphgrabber-045",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "13",
     "answers": [
-      "24",
-      "31",
+      "11",
+      "15",
+      "18",
+      "13"
+    ]
+  },
+  {
+    "id": "graphgrabber-046",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "28",
+    "answers": [
+      "30",
+      "33",
+      "28",
+      "26"
+    ]
+  },
+  {
+    "id": "graphgrabber-047",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "38",
+    "answers": [
+      "43",
+      "36",
+      "40",
+      "38"
+    ]
+  },
+  {
+    "id": "graphgrabber-048",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "38",
+    "answers": [
+      "43",
+      "40",
+      "38",
+      "36"
+    ]
+  },
+  {
+    "id": "graphgrabber-049",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "39",
+    "answers": [
+      "39",
+      "41",
+      "44",
+      "37"
+    ]
+  },
+  {
+    "id": "graphgrabber-050",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "12",
+    "answers": [
+      "10",
+      "14",
+      "17",
+      "12"
+    ]
+  },
+  {
+    "id": "graphgrabber-051",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "24",
+    "answers": [
+      "29",
       "26",
-      "28"
+      "22",
+      "24"
     ]
   },
   {
-    "id": "gg-055",
-    "question": "How many crates did Ship A deliver? {'Ship A': 11, 'Ship B': 45, 'Ship C': 33, 'Ship D': 42}",
-    "correctAnswer": "11",
-    "answers": [
-      "13",
-      "9",
-      "16",
-      "11"
-    ]
-  },
-  {
-    "id": "gg-056",
-    "question": "How many crates did Ship B deliver? {'Ship A': 29, 'Ship B': 25, 'Ship C': 49, 'Ship D': 9}",
+    "id": "graphgrabber-052",
+    "question": "How many crates were delivered?",
     "correctAnswer": "25",
     "answers": [
       "23",
       "30",
+      "25",
+      "27"
+    ]
+  },
+  {
+    "id": "graphgrabber-053",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "25",
+    "answers": [
+      "25",
+      "30",
+      "23",
+      "27"
+    ]
+  },
+  {
+    "id": "graphgrabber-054",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "30",
+    "answers": [
+      "32",
+      "30",
+      "28",
+      "35"
+    ]
+  },
+  {
+    "id": "graphgrabber-055",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "16",
+    "answers": [
+      "21",
+      "16",
+      "18",
+      "14"
+    ]
+  },
+  {
+    "id": "graphgrabber-056",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "36",
+    "answers": [
+      "34",
+      "41",
+      "36",
+      "38"
+    ]
+  },
+  {
+    "id": "graphgrabber-057",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "25",
+    "answers": [
+      "30",
+      "23",
       "27",
       "25"
     ]
   },
   {
-    "id": "gg-057",
-    "question": "How many crates did Ship A deliver? {'Ship A': 24, 'Ship B': 44, 'Ship C': 45, 'Ship D': 32}",
-    "correctAnswer": "24",
+    "id": "graphgrabber-058",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "46",
     "answers": [
-      "26",
-      "29",
-      "22",
-      "24"
-    ]
-  },
-  {
-    "id": "gg-058",
-    "question": "How many crates did Ship D deliver? {'Ship A': 40, 'Ship B': 8, 'Ship C': 23, 'Ship D': 29}",
-    "correctAnswer": "29",
-    "answers": [
-      "34",
-      "31",
-      "27",
-      "29"
-    ]
-  },
-  {
-    "id": "gg-059",
-    "question": "How many crates did Ship A deliver? {'Ship A': 19, 'Ship B': 43, 'Ship C': 47, 'Ship D': 44}",
-    "correctAnswer": "19",
-    "answers": [
-      "19",
-      "17",
-      "21",
-      "24"
-    ]
-  },
-  {
-    "id": "gg-060",
-    "question": "How many crates did Ship C deliver? {'Ship A': 32, 'Ship B': 44, 'Ship C': 44, 'Ship D': 11}",
-    "correctAnswer": "44",
-    "answers": [
-      "49",
-      "42",
       "46",
+      "51",
+      "48",
       "44"
     ]
   },
   {
-    "id": "gg-061",
-    "question": "How many crates did Ship A deliver? {'Ship A': 42, 'Ship B': 17, 'Ship C': 11, 'Ship D': 11}",
-    "correctAnswer": "42",
+    "id": "graphgrabber-059",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "39",
     "answers": [
+      "37",
+      "41",
       "44",
-      "47",
-      "40",
-      "42"
+      "39"
     ]
   },
   {
-    "id": "gg-062",
-    "question": "How many crates did Ship C deliver? {'Ship A': 41, 'Ship B': 13, 'Ship C': 45, 'Ship D': 37}",
-    "correctAnswer": "45",
+    "id": "graphgrabber-060",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "20",
     "answers": [
-      "45",
-      "50",
-      "47",
+      "20",
+      "25",
+      "22",
+      "18"
+    ]
+  },
+  {
+    "id": "graphgrabber-061",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "41",
+    "answers": [
+      "46",
+      "39",
+      "41",
       "43"
     ]
   },
   {
-    "id": "gg-063",
-    "question": "How many crates did Ship B deliver? {'Ship A': 44, 'Ship B': 33, 'Ship C': 16, 'Ship D': 20}",
-    "correctAnswer": "33",
+    "id": "graphgrabber-062",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "21",
     "answers": [
-      "35",
-      "31",
-      "38",
-      "33"
+      "26",
+      "19",
+      "23",
+      "21"
     ]
   },
   {
-    "id": "gg-064",
-    "question": "How many crates did Ship C deliver? {'Ship A': 24, 'Ship B': 42, 'Ship C': 32, 'Ship D': 37}",
-    "correctAnswer": "32",
+    "id": "graphgrabber-063",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "34",
     "answers": [
+      "39",
       "34",
-      "32",
-      "37",
-      "30"
+      "36",
+      "32"
     ]
   },
   {
-    "id": "gg-065",
-    "question": "How many crates did Ship C deliver? {'Ship A': 14, 'Ship B': 35, 'Ship C': 24, 'Ship D': 43}",
-    "correctAnswer": "24",
+    "id": "graphgrabber-064",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "8",
     "answers": [
-      "29",
-      "24",
-      "26",
-      "22"
+      "13",
+      "6",
+      "8",
+      "10"
     ]
   },
   {
-    "id": "gg-066",
-    "question": "How many crates did Ship B deliver? {'Ship A': 38, 'Ship B': 42, 'Ship C': 47, 'Ship D': 48}",
-    "correctAnswer": "42",
+    "id": "graphgrabber-065",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "21",
     "answers": [
-      "44",
-      "40",
-      "47",
-      "42"
+      "23",
+      "21",
+      "19",
+      "26"
     ]
   },
   {
-    "id": "gg-067",
-    "question": "How many crates did Ship B deliver? {'Ship A': 32, 'Ship B': 27, 'Ship C': 17, 'Ship D': 17}",
-    "correctAnswer": "27",
+    "id": "graphgrabber-066",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "8",
     "answers": [
-      "25",
-      "32",
-      "29",
-      "27"
+      "6",
+      "8",
+      "13",
+      "10"
     ]
   },
   {
-    "id": "gg-068",
-    "question": "How many crates did Ship D deliver? {'Ship A': 47, 'Ship B': 35, 'Ship C': 49, 'Ship D': 49}",
-    "correctAnswer": "49",
+    "id": "graphgrabber-067",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "48",
     "answers": [
-      "49",
-      "51",
-      "54",
-      "47"
+      "53",
+      "50",
+      "48",
+      "46"
     ]
   },
   {
-    "id": "gg-069",
-    "question": "How many crates did Ship B deliver? {'Ship A': 44, 'Ship B': 24, 'Ship C': 31, 'Ship D': 26}",
-    "correctAnswer": "24",
-    "answers": [
-      "22",
-      "29",
-      "26",
-      "24"
-    ]
-  },
-  {
-    "id": "gg-070",
-    "question": "How many crates did Ship B deliver? {'Ship A': 36, 'Ship B': 19, 'Ship C': 5, 'Ship D': 45}",
+    "id": "graphgrabber-068",
+    "question": "How many crates were delivered?",
     "correctAnswer": "19",
     "answers": [
       "17",
@@ -770,338 +748,294 @@
     ]
   },
   {
-    "id": "gg-071",
-    "question": "How many crates did Ship B deliver? {'Ship A': 20, 'Ship B': 35, 'Ship C': 26, 'Ship D': 29}",
-    "correctAnswer": "35",
+    "id": "graphgrabber-069",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "8",
     "answers": [
-      "37",
-      "33",
-      "35",
-      "40"
-    ]
-  },
-  {
-    "id": "gg-072",
-    "question": "How many crates did Ship A deliver? {'Ship A': 28, 'Ship B': 5, 'Ship C': 9, 'Ship D': 27}",
-    "correctAnswer": "28",
-    "answers": [
-      "26",
-      "30",
-      "33",
-      "28"
-    ]
-  },
-  {
-    "id": "gg-073",
-    "question": "How many crates did Ship C deliver? {'Ship A': 33, 'Ship B': 17, 'Ship C': 45, 'Ship D': 42}",
-    "correctAnswer": "45",
-    "answers": [
-      "47",
-      "43",
-      "50",
-      "45"
-    ]
-  },
-  {
-    "id": "gg-074",
-    "question": "How many crates did Ship C deliver? {'Ship A': 17, 'Ship B': 23, 'Ship C': 16, 'Ship D': 19}",
-    "correctAnswer": "16",
-    "answers": [
-      "14",
-      "16",
-      "21",
-      "18"
-    ]
-  },
-  {
-    "id": "gg-075",
-    "question": "How many crates did Ship C deliver? {'Ship A': 16, 'Ship B': 17, 'Ship C': 6, 'Ship D': 16}",
-    "correctAnswer": "6",
-    "answers": [
-      "8",
-      "4",
-      "11",
-      "6"
-    ]
-  },
-  {
-    "id": "gg-076",
-    "question": "How many crates did Ship B deliver? {'Ship A': 29, 'Ship B': 46, 'Ship C': 12, 'Ship D': 26}",
-    "correctAnswer": "46",
-    "answers": [
-      "51",
-      "46",
-      "48",
-      "44"
-    ]
-  },
-  {
-    "id": "gg-077",
-    "question": "How many crates did Ship D deliver? {'Ship A': 28, 'Ship B': 28, 'Ship C': 47, 'Ship D': 15}",
-    "correctAnswer": "15",
-    "answers": [
-      "17",
       "13",
-      "20",
+      "10",
+      "6",
+      "8"
+    ]
+  },
+  {
+    "id": "graphgrabber-070",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "33",
+    "answers": [
+      "31",
+      "35",
+      "38",
+      "33"
+    ]
+  },
+  {
+    "id": "graphgrabber-071",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "17",
+    "answers": [
+      "22",
+      "19",
+      "17",
       "15"
     ]
   },
   {
-    "id": "gg-078",
-    "question": "How many crates did Ship D deliver? {'Ship A': 13, 'Ship B': 17, 'Ship C': 17, 'Ship D': 39}",
-    "correctAnswer": "39",
+    "id": "graphgrabber-072",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "15",
     "answers": [
-      "39",
-      "44",
-      "41",
+      "17",
+      "13",
+      "15",
+      "20"
+    ]
+  },
+  {
+    "id": "graphgrabber-073",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "12",
+    "answers": [
+      "12",
+      "14",
+      "17",
+      "10"
+    ]
+  },
+  {
+    "id": "graphgrabber-074",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "10",
+    "answers": [
+      "10",
+      "12",
+      "15",
+      "8"
+    ]
+  },
+  {
+    "id": "graphgrabber-075",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "27",
+    "answers": [
+      "32",
+      "25",
+      "27",
+      "29"
+    ]
+  },
+  {
+    "id": "graphgrabber-076",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "33",
+    "answers": [
+      "38",
+      "31",
+      "33",
+      "35"
+    ]
+  },
+  {
+    "id": "graphgrabber-077",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "12",
+    "answers": [
+      "10",
+      "14",
+      "17",
+      "12"
+    ]
+  },
+  {
+    "id": "graphgrabber-078",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "32",
+    "answers": [
+      "32",
+      "34",
+      "30",
       "37"
     ]
   },
   {
-    "id": "gg-079",
-    "question": "How many crates did Ship B deliver? {'Ship A': 45, 'Ship B': 20, 'Ship C': 7, 'Ship D': 44}",
-    "correctAnswer": "20",
+    "id": "graphgrabber-079",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "45",
     "answers": [
-      "25",
-      "22",
-      "20",
+      "43",
+      "50",
+      "45",
+      "47"
+    ]
+  },
+  {
+    "id": "graphgrabber-080",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "10",
+    "answers": [
+      "12",
+      "10",
+      "15",
+      "8"
+    ]
+  },
+  {
+    "id": "graphgrabber-081",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "16",
+    "answers": [
+      "16",
+      "21",
+      "14",
       "18"
     ]
   },
   {
-    "id": "gg-080",
-    "question": "How many crates did Ship B deliver? {'Ship A': 20, 'Ship B': 8, 'Ship C': 45, 'Ship D': 22}",
-    "correctAnswer": "8",
+    "id": "graphgrabber-082",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "23",
     "answers": [
-      "10",
-      "6",
-      "8",
-      "13"
+      "25",
+      "28",
+      "21",
+      "23"
     ]
   },
   {
-    "id": "gg-081",
-    "question": "How many crates did Ship B deliver? {'Ship A': 35, 'Ship B': 47, 'Ship C': 44, 'Ship D': 9}",
-    "correctAnswer": "47",
+    "id": "graphgrabber-083",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "42",
     "answers": [
+      "40",
+      "44",
       "47",
-      "49",
-      "45",
-      "52"
+      "42"
     ]
   },
   {
-    "id": "gg-082",
-    "question": "How many crates did Ship C deliver? {'Ship A': 36, 'Ship B': 38, 'Ship C': 34, 'Ship D': 16}",
-    "correctAnswer": "34",
+    "id": "graphgrabber-084",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "9",
     "answers": [
-      "34",
+      "9",
+      "11",
+      "7",
+      "14"
+    ]
+  },
+  {
+    "id": "graphgrabber-085",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "17",
+    "answers": [
+      "17",
+      "15",
+      "22",
+      "19"
+    ]
+  },
+  {
+    "id": "graphgrabber-086",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "38",
+    "answers": [
       "36",
-      "39",
-      "32"
-    ]
-  },
-  {
-    "id": "gg-083",
-    "question": "How many crates did Ship D deliver? {'Ship A': 50, 'Ship B': 36, 'Ship C': 35, 'Ship D': 22}",
-    "correctAnswer": "22",
-    "answers": [
-      "24",
-      "20",
-      "27",
-      "22"
-    ]
-  },
-  {
-    "id": "gg-084",
-    "question": "How many crates did Ship B deliver? {'Ship A': 17, 'Ship B': 33, 'Ship C': 20, 'Ship D': 30}",
-    "correctAnswer": "33",
-    "answers": [
-      "33",
       "38",
-      "35",
-      "31"
-    ]
-  },
-  {
-    "id": "gg-085",
-    "question": "How many crates did Ship A deliver? {'Ship A': 41, 'Ship B': 15, 'Ship C': 28, 'Ship D': 21}",
-    "correctAnswer": "41",
-    "answers": [
-      "39",
-      "46",
-      "41",
+      "40",
       "43"
     ]
   },
   {
-    "id": "gg-086",
-    "question": "How many crates did Ship A deliver? {'Ship A': 33, 'Ship B': 38, 'Ship C': 27, 'Ship D': 19}",
-    "correctAnswer": "33",
-    "answers": [
-      "33",
-      "35",
-      "31",
-      "38"
-    ]
-  },
-  {
-    "id": "gg-087",
-    "question": "How many crates did Ship D deliver? {'Ship A': 32, 'Ship B': 33, 'Ship C': 34, 'Ship D': 32}",
-    "correctAnswer": "32",
-    "answers": [
-      "32",
-      "37",
-      "34",
-      "30"
-    ]
-  },
-  {
-    "id": "gg-088",
-    "question": "How many crates did Ship D deliver? {'Ship A': 22, 'Ship B': 29, 'Ship C': 6, 'Ship D': 16}",
-    "correctAnswer": "16",
-    "answers": [
-      "14",
-      "16",
-      "21",
-      "18"
-    ]
-  },
-  {
-    "id": "gg-089",
-    "question": "How many crates did Ship A deliver? {'Ship A': 27, 'Ship B': 10, 'Ship C': 23, 'Ship D': 37}",
-    "correctAnswer": "27",
-    "answers": [
-      "29",
-      "32",
-      "27",
-      "25"
-    ]
-  },
-  {
-    "id": "gg-090",
-    "question": "How many crates did Ship B deliver? {'Ship A': 12, 'Ship B': 9, 'Ship C': 28, 'Ship D': 7}",
-    "correctAnswer": "9",
-    "answers": [
-      "14",
-      "11",
-      "9",
-      "7"
-    ]
-  },
-  {
-    "id": "gg-091",
-    "question": "How many crates did Ship B deliver? {'Ship A': 21, 'Ship B': 24, 'Ship C': 48, 'Ship D': 22}",
-    "correctAnswer": "24",
-    "answers": [
-      "24",
-      "29",
-      "22",
-      "26"
-    ]
-  },
-  {
-    "id": "gg-092",
-    "question": "How many crates did Ship D deliver? {'Ship A': 5, 'Ship B': 24, 'Ship C': 23, 'Ship D': 27}",
-    "correctAnswer": "27",
-    "answers": [
-      "29",
-      "27",
-      "25",
-      "32"
-    ]
-  },
-  {
-    "id": "gg-093",
-    "question": "How many crates did Ship D deliver? {'Ship A': 35, 'Ship B': 46, 'Ship C': 37, 'Ship D': 14}",
+    "id": "graphgrabber-087",
+    "question": "How many crates were delivered?",
     "correctAnswer": "14",
     "answers": [
-      "19",
+      "16",
       "12",
+      "14",
+      "19"
+    ]
+  },
+  {
+    "id": "graphgrabber-088",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "6",
+    "answers": [
+      "8",
+      "6",
+      "4",
+      "11"
+    ]
+  },
+  {
+    "id": "graphgrabber-089",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "38",
+    "answers": [
+      "40",
+      "38",
+      "36",
+      "43"
+    ]
+  },
+  {
+    "id": "graphgrabber-090",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "16",
+    "answers": [
+      "21",
+      "18",
       "14",
       "16"
     ]
   },
   {
-    "id": "gg-094",
-    "question": "How many crates did Ship D deliver? {'Ship A': 35, 'Ship B': 19, 'Ship C': 38, 'Ship D': 42}",
-    "correctAnswer": "42",
+    "id": "graphgrabber-091",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "32",
     "answers": [
-      "40",
-      "42",
-      "44",
-      "47"
+      "37",
+      "32",
+      "34",
+      "30"
     ]
   },
   {
-    "id": "gg-095",
-    "question": "How many crates did Ship D deliver? {'Ship A': 25, 'Ship B': 17, 'Ship C': 32, 'Ship D': 49}",
-    "correctAnswer": "49",
+    "id": "graphgrabber-092",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "11",
     "answers": [
-      "49",
-      "47",
-      "54",
-      "51"
+      "16",
+      "13",
+      "9",
+      "11"
     ]
   },
   {
-    "id": "gg-096",
-    "question": "How many crates did Ship B deliver? {'Ship A': 40, 'Ship B': 6, 'Ship C': 28, 'Ship D': 13}",
-    "correctAnswer": "6",
+    "id": "graphgrabber-093",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "15",
     "answers": [
-      "8",
-      "6",
-      "11",
-      "4"
-    ]
-  },
-  {
-    "id": "gg-097",
-    "question": "How many crates did Ship B deliver? {'Ship A': 36, 'Ship B': 47, 'Ship C': 27, 'Ship D': 26}",
-    "correctAnswer": "47",
-    "answers": [
-      "47",
-      "45",
-      "49",
-      "52"
-    ]
-  },
-  {
-    "id": "gg-098",
-    "question": "How many crates did Ship A deliver? {'Ship A': 49, 'Ship B': 39, 'Ship C': 24, 'Ship D': 25}",
-    "correctAnswer": "49",
-    "answers": [
-      "51",
-      "47",
-      "54",
-      "49"
-    ]
-  },
-  {
-    "id": "gg-099",
-    "question": "How many crates did Ship D deliver? {'Ship A': 26, 'Ship B': 41, 'Ship C': 45, 'Ship D': 43}",
-    "correctAnswer": "43",
-    "answers": [
-      "41",
-      "45",
-      "43",
-      "48"
-    ]
-  },
-  {
-    "id": "gg-100",
-    "question": "How many crates did Ship D deliver? {'Ship A': 9, 'Ship B': 39, 'Ship C': 29, 'Ship D': 17}",
-    "correctAnswer": "17",
-    "answers": [
-      "22",
       "15",
-      "19",
-      "17"
+      "13",
+      "17",
+      "20"
     ]
   },
   {
-    "id": "gg-101",
-    "question": "How many crates did Ship A deliver? {'Ship A': 45, 'Ship B': 24, 'Ship C': 10, 'Ship D': 15}",
+    "id": "graphgrabber-094",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "26",
+    "answers": [
+      "28",
+      "26",
+      "31",
+      "24"
+    ]
+  },
+  {
+    "id": "graphgrabber-095",
+    "question": "How many crates were delivered?",
     "correctAnswer": "45",
     "answers": [
       "43",
@@ -1111,360 +1045,426 @@
     ]
   },
   {
-    "id": "gg-102",
-    "question": "How many crates did Ship D deliver? {'Ship A': 6, 'Ship B': 16, 'Ship C': 17, 'Ship D': 9}",
-    "correctAnswer": "9",
+    "id": "graphgrabber-096",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "39",
     "answers": [
-      "11",
-      "14",
-      "9",
-      "7"
+      "37",
+      "41",
+      "39",
+      "44"
     ]
   },
   {
-    "id": "gg-103",
-    "question": "How many crates did Ship D deliver? {'Ship A': 23, 'Ship B': 47, 'Ship C': 38, 'Ship D': 9}",
-    "correctAnswer": "9",
+    "id": "graphgrabber-097",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "12",
     "answers": [
-      "7",
       "14",
+      "10",
+      "17",
+      "12"
+    ]
+  },
+  {
+    "id": "graphgrabber-098",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "11",
+    "answers": [
+      "16",
+      "11",
+      "13",
+      "9"
+    ]
+  },
+  {
+    "id": "graphgrabber-099",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "14",
+    "answers": [
+      "12",
+      "14",
+      "16",
+      "19"
+    ]
+  },
+  {
+    "id": "graphgrabber-100",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "22",
+    "answers": [
+      "20",
+      "24",
+      "27",
+      "22"
+    ]
+  },
+  {
+    "id": "graphgrabber-101",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "5",
+    "answers": [
+      "3",
+      "7",
+      "10",
+      "5"
+    ]
+  },
+  {
+    "id": "graphgrabber-102",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "25",
+    "answers": [
+      "27",
+      "25",
+      "23",
+      "30"
+    ]
+  },
+  {
+    "id": "graphgrabber-103",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "19",
+    "answers": [
+      "21",
+      "19",
+      "24",
+      "17"
+    ]
+  },
+  {
+    "id": "graphgrabber-104",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "20",
+    "answers": [
+      "25",
+      "20",
+      "22",
+      "18"
+    ]
+  },
+  {
+    "id": "graphgrabber-105",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "11",
+    "answers": [
+      "16",
+      "13",
       "11",
       "9"
     ]
   },
   {
-    "id": "gg-104",
-    "question": "How many crates did Ship B deliver? {'Ship A': 15, 'Ship B': 25, 'Ship C': 31, 'Ship D': 30}",
-    "correctAnswer": "25",
-    "answers": [
-      "23",
-      "27",
-      "30",
-      "25"
-    ]
-  },
-  {
-    "id": "gg-105",
-    "question": "How many crates did Ship B deliver? {'Ship A': 35, 'Ship B': 9, 'Ship C': 29, 'Ship D': 18}",
-    "correctAnswer": "9",
-    "answers": [
-      "9",
-      "7",
-      "14",
-      "11"
-    ]
-  },
-  {
-    "id": "gg-106",
-    "question": "How many crates did Ship C deliver? {'Ship A': 50, 'Ship B': 47, 'Ship C': 35, 'Ship D': 15}",
-    "correctAnswer": "35",
-    "answers": [
-      "35",
-      "40",
-      "33",
-      "37"
-    ]
-  },
-  {
-    "id": "gg-107",
-    "question": "How many crates did Ship D deliver? {'Ship A': 22, 'Ship B': 17, 'Ship C': 5, 'Ship D': 14}",
-    "correctAnswer": "14",
-    "answers": [
-      "12",
-      "19",
-      "16",
-      "14"
-    ]
-  },
-  {
-    "id": "gg-108",
-    "question": "How many crates did Ship D deliver? {'Ship A': 38, 'Ship B': 26, 'Ship C': 41, 'Ship D': 36}",
+    "id": "graphgrabber-106",
+    "question": "How many crates were delivered?",
     "correctAnswer": "36",
     "answers": [
-      "38",
       "36",
-      "34",
-      "41"
-    ]
-  },
-  {
-    "id": "gg-109",
-    "question": "How many crates did Ship C deliver? {'Ship A': 10, 'Ship B': 23, 'Ship C': 46, 'Ship D': 34}",
-    "correctAnswer": "46",
-    "answers": [
-      "51",
-      "46",
-      "48",
-      "44"
-    ]
-  },
-  {
-    "id": "gg-110",
-    "question": "How many crates did Ship D deliver? {'Ship A': 31, 'Ship B': 20, 'Ship C': 16, 'Ship D': 44}",
-    "correctAnswer": "44",
-    "answers": [
-      "42",
-      "44",
-      "46",
-      "49"
-    ]
-  },
-  {
-    "id": "gg-111",
-    "question": "How many crates did Ship A deliver? {'Ship A': 49, 'Ship B': 41, 'Ship C': 11, 'Ship D': 30}",
-    "correctAnswer": "49",
-    "answers": [
-      "47",
-      "54",
-      "49",
-      "51"
-    ]
-  },
-  {
-    "id": "gg-112",
-    "question": "How many crates did Ship A deliver? {'Ship A': 45, 'Ship B': 39, 'Ship C': 23, 'Ship D': 47}",
-    "correctAnswer": "45",
-    "answers": [
-      "45",
-      "43",
-      "50",
-      "47"
-    ]
-  },
-  {
-    "id": "gg-113",
-    "question": "How many crates did Ship A deliver? {'Ship A': 40, 'Ship B': 12, 'Ship C': 28, 'Ship D': 9}",
-    "correctAnswer": "40",
-    "answers": [
-      "40",
-      "45",
-      "42",
-      "38"
-    ]
-  },
-  {
-    "id": "gg-114",
-    "question": "How many crates did Ship A deliver? {'Ship A': 15, 'Ship B': 21, 'Ship C': 18, 'Ship D': 37}",
-    "correctAnswer": "15",
-    "answers": [
-      "17",
-      "13",
-      "15",
-      "20"
-    ]
-  },
-  {
-    "id": "gg-115",
-    "question": "How many crates did Ship D deliver? {'Ship A': 45, 'Ship B': 49, 'Ship C': 48, 'Ship D': 34}",
-    "correctAnswer": "34",
-    "answers": [
-      "34",
-      "36",
-      "39",
-      "32"
-    ]
-  },
-  {
-    "id": "gg-116",
-    "question": "How many crates did Ship C deliver? {'Ship A': 17, 'Ship B': 30, 'Ship C': 7, 'Ship D': 5}",
-    "correctAnswer": "7",
-    "answers": [
-      "9",
-      "12",
-      "5",
-      "7"
-    ]
-  },
-  {
-    "id": "gg-117",
-    "question": "How many crates did Ship D deliver? {'Ship A': 25, 'Ship B': 47, 'Ship C': 34, 'Ship D': 36}",
-    "correctAnswer": "36",
-    "answers": [
-      "38",
-      "34",
-      "41",
-      "36"
-    ]
-  },
-  {
-    "id": "gg-118",
-    "question": "How many crates did Ship C deliver? {'Ship A': 50, 'Ship B': 33, 'Ship C': 13, 'Ship D': 35}",
-    "correctAnswer": "13",
-    "answers": [
-      "18",
-      "11",
-      "13",
-      "15"
-    ]
-  },
-  {
-    "id": "gg-119",
-    "question": "How many crates did Ship A deliver? {'Ship A': 43, 'Ship B': 11, 'Ship C': 16, 'Ship D': 23}",
-    "correctAnswer": "43",
-    "answers": [
-      "45",
-      "41",
-      "43",
-      "48"
-    ]
-  },
-  {
-    "id": "gg-120",
-    "question": "How many crates did Ship B deliver? {'Ship A': 47, 'Ship B': 5, 'Ship C': 48, 'Ship D': 22}",
-    "correctAnswer": "5",
-    "answers": [
-      "3",
-      "5",
-      "7",
-      "10"
-    ]
-  },
-  {
-    "id": "gg-121",
-    "question": "How many crates did Ship B deliver? {'Ship A': 18, 'Ship B': 50, 'Ship C': 7, 'Ship D': 48}",
-    "correctAnswer": "50",
-    "answers": [
-      "52",
-      "50",
-      "48",
-      "55"
-    ]
-  },
-  {
-    "id": "gg-122",
-    "question": "How many crates did Ship A deliver? {'Ship A': 45, 'Ship B': 38, 'Ship C': 46, 'Ship D': 47}",
-    "correctAnswer": "45",
-    "answers": [
-      "45",
-      "47",
-      "43",
-      "50"
-    ]
-  },
-  {
-    "id": "gg-123",
-    "question": "How many crates did Ship A deliver? {'Ship A': 33, 'Ship B': 8, 'Ship C': 43, 'Ship D': 5}",
-    "correctAnswer": "33",
-    "answers": [
-      "35",
-      "31",
-      "33",
-      "38"
-    ]
-  },
-  {
-    "id": "gg-124",
-    "question": "How many crates did Ship A deliver? {'Ship A': 28, 'Ship B': 20, 'Ship C': 17, 'Ship D': 10}",
-    "correctAnswer": "28",
-    "answers": [
-      "30",
-      "26",
-      "28",
-      "33"
-    ]
-  },
-  {
-    "id": "gg-125",
-    "question": "How many crates did Ship A deliver? {'Ship A': 26, 'Ship B': 17, 'Ship C': 48, 'Ship D': 47}",
-    "correctAnswer": "26",
-    "answers": [
-      "31",
-      "24",
-      "26",
-      "28"
-    ]
-  },
-  {
-    "id": "gg-126",
-    "question": "How many crates did Ship A deliver? {'Ship A': 15, 'Ship B': 7, 'Ship C': 31, 'Ship D': 37}",
-    "correctAnswer": "15",
-    "answers": [
-      "20",
-      "15",
-      "17",
-      "13"
-    ]
-  },
-  {
-    "id": "gg-127",
-    "question": "How many crates did Ship D deliver? {'Ship A': 44, 'Ship B': 18, 'Ship C': 39, 'Ship D': 30}",
-    "correctAnswer": "30",
-    "answers": [
-      "32",
-      "28",
-      "35",
-      "30"
-    ]
-  },
-  {
-    "id": "gg-128",
-    "question": "How many crates did Ship A deliver? {'Ship A': 11, 'Ship B': 27, 'Ship C': 25, 'Ship D': 16}",
-    "correctAnswer": "11",
-    "answers": [
-      "11",
-      "13",
-      "9",
-      "16"
-    ]
-  },
-  {
-    "id": "gg-129",
-    "question": "How many crates did Ship B deliver? {'Ship A': 5, 'Ship B': 29, 'Ship C': 18, 'Ship D': 34}",
-    "correctAnswer": "29",
-    "answers": [
-      "34",
-      "31",
-      "27",
-      "29"
-    ]
-  },
-  {
-    "id": "gg-130",
-    "question": "How many crates did Ship A deliver? {'Ship A': 46, 'Ship B': 44, 'Ship C': 28, 'Ship D': 7}",
-    "correctAnswer": "46",
-    "answers": [
-      "46",
-      "44",
-      "51",
-      "48"
-    ]
-  },
-  {
-    "id": "gg-131",
-    "question": "How many crates did Ship B deliver? {'Ship A': 43, 'Ship B': 36, 'Ship C': 11, 'Ship D': 50}",
-    "correctAnswer": "36",
-    "answers": [
       "41",
       "38",
-      "36",
       "34"
     ]
   },
   {
-    "id": "gg-132",
-    "question": "How many crates did Ship B deliver? {'Ship A': 45, 'Ship B': 49, 'Ship C': 29, 'Ship D': 48}",
-    "correctAnswer": "49",
+    "id": "graphgrabber-107",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "21",
     "answers": [
-      "54",
-      "51",
-      "49",
-      "47"
+      "21",
+      "26",
+      "23",
+      "19"
     ]
   },
   {
-    "id": "gg-133",
-    "question": "How many crates did Ship A deliver? {'Ship A': 47, 'Ship B': 35, 'Ship C': 9, 'Ship D': 26}",
+    "id": "graphgrabber-108",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "9",
+    "answers": [
+      "14",
+      "9",
+      "7",
+      "11"
+    ]
+  },
+  {
+    "id": "graphgrabber-109",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "5",
+    "answers": [
+      "7",
+      "5",
+      "3",
+      "10"
+    ]
+  },
+  {
+    "id": "graphgrabber-110",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "33",
+    "answers": [
+      "38",
+      "35",
+      "33",
+      "31"
+    ]
+  },
+  {
+    "id": "graphgrabber-111",
+    "question": "How many crates were delivered?",
     "correctAnswer": "47",
     "answers": [
       "45",
       "47",
-      "49",
-      "52"
+      "52",
+      "49"
     ]
   },
   {
-    "id": "gg-134",
-    "question": "How many crates did Ship B deliver? {'Ship A': 37, 'Ship B': 42, 'Ship C': 50, 'Ship D': 5}",
+    "id": "graphgrabber-112",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "46",
+    "answers": [
+      "44",
+      "46",
+      "51",
+      "48"
+    ]
+  },
+  {
+    "id": "graphgrabber-113",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "50",
+    "answers": [
+      "48",
+      "52",
+      "50",
+      "55"
+    ]
+  },
+  {
+    "id": "graphgrabber-114",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "38",
+    "answers": [
+      "38",
+      "36",
+      "40",
+      "43"
+    ]
+  },
+  {
+    "id": "graphgrabber-115",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "12",
+    "answers": [
+      "14",
+      "17",
+      "12",
+      "10"
+    ]
+  },
+  {
+    "id": "graphgrabber-116",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "49",
+    "answers": [
+      "47",
+      "49",
+      "51",
+      "54"
+    ]
+  },
+  {
+    "id": "graphgrabber-117",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "38",
+    "answers": [
+      "43",
+      "40",
+      "36",
+      "38"
+    ]
+  },
+  {
+    "id": "graphgrabber-118",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "8",
+    "answers": [
+      "6",
+      "10",
+      "8",
+      "13"
+    ]
+  },
+  {
+    "id": "graphgrabber-119",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "23",
+    "answers": [
+      "28",
+      "21",
+      "25",
+      "23"
+    ]
+  },
+  {
+    "id": "graphgrabber-120",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "23",
+    "answers": [
+      "28",
+      "25",
+      "23",
+      "21"
+    ]
+  },
+  {
+    "id": "graphgrabber-121",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "10",
+    "answers": [
+      "10",
+      "12",
+      "8",
+      "15"
+    ]
+  },
+  {
+    "id": "graphgrabber-122",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "10",
+    "answers": [
+      "15",
+      "12",
+      "10",
+      "8"
+    ]
+  },
+  {
+    "id": "graphgrabber-123",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "17",
+    "answers": [
+      "22",
+      "15",
+      "17",
+      "19"
+    ]
+  },
+  {
+    "id": "graphgrabber-124",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "29",
+    "answers": [
+      "29",
+      "31",
+      "27",
+      "34"
+    ]
+  },
+  {
+    "id": "graphgrabber-125",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "13",
+    "answers": [
+      "11",
+      "13",
+      "18",
+      "15"
+    ]
+  },
+  {
+    "id": "graphgrabber-126",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "26",
+    "answers": [
+      "31",
+      "26",
+      "28",
+      "24"
+    ]
+  },
+  {
+    "id": "graphgrabber-127",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "37",
+    "answers": [
+      "35",
+      "39",
+      "42",
+      "37"
+    ]
+  },
+  {
+    "id": "graphgrabber-128",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "47",
+    "answers": [
+      "45",
+      "52",
+      "47",
+      "49"
+    ]
+  },
+  {
+    "id": "graphgrabber-129",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "24",
+    "answers": [
+      "22",
+      "29",
+      "24",
+      "26"
+    ]
+  },
+  {
+    "id": "graphgrabber-130",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "44",
+    "answers": [
+      "42",
+      "49",
+      "44",
+      "46"
+    ]
+  },
+  {
+    "id": "graphgrabber-131",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "19",
+    "answers": [
+      "21",
+      "17",
+      "19",
+      "24"
+    ]
+  },
+  {
+    "id": "graphgrabber-132",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "22",
+    "answers": [
+      "20",
+      "22",
+      "24",
+      "27"
+    ]
+  },
+  {
+    "id": "graphgrabber-133",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "41",
+    "answers": [
+      "46",
+      "43",
+      "39",
+      "41"
+    ]
+  },
+  {
+    "id": "graphgrabber-134",
+    "question": "How many crates were delivered?",
     "correctAnswer": "42",
     "answers": [
       "44",
@@ -1474,8 +1474,283 @@
     ]
   },
   {
-    "id": "gg-135",
-    "question": "How many crates did Ship A deliver? {'Ship A': 24, 'Ship B': 20, 'Ship C': 32, 'Ship D': 20}",
+    "id": "graphgrabber-135",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "27",
+    "answers": [
+      "29",
+      "32",
+      "25",
+      "27"
+    ]
+  },
+  {
+    "id": "graphgrabber-136",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "49",
+    "answers": [
+      "54",
+      "51",
+      "47",
+      "49"
+    ]
+  },
+  {
+    "id": "graphgrabber-137",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "44",
+    "answers": [
+      "44",
+      "42",
+      "46",
+      "49"
+    ]
+  },
+  {
+    "id": "graphgrabber-138",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "36",
+    "answers": [
+      "38",
+      "41",
+      "34",
+      "36"
+    ]
+  },
+  {
+    "id": "graphgrabber-139",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "48",
+    "answers": [
+      "48",
+      "50",
+      "53",
+      "46"
+    ]
+  },
+  {
+    "id": "graphgrabber-140",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "31",
+    "answers": [
+      "31",
+      "36",
+      "29",
+      "33"
+    ]
+  },
+  {
+    "id": "graphgrabber-141",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "33",
+    "answers": [
+      "31",
+      "35",
+      "38",
+      "33"
+    ]
+  },
+  {
+    "id": "graphgrabber-142",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "14",
+    "answers": [
+      "19",
+      "16",
+      "12",
+      "14"
+    ]
+  },
+  {
+    "id": "graphgrabber-143",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "8",
+    "answers": [
+      "10",
+      "8",
+      "13",
+      "6"
+    ]
+  },
+  {
+    "id": "graphgrabber-144",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "21",
+    "answers": [
+      "26",
+      "19",
+      "21",
+      "23"
+    ]
+  },
+  {
+    "id": "graphgrabber-145",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "28",
+    "answers": [
+      "28",
+      "33",
+      "30",
+      "26"
+    ]
+  },
+  {
+    "id": "graphgrabber-146",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "17",
+    "answers": [
+      "19",
+      "17",
+      "15",
+      "22"
+    ]
+  },
+  {
+    "id": "graphgrabber-147",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "6",
+    "answers": [
+      "6",
+      "11",
+      "4",
+      "8"
+    ]
+  },
+  {
+    "id": "graphgrabber-148",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "27",
+    "answers": [
+      "25",
+      "29",
+      "32",
+      "27"
+    ]
+  },
+  {
+    "id": "graphgrabber-149",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "40",
+    "answers": [
+      "42",
+      "40",
+      "45",
+      "38"
+    ]
+  },
+  {
+    "id": "graphgrabber-150",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "48",
+    "answers": [
+      "46",
+      "48",
+      "53",
+      "50"
+    ]
+  },
+  {
+    "id": "graphgrabber-151",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "41",
+    "answers": [
+      "39",
+      "43",
+      "46",
+      "41"
+    ]
+  },
+  {
+    "id": "graphgrabber-152",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "36",
+    "answers": [
+      "34",
+      "38",
+      "41",
+      "36"
+    ]
+  },
+  {
+    "id": "graphgrabber-153",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "12",
+    "answers": [
+      "12",
+      "10",
+      "14",
+      "17"
+    ]
+  },
+  {
+    "id": "graphgrabber-154",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "19",
+    "answers": [
+      "21",
+      "17",
+      "19",
+      "24"
+    ]
+  },
+  {
+    "id": "graphgrabber-155",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "26",
+    "answers": [
+      "26",
+      "28",
+      "31",
+      "24"
+    ]
+  },
+  {
+    "id": "graphgrabber-156",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "18",
+    "answers": [
+      "20",
+      "16",
+      "23",
+      "18"
+    ]
+  },
+  {
+    "id": "graphgrabber-157",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "34",
+    "answers": [
+      "34",
+      "39",
+      "36",
+      "32"
+    ]
+  },
+  {
+    "id": "graphgrabber-158",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "7",
+    "answers": [
+      "7",
+      "9",
+      "12",
+      "5"
+    ]
+  },
+  {
+    "id": "graphgrabber-159",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "49",
+    "answers": [
+      "47",
+      "51",
+      "49",
+      "54"
+    ]
+  },
+  {
+    "id": "graphgrabber-160",
+    "question": "How many crates were delivered?",
     "correctAnswer": "24",
     "answers": [
       "22",
@@ -1485,470 +1760,217 @@
     ]
   },
   {
-    "id": "gg-136",
-    "question": "How many crates did Ship D deliver? {'Ship A': 36, 'Ship B': 23, 'Ship C': 17, 'Ship D': 14}",
-    "correctAnswer": "14",
+    "id": "graphgrabber-161",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "30",
     "answers": [
-      "19",
-      "14",
-      "12",
-      "16"
+      "35",
+      "32",
+      "28",
+      "30"
     ]
   },
   {
-    "id": "gg-137",
-    "question": "How many crates did Ship B deliver? {'Ship A': 20, 'Ship B': 43, 'Ship C': 33, 'Ship D': 26}",
+    "id": "graphgrabber-162",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "38",
+    "answers": [
+      "38",
+      "40",
+      "43",
+      "36"
+    ]
+  },
+  {
+    "id": "graphgrabber-163",
+    "question": "How many crates were delivered?",
     "correctAnswer": "43",
     "answers": [
-      "48",
-      "43",
       "45",
+      "43",
+      "48",
       "41"
     ]
   },
   {
-    "id": "gg-138",
-    "question": "How many crates did Ship A deliver? {'Ship A': 38, 'Ship B': 31, 'Ship C': 46, 'Ship D': 23}",
+    "id": "graphgrabber-164",
+    "question": "How many crates were delivered?",
     "correctAnswer": "38",
     "answers": [
-      "38",
-      "43",
+      "40",
       "36",
-      "40"
+      "38",
+      "43"
     ]
   },
   {
-    "id": "gg-139",
-    "question": "How many crates did Ship A deliver? {'Ship A': 26, 'Ship B': 20, 'Ship C': 18, 'Ship D': 39}",
-    "correctAnswer": "26",
+    "id": "graphgrabber-165",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "24",
     "answers": [
-      "31",
-      "26",
       "24",
-      "28"
-    ]
-  },
-  {
-    "id": "gg-140",
-    "question": "How many crates did Ship B deliver? {'Ship A': 43, 'Ship B': 29, 'Ship C': 38, 'Ship D': 25}",
-    "correctAnswer": "29",
-    "answers": [
-      "31",
       "29",
-      "27",
-      "34"
+      "22",
+      "26"
     ]
   },
   {
-    "id": "gg-141",
-    "question": "How many crates did Ship A deliver? {'Ship A': 9, 'Ship B': 36, 'Ship C': 9, 'Ship D': 17}",
-    "correctAnswer": "9",
+    "id": "graphgrabber-166",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "22",
     "answers": [
-      "14",
-      "7",
+      "27",
+      "22",
+      "24",
+      "20"
+    ]
+  },
+  {
+    "id": "graphgrabber-167",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "11",
+    "answers": [
+      "16",
+      "13",
       "9",
       "11"
     ]
   },
   {
-    "id": "gg-142",
-    "question": "How many crates did Ship B deliver? {'Ship A': 10, 'Ship B': 16, 'Ship C': 42, 'Ship D': 40}",
-    "correctAnswer": "16",
+    "id": "graphgrabber-168",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "35",
     "answers": [
-      "21",
-      "16",
-      "14",
-      "18"
+      "35",
+      "37",
+      "40",
+      "33"
     ]
   },
   {
-    "id": "gg-143",
-    "question": "How many crates did Ship B deliver? {'Ship A': 32, 'Ship B': 34, 'Ship C': 24, 'Ship D': 15}",
-    "correctAnswer": "34",
+    "id": "graphgrabber-169",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "41",
     "answers": [
-      "32",
+      "46",
+      "43",
+      "41",
+      "39"
+    ]
+  },
+  {
+    "id": "graphgrabber-170",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "22",
+    "answers": [
+      "20",
+      "27",
+      "24",
+      "22"
+    ]
+  },
+  {
+    "id": "graphgrabber-171",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "32",
+    "answers": [
       "34",
-      "39",
-      "36"
+      "32",
+      "30",
+      "37"
     ]
   },
   {
-    "id": "gg-144",
-    "question": "How many crates did Ship D deliver? {'Ship A': 43, 'Ship B': 20, 'Ship C': 24, 'Ship D': 23}",
-    "correctAnswer": "23",
+    "id": "graphgrabber-172",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "43",
     "answers": [
-      "23",
-      "21",
-      "28",
-      "25"
+      "41",
+      "43",
+      "45",
+      "48"
     ]
   },
   {
-    "id": "gg-145",
-    "question": "How many crates did Ship B deliver? {'Ship A': 10, 'Ship B': 28, 'Ship C': 30, 'Ship D': 29}",
+    "id": "graphgrabber-173",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "22",
+    "answers": [
+      "27",
+      "22",
+      "24",
+      "20"
+    ]
+  },
+  {
+    "id": "graphgrabber-174",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "7",
+    "answers": [
+      "7",
+      "5",
+      "9",
+      "12"
+    ]
+  },
+  {
+    "id": "graphgrabber-175",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "36",
+    "answers": [
+      "38",
+      "34",
+      "36",
+      "41"
+    ]
+  },
+  {
+    "id": "graphgrabber-176",
+    "question": "How many crates were delivered?",
     "correctAnswer": "28",
     "answers": [
-      "28",
       "26",
+      "28",
       "30",
       "33"
     ]
   },
   {
-    "id": "gg-146",
-    "question": "How many crates did Ship D deliver? {'Ship A': 37, 'Ship B': 44, 'Ship C': 32, 'Ship D': 14}",
-    "correctAnswer": "14",
+    "id": "graphgrabber-177",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "7",
     "answers": [
-      "19",
-      "12",
-      "16",
-      "14"
+      "5",
+      "7",
+      "9",
+      "12"
     ]
   },
   {
-    "id": "gg-147",
-    "question": "How many crates did Ship B deliver? {'Ship A': 10, 'Ship B': 24, 'Ship C': 43, 'Ship D': 39}",
-    "correctAnswer": "24",
-    "answers": [
-      "24",
-      "22",
-      "29",
-      "26"
-    ]
-  },
-  {
-    "id": "gg-148",
-    "question": "How many crates did Ship D deliver? {'Ship A': 34, 'Ship B': 24, 'Ship C': 34, 'Ship D': 23}",
-    "correctAnswer": "23",
-    "answers": [
-      "21",
-      "25",
-      "23",
-      "28"
-    ]
-  },
-  {
-    "id": "gg-149",
-    "question": "How many crates did Ship B deliver? {'Ship A': 13, 'Ship B': 50, 'Ship C': 35, 'Ship D': 17}",
-    "correctAnswer": "50",
-    "answers": [
-      "55",
-      "48",
-      "50",
-      "52"
-    ]
-  },
-  {
-    "id": "gg-150",
-    "question": "How many crates did Ship D deliver? {'Ship A': 37, 'Ship B': 28, 'Ship C': 36, 'Ship D': 30}",
-    "correctAnswer": "30",
-    "answers": [
-      "30",
-      "32",
-      "28",
-      "35"
-    ]
-  },
-  {
-    "id": "gg-151",
-    "question": "How many crates did Ship A deliver? {'Ship A': 29, 'Ship B': 36, 'Ship C': 24, 'Ship D': 46}",
-    "correctAnswer": "29",
-    "answers": [
-      "31",
-      "27",
-      "29",
-      "34"
-    ]
-  },
-  {
-    "id": "gg-152",
-    "question": "How many crates did Ship D deliver? {'Ship A': 29, 'Ship B': 41, 'Ship C': 15, 'Ship D': 17}",
-    "correctAnswer": "17",
-    "answers": [
-      "17",
-      "19",
-      "22",
-      "15"
-    ]
-  },
-  {
-    "id": "gg-153",
-    "question": "How many crates did Ship C deliver? {'Ship A': 37, 'Ship B': 50, 'Ship C': 36, 'Ship D': 45}",
-    "correctAnswer": "36",
-    "answers": [
-      "41",
-      "38",
-      "34",
-      "36"
-    ]
-  },
-  {
-    "id": "gg-154",
-    "question": "How many crates did Ship A deliver? {'Ship A': 32, 'Ship B': 20, 'Ship C': 20, 'Ship D': 35}",
-    "correctAnswer": "32",
-    "answers": [
-      "34",
-      "32",
-      "37",
-      "30"
-    ]
-  },
-  {
-    "id": "gg-155",
-    "question": "How many crates did Ship C deliver? {'Ship A': 49, 'Ship B': 47, 'Ship C': 46, 'Ship D': 14}",
-    "correctAnswer": "46",
-    "answers": [
-      "48",
-      "46",
-      "44",
-      "51"
-    ]
-  },
-  {
-    "id": "gg-156",
-    "question": "How many crates did Ship B deliver? {'Ship A': 21, 'Ship B': 20, 'Ship C': 43, 'Ship D': 42}",
-    "correctAnswer": "20",
-    "answers": [
-      "22",
-      "18",
-      "25",
-      "20"
-    ]
-  },
-  {
-    "id": "gg-157",
-    "question": "How many crates did Ship A deliver? {'Ship A': 46, 'Ship B': 50, 'Ship C': 29, 'Ship D': 30}",
-    "correctAnswer": "46",
-    "answers": [
-      "44",
-      "46",
-      "51",
-      "48"
-    ]
-  },
-  {
-    "id": "gg-158",
-    "question": "How many crates did Ship D deliver? {'Ship A': 32, 'Ship B': 21, 'Ship C': 49, 'Ship D': 24}",
-    "correctAnswer": "24",
-    "answers": [
-      "24",
-      "26",
-      "29",
-      "22"
-    ]
-  },
-  {
-    "id": "gg-159",
-    "question": "How many crates did Ship C deliver? {'Ship A': 10, 'Ship B': 11, 'Ship C': 45, 'Ship D': 41}",
-    "correctAnswer": "45",
-    "answers": [
-      "43",
-      "45",
-      "50",
-      "47"
-    ]
-  },
-  {
-    "id": "gg-160",
-    "question": "How many crates did Ship B deliver? {'Ship A': 30, 'Ship B': 49, 'Ship C': 24, 'Ship D': 5}",
-    "correctAnswer": "49",
-    "answers": [
-      "51",
-      "47",
-      "49",
-      "54"
-    ]
-  },
-  {
-    "id": "gg-161",
-    "question": "How many crates did Ship D deliver? {'Ship A': 9, 'Ship B': 49, 'Ship C': 31, 'Ship D': 38}",
-    "correctAnswer": "38",
-    "answers": [
-      "38",
-      "40",
-      "43",
-      "36"
-    ]
-  },
-  {
-    "id": "gg-162",
-    "question": "How many crates did Ship B deliver? {'Ship A': 15, 'Ship B': 16, 'Ship C': 28, 'Ship D': 16}",
+    "id": "graphgrabber-178",
+    "question": "How many crates were delivered?",
     "correctAnswer": "16",
     "answers": [
       "14",
-      "16",
       "21",
-      "18"
+      "18",
+      "16"
     ]
   },
   {
-    "id": "gg-163",
-    "question": "How many crates did Ship B deliver? {'Ship A': 37, 'Ship B': 12, 'Ship C': 33, 'Ship D': 41}",
-    "correctAnswer": "12",
+    "id": "graphgrabber-179",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "42",
     "answers": [
-      "17",
-      "10",
-      "12",
-      "14"
-    ]
-  },
-  {
-    "id": "gg-164",
-    "question": "How many crates did Ship D deliver? {'Ship A': 16, 'Ship B': 17, 'Ship C': 21, 'Ship D': 31}",
-    "correctAnswer": "31",
-    "answers": [
-      "33",
-      "36",
-      "29",
-      "31"
-    ]
-  },
-  {
-    "id": "gg-165",
-    "question": "How many crates did Ship A deliver? {'Ship A': 10, 'Ship B': 23, 'Ship C': 10, 'Ship D': 29}",
-    "correctAnswer": "10",
-    "answers": [
-      "15",
-      "12",
-      "10",
-      "8"
-    ]
-  },
-  {
-    "id": "gg-166",
-    "question": "How many crates did Ship D deliver? {'Ship A': 6, 'Ship B': 42, 'Ship C': 20, 'Ship D': 35}",
-    "correctAnswer": "35",
-    "answers": [
-      "37",
-      "33",
       "40",
-      "35"
+      "44",
+      "47",
+      "42"
     ]
   },
   {
-    "id": "gg-167",
-    "question": "How many crates did Ship A deliver? {'Ship A': 22, 'Ship B': 5, 'Ship C': 47, 'Ship D': 42}",
-    "correctAnswer": "22",
-    "answers": [
-      "24",
-      "20",
-      "27",
-      "22"
-    ]
-  },
-  {
-    "id": "gg-168",
-    "question": "How many crates did Ship D deliver? {'Ship A': 29, 'Ship B': 43, 'Ship C': 38, 'Ship D': 22}",
-    "correctAnswer": "22",
-    "answers": [
-      "22",
-      "20",
-      "24",
-      "27"
-    ]
-  },
-  {
-    "id": "gg-169",
-    "question": "How many crates did Ship C deliver? {'Ship A': 26, 'Ship B': 28, 'Ship C': 48, 'Ship D': 26}",
-    "correctAnswer": "48",
-    "answers": [
-      "48",
-      "46",
-      "53",
-      "50"
-    ]
-  },
-  {
-    "id": "gg-170",
-    "question": "How many crates did Ship C deliver? {'Ship A': 29, 'Ship B': 44, 'Ship C': 8, 'Ship D': 27}",
-    "correctAnswer": "8",
-    "answers": [
-      "6",
-      "10",
-      "13",
-      "8"
-    ]
-  },
-  {
-    "id": "gg-171",
-    "question": "How many crates did Ship A deliver? {'Ship A': 49, 'Ship B': 30, 'Ship C': 13, 'Ship D': 6}",
-    "correctAnswer": "49",
-    "answers": [
-      "51",
-      "49",
-      "54",
-      "47"
-    ]
-  },
-  {
-    "id": "gg-172",
-    "question": "How many crates did Ship D deliver? {'Ship A': 28, 'Ship B': 33, 'Ship C': 44, 'Ship D': 48}",
-    "correctAnswer": "48",
-    "answers": [
-      "50",
-      "48",
-      "46",
-      "53"
-    ]
-  },
-  {
-    "id": "gg-173",
-    "question": "How many crates did Ship C deliver? {'Ship A': 5, 'Ship B': 45, 'Ship C': 25, 'Ship D': 6}",
-    "correctAnswer": "25",
-    "answers": [
-      "30",
-      "27",
-      "23",
-      "25"
-    ]
-  },
-  {
-    "id": "gg-174",
-    "question": "How many crates did Ship D deliver? {'Ship A': 48, 'Ship B': 33, 'Ship C': 19, 'Ship D': 43}",
-    "correctAnswer": "43",
-    "answers": [
-      "45",
-      "43",
-      "41",
-      "48"
-    ]
-  },
-  {
-    "id": "gg-175",
-    "question": "How many crates did Ship A deliver? {'Ship A': 27, 'Ship B': 32, 'Ship C': 35, 'Ship D': 47}",
-    "correctAnswer": "27",
-    "answers": [
-      "25",
-      "27",
-      "29",
-      "32"
-    ]
-  },
-  {
-    "id": "gg-176",
-    "question": "How many crates did Ship A deliver? {'Ship A': 50, 'Ship B': 14, 'Ship C': 38, 'Ship D': 41}",
-    "correctAnswer": "50",
-    "answers": [
-      "48",
-      "50",
-      "55",
-      "52"
-    ]
-  },
-  {
-    "id": "gg-177",
-    "question": "How many crates did Ship B deliver? {'Ship A': 24, 'Ship B': 48, 'Ship C': 40, 'Ship D': 34}",
-    "correctAnswer": "48",
-    "answers": [
-      "46",
-      "50",
-      "48",
-      "53"
-    ]
-  },
-  {
-    "id": "gg-178",
-    "question": "How many crates did Ship B deliver? {'Ship A': 47, 'Ship B': 39, 'Ship C': 20, 'Ship D': 20}",
+    "id": "graphgrabber-180",
+    "question": "How many crates were delivered?",
     "correctAnswer": "39",
     "answers": [
       "44",
@@ -1958,107 +1980,151 @@
     ]
   },
   {
-    "id": "gg-179",
-    "question": "How many crates did Ship B deliver? {'Ship A': 11, 'Ship B': 32, 'Ship C': 50, 'Ship D': 6}",
+    "id": "graphgrabber-181",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "48",
+    "answers": [
+      "48",
+      "50",
+      "53",
+      "46"
+    ]
+  },
+  {
+    "id": "graphgrabber-182",
+    "question": "How many crates were delivered?",
     "correctAnswer": "32",
     "answers": [
-      "32",
-      "37",
       "34",
-      "30"
+      "30",
+      "32",
+      "37"
     ]
   },
   {
-    "id": "gg-180",
-    "question": "How many crates did Ship A deliver? {'Ship A': 19, 'Ship B': 21, 'Ship C': 47, 'Ship D': 35}",
-    "correctAnswer": "19",
+    "id": "graphgrabber-183",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "32",
     "answers": [
-      "19",
-      "24",
-      "17",
-      "21"
+      "34",
+      "32",
+      "30",
+      "37"
     ]
   },
   {
-    "id": "gg-181",
-    "question": "How many crates did Ship A deliver? {'Ship A': 10, 'Ship B': 49, 'Ship C': 26, 'Ship D': 19}",
+    "id": "graphgrabber-184",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "31",
+    "answers": [
+      "29",
+      "33",
+      "36",
+      "31"
+    ]
+  },
+  {
+    "id": "graphgrabber-185",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "25",
+    "answers": [
+      "25",
+      "27",
+      "30",
+      "23"
+    ]
+  },
+  {
+    "id": "graphgrabber-186",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "39",
+    "answers": [
+      "41",
+      "37",
+      "44",
+      "39"
+    ]
+  },
+  {
+    "id": "graphgrabber-187",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "13",
+    "answers": [
+      "11",
+      "15",
+      "18",
+      "13"
+    ]
+  },
+  {
+    "id": "graphgrabber-188",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "16",
+    "answers": [
+      "14",
+      "21",
+      "16",
+      "18"
+    ]
+  },
+  {
+    "id": "graphgrabber-189",
+    "question": "How many crates were delivered?",
     "correctAnswer": "10",
     "answers": [
       "10",
-      "15",
+      "8",
       "12",
-      "8"
+      "15"
     ]
   },
   {
-    "id": "gg-182",
-    "question": "How many crates did Ship B deliver? {'Ship A': 46, 'Ship B': 46, 'Ship C': 40, 'Ship D': 32}",
-    "correctAnswer": "46",
+    "id": "graphgrabber-190",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "21",
     "answers": [
-      "44",
-      "46",
-      "51",
-      "48"
+      "26",
+      "19",
+      "21",
+      "23"
     ]
   },
   {
-    "id": "gg-183",
-    "question": "How many crates did Ship C deliver? {'Ship A': 23, 'Ship B': 10, 'Ship C': 12, 'Ship D': 10}",
-    "correctAnswer": "12",
-    "answers": [
-      "17",
-      "12",
-      "10",
-      "14"
-    ]
-  },
-  {
-    "id": "gg-184",
-    "question": "How many crates did Ship D deliver? {'Ship A': 41, 'Ship B': 28, 'Ship C': 13, 'Ship D': 25}",
+    "id": "graphgrabber-191",
+    "question": "How many crates were delivered?",
     "correctAnswer": "25",
     "answers": [
       "23",
-      "30",
       "27",
+      "30",
       "25"
     ]
   },
   {
-    "id": "gg-185",
-    "question": "How many crates did Ship D deliver? {'Ship A': 42, 'Ship B': 39, 'Ship C': 17, 'Ship D': 29}",
-    "correctAnswer": "29",
+    "id": "graphgrabber-192",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "40",
     "answers": [
-      "34",
-      "29",
-      "31",
-      "27"
-    ]
-  },
-  {
-    "id": "gg-186",
-    "question": "How many crates did Ship B deliver? {'Ship A': 38, 'Ship B': 47, 'Ship C': 43, 'Ship D': 42}",
-    "correctAnswer": "47",
-    "answers": [
+      "40",
+      "38",
       "45",
-      "52",
-      "49",
-      "47"
+      "42"
     ]
   },
   {
-    "id": "gg-187",
-    "question": "How many crates did Ship C deliver? {'Ship A': 39, 'Ship B': 34, 'Ship C': 25, 'Ship D': 14}",
-    "correctAnswer": "25",
+    "id": "graphgrabber-193",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "12",
     "answers": [
-      "25",
-      "23",
-      "30",
-      "27"
+      "14",
+      "10",
+      "12",
+      "17"
     ]
   },
   {
-    "id": "gg-188",
-    "question": "How many crates did Ship A deliver? {'Ship A': 14, 'Ship B': 43, 'Ship C': 23, 'Ship D': 14}",
+    "id": "graphgrabber-194",
+    "question": "How many crates were delivered?",
     "correctAnswer": "14",
     "answers": [
       "19",
@@ -2068,135 +2134,69 @@
     ]
   },
   {
-    "id": "gg-189",
-    "question": "How many crates did Ship B deliver? {'Ship A': 22, 'Ship B': 50, 'Ship C': 41, 'Ship D': 35}",
-    "correctAnswer": "50",
-    "answers": [
-      "50",
-      "48",
-      "52",
-      "55"
-    ]
-  },
-  {
-    "id": "gg-190",
-    "question": "How many crates did Ship B deliver? {'Ship A': 8, 'Ship B': 26, 'Ship C': 14, 'Ship D': 50}",
-    "correctAnswer": "26",
+    "id": "graphgrabber-195",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "33",
     "answers": [
       "31",
-      "26",
-      "24",
-      "28"
+      "33",
+      "38",
+      "35"
     ]
   },
   {
-    "id": "gg-191",
-    "question": "How many crates did Ship B deliver? {'Ship A': 16, 'Ship B': 36, 'Ship C': 30, 'Ship D': 24}",
-    "correctAnswer": "36",
+    "id": "graphgrabber-196",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "39",
+    "answers": [
+      "37",
+      "41",
+      "44",
+      "39"
+    ]
+  },
+  {
+    "id": "graphgrabber-197",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "21",
+    "answers": [
+      "23",
+      "19",
+      "21",
+      "26"
+    ]
+  },
+  {
+    "id": "graphgrabber-198",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "22",
+    "answers": [
+      "20",
+      "27",
+      "24",
+      "22"
+    ]
+  },
+  {
+    "id": "graphgrabber-199",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "43",
     "answers": [
       "41",
-      "38",
-      "34",
-      "36"
+      "43",
+      "45",
+      "48"
     ]
   },
   {
-    "id": "gg-192",
-    "question": "How many crates did Ship C deliver? {'Ship A': 26, 'Ship B': 32, 'Ship C': 48, 'Ship D': 35}",
-    "correctAnswer": "48",
+    "id": "graphgrabber-200",
+    "question": "How many crates were delivered?",
+    "correctAnswer": "37",
     "answers": [
-      "46",
-      "48",
-      "50",
-      "53"
-    ]
-  },
-  {
-    "id": "gg-193",
-    "question": "How many crates did Ship B deliver? {'Ship A': 38, 'Ship B': 23, 'Ship C': 23, 'Ship D': 49}",
-    "correctAnswer": "23",
-    "answers": [
-      "25",
-      "21",
-      "23",
-      "28"
-    ]
-  },
-  {
-    "id": "gg-194",
-    "question": "How many crates did Ship C deliver? {'Ship A': 25, 'Ship B': 42, 'Ship C': 8, 'Ship D': 50}",
-    "correctAnswer": "8",
-    "answers": [
-      "10",
-      "8",
-      "6",
-      "13"
-    ]
-  },
-  {
-    "id": "gg-195",
-    "question": "How many crates did Ship D deliver? {'Ship A': 41, 'Ship B': 13, 'Ship C': 33, 'Ship D': 49}",
-    "correctAnswer": "49",
-    "answers": [
-      "51",
-      "54",
-      "49",
-      "47"
-    ]
-  },
-  {
-    "id": "gg-196",
-    "question": "How many crates did Ship C deliver? {'Ship A': 18, 'Ship B': 17, 'Ship C': 46, 'Ship D': 5}",
-    "correctAnswer": "46",
-    "answers": [
-      "48",
-      "51",
-      "44",
-      "46"
-    ]
-  },
-  {
-    "id": "gg-197",
-    "question": "How many crates did Ship A deliver? {'Ship A': 29, 'Ship B': 32, 'Ship C': 48, 'Ship D': 15}",
-    "correctAnswer": "29",
-    "answers": [
-      "34",
-      "27",
-      "31",
-      "29"
-    ]
-  },
-  {
-    "id": "gg-198",
-    "question": "How many crates did Ship C deliver? {'Ship A': 16, 'Ship B': 8, 'Ship C': 12, 'Ship D': 37}",
-    "correctAnswer": "12",
-    "answers": [
-      "10",
-      "14",
-      "12",
-      "17"
-    ]
-  },
-  {
-    "id": "gg-199",
-    "question": "How many crates did Ship D deliver? {'Ship A': 20, 'Ship B': 7, 'Ship C': 12, 'Ship D': 20}",
-    "correctAnswer": "20",
-    "answers": [
-      "18",
-      "20",
-      "22",
-      "25"
-    ]
-  },
-  {
-    "id": "gg-200",
-    "question": "How many crates did Ship A deliver? {'Ship A': 46, 'Ship B': 29, 'Ship C': 49, 'Ship D': 47}",
-    "correctAnswer": "46",
-    "answers": [
-      "46",
-      "48",
-      "44",
-      "51"
+      "42",
+      "37",
+      "39",
+      "35"
     ]
   }
 ]

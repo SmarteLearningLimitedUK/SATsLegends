@@ -1,1932 +1,7 @@
 [
   {
-    "id": "aa-001",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Right",
-      "Straight",
-      "Obtuse",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-002",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Straight",
-      "Obtuse",
-      "Right",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-003",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Straight",
-      "Right",
-      "Acute",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-004",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Obtuse",
-      "Straight",
-      "Acute",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-005",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Obtuse",
-      "Straight",
-      "Right",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-006",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Obtuse",
-      "Right",
-      "Straight",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-007",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Right",
-      "Acute",
-      "Straight",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-008",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Straight",
-      "Acute",
-      "Obtuse",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-009",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Straight",
-      "Obtuse",
-      "Acute",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-010",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Acute",
-      "Straight",
-      "Obtuse",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-011",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Acute",
-      "Right",
-      "Straight",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-012",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Straight",
-      "Right",
-      "Acute",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-013",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Straight",
-      "Right",
-      "Obtuse",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-014",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Obtuse",
-      "Acute",
-      "Right",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-015",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Right",
-      "Obtuse",
-      "Straight",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-016",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Acute",
-      "Obtuse",
-      "Straight",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-017",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Obtuse",
-      "Right",
-      "Acute",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-018",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Acute",
-      "Straight",
-      "Obtuse",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-019",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Straight",
-      "Right",
-      "Acute",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-020",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Obtuse",
-      "Acute",
-      "Straight",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-021",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Acute",
-      "Straight",
-      "Right",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-022",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Right",
-      "Acute",
-      "Straight",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-023",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Acute",
-      "Straight",
-      "Obtuse",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-024",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Right",
-      "Acute",
-      "Straight",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-025",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Right",
-      "Straight",
-      "Obtuse",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-026",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Straight",
-      "Obtuse",
-      "Acute",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-027",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Right",
-      "Acute",
-      "Obtuse",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-028",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Obtuse",
-      "Straight",
-      "Right",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-029",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Straight",
-      "Acute",
-      "Right",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-030",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Straight",
-      "Acute",
-      "Obtuse",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-031",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Acute",
-      "Right",
-      "Straight",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-032",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Right",
-      "Obtuse",
-      "Acute",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-033",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Acute",
-      "Right",
-      "Straight",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-034",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Right",
-      "Obtuse",
-      "Straight",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-035",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Right",
-      "Acute",
-      "Obtuse",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-036",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Obtuse",
-      "Straight",
-      "Acute",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-037",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Acute",
-      "Right",
-      "Straight",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-038",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Obtuse",
-      "Acute",
-      "Straight",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-039",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Right",
-      "Straight",
-      "Acute",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-040",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Straight",
-      "Right",
-      "Acute",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-041",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Right",
-      "Acute",
-      "Obtuse",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-042",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Right",
-      "Straight",
-      "Obtuse",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-043",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Right",
-      "Acute",
-      "Straight",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-044",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Acute",
-      "Obtuse",
-      "Straight",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-045",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Obtuse",
-      "Right",
-      "Acute",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-046",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Right",
-      "Obtuse",
-      "Acute",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-047",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Right",
-      "Acute",
-      "Obtuse",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-048",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Right",
-      "Acute",
-      "Straight",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-049",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Straight",
-      "Obtuse",
-      "Acute",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-050",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Right",
-      "Acute",
-      "Obtuse",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-051",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Obtuse",
-      "Straight",
-      "Right",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-052",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Acute",
-      "Right",
-      "Obtuse",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-053",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Obtuse",
-      "Straight",
-      "Right",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-054",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Acute",
-      "Obtuse",
-      "Straight",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-055",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Right",
-      "Obtuse",
-      "Acute",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-056",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Right",
-      "Acute",
-      "Straight",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-057",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Acute",
-      "Straight",
-      "Obtuse",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-058",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Right",
-      "Acute",
-      "Straight",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-059",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Right",
-      "Straight",
-      "Acute",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-060",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Acute",
-      "Obtuse",
-      "Straight",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-061",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Straight",
-      "Obtuse",
-      "Acute",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-062",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Right",
-      "Straight",
-      "Acute",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-063",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Obtuse",
-      "Straight",
-      "Acute",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-064",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Obtuse",
-      "Right",
-      "Acute",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-065",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Straight",
-      "Obtuse",
-      "Acute",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-066",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Obtuse",
-      "Straight",
-      "Acute",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-067",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Acute",
-      "Right",
-      "Straight",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-068",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Right",
-      "Straight",
-      "Obtuse",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-069",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Right",
-      "Obtuse",
-      "Straight",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-070",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Straight",
-      "Right",
-      "Obtuse",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-071",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Straight",
-      "Acute",
-      "Right",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-072",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Obtuse",
-      "Acute",
-      "Right",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-073",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Straight",
-      "Right",
-      "Obtuse",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-074",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Obtuse",
-      "Right",
-      "Straight",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-075",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Acute",
-      "Obtuse",
-      "Straight",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-076",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Right",
-      "Obtuse",
-      "Straight",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-077",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Straight",
-      "Right",
-      "Obtuse",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-078",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Obtuse",
-      "Right",
-      "Acute",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-079",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Straight",
-      "Right",
-      "Obtuse",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-080",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Acute",
-      "Right",
-      "Straight",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-081",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Right",
-      "Acute",
-      "Obtuse",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-082",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Straight",
-      "Acute",
-      "Right",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-083",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Straight",
-      "Obtuse",
-      "Right",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-084",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Obtuse",
-      "Straight",
-      "Acute",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-085",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Obtuse",
-      "Acute",
-      "Straight",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-086",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Straight",
-      "Acute",
-      "Obtuse",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-087",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Straight",
-      "Obtuse",
-      "Right",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-088",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Acute",
-      "Straight",
-      "Right",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-089",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Acute",
-      "Straight",
-      "Obtuse",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-090",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Right",
-      "Straight",
-      "Acute",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-091",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Acute",
-      "Obtuse",
-      "Right",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-092",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Straight",
-      "Acute",
-      "Obtuse",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-093",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Acute",
-      "Straight",
-      "Obtuse",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-094",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Obtuse",
-      "Acute",
-      "Straight",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-095",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Obtuse",
-      "Acute",
-      "Right",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-096",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Acute",
-      "Obtuse",
-      "Straight",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-097",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Right",
-      "Obtuse",
-      "Straight",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-098",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Right",
-      "Straight",
-      "Obtuse",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-099",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Straight",
-      "Right",
-      "Acute",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-100",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Obtuse",
-      "Right",
-      "Acute",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-101",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Obtuse",
-      "Right",
-      "Straight",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-102",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Obtuse",
-      "Acute",
-      "Straight",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-103",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Obtuse",
-      "Right",
-      "Straight",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-104",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Straight",
-      "Acute",
-      "Obtuse",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-105",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Obtuse",
-      "Acute",
-      "Straight",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-106",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Right",
-      "Obtuse",
-      "Acute",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-107",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Obtuse",
-      "Right",
-      "Acute",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-108",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Right",
-      "Obtuse",
-      "Straight",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-109",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Acute",
-      "Obtuse",
-      "Straight",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-110",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Right",
-      "Straight",
-      "Obtuse",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-111",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Straight",
-      "Obtuse",
-      "Right",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-112",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Acute",
-      "Obtuse",
-      "Straight",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-113",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Straight",
-      "Obtuse",
-      "Acute",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-114",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Obtuse",
-      "Acute",
-      "Straight",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-115",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Right",
-      "Acute",
-      "Obtuse",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-116",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Right",
-      "Acute",
-      "Straight",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-117",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Obtuse",
-      "Acute",
-      "Straight",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-118",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Obtuse",
-      "Straight",
-      "Right",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-119",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Acute",
-      "Right",
-      "Obtuse",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-120",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Acute",
-      "Straight",
-      "Obtuse",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-121",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Right",
-      "Acute",
-      "Straight",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-122",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Obtuse",
-      "Right",
-      "Straight",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-123",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Right",
-      "Acute",
-      "Obtuse",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-124",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Acute",
-      "Straight",
-      "Right",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-125",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Straight",
-      "Acute",
-      "Right",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-126",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Acute",
-      "Straight",
-      "Obtuse",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-127",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Right",
-      "Acute",
-      "Obtuse",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-128",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Acute",
-      "Straight",
-      "Obtuse",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-129",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Obtuse",
-      "Straight",
-      "Acute",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-130",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Obtuse",
-      "Straight",
-      "Acute",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-131",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Straight",
-      "Acute",
-      "Obtuse",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-132",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Obtuse",
-      "Straight",
-      "Right",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-133",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Straight",
-      "Right",
-      "Obtuse",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-134",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Straight",
-      "Obtuse",
-      "Acute",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-135",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Obtuse",
-      "Right",
-      "Acute",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-136",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Right",
-      "Obtuse",
-      "Straight",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-137",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Straight",
-      "Acute",
-      "Right",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-138",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Obtuse",
-      "Acute",
-      "Straight",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-139",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Right",
-      "Acute",
-      "Straight",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-140",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Acute",
-      "Straight",
-      "Right",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-141",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Right",
-      "Obtuse",
-      "Acute",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-142",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Obtuse",
-      "Straight",
-      "Right",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-143",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Right",
-      "Obtuse",
-      "Acute",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-144",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Right",
-      "Obtuse",
-      "Straight",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-145",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Acute",
-      "Obtuse",
-      "Straight",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-146",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Obtuse",
-      "Straight",
-      "Acute",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-147",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Straight",
-      "Obtuse",
-      "Right",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-148",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Obtuse",
-      "Right",
-      "Straight",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-149",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Straight",
-      "Right",
-      "Obtuse",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-150",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Acute",
-      "Straight",
-      "Right",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-151",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Straight",
-      "Right",
-      "Obtuse",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-152",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Straight",
-      "Obtuse",
-      "Right",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-153",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Obtuse",
-      "Acute",
-      "Right",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-154",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Straight",
-      "Obtuse",
-      "Right",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-155",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Obtuse",
-      "Straight",
-      "Right",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-156",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Obtuse",
-      "Acute",
-      "Right",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-157",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Acute",
-      "Obtuse",
-      "Right",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-158",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Obtuse",
-      "Acute",
-      "Right",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-159",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Acute",
-      "Right",
-      "Straight",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-160",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Obtuse",
-      "Right",
-      "Acute",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-161",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Obtuse",
-      "Straight",
-      "Right",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-162",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Right",
-      "Straight",
-      "Acute",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-163",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Obtuse",
-      "Right",
-      "Straight",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-164",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Right",
-      "Acute",
-      "Obtuse",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-165",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Obtuse",
-      "Right",
-      "Acute",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-166",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Straight",
-      "Right",
-      "Obtuse",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-167",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Straight",
-      "Right",
-      "Acute",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-168",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Obtuse",
-      "Right",
-      "Straight",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-169",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Right",
-      "Acute",
-      "Obtuse",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-170",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Straight",
-      "Obtuse",
-      "Right",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-171",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Obtuse",
-      "Straight",
-      "Acute",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-172",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Acute",
-      "Obtuse",
-      "Right",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-173",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Acute",
-      "Obtuse",
-      "Straight",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-174",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Acute",
-      "Right",
-      "Obtuse",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-175",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Obtuse",
-      "Straight",
-      "Acute",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-176",
-    "question": "What type of angle is 135\u00b0?",
+    "id": "anglearena-001",
+    "question": "What type of angle is 120\u00b0?",
     "correctAnswer": "Obtuse",
     "answers": [
       "Right",
@@ -1936,8 +11,107 @@
     ]
   },
   {
-    "id": "aa-177",
-    "question": "What type of angle is 135\u00b0?",
+    "id": "anglearena-002",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Acute",
+      "Straight",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-003",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Acute",
+      "Obtuse",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-004",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Right",
+      "Straight",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-005",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Acute",
+      "Straight",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-006",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Straight",
+      "Acute",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-007",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Acute",
+      "Straight",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-008",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Acute",
+      "Obtuse",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-009",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Obtuse",
+      "Straight",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-010",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Straight",
+      "Acute",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-011",
+    "question": "What type of angle is 120\u00b0?",
     "correctAnswer": "Obtuse",
     "answers": [
       "Straight",
@@ -1947,54 +121,10 @@
     ]
   },
   {
-    "id": "aa-178",
-    "question": "What type of angle is 135\u00b0?",
+    "id": "anglearena-012",
+    "question": "What type of angle is 120\u00b0?",
     "correctAnswer": "Obtuse",
     "answers": [
-      "Obtuse",
-      "Straight",
-      "Acute",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-179",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Obtuse",
-      "Right",
-      "Acute",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-180",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Right",
-      "Obtuse",
-      "Straight",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-181",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Acute",
-      "Right",
-      "Straight",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-182",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
       "Straight",
       "Acute",
       "Right",
@@ -2002,119 +132,9 @@
     ]
   },
   {
-    "id": "aa-183",
-    "question": "What type of angle is 135\u00b0?",
+    "id": "anglearena-013",
+    "question": "What type of angle is 120\u00b0?",
     "correctAnswer": "Obtuse",
-    "answers": [
-      "Obtuse",
-      "Acute",
-      "Straight",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-184",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Straight",
-      "Obtuse",
-      "Acute",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-185",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Acute",
-      "Right",
-      "Straight",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-186",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Straight",
-      "Acute",
-      "Obtuse",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-187",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Acute",
-      "Right",
-      "Straight",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-188",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Acute",
-      "Right",
-      "Obtuse",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-189",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
-    "answers": [
-      "Right",
-      "Acute",
-      "Obtuse",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-190",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Obtuse",
-      "Straight",
-      "Right",
-      "Acute"
-    ]
-  },
-  {
-    "id": "aa-191",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
-    "answers": [
-      "Obtuse",
-      "Acute",
-      "Right",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-192",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
-    "answers": [
-      "Straight",
-      "Right",
-      "Acute",
-      "Obtuse"
-    ]
-  },
-  {
-    "id": "aa-193",
-    "question": "What type of angle is 90\u00b0?",
-    "correctAnswer": "Right",
     "answers": [
       "Straight",
       "Obtuse",
@@ -2123,31 +143,9 @@
     ]
   },
   {
-    "id": "aa-194",
-    "question": "What type of angle is 135\u00b0?",
+    "id": "anglearena-014",
+    "question": "What type of angle is 120\u00b0?",
     "correctAnswer": "Obtuse",
-    "answers": [
-      "Obtuse",
-      "Straight",
-      "Acute",
-      "Right"
-    ]
-  },
-  {
-    "id": "aa-195",
-    "question": "What type of angle is 135\u00b0?",
-    "correctAnswer": "Obtuse",
-    "answers": [
-      "Acute",
-      "Right",
-      "Obtuse",
-      "Straight"
-    ]
-  },
-  {
-    "id": "aa-196",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
     "answers": [
       "Straight",
       "Acute",
@@ -2156,8 +154,855 @@
     ]
   },
   {
-    "id": "aa-197",
-    "question": "What type of angle is 135\u00b0?",
+    "id": "anglearena-015",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Acute",
+      "Obtuse",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-016",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Straight",
+      "Acute",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-017",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Acute",
+      "Obtuse",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-018",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Straight",
+      "Right",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-019",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Straight",
+      "Acute",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-020",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Straight",
+      "Obtuse",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-021",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Straight",
+      "Right",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-022",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Acute",
+      "Obtuse",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-023",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Obtuse",
+      "Straight",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-024",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Straight",
+      "Right",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-025",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Right",
+      "Straight",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-026",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Right",
+      "Acute",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-027",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Right",
+      "Obtuse",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-028",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Right",
+      "Acute",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-029",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Right",
+      "Acute",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-030",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Acute",
+      "Obtuse",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-031",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Straight",
+      "Acute",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-032",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Acute",
+      "Straight",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-033",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Obtuse",
+      "Straight",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-034",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Straight",
+      "Right",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-035",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Straight",
+      "Acute",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-036",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Acute",
+      "Right",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-037",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Obtuse",
+      "Acute",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-038",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Straight",
+      "Obtuse",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-039",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Right",
+      "Acute",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-040",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Obtuse",
+      "Right",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-041",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Acute",
+      "Obtuse",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-042",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Right",
+      "Straight",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-043",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Straight",
+      "Obtuse",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-044",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Acute",
+      "Obtuse",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-045",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Obtuse",
+      "Acute",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-046",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Acute",
+      "Obtuse",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-047",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Straight",
+      "Obtuse",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-048",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Obtuse",
+      "Right",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-049",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Acute",
+      "Obtuse",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-050",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Acute",
+      "Straight",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-051",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Obtuse",
+      "Acute",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-052",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Right",
+      "Acute",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-053",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Straight",
+      "Acute",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-054",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Straight",
+      "Right",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-055",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Obtuse",
+      "Right",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-056",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Straight",
+      "Right",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-057",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Right",
+      "Acute",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-058",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Straight",
+      "Acute",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-059",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Right",
+      "Acute",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-060",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Right",
+      "Straight",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-061",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Obtuse",
+      "Acute",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-062",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Straight",
+      "Acute",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-063",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Acute",
+      "Right",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-064",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Acute",
+      "Right",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-065",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Obtuse",
+      "Straight",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-066",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Acute",
+      "Straight",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-067",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Acute",
+      "Right",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-068",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Acute",
+      "Right",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-069",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Obtuse",
+      "Straight",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-070",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Obtuse",
+      "Straight",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-071",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Obtuse",
+      "Right",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-072",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Straight",
+      "Acute",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-073",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Acute",
+      "Obtuse",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-074",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Obtuse",
+      "Acute",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-075",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Right",
+      "Straight",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-076",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Right",
+      "Straight",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-077",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Straight",
+      "Right",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-078",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Right",
+      "Acute",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-079",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Obtuse",
+      "Right",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-080",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Acute",
+      "Right",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-081",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Obtuse",
+      "Straight",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-082",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Right",
+      "Obtuse",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-083",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Straight",
+      "Right",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-084",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Acute",
+      "Straight",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-085",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Right",
+      "Acute",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-086",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Obtuse",
+      "Acute",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-087",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Right",
+      "Acute",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-088",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Right",
+      "Obtuse",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-089",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Straight",
+      "Obtuse",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-090",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Acute",
+      "Straight",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-091",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Acute",
+      "Right",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-092",
+    "question": "What type of angle is 120\u00b0?",
     "correctAnswer": "Obtuse",
     "answers": [
       "Acute",
@@ -2167,9 +1012,97 @@
     ]
   },
   {
-    "id": "aa-198",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
+    "id": "anglearena-093",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Obtuse",
+      "Acute",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-094",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Straight",
+      "Obtuse",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-095",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Obtuse",
+      "Acute",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-096",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Straight",
+      "Obtuse",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-097",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Obtuse",
+      "Right",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-098",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Right",
+      "Straight",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-099",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Straight",
+      "Acute",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-100",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Straight",
+      "Obtuse",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-101",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
     "answers": [
       "Acute",
       "Obtuse",
@@ -2178,9 +1111,97 @@
     ]
   },
   {
-    "id": "aa-199",
-    "question": "What type of angle is 180\u00b0?",
-    "correctAnswer": "Straight",
+    "id": "anglearena-102",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Right",
+      "Obtuse",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-103",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Obtuse",
+      "Right",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-104",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Obtuse",
+      "Straight",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-105",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Straight",
+      "Acute",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-106",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Straight",
+      "Right",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-107",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Right",
+      "Obtuse",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-108",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Straight",
+      "Obtuse",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-109",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Obtuse",
+      "Acute",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-110",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
     "answers": [
       "Obtuse",
       "Acute",
@@ -2189,14 +1210,993 @@
     ]
   },
   {
-    "id": "aa-200",
-    "question": "What type of angle is 45\u00b0?",
-    "correctAnswer": "Acute",
+    "id": "anglearena-111",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Right",
+      "Acute",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-112",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
     "answers": [
       "Right",
       "Straight",
+      "Acute",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-113",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Acute",
+      "Obtuse",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-114",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Obtuse",
+      "Acute",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-115",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Right",
+      "Obtuse",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-116",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Right",
+      "Straight",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-117",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Right",
       "Obtuse",
       "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-118",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Right",
+      "Straight",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-119",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Obtuse",
+      "Straight",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-120",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Straight",
+      "Acute",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-121",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Obtuse",
+      "Right",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-122",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Acute",
+      "Right",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-123",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Straight",
+      "Acute",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-124",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Acute",
+      "Right",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-125",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Right",
+      "Straight",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-126",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Obtuse",
+      "Straight",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-127",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Right",
+      "Obtuse",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-128",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Acute",
+      "Right",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-129",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Right",
+      "Acute",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-130",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Obtuse",
+      "Acute",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-131",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Acute",
+      "Obtuse",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-132",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Straight",
+      "Acute",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-133",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Straight",
+      "Right",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-134",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Acute",
+      "Right",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-135",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Obtuse",
+      "Right",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-136",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Right",
+      "Obtuse",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-137",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Acute",
+      "Right",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-138",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Acute",
+      "Right",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-139",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Obtuse",
+      "Right",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-140",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Right",
+      "Straight",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-141",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Right",
+      "Straight",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-142",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Obtuse",
+      "Straight",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-143",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Straight",
+      "Obtuse",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-144",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Right",
+      "Acute",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-145",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Right",
+      "Straight",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-146",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Right",
+      "Obtuse",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-147",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Straight",
+      "Right",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-148",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Obtuse",
+      "Right",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-149",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Acute",
+      "Obtuse",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-150",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Obtuse",
+      "Acute",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-151",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Acute",
+      "Straight",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-152",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Straight",
+      "Right",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-153",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Acute",
+      "Straight",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-154",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Right",
+      "Straight",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-155",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Obtuse",
+      "Straight",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-156",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Straight",
+      "Acute",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-157",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Straight",
+      "Acute",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-158",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Acute",
+      "Obtuse",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-159",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Acute",
+      "Obtuse",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-160",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Acute",
+      "Right",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-161",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Obtuse",
+      "Right",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-162",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Obtuse",
+      "Straight",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-163",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Obtuse",
+      "Acute",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-164",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Right",
+      "Obtuse",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-165",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Right",
+      "Acute",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-166",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Acute",
+      "Right",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-167",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Straight",
+      "Acute",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-168",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Right",
+      "Obtuse",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-169",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Obtuse",
+      "Acute",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-170",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Obtuse",
+      "Straight",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-171",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Straight",
+      "Obtuse",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-172",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Right",
+      "Acute",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-173",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Right",
+      "Obtuse",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-174",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Obtuse",
+      "Acute",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-175",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Obtuse",
+      "Right",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-176",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Acute",
+      "Straight",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-177",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Acute",
+      "Right",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-178",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Right",
+      "Acute",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-179",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Right",
+      "Straight",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-180",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Acute",
+      "Obtuse",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-181",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Obtuse",
+      "Acute",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-182",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Right",
+      "Obtuse",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-183",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Straight",
+      "Acute",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-184",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Obtuse",
+      "Acute",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-185",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Acute",
+      "Right",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-186",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Acute",
+      "Obtuse",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-187",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Straight",
+      "Acute",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-188",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Obtuse",
+      "Right",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-189",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Straight",
+      "Right",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-190",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Obtuse",
+      "Acute",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-191",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Acute",
+      "Obtuse",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-192",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Acute",
+      "Right",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-193",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Obtuse",
+      "Straight",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-194",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Acute",
+      "Right",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-195",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Obtuse",
+      "Right",
+      "Straight"
+    ]
+  },
+  {
+    "id": "anglearena-196",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Straight",
+      "Obtuse",
+      "Right",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-197",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Obtuse",
+      "Straight",
+      "Right",
+      "Acute"
+    ]
+  },
+  {
+    "id": "anglearena-198",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Straight",
+      "Acute",
+      "Obtuse"
+    ]
+  },
+  {
+    "id": "anglearena-199",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Acute",
+      "Obtuse",
+      "Straight",
+      "Right"
+    ]
+  },
+  {
+    "id": "anglearena-200",
+    "question": "What type of angle is 120\u00b0?",
+    "correctAnswer": "Obtuse",
+    "answers": [
+      "Right",
+      "Acute",
+      "Straight",
+      "Obtuse"
     ]
   }
 ]

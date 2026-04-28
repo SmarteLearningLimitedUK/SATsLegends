@@ -1,29 +1,612 @@
 [
   {
-    "id": "ss-001",
-    "question": "Share 45 coins equally between 5 monsters.",
+    "id": "sharesplitter-001",
+    "question": "Share 52 coins equally between 2 monsters.",
+    "correctAnswer": "26",
+    "answers": [
+      "27",
+      "26",
+      "25",
+      "29"
+    ]
+  },
+  {
+    "id": "sharesplitter-002",
+    "question": "Share 57 coins equally between 3 monsters.",
+    "correctAnswer": "19",
+    "answers": [
+      "19",
+      "18",
+      "22",
+      "20"
+    ]
+  },
+  {
+    "id": "sharesplitter-003",
+    "question": "Share 28 coins equally between 2 monsters.",
+    "correctAnswer": "14",
+    "answers": [
+      "15",
+      "17",
+      "14",
+      "13"
+    ]
+  },
+  {
+    "id": "sharesplitter-004",
+    "question": "Share 18 coins equally between 2 monsters.",
     "correctAnswer": "9",
     "answers": [
+      "8",
       "10",
       "9",
-      "8",
       "12"
     ]
   },
   {
-    "id": "ss-002",
-    "question": "Share 35 coins equally between 5 monsters.",
-    "correctAnswer": "7",
+    "id": "sharesplitter-005",
+    "question": "Share 54 coins equally between 2 monsters.",
+    "correctAnswer": "27",
     "answers": [
+      "26",
+      "28",
+      "30",
+      "27"
+    ]
+  },
+  {
+    "id": "sharesplitter-006",
+    "question": "Share 40 coins equally between 5 monsters.",
+    "correctAnswer": "8",
+    "answers": [
+      "9",
+      "11",
       "8",
+      "7"
+    ]
+  },
+  {
+    "id": "sharesplitter-007",
+    "question": "Share 12 coins equally between 4 monsters.",
+    "correctAnswer": "3",
+    "answers": [
       "6",
-      "7",
+      "2",
+      "4",
+      "3"
+    ]
+  },
+  {
+    "id": "sharesplitter-008",
+    "question": "Share 20 coins equally between 2 monsters.",
+    "correctAnswer": "10",
+    "answers": [
+      "9",
+      "13",
+      "11",
       "10"
     ]
   },
   {
-    "id": "ss-003",
+    "id": "sharesplitter-009",
+    "question": "Share 30 coins equally between 3 monsters.",
+    "correctAnswer": "10",
+    "answers": [
+      "13",
+      "9",
+      "10",
+      "11"
+    ]
+  },
+  {
+    "id": "sharesplitter-010",
+    "question": "Share 48 coins equally between 2 monsters.",
+    "correctAnswer": "24",
+    "answers": [
+      "25",
+      "23",
+      "24",
+      "27"
+    ]
+  },
+  {
+    "id": "sharesplitter-011",
+    "question": "Share 50 coins equally between 5 monsters.",
+    "correctAnswer": "10",
+    "answers": [
+      "10",
+      "9",
+      "11",
+      "13"
+    ]
+  },
+  {
+    "id": "sharesplitter-012",
+    "question": "Share 30 coins equally between 5 monsters.",
+    "correctAnswer": "6",
+    "answers": [
+      "5",
+      "6",
+      "9",
+      "7"
+    ]
+  },
+  {
+    "id": "sharesplitter-013",
+    "question": "Share 20 coins equally between 5 monsters.",
+    "correctAnswer": "4",
+    "answers": [
+      "4",
+      "5",
+      "7",
+      "3"
+    ]
+  },
+  {
+    "id": "sharesplitter-014",
+    "question": "Share 20 coins equally between 2 monsters.",
+    "correctAnswer": "10",
+    "answers": [
+      "13",
+      "11",
+      "10",
+      "9"
+    ]
+  },
+  {
+    "id": "sharesplitter-015",
+    "question": "Share 20 coins equally between 4 monsters.",
+    "correctAnswer": "5",
+    "answers": [
+      "8",
+      "6",
+      "4",
+      "5"
+    ]
+  },
+  {
+    "id": "sharesplitter-016",
+    "question": "Share 18 coins equally between 3 monsters.",
+    "correctAnswer": "6",
+    "answers": [
+      "9",
+      "5",
+      "6",
+      "7"
+    ]
+  },
+  {
+    "id": "sharesplitter-017",
+    "question": "Share 55 coins equally between 5 monsters.",
+    "correctAnswer": "11",
+    "answers": [
+      "11",
+      "14",
+      "12",
+      "10"
+    ]
+  },
+  {
+    "id": "sharesplitter-018",
+    "question": "Share 25 coins equally between 5 monsters.",
+    "correctAnswer": "5",
+    "answers": [
+      "5",
+      "8",
+      "4",
+      "6"
+    ]
+  },
+  {
+    "id": "sharesplitter-019",
+    "question": "Share 20 coins equally between 4 monsters.",
+    "correctAnswer": "5",
+    "answers": [
+      "6",
+      "8",
+      "5",
+      "4"
+    ]
+  },
+  {
+    "id": "sharesplitter-020",
+    "question": "Share 45 coins equally between 5 monsters.",
+    "correctAnswer": "9",
+    "answers": [
+      "9",
+      "12",
+      "8",
+      "10"
+    ]
+  },
+  {
+    "id": "sharesplitter-021",
+    "question": "Share 24 coins equally between 4 monsters.",
+    "correctAnswer": "6",
+    "answers": [
+      "6",
+      "7",
+      "9",
+      "5"
+    ]
+  },
+  {
+    "id": "sharesplitter-022",
+    "question": "Share 35 coins equally between 5 monsters.",
+    "correctAnswer": "7",
+    "answers": [
+      "7",
+      "6",
+      "8",
+      "10"
+    ]
+  },
+  {
+    "id": "sharesplitter-023",
+    "question": "Share 39 coins equally between 3 monsters.",
+    "correctAnswer": "13",
+    "answers": [
+      "13",
+      "12",
+      "14",
+      "16"
+    ]
+  },
+  {
+    "id": "sharesplitter-024",
+    "question": "Share 51 coins equally between 3 monsters.",
+    "correctAnswer": "17",
+    "answers": [
+      "17",
+      "20",
+      "18",
+      "16"
+    ]
+  },
+  {
+    "id": "sharesplitter-025",
+    "question": "Share 32 coins equally between 4 monsters.",
+    "correctAnswer": "8",
+    "answers": [
+      "8",
+      "7",
+      "11",
+      "9"
+    ]
+  },
+  {
+    "id": "sharesplitter-026",
+    "question": "Share 25 coins equally between 5 monsters.",
+    "correctAnswer": "5",
+    "answers": [
+      "6",
+      "4",
+      "8",
+      "5"
+    ]
+  },
+  {
+    "id": "sharesplitter-027",
+    "question": "Share 18 coins equally between 3 monsters.",
+    "correctAnswer": "6",
+    "answers": [
+      "9",
+      "5",
+      "6",
+      "7"
+    ]
+  },
+  {
+    "id": "sharesplitter-028",
+    "question": "Share 46 coins equally between 2 monsters.",
+    "correctAnswer": "23",
+    "answers": [
+      "22",
+      "23",
+      "26",
+      "24"
+    ]
+  },
+  {
+    "id": "sharesplitter-029",
+    "question": "Share 32 coins equally between 2 monsters.",
+    "correctAnswer": "16",
+    "answers": [
+      "16",
+      "17",
+      "15",
+      "19"
+    ]
+  },
+  {
+    "id": "sharesplitter-030",
+    "question": "Share 24 coins equally between 3 monsters.",
+    "correctAnswer": "8",
+    "answers": [
+      "9",
+      "7",
+      "8",
+      "11"
+    ]
+  },
+  {
+    "id": "sharesplitter-031",
+    "question": "Share 51 coins equally between 3 monsters.",
+    "correctAnswer": "17",
+    "answers": [
+      "18",
+      "20",
+      "16",
+      "17"
+    ]
+  },
+  {
+    "id": "sharesplitter-032",
+    "question": "Share 10 coins equally between 5 monsters.",
+    "correctAnswer": "2",
+    "answers": [
+      "2",
+      "5",
+      "3",
+      "1"
+    ]
+  },
+  {
+    "id": "sharesplitter-033",
+    "question": "Share 12 coins equally between 2 monsters.",
+    "correctAnswer": "6",
+    "answers": [
+      "7",
+      "6",
+      "5",
+      "9"
+    ]
+  },
+  {
+    "id": "sharesplitter-034",
+    "question": "Share 35 coins equally between 5 monsters.",
+    "correctAnswer": "7",
+    "answers": [
+      "7",
+      "10",
+      "6",
+      "8"
+    ]
+  },
+  {
+    "id": "sharesplitter-035",
+    "question": "Share 40 coins equally between 5 monsters.",
+    "correctAnswer": "8",
+    "answers": [
+      "8",
+      "9",
+      "7",
+      "11"
+    ]
+  },
+  {
+    "id": "sharesplitter-036",
+    "question": "Share 12 coins equally between 4 monsters.",
+    "correctAnswer": "3",
+    "answers": [
+      "2",
+      "4",
+      "3",
+      "6"
+    ]
+  },
+  {
+    "id": "sharesplitter-037",
+    "question": "Share 24 coins equally between 4 monsters.",
+    "correctAnswer": "6",
+    "answers": [
+      "6",
+      "9",
+      "5",
+      "7"
+    ]
+  },
+  {
+    "id": "sharesplitter-038",
+    "question": "Share 36 coins equally between 2 monsters.",
+    "correctAnswer": "18",
+    "answers": [
+      "21",
+      "18",
+      "19",
+      "17"
+    ]
+  },
+  {
+    "id": "sharesplitter-039",
+    "question": "Share 57 coins equally between 3 monsters.",
+    "correctAnswer": "19",
+    "answers": [
+      "19",
+      "22",
+      "20",
+      "18"
+    ]
+  },
+  {
+    "id": "sharesplitter-040",
+    "question": "Share 40 coins equally between 2 monsters.",
+    "correctAnswer": "20",
+    "answers": [
+      "21",
+      "20",
+      "23",
+      "19"
+    ]
+  },
+  {
+    "id": "sharesplitter-041",
+    "question": "Share 54 coins equally between 3 monsters.",
+    "correctAnswer": "18",
+    "answers": [
+      "21",
+      "17",
+      "19",
+      "18"
+    ]
+  },
+  {
+    "id": "sharesplitter-042",
+    "question": "Share 26 coins equally between 2 monsters.",
+    "correctAnswer": "13",
+    "answers": [
+      "16",
+      "13",
+      "14",
+      "12"
+    ]
+  },
+  {
+    "id": "sharesplitter-043",
     "question": "Share 24 coins equally between 2 monsters.",
+    "correctAnswer": "12",
+    "answers": [
+      "13",
+      "11",
+      "15",
+      "12"
+    ]
+  },
+  {
+    "id": "sharesplitter-044",
+    "question": "Share 24 coins equally between 4 monsters.",
+    "correctAnswer": "6",
+    "answers": [
+      "7",
+      "5",
+      "6",
+      "9"
+    ]
+  },
+  {
+    "id": "sharesplitter-045",
+    "question": "Share 32 coins equally between 2 monsters.",
+    "correctAnswer": "16",
+    "answers": [
+      "15",
+      "16",
+      "17",
+      "19"
+    ]
+  },
+  {
+    "id": "sharesplitter-046",
+    "question": "Share 45 coins equally between 5 monsters.",
+    "correctAnswer": "9",
+    "answers": [
+      "9",
+      "8",
+      "10",
+      "12"
+    ]
+  },
+  {
+    "id": "sharesplitter-047",
+    "question": "Share 42 coins equally between 2 monsters.",
+    "correctAnswer": "21",
+    "answers": [
+      "24",
+      "20",
+      "21",
+      "22"
+    ]
+  },
+  {
+    "id": "sharesplitter-048",
+    "question": "Share 24 coins equally between 2 monsters.",
+    "correctAnswer": "12",
+    "answers": [
+      "15",
+      "13",
+      "12",
+      "11"
+    ]
+  },
+  {
+    "id": "sharesplitter-049",
+    "question": "Share 16 coins equally between 4 monsters.",
+    "correctAnswer": "4",
+    "answers": [
+      "7",
+      "3",
+      "5",
+      "4"
+    ]
+  },
+  {
+    "id": "sharesplitter-050",
+    "question": "Share 15 coins equally between 5 monsters.",
+    "correctAnswer": "3",
+    "answers": [
+      "2",
+      "3",
+      "4",
+      "6"
+    ]
+  },
+  {
+    "id": "sharesplitter-051",
+    "question": "Share 48 coins equally between 4 monsters.",
+    "correctAnswer": "12",
+    "answers": [
+      "11",
+      "13",
+      "12",
+      "15"
+    ]
+  },
+  {
+    "id": "sharesplitter-052",
+    "question": "Share 56 coins equally between 2 monsters.",
+    "correctAnswer": "28",
+    "answers": [
+      "29",
+      "31",
+      "28",
+      "27"
+    ]
+  },
+  {
+    "id": "sharesplitter-053",
+    "question": "Share 55 coins equally between 5 monsters.",
+    "correctAnswer": "11",
+    "answers": [
+      "11",
+      "14",
+      "12",
+      "10"
+    ]
+  },
+  {
+    "id": "sharesplitter-054",
+    "question": "Share 46 coins equally between 2 monsters.",
+    "correctAnswer": "23",
+    "answers": [
+      "26",
+      "22",
+      "24",
+      "23"
+    ]
+  },
+  {
+    "id": "sharesplitter-055",
+    "question": "Share 16 coins equally between 4 monsters.",
+    "correctAnswer": "4",
+    "answers": [
+      "7",
+      "4",
+      "5",
+      "3"
+    ]
+  },
+  {
+    "id": "sharesplitter-056",
+    "question": "Share 48 coins equally between 4 monsters.",
     "correctAnswer": "12",
     "answers": [
       "12",
@@ -33,678 +616,535 @@
     ]
   },
   {
-    "id": "ss-004",
-    "question": "Share 8 coins equally between 2 monsters.",
-    "correctAnswer": "4",
-    "answers": [
-      "3",
-      "5",
-      "4",
-      "7"
-    ]
-  },
-  {
-    "id": "ss-005",
-    "question": "Share 12 coins equally between 4 monsters.",
-    "correctAnswer": "3",
-    "answers": [
-      "2",
-      "3",
-      "4",
-      "6"
-    ]
-  },
-  {
-    "id": "ss-006",
-    "question": "Share 20 coins equally between 5 monsters.",
-    "correctAnswer": "4",
-    "answers": [
-      "5",
-      "4",
-      "3",
-      "7"
-    ]
-  },
-  {
-    "id": "ss-007",
-    "question": "Share 10 coins equally between 2 monsters.",
-    "correctAnswer": "5",
-    "answers": [
-      "4",
-      "5",
-      "8",
-      "6"
-    ]
-  },
-  {
-    "id": "ss-008",
-    "question": "Share 48 coins equally between 6 monsters.",
-    "correctAnswer": "8",
-    "answers": [
-      "7",
-      "8",
-      "11",
-      "9"
-    ]
-  },
-  {
-    "id": "ss-009",
-    "question": "Share 36 coins equally between 3 monsters.",
-    "correctAnswer": "12",
-    "answers": [
-      "15",
-      "11",
-      "13",
-      "12"
-    ]
-  },
-  {
-    "id": "ss-010",
-    "question": "Share 12 coins equally between 2 monsters.",
-    "correctAnswer": "6",
-    "answers": [
-      "7",
-      "6",
-      "9",
-      "5"
-    ]
-  },
-  {
-    "id": "ss-011",
-    "question": "Share 60 coins equally between 5 monsters.",
-    "correctAnswer": "12",
-    "answers": [
-      "12",
-      "11",
-      "13",
-      "15"
-    ]
-  },
-  {
-    "id": "ss-012",
-    "question": "Share 28 coins equally between 4 monsters.",
-    "correctAnswer": "7",
-    "answers": [
-      "7",
-      "8",
-      "6",
-      "10"
-    ]
-  },
-  {
-    "id": "ss-013",
-    "question": "Share 8 coins equally between 2 monsters.",
-    "correctAnswer": "4",
-    "answers": [
-      "4",
-      "3",
-      "5",
-      "7"
-    ]
-  },
-  {
-    "id": "ss-014",
-    "question": "Share 30 coins equally between 3 monsters.",
-    "correctAnswer": "10",
-    "answers": [
-      "10",
-      "13",
-      "9",
-      "11"
-    ]
-  },
-  {
-    "id": "ss-015",
-    "question": "Share 30 coins equally between 5 monsters.",
-    "correctAnswer": "6",
-    "answers": [
-      "6",
-      "7",
-      "5",
-      "9"
-    ]
-  },
-  {
-    "id": "ss-016",
-    "question": "Share 18 coins equally between 6 monsters.",
-    "correctAnswer": "3",
-    "answers": [
-      "4",
-      "2",
-      "6",
-      "3"
-    ]
-  },
-  {
-    "id": "ss-017",
-    "question": "Share 22 coins equally between 2 monsters.",
-    "correctAnswer": "11",
-    "answers": [
-      "10",
-      "12",
-      "11",
-      "14"
-    ]
-  },
-  {
-    "id": "ss-018",
-    "question": "Share 60 coins equally between 6 monsters.",
-    "correctAnswer": "10",
-    "answers": [
-      "13",
-      "11",
-      "9",
-      "10"
-    ]
-  },
-  {
-    "id": "ss-019",
-    "question": "Share 66 coins equally between 6 monsters.",
-    "correctAnswer": "11",
+    "id": "sharesplitter-057",
+    "question": "Share 52 coins equally between 4 monsters.",
+    "correctAnswer": "13",
     "answers": [
       "14",
-      "12",
-      "10",
-      "11"
-    ]
-  },
-  {
-    "id": "ss-020",
-    "question": "Share 25 coins equally between 5 monsters.",
-    "correctAnswer": "5",
-    "answers": [
-      "5",
-      "4",
-      "8",
-      "6"
-    ]
-  },
-  {
-    "id": "ss-021",
-    "question": "Share 10 coins equally between 2 monsters.",
-    "correctAnswer": "5",
-    "answers": [
-      "4",
-      "6",
-      "5",
-      "8"
-    ]
-  },
-  {
-    "id": "ss-022",
-    "question": "Share 40 coins equally between 5 monsters.",
-    "correctAnswer": "8",
-    "answers": [
-      "7",
-      "9",
-      "8",
-      "11"
-    ]
-  },
-  {
-    "id": "ss-023",
-    "question": "Share 30 coins equally between 3 monsters.",
-    "correctAnswer": "10",
-    "answers": [
-      "10",
-      "13",
-      "11",
-      "9"
-    ]
-  },
-  {
-    "id": "ss-024",
-    "question": "Share 32 coins equally between 4 monsters.",
-    "correctAnswer": "8",
-    "answers": [
-      "7",
-      "11",
-      "8",
-      "9"
-    ]
-  },
-  {
-    "id": "ss-025",
-    "question": "Share 4 coins equally between 2 monsters.",
-    "correctAnswer": "2",
-    "answers": [
-      "1",
-      "3",
-      "5",
-      "2"
-    ]
-  },
-  {
-    "id": "ss-026",
-    "question": "Share 66 coins equally between 6 monsters.",
-    "correctAnswer": "11",
-    "answers": [
-      "14",
-      "11",
-      "12",
-      "10"
-    ]
-  },
-  {
-    "id": "ss-027",
-    "question": "Share 48 coins equally between 6 monsters.",
-    "correctAnswer": "8",
-    "answers": [
-      "8",
-      "11",
-      "7",
-      "9"
-    ]
-  },
-  {
-    "id": "ss-028",
-    "question": "Share 33 coins equally between 3 monsters.",
-    "correctAnswer": "11",
-    "answers": [
-      "10",
-      "12",
-      "11",
-      "14"
-    ]
-  },
-  {
-    "id": "ss-029",
-    "question": "Share 36 coins equally between 3 monsters.",
-    "correctAnswer": "12",
-    "answers": [
       "13",
       "12",
-      "11",
-      "15"
+      "16"
     ]
   },
   {
-    "id": "ss-030",
-    "question": "Share 35 coins equally between 5 monsters.",
-    "correctAnswer": "7",
-    "answers": [
-      "6",
-      "7",
-      "10",
-      "8"
-    ]
-  },
-  {
-    "id": "ss-031",
-    "question": "Share 8 coins equally between 2 monsters.",
-    "correctAnswer": "4",
-    "answers": [
-      "7",
-      "5",
-      "3",
-      "4"
-    ]
-  },
-  {
-    "id": "ss-032",
-    "question": "Share 40 coins equally between 4 monsters.",
-    "correctAnswer": "10",
-    "answers": [
-      "9",
-      "10",
-      "13",
-      "11"
-    ]
-  },
-  {
-    "id": "ss-033",
-    "question": "Share 6 coins equally between 2 monsters.",
-    "correctAnswer": "3",
-    "answers": [
-      "2",
-      "6",
-      "4",
-      "3"
-    ]
-  },
-  {
-    "id": "ss-034",
-    "question": "Share 24 coins equally between 6 monsters.",
-    "correctAnswer": "4",
-    "answers": [
-      "5",
-      "7",
-      "3",
-      "4"
-    ]
-  },
-  {
-    "id": "ss-035",
-    "question": "Share 48 coins equally between 6 monsters.",
-    "correctAnswer": "8",
-    "answers": [
-      "9",
-      "11",
-      "7",
-      "8"
-    ]
-  },
-  {
-    "id": "ss-036",
-    "question": "Share 60 coins equally between 5 monsters.",
-    "correctAnswer": "12",
-    "answers": [
-      "13",
-      "15",
-      "12",
-      "11"
-    ]
-  },
-  {
-    "id": "ss-037",
-    "question": "Share 18 coins equally between 3 monsters.",
-    "correctAnswer": "6",
-    "answers": [
-      "9",
-      "6",
-      "5",
-      "7"
-    ]
-  },
-  {
-    "id": "ss-038",
-    "question": "Share 30 coins equally between 5 monsters.",
-    "correctAnswer": "6",
-    "answers": [
-      "5",
-      "9",
-      "7",
-      "6"
-    ]
-  },
-  {
-    "id": "ss-039",
-    "question": "Share 36 coins equally between 3 monsters.",
-    "correctAnswer": "12",
-    "answers": [
-      "13",
-      "15",
-      "11",
-      "12"
-    ]
-  },
-  {
-    "id": "ss-040",
-    "question": "Share 18 coins equally between 2 monsters.",
-    "correctAnswer": "9",
-    "answers": [
-      "10",
-      "8",
-      "12",
-      "9"
-    ]
-  },
-  {
-    "id": "ss-041",
-    "question": "Share 24 coins equally between 4 monsters.",
-    "correctAnswer": "6",
-    "answers": [
-      "9",
-      "5",
-      "6",
-      "7"
-    ]
-  },
-  {
-    "id": "ss-042",
-    "question": "Share 35 coins equally between 5 monsters.",
-    "correctAnswer": "7",
-    "answers": [
-      "6",
-      "7",
-      "10",
-      "8"
-    ]
-  },
-  {
-    "id": "ss-043",
-    "question": "Share 10 coins equally between 5 monsters.",
-    "correctAnswer": "2",
-    "answers": [
-      "1",
-      "3",
-      "2",
-      "5"
-    ]
-  },
-  {
-    "id": "ss-044",
-    "question": "Share 10 coins equally between 2 monsters.",
-    "correctAnswer": "5",
-    "answers": [
-      "5",
-      "4",
-      "6",
-      "8"
-    ]
-  },
-  {
-    "id": "ss-045",
-    "question": "Share 20 coins equally between 5 monsters.",
-    "correctAnswer": "4",
-    "answers": [
-      "3",
-      "4",
-      "7",
-      "5"
-    ]
-  },
-  {
-    "id": "ss-046",
-    "question": "Share 36 coins equally between 3 monsters.",
-    "correctAnswer": "12",
-    "answers": [
-      "11",
-      "13",
-      "15",
-      "12"
-    ]
-  },
-  {
-    "id": "ss-047",
+    "id": "sharesplitter-058",
     "question": "Share 36 coins equally between 4 monsters.",
     "correctAnswer": "9",
     "answers": [
       "8",
       "10",
+      "9",
+      "12"
+    ]
+  },
+  {
+    "id": "sharesplitter-059",
+    "question": "Share 28 coins equally between 4 monsters.",
+    "correctAnswer": "7",
+    "answers": [
+      "6",
+      "7",
+      "10",
+      "8"
+    ]
+  },
+  {
+    "id": "sharesplitter-060",
+    "question": "Share 52 coins equally between 4 monsters.",
+    "correctAnswer": "13",
+    "answers": [
+      "14",
+      "12",
+      "13",
+      "16"
+    ]
+  },
+  {
+    "id": "sharesplitter-061",
+    "question": "Share 18 coins equally between 2 monsters.",
+    "correctAnswer": "9",
+    "answers": [
+      "8",
+      "10",
       "12",
       "9"
     ]
   },
   {
-    "id": "ss-048",
-    "question": "Share 10 coins equally between 2 monsters.",
-    "correctAnswer": "5",
+    "id": "sharesplitter-062",
+    "question": "Share 54 coins equally between 3 monsters.",
+    "correctAnswer": "18",
     "answers": [
-      "6",
-      "8",
-      "4",
-      "5"
+      "21",
+      "17",
+      "19",
+      "18"
     ]
   },
   {
-    "id": "ss-049",
-    "question": "Share 60 coins equally between 6 monsters.",
-    "correctAnswer": "10",
+    "id": "sharesplitter-063",
+    "question": "Share 28 coins equally between 2 monsters.",
+    "correctAnswer": "14",
     "answers": [
-      "9",
+      "17",
       "13",
-      "10",
-      "11"
+      "15",
+      "14"
     ]
   },
   {
-    "id": "ss-050",
-    "question": "Share 10 coins equally between 2 monsters.",
+    "id": "sharesplitter-064",
+    "question": "Share 20 coins equally between 4 monsters.",
     "correctAnswer": "5",
     "answers": [
+      "6",
       "4",
       "8",
-      "6",
       "5"
     ]
   },
   {
-    "id": "ss-051",
-    "question": "Share 9 coins equally between 3 monsters.",
-    "correctAnswer": "3",
-    "answers": [
-      "3",
-      "2",
-      "6",
-      "4"
-    ]
-  },
-  {
-    "id": "ss-052",
-    "question": "Share 25 coins equally between 5 monsters.",
-    "correctAnswer": "5",
-    "answers": [
-      "8",
-      "4",
-      "6",
-      "5"
-    ]
-  },
-  {
-    "id": "ss-053",
-    "question": "Share 45 coins equally between 5 monsters.",
-    "correctAnswer": "9",
-    "answers": [
-      "9",
-      "10",
-      "8",
-      "12"
-    ]
-  },
-  {
-    "id": "ss-054",
-    "question": "Share 18 coins equally between 3 monsters.",
-    "correctAnswer": "6",
+    "id": "sharesplitter-065",
+    "question": "Share 12 coins equally between 3 monsters.",
+    "correctAnswer": "4",
     "answers": [
       "5",
-      "9",
-      "6",
-      "7"
-    ]
-  },
-  {
-    "id": "ss-055",
-    "question": "Share 15 coins equally between 5 monsters.",
-    "correctAnswer": "3",
-    "answers": [
-      "4",
-      "6",
-      "3",
-      "2"
-    ]
-  },
-  {
-    "id": "ss-056",
-    "question": "Share 40 coins equally between 5 monsters.",
-    "correctAnswer": "8",
-    "answers": [
-      "8",
       "7",
-      "9",
-      "11"
+      "4",
+      "3"
     ]
   },
   {
-    "id": "ss-057",
-    "question": "Share 44 coins equally between 4 monsters.",
-    "correctAnswer": "11",
+    "id": "sharesplitter-066",
+    "question": "Share 46 coins equally between 2 monsters.",
+    "correctAnswer": "23",
+    "answers": [
+      "24",
+      "23",
+      "26",
+      "22"
+    ]
+  },
+  {
+    "id": "sharesplitter-067",
+    "question": "Share 52 coins equally between 4 monsters.",
+    "correctAnswer": "13",
     "answers": [
       "14",
       "12",
-      "10",
-      "11"
+      "16",
+      "13"
     ]
   },
   {
-    "id": "ss-058",
-    "question": "Share 25 coins equally between 5 monsters.",
-    "correctAnswer": "5",
+    "id": "sharesplitter-068",
+    "question": "Share 52 coins equally between 4 monsters.",
+    "correctAnswer": "13",
     "answers": [
-      "8",
-      "5",
-      "6",
-      "4"
+      "13",
+      "16",
+      "12",
+      "14"
     ]
   },
   {
-    "id": "ss-059",
-    "question": "Share 20 coins equally between 5 monsters.",
-    "correctAnswer": "4",
-    "answers": [
-      "7",
-      "5",
-      "3",
-      "4"
-    ]
-  },
-  {
-    "id": "ss-060",
-    "question": "Share 48 coins equally between 6 monsters.",
+    "id": "sharesplitter-069",
+    "question": "Share 16 coins equally between 2 monsters.",
     "correctAnswer": "8",
     "answers": [
-      "8",
-      "9",
+      "7",
       "11",
-      "7"
+      "9",
+      "8"
     ]
   },
   {
-    "id": "ss-061",
-    "question": "Share 10 coins equally between 5 monsters.",
-    "correctAnswer": "2",
+    "id": "sharesplitter-070",
+    "question": "Share 21 coins equally between 3 monsters.",
+    "correctAnswer": "7",
     "answers": [
-      "1",
-      "3",
+      "10",
+      "6",
+      "7",
+      "8"
+    ]
+  },
+  {
+    "id": "sharesplitter-071",
+    "question": "Share 24 coins equally between 2 monsters.",
+    "correctAnswer": "12",
+    "answers": [
+      "12",
+      "11",
+      "15",
+      "13"
+    ]
+  },
+  {
+    "id": "sharesplitter-072",
+    "question": "Share 12 coins equally between 2 monsters.",
+    "correctAnswer": "6",
+    "answers": [
+      "7",
+      "6",
       "5",
+      "9"
+    ]
+  },
+  {
+    "id": "sharesplitter-073",
+    "question": "Share 56 coins equally between 4 monsters.",
+    "correctAnswer": "14",
+    "answers": [
+      "14",
+      "17",
+      "13",
+      "15"
+    ]
+  },
+  {
+    "id": "sharesplitter-074",
+    "question": "Share 55 coins equally between 5 monsters.",
+    "correctAnswer": "11",
+    "answers": [
+      "12",
+      "11",
+      "10",
+      "14"
+    ]
+  },
+  {
+    "id": "sharesplitter-075",
+    "question": "Share 57 coins equally between 3 monsters.",
+    "correctAnswer": "19",
+    "answers": [
+      "20",
+      "18",
+      "22",
+      "19"
+    ]
+  },
+  {
+    "id": "sharesplitter-076",
+    "question": "Share 30 coins equally between 3 monsters.",
+    "correctAnswer": "10",
+    "answers": [
+      "13",
+      "10",
+      "11",
+      "9"
+    ]
+  },
+  {
+    "id": "sharesplitter-077",
+    "question": "Share 40 coins equally between 2 monsters.",
+    "correctAnswer": "20",
+    "answers": [
+      "19",
+      "21",
+      "20",
+      "23"
+    ]
+  },
+  {
+    "id": "sharesplitter-078",
+    "question": "Share 35 coins equally between 5 monsters.",
+    "correctAnswer": "7",
+    "answers": [
+      "6",
+      "8",
+      "7",
+      "10"
+    ]
+  },
+  {
+    "id": "sharesplitter-079",
+    "question": "Share 56 coins equally between 4 monsters.",
+    "correctAnswer": "14",
+    "answers": [
+      "14",
+      "13",
+      "17",
+      "15"
+    ]
+  },
+  {
+    "id": "sharesplitter-080",
+    "question": "Share 12 coins equally between 4 monsters.",
+    "correctAnswer": "3",
+    "answers": [
+      "3",
+      "4",
+      "6",
       "2"
     ]
   },
   {
-    "id": "ss-062",
-    "question": "Share 20 coins equally between 5 monsters.",
-    "correctAnswer": "4",
+    "id": "sharesplitter-081",
+    "question": "Share 32 coins equally between 2 monsters.",
+    "correctAnswer": "16",
     "answers": [
-      "5",
-      "7",
-      "4",
-      "3"
+      "15",
+      "17",
+      "16",
+      "19"
     ]
   },
   {
-    "id": "ss-063",
-    "question": "Share 36 coins equally between 3 monsters.",
-    "correctAnswer": "12",
+    "id": "sharesplitter-082",
+    "question": "Share 21 coins equally between 3 monsters.",
+    "correctAnswer": "7",
     "answers": [
-      "15",
-      "12",
+      "7",
+      "10",
+      "6",
+      "8"
+    ]
+  },
+  {
+    "id": "sharesplitter-083",
+    "question": "Share 25 coins equally between 5 monsters.",
+    "correctAnswer": "5",
+    "answers": [
+      "4",
+      "8",
+      "6",
+      "5"
+    ]
+  },
+  {
+    "id": "sharesplitter-084",
+    "question": "Share 42 coins equally between 2 monsters.",
+    "correctAnswer": "21",
+    "answers": [
+      "24",
+      "22",
+      "20",
+      "21"
+    ]
+  },
+  {
+    "id": "sharesplitter-085",
+    "question": "Share 58 coins equally between 2 monsters.",
+    "correctAnswer": "29",
+    "answers": [
+      "30",
+      "32",
+      "28",
+      "29"
+    ]
+  },
+  {
+    "id": "sharesplitter-086",
+    "question": "Share 32 coins equally between 4 monsters.",
+    "correctAnswer": "8",
+    "answers": [
+      "8",
+      "11",
+      "9",
+      "7"
+    ]
+  },
+  {
+    "id": "sharesplitter-087",
+    "question": "Share 18 coins equally between 3 monsters.",
+    "correctAnswer": "6",
+    "answers": [
+      "9",
+      "7",
+      "6",
+      "5"
+    ]
+  },
+  {
+    "id": "sharesplitter-088",
+    "question": "Share 35 coins equally between 5 monsters.",
+    "correctAnswer": "7",
+    "answers": [
+      "10",
+      "7",
+      "8",
+      "6"
+    ]
+  },
+  {
+    "id": "sharesplitter-089",
+    "question": "Share 30 coins equally between 3 monsters.",
+    "correctAnswer": "10",
+    "answers": [
       "13",
+      "10",
+      "9",
       "11"
     ]
   },
   {
-    "id": "ss-064",
-    "question": "Share 12 coins equally between 4 monsters.",
-    "correctAnswer": "3",
+    "id": "sharesplitter-090",
+    "question": "Share 51 coins equally between 3 monsters.",
+    "correctAnswer": "17",
     "answers": [
-      "2",
+      "20",
+      "18",
+      "17",
+      "16"
+    ]
+  },
+  {
+    "id": "sharesplitter-091",
+    "question": "Share 14 coins equally between 2 monsters.",
+    "correctAnswer": "7",
+    "answers": [
+      "7",
+      "10",
       "6",
+      "8"
+    ]
+  },
+  {
+    "id": "sharesplitter-092",
+    "question": "Share 20 coins equally between 5 monsters.",
+    "correctAnswer": "4",
+    "answers": [
       "4",
+      "3",
+      "7",
+      "5"
+    ]
+  },
+  {
+    "id": "sharesplitter-093",
+    "question": "Share 42 coins equally between 3 monsters.",
+    "correctAnswer": "14",
+    "answers": [
+      "17",
+      "15",
+      "13",
+      "14"
+    ]
+  },
+  {
+    "id": "sharesplitter-094",
+    "question": "Share 28 coins equally between 2 monsters.",
+    "correctAnswer": "14",
+    "answers": [
+      "13",
+      "17",
+      "15",
+      "14"
+    ]
+  },
+  {
+    "id": "sharesplitter-095",
+    "question": "Share 27 coins equally between 3 monsters.",
+    "correctAnswer": "9",
+    "answers": [
+      "10",
+      "12",
+      "9",
+      "8"
+    ]
+  },
+  {
+    "id": "sharesplitter-096",
+    "question": "Share 16 coins equally between 4 monsters.",
+    "correctAnswer": "4",
+    "answers": [
+      "4",
+      "5",
+      "7",
       "3"
     ]
   },
   {
-    "id": "ss-065",
+    "id": "sharesplitter-097",
+    "question": "Share 52 coins equally between 2 monsters.",
+    "correctAnswer": "26",
+    "answers": [
+      "27",
+      "29",
+      "25",
+      "26"
+    ]
+  },
+  {
+    "id": "sharesplitter-098",
+    "question": "Share 54 coins equally between 2 monsters.",
+    "correctAnswer": "27",
+    "answers": [
+      "28",
+      "30",
+      "27",
+      "26"
+    ]
+  },
+  {
+    "id": "sharesplitter-099",
+    "question": "Share 20 coins equally between 5 monsters.",
+    "correctAnswer": "4",
+    "answers": [
+      "3",
+      "7",
+      "5",
+      "4"
+    ]
+  },
+  {
+    "id": "sharesplitter-100",
+    "question": "Share 57 coins equally between 3 monsters.",
+    "correctAnswer": "19",
+    "answers": [
+      "20",
+      "19",
+      "22",
+      "18"
+    ]
+  },
+  {
+    "id": "sharesplitter-101",
+    "question": "Share 18 coins equally between 3 monsters.",
+    "correctAnswer": "6",
+    "answers": [
+      "6",
+      "5",
+      "7",
+      "9"
+    ]
+  },
+  {
+    "id": "sharesplitter-102",
+    "question": "Share 48 coins equally between 4 monsters.",
+    "correctAnswer": "12",
+    "answers": [
+      "11",
+      "12",
+      "15",
+      "13"
+    ]
+  },
+  {
+    "id": "sharesplitter-103",
+    "question": "Share 24 coins equally between 4 monsters.",
+    "correctAnswer": "6",
+    "answers": [
+      "9",
+      "6",
+      "7",
+      "5"
+    ]
+  },
+  {
+    "id": "sharesplitter-104",
+    "question": "Share 12 coins equally between 4 monsters.",
+    "correctAnswer": "3",
+    "answers": [
+      "4",
+      "6",
+      "2",
+      "3"
+    ]
+  },
+  {
+    "id": "sharesplitter-105",
     "question": "Share 20 coins equally between 4 monsters.",
     "correctAnswer": "5",
     "answers": [
@@ -715,283 +1155,41 @@
     ]
   },
   {
-    "id": "ss-066",
-    "question": "Share 30 coins equally between 3 monsters.",
-    "correctAnswer": "10",
+    "id": "sharesplitter-106",
+    "question": "Share 38 coins equally between 2 monsters.",
+    "correctAnswer": "19",
     "answers": [
-      "13",
-      "9",
-      "11",
-      "10"
+      "19",
+      "18",
+      "22",
+      "20"
     ]
   },
   {
-    "id": "ss-067",
-    "question": "Share 30 coins equally between 6 monsters.",
-    "correctAnswer": "5",
-    "answers": [
-      "4",
-      "8",
-      "5",
-      "6"
-    ]
-  },
-  {
-    "id": "ss-068",
-    "question": "Share 72 coins equally between 6 monsters.",
-    "correctAnswer": "12",
-    "answers": [
-      "15",
-      "13",
-      "11",
-      "12"
-    ]
-  },
-  {
-    "id": "ss-069",
-    "question": "Share 35 coins equally between 5 monsters.",
-    "correctAnswer": "7",
-    "answers": [
-      "8",
-      "10",
-      "7",
-      "6"
-    ]
-  },
-  {
-    "id": "ss-070",
-    "question": "Share 18 coins equally between 2 monsters.",
-    "correctAnswer": "9",
-    "answers": [
-      "8",
-      "10",
-      "9",
-      "12"
-    ]
-  },
-  {
-    "id": "ss-071",
-    "question": "Share 15 coins equally between 5 monsters.",
-    "correctAnswer": "3",
-    "answers": [
-      "2",
-      "6",
-      "4",
-      "3"
-    ]
-  },
-  {
-    "id": "ss-072",
-    "question": "Share 42 coins equally between 6 monsters.",
-    "correctAnswer": "7",
-    "answers": [
-      "8",
-      "6",
-      "7",
-      "10"
-    ]
-  },
-  {
-    "id": "ss-073",
-    "question": "Share 8 coins equally between 4 monsters.",
-    "correctAnswer": "2",
-    "answers": [
-      "5",
-      "1",
-      "3",
-      "2"
-    ]
-  },
-  {
-    "id": "ss-074",
-    "question": "Share 24 coins equally between 3 monsters.",
-    "correctAnswer": "8",
-    "answers": [
-      "9",
-      "11",
-      "7",
-      "8"
-    ]
-  },
-  {
-    "id": "ss-075",
-    "question": "Share 48 coins equally between 4 monsters.",
-    "correctAnswer": "12",
-    "answers": [
-      "11",
-      "13",
-      "15",
-      "12"
-    ]
-  },
-  {
-    "id": "ss-076",
-    "question": "Share 16 coins equally between 2 monsters.",
-    "correctAnswer": "8",
-    "answers": [
-      "8",
-      "11",
-      "9",
-      "7"
-    ]
-  },
-  {
-    "id": "ss-077",
-    "question": "Share 32 coins equally between 4 monsters.",
-    "correctAnswer": "8",
-    "answers": [
-      "11",
-      "9",
-      "7",
-      "8"
-    ]
-  },
-  {
-    "id": "ss-078",
-    "question": "Share 55 coins equally between 5 monsters.",
-    "correctAnswer": "11",
-    "answers": [
-      "14",
-      "10",
-      "12",
-      "11"
-    ]
-  },
-  {
-    "id": "ss-079",
-    "question": "Share 45 coins equally between 5 monsters.",
-    "correctAnswer": "9",
-    "answers": [
-      "8",
-      "12",
-      "10",
-      "9"
-    ]
-  },
-  {
-    "id": "ss-080",
-    "question": "Share 10 coins equally between 2 monsters.",
-    "correctAnswer": "5",
-    "answers": [
-      "6",
-      "4",
-      "8",
-      "5"
-    ]
-  },
-  {
-    "id": "ss-081",
-    "question": "Share 14 coins equally between 2 monsters.",
-    "correctAnswer": "7",
-    "answers": [
-      "8",
-      "6",
-      "7",
-      "10"
-    ]
-  },
-  {
-    "id": "ss-082",
-    "question": "Share 10 coins equally between 2 monsters.",
-    "correctAnswer": "5",
-    "answers": [
-      "6",
-      "5",
-      "8",
-      "4"
-    ]
-  },
-  {
-    "id": "ss-083",
+    "id": "sharesplitter-107",
     "question": "Share 12 coins equally between 2 monsters.",
     "correctAnswer": "6",
     "answers": [
-      "7",
       "5",
       "9",
-      "6"
-    ]
-  },
-  {
-    "id": "ss-084",
-    "question": "Share 12 coins equally between 4 monsters.",
-    "correctAnswer": "3",
-    "answers": [
-      "3",
       "6",
-      "4",
-      "2"
+      "7"
     ]
   },
   {
-    "id": "ss-085",
-    "question": "Share 16 coins equally between 4 monsters.",
-    "correctAnswer": "4",
-    "answers": [
-      "4",
-      "7",
-      "3",
-      "5"
-    ]
-  },
-  {
-    "id": "ss-086",
-    "question": "Share 8 coins equally between 2 monsters.",
-    "correctAnswer": "4",
-    "answers": [
-      "7",
-      "5",
-      "4",
-      "3"
-    ]
-  },
-  {
-    "id": "ss-087",
-    "question": "Share 60 coins equally between 5 monsters.",
-    "correctAnswer": "12",
-    "answers": [
-      "13",
-      "15",
-      "11",
-      "12"
-    ]
-  },
-  {
-    "id": "ss-088",
-    "question": "Share 54 coins equally between 6 monsters.",
+    "id": "sharesplitter-108",
+    "question": "Share 36 coins equally between 4 monsters.",
     "correctAnswer": "9",
     "answers": [
+      "8",
+      "12",
       "9",
-      "8",
-      "10",
-      "12"
+      "10"
     ]
   },
   {
-    "id": "ss-089",
-    "question": "Share 25 coins equally between 5 monsters.",
-    "correctAnswer": "5",
-    "answers": [
-      "8",
-      "4",
-      "6",
-      "5"
-    ]
-  },
-  {
-    "id": "ss-090",
-    "question": "Share 14 coins equally between 2 monsters.",
-    "correctAnswer": "7",
-    "answers": [
-      "10",
-      "7",
-      "6",
-      "8"
-    ]
-  },
-  {
-    "id": "ss-091",
-    "question": "Share 6 coins equally between 2 monsters.",
+    "id": "sharesplitter-109",
+    "question": "Share 12 coins equally between 4 monsters.",
     "correctAnswer": "3",
     "answers": [
       "4",
@@ -1001,1042 +1199,85 @@
     ]
   },
   {
-    "id": "ss-092",
-    "question": "Share 24 coins equally between 2 monsters.",
-    "correctAnswer": "12",
+    "id": "sharesplitter-110",
+    "question": "Share 32 coins equally between 2 monsters.",
+    "correctAnswer": "16",
     "answers": [
-      "12",
-      "11",
       "15",
-      "13"
+      "19",
+      "17",
+      "16"
     ]
   },
   {
-    "id": "ss-093",
-    "question": "Share 27 coins equally between 3 monsters.",
-    "correctAnswer": "9",
-    "answers": [
-      "8",
-      "12",
-      "10",
-      "9"
-    ]
-  },
-  {
-    "id": "ss-094",
-    "question": "Share 60 coins equally between 6 monsters.",
-    "correctAnswer": "10",
-    "answers": [
-      "10",
-      "13",
-      "11",
-      "9"
-    ]
-  },
-  {
-    "id": "ss-095",
-    "question": "Share 30 coins equally between 3 monsters.",
-    "correctAnswer": "10",
-    "answers": [
-      "11",
-      "9",
-      "13",
-      "10"
-    ]
-  },
-  {
-    "id": "ss-096",
+    "id": "sharesplitter-111",
     "question": "Share 32 coins equally between 4 monsters.",
     "correctAnswer": "8",
     "answers": [
-      "9",
-      "8",
       "7",
-      "11"
-    ]
-  },
-  {
-    "id": "ss-097",
-    "question": "Share 25 coins equally between 5 monsters.",
-    "correctAnswer": "5",
-    "answers": [
-      "8",
-      "4",
-      "6",
-      "5"
-    ]
-  },
-  {
-    "id": "ss-098",
-    "question": "Share 36 coins equally between 3 monsters.",
-    "correctAnswer": "12",
-    "answers": [
-      "13",
-      "12",
-      "15",
-      "11"
-    ]
-  },
-  {
-    "id": "ss-099",
-    "question": "Share 27 coins equally between 3 monsters.",
-    "correctAnswer": "9",
-    "answers": [
-      "10",
-      "12",
+      "11",
       "8",
       "9"
     ]
   },
   {
-    "id": "ss-100",
-    "question": "Share 6 coins equally between 3 monsters.",
-    "correctAnswer": "2",
-    "answers": [
-      "1",
-      "3",
-      "2",
-      "5"
-    ]
-  },
-  {
-    "id": "ss-101",
-    "question": "Share 18 coins equally between 2 monsters.",
-    "correctAnswer": "9",
-    "answers": [
-      "9",
-      "8",
-      "10",
-      "12"
-    ]
-  },
-  {
-    "id": "ss-102",
-    "question": "Share 20 coins equally between 2 monsters.",
-    "correctAnswer": "10",
-    "answers": [
-      "13",
-      "9",
-      "11",
-      "10"
-    ]
-  },
-  {
-    "id": "ss-103",
-    "question": "Share 12 coins equally between 3 monsters.",
-    "correctAnswer": "4",
-    "answers": [
-      "4",
-      "5",
-      "3",
-      "7"
-    ]
-  },
-  {
-    "id": "ss-104",
-    "question": "Share 42 coins equally between 6 monsters.",
-    "correctAnswer": "7",
-    "answers": [
-      "10",
-      "6",
-      "8",
-      "7"
-    ]
-  },
-  {
-    "id": "ss-105",
-    "question": "Share 12 coins equally between 4 monsters.",
-    "correctAnswer": "3",
-    "answers": [
-      "6",
-      "4",
-      "2",
-      "3"
-    ]
-  },
-  {
-    "id": "ss-106",
-    "question": "Share 25 coins equally between 5 monsters.",
-    "correctAnswer": "5",
-    "answers": [
-      "8",
-      "6",
-      "5",
-      "4"
-    ]
-  },
-  {
-    "id": "ss-107",
-    "question": "Share 33 coins equally between 3 monsters.",
-    "correctAnswer": "11",
-    "answers": [
-      "11",
-      "12",
-      "14",
-      "10"
-    ]
-  },
-  {
-    "id": "ss-108",
-    "question": "Share 48 coins equally between 6 monsters.",
-    "correctAnswer": "8",
-    "answers": [
-      "9",
-      "11",
-      "7",
-      "8"
-    ]
-  },
-  {
-    "id": "ss-109",
-    "question": "Share 9 coins equally between 3 monsters.",
-    "correctAnswer": "3",
-    "answers": [
-      "6",
-      "2",
-      "3",
-      "4"
-    ]
-  },
-  {
-    "id": "ss-110",
-    "question": "Share 22 coins equally between 2 monsters.",
-    "correctAnswer": "11",
-    "answers": [
-      "12",
-      "14",
-      "11",
-      "10"
-    ]
-  },
-  {
-    "id": "ss-111",
-    "question": "Share 18 coins equally between 6 monsters.",
-    "correctAnswer": "3",
-    "answers": [
-      "6",
-      "4",
-      "3",
-      "2"
-    ]
-  },
-  {
-    "id": "ss-112",
-    "question": "Share 40 coins equally between 5 monsters.",
-    "correctAnswer": "8",
-    "answers": [
-      "7",
-      "9",
-      "11",
-      "8"
-    ]
-  },
-  {
-    "id": "ss-113",
-    "question": "Share 25 coins equally between 5 monsters.",
-    "correctAnswer": "5",
-    "answers": [
-      "4",
-      "8",
-      "5",
-      "6"
-    ]
-  },
-  {
-    "id": "ss-114",
-    "question": "Share 44 coins equally between 4 monsters.",
-    "correctAnswer": "11",
-    "answers": [
-      "12",
-      "11",
-      "14",
-      "10"
-    ]
-  },
-  {
-    "id": "ss-115",
-    "question": "Share 8 coins equally between 2 monsters.",
-    "correctAnswer": "4",
-    "answers": [
-      "4",
-      "5",
-      "3",
-      "7"
-    ]
-  },
-  {
-    "id": "ss-116",
-    "question": "Share 12 coins equally between 3 monsters.",
-    "correctAnswer": "4",
-    "answers": [
-      "5",
-      "4",
-      "7",
-      "3"
-    ]
-  },
-  {
-    "id": "ss-117",
-    "question": "Share 12 coins equally between 3 monsters.",
-    "correctAnswer": "4",
-    "answers": [
-      "7",
-      "4",
-      "5",
-      "3"
-    ]
-  },
-  {
-    "id": "ss-118",
-    "question": "Share 24 coins equally between 2 monsters.",
-    "correctAnswer": "12",
-    "answers": [
-      "12",
-      "11",
-      "13",
-      "15"
-    ]
-  },
-  {
-    "id": "ss-119",
-    "question": "Share 8 coins equally between 2 monsters.",
-    "correctAnswer": "4",
-    "answers": [
-      "5",
-      "7",
-      "4",
-      "3"
-    ]
-  },
-  {
-    "id": "ss-120",
-    "question": "Share 22 coins equally between 2 monsters.",
-    "correctAnswer": "11",
-    "answers": [
-      "14",
-      "11",
-      "12",
-      "10"
-    ]
-  },
-  {
-    "id": "ss-121",
-    "question": "Share 25 coins equally between 5 monsters.",
-    "correctAnswer": "5",
-    "answers": [
-      "6",
-      "4",
-      "5",
-      "8"
-    ]
-  },
-  {
-    "id": "ss-122",
-    "question": "Share 22 coins equally between 2 monsters.",
-    "correctAnswer": "11",
-    "answers": [
-      "12",
-      "14",
-      "11",
-      "10"
-    ]
-  },
-  {
-    "id": "ss-123",
-    "question": "Share 9 coins equally between 3 monsters.",
-    "correctAnswer": "3",
-    "answers": [
-      "6",
-      "2",
-      "4",
-      "3"
-    ]
-  },
-  {
-    "id": "ss-124",
-    "question": "Share 45 coins equally between 5 monsters.",
-    "correctAnswer": "9",
-    "answers": [
-      "9",
-      "10",
-      "12",
-      "8"
-    ]
-  },
-  {
-    "id": "ss-125",
+    "id": "sharesplitter-112",
     "question": "Share 30 coins equally between 5 monsters.",
     "correctAnswer": "6",
     "answers": [
-      "9",
-      "6",
       "7",
-      "5"
-    ]
-  },
-  {
-    "id": "ss-126",
-    "question": "Share 24 coins equally between 4 monsters.",
-    "correctAnswer": "6",
-    "answers": [
-      "6",
-      "7",
-      "9",
-      "5"
-    ]
-  },
-  {
-    "id": "ss-127",
-    "question": "Share 12 coins equally between 2 monsters.",
-    "correctAnswer": "6",
-    "answers": [
-      "5",
-      "7",
-      "9",
-      "6"
-    ]
-  },
-  {
-    "id": "ss-128",
-    "question": "Share 36 coins equally between 3 monsters.",
-    "correctAnswer": "12",
-    "answers": [
-      "12",
-      "11",
-      "15",
-      "13"
-    ]
-  },
-  {
-    "id": "ss-129",
-    "question": "Share 10 coins equally between 2 monsters.",
-    "correctAnswer": "5",
-    "answers": [
-      "4",
-      "5",
-      "6",
-      "8"
-    ]
-  },
-  {
-    "id": "ss-130",
-    "question": "Share 10 coins equally between 2 monsters.",
-    "correctAnswer": "5",
-    "answers": [
       "6",
       "5",
-      "4",
-      "8"
+      "9"
     ]
   },
   {
-    "id": "ss-131",
-    "question": "Share 48 coins equally between 4 monsters.",
-    "correctAnswer": "12",
-    "answers": [
-      "13",
-      "12",
-      "11",
-      "15"
-    ]
-  },
-  {
-    "id": "ss-132",
-    "question": "Share 48 coins equally between 4 monsters.",
-    "correctAnswer": "12",
-    "answers": [
-      "12",
-      "15",
-      "13",
-      "11"
-    ]
-  },
-  {
-    "id": "ss-133",
-    "question": "Share 48 coins equally between 6 monsters.",
-    "correctAnswer": "8",
-    "answers": [
-      "11",
-      "8",
-      "9",
-      "7"
-    ]
-  },
-  {
-    "id": "ss-134",
-    "question": "Share 22 coins equally between 2 monsters.",
-    "correctAnswer": "11",
-    "answers": [
-      "12",
-      "11",
-      "14",
-      "10"
-    ]
-  },
-  {
-    "id": "ss-135",
-    "question": "Share 45 coins equally between 5 monsters.",
-    "correctAnswer": "9",
-    "answers": [
-      "12",
-      "9",
-      "10",
-      "8"
-    ]
-  },
-  {
-    "id": "ss-136",
-    "question": "Share 18 coins equally between 2 monsters.",
-    "correctAnswer": "9",
-    "answers": [
-      "8",
-      "9",
-      "12",
-      "10"
-    ]
-  },
-  {
-    "id": "ss-137",
-    "question": "Share 36 coins equally between 6 monsters.",
-    "correctAnswer": "6",
-    "answers": [
-      "6",
-      "5",
-      "9",
-      "7"
-    ]
-  },
-  {
-    "id": "ss-138",
-    "question": "Share 12 coins equally between 4 monsters.",
-    "correctAnswer": "3",
-    "answers": [
-      "6",
-      "4",
-      "3",
-      "2"
-    ]
-  },
-  {
-    "id": "ss-139",
-    "question": "Share 10 coins equally between 2 monsters.",
-    "correctAnswer": "5",
-    "answers": [
-      "6",
-      "5",
-      "8",
-      "4"
-    ]
-  },
-  {
-    "id": "ss-140",
-    "question": "Share 18 coins equally between 2 monsters.",
-    "correctAnswer": "9",
-    "answers": [
-      "12",
-      "10",
-      "9",
-      "8"
-    ]
-  },
-  {
-    "id": "ss-141",
-    "question": "Share 48 coins equally between 4 monsters.",
-    "correctAnswer": "12",
-    "answers": [
-      "11",
-      "13",
-      "15",
-      "12"
-    ]
-  },
-  {
-    "id": "ss-142",
+    "id": "sharesplitter-113",
     "question": "Share 21 coins equally between 3 monsters.",
     "correctAnswer": "7",
     "answers": [
+      "6",
       "8",
       "7",
-      "10",
-      "6"
-    ]
-  },
-  {
-    "id": "ss-143",
-    "question": "Share 12 coins equally between 2 monsters.",
-    "correctAnswer": "6",
-    "answers": [
-      "9",
-      "6",
-      "5",
-      "7"
-    ]
-  },
-  {
-    "id": "ss-144",
-    "question": "Share 55 coins equally between 5 monsters.",
-    "correctAnswer": "11",
-    "answers": [
-      "10",
-      "14",
-      "12",
-      "11"
-    ]
-  },
-  {
-    "id": "ss-145",
-    "question": "Share 18 coins equally between 2 monsters.",
-    "correctAnswer": "9",
-    "answers": [
-      "12",
-      "10",
-      "9",
-      "8"
-    ]
-  },
-  {
-    "id": "ss-146",
-    "question": "Share 40 coins equally between 5 monsters.",
-    "correctAnswer": "8",
-    "answers": [
-      "11",
-      "7",
-      "9",
-      "8"
-    ]
-  },
-  {
-    "id": "ss-147",
-    "question": "Share 36 coins equally between 6 monsters.",
-    "correctAnswer": "6",
-    "answers": [
-      "6",
-      "9",
-      "5",
-      "7"
-    ]
-  },
-  {
-    "id": "ss-148",
-    "question": "Share 44 coins equally between 4 monsters.",
-    "correctAnswer": "11",
-    "answers": [
-      "14",
-      "11",
-      "10",
-      "12"
-    ]
-  },
-  {
-    "id": "ss-149",
-    "question": "Share 16 coins equally between 4 monsters.",
-    "correctAnswer": "4",
-    "answers": [
-      "5",
-      "4",
-      "3",
-      "7"
-    ]
-  },
-  {
-    "id": "ss-150",
-    "question": "Share 24 coins equally between 4 monsters.",
-    "correctAnswer": "6",
-    "answers": [
-      "9",
-      "5",
-      "7",
-      "6"
-    ]
-  },
-  {
-    "id": "ss-151",
-    "question": "Share 24 coins equally between 6 monsters.",
-    "correctAnswer": "4",
-    "answers": [
-      "3",
-      "4",
-      "5",
-      "7"
-    ]
-  },
-  {
-    "id": "ss-152",
-    "question": "Share 30 coins equally between 3 monsters.",
-    "correctAnswer": "10",
-    "answers": [
-      "10",
-      "11",
-      "9",
-      "13"
-    ]
-  },
-  {
-    "id": "ss-153",
-    "question": "Share 72 coins equally between 6 monsters.",
-    "correctAnswer": "12",
-    "answers": [
-      "12",
-      "15",
-      "13",
-      "11"
-    ]
-  },
-  {
-    "id": "ss-154",
-    "question": "Share 45 coins equally between 5 monsters.",
-    "correctAnswer": "9",
-    "answers": [
-      "9",
-      "8",
-      "10",
-      "12"
-    ]
-  },
-  {
-    "id": "ss-155",
-    "question": "Share 20 coins equally between 2 monsters.",
-    "correctAnswer": "10",
-    "answers": [
-      "9",
-      "13",
-      "11",
       "10"
     ]
   },
   {
-    "id": "ss-156",
-    "question": "Share 33 coins equally between 3 monsters.",
-    "correctAnswer": "11",
-    "answers": [
-      "14",
-      "12",
-      "11",
-      "10"
-    ]
-  },
-  {
-    "id": "ss-157",
-    "question": "Share 33 coins equally between 3 monsters.",
-    "correctAnswer": "11",
-    "answers": [
-      "14",
-      "12",
-      "11",
-      "10"
-    ]
-  },
-  {
-    "id": "ss-158",
-    "question": "Share 24 coins equally between 3 monsters.",
-    "correctAnswer": "8",
-    "answers": [
-      "11",
-      "7",
-      "9",
-      "8"
-    ]
-  },
-  {
-    "id": "ss-159",
-    "question": "Share 6 coins equally between 2 monsters.",
-    "correctAnswer": "3",
-    "answers": [
-      "2",
-      "6",
-      "4",
-      "3"
-    ]
-  },
-  {
-    "id": "ss-160",
-    "question": "Share 44 coins equally between 4 monsters.",
-    "correctAnswer": "11",
-    "answers": [
-      "14",
-      "10",
-      "12",
-      "11"
-    ]
-  },
-  {
-    "id": "ss-161",
-    "question": "Share 8 coins equally between 4 monsters.",
-    "correctAnswer": "2",
-    "answers": [
-      "3",
-      "5",
-      "1",
-      "2"
-    ]
-  },
-  {
-    "id": "ss-162",
-    "question": "Share 30 coins equally between 3 monsters.",
-    "correctAnswer": "10",
-    "answers": [
-      "10",
-      "13",
-      "9",
-      "11"
-    ]
-  },
-  {
-    "id": "ss-163",
-    "question": "Share 15 coins equally between 3 monsters.",
-    "correctAnswer": "5",
-    "answers": [
-      "5",
-      "4",
-      "8",
-      "6"
-    ]
-  },
-  {
-    "id": "ss-164",
-    "question": "Share 18 coins equally between 2 monsters.",
-    "correctAnswer": "9",
-    "answers": [
-      "12",
-      "8",
-      "9",
-      "10"
-    ]
-  },
-  {
-    "id": "ss-165",
-    "question": "Share 8 coins equally between 2 monsters.",
-    "correctAnswer": "4",
-    "answers": [
-      "5",
-      "7",
-      "3",
-      "4"
-    ]
-  },
-  {
-    "id": "ss-166",
-    "question": "Share 15 coins equally between 3 monsters.",
-    "correctAnswer": "5",
-    "answers": [
-      "4",
-      "8",
-      "6",
-      "5"
-    ]
-  },
-  {
-    "id": "ss-167",
-    "question": "Share 54 coins equally between 6 monsters.",
-    "correctAnswer": "9",
-    "answers": [
-      "10",
-      "8",
-      "9",
-      "12"
-    ]
-  },
-  {
-    "id": "ss-168",
-    "question": "Share 32 coins equally between 4 monsters.",
-    "correctAnswer": "8",
-    "answers": [
-      "9",
-      "7",
-      "8",
-      "11"
-    ]
-  },
-  {
-    "id": "ss-169",
-    "question": "Share 36 coins equally between 6 monsters.",
-    "correctAnswer": "6",
-    "answers": [
-      "7",
-      "6",
-      "5",
-      "9"
-    ]
-  },
-  {
-    "id": "ss-170",
-    "question": "Share 20 coins equally between 5 monsters.",
-    "correctAnswer": "4",
-    "answers": [
-      "5",
-      "3",
-      "7",
-      "4"
-    ]
-  },
-  {
-    "id": "ss-171",
-    "question": "Share 12 coins equally between 3 monsters.",
-    "correctAnswer": "4",
-    "answers": [
-      "4",
-      "3",
-      "7",
-      "5"
-    ]
-  },
-  {
-    "id": "ss-172",
-    "question": "Share 24 coins equally between 4 monsters.",
-    "correctAnswer": "6",
-    "answers": [
-      "9",
-      "7",
-      "5",
-      "6"
-    ]
-  },
-  {
-    "id": "ss-173",
-    "question": "Share 48 coins equally between 4 monsters.",
-    "correctAnswer": "12",
-    "answers": [
-      "12",
-      "15",
-      "13",
-      "11"
-    ]
-  },
-  {
-    "id": "ss-174",
-    "question": "Share 18 coins equally between 2 monsters.",
-    "correctAnswer": "9",
-    "answers": [
-      "8",
-      "9",
-      "10",
-      "12"
-    ]
-  },
-  {
-    "id": "ss-175",
-    "question": "Share 12 coins equally between 2 monsters.",
-    "correctAnswer": "6",
-    "answers": [
-      "5",
-      "7",
-      "6",
-      "9"
-    ]
-  },
-  {
-    "id": "ss-176",
-    "question": "Share 22 coins equally between 2 monsters.",
-    "correctAnswer": "11",
-    "answers": [
-      "14",
-      "12",
-      "11",
-      "10"
-    ]
-  },
-  {
-    "id": "ss-177",
-    "question": "Share 14 coins equally between 2 monsters.",
-    "correctAnswer": "7",
-    "answers": [
-      "7",
-      "6",
-      "10",
-      "8"
-    ]
-  },
-  {
-    "id": "ss-178",
-    "question": "Share 8 coins equally between 4 monsters.",
-    "correctAnswer": "2",
-    "answers": [
-      "1",
-      "2",
-      "5",
-      "3"
-    ]
-  },
-  {
-    "id": "ss-179",
+    "id": "sharesplitter-114",
     "question": "Share 40 coins equally between 4 monsters.",
     "correctAnswer": "10",
     "answers": [
       "11",
+      "13",
       "10",
+      "9"
+    ]
+  },
+  {
+    "id": "sharesplitter-115",
+    "question": "Share 20 coins equally between 2 monsters.",
+    "correctAnswer": "10",
+    "answers": [
+      "13",
+      "11",
       "9",
-      "13"
+      "10"
     ]
   },
   {
-    "id": "ss-180",
-    "question": "Share 36 coins equally between 3 monsters.",
-    "correctAnswer": "12",
+    "id": "sharesplitter-116",
+    "question": "Share 57 coins equally between 3 monsters.",
+    "correctAnswer": "19",
     "answers": [
-      "12",
-      "11",
-      "15",
-      "13"
+      "19",
+      "22",
+      "20",
+      "18"
     ]
   },
   {
-    "id": "ss-181",
-    "question": "Share 20 coins equally between 5 monsters.",
-    "correctAnswer": "4",
-    "answers": [
-      "4",
-      "5",
-      "7",
-      "3"
-    ]
-  },
-  {
-    "id": "ss-182",
-    "question": "Share 15 coins equally between 5 monsters.",
-    "correctAnswer": "3",
-    "answers": [
-      "3",
-      "2",
-      "4",
-      "6"
-    ]
-  },
-  {
-    "id": "ss-183",
-    "question": "Share 72 coins equally between 6 monsters.",
-    "correctAnswer": "12",
-    "answers": [
-      "12",
-      "15",
-      "11",
-      "13"
-    ]
-  },
-  {
-    "id": "ss-184",
-    "question": "Share 21 coins equally between 3 monsters.",
-    "correctAnswer": "7",
-    "answers": [
-      "7",
-      "8",
-      "10",
-      "6"
-    ]
-  },
-  {
-    "id": "ss-185",
-    "question": "Share 4 coins equally between 2 monsters.",
-    "correctAnswer": "2",
-    "answers": [
-      "3",
-      "5",
-      "1",
-      "2"
-    ]
-  },
-  {
-    "id": "ss-186",
-    "question": "Share 9 coins equally between 3 monsters.",
+    "id": "sharesplitter-117",
+    "question": "Share 12 coins equally between 4 monsters.",
     "correctAnswer": "3",
     "answers": [
       "6",
@@ -2046,7 +1287,535 @@
     ]
   },
   {
-    "id": "ss-187",
+    "id": "sharesplitter-118",
+    "question": "Share 56 coins equally between 4 monsters.",
+    "correctAnswer": "14",
+    "answers": [
+      "17",
+      "13",
+      "14",
+      "15"
+    ]
+  },
+  {
+    "id": "sharesplitter-119",
+    "question": "Share 30 coins equally between 5 monsters.",
+    "correctAnswer": "6",
+    "answers": [
+      "6",
+      "5",
+      "7",
+      "9"
+    ]
+  },
+  {
+    "id": "sharesplitter-120",
+    "question": "Share 52 coins equally between 4 monsters.",
+    "correctAnswer": "13",
+    "answers": [
+      "14",
+      "16",
+      "13",
+      "12"
+    ]
+  },
+  {
+    "id": "sharesplitter-121",
+    "question": "Share 54 coins equally between 3 monsters.",
+    "correctAnswer": "18",
+    "answers": [
+      "19",
+      "17",
+      "21",
+      "18"
+    ]
+  },
+  {
+    "id": "sharesplitter-122",
+    "question": "Share 50 coins equally between 5 monsters.",
+    "correctAnswer": "10",
+    "answers": [
+      "11",
+      "10",
+      "13",
+      "9"
+    ]
+  },
+  {
+    "id": "sharesplitter-123",
+    "question": "Share 51 coins equally between 3 monsters.",
+    "correctAnswer": "17",
+    "answers": [
+      "18",
+      "17",
+      "16",
+      "20"
+    ]
+  },
+  {
+    "id": "sharesplitter-124",
+    "question": "Share 28 coins equally between 4 monsters.",
+    "correctAnswer": "7",
+    "answers": [
+      "6",
+      "8",
+      "7",
+      "10"
+    ]
+  },
+  {
+    "id": "sharesplitter-125",
+    "question": "Share 30 coins equally between 2 monsters.",
+    "correctAnswer": "15",
+    "answers": [
+      "18",
+      "15",
+      "14",
+      "16"
+    ]
+  },
+  {
+    "id": "sharesplitter-126",
+    "question": "Share 32 coins equally between 4 monsters.",
+    "correctAnswer": "8",
+    "answers": [
+      "7",
+      "8",
+      "9",
+      "11"
+    ]
+  },
+  {
+    "id": "sharesplitter-127",
+    "question": "Share 25 coins equally between 5 monsters.",
+    "correctAnswer": "5",
+    "answers": [
+      "8",
+      "4",
+      "6",
+      "5"
+    ]
+  },
+  {
+    "id": "sharesplitter-128",
+    "question": "Share 30 coins equally between 2 monsters.",
+    "correctAnswer": "15",
+    "answers": [
+      "15",
+      "16",
+      "14",
+      "18"
+    ]
+  },
+  {
+    "id": "sharesplitter-129",
+    "question": "Share 50 coins equally between 5 monsters.",
+    "correctAnswer": "10",
+    "answers": [
+      "11",
+      "9",
+      "13",
+      "10"
+    ]
+  },
+  {
+    "id": "sharesplitter-130",
+    "question": "Share 33 coins equally between 3 monsters.",
+    "correctAnswer": "11",
+    "answers": [
+      "14",
+      "12",
+      "11",
+      "10"
+    ]
+  },
+  {
+    "id": "sharesplitter-131",
+    "question": "Share 35 coins equally between 5 monsters.",
+    "correctAnswer": "7",
+    "answers": [
+      "10",
+      "7",
+      "8",
+      "6"
+    ]
+  },
+  {
+    "id": "sharesplitter-132",
+    "question": "Share 28 coins equally between 4 monsters.",
+    "correctAnswer": "7",
+    "answers": [
+      "10",
+      "8",
+      "6",
+      "7"
+    ]
+  },
+  {
+    "id": "sharesplitter-133",
+    "question": "Share 20 coins equally between 4 monsters.",
+    "correctAnswer": "5",
+    "answers": [
+      "5",
+      "8",
+      "6",
+      "4"
+    ]
+  },
+  {
+    "id": "sharesplitter-134",
+    "question": "Share 36 coins equally between 4 monsters.",
+    "correctAnswer": "9",
+    "answers": [
+      "10",
+      "12",
+      "9",
+      "8"
+    ]
+  },
+  {
+    "id": "sharesplitter-135",
+    "question": "Share 16 coins equally between 4 monsters.",
+    "correctAnswer": "4",
+    "answers": [
+      "7",
+      "5",
+      "3",
+      "4"
+    ]
+  },
+  {
+    "id": "sharesplitter-136",
+    "question": "Share 22 coins equally between 2 monsters.",
+    "correctAnswer": "11",
+    "answers": [
+      "11",
+      "10",
+      "14",
+      "12"
+    ]
+  },
+  {
+    "id": "sharesplitter-137",
+    "question": "Share 51 coins equally between 3 monsters.",
+    "correctAnswer": "17",
+    "answers": [
+      "18",
+      "20",
+      "17",
+      "16"
+    ]
+  },
+  {
+    "id": "sharesplitter-138",
+    "question": "Share 16 coins equally between 4 monsters.",
+    "correctAnswer": "4",
+    "answers": [
+      "5",
+      "3",
+      "4",
+      "7"
+    ]
+  },
+  {
+    "id": "sharesplitter-139",
+    "question": "Share 16 coins equally between 4 monsters.",
+    "correctAnswer": "4",
+    "answers": [
+      "3",
+      "4",
+      "7",
+      "5"
+    ]
+  },
+  {
+    "id": "sharesplitter-140",
+    "question": "Share 25 coins equally between 5 monsters.",
+    "correctAnswer": "5",
+    "answers": [
+      "4",
+      "5",
+      "8",
+      "6"
+    ]
+  },
+  {
+    "id": "sharesplitter-141",
+    "question": "Share 48 coins equally between 4 monsters.",
+    "correctAnswer": "12",
+    "answers": [
+      "12",
+      "11",
+      "13",
+      "15"
+    ]
+  },
+  {
+    "id": "sharesplitter-142",
+    "question": "Share 28 coins equally between 4 monsters.",
+    "correctAnswer": "7",
+    "answers": [
+      "8",
+      "7",
+      "10",
+      "6"
+    ]
+  },
+  {
+    "id": "sharesplitter-143",
+    "question": "Share 10 coins equally between 5 monsters.",
+    "correctAnswer": "2",
+    "answers": [
+      "3",
+      "1",
+      "5",
+      "2"
+    ]
+  },
+  {
+    "id": "sharesplitter-144",
+    "question": "Share 51 coins equally between 3 monsters.",
+    "correctAnswer": "17",
+    "answers": [
+      "20",
+      "18",
+      "17",
+      "16"
+    ]
+  },
+  {
+    "id": "sharesplitter-145",
+    "question": "Share 30 coins equally between 3 monsters.",
+    "correctAnswer": "10",
+    "answers": [
+      "13",
+      "9",
+      "10",
+      "11"
+    ]
+  },
+  {
+    "id": "sharesplitter-146",
+    "question": "Share 21 coins equally between 3 monsters.",
+    "correctAnswer": "7",
+    "answers": [
+      "10",
+      "6",
+      "7",
+      "8"
+    ]
+  },
+  {
+    "id": "sharesplitter-147",
+    "question": "Share 55 coins equally between 5 monsters.",
+    "correctAnswer": "11",
+    "answers": [
+      "11",
+      "14",
+      "12",
+      "10"
+    ]
+  },
+  {
+    "id": "sharesplitter-148",
+    "question": "Share 52 coins equally between 4 monsters.",
+    "correctAnswer": "13",
+    "answers": [
+      "12",
+      "13",
+      "14",
+      "16"
+    ]
+  },
+  {
+    "id": "sharesplitter-149",
+    "question": "Share 45 coins equally between 5 monsters.",
+    "correctAnswer": "9",
+    "answers": [
+      "9",
+      "12",
+      "8",
+      "10"
+    ]
+  },
+  {
+    "id": "sharesplitter-150",
+    "question": "Share 18 coins equally between 2 monsters.",
+    "correctAnswer": "9",
+    "answers": [
+      "12",
+      "10",
+      "8",
+      "9"
+    ]
+  },
+  {
+    "id": "sharesplitter-151",
+    "question": "Share 20 coins equally between 4 monsters.",
+    "correctAnswer": "5",
+    "answers": [
+      "5",
+      "4",
+      "6",
+      "8"
+    ]
+  },
+  {
+    "id": "sharesplitter-152",
+    "question": "Share 46 coins equally between 2 monsters.",
+    "correctAnswer": "23",
+    "answers": [
+      "22",
+      "23",
+      "26",
+      "24"
+    ]
+  },
+  {
+    "id": "sharesplitter-153",
+    "question": "Share 60 coins equally between 5 monsters.",
+    "correctAnswer": "12",
+    "answers": [
+      "11",
+      "12",
+      "15",
+      "13"
+    ]
+  },
+  {
+    "id": "sharesplitter-154",
+    "question": "Share 33 coins equally between 3 monsters.",
+    "correctAnswer": "11",
+    "answers": [
+      "12",
+      "14",
+      "11",
+      "10"
+    ]
+  },
+  {
+    "id": "sharesplitter-155",
+    "question": "Share 52 coins equally between 2 monsters.",
+    "correctAnswer": "26",
+    "answers": [
+      "29",
+      "25",
+      "27",
+      "26"
+    ]
+  },
+  {
+    "id": "sharesplitter-156",
+    "question": "Share 50 coins equally between 5 monsters.",
+    "correctAnswer": "10",
+    "answers": [
+      "9",
+      "11",
+      "10",
+      "13"
+    ]
+  },
+  {
+    "id": "sharesplitter-157",
+    "question": "Share 18 coins equally between 2 monsters.",
+    "correctAnswer": "9",
+    "answers": [
+      "9",
+      "10",
+      "12",
+      "8"
+    ]
+  },
+  {
+    "id": "sharesplitter-158",
+    "question": "Share 54 coins equally between 3 monsters.",
+    "correctAnswer": "18",
+    "answers": [
+      "18",
+      "19",
+      "17",
+      "21"
+    ]
+  },
+  {
+    "id": "sharesplitter-159",
+    "question": "Share 12 coins equally between 3 monsters.",
+    "correctAnswer": "4",
+    "answers": [
+      "4",
+      "7",
+      "5",
+      "3"
+    ]
+  },
+  {
+    "id": "sharesplitter-160",
+    "question": "Share 12 coins equally between 4 monsters.",
+    "correctAnswer": "3",
+    "answers": [
+      "6",
+      "2",
+      "4",
+      "3"
+    ]
+  },
+  {
+    "id": "sharesplitter-161",
+    "question": "Share 25 coins equally between 5 monsters.",
+    "correctAnswer": "5",
+    "answers": [
+      "5",
+      "8",
+      "4",
+      "6"
+    ]
+  },
+  {
+    "id": "sharesplitter-162",
+    "question": "Share 20 coins equally between 5 monsters.",
+    "correctAnswer": "4",
+    "answers": [
+      "3",
+      "5",
+      "7",
+      "4"
+    ]
+  },
+  {
+    "id": "sharesplitter-163",
+    "question": "Share 30 coins equally between 5 monsters.",
+    "correctAnswer": "6",
+    "answers": [
+      "5",
+      "7",
+      "6",
+      "9"
+    ]
+  },
+  {
+    "id": "sharesplitter-164",
+    "question": "Share 50 coins equally between 2 monsters.",
+    "correctAnswer": "25",
+    "answers": [
+      "25",
+      "24",
+      "28",
+      "26"
+    ]
+  },
+  {
+    "id": "sharesplitter-165",
+    "question": "Share 20 coins equally between 5 monsters.",
+    "correctAnswer": "4",
+    "answers": [
+      "4",
+      "3",
+      "7",
+      "5"
+    ]
+  },
+  {
+    "id": "sharesplitter-166",
     "question": "Share 20 coins equally between 4 monsters.",
     "correctAnswer": "5",
     "answers": [
@@ -2057,52 +1826,327 @@
     ]
   },
   {
-    "id": "ss-188",
-    "question": "Share 40 coins equally between 5 monsters.",
-    "correctAnswer": "8",
+    "id": "sharesplitter-167",
+    "question": "Share 35 coins equally between 5 monsters.",
+    "correctAnswer": "7",
     "answers": [
+      "10",
+      "8",
       "7",
+      "6"
+    ]
+  },
+  {
+    "id": "sharesplitter-168",
+    "question": "Share 27 coins equally between 3 monsters.",
+    "correctAnswer": "9",
+    "answers": [
+      "10",
+      "12",
       "9",
-      "11",
       "8"
     ]
   },
   {
-    "id": "ss-189",
-    "question": "Share 4 coins equally between 2 monsters.",
-    "correctAnswer": "2",
-    "answers": [
-      "5",
-      "1",
-      "3",
-      "2"
-    ]
-  },
-  {
-    "id": "ss-190",
-    "question": "Share 72 coins equally between 6 monsters.",
-    "correctAnswer": "12",
+    "id": "sharesplitter-169",
+    "question": "Share 50 coins equally between 5 monsters.",
+    "correctAnswer": "10",
     "answers": [
       "11",
       "13",
-      "15",
-      "12"
+      "9",
+      "10"
     ]
   },
   {
-    "id": "ss-191",
-    "question": "Share 18 coins equally between 2 monsters.",
-    "correctAnswer": "9",
+    "id": "sharesplitter-170",
+    "question": "Share 55 coins equally between 5 monsters.",
+    "correctAnswer": "11",
+    "answers": [
+      "12",
+      "14",
+      "11",
+      "10"
+    ]
+  },
+  {
+    "id": "sharesplitter-171",
+    "question": "Share 21 coins equally between 3 monsters.",
+    "correctAnswer": "7",
     "answers": [
       "10",
+      "7",
       "8",
-      "9",
-      "12"
+      "6"
     ]
   },
   {
-    "id": "ss-192",
-    "question": "Share 18 coins equally between 3 monsters.",
+    "id": "sharesplitter-172",
+    "question": "Share 12 coins equally between 3 monsters.",
+    "correctAnswer": "4",
+    "answers": [
+      "7",
+      "3",
+      "4",
+      "5"
+    ]
+  },
+  {
+    "id": "sharesplitter-173",
+    "question": "Share 45 coins equally between 3 monsters.",
+    "correctAnswer": "15",
+    "answers": [
+      "18",
+      "16",
+      "15",
+      "14"
+    ]
+  },
+  {
+    "id": "sharesplitter-174",
+    "question": "Share 28 coins equally between 2 monsters.",
+    "correctAnswer": "14",
+    "answers": [
+      "14",
+      "17",
+      "13",
+      "15"
+    ]
+  },
+  {
+    "id": "sharesplitter-175",
+    "question": "Share 32 coins equally between 2 monsters.",
+    "correctAnswer": "16",
+    "answers": [
+      "16",
+      "15",
+      "19",
+      "17"
+    ]
+  },
+  {
+    "id": "sharesplitter-176",
+    "question": "Share 50 coins equally between 5 monsters.",
+    "correctAnswer": "10",
+    "answers": [
+      "9",
+      "11",
+      "13",
+      "10"
+    ]
+  },
+  {
+    "id": "sharesplitter-177",
+    "question": "Share 45 coins equally between 5 monsters.",
+    "correctAnswer": "9",
+    "answers": [
+      "12",
+      "8",
+      "9",
+      "10"
+    ]
+  },
+  {
+    "id": "sharesplitter-178",
+    "question": "Share 20 coins equally between 2 monsters.",
+    "correctAnswer": "10",
+    "answers": [
+      "9",
+      "11",
+      "13",
+      "10"
+    ]
+  },
+  {
+    "id": "sharesplitter-179",
+    "question": "Share 58 coins equally between 2 monsters.",
+    "correctAnswer": "29",
+    "answers": [
+      "28",
+      "29",
+      "30",
+      "32"
+    ]
+  },
+  {
+    "id": "sharesplitter-180",
+    "question": "Share 32 coins equally between 2 monsters.",
+    "correctAnswer": "16",
+    "answers": [
+      "16",
+      "15",
+      "17",
+      "19"
+    ]
+  },
+  {
+    "id": "sharesplitter-181",
+    "question": "Share 40 coins equally between 2 monsters.",
+    "correctAnswer": "20",
+    "answers": [
+      "21",
+      "19",
+      "23",
+      "20"
+    ]
+  },
+  {
+    "id": "sharesplitter-182",
+    "question": "Share 27 coins equally between 3 monsters.",
+    "correctAnswer": "9",
+    "answers": [
+      "12",
+      "10",
+      "8",
+      "9"
+    ]
+  },
+  {
+    "id": "sharesplitter-183",
+    "question": "Share 54 coins equally between 2 monsters.",
+    "correctAnswer": "27",
+    "answers": [
+      "28",
+      "30",
+      "26",
+      "27"
+    ]
+  },
+  {
+    "id": "sharesplitter-184",
+    "question": "Share 45 coins equally between 5 monsters.",
+    "correctAnswer": "9",
+    "answers": [
+      "12",
+      "8",
+      "9",
+      "10"
+    ]
+  },
+  {
+    "id": "sharesplitter-185",
+    "question": "Share 16 coins equally between 4 monsters.",
+    "correctAnswer": "4",
+    "answers": [
+      "3",
+      "7",
+      "4",
+      "5"
+    ]
+  },
+  {
+    "id": "sharesplitter-186",
+    "question": "Share 40 coins equally between 4 monsters.",
+    "correctAnswer": "10",
+    "answers": [
+      "13",
+      "9",
+      "10",
+      "11"
+    ]
+  },
+  {
+    "id": "sharesplitter-187",
+    "question": "Share 50 coins equally between 5 monsters.",
+    "correctAnswer": "10",
+    "answers": [
+      "10",
+      "9",
+      "13",
+      "11"
+    ]
+  },
+  {
+    "id": "sharesplitter-188",
+    "question": "Share 33 coins equally between 3 monsters.",
+    "correctAnswer": "11",
+    "answers": [
+      "12",
+      "10",
+      "14",
+      "11"
+    ]
+  },
+  {
+    "id": "sharesplitter-189",
+    "question": "Share 50 coins equally between 2 monsters.",
+    "correctAnswer": "25",
+    "answers": [
+      "26",
+      "24",
+      "25",
+      "28"
+    ]
+  },
+  {
+    "id": "sharesplitter-190",
+    "question": "Share 45 coins equally between 5 monsters.",
+    "correctAnswer": "9",
+    "answers": [
+      "8",
+      "12",
+      "10",
+      "9"
+    ]
+  },
+  {
+    "id": "sharesplitter-191",
+    "question": "Share 45 coins equally between 5 monsters.",
+    "correctAnswer": "9",
+    "answers": [
+      "9",
+      "12",
+      "8",
+      "10"
+    ]
+  },
+  {
+    "id": "sharesplitter-192",
+    "question": "Share 30 coins equally between 5 monsters.",
+    "correctAnswer": "6",
+    "answers": [
+      "5",
+      "9",
+      "7",
+      "6"
+    ]
+  },
+  {
+    "id": "sharesplitter-193",
+    "question": "Share 52 coins equally between 2 monsters.",
+    "correctAnswer": "26",
+    "answers": [
+      "26",
+      "27",
+      "25",
+      "29"
+    ]
+  },
+  {
+    "id": "sharesplitter-194",
+    "question": "Share 10 coins equally between 5 monsters.",
+    "correctAnswer": "2",
+    "answers": [
+      "1",
+      "2",
+      "5",
+      "3"
+    ]
+  },
+  {
+    "id": "sharesplitter-195",
+    "question": "Share 42 coins equally between 2 monsters.",
+    "correctAnswer": "21",
+    "answers": [
+      "24",
+      "21",
+      "22",
+      "20"
+    ]
+  },
+  {
+    "id": "sharesplitter-196",
+    "question": "Share 24 coins equally between 4 monsters.",
     "correctAnswer": "6",
     "answers": [
       "6",
@@ -2112,91 +2156,47 @@
     ]
   },
   {
-    "id": "ss-193",
-    "question": "Share 15 coins equally between 3 monsters.",
-    "correctAnswer": "5",
+    "id": "sharesplitter-197",
+    "question": "Share 32 coins equally between 4 monsters.",
+    "correctAnswer": "8",
     "answers": [
-      "4",
-      "5",
-      "8",
-      "6"
-    ]
-  },
-  {
-    "id": "ss-194",
-    "question": "Share 22 coins equally between 2 monsters.",
-    "correctAnswer": "11",
-    "answers": [
-      "12",
-      "14",
-      "10",
-      "11"
-    ]
-  },
-  {
-    "id": "ss-195",
-    "question": "Share 6 coins equally between 3 monsters.",
-    "correctAnswer": "2",
-    "answers": [
-      "1",
-      "5",
-      "2",
-      "3"
-    ]
-  },
-  {
-    "id": "ss-196",
-    "question": "Share 55 coins equally between 5 monsters.",
-    "correctAnswer": "11",
-    "answers": [
-      "10",
-      "14",
-      "12",
-      "11"
-    ]
-  },
-  {
-    "id": "ss-197",
-    "question": "Share 54 coins equally between 6 monsters.",
-    "correctAnswer": "9",
-    "answers": [
-      "8",
-      "12",
       "9",
-      "10"
+      "7",
+      "11",
+      "8"
     ]
   },
   {
-    "id": "ss-198",
-    "question": "Share 42 coins equally between 6 monsters.",
+    "id": "sharesplitter-198",
+    "question": "Share 21 coins equally between 3 monsters.",
     "correctAnswer": "7",
     "answers": [
-      "8",
       "7",
       "10",
+      "8",
       "6"
     ]
   },
   {
-    "id": "ss-199",
-    "question": "Share 18 coins equally between 2 monsters.",
-    "correctAnswer": "9",
+    "id": "sharesplitter-199",
+    "question": "Share 54 coins equally between 3 monsters.",
+    "correctAnswer": "18",
     "answers": [
-      "9",
-      "10",
-      "8",
-      "12"
+      "19",
+      "18",
+      "21",
+      "17"
     ]
   },
   {
-    "id": "ss-200",
-    "question": "Share 22 coins equally between 2 monsters.",
-    "correctAnswer": "11",
+    "id": "sharesplitter-200",
+    "question": "Share 16 coins equally between 4 monsters.",
+    "correctAnswer": "4",
     "answers": [
-      "10",
-      "12",
-      "14",
-      "11"
+      "7",
+      "4",
+      "5",
+      "3"
     ]
   }
 ]

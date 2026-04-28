@@ -16,6 +16,10 @@ type ExternalMultipleChoiceRow = {
   difficulty?: 'easy' | 'medium' | 'hard';
 };
 
+const externalCalculationClashRows = externalCalculationClash as unknown as ExternalMultipleChoiceRow[];
+const externalScaleBuilderRows = externalScaleBuilder as unknown as ExternalMultipleChoiceRow[];
+const externalGraphGrabberRows = externalGraphGrabber as unknown as ExternalMultipleChoiceRow[];
+
 export type SupportedChallengeGameType =
   | 'place_value_peaks'
   | 'calculation_clash'
@@ -239,15 +243,15 @@ const buildExternalChallengeQuestion = (
 };
 
 const EXTERNAL_CHALLENGE_BANKS: Partial<Record<SupportedChallengeGameType, BankEntry<ChallengeQuestion>[]>> = {
-  calculation_clash: externalCalculationClash.map((row) => ({
+  calculation_clash: externalCalculationClashRows.map((row) => ({
     minLevel: difficultyToMinLevel(row.difficulty),
     value: buildExternalChallengeQuestion('calculation_clash', row),
   })),
-  scale_safari: externalScaleBuilder.map((row) => ({
+  scale_safari: externalScaleBuilderRows.map((row) => ({
     minLevel: difficultyToMinLevel(row.difficulty),
     value: buildExternalChallengeQuestion('scale_safari', row),
   })),
-  graph_grabber: externalGraphGrabber.map((row) => ({
+  graph_grabber: externalGraphGrabberRows.map((row) => ({
     minLevel: difficultyToMinLevel(row.difficulty),
     value: buildExternalChallengeQuestion('graph_grabber', row),
   })),
