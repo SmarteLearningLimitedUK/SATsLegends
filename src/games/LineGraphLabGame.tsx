@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   AlertCircle,
   CheckCircle2,
@@ -13,6 +13,7 @@ import {
   CartesianGrid,
   Line,
   LineChart,
+  ResponsiveContainer,
   XAxis,
   YAxis,
 } from 'recharts';
@@ -266,8 +267,6 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   const [round, setRound] = useState<RoundData | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-  const chartWrapRef = useRef<HTMLDivElement | null>(null);
-  const [chartSize, setChartSize] = useState({ width: 0, height: 0 });
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
   const loadLevel = useCallback((targetLevel: number) => {
@@ -284,39 +283,6 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   useEffect(() => {
     setShowPracticeIntro(Boolean(isPractice));
   }, [isPractice]);
-
-  useLayoutEffect(() => {
-    const node = chartWrapRef.current;
-    if (!node) return undefined;
-
-    const measure = () => {
-      const rect = node.getBoundingClientRect();
-      const nextWidth = Math.floor(rect.width);
-      const nextHeight = Math.floor(rect.height);
-      if (nextWidth > 0 && nextHeight > 0) {
-        setChartSize({ width: nextWidth, height: nextHeight });
-      }
-    };
-
-    measure();
-    const settleFrame = window.requestAnimationFrame(measure);
-    window.addEventListener('resize', measure);
-
-    if (typeof ResizeObserver === 'undefined') {
-      return () => {
-        window.cancelAnimationFrame(settleFrame);
-        window.removeEventListener('resize', measure);
-      };
-    }
-
-    const observer = new ResizeObserver(() => measure());
-    observer.observe(node);
-    return () => {
-      window.cancelAnimationFrame(settleFrame);
-      window.removeEventListener('resize', measure);
-      observer.disconnect();
-    };
-  }, []);
 
   const startGame = () => {
     setXP(0);
@@ -359,12 +325,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
     const top = clamp(Math.ceil((maxValue + 3) / 5) * 5, 20, 60);
     return Array.from({ length: top + 1 }, (_, index) => index);
   }, [round]);
-  const chartFrameSize = useMemo(() => ({
-    width: Math.max(0, chartSize.width - 12),
-    height: Math.max(0, chartSize.height - 12),
-  }), [chartSize.height, chartSize.width]);
-
-    return (
+  return (
     <GameUiShell backgroundImage={lineGraphLabBackground} overlayDisabled className="bg-transparent">
       <PracticeIntroPopup
         open={showPracticeIntro}
@@ -377,95 +338,107 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
         className="relative h-full w-full min-h-0 select-none gap-0 text-slate-100"
         topClassName="flex items-start justify-center px-2 pt-0 sm:px-3 md:px-4"
         top={(
-          <GameQuestionCard className="w-full max-w-[780px]" title="Line Graph Lab" subtitle={round?.helper || ''}>
+          <GameQuestionCard
+            className="w-full max-w-[780px]"
+            title="Line Graph Lab"
+            subtitle={undefined}
+            style={{
+              ['--question-card-padding' as any]: '14px 18px',
+            }}
+            bodyClassName="text-[clamp(0.95rem,2.6vw,1.22rem)] font-black leading-snug text-white"
+          >
             {round?.question ?? ''}
           </GameQuestionCard>
         )}
         main={(
-          <section className="flex min-h-0 flex-1 flex-col gap-2 px-2 pb-3 sm:gap-3 sm:px-3 sm:pb-4 md:px-4 md:pb-5">
-            <div className="mt-0.5 flex min-h-0 flex-1 flex-col rounded-[1.75rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(8,24,54,0.55),rgba(4,12,28,0.38))] p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_18px_40px_rgba(2,6,23,0.18)] backdrop-blur-[2px] sm:p-4 md:p-5">
+          <section className="flex min-h-0 flex-1 flex-col gap-1.5 px-2 pb-2 sm:gap-2 sm:px-3 sm:pb-3 md:px-4 md:pb-4">
+            <div className="mt-0.5 flex min-h-0 flex-1 flex-col rounded-[1.75rem] border border-cyan-100/16 bg-[linear-gradient(180deg,rgba(8,24,54,0.55),rgba(4,12,28,0.38))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_18px_40px_rgba(2,6,23,0.18)] backdrop-blur-[2px] sm:p-3 md:p-4">
+              {round?.helper ? (
+                <div className="mb-1.5 px-1 text-center text-[10px] font-bold leading-tight text-cyan-100/88 sm:text-[11px]">
+                  {round.helper}
+                </div>
+              ) : null}
               <div
-                ref={chartWrapRef}
-                className="relative min-h-0 w-full flex-1 overflow-hidden rounded-2xl border border-slate-200/12 bg-[linear-gradient(180deg,rgba(7,18,38,0.68),rgba(4,10,24,0.42))] p-3 pb-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
+                className="relative h-[15rem] w-full shrink-0 overflow-hidden rounded-2xl border border-slate-200/12 bg-[linear-gradient(180deg,rgba(7,18,38,0.68),rgba(4,10,24,0.42))] p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] sm:h-[17rem] sm:p-3 md:h-[18.5rem]"
               >
                 <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(125,211,252,0.12),transparent_58%)]" />
                 <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),transparent_30%,rgba(255,255,255,0.02))]" />
-                {round && chartFrameSize.width > 0 && chartFrameSize.height > 0 && (
+                {round && (
                   <div className="relative z-10 h-full w-full">
-                  <LineChart
-                    width={chartFrameSize.width}
-                    height={chartFrameSize.height}
-                    data={round.graph}
-                    margin={{ top: 24, right: 18, left: 4, bottom: 28 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.22)" />
-                    <XAxis
-                      dataKey="label"
-                      tick={{ fill: '#dbeafe', fontSize: 12, fontWeight: 700 }}
-                      axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
-                      tickLine={{ stroke: 'rgba(191,219,254,0.45)' }}
-                      label={{ value: 'X Axis', position: 'insideBottom', offset: -6, fill: '#93c5fd', fontSize: 12, fontWeight: 800 }}
-                    />
-                    <YAxis
-                      ticks={yTicks}
-                      domain={[0, yTicks[yTicks.length - 1]]}
-                      tick={GraphYAxisTick as never}
-                      tickLine={false}
-                      axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
-                      label={{ value: 'Y Axis', angle: -90, position: 'insideLeft', fill: '#93c5fd', fontSize: 12, fontWeight: 800 }}
-                      width={48}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="value"
-                      stroke="#34d399"
-                      strokeWidth={4}
-                      dot={(props) => {
-                        const { cx, cy, payload, index } = props as { cx?: number; cy?: number; payload?: DataPoint; index?: number };
-                        if (cx == null || cy == null || !payload) return null;
-                        const isMarkedPoint = round.highlightIndex === index;
-                        return (
-                          <g>
-                            {isMarkedPoint ? (
-                              <>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart
+                        data={round.graph}
+                        margin={{ top: 18, right: 14, left: 0, bottom: 18 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.22)" />
+                        <XAxis
+                          dataKey="label"
+                          tick={{ fill: '#dbeafe', fontSize: 12, fontWeight: 700 }}
+                          axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
+                          tickLine={{ stroke: 'rgba(191,219,254,0.45)' }}
+                          label={{ value: 'X Axis', position: 'insideBottom', offset: -4, fill: '#93c5fd', fontSize: 11, fontWeight: 800 }}
+                        />
+                        <YAxis
+                          ticks={yTicks}
+                          domain={[0, yTicks[yTicks.length - 1]]}
+                          tick={GraphYAxisTick as never}
+                          tickLine={false}
+                          axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
+                          label={{ value: 'Y Axis', angle: -90, position: 'insideLeft', fill: '#93c5fd', fontSize: 11, fontWeight: 800 }}
+                          width={42}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="value"
+                          stroke="#34d399"
+                          strokeWidth={4}
+                          dot={(props) => {
+                            const { cx, cy, payload, index } = props as { cx?: number; cy?: number; payload?: DataPoint; index?: number };
+                            if (cx == null || cy == null || !payload) return null;
+                            const isMarkedPoint = round.highlightIndex === index;
+                            return (
+                              <g>
+                                {isMarkedPoint ? (
+                                  <>
+                                    <circle
+                                      cx={cx}
+                                      cy={cy}
+                                      r={11}
+                                      fill="rgba(251, 191, 36, 0.22)"
+                                      stroke="#fde68a"
+                                      strokeWidth={3}
+                                    />
+                                    <text
+                                      x={cx}
+                                      y={Math.max(14, cy - 16)}
+                                      textAnchor="middle"
+                                      fill="#fef3c7"
+                                      fontSize={13}
+                                      fontWeight={900}
+                                      paintOrder="stroke"
+                                      stroke="rgba(15, 23, 42, 0.92)"
+                                      strokeWidth={4}
+                                    >
+                                      A
+                                    </text>
+                                  </>
+                                ) : null}
                                 <circle
                                   cx={cx}
                                   cy={cy}
-                                  r={11}
-                                  fill="rgba(251, 191, 36, 0.22)"
-                                  stroke="#fde68a"
-                                  strokeWidth={3}
+                                  r={isMarkedPoint ? 7 : 5}
+                                  fill={isMarkedPoint ? '#fbbf24' : '#34d399'}
+                                  stroke="#ecfeff"
+                                  strokeWidth={2}
                                 />
-                                <text
-                                  x={cx}
-                                  y={Math.max(14, cy - 16)}
-                                  textAnchor="middle"
-                                  fill="#fef3c7"
-                                  fontSize={13}
-                                  fontWeight={900}
-                                  paintOrder="stroke"
-                                  stroke="rgba(15, 23, 42, 0.92)"
-                                  strokeWidth={4}
-                                >
-                                  A
-                                </text>
-                              </>
-                            ) : null}
-                            <circle
-                              cx={cx}
-                              cy={cy}
-                              r={isMarkedPoint ? 7 : 5}
-                              fill={isMarkedPoint ? '#fbbf24' : '#34d399'}
-                              stroke="#ecfeff"
-                              strokeWidth={2}
-                            />
-                          </g>
-                        );
-                      }}
-                      activeDot={{ r: 7, fill: '#6ee7b7', stroke: '#f0fdfa', strokeWidth: 2 }}
-                      animationDuration={350}
-                    />
-                  </LineChart>
+                              </g>
+                            );
+                          }}
+                          activeDot={{ r: 7, fill: '#6ee7b7', stroke: '#f0fdfa', strokeWidth: 2 }}
+                          animationDuration={350}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
                   </div>
                 )}
               </div>
@@ -473,8 +446,8 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
           </section>
         )}
         bottom={(
-          <div className="mx-auto flex w-full max-w-[780px] flex-col gap-2 px-2 pb-[calc(env(safe-area-inset-bottom)+0.25rem)] sm:px-3 md:px-4">
-            <div className="answer-choice-surface grid grid-cols-2 gap-2">
+          <div className="mx-auto flex w-full max-w-[780px] flex-col gap-1.5 px-2 pb-[calc(env(safe-area-inset-bottom)+0.15rem)] sm:px-3 md:px-4">
+            <div className="answer-choice-surface grid grid-cols-2 gap-1.5">
               {round?.options.map(option => {
                 const isSelected = selectedAnswer === option;
                 const isCorrect = gameState === 'success' && option === round.correctAnswer;
@@ -486,7 +459,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                     whileTap={{ scale: 0.98 }}
                     onClick={() => handleAnswer(option)}
                     disabled={gameState === 'success'}
-                    className={`min-h-[3rem] rounded-2xl px-3 py-2.25 text-center sm:min-h-[3.2rem] sm:px-4 ${
+                    className={`min-h-[2.7rem] rounded-2xl px-2.5 py-2 text-center sm:min-h-[3rem] sm:px-4 ${
                       isCorrect
                         ? 'ui-button-success'
                         : isWrongSelected
@@ -496,7 +469,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                             : 'ui-button-secondary'
                     } ${gameState === 'success' ? 'cursor-default' : ''}`}
                   >
-                    <span className="text-[0.88rem] font-black leading-tight sm:text-base">{option}</span>
+                    <span className="text-[0.82rem] font-black leading-tight sm:text-[0.95rem] md:text-base">{option}</span>
                   </motion.button>
                 );
               })}

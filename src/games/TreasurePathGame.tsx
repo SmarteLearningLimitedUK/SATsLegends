@@ -34,10 +34,10 @@ interface TreasureRound {
 
 const GRID_SIZE = 7;
 const CHECKERBOARD_INSET = {
-  left: '0%',
-  top: '0%',
-  right: '0%',
-  bottom: '0%',
+  left: '13.6%',
+  top: '13.2%',
+  right: '13.4%',
+  bottom: '13.8%',
 };
 const randomInt = (max: number) => Math.floor(Math.random() * max) + 1;
 
@@ -264,18 +264,18 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
           <GameQuestionCard
             title={gameTitle || 'Coordinates Quest'}
             subtitle={undefined}
-            className="min-h-[8.1rem]"
+            className="min-h-[8.9rem]"
             style={{
-              ['--question-card-padding' as any]: '18px 20px',
+              ['--question-card-padding' as any]: '18px 20px 20px',
             }}
-            bodyClassName="min-h-[4.5rem] pt-4 text-[clamp(0.95rem,2.9vw,1.3rem)] font-black leading-snug tracking-[0.01em] text-white md:pt-5 md:text-[clamp(1.05rem,2.2vw,1.4rem)]"
+            bodyClassName="flex min-h-[5.1rem] items-end pt-6 text-[clamp(0.95rem,2.9vw,1.3rem)] font-black leading-snug tracking-[0.01em] text-white md:pt-7 md:text-[clamp(1.05rem,2.2vw,1.4rem)]"
           >
             {round.promptText}
           </GameQuestionCard>
         </div>
 
         <div className="relative flex min-h-0 flex-1 items-center justify-center">
-          <div className="relative aspect-square w-[min(94vw,64vh,38rem)] overflow-hidden rounded-[1.5rem] border border-cyan-100/26 shadow-[0_18px_36px_rgba(2,6,23,0.4)] md:w-[min(88vw,64vh,40rem)]">
+          <div className="relative aspect-square w-[min(86vw,56vh,33rem)] overflow-hidden rounded-[1.5rem] border border-cyan-100/26 shadow-[0_18px_36px_rgba(2,6,23,0.4)] md:w-[min(82vw,58vh,35rem)]">
             <div className="absolute inset-0">
               <img
                 src={coordinateQuestBoard}
@@ -348,24 +348,24 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
             <div
               className="pointer-events-none absolute z-30 flex items-center justify-center"
               style={{
-                left: '0.75rem',
-                right: '0.75rem',
-                bottom: '0.55rem',
+                left: '1rem',
+                right: '1rem',
+                bottom: '0.4rem',
               }}
             >
-              <div className="rounded-full border border-cyan-100/55 bg-slate-950/72 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-50 shadow-[0_8px_18px_rgba(2,6,23,0.45)] backdrop-blur-sm">
+              <div className="rounded-full border border-cyan-100/55 bg-slate-950/72 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-cyan-50 shadow-[0_8px_18px_rgba(2,6,23,0.45)] backdrop-blur-sm md:px-3 md:text-[10px]">
                 X Axis →
               </div>
             </div>
             <div
               className="pointer-events-none absolute z-30 flex items-center justify-start"
               style={{
-                left: '0.55rem',
-                top: '0.75rem',
-                bottom: '0.75rem',
+                left: '0.35rem',
+                top: '1rem',
+                bottom: '1rem',
               }}
             >
-              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-90 rounded-full border border-emerald-100/55 bg-slate-950/72 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-emerald-50 shadow-[0_8px_18px_rgba(2,6,23,0.45)] backdrop-blur-sm">
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-90 rounded-full border border-emerald-100/55 bg-slate-950/72 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-emerald-50 shadow-[0_8px_18px_rgba(2,6,23,0.45)] backdrop-blur-sm md:px-3 md:text-[10px]">
                 Y Axis ↑
               </div>
             </div>
