@@ -5,7 +5,7 @@ import {
 } from '../app/gameplaySessionContract';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
-import sceneBackground from '../../range rodeo.jpg';
+import sceneBackground from '../assets/maps/backgroundsforgames/range rodeo.jpg';
 import rodeoBossOne from '../assets/rodeo boss/rodeo1.png';
 import rodeoBossTwo from '../assets/rodeo boss/rodeo2.png';
 import rodeoBossThree from '../assets/rodeo boss/rodeo3.png';
