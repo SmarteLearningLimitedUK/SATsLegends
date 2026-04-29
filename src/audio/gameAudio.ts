@@ -18,7 +18,6 @@ import placeValuePanicCorrectSrc from '../assets/sounds/place value panic correc
 import potionPourSrc from '../assets/sounds/potion pour.mp3';
 import primePopSrc from '../assets/sounds/prime pop pop.mp3';
 import rockBreakSrc from '../assets/sounds/rock break.mp3';
-import takeOutRushSrc from '../assets/sounds/takeoutrush.mp3';
 import timeUpSrc from '../assets/sounds/time up.mp3';
 import wrongAnswerMeanMachineSrc from '../assets/sounds/wrong answer mean machine.mp3';
 import { audioManager } from './audioManager';
@@ -105,7 +104,6 @@ const getAudioAsset = (effect: GameSoundEffect, context?: GameSoundContext) => {
     if (gameKey === 'potion_panic') return potionPourSrc;
     if (gameKey === 'prime_pop') return primePopSrc;
     if (gameKey === 'percent_power') return percentPowerSrc;
-    if (gameKey === 'take_out_rush') return takeOutRushSrc;
     if (gameKey === 'multiplication_mine') return rockBreakSrc;
     if (ENEMY_BATTLE_GAMES.has(gameKey)) return chooseRandom(MONSTER_GROWLS);
   }
@@ -176,6 +174,18 @@ const tonePatterns: Record<GameSoundEffect, ToneStep[]> = {
   ],
 };
 
+const takeOutRushBellDing: ToneStep[] = [
+  { frequency: 988, durationMs: 260, gain: 0.08, type: 'triangle' },
+  { frequency: 1482, durationMs: 220, gain: 0.05, type: 'triangle', delayMs: 4 },
+  { frequency: 1976, durationMs: 180, gain: 0.035, type: 'triangle', delayMs: 8 },
+];
+
+const getTonePattern = (effect: GameSoundEffect, context?: GameSoundContext) => {
+  const gameKey = normalizeGameKey(context);
+  if (effect === 'correct' && gameKey === 'take_out_rush') return takeOutRushBellDing;
+  return tonePatterns[effect];
+};
+
 const scheduleTone = (ctx: AudioContext, step: ToneStep, startAt: number) => {
   const oscillator = ctx.createOscillator();
   const gainNode = ctx.createGain();
@@ -224,7 +234,7 @@ export const playGameSound = (effect: GameSoundEffect, mutedOverride?: boolean, 
   }
 
   const startAt = ctx.currentTime + 0.01;
-  tonePatterns[effect].forEach((step) => {
+  getTonePattern(effect, context).forEach((step) => {
     scheduleTone(ctx, step, startAt + (step.delayMs ?? 0) / 1000);
   });
 

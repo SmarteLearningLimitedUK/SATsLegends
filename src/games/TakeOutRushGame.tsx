@@ -670,7 +670,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
             </section>
           </div>
 
-      <CelebrationSplash active={showCelebrationSplash} message="Order Up!" theme="takeout" sweepDuration={1.5} />
+      <CelebrationSplash active={showCelebrationSplash} message="Order Up!" theme="takeout" sweepDuration={3} />
         </main>
       </div>
     </FoodGameShell>

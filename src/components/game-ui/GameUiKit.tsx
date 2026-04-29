@@ -9,6 +9,7 @@ import {
   VolumeX,
 } from 'lucide-react';
 import { emitUiAudio } from '../../audio/uiAudioEvents';
+import { normalizeQuestionText } from '../../utils/normalizeQuestionText';
 
 type WrapperProps = {
   children: React.ReactNode;
@@ -94,14 +95,17 @@ export const GameQuestionCard: React.FC<GameQuestionCardProps> = ({
   bodyClassName,
   style,
 }) => {
+  const normalizedChildren = typeof children === 'string' ? normalizeQuestionText(children) : children;
+  const normalizedSubtitle = typeof subtitle === 'string' ? normalizeQuestionText(subtitle) : subtitle;
+
   return (
     <div className={cn('game-question-card', className)} style={style}>
       <div className={cn('game-question-copy mt-0.5 whitespace-pre-line text-white', bodyClassName)}>
-        {children}
+        {normalizedChildren}
       </div>
-      {subtitle ? (
+      {normalizedSubtitle ? (
         <div className="question-subtitle mt-1 text-xs font-semibold text-white/75 md:text-sm">
-          {subtitle}
+          {normalizedSubtitle}
         </div>
       ) : null}
     </div>

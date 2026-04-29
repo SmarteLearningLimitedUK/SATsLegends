@@ -547,7 +547,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
       </div>
 
       {selectedIslandState ? (
-        <div className="pointer-events-none fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+5.25rem)] z-40 flex justify-center px-4">
+        <div className="pointer-events-none fixed inset-0 z-40 flex items-center justify-center px-4 pt-[env(safe-area-inset-top)] pb-[calc(env(safe-area-inset-bottom)+5.25rem)]">
           <div className="pointer-events-auto relative w-full max-w-[20rem] px-4 py-4 text-white backdrop-blur-sm licensed-overlay-card">
             <button
               type="button"

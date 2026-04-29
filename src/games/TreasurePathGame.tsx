@@ -285,19 +285,6 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                 className="pointer-events-none absolute inset-0 h-full w-full rounded-[1.5rem] object-contain object-center"
               />
               <div
-                aria-hidden="true"
-                className="pointer-events-none absolute rounded-[0.45rem]"
-                style={{
-                  ...CHECKERBOARD_INSET,
-                  backgroundImage: [
-                    'linear-gradient(to right, rgba(191,219,254,0.38) 1px, transparent 1px)',
-                    'linear-gradient(to bottom, rgba(191,219,254,0.38) 1px, transparent 1px)',
-                  ].join(', '),
-                  backgroundSize: 'calc(100% / 7) calc(100% / 7)',
-                  backgroundPosition: '0 0',
-                }}
-              />
-              <div
                 className="absolute z-10 grid grid-cols-7 grid-rows-7 overflow-hidden rounded-[0.45rem]"
                 style={CHECKERBOARD_INSET}
               >
@@ -316,7 +303,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                           ? feedback === 'correct'
                             ? 'bg-emerald-400/24 ring-2 ring-emerald-200/80'
                             : 'bg-rose-500/22 ring-2 ring-rose-200/80'
-                          : 'bg-transparent hover:bg-white/10'
+                          : 'bg-transparent hover:bg-white/5'
                       }`}
                     >
                       {isStart && (

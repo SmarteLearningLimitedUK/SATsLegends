@@ -145,7 +145,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
       : result.stars === 2
         ? 'Great Work!'
         : 'Nice Job!';
-  const celebrationDuration = 1.5;
+  const celebrationDuration = 3;
 
   return (
     <AnimatePresence>

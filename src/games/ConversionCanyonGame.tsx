@@ -266,9 +266,9 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
           </GameQuestionCard>
         </div>
 
-        <div className="flex min-h-0 flex-1 items-end justify-center px-4 pt-2">
+        <div className="flex min-h-0 flex-1 items-end justify-center px-4 pt-2 pb-0">
           <motion.div
-            animate={successPulse ? { scale: [1, 1.01, 1] } : { scale: 1 }}
+            animate={successPulse ? { scale: [1.1, 1.111, 1.1] } : { scale: 1.1 }}
             transition={{ duration: 0.32, ease: 'easeOut' }}
             className="relative mx-auto w-full max-w-[20.75rem] overflow-visible px-1 pb-[5px] pt-1"
           >
@@ -297,7 +297,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
 
               <div
                 ref={dropRef}
-                className="absolute left-1/2 top-[13.5%] z-40 flex max-h-[3.65rem] w-[min(72%,14.8rem)] -translate-x-1/2 flex-wrap items-start justify-center gap-1.5 overflow-y-auto rounded-[1.1rem] px-1.5 py-1"
+                className="absolute left-1/2 top-[4.5%] z-40 flex max-h-[2.9rem] w-[min(76%,15.6rem)] -translate-x-1/2 flex-wrap items-end justify-center gap-1.5 overflow-hidden px-1.5 py-1"
                 aria-label="Weights on scale"
               >
                 {placedTokens.length > 0 ? (
@@ -305,7 +305,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
                     <button
                       key={token.id}
                       onClick={() => removePlacedToken(token.id)}
-                      className="relative z-10 flex w-[3.08rem] flex-col items-center justify-center rounded-xl bg-[#0b2d68]/88 px-1 py-1 text-white shadow-[0_10px_18px_rgba(2,6,23,0.36)] ring-1 ring-white/30"
+                      className="relative z-10 flex w-[3.1rem] flex-col items-center justify-center rounded-lg bg-transparent px-1 py-0.5 text-white drop-shadow-[0_10px_14px_rgba(2,6,23,0.35)]"
                       title={getMeasurementDisplay(token.grams).primary}
                     >
                       <img
@@ -325,7 +325,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
           </motion.div>
         </div>
 
-        <div className="w-full shrink-0 px-4 pb-[calc(env(safe-area-inset-bottom)+0.9rem)] pt-2">
+        <div className="w-full shrink-0 px-4 pb-[calc(env(safe-area-inset-bottom)+0.9rem)] pt-0">
           <div className="mx-auto w-full max-w-[32rem] rounded-[1.6rem] border border-white/14 bg-slate-950/45 p-2 shadow-[0_18px_44px_rgba(2,6,23,0.55)] backdrop-blur-sm">
             <div className="grid grid-cols-4 gap-2 px-1 pb-1 pt-1">
               {allTokens.map((token) => {

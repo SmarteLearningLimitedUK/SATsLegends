@@ -749,18 +749,32 @@ const solveSideLaunchSpeed = (angleDeg: number, targetX: number, targetY: number
   return Math.sqrt((PROJECTILE_GRAVITY * targetX * targetX) / denominator);
 };
 
-const getSideTargetWorld = (viewWidth: number, viewHeight: number) => ({
-  x: clamp(viewWidth * 3.65, 1280, 2200),
-  // Hold the enemy nearer the middle of the playfield instead of drifting too low.
-  y: -clamp(viewHeight * 0.46, 220, 430),
-});
+const ENEMY_PODIUM_SCREEN_Y_RATIOS = [0.24, 0.34, 0.44, 0.54] as const;
+
+const getSideTargetWorld = (viewWidth: number, viewHeight: number, questionIndex: number) => {
+  const ratio = ENEMY_PODIUM_SCREEN_Y_RATIOS[questionIndex % ENEMY_PODIUM_SCREEN_Y_RATIOS.length]
+    ?? ENEMY_PODIUM_SCREEN_Y_RATIOS[0];
+  const desiredScreenY = viewHeight * ratio;
+  const launcherScreenY = viewHeight * LAUNCHER_SCREEN_Y_RATIO;
+  const unclampedWorldY = desiredScreenY - launcherScreenY;
+
+  // Keep the enemy within the top 60% of the play area so it never sits under the answer cards.
+  const maxWorldY = -viewHeight * 0.16;
+  const minWorldY = -viewHeight * 0.64;
+  const worldY = clamp(unclampedWorldY, minWorldY, maxWorldY);
+
+  return {
+    x: clamp(viewWidth * 3.65, 1280, 2200),
+    y: worldY,
+  };
+};
 
 const getEnemySize = (_viewWidth: number, viewHeight: number) => clamp(viewHeight * 0.82, 320, 720);
 
 const getEnemyPortraitOffsetY = (viewWidth: number, viewHeight: number) => -getEnemySize(viewWidth, viewHeight) * 0.18;
 
-const getEnemyPortraitTargetWorld = (viewWidth: number, viewHeight: number) => {
-  const enemyWorld = getSideTargetWorld(viewWidth, viewHeight);
+const getEnemyPortraitTargetWorld = (viewWidth: number, viewHeight: number, questionIndex: number) => {
+  const enemyWorld = getSideTargetWorld(viewWidth, viewHeight, questionIndex);
   return {
     x: enemyWorld.x,
     y: enemyWorld.y + getEnemyPortraitOffsetY(viewWidth, viewHeight),
@@ -851,14 +865,16 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const [stars, setStars] = useState(0);
   const cameraHomeRef = useRef({ x: 0, y: 0 });
 
+  const questionSeed = useMemo(() => Math.floor(Math.random() * 1_000_000_000), [levelId, questionsProp]);
   const rawQuestions = useMemo(
     () => questionsProp || buildAngleQuestions({
       level: levelId,
       launcherX: 0,
       groundY: 0,
       gravity: 0,
+      seed: questionSeed,
     }),
-    [levelId, questionsProp],
+    [levelId, questionSeed, questionsProp],
   );
   const questions = useMemo(() => {
     const seen = new Set<string>();
@@ -1014,7 +1030,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     const canvas = canvasRef.current;
     const viewWidth = canvas ? canvas.width / window.devicePixelRatio : 390;
     const viewHeight = canvas ? canvas.height / window.devicePixelRatio : 560;
-    const targetWorld = getEnemyPortraitTargetWorld(viewWidth, viewHeight);
+    const targetWorld = getEnemyPortraitTargetWorld(viewWidth, viewHeight, questionIndex);
     projectileRef.current = buildProjectile(
       resolvedAngle,
       targetWorld.x,
@@ -1094,8 +1110,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       const projectile = projectileRef.current;
       const correctAnswer = activeQuestion?.correctAnswer ?? 0;
       const allowHit = selectedAnswerRef.current === correctAnswer;
-      const enemyPlatformWorld = getSideTargetWorld(viewWidth, viewHeight);
-      const enemyWorld = getEnemyPortraitTargetWorld(viewWidth, viewHeight);
+      const enemyPlatformWorld = getSideTargetWorld(viewWidth, viewHeight, questionIndex);
+      const enemyWorld = getEnemyPortraitTargetWorld(viewWidth, viewHeight, questionIndex);
       const showSideSetup = !projectile?.active && !impactResultRef.current;
       if (showSideSetup) {
         cameraRef.current = { ...cameraHomeRef.current };
@@ -1249,8 +1265,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         }
         ctx.translate(enemyScreen.x, enemyScreen.y);
         const enemySize = Math.min(viewWidth, viewHeight) * 0.26;
-        const platform: EnemyPlatform = questionIndex % 2 === 0 ? 'podium' : 'cloud';
-        drawEnemyPlatform(ctx, platform, enemySize);
+          const platform: EnemyPlatform = 'podium';
+          drawEnemyPlatform(ctx, platform, enemySize);
 
         const enemies = enemySpritesRef.current;
         const enemyIndex = enemies.length ? (questionIndex % enemies.length) : 0;
@@ -1395,7 +1411,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
                       type="button"
                       onClick={() => handleAnswer(option)}
                       disabled={gameState !== 'awaitingAnswer'}
-                      className={`inline-flex min-h-[2.8rem] items-center justify-center rounded-[1rem] px-2 py-2 text-[clamp(11px,1.6vh,15px)] font-black whitespace-nowrap disabled:cursor-not-allowed disabled:opacity-55 ${
+                      className={`inline-flex min-h-[2.35rem] items-center justify-center rounded-[1rem] px-1.5 py-1 text-[clamp(11px,1.6vh,15px)] font-black leading-none whitespace-nowrap disabled:cursor-not-allowed disabled:opacity-55 ${
                         gameState === 'resolvedCorrect' && selectedAnswer === option
                           ? 'ui-button-success'
                           : selectedAnswer === option

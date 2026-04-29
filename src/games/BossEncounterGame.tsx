@@ -1081,6 +1081,15 @@ const BossPaperStage: React.FC<{
   </div>
 );
 
+const selectedBossAnswerClass =
+  'border-amber-200/70 bg-[linear-gradient(180deg,rgba(250,204,21,0.98),rgba(245,158,11,0.94))] text-[#1f2937] shadow-[0_10px_22px_rgba(2,6,23,0.38)]';
+
+const formatDivisionDisplay = (value: React.ReactNode) => {
+  if (typeof value !== 'string') return value;
+  // Division should render as a symbol in boss levels (avoid slash).
+  return value.replaceAll('/', ' ÷ ');
+};
+
 const BossAnswerCard: React.FC<{
   label: string;
   selected?: boolean;
@@ -1092,14 +1101,24 @@ const BossAnswerCard: React.FC<{
     type="button"
     onClick={onClick}
     className={`answer-choice-card relative flex h-[clamp(3.75rem,10vh,5.55rem)] min-w-0 items-center gap-[clamp(0.65rem,2vw,1.2rem)] overflow-hidden rounded-[0.85rem] border px-[clamp(0.65rem,2.2vw,1.2rem)] text-left shadow-[0_8px_18px_rgba(2,6,23,0.36)] transition ${
-      correct ? 'ui-button-success answer-choice-card--correct' : selected ? 'ui-button-primary answer-choice-card--selected' : 'ui-button-secondary answer-choice-card--default'
+      correct
+        ? 'ui-button-success answer-choice-card--correct'
+        : selected
+          ? `answer-choice-card--selected ${selectedBossAnswerClass}`
+          : 'ui-button-secondary answer-choice-card--default'
     }`}
   >
-    <span className="flex h-[clamp(2.25rem,6.5vh,3.5rem)] w-[clamp(2.25rem,6.5vh,3.5rem)] shrink-0 items-center justify-center bg-[linear-gradient(180deg,#9b3cff,#5b16d8)] text-[clamp(1.25rem,4vw,2rem)] font-black text-white shadow-[0_6px_12px_rgba(50,12,117,0.5)] [clip-path:polygon(50%_0%,90%_20%,90%_75%,50%_100%,10%_75%,10%_20%)]">
+    <span
+      className={`flex h-[clamp(2.25rem,6.5vh,3.5rem)] w-[clamp(2.25rem,6.5vh,3.5rem)] shrink-0 items-center justify-center text-[clamp(1.25rem,4vw,2rem)] font-black shadow-[0_6px_12px_rgba(50,12,117,0.5)] [clip-path:polygon(50%_0%,90%_20%,90%_75%,50%_100%,10%_75%,10%_20%)] ${
+        selected
+          ? 'bg-[linear-gradient(180deg,#f59e0b,#d97706)] text-[#1f2937] shadow-[0_6px_12px_rgba(2,6,23,0.28)]'
+          : 'bg-[linear-gradient(180deg,#9b3cff,#5b16d8)] text-white'
+      }`}
+    >
       {label}
     </span>
-    <span className="min-w-0 flex-1 break-words text-[clamp(1.2rem,4vw,2rem)] font-black leading-tight text-white">
-      {children}
+    <span className={`min-w-0 flex-1 break-words text-[clamp(1.2rem,4vw,2rem)] font-black leading-tight ${selected ? 'text-[#1f2937]' : 'text-white'}`}>
+      {formatDivisionDisplay(children)}
     </span>
   </button>
 );
@@ -1168,10 +1187,51 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
   );
   const [arithmeticAnswers, setArithmeticAnswers] = useState<Record<number, string>>({});
   const [arithmeticResult, setArithmeticResult] = useState<ArithmeticPaperResult | null>(null);
-  const [arithmeticScreen, setArithmeticScreen] = useState<'intro' | 'active' | 'results' | 'review'>('intro');
+  const [arithmeticScreen, setArithmeticScreen] = useState<'intro' | 'active' | 'complete' | 'results' | 'review'>('intro');
   const [reasoningAnswers, setReasoningAnswers] = useState<Record<number, any>>({});
   const [reasoningResult, setReasoningResult] = useState<ReasoningPaperResult | null>(null);
-  const [reasoningScreen, setReasoningScreen] = useState<'intro' | 'active' | 'results' | 'review'>('intro');
+  const [reasoningScreen, setReasoningScreen] = useState<'intro' | 'active' | 'complete' | 'results' | 'review'>('intro');
+  const resultsGateCopy = "Well done — let's look at your results.";
+
+  const ResultsGate: React.FC<{ onViewResults: () => void }> = ({ onViewResults }) => (
+    <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-[#050914] px-4 py-4 font-sans text-white">
+      <img
+        src={bossPaperBackground}
+        alt=""
+        aria-hidden="true"
+        draggable={false}
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-85"
+      />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.08)_0%,rgba(2,6,23,0.35)_55%,rgba(2,6,23,0.78)_100%)]" />
+      <BossParallaxLayer theme={bossTheme} />
+      <BossAtmosphereLayer theme={bossTheme} density={bossTheme === 'crystal' ? 'high' : 'medium'} />
+      <motion.div
+        className="pointer-events-none absolute left-0 top-[28%] w-full"
+        initial={{ x: '-120%', rotate: -6, opacity: 0 }}
+        animate={{ x: '120%', rotate: 6, opacity: [0, 1, 1, 0] }}
+        transition={{ duration: 1.35, ease: 'easeInOut' }}
+      >
+        <div className="mx-auto w-[min(92vw,46rem)] rounded-[1.25rem] border border-amber-200/60 bg-[linear-gradient(180deg,rgba(253,230,138,0.95),rgba(245,158,11,0.92))] px-5 py-4 text-center text-[clamp(0.9rem,3.4vw,1.25rem)] font-black tracking-[0.02em] text-[#1f2937] shadow-[0_18px_40px_rgba(2,6,23,0.45)]">
+          {resultsGateCopy}
+        </div>
+      </motion.div>
+
+      <section className="relative z-10 w-full max-w-xl rounded-[1.15rem] border border-white/14 bg-slate-950/70 p-5 shadow-[0_18px_44px_rgba(2,6,23,0.55)] backdrop-blur-sm">
+        <div className="text-center text-xs font-black uppercase tracking-[0.18em] text-cyan-100/70">
+          Core of Calculation
+        </div>
+        <h2 className="mt-2 text-center text-2xl font-black text-white md:text-3xl">Level complete</h2>
+        <p className="mt-2 text-center text-sm font-bold text-white/75">{resultsGateCopy}</p>
+        <button
+          type="button"
+          onClick={onViewResults}
+          className="ui-button-primary mt-5 inline-flex w-full min-h-[3.25rem] items-center justify-center whitespace-nowrap rounded-[1rem] px-4 py-3 text-sm font-black uppercase leading-none tracking-[0.12em]"
+        >
+          View Results
+        </button>
+      </section>
+    </div>
+  );
   const questions = useMemo(
     () => (isArithmeticPaper || isReasoningPaper ? [] : Array.from({ length: TOTAL_QUESTIONS }, () => {
       const base = QUESTION_GENERATORS[gameType]();
@@ -1365,7 +1425,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
       isBestBossPaperAttemptToday(gameType, preliminaryResult.score),
     );
     setArithmeticResult(result);
-    setArithmeticScreen('results');
+    setArithmeticScreen('complete');
     setScore(result.xpAwarded);
     sessionEvents?.onEvent?.({
       type: 'game_complete',
@@ -1452,7 +1512,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
           isBestBossPaperAttemptToday(gameType, preliminaryResult.score),
         );
     setReasoningResult(result);
-    setReasoningScreen('results');
+    setReasoningScreen('complete');
     setScore(result.xpAwarded);
     sessionEvents?.onEvent?.({
       type: 'game_complete',
@@ -1621,6 +1681,10 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
       );
     }
 
+    if (reasoningResult && reasoningScreen === 'complete') {
+      return <ResultsGate onViewResults={() => setReasoningScreen('results')} />;
+    }
+
     if (reasoningScreen === 'intro') {
       return (
         <div className="flex h-full w-full items-center justify-center overflow-hidden bg-[#f7f4ea] px-4 py-4 font-sans text-slate-950">
@@ -1760,6 +1824,15 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
 
     if (!reasoningQuestion) return null;
     const currentReasoningAnswer = reasoningAnswers[reasoningQuestion.id] ?? '';
+    const canAdvanceReasoning = (() => {
+      if (reasoningQuestion.responseMode === 'multiSelect') {
+        return Array.isArray(currentReasoningAnswer) && currentReasoningAnswer.length > 0;
+      }
+      if (reasoningQuestion.responseMode === 'ordering') {
+        return Array.isArray(currentReasoningAnswer) && currentReasoningAnswer.every((item) => String(item).trim().length > 0);
+      }
+      return String(currentReasoningAnswer).trim().length > 0;
+    })();
     const timeLeft = sessionState?.timeLeft ?? reasoningPaper.timeLimitSeconds;
     const warningText = timeLeft <= 60
       ? '1 minute left'
@@ -1924,6 +1997,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
                 }
                 goNextPaperQuestion(reasoningQuestionCount);
               }}
+              disabled={!canAdvanceReasoning}
               className={bossNavButtonClass}
             >
               {currentIndex >= reasoningQuestionCount - 1 ? 'Finish' : 'Next'}
@@ -1941,6 +2015,10 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
           Loading arithmetic paper...
         </div>
       );
+    }
+
+    if (arithmeticResult && arithmeticScreen === 'complete') {
+      return <ResultsGate onViewResults={() => setArithmeticScreen('results')} />;
     }
 
     if (arithmeticScreen === 'intro') {
@@ -2079,11 +2157,12 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
     }
 
     const selectedAnswer = arithmeticAnswers[arithmeticQuestion.id];
+    const canAdvanceArithmetic = String(selectedAnswer ?? '').trim().length > 0;
     return (
       <BossPaperStage
         title="Arithmetic Showdown"
         questionNumber={currentIndex + 1}
-        questionText={`Calculate the value of: ${arithmeticQuestion.question}\nChoose the correct answer.`}
+        questionText={formatDivisionDisplay(`Calculate the value of: ${arithmeticQuestion.question}\nChoose the correct answer.`)}
         theme={bossTheme}
         atmosphereDensity={bossTheme === 'crystal' ? 'high' : 'medium'}
         visual={<BossPaperFallbackVisual encounter={encounter} bossPose={bossPose} title="Arithmetic Showdown Boss" />}
@@ -2095,15 +2174,15 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
             aria-pressed={String(option) === selectedAnswer}
             className={`answer-choice-card relative flex h-[clamp(3rem,8.2vh,4.55rem)] min-w-0 items-center gap-[clamp(0.45rem,1.5vw,0.9rem)] overflow-hidden rounded-[0.78rem] border px-[clamp(0.55rem,1.7vw,0.95rem)] text-left shadow-[0_8px_18px_rgba(2,6,23,0.36)] transition ${
               String(option) === selectedAnswer
-                ? 'ui-button-primary answer-choice-card--selected'
+                ? `answer-choice-card--selected ${selectedBossAnswerClass}`
                 : 'ui-button-secondary answer-choice-card--default'
             }`}
           >
             <span className="pointer-events-none inline-flex h-[clamp(1.9rem,5.4vh,2.8rem)] w-[clamp(1.9rem,5.4vh,2.8rem)] shrink-0 items-center justify-center rounded-full bg-white/10 text-[clamp(0.9rem,2.8vw,1.25rem)] font-black text-white/82">
               {String.fromCharCode(65 + index)}
             </span>
-            <span className="min-w-0 flex-1 break-words text-[clamp(0.92rem,2.9vw,1.35rem)] font-black leading-tight text-white">
-              {option}
+            <span className={`min-w-0 flex-1 break-words text-[clamp(0.92rem,2.9vw,1.35rem)] font-black leading-tight ${String(option) === selectedAnswer ? 'text-[#1f2937]' : 'text-white'}`}>
+              {formatDivisionDisplay(String(option))}
             </span>
           </button>
         ))}
@@ -2129,6 +2208,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
                 }
                 goNextPaperQuestion(arithmeticQuestionCount);
               }}
+              disabled={!canAdvanceArithmetic}
               className={bossNavButtonClass}
             >
               {currentIndex >= arithmeticQuestionCount - 1 ? 'Finish' : 'Next'}

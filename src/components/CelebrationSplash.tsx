@@ -38,17 +38,17 @@ const VictorySwooshField: React.FC = () => (
     <motion.div
       className="absolute left-1/2 top-[24%] h-4 w-[180%] -translate-x-1/2 rounded-full bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.86)_12%,rgba(56,189,248,0.92)_34%,rgba(251,191,36,0.94)_58%,rgba(255,255,255,0.86)_80%,transparent)] blur-[2px]"
       animate={{ x: ['-34%', '34%'], rotate: [-10, 8, -10], opacity: [0.16, 0.95, 0.18] }}
-      transition={{ duration: 1.15, ease: 'easeInOut', repeat: Infinity, repeatType: 'mirror' }}
+      transition={{ duration: 2.85, ease: 'easeInOut', repeat: Infinity, repeatType: 'mirror' }}
     />
     <motion.div
       className="absolute left-1/2 top-[58%] h-5 w-[170%] -translate-x-1/2 rounded-full bg-[linear-gradient(90deg,transparent,rgba(186,230,253,0.76)_14%,rgba(147,197,253,0.92)_42%,rgba(253,224,71,0.92)_66%,rgba(186,230,253,0.76)_86%,transparent)] blur-[3px]"
       animate={{ x: ['32%', '-32%'], rotate: [8, -7, 8], opacity: [0.18, 0.9, 0.2] }}
-      transition={{ duration: 1.22, ease: 'easeInOut', repeat: Infinity, repeatType: 'mirror', delay: 0.18 }}
+      transition={{ duration: 3.05, ease: 'easeInOut', repeat: Infinity, repeatType: 'mirror', delay: 0.18 }}
     />
     <motion.div
       className="absolute left-1/2 top-1/2 h-[42%] w-[42%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.68)_0%,rgba(255,255,255,0.24)_22%,rgba(56,189,248,0.18)_44%,rgba(56,189,248,0)_74%)] blur-2xl"
       animate={{ scale: [0.88, 1.08, 0.92], opacity: [0.18, 0.48, 0.2] }}
-      transition={{ duration: 1.05, ease: 'easeInOut', repeat: Infinity, repeatType: 'mirror' }}
+      transition={{ duration: 2.55, ease: 'easeInOut', repeat: Infinity, repeatType: 'mirror' }}
     />
   </div>
 );
@@ -91,7 +91,7 @@ const FlameField: React.FC = () => (
 
 const CelebrationSplash: React.FC<CelebrationSplashProps> = ({ active, message, theme, sweepDuration }) => {
   const styles = THEME_STYLES[theme];
-  const duration = sweepDuration ?? 1.5;
+  const duration = sweepDuration ?? 3;
 
   return (
     <AnimatePresence>

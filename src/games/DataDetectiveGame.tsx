@@ -130,12 +130,12 @@ const GraphXAxisTick: React.FC<AxisTickProps> = ({ x = 0, y = 0, payload }) => {
 const GraphYAxisTick: React.FC<AxisTickProps> = ({ x = 0, y = 0, payload }) => {
   const rawValue = payload?.value;
   const value = typeof rawValue === 'number' ? rawValue : Number(rawValue);
-  const isMajor = Number.isFinite(value) && value % 5 === 0;
-  const tickLength = isMajor ? 13 : 8;
-  const strokeWidth = isMajor ? 2.4 : 1.1;
-  const fontSize = isMajor ? 12 : 10;
+  const isMajor = Number.isFinite(value) && value % 10 === 0;
+  const tickLength = isMajor ? 11 : 6;
+  const strokeWidth = isMajor ? 2.1 : 1;
+  const fontSize = isMajor ? 11 : 9;
   const fontWeight = isMajor ? 900 : 700;
-  const labelOpacity = isMajor ? 1 : 0.84;
+  const labelOpacity = isMajor ? 1 : 0.8;
 
   return (
     <g transform={`translate(${x},${y})`}>
@@ -193,8 +193,8 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
   const maxCaseValue = Math.max(...currentCase.map((item) => item.amount), 0);
-  const barAxisMax = Math.max(5, Math.ceil(maxCaseValue / 5) * 5);
-  const barTicks = Array.from({ length: barAxisMax + 1 }, (_, index) => index);
+  const barAxisMax = Math.max(6, Math.ceil(maxCaseValue / 2) * 2);
+  const barTicks = Array.from({ length: Math.floor(barAxisMax / 2) + 1 }, (_, index) => index * 2);
 
   const generateCase = useCallback(() => {
     const nextMode: CaseMode = Math.random() > 0.5 ? 'detective' : 'whodunnit';
@@ -401,7 +401,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             <div className="pointer-events-none absolute inset-0 bg-slate-950/20" />
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.3)_1px,transparent_1px)] opacity-7 [background-size:20px_20px]" />
 
-            <div className="relative w-full" style={{ height: 'clamp(12.5rem, 31vh, 21rem)' }}>
+            <div className="relative w-full" style={{ height: 'clamp(11.5rem, 27vh, 19rem)' }}>
               <ResponsiveContainer width="100%" height="100%">
                 {chartType === 'bar' ? (
                     <BarChart data={currentCase} margin={{ top: 12, right: 10, left: -4, bottom: 28 }}>
@@ -493,13 +493,12 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
         </main>
       )}
       bottom={(
-        <section className="z-10 flex w-full flex-col gap-2 bg-[linear-gradient(180deg,rgba(8,18,40,0.16),rgba(5,12,28,0.24))] px-2 pb-[calc(env(safe-area-inset-bottom)+0.25rem)] pt-1 sm:px-3 sm:pb-[calc(env(safe-area-inset-bottom)+0.35rem)] sm:pt-1 md:gap-3 md:px-5 md:pb-[calc(env(safe-area-inset-bottom)+0.5rem)] md:pt-2 max-[480px]:gap-1 max-[480px]:px-1.5 max-[480px]:pt-0.5">
-          <div className="mb-1 flex items-center gap-2 text-amber-500">
-            <Users className="h-5 w-5" />
-            <h2 className="text-xs font-black uppercase tracking-widest">Suspect Lineup</h2>
-          </div>
-
+        <section className="z-10 flex w-full flex-col gap-1 bg-[linear-gradient(180deg,rgba(8,18,40,0.16),rgba(5,12,28,0.24))] px-2 pb-[calc(env(safe-area-inset-bottom)+0.25rem)] pt-0.5 sm:px-3 sm:pb-[calc(env(safe-area-inset-bottom)+0.35rem)] sm:pt-0.5 md:px-5 md:pb-[calc(env(safe-area-inset-bottom)+0.5rem)] md:pt-1 max-[480px]:gap-1 max-[480px]:px-1.5 max-[480px]:pt-0.5">
           <div className="relative overflow-visible">
+            <div className="mb-0.5 flex items-center gap-2 text-amber-500">
+              <Users className="h-5 w-5" />
+              <h2 className="text-xs font-black uppercase tracking-widest">Suspect Lineup</h2>
+            </div>
             <div className={`grid grid-cols-4 items-start gap-1 max-[480px]:gap-0.5 ${selectedSuspect ? 'pointer-events-none opacity-0' : ''}`}>
               {suspects.map((suspect) => (
                 <motion.button

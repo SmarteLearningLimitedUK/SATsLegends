@@ -126,8 +126,8 @@ const SHARE_SPLITTER_PLATE_DROP_POINTS: SlicePlacement[] = (() => {
   const addRing = (count: number, radius: number, angleOffset: number) => {
     for (let i = 0; i < count; i += 1) {
       const angle = angleOffset + (i / count) * Math.PI * 2;
-      const stretchX = 1.04;
-      const stretchY = 0.78;
+      const stretchX = 1;
+      const stretchY = 0.92;
       points.push({
         x: Math.cos(angle) * radius * stretchX,
         y: Math.sin(angle) * radius * stretchY,
@@ -136,9 +136,9 @@ const SHARE_SPLITTER_PLATE_DROP_POINTS: SlicePlacement[] = (() => {
   };
 
   // Two rings is plenty for the typical slice counts; extra slices fall back to the compact spiral.
-  addRing(6, 0.11, -Math.PI / 6);
-  addRing(10, 0.175, 0);
-  addRing(14, 0.235, Math.PI / 14);
+  addRing(6, 0.32, -Math.PI / 6);
+  addRing(10, 0.44, 0);
+  addRing(14, 0.53, Math.PI / 14);
 
   return points;
 })();
@@ -176,16 +176,22 @@ const buildSharePrompt = () => {
   return [
     "Welcome to the Monster Mind's party.",
     'They are fighting over a Brainpower cake.',
-    'Tap a plate to place a slice and match the target ratio.',
+    'Tap each plate to obtain a serving and match the target ratio.',
     'Keep the ratio balanced to stop their greed.',
   ].join('\n');
 };
 
-const createChallenge = (levelId: number, solved: number): ShareChallenge => {
+const createChallenge = (levelId: number, solved: number, avoidRatioKey?: string | null): ShareChallenge => {
   const mode = shareModeForLevel(levelId);
   const plateCount = plateCountForMode(mode);
   const patternOptions = RATIO_PATTERNS_BY_COUNT[plateCount] || RATIO_PATTERNS_BY_COUNT[2];
-  const pattern = [...randomPick(patternOptions)];
+  const maxAttempts = Math.max(6, patternOptions.length * 2);
+  let pattern = [...randomPick(patternOptions)];
+  let ratioKey = pattern.join(':');
+  for (let attempt = 0; attempt < maxAttempts && avoidRatioKey && ratioKey === avoidRatioKey; attempt += 1) {
+    pattern = [...randomPick(patternOptions)];
+    ratioKey = pattern.join(':');
+  }
   const totalUnits = pattern.reduce((sum, value) => sum + value, 0);
   const unitValue = mode === 'direct_share' ? 1 : mode === 'scaled_share' ? 2 : 3;
   const totalSlices = totalUnits * unitValue;
@@ -214,7 +220,12 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const [roundSolved, setRoundSolved] = useState(0);
   const [attempts, setAttempts] = useState(0);
   const [xpEarned, setXpEarned] = useState(0);
-  const [challenge, setChallenge] = useState<ShareChallenge>(() => createChallenge(levelId, 0));
+  const lastRatioKeyRef = useRef<string | null>(null);
+  const [challenge, setChallenge] = useState<ShareChallenge>(() => {
+    const first = createChallenge(levelId, 0, null);
+    lastRatioKeyRef.current = first.ratios.join(':');
+    return first;
+  });
   const [plates, setPlates] = useState<string[][]>(() => createEmptyPlates(challenge.plateCount));
   const [remainingSlices, setRemainingSlices] = useState(challenge.totalSlices);
   const [feedback, setFeedback] = useState('');
@@ -342,15 +353,16 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   );
   const backgroundOffsetX = (viewportRect.width - (SHARE_SPLITTER_BACKGROUND_SIZE.width * backgroundScale)) / 2;
   const backgroundOffsetY = viewportRect.height - (SHARE_SPLITTER_BACKGROUND_SIZE.height * backgroundScale);
-  const plateSizePx = Math.max(
+  const plateSizePxRaw = Math.max(
     isCompactViewport ? 68 : 78,
     Math.min(
       isCompactViewport ? 78 : 104,
       ((viewportRect.width - (isCompactViewport ? 44 : 64)) / MAX_PLATE_COUNT) * plateLayoutScale,
     ),
   );
+  const plateSizePx = plateSizePxRaw * 1.1;
   const platePositions = useMemo(() => {
-    const sidePadding = isCompactViewport ? 54 : 42;
+    const sidePadding = isCompactViewport ? Math.max(56, plateSizePx * 0.42) : Math.max(44, plateSizePx * 0.34);
     const usableWidth = Math.max(1, viewportRect.width - sidePadding * 2);
     const y = (plateSizePx * (isCompactViewport ? 0.6 : 0.7)) + (isCompactViewport ? 10 : 14);
 
@@ -360,11 +372,12 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     }));
   }, [isCompactViewport, plateSizePx, viewportRect.width]);
   const promptText = isPractice
-    ? `Quick! share the cake to avoid a riot!\nTarget ratio: ${challenge.ratios.join(':')}`
-    : `Quick! share the cake to avoid a riot!\nThere are ${challenge.totalSlices} slices of brainpower cake.\nThe Monster Mind demands it is shared in a ratio of ${challenge.ratios.join(':')}.`;
+    ? `Quick! Share the cake to avoid a riot!\nTap each plate to obtain a serving.\nTarget ratio: ${challenge.ratios.join(':')}`
+    : `Quick! Share the cake to avoid a riot!\nTap each plate to obtain a serving.\nThere are ${challenge.totalSlices} slices of brainpower cake.\nThe Monster Mind demands it is shared in a ratio of ${challenge.ratios.join(':')}.`;
 
   const loadNextChallenge = useCallback((solvedCount: number) => {
-    const next = createChallenge(levelId, solvedCount);
+    const next = createChallenge(levelId, solvedCount, lastRatioKeyRef.current);
+    lastRatioKeyRef.current = next.ratios.join(':');
     setChallenge(next);
     setPlates(createEmptyPlates(next.plateCount));
     setRemainingSlices(next.totalSlices);
@@ -452,7 +465,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     // Stack slices in a compact spiral so they read as sitting on the plate.
     const angleDegrees = index * 137.50776405;
     const angle = (angleDegrees * Math.PI) / 180;
-    const radius = Math.min(0.18, 0.04 + (index * 0.022));
+    const radius = Math.min(0.52, 0.12 + (index * 0.04));
     const stretchX = index % 2 === 0 ? 1 : 0.9;
     const stretchY = index % 3 === 0 ? 0.82 : 0.72;
 
@@ -602,12 +615,12 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                         const sliceCount = plates[index].length;
                         const sliceBaseSizePx = Math.max(
                           22,
-                          plateSizePx * (sliceCount <= 3 ? 0.24 : sliceCount <= 6 ? 0.2 : 0.16),
+                          plateSizePx * (sliceCount <= 3 ? 0.2 : sliceCount <= 6 ? 0.155 : 0.13),
                         );
 
                         return (
+                          <React.Fragment key={plate.id}>
                           <div
-                            key={plate.id}
                             data-testid={`share-splitter-plate-${index + 1}`}
                             className="pointer-events-none absolute z-[90] flex -translate-x-1/2 -translate-y-1/2 items-center justify-center p-0 text-center transition"
                             style={{
@@ -628,6 +641,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                             <div className="pointer-events-none absolute inset-0">
                               {plates[index].map((sliceId, sliceIndex) => {
                                 const placement = getPlateSlicePlacement(sliceIndex);
+                                const rotation = (sliceIndex % 2 === 0 ? -1 : 1) * Math.min(8, sliceIndex * 2);
                                 return (
                                   <motion.img
                                     key={sliceId}
@@ -642,13 +656,25 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                                     style={{
                                       width: `${sliceBaseSizePx}px`,
                                       height: `${sliceBaseSizePx}px`,
-                                      transform: `translate(-50%, -50%) translate(${placement.x * plateSizePx}px, ${placement.y * plateSizePx}px)`,
+                                      transform: `translate(-50%, -50%) translate(${placement.x * plateSizePx}px, ${placement.y * plateSizePx}px) rotate(${rotation}deg)`,
                                     }}
                                   />
                                 );
                               })}
                             </div>
                           </div>
+
+                          <div
+                            aria-hidden="true"
+                            className="pointer-events-none absolute z-[95] -translate-x-1/2 rounded-full border border-white/18 bg-slate-950/72 px-3 py-1 text-[11px] font-black tracking-[0.12em] text-white shadow-[0_10px_18px_rgba(15,23,42,0.32)] backdrop-blur-sm"
+                            style={{
+                              left: `${center.x}px`,
+                              top: `${center.y + (plateSizePx * 0.62)}px`,
+                            }}
+                          >
+                            {sliceCount}
+                          </div>
+                          </React.Fragment>
                         );
                       })}
                     </div>
@@ -728,13 +754,13 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
                   <motion.div
                     aria-live="polite"
-                    className="pointer-events-none absolute z-[29] -translate-y-1/2 rounded-xl border border-amber-100/80 bg-slate-950/82 px-3 py-2 text-center shadow-[0_10px_18px_rgba(15,23,42,0.32)] backdrop-blur-sm"
+                    className="pointer-events-none absolute z-[29] -translate-x-1/2 rounded-xl border border-amber-100/80 bg-slate-950/82 px-3 py-2 text-center shadow-[0_10px_18px_rgba(15,23,42,0.32)] backdrop-blur-sm"
                     initial={{ opacity: 0, x: 8 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.22, ease: 'easeOut' }}
                     style={{
-                      left: `${cakeSourceCenter.x + (cakeVisualSizePx * 0.34)}px`,
-                      top: `${cakeVisualY - (cakeVisualSizePx * 0.25)}px`,
+                      left: `${cakeSourceCenter.x}px`,
+                      top: `${cakeVisualY + (cakeVisualSizePx * 0.68)}px`,
                       width: `${Math.max(72, cakeVisualSizePx * 0.46)}px`,
                     }}
                   >

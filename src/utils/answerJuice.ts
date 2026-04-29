@@ -27,7 +27,7 @@ export const playCorrectAnswerJuice = () => {
   }
 
   triggerHaptic('success');
-  withClass('.app-viewport', 'sat-juice-correct', 420);
+  withClass('.app-viewport', 'sat-juice-correct', 1200);
 };
 
 export const playWrongAnswerJuice = () => {

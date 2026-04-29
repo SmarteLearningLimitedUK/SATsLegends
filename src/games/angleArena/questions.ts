@@ -18,6 +18,7 @@ interface BuildConfig {
   launcherX: number;
   groundY: number;
   gravity: number;
+  seed?: number;
 }
 
 type QuestionSpec = {
@@ -104,8 +105,20 @@ const buildTargetPoint = (correctAnswer: number, config: BuildConfig, band: numb
   };
 };
 
-const buildQuestion = (spec: QuestionSpec, index: number, config: BuildConfig, band: number): AngleQuestion => {
-  const rng = createRng((config.level * 997) + ((band + 1) * 149) + (index * 43) + spec.correctAnswer);
+const buildQuestion = (
+  spec: QuestionSpec,
+  index: number,
+  config: BuildConfig,
+  band: number,
+  runSeed: number,
+): AngleQuestion => {
+  const rng = createRng(
+    (runSeed * 53)
+    + (config.level * 997)
+    + ((band + 1) * 149)
+    + (index * 43)
+    + spec.correctAnswer,
+  );
   const options = buildOptions(spec.correctAnswer, rng, band);
   const target = buildTargetPoint(spec.correctAnswer, config, band);
 
@@ -170,5 +183,12 @@ const selectBand = (level: number) => clamp(Math.floor((Math.max(1, level) - 1) 
 export const buildAngleQuestions = (config: BuildConfig): AngleQuestion[] => {
   const level = Math.max(1, Math.floor(config.level || 1));
   const band = selectBand(level);
-  return QUESTION_BANK[band].map((spec, index) => buildQuestion(spec, index, { ...config, level }, band));
+  const runSeed = Number.isFinite(config.seed)
+    ? Math.floor(config.seed as number)
+    : Math.floor(Math.random() * 1_000_000_000);
+  const rng = createRng((runSeed * 19) + (level * 71) + (band * 31));
+
+  return shuffle([...QUESTION_BANK[band]], rng).map((spec, index) =>
+    buildQuestion(spec, index, { ...config, level }, band, runSeed),
+  );
 };

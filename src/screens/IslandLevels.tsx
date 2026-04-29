@@ -320,10 +320,10 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
               return (
                 <div
                   key={group.id}
-                  className={`licensed-board-frame w-full rounded-2xl px-3 py-2 text-left transition md:px-4 md:py-3.5 ${
+                  className={`licensed-board-frame surface-edge-off w-full rounded-2xl px-3 py-2 text-left transition md:px-4 md:py-3.5 ${
                     group.hasNextPlayable
-                      ? 'border border-amber-200/60 shadow-[0_0_0_1px_rgba(251,191,36,0.25),0_16px_28px_rgba(234,179,8,0.18)]'
-                      : 'border border-white/14'
+                      ? 'shadow-[0_0_0_1px_rgba(251,191,36,0.25),0_16px_28px_rgba(234,179,8,0.18)]'
+                      : ''
                   }`}
                 >
                   <button

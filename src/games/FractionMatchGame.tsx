@@ -38,8 +38,8 @@ interface GemCell {
 type BoardCell = GemCell | null;
 
 const GEM_TYPES: GemType[] = ['red', 'blue', 'green', 'yellow', 'purple'];
-const BOARD_COLUMNS = 5;
-const BOARD_ROWS = 5;
+const BOARD_COLUMNS = 6;
+const BOARD_ROWS = 6;
 const ROUND_SECONDS = 60;
 const BASE_TARGET_SCORE = 900;
 const TARGET_SCORE_STEP = 140;
@@ -332,9 +332,11 @@ const MatchGameShell: React.FC<{
              </div>
            ) : null}
 
-            <div className={`relative z-10 flex h-full w-full items-end justify-center px-1.5 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] ${useSharedTopHud ? 'match-mastery-board-stage pt-[calc(env(safe-area-inset-top)+10.6rem+10pt)]' : 'pt-[calc(0.35rem+10pt)]'} sm:px-3`}>
-             <AnimatePresence>
-               {fireActive ? (
+              <div
+                className={`relative z-10 flex h-full w-full flex-col items-stretch justify-start px-1.5 pb-[calc(env(safe-area-inset-bottom)+0.2rem)] ${useSharedTopHud ? 'match-mastery-board-stage pt-[calc(env(safe-area-inset-top)+10.6rem+10pt)]' : 'pt-[calc(0.35rem+10pt)]'} sm:px-3`}
+              >
+                <AnimatePresence>
+                  {fireActive ? (
                  <motion.div
                    key={`fire-overlay-${firePulse}`}
                    className="pointer-events-none absolute inset-0 z-[1]"
@@ -356,9 +358,11 @@ const MatchGameShell: React.FC<{
                    />
                  </motion.div>
                ) : null}
-             </AnimatePresence>
-             <div className="relative z-[2]">{children}</div>
-           </div>
+                </AnimatePresence>
+                <div className="relative z-[2] flex min-h-0 flex-1 items-stretch justify-center">
+                  {children}
+                </div>
+              </div>
          </div>
        </div>
      </div>
@@ -390,6 +394,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   const [firePulse, setFirePulse] = useState(0);
 
   const endedRef = useRef(false);
+  const boardFrameRef = useRef<HTMLDivElement | null>(null);
   const boardGridRef = useRef<HTMLDivElement | null>(null);
   const fireTimeoutRef = useRef<number | null>(null);
   const lastMatchAtRef = useRef<number | null>(null);
@@ -431,22 +436,22 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
 
   useEffect(() => {
     const updateGemSize = () => {
-      const node = boardGridRef.current;
-      if (!node) return;
+      const frameNode = boardFrameRef.current;
+      const gridNode = boardGridRef.current;
+      if (!frameNode || !gridNode) return;
 
-      const boardWidth = node.clientWidth;
-      if (boardWidth <= 0) return;
+      const frameWidth = frameNode.clientWidth;
+      const frameHeight = frameNode.clientHeight;
+      if (frameWidth <= 0 || frameHeight <= 0) return;
 
       const gapPx = 6;
-      const rawWidthSize = Math.floor((boardWidth - (gapPx * (BOARD_COLUMNS - 1))) / BOARD_COLUMNS);
-      const rect = node.getBoundingClientRect();
-      // Leave extra breathing room so the tile grid never collides with the shared HUD
-      // (timer + progress bar) on shorter viewports.
-      const reservedBottom = Math.max(118, window.innerHeight * 0.16);
-      const availableGridHeight = Math.max(220, window.innerHeight - rect.top - reservedBottom);
-      const rawHeightSize = Math.floor((availableGridHeight - (gapPx * (BOARD_ROWS - 1))) / BOARD_ROWS);
+      const availableWidth = Math.max(0, frameWidth);
+      const availableHeight = Math.max(0, frameHeight);
+
+      const rawWidthSize = Math.floor((availableWidth - (gapPx * (BOARD_COLUMNS - 1))) / BOARD_COLUMNS);
+      const rawHeightSize = Math.floor((availableHeight - (gapPx * (BOARD_ROWS - 1))) / BOARD_ROWS);
       const rawSize = Math.min(rawWidthSize, rawHeightSize);
-      const clampedSize = Math.max(40, Math.min(112, rawSize));
+      const clampedSize = Math.max(34, Math.min(112, rawSize));
 
       setGemSize((prev) => (prev === clampedSize ? prev : clampedSize));
     };
@@ -460,11 +465,12 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
     window.addEventListener('resize', resizeListener);
 
     let observer: ResizeObserver | null = null;
-    if (typeof ResizeObserver !== 'undefined' && boardGridRef.current) {
+    if (typeof ResizeObserver !== 'undefined') {
       observer = new ResizeObserver(() => {
         updateGemSize();
       });
-      observer.observe(boardGridRef.current);
+      if (boardFrameRef.current) observer.observe(boardFrameRef.current);
+      if (boardGridRef.current) observer.observe(boardGridRef.current);
     }
 
     return () => {
@@ -628,7 +634,10 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
-      <div className="relative box-border mx-auto w-[min(calc(100vw-0.75rem),31rem)] rounded-[2rem] border border-cyan-100/18 bg-[#04102c]/54 p-1.5 shadow-[0_18px_40px_rgba(0,0,0,0.45)] backdrop-blur-[2px] sm:p-2">
+      <div
+        ref={boardFrameRef}
+        className="relative box-border mx-auto h-full w-full max-w-[32rem] rounded-[2rem] border border-cyan-100/18 bg-[#04102c]/54 p-1.5 shadow-[0_18px_40px_rgba(0,0,0,0.45)] backdrop-blur-[2px] sm:p-2"
+      >
         <div
           className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-[0.24]"
           style={{
@@ -643,7 +652,10 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
             boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.06), inset 0 0 30px rgba(0,0,0,0.45)',
           }}
         />
-        <div ref={boardGridRef} className="relative z-10 grid w-full grid-cols-5 gap-1.5 sm:gap-1.5">
+        <div
+          ref={boardGridRef}
+          className="relative z-10 grid h-full w-full grid-cols-6 grid-rows-6 gap-1.5 sm:gap-1.5"
+        >
           {board.map((cell, idx) => (
             <div
               key={idx}
@@ -656,7 +668,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
                     key={`${idx}-${cell.type}-${cell.label}`}
                     type={cell.type}
                     label={cell.label}
-                    size={Math.max(54, gemSize - 2)}
+                    size={Math.max(24, gemSize - 2)}
                     isSelected={selectedIdx === idx}
                     onClick={() => {
                       void handleGemClick(idx);

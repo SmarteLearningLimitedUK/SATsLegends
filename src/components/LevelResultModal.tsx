@@ -71,7 +71,7 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
   const fallbackFailureSupport =
     'Great effort. Shake it off, retry quickly, and push your Combo on the next run.';
   const celebrationMessage = isVictory ? 'Great Work!' : 'Nice Try!';
-  const celebrationDuration = 1.5;
+  const celebrationDuration = 3;
 
   return (
     <AnimatePresence>

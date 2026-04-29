@@ -84,8 +84,8 @@ const LEVELS: Level[] = [
 ];
 
 const GRID_SIZE = 20;
-const BLUEPRINT_BOARD_TOP = '56%';
-const BLUEPRINT_BOARD_SIZE = 'min(84vw, 27rem, 42vh)';
+const BLUEPRINT_BOARD_TOP = '50%';
+const BLUEPRINT_BOARD_SIZE = 'min(82vw, 26rem, 40vh)';
 const SCALE_BUILDER_INTRO = `The Monster Minds have damaged the island structures.\nUse the scale factor to restore each structure to the correct size.\nMultiply each length correctly.`;
 
 const formatBlueprintValue = (value: number) => {
@@ -500,7 +500,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
 
           <div
             className="fixed left-0 right-0 z-30"
-            style={{ bottom: 'calc(env(safe-area-inset-bottom) + 5.1rem)' }}
+            style={{ bottom: 'calc(env(safe-area-inset-bottom) + 0.35rem)' }}
           >
             <div className="mx-auto flex w-full max-w-[780px] flex-col gap-2 px-2 md:px-3">
               <div className="grid grid-cols-2 gap-2">
@@ -555,7 +555,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className={`absolute bottom-[calc(env(safe-area-inset-bottom)+10.25rem)] left-1/2 z-20 w-[min(92vw,30rem)] -translate-x-1/2 rounded-[1rem] border px-4 py-2 text-center shadow-2xl ${
+                className={`absolute bottom-[calc(env(safe-area-inset-bottom)+7.25rem)] left-1/2 z-20 w-[min(92vw,30rem)] -translate-x-1/2 rounded-[1rem] border px-4 py-2 text-center shadow-2xl ${
                   feedback.type === 'success'
                     ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-100'
                     : 'border-rose-500/50 bg-rose-500/10 text-amber-100'

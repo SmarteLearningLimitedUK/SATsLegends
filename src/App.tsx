@@ -1007,8 +1007,30 @@ const App: React.FC = () => {
     }
 
     const levels = selectedIsland.levels ?? [];
-    const index = levels.findIndex((level) => level.id === selectedLevel.id);
-    const next = index >= 0 ? levels[index + 1] : null;
+
+    const samePackLevels = (() => {
+      if (selectedLevel.miniGameKey) {
+        return levels.filter((level) => level.miniGameKey === selectedLevel.miniGameKey);
+      }
+      if (selectedLevel.blueprintKey) {
+        return levels.filter((level) => level.blueprintKey === selectedLevel.blueprintKey);
+      }
+      if (selectedLevel.gameType) {
+        return levels.filter((level) => level.gameType === selectedLevel.gameType);
+      }
+      return [];
+    })();
+
+    const orderedPackLevels = samePackLevels.length > 0
+      ? [...samePackLevels].sort((a, b) => {
+        const aOrder = a.miniGameLevel ?? a.id;
+        const bOrder = b.miniGameLevel ?? b.id;
+        return aOrder - bOrder;
+      })
+      : [];
+
+    const packIndex = orderedPackLevels.findIndex((level) => level.id === selectedLevel.id);
+    const next = packIndex >= 0 ? orderedPackLevels[packIndex + 1] : null;
 
     if (next) {
       setSelectedLevel(next);
@@ -1017,7 +1039,7 @@ const App: React.FC = () => {
       return;
     }
 
-    // No next level: return to island selection.
+    // No next level in this game pack: return to island selection.
     setSelectedLevel(null);
     goToIslandLevels();
   };
