@@ -94,7 +94,6 @@ const CATEGORY_BY_GAME_TITLE: Record<string, CurriculumCategory> = {
   'Potion Panic': 'Ratio',
   'Prime Pop': 'Number',
   Quiz: 'SATs Practice',
-  'Ratio Racer': 'Ratio',
   'Ratio Rapids': 'Ratio',
   'Reasoning Quest': 'Reasoning',
   'Remainder Run': 'Number',

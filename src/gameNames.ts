@@ -32,7 +32,7 @@ export const CANONICAL_GAME_LABELS: Partial<Record<MiniGameType, string>> = {
   rule_runner: 'Rule Runner',
   percent_power: 'Percent Power',
   area_architect: 'Area Architect',
-  ratio_fractions: 'Ratio Racer',
+  ratio_fractions: 'Ratio Rapids',
   formula_forge: 'Formula Forge',
   unit_mixer: 'Lava Path',
   change_counter: 'Change Counter',

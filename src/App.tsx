@@ -103,7 +103,7 @@ const App: React.FC = () => {
   } = useScreenFlow();
 
   const canonicalGameTitle = screen === 'ratio_racer'
-    ? 'Ratio Racer'
+    ? 'Ratio Rapids'
     : screen === 'scale_builder'
       ? 'Scale Builder'
     : screen === 'share_splitter'
@@ -1234,7 +1234,7 @@ const App: React.FC = () => {
       : isMapLayoutScreen
       ? 'sat-screen-map-content'
       : 'sat-screen-standard-content items-stretch';
-  const appViewportOverflowClass = isWorldMapScreen ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden';
+  const appViewportOverflowClass = 'overflow-hidden';
   const appScreenOverflowClass = isWorldMapScreen ? 'overflow-visible' : 'overflow-hidden';
   const screenEnterScale = 1;
   const screenExitScale = 1;
@@ -1371,7 +1371,7 @@ const App: React.FC = () => {
                 data-qa-root="screen"
                 data-qa-screen={screen}
                 data-qa-scrollable={screenBehavior.scrollable ? 'true' : 'false'}
-                className={`app-screen-content relative z-10 flex ${isWorldMapScreen ? 'min-h-full' : 'h-full min-h-0'} w-full flex-1 justify-center ${appScreenOverflowClass} pointer-events-auto ${contentShellClass} ${globalDockOffsetClass}`}
+                className={`app-screen-content relative z-10 flex h-full min-h-0 w-full flex-1 justify-center ${appScreenOverflowClass} pointer-events-auto ${contentShellClass} ${globalDockOffsetClass}`}
               >
                 <AppRouter
                   screen={screen}

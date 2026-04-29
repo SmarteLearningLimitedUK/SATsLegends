@@ -229,10 +229,10 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   ratio_rapids: {
-    label: 'Ratio Racer',
+    label: 'Ratio Rapids',
     focus: 'Ratios, scaling and proportional defence',
     rules: {
-      title: 'Ratio Racer',
+      title: 'Ratio Rapids',
       summary: 'Deploy sword and cannon pirates in the correct ratio to stop each attack wave before it hits the island.',
       bullets: [
         'Fill every defender slot using the ratio and total defenders shown at the top.',
@@ -473,10 +473,10 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   ratio_fractions: {
-    label: 'Ratio Racer',
+    label: 'Ratio Rapids',
     focus: 'Ratio to fraction and part-to-whole reasoning',
     rules: {
-      title: 'Ratio Racer',
+      title: 'Ratio Rapids',
       summary: 'Race through ratios and turn them into fractions of the whole.',
       bullets: [
         'Add the ratio parts to find the total.',

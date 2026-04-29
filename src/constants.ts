@@ -56,11 +56,11 @@ const FRACTION_FOREST_LEVELS: LevelData[] = [
   { id: 5, stars: 0, isLocked: false, blueprintKey: 'simplify_sprint', displayName: 'Simplify Sprint', gameType: 'fraction_match' },
 ];
 
-const RATIO_RACER_LEVELS: LevelData[] = [
+const RATIO_RAPIDS_LEVELS: LevelData[] = [
   { id: 1, stars: 0, isLocked: false, blueprintKey: 'potion_panic', displayName: 'Potion Panic', gameType: 'potion_pour', miniGameKey: 'potion_panic', miniGameLevel: 1 },
   { id: 2, stars: 0, isLocked: false, blueprintKey: 'potion_panic', displayName: 'Potion Panic', gameType: 'potion_pour', miniGameKey: 'potion_panic', miniGameLevel: 2 },
   { id: 3, stars: 0, isLocked: false, blueprintKey: 'share_splitter', displayName: 'Share Splitter', gameType: 'ratio_rapids' },
-  { id: 4, stars: 0, isLocked: false, blueprintKey: 'ratio_fractions', displayName: 'Ratio Racer', gameType: 'ratio_fractions' },
+  { id: 4, stars: 0, isLocked: false, blueprintKey: 'ratio_fractions', displayName: 'Ratio Rapids', gameType: 'ratio_fractions' },
   // Briefings are for explicit practice levels only.
   { id: 5, stars: 0, isLocked: false, blueprintKey: 'scale_builder', displayName: 'Scale Builder', gameType: 'scale_safari', isPractice: false },
 ];
@@ -214,16 +214,16 @@ export const ISLANDS: IslandData[] = [
   },
   {
     id: 7,
-    name: 'Ratio Racer',
+    name: 'Ratio Rapids',
     category: 'Ratio',
     isLocked: false,
     color: 'bg-[#2CC7D9]',
-    themeName: 'Ratio Racer',
+    themeName: 'Ratio Rapids',
     bgGradient: 'from-cyan-300 to-sky-200',
     groundColor: 'bg-cyan-700',
     mapImage: world04Map,
     decorations: [],
-      levels: mergeIslandLevels(RATIO_RACER_LEVELS),
+      levels: mergeIslandLevels(RATIO_RAPIDS_LEVELS),
   },
 ];
 

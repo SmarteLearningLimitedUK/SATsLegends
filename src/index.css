@@ -4165,9 +4165,9 @@ button:disabled {
 }
 
 .screen-world-map .app-screen-content {
-  height: auto !important;
-  min-height: 100%;
-  overflow: visible !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
 }
 
 .app-shell-family-game .app-screen-content {

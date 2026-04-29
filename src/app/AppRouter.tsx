@@ -121,7 +121,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
 }) => {
   const renderStandaloneRatioRacer = () => {
     const standaloneLevelId = 4;
-    const gameTitle = 'Ratio Racer';
+    const gameTitle = 'Ratio Rapids';
     const sessionContext = {
       gameType: 'ratio_fractions' as const,
       levelId: standaloneLevelId,
