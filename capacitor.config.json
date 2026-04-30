@@ -1,0 +1,7 @@
+{
+  "appId": "com.smartelearning.satslegends",
+  "appName": "SATs Legends",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}
+
