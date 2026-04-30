@@ -16,6 +16,7 @@
     "screenshots": "tsx scripts/capture-screenshots.ts"
   },
   "dependencies": {
+    "@capacitor/core": "^8.3.1",
     "@google/genai": "^1.29.0",
     "@tailwindcss/vite": "^4.1.14",
     "@vitejs/plugin-react": "^5.0.4",
@@ -32,6 +33,7 @@
     "zustand": "^5.0.12"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.3.1",
     "@playwright/test": "^1.59.1",
     "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^22.14.0",
