@@ -810,13 +810,13 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
         main={(
           <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2">
         <div className="relative z-[35] min-h-0 overflow-visible bg-transparent">
-          <div
-            className="absolute inset-0 z-[70] overflow-visible"
-            style={{ transform: 'translateY(calc(var(--potion-cauldron-shift, 0px) + 32px))' }}
-          >
-            <div className="pointer-events-none absolute left-1/2 top-[84%] z-0 h-14 w-[72%] -translate-x-1/2 rounded-full bg-black/55 blur-md" />
-            <div className="pointer-events-none absolute left-1/2 top-[76%] z-10 h-[24%] w-[58%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
-            <div className="absolute left-1/2 top-[72%] z-10 flex h-[18%] w-[48%] -translate-x-1/2 translate-y-[52px] items-end justify-between px-5">
+           <div
+             className="absolute inset-0 z-[70] overflow-visible"
+             style={{ transform: 'translateY(var(--potion-cauldron-shift, 0px))' }}
+           >
+             <div className="pointer-events-none absolute left-1/2 top-[84%] z-0 h-14 w-[72%] -translate-x-1/2 rounded-full bg-black/55 blur-md" />
+             <div className="pointer-events-none absolute left-1/2 top-[76%] z-10 h-[24%] w-[58%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
+             <div className="absolute left-1/2 top-[72%] z-10 flex h-[18%] w-[48%] -translate-x-1/2 translate-y-[52px] items-end justify-between px-5">
               {[0, 1, 2].map((idx) => (
                 <motion.span
                   key={`flame-${idx}`}
@@ -826,17 +826,17 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
                 />
               ))}
             </div>
-            <img
-              src={cauldrenAndPotionArt}
-              alt=""
-              aria-hidden="true"
-              className="pointer-events-none absolute left-1/2 bottom-[13%] z-[90] h-[31%] max-w-none -translate-x-1/2 translate-y-[44px] object-contain md:bottom-[11%]"
-            />
-            <div className="absolute left-1/2 bottom-[28.5%] z-20 h-[12.5%] w-[27.5%] -translate-x-1/2 translate-y-[49px] overflow-hidden rounded-[46%]">
-              <motion.div
-                className="absolute inset-x-[8%] bottom-[8%] rounded-[42%]"
-                style={{
-                  background: `linear-gradient(180deg, rgba(255,255,255,0.34) 0%, ${mixColor} 18%, rgba(15,23,42,0.18) 100%)`,
+             <img
+               src={cauldrenAndPotionArt}
+               alt=""
+               aria-hidden="true"
+               className="pointer-events-none absolute left-1/2 bottom-[6%] z-[90] h-[38%] max-w-none -translate-x-1/2 object-contain md:bottom-[4%]"
+             />
+             <div className="absolute left-1/2 bottom-[23%] z-20 h-[14%] w-[30%] -translate-x-1/2 overflow-hidden rounded-[46%]">
+               <motion.div
+                 className="absolute inset-x-[8%] bottom-[8%] rounded-[42%]"
+                 style={{
+                   background: `linear-gradient(180deg, rgba(255,255,255,0.34) 0%, ${mixColor} 18%, rgba(15,23,42,0.18) 100%)`,
                   boxShadow: `0 0 30px ${mixColor}`,
                 }}
                 animate={{ height: `${Math.min(96, Math.max(18, (currentTotal / Math.max(1, targetTotal * 1.1)) * 100))}%` }}
