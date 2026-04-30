@@ -395,7 +395,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                   className="ui-close-button absolute right-4 top-4 z-20"
                   aria-label="Close result"
                 >
-                  <span aria-hidden="true">Ã—</span>
+                  <span aria-hidden="true">×</span>
                 </button>
 
                 <div className={`text-4xl font-black md:text-5xl ${isVictory ? 'text-emerald-300' : 'text-amber-300'}`}>

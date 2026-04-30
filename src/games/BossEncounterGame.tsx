@@ -14,6 +14,7 @@ import BossAtmosphereLayer from '../components/boss/BossAtmosphereLayer';
 import BossParallaxLayer from '../components/boss/BossParallaxLayer';
 import { getBossThemeVariant } from '../components/boss/bossAtmospherePresets';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
+import { formatMathOperatorsDisplay } from '../utils/mathDisplay';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import bossPaperBackground from '../assets/maps/backgroundsforgames/forestbackground.png';
@@ -1084,10 +1085,9 @@ const BossPaperStage: React.FC<{
 const selectedBossAnswerClass =
   'border-amber-200/70 bg-[linear-gradient(180deg,rgba(250,204,21,0.98),rgba(245,158,11,0.94))] text-[#1f2937] shadow-[0_10px_22px_rgba(2,6,23,0.38)]';
 
-const formatDivisionDisplay = (value: React.ReactNode) => {
+const formatBossMathDisplay = (value: React.ReactNode) => {
   if (typeof value !== 'string') return value;
-  // Division should render as a symbol in boss levels (avoid slash).
-  return value.replaceAll('/', ' ÷ ');
+  return formatMathOperatorsDisplay(value);
 };
 
 const BossAnswerCard: React.FC<{
@@ -1118,7 +1118,7 @@ const BossAnswerCard: React.FC<{
       {label}
     </span>
     <span className={`min-w-0 flex-1 break-words text-[clamp(1.2rem,4vw,2rem)] font-black leading-tight ${selected ? 'text-[#1f2937]' : 'text-white'}`}>
-      {formatDivisionDisplay(children)}
+      {formatBossMathDisplay(children)}
     </span>
   </button>
 );
@@ -2162,7 +2162,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
       <BossPaperStage
         title="Arithmetic Showdown"
         questionNumber={currentIndex + 1}
-        questionText={formatDivisionDisplay(`Calculate the value of: ${arithmeticQuestion.question}\nChoose the correct answer.`)}
+        questionText={formatMathOperatorsDisplay(`Calculate the value of: ${arithmeticQuestion.question}\nChoose the correct answer.`)}
         theme={bossTheme}
         atmosphereDensity={bossTheme === 'crystal' ? 'high' : 'medium'}
         visual={<BossPaperFallbackVisual encounter={encounter} bossPose={bossPose} title="Arithmetic Showdown Boss" />}
@@ -2182,7 +2182,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
               {String.fromCharCode(65 + index)}
             </span>
             <span className={`min-w-0 flex-1 break-words text-[clamp(0.92rem,2.9vw,1.35rem)] font-black leading-tight ${String(option) === selectedAnswer ? 'text-[#1f2937]' : 'text-white'}`}>
-              {formatDivisionDisplay(String(option))}
+              {formatMathOperatorsDisplay(String(option))}
             </span>
           </button>
         ))}

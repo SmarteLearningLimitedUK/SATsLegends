@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { emitUiAudio } from '../../audio/uiAudioEvents';
 import { normalizeQuestionText } from '../../utils/normalizeQuestionText';
+import { formatMathOperatorsDisplay } from '../../utils/mathDisplay';
 
 type WrapperProps = {
   children: React.ReactNode;
@@ -95,8 +96,12 @@ export const GameQuestionCard: React.FC<GameQuestionCardProps> = ({
   bodyClassName,
   style,
 }) => {
-  const normalizedChildren = typeof children === 'string' ? normalizeQuestionText(children) : children;
-  const normalizedSubtitle = typeof subtitle === 'string' ? normalizeQuestionText(subtitle) : subtitle;
+  const normalizedChildren = typeof children === 'string'
+    ? formatMathOperatorsDisplay(normalizeQuestionText(children))
+    : children;
+  const normalizedSubtitle = typeof subtitle === 'string'
+    ? formatMathOperatorsDisplay(normalizeQuestionText(subtitle))
+    : subtitle;
 
   return (
     <div className={cn('game-question-card', className)} style={style}>
