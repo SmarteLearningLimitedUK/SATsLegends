@@ -6833,6 +6833,16 @@ button.avatar-hero-arrow:not(:disabled):active {
   margin-right: auto;
 }
 
+/* Keep question typography consistent across all minigames.
+   Maths vs Zombies is the baseline for card text tone/weight/size. */
+.game-question-card .game-question-copy,
+.game-question-card .game-question-copy * {
+  font-family: var(--font-sans, var(--font-fredoka)) !important;
+  font-size: var(--sat-question-copy-size, clamp(0.96rem, 2.95vw, 1.12rem)) !important;
+  font-weight: var(--sat-question-copy-weight, 600) !important;
+  line-height: var(--sat-question-copy-line-height, 1.22) !important;
+}
+
 .practice-briefing-copy {
   text-wrap: balance;
   overflow-wrap: anywhere;
