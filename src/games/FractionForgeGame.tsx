@@ -750,7 +750,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
           return (
             <React.Fragment key={`target-${round.id}-${index}`}>
               <div
-                className={`pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-[0.85rem] border border-dashed bg-cyan-200/8 ${isHover ? 'border-amber-200/70 shadow-[0_0_22px_rgba(251,191,36,0.24)]' : 'border-cyan-200/30'}`}
+                className={`pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-[0.85rem] border border-dashed bg-white/28 ${isHover ? 'border-amber-200/70 shadow-[0_0_22px_rgba(251,191,36,0.24)]' : 'border-cyan-200/30'}`}
                 style={{
                   left: `${anchor.x}%`,
                   top: layout.targetTop,

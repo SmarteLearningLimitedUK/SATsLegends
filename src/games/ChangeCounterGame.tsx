@@ -350,7 +350,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
   };
 
   return (
-    <GameScreenShell className="overflow-hidden" overlayDisabled backgroundOpacity={1}>
+    <GameScreenShell className="overflow-hidden" overlayDisabled backgroundOpacity={1} backgroundImage={changeCounterBackground}>
 
       <PracticeIntroPopup
         open={showPracticeIntro}

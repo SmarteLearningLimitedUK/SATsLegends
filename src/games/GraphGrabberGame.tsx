@@ -11,7 +11,6 @@ import {
   Pie,
   PieChart,
   ResponsiveContainer,
-  Tooltip,
   XAxis,
   YAxis,
 } from 'recharts';
@@ -99,9 +98,13 @@ const scoreToStars = (XP: number) => {
 };
 
 const buildAxisTicks = (maxValue: number) => {
-  const safeMax = Math.max(5, Math.ceil(maxValue));
-  const roundedMax = Math.ceil(safeMax / 5) * 5;
-  return Array.from({ length: roundedMax + 1 }, (_, index) => index);
+  const step = 2;
+  const safeMax = Math.max(8, Math.ceil(maxValue));
+  const roundedMax = Math.ceil(safeMax / step) * step;
+  return Array.from(
+    { length: Math.floor(roundedMax / step) + 1 },
+    (_, index) => index * step,
+  );
 };
 
 type AxisTickProps = {
@@ -113,12 +116,10 @@ type AxisTickProps = {
 const GraphYAxisTick: React.FC<AxisTickProps> = ({ x = 0, y = 0, payload }) => {
   const rawValue = payload?.value;
   const value = typeof rawValue === 'number' ? rawValue : Number(rawValue);
-  const isMajor = Number.isFinite(value) && value % 5 === 0;
-  const tickLength = isMajor ? 13 : 8;
-  const strokeWidth = isMajor ? 2.4 : 1.1;
-  const fontSize = isMajor ? 12 : 10;
-  const fontWeight = isMajor ? 900 : 700;
-  const labelOpacity = isMajor ? 1 : 0.84;
+  const tickLength = 12;
+  const strokeWidth = 2;
+  const fontSize = 11;
+  const fontWeight = 900;
 
   return (
     <g transform={`translate(${x},${y})`}>
@@ -127,7 +128,7 @@ const GraphYAxisTick: React.FC<AxisTickProps> = ({ x = 0, y = 0, payload }) => {
         y1={0}
         x2={tickLength}
         y2={0}
-        stroke={isMajor ? 'rgba(255,248,236,0.9)' : 'rgba(255,248,236,0.62)'}
+        stroke="rgba(255,248,236,0.9)"
         strokeWidth={strokeWidth}
         strokeLinecap="round"
       />
@@ -138,7 +139,7 @@ const GraphYAxisTick: React.FC<AxisTickProps> = ({ x = 0, y = 0, payload }) => {
         fill="#fff8ec"
         fontSize={fontSize}
         fontWeight={fontWeight}
-        opacity={labelOpacity}
+        opacity={1}
       >
         {value}
       </text>
@@ -467,10 +468,6 @@ const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
                 label={{ value: 'Y Axis', angle: -90, position: 'insideLeft', fill: '#93c5fd', fontSize: 12, fontWeight: 800 } as never}
                 width={48}
               />
-              <Tooltip
-                cursor={{ fill: 'rgba(255,255,255,0.08)' }}
-                contentStyle={{ background: 'rgba(8,15,32,0.95)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '14px', color: '#fff8ec' }}
-              />
               <Bar dataKey="value" radius={[12, 12, 0, 0]}>
                 {round.bars!.map((bar) => (
                   <Cell key={bar.label} fill={bar.color} />
@@ -510,9 +507,6 @@ const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
                 label={{ value: 'Y Axis', angle: -90, position: 'insideLeft', fill: '#93c5fd', fontSize: 12, fontWeight: 800 } as never}
                 width={48}
               />
-              <Tooltip
-                contentStyle={{ background: 'rgba(8,15,32,0.95)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '14px', color: '#fff8ec' }}
-              />
               <Line type="monotone" dataKey="value" stroke="#60a5fa" strokeWidth={4} dot={{ r: 5, strokeWidth: 2, stroke: '#fff8ec', fill: '#60a5fa' }} />
             </LineChart>
           </ResponsiveContainer>
@@ -532,9 +526,6 @@ const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
         <div className="h-[clamp(13.5rem,32vh,19.5rem)]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              <Tooltip
-                contentStyle={{ background: 'rgba(8,15,32,0.95)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '14px', color: '#fff8ec' }}
-              />
               <Pie data={round.pie!} dataKey="value" nameKey="label" cx="50%" cy="50%" innerRadius={52} outerRadius={90} paddingAngle={3}>
                 {round.pie!.map((slice) => (
                   <Cell key={slice.label} fill={slice.color} />
@@ -737,7 +728,11 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
     submitAnswer(selectedIds);
   };
 
-  const optionGridClass = round.answerMode === 'trueFalse'
+  const isPieRound = round.kind === 'pie';
+
+  const optionGridClass = isPieRound
+    ? 'grid-cols-2'
+    : round.answerMode === 'trueFalse'
     ? 'grid-cols-2'
     : round.answerMode === 'multi'
       ? 'grid-cols-1 sm:grid-cols-2'
@@ -773,7 +768,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
               <GraphBoard round={round} />
             </div>
 
-            <section className="rounded-[1.15rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(10,17,37,0.84))] p-2.5 shadow-[0_18px_30px_rgba(2,6,23,0.18)] md:p-3">
+            <section className={`rounded-[1.15rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.72),rgba(10,17,37,0.84))] shadow-[0_18px_30px_rgba(2,6,23,0.18)] ${isPieRound ? 'p-2' : 'p-2.5 md:p-3'}`}>
               <div className={`grid gap-2 ${optionGridClass}`}>
                 {round.options.map((choice) => {
                   const selected = selectedIds.includes(choice.id);
@@ -785,7 +780,9 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
                       onClick={() => handleOptionClick(choice)}
                       disabled={feedback !== null || isFinished}
                       className={[
-                        'rounded-[1rem] px-3 py-3 text-center text-[clamp(0.92rem,3vw,1.25rem)] font-black transition disabled:opacity-45',
+                        isPieRound
+                          ? 'rounded-[0.9rem] px-2.5 py-2 text-center text-[clamp(0.82rem,2.45vw,1rem)] leading-tight font-black transition disabled:opacity-45'
+                          : 'rounded-[1rem] px-3 py-3 text-center text-[clamp(0.92rem,3vw,1.25rem)] font-black transition disabled:opacity-45',
                         isCorrect
                           ? 'ui-button-success'
                           : selected

@@ -38,7 +38,7 @@ interface GemCell {
 type BoardCell = GemCell | null;
 
 const GEM_TYPES: GemType[] = ['red', 'blue', 'green', 'yellow', 'purple'];
-const BOARD_COLUMNS = 6;
+const BOARD_COLUMNS = 5;
 const BOARD_ROWS = 6;
 const ROUND_SECONDS = 60;
 const BASE_TARGET_SCORE = 900;
@@ -214,7 +214,7 @@ const BevelledGem: React.FC<{
     >
       <div className="absolute left-0 top-0 h-full w-full bg-gradient-to-br from-white/36 via-transparent to-black/18" />
       <div className="absolute left-1.5 top-1.5 h-2 w-2 rounded-full bg-white/54 blur-[1px]" />
-      <span className="absolute inset-0 flex items-center justify-center px-0.5 text-center text-[11px] font-black leading-none text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] sm:text-xs">
+      <span className="absolute inset-0 flex items-center justify-center px-0.5 text-center text-[13px] font-black leading-none text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] sm:text-sm">
         {label}
       </span>
 
@@ -333,7 +333,7 @@ const MatchGameShell: React.FC<{
            ) : null}
 
               <div
-                className={`relative z-10 flex h-full w-full flex-col items-stretch justify-start px-1.5 pb-[calc(env(safe-area-inset-bottom)+0.2rem)] ${useSharedTopHud ? 'match-mastery-board-stage pt-[calc(env(safe-area-inset-top)+10.6rem+10pt)]' : 'pt-[calc(0.35rem+10pt)]'} sm:px-3`}
+                className={`relative z-10 flex h-full w-full flex-col items-stretch justify-end px-1.5 pb-[calc(env(safe-area-inset-bottom)+0.2rem)] ${useSharedTopHud ? 'match-mastery-board-stage pt-[calc(env(safe-area-inset-top)+10.6rem+10pt)]' : 'pt-[calc(0.35rem+10pt)]'} sm:px-3`}
               >
                 <AnimatePresence>
                   {fireActive ? (
@@ -444,7 +444,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       const frameHeight = frameNode.clientHeight;
       if (frameWidth <= 0 || frameHeight <= 0) return;
 
-      const gapPx = 6;
+      const gapPx = 0.5;
       const availableWidth = Math.max(0, frameWidth);
       const availableHeight = Math.max(0, frameHeight);
 
@@ -636,7 +636,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       />
       <div
         ref={boardFrameRef}
-        className="relative box-border mx-auto h-full w-full max-w-[32rem] rounded-[2rem] border border-cyan-100/18 bg-[#04102c]/54 p-1.5 shadow-[0_18px_40px_rgba(0,0,0,0.45)] backdrop-blur-[2px] sm:p-2"
+        className="relative box-border mx-auto mt-auto h-full w-full max-w-[32rem] rounded-[2rem] border border-cyan-100/18 bg-[#04102c]/54 p-1.5 shadow-[0_18px_40px_rgba(0,0,0,0.45)] backdrop-blur-[2px] sm:p-2"
       >
         <div
           className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-[0.24]"
@@ -654,7 +654,8 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
         />
         <div
           ref={boardGridRef}
-          className="relative z-10 grid h-full w-full grid-cols-6 grid-rows-6 gap-1.5 sm:gap-1.5"
+          className="relative z-10 grid h-full w-full grid-cols-5 grid-rows-6"
+          style={{ gap: '0.5px' }}
         >
           {board.map((cell, idx) => (
             <div

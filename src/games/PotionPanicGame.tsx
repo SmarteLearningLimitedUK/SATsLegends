@@ -810,10 +810,10 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
         main={(
           <div className="mx-auto grid h-full w-full max-w-[780px] min-h-0 grid-rows-[minmax(0,1fr)_auto] gap-2">
         <div className="relative z-[35] min-h-0 overflow-visible bg-transparent">
-           <div
-             className="absolute inset-0 z-[70] overflow-visible"
-             style={{ transform: 'translateY(var(--potion-cauldron-shift, 0px))' }}
-           >
+          <div
+            className="absolute inset-0 z-[110] overflow-visible"
+            style={{ transform: 'translateY(var(--potion-cauldron-shift, 0px))' }}
+          >
              <div className="pointer-events-none absolute left-1/2 top-[84%] z-0 h-14 w-[72%] -translate-x-1/2 rounded-full bg-black/55 blur-md" />
              <div className="pointer-events-none absolute left-1/2 top-[76%] z-10 h-[24%] w-[58%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
              <div className="absolute left-1/2 top-[72%] z-10 flex h-[18%] w-[48%] -translate-x-1/2 translate-y-[52px] items-end justify-between px-5">
@@ -830,7 +830,7 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
                src={cauldrenAndPotionArt}
                alt=""
                aria-hidden="true"
-               className="pointer-events-none absolute left-1/2 bottom-[6%] z-[90] h-[38%] max-w-none -translate-x-1/2 object-contain md:bottom-[4%]"
+               className="pointer-events-none absolute left-1/2 bottom-[6%] z-[130] h-[38%] max-w-none -translate-x-1/2 object-contain md:bottom-[4%]"
              />
              <div className="absolute left-1/2 bottom-[23%] z-20 h-[14%] w-[30%] -translate-x-1/2 overflow-hidden rounded-[46%]">
                <motion.div

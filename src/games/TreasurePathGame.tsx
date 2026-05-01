@@ -33,12 +33,20 @@ interface TreasureRound {
 }
 
 const GRID_SIZE = 7;
-const CHECKERBOARD_INSET = {
-  left: '13.6%',
-  top: '13.2%',
-  right: '13.4%',
-  bottom: '13.8%',
-};
+const CHECKERBOARD_BOUNDS = {
+  left: 0.136,
+  top: 0.132,
+  right: 0.134,
+  bottom: 0.138,
+} as const;
+const CHECKERBOARD_WIDTH_RATIO = 1 - CHECKERBOARD_BOUNDS.left - CHECKERBOARD_BOUNDS.right;
+const CHECKERBOARD_HEIGHT_RATIO = 1 - CHECKERBOARD_BOUNDS.top - CHECKERBOARD_BOUNDS.bottom;
+const BOARD_IMAGE_CROP_STYLE = {
+  left: `${-(CHECKERBOARD_BOUNDS.left / CHECKERBOARD_WIDTH_RATIO) * 100}%`,
+  top: `${-(CHECKERBOARD_BOUNDS.top / CHECKERBOARD_HEIGHT_RATIO) * 100}%`,
+  width: `${(100 / CHECKERBOARD_WIDTH_RATIO)}%`,
+  height: `${(100 / CHECKERBOARD_HEIGHT_RATIO)}%`,
+} as const;
 const randomInt = (max: number) => Math.floor(Math.random() * max) + 1;
 
 const coordinateKey = (x: number, y: number) => `${x}-${y}`;
@@ -275,18 +283,21 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
         </div>
 
         <div className="relative flex min-h-0 flex-1 items-center justify-center">
-          <div className="relative aspect-square w-[min(86vw,56vh,33rem)] overflow-hidden rounded-[1.5rem] border border-cyan-100/26 shadow-[0_18px_36px_rgba(2,6,23,0.4)] md:w-[min(82vw,58vh,35rem)]">
+          <div className="relative aspect-square h-full max-h-[min(96vw,74vh,46rem)] w-full max-w-[min(96vw,74vh,46rem)] overflow-hidden rounded-[1.5rem] border border-cyan-100/26 shadow-[0_18px_36px_rgba(2,6,23,0.4)]">
             <div className="absolute inset-0">
               <img
                 src={coordinateQuestBoard}
                 alt=""
                 aria-hidden="true"
                 draggable={false}
-                className="pointer-events-none absolute inset-0 h-full w-full rounded-[1.5rem] object-contain object-center"
+                className="pointer-events-none absolute rounded-[1.5rem] object-fill"
+                style={BOARD_IMAGE_CROP_STYLE}
               />
               <div
                 className="absolute z-10 grid grid-cols-7 grid-rows-7 overflow-hidden rounded-[0.45rem]"
-                style={CHECKERBOARD_INSET}
+                style={{
+                  inset: 0,
+                }}
               >
                 {cells.map((cell) => {
                   const key = coordinateKey(cell.x, cell.y);

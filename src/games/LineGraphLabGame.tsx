@@ -56,12 +56,10 @@ type AxisTickProps = {
 const GraphYAxisTick: React.FC<AxisTickProps> = ({ x = 0, y = 0, payload }) => {
   const rawValue = payload?.value;
   const value = typeof rawValue === 'number' ? rawValue : Number(rawValue);
-  const isMajor = Number.isFinite(value) && value % 5 === 0;
-  const tickLength = isMajor ? 13 : 8;
-  const strokeWidth = isMajor ? 2.4 : 1.1;
-  const fontSize = isMajor ? 12 : 10;
-  const fontWeight = isMajor ? 900 : 700;
-  const labelOpacity = isMajor ? 1 : 0.82;
+  const tickLength = 12;
+  const strokeWidth = 2;
+  const fontSize = 11;
+  const fontWeight = 900;
 
   return (
     <g transform={`translate(${x},${y})`}>
@@ -70,7 +68,7 @@ const GraphYAxisTick: React.FC<AxisTickProps> = ({ x = 0, y = 0, payload }) => {
         y1={0}
         x2={tickLength}
         y2={0}
-        stroke={isMajor ? 'rgba(219,234,254,0.9)' : 'rgba(219,234,254,0.65)'}
+        stroke="rgba(219,234,254,0.9)"
         strokeWidth={strokeWidth}
         strokeLinecap="round"
       />
@@ -81,7 +79,7 @@ const GraphYAxisTick: React.FC<AxisTickProps> = ({ x = 0, y = 0, payload }) => {
         fill="#dbeafe"
         fontSize={fontSize}
         fontWeight={fontWeight}
-        opacity={labelOpacity}
+        opacity={1}
       >
         {value}
       </text>
@@ -320,10 +318,11 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   };
 
   const yTicks = useMemo(() => {
-    if (!round) return Array.from({ length: 41 }, (_, index) => index);
+    const step = 2;
+    if (!round) return Array.from({ length: 21 }, (_, index) => index * step);
     const maxValue = Math.max(...round.graph.map((point) => point.value));
-    const top = clamp(Math.ceil((maxValue + 3) / 5) * 5, 20, 60);
-    return Array.from({ length: top + 1 }, (_, index) => index);
+    const top = clamp(Math.ceil((maxValue + 2) / step) * step, 20, 60);
+    return Array.from({ length: Math.floor(top / step) + 1 }, (_, index) => index * step);
   }, [round]);
   return (
     <GameUiShell backgroundImage={lineGraphLabBackground} overlayDisabled className="bg-transparent">

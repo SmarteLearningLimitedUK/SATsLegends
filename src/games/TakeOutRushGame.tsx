@@ -143,6 +143,9 @@ const loadSortedImages = (record: Record<string, string>) => (
 const takeOutMonsterImages = loadSortedImages(
   import.meta.glob('../assets/take_out/monsters/*.png', { eager: true, import: 'default' }) as Record<string, string>,
 );
+const fallbackServerImages = loadSortedImages(
+  import.meta.glob('../assets/characters/mobile/*/*_neutral.png', { eager: true, import: 'default' }) as Record<string, string>,
+);
 
 const MONSTER_IMAGES = takeOutMonsterImages;
 
@@ -558,7 +561,14 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     () => order.trayItemIds.map((id) => ITEM_BY_ID[id]).filter(Boolean),
     [order.trayItemIds],
   );
-  const orderMonster = useMemo(() => pick(MONSTER_IMAGES), [order.id]);
+  const orderMonster = useMemo(
+    () => (MONSTER_IMAGES.length ? pick(MONSTER_IMAGES) : undefined),
+    [order.id],
+  );
+  const fallbackServer = useMemo(
+    () => (fallbackServerImages.length ? fallbackServerImages[order.stage % fallbackServerImages.length] : undefined),
+    [order.stage],
+  );
 
   return (
     <FoodGameShell
@@ -607,13 +617,33 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
               </div>
             </div>
             <div className="pointer-events-none absolute left-1/2 bottom-[calc(3%_-_8pt)] h-[50%] w-[min(80vw,21rem)] -translate-x-1/2 overflow-hidden max-[480px]:h-[52%]">
-              <img
-                src={orderMonster}
-                alt=""
-                draggable={false}
-                className="absolute bottom-0 h-full w-full scale-[1.08] object-contain drop-shadow-[0_12px_22px_rgba(2,6,23,0.45)] md:scale-[1.18]"
-                style={{ transformOrigin: 'bottom center' }}
-              />
+              {orderMonster ? (
+                <img
+                  src={orderMonster}
+                  alt=""
+                  draggable={false}
+                  className="absolute bottom-0 h-full w-full scale-[1.08] object-contain drop-shadow-[0_12px_22px_rgba(2,6,23,0.45)] md:scale-[1.18]"
+                  style={{ transformOrigin: 'bottom center' }}
+                />
+              ) : (
+                <div className="absolute bottom-0 left-1/2 flex h-full w-full -translate-x-1/2 flex-col items-center justify-end">
+                  {fallbackServer ? (
+                    <img
+                      src={fallbackServer}
+                      alt=""
+                      draggable={false}
+                      className="h-[78%] w-auto object-contain drop-shadow-[0_12px_22px_rgba(2,6,23,0.45)]"
+                    />
+                  ) : (
+                    <div className="h-[62%] w-[44%] rounded-[1.2rem] border border-cyan-100/30 bg-slate-900/65" />
+                  )}
+                  <div className="absolute bottom-[11%] left-1/2 flex h-[13%] w-[54%] -translate-x-1/2 items-center justify-center gap-1 rounded-[0.8rem] border border-amber-100/35 bg-slate-900/78 px-2 shadow-[0_8px_16px_rgba(2,6,23,0.4)]">
+                    {availableItems.slice(0, 3).map((item) => (
+                      <FoodSprite key={`tray-${item.id}`} item={item} className="h-[72%] w-auto object-contain" />
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </section>
 

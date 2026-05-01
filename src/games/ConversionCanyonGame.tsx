@@ -285,10 +285,10 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
                   draggable={false}
                   className="pointer-events-none relative z-10 h-auto w-full object-contain object-center drop-shadow-[0_12px_16px_rgba(2,6,23,0.28)]"
                 />
-                <div className="pointer-events-none absolute left-1/2 bottom-[10.5%] z-30 -translate-x-1/2">
-                  <div className="flex min-w-[8.9rem] flex-col items-center rounded-[0.95rem] border border-cyan-200/62 bg-[#061426]/94 px-3 py-1.5 text-center shadow-[0_10px_18px_rgba(2,6,23,0.58)]">
+                <div className="pointer-events-none absolute left-1/2 bottom-[calc(10.5%+20pt)] z-30 -translate-x-1/2">
+                  <div className="flex min-w-[6.85rem] flex-col items-center rounded-[0.95rem] border border-cyan-200/62 bg-[#061426]/94 px-2 py-1 text-center shadow-[0_10px_18px_rgba(2,6,23,0.58)]">
                     <div className="text-[8px] font-black uppercase tracking-[0.25em] text-cyan-100/82">Digital Weight</div>
-                    <div className="mt-0.5 font-mono text-[1.12rem] font-black tracking-[0.08em] text-emerald-200">
+                    <div className="mt-0.5 font-mono text-[0.86rem] font-black tracking-[0.08em] text-emerald-200">
                       {toGramLabel(currentGrams)}
                     </div>
                   </div>
@@ -297,7 +297,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
 
               <div
                 ref={dropRef}
-                className="absolute left-1/2 top-[4.5%] z-40 flex max-h-[2.9rem] w-[min(76%,15.6rem)] -translate-x-1/2 flex-wrap items-end justify-center gap-1.5 overflow-hidden px-1.5 py-1"
+                className="absolute left-1/2 top-[0.8%] z-40 flex max-h-[2.9rem] w-[min(63%,12.6rem)] -translate-x-1/2 flex-wrap items-end justify-center gap-0.5 overflow-hidden px-0.5 py-0.5"
                 aria-label="Weights on scale"
               >
                 {placedTokens.length > 0 ? (
@@ -305,7 +305,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
                     <button
                       key={token.id}
                       onClick={() => removePlacedToken(token.id)}
-                      className="relative z-10 flex w-[3.1rem] flex-col items-center justify-center rounded-lg bg-transparent px-1 py-0.5 text-white drop-shadow-[0_10px_14px_rgba(2,6,23,0.35)]"
+                      className="relative z-10 flex w-[2.55rem] flex-col items-center justify-center rounded-lg bg-transparent px-0.5 py-0.5 text-white drop-shadow-[0_10px_14px_rgba(2,6,23,0.35)]"
                       title={getMeasurementDisplay(token.grams).primary}
                     >
                       <img
@@ -314,7 +314,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
                         className="h-6 w-6 object-contain"
                         draggable={false}
                       />
-                      <span className="mt-0.5 max-w-[3.08rem] text-center text-[8px] font-black leading-none tracking-[0.01em]">
+                      <span className="mt-0.5 max-w-[2.5rem] text-center text-[8px] font-black leading-none tracking-[0.01em]">
                         {getMeasurementDisplay(token.grams).primary}
                       </span>
                     </button>

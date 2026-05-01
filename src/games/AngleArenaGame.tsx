@@ -749,12 +749,11 @@ const solveSideLaunchSpeed = (angleDeg: number, targetX: number, targetY: number
   return Math.sqrt((PROJECTILE_GRAVITY * targetX * targetX) / denominator);
 };
 
-const ENEMY_PODIUM_SCREEN_Y_RATIOS = [0.24, 0.34, 0.44, 0.54] as const;
+const ENEMY_PODIUM_SCREEN_Y_RATIO = 0.5;
 
 const getSideTargetWorld = (viewWidth: number, viewHeight: number, questionIndex: number) => {
-  const ratio = ENEMY_PODIUM_SCREEN_Y_RATIOS[questionIndex % ENEMY_PODIUM_SCREEN_Y_RATIOS.length]
-    ?? ENEMY_PODIUM_SCREEN_Y_RATIOS[0];
-  const desiredScreenY = viewHeight * ratio;
+  void questionIndex;
+  const desiredScreenY = viewHeight * ENEMY_PODIUM_SCREEN_Y_RATIO;
   const launcherScreenY = viewHeight * LAUNCHER_SCREEN_Y_RATIO;
   const unclampedWorldY = desiredScreenY - launcherScreenY;
 

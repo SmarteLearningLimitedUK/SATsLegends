@@ -82,6 +82,10 @@ const loadSortedImages = (record: Record<string, string>) => (
 const MUGSHOT_IMAGES = loadSortedImages(
   import.meta.glob('../assets/datadetective/mugshots/*.png', { eager: true, import: 'default' }) as Record<string, string>,
 );
+const FALLBACK_SUSPECT_IMAGES = loadSortedImages(
+  import.meta.glob('../assets/bosses/*.{png,jpg,jpeg,webp}', { eager: true, import: 'default' }) as Record<string, string>,
+);
+const SUSPECT_PORTRAITS = MUGSHOT_IMAGES.length > 0 ? MUGSHOT_IMAGES : FALLBACK_SUSPECT_IMAGES;
 const DETECTIVE_BRIEFS = [
   'Match the evidence totals to the suspect report.',
   'Check the chart carefully before accusing.',
@@ -212,7 +216,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
 
     const correctIdx = Math.floor(Math.random() * 4);
     const getPortraitForSuspect = (index: number) => (
-      MUGSHOT_IMAGES.length ? MUGSHOT_IMAGES[index % MUGSHOT_IMAGES.length] : undefined
+      SUSPECT_PORTRAITS.length ? SUSPECT_PORTRAITS[index % SUSPECT_PORTRAITS.length] : undefined
     );
     const newSuspects = Array.from({ length: 4 }, (_, i) => {
       if (i === correctIdx) {
@@ -401,7 +405,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             <div className="pointer-events-none absolute inset-0 bg-slate-950/20" />
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.3)_1px,transparent_1px)] opacity-7 [background-size:20px_20px]" />
 
-            <div className="relative w-full" style={{ height: 'clamp(11.5rem, 27vh, 19rem)' }}>
+            <div className="relative w-full min-h-0 flex-1" style={{ minHeight: 'clamp(9rem, 20vh, 13.5rem)' }}>
               <ResponsiveContainer width="100%" height="100%">
                 {chartType === 'bar' ? (
                     <BarChart data={currentCase} margin={{ top: 12, right: 10, left: -4, bottom: 28 }}>
@@ -478,7 +482,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
               </ResponsiveContainer>
             </div>
 
-            <div className="mt-1.5 grid grid-cols-2 gap-1 sm:gap-1.5 max-[480px]:mt-1 max-[480px]:gap-0.5">
+            <div className="mt-1.5 shrink-0 grid grid-cols-2 gap-1 sm:gap-1.5 max-[480px]:mt-1 max-[480px]:gap-0.5">
               {currentCase.map(item => (
                 <div key={item.name} className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/8 px-2 py-1">
                   <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: item.color }} />

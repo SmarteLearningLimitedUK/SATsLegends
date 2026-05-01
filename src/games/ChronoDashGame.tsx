@@ -295,13 +295,13 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({
               </AnimatePresence>
             </div>
 
-            <div className="mt-auto flex w-full flex-col gap-2">
+            <div className="mt-auto flex w-full items-stretch gap-2">
               {gameState === 'playing' && (
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={checkTime}
-                  className="ui-button-primary w-full rounded-2xl py-2.5 text-base font-black md:py-3 md:text-lg"
+                  className="ui-button-primary flex-1 rounded-2xl py-2.5 text-base font-black md:py-3 md:text-lg"
                 >
                   RESTORE TIME
                 </motion.button>
@@ -309,7 +309,7 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({
 
               <button
                 onClick={resetRun}
-                className="ui-button-secondary flex min-h-[2.6rem] items-center justify-center gap-2 px-4 py-2 text-[10px] font-bold tracking-widest"
+                className="ui-button-secondary flex min-h-[2.6rem] flex-1 items-center justify-center gap-2 px-4 py-2 text-[10px] font-bold tracking-widest"
               >
                 <RotateCcw size={14} /> RESET TIMEKEEPER
               </button>

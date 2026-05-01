@@ -572,7 +572,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
         >
           <div className="mx-auto flex w-full max-w-[56rem] flex-col gap-2 px-2 sm:px-3 md:px-4">
             <GameQuestionCard
-              title="Ratio Rapids"
+              title="Ratio Racer"
               className="w-full !mb-0"
               style={{
                 ['--question-card-width' as any]: 'min(100%, 56rem)',

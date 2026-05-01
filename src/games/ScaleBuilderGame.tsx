@@ -84,8 +84,8 @@ const LEVELS: Level[] = [
 ];
 
 const GRID_SIZE = 20;
-const BLUEPRINT_BOARD_TOP = '50%';
-const BLUEPRINT_BOARD_SIZE = 'min(82vw, 26rem, 40vh)';
+const BLUEPRINT_BOARD_TOP = '46%';
+const BLUEPRINT_BOARD_SIZE = 'min(72vw, 21rem, 33vh)';
 const SCALE_BUILDER_INTRO = `The Monster Minds have damaged the island structures.\nUse the scale factor to restore each structure to the correct size.\nMultiply each length correctly.`;
 
 const formatBlueprintValue = (value: number) => {
@@ -439,13 +439,8 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
       <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-[10px] px-2 pb-[calc(env(safe-area-inset-bottom)+10.4rem)] pt-[calc(env(safe-area-inset-top)+0.95rem)] md:px-3">
         <div className="relative mx-auto flex h-full w-full max-w-[780px] min-h-0 flex-1 flex-col overflow-visible">
           <div className="relative z-10 grid h-full min-h-0 w-full grid-rows-[auto_minmax(0,1fr)] gap-[10px] p-0 md:p-0">
-            <GameQuestionCard
-              className="w-full"
-              style={{
-                ['--question-card-padding' as any]: '12px 14px',
-              }}
-            >
-              <div className="game-question-copy mt-0 whitespace-pre-line text-[9.5px] font-black leading-snug text-white md:text-[10px]">
+            <GameQuestionCard className="w-full">
+              <div className="game-question-copy mt-0 whitespace-pre-line text-[clamp(0.98rem,2.75vw,1.22rem)] font-black leading-snug text-white">
                 {instructionsText}
               </div>
             </GameQuestionCard>

@@ -76,11 +76,14 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
   const timeoutRef = useRef<number | null>(null);
 
   const roundsGoal = useMemo(() => clamp(6 + Math.floor(levelId / 2), 6, 10), [levelId]);
-  const bossDamageStage = Math.min(
-    RODEO_BOSS_IMAGES.length - 1,
-    Math.floor((correctAnswers / Math.max(1, roundsGoal)) * RODEO_BOSS_IMAGES.length),
-  );
-  const bossImage = RODEO_BOSS_IMAGES[bossDamageStage];
+  const neutralBossImage = RODEO_BOSS_IMAGES[0];
+  const successBossImage = RODEO_BOSS_IMAGES[2] ?? RODEO_BOSS_IMAGES[RODEO_BOSS_IMAGES.length - 1];
+  const errorBossImage = RODEO_BOSS_IMAGES[3] ?? RODEO_BOSS_IMAGES[RODEO_BOSS_IMAGES.length - 1];
+  const bossImage = feedback?.tone === 'success'
+    ? successBossImage
+    : feedback?.tone === 'error'
+      ? errorBossImage
+      : neutralBossImage;
 
   const lives = sessionState?.lives ?? 3;
   const timeLeft = sessionState?.timeLeft ?? 1;
@@ -253,7 +256,7 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
 
           <div className="relative z-[1] mx-auto flex min-h-0 w-full max-w-[520px] flex-1 items-end justify-center pb-[5px]">
             <div className="relative h-full min-h-[10rem] w-full max-h-[18.5rem]">
-              <div className="absolute left-1/2 top-[14%] z-10 -translate-x-1/2 rounded-lg border border-amber-200/35 bg-slate-900/76 p-1.5 shadow-[0_10px_20px_rgba(2,6,23,0.46)]">
+              <div className="absolute left-1/2 top-[34%] z-10 -translate-x-1/2 rounded-lg border border-amber-200/35 bg-slate-900/76 p-1.5 shadow-[0_10px_20px_rgba(2,6,23,0.46)]">
                 <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.12em] text-amber-200 md:text-[9px]">
                   Range Boss
                 </div>
@@ -272,7 +275,7 @@ const RangeRodeoGame: React.FC<RangeRodeoGameShellProps> = ({
                 alt=""
                 aria-hidden="true"
                 draggable={false}
-                className="absolute left-1/2 bottom-[5px] h-[108%] max-h-[19.4rem] -translate-x-1/2 object-contain drop-shadow-[0_18px_26px_rgba(2,6,23,0.58)]"
+                className="absolute left-1/2 bottom-[-30px] h-[108%] max-h-[19.4rem] -translate-x-1/2 object-contain drop-shadow-[0_18px_26px_rgba(2,6,23,0.58)]"
               />
             </div>
           </div>
