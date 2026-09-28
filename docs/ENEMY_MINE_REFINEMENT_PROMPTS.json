@@ -260,7 +260,8 @@
     "src/components/BossPortrait.tsx": "Same encounter identity resolver and stable actor for existing portrait consumers.",
     "src/games/AngleArenaGame.tsx": "Canvas projection updates a single stable DOM goblin actor position/size; existing cannon/angle/physics/scoring unchanged. Hit/taunt from current outcome, defeat from levelComplete; reduced motion inherited from actor.",
     "src/games/MultiplicationMineGame.tsx": "Four-strike cyan-ore progression, one static-state image node, guarded input/session events/exact final XP, physical pick/recoil/chips, reduced-motion static presentation; mission then ore then tightly grouped answers then status.",
-    "src/games/MathsVsZombiesGame.tsx": "Owned by question_visibility: shared zombie cutout per current entity, idle/hit/taunt/defeated state mappings; no raw frame swaps."
+    "src/games/MathsVsZombiesGame.tsx": "Owned by question_visibility: shared zombie cutout per current entity, idle/hit/taunt/defeated state mappings; no raw frame swaps.",
+    "src/games/DataDetectiveGame.tsx": "Owned by root: current case mugshots use the same goblin/rhino/jelly/cyclops roster with stable shared actors and distinct current-case identities; existing case/math retained."
   },
   "sharedActor": {
     "files": [
@@ -331,7 +332,32 @@
   },
   "verification": {
     "sourceReview": "React hooks/input/timers/identity/reduced-motion audited within owned changes",
-    "typecheck": "Pending final scoped lint completion",
-    "browser": "Not run during concurrent source writes; full profile verification belongs to coordinated final frozen-source QA."
-  }
+    "typecheck": "npm run lint (tsc --noEmit) passed after final production edits.",
+    "browser": "Not run during concurrent source writes; full profile verification belongs to coordinated final frozen-source QA.",
+    "pureHelpers": "TypeScript AST extraction of actual source helpers:20000 generated Order/Factor/Ninja/PVP questions across all five tiers passed answer correctness/available unique choices or adequate token inventory; Factor90%/70% exact star boundaries and perfect-score attainability passed every selected tier. Mine/Angle source-only generator coverage delegated to central tier QA owner.",
+    "diff": "Scoped git diff --check passed; no browser runs or live device-fit claims during source phase."
+  },
+  "changedFilesThisOwner": [
+    "src/games/MultiplicationMineGame.tsx",
+    "src/games/multiplication-mine.css",
+    "src/games/NumberLineNinjaGame.tsx",
+    "src/games/PlaceValuePanicGame.tsx",
+    "src/games/FactorFrenzyGame.tsx",
+    "src/games/OrderOpsArenaGame.tsx",
+    "src/games/BossEncounterGame.tsx",
+    "src/games/AngleArenaGame.tsx",
+    "src/components/BossPortrait.tsx",
+    "src/assets/enemies/cohesive/index.ts",
+    "src/assets/enemies/cohesive/goblin.webp",
+    "src/assets/enemies/cohesive/rhino.webp",
+    "src/assets/enemies/cohesive/zombie.webp",
+    "src/assets/enemies/cohesive/jelly.webp",
+    "src/assets/enemies/cohesive/cyclops-slime.webp",
+    "src/assets/mine/ore/ore-intact.webp",
+    "src/assets/mine/ore/ore-cracked.webp",
+    "src/assets/mine/ore/ore-split.webp",
+    "src/assets/mine/ore/ore-open.webp",
+    "docs/ENEMY_MINE_REFINEMENT_PROMPTS.json"
+  ],
+  "freeze": "Owned production/art/docs frozen for coordinated device QA. No active image generation or exec process."
 }
