@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { ChevronDown } from 'lucide-react';
 import {
   emitMiniGameSessionEvent,
@@ -7,7 +7,8 @@ import {
 } from '../app/gameplaySessionContract';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
-import dojoBackground from '../assets/maps/backgroundsforgames/numberlineninja.jpg';
+import MonsterMindActor, { type MonsterMindReaction } from '../components/game-ui/MonsterMindActor';
+import dojoBackground from '../assets/maps/premium/number-line-ninja.webp';
 import { pickBossArt } from '../assets/bosses/library';
 interface NumberLineNinjaGameProps {
   levelId: number;
@@ -43,6 +44,7 @@ interface NumberLineQuestion {
 const QUESTION_ADVANCE_MS = 620;
 const QUESTION_FEEDBACK_MS = 520;
 const MONSTER_HIT_REACTION_MS = 900;
+const MONSTER_TAUNT_REACTION_MS = 660;
 const MONSTER_ESCAPE_LINE = 'The Monster Mind slips deeper into the shadows, hiding more of the path!';
 const MONSTER_DAMAGE_LINES = ['Ouch!', 'Nice hit!', 'Direct hit!', 'Pow!', 'Bullseye!'] as const;
 
@@ -58,80 +60,6 @@ const shuffle = <T,>(items: T[]): T[] => {
 };
 
 const uniqueStrings = (values: string[]) => Array.from(new Set(values));
-
-const createStaticEnemyFrame = (src: string): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const image = new Image();
-    image.onload = () => {
-      try {
-        const canvas = document.createElement('canvas');
-        canvas.width = image.naturalWidth;
-        canvas.height = image.naturalHeight;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          resolve(src);
-          return;
-        }
-
-        ctx.drawImage(image, 0, 0);
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const data = imageData.data;
-        const width = canvas.width;
-        const height = canvas.height;
-        const visited = new Uint8Array(width * height);
-        const stack: number[] = [];
-
-        const isNearBlack = (index: number) => {
-          const r = data[index];
-          const g = data[index + 1];
-          const b = data[index + 2];
-          const a = data[index + 3];
-          if (a === 0) return false;
-          const max = Math.max(r, g, b);
-          const min = Math.min(r, g, b);
-          return max <= 42 && max - min <= 18;
-        };
-
-        const pushIfBlack = (x: number, y: number) => {
-          if (x < 0 || y < 0 || x >= width || y >= height) return;
-          const point = y * width + x;
-          if (visited[point]) return;
-          const pixelIndex = point * 4;
-          if (!isNearBlack(pixelIndex)) return;
-          visited[point] = 1;
-          stack.push(point);
-        };
-
-        for (let x = 0; x < width; x += 1) {
-          pushIfBlack(x, 0);
-          pushIfBlack(x, height - 1);
-        }
-        for (let y = 0; y < height; y += 1) {
-          pushIfBlack(0, y);
-          pushIfBlack(width - 1, y);
-        }
-
-        while (stack.length > 0) {
-          const point = stack.pop() as number;
-          const pixelIndex = point * 4;
-          data[pixelIndex + 3] = 0;
-          const x = point % width;
-          const y = (point / width) | 0;
-          pushIfBlack(x + 1, y);
-          pushIfBlack(x - 1, y);
-          pushIfBlack(x, y + 1);
-          pushIfBlack(x, y - 1);
-        }
-
-        ctx.putImageData(imageData, 0, 0);
-        resolve(canvas.toDataURL('image/png'));
-      } catch (error) {
-        reject(error);
-      }
-    };
-    image.onerror = () => reject(new Error('Failed to load enemy frame'));
-    image.src = src;
-  });
 
 const scoreToStars = (XP: number, correct: number, attempts: number) => {
   const accuracy = attempts > 0 ? correct / attempts : 0;
@@ -263,6 +191,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   sessionState,
   sessionEvents,
 }) => {
+  const reducedMotion = useReducedMotion();
   const [question, setQuestion] = useState<NumberLineQuestion>(() => buildQuestion(Math.max(levelId, 1)));
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [feedbackState, setFeedbackState] = useState<FeedbackState>('idle');
@@ -275,22 +204,19 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   const [lineShake, setLineShake] = useState(false);
   const [flyingAnswer, setFlyingAnswer] = useState<FlyingAnswerState | null>(null);
   const [confettiBurstKey, setConfettiBurstKey] = useState(0);
-  const [monsterEffect, setMonsterEffect] = useState<'idle' | 'hit'>('idle');
-  const [monsterHitFx, setMonsterHitFx] = useState(false);
-  const [monsterSmokeFx, setMonsterSmokeFx] = useState(false);
+  const [monsterReaction, setMonsterReaction] = useState<MonsterMindReaction>('idle');
   const [monsterSpeech, setMonsterSpeech] = useState<string | null>(null);
-  const [monsterHitAnimationIndex, setMonsterHitAnimationIndex] = useState(0);
-  const monsterHitA = useMemo(() => pickBossArt(`number-line-ninja-${levelId}-a`), [levelId]);
-  const monsterHitB = useMemo(() => pickBossArt(`number-line-ninja-${levelId}-b`), [levelId]);
-  const [idleMonsterSrc, setIdleMonsterSrc] = useState<string>(monsterHitA);
+  const [monsterReactionKey, setMonsterReactionKey] = useState(0);
+  const monsterSrc = useMemo(() => pickBossArt(`number-line-ninja-${levelId}-a`), [levelId]);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
-  const timeoutIdsRef = useRef<number[]>([]);
+  const timeoutIdsRef = useRef(new Set<number>());
   const answerLockRef = useRef(false);
+  const runEndedRef = useRef(false);
   const playfieldRef = useRef<HTMLDivElement | null>(null);
   const missingSlotRef = useRef<HTMLDivElement | null>(null);
   const optionButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
-  const monsterSpeechTimeoutRef = useRef<number | null>(null);
+  const monsterReactionTimeoutRef = useRef<number | null>(null);
 
   const goalCorrect = useMemo(
     () => Math.min(14, Math.max(7, 6 + Math.floor(levelId / 2))),
@@ -301,26 +227,42 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   const isSessionActive = sessionState ? timeLeft > 0 && lives > 0 : true;
 
   const queueTimeout = (fn: () => void, delay: number) => {
-    const timeoutId = window.setTimeout(fn, delay);
-    timeoutIdsRef.current.push(timeoutId);
+    const timeoutId = window.setTimeout(() => {
+      timeoutIdsRef.current.delete(timeoutId);
+      if (!runEndedRef.current) fn();
+    }, delay);
+    timeoutIdsRef.current.add(timeoutId);
   };
 
   const clearQueuedTimeouts = () => {
     timeoutIdsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId));
-    timeoutIdsRef.current = [];
+    timeoutIdsRef.current.clear();
   };
 
-  useEffect(() => () => clearQueuedTimeouts(), []);
+  const clearMonsterReactionTimeout = () => {
+    if (monsterReactionTimeoutRef.current === null) return;
+    window.clearTimeout(monsterReactionTimeoutRef.current);
+    monsterReactionTimeoutRef.current = null;
+  };
+
+  useEffect(() => {
+    runEndedRef.current = false;
+    return () => {
+      runEndedRef.current = true;
+      answerLockRef.current = true;
+      clearQueuedTimeouts();
+      clearMonsterReactionTimeout();
+    };
+  }, []);
 
   useEffect(() => {
     setShowPracticeIntro(Boolean(isPractice));
   }, [isPractice]);
 
   useEffect(() => {
-    if (!sessionState) return;
-    if (sessionState.timeLeft !== sessionState.totalTime) return;
-
+    // AppRouter remounts the game on restart; live session updates must not reset a round.
     clearQueuedTimeouts();
+    clearMonsterReactionTimeout();
     setQuestion(buildQuestion(Math.max(levelId, 1)));
     setSelectedAnswer(null);
     setFeedbackState('idle');
@@ -329,49 +271,25 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     setCorrectCount(0);
     setLocked(false);
     answerLockRef.current = false;
+    runEndedRef.current = false;
     setDidComplete(false);
     setDidFail(false);
     setLineShake(false);
     setFlyingAnswer(null);
     setConfettiBurstKey(0);
-    setMonsterEffect('idle');
-    setMonsterHitFx(false);
-    setMonsterSmokeFx(false);
+    setMonsterReaction('idle');
+    setMonsterReactionKey(0);
     setMonsterSpeech(null);
-  }, [levelId, sessionState, sessionState?.timeLeft, sessionState?.totalTime]);
+  }, [levelId]);
 
   useEffect(() => {
-    let mounted = true;
-    createStaticEnemyFrame(monsterHitA)
-      .then((frame) => {
-        if (mounted) setIdleMonsterSrc(frame);
-      })
-      .catch(() => {
-        if (mounted) setIdleMonsterSrc(monsterHitA);
-      });
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (monsterEffect !== 'hit') return undefined;
-    setMonsterHitFx(true);
-    const timeoutId = window.setTimeout(() => setMonsterHitFx(false), MONSTER_HIT_REACTION_MS);
-    return () => window.clearTimeout(timeoutId);
-  }, [monsterEffect]);
-
-  useEffect(() => () => {
-    if (monsterSpeechTimeoutRef.current !== null) {
-      window.clearTimeout(monsterSpeechTimeoutRef.current);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!sessionState || didComplete || didFail) return;
+    if (!sessionState || runEndedRef.current || didComplete || didFail) return;
     if (isSessionActive) return;
 
+    runEndedRef.current = true;
+    answerLockRef.current = true;
+    clearQueuedTimeouts();
+    clearMonsterReactionTimeout();
     setDidFail(true);
     emitMiniGameSessionEvent(sessionEvents, 'game_failed', {
       score: XP,
@@ -381,8 +299,15 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   }, [didComplete, didFail, isSessionActive, lives, onGameOver, XP, sessionEvents, sessionState]);
 
   const completeRun = (finalScore: number, nextCorrect: number, nextAttempts: number) => {
-    if (didComplete) return;
+    if (runEndedRef.current || didComplete || didFail) return;
+    runEndedRef.current = true;
+    answerLockRef.current = true;
+    clearQueuedTimeouts();
+    clearMonsterReactionTimeout();
     setDidComplete(true);
+    setMonsterReaction('defeated');
+    setMonsterReactionKey((current) => current + 1);
+    setMonsterSpeech(null);
     const stars = scoreToStars(finalScore, nextCorrect, nextAttempts);
     emitMiniGameSessionEvent(sessionEvents, 'game_complete', {
       score: finalScore,
@@ -400,48 +325,46 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     answerLockRef.current = false;
     setLineShake(false);
     setFlyingAnswer(null);
-    setMonsterEffect('idle');
-    setMonsterHitFx(false);
-    setMonsterSmokeFx(false);
-    setMonsterSpeech(null);
   };
 
-  const triggerMonsterHit = () => {
-    setMonsterEffect('hit');
-    setMonsterSpeech(MONSTER_DAMAGE_LINES[Math.floor(Math.random() * MONSTER_DAMAGE_LINES.length)]);
-    setMonsterHitAnimationIndex((current) => (current === 0 ? 1 : 0));
-
-    if (monsterSpeechTimeoutRef.current !== null) {
-      window.clearTimeout(monsterSpeechTimeoutRef.current);
-    }
-
-    monsterSpeechTimeoutRef.current = window.setTimeout(() => {
+  const triggerMonsterReaction = (reaction: 'hit' | 'taunt') => {
+    // A new hit replaces the old reaction timer, even if the next question is already open.
+    clearMonsterReactionTimeout();
+    setMonsterReaction(reaction);
+    setMonsterReactionKey((current) => current + 1);
+    setMonsterSpeech(reaction === 'hit'
+      ? MONSTER_DAMAGE_LINES[Math.floor(Math.random() * MONSTER_DAMAGE_LINES.length)]
+      : MONSTER_ESCAPE_LINE);
+    monsterReactionTimeoutRef.current = window.setTimeout(() => {
+      monsterReactionTimeoutRef.current = null;
+      if (runEndedRef.current) return;
+      setMonsterReaction('idle');
       setMonsterSpeech(null);
-    }, MONSTER_HIT_REACTION_MS - 120);
-
-    queueTimeout(() => {
-      setMonsterEffect('idle');
-    }, MONSTER_HIT_REACTION_MS);
+    }, reaction === 'hit' ? MONSTER_HIT_REACTION_MS : MONSTER_TAUNT_REACTION_MS);
   };
 
   const getTravelAnimation = (option: string): FlyingAnswerState | null => {
-    const rootRect = playfieldRef.current?.getBoundingClientRect();
+    const stage = playfieldRef.current;
+    const rootRect = stage?.getBoundingClientRect();
     const optionRect = optionButtonRefs.current[option]?.getBoundingClientRect();
     const slotRect = missingSlotRef.current?.getBoundingClientRect();
 
-    if (!rootRect || !optionRect || !slotRect) return null;
+    if (!stage || !rootRect || !optionRect || !slotRect) return null;
+    const scaleX = rootRect.width / Math.max(1, stage.clientWidth);
+    const scaleY = rootRect.height / Math.max(1, stage.clientHeight);
+    if (scaleX <= 0 || scaleY <= 0) return null;
 
     return {
       value: option,
-      startX: optionRect.left - rootRect.left + (optionRect.width / 2),
-      startY: optionRect.top - rootRect.top + (optionRect.height / 2),
-      endX: slotRect.left - rootRect.left + (slotRect.width / 2),
-      endY: slotRect.top - rootRect.top + (slotRect.height / 2),
+      startX: (optionRect.left - rootRect.left + (optionRect.width / 2)) / scaleX,
+      startY: (optionRect.top - rootRect.top + (optionRect.height / 2)) / scaleY,
+      endX: (slotRect.left - rootRect.left + (slotRect.width / 2)) / scaleX,
+      endY: (slotRect.top - rootRect.top + (slotRect.height / 2)) / scaleY,
     };
   };
 
   const handleAnswerDrop = (option: string) => {
-    if (!isSessionActive || locked || answerLockRef.current || didComplete || didFail) return;
+    if (!isSessionActive || runEndedRef.current || locked || answerLockRef.current || didComplete || didFail) return;
 
     answerLockRef.current = true;
 
@@ -459,10 +382,9 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       setCorrectCount(nextCorrect);
       setScore(nextScore);
       setFeedbackState('correct');
-      setMonsterSmokeFx(false);
-      setFlyingAnswer(getTravelAnimation(option));
+      setFlyingAnswer(reducedMotion ? null : getTravelAnimation(option));
       setConfettiBurstKey((current) => current + 1);
-      triggerMonsterHit();
+      triggerMonsterReaction('hit');
 
       emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
         score: XP,
@@ -492,9 +414,8 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     }
 
     setFeedbackState('incorrect');
-    setLineShake(true);
-    setMonsterSmokeFx(true);
-    setMonsterSpeech(MONSTER_ESCAPE_LINE);
+    setLineShake(!reducedMotion);
+    triggerMonsterReaction('taunt');
 
     emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
       score: XP,
@@ -513,7 +434,6 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   const focusPct = (question.focusIndex / (question.labels.length - 1)) * 100;
   const monsterRemainingHealth = Math.max(0, goalCorrect - correctCount);
   const monsterHealthPct = (monsterRemainingHealth / goalCorrect) * 100;
-  const activeMonsterHitSrc = monsterHitAnimationIndex === 0 ? monsterHitA : monsterHitB;
 
   const questionCardRef = useRef<HTMLDivElement | null>(null);
   const [questionDockBottom, setQuestionDockBottom] = useState<number>(0);
@@ -551,7 +471,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       <img
         src={dojoBackground}
         alt="Number line dojo backdrop"
-        className="absolute inset-0 h-full w-full object-contain object-center"
+        className="absolute inset-0 h-full w-full object-cover object-center"
         draggable={false}
       />
       <div className="absolute inset-0 bg-slate-950/25" />

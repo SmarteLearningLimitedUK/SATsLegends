@@ -1,5 +1,6 @@
 import React, { Suspense, useMemo } from 'react';
 import { motion } from 'motion/react';
+import { ArrowRight } from 'lucide-react';
 import AvatarSelect from '../screens/AvatarSelect';
 import WorldMap from '../screens/WorldMap';
 import IslandLevels from '../screens/IslandLevels';
@@ -429,14 +430,15 @@ export const AppRouter: React.FC<AppRouterProps> = ({
             draggable={false}
           />
 
-          <div className="absolute bottom-[7.5%] left-1/2 h-14 w-56 -translate-x-1/2 sm:h-16 sm:w-64">
+          <div className="legend-welcome-action absolute bottom-[7.5%] left-1/2 w-56 -translate-x-1/2 sm:w-64">
+            <p>{player.playerName.trim() ? `Welcome back, ${player.playerName}.` : 'Big adventures. Brilliant minds.'}</p>
             <button
               type="button"
               onClick={onStartAdventure}
               aria-label="Start"
-              className="ui-button-primary flex h-full w-full items-center justify-center border-0 bg-transparent px-4 py-0 text-lg font-black uppercase tracking-[0.12em] text-[#16233d] sm:text-xl"
+              className="ui-button-primary px-4 py-3 text-lg"
             >
-              Start
+              {player.playerName.trim() ? 'Continue adventure' : 'Start adventure'}<ArrowRight aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -510,11 +512,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
     }
 
     case 'gameplay':
-      const hideMiniGameTimer = useMemo(() => {
-        if (screen !== 'gameplay' || !selectedLevel) return false;
-        if (LEVEL_TIMERS_DISABLED) return true;
-        return selectedLevel.gameType === 'basketball_rebounder';
-      }, [screen, selectedLevel]);
+      const hideMiniGameTimer = LEVEL_TIMERS_DISABLED || selectedLevel?.gameType === 'basketball_rebounder';
 
     const shellStyle = {
         '--game-shell-top-inset': '0.8rem',

@@ -17,13 +17,7 @@ import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import cannonFacingLeftSrc from '../assets/angle_arena/cannonanglearena/1.png';
 import cannonFacingRightSrc from '../assets/angle_arena/cannonanglearena/2.png';
 import cannonFacingUpSrc from '../assets/angle_arena/cannonanglearena/3.png';
-import angryBackgroundSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Background/1.png';
-import angryParallaxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Background/INGAME_PARALLAX_1.png';
-import angryGroundsSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Background/INGAME_GROUNDS_1.png';
-import angryBlocksSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Buildings/blocks.png';
-import angryProps1Src from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Buildings/props1.png';
-import angryProps2Src from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Buildings/props2.png';
-import angryLogoSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sprites/Menu/Angry_Birds_logos.png';
+import { GAME_SCENE_META } from '../gameSceneMeta';
 import angleArenaLaunchSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/bird shot-a1.wav';
 import angleArenaHitSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/pig/piglette destroyed.wav';
 import angleArenaWoodSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/8d82b5_Angry_Birds_Wood_Damage_Sound_Effect.mp3';
@@ -331,61 +325,6 @@ const drawSkyBackground = (
   ctx.restore();
 };
 
-const drawContainImage = (
-  ctx: CanvasRenderingContext2D,
-  image: HTMLImageElement,
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  opacity = 1,
-) => {
-  const iw = image.naturalWidth || image.width;
-  const ih = image.naturalHeight || image.height;
-  if (!iw || !ih) return;
-  const scale = Math.min(width / iw, height / ih);
-  const dw = iw * scale;
-  const dh = ih * scale;
-  ctx.save();
-  ctx.globalAlpha = opacity;
-  ctx.drawImage(image, x + (width - dw) / 2, y + (height - dh) / 2, dw, dh);
-  ctx.restore();
-};
-
-const drawImageSlice = (
-  ctx: CanvasRenderingContext2D,
-  image: HTMLImageElement,
-  sx: number,
-  sy: number,
-  sw: number,
-  sh: number,
-  dx: number,
-  dy: number,
-  dw: number,
-  dh: number,
-  opacity = 1,
-) => {
-  if (!image.complete) return;
-  ctx.save();
-  ctx.globalAlpha = opacity;
-  ctx.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
-  ctx.restore();
-};
-
-const drawSpriteSlice = (
-  ctx: CanvasRenderingContext2D,
-  image: HTMLImageElement,
-  source: { x: number; y: number; w: number; h: number },
-  target: { x: number; y: number; w: number; h: number },
-  opacity = 1,
-) => {
-  if (!image.complete) return;
-  ctx.save();
-  ctx.globalAlpha = opacity;
-  ctx.drawImage(image, source.x, source.y, source.w, source.h, target.x, target.y, target.w, target.h);
-  ctx.restore();
-};
-
 const drawRoundedRectPath = (
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -680,139 +619,6 @@ const drawWoodenTower = (
   ctx.restore();
 };
 
-const drawLevelDressing = (
-  ctx: CanvasRenderingContext2D,
-  parallax: HTMLImageElement | null,
-  grounds: HTMLImageElement | null,
-  blocks: HTMLImageElement | null,
-  props1: HTMLImageElement | null,
-  props2: HTMLImageElement | null,
-  width: number,
-  height: number,
-  cameraX: number,
-  cameraY: number,
-  timestamp: number,
-) => {
-  if (parallax?.complete) {
-    const pw = parallax.naturalWidth || parallax.width;
-    const ph = parallax.naturalHeight || parallax.height;
-    const drift = (cameraX * 0.03) % width;
-
-    ctx.save();
-    for (let i = -1; i <= 1; i += 1) {
-      const dx = (i * width) - drift;
-      drawImageSlice(ctx, parallax, 0, 0, pw, ph * 0.46, dx, height * 0.14, width, height * 0.2, 0.72);
-    }
-    for (let i = -1; i <= 2; i += 1) {
-      const dx = (i * width * 0.58) - ((cameraX * 0.06) % (width * 0.58));
-      drawImageSlice(ctx, parallax, 0, ph * 0.54, pw, ph * 0.18, dx, height * 0.62, width * 0.5, height * 0.08, 0.8);
-    }
-    for (let i = -1; i <= 2; i += 1) {
-      const dx = (i * width * 0.72) - ((cameraX * 0.09) % (width * 0.72));
-      drawImageSlice(ctx, parallax, 0, ph * 0.76, pw, ph * 0.12, dx, height * 0.72, width * 0.68, height * 0.06, 0.72);
-    }
-    ctx.restore();
-  }
-
-  if (grounds?.complete) {
-    const gw = grounds.naturalWidth || grounds.width;
-    const gh = grounds.naturalHeight || grounds.height;
-    const dirtSliceY = gh * 0.22;
-    const dirtSliceH = gh * 0.18;
-    const grassSliceY = 0;
-    const grassSliceH = gh * 0.12;
-    const baseY = height * 0.77;
-    const groundDrift = (cameraX * 0.12) % width;
-
-    ctx.save();
-    for (let i = -1; i <= 2; i += 1) {
-      const dx = (i * width * 0.52) - groundDrift;
-      drawImageSlice(ctx, grounds, 0, grassSliceY, gw, grassSliceH, dx, baseY - height * 0.03, width * 0.56, height * 0.08, 0.96);
-      drawImageSlice(ctx, grounds, 0, dirtSliceY, gw, dirtSliceH, dx, baseY + height * 0.01, width * 0.56, height * 0.14, 0.96);
-    }
-    ctx.restore();
-  }
-
-  if (blocks?.complete || props1?.complete || props2?.complete) {
-    const blockW = blocks?.naturalWidth || blocks?.width || 0;
-    const blockH = blocks?.naturalHeight || blocks?.height || 0;
-    const props1W = props1?.naturalWidth || props1?.width || 0;
-    const props1H = props1?.naturalHeight || props1?.height || 0;
-    const props2W = props2?.naturalWidth || props2?.width || 0;
-    const props2H = props2?.naturalHeight || props2?.height || 0;
-    const stageY = height * 0.78;
-    const dr = (cameraX * 0.16) % width;
-
-    ctx.save();
-    ctx.globalAlpha = 0.95;
-
-    if (blocks?.complete && blockW && blockH) {
-      for (let i = -1; i <= 2; i += 1) {
-        const x = (i * width * 0.62) - dr;
-        drawSpriteSlice(
-          ctx,
-          blocks,
-          { x: 3140, y: 3090, w: 620, h: 240 },
-          { x, y: stageY - height * 0.02, w: width * 0.6, h: height * 0.1 },
-          0.85,
-        );
-        drawSpriteSlice(
-          ctx,
-          blocks,
-          { x: 3010, y: 3810, w: 760, h: 190 },
-          { x: x + width * 0.01, y: stageY + height * 0.04, w: width * 0.56, h: height * 0.06 },
-          0.9,
-        );
-      }
-    }
-
-    if (props1?.complete && props1W && props1H) {
-      drawSpriteSlice(
-        ctx,
-        props1,
-        { x: 510, y: 520, w: 250, h: 150 },
-        { x: width * 0.12 - dr * 0.4, y: height * 0.56, w: width * 0.24, h: height * 0.1 },
-        0.95,
-      );
-      drawSpriteSlice(
-        ctx,
-        props1,
-        { x: 0, y: 0, w: 260, h: 190 },
-        { x: width * 0.62 - dr * 0.2, y: height * 0.48, w: width * 0.16, h: height * 0.18 },
-        0.82,
-      );
-    }
-
-    if (props2?.complete && props2W && props2H) {
-      drawSpriteSlice(
-        ctx,
-        props2,
-        { x: 320, y: 470, w: 390, h: 210 },
-        { x: width * 0.74 - dr * 0.18, y: height * 0.57, w: width * 0.2, h: height * 0.08 },
-        0.92,
-      );
-      drawSpriteSlice(
-        ctx,
-        props2,
-        { x: 440, y: 690, w: 220, h: 140 },
-        { x: width * 0.39 - dr * 0.14, y: height * 0.52, w: width * 0.13, h: height * 0.08 },
-        0.9,
-      );
-    }
-
-    ctx.restore();
-  }
-
-  ctx.save();
-  ctx.globalAlpha = 0.16;
-  ctx.fillStyle = 'rgba(255,255,255,0.35)';
-  ctx.beginPath();
-  ctx.ellipse(width * 0.18, height * 0.21 + Math.sin(timestamp * 0.00045) * 4, 84, 22, -0.2, 0, Math.PI * 2);
-  ctx.ellipse(width * 0.82, height * 0.18 + Math.cos(timestamp * 0.00038) * 3, 104, 26, 0.12, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-};
-
 const formatTime = (seconds: number) => {
   const clamped = Math.max(0, Math.floor(seconds));
   const mins = Math.floor(clamped / 60);
@@ -892,13 +698,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const aimTimeoutRef = useRef<number | null>(null);
   const cannonSpritesRef = useRef<CannonSprites>({});
   const enemySpritesRef = useRef<HTMLImageElement[]>([]);
-  const angryBackgroundRef = useRef<HTMLImageElement | null>(null);
-  const angryParallaxRef = useRef<HTMLImageElement | null>(null);
-  const angryGroundsRef = useRef<HTMLImageElement | null>(null);
-  const angryBlocksRef = useRef<HTMLImageElement | null>(null);
-  const angryProps1Ref = useRef<HTMLImageElement | null>(null);
-  const angryProps2Ref = useRef<HTMLImageElement | null>(null);
-  const angryLogoRef = useRef<HTMLImageElement | null>(null);
+  const arenaBackdropRef = useRef<HTMLImageElement | null>(null);
   const angleArenaSfxRef = useRef<Partial<Record<AngleArenaSfxKey, HTMLAudioElement>>>({});
 
   const [gameState, setGameState] = useState<GameState>('intro');
@@ -996,20 +796,12 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   }, []);
 
   useEffect(() => {
-    const loadTexture = (src: string, assign: (img: HTMLImageElement) => void) => {
-      const img = new Image();
-      img.decoding = 'async';
-      img.src = src;
-      img.onload = () => assign(img);
-      return img;
-    };
-    loadTexture(angryBackgroundSrc, (img) => { angryBackgroundRef.current = img; });
-    loadTexture(angryParallaxSrc, (img) => { angryParallaxRef.current = img; });
-    loadTexture(angryGroundsSrc, (img) => { angryGroundsRef.current = img; });
-    loadTexture(angryBlocksSrc, (img) => { angryBlocksRef.current = img; });
-    loadTexture(angryProps1Src, (img) => { angryProps1Ref.current = img; });
-    loadTexture(angryProps2Src, (img) => { angryProps2Ref.current = img; });
-    loadTexture(angryLogoSrc, (img) => { angryLogoRef.current = img; });
+    const image = new Image();
+    image.decoding = 'async';
+    image.onload = () => { arenaBackdropRef.current = image; };
+    image.src = GAME_SCENE_META.angle_arena.background ?? '';
+    return () => { image.onload = null; };
+
   }, []);
 
   useEffect(() => {
@@ -1210,29 +1002,23 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
       ctx.translate(shakeX, shakeY);
       ctx.clearRect(0, 0, viewWidth, viewHeight);
-      const bg = angryBackgroundRef.current;
-      if (bg) {
-        ctx.drawImage(bg, 0, 0, viewWidth, viewHeight);
+      const bg = arenaBackdropRef.current;
+      if (bg?.naturalWidth) {
+        // Use the existing geometry environment at its proper aspect ratio.
+        const scale = Math.max(viewWidth / bg.naturalWidth, viewHeight / bg.naturalHeight);
+        const width = bg.naturalWidth * scale;
+        const height = bg.naturalHeight * scale;
+        ctx.drawImage(bg, (viewWidth - width) / 2, (viewHeight - height) / 2, width, height);
+        // Record the source only once it has actually been painted. Canvas
+        // scenery has no image element for the shared visual checks to inspect.
+        if (canvas.dataset.renderedBackgroundSrc !== bg.currentSrc) canvas.dataset.renderedBackgroundSrc = bg.currentSrc;
+        const shade = ctx.createLinearGradient(0, 0, 0, viewHeight);
+        shade.addColorStop(0, 'rgba(8, 26, 53, .14)');
+        shade.addColorStop(1, 'rgba(8, 26, 53, .4)');
+        ctx.fillStyle = shade;
+        ctx.fillRect(0, 0, viewWidth, viewHeight);
       } else {
         drawSkyBackground(ctx, viewWidth, viewHeight, timestamp, camera.x, camera.y, Boolean(projectile?.active));
-      }
-      drawLevelDressing(
-        ctx,
-        angryParallaxRef.current,
-        angryGroundsRef.current,
-        angryBlocksRef.current,
-        angryProps1Ref.current,
-        angryProps2Ref.current,
-        viewWidth,
-        viewHeight,
-        camera.x,
-        camera.y,
-        timestamp,
-      );
-
-      const logo = angryLogoRef.current;
-      if (logo) {
-        drawContainImage(ctx, logo, viewWidth * 0.05, viewHeight * 0.04, viewWidth * 0.32, viewHeight * 0.1, 0.88);
       }
 
       const cannonAnchor = { x: viewWidth * CANNON_ANCHOR_X_RATIO, y: viewHeight * CANNON_ANCHOR_Y_RATIO };

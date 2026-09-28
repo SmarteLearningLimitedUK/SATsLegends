@@ -1,0 +1,55 @@
+.pvp-stone-panel,
+.pvp-digit-panel {
+  padding: 10px;
+  border: 1px solid #76b6c5;
+  border-radius: 16px;
+  background: #102e45;
+  box-shadow: inset 0 1px 0 #b7e3e626, 0 5px 0 #082034, 0 9px 16px #04172440;
+}
+
+.pvp-stone-heading {
+  margin-bottom: 8px;
+  color: #e4f5f7;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  line-height: 1.2;
+}
+
+.pvp-stone-row { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 80px; }
+.sat-theme-bluegold .legend-pvp-targets .pvp-number-stone[data-pvp-location='target'] {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 12px;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.pvp-number-stone:focus-visible { outline: 3px solid #a6f1f5; outline-offset: 4px; }
+.pvp-place-label { color: #ffe4a1; font-size: 11px; font-weight: 600; line-height: 14px; white-space: nowrap; }
+.pvp-stone-face {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  min-height: 52px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #e5bf6e;
+  border-radius: 11px;
+  background: linear-gradient(145deg, #284d66, #17364e);
+  box-shadow: inset 0 2px 0 #ffebb238, inset 0 -3px 0 #0c2439, 0 3px 0 #9e7438;
+}
+.pvp-stone-digit { color: #f1fcff; font-family: var(--font-fredoka); font-size: 31px; font-weight: 600; line-height: 1; text-shadow: 0 2px 0 #0b2338; }
+.pvp-stone-digit.is-empty { color: #91b3c4; font-size: 24px; }
+.pvp-number-stone.is-filled .pvp-stone-face { background: linear-gradient(145deg, #356e88, #204f69); }
+.pvp-number-stone.is-error .pvp-stone-face { border-color: #ffa1a9; }
+.pvp-number-stone.is-solved .pvp-stone-face { border-color: #9af0bd; box-shadow: inset 0 2px #cdf9dc38, inset 0 -3px #143f45, 0 3px #497d5d; }
+.pvp-floating-stone { border: 2px solid #96d9e5; border-radius: 12px; background: #28627f; box-shadow: inset 0 2px #c4f1f455, 0 5px 12px #03192755; }
+.pvp-enemy-ground { position: absolute; left: 24%; right: 22%; bottom: 13%; height: 5%; border-radius: 50%; background: #061e2a55; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pvp-number-stone, .pvp-floating-stone { animation: none !important; transition: none !important; }
+}

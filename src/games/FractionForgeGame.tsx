@@ -3,7 +3,8 @@ import { AnimatePresence, motion } from 'motion/react';
 import AssetIcon from '../components/AssetIcon';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
-import fractionForgeBackground from '../assets/maps/backgroundsforgames/fraction forge map.jpg';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
+import fractionForgeBackground from '../assets/maps/premium/fraction-forge.webp';
 import { triggerHaptic } from '../haptics';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 
@@ -321,7 +322,9 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     if (!token) return;
 
     const rect = event.currentTarget.getBoundingClientRect();
-    event.currentTarget.setPointerCapture(event.pointerId);
+    // Keep capture on the stable playfield: the source tile is removed while
+    // dragging, and would otherwise lose capture with it.
+    playfieldRef.current?.setPointerCapture(event.pointerId);
 
     if (location === 'target') {
       setTargetSlots((prev) => prev.map((card, i) => (i === index ? null : card)));
@@ -345,29 +348,24 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
   }, [dragState, isResolving, sourceSlots, targetSlots]);
 
   const findDropCandidate = useCallback((clientX: number, clientY: number): { location: TokenLocation; index: number } | null => {
-    const rect = playfieldRef.current?.getBoundingClientRect();
-    if (!rect) return null;
+    const playfield = playfieldRef.current;
+    if (!playfield) return null;
+    const rect = playfield.getBoundingClientRect();
 
     const threshold = Math.max(50, rect.width * 0.09);
     let best: { location: TokenLocation; index: number; distance: number } | null = null;
 
-    activeTargetAnchors.forEach((anchor, index) => {
-      const cx = rect.left + (anchor.x / 100) * rect.width;
-      const cy = rect.top + layout.targetTop;
-      const distance = Math.hypot(clientX - cx, clientY - cy);
-      if (!best || distance < best.distance) best = { location: 'target', index, distance };
-    });
-
-    activeSourceAnchors.forEach((anchor, index) => {
-      const cx = rect.left + (anchor.x / 100) * rect.width;
-      const cy = rect.top + layout.sourceTop;
-      const distance = Math.hypot(clientX - cx, clientY - cy);
-      if (!best || distance < best.distance) best = { location: 'source', index, distance };
+    (['target', 'source'] as const).forEach((location) => {
+      playfield.querySelectorAll<HTMLElement>(`[data-fraction-${location}="true"]`).forEach((slot, index) => {
+        const bounds = slot.getBoundingClientRect();
+        const distance = Math.hypot(clientX - (bounds.x + bounds.width / 2), clientY - (bounds.y + bounds.height / 2));
+        if (!best || distance < best.distance) best = { location, index, distance };
+      });
     });
 
     if (!best || best.distance > threshold) return null;
     return { location: best.location, index: best.index };
-  }, [activeSourceAnchors, activeTargetAnchors, layout.sourceTop, layout.targetTop]);
+  }, []);
 
   const placeTokenInArrays = useCallback((candidate: { location: TokenLocation; index: number } | null) => {
     if (!dragState) return;
@@ -410,35 +408,19 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     setSourceSlots(nextSources);
   }, [dragState, sourceSlots, targetSlots]);
 
-  useEffect(() => {
-    if (!dragState) return undefined;
+  const moveDraggedToken = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragState || event.pointerId !== dragState.pointerId) return;
+    setDragState((current) => current ? { ...current, clientX: event.clientX, clientY: event.clientY } : current);
+  };
 
-    const onMove = (event: PointerEvent) => {
-      if (event.pointerId !== dragState.pointerId) return;
-      setDragState((current) => {
-        if (!current || current.pointerId !== event.pointerId) return current;
-        return { ...current, clientX: event.clientX, clientY: event.clientY };
-      });
-    };
-
-    const onFinish = (event: PointerEvent) => {
-      if (event.pointerId !== dragState.pointerId) return;
-      const candidate = findDropCandidate(event.clientX, event.clientY);
-      placeTokenInArrays(candidate);
-      setDragState(null);
-      triggerHaptic('selection');
-    };
-
-    window.addEventListener('pointermove', onMove);
-    window.addEventListener('pointerup', onFinish);
-    window.addEventListener('pointercancel', onFinish);
-
-    return () => {
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('pointerup', onFinish);
-      window.removeEventListener('pointercancel', onFinish);
-    };
-  }, [dragState, findDropCandidate, placeTokenInArrays]);
+  const finishDrag = (event: React.PointerEvent<HTMLDivElement>, cancelled = false) => {
+    if (!dragState || event.pointerId !== dragState.pointerId) return;
+    placeTokenInArrays(cancelled
+      ? { location: dragState.fromLocation, index: dragState.fromIndex }
+      : findDropCandidate(event.clientX, event.clientY));
+    setDragState(null);
+    triggerHaptic('selection');
+  };
 
   useEffect(() => {
     if (endedRef.current || isResolving) return;
@@ -516,6 +498,11 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
   ]);
 
   const showSmoke = feedback?.tone === 'error';
+  const playfieldBounds = playfieldRef.current?.getBoundingClientRect();
+  const dragScaleX = playfieldBounds && playfieldRef.current?.clientWidth
+    ? playfieldBounds.width / playfieldRef.current.clientWidth : 1;
+  const dragScaleY = playfieldBounds && playfieldRef.current?.clientHeight
+    ? playfieldBounds.height / playfieldRef.current.clientHeight : 1;
 
   useEffect(() => {
     setShowPracticeIntro(Boolean(isPractice));
@@ -554,7 +541,13 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
         onAction={() => setShowPracticeIntro(false)}
       />
 
-      <div ref={playfieldRef} className="relative h-full w-full">
+      <div
+        ref={playfieldRef}
+        className="relative h-full w-full"
+        onPointerMove={moveDraggedToken}
+        onPointerUp={finishDrag}
+        onPointerCancel={(event) => finishDrag(event, true)}
+      >
         <AnimatePresence>
           {forgeGlow && (
             <motion.div
@@ -597,20 +590,14 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
           )}
         </AnimatePresence>
 
-        <div
-          className="pointer-events-none fixed left-0 right-0 z-[60]"
-          style={{ top: useSharedTopHud ? '4px' : '8px' }}
+        <GameQuestionCard
+          title={gameTitle || 'Fraction Forge'}
+          subtitle="Place the fractions in order."
+          className="pointer-events-none"
+          style={{ position: 'absolute', top: 5, width: '94%', transform: 'none' }}
         >
-          <div className="mx-auto w-full max-w-[760px] rounded-[1rem] bg-slate-950/72 px-[15px] py-[11px] text-center backdrop-blur-sm">
-            <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90">Fraction Forge</div>
-            <div className="mt-0.5 text-[clamp(1rem,3.8vw,1.35rem)] font-black text-white">
-              {round.prompt}
-            </div>
-            <div className="mt-1 text-[10px] font-semibold text-cyan-100/90">
-              Place the fractions in order.
-            </div>
-          </div>
-        </div>
+          {round.prompt}
+        </GameQuestionCard>
 
         {activeSourceAnchors.map((anchor, index) => {
           const token = sourceSlots[index];
@@ -618,8 +605,9 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
           return (
             <div
               key={`source-${round.id}-${index}`}
+              data-fraction-source="true"
               className="absolute -translate-x-1/2 -translate-y-1/2"
-              style={{ left: `${anchor.x}%`, top: layout.sourceTop }}
+              style={{ left: `${anchor.x}%`, top: layout.sourceTop, width: layout.cardSize.width, height: layout.cardSize.height }}
             >
               {token && !hidden && (
                 <FractionCardTile
@@ -638,6 +626,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
           return (
             <React.Fragment key={`target-${round.id}-${index}`}>
               <div
+                data-fraction-target="true"
                 className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-[0.85rem] border border-dashed border-cyan-200/45 bg-cyan-200/12"
                 style={{
                   left: `${anchor.x}%`,
@@ -647,6 +636,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
                 }}
               />
               <div
+                data-fraction-placement="true"
                 className="absolute z-[11] -translate-x-1/2 -translate-y-1/2"
                 style={{ left: `${anchor.x}%`, top: layout.targetTop }}
               >
@@ -690,15 +680,16 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
 
         {dragState && (
           <div
-              className="pointer-events-none absolute z-50"
-              style={{
-              left: dragState.clientX - (dragState.width / 2),
-              top: dragState.clientY - (dragState.height / 2),
-                width: dragState.width,
-                height: dragState.height,
-              }}
+            data-fraction-drag="true"
+            className="pointer-events-none absolute z-50"
+            style={{
+              left: (dragState.clientX - (playfieldBounds?.left ?? 0) - dragState.width / 2) / dragScaleX,
+              top: (dragState.clientY - (playfieldBounds?.top ?? 0) - dragState.height / 2) / dragScaleY,
+              width: dragState.width / dragScaleX,
+              height: dragState.height / dragScaleY,
+            }}
           >
-            <FractionCardTile card={dragState.token} size={{ width: dragState.width, height: dragState.height }} disabled />
+            <FractionCardTile card={dragState.token} size={{ width: dragState.width / dragScaleX, height: dragState.height / dragScaleY }} disabled />
           </div>
         )}
       </div>

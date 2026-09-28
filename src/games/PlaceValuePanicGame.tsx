@@ -1,23 +1,19 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import animatedEnemy1 from '../assets/maps/ezgif-261d69e7ae90ee8c.webp';
-import forestBackground from '../assets/maps/backgroundsforgames/Place Value Panic.png';
+import forestBackground from '../assets/maps/premium/place-value-panic.webp';
 import hudAvatarName from '../assets/ui_frames/hudfortextplace_slices/hud_avatar_name.png';
 import hourglassIcon from '../assets/casual_ui/icons/hourglass.png';
-import socketM from '../assets/casual_ui/updaed_sockets_slices/socket_m.png';
-import socketHth from '../assets/casual_ui/updaed_sockets_slices/socket_hth.png';
-import socketTth from '../assets/casual_ui/updaed_sockets_slices/socket_tth.png';
-import socketTh from '../assets/casual_ui/updaed_sockets_slices/socket_th.png';
-import socketH from '../assets/casual_ui/updaed_sockets_slices/socket_h.png';
-import socketT from '../assets/casual_ui/updaed_sockets_slices/socket_t.png';
-import socketU from '../assets/casual_ui/updaed_sockets_slices/socket_u.png';
 import { triggerHaptic } from '../haptics';
 import { AVATARS } from '../constants';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
+import MonsterMindActor from '../components/game-ui/MonsterMindActor';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
+import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
+import './place-value-panic.css';
 
-interface PlaceValuePanicGameProps {
+interface PlaceValuePanicGameProps extends MiniGameShellContractProps {
   levelId: number;
   miniGameLevel?: number;
   avatarId: string;
@@ -71,6 +67,10 @@ const GOBLIN_DAMAGE_LINES = ['Ouch!', 'Hey!', 'Oof!', 'Wahhh!', 'Ugh!'] as const
 const HIT_REACTION_MS = 900;
 
 const FULL_PLACE_VALUE_HINTS = ['M', 'Hth', 'Tth', 'Th', 'H', 'T', 'U'] as const;
+const PLACE_NAMES: Record<string, string> = {
+  M: 'Millions', Hth: 'Hundred thousands', Tth: 'Ten thousands',
+  Th: 'Thousands', H: 'Hundreds', T: 'Tens', U: 'Units',
+};
 const TARGET_ROW_Y_OFFSET_PX = 0;
 const SOURCE_ROW_Y_OFFSET_PX = 30;
 
@@ -84,80 +84,6 @@ const shuffle = <T,>(items: T[]): T[] => {
   }
   return clone;
 };
-
-const createStaticEnemyFrame = (src: string): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const image = new Image();
-    image.onload = () => {
-      try {
-        const canvas = document.createElement('canvas');
-        canvas.width = image.naturalWidth;
-        canvas.height = image.naturalHeight;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          resolve(src);
-          return;
-        }
-
-        ctx.drawImage(image, 0, 0);
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const data = imageData.data;
-        const width = canvas.width;
-        const height = canvas.height;
-        const visited = new Uint8Array(width * height);
-        const stack: number[] = [];
-
-        const isNearBlack = (index: number) => {
-          const r = data[index];
-          const g = data[index + 1];
-          const b = data[index + 2];
-          const a = data[index + 3];
-          if (a === 0) return false;
-          const max = Math.max(r, g, b);
-          const min = Math.min(r, g, b);
-          return max <= 42 && max - min <= 18;
-        };
-
-        const pushIfBlack = (x: number, y: number) => {
-          if (x < 0 || y < 0 || x >= width || y >= height) return;
-          const point = y * width + x;
-          if (visited[point]) return;
-          const pixelIndex = point * 4;
-          if (!isNearBlack(pixelIndex)) return;
-          visited[point] = 1;
-          stack.push(point);
-        };
-
-        for (let x = 0; x < width; x += 1) {
-          pushIfBlack(x, 0);
-          pushIfBlack(x, height - 1);
-        }
-        for (let y = 0; y < height; y += 1) {
-          pushIfBlack(0, y);
-          pushIfBlack(width - 1, y);
-        }
-
-        while (stack.length > 0) {
-          const point = stack.pop() as number;
-          const pixelIndex = point * 4;
-          data[pixelIndex + 3] = 0;
-          const x = point % width;
-          const y = (point / width) | 0;
-          pushIfBlack(x + 1, y);
-          pushIfBlack(x - 1, y);
-          pushIfBlack(x, y + 1);
-          pushIfBlack(x, y - 1);
-        }
-
-        ctx.putImageData(imageData, 0, 0);
-        resolve(canvas.toDataURL('image/png'));
-      } catch (error) {
-        reject(error);
-      }
-    };
-    image.onerror = () => reject(new Error('Failed to load enemy frame'));
-    image.src = src;
-  });
 
 const scoreToStars = (accuracy: number): number => {
   if (accuracy >= 0.9) return 3;
@@ -218,16 +144,6 @@ const slotCountForLevel = (level: number): number => {
   if (level <= 8) return 5;
   if (level === 9) return 6;
   return 7;
-};
-
-const getSocketAsset = (placeHint: string, _slotIndex: number, _placeHints: string[]) => {
-  if (placeHint === 'M') return socketM;
-  if (placeHint === 'Hth') return socketHth;
-  if (placeHint === 'Tth') return socketTth;
-  if (placeHint === 'Th') return socketTh;
-  if (placeHint === 'H') return socketH;
-  if (placeHint === 'T') return socketT;
-  return socketU;
 };
 
 const ONES_WORDS = [
@@ -353,6 +269,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   useSharedTopHud = false,
   isPractice = false,
   practiceBriefing,
+  sessionState,
+  sessionEvents,
   onVictory,
   onGameOver,
   onBack,
@@ -433,14 +351,14 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const [dragState, setDragState] = useState<DragState | null>(null);
   const [goblinHealth, setGoblinHealth] = useState<number>(GOBLIN_MAX_HEALTH);
   const [XP, setScore] = useState<number>(0);
-  const [matchTimeLeft, setMatchTimeLeft] = useState<number>(MATCH_DURATION_SECONDS);
+  const [localTimeLeft, setMatchTimeLeft] = useState<number>(MATCH_DURATION_SECONDS);
+  const matchTimeLeft = sessionState?.timeLeft ?? localTimeLeft;
   const [attempts, setAttempts] = useState<number>(0);
   const [correctAnswers, setCorrectAnswers] = useState<number>(0);
   const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; message: string } | null>(null);
   const [isResolving, setIsResolving] = useState(false);
   const [goblinEffect, setGoblinEffect] = useState<GoblinEffect>('idle');
-  const [idleEnemySrc, setIdleEnemySrc] = useState<string>(animatedEnemy1);
-  const [showHitFx, setShowHitFx] = useState(false);
+  const reducedMotion = useReducedMotion();
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
   const [enemySpeech, setEnemySpeech] = useState<string | null>(null);
   const [slotPulseKey, setSlotPulseKey] = useState(0);
@@ -451,6 +369,20 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const gameOverDispatchedRef = useRef(false);
   const speechTimeoutRef = useRef<number | null>(null);
   const playfieldRef = useRef<HTMLDivElement | null>(null);
+  const submitLockedRef = useRef(false);
+  const pendingTimeoutsRef = useRef<Set<number>>(new Set());
+  const clearRoundTimeouts = useCallback(() => {
+    pendingTimeoutsRef.current.forEach((timeout) => window.clearTimeout(timeout));
+    pendingTimeoutsRef.current.clear();
+  }, []);
+  const scheduleRound = useCallback((callback: () => void, delay: number) => {
+    const timeout = window.setTimeout(() => {
+      pendingTimeoutsRef.current.delete(timeout);
+      callback();
+    }, delay);
+    pendingTimeoutsRef.current.add(timeout);
+  }, []);
+  useEffect(() => clearRoundTimeouts, [clearRoundTimeouts]);
 
   const activeTargetAnchors = useMemo(
     () => centeredAnchors(question.expectedDigits.length, spanForSlots(question.expectedDigits.length, 'target'), 50),
@@ -549,46 +481,26 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     setInitialSourceSlots(shuffledSources.map((token) => (token ? { ...token } : null)));
     setDragState(null);
     setIsResolving(false);
+    submitLockedRef.current = false;
     setGoblinEffect('idle');
-    setShowHitFx(false);
   }, []);
 
   useEffect(() => {
     victoryDispatchedRef.current = false;
     gameOverDispatchedRef.current = false;
+    clearRoundTimeouts();
     setMatchTimeLeft(MATCH_DURATION_SECONDS);
     resetRound(makeQuestion(resolvedLevel));
-  }, [resetRound, resolvedLevel]);
+  }, [clearRoundTimeouts, resetRound, resolvedLevel]);
 
   useEffect(() => {
-    if (isPractice || victoryDispatchedRef.current || gameOverDispatchedRef.current) return undefined;
+    if (sessionState || isPractice || victoryDispatchedRef.current || gameOverDispatchedRef.current) return undefined;
     const intervalId = window.setInterval(() => {
+      if (document.hidden) return;
       setMatchTimeLeft((prev) => Math.max(0, prev - 1));
     }, 1000);
     return () => window.clearInterval(intervalId);
-  }, [isPractice, question.id]);
-
-  useEffect(() => {
-    let mounted = true;
-    createStaticEnemyFrame(animatedEnemy1)
-      .then((frame) => {
-        if (mounted) setIdleEnemySrc(frame);
-      })
-      .catch(() => {
-        if (mounted) setIdleEnemySrc(animatedEnemy1);
-      });
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (goblinEffect !== 'hit') return undefined;
-    setShowHitFx(true);
-    const timeoutId = window.setTimeout(() => setShowHitFx(false), HIT_REACTION_MS);
-    return () => window.clearTimeout(timeoutId);
-  }, [goblinEffect]);
+  }, [isPractice, question.id, sessionState]);
 
   useEffect(() => {
     setShowPracticeIntro(Boolean(isPractice));
@@ -601,15 +513,15 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   }, []);
 
   useEffect(() => {
-    if (matchTimeLeft > 0 || victoryDispatchedRef.current || gameOverDispatchedRef.current) return;
+    if (sessionState || matchTimeLeft > 0 || victoryDispatchedRef.current || gameOverDispatchedRef.current) return;
     gameOverDispatchedRef.current = true;
     setIsResolving(true);
     setFeedback(null);
     setGoblinEffect('heal');
     triggerHaptic('warning');
     setDragState(null);
-    window.setTimeout(() => onGameOver(Math.max(0, XP)), 220);
-  }, [matchTimeLeft, onGameOver, XP]);
+    scheduleRound(() => onGameOver(Math.max(0, XP)), 220);
+  }, [matchTimeLeft, onGameOver, scheduleRound, sessionState, XP]);
 
   const getPlayfieldScale = useCallback(() => {
     const node = playfieldRef.current;
@@ -645,6 +557,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const rect = event.currentTarget.getBoundingClientRect();
     const scale = getPlayfieldScale();
     event.currentTarget.setPointerCapture(event.pointerId);
+    event.currentTarget.dataset.dragStartX = String(event.clientX);
+    event.currentTarget.dataset.dragStartY = String(event.clientY);
 
     if (location === 'target') {
       setTargetSlots((prev) => prev.map((item, slotIndex) => (slotIndex === index ? null : item)));
@@ -671,55 +585,34 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const findDropCandidate = useCallback((
     clientX: number,
     clientY: number,
-    fromLocation: TokenLocation,
   ): { location: TokenLocation; index: number } | null => {
-    const rect = playfieldRef.current?.getBoundingClientRect();
-    if (!rect) return null;
-
-    const targetPct = targetSocketSizing.widthValue / 100;
-    const sourcePct = Number.parseFloat(layout.sourceWidth) / 100;
-    const targetRadius = Math.max(50, rect.width * Math.max(0.085, targetPct * 0.88));
-    const sourceRadius = Math.max(38, rect.width * Math.max(0.065, sourcePct * 0.66));
-
-    let bestTarget: { index: number; distance: number } | null = null;
-    let bestSource: { index: number; distance: number } | null = null;
-
-    activeTargetAnchors.forEach((anchor, index) => {
-      const cx = rect.left + (anchor.x / 100) * rect.width;
-      const cy = rect.top + (layout.targetY / 100) * rect.height - TARGET_ROW_Y_OFFSET_PX;
-      const d = Math.hypot(clientX - cx, clientY - cy);
-      if (!bestTarget || d < bestTarget.distance) bestTarget = { index, distance: d };
-    });
-
-    activeSourceAnchors.forEach((anchor, index) => {
-      const cx = rect.left + (anchor.x / 100) * rect.width;
-      const cy = rect.top + (layout.sourceY / 100) * rect.height - SOURCE_ROW_Y_OFFSET_PX;
-      const d = Math.hypot(clientX - cx, clientY - cy);
-      if (!bestSource || d < bestSource.distance) bestSource = { index, distance: d };
-    });
-
-    // Prefer target sockets when dragging answer tokens downward from the source row.
-    if (fromLocation === 'source') {
-      if (bestTarget && bestTarget.distance <= targetRadius * 1.12) {
-        return { location: 'target', index: bestTarget.index };
+    const slots: NodeListOf<HTMLButtonElement> | undefined = playfieldRef.current?.querySelectorAll('[data-pvp-location]');
+    if (!slots) return null;
+    // Measure rendered controls, including the shell's scale, rather than guessing coordinates.
+    for (const slot of Array.from(slots)) {
+      const bounds = slot.getBoundingClientRect();
+      if (clientX >= bounds.left - 8 && clientX <= bounds.right + 8
+        && clientY >= bounds.top - 8 && clientY <= bounds.bottom + 8) {
+        return { location: slot.dataset.pvpLocation as TokenLocation, index: Number(slot.dataset.pvpIndex) };
       }
-      if (bestSource && bestSource.distance <= sourceRadius) {
-        return { location: 'source', index: bestSource.index };
-      }
-      if (bestTarget && clientY >= rect.top + rect.height * 0.58) {
-        return { location: 'target', index: bestTarget.index };
-      }
-      return null;
-    }
-
-    if (bestTarget && bestTarget.distance <= targetRadius * 0.92) {
-      return { location: 'target', index: bestTarget.index };
-    }
-    if (bestSource && bestSource.distance <= sourceRadius * 0.9) {
-      return { location: 'source', index: bestSource.index };
     }
     return null;
-  }, [activeSourceAnchors, activeTargetAnchors, layout.sourceWidth, layout.sourceY, layout.targetY, targetSocketSizing.widthValue]);
+  }, []);
+
+  const tapToken = (location: TokenLocation, index: number) => {
+    if (isResolving || dragState) return;
+    const targets = [...targetSlots];
+    const sources = [...sourceSlots];
+    const token = location === 'source' ? sources[index] : targets[index];
+    if (!token) return;
+    const destination = (location === 'source' ? targets : sources).findIndex((item) => item === null);
+    if (destination < 0) return;
+    if (location === 'source') { targets[destination] = token; sources[index] = null; }
+    else { sources[destination] = token; targets[index] = null; }
+    setTargetSlots(targets);
+    setSourceSlots(sources);
+    triggerHaptic('selection');
+  };
 
   const placeTokenInArrays = useCallback((candidate: { location: TokenLocation; index: number } | null) => {
     if (!dragState) return;
@@ -763,55 +656,46 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     setSourceSlots(nextSources);
   }, [dragState, sourceSlots, targetSlots]);
 
-  useEffect(() => {
-    if (!dragState) return undefined;
+  const moveDrag = (event: React.PointerEvent<HTMLDivElement>) => {
+    setDragState((current) => current?.pointerId === event.pointerId
+      ? { ...current, clientX: event.clientX, clientY: event.clientY }
+      : current);
+  };
 
-    const onMove = (event: PointerEvent) => {
-      if (event.pointerId !== dragState.pointerId) return;
-      setDragState((current) => {
-        if (!current || current.pointerId !== event.pointerId) return current;
-        return {
-          ...current,
-          clientX: event.clientX,
-          clientY: event.clientY,
-        };
-      });
-    };
-
-    const onFinish = (event: PointerEvent) => {
-      if (event.pointerId !== dragState.pointerId) return;
-      const candidate = findDropCandidate(event.clientX, event.clientY, dragState.fromLocation);
+  const finishDrag = (event: React.PointerEvent<HTMLDivElement>) => {
+      if (!dragState || event.pointerId !== dragState.pointerId) return;
+      const origin = playfieldRef.current?.querySelector<HTMLButtonElement>(`[data-pvp-location="${dragState.fromLocation}"][data-pvp-index="${dragState.fromIndex}"]`);
+      const distance = origin ? Math.hypot(event.clientX - Number(origin.dataset.dragStartX), event.clientY - Number(origin.dataset.dragStartY)) : Infinity;
+      const openSlot = (dragState.fromLocation === 'source' ? targetSlots : sourceSlots).findIndex((token) => token === null);
+      const candidate = distance < 8 && openSlot >= 0
+        ? { location: (dragState.fromLocation === 'source' ? 'target' : 'source') as TokenLocation, index: openSlot }
+        : findDropCandidate(event.clientX, event.clientY);
       placeTokenInArrays(candidate);
       setDragState(null);
       triggerHaptic('selection');
-    };
+  };
 
-    window.addEventListener('pointermove', onMove);
-    window.addEventListener('pointerup', onFinish);
-    window.addEventListener('pointercancel', onFinish);
-
-    return () => {
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('pointerup', onFinish);
-      window.removeEventListener('pointercancel', onFinish);
-    };
-  }, [dragState, findDropCandidate, placeTokenInArrays]);
+  const cancelDrag = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragState || event.pointerId !== dragState.pointerId) return;
+    placeTokenInArrays({ location: dragState.fromLocation, index: dragState.fromIndex });
+    setDragState(null);
+  };
 
   const advanceRound = useCallback((newHealth: number) => {
     if (newHealth <= 0 && !victoryDispatchedRef.current) {
       victoryDispatchedRef.current = true;
       const finalAccuracy = attempts > 0 ? correctAnswers / attempts : 1;
       const stars = scoreToStars(finalAccuracy);
-      window.setTimeout(() => onVictory(stars, Math.max(0, XP)), 380);
+      scheduleRound(() => onVictory(stars, Math.max(0, XP)), 380);
       return;
     }
 
     const nextQuestion = makeQuestion(resolvedLevel);
-    window.setTimeout(() => {
+    scheduleRound(() => {
       setFeedback(null);
       resetRound(nextQuestion);
     }, HIT_REACTION_MS + 140);
-  }, [attempts, correctAnswers, onVictory, resetRound, resolvedLevel, XP]);
+  }, [attempts, correctAnswers, onVictory, resetRound, resolvedLevel, scheduleRound, XP]);
 
   const canSubmit = useMemo(
     () => !isResolving && !dragState && targetSlots.length > 0 && targetSlots.every((token) => token !== null),
@@ -829,13 +713,15 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   }, [timerProgress]);
 
   const handleSubmit = useCallback(() => {
-    if (!canSubmit) return;
+    if (!canSubmit || submitLockedRef.current) return;
+    submitLockedRef.current = true;
 
     const isCorrect = targetSlots.every((token, index) => token?.value === question.expectedDigits[index]);
     setIsResolving(true);
     setAttempts((prev) => prev + 1);
 
     if (isCorrect) {
+      emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { metadata: { questionId: question.id } });
       const nextHealth = Math.max(0, goblinHealth - 1);
       setGoblinHealth(nextHealth);
       setCorrectAnswers((prev) => prev + 1);
@@ -856,9 +742,10 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       return;
     }
 
+      emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { metadata: { questionId: question.id } });
       setFeedback({
         tone: 'error',
-        message: 'Still scrambled!\n\nThe Monster Mind is causing more chaos on the island.',
+        message: 'Try again. Check each digit’s place value.',
       });
       setGoblinEffect('heal');
       setBoardShake(true);
@@ -867,19 +754,20 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       setTargetSlots(Array(question.expectedDigits.length).fill(null));
       setSourceSlots(initialSourceSlots.map((token) => (token ? { ...token } : null)));
 
-    window.setTimeout(() => {
+    scheduleRound(() => {
       setFeedback(null);
       setIsResolving(false);
+      submitLockedRef.current = false;
       setGoblinEffect('idle');
       setBoardShake(false);
       setWrongFlash(false);
     }, 520);
-  }, [advanceRound, canSubmit, goblinHealth, initialSourceSlots, question.expectedDigits, resolvedLevel, targetSlots]);
+  }, [advanceRound, canSubmit, goblinHealth, initialSourceSlots, question.expectedDigits, question.id, resolvedLevel, scheduleRound, sessionEvents, targetSlots]);
 
   const numberStyle: React.CSSProperties = {
-    fontFamily: '"Trebuchet MS", "Arial Rounded MT Bold", "Avenir Next", "Nunito", sans-serif',
+    fontFamily: 'var(--font-fredoka)',
     letterSpacing: '0.01em',
-    textShadow: '0 2px 0 rgba(5,11,29,0.9), 0 0 8px rgba(148,163,184,0.35)',
+    textShadow: '0 2px 0 rgba(5,11,29,0.7)',
   };
 
   const topHudLayout = useMemo(() => ({
@@ -907,7 +795,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           alt=""
           aria-hidden="true"
           draggable={false}
-          className="absolute inset-0 h-full w-full object-contain object-center"
+          className="absolute inset-0 h-full w-full object-cover object-center"
         />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,14,24,0.18)_0%,rgba(7,14,24,0.24)_44%,rgba(7,14,24,0.56)_100%)]" />
       </div>
@@ -989,13 +877,13 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         </div>
       ) : null}
 
-      <div className="pointer-events-none fixed left-1/2 z-[60] w-[min(88vw,36rem)] -translate-x-1/2" style={{ top: '4px' }}>
+      <div className="legend-pvp-question pointer-events-none absolute z-[60]" style={{ inset: '0 0 auto' }}>
         <GameQuestionCard
           title="Place Value Panic"
           className="mx-auto rounded-[0.95rem] px-3.25 py-2.25 text-center"
           titleClassName="text-[9px] tracking-[0.28em] md:text-[10px]"
           bodyClassName="mt-1 text-[clamp(0.82rem,1.65vw,0.98rem)] leading-snug md:text-[clamp(0.9rem,1.7vw,1.04rem)]"
-          style={{ top: 'calc(env(safe-area-inset-top) + 3.2rem)' }}
+          style={{ position: 'relative', top: '5px', width: '94%', transform: 'none' }}
         >
           {questionPrompt}
         </GameQuestionCard>
@@ -1004,21 +892,21 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       <motion.div
         ref={playfieldRef}
         className="absolute inset-0 z-20"
-        animate={boardShake ? { x: [0, -10, 10, -8, 8, -4, 4, 0] } : { x: 0 }}
+        onPointerMove={moveDrag}
+        onPointerUp={finishDrag}
+        onPointerCancel={cancelDrag}
+        animate={boardShake && !reducedMotion ? { x: [0, -6, 6, -3, 3, 0] } : { x: 0 }}
         transition={{ duration: 0.34, ease: 'easeInOut' }}
       >
         <div
-          className="pointer-events-none absolute left-1/2 top-[20.8%] z-10 -translate-x-1/2"
-          style={{ width: 'min(83vw, 37rem)' }}
+          className="legend-pvp-targets pointer-events-auto absolute left-1/2 top-[32%] z-10 -translate-x-1/2"
+          style={{ width: question.expectedDigits.length > 5 ? '96%' : '83%' }}
         >
-          <div className="mx-auto rounded-[1.2rem] border border-cyan-100/20 bg-slate-950/26 p-2 shadow-[0_18px_40px_rgba(2,6,23,0.34)] backdrop-blur-[8px] md:p-3">
-            <div className="mb-2 flex items-center justify-center gap-3 px-2 text-[clamp(0.62rem,1.35vw,0.76rem)] font-black uppercase tracking-[0.28em] text-amber-200/92">
-              <span className="h-px flex-1 max-w-12 bg-gradient-to-r from-transparent via-amber-200/65 to-transparent" />
+          <div className="pvp-stone-panel" data-pvp-number-stones>
+            <div className="pvp-stone-heading">
               <span>Number Stones</span>
-              <span className="h-px flex-1 max-w-12 bg-gradient-to-r from-transparent via-amber-200/65 to-transparent" />
             </div>
-            <div className="relative mx-auto flex min-h-[6.75rem] items-center justify-center rounded-[1.1rem] border border-white/12 bg-[radial-gradient(circle_at_50%_18%,rgba(103,232,249,0.16),rgba(15,23,42,0.16)_42%,rgba(2,6,23,0.52)_100%)] px-2.5 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:min-h-[7.45rem] md:px-3.5 md:py-3.5">
-              <div className="relative flex w-full items-center justify-center gap-[0.4rem] md:gap-2">
+            <div className="pvp-stone-row">
                 {activeTargetAnchors.map((anchor, idx) => {
               const token = targetSlots[idx];
               const isDraggingThis = dragState?.fromLocation === 'target' && dragState.fromIndex === idx;
@@ -1027,12 +915,19 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               key={`target-${idx}`}
               type="button"
               onPointerDown={(event) => beginDrag('target', idx, event)}
-              className="absolute -translate-x-1/2 -translate-y-1/2 rounded-xl touch-none border-0 bg-transparent"
+              onClick={(event) => { if (event.detail === 0) tapToken('target', idx); }}
+              aria-label={`${PLACE_NAMES[question.placeHints[idx]]} place${token ? `, digit ${token.value}. Tap to remove` : ', empty'}`}
+              data-pvp-location="target"
+              data-pvp-index={idx}
+              className={`pvp-number-stone relative flex-1 touch-none${token ? ' is-filled' : ''}${wrongFlash ? ' is-error' : ''}${feedback?.tone === 'success' ? ' is-solved' : ''}`}
               data-button-skin="none"
+              disabled={isResolving}
+              whileHover={reducedMotion ? undefined : { y: -2 }}
+              whileTap={reducedMotion ? undefined : { scale: 0.96 }}
               animate={
                 token
                   ? {
-                      scale: slotPulseKey > 0 ? [1, 1.08, 1] : 1,
+                      scale: slotPulseKey > 0 && !reducedMotion ? [1, 1.04, 1] : 1,
                     }
                   : {
                       scale: 1,
@@ -1040,63 +935,34 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               }
               transition={{ duration: 0.34, ease: 'easeOut' }}
               style={{
-                left: `${anchor.x}%`,
-                top: `calc(${layout.targetY}% - ${TARGET_ROW_Y_OFFSET_PX}px)`,
-                width: targetSocketSizing.width,
-                height: targetSocketSizing.height,
+                maxWidth: '68px',
+                minWidth: 0,
+                height: '72px',
               }}
             >
-              <span className="pointer-events-none absolute inset-[-12%] rounded-full border border-amber-200/35 bg-amber-100/10 shadow-[0_0_18px_rgba(251,191,36,0.18)]" />
-              <img
-                src={getSocketAsset(question.placeHints[idx], idx, question.placeHints)}
-                alt=""
-                aria-hidden="true"
-                draggable={false}
-                className="pointer-events-none absolute inset-0 h-full w-full object-contain drop-shadow-[0_0_8px_rgba(251,191,36,0.22)]"
-              />
-              {token ? (
-                <>
-                  <motion.span
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-[14%] rounded-[1rem]"
-                    animate={
-                      wrongFlash
-                        ? { opacity: [0, 0.9, 0], backgroundColor: ['rgba(251,113,133,0)', 'rgba(251,113,133,0.34)', 'rgba(251,113,133,0)'] }
-                        : { opacity: slotPulseKey > 0 ? [0, 0.9, 0] : 0, backgroundColor: ['rgba(34,211,238,0)', 'rgba(34,211,238,0.25)', 'rgba(34,211,238,0)'] }
-                    }
-                    transition={{ duration: 0.34, ease: 'easeOut' }}
-                  />
-                  <span className="pointer-events-none absolute left-1/2 top-1/2 z-[8] h-[56%] w-[66%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/28 blur-[10px]" />
-                  <motion.span
-                    layout
-                    transition={{ type: 'spring', stiffness: 560, damping: 27, mass: 0.62 }}
-                    className="absolute left-1/2 top-1/2 z-10 block -translate-x-1/2 -translate-y-1/2 font-black text-white"
-                    style={{ ...numberStyle, fontSize: `clamp(2.25rem, 5.1vw, 3.75rem)` }}
-                  >
-                    {token.value}
-                  </motion.span>
-                </>
-              ) : null}
+              <span className="pvp-place-label" data-pvp-place-label aria-hidden="true">
+                {question.placeHints.length <= 4 ? PLACE_NAMES[question.placeHints[idx]] : question.placeHints[idx]}
+              </span>
+              <span className="pvp-stone-face" aria-hidden="true">
+                <span className={`pvp-stone-digit${token ? '' : ' is-empty'}`} data-pvp-stone-digit>{token?.value ?? '—'}</span>
+              </span>
               {isDraggingThis ? <span className="sr-only">Dragging</span> : null}
             </motion.button>
           );
         })}
-              </div>
             </div>
           </div>
         </div>
 
         <div
-          className="pointer-events-none absolute left-1/2 top-[70.8%] z-10 -translate-x-1/2"
-          style={{ width: 'min(84vw, 40rem)' }}
+          className="legend-pvp-sources pointer-events-auto absolute left-1/2 z-40 -translate-x-1/2"
+          style={{ width: '84%', top: sourceSlots.length > 6 ? '72%' : '75%' }}
         >
-          <div className="rounded-[1.25rem] border border-cyan-100/16 bg-slate-950/24 p-2 shadow-[0_16px_36px_rgba(2,6,23,0.28)] backdrop-blur-[8px] md:p-3">
-            <div className="mb-2 flex items-center justify-center gap-3 px-2 text-[clamp(0.62rem,1.35vw,0.76rem)] font-black uppercase tracking-[0.28em] text-cyan-100/90">
-              <span className="h-px flex-1 max-w-14 bg-gradient-to-r from-transparent via-cyan-100/55 to-transparent" />
-              <span>Choose the Missing Digits</span>
-              <span className="h-px flex-1 max-w-14 bg-gradient-to-r from-transparent via-cyan-100/55 to-transparent" />
+          <div className="pvp-digit-panel">
+            <div className="pvp-stone-heading">
+              <span>Tap or drag the digits</span>
             </div>
-            <div className="relative flex flex-wrap items-center justify-center gap-[0.42rem] md:gap-2">
+            <div className={`relative gap-1 ${sourceSlots.length > 6 ? 'grid grid-cols-5' : 'flex items-center justify-center'}`}>
               {activeSourceAnchors.map((anchor, idx) => {
               const token = sourceSlots[idx];
               const isDraggingThis = dragState?.fromLocation === 'source' && dragState.fromIndex === idx;
@@ -1105,29 +971,30 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               key={`source-${idx}`}
               type="button"
               onPointerDown={(event) => beginDrag('source', idx, event)}
-              className="absolute z-[22] -translate-x-1/2 -translate-y-1/2 rounded-xl touch-none border-0 bg-transparent"
+              onClick={(event) => { if (event.detail === 0) tapToken('source', idx); }}
+              aria-label={token ? `Digit ${token.value}` : 'Empty digit space'}
+              data-pvp-location="source"
+              data-pvp-index={idx}
+              className="relative z-[22] flex-1 rounded-xl touch-none border-0 bg-transparent"
               data-button-skin="none"
-              initial={{ opacity: 0, y: 14, scale: 0.94 }}
+              tabIndex={token ? 0 : -1}
+              initial={reducedMotion ? false : { opacity: 0, y: 8, scale: 0.96 }}
               animate={{ opacity: token ? 1 : 0, y: 0, scale: token ? 1 : 0.94 }}
               transition={{ duration: 0.26, ease: 'easeOut', delay: idx * 0.04 }}
               style={{
-                left: `${anchor.x}%`,
-                top: `calc(${layout.sourceY}% - ${SOURCE_ROW_Y_OFFSET_PX}px)`,
-                width: sourceTokenWidth,
-                height: layout.sourceHeight,
+                maxWidth: '64px',
+                minWidth: 0,
+                height: sourceSlots.length > 6 ? '44px' : '58px',
               }}
             >
               {token ? (
                 <>
-                  <span className="pointer-events-none absolute left-1/2 top-1/2 z-[8] h-[56%] w-[66%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/24 blur-[11px]" />
-                  <motion.span
-                    layout
-                    transition={{ type: 'spring', stiffness: 560, damping: 27, mass: 0.62 }}
+                  <span
                     className="absolute left-1/2 top-1/2 block -translate-x-1/2 -translate-y-1/2 font-black text-white"
-                    style={{ ...numberStyle, fontSize: layout.sourceFont }}
+                    style={{ ...numberStyle, fontSize: '2.2rem' }}
                   >
                     {token.value}
-                  </motion.span>
+                  </span>
                 </>
               ) : null}
               {isDraggingThis ? <span className="sr-only">Dragging</span> : null}
@@ -1147,27 +1014,17 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               {enemySpeech ? (
                 <motion.div
                   key={`enemy-speech-${enemySpeech}`}
-                  initial={{ opacity: 0, y: 8, scale: 0.9 }}
-                  animate={{ opacity: 1, y: 0, scale: [1, 1.04, 1] }}
-                  exit={{ opacity: 0, y: -8, scale: 0.9 }}
+                  initial={{ opacity: 0, y: reducedMotion ? 0 : 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
                   transition={{ duration: 0.22, ease: 'easeOut' }}
                   className="absolute left-1/2 top-[-22%] z-40 -translate-x-1/2"
                 >
                   <div className="relative">
-                    <motion.div
-                      className="absolute inset-[-8px] rounded-full bg-amber-300/35 blur-md"
-                      animate={{ opacity: [0.5, 0.9, 0.5], scale: [0.96, 1.04, 0.96] }}
-                      transition={{ duration: 0.7, repeat: Infinity, ease: 'easeInOut' }}
-                    />
                     <div className="relative rounded-full border border-amber-200/70 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.96),rgba(254,243,199,0.94)_42%,rgba(254,215,170,0.92)_100%)] px-3.5 py-1.5 text-[clamp(0.58rem,1.5vw,0.82rem)] font-black uppercase tracking-[0.05em] text-slate-800 shadow-[0_10px_18px_rgba(2,6,23,0.45)]">
                       {enemySpeech}
                     </div>
                     <div className="absolute left-1/2 top-[100%] h-2.5 w-2.5 -translate-x-1/2 rotate-45 border-b border-r border-amber-200/70 bg-amber-100/95" />
-                    <motion.span
-                      className="absolute -right-1.5 -top-1.5 h-2 w-2 rounded-full bg-amber-200/95 shadow-[0_0_10px_rgba(251,191,36,0.9)]"
-                      animate={{ scale: [0.8, 1.15, 0.8], opacity: [0.4, 1, 0.4] }}
-                      transition={{ duration: 0.55, repeat: Infinity, ease: 'easeInOut' }}
-                    />
                   </div>
                 </motion.div>
               ) : null}
@@ -1177,8 +1034,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.12em] text-amber-200 md:text-[9px]">
                   Monster Mind
                 </div>
-                <div className="relative h-2 overflow-visible rounded-full border border-slate-700/80 bg-slate-950/80">
-                  <div className="pointer-events-none absolute inset-[-8px] rounded-full bg-rose-300/14 blur-sm" />
+                <div className="relative h-2 overflow-hidden rounded-full border border-slate-700/80 bg-slate-950/80" role="progressbar" aria-label="Monster Mind strength" aria-valuemin={0} aria-valuemax={GOBLIN_MAX_HEALTH} aria-valuenow={goblinHealth} data-pvp-health={goblinHealth}>
                   <motion.div
                     className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-rose-500 via-rose-400 to-orange-300 shadow-[0_0_12px_rgba(251,113,133,0.75)]"
                     animate={{ width: `${(goblinHealth / GOBLIN_MAX_HEALTH) * 100}%` }}
@@ -1188,114 +1044,14 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 </div>
               </div>
             </div>
-            <motion.div
-              className="absolute left-1/2 top-[66%] h-[38%] w-[56%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl"
-              animate={{
-                opacity: goblinEffect === 'idle' ? 0.22 : 0.52,
-                scale: goblinEffect === 'idle' ? 1 : [1, 1.12, 1],
-                backgroundColor:
-                  goblinEffect === 'hit'
-                    ? 'rgba(248,113,113,0.92)'
-                    : goblinEffect === 'heal'
-                      ? 'rgba(74,222,128,0.9)'
-                      : 'rgba(56,189,248,0.55)',
-              }}
-              transition={{
-                duration: goblinEffect === 'hit' ? 0.32 : 0.45,
-                ease: 'easeInOut',
-                repeat: goblinEffect === 'idle' ? Infinity : 0,
-                repeatDelay: 1.1,
-              }}
-            />
-            <AnimatePresence>
-              {showHitFx ? (
-                <motion.div
-                  key="goblin-hit-vfx"
-                  className="pointer-events-none absolute inset-[-16%]"
-                  initial={{ opacity: 0.98, scale: 0.54 }}
-                  animate={{ opacity: 0, scale: 1.46, rotate: 160 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.56, ease: 'easeOut' }}
-                >
-                  <div className="absolute inset-0 rounded-full border-[8px] border-rose-400/90 blur-[1px]" />
-                  <div className="absolute inset-[18%] rounded-full border-[5px] border-red-500/85" />
-                  <div className="absolute inset-[38%] rounded-full border-[4px] border-orange-300/85" />
-                  <motion.div
-                    className="absolute inset-[26%] rounded-full bg-[radial-gradient(circle,rgba(254,226,226,0.95)_0%,rgba(251,113,133,0.85)_26%,rgba(244,63,94,0.62)_52%,rgba(239,68,68,0)_84%)]"
-                    initial={{ scale: 0.22, opacity: 0.98 }}
-                    animate={{ scale: 1.6, opacity: 0 }}
-                    transition={{ duration: 0.5, ease: 'easeOut' }}
-                  />
-                  {Array.from({ length: 14 }).map((_, idx) => {
-                    const angle = (idx / 14) * Math.PI * 2;
-                    const tx = Math.cos(angle) * 88;
-                    const ty = Math.sin(angle) * 88;
-                    return (
-                      <motion.span
-                        key={`blast-particle-${idx}`}
-                        className="absolute left-1/2 top-1/2 h-2.5 w-2.5 rounded-full bg-rose-300 shadow-[0_0_12px_rgba(251,113,133,0.9)]"
-                        initial={{ x: '-50%', y: '-50%', scale: 0.35, opacity: 0.95 }}
-                        animate={{ x: `calc(-50% + ${tx}px)`, y: `calc(-50% + ${ty}px)`, scale: 0.12, opacity: 0 }}
-                        transition={{ duration: 0.48, ease: 'easeOut', delay: idx * 0.008 }}
-                      />
-                    );
-                  })}
-                </motion.div>
-              ) : null}
-            </AnimatePresence>
-            <motion.div
+            <div className="pvp-enemy-ground" aria-hidden="true" />
+            <MonsterMindActor
+              src={animatedEnemy1}
+              alt="Monster Mind"
+              reaction={goblinHealth <= 0 ? 'defeated' : goblinEffect === 'heal' ? 'taunt' : goblinEffect}
+              reactionKey={slotPulseKey}
               className="relative translate-y-[8px]"
-              animate={{
-                y: [0, -5, 0],
-                x: goblinEffect === 'hit' ? [0, -9, 9, -8, 8, -5, 5, 0] : 0,
-                rotate: goblinEffect === 'hit' ? [0, -2.2, 2.2, -1.8, 1.8, 0] : 0,
-                scale: goblinEffect === 'hit' ? [1.04, 1.08, 1.04] : goblinEffect === 'heal' ? [1, 1.03, 1] : 1,
-              }}
-              transition={{
-                y: { duration: 1.8, repeat: Infinity, ease: 'easeInOut' },
-                x: { duration: 0.9, ease: 'easeInOut' },
-                rotate: { duration: 0.9, ease: 'easeInOut' },
-                scale: { duration: 0.9, ease: 'easeInOut' },
-              }}
-            >
-              <motion.img
-                src={idleEnemySrc}
-                alt=""
-                aria-hidden="true"
-                draggable={false}
-                className="relative h-auto w-full object-contain drop-shadow-[0_16px_22px_rgba(2,6,23,0.5)]"
-                animate={{ opacity: goblinEffect === 'hit' ? 0 : 1 }}
-                transition={{ duration: 0.14, ease: 'easeOut' }}
-              />
-              <AnimatePresence>
-                {goblinEffect === 'hit' ? (
-                  <motion.img
-                    key={`enemy-hit-${slotPulseKey}`}
-                    src={animatedEnemy1}
-                    alt=""
-                    aria-hidden="true"
-                    draggable={false}
-                    className="absolute inset-0 h-full w-full object-contain"
-                    initial={{ opacity: 0.98 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.14, ease: 'easeOut' }}
-                    style={{
-                      mixBlendMode: 'screen',
-                      filter: 'brightness(1.08) contrast(1.1) saturate(1.04)',
-                      WebkitMaskImage: `url("${idleEnemySrc}")`,
-                      maskImage: `url("${idleEnemySrc}")`,
-                      WebkitMaskRepeat: 'no-repeat',
-                      maskRepeat: 'no-repeat',
-                      WebkitMaskPosition: 'center',
-                      maskPosition: 'center',
-                      WebkitMaskSize: 'contain',
-                      maskSize: 'contain',
-                    }}
-                  />
-                ) : null}
-              </AnimatePresence>
-            </motion.div>
+            />
           </div>
         </div>
 
@@ -1329,7 +1085,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           const relative = getRelativePoint(dragState.clientX, dragState.clientY);
           return (
             <motion.div
-              className="pointer-events-none absolute z-[80] flex items-center justify-center rounded-xl"
+              className="pvp-floating-stone pointer-events-none absolute z-[80] flex items-center justify-center"
               style={{
                 left: relative.x - (dragState.width / 2),
                 top: relative.y - (dragState.height / 2),
@@ -1337,12 +1093,11 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 height: dragState.height,
               }}
               initial={{ scale: 1 }}
-              animate={{ scale: 1.03 }}
+              animate={{ scale: reducedMotion ? 1 : 1.03 }}
             >
-              <span className="absolute left-1/2 top-1/2 z-[8] h-[56%] w-[66%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/24 blur-[11px]" />
               <span
                 className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-black text-white"
-                style={{ ...numberStyle, fontSize: layout.sourceFont }}
+                style={{ ...numberStyle, fontSize: '2.2rem' }}
               >
                 {dragState.token.value}
               </span>
@@ -1358,7 +1113,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16 }}
-            className={`absolute bottom-[calc(env(safe-area-inset-bottom)+4.6rem)] left-1/2 z-40 -translate-x-1/2 rounded-[1.1rem] border px-5 py-3 text-center text-sm font-black leading-snug shadow-[0_12px_28px_rgba(2,6,23,0.55)] whitespace-pre-line ${
+            className={`pointer-events-none absolute bottom-[calc(env(safe-area-inset-bottom)+4.6rem)] left-1/2 z-40 -translate-x-1/2 rounded-[1.1rem] border px-5 py-3 text-center text-sm font-black leading-snug shadow-[0_12px_28px_rgba(2,6,23,0.55)] whitespace-pre-line ${
               feedback.tone === 'success'
                 ? 'border-emerald-200/70 bg-emerald-500/35 text-emerald-50'
                 : 'border-rose-200/70 bg-rose-500/35 text-amber-50'

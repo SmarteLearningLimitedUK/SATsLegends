@@ -103,7 +103,7 @@ const QuestionCardFrame: React.FC<QuestionCardFrameProps> = ({
   bodyClassName,
   style,
 }) => (
-  <div className={cn('game-question-card', className)} style={style}>
+  <div className={cn('game-question-card', className)} data-game-question="true" style={style}>
     <img
       className="game-question-card-shell"
       src={QUESTION_CARD_SHELL}
@@ -127,7 +127,7 @@ const QuestionCardFrame: React.FC<QuestionCardFrameProps> = ({
           </div>
         </div>
       ) : null}
-      <div className={cn('game-question-copy game-question-card-copy whitespace-pre-line text-white', bodyClassName)}>
+      <div data-question-copy="true" className={cn('game-question-copy game-question-card-copy whitespace-pre-line text-white', bodyClassName)}>
         {children}
       </div>
       {subtitle ? (

@@ -446,24 +446,26 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
             </header>
           ) : null}
 
-          <section className="shrink-0 rounded-[1.1rem] border border-white/16 bg-[linear-gradient(180deg,rgba(16,25,49,0.8),rgba(8,12,25,0.9))] p-1.5 shadow-[0_10px_18px_rgba(2,6,23,0.16)] backdrop-blur-sm">
-            <GameQuestionCard
-              title={title}
-              subtitle="Use the division setup shown below."
-              className="mx-auto max-w-[27rem] border border-violet-200/26 bg-[linear-gradient(180deg,rgba(60,16,144,0.96),rgba(27,11,74,0.92))] shadow-[0_12px_24px_rgba(2,6,23,0.16)] backdrop-blur-sm"
-              titleClassName="text-violet-100"
-            >
-              Work out the quotient or decimal shown by the division spell.
-            </GameQuestionCard>
+          <GameQuestionCard
+            title={title}
+            subtitle={problem.answerMode === 'decimal'
+              ? 'Give your answer as a decimal.'
+              : 'Give the quotient and remainder.'}
+            className="mx-auto w-full max-w-[27rem] shrink-0"
+            style={{ position: 'relative', top: 0, transform: 'none' }}
+          >
+            {problem.displayDividend} ÷ {problem.divisor} = ?
+          </GameQuestionCard>
 
-            <div className="mt-1.5">
+          <section data-division-playfield="true" className="relative flex min-h-0 flex-1 items-center justify-center">
+            <div data-division-problem="true" data-problem-id={problem.id} className="w-full">
               <LongDivisionVisual problem={problem} />
             </div>
           </section>
 
           <section className="shrink-0 rounded-[1.1rem] border border-white/16 bg-[linear-gradient(180deg,rgba(16,25,49,0.8),rgba(8,12,25,0.9))] p-1.5 shadow-[0_10px_18px_rgba(2,6,23,0.16)] backdrop-blur-sm">
             <div className="text-center text-[8px] font-black uppercase tracking-[0.16em] text-amber-100/80">
-              Tap the correct quotient and remainder
+              {problem.answerMode === 'decimal' ? 'Tap the correct decimal' : 'Tap the correct quotient and remainder'}
             </div>
             <div className="answer-choice-surface mt-1.5 grid grid-cols-4 gap-1.25">
               {problem.options.map((option, index) => (

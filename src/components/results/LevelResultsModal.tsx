@@ -9,6 +9,7 @@ import { BonusBreakdown as BonusBreakdownType, StarCount } from '../../lib/progr
 import CelebrationSplash from '../CelebrationSplash';
 import successRoundBackground from '../../assets/end of round screen/success screen.jpg';
 import failureRoundBackground from '../../assets/end of round screen/failure screen.jpg';
+import { useDialogFocus } from '../game-ui/useDialogFocus';
 
 interface LevelResultsModalProps {
   isOpen: boolean;
@@ -107,7 +108,7 @@ const ResultStatTile: React.FC<{ label: string; value: React.ReactNode; tone?: '
         : 'border-cyan-200/25 bg-cyan-400/8 text-cyan-100';
 
   return (
-    <div className={`rounded-[1rem] border px-3 py-2.5 text-center shadow-[0_10px_20px_rgba(2,6,23,0.18)] ${toneClass}`}>
+    <div className={`legend-result-stat rounded-[1rem] border px-3 py-2.5 text-center ${toneClass}`}>
       <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/58">{label}</div>
       <div className="mt-1 text-base font-black md:text-lg">{value}</div>
     </div>
@@ -124,28 +125,23 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
   onCalmBreak,
 }) => {
   const reducedMotion = useReducedMotion();
+  const dialogRef = useDialogFocus(isOpen && Boolean(result), onMap);
   const [playStars, setPlayStars] = useState(false);
   const [playXp, setPlayXp] = useState(false);
-  const [showButtons, setShowButtons] = useState(false);
   const [levelUpPulse, setLevelUpPulse] = useState(false);
   const isPractice = Boolean(result?.practice);
-  const handleXpComplete = useCallback(() => setShowButtons(true), []);
   const handleXpLevelUp = useCallback(() => setLevelUpPulse(true), []);
 
   useEffect(() => {
     if (!isOpen || !result) return;
     setPlayStars(false);
     setPlayXp(false);
-    setShowButtons(false);
     setLevelUpPulse(false);
 
     const starDelay = reducedMotion ? 0 : 180;
     const xpDelay = reducedMotion ? 0 : 540;
 
-    if (isPractice) {
-      const buttonsTimer = window.setTimeout(() => setShowButtons(true), reducedMotion ? 0 : 220);
-      return () => window.clearTimeout(buttonsTimer);
-    }
+    if (isPractice) return;
 
     const timers = [
       window.setTimeout(() => setPlayStars(true), starDelay),
@@ -200,16 +196,21 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
             <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/55 to-transparent" />
           </div>
 
-          {isVictory ? (
+          {isVictory && !reducedMotion ? (
             <CelebrationSplash active message={celebrationMessage} theme="victory" sweepDuration={celebrationDuration} />
           ) : null}
 
           <motion.div
+            ref={dialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Mission results"
+            tabIndex={-1}
             initial={{ y: 24, scale: 0.96, opacity: 0 }}
             animate={{ y: 0, scale: 1, opacity: 1 }}
             exit={{ y: 16, scale: 0.98, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 220, damping: 20 }}
-            className="relative z-10 flex h-[min(92vh,58rem)] w-full max-w-md flex-col overflow-hidden rounded-[1.6rem] border border-white/15 bg-[linear-gradient(180deg,rgba(7,21,52,0.78),rgba(5,17,45,0.9))] p-4 shadow-[0_28px_80px_rgba(0,0,0,0.5)] backdrop-blur-md md:max-w-2xl md:rounded-[2rem] md:p-6"
+            className="legend-dialog relative z-10 flex h-[min(92vh,58rem)] w-full max-w-md flex-col overflow-hidden p-4 md:max-w-2xl md:p-6"
           >
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(56,189,248,0.18),transparent_55%),radial-gradient(circle_at_50%_100%,rgba(251,191,36,0.18),transparent_60%)]" />
             <button
@@ -282,7 +283,6 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
                         segments={xpSegments}
                         play={playXp}
                         onLevelUp={handleXpLevelUp}
-                        onComplete={handleXpComplete}
                       />
                     </div>
                   </div>
@@ -292,27 +292,22 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
                 )}
               </div>
 
-              <div className={`mt-auto grid gap-2 pt-2 ${showButtons ? 'opacity-100' : 'pointer-events-none opacity-0'} transition-opacity duration-300 ${isVictory ? 'grid-cols-2' : 'grid-cols-2'}`}>
+              <div className="mt-auto grid grid-cols-2 gap-2 pt-2">
                 {isPractice ? (
                   <>
                     <button
                       type="button"
+                      data-dialog-primary
                       className="ui-button-primary py-3 text-sm font-black uppercase tracking-[0.18em]"
                       onClick={onRetry}
                     >
                       Retry Practice
                     </button>
-                    <button
-                      type="button"
-                      className="ui-button-secondary py-2 text-xs font-black uppercase tracking-[0.18em]"
-                      onClick={onMap}
-                    >
-                      Map
-                    </button>
                   </>
                 ) : isVictory ? (
                   <button
                     type="button"
+                    data-dialog-primary
                     className="ui-button-primary py-3 text-sm font-black uppercase tracking-[0.18em]"
                     onClick={onNext || onMap}
                   >

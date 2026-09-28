@@ -1,0 +1,1 @@
+const o="/assets/goblin-DzLNs-8n.png",a=s=>Object.entries(s).sort(([t],[e])=>t.localeCompare(e)).map(([,t])=>t),r=Object.assign({"./goblin.png":o}),n=a(r),c=n.length?n:[],l=s=>{let t=0;for(let e=0;e<s.length;e+=1)t=(t<<5)-t+s.charCodeAt(e),t|=0;return Math.abs(t)},g=(s,t=c)=>t.length?t[l(s)%t.length]:"";export{n as B,g as p};

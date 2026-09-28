@@ -8,7 +8,7 @@ import {
 } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
-import areaBackdrop from '../assets/maps/backgroundsforgames/area architect.jpg';
+import areaBackdrop from '../assets/maps/premium/area-architect.webp';
 import {
   reshuffleAvoidingRepeat,
   shuffle,
@@ -211,7 +211,10 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
         <section className="mx-auto w-full max-w-[44rem] shrink-0">
           <div className="rounded-[1.6rem] border border-white/14 bg-black/28 p-3 shadow-[0_18px_34px_rgba(15,23,42,0.34)] backdrop-blur-sm">
             <div className="space-y-2">
-              <GameQuestionCard title="Area Architect">
+              <GameQuestionCard
+                title="Area Architect"
+                style={{ position: 'relative', top: 'auto', left: 'auto', right: 'auto', width: '100%' }}
+              >
                 {question.prompt}
               </GameQuestionCard>
 

@@ -6,7 +6,7 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { RotateCcw, Plus, Minus } from 'lucide-react';
-import missionBackground from '../assets/maps/backgroundsforgames/Chrono Dash Time Trial.jpg';
+import missionBackground from '../assets/maps/premium/chrono-dash.webp';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 
 interface ChronoDashGameProps {
@@ -192,49 +192,20 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({
         className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
       />
 
-      <div className={`relative z-10 flex h-full min-h-0 w-full flex-col items-center ${topPadding} px-4 pb-[calc(env(safe-area-inset-bottom)+4.8rem)]`}>
-        <div className="w-full max-w-md min-h-0">
-          <main className="flex w-full min-h-0 flex-1 flex-col items-center gap-3">
+      <div className={`relative z-10 flex h-full min-h-0 w-full flex-col items-center ${topPadding} px-4 pb-20`}>
+        <div className="h-full w-full max-w-md min-h-0">
+          <main className="flex h-full w-full min-h-0 flex-col items-center gap-3">
             <GameQuestionCard
               title="Chrono Dash"
               subtitle="Match the target time and restore the lava clock."
-              className="relative z-20 mx-auto w-full max-w-[28rem]"
+              className="relative z-20 mx-auto w-full max-w-[28rem] shrink-0"
               bodyClassName="text-[clamp(0.95rem,2.9vw,1.25rem)] font-black leading-snug tracking-[0.01em] text-white md:text-[1.35rem]"
+              style={{ position: 'relative', top: 0, transform: 'none' }}
             >
-              The Monster Minds have disrupted the island timekeeper.
+              Set the clock to {targetTime.hours.toString().padStart(2, '0')}:{targetTime.minutes.toString().padStart(2, '0')}.
             </GameQuestionCard>
 
-            <motion.div
-              initial={{ y: -20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              className="w-full max-w-[18rem]"
-            >
-              <div className="overflow-hidden rounded-2xl border-4 border-[#334155] bg-[#1e293b] px-4 py-3 shadow-[0_0_30px_rgba(59,130,246,0.2)]">
-                <div className="mb-1 text-center text-[10px] font-black uppercase tracking-[0.22em] text-blue-200/80">
-                  Target Time
-                </div>
-                <div className="flex items-center justify-center gap-2">
-                  <span className="text-4xl font-black tracking-tighter text-blue-400 drop-shadow-[0_0_10px_rgba(96,165,250,0.5)]">
-                    {targetTime.hours.toString().padStart(2, '0')}
-                  </span>
-                  <motion.span
-                    animate={{ opacity: [1, 0.3, 1] }}
-                    transition={{ repeat: Infinity, duration: 1 }}
-                    className="text-3xl font-black text-blue-400/50"
-                  >
-                    :
-                  </motion.span>
-                  <span className="text-4xl font-black tracking-tighter text-blue-400 drop-shadow-[0_0_10px_rgba(96,165,250,0.5)]">
-                    {targetTime.minutes.toString().padStart(2, '0')}
-                  </span>
-                </div>
-              </div>
-              <p className="mx-auto mt-2 max-w-[16rem] text-center text-[11px] font-bold leading-tight text-orange-100/90 md:max-w-[18rem] md:text-[12px]">
-                Match the clock to restore the correct time.
-              </p>
-            </motion.div>
-
-            <div className="relative mt-1">
+            <div data-clock-playfield="true" className="relative mt-1 flex min-h-0 w-full flex-1 items-center justify-center">
               <div className="relative flex h-[12rem] w-[12rem] items-center justify-center rounded-full md:h-[14.4rem] md:w-[14.4rem]">
                 <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_50%_50%,rgba(255,166,0,0.18),transparent_64%)] blur-[4px]" />
                 <LavaClockFace />
@@ -263,16 +234,16 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({
               <div className="flex flex-col items-center gap-2">
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-300">Hour Hand</p>
                 <div className="flex items-center gap-3">
-                  <ControlButton onClick={() => adjustTime('hours', -1)} icon={<Minus size={20} />} color="blue" />
-                  <ControlButton onClick={() => adjustTime('hours', 1)} icon={<Plus size={20} />} color="blue" />
+                  <ControlButton label="Decrease hour" onClick={() => adjustTime('hours', -1)} icon={<Minus size={20} />} color="blue" />
+                  <ControlButton label="Increase hour" onClick={() => adjustTime('hours', 1)} icon={<Plus size={20} />} color="blue" />
                 </div>
               </div>
 
               <div className="flex flex-col items-center gap-2">
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-purple-300">Minute Hand</p>
                 <div className="flex items-center gap-3">
-                  <ControlButton onClick={() => adjustTime('minutes', -5)} icon={<Minus size={20} />} color="purple" />
-                  <ControlButton onClick={() => adjustTime('minutes', 5)} icon={<Plus size={20} />} color="purple" />
+                  <ControlButton label="Decrease minutes" onClick={() => adjustTime('minutes', -5)} icon={<Minus size={20} />} color="purple" />
+                  <ControlButton label="Increase minutes" onClick={() => adjustTime('minutes', 5)} icon={<Plus size={20} />} color="purple" />
                 </div>
               </div>
             </div>
@@ -327,9 +298,11 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({
 };
 
 function ControlButton({
+  label,
   onClick,
   icon,
 }: {
+  label: string;
   onClick: () => void;
   icon: React.ReactNode;
   color: 'blue' | 'purple';
@@ -339,6 +312,7 @@ function ControlButton({
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
       onClick={onClick}
+      aria-label={label}
       className="ui-icon-button flex h-12 w-12 items-center justify-center rounded-xl"
     >
       <div className="text-white drop-shadow-md">{icon}</div>

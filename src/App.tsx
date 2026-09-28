@@ -14,6 +14,7 @@ import AchievementsModal from './components/modals/AchievementsModal';
 import LevelResultsModal from './components/results/LevelResultsModal';
 import UnifiedMiniGameHud from './components/UnifiedMiniGameHud';
 import AssetIcon from './components/AssetIcon';
+import PracticeIntroPopup from './components/game-ui/PracticeIntroPopup';
 import { IslandData, LevelData, PlayerData } from './types';
 import { AppRouter } from './app/AppRouter';
 import { useScreenFlow } from './app/useScreenFlow';
@@ -100,9 +101,13 @@ const App: React.FC = () => {
     incorrect: 0,
     hintsUsed: 0,
   });
+  const [answerStreak, setAnswerStreak] = useState(0);
+  const [gameplayHelpOpen, setGameplayHelpOpen] = useState(false);
 
   const resetSessionMetrics = useCallback(() => {
     setSessionMetrics({ correct: 0, incorrect: 0, hintsUsed: 0 });
+    setAnswerStreak(0);
+    setGameplayHelpOpen(false);
   }, []);
 
   const mapProgressionToPlayer = useCallback((levels: Record<string, LevelProgress>) => {
@@ -294,6 +299,8 @@ const App: React.FC = () => {
   } = useGameplaySession({
     screen,
     selectedLevel,
+    paused: gameplayHelpOpen || Boolean(levelResult),
+    restartKey: gameplayRestartKey,
     onLifeDepleted: () => handleGameOverRef.current(0),
     onTimeDepleted: () => handleGameOverRef.current(0),
   });
@@ -525,7 +532,7 @@ const App: React.FC = () => {
       if (selectedLevel.blueprintKey === 'place_value_panic') {
         return {
           title: 'Place Value Panic',
-          summary: 'Place value is the value of a digit based on its position within a number.\nRead the question and then drag each number to its corresponding place.',
+          summary: 'Rebuild the number in the mission. Tap a digit to fill the next space, or drag it to a place-value slot. Tap a filled slot to take its digit back.',
           bullets: [],
         };
       }
@@ -768,6 +775,10 @@ const App: React.FC = () => {
 
   const handleStartAdventure = () => {
     triggerHaptic('tap');
+    if (hasCompletedProfile) {
+      goToWorldMap();
+      return;
+    }
     setDraftName(player.playerName.trim() || 'Explorer');
     goToAvatarSelection();
   };
@@ -964,12 +975,14 @@ const App: React.FC = () => {
       playGameSound('correct');
       triggerHaptic('selection');
       setSessionMetrics((prev) => ({ ...prev, correct: prev.correct + 1 }));
+      setAnswerStreak((previous) => previous + 1);
       recordTelemetryEvent('correct_answer', event);
     },
     onIncorrectAnswer: (event) => {
       playGameSound('incorrect');
       triggerHaptic('error');
       setSessionMetrics((prev) => ({ ...prev, incorrect: prev.incorrect + 1 }));
+      setAnswerStreak(0);
       recordTelemetryEvent('incorrect_answer', event);
       if (screen === 'gameplay') {
         const metadataKey = JSON.stringify(event.metadata ?? {});
@@ -1176,6 +1189,11 @@ const App: React.FC = () => {
             {!isStartScreen ? (
               <UnifiedMiniGameHud
                 avatarId={player.avatarId}
+                title={isGameplayScreen ? canonicalGameTitle : 'SATs Legends'}
+                levelLabel={selectedLevel ? `Mission ${selectedLevel.miniGameLevel || selectedLevel.id}` : 'Adventure'}
+                streak={answerStreak}
+                isPractice={Boolean(isGameplayScreen && selectedLevel?.isPractice)}
+                onHelp={isGameplayScreen ? () => setGameplayHelpOpen(true) : undefined}
                 timeLeft={globalMiniGameHudTimeLeft}
                 totalTime={GLOBAL_MINIGAME_HUD_DURATION_SECONDS}
                 lives={globalMiniGameLives}
@@ -1186,6 +1204,16 @@ const App: React.FC = () => {
                 bottomContent={mapHudDock || undefined}
               />
             ) : null}
+
+            <PracticeIntroPopup
+              open={gameplayHelpOpen && isGameplayScreen}
+              kind="help"
+              title={canonicalGameTitle || 'Your mission'}
+              body="Read the mission, explore the playfield, then choose your answer."
+              briefing={hintRuleSet || selectedRuleSet}
+              actionLabel="Back to mission"
+              onAction={() => setGameplayHelpOpen(false)}
+            />
 
             <DailyQuestsModal
               isOpen={showQuests}
@@ -1207,6 +1235,7 @@ const App: React.FC = () => {
                 title: levelResult.title,
                 subtitle: levelResult.subtitle,
                 stars: levelResult.stars as 0 | 1 | 2 | 3,
+                practice: levelResult.practice,
                 xpGained: levelResult.xpGained,
                 bonuses: levelResult.bonuses,
                 previousLevel: levelResult.previousLevel,

@@ -6,7 +6,7 @@ import {
 } from '../app/gameplaySessionContract';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
-import missionBackground from '../assets/maps/backgroundsforgames/roundingrocketbackground.jpg';
+import missionBackground from '../assets/maps/premium/rounding-rocket.webp';
 import roundingRocketArt from '../assets/rocktlogo.png';
 
 interface RoundingRocketGameProps {
@@ -339,7 +339,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
         alt=""
         aria-hidden="true"
         draggable={false}
-        className="pointer-events-none absolute inset-0 h-full w-full object-contain object-center opacity-85 grayscale-[0.15] saturate-75"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-85 grayscale-[0.15] saturate-75"
       />
 
       <PracticeIntroPopup

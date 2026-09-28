@@ -1,35 +1,38 @@
 import { MiniGameType } from './types';
-import areaArchitectBackground from './assets/maps/backgroundsforgames/area architect.jpg';
-import calculationCupBackground from './assets/maps/backgroundsforgames/Calculation Cup.png';
-import changeCounterBackground from './assets/maps/backgroundsforgames/changecounter.jpg';
-import chronoDashTimeTrialBackground from './assets/maps/backgroundsforgames/Chrono Dash Time Trial.jpg';
-import cloudCollapseBackground from './assets/maps/backgroundsforgames/Cloud Collapse.jpg';
-import coordinateQuestBackground from './assets/maps/backgroundsforgames/coordinate quest.jpg';
-import crystalCoreBackground from './assets/maps/backgroundsforgames/crystal core.jpg';
-import dataDetectiveBackground from './assets/maps/backgroundsforgames/data detective.jpg';
-import matrixMatchBackground from './assets/maps/backgroundsforgames/End Trial.jpg';
-import fractionForgeBackground from './assets/maps/backgroundsforgames/fraction forge map.jpg';
-import graphGrabberBackground from './assets/maps/backgroundsforgames/graph grabber.jpg';
-import lineGraphLabBackground from './assets/maps/backgroundsforgames/linegraphlab.jpg';
-import meanMachineBackground from './assets/maps/backgroundsforgames/meanmachine.jpg';
-import mixedMasteryBackground from './assets/maps/backgroundsforgames/Mixed Mastery.jpg';
-import monsterMarketBackground from './assets/maps/backgroundsforgames/Monster Market.png';
-import multiStepMarathonBackground from './assets/maps/backgroundsforgames/Multi Step Marathon.jpg';
-import orderOpsArenaBackground from './assets/maps/backgroundsforgames/orderopsarena.jpg';
-import percentPowerBackground from './assets/maps/backgroundsforgames/percent power.jpg';
-import placeValuePanicBackground from './assets/maps/backgroundsforgames/Place Value Panic.png';
-import polygonPalaceBackground from './assets/maps/backgroundsforgames/polygon palace.jpg';
-import potionPanicBackground from './assets/maps/backgroundsforgames/tableshresplit.png';
-import primePopBackground from './assets/maps/backgroundsforgames/primepopbkground.jpg';
-import problemPyramidBackground from './assets/maps/backgroundsforgames/problem pyramid.jpg';
-import rotationStationBackground from './assets/maps/backgroundsforgames/Rotation Reflection.jpg';
-import rotationStationBackground from './assets/maps/backgroundsforgames/rotationstation.jpg';
-import scaleBuilderBackground from './assets/maps/backgroundsforgames/scalebuilder-construction.png';
-import scaleMasterBackground from './assets/maps/backgroundsforgames/Scale Master.png';
-import shareSplitterBackground from './assets/maps/backgroundsforgames/sharesplitterfinal.png';
-import takeOutRushBackground from './assets/maps/backgroundsforgames/Take-Out Rush.png';
-import lavaPathBackground from './assets/maps/backgroundsforgames/lava-path.jpg';
-import towerOfFactorsBackground from './assets/maps/backgroundsforgames/tower of factors.jpg';
+import angleArenaBackground from './assets/maps/premium/angle-arena.webp';
+import matchMasteryBackground from './assets/maps/premium/match-mastery.webp';
+import mirrorGateBackground from './assets/maps/premium/mirror-gate.webp';
+import remainderRunBackground from './assets/maps/premium/remainder-run.webp';
+import shareSplitterBackground from './assets/maps/premium/share-splitter.webp';
+import areaArchitectBackground from './assets/maps/premium/area-architect.webp';
+import calculationCupBackground from './assets/maps/premium/formula-forge.webp';
+import changeCounterBackground from './assets/maps/premium/change-counter.webp';
+import chronoDashTimeTrialBackground from './assets/maps/premium/chrono-dash.webp';
+import cloudCollapseBackground from './assets/maps/premium/match-mastery.webp';
+import coordinateQuestBackground from './assets/maps/premium/coordinates-quest.webp';
+import crystalCoreBackground from './assets/maps/premium/crystal-core.webp';
+import dataDetectiveBackground from './assets/maps/premium/data-detective.webp';
+import matrixMatchBackground from './assets/maps/premium/matrix-match.webp';
+import graphGrabberBackground from './assets/maps/premium/graph-grabber.webp';
+import lineGraphLabBackground from './assets/maps/premium/line-graph-lab.webp';
+import meanMachineBackground from './assets/maps/premium/mean-machine.webp';
+import mixedMasteryBackground from './assets/maps/premium/matrix-match.webp';
+import monsterMarketBackground from './assets/maps/premium/take-out-rush.webp';
+import multiStepMarathonBackground from './assets/maps/premium/problem-pyramid.webp';
+import orderOpsArenaBackground from './assets/maps/premium/order-ops-arena.webp';
+import percentPowerBackground from './assets/maps/premium/percent-power.webp';
+import placeValuePanicBackground from './assets/maps/premium/place-value-panic.webp';
+import polygonPalaceBackground from './assets/maps/premium/polygon-palace.webp';
+import potionPanicBackground from './assets/maps/premium/potion-panic.webp';
+import primePopBackground from './assets/maps/premium/prime-pop.webp';
+import problemPyramidBackground from './assets/maps/premium/problem-pyramid.webp';
+import rotationStationBackground from './assets/maps/premium/rotation-station.webp';
+import scaleBuilderBackground from './assets/maps/premium/scale-builder.webp';
+import scaleMasterBackground from './assets/maps/premium/conversion-canyon.webp';
+import ratioRacerBackground from './assets/maps/premium/ratio-racer.webp';
+import takeOutRushBackground from './assets/maps/premium/take-out-rush.webp';
+import lavaPathBackground from './assets/maps/premium/lava-path.webp';
+import towerOfFactorsBackground from './assets/maps/premium/factor-frenzy.webp';
 
 export interface GameSceneMeta {
   background?: string;
@@ -94,23 +97,23 @@ export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   logic_sort: withBackground(REASONING_SCENE, mixedMasteryBackground),
   matrix_match: withBackground(REASONING_SCENE, matrixMatchBackground),
   take_out_rush: withBackground(FRACTION_SCENE, takeOutRushBackground),
-  fraction_match: withBackground(FRACTION_SCENE, fractionForgeBackground),
+  fraction_match: withBackground(FRACTION_SCENE, matchMasteryBackground),
   crystal_core: withBackground(FRACTION_SCENE, crystalCoreBackground),
   prime_pop: withBackground(NUMBER_SCENE, primePopBackground),
-  angle_arena: withBackground(GEOMETRY_SCENE, polygonPalaceBackground),
+  angle_arena: withBackground(GEOMETRY_SCENE, angleArenaBackground),
   polygon_palace: withBackground(GEOMETRY_SCENE, polygonPalaceBackground),
   data_dungeon: withBackground(DATA_SCENE, dataDetectiveBackground),
   monster_market: withBackground(NUMBER_SCENE, monsterMarketBackground),
   tower_of_factors: withBackground(NUMBER_SCENE, towerOfFactorsBackground),
   measurement_forge: withBackground(RATIO_SCENE, scaleMasterBackground),
   timekeeper_temple: withBackground(DATA_SCENE, chronoDashTimeTrialBackground),
-  ratio_rapids: withBackground(RATIO_SCENE, scaleMasterBackground),
-  remainder_run: withBackground(RATIO_SCENE, primePopBackground),
+  ratio_rapids: withBackground(RATIO_SCENE, shareSplitterBackground),
+  remainder_run: withBackground(RATIO_SCENE, remainderRunBackground),
   place_value_peaks: withBackground(NUMBER_SCENE, placeValuePanicBackground),
   calculation_clash: withBackground(NUMBER_SCENE, calculationCupBackground),
   coordinate_quest: withBackground(GEOMETRY_SCENE, coordinateQuestBackground),
   transform_temple: withBackground(GEOMETRY_SCENE, rotationStationBackground),
-  mirror_gate: withBackground(REASONING_SCENE, rotationStationBackground),
+  mirror_gate: withBackground(REASONING_SCENE, mirrorGateBackground),
   scale_safari: withBackground(SCALE_BUILDER_SCENE, scaleBuilderBackground),
   scales_of_the_sun: withBackground(SCALE_SCENE, scaleMasterBackground),
   graph_grabber: withBackground(CHART_CHASE_SCENE, graphGrabberBackground),
@@ -118,7 +121,7 @@ export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   mean_machine: withBackground(DATA_SCENE, meanMachineBackground),
   percent_power: withBackground(RATIO_SCENE, percentPowerBackground),
   area_architect: withBackground(GEOMETRY_SCENE, areaArchitectBackground),
-  ratio_fractions: withBackground(RATIO_SCENE, shareSplitterBackground),
+  ratio_fractions: withBackground(RATIO_SCENE, ratioRacerBackground),
   equation_grove: withBackground(REASONING_SCENE, orderOpsArenaBackground),
   rule_runner: withBackground(REASONING_SCENE, problemPyramidBackground),
   formula_forge: withBackground(NUMBER_SCENE, calculationCupBackground),

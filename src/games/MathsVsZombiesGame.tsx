@@ -3,8 +3,9 @@ import { Timer as TimerIcon, Heart, Target, Brain } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
 import zombieFallback from '../assets/zombies/zombie.png';
-import zombiePlayfield from '../assets/zombies/zombiebkground.png';
+import zombiePlayfield from '../assets/maps/premium/maths-vs-zombies.webp';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import { formatMultiplicationDisplay } from '../utils/mathDisplay';
 
@@ -496,6 +497,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
   return (
     <div
       className="relative flex h-full w-full flex-col items-center overflow-hidden font-sans text-white select-none"
+      style={{ backgroundImage: `linear-gradient(#081a35aa, #081a35cc), url(${zombiePlayfield})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
     >
       <PracticeIntroPopup
         open={showPracticeIntro}
@@ -505,10 +507,14 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
         onAction={() => setShowPracticeIntro(false)}
       />
 
-      <div className={`relative z-10 flex h-full w-full max-w-[1000px] flex-col ${useSharedTopHud ? 'pt-[max(3.7rem,calc(env(safe-area-inset-top)+3.1rem))]' : ''}`}>
+      <div className="relative z-10 flex h-full w-full max-w-[1000px] flex-col gap-2">
         {!useSharedTopHud ? (
           <TopBar XP={XP} brainPoints={zombiesDefeated} health={health} timer={timerLabel} onBack={onBack} />
         ) : null}
+
+        <GameQuestionCard title={gameTitle || 'Maths vs Zombies'} subtitle="Solve the sum to push back the minions." style={{ position: 'relative', top: '5px', width: '92%', transform: 'none' }}>
+          {question.prompt.split('\n\n').slice(-1)[0]}
+        </GameQuestionCard>
 
         <div
           className={`relative mx-4 flex-1 overflow-hidden rounded-3xl border-4 border-blue-400/30 bg-blue-900/10 shadow-2xl ${useSharedTopHud ? 'mt-2' : 'mt-4'}`}
@@ -565,27 +571,12 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 
         </div>
 
-        <div className="mx-4 mt-3 rounded-[1.35rem] border border-amber-300/35 bg-slate-950/74 px-4 py-3 shadow-[0_20px_48px_rgba(2,6,23,0.45)]">
+        <div className="licensed-board-frame mx-4 mt-1 rounded-[1.35rem] px-4 py-3">
           <div
             className={`min-h-[16px] text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-cyan-100/80 ${feedback ? 'opacity-100' : 'opacity-0'}`}
             aria-hidden={!feedback}
           >
             {feedback || '\u00A0'}
-          </div>
-          <div className="flex items-center justify-center gap-3 text-[0.66rem] font-black uppercase tracking-[0.24em] text-amber-100/90">
-            <span className="h-px w-8 bg-amber-200/75" />
-            Mission
-            <span className="h-px w-8 bg-amber-200/75" />
-          </div>
-          <div className="mt-2 text-center text-[clamp(0.84rem,2.1vw,1.02rem)] font-semibold leading-snug text-white/94">
-            the monster minds have sent their minions - solve the sum to defeat them
-          </div>
-          <div className="mt-2 flex items-center justify-center">
-            <div className="rounded-[0.95rem] border border-cyan-200/40 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(23,37,84,0.95))] px-4 py-2.5 shadow-[0_10px_24px_rgba(2,6,23,0.4)]">
-              <div className="text-[clamp(1.35rem,4vw,2.1rem)] font-black leading-none tracking-[0.03em] text-white drop-shadow-[0_2px_8px_rgba(2,6,23,0.7)]">
-                {question.prompt.split('\n\n').slice(-1)[0]}
-              </div>
-            </div>
           </div>
           <div className="mt-3 text-center text-[0.68rem] font-black uppercase tracking-[0.24em] text-amber-100/90">
             Choose the correct answer

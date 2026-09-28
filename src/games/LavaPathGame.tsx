@@ -8,7 +8,7 @@ import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameScreenShell } from '../layout/ScreenPrimitives';
 import { getSatsInspiredChallengeQuestion } from '../systems/content/satsInspiredQuestionBanks';
 import { triggerHaptic } from '../haptics';
-import lavaPathBackground from '../assets/maps/backgroundsforgames/lava-path.jpg';
+import lavaPathBackground from '../assets/maps/premium/lava-path.webp';
 import {
   GameplaySessionEventHandlers,
   GameplaySessionState,
@@ -59,7 +59,6 @@ const getLavaPathPosition = (stepIndex: number) => {
 };
 
 const buildLavaPathD = () => {
-  if (LAVA_PATH_STOPS.length === 0) return '';
   const [first, ...rest] = LAVA_PATH_STOPS;
   const segments = rest.map((point, index) => {
     const previous = LAVA_PATH_STOPS[index];

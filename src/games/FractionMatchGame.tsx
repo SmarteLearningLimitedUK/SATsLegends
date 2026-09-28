@@ -1,13 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronLeft } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import factorFrenzyBackground from '../assets/maps/backgroundsforgames/Factor Frenzy.jpg';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
+import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 
-const TRANSPARENT_BACKDROP_PIXEL = 'data:image/gif;base64,R0lGODlhAQABAAAAACw=';
 
 interface FractionMatchGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -252,11 +251,7 @@ const MatchGameShell: React.FC<{
 }) => {
   return (
     <div className="relative h-full w-full select-none overflow-hidden font-sans text-white">
-      <GameplaySceneBackdrop
-        gameType={variantGameType}
-        backgroundOverride={TRANSPARENT_BACKDROP_PIXEL}
-        className="opacity-0"
-      />
+      <GameplaySceneBackdrop gameType={variantGameType} className="opacity-45 [&_img]:!object-cover" />
 
       <div className="pointer-events-none absolute inset-0">
         {[...Array(20)].map((_, idx) => (

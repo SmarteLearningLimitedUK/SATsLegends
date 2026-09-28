@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { motion } from 'motion/react';
-import changeCounterBackground from '../assets/maps/backgroundsforgames/Monster Market.png';
+import changeCounterBackground from '../assets/maps/premium/change-counter.webp';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 import { FeedbackStrip, TaskCard } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';

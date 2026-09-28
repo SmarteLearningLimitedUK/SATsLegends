@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { triggerHaptic } from '../haptics';
-import gameplayBackground from '../assets/maps/backgroundsforgames/rotationstation.jpg';
+import gameplayBackground from '../assets/maps/premium/rotation-station.webp';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 
 interface RotationStationGameProps {
@@ -465,7 +465,7 @@ const RotationStationGame: React.FC<RotationStationGameProps> = ({
         alt=""
         aria-hidden="true"
         draggable={false}
-        className="pointer-events-none absolute inset-0 h-full w-full object-contain object-center"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
       />
 
       <main

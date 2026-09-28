@@ -1,107 +1,40 @@
 import React, { useEffect, useState } from 'react';
-import AssetIcon from './AssetIcon';
+import { ArrowLeft, CircleHelp, Volume2, VolumeX } from 'lucide-react';
 import { triggerHaptic } from '../haptics';
 import { playGameSound } from '../audio/gameAudio';
-import {
-  GAME_AUDIO_STORAGE_KEY,
-  GAME_HUD_MUTE_EVENT,
-  GAME_HUD_MUTE_SYNC_EVENT,
-} from '../gameHudEvents';
+import { GAME_AUDIO_STORAGE_KEY, GAME_HUD_MUTE_EVENT, GAME_HUD_MUTE_SYNC_EVENT } from '../gameHudEvents';
 
 interface GameActionDockProps {
   onBack: () => void;
+  onHelp?: () => void;
   accentClass?: string;
   compact?: boolean;
   variant?: 'local' | 'global';
 }
-
-const GameActionDock: React.FC<GameActionDockProps> = ({
-  onBack,
-  accentClass: _accentClass,
-  compact = false,
-  variant = 'local',
-}) => {
-  if (variant !== 'global') {
-    return null;
-  }
-
+const GameActionDock: React.FC<GameActionDockProps> = ({ onBack, onHelp, variant = 'local' }) => {
   const [isMuted, setIsMuted] = useState(() => localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true');
-
   useEffect(() => {
-    const handleMuteSync = (event: Event) => {
-      const detail = (event as CustomEvent<{ muted?: boolean }>).detail;
-      if (typeof detail?.muted === 'boolean') {
-        setIsMuted(detail.muted);
-      }
+    const sync = (event: Event) => {
+      const muted = (event as CustomEvent<{ muted?: boolean }>).detail?.muted;
+      if (typeof muted === 'boolean') setIsMuted(muted);
     };
-
-    window.addEventListener(GAME_HUD_MUTE_SYNC_EVENT, handleMuteSync as EventListener);
-    return () => {
-      window.removeEventListener(GAME_HUD_MUTE_SYNC_EVENT, handleMuteSync as EventListener);
-    };
+    window.addEventListener(GAME_HUD_MUTE_SYNC_EVENT, sync);
+    return () => window.removeEventListener(GAME_HUD_MUTE_SYNC_EVENT, sync);
   }, []);
-
-  const handleToggleMute = () => {
-    const nextMuted = !isMuted;
-    playGameSound('tap', isMuted);
-    triggerHaptic('tap');
-    setIsMuted(nextMuted);
-    window.dispatchEvent(
-      new CustomEvent(GAME_HUD_MUTE_EVENT, {
-        detail: { muted: nextMuted },
-      }),
-    );
-  };
-
-  // Match the World Map dock look (blue capsule + tiled buttons).
-  const dockButtonClass = [
-    'inline-flex items-center justify-center border text-slate-100',
-    'border-cyan-100/40 bg-[linear-gradient(180deg,rgba(75,137,232,0.9)_0%,rgba(45,102,194,0.9)_54%,rgba(29,75,153,0.92)_100%)]',
-    'shadow-[0_6px_12px_rgba(2,6,23,0.33),inset_0_1px_0_rgba(255,255,255,0.26)]',
-    'transition-[transform,filter,box-shadow,background] duration-150 ease-out',
-    'hover:brightness-105 active:translate-y-[1px] active:brightness-95',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b1e4e]',
-    'h-[42px] w-[42px] rounded-[0.85rem]',
-    'disabled:cursor-not-allowed disabled:opacity-60',
-  ].join(' ');
-  const dockIconClass = 'h-[18px] w-[18px] drop-shadow-[0_2px_2px_rgba(0,0,0,0.26)]';
-
+  if (variant !== 'global') return null;
+  const tap = (action: () => void) => { playGameSound('tap', isMuted); triggerHaptic('tap'); action(); };
   return (
-    <div className="mt-0.5 flex w-full max-w-[calc(100vw-0.7rem)] shrink-0 items-center justify-center overflow-hidden">
-      <div className="relative w-fit max-w-full shrink-0 rounded-[1.15rem] border border-cyan-100/26 bg-[linear-gradient(180deg,rgba(16,40,96,0.88)_0%,rgba(9,24,64,0.92)_100%)] px-2 py-1.5 shadow-[0_14px_24px_rgba(2,6,23,0.42),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-[3px]">
-        <div className="pointer-events-none absolute inset-[1px] rounded-[1.05rem] border border-cyan-100/14" />
-        <div className="pointer-events-none absolute inset-x-3 top-[3px] h-3 rounded-full bg-cyan-200/12 blur-[2px]" />
-
-        <div className={`relative grid ${compact ? 'gap-1.5' : 'gap-2'} grid-cols-2`}>
-          <button
-            type="button"
-            onClick={() => {
-              playGameSound('tap', isMuted);
-              triggerHaptic('tap');
-              onBack();
-            }}
-            data-ui-sound="handled"
-            className={dockButtonClass}
-            aria-label="Back"
-            title="Back to map"
-          >
-            <AssetIcon name="back" className={dockIconClass} />
-          </button>
-          <button
-            type="button"
-            onClick={handleToggleMute}
-            data-ui-sound="handled"
-            className={dockButtonClass}
-            aria-label={isMuted ? 'Unmute audio' : 'Mute audio'}
-            aria-pressed={isMuted}
-            title={isMuted ? 'Sound off' : 'Sound on'}
-          >
-            <AssetIcon name={isMuted ? 'soundMute' : 'sound'} className={dockIconClass} />
-          </button>
-        </div>
-      </div>
-    </div>
+    <nav className="legend-dock-surface" aria-label="Game controls">
+      <button type="button" className="legend-dock-button" data-button-skin="none" data-ui-sound="handled" aria-label="Back" title="Back to islands" onClick={() => tap(onBack)}><ArrowLeft aria-hidden="true" /><span>Back</span></button>
+      {onHelp ? <button type="button" className="legend-dock-button" data-button-skin="none" data-ui-sound="handled" aria-label="How to play" onClick={(event) => { event.currentTarget.focus({ preventScroll: true }); tap(onHelp); }}><CircleHelp aria-hidden="true" /><span>Help</span></button> : null}
+      <button type="button" className="legend-dock-button" data-button-skin="none" data-ui-sound="handled" aria-label={isMuted ? 'Unmute audio' : 'Mute audio'} aria-pressed={isMuted} onClick={() => tap(() => {
+        const muted = !isMuted;
+        setIsMuted(muted);
+        window.dispatchEvent(new CustomEvent(GAME_HUD_MUTE_EVENT, { detail: { muted } }));
+      })}>
+        {isMuted ? <VolumeX aria-hidden="true" /> : <Volume2 aria-hidden="true" />}<span>Sound</span>
+      </button>
+    </nav>
   );
 };
-
 export default GameActionDock;

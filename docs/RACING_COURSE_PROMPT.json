@@ -1,0 +1,13 @@
+{
+  "generator": "Built-in image_gen tool",
+  "date": "2026-09-28",
+  "useCase": "stylized-concept",
+  "file": "src/assets/maps/premium/ratio-racer-course.webp",
+  "sourceOutput": "C:/Users/samva/.codex/generated_images/01a0e81b-6e81-7fc3-a666-822ef603eb1a/exec-9342b61c-d415-45c4-987d-6c5dfea4adad.png",
+  "styleReferences": [
+    "src/assets/gokarts/karts/2.png",
+    "src/assets/maps/premium/ratio-racer.webp"
+  ],
+  "prompt": "Use case: stylized-concept. Asset type: seamless horizontally scrolling game background panorama for the existing SATs Legends Ratio Racer. Input image1 is the live character/kart STYLE reference only; input image2 is the existing environment reference. Create a NEW 2D hand-drawn CARTOON racing course, matching the character's bold dark outlines, chunky rounded storybook shapes, vivid teal/green/blue and warm golden accents, clean cel-shaded two-or-three tone painted shading. Premium preteen-friendly game illustration; no realistic3D, photo textures, microdetail, film lighting. Wide landscape 1536x1024 full bleed. Crucial: a continuous SIDE VIEW of a STRAIGHT road going from the LEFT EDGE to the RIGHT EDGE in perfectly HORIZONTAL PARALLEL bands. Horizon and road edges stay at identical heights across the entire image. No perspective vanishing point, diagonal road, bends, intersections, or road taper. Dark teal asphalt fills bottom35%; horizontal gold curb at65%height and roadside low rounded pale stone barrier at60%height. Neat white dashed horizontal lane line at85%height. Broad empty unobstructed road for the separate live kart. Upper65% is lush chunky green trees, small rounded teal mountains, a whimsical cream-and-teal distant castle among the hills, cyan sky and plump clouds, golden round barrier caps and repeated small right-facing gold chevrons. Seamless looping horizontally: leftmost and rightmost edges must match EXACTLY in colors, heights, lighting and continuing forms. Same tree canopy shapes and hill silhouette at both edges; sky and asphalt colors equal at both edges; all horizontal barrier/curb/lane bands connect exactly when image repeats. No unique start/finish structure at either edge. No large tree trunks at near sides, no foreground foliage across road. Do not bake the reference kart, any cars, characters, creatures, lettering, numbers, signage, UI, borders or watermark into the background. Existing sprites render separately. Keep the road and horizon level so tiled copies make one continuous racing course.",
+  "processing": "Format conversion to WebP at quality92. No retouching, compositing or geometry edits."
+}

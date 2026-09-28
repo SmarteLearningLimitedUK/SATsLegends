@@ -27,7 +27,7 @@ import {
 } from 'recharts';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
-import dataDetectiveBackground from '../assets/maps/backgroundsforgames/data detective.jpg';
+import dataDetectiveBackground from '../assets/maps/premium/data-detective.webp';
 
 interface StolenItem {
   name: string;
@@ -258,7 +258,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
         onAction={() => setShowPracticeIntro(false)}
       />
       <GameScreenLayout
-        className="relative z-10 h-full w-full min-h-0 gap-0 text-slate-100"
+        className="data-detective-layout relative z-10 h-full w-full min-h-0 gap-0 text-slate-100"
         topClassName="!min-h-0 flex flex-col items-center gap-0 px-2 pt-0 sm:px-3 md:px-4"
         top={(
         <div className="flex w-full flex-col gap-0">
@@ -306,10 +306,11 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           <GameQuestionCard
             className="z-30 mt-0 w-full max-w-[620px] rounded-[1.2rem] px-3 py-2 text-center shadow-[0_10px_20px_rgba(2,6,23,0.38)] max-[480px]:px-2 max-[480px]:py-1.25"
             titleClassName="text-[9px] tracking-[0.26em] text-cyan-50/85"
-            title={caseMode === 'whodunnit' ? 'Who took the loot?' : 'Match the evidence totals.'}
-            subtitle={<span className="text-[10px] leading-snug text-stone-200/88">{caseBrief}</span>}
+            title="Data Detective"
+            subtitle="Compare the chart with each suspect before accusing."
+            style={{ position: 'relative', top: 0, transform: 'none' }}
           >
-            {''}
+            {caseBrief}
           </GameQuestionCard>
         </div>
       )}

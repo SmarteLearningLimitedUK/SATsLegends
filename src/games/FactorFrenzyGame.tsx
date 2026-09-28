@@ -7,9 +7,10 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
-import factorFrenzyBackground from '../assets/maps/backgroundsforgames/Factor Frenzy.jpg';
-import meanEnemy from '../assets/mean.png';
+import factorFrenzyBackground from '../assets/maps/premium/factor-frenzy.webp';
+import factorEnemy from '../assets/reskin/factor-sentinel.webp';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
+import MonsterMindActor from '../components/game-ui/MonsterMindActor';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
 
 type FactorProblemType = 'missing_factor' | 'all_factors' | 'common_factors' | 'prime_factors';
@@ -395,7 +396,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
   return (
     <div
-      className="relative h-full w-full overflow-hidden bg-contain bg-center bg-no-repeat text-white"
+      className="relative h-full w-full overflow-hidden bg-cover bg-center bg-no-repeat text-white"
       style={{ backgroundImage: `url(${factorFrenzyBackground})` }}
     >
       <div className="pointer-events-none fixed left-0 right-0 top-[max(0.5rem,env(safe-area-inset-top))] z-50 flex justify-center px-3">
@@ -447,11 +448,8 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                 </div>
               </motion.div>
             ) : (
-              <motion.div
-                key={state.currentProblem?.id}
-                initial={{ opacity: 0, x: 16 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -16 }}
+              <div
+                key="playing"
                 className="flex min-h-0 flex-1 flex-col"
               >
                 <div className="relative min-h-0 flex-1 overflow-hidden rounded-3xl border border-cyan-100/16 bg-transparent p-3 sm:p-4">
@@ -480,25 +478,17 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                       </div>
 
                       <div className="mt-3 flex w-full justify-center">
-                        <motion.div
+                        <div
                           className="relative w-[min(36vw,10rem)] max-w-full"
-                          animate={
-                            showHitFx
-                              ? { x: [0, -8, 8, -6, 6, 0], rotate: [0, -2, 2, -1, 1, 0] }
-                              : { x: 0, rotate: 0 }
-                          }
-                          transition={{ duration: 0.42, ease: 'easeInOut' }}
                         >
-                          <motion.img
-                            src={meanEnemy}
-                            alt=""
-                            aria-hidden="true"
-                            draggable={false}
+                          <MonsterMindActor
+                            src={factorEnemy}
+                            alt="Monster Mind"
+                            reaction={state.enemyHealth <= 0 ? 'defeated' : showHitFx ? 'hit' : state.status === 'incorrect' ? 'taunt' : 'idle'}
+                            reactionKey={state.currentProblem?.id}
                             className="relative h-auto w-full object-contain drop-shadow-[0_18px_26px_rgba(2,6,23,0.38)]"
-                            animate={{ opacity: showHitFx ? 0.92 : 1, scale: showHitFx ? [1, 1.03, 1] : 1 }}
-                            transition={{ duration: 0.42, ease: 'easeInOut' }}
                           />
-                        </motion.div>
+                        </div>
                       </div>
 
                       <AnimatePresence>
@@ -538,7 +528,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                     </div>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             )}
           </AnimatePresence>
         </main>

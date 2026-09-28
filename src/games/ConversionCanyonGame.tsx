@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
-import conversionCanyonBackground from '../assets/maps/backgroundsforgames/conversion canyon.jpg';
+import conversionCanyonBackground from '../assets/maps/premium/conversion-canyon.webp';
 import weighScale from '../assets/maps/backgroundsforgames/Scale Master.png';
 import gemBlue from '../assets/place_value/jewels/diamond_blue.png';
 import gemGreen from '../assets/place_value/jewels/diamond_green.png';
@@ -10,6 +10,7 @@ import gemYellow from '../assets/place_value/jewels/diamond_yellow.png';
 import gemEmerald from '../assets/place_value/jewels/emerald.png';
 import gemSapphire from '../assets/place_value/jewels/sapphire.png';
 import { useTrimmedImageSource, useTrimmedImageSources } from '../utils/trimTransparentImage';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 
 interface ConversionCanyonGameProps {
   levelId: number;
@@ -209,29 +210,29 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
       />
       <div className="relative z-10 flex h-full w-full min-h-0 flex-col">
         <div className="flex min-h-0 flex-1 flex-col items-center justify-start gap-3 px-4 pt-[calc(env(safe-area-inset-top)+0.6rem)]">
-          <div className="w-full max-w-[34rem] rounded-[1.35rem] border border-white/12 bg-[linear-gradient(180deg,rgba(12,24,45,0.8),rgba(8,14,28,0.86))] px-4 py-2 text-center shadow-[0_16px_30px_rgba(2,6,23,0.35)]">
-            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-200/90">Conversion Canyon</div>
-            <div className="mt-1 text-[clamp(1rem,3.8vw,1.35rem)] font-black text-white">
-              The Monster Minds have disrupted the canyon supplies. Rebuild the shipment so it totals {toKgLabel(round.targetGrams)}.
-            </div>
-            <div className="mt-1 text-[11px] font-semibold text-cyan-100/90">
-              Use the available weights to match the target exactly.
-            </div>
-          </div>
+          <GameQuestionCard
+            title="Conversion Canyon"
+            subtitle="Use the weights to match the target exactly."
+            className="shrink-0"
+            style={{ position: 'relative', top: 0, width: '100%', transform: 'none' }}
+          >
+            Rebuild the shipment so it totals <strong>{toKgLabel(round.targetGrams)}</strong>.
+          </GameQuestionCard>
 
           <motion.div
             animate={successPulse ? { scale: [1, 1.02, 1] } : { scale: 1 }}
             transition={{ duration: 0.36, ease: 'easeOut' }}
-            className="relative flex w-full max-w-[35rem] flex-1 min-h-[19rem] items-center justify-center p-1 md:max-w-[40rem]"
+            data-conversion-playfield="true"
+            className="relative flex w-full max-w-[35rem] min-h-0 flex-1 items-center justify-center p-1 md:max-w-[40rem]"
           >
-            <div className="relative flex min-h-[19rem] w-full items-center justify-center">
-              <div className="pointer-events-none absolute left-1/2 top-1/2 z-10 flex w-full max-w-[26rem] -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+            <div className="relative flex h-full min-h-0 w-full items-center justify-center">
+              <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
                 <img
                   src={trimmedScaleImage}
                   alt=""
                   aria-hidden="true"
                   draggable={false}
-                  className="pointer-events-none relative z-10 h-auto w-full object-contain object-center drop-shadow-[0_18px_24px_rgba(2,6,23,0.38)]"
+                  className="pointer-events-none relative z-10 h-full w-full object-contain object-center drop-shadow-[0_18px_24px_rgba(2,6,23,0.38)]"
                 />
                 <div className="pointer-events-none absolute left-1/2 top-[58%] z-20 -translate-x-1/2 -translate-y-1/2">
                   <div className="flex min-w-[8.4rem] flex-col items-center rounded-[0.95rem] border border-cyan-200/58 bg-[linear-gradient(180deg,rgba(7,22,43,0.94),rgba(4,10,24,0.98))] px-3 py-1.5 text-center shadow-[0_10px_18px_rgba(2,6,23,0.55)]">

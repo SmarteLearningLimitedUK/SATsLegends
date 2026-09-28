@@ -1,0 +1,19 @@
+.monster-mind-actor { display: block; }
+.monster-mind-recoil, .monster-mind-sway, .monster-mind-breath { width: 100%; height: 100%; transform-origin: 50% 96%; }
+.monster-mind-actor [data-monster-image] { display: block; width: 100%; height: 100%; object-fit: contain; user-select: none; }
+.monster-mind-sway { animation: monster-mind-sway var(--monster-sway-duration, 6.1s) ease-in-out var(--monster-sway-delay, -.8s) infinite; }
+.monster-mind-breath { animation: monster-mind-breathe var(--monster-breath-duration, 3.9s) ease-in-out var(--monster-breath-delay, -.4s) infinite; }
+.monster-mind-actor[data-monster-ready="false"] :is(.monster-mind-sway, .monster-mind-breath),
+.monster-mind-actor:not([data-monster-reaction="idle"]) :is(.monster-mind-sway, .monster-mind-breath) { animation-play-state: paused; }
+
+@keyframes monster-mind-breathe {
+  0%, 100% { transform: scale(1, 1); }
+  50% { transform: scale(1.004, 1.013); }
+}
+@keyframes monster-mind-sway {
+  0%, 100% { transform: translateX(-.65px) rotate(-.55deg); }
+  50% { transform: translateX(.65px) rotate(.55deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .monster-mind-recoil, .monster-mind-sway, .monster-mind-breath { animation: none !important; transform: none; }
+}

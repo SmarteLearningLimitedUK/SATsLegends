@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { ChevronLeft, CircleDollarSign, Zap } from 'lucide-react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
-import percentPowerBackground from '../assets/maps/backgroundsforgames/percent power.jpg';
+import percentPowerBackground from '../assets/maps/premium/percent-power.webp';
 import { triggerHaptic } from '../haptics';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
@@ -339,7 +339,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
       />
 
       {!useSharedTopHud ? (
-        <div className="absolute left-0 right-0 top-[calc(env(safe-area-inset-top)+2px)] z-30 flex items-center justify-between px-3">
+        <div data-local-top-hud="true" className="absolute left-0 right-0 top-[calc(env(safe-area-inset-top)+2px)] z-30 flex items-center justify-between px-3">
           <button
             type="button"
             onClick={onBack}

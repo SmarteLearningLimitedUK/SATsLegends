@@ -15,7 +15,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import graphGrabberBackground from '../assets/maps/backgroundsforgames/graph grabber.jpg';
+import graphGrabberBackground from '../assets/maps/premium/graph-grabber.webp';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
@@ -704,7 +704,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden bg-transparent select-none text-slate-100">
       <div
-        className="pointer-events-none absolute inset-0 bg-contain bg-center bg-no-repeat opacity-100"
+        className="pointer-events-none absolute inset-0 bg-cover bg-center bg-no-repeat opacity-100"
         style={{ backgroundImage: `url(${graphGrabberBackground})` }}
         aria-hidden="true"
       />

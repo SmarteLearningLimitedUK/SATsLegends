@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import takeOutLevelBg from '../assets/maps/backgroundsforgames/Take-Out Rush.png';
+import takeOutLevelBg from '../assets/maps/premium/take-out-rush.webp';
 import food1 from '../assets/take_out/food/1.png';
 import food2 from '../assets/take_out/food/2.png';
 import food3 from '../assets/take_out/food/3.png';
@@ -14,6 +14,7 @@ import food9 from '../assets/take_out/food/9.png';
 import FoodGameShell from '../components/FoodGameShell';
 import { triggerHaptic } from '../haptics';
 import CelebrationSplash from '../components/CelebrationSplash';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 
 interface TakeOutRushGameProps {
   levelId: number;
@@ -592,19 +593,20 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
           </header>
         ) : null}
 
+        <GameQuestionCard
+          title="Take-Out Rush"
+          subtitle={activeConstraints.minItems > 1
+            ? `Use at least ${activeConstraints.minItems} items. Tap food to add it.`
+            : 'Tap food to add it, then send your order.'}
+          className="shrink-0"
+          style={{ position: 'relative', top: 0, width: '100%', transform: 'none' }}
+        >
+          Build an order worth <strong>{asDisplayFraction(order.target)}</strong>.
+        </GameQuestionCard>
+
         <main className="relative mt-1.5 flex min-h-0 flex-1 flex-col gap-2 pb-[calc(env(safe-area-inset-bottom)+2.1rem)]">
-          <section className="relative flex min-h-[16rem] flex-1 items-start justify-center">
-            <div className="absolute left-1/2 top-[calc(8%+8px)] w-[min(84vw,18.5rem)] -translate-x-1/2 text-center">
-              <div className="rounded-[1.35rem] border border-orange-300/38 bg-[linear-gradient(180deg,rgba(15,18,32,0.94),rgba(10,12,24,0.98))] px-4 py-3 shadow-[0_18px_34px_rgba(2,6,23,0.56)]">
-                <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/88 drop-shadow-[0_2px_6px_rgba(2,6,23,0.8)]">
-                  Order Target
-                </div>
-                <div className="mt-1 text-[clamp(1.65rem,7vw,2.45rem)] font-black leading-none text-white drop-shadow-[0_3px_10px_rgba(2,6,23,0.9)]">
-                  {asDisplayFraction(order.target)}
-                </div>
-              </div>
-            </div>
-            <div className="pointer-events-none absolute left-1/2 bottom-[calc(4%_-_8pt)] h-[46%] w-[min(82vw,21rem)] -translate-x-1/2 overflow-hidden max-[480px]:h-[48%]">
+          <section data-takeout-playfield="true" className="relative flex min-h-0 flex-1 items-start justify-center">
+            <div className="pointer-events-none absolute left-1/2 bottom-[calc(4%_-_8pt)] h-[86%] w-[min(82%,21rem)] -translate-x-1/2 overflow-hidden">
               <img
                 src={orderMonster}
                 alt=""

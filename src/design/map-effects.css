@@ -1,0 +1,91 @@
+.legend-world-map .legend-map-atmosphere {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
+.legend-world-map .legend-map-terrain-light {
+  opacity: .64;
+  animation: legend-map-light 10s ease-in-out infinite;
+}
+
+.legend-world-map .legend-map-shoreline {
+  opacity: .2;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: legend-map-tide 9s ease-in-out infinite;
+}
+
+.legend-world-map .legend-map-mote {
+  opacity: 0;
+  animation: legend-map-drift 7s ease-in-out infinite;
+}
+
+.legend-world-map .legend-map-mote-ember {
+  animation-name: legend-map-ember;
+}
+
+.legend-world-map .legend-map-mote-ice {
+  animation-name: legend-map-snow;
+}
+
+/* The name plates are already illustrated in the map. Hover and keyboard
+   focus never add a translucent fill across their lettering. */
+#root .legend-world-map .legend-map-hotspot,
+#root .legend-world-map .legend-map-hotspot:hover,
+#root .legend-world-map .legend-map-hotspot:focus-visible {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+#root .legend-world-map .legend-map-hotspot:focus-visible {
+  outline: 3px solid #ffe09a !important;
+  outline-offset: -6px !important;
+}
+
+@keyframes legend-map-light {
+  0%, 100% { opacity: .56; }
+  50% { opacity: .82; }
+}
+
+@keyframes legend-map-tide {
+  0%, 100% { opacity: .12; transform: scaleX(.96); }
+  50% { opacity: .28; transform: scaleX(1.035); }
+}
+
+@keyframes legend-map-drift {
+  0%, 100% { opacity: 0; transform: translate(-3px, 3px); }
+  35%, 60% { opacity: .7; }
+  80% { opacity: 0; transform: translate(4px, -5px); }
+}
+
+@keyframes legend-map-ember {
+  0%, 100% { opacity: 0; transform: translate(0, 5px); }
+  30% { opacity: .8; }
+  80% { opacity: 0; transform: translate(3px, -13px); }
+}
+
+@keyframes legend-map-snow {
+  0%, 100% { opacity: 0; transform: translate(2px, -5px); }
+  30%, 55% { opacity: .72; }
+  85% { opacity: 0; transform: translate(-3px, 9px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .legend-world-map .legend-map-atmosphere * {
+    animation: none !important;
+  }
+
+  .legend-world-map .legend-map-mote {
+    opacity: .45;
+  }
+
+  .legend-world-map .legend-map-details {
+    animation: none;
+  }
+}

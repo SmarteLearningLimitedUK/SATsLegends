@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { GameQuestionCard, GameUiShell } from '../components/game-ui/GameUiKit';
+import MonsterMindActor from '../components/game-ui/MonsterMindActor';
 import { triggerHaptic } from '../haptics';
 import { formatMultiplicationDisplay } from '../utils/mathDisplay';
 import { pickBossArt } from '../assets/bosses/library';
@@ -284,17 +285,12 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
                     <div className="absolute left-3 top-3 rounded-full border border-rose-200/14 bg-slate-950/35 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-rose-100/82">
                       {Math.max(0, maxEnemyHealth - enemyHealth)} orders restored
                     </div>
-                  <motion.img
+                  <MonsterMindActor
                     src={orderOpsEnemy}
                     alt="Order Ops enemy"
-                    animate={feedback?.type === 'success'
-                      ? { x: [0, -5, 5, -3, 0] }
-                      : feedback?.type === 'error'
-                        ? { x: [0, 4, -4, 0] }
-                        : { x: 0 }}
-                    transition={{ duration: 0.38 }}
+                    reaction={enemyHealth <= 0 ? 'defeated' : feedback ? feedback.type === 'error' ? 'taunt' : 'hit' : 'idle'}
+                    reactionKey={questionCount}
                     className="h-full w-full max-w-[18rem] object-contain object-center drop-shadow-[0_18px_28px_rgba(0,0,0,0.24)]"
-                    draggable={false}
                   />
                 </div>
               </div>

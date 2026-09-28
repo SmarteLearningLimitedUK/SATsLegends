@@ -1,0 +1,14 @@
+{
+  "generator": "Built-in image_gen tool",
+  "date": "2026-09-28",
+  "purpose": "Artwork replacement for the existing Factor Frenzy Monster Mind. No new enemy rules, encounter or boss system.",
+  "file": "src/assets/reskin/factor-sentinel.webp",
+  "editTarget": "src/assets/mean.png",
+  "styleReferences": [
+    "src/assets/characters/mobile/Barratt/barrat_neutral.png",
+    "src/assets/characters/mobile/Bran/bran_neutral.png",
+    "src/assets/characters/mobile/Mochi/mochi_neutral.png",
+    "src/assets/characters/mobile/Vex/vex_neutral.png"
+  ],
+  "transparentBackground": true
+}

@@ -9,7 +9,7 @@ import {
 } from '../components/game-ui/GameUiKit';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
-import problemPyramidBackground from '../assets/maps/backgroundsforgames/problem pyramid.jpg';
+import problemPyramidBackground from '../assets/maps/premium/problem-pyramid.webp';
 
 interface ProblemPyramidGameProps extends MiniGameShellContractProps {
   levelId: number;

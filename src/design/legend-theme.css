@@ -1,0 +1,232 @@
+/* One material language, applied after existing game-specific layout rules.
+   This file skins the established bounds; it does not change stage/safe-area maths. */
+:root {
+  --legend-ink: #081a35;
+  --legend-blue: #164b85;
+  --legend-cyan: #79e0ee;
+  --legend-gold: #ffd56b;
+  --legend-paper: #f6f4e9;
+  --legend-muted: #a7c6df;
+  --legend-surface: linear-gradient(145deg, #194e7b 0%, #102f53 45%, #0b203c 100%);
+  --legend-edge: #5288af;
+  --legend-shadow: 0 8px 24px rgba(3, 22, 48, .28);
+  --legend-sheen: inset 0 2px 0 rgba(207, 243, 255, .2);
+  --sat-button-primary-skin: linear-gradient(160deg, #ffe9a0, #ffd56b 36%, #efb83d);
+  --sat-button-secondary-skin: linear-gradient(150deg, #3376a5, #205782 55%, #194367);
+  --sat-button-success-skin: linear-gradient(150deg, #9ae6b6, #63cba4 60%, #42ad92);
+  --sat-button-accent-skin: linear-gradient(145deg, #327ba9, #1c4b75);
+  --sat-button-cta-skin: linear-gradient(160deg, #ffe9a0, #ffd56b 36%, #efb83d);
+}
+
+.sat-theme-bluegold { color: var(--legend-paper); }
+/* Portrait environment art fills only the established gameplay viewport. */
+#root .app-viewport.sat-theme-bluegold.screen-gameplay .game-background-layer {
+  background-size: cover !important;
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay .game-background-layer > img {
+  object-fit: cover !important;
+}
+.sat-theme-bluegold :is(h1, h2, h3) { font-family: var(--font-display); }
+#root .app-viewport.sat-theme-bluegold :is(.text-amber-100, .text-amber-200, .text-amber-300, .text-yellow-300) {
+  color: var(--legend-gold) !important;
+}
+#root .app-viewport.sat-theme-bluegold :is(.text-amber-950, .text-yellow-950) { color: #352509 !important; }
+.sat-theme-bluegold :is(.text-aaa-h1, .text-aaa-h2) { text-transform: none; letter-spacing: -.015em; }
+.sat-theme-bluegold :is(.text-aaa-sm, .text-aaa-micro) { letter-spacing: .055em; }
+
+/* Leave unique puzzle tiles and interactive canvases in their own art direction. */
+#root .app-viewport.sat-theme-bluegold :is(.licensed-board-frame, .licensed-overlay-card, .licensed-game-card, .licensed-game-card-dark),
+#root .app-viewport.sat-theme-bluegold.screen-gameplay .game-shell-host :is(.mission-panel-shell, .shared-game-interaction-panel, .aaa-objective-shell) {
+  background: var(--legend-surface) !important;
+  border: 2px solid var(--legend-edge) !important;
+  box-shadow: var(--legend-sheen), var(--legend-shadow) !important;
+  color: var(--legend-paper) !important;
+}
+#root .app-viewport.sat-theme-bluegold :is(.licensed-board-frame, .licensed-overlay-card)::before,
+#root .app-viewport.sat-theme-bluegold :is(.licensed-board-frame, .licensed-overlay-card)::after { content: none !important; }
+#root .app-viewport.sat-theme-bluegold.screen-gameplay .game-shell-host .aaa-playfield-shell:not(.border-0) {
+  background: linear-gradient(145deg, rgba(18, 63, 88, .64), rgba(8, 30, 52, .84)) !important;
+  border: 2px solid rgba(141, 216, 227, .5) !important;
+  box-shadow: var(--legend-sheen), var(--legend-shadow) !important;
+}
+
+/* Root scoping gives this skin priority over the existing contextual button resets. */
+/* Shared controls: warm gold actions, blue options, mint success. */
+#root .app-viewport.sat-theme-bluegold :is(.ui-button-primary, .ui-action-button, .game-button-primary, .licensed-submit-button, .licensed-wood-button, .fantasy-cta-button, .hero-cta-button, .gold-pill-shell, .mission-action-btn-primary, .potion-brew-button),
+.legend-dialog .ui-button-primary {
+  border: 2px solid #be8425 !important;
+  border-radius: 14px !important;
+  background: linear-gradient(160deg, #ffe9a0 0%, #ffd56b 36%, #efb83d 100%) !important;
+  color: #30240d !important;
+  box-shadow: inset 0 2px 0 #fff3c5, 0 4px 0 #946021, 0 8px 16px rgba(9, 28, 47, .2) !important;
+  font-weight: 600;
+  text-shadow: none !important;
+  transition: transform 140ms ease, filter 140ms ease, box-shadow 140ms ease !important;
+}
+#root .app-viewport.sat-theme-bluegold :is(.ui-button-secondary, .game-button-secondary, .licensed-answer-button, .licensed-wood-button-secondary, .casual-action-button, .mission-action-btn-secondary),
+.legend-dialog .ui-button-secondary {
+  border: 2px solid #5a9abe !important;
+  border-radius: 14px !important;
+  background: linear-gradient(150deg, #3376a5, #205782 55%, #194367) !important;
+  color: #f2fbff !important;
+  box-shadow: inset 0 2px 0 rgba(214, 247, 255, .24), 0 3px 0 #0b2946 !important;
+  transition: transform 140ms ease, filter 140ms ease, box-shadow 140ms ease !important;
+}
+#root .app-viewport.sat-theme-bluegold :is(.ui-button-success, .mission-action-btn-success),
+.legend-dialog .ui-button-success {
+  border: 2px solid #348875 !important;
+  border-radius: 14px !important;
+  background: linear-gradient(150deg, #9ae6b6, #63cba4 60%, #42ad92) !important;
+  color: #0b352d !important;
+  box-shadow: inset 0 2px 0 #d5ffe6, 0 3px 0 #256a5e !important;
+}
+#root .app-viewport.sat-theme-bluegold :is(.ui-icon-button, .ui-close-button, .avatar-hero-arrow, .legend-dock-button),
+.legend-dialog :is(.ui-icon-button, .ui-close-button) {
+  border: 2px solid #629fc1 !important;
+  border-radius: 13px !important;
+  background: linear-gradient(145deg, #327ba9, #1c4b75) !important;
+  box-shadow: var(--legend-sheen), 0 3px 0 #102c4b !important;
+  color: #fff !important;
+  transition: transform 140ms ease, filter 140ms ease !important;
+}
+#root .app-viewport.sat-theme-bluegold :is(.ui-button-primary, .ui-button-secondary, .ui-button-success, .ui-icon-button, .legend-dock-button)::before,
+#root .app-viewport.sat-theme-bluegold :is(.ui-button-primary, .ui-button-secondary, .ui-button-success, .ui-icon-button, .legend-dock-button)::after { content: none !important; }
+@media (hover: hover) {
+  #root .app-viewport.sat-theme-bluegold :is(.ui-button-primary, .ui-button-secondary, .ui-icon-button, .legend-dock-button):not(:disabled):hover,
+  .legend-dialog button:not(:disabled):hover { filter: brightness(1.1) !important; }
+}
+#root .app-viewport.sat-theme-bluegold :is(.ui-button-primary, .ui-button-secondary, .ui-button-success, .ui-icon-button, .legend-dock-button):not(:disabled):active,
+.legend-dialog button:not(:disabled):active { transform: translateY(2px) !important; filter: brightness(.96) !important; }
+.sat-theme-bluegold button:disabled,
+.legend-dialog button:disabled { opacity: .48; cursor: not-allowed; }
+.sat-theme-bluegold :is(button, input, [role='button']):focus-visible,
+.legend-dialog :is(button, input):focus-visible {
+  outline: 3px solid #ffdc82 !important;
+  outline-offset: 3px;
+}
+.sat-theme-bluegold button { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+.sat-theme-bluegold button[aria-pressed='true']:not(.legend-dock-button) {
+  outline: 3px solid var(--legend-gold);
+  outline-offset: -3px;
+}
+
+/* Mission frame: one quiet surface, no competing illustrated banner. */
+#root .app-viewport.sat-theme-bluegold .game-question-card {
+  border: 2px solid rgba(123, 190, 214, .72) !important;
+  border-radius: 18px;
+  background: var(--legend-surface) !important;
+  box-shadow: var(--legend-sheen), var(--legend-shadow) !important;
+  color: var(--legend-paper);
+}
+.sat-theme-bluegold .game-question-card-shell { display: none; }
+.sat-theme-bluegold .game-question-card-title-strip {
+  background: none !important;
+  min-height: 1.15rem;
+  margin-bottom: .25rem;
+}
+#root .app-viewport.sat-theme-bluegold .game-question-card .question-title {
+  color: var(--legend-cyan) !important;
+  letter-spacing: .09em;
+  font-size: 10px;
+  text-shadow: none;
+}
+.sat-theme-bluegold .game-question-card .game-question-copy { font-weight: 500; line-height: 1.2; }
+.sat-theme-bluegold .game-question-card .question-subtitle { color: #c9deea; line-height: 1.25; }
+
+/* Shared HUD retains the stage's existing top/bottom anchors and heights. */
+.legend-hud-bar {
+  display: flex; align-items: center; gap: 10px;
+  width: min(94vw, 520px); padding: clamp(.28rem, .7vh, .55rem) 8px;
+  border: 2px solid #517da7; border-radius: 18px;
+  background: var(--legend-surface); box-shadow: var(--legend-sheen), var(--legend-shadow);
+}
+.legend-hud-avatar {
+  flex: 0 0 auto; width: clamp(40px, 10vw, 54px); height: clamp(40px, 10vw, 54px);
+  border: 2px solid #e5be69; border-radius: 12px; background: #245177; overflow: hidden;
+}
+.legend-hud-avatar img { height: 100%; width: 100%; object-fit: contain; }
+.legend-hud-mission { min-width: 0; flex: 1; }
+.legend-hud-label { color: var(--legend-muted); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+.legend-hud-title { color: #f5fbff; font-size: clamp(12px, 3.4vw, 15px); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.legend-hud-streak { color: var(--legend-gold); font-size: 11px; display: inline-flex; align-items: center; gap: 3px; }
+.legend-hud-lives { flex-shrink: 0; display: flex; align-items: center; gap: 3px; color: #fb8694; }
+.legend-hud-lives svg { width: 15px; height: 15px; }
+.legend-hud-lives .is-empty { color: #647b93; fill: transparent; }
+.legend-hud-practice { color: var(--legend-cyan); font-size: 10px; font-weight: 600; }
+.legend-hud-timer { width: 100%; height: 5px; margin-top: 4px; border-radius: 9px; background: #081a35; overflow: hidden; }
+.legend-hud-timer > div { height: 100%; border-radius: inherit; background: #71d7c9; transition: width .25s; }
+.legend-hud-timer.is-low > div { background: #ffbe68; }
+.legend-dock-surface {
+  display: flex; gap: 6px; align-items: center; padding: 6px 8px 8px;
+  border: 2px solid #477798; border-radius: 18px;
+  background: var(--legend-surface); box-shadow: var(--legend-sheen), var(--legend-shadow);
+}
+.legend-dock-button { display: flex; width: 42px; height: 42px; flex-direction: column; align-items: center; justify-content: center; gap: 1px; }
+.legend-dock-button svg { height: 17px; width: 17px; }
+.legend-dock-button span { font-size: 9px; line-height: 1.1; }
+.legend-dock-base { pointer-events: none; position: absolute; inset: auto 0 0; height: calc(4rem + env(safe-area-inset-bottom)); background: #081a35; }
+
+/* Briefings and results share the same surface and typography. */
+.legend-dialog {
+  color: var(--legend-paper); font-family: var(--font-fredoka);
+  background: var(--legend-surface) !important; border: 2px solid #6598b9 !important;
+  border-radius: 24px; box-shadow: var(--legend-sheen), 0 24px 70px rgba(2, 20, 43, .38);
+}
+.legend-dialog h2 { font-family: var(--font-display); font-size: clamp(25px, 5vw, 34px); line-height: 1.1; }
+.legend-dialog-eyebrow { font-size: 10px; text-transform: uppercase; letter-spacing: .16em; color: var(--legend-cyan); }
+.legend-dialog-emblem { margin: 0 auto 12px; width: 56px; height: 56px; display: grid; place-items: center; border: 2px solid #e9c374; border-radius: 17px; color: var(--legend-gold); background: #1b4970; box-shadow: inset 0 2px 0 rgba(255,255,255,.18); }
+.legend-dialog-emblem svg { width: 28px; height: 28px; }
+.legend-briefing-copy { color: #deedf5; font-size: 16px; line-height: 1.5; white-space: pre-line; }
+.legend-briefing-steps { text-align: left; display: grid; gap: 10px; padding: 0; list-style: none; }
+.legend-briefing-steps li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: #d0e5f1; }
+.legend-step-number { flex-shrink: 0; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 8px; background: #225783; color: #ffdc83; font-weight: 600; }
+.legend-briefing-note { font-size: 12px; color: #9fc6dc; }
+
+/* The art remains the hero of the island journey. */
+.legend-island-root { isolation: isolate; }
+.legend-island-backdrop { position: absolute; inset: 0; z-index: -1; background-size: cover; background-position: center; opacity: .24; }
+.legend-island-root::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(#0b244a55, #081a35ee 75%); pointer-events: none; }
+.legend-island-header h1 { font-size: 25px; line-height: 1.1; }
+.legend-island-category { color: #90c7df; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+.legend-next-mission { border: 2px solid #c6a667; background: linear-gradient(140deg, #385064, #182e44); box-shadow: var(--legend-sheen), var(--legend-shadow); }
+.legend-next-mission .legend-eyebrow { color: #ffda8b; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
+.legend-group { position: relative; }
+.legend-group[data-next='true'] { border-color: #d9b773 !important; }
+.legend-group-header { min-height: 48px; }
+.legend-group-title { font-size: 17px; color: #f0f8ff; font-weight: 600; }
+.legend-group-progress { color: #abccdf; font-size: 11px; margin-top: 3px; }
+.legend-group-icon { width: 48px; height: 48px; flex-shrink: 0; object-fit: cover; border-radius: 12px; border: 2px solid #6396b7; }
+.legend-level-row { min-height: 54px; }
+.legend-level-row .ui-button-primary { min-height: 44px; min-width: 64px; }
+.legend-map-guidance { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px; margin: 0 8px; border: 2px solid #6192b4; border-radius: 18px; background: var(--legend-surface); box-shadow: var(--legend-sheen), var(--legend-shadow); }
+.legend-map-guidance .legend-eyebrow { color: #99cfdf; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
+.legend-map-guidance strong { font-size: 15px; font-weight: 600; }
+.legend-map-guidance button { min-height: 44px; padding: 8px 12px; font-size: 13px; flex-shrink: 0; }
+.legend-map-hotspot:focus-visible { outline-offset: -5px !important; border-radius: 20px; background: rgba(255, 212, 107, .15) !important; }
+.legend-map-details { animation: legend-enter 220ms ease-out; }
+.legend-map-details img { width: 100%; height: 110px; object-fit: cover; border-radius: 12px; margin-bottom: 12px; }
+.legend-map-details h2 { line-height: 1.15; }
+.legend-map-details .legend-map-category { color: var(--legend-cyan); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+
+.legend-welcome-action { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.legend-welcome-action p { color: #deefff; text-shadow: 0 2px 8px #081a35; font-size: 14px; margin: 0; }
+.legend-welcome-action button { width: 100%; min-height: 56px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.legend-welcome-action button svg { height: 20px; width: 20px; }
+.legend-avatar-name { position: absolute; bottom: 20%; left: 0; right: 0; z-index: 15; text-align: center; pointer-events: none; font-family: var(--font-display); font-size: 25px; color: #ffe6a2; text-shadow: 0 3px 12px #071b36; }
+.sat-theme-bluegold .aaa-name-input { border: 2px solid #598dad; background: #0b2642; box-shadow: inset 0 2px 6px #07192b; }
+.sat-theme-bluegold .legend-pvp-sources [data-pvp-location='source'] {
+  background: linear-gradient(145deg, #3e81a7, #205579) !important;
+  border: 2px solid #82c0d0 !important;
+  border-radius: 12px;
+  box-shadow: inset 0 2px 0 #a2d8e555, 0 3px 0 #102a40;
+}
+.sat-theme-bluegold .legend-pvp-targets [data-pvp-location='target'] {
+  background: #193a52 !important;
+  border: 2px solid #e4c679 !important;
+  border-radius: 12px;
+}
+.legend-pvp-targets [data-pvp-location='target'] > img { opacity: .6; }
+@keyframes legend-enter { from { opacity: 0; translate: 0 8px; } to { opacity: 1; translate: 0 0; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}

@@ -3,6 +3,8 @@ import AssetIcon from '../components/AssetIcon';
 import { IslandData, LevelData, PlayerData } from '../types';
 import { getLevelGameTitle, getLevelGroupKey } from '../utils/gameNames';
 import { UNLOCK_ALL_LEVELS } from '../app/testingFlags';
+import { ChevronDown, Lock } from 'lucide-react';
+import { GAME_SCENE_META } from '../gameSceneMeta';
 
 interface IslandLevelsProps {
   island: IslandData;
@@ -197,7 +199,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
 
   return (
     <div
-      className="premium-page-root relative h-full min-h-0 w-full overflow-hidden bg-[#07111f]"
+      className="legend-island-root premium-page-root relative h-full min-h-0 w-full overflow-hidden bg-[#07111f]"
       style={{
         height: '100%',
         minHeight: 0,
@@ -205,6 +207,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
         overscrollBehaviorY: 'contain',
       }}
     >
+      <div className="legend-island-backdrop" style={{ backgroundImage: `url(${island.mapImage})` }} aria-hidden="true" />
       <div
         className="premium-page-content relative z-10 mx-auto flex h-full min-h-0 w-full max-w-4xl flex-col px-3 pb-4 pt-[calc(env(safe-area-inset-top)+0.35rem)] md:px-5 md:pb-6 md:pt-[calc(env(safe-area-inset-top)+0.5rem)]"
         style={{
@@ -212,7 +215,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
           minHeight: 0,
         }}
       >
-        <div className="mb-3 flex flex-wrap items-start justify-between gap-2 md:mb-4">
+        <div className="legend-island-header mb-3 flex flex-wrap items-start justify-between gap-2 md:mb-4">
           <button
             onClick={onBack}
             className="ui-icon-button flex h-11 w-11 items-center justify-center rounded-full p-0 text-white shadow-xl md:h-12 md:w-12"
@@ -222,6 +225,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
           </button>
 
           <div className="flex-1 text-center">
+            <div className="legend-island-category">{island.category} · Island {island.id}</div>
             <div className="flex justify-center">
               <h1 className="text-xl font-black text-white drop-shadow-[0_12px_24px_rgba(2,6,23,0.5)] md:text-3xl">{island.name}</h1>
             </div>
@@ -239,9 +243,10 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
         </div>
 
         {nextPlayableRow ? (
-          <div className="mb-3 rounded-2xl border border-amber-200/70 bg-[linear-gradient(180deg,rgba(251,191,36,0.24),rgba(234,179,8,0.1),rgba(15,23,42,0.4))] p-3 shadow-[0_14px_28px_rgba(234,179,8,0.22)] md:mb-4 md:p-3.5">
+          <div className="legend-next-mission mb-3 rounded-2xl p-3 md:mb-4 md:p-3.5">
             <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
+                <div className="legend-eyebrow">Next mission</div>
                 <div className="mt-1 truncate text-sm font-black text-cyan-100 md:text-base">
                   {getGroupName(nextPlayableRow.level)} - {nextPlayableLabel}
                 </div>
@@ -266,7 +271,8 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
               return (
                 <div
                   key={group.id}
-                  className={`licensed-board-frame w-full rounded-2xl px-3 py-3 text-left transition md:px-4 md:py-3.5 ${
+                  data-next={group.hasNextPlayable}
+                  className={`legend-group licensed-board-frame w-full rounded-2xl px-3 py-3 text-left transition md:px-4 md:py-3.5 ${
                     group.hasNextPlayable
                       ? 'border border-amber-200/60 shadow-[0_0_0_1px_rgba(251,191,36,0.25),0_16px_28px_rgba(234,179,8,0.18)]'
                       : 'border border-white/14'
@@ -275,11 +281,14 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                   <button
                     type="button"
                     onClick={() => setExpandedGameId((current) => (current === group.id ? null : group.id))}
-                    className="flex w-full items-center gap-3 text-left md:gap-4"
+                    className="legend-group-header flex w-full items-center gap-3 text-left md:gap-4"
                     aria-expanded={isExpanded}
+                    aria-controls={`mission-group-${island.id}-${group.id}`}
                     data-button-skin="none"
                   >
-                    <div className={`relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 md:h-12 md:w-12 ${
+                    {group.levels[0]?.level.gameType && GAME_SCENE_META[group.levels[0].level.gameType]?.background ? (
+                      <img src={GAME_SCENE_META[group.levels[0].level.gameType!]?.background} className="legend-group-icon" alt="" draggable={false} loading="lazy" />
+                    ) : <div className={`relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 md:h-12 md:w-12 ${
                       group.completedCount === group.levels.length
                         ? 'border-emerald-300 bg-emerald-500/28'
                         : group.hasNextPlayable
@@ -295,10 +304,11 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                           !
                         </span>
                       ) : null}
-                    </div>
+                    </div>}
 
                     <div className="min-w-0 flex-1">
-                      <div className="truncate text-sm font-black text-cyan-100 md:text-base">{group.name}</div>
+                      <div className="legend-group-title truncate">{group.name}</div>
+                      <div className="legend-group-progress">{group.completedCount}/{group.levels.length} missions complete{group.hasNextPlayable ? ' · Up next' : ''}</div>
                       <div className="mt-0.5 inline-flex items-center gap-1 rounded-full border border-white/12 bg-white/5 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/80 md:text-[11px]">
                         <AssetIcon name="brainpowerToken" className="h-3.5 w-3.5 md:h-4 md:w-4" />
                         <span>{group.totalStars}/{totalPossibleBrainpowerTokens}</span>
@@ -306,13 +316,11 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                       </div>
                     </div>
 
-                    <span className="ml-1 text-xs font-black text-cyan-100/85 md:text-sm">
-                        {isExpanded ? '-' : '+'}
-                      </span>
+                    <ChevronDown className={`h-5 w-5 shrink-0 text-cyan-100 transition-transform ${isExpanded ? 'rotate-180' : ''}`} aria-hidden="true" />
                   </button>
 
                   {isExpanded ? (
-                    <div className="mt-3 rounded-xl border border-white/14 bg-slate-900/45 p-3">
+                    <div id={`mission-group-${island.id}-${group.id}`} className="mt-3 rounded-xl border border-white/14 bg-slate-900/45 p-3">
                       <div className="flex flex-col gap-2">
                         {group.levels.map((row) => {
                           const { level, stars, isCompleted, isUnlocked, isNextPlayable, lockReason } = row;
@@ -326,18 +334,18 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                               : isCompleted
                                 ? 'border-emerald-300/60 bg-[linear-gradient(180deg,rgba(34,197,94,0.24),rgba(15,23,42,0.38))]'
                                 : isBoss
-                                  ? 'border-violet-200/60 bg-[linear-gradient(180deg,rgba(139,92,246,0.3),rgba(30,41,59,0.45))]'
+                                  ? 'border-amber-200/60 bg-amber-500/15'
                                   : 'border-cyan-200/55 bg-[linear-gradient(180deg,rgba(34,211,238,0.2),rgba(15,23,42,0.45))]';
 
                             return (
                               <div
                                 key={`${group.id}-${level.id}`}
-                                className={`flex items-center gap-2 rounded-xl border px-2.5 py-2 transition ${rowStateClass}`}
+                                className={`legend-level-row flex items-center gap-2 rounded-xl border px-2.5 py-2 transition ${rowStateClass}`}
                               >
                                 <div className="w-[4.1rem] shrink-0 text-aaa-sm font-black text-cyan-100 md:w-[5rem]">
                                   {levelLabel}
                                 </div>
-                                <div className="min-w-0 flex-1" />
+                                <div className="min-w-0 flex-1 text-xs text-cyan-100/80">{!isUnlocked ? <Lock size={14} aria-label={lockReason || 'Locked'} /> : level.isPractice ? 'Warm up' : isCompleted ? 'Complete' : ''}</div>
 
                                 <div className="flex items-center gap-0.5 md:gap-1">
                                   {[1, 2, 3].map((value) => (
@@ -353,6 +361,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                                 type="button"
                                 onClick={() => isUnlocked && onSelectLevel(level)}
                                 disabled={!isUnlocked}
+                                aria-label={`${!isUnlocked ? 'Locked' : isCompleted ? 'Replay' : 'Play'} ${group.name} ${levelLabel}`}
                                 className={`ui-button-primary ml-2 rounded-lg px-3 py-1.5 text-aaa-micro text-white ${
                                   !isUnlocked
                                     ? 'opacity-60'

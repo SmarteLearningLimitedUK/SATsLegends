@@ -5,7 +5,7 @@ import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import AssetIcon from '../components/AssetIcon';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { triggerHaptic } from '../haptics';
-import simplifySprintBackground from '../assets/maps/backgroundsforgames/simplifysprint.jpg';
+import simplifySprintBackground from '../assets/maps/premium/simplify-sprint.webp';
 import successRoundBackground from '../assets/end of round screen/success screen.jpg';
 import failureRoundBackground from '../assets/end of round screen/failure screen.jpg';
 
@@ -364,7 +364,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
       />
 
       {!useSharedTopHud && (
-        <div className="absolute left-0 right-0 z-30 flex items-center justify-between px-3 py-2 md:px-5" style={{ top: 'calc(env(safe-area-inset-top) + 2px)' }}>
+        <div data-local-top-hud="true" className="absolute left-0 right-0 z-30 flex items-center justify-between px-3 py-2 md:px-5" style={{ top: 'calc(env(safe-area-inset-top) + 2px)' }}>
           <button
             type="button"
             onClick={onBack}

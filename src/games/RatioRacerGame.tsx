@@ -1,15 +1,17 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import { Flag, Zap } from 'lucide-react';
 import {
   GameUiShell,
   GameQuestionCard,
 } from '../components/game-ui/GameUiKit';
-import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
+import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import { DEFAULT_RACE_DIFFICULTY, RACE_TUNING, RaceDifficulty } from './ratioFractionsRace/constants';
 import { getQuestionTier, QuestionTier } from './ratioFractionsRace/questionSelector';
 import { RatioFractionQuestion } from './ratioFractionsRace/types';
-import ratioBackdrop from '../assets/gokarts/bkgroundratiofractionkarts.png';
+import { GAME_SCENE_META } from '../gameSceneMeta';
+import courseBackground from '../assets/maps/premium/ratio-racer-course.webp';
 import kartBarratt from '../assets/gokarts/karts/1.png';
 import kartBran from '../assets/gokarts/karts/2.png';
 import kartMochi from '../assets/gokarts/karts/3.png';
@@ -19,6 +21,7 @@ import {
   reshuffleAvoidingRepeat,
   shuffleOptionsWithCorrect,
 } from '../utils/questionShuffle';
+import './ratioFractionsRace/ratio-racer.css';
 
 interface RatioRacerGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -41,15 +44,13 @@ type RaceState =
 const START_OFFSET = 0;
 const RACER_LERP = 0.16;
 const BASE_XP = 160;
-const PLAYER_KART_SCALE = 2.08;
-const PLAYER_KART_RAISE = '84pt';
-const PLAYER_TRACK_LINE_Y = 80.8;
-const FINISH_Y_SHIFT = -200;
-const FINISH_X_SHIFT = -100;
-const PLAYER_BOB_BASE_SPEED = 5.1;
-const PLAYER_BOB_AMPLITUDE = 4.5;
-const PLAYER_ROLL_MAX = 5;
-const FINISH_SCREEN_THRESHOLD = 91;
+const COURSE_TILE_WIDTH = 2;
+const COURSE_TILE_OVERLAP = 0.1;
+const COURSE_REPEAT_DISTANCE = COURSE_TILE_WIDTH - COURSE_TILE_OVERLAP;
+const COURSE_TILES = [0, 1, 2];
+const COURSE_STRIP_WIDTH = COURSE_TILE_WIDTH * COURSE_TILES.length;
+const COURSE_START_OFFSET = 0.5;
+const COURSE_TRAVEL_PER_ANSWER = 0.9;
 const PLAYER_KARTS: Record<string, string> = {
   barratt: kartBran,
   bran: kartMochi,
@@ -214,15 +215,21 @@ const starsForAccuracy = (correct: number, attempts: number) => {
 
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 
+const equivalentFractions = (answer: string, expected: string) => {
+  const value = answer.match(/^(-?\d+)\/([1-9]\d*)$/);
+  const target = expected.match(/^(-?\d+)\/([1-9]\d*)$/);
+  if (!value || !target) return false;
+  return BigInt(value[1]) * BigInt(target[2]) === BigInt(target[1]) * BigInt(value[2]);
+};
+
 const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
   levelId,
   avatarId,
   onVictory,
   onGameOver,
-  onBack,
   sessionState,
+  sessionEvents,
 }) => {
-  const [roundIndex, setRoundIndex] = useState(0);
   const [attempts, setAttempts] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [feedback, setFeedback] = useState('');
@@ -230,8 +237,8 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
   const [locked, setLocked] = useState(false);
   const [raceState, setRaceState] = useState<RaceState>('introCountdown');
   const [countdown, setCountdown] = useState(3);
-  const [, setRenderTick] = useState(0);
-  const [viewport, setViewport] = useState({ width: 320, height: 480 });
+  const [raceProgress, setRaceProgress] = useState(0);
+  const reducedMotion = useReducedMotion();
   const initialDecks = useMemo(() => buildTierDecks(), []);
   const [tierDecks, setTierDecks] = useState(initialDecks);
   const tierDecksRef = useRef(initialDecks);
@@ -246,25 +253,14 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
   const raceDifficulty: RaceDifficulty = levelId <= 3 ? 'easy' : levelId <= 6 ? 'standard' : 'hard';
   const tuning = RACE_TUNING[raceDifficulty] || RACE_TUNING[DEFAULT_RACE_DIFFICULTY];
 
-  const raceViewportRef = useRef<HTMLDivElement | null>(null);
   const playerPosRef = useRef(START_OFFSET);
   const playerTargetRef = useRef(START_OFFSET);
   const reportedResultRef = useRef(false);
-  const playerBobPhaseRef = useRef(0);
+  const answerLockedRef = useRef(false);
+  const pendingTimeoutsRef = useRef<Set<number>>(new Set());
 
   const lives = sessionState?.lives ?? 3;
   const playerKart = PLAYER_KARTS[avatarId] || PLAYER_KARTS.barratt;
-
-  useEffect(() => {
-    if (!raceViewportRef.current || typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(() => {
-      const node = raceViewportRef.current;
-      if (!node) return;
-      setViewport({ width: node.clientWidth, height: node.clientHeight });
-    });
-    observer.observe(raceViewportRef.current);
-    return () => observer.disconnect();
-  }, []);
 
   useEffect(() => {
     tierDecksRef.current = tierDecks;
@@ -281,7 +277,18 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
     questionStartRef.current = Date.now();
     playerPosRef.current = START_OFFSET;
     playerTargetRef.current = START_OFFSET;
-    playerBobPhaseRef.current = 0;
+    setRaceProgress(0);
+    setAttempts(0);
+    setCorrectCount(0);
+    setSelected(null);
+    setFeedback('');
+    setLocked(false);
+    answerLockedRef.current = false;
+    setRaceState('introCountdown');
+    return () => {
+      pendingTimeoutsRef.current.forEach((timeout) => window.clearTimeout(timeout));
+      pendingTimeoutsRef.current.clear();
+    };
   }, [levelId]);
 
   useEffect(() => {
@@ -292,19 +299,21 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
       const dt = Math.min(0.12, Math.max(0, (timestamp - last) / 1000));
       lastTime = timestamp;
 
-      const playerX = playerPosRef.current;
-      const playerTarget = playerTargetRef.current;
-
-      playerPosRef.current = playerX + (playerTarget - playerX) * RACER_LERP;
-      playerBobPhaseRef.current += dt * (PLAYER_BOB_BASE_SPEED + Math.abs(playerTarget - playerX) * 0.14);
-
-      setRenderTick((prev) => prev + 1);
+      if (!document.hidden) {
+        const playerX = playerPosRef.current;
+        const playerTarget = playerTargetRef.current;
+        if (Math.abs(playerTarget - playerX) > 0.01) {
+          const blend = reducedMotion ? 1 : 1 - Math.pow(1 - RACER_LERP, dt * 60);
+          playerPosRef.current = playerX + (playerTarget - playerX) * blend;
+          setRaceProgress(clamp(playerPosRef.current / tuning.trackLength, 0, 1));
+        }
+      }
       frameId = requestAnimationFrame(tick);
     };
 
     frameId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frameId);
-  }, [tuning.trackLength, viewport.width]);
+  }, [reducedMotion, tuning.trackLength]);
 
   useEffect(() => {
     if (raceState === 'playerWin' && !reportedResultRef.current) {
@@ -360,33 +369,46 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
     return nextQuestion;
   };
 
-  const handleAnswer = (option: string) => {
-    if (locked || raceState !== 'showingQuestion') return;
+  const schedule = (callback: () => void, delay: number) => {
+    const timeout = window.setTimeout(() => {
+      pendingTimeoutsRef.current.delete(timeout);
+      callback();
+    }, delay);
+    pendingTimeoutsRef.current.add(timeout);
+  };
 
+  const handleAnswer = (option: string) => {
+    if (answerLockedRef.current || locked || raceState !== 'showingQuestion') return;
+
+    answerLockedRef.current = true;
     setSelected(option);
     setAttempts((prev) => prev + 1);
     setLocked(true);
     setRaceState('evaluatingAnswer');
 
     const playerStep = tuning.playerAdvanceDistance;
-    const stumble = tuning.playerStumbleDistance;
     const boostDelay = tuning.playerBoostAnticipationMs;
     const moveDuration = tuning.playerMoveDurationMs + boostDelay;
 
-    if (option === question.correctAnswer) {
+    if (equivalentFractions(option, question.correctAnswer)) {
       setCorrectCount((prev) => prev + 1);
+      emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { metadata: { question: question.id } });
       const elapsedMs = Date.now() - questionStartRef.current;
       const isPraise = shouldShowPraise(1, elapsedMs);
-      setFeedback(isPraise ? buildPraiseMessage() : 'Fuel mix fixed!');
+      setFeedback(isPraise ? `${buildPraiseMessage()} Boost engaged!` : 'Fuel mix fixed! Boost engaged!');
       setRaceState('correctBoost');
-      window.setTimeout(() => {
+      schedule(() => {
         playerTargetRef.current = Math.min(tuning.trackLength, playerTargetRef.current + playerStep);
       }, boostDelay);
 
-      window.setTimeout(() => {
+      schedule(() => {
+        // Finish the boost before unlocking another answer, so the course rests
+        // while the player reads and resumes from the exact race distance.
+        playerPosRef.current = playerTargetRef.current;
+        setRaceProgress(clamp(playerPosRef.current / tuning.trackLength, 0, 1));
         if (playerTargetRef.current >= tuning.trackLength) {
           setRaceState('playerWin');
-          confetti({
+          if (!reducedMotion) confetti({
             particleCount: 60,
             spread: 55,
             origin: { y: 0.6 },
@@ -400,122 +422,143 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
         questionStartRef.current = Date.now();
         setSelected(null);
         setLocked(false);
-        setRoundIndex((prev) => prev + 1);
+        answerLockedRef.current = false;
         setFeedback('');
         setRaceState('showingQuestion');
       }, moveDuration);
       return;
     }
 
-    setFeedback('Fuel mix still off.');
+    emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { metadata: { question: question.id } });
+    setFeedback('Pit stop! Add all the ratio parts, then try again.');
     setRaceState('incorrectStall');
-    if (stumble > 0) {
-      playerTargetRef.current = Math.min(tuning.trackLength, playerTargetRef.current + stumble);
-    }
-    window.setTimeout(() => {
-      const nextTier = getQuestionTier(playerPosRef.current / tuning.trackLength);
-      setQuestion(advanceQuestionForTier(nextTier));
-      questionStartRef.current = Date.now();
+    schedule(() => {
       setSelected(null);
       setLocked(false);
-      setRoundIndex((prev) => prev + 1);
-      setFeedback('');
+      answerLockedRef.current = false;
       setRaceState('showingQuestion');
     }, tuning.incorrectFeedbackMs);
   };
 
-  const trackSpan = Math.max(1, tuning.trackLength);
-  const cameraWorldPosition = playerPosRef.current;
-  const playerLeft = 50;
-  const finishLeft = 50 + ((tuning.trackLength - cameraWorldPosition) / trackSpan) * 100;
   const showBoost = raceState === 'correctBoost';
   const showStall = raceState === 'incorrectStall';
-  const playerLineY = PLAYER_TRACK_LINE_Y;
-  const finishLineY = clamp(
-    playerLineY + (FINISH_Y_SHIFT / Math.max(1, viewport.height)) * 100,
-    0,
-    100,
+  const scene = GAME_SCENE_META.ratio_fractions.background;
+  const progressPercent = Math.round(raceProgress * 100);
+  const courseTravel = reducedMotion ? 0 : (
+    raceProgress * tuning.trackLength / tuning.playerAdvanceDistance * COURSE_TRAVEL_PER_ANSWER
   );
-  const raceProgress = clamp(playerPosRef.current / trackSpan, 0, 1);
-  const playerBobOffset = Math.sin(playerBobPhaseRef.current) * PLAYER_BOB_AMPLITUDE;
-  const playerLean = clamp((playerTargetRef.current - playerPosRef.current) * 0.9, -PLAYER_ROLL_MAX, PLAYER_ROLL_MAX);
-
-  const playerStyle = {
-    transform: `translate3d(-50%, calc(-100% + ${playerBobOffset}px - ${PLAYER_KART_RAISE}), 0) rotate(${playerLean}deg) scale(${PLAYER_KART_SCALE})`,
-    transformOrigin: '50% 100%',
-    top: `${playerLineY}%`,
-    left: `${playerLeft - 2.5}%`,
-  };
-
-  const finishLineInView = finishLeft <= FINISH_SCREEN_THRESHOLD;
-  const finishStyle = finishLineInView
-    ? {
-        transform: 'translate(-50%, -50%)',
-        top: `${finishLineY}%`,
-        left: `calc(${finishLeft}% + ${FINISH_X_SHIFT}px)`,
-      }
-    : {
-        transform: 'translateY(-50%)',
-        top: `${finishLineY}%`,
-        right: '1rem',
-      };
+  // Keep the camera inside the repeated tiles so each wrap shows the same blend.
+  const courseOffset = COURSE_REPEAT_DISTANCE + (
+    (COURSE_START_OFFSET + courseTravel) % COURSE_REPEAT_DISTANCE
+  );
 
   return (
     <GameUiShell overlayDisabled className="bg-transparent">
-      <div className="relative h-full w-full">
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            backgroundColor: '#0b0f1c',
-          }}
-        />
+      <div className="ratio-racer-layout relative h-full w-full">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 select-none bg-contain bg-center bg-no-repeat"
+          className="ratio-racer-backdrop pointer-events-none absolute inset-0"
           style={{
-            backgroundImage: `url(${ratioBackdrop})`,
-            backgroundPosition: 'center center',
+            backgroundImage: `linear-gradient(180deg, rgba(7,25,45,.64), rgba(7,25,45,.78)), url(${scene})`,
           }}
         />
+        <div className="ratio-racer-content">
+          <GameQuestionCard
+            title="Fix the fuel mix"
+            className="ratio-racer-mission"
+            style={{ position: 'relative', top: 0, transform: 'none', width: '100%', padding: '10px 12px', fontSize: 18 }}
+          >
+            <span className="ratio-racer-ratio">
+              {question.labels.join(' : ')} = {question.ratio.join(' : ')}
+            </span>
+            <span className="ratio-racer-question">What fraction of the mix is {question.target.toLowerCase()}?</span>
+          </GameQuestionCard>
 
-        <div ref={raceViewportRef} className="pointer-events-none absolute inset-0 z-20">
-          <div className="relative h-full w-full">
-            <div
-              className="absolute z-30 flex items-center gap-2 overflow-visible rounded-full border border-amber-100 bg-[linear-gradient(180deg,rgba(255,243,179,0.98),rgba(251,191,36,0.98))] px-5 py-2 text-[11px] font-black uppercase tracking-[0.12em] text-slate-900 shadow-[0_0_0_1px_rgba(255,255,255,0.2),0_0_22px_rgba(253,224,71,0.85),0_0_42px_rgba(245,158,11,0.45)]"
-              style={finishStyle}
-            >
-              <span>Finish</span>
-              <span className="text-sm leading-none">→</span>
+          <div className="ratio-racer-scene" data-race-scene data-race-state={raceState}>
+            <div className="ratio-racer-course" data-race-course data-course-travel={courseTravel} aria-hidden="true">
+              <div
+                className="ratio-racer-course-strip"
+                data-race-course-strip
+                style={{ transform: `translate3d(${-courseOffset / COURSE_STRIP_WIDTH * 100}%, 0, 0)` }}
+              >
+                {COURSE_TILES.map((tile) => (
+                  <img
+                    key={tile}
+                    className="ratio-racer-track"
+                    data-race-course-tile={tile}
+                    src={courseBackground}
+                    alt=""
+                    draggable={false}
+                    style={{ marginRight: `${-COURSE_TILE_OVERLAP / COURSE_STRIP_WIDTH * 100}%`, zIndex: COURSE_TILES.length - tile }}
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="ratio-racer-track-shade" aria-hidden="true" />
+
+            <div className="ratio-racer-route">
+              <div className="ratio-racer-route-labels">
+                <span>{progressPercent >= 80 ? 'Final stretch' : 'Race to the finish'}</span>
+                <span><Flag size={13} aria-hidden="true" /> {progressPercent}%</span>
+              </div>
+              <div
+                className="ratio-racer-progress"
+                role="progressbar"
+                aria-label="Race distance"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={progressPercent}
+                data-race-progress={progressPercent}
+              >
+                <div style={{ width: `${progressPercent}%` }} />
+              </div>
             </div>
 
-            <motion.div
-              className="absolute z-40 flex h-36 w-60 items-end justify-center overflow-visible sm:h-40 sm:w-68 md:h-48 md:w-80"
-              style={playerStyle}
-              animate={
-                showBoost
-                  ? { scale: [1, 1.1, 1], y: [0, -4, 0] }
-                  : showStall
-                    ? { x: [0, -4, 4, -3, 3, 0] }
-                    : { scale: 1 }
-              }
-              transition={{ duration: 0.35 }}
+            {raceProgress > .75 ? (
+              <div className="ratio-racer-finish" aria-hidden="true" style={{ left: `${125 - raceProgress * 67}%` }}>
+                <span />
+              </div>
+            ) : null}
+
+            <div
+              className="ratio-racer-kart-anchor"
+              data-player-kart
+              style={{ left: `${44 + raceProgress * 12}%` }}
             >
-              <img
-                src={playerKart}
-                alt="Player kart"
-                className="relative z-10 h-full w-full object-contain drop-shadow-[0_0_20px_rgba(56,189,248,0.72)]"
-                style={{
-                  imageRendering: 'auto',
-                  filter: 'saturate(1.08) contrast(1.03)',
-                  transform: 'translateZ(0)',
-                }}
-              />
-              <div className="pointer-events-none absolute inset-x-[10%] bottom-[8%] h-4 rounded-full bg-cyan-300/25 blur-[10px]" />
-            </motion.div>
+              <div className="ratio-racer-kart-shadow" aria-hidden="true" />
+              <motion.div
+                className="ratio-racer-kart"
+                animate={reducedMotion
+                  ? { y: 0, rotate: 0 }
+                  : showBoost
+                    ? { y: [0, -6, 0], rotate: [0, -3, 0] }
+                    : showStall
+                      ? { x: [0, -4, 4, -2, 0], y: 0, rotate: 0 }
+                      : { y: [0, -1.5, 0], x: 0, rotate: 0 }}
+                transition={{ duration: showBoost || showStall ? .4 : 1.2, repeat: showBoost || showStall || reducedMotion ? 0 : Infinity, ease: 'easeInOut' }}
+              >
+                <img src={playerKart} alt="Your racing kart" draggable={false} />
+              </motion.div>
+              <AnimatePresence>
+                {showBoost ? (
+                  <motion.div
+                    className="ratio-racer-boost"
+                    key={`boost-${correctCount}`}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    aria-hidden="true"
+                  >
+                    <Zap size={16} fill="currentColor" /> Boost!
+                  </motion.div>
+                ) : null}
+              </AnimatePresence>
+            </div>
 
             {raceState === 'introCountdown' ? (
-              <div className="absolute inset-0 flex items-center justify-center bg-slate-950/60 text-5xl font-black text-amber-100">
-                {countdown || 'Go!'}
+              <div className="ratio-racer-countdown" role="status">
+                <span>Ready to race?</span>
+                <strong>{countdown || 'Go!'}</strong>
               </div>
             ) : null}
 
@@ -526,62 +569,40 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
-                  className="absolute inset-0 z-40 flex items-center justify-center bg-slate-950/55"
+                  className="ratio-racer-win"
                 >
-                  <div className="rounded-full border border-emerald-200/60 bg-emerald-400/25 px-6 py-3 text-2xl font-black uppercase tracking-[0.2em] text-emerald-100 shadow-[0_12px_24px_rgba(16,185,129,0.35)]">
-                    Race Restored!
-                  </div>
+                  <Flag size={28} aria-hidden="true" /> Finish line reached!
                 </motion.div>
               ) : null}
             </AnimatePresence>
           </div>
-        </div>
-
-        <div
-          className="fixed left-0 right-0 z-[60]"
-          style={{ top: 'calc(env(safe-area-inset-top) + 4px)' }}
-        >
-          <div className="mx-auto flex w-full max-w-[56rem] flex-col gap-2 px-2 sm:px-3 md:px-4">
-            <GameQuestionCard
-              title="Ratio Racer"
-              className="w-full !mb-0"
-              style={{
-                ['--question-card-width' as any]: 'min(100%, 56rem)',
-                ['--question-card-padding' as any]: '16px 18px',
-              }}
-              subtitle={feedback ? (
-                <div className={`text-[11px] font-semibold md:text-[13px] ${
-                  ['Great!', 'Amazing!', 'Awesome!', 'Fantastic!'].includes(feedback)
-                    ? 'rounded-full border border-amber-100/70 bg-[linear-gradient(135deg,rgba(255,241,166,0.96),rgba(125,211,252,0.9))] px-3 py-1 text-slate-950 shadow-[0_0_22px_rgba(251,191,36,0.55)]'
-                    : 'text-amber-100'
-                }`}>{feedback}</div>
-              ) : (
-                <div className="text-[11px] font-semibold text-amber-100 md:text-[13px]">
-                  The Monster Minds have thrown the fuel ratios off. Fix the mix to keep your kart moving.
-                </div>
-              )}
-              titleClassName="text-[12px] md:text-[14px] tracking-[0.28em]"
-              bodyClassName="text-[clamp(1.15rem,4vw,1.7rem)] font-black leading-[1.08] tracking-tight md:text-[clamp(1.3rem,2.4vw,2rem)]"
-            >
-              {question.prompt}
-            </GameQuestionCard>
-
-            <div className="answer-choice-surface grid grid-cols-4 gap-2 rounded-[1.25rem] border border-white/12 bg-slate-950/24 px-2 py-2 shadow-[0_14px_28px_rgba(2,6,23,0.22)] backdrop-blur-[4px]">
+          <div className="ratio-racer-answers answer-choice-surface">
+            <div className={`ratio-racer-feedback${showBoost ? ' is-boost' : showStall ? ' is-stall' : ''}`} role="status" aria-live="polite">
+              {feedback || 'Choose the fraction to boost your kart.'}
+            </div>
+            <div className="ratio-racer-answer-grid" role="group" aria-label="Fuel fractions">
               {question.options.map((option) => (
                 <motion.button
                   key={option}
+                  type="button"
+                  data-race-answer={option}
+                  aria-label={option}
+                  aria-pressed={selected === option}
                   whileTap={{ scale: 0.96 }}
                   onClick={() => handleAnswer(option)}
                   disabled={locked || raceState !== 'showingQuestion'}
-                  className={`min-h-[3.1rem] rounded-[1rem] px-2 py-2 text-center text-base font-black ${
+                  className={`ratio-racer-answer ${
                     selected === option
-                      ? option === question.correctAnswer
+                      ? equivalentFractions(option, question.correctAnswer)
                         ? 'ui-button-success'
-                        : 'ui-button-primary'
+                        : 'ui-button-secondary is-incorrect'
                       : 'ui-button-secondary'
                   }`}
                 >
-                  {option}
+                  <span className="ratio-racer-fraction" aria-hidden="true">
+                    <span>{option.split('/')[0]}</span>
+                    <span>{option.split('/')[1]}</span>
+                  </span>
                 </motion.button>
               ))}
             </div>
@@ -593,6 +614,3 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
 };
 
 export default RatioRacerGame;
-
-
-

@@ -18,7 +18,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import lineGraphLabBackground from '../assets/maps/backgroundsforgames/linegraphlab.jpg';
+import lineGraphLabBackground from '../assets/maps/premium/line-graph-lab.webp';
 
 interface DataPoint {
   label: string;

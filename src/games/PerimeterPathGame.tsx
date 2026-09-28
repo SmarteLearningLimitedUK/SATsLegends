@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import perimeterBackground from '../assets/maps/backgroundsforgames/Perimeter Path.jpg';
+import perimeterBackground from '../assets/maps/premium/perimeter-path.webp';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { stripLegacyWorldPrefix } from '../utils/fantasyPrompt';
 
@@ -481,7 +481,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({
         alt=""
         aria-hidden="true"
         draggable={false}
-        className="pointer-events-none absolute inset-0 h-full w-full object-contain object-center"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
       />
 
       <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-[calc(env(safe-area-inset-top)+0.2rem)]">

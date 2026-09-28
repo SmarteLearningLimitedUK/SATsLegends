@@ -84,7 +84,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({
 
             <div className="relative z-30 mx-auto mt-2 flex w-full max-w-3xl flex-col gap-3 rounded-[1.35rem] border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(8,21,58,0.82),rgba(4,15,44,0.88))] px-4 py-4 text-center shadow-[0_18px_32px_rgba(2,6,23,0.32)] backdrop-blur-md sm:px-5 sm:py-5">
               <div className="text-[0.68rem] font-black uppercase tracking-[0.22em] text-cyan-100/80 sm:text-xs">
-                Enter your name and select your Hero.
+                What should we call you, adventurer?
               </div>
               <input
                 value={draftName}
@@ -93,6 +93,9 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({
                 if (event.key === 'Enter') onConfirm();
                 }}
               placeholder="Explorer"
+              aria-label="Your adventurer name"
+              autoComplete="nickname"
+              maxLength={18}
               className="aaa-name-input w-full rounded-[1.15rem] border border-white/20 bg-slate-950/65 px-5 py-3 text-center text-base font-black text-white shadow-[0_14px_28px_rgba(0,0,0,0.2)] outline-none placeholder:text-white/45 focus:ring-2 focus:ring-amber-300/45 md:rounded-[1.5rem] md:px-6 md:py-4 md:text-2xl"
             />
           </div>
@@ -144,6 +147,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({
             </motion.button>
           </div>
 
+          <div className="legend-avatar-name" aria-live="polite">{selectedAvatar.name}</div>
           <div className="absolute bottom-[7.5%] left-1/2 z-20 h-14 w-56 -translate-x-1/2 sm:h-16 sm:w-64">
             <button
               type="button"

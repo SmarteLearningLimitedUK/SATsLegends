@@ -6,7 +6,7 @@ import AssetIcon from '../components/AssetIcon';
 import { GameScreenShell } from '../layout/ScreenPrimitives';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
-import coordinateQuestBackground from '../assets/maps/backgroundsforgames/coordinate quest.jpg';
+import coordinateQuestBackground from '../assets/maps/premium/coordinates-quest.webp';
 
 interface TreasurePathGameProps {
   levelId: number;
@@ -265,14 +265,23 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
         </div>
 
         <div className="relative flex min-h-0 flex-1 items-center justify-center">
-          <div className="relative flex aspect-square w-[min(74vw,26.5rem)] flex-col rounded-[1.5rem] border border-cyan-100/26 bg-[linear-gradient(180deg,rgba(8,22,52,0.84),rgba(7,18,43,0.92))] p-3 shadow-[0_18px_36px_rgba(2,6,23,0.4)]">
-            <div className="mb-2 flex items-center justify-start px-1 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/72">
-              <span>x-axis</span>
+          <div className="relative flex aspect-square w-full max-w-[26.5rem] flex-col rounded-[1.5rem] border border-cyan-100/26 bg-[linear-gradient(180deg,rgba(8,22,52,0.84),rgba(7,18,43,0.92))] p-3 shadow-[0_18px_36px_rgba(2,6,23,0.4)]" role="group" aria-label="Coordinate grid">
+            <div className="mb-2 flex items-end gap-2 text-[10px] font-black text-cyan-100">
+              <div className="w-8 shrink-0" />
+              <div className="min-w-0 flex-1">
+                <div className="mb-1 text-center uppercase tracking-[0.22em]">x-axis</div>
+                <div className="grid grid-cols-7 text-center" aria-label="X coordinates increase from 1 to 7">
+                  {Array.from({ length: GRID_SIZE }, (_, index) => <span key={index + 1}>{index + 1}</span>)}
+                </div>
+              </div>
             </div>
             <div className="flex min-h-0 flex-1 items-stretch gap-2">
-              <div className="flex w-6 items-center justify-center">
-                <div className="-rotate-90 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/72">
-                  y-axis
+              <div className="flex w-8 shrink-0 items-stretch gap-1 text-[10px] font-black text-cyan-100">
+                <div className="flex w-3 items-center justify-center">
+                  <span className="-rotate-90 whitespace-nowrap uppercase tracking-[0.22em]">y-axis</span>
+                </div>
+                <div className="grid min-h-0 flex-1 grid-rows-7 text-center" aria-label="Y coordinates increase from 1 at the bottom to 7 at the top">
+                  {Array.from({ length: GRID_SIZE }, (_, index) => <span key={GRID_SIZE - index} className="flex items-center justify-center">{GRID_SIZE - index}</span>)}
                 </div>
               </div>
               <div className="relative min-h-0 flex-1 rounded-[1.2rem] border border-cyan-100/14">
@@ -299,6 +308,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                     key={key}
                     onClick={() => handleTileTap(cell.x, cell.y)}
                     disabled={!!feedback}
+                    aria-label={`Marker at x=${cell.x}, y=${cell.y}${isStart ? ', current explorer position' : ''}`}
                     className={`relative border text-left transition-all ${
                       isSelected
                         ? feedback === 'correct'

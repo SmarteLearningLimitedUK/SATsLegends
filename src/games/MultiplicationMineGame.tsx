@@ -2,11 +2,15 @@ import React, { useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { MAIN_PNG_SKIN } from '../assets/reskin/mainPng';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
-import mineBackground from '../assets/maps/backgroundsforgames/multiplication mine background.jpg';
-import rockAsset from '../assets/rocktlogo.png';
+import mineBackground from '../assets/maps/premium/multiplication-mine.webp';
+import wholeRockAsset from '../assets/mine/18.png';
+import crackedRockAsset from '../assets/mine/19.png';
+import splitRockAsset from '../assets/mine/20.png';
+import rubbleRockAsset from '../assets/mine/21.png';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { triggerHaptic } from '../haptics';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
+import { useTrimmedImageSource } from '../utils/trimTransparentImage';
 
 interface MultiplicationMineGameProps {
   levelId: number;
@@ -29,6 +33,7 @@ interface MultiplicationQuestion {
 type Phase = 'playing' | 'exploding' | 'treasure';
 
 const ROCK_MAX_HEALTH = 4;
+const ROCK_DAMAGE_ASSETS = [wholeRockAsset, crackedRockAsset, splitRockAsset, rubbleRockAsset];
 
 const makeOptions = (correct: number) => {
   const spread = Math.max(3, Math.round(correct * 0.18));
@@ -70,6 +75,8 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
   const resolvedLevel = useMemo(() => Math.max(1, Math.min(10, levelId || 1)), [levelId]);
   const [question, setQuestion] = useState<MultiplicationQuestion>(() => makeQuestion(resolvedLevel, 0));
   const [rockHealth, setRockHealth] = useState(ROCK_MAX_HEALTH);
+  const rockAsset = ROCK_DAMAGE_ASSETS[Math.min(ROCK_DAMAGE_ASSETS.length - 1, ROCK_MAX_HEALTH - rockHealth)];
+  const trimmedRockAsset = useTrimmedImageSource(rockAsset);
   const [correctCount, setCorrectCount] = useState(0);
   const [mistakes, setMistakes] = useState(0);
   const [XP, setScore] = useState(0);
@@ -152,36 +159,13 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
               subtitle="The Monster Minds locked the numbers in rock. Solve the multiplication to break it open."
               className="mx-auto w-full"
               bodyClassName="text-[clamp(1.7rem,6vw,3rem)] font-black tracking-wide text-white"
+              style={{ position: 'relative', top: 0, transform: 'none' }}
             >
             {question.a} x {question.b} = ?
           </GameQuestionCard>
         </div>
 
-        <div className="mt-4 w-full max-w-[520px]">
-          <div className="answer-choice-surface grid grid-cols-2 gap-2.5">
-            {question.options.map((option) => (
-              <motion.button
-                key={`${question.a}x${question.b}-${option}`}
-                type="button"
-                onClick={() => solveQuestion(option)}
-                disabled={phase !== 'playing'}
-                whileTap={{ scale: 0.96, y: 2 }}
-                animate={selectedChoice === option ? (feedback?.tone === 'ok' || feedback?.tone === 'praise' ? { scale: [1, 1.12, 0.98, 1.05, 1], rotate: [0, -2, 2, 0] } : { scale: [1, 1.05, 1] }) : { scale: 1 }}
-                className={`h-16 rounded-2xl border px-3 text-center text-[clamp(1.35rem,5vw,2.1rem)] font-black shadow-[0_8px_16px_rgba(0,0,0,0.35)] transition ${
-                  selectedChoice === option
-                    ? feedback?.tone === 'ok' || feedback?.tone === 'praise'
-                      ? 'ui-button-success'
-                      : 'ui-button-primary'
-                    : 'ui-button-secondary'
-                } disabled:opacity-60`}
-              >
-                {option}
-              </motion.button>
-            ))}
-          </div>
-        </div>
-
-        <div className="relative mt-5 flex flex-1 w-full items-center justify-center">
+        <div className="relative mt-5 flex min-h-0 flex-1 w-full items-center justify-center">
           <AnimatePresence mode="wait">
             {phase !== 'treasure' ? (
               <motion.div
@@ -196,10 +180,12 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
                   repeat: phase === 'playing' ? Infinity : 0,
                   repeatDelay: 1.2,
                 }}
-                className="relative h-[240px] w-[240px] overflow-hidden bg-transparent"
+                className="relative h-[240px] w-[240px] bg-transparent"
               >
                 <img
-                  src={rockAsset}
+                  data-mine-rock="true"
+                  data-rock-health={rockHealth}
+                  src={trimmedRockAsset}
                   alt="Multiplication Mine rock"
                   draggable={false}
                   className={`absolute inset-0 h-full w-full object-contain object-center drop-shadow-[0_18px_28px_rgba(0,0,0,0.28)] ${
@@ -207,7 +193,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
                   }`}
                 />
 
-                <div className="absolute -bottom-10 left-1/2 flex -translate-x-1/2 gap-2">
+                <div className="absolute -bottom-6 left-1/2 flex -translate-x-1/2 gap-2" aria-label={`${rockHealth} of ${ROCK_MAX_HEALTH} rock strength remaining`}>
                   {Array.from({ length: ROCK_MAX_HEALTH }).map((_, idx) => (
                     <span
                       key={`rock-hp-${idx}`}
@@ -270,6 +256,30 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
               </motion.div>
             )}
           </AnimatePresence>
+        </div>
+
+        <div className="mt-4 w-full max-w-[520px] shrink-0">
+          <div className="answer-choice-surface grid grid-cols-2 gap-2.5">
+            {question.options.map((option) => (
+              <motion.button
+                key={`${question.a}x${question.b}-${option}`}
+                type="button"
+                onClick={() => solveQuestion(option)}
+                disabled={phase !== 'playing'}
+                whileTap={{ scale: 0.96, y: 2 }}
+                animate={selectedChoice === option ? (feedback?.tone === 'ok' || feedback?.tone === 'praise' ? { scale: [1, 1.12, 0.98, 1.05, 1], rotate: [0, -2, 2, 0] } : { scale: [1, 1.05, 1] }) : { scale: 1 }}
+                className={`h-16 rounded-2xl border px-3 text-center text-[clamp(1.35rem,5vw,2.1rem)] font-black shadow-[0_8px_16px_rgba(0,0,0,0.35)] transition ${
+                  selectedChoice === option
+                    ? feedback?.tone === 'ok' || feedback?.tone === 'praise'
+                      ? 'ui-button-success'
+                      : 'ui-button-primary'
+                    : 'ui-button-secondary'
+                } disabled:opacity-60`}
+              >
+                {option}
+              </motion.button>
+            ))}
+          </div>
         </div>
 
         <AnimatePresence mode="wait">

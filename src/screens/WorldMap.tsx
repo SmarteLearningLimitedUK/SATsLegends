@@ -1,10 +1,12 @@
 import React, { useMemo, useState } from 'react';
-import { X } from 'lucide-react';
+import { ArrowRight, X } from 'lucide-react';
 import { IslandData, PlayerData } from '../types';
 import { ISLANDS } from '../constants';
 import universalMapPoster from '../assets/maps/mapselect.png';
 import AssetIcon from '../components/AssetIcon';
 import ParentGateOverlay from '../components/ParentGateOverlay';
+import MapAtmosphere from '../components/world-map/MapAtmosphere';
+import '../design/map-effects.css';
 import { UNLOCK_ALL_LEVELS } from '../app/testingFlags';
 
 interface WorldMapProps {
@@ -29,13 +31,6 @@ type IslandHotspot = {
   y: number;
   width: number;
   height: number;
-};
-
-type IslandAccentFrame = {
-  width: string;
-  height: string;
-  top: string;
-  left: string;
 };
 
 const MAP_WIDTH_PX = 768;
@@ -100,237 +95,6 @@ const ISLAND_HOTSPOTS: IslandHotspot[] = [
   },
 ];
 
-const ISLAND_ACCENT_FRAMES: Partial<Record<number, IslandAccentFrame>> = {
-  1: { left: '50%', top: '50%', width: '70%', height: '72%' },
-  2: { left: '50%', top: '54%', width: '68%', height: '68%' },
-  3: { left: '50%', top: '48%', width: '66%', height: '70%' },
-  4: { left: '50%', top: '52%', width: '66%', height: '68%' },
-  5: { left: '50%', top: '45%', width: '74%', height: '64%' },
-  6: { left: '50%', top: '40%', width: '60%', height: '74%' },
-  7: { left: '50%', top: '48%', width: '70%', height: '66%' },
-  8: { left: '50%', top: '42%', width: '62%', height: '78%' },
-};
-
-const getIslandAccentFrame = (islandId: number): IslandAccentFrame => (
-  ISLAND_ACCENT_FRAMES[islandId] ?? {
-    left: '50%',
-    top: '50%',
-    width: '68%',
-    height: '68%',
-  }
-);
-
-const renderIslandAccent = (islandId: number) => {
-  switch (islandId) {
-    case 8:
-      return (
-        <div className="world-map-core-smoke pointer-events-none absolute inset-0 z-10">
-          <div className="world-map-core-smoke-puff world-map-core-smoke-puff-a" />
-          <div className="world-map-core-smoke-puff world-map-core-smoke-puff-b" />
-          <div className="world-map-core-smoke-puff world-map-core-smoke-puff-c" />
-        </div>
-      );
-    case 6:
-      return (
-        <div className="world-map-volcano-accent pointer-events-none absolute inset-0 z-10">
-          <div className="world-map-volcano-flame world-map-volcano-flame-primary" />
-          <div className="world-map-volcano-flame world-map-volcano-flame-secondary" />
-          <div className="world-map-volcano-smoke" />
-        </div>
-      );
-    case 5:
-      return (
-        <>
-          {[0, 1, 2].map(index => (
-            <span
-              key={`operations-beam-${index}`}
-              className="world-map-light-beam"
-              style={{
-                left: `${24 + index * 16}%`,
-                top: `${14 + index * 3}%`,
-                transform: `rotate(${index * 7 - 8}deg)`,
-                animationDelay: `${index * 0.8}s`,
-                animationDuration: `${4.6 + index * 0.4}s`,
-              }}
-            />
-          ))}
-          {[0, 1].map(index => (
-            <span
-              key={`operations-bird-${index}`}
-              className="world-map-orbit world-map-orbit-birds"
-              style={{ animationDelay: `${index * 1.15}s`, animationDuration: `${7.1 + index * 0.5}s` }}
-            >
-              <span className="world-map-bird" />
-            </span>
-          ))}
-        </>
-      );
-    case 3:
-      return (
-        <>
-          {[0, 1, 2, 3].map(index => (
-            <span
-              key={`geometry-snow-${index}`}
-              className="world-map-snowflake"
-              style={{
-                left: `${16 + index * 12}%`,
-                top: `${8 + (index % 2) * 12}%`,
-                animationDelay: `${index * 0.42}s`,
-                animationDuration: `${3.6 + (index % 3) * 0.4}s`,
-              }}
-            />
-          ))}
-          {[0, 1].map(index => (
-            <span
-              key={`geometry-wisp-${index}`}
-              className="world-map-wind-wisp"
-              style={{
-                left: `${22 + index * 24}%`,
-                top: `${28 + index * 7}%`,
-                animationDelay: `${index * 0.95}s`,
-                animationDuration: `${5.6 + index * 0.5}s`,
-              }}
-            />
-          ))}
-        </>
-      );
-    case 2:
-      return (
-        <>
-          {[0, 1, 2].map(index => (
-            <span
-              key={`fraction-butterfly-${index}`}
-              className="world-map-butterfly"
-              style={{
-                left: `${18 + index * 19}%`,
-                top: `${22 - index * 2}%`,
-                animationDelay: `${index * 0.85}s`,
-                animationDuration: `${5.2 + index * 0.4}s`,
-              }}
-            />
-          ))}
-          {[0, 1, 2].map(index => (
-            <span
-              key={`fraction-bubble-${index}`}
-              className="world-map-bubble"
-              style={{
-                left: `${24 + index * 18}%`,
-                bottom: `${8 + index * 2}%`,
-                animationDelay: `${index * 0.7}s`,
-                animationDuration: `${4.4 + index * 0.4}s`,
-              }}
-            />
-          ))}
-        </>
-      );
-    case 4:
-      return (
-        <>
-          {[0, 1, 2].map(index => (
-            <span
-              key={`data-dust-${index}`}
-              className="world-map-dust-devil"
-              style={{
-                left: `${22 + index * 18}%`,
-                bottom: `${12 + (index % 2) * 8}%`,
-                animationDelay: `${index * 1.1}s`,
-                animationDuration: `${4.5 + index * 0.4}s`,
-              }}
-            />
-          ))}
-          {[0, 1].map(index => (
-            <span
-              key={`data-wisp-${index}`}
-              className="world-map-wind-wisp"
-              style={{
-                left: `${26 + index * 26}%`,
-                top: `${18 + index * 10}%`,
-                animationDelay: `${index * 1.2}s`,
-                animationDuration: `${5.8 + index * 0.4}s`,
-              }}
-            />
-          ))}
-        </>
-      );
-    case 7:
-      return (
-        <>
-          {[0, 1, 2].map(index => (
-            <span
-              key={`ratio-steam-puff-${index}`}
-              className="world-map-volcano-smoke"
-              style={{
-                left: `${20 + index * 18}%`,
-                top: `${2 + index * 2}%`,
-                width: `${12 + index * 2}%`,
-                height: `${12 + index * 2}%`,
-                animationDuration: `${3.6 + index * 0.35}s`,
-              }}
-            />
-          ))}
-          {[0, 1, 2].map(index => (
-            <span
-              key={`ratio-bubble-${index}`}
-              className="world-map-bubble"
-              style={{
-                left: `${18 + index * 22}%`,
-                bottom: `${6 + index * 2}%`,
-                animationDelay: `${index * 0.6}s`,
-                animationDuration: `${4.5 + index * 0.35}s`,
-              }}
-            />
-          ))}
-        </>
-      );
-    case 1:
-      return (
-        <>
-          {[0, 1, 2].map(index => (
-            <span
-              key={`acro-symbol-${index}`}
-              className="absolute text-[0.95rem] font-black text-amber-100 drop-shadow-[0_2px_8px_rgba(15,23,42,0.45)]"
-              style={{
-                left: `${22 + index * 18}%`,
-                top: `${12 + (index % 2) * 9}%`,
-                animationDelay: `${index * 0.7}s`,
-                animationDuration: `${4.4 + index * 0.45}s`,
-              }}
-            >
-              {['+', '÷', '%'][index]}
-            </span>
-          ))}
-          {[0, 1, 2].map(index => (
-            <span
-              key={`acro-star-${index}`}
-              className="world-map-orbit world-map-orbit-stars"
-              style={{ animationDelay: `${index * 0.68}s`, animationDuration: `${6.2 + index * 0.4}s` }}
-            >
-              <span className="world-map-star" />
-            </span>
-          ))}
-        </>
-      );
-    default:
-      return (
-        <div
-          className="world-map-island-breathe pointer-events-none absolute inset-0 z-10"
-          style={{
-            animationDuration: `${6.2 + (islandId % 4) * 0.6}s`,
-            animationDelay: `${(islandId % 5) * 0.18}s`,
-          }}
-        >
-          <div
-            className="world-map-island-halo"
-            style={{
-              animationDuration: `${7.4 + (islandId % 3) * 0.45}s`,
-              animationDelay: `${(islandId % 7) * 0.12}s`,
-            }}
-          />
-        </div>
-      );
-  }
-};
-
 const WorldMap: React.FC<WorldMapProps> = ({
   player,
   onSelectIsland,
@@ -369,6 +133,9 @@ const WorldMap: React.FC<WorldMapProps> = ({
   ), [player]);
 
   const selectedIslandState = islandStates.find(entry => entry.island.id === selectedIslandId) ?? null;
+  const recommendedIsland = islandStates.find(({ island, isUnlocked }) => isUnlocked && island.levels.some(
+    (level) => !(player.completedLevels[island.id] || []).includes(level.id),
+  )) ?? islandStates.find(({ isUnlocked }) => isUnlocked);
   const useUnifiedHud = typeof document !== 'undefined'
     && Boolean(document.querySelector('[data-unified-minigame-hud="true"]'));
   const actionDock = (
@@ -403,7 +170,16 @@ const WorldMap: React.FC<WorldMapProps> = ({
   );
 
   return (
-    <div className="relative w-full overflow-visible">
+    <div className="legend-world-map relative w-full overflow-visible">
+      {recommendedIsland ? (
+        <div className="legend-map-guidance">
+          <div className="min-w-0">
+            <div className="legend-eyebrow">Your next destination</div>
+            <strong className="block truncate">{recommendedIsland.island.name}</strong>
+          </div>
+          <button type="button" className="ui-button-primary inline-flex items-center gap-1" onClick={() => onSelectIsland(recommendedIsland.island)}>Let's go<ArrowRight size={16} aria-hidden="true" /></button>
+        </div>
+      ) : null}
       <div
         className="relative mx-auto w-full overflow-hidden"
         style={{ aspectRatio: `${MAP_WIDTH_PX} / ${MAP_HEIGHT_PX}` }}
@@ -414,6 +190,8 @@ const WorldMap: React.FC<WorldMapProps> = ({
           className="absolute inset-0 h-full w-full object-cover"
           draggable={false}
         />
+
+        <MapAtmosphere recommendedIslandId={recommendedIsland?.island.id} />
 
         <div className="absolute inset-0 z-20">
           {ISLAND_HOTSPOTS.map((hotspot) => {
@@ -433,27 +211,11 @@ const WorldMap: React.FC<WorldMapProps> = ({
                   transform: 'translate(-50%, -50%)',
                 }}
               >
-                <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                  {(() => {
-                    const accentFrame = getIslandAccentFrame(hotspot.islandId);
-                    return (
-                  <div
-                    className="absolute overflow-hidden"
-                    style={{
-                      ...accentFrame,
-                      transform: 'translate(-50%, -50%)',
-                    }}
-                  >
-                    {renderIslandAccent(hotspot.islandId)}
-                  </div>
-                    );
-                  })()}
-                </div>
                 <button
                   type="button"
                   onClick={() => setSelectedIslandId(island.id)}
                   aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
-                  className="absolute inset-0 z-20 border border-transparent bg-transparent transition-all focus:outline-none"
+                  className="legend-map-hotspot absolute inset-0 z-20 border border-transparent bg-transparent transition-all focus:outline-none"
                   data-button-skin="none"
                   style={{ opacity: 1 }}
                 />
@@ -465,7 +227,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
 
       {selectedIslandState ? (
         <div className="pointer-events-none fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+4.8rem)] z-40 flex justify-center px-4">
-          <div className="pointer-events-auto relative w-full max-w-[20rem] px-4 py-4 text-white backdrop-blur-sm licensed-overlay-card">
+          <div className="legend-map-details pointer-events-auto relative w-full max-w-[20rem] px-4 py-4 text-white backdrop-blur-sm licensed-overlay-card" role="region" aria-label={`${selectedIslandState.island.name} details`}>
             <button
               type="button"
               onClick={() => setSelectedIslandId(null)}
@@ -474,9 +236,11 @@ const WorldMap: React.FC<WorldMapProps> = ({
             >
               <X className="h-4 w-4" />
             </button>
-            <div className="text-center text-aaa-h2 text-cyan-50">
+            <img src={selectedIslandState.island.mapImage} alt="" draggable={false} />
+            <div className="legend-map-category text-center">{selectedIslandState.island.category}</div>
+            <h2 className="text-center text-aaa-h2 text-cyan-50">
               {selectedIslandState.island.name}
-            </div>
+            </h2>
             <div className="mt-1 text-center text-aaa-micro text-cyan-100/82 opacity-90 font-bold">
               {selectedIslandState.earnedBrainpower}/{selectedIslandState.totalPossibleBrainpower} brainpower collected
             </div>
@@ -522,12 +286,3 @@ const WorldMap: React.FC<WorldMapProps> = ({
 };
 
 export default WorldMap;
-
-
-
-
-
-
-
-
-

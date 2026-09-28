@@ -7,7 +7,7 @@ import { triggerHaptic } from '../haptics';
 import { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gameplaySessionContract';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
-import fractionForgeBackground from '../assets/maps/backgroundsforgames/fraction forge map.jpg';
+import fractionForgeBackground from '../assets/maps/premium/formula-forge.webp';
 
 interface FormulaForgeGameProps {
   levelId: number;

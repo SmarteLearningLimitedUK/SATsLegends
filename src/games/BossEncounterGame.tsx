@@ -6,9 +6,11 @@ import { getBossEncounter, resolveBossPose } from '../bossMeta';
 import { BossPose } from '../assets/bosses';
 import { triggerHaptic } from '../haptics';
 import AnimatedAvatar from '../components/AnimatedAvatar';
+import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
+import MonsterMindActor from '../components/game-ui/MonsterMindActor';
 import { isBossEncounterGameType, SupportedBossGameType } from './bossEncounterTypes';
 import { AnimationState } from '../types';
 
@@ -133,6 +135,7 @@ const BattleUnitCard: React.FC<BattleUnitCardProps> = ({
   className = '',
 }) => (
   <div
+    data-battle-unit={side}
     className={`relative w-[min(20rem,44vw)] rounded-[1.5rem] border border-white/10 bg-[linear-gradient(180deg,rgba(9,13,24,0.8),rgba(4,8,16,0.92))] p-3 shadow-[0_18px_36px_rgba(0,0,0,0.24)] backdrop-blur-xl ${className}`.trim()}
   >
     <div className={`absolute inset-0 rounded-[1.5rem] opacity-70 ${side === 'boss' ? 'bg-[radial-gradient(circle_at_top_right,rgba(248,113,113,0.14),transparent_46%)]' : 'bg-[radial-gradient(circle_at_top_left,rgba(96,165,250,0.16),transparent_46%)]'}`} />
@@ -656,6 +659,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
 
   return (
     <div className="relative flex h-full w-full overflow-hidden bg-[radial-gradient(circle_at_top,#152036_0%,#0a1120_48%,#030611_100%)] font-sans">
+      <GameplaySceneBackdrop gameType={gameType} className="opacity-60 [&_img]:!object-cover" />
 
       <PracticeIntroPopup
         open={showPracticeIntro}
@@ -668,6 +672,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
         <div className="flex shrink-0 justify-center">
           <GameQuestionCard
             title="Question"
+            style={{ position: 'relative', top: 0, transform: 'none' }}
             className="w-full max-w-[52rem] rounded-[1.6rem] bg-[linear-gradient(180deg,rgba(10,15,28,0.88),rgba(4,8,18,0.95))] shadow-[0_18px_42px_rgba(0,0,0,0.26)]"
           >
             {formatFantasyPrompt(question.prompt)}
@@ -685,15 +690,12 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
             >
               <div className="relative h-[5.6rem] w-[5.6rem] shrink-0 rounded-[1.15rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.16),rgba(255,255,255,0.02))]">
                 <div className="pointer-events-none absolute inset-[10%] rounded-full bg-white/10 blur-xl" />
-                <motion.img
-                  key={`${encounter.assetId}-${bossPose}`}
-                  src={resolveBossPose(encounter.assetId, bossPose)}
+                <MonsterMindActor
+                  src={resolveBossPose(encounter.assetId, 'neutral')}
                   alt={encounter.name}
-                  initial={{ opacity: 0, scale: 0.96, y: 4 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{ duration: 0.24, ease: 'easeOut' }}
+                  reaction={bossPose === 'defeat' ? 'defeated' : submittedIndices === null ? 'idle' : heroPose === 'victory' ? 'hit' : 'taunt'}
+                  reactionKey={`${currentIndex}:${bossHealth}:${heroHealth}`}
                   className="relative z-10 h-full w-full object-contain drop-shadow-[0_10px_18px_rgba(0,0,0,0.38)]"
-                  draggable={false}
                 />
               </div>
             </BattleUnitCard>

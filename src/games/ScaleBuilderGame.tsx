@@ -4,11 +4,11 @@ import { AnimatePresence, motion } from 'motion/react';
 import { AVATARS } from '../constants';
 import { GameScreenShell } from '../layout/ScreenPrimitives';
 import labelGreenLongAsset from '../assets/licensed/slices/label_green_long.png';
-import scaleBuilderBackground from '../assets/maps/backgroundsforgames/scalebuilder-construction.png';
+import scaleBuilderBackground from '../assets/maps/premium/scale-builder.webp';
 import { GameQuestionCard, IconButton, PrimaryButton } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
-import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
+import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
 
 interface ScaleBuilderGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -77,8 +77,8 @@ const LEVELS: Level[] = [
 ];
 
 const GRID_SIZE = 20;
-const BLUEPRINT_BOARD_TOP = '58%';
-const BLUEPRINT_BOARD_SIZE = 'min(76vw, 29rem, 58vh)';
+const BLUEPRINT_BOARD_TOP = '50%';
+const BLUEPRINT_BOARD_SIZE = 'min(88%, 18rem)';
 const SCALE_BUILDER_INTRO = `The Monster Minds have damaged the island structures.\nUse the scale factor to rebuild each blueprint to the correct size.\nMultiply each length correctly.`;
 
 const formatBlueprintValue = (value: number) => {
@@ -197,6 +197,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
   useSharedTopHud = false,
   isPractice,
   practiceBriefing,
+  sessionEvents,
   onVictory,
   onGameOver: _onGameOver,
   onBack,
@@ -236,16 +237,19 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
   const blueprintWidth = currentLevel.shape.baseHeight * activeScaleY;
 
   const verifyScale = () => {
+    if (gameState !== 'playing') return;
     const widthDiff = Math.abs(widthScale - currentLevel.targetScale);
     const heightDiff = Math.abs(heightScale - currentLevel.targetScale);
     const difference = Math.max(widthDiff, heightDiff);
     if (difference < 0.01) {
-      setFeedback({ type: 'success', message: '🏗️ “Structure restored!”\n\nThe tower is rebuilt to 15 metres.' });
+      setFeedback({ type: 'success', message: `Blueprint restored! ${formatBlueprintValue(blueprintLength)} × ${formatBlueprintValue(blueprintWidth)} units.` });
+      emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { metadata: { project: currentLevel.id } });
       setGameState('success');
       return;
     }
 
-    setFeedback({ type: 'error', message: '⚠️ “Structure unstable!”' });
+    setFeedback({ type: 'error', message: 'Try again. Multiply both lengths by the scale factor.' });
+    emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { metadata: { project: currentLevel.id } });
     setMistakeCount((previous) => previous + 1);
   };
 
@@ -253,6 +257,8 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
     if (currentLevelIdx < LEVELS.length - 1) {
       setCurrentLevelIdx((previous) => previous + 1);
       setCurrentScale(1.0);
+      setWidthScale(1.0);
+      setHeightScale(1.0);
       setFeedback(null);
       setGameState('playing');
       return;
@@ -315,7 +321,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
     onVictory(starRating, finalScore);
   };
 
-  const instructionsText = currentLevel.instructions;
+  const instructionsText = currentLevel.instructions.replace(/\n\n/g, '\n');
 
   return (
     <GameScreenShell
@@ -364,18 +370,19 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
       <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-2 px-2 pb-1 pt-[calc(env(safe-area-inset-top)+0.95rem)] md:gap-3 md:px-3">
         <div className="relative mx-auto flex h-full w-full max-w-[780px] min-h-0 flex-1 flex-col overflow-visible">
           <div className="relative z-10 grid h-full min-h-0 w-full grid-rows-[auto_minmax(0,1fr)_auto] gap-3 p-0 md:gap-4 md:p-0">
-            <GameQuestionCard title="Scale Builder" bodyClassName="text-[10px] font-black leading-snug md:text-[11px]">
+            <GameQuestionCard title="Scale Builder" bodyClassName="text-[10px] font-black leading-snug md:text-[11px]" style={{ position: 'relative', top: 0, transform: 'none' }}>
               {instructionsText}
             </GameQuestionCard>
 
             <div className="relative min-h-0 flex-1 overflow-visible">
               <div className="relative z-10 h-full w-full">
                 <div
-                  className="absolute left-1/2 flex aspect-square -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-[0.9rem]"
+                  data-scale-blueprint
+                  className="absolute left-1/2 flex aspect-square -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-[0.9rem] border-2 border-cyan-200/40 bg-[#102e49]/90"
                   style={{
                     top: BLUEPRINT_BOARD_TOP,
                     width: BLUEPRINT_BOARD_SIZE,
-                    height: BLUEPRINT_BOARD_SIZE,
+                    maxHeight: '94%',
                   }}
                 >
                   <BlueprintGrid />
@@ -411,17 +418,26 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
               </div>
             </div>
 
-            <div className="rounded-[1.1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(2,6,23,0.99),rgba(7,15,29,0.99))] p-2 shadow-[0_0_0_1px_rgba(15,23,42,0.6),0_18px_30px_rgba(2,6,23,0.46)]">
+            <div data-scale-controls className="licensed-board-frame rounded-[1.1rem] p-2">
               <div className="mb-2 flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/82">
                 <span>Rebuild the blueprint</span>
+                <div className="flex gap-1">
+                {isDimensionMode ? <button type="button" onClick={resetLevel} disabled={gameState !== 'playing'} className="ui-button-secondary min-h-11 px-2 text-xs">Reset</button> : null}
                 <button
                   onClick={() => setShowBase((previous) => !previous)}
                   className="ui-button-secondary rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em]"
                 >
                   {showBase ? 'Hide guide' : 'Show guide'}
                 </button>
+                </div>
               </div>
-              <div className="grid grid-cols-3 gap-2">
+              {isDimensionMode ? <div className="grid grid-cols-2 gap-2">
+                {(['width', 'height'] as const).flatMap((dimension) => [-0.25, 0.25].map((delta) => (
+                  <button type="button" key={`${dimension}-${delta}`} className="ui-button-secondary min-h-11 px-2 py-2 text-xs" disabled={gameState !== 'playing'} onClick={() => adjustDimension(dimension, delta)}>
+                    {dimension === 'width' ? 'Length' : 'Width'} {delta > 0 ? '+' : '−'}0.25
+                  </button>
+                )))}
+              </div> : <div className="grid grid-cols-3 gap-2">
                 <button
                   onClick={() => adjustDimension('width', -0.25)}
                   disabled={gameState !== 'playing'}
@@ -447,7 +463,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                     ? 'W+0.25'
                     : '+0.25'}
                 </button>
-              </div>
+              </div>}
               <div className="mt-3 grid grid-cols-2 gap-2">
                 {gameState === 'success' ? (
                   <button
@@ -476,7 +492,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className={`absolute bottom-[calc(env(safe-area-inset-bottom)+4.6rem)] left-1/2 z-20 -translate-x-1/2 rounded-full border px-5 py-2 shadow-2xl ${
+                className={`pointer-events-none absolute bottom-[calc(env(safe-area-inset-bottom)+4.6rem)] left-1/2 z-20 -translate-x-1/2 rounded-full border px-5 py-2 shadow-2xl ${
                   feedback.type === 'success'
                     ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-100'
                     : 'border-rose-500/50 bg-rose-500/10 text-amber-100'
