@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { motion } from 'motion/react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { motion, useIsPresent, useReducedMotion } from 'motion/react';
 import conversionCanyonBackground from '../assets/maps/premium/conversion-canyon.webp';
 import weighScale from '../assets/maps/backgroundsforgames/Scale Master.png';
 import gemBlue from '../assets/place_value/jewels/diamond_blue.png';
@@ -11,8 +11,10 @@ import gemEmerald from '../assets/place_value/jewels/emerald.png';
 import gemSapphire from '../assets/place_value/jewels/sapphire.png';
 import { useTrimmedImageSource, useTrimmedImageSources } from '../utils/trimTransparentImage';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
+import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
+import './game-refinements.css';
 
-interface ConversionCanyonGameProps {
+interface ConversionCanyonGameProps extends MiniGameShellContractProps {
   levelId: number;
   avatarId: string;
   onVictory: (stars: number, XP: number) => void;
@@ -35,12 +37,11 @@ const TOTAL_ROUNDS = 5;
 const GEM_IMAGES = [gemBlue, gemGreen, gemPurple, gemRed, gemYellow, gemEmerald, gemSapphire];
 
 const STAGE_DENOMS: number[][] = [
-  [50, 100, 150, 200, 250, 300],
-  [100, 150, 200, 250, 300, 400],
+  [100, 200, 300, 400, 500],
+  [50, 100, 150, 200, 250, 500],
   [100, 250, 500, 750, 1000, 1250],
   [250, 500, 750, 1000, 1500, 2000],
   [500, 750, 1000, 1500, 2000, 2500],
-  [500, 1000, 2000, 3000, 4000, 5000],
 ];
 
 const toKgLabel = (grams: number) => `${(grams / 1000).toLocaleString(undefined, { maximumFractionDigits: 2 })} kg`;
@@ -60,7 +61,7 @@ const getMeasurementDisplay = (grams: number) => {
   };
 };
 
-const clampStage = (levelId: number, roundIndex: number) => Math.min(STAGE_DENOMS.length - 1, Math.max(0, levelId - 1 + roundIndex));
+const clampStage = (levelId: number) => Math.min(STAGE_DENOMS.length - 1, Math.max(0, levelId - 1));
 
 const randomFrom = <T,>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)];
 
@@ -74,11 +75,11 @@ const shuffle = <T,>(arr: T[]) => {
 };
 
 const buildRound = (levelId: number, roundIndex: number): RoundData => {
-  const stage = clampStage(levelId, roundIndex);
+  const stage = clampStage(levelId);
   const denoms = STAGE_DENOMS[stage];
   const minimumDistinctChoices = 5;
   const distinctChoices = shuffle(denoms).slice(0, Math.max(minimumDistinctChoices, Math.min(denoms.length, 6)));
-  const requiredCount = Math.min(4, Math.max(2, 2 + Math.floor(stage / 2)));
+  const requiredCount = stage <= 1 ? 2 : stage <= 3 ? 3 : 4;
 
   const required = shuffle(distinctChoices).slice(0, requiredCount);
   const targetGrams = required.reduce((sum, grams) => sum + grams, 0);
@@ -110,7 +111,13 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
   onVictory,
   onGameOver: _onGameOver,
   onBack: _onBack,
+  sessionState,
+  sessionEvents,
 }) => {
+  const reducedMotion = useReducedMotion();
+  const isPresent = useIsPresent();
+  const presentRef = useRef(isPresent);
+  presentRef.current = isPresent;
   const [roundIndex, setRoundIndex] = useState(0);
   const [round, setRound] = useState<RoundData>(() => buildRound(levelId, 0));
   const [placedIds, setPlacedIds] = useState<string[]>([]);
@@ -120,6 +127,11 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
 
   const rootRef = useRef<HTMLDivElement>(null);
   const dropRef = useRef<HTMLDivElement>(null);
+  const placedIdsRef = useRef<string[]>([]);
+  const resolvingRef = useRef(false);
+  const timerRef = useRef<number | null>(null);
+  const victoryRef = useRef(onVictory);
+  victoryRef.current = onVictory;
   const trimmedScaleImage = useTrimmedImageSource(weighScale);
   const trimmedGemImages = useTrimmedImageSources(GEM_IMAGES);
   const gemImageMap = useMemo(
@@ -128,6 +140,10 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
   );
 
   useEffect(() => {
+    if (!presentRef.current) return;
+    if (timerRef.current !== null) window.clearTimeout(timerRef.current);
+    placedIdsRef.current = [];
+    resolvingRef.current = false;
     setRoundIndex(0);
     setRound(buildRound(levelId, 0));
     setPlacedIds([]);
@@ -135,6 +151,11 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
     setSuccessPulse(false);
     setFeedback(null);
   }, [levelId]);
+
+  useLayoutEffect(() => {
+    if (!isPresent) resolvingRef.current = true;
+    return () => { if (timerRef.current !== null) window.clearTimeout(timerRef.current); };
+  }, [isPresent]);
 
   const tokenMap = useMemo(() => new Map(round.tokens.map((token) => [token.id, token])), [round.tokens]);
 
@@ -152,39 +173,51 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
   };
 
   const placeToken = (id: string) => {
-    if (placedIds.includes(id)) return;
-    setPlacedIds((previous) => [...previous, id]);
+    if (!presentRef.current || resolvingRef.current || sessionState?.paused || placedIdsRef.current.includes(id) || !tokenMap.has(id)) return;
+    placedIdsRef.current = [...placedIdsRef.current, id];
+    setPlacedIds(placedIdsRef.current);
     setFeedback(null);
   };
 
   const removePlacedToken = (id: string) => {
-    setPlacedIds((previous) => previous.filter((tokenId) => tokenId !== id));
+    if (!presentRef.current || resolvingRef.current || sessionState?.paused) return;
+    placedIdsRef.current = placedIdsRef.current.filter((tokenId) => tokenId !== id);
+    setPlacedIds(placedIdsRef.current);
     setFeedback(null);
   };
 
   const handleResetScale = () => {
+    if (!presentRef.current || resolvingRef.current || sessionState?.paused) return;
+    placedIdsRef.current = [];
     setPlacedIds([]);
     setSuccessPulse(false);
     setFeedback(null);
   };
 
   const handleSubmit = () => {
-    if (successPulse) return;
-    if (currentGrams !== round.targetGrams) {
+    if (!presentRef.current || resolvingRef.current || sessionState?.paused) return;
+    const submittedGrams = placedIdsRef.current.reduce((total, id) => total + (tokenMap.get(id)?.grams ?? 0), 0);
+    if (submittedGrams !== round.targetGrams) {
       setFeedback({ tone: 'error', text: 'Still unbalanced. Adjust the weights and try again.' });
       return;
     }
 
     setFeedback({ tone: 'success', text: 'Perfect balance! Shipment restored.' });
     setSuccessPulse(true);
+    resolvingRef.current = true;
     const nextScore = XP + 350 + (roundIndex * 70);
     setScore(nextScore);
+    sessionEvents?.onCorrectAnswer?.({ score: nextScore, metadata: { round: roundIndex + 1 } });
+    sessionEvents?.onPuzzleComplete?.({ score: nextScore, metadata: { round: roundIndex + 1, totalRounds: TOTAL_ROUNDS } });
 
-    window.setTimeout(() => {
+    timerRef.current = window.setTimeout(() => {
+      if (!presentRef.current) return;
       setSuccessPulse(false);
       setFeedback(null);
       if (roundIndex >= TOTAL_ROUNDS - 1) {
-        onVictory(scoreToStars(nextScore), nextScore);
+        const stars = scoreToStars(nextScore);
+        sessionEvents?.onGameComplete?.({ score: nextScore, stars });
+        victoryRef.current(stars, nextScore);
         return;
       }
 
@@ -192,21 +225,24 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
       setRoundIndex(nextRoundIndex);
       setRound(buildRound(levelId, nextRoundIndex));
       setPlacedIds([]);
+      placedIdsRef.current = [];
+      resolvingRef.current = false;
     }, 700);
   };
 
   return (
-    <div ref={rootRef} className="relative h-full w-full overflow-hidden bg-[#07122b]">
+    <div ref={rootRef} className="conversion-game relative h-full w-full overflow-hidden bg-[#94b8d2]" data-conversion-tier={clampStage(levelId) + 1}>
       <img
         src={conversionCanyonBackground}
         alt=""
         aria-hidden="true"
         draggable={false}
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
+        data-game-scene-image data-background-fit="contain"
+        className="pointer-events-none absolute inset-0 h-full w-full object-contain object-center"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_35%_18%,rgba(15,23,42,0.25),transparent_52%),linear-gradient(180deg,rgba(2,6,23,0.45),rgba(2,6,23,0.7))]"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.15),rgba(2,6,23,0.26))]"
       />
       <div className="relative z-10 flex h-full w-full min-h-0 flex-col">
         <div className="flex min-h-0 flex-1 flex-col items-center justify-start gap-3 px-4 pt-[calc(env(safe-area-inset-top)+0.6rem)]">
@@ -220,38 +256,33 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
           </GameQuestionCard>
 
           <motion.div
-            animate={successPulse ? { scale: [1, 1.02, 1] } : { scale: 1 }}
+            animate={successPulse && !reducedMotion ? { scale: [1, 1.02, 1] } : { scale: 1 }}
             transition={{ duration: 0.36, ease: 'easeOut' }}
             data-conversion-playfield="true"
             className="relative flex w-full max-w-[35rem] min-h-0 flex-1 items-center justify-center p-1 md:max-w-[40rem]"
           >
-            <div className="relative flex h-full min-h-0 w-full items-center justify-center">
-              <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
-                <img
+            <div className="conversion-scale-frame" data-conversion-scale>
+              <img
                   src={trimmedScaleImage}
                   alt=""
                   aria-hidden="true"
                   draggable={false}
-                  className="pointer-events-none relative z-10 h-full w-full object-contain object-center drop-shadow-[0_18px_24px_rgba(2,6,23,0.38)]"
+                  className="pointer-events-none"
                 />
-                <div className="pointer-events-none absolute left-1/2 top-[58%] z-20 -translate-x-1/2 -translate-y-1/2">
-                  <div className="flex min-w-[8.4rem] flex-col items-center rounded-[0.95rem] border border-cyan-200/58 bg-[linear-gradient(180deg,rgba(7,22,43,0.94),rgba(4,10,24,0.98))] px-3 py-1.5 text-center shadow-[0_10px_18px_rgba(2,6,23,0.55)]">
-                    <div className="text-[8px] font-black uppercase tracking-[0.28em] text-cyan-100/80">Load Meter</div>
-                    <div className="mt-0.5 font-mono text-[1.1rem] font-black tracking-[0.12em] text-emerald-200">
-                      {toGramLabel(currentGrams)}
-                    </div>
-                  </div>
-                </div>
+              <div className="conversion-load-meter" data-conversion-load={currentGrams}>
+                <span>Load meter</span><strong>{toGramLabel(currentGrams)}</strong>
               </div>
               <div
                 ref={dropRef}
-                className="absolute left-1/2 top-[51%] z-20 flex min-h-[4.5rem] w-[70%] -translate-x-1/2 items-center justify-center gap-2 rounded-[1.1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(2,6,23,0.16),rgba(2,6,23,0.28))] px-2 py-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
+                className="conversion-load-tray" data-conversion-tray
               >
+                {placedTokens.length === 0 ? <span>Tap or drop weights here</span> : null}
                 {placedTokens.map((token) => (
                   <button
                     key={token.id}
+                    type="button" disabled={successPulse || Boolean(sessionState?.paused)}
+                    aria-label={`Remove ${getMeasurementDisplay(token.grams).primary} weight`}
                     onClick={() => removePlacedToken(token.id)}
-                    className="relative z-10 flex min-w-[2.4rem] flex-col items-center rounded-xl bg-[linear-gradient(180deg,rgba(11,45,104,0.92),rgba(7,26,61,0.96))] px-1 py-0.5 text-white ring-1 ring-white/28"
                   >
                     <img src={gemImageMap.get(token.gem) ?? token.gem} alt="" className="h-5 w-5 object-contain" draggable={false} />
                     <span className="text-[9px] font-black leading-none">{getMeasurementDisplay(token.grams).primary}</span>
@@ -270,18 +301,19 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
                 return (
                   <motion.button
                     key={token.id}
-                    drag={!isPlaced}
+                    drag={!isPlaced && !successPulse && !sessionState?.paused}
                     dragConstraints={rootRef}
                     dragSnapToOrigin
-                    whileTap={{ scale: 1.06 }}
+                    whileTap={reducedMotion ? undefined : { scale: 1.03 }}
                     onClick={() => placeToken(token.id)}
-                    onPointerUp={() => placeToken(token.id)}
                     onDragEnd={(_, info) => {
                       if (isInsideDrop(info.point.x, info.point.y)) {
                         placeToken(token.id);
                       }
                     }}
-                    disabled={isPlaced}
+                    disabled={isPlaced || successPulse || Boolean(sessionState?.paused)}
+                    aria-label={`Add ${getMeasurementDisplay(token.grams).primary} weight`}
+                    data-conversion-token={token.id}
                     className={`flex h-[4.25rem] w-full flex-col items-center justify-center rounded-xl px-1 text-white shadow-[0_10px_16px_rgba(0,0,0,0.28)] ring-2 ring-white/10 touch-none ${
                       isPlaced
                         ? 'bg-slate-900/30 opacity-40'
@@ -314,6 +346,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
                 <button
                   type="button"
                   onClick={handleResetScale}
+                  disabled={successPulse || Boolean(sessionState?.paused)}
                   className="ui-button-secondary w-full rounded-[1.15rem] py-2.5 text-[0.78rem] font-black uppercase tracking-[0.14em]"
                 >
                   Reset Weights
@@ -321,7 +354,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
                 <button
                   type="button"
                   onClick={handleSubmit}
-                  disabled={successPulse}
+                  disabled={successPulse || Boolean(sessionState?.paused)}
                   className="ui-button-primary w-full rounded-[1.15rem] py-2.5 text-[0.78rem] font-black uppercase tracking-[0.16em] disabled:opacity-60"
                 >
                   Submit Shipment

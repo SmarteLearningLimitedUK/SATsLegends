@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
@@ -6,7 +6,7 @@ import { GameQuestionCard, GameUiShell } from '../components/game-ui/GameUiKit';
 import MonsterMindActor from '../components/game-ui/MonsterMindActor';
 import { triggerHaptic } from '../haptics';
 import { formatMultiplicationDisplay } from '../utils/mathDisplay';
-import { pickBossArt } from '../assets/bosses/library';
+import goblinMonster from '../assets/enemies/cohesive/goblin.webp';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
 
 interface OrderOpsArenaGameProps {
@@ -37,7 +37,6 @@ const ENEMY_HEALTH_BY_LEVEL: Record<number, number> = {
   3: 7,
   4: 8,
   5: 9,
-  6: 10,
 };
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
@@ -58,13 +57,15 @@ const makeOptions = (correct: number) => {
 };
 
 const createOpsRound = (levelId: number): OpsRound => {
-  const modes = ['mixed', 'brackets', 'doubleMultiply'] as const;
-  const mode = modes[randomInt(0, Math.min(modes.length - 1, 1 + Math.floor(levelId / 2)))] as typeof modes[number];
+  const tier = Math.max(1, Math.min(5, levelId));
+  const factorMax = [3, 5, 7, 10, 12][tier - 1];
+  const modes = tier === 1 ? ['mixed'] as const : tier === 2 ? ['mixed', 'brackets'] as const : ['mixed', 'brackets', 'doubleMultiply'] as const;
+  const mode = modes[randomInt(0, modes.length - 1)];
 
   if (mode === 'brackets') {
-    const a = randomInt(2, 12);
-    const b = randomInt(2, 10);
-    const c = randomInt(2, 7);
+    const a = randomInt(2, 3 + tier * 2);
+    const b = randomInt(2, factorMax);
+    const c = randomInt(2, Math.min(9, tier + 3));
     const answer = (a + b) * c;
     return {
       expression: `(${a} + ${b}) * ${c}`,
@@ -75,10 +76,10 @@ const createOpsRound = (levelId: number): OpsRound => {
   }
 
   if (mode === 'doubleMultiply') {
-    const a = randomInt(2, 10);
-    const b = randomInt(2, 8);
-    const c = randomInt(2, 9);
-    const d = randomInt(2, 7);
+    const a = randomInt(2, factorMax);
+    const b = randomInt(2, Math.max(3, factorMax - 2));
+    const c = randomInt(2, factorMax);
+    const d = randomInt(2, Math.max(3, factorMax - 3));
     const answer = (a * b) + (c * d);
     return {
       expression: `${a} * ${b} + ${c} * ${d}`,
@@ -88,13 +89,13 @@ const createOpsRound = (levelId: number): OpsRound => {
     };
   }
 
-  const a = randomInt(10, 45);
-  const b = randomInt(2, 10);
-  const c = randomInt(2, 7);
-  const d = randomInt(1, 14);
+  const a = randomInt(tier === 1 ? 2 : 5, 12 + tier * 7);
+  const b = randomInt(2, factorMax);
+  const c = randomInt(2, Math.min(9, tier + 2));
+  const d = tier === 1 ? 0 : randomInt(1, Math.min(tier * 2, a + b * c - 1));
   const answer = a + (b * c) - d;
   return {
-    expression: `${a} + ${b} * ${c} - ${d}`,
+    expression: `${a} + ${b} * ${c}${d ? ` - ${d}` : ''}`,
     answer,
     options: makeOptions(answer),
     hint: 'Multiply before add or subtract.',
@@ -108,8 +109,9 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
   onGameOver,
   onBack: _onBack,
 }) => {
-  const maxEnemyHealth = ENEMY_HEALTH_BY_LEVEL[levelId] || 7;
-  const initialTime = 76 + (levelId * 7);
+  const tier = Math.max(1, Math.min(5, levelId));
+  const maxEnemyHealth = ENEMY_HEALTH_BY_LEVEL[tier];
+  const initialTime = 76 + (tier * 7);
   const targetScore = maxEnemyHealth * 210;
   const timersRef = useRef<number[]>([]);
   const scoreRef = useRef(0);
@@ -123,7 +125,7 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
   const [round, setRound] = useState<OpsRound>(() => createOpsRound(levelId));
   const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [isFinished, setIsFinished] = useState(false);
-  const orderOpsEnemy = useMemo(() => pickBossArt(`order-ops-${levelId}`), [levelId]);
+  const orderOpsEnemy = goblinMonster;
   const roundStartRef = useRef<number>(Date.now());
 
 
@@ -181,6 +183,7 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
         : 1;
 
     confetti({
+      disableForReducedMotion: true,
       particleCount: 120,
       spread: 70,
       origin: { y: 0.64 },

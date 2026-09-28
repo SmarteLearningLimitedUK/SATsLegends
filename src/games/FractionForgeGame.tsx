@@ -108,9 +108,12 @@ const createRowAnchors = (
 };
 
 const makeRound = (level: number, roundIndex: number): RoundState => {
-  const maxCards = Math.min(5, 3 + Math.floor((level + roundIndex - 1) / 4));
-  const allowImproper = level >= 6 || roundIndex >= 5;
-  const pool = allowImproper ? FRACTION_POOL : FRACTION_POOL.filter(([n, d]) => n < d);
+  const tier = Math.max(1, Math.min(5, level));
+  const maxCards = [3, 3, 4, 4, 5][tier - 1];
+  const pool = tier === 1 ? FRACTION_POOL.filter(([n, d]) => n === 1 && d <= 4)
+    : tier === 2 ? FRACTION_POOL.filter(([n, d]) => n < d && d <= 5)
+      : tier === 3 ? FRACTION_POOL.filter(([n, d]) => n < d)
+        : tier === 4 ? FRACTION_POOL.filter(([, d]) => d <= 5) : FRACTION_POOL;
   const picked = shuffle([...pool]).slice(0, maxCards);
 
   const cards: FractionCard[] = picked.map(([numerator, denominator], idx) => ({
@@ -203,7 +206,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
   scoreRef.current = XP;
 
   const resolvedLevel = useMemo(
-    () => Math.max(1, Math.min(10, miniGameLevel || levelId || 1)),
+    () => Math.max(1, Math.min(5, miniGameLevel || levelId || 1)),
     [levelId, miniGameLevel],
   );
   const totalRounds = useMemo(() => Math.min(9, 5 + Math.floor(resolvedLevel / 2)), [resolvedLevel]);

@@ -7,6 +7,7 @@ export interface MiniGameSessionState {
   timeLeft: number;
   totalTime: number;
   lives: number;
+  paused?: boolean;
 }
 
 export type MiniGameSessionEventType =

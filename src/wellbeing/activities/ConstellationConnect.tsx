@@ -1,96 +1,53 @@
-import React, { useMemo, useState } from 'react';
-import { motion } from 'motion/react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Star } from 'lucide-react';
 import WellbeingShell from '../WellbeingShell';
 import { WellbeingActivityComponentProps } from '../types';
+import { useWellbeingCompletion } from '../useWellbeingCompletion';
 
 const stars = [
-  { x: 20, y: 55 },
-  { x: 36, y: 35 },
-  { x: 56, y: 28 },
-  { x: 74, y: 44 },
-  { x: 64, y: 66 },
-];
-
-const constellationFacts = [
-  {
-    name: 'The Lantern Path',
-    fact: 'This constellation is used as a sky guide in many old sea stories.',
-  },
-  {
-    name: 'The Grove Crown',
-    fact: 'Some islanders say this pattern marks the beginning of a calm night.',
-  },
-  {
-    name: 'The Wave Walker',
-    fact: 'Constellations were often used to help travellers keep their bearings at night.',
-  },
+  { x: 20, y: 55 }, { x: 36, y: 35 }, { x: 56, y: 28 }, { x: 74, y: 44 }, { x: 64, y: 66 },
 ];
 
 const ConstellationConnect: React.FC<WellbeingActivityComponentProps> = ({ onComplete, onExit }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [showFact, setShowFact] = useState(false);
-  const [factIndex] = useState(() => Math.floor(Math.random() * constellationFacts.length));
-  const lines = useMemo(() => stars.slice(0, currentIndex), [currentIndex]);
-  const constellation = constellationFacts[factIndex];
+  const activeRef = useRef(0);
+  const focusNextRef = useRef(false);
+  const starRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const { finished, finish, cancel } = useWellbeingCompletion(onComplete);
 
-  const handleSelect = (index: number) => {
-    if (index !== currentIndex) return;
-    if (index === stars.length - 1) {
-      setCurrentIndex(stars.length);
-      setShowFact(true);
-      window.setTimeout(() => onComplete(), 2200);
-      return;
-    }
-    setCurrentIndex((value) => value + 1);
+  useEffect(() => {
+    if (focusNextRef.current && currentIndex < stars.length) starRefs.current[currentIndex]?.focus();
+    focusNextRef.current = false;
+  }, [currentIndex]);
+
+  const selectStar = (index: number, keyboard: boolean) => {
+    if (finished || index !== activeRef.current) return;
+    activeRef.current = index + 1;
+    focusNextRef.current = keyboard;
+    setCurrentIndex(index + 1);
+    if (index === stars.length - 1) finish(2200);
   };
 
   return (
-    <WellbeingShell title="Constellation Connect" subtitle="Trace the stars and uncover the sky fact" type="Focus" progress={(currentIndex / stars.length) * 100} onExit={onExit}>
-      <div className="relative flex flex-1 items-center justify-center overflow-hidden p-5">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(255,230,140,0.08),transparent_18%),radial-gradient(circle_at_15%_82%,rgba(255,255,255,0.12),transparent_6%),radial-gradient(circle_at_34%_68%,rgba(255,214,102,0.14),transparent_6%),radial-gradient(circle_at_66%_34%,rgba(229,231,235,0.12),transparent_5%),radial-gradient(circle_at_82%_76%,rgba(250,204,21,0.12),transparent_7%),linear-gradient(180deg,#020202 0%,#06060a 38%,#000000 100%)]" />
-        <div className="pointer-events-none absolute inset-0 opacity-90 [background-image:radial-gradient(rgba(255,215,110,0.9)_0.7px,transparent_0.9px),radial-gradient(rgba(255,255,255,0.75)_0.6px,transparent_0.8px)] [background-position:0 0,8px 8px] [background-size:32px_32px,42px_42px]" />
-        <div className="pointer-events-none absolute left-4 right-4 top-4 z-10 flex justify-center">
-          <div className="rounded-full border border-gold-100/14 bg-black/45 px-4 py-2 text-center text-xs font-bold tracking-[0.14em] text-amber-50/90 backdrop-blur-sm">
-            Trace the stars in order
-          </div>
-        </div>
-        <svg viewBox="0 0 100 100" className="h-full w-full max-w-sm overflow-visible">
-          {lines.map((_, index) => {
-            const from = stars[index];
-            const to = stars[index + 1];
-            if (!to) return null;
-            return <line key={`line-${index}`} x1={from.x} y1={from.y} x2={to.x} y2={to.y} stroke="rgba(165,243,252,0.9)" strokeWidth="2.2" strokeLinecap="round" />;
-          })}
+    <WellbeingShell title="Star Path" activityId="constellation_connect" type="Focus"
+      subtitle="Connect the glowing stars in order, from 1 to 5." purpose="Focus on one point, then the next."
+      affirmation="Small steps can make a clear path."
+      status={finished ? 'Your star path is complete' : 'Stars connected ' + currentIndex + ' of 5 · Next: ' + (currentIndex + 1)}
+      progress={currentIndex / stars.length * 100} onExit={() => { cancel(); onExit(); }}>
+      <div className="wellbeing-scene">
+        <div className="stars-board" data-star-path-step={currentIndex}>
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            {stars.slice(0, Math.max(0, currentIndex - 1)).map((from, index) => <line key={index} x1={from.x} y1={from.y} x2={stars[index + 1].x} y2={stars[index + 1].y} stroke="#d9f3c8" strokeWidth="2.5" strokeLinecap="round" vectorEffect="non-scaling-stroke" />)}
+          </svg>
           {stars.map((star, index) => (
-            <g key={`star-${index}`}>
-              <motion.circle cx={star.x} cy={star.y} r={currentIndex >= index ? 4.6 : 3.6} fill={currentIndex >= index ? '#fef3c7' : 'rgba(191,219,254,0.7)'} animate={{ scale: index === currentIndex ? [1, 1.08, 1] : 1 }} transition={{ duration: 1.6, repeat: Infinity }} />
-              <circle
-                cx={star.x}
-                cy={star.y}
-                r={8}
-                fill="transparent"
-                onPointerDown={() => handleSelect(index)}
-                style={{ cursor: 'pointer' }}
-              />
-            </g>
+            <button key={index} type="button" ref={(node) => { starRefs.current[index] = node; }}
+              onClick={(event) => selectStar(index, event.detail === 0)} className={'star-point' + (index === currentIndex ? ' is-current' : index < currentIndex ? ' is-done' : ' is-future')}
+              style={{ left: star.x + '%', top: star.y + '%' }} data-button-skin="none" data-star-point={index + 1}
+              aria-label={'Connect star ' + (index + 1)} aria-current={index === currentIndex ? 'step' : undefined} aria-disabled={index !== currentIndex || finished}>
+              <Star fill="currentColor" stroke="#315263" strokeWidth={1.6} aria-hidden="true" /><span>{index + 1}</span>
+            </button>
           ))}
-        </svg>
-
-        {showFact ? (
-          <motion.div
-            initial={{ opacity: 0, y: 12, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            className="absolute bottom-5 left-1/2 z-20 w-[min(92%,28rem)] -translate-x-1/2 rounded-[1.6rem] border border-emerald-100/18 bg-[linear-gradient(180deg,rgba(6,78,59,0.82),rgba(8,47,73,0.86))] px-4 py-4 text-center shadow-[0_18px_40px_rgba(2,6,23,0.35)]"
-          >
-            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-100/65">
-              Constellation complete
-            </div>
-            <div className="mt-1 text-lg font-black text-emerald-50">{constellation.name}</div>
-            <div className="mt-2 text-sm font-semibold leading-relaxed text-cyan-50/84">
-              {constellation.fact}
-            </div>
-          </motion.div>
-        ) : null}
+        </div>
       </div>
     </WellbeingShell>
   );

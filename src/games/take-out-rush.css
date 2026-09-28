@@ -1,0 +1,65 @@
+.rush-layout { position: relative; display: flex; flex: 1; min-height: 0; flex-direction: column; gap: 8px; color: #f1faf7; }
+.rush-layout.has-shared-hud { padding-top: calc(env(safe-area-inset-top) + 4.7rem); }
+.rush-mission { flex: 0 0 auto; }
+.rush-local-clock { position: relative; display: flex; justify-content: space-between; overflow: hidden; padding: 7px 12px; background: #0d2d32; border-radius: 10px; font-size: 12px; }
+.rush-local-clock > div { position: absolute; bottom: 0; left: 0; height: 3px; }
+.rush-kitchen { position: relative; flex: 1 1 auto; min-height: 170px; overflow: hidden; isolation: isolate; border: 2px solid #f4cd8270; border-radius: 18px; background: linear-gradient(180deg, #04272810, #082b2960); }
+.rush-kitchen-art { position: absolute; z-index: -2; inset: 0; height: 100%; width: 100%; object-fit: cover; object-position: 50% 54%; }
+.rush-kitchen::after { content: ''; position: absolute; z-index: -1; inset: 0; background: linear-gradient(#082e332b, #082e3310 55%, #05233055); pointer-events: none; }
+.rush-order-rail { position: absolute; z-index: 3; top: 8px; left: 8px; right: 8px; display: flex; justify-content: space-between; gap: 8px; padding: 6px 10px; background: #0a3437eb; border-bottom: 3px solid #dba85c; color: #fff0bb; font-size: 10px; }
+.rush-order-rail strong { color: #b9f1ba; }
+.rush-layout[data-takeout-pressure="last-orders"] .rush-order-rail strong { color: #ffbb83; }
+.rush-customer { position: absolute; right: 7%; bottom: 84px; width: min(62%, 230px); height: calc(100% - 138px); min-height: 68px; }
+.rush-customer img { height: 100%; width: 100%; object-fit: contain; object-position: center bottom; filter: drop-shadow(0 8px 5px #092a3255); transform-origin: 50% 95%; }
+.rush-customer-quip { position: absolute; z-index: 2; top: 1px; left: 50%; width: max-content; max-width: 190px; transform: translateX(-50%); padding: 5px 9px; border: 2px solid #d6b06b; border-radius: 12px; background: #fff0ce; color: #213d3e; text-align: center; font-size: 10px; font-weight: 700; }
+.rush-counter { position: absolute; z-index: 4; left: 0; right: 0; bottom: 0; padding: 8px; border-top: 4px solid #e8ae5e; background: linear-gradient(#875137, #59351f); box-shadow: 0 -5px 14px #071a293d; }
+.rush-tray-label { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 6px; color: #ffefd0; font-size: 10px; }
+.rush-tray-label strong { font-size: 15px; color: #c4ffb2; }
+.rush-tray-label > span:last-child { max-width: 45%; text-align: right; }
+.rush-tray-items { display: grid; gap: 5px; min-height: 46px; padding: 4px 5px; border: 2px solid #819d9b; border-radius: 10px; background: linear-gradient(#d9e6da, #9cb3ad); }
+.rush-tray-items button { position: relative; display: flex; align-items: center; justify-content: center; gap: 3px; min-width: 0; min-height: 44px; padding: 1px 3px; border-radius: 7px; background: #edf1d8; color: #193e3e; font-size: 10px; box-shadow: 0 2px #6e8e87; }
+.rush-tray-items button img { width: 29px; height: 29px; object-fit: contain; }
+.rush-tray-items button span { display: flex; flex-direction: column; }
+.rush-tray-items small { position: absolute; top: 2px; right: 2px; font-size: 16px; color: #79422a; }
+.rush-empty-tray { display: flex; align-items: center; justify-content: center; color: #365452; text-align: center; font-size: 11px; }
+.rush-kitchen.is-overfilled .rush-tray-label strong { color: #ffd397; }
+.rush-kitchen.is-overfilled .rush-counter { border-top-color: #f49e77; }
+.rush-responses { flex: 0 0 auto; width: 100%; max-width: 780px; margin: 0 auto; }
+.rush-food-shelf { display: grid; gap: 6px; padding: 6px; border-bottom: 4px solid #bc8d52; border-radius: 12px; background: #092d34ed; }
+.rush-food-shelf button { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; min-height: 70px; padding: 4px; border: 1px solid #a8d4c980; border-radius: 9px; background: #123f47; box-shadow: 0 3px #031d2a; transition: background .15s; }
+.rush-food-shelf button:hover { background: #235b5e; }
+.rush-food-shelf button:disabled, .rush-tray-items button:disabled { opacity: .65; }
+.rush-food-shelf img { width: 42px; height: 42px; object-fit: contain; }
+.rush-food-shelf strong { color: #ffe5aa; font-size: 14px; }
+.rush-feedback { display: flex; min-height: 29px; align-items: center; justify-content: center; padding: 3px 6px; color: #d8f1de; text-align: center; font-size: 11px; line-height: 1.2; background: #092a31e8; }
+.rush-feedback.is-error { color: #ffd8ad; }
+.rush-actions { display: flex; justify-content: center; gap: 8px; }
+.rush-actions button { min-height: 44px; width: min(42%, 190px); font-size: 12px; }
+.rush-actions button:last-child { width: min(56%, 290px); }
+.rush-steam { position: absolute; left: 23%; bottom: 90px; width: 60px; height: 80px; pointer-events: none; }
+.rush-steam i { position: absolute; bottom: 0; left: 8px; height: 35px; width: 13px; border-radius: 50%; background: #cbffe088; filter: blur(4px); animation: rush-steam-rise 2.5s ease-out infinite; }
+.rush-steam i:nth-child(2) { left: 24px; animation-delay: -.8s; }.rush-steam i:nth-child(3) { left: 40px; animation-delay: -1.6s; }
+@keyframes rush-steam-rise { from { opacity: 0; transform: translateY(8px) scale(.6); } 35% { opacity: .6; } to { opacity: 0; transform: translateY(-65px) scale(1.6); } }
+@media (min-width: 700px) { .rush-kitchen { min-height: 0; }.rush-customer { right: 10%; width: min(39%, 330px); bottom: 112px; height: calc(100% - 176px); }.rush-customer-quip { max-width: 260px; font-size: 13px; }.rush-order-rail { font-size: 13px; padding: 8px 14px; }.rush-counter { padding: 12px 18px; }.rush-tray-label { font-size: 13px; }.rush-tray-items { max-width: 680px; min-height: 60px; }.rush-tray-items button { min-height: 48px; font-size: 13px; }.rush-tray-items button img { width: 40px; height: 40px; }.rush-food-shelf button { min-height: 77px; }.rush-food-shelf img { width: 47px; height: 47px; }.rush-feedback { font-size: 13px; }.rush-steam { left: 24%; bottom: 112px; } }
+@media (prefers-reduced-motion: reduce) { .rush-steam i { animation: none; opacity: .25; }.rush-food-shelf button { transition: none; } }
+
+@media (min-width: 700px) and (max-height: 720px) {
+  .rush-layout { gap: 6px; }
+  .rush-mission { --question-card-padding: 4px 12px; }
+  .rush-mission .game-question-card-inner { display: grid; grid-template-columns: minmax(86px, 1fr) auto minmax(86px, 1fr); gap: 2px 8px; align-items: center; }
+  .rush-mission .game-question-card-title-strip { width: auto; min-height: 0; margin: 0; justify-self: start; }
+  .rush-mission .game-question-copy { grid-column: 2; margin-top: 0; font-size: 18px; }
+  .rush-mission .question-subtitle { grid-column: 1 / -1; margin-top: 0; font-size: 11px; }
+  .rush-order-rail { padding: 6px 12px; font-size: 12px; line-height: 1.25; }
+  .rush-customer { top: 48px; bottom: 78px; height: auto; min-height: 0; }
+  .rush-customer-quip { top: 8px; left: auto; right: calc(50% + 60px); max-width: 200px; transform: none; font-size: 11px; }
+  .rush-counter { display: grid; grid-template-columns: minmax(175px, .6fr) minmax(0, 1fr); align-items: center; gap: 12px; padding: 8px 12px; }
+  .rush-tray-label { flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; margin-bottom: 0; font-size: 11px; line-height: 1.25; }
+  .rush-tray-label > span:last-child { max-width: none; text-align: left; }
+  .rush-tray-items { min-height: 54px; }
+  .rush-tray-items button { min-height: 44px; font-size: 11px; }
+  .rush-tray-items button img { width: 34px; height: 34px; }
+  .rush-food-shelf button { min-height: 70px; }
+  .rush-food-shelf img { width: 42px; height: 42px; }
+  .rush-feedback { font-size: 11px; }
+}

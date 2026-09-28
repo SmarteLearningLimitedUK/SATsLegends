@@ -26,6 +26,7 @@ import { buildAngleQuestions } from '../games/angleArena/questions';
 import { isBossEncounterGameType } from '../games/bossEncounterTypes';
 import { GameScreen, IslandData, LevelData, PlayerData } from '../types';
 import { getLevelGameTitle } from '../utils/gameNames';
+import { getGameDifficulty } from '../systems/content/gameDifficulty';
 import splashPoster from '../assets/casual_ui/splashrep1.png';
 import { LEVEL_TIMERS_DISABLED } from './testingFlags';
 import {
@@ -154,8 +155,10 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       </GameLoadBoundary>
     );
 
+    const difficulty = getGameDifficulty(selectedLevel);
     const sharedProps = {
-      levelId: selectedLevel.id,
+      levelId: difficulty,
+      miniGameLevel: difficulty,
       avatarId: player.avatarId,
       useSharedTopHud: true,
       isPractice: Boolean(selectedLevel.isPractice),
@@ -192,7 +195,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         return renderFromRegistry('AngleArenaGame', {
           ...sharedProps,
           questions: buildAngleQuestions({
-            level: selectedLevel.miniGameLevel || selectedLevel.id,
+            level: difficulty,
             launcherX: 0,
             groundY: 0,
             gravity: 0,
@@ -256,17 +259,9 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         return renderFromRegistry('TowerOfFactorsGame', { ...sharedProps, isBoss: Boolean(selectedLevel.isBoss) });
       case 'place_value_peaks':
         if (selectedLevel.blueprintKey === 'place_value_panic') {
-          const inferredMiniGameLevel = (
-            selectedLevel.miniGameLevel
-            || selectedIsland?.levels
-              .filter((level) => level.blueprintKey === 'place_value_panic')
-              .sort((a, b) => a.id - b.id)
-              .findIndex((level) => level.id === selectedLevel.id) + 1
-            || 1
-          );
           return renderFromRegistry('PlaceValuePanicGame', {
             ...sharedProps,
-            miniGameLevel: inferredMiniGameLevel,
+            miniGameLevel: difficulty,
             isPractice: Boolean(selectedLevel.isPractice),
           });
         }

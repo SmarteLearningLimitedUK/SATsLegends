@@ -1,5 +1,6 @@
 ﻿import React, { useEffect, useMemo, useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import { useLayoutEffect, useRef } from 'react';
+import { AnimatePresence, motion, useIsPresent, useReducedMotion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { Coins } from '../components/GameIcons';
 import AssetIcon from '../components/AssetIcon';
@@ -7,8 +8,9 @@ import { GameScreenShell } from '../layout/ScreenPrimitives';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
 import coordinateQuestBackground from '../assets/maps/premium/coordinates-quest.webp';
+import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
 
-interface TreasurePathGameProps {
+interface TreasurePathGameProps extends MiniGameShellContractProps {
   levelId: number;
   avatarId: string;
   gameTitle?: string;
@@ -32,37 +34,13 @@ interface TreasureRound {
   traps: string[];
 }
 
-const GRID_SIZE = 7;
 const randomInt = (max: number) => Math.floor(Math.random() * max) + 1;
 
 const coordinateKey = (x: number, y: number) => `${x}-${y}`;
 
-const buildMovementRound = () => {
-  let current = { x: randomInt(GRID_SIZE), y: randomInt(GRID_SIZE) };
-  const steps: string[] = [];
-
+const buildMovementRound = (gridSize: number, difficulty: number) => {
+  const start = { x: randomInt(gridSize), y: randomInt(gridSize) };
   const moves = [
-    { label: 'right', dx: 1, dy: 0 },
-    { label: 'left', dx: -1, dy: 0 },
-    { label: 'up', dx: 0, dy: 1 },
-    { label: 'down', dx: 0, dy: -1 },
-  ];
-
-  for (let index = 0; index < 2; index += 1) {
-    const validMoves = moves.filter((move) => {
-      const nextX = current.x + move.dx;
-      const nextY = current.y + move.dy;
-      return nextX >= 1 && nextX <= GRID_SIZE && nextY >= 1 && nextY <= GRID_SIZE;
-    });
-
-    const move = validMoves[Math.floor(Math.random() * validMoves.length)];
-    current = { x: current.x + move.dx, y: current.y + move.dy };
-    steps.push(`Move 1 ${move.label}`);
-  }
-
-  const start = { x: current.x, y: current.y };
-
-  const followMoves = [
     { label: 'right', dx: 1, dy: 0 },
     { label: 'left', dx: -1, dy: 0 },
     { label: 'up', dx: 0, dy: 1 },
@@ -72,37 +50,39 @@ const buildMovementRound = () => {
   let target = { ...start };
   const instructions: string[] = [];
 
-  for (let index = 0; index < 2; index += 1) {
-    const validMoves = followMoves.filter((move) => {
-      const nextX = target.x + move.dx;
-      const nextY = target.y + move.dy;
-      return nextX >= 1 && nextX <= GRID_SIZE && nextY >= 1 && nextY <= GRID_SIZE;
+  const stepCount = difficulty <= 2 ? 1 : difficulty === 3 ? 2 : 3;
+  for (let index = 0; index < stepCount; index += 1) {
+    const distance = difficulty === 5 ? randomInt(2) : 1;
+    const validMoves = moves.filter((move) => {
+      const nextX = target.x + move.dx * distance;
+      const nextY = target.y + move.dy * distance;
+      return nextX >= 1 && nextX <= gridSize && nextY >= 1 && nextY <= gridSize;
     });
 
     const move = validMoves[Math.floor(Math.random() * validMoves.length)];
-    target = { x: target.x + move.dx, y: target.y + move.dy };
-    instructions.push(`Move 1 ${move.label}`);
+    target = { x: target.x + move.dx * distance, y: target.y + move.dy * distance };
+    instructions.push(`Move ${distance} ${move.label}`);
   }
 
   return {
     promptTitle: 'Marker Recovery',
-    promptText: `The Monster Minds have hidden the correct route. X axis runs left to right. Y axis runs bottom to top. Start at (x=${start.x}, y=${start.y}). ${instructions.join('. ')}.`,
+    promptText: `Start at (${start.x}, ${start.y}). ${instructions.join('. ')}. Tap your finishing point.`,
     promptType: 'movement' as const,
     start,
     target,
   };
 };
 
-const generateRound = (): TreasureRound => {
-  const directMode = Math.random() > 0.4;
+const generateRound = (gridSize: number, difficulty: number, translation: boolean): TreasureRound => {
+  const directMode = !translation && (difficulty === 1 || Math.random() > (difficulty >= 4 ? 0.8 : 0.4));
 
   if (directMode) {
-    let target = { x: randomInt(GRID_SIZE), y: randomInt(GRID_SIZE) };
-    const start = { x: randomInt(GRID_SIZE), y: randomInt(GRID_SIZE) };
+    const target = { x: randomInt(gridSize), y: randomInt(gridSize) };
+    const start = { x: randomInt(gridSize), y: randomInt(gridSize) };
 
     return {
       promptTitle: 'Route Recovery',
-      promptText: `The Monster Minds have scrambled the route markers. X axis runs left to right. Y axis runs bottom to top. Move the explorer to (x=${target.x}, y=${target.y}) to restore the path.`,
+      promptText: `Tap (${target.x}, ${target.y}) to restore the route. Read x across first, then y up.`,
       promptType: 'coordinate',
       start,
       target,
@@ -110,7 +90,7 @@ const generateRound = (): TreasureRound => {
     };
   }
 
-  const movement = buildMovementRound();
+  const movement = buildMovementRound(gridSize, difficulty);
   return {
     ...movement,
     traps: [],
@@ -124,13 +104,44 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
   onVictory,
   onGameOver,
   onBack,
+  isPractice,
+  sessionState,
+  sessionEvents,
 }) => {
+  const isPresent = useIsPresent();
+  const reducedMotion = useReducedMotion();
+  const presentRef = useRef(isPresent);
+  presentRef.current = isPresent;
+  const timersRef = useRef(new Set<number>());
+  const endedRef = useRef(false);
+  const answerLockedRef = useRef(false);
+  const attemptsRef = useRef(0);
+  const correctRef = useRef(0);
+  const performanceStars = () => {
+    const accuracy = correctRef.current / Math.max(1, attemptsRef.current);
+    return accuracy >= .9 ? 3 : accuracy >= .7 ? 2 : 1;
+  };
+  const clearTimers = () => { timersRef.current.forEach(window.clearTimeout); timersRef.current.clear(); };
+  const queueTimeout = (callback: () => void, delay: number) => {
+    const id = window.setTimeout(() => {
+      timersRef.current.delete(id);
+      if (presentRef.current && !endedRef.current) callback();
+    }, delay);
+    timersRef.current.add(id);
+  };
+  useLayoutEffect(() => { if (!isPresent) { endedRef.current = true; clearTimers(); } }, [isPresent]);
+  useEffect(() => () => { endedRef.current = true; clearTimers(); }, []);
+  const difficulty = Math.max(1, Math.min(5, levelId));
+  const gridSize = difficulty <= 2 ? 5 : difficulty === 3 ? 6 : 7;
+  const translation = Boolean(gameTitle?.toLowerCase().includes('translation'));
   const [XP, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(115);
   const [roundIndex, setRoundIndex] = useState(0);
-  const [round, setRound] = useState<TreasureRound>(() => generateRound());
+  const [round, setRound] = useState<TreasureRound>(() => generateRound(gridSize, difficulty, translation));
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
-  const [lives, setLives] = useState(3);
+  const [localLives, setLocalLives] = useState(3);
+  const usesSharedLives = Boolean(sessionState && !isPractice);
+  const lives = usesSharedLives ? sessionState!.lives : localLives;
   const [isGameOver, setIsGameOver] = useState(false);
   const [isVictory, setIsVictory] = useState(false);
   const [selectedTile, setSelectedTile] = useState<string | null>(null);
@@ -145,8 +156,8 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
 
   const cells: GridCell[] = useMemo(() => {
     const entries: GridCell[] = [];
-    for (let y = GRID_SIZE; y >= 1; y -= 1) {
-      for (let x = 1; x <= GRID_SIZE; x += 1) {
+    for (let y = gridSize; y >= 1; y -= 1) {
+      for (let x = 1; x <= gridSize; x += 1) {
         entries.push({
           x,
           y,
@@ -155,35 +166,44 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
       }
     }
     return entries;
-  }, [round.traps]);
+  }, [gridSize, round.traps]);
 
   useEffect(() => {
+    endedRef.current = false;
+    answerLockedRef.current = false;
+    attemptsRef.current = 0;
+    correctRef.current = 0;
+    clearTimers();
     setScore(0);
     setTimeLeft(115 + levelId * 6);
     setRoundIndex(0);
-    setRound(generateRound());
+    setRound(generateRound(gridSize, difficulty, translation));
     setFeedback(null);
-    setLives(3);
+    setLocalLives(3);
     setIsGameOver(false);
     setIsVictory(false);
     setSelectedTile(null);
-  }, [levelId]);
+  }, [difficulty, gridSize, levelId, translation]);
 
   useEffect(() => {
-    if (isGameOver || isVictory || feedback) return undefined;
+    if (isGameOver || isVictory || feedback || isPractice || sessionState?.paused || !isPresent) return undefined;
 
     const timer = setInterval(() => {
       setTimeLeft((previous) => {
         if (previous <= 1) {
           clearInterval(timer);
+          if (endedRef.current) return 0;
+          endedRef.current = true;
           if (XP >= targetScore) {
-            const stars = XP >= targetScore * 1.7 ? 3 : XP >= targetScore * 1.25 ? 2 : 1;
+            const stars = performanceStars();
             setIsVictory(true);
+            emitMiniGameSessionEvent(sessionEvents, 'game_complete', { score: XP, stars });
             onVictory(stars, XP);
             return 0;
           }
 
           setIsGameOver(true);
+          emitMiniGameSessionEvent(sessionEvents, 'game_failed', { score: XP, reason: 'time' });
           onGameOver(XP);
           return 0;
         }
@@ -192,61 +212,76 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [feedback, isGameOver, isVictory, onGameOver, onVictory, XP, targetScore]);
+  }, [feedback, isGameOver, isPresent, isPractice, isVictory, onGameOver, onVictory, sessionEvents, sessionState?.paused, XP, targetScore]);
 
   const handleAdvance = (nextScore: number, nextRoundIndex: number) => {
+    if (endedRef.current || !presentRef.current) return;
     if (nextRoundIndex >= 7 || nextScore >= targetScore) {
-      const stars = nextScore >= targetScore * 1.7 ? 3 : nextScore >= targetScore * 1.25 ? 2 : 1;
+      endedRef.current = true;
+      const stars = performanceStars();
       setIsVictory(true);
+      emitMiniGameSessionEvent(sessionEvents, 'game_complete', { score: nextScore, stars });
       onVictory(stars, nextScore);
       return;
     }
 
     setRoundIndex(nextRoundIndex);
-    setRound(generateRound());
+    setRound(generateRound(gridSize, difficulty, translation));
     setSelectedTile(null);
     setFeedback(null);
+    answerLockedRef.current = false;
   };
 
   const handleTileTap = (x: number, y: number) => {
-    if (feedback) return;
+    if (feedback || answerLockedRef.current || endedRef.current || !isPresent || sessionState?.paused) return;
+    answerLockedRef.current = true;
+    attemptsRef.current += 1;
 
     const key = coordinateKey(x, y);
     setSelectedTile(key);
 
     if (x === round.target.x && y === round.target.y) {
+      correctRef.current += 1;
       const nextScore = XP + 150 + Math.max(0, timeLeft);
       const nextRoundIndex = roundIndex + 1;
 
       setFeedback('correct');
       setScore(nextScore);
-      confetti({
+      emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { metadata: { x, y } });
+      emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete');
+      if (!reducedMotion) confetti({
         particleCount: 55,
         spread: 52,
         origin: { y: 0.62 },
         colors: ['#fde047', '#4ade80', '#38bdf8'],
       });
 
-      window.setTimeout(() => handleAdvance(nextScore, nextRoundIndex), 1100);
+      queueTimeout(() => handleAdvance(nextScore, nextRoundIndex), 1100);
       return;
     }
 
     const remainingLives = lives - 1;
+    emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { metadata: { x, y } });
     setFeedback('incorrect');
-    setLives(remainingLives);
+    if (!usesSharedLives && !isPractice) setLocalLives(remainingLives);
     setScore((previous) => Math.max(0, previous - 35));
 
-    if (remainingLives <= 0) {
-      window.setTimeout(() => {
+    if (!isPractice && remainingLives <= 0) {
+      queueTimeout(() => {
+        endedRef.current = true;
         setIsGameOver(true);
-        onGameOver(Math.max(0, XP - 35));
+        if (!usesSharedLives) {
+          emitMiniGameSessionEvent(sessionEvents, 'game_failed', { score: Math.max(0, XP - 35), reason: 'lives' });
+          onGameOver(Math.max(0, XP - 35));
+        }
       }, 700);
       return;
     }
 
-    window.setTimeout(() => {
+    queueTimeout(() => {
       setFeedback(null);
       setSelectedTile(null);
+      answerLockedRef.current = false;
     }, 800);
   };
 
@@ -270,8 +305,8 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
               <div className="w-8 shrink-0" />
               <div className="min-w-0 flex-1">
                 <div className="mb-1 text-center uppercase tracking-[0.22em]">x-axis</div>
-                <div className="grid grid-cols-7 text-center" aria-label="X coordinates increase from 1 to 7">
-                  {Array.from({ length: GRID_SIZE }, (_, index) => <span key={index + 1}>{index + 1}</span>)}
+                <div className="grid text-center" style={{ gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))` }} aria-label={`X coordinates increase from 1 to ${gridSize}`}>
+                  {Array.from({ length: gridSize }, (_, index) => <span key={index + 1}>{index + 1}</span>)}
                 </div>
               </div>
             </div>
@@ -280,8 +315,8 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                 <div className="flex w-3 items-center justify-center">
                   <span className="-rotate-90 whitespace-nowrap uppercase tracking-[0.22em]">y-axis</span>
                 </div>
-                <div className="grid min-h-0 flex-1 grid-rows-7 text-center" aria-label="Y coordinates increase from 1 at the bottom to 7 at the top">
-                  {Array.from({ length: GRID_SIZE }, (_, index) => <span key={GRID_SIZE - index} className="flex items-center justify-center">{GRID_SIZE - index}</span>)}
+                <div className="grid min-h-0 flex-1 text-center" style={{ gridTemplateRows: `repeat(${gridSize}, minmax(0, 1fr))` }} aria-label={`Y coordinates increase from 1 at the bottom to ${gridSize} at the top`}>
+                  {Array.from({ length: gridSize }, (_, index) => <span key={gridSize - index} className="flex items-center justify-center">{gridSize - index}</span>)}
                 </div>
               </div>
               <div className="relative min-h-0 flex-1 rounded-[1.2rem] border border-cyan-100/14">
@@ -293,11 +328,11 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                       'linear-gradient(to right, rgba(191,219,254,0.38) 1px, transparent 1px)',
                       'linear-gradient(to bottom, rgba(191,219,254,0.38) 1px, transparent 1px)',
                     ].join(', '),
-                    backgroundSize: 'calc(100% / 7) calc(100% / 7)',
+                    backgroundSize: `calc(100% / ${gridSize}) calc(100% / ${gridSize})`,
                     backgroundPosition: '0 0',
                   }}
                 />
-                <div className="absolute inset-0 z-10 grid grid-cols-7 grid-rows-7 overflow-hidden rounded-[1.2rem]">
+                <div className="absolute inset-0 z-10 grid overflow-hidden rounded-[1.2rem]" style={{ gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${gridSize}, minmax(0, 1fr))` }}>
               {cells.map((cell) => {
                 const key = coordinateKey(cell.x, cell.y);
                 const isStart = cell.x === round.start.x && cell.y === round.start.y;

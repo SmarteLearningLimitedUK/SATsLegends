@@ -28,6 +28,9 @@ import {
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import dataDetectiveBackground from '../assets/maps/premium/data-detective.webp';
+import SceneEnvironment from '../components/SceneEnvironment';
+import MonsterMindActor from '../components/game-ui/MonsterMindActor';
+import { COHESIVE_ENEMIES } from '../assets/enemies/cohesive';
 
 interface StolenItem {
   name: string;
@@ -72,15 +75,8 @@ const ITEMS = [
 
 const MONSTER_COLORS = ['bg-emerald-500', 'bg-blue-500', 'bg-purple-500', 'bg-rose-500'];
 
-const MONSTER_NAMES = ['Grumpy Green', 'Blue Blob', 'Purple Prowler', 'Red Rogue'];
-const loadSortedImages = (record: Record<string, string>) => (
-  Object.entries(record)
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([, value]) => value)
-);
-const MUGSHOT_IMAGES = loadSortedImages(
-  import.meta.glob('../assets/datadetective/mugshots/*.png', { eager: true, import: 'default' }) as Record<string, string>,
-);
+const MONSTER_NAMES = ['Grumpy Green', 'Vault Rhino', 'Crystal Jelly', 'Slime Sneak'];
+const MUGSHOT_IMAGES = [COHESIVE_ENEMIES.goblin, COHESIVE_ENEMIES.rhino, COHESIVE_ENEMIES.jelly, COHESIVE_ENEMIES.cyclopsSlime];
 const DETECTIVE_BRIEFS = [
   'Match the evidence totals to the suspect report.',
   'Check the chart carefully before accusing.',
@@ -103,11 +99,13 @@ const scoreToStars = (XP: number) => {
 };
 
 const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
+  levelId,
   useSharedTopHud = false,
   onVictory,
   onGameOver,
   onBack,
 }) => {
+  const difficulty = Math.max(1, Math.min(5, levelId));
   const [XP, setScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [gameState, setGameState] = useState<'playing' | 'success' | 'complete'>('playing');
@@ -124,8 +122,9 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(useSharedTopHud));
 
   const maxCaseValue = Math.max(...currentCase.map((item) => item.amount), 0);
-  const barAxisMax = Math.max(1, maxCaseValue);
-  const barTicks = Array.from({ length: barAxisMax + 1 }, (_, index) => index);
+  const tickStep = difficulty <= 2 ? 1 : difficulty === 3 ? 2 : 5;
+  const barAxisMax = Math.max(tickStep, Math.ceil(maxCaseValue / tickStep) * tickStep);
+  const barTicks = Array.from({ length: barAxisMax / tickStep + 1 }, (_, index) => index * tickStep);
 
   const generateCase = useCallback(() => {
     const nextMode: CaseMode = Math.random() > 0.5 ? 'detective' : 'whodunnit';
@@ -133,17 +132,19 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
     setCaseBrief(nextMode === 'whodunnit'
       ? WHODUNNIT_BRIEFS[Math.floor(Math.random() * WHODUNNIT_BRIEFS.length)]
       : DETECTIVE_BRIEFS[Math.floor(Math.random() * DETECTIVE_BRIEFS.length)]);
-    setChartType(Math.random() > 0.5 ? 'bar' : 'pie');
+    setChartType(difficulty <= 2 || Math.random() > 0.5 ? 'bar' : 'pie');
+
+    const maxAmount = [0, 5, 8, 12, 20, 30][difficulty];
 
     const caseData = ITEMS.map(item => ({
       ...item,
-      amount: Math.floor(Math.random() * 10) + 2,
+      amount: Math.floor(Math.random() * maxAmount) + 1,
     }));
     setCurrentCase(caseData);
 
     const correctIdx = Math.floor(Math.random() * 4);
     const mugshotPool = MUGSHOT_IMAGES.length
-      ? shuffle(MUGSHOT_IMAGES)
+      ? MUGSHOT_IMAGES
       : [];
     const shuffledMugshots = mugshotPool.length >= 4
       ? mugshotPool.slice(0, 4)
@@ -161,7 +162,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
 
       let randomItems: number[];
       do {
-        randomItems = caseData.map(() => Math.floor(Math.random() * 10) + 2);
+        randomItems = caseData.map(() => Math.floor(Math.random() * maxAmount) + 1);
       } while (JSON.stringify(randomItems) === JSON.stringify(caseData.map(d => d.amount)));
 
       return {
@@ -178,7 +179,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
     setFeedback(null);
     setSelectedSuspectId(null);
     setIncorrectSuspectIds([]);
-  }, []);
+  }, [difficulty]);
 
   const startGame = () => {
     setScore(0);
@@ -244,13 +245,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
 
   return (
     <div className="relative h-full w-full min-h-0 text-slate-100">
-      <img
-        src={dataDetectiveBackground}
-        alt=""
-        aria-hidden="true"
-        draggable={false}
-        className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
-      />
+      <SceneEnvironment src={dataDetectiveBackground} />
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Data Detective"
@@ -345,8 +340,9 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                           <XAxis
                             dataKey="name"
                             stroke="#a8a29e"
-                            fontSize={17}
-                            tick={false}
+                            fontSize={14}
+                            tick={{ fill: '#f1f5f9' }}
+                            tickFormatter={(name) => String(name).split(' ').at(-1) || String(name)}
                             tickLine={false}
                             axisLine={false}
                             interval={0}
@@ -354,6 +350,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                           <YAxis
                             ticks={barTicks}
                             domain={[0, barAxisMax]}
+                            interval={0}
                             stroke="#a8a29e"
                             fontSize={17}
                             tickLine={false}
@@ -459,12 +456,12 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                   >
                     <div className="relative flex h-full w-full items-center justify-center overflow-visible rounded-[0.95rem] border border-white/16 bg-slate-950/40 p-0.75 shadow-lg max-[480px]:rounded-[0.85rem] max-[480px]:p-0.25">
                       {suspect.portrait ? (
-                        <img
+                        <MonsterMindActor
                           src={suspect.portrait}
-                          alt=""
-                          draggable={false}
-                          className="suspect-portrait block h-full w-full max-h-full max-w-full translate-y-[8px] object-contain object-center"
-                          data-suspect-portrait="true"
+                          alt={suspect.name}
+                          reaction={gameState === 'success' && suspect.id === guiltyId ? 'defeated' : selectedSuspectId === suspect.id ? 'taunt' : 'idle'}
+                          reactionKey={`${level}-${selectedSuspectId}-${gameState}`}
+                          className="h-full w-full"
                         />
                       ) : (
                         <div className={`flex h-full w-full translate-y-[8px] items-center justify-center ${suspect.color}/20`}>
@@ -519,12 +516,12 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                   <div className="flex items-center gap-3">
                     <div className="flex h-20 w-20 items-center justify-center overflow-visible rounded-2xl border border-white/20 bg-slate-950/40 p-1.5 max-[480px]:h-20 max-[480px]:w-20 max-[480px]:p-1">
                       {selectedSuspect.portrait && (
-                        <img
+                        <MonsterMindActor
                           src={selectedSuspect.portrait}
-                          alt=""
-                          draggable={false}
-                          className="suspect-portrait block h-full w-full max-h-full max-w-full object-contain object-center"
-                          data-suspect-portrait="true"
+                          alt={selectedSuspect.name}
+                          reaction="taunt"
+                          reactionKey={`${level}-${selectedSuspectId}`}
+                          className="h-full w-full"
                         />
                       )}
                     </div>

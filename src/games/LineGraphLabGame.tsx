@@ -66,12 +66,14 @@ const shuffle = <T,>(items: T[]) => {
 };
 
 const generateGraph = (level: number): DataPoint[] => {
-  const base = 10 + (level * 2);
-  const values = [base, base + 4, base + 8, base + 12, base + 9];
+  const base = [0, 1, 2, 10, 16, 24][clamp(level, 1, 5)];
+  const values = level <= 2
+    ? [base, base + 1, base + 3, base + 6, base + 4]
+    : [base, base + 2, base + 6, base + 14, base + 9];
 
   return values.map((value, index) => ({
     label: X_AXIS_LABELS[index],
-    value: clamp(Math.round(value / 2) * 2, 8, 40),
+    value,
   }));
 };
 
@@ -90,12 +92,11 @@ const uniqueLowestIndex = (graph: DataPoint[]) => {
 const buildValueQuestion = (graph: DataPoint[]): RoundData => {
   const targetIndex = 3;
   const target = graph[targetIndex];
-  const wrongs = shuffle([
-    `${clamp(target.value - 10, 0, 100)}`,
-    `${clamp(target.value + 10, 0, 100)}`,
-    `${clamp(target.value + 20, 0, 100)}`,
-    `${clamp(target.value - 20, 0, 100)}`,
-  ]).filter(value => Number(value) !== target.value);
+  const delta = target.value <= 10 ? 1 : 2;
+  const wrongs = shuffle([...new Set([
+    Math.max(0, target.value - delta), target.value + delta,
+    target.value + delta * 2, Math.max(0, target.value - delta * 2),
+  ])]).filter(value => value !== target.value).map(String);
 
   const options = shuffle([`${target.value}`, ...wrongs.slice(0, 3)]);
   return {
@@ -113,10 +114,10 @@ const buildReadingPointQuestion = (graph: DataPoint[]): RoundData => {
   const coordinate = `(${target.label}, ${target.value})`;
   const wrongs = shuffle([
     `(${graph[1].label}, ${target.value})`,
-    `(${target.label}, ${clamp(target.value + 4, 8, 40)})`,
+    `(${target.label}, ${target.value + 2})`,
     `(${graph[3].label}, ${target.value})`,
-    `(${target.label}, ${clamp(target.value - 4, 8, 40)})`,
-  ]).filter((value) => value !== coordinate);
+    `(${target.label}, ${Math.max(0, target.value - 2)})`,
+  ]).filter((value, index, values) => value !== coordinate && values.indexOf(value) === index);
 
   return {
     graph,
@@ -190,15 +191,15 @@ const generateRound = (level: number): RoundData => {
     attempts += 1;
     graph = generateGraph(level);
     const allowedTypes =
-      level <= 2
+      level === 1
         ? ['basic_reading'] as const
-        : level === 3
-          ? ['reading_point'] as const
-          : level === 4
-            ? ['interpretation'] as const
-            : level <= 6
+        : level === 2
+          ? ['basic_reading', 'reading_point'] as const
+          : level === 3
               ? ['basic_reading', 'reading_point', 'interpretation'] as const
-          : QUESTION_TYPES;
+              : level === 4
+                ? ['interpretation', 'comparison'] as const
+                : QUESTION_TYPES;
     const type = allowedTypes[Math.floor(Math.random() * allowedTypes.length)];
 
     if (type === 'basic_reading') built = buildValueQuestion(graph);
@@ -211,7 +212,7 @@ const generateRound = (level: number): RoundData => {
 };
 
 const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
-  levelId: _levelId,
+  levelId,
   avatarId: _avatarId,
   useSharedTopHud: _useSharedTopHud = false,
   isPractice,
@@ -220,6 +221,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   onGameOver: _onGameOver,
   onBack,
 }) => {
+  const difficulty = clamp(levelId, 1, 5);
   const [XP, setXP] = useState(0);
   const [level, setLevel] = useState(1);
   const [gameState, setGameState] = useState<'playing' | 'success' | 'complete'>('playing');
@@ -230,12 +232,12 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   const [chartSize, setChartSize] = useState({ width: 0, height: 0 });
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
-  const loadLevel = useCallback((targetLevel: number) => {
-    setRound(generateRound(targetLevel));
+  const loadLevel = useCallback((_targetLevel: number) => {
+    setRound(generateRound(difficulty));
     setSelectedAnswer(null);
     setFeedback(null);
     setGameState('playing');
-  }, []);
+  }, [difficulty]);
 
   useEffect(() => {
     loadLevel(1);
@@ -294,12 +296,12 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   };
 
   const yTicks = useMemo(() => {
-    if (!round) return [0, 20, 40, 60, 80, 100];
+    if (!round) return [0, 1, 2, 3, 4, 5];
     const maxValue = Math.max(...round.graph.map(point => point.value));
-    const ceiling = Math.ceil((maxValue + 8) / 10) * 10;
-    const top = clamp(ceiling, 40, 100);
-    return Array.from({ length: 6 }, (_, index) => Math.round((top / 5) * index));
-  }, [round]);
+    const step = difficulty <= 2 ? 1 : 5;
+    const top = Math.ceil(maxValue / step) * step;
+    return Array.from({ length: top / step + 1 }, (_, index) => index * step);
+  }, [difficulty, round]);
 
   return (
     <GameUiShell backgroundImage={lineGraphLabBackground} overlayDisabled className="bg-transparent">
@@ -340,18 +342,20 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.22)" />
                         <XAxis
                           dataKey="label"
-                          tick={{ fill: '#dbeafe', fontSize: 12, fontWeight: 700 }}
+                          interval={0}
+                          tick={{ fill: '#e8f3ff', fontSize: 14, fontWeight: 700 }}
                           axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
                           tickLine={{ stroke: 'rgba(191,219,254,0.45)' }}
-                          label={{ value: 'X Axis', position: 'insideBottom', offset: -6, fill: '#93c5fd', fontSize: 12, fontWeight: 800 }}
+                          label={{ value: 'Time', position: 'insideBottom', offset: -6, fill: '#c0e2ff', fontSize: 14, fontWeight: 800 }}
                         />
                         <YAxis
                           ticks={yTicks}
                           domain={[0, yTicks[yTicks.length - 1]]}
-                          tick={{ fill: '#dbeafe', fontSize: 12, fontWeight: 700 }}
+                          interval={0}
+                          tick={{ fill: '#e8f3ff', fontSize: 14, fontWeight: 700 }}
                           axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
                           tickLine={{ stroke: 'rgba(191,219,254,0.45)' }}
-                          label={{ value: 'Y Axis', angle: -90, position: 'insideLeft', fill: '#93c5fd', fontSize: 12, fontWeight: 800 }}
+                          label={{ value: 'Units', angle: -90, position: 'insideLeft', fill: '#c0e2ff', fontSize: 14, fontWeight: 800 }}
                           width={42}
                         />
                         <Line

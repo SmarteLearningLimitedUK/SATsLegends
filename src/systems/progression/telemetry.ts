@@ -54,8 +54,8 @@ const normalizeTopicTags = (tags: string[]) => Array.from(new Set(tags.map(tag =
 export const createTelemetryState = (seed?: PlayerTelemetry): PlayerTelemetry => ({
   ...DEFAULT_TELEMETRY,
   ...(seed || {}),
-  topicStats: { ...(seed?.topicStats || {}) },
-  gameStats: { ...(seed?.gameStats || {}) },
+  topicStats: Object.fromEntries(Object.entries(seed?.topicStats || {}).map(([id, stat]) => [id, { ...stat }])),
+  gameStats: Object.fromEntries(Object.entries(seed?.gameStats || {}).map(([id, stat]) => [id, { ...stat }])),
 });
 
 export const ensureTelemetry = (player: PlayerData): PlayerTelemetry => (

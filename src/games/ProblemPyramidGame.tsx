@@ -44,8 +44,9 @@ const shuffle = <T,>(items: T[]) => {
 };
 
 const buildRound = (level: number, round: number): PyramidRound => {
-  const min = level <= 2 ? 2 : level <= 5 ? 4 : 6;
-  const max = level <= 2 ? 8 : level <= 5 ? 12 : 18;
+  const tier = Math.max(1, Math.min(5, level));
+  const min = [1, 2, 3, 4, 6][tier - 1];
+  const max = [4, 8, 12, 18, 30][tier - 1];
   const base: [number, number, number] = [
     clamp(min + Math.floor(Math.random() * (max - min + 1)), min, max),
     clamp(min + Math.floor(Math.random() * (max - min + 1)), min, max),

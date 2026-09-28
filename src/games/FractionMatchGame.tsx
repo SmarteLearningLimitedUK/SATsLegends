@@ -140,21 +140,23 @@ const wouldCreateImmediateMatch = (board: BoardCell[], row: number, col: number,
   return false;
 };
 
-const pickTileLabel = (type: GemType, includeDecimals: boolean) => {
-  const pool = includeDecimals
-    ? GEM_VALUE_POOLS[type]
-    : GEM_VALUE_POOLS[type].filter((option) => option.format !== 'decimal');
+const pickTileLabel = (type: GemType, tier: number) => {
+  const values = GEM_VALUE_POOLS[type];
+  const pool = tier === 1 ? values.slice(0, 1)
+    : tier === 2 ? values.filter((option) => option.format === 'fraction')
+      : tier === 3 ? values.filter((option) => option.format !== 'decimal')
+        : tier === 4 ? values.filter((option) => option.format !== 'percentage') : values;
 
   const selected = pool[Math.floor(Math.random() * pool.length)] ?? GEM_VALUE_POOLS[type][0];
   return selected.label;
 };
 
-const buildCell = (type: GemType, includeDecimals: boolean): GemCell => ({
+const buildCell = (type: GemType, tier: number): GemCell => ({
   type,
-  label: pickTileLabel(type, includeDecimals),
+  label: pickTileLabel(type, tier),
 });
 
-const createInitialBoard = (includeDecimals: boolean): BoardCell[] => {
+const createInitialBoard = (tier: number): BoardCell[] => {
   const board: BoardCell[] = Array.from({ length: GRID_ROWS * GRID_COLS }, () => null);
 
   for (let row = 0; row < GRID_ROWS; row += 1) {
@@ -162,7 +164,7 @@ const createInitialBoard = (includeDecimals: boolean): BoardCell[] => {
       const candidates = GEM_TYPES.filter((gemType) => !wouldCreateImmediateMatch(board, row, col, gemType));
       const chosenPool = candidates.length > 0 ? candidates : GEM_TYPES;
       const chosenType = chosenPool[Math.floor(Math.random() * chosenPool.length)];
-      board[indexFor(row, col)] = buildCell(chosenType, includeDecimals);
+      board[indexFor(row, col)] = buildCell(chosenType, tier);
     }
   }
 
@@ -251,7 +253,7 @@ const MatchGameShell: React.FC<{
 }) => {
   return (
     <div className="relative h-full w-full select-none overflow-hidden font-sans text-white">
-      <GameplaySceneBackdrop gameType={variantGameType} className="opacity-45 [&_img]:!object-cover" />
+      <GameplaySceneBackdrop gameType={variantGameType} className="opacity-45" />
 
       <div className="pointer-events-none absolute inset-0">
         {[...Array(20)].map((_, idx) => (
@@ -399,19 +401,18 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   const fireTimeoutRef = useRef<number | null>(null);
   const lastMatchAtRef = useRef<number | null>(null);
 
-  const resolvedLevel = useMemo(() => Math.max(1, miniGameLevel || levelId || 1), [levelId, miniGameLevel]);
+  const resolvedLevel = useMemo(() => Math.max(1, Math.min(5, miniGameLevel || levelId || 1)), [levelId, miniGameLevel]);
   const targetScore = useMemo(() => BASE_TARGET_SCORE + (resolvedLevel * TARGET_SCORE_STEP), [resolvedLevel]);
   const levelName = useMemo(() => `Match ${Math.max(1, resolvedLevel)}`, [resolvedLevel]);
-  const includeDecimals = resolvedLevel >= 3;
 
   const makeRandomCell = useCallback(() => {
     const randomType = GEM_TYPES[Math.floor(Math.random() * GEM_TYPES.length)];
-    return buildCell(randomType, includeDecimals);
-  }, [includeDecimals]);
+    return buildCell(randomType, resolvedLevel);
+  }, [resolvedLevel]);
 
   const resetBoard = useCallback(() => {
     endedRef.current = false;
-    setBoard(createInitialBoard(includeDecimals));
+    setBoard(createInitialBoard(resolvedLevel));
     setSelectedIdx(null);
     setScore(0);
     setIsProcessing(false);
@@ -420,7 +421,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
     lastMatchAtRef.current = null;
     if (fireTimeoutRef.current !== null) window.clearTimeout(fireTimeoutRef.current);
     fireTimeoutRef.current = null;
-  }, [includeDecimals]);
+  }, [resolvedLevel]);
 
   useEffect(() => {
     resetBoard();

@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import React, { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { motion, useIsPresent, useReducedMotion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import { ChevronLeft, CircleDollarSign, Zap } from 'lucide-react';
+import { ChevronLeft, CircleDollarSign } from 'lucide-react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import percentPowerBackground from '../assets/maps/premium/percent-power.webp';
 import { triggerHaptic } from '../haptics';
@@ -11,6 +11,7 @@ import {
   emitMiniGameSessionEvent,
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
+import './game-refinements.css';
 
 interface PercentPowerGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -74,9 +75,11 @@ const scoreToStars = (accuracy: number, remainingLives: number) => {
   return 1;
 };
 
-const buildDirectQuestion = (): PercentPowerQuestion => {
-  const percent = [10, 20, 25, 40, 50, 75][randomInt(0, 5)];
-  const amount = [40, 60, 80, 100, 120, 160, 200][randomInt(0, 6)];
+const buildDirectQuestion = (tier: number): PercentPowerQuestion => {
+  const percentages = tier === 1 ? [10, 50] : tier === 2 ? [10, 25, 50, 75] : [10, 20, 25, 40, 50, 75];
+  const amounts = tier === 1 ? [20, 40, 60, 80, 100] : tier === 2 ? [40, 80, 100, 120, 160] : [60, 120, 160, 200, 240, 320];
+  const percent = percentages[randomInt(0, percentages.length - 1)];
+  const amount = amounts[randomInt(0, amounts.length - 1)];
   const answer = (amount * percent) / 100;
   const { options, answerIndex } = makeOptions(
     `${answer}`,
@@ -95,8 +98,9 @@ const buildDirectQuestion = (): PercentPowerQuestion => {
   };
 };
 
-const buildReverseQuestion = (): PercentPowerQuestion => {
-  const percent = [10, 20, 25, 40, 50][randomInt(0, 4)];
+const buildReverseQuestion = (tier: number): PercentPowerQuestion => {
+  const percentages = tier === 3 ? [10, 25, 50] : [10, 20, 25, 40, 50];
+  const percent = percentages[randomInt(0, percentages.length - 1)];
   const whole = [80, 120, 160, 200, 240, 320][randomInt(0, 5)];
   const part = (whole * percent) / 100;
   const { options, answerIndex } = makeOptions(
@@ -139,12 +143,12 @@ const buildIncreaseQuestion = (): PercentPowerQuestion => {
 
 const buildQuestion = (level: number, round: number): PercentPowerQuestion => {
   if (level <= 2) {
-    return buildDirectQuestion();
+    return buildDirectQuestion(level);
   }
-  if (level <= 4) {
-    return round % 2 === 0 ? buildReverseQuestion() : buildDirectQuestion();
+  if (level === 3 || level === 4) {
+    return round % 2 === 0 ? buildReverseQuestion(level) : buildDirectQuestion(level);
   }
-  return [buildDirectQuestion, buildReverseQuestion, buildIncreaseQuestion][round % 3]();
+  return round % 3 === 0 ? buildDirectQuestion(level) : round % 3 === 1 ? buildIncreaseQuestion() : buildReverseQuestion(level);
 };
 
 const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
@@ -160,7 +164,12 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
   practiceBriefing,
   gameTitle,
 }) => {
-  const resolvedLevel = useMemo(() => Math.max(1, Math.min(10, miniGameLevel || levelId || 1)), [levelId, miniGameLevel]);
+  const resolvedLevel = useMemo(() => Math.max(1, Math.min(5, miniGameLevel || levelId || 1)), [levelId, miniGameLevel]);
+  const reducedMotion = useReducedMotion();
+  const isPresent = useIsPresent();
+  const presentRef = useRef(isPresent);
+  presentRef.current = isPresent;
+  const chamberId = useId().replace(/:/g, '');
   const totalRounds = useMemo(() => Math.min(10, 5 + Math.floor(resolvedLevel / 2)), [resolvedLevel]);
   const [roundNumber, setRoundNumber] = useState(1);
   const [question, setQuestion] = useState<PercentPowerQuestion>(() => buildQuestion(resolvedLevel, 1));
@@ -176,12 +185,25 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
   const scoreRef = useRef(0);
   const didEndRef = useRef(false);
+  const answerLockRef = useRef(false);
+  const timersRef = useRef<number[]>([]);
+  const victoryPendingRef = useRef(false);
+  const observedPositiveLives = useRef((sessionState?.lives ?? 0) > 0);
+  const victoryRef = useRef(onVictory); victoryRef.current = onVictory;
+  const gameOverRef = useRef(onGameOver); gameOverRef.current = onGameOver;
+  const sessionRef = useRef(sessionState); sessionRef.current = sessionState;
+  const clearTimers = () => { timersRef.current.forEach(window.clearTimeout); timersRef.current = []; };
+  useLayoutEffect(() => {
+    if (!isPresent) { didEndRef.current = true; answerLockRef.current = true; victoryPendingRef.current = false; clearTimers(); }
+    return () => clearTimers();
+  }, [isPresent]);
 
   const lives = sessionState?.lives ?? localLives;
   const timeLeft = sessionState?.timeLeft ?? localTimer;
-  const totalTime = sessionState?.totalTime ?? FALLBACK_TIMER;
 
   useEffect(() => {
+    if (!presentRef.current) return;
+    clearTimers(); answerLockRef.current = false; victoryPendingRef.current = false;
     scoreRef.current = XP;
   }, [XP]);
 
@@ -206,8 +228,9 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
   }, [isPractice]);
 
   useEffect(() => {
-    if (sessionState || didEndRef.current) return undefined;
+    if (sessionState || didEndRef.current || !isPresent) return undefined;
     const timerId = window.setInterval(() => {
+      if (!presentRef.current || didEndRef.current) return;
       setLocalTimer((previous) => {
         if (previous <= 1) {
           window.clearInterval(timerId);
@@ -217,21 +240,23 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
       });
     }, 1000);
     return () => window.clearInterval(timerId);
-  }, [sessionState]);
+  }, [isPresent, sessionState]);
 
   useEffect(() => {
-    if (didEndRef.current) return;
+    if ((sessionState?.lives ?? 0) > 0) observedPositiveLives.current = true;
+    if (!isPresent || didEndRef.current || (sessionState && !observedPositiveLives.current)) return;
     if (timeLeft > 0 && lives > 0) return;
     didEndRef.current = true;
+    answerLockRef.current = true; clearTimers(); setLocked(true);
     emitMiniGameSessionEvent(sessionEvents, 'game_failed', {
       score: scoreRef.current,
       reason: timeLeft <= 0 ? 'time' : 'lives',
     });
-    onGameOver(scoreRef.current);
-  }, [lives, onGameOver, sessionEvents, timeLeft]);
+    if (!sessionState) gameOverRef.current(scoreRef.current);
+  }, [isPresent, lives, sessionEvents, sessionState, timeLeft]);
 
   const finishVictory = useCallback((finalScore: number, finalAttempts: number, finalCorrect: number, remainingLives: number) => {
-    if (didEndRef.current) return;
+    if (didEndRef.current || !presentRef.current) return;
     didEndRef.current = true;
     const accuracy = finalAttempts > 0 ? finalCorrect / finalAttempts : 1;
     const stars = scoreToStars(accuracy, remainingLives);
@@ -240,26 +265,33 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
       stars,
       metadata: { accuracy },
     });
-    confetti({
+    if (!reducedMotion) confetti({
       particleCount: 90,
       spread: 54,
       origin: { y: 0.62 },
       colors: ['#67e8f9', '#fef08a', '#ffffff'],
     });
-    window.setTimeout(() => onVictory(stars, finalScore), 320);
-  }, [onVictory, sessionEvents]);
+    victoryPendingRef.current = true;
+    timersRef.current.push(window.setTimeout(() => {
+      if (!presentRef.current || !victoryPendingRef.current || (sessionRef.current && sessionRef.current.lives <= 0 && !isPractice)) return;
+      victoryPendingRef.current = false; victoryRef.current(stars, finalScore);
+    }, 320));
+  }, [isPractice, reducedMotion, sessionEvents]);
 
   const advanceQuestion = useCallback((nextRound: number) => {
+    if (!presentRef.current || didEndRef.current) return;
     const nextQuestion = buildQuestion(resolvedLevel, nextRound);
     setRoundNumber(nextRound);
     setQuestion(nextQuestion);
     setSelectedIndex(null);
     setFeedback(null);
     setLocked(false);
+    answerLockRef.current = false;
   }, [resolvedLevel]);
 
   const handleAnswer = (index: number) => {
-    if (isLocked || didEndRef.current) return;
+    if (answerLockRef.current || didEndRef.current || !presentRef.current || sessionState?.paused || timeLeft <= 0 || (sessionState && !isPractice && lives <= 0)) return;
+    answerLockRef.current = true;
     setLocked(true);
     setSelectedIndex(index);
 
@@ -274,7 +306,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
       setFeedback('correct');
       setScore(nextScore);
       setCorrectAnswers(nextCorrect);
-      setStatusText(`Correct. +${award} power added.`);
+      setStatusText(`Power cell restored. +${award} XP.`);
       triggerHaptic('success');
       emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
         score: nextScore,
@@ -290,14 +322,14 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
         return;
       }
 
-      window.setTimeout(() => {
+      timersRef.current.push(window.setTimeout(() => {
         advanceQuestion(roundNumber + 1);
-      }, 540);
+      }, 540));
       return;
     }
 
     setFeedback('incorrect');
-    setStatusText('Not this one. Recheck the percentage clue.');
+    setStatusText('Pressure vented. Recheck the percentage clue.');
     triggerHaptic('warning');
     emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
       score: XP,
@@ -312,18 +344,16 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
       return;
     }
 
-    window.setTimeout(() => {
+    timersRef.current.push(window.setTimeout(() => {
       if (didEndRef.current) return;
       advanceQuestion(Math.min(totalRounds, roundNumber + 1));
-    }, 620);
+    }, 620));
   };
 
-  const timerProgress = Math.max(0, Math.min(1, timeLeft / Math.max(1, totalTime)));
   const coreFill = Math.max(0, Math.min(1, correctAnswers / Math.max(1, totalRounds)));
-  const corePulse = 1 + (coreFill * 0.12);
 
   return (
-    <div className="relative h-full w-full overflow-hidden text-white">
+    <div className="reactor-game relative h-full w-full overflow-hidden text-white">
       <GameplaySceneBackdrop
         gameType="percent_power"
         backgroundOverride={percentPowerBackground}
@@ -343,7 +373,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
           <button
             type="button"
             onClick={onBack}
-            className="flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-200/45 bg-[#0a1f56]/88 shadow-[0_8px_20px_rgba(0,0,0,0.45)]"
+            className="flex h-11 w-11 items-center justify-center rounded-xl border border-cyan-200/45 bg-[#0a1f56]/88 shadow-[0_8px_20px_rgba(0,0,0,0.45)]"
             aria-label="Back"
           >
             <ChevronLeft className="h-5 w-5 text-cyan-100" />
@@ -357,102 +387,59 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
         </div>
       ) : null}
 
-      <div
-        className={`relative z-20 flex h-full w-full flex-col items-center px-4 pb-[calc(env(safe-area-inset-bottom)+4.4rem)] ${
-          useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+4.75rem)]' : 'pt-[calc(env(safe-area-inset-top)+3.15rem)]'
-        }`}
-      >
-        <div className="w-full max-w-[44rem] px-1">
-          <div className="mt-2">
-            <GameQuestionCard title="Percent Power" className="max-w-[44rem] backdrop-blur-sm">
-              {question.prompt}
-              <span className="block text-sm font-semibold text-cyan-50/80 md:text-base">{question.helper}</span>
-            </GameQuestionCard>
-          </div>
+      <main className="reactor-layout" data-reactor-game data-reactor-tier={resolvedLevel} data-reactor-reaction={feedback || 'idle'} data-reactor-charge={correctAnswers}>
+        <GameQuestionCard title="Restore the reactor" style={{ position: 'relative', top: 0, transform: 'none' }}>
+          {question.prompt}
+        </GameQuestionCard>
+        <div className="reactor-playfield" data-reactor-playfield>
+          <motion.div className="reactor-machine"
+            animate={!reducedMotion && feedback === 'incorrect' ? { x: [0,-5,5,-3,0] } : { x: 0 }} transition={{ duration: .35 }}>
+            <svg viewBox="0 0 360 310" role="img" aria-label={`Reactor. ${correctAnswers} of ${totalRounds} power cells restored. ${question.sideLabel}. ${question.coreLabel}.`}>
+              <defs>
+                <clipPath id={`${chamberId}-chamber`}><rect x="115" y="65" width="130" height="170" rx="34" /></clipPath>
+                <linearGradient id={`${chamberId}-steel`} x1="0" x2="1"><stop stopColor="#526665"/><stop offset=".5" stopColor="#8caca0"/><stop offset="1" stopColor="#425655"/></linearGradient>
+                <linearGradient id={`${chamberId}-power`} x1="0" y1="0" x2="0" y2="1"><stop stopColor="#dbffa4"/><stop offset="1" stopColor="#48b992"/></linearGradient>
+              </defs>
+              <ellipse cx="180" cy="288" rx="132" ry="12" fill="#05191b" opacity=".55"/>
+              <path d="M117 93H67V165H35V233H114M243 93H293V165H325V233H246" fill="none" stroke="#102c30" strokeWidth="25" strokeLinejoin="round"/>
+              <path d="M117 93H67V165H35V233H114M243 93H293V165H325V233H246" fill="none" stroke="#899785" strokeWidth="15" strokeLinejoin="round"/>
+              <path d="M117 93H67V165H35V233H114M243 93H293V165H325V233H246" fill="none" stroke={feedback === 'incorrect' ? '#f2a353' : '#69dcb1'} strokeWidth="5" strokeLinejoin="round"/>
+              <rect x="94" y="37" width="172" height="237" rx="38" fill={`url(#${chamberId}-steel)`} stroke="#132f33" strokeWidth="7"/>
+              <rect x="111" y="61" width="138" height="178" rx="38" fill="#092c31" stroke="#1e4448" strokeWidth="6"/>
+              <g clipPath={`url(#${chamberId}-chamber)`}>
+                <rect x="115" y="65" width="130" height="170" fill="#103c41"/>
+                <motion.rect x="115" y={235 - (38 + coreFill * 132)} width="130" height={38 + coreFill * 132}
+                  fill={`url(#${chamberId}-power)`} animate={!reducedMotion && feedback === 'correct' ? { opacity: [.65,1] } : { opacity: .9 }} transition={{ duration: .4 }}/>
+                <path d="M148 63V235M215 63V235" stroke="#e3ffff" strokeWidth="7" opacity=".15"/>
+                {[0,1,2].map((index) => <motion.circle key={index} cx={150+index*31} cy={205-index*22} r={5+index}
+                  fill="#eeffc0" opacity=".6" animate={!reducedMotion ? { y: [0,-10,0] } : { y: 0 }} transition={{ duration: 2.3 + index*.4, repeat: Infinity }}/>) }
+                <circle cx="180" cy="143" r="33" fill="#102f37" stroke="#cdf6bb" strokeWidth="3"/>
+                <path d="M183 119L166 145H178L174 167L196 138H182Z" fill={feedback === 'incorrect' ? '#f7ac67' : '#d6ff94'}/>
+              </g>
+              {[{x:104,y:54},{x:256,y:54},{x:104,y:255},{x:256,y:255}].map((bolt,index) => <g key={index}><circle cx={bolt.x} cy={bolt.y} r="7" fill="#d7d2a7" stroke="#203a3c" strokeWidth="2"/><path d={`M${bolt.x-3} ${bolt.y}h6`} stroke="#526758" strokeWidth="2"/></g>)}
+              <rect x="105" y="12" width="150" height="40" rx="8" fill="#10363b" stroke="#dfc278" strokeWidth="3"/>
+              <text x="180" y="39" textAnchor="middle" className="reactor-plaque">POWER CELLS</text>
+              <rect x="106" y="249" width="148" height="26" rx="6" fill="#0d2d32" stroke="#213e3f" strokeWidth="2"/>
+              {Array.from({length:10},(_,index) => <rect key={index} data-reactor-segment={index} data-charged={index < Math.round(coreFill*10)}
+                x={114+index*13.6} y="255" width="9" height="13" rx="2" fill={index < Math.round(coreFill*10) ? '#abec78' : '#3d5955'}/>) }
+              <rect x="124" y="78" width="112" height="27" rx="7" fill="#0c3037"/>
+              <text x="180" y="97" textAnchor="middle" className="reactor-core-caption">{question.coreLabel}</text>
+              <text x="180" y="224" textAnchor="middle" className="reactor-plaque">{question.sideLabel}</text>
+              <text x="180" y="304" textAnchor="middle" className="reactor-plaque">{correctAnswers}/{totalRounds} cells restored</text>
+              {feedback === 'incorrect' ? <motion.g data-reactor-vent animate={!reducedMotion ? { y: [0,-14], opacity: [1,0] } : { opacity: .75 }} transition={{ duration: .55 }}>
+                <path d="M40 167q-14-15 0-24q-5-10 7-13M320 167q14-15 0-24q5-10-7-13" fill="none" stroke="#fbdda9" strokeWidth="6" strokeLinecap="round"/>
+              </motion.g> : null}
+            </svg>
+          </motion.div>
         </div>
-
-        <div className="relative mt-2 flex w-full max-w-[44rem] flex-1 min-h-0 flex-col items-center justify-center px-2 py-2">
-          <div className="absolute left-1/2 top-[63%] h-[15rem] w-[15rem] -translate-x-1/2 -translate-y-1/2 md:h-[16rem] md:w-[16rem]">
-              <motion.div
-                className="absolute left-1/2 top-1/2 rounded-full bg-[radial-gradient(circle,rgba(220,252,231,0.98),rgba(74,222,128,0.9)_56%,rgba(22,163,74,0.3)_100%)] shadow-[0_0_24px_rgba(34,197,94,0.58)]"
-                animate={{
-                  x: '-50%',
-                  y: 'calc(-50% + 40px)',
-                  width: `${Math.max(30, coreFill * 58)}%`,
-                  height: `${Math.max(30, coreFill * 58)}%`,
-                  scale: [1, corePulse, 1],
-                  boxShadow: [
-                    '0 0 18px rgba(34,197,94,0.42), 0 0 44px rgba(34,197,94,0.14)',
-                    '0 0 28px rgba(74,222,128,0.68), 0 0 68px rgba(34,197,94,0.34)',
-                    '0 0 18px rgba(34,197,94,0.42), 0 0 44px rgba(34,197,94,0.14)',
-                  ],
-                }}
-              transition={{ duration: 0.9, ease: 'easeInOut', repeat: Infinity, repeatType: 'mirror' }}
-            />
-          </div>
-
-          <AnimatePresence>
-            {statusText ? (
-              <motion.div
-                key={statusText}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                className={`mt-4 rounded-full border px-4 py-2 text-center text-[11px] font-black uppercase tracking-[0.12em] shadow-[0_10px_20px_rgba(2,6,23,0.16)] ${
-                  feedback === 'correct'
-                    ? 'border-emerald-300/60 bg-emerald-300/18 text-emerald-50'
-                    : feedback === 'incorrect'
-                      ? 'border-rose-300/60 bg-rose-300/18 text-amber-50'
-                      : 'border-cyan-200/26 bg-[#071a38]/72 text-cyan-100/82'
-                }`}
-              >
-                {statusText}
-              </motion.div>
-            ) : null}
-          </AnimatePresence>
+        <div className="answer-choice-surface reactor-answers">
+          {question.options.map((option,index) => <motion.button key={`${question.id}-${option}`} type="button"
+            onClick={() => handleAnswer(index)} disabled={isLocked || didEndRef.current || Boolean(sessionState?.paused)}
+            whileTap={reducedMotion ? undefined : {scale:.98}}
+            className={index === selectedIndex ? feedback === 'correct' ? 'ui-button-success' : 'ui-button-primary' : 'ui-button-secondary'}>{option}</motion.button>)}
         </div>
-
-        <div className="answer-choice-surface mt-4 grid w-full max-w-[44rem] grid-cols-2 gap-3">
-          {question.options.map((option, index) => {
-            const isSelected = index === selectedIndex;
-            const isCorrect = feedback === 'correct' && index === question.answerIndex;
-            const isIncorrect = feedback === 'incorrect' && isSelected;
-
-            return (
-              <motion.button
-                key={`${question.id}-${option}`}
-                type="button"
-                whileTap={{ scale: 0.985 }}
-                onClick={() => handleAnswer(index)}
-                disabled={isLocked || didEndRef.current}
-                className={`relative min-h-[2.8rem] overflow-hidden rounded-[1rem] px-2.5 py-1.5 text-center ${
-                  isCorrect
-                    ? 'ui-button-success'
-                    : isIncorrect
-                      ? 'ui-button-primary'
-                      : isSelected
-                        ? 'ui-button-primary'
-                        : 'ui-button-secondary'
-                }`}
-              >
-                <div className="absolute inset-x-[8%] top-[12%] h-[30%] rounded-full bg-white/12 blur-md" />
-                <div className="relative z-10 flex items-center gap-2">
-                  <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-[0.65rem] border ${
-                    isCorrect || isIncorrect || isSelected
-                      ? 'border-black/10 bg-white/36 text-slate-900'
-                      : 'border-white/16 bg-white/10 text-white'
-                  }`}>
-                    <Zap className={`h-3.5 w-3.5 ${index === 0 ? 'rotate-12' : index === 1 ? '-rotate-12' : index === 2 ? 'rotate-6' : '-rotate-6'}`} />
-                  </div>
-                  <div className="flex-1 text-center text-[1.05rem] font-black leading-none text-white md:text-[1.22rem]">
-                    {option}
-                  </div>
-                </div>
-              </motion.button>
-            );
-          })}
-        </div>
-      </div>
+        <div className="refinement-feedback" role="status" aria-live="polite">{statusText || question.helper}</div>
+      </main>
     </div>
   );
 };

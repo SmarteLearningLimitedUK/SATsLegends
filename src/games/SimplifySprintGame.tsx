@@ -78,15 +78,16 @@ const shuffle = <T,>(items: T[]): T[] => {
 };
 
 const makeQuestion = (level: number, round: number): RoundQuestion => {
-  const maxDen = Math.min(12 + level + round, 28);
+  const tier = Math.max(1, Math.min(5, level));
+  const maxDen = [4, 6, 10, 16, 24][tier - 1];
   let baseDen = randomInt(2, Math.max(4, maxDen));
-  let baseNum = randomInt(1, Math.max(2, baseDen - 1));
+  let baseNum = randomInt(1, baseDen - 1);
   if (level >= 5 && Math.random() > 0.58) {
     baseNum = randomInt(baseDen + 1, Math.max(baseDen + 2, baseDen * 2));
   }
 
   const base = simplify({ numerator: baseNum, denominator: baseDen });
-  const multiplier = randomInt(2, Math.min(9, 3 + Math.floor(level / 2)));
+  const multiplier = randomInt(2, [2, 3, 4, 6, 8][tier - 1]);
   const prompt = {
     numerator: base.numerator * multiplier,
     denominator: base.denominator * multiplier,
@@ -166,7 +167,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
   onBack,
 }) => {
   const resolvedLevel = useMemo(
-    () => Math.max(1, Math.min(10, miniGameLevel || levelId || 1)),
+    () => Math.max(1, Math.min(5, miniGameLevel || levelId || 1)),
     [levelId, miniGameLevel],
   );
   const totalRounds = useMemo(() => Math.min(12, 6 + Math.floor(resolvedLevel / 2)), [resolvedLevel]);

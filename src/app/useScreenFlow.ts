@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { ISLANDS } from '../constants';
 import { GameScreen, IslandData, LevelData } from '../types';
 import { buildRouteForScreen, parseRoute } from './routeConfig';
+import { resolveIslandLevel } from '../systems/content/gameDifficulty';
 
 export interface ScreenFlowController {
   screen: GameScreen;
@@ -39,7 +40,7 @@ export const useScreenFlow = (): ScreenFlowController => {
 
   const resolveLevel = useCallback((island: IslandData | null, levelId?: number) => {
     if (!island || !levelId) return null;
-    return island.levels.find((level) => level.id === levelId) ?? null;
+    return resolveIslandLevel(island, levelId) ?? null;
   }, []);
 
   const initialRoute = parseRoute(location.pathname);

@@ -39,7 +39,9 @@ export interface PlaceValuePanicLevelConfig extends NumberBaseCampMiniGameLevel 
   targetScore: number;
 }
 
-const LEVELS_PER_MINIGAME = 10;
+// Keep the existing route seeds so the campaign normalizer can preserve saved
+// route identities. The playable menu selects practice plus five scored tiers.
+const ROUTE_SEED_VARIANTS_PER_MINIGAME = 10;
 
 const toTier = (miniGameLevel: number): NumberBaseCampDifficultyTier => (
   Math.min(5, Math.floor((miniGameLevel - 1) / 2) + 1) as NumberBaseCampDifficultyTier
@@ -110,7 +112,7 @@ const basePackDefs: Array<{
 let globalCounter = 1;
 
 export const NUMBER_BASE_CAMP_MINIGAME_PACKS: NumberBaseCampMiniGamePack[] = basePackDefs.map((packDef) => {
-  const levels: NumberBaseCampMiniGameLevel[] = Array.from({ length: LEVELS_PER_MINIGAME }, (_, index) => {
+  const levels: NumberBaseCampMiniGameLevel[] = Array.from({ length: ROUTE_SEED_VARIANTS_PER_MINIGAME }, (_, index) => {
     const miniGameLevel = index + 1;
     const difficultyTier = toTier(miniGameLevel);
     const globalLevelId = globalCounter++;
@@ -142,16 +144,9 @@ const PLACE_VALUE_PANIC_COLUMNS_BY_TIER: Record<NumberBaseCampDifficultyTier, Ar
 
 export const PLACE_VALUE_PANIC_LEVELS: PlaceValuePanicLevelConfig[] = (
   NUMBER_BASE_CAMP_MINIGAME_PACKS.find((pack) => pack.key === 'place_value_panic')?.levels || []
-).map((levelMeta) => {
-  // Combined pacing groups requested:
-  // 1-2, 3-4, 5-7, 8-10
-  const combinedReferenceLevel = (
-    levelMeta.miniGameLevel <= 2 ? 2
-      : levelMeta.miniGameLevel <= 4 ? 4
-      : levelMeta.miniGameLevel <= 7 ? 7
-      : 10
-  );
-  const combinedTier = toTier(combinedReferenceLevel);
+).filter((level) => level.miniGameLevel % 2 === 0).map((levelMeta) => {
+  const combinedReferenceLevel = levelMeta.miniGameLevel;
+  const combinedTier = levelMeta.difficultyTier;
   const queueLimit = Math.max(4, 8 - (combinedTier - 1) - (combinedReferenceLevel % 2 === 0 ? 1 : 0));
   const timeLimitSec = 60;
   const promptsToClear = 3 + combinedTier;
@@ -161,6 +156,7 @@ export const PLACE_VALUE_PANIC_LEVELS: PlaceValuePanicLevelConfig[] = (
 
   return {
     ...levelMeta,
+    miniGameLevel: combinedTier,
     queueLimit,
     timeLimitSec,
     promptsToClear,
@@ -172,14 +168,15 @@ export const PLACE_VALUE_PANIC_LEVELS: PlaceValuePanicLevelConfig[] = (
 });
 
 export const getPlaceValuePanicLevelConfig = (miniGameLevel: number): PlaceValuePanicLevelConfig => {
-  return PLACE_VALUE_PANIC_LEVELS.find((level) => level.miniGameLevel === miniGameLevel)
+  const tier = Math.max(1, Math.min(5, miniGameLevel || 1));
+  return PLACE_VALUE_PANIC_LEVELS.find((level) => level.miniGameLevel === tier)
     || PLACE_VALUE_PANIC_LEVELS[0];
 };
 
 export const NUMBER_BASE_CAMP_LEVELS: LevelData[] = (() => {
   const ordered: LevelData[] = [];
 
-  for (let miniGameLevel = 1; miniGameLevel <= LEVELS_PER_MINIGAME; miniGameLevel += 1) {
+  for (let miniGameLevel = 1; miniGameLevel <= ROUTE_SEED_VARIANTS_PER_MINIGAME; miniGameLevel += 1) {
     for (const miniGamePack of NUMBER_BASE_CAMP_MINIGAME_PACKS) {
       const levelMeta = miniGamePack.levels.find((level) => level.miniGameLevel === miniGameLevel);
       if (!levelMeta) continue;

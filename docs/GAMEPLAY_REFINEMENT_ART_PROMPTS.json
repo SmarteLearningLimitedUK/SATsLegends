@@ -1,0 +1,26 @@
+[
+  {
+    "name": "monster-market-shop-wide",
+    "method": "built-in image_gen",
+    "source": "C:\\Users\\samva\\.codex\\generated_images\\01a0e81b-6e81-7fc3-a666-822ef603eb1a\\exec-a6c0bfeb-33f8-46c2-a7b3-0db831357537.png",
+    "destination": "src/assets/maps/teen/monster-market-shop-wide.webp",
+    "prompt": "Use case: composition redesign of existing game environment. Image1 is the current portrait monster shop. Images2 and3 are supporting character STYLE references only; do not insert those heroes. Recreate this same shop as a very wide landscape 2:1 game illustration, with the ENTIRE setting readable without zooming or cropping: a complete broad wooden checkout counter across the lower third, shelves and blank price tags, green slime jars, warm lamps, teal awning, fantasy village glimpse. Put the same cheeky goblin merchant fully visible at the far LEFT edge, inside the leftmost18% of the composition, leaning on the counter with face and hands visible. Put the entire brass/teal cash register clearly readable at the far RIGHT, inside the rightmost18%, on the counter. Keep the middle50% open and visually quiet for the live receipt, but DO NOT draw any UI or blank panel. Counter base and edge must both be visible; do not cut off major props at the image boundaries. Chunky outlined cel-painted 2D fantasy cartoon matching supporting heroes, clean broad silhouettes, confident dark blue outlines, warm amber highlights with navy/teal/leaf green. For ages11–14: mischievous and premium, not nursery cute, not realistic, not glossy3D. No ghost layers, blur, text, numerical prices, letters, logos, mathematical notation, frames, pizza, gore, weapons or watermarks. All artwork opaque, landscape composition full bleed.",
+    "references": [
+      "D:\\BrainZilla\\GitHub\\SATsLegends\\src\\assets\\maps\\teen\\monster-market-shop.webp",
+      "D:\\BrainZilla\\GitHub\\SATsLegends\\src\\assets\\characters\\mobile\\Barratt\\barrat_neutral.png",
+      "D:\\BrainZilla\\GitHub\\SATsLegends\\src\\assets\\characters\\mobile\\Mochi\\mochi_neutral.png"
+    ]
+  },
+  {
+    "name": "restaurant-rush-wide",
+    "method": "built-in image_gen",
+    "source": "C:\\Users\\samva\\.codex\\generated_images\\01a0e81b-6e81-7fc3-a666-822ef603eb1a\\exec-345798b3-1dcb-45e9-b7a9-f3d4dfe41a11.png",
+    "destination": "src/assets/maps/teen/restaurant-rush-wide.webp",
+    "prompt": "Use case: composition redesign of existing game environment. Image1 is the current portrait monster restaurant; images2/3 are supporting hero STYLE references only, do not insert these heroes. Recreate the same bustling restaurant as a very wide landscape2:1 illustrated game environment. Show the ENTIRE foreground wooden service counter, its top edge and full front face, with a clear kitchen behind: complete copper extraction hood, griddle, green bubbling sauce pot, hanging ladles, neatly stacked plates, blank order rail, monster diners at the left edge in booths. Keep the central55% of the serving area clear for our live tray and character overlays. Important kitchen props concentrated in the upper left and upper right thirds, fully inside the canvas; side dishes/cutlery at the far corners, no giant foreground objects. A grumpy slug diner and a cheeky green sauce splash add comic restaurant urgency. Strongly cartoony cel-painted2D illustration matching the hero references: chunky readable shapes, thick crisp dark blue outlines, simplified surfaces and cinematic warm amber light against deep teal walls. Young-teen fantasy arcade production value, not nursery cute, not realistic matte painting, not glossy3D. Preserve established palette and world. Wide landscape full bleed, entire architecture visible, no close crop. No UI panels, words, numbers, logos, watermarks, pizza, gore, weapons or repeated ghost objects.",
+    "references": [
+      "D:\\BrainZilla\\GitHub\\SATsLegends\\src\\assets\\maps\\teen\\restaurant-rush.webp",
+      "D:\\BrainZilla\\GitHub\\SATsLegends\\src\\assets\\characters\\mobile\\Barratt\\barrat_neutral.png",
+      "D:\\BrainZilla\\GitHub\\SATsLegends\\src\\assets\\characters\\mobile\\Mochi\\mochi_neutral.png"
+    ]
+  }
+]

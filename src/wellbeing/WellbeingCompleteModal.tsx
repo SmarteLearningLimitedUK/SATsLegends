@@ -1,6 +1,7 @@
-import React from 'react';
-import { AnimatePresence, motion } from 'motion/react';
-import AssetIcon from '../components/AssetIcon';
+import React, { useEffect, useId, useRef } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { Leaf, X } from 'lucide-react';
+import './wellbeing.css';
 
 interface WellbeingCompleteModalProps {
   isOpen: boolean;
@@ -12,58 +13,75 @@ interface WellbeingCompleteModalProps {
 }
 
 const WellbeingCompleteModal: React.FC<WellbeingCompleteModalProps> = ({
-  isOpen,
-  title,
-  rewardLabel,
-  onContinue,
-  onPlayAnother,
-  onBackToHub,
-}) => (
-  <AnimatePresence>
-    {isOpen ? (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[150] flex items-center justify-center bg-slate-950/72 px-4 backdrop-blur-lg"
-      >
-        <motion.div
-          initial={{ y: 18, scale: 0.96, opacity: 0 }}
-          animate={{ y: 0, scale: 1, opacity: 1 }}
-          exit={{ y: 18, scale: 0.98, opacity: 0 }}
-          className="relative w-full max-w-sm rounded-[1.8rem] border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(14,40,79,0.98),rgba(8,23,49,0.98))] p-5 text-center text-white shadow-[0_24px_60px_rgba(2,6,23,0.42)]"
-        >
-          <button
-            type="button"
-            onClick={onBackToHub}
-            className="ui-close-button absolute right-4 top-4"
-            aria-label="Close"
-          >
-            <span aria-hidden="true">×</span>
-          </button>
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[radial-gradient(circle,rgba(167,243,208,0.36),rgba(125,211,252,0.15))] text-3xl shadow-[0_0_28px_rgba(167,243,208,0.18)]">
-            ?
-          </div>
-          <div className="mt-3 text-2xl font-black text-cyan-50">Well done</div>
-          <div className="mt-1 text-sm font-semibold text-cyan-100/80">{title} complete. Feeling a little steadier?</div>
-          <div className="mt-3 rounded-full border border-emerald-200/28 bg-emerald-400/10 px-3 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-emerald-100">
-            {rewardLabel}
-          </div>
-          <div className="mt-5 flex flex-col gap-2">
-            <button type="button" onClick={onContinue} className="ui-button-success px-4 py-3 text-sm font-black uppercase tracking-[0.14em]">
-              Continue
+  isOpen, title, rewardLabel, onContinue, onPlayAnother, onBackToHub,
+}) => {
+  const reducedMotion = useReducedMotion();
+  const titleId = useId();
+  const descriptionId = useId();
+  const dialogRef = useRef<HTMLDivElement | null>(null);
+  const continueRef = useRef<HTMLButtonElement | null>(null);
+  const backRef = useRef(onBackToHub);
+
+  useEffect(() => { backRef.current = onBackToHub; }, [onBackToHub]);
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    continueRef.current?.focus({ preventScroll: true });
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        backRef.current();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const controls = dialogRef.current?.querySelectorAll<HTMLElement>('button:not(:disabled), [href], [tabindex="0"]');
+      if (!controls?.length) return;
+      const first = controls[0];
+      const last = controls[controls.length - 1];
+      const active = document.activeElement;
+      if (event.shiftKey && (active === first || !dialogRef.current?.contains(active))) {
+        event.preventDefault(); last.focus();
+      } else if (!event.shiftKey && (active === last || !dialogRef.current?.contains(active))) {
+        event.preventDefault(); first.focus();
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      if (previousFocus?.isConnected) previousFocus.focus({ preventScroll: true });
+    };
+  }, [isOpen]);
+
+  return (
+    <AnimatePresence>
+      {isOpen ? (
+        <motion.div className="wellbeing-complete-backdrop" data-wellbeing-complete
+          initial={{ opacity: reducedMotion ? 1 : 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          transition={{ duration: reducedMotion ? 0 : .2 }}>
+          <motion.div ref={dialogRef} className="wellbeing-complete" role="dialog" aria-modal="true"
+            aria-labelledby={titleId} aria-describedby={descriptionId}
+            initial={reducedMotion ? false : { y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ opacity: 0 }}
+            transition={{ duration: reducedMotion ? 0 : .25 }}>
+            <button type="button" onClick={onBackToHub} className="wellbeing-complete-close" data-button-skin="none" aria-label="Close completion">
+              <X size={21} aria-hidden="true" />
             </button>
-              <button type="button" onClick={onPlayAnother} className="ui-button-secondary px-4 py-3 text-sm font-black uppercase tracking-[0.14em]">
-              Play Another Wellbeing Activity
-              </button>
-              <button type="button" onClick={onBackToHub} className="ui-button-secondary px-4 py-3 text-sm font-black uppercase tracking-[0.14em]">
-              Back To Mind Garden
-              </button>
-          </div>
+            <div className="wellbeing-complete-emblem" aria-hidden="true"><Leaf size={32} strokeWidth={1.7} /></div>
+            <h2 id={titleId}>Your calm break is complete</h2>
+            <p id={descriptionId}>{title} complete. You took a moment for yourself.</p>
+            <p data-wellbeing-affirmation>Ready when you are.</p>
+            <div className="wellbeing-complete-reward" data-wellbeing-reward>
+              <Leaf size={18} aria-hidden="true" />{rewardLabel.replaceAll('\uFFFD', '·')}
+            </div>
+            <div className="wellbeing-complete-actions">
+              <button ref={continueRef} type="button" onClick={onContinue} className="wellbeing-action" data-button-skin="none">Continue adventure</button>
+              <button type="button" onClick={onPlayAnother} className="wellbeing-quiet-action" data-button-skin="none">Choose another activity</button>
+              <button type="button" onClick={onBackToHub} className="wellbeing-quiet-action" data-button-skin="none">Back to Calm Grove</button>
+            </div>
+          </motion.div>
         </motion.div>
-      </motion.div>
-    ) : null}
-  </AnimatePresence>
-);
+      ) : null}
+    </AnimatePresence>
+  );
+};
 
 export default WellbeingCompleteModal;

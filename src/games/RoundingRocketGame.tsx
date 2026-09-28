@@ -20,7 +20,7 @@ interface RoundingRocketGameProps {
 
 type RoundingRocketGameShellProps = RoundingRocketGameProps & MiniGameShellContractProps;
 
-type RoundTarget = 10 | 100;
+type RoundTarget = 10 | 100 | 1000;
 
 type RocketState =
   | 'idle'
@@ -59,21 +59,15 @@ const scoreToStars = (XP: number, correct: number, attempts: number) => {
 };
 
 const targetForLevel = (levelId: number): RoundTarget => {
-  if (levelId <= 3) return 10;
-  return 100;
+  return levelId <= 2 ? 10 : levelId <= 4 ? 100 : 1000;
 };
 
 const createFuelNumber = (target: RoundTarget, difficultyLevel: number) => {
-  if (target === 10) {
-    const upper = difficultyLevel <= 3 ? 140 : difficultyLevel <= 6 ? 350 : 980;
-    let value = randomInt(12, upper);
-    while (value % 10 === 0) value = randomInt(12, upper);
-    return value;
-  }
-
-  const upper = difficultyLevel <= 6 ? 1200 : 9800;
-  let value = randomInt(120, upper);
-  while (value % 100 === 0) value = randomInt(120, upper);
+  const tier = Math.max(1, Math.min(5, difficultyLevel));
+  const upper = [99, 499, 999, 4999, 9999][tier - 1];
+  const lower = target === 10 ? 12 : target + 20;
+  let value = randomInt(lower, upper);
+  while (value % target === 0) value = randomInt(lower, upper);
   return value;
 };
 
@@ -221,7 +215,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
   };
 
   const loadNextRound = (difficultyOffset: number) => {
-    const magnitudeLevel = Math.max(1, levelId + difficultyOffset);
+    const magnitudeLevel = Math.max(1, Math.min(5, levelId));
     setRound(generateRound(Math.max(1, levelId), magnitudeLevel));
     resetRocketToIdle();
   };
@@ -339,7 +333,9 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
         alt=""
         aria-hidden="true"
         draggable={false}
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-85 grayscale-[0.15] saturate-75"
+        data-game-scene-image="true"
+        data-background-fit="contain"
+        className="pointer-events-none absolute inset-0 h-full w-full object-contain object-center opacity-85 grayscale-[0.15] saturate-75"
       />
 
       <PracticeIntroPopup

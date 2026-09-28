@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Timer as TimerIcon, Heart, Target, Brain } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useIsPresent } from 'motion/react';
 import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
-import zombieFallback from '../assets/zombies/zombie.png';
+import zombieEnemy from '../assets/enemies/cohesive/zombie.webp';
 import zombiePlayfield from '../assets/maps/premium/maths-vs-zombies.webp';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
-import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
+import { MiniGameShellContractProps, emitMiniGameSessionEvent } from '../app/gameplaySessionContract';
 import { formatMultiplicationDisplay } from '../utils/mathDisplay';
+import MonsterMindActor from '../components/game-ui/MonsterMindActor';
 
 interface MathsVsZombiesGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -29,8 +30,6 @@ interface Zombie {
   maxHealth: number;
   speed: number; // percent per second
   state: ZombieState;
-  frameIndex: number;
-  frameTime: number;
   stateTime: number;
 }
 
@@ -48,47 +47,21 @@ const RIGHT_SPAWN_MAX_Y = 62;
 const TARGET_Y = 78;
 const TARGET_X = 22;
 const ZOMBIE_SIZE = 52;
-const ANIM_FPS = 8;
-
-const loadFrames = (record: Record<string, string>) => (
-  Object.entries(record)
-    .sort(([a], [b]) => {
-      const anum = Number(a.match(/(\d+)/)?.[1] ?? 0);
-      const bnum = Number(b.match(/(\d+)/)?.[1] ?? 0);
-      return anum - bnum;
-    })
-    .map(([, value]) => value)
-);
-
-const ensureFrames = (frames: string[]) => (frames.length ? frames : [zombieFallback]);
-
-const zombieAppearFrames = ensureFrames(loadFrames(import.meta.glob('../assets/zombies/appear/*.png', { eager: true, import: 'default' }) as Record<string, string>));
-const zombieWalkFrames = ensureFrames(loadFrames(import.meta.glob('../assets/zombies/walk/*.png', { eager: true, import: 'default' }) as Record<string, string>));
-const zombieHitFrames = ensureFrames(loadFrames(import.meta.glob('../assets/zombies/attack/*.png', { eager: true, import: 'default' }) as Record<string, string>));
-const zombieDieFrames = ensureFrames(loadFrames(import.meta.glob('../assets/zombies/die/*.png', { eager: true, import: 'default' }) as Record<string, string>));
-const zombieIdleFrames = ensureFrames(loadFrames(import.meta.glob('../assets/zombies/idle/*.png', { eager: true, import: 'default' }) as Record<string, string>));
-
-const FRAMES_BY_STATE: Record<ZombieState, string[]> = {
-  appear: zombieAppearFrames,
-  walk: zombieWalkFrames,
-  hit: zombieHitFrames,
-  attack: zombieHitFrames,
-  die: zombieDieFrames,
-};
 
 const stateDuration = (state: ZombieState) => {
   if (state === 'attack') return 1.8;
   if (state === 'appear') return 0.6;
   if (state === 'die') return 0.7;
-  const frameCount = FRAMES_BY_STATE[state]?.length || 1;
-  return frameCount / ANIM_FPS;
+  return 0.9;
 };
 
 const maxZombiesForLevel = (levelId: number) => {
-  if (levelId <= 2) return 1;
-  if (levelId <= 4) return 2;
-  if (levelId <= 6) return 3 + (levelId > 5 ? 1 : 0);
-  return 4 + (levelId > 5 ? 1 : 0);
+  return [1, 2, 2, 3, 4][Math.max(0, Math.min(4, levelId - 1))];
+};
+
+const starsFromAccuracy = (correct: number, attempts: number) => {
+  const accuracy = correct / Math.max(1, attempts);
+  return accuracy >= 0.9 ? 3 : accuracy >= 0.7 ? 2 : 1;
 };
 
 const buildQuestion = (levelId: number): Question => {
@@ -97,7 +70,6 @@ const buildQuestion = (levelId: number): Question => {
   let opPool: Array<'+' | '-' | '×' | '÷'> = ['+', '-'];
   let a = 0;
   let b = 0;
-  let c = 0;
   let answer = 0;
   let equation = '';
 
@@ -112,34 +84,31 @@ const buildQuestion = (levelId: number): Question => {
     a = roll(0, 10);
     b = roll(0, 8);
   } else if (levelId === 3) {
-    // Two-number add/sub with three-digit values.
+    // Confident two-digit addition/subtraction before times-table questions.
     opPool = ['+', '-'];
-    a = roll(120, 980);
-    b = roll(110, 890);
-  } else if (levelId <= 5) {
+    a = roll(10, 50);
+    b = roll(10, 40);
+  } else if (levelId === 4) {
     // Introduce multiplication/division with manageable factors.
     opPool = ['×', '÷'];
+    a = roll(2, 8);
+    b = roll(2, 8);
+  } else {
+    opPool = ['+', '-', '×', '÷'];
     a = roll(2, 12);
     b = roll(2, 12);
-  } else if (levelId <= 7) {
-    // Negatives appear with add/sub in a tighter range.
-    opPool = ['+', '-'];
-    a = roll(-20, 20);
-    b = roll(-18, 18);
-  } else {
-    // Larger numbers into thousands with mixed add/sub.
-    opPool = ['+', '-'];
-    a = roll(350, 1900);
-    b = roll(220, 1600);
   }
 
   const op = opPool[Math.floor(Math.random() * opPool.length)];
+  if (levelId === 5 && (op === '+' || op === '-')) {
+    a = roll(-20, 30); b = roll(-20, 20);
+  }
 
   if (op === '+') {
     answer = a + b;
     equation = `${a} + ${b}`;
   } else if (op === '-') {
-    if (levelId <= 2 || levelId === 3 || levelId >= 8) {
+    if (levelId <= 3) {
       if (a < b) [a, b] = [b, a];
     }
     answer = a - b;
@@ -158,7 +127,7 @@ const buildQuestion = (levelId: number): Question => {
   while (options.size < 4) {
     const delta = Math.floor(Math.random() * 8) + 1;
     const candidate = Math.random() < 0.5 ? answer + delta : answer - delta;
-    if (candidate !== answer) options.add(candidate);
+    if (candidate !== answer && (levelId === 5 || candidate >= 0)) options.add(candidate);
   }
   const shuffled = Array.from(options).sort(() => Math.random() - 0.5);
   return {
@@ -216,32 +185,46 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
   gameTitle,
   isPractice,
   practiceBriefing,
+  sessionState,
+  sessionEvents,
   onVictory,
   onGameOver,
   onBack,
 }) => {
-  const roundSeconds = useMemo(() => 70 + (levelId * 6), [levelId]);
-  const victoryTargetScore = useMemo(() => 1200 + (levelId * 220), [levelId]);
+  const tier = Math.max(1, Math.min(5, levelId || 1));
+  const isPresent = useIsPresent();
+  const roundSeconds = useMemo(() => [90, 85, 80, 75, 70][tier - 1], [tier]);
+  const victoryTargetScore = useMemo(() => (isPractice ? 4 : tier + 3) * 220, [isPractice, tier]);
   const baseZombieHealth = useMemo(() => 1, []);
-  const spawnDelayMs = useMemo(() => Math.max(2600, 5200 - (levelId * 220)), [levelId]);
+  const spawnDelayMs = useMemo(() => [6000, 5200, 4400, 3600, 3000][tier - 1], [tier]);
 
   const [XP, setScore] = useState(0);
   const [zombiesDefeated, setZombiesDefeated] = useState(0);
   const [health, setHealth] = useState(3);
   const [timeLeft, setTimeLeft] = useState(roundSeconds);
   const [zombies, setZombies] = useState<Zombie[]>([]);
-  const [question, setQuestion] = useState<Question>(() => buildQuestion(levelId));
+  const [question, setQuestion] = useState<Question>(() => buildQuestion(tier));
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [feedback, setFeedback] = useState('');
   const [locked, setLocked] = useState(false);
   const [gameActive, setGameActive] = useState(true);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
+  const paused = Boolean(sessionState?.paused || showPracticeIntro);
+  const usesSharedLives = Boolean(sessionState && !isPractice);
+  const pausedRef = useRef(paused); pausedRef.current = paused;
 
   const rafRef = useRef<number | null>(null);
   const lastTimeRef = useRef(0);
   const spawnTimerRef = useRef(0);
   const endedRef = useRef(false);
   const idRef = useRef(1);
+  const answerLockRef = useRef(false);
+  const answerTimerRef = useRef<number | null>(null);
+  const scoreRef = useRef(0);
+  const attemptsRef = useRef(0);
+  const onVictoryRef = useRef(onVictory); onVictoryRef.current = onVictory;
+  const onGameOverRef = useRef(onGameOver); onGameOverRef.current = onGameOver;
+  const presentRef = useRef(isPresent); presentRef.current = isPresent;
 
   const zombiesRef = useRef<Zombie[]>([]);
   useEffect(() => { zombiesRef.current = zombies; }, [zombies]);
@@ -257,8 +240,8 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 
   const spawnZombie = useCallback(() => {
     const lane = Math.floor(Math.random() * LANES);
-    const maxZombies = maxZombiesForLevel(levelId);
-    if (zombiesRef.current.length >= maxZombies) return;
+    const maxZombies = isPractice ? 1 : maxZombiesForLevel(tier);
+    if (zombiesRef.current.filter((enemy) => enemy.state !== 'die').length >= maxZombies) return;
     const spawnSide = Math.random() < 0.5 ? 'top' : 'right';
     const laneX = 18 + lane * 20;
     const startX = spawnSide === 'right' ? SPAWN_RIGHT_X : laneX;
@@ -272,20 +255,18 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       y: startY,
       health: baseZombieHealth,
       maxHealth: baseZombieHealth,
-      speed: 0.12 + (levelId * 0.035),
+      speed: isPractice ? 0 : [0.9, 1.2, 1.6, 2, 2.4][tier - 1],
       state: 'appear',
-      frameIndex: 0,
-      frameTime: 0,
       stateTime: 0,
     };
 
     const next = [...zombiesRef.current, zombie];
     zombiesRef.current = next;
     setZombies(next);
-  }, [baseZombieHealth, levelId]);
+  }, [baseZombieHealth, isPractice, tier]);
 
-  const finishGame = useCallback((won: boolean) => {
-    if (endedRef.current) return;
+  const finishGame = useCallback((won: boolean, reason = 'lives') => {
+    if (!presentRef.current || endedRef.current) return;
     endedRef.current = true;
     setGameActive(false);
 
@@ -295,51 +276,67 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     }
 
     if (won) {
-      const finalScore = XP;
-      const stars = finalScore >= victoryTargetScore * 1.85 ? 3 : finalScore >= victoryTargetScore * 1.35 ? 2 : 1;
-      onVictory(stars, finalScore);
+      const finalScore = scoreRef.current;
+      const stars = starsFromAccuracy(finalScore / 220, attemptsRef.current);
+      emitMiniGameSessionEvent(sessionEvents, 'game_complete', { score: finalScore, stars });
+      onVictoryRef.current(stars, finalScore);
       return;
     }
-    onGameOver(XP);
-  }, [onGameOver, onVictory, XP, victoryTargetScore]);
+    emitMiniGameSessionEvent(sessionEvents, 'game_failed', { score: scoreRef.current, reason });
+    if (reason === 'timer' || !usesSharedLives) onGameOverRef.current(scoreRef.current);
+  }, [sessionEvents, usesSharedLives]);
 
   useEffect(() => {
     endedRef.current = false;
     setGameActive(true);
     setScore(0);
+    scoreRef.current = 0;
+    attemptsRef.current = 0;
+    answerLockRef.current = false;
+    if (answerTimerRef.current !== null) window.clearTimeout(answerTimerRef.current);
     setZombiesDefeated(0);
     setHealth(3);
     setTimeLeft(roundSeconds);
     setZombies([]);
     zombiesRef.current = [];
-    setQuestion(buildQuestion(levelId));
+    setQuestion(buildQuestion(tier));
     setSelectedAnswer(null);
     setFeedback('');
     setLocked(false);
     idRef.current = 1;
-    spawnTimerRef.current = spawnDelayMs;
+    spawnTimerRef.current = 0;
     lastTimeRef.current = 0;
-  }, [levelId, roundSeconds, spawnDelayMs]);
+    spawnZombie();
+  }, [tier, roundSeconds, spawnDelayMs, spawnZombie]);
+
+  useEffect(() => () => {
+    endedRef.current = true;
+    if (answerTimerRef.current !== null) window.clearTimeout(answerTimerRef.current);
+    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+  }, []);
+  useEffect(() => {
+    if (isPresent) return;
+    endedRef.current = true;
+    if (answerTimerRef.current !== null) window.clearTimeout(answerTimerRef.current);
+    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+  }, [isPresent]);
 
   useEffect(() => {
-    if (isPractice || !gameActive || endedRef.current) return;
+    if (paused || !isPresent || isPractice || !gameActive || endedRef.current) return;
     const timerInterval = window.setInterval(() => {
-      setTimeLeft((previous) => {
-        if (previous <= 1) {
-          window.clearInterval(timerInterval);
-          finishGame(health > 0);
-          return 0;
-        }
-        const next = previous - 1;
-        return next;
-      });
+      setTimeLeft((previous) => Math.max(0, previous - 1));
     }, 1000);
 
     return () => window.clearInterval(timerInterval);
-  }, [finishGame, gameActive, health, isPractice]);
+  }, [gameActive, isPractice, isPresent, paused]);
+
+  useEffect(() => {
+    if (paused || isPractice || !gameActive || timeLeft > 0) return;
+    finishGame(health > 0 && scoreRef.current >= victoryTargetScore, 'timer');
+  }, [finishGame, gameActive, health, isPractice, paused, timeLeft, victoryTargetScore]);
 
   const updateFrame = useCallback((timestamp: number) => {
-    if (!gameActive || endedRef.current) return;
+    if (!presentRef.current || paused || !gameActive || endedRef.current) return;
 
     if (!lastTimeRef.current) {
       lastTimeRef.current = timestamp;
@@ -372,16 +369,6 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 
       let nextState = zombie.state;
       let nextStateTime = zombie.stateTime + dt;
-      let nextFrameTime = zombie.frameTime + dt;
-      let nextFrameIndex = zombie.frameIndex;
-
-      const frames = FRAMES_BY_STATE[nextState] ?? zombieWalkFrames;
-      const frameCount = frames.length || 1;
-      if (nextFrameTime >= 1 / ANIM_FPS) {
-        nextFrameIndex = (nextFrameIndex + 1) % frameCount;
-        nextFrameTime = 0;
-      }
-
       if (nextState === 'appear' && nextStateTime >= stateDuration('appear')) {
         nextState = 'walk';
         nextStateTime = 0;
@@ -411,42 +398,45 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
         x: nextX,
         y: nextY,
         state: nextState,
-        frameIndex: nextFrameIndex,
-        frameTime: nextFrameTime,
         stateTime: nextStateTime,
       } as Zombie;
     }).filter(Boolean) as Zombie[];
 
-    if (breaches > 0) {
+    if (breaches > 0 && !isPractice) {
+      attemptsRef.current += breaches;
+      for (let index = 0; index < breaches; index += 1) emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { score: scoreRef.current, metadata: { breach: timestamp, index } });
       setHealth((value) => Math.max(0, value - breaches));
     }
 
     zombiesRef.current = zombiesNext;
     setZombies(zombiesNext);
 
-    if (health - breaches <= 0 && !endedRef.current) {
+    if (!isPractice && health - breaches <= 0 && !endedRef.current) {
       finishGame(false);
       return;
     }
 
     rafRef.current = requestAnimationFrame(updateFrame);
-  }, [finishGame, gameActive, health, spawnDelayMs, spawnZombie]);
+  }, [finishGame, gameActive, health, isPractice, paused, sessionEvents, spawnDelayMs, spawnZombie]);
 
   useEffect(() => {
-    if (!gameActive || endedRef.current) return;
+    lastTimeRef.current = 0;
+    if (!isPresent || paused || !gameActive || endedRef.current) return;
     rafRef.current = requestAnimationFrame(updateFrame);
     return () => {
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
     };
-  }, [gameActive, updateFrame]);
+  }, [gameActive, isPresent, paused, updateFrame]);
 
   const handleAnswer = (index: number) => {
-    if (!gameActive || endedRef.current || locked) return;
+    if (!presentRef.current || paused || !gameActive || endedRef.current || locked || answerLockRef.current) return;
+    answerLockRef.current = true;
+    attemptsRef.current += 1;
     setLocked(true);
     setSelectedAnswer(index);
     if (index === question.correctIndex) {
       setFeedback('Zombie down!');
-      const targetZombie = zombiesRef.current.reduce((closest, zombie) => (
+      const targetZombie = zombiesRef.current.filter((enemy) => enemy.state !== 'die' && enemy.state !== 'attack').reduce((closest, zombie) => (
         zombie.y > (closest?.y ?? -Infinity) ? zombie : closest
       ), null as Zombie | null);
 
@@ -458,34 +448,37 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
             health: 0,
             state: 'die',
             stateTime: 0,
-            frameIndex: 0,
-            frameTime: 0,
           };
         });
         zombiesRef.current = next;
         setZombies(next);
-        setScore((value) => {
-          const nextScore = value + 220;
-          if (nextScore >= victoryTargetScore && !endedRef.current) {
-            window.setTimeout(() => finishGame(true), 0);
-          }
-          return nextScore;
-        });
         setZombiesDefeated((value) => value + 1);
       }
+      scoreRef.current += 220;
+      setScore(scoreRef.current);
+      spawnTimerRef.current = spawnDelayMs;
+      emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { score: scoreRef.current, metadata: { tier, equation: question.prompt, answer: question.options[index] } });
+      emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', { score: scoreRef.current });
     } else {
       setFeedback('Close! Try the next one.');
-      setHealth((value) => Math.max(0, value - 1));
-      if (health <= 1) {
+      emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { score: scoreRef.current, metadata: { tier, equation: question.prompt } });
+      if (!isPractice) setHealth((value) => Math.max(0, value - 1));
+      if (!isPractice && health <= 1) {
         finishGame(false);
       }
     }
-    window.setTimeout(() => {
-      setQuestion(buildQuestion(levelId));
+    const settleAnswer = () => {
+      answerTimerRef.current = null;
+      if (!presentRef.current || endedRef.current) return;
+      if (pausedRef.current) { answerTimerRef.current = window.setTimeout(settleAnswer, 100); return; }
+      if (scoreRef.current >= victoryTargetScore) { finishGame(true); return; }
+      setQuestion(buildQuestion(tier));
       setSelectedAnswer(null);
       setFeedback('');
       setLocked(false);
-    }, 750);
+      answerLockRef.current = false;
+    };
+    answerTimerRef.current = window.setTimeout(settleAnswer, 750);
   };
 
   const timerLabel = useMemo(() => {
@@ -497,12 +490,13 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
   return (
     <div
       className="relative flex h-full w-full flex-col items-center overflow-hidden font-sans text-white select-none"
-      style={{ backgroundImage: `linear-gradient(#081a35aa, #081a35cc), url(${zombiePlayfield})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+      data-zombies-game data-zombies-tier={tier} data-zombies-score={XP} data-zombies-target={victoryTargetScore} data-zombies-time={timeLeft}
+      style={{ backgroundImage: `linear-gradient(#081a35aa, #081a35cc), url(${zombiePlayfield})`, backgroundSize: 'contain', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}
     >
       <PracticeIntroPopup
         open={showPracticeIntro}
         title={gameTitle || 'Maths vs Zombies'}
-        body="The Monster Minds have sent the zombies forward.\nSolve the sums to push them back.\nKeep your answers quick and accurate."
+        body="The Monster Minds have sent their minions.\nSolve four sums at your own pace to push them back.\nPractice minions wait while you work."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
@@ -512,13 +506,13 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           <TopBar XP={XP} brainPoints={zombiesDefeated} health={health} timer={timerLabel} onBack={onBack} />
         ) : null}
 
-        <GameQuestionCard title={gameTitle || 'Maths vs Zombies'} subtitle="Solve the sum to push back the minions." style={{ position: 'relative', top: '5px', width: '92%', transform: 'none' }}>
+        <GameQuestionCard title={gameTitle || 'Maths vs Zombies'} subtitle={`Push back ${victoryTargetScore / 220} minions. ${XP / 220} cleared.`} style={{ position: 'relative', top: '5px', width: '92%', transform: 'none' }}>
           {question.prompt.split('\n\n').slice(-1)[0]}
         </GameQuestionCard>
 
         <div
           className={`relative mx-4 flex-1 overflow-hidden rounded-3xl border-4 border-blue-400/30 bg-blue-900/10 shadow-2xl ${useSharedTopHud ? 'mt-2' : 'mt-4'}`}
-          style={{ backgroundImage: `url(${zombiePlayfield})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}
+          style={{ backgroundImage: `url(${zombiePlayfield})`, backgroundSize: 'contain', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}
         >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_85%,rgba(56,189,248,0.06),transparent_48%)]" />
           <div className="absolute bottom-4 left-6 flex -translate-x-2.5 flex-col items-center gap-2">
@@ -535,9 +529,6 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 
           <AnimatePresence>
             {zombies.map((zombie) => {
-              const frameList = FRAMES_BY_STATE[zombie.state] ?? zombieWalkFrames;
-              const safeFrameList = frameList.length ? frameList : [zombieFallback];
-              const frame = safeFrameList[zombie.frameIndex % safeFrameList.length];
               return (
                 <motion.div
                   key={zombie.id}
@@ -552,12 +543,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
                     width: `${ZOMBIE_SIZE}px`,
                   }}
                 >
-                  <img
-                    src={frame}
-                    alt=""
-                    className="h-[52px] w-auto object-contain drop-shadow-[0_8px_14px_rgba(2,6,23,0.45)]"
-                    draggable={false}
-                  />
+                  <MonsterMindActor src={zombieEnemy} alt="Cartoon zombie minion" reaction={zombie.state === 'die' ? 'defeated' : zombie.state === 'attack' ? 'taunt' : zombie.state === 'hit' ? 'hit' : 'idle'} reactionKey={`${zombie.id}-${zombie.state}`} style={{ width: ZOMBIE_SIZE, height: ZOMBIE_SIZE }} />
                   <div className="h-2 w-full overflow-hidden rounded-full bg-black/40">
                     <div
                       className="h-full bg-emerald-300"
@@ -587,7 +573,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
                 key={`${option}-${index}`}
                 type="button"
                 onClick={() => handleAnswer(index)}
-                disabled={locked}
+                disabled={locked || paused || !isPresent || !gameActive}
                 className={`h-[clamp(2.6rem,6.5vh,3.15rem)] rounded-[0.95rem] px-2 text-[clamp(0.88rem,3vw,1.12rem)] font-black shadow-[0_10px_18px_rgba(2,6,23,0.24)] ${
                   locked && selectedAnswer === index
                     ? index === question.correctIndex

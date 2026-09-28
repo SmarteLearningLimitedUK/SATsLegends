@@ -11,6 +11,7 @@
   gap: 10px;
   width: 94%;
   height: 100%;
+  min-height: 0;
   margin: 0 auto;
   padding: 5px 0 10px;
 }
@@ -31,6 +32,19 @@
   box-shadow: 0 10px 20px #03152655, inset 0 1px #e7fbff66;
 }
 
+.ratio-racer-scene.is-boost { border-color: #bde9a1; box-shadow: 0 10px 20px #03152655, inset 0 0 14px #a2ff5c2b; }
+.ratio-racer-scene.is-stall, .ratio-racer-scene.is-last-chance { border-color: #f2a67c; }
+.ratio-racer-pit-board { position: absolute; z-index: 2; top: 35%; left: 5%; display: none; max-width: 180px; padding: 9px 13px; border: 3px solid #cbab68; border-radius: 5px; background: #153947ed; box-shadow: 3px 5px #11364277; color: #b9ecb3; transform: rotate(-3deg); }
+.ratio-racer-pit-board span { display: block; margin-bottom: 4px; color: #e6ca8b; font-size: 10px; text-transform: uppercase; letter-spacing: .12em; }
+.ratio-racer-pit-board strong { display: block; font-size: 17px; line-height: 1.2; }
+.ratio-racer-track-flags { position: absolute; z-index: 2; top: 31%; right: 7%; width: 55px; height: 90px; pointer-events: none; }
+.ratio-racer-track-flags i { position: absolute; width: 2px; height: 90px; background: #f4e9b1; box-shadow: 1px 1px #204941; transform: rotate(12deg); transform-origin: 50% 100%; }
+.ratio-racer-track-flags i::before { content: ''; position: absolute; top: 0; width: 30px; height: 23px; border: 2px solid #ead297; border-radius: 1px 5px 7px 1px; background: linear-gradient(135deg, #4c8291, #173943); }
+.ratio-racer-track-flags i:last-child { left: 25px; top: 13px; height: 74px; transform: rotate(-10deg); }
+.ratio-racer-track-flags i:last-child::before { background: #d7b158; }
+.ratio-racer-scene.is-boost .ratio-racer-track-flags i { animation: racer-flag-cheer .45s ease-in-out; }
+@keyframes racer-flag-cheer { 35% { transform: rotate(-4deg); } 75% { transform: rotate(20deg); } }
+
 .ratio-racer-course { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
 /* Three panoramas cover each wrap; the right 5% blends into the next tile. */
 .ratio-racer-course-strip { position: absolute; top: 0; left: 0; display: flex; width: 600%; height: 100%; will-change: transform; }
@@ -47,12 +61,22 @@
 .ratio-racer-kart { position: absolute; inset: 0; transform-origin: 50% 85%; }
 .ratio-racer-kart img { display: block; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 3px 2px #08253455); user-select: none; }
 .ratio-racer-kart-shadow { position: absolute; left: 15%; right: 8%; bottom: 7%; height: 12px; border-radius: 50%; background: #071e29a6; filter: blur(4px); }
+.ratio-racer-exhaust { position: absolute; z-index: -1; left: 8%; bottom: 16%; width: 48%; height: 27%; opacity: 0; pointer-events: none; }
+.ratio-racer-exhaust.is-boost, .ratio-racer-exhaust.is-stall { opacity: 1; }
+.ratio-racer-exhaust i { position: absolute; right: 0; bottom: 20%; width: 42px; height: 20px; border: 2px solid #ffe792; border-radius: 80% 15% 15% 80%; background: #f1b158; box-shadow: -15px 0 0 -6px #e7ed9e; animation: racer-boost-exhaust .4s ease-out infinite; }
+.ratio-racer-exhaust i:nth-child(2) { bottom: 7%; right: 17%; width: 32px; height: 17px; animation-delay: -.13s; }.ratio-racer-exhaust i:last-child { bottom: 35%; right: 34%; width: 20px; height: 13px; animation-delay: -.27s; }
+.ratio-racer-exhaust.is-stall i { width: 22px; height: 22px; border-radius: 50%; border-color: #bbd9a7; background: #8aa285; box-shadow: none; animation: racer-stall-puff .6s ease-out forwards; }
+@keyframes racer-boost-exhaust { from { transform: translateX(0) scale(.7); opacity: .9; } to { transform: translateX(-24px) scale(1.1); opacity: 0; } }
+@keyframes racer-stall-puff { from { transform: translate(0, 0) scale(.5); opacity: .8; } to { transform: translate(-12px, -23px) scale(1.5); opacity: 0; } }
 .ratio-racer-boost { position: absolute; top: 4%; right: 4%; display: inline-flex; align-items: center; gap: 3px; padding: 5px 9px; border: 1px solid #fff0b0; border-radius: 20px; background: #ffda7c; color: #14364c; font-size: 12px; font-weight: 600; box-shadow: 0 3px 8px #03253844; }
 .ratio-racer-finish { position: absolute; z-index: 2; top: 38%; bottom: 12%; width: 3px; background: #eafcff; box-shadow: 0 1px 3px #09233c; }
 .ratio-racer-finish > span { display: block; width: 40px; height: 28px; border: 2px solid #eafcff; background: conic-gradient(#082739 25%, #edfafd 0 50%, #082739 0 75%, #edfafd 0) 0 0 / 12px 12px; }
 .ratio-racer-countdown, .ratio-racer-win { position: absolute; z-index: 5; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; background: #072d3b60; color: #fff1c4; text-shadow: 0 2px 6px #073243; }
 .ratio-racer-countdown > span { font-size: 16px; font-weight: 600; }
 .ratio-racer-countdown > strong { font-size: 56px; line-height: 1; }
+.ratio-racer-start-lights { display: flex; gap: 7px; padding: 7px 10px; border: 2px solid #cba75d; border-radius: 10px; background: #122e37; }
+.ratio-racer-start-lights i { width: 19px; height: 19px; border: 2px solid #935447; border-radius: 50%; background: #3e3030; }
+.ratio-racer-start-lights i.is-lit { background: #f69067; box-shadow: 0 0 7px #fd975b77; }
 .ratio-racer-win { font-size: 22px; font-weight: 600; }
 
 .ratio-racer-answers { flex: 0 0 auto; padding: 8px; }
@@ -66,6 +90,19 @@
 .ratio-racer-fraction > span:last-child { padding-top: 2px; }
 #root .app-viewport.sat-theme-bluegold .ratio-racer-answer.is-incorrect { border-color: #f99cac !important; }
 
+@media (min-width: 700px) {
+  .ratio-racer-content { width: calc(100% - 32px); }
+  .ratio-racer-scene { min-height: 0; }
+  .ratio-racer-pit-board { display: block; }
+  .ratio-racer-kart-anchor { height: min(65%, 246px); width: auto; max-width: 47%; }
+  .ratio-racer-answers { align-self: center; width: min(100%, 780px); }
+  .ratio-racer-route { left: 18px; right: 18px; }
+  .ratio-racer-route-labels { font-size: 14px; }
+  .ratio-racer-feedback { font-size: 14px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ratio-racer-kart, .ratio-racer-progress > div { animation: none; transition: none; }
+  .ratio-racer-track-flags i, .ratio-racer-exhaust i { animation: none !important; }
+  .ratio-racer-exhaust i { opacity: .55; }
 }

@@ -1,34 +1,69 @@
 import React from 'react';
+import { ArrowLeft } from 'lucide-react';
+import { WELLBEING_SCENES } from './scenes';
+import { WellbeingActivityId } from './types';
+import './wellbeing.css';
 
 interface WellbeingShellProps {
   title: string;
   subtitle?: string;
   type?: string;
+  activityId?: WellbeingActivityId;
   progress?: number;
+  status?: string;
+  purpose?: string;
+  affirmation?: string;
+  paused?: boolean;
   onExit: () => void;
   children: React.ReactNode;
 }
 
-const WellbeingShell: React.FC<WellbeingShellProps> = ({ children }) => (
-  <div className="relative flex h-full min-h-0 w-full flex-col overflow-hidden bg-[radial-gradient(circle_at_top,rgba(167,243,208,0.22),transparent_34%),linear-gradient(180deg,#071c16_0%,#0b2d23_48%,#12382b_100%)] text-white">
-    <div className="pointer-events-none absolute inset-0 overflow-hidden">
-      <div className="absolute left-[12%] top-[10%] h-24 w-24 rounded-full bg-emerald-300/12 blur-3xl" />
-      <div className="absolute right-[8%] top-[22%] h-20 w-20 rounded-full bg-lime-300/10 blur-3xl" />
-      {Array.from({ length: 9 }).map((_, index) => (
-        <span
-          key={`wellbeing-particle-${index}`}
-          className="absolute h-1.5 w-1.5 rounded-full bg-emerald-100/45"
-          style={{ left: `${12 + index * 9}%`, top: `${18 + (index % 4) * 16}%` }}
-        />
-      ))}
-    </div>
-
-    <div className="relative z-10 min-h-0 flex-1 px-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-[calc(env(safe-area-inset-top)+1.15rem)]">
-      <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-[1.9rem] border border-cyan-100/14 bg-[linear-gradient(180deg,rgba(13,33,65,0.68),rgba(8,20,42,0.76))] shadow-[0_20px_40px_rgba(2,6,23,0.32)] backdrop-blur-sm">
-        {children}
+const WellbeingShell: React.FC<WellbeingShellProps> = ({
+  title, subtitle, type, activityId, progress, status, purpose, affirmation,
+  paused = false, onExit, children,
+}) => {
+  const safeProgress = Math.max(0, Math.min(100, progress ?? 0));
+  return (
+    <section className={`wellbeing-shell${activityId ? '' : ' wellbeing-shell--hub'}`} data-wellbeing-activity={activityId ?? 'hub'} data-wellbeing-paused={paused} aria-label={title}>
+      <div className="wellbeing-landscape" aria-hidden="true">
+        <img src={WELLBEING_SCENES[activityId ?? 'leaf_drift']} alt="" draggable={false} data-wellbeing-scene />
+        <div className="wellbeing-scene-shade" />
+        <div className="wellbeing-haze wellbeing-drift" />
+        <div className="wellbeing-light wellbeing-drift" />
+        <div className="wellbeing-motes">
+          {Array.from({ length: 7 }, (_, index) => (
+            <span className="wellbeing-drift" key={index} style={{
+              left: `${12 + index * 12}%`, top: `${24 + (index % 3) * 20}%`,
+              animationDelay: `${index * -2.1}s`, animationDuration: `${13 + index * 1.4}s`,
+            }} />
+          ))}
+        </div>
       </div>
-    </div>
-  </div>
-);
+      <header className="wellbeing-header">
+        <div className="wellbeing-heading">
+          <span className="wellbeing-eyebrow">{activityId ? `Calm Grove · ${type ?? 'A moment for you'}` : 'A moment for you'}</span>
+          <h1>{title}</h1>
+          {subtitle ? <p className="wellbeing-how-to" data-wellbeing-instructions>{subtitle}</p> : null}
+          {purpose ? <p className="wellbeing-purpose" data-wellbeing-purpose>{purpose}</p> : null}
+        </div>
+        <button type="button" onClick={onExit} className="wellbeing-exit" data-button-skin="none" data-wellbeing-exit aria-label="Back to adventure">
+          <ArrowLeft size={19} aria-hidden="true" /><span>Back to adventure</span>
+        </button>
+      </header>
+      <div className="wellbeing-content">{children}</div>
+      {status || affirmation || progress !== undefined ? (
+        <footer className="wellbeing-footer">
+          {status ? <p data-wellbeing-status role="status" aria-live="polite">{status}</p> : null}
+          {progress !== undefined ? (
+            <div className="wellbeing-progress" role="progressbar" aria-label={`${title} progress`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(safeProgress)} data-wellbeing-progress={Math.round(safeProgress)}>
+              <span style={{ width: `${safeProgress}%` }} />
+            </div>
+          ) : null}
+          {affirmation ? <p className="wellbeing-affirmation" data-wellbeing-affirmation>{affirmation}</p> : null}
+        </footer>
+      ) : null}
+    </section>
+  );
+};
 
 export default WellbeingShell;

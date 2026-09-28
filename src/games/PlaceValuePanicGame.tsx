@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import animatedEnemy1 from '../assets/maps/ezgif-261d69e7ae90ee8c.webp';
+import rhinoEnemy from '../assets/enemies/cohesive/rhino.webp';
 import forestBackground from '../assets/maps/premium/place-value-panic.webp';
 import hudAvatarName from '../assets/ui_frames/hudfortextplace_slices/hud_avatar_name.png';
 import hourglassIcon from '../assets/casual_ui/icons/hourglass.png';
@@ -131,19 +131,8 @@ const getDistractorDigits = (expectedDigits: number[], count: number): number[] 
 };
 
 const slotCountForLevel = (level: number): number => {
-  // Gradual staged ramp:
-  // L1-2: T,U
-  // L3-4: H,T,U
-  // L5-6: Th,H,T,U
-  // L7-8: Tth,Th,H,T,U
-  // L9:   Hth,Tth,Th,H,T,U
-  // L10+: M,Hth,Tth,Th,H,T,U
-  if (level <= 2) return 2;
-  if (level <= 4) return 3;
-  if (level <= 6) return 4;
-  if (level <= 8) return 5;
-  if (level === 9) return 6;
-  return 7;
+  // Each scored tier opens a distinct place-value range; the final tier includes millions.
+  return [2, 3, 4, 5, 7][Math.max(1, Math.min(5, level)) - 1];
 };
 
 const ONES_WORDS = [
@@ -300,7 +289,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   }, []);
 
   const resolvedLevel = useMemo(
-    () => Math.max(1, Math.min(10, miniGameLevel || levelId || 1)),
+    () => Math.max(1, Math.min(5, miniGameLevel || levelId || 1)),
     [levelId, miniGameLevel],
   );
 
@@ -367,6 +356,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
   const victoryDispatchedRef = useRef(false);
   const gameOverDispatchedRef = useRef(false);
+  const onVictoryRef = useRef(onVictory);
   const speechTimeoutRef = useRef<number | null>(null);
   const playfieldRef = useRef<HTMLDivElement | null>(null);
   const submitLockedRef = useRef(false);
@@ -383,6 +373,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     pendingTimeoutsRef.current.add(timeout);
   }, []);
   useEffect(() => clearRoundTimeouts, [clearRoundTimeouts]);
+  useEffect(() => { onVictoryRef.current = onVictory; }, [onVictory]);
 
   const activeTargetAnchors = useMemo(
     () => centeredAnchors(question.expectedDigits.length, spanForSlots(question.expectedDigits.length, 'target'), 50),
@@ -554,6 +545,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     const token = location === 'target' ? targetSlots[index] : sourceSlots[index];
     if (!token) return;
 
+    setFeedback(null);
+
     const rect = event.currentTarget.getBoundingClientRect();
     const scale = getPlayfieldScale();
     event.currentTarget.setPointerCapture(event.pointerId);
@@ -607,6 +600,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     if (!token) return;
     const destination = (location === 'source' ? targets : sources).findIndex((item) => item === null);
     if (destination < 0) return;
+    setFeedback(null);
     if (location === 'source') { targets[destination] = token; sources[index] = null; }
     else { sources[destination] = token; targets[index] = null; }
     setTargetSlots(targets);
@@ -681,12 +675,12 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     setDragState(null);
   };
 
-  const advanceRound = useCallback((newHealth: number) => {
+  const advanceRound = useCallback((newHealth: number, finalScore: number, finalCorrectAnswers: number, finalAttempts: number) => {
     if (newHealth <= 0 && !victoryDispatchedRef.current) {
       victoryDispatchedRef.current = true;
-      const finalAccuracy = attempts > 0 ? correctAnswers / attempts : 1;
+      const finalAccuracy = finalAttempts > 0 ? finalCorrectAnswers / finalAttempts : 1;
       const stars = scoreToStars(finalAccuracy);
-      scheduleRound(() => onVictory(stars, Math.max(0, XP)), 380);
+      scheduleRound(() => onVictoryRef.current(stars, Math.max(0, finalScore)), 380);
       return;
     }
 
@@ -695,7 +689,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       setFeedback(null);
       resetRound(nextQuestion);
     }, HIT_REACTION_MS + 140);
-  }, [attempts, correctAnswers, onVictory, resetRound, resolvedLevel, scheduleRound, XP]);
+  }, [resetRound, resolvedLevel, scheduleRound]);
 
   const canSubmit = useMemo(
     () => !isResolving && !dragState && targetSlots.length > 0 && targetSlots.every((token) => token !== null),
@@ -717,15 +711,18 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     submitLockedRef.current = true;
 
     const isCorrect = targetSlots.every((token, index) => token?.value === question.expectedDigits[index]);
+    const nextAttempts = attempts + 1;
     setIsResolving(true);
-    setAttempts((prev) => prev + 1);
+    setAttempts(nextAttempts);
 
     if (isCorrect) {
       emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { metadata: { questionId: question.id } });
       const nextHealth = Math.max(0, goblinHealth - 1);
+      const nextCorrectAnswers = correctAnswers + 1;
+      const nextScore = XP + 140 + resolvedLevel * 22;
       setGoblinHealth(nextHealth);
-      setCorrectAnswers((prev) => prev + 1);
-      setScore((prev) => prev + (140 + resolvedLevel * 22));
+      setCorrectAnswers(nextCorrectAnswers);
+      setScore(nextScore);
       setFeedback({
         tone: 'success',
         message: 'Number restored!\nThe island markers are back in order.',
@@ -738,7 +735,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       }
       speechTimeoutRef.current = window.setTimeout(() => setEnemySpeech(null), 920);
       triggerHaptic('success');
-      advanceRound(nextHealth);
+      advanceRound(nextHealth, nextScore, nextCorrectAnswers, nextAttempts);
       return;
     }
 
@@ -755,14 +752,13 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       setSourceSlots(initialSourceSlots.map((token) => (token ? { ...token } : null)));
 
     scheduleRound(() => {
-      setFeedback(null);
       setIsResolving(false);
       submitLockedRef.current = false;
       setGoblinEffect('idle');
       setBoardShake(false);
       setWrongFlash(false);
     }, 520);
-  }, [advanceRound, canSubmit, goblinHealth, initialSourceSlots, question.expectedDigits, question.id, resolvedLevel, scheduleRound, sessionEvents, targetSlots]);
+  }, [advanceRound, attempts, canSubmit, correctAnswers, goblinHealth, initialSourceSlots, question.expectedDigits, question.id, resolvedLevel, scheduleRound, sessionEvents, targetSlots, XP]);
 
   const numberStyle: React.CSSProperties = {
     fontFamily: 'var(--font-fredoka)',
@@ -795,7 +791,9 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           alt=""
           aria-hidden="true"
           draggable={false}
-          className="absolute inset-0 h-full w-full object-cover object-center"
+          className="absolute inset-0 h-full w-full object-contain object-center"
+          data-game-scene-image="true"
+          data-background-fit="contain"
         />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,14,24,0.18)_0%,rgba(7,14,24,0.24)_44%,rgba(7,14,24,0.56)_100%)]" />
       </div>
@@ -959,8 +957,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           style={{ width: '84%', top: sourceSlots.length > 6 ? '72%' : '75%' }}
         >
           <div className="pvp-digit-panel">
-            <div className="pvp-stone-heading">
-              <span>Tap or drag the digits</span>
+            <div className={`pvp-stone-heading pvp-digit-status${feedback ? ` is-${feedback.tone}` : ''}`} role="status" aria-live="polite">
+              <span>{feedback ? feedback.message.split('\n')[0] : 'Tap or drag the digits'}</span>
             </div>
             <div className={`relative gap-1 ${sourceSlots.length > 6 ? 'grid grid-cols-5' : 'flex items-center justify-center'}`}>
               {activeSourceAnchors.map((anchor, idx) => {
@@ -987,16 +985,14 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 height: sourceSlots.length > 6 ? '44px' : '58px',
               }}
             >
-              {token ? (
-                <>
-                  <span
-                    className="absolute left-1/2 top-1/2 block -translate-x-1/2 -translate-y-1/2 font-black text-white"
-                    style={{ ...numberStyle, fontSize: '2.2rem' }}
-                  >
-                    {token.value}
-                  </span>
-                </>
-              ) : null}
+              {/* Keep the touch target mounted while the digit is lifted. */}
+              <span
+                className="pointer-events-none absolute left-1/2 top-1/2 block -translate-x-1/2 -translate-y-1/2 font-black text-white"
+                style={{ ...numberStyle, fontSize: '2.2rem' }}
+                aria-hidden="true"
+              >
+                {token?.value ?? (isDraggingThis ? dragState?.token.value : '')}
+              </span>
               {isDraggingThis ? <span className="sr-only">Dragging</span> : null}
             </motion.button>
           );
@@ -1006,8 +1002,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         </div>
 
         <div
-          className="pointer-events-none absolute left-1/2 top-[52.4%] z-30 -translate-x-1/2"
-          style={{ width: `${layout.enemyWidth + 6}%` }}
+          className="legend-pvp-enemy pointer-events-none absolute left-1/2 top-[52.4%] z-30 -translate-x-1/2"
+          style={{ width: `${sourceSlots.length > 6 ? 36 : Math.min(46, layout.enemyWidth + 6)}%` }}
         >
           <div className="relative">
             <AnimatePresence>
@@ -1046,11 +1042,12 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
             </div>
             <div className="pvp-enemy-ground" aria-hidden="true" />
             <MonsterMindActor
-              src={animatedEnemy1}
+              src={rhinoEnemy}
               alt="Monster Mind"
               reaction={goblinHealth <= 0 ? 'defeated' : goblinEffect === 'heal' ? 'taunt' : goblinEffect}
               reactionKey={slotPulseKey}
               className="relative translate-y-[8px]"
+              style={{ width: '100%', aspectRatio: '1' }}
             />
           </div>
         </div>
@@ -1106,23 +1103,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         })()
       ) : null}
 
-      <AnimatePresence>
-        {feedback ? (
-          <motion.div
-            key={feedback.message}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -16 }}
-            className={`pointer-events-none absolute bottom-[calc(env(safe-area-inset-bottom)+4.6rem)] left-1/2 z-40 -translate-x-1/2 rounded-[1.1rem] border px-5 py-3 text-center text-sm font-black leading-snug shadow-[0_12px_28px_rgba(2,6,23,0.55)] whitespace-pre-line ${
-              feedback.tone === 'success'
-                ? 'border-emerald-200/70 bg-emerald-500/35 text-emerald-50'
-                : 'border-rose-200/70 bg-rose-500/35 text-amber-50'
-            }`}
-          >
-            {feedback.message}
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
       </div>
     </div>
   );

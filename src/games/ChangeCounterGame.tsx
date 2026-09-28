@@ -1,15 +1,17 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
-import { motion } from 'motion/react';
-import changeCounterBackground from '../assets/maps/premium/change-counter.webp';
+import { motion, useIsPresent, useReducedMotion } from 'motion/react';
+import changeCounterBackground from '../assets/maps/teen/monster-market-shop.webp';
+import SceneEnvironment from '../components/SceneEnvironment';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
-import { FeedbackStrip, TaskCard } from '../components/game-ui/GameUiKit';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { triggerHaptic } from '../haptics';
 import {
   GameplaySessionEventHandlers,
   GameplaySessionState,
   MiniGameShellContractProps,
+  emitMiniGameSessionEvent,
 } from '../app/gameplaySessionContract';
 import {
   reshuffleAvoidingRepeat,
@@ -25,6 +27,7 @@ import item7 from '../assets/change counter/itemsforsale/7.png';
 import item8 from '../assets/change counter/itemsforsale/8.png';
 import item9 from '../assets/change counter/itemsforsale/9.png';
 import item10 from '../assets/change counter/itemsforsale/10.png';
+import './monster-market.css';
 
 interface ChangeCounterGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -83,19 +86,11 @@ const pick = <T,>(values: T[]) => values[Math.floor(Math.random() * values.lengt
 const titleCase = (value: string) => value.replace(/\b\w/g, (character) => character.toUpperCase());
 
 const getDifficultyProfile = (levelId: number) => {
-  if (levelId <= 2) {
-    return { lineCount: 1, minQuantity: 1, maxQuantity: 1, changeValues: [5, 10, 20, 50, 75] };
-  }
-
-  if (levelId <= 4) {
-    return { lineCount: 2, minQuantity: 1, maxQuantity: 2, changeValues: [10, 15, 20, 25, 35, 50, 75, 100] };
-  }
-
-  if (levelId <= 6) {
-    return { lineCount: 3, minQuantity: 1, maxQuantity: 3, changeValues: [15, 20, 25, 35, 45, 55, 65, 75, 90, 110] };
-  }
-
-  return { lineCount: 4, minQuantity: 2, maxQuantity: 4, changeValues: [20, 25, 35, 45, 55, 65, 75, 90, 110, 130, 150] };
+  if (levelId <= 1) return { lineCount: 1, minQuantity: 1, maxQuantity: 1, priceStep: 10, maxPrice: 100, changeValues: [10, 20, 30, 50] };
+  if (levelId === 2) return { lineCount: 1, minQuantity: 1, maxQuantity: 1, priceStep: 5, maxPrice: 500, changeValues: [5, 10, 20, 25, 50, 75, 100] };
+  if (levelId === 3) return { lineCount: 2, minQuantity: 1, maxQuantity: 2, priceStep: 5, maxPrice: 800, changeValues: [10, 15, 25, 35, 50, 75, 100] };
+  if (levelId === 4) return { lineCount: 3, minQuantity: 1, maxQuantity: 3, priceStep: 1, maxPrice: 1500, changeValues: [15, 25, 35, 45, 55, 65, 90, 110] };
+  return { lineCount: 4, minQuantity: 2, maxQuantity: 4, priceStep: 1, maxPrice: 1500, changeValues: [25, 35, 45, 55, 65, 75, 90, 110, 130, 150] };
 };
 
 const buildAnswerOptions = (correctPence: number, levelId: number) => {
@@ -132,8 +127,10 @@ const buildReceiptQuestion = (levelId: number, roundIndex: number, order: Market
   const lines: ReceiptLine[] = seeds.map((seed, index) => {
     const quantity = profile.lineCount === 1
       ? 1
-      : randomInt(profile.minQuantity, profile.maxQuantity + (index === 0 ? 0 : 1));
-    const unitPricePence = seed.costPence;
+      : randomInt(profile.minQuantity, profile.maxQuantity);
+    const unitPricePence = levelId <= 1
+      ? Math.max(20, ((Math.round(seed.costPence / 10) % 9) + 1) * 10)
+      : Math.min(profile.maxPrice, Math.max(profile.priceStep, Math.round(seed.costPence / profile.priceStep) * profile.priceStep));
     return {
       id: `${seed.id}-${index}`,
       item: seed.item,
@@ -201,14 +198,18 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
   onVictory,
   onGameOver,
   onBack: _onBack,
-  sessionState: _sessionState,
+  sessionState,
   sessionEvents,
 }) => {
-  const resolvedLevel = useMemo(() => Math.max(1, Math.min(8, levelId || 1)), [levelId]);
+  const reducedMotion = useReducedMotion();
+  const isPresent = useIsPresent();
+  const presentRef = useRef(isPresent);
+  presentRef.current = isPresent;
+  const resolvedLevel = useMemo(() => Math.max(1, Math.min(5, levelId || 1)), [levelId]);
   const [roundIndex, setRoundIndex] = useState(0);
   const [questionOrder, setQuestionOrder] = useState<MarketItem[]>(() => buildQuestionDeck(null));
   const [question, setQuestion] = useState<ChangeQuestion>(() => resolveQuestion(resolvedLevel, 0, questionOrder));
-  const [lives, setLives] = useState(MAX_LIVES);
+  const [localLives, setLives] = useState(MAX_LIVES);
   const [score, setScore] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
@@ -216,17 +217,61 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
   const [feedbackText, setFeedbackText] = useState('');
   const [locked, setLocked] = useState(false);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
-  const timersRef = useRef<number[]>([]);
+  const timersRef = useRef(new Set<number>());
+  const answerLockRef = useRef(false);
+  const runEndedRef = useRef(false);
+  const onVictoryRef = useRef(onVictory);
+  onVictoryRef.current = onVictory;
+  const onGameOverRef = useRef(onGameOver);
+  onGameOverRef.current = onGameOver;
+  const fallbackFailurePendingRef = useRef(false);
+  const usesSharedLives = Boolean(sessionState && !isPractice);
+  const lives = usesSharedLives ? sessionState!.lives : localLives;
+  const observedPositiveLifeRef = useRef(usesSharedLives && lives > 0);
+  const sharedLivesBlocked = usesSharedLives && lives <= 0;
+  const sharedLivesBlockedRef = useRef(sharedLivesBlocked);
+  sharedLivesBlockedRef.current = sharedLivesBlocked;
 
   const clearTimers = () => {
     timersRef.current.forEach((timerId) => window.clearTimeout(timerId));
-    timersRef.current = [];
+    timersRef.current.clear();
   };
 
+  const queueTimeout = (callback: () => void, delay: number) => {
+    if (!presentRef.current || runEndedRef.current || sharedLivesBlockedRef.current) return;
+    const timerId = window.setTimeout(() => {
+      timersRef.current.delete(timerId);
+      if (presentRef.current && !runEndedRef.current && !sharedLivesBlockedRef.current) callback();
+    }, delay);
+    timersRef.current.add(timerId);
+  };
 
+  // Cancel results as soon as exit starts, before the retained screen unmounts.
+  useLayoutEffect(() => {
+    if (isPresent) return;
+    runEndedRef.current = true;
+    answerLockRef.current = true;
+    fallbackFailurePendingRef.current = false;
+    clearTimers();
+  }, [isPresent]);
 
   useEffect(() => {
+    runEndedRef.current = !presentRef.current;
+    return () => {
+      runEndedRef.current = true;
+      answerLockRef.current = true;
+      fallbackFailurePendingRef.current = false;
+      clearTimers();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!presentRef.current) return;
     clearTimers();
+    runEndedRef.current = false;
+    answerLockRef.current = false;
+    fallbackFailurePendingRef.current = false;
+    observedPositiveLifeRef.current = usesSharedLives && lives > 0;
     const nextOrder = buildQuestionDeck(null);
     setQuestionOrder(nextOrder);
     setRoundIndex(0);
@@ -244,21 +289,57 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
     setShowPracticeIntro(Boolean(isPractice));
   }, [isPractice]);
 
+  const endFailedRun = useCallback((finalScore: number) => {
+    if (!presentRef.current || runEndedRef.current) return;
+    runEndedRef.current = true;
+    answerLockRef.current = true;
+    setLocked(true);
+    clearTimers();
+    emitMiniGameSessionEvent(sessionEvents, 'game_failed', { score: finalScore, reason: 'lives' });
+    if (usesSharedLives) return;
+
+    // Practice and standalone play retain their local result after feedback.
+    fallbackFailurePendingRef.current = true;
+    const timerId = window.setTimeout(() => {
+      timersRef.current.delete(timerId);
+      if (!presentRef.current || !fallbackFailurePendingRef.current) return;
+      fallbackFailurePendingRef.current = false;
+      onGameOverRef.current(finalScore);
+    }, 620);
+    timersRef.current.add(timerId);
+  }, [sessionEvents, usesSharedLives]);
+
+  useEffect(() => {
+    if (!presentRef.current || !usesSharedLives) return;
+    if (lives > 0) {
+      observedPositiveLifeRef.current = true;
+      return;
+    }
+    // Retry briefly carries the previous run's zero before the shell resets.
+    if (observedPositiveLifeRef.current) endFailedRun(score);
+  }, [endFailedRun, isPresent, lives, score, usesSharedLives]);
+
   const advanceRound = useCallback((nextCorrect: number, nextScore: number, nextLives: number) => {
+    if (!presentRef.current || runEndedRef.current) return;
     if (roundIndex + 1 >= TOTAL_ROUNDS) {
       const stars = starsForRun(nextCorrect, TOTAL_ROUNDS, nextLives);
-      confetti({
-        particleCount: 90,
-        spread: 70,
-        origin: { y: 0.65 },
-        colors: ['#f97316', '#38bdf8', '#facc15'],
-      });
-      sessionEvents?.onGameComplete?.({ score: nextScore, stars });
-      onVictory(stars, nextScore);
+      clearTimers();
+      queueTimeout(() => {
+        runEndedRef.current = true;
+        clearTimers();
+        if (!reducedMotion) confetti({
+          particleCount: 90,
+          spread: 70,
+          origin: { y: 0.65 },
+          colors: ['#f97316', '#38bdf8', '#facc15'],
+        });
+        emitMiniGameSessionEvent(sessionEvents, 'game_complete', { score: nextScore, stars });
+        onVictoryRef.current(stars, nextScore);
+      }, 520);
       return;
     }
 
-    const timeoutId = window.setTimeout(() => {
+    queueTimeout(() => {
       const nextRound = roundIndex + 1;
       const lastQuestion = questionOrder.length ? questionOrder[questionOrder.length - 1] : null;
       const nextOrder = (questionOrder.length && nextRound % questionOrder.length === 0)
@@ -271,12 +352,13 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
       setFeedbackTone('neutral');
       setFeedbackText('');
       setLocked(false);
+      answerLockRef.current = false;
     }, 520);
-    timersRef.current.push(timeoutId);
-  }, [onVictory, questionOrder, roundIndex, resolvedLevel, sessionEvents]);
+  }, [questionOrder, roundIndex, resolvedLevel, sessionEvents, reducedMotion]);
 
   const handleAnswer = (option: string) => {
-    if (locked) return;
+    if (!presentRef.current || locked || answerLockRef.current || runEndedRef.current || sharedLivesBlockedRef.current) return;
+    answerLockRef.current = true;
     setSelected(option);
     setLocked(true);
 
@@ -287,10 +369,10 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
       setScore(updatedScore);
       setCorrectCount(nextCorrect);
       setFeedbackTone('success');
-      setFeedbackText(`Trade restored. +${gained} XP`);
+      setFeedbackText(`Cha-ching! +${gained} XP. The slime stays in its jar.`);
       triggerHaptic('success');
-      sessionEvents?.onCorrectAnswer?.({ score: updatedScore, metadata: { item: question.item } });
-      sessionEvents?.onPuzzleComplete?.({ score: updatedScore });
+      emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { score: updatedScore, metadata: { item: question.item } });
+      emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', { score: updatedScore });
       advanceRound(nextCorrect, updatedScore, lives);
       return;
     }
@@ -298,111 +380,81 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
     const nextLives = lives - 1;
     setLives(nextLives);
     setFeedbackTone('warning');
-    setFeedbackText(`Trade still scrambled. Correct answer: ${question.correct}`);
+    setFeedbackText(`The till says nope. Change due: ${question.correct}. Try again.`);
     triggerHaptic('error');
-    sessionEvents?.onIncorrectAnswer?.({ score, metadata: { correctAnswer: question.correct } });
+    emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { score, metadata: { correctAnswer: question.correct } });
 
     if (nextLives <= 0) {
-      const timeoutId = window.setTimeout(() => {
-        sessionEvents?.onGameFailed?.({ score, reason: 'lives' });
-        onGameOver(score);
-      }, 620);
-      timersRef.current.push(timeoutId);
+      endFailedRun(score);
       return;
     }
 
-    const timeoutId = window.setTimeout(() => {
+    queueTimeout(() => {
       setSelected(null);
       setFeedbackTone('neutral');
       setFeedbackText('');
       setLocked(false);
+      answerLockRef.current = false;
     }, 520);
-    timersRef.current.push(timeoutId);
   };
 
+  const marketState = feedbackTone === 'success' ? 'correct' : feedbackTone === 'warning' ? 'incorrect' : 'idle';
+  const merchantLine = marketState === 'correct' ? 'Lovely. Suspiciously lovely.'
+    : marketState === 'incorrect' ? 'Oi! That till bites.'
+      : lives <= 1 ? 'Last chance. Keep the slime bottled.' : 'Exact change. No funny business.';
+
   return (
-    <GameScreenShell className="overflow-hidden" backgroundImage={changeCounterBackground} backgroundOpacity={1}>
+    <GameScreenShell className="market-game overflow-hidden" backgroundImage={changeCounterBackground} backgroundOpacity={.5}>
+      <PracticeIntroPopup open={showPracticeIntro} title="Monster Market"
+        body="The till has been slimed. Check every item and quantity.
+Work out the exact change to keep the trade moving."
+        briefing={practiceBriefing} onAction={() => setShowPracticeIntro(false)} />
+      <div className={`market-layout${useSharedTopHud ? ' has-shared-hud' : ''}`}
+        data-market-game data-market-state={marketState} data-market-round={roundIndex + 1} data-market-present={isPresent}
+        data-market-lives={lives} data-market-correct={correctCount} data-market-score={score}>
+        <PuzzleStage className="market-stack">
+          <GameQuestionCard title="Till check" subtitle="Check every quantity on the receipt."
+            style={{ position: 'relative', top: 0, transform: 'none', width: '100%' }}>
+            The customer paid <strong>{formatMoney(question.paidPence)}</strong>. How much change is due?
+          </GameQuestionCard>
 
-      <PracticeIntroPopup
-        open={showPracticeIntro}
-        title="Monster Market"
-        body="The Monster Minds have caused chaos in the market.\nSome orders now bundle several items and quantities.\nWork out the exact change to restore the trade."
-        briefing={practiceBriefing}
-        onAction={() => setShowPracticeIntro(false)}
-      />
-
-      <div className={`relative z-10 flex h-full min-h-0 w-full flex-1 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+4.6rem)] md:pt-[calc(env(safe-area-inset-top)+4.9rem)]' : 'pt-[calc(env(safe-area-inset-top)+2.4rem)]'}`}>
-        <PuzzleStage className="flex h-full min-h-0 flex-1 flex-col gap-2 md:gap-3">
-          <TaskCard className="mx-auto w-full max-w-[44rem]">
-            <div className="question-title">Monster Market</div>
-            <div className="game-question-copy mt-1 text-white md:text-lg">
-              {`Order Received! ${question.lines.map((line) => `${line.quantity}x ${titleCase(line.item)}`).join(', ')}. Funds Deposited = ${formatMoney(question.paidPence)}`}
-            </div>
-            <div className="mt-2 text-[11px] font-semibold text-cyan-100/85 md:text-sm">
-              Calculate the change due from this receipt.
-            </div>
-          </TaskCard>
-
-          <div className="mx-auto flex w-full max-w-[44rem] justify-center">
-            <div className="casual-panel-surface flex w-full max-w-[28rem] flex-col gap-3 overflow-hidden rounded-[1.25rem] border border-white/10 px-3 py-3 shadow-[0_12px_24px_rgba(0,0,0,0.16)] md:max-w-[32rem] md:rounded-[1.45rem] md:px-4 md:py-4">
-              <div className="grid gap-2">
-                {question.lines.map((line) => (
-                  <div key={line.id} className="flex items-center gap-3 rounded-[1rem] border border-white/8 bg-black/18 px-3 py-2 md:px-4 md:py-3">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[0.9rem] bg-black/20 md:h-14 md:w-14">
-                      <img
-                        src={line.image}
-                        alt={titleCase(line.item)}
-                        className="h-10 w-10 object-contain drop-shadow-[0_8px_14px_rgba(0,0,0,0.22)] md:h-12 md:w-12"
-                        draggable={false}
-                      />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-sm font-black text-white md:text-base">
-                        {line.quantity}x {titleCase(line.item)}
-                      </div>
-                      <div className="text-[10px] font-semibold text-cyan-100/75 md:text-[11px]">
-                        {formatMoney(line.unitPricePence)} each
-                      </div>
-                    </div>
-                    <div className="shrink-0 rounded-full border border-white/10 bg-white/8 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-amber-100 md:text-[12px]">
-                      {formatMoney(line.lineTotalPence)}
-                    </div>
-                  </div>
-                ))}
+          <section className={`market-scene${lives <= 1 ? ' is-last-chance' : ''}`} data-market-playfield>
+            <SceneEnvironment src={changeCounterBackground} className="market-shop-art" />
+            <div className="market-customer-quip" role="status">{merchantLine}</div>
+            <div className="market-slime" data-market-slime aria-hidden="true"><span /><i data-market-bubble /><i data-market-bubble /></div>
+            <motion.div className="market-receipt" data-market-receipt key={`${question.id}-${roundIndex}`}
+              style={{ '--receipt-count': question.lines.length, '--receipt-short-rows': Math.ceil(question.lines.length / 2) } as React.CSSProperties}
+              initial={reducedMotion ? false : { y: 8, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: reducedMotion ? 0 : .18 }}>
+              <div className="market-receipt-heading"><span>Trade receipt</span><strong>{String(roundIndex + 1).padStart(2, '0')} / {TOTAL_ROUNDS}</strong></div>
+              <div className="market-receipt-lines" style={{ gridTemplateRows: `repeat(${question.lines.length}, minmax(0, 1fr))` }}>
+                {question.lines.map((line) => <div key={line.id} className="market-receipt-line" data-market-line>
+                  <img src={line.image} alt={titleCase(line.item)} draggable={false} />
+                  <div><strong>{line.quantity}× {titleCase(line.item)}</strong><small>{formatMoney(line.unitPricePence)} each</small></div>
+                  <b>{formatMoney(line.lineTotalPence)}</b>
+                </div>)}
               </div>
-
-              <div className="flex flex-wrap items-center justify-between gap-2 rounded-[1rem] border border-white/8 bg-slate-950/28 px-3 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-white/82 md:text-[12px]">
-                <span>Total cost: {formatMoney(question.costPence)}</span>
-                <span>Funds deposited: {formatMoney(question.paidPence)}</span>
+              <div className="market-receipt-totals">
+                <div><span>Total cost</span><strong data-market-cost>{formatMoney(question.costPence)}</strong></div>
+                <div><span>Customer paid</span><strong data-market-paid>{formatMoney(question.paidPence)}</strong></div>
               </div>
-            </div>
-          </div>
+              <div className={`market-receipt-stamp${marketState === 'correct' ? ' is-paid' : ''}`} aria-hidden="true">
+                {marketState === 'correct' ? 'PAID. MOSTLY SLIME-FREE.' : `${TOTAL_ROUNDS - roundIndex} trades to finish`}
+              </div>
+            </motion.div>
+          </section>
 
-          <div className="flex min-h-0 flex-col gap-2 md:gap-3">
-            <div className="answer-choice-surface mx-auto grid w-full max-w-[32rem] grid-cols-2 gap-1.5 md:gap-2">
-              {question.options.map((option) => (
-                <motion.button
-                  key={`${question.id}-${option}`}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => handleAnswer(option)}
-                  disabled={locked}
-                  className={`flex min-h-[2.8rem] items-center justify-center rounded-[0.95rem] px-2 py-1.5 text-sm font-black md:min-h-[3.15rem] md:text-lg ${
-                    selected === option
-                      ? option === question.correct
-                        ? 'ui-button-success'
-                        : 'ui-button-primary'
-                      : 'ui-button-secondary'
-                  }`}
-                >
-                  {option}
-                </motion.button>
-              ))}
-            </div>
+          <div className="market-answers answer-choice-surface" role="group" aria-label="Exact change">
+            {question.options.map((option) => <motion.button key={`${question.id}-${option}`} type="button"
+              data-market-answer={option} whileTap={reducedMotion ? undefined : { scale: .97 }}
+              onClick={() => handleAnswer(option)} disabled={!isPresent || locked || sharedLivesBlocked}
+              className={selected === option ? option === question.correct ? 'ui-button-success' : 'ui-button-primary' : 'ui-button-secondary'}>
+              {option}
+            </motion.button>)}
           </div>
-
-          <FeedbackStrip tone={feedbackTone}>
-            {feedbackText}
-          </FeedbackStrip>
+          <div className={`market-feedback${marketState === 'incorrect' ? ' is-error' : ''}`} role="status" aria-live="polite">
+            {feedbackText || (lives <= 1 ? 'One chance left. Read the receipt, then pay the exact change.' : 'Keep the queue moving. Pay the exact change.')}
+          </div>
         </PuzzleStage>
       </div>
     </GameScreenShell>

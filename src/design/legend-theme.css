@@ -1,6 +1,9 @@
 /* One material language, applied after existing game-specific layout rules.
    This file skins the established bounds; it does not change stage/safe-area maths. */
 :root {
+  --legend-label-size: 14px;
+  --legend-body-size: 16px;
+  --legend-question-size: 18px;
   --legend-ink: #081a35;
   --legend-blue: #164b85;
   --legend-cyan: #79e0ee;
@@ -18,13 +21,22 @@
   --sat-button-cta-skin: linear-gradient(160deg, #ffe9a0, #ffd56b 36%, #efb83d);
 }
 
-.sat-theme-bluegold { color: var(--legend-paper); }
-/* Portrait environment art fills only the established gameplay viewport. */
-#root .app-viewport.sat-theme-bluegold.screen-gameplay .game-background-layer {
-  background-size: cover !important;
+.iphone-game-stage {
+  --legend-label-size: max(14px, calc(14px / var(--game-stage-scale, 1)));
+  --legend-body-size: max(16px, calc(16px / var(--game-stage-scale, 1)));
+  --legend-question-size: max(18px, calc(18px / var(--game-stage-scale, 1)));
 }
-#root .app-viewport.sat-theme-bluegold.screen-gameplay .game-background-layer > img {
-  object-fit: cover !important;
+
+.sat-theme-bluegold { color: var(--legend-paper); }
+/* Keep the complete environment within the established gameplay viewport. */
+#root .app-viewport.sat-theme-bluegold.screen-gameplay .game-background-layer {
+  background-size: contain !important;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: #092b35;
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay .game-background-layer img {
+  object-fit: contain !important;
 }
 .sat-theme-bluegold :is(h1, h2, h3) { font-family: var(--font-display); }
 #root .app-viewport.sat-theme-bluegold :is(.text-amber-100, .text-amber-200, .text-amber-300, .text-yellow-300) {
@@ -127,11 +139,38 @@
 #root .app-viewport.sat-theme-bluegold .game-question-card .question-title {
   color: var(--legend-cyan) !important;
   letter-spacing: .09em;
-  font-size: 10px;
+  font-size: var(--legend-label-size);
   text-shadow: none;
 }
-.sat-theme-bluegold .game-question-card .game-question-copy { font-weight: 500; line-height: 1.2; }
-.sat-theme-bluegold .game-question-card .question-subtitle { color: #c9deea; line-height: 1.25; }
+.sat-theme-bluegold .game-question-card .game-question-copy { font-size: var(--legend-question-size); font-weight: 500; line-height: 1.35; }
+.sat-theme-bluegold .game-question-card .question-subtitle { color: #d6eaf4; font-size: var(--legend-label-size); line-height: 1.4; }
+
+/* Essential labels share one readable floor even when the stage is scaled. */
+#root .app-viewport.sat-theme-bluegold.screen-gameplay .game-shell-host :is(.text-xs, .text-\[9px\], .text-\[10px\], .text-\[11px\], .text-\[12px\], .text-\[13px\]) {
+  font-size: var(--legend-label-size) !important;
+  line-height: 1.3;
+  letter-spacing: .035em;
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay .game-question-card :is(.question-title, .question-subtitle) {
+  font-size: calc(var(--legend-label-size) / var(--question-card-scale, 1)) !important;
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay .game-question-card .game-question-copy {
+  font-size: calc(var(--legend-question-size) / var(--question-card-scale, 1));
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay :is(.answer-choice-surface, .shared-game-answer-panel) button {
+  font-size: var(--legend-question-size);
+  line-height: 1.25;
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay :is(.answer-choice-surface, .shared-game-answer-panel) button > span {
+  font-size: inherit;
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay :is(.recharts-cartesian-axis-tick-value, .recharts-label) {
+  font-size: var(--legend-label-size);
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay .unified-minigame-hud-enabled {
+  --shared-minigame-hud-reserved-top: calc(4.9rem / var(--game-stage-scale, 1));
+  --shared-minigame-reserved-bottom: calc(4.25rem / var(--game-stage-scale, 1));
+}
 
 /* Shared HUD retains the stage's existing top/bottom anchors and heights. */
 .legend-hud-bar {
@@ -146,13 +185,13 @@
 }
 .legend-hud-avatar img { height: 100%; width: 100%; object-fit: contain; }
 .legend-hud-mission { min-width: 0; flex: 1; }
-.legend-hud-label { color: var(--legend-muted); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
-.legend-hud-title { color: #f5fbff; font-size: clamp(12px, 3.4vw, 15px); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.legend-hud-streak { color: var(--legend-gold); font-size: 11px; display: inline-flex; align-items: center; gap: 3px; }
+.legend-hud-label { color: #bdd6e8; font-size: var(--legend-label-size); letter-spacing: .035em; text-transform: uppercase; }
+.legend-hud-title { color: #f5fbff; font-size: var(--legend-body-size); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.legend-hud-streak { color: var(--legend-gold); font-size: var(--legend-label-size); display: inline-flex; align-items: center; gap: 3px; }
 .legend-hud-lives { flex-shrink: 0; display: flex; align-items: center; gap: 3px; color: #fb8694; }
 .legend-hud-lives svg { width: 15px; height: 15px; }
 .legend-hud-lives .is-empty { color: #647b93; fill: transparent; }
-.legend-hud-practice { color: var(--legend-cyan); font-size: 10px; font-weight: 600; }
+.legend-hud-practice { color: var(--legend-cyan); font-size: var(--legend-label-size); font-weight: 600; }
 .legend-hud-timer { width: 100%; height: 5px; margin-top: 4px; border-radius: 9px; background: #081a35; overflow: hidden; }
 .legend-hud-timer > div { height: 100%; border-radius: inherit; background: #71d7c9; transition: width .25s; }
 .legend-hud-timer.is-low > div { background: #ffbe68; }
@@ -161,10 +200,10 @@
   border: 2px solid #477798; border-radius: 18px;
   background: var(--legend-surface); box-shadow: var(--legend-sheen), var(--legend-shadow);
 }
-.legend-dock-button { display: flex; width: 42px; height: 42px; flex-direction: column; align-items: center; justify-content: center; gap: 1px; }
-.legend-dock-button svg { height: 17px; width: 17px; }
-.legend-dock-button span { font-size: 9px; line-height: 1.1; }
-.legend-dock-base { pointer-events: none; position: absolute; inset: auto 0 0; height: calc(4rem + env(safe-area-inset-bottom)); background: #081a35; }
+.legend-dock-button { display: flex; width: max(52px, calc(52px / var(--game-stage-scale, 1))); height: max(46px, calc(46px / var(--game-stage-scale, 1))); flex-direction: column; align-items: center; justify-content: center; gap: 1px; }
+.legend-dock-button svg { height: max(18px, calc(18px / var(--game-stage-scale, 1))); width: max(18px, calc(18px / var(--game-stage-scale, 1))); }
+.legend-dock-button span { font-size: var(--legend-label-size); line-height: 1.1; }
+.legend-dock-base { pointer-events: none; position: absolute; inset: auto 0 0; height: calc((4.25rem + env(safe-area-inset-bottom)) / var(--game-stage-scale, 1)); background: #081a35; }
 
 /* Briefings and results share the same surface and typography. */
 .legend-dialog {

@@ -9,7 +9,7 @@ import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import MonsterMindActor, { type MonsterMindReaction } from '../components/game-ui/MonsterMindActor';
 import dojoBackground from '../assets/maps/premium/number-line-ninja.webp';
-import { pickBossArt } from '../assets/bosses/library';
+import goblinMonster from '../assets/enemies/cohesive/goblin.webp';
 interface NumberLineNinjaGameProps {
   levelId: number;
   avatarId: string;
@@ -24,11 +24,20 @@ type NumberLineNinjaGameShellProps = NumberLineNinjaGameProps & MiniGameShellCon
 type FeedbackState = 'idle' | 'correct' | 'incorrect';
 
 interface FlyingAnswerState {
+  flightId: number;
   value: string;
   startX: number;
   startY: number;
   endX: number;
   endY: number;
+}
+
+interface PendingCorrectAnswerAdvance {
+  flightId: number;
+  questionId: number;
+  flightLanded: boolean;
+  minimumFeedbackElapsed: boolean;
+  resolve: () => void;
 }
 
 interface NumberLineQuestion {
@@ -114,11 +123,8 @@ const createQuestion = (
 };
 
 const difficultyBandForLevel = (levelId: number) => {
-  if (levelId <= 2) return 1;
-  if (levelId <= 4) return 3;
-  if (levelId <= 6) return 5;
-  if (levelId <= 8) return 7;
-  return 9;
+  const tier = Math.max(1, Math.min(5, levelId));
+  return (tier - 1) * 2 + 1;
 };
 
 const buildQuestion = (levelId: number): NumberLineQuestion => {
@@ -207,19 +213,23 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   const [monsterReaction, setMonsterReaction] = useState<MonsterMindReaction>('idle');
   const [monsterSpeech, setMonsterSpeech] = useState<string | null>(null);
   const [monsterReactionKey, setMonsterReactionKey] = useState(0);
-  const monsterSrc = useMemo(() => pickBossArt(`number-line-ninja-${levelId}-a`), [levelId]);
+  const monsterSrc = goblinMonster;
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
   const timeoutIdsRef = useRef(new Set<number>());
   const answerLockRef = useRef(false);
   const runEndedRef = useRef(false);
+  const flightSequenceRef = useRef(0);
+  const pendingCorrectAdvanceRef = useRef<PendingCorrectAnswerAdvance | null>(null);
   const playfieldRef = useRef<HTMLDivElement | null>(null);
   const missingSlotRef = useRef<HTMLDivElement | null>(null);
   const optionButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const monsterReactionTimeoutRef = useRef<number | null>(null);
+  const onVictoryRef = useRef(onVictory);
+  useEffect(() => { onVictoryRef.current = onVictory; }, [onVictory]);
 
   const goalCorrect = useMemo(
-    () => Math.min(14, Math.max(7, 6 + Math.floor(levelId / 2))),
+    () => 6 + Math.max(1, Math.min(5, levelId)),
     [levelId],
   );
   const timeLeft = sessionState?.timeLeft ?? 1;
@@ -237,6 +247,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   const clearQueuedTimeouts = () => {
     timeoutIdsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId));
     timeoutIdsRef.current.clear();
+    pendingCorrectAdvanceRef.current = null;
   };
 
   const clearMonsterReactionTimeout = () => {
@@ -314,7 +325,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       stars,
       metadata: { correctCount: nextCorrect, attempts: nextAttempts },
     });
-    onVictory(stars, finalScore);
+    onVictoryRef.current(stars, finalScore);
   };
 
   const advanceQuestion = () => {
@@ -325,6 +336,20 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     answerLockRef.current = false;
     setLineShake(false);
     setFlyingAnswer(null);
+  };
+
+  const resolvePendingCorrectAnswer = () => {
+    const pending = pendingCorrectAdvanceRef.current;
+    if (!pending || runEndedRef.current || !pending.minimumFeedbackElapsed || !pending.flightLanded) return;
+    pendingCorrectAdvanceRef.current = null;
+    pending.resolve();
+  };
+
+  const markFlightLanded = (flightId: number, questionId: number) => {
+    const pending = pendingCorrectAdvanceRef.current;
+    if (!pending || runEndedRef.current || pending.flightId !== flightId || pending.questionId !== questionId) return;
+    pending.flightLanded = true;
+    resolvePendingCorrectAnswer();
   };
 
   const triggerMonsterReaction = (reaction: 'hit' | 'taunt') => {
@@ -343,7 +368,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     }, reaction === 'hit' ? MONSTER_HIT_REACTION_MS : MONSTER_TAUNT_REACTION_MS);
   };
 
-  const getTravelAnimation = (option: string): FlyingAnswerState | null => {
+  const getTravelAnimation = (option: string, flightId: number): FlyingAnswerState | null => {
     const stage = playfieldRef.current;
     const rootRect = stage?.getBoundingClientRect();
     const optionRect = optionButtonRefs.current[option]?.getBoundingClientRect();
@@ -355,6 +380,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     if (scaleX <= 0 || scaleY <= 0) return null;
 
     return {
+      flightId,
       value: option,
       startX: (optionRect.left - rootRect.left + (optionRect.width / 2)) / scaleX,
       startY: (optionRect.top - rootRect.top + (optionRect.height / 2)) / scaleY,
@@ -378,11 +404,26 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       const nextCorrect = correctCount + 1;
       const pointGain = 130 + (nextCorrect % 4 === 0 ? 30 : 0);
       const nextScore = XP + pointGain;
+      const flightId = ++flightSequenceRef.current;
+      const flight = reducedMotion ? null : getTravelAnimation(option, flightId);
+      pendingCorrectAdvanceRef.current = {
+        flightId,
+        questionId: question.id,
+        flightLanded: !flight,
+        minimumFeedbackElapsed: false,
+        resolve: () => {
+          if (nextCorrect >= goalCorrect) {
+            completeRun(nextScore, nextCorrect, nextAttempts);
+            return;
+          }
+          advanceQuestion();
+        },
+      };
 
       setCorrectCount(nextCorrect);
       setScore(nextScore);
       setFeedbackState('correct');
-      setFlyingAnswer(reducedMotion ? null : getTravelAnimation(option));
+      setFlyingAnswer(flight);
       setConfettiBurstKey((current) => current + 1);
       triggerMonsterReaction('hit');
 
@@ -404,11 +445,11 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       });
 
       queueTimeout(() => {
-        if (nextCorrect >= goalCorrect) {
-          completeRun(nextScore, nextCorrect, nextAttempts);
-          return;
-        }
-        advanceQuestion();
+        const pending = pendingCorrectAdvanceRef.current;
+        if (!pending || pending.flightId !== flightId || pending.questionId !== question.id) return;
+        // Slow frame resolution may start the flight late; keep its original question until it lands.
+        pending.minimumFeedbackElapsed = true;
+        resolvePendingCorrectAnswer();
       }, Math.max(QUESTION_ADVANCE_MS, 760));
       return;
     }
@@ -439,28 +480,47 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   const [questionDockBottom, setQuestionDockBottom] = useState<number>(0);
 
   useLayoutEffect(() => {
-    const node = questionCardRef.current;
-    if (!node) return undefined;
+    const card = questionCardRef.current?.querySelector<HTMLElement>('[data-game-question]');
+    const playfield = playfieldRef.current;
+    if (!card || !playfield) return undefined;
 
     const update = () => {
-      const rect = node.getBoundingClientRect();
-      const playfieldTop = playfieldRef.current?.getBoundingClientRect().top ?? 0;
-      setQuestionDockBottom(rect.bottom - playfieldTop);
+      const playfieldRect = playfield.getBoundingClientRect();
+      if (playfield.offsetHeight <= 0 || playfieldRect.height <= 0) return;
+
+      // The fixed card is out of its wrapper's flow; measure its painted bottom in stage units.
+      const scaleY = playfieldRect.height / playfield.offsetHeight;
+      const nextBottom = Math.max(0, (card.getBoundingClientRect().bottom - playfieldRect.top) / scaleY);
+      setQuestionDockBottom((current) => Math.abs(current - nextBottom) < 0.1 ? current : nextBottom);
     };
 
     update();
     const ro = new ResizeObserver(update);
-    ro.observe(node);
+    ro.observe(card);
+    ro.observe(playfield);
+    const frameId = window.requestAnimationFrame(update);
     window.addEventListener('resize', update);
+    window.visualViewport?.addEventListener('resize', update);
 
     return () => {
       ro.disconnect();
+      window.cancelAnimationFrame(frameId);
       window.removeEventListener('resize', update);
+      window.visualViewport?.removeEventListener('resize', update);
     };
   }, [question.id]);
 
   return (
-    <div ref={playfieldRef} className="relative h-full w-full overflow-hidden">
+    <div
+      ref={playfieldRef}
+      data-number-line-game="true"
+      data-number-line-state={didComplete ? 'complete' : didFail ? 'failed' : feedbackState}
+      data-number-line-question={question.id}
+      data-number-line-correct={correctCount}
+      data-number-line-goal={goalCorrect}
+      data-number-line-reaction-key={monsterReactionKey}
+      className="relative h-full w-full overflow-hidden"
+    >
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Number Line Ninja"
@@ -471,7 +531,9 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       <img
         src={dojoBackground}
         alt="Number line dojo backdrop"
-        className="absolute inset-0 h-full w-full object-cover object-center"
+        className="absolute inset-0 h-full w-full object-contain object-center"
+        data-game-scene-image="true"
+        data-background-fit="contain"
         draggable={false}
       />
       <div className="absolute inset-0 bg-slate-950/25" />
@@ -494,7 +556,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       </div>
 
       <div
-        className="relative z-10 flex h-full min-h-0 flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+5.2rem)]"
+        className="relative z-10 flex h-full min-h-0 flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+3rem)]"
         style={{
           // Keep the number line docked below the fixed question card (even when the text wraps).
           // Requirement: number line should be below the question card without touching it.
@@ -503,7 +565,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       >
         <div className="flex min-h-0 flex-1 flex-col items-center justify-start pt-0">
           <motion.div
-            animate={lineShake ? { x: [0, -10, 10, -8, 8, -4, 4, 0] } : { x: 0 }}
+            animate={lineShake && !reducedMotion ? { x: [0, -10, 10, -8, 8, -4, 4, 0] } : { x: 0 }}
             transition={{ duration: 0.34, ease: 'easeInOut' }}
             className="qa-number-line relative mt-0 flex h-[24%] min-h-[156px] w-full max-w-[760px] items-center justify-center"
             style={{ marginTop: 12 }}
@@ -516,14 +578,14 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
               </div>
 
               <motion.div
-                animate={{ opacity: [0.28, 0.58, 0.28], scale: [0.985, 1.02, 0.985] }}
+                animate={reducedMotion ? { opacity: 0.4, scale: 1 } : { opacity: [0.28, 0.58, 0.28], scale: [0.985, 1.02, 0.985] }}
                 transition={{ duration: 2.3, repeat: Infinity, ease: 'easeInOut' }}
                 className="pointer-events-none absolute inset-0 rounded-[1.4rem] bg-[radial-gradient(circle_at_50%_50%,rgba(56,189,248,0.2),rgba(30,41,59,0.08)_58%,transparent_80%)]"
               />
 
-              <div className="relative mx-auto w-[88%] max-w-[610px] pt-1">
+              <div className="relative mx-auto h-[118px] w-[88%] max-w-[610px]">
                 <motion.div
-                  animate={{
+                  animate={reducedMotion ? { opacity: 1 } : {
                     boxShadow: [
                       '0 0 18px rgba(34,211,238,0.45)',
                       '0 0 32px rgba(34,211,238,0.84)',
@@ -532,7 +594,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                     opacity: [0.9, 1, 0.9],
                   }}
                   transition={{ duration: 1.7, repeat: Infinity, ease: 'easeInOut' }}
-                  className="absolute left-0 right-0 top-1/2 h-[7px] -translate-y-1/2 rounded-full bg-gradient-to-r from-cyan-200 via-white to-cyan-200"
+                  className="absolute left-0 right-0 top-[32px] h-[7px] -translate-y-1/2 rounded-full bg-gradient-to-r from-cyan-200 via-white to-cyan-200"
                 />
 
                 {question.labels.map((label, index) => {
@@ -543,7 +605,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                   return (
                     <React.Fragment key={`${question.id}-${index}`}>
                       <div
-                        className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2"
+                        className="absolute top-[32px] -translate-x-1/2 -translate-y-1/2"
                         style={{ left: `${pct}%` }}
                       >
                         <div
@@ -554,14 +616,16 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                       </div>
 
                       <div
+                        data-line-marker={index}
                         className="absolute -translate-x-1/2"
-                        style={{ left: `${pct}%`, top: 'calc(50% + 34px)' }}
+                        style={{ left: `${pct}%`, top: 66 }}
                       >
                         <div className="flex h-[48px] w-[74px] items-center justify-center">
                           {isQuestionMark ? (
                             <motion.div
                               ref={missingSlotRef}
-                              animate={{
+                              data-number-line-missing="true"
+                              animate={reducedMotion ? { scale: 1 } : {
                                 scale: [1, 1.08, 1],
                                 boxShadow: [
                                   '0 0 0px rgba(245,158,11,0.25)',
@@ -586,9 +650,9 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                 })}
 
                 <motion.div
-                  animate={{ y: [0, 10, 0], opacity: [0.55, 1, 0.55] }}
+                  animate={reducedMotion ? { y: 0, opacity: 1 } : { y: [0, 10, 0], opacity: [0.55, 1, 0.55] }}
                   transition={{ duration: 1.05, repeat: Infinity, ease: 'easeInOut' }}
-                  className="pointer-events-none absolute top-[-10px] -translate-x-1/2"
+                  className="pointer-events-none absolute top-0 -translate-x-1/2"
                   style={{ left: `${focusPct}%` }}
                 >
                   <ChevronDown className="h-7 w-7 text-amber-200 drop-shadow-[0_0_12px_rgba(251,191,36,0.96)]" />
@@ -597,174 +661,61 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
             </div>
           </motion.div>
 
-          <div className="relative mt-2 flex h-[31%] min-h-[220px] w-full max-w-[560px] shrink-0 translate-y-[2px] items-end justify-center">
-            <div className="qa-enemy-cluster pointer-events-none relative mx-auto flex w-full max-w-[560px] flex-col items-center justify-end gap-4">
-              <div className="w-[144px] self-center translate-y-[122px] rounded-2xl border border-amber-200/35 bg-slate-900/76 p-1.5 shadow-[0_10px_20px_rgba(2,6,23,0.46)] sm:w-[162px]">
-                <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.12em] text-amber-200 md:text-[9px]">
-                  Monster Mind
-                </div>
-                <div className="relative h-2 overflow-hidden rounded-full border border-slate-700/80 bg-slate-950/80">
-                  <motion.div
-                    className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-rose-500 via-rose-400 to-orange-300 shadow-[0_0_12px_rgba(251,113,133,0.75)]"
-                    animate={{ width: `${monsterHealthPct}%` }}
-                    transition={{ type: 'spring', stiffness: 210, damping: 26 }}
-                  />
-                  <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.14)_1px,transparent_1px)] bg-[length:10%_100%]" />
-                </div>
-              </div>
-
-              <div className="relative flex w-full min-w-0 max-w-[280px] justify-center">
-                <AnimatePresence>
+          <div className="relative mt-2 flex h-[31%] min-h-[220px] w-full max-w-[560px] shrink-0 items-end justify-center">
+            <div className="qa-enemy-cluster pointer-events-none relative mx-auto flex h-full w-full max-w-[560px] flex-col items-center justify-end gap-2">
+              <div className="relative h-[174px] w-[240px] max-w-[80%] shrink-0 sm:w-[256px]">
+                <MonsterMindActor
+                  src={monsterSrc}
+                  alt="Monster Mind guarding the hidden path"
+                  reaction={monsterReaction}
+                  reactionKey={monsterReactionKey}
+                  className="h-full w-full drop-shadow-[0_12px_14px_rgba(2,6,23,0.35)]"
+                />
+                <AnimatePresence initial={false}>
                   {monsterSpeech ? (
                     <motion.div
-                      key={`monster-speech-${monsterSpeech}`}
-                      initial={{ opacity: 0, y: 8, scale: 0.9 }}
-                      animate={{ opacity: 1, y: 0, scale: [1, 1.04, 1] }}
-                      exit={{ opacity: 0, y: -8, scale: 0.9 }}
-                      transition={{ duration: 0.22, ease: 'easeOut' }}
-                      className="absolute left-1/2 top-[-18%] z-40 -translate-x-1/2"
+                      key={monsterReactionKey}
+                      initial={{ opacity: 0, y: reducedMotion ? 0 : 5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 0 }}
+                      transition={{ duration: reducedMotion ? 0 : 0.16 }}
+                      className="absolute left-1/2 top-0 z-40 w-max max-w-[240px] -translate-x-1/2"
                     >
-                      <div className="relative">
-                        <motion.div
-                          className="absolute inset-[-8px] rounded-full bg-amber-300/35 blur-md"
-                          animate={{ opacity: [0.5, 0.9, 0.5], scale: [0.96, 1.04, 0.96] }}
-                          transition={{ duration: 0.7, repeat: Infinity, ease: 'easeInOut' }}
-                        />
-                        <div className="relative max-w-[220px] rounded-full border border-amber-200/70 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.96),rgba(254,243,199,0.94)_42%,rgba(254,215,170,0.92)_100%)] px-3.5 py-1.5 text-center text-[clamp(0.62rem,1.8vw,0.9rem)] font-black leading-tight tracking-normal text-slate-800 shadow-[0_10px_18px_rgba(2,6,23,0.45)] sm:max-w-[240px]">
-                          {monsterSpeech}
-                        </div>
-                        <div className="absolute left-1/2 top-[100%] h-2.5 w-2.5 -translate-x-1/2 rotate-45 border-b border-r border-amber-200/70 bg-amber-100/95" />
+                      <div className="relative rounded-2xl border border-amber-200/70 bg-amber-50/95 px-3 py-1.5 text-center text-[clamp(0.62rem,1.6vw,0.8rem)] font-black leading-tight text-slate-800 shadow-[0_6px_14px_rgba(2,6,23,0.25)]">
+                        {monsterSpeech}
+                        <div className="absolute left-1/2 top-[100%] h-2 w-2 -translate-x-1/2 rotate-45 border-b border-r border-amber-200/70 bg-amber-50/95" />
                       </div>
                     </motion.div>
                   ) : null}
                 </AnimatePresence>
+              </div>
 
-                <motion.div
-                  className="absolute left-1/2 top-[62%] h-[38%] w-[56%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl"
-                  animate={{
-                    opacity: monsterSmokeFx ? 0.6 : monsterEffect === 'idle' ? 0.22 : 0.52,
-                    scale: monsterSmokeFx ? [1, 1.08, 0.98, 1.04, 1] : monsterEffect === 'idle' ? 1 : [1, 1.12, 1],
-                    backgroundColor:
-                      monsterSmokeFx
-                        ? 'rgba(88,28,135,0.78)'
-                        : monsterEffect === 'hit'
-                        ? 'rgba(248,113,113,0.92)'
-                        : 'rgba(56,189,248,0.55)',
-                  }}
-                  transition={{
-                    duration: monsterSmokeFx ? 0.82 : monsterEffect === 'hit' ? 0.32 : 0.45,
-                    ease: 'easeInOut',
-                    repeat: monsterSmokeFx || monsterEffect !== 'idle' ? 0 : Infinity,
-                    repeatDelay: 1.1,
-                  }}
-                />
-
-                <AnimatePresence>
-                  {monsterSmokeFx ? (
-                    <motion.div
-                      key={`monster-smoke-${question.id}-${feedbackState}`}
-                      className="pointer-events-none absolute inset-[-24%] z-10"
-                      initial={{ opacity: 0, scale: 0.82 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 1.04 }}
-                      transition={{ duration: 0.2, ease: 'easeOut' }}
-                    >
-                      <motion.div
-                        className="absolute inset-[10%] rounded-full bg-[radial-gradient(circle_at_50%_50%,rgba(17,24,39,0.28),rgba(88,28,135,0.6)_40%,rgba(15,23,42,0.08)_64%,transparent_78%)] blur-2xl"
-                        animate={{ rotate: [0, 120, 240, 360] }}
-                        transition={{ duration: 1.05, repeat: Infinity, ease: 'linear' }}
-                      />
-                      <motion.div
-                        className="absolute left-[14%] top-[28%] h-[34%] w-[34%] rounded-full bg-[radial-gradient(circle_at_30%_30%,rgba(139,92,246,0.74),rgba(17,24,39,0.1)_62%,transparent_80%)] blur-xl"
-                        animate={{
-                          x: [0, 16, 0, -12, 0],
-                          y: [0, -10, 6, -4, 0],
-                          rotate: [0, 90, 180, 270, 360],
-                          scale: [0.86, 1.08, 0.94, 1.02, 0.9],
-                        }}
-                        transition={{ duration: 1.35, repeat: Infinity, ease: 'easeInOut' }}
-                      />
-                      <motion.div
-                        className="absolute right-[16%] top-[18%] h-[30%] w-[30%] rounded-full bg-[radial-gradient(circle_at_65%_35%,rgba(31,41,55,0.9),rgba(168,85,247,0.58)_45%,rgba(17,24,39,0.06)_74%,transparent_84%)] blur-xl"
-                        animate={{
-                          x: [0, -12, 0, 10, 0],
-                          y: [0, 8, -6, 4, 0],
-                          rotate: [0, -90, -180, -270, -360],
-                          scale: [0.9, 1.12, 0.96, 1.04, 0.9],
-                        }}
-                        transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut' }}
-                      />
-                      <motion.div
-                        className="absolute inset-[26%] rounded-full border border-fuchsia-400/20 bg-[radial-gradient(circle_at_center,rgba(15,23,42,0.2),rgba(88,28,135,0.25)_56%,transparent_82%)] blur-lg"
-                        animate={{ rotate: [0, 360] }}
-                        transition={{ duration: 0.9, repeat: Infinity, ease: 'linear' }}
-                      />
-                    </motion.div>
-                  ) : null}
-
-                  {monsterHitFx ? (
-                    <motion.div
-                      key={`monster-hit-fx-${question.id}-${confettiBurstKey}`}
-                      className="pointer-events-none absolute inset-[-16%]"
-                      initial={{ opacity: 0.98, scale: 0.54 }}
-                      animate={{ opacity: 0, scale: 1.46, rotate: 160 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.56, ease: 'easeOut' }}
-                    >
-                      <div className="absolute inset-0 rounded-full border-[8px] border-rose-400/90 blur-[1px]" />
-                      <div className="absolute inset-[18%] rounded-full border-[5px] border-red-500/85" />
-                      <div className="absolute inset-[38%] rounded-full border-[4px] border-orange-300/85" />
-                    </motion.div>
-                  ) : null}
-                </AnimatePresence>
-
-                <motion.div
-                  className="relative w-[84%] max-w-[300px] translate-y-[110px] scale-[0.94] sm:w-full sm:max-w-[330px] sm:scale-100"
-                  animate={{
-                    y: [0, -5, 0],
-                    x: monsterEffect === 'hit' ? [0, -9, 9, -8, 8, -5, 5, 0] : 0,
-                    rotate: monsterEffect === 'hit' ? [0, -2.2, 2.2, -1.8, 1.8, 0] : 0,
-                    scale: monsterEffect === 'hit' ? [1.04, 1.08, 1.04] : 1,
-                  }}
-                  transition={{
-                    y: { duration: 1.8, repeat: Infinity, ease: 'easeInOut' },
-                    x: { duration: 0.9, ease: 'easeInOut' },
-                    rotate: { duration: 0.9, ease: 'easeInOut' },
-                    scale: { duration: 0.9, ease: 'easeInOut' },
-                  }}
+              <div className="w-[144px] shrink-0 self-center rounded-2xl border border-amber-200/35 bg-slate-900/76 p-1.5 shadow-[0_8px_16px_rgba(2,6,23,0.35)] sm:w-[162px]">
+                <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.12em] text-amber-200 md:text-[9px]">
+                  Monster Mind
+                </div>
+                <div
+                  data-number-line-health={monsterRemainingHealth}
+                  role="progressbar"
+                  aria-label="Monster Mind remaining strength"
+                  aria-valuemin={0}
+                  aria-valuemax={goalCorrect}
+                  aria-valuenow={monsterRemainingHealth}
+                  className="relative h-2 overflow-hidden rounded-full border border-slate-700/80 bg-slate-950/80"
                 >
-                  <motion.img
-                    src={idleMonsterSrc}
-                    alt=""
-                    aria-hidden="true"
-                    draggable={false}
-                    className="relative h-auto w-full object-contain drop-shadow-[0_16px_22px_rgba(2,6,23,0.5)]"
-                    animate={{ opacity: monsterEffect === 'hit' ? 0 : 1 }}
-                    transition={{ duration: 0.14, ease: 'easeOut' }}
+                  <motion.div
+                    className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-rose-500 via-rose-400 to-orange-300"
+                    animate={{ width: `${monsterHealthPct}%` }}
+                    transition={reducedMotion ? { duration: 0 } : { type: 'spring', stiffness: 210, damping: 26 }}
                   />
-                  <AnimatePresence>
-                    {monsterEffect === 'hit' ? (
-                      <motion.img
-                        key={`monster-hit-${question.id}-${monsterHitAnimationIndex}`}
-                        src={activeMonsterHitSrc}
-                        alt=""
-                        aria-hidden="true"
-                        draggable={false}
-                        className="absolute inset-0 h-full w-full object-contain"
-                        initial={{ opacity: 0.98 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.14, ease: 'easeOut' }}
-                      />
-                    ) : null}
-                  </AnimatePresence>
-                </motion.div>
+                  <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.14)_1px,transparent_1px)] bg-[length:10%_100%]" />
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="shrink-0 pb-1 pt-2">
+        <div data-number-line-answers="true" className="shrink-0 pb-1 pt-2">
           <div className="mb-2 text-center text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/88">
             Reveal the missing marker
           </div>
@@ -778,16 +729,17 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                 <motion.button
                   key={`${question.id}-${option}-${index}`}
                   type="button"
+                  data-number-line-answer={option}
                   data-button-skin="none"
                   ref={(node) => {
                     optionButtonRefs.current[option] = node;
                   }}
                   onClick={() => handleAnswerDrop(option)}
                   disabled={locked || didComplete || didFail || !isSessionActive}
-                  whileTap={{ scale: 0.985 }}
+                  whileTap={reducedMotion ? undefined : { scale: 0.985 }}
                   animate={{
-                    scale: isCorrect ? [1, 1.16, 0.98, 1.08, 1] : 1,
-                    rotateX: isCorrect ? [0, 90, 180, 270, 360, 540, 720] : 0,
+                    scale: isCorrect && !reducedMotion ? [1, 1.16, 0.98, 1.08, 1] : 1,
+                    rotateX: isCorrect && !reducedMotion ? [0, 90, 180, 270, 360, 540, 720] : 0,
                   }}
                   transition={{ duration: isCorrect ? 0.72 : 0.4, ease: 'easeInOut' }}
                   className="group relative h-[66px] w-[66px] sm:h-[74px] sm:w-[74px]"
@@ -808,8 +760,8 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                   <motion.div
                     initial={false}
                     animate={{
-                      scale: isCorrect ? 1 : isSelected ? 1.03 : 1,
-                      y: isWrong ? [0, -3, 3, -2, 0] : 0,
+                      scale: !reducedMotion && isSelected && !isCorrect ? 1.03 : 1,
+                      y: isWrong && !reducedMotion ? [0, -3, 3, -2, 0] : 0,
                     }}
                     transition={{ duration: isWrong ? 0.35 : 0.4 }}
                     className={`relative flex h-full items-center justify-center px-1 text-center text-[clamp(14px,1.7vw,20px)] font-black leading-none tracking-tight drop-shadow-[0_3px_3px_rgba(0,0,0,0.42)] ${
@@ -819,7 +771,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                     {option}
                   </motion.div>
 
-                  {isCorrect && (
+                  {isCorrect && !reducedMotion && (
                     <motion.div
                       initial={{ opacity: 0, scale: 0.7 }}
                       animate={{ opacity: [0, 1, 0.45, 0], scale: [0.7, 1.16, 1.28, 1.38] }}
@@ -835,24 +787,33 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       <AnimatePresence>
         {flyingAnswer && feedbackState === 'correct' && (
           <motion.div
-            key={`${question.id}-${flyingAnswer.value}-${confettiBurstKey}`}
+            key={flyingAnswer.flightId}
+            data-number-line-flight="true"
             initial={{
-              x: flyingAnswer.startX - 36,
-              y: flyingAnswer.startY - 36,
+              x: flyingAnswer.startX - 30,
+              y: flyingAnswer.startY - 30,
               scale: 1,
               opacity: 1,
             }}
             animate={{
-              x: flyingAnswer.endX - 23,
-              y: flyingAnswer.endY - 23,
+              x: flyingAnswer.endX - 30,
+              y: flyingAnswer.endY - 30,
               scale: 0.64,
               opacity: 1,
               rotateX: [0, 180, 360, 540],
             }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.58, ease: [0.2, 0.85, 0.24, 1] }}
-            className="pointer-events-none absolute z-30 h-[60px] w-[60px]"
-            style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
+            onAnimationComplete={(definition) => {
+              // Exit only fades opacity; it must never satisfy the keyed landing gate.
+              if (typeof definition === 'object' && definition !== null
+                && 'x' in definition && 'y' in definition
+                && definition.x === flyingAnswer.endX - 30 && definition.y === flyingAnswer.endY - 30) {
+                markFlightLanded(flyingAnswer.flightId, question.id);
+              }
+            }}
+            className="pointer-events-none absolute left-0 top-0 z-30 h-[60px] w-[60px]"
+            style={{ transformOrigin: 'center', transformStyle: 'preserve-3d', perspective: 1000 }}
           >
             <div className="absolute inset-0 rounded-full border-[2px] border-emerald-100/95 bg-gradient-to-b from-emerald-300 to-green-600 shadow-[0_10px_0_rgba(20,83,45,0.82),0_0_28px_rgba(74,222,128,0.78)]" />
             <div className="pointer-events-none absolute inset-[9%] rounded-full bg-gradient-to-b from-white/30 via-transparent to-transparent" />
@@ -862,7 +823,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
           </motion.div>
         )}
 
-        {feedbackState === 'correct' && confettiBurstKey > 0 && (
+        {feedbackState === 'correct' && confettiBurstKey > 0 && !reducedMotion && (
           <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden">
             {[
               { left: '43%', top: '23%', color: 'bg-amber-300', delay: 0 },
@@ -896,11 +857,12 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
           </div>
         )}
 
-                {feedbackState !== 'idle' && (
+        {feedbackState !== 'idle' && (
           <motion.div
-            initial={{ opacity: 0, y: -12, scale: 0.92 }}
+            initial={reducedMotion ? false : { opacity: 0, y: -12, scale: 0.92 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -8, scale: 0.95 }}
+            exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: -8, scale: 0.95 }}
+            transition={reducedMotion ? { duration: 0 } : undefined}
             className="pointer-events-none absolute left-1/2 top-3 z-20 -translate-x-1/2"
           >
             <div
@@ -915,7 +877,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
           </motion.div>
         )}
 
-        {feedbackState === 'incorrect' && (
+        {feedbackState === 'incorrect' && !reducedMotion && (
           <motion.div
             key={`${question.id}-wrong-x`}
             initial={{ opacity: 0, scale: 0.4 }}

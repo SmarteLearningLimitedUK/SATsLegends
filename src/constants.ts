@@ -7,6 +7,7 @@ import world04Map from './assets/maps/harbour.jpg';
 import world05Map from './assets/maps/finalamendedworldmap.png';
 import world06Map from './assets/maps/finalmap.png';
 import { NUMBER_BASE_CAMP_LEVELS } from './systems/content/island1NumberBaseCamp';
+import { buildFiveTierCampaign } from './systems/content/gameDifficulty';
 
 const mergeIslandLevels = (...groups: LevelData[][]): LevelData[] => {
   const flattened = groups.flat().map((level, index) => ({
@@ -15,7 +16,7 @@ const mergeIslandLevels = (...groups: LevelData[][]): LevelData[] => {
   }));
 
   const seen = new Set<string>();
-  return flattened.map((level) => {
+  const seededLevels = flattened.map((level) => {
     const practiceKey = level.blueprintKey || `${level.gameType || 'level'}-${level.id}`;
     const isPractice = !seen.has(practiceKey);
     seen.add(practiceKey);
@@ -24,6 +25,7 @@ const mergeIslandLevels = (...groups: LevelData[][]): LevelData[] => {
       isPractice: level.isPractice ?? isPractice,
     };
   });
+  return buildFiveTierCampaign(seededLevels);
 };
 
 const pickLevelsByBlueprint = (levels: LevelData[], blueprintKeys: string[]): LevelData[] => (
@@ -189,12 +191,12 @@ export const ISLANDS: IslandData[] = [
     groundColor: 'bg-indigo-950',
     mapImage: world06Map,
     decorations: [],
-    levels: [
-      { id: 1, stars: 0, isLocked: false, blueprintKey: 'time_keeper_cove', displayName: 'Chrono Dash: Time Trial', gameType: 'timekeeper_temple' },
-      { id: 2, stars: 0, isLocked: false, blueprintKey: 'problem_pyramid', displayName: 'Problem Pyramid', gameType: 'rule_runner' },
-      { id: 3, stars: 0, isLocked: false, blueprintKey: 'unit_mixer', displayName: 'Lava Path', gameType: 'unit_mixer' },
-      { id: 4, stars: 0, isLocked: false, blueprintKey: 'change_counter', displayName: 'Change Counter', gameType: 'change_counter' },
-    ],
+    levels: buildFiveTierCampaign([
+      { id: 1, stars: 0, isLocked: false, isPractice: false, blueprintKey: 'time_keeper_cove', displayName: 'Chrono Dash: Time Trial', gameType: 'timekeeper_temple' },
+      { id: 2, stars: 0, isLocked: false, isPractice: false, blueprintKey: 'problem_pyramid', displayName: 'Problem Pyramid', gameType: 'rule_runner' },
+      { id: 3, stars: 0, isLocked: false, isPractice: false, blueprintKey: 'unit_mixer', displayName: 'Lava Path', gameType: 'unit_mixer' },
+      { id: 4, stars: 0, isLocked: false, isPractice: false, blueprintKey: 'change_counter', displayName: 'Change Counter', gameType: 'change_counter' },
+    ]),
   },
   {
     id: 8,

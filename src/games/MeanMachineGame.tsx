@@ -15,6 +15,7 @@ import modeMachineImage from '../assets/mode.png';
 import { GameplaySessionEventHandlers, GameplaySessionState, MiniGamePracticeBriefing } from '../app/gameplaySessionContract';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
+import SceneEnvironment from '../components/SceneEnvironment';
 
 type RoundMode = 'mean' | 'median' | 'mode' | 'missing';
 type GameState = 'idle' | 'spinning' | 'answering' | 'resolved';
@@ -139,10 +140,7 @@ const scoreToStars = (XP: number) => {
 };
 
 const getActiveReelCount = (level: number) => {
-  if (level <= 2) return 2;
-  if (level <= 4) return 3;
-  if (level <= 7) return 4;
-  return 5;
+  return [0, 2, 3, 4, 5, 6][Math.max(1, Math.min(5, level))];
 };
 
 const getActiveReelIndexes = (activeCount: number) => {
@@ -216,7 +214,7 @@ const buildMeanRound = (level: number): RoundData => {
 };
 
 const buildMedianRound = (level: number): RoundData => {
-  const useDoubleDigits = level >= 6;
+  const useDoubleDigits = level >= 3;
   const minValue = useDoubleDigits ? 8 : 2;
   const maxValue = useDoubleDigits ? 28 + level : 14 + level;
   const baseCount = getActiveReelCount(level);
@@ -254,7 +252,7 @@ const buildMedianRound = (level: number): RoundData => {
 };
 
 const buildModeRound = (level: number): RoundData => {
-  const useDoubleDigits = level >= 7;
+  const useDoubleDigits = level >= 3;
   const minValue = useDoubleDigits ? 9 : 2;
   const maxValue = useDoubleDigits ? 30 + level : 16 + level;
   const baseCount = getActiveReelCount(level);
@@ -304,7 +302,7 @@ const buildModeRound = (level: number): RoundData => {
 };
 
 const buildMissingRound = (level: number): RoundData => {
-  const useDoubleDigits = level >= 8;
+  const useDoubleDigits = level >= 4;
   const minValue = useDoubleDigits ? 12 : 4;
   const maxValue = useDoubleDigits ? 34 : 18 + level * 2;
   const activeCount = getActiveReelCount(level);
@@ -363,10 +361,11 @@ const buildMissingRound = (level: number): RoundData => {
   };
 };
 
-const buildRound = (level: number, previousMode: RoundMode | null = null) => {
-  const preferredMode = ROUND_MODES[(level - 1) % ROUND_MODES.length];
+const buildRound = (level: number, roundNumber: number, previousMode: RoundMode | null = null) => {
+  const modes = level === 1 ? ROUND_MODES.slice(0, 1) : level === 2 ? ROUND_MODES.slice(0, 2) : level === 3 ? ROUND_MODES.slice(0, 3) : ROUND_MODES;
+  const preferredMode = modes[(roundNumber - 1) % modes.length];
   const mode = preferredMode === previousMode
-    ? ROUND_MODES[(ROUND_MODES.indexOf(preferredMode) + 1) % ROUND_MODES.length]
+    ? modes[(modes.indexOf(preferredMode) + 1) % modes.length]
     : preferredMode;
 
   if (mode === 'mean') return buildMeanRound(level);
@@ -408,7 +407,7 @@ const ReelWindow: React.FC<{
 );
 
 const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
-  levelId: _levelId,
+  levelId,
   avatarId: _avatarId,
   useSharedTopHud: _useSharedTopHud = true,
   isPractice,
@@ -419,6 +418,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
   sessionState,
   sessionEvents,
 }) => {
+  const difficulty = Math.max(1, Math.min(5, levelId));
   const [level, setLevel] = useState(1);
   const [XP, setXP] = useState(0);
   const [gameState, setGameState] = useState<GameState>('idle');
@@ -459,11 +459,11 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
   const initialiseRound = useCallback((targetLevel: number, previousMode: RoundMode | null = null) => {
     clearTimers();
     answerLockedRef.current = false;
-    let nextRound = buildRound(targetLevel, previousMode);
+    let nextRound = buildRound(difficulty, targetLevel, previousMode);
     let nextSignature = roundSignature(nextRound);
     let guard = 0;
     while (lastRoundRef.current.includes(nextSignature) && guard < 10) {
-      nextRound = buildRound(targetLevel, previousMode);
+      nextRound = buildRound(difficulty, targetLevel, previousMode);
       nextSignature = roundSignature(nextRound);
       guard += 1;
     }
@@ -479,7 +479,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
     setReelSettled(false);
     setWrongPulse(false);
     setReelDisplay(Array.from({ length: REEL_COUNT }, () => '?'));
-  }, [clearTimers]);
+  }, [clearTimers, difficulty]);
 
   useEffect(() => {
     initialiseRound(1);
@@ -542,7 +542,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
         setReelDisplay(Array.from({ length: REEL_COUNT }, (_, index) => {
           if (!round.activeReelIndexes.includes(index)) return '';
           if (round.mode === 'missing' && round.visibleValues[index] === null) return '?';
-          return randomInt(level >= 6 ? 10 : 0, level >= 8 ? 38 : 18);
+          return randomInt(difficulty >= 3 ? 10 : 0, difficulty >= 4 ? 38 : 18);
         }));
       }, tick * 85);
     }
@@ -553,7 +553,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
       setGameState('answering');
     }, 900);
     queueTimeout(() => setReelSettled(false), 1280);
-  }, [clearTimers, gameState, level, queueTimeout, round, sessionActive]);
+  }, [clearTimers, difficulty, gameState, queueTimeout, round, sessionActive]);
 
   const handleAnswer = useCallback((answer: number) => {
     if (!round || gameState !== 'answering' || !sessionActive || answerLockedRef.current) return;
@@ -672,11 +672,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${meanMachineBackground})` }}
-      />
+      <SceneEnvironment src={meanMachineBackground} />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(56,189,248,0.18),transparent_34%),radial-gradient(circle_at_12%_82%,rgba(59,130,246,0.14),transparent_28%),radial-gradient(circle_at_88%_78%,rgba(251,191,36,0.12),transparent_30%),linear-gradient(180deg,rgba(3,7,18,0.2),rgba(3,7,18,0.5))]" />
       <div className="pointer-events-none absolute inset-x-[16%] top-[10%] h-24 rounded-full bg-cyan-300/12 blur-3xl" />
 

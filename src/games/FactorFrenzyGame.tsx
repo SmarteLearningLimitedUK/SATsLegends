@@ -68,9 +68,10 @@ const INITIAL_STATE: LocalState = {
   enemyHealth: ENEMY_MAX_HEALTH,
 };
 
-const scoreToStars = (XP: number) => {
-  if (XP >= 14000) return 3;
-  if (XP >= 10000) return 2;
+const scoreToStars = (XP: number, roundTimeLimit: number) => {
+  const attainableScore = ENEMY_MAX_HEALTH * (500 + roundTimeLimit * 10);
+  if (XP >= attainableScore * .9) return 3;
+  if (XP >= attainableScore * .7) return 2;
   return 1;
 };
 
@@ -84,7 +85,7 @@ const shuffle = <T,>(items: T[]): T[] => {
 };
 
 const buildOptions = (correctAnswers: number[], distractors: number[], minimumCount = 4) => {
-  const options = [...new Set([...correctAnswers, ...distractors])];
+  const options = [...new Set([...correctAnswers, ...shuffle(distractors).slice(0, 3)])];
   let offset = 1;
 
   while (options.length < minimumCount) {
@@ -100,13 +101,15 @@ const buildOptions = (correctAnswers: number[], distractors: number[], minimumCo
 };
 
 const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
-  levelId: _levelId,
+  levelId,
   avatarId: _avatarId,
   useSharedTopHud: _useSharedTopHud,
   onVictory,
   onGameOver: _onGameOver,
   onBack: _onBack,
 }) => {
+  const difficultyTier = Math.max(1, Math.min(5, levelId));
+  const levelConfig = FRENZY_LEVELS[difficultyTier - 1];
   const [state, setState] = useState<LocalState>(INITIAL_STATE);
   const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
   const [showHitFx, setShowHitFx] = useState(false);
@@ -157,15 +160,15 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   };
 
   const generateProblem = useCallback((level: number): FactorProblem => {
+    const tier = Math.max(1, Math.min(5, level));
     const problemTypes: FactorProblemType[] = ['missing_factor', 'all_factors', 'common_factors', 'prime_factors'];
-    const type = problemTypes[Math.min(level - 1, problemTypes.length - 1)];
+    const type = tier === 5 ? Math.random() < .5 ? 'common_factors' : 'prime_factors' : problemTypes[tier - 1];
     const id = Date.now() + Math.floor(Math.random() * 1000);
 
     if (type === 'missing_factor') {
-      const number = Math.floor(Math.random() * 50) + 10;
-      const factors = getFactors(number);
-      const factor = factors[Math.floor(Math.random() * factors.length)];
-      const answer = number / factor;
+      const factor = 2 + Math.floor(Math.random() * 4);
+      const answer = 2 + Math.floor(Math.random() * 4);
+      const number = factor * answer;
       const distractors = [answer + 2, answer - 1, answer + 5, answer - 3].filter((value) => value > 0);
       const options = buildOptions([answer], distractors, 4);
 
@@ -180,7 +183,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     }
 
     if (type === 'all_factors') {
-      const number = [12, 16, 20, 24, 30, 36, 48][Math.floor(Math.random() * 7)];
+      const number = [6, 8, 10, 12][Math.floor(Math.random() * 4)];
       const correctAnswers = getFactors(number);
       const extras = [number + 1, number - 2, 7, 9, 11, 13, 14, 15].filter((value) => value > 0 && !correctAnswers.includes(value));
       const options = buildOptions(correctAnswers, extras, Math.max(4, correctAnswers.length));
@@ -196,13 +199,9 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     }
 
     if (type === 'common_factors') {
-      const pairs: Array<[number, number]> = [
-        [12, 18],
-        [18, 24],
-        [24, 36],
-        [20, 30],
-        [30, 45],
-      ];
+      const pairs: Array<[number, number]> = tier === 5
+        ? [[24, 36], [30, 45], [36, 60], [42, 70]]
+        : [[12, 18], [16, 24], [18, 30], [20, 30]];
       const [number, number2] = pairs[Math.floor(Math.random() * pairs.length)];
       const factorsOne = getFactors(number);
       const factorsTwo = getFactors(number2);
@@ -221,7 +220,8 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
       };
     }
 
-    const number = [12, 20, 30, 42, 60, 72, 84][Math.floor(Math.random() * 7)];
+    const numbers = tier === 5 ? [60, 72, 84, 90, 120] : [12, 18, 20, 24, 30, 36, 42];
+    const number = numbers[Math.floor(Math.random() * numbers.length)];
     const correctAnswers = getPrimeFactors(number);
     const options = buildOptions(correctAnswers, [2, 3, 5, 7, 11, 13, 4, 6, 8, 9], 4);
 
@@ -235,17 +235,9 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     };
   }, []);
 
-  const getLevelFromScore = useCallback((XP: number) => {
-    const currentLevel = [...FRENZY_LEVELS].reverse().find((level) => XP >= level.threshold) || FRENZY_LEVELS[0];
-    return {
-      levelConfig: currentLevel,
-      levelIndex: FRENZY_LEVELS.indexOf(currentLevel) + 1,
-    };
-  }, []);
-
   const startGame = () => {
     endedRef.current = false;
-    const firstProblem = generateProblem(1);
+    const firstProblem = generateProblem(difficultyTier);
     problemStartRef.current = Date.now();
     setSuccessTone('success');
     setSuccessMessage('Direct hit!');
@@ -253,7 +245,8 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
       ...INITIAL_STATE,
       currentProblem: firstProblem,
       status: 'playing',
-      timeLeft: FRENZY_LEVELS[0].timeLimit,
+      level: difficultyTier,
+      timeLeft: levelConfig.timeLimit,
       enemyHealth: ENEMY_MAX_HEALTH,
     });
     setSelectedOptions([]);
@@ -261,7 +254,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
   useEffect(() => {
     if (state.currentProblem) return;
-    const firstProblem = generateProblem(1);
+    const firstProblem = generateProblem(difficultyTier);
     problemStartRef.current = Date.now();
     setSuccessTone('success');
     setSuccessMessage('Direct hit!');
@@ -269,10 +262,11 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
       ...previous,
       currentProblem: firstProblem,
       status: 'playing',
-      timeLeft: FRENZY_LEVELS[0].timeLimit,
+      level: difficultyTier,
+      timeLeft: levelConfig.timeLimit,
       enemyHealth: ENEMY_MAX_HEALTH,
     }));
-  }, [state.currentProblem, generateProblem]);
+  }, [state.currentProblem, generateProblem, difficultyTier, levelConfig.timeLimit]);
 
   useEffect(() => {
     clearTimer();
@@ -336,6 +330,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
       setShowHitFx(true);
       confetti({
+        disableForReducedMotion: true,
         particleCount: finished ? 160 : 120,
         spread: 80,
         origin: { y: 0.62 },
@@ -351,15 +346,14 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   };
 
   const nextProblem = () => {
-    const { levelConfig, levelIndex } = getLevelFromScore(state.XP);
-    const problem = generateProblem(levelIndex);
+    const problem = generateProblem(difficultyTier);
     problemStartRef.current = Date.now();
     setSuccessTone('success');
     setSuccessMessage('Direct hit!');
 
     setState((previous) => ({
       ...previous,
-      level: levelIndex,
+      level: difficultyTier,
       currentProblem: problem,
       status: 'playing',
       timeLeft: levelConfig.timeLimit,
@@ -388,7 +382,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   const submitRun = () => {
     if (endedRef.current) return;
     endedRef.current = true;
-    onVictory(scoreToStars(state.XP), state.XP);
+    onVictory(scoreToStars(state.XP, levelConfig.timeLimit), state.XP);
   };
 
   const enemyHealthPercent = (state.enemyHealth / ENEMY_MAX_HEALTH) * 100;
@@ -396,7 +390,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
   return (
     <div
-      className="relative h-full w-full overflow-hidden bg-cover bg-center bg-no-repeat text-white"
+      className="relative h-full w-full overflow-hidden bg-contain bg-center bg-no-repeat text-white"
       style={{ backgroundImage: `url(${factorFrenzyBackground})` }}
     >
       <div className="pointer-events-none fixed left-0 right-0 top-[max(0.5rem,env(safe-area-inset-top))] z-50 flex justify-center px-3">

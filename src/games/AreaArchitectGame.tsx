@@ -103,8 +103,17 @@ const QUESTION_BANK: AreaQuestion[] = [
   ),
 ];
 
-const buildQuestionDeck = (previousLast: AreaQuestion | null) => (
-  reshuffleAvoidingRepeat(QUESTION_BANK, previousLast, (question) => question.id).map((question) => ({
+const areaQuestionsForTier = (level: number): AreaQuestion[] => {
+  const tier = Math.max(1, Math.min(5, level));
+  if (tier === 1) return [2, 3].map((width) => buildQuestion(5, rectCells(1, 1, width, 2), 'Count the shaded squares to find the area.'));
+  if (tier === 2) return [3, 4].map((width) => buildQuestion(6, rectCells(1, 1, width, 3), 'Find the area of the shaded rectangle.'));
+  if (tier === 3) return QUESTION_BANK.slice(3, 5);
+  if (tier === 4) return [2, 3].map((height) => buildQuestion(7, [...rectCells(1, 1, 4, 2), ...rectCells(1, 3, 2, height)], 'Split the L-shape into rectangles to find its area.'));
+  return [2, 3].map((gap) => buildQuestion(7, rectCells(1, 1, 5, 5).filter((cell) => !(cell.x >= 3 && cell.x < 3 + gap && cell.y >= 3 && cell.y < 3 + gap)), 'Find the shaded area, leaving out the gap.'));
+};
+
+const buildQuestionDeck = (level: number, previousLast: AreaQuestion | null) => (
+  reshuffleAvoidingRepeat(areaQuestionsForTier(level), previousLast, (question) => question.id).map((question) => ({
     ...question,
     options: shuffleOptionsWithCorrect(question.options, question.correct).options,
   }))
@@ -132,7 +141,7 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
   const [locked, setLocked] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [feedbackTone, setFeedbackTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
-  const [questionOrder, setQuestionOrder] = useState<AreaQuestion[]>(() => buildQuestionDeck(null));
+  const [questionOrder, setQuestionOrder] = useState<AreaQuestion[]>(() => buildQuestionDeck(levelId, null));
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
   const question = useMemo(
@@ -145,7 +154,7 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
   useEffect(() => {
     if (!questionOrder.length) return;
     if (roundIndex > 0 && roundIndex % questionOrder.length === 0) {
-      setQuestionOrder(buildQuestionDeck(lastQuestion));
+      setQuestionOrder(buildQuestionDeck(levelId, lastQuestion));
     }
   }, [lastQuestion, questionOrder.length, roundIndex]);
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { BossPose } from '../assets/bosses';
-import { BossEncounter, resolveBossPose } from '../bossMeta';
+import { BossEncounter } from '../bossMeta';
+import { resolveEncounterEnemyArt } from '../assets/enemies/cohesive';
 import MonsterMindActor from './game-ui/MonsterMindActor';
 
 interface BossPortraitProps {
@@ -11,7 +12,7 @@ interface BossPortraitProps {
 }
 
 const BossPortrait: React.FC<BossPortraitProps> = ({ encounter, pose, className = '' }) => {
-  const image = resolveBossPose(encounter.assetId, 'neutral');
+  const image = resolveEncounterEnemyArt(encounter.assetId);
   const reaction = pose === 'defeat' ? 'defeated' : pose === 'dazed' ? 'hit' : pose === 'neutral' ? 'idle' : 'taunt';
 
   return (
@@ -29,11 +30,11 @@ const BossPortrait: React.FC<BossPortraitProps> = ({ encounter, pose, className 
             className="pointer-events-none absolute inset-[10%] rounded-full bg-white/14 blur-xl"
           />
           <MonsterMindActor
-              src={image}
-              alt={encounter.name}
-              reaction={reaction}
-              reactionKey={pose}
-              className="relative z-10 h-full max-h-[7rem] w-full object-contain drop-shadow-[0_14px_24px_rgba(0,0,0,0.42)]"
+            src={image}
+            alt={encounter.name}
+            reaction={reaction}
+            reactionKey={pose}
+            className="relative z-10 h-full max-h-[7rem] w-full object-contain drop-shadow-[0_14px_24px_rgba(0,0,0,0.42)]"
           />
         </div>
         <div className="min-w-0">

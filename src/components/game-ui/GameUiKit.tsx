@@ -9,6 +9,7 @@ import {
   VolumeX,
 } from 'lucide-react';
 import { playGameSound } from '../../audio/gameAudio';
+import SceneEnvironment from '../SceneEnvironment';
 
 type WrapperProps = {
   children: React.ReactNode;
@@ -212,13 +213,11 @@ export const GameUiShell: React.FC<GameUiShellProps> = ({
       {backgroundImage ? (
         <div
           data-game-background-layer="true"
-          className="game-background-layer pointer-events-none absolute inset-0 bg-contain bg-center bg-no-repeat"
+          className="game-background-layer pointer-events-none absolute inset-0"
           style={{
-            backgroundImage: `url(${backgroundImage})`,
             opacity: backgroundOpacity,
-            backgroundPosition: backgroundPosition || undefined,
           }}
-        />
+        ><SceneEnvironment src={backgroundImage} position={backgroundPosition} /></div>
       ) : null}
       {overlayDisabled ? null : null}
       <div className="relative z-10 flex h-full min-h-0 flex-col">

@@ -229,17 +229,7 @@ const modeForLevel = (levelId: number): ChallengeMode => {
   if (levelId === 2) return 'scale_recipe';
   if (levelId === 3) return 'missing_value';
   if (levelId === 4) return 'fix_mistake';
-  if (levelId === 5) return 'word_problem';
-  if (levelId === 6) return 'multi_step';
-
-  const advancedCycle: ChallengeMode[] = [
-    'fix_mistake',
-    'missing_value',
-    'scale_recipe',
-    'word_problem',
-    'multi_step',
-  ];
-  return advancedCycle[(levelId - 7) % advancedCycle.length];
+  return Math.random() < 0.5 ? 'word_problem' : 'multi_step';
 };
 
 const stageForMode = (mode: ChallengeMode): number => {
@@ -407,13 +397,8 @@ const generateChallenge = (levelId: number, solved: number, previousTitle?: stri
     const mode = modeForLevel(levelId);
     const stage = stageForMode(mode);
     const maxIngredients = INGREDIENTS.length;
-    const activeCount = levelId >= 10
-      ? Math.min(5, maxIngredients)
-      : levelId >= 7
-        ? Math.min(4, maxIngredients)
-        : levelId >= 4
-          ? Math.min(3, maxIngredients)
-          : 2;
+    const activeCount = levelId >= 5 ? Math.min(4, maxIngredients)
+      : levelId >= 3 ? Math.min(3, maxIngredients) : 2;
     let activeIndices =
       shuffled([0, 1, 2, 3, 4]).slice(0, activeCount).sort((a, b) => a - b);
     let baseRatio: number[] = [...randomPick(SIMPLE_PAIR_RATIOS)];
@@ -443,7 +428,7 @@ const generateChallenge = (levelId: number, solved: number, previousTitle?: stri
       revealTargets = true;
     } else if (mode === 'scale_recipe') {
       baseRatio = selectBaseRatio();
-      scale = randomPick(stage >= 4 ? [3, 4, 5, 6, 7, 8] : [2, 3, 4, 5, 6]);
+      scale = randomPick(stage >= 4 ? [3, 4, 5, 6, 7, 8] : [2, 3]);
     } else if (mode === 'missing_value') {
       baseRatio = activeCount === 2
         ? [...randomPick(stage >= 4 ? WORD_PAIR_RATIOS.concat(ADVANCED_PAIR_RATIOS) : WORD_PAIR_RATIOS)]

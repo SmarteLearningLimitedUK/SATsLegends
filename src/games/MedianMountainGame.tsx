@@ -16,6 +16,7 @@ import {
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
+import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 
 interface NumberItem {
   id: number;
@@ -52,7 +53,7 @@ const scoreToStars = (XP: number) => {
 const formatMedian = (value: number) => (Number.isInteger(value) ? `${value}` : value.toFixed(1));
 
 const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
-  levelId: _levelId,
+  levelId,
   avatarId: _avatarId,
   useSharedTopHud = false,
   onVictory,
@@ -61,6 +62,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
   sessionState,
   sessionEvents,
 }) => {
+  const difficulty = Math.max(1, Math.min(5, levelId));
   const [gameState, setGameState] = useState<'playing' | 'success' | 'complete'>('playing');
   const [XP, setScore] = useState(0);
   const [level, setLevel] = useState(1);
@@ -85,14 +87,13 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
 
   useEffect(() => () => clearFeedbackTimeout(), []);
 
-  const generateLevel = useCallback((lvl: number) => {
-    const count = lvl <= 5
-      ? 3 + (Math.floor((lvl - 1) / 2) * 2)
-      : 4 + (Math.floor((lvl - 6) / 2) * 2);
+  const generateLevel = useCallback((_roundNumber: number) => {
+    const count = [0, 3, 5, 7, 4, 6][difficulty];
+    const maxValue = [0, 10, 20, 35, 50, 80][difficulty];
 
     const rawNumbers: number[] = [];
     for (let i = 0; i < count; i += 1) {
-      rawNumbers.push(Math.floor(Math.random() * (36 + lvl * 4)) + 1);
+      rawNumbers.push(Math.floor(Math.random() * maxValue) + 1);
     }
 
     const sorted = [...rawNumbers].sort((a, b) => a - b);
@@ -123,7 +124,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
     setFeedback(null);
     setIsSorted(false);
     window.setTimeout(() => inputRef.current?.focus(), 24);
-  }, []);
+  }, [difficulty]);
 
   useEffect(() => {
     generateLevel(1);
@@ -273,6 +274,10 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
           </div>
         )}
 
+        <GameQuestionCard title="Median Mountain" style={{ position: 'relative', top: 0, transform: 'none', width: '100%' }}
+          subtitle={currentLevelData?.isEven ? 'With two middle values, add them and divide by 2.' : 'The middle value in an ordered list is the median.'}>
+          Sort the stones, then enter the median.
+        </GameQuestionCard>
         <main className="relative flex min-h-0 flex-1 items-center justify-center">
           <AnimatePresence mode="wait">
             {(gameState === 'playing' || gameState === 'success') && currentLevelData && (
@@ -283,14 +288,6 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
                 exit={{ opacity: 0, y: -8, scale: 0.99 }}
                 className="mx-auto flex w-full max-w-[840px] min-h-0 flex-col gap-3"
               >
-                <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-cyan-100/50 bg-[#123062]/80 px-4 py-2 shadow-[0_10px_20px_rgba(2,6,23,0.45)]">
-                  <div className="rounded-lg bg-[linear-gradient(180deg,#f7d47c_0%,#f5b72e_100%)] p-1.5 text-slate-900">
-                    <LayoutGrid className="h-4 w-4" />
-                  </div>
-                  <p className="text-[11px] font-black uppercase tracking-[0.16em] text-amber-100">
-                    Sort The Stones, Find The Median
-                  </p>
-                </div>
 
                 <div className="relative overflow-hidden rounded-[2rem] border border-cyan-100/35 bg-[#0f2e61]/70 px-3 py-4 shadow-[0_14px_30px_rgba(2,6,23,0.45)] sm:px-4">
                   <div className="pointer-events-none absolute inset-x-8 top-0 h-14 bg-[radial-gradient(circle_at_50%_0%,rgba(56,189,248,0.24),transparent_72%)]" />

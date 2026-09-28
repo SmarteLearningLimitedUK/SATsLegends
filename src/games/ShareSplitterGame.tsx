@@ -152,7 +152,7 @@ const starsForAccuracy = (correct: number, attempts: number) => {
 const shareModeForLevel = (levelId: number): ShareChallenge['mode'] => {
   if (levelId <= 1) return 'direct_share';
   if (levelId <= 3) return 'scaled_share';
-  if (levelId <= 5) return 'bigger_share';
+  if (levelId === 4) return 'bigger_share';
   return 'exam_share';
 };
 
@@ -166,12 +166,20 @@ const buildSharePrompt = () => {
 };
 
 const createChallenge = (levelId: number, solved: number): ShareChallenge => {
+  const tier = Math.max(1, Math.min(5, levelId));
   const mode = shareModeForLevel(levelId);
   const plateCount = MAX_PLATE_COUNT;
-  const patternOptions = RATIO_PATTERNS_BY_COUNT[plateCount] || RATIO_PATTERNS_BY_COUNT[2];
+  const tierPatterns: number[][][] = [
+    [[1, 1, 1, 1, 1]],
+    [[1, 1, 1, 1, 2], [1, 1, 1, 2, 2]],
+    [[1, 1, 2, 2, 3], [1, 2, 1, 2, 3]],
+    [[1, 2, 2, 3, 3], [2, 1, 2, 3, 3]],
+    [[2, 1, 2, 3, 4], [1, 2, 3, 2, 4]],
+  ];
+  const patternOptions = tierPatterns[tier - 1];
   const pattern = [...randomPick(patternOptions)];
   const totalUnits = pattern.reduce((sum, value) => sum + value, 0);
-  const unitValue = mode === 'direct_share' ? 1 : mode === 'scaled_share' ? 2 : 3;
+  const unitValue = [1, 1, 2, 2, 3][tier - 1];
   const totalSlices = totalUnits * unitValue;
   const targetCounts = pattern.map((value) => value * unitValue);
   const ratioText = pattern.join(':');

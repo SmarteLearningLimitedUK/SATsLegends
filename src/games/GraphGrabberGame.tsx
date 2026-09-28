@@ -19,6 +19,7 @@ import graphGrabberBackground from '../assets/maps/premium/graph-grabber.webp';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
+import SceneEnvironment from '../components/SceneEnvironment';
 
 interface GraphGrabberGameProps {
   levelId: number;
@@ -72,7 +73,7 @@ interface ChartRound {
 }
 
 const MAX_HEARTS = 4;
-const ROUND_GOAL_BY_LEVEL = [0, 4, 5, 5, 6];
+const ROUND_GOAL_BY_LEVEL = [0, 4, 5, 5, 6, 7];
 const CARAVAN_POOL = [
   { id: 'windward', label: 'Windward', color: '#38bdf8' },
   { id: 'eden', label: 'Eden', color: '#818cf8' },
@@ -100,12 +101,12 @@ const scoreToStars = (XP: number) => {
 };
 
 const createBarRound = (levelId: number, variant: number): ChartRound => {
-  const base = 4 + levelId + variant;
+  const base = levelId <= 2 ? 2 + levelId + (Math.floor(variant / 4) % 2) : 4 + levelId * 2 + (variant % 2);
   const bars: BarDatum[] = [
-    { ...CARAVAN_POOL[0], value: clamp(base, 3, 14) },
-    { ...CARAVAN_POOL[1], value: clamp(base + 3, 4, 16) },
-    { ...CARAVAN_POOL[2], value: clamp(base + 1, 3, 15) },
-    { ...CARAVAN_POOL[3], value: clamp(base - 2, 2, 12) },
+    { ...CARAVAN_POOL[0], value: base },
+    { ...CARAVAN_POOL[1], value: base + 3 },
+    { ...CARAVAN_POOL[2], value: base + 1 },
+    { ...CARAVAN_POOL[3], value: base - 2 },
   ];
   const maxBar = bars.reduce((best, current) => (current.value > best.value ? current : best), bars[0]);
   if (variant % 4 === 0) {
@@ -207,13 +208,13 @@ const createBarRound = (levelId: number, variant: number): ChartRound => {
 };
 
 const createLineRound = (levelId: number, variant: number): ChartRound => {
-  const base = 8 + (levelId * 2);
+  const base = [0, 2, 3, 8, 12, 20][clamp(levelId, 1, 5)];
   const line: LineDatum[] = [
-    { label: '1', value: clamp(base, 6, 18) },
-    { label: '2', value: clamp(base + 3, 7, 20) },
-    { label: '3', value: clamp(base + 5, 8, 22) },
-    { label: '4', value: clamp(base + 2, 7, 20) },
-    { label: '5', value: clamp(base + 7, 9, 24) },
+    { label: '1', value: base },
+    { label: '2', value: base + 3 },
+    { label: '3', value: base + 5 },
+    { label: '4', value: base + 2 },
+    { label: '5', value: base + 7 },
   ];
   const riseAtThree = line[2].value > line[1].value;
   const highest = line.reduce((best, current) => (current.value > best.value ? current : best), line[0]);
@@ -378,6 +379,17 @@ const JerryLabel = (pie: PieDatum[]) => pie.find((slice) => slice.label === 'Jer
 const IvyLabel = (pie: PieDatum[]) => pie.find((slice) => slice.label === 'Ivy')?.label ?? 'Ivy';
 
 const buildRound = (levelId: number, roundIndex: number): ChartRound => {
+  if (levelId === 1) return createBarRound(levelId, roundIndex * 4);
+  if (levelId === 2) {
+    return roundIndex % 3 === 2
+      ? createLineRound(levelId, Math.floor(roundIndex / 3) * 4)
+      : createBarRound(levelId, roundIndex % 3);
+  }
+  if (levelId === 3) {
+    if (roundIndex % 3 === 0) return createBarRound(levelId, roundIndex % 3);
+    if (roundIndex % 3 === 1) return createLineRound(levelId, roundIndex % 2);
+    return createPieRound(levelId, roundIndex % 2);
+  }
   const variant = roundIndex % 6;
   if (variant <= 2) {
     return createBarRound(levelId, roundIndex);
@@ -396,7 +408,11 @@ const matchesAnswer = (selected: string[], expected: string[]) => {
   return left.length === right.length && left.every((value, index) => value === right[index]);
 };
 
-const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
+const GraphBoard: React.FC<{ round: ChartRound; difficulty: number }> = ({ round, difficulty }) => {
+  const values = round.bars?.map((point) => point.value) || round.line?.map((point) => point.value) || [1];
+  const tickStep = difficulty <= 2 ? 1 : 2;
+  const axisMax = Math.ceil(Math.max(...values) / tickStep) * tickStep;
+  const axisTicks = Array.from({ length: axisMax / tickStep + 1 }, (_, index) => index * tickStep);
   if (round.kind === 'bar' && round.bars) {
     return (
       <div className="flex h-full min-h-0 flex-col rounded-[1rem] border border-white/8 bg-[linear-gradient(180deg,rgba(9,19,42,0.5),rgba(7,14,32,0.66))] p-1.5 shadow-[0_14px_24px_rgba(2,6,23,0.16)]">
@@ -411,13 +427,17 @@ const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
               <CartesianGrid stroke="rgba(255,255,255,0.12)" strokeDasharray="3 3" vertical={false} />
               <XAxis
                 dataKey="label"
-                tick={{ fill: '#fff8ec', fontSize: 11, fontWeight: 800 }}
+                interval={0}
+                tick={{ fill: '#fff8ec', fontSize: 14, fontWeight: 800 }}
                 axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
                 tickLine={false}
                 label={{ value: round.xLabel, position: 'insideBottom', offset: -2, fill: '#fff8ec', fontSize: 11, fontWeight: 800 } as never}
               />
               <YAxis
-                tick={{ fill: '#fff8ec', fontSize: 11, fontWeight: 800 }}
+                domain={[0, axisMax]}
+                ticks={axisTicks}
+                interval={0}
+                tick={{ fill: '#fff8ec', fontSize: 14, fontWeight: 800 }}
                 axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
                 tickLine={false}
                 label={{ value: round.yLabel, angle: -90, position: 'insideLeft', fill: '#fff8ec', fontSize: 11, fontWeight: 800 } as never}
@@ -452,13 +472,17 @@ const GraphBoard: React.FC<{ round: ChartRound }> = ({ round }) => {
               <CartesianGrid stroke="rgba(255,255,255,0.12)" strokeDasharray="3 3" />
               <XAxis
                 dataKey="label"
-                tick={{ fill: '#fff8ec', fontSize: 11, fontWeight: 800 }}
+                interval={0}
+                tick={{ fill: '#fff8ec', fontSize: 14, fontWeight: 800 }}
                 axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
                 tickLine={false}
                 label={{ value: round.xLabel, position: 'insideBottom', offset: -2, fill: '#fff8ec', fontSize: 11, fontWeight: 800 } as never}
               />
               <YAxis
-                tick={{ fill: '#fff8ec', fontSize: 11, fontWeight: 800 }}
+                domain={[0, axisMax]}
+                ticks={axisTicks}
+                interval={0}
+                tick={{ fill: '#fff8ec', fontSize: 14, fontWeight: 800 }}
                 axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
                 tickLine={false}
                 label={{ value: round.yLabel, angle: -90, position: 'insideLeft', fill: '#fff8ec', fontSize: 11, fontWeight: 800 } as never}
@@ -531,7 +555,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
   onBack: _onBack,
 }) => {
   const totalRounds = ROUND_GOAL_BY_LEVEL[levelId] || 5;
-  const targetScore = 860 + (levelId * 220);
+  const targetScore = totalRounds * 155 + 12 * totalRounds * (totalRounds - 1);
   const timeoutsRef = useRef<number[]>([]);
 
   const [XP, setScore] = useState(0);
@@ -593,7 +617,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
   const finishVictory = (finalScore: number) => {
     if (isFinished) return;
     setIsFinished(true);
-    const stars = finalScore >= targetScore * 1.45 && hearts >= 3
+    const stars = finalScore >= targetScore * .9 && hearts >= 3
       ? 3
       : finalScore >= targetScore && hearts >= 2
         ? 2
@@ -703,11 +727,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden bg-transparent select-none text-slate-100">
-      <div
-        className="pointer-events-none absolute inset-0 bg-cover bg-center bg-no-repeat opacity-100"
-        style={{ backgroundImage: `url(${graphGrabberBackground})` }}
-        aria-hidden="true"
-      />
+      <SceneEnvironment src={graphGrabberBackground} />
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(8,15,32,0.14),rgba(8,15,32,0.24))]" aria-hidden="true" />
       <PracticeIntroPopup
         open={showPracticeIntro}
@@ -733,7 +753,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
           </GameQuestionCard>
 
           <div className="min-h-0">
-            <GraphBoard round={round} />
+            <GraphBoard round={round} difficulty={levelId} />
           </div>
 
           <section className="rounded-[1rem] border border-white/8 bg-[linear-gradient(180deg,rgba(15,23,42,0.62),rgba(10,17,37,0.76))] p-2 shadow-[0_14px_24px_rgba(2,6,23,0.16)] md:p-2.5">

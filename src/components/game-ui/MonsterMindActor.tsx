@@ -17,19 +17,19 @@ export interface MonsterMindActorProps {
 const EMPTY_FRAME = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/%3E';
 const REACTIONS: Record<Exclude<MonsterMindReaction, 'idle'>, Keyframe[]> = {
   hit: [
-    { transform: 'translate(0, 0) rotate(0deg) scale(1)', offset: 0 },
-    { transform: 'translate(-5px, 1px) rotate(-2deg) scale(.985, 1.01)', offset: .2 },
-    { transform: 'translate(2px, 0) rotate(.8deg) scale(1.006, .997)', offset: .56 },
+    { transform: 'translate(0, 0) rotate(0deg) scale(1)', offset: 0, easing: 'ease-out' },
+    { transform: 'translate(-5px, 1px) rotate(-2deg) scale(.985, 1.01)', offset: .2, easing: 'ease-in-out' },
+    { transform: 'translate(2px, 0) rotate(.8deg) scale(1.006, .997)', offset: .56, easing: 'ease-out' },
     { transform: 'translate(0, 0) rotate(0deg) scale(1)', offset: 1 },
   ],
   taunt: [
-    { transform: 'translate(0, 0) rotate(0deg) scale(1)', offset: 0 },
-    { transform: 'translate(2px, 0) rotate(1.2deg) scale(1.01, .99)', offset: .4 },
+    { transform: 'translate(0, 0) rotate(0deg) scale(1)', offset: 0, easing: 'ease-in-out' },
+    { transform: 'translate(2px, 0) rotate(1.2deg) scale(1.01, .99)', offset: .4, easing: 'ease-in-out' },
     { transform: 'translate(0, 0) rotate(0deg) scale(1)', offset: 1 },
   ],
   defeated: [
-    { transform: 'translate(0, 0) rotate(0deg) scale(1)' },
-    { transform: 'translate(0, 4px) rotate(6deg) scale(.97)' },
+    { transform: 'translate(0, 0) rotate(0deg) scale(1)', offset: 0, easing: 'ease-out' },
+    { transform: 'translate(0, 4px) rotate(6deg) scale(.97)', offset: 1 },
   ],
 };
 
@@ -45,7 +45,10 @@ const MonsterMindActor: React.FC<MonsterMindActorProps> = ({
   const reducedMotion = useReducedMotion();
   const recoilRef = useRef<HTMLDivElement | null>(null);
   const timing = useMemo(() => {
-    const seed = Array.from(src).reduce((value, letter) => (value * 31 + letter.charCodeAt(0)) >>> 0, 0);
+    let seed = 0;
+    for (let index = 0; index < src.length; index += 1) {
+      seed = (seed * 31 + src.charCodeAt(index)) >>> 0;
+    }
     return {
       '--monster-breath-duration': `${3.6 + (seed % 7) * .1}s`,
       '--monster-sway-duration': `${5.7 + (seed % 11) * .1}s`,
@@ -59,7 +62,7 @@ const MonsterMindActor: React.FC<MonsterMindActorProps> = ({
     if (!node || !frame || reaction === 'idle' || reducedMotion || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
     const animation = node.animate(REACTIONS[reaction], {
       duration: reaction === 'hit' ? 440 : reaction === 'taunt' ? 660 : 560,
-      easing: 'cubic-bezier(.2,.65,.35,1)',
+      easing: 'linear',
       fill: reaction === 'defeated' ? 'forwards' : 'none',
     });
     return () => animation.cancel();

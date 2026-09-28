@@ -2,7 +2,8 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { AVATARS } from '../constants';
-import { getBossEncounter, resolveBossPose } from '../bossMeta';
+import { getBossEncounter } from '../bossMeta';
+import { resolveEncounterEnemyArt } from '../assets/enemies/cohesive';
 import { BossPose } from '../assets/bosses';
 import { triggerHaptic } from '../haptics';
 import AnimatedAvatar from '../components/AnimatedAvatar';
@@ -64,7 +65,7 @@ const makeOptions = (correct: string, wrongs: string[]) => {
     pad += 1;
   }
 
-  const shuffled = shuffle(options).slice(0, 4);
+  const shuffled = shuffle(options.slice(0, 4));
   return { options: shuffled, answerIndex: shuffled.indexOf(correct) };
 };
 
@@ -659,7 +660,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
 
   return (
     <div className="relative flex h-full w-full overflow-hidden bg-[radial-gradient(circle_at_top,#152036_0%,#0a1120_48%,#030611_100%)] font-sans">
-      <GameplaySceneBackdrop gameType={gameType} className="opacity-60 [&_img]:!object-cover" />
+      <GameplaySceneBackdrop gameType={gameType} className="opacity-60" />
 
       <PracticeIntroPopup
         open={showPracticeIntro}
@@ -691,7 +692,7 @@ const BossEncounterGame: React.FC<BossEncounterGameProps> = ({
               <div className="relative h-[5.6rem] w-[5.6rem] shrink-0 rounded-[1.15rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.16),rgba(255,255,255,0.02))]">
                 <div className="pointer-events-none absolute inset-[10%] rounded-full bg-white/10 blur-xl" />
                 <MonsterMindActor
-                  src={resolveBossPose(encounter.assetId, 'neutral')}
+                  src={resolveEncounterEnemyArt(encounter.assetId)}
                   alt={encounter.name}
                   reaction={bossPose === 'defeat' ? 'defeated' : submittedIndices === null ? 'idle' : heroPose === 'victory' ? 'hit' : 'taunt'}
                   reactionKey={`${currentIndex}:${bossHealth}:${heroHealth}`}

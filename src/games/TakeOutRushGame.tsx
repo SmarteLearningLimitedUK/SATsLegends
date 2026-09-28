@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { motion } from 'motion/react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { AnimatePresence, motion, useIsPresent, useReducedMotion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import takeOutLevelBg from '../assets/maps/premium/take-out-rush.webp';
+import takeOutLevelBg from '../assets/maps/teen/restaurant-rush.webp';
 import food1 from '../assets/take_out/food/1.png';
 import food2 from '../assets/take_out/food/2.png';
 import food3 from '../assets/take_out/food/3.png';
@@ -15,8 +15,10 @@ import FoodGameShell from '../components/FoodGameShell';
 import { triggerHaptic } from '../haptics';
 import CelebrationSplash from '../components/CelebrationSplash';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
+import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
+import './take-out-rush.css';
 
-interface TakeOutRushGameProps {
+interface TakeOutRushGameProps extends MiniGameShellContractProps {
   levelId: number;
   miniGameLevel?: number;
   avatarId: string;
@@ -210,18 +212,14 @@ const shuffle = <T,>(items: T[]): T[] => {
   return clone;
 };
 
-const stageFromProgress = (baseLevel: number, ordersServed: number, timeLeft: number): number => {
-  const servedRamp = Math.floor(ordersServed / 3);
-  const base = Math.max(1, Math.min(12, baseLevel + servedRamp));
-  if (timeLeft <= 30) return Math.min(12, base + 1);
-  return base;
-};
+const stageFromProgress = (baseLevel: number, _ordersServed: number, _timeLeft: number): number => Math.max(1, Math.min(5, baseLevel));
 
 const allowedIdsByStage = (stage: number): string[] => {
-  if (stage <= 3) {
+  if (stage === 1) return ['rice_bowl', 'burger_meal', 'pizza_slice'];
+  if (stage === 2) {
     return ['rice_bowl', 'pizza_slice', 'fries', 'burger_meal'];
   }
-  if (stage <= 7) {
+  if (stage === 3) {
     return ['rice_bowl', 'pizza_slice', 'fries', 'salad_bowl', 'hotdog_combo', 'roast_chicken', 'berry_dessert'];
   }
   return FOOD_ITEMS.map((item) => item.id);
@@ -240,17 +238,17 @@ const generateOrder = (stage: number): TakeOutOrder => {
     const shuffledPool = shuffle(pool);
 
     let bannedItemId: string | undefined;
-    if (stage >= 5 && Math.random() < 0.44 && pool.length >= 5) {
+    if (stage >= 4 && Math.random() < (stage === 5 ? 0.7 : 0.44) && pool.length >= 5) {
       bannedItemId = pick(pool);
     }
 
     const trayIds = shuffledPool.filter((id) => id !== bannedItemId);
-    const traySize = Math.min(stage <= 3 ? 4 : 5, trayIds.length);
+    const traySize = Math.min(stage === 1 ? 3 : stage === 2 ? 4 : 5, trayIds.length);
     const trayItemIds = trayIds.slice(0, traySize);
     if (trayItemIds.length < 2) continue;
 
-    const minItems = stage >= 8 ? 3 : stage >= 5 ? 2 : 1;
-    const maxItems = stage >= 9 ? 6 : stage >= 5 ? 5 : 4;
+    const minItems = stage === 5 ? 3 : stage >= 3 ? 2 : 1;
+    const maxItems = stage === 1 ? 2 : stage === 2 ? 4 : stage === 3 ? 4 : stage === 4 ? 5 : 6;
     const itemCount = Math.floor(Math.random() * (maxItems - minItems + 1)) + minItems;
 
     const selectionIds = Array.from({ length: itemCount }, () => pick(trayItemIds));
@@ -263,7 +261,7 @@ const generateOrder = (stage: number): TakeOutOrder => {
     if (compareFractions(target, { n: 0, d: 1 }) <= 0) continue;
     if (compareFractions(target, { n: 1, d: 1 }) > 0) continue;
 
-    const hasVariety = new Set(selectionIds).size >= (stage >= 6 ? 2 : 1);
+    const hasVariety = new Set(selectionIds).size >= (stage >= 3 ? 2 : 1);
     if (!hasVariety) continue;
 
     const constraints: OrderConstraint[] = [];
@@ -281,7 +279,7 @@ const generateOrder = (stage: number): TakeOutOrder => {
       stage,
       text: buildOrderText(target),
       trayItemIds,
-      rushTag: stage >= 8 ? 'Rush Order' : undefined,
+      rushTag: stage === 5 ? 'Rush Order' : undefined,
     };
   }
 
@@ -324,8 +322,15 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
   onVictory,
   onGameOver: _onGameOver,
   onBack,
+  sessionEvents,
+  sessionState,
+  isPractice,
 }) => {
-  const baseLevel = Math.max(1, Math.min(12, miniGameLevel || levelId || 1));
+  const reducedMotion = useReducedMotion();
+  const isPresent = useIsPresent();
+  const presentRef = useRef(isPresent);
+  presentRef.current = isPresent;
+  const baseLevel = Math.max(1, Math.min(5, miniGameLevel || levelId || 1));
 
   const [timeLeft, setTimeLeft] = useState(ROUND_DURATION_SECONDS);
   const [XP, setScore] = useState(0);
@@ -343,9 +348,32 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
 
   const autoValidateTimeoutRef = useRef<number | null>(null);
   const feedbackTimeoutRef = useRef<number | null>(null);
+  const shiftTimerRef = useRef<number | null>(null);
   const roundFinishedRef = useRef(false);
+  const resolvingOrderRef = useRef(false);
+  const unlockTimeoutRef = useRef<number | null>(null);
+  const selectedIdsRef = useRef<string[]>([]);
+  const performanceRef = useRef({ XP: 0, served: 0, wrong: 0, combo: 0 });
+  const pausedSinceRef = useRef<number | null>(null);
+  const pausedDurationRef = useRef(0);
+  const orderPauseBaselineRef = useRef(0);
+  const onVictoryRef = useRef(onVictory);
+  onVictoryRef.current = onVictory;
+  const observedPositiveLifeRef = useRef(Boolean(sessionState && sessionState.lives > 0));
+  const sharedLivesBlocked = Boolean(sessionState && !isPractice && sessionState.lives <= 0);
+
+  const pausedDurationAt = useCallback((now: number) => pausedDurationRef.current
+    + (pausedSinceRef.current === null ? 0 : Math.max(0, now - pausedSinceRef.current)), []);
 
   const clearTimers = () => {
+    if (shiftTimerRef.current !== null) {
+      window.clearInterval(shiftTimerRef.current);
+      shiftTimerRef.current = null;
+    }
+    if (unlockTimeoutRef.current !== null) {
+      window.clearTimeout(unlockTimeoutRef.current);
+      unlockTimeoutRef.current = null;
+    }
     if (autoValidateTimeoutRef.current !== null) {
       window.clearTimeout(autoValidateTimeoutRef.current);
       autoValidateTimeoutRef.current = null;
@@ -356,31 +384,83 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     }
   };
 
-  useEffect(() => clearTimers, []);
+  // The outgoing screen remains mounted while AnimatePresence finishes its exit.
+  useLayoutEffect(() => {
+    if (isPresent) return;
+    roundFinishedRef.current = true;
+    resolvingOrderRef.current = true;
+    clearTimers();
+  }, [isPresent]);
+
+  useLayoutEffect(() => {
+    const now = Date.now();
+    if (isPresent && !roundFinished && sessionState?.paused) {
+      if (pausedSinceRef.current === null) pausedSinceRef.current = now;
+      return;
+    }
+    if (pausedSinceRef.current !== null) {
+      pausedDurationRef.current += Math.max(0, now - pausedSinceRef.current);
+      pausedSinceRef.current = null;
+    }
+  }, [isPresent, roundFinished, sessionState?.paused]);
 
   useEffect(() => {
-    if (roundFinished) return undefined;
+    roundFinishedRef.current = !presentRef.current;
+    resolvingOrderRef.current = !presentRef.current;
+    return () => {
+      roundFinishedRef.current = true;
+      resolvingOrderRef.current = true;
+      clearTimers();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isPresent || roundFinished || sessionState?.paused) return undefined;
     const timerId = window.setInterval(() => {
+      if (!presentRef.current || roundFinishedRef.current) return;
       setTimeLeft((prev) => {
+        if (!presentRef.current || roundFinishedRef.current) return prev;
         if (prev <= 1) {
           window.clearInterval(timerId);
+          if (shiftTimerRef.current === timerId) shiftTimerRef.current = null;
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
+    shiftTimerRef.current = timerId;
 
-    return () => window.clearInterval(timerId);
-  }, [roundFinished]);
+    return () => {
+      window.clearInterval(timerId);
+      if (shiftTimerRef.current === timerId) shiftTimerRef.current = null;
+    };
+  }, [isPresent, roundFinished, sessionState?.paused]);
 
   useEffect(() => {
-    if (timeLeft > 0 || roundFinishedRef.current) return;
+    if (!presentRef.current) return;
+    if (sessionState && sessionState.lives > 0) {
+      observedPositiveLifeRef.current = true;
+      return;
+    }
+    if (!sessionState || isPractice || !observedPositiveLifeRef.current || roundFinishedRef.current) return;
+    roundFinishedRef.current = true;
+    resolvingOrderRef.current = true;
+    clearTimers();
+    setRoundFinished(true);
+    emitMiniGameSessionEvent(sessionEvents, 'game_failed', { score: performanceRef.current.XP, reason: 'lives' });
+  }, [isPractice, isPresent, sessionEvents, sessionState?.lives]);
+
+  useEffect(() => {
+    if (!presentRef.current || timeLeft > 0 || roundFinishedRef.current || sessionState?.paused) return;
 
     roundFinishedRef.current = true;
+    clearTimers();
     setRoundFinished(true);
-    const stars = starsForPerformance(XP, ordersServed, wrongOrders);
-    onVictory(stars, XP);
-  }, [onVictory, ordersServed, XP, timeLeft, wrongOrders]);
+    const result = performanceRef.current;
+    const stars = starsForPerformance(result.XP, result.served, result.wrong);
+    emitMiniGameSessionEvent(sessionEvents, 'game_complete', { score: result.XP, stars });
+    onVictoryRef.current(stars, result.XP);
+  }, [isPresent, sessionEvents, sessionState?.paused, timeLeft]);
 
   const activeConstraints = useMemo(() => {
     const bannedIds = new Set(
@@ -416,32 +496,48 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     return true;
   }, [activeConstraints.bannedIds, activeConstraints.minItems, selectedIds]);
 
-  const canSubmit = selectedIds.length > 0 && !isResolvingOrder && !roundFinished;
+  const canSubmit = isPresent && selectedIds.length > 0 && !isResolvingOrder && !roundFinished && !sharedLivesBlocked;
 
   const nextOrder = useCallback((servedCount: number, nextTimeLeft: number) => {
+    if (!presentRef.current || roundFinishedRef.current) return;
+    const now = Date.now();
+    // If the next ticket arrives during Help, count only its own pause overlap.
+    orderPauseBaselineRef.current = pausedDurationAt(now);
     const stage = stageFromProgress(baseLevel, servedCount, nextTimeLeft);
     setOrder(generateOrder(stage));
+    selectedIdsRef.current = [];
     setSelectedIds([]);
-    setOrderStartMs(Date.now());
-  }, [baseLevel]);
+    setOrderStartMs(now);
+  }, [baseLevel, pausedDurationAt]);
 
   const resolveCorrectOrder = useCallback(() => {
+    if (!presentRef.current || roundFinishedRef.current) return;
     const now = Date.now();
-    const orderSolveMs = Math.max(350, now - orderStartMs);
+    const pausedOrderMs = Math.max(0, pausedDurationAt(now) - orderPauseBaselineRef.current);
+    const orderSolveMs = Math.max(350, now - orderStartMs - pausedOrderMs);
     const stageBonus = order.stage * 16;
-    const itemBonus = selectedIds.length * 14;
+    const itemBonus = selectedIdsRef.current.length * 14;
     const speedBonus = Math.max(30, Math.round(220 - (orderSolveMs / 70)));
-    const streakBonus = Combo * 22;
+    const streakBonus = performanceRef.current.combo * 22;
     const points = 120 + stageBonus + itemBonus + speedBonus + streakBonus;
+    const nextPerformance = {
+      ...performanceRef.current,
+      XP: performanceRef.current.XP + points,
+      served: performanceRef.current.served + 1,
+      combo: performanceRef.current.combo + 1,
+    };
+    performanceRef.current = nextPerformance;
 
     triggerHaptic('success');
-    setShowCelebrationSplash(true);
-    setScore((prev) => prev + points);
-    setOrdersServed((prev) => prev + 1);
-    setStreak((prev) => prev + 1);
-    setFeedback({ tone: 'success', text: `Order perfect! +${points}` });
+    setShowCelebrationSplash(!reducedMotion);
+    setScore(nextPerformance.XP);
+    setOrdersServed(nextPerformance.served);
+    setStreak(nextPerformance.combo);
+    setFeedback({ tone: 'success', text: `Chef's kiss! +${points} XP. Combo ${nextPerformance.combo}!` });
+    emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { score: nextPerformance.XP, metadata: { order: order.id } });
+    emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', { score: nextPerformance.XP, metadata: { order: order.id } });
 
-    confetti({
+    if (!reducedMotion) confetti({
       particleCount: 64,
       spread: 46,
       origin: { y: 0.72 },
@@ -453,34 +549,51 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     }
 
     feedbackTimeoutRef.current = window.setTimeout(() => {
+      if (!presentRef.current || roundFinishedRef.current) return;
       setFeedback(null);
       setShowCelebrationSplash(false);
-      nextOrder(ordersServed + 1, timeLeft);
+      nextOrder(nextPerformance.served, timeLeft);
       setIsResolvingOrder(false);
+      resolvingOrderRef.current = false;
     }, 1280);
-  }, [nextOrder, order.stage, orderStartMs, ordersServed, selectedIds.length, Combo, timeLeft]);
+  }, [nextOrder, order.id, order.stage, orderStartMs, pausedDurationAt, timeLeft, reducedMotion, sessionEvents]);
 
   const resolveIncorrectOrder = useCallback(() => {
+    if (!presentRef.current || roundFinishedRef.current) return;
+    const nextPerformance = {
+      ...performanceRef.current,
+      XP: Math.max(0, performanceRef.current.XP - 24),
+      wrong: performanceRef.current.wrong + 1,
+      combo: 0,
+    };
+    performanceRef.current = nextPerformance;
     triggerHaptic('warning');
-    setWrongOrders((prev) => prev + 1);
+    setWrongOrders(nextPerformance.wrong);
     setStreak(0);
-    setScore((prev) => Math.max(0, prev - 24));
-    setFeedback({ tone: 'error', text: `Try again. Target is ${asDisplayFraction(order.target)}.` });
+    setScore(nextPerformance.XP);
+    setFeedback({ tone: 'error', text: `The chef says nope! Make exactly ${asDisplayFraction(order.target)}.` });
+    emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { score: nextPerformance.XP, metadata: { order: order.id, attempt: nextPerformance.wrong } });
 
     if (feedbackTimeoutRef.current !== null) {
       window.clearTimeout(feedbackTimeoutRef.current);
     }
 
     feedbackTimeoutRef.current = window.setTimeout(() => {
+      if (!presentRef.current || roundFinishedRef.current) return;
       setFeedback(null);
     }, 520);
-  }, [order.target]);
+  }, [order.id, order.target, sessionEvents]);
 
   const submitOrder = useCallback((fromAuto = false) => {
-    if (isResolvingOrder || roundFinished) return;
+    if (!presentRef.current || sharedLivesBlocked || resolvingOrderRef.current || roundFinishedRef.current || isResolvingOrder || roundFinished) return;
+    resolvingOrderRef.current = true;
     setIsResolvingOrder(true);
 
-    const valid = isExact && constraintsMet;
+    const selected = selectedIdsRef.current;
+    const total = selected.reduce<Fraction>((sum, id) => addFractions(sum, ITEM_BY_ID[id].value), { n: 0, d: 1 });
+    const valid = equalFractions(total, order.target)
+      && selected.length >= activeConstraints.minItems
+      && !selected.some((id) => activeConstraints.bannedIds.has(id));
     if (valid) {
       resolveCorrectOrder();
       return;
@@ -491,13 +604,16 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
       }
     }
 
-    window.setTimeout(() => {
+    unlockTimeoutRef.current = window.setTimeout(() => {
+      unlockTimeoutRef.current = null;
+      if (!presentRef.current || roundFinishedRef.current) return;
       setIsResolvingOrder(false);
+      resolvingOrderRef.current = false;
     }, 170);
-  }, [constraintsMet, isExact, isResolvingOrder, resolveCorrectOrder, resolveIncorrectOrder, roundFinished]);
+  }, [activeConstraints.bannedIds, activeConstraints.minItems, isResolvingOrder, order.target, resolveCorrectOrder, resolveIncorrectOrder, roundFinished, sharedLivesBlocked]);
 
   useEffect(() => {
-    if (roundFinished || isResolvingOrder) return;
+    if (!presentRef.current || sharedLivesBlocked || roundFinishedRef.current || resolvingOrderRef.current || roundFinished || isResolvingOrder) return;
     if (!isExact || !constraintsMet) return;
 
     if (autoValidateTimeoutRef.current !== null) {
@@ -514,32 +630,39 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
         autoValidateTimeoutRef.current = null;
       }
     };
-  }, [constraintsMet, isExact, isResolvingOrder, roundFinished, submitOrder]);
+  }, [constraintsMet, isExact, isPresent, isResolvingOrder, roundFinished, sharedLivesBlocked, submitOrder]);
 
   const addItem = (itemId: string) => {
-    if (roundFinished || isResolvingOrder) return;
+    if (!presentRef.current || sharedLivesBlocked || roundFinishedRef.current || resolvingOrderRef.current || roundFinished || isResolvingOrder) return;
 
     if (activeConstraints.bannedIds.has(itemId)) {
       triggerHaptic('warning');
       setFeedback({ tone: 'error', text: `${ITEM_BY_ID[itemId].name} is blocked for this order.` });
       if (feedbackTimeoutRef.current !== null) window.clearTimeout(feedbackTimeoutRef.current);
-      feedbackTimeoutRef.current = window.setTimeout(() => setFeedback(null), 520);
+      feedbackTimeoutRef.current = window.setTimeout(() => {
+        if (presentRef.current && !roundFinishedRef.current) setFeedback(null);
+      }, 520);
       return;
     }
 
     triggerHaptic('selection');
-    setSelectedIds((prev) => [...prev, itemId]);
+    selectedIdsRef.current = [...selectedIdsRef.current, itemId];
+    setSelectedIds(selectedIdsRef.current);
   };
 
-  const removeSelectedItem = (index: number) => {
-    if (roundFinished || isResolvingOrder) return;
+  const removeSelectedItem = (itemId: string) => {
+    if (!presentRef.current || sharedLivesBlocked || roundFinishedRef.current || resolvingOrderRef.current || roundFinished || isResolvingOrder) return;
+    const index = selectedIdsRef.current.indexOf(itemId);
+    if (index < 0) return;
     triggerHaptic('light');
-    setSelectedIds((prev) => prev.filter((_, i) => i !== index));
+    selectedIdsRef.current = selectedIdsRef.current.filter((_, i) => i !== index);
+    setSelectedIds(selectedIdsRef.current);
   };
 
   const clearTray = () => {
-    if (roundFinished || isResolvingOrder) return;
+    if (!presentRef.current || sharedLivesBlocked || roundFinishedRef.current || resolvingOrderRef.current || roundFinished || isResolvingOrder) return;
     triggerHaptic('light');
+    selectedIdsRef.current = [];
     setSelectedIds([]);
   };
 
@@ -550,128 +673,98 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     return `hsl(${hue} 88% 50%)`;
   }, [timerProgress]);
 
-  const topOffsetClass = useSharedTopHud
-    ? 'pt-[calc(env(safe-area-inset-top)+5.45rem)]'
-    : 'pt-[max(0.2rem,env(safe-area-inset-top))]';
-
   const availableItems = useMemo(
     () => order.trayItemIds.map((id) => ITEM_BY_ID[id]).filter(Boolean),
     [order.trayItemIds],
   );
   const orderMonster = useMemo(() => pick(MONSTER_IMAGES), [order.id]);
+  const trayGroups = useMemo(() => {
+    const groups = new Map<string, { item: FoodItem; count: number }>();
+    selectedIds.forEach((id) => {
+      const group = groups.get(id);
+      if (group) group.count += 1;
+      else groups.set(id, { item: ITEM_BY_ID[id], count: 1 });
+    });
+    return [...groups.values()];
+  }, [selectedIds]);
+  const overTarget = compareFractions(runningTotal, order.target) > 0;
+  const rushPressure = timeLeft <= 30 ? 'last-orders' : Combo >= 3 ? 'combo' : 'steady';
+  const customerLine = feedback?.tone === 'success' ? 'Slime-free. Mostly.'
+    : feedback?.tone === 'error' ? "That is not my order, chef!"
+      : ['My stomach just growled back.', 'The sauce is watching.', 'Hungry. Very hungry.', 'Make it snappy, chef.'][ordersServed % 4];
 
   return (
-    <FoodGameShell
-      gameType="take_out_rush"
-      backgroundImage={takeOutLevelBg}
-      overlayDisabled
-      backgroundOpacity={0.88}
-    >
-      <div className={`relative z-20 flex min-h-0 flex-1 flex-col ${topOffsetClass}`}>
-        {!useSharedTopHud ? (
-          <header className="rounded-[1.25rem] border border-cyan-100/20 bg-slate-950/58 px-3 py-2.5 shadow-[0_12px_22px_rgba(2,6,23,0.46)]">
-            <div className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2.5">
-              <div>
-                <div className="text-[9px] font-black uppercase tracking-[0.18em] text-cyan-100/75">Rush Timer</div>
-                <div className="relative mt-1 h-3.5 overflow-hidden rounded-full border border-cyan-100/26 bg-blue-950/58">
-                  <motion.div
-                    className="absolute inset-y-0 left-0 rounded-full"
-                    animate={{ width: `${timerProgress * 100}%`, backgroundColor: timerFillColor }}
-                    transition={{ duration: 0.22, ease: 'easeOut' }}
-                    style={{ boxShadow: '0 0 12px rgba(34,197,94,0.45)' }}
-                  />
-                  <div className="absolute inset-[1px] rounded-full bg-[linear-gradient(to_right,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:12%_100%]" />
-                </div>
-              </div>
-
-              <div className="rounded-full border border-white/18 bg-slate-900/54 px-3 py-1 text-center">
-                <div className="text-[8px] font-black uppercase tracking-[0.16em] text-cyan-100/65">XP</div>
-                <div className="text-sm font-black text-white">{XP}</div>
-              </div>
-
-            </div>
-          </header>
-        ) : null}
-
-        <GameQuestionCard
-          title="Take-Out Rush"
-          subtitle={activeConstraints.minItems > 1
-            ? `Use at least ${activeConstraints.minItems} items. Tap food to add it.`
-            : 'Tap food to add it, then send your order.'}
-          className="shrink-0"
-          style={{ position: 'relative', top: 0, width: '100%', transform: 'none' }}
-        >
+    <FoodGameShell gameType="take_out_rush" backgroundImage={takeOutLevelBg} overlayDisabled
+      backgroundOpacity={1} backgroundPosition="50% 61%" className="restaurant-rush">
+      <div className={`rush-layout${useSharedTopHud ? ' has-shared-hud' : ''}`}
+        data-takeout-game data-takeout-state={roundFinished ? 'finished' : feedback?.tone || 'idle'}
+        data-takeout-time={timeLeft} data-takeout-paused={sessionState?.paused || false} data-takeout-present={isPresent}
+        data-takeout-served={ordersServed} data-takeout-combo={Combo} data-takeout-pressure={rushPressure}
+        data-takeout-selected-count={selectedIds.length} data-takeout-wrong={wrongOrders} data-takeout-score={XP}>
+        {!useSharedTopHud && <div className="rush-local-clock" aria-label="Existing restaurant round timer">
+          <span>Kitchen closes in {timeLeft}s</span><span>{XP} XP</span>
+          <div style={{ width: `${timerProgress * 100}%`, backgroundColor: timerFillColor }} />
+        </div>}
+        <GameQuestionCard title="Order ticket"
+          subtitle={`90s kitchen shift. ${isPractice ? 'Practice exact orders.' : 'Wrong orders cost a life.'}${activeConstraints.minItems > 1 ? ` Use at least ${activeConstraints.minItems} portions.` : ''}`}
+          className="rush-mission" style={{ position: 'relative', top: 0, width: '100%', transform: 'none' }}>
           Build an order worth <strong>{asDisplayFraction(order.target)}</strong>.
         </GameQuestionCard>
 
-        <main className="relative mt-1.5 flex min-h-0 flex-1 flex-col gap-2 pb-[calc(env(safe-area-inset-bottom)+2.1rem)]">
-          <section data-takeout-playfield="true" className="relative flex min-h-0 flex-1 items-start justify-center">
-            <div className="pointer-events-none absolute left-1/2 bottom-[calc(4%_-_8pt)] h-[86%] w-[min(82%,21rem)] -translate-x-1/2 overflow-hidden">
-              <img
-                src={orderMonster}
-                alt=""
-                draggable={false}
-                className="absolute bottom-0 h-full w-full scale-[1.04] object-contain drop-shadow-[0_12px_22px_rgba(2,6,23,0.45)] md:scale-[1.12]"
-                style={{ transformOrigin: 'bottom center' }}
-              />
-            </div>
-          </section>
-
-          <div className="flex flex-col gap-2">
-            <section className="rounded-[1.35rem] border border-black/25 bg-[linear-gradient(180deg,rgba(11,13,24,0.74),rgba(8,10,18,0.88))] p-2.5 shadow-[0_14px_26px_rgba(2,6,23,0.42)]">
-              <div className="mt-1 grid grid-cols-4 items-center justify-center gap-2">
-                {availableItems.map((item) => {
-                  const isBanned = activeConstraints.bannedIds.has(item.id);
-                  return (
-                     <button
-                       key={item.id}
-                       type="button"
-                       data-button-skin="none"
-                       onClick={() => addItem(item.id)}
-                       disabled={isResolvingOrder || roundFinished || isBanned}
-                       className={`group flex min-h-[5.2rem] flex-col items-center justify-center rounded-[1rem] border px-2.5 py-2 text-[10px] font-semibold text-white shadow-[0_10px_18px_rgba(0,0,0,0.28)] transition hover:border-white/28 active:scale-[0.98] disabled:opacity-50 ${isBanned ? 'border-white/10 bg-slate-950/30 grayscale' : 'border-white/18 bg-slate-950/65'}`}
-                     >
-                       <FoodSprite item={item} className="h-11 w-11 object-contain" />
-                       <div className="mt-1 whitespace-nowrap text-[10px] font-black text-amber-100 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
-                         {asDisplayFraction(item.value)}
-                       </div>
-                     </button>
-                  );
-                })}
-              </div>
-            </section>
-
-            <section className="game-submit-dock rounded-[1.25rem] border border-cyan-100/20 bg-slate-950/72 px-3 py-2 shadow-[0_12px_22px_rgba(2,6,23,0.5)]">
-              <div className="flex flex-col items-center gap-2 text-center">
-                {feedback?.text ? (
-                  <div className="min-w-0 text-[11px] font-semibold text-cyan-100/70">
-                    {feedback.text}
-                  </div>
-                ) : null}
-                <div className="flex w-full items-center justify-center gap-2">
-                  <button
-                    type="button"
-                    onClick={clearTray}
-                    disabled={selectedIds.length === 0 || isResolvingOrder}
-                    className="ui-button-secondary w-[min(7.5rem,34vw)] px-3 py-2 text-[10px] font-black uppercase disabled:opacity-50"
-                  >
-                    Reset
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => submitOrder(false)}
-                    disabled={!canSubmit}
-                    className="ui-button-primary relative inline-flex h-12 w-[min(12.5rem,56vw)] items-center justify-center border-0 bg-transparent px-4 py-0 text-[11px] font-black uppercase tracking-[0.12em] text-[#16233d] disabled:opacity-50"
-                  >
-                    Send Order
-                  </button>
-                </div>
-              </div>
-            </section>
+        <section data-takeout-playfield className={`rush-kitchen${overTarget ? ' is-overfilled' : ''}`}
+          data-takeout-target={`${order.target.n}/${order.target.d}`} data-takeout-total={`${runningTotal.n}/${runningTotal.d}`}>
+          <img src={takeOutLevelBg} alt="Fantasy kitchen with a serving counter, diners and bubbling sauce"
+            className="rush-kitchen-art" data-takeout-background draggable={false} />
+          <div className="rush-order-rail">
+            <span>Ticket #{ordersServed + 1}</span>
+            <strong>{rushPressure === 'last-orders' ? 'Last orders! Closing soon.' : Combo > 0 ? `On a roll ×${Combo}` : 'Keep the kitchen moving'}</strong>
           </div>
+          <div className="rush-steam" aria-hidden="true"><i /><i /><i /></div>
+          <div className="rush-customer">
+            <div className="rush-customer-quip">{customerLine}</div>
+            <motion.img key={order.id} src={orderMonster} alt="Your hungry customer" draggable={false}
+              initial={reducedMotion ? false : { opacity: 0, x: 12 }}
+              animate={reducedMotion ? { x: 0, y: 0, opacity: 1, rotate: 0 } : { opacity: 1, x: 0,
+                y: feedback?.tone === 'success' ? [0, -8, 0] : [0, -2, 0], rotate: feedback?.tone === 'error' ? [0, -3, 3, 0] : 0 }}
+              transition={{ duration: feedback ? .35 : 2.4, repeat: feedback || reducedMotion ? 0 : Infinity, ease: 'easeInOut' }} />
+          </div>
+          <div className="rush-counter" data-takeout-tray>
+            <div className="rush-tray-label"><span>Your tray <strong>{asDisplayFraction(runningTotal)}</strong> / {asDisplayFraction(order.target)}</span>
+              <span>{overTarget ? 'Too much! Remove a portion.' : isExact && !constraintsMet ? `Need ${activeConstraints.minItems} portions.` : isExact ? 'Exact. Order up!' : 'Build the exact total.'}</span>
+            </div>
+            <div className="rush-tray-items" style={{ gridTemplateColumns: `repeat(${Math.max(1, trayGroups.length)}, minmax(0, 1fr))` }}>
+              <AnimatePresence initial={false}>
+                {trayGroups.map(({ item, count }) => <motion.button key={item.id} type="button"
+                  data-takeout-remove={item.id} aria-label={`Remove one ${asDisplayFraction(item.value)} portion`}
+                  disabled={!isPresent || isResolvingOrder || roundFinished || sharedLivesBlocked} onClick={() => removeSelectedItem(item.id)}
+                  initial={reducedMotion ? false : { y: -10, scale: .85, opacity: 0 }} animate={{ y: 0, scale: 1, opacity: 1 }}
+                  exit={reducedMotion ? { opacity: 0 } : { y: 8, scale: .9, opacity: 0 }} transition={{ duration: reducedMotion ? 0 : .18 }}>
+                  <FoodSprite item={item} /><span>{asDisplayFraction(item.value)} <b>×{count}</b></span><small aria-hidden="true">−</small>
+                </motion.button>)}
+              </AnimatePresence>
+              {!trayGroups.length && <div className="rush-empty-tray">Empty tray. The chef is judging you.</div>}
+            </div>
+          </div>
+        </section>
 
-      <CelebrationSplash active={showCelebrationSplash} message="Order Up!" theme="takeout" sweepDuration={1.35} />
-        </main>
+        <div className="rush-responses" data-takeout-responses>
+          <div className="rush-food-shelf" style={{ gridTemplateColumns: `repeat(${availableItems.length}, minmax(0, 1fr))` }}>
+            {availableItems.map((item) => <button key={item.id} type="button" data-button-skin="none"
+              data-takeout-food={item.id} data-food-fraction={`${item.value.n}/${item.value.d}`}
+              aria-label={`Add ${asDisplayFraction(item.value)} portion`} onClick={() => addItem(item.id)}
+              disabled={!isPresent || isResolvingOrder || roundFinished || sharedLivesBlocked || activeConstraints.bannedIds.has(item.id)}>
+              <FoodSprite item={item} /><strong>{asDisplayFraction(item.value)}</strong>
+            </button>)}
+          </div>
+          <div className={`rush-feedback${feedback?.tone === 'error' ? ' is-error' : ''}`} role="status" aria-live="polite">
+            {feedback?.text || (Combo > 0 ? 'Keep the combo alive. Exact portions only.' : 'Tap portions to match the target. Suspicious sauce awaits.')}
+          </div>
+          <div className="rush-actions">
+            <button type="button" onClick={clearTray} disabled={!isPresent || !selectedIds.length || isResolvingOrder || roundFinished || sharedLivesBlocked} className="ui-button-secondary">Reset tray</button>
+            <button type="button" data-takeout-submit onClick={() => submitOrder(false)} disabled={!canSubmit} className="ui-button-primary">Send order</button>
+          </div>
+        </div>
+        <CelebrationSplash active={showCelebrationSplash && !reducedMotion} message="Order Up!" theme="takeout" sweepDuration={1.35} />
       </div>
     </FoodGameShell>
   );

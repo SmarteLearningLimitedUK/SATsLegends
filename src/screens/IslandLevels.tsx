@@ -5,6 +5,7 @@ import { getLevelGameTitle, getLevelGroupKey } from '../utils/gameNames';
 import { UNLOCK_ALL_LEVELS } from '../app/testingFlags';
 import { ChevronDown, Lock } from 'lucide-react';
 import { GAME_SCENE_META } from '../gameSceneMeta';
+import { GAME_DIFFICULTY_LABELS, getGameDifficulty, getLevelProgressIds } from '../systems/content/gameDifficulty';
 
 interface IslandLevelsProps {
   island: IslandData;
@@ -66,7 +67,6 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
 
   const completedLevels = player.completedLevels[island.id] || [];
   const totalCoinsEarned = player.stats?.totalCoinsEarned || 0;
-  const usesSequentialUnlock = island.id === 1;
 
   useEffect(() => {
     setExpandedGameId(null);
@@ -74,43 +74,35 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
 
   const levelRows = useMemo<LevelRowState[]>(() => {
     const rows = island.levels.map((level) => {
-      const miniGameLevel = level.miniGameLevel || 0;
-      const previousRequiredComplete = usesSequentialUnlock && level.miniGameKey && level.miniGameLevel
-        ? island.levels
-          .filter((candidate) => (
-            candidate.miniGameKey === level.miniGameKey
-            && (candidate.miniGameLevel || 0) < miniGameLevel
-          ))
-          .every((candidate) => completedLevels.includes(candidate.id))
-        : island.levels
-          .filter((candidate) => candidate.id < level.id)
-          .every((candidate) => completedLevels.includes(candidate.id));
+      const isRecordedComplete = (candidate: LevelData) => (
+        getLevelProgressIds(candidate).some((id) => completedLevels.includes(id))
+      );
+      const previousRequiredComplete = level.isBoss
+        ? island.levels.filter((candidate) => candidate.id < level.id).every(isRecordedComplete)
+        : island.levels.filter((candidate) => (
+          !candidate.isPractice && getLevelGroupKey(candidate) === getLevelGroupKey(level)
+          && getGameDifficulty(candidate) < getGameDifficulty(level)
+        )).every(isRecordedComplete);
 
       const bossCoinsNeeded = level.bossUnlockCoins || 0;
       const hasBossCoins = totalCoinsEarned >= bossCoinsNeeded;
 
       let isUnlocked = level.isBoss
         ? previousRequiredComplete && hasBossCoins
-        : usesSequentialUnlock
-          ? previousRequiredComplete
-          : true;
-
-      if (level.blueprintKey === 'maths_vs_zombies') {
-        isUnlocked = true;
-      }
+        : Boolean(level.isPractice) || previousRequiredComplete;
 
       if (UNLOCK_ALL_LEVELS) {
         isUnlocked = true;
       }
 
-      const stars = player.levelStars?.[`${island.id}-${level.id}`] || 0;
-      const isCompleted = completedLevels.includes(level.id);
+      const stars = Math.max(0, ...getLevelProgressIds(level).map((id) => player.levelStars?.[`${island.id}-${id}`] || 0));
+      const isCompleted = isRecordedComplete(level);
 
       let lockReason: string | undefined;
       if (!isUnlocked && level.isBoss && !hasBossCoins) {
         lockReason = `Need ${bossCoinsNeeded} total coins`;
       } else if (!isUnlocked) {
-        lockReason = 'Complete earlier levels first';
+        lockReason = 'Complete the previous difficulty first';
       }
 
       if (UNLOCK_ALL_LEVELS) {
@@ -127,13 +119,13 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
       };
     });
 
-    const nextPlayable = rows.find((row) => row.isUnlocked && !row.isCompleted);
+    const nextPlayable = rows.find((row) => !row.level.isPractice && row.isUnlocked && !row.isCompleted);
     if (nextPlayable) {
       nextPlayable.isNextPlayable = true;
     }
 
     return rows;
-  }, [completedLevels, island.id, island.levels, player.levelStars, totalCoinsEarned, usesSequentialUnlock]);
+  }, [completedLevels, island.id, island.levels, player.levelStars, totalCoinsEarned]);
 
   const gameGroups = useMemo<GameGroupState[]>(() => {
     const groups = new Map<string, GameGroupState>();
@@ -163,6 +155,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
 
     ordered.forEach((group) => {
       group.levels.sort((a, b) => {
+        if (a.level.isPractice !== b.level.isPractice) return a.level.isPractice ? -1 : 1;
         const left = a.level.miniGameLevel || a.level.id;
         const right = b.level.miniGameLevel || b.level.id;
         return left - right;
@@ -340,12 +333,15 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                             return (
                               <div
                                 key={`${group.id}-${level.id}`}
+                                data-level-route={level.id}
+                                data-level-difficulty={level.isPractice ? 'practice' : getGameDifficulty(level)}
+                                data-level-blueprint={level.blueprintKey}
                                 className={`legend-level-row flex items-center gap-2 rounded-xl border px-2.5 py-2 transition ${rowStateClass}`}
                               >
                                 <div className="w-[4.1rem] shrink-0 text-aaa-sm font-black text-cyan-100 md:w-[5rem]">
                                   {levelLabel}
                                 </div>
-                                <div className="min-w-0 flex-1 text-xs text-cyan-100/80">{!isUnlocked ? <Lock size={14} aria-label={lockReason || 'Locked'} /> : level.isPractice ? 'Warm up' : isCompleted ? 'Complete' : ''}</div>
+                                <div className="min-w-0 flex-1 text-xs text-cyan-100/80">{!isUnlocked ? <Lock size={14} aria-label={lockReason || 'Locked'} /> : level.isPractice ? 'Warm up' : isCompleted ? 'Complete' : level.isBoss ? '' : GAME_DIFFICULTY_LABELS[getGameDifficulty(level)]}</div>
 
                                 <div className="flex items-center gap-0.5 md:gap-1">
                                   {[1, 2, 3].map((value) => (

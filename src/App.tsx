@@ -6,6 +6,7 @@ import { getLevelGameTitle } from './utils/gameNames';
 import { GAME_HUD_RESTART_EVENT } from './gameHudEvents';
 import { triggerHaptic } from './haptics';
 import { getBlueprintRuleSet } from './systems/content/islandBlueprint';
+import { getLevelProgressIds } from './systems/content/gameDifficulty';
 import {
   ISLANDS,
 } from './constants';
@@ -55,6 +56,7 @@ const App: React.FC = () => {
   const [stageRenderMultiplier, setStageRenderMultiplier] = useState(1);
   const [questionCardScale, setQuestionCardScale] = useState(1);
   const [potionCauldronShift, setPotionCauldronShift] = useState('0px');
+  const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
   const buildId = import.meta.env.VITE_BUILD_ID ?? CACHE_BUSTER;
 
   const {
@@ -332,7 +334,8 @@ const App: React.FC = () => {
     timeLeft: globalMiniGameHudTimeLeft,
     totalTime: GLOBAL_MINIGAME_HUD_DURATION_SECONDS,
     lives: globalMiniGameLives,
-  }), [globalMiniGameHudTimeLeft, globalMiniGameLives]);
+    paused: gameplayHelpOpen || Boolean(levelResult),
+  }), [gameplayHelpOpen, globalMiniGameHudTimeLeft, globalMiniGameLives, levelResult]);
 
   const resolveLevelTitle = useCallback(() => {
     if (!selectedLevel) return 'Level over';
@@ -397,7 +400,6 @@ const App: React.FC = () => {
       return;
     }
 
-    let wellbeingSuggested = false;
     const now = Date.now();
     const levelKey = selectedIsland && selectedLevel ? `${selectedIsland.id}-${selectedLevel.id}` : null;
     let levelFailCount = 0;
@@ -405,17 +407,15 @@ const App: React.FC = () => {
       levelFailCountsRef.current[levelKey] = (levelFailCountsRef.current[levelKey] || 0) + 1;
       levelFailCount = levelFailCountsRef.current[levelKey];
     }
-    setWellbeingSignals((prev) => {
-      const nextSignals = {
-        ...prev,
-        consecutiveFails: prev.consecutiveFails + 1,
-        gamesPlayedSinceBreak: prev.gamesPlayedSinceBreak + 1,
-      };
-      wellbeingSuggested = levelFailCount >= 3 || shouldSuggestWellbeing(nextSignals, now);
-      return wellbeingSuggested
-        ? { ...nextSignals, lastSuggestionTime: now }
-        : nextSignals;
-    });
+    const nextSignals = {
+      ...wellbeingSignals,
+      consecutiveFails: wellbeingSignals.consecutiveFails + 1,
+      gamesPlayedSinceBreak: wellbeingSignals.gamesPlayedSinceBreak + 1,
+    };
+    const wellbeingSuggested = levelFailCount >= 3 || shouldSuggestWellbeing(nextSignals, now);
+    setWellbeingSignals(wellbeingSuggested
+      ? { ...nextSignals, lastSuggestionTime: now }
+      : nextSignals);
     if (!selectedIsland || !selectedLevel) return;
 
     const totalAttempts = sessionMetrics.correct + sessionMetrics.incorrect;
@@ -437,7 +437,7 @@ const App: React.FC = () => {
       type: 'gameover',
       title: levelTitle,
       subtitle: wellbeingSuggested
-        ? 'Three tough failures in a row. Want to take a minute in a calm break?'
+        ? "That was a tough round. Take a calm minute, then come back when you're ready."
         : 'No rewards lost forever. Reset, tighten the route, and take another shot.',
       stars: progressionResult.stars,
       xpGained: progressionResult.xpGained,
@@ -458,7 +458,7 @@ const App: React.FC = () => {
       achievementsUnlocked: [],
       wellbeingSuggested,
     });
-  }, [buildPracticeLevelResult, completeProgressionLevel, resolveLevelTitle, selectedIsland, selectedLevel, sessionMetrics.correct, sessionMetrics.hintsUsed, sessionMetrics.incorrect, sessionState.lives, sessionState.timeLeft, sessionState.totalTime, setLevelResult]);
+  }, [buildPracticeLevelResult, completeProgressionLevel, resolveLevelTitle, selectedIsland, selectedLevel, sessionMetrics.correct, sessionMetrics.hintsUsed, sessionMetrics.incorrect, sessionState.lives, sessionState.timeLeft, sessionState.totalTime, setLevelResult, wellbeingSignals]);
 
   useEffect(() => {
     handleGameOverRef.current = handleGameOver;
@@ -725,6 +725,7 @@ const App: React.FC = () => {
     const updateStageScale = () => {
       const viewportWidth = window.visualViewport?.width ?? window.innerWidth;
       const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
+      setViewportSize({ width: viewportWidth, height: viewportHeight });
       const baseWidth = IPHONE_STAGE_WIDTH;
       const baseHeight = IPHONE_STAGE_HEIGHT;
       const isTabletViewport = Math.min(viewportWidth, viewportHeight) >= 700;
@@ -757,7 +758,8 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const allowVerticalPan = screen === 'world_map' || screen === 'island_levels';
+    const allowVerticalPan = screen === 'world_map' || screen === 'island_levels'
+      || screen === 'parent_dashboard' || screen === 'wellbeing_hub';
     document.body.style.touchAction = allowVerticalPan ? 'pan-y' : 'none';
     document.body.style.overscrollBehaviorY = allowVerticalPan ? 'contain' : 'none';
   }, [screen]);
@@ -875,50 +877,42 @@ const App: React.FC = () => {
 
     const completedInIsland = player.completedLevels[selectedIsland.id] || [];
     const isSequentialIsland = selectedIsland.id === 1;
-    const isLevelConsideredComplete = (levelId: number) => (
-      completedInIsland.includes(levelId) || levelId === selectedLevel.id
+    const isLevelConsideredComplete = (level: LevelData) => (
+      getLevelProgressIds(level).some((id) => completedInIsland.includes(id))
+      || level.id === selectedLevel.id
     );
 
-    const isPlaceValuePanic = selectedLevel.blueprintKey === 'place_value_panic';
-
-    const laneNextLevel = selectedLevel.miniGameKey && selectedLevel.miniGameLevel
+    const laneNextLevel = selectedLevel.miniGameKey && !selectedLevel.isBoss
       ? selectedIsland.levels.find((level) => (
         level.miniGameKey === selectedLevel.miniGameKey
-        && level.miniGameLevel === selectedLevel.miniGameLevel! + 1
+        && !level.isPractice
+        && level.miniGameLevel === (selectedLevel.miniGameLevel ?? 0) + 1
       ))
       : undefined;
-
-    const placeValueNextLevel = isPlaceValuePanic
-      ? selectedIsland.levels
-          .filter((level) => level.blueprintKey === 'place_value_panic')
-          .sort((a, b) => ((a.miniGameLevel || a.id) - (b.miniGameLevel || b.id)))
-          .find((level) => (
-            (level.miniGameLevel || level.id)
-            > (selectedLevel.miniGameLevel || selectedLevel.id)
-          ))
+    const sequentialNextLevel = !selectedLevel.miniGameKey || selectedLevel.isBoss
+      ? selectedIsland.levels.find(level => level.id === selectedLevel.id + 1)
       : undefined;
-
-    const sequentialNextLevel = selectedIsland.levels.find(level => level.id === selectedLevel.id + 1);
-    const nextLevel = placeValueNextLevel || laneNextLevel || sequentialNextLevel;
+    const nextLevel = laneNextLevel || sequentialNextLevel;
     setLevelResult(null);
 
     if (nextLevel) {
       const canEnterNextLevel = nextLevel.isBoss
         ? selectedIsland.levels
-            .filter(level => level.id < nextLevel.id)
-            .every(level => isLevelConsideredComplete(level.id))
+            .filter(level => !level.isPractice && !level.isBoss && level.id < nextLevel.id)
+            .every(isLevelConsideredComplete)
           && (player.stats?.totalCoinsEarned || 0) >= (nextLevel.bossUnlockCoins || 0)
         : isSequentialIsland
           ? nextLevel.miniGameKey && nextLevel.miniGameLevel
             ? selectedIsland.levels
                 .filter((level) => (
                   level.miniGameKey === nextLevel.miniGameKey
+                  && !level.isPractice
                   && (level.miniGameLevel || 0) < (nextLevel.miniGameLevel || 0)
                 ))
-                .every(level => isLevelConsideredComplete(level.id))
+                .every(isLevelConsideredComplete)
             : selectedIsland.levels
-                .filter(level => level.id < nextLevel.id)
-                .every(level => isLevelConsideredComplete(level.id))
+                .filter(level => !level.isPractice && level.id < nextLevel.id)
+                .every(isLevelConsideredComplete)
           : true;
 
       if (!canEnterNextLevel) {
@@ -933,7 +927,7 @@ const App: React.FC = () => {
     }
 
     setSelectedLevel(null);
-    goToHome();
+    goToIslandLevels();
   };
 
   const handleClaimQuest = (questId: string) => {
@@ -1025,7 +1019,15 @@ const App: React.FC = () => {
   const selectedGameType = selectedLevel?.gameType;
   const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
-  const useUnboundedStageShell = false;
+  const hasWideGameViewport = viewportSize.width >= 700 && viewportSize.height >= 600;
+  const usesResponsiveGameScene = selectedGameType === 'change_counter'
+    || (selectedGameType === 'take_out_rush' && selectedLevel?.blueprintKey !== 'fraction_forge')
+    || selectedGameType === 'ratio_fractions'
+    || (selectedGameType === 'ratio_rapids'
+      && selectedLevel?.blueprintKey !== 'share_splitter'
+      && selectedLevel?.blueprintKey !== 'maths_vs_zombies');
+  const useUnboundedStageShell = screen === 'parent_dashboard' || isWellbeingScreen
+    || (isGameplayScreen && hasWideGameViewport && usesResponsiveGameScene);
   const globalDockOffsetClass = screen !== 'splash' && !isGameplayScreen && screen !== 'avatar_selection' && screen !== 'profile_setup'
     ? 'pb-[calc((4.35rem+env(safe-area-inset-bottom))/var(--game-stage-scale))] md:pb-[calc((4.65rem+env(safe-area-inset-bottom))/var(--game-stage-scale))]'
     : '';
@@ -1116,16 +1118,16 @@ const App: React.FC = () => {
   const stageWidth = IPHONE_STAGE_WIDTH;
   const stageHeight = IPHONE_STAGE_HEIGHT;
   const stageStyle = {
-    '--game-stage-width': `${Math.round(stageWidth * stageRenderMultiplier)}px`,
-    '--game-stage-height': `${Math.round(stageHeight * stageRenderMultiplier)}px`,
-    '--game-stage-scale': `${stageScale}`,
-    '--question-card-scale': `${questionCardScale}`,
+    '--game-stage-width': `${Math.round(useUnboundedStageShell ? viewportSize.width : stageWidth * stageRenderMultiplier)}px`,
+    '--game-stage-height': `${Math.round(useUnboundedStageShell ? viewportSize.height : stageHeight * stageRenderMultiplier)}px`,
+    '--game-stage-scale': `${useUnboundedStageShell ? 1 : stageScale}`,
+    '--question-card-scale': `${useUnboundedStageShell ? 1 : questionCardScale}`,
     '--potion-cauldron-shift': potionCauldronShift,
   } as React.CSSProperties;
 
   return (
     <div className="iphone-game-viewport">
-      <div className={`iphone-game-stage${useUnboundedStageShell ? ' iphone-game-stage-unbounded' : ''}`} style={useUnboundedStageShell ? undefined : stageStyle}>
+      <div className={`iphone-game-stage${useUnboundedStageShell ? ' iphone-game-stage-unbounded' : ''}`} style={stageStyle} data-stage-layout={useUnboundedStageShell ? 'responsive' : 'portrait'}>
         <div className="iphone-game-stage-inner">
           <div
             data-screen-family={screenBehavior.family}
@@ -1140,7 +1142,7 @@ const App: React.FC = () => {
                 data-qa-root="screen"
                 data-qa-screen={screen}
                 data-qa-scrollable={screenBehavior.scrollable ? 'true' : 'false'}
-                className={`app-screen-content relative z-10 flex min-h-0 w-full flex-1 justify-center pointer-events-auto ${screenBehavior.scrollable ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden'} ${contentShellClass} ${globalDockOffsetClass}`}
+                className={`app-screen-content relative z-10 flex min-h-0 w-full flex-1 justify-center pointer-events-auto ${screenBehavior.scrollable && screen !== 'parent_dashboard' ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden'} ${contentShellClass} ${globalDockOffsetClass}`}
                 style={screenBehavior.scrollable ? { WebkitOverflowScrolling: 'touch' } : undefined}
               >
                 <AppRouter
@@ -1190,7 +1192,7 @@ const App: React.FC = () => {
               <UnifiedMiniGameHud
                 avatarId={player.avatarId}
                 title={isGameplayScreen ? canonicalGameTitle : 'SATs Legends'}
-                levelLabel={selectedLevel ? `Mission ${selectedLevel.miniGameLevel || selectedLevel.id}` : 'Adventure'}
+                levelLabel={selectedLevel ? selectedLevel.isPractice ? 'Practice' : selectedLevel.isBoss ? 'Challenge' : `Level ${selectedLevel.difficultyTier ?? selectedLevel.miniGameLevel ?? 1} of 5` : 'Adventure'}
                 streak={answerStreak}
                 isPractice={Boolean(isGameplayScreen && selectedLevel?.isPractice)}
                 onHelp={isGameplayScreen ? () => setGameplayHelpOpen(true) : undefined}

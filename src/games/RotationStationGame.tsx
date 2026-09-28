@@ -111,18 +111,17 @@ const applyQuarterTurns = (orientation: number, direction: TurnDirection, turns:
 };
 
 const roundSecondsForLevel = (level: number) => {
-  if (level <= 3) return 90;
-  if (level <= 7) return 75;
+  if (level <= 2) return 90;
+  if (level <= 4) return 75;
   return 60;
 };
 
 const stageFromProgress = (baseLevel: number, solvedCount: number, timeLeft: number) => {
-  const solvedBoost = Math.floor(solvedCount / 4);
-  const urgencyBoost = timeLeft <= 15 ? 1 : 0;
-  return Math.max(1, Math.min(12, baseLevel + solvedBoost + urgencyBoost));
+  return [1, 4, 6, 8, 11][Math.max(0, Math.min(4, baseLevel - 1))];
 };
 
 const modeForStage = (stage: number): RotationMode => {
+  if (stage === 1) return 'rotate_match';
   const roll = Math.random();
   if (stage <= 3) return roll < 0.72 ? 'rotate_match' : 'predict_result';
   if (stage <= 7) {
@@ -177,7 +176,7 @@ const createQuestion = (baseLevel: number, solvedCount: number, timeLeft: number
 
   const startOrientation = randomInt(0, 3);
   const direction: TurnDirection = Math.random() < 0.5 ? 'cw' : 'acw';
-  const allowedTurns = stage <= 3 ? [1] : stage <= 7 ? [1, 2, 3] : [1, 2, 3];
+  const allowedTurns = stage <= 3 ? [1] : stage <= 4 ? [1, 2] : [1, 2, 3];
   const quarterTurns = speedRound ? 1 : allowedTurns[randomInt(0, allowedTurns.length - 1)];
   const targetOrientation = applyQuarterTurns(startOrientation, direction, quarterTurns);
   const turnText = buildTurnLabel(quarterTurns, direction);
@@ -299,7 +298,7 @@ const RotationStationGame: React.FC<RotationStationGameProps> = ({
   onGameOver: _onGameOver,
   onBack,
 }) => {
-  const baseLevel = Math.max(1, Math.min(12, miniGameLevel || levelId || 1));
+  const baseLevel = Math.max(1, Math.min(5, miniGameLevel || levelId || 1));
   const initialRoundSeconds = useMemo(() => roundSecondsForLevel(baseLevel), [baseLevel]);
 
   const [timeLeft, setTimeLeft] = useState(initialRoundSeconds);
@@ -465,7 +464,9 @@ const RotationStationGame: React.FC<RotationStationGameProps> = ({
         alt=""
         aria-hidden="true"
         draggable={false}
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
+        data-game-scene-image="true"
+        data-background-fit="contain"
+        className="pointer-events-none absolute inset-0 h-full w-full object-contain object-center"
       />
 
       <main

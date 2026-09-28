@@ -1,12 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useIsPresent, useReducedMotion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { triggerHaptic } from '../haptics';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
+import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
+import { MiniGameShellContractProps, emitMiniGameSessionEvent } from '../app/gameplaySessionContract';
 
-interface RemainderRunGameProps {
+interface RemainderRunGameProps extends MiniGameShellContractProps {
   levelId: number;
   miniGameLevel?: number;
   avatarId: string;
@@ -45,16 +47,13 @@ const shuffle = <T,>(items: T[]) => [...items].sort(() => Math.random() - 0.5);
 const formatDecimalAnswer = (value: number, decimalPlaces: number) => value.toFixed(decimalPlaces).replace(/\.?0+$/, '');
 
 const roundSecondsForLevel = (level: number) => {
-  if (level <= 3) return 90;
-  if (level <= 7) return 75;
+  if (level <= 2) return 90;
+  if (level <= 4) return 75;
   return 60;
 };
 
-const stageFromProgress = (baseLevel: number, solvedCount: number, timeLeft: number) => {
-  const solvedBoost = Math.floor(solvedCount / 4);
-  const urgencyBoost = timeLeft <= 15 ? 1 : 0;
-  return Math.max(1, Math.min(12, baseLevel + solvedBoost + urgencyBoost));
-};
+// A round never promotes itself beyond the difficulty the player selected.
+const stageForTier = (tier: number) => [1, 3, 5, 7, 10][Math.max(0, Math.min(4, tier - 1))];
 
 const makeAnswerLabel = (quotient: number, remainder: number) => `${quotient} r${remainder}`;
 
@@ -133,10 +132,10 @@ const createDecimalProblem = (stage: number): RemainderProblem => {
   const decimalPlaces = stage < 10 ? 1 : 2;
   const templatePool = stage < 10 ? ONE_DP_TEMPLATES : TWO_DP_TEMPLATES;
   const template = templatePool[randomInt(0, templatePool.length - 1)];
-  const multiplier = randomInt(stage < 10 ? 2 : 3, stage < 10 ? 9 : 12);
+  const multiplier = randomInt(1, stage < 10 ? 1 : 3);
   const divisor = template.denominator * multiplier;
   const remainder = template.numerator * multiplier;
-  const quotient = randomInt(stage < 10 ? 10 : 18, stage < 10 ? 49 : 84);
+  const quotient = randomInt(stage < 10 ? 1 : 3, stage < 10 ? 12 : 25);
   const dividend = (divisor * quotient) + remainder;
   const answerValue = quotient + (template.numerator / template.denominator);
 
@@ -261,11 +260,18 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
   levelId,
   miniGameLevel,
   useSharedTopHud = false,
+  isPractice,
+  practiceBriefing,
+  sessionState,
+  sessionEvents,
   onVictory,
   onGameOver: _onGameOver,
   onBack: _onBack,
 }) => {
-  const baseLevel = Math.max(1, Math.min(12, miniGameLevel || levelId || 1));
+  const baseLevel = Math.max(1, Math.min(5, miniGameLevel || levelId || 1));
+  const difficultyStage = stageForTier(baseLevel);
+  const isPresent = useIsPresent();
+  const reducedMotion = useReducedMotion();
   const initialRoundTime = useMemo(() => roundSecondsForLevel(baseLevel), [baseLevel]);
 
   const [timeLeft, setTimeLeft] = useState(initialRoundTime);
@@ -278,26 +284,34 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
   const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [isLocked, setIsLocked] = useState(false);
+  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
   const [problem, setProblem] = useState<RemainderProblem>(() => {
-    const startStage = stageFromProgress(baseLevel, 0, initialRoundTime);
-    return createProblem(startStage);
+    return createProblem(difficultyStage);
   });
 
   const questionStartRef = useRef<number>(Date.now());
   const finishGuardRef = useRef(false);
   const timeoutRefs = useRef<number[]>([]);
+  const answerLockRef = useRef(false);
+  const presentRef = useRef(isPresent);
+  presentRef.current = isPresent;
+  const onVictoryRef = useRef(onVictory);
+  onVictoryRef.current = onVictory;
 
   const clearTimeouts = () => {
     timeoutRefs.current.forEach((timer) => window.clearTimeout(timer));
     timeoutRefs.current = [];
   };
 
-  useEffect(() => () => clearTimeouts(), []);
+  useEffect(() => () => { finishGuardRef.current = true; clearTimeouts(); }, []);
+  useEffect(() => { if (!isPresent) { finishGuardRef.current = true; clearTimeouts(); } }, [isPresent]);
+  useEffect(() => setShowPracticeIntro(Boolean(isPractice)), [isPractice]);
 
   useEffect(() => {
     clearTimeouts();
     finishGuardRef.current = false;
+    answerLockRef.current = false;
     setTimeLeft(initialRoundTime);
     setScore(0);
     setCombo(0);
@@ -308,35 +322,34 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
     setFeedback(null);
     setSelectedAnswer(null);
     setIsLocked(false);
-    const nextStage = stageFromProgress(baseLevel, 0, initialRoundTime);
-    setProblem(createProblem(nextStage));
+    setProblem(createProblem(difficultyStage));
     questionStartRef.current = Date.now();
-  }, [baseLevel, initialRoundTime]);
+  }, [baseLevel, difficultyStage, initialRoundTime]);
 
   useEffect(() => {
-    if (roundOver) return undefined;
+    if (roundOver || isPractice || showPracticeIntro || sessionState?.paused || !isPresent) return undefined;
     const interval = window.setInterval(() => {
       setTimeLeft((prev) => Math.max(0, prev - 1));
     }, 1000);
     return () => window.clearInterval(interval);
-  }, [roundOver]);
+  }, [isPractice, isPresent, roundOver, sessionState?.paused, showPracticeIntro]);
 
   useEffect(() => {
-    if (timeLeft > 0 || finishGuardRef.current) return;
+    if (!isPresent || sessionState?.paused || finishGuardRef.current || (isPractice ? correctCount < 5 : timeLeft > 0)) return;
     finishGuardRef.current = true;
     setRoundOver(true);
     setIsLocked(true);
 
-    const finalStage = stageFromProgress(baseLevel, solvedCount, 0);
-    const stars = starsFromPerformance(XP, correctCount, attemptCount, finalStage);
-    confetti({
+    const stars = starsFromPerformance(XP, correctCount, attemptCount, difficultyStage);
+    if (!reducedMotion) confetti({
       particleCount: 120,
       spread: 64,
       origin: { y: 0.68 },
       colors: ['#facc15', '#60a5fa', '#34d399', '#ffffff'],
     });
-    onVictory(stars, XP);
-  }, [attemptCount, baseLevel, correctCount, onVictory, XP, solvedCount, timeLeft]);
+    emitMiniGameSessionEvent(sessionEvents, 'game_complete', { score: XP, stars });
+    onVictoryRef.current(stars, XP);
+  }, [attemptCount, correctCount, difficultyStage, isPractice, isPresent, reducedMotion, sessionEvents, sessionState?.paused, timeLeft, XP]);
 
   const timerProgress = Math.max(0, Math.min(1, timeLeft / initialRoundTime));
   const timerFillColor = useMemo(() => {
@@ -346,19 +359,20 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
 
   const moveToNextProblem = useCallback((nextSolvedCount: number, delayMs: number) => {
     const timer = window.setTimeout(() => {
-      if (finishGuardRef.current) return;
-      const nextStage = stageFromProgress(baseLevel, nextSolvedCount, timeLeft);
-      setProblem(createProblem(nextStage));
+      if (!presentRef.current || finishGuardRef.current) return;
+      setProblem(createProblem(difficultyStage));
       setFeedback(null);
       setSelectedAnswer(null);
       setIsLocked(false);
+      answerLockRef.current = false;
       questionStartRef.current = Date.now();
     }, delayMs);
     timeoutRefs.current.push(timer);
-  }, [baseLevel, timeLeft]);
+  }, [difficultyStage]);
 
   const evaluateAnswer = useCallback((choice: string) => {
-    if (roundOver || isLocked) return;
+    if (!presentRef.current || showPracticeIntro || sessionState?.paused || roundOver || isLocked || answerLockRef.current || finishGuardRef.current) return;
+    answerLockRef.current = true;
     setIsLocked(true);
     setSelectedAnswer(choice);
 
@@ -379,6 +393,8 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
 
       triggerHaptic('success');
       setScore((prev) => prev + points);
+      emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { score: XP + points, metadata: { problemId: problem.id, tier: baseLevel } });
+      emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', { score: XP + points });
       setCorrectCount((prev) => prev + 1);
       setCombo((prev) => prev + 1);
       setFeedback({
@@ -387,7 +403,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
         subtitle: isPraise ? 'Fast first try bonus!' : `+${points} points`,
       });
 
-      confetti({
+      if (!reducedMotion) confetti({
         particleCount: 24,
         spread: 32,
         origin: { y: 0.72 },
@@ -401,22 +417,24 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
     triggerHaptic('error');
     setCombo(0);
     setScore((prev) => Math.max(0, prev - 25));
-    setTimeLeft((prev) => Math.max(0, prev - 2));
+    if (!isPractice) setTimeLeft((prev) => Math.max(0, prev - 2));
+    emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { score: Math.max(0, XP - 25), metadata: { problemId: problem.id, tier: baseLevel } });
     setFeedback({
       tone: 'error',
       title: 'Not quite',
       subtitle: 'Check your working and try the next one.',
     });
     moveToNextProblem(nextSolved, 620);
-  }, [attemptCount, combo, isLocked, moveToNextProblem, problem, roundOver, solvedCount]);
+  }, [attemptCount, baseLevel, combo, isLocked, isPractice, moveToNextProblem, problem, reducedMotion, roundOver, sessionEvents, sessionState?.paused, showPracticeIntro, solvedCount, XP]);
 
   const showTopHud = !useSharedTopHud;
 
   const title = 'Remainder Run';
 
   return (
-    <div className="relative z-20 h-full w-full overflow-hidden select-none bg-slate-950">
+    <div className="relative z-20 h-full w-full overflow-hidden select-none bg-slate-950" data-remainder-game data-remainder-tier={baseLevel} data-remainder-stage={difficultyStage} data-remainder-correct={correctCount}>
       <GameplaySceneBackdrop gameType="remainder_run" />
+      <PracticeIntroPopup open={showPracticeIntro} title="Remainder Run" body="Divide the number, then choose the quotient and what is left over. Try five sums at your own pace." briefing={practiceBriefing} onAction={() => setShowPracticeIntro(false)} />
 
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),rgba(15,23,42,0.06)_32%,rgba(2,6,23,0.36)_100%)]" />
 
@@ -472,7 +490,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
                 <button
                   key={`${problem.id}-${option}-${index}`}
                   type="button"
-                  disabled={isLocked || roundOver}
+                  disabled={!isPresent || showPracticeIntro || isLocked || roundOver || sessionState?.paused}
                   onClick={() => evaluateAnswer(option)}
                   className={`relative min-h-[2.65rem] rounded-[0.85rem] border px-2 py-1.5 text-center shadow-[0_8px_18px_rgba(2,6,23,0.16)] transition-transform duration-150 hover:scale-[1.01] disabled:opacity-55 ${
                     selectedAnswer === option

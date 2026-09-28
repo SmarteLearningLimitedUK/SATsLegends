@@ -6,7 +6,7 @@ import remainderRunBackground from './assets/maps/premium/remainder-run.webp';
 import shareSplitterBackground from './assets/maps/premium/share-splitter.webp';
 import areaArchitectBackground from './assets/maps/premium/area-architect.webp';
 import calculationCupBackground from './assets/maps/premium/formula-forge.webp';
-import changeCounterBackground from './assets/maps/premium/change-counter.webp';
+import changeCounterBackground from './assets/maps/teen/monster-market-shop.webp';
 import chronoDashTimeTrialBackground from './assets/maps/premium/chrono-dash.webp';
 import cloudCollapseBackground from './assets/maps/premium/match-mastery.webp';
 import coordinateQuestBackground from './assets/maps/premium/coordinates-quest.webp';
@@ -29,8 +29,10 @@ import problemPyramidBackground from './assets/maps/premium/problem-pyramid.webp
 import rotationStationBackground from './assets/maps/premium/rotation-station.webp';
 import scaleBuilderBackground from './assets/maps/premium/scale-builder.webp';
 import scaleMasterBackground from './assets/maps/premium/conversion-canyon.webp';
-import ratioRacerBackground from './assets/maps/premium/ratio-racer.webp';
-import takeOutRushBackground from './assets/maps/premium/take-out-rush.webp';
+import ratioRacerBackground from './assets/maps/teen/racing-paddock.webp';
+import takeOutRushBackground from './assets/maps/teen/restaurant-rush.webp';
+import takeOutRushWideBackground from './assets/maps/teen/restaurant-rush-wide.webp';
+import changeCounterWideBackground from './assets/maps/teen/monster-market-shop-wide.webp';
 import lavaPathBackground from './assets/maps/premium/lava-path.webp';
 import towerOfFactorsBackground from './assets/maps/premium/factor-frenzy.webp';
 
@@ -89,6 +91,12 @@ const withBackground = (scene: GameSceneMeta, background: string): GameSceneMeta
   ...scene,
   background,
 });
+
+export const getWideEnvironment = (background: string): string | undefined => {
+  if (background === takeOutRushBackground) return takeOutRushWideBackground;
+  if (background === changeCounterBackground) return changeCounterWideBackground;
+  return undefined;
+};
 
 export const GAME_SCENE_META: Record<MiniGameType, GameSceneMeta> = {
   quiz: withBackground(NUMBER_SCENE, mixedMasteryBackground),

@@ -1,0 +1,337 @@
+{
+  "phase": "gameplay-framing-interaction-and-difficulty-refinement",
+  "tool": "built-in image_gen",
+  "beforeEditing": {
+    "task": [
+      "Unify currently used enemy cutouts in the outlined cartoon style of Barratt/Mochi while retaining distinct identities.",
+      "Preserve the existing single-image MonsterMindActor reaction/reduced-motion/source guards across enemy consumers.",
+      "Replace Multiplication Mine sprites with a substantial same-identity four-state cyan-ore progression and controlled physical impact feedback.",
+      "Keep fixed difficulty tiers1–5 in owned generators, existing four-strike Mine objective, reward formulas and shared session ownership."
+    ],
+    "exactFilesInspected": [
+      "AGENTS.md",
+      "docs/GAMEPLAY_REFINEMENT_NOTES.md",
+      "docs/EXPERIENCE_SPEC.md",
+      "docs/BUILD_SPEC.md",
+      "src/components/game-ui/MonsterMindActor.tsx",
+      "src/components/game-ui/monster-mind-actor.css",
+      "src/utils/staticEnemyFrame.ts",
+      "src/components/BossPortrait.tsx",
+      "src/games/NumberLineNinjaGame.tsx",
+      "src/games/PlaceValuePanicGame.tsx",
+      "src/games/FactorFrenzyGame.tsx",
+      "src/games/OrderOpsArenaGame.tsx",
+      "src/games/BossEncounterGame.tsx",
+      "src/games/AngleArenaGame.tsx",
+      "src/games/MultiplicationMineGame.tsx",
+      "src/games/MathsVsZombiesGame.tsx",
+      "src/assets/characters/index.ts",
+      "src/assets/bosses/index.ts",
+      "src/assets/bosses/library.ts",
+      "src/bossMeta.ts",
+      "src/app/gameplaySessionContract.ts"
+    ],
+    "assumptions": [
+      "Router supplies each ordinary mini-game's actual difficulty tier as levelId1–5; selected route IDs remain in shell events.",
+      "Only current repository heroes/enemy identities are art references; no external legacy assumptions.",
+      "Factor sentinel already matches the desired outlines/cel painting and is retained.",
+      "Existing paper encounter identities/routes remain unchanged; no new boss systems.",
+      "MathsVsZombiesGame.tsx integration belongs to question_visibility; root owns App/shared layout/typography/background fitting.",
+      "AngleArena canvas gameplay remains intact; its enemy cutout alone can become a stable DOM MonsterMindActor aligned by the existing canvas projection."
+    ]
+  },
+  "styleReferences": [
+    "src/assets/characters/mobile/Barratt/barrat_neutral.png",
+    "src/assets/characters/mobile/Mochi/mochi_neutral.png"
+  ],
+  "assets": [
+    {
+      "id": "goblin",
+      "file": "src/assets/enemies/cohesive/goblin.webp",
+      "prompt": "Use case: stylized-concept. Asset type: transparent full-body game character cutout for the current SATs Legends young-teen adventure, ages roughly 11–14. Input images 1 and 2 are ONLY art-style references: Barratt the deer archer and Mochi the panda ninja. Match their chunky chibi fantasy proportions, thick dark ink silhouette outlines, clean rounded forms, expressive large eyes, confident two-or-three-tone cel shading, restrained painted gradients, rich teal/blue/green and warm amber accents. This must look hand-drawn 2D cartoon, never photorealistic or realistic3D. Place one complete character in a grounded neutral three-quarter stance, feet fully visible at the same low baseline, centered with a modest transparent margin. Clean alpha cutout, no scenery, no text, no number, no glyph, no panel, no UI, no watermark, no duplicate poses, no black or colored background. Comic confidence, no gore, wounds or exposed injury. Input image3 is the old goblin identity reference. Rework that goblin into the heroes' cartoon style: short stocky olive-green mage, large triangular ears, cheeky amber eyes, long dark navy pointed hat with amber band, navy coat with amber trim, broad brown belt and rounded boots. Retain its curled pointed hat and a crooked wooden staff held upright with a small simple golden flame; other hand relaxed and gesturing. Full character, no weapon raised toward viewer. Keep facial features bold and legible at small game sizes.",
+      "referencePaths": [
+        "src/assets/characters/mobile/Barratt/barrat_neutral.png",
+        "src/assets/characters/mobile/Mochi/mochi_neutral.png",
+        "src/assets/bosses/goblin.png"
+      ],
+      "transparentBackground": true,
+      "status": "accepted-and-integrated",
+      "rawGeneratedPath": "C:/Users/samva/.codex/generated_images/01a0e8a1-9693-7441-86c2-8fa3098634b4/exec-691b4d25-1404-40e4-b889-2d08ae1b8493.png",
+      "output": {
+        "format": "webp",
+        "width": 683,
+        "height": 1024,
+        "bytes": 97636,
+        "hasAlpha": true,
+        "transparentAlphaMinimum": 0
+      },
+      "optimization": "Sharp WebP quality90, alphaQuality100, effort6; enemy height1024 preserving aspect; ore inside768x768 preserving aspect. No image generation by shell.",
+      "visualReview": "Viewed generated output; thick outlines, chunky proportions and cel-painted teal/amber forms match current hero references. Full character alpha cutout, no baked text/UI, wounds or gore."
+    },
+    {
+      "id": "rhino",
+      "file": "src/assets/enemies/cohesive/rhino.webp",
+      "prompt": "Use case: stylized-concept. Asset type: transparent full-body game character cutout for the current SATs Legends young-teen adventure, ages roughly 11–14. Input images 1 and 2 are ONLY art-style references: Barratt the deer archer and Mochi the panda ninja. Match their chunky chibi fantasy proportions, thick dark ink silhouette outlines, clean rounded forms, expressive large eyes, confident two-or-three-tone cel shading, restrained painted gradients, rich teal/blue/green and warm amber accents. This must look hand-drawn 2D cartoon, never photorealistic or realistic3D. Place one complete character in a grounded neutral three-quarter stance, feet fully visible at the same low baseline, centered with a modest transparent margin. Clean alpha cutout, no scenery, no text, no number, no glyph, no panel, no UI, no watermark, no duplicate poses, no black or colored background. Comic confidence, no gore, wounds or exposed injury. Input image3 is the existing armored rhino identity reference. Rework the same stout pale-grey rhino guardian, prominent rounded ivory nose horn, determined warm amber eyes, chunky blue armor panels with burnt-orange edging and simple golden rivets, broad planted feet, one small rounded stone training club held loosely at its side. Keep recognizable rhino silhouette and existing blue/red armor arrangement; replace tiny decorative markings with clean unmarked cel-shaded surfaces. Cartoon challenger, not frightening. The last input image is the new goblin style reference; match exactly its bold outline weight, clean cel painting, rounded materials and full-body cutout finish while retaining the different subject above.",
+      "referencePaths": [
+        "D:/BrainZilla/GitHub/SATsLegends/src/assets/characters/mobile/Barratt/barrat_neutral.png",
+        "D:/BrainZilla/GitHub/SATsLegends/src/assets/characters/mobile/Mochi/mochi_neutral.png",
+        "D:/BrainZilla/GitHub/SATsLegends/src/assets/maps/ezgif-261d69e7ae90ee8c.webp",
+        "C:\\Users\\samva\\.codex\\generated_images\\01a0e8a1-9693-7441-86c2-8fa3098634b4\\exec-691b4d25-1404-40e4-b889-2d08ae1b8493.png"
+      ],
+      "transparentBackground": true,
+      "status": "accepted-and-integrated",
+      "rawGeneratedPath": "C:/Users/samva/.codex/generated_images/01a0e8a1-9693-7441-86c2-8fa3098634b4/exec-2ab826c5-b302-437e-a9ed-5f3b8ee3901a.png",
+      "output": {
+        "format": "webp",
+        "width": 683,
+        "height": 1024,
+        "bytes": 101572,
+        "hasAlpha": true,
+        "transparentAlphaMinimum": 0
+      },
+      "optimization": "Sharp WebP quality90, alphaQuality100, effort6; enemy height1024 preserving aspect; ore inside768x768 preserving aspect. No image generation by shell.",
+      "visualReview": "Viewed generated output; thick outlines, chunky proportions and cel-painted teal/amber forms match current hero references. Full character alpha cutout, no baked text/UI, wounds or gore."
+    },
+    {
+      "id": "zombie",
+      "file": "src/assets/enemies/cohesive/zombie.webp",
+      "prompt": "Use case: stylized-concept. Asset type: transparent full-body game character cutout for the current SATs Legends young-teen adventure, ages roughly 11–14. Input images 1 and 2 are ONLY art-style references: Barratt the deer archer and Mochi the panda ninja. Match their chunky chibi fantasy proportions, thick dark ink silhouette outlines, clean rounded forms, expressive large eyes, confident two-or-three-tone cel shading, restrained painted gradients, rich teal/blue/green and warm amber accents. This must look hand-drawn 2D cartoon, never photorealistic or realistic3D. Place one complete character in a grounded neutral three-quarter stance, feet fully visible at the same low baseline, centered with a modest transparent margin. Clean alpha cutout, no scenery, no text, no number, no glyph, no panel, no UI, no watermark, no duplicate poses, no black or colored background. Comic confidence, no gore, wounds or exposed injury. Input image3 is the existing zombie identity reference, to be redesigned in the heroes' art style. One short stocky mint-green mischievous zombie challenger with big expressive uneven eyes, short messy dark-teal hair, charcoal/navy patched jacket, brown trousers, large rounded boots, arms loosely reaching forward. Friendly comic peril and a crooked grin. Clothes use stitched patches and rounded hems; remove all red wound marks and exposed injury. Complete clean character with solid torso silhouette. The last input image is the new goblin style reference; match exactly its bold outline weight, clean cel painting, rounded materials and full-body cutout finish while retaining the different subject above.",
+      "referencePaths": [
+        "D:/BrainZilla/GitHub/SATsLegends/src/assets/characters/mobile/Barratt/barrat_neutral.png",
+        "D:/BrainZilla/GitHub/SATsLegends/src/assets/characters/mobile/Mochi/mochi_neutral.png",
+        "D:/BrainZilla/GitHub/SATsLegends/src/assets/zombies/zombie.png",
+        "C:\\Users\\samva\\.codex\\generated_images\\01a0e8a1-9693-7441-86c2-8fa3098634b4\\exec-691b4d25-1404-40e4-b889-2d08ae1b8493.png"
+      ],
+      "transparentBackground": true,
+      "status": "accepted-and-integrated",
+      "rawGeneratedPath": "C:/Users/samva/.codex/generated_images/01a0e8a1-9693-7441-86c2-8fa3098634b4/exec-216b559b-506a-4ea0-bc70-5d2e415f50e9.png",
+      "output": {
+        "format": "webp",
+        "width": 683,
+        "height": 1024,
+        "bytes": 83004,
+        "hasAlpha": true,
+        "transparentAlphaMinimum": 0
+      },
+      "optimization": "Sharp WebP quality90, alphaQuality100, effort6; enemy height1024 preserving aspect; ore inside768x768 preserving aspect. No image generation by shell.",
+      "visualReview": "Viewed generated output; thick outlines, chunky proportions and cel-painted teal/amber forms match current hero references. Full character alpha cutout, no baked text/UI, wounds or gore."
+    },
+    {
+      "id": "jelly",
+      "file": "src/assets/enemies/cohesive/jelly.webp",
+      "prompt": "Use case: stylized-concept. Asset type: transparent full-body game character cutout for the current SATs Legends young-teen adventure, ages roughly 11–14. Input images 1 and 2 are ONLY art-style references: Barratt the deer archer and Mochi the panda ninja. Match their chunky chibi fantasy proportions, thick dark ink silhouette outlines, clean rounded forms, expressive large eyes, confident two-or-three-tone cel shading, restrained painted gradients, rich teal/blue/green and warm amber accents. This must look hand-drawn 2D cartoon, never photorealistic or realistic3D. Place one complete character in a grounded neutral three-quarter stance, feet fully visible at the same low baseline, centered with a modest transparent margin. Clean alpha cutout, no scenery, no text, no number, no glyph, no panel, no UI, no watermark, no duplicate poses, no black or colored background. Comic confidence, no gore, wounds or exposed injury. Subject: one crystal-jelly creature, the current crystal-core encounter identity. A broad squat cyan jelly body with a few big faceted aqua crystals rising from its crown and back, two expressive dark-teal eyes and a confident crooked smile, two rounded little arm nubs, broad flattened jelly feet. Bold substantial silhouette, gently translucent painted cel shading but no realistic refraction; turquoise body, amber crystal tips, tiny cream highlights. Grounded confident stance, no surrounding halo or extra scenery. The last input image is the new goblin style reference; match exactly its bold outline weight, clean cel painting, rounded materials and full-body cutout finish while retaining the different subject above.",
+      "referencePaths": [
+        "D:/BrainZilla/GitHub/SATsLegends/src/assets/characters/mobile/Barratt/barrat_neutral.png",
+        "D:/BrainZilla/GitHub/SATsLegends/src/assets/characters/mobile/Mochi/mochi_neutral.png",
+        "C:\\Users\\samva\\.codex\\generated_images\\01a0e8a1-9693-7441-86c2-8fa3098634b4\\exec-691b4d25-1404-40e4-b889-2d08ae1b8493.png"
+      ],
+      "transparentBackground": true,
+      "status": "accepted-and-integrated",
+      "rawGeneratedPath": "C:/Users/samva/.codex/generated_images/01a0e8a1-9693-7441-86c2-8fa3098634b4/exec-b84b02f9-2dd8-40ba-870c-f1c9a5737696.png",
+      "output": {
+        "format": "webp",
+        "width": 974,
+        "height": 1024,
+        "bytes": 108858,
+        "hasAlpha": true,
+        "transparentAlphaMinimum": 0
+      },
+      "optimization": "Sharp WebP quality90, alphaQuality100, effort6; enemy height1024 preserving aspect; ore inside768x768 preserving aspect. No image generation by shell.",
+      "visualReview": "Viewed generated output; thick outlines, chunky proportions and cel-painted teal/amber forms match current hero references. Full character alpha cutout, no baked text/UI, wounds or gore."
+    },
+    {
+      "id": "cyclops",
+      "file": "src/assets/enemies/cohesive/cyclops-slime.webp",
+      "prompt": "Use case: stylized-concept. Asset type: transparent full-body game character cutout for the current SATs Legends young-teen adventure, ages roughly 11–14. Input images 1 and 2 are ONLY art-style references: Barratt the deer archer and Mochi the panda ninja. Match their chunky chibi fantasy proportions, thick dark ink silhouette outlines, clean rounded forms, expressive large eyes, confident two-or-three-tone cel shading, restrained painted gradients, rich teal/blue/green and warm amber accents. This must look hand-drawn 2D cartoon, never photorealistic or realistic3D. Place one complete character in a grounded neutral three-quarter stance, feet fully visible at the same low baseline, centered with a modest transparent margin. Clean alpha cutout, no scenery, no text, no number, no glyph, no panel, no UI, no watermark, no duplicate poses, no black or colored background. Comic confidence, no gore, wounds or exposed injury. Subject: one cyclops-slime creature, the current mirror-gate and matrix encounter identity. Squat rounded deep teal slime body, a single large mint-and-amber eye, chunky small amber horns, two sturdy rounded arms and broad slime feet, confident comic grin. Clean thick outline and simplified two-tone shapes, blue/teal body with amber horn accents; no purple primary surface, no realistic wet texture. Full grounded creature, no scenery. The last input image is the new goblin style reference; match exactly its bold outline weight, clean cel painting, rounded materials and full-body cutout finish while retaining the different subject above.",
+      "referencePaths": [
+        "D:/BrainZilla/GitHub/SATsLegends/src/assets/characters/mobile/Barratt/barrat_neutral.png",
+        "D:/BrainZilla/GitHub/SATsLegends/src/assets/characters/mobile/Mochi/mochi_neutral.png",
+        "C:\\Users\\samva\\.codex\\generated_images\\01a0e8a1-9693-7441-86c2-8fa3098634b4\\exec-691b4d25-1404-40e4-b889-2d08ae1b8493.png"
+      ],
+      "transparentBackground": true,
+      "status": "accepted-and-integrated",
+      "rawGeneratedPath": "C:/Users/samva/.codex/generated_images/01a0e8a1-9693-7441-86c2-8fa3098634b4/exec-91478cf1-5ac4-471c-b977-60923434db93.png",
+      "output": {
+        "format": "webp",
+        "width": 683,
+        "height": 1024,
+        "bytes": 75086,
+        "hasAlpha": true,
+        "transparentAlphaMinimum": 0
+      },
+      "optimization": "Sharp WebP quality90, alphaQuality100, effort6; enemy height1024 preserving aspect; ore inside768x768 preserving aspect. No image generation by shell.",
+      "visualReview": "Viewed generated output; thick outlines, chunky proportions and cel-painted teal/amber forms match current hero references. Full character alpha cutout, no baked text/UI, wounds or gore."
+    }
+  ],
+  "mineAssets": [
+    {
+      "id": "ore-intact",
+      "file": "src/assets/mine/ore/ore-intact.webp",
+      "prompt": "Use case: stylized-concept. Asset type: one transparent game prop for SATs Legends Multiplication Mine, young-teen fantasy adventure. The two attached heroes are ONLY style references. Create one substantial compact ore boulder, three-quarter view, grounded base, centered and nearly filling a square canvas with a modest transparent margin. A single broad heavy slate-blue stone mass with large chunky angular facets and a distinctive sloping crown, three small aqua/cyan crystal clusters embedded along its upper-left and right edge, a bright amber seam low on its front. Bold dark ink outlines, clean hand-painted 2D cartoon cel shading and restrained gradients matching Barratt/Mochi, rich material depth from a few large shapes. Make it feel like a real heavy adventure obstacle rather than a small pebble or baby toy. Intact and unbroken, only natural stone seams. Full silhouette and base visible, genuine alpha transparency, no scene, no text, no number, no interface, no eyes/face, no separate floating particles, no black matte, no photorealism/realistic3D, no watermark. This will become a consistent same-camera same-silhouette four-state damage progression.",
+      "referencePaths": [
+        "src/assets/characters/mobile/Barratt/barrat_neutral.png",
+        "src/assets/characters/mobile/Mochi/mochi_neutral.png"
+      ],
+      "transparentBackground": true,
+      "status": "accepted-and-integrated",
+      "rawGeneratedPath": "C:/Users/samva/.codex/generated_images/01a0e8a1-9693-7441-86c2-8fa3098634b4/exec-00384c8b-e5a1-42a9-ab9e-4737f1226ddd.png",
+      "output": {
+        "format": "webp",
+        "width": 768,
+        "height": 768,
+        "bytes": 82072,
+        "hasAlpha": true,
+        "transparentAlphaMinimum": 0
+      },
+      "optimization": "Sharp WebP quality90, alphaQuality100, effort6; enemy height1024 preserving aspect; ore inside768x768 preserving aspect. No image generation by shell.",
+      "visualReview": "Viewed generated output; broad crown, side crystals, amber lower seam and ground baseline remain the same boulder through cracks/open core. No baked text/UI or flying debris."
+    },
+    {
+      "id": "ore-cracked",
+      "file": "src/assets/mine/ore/ore-cracked.webp",
+      "status": "accepted-and-integrated",
+      "transparentBackground": true,
+      "prompt": "Use case: precise-object-edit. Asset type: transparent same-identity damaged game prop for SATs Legends Multiplication Mine. Image1 is the EDIT TARGET, the intact cyan-ore boulder. Preserve its exact canvas size, camera angle, center, baseline, scale, slate-blue facets, bold ink outlines, chunky cel-painted style, three existing cyan crystal clusters and lower amber vein. Keep the image fully transparent outside the prop; no background, UI, writing, face, realistic material, glow halo or watermark. Add only the first impact damage: one bold dark branching crack through the central front stone and a small chipped wedge near the lower amber seam. The boulder remains whole and its outer silhouette is unchanged. Cyan crystal positions/colors stay exactly fixed. Do not redesign the boulder, move it, resize it, rotate it, change the camera, or introduce a different rock identity.",
+      "referencePaths": [
+        "C:\\Users\\samva\\.codex\\generated_images\\01a0e8a1-9693-7441-86c2-8fa3098634b4\\exec-00384c8b-e5a1-42a9-ab9e-4737f1226ddd.png"
+      ],
+      "rawGeneratedPath": "C:/Users/samva/.codex/generated_images/01a0e8a1-9693-7441-86c2-8fa3098634b4/exec-cb0b84e8-8ee5-4fbd-b395-5fa75c426085.png",
+      "output": {
+        "format": "webp",
+        "width": 768,
+        "height": 768,
+        "bytes": 84090,
+        "hasAlpha": true,
+        "transparentAlphaMinimum": 0
+      },
+      "optimization": "Sharp WebP quality90, alphaQuality100, effort6; enemy height1024 preserving aspect; ore inside768x768 preserving aspect. No image generation by shell.",
+      "visualReview": "Viewed generated output; broad crown, side crystals, amber lower seam and ground baseline remain the same boulder through cracks/open core. No baked text/UI or flying debris."
+    },
+    {
+      "id": "ore-split",
+      "file": "src/assets/mine/ore/ore-split.webp",
+      "status": "accepted-and-integrated",
+      "transparentBackground": true,
+      "prompt": "Use case: precise-object-edit. Asset type: transparent same-identity damaged game prop for SATs Legends Multiplication Mine. Image1 is the EDIT TARGET, the intact cyan-ore boulder. Preserve its exact canvas size, camera angle, center, baseline, scale, slate-blue facets, bold ink outlines, chunky cel-painted style, three existing cyan crystal clusters and lower amber vein. Keep the image fully transparent outside the prop; no background, UI, writing, face, realistic material, glow halo or watermark. Add strong second impact damage to the same ore boulder: three coherent branching fissures in the central front stone, a small amber-lit cyan glint visible through the central fissure, and two chips loosened at the base. The rock still stands as one recognizable broad mass; keep the full outer silhouette and all existing side-crystal positions. Do not redesign the boulder, move it, resize it, rotate it, change the camera, or introduce a different rock identity.",
+      "referencePaths": [
+        "C:\\Users\\samva\\.codex\\generated_images\\01a0e8a1-9693-7441-86c2-8fa3098634b4\\exec-00384c8b-e5a1-42a9-ab9e-4737f1226ddd.png"
+      ],
+      "rawGeneratedPath": "C:/Users/samva/.codex/generated_images/01a0e8a1-9693-7441-86c2-8fa3098634b4/exec-9b23b8a1-99cf-48c9-a003-6c6b96e5cf44.png",
+      "output": {
+        "format": "webp",
+        "width": 768,
+        "height": 768,
+        "bytes": 92882,
+        "hasAlpha": true,
+        "transparentAlphaMinimum": 0
+      },
+      "optimization": "Sharp WebP quality90, alphaQuality100, effort6; enemy height1024 preserving aspect; ore inside768x768 preserving aspect. No image generation by shell.",
+      "visualReview": "Viewed generated output; broad crown, side crystals, amber lower seam and ground baseline remain the same boulder through cracks/open core. No baked text/UI or flying debris."
+    },
+    {
+      "id": "ore-open",
+      "file": "src/assets/mine/ore/ore-open.webp",
+      "status": "accepted-and-integrated",
+      "transparentBackground": true,
+      "prompt": "Use case: precise-object-edit. Asset type: transparent same-identity damaged game prop for SATs Legends Multiplication Mine. Image1 is the EDIT TARGET, the intact cyan-ore boulder. Preserve its exact canvas size, camera angle, center, baseline, scale, slate-blue facets, bold ink outlines, chunky cel-painted style, three existing cyan crystal clusters and lower amber vein. Keep the image fully transparent outside the prop; no background, UI, writing, face, realistic material, glow halo or watermark. Show the final breached ore state of the same boulder: split the large central front facet into three heavy separated stone segments, revealing a substantial bright cyan crystal core held between them, a few large slate-blue and amber-edged chunks at the original base. The crown and side crystal clusters remain recognizable in their original positions so this is visibly the same obstacle; retain the broad overall outline and exact baseline. No flying particles or dust baked into the image. Do not redesign the boulder, move it, resize it, rotate it, change the camera, or introduce a different rock identity.",
+      "referencePaths": [
+        "C:\\Users\\samva\\.codex\\generated_images\\01a0e8a1-9693-7441-86c2-8fa3098634b4\\exec-00384c8b-e5a1-42a9-ab9e-4737f1226ddd.png"
+      ],
+      "rawGeneratedPath": "C:/Users/samva/.codex/generated_images/01a0e8a1-9693-7441-86c2-8fa3098634b4/exec-f2e23f5f-9991-43cf-bc8b-f5e633d9155e.png",
+      "output": {
+        "format": "webp",
+        "width": 768,
+        "height": 768,
+        "bytes": 94768,
+        "hasAlpha": true,
+        "transparentAlphaMinimum": 0
+      },
+      "optimization": "Sharp WebP quality90, alphaQuality100, effort6; enemy height1024 preserving aspect; ore inside768x768 preserving aspect. No image generation by shell.",
+      "visualReview": "Viewed generated output; broad crown, side crystals, amber lower seam and ground baseline remain the same boulder through cracks/open core. No baked text/UI or flying debris."
+    }
+  ],
+  "retainedAsset": "src/assets/reskin/factor-sentinel.webp",
+  "integrations": {
+    "src/games/NumberLineNinjaGame.tsx": "One goblin actor; existing hit/taunt timing and explicit contain frame retained; scene contained.",
+    "src/games/PlaceValuePanicGame.tsx": "One rhino actor in the existing square bounded frame; existing native touch lifecycle/scoring repairs retained; scene contained.",
+    "src/games/FactorFrenzyGame.tsx": "Existing outlined sentinel retained; one stable actor through each round; selected tier remains fixed; contained scene.",
+    "src/games/OrderOpsArenaGame.tsx": "One goblin actor, fixed selected tier for all rounds, existing scoring and enemy health retained.",
+    "src/games/BossEncounterGame.tsx": "Existing Crystal Core uses jelly; existing Mirror Gate/Matrix use cyclops slime. One fixed actor source per current encounter; scene cover override removed.",
+    "src/components/BossPortrait.tsx": "Same encounter identity resolver and stable actor for existing portrait consumers.",
+    "src/games/AngleArenaGame.tsx": "Canvas projection updates a single stable DOM goblin actor position/size; existing cannon/angle/physics/scoring unchanged. Hit/taunt from current outcome, defeat from levelComplete; reduced motion inherited from actor.",
+    "src/games/MultiplicationMineGame.tsx": "Four-strike cyan-ore progression, one static-state image node, guarded input/session events/exact final XP, physical pick/recoil/chips, reduced-motion static presentation; mission then ore then tightly grouped answers then status.",
+    "src/games/MathsVsZombiesGame.tsx": "Owned by question_visibility: shared zombie cutout per current entity, idle/hit/taunt/defeated state mappings; no raw frame swaps."
+  },
+  "sharedActor": {
+    "files": [
+      "src/components/game-ui/MonsterMindActor.tsx",
+      "src/components/game-ui/monster-mind-actor.css",
+      "src/utils/staticEnemyFrame.ts"
+    ],
+    "status": "Inspected and retained unchanged in this phase",
+    "behavior": "Single image DOM node, source-tagged prepared static-frame cache, no raw animated fallback, independent grounded breathing/sway, clean440ms hit/660ms taunt/560ms defeat and reduced-motion disable."
+  },
+  "difficulty": {
+    "mine": [
+      "2–5 multiplication",
+      "2–7 multiplication",
+      "3–9 multiplication",
+      "4–12 multiplication",
+      "6–12 multiplication"
+    ],
+    "ninja": [
+      "integer step1",
+      "integer step2/5",
+      "positive tens step10",
+      "negative step5",
+      "decimal step0.1/0.2/0.25"
+    ],
+    "placeValue": [
+      "2 columns",
+      "3 columns",
+      "4 columns",
+      "5 columns",
+      "7 columns including millions"
+    ],
+    "factor": [
+      "missing factors, factors2–5",
+      "all factors of6/8/10/12",
+      "common factors of smaller pairs",
+      "prime factors of12–42",
+      "common/prime factors of larger pairs/numbers up to120"
+    ],
+    "order": [
+      "small multiply then add",
+      "multiply/add or brackets",
+      "broader factors and two products",
+      "factors up to10",
+      "factors up to12"
+    ],
+    "rule": "Chosen1–5 tier remains fixed through each run. Route identity/progress stay owned by router; no question complexity from route order."
+  },
+  "rewardThresholdRepair": {
+    "file": "src/games/FactorFrenzyGame.tsx",
+    "reason": "Existing10000/14000 thresholds exceeded ten strikes maximum attainable score8000.",
+    "attainableScore": "10 * (500 + selected-tier roundTimeLimit * 10)",
+    "threeStars": "XP >=90% of attainableScore",
+    "twoStars": "XP >=70% of attainableScore",
+    "unchanged": "500 + timeLeft *10 XP per strike; ten-strike objective; all other reward/scoring formulas."
+  },
+  "layout": {
+    "mine": "Contracted stage already reserves topHUD/bottomdock; shared Mine mission uses5px inner top gap. Caption/feedback use --legend-label-size and answer buttons compensate --game-stage-scale for a44px rendered minimum. Ore absolutely centers within available playfield with bounded contain geometry.",
+    "scenes": "No cover/crop overrides in owned Boss/Factor/Ninja/PVP scenes; preserve actor aspect ratios.",
+    "angle": "Canvas environment/gameplay is retained; enemy alone follows existing projection as full-body actor."
+  },
+  "audit": {
+    "unusedConsumers": [
+      "src/components/ViewportBossEnemy.tsx",
+      "src/bossVisuals.ts"
+    ],
+    "action": "No production imports of ViewportBossEnemy found; unused legacy art helpers left untouched. No new boss system or external legacy assumptions."
+  },
+  "verification": {
+    "sourceReview": "React hooks/input/timers/identity/reduced-motion audited within owned changes",
+    "typecheck": "Pending final scoped lint completion",
+    "browser": "Not run during concurrent source writes; full profile verification belongs to coordinated final frozen-source QA."
+  }
+}

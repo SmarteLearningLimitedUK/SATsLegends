@@ -76,12 +76,13 @@ const isPrime = (n: number) => {
 };
 
 const getConfig = (levelId: number): PrimePopConfig => {
-  const level = Math.max(1, levelId);
+  const tier = Math.max(1, Math.min(5, levelId));
+  const level = [1, 3, 5, 7, 10][tier - 1];
   if (level <= 3) {
     return {
       roundSeconds: 45,
       targetScore: 900 + ((level - 1) * 80),
-      maxNumber: 40,
+      maxNumber: [20, 40, 60, 80, 99][tier - 1],
       minBubbles: 4,
       maxBubbles: 7,
       minRadius: 4.8,
@@ -100,7 +101,7 @@ const getConfig = (levelId: number): PrimePopConfig => {
     return {
       roundSeconds: 45,
       targetScore: 1150 + ((level - 4) * 95),
-      maxNumber: 70,
+      maxNumber: [20, 40, 60, 80, 99][tier - 1],
       minBubbles: 5,
       maxBubbles: 8,
       minRadius: 4.4,
@@ -577,7 +578,8 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
 
   return (
     <div
-      className="relative z-20 flex h-full min-h-0 w-full flex-col overflow-hidden bg-cover bg-center bg-no-repeat select-none"
+      data-background-fit="contain"
+      className="relative z-20 flex h-full min-h-0 w-full flex-col overflow-hidden bg-contain bg-center bg-no-repeat select-none"
       style={{ backgroundImage: `url(${primePopBackground})` }}
     >
       <PracticeIntroPopup

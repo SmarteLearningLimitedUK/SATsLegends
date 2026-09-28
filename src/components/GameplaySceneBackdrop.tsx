@@ -1,6 +1,7 @@
 import React from 'react';
 import { GAME_SCENE_META } from '../gameSceneMeta';
 import { MiniGameType } from '../types';
+import SceneEnvironment from './SceneEnvironment';
 
 interface GameplaySceneBackdropProps {
   gameType: MiniGameType;
@@ -25,12 +26,7 @@ const GameplaySceneBackdrop: React.FC<GameplaySceneBackdropProps> = ({
       data-game-background-layer="true"
     >
       {backgroundImage ? (
-        <img
-          src={backgroundImage}
-          alt=""
-          className="absolute inset-0 h-full w-full object-contain object-center"
-          draggable={false}
-        />
+        <SceneEnvironment src={backgroundImage} />
       ) : null}
     </div>
   );

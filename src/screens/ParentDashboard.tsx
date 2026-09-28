@@ -1,289 +1,128 @@
 import React, { useMemo } from 'react';
+import { ArrowLeft, ChevronDown } from 'lucide-react';
 import AssetIcon from '../components/AssetIcon';
-import { FramedPanel, ScrollScreenShell } from '../layout/ScreenPrimitives';
 import { ACHIEVEMENT_CATALOG } from '../systems/progression/achievementCatalog';
 import { buildParentReport } from '../systems/progression/reporting';
-import { PlayerData, TopicStat } from '../types';
+import { ParentGameSummary, PlayerData, TopicStat } from '../types';
+import './parent-dashboard.css';
 
 interface ParentDashboardProps {
   player: PlayerData;
   onBack: () => void;
 }
 
-type SummaryTileProps = {
-  label: string;
-  value: string | number;
-  icon: 'gamepad' | 'trophy' | 'stopwatch' | 'star';
-};
-
-type GameCardProps = {
-  title: string;
-  toneClass: string;
-  game: ReturnType<typeof buildParentReport>['favoriteGame'];
-  fallback: string;
-};
-
 const formatDuration = (seconds: number) => {
   if (seconds <= 0) return '0s';
   const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
-  if (minutes === 0) return `${remainingSeconds}s`;
-  return remainingSeconds === 0 ? `${minutes}m` : `${minutes}m ${remainingSeconds}s`;
+  const remainder = seconds % 60;
+  return minutes ? `${minutes}m${remainder ? ` ${remainder}s` : ''}` : `${remainder}s`;
 };
+const formatAccuracy = (fraction: number) => `${Math.round(fraction * 100)}%`;
 
-const SummaryTile: React.FC<SummaryTileProps> = ({ label, value, icon }) => (
-  <div className="rounded-[1rem] border border-white/10 bg-white/6 px-3 py-3 md:px-4 md:py-4">
-    <AssetIcon name={icon} className="h-4 w-4 text-white/70 md:h-5 md:w-5" />
-    <div className="mt-2 text-xl font-black tracking-tight text-white md:text-3xl">
-      {value}
-    </div>
-    <div className="mt-1 text-[10px] font-black uppercase tracking-[0.14em] text-white/55 md:text-xs">
-      {label}
-    </div>
+const SummaryStat: React.FC<{
+  label: string;
+  value: string | number;
+  note: string;
+  icon: 'gamepad' | 'trophy' | 'stopwatch' | 'star';
+}> = ({ label, value, note, icon }) => (
+  <div className="parent-summary-stat">
+    <div className="parent-stat-label"><AssetIcon name={icon} className="h-4 w-4" />{label}</div>
+    <strong>{value}</strong>
+    <span>{note}</span>
   </div>
 );
 
-const GameCard: React.FC<GameCardProps> = ({ title, toneClass, game, fallback }) => (
-  <FramedPanel className="rounded-[1.35rem] border border-white/12 bg-slate-950/62 p-4 text-white md:rounded-[2rem] md:p-5">
-    <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/55">{title}</div>
-    <div className={`mt-3 rounded-[1rem] border px-4 py-4 ${toneClass}`}>
-      {game ? (
-        <>
-          <div className="text-lg font-black tracking-tight md:text-2xl">{game.label}</div>
-          <div className="mt-2 text-sm font-semibold leading-relaxed text-white/78 md:text-base">
-            {game.sessions} sessions | {game.accuracy}% accuracy | Avg {formatDuration(game.avgTimeSec)}
-          </div>
-        </>
-      ) : (
-        <div className="text-sm text-white/62">{fallback}</div>
-      )}
-    </div>
-  </FramedPanel>
+const TopicList: React.FC<{ title: string; items: string[]; emptyText: string; tone: string }> = ({ title, items, emptyText, tone }) => (
+  <section className={`parent-topic-section ${tone}`}>
+    <h3>{title}</h3>
+    {items.length ? <ul>{items.map((item) => <li key={item}>{item}</li>)}</ul> : <p>{emptyText}</p>}
+  </section>
 );
 
-const ListCard: React.FC<{
-  title: string;
-  eyebrowTone: string;
-  description: string;
-  items: string[];
-  emptyText: string;
-}> = ({ title, eyebrowTone, description, items, emptyText }) => (
-  <FramedPanel className="rounded-[1.35rem] border border-white/12 bg-slate-950/62 p-4 text-white md:rounded-[2rem] md:p-5">
-    <div className={`text-[10px] font-black uppercase tracking-[0.18em] ${eyebrowTone}`}>{title}</div>
-    <div className="mt-3 text-sm leading-relaxed text-white/68">{description}</div>
-    <div className="mt-3 grid gap-2">
-      {items.length ? items.map((item) => (
-        <div key={item} className="rounded-[0.9rem] border border-white/10 bg-white/5 px-4 py-3 text-base font-bold text-white">
-          {item}
-        </div>
-      )) : (
-        <div className="rounded-[0.9rem] border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/60">
-          {emptyText}
-        </div>
-      )}
-    </div>
-  </FramedPanel>
+const GameRow: React.FC<{ label: string; game: ParentGameSummary | null }> = ({ label, game }) => (
+  <div className="parent-game-row">
+    <span>{label}</span>
+    <div>{game ? <><strong>{game.label}</strong><small>{game.sessions} sessions · {formatAccuracy(game.accuracy)} accuracy · {formatDuration(game.avgTimeSec)} per session</small></> : <p>No game history yet.</p>}</div>
+  </div>
 );
 
 const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => {
   const report = useMemo(() => buildParentReport(player), [player]);
-
-  const gamesPlayed = player.telemetry?.sessionsPlayed ?? player.stats?.totalGamesPlayed ?? 0;
-  const totalStars = player.stats?.totalStars ?? 0;
   const telemetry = player.telemetry;
-  const earnedAchievementIds = new Set(player.achievementState?.earned ?? player.achievements ?? []);
-  const earnedAchievementNames = ACHIEVEMENT_CATALOG
-    .filter((achievement) => earnedAchievementIds.has(achievement.id))
-    .slice(0, 8)
-    .map((achievement) => achievement.name);
-  const recentTopics = telemetry
-    ? (Object.values(telemetry.topicStats) as TopicStat[])
-      .sort((a, b) => (b.lastPlayed ?? 0) - (a.lastPlayed ?? 0))
-      .slice(0, 6)
-    : [];
-  const bestSubject = report.excelling[0] ?? 'No strong topic data yet';
-  const focusSubject = report.needsPractice[0] ?? 'No weak topic data yet';
+  const sessions = telemetry?.sessionsPlayed ?? player.stats?.totalGamesPlayed ?? 0;
+  const totalAttempts = (telemetry?.correctAnswers ?? 0) + (telemetry?.incorrectAnswers ?? 0);
+  const earnedIds = new Set(player.achievementState?.earned ?? player.achievements ?? []);
+  const earnedAchievements = ACHIEVEMENT_CATALOG.filter((achievement) => earnedIds.has(achievement.id));
+  const recentTopics = useMemo(() => telemetry
+    ? (Object.values(telemetry.topicStats) as TopicStat[]).sort((a, b) => (b.lastPlayed ?? 0) - (a.lastPlayed ?? 0)).slice(0, 6)
+    : [], [telemetry]);
 
   return (
-    <ScrollScreenShell className="relative min-h-[100dvh] w-full licensed-shell-bg">
-      <div className="absolute inset-0 bg-slate-950/48" />
-
-      <div className="relative z-10 flex flex-col gap-4 px-4 pb-24 pt-[calc(0.75rem+env(safe-area-inset-top))] md:px-8 md:pb-12 md:pt-6">
-        <FramedPanel className="rounded-[1.4rem] border border-white/12 bg-slate-950/62 p-4 text-white md:rounded-[2rem] md:p-6">
-          <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-100/70">Parent snapshot</div>
-          <div className="mt-2 text-2xl font-black tracking-tight md:text-4xl">One page, four answers.</div>
-          <div className="mt-1 max-w-3xl text-sm leading-relaxed text-white/72 md:text-base">
-            Quickly see where your child is excelling, where they need more practice, and which games they are
-            spending the most and least time on.
+    <section className="parent-dashboard" data-parent-snapshot="true" data-scroll-region="parent-snapshot" aria-label="Parent Snapshot">
+      <div className="parent-report-content">
+        <header className="parent-report-header">
+          <div>
+            <span className="parent-eyebrow">Adventure report</span>
+            <h1>Parent snapshot</h1>
+            <p>{player.playerName || 'Your child'}’s progress, practice and play.</p>
           </div>
-          <div className="mt-4 grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-3">
-            <SummaryTile label="Sessions" value={gamesPlayed} icon="gamepad" />
-            <SummaryTile label="Accuracy" value={`${report.overallAccuracy}%`} icon="trophy" />
-            <SummaryTile label="Speed" value={formatDuration(report.averageSessionTimeSec)} icon="stopwatch" />
-            <SummaryTile label="Brainpower" value={totalStars} icon="star" />
-          </div>
-        </FramedPanel>
+          <button type="button" onClick={onBack} className="parent-back ui-button-secondary"><ArrowLeft size={17} aria-hidden="true" />Back to map</button>
+        </header>
 
-        <div className="grid gap-4 md:grid-cols-2">
-          <FramedPanel className="rounded-[1.35rem] border border-white/12 bg-slate-950/62 p-4 text-white md:rounded-[2rem] md:p-5">
-            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/70">Performance ledger</div>
-            <div className="mt-3 grid grid-cols-2 gap-3">
-              <SummaryTile label="Correct" value={telemetry?.correctAnswers ?? 0} icon="star" />
-              <SummaryTile label="Incorrect" value={telemetry?.incorrectAnswers ?? 0} icon="gamepad" />
-              <SummaryTile label="Best streak" value={telemetry?.bestCorrectStreak ?? 0} icon="trophy" />
-              <SummaryTile label="Play time" value={formatDuration(telemetry?.totalPlayTimeSec ?? 0)} icon="stopwatch" />
-            </div>
-          </FramedPanel>
-
-          <FramedPanel className="rounded-[1.35rem] border border-white/12 bg-slate-950/62 p-4 text-white md:rounded-[2rem] md:p-5">
-            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/70">Current focus</div>
-            <div className="mt-3 grid gap-3">
-              <div className="rounded-[1rem] border border-emerald-200/24 bg-emerald-200/10 px-4 py-3">
-                <div className="text-[10px] font-black uppercase tracking-[0.14em] text-emerald-100/78">Strongest topic</div>
-                <div className="mt-1 text-lg font-black text-white md:text-2xl">{bestSubject}</div>
-              </div>
-              <div className="rounded-[1rem] border border-rose-200/24 bg-rose-200/10 px-4 py-3">
-                <div className="text-[10px] font-black uppercase tracking-[0.14em] text-rose-100/78">Needs attention</div>
-                <div className="mt-1 text-lg font-black text-white md:text-2xl">{focusSubject}</div>
-              </div>
-            </div>
-          </FramedPanel>
+        <div className="parent-summary" aria-label="Progress at a glance">
+          <SummaryStat label="Game sessions" value={sessions} note="Adventure so far" icon="gamepad" />
+          <SummaryStat label="Answer accuracy" value={totalAttempts ? `${report.overallAccuracy}%` : '—'} note={totalAttempts ? `Across ${totalAttempts} answers` : 'No answers recorded yet'} icon="trophy" />
+          <SummaryStat label="Time per session" value={sessions ? formatDuration(report.averageSessionTimeSec) : '—'} note="Average play time" icon="stopwatch" />
+          <SummaryStat label="Stars earned" value={player.stats?.totalStars ?? 0} note="Mission rewards" icon="star" />
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
-          <GameCard
-            title="Favourite game"
-            toneClass="border-emerald-300/35 bg-emerald-300/10"
-            game={report.favoriteGame}
-            fallback="No play data yet."
-          />
-          <GameCard
-            title="Least played game"
-            toneClass="border-rose-300/35 bg-rose-300/10"
-            game={report.leastPlayedGame}
-            fallback="No play data yet."
-          />
-        </div>
+        <section className="parent-focus" aria-labelledby="parent-focus-title">
+          <div className="parent-section-heading"><h2 id="parent-focus-title">Where to go next</h2><p>A little practice and plenty of encouragement.</p></div>
+          <div className="parent-topic-grid">
+            <TopicList title="Highest accuracy" items={report.excelling} tone="is-strength" emptyText="Topic accuracy will appear after a few missions." />
+            <TopicList title="Practice rotation" items={report.needsPractice} tone="is-practice" emptyText="Keep exploring. More answers will help choose topics to revisit." />
+          </div>
+          <p className="parent-starting-topics">These are relative rankings. A topic can appear in both lists while only a few topics have been played.</p>
+          <p className="parent-support-note">Try asking, “What helped you work that one out?” Celebrate the approach as well as the answer.</p>
+          {report.nextFocus.length > 0 && <p className="parent-starting-topics"><strong>Still getting started:</strong> {report.nextFocus.join(', ')}.</p>}
+        </section>
 
-        <FramedPanel className="rounded-[1.35rem] border border-white/12 bg-slate-950/62 p-4 text-white md:rounded-[2rem] md:p-5">
-          <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/55">Detailed stats</div>
-          <div className="mt-3 grid gap-3 md:grid-cols-3">
-            <div className="rounded-[1rem] border border-white/10 bg-white/5 px-4 py-3">
-              <div className="text-xs font-black uppercase tracking-[0.14em] text-cyan-100/75">Total games</div>
-              <div className="mt-1 text-2xl font-black text-white">{player.stats?.totalGamesPlayed ?? 0}</div>
-            </div>
-            <div className="rounded-[1rem] border border-white/10 bg-white/5 px-4 py-3">
-              <div className="text-xs font-black uppercase tracking-[0.14em] text-cyan-100/75">Stars earned</div>
-              <div className="mt-1 text-2xl font-black text-white">{totalStars}</div>
-            </div>
-            <div className="rounded-[1rem] border border-white/10 bg-white/5 px-4 py-3">
-              <div className="text-xs font-black uppercase tracking-[0.14em] text-cyan-100/75">Achievements</div>
-              <div className="mt-1 text-2xl font-black text-white">{earnedAchievementNames.length}</div>
+        <section className="parent-play-patterns" aria-labelledby="parent-games-title">
+          <div className="parent-section-heading"><h2 id="parent-games-title">What they’re playing</h2><p>Use their favourite game as a starting point for the next adventure.</p></div>
+          <GameRow label="Favourite game" game={report.favoriteGame} />
+          <GameRow label="Least played" game={report.leastPlayedGame} />
+          {report.mostPlayed.length > 0 && <p className="parent-starting-topics"><strong>Most played:</strong> {report.mostPlayed.join(' · ')}</p>}
+        </section>
+
+        <details className="parent-details" open={totalAttempts === 0}>
+          <summary><span>Answer history &amp; milestones</span><ChevronDown size={18} aria-hidden="true" /></summary>
+          <div className="parent-details-content">
+            <dl className="parent-ledger">
+              <div><dt>Correct answers</dt><dd>{telemetry?.correctAnswers ?? 0}</dd></div>
+              <div><dt>Answers to revisit</dt><dd>{telemetry?.incorrectAnswers ?? 0}</dd></div>
+              <div><dt>Best correct streak</dt><dd>{telemetry?.bestCorrectStreak ?? 0}</dd></div>
+              <div><dt>Total play time</dt><dd>{formatDuration(telemetry?.totalPlayTimeSec ?? 0)}</dd></div>
+              <div><dt>Total games played</dt><dd>{player.stats?.totalGamesPlayed ?? 0}</dd></div>
+              <div><dt>Achievements earned</dt><dd>{earnedAchievements.length}</dd></div>
+            </dl>
+            <div className="parent-history-grid">
+              <section><h3>Recent topics</h3>{recentTopics.length ? <ul className="parent-history-list">{recentTopics.map((topic) => <li key={topic.topicId}><span>{topic.topicId.replace(/_/g, ' ')}</span><strong>{formatAccuracy(topic.accuracy)}</strong></li>)}</ul> : <p>Topic history appears after playing a mission.</p>}</section>
+              <section><h3>Achievements</h3>{earnedAchievements.length ? <ul className="parent-achievement-list">{earnedAchievements.map((achievement) => <li key={achievement.id}><AssetIcon name="trophy" className="h-4 w-4" />{achievement.name}</li>)}</ul> : <p>Their first achievement is still ahead.</p>}</section>
             </div>
           </div>
-          <div className="mt-3 grid gap-2 md:grid-cols-2">
-            <div className="rounded-[1rem] border border-white/10 bg-white/5 px-4 py-3">
-              <div className="text-xs font-black uppercase tracking-[0.14em] text-cyan-100/75">Top games</div>
-              <div className="mt-2 space-y-2">
-                {report.mostPlayed.length ? report.mostPlayed.map((game) => (
-                  <div key={game} className="rounded-[0.8rem] border border-white/10 bg-slate-900/50 px-3 py-2 text-sm font-semibold text-white">
-                    {game}
-                  </div>
-                )) : (
-                  <div className="rounded-[0.8rem] border border-white/10 bg-slate-900/50 px-3 py-2 text-sm text-white/60">
-                    No game data yet.
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="rounded-[1rem] border border-white/10 bg-white/5 px-4 py-3">
-              <div className="text-xs font-black uppercase tracking-[0.14em] text-cyan-100/75">Recent topics</div>
-              <div className="mt-2 space-y-2">
-                {recentTopics.length ? recentTopics.map((topic) => (
-                  <div key={topic.topicId} className="rounded-[0.8rem] border border-white/10 bg-slate-900/50 px-3 py-2 text-sm font-semibold text-white">
-                    {topic.topicId.replace(/_/g, ' ')} - {topic.accuracy}% accuracy
-                  </div>
-                )) : (
-                  <div className="rounded-[0.8rem] border border-white/10 bg-slate-900/50 px-3 py-2 text-sm text-white/60">
-                    No topic history yet.
-                  </div>
-                )}
-              </div>
-            </div>
+        </details>
+
+        <details className="parent-details">
+          <summary><span>Session pace</span><ChevronDown size={18} aria-hidden="true" /></summary>
+          <div className="parent-details-content">
+            <p>Session times reflect different games and puzzle types. They’re useful context, rather than a target to rush.</p>
+            <GameRow label="Shortest average" game={report.fastestGame} />
+            <GameRow label="Longest average" game={report.slowestGame} />
           </div>
-        </FramedPanel>
-
-        <FramedPanel className="rounded-[1.35rem] border border-white/12 bg-slate-950/62 p-4 text-white md:rounded-[2rem] md:p-5">
-          <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/55">Achievements</div>
-          <div className="mt-3 grid gap-2 md:grid-cols-2">
-            {earnedAchievementNames.length ? earnedAchievementNames.map((name) => (
-              <div key={name} className="rounded-[0.9rem] border border-amber-200/20 bg-amber-200/8 px-4 py-3 text-sm font-black text-white">
-                {name}
-              </div>
-            )) : (
-              <div className="rounded-[0.9rem] border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/60">
-                No achievements earned yet.
-              </div>
-            )}
-          </div>
-        </FramedPanel>
-
-        <FramedPanel className="rounded-[1.35rem] border border-white/12 bg-slate-950/62 p-4 text-white md:rounded-[2rem] md:p-5">
-          <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/55">Speed</div>
-          <div className="mt-3 grid gap-3 md:grid-cols-2">
-            <div className="rounded-[1rem] border border-cyan-200/30 bg-white/5 px-4 py-3">
-              <div className="text-xs font-black uppercase tracking-[0.14em] text-cyan-100/75">Fastest game</div>
-              {report.fastestGame ? (
-                <>
-                  <div className="mt-1 text-lg font-black md:text-2xl">{report.fastestGame.label}</div>
-                  <div className="mt-1 text-sm text-white/72">Average session: {formatDuration(report.fastestGame.avgTimeSec)}</div>
-                </>
-              ) : (
-                <div className="mt-1 text-sm text-white/60">No speed data yet.</div>
-              )}
-            </div>
-            <div className="rounded-[1rem] border border-amber-200/30 bg-amber-200/10 px-4 py-3">
-              <div className="text-xs font-black uppercase tracking-[0.14em] text-amber-100/80">Slowest game</div>
-              {report.slowestGame ? (
-                <>
-                  <div className="mt-1 text-lg font-black md:text-2xl">{report.slowestGame.label}</div>
-                  <div className="mt-1 text-sm text-white/72">Average session: {formatDuration(report.slowestGame.avgTimeSec)}</div>
-                </>
-              ) : (
-                <div className="mt-1 text-sm text-white/60">No speed data yet.</div>
-              )}
-            </div>
-          </div>
-        </FramedPanel>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          <ListCard
-            title="Excelling in"
-            eyebrowTone="text-emerald-100/80"
-            description="These are the areas where your child is currently performing strongest."
-            items={report.excelling}
-            emptyText="No mastered areas detected yet."
-          />
-          <ListCard
-            title="Needs more practice"
-            eyebrowTone="text-rose-100/80"
-            description="These topics are worth revisiting with a little extra support."
-            items={report.needsPractice}
-            emptyText="No weak areas detected yet."
-          />
-        </div>
-
-        <div className="flex justify-center pb-2 pt-1">
-          <button
-            type="button"
-            onClick={onBack}
-            className="ui-button-primary rounded-[1.25rem] px-8 py-3 text-base md:rounded-2xl md:px-10 md:py-4 md:text-lg"
-          >
-            Back to map
-          </button>
-        </div>
+        </details>
+        <p className="parent-report-footnote">Based on the play recorded on this device. Every mission is a chance to learn.</p>
       </div>
-    </ScrollScreenShell>
+    </section>
   );
 };
 

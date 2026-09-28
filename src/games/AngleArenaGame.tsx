@@ -23,7 +23,8 @@ import angleArenaHitSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeU
 import angleArenaWoodSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/8d82b5_Angry_Birds_Wood_Damage_Sound_Effect.mp3';
 import angleArenaFailSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/Level/level failed piglets a1.mp3';
 import angleArenaCompleteSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/Level/level clear military 1.mp3';
-import { BOSS_ART_LIBRARY } from '../assets/bosses/library';
+import goblinMonster from '../assets/enemies/cohesive/goblin.webp';
+import MonsterMindActor, { type MonsterMindReaction } from '../components/game-ui/MonsterMindActor';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
 import { angleToVector, clamp, degreesToRadians, distance, lerp, worldToScreen } from './angleArena/math';
 
@@ -504,51 +505,6 @@ const drawEnemyPlatform = (ctx: CanvasRenderingContext2D, platform: EnemyPlatfor
   ctx.restore();
 };
 
-const drawEnemyPortrait = (ctx: CanvasRenderingContext2D, image: HTMLImageElement, sizePx: number) => {
-  if (!image.complete) return;
-  const diameter = sizePx * 0.62;
-  const radius = diameter / 2;
-
-  ctx.save();
-  ctx.shadowColor = 'rgba(2,6,23,0.65)';
-  ctx.shadowBlur = 18;
-  ctx.shadowOffsetY = 10;
-  ctx.beginPath();
-  ctx.arc(0, 0, radius, 0, Math.PI * 2);
-  ctx.closePath();
-  ctx.fillStyle = 'rgba(15,23,42,0.35)';
-  ctx.fill();
-  ctx.restore();
-
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(0, 0, radius, 0, Math.PI * 2);
-  ctx.closePath();
-  ctx.clip();
-
-  const iw = image.naturalWidth || image.width;
-  const ih = image.naturalHeight || image.height;
-  const scale = Math.max(diameter / iw, diameter / ih);
-  const dw = iw * scale;
-  const dh = ih * scale;
-  ctx.drawImage(image, -dw / 2, -dh / 2, dw, dh);
-  ctx.restore();
-
-  ctx.save();
-  ctx.strokeStyle = 'rgba(226,232,240,0.9)';
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.arc(0, 0, radius, 0, Math.PI * 2);
-  ctx.stroke();
-
-  ctx.strokeStyle = 'rgba(56,189,248,0.5)';
-  ctx.lineWidth = 8;
-  ctx.beginPath();
-  ctx.arc(0, 0, radius + 6, 0, Math.PI * 2);
-  ctx.stroke();
-  ctx.restore();
-};
-
 const drawWoodenTower = (
   ctx: CanvasRenderingContext2D,
   width: number,
@@ -697,7 +653,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const impactPositionRef = useRef({ x: 0, y: 0 });
   const aimTimeoutRef = useRef<number | null>(null);
   const cannonSpritesRef = useRef<CannonSprites>({});
-  const enemySpritesRef = useRef<HTMLImageElement[]>([]);
+  const enemyActorFrameRef = useRef<HTMLDivElement | null>(null);
   const arenaBackdropRef = useRef<HTMLImageElement | null>(null);
   const angleArenaSfxRef = useRef<Partial<Record<AngleArenaSfxKey, HTMLAudioElement>>>({});
 
@@ -705,6 +661,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const [questionIndex, setQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [feedback, setFeedback] = useState('');
+  const [enemyReaction, setEnemyReaction] = useState<MonsterMindReaction>('idle');
+  const [enemyReactionKey, setEnemyReactionKey] = useState(0);
   const [score, setScore] = useState(0);
   const [localLives, setLocalLives] = useState(INITIAL_LIVES);
   const [localTimer, setLocalTimer] = useState(INITIAL_TIMER);
@@ -783,19 +741,6 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   }, []);
 
   useEffect(() => {
-    const sources = BOSS_ART_LIBRARY;
-    sources.forEach((src, index) => {
-      const img = new Image();
-      img.src = src;
-      img.onload = () => {
-        const next = [...enemySpritesRef.current];
-        next[index] = img;
-        enemySpritesRef.current = next;
-      };
-    });
-  }, []);
-
-  useEffect(() => {
     const image = new Image();
     image.decoding = 'async';
     image.onload = () => { arenaBackdropRef.current = image; };
@@ -822,6 +767,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   }, []);
 
   const resetForNext = () => {
+    setEnemyReaction('idle');
     setSelectedAnswer(null);
     selectedAnswerRef.current = null;
     setFeedback('');
@@ -850,6 +796,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const handleResolve = (result: ImpactResult) => {
     if (impactResultRef.current) return;
     impactResultRef.current = result;
+    setEnemyReaction(result === 'hit' ? 'hit' : 'taunt');
+    setEnemyReactionKey((value) => value + 1);
     cameraTargetRef.current = impactPositionRef.current;
     if (settleTimeoutRef.current) window.clearTimeout(settleTimeoutRef.current);
     settleTimeoutRef.current = window.setTimeout(() => {
@@ -1097,22 +1045,14 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         ctx.restore();
       }
 
-      const enemies = enemySpritesRef.current;
-      const enemyIndex = enemies.length ? (questionIndex % enemies.length) : 0;
-      const enemy = enemies[enemyIndex];
-      if (enemy) {
-        ctx.save();
-        ctx.translate(enemyScreen.x, enemyScreen.y - (enemyTowerHeight * 0.18));
-        drawEnemyPortrait(ctx, enemy, enemySize);
-        ctx.restore();
-      } else {
-        ctx.save();
-        ctx.translate(enemyScreen.x, enemyScreen.y - (enemyTowerHeight * 0.18));
-        ctx.fillStyle = 'rgba(250,204,21,0.85)';
-        ctx.beginPath();
-        ctx.arc(0, -enemySize * 0.1, enemySize * 0.12, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
+      // One stable DOM actor follows the canvas projection; percentages retain stage scaling.
+      const enemyFrame = enemyActorFrameRef.current;
+      if (enemyFrame) {
+        enemyFrame.style.left = `${enemyScreen.x / viewWidth * 100}%`;
+        enemyFrame.style.top = `${(enemyScreen.y - enemyTowerHeight * .04) / viewHeight * 100}%`;
+        enemyFrame.style.width = `${enemySize * .82 / viewWidth * 100}%`;
+        enemyFrame.style.height = `${enemySize * 1.16 / viewHeight * 100}%`;
+        enemyFrame.style.visibility = 'visible';
       }
       ctx.restore();
 
@@ -1215,6 +1155,9 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
           ref={canvasRef}
           className="absolute inset-0 z-10 h-full w-full"
          />
+        <div ref={enemyActorFrameRef} data-angle-enemy-frame="true" className="pointer-events-none absolute z-[15]" style={{ width: 0, height: 0, translate: '-50% -100%', visibility: 'hidden' }}>
+          <MonsterMindActor src={goblinMonster} alt="Goblin guarding the angle target" reaction={gameState === 'levelComplete' ? 'defeated' : enemyReaction} reactionKey={enemyReactionKey} className="h-full w-full drop-shadow-[0_5px_5px_rgba(2,6,23,0.35)]" />
+        </div>
         <GameScreenLayout
           className="relative z-20 px-3 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2"
           topClassName="!min-h-0 flex flex-col items-center gap-0 px-2 pt-0 sm:px-3 md:px-4"

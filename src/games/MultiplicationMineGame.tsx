@@ -1,18 +1,20 @@
-import React, { useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
-import { MAIN_PNG_SKIN } from '../assets/reskin/mainPng';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useIsPresent, useReducedMotion } from 'motion/react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
+import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import mineBackground from '../assets/maps/premium/multiplication-mine.webp';
-import wholeRockAsset from '../assets/mine/18.png';
-import crackedRockAsset from '../assets/mine/19.png';
-import splitRockAsset from '../assets/mine/20.png';
-import rubbleRockAsset from '../assets/mine/21.png';
+import intactOre from '../assets/mine/ore/ore-intact.webp';
+import crackedOre from '../assets/mine/ore/ore-cracked.webp';
+import splitOre from '../assets/mine/ore/ore-split.webp';
+import openOre from '../assets/mine/ore/ore-open.webp';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
+import { emitMiniGameSessionEvent, type MiniGameShellContractProps } from '../app/gameplaySessionContract';
+import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import { triggerHaptic } from '../haptics';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
-import { useTrimmedImageSource } from '../utils/trimTransparentImage';
+import './multiplication-mine.css';
 
-interface MultiplicationMineGameProps {
+interface MultiplicationMineGameProps extends MiniGameShellContractProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
@@ -23,7 +25,6 @@ interface MultiplicationMineGameProps {
 }
 
 interface MultiplicationQuestion {
-  kind: 'fluency' | 'reasoning';
   a: number;
   b: number;
   answer: number;
@@ -31,278 +32,246 @@ interface MultiplicationQuestion {
 }
 
 type Phase = 'playing' | 'exploding' | 'treasure';
-
 const ROCK_MAX_HEALTH = 4;
-const ROCK_DAMAGE_ASSETS = [wholeRockAsset, crackedRockAsset, splitRockAsset, rubbleRockAsset];
+const ORE_STATES = [intactOre, crackedOre, splitOre, openOre];
+
+const shuffle = <T,>(values: T[]) => {
+  const result = [...values];
+  for (let index = result.length - 1; index > 0; index -= 1) {
+    const swap = Math.floor(Math.random() * (index + 1));
+    [result[index], result[swap]] = [result[swap], result[index]];
+  }
+  return result;
+};
 
 const makeOptions = (correct: number) => {
-  const spread = Math.max(3, Math.round(correct * 0.18));
+  const spread = Math.max(3, Math.round(correct * .18));
   const wrongs = new Set<number>();
-
   while (wrongs.size < 3) {
     const candidate = Math.max(0, correct + Math.floor(Math.random() * (spread * 2 + 1)) - spread);
-    if (candidate !== correct) {
-      wrongs.add(candidate);
-    }
+    if (candidate !== correct) wrongs.add(candidate);
   }
-
-  return [...wrongs, correct].sort(() => Math.random() - 0.5);
+  return shuffle([...wrongs, correct]);
 };
 
-const makeQuestion = (level: number, solved: number): MultiplicationQuestion => {
-  const progression = Math.min(12, 6 + level + Math.floor(solved / 2));
-  const a = 2 + Math.floor(Math.random() * (progression - 1));
-  const b = 2 + Math.floor(Math.random() * (progression - 1));
-  const answer = a * b;
-  return { kind: 'fluency', a, b, answer, options: makeOptions(answer) };
+/** A chosen tier stays fixed for the whole four-strike run. */
+const makeQuestion = (tier: number): MultiplicationQuestion => {
+  const [minimum, maximum] = [[2, 5], [2, 7], [3, 9], [4, 12], [6, 12]][Math.max(1, Math.min(5, tier)) - 1];
+  const a = minimum + Math.floor(Math.random() * (maximum - minimum + 1));
+  const b = minimum + Math.floor(Math.random() * (maximum - minimum + 1));
+  return { a, b, answer: a * b, options: makeOptions(a * b) };
 };
 
-const starsForMistakes = (mistakes: number) => {
-  if (mistakes <= 1) return 3;
-  if (mistakes <= 3) return 2;
-  return 1;
-};
+const starsForMistakes = (mistakes: number) => mistakes <= 1 ? 3 : mistakes <= 3 ? 2 : 1;
 
 const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
-  levelId,
-  avatarId: _avatarId,
-  useSharedTopHud = false,
-  isBoss: _isBoss = false,
-  onVictory,
-  onGameOver: _onGameOver,
-  onBack,
+  levelId, useSharedTopHud = false, isPractice, practiceBriefing,
+  sessionState, sessionEvents, onVictory,
 }) => {
-  const resolvedLevel = useMemo(() => Math.max(1, Math.min(10, levelId || 1)), [levelId]);
-  const [question, setQuestion] = useState<MultiplicationQuestion>(() => makeQuestion(resolvedLevel, 0));
+  const tier = useMemo(() => Math.max(1, Math.min(5, levelId || 1)), [levelId]);
+  const isPresent = useIsPresent();
+  const reducedMotion = useReducedMotion();
+  const [question, setQuestion] = useState(() => makeQuestion(tier));
   const [rockHealth, setRockHealth] = useState(ROCK_MAX_HEALTH);
-  const rockAsset = ROCK_DAMAGE_ASSETS[Math.min(ROCK_DAMAGE_ASSETS.length - 1, ROCK_MAX_HEALTH - rockHealth)];
-  const trimmedRockAsset = useTrimmedImageSource(rockAsset);
   const [correctCount, setCorrectCount] = useState(0);
-  const [mistakes, setMistakes] = useState(0);
-  const [XP, setScore] = useState(0);
   const [phase, setPhase] = useState<Phase>('playing');
   const [feedback, setFeedback] = useState<{ tone: 'ok' | 'error' | 'praise'; text: string } | null>(null);
   const [impactTick, setImpactTick] = useState(0);
   const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
-  const completedRef = useRef(false);
-  const questionStartRef = useRef<number>(Date.now());
+  const [locked, setLocked] = useState(false);
+  const [runEnded, setRunEnded] = useState(false);
+  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
+  const timersRef = useRef(new Set<number>());
+  const answerLockRef = useRef(false);
+  const endedRef = useRef(false);
+  const mountedRef = useRef(true);
+  const scoreRef = useRef(0);
+  const correctRef = useRef(0);
+  const mistakesRef = useRef(0);
+  const healthRef = useRef(ROCK_MAX_HEALTH);
+  const questionStartRef = useRef(Date.now());
   const questionAttemptRef = useRef(0);
+  const presentRef = useRef(isPresent);
+  const sessionRef = useRef(sessionState);
+  const victoryRef = useRef(onVictory);
+  const oreRef = useRef<HTMLDivElement | null>(null);
+  presentRef.current = isPresent;
+  sessionRef.current = sessionState;
+  victoryRef.current = onVictory;
+
+  const clearTimers = useCallback(() => {
+    timersRef.current.forEach((timer) => window.clearTimeout(timer));
+    timersRef.current.clear();
+  }, []);
+  const canContinue = () => mountedRef.current && presentRef.current && !endedRef.current
+    && (!sessionRef.current || (sessionRef.current.lives > 0 && sessionRef.current.timeLeft > 0));
+
+  const schedule = (callback: () => void, delay: number) => {
+    const invoke = () => {
+      timersRef.current.delete(timer);
+      if (!canContinue()) return;
+      if (sessionRef.current?.paused) {
+        timer = window.setTimeout(invoke, 80);
+        timersRef.current.add(timer);
+        return;
+      }
+      callback();
+    };
+    let timer = window.setTimeout(invoke, delay);
+    timersRef.current.add(timer);
+  };
+
+  useLayoutEffect(() => {
+    if (isPresent) return;
+    endedRef.current = true;
+    answerLockRef.current = true;
+    clearTimers();
+  }, [clearTimers, isPresent]);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => { mountedRef.current = false; clearTimers(); };
+  }, [clearTimers]);
+
+  useEffect(() => {
+    // Static states share one registered canvas; prepare them before the first strike.
+    const images = ORE_STATES.map((src) => { const image = new Image(); image.src = src; return image; });
+    return () => images.forEach((image) => { image.onload = null; image.onerror = null; });
+  }, []);
+
+  useEffect(() => {
+    if (!sessionState || (sessionState.lives > 0 && sessionState.timeLeft > 0)) return;
+    endedRef.current = true;
+    answerLockRef.current = true;
+    clearTimers();
+    setRunEnded(true);
+    setLocked(true);
+  }, [clearTimers, sessionState?.lives, sessionState?.timeLeft]);
+
+  useEffect(() => {
+    const reset = () => {
+      if (!presentRef.current) return;
+      clearTimers();
+      endedRef.current = false;
+      answerLockRef.current = false;
+      scoreRef.current = 0;
+      correctRef.current = 0;
+      mistakesRef.current = 0;
+      healthRef.current = ROCK_MAX_HEALTH;
+      questionAttemptRef.current = 0;
+      questionStartRef.current = Date.now();
+      setQuestion(makeQuestion(tier));
+      setRockHealth(ROCK_MAX_HEALTH);
+      setCorrectCount(0);
+      setPhase('playing');
+      setFeedback(null);
+      setSelectedChoice(null);
+      setLocked(false);
+      setRunEnded(false);
+    };
+    window.addEventListener(GAME_HUD_RESTART_EVENT, reset);
+    return () => window.removeEventListener(GAME_HUD_RESTART_EVENT, reset);
+  }, [clearTimers, tier]);
+
+  useEffect(() => {
+    if (!impactTick || feedback?.tone === 'error' || reducedMotion || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const animation = oreRef.current?.animate([
+      { transform: 'translate(0,0) rotate(0deg)', offset: 0, easing: 'ease-out' },
+      { transform: 'translate(-4px,2px) rotate(-1.2deg)', offset: .24, easing: 'ease-in-out' },
+      { transform: 'translate(2px,0) rotate(.5deg)', offset: .6, easing: 'ease-out' },
+      { transform: 'translate(0,0) rotate(0deg)', offset: 1 },
+    ], { duration: 390, easing: 'linear' });
+    return () => animation?.cancel();
+  }, [feedback?.tone, impactTick, reducedMotion]);
 
   const solveQuestion = (selectedAnswer: number) => {
-    if (phase !== 'playing') return;
+    if (!canContinue() || answerLockRef.current || phase !== 'playing' || sessionRef.current?.paused || showPracticeIntro) return;
+    answerLockRef.current = true;
+    setLocked(true);
     setSelectedChoice(selectedAnswer);
     questionAttemptRef.current += 1;
 
-    if (selectedAnswer === question.answer) {
-      const nextCorrect = correctCount + 1;
-      const nextHealth = Math.max(0, rockHealth - 1);
-      const gained = 120 + (resolvedLevel * 18);
-      const nextScore = XP + gained;
-      const elapsedMs = Date.now() - questionStartRef.current;
-      const isPraise = shouldShowPraise(questionAttemptRef.current, elapsedMs);
-
-      setCorrectCount(nextCorrect);
-      setRockHealth(nextHealth);
-      setScore(nextScore);
-      setImpactTick((prev) => prev + 1);
-        setFeedback({
-          tone: isPraise ? 'praise' : 'ok',
-          text: isPraise
-            ? buildPraiseMessage()
-            : nextHealth <= 0
-              ? 'Rock shattered! Numbers recovered!'
-              : 'Rock cracked!',
-        });
-      triggerHaptic('success');
-
-      if (nextHealth <= 0 && !completedRef.current) {
-        completedRef.current = true;
-        setPhase('exploding');
-        window.setTimeout(() => setPhase('treasure'), 650);
-        window.setTimeout(() => {
-          const finalScore = nextScore + 500;
-          const stars = starsForMistakes(mistakes);
-          onVictory(stars, finalScore);
-        }, 1250);
-        return;
-      }
-
-      window.setTimeout(() => {
-        setQuestion(makeQuestion(resolvedLevel, nextCorrect));
+    if (selectedAnswer !== question.answer) {
+      mistakesRef.current += 1;
+      emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { score: scoreRef.current });
+      setFeedback({ tone: 'error', text: 'The ore is holding. Check the multiplication and try again.' });
+      triggerHaptic('error');
+      schedule(() => {
         setFeedback(null);
         setSelectedChoice(null);
-        questionAttemptRef.current = 0;
-        questionStartRef.current = Date.now();
-      }, 320);
+        answerLockRef.current = false;
+        setLocked(false);
+      }, 700);
       return;
     }
 
-    setMistakes((prev) => prev + 1);
-    setFeedback({ tone: 'error', text: 'The rock is still sealed. Try again.' });
-    setImpactTick((prev) => prev + 1);
-    triggerHaptic('error');
-    window.setTimeout(() => {
+    const nextCorrect = correctRef.current + 1;
+    const nextHealth = Math.max(0, healthRef.current - 1);
+    const nextScore = scoreRef.current + 120 + tier * 18;
+    correctRef.current = nextCorrect;
+    healthRef.current = nextHealth;
+    scoreRef.current = nextScore;
+    setCorrectCount(nextCorrect);
+    setRockHealth(nextHealth);
+    setImpactTick((value) => value + 1);
+    const praise = shouldShowPraise(questionAttemptRef.current, Date.now() - questionStartRef.current);
+    setFeedback({ tone: praise ? 'praise' : 'ok', text: nextHealth === 0 ? 'Crystal recovered. Mine cleared!' : praise ? buildPraiseMessage() : 'Clean strike. The crystal seam is opening.' });
+    emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { score: nextScore });
+    triggerHaptic('success');
+
+    if (nextHealth === 0) {
+      setPhase('exploding');
+      schedule(() => setPhase('treasure'), 650);
+      schedule(() => {
+        if (!canContinue()) return;
+        endedRef.current = true;
+        setRunEnded(true);
+        victoryRef.current(starsForMistakes(mistakesRef.current), nextScore + 500);
+      }, 1250);
+      return;
+    }
+    schedule(() => {
+      setQuestion(makeQuestion(tier));
       setFeedback(null);
       setSelectedChoice(null);
-    }, 700);
+      questionAttemptRef.current = 0;
+      questionStartRef.current = Date.now();
+      answerLockRef.current = false;
+      setLocked(false);
+    }, 320);
   };
 
+  const oreSource = ORE_STATES[Math.min(ORE_STATES.length - 1, ROCK_MAX_HEALTH - rockHealth)];
+  const struck = feedback?.tone === 'ok' || feedback?.tone === 'praise';
+
   return (
-    <div className="relative h-full w-full overflow-hidden text-white">
+    <div className="multiplication-mine" data-mine-game="true" data-mine-tier={tier} data-mine-state={runEnded ? 'ended' : phase} data-mine-correct={correctCount} data-mine-present={isPresent} data-mine-paused={Boolean(sessionState?.paused)} data-mine-reduced={Boolean(reducedMotion)}>
       <GameplaySceneBackdrop gameType="calculation_clash" backgroundOverride={mineBackground} />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(8,15,32,0.14),rgba(3,7,18,0.34))]" />
-
-      <div className={`relative z-20 flex h-full w-full flex-col items-center px-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+3.2rem)]' : 'pt-[calc(env(safe-area-inset-top)+4.2rem)]'}`}>
-        <div className="w-full max-w-[760px]">
-            <GameQuestionCard
-              title="Multiplication Mine"
-              subtitle="The Monster Minds locked the numbers in rock. Solve the multiplication to break it open."
-              className="mx-auto w-full"
-              bodyClassName="text-[clamp(1.7rem,6vw,3rem)] font-black tracking-wide text-white"
-              style={{ position: 'relative', top: 0, transform: 'none' }}
-            >
-            {question.a} x {question.b} = ?
-          </GameQuestionCard>
-        </div>
-
-        <div className="relative mt-5 flex min-h-0 flex-1 w-full items-center justify-center">
-          <AnimatePresence mode="wait">
-            {phase !== 'treasure' ? (
-              <motion.div
-                key="rock"
-                animate={{
-                  scale: phase === 'exploding' ? [1, 1.1, 0.9, 0] : [1, 1.02, 1],
-                  rotate: phase === 'exploding' ? [0, -7, 7, 0] : 0,
-                  x: phase === 'playing' && (feedback?.tone === 'ok' || feedback?.tone === 'praise') ? [0, -6, 6, -3, 3, 0] : 0,
-                }}
-                transition={{
-                  duration: phase === 'exploding' ? 0.58 : 0.7,
-                  repeat: phase === 'playing' ? Infinity : 0,
-                  repeatDelay: 1.2,
-                }}
-                className="relative h-[240px] w-[240px] bg-transparent"
-              >
-                <img
-                  data-mine-rock="true"
-                  data-rock-health={rockHealth}
-                  src={trimmedRockAsset}
-                  alt="Multiplication Mine rock"
-                  draggable={false}
-                  className={`absolute inset-0 h-full w-full object-contain object-center drop-shadow-[0_18px_28px_rgba(0,0,0,0.28)] ${
-                    feedback?.tone === 'praise' ? 'animate-pulse saturate-125' : ''
-                  }`}
-                />
-
-                <div className="absolute -bottom-6 left-1/2 flex -translate-x-1/2 gap-2" aria-label={`${rockHealth} of ${ROCK_MAX_HEALTH} rock strength remaining`}>
-                  {Array.from({ length: ROCK_MAX_HEALTH }).map((_, idx) => (
-                    <span
-                      key={`rock-hp-${idx}`}
-                      className={`h-3 w-7 rounded-full border ${
-                        idx < rockHealth
-                          ? 'border-[#ffd36e] bg-gradient-to-b from-[#ffe79a] to-[#f8b937]'
-                          : 'border-white/20 bg-white/10'
-                      }`}
-                    />
-                  ))}
-                </div>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="treasure"
-                initial={{ scale: 0.5, opacity: 0, y: 30 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                className="relative flex flex-col items-center"
-              >
-                <motion.div
-                  animate={{ opacity: [0.45, 0.9, 0.45], scale: [0.9, 1.08, 0.9] }}
-                  transition={{ duration: 1.15, repeat: Infinity }}
-                  className="absolute h-[230px] w-[230px] rounded-full bg-yellow-300/35 blur-3xl"
-                />
-                <img
-                  src={MAIN_PNG_SKIN.treasureChest}
-                  alt="Treasure chest"
-                  className="relative z-10 w-[230px] max-w-[65vw] object-contain drop-shadow-[0_18px_24px_rgba(0,0,0,0.65)]"
-                  draggable={false}
-                />
-                  <p className="relative z-10 mt-3 text-xl font-black uppercase tracking-[0.1em] text-[#ffe590]">
-                    Mine Cleared
-                  </p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <AnimatePresence>
-            {phase === 'exploding' && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="pointer-events-none absolute inset-0"
-              >
-                {Array.from({ length: 18 }).map((_, idx) => {
-                  const angle = (idx / 18) * Math.PI * 2;
-                  const dx = Math.cos(angle) * (120 + (idx % 3) * 26);
-                  const dy = Math.sin(angle) * (120 + (idx % 4) * 18);
-                  return (
-                    <motion.span
-                      key={`spark-${idx}`}
-                      initial={{ x: 0, y: 0, scale: 1, opacity: 1 }}
-                      animate={{ x: dx, y: dy, scale: 0.2, opacity: 0 }}
-                      transition={{ duration: 0.6, ease: 'easeOut' }}
-                      className="absolute left-1/2 top-1/2 h-3 w-3 rounded-full bg-yellow-300 shadow-[0_0_12px_rgba(255,230,120,0.9)]"
-                    />
-                  );
-                })}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        <div className="mt-4 w-full max-w-[520px] shrink-0">
-          <div className="answer-choice-surface grid grid-cols-2 gap-2.5">
-            {question.options.map((option) => (
-              <motion.button
-                key={`${question.a}x${question.b}-${option}`}
-                type="button"
-                onClick={() => solveQuestion(option)}
-                disabled={phase !== 'playing'}
-                whileTap={{ scale: 0.96, y: 2 }}
-                animate={selectedChoice === option ? (feedback?.tone === 'ok' || feedback?.tone === 'praise' ? { scale: [1, 1.12, 0.98, 1.05, 1], rotate: [0, -2, 2, 0] } : { scale: [1, 1.05, 1] }) : { scale: 1 }}
-                className={`h-16 rounded-2xl border px-3 text-center text-[clamp(1.35rem,5vw,2.1rem)] font-black shadow-[0_8px_16px_rgba(0,0,0,0.35)] transition ${
-                  selectedChoice === option
-                    ? feedback?.tone === 'ok' || feedback?.tone === 'praise'
-                      ? 'ui-button-success'
-                      : 'ui-button-primary'
-                    : 'ui-button-secondary'
-                } disabled:opacity-60`}
-              >
-                {option}
-              </motion.button>
-            ))}
+      <PracticeIntroPopup open={showPracticeIntro} title={practiceBriefing?.title ?? 'Multiplication Mine'} body={practiceBriefing?.summary ?? 'Solve each multiplication and choose the result.\nFour accurate strikes open the ore and reveal its crystal.'} briefing={practiceBriefing} onAction={() => { setShowPracticeIntro(false); questionStartRef.current = Date.now(); }} />
+      <div className="mine-layout" data-mine-shared-hud={useSharedTopHud}>
+        <GameQuestionCard title="Multiplication Mine" subtitle="Solve the multiplication. Four accurate strikes uncover the crystal." className="mine-mission" bodyClassName="mine-equation" style={{ position: 'relative', top: 0, transform: 'none' }}>
+          {question.a} × {question.b} = ?
+        </GameQuestionCard>
+        <div className="mine-playfield" data-mine-playfield="true">
+          <div className="mine-ground" aria-hidden="true" />
+          <div ref={oreRef} className={`mine-ore ${phase === 'treasure' ? 'is-recovered' : ''}`}>
+            <img data-mine-rock="true" data-rock-health={rockHealth} src={oreSource} alt={phase === 'treasure' ? 'The recovered crystal inside its opened ore boulder' : 'A heavy crystal ore boulder developing cracks with each accurate strike'} draggable={false} />
+            <span className="mine-seam-light" aria-hidden="true" />
+            {struck && !reducedMotion && !sessionState?.paused && <div key={impactTick} className="mine-impact" aria-hidden="true">
+              <svg className="mine-pick-strike" viewBox="0 0 120 120"><path d="M27 94 86 29" stroke="#132b40" strokeWidth="13" strokeLinecap="round" /><path d="M27 94 86 29" stroke="#bd813b" strokeWidth="7" strokeLinecap="round" /><path d="M52 27 Q82 6 111 37 L101 42 Q79 26 56 37Z" fill="#c8e6f0" stroke="#173449" strokeWidth="5" strokeLinejoin="round" /><path d="M85 17 87 34" stroke="#f4d58b" strokeWidth="7" /></svg>
+              {Array.from({ length: phase === 'exploding' ? 12 : 7 }, (_, index) => <span key={index} className={index % 3 === 0 ? 'mine-spark' : 'mine-chip'} style={{ '--chip-x': `${Math.cos(index * 2.3) * (64 + index * 5)}px`, '--chip-y': `${-32 - (index % 4) * 17}px`, '--chip-turn': `${index * 41 - 90}deg` } as React.CSSProperties} />)}
+            </div>}
+            {phase === 'treasure' && <div className="mine-recovered-label">Crystal recovered</div>}
+          </div>
+          <div className="mine-strength" role="progressbar" aria-label="Ore strength remaining" aria-valuemin={0} aria-valuemax={ROCK_MAX_HEALTH} aria-valuenow={rockHealth} data-mine-strength={rockHealth}>
+            <span>{rockHealth === 0 ? 'Seam cleared' : `${rockHealth} ${rockHealth === 1 ? 'strike' : 'strikes'} to clear`}</span>
+            <div aria-hidden="true">{Array.from({ length: ROCK_MAX_HEALTH }, (_, index) => <i key={index} className={index < rockHealth ? 'is-solid' : ''} />)}</div>
           </div>
         </div>
-
-        <AnimatePresence mode="wait">
-          {feedback ? (
-            <motion.div
-              key={`feedback-${impactTick}`}
-              initial={{ opacity: 0, y: 10, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -8, scale: 0.95 }}
-              className={`mb-1 rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.11em] ${
-                feedback.tone === 'ok'
-                  ? 'border-emerald-300/60 bg-emerald-300/15 text-emerald-100'
-                  : feedback.tone === 'praise'
-                    ? 'border-amber-100/65 bg-[linear-gradient(135deg,rgba(255,241,166,0.96),rgba(125,211,252,0.9))] text-slate-950 shadow-[0_0_22px_rgba(251,191,36,0.55)]'
-                    : 'border-rose-300/60 bg-rose-300/15 text-amber-100'
-              }`}
-            >
-              {feedback.text}
-            </motion.div>
-          ) : (
-            <div className="mb-1 h-9" />
-          )}
-        </AnimatePresence>
+        <div className="answer-choice-surface mine-answers" data-mine-answers="true">
+          {question.options.map((option) => <button key={`${question.a}x${question.b}-${option}`} type="button" data-mine-answer={option} aria-label={`Strike with ${option}`} onClick={() => solveQuestion(option)} disabled={locked || phase !== 'playing' || runEnded || !isPresent || Boolean(sessionState?.paused)} className={selectedChoice === option ? struck ? 'ui-button-success' : 'mine-answer-error ui-button-secondary' : 'ui-button-secondary'}>{option}</button>)}
+        </div>
+        <p className={`mine-feedback ${feedback?.tone ?? ''}`} role="status" aria-live="polite" data-mine-feedback="true">{feedback?.text ?? 'Choose the result to strike the ore.'}</p>
       </div>
     </div>
   );

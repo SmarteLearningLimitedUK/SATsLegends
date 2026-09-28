@@ -1,0 +1,2 @@
+.food-game-shell { position: relative; display: flex; height: 100%; min-height: 0; width: 100%; flex-direction: column; padding: 4px 8px 8px; }
+@media (min-width: 700px) { .food-game-shell { padding-inline: 16px; } }

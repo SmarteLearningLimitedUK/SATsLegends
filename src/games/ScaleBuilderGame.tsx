@@ -76,6 +76,22 @@ const LEVELS: Level[] = [
   },
 ];
 
+const levelsForTier = (tier: number): Level[] => {
+  const template = LEVELS[Math.max(0, Math.min(4, tier - 1))];
+  const widths = [20, 32, 40, 56, 64];
+  const heights = [12, 24, 28, 40, 48];
+  return Array.from({ length: LEVELS.length }, (_, index) => {
+    const baseWidth = widths[tier - 1] + index * 2;
+    const baseHeight = heights[tier - 1] + index * 2;
+    return {
+      ...template,
+      id: index + 1,
+      shape: { ...template.shape, baseWidth, baseHeight },
+      instructions: `Original size: ${baseWidth} units by ${baseHeight} units\n\nScale factor: x${template.targetScale}\n\nWhat is the new size?`,
+    };
+  });
+};
+
 const GRID_SIZE = 20;
 const BLUEPRINT_BOARD_TOP = '50%';
 const BLUEPRINT_BOARD_SIZE = 'min(88%, 18rem)';
@@ -203,6 +219,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
   onBack,
 }) => {
   const avatar = useMemo(() => AVATARS.find((item) => item.id === avatarId) || AVATARS[0], [avatarId]);
+  const tierLevels = useMemo(() => levelsForTier(Math.max(1, Math.min(5, levelId))), [levelId]);
 
   const [currentLevelIdx, setCurrentLevelIdx] = useState(0);
   const [currentScale, setCurrentScale] = useState(1.0);
@@ -214,7 +231,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
   const [mistakeCount, setMistakeCount] = useState(0);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
-  const currentLevel = LEVELS[currentLevelIdx];
+  const currentLevel = tierLevels[currentLevelIdx];
   const completedLevels = currentLevelIdx + (gameState === 'complete' ? 1 : 0);
 
   const finalScore = useMemo(() => {
@@ -230,7 +247,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
     return 1;
   }, [mistakeCount]);
 
-  const isDimensionMode = currentLevel.id >= 4;
+  const isDimensionMode = Math.max(1, Math.min(5, levelId)) >= 4;
   const activeScaleX = isDimensionMode ? widthScale : currentScale;
   const activeScaleY = isDimensionMode ? heightScale : currentScale;
   const blueprintLength = currentLevel.shape.baseWidth * activeScaleX;

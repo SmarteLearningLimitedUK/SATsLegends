@@ -580,18 +580,17 @@ const SORT_CRITERIA: SortCriterion[] = [
 ];
 
 const roundSecondsForLevel = (level: number) => {
-  if (level <= 3) return 90;
-  if (level <= 7) return 75;
+  if (level <= 2) return 90;
+  if (level <= 4) return 75;
   return 60;
 };
 
 const stageFromProgress = (baseLevel: number, answeredCount: number, timeLeft: number) => {
-  const solvedBoost = Math.floor(answeredCount / 4);
-  const urgencyBoost = timeLeft <= 15 ? 1 : 0;
-  return Math.max(1, Math.min(12, baseLevel + solvedBoost + urgencyBoost));
+  return [1, 3, 5, 8, 11][Math.max(0, Math.min(4, baseLevel - 1))];
 };
 
 const modeForStage = (stage: number): QuestionMode => {
+  if (stage === 1) return 'name';
   const roll = Math.random();
   if (stage >= 8 && roll < 0.32) return 'count';
   if (stage <= 3) {
@@ -886,7 +885,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
   onGameOver: _onGameOver,
   onBack,
 }) => {
-  const baseLevel = Math.max(1, Math.min(12, miniGameLevel || levelId || 1));
+  const baseLevel = Math.max(1, Math.min(5, miniGameLevel || levelId || 1));
   const initialRoundSeconds = useMemo(() => roundSecondsForLevel(baseLevel), [baseLevel]);
 
   const [timeLeft, setTimeLeft] = useState(initialRoundSeconds);
@@ -1061,7 +1060,9 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
         alt=""
         aria-hidden="true"
         draggable={false}
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
+        data-game-scene-image="true"
+        data-background-fit="contain"
+        className="pointer-events-none absolute inset-0 h-full w-full object-contain object-center"
       />
 
       <main

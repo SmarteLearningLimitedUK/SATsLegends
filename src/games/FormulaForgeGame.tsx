@@ -236,11 +236,11 @@ const buildVolumeRound = (mode: SolveMode, level: number): FormulaRound => {
 };
 
 const createRound = (level: number): FormulaRound => {
-  const modes: FormulaKind[] = level <= 2
-    ? ['area_rect', 'perimeter_rect']
-    : level <= 4
-      ? ['area_rect', 'perimeter_rect', 'triangle_area']
-      : ['area_rect', 'perimeter_rect', 'triangle_area', 'volume_cuboid'];
+  const modes: FormulaKind[] = level === 1 ? ['area_rect']
+    : level === 2 ? ['area_rect', 'perimeter_rect']
+      : level === 3 ? ['triangle_area']
+        : level === 4 ? ['triangle_area', 'volume_cuboid']
+          : ['area_rect', 'perimeter_rect', 'triangle_area', 'volume_cuboid'];
 
   const mode = modes[randomInt(0, modes.length - 1)];
   const solveMode: SolveMode = level >= 5 && Math.random() > 0.48 ? 'missing' : 'compute';
@@ -351,7 +351,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
   sessionState,
   sessionEvents,
 }) => {
-  const resolvedLevel = useMemo(() => Math.max(1, Math.min(10, levelId || 1)), [levelId]);
+  const resolvedLevel = useMemo(() => Math.max(1, Math.min(5, levelId || 1)), [levelId]);
   const totalRounds = useMemo(() => Math.min(10, 6 + Math.floor(resolvedLevel / 2)), [resolvedLevel]);
 
   const [roundNumber, setRoundNumber] = useState(1);
