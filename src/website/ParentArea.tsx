@@ -26,8 +26,10 @@ function ParentDashboard() {
   const [busy, setBusy] = useState('');
   const [error, setError] = useState('');
   const [pendingReportValue, setPendingReportValue] = useState<boolean | null>(null);
-  const active = hasMathariaAccess(family.subscriptions);
+  const active = hasMathariaAccess(family.subscriptions, family.complimentary);
   const subscription = family.subscriptions.find(s => s.product_code === 'matharia' && ['active', 'trialing'].includes(s.status));
+  const complimentary = family.complimentary.find(grant => grant.product_code === 'matharia'
+    && !grant.revoked_at && new Date(grant.valid_until).getTime() > Date.now());
   useEffect(() => {
     if (query.get('checkout') !== 'success' || active) return;
     let attempts = 0;
@@ -58,9 +60,12 @@ function ParentDashboard() {
           : family.children.map(child => <div className="family-child" key={child.id}><h3>{child.nickname}</h3><p>SATs Legends Matharia</p><div className="family-actions">{active ? <Link onClick={() => family.selectChild(child.id)} className="website-button website-button-gold" to="/play"><Gamepad2 size={18} /> Play Matharia</Link> : <Link className="website-button website-button-gold" to="/subscriptions">Choose a subscription</Link>}<Link className="website-button website-button-outline" to={`/parent/progress/${child.id}`}>View progress <ArrowRight size={17} /></Link></div></div>)}
       </section>
       <section className="family-panel"><p className="website-eyebrow">Your subscription</p><h2>{active ? 'Your adventure is active.' : 'Choose your next chapter.'}</h2>
-        {active && subscription ? <p>{subscription.interval === 'month' ? 'Monthly · £4.99' : 'Yearly · £49.99'} · One child profile<br />{subscription.cancel_at_period_end ? 'Access ends' : 'Next renewal'} {new Date(subscription.current_period_end).toLocaleDateString('en-GB')}.</p> : <p>Monthly access for £4.99 or a whole year for £49.99. English adventures are coming later.</p>}
-        {family.subscriptions.length ? <button className="website-button website-button-outline" disabled={Boolean(busy)} onClick={() => void action('billing', async () => openBilling((await billingRequest({ action: 'portal' })).url))}>{busy === 'billing' ? 'Opening…' : 'Manage subscription'}</button> : <Link className="website-button website-button-gold" to="/subscriptions">See subscriptions <ArrowRight size={17} /></Link>}
-        <p className="family-small">Manage payments, download invoices or cancel renewal through secure Stripe billing.</p>
+        {active && subscription ? <p>{subscription.interval === 'month' ? 'Monthly · £4.99' : 'Yearly · £49.99'} · One child profile<br />{subscription.cancel_at_period_end ? 'Access ends' : 'Next renewal'} {new Date(subscription.current_period_end).toLocaleDateString('en-GB')}.</p>
+          : complimentary ? <p>Complimentary Matharia access · One child profile<br />Access ends {new Date(complimentary.valid_until).toLocaleDateString('en-GB')}. There is no charge or automatic renewal.</p>
+          : <p>Monthly access for £4.99 or a whole year for £49.99. English adventures are coming later.</p>}
+        {family.subscriptions.length ? <button className="website-button website-button-outline" disabled={Boolean(busy)} onClick={() => void action('billing', async () => openBilling((await billingRequest({ action: 'portal' })).url))}>{busy === 'billing' ? 'Opening…' : 'Manage subscription'}</button>
+          : !complimentary && <Link className="website-button website-button-gold" to="/subscriptions">See subscriptions <ArrowRight size={17} /></Link>}
+        {family.subscriptions.length > 0 && <p className="family-small">Manage payments, download invoices or cancel renewal through secure Stripe billing.</p>}
       </section>
     </div>
     <section className="family-panel family-email-panel"><Mail size={30} /><div><p className="website-eyebrow">Progress, straight to you</p><h2>Two little updates. Every week.</h2><p>Sunday at 3 pm and Wednesday at 4 pm, UK time, sent to <strong>{family.session?.user.email}</strong>. Each email links to your child’s private, up-to-date progress page.</p><label className="family-checkbox"><input type="checkbox" checked={pendingReportValue ?? family.settings?.report_emails ?? false} disabled={Boolean(busy) || !family.settings} onChange={event => {

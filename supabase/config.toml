@@ -11,3 +11,7 @@ verify_jwt = false
 [functions.send-parent-reports]
 # Private scheduler secret is verified before touching data.
 verify_jwt = false
+
+[functions.admin-support]
+# The function validates the parent's JWT and staff membership itself.
+verify_jwt = false

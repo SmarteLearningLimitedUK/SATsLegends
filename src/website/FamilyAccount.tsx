@@ -4,10 +4,11 @@ import { accountsConfigured, supabase } from './services/supabase';
 
 export type ChildProfile = { id: string; parent_id: string; nickname: string };
 export type Subscription = { id: string; product_code: string; status: string; interval: 'month' | 'year'; current_period_end: string; cancel_at_period_end: boolean };
+export type ComplimentaryAccess = { product_code: string; valid_until: string; revoked_at: string | null };
 type Settings = { report_emails: boolean; next_report_at: string };
 type Family = {
   configured: boolean; session: Session | null; loading: boolean; dataLoading: boolean; error: string;
-  children: ChildProfile[]; subscriptions: Subscription[]; settings: Settings | null;
+  children: ChildProfile[]; subscriptions: Subscription[]; complimentary: ComplimentaryAccess[]; isAdmin: boolean; settings: Settings | null;
   selectedChild: ChildProfile | null; selectChild: (id: string) => void;
   refresh: () => Promise<void>; signOut: () => Promise<void>; recovery: boolean;
 };
@@ -17,8 +18,10 @@ export function useFamily() {
   if (!family) throw new Error('Missing family account provider');
   return family;
 }
-export const hasMathariaAccess = (subscriptions: Subscription[]) => subscriptions.some(s => s.product_code === 'matharia'
-  && ['active', 'trialing'].includes(s.status) && new Date(s.current_period_end).getTime() > Date.now());
+export const hasMathariaAccess = (subscriptions: Subscription[], complimentary: ComplimentaryAccess[] = []) =>
+  subscriptions.some(s => s.product_code === 'matharia'
+    && ['active', 'trialing'].includes(s.status) && new Date(s.current_period_end).getTime() > Date.now())
+  || complimentary.some(grant => grant.product_code === 'matharia' && !grant.revoked_at && new Date(grant.valid_until).getTime() > Date.now());
 
 export default function FamilyAccount({ children: content }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
@@ -27,6 +30,8 @@ export default function FamilyAccount({ children: content }: { children: ReactNo
   const [error, setError] = useState('');
   const [children, setChildren] = useState<ChildProfile[]>([]);
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  const [complimentary, setComplimentary] = useState<ComplimentaryAccess[]>([]);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [settings, setSettings] = useState<Settings | null>(null);
   const [selectedId, setSelectedId] = useState('');
   const [recovery, setRecovery] = useState(false);
@@ -38,7 +43,7 @@ export default function FamilyAccount({ children: content }: { children: ReactNo
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, next) => {
       if (!alive) return;
       if (event === 'PASSWORD_RECOVERY') setRecovery(true);
-      if (!next) { setRecovery(false); setChildren([]); setSubscriptions([]); setSettings(null); setSelectedId(''); generation.current++; }
+      if (!next) { setRecovery(false); setChildren([]); setSubscriptions([]); setComplimentary([]); setIsAdmin(false); setSettings(null); setSelectedId(''); generation.current++; }
       setSession(next); setLoading(false);
     });
     supabase.auth.getSession().then(({ data, error: authError }) => {
@@ -53,19 +58,21 @@ export default function FamilyAccount({ children: content }: { children: ReactNo
     const request = ++generation.current;
     setDataLoading(true); setError('');
     try {
-      const [profiles, billing, preferences] = await Promise.all([
+      const [profiles, billing, preferences, grants, staff] = await Promise.all([
         supabase.from('child_profiles').select('id,parent_id,nickname').order('created_at'),
         supabase.from('subscriptions').select('id,product_code,status,interval,current_period_end,cancel_at_period_end'),
         supabase.from('parent_settings').select('report_emails,next_report_at').single(),
+        supabase.from('complimentary_access').select('product_code,valid_until,revoked_at'),
+        supabase.rpc('is_staff'),
       ]);
-      if (profiles.error || billing.error || preferences.error) throw new Error('Unable to load your family account. Please try again.');
+      if (profiles.error || billing.error || preferences.error || grants.error || staff.error) throw new Error('Unable to load your family account. Please try again.');
       if (request !== generation.current) return;
-      setChildren(profiles.data); setSubscriptions(billing.data); setSettings(preferences.data);
+      setChildren(profiles.data); setSubscriptions(billing.data); setComplimentary(grants.data); setIsAdmin(staff.data === true); setSettings(preferences.data);
     } catch (caught) { if (request === generation.current) setError(caught instanceof Error ? caught.message : 'Account unavailable.'); }
     finally { if (request === generation.current) setDataLoading(false); }
   }, [parentId]);
   useEffect(() => {
-    setChildren([]); setSubscriptions([]); setSettings(null); setSelectedId('');
+    setChildren([]); setSubscriptions([]); setComplimentary([]); setIsAdmin(false); setSettings(null); setSelectedId('');
     if (parentId) { setSelectedId(sessionStorage.getItem(`legends-child:${parentId}`) || ''); void refresh(); }
     return () => { generation.current++; };
   }, [parentId, refresh]);
@@ -80,6 +87,6 @@ export default function FamilyAccount({ children: content }: { children: ReactNo
     if (signOutError) throw new Error('Unable to log out. Please try again.');
   }
   return <FamilyContext.Provider value={{ configured: accountsConfigured, session, loading, dataLoading, error, children,
-    subscriptions, settings, selectedChild: children.find(child => child.id === selectedId) ?? null,
+    subscriptions, complimentary, isAdmin, settings, selectedChild: children.find(child => child.id === selectedId) ?? null,
     selectChild, refresh, signOut, recovery }}>{content}</FamilyContext.Provider>;
 }
