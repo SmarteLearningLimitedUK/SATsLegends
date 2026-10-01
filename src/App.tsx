@@ -54,6 +54,8 @@ import { getXpRequiredForLevel } from './lib/progression/getXpRequiredForLevel';
 import { CACHE_BUSTER } from './cacheBuster';
 import { playGameSound } from './audio/gameAudio';
 
+const PHONE_STAGE_MIN_HEIGHT = 635;
+
 const App: React.FC = () => {
   const [stageScale, setStageScale] = useState(1);
   const [stageRenderMultiplier, setStageRenderMultiplier] = useState(1);
@@ -538,6 +540,7 @@ const App: React.FC = () => {
       const viewportWidth = window.visualViewport?.width ?? window.innerWidth;
       const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
       setViewportSize({ width: viewportWidth, height: viewportHeight });
+      const isPortraitPhone = viewportWidth < 700 && viewportHeight >= viewportWidth;
       const baseWidth = IPHONE_STAGE_WIDTH;
       const baseHeight = IPHONE_STAGE_HEIGHT;
       const isTabletViewport = Math.min(viewportWidth, viewportHeight) >= 700;
@@ -548,7 +551,9 @@ const App: React.FC = () => {
         viewportHeight / (baseHeight * renderMultiplier),
       );
       const scale = rawScale * (isTabletViewport ? 0.95 : 1);
-      setStageScale(Number.isFinite(scale) && scale > 0 ? scale : 1);
+      setStageScale(isPortraitPhone
+        ? Math.min(1, viewportHeight / PHONE_STAGE_MIN_HEIGHT)
+        : Number.isFinite(scale) && scale > 0 ? scale : 1);
       setStageRenderMultiplier(renderMultiplier);
       setQuestionCardScale(isTabletViewport ? 0.92 : 1);
       setPotionCauldronShift(isTabletViewport ? '28px' : '0px');
@@ -927,8 +932,9 @@ const App: React.FC = () => {
         </div>
       )
     : null;
-  const stageWidth = IPHONE_STAGE_WIDTH;
-  const stageHeight = IPHONE_STAGE_HEIGHT;
+  const isPortraitPhone = viewportSize.width > 0 && viewportSize.width < 700 && viewportSize.height >= viewportSize.width;
+  const stageWidth = isPortraitPhone ? viewportSize.width / stageScale : IPHONE_STAGE_WIDTH;
+  const stageHeight = isPortraitPhone ? viewportSize.height / stageScale : IPHONE_STAGE_HEIGHT;
   const stageStyle = {
     '--game-stage-width': `${Math.round(useUnboundedStageShell ? viewportSize.width : stageWidth * stageRenderMultiplier)}px`,
     '--game-stage-height': `${Math.round(useUnboundedStageShell ? viewportSize.height : stageHeight * stageRenderMultiplier)}px`,
@@ -936,9 +942,12 @@ const App: React.FC = () => {
     '--question-card-scale': `${useUnboundedStageShell ? 1 : questionCardScale}`,
     '--potion-cauldron-shift': potionCauldronShift,
   } as React.CSSProperties;
+  const viewportStyle = viewportSize.height > 0
+    ? { height: `${viewportSize.height}px`, maxHeight: `${viewportSize.height}px` }
+    : undefined;
 
   return (
-    <div className="iphone-game-viewport">
+    <div className="iphone-game-viewport" style={viewportStyle}>
       <div className={`iphone-game-stage${useUnboundedStageShell ? ' iphone-game-stage-unbounded' : ''}`} style={stageStyle} data-stage-layout={useUnboundedStageShell ? 'responsive' : 'portrait'}>
         <div className="iphone-game-stage-inner">
           <div
