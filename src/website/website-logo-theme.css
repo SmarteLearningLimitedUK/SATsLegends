@@ -1,0 +1,169 @@
+/* Website palette from the game's splash logo, with darker purple surface tints. */
+body.legends-website-body { background: #14072f; }
+.legends-website {
+  --web-purple: #451ccb;
+  --web-purple-deep: #090842;
+  --web-lavender: #b6afe3;
+  --web-white: #f0eef7;
+  --web-gold: #fde161;
+  --web-orange: #ea920a;
+  --web-gold-edge: #ea920a;
+  --web-gold-hairline: #b6afe34d;
+  --web-midnight: #14072f;
+  --web-muted: #c6bddf;
+  --web-cyan: var(--web-lavender);
+  --web-metal: linear-gradient(145deg,#fff0a2,#fde161 30%,#ffbc19 68%,#ea920a);
+  --web-gold-lettering: linear-gradient(180deg,#fff3b6,#fde161 38%,#ffbd19 68%,#f3a51c);
+  --web-enamel: linear-gradient(145deg,#391878f7,#25114ff7 55%,#1b0b3cf7);
+  color: var(--web-white);
+  background: var(--web-midnight);
+}
+
+/* The illustration keeps its original colours under the purple atmosphere. */
+.legends-website .website-world-backdrop::after {
+  background: linear-gradient(90deg,#1c0842cc,#160832d1 35%,#170a39d1 70%,#20094aa6),linear-gradient(0deg,#10052d80,transparent 70%);
+}
+.legends-website .website-hero::before {
+  background: linear-gradient(90deg,#17082feb 0%,#211043dd 24%,#2110438f 40%,#2110431a 58%,transparent 75%),linear-gradient(0deg,#170832cc,transparent 25%);
+}
+.legends-website .website-hero-glow { background: radial-gradient(ellipse,#fde16124,#451ccb18 40%,transparent 70%); }
+.legends-website .website-hero-bottom { background: linear-gradient(90deg,transparent,#7841ef,#fde161,#7841ef,transparent); }
+.legends-website .website-hero-description { color: #ded8f0; }
+.legends-website .website-hero-note { color: #d3cbe9; }
+.legends-website .website-hero-note svg { color: var(--web-gold); }
+.legends-website .website-hero-copy h2 { color: var(--web-white); }
+.legends-website .website-hero-copy h2 span { color: var(--web-gold); }
+.legends-website .website-encounter-caption { color: var(--web-gold); background: #230d4de8; border-color: #a98ee173; }
+
+.legends-website .website-header {
+  background: linear-gradient(180deg,#31116bf7,#1c0b43f7);
+  border-color: #9271c85c;
+  box-shadow: 0 4px 25px #10042266,inset 0 1px 0 #b6afe31a;
+}
+.legends-website .website-header::after { background: linear-gradient(90deg,transparent,#7841ef,#fde161a6,#7841ef,transparent); }
+.legends-website .website-desktop-nav a { color: #d9d1ef; }
+.legends-website .website-desktop-nav a:is(:hover,.active) { color: var(--web-gold); }
+.legends-website .website-desktop-nav a.active::after { background: var(--web-metal); }
+.legends-website .website-mobile-nav { background: #230e4e; border-color: #9271c85c; }
+.legends-website .website-mobile-nav :is(a,button) { color: #ded5f5; }
+.legends-website .website-mobile-nav a:is(:hover,.active) { color: var(--web-gold); background: #451ccb59; }
+.legends-website :is(.website-menu-button,.website-login:hover) { color: var(--web-gold); }
+.legends-website .website-demo-name small { color: #d4c5ff; }
+.legends-website :is(a,button,input):focus-visible { outline-color: var(--web-gold); }
+.legends-website .website-skip-link { background: var(--web-gold); color: #230e4e !important; }
+
+/* Golden-orange actions echo LEGENDS; purple controls echo the ribbon. */
+.legends-website .website-button-gold {
+  color: #261047;
+  background: linear-gradient(180deg,#fde161 0%,#ffd735 36%,#ffb919 76%,#ea920a 100%);
+  border-color: #fff1a0;
+  box-shadow: inset 0 2px 0 #fff4b7,inset 0 -2px 0 #d07808,0 5px 0 #9a4804,0 6px 0 1px #190837,0 12px 26px #ea920a30;
+  text-shadow: 0 1px 0 #fff3b566;
+}
+.legends-website .website-button-gold::before { background: linear-gradient(90deg,transparent,#fff6c2a6,transparent); }
+.legends-website .website-button-gold:is(:hover,:focus-visible) {
+  background: linear-gradient(180deg,#ffec80,#fde161 35%,#ffb919 78%,#ea920a);
+  box-shadow: inset 0 2px 0 #fff4b7,inset 0 -2px 0 #d07808,0 8px 0 #9a4804,0 9px 0 1px #190837,0 17px 35px #ea920a45;
+}
+.legends-website .website-button-gold:active { box-shadow: inset 0 2px 0 #fff4b7,0 2px 0 #9a4804,0 6px 16px #ea920a30; }
+.legends-website .website-button-outline {
+  color: var(--web-white);
+  background: linear-gradient(145deg,#451ccbde,#2d1265eb);
+  border-color: #a98ee1a6;
+  box-shadow: inset 0 1px 0 #dcd4ff26,0 4px 12px #16062966;
+}
+.legends-website .website-button-outline:hover { border-color: #d2bfff; background: #4e25a4; }
+
+.legends-website :is(.website-eyebrow,.website-hero-copy > .website-eyebrow) { color: var(--web-gold); }
+.legends-website .website-hero-copy > .website-eyebrow > span { background: var(--web-gold); box-shadow: 0 0 12px #fde16180; }
+.legends-website .website-heading-center::before { color: var(--web-gold); }
+.legends-website :is(.website-section-heading h2,.website-path h3,.website-final-cta h2) { color: var(--web-white); }
+.legends-website :is(.website-section-heading p:not(.website-eyebrow),.website-path p,.website-final-cta p:not(.website-eyebrow)) { color: #d3c9e8; }
+.legends-website .website-path { background: var(--web-enamel); border-color: #9271c873; box-shadow: inset 0 1px 0 #dcd4ff26,0 15px 30px #10042266; }
+.legends-website .website-path-play { --path-color: #fde161; }
+.legends-website .website-path-learn { --path-color: #e0d8ff; }
+.legends-website .website-path-watch { --path-color: #c4a4ff; }
+.legends-website .website-path::after { border-color: #b6afe369; }
+.legends-website .website-path:hover { background: linear-gradient(145deg,#49218d,#301463 55%,#25104f); border-color: #b69aea; box-shadow: inset 0 1px 0 #dcd4ff3d,0 18px 36px #10042280; }
+.legends-website .website-path-icon { color: var(--path-color,#e0d8ff); background: linear-gradient(145deg,#451ccb5c,#451ccb1a); border-color: #a98ee180; box-shadow: inset 0 1px 0 #dcd4ff26,0 3px 0 #14072f; }
+.legends-website .website-path-number { color: var(--web-lavender); }
+.legends-website .website-path-link { border-color: #b6afe330; }
+.legends-website .website-text-link { color: var(--web-gold) !important; }
+.legends-website .website-text-link:hover { color: #fff1a0 !important; }
+.legends-website .website-adventure-image { border-color: #a98ee1b3; background: #29115c; }
+.legends-website .website-adventure-image::after { background: linear-gradient(0deg,#170832ad,transparent 65%); box-shadow: inset 0 0 0 4px #451ccb40; }
+.legends-website .website-adventure-play { color: #261047; border-color: #fff1a0; box-shadow: 0 3px 0 #9a4804,0 0 0 5px #451ccb73; }
+.legends-website .website-subject { background: #29115ceb; border-color: #b6afe380; color: var(--web-gold); }
+.legends-website .website-adventure-title svg { color: var(--web-lavender); }
+.legends-website .website-final-cta {
+  background: linear-gradient(90deg,#321367f5,#230e4ee8 70%,#230e4e94),url('../assets/maps/premium/potion-panic.webp') right 43% / cover;
+  border-color: #b6afe399;
+  box-shadow: inset 0 1px 0 #dcd4ff33,0 18px 38px #10042280;
+}
+.legends-website .website-final-cta::before { border-color: #b6afe34d; }
+.legends-website .website-footer { background: #170831f2; border-color: #9271c84d; }
+.legends-website .website-footer-top > p { color: #b6afe3; }
+.legends-website .website-footer nav { color: #d3c9e8; }
+.legends-website .website-footer nav a:hover { color: var(--web-gold); }
+.legends-website .website-footer-bottom { color: #b6afe3; border-color: #9271c838; }
+
+/* Learning and account pages use the same surfaces and controls. */
+.legends-website :is(.website-resource-heading,.website-account-world)::before { background: radial-gradient(ellipse,#7841ef30,transparent 70%); }
+.legends-website :is(.website-resource-heading > p:last-child,.website-account-world > p:not(.website-eyebrow)) { color: #ded8f0; }
+.legends-website .website-resource-toolbar { background: #230e4eb8; border-color: #9271c873; }
+.legends-website .website-filters button { color: #d3c9e8; }
+.legends-website .website-filters button:hover { color: var(--web-white); background: #451ccb59; }
+.legends-website .website-filters button.active { color: var(--web-gold); border-color: #aa8ade; background: linear-gradient(145deg,#451ccb99,#301463); box-shadow: inset 0 1px 0 #dcd4ff26; }
+.legends-website .website-search { color: #d3c9e8; background: #190936; border-color: #9271c8; }
+.legends-website .website-search input { color: var(--web-white); }
+.legends-website .website-search input::placeholder { color: var(--web-lavender); }
+.legends-website :is(.website-topic,.website-video-card,.website-account-form-wrap) { background: var(--web-enamel); border-color: #9271c880; box-shadow: inset 0 1px 0 #dcd4ff26,0 12px 28px #10042266; }
+.legends-website .website-topic-open { border-color: #bca5f0; }
+.legends-website .website-topic-toggle { color: var(--web-white); }
+.legends-website .website-topic-toggle:hover { background: #451ccb30; }
+.legends-website .website-topic-toggle > img { border-color: #a98ee173; }
+.legends-website .website-topic-toggle > svg { color: var(--web-lavender); }
+.legends-website .website-topic-category { color: #d2bfff; }
+.legends-website .website-topic-text > span:last-child { color: #d3c9e8; }
+.legends-website .website-topic-open-label { color: var(--web-gold); }
+.legends-website .website-guide { border-color: #9271c84d; }
+.legends-website .website-guide ol { color: #ded8f0; }
+.legends-website .website-guide li::marker { color: var(--web-gold); }
+.legends-website .website-worked-example { background: #451ccb26; border-color: #b6afe3; }
+.legends-website .website-worked-example > span { color: #d2bfff; }
+.legends-website .website-worked-example p { color: var(--web-white); }
+.legends-website :is(.website-tip,.website-answer-feedback p,.website-resource-note) { color: #d3c9e8; }
+.legends-website :is(.website-tip svg,.website-resource-note > svg,.website-answer-feedback strong) { color: var(--web-gold); }
+.legends-website .website-quick-check { border-color: #9271c84d; }
+.legends-website .website-quick-check > p:not(.website-eyebrow) { color: #ded8f0; }
+.legends-website .website-answer-options button { background: linear-gradient(145deg,#49218d,#301463); border-color: #a98ee1; box-shadow: inset 0 1px 0 #dcd4ff26,0 3px 0 #190837; }
+.legends-website .website-answer-options button:hover { border-color: var(--web-gold); }
+.legends-website .website-answer-options .website-answer-correct { background: #22735c; border-color: #91e6bb; }
+.legends-website .website-answer-options .website-answer-try { border-color: var(--web-gold); }
+.legends-website :is(.website-resource-note,.website-video-learning-tip) { border-color: #9271c84d; }
+.legends-website :is(.website-video-count,.website-video-card-copy > p:not(.website-topic-category),.website-video-learning-tip p) { color: #d3c9e8; }
+.legends-website .website-video-card h2 button:hover { color: var(--web-gold); }
+.legends-website .website-video-play { color: #261047; border-color: #fff1a0; box-shadow: inset 0 1px 0 #fff4b7,0 4px 0 #9a4804,0 0 0 7px #451ccb73,0 12px 24px #10042299; }
+.legends-website .website-video-duration { background: #230e4ee6; }
+.legends-website .website-video-thumbnail::after { background: linear-gradient(0deg,#1708329c,#17083210); }
+.legends-website .website-video-dialog { border-color: #b6afe3b3; box-shadow: inset 0 1px 0 #dcd4ff33,0 30px 100px #100422b3; }
+.legends-website .website-video-dialog::backdrop { background: #100422d9; }
+.legends-website .website-video-dialog-content p { color: #d3c9e8; }
+.legends-website .website-icon-button { color: var(--web-white); background: #451ccb4d; border-color: #a98ee180; }
+.legends-website .website-account-form-wrap::before { background: linear-gradient(90deg,transparent,#b6afe3,transparent); }
+.legends-website .website-account-form-wrap > p:not(.website-eyebrow) { color: #d3c9e8; }
+.legends-website .website-account-form-wrap label { color: #ded8f0; }
+.legends-website .website-account-form-wrap input { color: var(--web-white); border-color: #9271c8; background: #190936; box-shadow: inset 0 2px 5px #10042280; }
+.legends-website .website-account-form-wrap input::placeholder { color: var(--web-lavender); }
+.legends-website .website-password-field button { color: #d3c9e8; }
+.legends-website .website-account-preview { color: #d3c9e8; background: #451ccb26; border-color: #b6afe3; }
+.legends-website .website-account-preview strong { color: var(--web-gold); }
+.legends-website .website-account-switch a { color: var(--web-gold); }
+.legends-website .website-account-guest { color: #c6bddf !important; border-color: #9271c84d; }
+.legends-website .website-account-caption { color: var(--web-lavender); }
+.legends-website .website-account-success p:not(.website-eyebrow) { color: #d3c9e8; }
+
+@media (max-width: 580px) {
+  .legends-website .website-hero::before { background: linear-gradient(180deg,#17082ff2 0%,#17082ff2 32%,#211043eb 46%,#21104350 59%,transparent 70%,#170832a6 100%); }
+  .legends-website .website-world-backdrop::after { background: linear-gradient(90deg,#170832df,#230e4ed1 50%,#170832d9); }
+}

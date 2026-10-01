@@ -1,3 +1,72 @@
+.legend-world-map {
+  --map-label-size: max(14px, calc(14px / var(--game-stage-scale, 1)));
+  --map-body-size: max(16px, calc(16px / var(--game-stage-scale, 1)));
+  --map-title-size: max(18px, calc(18px / var(--game-stage-scale, 1)));
+  --map-control-size: max(44px, calc(44px / var(--game-stage-scale, 1)));
+}
+
+/* The original 20rem card became tiny after stage scaling. Compensate its
+   physical width locally, bounded by the same map viewport and dock reserve. */
+#root .legend-world-map .legend-map-detail-overlay {
+  bottom: calc((4.8rem + env(safe-area-inset-bottom)) / var(--game-stage-scale, 1));
+  padding-inline: calc(12px / var(--game-stage-scale, 1));
+}
+
+#root .legend-world-map .legend-map-details {
+  max-width: calc(320px / var(--game-stage-scale, 1));
+  max-height: calc(var(--game-stage-height, 844px) - 160px / var(--game-stage-scale, 1));
+  overflow-y: auto;
+  padding: calc(12px / var(--game-stage-scale, 1));
+  font-size: var(--map-body-size);
+}
+
+#root .legend-world-map .legend-map-details img {
+  height: calc(72px / var(--game-stage-scale, 1));
+  margin-bottom: calc(10px / var(--game-stage-scale, 1));
+}
+
+#root .legend-world-map .legend-map-details .legend-map-category {
+  font-size: var(--map-label-size) !important;
+  line-height: 1.3;
+  letter-spacing: .04em;
+}
+
+#root .legend-world-map .legend-map-details h2 {
+  margin-top: calc(5px / var(--game-stage-scale, 1));
+  font-size: var(--map-title-size) !important;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+#root .legend-world-map .legend-map-details :is(.legend-map-brainpower, .legend-map-progress) {
+  margin-top: calc(5px / var(--game-stage-scale, 1));
+  font-size: var(--map-body-size) !important;
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+
+#root .legend-world-map .legend-map-details [data-map-detail-close] {
+  top: calc(8px / var(--game-stage-scale, 1));
+  right: calc(8px / var(--game-stage-scale, 1));
+  height: var(--map-control-size);
+  width: var(--map-control-size);
+  min-height: var(--map-control-size) !important;
+  min-width: var(--map-control-size) !important;
+}
+
+#root .legend-world-map .legend-map-details [data-map-detail-close] svg {
+  width: calc(18px / var(--game-stage-scale, 1));
+  height: calc(18px / var(--game-stage-scale, 1));
+}
+
+#root .legend-world-map .legend-map-details [data-map-explore-island] {
+  min-height: var(--map-control-size) !important;
+  margin-top: calc(12px / var(--game-stage-scale, 1));
+  padding: calc(8px / var(--game-stage-scale, 1)) calc(12px / var(--game-stage-scale, 1));
+  font-size: var(--map-label-size) !important;
+  line-height: 1.2;
+}
+
 .legend-world-map .legend-map-atmosphere {
   position: absolute;
   inset: 0;
@@ -34,18 +103,28 @@
   animation-name: legend-map-snow;
 }
 
-/* The name plates are already illustrated in the map. Hover and keyboard
-   focus never add a translucent fill across their lettering. */
+/* Island hit areas stay transparent and stationary over the terrain. */
 #root .legend-world-map .legend-map-hotspot,
 #root .legend-world-map .legend-map-hotspot:hover,
+#root .legend-world-map .legend-map-hotspot:active,
 #root .legend-world-map .legend-map-hotspot:focus-visible {
   background: transparent !important;
   box-shadow: none !important;
+  border: 0 !important;
+  padding: 0;
+  box-sizing: border-box;
+  line-height: 1.2 !important;
+  text-transform: none !important;
+  overflow: visible !important;
+  transform: none !important;
+  translate: none !important;
+  rotate: none !important;
+  scale: none !important;
+  transition: none !important;
 }
 
 #root .legend-world-map .legend-map-hotspot:focus-visible {
-  outline: 3px solid #ffe09a !important;
-  outline-offset: -6px !important;
+  outline: none !important;
 }
 
 @keyframes legend-map-light {
@@ -89,3 +168,52 @@
     animation: none;
   }
 }
+
+.legend-map-content-prop { opacity:.38; transition:opacity .2s; }
+.legend-map-atmosphere [data-active=true] .legend-map-content-prop { opacity:.95; }
+.legend-map-atmosphere [data-active=true] .legend-map-terrain-light { opacity:1; animation-duration:3s; }
+.legend-map-atmosphere [data-active=true] .legend-map-shoreline { stroke:#ffe4a3; stroke-width:3; opacity:.65; animation-duration:2.4s; }
+.island-content-glyph { fill:none; stroke:#deeffa; stroke-width:3; stroke-linecap:round; stroke-linejoin:round; }
+.island-content-glyph text { stroke:none; fill:#f4fbff; font-family:var(--font-display); font-size:26px; font-weight:700; text-anchor:middle; }
+#root .legend-world-map .legend-island-preview { position:relative; overflow:hidden; isolation:isolate; width:100%; height:calc(116px / var(--game-stage-scale,1)); margin-bottom:calc(10px / var(--game-stage-scale,1)); border-radius:calc(12px / var(--game-stage-scale,1)); background:#143b60; }
+.legend-island-preview-camera { position:absolute; inset:0; animation:legend-island-camera 14s ease-in-out infinite; }
+#root .legend-world-map .legend-island-preview img { width:100%; height:100%; margin:0; object-fit:cover; object-position:center 42%; border-radius:0; }
+.legend-island-preview-shade { position:absolute; inset:0; background:linear-gradient(90deg,#071c3880,transparent 60%),linear-gradient(0deg,#061a3b44,transparent 55%); }
+.legend-island-preview-emblem { position:absolute; left:6%; top:10%; width:calc(92px / var(--game-stage-scale,1)); height:80%; filter:drop-shadow(0 4px 7px #00112299); animation:legend-island-float 4s ease-in-out infinite; }
+.legend-island-preview-particles { position:absolute; inset:0; pointer-events:none; }
+.legend-island-preview-particles i { position:absolute; left:48%; top:68%; width:calc(5px / var(--game-stage-scale,1)); height:calc(5px / var(--game-stage-scale,1)); border-radius:50%; background:#b6e7ff; animation:legend-island-spark 4s ease-in-out infinite; }
+.legend-island-preview-particles i:nth-child(2) { left:64%; top:42%; animation-delay:-1s; }
+.legend-island-preview-particles i:nth-child(3) { left:78%; top:72%; animation-delay:-2s; }
+.legend-island-preview-particles i:nth-child(4) { left:89%; top:56%; animation-delay:-3s; }
+.legend-island-preview[data-preview-theme=geometry] .legend-island-preview-particles i { background:#f3fbff; border-radius:0; transform:rotate(45deg); }
+.legend-island-preview[data-preview-theme=operations] .legend-island-preview-particles i { background:#ffc46d; }
+.legend-island-preview[data-preview-theme=ratio] .legend-island-preview-particles i { background:#b8ffe0; border:1px solid #eafff4; }
+#root .legend-world-map .legend-map-island-description { margin:calc(8px / var(--game-stage-scale,1)) 0; color:#d4e8f8; font-family:var(--font-fredoka); font-size:var(--map-label-size); line-height:1.4; text-align:center; }
+.island-glyph-clock { transform-origin:64px 64px; animation:legend-island-clock 12s linear infinite; }
+.island-glyph-operations { transform-origin:64px 64px; animation:legend-island-clock 20s linear infinite; }
+.island-glyph-shape { animation:legend-island-crystal 4s ease-in-out infinite; }
+.island-glyph-fraction { animation:legend-island-crystal 4s ease-in-out infinite; }
+.island-glyph-bar { transform-box:fill-box; transform-origin:bottom; animation:legend-island-bar 3s ease-in-out infinite; }
+.island-glyph-bar-2 { animation-delay:-1s; }
+.island-glyph-bar-3 { animation-delay:-2s; }
+.island-glyph-potion { animation:legend-island-potion 3s ease-in-out infinite; }
+.island-glyph-bubble { animation:legend-island-bubble 3s ease-in-out infinite; }
+.island-glyph-check { animation:legend-island-crystal 3s ease-in-out infinite; }
+@keyframes legend-island-camera { 0%,100%{ transform:scale(1.06) translateX(-1%); } 50%{ transform:scale(1.1) translateX(1%); } }
+@keyframes legend-island-float { 0%,100%{ transform:translateY(0) rotate(-3deg); } 50%{ transform:translateY(-5px) rotate(3deg); } }
+@keyframes legend-island-spark { 0%,100%{opacity:0;transform:translateY(6px)} 30%{opacity:.9} 80%{opacity:0;transform:translateY(-18px)} }
+@keyframes legend-island-clock { to{ transform:rotate(360deg); } }
+@keyframes legend-island-crystal { 0%,100%{fill-opacity:.8} 50%{fill-opacity:1;stroke:#a9f5ff;} }
+@keyframes legend-island-bar { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(.7)} }
+@keyframes legend-island-potion { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+@keyframes legend-island-bubble { 0%{opacity:0;transform:translateY(8px)} 30%{opacity:1} 100%{opacity:0;transform:translateY(-14px)} }
+@media(prefers-reduced-motion:reduce) {
+ .legend-world-map :is(.legend-island-preview-camera,.legend-island-preview-emblem,.legend-island-preview-particles i,.island-content-glyph *) { animation:none!important; }
+ .legend-island-preview-particles i { opacity:.5; }
+ #root .legend-world-map .legend-map-island-label,.legend-map-content-prop { transition:none; }
+}
+
+#root .legend-world-map .legend-map-details [data-map-detail-close] { z-index:5; }
+#root .legend-world-map .legend-map-details h2 { white-space:nowrap; text-wrap:nowrap; }
+
+/* Give the next destination its own full-width line, matching the map labels. */

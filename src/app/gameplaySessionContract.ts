@@ -52,6 +52,8 @@ export interface MiniGamePracticeBriefing {
   title: string;
   summary: string;
   bullets: string[];
+  example?: string;
+  revisionKey?: string;
 }
 
 /**

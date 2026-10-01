@@ -28,7 +28,7 @@ Place Value Panic passes the final score, correct count and attempt count explic
 - `scripts/verify-legend-monster-motion.mjs`: targeted visible-interface, interaction, identity, motion and device checks.
 - This note records scope, assumptions and results.
 
-The audit found no same-enemy image swap in Multiplication Mine's rock states, Take-Out Rush's new customers, separate zombie lifecycles or Angle Arena's changing canvas targets; those systems are outside this change. Unused viewport/result enemy components are also left alone.
+At the time of this original motion pass, the audit found no same-enemy image swap in Multiplication Mine's rock states, Take-Out Rush's new customers, separate zombie lifecycles or Angle Arena's changing canvas targets; those systems were outside that pass. The later explicitly requested enemy/Mine/framing refinement is recorded in `docs/GAMEPLAY_REFINEMENT_NOTES.md`. Unused viewport/result enemy components remain outside the scope.
 
 ## Assumptions and constraints
 
@@ -40,4 +40,6 @@ The audit found no same-enemy image swap in Multiplication Mine's rock states, T
 
 ## Verification
 
-Results will be recorded after the source is stable in `qa-artifacts/legend-monster-motion/report.json`, with screenshots alongside it. The checks cover all current Place Value Panic routes, actual digit tap/drag/cancel/wrong-check/correct progression, repeated Number Line Ninja hits and completion, one persistent enemy image/source, actor idle/reaction/reduced motion, affected encounter screens and the mandatory HUD/device-fit boundaries.
+The original motion pass completed 88/88 passing rows in `qa-artifacts/legend-monster-motion/report.json`, with screenshots alongside it. These historical checks cover the original route set, actual digit tap/drag/cancel/wrong-check/correct progression, repeated Number Line Ninja hits and completion, one persistent enemy image/source, actor idle/reaction/reduced motion, affected encounter screens and the mandatory HUD/device-fit boundaries.
+
+The later coherent enemy art, four-stage ore, five-tier route set, readable label floors and Ninja pending-exit repair have separate current verification under `qa-artifacts/gameplay-refinements/monster-current`. Final current results, exact changed files, art prompts and device-fit evidence are consolidated in `docs/GAMEPLAY_REFINEMENT_NOTES.md`; the original88 rows are not presented as tests of those later edits.

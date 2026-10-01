@@ -1,10 +1,13 @@
 import { chromium, webkit, devices, expect } from '@playwright/test';
 import { mkdir, writeFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 
 const base = process.env.LEGEND_QA_URL || 'http://localhost:3000';
-const output = path.resolve('qa-artifacts/legend-expanded-experience');
+const output = path.resolve(process.env.LEGEND_QA_OUTPUT || 'qa-artifacts/legend-expanded-experience');
 const reportName = process.env.LEGEND_QA_REPORT || 'report.json';
+const stopFile = path.resolve(process.env.LEGEND_QA_STOP_FILE || path.join(output, reportName + '.stop'));
+let stopRequested = false;
 const profileFilter = process.env.LEGEND_QA_PROFILE;
 const selectedCases = new Set((process.env.LEGEND_QA_CASES || '').split(',').map((value) => value.trim()).filter(Boolean));
 // Retain proven unchanged checks without also skipping the reduced-motion version.
@@ -86,7 +89,7 @@ async function settleScreen(page) {
 }
 
 async function dismissIntro(page) {
-  await expect(page.locator('[data-market-game], [data-takeout-game], [data-race-scene]')).toBeVisible();
+  await expect(page.locator('[data-market-game], [data-takeout-game], [data-race-scene], [data-formula-game]')).toBeVisible();
   await pause(page, 650);
   const primary = page.locator('[role="dialog"] [data-dialog-primary]');
   if (await primary.count()) await primary.first().click();
@@ -155,12 +158,12 @@ async function stageLayout(page, expected) {
   return result;
 }
 
-async function paintedImage(locator, expectedName) {
+async function paintedImage(locator, expectedName, expectedFit = 'cover') {
   await expect(locator).toHaveCount(1);
   await expect.poll(() => locator.evaluate((image) => image.complete && image.naturalWidth > 0)).toBe(true);
   const result = await locator.evaluate((image) => ({ source: image.currentSrc, width: image.naturalWidth, height: image.naturalHeight, objectFit: getComputedStyle(image).objectFit }));
   expect(decodeURIComponent(result.source)).toContain(expectedName);
-  expect(result.objectFit).toBe('cover');
+  expect(result.objectFit).toBe(expectedFit);
   return result;
 }
 
@@ -361,12 +364,13 @@ async function discoverRoutes(page) {
   await openRoute(page, '/map');
   return page.evaluate(async () => {
     const { ISLANDS } = await import('/src/constants.ts');
-    return Object.fromEntries(['take_out_rush', 'change_counter', 'ratio_fractions'].map((key) => {
-      const scoredIsland = ISLANDS.find((entry) => entry.levels.some((level) => level.blueprintKey === key && !level.isPractice));
-      const island = scoredIsland || ISLANDS.find((entry) => entry.levels.some((level) => level.blueprintKey === key));
-      const level = island?.levels.find((entry) => entry.blueprintKey === key && (!scoredIsland || !entry.isPractice));
+    const { getGameDifficulty } = await import('/src/systems/content/gameDifficulty.ts');
+    return Object.fromEntries(['take_out_rush', 'change_counter', 'ratio_fractions', 'formula_forge'].map((key) => {
+      const island = ISLANDS.find((entry) => entry.levels.some((level) => level.blueprintKey === key && !level.isPractice && getGameDifficulty(level) === 1));
+      const level = island?.levels.find((entry) => entry.blueprintKey === key && !entry.isPractice && getGameDifficulty(entry) === 1);
       if (!island || !level) throw new Error('Missing current campaign blueprint ' + key);
-      return [key, { route: `/game/${island.id}/${level.id}`, islandId: island.id, levelId: level.id, blueprintKey: key, miniGameLevel: level.miniGameLevel, isPractice: Boolean(level.isPractice) }];
+      const next = key === 'formula_forge' ? island.levels.find((entry) => entry.miniGameKey === level.miniGameKey && !entry.isPractice && getGameDifficulty(entry) === 2) : undefined;
+      return [key, { route: `/game/${island.id}/${level.id}`, islandId: island.id, levelId: level.id, blueprintKey: key, gameType: level.gameType, miniGameLevel: level.miniGameLevel, difficulty: getGameDifficulty(level), isPractice: Boolean(level.isPractice), provenance: 'actual scored campaign route', ...(next ? { next: { route: `/game/${island.id}/${next.id}`, blueprintKey: next.blueprintKey, difficulty: getGameDifficulty(next) } } : {}) }];
     }));
   });
 }
@@ -387,9 +391,7 @@ async function gameplayLayout(page, profile, playfieldSelector, responseSelector
     expect(playfield.x).toBeGreaterThanOrEqual(-1); expect(playfield.right).toBeLessThanOrEqual(layout.viewport.width + 1);
     for (const button of await page.locator(buttonsSelector).all()) await hitVisible(button, { minimumHeight: 44, text: true });
     if (captionSelector) await hitVisible(page.locator(captionSelector), { text: true });
-    // Shared dock has an existing 42px design. Its physical visibility and hit
-    // silhouette remain strict without inventing a new size requirement here.
-    for (const button of await page.locator('[data-testid="shared-bottom-hud"] button').all()) await hitVisible(button);
+    for (const button of await page.locator('[data-testid="shared-bottom-hud"] button').all()) await hitVisible(button, { minimumHeight: 44 });
   } catch (error) { error.qaMetrics ||= { question, topHud, playfield, answers, dock, layout }; throw error; }
   return { layout, question, topHud, playfield, answers, dock };
 }
@@ -460,8 +462,8 @@ async function delayedVictoryExit(page, profile, level, kind) {
   if (kind === 'race') {
     const tuning = await page.evaluate(async (id) => {
       const { RACE_TUNING } = await import('/src/games/ratioFractionsRace/constants.ts');
-      return RACE_TUNING[id <= 3 ? 'easy' : id <= 6 ? 'standard' : 'hard'];
-    }, level.levelId);
+      return RACE_TUNING[id <= 1 ? 'easy' : id <= 3 ? 'standard' : 'hard'];
+    }, level.difficulty);
     rounds = Math.ceil(tuning.trackLength / tuning.playerAdvanceDistance);
     delay = tuning.playerMoveDurationMs + tuning.playerBoostAnticipationMs;
     await expect(root).toHaveAttribute('data-race-state', 'showingQuestion');
@@ -518,21 +520,55 @@ async function delayedVictoryExit(page, profile, level, kind) {
 }
 
 async function marketPuzzle(page) {
-  const cost = moneyPence(await page.locator('[data-market-cost]').innerText());
-  const paid = moneyPence(await page.locator('[data-market-paid]').innerText());
+  // A 520ms advance can fall between separate protocol reads. Every field below
+  // comes from one settled, answer-enabled receipt in a single DOM evaluation.
+  let snapshot;
+  await expect.poll(async () => {
+    snapshot = await page.locator('[data-market-game]').evaluate((root) => {
+      const receipt = root.querySelector('[data-market-receipt]');
+      const buttons = [...root.querySelectorAll('[data-market-answer]')];
+      if (!receipt) return { ready: false, reason: 'receipt missing' };
+      const style = getComputedStyle(receipt);
+      const matrix = new DOMMatrix(style.transform === 'none' ? undefined : style.transform);
+      const ready = root.dataset.marketState === 'idle' && root.dataset.marketPresent !== 'false'
+        && buttons.length === 4 && buttons.every((button) => !button.disabled)
+        && Number(style.opacity) === 1 && Math.abs(matrix.m42) < .000001;
+      if (!ready) return { ready: false, state: root.dataset.marketState, present: root.dataset.marketPresent,
+        enabled: buttons.filter((button) => !button.disabled).length, opacity: style.opacity, translateY: matrix.m42 };
+      return { ready: true, round: Number(root.dataset.marketRound),
+        cost: root.querySelector('[data-market-cost]').textContent.trim(),
+        paid: root.querySelector('[data-market-paid]').textContent.trim(),
+        lines: [...receipt.querySelectorAll('[data-market-line]')].map((line) => ({
+          quantity: line.querySelector('strong').textContent.trim(),
+          unit: line.querySelector('small').textContent.trim(), total: line.querySelector('b').textContent.trim(),
+        })), choices: buttons.map((button) => button.textContent.trim()) };
+    });
+    return snapshot.ready;
+  }, { message: 'Wait for one idle, answer-enabled Market receipt with its entrance pose settled', timeout: 10000 }).toBe(true).catch((error) => {
+    error.qaMetrics = { marketReceiptReadiness: snapshot }; throw error;
+  });
+  const cost = moneyPence(snapshot.cost);
+  const paid = moneyPence(snapshot.paid);
   const lineTotals = [];
-  for (const line of await page.locator('[data-market-line]').all()) {
-    const quantity = Number((await line.locator('strong').innerText()).match(/^(\d+)×/)[1]);
-    const unit = moneyPence(await line.locator('small').innerText());
-    const total = moneyPence(await line.locator('b').innerText());
-    expect(quantity * unit).toBe(total); lineTotals.push(total);
+  try {
+    for (const line of snapshot.lines) {
+      expect(line.quantity).toMatch(/^\d+×/);
+      const quantity = Number(line.quantity.match(/^(\d+)×/)[1]);
+      const unit = moneyPence(line.unit);
+      const total = moneyPence(line.total);
+      expect(quantity).toBeGreaterThan(0); expect(unit).toBeGreaterThan(0);
+      expect(quantity * unit).toBe(total); lineTotals.push(total);
+    }
+    expect(lineTotals.length).toBeGreaterThan(0);
+    expect(lineTotals.reduce((sum, value) => sum + value, 0)).toBe(cost);
+    expect(paid).toBeGreaterThan(cost);
+    expect(snapshot.choices).toHaveLength(4); expect(new Set(snapshot.choices).size).toBe(4);
+    const matching = snapshot.choices.filter((option) => moneyPence(option) === paid - cost);
+    expect(matching).toHaveLength(1);
+    return { cost, paid, lineCount: lineTotals.length, correct: matching[0], wrong: snapshot.choices.find((option) => moneyPence(option) !== paid - cost) };
+  } catch (error) {
+    error.qaMetrics = { marketReceiptSnapshot: snapshot }; throw error;
   }
-  expect(lineTotals.reduce((sum, value) => sum + value, 0)).toBe(cost);
-  const choices = await page.locator('[data-market-answer]').evaluateAll((buttons) => buttons.map((button) => button.textContent.trim()));
-  expect(new Set(choices).size).toBe(4);
-  const matching = choices.filter((option) => moneyPence(option) === paid - cost);
-  expect(matching).toHaveLength(1);
-  return { cost, paid, lineCount: lineTotals.length, correct: matching[0], wrong: choices.find((option) => moneyPence(option) !== paid - cost) };
 }
 
 async function marketReceiptVisibility(page) {
@@ -559,7 +595,7 @@ async function marketReceiptVisibility(page) {
 async function marketFlow(page, profile, motion, level, exiting = false) {
   await openRoute(page, level.route); await dismissIntro(page);
   const root = page.locator('[data-market-game]'); await expect(root).toHaveAttribute('data-market-state', 'idle');
-  const art = await paintedImage(page.locator('[data-market-background]'), 'monster-market-shop.webp');
+  const art = await paintedImage(page.locator('.market-shop-art [data-game-scene-image]'), profile.name === 'phone-a2hs' ? 'monster-market-shop.webp' : 'monster-market-shop-wide.webp', 'contain');
   const layouts = [await gameplayLayout(page, profile, '[data-market-playfield]', '.market-answers', '[data-market-answer]', '.market-feedback')];
   layouts[0].receipt = await marketReceiptVisibility(page);
   await page.screenshot({ path: path.join(output, `${profile.name}-${motion}-market-ready.png`) });
@@ -592,7 +628,7 @@ async function marketFlow(page, profile, motion, level, exiting = false) {
     }
     if (index < 5) await expect(root).toHaveAttribute('data-market-round', String(index + 2));
   }
-  const result = await victoryResult(page, level, 6 * (150 + Math.max(1, Math.min(8, level.levelId)) * 14), 6, 1);
+  const result = await victoryResult(page, level, 6 * (150 + level.difficulty * 14), 6, 1);
   const savedTelemetry = await telemetry(page);
   expect(savedTelemetry.correctAnswers).toBe(6); expect(savedTelemetry.incorrectAnswers).toBe(1); expect(savedTelemetry.sessionsPlayed).toBe(1);
   if (motion === 'reduced') await expect(page.locator('canvas')).toHaveCount(0);
@@ -696,7 +732,7 @@ async function restaurantFlow(page, profile, motion, level, exiting = false) {
   await installTimerClock(page);
   await openRoute(page, level.route); await dismissIntro(page);
   const root = page.locator('[data-takeout-game]'); await expect(root).toHaveAttribute('data-takeout-state', 'idle');
-  const art = await paintedImage(page.locator('[data-takeout-background]'), 'restaurant-rush.webp');
+  const art = await paintedImage(page.locator('.rush-kitchen-art [data-game-scene-image]'), profile.name === 'phone-a2hs' ? 'restaurant-rush.webp' : 'restaurant-rush-wide.webp', 'contain');
   const layouts = [await gameplayLayout(page, profile, '[data-takeout-playfield]', '[data-takeout-responses]', '[data-takeout-food], .rush-actions button', '.rush-feedback')];
   await hitVisible(page.locator('.rush-customer-quip'), { text: true });
   const idle = await ambientMotion(page, '[data-takeout-game]', motion);
@@ -814,7 +850,11 @@ function raceCoverage(samples) {
   for (const sample of samples) {
     expect(sample.gaps).toEqual([]); expect(sample.tileCount).toBe(3); expect(Number.isFinite(sample.travel)).toBe(true);
     if (sample.missionText !== first.missionText) continue;
-    for (const element of ['mission', 'answers', 'top', 'dock', 'scene']) for (const axis of ['x', 'y', 'width', 'height']) expect(Math.abs(sample[element][axis] - first[element][axis])).toBeLessThanOrEqual(1);
+    for (const element of ['mission', 'answers', 'top', 'dock', 'scene']) for (const axis of ['x', 'y', 'width', 'height']) {
+      const delta = Math.abs(sample[element][axis] - first[element][axis]);
+      try { expect(delta).toBeLessThanOrEqual(1); }
+      catch (error) { error.qaMetrics = { element, axis, delta, first, sample, sampledFrames: samples.length }; throw error; }
+    }
   }
 }
 
@@ -829,7 +869,8 @@ async function racingFlow(page, profile, motion, level, exiting = false) {
   await page.context().addInitScript(() => { Math.random = () => .2; });
   await openRoute(page, level.route); await dismissIntro(page);
   const scene = page.locator('[data-race-scene]'); await expect(scene).toHaveAttribute('data-race-state', 'showingQuestion');
-  const backdrop = await page.locator('.ratio-racer-backdrop').evaluate((node) => getComputedStyle(node).backgroundImage); expect(backdrop).toContain('racing-paddock.webp');
+  const backdrop = await page.locator('.ratio-racer-backdrop').evaluate((node) => ({ image: getComputedStyle(node).backgroundImage, size: getComputedStyle(node).backgroundSize }));
+  expect(backdrop.image).toContain('racing-paddock.webp'); expect(backdrop.size.split(',').map((size) => size.trim())).toEqual(['contain', 'contain']);
   const art = [];
   for (const image of await page.locator('[data-race-course-tile]').all()) art.push(await paintedImage(image, 'race-course-crowd.webp'));
   expect(art).toHaveLength(3);
@@ -887,13 +928,13 @@ async function racingFlow(page, profile, motion, level, exiting = false) {
     if (await page.getByRole('dialog', { name: 'Mission results' }).count()) { completed = true; break; }
     await layout(); await reading();
   }
-  expect(completed).toBe(true); expect([...tiers].sort()).toEqual([2, 3, 4]);
+  expect(completed).toBe(true); expect([...tiers]).toEqual([level.difficulty <= 3 ? 2 : level.difficulty === 4 ? 3 : 4]);
   if (motion === 'normal') expect(motionChecks.reduce((sum, check) => sum + check.wraps, 0)).toBeGreaterThan(0);
-  const result = await victoryResult(page, level, 160 + correctCount * 45 + level.levelId * 30, correctCount, wrongCount);
+  const result = await victoryResult(page, level, 160 + correctCount * 45 + level.difficulty * 30, correctCount, wrongCount);
   const savedTelemetry = await telemetry(page);
   expect(savedTelemetry.sessionsPlayed).toBe(1); expect(savedTelemetry.correctAnswers).toBe(correctCount); expect(savedTelemetry.incorrectAnswers).toBe(wrongCount);
   if (motion === 'reduced') await expect(page.locator('canvas')).toHaveCount(0);
-  return { checks: ['full-width desktop/tablet venue', 'actual visible racing kart', 'native wrong fuel stops course and retries', 'equivalent and literal fractions', 'all two/three/four part tiers', 'continuous painted blended course coverage in every phase', 'reading pauses static', 'successful boosts move course without moving chrome', 'reduced course/kart static', level.isPractice ? 'actual live practice race records exact internal score/accuracy and Parent completion once without a scored save' : 'complete race saves exact raw score/accuracy and Parent completion once'], level, art, backdrop, layouts, motionChecks, tiers: [...tiers], result, telemetry: savedTelemetry };
+  return { checks: ['full-width desktop/tablet venue', 'actual visible racing kart', 'native wrong fuel stops course and retries', 'equivalent and literal fractions', 'fixed selected-tier ratio part count throughout the race', 'continuous painted blended course coverage in every phase', 'reading pauses static', 'successful boosts move course without moving chrome', 'reduced course/kart static', level.isPractice ? 'actual live practice race records exact internal score/accuracy and Parent completion once without a scored save' : 'complete race saves exact raw score/accuracy and Parent completion once'], level, art, backdrop, layouts, motionChecks, tiers: [...tiers], result, telemetry: savedTelemetry };
 }
 
 async function calmHub(page, profile, motion) {
@@ -1036,7 +1077,19 @@ async function completeCalmInputs(page, profile, id, motion, { pendingExit = fal
     const pausedAnimations = await root.evaluate((node) => node.getAnimations({ subtree: true }).filter((animation) => animation.playState === 'running' && Number(animation.effect?.getComputedTiming().duration) > 1).length);
     expect(pausedAnimations).toBe(0);
     await activate(page, profile, root.getByRole('button', { name: 'Resume breathing', exact: true }), true);
-    await expect(root.locator('[data-breathing-phase]')).toHaveAttribute('data-breathing-phase', 'complete', { timeout: 45000 });
+    const phaseWaitStart = await page.evaluate(() => performance.now());
+    try {
+      await expect(root.locator('[data-breathing-phase]')).toHaveAttribute('data-breathing-phase', 'complete', { timeout: 45000 });
+    } catch (error) {
+      error.qaMetrics = await page.evaluate(({ paused, phaseWaitStart }) => {
+        const node = document.querySelector('[data-wellbeing-activity="breathing_bloom"]');
+        return { pausedAtInput: paused, phaseWaitStart, phaseWaitEnd: performance.now(), documentVisibility: document.visibilityState,
+          phase: node?.querySelector('[data-breathing-phase]')?.dataset.breathingPhase, pausedNow: node?.dataset.wellbeingPaused,
+          progress: node?.querySelector('[data-wellbeing-progress]')?.getAttribute('aria-valuenow'),
+          status: node?.querySelector('[data-wellbeing-status]')?.textContent, trace: window.__breathTrace?.samples || [] };
+      }, { paused, phaseWaitStart }).catch(() => ({ phaseWaitStart, browserClosedDuringPhaseWait: true }));
+      throw error;
+    }
     const trace = await page.evaluate(() => { window.__breathTrace.observer.disconnect(); const samples = window.__breathTrace.samples; delete window.__breathTrace; return samples; });
     const phases = trace.filter((sample, index) => index === 0 || sample.phase !== trace[index - 1].phase);
     const phaseTiming = [];
@@ -1352,15 +1405,14 @@ async function choiceLivesEnd(page, profile, motion, level, kind) {
     await expect(page.locator('.legend-hud-lives')).toHaveAttribute('aria-label', '3 of 3 lives remaining');
   }
   if (kind === 'market') expect(correct).toBe(6);
-  const score = kind === 'market' ? correct * (150 + Math.min(8, level.levelId) * 14) : 160 + correct * 45 + level.levelId * 30;
+  const score = kind === 'market' ? correct * (150 + level.difficulty * 14) : 160 + correct * 45 + level.difficulty * 30;
   const victory = await victoryResult(page, level, score, correct, 0, 2); const after = await telemetry(page);
   expect(after.sessionsPlayed).toBe(2); expect(after.incorrectAnswers).toBe(3); expect(after.correctAnswers).toBe(correct);
   return { checks: ['native incorrect answers reach zero lives', 'one failure/save with final incorrect metrics', 'no local/shared double GameOver or stale overwrite', 'Retry restores three lives and stays active', 'native correct retry actions lead to victory', 'final raw score and 100% fresh-run accuracy', 'two total Parent sessions'], level, before, correct, victory, telemetry: after, motion };
 }
 
 async function postFailureCalmReturn(page, profile, motion, originalLevel, kind) {
-  const level = kind === 'restaurant' ? { ...originalLevel, isPractice: false, fixture: 'Existing Restaurant scored configuration in isolated browser; actual App callbacks, no repository/routing change' } : originalLevel;
-  if (kind === 'restaurant') page.__qaScoredFixture = true;
+  const level = originalLevel;
   await installTimerClock(page); await openRoute(page, level.route); await dismissIntro(page);
   const root = page.locator(kind === 'restaurant' ? '[data-takeout-game]' : '[data-market-game]');
   const result = page.getByRole('dialog', { name: 'Mission results', exact: true });
@@ -1424,7 +1476,7 @@ async function postFailureCalmReturn(page, profile, motion, originalLevel, kind)
       const puzzle = await marketPuzzle(page); await tap(page, profile, page.locator('[data-market-answer]').filter({ hasText: new RegExp(`^${puzzle.correct.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`) }));
       if (round < 6) await expect(root).toHaveAttribute('data-market-round', String(round + 1));
     }
-    await victoryResult(page, level, 6 * (150 + Math.min(8, level.levelId) * 14), 6, 0, 4);
+    await victoryResult(page, level, 6 * (150 + level.difficulty * 14), 6, 0, 4);
   }
   expect((await telemetry(page)).sessionsPlayed).toBe(4);
   return { checks: ['three actual scored failures expose current Calm Break entry', 'native leaf completion returns to the existing failure result', 'restored result remains unchanged through 92 seconds', 'no duplicate gameplay completion or save behind result', ...(kind === 'restaurant' ? ['Restaurant local timer remains paused behind restored failure'] : []), 'Retry remains active and wins once'], level, before, pausedTimer, clockAdvanceBehindResultMs: 92000, after: { level: await savedLevel(page, level.route), telemetry: await telemetry(page), calmTokens: await calmTokens(page) } };
@@ -1472,13 +1524,13 @@ async function fourLineMarketFixture(page, profile, motion, level) {
     const { createRoot } = (await import('/node_modules/.vite/deps/react-dom_client.js')).default;
     const Game = (await import('/src/games/ChangeCounterGame.tsx')).default;
     const content = document.querySelector('[data-gameplay-content-stage="true"]');
-    const host = document.createElement('div'); host.dataset.qaIsolatedMarket = 'level-8';
+    const host = document.createElement('div'); host.dataset.qaIsolatedMarket = 'tier-5';
     host.style.cssText = 'display:flex;flex:1;min-height:0;width:100%';
     const stage = document.querySelector('[data-stage-layout]');
-    const evidence = { label: 'Isolated current public ChangeCounterGame component, levelId 8; not a live campaign route', hostClass: content.className, stageClass: stage.className, preservedShellClass: content.closest('.game-shell-host').className };
+    const evidence = { label: 'Isolated current public ChangeCounterGame component, difficulty tier5; not a live campaign route', hostClass: content.className, stageClass: stage.className, preservedShellClass: content.closest('.game-shell-host').className };
     content.replaceChildren(host);
     window.__qaMarketFixture = createRoot(host);
-    window.__qaMarketFixture.render(React.createElement(Game, { levelId: 8, avatarId: 'qa', useSharedTopHud: true, onVictory: () => {}, onGameOver: () => {}, onBack: () => {}, sessionState: { timeLeft: 300, totalTime: 300, lives: 3 } }));
+    window.__qaMarketFixture.render(React.createElement(Game, { levelId: 5, avatarId: 'qa', useSharedTopHud: true, onVictory: () => {}, onGameOver: () => {}, onBack: () => {}, sessionState: { timeLeft: 300, totalTime: 300, lives: 3 } }));
     return evidence;
   });
   await expect(page.locator('[data-market-line]')).toHaveCount(4); await pause(page, 350);
@@ -1495,19 +1547,78 @@ async function fourLineMarketFixture(page, profile, motion, level) {
   await tap(page, profile, page.locator(`[data-market-answer="${puzzle.correct}"]`)); await expect(page.locator('[data-market-game]')).toHaveAttribute('data-market-correct', '1');
   await expect(page.locator('[data-market-game]')).toHaveAttribute('data-market-round', '2');
   await page.evaluate(() => { window.__qaMarketFixture.unmount(); delete window.__qaMarketFixture; });
-  return { checks: ['isolated existing level 8 public props', 'four visible receipt rows and exact totals', 'row/text/image containment and HUD/dock fit at625px and600px responsive cutoff', 'four usable answers above dock', 'actual correct calculation advances'], fixture, fit, boundaryFit, puzzle, motion };
+  return { checks: ['isolated current mastery-tier public props', 'four visible receipt rows and exact totals', 'row/text/image containment and HUD/dock fit at625px and600px responsive cutoff', 'four usable answers above dock', 'actual correct calculation advances'], fixture, fit, boundaryFit, puzzle, motion };
+}
+
+async function formulaCompletion(page, profile, motion, level) {
+  await openRoute(page, level.route); await dismissIntro(page);
+  const root = page.locator('[data-formula-game]');
+  await expect(root).toHaveAttribute('data-formula-tier', '1');
+  const puzzles = [];
+  for (let number = 1; number <= 6; number += 1) {
+    await expect(root).toHaveAttribute('data-formula-question', String(number));
+    await expect(root).toHaveAttribute('data-formula-state', 'idle');
+    const snapshot = await root.evaluate((node) => ({
+      prompt: node.querySelector('[data-question-copy]').textContent.trim(),
+      formula: node.querySelector('[data-formula-equation]').textContent.trim(),
+      options: [...node.querySelectorAll('[data-formula-answer]')].map((button) => ({ value: Number(button.dataset.formulaAnswer), disabled: button.disabled })),
+    }));
+    expect(snapshot.formula).toBe('A = l × w');
+    const length = Number(snapshot.prompt.match(/\bl\s*=\s*(\d+)/)?.[1]);
+    const width = Number(snapshot.prompt.match(/\bw\s*=\s*(\d+)/)?.[1]);
+    expect(length).toBeGreaterThanOrEqual(3); expect(length).toBeLessThanOrEqual(11);
+    expect(width).toBeGreaterThanOrEqual(2); expect(width).toBeLessThanOrEqual(9);
+    const answer = length * width;
+    expect(snapshot.options).toHaveLength(4); expect(new Set(snapshot.options.map((option) => option.value)).size).toBe(4);
+    expect(snapshot.options.every((option) => !option.disabled)).toBe(true);
+    expect(snapshot.options.filter((option) => option.value === answer)).toHaveLength(1);
+    const fit = {
+      question: await hitVisible(page.locator('[data-game-question]'), { text: true }),
+      top: await box(page.locator('[data-testid="shared-top-hud"]')),
+      playfield: await box(page.locator('[data-formula-playfield]')),
+      hint: await hitVisible(page.locator('[data-formula-hint]'), { text: true }),
+      answers: await box(page.locator('[data-formula-answers]')),
+      dock: await box(page.locator('[data-testid="shared-bottom-hud"]')),
+    };
+    try {
+      expect(fit.question.y).toBeGreaterThanOrEqual(fit.top.bottom - 1);
+      expect(fit.playfield.y).toBeGreaterThanOrEqual(fit.question.bottom - 1);
+      expect(fit.playfield.height).toBeGreaterThanOrEqual(64);
+      expect(fit.hint.y).toBeGreaterThanOrEqual(fit.playfield.bottom - 1);
+      expect(fit.answers.y).toBeGreaterThanOrEqual(fit.hint.bottom - 1);
+      expect(fit.answers.bottom).toBeLessThanOrEqual(fit.dock.y + 1);
+      for (const button of await page.locator('[data-formula-answer]').all()) await hitVisible(button, { minimumHeight: 44, text: true });
+    } catch (error) { error.qaMetrics ||= { number, snapshot, fit }; throw error; }
+    puzzles.push({ number, length, width, answer, options: snapshot.options.map((option) => option.value), fit });
+    if (number === 1) await page.screenshot({ path: path.join(output, `${profile.name}-${motion}-formula-gameplay.png`) });
+    await activate(page, profile, page.locator(`[data-formula-answer="${answer}"]`), true);
+  }
+  const result = await victoryResult(page, level, 912, 6, 0);
+  expect(result.stored.bestStars).toBe(3);
+  await page.screenshot({ path: path.join(output, `${profile.name}-${motion}-formula-result.png`) });
+  expect(level.next?.blueprintKey).toBe('formula_forge'); expect(level.next.difficulty).toBe(2);
+  await activate(page, profile, page.getByRole('dialog', { name: 'Mission results', exact: true }).getByRole('button', { name: 'Next Level', exact: true }), true);
+  await expect(page).toHaveURL(base + level.next.route);
+  await expect(root).toHaveAttribute('data-formula-tier', '2');
+  await expect(root).toHaveAttribute('data-formula-question', '1');
+  await expect(root).toHaveAttribute('data-formula-state', 'idle');
+  await expect(page.getByRole('dialog', { name: 'Mission results', exact: true })).toHaveCount(0);
+  expect((await telemetry(page)).sessionsPlayed).toBe(1);
+  expect((await savedLevel(page, level.next.route))?.timesPlayed || 0).toBe(0);
+  return { checks: ['six native correct choices solved from visible dimensions', 'mission/playfield/hint/four answers remain visible with44px controls', 'final raw912XP/100% accuracy/three stars and one Parent completion', 'Next Level opens the same blueprint at actual scored tier2'], level, puzzles, result, next: level.next };
 }
 
 const primaryCases = [
   ['restaurant', (page, context, profile, motion, routes) => restaurantFlow(page, profile, motion, routes.take_out_rush)],
   ['restaurant_exit', (page, context, profile, motion, routes) => restaurantFlow(page, profile, motion, routes.take_out_rush, true)],
-  ['restaurant_lives_fixture', (page, context, profile, motion, routes) => { page.__qaScoredFixture = true; return restaurantLivesEnd(page, profile, motion, { ...routes.take_out_rush, isPractice: false, fixture: 'Existing component scored configuration in isolated browser; actual App callbacks, no repository/routing change' }); }],
+  // Historical case keys remain stable; both flows now use actual scored routes.
+  ['restaurant_lives_fixture', (page, context, profile, motion, routes) => restaurantLivesEnd(page, profile, motion, routes.take_out_rush)],
   ['market', (page, context, profile, motion, routes) => marketFlow(page, profile, motion, routes.change_counter)],
   ['market_exit', (page, context, profile, motion, routes) => marketFlow(page, profile, motion, routes.change_counter, true)],
   ['market_lives', (page, context, profile, motion, routes) => choiceLivesEnd(page, profile, motion, routes.change_counter, 'market')],
   ['race', (page, context, profile, motion, routes) => racingFlow(page, profile, motion, routes.ratio_fractions)],
   ['race_exit', (page, context, profile, motion, routes) => racingFlow(page, profile, motion, routes.ratio_fractions, true)],
-  ['race_lives_fixture', (page, context, profile, motion, routes) => { page.__qaScoredFixture = true; return choiceLivesEnd(page, profile, motion, { ...routes.ratio_fractions, isPractice: false, fixture: 'Existing component scored configuration in isolated browser; actual App callbacks, no repository/routing change' }, 'race'); }],
+  ['race_lives_fixture', (page, context, profile, motion, routes) => choiceLivesEnd(page, profile, motion, routes.ratio_fractions, 'race')],
   ['calm_hub', (page, context, profile, motion) => calmHub(page, profile, motion)],
   ...Object.keys(calmScenes).map((id) => [id, (page, context, profile, motion) => calmFlow(page, profile, motion, id)]),
   ['microphone_recovery', (page, context, profile, motion) => microphoneRecovery(page, profile, motion)],
@@ -1516,6 +1627,7 @@ const primaryCases = [
 ];
 
 const followupCases = [
+  ['formula_completion', (page, context, profile, motion, routes) => formulaCompletion(page, profile, motion, routes.formula_forge)],
   ['restaurant_post_failure_calm_fixture', (page, context, profile, motion, routes) => postFailureCalmReturn(page, profile, motion, routes.take_out_rush, 'restaurant')],
   ['market_post_failure_calm', (page, context, profile, motion, routes) => postFailureCalmReturn(page, profile, motion, routes.change_counter, 'market')],
 ];
@@ -1531,6 +1643,7 @@ const shortCases = [
 ];
 
 for (const profile of profiles) for (const motion of ['normal', 'reduced']) {
+  if (stopRequested) continue;
   if (process.env.LEGEND_QA_MOTION && process.env.LEGEND_QA_MOTION !== motion) continue;
   const browser = await profile.browser.launch();
   const cases = (profile.name === 'pc-short' ? shortCases : [...primaryCases, ...followupCases.filter(([name]) => selectedCases.has(name))])
@@ -1570,8 +1683,13 @@ for (const profile of profiles) for (const motion of ['normal', 'reduced']) {
         if (process.env.LEGEND_QA_STOP_ON_FAILURE) throw error;
       } finally {
         await context.close();
-        await writeFile(path.join(output, reportName), JSON.stringify({ scope: 'Expanded teen gameplay, Calm Grove and Parent Snapshot', base, contextsClosed: true, assumptions: ['Current repository routes/components only', 'No external legacy assumptions', 'Native browser wheel scrolling is distinct from native touchscreen taps', 'Clock advances only existing Restaurant timers after actual answers'], rows: reports }, null, 2));
+        await writeFile(path.join(output, reportName), JSON.stringify({ scope: 'Current five-tier gameplay, Calm Grove and Parent Snapshot after shared framing refinement', base, contextsClosed: true, assumptions: ['Current repository routes/components only', 'No external legacy assumptions', 'Game flows use actual scored campaign routes; historical fixture case keys remain labels only', 'Four-line Market fit and Parent seeded reports are isolated fixtures explicitly labeled', 'Mobile WebKit uses native keyboard scrolling, distinct from native touchscreen taps; desktop uses native browser wheel input', 'Controlled timers are limited to existing Restaurant gameplay timing; native animation clock remains real'], rows: reports }, null, 2));
+        if (existsSync(stopFile)) {
+          stopRequested = true;
+          console.log('Coordinated stop requested; active case context closed. Remaining keys will resume from retained report provenance.');
+        }
       }
+      if (stopRequested) break;
     }
   } finally { await browser.close(); }
 }

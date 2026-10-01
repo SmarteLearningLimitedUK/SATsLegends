@@ -1,3 +1,4 @@
+import { getLearnerGuide } from './learnerGuides';
 ﻿export type MiniGameRole =
   | 'concept_visualisation'
   | 'fluency'
@@ -970,8 +971,8 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
   {
     id: 8,
     name: 'Core of Calculation',
-    domain: 'Boss Papers',
-    purpose: 'Run three SATs paper-style boss trials under pressure.',
+    domain: 'SATs Mock Adventures',
+    purpose: 'Complete three timed KS2 maths mock adventures with familiar teaching models and a review afterwards.',
     satsCoverage: [
       'SATs Paper 1 arithmetic',
       'SATs Paper 2 reasoning',
@@ -1015,14 +1016,14 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
       'Paper 3 combines mixed reasoning under pressure.',
     ],
     designRules: [
-      'Each boss should read like a SATs paper trial.',
-      'Keep prompts short, direct and exam-like.',
+      'Use official paper timings and mark totals; keep game missions and familiar maths models.',
+      'Keep prompts short and plain; present a single game mission, not a paper page.',
       'Pressure must be real but fair: clear goals, rising speed, no unclear traps.',
     ],
     successCriteria: [
       'Players recognise the three paper formats.',
       'Players improve speed and accuracy across all papers.',
-      'Boss trials feel like exam practice, not filler.',
+      'Mock adventures sample all nine KS2 maths strands and link review to guided practice.',
     ],
     islandSkillTags: [
       'ARITHMETIC',
@@ -1049,8 +1050,8 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
         name: 'SATs Paper 2: Reasoning',
         role: 'strategy',
         gameplayRoles: ['strategy', 'mixed_mastery'],
-        mechanicSummary: 'Reasoning paper trial built from transformations, shape properties and coordinate thinking.',
-        curriculumObjectives: ['reasoning', 'geometry', 'transformations'],
+        mechanicSummary: 'Mixed reasoning adventure sampling all nine KS2 maths strands, with 35 marks in 40 minutes.',
+        curriculumObjectives: ['number', 'calculations', 'fractions_decimals_percentages', 'ratio', 'algebra', 'measurement', 'shape_properties', 'position_direction', 'statistics'],
         skillTags: ['MIXED_ARITHMETIC', 'MULTI_STEP_REASONING'],
         keySystems: ['reasoning checkpoints', 'branching decision paths', 'paper-style constraint pressure'],
         questionTypes: ['reasoning paper questions', 'geometry and movement clues'],
@@ -1063,8 +1064,8 @@ export const ISLAND_BLUEPRINTS: IslandBlueprint[] = [
         name: 'SATs Paper 3: Reasoning',
         role: 'mixed_mastery',
         gameplayRoles: ['mixed_mastery', 'pressure_timing'],
-        mechanicSummary: 'Mixed reasoning paper trial that blends clues, patterns and data under pressure.',
-        curriculumObjectives: ['mixed_reasoning', 'pattern_reasoning', 'data_reasoning'],
+        mechanicSummary: 'A second mixed reasoning adventure using different mission selections, with 35 marks in 40 minutes.',
+        curriculumObjectives: ['number', 'calculations', 'fractions_decimals_percentages', 'ratio', 'algebra', 'measurement', 'shape_properties', 'position_direction', 'statistics'],
         skillTags: ['MULTI_STEP_REASONING', 'MIXED_ARITHMETIC'],
         keySystems: ['paper three challenge loops', 'combined clue sets', 'timed response windows'],
         questionTypes: ['mixed reasoning paper questions', 'pattern and data clues'],
@@ -1090,6 +1091,8 @@ export const getMiniGameBlueprintByKey = (blueprintKey?: string | null) => {
 };
 
 export const getBlueprintRuleSet = (blueprintKey?: string | null) => {
+  const learnerGuide = getLearnerGuide(blueprintKey);
+  if (learnerGuide) return learnerGuide;
   const miniGame = getMiniGameBlueprintByKey(blueprintKey);
   if (!miniGame) return null;
 

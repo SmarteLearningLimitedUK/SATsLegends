@@ -40,8 +40,10 @@ const TOKENS_PER_LEVEL = 3;
 
 const getGroupName = (level: LevelData) => getLevelGameTitle(level) || `Level ${level.id}`;
 
+const islandMockKeys = new Set(['crystal_core', 'mirror_gate', 'matrix_match']);
 const getLevelDisplayLabel = (level: LevelData, groupLevels: LevelRowState[]) => {
   if (level.isPractice) return 'Practice';
+  if (level.isBoss && islandMockKeys.has(level.gameType ?? '')) return `Paper ${level.id}`;
 
   const numberedLevels = groupLevels.filter((row) => row.level.isPractice !== true);
   const displayIndex = numberedLevels.findIndex((row) => row.level.id === level.id);
@@ -341,7 +343,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                                 <div className="w-[4.1rem] shrink-0 text-aaa-sm font-black text-cyan-100 md:w-[5rem]">
                                   {levelLabel}
                                 </div>
-                                <div className="min-w-0 flex-1 text-xs text-cyan-100/80">{!isUnlocked ? <Lock size={14} aria-label={lockReason || 'Locked'} /> : level.isPractice ? 'Warm up' : isCompleted ? 'Complete' : level.isBoss ? '' : GAME_DIFFICULTY_LABELS[getGameDifficulty(level)]}</div>
+                                <div className="min-w-0 flex-1 text-xs text-cyan-100/80">{!isUnlocked ? <Lock size={14} aria-label={lockReason || 'Locked'} /> : level.isPractice ? 'Warm up' : isCompleted ? 'Complete' : level.isBoss && islandMockKeys.has(level.gameType ?? '') ? `${level.gameType === 'crystal_core' ? '30 min · 40 marks' : '40 min · 35 marks'}` : level.isBoss ? '' : GAME_DIFFICULTY_LABELS[getGameDifficulty(level)]}</div>
 
                                 <div className="flex items-center gap-0.5 md:gap-1">
                                   {[1, 2, 3].map((value) => (
@@ -373,7 +375,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                                     : isCompleted
                                       ? 'Replay'
                                       : isBoss
-                                        ? 'Boss'
+                                        ? islandMockKeys.has(level.gameType ?? '') ? 'Launch' : 'Boss'
                                         : 'Play'}
                                 </button>
                               </div>

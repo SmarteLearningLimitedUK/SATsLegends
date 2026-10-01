@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { AnimatePresence, motion, useIsPresent, useReducedMotion } from 'motion/react';
 import { ChevronDown } from 'lucide-react';
 import {
   emitMiniGameSessionEvent,
@@ -197,6 +197,9 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   sessionState,
   sessionEvents,
 }) => {
+  const isPresent = useIsPresent();
+  const presentRef = useRef(isPresent);
+  presentRef.current = isPresent;
   const reducedMotion = useReducedMotion();
   const [question, setQuestion] = useState<NumberLineQuestion>(() => buildQuestion(Math.max(levelId, 1)));
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -239,7 +242,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   const queueTimeout = (fn: () => void, delay: number) => {
     const timeoutId = window.setTimeout(() => {
       timeoutIdsRef.current.delete(timeoutId);
-      if (!runEndedRef.current) fn();
+      if (presentRef.current && !runEndedRef.current) fn();
     }, delay);
     timeoutIdsRef.current.add(timeoutId);
   };
@@ -256,8 +259,16 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     monsterReactionTimeoutRef.current = null;
   };
 
+  useLayoutEffect(() => {
+    if (isPresent) return;
+    runEndedRef.current = true;
+    answerLockRef.current = true;
+    clearQueuedTimeouts();
+    clearMonsterReactionTimeout();
+  }, [isPresent]);
+
   useEffect(() => {
-    runEndedRef.current = false;
+    if (presentRef.current) runEndedRef.current = false;
     return () => {
       runEndedRef.current = true;
       answerLockRef.current = true;
@@ -272,6 +283,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
 
   useEffect(() => {
     // AppRouter remounts the game on restart; live session updates must not reset a round.
+    if (!presentRef.current) return;
     clearQueuedTimeouts();
     clearMonsterReactionTimeout();
     setQuestion(buildQuestion(Math.max(levelId, 1)));
@@ -294,7 +306,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   }, [levelId]);
 
   useEffect(() => {
-    if (!sessionState || runEndedRef.current || didComplete || didFail) return;
+    if (!presentRef.current || !sessionState || runEndedRef.current || didComplete || didFail) return;
     if (isSessionActive) return;
 
     runEndedRef.current = true;
@@ -310,7 +322,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   }, [didComplete, didFail, isSessionActive, lives, onGameOver, XP, sessionEvents, sessionState]);
 
   const completeRun = (finalScore: number, nextCorrect: number, nextAttempts: number) => {
-    if (runEndedRef.current || didComplete || didFail) return;
+    if (!presentRef.current || runEndedRef.current || didComplete || didFail) return;
     runEndedRef.current = true;
     answerLockRef.current = true;
     clearQueuedTimeouts();
@@ -329,6 +341,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   };
 
   const advanceQuestion = () => {
+    if (!presentRef.current || runEndedRef.current) return;
     setQuestion(buildQuestion(Math.max(levelId, 1)));
     setSelectedAnswer(null);
     setFeedbackState('idle');
@@ -340,19 +353,20 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
 
   const resolvePendingCorrectAnswer = () => {
     const pending = pendingCorrectAdvanceRef.current;
-    if (!pending || runEndedRef.current || !pending.minimumFeedbackElapsed || !pending.flightLanded) return;
+    if (!presentRef.current || !pending || runEndedRef.current || !pending.minimumFeedbackElapsed || !pending.flightLanded) return;
     pendingCorrectAdvanceRef.current = null;
     pending.resolve();
   };
 
   const markFlightLanded = (flightId: number, questionId: number) => {
     const pending = pendingCorrectAdvanceRef.current;
-    if (!pending || runEndedRef.current || pending.flightId !== flightId || pending.questionId !== questionId) return;
+    if (!presentRef.current || !pending || runEndedRef.current || pending.flightId !== flightId || pending.questionId !== questionId) return;
     pending.flightLanded = true;
     resolvePendingCorrectAnswer();
   };
 
   const triggerMonsterReaction = (reaction: 'hit' | 'taunt') => {
+    if (!presentRef.current || runEndedRef.current) return;
     // A new hit replaces the old reaction timer, even if the next question is already open.
     clearMonsterReactionTimeout();
     setMonsterReaction(reaction);
@@ -362,7 +376,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       : MONSTER_ESCAPE_LINE);
     monsterReactionTimeoutRef.current = window.setTimeout(() => {
       monsterReactionTimeoutRef.current = null;
-      if (runEndedRef.current) return;
+      if (!presentRef.current || runEndedRef.current) return;
       setMonsterReaction('idle');
       setMonsterSpeech(null);
     }, reaction === 'hit' ? MONSTER_HIT_REACTION_MS : MONSTER_TAUNT_REACTION_MS);
@@ -390,7 +404,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   };
 
   const handleAnswerDrop = (option: string) => {
-    if (!isSessionActive || runEndedRef.current || locked || answerLockRef.current || didComplete || didFail) return;
+    if (!presentRef.current || !isSessionActive || runEndedRef.current || locked || answerLockRef.current || didComplete || didFail) return;
 
     answerLockRef.current = true;
 
@@ -514,6 +528,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     <div
       ref={playfieldRef}
       data-number-line-game="true"
+      data-number-line-present={isPresent ? 'true' : 'false'}
       data-number-line-state={didComplete ? 'complete' : didFail ? 'failed' : feedbackState}
       data-number-line-question={question.id}
       data-number-line-correct={correctCount}

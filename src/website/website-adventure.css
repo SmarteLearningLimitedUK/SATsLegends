@@ -1,0 +1,82 @@
+/* Artwork belongs to the hosting website; the game's level art is untouched. */
+.legends-website { position: relative; isolation: isolate; background: #071c27; }
+.website-world-backdrop { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.website-world-backdrop > img { width: 100%; height: 100%; object-fit: cover; object-position: 65% center; }
+.website-world-backdrop::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg,#061923b3,#071526cc 30%,#08182ad1 70%,#06192399), linear-gradient(0deg,#04132070,transparent 70%); }
+.legends-website .website-hero { overflow: hidden; background: transparent; }
+.legends-website :is(.website-hero,.website-hero-inner) { min-height: 620px; }
+.website-hero-landscape { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 65% 50%; z-index: -3; }
+.legends-website .website-hero::before { background: linear-gradient(90deg,#071726ef 0%,#081728e0 24%,#08172895 40%,#08172825 58%,transparent 75%),linear-gradient(0deg,#061b27db 0%,transparent 25%); }
+.legends-website .website-hero-glow { width: 45%; height: 75%; top: 15%; background: radial-gradient(ellipse,#ffce6020,transparent 70%); }
+.legends-website .website-hero-copy { width: 53%; padding-top: 25px; padding-bottom: 43px; }
+.legends-website .website-hero-description { color: #d1dee5; max-width: 390px; text-shadow: 0 2px 7px #04101c; }
+.legends-website .website-hero-note { color: #c0d0da; }
+.website-encounter-scene { position: absolute; bottom: 0; right: calc((100% - 100vw) / 2); width: min(850px,64vw); height: 620px; pointer-events: none; }
+
+/* CSS crops the transparent margins without changing the repository sprites. */
+.website-scene-character { position: absolute; overflow: clip; filter: drop-shadow(0 4px 1px #0415266b) drop-shadow(0 12px 12px #04152677); }
+.website-scene-character::after { content: ''; position: absolute; height: 5%; width: 80%; left: 10%; bottom: 0; background: #0619275c; border-radius: 50%; filter: blur(5px); z-index: -1; }
+.website-scene-character > img { position: absolute; max-width: none; height: auto; width: calc(100% * var(--sprite-scale)); left: var(--sprite-x); top: var(--sprite-y); }
+.website-scene-barratt { --sprite-scale: 1.714286; --sprite-x: -34.69388%; --sprite-y: -59.80392%; aspect-ratio: 245 / 306; width: 34%; left: 35%; bottom: 37px; z-index: 3; }
+.website-scene-goblin { --sprite-scale: 1.175559; --sprite-x: -9.1222%; --sprite-y: -20.87766%; aspect-ratio: 581 / 752; width: 19%; left: 13%; bottom: 99px; z-index: 2; }
+.website-scene-rhino { --sprite-scale: 1.063863; --sprite-x: -4.6729%; --sprite-y: -18.0593%; aspect-ratio: 642 / 742; width: 14%; right: 50%; bottom: 385px; z-index: 1; }
+.website-scene-cyclops { --sprite-scale: 1.082409; --sprite-x: -4.75436%; --sprite-y: -32.13729%; aspect-ratio: 631 / 641; width: 20%; right: 3%; bottom: 89px; z-index: 4; }
+.website-encounter-caption { position: absolute; left: 40%; bottom: 18px; display: flex; align-items: center; gap: 8px; font-size: 11px; color: #ffe6ac; background: #091c2bd9; padding: 7px 13px; border: 1px solid #f4ce7970; border-radius: 5px; box-shadow: 0 3px 10px #04101c66; }
+.legends-website .website-section-heading { text-shadow: 0 2px 10px #03111c; }
+.legends-website .website-section-heading p:not(.website-eyebrow) { color: #c4d2db; }
+.legends-website .website-paths { padding-top: 66px; }
+.legends-website .website-path { background: radial-gradient(ellipse at 0 0,#d7a85a14,transparent 55%),linear-gradient(145deg,#173147f5,#0b1c31f5); }
+.legends-website .website-adventures { margin-top: 72px; }
+.legends-website .website-adventure-title { text-shadow: 0 2px 7px #03111c; }
+.legends-website .website-final-cta { background: linear-gradient(90deg,#152e43f5,#0b1c32ed 70%,#0b1c329e),url('../assets/maps/premium/potion-panic.webp') right 43% / cover; }
+.legends-website .website-footer { background: #050f1de8; }
+.legends-website :is(.website-resource-heading,.website-account-world) { text-shadow: 0 2px 8px #03111c; }
+.legends-website :is(.website-resource-heading h1 span,.website-account-world h1 > span) { text-shadow: none; }
+.legends-website .website-resource-toolbar { background: #081a2ab3; border-radius: 10px; padding-inline: 14px; }
+.legends-website .website-account-form-wrap { background: linear-gradient(145deg,#193149f7,#0b1b30f7); border-color: #c3995680; }
+
+/* All website brand placements show the badge from the game's splash poster. */
+.legends-website .website-brand { display: block; width: 120px; }
+.legends-website .website-brand-small { width: 108px; transform: none; margin-right: 0; }
+.website-splash-logo { display: block; width: 100%; height: auto; }
+.legends-website .website-splash-heading { width: min(400px,100%); line-height: 0; }
+
+@media (max-width: 1100px) {
+  .website-encounter-scene { width: 60vw; }
+  .website-scene-barratt { width: 36%; left: 31%; bottom: 43px; }
+  .website-scene-goblin { width: 20%; left: 12%; bottom: 166px; }
+  .website-scene-rhino { bottom: 332px; right: 17%; }
+  .website-scene-cyclops { width: 23%; right: 1%; bottom: 111px; }
+  .website-encounter-caption { left: 29%; font-size: 10px; }
+}
+@media (min-width: 581px) and (max-width: 900px) {
+  .legends-website :is(.website-hero,.website-hero-inner) { min-height: 590px; }
+  .legends-website .website-hero-copy { width: 61%; }
+  .legends-website .website-hero-description { max-width: 320px; }
+  .website-encounter-scene { width: 52vw; height: 590px; }
+  .website-scene-barratt { width: 46%; left: 22%; bottom: 40px; }
+  .website-scene-goblin { width: 25%; left: 8%; bottom: 180px; }
+  .website-scene-rhino { width: 20%; right: 60%; bottom: 350px; }
+  .website-scene-cyclops { width: 29%; right: 2%; bottom: 179px; }
+  .website-encounter-caption { left: auto; right: 9%; font-size: 9px; padding: 6px 9px; }
+}
+@media (max-width: 580px) {
+  .legends-website .website-brand { width: 104px; }
+  .legends-website .website-splash-heading { width: min(290px,100%); }
+  .legends-website :is(.website-hero,.website-hero-inner) { min-height: 750px; }
+  .legends-website .website-hero-copy { width: 100%; padding-top: 27px; padding-bottom: 0; }
+  .website-hero-landscape { top: 270px; height: calc(100% - 270px); object-position: 64% center; }
+  .legends-website .website-hero::before { background: linear-gradient(180deg,#071726f0 0%,#071726f0 32%,#081728eb 46%,#08172850 59%,transparent 70%,#061b27a6 100%); }
+  .legends-website .website-hero-glow { top: 52%; width: 100%; height: 40%; }
+  .legends-website .website-hero-description { max-width: 350px; }
+  .website-encounter-scene { height: 310px; width: 100vw; bottom: 0; }
+  .website-scene-barratt { width: 39%; left: 5%; bottom: 46px; }
+  .website-scene-goblin { width: 22%; left: 47%; bottom: 137px; }
+  .website-scene-rhino { width: 19%; right: 12%; bottom: 258px; }
+  .website-scene-cyclops { width: 27%; right: 1%; bottom: 43px; }
+  .website-encounter-caption { left: 50%; right: auto; bottom: 12px; transform: translateX(-50%); font-size: 10px; white-space: nowrap; }
+  .website-world-backdrop > img { object-position: 66% center; }
+  .website-world-backdrop::after { background: linear-gradient(90deg,#071727df,#071727d1 50%,#071727d9); }
+  .legends-website .website-paths { padding-top: 45px; }
+  .legends-website .website-adventures { margin-top: 46px; }
+}

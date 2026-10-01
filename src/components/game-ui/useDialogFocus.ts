@@ -13,7 +13,7 @@ export const useDialogFocus = (open: boolean, onClose: () => void) => {
       const dialog = dialogRef.current;
       if (!dialog) return [];
       const controls: NodeListOf<HTMLElement> = dialog.querySelectorAll(
-        'button:not(:disabled), input:not(:disabled), a[href], [tabindex="0"]',
+        'button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), summary, a[href], [tabindex="0"]',
       );
       return Array.from<HTMLElement>(controls).filter((element) => element.getClientRects().length > 0);
     };

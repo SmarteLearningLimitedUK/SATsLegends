@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BookOpen, Flame, Heart } from 'lucide-react';
 import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
 import GameActionDock from './GameActionDock';
@@ -6,6 +6,7 @@ import { LEVEL_TIMERS_DISABLED } from '../app/testingFlags';
 
 interface UnifiedMiniGameHudProps {
   avatarId?: string;
+  assessment?: boolean;
   timeLeft: number;
   totalTime: number;
   hidden?: boolean;
@@ -27,12 +28,21 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
   avatarId, timeLeft, totalTime, hidden = false, hideTimer = false,
   hideTopBar = false, lives = 3, onBack, onHelp, title = 'SATs Legends',
   levelLabel = 'Adventure', streak = 0, isPractice = false,
-  variant = 'gameplay', showActions = true, bottomContent,
+  variant = 'gameplay', showActions = true, bottomContent, assessment = false,
 }) => {
   const avatar = CHARACTER_AVATARS.find((entry) => entry.id === avatarId)
     ?? CHARACTER_AVATARS.find((entry) => entry.id === DEFAULT_AVATAR_ID)
     ?? CHARACTER_AVATARS[0];
-  const showTimer = !hideTimer && !LEVEL_TIMERS_DISABLED;
+  const [mockClock, setMockClock] = useState<{ timeLeft: number; totalTime: number } | null>(null);
+  useEffect(() => {
+    setMockClock(null);
+    if (!assessment) return;
+    const update = (event: Event) => setMockClock((event as CustomEvent<{ timeLeft: number; totalTime: number }>).detail);
+    window.addEventListener('sats-mock-clock', update);
+    return () => window.removeEventListener('sats-mock-clock', update);
+  }, [assessment, title]);
+  if (assessment && mockClock) { timeLeft = mockClock.timeLeft; totalTime = mockClock.totalTime; }
+  const showTimer = !hideTimer && (assessment ? Boolean(mockClock) : !LEVEL_TIMERS_DISABLED);
   const progress = Math.max(0, Math.min(1, totalTime > 0 ? timeLeft / totalTime : 0));
   if (hidden) return null;
 
@@ -56,14 +66,14 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
             </div>
             <div className="flex shrink-0 flex-col items-end gap-1">
               {variant === 'gameplay' ? (
-                isPractice ? <span className="legend-hud-practice inline-flex items-center gap-1"><BookOpen size={17} aria-hidden="true" />Practice</span> : (
+                assessment ? <span className="legend-hud-practice">Mock run</span> : isPractice ? <span className="legend-hud-practice inline-flex items-center gap-1"><BookOpen size={17} aria-hidden="true" />Practice</span> : (
                   <div className="legend-hud-lives" role="img" aria-label={`${lives} of 3 lives remaining`}>
                     {[1, 2, 3].map((heart) => <Heart key={heart} fill="currentColor" className={heart > lives ? 'is-empty' : ''} aria-hidden="true" />)}
                   </div>
                 )
               ) : null}
-              <span className="legend-hud-streak" aria-live="polite" aria-atomic="true">
-                {streak > 1 ? <><Flame size={13} aria-hidden="true" />{streak} in a row</> : showTimer ? `${Math.max(0, Math.floor(timeLeft))}s` : null}
+              <span className="legend-hud-streak" aria-live={assessment ? 'off' : 'polite'} aria-atomic="true">
+                {!assessment && streak > 1 ? <><Flame size={13} aria-hidden="true" />{streak} in a row</> : showTimer ? assessment ? `${Math.floor(timeLeft / 60)}:${String(timeLeft % 60).padStart(2, '0')}` : `${Math.max(0, Math.floor(timeLeft))}s` : null}
               </span>
             </div>
           </div>

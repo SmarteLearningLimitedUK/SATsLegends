@@ -27,7 +27,15 @@
   --legend-question-size: max(18px, calc(18px / var(--game-stage-scale, 1)));
 }
 
-.sat-theme-bluegold { color: var(--legend-paper); }
+/* The viewport already scales this logical stage once. A viewport-height cap
+   inside it would shrink the playfield a second time in short browser windows. */
+#root .iphone-game-stage .screen-gameplay,
+#root .iphone-game-stage .screen-gameplay :is(.app-screen-content, .game-shell-host, .game-shell-contract, .structured-game-layout) {
+  height: 100%;
+  max-height: 100% !important;
+}
+
+.sat-theme-bluegold { color: var(--legend-paper); font-family: var(--font-fredoka), sans-serif; }
 /* Keep the complete environment within the established gameplay viewport. */
 #root .app-viewport.sat-theme-bluegold.screen-gameplay .game-background-layer {
   background-size: contain !important;
@@ -42,7 +50,8 @@
 #root .app-viewport.sat-theme-bluegold :is(.text-amber-100, .text-amber-200, .text-amber-300, .text-yellow-300) {
   color: var(--legend-gold) !important;
 }
-#root .app-viewport.sat-theme-bluegold :is(.text-amber-950, .text-yellow-950) { color: #352509 !important; }
+#root .app-viewport.sat-theme-bluegold :is(.text-amber-950, .text-yellow-950) { color: var(--legend-paper) !important; }
+#root .app-viewport.sat-theme-bluegold :is(.ui-button-primary, .ui-button-success) :is(.text-amber-950, .text-yellow-950) { color: var(--legend-ink) !important; }
 .sat-theme-bluegold :is(.text-aaa-h1, .text-aaa-h2) { text-transform: none; letter-spacing: -.015em; }
 .sat-theme-bluegold :is(.text-aaa-sm, .text-aaa-micro) { letter-spacing: .055em; }
 
@@ -146,16 +155,19 @@
 .sat-theme-bluegold .game-question-card .question-subtitle { color: #d6eaf4; font-size: var(--legend-label-size); line-height: 1.4; }
 
 /* Essential labels share one readable floor even when the stage is scaled. */
-#root .app-viewport.sat-theme-bluegold.screen-gameplay .game-shell-host :is(.text-xs, .text-\[9px\], .text-\[10px\], .text-\[11px\], .text-\[12px\], .text-\[13px\]) {
+#root .app-viewport.sat-theme-bluegold.screen-gameplay .game-shell-host :is(.text-xs, .text-sm, .text-aaa-micro, .text-aaa-sm, [class*="text-[0."], [class*="text-[clamp(0."], .text-\[8px\], .text-\[9px\], .text-\[10px\], .text-\[11px\], .text-\[12px\], .text-\[13px\], .text-\[14px\]) {
   font-size: var(--legend-label-size) !important;
   line-height: 1.3;
   letter-spacing: .035em;
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay .game-shell-host :is(.ui-button-primary, .ui-button-secondary, .ui-button-success) {
+  min-height: max(var(--sat-pill-height, 48px), calc(44px / var(--game-stage-scale, 1))) !important;
 }
 #root .app-viewport.sat-theme-bluegold.screen-gameplay .game-question-card :is(.question-title, .question-subtitle) {
   font-size: calc(var(--legend-label-size) / var(--question-card-scale, 1)) !important;
 }
 #root .app-viewport.sat-theme-bluegold.screen-gameplay .game-question-card .game-question-copy {
-  font-size: calc(var(--legend-question-size) / var(--question-card-scale, 1));
+  font-size: calc(var(--legend-question-size) / var(--question-card-scale, 1)) !important;
 }
 #root .app-viewport.sat-theme-bluegold.screen-gameplay :is(.answer-choice-surface, .shared-game-answer-panel) button {
   font-size: var(--legend-question-size);

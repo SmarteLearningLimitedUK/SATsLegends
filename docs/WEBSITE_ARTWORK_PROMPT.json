@@ -1,0 +1,16 @@
+{
+  "tool": "Built-in image_gen.imagegen",
+  "output": "src/assets/website/adventure-valley-v1.png",
+  "referenceImages": [
+    "src/assets/maps/premium/place-value-panic.webp",
+    "src/assets/maps/premium/potion-panic.webp",
+    "src/assets/maps/premium/lava-path.webp"
+  ],
+  "enemyOverlays": [
+    "src/assets/enemies/cohesive/goblin.webp",
+    "src/assets/enemies/cohesive/rhino.webp",
+    "src/assets/enemies/cohesive/cyclops-slime.webp"
+  ],
+  "date": "2026-09-29",
+  "prompt": "Use case: stylized-concept.\nAsset type: landscape background illustration for the SATs Legends adventure game website, around 2:1 wide.\nPrimary request: a rich, inviting adventure environment that precisely matches the painted cartoon art style of the supplied existing game levels.\nInput images: Image 1 (Place Value Panic) is the main style reference: thick clean outlines, lush layered foliage, sculpted stone ruins, painterly cel shading, turquoise waterfalls. Image 2 (Potion Panic) supplies warm gold lantern lighting and tree-root shapes. Image 3 (Lava Path) supplies distant volcanic adventure terrain.\nScene: a magical forest valley with a winding stone path leading from the foreground across an ancient arched stone bridge, over bright turquoise water and toward a ruined stone arch high on a sunlit hill. Giant trees and leafy branches frame the edges; blue glowing crystals nestle among roots. A few golden lanterns hang from branches. In the far right distance a small volcanic peak and thin amber lava falls suggest more lands to explore. No castle invented; use the reference's ancient stone temple ruins. A broad mossy stone ledge fills the lower right foreground for game character overlays.\nComposition: wide panoramic horizontal landscape with layered depth; main adventure route, bridge, waterfalls and ruins occupy center and right. Leftmost third is a quieter shadowed forest area suitable for readable gold website headings, but still visibly illustrated. Center-right must have clear open ground where existing hero and enemy sprite images will be placed in HTML. Trees, leaves and rocks at far edges richly frame the scene without covering the central route.\nLighting and mood: warm late afternoon sunlight through deep emerald foliage, luminous cyan water, amber lantern glow, adventurous and premium, lively and optimistic for ages 11–14.\nStyle: hand-painted 2D game background, bold dark contour lines and crisp chunky shapes exactly like Image 1. Saturated teal, emerald, sapphire, golden amber, strong foreground/midground/background separation. No photorealism or 3D rendering.\nConstraints: environment only, no characters or monsters (the website will overlay the real game sprites), no logos, no text, no numbers, no UI, no frames, no watermarks. Keep the wide composition and detailed adventure world."
+}

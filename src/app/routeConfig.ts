@@ -20,7 +20,7 @@ const parseNumericSegment = (value: string | undefined) => {
 
 export const parseRoute = (pathname: string): RouteState => {
   const normalized = normalizePath(pathname);
-  if (normalized === '/') return { screen: 'splash' };
+  if (normalized === '/' || normalized === '/play') return { screen: 'splash' };
 
   const segments = normalized.split('/').filter(Boolean);
   const [root, first, second] = segments;
@@ -69,7 +69,7 @@ export const buildRouteForScreen = (
 ): string => {
   switch (screen) {
     case 'splash':
-      return '/';
+      return '/play';
     case 'profile_setup':
       return '/avatar';
     case 'avatar_selection':

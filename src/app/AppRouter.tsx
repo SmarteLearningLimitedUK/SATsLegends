@@ -247,6 +247,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         }
         if (selectedLevel.isBoss && isBossEncounterGameType(selectedLevel.gameType)) {
           return renderFromRegistry('BossEncounterGame', {
+            ...sharedProps,
             gameType: selectedLevel.gameType,
             levelId: selectedLevel.id,
             avatarId: player.avatarId,
@@ -364,6 +365,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       case 'matrix_match':
         if (selectedLevel.isBoss && isBossEncounterGameType(selectedLevel.gameType)) {
           return renderFromRegistry('BossEncounterGame', {
+            ...sharedProps,
             gameType: selectedLevel.gameType,
             levelId: selectedLevel.id,
             avatarId: player.avatarId,
@@ -384,6 +386,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       default:
         if (selectedLevel.isBoss && isBossEncounterGameType(selectedLevel.gameType)) {
           return renderFromRegistry('BossEncounterGame', {
+            ...sharedProps,
             gameType: selectedLevel.gameType,
             levelId: selectedLevel.id,
             avatarId: player.avatarId,

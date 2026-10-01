@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { AnimatePresence, motion, useIsPresent, useReducedMotion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import CelebrationSplash from '../components/CelebrationSplash';
 import { GameScreenShell } from '../layout/ScreenPrimitives';
@@ -93,7 +93,7 @@ const buildQuestionStem = (round: FormulaRound) => {
   const targetText = describeTargetLabel(round.targetLabel);
   const leadIn = round.kind === 'reasoning' ? 'Find the missing' : 'Work out the';
 
-  return `The Monster Minds have scrambled the forge runes. The runes now show ${givenText}.\n${leadIn} ${targetText}, ${round.targetLabel}.`;
+  return `The forge shows ${givenText}.\n${leadIn} ${targetText}, ${round.targetLabel}.`;
 };
 
 const buildAreaRound = (mode: SolveMode, level: number): FormulaRound => {
@@ -259,46 +259,19 @@ const scoreToStars = (correct: number, rounds: number, lives: number) => {
 };
 
 const FormulaShapePanel: React.FC<{ round: FormulaRound }> = ({ round }) => {
-  const valueFor = (label: string) => round.given.find((item) => item.label === label)?.value ?? 0;
-
-  if (round.diagram === 'triangle') {
-    const base = valueFor('b');
-    const height = valueFor('h');
-
-    return (
-      <div className="rounded-[1.35rem] border border-cyan-200/14 bg-[linear-gradient(180deg,rgba(8,18,36,0.45),rgba(15,23,42,0.2))] p-3 shadow-[0_12px_22px_rgba(2,6,23,0.12)] md:p-4">
-        <div className="flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/72 md:text-[11px]">
-          <span>Shape blueprint</span>
-          <span>{round.title}</span>
-        </div>
-        <div className="mt-2 rounded-[0.95rem] border border-white/10 bg-black/14 px-3 py-2 text-sm font-semibold text-cyan-50/88">
-          {round.prompt}
-        </div>
-        <div className="relative mt-3 aspect-[1.3/1] overflow-hidden rounded-[1.4rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.16),rgba(15,23,42,0.06)_42%,rgba(8,15,30,0.28)_100%)] p-3">
+  return (
+    <div data-formula-playfield="true" className="flex h-full min-h-0 flex-col rounded-[1.35rem] border border-cyan-200/14 bg-[linear-gradient(180deg,rgba(8,18,36,0.45),rgba(15,23,42,0.2))] p-2 shadow-[0_12px_22px_rgba(2,6,23,0.12)]">
+      <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-2 gap-y-1 text-[11px] font-bold text-cyan-100">
+        <span>{round.title}</span>
+        <span data-formula-equation="true">{round.formula}</span>
+      </div>
+      <div className="relative mt-2 min-h-0 flex-1 overflow-hidden rounded-[1.1rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.16),rgba(15,23,42,0.06)_42%,rgba(8,15,30,0.28)_100%)]">
+        {round.diagram === 'triangle' ? (
           <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full">
             <polygon points="50,16 18,78 82,78" fill="rgba(56,189,248,0.16)" stroke="rgba(191,219,254,0.9)" strokeWidth="2.2" strokeLinejoin="round" strokeLinecap="round" />
             <line x1="50" y1="16" x2="50" y2="78" stroke="rgba(191,219,254,0.45)" strokeDasharray="3 3" strokeWidth="1.2" strokeLinecap="round" />
           </svg>
-        </div>
-      </div>
-    );
-  }
-
-  if (round.diagram === 'cuboid') {
-    const length = valueFor('l');
-    const width = valueFor('w');
-    const height = valueFor('h');
-
-    return (
-      <div className="rounded-[1.35rem] border border-cyan-200/14 bg-[linear-gradient(180deg,rgba(8,18,36,0.45),rgba(15,23,42,0.2))] p-3 shadow-[0_12px_22px_rgba(2,6,23,0.12)] md:p-4">
-        <div className="flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/72 md:text-[11px]">
-          <span>Shape blueprint</span>
-          <span>{round.title}</span>
-        </div>
-        <div className="mt-2 rounded-[0.95rem] border border-white/10 bg-black/14 px-3 py-2 text-sm font-semibold text-cyan-50/88">
-          {round.prompt}
-        </div>
-        <div className="relative mt-3 aspect-[1.25/1] overflow-hidden rounded-[1.4rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.16),rgba(15,23,42,0.06)_42%,rgba(8,15,30,0.28)_100%)] p-3">
+        ) : round.diagram === 'cuboid' ? (
           <svg viewBox="0 0 120 100" className="absolute inset-0 h-full w-full">
             <polygon points="28,24 70,24 92,40 50,40" fill="rgba(56,189,248,0.18)" stroke="rgba(191,219,254,0.9)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
             <polygon points="28,24 28,66 50,82 50,40" fill="rgba(14,165,233,0.12)" stroke="rgba(191,219,254,0.85)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
@@ -307,35 +280,19 @@ const FormulaShapePanel: React.FC<{ round: FormulaRound }> = ({ round }) => {
             <line x1="70" y1="24" x2="92" y2="40" stroke="rgba(191,219,254,0.45)" strokeWidth="1.2" strokeLinecap="round" />
             <line x1="50" y1="40" x2="50" y2="82" stroke="rgba(191,219,254,0.45)" strokeWidth="1.2" strokeLinecap="round" />
           </svg>
-        </div>
-      </div>
-    );
-  }
-
-  const length = valueFor('l');
-  const width = valueFor('w');
-
-  return (
-    <div className="rounded-[1.35rem] border border-cyan-200/14 bg-[linear-gradient(180deg,rgba(8,18,36,0.45),rgba(15,23,42,0.2))] p-3 shadow-[0_12px_22px_rgba(2,6,23,0.12)] md:p-4">
-      <div className="flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/72 md:text-[11px]">
-        <span>Shape blueprint</span>
-        <span>{round.title}</span>
-      </div>
-      <div className="mt-2 rounded-[0.95rem] border border-white/10 bg-black/14 px-3 py-2 text-sm font-semibold text-cyan-50/88">
-        {round.prompt}
-      </div>
-      <div className="relative mt-3 aspect-[1.25/1] overflow-hidden rounded-[1.4rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.16),rgba(15,23,42,0.06)_42%,rgba(8,15,30,0.28)_100%)] p-3">
-        <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full">
-          <rect x="18" y="18" width="64" height="64" rx="10" fill="rgba(56,189,248,0.16)" stroke="rgba(191,219,254,0.9)" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
-          <g opacity="0.24" stroke="rgba(255,255,255,0.85)" strokeWidth="0.8">
-            {Array.from({ length: 4 }).map((_, index) => (
-              <React.Fragment key={`grid-${index}`}>
-                <line x1={18 + ((index + 1) * 12)} y1="18" x2={18 + ((index + 1) * 12)} y2="82" />
-                <line x1="18" y1={18 + ((index + 1) * 12)} x2="82" y2={18 + ((index + 1) * 12)} />
-              </React.Fragment>
-            ))}
-          </g>
-        </svg>
+        ) : (
+          <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full">
+            <rect x="18" y="18" width="64" height="64" rx="10" fill="rgba(56,189,248,0.16)" stroke="rgba(191,219,254,0.9)" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+            <g opacity="0.24" stroke="rgba(255,255,255,0.85)" strokeWidth="0.8">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <React.Fragment key={`grid-${index}`}>
+                  <line x1={18 + ((index + 1) * 12)} y1="18" x2={18 + ((index + 1) * 12)} y2="82" />
+                  <line x1="18" y1={18 + ((index + 1) * 12)} x2="82" y2={18 + ((index + 1) * 12)} />
+                </React.Fragment>
+              ))}
+            </g>
+          </svg>
+        )}
       </div>
     </div>
   );
@@ -348,9 +305,13 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
   onVictory,
   onGameOver,
   onBack: _onBack,
-  sessionState,
+  sessionState: _sessionState,
   sessionEvents,
 }) => {
+  const reducedMotion = useReducedMotion();
+  const isPresent = useIsPresent();
+  const presentRef = useRef(isPresent);
+  presentRef.current = isPresent;
   const resolvedLevel = useMemo(() => Math.max(1, Math.min(5, levelId || 1)), [levelId]);
   const totalRounds = useMemo(() => Math.min(10, 6 + Math.floor(resolvedLevel / 2)), [resolvedLevel]);
 
@@ -363,20 +324,49 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
   const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
   const [isFinished, setIsFinished] = useState(false);
   const [showCelebrationSplash, setShowCelebrationSplash] = useState(false);
+  const [compactViewport, setCompactViewport] = useState(() => (
+    typeof window !== 'undefined' && window.matchMedia('(min-width: 700px) and (max-height: 720px)').matches
+  ));
+
+  useEffect(() => {
+    const query = window.matchMedia('(min-width: 700px) and (max-height: 720px)');
+    const update = () => setCompactViewport(query.matches);
+    update();
+    query.addEventListener('change', update);
+    return () => query.removeEventListener('change', update);
+  }, []);
 
   const timersRef = useRef<number[]>([]);
+  const answerLockRef = useRef(false);
+  const reportedResultRef = useRef(false);
+  const onVictoryRef = useRef(onVictory);
+  onVictoryRef.current = onVictory;
+  const onGameOverRef = useRef(onGameOver);
+  onGameOverRef.current = onGameOver;
+  const sessionEventsRef = useRef(sessionEvents);
+  sessionEventsRef.current = sessionEvents;
   const scoreRef = useRef(0);
   scoreRef.current = XP;
 
-  const clearTimers = () => {
+  const clearTimers = useCallback(() => {
     timersRef.current.forEach((id) => window.clearTimeout(id));
     timersRef.current = [];
-  };
+  }, []);
 
-  useEffect(() => () => clearTimers(), []);
+  useEffect(() => () => clearTimers(), [clearTimers]);
+
+  useLayoutEffect(() => {
+    if (!isPresent) {
+      answerLockRef.current = true;
+      clearTimers();
+    }
+  }, [clearTimers, isPresent]);
 
   useEffect(() => {
     clearTimers();
+    answerLockRef.current = false;
+    reportedResultRef.current = false;
+    scoreRef.current = 0;
     setRoundNumber(1);
     setRound(createRound(resolvedLevel));
     setScore(0);
@@ -386,40 +376,51 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
     setSelectedChoice(null);
     setIsFinished(false);
     setShowCelebrationSplash(false);
-  }, [resolvedLevel]);
+  }, [clearTimers, resolvedLevel]);
 
-  const advanceRound = useCallback(() => {
+  const advanceRound = useCallback((nextScore: number, nextCorrectCount: number, nextLives: number) => {
     if (roundNumber >= totalRounds) {
       setIsFinished(true);
-      const stars = scoreToStars(correctCount + 1, totalRounds, lives);
-      confetti({
-        particleCount: 110,
-        spread: 70,
-        origin: { y: 0.62 },
-        colors: ['#fcd34d', '#67e8f9', '#ffffff'],
-      });
-      sessionEvents?.onGameComplete?.({ score: XP, stars });
-      onVictory(stars, XP);
+      const timeoutId = window.setTimeout(() => {
+        if (!presentRef.current || reportedResultRef.current) return;
+        reportedResultRef.current = true;
+        const stars = scoreToStars(nextCorrectCount, totalRounds, nextLives);
+        if (!reducedMotion) {
+          confetti({
+            particleCount: 110,
+            spread: 70,
+            origin: { y: 0.62 },
+            colors: ['#fcd34d', '#67e8f9', '#ffffff'],
+          });
+        }
+        sessionEventsRef.current?.onGameComplete?.({ score: nextScore, stars });
+        onVictoryRef.current(stars, nextScore);
+      }, 520);
+      timersRef.current.push(timeoutId);
       return;
     }
 
     const timeoutId = window.setTimeout(() => {
+      if (!presentRef.current) return;
       setShowCelebrationSplash(false);
       setRoundNumber((prev) => prev + 1);
       setRound(createRound(resolvedLevel));
       setFeedback(null);
       setSelectedChoice(null);
+      answerLockRef.current = false;
     }, 520);
     timersRef.current.push(timeoutId);
-  }, [XP, correctCount, lives, onVictory, roundNumber, resolvedLevel, sessionEvents, totalRounds]);
+  }, [reducedMotion, roundNumber, resolvedLevel, totalRounds]);
 
   const handleAnswer = (choice: number) => {
-    if (feedback || isFinished) return;
+    if (!presentRef.current || answerLockRef.current || feedback || isFinished) return;
+    answerLockRef.current = true;
     setSelectedChoice(choice);
 
     if (choice === round.answer) {
       const gained = 140 + (resolvedLevel * 12);
       const updatedScore = XP + gained;
+      scoreRef.current = updatedScore;
       setScore(updatedScore);
       setCorrectCount((prev) => prev + 1);
       setShowCelebrationSplash(true);
@@ -431,7 +432,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
       triggerHaptic('success');
       sessionEvents?.onCorrectAnswer?.({ score: updatedScore, metadata: { formula: round.title } });
       sessionEvents?.onPuzzleComplete?.({ score: updatedScore });
-      advanceRound();
+      advanceRound(updatedScore, correctCount + 1, lives);
       return;
     }
 
@@ -448,16 +449,20 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
     if (nextLives <= 0) {
       setIsFinished(true);
       const timeoutId = window.setTimeout(() => {
-        sessionEvents?.onGameFailed?.({ score: XP, reason: 'lives' });
-        onGameOver(scoreRef.current);
+        if (!presentRef.current || reportedResultRef.current) return;
+        reportedResultRef.current = true;
+        sessionEventsRef.current?.onGameFailed?.({ score: scoreRef.current, reason: 'lives' });
+        onGameOverRef.current(scoreRef.current);
       }, 620);
       timersRef.current.push(timeoutId);
       return;
     }
 
     const timeoutId = window.setTimeout(() => {
+      if (!presentRef.current) return;
       setFeedback(null);
       setSelectedChoice(null);
+      answerLockRef.current = false;
     }, 520);
     timersRef.current.push(timeoutId);
   };
@@ -470,35 +475,43 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
       overlayDisabled
     >
 
-      <div className={`relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+4.75rem)] md:pt-[calc(env(safe-area-inset-top)+5rem)]' : 'pt-[calc(env(safe-area-inset-top)+2.5rem)]'}`}>
-        <div className="relative flex w-full max-w-6xl min-h-0 flex-1 flex-col overflow-hidden rounded-[1.7rem] p-2 md:rounded-[2rem] md:p-3">
+      <div data-formula-game="true" data-formula-tier={resolvedLevel} data-formula-question={roundNumber} data-formula-state={isFinished ? 'finished' : feedback?.tone || 'idle'} className={`relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 ${compactViewport ? 'pb-0' : 'pb-[calc(env(safe-area-inset-bottom)+2.1rem)]'} ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+4.75rem)] md:pt-[calc(env(safe-area-inset-top)+5rem)]' : 'pt-[calc(env(safe-area-inset-top)+2.5rem)]'}`}>
+        <div className={`relative flex w-full max-w-6xl min-h-0 flex-1 flex-col overflow-hidden rounded-[1.7rem] p-2 md:rounded-[2rem] ${compactViewport ? '' : 'md:p-3'}`}>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.12),rgba(15,23,42,0.02)_36%,rgba(15,23,42,0.08)_100%)]" />
 
-          <div className="relative z-10 flex h-full w-full min-h-0 flex-col px-2 pb-2 pt-2 md:px-4 md:pb-4">
-            <div className="flex justify-center">
+          <div className={`relative z-10 flex h-full w-full min-h-0 flex-col px-2 pt-2 ${compactViewport ? 'pb-0' : 'pb-2 md:px-4 md:pb-4'}`}>
+            <div className="flex shrink-0 justify-center">
               <GameQuestionCard
                 title="Formula Forge"
                 subtitle={`Question ${roundNumber} of ${totalRounds}`}
+                style={{ position: 'relative', top: 'auto', left: 'auto', right: 'auto', width: '100%', transform: 'none' }}
                 className="max-w-[860px] border border-cyan-200/22 bg-[linear-gradient(180deg,rgba(8,18,36,0.42),rgba(8,18,36,0.18))] shadow-[0_12px_26px_rgba(2,6,23,0.12)]"
               >
                 {formatFantasyPrompt(buildQuestionStem(round))}
               </GameQuestionCard>
             </div>
 
-            <div className="mt-3 grid min-h-0 flex-1 grid-rows-[auto_minmax(0,1fr)_auto] gap-2 md:gap-3">
-              <FormulaShapePanel round={round} />
+            <div className="mt-2 flex min-h-0 flex-1 flex-col gap-2">
+              <div className="min-h-0 flex-1">
+                <FormulaShapePanel round={round} />
+              </div>
 
-              <div className="answer-choice-surface min-h-0 rounded-[1.25rem] border border-white/12 bg-[linear-gradient(180deg,rgba(30,64,175,0.08),rgba(15,23,42,0.46))] p-3 shadow-[0_14px_26px_rgba(2,6,23,0.12)] md:p-4">
-                <div className="text-[11px] font-black uppercase tracking-[0.16em] text-amber-100/85 md:text-xs">Restore the correct value for {round.targetLabel}</div>
-                <div className="mt-2.5 grid grid-cols-2 gap-1.5 md:gap-2.5">
+              <div data-formula-hint="true" className="shrink-0 rounded-[1rem] border border-white/10 bg-black/10 px-2 py-1 text-[11px] font-semibold text-cyan-100/80">
+                Rune hint: {round.hint}
+              </div>
+
+              <div data-formula-answers="true" className="answer-choice-surface shrink-0 rounded-[1.25rem] border border-white/12 bg-[linear-gradient(180deg,rgba(30,64,175,0.08),rgba(15,23,42,0.46))] p-2 shadow-[0_14px_26px_rgba(2,6,23,0.12)]">
+                <div className="text-[11px] font-bold text-amber-100/85">Choose {round.targetLabel}</div>
+                <div className="mt-1.5 grid grid-cols-2 gap-2">
                   {round.options.map((option) => (
                     <motion.button
                       key={`${round.id}-${option}`}
                       type="button"
+                      data-formula-answer={option}
                       onClick={() => handleAnswer(option)}
                       disabled={Boolean(feedback) || isFinished}
-                      whileTap={{ scale: 0.96 }}
-                      animate={selectedChoice === option ? (feedback?.tone === 'success' ? { scale: [1, 1.1, 0.98, 1.05, 1], rotate: [0, -2, 2, 0] } : { scale: [1, 1.04, 1] }) : { scale: 1 }}
+                      whileTap={reducedMotion ? undefined : { scale: 0.96 }}
+                      animate={!reducedMotion && selectedChoice === option ? (feedback?.tone === 'success' ? { scale: [1, 1.1, 0.98, 1.05, 1], rotate: [0, -2, 2, 0] } : { scale: [1, 1.04, 1] }) : { scale: 1 }}
                       className={`min-h-[2.8rem] rounded-[1.05rem] px-2 py-1.5 text-base font-black shadow-[0_12px_20px_rgba(2,6,23,0.2)] disabled:opacity-60 md:min-h-[3.3rem] md:text-2xl ${
                         selectedChoice === option
                           ? feedback?.tone === 'success'
@@ -513,9 +526,6 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
                 </div>
               </div>
 
-                <div className="rounded-[1rem] border border-white/10 bg-black/10 px-3 py-1.5 text-[11px] font-semibold text-cyan-100/80">
-                  Rune hint: {round.hint}
-                </div>
             </div>
           </div>
 

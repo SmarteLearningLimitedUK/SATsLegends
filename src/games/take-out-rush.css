@@ -4,7 +4,7 @@
 .rush-local-clock { position: relative; display: flex; justify-content: space-between; overflow: hidden; padding: 7px 12px; background: #0d2d32; border-radius: 10px; font-size: 12px; }
 .rush-local-clock > div { position: absolute; bottom: 0; left: 0; height: 3px; }
 .rush-kitchen { position: relative; flex: 1 1 auto; min-height: 170px; overflow: hidden; isolation: isolate; border: 2px solid #f4cd8270; border-radius: 18px; background: linear-gradient(180deg, #04272810, #082b2960); }
-.rush-kitchen-art { position: absolute; z-index: -2; inset: 0; height: 100%; width: 100%; object-fit: cover; object-position: 50% 54%; }
+.rush-kitchen-art { position: absolute; z-index: -2; inset: 0; height: 100%; width: 100%; background: #122c35; }
 .rush-kitchen::after { content: ''; position: absolute; z-index: -1; inset: 0; background: linear-gradient(#082e332b, #082e3310 55%, #05233055); pointer-events: none; }
 .rush-order-rail { position: absolute; z-index: 3; top: 8px; left: 8px; right: 8px; display: flex; justify-content: space-between; gap: 8px; padding: 6px 10px; background: #0a3437eb; border-bottom: 3px solid #dba85c; color: #fff0bb; font-size: 10px; }
 .rush-order-rail strong { color: #b9f1ba; }
@@ -63,3 +63,8 @@
   .rush-food-shelf img { width: 42px; height: 42px; }
   .rush-feedback { font-size: 11px; }
 }
+
+.rush-layout :is(.rush-local-clock, .rush-order-rail, .rush-customer-quip, .rush-tray-label, .rush-tray-items button, .rush-empty-tray, .rush-feedback) { font-size: var(--legend-label-size, 14px); }
+.rush-tray-label strong, .rush-actions button { font-size: var(--legend-body-size, 16px); }
+.rush-food-shelf strong { font-size: var(--legend-question-size, 18px); }
+.rush-tray-items button { min-height: max(44px, calc(44px / var(--game-stage-scale, 1))); }

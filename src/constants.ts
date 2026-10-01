@@ -201,7 +201,7 @@ export const ISLANDS: IslandData[] = [
   {
     id: 8,
     name: 'Core of Calculation',
-    category: 'Boss Island',
+    category: 'SATs Mock Adventures',
     isLocked: false,
     color: 'bg-[#2C2A4A]',
     themeName: 'Core of Calculation',

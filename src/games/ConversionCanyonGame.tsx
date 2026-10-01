@@ -13,6 +13,7 @@ import { useTrimmedImageSource, useTrimmedImageSources } from '../utils/trimTran
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import './game-refinements.css';
+import '../components/game-ui/arcade-amendments.css';
 
 interface ConversionCanyonGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -123,6 +124,8 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
   const [placedIds, setPlacedIds] = useState<string[]>([]);
   const [XP, setScore] = useState(0);
   const [successPulse, setSuccessPulse] = useState(false);
+  const [impact, setImpact] = useState(0);
+  const [broken, setBroken] = useState(false);
   const [feedback, setFeedback] = useState<null | { tone: 'success' | 'error'; text: string }>(null);
 
   const rootRef = useRef<HTMLDivElement>(null);
@@ -147,6 +150,8 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
     setRoundIndex(0);
     setRound(buildRound(levelId, 0));
     setPlacedIds([]);
+    setBroken(false);
+    setImpact(0);
     setScore(0);
     setSuccessPulse(false);
     setFeedback(null);
@@ -176,12 +181,15 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
     if (!presentRef.current || resolvingRef.current || sessionState?.paused || placedIdsRef.current.includes(id) || !tokenMap.has(id)) return;
     placedIdsRef.current = [...placedIdsRef.current, id];
     setPlacedIds(placedIdsRef.current);
+    setImpact((value) => value + 1);
     setFeedback(null);
   };
 
   const removePlacedToken = (id: string) => {
     if (!presentRef.current || resolvingRef.current || sessionState?.paused) return;
     placedIdsRef.current = placedIdsRef.current.filter((tokenId) => tokenId !== id);
+    const remaining = placedIdsRef.current.reduce((sum, tokenId) => sum + (tokenMap.get(tokenId)?.grams ?? 0), 0);
+    if (remaining <= round.targetGrams) setBroken(false);
     setPlacedIds(placedIdsRef.current);
     setFeedback(null);
   };
@@ -190,6 +198,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
     if (!presentRef.current || resolvingRef.current || sessionState?.paused) return;
     placedIdsRef.current = [];
     setPlacedIds([]);
+    setBroken(false);
     setSuccessPulse(false);
     setFeedback(null);
   };
@@ -198,10 +207,16 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
     if (!presentRef.current || resolvingRef.current || sessionState?.paused) return;
     const submittedGrams = placedIdsRef.current.reduce((total, id) => total + (tokenMap.get(id)?.grams ?? 0), 0);
     if (submittedGrams !== round.targetGrams) {
-      setFeedback({ tone: 'error', text: 'Still unbalanced. Adjust the weights and try again.' });
+      const excess = submittedGrams - round.targetGrams;
+      setBroken(excess > 0);
+      setImpact((value) => value + 1);
+      setFeedback({ tone: 'error', text: excess > 0
+        ? `Scale snapped! Over by ${toGramLabel(excess)} (${toKgLabel(excess)}). Remove excess to repair.`
+        : `${toGramLabel(-excess)} (${toKgLabel(-excess)}) short. Add more weight.` });
       return;
     }
 
+    setBroken(false);
     setFeedback({ tone: 'success', text: 'Perfect balance! Shipment restored.' });
     setSuccessPulse(true);
     resolvingRef.current = true;
@@ -231,7 +246,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
   };
 
   return (
-    <div ref={rootRef} className="conversion-game relative h-full w-full overflow-hidden bg-[#94b8d2]" data-conversion-tier={clampStage(levelId) + 1}>
+    <div ref={rootRef} className="conversion-game arcade-conversion relative h-full w-full overflow-hidden bg-[#94b8d2]" data-conversion-tier={clampStage(levelId) + 1}>
       <img
         src={conversionCanyonBackground}
         alt=""
@@ -248,11 +263,11 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
         <div className="flex min-h-0 flex-1 flex-col items-center justify-start gap-3 px-4 pt-[calc(env(safe-area-inset-top)+0.6rem)]">
           <GameQuestionCard
             title="Conversion Canyon"
-            subtitle="Use the weights to match the target exactly."
+            subtitle={feedback ? undefined : "Tap or drop weights onto the tray."}
             className="shrink-0"
             style={{ position: 'relative', top: 0, width: '100%', transform: 'none' }}
           >
-            Rebuild the shipment so it totals <strong>{toKgLabel(round.targetGrams)}</strong>.
+            {feedback ? <span role="status" aria-live="polite">{feedback.text}</span> : <>Match <strong>{toKgLabel(round.targetGrams)}</strong> exactly.</>}
           </GameQuestionCard>
 
           <motion.div
@@ -261,14 +276,22 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
             data-conversion-playfield="true"
             className="relative flex w-full max-w-[35rem] min-h-0 flex-1 items-center justify-center p-1 md:max-w-[40rem]"
           >
-            <div className="conversion-scale-frame" data-conversion-scale>
-              <img
+            <div className="conversion-scale-frame" data-conversion-scale data-conversion-broken={broken} data-conversion-target={round.targetGrams}>
+              <motion.img
+                  key={`scale-${impact}-${broken}`}
+                  initial={reducedMotion ? false : { rotate: 0, y: 0, x: 0 }}
+                  animate={reducedMotion ? { rotate: broken ? 12 : 0, y: broken ? 7 : 0 } : broken
+                    ? { rotate: [0, -5, 4, 12], y: [0, 1, -2, 7] }
+                    : currentGrams > round.targetGrams ? { rotate: [0, -2, 1, -1, 0], y: [0, 3, 1, 3, 0] }
+                    : impact > 0 ? { rotate: [0, -2, 2, -1, 0], y: [0, 3, -1, 0] } : { rotate: 0, y: 0 }}
+                  transition={{ duration: .48, repeat: !reducedMotion && !broken && currentGrams > round.targetGrams ? Infinity : 0 }}
                   src={trimmedScaleImage}
                   alt=""
                   aria-hidden="true"
                   draggable={false}
-                  className="pointer-events-none"
+                  className={`pointer-events-none conversion-scale-art ${broken ? 'is-broken' : currentGrams > round.targetGrams ? 'is-straining' : impact > 0 ? 'is-loading' : ''}`}
                 />
+              {broken && <><svg className="conversion-crack" viewBox="0 0 100 150" aria-hidden="true"><path d="M65 0 L38 35 L62 54 L30 87 L51 102 L23 150" /></svg></>}
               <div className="conversion-load-meter" data-conversion-load={currentGrams}>
                 <span>Load meter</span><strong>{toGramLabel(currentGrams)}</strong>
               </div>
@@ -313,7 +336,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
                     }}
                     disabled={isPlaced || successPulse || Boolean(sessionState?.paused)}
                     aria-label={`Add ${getMeasurementDisplay(token.grams).primary} weight`}
-                    data-conversion-token={token.id}
+                    data-conversion-token={token.id} data-token-grams={token.grams}
                     className={`flex h-[4.25rem] w-full flex-col items-center justify-center rounded-xl px-1 text-white shadow-[0_10px_16px_rgba(0,0,0,0.28)] ring-2 ring-white/10 touch-none ${
                       isPlaced
                         ? 'bg-slate-900/30 opacity-40'
@@ -331,17 +354,6 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
             </div>
 
             <div className="game-submit-dock mt-2 flex flex-col items-center gap-2 px-1">
-              {feedback ? (
-                <div
-                  className={`w-full rounded-[1.1rem] border px-3 py-2 text-center text-[11px] font-black uppercase tracking-[0.12em] shadow-[0_10px_20px_rgba(2,6,23,0.2)] ${
-                    feedback.tone === 'success'
-                      ? 'border-emerald-200/60 bg-emerald-400/20 text-emerald-100'
-                      : 'border-rose-200/60 bg-rose-400/15 text-rose-100'
-                  }`}
-                >
-                  {feedback.text}
-                </div>
-              ) : null}
               <div className="grid w-full grid-cols-2 gap-2">
                 <button
                   type="button"
@@ -349,7 +361,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
                   disabled={successPulse || Boolean(sessionState?.paused)}
                   className="ui-button-secondary w-full rounded-[1.15rem] py-2.5 text-[0.78rem] font-black uppercase tracking-[0.14em]"
                 >
-                  Reset Weights
+                  {broken ? 'Repair & reset' : 'Reset weights'}
                 </button>
                 <button
                   type="button"

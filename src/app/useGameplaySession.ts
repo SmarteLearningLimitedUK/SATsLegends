@@ -3,9 +3,11 @@ import { GAME_HUD_MUTE_EVENT, GAME_HUD_MUTE_SYNC_EVENT } from '../gameHudEvents'
 import { GAME_AUDIO_STORAGE_KEY } from '../gameHudEvents';
 import { GameScreen, LevelData } from '../types';
 import { LEVEL_TIMERS_DISABLED } from './testingFlags';
+import { isBossEncounterGameType } from '../games/bossEncounterTypes';
 
 export const GLOBAL_MINIGAME_HUD_DURATION_SECONDS = 90;
 export const GLOBAL_MINIGAME_LIVES = 3;
+export const getSessionDurationSeconds = (level: LevelData | null) => isBossEncounterGameType(level?.gameType) ? level?.gameType === 'crystal_core' ? 1800 : 2400 : GLOBAL_MINIGAME_HUD_DURATION_SECONDS;
 
 interface GameplaySessionArgs {
   screen: GameScreen;
@@ -45,22 +47,33 @@ export const useGameplaySession = ({
     screen === 'gameplay'
     && (
       Boolean(selectedLevel?.isPractice)
+      || isBossEncounterGameType(selectedLevel?.gameType)
       || selectedLevel?.gameType === 'mean_machine'
       || selectedLevel?.gameType === 'potion_pour'
     );
   const consumeLife = useCallback((amount = 1) => {
-    if (amount <= 0 || selectedLevel?.isPractice) return;
+    if (amount <= 0 || selectedLevel?.isPractice || isBossEncounterGameType(selectedLevel?.gameType)) return;
     setGlobalMiniGameLives((previous) => Math.max(0, previous - amount));
-  }, [selectedLevel?.isPractice]);
+  }, [selectedLevel?.isPractice, selectedLevel?.gameType]);
 
   useEffect(() => {
     if (screen !== 'gameplay' || !selectedLevel) return undefined;
-    setGlobalMiniGameHudTimeLeft(GLOBAL_MINIGAME_HUD_DURATION_SECONDS);
+    setGlobalMiniGameHudTimeLeft(getSessionDurationSeconds(selectedLevel));
     setGlobalMiniGameLives(GLOBAL_MINIGAME_LIVES);
     lifeLock.current = false;
     timeLock.current = false;
     return undefined;
   }, [screen, selectedLevel?.id, selectedLevel?.blueprintKey, selectedLevel?.isPractice, restartKey]);
+
+  useEffect(() => {
+    if (screen !== 'gameplay' || !isBossEncounterGameType(selectedLevel?.gameType)) return;
+    const update = (event: Event) => {
+      const clock = (event as CustomEvent<{ timeLeft: number }>).detail;
+      if (Number.isFinite(clock?.timeLeft)) setGlobalMiniGameHudTimeLeft(clock.timeLeft);
+    };
+    window.addEventListener('sats-mock-clock', update);
+    return () => window.removeEventListener('sats-mock-clock', update);
+  }, [screen, selectedLevel?.gameType]);
 
   useEffect(() => {
     if (screen !== 'gameplay' || !selectedLevel || paused || isUntimedGameplay || LEVEL_TIMERS_DISABLED) return undefined;

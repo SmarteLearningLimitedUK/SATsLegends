@@ -15,13 +15,8 @@ export interface GameMeta {
 }
 
 const makeBossRules = (title: string, summary: string, closingLine: string): GameRuleSet => ({
-  title,
-  summary,
-  bullets: [
-    'Each correct answer damages the boss health bar.',
-    'You need at least 8 correct answers out of 10 to win.',
-    closingLine,
-  ],
+  title, summary,
+  bullets: ['Save each answer to charge a mission crystal; use Later and the mission list to revisit questions.', 'Complete the full timed run. Errors do not remove lives or end it early.', closingLine],
 });
 
 export const GAME_META: Record<MiniGameType, GameMeta> = {
@@ -80,12 +75,12 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
   },
   matrix_match: {
     label: 'SATs Paper 3',
-    focus: 'Reasoning paper boss duel',
+    focus: 'Mixed reasoning mock adventure',
     mode: 'boss',
     rules: makeBossRules(
       'SATs Paper 3: Reasoning',
-      'Enter the final reasoning paper and complete each pattern before the Oracle Slime overwhelms the forest.',
-      'Look for colour, size, number and rotation rules before you commit.'
+      'Explore mixed KS2 maths missions in a 40-minute, 35-mark adventure.',
+      'Review solutions after finishing and return to the recommended practice games.'
     ),
   },
   take_out_rush: {
@@ -116,12 +111,12 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
   },
   crystal_core: {
     label: 'SATs Paper 1',
-    focus: 'Arithmetic paper boss duel',
+    focus: 'Timed arithmetic mock adventure',
     mode: 'boss',
     rules: makeBossRules(
       'SATs Paper 1: Arithmetic',
-      'Stabilise the arithmetic paper by proving calculation fluency under pressure.',
-      'Wrong answers feed the unstable core, so accuracy matters more than rushing.'
+      'Charge the arithmetic reactor with a 30-minute, 40-mark calculation adventure.',
+      'Use paper for formal written methods and no calculator; answers appear after the run.'
     ),
   },
   prime_pop: {
@@ -308,12 +303,12 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
   },
   mirror_gate: {
     label: 'SATs Paper 2',
-    focus: 'Reasoning paper boss duel',
+    focus: 'Mixed reasoning mock adventure',
     mode: 'boss',
     rules: makeBossRules(
       'SATs Paper 2: Reasoning',
-      'Survive the reasoning paper by mastering transformations, shape properties and coordinate thinking.',
-      'Paper errors give the warden control of the gate, so read each move carefully.'
+      'Unlock the mirror gate with a 40-minute, 35-mark mix of all nine KS2 maths strands.',
+      'Save, skip and revisit missions before the clock ends; review your methods afterwards.'
     ),
   },
   scale_safari: {

@@ -1,0 +1,48 @@
+.family-main { padding-top: 50px; padding-bottom: 70px; min-height: 60vh; }
+.family-main > .website-text-link { margin-bottom: 22px; }
+.family-main h1 { color: #f0eef7; font-size: clamp(32px,4vw,52px); line-height: 1.12; overflow-wrap: anywhere; }
+.family-main h1 span { color: #fde161; }
+.family-main h2 { font-size: 29px; color: #f0eef7; line-height: 1.2; }
+.family-main h3 { font-size: 22px; margin-top: 22px; color: #fde161; }
+.family-main p { color: #c5beeb; }
+.family-main .website-eyebrow { color: #fde161; }
+.family-notice,.family-error { margin-block: 20px; padding: 16px 18px; border-radius: 12px; font-size: 14px; line-height: 1.6; }
+.family-notice { color: #e6dfff !important; background: #451ccb40; border: 1px solid #b6afe355; }
+.family-error { color: #ffdfda !important; background: #7f203250; border: 1px solid #ff958e80; }
+.family-notice button { color: #fde161; text-decoration: underline; margin-left: 8px; }
+.family-checkbox { display: flex !important; flex-direction: row !important; align-items: flex-start; gap: 12px; color: #c5beeb; font-size: 13px !important; line-height: 1.5; font-weight: 400 !important; }
+.family-checkbox input { width: 18px !important; height: 18px !important; min-height: 18px !important; padding: 0 !important; box-shadow: none !important; flex: 0 0 18px; margin: 2px 0 0 !important; accent-color: #fde161; }
+.family-plans,.family-dashboard-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; margin-block: 30px; }
+.family-plan,.family-panel { padding: 32px; border-radius: 20px; border: 1px solid #b6afe350; background: linear-gradient(135deg,#241653ed,#110b34f5); box-shadow: 0 12px 40px #06042060; }
+.family-plan-year { border-color: #fde161b3; box-shadow: 0 0 35px #fde16115,0 12px 40px #06042060; }
+.family-plan > p,.family-panel > p { margin-top: 15px; }
+.family-plan .family-price { font-size: 55px; font-weight: 700; color: #fde161; margin-block: 22px 6px; line-height: 1.2; }
+.family-price span { font-size: 15px; font-weight: 400; color: #c5beeb; }
+.family-plan ul { list-style: none; padding: 0; margin-block: 27px; display: grid; gap: 13px; }
+.family-plan li { display: flex; gap: 11px; font-size: 14px; color: #e0dcf6; }
+.family-plan li svg { color: #fde161; flex-shrink: 0; }
+.family-plan .website-button { width: 100%; }
+.family-small { font-size: 12px !important; line-height: 1.7; margin-top: 18px; }
+.family-small > svg { display: inline; vertical-align: middle; margin-right: 6px; }
+.family-coming-soon,.family-email-panel { display: flex; align-items: flex-start; gap: 24px; margin-block: 35px; }
+.family-coming-soon { padding: 28px 0; border-top: 1px solid #b6afe345; border-bottom: 1px solid #b6afe345; }
+.family-coming-soon > svg,.family-email-panel > svg { color: #fde161; flex-shrink: 0; }
+.family-coming-soon > div { flex: 1; }
+.family-coming-soon > span { font-size: 12px; padding: 8px 13px; border-radius: 20px; background: #451ccb70; color: #ddd6ff; white-space: nowrap; }
+.family-coming-soon p,.family-email-panel p { margin-top: 12px; }
+.family-email-panel .family-checkbox { margin-top: 20px; }
+.family-email-panel strong { overflow-wrap: anywhere; }
+.family-actions { display: flex; flex-wrap: wrap; gap: 13px; margin-top: 23px; }
+.family-panel > .website-button { margin-top: 22px; }
+.family-form { margin-top: 20px; display: grid; gap: 14px; }
+.family-form label { display: grid; gap: 9px; color: #f0eef7; font-size: 14px; }
+.family-form input { padding: 13px; border: 1px solid #b6afe360; background: #0b082e; border-radius: 8px; color: #f0eef7; width: 100%; }
+.family-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 15px; margin-block: 28px; }
+.family-stats > div { padding: 24px; background: #241653ea; border: 1px solid #b6afe340; border-radius: 14px; }
+.family-stats strong { display: block; color: #fde161; font-size: 35px; }
+.family-stats span { color: #c5beeb; font-size: 13px; }
+.legends-website button:disabled { opacity: .5; cursor: not-allowed; }
+.game-save-status { position: fixed; bottom: 12px; left: 12px; z-index: 110; max-width: min(380px,70vw); border: 1px solid #b6afe380; background: #160e40f5; padding: 8px 12px; border-radius: 9px; font-size: 11px; color: #f0eef7; }
+.game-save-status a,.game-save-status button { color: #fde161; text-decoration: underline; margin-left: 8px; }
+@media(max-width:800px) { .family-plan,.family-panel { padding: 24px; }.family-stats { grid-template-columns: repeat(2,1fr); } }
+@media(max-width:580px) { .family-main { padding-top: 30px; }.family-plans,.family-dashboard-grid { grid-template-columns: 1fr; gap: 18px; }.family-plan .family-price { font-size: 46px; }.family-coming-soon { flex-wrap: wrap; gap: 15px; }.family-coming-soon > div { flex-basis: 75%; }.family-email-panel { gap: 15px; }.family-email-panel > svg { width: 22px; }.family-stats > div { padding: 20px; }.family-actions .website-button { width: 100%; } }

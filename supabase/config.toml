@@ -1,0 +1,13 @@
+project_id = "sats-legends"
+
+[functions.billing]
+# JWT is verified explicitly with Auth.getUser for every authenticated action.
+verify_jwt = false
+
+[functions.stripe-webhook]
+# Stripe signature validation replaces JWT authentication here.
+verify_jwt = false
+
+[functions.send-parent-reports]
+# Private scheduler secret is verified before touching data.
+verify_jwt = false

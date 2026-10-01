@@ -1,4 +1,6 @@
-﻿import React, { useEffect, useMemo, useState } from 'react';
+﻿import { useTrimmedImageSource } from '../utils/trimTransparentImage';
+import ArcadeJourney from '../components/game-ui/ArcadeJourney';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useLayoutEffect, useRef } from 'react';
 import { AnimatePresence, motion, useIsPresent, useReducedMotion } from 'motion/react';
 import confetti from 'canvas-confetti';
@@ -152,6 +154,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
     || CHARACTER_AVATARS[0]
   ), [avatarId]);
 
+  const heroImage = useTrimmedImageSource(playerAvatar.image);
   const targetScore = 950 + levelId * 100;
 
   const cells: GridCell[] = useMemo(() => {
@@ -299,8 +302,10 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
           </GameQuestionCard>
         </div>
 
-        <div className="relative flex min-h-0 flex-1 items-center justify-center">
-          <div className="relative flex aspect-square w-full max-w-[26.5rem] flex-col rounded-[1.5rem] border border-cyan-100/26 bg-[linear-gradient(180deg,rgba(8,22,52,0.84),rgba(7,18,43,0.92))] p-3 shadow-[0_18px_36px_rgba(2,6,23,0.4)]" role="group" aria-label="Coordinate grid">
+        <div className="relative flex min-h-0 flex-1 flex-col items-center justify-center gap-2">
+          <div className="coordinates-expedition"><ArcadeJourney kind="expedition" completed={roundIndex + (feedback === 'correct' ? 1 : 0)} total={7} avatarId={avatarId} danger={feedback === 'incorrect'} /></div>
+          <div className="coordinates-grid-board relative flex aspect-square w-full max-w-[26.5rem] flex-col rounded-[1.5rem] border border-cyan-100/26 bg-[linear-gradient(180deg,rgba(8,22,52,0.84),rgba(7,18,43,0.92))] p-3 shadow-[0_18px_36px_rgba(2,6,23,0.4)]" role="group" aria-label="Coordinate grid">
+            <img className="coordinates-hero-portrait" src={heroImage} alt={playerAvatar.name} />
             <div className="mb-2 flex items-end gap-2 text-[10px] font-black text-cyan-100">
               <div className="w-8 shrink-0" />
               <div className="min-w-0 flex-1">
@@ -332,6 +337,10 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                     backgroundPosition: '0 0',
                   }}
                 />
+                <motion.img src={heroImage} alt="" aria-hidden="true" draggable={false}
+                  className="pointer-events-none absolute z-[15] h-[20%] w-[20%] object-contain"
+                  animate={{ left: `${((feedback === 'correct' ? round.target.x : round.start.x) - .5) / gridSize * 100}%`, bottom: `${((feedback === 'correct' ? round.target.y : round.start.y) - .5) / gridSize * 100}%` }}
+                  style={{ transform: 'translate(-50%, 50%)' }} transition={{ duration: reducedMotion ? 0 : .6 }} />
                 <div className="absolute inset-0 z-10 grid overflow-hidden rounded-[1.2rem]" style={{ gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${gridSize}, minmax(0, 1fr))` }}>
               {cells.map((cell) => {
                 const key = coordinateKey(cell.x, cell.y);
@@ -352,7 +361,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                         : 'border-cyan-100/12 bg-transparent hover:bg-white/10'
                     }`}
                   >
-                    {isStart && (
+                    {isStart && !playerAvatar.image && (
                       <motion.div
                         layout
                         className="absolute left-1/2 top-1/2 flex h-[66%] w-[66%] -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full border border-white/22 bg-[linear-gradient(180deg,rgba(245,158,11,0.95),rgba(194,65,12,0.95))] shadow-[0_10px_20px_rgba(0,0,0,0.24)]"

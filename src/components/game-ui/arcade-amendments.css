@@ -1,0 +1,100 @@
+.arcade-journey { width:100%; flex-shrink:0; color:#f1f8ff; }
+.arcade-journey-caption { display:flex; justify-content:space-between; gap:8px; font-size:max(14px, calc(14px / var(--game-stage-scale, 1))); line-height:1.25; padding:4px 2px; }
+.arcade-journey-window { position:relative; height:max(64px, calc(72px / var(--game-stage-scale, 1))); overflow:hidden; border:1px solid #8cd8ef66; border-radius:12px; background:linear-gradient(#123258,#071427); }
+.arcade-journey-world { position:absolute; width:160%; height:100%; left:10%; display:flex; align-items:center; gap:5px; }
+.arcade-journey-section { position:relative; flex:1; height:26px; border:2px solid #97b6cc; background:#22344a; box-shadow:0 8px 0 #081423; transition:background .4s,border-color .4s; }
+.arcade-journey-section.is-restored { background:#238173; border-color:#87f5c6; }
+.arcade-journey-core { display:flex; justify-content:center; font-size:16px; font-weight:800; line-height:20px; }
+.arcade-journey-hero { position:absolute; z-index:2; left:12%; bottom:10px; width:64px; height:62px; object-fit:contain; filter:drop-shadow(0 3px 3px #00101f); }
+.arcade-journey-hazard { position:absolute; bottom:0; height:9px; width:100%; background:repeating-linear-gradient(110deg,#ffb85e 0 12px,#f46631 12px 25px); }
+.arcade-journey--vault .arcade-journey-section { height:45px; border-radius:8px 8px 0 0; background:linear-gradient(90deg,#21354d,#3d5975,#21354d); }
+.arcade-journey--vault .is-restored { background:#114944; border-color:#8eeeb8; }
+.arcade-journey--vault .arcade-journey-hazard { background:#8aff7790; }
+.arcade-journey--power .arcade-journey-section { height:38px; border-radius:50%; box-shadow:0 0 0 4px #172c46; }
+.arcade-journey--power .is-restored { box-shadow:0 0 18px #67e8ca; }
+.arcade-journey--power .arcade-journey-hero { display:none; }
+.arcade-journey--power .arcade-journey-hazard { bottom:27px; z-index:-1; background:#5cdce4; height:3px; }
+.arcade-journey--expedition .arcade-journey-section { height:22px; border-radius:50%; background:#39745d; }
+.arcade-journey--expedition .arcade-journey-hazard { background:linear-gradient(90deg,#146d9f,#60c7ed,#146d9f); }
+.arcade-journey[data-danger=true] .arcade-journey-window { border-color:#ff928d; }
+#root .conversion-game.arcade-conversion .conversion-scale-frame { width:auto; height:calc(100% - 65px); aspect-ratio:812 / 748; max-height:160px; min-height:0; margin-top:30px; }
+#root .arcade-conversion .conversion-load-tray { top:-12px; width:320px; max-width:320px; min-height:48px; transform:translate(-50%,-50%); flex-wrap:nowrap; overflow-x:auto; justify-content:flex-start; background:#091e38f5; border:1px solid #ade0eeaa; box-shadow:0 5px 0 #163347; }
+#root .arcade-conversion .conversion-load-tray > span { width:100%; text-align:center; }
+#root .arcade-conversion .conversion-load-tray button { flex:0 0 auto; padding:4px 8px; min-width:60px; }
+#root .arcade-conversion .conversion-load-meter { top:auto; bottom:0; background:#081b35f5; }
+.conversion-crack { position:absolute; inset:18% 25% 10%; z-index:3; pointer-events:none; }
+.conversion-crack path { stroke:#fff3cc; stroke-width:6px; fill:none; filter:drop-shadow(0 0 3px #ff7149); }
+.conversion-break-label { position:absolute; left:0; right:0; bottom:28%; z-index:5; text-align:center; font-weight:800; color:#fff1e6; background:#5a1727ee; padding:6px; font-size:14px; }
+.coordinates-expedition { width:100%; max-width:26.5rem; margin:auto; }
+.coordinates-hero-portrait { position:absolute; right:8px; top:-28px; width:82px; height:96px; object-fit:contain; pointer-events:none; z-index:3; filter:drop-shadow(0 4px 5px #00101f); }
+.coordinates-grid-board { margin-top:6px; }
+.fraction-crossing { position:absolute; left:5%; right:5%; bottom:5%; z-index:3; }
+.simplify-vault-panel { gap:8px!important; padding-top:8px!important; padding-bottom:8px!important; }
+.simplify-chain { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; color:#e7f8ff; font-size:16px; min-height:24px; }
+.mean-power-panel { position:absolute; z-index:4; bottom:4px; left:4%; width:92%; pointer-events:none; }
+.mean-power-panel .arcade-journey-window { height:48px; }
+.mean-power-panel .arcade-journey-caption { background:#081b35eb; border-radius:8px 8px 0 0; padding:4px 8px; }
+#root .data-detective-layout .detective-evidence-heading { color:#dcf5ff; font-size:max(14px,calc(14px / var(--game-stage-scale,1))); letter-spacing:0; text-transform:none; }
+.detective-evidence-pins { display:grid; grid-template-columns:1fr 1fr; gap:5px; }
+.detective-evidence-pin { display:flex; align-items:center; gap:6px; min-height:44px; padding:5px 8px; border-radius:8px; border:1px solid #91b9ce70; background:#0b203bea; color:#f1f8ff; text-align:left; font-size:max(14px,calc(14px / var(--game-stage-scale,1))); line-height:1.2; }
+.detective-evidence-pin[aria-pressed=true] { border-color:#8bf5ca; background:#123f4e; }
+.detective-lineup { display:flex!important; gap:8px!important; overflow-x:auto; padding:3px 2px 6px; scroll-snap-type:x mandatory; }
+#root .detective-lineup > button { flex:0 0 88px; height:102px; aspect-ratio:auto!important; scroll-snap-align:start; flex-direction:column; }
+.detective-suspect-name { font-size:14px; color:#f1f8ff; line-height:1.1; text-align:center; padding-top:4px; }
+.detective-suspect-portrait { flex:1; min-height:0; }
+#root .detective-dossier { max-height:calc(100% - 12px); background:#081c38; }
+.detective-dossier-items { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+#root .detective-dossier-items > div { padding:8px; gap:6px; }
+#root .detective-dossier-items span { font-size:14px; line-height:1.2; }
+.player-profile-arcade { font-family:var(--font-fredoka), sans-serif; color:#f2f8ff; }
+.profile-summary-heading { font-family:var(--font-display), sans-serif; font-size:32px; line-height:1.1; margin:6px 0; overflow-wrap:anywhere; }
+.profile-summary-hero { display:flex; gap:16px; align-items:center; padding:20px; border:1px solid #91c4e15c; background:linear-gradient(135deg,#153b67,#091d3b); border-radius:20px; }
+.profile-summary-portrait { width:110px; height:140px; object-fit:contain; flex-shrink:0; filter:drop-shadow(0 5px 5px #020d20); }
+.profile-summary-label { color:#bee7ff; font-size:14px; font-weight:600; }
+.profile-summary-copy { color:#d5e6f5; font-size:16px; line-height:1.4; }
+.profile-summary-stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+.profile-summary-stat { padding:16px; border:1px solid #a1c2da50; background:#0c2545; border-radius:14px; }
+.profile-summary-stat strong { display:block; font-size:28px; color:#f2f8ff; }
+.profile-achievement-list { display:grid; gap:10px; }
+.profile-achievement { display:flex; gap:12px; padding:14px; border-radius:12px; border:1px solid #8daeca44; background:#0c2443; }
+.profile-achievement h3 { color:#f2f8ff; font-size:19px; margin:0 0 4px; }
+@media(max-width:600px) { .profile-summary-stats { grid-template-columns:repeat(2,minmax(0,1fr)); } .profile-summary-hero { padding:14px; gap:10px; } .profile-summary-portrait { width:86px; height:115px; } .profile-summary-heading { font-size:28px; } }
+@media(prefers-reduced-motion:reduce) { .arcade-journey * { transition:none!important; } }
+
+#root .data-detective-layout { padding-bottom:4px!important; }
+#root .data-detective-layout .detective-evidence-pins { flex-shrink:0; }
+#root .data-detective-layout .detective-evidence-pin { min-height:max(44px,calc(44px / var(--game-stage-scale,1))); }
+#root .data-detective-layout .game-screen-main section { padding:4px 8px!important; gap:4px!important; }
+#root .data-detective-layout .game-screen-main section > div:last-child { padding:6px!important; background:#081d37f2; }
+#root .data-detective-layout .game-screen-main section > div:first-child > div:last-child { display:none; }
+#root .data-detective-layout .game-screen-bottom h2 { font-size:max(14px,calc(14px / var(--game-stage-scale,1))); letter-spacing:0; text-transform:none; }
+#root .detective-lineup > button { background:#102c4b!important; color:#f1f8ff!important; border-color:#8fbbd066!important; }
+#root .detective-lineup > button[aria-pressed=true] { border-color:#89f2d2!important; }
+#root .detective-lineup > button .detective-suspect-name { font-size:max(14px,calc(14px / var(--game-stage-scale,1))); }
+#root .arcade-conversion .conversion-load-tray { max-width:calc(100vw - 40px); }
+#root .arcade-conversion .conversion-load-meter { bottom:-4px; min-width:120px; padding:4px; }
+
+/* The game uses a portrait logical stage even in a wide desktop browser. */
+#root .player-profile-arcade .profile-summary-hero { flex-direction:column; text-align:center; padding:14px; }
+#root .player-profile-arcade .profile-summary-portrait { width:100px; height:110px; }
+#root .player-profile-arcade .profile-summary-stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+#root .player-profile-arcade .profile-summary-stat { padding:10px; min-width:0; }
+#root .player-profile-arcade .profile-summary-heading { font-size:max(28px,calc(28px / var(--game-stage-scale,1))); overflow-wrap:normal; }
+#root .player-profile-arcade .profile-summary-copy { font-size:max(16px,calc(16px / var(--game-stage-scale,1))); }
+#root .player-profile-arcade .profile-summary-label { font-size:max(14px,calc(14px / var(--game-stage-scale,1))); overflow-wrap:normal; }
+#root .player-profile-arcade .profile-summary-stat strong { font-size:max(24px,calc(24px / var(--game-stage-scale,1))); }
+#root .player-profile-arcade .app-screen-scroll { padding-left:12px!important; padding-right:12px!important; }
+#root .coordinates-hero-portrait { width:70px; height:84px; right:6px; top:-66px; }
+#root .coordinates-expedition { margin:0 auto; }
+#root .arcade-conversion .conversion-load-tray { width:300px; }
+
+.conversion-scale-art.is-loading { animation:conversion-place .48s ease-out; }
+.conversion-scale-art.is-straining { animation:conversion-strain .55s ease-in-out infinite; }
+.conversion-scale-art.is-broken { animation:conversion-snap .45s ease-out both; }
+@keyframes conversion-place { 0%,100%{transform:translateY(0) rotate(0)} 25%{transform:translateY(3px) rotate(-2deg)} 55%{transform:translateY(-1px) rotate(2deg)} }
+@keyframes conversion-strain { 0%,100%{transform:translateY(0) rotate(0)} 30%{transform:translateY(3px) rotate(-2deg)} 65%{transform:translateY(2px) rotate(2deg)} }
+@keyframes conversion-snap { 0%{transform:translateY(0) rotate(0)} 35%{transform:translateY(-2px) rotate(-4deg)} 100%{transform:translateY(7px) rotate(12deg)} }
+@media(prefers-reduced-motion:reduce) { .conversion-scale-art { animation:none!important; } .conversion-scale-art.is-broken { transform:translateY(7px) rotate(12deg)!important; } }
+
+#root .arcade-conversion .conversion-load-meter { left:calc(50% + 90px); min-width:100px; z-index:4; }
+#root .arcade-conversion .conversion-load-meter { left:calc(100% + 50px); }

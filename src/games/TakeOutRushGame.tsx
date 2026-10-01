@@ -12,6 +12,7 @@ import food7 from '../assets/take_out/food/7.png';
 import food8 from '../assets/take_out/food/8.png';
 import food9 from '../assets/take_out/food/9.png';
 import FoodGameShell from '../components/FoodGameShell';
+import SceneEnvironment from '../components/SceneEnvironment';
 import { triggerHaptic } from '../haptics';
 import CelebrationSplash from '../components/CelebrationSplash';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
@@ -519,7 +520,8 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     const itemBonus = selectedIdsRef.current.length * 14;
     const speedBonus = Math.max(30, Math.round(220 - (orderSolveMs / 70)));
     const streakBonus = performanceRef.current.combo * 22;
-    const points = 120 + stageBonus + itemBonus + speedBonus + streakBonus;
+    const serviceStamp = (performanceRef.current.combo + 1) % 3 === 0;
+    const points = 120 + stageBonus + itemBonus + speedBonus + streakBonus + (serviceStamp ? 60 : 0);
     const nextPerformance = {
       ...performanceRef.current,
       XP: performanceRef.current.XP + points,
@@ -533,7 +535,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     setScore(nextPerformance.XP);
     setOrdersServed(nextPerformance.served);
     setStreak(nextPerformance.combo);
-    setFeedback({ tone: 'success', text: `Chef's kiss! +${points} XP. Combo ${nextPerformance.combo}!` });
+    setFeedback({ tone: 'success', text: `${serviceStamp ? 'Service stamp! +60 bonus XP.' : 'Perfect order!'} +${points} XP. Streak ${nextPerformance.combo}!` });
     emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { score: nextPerformance.XP, metadata: { order: order.id } });
     emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', { score: nextPerformance.XP, metadata: { order: order.id } });
 
@@ -571,7 +573,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     setWrongOrders(nextPerformance.wrong);
     setStreak(0);
     setScore(nextPerformance.XP);
-    setFeedback({ tone: 'error', text: `The chef says nope! Make exactly ${asDisplayFraction(order.target)}.` });
+    setFeedback({ tone: 'error', text: `Order needs adjusting. Make exactly ${asDisplayFraction(order.target)}.` });
     emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { score: nextPerformance.XP, metadata: { order: order.id, attempt: nextPerformance.wrong } });
 
     if (feedbackTimeoutRef.current !== null) {
@@ -690,12 +692,12 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
   const overTarget = compareFractions(runningTotal, order.target) > 0;
   const rushPressure = timeLeft <= 30 ? 'last-orders' : Combo >= 3 ? 'combo' : 'steady';
   const customerLine = feedback?.tone === 'success' ? 'Slime-free. Mostly.'
-    : feedback?.tone === 'error' ? "That is not my order, chef!"
-      : ['My stomach just growled back.', 'The sauce is watching.', 'Hungry. Very hungry.', 'Make it snappy, chef.'][ordersServed % 4];
+    : feedback?.tone === 'error' ? "Could you check my order?"
+      : ['My stomach just growled back.', 'The sauce is watching.', 'Hungry. Very hungry.', 'One heroic order, please.'][ordersServed % 4];
 
   return (
     <FoodGameShell gameType="take_out_rush" backgroundImage={takeOutLevelBg} overlayDisabled
-      backgroundOpacity={1} backgroundPosition="50% 61%" className="restaurant-rush">
+      backgroundOpacity={1} backgroundPosition="50% 61%" className="restaurant-rush cafe-hero">
       <div className={`rush-layout${useSharedTopHud ? ' has-shared-hud' : ''}`}
         data-takeout-game data-takeout-state={roundFinished ? 'finished' : feedback?.tone || 'idle'}
         data-takeout-time={timeLeft} data-takeout-paused={sessionState?.paused || false} data-takeout-present={isPresent}
@@ -706,18 +708,18 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
           <div style={{ width: `${timerProgress * 100}%`, backgroundColor: timerFillColor }} />
         </div>}
         <GameQuestionCard title="Order ticket"
-          subtitle={`90s kitchen shift. ${isPractice ? 'Practice exact orders.' : 'Wrong orders cost a life.'}${activeConstraints.minItems > 1 ? ` Use at least ${activeConstraints.minItems} portions.` : ''}`}
+          subtitle={`90s café service. ${isPractice ? 'Practice exact orders.' : 'Wrong orders cost a life.'}${activeConstraints.minItems > 1 ? ` Use at least ${activeConstraints.minItems} portions.` : ''}`}
           className="rush-mission" style={{ position: 'relative', top: 0, width: '100%', transform: 'none' }}>
           Build an order worth <strong>{asDisplayFraction(order.target)}</strong>.
         </GameQuestionCard>
 
         <section data-takeout-playfield className={`rush-kitchen${overTarget ? ' is-overfilled' : ''}`}
           data-takeout-target={`${order.target.n}/${order.target.d}`} data-takeout-total={`${runningTotal.n}/${runningTotal.d}`}>
-          <img src={takeOutLevelBg} alt="Fantasy kitchen with a serving counter, diners and bubbling sauce"
-            className="rush-kitchen-art" data-takeout-background draggable={false} />
+          <SceneEnvironment src={takeOutLevelBg} alt="Fantasy kitchen with a serving counter, diners and bubbling sauce"
+            className="rush-kitchen-art" />
           <div className="rush-order-rail">
             <span>Ticket #{ordersServed + 1}</span>
-            <strong>{rushPressure === 'last-orders' ? 'Last orders! Closing soon.' : Combo > 0 ? `On a roll ×${Combo}` : 'Keep the kitchen moving'}</strong>
+            <strong>{rushPressure === 'last-orders' ? 'Last orders! Closing soon.' : Combo > 0 ? `Perfect service ×${Combo}` : 'Your café. Your moment.'}</strong>
           </div>
           <div className="rush-steam" aria-hidden="true"><i /><i /><i /></div>
           <div className="rush-customer">
@@ -728,7 +730,8 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                 y: feedback?.tone === 'success' ? [0, -8, 0] : [0, -2, 0], rotate: feedback?.tone === 'error' ? [0, -3, 3, 0] : 0 }}
               transition={{ duration: feedback ? .35 : 2.4, repeat: feedback || reducedMotion ? 0 : Infinity, ease: 'easeInOut' }} />
           </div>
-          <div className="rush-counter" data-takeout-tray>
+          <motion.div className="rush-counter" data-takeout-tray
+            animate={feedback?.tone === 'success' && !reducedMotion ? { x: [0, 12, 0], y: [0, -4, 0] } : { x: 0, y: 0 }} transition={{ duration: .45 }}>
             <div className="rush-tray-label"><span>Your tray <strong>{asDisplayFraction(runningTotal)}</strong> / {asDisplayFraction(order.target)}</span>
               <span>{overTarget ? 'Too much! Remove a portion.' : isExact && !constraintsMet ? `Need ${activeConstraints.minItems} portions.` : isExact ? 'Exact. Order up!' : 'Build the exact total.'}</span>
             </div>
@@ -742,9 +745,9 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                   <FoodSprite item={item} /><span>{asDisplayFraction(item.value)} <b>×{count}</b></span><small aria-hidden="true">−</small>
                 </motion.button>)}
               </AnimatePresence>
-              {!trayGroups.length && <div className="rush-empty-tray">Empty tray. The chef is judging you.</div>}
+              {!trayGroups.length && <div className="rush-empty-tray">New ticket. Build something brilliant.</div>}
             </div>
-          </div>
+          </motion.div>
         </section>
 
         <div className="rush-responses" data-takeout-responses>
@@ -757,7 +760,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
             </button>)}
           </div>
           <div className={`rush-feedback${feedback?.tone === 'error' ? ' is-error' : ''}`} role="status" aria-live="polite">
-            {feedback?.text || (Combo > 0 ? 'Keep the combo alive. Exact portions only.' : 'Tap portions to match the target. Suspicious sauce awaits.')}
+            {feedback?.text || (Combo > 0 ? 'Keep the combo alive. Exact portions only.' : 'Build the exact order. Three perfect orders earn a +60 XP service stamp.')}
           </div>
           <div className="rush-actions">
             <button type="button" onClick={clearTray} disabled={!isPresent || !selectedIds.length || isResolvingOrder || roundFinished || sharedLivesBlocked} className="ui-button-secondary">Reset tray</button>

@@ -1,22 +1,45 @@
 import { chromium, webkit, devices, expect } from '@playwright/test';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { access, mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const base = process.env.LEGEND_QA_URL || 'http://localhost:3000';
-const output = path.resolve('qa-artifacts/legend-monster-motion');
+const output = path.resolve(process.env.LEGEND_QA_OUTPUT || 'qa-artifacts/legend-monster-motion');
 const reportName = process.env.LEGEND_QA_REPORT || 'report.json';
 const profileFilter = process.env.LEGEND_QA_PROFILE;
+const motionFilter = process.env.LEGEND_QA_MOTION;
 const diagnostic = process.env.LEGEND_QA_DIAGNOSTIC;
 const caseFilter = diagnostic ? `${diagnostic}-diagnostic` : process.env.LEGEND_QA_CASE;
 const selectedCases = new Set((process.env.LEGEND_QA_CASES || '').split(',').map((name) => name.trim()).filter(Boolean));
+const stopFile = process.env.LEGEND_QA_STOP_FILE;
 const profiles = [
   { name: 'pc', browser: chromium, options: { viewport: { width: 1440, height: 900 } } },
   { name: 'ipad-a2hs', browser: webkit, options: { ...devices['iPad (gen 7)'], viewport: { width: 768, height: 1024 } } },
   { name: 'phone-a2hs', browser: webkit, options: { ...devices['iPhone 13'], viewport: { width: 390, height: 844 } } },
 ].filter((profile) => !profileFilter || profile.name === profileFilter);
 const reports = [];
+let stopRequested = false;
 let nativePoseEvidence = null;
+const pageProfiles = new WeakMap();
 await mkdir(output, { recursive: true });
+
+async function shouldStop() {
+  if (stopRequested) return true;
+  if (!stopFile) return false;
+  try { await access(stopFile); }
+  catch { return false; }
+  stopRequested = true;
+  console.log('QA stop requested; closing at the completed case boundary.');
+  return true;
+}
+
+async function writeReport(runComplete = false) {
+  await writeFile(path.join(output, reportName), JSON.stringify({
+    base, capturedAt: new Date().toISOString(), profiles: profiles.map((profile) => profile.name),
+    runComplete, stoppedAtBoundary: stopRequested,
+    assumption: 'Existing curriculum, scoring and current campaign routes are retained; native mobile tap and scaled pointer drag use actual rendered controls. No external legacy assumptions were used.',
+    reports,
+  }, null, 2));
+}
 
 const pause = (page, milliseconds) => page.waitForTimeout(milliseconds);
 const tap = (page, profile, locator) => profile.options.hasTouch ? locator.tap() : locator.click();
@@ -34,7 +57,7 @@ async function readyActor(page) {
   await pause(page, 350);
 }
 
-async function startMission(page, route) {
+async function startMission(page, route, { skipActor = false } = {}) {
   await page.goto('about:blank');
   await page.goto(base + route);
   await expect(questionCopy(page)).toBeVisible({ timeout: 20000 });
@@ -42,13 +65,16 @@ async function startMission(page, route) {
   await pause(page, 350);
   for (let attempt = 0; attempt < 3; attempt += 1) {
     const primary = page.locator('[role="dialog"] [data-dialog-primary]');
-    if (await primary.count()) await primary.first().click();
+    if (await primary.count()) {
+      const profile = pageProfiles.get(page);
+      if (profile) await tap(page, profile, primary.first()); else await primary.first().click();
+    }
     await expect(page.locator('[role="dialog"]')).toHaveCount(0);
     await pause(page, 200);
     if (!await primary.count()) break;
   }
   expect((await questionCopy(page).innerText()).trim()).not.toBe('');
-  await readyActor(page);
+  if (!skipActor) await readyActor(page);
 }
 
 // Observe mutations as well as animation frames: a one-frame source swap or keyed remount is a failure.
@@ -265,7 +291,8 @@ async function stoneReadability(page) {
         const hit = document.elementFromPoint(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
         let opacity = 1;
         for (let node = element; node; node = node.parentElement) opacity *= Number(getComputedStyle(node).opacity);
-        return { text: element.textContent, className: element.className, height: bounds.height, width: bounds.width, opacity, color: rgba(style.color), hitVisible: Boolean(hit && button.contains(hit)), inViewport: bounds.x >= 0 && bounds.y >= 0 && bounds.right <= innerWidth && bounds.bottom <= innerHeight };
+        const scale = button.getBoundingClientRect().height / button.offsetHeight;
+        return { text: element.textContent, className: element.className, x: bounds.x, y: bounds.y, right: bounds.right, bottom: bounds.bottom, height: bounds.height, width: bounds.width, fontSizePhysical: parseFloat(style.fontSize) * scale, opacity, color: rgba(style.color), hitVisible: Boolean(hit && button.contains(hit)), inViewport: bounds.x >= 0 && bounds.y >= 0 && bounds.right <= innerWidth && bounds.bottom <= innerHeight };
       };
       const labelSample = sampleText(label);
       const digitSample = sampleText(digit);
@@ -289,13 +316,15 @@ async function stoneReadability(page) {
       expect(item.opacity, `${item.text} is ghosted by an ancestor`).toBeGreaterThanOrEqual(0.99);
       expect(item.color[3] ?? 1, `${item.text} text is translucent`).toBe(1);
     }
+    expect(sample.label.fontSizePhysical, `${sample.label.text} must retain14px rendered type`).toBeGreaterThanOrEqual(13.99);
     expect(sample.label.height).toBeGreaterThanOrEqual(8);
     expect(sample.digit.height).toBeGreaterThanOrEqual(17);
     expect(sample.labelContrast).toBeGreaterThanOrEqual(4.5);
     expect(sample.digitContrast).toBeGreaterThanOrEqual(sample.digit.text === '—' ? 3 : 4.5);
     expect(sample.buttonWidth).toBeGreaterThanOrEqual(30);
-    expect(sample.buttonHeight).toBeGreaterThanOrEqual(40);
+    expect(sample.buttonHeight).toBeGreaterThanOrEqual(43.99);
   }
+  for (let index = 1; index < result.samples.length; index += 1) expect(result.samples[index - 1].label.right, `Adjacent place labels ${result.samples[index - 1].label.text}/${result.samples[index].label.text} overlap`).toBeLessThanOrEqual(result.samples[index].label.x + .5);
   } catch (error) { error.qaMetrics = result; throw error; }
   return result;
 }
@@ -480,7 +509,9 @@ async function scoredVictoryResult(page, route, score, correct, mistakes) {
 }
 
 async function leaveDuringReaction(page) {
-  await page.locator('[data-testid="shared-bottom-hud"]').getByRole('button', { name: 'Back', exact: true }).click();
+  const back = page.locator('[data-testid="shared-bottom-hud"]').getByRole('button', { name: 'Back', exact: true });
+  const profile = pageProfiles.get(page);
+  if (profile) await tap(page, profile, back); else await back.click();
   await expect(actor(page)).toHaveCount(0);
   await pause(page, 1300);
   await expect(actor(page)).toHaveCount(0);
@@ -607,10 +638,515 @@ function encounterAnswers(prompt, options) {
   throw new Error(`No independent solver for current encounter prompt: ${prompt}`);
 }
 
+const nativeAction = async (page, profile, button, key = 'Enter') => {
+  if (profile.options.hasTouch) await button.tap();
+  else { await button.focus(); await page.keyboard.press(key); }
+};
+
+const progressionSnapshot = (page) => page.evaluate(() => {
+  const state = JSON.parse(localStorage.getItem('sats-legends-save') || 'null')?.state;
+  return state ? { player: state.player, levels: state.levels, totalStars: state.totalStars } : null;
+});
+
+async function mineSnapshot(page) {
+  return page.locator('[data-mine-game]').evaluate((root) => {
+    const bounds = (element) => { const b = element.getBoundingClientRect(); return { x: b.x, y: b.y, right: b.right, bottom: b.bottom, width: b.width, height: b.height }; };
+    const mission = root.querySelector('[data-game-question]');
+    const question = root.querySelector('[data-question-copy]').textContent.trim();
+    const factors = question.match(/(\d+)\s*×\s*(\d+)/);
+    const image = root.querySelector('[data-mine-rock]');
+    const buttons = [...root.querySelectorAll('[data-mine-answer]')];
+    const top = document.querySelector('[data-testid="shared-top-hud"]');
+    const dock = document.querySelector('.legend-dock-surface');
+    const playfield = root.querySelector('[data-mine-playfield]');
+    const strength = root.querySelector('[data-mine-strength]');
+    const status = root.querySelector('[data-mine-feedback]');
+    return { tier: Number(root.dataset.mineTier), phase: root.dataset.mineState, correct: Number(root.dataset.mineCorrect), health: Number(image.dataset.rockHealth), question,
+      answer: factors ? Number(factors[1]) * Number(factors[2]) : null, source: image.currentSrc, imageLoaded: image.complete && image.naturalWidth === 768,
+      top: top && bounds(top), mission: bounds(mission), playfield: bounds(playfield), ore: bounds(image), answers: bounds(root.querySelector('[data-mine-answers]')), feedback: bounds(status), dock: dock && bounds(dock),
+      labelSize: parseFloat(getComputedStyle(strength).fontSize) * (strength.getBoundingClientRect().width / strength.offsetWidth),
+      controls: buttons.map((button) => { const b = button.getBoundingClientRect(); const hit = document.elementFromPoint(b.x + b.width / 2, b.y + b.height / 2); return { value: Number(button.dataset.mineAnswer), disabled: button.disabled, ...bounds(button), hit: Boolean(hit && button.contains(hit)) }; }),
+      animations: [...root.querySelectorAll('.mine-ore,.mine-seam-light,.mine-impact *')].flatMap((element) => element.getAnimations().filter((animation) => animation.playState === 'running' && animation.effect?.getComputedTiming().activeDuration > 1).map((animation) => ({ name: animation.animationName || 'WAAPI', target: element.className }))),
+    };
+  });
+}
+
+function assertMineLayout(value) {
+  expect(value.answer).not.toBeNull();
+  expect(value.imageLoaded).toBe(true);
+  expect(value.controls).toHaveLength(4);
+  expect(new Set(value.controls.map((button) => button.value)).size).toBe(4);
+  expect(value.controls.map((button) => button.value)).toContain(value.answer);
+  expect(value.mission.y).toBeGreaterThanOrEqual(value.top.bottom - 1);
+  expect(value.playfield.y).toBeGreaterThanOrEqual(value.mission.bottom - 1);
+  expect(value.playfield.height).toBeGreaterThan(70);
+  expect(value.ore.y).toBeGreaterThanOrEqual(value.playfield.y - 1);
+  expect(value.ore.bottom).toBeLessThanOrEqual(value.playfield.bottom + 1);
+  expect(value.ore.x).toBeGreaterThanOrEqual(value.playfield.x - 1);
+  expect(value.ore.right).toBeLessThanOrEqual(value.playfield.right + 1);
+  expect(value.answers.y).toBeGreaterThanOrEqual(value.playfield.bottom - 1);
+  expect(value.feedback.bottom).toBeLessThanOrEqual(value.dock.y + 1);
+  for (const button of value.controls) { expect(button.height).toBeGreaterThanOrEqual(43.99); expect(button.hit).toBe(true); }
+  expect(value.labelSize).toBeGreaterThanOrEqual(13.5);
+}
+
+async function completeMine(page, profile, route, reducedMotion, { wrong = false, duplicate = false } = {}) {
+  await startMission(page, route, { skipActor: true });
+  const initial = await mineSnapshot(page);
+  assertMineLayout(initial);
+  expect(initial.correct).toBe(0); expect(initial.health).toBe(4); expect(initial.source).toContain('ore-intact');
+  const baseline = await progressionSnapshot(page);
+  if (wrong) {
+    const incorrect = initial.controls.find((button) => button.value !== initial.answer).value;
+    await nativeAction(page, profile, page.locator(`[data-mine-answer="${incorrect}"]`));
+    await expect(page.locator('[data-mine-feedback]')).toHaveClass(/error/);
+    expect((await mineSnapshot(page)).health).toBe(4);
+    expect((await mineSnapshot(page)).correct).toBe(0);
+    await expect(page.locator('[data-mine-answer]').first()).toBeEnabled();
+  }
+  const strikes = [];
+  for (let index = 0; index < 4; index += 1) {
+    await expect(page.locator('[data-mine-answer]').first()).toBeEnabled();
+    const before = await mineSnapshot(page);
+    const button = page.locator(`[data-mine-answer="${before.answer}"]`);
+    // Native input exercises each real flow. This explicit same-turn DOM stress
+    // test separately verifies the ref guard and is never described as touch input.
+    if (duplicate && index === 1) await rapidActivate(button);
+    else await nativeAction(page, profile, button, index % 2 ? 'Space' : 'Enter');
+    await expect(page.locator('[data-mine-rock]')).toHaveAttribute('data-rock-health', String(3 - index));
+    await expect(page.locator('[data-mine-game]')).toHaveAttribute('data-mine-correct', String(index + 1));
+    const state = await mineSnapshot(page);
+    const expectedFile = ['ore-cracked', 'ore-split', 'ore-open', 'ore-open'][index];
+    expect(state.source).toContain(expectedFile);
+    if (reducedMotion) { expect(state.animations).toEqual([]); await expect(page.locator('.mine-impact')).toHaveCount(0); }
+    strikes.push(state);
+    await page.screenshot({ path: path.join(output, `${profile.name}-${reducedMotion ? 'reduced' : 'normal'}-mine-${route.replaceAll('/', '-')}-strike-${index + 1}.png`) });
+  }
+  const dialog = page.getByRole('dialog', { name: 'Mission results', exact: true });
+  await expect(dialog).toBeVisible();
+  // Actual mode is read from the visible result rather than inferred from route numbering.
+  const isPractice = await dialog.getByText('Practice Complete', { exact: true }).count() > 0;
+  if (isPractice) {
+    await expect(dialog.getByText('No XP or brainpower awarded', { exact: true })).toBeVisible();
+    expect(await progressionSnapshot(page)).toEqual(baseline);
+  } else {
+    const expectedScore = 4 * (120 + initial.tier * 18) + 500;
+    await scoredVictoryResult(page, route, expectedScore, 4, wrong ? 1 : 0);
+  }
+  return { checks: ['current campaign route', 'visible mathematical question/four reachable44px answers', 'native keyboard or native mobile taps', 'same-identity ore states and next-question progression', 'wrong retry preserves health', ...(duplicate ? ['separately labeled same-turn DOM duplicate guard'] : []), reducedMotion ? 'static reduced-motion effects' : 'physical pick/chip/recoil presentation', isPractice ? 'practice awards no progression XP/stars' : 'one exact saved raw score and final-answer accuracy'], initial, strikes, isPractice };
+}
+
+async function minePendingExit(page, profile, route, reducedMotion) {
+  await startMission(page, route, { skipActor: true });
+  const baseline = await savedLevel(page, route);
+  const back = page.locator('[data-testid="shared-bottom-hud"]').getByRole('button', { name: 'Back', exact: true });
+  const backBounds = await back.boundingBox();
+  await page.evaluate(() => {
+    const root = document.querySelector('[data-mine-game]');
+    window.__legendMineNativeTimeline = [];
+    window.__legendMineBoundary = { presenceExitAt: null, unmountedAt: null };
+    const collect = () => {
+      if (root.dataset.minePresent === 'false' && window.__legendMineBoundary.presenceExitAt === null) window.__legendMineBoundary.presenceExitAt = performance.now();
+      if (!root.isConnected && window.__legendMineBoundary.unmountedAt === null) window.__legendMineBoundary.unmountedAt = performance.now();
+    };
+    window.__legendMineBoundaryObserver = new MutationObserver(collect);
+    window.__legendMineBoundaryObserver.observe(document.body, { subtree: true, attributes: true, childList: true, attributeFilter: ['data-mine-present'] });
+    window.__legendMineNativeListener = (event) => {
+      if (event.target.closest?.('[data-mine-answer]')) window.__legendMineNativeTimeline.push({ type: 'answer', at: performance.now(), trusted: event.isTrusted });
+      if (event.target.closest?.('[data-testid="shared-bottom-hud"] button')) window.__legendMineNativeTimeline.push({ type: 'dock', at: performance.now(), trusted: event.isTrusted });
+    };
+    document.addEventListener('click', window.__legendMineNativeListener, true);
+  });
+  for (let index = 0; index < 4; index += 1) {
+    await expect(page.locator('[data-mine-answer]').first()).toBeEnabled();
+    const state = await mineSnapshot(page);
+    await nativeAction(page, profile, page.locator(`[data-mine-answer="${state.answer}"]`));
+  }
+  if (!profile.options.hasTouch) await back.focus();
+  const targetDelay = reducedMotion ? 950 : 1150;
+  await page.evaluate(async (delay) => {
+    const final = window.__legendMineNativeTimeline.filter((entry) => entry.type === 'answer').at(-1);
+    const remaining = delay - (performance.now() - final.at);
+    if (remaining > 0) await new Promise((resolve) => setTimeout(resolve, remaining));
+  }, targetDelay);
+  if (profile.options.hasTouch) await page.touchscreen.tap(backBounds.x + backBounds.width / 2, backBounds.y + backBounds.height / 2);
+  else await page.keyboard.press('Enter');
+  await expect(page.locator('[data-mine-game]')).toHaveCount(0);
+  const { timeline, presenceExitAt, unmountedAt } = await page.evaluate(() => {
+    document.removeEventListener('click', window.__legendMineNativeListener, true);
+    window.__legendMineBoundaryObserver.disconnect();
+    return { timeline: window.__legendMineNativeTimeline, ...window.__legendMineBoundary };
+  });
+  const finalInput = timeline.filter((entry) => entry.type === 'answer').at(-1);
+  const exitInput = timeline.find((entry) => entry.type === 'dock');
+  expect(finalInput.trusted).toBe(true); expect(exitInput.trusted).toBe(true);
+  expect(exitInput.at - finalInput.at).toBeLessThan(1250);
+  expect(exitInput.at - finalInput.at).toBeGreaterThanOrEqual(targetDelay - 20);
+  expect(presenceExitAt).not.toBeNull(); expect(presenceExitAt - finalInput.at).toBeLessThan(1250);
+  expect(unmountedAt).not.toBeNull();
+  if (!reducedMotion) expect(unmountedAt - finalInput.at, 'Normal-motion outgoing Mine must remain mounted across the original1250ms victory deadline').toBeGreaterThan(1250);
+  await pause(page, 1450);
+  await expect(page.getByRole('dialog', { name: 'Mission results', exact: true })).toHaveCount(0);
+  expect(await savedLevel(page, route)).toEqual(baseline);
+  await startMission(page, route, { skipActor: true });
+  await expect(page.locator('[data-mine-rock]')).toHaveAttribute('data-rock-health', '4');
+  await expect(page.locator('[data-mine-game]')).toHaveAttribute('data-mine-correct', '0');
+  return { checks: ['native shared Back near existing1250ms completion', reducedMotion ? 'before-deadline exit/unmount has no late result/save' : 'presence exit invalidates completion while outgoing component remains mounted across deadline', 'fresh entry resets ore/progress'], reducedMotion, timeline, presenceExitAt, unmountedAt, exitAfterFinalMs: exitInput.at - finalInput.at, unmountAfterFinalMs: unmountedAt - finalInput.at };
+}
+
+async function numberLinePendingExit(page, profile, route, reducedMotion) {
+  await startMission(page, route);
+  const root = page.locator('[data-number-line-game]');
+  const goal = Number(await root.getAttribute('data-number-line-goal'));
+  const completionSnapshot = () => page.evaluate((key) => {
+    const progress = JSON.parse(localStorage.getItem('sats-legends-save') || 'null')?.state;
+    const telemetry = JSON.parse(localStorage.getItem('maths_quest_player_v2') || 'null')?.telemetry;
+    return {
+      level: progress?.levels?.[key] || null,
+      progressionPlayer: progress?.player || null,
+      totalStars: progress?.totalStars ?? 0,
+      sessionsPlayed: telemetry?.sessionsPlayed ?? 0,
+      completedSessions: Object.fromEntries(Object.entries(telemetry?.gameStats || {})
+        .filter(([, stat]) => stat.sessions > 0 || stat.completions > 0)
+        .map(([id, stat]) => [id, { sessions: stat.sessions, completions: stat.completions }])),
+    };
+  }, progressionKey(route));
+  const baseline = await completionSnapshot();
+  const back = page.locator('[data-testid="shared-bottom-hud"]').getByRole('button', { name: 'Back', exact: true });
+  const backBounds = await back.boundingBox();
+  expect(backBounds).not.toBeNull();
+  await page.evaluate(() => {
+    const game = document.querySelector('[data-number-line-game]');
+    const viewport = document.querySelector('.app-viewport');
+    window.__legendNinjaExit = { inputs: [], screenExitAt: null, presenceExitAt: null, unmountedAt: null, resultSeen: false };
+    const collect = () => {
+      if (!viewport.classList.contains('screen-gameplay') && window.__legendNinjaExit.screenExitAt === null) window.__legendNinjaExit.screenExitAt = performance.now();
+      if (game.dataset.numberLinePresent === 'false' && window.__legendNinjaExit.presenceExitAt === null) window.__legendNinjaExit.presenceExitAt = performance.now();
+      if (!game.isConnected && window.__legendNinjaExit.unmountedAt === null) window.__legendNinjaExit.unmountedAt = performance.now();
+      if (document.querySelector('[role="dialog"][aria-label="Mission results"]')) window.__legendNinjaExit.resultSeen = true;
+    };
+    window.__legendNinjaExitObserver = new MutationObserver(collect);
+    window.__legendNinjaExitObserver.observe(document.body, { subtree: true, attributes: true, childList: true, attributeFilter: ['class', 'data-number-line-correct', 'data-number-line-present'] });
+    window.__legendNinjaExitListener = (event) => {
+      const answer = event.target.closest?.('[data-number-line-answer]');
+      const dock = event.target.closest?.('[data-testid="shared-bottom-hud"] button');
+      if (answer || dock) window.__legendNinjaExit.inputs.push({ type: answer ? 'answer' : 'dock', at: performance.now(), trusted: event.isTrusted });
+    };
+    document.addEventListener('click', window.__legendNinjaExitListener, true);
+  });
+  for (let index = 0; index < goal; index += 1) {
+    await expect(root).toHaveAttribute('data-number-line-state', 'idle');
+    const correct = await numberLineAnswer(page);
+    await nativeAction(page, profile, page.locator(`[data-number-line-answer="${correct}"]`));
+    if (index < goal - 1) await expect(root).toHaveAttribute('data-number-line-correct', String(index + 1));
+  }
+  if (!profile.options.hasTouch) await back.focus();
+  const targetDelay = reducedMotion ? 600 : 670;
+  await page.evaluate(async (delay) => {
+    const final = window.__legendNinjaExit.inputs.filter((entry) => entry.type === 'answer').at(-1);
+    const remaining = delay - (performance.now() - final.at);
+    if (remaining > 0) await new Promise((resolve) => setTimeout(resolve, remaining));
+  }, targetDelay);
+  if (profile.options.hasTouch) await page.touchscreen.tap(backBounds.x + backBounds.width / 2, backBounds.y + backBounds.height / 2);
+  else await page.keyboard.press('Enter');
+  await expect(root).toHaveCount(0);
+  await pause(page, 1300);
+  const timeline = await page.evaluate(() => {
+    document.removeEventListener('click', window.__legendNinjaExitListener, true);
+    window.__legendNinjaExitObserver.disconnect();
+    return window.__legendNinjaExit;
+  });
+  const after = await completionSnapshot();
+  const finalInput = timeline.inputs.filter((entry) => entry.type === 'answer').at(-1);
+  const exitInput = timeline.inputs.find((entry) => entry.type === 'dock');
+  const details = { checks: ['native shared Back before final760ms minimum', reducedMotion ? 'reduced-motion exit has no late result/save' : 'retained normal exit crosses final minimum', 'no late completion event, result or progression save'], goal, reducedMotion, targetDelay, timeline, finalInput, exitInput, baseline, after };
+  try {
+    expect(finalInput.trusted).toBe(true); expect(exitInput.trusted).toBe(true);
+    expect(exitInput.at - finalInput.at).toBeGreaterThanOrEqual(targetDelay - 20);
+    expect(exitInput.at - finalInput.at).toBeLessThan(760);
+    expect(timeline.screenExitAt).not.toBeNull();
+    expect(timeline.screenExitAt - finalInput.at).toBeLessThan(760);
+    expect(timeline.presenceExitAt).not.toBeNull();
+    expect(timeline.presenceExitAt - finalInput.at).toBeLessThan(760);
+    expect(timeline.unmountedAt).not.toBeNull();
+    if (!reducedMotion) expect(timeline.unmountedAt - finalInput.at, 'The outgoing Ninja must remain mounted across the original760ms minimum').toBeGreaterThan(760);
+    expect(timeline.resultSeen, 'Leaving the game must not open delayed Mission results').toBe(false);
+    await expect(page.getByRole('dialog', { name: 'Mission results', exact: true })).toHaveCount(0);
+    expect(after, 'Leaving before final victory must not add a completed session or progression reward').toEqual(baseline);
+  } catch (error) { error.qaMetrics = details; throw error; }
+  return details;
+}
+
+function angleAnswer(prompt) {
+  let match;
+  if ((match = prompt.match(/One angle on a straight line is (\d+)°/))) return 180 - Number(match[1]);
+  if ((match = prompt.match(/(?:smaller angle is (\d+)° less|larger angle is (\d+)° more)/))) {
+    const smaller = (180 - Number(match[1] || match[2])) / 2;
+    return /What is the smaller/.test(prompt) ? smaller : 180 - smaller;
+  }
+  if ((match = prompt.match(/ratio (\d+):(\d+)/))) {
+    const pair = [Number(match[1]), Number(match[2])];
+    return 180 * (/What is the smaller/.test(prompt) ? Math.min(...pair) : Math.max(...pair)) / (pair[0] + pair[1]);
+  }
+  throw new Error('No current angle prompt solver: ' + prompt);
+}
+
+async function angleNativeLevel(page, profile, route, reducedMotion, mode = 'complete') {
+  await startMission(page, route);
+  const goal = 6;
+  const completionSnapshot = () => page.evaluate((key) => {
+    const progress = JSON.parse(localStorage.getItem('sats-legends-save') || 'null')?.state;
+    const telemetry = JSON.parse(localStorage.getItem('maths_quest_player_v2') || 'null')?.telemetry;
+    return { level: progress?.levels?.[key] || null, progressionPlayer: progress?.player || null,
+      totalStars: progress?.totalStars ?? 0, sessionsPlayed: telemetry?.sessionsPlayed ?? 0,
+      completedSessions: Object.fromEntries(Object.entries(telemetry?.gameStats || {})
+        .filter(([, stat]) => stat.sessions > 0 || stat.completions > 0)
+        .map(([id, stat]) => [id, { sessions: stat.sessions, completions: stat.completions }])) };
+  }, progressionKey(route));
+  const baseline = await completionSnapshot();
+  const back = page.locator('[data-testid="shared-bottom-hud"]').getByRole('button', { name: 'Back', exact: true });
+  const backBounds = await back.boundingBox();
+  await page.evaluate(() => {
+    const frame = document.querySelector('[data-angle-enemy-frame]');
+    const viewport = document.querySelector('.app-viewport');
+    window.__legendAngleLevel = { inputs: [], resolutions: [], screenExitAt: null, presenceExitAt: null, unmountedAt: null, resultSeen: false };
+    const trace = window.__legendAngleLevel;
+    const collect = () => {
+      const reaction = frame.querySelector('[data-monster-actor]')?.dataset.monsterReaction;
+      const shot = trace.inputs.filter((entry) => entry.type === 'answer').length - 1;
+      if (shot >= 0 && ['hit', 'taunt'].includes(reaction) && !trace.resolutions.some((entry) => entry.shot === shot)) trace.resolutions.push({ shot, reaction, at: performance.now() });
+      if (!viewport.classList.contains('screen-gameplay') && trace.screenExitAt === null) trace.screenExitAt = performance.now();
+      const root = document.querySelector('[data-angle-game]');
+      if (root?.dataset.anglePresent === 'false' && trace.presenceExitAt === null) trace.presenceExitAt = performance.now();
+      if (!frame.isConnected && trace.unmountedAt === null) trace.unmountedAt = performance.now();
+      if (document.querySelector('[role="dialog"][aria-label="Mission results"]')) trace.resultSeen = true;
+    };
+    window.__legendAngleLevelObserver = new MutationObserver(collect);
+    window.__legendAngleLevelObserver.observe(document.body, { subtree: true, attributes: true, childList: true, attributeFilter: ['class', 'data-monster-reaction', 'data-angle-present'] });
+    window.__legendAngleLevelListener = (event) => {
+      const answer = event.target.closest?.('.answer-choice-surface button');
+      const dock = event.target.closest?.('[data-testid="shared-bottom-hud"] button');
+      const next = event.target.closest?.('button')?.textContent.trim() === 'Next';
+      if (answer || dock || next) trace.inputs.push({ type: answer ? 'answer' : dock ? 'dock' : 'next', at: performance.now(), trusted: event.isTrusted,
+        choice: answer ? Number(answer.textContent.replace('°', '').trim()) : null,
+        prompt: answer ? document.querySelector('[data-question-copy]')?.textContent.trim() : null });
+    };
+    document.addEventListener('click', window.__legendAngleLevelListener, true);
+    window.__legendAngleLevelStop = () => { collect(); window.__legendAngleLevelObserver.disconnect(); document.removeEventListener('click', window.__legendAngleLevelListener, true); return trace; };
+  });
+  const buttons = page.locator('.answer-choice-surface button');
+  for (let index = 0; index < goal; index += 1) {
+    await expect(buttons.first()).toBeEnabled();
+    const answer = angleAnswer(await questionCopy(page).innerText());
+    await nativeAction(page, profile, exactText(buttons, `${answer}°`));
+    await page.waitForFunction((shot) => window.__legendAngleLevel.resolutions.some((entry) => entry.shot === shot), index, { timeout: 20000 });
+    const result = await page.evaluate((shot) => window.__legendAngleLevel.resolutions.find((entry) => entry.shot === shot), index);
+    expect(result.reaction, 'Every native correct Angle answer must actually hit').toBe('hit');
+  }
+  let result;
+  if (mode === 'exit' || mode === 'manual') {
+    const targetDelay = mode === 'manual' ? 800 : reducedMotion ? 700 : 800;
+    const control = mode === 'exit' ? back : page.getByRole('button', { name: 'Next', exact: true });
+    const bounds = mode === 'exit' ? backBounds : await control.boundingBox();
+    expect(bounds).not.toBeNull();
+    if (!profile.options.hasTouch) await control.focus();
+    await page.evaluate(async (delay) => {
+      const final = window.__legendAngleLevel.resolutions.at(-1);
+      const remaining = delay - (performance.now() - final.at);
+      if (remaining > 0) await new Promise((resolve) => setTimeout(resolve, remaining));
+    }, targetDelay);
+    if (profile.options.hasTouch) await page.touchscreen.tap(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+    else await page.keyboard.press('Enter');
+    if (mode === 'exit') {
+      await expect(page.locator('[data-angle-enemy-frame]')).toHaveCount(0);
+      await pause(page, 1300);
+    } else result = await scoredVictoryResult(page, route, goal * 250, goal, 0);
+  } else result = await scoredVictoryResult(page, route, goal * 250, goal, 0);
+  const timeline = await page.evaluate(() => window.__legendAngleLevelStop());
+  const after = await completionSnapshot();
+  const inputs = timeline.inputs.filter((entry) => entry.type === 'answer');
+  const finalResolution = timeline.resolutions.at(-1);
+  const exitInput = timeline.inputs.find((entry) => entry.type === 'dock');
+  const manualInput = timeline.inputs.find((entry) => entry.type === 'next');
+  const details = { checks: ['six current-tier questions solved from visible copy', 'all trusted native answers hit the actual target', mode === 'exit' ? 'native final Back before existing900ms autoNext' : mode === 'manual' ? 'native final Next near existing900ms autoNext saves exactly once' : 'automatic final result includes all six hits exactly once'], mode, reducedMotion, goal, timeline, baseline, after, result, finalResolution, exitInput, manualInput };
+  try {
+    expect(inputs).toHaveLength(goal);
+    for (const input of inputs) { expect(input.trusted).toBe(true); expect(input.choice).toBe(angleAnswer(input.prompt)); }
+    if (mode === 'exit') {
+      expect(exitInput.trusted).toBe(true);
+      expect(exitInput.at - finalResolution.at).toBeLessThan(900);
+      expect(timeline.screenExitAt - finalResolution.at).toBeLessThan(900);
+      expect(timeline.screenExitAt).not.toBeNull(); expect(timeline.unmountedAt).not.toBeNull();
+      if (!reducedMotion) expect(timeline.unmountedAt - finalResolution.at, 'The outgoing Angle must remain mounted across the original900ms advance deadline').toBeGreaterThan(900);
+      expect(timeline.resultSeen, 'Back must not open a delayed result during retained exit').toBe(false);
+      await expect(page.getByRole('dialog', { name: 'Mission results', exact: true })).toHaveCount(0);
+      expect(after, 'Back before final victory must not add a completion or save').toEqual(baseline);
+    } else {
+      if (mode === 'manual') { expect(manualInput.trusted).toBe(true); expect(manualInput.at - finalResolution.at).toBeLessThan(900); }
+      expect(after.sessionsPlayed - baseline.sessionsPlayed).toBe(1);
+    }
+  } catch (error) { error.qaMetrics = details; throw error; }
+  return details;
+}
+
+async function angleFlightTrace(page, profile, route, throttleMs = 0, count = 3) {
+  await startMission(page, route);
+  await page.evaluate((delay) => {
+    const canvas = document.querySelector('canvas');
+    const trace = { throttleMs: delay, shots: [], frames: [], resolutions: [] };
+    window.__legendAngleFlight = trace;
+    const nativeArc = CanvasRenderingContext2D.prototype.arc;
+    let origin;
+    CanvasRenderingContext2D.prototype.arc = function (x, y, radius, ...rest) {
+      if (this.canvas === canvas) {
+        const transform = this.getTransform();
+        const position = new DOMPoint(x, y).matrixTransform(transform);
+        const screen = { x: position.x / devicePixelRatio, y: position.y / devicePixelRatio };
+        if (Math.abs(radius - 252) < .0001) origin = screen;
+        if (radius === 12 && x === 0 && y === 0 && origin && trace.shots.length) {
+          trace.frames.push({ shot: trace.shots.length - 1, at: performance.now(), x: screen.x - origin.x, y: screen.y - origin.y });
+        }
+      }
+      return nativeArc.call(this, x, y, radius, ...rest);
+    };
+    const click = (event) => {
+      const button = event.target.closest?.('.answer-choice-surface button');
+      if (!button) return;
+      trace.shots.push({ at: performance.now(), trusted: event.isTrusted, choice: Number(button.textContent.replace('°', '').trim()), prompt: document.querySelector('[data-question-copy]')?.textContent.trim() });
+    };
+    document.addEventListener('click', click, true);
+    const collect = () => {
+      const reaction = document.querySelector('[data-monster-actor]')?.dataset.monsterReaction;
+      const shot = trace.shots.length - 1;
+      if (shot >= 0 && ['hit', 'taunt'].includes(reaction) && !trace.resolutions.some((entry) => entry.shot === shot)) trace.resolutions.push({ shot, reaction, at: performance.now() });
+    };
+    const observer = new MutationObserver(collect);
+    observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ['data-monster-reaction'] });
+    const nativeRequest = requestAnimationFrame.bind(window);
+    const nativeCancel = cancelAnimationFrame.bind(window);
+    const scheduled = new Map();
+    let nextFrameId = 1000000000;
+    if (delay) {
+      window.requestAnimationFrame = (callback) => {
+        const id = nextFrameId++;
+        const entry = { timer: null, frame: null };
+        scheduled.set(id, entry);
+        entry.timer = setTimeout(() => {
+          entry.timer = null;
+          entry.frame = nativeRequest((timestamp) => { scheduled.delete(id); callback(timestamp); });
+        }, delay);
+        return id;
+      };
+      window.cancelAnimationFrame = (id) => {
+        const entry = scheduled.get(id);
+        if (!entry) { nativeCancel(id); return; }
+        if (entry.timer !== null) clearTimeout(entry.timer);
+        if (entry.frame !== null) nativeCancel(entry.frame);
+        scheduled.delete(id);
+      };
+    }
+    window.__legendAngleFlightStop = () => {
+      collect(); observer.disconnect(); document.removeEventListener('click', click, true);
+      CanvasRenderingContext2D.prototype.arc = nativeArc;
+      if (delay) {
+        for (const id of scheduled.keys()) window.cancelAnimationFrame(id);
+        window.requestAnimationFrame = nativeRequest;
+        window.cancelAnimationFrame = nativeCancel;
+      }
+      return trace;
+    };
+  }, throttleMs);
+  const buttons = page.locator('.answer-choice-surface button');
+  for (let index = 0; index < count; index += 1) {
+    await expect(buttons.first()).toBeEnabled();
+    const prompt = await questionCopy(page).innerText();
+    const correct = angleAnswer(prompt);
+    await nativeAction(page, profile, exactText(buttons, `${correct}°`));
+    await page.waitForFunction((shot) => window.__legendAngleFlight.resolutions.some((entry) => entry.shot === shot), index, { timeout: 20000 });
+  }
+  const trace = await page.evaluate(() => window.__legendAngleFlightStop());
+  const closestOnSegment = (a, b, target) => {
+    const dx = b.x - a.x; const dy = b.y - a.y;
+    const lengthSquared = dx * dx + dy * dy;
+    const t = Math.max(0, Math.min(1, lengthSquared ? ((target.x - a.x) * dx + (target.y - a.y) * dy) / lengthSquared : 0));
+    return Math.hypot(a.x + t * dx - target.x, a.y + t * dy - target.y);
+  };
+  const shots = trace.shots.map((shot, index) => {
+    const correct = angleAnswer(shot.prompt);
+    expect(shot.trusted).toBe(true); expect(shot.choice, 'The trusted native click must match its then-visible question').toBe(correct);
+    const radius = 520 + (index % 3) * 40;
+    const radians = correct / 180 * Math.PI;
+    const target = { x: Math.cos(radians) * radius, y: -Math.sin(radians) * radius };
+    const frames = [{ shot: index, at: shot.at, x: 0, y: 0 }, ...trace.frames.filter((frame) => frame.shot === index)];
+    expect(frames.length, 'The flight trace must include actual painted projectile frames').toBeGreaterThan(1);
+    const crossings = [];
+    for (let frameIndex = 1; frameIndex < frames.length; frameIndex += 1) {
+      const before = frames[frameIndex - 1]; const after = frames[frameIndex];
+      const beforeDistance = Math.hypot(before.x - target.x, before.y - target.y);
+      const afterDistance = Math.hypot(after.x - target.x, after.y - target.y);
+      const segmentDistance = closestOnSegment(before, after, target);
+      if (beforeDistance > 44 && afterDistance > 44 && segmentDistance < 44) crossings.push({ before, after, beforeDistance, afterDistance, segmentDistance, gapMs: after.at - before.at, travelDistance: Math.hypot(after.x - before.x, after.y - before.y) });
+    }
+    return { ...shot, correct, target, resolution: trace.resolutions.find((entry) => entry.shot === index), crossings, frameCount: frames.length, maxFrameGapMs: Math.max(...frames.slice(1).map((frame, frameIndex) => frame.at - frames[frameIndex].at)) };
+  });
+  return { label: throttleMs ? `Explicit QA-only RAF pacing delay${throttleMs}ms; no production or clock changes` : 'Unmodified native frame cadence', ...trace, shots, missedCorrect: shots.filter((shot) => shot.resolution.reaction === 'taunt'), skippedTarget: shots.filter((shot) => shot.resolution.reaction === 'taunt' && shot.crossings.length) };
+}
+
+async function beginRosterProbe(page) {
+  await page.evaluate(() => {
+    const originals = [...document.querySelectorAll('.data-detective-layout button [data-monster-actor]')];
+    const fingerprint = (source) => { let h = 2166136261; for (let i = 0; i < source.length; i += 1) h = Math.imul(h ^ source.charCodeAt(i), 16777619); return source.length + ':' + (h >>> 0).toString(16); };
+    const histories = originals.map((actor) => ({ actor, image: actor.querySelector('img'), sources: new Set(), identities: new Set(), samples: [], failures: [] }));
+    const known = new Map(histories.map((entry) => [entry.image.getAttribute('src'), fingerprint(entry.image.getAttribute('src'))]));
+    const collect = () => histories.forEach((entry) => {
+      const images = entry.actor.querySelectorAll('img');
+      const source = entry.image.getAttribute('src');
+      if (!entry.actor.isConnected || images.length !== 1 || images[0] !== entry.image || !source.startsWith('data:image/png')) entry.failures.push('identity/image lifecycle');
+      if (!known.has(source)) known.set(source, fingerprint(source));
+      entry.sources.add(known.get(source)); entry.identities.add(entry.actor.dataset.monsterIdentity);
+      const matrix = (selector) => { const t = getComputedStyle(entry.actor.querySelector(selector)).transform; return t === 'none' ? new DOMMatrix() : new DOMMatrix(t); };
+      const breath = matrix('.monster-mind-breath'), sway = matrix('.monster-mind-sway');
+      entry.samples.push({ breath: breath.d, sway: Math.atan2(sway.b, sway.a), running: entry.actor.getAnimations({ subtree: true }).filter((animation) => animation.playState === 'running' && animation.effect?.getComputedTiming().activeDuration > 1).length });
+    });
+    collect();
+    const timer = setInterval(collect, 40);
+    const observer = new MutationObserver(collect);
+    observer.observe(document.querySelector('.data-detective-layout'), { subtree: true, childList: true, attributes: true, attributeFilter: ['src', 'data-monster-identity', 'data-monster-reaction'] });
+    window.__legendRosterProbe = { stop: () => { clearInterval(timer); observer.disconnect(); collect(); return histories.map((entry) => {
+      const range = (key) => Math.max(...entry.samples.map((sample) => sample[key])) - Math.min(...entry.samples.map((sample) => sample[key]));
+      return { identities: [...entry.identities], sources: [...entry.sources], imageStable: entry.image === entry.actor.querySelector('img'), samples: entry.samples.length, breathRange: range('breath'), swayRange: range('sway'), maxRunning: Math.max(...entry.samples.map((sample) => sample.running)), failures: entry.failures };
+    }); } };
+  });
+}
+
+async function beginCreatureProbe(handle) {
+  await handle.evaluate((creature) => {
+    const image = creature.querySelector('img');
+    const initialSource = image.getAttribute('src');
+    const initialIdentity = creature.dataset.monsterIdentity;
+    const samples = [], failures = [], reactions = new Set();
+    const collect = () => {
+      if (!creature.isConnected) return;
+      const images = creature.querySelectorAll('img');
+      const sameSource = image.getAttribute('src') === initialSource;
+      const sameIdentity = creature.dataset.monsterIdentity === initialIdentity;
+      if (images.length !== 1 || images[0] !== image || !sameSource || !sameIdentity || creature.dataset.monsterReady !== 'true' || !initialSource.startsWith('data:image/png')) failures.push('entity image/identity swapped');
+      reactions.add(creature.dataset.monsterReaction);
+      samples.push({ at: performance.now(), connected: true, reaction: creature.dataset.monsterReaction });
+    };
+    const observer = new MutationObserver(collect);
+    observer.observe(creature, { subtree: true, childList: true, attributes: true, attributeFilter: ['src','data-monster-identity','data-monster-ready','data-monster-reaction'] });
+    collect();
+    const timer = setInterval(collect, 16);
+    window.__legendCreatureProbe = { stop: () => { clearInterval(timer); observer.disconnect(); collect(); return { identity: initialIdentity, preparedPNG: initialSource.startsWith('data:image/png'), connectedAtEnd: creature.isConnected, samples: samples.length, reactions: [...reactions], failures }; } };
+  });
+}
+
 async function runProfile(profile) {
   const browser = await profile.browser.launch();
   try {
-    for (const reducedMotion of diagnostic === 'native-timeline' ? [false] : [false, true]) {
+    for (const reducedMotion of (diagnostic === 'native-timeline' ? [false] : [false, true]).filter((value) => !motionFilter || (value ? 'reduced' : 'normal') === motionFilter)) {
+      if (await shouldStop()) break;
       const motion = reducedMotion ? 'reduced' : 'normal';
       nativePoseEvidence = null;
       const context = await browser.newContext({ ...profile.options, reducedMotion: reducedMotion ? 'reduce' : 'no-preference' });
@@ -622,22 +1158,26 @@ async function runProfile(profile) {
         window.matchMedia = (query) => { const result = original(query); if (query.includes('display-mode: standalone')) Object.defineProperty(result, 'matches', { value: true }); return result; };
       }, profile.name !== 'pc');
       const page = await context.newPage();
+      pageProfiles.set(page, profile);
       page.setDefaultTimeout(12000);
       const errors = [];
       page.on('pageerror', (error) => errors.push(error.message));
       page.on('console', (message) => { if (message.type() === 'error' && /GameLoadBoundary|failed to load mini-game/.test(message.text())) errors.push(message.text()); });
       try {
-        await page.goto(base);
+        await page.goto(base + '/play');
         const routes = await page.evaluate(async () => {
           const { ISLANDS } = await import('/src/constants.ts');
           const { resolveMiniGameRegistryKey } = await import('/src/app/miniGameResolver.ts');
           const all = ISLANDS.flatMap((island) => island.levels.map((level) => ({ ...level, route: `/game/${island.id}/${level.id}`, registry: resolveMiniGameRegistryKey(level) })));
           const first = (key, practice) => all.find((level) => level.blueprintKey === key && (practice === undefined || level.isPractice === practice));
-          return { placeValue: all.filter((level) => level.blueprintKey === 'place_value_panic'), placeValueScored: first('place_value_panic', false), numberLineLevels: all.filter((level) => level.blueprintKey === 'number_line_ninja'), numberLine: first('number_line_ninja', true), numberLineScored: first('number_line_ninja', false), factor: first('factor_frenzy'), order: first('order_ops_arena'), encounters: all.filter((level) => ['crystal_core', 'mirror_gate', 'matrix_match'].includes(level.blueprintKey)), portraitRoutes: all.filter((level) => level.isBoss && ['TowerOfFactorsGame', 'CurriculumChallengeGame', 'ReasoningGame'].includes(level.registry)) };
+          return { placeValue: all.filter((level) => level.blueprintKey === 'place_value_panic'), placeValueScored: first('place_value_panic', false), numberLineLevels: all.filter((level) => level.blueprintKey === 'number_line_ninja'), numberLine: first('number_line_ninja', true), numberLineScored: first('number_line_ninja', false), numberLineExit: all.find((level) => level.blueprintKey === 'number_line_ninja' && !level.isPractice && level.difficultyTier === 2), factor: first('factor_frenzy', true), order: first('order_ops_arena', true), mine: first('multiplication_mine', true), mineScored: first('multiplication_mine', false), mineExit: all.find((level) => level.blueprintKey === 'multiplication_mine' && !level.isPractice && level.difficultyTier === 2), angle: first('angle_arena', true), angleScored: first('angle_arena', false), angleExit: all.find((level) => level.blueprintKey === 'angle_arena' && !level.isPractice && level.difficultyTier === 2), angleManual: all.find((level) => level.blueprintKey === 'angle_arena' && !level.isPractice && level.difficultyTier === 3), detective: first('data_detective', true), zombies: all.find((level) => level.registry === 'MathsVsZombiesGame' && level.isPractice), encounters: all.filter((level) => ['crystal_core', 'mirror_gate', 'matrix_match'].includes(level.blueprintKey)), portraitRoutes: all.filter((level) => level.isBoss && ['TowerOfFactorsGame', 'CurriculumChallengeGame', 'ReasoningGame'].includes(level.registry)) };
         });
-        expect(routes.placeValue).toHaveLength(10);
+        expect(routes.placeValue).toHaveLength(6);
+        expect(routes.placeValue.filter((level) => level.isPractice)).toHaveLength(1);
+        expect(routes.placeValue.filter((level) => !level.isPractice).map((level) => level.difficultyTier).sort()).toEqual([1, 2, 3, 4, 5]);
         expect(routes.encounters).toHaveLength(3);
         const record = async (name, route, work, force = false) => {
+          if (await shouldStop()) return;
           if (!force && ((caseFilter && !name.includes(caseFilter)) || (selectedCases.size && !selectedCases.has(name)))) return;
           const started = Date.now();
           const beforeErrors = errors.length;
@@ -654,6 +1194,7 @@ async function runProfile(profile) {
             console.log(`${profile.name}/${motion}: ${name} FAILED: ${error.message}`);
             await page.evaluate(() => window.__legendMonsterProbe?.stop()).catch(() => {});
           }
+          await writeReport();
         };
 
         if (diagnostic === 'native-tap') await record('native-tap-diagnostic', routes.placeValue[0].route, async () => {
@@ -662,6 +1203,14 @@ async function runProfile(profile) {
         });
         if (diagnostic === 'native-timeline') await record('native-timeline-diagnostic', routes.numberLine.route,
           () => diagnoseNativeTimeline(page, profile, routes.numberLine.route));
+        if (diagnostic === 'angle-flight') await record('angle-flight-diagnostic', routes.angle.route, async () => {
+          const natural = await angleFlightTrace(page, profile, routes.angle.route);
+          const controlled = await angleFlightTrace(page, profile, routes.angle.route, 250);
+          expect(natural.missedCorrect, 'All correct shots at actual frame cadence must hit').toHaveLength(0);
+          expect(controlled.missedCorrect, 'All correct shots under explicit250ms RAF pacing must hit').toHaveLength(0);
+          await page.screenshot({ path: path.join(output, `${profile.name}-${motion}-angle-flight-diagnostic.png`) });
+          return { checks: ['actual trusted correct-choice/current-prompt trace', 'canvas-painted projectile reconstructed relative to painted world origin', 'real consecutive flight frames checked against target circle', 'all six native correct shots hit across natural and explicit slow frames'], natural, controlled, correctShots: natural.shots.length + controlled.shots.length, missedCorrect: 0, crossingHits: [...natural.shots, ...controlled.shots].filter((shot) => shot.resolution.reaction === 'hit' && shot.crossings.length).length };
+        });
         if (!diagnostic && !reducedMotion) await record('native-recoil-and-flight', routes.numberLine.route, async () => {
           const details = await diagnoseNativeTimeline(page, profile, routes.numberLine.route);
           expect(details.natural.closestFlightBeforeAdvance, 'Flight must land at its original slot before advancing').not.toBeNull();
@@ -680,11 +1229,12 @@ async function runProfile(profile) {
             boards.push({ route: level.route, miniGameLevel: level.miniGameLevel, slots: readability.samples.length, readability, layout, separation });
           }
           await page.screenshot({ path: path.join(output, `${profile.name}-${motion}-number-stones-seven-places.png`) });
-          return { checks: ['all 10 existing place-value boards', 'opaque number-stone panel', 'separate visible labels and digits', 'text contrast and hit visibility', 'no socket/glow images'], boards };
+          return { checks: ['current practice plus five scored place-value tiers', 'opaque number-stone panel', 'separate visible labels and digits', 'text contrast and hit visibility', 'no socket/glow images'], boards };
         });
 
         await record('place-value-input-motion', routes.placeValue[0].route, async () => {
           await startMission(page, routes.placeValue[0].route);
+          await expect(actor(page)).toHaveAttribute('data-monster-identity', /rhino/);
           const idle = await idleProbe(page, reducedMotion);
           expect(await pvpStrength(page)).toBe(10);
           const digits = String(parseWords(await questionCopy(page).innerText())).padStart(await targetSlots(page).count(), '0').split('');
@@ -749,6 +1299,7 @@ async function runProfile(profile) {
 
         await record('number-line-completion-motion', routes.numberLine.route, async () => {
           await startMission(page, routes.numberLine.route);
+          await expect(actor(page)).toHaveAttribute('data-monster-identity', /goblin/);
           const idle = await idleProbe(page, reducedMotion);
           const root = page.locator('[data-number-line-game]');
           const goal = Number(await root.getAttribute('data-number-line-goal'));
@@ -860,8 +1411,11 @@ async function runProfile(profile) {
           return { checks: ['current scored campaign route', 'one wrong then independently solved goal-count correct answers', 'four-hit bonus included in raw score', 'final shared answer included in persisted and displayed accuracy', 'same-turn final answer saves exactly one victory'], goal, ...result };
         });
 
+        await record('number-line-pending-exit', routes.numberLineExit.route, async () => numberLinePendingExit(page, profile, routes.numberLineExit.route, reducedMotion));
+
         await record('factor-frenzy-motion', routes.factor.route, async () => {
           await startMission(page, routes.factor.route);
+          await expect(actor(page)).toHaveAttribute('data-monster-identity', /factor-sentinel/);
           const idle = await idleProbe(page, reducedMotion);
           const probes = [];
           for (const correct of [false, true, true]) {
@@ -883,6 +1437,7 @@ async function runProfile(profile) {
 
         await record('order-ops-motion', routes.order.route, async () => {
           await startMission(page, routes.order.route);
+          await expect(actor(page)).toHaveAttribute('data-monster-identity', /goblin/);
           const idle = await idleProbe(page, reducedMotion);
           const probes = [];
           for (const correct of [false, true, true]) {
@@ -898,8 +1453,163 @@ async function runProfile(profile) {
           return { checks: ['BIDMAS answer derived from rendered expression', 'incorrect and repeated correct reactions', 'one stable actor through feedback'], idle, probes };
         });
 
+        await record('multiplication-mine-practice', routes.mine.route, async () => {
+          return completeMine(page, profile, routes.mine.route, reducedMotion);
+        });
+
+        await record('multiplication-mine-scored', routes.mineScored.route, async () => {
+          return completeMine(page, profile, routes.mineScored.route, reducedMotion, { wrong: true, duplicate: true });
+        });
+
+        await record('multiplication-mine-pending-exit', routes.mineExit.route, async () => {
+          return minePendingExit(page, profile, routes.mineExit.route, reducedMotion);
+        });
+
+        await record('angle-arena-actor', routes.angle.route, async () => {
+          await startMission(page, routes.angle.route);
+          await expect(actor(page)).toHaveAttribute('data-monster-identity', /goblin/);
+          const canvas = page.locator('canvas').first();
+          await expect(canvas).toHaveAttribute('data-background-fit', 'contain');
+          await expect(canvas).toHaveAttribute('data-rendered-background-src', /\S+/);
+          const framing = await canvas.evaluate((element) => ({ fit: element.dataset.backgroundFit, source: element.dataset.renderedBackgroundSrc, paintWidth: Number(element.dataset.backgroundPaintWidth), paintHeight: Number(element.dataset.backgroundPaintHeight), width: element.width / devicePixelRatio, height: element.height / devicePixelRatio, clientWidth: element.clientWidth, clientHeight: element.clientHeight }));
+          expect(framing.paintWidth).toBeGreaterThan(0); expect(framing.paintHeight).toBeGreaterThan(0);
+          expect(framing.paintWidth).toBeLessThanOrEqual(framing.width + 1);
+          expect(framing.paintHeight).toBeLessThanOrEqual(framing.height + 1);
+          expect(Math.min(framing.width / framing.paintWidth, framing.height / framing.paintHeight)).toBeCloseTo(1, 5);
+          const initialProjection = await page.locator('[data-angle-enemy-frame]').boundingBox();
+          const idle = await idleProbe(page, reducedMotion);
+          const probes = [];
+          for (const correct of [false, true, true]) {
+            const buttons = page.locator('.answer-choice-surface button');
+            await expect(buttons.first()).toBeEnabled();
+            const answer = angleAnswer(await questionCopy(page).innerText());
+            const choices = (await buttons.allTextContents()).map((text) => Number(text.replace('°', '').trim()));
+            expect(choices).toContain(answer);
+            const value = correct ? answer : choices.find((choice) => choice !== answer);
+            await beginActorProbe(page);
+            await nativeAction(page, profile, buttons.nth(choices.indexOf(value)));
+            await expect(actor(page)).toHaveAttribute('data-monster-reaction', correct ? 'hit' : 'taunt', { timeout: 15000 });
+            probes.push(await finishActorProbe(page, { reducedMotion, reaction: correct ? 'hit' : 'taunt' }, 650));
+            await expect(buttons.first()).toBeEnabled();
+          }
+          expect(new Set([idle, ...probes].flatMap((probe) => probe.sourceFingerprints)).size).toBe(1);
+          await leaveDuringReaction(page);
+          return { checks: ['contained painted environment/source metadata', 'current straight-line angle question independently solved', 'normal/reduced stable full-body goblin source through miss/hits', 'current flight camera preserved', 'native exit'], note: 'Existing preflight target projection can be outside the portrait stage; no initial full-target-fit claim.', framing, initialProjection, idle, probes };
+        });
+
+        await record('angle-arena-scored-victory', routes.angleScored.route, () => angleNativeLevel(page, profile, routes.angleScored.route, reducedMotion));
+        await record('angle-arena-pending-exit', routes.angleExit.route, () => angleNativeLevel(page, profile, routes.angleExit.route, reducedMotion, 'exit'));
+        await record('angle-arena-manual-next', routes.angleManual.route, () => angleNativeLevel(page, profile, routes.angleManual.route, reducedMotion, 'manual'));
+
+        await record('data-detective-roster', routes.detective.route, async () => {
+          await startMission(page, routes.detective.route, { skipActor: true });
+          const roster = page.locator('.data-detective-layout button [data-monster-actor]');
+          await expect(roster).toHaveCount(4);
+          for (const member of await roster.all()) {
+            await expect(member).toHaveAttribute('data-monster-ready', 'true');
+            await expect(member.locator('img')).toHaveCount(1);
+            await expect(member.locator('img')).toHaveAttribute('src', /^data:image\/png/);
+          }
+          const identities = await roster.evaluateAll((members) => members.map((member) => member.dataset.monsterIdentity));
+          expect(new Set(identities).size).toBe(4);
+          for (const name of ['goblin', 'rhino', 'jelly', 'cyclops-slime']) expect(identities.some((identity) => identity.includes(name))).toBe(true);
+          await beginRosterProbe(page);
+          await pause(page, reducedMotion ? 1100 : 4400);
+          const idle = await page.evaluate(() => window.__legendRosterProbe.stop());
+          for (const member of idle) {
+            expect(member.failures).toEqual([]); expect(member.sources).toHaveLength(1); expect(member.identities).toHaveLength(1);
+            if (reducedMotion) { expect(member.breathRange).toBeLessThan(.0001); expect(member.swayRange).toBeLessThan(.0001); expect(member.maxRunning).toBe(0); }
+            else { expect(member.breathRange).toBeGreaterThan(.006); expect(member.swayRange).toBeGreaterThan(.008); }
+          }
+          // Early-tier charts are bars. Read only rendered axis/column geometry,
+          // independently of React state or the internal guilty ID.
+          const chart = page.locator('.recharts-wrapper');
+          const axisLabels = chart.locator('.recharts-yAxis-tick-labels .recharts-cartesian-axis-tick-value');
+          await expect.poll(() => axisLabels.count(), { message: 'The rendered bar chart needs two numeric Y-axis labels' }).toBeGreaterThanOrEqual(2);
+          const evidence = await chart.evaluate((chart) => {
+            const ticks = [...chart.querySelectorAll('.recharts-yAxis-tick-labels .recharts-cartesian-axis-tick-value')].map((text) => ({ value: Number(text.textContent), y: text.getBoundingClientRect().y }));
+            const sorted = ticks.filter((tick) => Number.isFinite(tick.value)).sort((first, second) => first.value - second.value);
+            if (sorted.length < 2 || sorted.at(-1).value <= sorted[0].value) throw new Error(`Rendered chart has no usable numeric axis: ${JSON.stringify(ticks)}`);
+            const pixelsPerUnit = Math.abs(sorted.at(-1).y - sorted[0].y) / (sorted.at(-1).value - sorted[0].value);
+            if (!Number.isFinite(pixelsPerUnit) || pixelsPerUnit <= 0) throw new Error(`Rendered chart has an invalid axis scale: ${JSON.stringify(ticks)}`);
+            const bars = [...chart.querySelectorAll('.recharts-bar-rectangle')].map((bar) => bar.getBoundingClientRect());
+            return { ticks, pixelsPerUnit, amounts: bars.map((bar) => Math.round(bar.height / pixelsPerUnit)) };
+          });
+          expect(evidence.amounts).toHaveLength(4); expect(evidence.amounts.every((value) => value > 0)).toBe(true);
+          const choices = roster.locator('xpath=ancestor::button[1]');
+          const opened = [];
+          await beginRosterProbe(page);
+          let found = false;
+          for (let index = 0; index < 4; index += 1) {
+            await nativeAction(page, profile, choices.nth(index));
+            const lockUp = page.getByRole('button', { name: 'Lock Up', exact: true });
+            await expect(lockUp).toBeVisible();
+            const modal = lockUp.locator('..').locator('..');
+            const modalActor = modal.locator('[data-monster-actor]');
+            await expect(modalActor).toHaveAttribute('data-monster-ready', 'true');
+            await expect(modalActor).toHaveAttribute('data-monster-identity', identities[index]);
+            await expect(modalActor.locator('img')).toHaveCount(1);
+            await expect(modalActor.locator('img')).toHaveAttribute('src', /^data:image\/png/);
+            const amounts = (await modal.locator('div.flex.items-center.justify-between > span').allTextContents()).map(Number);
+            expect(amounts).toHaveLength(4);
+            opened.push({ index, identity: identities[index], amounts });
+            if (JSON.stringify(amounts) === JSON.stringify(evidence.amounts)) {
+              await nativeAction(page, profile, lockUp);
+              await expect(roster.nth(index)).toHaveAttribute('data-monster-reaction', 'defeated');
+              found = true;
+            }
+            await nativeAction(page, profile, page.getByRole('button', { name: 'Close', exact: true }));
+            await expect(page.getByRole('button', { name: 'Lock Up', exact: true })).toHaveCount(0);
+            if (found) break;
+          }
+          expect(found).toBe(true);
+          await nativeAction(page, profile, page.getByRole('button', { name: /Next Case File/ }));
+          await expect(roster).toHaveCount(4);
+          const transitions = await page.evaluate(() => window.__legendRosterProbe.stop());
+          for (const member of transitions) { expect(member.failures).toEqual([]); expect(member.sources).toHaveLength(1); expect(member.imageStable).toBe(true); }
+          await page.screenshot({ path: path.join(output, `${profile.name}-${motion}-data-detective-cohesive-roster.png`) });
+          await nativeAction(page, profile, page.locator('[data-testid="shared-bottom-hud"]').getByRole('button', { name: 'Back', exact: true }));
+          await expect(actor(page)).toHaveCount(0);
+          return { checks: ['four distinct current character identities', 'one prepared PNG per roster actor', 'normal breathing/sway or static reduced motion', 'selected modal uses matching current identity', 'culprit derived from rendered chart heights/numbered axis and native report comparison', 'culprit defeat and next-case stable roster nodes', 'native exit'], idle, transitions, evidence, opened };
+        });
+
+        await record('zombies-cohesive-identity', routes.zombies.route, async () => {
+          await startMission(page, routes.zombies.route);
+          await expect(actor(page)).toHaveAttribute('data-monster-identity', /zombie/);
+          const idle = await idleProbe(page, reducedMotion);
+          const root = page.locator('[data-zombies-game]');
+          const equation = (await questionCopy(page).innerText()).trim();
+          expect(equation).toMatch(/^\d+\s*\+\s*\d+$/);
+          const answer = expressionValue(equation);
+          const buttons = root.getByRole('button').filter({ hasText: /^\d+$/ });
+          const choices = (await buttons.allTextContents()).map((text) => Number(text.trim()));
+          const wrong = choices.find((value) => value !== answer);
+          const baseline = await progressionSnapshot(page);
+          await nativeAction(page, profile, exactText(buttons, String(wrong)));
+          await expect(root).toHaveAttribute('data-zombies-score', '0');
+          await expect(buttons.first()).toBeEnabled();
+          const defeated = [];
+          for (let index = 0; index < 4; index += 1) {
+            await expect(actor(page).first()).toHaveAttribute('data-monster-ready', 'true');
+            const handle = await actor(page).first().elementHandle();
+            await beginCreatureProbe(handle);
+            const result = expressionValue(await questionCopy(page).innerText());
+            await nativeAction(page, profile, exactText(buttons, String(result)));
+            await expect(root).toHaveAttribute('data-zombies-score', String((index + 1) * 220));
+            await pause(page, 180);
+            const probe = await page.evaluate(() => window.__legendCreatureProbe.stop());
+            expect(probe.failures).toEqual([]); expect(probe.preparedPNG).toBe(true); expect(probe.reactions).toContain('defeated');
+            defeated.push(probe);
+            if (index < 3) await expect(buttons.first()).toBeEnabled();
+          }
+          await expect(page.getByText('Practice Complete', { exact: true })).toBeVisible();
+          expect(await progressionSnapshot(page)).toEqual(baseline);
+          return { checks: ['gentle current practice addition independently solved', 'wrong answer recovery', 'one unchanged preparedPNG per entity through its legitimate defeat/removal', 'normal idle or reduced-motion static minion', 'native four-answer practice completion with no progression reward'], idle, defeated };
+        });
+
         for (const encounter of routes.encounters) await record(`encounter-${encounter.blueprintKey}-motion`, encounter.route, async () => {
           await startMission(page, encounter.route);
+          await expect(actor(page)).toHaveAttribute('data-monster-identity', encounter.blueprintKey === 'crystal_core' ? /jelly/ : /cyclops-slime/);
           const idle = await idleProbe(page, reducedMotion);
           const probes = [];
           for (const correct of [false, true, true]) {
@@ -922,7 +1632,7 @@ async function runProfile(profile) {
           return { checks: ['answers derived from current encounter prompt', 'wrong and repeated correct pose changes', 'no keyed image fade/remount'], idle, probes };
         });
 
-        reports.push({ profile: profile.name, motion, case: 'boss-portrait-route-audit', passed: routes.portraitRoutes.length === 0, reachableRoutes: routes.portraitRoutes.map((level) => level.route), note: routes.portraitRoutes.length === 0 ? 'Current isBoss routes dispatch BossEncounterGame; conditional BossPortrait consumers have no live campaign route. No alias or new boss route was invented.' : 'Live BossPortrait route requires additional interaction coverage.' });
+        if (!stopRequested) reports.push({ profile: profile.name, motion, case: 'boss-portrait-route-audit', passed: routes.portraitRoutes.length === 0, reachableRoutes: routes.portraitRoutes.map((level) => level.route), note: routes.portraitRoutes.length === 0 ? 'Current isBoss routes dispatch BossEncounterGame; conditional BossPortrait consumers have no live campaign route. No alias or new boss route was invented.' : 'Live BossPortrait route requires additional interaction coverage.' });
         if (routes.portraitRoutes.length) process.exitCode = 1;
         expect(errors).toEqual([]);
       } catch (error) {
@@ -935,19 +1645,20 @@ async function runProfile(profile) {
 
 // Each software-rendered WebKit surface gets its own verification window, avoiding GPU contention.
 for (const profile of caseFilter === 'number-stones-fit' ? [] : profiles) {
+  if (await shouldStop()) break;
   try { await runProfile(profile); }
   catch (error) {
     reports.push({ profile: profile.name, case: 'runner', passed: false, error: String(error) });
     process.exitCode = 1;
   }
 }
-if (!profileFilter && ((!caseFilter && !selectedCases.size) || caseFilter === 'number-stones-fit')) {
+if (!stopRequested && !profileFilter && ((!caseFilter && !selectedCases.size) || caseFilter === 'number-stones-fit')) {
   const browser = await chromium.launch();
   const context = await browser.newContext({ viewport: { width: 1264, height: 625 }, reducedMotion: 'no-preference' });
   const page = await context.newPage();
   let currentRoute;
   try {
-    await page.goto(base);
+    await page.goto(base + '/play');
     const routes = await page.evaluate(async () => {
       const { ISLANDS } = await import('/src/constants.ts');
       return ISLANDS.flatMap((island) => island.levels.filter((level) => level.blueprintKey === 'place_value_panic').map((level) => `/game/${island.id}/${level.id}`));
@@ -979,6 +1690,6 @@ if (!profileFilter && ((!caseFilter && !selectedCases.size) || caseFilter === 'n
     console.log(`pc-short: number-stones-fit FAILED: ${error.message}`);
   } finally { await context.close(); await browser.close(); }
 }
-await writeFile(path.join(output, reportName), JSON.stringify({ base, capturedAt: new Date().toISOString(), profiles: profiles.map((profile) => profile.name), assumption: 'Existing curriculum, scoring and current campaign routes are retained; native mobile tap and scaled pointer drag use actual rendered controls. No external legacy assumptions were used.', reports }, null, 2));
+await writeReport(true);
 const passed = reports.filter((report) => report.passed).length;
 console.log(`Monster Mind / Number Stones QA: ${passed}/${reports.length} checks passed; report ${path.join(output, reportName)}`);

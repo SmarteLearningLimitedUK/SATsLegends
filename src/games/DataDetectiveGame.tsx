@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Search,
   FileText,
@@ -11,7 +11,8 @@ import {
   PieChart as PieChartIcon,
   BarChart3,
 } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import '../components/game-ui/arcade-amendments.css';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import {
   BarChart,
@@ -105,6 +106,9 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
   onGameOver,
   onBack,
 }) => {
+  const dossierRef = useRef<HTMLDivElement>(null);
+  const reducedMotion = useReducedMotion();
+  const [pinnedEvidence, setPinnedEvidence] = useState<string | null>(null);
   const difficulty = Math.max(1, Math.min(5, levelId));
   const [XP, setScore] = useState(0);
   const [level, setLevel] = useState(1);
@@ -121,12 +125,20 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
   const [incorrectSuspectIds, setIncorrectSuspectIds] = useState<number[]>([]);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(useSharedTopHud));
 
+  useEffect(() => {
+    if (selectedSuspectId === null) return;
+    const previous = document.activeElement as HTMLElement | null;
+    dossierRef.current?.querySelector<HTMLButtonElement>('button')?.focus();
+    return () => previous?.focus();
+  }, [selectedSuspectId]);
+
   const maxCaseValue = Math.max(...currentCase.map((item) => item.amount), 0);
   const tickStep = difficulty <= 2 ? 1 : difficulty === 3 ? 2 : 5;
   const barAxisMax = Math.max(tickStep, Math.ceil(maxCaseValue / tickStep) * tickStep);
   const barTicks = Array.from({ length: barAxisMax / tickStep + 1 }, (_, index) => index * tickStep);
 
   const generateCase = useCallback(() => {
+    setPinnedEvidence(null);
     const nextMode: CaseMode = Math.random() > 0.5 ? 'detective' : 'whodunnit';
     setCaseMode(nextMode);
     setCaseBrief(nextMode === 'whodunnit'
@@ -302,10 +314,10 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             className="z-30 mt-0 w-full max-w-[620px] rounded-[1.2rem] px-3 py-2 text-center shadow-[0_10px_20px_rgba(2,6,23,0.38)] max-[480px]:px-2 max-[480px]:py-1.25"
             titleClassName="text-[9px] tracking-[0.26em] text-cyan-50/85"
             title="Data Detective"
-            subtitle="Compare the chart with each suspect before accusing."
+            subtitle="Pin clues. Compare stashes."
             style={{ position: 'relative', top: 0, transform: 'none' }}
           >
-            {caseBrief}
+            Find the matching suspect.
           </GameQuestionCard>
         </div>
       )}
@@ -315,8 +327,8 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
               <div className="mb-1 flex items-center justify-between">
                 <div className="flex items-center gap-2 text-amber-500">
                   <FileText className="h-5 w-5" />
-                  <h2 className="text-[11px] font-black uppercase tracking-[0.26em]">
-                    {caseMode === 'whodunnit' ? 'Clue Board' : 'Evidence: Stolen Items'}
+                  <h2 className="detective-evidence-heading font-black">
+                    {`Case ${level}/${MAX_CASES} · Evidence board`}
                   </h2>
                 </div>
                 <div className="flex items-center gap-2 rounded-full border border-stone-700 bg-stone-800 px-3 py-1">
@@ -331,8 +343,8 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                 <div className="pointer-events-none absolute inset-0 bg-slate-950/20" />
                 <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.3)_1px,transparent_1px)] opacity-7 [background-size:20px_20px]" />
 
-                <div className="flex min-h-0 flex-1 flex-col">
-                  <div className="relative w-full flex-[1.15]" style={{ minHeight: 'clamp(9.5rem, 22vh, 15.5rem)' }}>
+                <div className="flex h-full min-h-0 flex-1 flex-col">
+                  <div className="relative min-h-0 w-full flex-1" style={{ minHeight: 0 }}>
                     <ResponsiveContainer width="100%" height="100%">
                       {chartType === 'bar' ? (
                         <BarChart data={currentCase} margin={{ top: 12, right: 10, left: -6, bottom: 6 }}>
@@ -362,9 +374,9 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                             contentStyle={{ backgroundColor: '#1c1917', border: '1px solid #444', borderRadius: '8px', fontSize: '17px' }}
                             itemStyle={{ color: '#fff' }}
                           />
-                          <Bar dataKey="amount" radius={[4, 4, 0, 0]} isAnimationActive={false}>
+                          <Bar dataKey="amount" radius={[4, 4, 0, 0]} isAnimationActive={!reducedMotion} animationDuration={600}>
                             {currentCase.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={entry.color} />
+                              <Cell key={`cell-${index}`} fill={entry.color} opacity={!pinnedEvidence || pinnedEvidence === entry.name ? 1 : .35} />
                             ))}
                           </Bar>
                         </BarChart>
@@ -379,7 +391,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                             paddingAngle={3}
                             labelLine={false}
                             dataKey="amount"
-                            isAnimationActive={false}
+                            isAnimationActive={!reducedMotion} animationDuration={600}
                             label={({ cx, cy, midAngle, innerRadius, outerRadius, value }) => {
                               const radius = innerRadius + (outerRadius - innerRadius) * 0.68;
                               const rad = (-midAngle * Math.PI) / 180;
@@ -401,7 +413,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                             }}
                           >
                             {currentCase.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={entry.color} />
+                              <Cell key={`cell-${index}`} fill={entry.color} opacity={!pinnedEvidence || pinnedEvidence === entry.name ? 1 : .35} />
                             ))}
                           </Pie>
                           <Tooltip
@@ -413,14 +425,14 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                   </div>
 
                   <div className="mt-auto pt-2">
-                    <div className="grid grid-cols-2 gap-1 sm:gap-1.5 max-[480px]:gap-0.5">
+                    <div className="detective-evidence-pins" aria-label="Pin evidence to focus the chart">
                       {currentCase.map(item => (
-                        <div key={item.name} className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/8 px-2 py-1">
+                        <button key={item.name} type="button" data-button-skin="none" className="detective-evidence-pin" aria-pressed={pinnedEvidence === item.name} onClick={() => setPinnedEvidence((current) => current === item.name ? null : item.name)}>
                           <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
-                          <span className="min-w-0 truncate text-[16px] font-bold uppercase tracking-wide text-stone-300 max-[480px]:text-[13px]">
+                          <span className="min-w-0 font-semibold">
                             {item.name}
                           </span>
-                        </div>
+                        </button>
                       ))}
                     </div>
                   </div>
@@ -436,13 +448,16 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                 <Users className="h-4.5 w-4.5" />
                 <h2 className="text-[10px] font-black uppercase tracking-[0.2em]">Choose the thief</h2>
               </div>
-              <div className={`grid grid-cols-4 items-start gap-1.5 max-[480px]:gap-0.75 ${selectedSuspect ? 'pointer-events-none opacity-0' : ''}`}>
+              <div className="detective-lineup">
                 {suspects.map((suspect) => (
                   <motion.button
                     key={suspect.id}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => handleSuspectClick(suspect.id)}
+                    data-button-skin="none"
+                    aria-label={`Inspect ${suspect.name}`}
+                    aria-pressed={selectedSuspectId === suspect.id}
                     transition={{ duration: 0.35 }}
                     className={`group relative flex w-full aspect-[5/4] items-center justify-center rounded-[1rem] border p-1 transition-all duration-300 sm:aspect-[4/5] max-[480px]:aspect-[4/5] max-[480px]:rounded-lg max-[480px]:p-0.25 ${
                       gameState === 'success' && suspect.id === guiltyId
@@ -454,7 +469,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                             : 'border-stone-800 bg-stone-900/50 hover:border-amber-500/50'
                     }`}
                   >
-                    <div className="relative flex h-full w-full items-center justify-center overflow-visible rounded-[0.95rem] border border-white/16 bg-slate-950/40 p-0.75 shadow-lg max-[480px]:rounded-[0.85rem] max-[480px]:p-0.25">
+                    <div className="detective-suspect-portrait relative flex h-full w-full items-center justify-center overflow-visible rounded-[0.95rem] border border-white/16 bg-slate-950/40 p-0.75 shadow-lg max-[480px]:rounded-[0.85rem] max-[480px]:p-0.25">
                       {suspect.portrait ? (
                         <MonsterMindActor
                           src={suspect.portrait}
@@ -472,6 +487,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                       )}
                     </div>
 
+                    <span className="detective-suspect-name">{suspect.name}</span>
                     {gameState === 'success' && suspect.id === guiltyId && (
                       <div className="absolute right-2 top-2">
                         <CheckCircle2 className="h-5 w-5 text-emerald-500" />
@@ -512,7 +528,16 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                 exit={{ opacity: 0, scale: 0.95 }}
                 className="absolute inset-0 z-40 flex items-center justify-center bg-slate-950/55 p-2 backdrop-blur-md max-[480px]:p-1"
               >
-                <div className="w-full max-w-[20rem] max-h-[calc(100%-0.75rem)] overflow-y-auto overflow-x-hidden rounded-2xl border border-white/18 bg-[linear-gradient(180deg,rgba(9,24,58,0.96),rgba(4,12,28,0.98))] p-4 shadow-[0_24px_48px_rgba(0,0,0,0.45)] max-[480px]:max-w-[calc(100%-0.5rem)] max-[480px]:max-h-[calc(100%-0.5rem)] max-[480px]:p-3">
+                <div ref={dossierRef} onKeyDown={(event) => {
+                  if (event.key === 'Escape') setSelectedSuspectId(null);
+                  if (event.key === 'Tab') {
+                    const controls = dossierRef.current?.querySelectorAll<HTMLButtonElement>('button:not(:disabled)');
+                    if (!controls?.length) return;
+                    const first = controls[0]; const last = controls[controls.length - 1];
+                    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+                    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+                  }
+                }} role="dialog" aria-modal="true" aria-label={`${selectedSuspect.name} evidence dossier`} className="detective-dossier w-full max-w-[20rem] max-h-[calc(100%-0.75rem)] overflow-y-auto overflow-x-hidden rounded-2xl border border-white/18 bg-[linear-gradient(180deg,rgba(9,24,58,0.96),rgba(4,12,28,0.98))] p-4 shadow-[0_24px_48px_rgba(0,0,0,0.45)] max-[480px]:max-w-[calc(100%-0.5rem)] max-[480px]:max-h-[calc(100%-0.5rem)] max-[480px]:p-3">
                   <div className="flex items-center gap-3">
                     <div className="flex h-20 w-20 items-center justify-center overflow-visible rounded-2xl border border-white/20 bg-slate-950/40 p-1.5 max-[480px]:h-20 max-[480px]:w-20 max-[480px]:p-1">
                       {selectedSuspect.portrait && (
@@ -531,7 +556,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                     </div>
                   </div>
 
-                  <div className="mt-4 max-h-[38vh] space-y-2 overflow-y-auto pr-1 max-[480px]:mt-3 max-[480px]:max-h-[28vh]">
+                  <div className="detective-dossier-items mt-3">
                     {selectedSuspect.items.map((amount, index) => (
                       <div key={`${selectedSuspect.id}-item-${index}`} className="flex items-center justify-between rounded-xl border border-white/12 bg-white/6 px-3 py-2 max-[480px]:px-2 max-[480px]:py-1.5">
                         <div className="flex items-center gap-2">
@@ -556,7 +581,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                       onClick={() => handleAccuse(selectedSuspect.id)}
                       className="ui-button-primary flex-1 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-[0.14em] max-[480px]:px-3 max-[480px]:py-1.5"
                     >
-                      Lock Up
+                      Accuse
                     </button>
                   </div>
                 </div>

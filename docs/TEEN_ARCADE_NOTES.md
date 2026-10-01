@@ -41,7 +41,7 @@ Cinematic cartoon arcade: physical props, clear silhouettes, teal/amber light, c
 
 Retain existing passing verification with provenance where the corresponding surface is unchanged. Recheck every changed gameplay layout in PC, iPad A2HS and smartphone A2HS simulations, with normal/reduced motion. Exercise actual inputs, correct/incorrect recovery, final result persistence, scene assignments, all six calm activity completions/exits and Parent Snapshot overflow/scrollability. Physical installed-device behaviour is not inferred from simulation.
 
-Results and final changed-file/art prompt lists will be appended when the pass is complete.
+Final combined validation, exact changed files and art-prompt provenance are recorded in `docs/GAMEPLAY_REFINEMENT_NOTES.md`. Per-row provenance distinguishes unchanged wellbeing/Parent evidence from fresh checks of later game, framing and difficulty edits.
 
 ## Composition and motion plan
 
@@ -65,14 +65,14 @@ Ten final environments were created using the built-in `image_gen` tool and insp
 
 The original Number Stones/Monster Mind pass has 88/88 passing verification rows with historical report provenance retained. This includes native mobile taps, stable enemy identity during damage, measured Ninja flights, all 12 scored full-level victories, exact final score/accuracy persistence and one completion save. The expanded visual and wellbeing pass uses separate verification so these results are not misrepresented as coverage of later edits.
 
-## Final integration repairs under verification
+## Integration repairs
 
 - The short desktop restaurant mission is compacted within the existing wide/short breakpoint so the ticket rail, speaking customer and tray have distinct visible space. Answer targets, section order and dock bounds remain.
 - Existing shell pause state is exposed as an optional session-state field for the restaurant's current 90-second shift. Its local timer must stop behind Help or a result overlay and resume afterward; this retains the existing duration and score formulas.
 - Calm completion must cancel as soon as navigation starts, including the shared dock and retained AnimatePresence exit. A reward must not arrive after leaving an activity; optional microphone work must also stop at that boundary.
 - The same presence boundary guards delayed results in the three themed games and stops their owned timers/schedulers immediately when leaving. Existing feedback delays and score formulas remain; a retained exit animation must not finish a run on another screen.
 
-These repairs use only current repository lifecycle and state. They do not change level routing, practice flags, curriculum, rewards or scoring systems.
+These venue/wellbeing lifecycle repairs use only current repository lifecycle and state and preserve their existing rewards and scoring. The separately requested later five-tier route and curriculum refinement is documented in `docs/GAMEPLAY_REFINEMENT_NOTES.md`.
 
 ## Parent recording correction found during verification
 

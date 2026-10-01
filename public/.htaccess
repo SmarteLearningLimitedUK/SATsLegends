@@ -1,0 +1,21 @@
+# Apache / cPanel FTP hosting: React browser routes must return index.html.
+# Ask your host to enable mod_rewrite and AllowOverride if deep links return 404.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  # Never serve hidden files accidentally uploaded by an FTP client.
+  RewriteRule (^|/)\.(?!well-known(?:/|$)) - [F,L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^ index.html [L]
+</IfModule>
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "DENY"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self' https://*.supabase.co; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'"
+  # Worry Balloon has an optional, on-device microphone. Camera/location are unused.
+  Header always set Permissions-Policy "camera=(), geolocation=(), microphone=(self), payment=()"
+  # Only send HSTS on HTTPS. Terminating proxies must set it at their TLS layer.
+  Header always set Strict-Transport-Security "max-age=31536000" "expr=%{HTTPS} == 'on'"
+</IfModule>

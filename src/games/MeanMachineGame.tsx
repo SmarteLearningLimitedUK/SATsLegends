@@ -1,5 +1,6 @@
+import ArcadeJourney from '../components/game-ui/ArcadeJourney';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import {
   AlertTriangle,
   CheckCircle2,
@@ -418,6 +419,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
   sessionState,
   sessionEvents,
 }) => {
+  const reducedMotion = useReducedMotion();
   const difficulty = Math.max(1, Math.min(5, levelId));
   const [level, setLevel] = useState(1);
   const [XP, setXP] = useState(0);
@@ -427,6 +429,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
   const [reelDisplay, setReelDisplay] = useState<Array<number | string>>(Array.from({ length: REEL_COUNT }, () => '?'));
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [repairStreak, setRepairStreak] = useState(0);
   const [showJackpot, setShowJackpot] = useState(false);
   const [showGlitch, setShowGlitch] = useState(false);
   const [spinPulse, setSpinPulse] = useState(false);
@@ -561,7 +564,9 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
     setSelectedAnswer(answer);
 
     if (answer === round.correctAnswer) {
-      const earnedXP = XP + 150 + level * 35;
+      const nextStreak = repairStreak + 1;
+      setRepairStreak(nextStreak);
+      const earnedXP = XP + 150 + level * 35 + (nextStreak % 3 === 0 ? 75 : 0);
       setXP(earnedXP);
       setShowJackpot(true);
       setMachineShake(true);
@@ -592,6 +597,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
       return;
     }
 
+    setRepairStreak(0);
     setShowGlitch(true);
     setMachineShake(true);
     setWrongPulse(true);
@@ -620,21 +626,22 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
       answerLockedRef.current = false;
       setGameState('answering');
     }, 1150);
-  }, [XP, gameState, goToNextRound, level, queueTimeout, round, sessionActive, sessionEvents]);
+  }, [XP, gameState, goToNextRound, level, queueTimeout, repairStreak, round, sessionActive, sessionEvents]);
 
   const restart = useCallback(() => {
     completionLockedRef.current = false;
     failureLockedRef.current = false;
     setLevel(1);
     setXP(0);
+    setRepairStreak(0);
     initialiseRound(1);
   }, [initialiseRound]);
 
   const modeCopy = useMemo(() => {
-    if (!round) return { title: 'Spin the reels', prompt: 'Recalibrate the machine to begin.' };
+    if (!round) return { title: 'Scan the power cells', prompt: 'Recalibrate the machine to begin.' };
     if (round.mode === 'mean') {
       return {
-        title: `Spin ${round.activeReelIndexes.length} reels. Find the MEAN.`,
+        title: `Scan ${round.activeReelIndexes.length} cells. Restore their MEAN.`,
         prompt: `Add them, then divide by ${round.activeReelIndexes.length} to get the MEAN.`,
       };
     }
@@ -668,7 +675,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Mean Machine"
-        body="The Monster Minds have sabotaged the island machine.\nSpin the reels and solve the clues to recalibrate it.\nUse the right method for each round."
+        body="The Monster Minds have sabotaged the island machine.\nScan the power cells and restore the island grid. Three clean repairs earn 75 bonus XP.\nUse the right method for each round."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
@@ -687,6 +694,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
           <main className="flex min-h-0 flex-1 flex-col gap-2.5">
             <section className="relative min-h-0 flex-1 overflow-hidden rounded-[1.6rem] border border-transparent bg-transparent px-2 py-2 shadow-none">
 
+              <div className="mean-power-panel"><ArcadeJourney kind="power" completed={level - 1 + (feedback?.type === 'success' ? 1 : 0)} total={TOTAL_LEVELS} danger={showGlitch} /></div>
               <div className="relative flex h-full min-h-0 flex-col gap-2.5">
                 <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-[1.35rem] border border-transparent bg-transparent px-1 py-1">
                   <motion.div
@@ -701,7 +709,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                       >
                       <img
                         src={alphaKeyedMachineImage}
-                        alt="MEAN Machine slot machine"
+                        alt="Island power calibration machine"
                         draggable={false}
                         className="pointer-events-none absolute inset-0 z-[12] h-full w-full object-cover object-center"
                       />
@@ -733,21 +741,21 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                         type="button"
                         onClick={handleSpin}
                         disabled={!round || gameState === 'spinning' || !sessionActive}
-                        animate={spinPulse ? { scale: [1, 0.94, 1.06, 1], y: [0, 2, -1, 0] } : { scale: [1, 1.03, 1], y: [0, -1, 0] }}
-                        transition={spinPulse ? { duration: 0.34 } : { duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+                        animate={spinPulse && !reducedMotion ? { scale: [1, 0.94, 1.06, 1], y: [0, 2, -1, 0] } : { scale: 1, y: 0 }}
+                        transition={{ duration: reducedMotion ? 0 : .34 }}
                         className="absolute z-30 flex items-center justify-center rounded-[1.2rem] bg-transparent text-[0.98rem] font-black uppercase tracking-[0.18em] text-cyan-50 disabled:cursor-not-allowed disabled:opacity-65 md:text-[1.05rem]"
-                        aria-label="Press the MEAN Machine base button"
+                        aria-label="Scan the power cells"
                         style={{
                           left: '31.7%',
                           top: '79.6%',
                           width: '31.2%',
-                          height: '6.9%',
+                          height: 'max(6.9%, calc(44px / var(--game-stage-scale, 1)))',
                         }}
                       >
                         <span className="absolute inset-[6%] rounded-[1rem] bg-cyan-300/10 blur-md" />
                         <span className="absolute inset-0 rounded-[1.2rem] border border-cyan-200/22 bg-[linear-gradient(180deg,rgba(37,99,235,0.12),rgba(29,78,216,0.04))]" />
                         <span className="relative z-10">
-                          {gameState === 'spinning' ? 'Spinning' : 'Spin'}
+                          {gameState === 'spinning' ? 'Scanning' : 'Scan'}
                         </span>
                       </motion.button>
 
@@ -813,6 +821,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
             <section className="shrink-0 rounded-[1.35rem] border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(10,31,83,0.92),rgba(7,21,58,0.96))] p-2.5 shadow-[0_16px_26px_rgba(2,6,23,0.34)]">
               <div className="mb-2 flex items-center justify-start gap-2">
                 <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/74">
+                  <span className="mean-repair-streak">{repairStreak > 0 ? `${repairStreak} clean repairs · ${3 - repairStreak % 3} to bonus` : 'Three clean repairs earn +75 XP'} · </span>
                   {round?.mode === 'mean' ? (
                     <>
                       Pick the <span className="underline decoration-amber-200/90 underline-offset-[3px]">MEAN</span>

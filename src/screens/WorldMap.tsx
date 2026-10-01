@@ -1,12 +1,16 @@
-import React, { useMemo, useState } from 'react';
-import { ArrowRight, X } from 'lucide-react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { X } from 'lucide-react';
 import { IslandData, PlayerData } from '../types';
 import { ISLANDS } from '../constants';
-import universalMapPoster from '../assets/maps/mapselect.png';
+import islandAtlas from '../assets/maps/island-atlas-rich.png';
+import mathariaLogo from '../assets/maps/matharia-logo.png';
 import AssetIcon from '../components/AssetIcon';
 import ParentGateOverlay from '../components/ParentGateOverlay';
-import MapAtmosphere from '../components/world-map/MapAtmosphere';
+import MapAtmosphere, { TERRAIN_ACCENTS } from '../components/world-map/MapAtmosphere';
+import { useIslandCardPosition } from '../components/world-map/useIslandCardPosition';
+import { islandPreviewCategory } from '../components/world-map/IslandPreviewScene';
 import '../design/map-effects.css';
+import '../design/map-exploration.css';
 import { UNLOCK_ALL_LEVELS } from '../app/testingFlags';
 
 interface WorldMapProps {
@@ -25,75 +29,15 @@ type IslandState = {
   totalPossibleBrainpower: number;
 };
 
-type IslandHotspot = {
-  islandId: number;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-};
-
 const MAP_WIDTH_PX = 768;
 const MAP_HEIGHT_PX = 2500;
-
-const ISLAND_HOTSPOTS: IslandHotspot[] = [
-  {
-    islandId: 8,
-    x: 52.47,
-    y: 17.38,
-    width: 93.49,
-    height: 5.56,
-  },
-  {
-    islandId: 6,
-    x: 37.5,
-    y: 25.72,
-    width: 63.02,
-    height: 5.52,
-  },
-  {
-    islandId: 5,
-    x: 63.67,
-    y: 34.32,
-    width: 62.76,
-    height: 5.52,
-  },
-  {
-    islandId: 3,
-    x: 45.44,
-    y: 45.16,
-    width: 62.76,
-    height: 5.52,
-  },
-  {
-    islandId: 2,
-    x: 52.73,
-    y: 54.98,
-    width: 82.55,
-    height: 5.72,
-  },
-  {
-    islandId: 4,
-    x: 50,
-    y: 66.74,
-    width: 63.02,
-    height: 5.56,
-  },
-  {
-    islandId: 7,
-    x: 54.17,
-    y: 79.5,
-    width: 75,
-    height: 5.56,
-  },
-  {
-    islandId: 1,
-    x: 35.94,
-    y: 91.62,
-    width: 63.02,
-    height: 5.56,
-  },
-];
+// Individual atlas bounds preserve the full peaks and waterfall tips.
+const ISLAND_ATLAS_BOUNDS: Record<number, string> = {
+  8:'0 0 444 454', 6:'444 0 444 474',
+  5:'0 454 444 440', 3:'444 474 444 422',
+  2:'0 894 444 428', 4:'444 896 444 428',
+  7:'0 1322 444 454', 1:'444 1324 444 452',
+};
 
 const WorldMap: React.FC<WorldMapProps> = ({
   player,
@@ -103,6 +47,25 @@ const WorldMap: React.FC<WorldMapProps> = ({
   onOpenParentReport,
 }) => {
   const [selectedIslandId, setSelectedIslandId] = useState<number | null>(null);
+  const [activeIslandId, setActiveIslandId] = useState<number | null>(null);
+  const [hoveredIslandId, setHoveredIslandId] = useState<number | null>(null);
+  const hoverDismissRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cancelHoverDismiss = () => { if (hoverDismissRef.current) clearTimeout(hoverDismissRef.current); };
+  const dismissHoverSoon = () => {
+    cancelHoverDismiss();
+    hoverDismissRef.current = setTimeout(() => setHoveredIslandId(null), 400);
+  };
+  const closeDetails = () => { cancelHoverDismiss(); setHoveredIslandId(null); setSelectedIslandId(null); };
+  useEffect(() => () => { if (hoverDismissRef.current) clearTimeout(hoverDismissRef.current); }, []);
+  const detailRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<HTMLDivElement>(null);
+  const islandButtons = useRef(new Map<number, HTMLButtonElement>());
+  useEffect(() => {
+    if (selectedIslandId === null) return;
+    const previous = islandButtons.current.get(selectedIslandId) ?? document.activeElement as HTMLElement | null;
+    detailRef.current?.querySelector<HTMLButtonElement>('[data-map-detail-close]')?.focus({ preventScroll: true });
+    return () => previous?.focus({ preventScroll: true });
+  }, [selectedIslandId]);
   const [showParentGate, setShowParentGate] = useState(false);
   const islandStates = useMemo<IslandState[]>(() => (
     ISLANDS.map(island => {
@@ -132,7 +95,10 @@ const WorldMap: React.FC<WorldMapProps> = ({
     })
   ), [player]);
 
-  const selectedIslandState = islandStates.find(entry => entry.island.id === selectedIslandId) ?? null;
+  const displayedIslandId = selectedIslandId ?? hoveredIslandId;
+  const isHoverPreview = selectedIslandId === null;
+  const cardPosition = useIslandCardPosition(displayedIslandId, selectedIslandId, mapRef, detailRef, islandButtons);
+  const selectedIslandState = islandStates.find(entry => entry.island.id === displayedIslandId) ?? null;
   const recommendedIsland = islandStates.find(({ island, isUnlocked }) => isUnlocked && island.levels.some(
     (level) => !(player.completedLevels[island.id] || []).includes(level.id),
   )) ?? islandStates.find(({ isUnlocked }) => isUnlocked);
@@ -170,34 +136,23 @@ const WorldMap: React.FC<WorldMapProps> = ({
   );
 
   return (
-    <div className="legend-world-map relative w-full overflow-visible">
-      {recommendedIsland ? (
-        <div className="legend-map-guidance">
-          <div className="min-w-0">
-            <div className="legend-eyebrow">Your next destination</div>
-            <strong className="block truncate">{recommendedIsland.island.name}</strong>
-          </div>
-          <button type="button" className="ui-button-primary inline-flex items-center gap-1" onClick={() => onSelectIsland(recommendedIsland.island)}>Let's go<ArrowRight size={16} aria-hidden="true" /></button>
-        </div>
-      ) : null}
+    <div ref={mapRef} className="legend-world-map relative w-full overflow-visible">
+      <div className="legend-map-brand-header">
+        <img className="legend-map-brand" src={mathariaLogo} alt="Welcome to Matharia" draggable={false} />
+      </div>
       <div
-        className="relative mx-auto w-full overflow-hidden"
+        className="legend-map-ocean relative mx-auto w-full overflow-hidden"
         style={{ aspectRatio: `${MAP_WIDTH_PX} / ${MAP_HEIGHT_PX}` }}
+        data-map-poster-frame
       >
-        <img
-          src={universalMapPoster}
-          alt="Island select map"
-          className="absolute inset-0 h-full w-full object-cover"
-          draggable={false}
-        />
+        <MapAtmosphere activeIslandId={selectedIslandId ?? activeIslandId} recommendedIslandId={recommendedIsland?.island.id} />
 
-        <MapAtmosphere recommendedIslandId={recommendedIsland?.island.id} />
-
-        <div className="absolute inset-0 z-20">
-          {ISLAND_HOTSPOTS.map((hotspot) => {
+        <div className="absolute inset-0 z-20" data-map-island-layer>
+          {TERRAIN_ACCENTS.map((hotspot) => {
             const islandState = islandStates.find(({ island }) => island.id === hotspot.islandId);
             if (!islandState) return null;
             const { island, isUnlocked } = islandState;
+            const [cropX, cropY, cropWidth, cropHeight] = ISLAND_ATLAS_BOUNDS[island.id].split(' ').map(Number);
 
             return (
               <div
@@ -206,19 +161,45 @@ const WorldMap: React.FC<WorldMapProps> = ({
                 style={{
                   left: `${hotspot.x}%`,
                   top: `${hotspot.y}%`,
-                  width: `${hotspot.width * 1.5}%`,
+                  width: `${hotspot.width}%`,
                   height: `${hotspot.height}%`,
                   transform: 'translate(-50%, -50%)',
                 }}
               >
                 <button
+                  ref={(button) => { if (button) islandButtons.current.set(island.id, button); else islandButtons.current.delete(island.id); }}
                   type="button"
-                  onClick={() => setSelectedIslandId(island.id)}
+                  onClick={(event) => {
+                    event.currentTarget.focus({ preventScroll: true });
+                    cancelHoverDismiss();
+                    setHoveredIslandId(null);
+                    setSelectedIslandId(island.id);
+                  }}
+                  onPointerEnter={(event) => {
+                    setActiveIslandId(island.id);
+                    if (event.pointerType === 'mouse' && selectedIslandId === null) { cancelHoverDismiss(); setHoveredIslandId(island.id); }
+                  }}
+                  onPointerLeave={() => { setActiveIslandId(null); dismissHoverSoon(); }}
+                  onFocus={() => setActiveIslandId(island.id)}
+                  onBlur={() => setActiveIslandId(null)}
                   aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
+                  aria-expanded={displayedIslandId === island.id}
+                  aria-controls={displayedIslandId === island.id ? "legend-map-island-details" : undefined}
+                  data-island-selected={selectedIslandId === island.id}
                   className="legend-map-hotspot absolute inset-0 z-20 border border-transparent bg-transparent transition-all focus:outline-none"
                   data-button-skin="none"
+                  data-map-island-id={island.id}
+                  data-island-locked={!isUnlocked}
+                  data-island-active={selectedIslandId === island.id || activeIslandId === island.id}
                   style={{ opacity: 1 }}
-                />
+                >
+                  <span className="legend-map-island-sprite" aria-hidden="true" data-island-sprite={island.id}>
+                    <svg className="legend-map-island-cell" viewBox={ISLAND_ATLAS_BOUNDS[island.id]} preserveAspectRatio="xMidYMid meet" focusable="false">
+                      <defs><clipPath id={`map-island-crop-${island.id}`}><rect x={cropX} y={cropY} width={cropWidth} height={cropHeight} /></clipPath></defs>
+                      <image href={islandAtlas} width="888" height="1776" clipPath={`url(#map-island-crop-${island.id})`} />
+                    </svg>
+                  </span>
+                </button>
               </div>
             );
           })}
@@ -226,39 +207,36 @@ const WorldMap: React.FC<WorldMapProps> = ({
       </div>
 
       {selectedIslandState ? (
-        <div className="pointer-events-none fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+4.8rem)] z-40 flex justify-center px-4">
-          <div className="legend-map-details pointer-events-auto relative w-full max-w-[20rem] px-4 py-4 text-white backdrop-blur-sm licensed-overlay-card" role="region" aria-label={`${selectedIslandState.island.name} details`}>
-            <button
+          <div ref={detailRef} id="legend-map-island-details" onPointerEnter={cancelHoverDismiss} onPointerLeave={dismissHoverSoon} onKeyDown={(event) => { if (event.key === 'Escape') closeDetails(); }} style={cardPosition.style} data-card-placement={cardPosition.side} className="legend-map-details legend-map-anchored-card pointer-events-auto px-4 py-4 text-white backdrop-blur-sm licensed-overlay-card" role="region" aria-label={`${selectedIslandState.island.name} details`} data-map-detail-island={selectedIslandState.island.id} data-preview-only={isHoverPreview}>
+            {!isHoverPreview && <button
               type="button"
-              onClick={() => setSelectedIslandId(null)}
+              onClick={closeDetails}
               aria-label="Close island details"
+              data-map-detail-close
               className="ui-close-button absolute right-2 top-2 flex h-8 w-8 items-center justify-center text-white/90"
             >
-              <X className="h-4 w-4" />
-            </button>
-            <img src={selectedIslandState.island.mapImage} alt="" draggable={false} />
-            <div className="legend-map-category text-center">{selectedIslandState.island.category}</div>
+              <X className="h-4 w-4" aria-hidden="true" />
+            </button>}
+            <div className="legend-map-category text-center">{islandPreviewCategory(selectedIslandState.island)}</div>
             <h2 className="text-center text-aaa-h2 text-cyan-50">
               {selectedIslandState.island.name}
             </h2>
-            <div className="mt-1 text-center text-aaa-micro text-cyan-100/82 opacity-90 font-bold">
-              {selectedIslandState.earnedBrainpower}/{selectedIslandState.totalPossibleBrainpower} brainpower collected
-            </div>
-            <div className="mt-2 h-2.5 overflow-hidden rounded-full border border-white/20 bg-slate-950/60">
+            <div className="mt-2 h-2.5 overflow-hidden rounded-full border border-white/20 bg-slate-950/60" role="progressbar" aria-label="Island completion" aria-valuemin={0} aria-valuemax={100} aria-valuenow={selectedIslandState.completion}>
               <div
                 className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-sky-300 to-emerald-300 transition-all duration-300"
                 style={{ width: `${selectedIslandState.completion}%` }}
               />
             </div>
-            <div className="mt-1 text-center text-aaa-sm text-amber-100">
+            <div className="legend-map-progress mt-1 text-center text-aaa-sm text-amber-100">
               {selectedIslandState.completion}% progress
             </div>
-            <button
+            {!isHoverPreview && <button
               type="button"
               onClick={() => {
                 if (selectedIslandState.isUnlocked) onSelectIsland(selectedIslandState.island);
               }}
               disabled={!selectedIslandState.isUnlocked}
+              data-map-explore-island={selectedIslandState.island.id}
               className={`mt-3 w-full rounded-full px-4 py-3 text-aaa-sm transition-all ${
                 selectedIslandState.isUnlocked
                   ? 'ui-button-primary'
@@ -266,9 +244,8 @@ const WorldMap: React.FC<WorldMapProps> = ({
               }`}
             >
               {selectedIslandState.isUnlocked ? 'Explore Island' : 'Island Locked'}
-            </button>
+            </button>}
           </div>
-        </div>
       ) : null}
 
       {useUnifiedHud ? null : actionDock}

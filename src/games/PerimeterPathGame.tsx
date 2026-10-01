@@ -299,6 +299,11 @@ const PerimeterShapeRenderer: React.FC<{
           <line data-perimeter-edge-line={edge.id} x1={edge.from.x} y1={edge.from.y} x2={edge.to.x} y2={edge.to.y}
             stroke={selected ? '#f6c75d' : '#9ecabd'} strokeWidth={selected ? '2.5' : '1.6'}
             strokeDasharray={selected ? undefined : '2 1'} />
+          <line data-perimeter-edge-hit={edge.id} className="perimeter-edge-hit"
+            x1={edge.from.x} y1={edge.from.y} x2={edge.to.x} y2={edge.to.y}
+            stroke="transparent" strokeWidth="12" vectorEffect="non-scaling-stroke"
+            style={disabled ? { pointerEvents: 'none' } : undefined}
+            onClick={() => { if (!disabled) onSelectEdge(edge.id); }} />
         </g>;
       })}
     </svg>

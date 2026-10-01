@@ -1,10 +1,13 @@
-import React, { useEffect, useRef } from 'react';
+import React, { lazy, Suspense, useContext, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import { Compass, X } from 'lucide-react';
 import { MiniGamePracticeBriefing } from '../../app/gameplaySessionContract';
 import { playGameSound } from '../../audio/gameAudio';
 import { useDialogFocus } from './useDialogFocus';
+import { LearnerGuideContext } from './LearnerGuideContext';
+import './sats-adventure.css';
+const RevisionWorkshop = lazy(() => import('./RevisionWorkshop'));
 
 type PracticeIntroPopupProps = {
   open: boolean;
@@ -13,9 +16,13 @@ type PracticeIntroPopupProps = {
   briefing?: MiniGamePracticeBriefing | null;
   actionLabel?: string;
   onAction: () => void;
-  kind?: 'practice' | 'help';
+  kind?: 'practice' | 'help' | 'mock';
 };
 const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({ open, title, body, briefing, actionLabel = 'Start practice', onAction, kind = 'practice' }) => {
+  const context = useContext(LearnerGuideContext);
+  briefing = briefing ?? (kind === 'mock' ? null : context?.guide);
+  const managed = kind === 'practice' && context?.introManaged;
+  const visible = open && !managed;
   const actionTriggered = useRef(false);
   useEffect(() => { if (open) actionTriggered.current = false; }, [open]);
   const commitAction = () => {
@@ -24,24 +31,29 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({ open, title, bo
     playGameSound('tap');
     onAction();
   };
-  const dialogRef = useDialogFocus(open, commitAction);
+  useEffect(() => {
+    if (managed && context?.introDismissed && open) commitAction();
+  }, [managed, context?.introDismissed, open]);
+  const dialogRef = useDialogFocus(visible, commitAction);
   const popup = (
     <AnimatePresence>
-      {open ? (
+      {visible ? (
         <motion.div key="practice-intro-popup" className="fixed inset-0 z-[9999] flex items-center justify-center px-4 py-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
           <div aria-hidden="true" className="absolute inset-0 bg-[#04162b]/80 backdrop-blur-[6px]" />
-          <motion.div ref={dialogRef} role="dialog" aria-modal="true" aria-label={`${title} ${kind === 'help' ? 'how to play' : 'practice briefing'}`} tabIndex={-1}
+          <motion.div ref={dialogRef} role="dialog" aria-modal="true" aria-label={`${title} ${kind === 'help' ? 'how to play' : kind === 'mock' ? 'mock briefing' : 'practice briefing'}`} tabIndex={-1}
             initial={{ opacity: 0, y: 16, scale: .97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: .22 }}
             className="legend-dialog relative z-10 flex max-h-[calc(100dvh-2rem)] w-full max-w-[28rem] flex-col p-5 text-center sm:p-7">
             <button type="button" aria-label={kind === 'help' ? 'Close help' : 'Close practice briefing'} onClick={commitAction} data-ui-sound="handled" className="ui-close-button absolute right-3 top-3 flex h-11 w-11 items-center justify-center"><X size={18} /></button>
             <div className="min-h-0 overflow-y-auto pr-1" style={{ touchAction: 'pan-y' }}>
               <div className="legend-dialog-emblem"><Compass aria-hidden="true" /></div>
-              <div className="legend-dialog-eyebrow">{kind === 'help' ? 'How to play' : 'Your warm-up mission'}</div>
+              <div className="legend-dialog-eyebrow">{kind === 'help' ? 'How to play' : kind === 'mock' ? 'Final adventure' : 'Your warm-up mission'}</div>
               <h2 className="mb-3 mt-2">{title}</h2>
               <div className="legend-briefing-copy">{briefing?.summary || body}</div>
               {briefing?.bullets.length ? <ol className="legend-briefing-steps mt-4">
                 {briefing.bullets.map((bullet, index) => <li key={`${title}-${index}`}><span className="legend-step-number">{index + 1}</span><span>{bullet}</span></li>)}
               </ol> : null}
+              {briefing?.example ? <div className="legend-worked-example"><strong>Worked example</strong><p>{briefing.example}</p></div> : null}
+              {kind === 'help' && briefing?.revisionKey ? <Suspense fallback={<p>Opening your practice mission…</p>}><RevisionWorkshop key={briefing.revisionKey} game={briefing.revisionKey} /></Suspense> : null}
             </div>
             <div className="mt-5 flex shrink-0 flex-col items-center gap-3">
               <button type="button" data-dialog-primary data-ui-sound="handled" onClick={commitAction} className="ui-button-primary flex min-h-12 w-full items-center justify-center px-4 py-3 text-base">{actionLabel}</button>

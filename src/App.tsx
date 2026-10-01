@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { TreePine } from 'lucide-react';
 import { GAME_META, GameRuleSet } from './gameMeta';
@@ -6,6 +6,9 @@ import { getLevelGameTitle } from './utils/gameNames';
 import { GAME_HUD_RESTART_EVENT } from './gameHudEvents';
 import { triggerHaptic } from './haptics';
 import { getBlueprintRuleSet } from './systems/content/islandBlueprint';
+import { getLearnerGuide } from './systems/content/learnerGuides';
+import { LearnerGuideContext } from './components/game-ui/LearnerGuideContext';
+import { isBossEncounterGameType } from './games/bossEncounterTypes';
 import { getLevelProgressIds } from './systems/content/gameDifficulty';
 import {
   ISLANDS,
@@ -22,7 +25,7 @@ import { useScreenFlow } from './app/useScreenFlow';
 import { useOverlayState } from './app/useOverlayState';
 import { usePlayerProgression } from './app/usePlayerProgression';
 import {
-  GLOBAL_MINIGAME_HUD_DURATION_SECONDS,
+  getSessionDurationSeconds,
   useGameplaySession,
 } from './app/useGameplaySession';
 import { GameplaySessionEventHandlers, GameplaySessionEventPayload, GameplaySessionState } from './app/gameplaySessionContract';
@@ -209,6 +212,9 @@ const App: React.FC = () => {
   const [wellbeingCompletion, setWellbeingCompletion] = useState<WellbeingCompletionState | null>(null);
   const [storedLevelResult, setStoredLevelResult] = useState<LevelResultState | null>(null);
   const [gameplayRestartKey, setGameplayRestartKey] = useState(0);
+  const [dismissedPracticeGuide, setDismissedPracticeGuide] = useState('');
+  const practiceGuideKey = `${selectedLevel?.blueprintKey}:${selectedLevel?.id}:${gameplayRestartKey}`;
+  const practiceBriefingOpen = Boolean(screen === 'gameplay' && selectedLevel?.isPractice && getLearnerGuide(selectedLevel.blueprintKey) && dismissedPracticeGuide !== practiceGuideKey);
   const legacyHydrationAppliedRef = useRef(false);
   const lastIncorrectLifeLossRef = useRef<{ signature: string; at: number }>({ signature: '', at: 0 });
   const levelFailCountsRef = useRef<Record<string, number>>({});
@@ -301,7 +307,7 @@ const App: React.FC = () => {
   } = useGameplaySession({
     screen,
     selectedLevel,
-    paused: gameplayHelpOpen || Boolean(levelResult),
+    paused: gameplayHelpOpen || practiceBriefingOpen || Boolean(levelResult),
     restartKey: gameplayRestartKey,
     onLifeDepleted: () => handleGameOverRef.current(0),
     onTimeDepleted: () => handleGameOverRef.current(0),
@@ -332,10 +338,10 @@ const App: React.FC = () => {
 
   const sessionState: GameplaySessionState = useMemo(() => ({
     timeLeft: globalMiniGameHudTimeLeft,
-    totalTime: GLOBAL_MINIGAME_HUD_DURATION_SECONDS,
+    totalTime: getSessionDurationSeconds(selectedLevel),
     lives: globalMiniGameLives,
-    paused: gameplayHelpOpen || Boolean(levelResult),
-  }), [gameplayHelpOpen, globalMiniGameHudTimeLeft, globalMiniGameLives, levelResult]);
+    paused: gameplayHelpOpen || practiceBriefingOpen || Boolean(levelResult),
+  }), [gameplayHelpOpen, practiceBriefingOpen, globalMiniGameHudTimeLeft, globalMiniGameLives, levelResult, selectedLevel]);
 
   const resolveLevelTitle = useCallback(() => {
     if (!selectedLevel) return 'Level over';
@@ -485,202 +491,8 @@ const App: React.FC = () => {
     [selectedLevel?.blueprintKey, selectedLevel?.gameType],
   );
 
-  const buildKidRules = useCallback((rules: GameRuleSet | null) => {
-    if (!rules) return null;
-    const combined = `${rules.summary} ${rules.bullets.join(' ')}`.toLowerCase();
-    const line1 = 'Read the question at the top.';
-    let line2 = 'Use the tools on screen to find the answer.';
-    let line3 = 'Tap the main button when you are ready.';
-
-    if (combined.includes('drag') || combined.includes('drop') || combined.includes('place')) {
-      line2 = 'Drag items to the right spot.';
-    } else if (combined.includes('swap') || combined.includes('match')) {
-      line2 = 'Swap tiles to make a match.';
-    } else if (combined.includes('tap') && !combined.includes('drag')) {
-      line2 = 'Tap the right choice.';
-    }
-
-    if (combined.includes('angle') || combined.includes('launch') || combined.includes('fire')) {
-      line2 = 'Choose the angle, then fire.';
-    }
-    if (combined.includes('ratio')) {
-      line2 = 'Use the ratio to build the correct mix.';
-    }
-    if (combined.includes('graph') || combined.includes('chart')) {
-      line2 = 'Read the chart, then choose the correct answer.';
-    }
-    if (combined.includes('time')) {
-      line2 = 'Set the time to match the question.';
-    }
-    if (combined.includes('measure') || combined.includes('scale') || combined.includes('weight')) {
-      line2 = 'Add the right amounts to match the target.';
-    }
-    if (combined.includes('check')) {
-      line3 = 'Tap Check when you are ready.';
-    }
-
-    return {
-      title: rules.title,
-      summary: `Here is how to play ${rules.title}.`,
-      bullets: [line1, line2, line3],
-    };
-  }, []);
-
-  const hintRuleSet = useMemo(
-    () => {
-      if (!selectedLevel?.isPractice) return null;
-      if (selectedLevel.blueprintKey === 'place_value_panic') {
-        return {
-          title: 'Place Value Panic',
-          summary: 'Rebuild the number in the mission. Tap a digit to fill the next space, or drag it to a place-value slot. Tap a filled slot to take its digit back.',
-          bullets: [],
-        };
-      }
-      if (selectedLevel.blueprintKey === 'number_line_ninja') {
-        return {
-          title: 'Number Line Ninja',
-          summary: 'Use the Number Line to identify and choose the correct answer.',
-          bullets: [],
-        };
-      }
-      if (selectedLevel.blueprintKey === 'mean_machine') {
-        return {
-          title: 'Mean Machine',
-          summary: "The Mean Machine must be tamed. It's the source of all fun for the Monster Mind. Spin the reels and follow the instructions to identify MEAN, MODE, and MEDIAN.",
-          bullets: [],
-        };
-      }
-      if (selectedLevel.blueprintKey === 'multiplication_mine') {
-        return {
-          title: 'Multiplication Mine',
-          summary: "You've made it to the Mines but there are boulders in the way. Solve the multiplication problems and smash your way through!",
-          bullets: [],
-        };
-      }
-      if (selectedLevel.blueprintKey === 'data_detective' || selectedLevel.blueprintKey === 'whodunnit_data') {
-        return {
-          title: 'Data Detective',
-          summary: "Stop! Show me some ID.. oh, sorry, I'm a seargent down today and we could use your help. There have been thefts, and I need some help looking through the evidence to find our suspect. Can you help?",
-          bullets: [],
-        };
-      }
-      if (selectedLevel.blueprintKey === 'take_out_rush') {
-        return {
-          title: 'Take-Out Rush',
-          summary: 'Welcome to Monster Munch Diner. These monster Mnds are sure impatient. Complete their order in time to keep them happy.',
-          bullets: [],
-        };
-      }
-      if (selectedLevel.blueprintKey === 'percent_power') {
-        return {
-          title: 'Percent Power',
-          summary: 'Practice finding parts of a whole and working backwards from a percentage clue. Use the hints to spot simple percentage facts before you answer.',
-          bullets: [],
-        };
-      }
-      if (selectedLevel.blueprintKey === 'polygon_palace') {
-        return {
-          title: 'Polygon Palace',
-          summary: 'Welcome traveller! I need a hand to categorise these shapes. Read the question and select the correct answer, or answers, as there may be more than one. Some of the later shapes are 3D, so be ready to count faces, edges, and vertices too!',
-          bullets: [],
-        };
-      }
-      if (selectedLevel.blueprintKey === 'area_architect') {
-        return {
-          title: 'Area Architect',
-          summary: 'We need to figure out the area of the underground tunnels beneath Monster Mind headquarters. Using the blueprints, can you help us work out the dimensions?',
-          bullets: [],
-        };
-      }
-      if (selectedLevel.blueprintKey === 'perimeter_path') {
-        return {
-          title: 'Perimeter Path',
-          summary: 'We are mapping out the castle tunnels. We need to make sure we have enough fuse to run the dynamite. Can you help us calculate the perimeter? Remember... Perimeter is defined as the total distance around a two-dimensional shape.',
-          bullets: [],
-        };
-      }
-      if (selectedLevel.blueprintKey === 'order_ops_arena') {
-        return {
-          title: 'Order Ops Arena',
-          summary: 'HALT! Who goes there. I require order... order of operatons that is! The BIDMAS rule is an acronym to help us remember the order of operations in calculations. Let\'s duel!',
-          bullets: [],
-        };
-      }
-      if (selectedLevel.blueprintKey === 'formula_forge') {
-        return {
-          title: 'Formula Forge',
-          summary: 'Algebra is like a puzzle where letters stand for numbers we don’t know yet, helping us solve problems step by step. Can you complete the formula?',
-          bullets: [],
-        };
-      }
-      if (selectedLevel.blueprintKey === 'factor_frenzy') {
-        return {
-          title: 'Factor Frenzy',
-          summary: 'A factor is a number that divides another number exactly, without leaving any remainder. Factors can also be seen as pairs of numbers that, when multiplied together, result in the original number. Help find the hidden factors.',
-          bullets: [],
-        };
-      }
-      if (selectedLevel.blueprintKey === 'remainder_run') {
-        return {
-          title: 'Remainder Run',
-          summary: 'Use long division to work out the quotient, remainder, or decimal answer. Look at the visual, then pick the correct answer.',
-          bullets: [],
-        };
-      }
-      if (selectedLevel.blueprintKey === 'coordinate_quest') {
-        return {
-          title: 'Coordinate Quest',
-          summary: "We can't get through! That Monster Mind has hidden traps. Navigate the map from the co-ordinates given, and make it through the pass safely. Remember: the X axis runs left to right â†’, and the Y axis runs bottom to top â†‘.",
-          bullets: [],
-        };
-      }
-      if (selectedLevel.blueprintKey === 'angle_arena') {
-        return {
-          title: 'Angle Arena',
-          summary: "Greetings! We've built our cannon here to destroy the Monster Mind's look-out towers. Use your maths skills to work out the angle and blast them.",
-          bullets: [],
-        };
-      }
-      if (selectedLevel.blueprintKey === 'simplify_sprint') {
-        return {
-          title: 'Simplify Sprint',
-          summary: 'The Monster Mind has scrambled the fractions to make them look bigger than they are. Spot a common factor, reduce each fraction to its simplest form, and keep the sprint moving.',
-          bullets: [],
-        };
-      }
-      if (selectedLevel.blueprintKey === 'rotation_reflection') {
-        return {
-          title: 'Rotation Station',
-          summary: 'We need to pack our caravan, but some of the items wont fit unless we are smart with the packing. can you take a look at our shapes and help us out? we may need to flip, mirror or rotate.',
-          bullets: [],
-        };
-      }
-      const baseRules = selectedRuleSet || {
-        title: canonicalGameTitle || 'Practice',
-        summary: `This is the practice run for ${canonicalGameTitle || 'this game'}. Use it to learn the controls before the real level.`,
-        bullets: [
-          'Read the mission at the top before you begin.',
-          'Use the on-screen tools to learn how the game works.',
-          'Tap help any time you want a reminder.',
-        ],
-      };
-      if (!baseRules) return null;
-      const titleOverride = canonicalGameTitle?.trim();
-      const resolvedRules = titleOverride
-        ? { ...baseRules, title: titleOverride }
-        : baseRules;
-      const kidRules = buildKidRules(resolvedRules);
-      if (!kidRules) return null;
-      if (selectedLevel?.isPractice) {
-        return {
-          ...kidRules,
-          summary: `Practice run for ${kidRules.title}. Learn the controls here, then skip or start level one.`,
-        };
-      }
-      return kidRules;
-    },
-    [buildKidRules, selectedLevel, selectedRuleSet],
-  );
+  const hintRuleSet = useMemo(() => getLearnerGuide(selectedLevel?.blueprintKey), [selectedLevel?.blueprintKey]);
+  const isMockAssessment = Boolean(selectedLevel?.isBoss && isBossEncounterGameType(selectedLevel.gameType));
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -1020,7 +832,7 @@ const App: React.FC = () => {
   const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
   const hasWideGameViewport = viewportSize.width >= 700 && viewportSize.height >= 600;
-  const usesResponsiveGameScene = selectedGameType === 'change_counter'
+  const usesResponsiveGameScene = isMockAssessment || selectedGameType === 'change_counter'
     || (selectedGameType === 'take_out_rush' && selectedLevel?.blueprintKey !== 'fraction_forge')
     || selectedGameType === 'ratio_fractions'
     || (selectedGameType === 'ratio_rapids'
@@ -1145,6 +957,7 @@ const App: React.FC = () => {
                 className={`app-screen-content relative z-10 flex min-h-0 w-full flex-1 justify-center pointer-events-auto ${screenBehavior.scrollable && screen !== 'parent_dashboard' ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden'} ${contentShellClass} ${globalDockOffsetClass}`}
                 style={screenBehavior.scrollable ? { WebkitOverflowScrolling: 'touch' } : undefined}
               >
+                <LearnerGuideContext.Provider value={{ guide: hintRuleSet, introManaged: Boolean(selectedLevel?.isPractice), introDismissed: dismissedPracticeGuide === practiceGuideKey }}>
                 <AppRouter
                   screen={screen}
                   player={player}
@@ -1159,7 +972,7 @@ const App: React.FC = () => {
                   usesQuestionMatchFrame={usesQuestionMatchFrame}
                   globalMiniGameHudTimeLeft={globalMiniGameHudTimeLeft}
                   globalMiniGameLives={globalMiniGameLives}
-                  globalMiniGameHudDurationSeconds={GLOBAL_MINIGAME_HUD_DURATION_SECONDS}
+                  globalMiniGameHudDurationSeconds={getSessionDurationSeconds(selectedLevel)}
                   sessionState={sessionState}
                   sessionEvents={sessionEvents}
                   onStartAdventure={handleStartAdventure}
@@ -1184,6 +997,7 @@ const App: React.FC = () => {
                   onUpdatePlayer={handleUpdatePlayer}
                 />
 
+                </LearnerGuideContext.Provider>
                 {null}
               </motion.div>
             </AnimatePresence>
@@ -1192,14 +1006,15 @@ const App: React.FC = () => {
               <UnifiedMiniGameHud
                 avatarId={player.avatarId}
                 title={isGameplayScreen ? canonicalGameTitle : 'SATs Legends'}
-                levelLabel={selectedLevel ? selectedLevel.isPractice ? 'Practice' : selectedLevel.isBoss ? 'Challenge' : `Level ${selectedLevel.difficultyTier ?? selectedLevel.miniGameLevel ?? 1} of 5` : 'Adventure'}
+                levelLabel={selectedLevel ? selectedLevel.isPractice ? 'Practice' : selectedLevel.isBoss ? 'Mock adventure' : `Level ${selectedLevel.difficultyTier ?? selectedLevel.miniGameLevel ?? 1} of 5` : 'Adventure'}
                 streak={answerStreak}
                 isPractice={Boolean(isGameplayScreen && selectedLevel?.isPractice)}
                 onHelp={isGameplayScreen ? () => setGameplayHelpOpen(true) : undefined}
                 timeLeft={globalMiniGameHudTimeLeft}
-                totalTime={GLOBAL_MINIGAME_HUD_DURATION_SECONDS}
+                totalTime={getSessionDurationSeconds(selectedLevel)}
                 lives={globalMiniGameLives}
-                hideTimer={hideShellTimer}
+                hideTimer={isMockAssessment ? false : hideShellTimer}
+                assessment={isMockAssessment}
                 hideTopBar={screen === 'world_map' || screen === 'island_levels' || screen === 'profile' || screen === 'achievements_tracker' || screen === 'parent_dashboard'}
                 onBack={isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
                 variant={isGameplayScreen ? 'gameplay' : 'hub'}
@@ -1207,6 +1022,11 @@ const App: React.FC = () => {
               />
             ) : null}
 
+            <PracticeIntroPopup
+              open={practiceBriefingOpen}
+              title={canonicalGameTitle || 'Practice'} body="Learn the method, then try the mission." briefing={hintRuleSet}
+              onAction={() => setDismissedPracticeGuide(practiceGuideKey)}
+            />
             <PracticeIntroPopup
               open={gameplayHelpOpen && isGameplayScreen}
               kind="help"

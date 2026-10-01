@@ -1,3 +1,4 @@
+import ArcadeJourney from '../components/game-ui/ArcadeJourney';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import AssetIcon from '../components/AssetIcon';
@@ -123,13 +124,14 @@ const makeRound = (level: number, roundIndex: number): RoundState => {
     value: numerator / denominator,
   }));
 
+  const descending = roundIndex % 2 === 0;
   const sortedIds = [...cards]
-    .sort((a, b) => a.value - b.value)
+    .sort((a, b) => descending ? b.value - a.value : a.value - b.value)
     .map((card) => card.id);
 
   return {
     id: `round-${roundIndex}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-    prompt: 'Sort the fractions from smallest to largest!',
+    prompt: descending ? 'Forge the path: largest to smallest!' : 'Forge the path: smallest to largest!',
     cards,
     sortedIds,
   };
@@ -194,6 +196,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
   const [XP, setScore] = useState(0);
   const [attempts, setAttempts] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [forgeStreak, setForgeStreak] = useState(0);
   const [isResolving, setIsResolving] = useState(false);
   const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; message: string } | null>(null);
   const [forgeGlow, setForgeGlow] = useState(false);
@@ -306,6 +309,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     setScore(0);
     setAttempts(0);
     setCorrectAnswers(0);
+    setForgeStreak(0);
     resetRound(makeRound(resolvedLevel, 1));
   }, [resolvedLevel, resetRound]);
 
@@ -436,12 +440,14 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     setAttempts((prev) => prev + 1);
 
     if (isCorrect) {
-      const awarded = 120 + Math.max(0, Math.floor(timeLeft * 1.25));
+      const nextStreak = forgeStreak + 1;
+      setForgeStreak(nextStreak);
+      const awarded = 120 + Math.max(0, Math.floor(timeLeft * 1.25)) + (nextStreak % 3 === 0 ? 60 : 0);
       const nextScore = XP + awarded;
       const nextCorrect = correctAnswers + 1;
       setScore(nextScore);
       setCorrectAnswers(nextCorrect);
-      setFeedback({ tone: 'success', message: 'Perfect order forged!' });
+      setFeedback({ tone: 'success', message: nextStreak % 3 === 0 ? 'Hot streak! +60 XP. Bridge forged.' : 'Bridge forged! Cross the lava.' });
       setForgeGlow(true);
       triggerHaptic('success');
 
@@ -468,10 +474,11 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
       return;
     }
 
+    setForgeStreak(0);
     const nextLives = lives - 1;
     setLives(nextLives);
     setTimeLeft((prev) => Math.max(0, prev - 4));
-    setFeedback({ tone: 'error', message: 'Not quite. Reforge the order.' });
+    setFeedback({ tone: 'error', message: 'Bridge cracked! Reforge the order.' });
     triggerHaptic('error');
 
     if (nextLives <= 0) {
@@ -486,6 +493,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
   }, [
     attempts,
     correctAnswers,
+    forgeStreak,
     isResolving,
     lives,
     onGameOver,
@@ -595,12 +603,14 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
 
         <GameQuestionCard
           title={gameTitle || 'Fraction Forge'}
-          subtitle="Place the fractions in order."
+          subtitle="Three clean bridges earn +60 XP. Errors cost 4 seconds."
           className="pointer-events-none"
           style={{ position: 'absolute', top: 5, width: '94%', transform: 'none' }}
         >
           {round.prompt}
         </GameQuestionCard>
+
+<div className="fraction-crossing"><ArcadeJourney kind="bridge" completed={correctAnswers} total={totalRounds} avatarId={_avatarId} danger={showSmoke} /></div>
 
         {activeSourceAnchors.map((anchor, index) => {
           const token = sourceSlots[index];
@@ -657,7 +667,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
                   className="pointer-events-none absolute z-[12] -translate-x-1/2 -translate-y-1/2 text-cyan-200/85"
                   style={{ left: `${(anchor.x + activeTargetAnchors[index + 1].x) / 2}%`, top: layout.pedestalTop }}
                 >
-                  <span className="text-[clamp(1.15rem,2.8vw,1.8rem)] font-black">&gt;</span>
+                  <span className="text-[clamp(1.15rem,2.8vw,1.8rem)] font-black">{roundIndex % 2 === 0 ? '>' : '<'}</span>
                 </div>
               )}
             </React.Fragment>

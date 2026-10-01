@@ -1,0 +1,253 @@
+/* Website-only finish. Gameplay surfaces and viewport dimensions use their existing styles. */
+.legends-website {
+  --web-gold: #ffdc83;
+  --web-gold-edge: #b78236;
+  --web-gold-hairline: #d4a65742;
+  --web-midnight: #070f23;
+  --web-metal: linear-gradient(135deg, #fff3c3 0%, #e6b44f 35%, #ffd77c 58%, #b97b24 100%);
+  --web-gold-lettering: linear-gradient(180deg, #fff6cf 0%, #ffe399 30%, #dda131 49%, #ffdc79 53%, #fff0b1 71%, #efb544 100%);
+  --web-enamel: linear-gradient(135deg, #1c304c 0%, #101e36 45%, #0b152b 100%);
+  background: radial-gradient(ellipse at 95% 36%, #192f4826, transparent 40%), var(--web-midnight);
+  color: #fcf7eb;
+}
+
+/* A quiet gold seam makes the navigation feel like part of the game world. */
+.legends-website .website-header {
+  background: linear-gradient(180deg, #101a2cf5, #070f23f5);
+  border-bottom-color: var(--web-gold-hairline);
+  box-shadow: 0 4px 28px #0207163d, inset 0 1px 0 #fff2be09;
+}
+.legends-website .website-header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #d4a65780 28%, #fff0b8a6 50%, #d4a65780 72%, transparent);
+  pointer-events: none;
+}
+.legends-website .website-brand-gem {
+  background: var(--web-metal);
+  color: #172039;
+  border: 0;
+  filter: drop-shadow(0 2px 4px #0006);
+  position: relative;
+  isolation: isolate;
+}
+.legends-website .website-brand-gem::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  clip-path: polygon(50% 0,100% 18%,92% 72%,50% 100%,8% 72%,0 18%);
+  background: linear-gradient(150deg, #304a62, #12243e 58%, #0b162e);
+  z-index: -1;
+}
+.legends-website .website-brand-gem svg { color: #ffe2a1; filter: drop-shadow(0 2px 0 #030919); }
+.legends-website .website-brand strong { color: #ffe2a1; text-shadow: 0 2px 0 #85551b55; }
+.legends-website .website-desktop-nav a.active { color: #ffe4a2; }
+.legends-website .website-desktop-nav a.active::after { background: var(--web-metal); box-shadow: 0 0 9px #ffd4703d; }
+.legends-website .website-mobile-nav { background: #0b1427; border-color: var(--web-gold-hairline); }
+.legends-website .website-mobile-nav a.active { background: #d4a65712; color: #ffe4a2; }
+.legends-website .website-menu-button { color: #ffe7b0; }
+
+/* Gold is concentrated on the brand and the actions, with deep blue enamel behind it. */
+.legends-website .website-button-gold {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #fff0b4;
+  border-radius: 11px;
+  color: #34230c;
+  background: linear-gradient(180deg, #fff0b1 0%, #ffda78 38%, #edb444 100%);
+  box-shadow: inset 0 2px 0 #fff7d7, inset 0 -2px 0 #d49731, 0 5px 0 #80521d, 0 6px 0 1px #321e10, 0 12px 26px #d99b3323;
+  text-shadow: 0 1px 0 #fff2c799;
+}
+.legends-website .website-button-gold::before {
+  content: '';
+  position: absolute;
+  top: -30%;
+  left: -50%;
+  width: 28%;
+  height: 160%;
+  background: linear-gradient(90deg, transparent, #fff9dca6, transparent);
+  transform: skewX(-24deg);
+  transition: left 550ms ease;
+  pointer-events: none;
+}
+.legends-website .website-button-gold:is(:hover, :focus-visible) {
+  transform: translateY(-3px);
+  box-shadow: inset 0 2px 0 #fff8df, inset 0 -2px 0 #d49731, 0 8px 0 #80521d, 0 9px 0 1px #321e10, 0 17px 35px #f1b94f38;
+}
+.legends-website .website-button-gold:is(:hover, :focus-visible)::before { left: 130%; }
+.legends-website .website-button-gold:active { transform: translateY(3px); box-shadow: inset 0 2px 0 #fff8df, 0 2px 0 #80521d, 0 6px 16px #d99b3323; }
+.legends-website .website-button-outline {
+  border-color: #d3ae655c;
+  background: linear-gradient(145deg, #172b46de, #0a182ee8);
+  box-shadow: inset 0 1px 0 #ffedb812, 0 4px 12px #03091433;
+  color: #fff0cb;
+}
+.legends-website .website-button-outline:hover { border-color: #ffe3a18c; background: #233850; }
+.legends-website .website-button-small { border-radius: 8px; }
+
+.legends-website .website-hero { background: #0b162b; }
+.legends-website .website-hero-art { filter: saturate(1.2) contrast(1.08); }
+.legends-website .website-hero::before {
+  background: linear-gradient(90deg,#0b162b 0%,#0b162b 19%,#0b162bf5 34%,#0b162b82 56%,#0b162b0a 83%), linear-gradient(0deg,#070f23,transparent 22%);
+}
+.legends-website .website-hero-glow {
+  background: radial-gradient(ellipse, #ffd86b47 0%, #ffc95e24 34%, #64e6d51a 56%, transparent 72%);
+  filter: blur(38px);
+  right: 0;
+  top: 7%;
+  width: 54%;
+  height: 95%;
+}
+.legends-website .website-hero-copy { padding-top: 24px; }
+.legends-website .website-hero-copy > .website-eyebrow { color: #ffdc88; margin-bottom: 10px; }
+.legends-website .website-hero-copy > .website-eyebrow > span { background: #ffdc88; box-shadow: 0 0 12px #ffce6c80; transform: rotate(45deg); border-radius: 1px; }
+.legends-website .website-hero-wordmark { width: max-content; position: relative; }
+.legends-website .website-wordmark-crest { display: flex; align-items: center; gap: 12px; width: 93%; margin-bottom: 5px; color: #ffe4a0; }
+.legends-website .website-wordmark-crest span { height: 1px; flex: 1; background: linear-gradient(90deg,transparent,#dfb15f); }
+.legends-website .website-wordmark-crest span:last-child { transform: rotate(180deg); }
+.legends-website .website-wordmark-crest svg { filter: drop-shadow(0 0 7px #ffc95855); }
+.legends-website .website-hero-title {
+  font-size: clamp(92px, 8vw, 118px);
+  text-shadow: none;
+  filter: drop-shadow(0 2px 0 #8f5c29) drop-shadow(0 5px 0 #02091f) drop-shadow(0 11px 13px #02081899);
+}
+.legends-website .website-hero-title > span {
+  color: #fff2d5;
+  background: linear-gradient(180deg, #fffdf2 8%, #fff7dd 35%, #d5c6a5 52%, #fff8e4 54%, #ffedbd 94%);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1px #ffeecb;
+}
+.legends-website .website-hero-title > strong {
+  font-size: .79em;
+  background: var(--web-gold-lettering);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1px #e8b655;
+  margin-top: 2px;
+}
+.legends-website .website-title-star { -webkit-text-fill-color: #ffe09a; -webkit-text-stroke: 0; filter: drop-shadow(0 0 11px #ffc85966); }
+.legends-website .website-hero-copy h2 { margin-top: 23px; color: #fff5df; }
+.legends-website .website-hero-copy h2 span { color: #ffdf92; }
+.legends-website .website-hero-description { color: #c0cbdc; }
+.legends-website .website-hero-actions { margin-top: 25px; }
+.legends-website .website-hero-note { color: #afbbce; }
+.legends-website .website-hero-note svg { color: #f8d68a; }
+.legends-website .website-heroes img { filter: drop-shadow(0 0 1px #fff2bf) drop-shadow(0 0 18px #ffd57524) drop-shadow(0 25px 14px #02091a90); }
+.legends-website .website-orbit {
+  border-color: #ffdd8b85;
+  background: radial-gradient(ellipse,#ffe09c29,transparent 65%);
+  box-shadow: 0 0 0 6px #ffdb7b10, 0 0 35px #ffc55e45, inset 0 0 20px #ffd57533;
+  transform: rotate(-4deg);
+}
+.legends-website .website-orbit::after { content: ''; position: absolute; inset: 10px 22px; border: 1px solid #ffe9a840; border-radius: 50%; }
+.legends-website .website-hero-caption { background: linear-gradient(145deg,#273549f2,#111e35f2); border-color: #d8aa5a; color: #ffdf98; box-shadow: inset 0 1px 0 #ffedb42e, 0 5px 0 #060f25, 0 10px 24px #0005; }
+.legends-website .website-hero-bottom { background: linear-gradient(90deg,transparent,#d4a65773,#ffecadbf,#d4a65773,transparent); }
+
+/* Destination tiles are the actions. One shared material keeps their hierarchy clear. */
+.legends-website .website-paths { padding-top: 55px; }
+.legends-website .website-eyebrow { color: #e4bd76; }
+.legends-website .website-heading-center { position: relative; padding-top: 10px; }
+.legends-website .website-heading-center::before { content: '✦'; position: absolute; top: -22px; left: calc(50% - 7px); font-size: 18px; color: #edc57e; text-shadow: 0 0 15px #f8c66b44; }
+.legends-website .website-section-heading h2 { color: #fff3d6; }
+.legends-website .website-path {
+  background: radial-gradient(ellipse at 0 0,#d7a85a14,transparent 55%), var(--web-enamel);
+  border-color: #bc8b454f;
+  box-shadow: inset 0 1px 0 #ffe6a321, inset 0 -1px 0 #080f26, 0 15px 30px #0308183d;
+  padding: 29px;
+}
+.legends-website .website-path-play { --path-color: #ffe09a; }
+.legends-website .website-path-learn { --path-color: #8be8e6; }
+.legends-website .website-path-watch { --path-color: #ceb5f8; }
+.legends-website .website-path::before { left: 0; right: 0; height: 2px; background: linear-gradient(90deg,transparent,var(--path-color),transparent); }
+.legends-website .website-path::after { content: ''; position: absolute; right: 13px; bottom: 13px; width: 13px; height: 13px; border-right: 1px solid #d4a6575c; border-bottom: 1px solid #d4a6575c; pointer-events: none; }
+.legends-website .website-path:hover { border-color: #e4bd76a3; background: radial-gradient(ellipse at 0 0,#d7a85a24,transparent 60%),var(--web-enamel); box-shadow: inset 0 1px 0 #ffedb745, 0 18px 36px #03081866, 0 0 20px #d7a85a0d; }
+.legends-website .website-path-icon { background: linear-gradient(145deg,#fff3c319,#ffffff04); border-color: #d5ad6650; box-shadow: inset 0 1px 0 #fff3c320, 0 3px 0 #030c1c88; }
+.legends-website .website-path h3 { color: #fff3d6; }
+.legends-website .website-path-number { color: #cfab6c; }
+.legends-website .website-path-link { border-color: #d4a6572e; }
+.legends-website .website-text-link { color: #f6d58f !important; }
+.legends-website .website-text-link:hover { color: #fff0bc !important; }
+.legends-website .website-adventure-image { border: 1px solid #c39b5d85; box-shadow: inset 0 1px 0 #ffe9b33b, 0 8px 22px #0003; }
+.legends-website .website-adventure-image::after { background: linear-gradient(0deg,#070f239c,transparent 65%); box-shadow: inset 0 0 0 4px #0e1c3280; }
+.legends-website .website-adventure-play { background: var(--web-metal); color: #18243b; border-color: #fff1c8; box-shadow: 0 3px 0 #76521f, 0 0 0 5px #ffd57526; }
+.legends-website .website-subject { border-color: #d4a6576b; background: #0a142ce8; color: #ffe1a2; }
+.legends-website .website-adventure-title svg { color: #e4bd76; }
+.legends-website .website-final-cta {
+  border: 1px solid #d4a65794;
+  background: radial-gradient(ellipse at 15% 35%,#d7a85a1f,transparent 60%), linear-gradient(110deg,#203651,#0d1b34);
+  box-shadow: inset 0 1px 0 #fff0b836, inset 0 -1px 0 #0004, 0 18px 38px #02071766;
+}
+.legends-website .website-final-cta::before { content: ''; position: absolute; inset: 7px; border: 1px solid #d4a65726; border-radius: 9px; pointer-events: none; }
+.legends-website .website-final-cta h2 { color: #fff2ce; }
+.legends-website .website-footer { background: #050c1b; border-color: #d4a65729; }
+.legends-website .website-footer-bottom { border-color: #d4a6571f; }
+
+/* The same gold finish follows through the learning and account screens. */
+.legends-website .website-resource-heading { position: relative; }
+.legends-website .website-resource-heading::before { content: ''; position: absolute; top: -10px; right: -70px; width: 400px; height: 320px; background: radial-gradient(ellipse,#d7a85a12,transparent 70%); pointer-events: none; }
+.legends-website :is(.website-resource-heading h1 span,.website-account-world h1 > span) { color: #ffe2a1; background: var(--web-gold-lettering); background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 2px 0 #9b682140); }
+.legends-website .website-resource-toolbar { border-color: var(--web-gold-hairline); }
+.legends-website .website-filters button.active { border-color: #e1b36685; color: #ffdf99; background: linear-gradient(145deg,#ffd57522,#d7a85a0a); box-shadow: inset 0 1px 0 #ffeab52b; }
+.legends-website .website-filters button:hover { background: #d7a85a15; }
+.legends-website .website-search { border-color: #d4a65766; background: #0b172b; box-shadow: inset 0 1px 3px #02081970; }
+.legends-website :is(.website-topic,.website-video-card,.website-account-form-wrap) { background: var(--web-enamel); border-color: #c399564f; box-shadow: inset 0 1px 0 #fff0bd1c, 0 12px 28px #02071933; }
+.legends-website .website-topic-open { border-color: #d7b576a6; }
+.legends-website .website-topic-toggle:hover { background: #d7a85a0a; }
+.legends-website .website-topic-toggle > img { border: 1px solid #d4a6574d; }
+.legends-website .website-topic-toggle > svg { color: #e4bd76; }
+.legends-website .website-topic-category { color: #e5bd79; }
+.legends-website .website-guide { border-color: #d4a65742; }
+.legends-website .website-worked-example { background: #d7a85a09; border-left-color: #edc57e; }
+.legends-website .website-worked-example > span { color: #edc57e; }
+.legends-website .website-answer-options button { background: linear-gradient(145deg,#29445e,#152944); border-color: #d4a65769; box-shadow: inset 0 1px 0 #fff2c01c, 0 3px 0 #050e22; }
+.legends-website .website-answer-options .website-answer-correct { background: #22735c; border-color: #91e6bb; }
+.legends-website .website-answer-options .website-answer-try { border-color: #ffdf99; }
+.legends-website .website-resource-note { border-color: var(--web-gold-hairline); }
+.legends-website .website-video-play { background: var(--web-metal); border: 1px solid #fff1c8; box-shadow: inset 0 1px 0 #fff8da,0 4px 0 #80551e,0 0 0 7px #ffd57529,0 12px 24px #060b2460; }
+.legends-website .website-video-learning-tip { border-color: var(--web-gold-hairline); }
+.legends-website .website-account-form-wrap { position: relative; border-color: #d4a65785; }
+.legends-website .website-account-form-wrap::before { content: ''; position: absolute; height: 2px; top: -1px; left: 20%; right: 20%; background: linear-gradient(90deg,transparent,#ffeab6,transparent); pointer-events: none; }
+.legends-website .website-account-form-wrap input { border-color: #d4a65766; background: #081327; box-shadow: inset 0 2px 5px #0208184d; }
+.legends-website .website-account-preview { border-color: #ddb66f; background: #d7a85a0a; }
+.legends-website .website-account-preview strong { color: #f3d28e; }
+.legends-website .website-account-world::before { background: radial-gradient(ellipse,#d7a85a23,transparent 65%); }
+.legends-website .website-account-caption { color: #d7b576; }
+.legends-website .website-video-dialog { background: var(--web-enamel); border-color: #d4a65799; box-shadow: inset 0 1px 0 #fff0bd35,0 30px 100px #0008; }
+.legends-website .website-icon-button { color: #ffdf99; border: 1px solid #d4a65742; background: #d7a85a0a; }
+
+@media (max-width: 1100px) {
+  .legends-website .website-path { padding: 24px; }
+  .legends-website .website-hero-title { font-size: 96px !important; }
+}
+@media (max-width: 800px) {
+  .legends-website .website-hero-title { font-size: 82px !important; }
+  .legends-website .website-path { padding: 22px 18px; }
+  .legends-website .website-wordmark-crest { margin-bottom: 7px; }
+}
+@media (max-width: 580px) {
+  .legends-website .website-hero, .legends-website .website-hero-inner { min-height: 750px; }
+  .legends-website .website-hero-copy { padding-top: 27px; }
+  .legends-website .website-hero-copy > .website-eyebrow { margin-bottom: 13px; }
+  .legends-website .website-wordmark-crest { gap: 9px; margin-bottom: 6px; }
+  .legends-website .website-wordmark-crest svg { width: 20px; height: 20px; }
+  .legends-website .website-hero-title { font-size: 83px !important; }
+  .legends-website .website-hero-title > strong { font-size: .78em; }
+  .legends-website .website-hero-copy h2 { margin-top: 22px; }
+  .legends-website .website-hero-actions { margin-top: 21px; }
+  .legends-website .website-hero-description { line-height: 1.55; }
+  .legends-website .website-hero::before { background: linear-gradient(180deg,#0b162b 0%,#0b162b 32%,#0b162bed 46%,#0b162b15 72%,#070f23 100%); }
+  .legends-website .website-hero-glow { width: 95%; height: 45%; top: 52%; right: -8%; }
+  .legends-website .website-hero-caption { bottom: 24px; }
+  .legends-website .website-paths { padding-top: 43px; }
+  .legends-website .website-path { padding: 24px; }
+  .legends-website .website-paths .website-eyebrow { letter-spacing: .09em; }
+  .legends-website .website-resource-heading::before { right: -100px; width: 300px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .legends-website .website-button-gold::before { display: none; }
+}

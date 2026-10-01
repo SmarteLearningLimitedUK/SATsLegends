@@ -1,5 +1,5 @@
 .ratio-racer-backdrop {
-  background-size: cover;
+  background-size: contain;
   background-position: center;
 }
 
@@ -85,6 +85,7 @@
 .ratio-racer-feedback.is-stall { color: #ffe1a0; }
 .ratio-racer-answer-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
 .ratio-racer-answer { display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 66px; padding: 5px !important; }
+#root .app-viewport.sat-theme-bluegold.screen-gameplay .game-shell-host .ratio-racer-answer { min-height: max(66px, calc(44px / var(--game-stage-scale, 1))) !important; }
 .ratio-racer-fraction { display: flex; flex-direction: column; min-width: 25px; color: inherit; font-size: 23px; font-weight: 600; line-height: 1.1; }
 .ratio-racer-fraction > span:first-child { border-bottom: 2px solid currentColor; padding-bottom: 2px; }
 .ratio-racer-fraction > span:last-child { padding-top: 2px; }
@@ -106,3 +107,6 @@
   .ratio-racer-track-flags i, .ratio-racer-exhaust i { animation: none !important; }
   .ratio-racer-exhaust i { opacity: .55; }
 }
+
+.ratio-racer-content :is(.ratio-racer-pit-board span, .ratio-racer-route-labels, .ratio-racer-boost, .ratio-racer-feedback) { font-size: var(--legend-label-size, 14px); }
+.ratio-racer-ratio { font-size: var(--legend-body-size, 16px); }

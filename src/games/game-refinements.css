@@ -53,11 +53,12 @@
 .lava-crossing-answers button { min-height: max(48px, var(--refinement-hit-size)); padding: 8px; font-weight: 800; font-size: var(--legend-question-size, 18px); border-radius: 12px; }
 .refinement-feedback { min-height: 35px; width: 100%; flex-shrink: 0; text-align: center; font-size: var(--legend-label-size, 14px); line-height: 1.25; font-weight: 750; color: #e0f2fe; }
 
-.perimeter-board { position: relative; width: 100%; flex: 1; min-height: 300px; overflow: hidden; border: 2px solid #e5bf6f; border-radius: 20px; background: #143c39ee; box-shadow: inset 0 0 0 5px #091e23, 0 10px 20px #07132155; }
-.perimeter-board svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.perimeter-board { position: relative; width: 100%; flex: 1; min-height: 300px; overflow: clip; border: 2px solid #e5bf6f; border-radius: 20px; background: #143c39ee; box-shadow: inset 0 0 0 5px #091e23, 0 10px 20px #07132155; }
+.perimeter-board svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.perimeter-board .perimeter-edge-hit { pointer-events: stroke; cursor: pointer; }
 .perimeter-edge-control {
   position: absolute; z-index: 2; min-width: max(58px, var(--refinement-hit-size)); min-height: var(--refinement-hit-size);
-  transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; gap: 4px;
+  translate: -50% -50%; transform: none; display: flex; align-items: center; justify-content: center; gap: 4px;
   padding: 4px 7px; border: 2px solid #b4d0bd; border-radius: 9px;
   background: #10292b; color: #f4f8e9; font-size: var(--legend-label-size, 14px); line-height: 1.1; font-weight: 850;
   box-shadow: 0 3px 0 #07191c; touch-action: manipulation;
@@ -111,7 +112,7 @@
 }
 @media (min-width: 700px) and (min-height: 700px) {
   .perimeter-edge-control { min-width: max(72px, var(--refinement-hit-size)); }
-  .conversion-scale-frame { max-width: 350px; max-height: 320px; }
+  .conversion-scale-frame { max-width: min(86%, 350px); max-height: 320px; }
   .chrono-clock { width: 280px; }
 }
 @media (prefers-reduced-motion: reduce) {

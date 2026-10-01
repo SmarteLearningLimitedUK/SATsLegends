@@ -1,4 +1,5 @@
 import { useId } from 'react';
+import MapSeaLife from './MapSeaLife';
 
 type TerrainAccent = {
   islandId: number;
@@ -9,31 +10,17 @@ type TerrainAccent = {
   tone: 'ember' | 'sunlight' | 'ice' | 'mint';
 };
 
-// Coordinates follow the illustrated terrain in mapselect.png, independently
-// of the much larger interactive hotspots used by the map.
-const TERRAIN_ACCENTS: TerrainAccent[] = [
-  { islandId: 8, x: 59.5, y: 17, width: 26, height: 10.5, tone: 'ember' },
+// Effects and hit targets share the illustrated island bounds. The cleaned
+// poster preserves the original terrain positions.
+export const TERRAIN_ACCENTS: TerrainAccent[] = [
+  { islandId: 8, x: 59.5, y: 18.5, width: 26, height: 10.5, tone: 'ember' },
   { islandId: 6, x: 25, y: 25.2, width: 39, height: 11.7, tone: 'ember' },
   { islandId: 5, x: 76.5, y: 33.2, width: 40, height: 10, tone: 'sunlight' },
   { islandId: 3, x: 35, y: 44.9, width: 44, height: 10.6, tone: 'ice' },
   { islandId: 2, x: 74, y: 55.5, width: 39, height: 10.2, tone: 'mint' },
   { islandId: 4, x: 35, y: 67, width: 40, height: 10.8, tone: 'sunlight' },
   { islandId: 7, x: 75, y: 79.6, width: 40, height: 10.5, tone: 'mint' },
-  { islandId: 1, x: 50, y: 91.6, width: 39, height: 11.7, tone: 'sunlight' },
-];
-
-// The name plates are part of the poster. Exclude the complete plates, with
-// extra breathing room, from every decorative pixel rather than relying on
-// z-index or a particular frame of an animation.
-const LABEL_PLATES = [
-  { x: 514.5, y: 417.5, width: 235, height: 51 },
-  { x: 273.5, y: 600, width: 236, height: 51 },
-  { x: 250.5, y: 808.5, width: 235.5, height: 51 },
-  { x: 344, y: 1108.5, width: 236, height: 51 },
-  { x: 244.5, y: 1322.5, width: 236.5, height: 51 },
-  { x: 362.5, y: 1652, width: 235, height: 51 },
-  { x: 238, y: 1962, width: 235, height: 51 },
-  { x: 110.5, y: 2289, width: 220.5, height: 48 },
+  { islandId: 1, x: 50, y: 89.5, width: 39, height: 11.7, tone: 'sunlight' },
 ];
 
 const TONES = {
@@ -43,9 +30,11 @@ const TONES = {
   mint: '#b1ffcf',
 } as const;
 
-const MapAtmosphere = ({ recommendedIslandId }: { recommendedIslandId?: number }) => {
+const MapAtmosphere = ({ recommendedIslandId, activeIslandId }: {
+  recommendedIslandId?: number;
+  activeIslandId?: number | null;
+}) => {
   const id = useId().replace(/:/g, '');
-  const maskId = `${id}-map-labels`;
 
   return (
     <svg
@@ -56,21 +45,10 @@ const MapAtmosphere = ({ recommendedIslandId }: { recommendedIslandId?: number }
       data-map-atmosphere
     >
       <defs>
-        <mask id={maskId} maskUnits="userSpaceOnUse" x="0" y="0" width="768" height="2500">
-          <rect width="768" height="2500" fill="white" />
-          {LABEL_PLATES.map((plate, index) => (
-            <rect
-              key={index}
-              data-map-label-exclusion
-              x={plate.x - 8}
-              y={plate.y - 8}
-              width={plate.width + 16}
-              height={plate.height + 16}
-              rx="8"
-              fill="black"
-            />
-          ))}
-        </mask>
+        <pattern id={`${id}-waves`} width="190" height="130" patternUnits="userSpaceOnUse">
+          <path d="M10 30Q45 13 80 30T150 30M90 88Q120 75 155 88" fill="none" stroke="#d3fff3" strokeWidth="3" strokeLinecap="round" opacity=".2" />
+          <path d="M30 110Q55 99 80 110" fill="none" stroke="#126d89" strokeWidth="2" strokeLinecap="round" opacity=".12" />
+        </pattern>
         {Object.entries(TONES).map(([tone, color]) => (
           <radialGradient key={tone} id={`${id}-${tone}`}>
             <stop offset="0" stopColor={color} stopOpacity="0.34" />
@@ -79,14 +57,17 @@ const MapAtmosphere = ({ recommendedIslandId }: { recommendedIslandId?: number }
           </radialGradient>
         ))}
       </defs>
-      <g mask={`url(#${maskId})`} data-map-effects-masked>
+      <rect className="legend-map-water-flow" x="-30" y="-20" width="828" height="2540" fill={`url(#${id}-waves)`} />
+      <path className="legend-map-voyage-route" d="M457 300L457 425Q115 440 192 630T588 830Q680 950 269 1123T568 1388Q680 1530 269 1675T576 1990Q680 2150 384 2290" fill="none" stroke="#d9fff2" strokeWidth="3" strokeDasharray="4 15" strokeLinecap="round" opacity=".35" />
+      <MapSeaLife />
+      <g data-map-island-effects>
         {TERRAIN_ACCENTS.map((site, index) => {
           const x = site.x * 7.68;
           const y = site.y * 25;
           const width = site.width * 7.68;
           const height = site.height * 25;
           return (
-            <g key={site.islandId} data-map-terrain-accent={site.islandId}>
+            <g key={site.islandId} data-map-terrain-accent={site.islandId} data-active={site.islandId === activeIslandId}>
               <ellipse
                 className="legend-map-terrain-light"
                 cx={x}

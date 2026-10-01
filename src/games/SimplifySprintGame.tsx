@@ -1,4 +1,5 @@
-﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+﻿import ArcadeJourney from '../components/game-ui/ArcadeJourney';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ChevronLeft, CircleDollarSign } from 'lucide-react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
@@ -184,6 +185,8 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
   const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; text: string } | null>(null);
   const [currentPair, setCurrentPair] = useState<FractionPair>(() => makeQuestion(resolvedLevel, 1).prompt);
   const [startPair, setStartPair] = useState<FractionPair>(() => makeQuestion(resolvedLevel, 1).prompt);
+  const [factorChain, setFactorChain] = useState<number[]>([]);
+  useEffect(() => setFactorChain([]), [question.id]);
   const [fractionShake, setFractionShake] = useState(false);
   const [fractionPulseKey, setFractionPulseKey] = useState(0);
   const [roundResult, setRoundResult] = useState<RoundResultState | null>(null);
@@ -303,6 +306,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
     };
 
     setCurrentPair(reduced);
+    setFactorChain((chain) => [...chain, factor]);
     setFractionPulseKey((prev) => prev + 1);
     triggerHaptic('success');
 
@@ -331,7 +335,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
     clearRoundResultTimer();
     setRoundResult({
       kind: 'success',
-      title: isFinalRound ? 'Sprint Cleared' : 'Sprint Cleared',
+      title: isFinalRound ? 'Vault Escape Complete' : 'Vault Unlocked',
       subtitle: isFinalRound
         ? 'You simplified the final fraction.'
         : 'Brain power collected. Next fraction is loading.',
@@ -394,12 +398,13 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
         <div className="w-full max-w-[44rem] px-1">
           <div className="mt-2">
             <GameQuestionCard title="Simplify Sprint" className="max-w-[44rem]">
-              Reduce the fraction to its smallest form by tapping the correct factor.
+              Crack the vault locks: divide both numbers by a shared factor.
             </GameQuestionCard>
           </div>
         </div>
 
-        <div className="mt-3 flex w-full max-w-[44rem] flex-1 min-h-0 flex-col items-center justify-center gap-3 rounded-[2rem] border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(15,118,110,0.32),rgba(30,64,175,0.34),rgba(15,23,42,0.86))] px-4 py-5 shadow-[0_22px_50px_rgba(0,0,0,0.45)]">
+        <div className="simplify-vault-panel mt-3 flex w-full max-w-[44rem] flex-1 min-h-0 flex-col items-center justify-center gap-3 rounded-[2rem] border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(15,118,110,0.32),rgba(30,64,175,0.34),rgba(15,23,42,0.86))] px-4 py-5 shadow-[0_22px_50px_rgba(0,0,0,0.45)]">
+          <ArcadeJourney kind="vault" completed={correctAnswers} total={totalRounds} avatarId={_avatarId} danger={fractionShake} />
           <div className="flex w-full items-center gap-3">
             <div className="flex-1">
               <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Simplify meter</div>
@@ -434,7 +439,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
           </motion.div>
 
           <div className="rounded-full border border-sky-200/40 bg-[linear-gradient(180deg,rgba(14,116,144,0.28),rgba(15,23,42,0.78))] px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-cyan-50">
-            Reduce until it cannot simplify further
+            {factorChain.length ? `Locks opened: ${factorChain.map((factor) => `÷ ${factor}`).join(' → ')}` : 'Choose a factor to open the first lock'}
           </div>
         </div>
 

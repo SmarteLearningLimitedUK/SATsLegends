@@ -1,4 +1,5 @@
-﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
+﻿import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useIsPresent } from 'motion/react';
 import {
   emitMiniGameSessionEvent,
   MiniGameShellContractProps,
@@ -608,6 +609,21 @@ const stepProjectile = (projectile: ProjectileState, dt: number) => {
   return { ...projectile, x: nextX, y: nextY, trail: faded };
 };
 
+const segmentHitsTarget = (
+  from: { x: number; y: number },
+  to: { x: number; y: number },
+  target: { x: number; y: number },
+  radius: number,
+) => {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const lengthSquared = dx * dx + dy * dy;
+  const progress = lengthSquared === 0
+    ? 0
+    : clamp(((target.x - from.x) * dx + (target.y - from.y) * dy) / lengthSquared, 0, 1);
+  return distance(from.x + progress * dx, from.y + progress * dy, target.x, target.y) <= radius;
+};
+
 const normalizeVector = (x: number, y: number) => {
   const magnitude = Math.hypot(x, y);
   if (magnitude <= 0) return { x: 0, y: 0 };
@@ -637,6 +653,14 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   questions: questionsProp,
   onRoundComplete,
 }) => {
+  const isPresent = useIsPresent();
+  const presentRef = useRef(isPresent);
+  presentRef.current = isPresent;
+  const terminalRef = useRef(false);
+  const advancedQuestionRef = useRef<number | null>(null);
+  const nextCallbackRef = useRef<(() => void) | null>(null);
+  const callbacksRef = useRef({ onVictory, onGameOver, onRoundComplete, sessionEvents });
+  callbacksRef.current = { onVictory, onGameOver, onRoundComplete, sessionEvents };
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationRef = useRef<number | null>(null);
   const lastFrameRef = useRef<number | null>(null);
@@ -667,6 +691,29 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const [localLives, setLocalLives] = useState(INITIAL_LIVES);
   const [localTimer, setLocalTimer] = useState(INITIAL_TIMER);
   const [stars, setStars] = useState(0);
+  const questionIndexRef = useRef(questionIndex);
+  questionIndexRef.current = questionIndex;
+
+  const clearRoundTimers = useCallback(() => {
+    if (aimTimeoutRef.current !== null) window.clearTimeout(aimTimeoutRef.current);
+    if (settleTimeoutRef.current !== null) window.clearTimeout(settleTimeoutRef.current);
+    if (autoAdvanceTimeoutRef.current !== null) window.clearTimeout(autoAdvanceTimeoutRef.current);
+    aimTimeoutRef.current = null;
+    settleTimeoutRef.current = null;
+    autoAdvanceTimeoutRef.current = null;
+  }, []);
+
+  const stopScheduledWork = useCallback(() => {
+    clearRoundTimers();
+    if (animationRef.current !== null) cancelAnimationFrame(animationRef.current);
+    animationRef.current = null;
+  }, [clearRoundTimers]);
+
+  useLayoutEffect(() => {
+    if (isPresent) return;
+    terminalRef.current = true;
+    stopScheduledWork();
+  }, [isPresent, stopScheduledWork]);
 
   const rawQuestions = useMemo(
     () => questionsProp || buildAngleQuestions({
@@ -685,6 +732,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const totalTime = sessionState?.totalTime ?? INITIAL_TIMER;
 
   useEffect(() => {
+    if (!presentRef.current || terminalRef.current) return;
     setGameState('awaitingAnswer');
   }, []);
 
@@ -692,39 +740,39 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     if (sessionState) return;
     setLocalTimer(INITIAL_TIMER);
     const interval = window.setInterval(() => {
+      if (!presentRef.current || terminalRef.current) return;
       setLocalTimer((prev) => Math.max(0, prev - 1));
     }, 1000);
     return () => window.clearInterval(interval);
   }, [sessionState]);
 
   useEffect(() => {
-    if (!sessionState) return;
+    if (!presentRef.current || terminalRef.current || !sessionState) return;
     if (sessionState.timeLeft <= 0 || sessionState.lives <= 0) {
+      terminalRef.current = true;
+      stopScheduledWork();
       setGameState('gameOver');
-      emitMiniGameSessionEvent(sessionEvents, 'game_failed', {
+      emitMiniGameSessionEvent(callbacksRef.current.sessionEvents, 'game_failed', {
         score: scoreRef.current,
         reason: sessionState.timeLeft <= 0 ? 'time' : 'lives',
       });
-      onGameOver(scoreRef.current);
+      callbacksRef.current.onGameOver(scoreRef.current);
     }
-  }, [onGameOver, sessionEvents, sessionState]);
+  }, [onGameOver, sessionEvents, sessionState, stopScheduledWork]);
 
   useEffect(() => {
-    if (sessionState) return;
+    if (!presentRef.current || terminalRef.current || sessionState) return;
     if (timeLeft <= 0 || lives <= 0) {
+      terminalRef.current = true;
+      stopScheduledWork();
       setGameState('gameOver');
-      onGameOver(scoreRef.current);
+      callbacksRef.current.onGameOver(scoreRef.current);
     }
-  }, [lives, onGameOver, sessionState, timeLeft]);
+  }, [lives, onGameOver, sessionState, stopScheduledWork, timeLeft]);
 
   useEffect(() => {
-    return () => {
-      if (animationRef.current) cancelAnimationFrame(animationRef.current);
-      if (aimTimeoutRef.current) window.clearTimeout(aimTimeoutRef.current);
-      if (settleTimeoutRef.current) window.clearTimeout(settleTimeoutRef.current);
-      if (autoAdvanceTimeoutRef.current) window.clearTimeout(autoAdvanceTimeoutRef.current);
-    };
-  }, []);
+    return stopScheduledWork;
+  }, [stopScheduledWork]);
 
   useEffect(() => {
     const load = (key: CannonSpriteKey, src: string) => {
@@ -767,6 +815,9 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   }, []);
 
   const resetForNext = () => {
+    if (!presentRef.current || terminalRef.current) return;
+    clearRoundTimers();
+    advancedQuestionRef.current = questionIndex;
     setEnemyReaction('idle');
     setSelectedAnswer(null);
     selectedAnswerRef.current = null;
@@ -779,28 +830,33 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   };
 
   const finishLevel = (finalScore: number) => {
+    if (!presentRef.current || terminalRef.current) return;
+    terminalRef.current = true;
+    stopScheduledWork();
     const earnedStars = Math.min(3, Math.max(1, Math.floor(finalScore / 450)));
     setStars(earnedStars);
     setGameState('levelComplete');
     playAngleArenaSfx(angleArenaSfxRef.current, 'complete');
-    emitMiniGameSessionEvent(sessionEvents, 'game_complete', {
+    emitMiniGameSessionEvent(callbacksRef.current.sessionEvents, 'game_complete', {
       score: finalScore,
       stars: earnedStars,
       metadata: {
         correct: finalScore / POINTS_PER_HIT,
       },
     });
-    onVictory(earnedStars, finalScore);
+    callbacksRef.current.onVictory(earnedStars, finalScore);
   };
 
   const handleResolve = (result: ImpactResult) => {
-    if (impactResultRef.current) return;
+    if (!presentRef.current || terminalRef.current || impactResultRef.current) return;
     impactResultRef.current = result;
     setEnemyReaction(result === 'hit' ? 'hit' : 'taunt');
     setEnemyReactionKey((value) => value + 1);
     cameraTargetRef.current = impactPositionRef.current;
     if (settleTimeoutRef.current) window.clearTimeout(settleTimeoutRef.current);
     settleTimeoutRef.current = window.setTimeout(() => {
+      settleTimeoutRef.current = null;
+      if (!presentRef.current || terminalRef.current) return;
       cameraTargetRef.current = { x: 0, y: 0 };
     }, 680);
 
@@ -813,13 +869,13 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       setStars((prev) => Math.min(3, Math.max(prev, Math.floor(nextScore / 450))));
       setFeedback('Lookout cleared!');
       triggerHaptic('success');
-      onRoundComplete?.(true);
+      callbacksRef.current.onRoundComplete?.(true);
       setGameState('resolvedCorrect');
     } else {
       const correctAngle = activeQuestion?.correctAnswer;
       setFeedback(`Missed! The correct angle was ${correctAngle ?? '--'}°.`);
       triggerHaptic('error');
-      onRoundComplete?.(false);
+      callbacksRef.current.onRoundComplete?.(false);
       if (!sessionState) {
         setLocalLives((prev) => Math.max(0, prev - 1));
       }
@@ -833,7 +889,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   };
 
   const fireProjectile = (angleDeg?: number) => {
-    if (!activeQuestion) return;
+    if (!presentRef.current || terminalRef.current || !activeQuestion) return;
     const resolvedAngle = Number.isFinite(angleDeg) ? (angleDeg as number) : desiredAngleRef.current;
     const speed = activeQuestion.launchSpeed || PROJECTILE_SPEED;
     projectileRef.current = buildProjectile(resolvedAngle, speed);
@@ -843,7 +899,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   };
 
   const handleAnswer = (answer: number) => {
-    if (gameState !== 'awaitingAnswer' || !activeQuestion) return;
+    if (!presentRef.current || terminalRef.current || gameState !== 'awaitingAnswer' || selectedAnswerRef.current !== null || !activeQuestion) return;
+    advancedQuestionRef.current = null;
     selectedAnswerRef.current = answer;
     setSelectedAnswer(answer);
     setFeedback('');
@@ -851,6 +908,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     setGameState('aiming');
     if (aimTimeoutRef.current) window.clearTimeout(aimTimeoutRef.current);
     aimTimeoutRef.current = window.setTimeout(() => {
+      aimTimeoutRef.current = null;
+      if (!presentRef.current || terminalRef.current) return;
       setGameState('firing');
       fireProjectile(answer);
     }, AIM_DELAY);
@@ -888,6 +947,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     if (!ctx) return;
 
     const draw = (timestamp: number) => {
+      if (!presentRef.current || terminalRef.current) return;
       if (lastFrameRef.current === null) lastFrameRef.current = timestamp;
       const delta = timestamp - lastFrameRef.current;
       lastFrameRef.current = timestamp;
@@ -895,6 +955,9 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       const viewWidth = canvas.width / window.devicePixelRatio;
       const viewHeight = canvas.height / window.devicePixelRatio;
 
+      const previousProjectilePosition = projectileRef.current?.active
+        ? { x: projectileRef.current.x, y: projectileRef.current.y }
+        : null;
       if (projectileRef.current?.active) {
         projectileRef.current = stepProjectile(projectileRef.current, delta);
       }
@@ -908,7 +971,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       const enemyWorld = { x: enemyVector.x * enemyRadius, y: enemyVector.y * enemyRadius };
 
       if (projectile?.active) {
-        const hit = allowHit && distance(projectile.x, projectile.y, enemyWorld.x, enemyWorld.y) <= TARGET_RADIUS + PROJECTILE_RADIUS;
+        const hit = allowHit && previousProjectilePosition !== null
+          && segmentHitsTarget(previousProjectilePosition, projectile, enemyWorld, TARGET_RADIUS + PROJECTILE_RADIUS);
         if (hit) {
           projectile.active = false;
           impactPositionRef.current = { ...enemyWorld };
@@ -952,14 +1016,20 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.clearRect(0, 0, viewWidth, viewHeight);
       const bg = arenaBackdropRef.current;
       if (bg?.naturalWidth) {
-        // Use the existing geometry environment at its proper aspect ratio.
-        const scale = Math.max(viewWidth / bg.naturalWidth, viewHeight / bg.naturalHeight);
+        // Fit the complete environment. The world projection below remains
+        // independent so scenery framing does not change aiming or physics.
+        ctx.fillStyle = '#0c2135';
+        ctx.fillRect(0, 0, viewWidth, viewHeight);
+        const scale = Math.min(viewWidth / bg.naturalWidth, viewHeight / bg.naturalHeight);
         const width = bg.naturalWidth * scale;
         const height = bg.naturalHeight * scale;
         ctx.drawImage(bg, (viewWidth - width) / 2, (viewHeight - height) / 2, width, height);
         // Record the source only once it has actually been painted. Canvas
         // scenery has no image element for the shared visual checks to inspect.
         if (canvas.dataset.renderedBackgroundSrc !== bg.currentSrc) canvas.dataset.renderedBackgroundSrc = bg.currentSrc;
+        canvas.dataset.backgroundFit = 'contain';
+        canvas.dataset.backgroundPaintWidth = String(width);
+        canvas.dataset.backgroundPaintHeight = String(height);
         const shade = ctx.createLinearGradient(0, 0, 0, viewHeight);
         shade.addColorStop(0, 'rgba(8, 26, 53, .14)');
         shade.addColorStop(1, 'rgba(8, 26, 53, .4)');
@@ -1091,10 +1161,10 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
       ctx.restore();
 
-      animationRef.current = requestAnimationFrame(draw);
+      if (presentRef.current && !terminalRef.current) animationRef.current = requestAnimationFrame(draw);
     };
 
-    animationRef.current = requestAnimationFrame(draw);
+    if (presentRef.current && !terminalRef.current) animationRef.current = requestAnimationFrame(draw);
     return () => {
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
       animationRef.current = null;
@@ -1102,10 +1172,15 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   }, [activeQuestion, gameState, selectedAnswer]);
 
   const handleNext = () => {
+    if (!presentRef.current || terminalRef.current || advancedQuestionRef.current === questionIndex) return;
     if (gameState !== 'resolvedCorrect' && gameState !== 'resolvedIncorrect') return;
+    advancedQuestionRef.current = questionIndex;
+    clearRoundTimers();
     if (gameState === 'resolvedIncorrect' && !sessionState && lives <= 0) {
+      terminalRef.current = true;
+      stopScheduledWork();
       setGameState('gameOver');
-      onGameOver(scoreRef.current);
+      callbacksRef.current.onGameOver(scoreRef.current);
       return;
     }
     if (questionIndex >= questions.length - 1) {
@@ -1115,9 +1190,10 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     setQuestionIndex((prev) => prev + 1);
     resetForNext();
   };
+  nextCallbackRef.current = handleNext;
 
   useEffect(() => {
-    if (gameState !== 'resolvedCorrect' && gameState !== 'resolvedIncorrect') {
+    if (!presentRef.current || terminalRef.current || (gameState !== 'resolvedCorrect' && gameState !== 'resolvedIncorrect')) {
       if (autoAdvanceTimeoutRef.current) window.clearTimeout(autoAdvanceTimeoutRef.current);
       autoAdvanceTimeoutRef.current = null;
       return;
@@ -1125,15 +1201,17 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
     if (autoAdvanceTimeoutRef.current) window.clearTimeout(autoAdvanceTimeoutRef.current);
     autoAdvanceTimeoutRef.current = window.setTimeout(() => {
-      handleNext();
+      autoAdvanceTimeoutRef.current = null;
+      if (!presentRef.current || terminalRef.current || questionIndexRef.current !== questionIndex) return;
+      nextCallbackRef.current?.();
     }, 900);
-  }, [gameState]);
+  }, [gameState, questionIndex]);
 
   const showPromptAndAnswers = gameState === 'awaitingAnswer';
 
   return (
     <GameUiShell className="bg-transparent !bg-none ![background-image:none] ![background-color:transparent]" overlayDisabled>
-      <div className="relative h-full w-full overflow-hidden text-white">
+      <div data-angle-game="true" data-angle-present={isPresent} className="relative h-full w-full overflow-hidden text-white">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(180deg,#bfeaff_0%,#7dd3fc_36%,#60a5fa_66%,#1e3a8a_100%)]"

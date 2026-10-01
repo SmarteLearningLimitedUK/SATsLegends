@@ -203,11 +203,12 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
 
   useEffect(() => {
     if (!presentRef.current) return;
-    clearTimers(); answerLockRef.current = false; victoryPendingRef.current = false;
     scoreRef.current = XP;
   }, [XP]);
 
   useEffect(() => {
+    if (!presentRef.current) return;
+    clearTimers(); answerLockRef.current = false; victoryPendingRef.current = false;
     didEndRef.current = false;
     scoreRef.current = 0;
     setRoundNumber(1);

@@ -140,7 +140,7 @@ const QUESTION_BANK: QuestionSpec[][] = [
     { prompt: 'One angle on a straight line is 77°. What is the other angle?', correctAnswer: 103, difficulty: 2 },
   ],
   [
-    { prompt: 'The angles are in the ratio 2:7 on a straight line. What is the smaller angle?', correctAnswer: 20, difficulty: 3 },
+    { prompt: 'The angles are in the ratio 2:7 on a straight line. What is the smaller angle?', correctAnswer: 40, difficulty: 3 },
     { prompt: 'The angles are in the ratio 4:5 on a straight line. What is the larger angle?', correctAnswer: 100, difficulty: 3 },
     { prompt: 'The smaller angle is 26° less than the larger angle. What is the larger angle?', correctAnswer: 103, difficulty: 3 },
     { prompt: 'The angles are in the ratio 3:6 on a straight line. What is the smaller angle?', correctAnswer: 60, difficulty: 3 },
