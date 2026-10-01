@@ -1,6 +1,7 @@
 import { lazy, Suspense, useLayoutEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ArrowLeft, LoaderCircle } from 'lucide-react';
+import { parseRoute } from '../app/routeConfig';
 import Website from './Website';
 import FamilyAccount from './FamilyAccount';
 import './website.css';
@@ -21,6 +22,7 @@ export default function WebsiteRoot() {
 function WebsiteContent() {
   const { pathname } = useLocation();
   const isWebsite = websiteRoutes.has(pathname.replace(/\/+$/, '') || '/') || pathname.startsWith('/parent');
+  const isMinigame = parseRoute(pathname).screen === 'gameplay';
 
   useLayoutEffect(() => {
     document.body.classList.toggle('legends-website-body', isWebsite);
@@ -38,6 +40,6 @@ function WebsiteContent() {
     <Suspense fallback={<div className="website-game-loading"><LoaderCircle className="website-spinner" /><p>Opening your adventure…</p></div>}><GameGate>
       <Game />
     </GameGate></Suspense>
-    <Link className="website-return" to="/" aria-label="Return to SATs Legends website"><ArrowLeft size={16} /><span>Website</span></Link>
+    {isMinigame ? null : <Link className="website-return" to="/" aria-label="Return to SATs Legends website"><ArrowLeft size={16} /><span>Website</span></Link>}
   </>;
 }
