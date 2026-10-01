@@ -66,6 +66,8 @@ try {
       return reply({ report_emails: reportEmails, next_report_at: '2026-09-30T15:00:00Z' });
     }
     if (url.pathname.endsWith('/subscriptions')) return reply(paid ? [{ id: 'sub_fixture', product_code: 'matharia', status: 'active', interval: 'month', current_period_end: new Date(Date.now() + 86400000).toISOString(), cancel_at_period_end: false }] : []);
+    if (url.pathname.endsWith('/complimentary_access')) return reply([]);
+    if (url.pathname.endsWith('/rpc/is_staff')) return reply(false);
     if (url.pathname.endsWith('/child_progress')) return reply(url.searchParams.get('child_id') === `eq.${otherChildId}` ? [] : [progress]);
     throw new Error(`Unexpected fixture request ${request.method()} ${url.pathname}`);
   });

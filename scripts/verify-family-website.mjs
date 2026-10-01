@@ -21,7 +21,10 @@ try {
         await expect(page.getByText('£4.99', { exact: false }).first()).toBeVisible();
         await expect(page.getByText('£49.99', { exact: false }).first()).toBeVisible();
         await expect(page.getByText('These subscriptions cover Matharia only.', { exact: false })).toBeVisible();
-        await expect(page.getByText('PayPal will be offered when account activation is complete.', { exact: false })).toBeVisible();
+        await expect(page.getByText('Checkout is not available yet.', { exact: false })).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Not available yet' })).toHaveCount(2);
+        await expect(page.getByRole('link', { name: 'Create parent account' })).toHaveCount(0);
+        await expect(page.getByRole('link', { name: 'Explore plans' })).toBeVisible();
       }
       if (route === '/for-parents') {
         await expect(page.getByRole('heading', { name: 'Big adventures. Small steps to SATs.' })).toBeVisible();
