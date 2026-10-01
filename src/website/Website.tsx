@@ -13,7 +13,7 @@ import Account, { AuthCallback } from './ParentAccount';
 import Subscriptions from './Subscriptions';
 import { useFamily } from './FamilyAccount';
 import AdventureArtwork, { AdventureBackdrop } from './AdventureArtwork';
-import valley from '../assets/website/adventure-valley-v1.png';
+import valley from '../assets/website/adventure-valley-v1.webp';
 import SplashLogo from './SplashLogo';
 import GameplayGallery from './GameplayGallery';
 

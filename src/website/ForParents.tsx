@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ArrowRight, BookOpen, Check, Leaf, LockKeyhole, Mail, ShieldCheck } from 'lucide-react';
-import valley from '../assets/website/adventure-valley-v1.png';
+import valley from '../assets/website/adventure-valley-v1.webp';
 import mochi from '../assets/characters/mobile/Mochi/mochi_happy.png';
 import { WELLBEING_SCENES } from '../wellbeing/scenes';
 import { revisionTopics } from './content';

@@ -4,8 +4,8 @@ import world01Map from './assets/maps/forect.jpg';
 import world02Map from './assets/maps/reef2.jpg';
 import world03Map from './assets/maps/backgroundsforgames/castle.jpg';
 import world04Map from './assets/maps/harbour.jpg';
-import world05Map from './assets/maps/finalamendedworldmap.png';
-import world06Map from './assets/maps/finalmap.png';
+import world05Map from './assets/maps/finalamendedworldmap.webp';
+import world06Map from './assets/maps/finalmap.webp';
 import { NUMBER_BASE_CAMP_LEVELS } from './systems/content/island1NumberBaseCamp';
 import { buildFiveTierCampaign } from './systems/content/gameDifficulty';
 

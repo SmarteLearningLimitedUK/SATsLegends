@@ -537,8 +537,10 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const updateStageScale = () => {
-      const viewportWidth = window.visualViewport?.width ?? window.innerWidth;
-      const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
+      // Keep the layout viewport stable while the browser magnifies the visual viewport.
+      const isZoomed = (window.visualViewport?.scale ?? 1) > 1.01;
+      const viewportWidth = isZoomed ? window.innerWidth : window.visualViewport?.width ?? window.innerWidth;
+      const viewportHeight = isZoomed ? window.innerHeight : window.visualViewport?.height ?? window.innerHeight;
       setViewportSize({ width: viewportWidth, height: viewportHeight });
       const isPortraitPhone = viewportWidth < 700 && viewportHeight >= viewportWidth;
       const baseWidth = IPHONE_STAGE_WIDTH;
@@ -933,12 +935,16 @@ const App: React.FC = () => {
       )
     : null;
   const isPortraitPhone = viewportSize.width > 0 && viewportSize.width < 700 && viewportSize.height >= viewportSize.width;
-  const stageWidth = isPortraitPhone ? viewportSize.width / stageScale : IPHONE_STAGE_WIDTH;
+  const useScrollableStageShell = !useUnboundedStageShell && viewportSize.width > viewportSize.height;
+  const wideStageScale = viewportSize.width >= 1100 ? 1.3 : viewportSize.width >= 900 ? 1.15 : 1;
+  const effectiveStageScale = useScrollableStageShell ? wideStageScale : stageScale;
+  const stageWidth = useScrollableStageShell ? IPHONE_STAGE_WIDTH : isPortraitPhone ? viewportSize.width / stageScale : IPHONE_STAGE_WIDTH;
   const stageHeight = isPortraitPhone ? viewportSize.height / stageScale : IPHONE_STAGE_HEIGHT;
+  const effectiveRenderMultiplier = useScrollableStageShell ? 1 : stageRenderMultiplier;
   const stageStyle = {
-    '--game-stage-width': `${Math.round(useUnboundedStageShell ? viewportSize.width : stageWidth * stageRenderMultiplier)}px`,
-    '--game-stage-height': `${Math.round(useUnboundedStageShell ? viewportSize.height : stageHeight * stageRenderMultiplier)}px`,
-    '--game-stage-scale': `${useUnboundedStageShell ? 1 : stageScale}`,
+    '--game-stage-width': `${Math.round(useUnboundedStageShell ? viewportSize.width : stageWidth * effectiveRenderMultiplier)}px`,
+    '--game-stage-height': `${Math.round(useUnboundedStageShell ? viewportSize.height : stageHeight * effectiveRenderMultiplier)}px`,
+    '--game-stage-scale': `${useUnboundedStageShell ? 1 : effectiveStageScale}`,
     '--question-card-scale': `${useUnboundedStageShell ? 1 : questionCardScale}`,
     '--potion-cauldron-shift': potionCauldronShift,
   } as React.CSSProperties;
@@ -947,8 +953,8 @@ const App: React.FC = () => {
     : undefined;
 
   return (
-    <div className="iphone-game-viewport" style={viewportStyle}>
-      <div className={`iphone-game-stage${useUnboundedStageShell ? ' iphone-game-stage-unbounded' : ''}`} style={stageStyle} data-stage-layout={useUnboundedStageShell ? 'responsive' : 'portrait'}>
+    <div className={`iphone-game-viewport${useScrollableStageShell ? ' iphone-game-viewport-scrollable' : ''}`} style={viewportStyle}>
+      <div className={`iphone-game-stage${useUnboundedStageShell ? ' iphone-game-stage-unbounded' : ''}${useScrollableStageShell ? ' iphone-game-stage-scrollable' : ''}`} style={stageStyle} data-stage-layout={useUnboundedStageShell ? 'responsive' : useScrollableStageShell ? 'scrollable' : 'portrait'}>
         <div className="iphone-game-stage-inner">
           <div
             data-screen-family={screenBehavior.family}
@@ -1109,6 +1115,7 @@ const App: React.FC = () => {
           </div>
         </div>
       </div>
+      {useScrollableStageShell ? <div className="iphone-game-scroll-spacer" style={{ height: `${Math.ceil(IPHONE_STAGE_HEIGHT * effectiveStageScale)}px` }} aria-hidden="true" /> : null}
     </div>
   );
 };

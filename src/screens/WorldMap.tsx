@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { X } from 'lucide-react';
 import { IslandData, PlayerData } from '../types';
 import { ISLANDS } from '../constants';
-import islandAtlas from '../assets/maps/island-atlas-rich.png';
+import islandAtlas from '../assets/maps/island-atlas-rich.webp';
 import mathariaLogo from '../assets/maps/matharia-logo.png';
 import AssetIcon from '../components/AssetIcon';
 import ParentGateOverlay from '../components/ParentGateOverlay';

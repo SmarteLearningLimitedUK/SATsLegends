@@ -622,9 +622,13 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
 
             <AnimatePresence>
               {bubbles.map((bubble) => (
-                <motion.div
+                <motion.button
                   key={bubble.id}
-                  className="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+                  type="button"
+                  data-button-skin="none"
+                  aria-label={`Pop number ${bubble.value}`}
+                  onClick={(event) => { if (event.detail === 0) tapBubble(bubble.id); }}
+                  className="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-full border-0 bg-transparent p-0 focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-amber-300"
                   style={{ left: `${bubble.x}%`, top: `${bubble.y}%` }}
                   initial={{ scale: 0.5, opacity: 0 }}
                   animate={
@@ -644,7 +648,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
                   onPointerCancel={cancelHeldPop}
                 >
                   <PrimeBubble bubble={bubble} isPhone={isPhone} />
-                </motion.div>
+                </motion.button>
               ))}
             </AnimatePresence>
           </div>

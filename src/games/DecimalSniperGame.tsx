@@ -350,6 +350,14 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
     triggerHaptic('selection');
   }, []);
 
+  const fireAtTarget = useCallback((target: MovingTarget) => {
+    if (resultStateRef.current !== 'running' || isPausedRef.current || projectileRef.current) return;
+    const nextAim = buildAimVector(layoutRef.current.launcherOrigin, { x: target.x, y: target.y });
+    aimVectorRef.current = nextAim;
+    setAimVector(nextAim);
+    fireProjectile();
+  }, [fireProjectile]);
+
   const getLocalPoint = useCallback((clientX: number, clientY: number): Vec2 | null => {
     const rect = arenaRef.current?.getBoundingClientRect();
     if (!rect || rect.width <= 0 || rect.height <= 0) return null;
@@ -605,7 +613,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title={gameTitle || 'Place Value Panic'}
-        body="The Monster Minds have hidden the target in decimal fog.\nDrag to aim, release to fire, and hit the matching decimal.\nWatch the place value carefully."
+        body="The Monster Minds have hidden the target in decimal fog.\nDrag to aim and release, or tap a target to fire.\nWatch the place value carefully."
         briefing={practiceBriefing}
         onAction={dismissPracticeIntro}
       />
@@ -620,7 +628,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
             className="pointer-events-none absolute z-10 rounded-full border border-white/12 bg-slate-900/52 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-white/75"
             style={{ top: `${Math.max(10, arenaLayout.topZoneHeight - 34)}px`, left: `${arenaLayout.sidePadding + 4}px` }}
           >
-            Drag launcher to aim
+            Drag to aim or tap a target
           </motion.div>
         )}
       </AnimatePresence>
@@ -630,9 +638,14 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
         const top = toPercentY(target.y, arenaSize.height);
 
         return (
-          <motion.div
+          <motion.button
             key={target.id}
-            className={`absolute z-10 flex select-none items-center justify-center rounded-full border text-sm font-black shadow-[0_8px_24px_rgba(2,6,23,0.35)] md:text-base ${paletteStyles[target.palette]}`}
+            type="button"
+            data-button-skin="none"
+            aria-label={`Aim at ${target.label} and fire`}
+            disabled={resultState !== 'running' || isPaused || Boolean(projectile)}
+            onClick={() => fireAtTarget(target)}
+            className={`absolute z-10 flex select-none items-center justify-center rounded-full border p-0 text-sm font-black shadow-[0_8px_24px_rgba(2,6,23,0.35)] focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-amber-300 md:text-base ${paletteStyles[target.palette]}`}
             style={{
               left: `${left}%`,
               top: `${top}%`,
@@ -644,7 +657,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
             transition={{ duration: 1.3, repeat: Infinity, ease: 'easeInOut' }}
           >
             {target.label}
-          </motion.div>
+          </motion.button>
         );
       })}
 
@@ -691,7 +704,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
           onPointerDown={handleLauncherPointerDown}
           disabled={resultState !== 'running' || isPaused || Boolean(projectile)}
           className="relative h-20 w-20 touch-none rounded-full border border-cyan-100/45 bg-[radial-gradient(circle_at_35%_28%,rgba(186,230,253,0.95),rgba(14,116,144,0.9)_58%,rgba(8,47,73,0.96))] shadow-[0_10px_24px_rgba(3,37,65,0.45)] disabled:opacity-50"
-          aria-label="Drag to aim and release to fire"
+          aria-label="Drag to aim and release to fire, or tap a target"
         >
           <div className="absolute inset-[22%] rounded-full border border-white/35" />
           <div className="absolute inset-0 flex items-center justify-center text-cyan-50">
@@ -700,7 +713,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
         </button>
 
         <div className="pointer-events-none mt-2 text-center text-[10px] font-black uppercase tracking-[0.14em] text-white/75">
-          Drag and release
+          Drag and release, or tap a target
         </div>
       </div>
     </div>

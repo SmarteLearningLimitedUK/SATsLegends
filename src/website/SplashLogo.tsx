@@ -1,5 +1,5 @@
 import { useId } from 'react';
-import splashPoster from '../assets/casual_ui/splashrep1.png';
+import splashPoster from '../assets/casual_ui/splashrep1.webp';
 
 /** Display the existing splash badge pixels, excluding the surrounding scene. */
 export default function SplashLogo() {
