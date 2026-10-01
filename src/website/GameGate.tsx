@@ -52,7 +52,7 @@ export default function GameGate({ children }: { children: ReactNode }) {
   if (family.loading || (family.dataLoading && !family.settings)) return <GateMessage title="Opening your adventure…"><p role="status">Loading your family account.</p></GateMessage>;
   if (!family.session) return <Navigate to="/login?next=/parent" replace />;
   if (family.error) return <GateMessage title="Let’s try again."><p role="alert">{family.error}</p><button className="website-button website-button-gold" onClick={() => void family.refresh()}>Reload account</button></GateMessage>;
-  if (!hasMathariaAccess(family.subscriptions)) return <Navigate to="/subscriptions" replace />;
+  if (!hasMathariaAccess(family.subscriptions, family.complimentary)) return <Navigate to="/subscriptions" replace />;
   if (!child) return <Navigate to="/parent" replace />;
   if (error) return <GateMessage title="Let’s reconnect."><p role="alert">{error}</p><button className="website-button website-button-gold" onClick={() => setReload(value => value + 1)}>Try again</button></GateMessage>;
   if (loaded?.id !== child.id) return <GateMessage title="Opening Matharia…"><p role="status">Loading {child.nickname}’s adventure.</p></GateMessage>;

@@ -12,7 +12,7 @@ import './parents.css';
 
 const Game = lazy(() => import('../App'));
 const GameGate = lazy(() => import('./GameGate'));
-const websiteRoutes = new Set(['/', '/revision', '/videos', '/signup', '/login', '/subscriptions', '/for-parents', '/forgot-password', '/reset-password', '/auth/callback']);
+const websiteRoutes = new Set(['/', '/revision', '/videos', '/signup', '/login', '/subscriptions', '/for-parents', '/forgot-password', '/reset-password', '/auth/callback', '/admin']);
 
 export default function WebsiteRoot() {
   return <FamilyAccount><WebsiteContent /></FamilyAccount>;

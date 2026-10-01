@@ -34,7 +34,7 @@ export default function Subscriptions() {
     ] as const).map(plan => <section className={`family-plan ${plan.interval === 'year' ? 'family-plan-year' : ''}`} key={plan.interval}>
       <p className="website-eyebrow">{plan.interval === 'year' ? 'Best value' : 'Start your journey'}</p><h2>{plan.name}</h2><p className="family-price">{plan.amount} <span>{plan.period}</span></p><p>{plan.detail}</p>
       <ul>{['One child player profile', 'Matharia maths adventures in your browser', 'Saved progress across devices', 'Private parent progress dashboard', 'Sunday and Wednesday progress emails'].map(feature => <li key={feature}><Check size={17} />{feature}</li>)}</ul>
-      {hasMathariaAccess(family.subscriptions) ? <Link className="website-button website-button-gold" to="/parent">Go to your account <ArrowRight size={17} /></Link>
+      {hasMathariaAccess(family.subscriptions, family.complimentary) ? <Link className="website-button website-button-gold" to="/parent">Go to your account <ArrowRight size={17} /></Link>
         : family.session ? <button className="website-button website-button-gold" disabled={Boolean(busy) || !ready.includes(plan.interval)} onClick={() => void checkout(plan.interval)}>{busy === plan.interval ? 'Opening checkout…' : `Choose ${plan.interval === 'month' ? 'monthly' : 'yearly'}`}<ArrowRight size={17} /></button>
           : <Link className="website-button website-button-gold" to="/signup?next=/subscriptions">Create parent account <ArrowRight size={17} /></Link>}
       <p className="family-small">Renews automatically at {plan.amount} {plan.period}. Cancel renewal in your parent account; access continues until the end of your paid period.</p>

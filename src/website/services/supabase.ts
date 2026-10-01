@@ -26,5 +26,23 @@ export function openBilling(url: string) {
   window.location.assign(target.href);
 }
 export function safeReturnPath(path: string | null): string {
-  return path && /^\/(parent(?:\/progress\/[a-f0-9-]{36})?|subscriptions)$/.test(path) ? path : '/parent';
+  return path && /^\/(parent(?:\/progress\/[a-f0-9-]{36})?|subscriptions|admin)$/.test(path) ? path : '/parent';
+}
+
+export async function adminSupportRequest(query?: { q?: string; page?: number }, action?: { action: 'grant' | 'revoke' | 'reset' | 'suspend' | 'reactivate'; targetId: string; reason: string }) {
+  if (!supabase) throw new Error('Accounts are not available yet.');
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error('Please log in again.');
+  const params = new URLSearchParams();
+  if (query?.q) params.set('q', query.q);
+  if (query?.page) params.set('page', String(query.page));
+  const response = await fetch(`${url}/functions/v1/admin-support${params.size ? `?${params}` : ''}`, {
+    method: action ? 'POST' : 'GET',
+    headers: { apikey: key!, Authorization: `Bearer ${session.access_token}`,
+      ...(action ? { 'Content-Type': 'application/json' } : {}) },
+    ...(action ? { body: JSON.stringify(action) } : {}), signal: AbortSignal.timeout(30000),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Admin request failed. Please try again.');
+  return data;
 }
