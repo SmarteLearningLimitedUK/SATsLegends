@@ -102,7 +102,7 @@ body {
     radial-gradient(circle at 50% 28%, rgba(251,191,36,0.06), transparent 22%),
     linear-gradient(180deg, #181f2b 0%, #10151f 42%, #0a0f18 76%, #04070d 100%);
   overscroll-behavior: none;
-  touch-action: none;
+  touch-action: manipulation;
 }
 
 .app-viewport [class*="text-amber-"],
@@ -124,6 +124,14 @@ body {
   background: #020617;
 }
 
+.iphone-game-viewport-scrollable {
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  touch-action: pan-y pinch-zoom;
+  -webkit-overflow-scrolling: touch;
+}
+
 .iphone-game-stage {
   position: absolute;
   left: 50%;
@@ -134,6 +142,16 @@ body {
   transform-origin: center center;
   overflow: hidden;
   background: #020617;
+}
+
+.iphone-game-stage-scrollable {
+  top: 0;
+  transform: translateX(-50%) scale(var(--game-stage-scale, 1));
+  transform-origin: top center;
+}
+
+.iphone-game-scroll-spacer {
+  pointer-events: none;
 }
 
 .iphone-game-stage-unbounded {

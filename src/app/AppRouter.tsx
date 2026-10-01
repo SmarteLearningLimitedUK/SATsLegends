@@ -27,7 +27,7 @@ import { isBossEncounterGameType } from '../games/bossEncounterTypes';
 import { GameScreen, IslandData, LevelData, PlayerData } from '../types';
 import { getLevelGameTitle } from '../utils/gameNames';
 import { getGameDifficulty } from '../systems/content/gameDifficulty';
-import splashPoster from '../assets/casual_ui/splashrep1.png';
+import splashPoster from '../assets/casual_ui/splashrep1.webp';
 import { LEVEL_TIMERS_DISABLED } from './testingFlags';
 import {
   bindMiniGameSessionHandlers,

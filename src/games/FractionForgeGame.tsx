@@ -47,6 +47,8 @@ interface DragState {
   pointerId: number;
   clientX: number;
   clientY: number;
+  startClientX: number;
+  startClientY: number;
   offsetX: number;
   offsetY: number;
   width: number;
@@ -146,16 +148,21 @@ const scoreToStars = (accuracy: number, lives: number) => {
 const FractionCardTile: React.FC<{
   card: FractionCard;
   onPointerDown?: (event: React.PointerEvent<HTMLButtonElement>) => void;
+  onKeyboardActivate?: () => void;
+  selected?: boolean;
   disabled?: boolean;
   size: { width: number; height: number };
   compact?: boolean;
-}> = ({ card, onPointerDown, disabled = false, size }) => (
+}> = ({ card, onPointerDown, onKeyboardActivate, selected = false, disabled = false, size }) => (
   <motion.button
     type="button"
     onPointerDown={onPointerDown}
+    onClick={(event) => { if (event.detail === 0) onKeyboardActivate?.(); }}
+    aria-label={`Fraction ${card.numerator} over ${card.denominator}`}
+    aria-pressed={selected}
     disabled={disabled}
     whileTap={disabled ? undefined : { scale: 0.97 }}
-    className="relative flex cursor-grab flex-col items-center justify-center rounded-[0.95rem] border border-cyan-200/70 bg-[radial-gradient(circle_at_50%_12%,rgba(255,255,255,0.24),rgba(255,255,255,0)_32%),linear-gradient(180deg,#5ba7ff_0%,#2056c3_58%,#163b8e_100%)] text-white shadow-[0_14px_28px_rgba(8,47,111,0.54),inset_0_1px_0_rgba(255,255,255,0.12)] active:cursor-grabbing disabled:cursor-default touch-none"
+    className={`relative flex cursor-grab flex-col items-center justify-center rounded-[0.95rem] border border-cyan-200/70 bg-[radial-gradient(circle_at_50%_12%,rgba(255,255,255,0.24),rgba(255,255,255,0)_32%),linear-gradient(180deg,#5ba7ff_0%,#2056c3_58%,#163b8e_100%)] text-white shadow-[0_14px_28px_rgba(8,47,111,0.54),inset_0_1px_0_rgba(255,255,255,0.12)] active:cursor-grabbing disabled:cursor-default touch-none${selected ? ' ring-4 ring-amber-300 ring-offset-2 ring-offset-slate-900' : ''}`}
     style={{ width: size.width, height: size.height }}
   >
     <div className="pointer-events-none absolute inset-0 rounded-[0.85rem] bg-gradient-to-br from-white/24 via-transparent to-transparent" />
@@ -191,6 +198,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
   const [targetSlots, setTargetSlots] = useState<Array<FractionCard | null>>([]);
   const [sourceSlots, setSourceSlots] = useState<Array<FractionCard | null>>([]);
   const [dragState, setDragState] = useState<DragState | null>(null);
+  const [selectedCard, setSelectedCard] = useState<{ location: TokenLocation; index: number } | null>(null);
   const [timeLeft, setTimeLeft] = useState(() => Math.max(40, 58 - (Math.max(1, levelId) * 2)));
   const [lives, setLives] = useState(10);
   const [XP, setScore] = useState(0);
@@ -283,6 +291,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     setTargetSlots(Array(nextRound.cards.length).fill(null));
     setSourceSlots(shuffle(nextRound.cards));
     setDragState(null);
+    setSelectedCard(null);
     setIsResolving(false);
     setFeedback(null);
   }, []);
@@ -346,13 +355,41 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
       pointerId: event.pointerId,
       clientX: event.clientX,
       clientY: event.clientY,
+      startClientX: event.clientX,
+      startClientY: event.clientY,
       offsetX: event.clientX - rect.left,
       offsetY: event.clientY - rect.top,
       width: rect.width,
       height: rect.height,
     });
+    setSelectedCard(null);
     triggerHaptic('selection');
   }, [dragState, isResolving, sourceSlots, targetSlots]);
+
+  const placeSelectedCard = useCallback((location: TokenLocation, index: number) => {
+    if (!selectedCard || isResolving) return;
+    if (selectedCard.location === location && selectedCard.index === index) {
+      setSelectedCard(null);
+      return;
+    }
+    const nextTargets = [...targetSlots];
+    const nextSources = [...sourceSlots];
+    const origin = selectedCard.location === 'target' ? nextTargets : nextSources;
+    const destination = location === 'target' ? nextTargets : nextSources;
+    const token = origin[selectedCard.index];
+    if (!token) return;
+    origin[selectedCard.index] = destination[index];
+    destination[index] = token;
+    setTargetSlots(nextTargets);
+    setSourceSlots(nextSources);
+    setSelectedCard(null);
+    triggerHaptic('selection');
+  }, [isResolving, selectedCard, sourceSlots, targetSlots]);
+
+  const activateCard = useCallback((location: TokenLocation, index: number) => {
+    if (selectedCard) placeSelectedCard(location, index);
+    else setSelectedCard({ location, index });
+  }, [placeSelectedCard, selectedCard]);
 
   const findDropCandidate = useCallback((clientX: number, clientY: number): { location: TokenLocation; index: number } | null => {
     const playfield = playfieldRef.current;
@@ -422,9 +459,11 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
 
   const finishDrag = (event: React.PointerEvent<HTMLDivElement>, cancelled = false) => {
     if (!dragState || event.pointerId !== dragState.pointerId) return;
-    placeTokenInArrays(cancelled
+    const wasTap = !cancelled && Math.hypot(event.clientX - dragState.startClientX, event.clientY - dragState.startClientY) < 8;
+    placeTokenInArrays(cancelled || wasTap
       ? { location: dragState.fromLocation, index: dragState.fromIndex }
       : findDropCandidate(event.clientX, event.clientY));
+    if (wasTap) setSelectedCard({ location: dragState.fromLocation, index: dragState.fromIndex });
     setDragState(null);
     triggerHaptic('selection');
   };
@@ -603,7 +642,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
 
         <GameQuestionCard
           title={gameTitle || 'Fraction Forge'}
-          subtitle="Three clean bridges earn +60 XP. Errors cost 4 seconds."
+          subtitle="Tap a fraction, then a bridge slot, or drag it. Errors cost 4 seconds."
           className="pointer-events-none"
           style={{ position: 'absolute', top: 5, width: '94%', transform: 'none' }}
         >
@@ -626,9 +665,12 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
                 <FractionCardTile
                   card={token}
                   size={layout.cardSize}
-                  onPointerDown={(event) => beginDrag('source', index, event)}
+                  selected={selectedCard?.location === 'source' && selectedCard.index === index}
+                  onKeyboardActivate={() => activateCard('source', index)}
+                  onPointerDown={(event) => selectedCard ? placeSelectedCard('source', index) : beginDrag('source', index, event)}
                 />
               )}
+              {!token && <button type="button" data-button-skin="none" disabled={!selectedCard || isResolving} onClick={() => placeSelectedCard('source', index)} aria-label={`Place selected fraction in source position ${index + 1}`} className="h-full w-full rounded-xl border-2 border-dashed border-cyan-200/50 bg-slate-900/25 disabled:pointer-events-none disabled:opacity-40" />}
             </div>
           );
         })}
@@ -638,9 +680,14 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
           const hidden = dragState?.token.id === token?.id;
           return (
             <React.Fragment key={`target-${round.id}-${index}`}>
-              <div
+              <button
+                type="button"
                 data-fraction-target="true"
-                className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-[0.85rem] border border-dashed border-cyan-200/45 bg-cyan-200/12"
+                data-button-skin="none"
+                disabled={!selectedCard || isResolving}
+                onClick={() => placeSelectedCard('target', index)}
+                aria-label={`Place selected fraction in bridge position ${index + 1}`}
+                className="absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-[0.85rem] border border-dashed border-cyan-200/45 bg-cyan-200/12 disabled:pointer-events-none"
                 style={{
                   left: `${anchor.x}%`,
                   top: layout.targetTop,
@@ -657,7 +704,9 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
                   <FractionCardTile
                     card={token}
                     size={layout.cardSize}
-                    onPointerDown={(event) => beginDrag('target', index, event)}
+                    selected={selectedCard?.location === 'target' && selectedCard.index === index}
+                    onKeyboardActivate={() => activateCard('target', index)}
+                    onPointerDown={(event) => selectedCard ? placeSelectedCard('target', index) : beginDrag('target', index, event)}
                   />
                 )}
               </div>
@@ -673,6 +722,8 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
             </React.Fragment>
           );
         })}
+
+        {selectedCard && <div role="status" aria-live="polite" className="pointer-events-none absolute left-1/2 top-[47%] z-30 -translate-x-1/2 rounded-xl bg-slate-950/85 px-3 py-2 text-center text-xs font-bold text-amber-100">Fraction selected. Tap a bridge slot.</div>}
 
         <AnimatePresence>
           {feedback && (
