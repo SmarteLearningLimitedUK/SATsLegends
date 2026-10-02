@@ -60,6 +60,15 @@
   .website-scene-rhino { width: 20%; right: 60%; bottom: 305px; }
   .website-scene-cyclops { width: 27%; right: 2%; bottom: 75px; }
 }
+@media (min-width: 581px) and (max-width: 680px) {
+  /* Keep the bridge encounter clear of the copy as the columns meet. */
+  .website-scene-goblin { left: 22%; }
+  .website-scene-rhino { right: 50%; }
+}
+@media (min-width: 2000px) {
+  /* The foreground ledge sits lower when the wide landscape is vertically cropped. */
+  .website-scene-goblin { bottom: 30px; }
+}
 @media (max-width: 580px) {
   .legends-website .website-brand { width: 104px; }
   .legends-website .website-splash-heading { width: min(290px,100%); }
