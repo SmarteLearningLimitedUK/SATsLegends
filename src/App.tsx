@@ -51,7 +51,6 @@ import { reconcileAchievementState } from './systems/progression/achievementCata
 import { useProgressionStore } from './store/useProgressionStore';
 import { LevelProgress } from './lib/progression/types';
 import { getXpRequiredForLevel } from './lib/progression/getXpRequiredForLevel';
-import { CACHE_BUSTER } from './cacheBuster';
 import { playGameSound } from './audio/gameAudio';
 
 const PHONE_STAGE_MIN_HEIGHT = 635;
@@ -62,7 +61,6 @@ const App: React.FC = () => {
   const [questionCardScale, setQuestionCardScale] = useState(1);
   const [potionCauldronShift, setPotionCauldronShift] = useState('0px');
   const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
-  const buildId = import.meta.env.VITE_BUILD_ID ?? CACHE_BUSTER;
 
   const {
     screen,
@@ -498,39 +496,6 @@ const App: React.FC = () => {
   const isMockAssessment = Boolean(selectedLevel?.isBoss && isBossEncounterGameType(selectedLevel.gameType));
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    if (!buildId) return;
-    try {
-      const storageKey = 'sats_legends_build_id';
-      const previous = window.localStorage.getItem(storageKey);
-      if (previous && previous !== buildId) {
-        const clearBrowserState = async () => {
-          try {
-            window.localStorage.clear();
-            window.sessionStorage.clear();
-            if ('caches' in window) {
-              const keys = await caches.keys();
-              await Promise.all(keys.map((key) => caches.delete(key)));
-            }
-          } catch {
-            // Ignore cache/storage errors so we can still recover on reload.
-          }
-        };
-
-        void (async () => {
-          await clearBrowserState();
-          window.localStorage.setItem(storageKey, buildId);
-          window.location.reload();
-        })();
-        return;
-      }
-      window.localStorage.setItem(storageKey, buildId);
-    } catch {
-      // Ignore storage/cache errors to avoid blocking render.
-    }
-  }, [buildId]);
-
-  useEffect(() => {
     if (screen === 'profile_setup') {
       setDraftName(player.playerName || '');
     }
@@ -847,7 +812,9 @@ const App: React.FC = () => {
       && selectedLevel?.blueprintKey !== 'share_splitter'
       && selectedLevel?.blueprintKey !== 'maths_vs_zombies');
   const useUnboundedStageShell = screen === 'parent_dashboard' || isWellbeingScreen
-    || (isGameplayScreen && hasWideGameViewport && usesResponsiveGameScene);
+    || (isGameplayScreen && hasWideGameViewport && usesResponsiveGameScene)
+    || (isGameplayScreen && selectedLevel?.blueprintKey === 'place_value_panic'
+      && viewportSize.width >= 560 && viewportSize.width > viewportSize.height && viewportSize.height <= 420);
   const globalDockOffsetClass = screen !== 'splash' && !isGameplayScreen && screen !== 'avatar_selection' && screen !== 'profile_setup'
     ? 'pb-[calc((4.35rem+env(safe-area-inset-bottom))/var(--game-stage-scale))] md:pb-[calc((4.65rem+env(safe-area-inset-bottom))/var(--game-stage-scale))]'
     : '';

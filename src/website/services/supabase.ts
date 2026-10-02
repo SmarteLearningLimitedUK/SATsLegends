@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+export { safeReturnPath } from './returnPath';
 
 const url = import.meta.env.VITE_SUPABASE_URL?.trim();
 const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim();
@@ -10,7 +11,7 @@ export const supabase = accountsConfigured ? createClient(url!, key!, {
   auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, experimental: { passkey: true } },
 }) : null;
 
-export async function billingRequest(body?: { action: 'checkout' | 'portal'; interval?: 'month' | 'year' }) {
+export async function billingRequest(body?: { action: 'checkout'; product: 'matharia' | 'english' | 'bundle'; interval: 'month' | 'year' } | { action: 'portal' }) {
   if (!supabase) throw new Error('Accounts and subscriptions are not available yet.');
   const { data: { session } } = await supabase.auth.getSession();
   const response = await fetch(`${url}/functions/v1/billing`, {
@@ -28,17 +29,14 @@ export function openBilling(url: string) {
   if (target.protocol !== 'https:' || !['checkout.stripe.com', 'billing.stripe.com'].includes(target.hostname)) throw new Error('Unexpected billing address.');
   window.location.assign(target.href);
 }
-export function safeReturnPath(path: string | null): string {
-  return path && /^\/(parent(?:\/progress\/[a-f0-9-]{36})?|subscriptions|admin)$/.test(path) ? path : '/parent';
-}
-
-export async function adminSupportRequest(query?: { q?: string; page?: number }, action?: { action: 'grant' | 'revoke' | 'reset' | 'suspend' | 'reactivate'; targetId: string; reason: string }) {
+export async function adminSupportRequest(query?: { q?: string; page?: number; pendingDeletion?: boolean }, action?: { action: 'grant' | 'revoke' | 'reset' | 'suspend' | 'reactivate'; targetId: string; reason: string }) {
   if (!supabase) throw new Error('Accounts are not available yet.');
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) throw new Error('Please log in again.');
   const params = new URLSearchParams();
   if (query?.q) params.set('q', query.q);
   if (query?.page) params.set('page', String(query.page));
+  if (query?.pendingDeletion) params.set('pendingDeletion', 'true');
   const response = await fetch(`${url}/functions/v1/admin-support${params.size ? `?${params}` : ''}`, {
     method: action ? 'POST' : 'GET',
     headers: { apikey: key!, Authorization: `Bearer ${session.access_token}`,

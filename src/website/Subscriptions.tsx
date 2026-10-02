@@ -1,47 +1,81 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { ArrowRight, Check, BookOpen, Gamepad2, Mail } from 'lucide-react';
+import { ArrowRight, Check, Gamepad2, Mail } from 'lucide-react';
 import { hasMathariaAccess, useFamily } from './FamilyAccount';
 import { billingRequest, openBilling } from './services/supabase';
+import { englishReleased } from './englishRelease';
+import ReleasedSubscriptions from './ReleasedSubscriptions';
+
+type Interval = 'month' | 'year';
+type Plan = { product: string; interval: Interval; available: boolean; amount: number; currency: string };
+
+const prices: Record<Interval, number> = { month: 499, year: 4999 };
+const features = ['Matharia maths adventures', 'One child profile', 'Saved progress across devices', 'Private parent dashboard'];
+const formatPounds = (pence: number) => new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(pence / 100);
 
 export default function Subscriptions() {
+  return englishReleased ? <ReleasedSubscriptions /> : <MathariaSubscriptions />;
+}
+
+function MathariaSubscriptions() {
   const family = useFamily();
   const [query] = useSearchParams();
-  const [ready, setReady] = useState<string[]>([]);
+  const [plans, setPlans] = useState<Plan[]>([]);
   const [paypalReady, setPaypalReady] = useState(false);
   const [busy, setBusy] = useState('');
   const [error, setError] = useState('');
+  const mathariaActive = hasMathariaAccess(family.subscriptions, family.complimentary);
+  const otherPaidPlan = family.subscriptions.some(subscription => subscription.product_code !== 'matharia'
+    && ['active', 'trialing'].includes(subscription.status)
+    && new Date(subscription.current_period_end).getTime() > Date.now());
+
   useEffect(() => {
     if (!family.configured) return;
     let alive = true;
-    billingRequest().then(data => { if (alive) { setReady(data.plans.filter((p: { available: boolean }) => p.available).map((p: { interval: string }) => p.interval)); setPaypalReady(data.paymentMethods?.includes('paypal') === true); } })
-      .catch(() => { if (alive) setError('Subscriptions are not available to purchase yet.'); });
+    billingRequest().then(data => {
+      if (!alive) return;
+      setPlans(data.plans);
+      setPaypalReady(data.paymentMethods?.includes('paypal') === true);
+    }).catch(() => { if (alive) setError('Checkout availability could not be checked. Please try again later.'); });
     return () => { alive = false; };
   }, [family.configured]);
-  async function checkout(interval: 'month' | 'year') {
+
+  async function checkout(interval: Interval) {
     setBusy(interval); setError('');
-    try { openBilling((await billingRequest({ action: 'checkout', interval })).url); }
+    try { openBilling((await billingRequest({ action: 'checkout', product: 'matharia', interval })).url); }
     catch (caught) { setError(caught instanceof Error ? caught.message : 'Unable to open checkout.'); setBusy(''); }
   }
+  async function manage() {
+    setBusy('portal'); setError('');
+    try { openBilling((await billingRequest({ action: 'portal' })).url); }
+    catch (caught) { setError(caught instanceof Error ? caught.message : 'Unable to open billing.'); setBusy(''); }
+  }
+
   return <main id="website-main" className="website-container family-main">
-    <div className="website-resource-heading"><p className="website-eyebrow"><Gamepad2 size={16} /> SATs Legends Matharia</p><h1>A world of adventure.<br /><span>A brighter maths journey.</span></h1><p>Browser play, one child profile and progress you can follow.</p></div>
-    {query.get('checkout') === 'cancelled' && <p className="family-notice" role="status">Checkout was cancelled. You can choose a plan whenever you’re ready.</p>}
+    <div className="website-resource-heading"><p className="website-eyebrow"><Gamepad2 size={16} /> SATs Legends subscriptions</p><h1>Choose your adventure.<br /><span>Grow every skill.</span></h1><p>One child profile, browser play and progress you can follow.</p></div>
+    {query.get('checkout') === 'cancelled' && <p className="family-notice" role="status">Checkout was cancelled. Choose a plan whenever you’re ready.</p>}
+    {(query.get('product') === 'english' || query.get('product') === 'bundle') && <p className="family-notice" role="status">Lexcoria is in development. English and combined plans are not on sale yet; the subscriptions below cover Matharia only.</p>}
     {error && <p className="family-error" role="alert">{error}</p>}
-    {!family.configured && <p className="family-notice">Subscriptions are coming soon. Parent accounts and secure checkout are being connected.</p>}
-    <div className="family-plans">{([
-      { interval: 'month', name: 'Monthly adventure', amount: '£4.99', period: 'per month', detail: 'A little adventure, every month.' },
-      { interval: 'year', name: 'A year of legends', amount: '£49.99', period: 'per year', detail: 'Save £9.89 compared with 12 monthly payments.' },
-    ] as const).map(plan => <section className={`family-plan ${plan.interval === 'year' ? 'family-plan-year' : ''}`} key={plan.interval}>
-      <p className="website-eyebrow">{plan.interval === 'year' ? 'Best value' : 'Start your journey'}</p><h2>{plan.name}</h2><p className="family-price">{plan.amount} <span>{plan.period}</span></p><p>{plan.detail}</p>
-      <ul>{['One child player profile', 'Matharia maths adventures in your browser', 'Saved progress across devices', 'Private parent progress dashboard', 'Sunday and Wednesday progress emails'].map(feature => <li key={feature}><Check size={17} />{feature}</li>)}</ul>
-      {hasMathariaAccess(family.subscriptions, family.complimentary) ? <Link className="website-button website-button-gold" to="/parent">Go to your account <ArrowRight size={17} /></Link>
-        : family.session ? <button className="website-button website-button-gold" disabled={Boolean(busy) || !ready.includes(plan.interval)} onClick={() => void checkout(plan.interval)}>{busy === plan.interval ? 'Opening checkout…' : `Choose ${plan.interval === 'month' ? 'monthly' : 'yearly'}`}<ArrowRight size={17} /></button>
-          : <Link className="website-button website-button-gold" to="/signup?next=/subscriptions">Create parent account <ArrowRight size={17} /></Link>}
-      <p className="family-small">Renews automatically at {plan.amount} {plan.period}. Cancel renewal in your parent account; access continues until the end of your paid period.</p>
-    </section>)}</div>
-    <p className="family-payment-note"><strong>{paypalReady ? 'Card or PayPal. Your choice.' : ready.length ? 'Pay by card at secure checkout.' : 'Card and PayPal checkout is being prepared.'}</strong> {paypalReady ? 'Choose your payment method at secure checkout for either plan.' : 'PayPal will be offered when account activation is complete.'} Payment details are handled by the payment provider and are not stored in the game.</p>
-    <Link className="website-text-link family-parent-link" to="/for-parents">How Matharia supports revision and wellbeing <ArrowRight size={17} /></Link>
-    <section className="family-coming-soon"><BookOpen size={32} /><div><p className="website-eyebrow">The next chapter</p><h2>An English adventure is on its way.</h2><p>In development. These subscriptions cover Matharia only. English access and pricing will be announced when it’s ready.</p></div><span>Coming soon</span></section>
-    <p className="family-small"><Mail size={15} /> Reports arrive on Sundays at 3 pm and Wednesdays at 4 pm, UK time. You can switch them off and view saved progress at any time.</p>
+    {!family.configured && <p className="family-notice">Secure subscriptions are being connected. Plans cannot be purchased yet.</p>}
+    <p className="family-product-intro">Matharia · The maths adventure · one child profile</p>
+    <div className="family-plans">{(['month', 'year'] as const).map(interval => {
+      const amount = prices[interval];
+      const verified = plans.find(plan => plan.product === 'matharia' && plan.interval === interval);
+      const available = verified?.available === true && verified.amount === amount && verified.currency === 'gbp';
+      return <section className={`family-plan ${interval === 'year' ? 'family-plan-year' : ''}`} key={interval}>
+        <p className="website-eyebrow">{interval === 'year' ? 'Annual billing' : 'Monthly billing'}</p>
+        <h2>Matharia {interval === 'year' ? 'yearly' : 'monthly'}</h2>
+        <p className="family-price">{formatPounds(amount)} <span>per {interval}</span></p>
+        <p>{interval === 'year' ? 'Save £9.89 compared with twelve monthly payments.' : 'Pay monthly and cancel renewal any time.'}</p>
+        <ul>{features.map(feature => <li key={feature}><Check size={17} />{feature}</li>)}</ul>
+        {mathariaActive ? <Link className="website-button website-button-gold" to="/parent">Go to your account <ArrowRight size={17} /></Link>
+          : otherPaidPlan ? <button className="website-button website-button-gold" disabled={Boolean(busy)} onClick={() => void manage()}>{busy === 'portal' ? 'Opening billing…' : 'Manage existing plan'}<ArrowRight size={17} /></button>
+            : family.session ? <button className="website-button website-button-gold" disabled={Boolean(busy) || !available} onClick={() => void checkout(interval)}>{busy === interval ? 'Opening checkout…' : available ? 'Choose this plan' : 'Checkout not ready'}<ArrowRight size={17} /></button>
+              : <Link className="website-button website-button-gold" to="/signup?next=/subscriptions">Create parent account <ArrowRight size={17} /></Link>}
+        <p className="family-small">{otherPaidPlan && !mathariaActive ? 'Manage your existing subscription before choosing another plan so you are not billed twice.' : `Renews automatically at ${formatPounds(amount)} per ${interval}. Cancel renewal in your parent account; access continues until the end of the paid period.`}</p>
+      </section>;
+    })}</div>
+    <p className="family-payment-note"><strong>{paypalReady ? 'Card or PayPal at secure checkout.' : 'Secure card checkout.'}</strong> Payment details are handled by the payment provider and are not stored in the game.</p>
+    <p className="family-small"><Mail size={15} /> Progress emails can be switched off in your parent account.</p>
   </main>;
 }

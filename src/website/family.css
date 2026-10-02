@@ -13,6 +13,10 @@
 .family-checkbox { display: flex !important; flex-direction: row !important; align-items: flex-start; gap: 12px; color: #c5beeb; font-size: 13px !important; line-height: 1.5; font-weight: 400 !important; }
 .family-checkbox input { width: 18px !important; height: 18px !important; min-height: 18px !important; padding: 0 !important; box-shadow: none !important; flex: 0 0 18px; margin: 2px 0 0 !important; accent-color: #fde161; }
 .family-plans,.family-dashboard-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; margin-block: 30px; }
+.family-product-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+.family-product-tabs button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 10px 18px; border: 1px solid #b6afe380; border-radius: 12px; color: #f0eef7; background: #241653; cursor: pointer; }
+.family-product-tabs button.is-active { border-color: #fde161; color: #fde161; background: #451ccb; }
+.family-product-intro { margin-top: 16px !important; }
 .family-plan,.family-panel { padding: 32px; border-radius: 20px; border: 1px solid #b6afe350; background: linear-gradient(135deg,#241653ed,#110b34f5); box-shadow: 0 12px 40px #06042060; }
 .family-plan-year { border-color: #fde161b3; box-shadow: 0 0 35px #fde16115,0 12px 40px #06042060; }
 .family-plan > p,.family-panel > p { margin-top: 15px; }
@@ -37,6 +41,11 @@
 .family-passkey-panel > div { min-width: 0; }
 .family-passkey-panel ul { margin: 18px 0; padding-left: 20px; color: #c5beeb; }
 .family-passkey-panel .website-button { margin-top: 20px; }
+.family-account-data { margin-top: 35px; }
+.family-account-data > .website-button { margin-top: 20px; }
+.family-inline-button { padding: 0; border: 0; background: none; color: #fde161; font: inherit; text-decoration: underline; cursor: pointer; }
+.family-deletion-confirm { margin-top: 20px; padding: 18px; border: 1px solid #b6afe380; border-radius: 12px; background: #451ccb30; }
+.family-deletion-confirm .family-actions { margin-top: 16px; }
 .family-actions { display: flex; flex-wrap: wrap; gap: 13px; margin-top: 23px; }
 .family-panel > .website-button { margin-top: 22px; }
 .family-form { margin-top: 20px; display: grid; gap: 14px; }

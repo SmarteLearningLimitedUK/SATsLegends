@@ -16,7 +16,7 @@ export const admin = () => createClient(secret('SUPABASE_URL'), secret('SUPABASE
 export class HttpError extends Error {
   constructor(public status: number, message: string) { super(message); }
 }
-export async function billingBody(request: Request): Promise<{ action: 'checkout'; interval: 'month' | 'year' } | { action: 'portal' }> {
+export async function billingBody(request: Request): Promise<{ action: 'checkout'; interval: 'month' | 'year'; product: 'matharia' | 'english' | 'bundle' } | { action: 'portal' }> {
   if (!request.headers.get('content-type')?.toLowerCase().startsWith('application/json')) throw new HttpError(415, 'Send a JSON request.');
   const reader = request.body?.getReader();
   if (!reader) throw new HttpError(400, 'Missing billing request.');
@@ -39,7 +39,10 @@ export async function billingBody(request: Request): Promise<{ action: 'checkout
   if (!body || Array.isArray(body) || typeof body !== 'object') throw new HttpError(400, 'Invalid billing request.');
   if (body.action === 'portal' && Object.keys(body).length === 1) return { action: 'portal' };
   if (body.action === 'checkout' && (body.interval === 'month' || body.interval === 'year')
-    && Object.keys(body).every(key => key === 'action' || key === 'interval')) return { action: 'checkout', interval: body.interval };
+    && (body.product === 'matharia' || body.product === 'english' || body.product === 'bundle')
+    && Object.keys(body).every(key => key === 'action' || key === 'interval' || key === 'product')) {
+    return { action: 'checkout', interval: body.interval, product: body.product };
+  }
   throw new HttpError(400, 'Choose a valid billing action and monthly or yearly plan.');
 }
 export function json(body: unknown, status = 200, cors = false): Response {

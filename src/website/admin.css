@@ -1,4 +1,13 @@
 .admin-main { max-width: 1140px; }
+.admin-report-health { margin-top: 25px; }
+.admin-report-health-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.admin-report-health-heading h2 { margin: 0; }
+.admin-report-health > p { margin-top: 12px; }
+.admin-report-health .family-error { margin-bottom: 0; }
+.admin-deletion-summary { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-top: 18px; }
+.admin-deletion-summary h2 { margin: 0; }
+.admin-deletion-summary p { margin-top: 8px; }
+.admin-deletion-summary .website-button { flex: 0 0 auto; }
 .admin-search { margin-top: 28px; }
 .admin-search label,.admin-reason { display: grid; gap: 8px; color: #f0eef7; font-size: 14px; }
 .admin-search > div { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 9px; }
@@ -20,4 +29,4 @@
 .admin-actions button { padding: 9px 12px; border: 1px solid #b6afe37a; background: #362278; border-radius: 9px; color: #f0eef7; font-size: 12px; }
 .admin-actions button:hover:not(:disabled) { background: #5437a4; }
 .admin-next { margin: 18px 10px 0 0; }
-@media(max-width:650px) { .admin-account-facts { grid-template-columns: 1fr; }.admin-search > div { display: grid; }.admin-search input { width: 100%; }.admin-actions button { width: 100%; } }
+@media(max-width:650px) { .admin-account-facts { grid-template-columns: 1fr; }.admin-search > div { display: grid; }.admin-search input { width: 100%; }.admin-actions button { width: 100%; }.admin-deletion-summary { align-items: stretch; flex-direction: column; }.admin-deletion-summary .website-button { width: 100%; } }

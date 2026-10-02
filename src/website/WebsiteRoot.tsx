@@ -1,19 +1,21 @@
 import { lazy, Suspense, useLayoutEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, LoaderCircle } from 'lucide-react';
 import { parseRoute } from '../app/routeConfig';
 import Website from './Website';
 import FamilyAccount from './FamilyAccount';
+import { englishReleased } from './englishRelease';
 import './website.css';
 import './website-premium.css';
 import './website-adventure.css';
 import './website-logo-theme.css';
 import './family.css';
+import './english.css';
 import './parents.css';
 
 const Game = lazy(() => import('../App'));
 const GameGate = lazy(() => import('./GameGate'));
-const websiteRoutes = new Set(['/', '/revision', '/videos', '/signup', '/login', '/subscriptions', '/for-parents', '/forgot-password', '/reset-password', '/auth/callback', '/admin']);
+const websiteRoutes = new Set(['/', '/english', '/revision', '/videos', '/signup', '/login', '/subscriptions', '/for-parents', '/forgot-password', '/reset-password', '/auth/callback', '/admin']);
 
 export default function WebsiteRoot() {
   return <FamilyAccount><WebsiteContent /></FamilyAccount>;
@@ -21,7 +23,8 @@ export default function WebsiteRoot() {
 
 function WebsiteContent() {
   const { pathname } = useLocation();
-  const isWebsite = websiteRoutes.has(pathname.replace(/\/+$/, '') || '/') || pathname.startsWith('/parent');
+  const isUnreleasedEnglishRoute = pathname.startsWith('/english/');
+  const isWebsite = websiteRoutes.has(pathname.replace(/\/+$/, '') || '/') || pathname.startsWith('/parent') || isUnreleasedEnglishRoute;
   const gameScreen = parseRoute(pathname).screen;
   const isMinigame = gameScreen === 'gameplay';
   const hasGameDock = !['splash', 'avatar_selection', 'profile_setup'].includes(gameScreen);
@@ -36,6 +39,9 @@ function WebsiteContent() {
     return () => document.body.classList.remove('legends-website-body');
   }, [isWebsite, pathname]);
 
+  if (isUnreleasedEnglishRoute) return englishReleased
+    ? <main id="website-main" className="website-container family-main"><h1>Lexcoria files are not in this deployment.</h1><p>Please contact SATs Legends support.</p><Link to="/english">Back to Lexcoria</Link></main>
+    : <Navigate to="/english" replace />;
   if (isWebsite) return <Website />;
 
   return <>

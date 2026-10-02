@@ -92,7 +92,9 @@ class GameLoadBoundary extends React.Component<GameLoadBoundaryProps, GameLoadBo
   }
 
   handleRetry = () => {
-    this.setState({ error: null });
+    // React.lazy caches a rejected import on the component itself. A fresh page
+    // load creates a new lazy component and retries the chunk request.
+    window.location.reload();
   };
 
   render() {

@@ -883,7 +883,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           bodyClassName="mt-1 text-[clamp(0.82rem,1.65vw,0.98rem)] leading-snug md:text-[clamp(0.9rem,1.7vw,1.04rem)]"
           style={{ position: 'relative', top: '5px', width: '94%', transform: 'none' }}
         >
-          {questionPrompt}
+          <span className="pvp-prompt-full">{questionPrompt}</span>
+          <span className="pvp-prompt-compact">{question.prompt.split('\n').find((line) => line.startsWith('Rebuild ')) || question.prompt}</span>
         </GameQuestionCard>
       </div>
 

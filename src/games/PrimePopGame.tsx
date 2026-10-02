@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import AssetIcon from '../components/AssetIcon';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { AVATARS } from '../constants';
 import primePopBackground from '../assets/maps/premium/prime-pop.webp';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
-import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
+import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
 
 interface PrimePopGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -224,6 +223,8 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
   onBack,
   isPractice,
   practiceBriefing,
+  sessionState,
+  sessionEvents,
 }) => {
   const config = useMemo(() => getConfig(levelId), [levelId]);
   const avatar = AVATARS.find((item) => item.id === avatarId) || AVATARS[0];
@@ -231,10 +232,10 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
   const [usesSharedHud, setUsesSharedHud] = useState(false);
   const onVictoryRef = useRef(onVictory);
   const onGameOverRef = useRef(onGameOver);
+  const sessionEventsRef = useRef(sessionEvents);
+  sessionEventsRef.current = sessionEvents;
 
   const [XP, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(config.roundSeconds);
-  const [lives, setLives] = useState(INITIAL_LIVES);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [bubbles, setBubbles] = useState<Bubble[]>([]);
   const [mistakeBubbleId, setMistakeBubbleId] = useState<number | null>(null);
@@ -256,6 +257,11 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
   const bubblesRef = useRef<Bubble[]>([]);
   const primePopsRef = useRef(0);
   const totalPopsRef = useRef(0);
+  const localTimeRemainingRef = useRef(config.roundSeconds);
+  const pausedRef = useRef(false);
+  pausedRef.current = Boolean(showPracticeIntro || sessionState?.paused);
+  const hasSharedSession = Boolean(sessionState);
+  const useLocalLives = !hasSharedSession || Boolean(isPractice);
 
   const targetScore = config.targetScore;
   const progress = Math.min((XP / Math.max(targetScore, 1)) * 100, 100);
@@ -396,8 +402,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     primePopsRef.current = 0;
     totalPopsRef.current = 0;
     setScore(0);
-    setLives(INITIAL_LIVES);
-    setTimeLeft(config.roundSeconds);
+    localTimeRemainingRef.current = config.roundSeconds;
     setFeedback(null);
     setMistakeBubbleId(null);
     setPressedBubbleId(null);
@@ -411,18 +416,16 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     setBubbles(initial);
     lastFrameRef.current = null;
 
-    timerRef.current = window.setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          finalize(scoreRef.current);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    if (!hasSharedSession) {
+      timerRef.current = window.setInterval(() => {
+        if (pausedRef.current || document.hidden || overRef.current) return;
+        localTimeRemainingRef.current = Math.max(0, localTimeRemainingRef.current - 1);
+        if (localTimeRemainingRef.current === 0) finalize(scoreRef.current);
+      }, 1000);
+    }
 
     spawnRef.current = window.setInterval(() => {
-      if (overRef.current) return;
+      if (overRef.current || pausedRef.current || document.hidden) return;
       if (bubblesRef.current.length >= bubbleRuntime.maxBubbles) return;
       const next = [...bubblesRef.current, makeBubble(bubblesRef.current)];
       bubblesRef.current = next;
@@ -430,10 +433,10 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     }, config.spawnEveryMs);
 
     return () => clearLoops();
-  }, [bubbleRuntime.maxBubbles, bubbleRuntime.minBubbles, clearLoops, config.roundSeconds, config.spawnEveryMs, finalize, makeBubble]);
+  }, [bubbleRuntime.maxBubbles, bubbleRuntime.minBubbles, clearLoops, config.roundSeconds, config.spawnEveryMs, finalize, hasSharedSession, makeBubble]);
 
   const popBubble = useCallback((bubbleId: number) => {
-    if (overRef.current) return;
+    if (overRef.current || pausedRef.current) return;
     const target = bubblesRef.current.find((bubble) => bubble.id === bubbleId);
     if (!target) return;
 
@@ -463,11 +466,19 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
 
       setBubbles(nextBubbles);
       setScore(scoreRef.current);
-      setLives(livesRef.current);
+      emitMiniGameSessionEvent(sessionEventsRef.current, 'correct_answer', {
+        score: scoreRef.current,
+        metadata: { bubbleId, value: target.value },
+      });
       window.setTimeout(() => setFeedback(null), 520);
+      if (scoreRef.current >= targetScore) finalize(scoreRef.current);
     } else {
       comboNext = 0;
-      livesNext -= 1;
+      if (useLocalLives) livesNext -= 1;
+      emitMiniGameSessionEvent(sessionEventsRef.current, 'incorrect_answer', {
+        score: scoreRef.current,
+        metadata: { bubbleId, value: target.value },
+      });
       setMistakeBubbleId(bubbleId);
       setScreenShake(true);
       setFeedback('-1 life');
@@ -482,20 +493,19 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
         setScreenShake(false);
         setBubbles(nextBubbles);
         setScore(scoreRef.current);
-        setLives(livesRef.current);
         window.setTimeout(() => setFeedback(null), 520);
 
-        if (scoreRef.current >= targetScore || livesRef.current <= 0) {
+        if (useLocalLives && livesRef.current <= 0) {
           finalize(scoreRef.current);
         }
       }, 190);
       return;
     }
 
-    if (livesRef.current <= 0) {
+    if (useLocalLives && livesRef.current <= 0) {
       finalize(scoreRef.current);
     }
-  }, [config.comboStep, config.primePoints, finalize, targetScore]);
+  }, [config.comboStep, config.primePoints, finalize, targetScore, useLocalLives]);
 
   const cancelHeldPop = useCallback(() => {
     setPressedBubbleId(null);
@@ -511,6 +521,11 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
 
   const loop = useCallback((ts: number) => {
     if (overRef.current) return;
+    if (pausedRef.current || document.hidden) {
+      lastFrameRef.current = null;
+      rafRef.current = requestAnimationFrame(loop);
+      return;
+    }
     const last = lastFrameRef.current ?? ts;
     const dt = Math.min((ts - last) / 1000, 0.05);
     lastFrameRef.current = ts;
@@ -531,7 +546,8 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     });
     const movedWithoutOverlap = resolveBubbleCollisions(movedBubbles);
 
-    const dangerPrimeHits = movedWithoutOverlap.filter((bubble) => bubble.isPrime && (bubble.y - bubble.radius) <= DANGER_LINE_Y).length;
+    const dangerPrimeBubbles = movedWithoutOverlap.filter((bubble) => bubble.isPrime && (bubble.y - bubble.radius) <= DANGER_LINE_Y);
+    const dangerPrimeHits = dangerPrimeBubbles.length;
     const nextBubbles = movedWithoutOverlap.filter((bubble) => {
       if ((bubble.y - bubble.radius) <= DANGER_LINE_Y && bubble.isPrime) return false;
       return bubble.y >= -(bubble.radius + 3);
@@ -541,10 +557,14 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     let livesNext = livesRef.current;
 
     if (dangerPrimeHits > 0) {
-      livesNext -= dangerPrimeHits;
+      if (useLocalLives) livesNext -= dangerPrimeHits;
       comboNext = 0;
       setFeedback(`-${dangerPrimeHits} life${dangerPrimeHits > 1 ? 's' : ''}`);
       window.setTimeout(() => setFeedback(null), 520);
+      dangerPrimeBubbles.forEach((bubble) => emitMiniGameSessionEvent(sessionEventsRef.current, 'incorrect_answer', {
+        score: scoreRef.current,
+        metadata: { bubbleId: bubble.id, reason: 'escaped' },
+      }));
     }
 
     bubblesRef.current = nextBubbles;
@@ -554,15 +574,14 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
 
     setBubbles(nextBubbles);
     setScore(scoreRef.current);
-    setLives(livesRef.current);
 
-    if (livesRef.current <= 0) {
+    if (useLocalLives && livesRef.current <= 0) {
       finalize(scoreRef.current);
       return;
     }
 
     rafRef.current = requestAnimationFrame(loop);
-  }, [finalize, targetScore]);
+  }, [finalize, useLocalLives]);
 
   useEffect(() => {
     if (overRef.current) return;

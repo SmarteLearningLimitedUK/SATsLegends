@@ -18,10 +18,14 @@ export function useFamily() {
   if (!family) throw new Error('Missing family account provider');
   return family;
 }
-export const hasMathariaAccess = (subscriptions: Subscription[], complimentary: ComplimentaryAccess[] = []) =>
-  subscriptions.some(s => s.product_code === 'matharia'
+export const hasGameAccess = (product: 'matharia' | 'english', subscriptions: Subscription[], complimentary: ComplimentaryAccess[] = []) =>
+  subscriptions.some(s => (s.product_code === product || s.product_code === 'bundle')
     && ['active', 'trialing'].includes(s.status) && new Date(s.current_period_end).getTime() > Date.now())
-  || complimentary.some(grant => grant.product_code === 'matharia' && !grant.revoked_at && new Date(grant.valid_until).getTime() > Date.now());
+  || complimentary.some(grant => (grant.product_code === product || grant.product_code === 'bundle')
+    && !grant.revoked_at && new Date(grant.valid_until).getTime() > Date.now());
+
+export const hasMathariaAccess = (subscriptions: Subscription[], complimentary: ComplimentaryAccess[] = []) =>
+  hasGameAccess('matharia', subscriptions, complimentary);
 
 export default function FamilyAccount({ children: content }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
