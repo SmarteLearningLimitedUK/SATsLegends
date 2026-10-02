@@ -12,6 +12,7 @@ import factorEnemy from '../assets/reskin/factor-sentinel.webp';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import MonsterMindActor from '../components/game-ui/MonsterMindActor';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
+import { triggerHaptic } from '../haptics';
 
 type FactorProblemType = 'missing_factor' | 'all_factors' | 'common_factors' | 'prime_factors';
 
@@ -35,6 +36,7 @@ interface FactorFrenzyGameProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
+  isPractice?: boolean;
   onVictory: (stars: number, XP: number) => void;
   onGameOver: (XP: number) => void;
   onBack: () => void;
@@ -104,6 +106,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   levelId,
   avatarId: _avatarId,
   useSharedTopHud: _useSharedTopHud,
+  isPractice = false,
   onVictory,
   onGameOver: _onGameOver,
   onBack: _onBack,
@@ -271,7 +274,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   useEffect(() => {
     clearTimer();
 
-    if (state.status !== 'playing') return;
+    if (state.status !== 'playing' || isPractice) return;
 
     timerRef.current = window.setInterval(() => {
       setState((previous) => {
@@ -291,10 +294,11 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     }, 1000);
 
     return () => clearTimer();
-  }, [state.status]);
+  }, [state.status, isPractice]);
 
   const toggleOption = (value: number) => {
     if (state.status !== 'playing') return;
+    triggerHaptic('selection');
 
     setSelectedOptions((previous) => (
       previous.includes(value)
@@ -327,6 +331,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
       }));
       setSuccessTone(isPraise ? 'praise' : 'success');
       setSuccessMessage(isPraise ? buildPraiseMessage() : 'Direct hit!');
+      triggerHaptic('success');
 
       setShowHitFx(true);
       confetti({
@@ -343,6 +348,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
       ...previous,
       status: 'incorrect',
     }));
+    triggerHaptic('error');
   };
 
   const nextProblem = () => {
@@ -367,11 +373,12 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
     const delay = state.status === 'correct' ? 620 : 880;
     advanceRef.current = window.setTimeout(() => {
-      nextProblem();
+      if (state.status === 'correct' || state.timeLeft === 0) nextProblem();
+      else setState(previous => ({ ...previous, status: 'playing' }));
     }, delay);
 
     return () => clearAdvanceTimer();
-  }, [state.status]);
+  }, [state.status, state.timeLeft]);
 
   useEffect(() => {
     if (!showHitFx) return;
@@ -391,6 +398,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   return (
     <div
       className="relative h-full w-full overflow-hidden bg-contain bg-center bg-no-repeat text-white"
+      data-factor-game data-factor-problem={state.currentProblem?.id} data-factor-status={state.status} data-factor-health={state.enemyHealth}
       style={{ backgroundImage: `url(${factorFrenzyBackground})` }}
     >
       <div className="pointer-events-none fixed left-0 right-0 top-[max(0.5rem,env(safe-area-inset-top))] z-50 flex justify-center px-3">
@@ -406,7 +414,8 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
         </div>
       </div>
 
-      <div className="relative z-10 flex h-full flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+11rem)] pt-[calc(env(safe-area-inset-top)+7.4rem)] sm:px-4 sm:pb-[calc(env(safe-area-inset-bottom)+11.5rem)] sm:pt-[calc(env(safe-area-inset-top)+7.8rem)] md:px-5 md:pb-[calc(env(safe-area-inset-bottom)+12rem)] md:pt-[calc(env(safe-area-inset-top)+8.1rem)]">
+      <div className="relative z-10 flex h-full flex-col px-3 pb-2 pt-[calc(env(safe-area-inset-top)+7.4rem)] sm:px-4 sm:pt-[calc(env(safe-area-inset-top)+7.8rem)] md:px-5 md:pt-[calc(env(safe-area-inset-top)+8.1rem)]"
+        style={{ height: '75%', flex: '0 0 auto' }}>
         <main className="relative flex min-h-0 flex-1 flex-col">
           <AnimatePresence mode="wait">
             {state.status === 'complete' ? (
@@ -450,10 +459,10 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                   <div className="flex h-full min-h-0 flex-col">
                     <div className="flex items-start justify-between gap-3">
                       <div className="text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/80 sm:text-xs">
-                        Strike every correct factor
+                        {state.currentProblem?.type === 'missing_factor' ? 'Find the missing link' : 'Strike every correct factor'}
                       </div>
                       <div className="rounded-full border border-cyan-100/25 bg-slate-950/50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/90">
-                        {state.timeLeft}s left
+                        {isPractice ? 'Practice · no timer' : `${state.timeLeft}s left`}
                       </div>
                     </div>
 
@@ -480,7 +489,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                             alt="Monster Mind"
                             reaction={state.enemyHealth <= 0 ? 'defeated' : showHitFx ? 'hit' : state.status === 'incorrect' ? 'taunt' : 'idle'}
                             reactionKey={state.currentProblem?.id}
-                            className="relative h-auto w-full object-contain drop-shadow-[0_18px_26px_rgba(2,6,23,0.38)]"
+                            className="pointer-events-none relative h-auto w-full object-contain drop-shadow-[0_18px_26px_rgba(2,6,23,0.38)]"
                           />
                         </div>
                       </div>
@@ -505,7 +514,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                       </AnimatePresence>
                     </div>
 
-                    <div className="mt-auto flex items-center justify-center">
+                    <div className="relative z-30 mt-auto flex items-center justify-center">
                       {state.status === 'playing' ? (
                         <button
                           onClick={checkAnswer}
@@ -516,7 +525,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                         </button>
                       ) : (
                         <div className="inline-flex w-full max-w-sm items-center justify-center rounded-2xl border border-cyan-100/45 bg-[#0d2a5a]/70 px-4 py-3 text-xs font-black uppercase tracking-[0.14em] text-cyan-100/95">
-                          {state.status === 'correct' ? 'Direct hit • loading next challenge' : 'The swarm is still active • loading next challenge'}
+                          {state.status === 'correct' ? 'Direct hit · next challenge incoming' : state.timeLeft === 0 ? 'Time up · next challenge incoming' : 'Not quite · adjust your factor strikes'}
                         </div>
                       )}
                     </div>
@@ -528,7 +537,10 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
         </main>
 
         {state.status !== 'complete' && (
-          <div className="fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+4.5rem)] z-40 px-3">
+          <div className="relative z-40 shrink-0 px-3">
+            <div className="mx-auto mb-2 w-full max-w-[780px] text-center text-xs font-bold text-cyan-50" role="status" data-factor-selected={selectedOptions.length}>
+              {selectedOptions.length} selected · tap a factor again to remove it
+            </div>
             <div className="answer-choice-surface mx-auto grid w-full max-w-[780px] grid-cols-4 gap-2 sm:gap-2.5 md:gap-3">
               {state.currentProblem?.options.map((option, idx) => (
                 <motion.button
@@ -538,6 +550,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{ delay: idx * 0.03 }}
                   onClick={() => toggleOption(option)}
+                  disabled={state.status !== 'playing'} aria-pressed={selectedOptions.includes(option)} data-factor-choice={option}
                   className={`relative flex h-[clamp(50px,7.2vh,68px)] items-center justify-center rounded-2xl border text-[clamp(0.95rem,3vw,1.55rem)] font-black transition ${
                     state.status === 'correct' && selectedOptions.includes(option)
                       ? 'ui-button-success'

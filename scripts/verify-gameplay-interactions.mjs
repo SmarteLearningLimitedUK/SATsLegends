@@ -77,14 +77,14 @@ async function hit(locator, minimumHeight = 44) {
   } catch(error) { error.qaMetrics=result; throw error; }
   return result;
 }
-async function hierarchy(page, boardSelector, answerSelector) {
+async function hierarchy(page, boardSelector, answerSelector, topOverlap = 1) {
   const result=await page.evaluate(({boardSelector,answerSelector})=>{
     const box=(selector)=>{const node=document.querySelector(selector);if(!node)return null;const r=node.getBoundingClientRect();return {x:r.x,y:r.y,right:r.right,bottom:r.bottom,width:r.width,height:r.height};};
     return {top:box('[data-testid="shared-top-hud"]'),mission:box('[data-game-question]'),board:box(boardSelector),answers:box(answerSelector),dock:box('[data-testid="shared-bottom-hud"]')};
   },{boardSelector,answerSelector});
   try {
     for(const name of ['top','mission','board','answers','dock'])expect(result[name],name+' present').toBeTruthy();
-    expect(result.mission.y,'HUD precedes mission').toBeGreaterThanOrEqual(result.top.bottom-1);
+    expect(result.mission.y,'HUD precedes mission').toBeGreaterThanOrEqual(result.top.bottom-topOverlap);
     expect(result.board.y,'Mission precedes playfield').toBeGreaterThanOrEqual(result.mission.bottom-1);
     expect(result.board.bottom,'Playfield precedes answers').toBeLessThanOrEqual(result.answers.y+1);
     expect(result.answers.bottom,'Answers precede dock').toBeLessThanOrEqual(result.dock.y+1);
@@ -186,7 +186,7 @@ async function perimeterFlow(page,profile,motion,levels){
   for(const tier of [1,4,5]){
     const level=levels.find(level=>level.tier===tier);expect(level).toBeTruthy();await open(page,level.route);
     const root=page.locator('[data-perimeter-game]');await expect(root).toHaveAttribute('data-perimeter-tier',String(tier));
-    const layout=await hierarchy(page,'[data-perimeter-playfield]','.perimeter-responses');
+    const layout=await hierarchy(page,'[data-perimeter-playfield]','.perimeter-input-dock',16);
     const edgeControls=page.locator('[data-perimeter-edge]');const count=await edgeControls.count();expect(count).toBe(tier===1?4:8);
     await expect(page.locator('[data-perimeter-edge-hit]')).toHaveCount(count);
     const segment=page.locator('[data-perimeter-edge-hit]').first();
@@ -215,24 +215,28 @@ async function perimeterFlow(page,profile,motion,levels){
     for(const edge of await edgeControls.all())await tap(page,profile,edge);
     expect(await edgeControls.evaluateAll(nodes=>nodes.every(node=>node.getAttribute('aria-pressed')==='false'))).toBe(true);
     const solve=async()=>{
-      const unit=(await page.locator('.perimeter-responses button').first().innerText()).match(/(cm|m)\s*$/)[1];
+      const unit=(await page.locator('.perimeter-input-dock label').innerText()).match(/\((cm|m)\)$/)[1];
       const labels=await edgeControls.evaluateAll(nodes=>nodes.map(node=>node.dataset.edgeValue));
       const sum=labels.reduce((total,label,index)=>{
         if(label==='?')label=labels[(index+2)%4];const match=label.match(/^([\d.]+) (m|cm)$/);expect(match).toBeTruthy();return total+Number(match[1])*(unit==='cm'&&match[2]==='m'?100:1);
       },0);
-      return {sum,button:await answerByQuantity(page,'.perimeter-responses button',sum)};
+      return Math.round(sum);
     };
-    for(const button of await page.locator('.perimeter-responses button').all())await hit(button);
     const before=await telemetry(page);let question=await root.getAttribute('data-perimeter-question');
-    const untraced=await solve();await expect(untraced.button).toBeEnabled();await tap(page,profile,untraced.button);
+    const untraced=await solve();await expect(page.locator('[data-perimeter-answer]')).toBeDisabled();await expect(page.locator('[data-perimeter-submit]')).toBeDisabled();
+    for(const edge of await edgeControls.all())await tap(page,profile,edge);
+    await expect(page.locator('[data-perimeter-answer]')).toBeEnabled();await page.locator('[data-perimeter-answer]').fill(String(untraced+1));await tap(page,profile,page.locator('[data-perimeter-submit]'));
+    await expect(root).toHaveAttribute('data-perimeter-question',question);await expect(page.locator('[data-perimeter-answer]')).toBeEnabled();
+    await page.locator('[data-perimeter-answer]').fill(String(untraced));await tap(page,profile,page.locator('[data-perimeter-submit]'));
     await expect(root).not.toHaveAttribute('data-perimeter-question',question);expect(await edgeControls.evaluateAll(nodes=>nodes.every(node=>node.getAttribute('aria-pressed')==='false'))).toBe(true);
-    await tap(page,profile,edgeControls.first());await tap(page,profile,edgeControls.nth(1));question=await root.getAttribute('data-perimeter-question');
-    const traced=await solve();await tap(page,profile,traced.button);await expect(root).not.toHaveAttribute('data-perimeter-question',question);
+    question=await root.getAttribute('data-perimeter-question');const traced=await solve();
+    for(const edge of await edgeControls.all())await tap(page,profile,edge);
+    await page.locator('[data-perimeter-answer]').fill(String(traced));await tap(page,profile,page.locator('[data-perimeter-submit]'));await expect(root).not.toHaveAttribute('data-perimeter-question',question);
     expect(await edgeControls.evaluateAll(nodes=>nodes.every(node=>node.getAttribute('aria-pressed')==='false'))).toBe(true);
     await expect.poll(async()=>Number((await telemetry(page)).correctAnswers||0)).toBe(Number(before.correctAnswers||0)+2);
     if(motion==='reduced')await expect(page.locator('canvas')).toHaveCount(0);
     await page.screenshot({path:path.join(output,`${profile.name}-${motion}-perimeter-tier${tier}.png`)});
-    cases.push({tier,route:level.route,layout,edgeCount:count,bounds,nativeSelect:true,literalSegmentTap:{point:segmentPoint,sameCheckedAndColourState:true},keyboardEnterSpace:true,answersAcceptedUntraced:true,persistentStateResetNextQuestion:true,independentPerimeters:[untraced.sum,traced.sum]});
+    cases.push({tier,route:level.route,layout,edgeCount:count,bounds,nativeSelect:true,literalSegmentTap:{point:segmentPoint,sameCheckedAndColourState:true},keyboardEnterSpace:true,answersRequireFullTrace:true,wrongAnswerKeepsQuestion:true,persistentStateResetNextQuestion:true,independentPerimeters:[untraced,traced]});
   }
   return {cases};
 }

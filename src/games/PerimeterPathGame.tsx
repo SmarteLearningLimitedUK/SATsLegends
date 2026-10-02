@@ -329,7 +329,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({ levelId, avatarId
   presentRef.current = isPresent;
   const [XP, setScore] = useState(0);
   const [question, setQuestion] = useState<PerimeterQuestion>(() => generateQuestion(tier));
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [answerDraft, setAnswerDraft] = useState('');
   const [combo, setStreak] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [feedback, setFeedback] = useState<FeedbackState | null>(null);
@@ -351,24 +351,25 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({ levelId, avatarId
     clearTimers();
     endedRef.current = false;
     answerLockRef.current = false;
-    setScore(0); setQuestion(generateQuestion(tier)); setSelectedOption(null);
+    setScore(0); setQuestion(generateQuestion(tier)); setAnswerDraft('');
     setStreak(0); setCorrectCount(0); setFeedback(null); setSelectedEdgeIds([]); setLocked(false);
   }, [tier]);
 
   const nextQuestion = () => {
     if (endedRef.current || !presentRef.current) return;
-    setQuestion(generateQuestion(tier)); setSelectedOption(null); setFeedback(null);
+    setQuestion(generateQuestion(tier)); setAnswerDraft(''); setFeedback(null);
     setSelectedEdgeIds([]); setLocked(false); answerLockRef.current = false;
   };
-  const handleAnswer = (option: number) => {
-    if (answerLockRef.current || endedRef.current || !presentRef.current || sessionState?.paused) return;
-    answerLockRef.current = true; setLocked(true); setSelectedOption(option);
+  const handleAnswer = () => {
+    if (answerLockRef.current || endedRef.current || !presentRef.current || sessionState?.paused || selectedEdgeIds.length !== question.shape.edges.length || !/^\d+$/.test(answerDraft)) return;
+    const option = Number(answerDraft);
+    answerLockRef.current = true; setLocked(true);
     const correct = option === question.correctPerimeter;
     const nextScore = correct ? XP + 220 + tier * 14 + combo * 26 : Math.max(0, XP - 40);
     const nextCorrect = correctCount + (correct ? 1 : 0);
     setScore(nextScore); setStreak(correct ? combo + 1 : 0); setCorrectCount(nextCorrect);
     setFeedback(correct ? { type: 'correct', message: 'Boundary secured. Slime stays outside!' }
-      : { type: 'incorrect', message: `Check every outside edge: ${question.correctPerimeter} ${question.answerUnit}.` });
+      : { type: 'incorrect', message: question.hint });
     if (correct) {
       sessionEvents?.onCorrectAnswer?.({ score: nextScore, metadata: { questionId: question.id } });
       sessionEvents?.onPuzzleComplete?.({ score: nextScore, metadata: { completed: nextCorrect, total: TARGET_CORRECT } });
@@ -381,7 +382,8 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({ levelId, avatarId
         const stars = scoreToStars(nextScore);
         sessionEvents?.onGameComplete?.({ score: nextScore, stars });
         victoryRef.current(stars, nextScore);
-      } else nextQuestion();
+      } else if (correct) nextQuestion();
+      else { setLocked(false); setAnswerDraft(''); answerLockRef.current = false; setFeedback(null); }
     }, correct ? 520 : 900));
   };
   const toggleEdge = (id: string) => {
@@ -400,15 +402,18 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({ levelId, avatarId
           animate={!reducedMotion && feedback?.type === 'incorrect' ? { x: [0, -5, 5, -3, 0] } : { x: 0 }} transition={{ duration: .3 }}>
           <PerimeterShapeRenderer shape={question.shape} selectedEdgeIds={selectedEdgeIds} disabled={locked || Boolean(sessionState?.paused)} onSelectEdge={toggleEdge} />
         </motion.div>
-        <div className="answer-choice-surface perimeter-responses">
-          {question.options.map((option) => <motion.button key={`${question.id}-${option}`} type="button"
-            whileTap={reducedMotion ? undefined : { scale: .98 }} onClick={() => handleAnswer(option)} disabled={locked || Boolean(sessionState?.paused)}
-            className={selectedOption === option ? feedback?.type === 'correct' ? 'ui-button-success' : 'ui-button-primary' : 'ui-button-secondary'}>
-            {option} {question.answerUnit}
-          </motion.button>)}
-        </div>
+        <form className="perimeter-input-dock" onSubmit={event => { event.preventDefault(); handleAnswer(); }}>
+          <label htmlFor="perimeter-answer">Total boundary ({question.answerUnit})</label>
+          <div><input id="perimeter-answer" data-perimeter-answer type="text" inputMode="numeric" pattern="[0-9]*" maxLength={6}
+            value={answerDraft} onChange={event => setAnswerDraft(event.target.value.replace(/\D/g, ''))}
+            disabled={locked || Boolean(sessionState?.paused) || selectedEdgeIds.length !== question.shape.edges.length}
+            placeholder={selectedEdgeIds.length === question.shape.edges.length ? 'Enter total' : 'Trace every edge first'} />
+            <motion.button type="submit" data-perimeter-submit className="ui-button-primary"
+              whileTap={reducedMotion ? undefined : { scale: .97 }}
+              disabled={locked || Boolean(sessionState?.paused) || selectedEdgeIds.length !== question.shape.edges.length || !answerDraft}>Secure path</motion.button></div>
+        </form>
         <div className="refinement-feedback" role="status" aria-live="polite">
-          {feedback?.message || `Check edges as you count (${selectedEdgeIds.length}/${question.shape.edges.length}). You can answer any time.`}
+          {feedback?.message || `Trace each outside edge (${selectedEdgeIds.length}/${question.shape.edges.length}), then enter the total.`}
         </div>
       </main>
     </div>
