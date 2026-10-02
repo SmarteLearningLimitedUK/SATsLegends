@@ -31,8 +31,11 @@ try {
   await server();
   await db.exec(`insert into public.complimentary_access(parent_id,product_code,valid_until,reason,granted_by)
     values('${parent}','matharia',now()+interval '1 year','owner test','${owner}')`);
+  await db.exec(`insert into public.complimentary_access(parent_id,product_code,valid_until,reason,granted_by)
+    values('${parent}','english',now()+interval '1 year','English playtest','${owner}')`);
   await as(parent);
   assert.equal((await db.query("select public.has_game_access('matharia') as allowed")).rows[0].allowed, true);
+  assert.equal((await db.query("select public.has_game_access('english') as allowed")).rows[0].allowed, true);
   const child = (await db.query("select * from public.create_child_profile('TestLegend')")).rows[0];
   await db.query("select public.save_child_progress($1,'matharia',0,$2,'{}','{}')", [child.id, '20000000-0000-4000-8000-000000000001']);
   await as(owner);
@@ -45,14 +48,21 @@ try {
     values('${parent}','Support test','${owner}')`);
   await as(parent);
   assert.equal((await db.query("select public.has_game_access('matharia') as allowed")).rows[0].allowed, false);
+  assert.equal((await db.query("select public.has_game_access('english') as allowed")).rows[0].allowed, false);
   assert.equal((await db.query('select * from public.child_progress')).rows.length, 0);
   await denied("select public.save_child_progress($1,'matharia',1,$2,'{}','{}')".replace('$1', `'${child.id}'`).replace('$2', "'20000000-0000-4000-8000-000000000002'"), /Active Matharia/);
   console.log('PASS database blocks an already signed-in suspended parent');
 
   await server();
   await db.exec(`update public.account_suspensions set cleared_at=now() where parent_id='${parent}';
-    update public.complimentary_access set revoked_at=now() where parent_id='${parent}'`);
+    update public.complimentary_access set revoked_at=now() where parent_id='${parent}' and product_code='english'`);
+  await as(parent);
+  assert.equal((await db.query("select public.has_game_access('matharia') as allowed")).rows[0].allowed, true);
+  assert.equal((await db.query("select public.has_game_access('english') as allowed")).rows[0].allowed, false);
+  await server();
+  await db.exec(`update public.complimentary_access set revoked_at=now() where parent_id='${parent}' and product_code='matharia'`);
   await as(parent);
   assert.equal((await db.query("select public.has_game_access('matharia') as allowed")).rows[0].allowed, false);
-  console.log('PASS revoking complimentary access removes game entitlement');
+  assert.equal((await db.query("select public.has_game_access('english') as allowed")).rows[0].allowed, false);
+  console.log('PASS revoking English and Matharia complimentary access is independent');
 } finally { await db.close(); }

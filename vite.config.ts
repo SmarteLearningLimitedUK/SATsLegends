@@ -6,7 +6,6 @@ import { defineConfig, loadEnv } from 'vite';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', 'VITE_');
   const isVercel = process.env.VERCEL === '1';
-  const buildId = env.VITE_BUILD_ID ?? process.env.VITE_BUILD_ID ?? new Date().toISOString();
 
   return {
     plugins: [react(), tailwindcss()],
@@ -14,9 +13,6 @@ export default defineConfig(({ mode }) => {
     // Use absolute paths on Vercel to avoid asset resolution issues on rewritten routes.
     // Keep relative paths for non-Vercel static uploads.
     base: env.VITE_ASSET_BASE || (isVercel ? '/' : './'),
-    define: {
-      'import.meta.env.VITE_BUILD_ID': JSON.stringify(buildId),
-    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),

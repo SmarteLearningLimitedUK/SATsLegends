@@ -1,9 +1,9 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowRight, Eye, EyeOff, Gem } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, Gem, X } from 'lucide-react';
 import barratt from '../assets/characters/mobile/Barratt/barratt_happy.png';
 import { useFamily } from './FamilyAccount';
-import { safeReturnPath, supabase } from './services/supabase';
+import { appleAuthEnabled, googleAuthEnabled, passkeyAuthEnabled, safeReturnPath, supabase } from './services/supabase';
 
 export default function ParentAccount({ mode }: { mode: 'signup' | 'login' | 'forgot' | 'reset' }) {
   const family = useFamily();
@@ -14,8 +14,25 @@ export default function ParentAccount({ mode }: { mode: 'signup' | 'login' | 'fo
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [socialConsent, setSocialConsent] = useState(false);
+  const messageRef = useRef<HTMLParagraphElement>(null);
   const signup = mode === 'signup';
-  useEffect(() => { setMessage(''); setError(''); setShowPassword(false); }, [mode]);
+  useEffect(() => { setMessage(''); setError(''); setShowPassword(false); setSocialConsent(false); }, [mode]);
+  useEffect(() => {
+    if (mode !== 'forgot' || !message) return;
+    const dismissOutside = (event: PointerEvent) => {
+      if (event.target instanceof Node && !messageRef.current?.contains(event.target)) setMessage('');
+    };
+    const dismissOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMessage('');
+    };
+    document.addEventListener('pointerdown', dismissOutside);
+    document.addEventListener('keydown', dismissOnEscape);
+    return () => {
+      document.removeEventListener('pointerdown', dismissOutside);
+      document.removeEventListener('keydown', dismissOnEscape);
+    };
+  }, [message, mode]);
   if (family.session && (mode === 'signup' || mode === 'login') && !family.recovery) return <Navigate to={next} replace />;
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -38,7 +55,9 @@ export default function ParentAccount({ mode }: { mode: 'signup' | 'login' | 'fo
       } else if (mode === 'forgot') {
         const result = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/reset-password` });
         if (result.error) throw result.error;
-        form.reset(); setMessage('If an account exists for this email, a password reset link is on its way.');
+        form.reset();
+        form.querySelector<HTMLInputElement>('input[name="email"]')?.blur();
+        setMessage('If an account exists for this email, a password reset link is on its way.');
       } else if (mode === 'reset') {
         if (!family.session || !family.recovery) throw new Error('Open the password reset link in your email first.');
         const result = await supabase.auth.updateUser({ password });
@@ -52,13 +71,35 @@ export default function ParentAccount({ mode }: { mode: 'signup' | 'login' | 'fo
     } catch (caught) { setError(caught instanceof Error ? caught.message : 'Please try again.'); }
     finally { setBusy(false); }
   }
+  async function handleSocial(provider: 'google' | 'apple') {
+    if (!supabase || busy || !socialConsent) return;
+    setBusy(true); setError(''); setMessage('');
+    try {
+      const { error: authError } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: { redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}` },
+      });
+      if (authError) throw authError;
+    } catch (caught) { setError(caught instanceof Error ? caught.message : 'Unable to start sign in. Please try again.'); }
+    finally { setBusy(false); }
+  }
+  async function handlePasskey() {
+    if (!supabase || busy) return;
+    setBusy(true); setError(''); setMessage('');
+    try {
+      const { error: authError } = await supabase.auth.signInWithPasskey();
+      if (authError) throw authError;
+      navigate(next, { replace: true });
+    } catch (caught) { setError(caught instanceof Error ? caught.message : 'Unable to use this passkey. Please try again.'); }
+    finally { setBusy(false); }
+  }
   const title = signup ? 'Your family’s adventure starts here.' : mode === 'forgot' ? 'Reset your password.' : mode === 'reset' ? 'Choose a new password.' : 'Welcome back.';
   return <main className="website-account-main website-container" id="website-main">
     <section className="website-account-world"><p className="website-eyebrow"><Gem size={17} /> SATs Legends Matharia</p><h1>Big adventures.<br /><span>Little legends.</span></h1><p>One child. A world of maths adventures.<br /> Progress you can follow, every step of the way.</p><img src={barratt} alt="Barratt is ready for an adventure" /><span className="website-account-caption">A brighter next chapter.</span></section>
     <section className="website-account-form-wrap">
       <p className="website-eyebrow">Parent & guardian accounts</p><h2>{title}</h2><p>{signup ? 'Create your parent account, add your child’s nickname, then choose monthly or yearly access.' : 'Your child’s adventures and progress, in one place.'}</p>
       {!family.configured && <p className="family-notice" role="status">Parent accounts and purchases are not available yet. Please check back soon.</p>}
-      {message && <p className="family-notice" role="status">{message}</p>}
+      {message && <p ref={messageRef} className={`family-notice${mode === 'forgot' ? ' family-notice-dismissible' : ''}`} role="status">{message}{mode === 'forgot' && <button className="family-notice-dismiss" type="button" aria-label="Dismiss password reset message" onClick={() => setMessage('')}><X size={18} /></button>}</p>}
       {query.get('reset') === 'success' && <p className="family-notice" role="status">Your password has been updated. Please log in.</p>}
       {error && <p className="family-error" role="alert">{error}</p>}
       <form onSubmit={handleSubmit}>
@@ -67,6 +108,18 @@ export default function ParentAccount({ mode }: { mode: 'signup' | 'login' | 'fo
         {signup && <><label className="family-checkbox"><input type="checkbox" required disabled={!family.configured || busy} />I’m the child’s parent or guardian and I’m creating my own account.</label><label className="family-checkbox"><input type="checkbox" name="reports" defaultChecked disabled={!family.configured || busy} />Email me my child’s progress on Sundays at 3 pm and Wednesdays at 4 pm, UK time. I can turn these emails off in my account.</label></>}
         <button className="website-button website-button-gold" type="submit" disabled={!family.configured || busy}>{busy ? 'Please wait…' : signup ? 'Create parent account' : mode === 'forgot' ? 'Send reset link' : mode === 'reset' ? 'Save new password' : 'Log in'}<ArrowRight size={19} /></button>
       </form>
+      {(mode === 'signup' || mode === 'login') && (googleAuthEnabled || appleAuthEnabled || passkeyAuthEnabled) && <div className="website-alternative-auth">
+        <p className="website-auth-divider"><span>Or continue securely</span></p>
+        {(googleAuthEnabled || appleAuthEnabled) && <>
+          <label className="family-checkbox website-social-consent"><input type="checkbox" checked={socialConsent} onChange={event => setSocialConsent(event.target.checked)} disabled={busy} />I’m the parent or guardian creating or accessing this family account.</label>
+          <div className="website-social-options">
+            {googleAuthEnabled && <button type="button" className="website-social-button" onClick={() => void handleSocial('google')} disabled={busy || !socialConsent}>Continue with Google</button>}
+            {appleAuthEnabled && <button type="button" className="website-social-button" onClick={() => void handleSocial('apple')} disabled={busy || !socialConsent}>Continue with Apple</button>}
+          </div>
+          {signup && <p className="website-auth-help">Progress emails start off for social sign-ups. Turn them on in your parent account whenever you like.</p>}
+        </>}
+        {mode === 'login' && passkeyAuthEnabled && <button type="button" className="website-social-button website-passkey-button" onClick={() => void handlePasskey()} disabled={busy || typeof window === 'undefined' || !window.PublicKeyCredential || !window.isSecureContext}>Log in with a passkey</button>}
+      </div>}
       {mode === 'login' && <Link className="website-text-link" to="/forgot-password">Forgot password?</Link>}
       <p className="website-account-switch">{signup ? 'Already have an account?' : 'New to SATs Legends?'} <Link to={`${signup ? '/login' : '/signup'}?next=${encodeURIComponent(next)}`}>{signup ? 'Log in' : 'Sign up'}</Link></p>
       <Link to="/subscriptions" className="website-account-guest">See Matharia subscriptions <ArrowRight size={16} /></Link>

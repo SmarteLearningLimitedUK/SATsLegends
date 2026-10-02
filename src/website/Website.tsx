@@ -17,6 +17,7 @@ import valley from '../assets/website/adventure-valley-v1.webp';
 import SplashLogo from './SplashLogo';
 import GameplayGallery from './GameplayGallery';
 import EnglishLanding from './EnglishLanding';
+import { englishReleased, englishTesting } from './englishRelease';
 
 const ParentArea = lazy(() => import('./ParentArea'));
 const ForParents = lazy(() => import('./ForParents'));
@@ -62,9 +63,9 @@ function Home() {
 
     <section className="website-english-teaser website-container" aria-labelledby="website-english-title">
       <div>
-        <p className="website-eyebrow"><BookOpen size={16} /> Coming soon · English adventure</p>
-        <h2 id="website-english-title">Lexcoria is taking shape.</h2>
-        <p>Reading, grammar, punctuation and spelling will become a new SATs Legends adventure.</p>
+        <p className="website-eyebrow"><BookOpen size={16} /> {englishReleased ? 'English adventure' : englishTesting ? 'Playtest · English adventure' : 'Coming soon · English adventure'}</p>
+        <h2 id="website-english-title">{englishReleased ? 'Enter Lexcoria.' : englishTesting ? 'Lexcoria is ready to test.' : 'Lexcoria is taking shape.'}</h2>
+        <p>{englishReleased ? 'Reading, grammar, punctuation and spelling challenges now sit alongside Matharia.' : englishTesting ? 'Our English revision sister game is open for a gated playtest.' : 'Reading, grammar, punctuation and spelling will become a new SATs Legends adventure.'}</p>
       </div>
       <Link className="website-button website-button-outline" to="/english">Discover Lexcoria <ArrowRight size={18} /></Link>
     </section>
@@ -90,7 +91,6 @@ function Home() {
     </section>
 
     <GameplayGallery />
-
     <motion.section {...reveal} className="website-parent-intro website-container">
       <div><p className="website-eyebrow">For parents & carers</p><h2>Support every step of their adventure.</h2><p>Explore maths revision, progress reports and moments of calm inside Matharia.</p></div>
       <Link className="website-text-link" to="/for-parents">Meet the parent guide <ArrowRight size={18} /></Link>
@@ -111,7 +111,7 @@ export default function Website() {
   const { pathname } = useLocation();
   useEffect(() => { setMenuOpen(false); }, [pathname]);
   useEffect(() => {
-    const page = pathname.startsWith('/parent/progress') ? 'Child progress' : pathname.startsWith('/parent') ? 'Parent account' : pathname === '/admin' ? 'Admin' : pathname === '/for-parents' ? 'For parents' : pathname === '/english' ? 'Lexcoria' : pathname === '/subscriptions' ? 'Matharia subscriptions' : pathname === '/revision' ? 'Revision Guide' : pathname === '/videos' ? 'Videos' : pathname === '/signup' ? 'Sign up' : pathname === '/login' ? 'Log in' : pathname.includes('password') ? 'Reset password' : 'Play. Learn. Level up.';
+    const page = pathname.startsWith('/parent/progress') ? 'Child progress' : pathname.startsWith('/parent') ? 'Parent account' : pathname === '/admin' ? 'Admin' : pathname === '/for-parents' ? 'For parents' : pathname === '/english' ? 'Lexcoria' : pathname === '/subscriptions' ? 'Subscriptions' : pathname === '/revision' ? 'Revision Guide' : pathname === '/videos' ? 'Videos' : pathname === '/signup' ? 'Sign up' : pathname === '/login' ? 'Log in' : pathname.includes('password') ? 'Reset password' : 'Play. Learn. Level up.';
     document.title = `SATs Legends · ${page}`;
   }, [pathname]);
 

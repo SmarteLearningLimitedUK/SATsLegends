@@ -3,8 +3,9 @@ import type { User } from 'npm:@supabase/supabase-js@2.117.2';
 
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 type Action = 'grant' | 'revoke' | 'reset' | 'suspend' | 'reactivate';
+type GrantProduct = 'matharia' | 'english';
 
-async function bodyFor(request: Request): Promise<{ action: Action; targetId: string; reason: string }> {
+async function bodyFor(request: Request): Promise<{ action: Action; targetId: string; reason: string; product: GrantProduct }> {
   if (!request.headers.get('content-type')?.toLowerCase().startsWith('application/json')) throw new HttpError(415, 'Send a JSON request.');
   const reader = request.body?.getReader();
   if (!reader) throw new HttpError(400, 'Missing request.');
@@ -26,15 +27,19 @@ async function bodyFor(request: Request): Promise<{ action: Action; targetId: st
     for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.length; }
     body = JSON.parse(new TextDecoder().decode(bytes));
   } catch { throw new HttpError(400, 'Invalid request.'); }
-  if (!body || Array.isArray(body) || typeof body !== 'object' || Object.keys(body).some(key => !['action', 'targetId', 'reason'].includes(key))) {
+  if (!body || Array.isArray(body) || typeof body !== 'object' || Object.keys(body).some(key => !['action', 'targetId', 'reason', 'product'].includes(key))) {
     throw new HttpError(400, 'Invalid request.');
   }
+  const accessAction = body.action === 'grant' || body.action === 'revoke';
   if (!['grant', 'revoke', 'reset', 'suspend', 'reactivate'].includes(String(body.action))
     || typeof body.targetId !== 'string' || !uuid.test(body.targetId)
-    || typeof body.reason !== 'string' || body.reason.trim().length < 5 || body.reason.length > 300) {
+    || typeof body.reason !== 'string' || body.reason.trim().length < 5 || body.reason.length > 300
+    || (body.product !== undefined && (!accessAction || (body.product !== 'matharia' && body.product !== 'english')))) {
     throw new HttpError(400, 'Choose an account and enter a short reason.');
   }
-  return { action: body.action as Action, targetId: body.targetId, reason: body.reason.trim() };
+  // Older Matharia clients omit product during a staged website/function rollout.
+  return { action: body.action as Action, targetId: body.targetId, reason: body.reason.trim(),
+    product: body.product === 'english' ? 'english' : 'matharia' };
 }
 
 Deno.serve(async request => {
@@ -53,13 +58,25 @@ Deno.serve(async request => {
       const url = new URL(request.url);
       const q = (url.searchParams.get('q') || '').trim().toLowerCase();
       if (q.length > 100) throw new HttpError(400, 'Search is too long.');
+      const pendingDeletion = url.searchParams.get('pendingDeletion') === 'true';
+      if (pendingDeletion && q) throw new HttpError(400, 'Clear search to view deletion requests.');
       const page = Number(url.searchParams.get('page') || '1');
       if (!Number.isInteger(page) || page < 1 || page > 10000) throw new HttpError(400, 'Invalid page.');
       const perPage = 50;
       let users: User[] = [];
       let total = 0;
       let truncated = false;
-      if (!q) {
+      if (pendingDeletion) {
+        const requests = await db.from('account_deletion_requests').select('parent_id', { count: 'exact' })
+          .order('requested_at', { ascending: false }).range((page - 1) * perPage, page * perPage - 1);
+        if (requests.error) throw requests.error;
+        total = requests.count ?? 0;
+        const results = await Promise.all((requests.data ?? []).map(row => db.auth.admin.getUserById(row.parent_id)));
+        for (const result of results) {
+          if (result.error) throw result.error;
+          if (result.data.user) users.push(result.data.user);
+        }
+      } else if (!q) {
         const result = await db.auth.admin.listUsers({ page, perPage });
         if (result.error) throw result.error;
         users = result.data.users;
@@ -75,30 +92,51 @@ Deno.serve(async request => {
         }
         users = users.slice(0, 50);
       }
+      const [latestRun, failedDeliveries, overdueDeliveries, pendingDeletionRequests] = await Promise.all([
+        db.from('report_job_status').select('started_at,finished_at,claimed,sent,failed,error')
+          .eq('id', true).maybeSingle(),
+        db.from('report_deliveries').select('id', { count: 'exact', head: true })
+          .in('status', ['pending', 'sending']).not('last_error', 'is', null),
+        db.from('report_deliveries').select('id', { count: 'exact', head: true })
+          .in('status', ['pending', 'sending']).lt('due_at', new Date(Date.now() - 3600000).toISOString()),
+        db.from('account_deletion_requests').select('parent_id', { count: 'exact', head: true }),
+      ]);
+      for (const result of [latestRun, failedDeliveries, overdueDeliveries, pendingDeletionRequests]) if (result.error) throw result.error;
+      const reportHealth = {
+        latestRun: latestRun.data, failedDeliveries: failedDeliveries.count ?? 0,
+        overdueDeliveries: overdueDeliveries.count ?? 0,
+        schedulerStale: !latestRun.data || Date.now() - new Date(latestRun.data.started_at).getTime() > 10 * 60000,
+      };
       const ids = users.map(user => user.id);
-      if (!ids.length) return json({ accounts: [], total, truncated, page }, 200, true);
-      const [children, subscriptions, grants, reports, progress, suspensions] = await Promise.all([
+      if (!ids.length) return json({ accounts: [], total, truncated, page, reportHealth,
+        pendingDeletionRequests: pendingDeletionRequests.count ?? 0 }, 200, true);
+      const [children, subscriptions, grants, reports, progress, suspensions, deletionRequests] = await Promise.all([
         db.from('child_profiles').select('parent_id,nickname').in('parent_id', ids),
-        db.from('subscriptions').select('parent_id,status,interval,current_period_end,product_code').in('parent_id', ids),
+        db.from('subscriptions').select('parent_id,status,interval,current_period_end,cancel_at_period_end,product_code').in('parent_id', ids),
         db.from('complimentary_access').select('parent_id,product_code,valid_until,revoked_at').in('parent_id', ids),
         db.from('parent_settings').select('parent_id,report_emails,next_report_at').in('parent_id', ids),
         db.from('child_progress').select('parent_id,updated_at').in('parent_id', ids),
         db.from('account_suspensions').select('parent_id,reason,suspended_at,cleared_at').in('parent_id', ids),
+        db.from('account_deletion_requests').select('parent_id,requested_at').in('parent_id', ids),
       ]);
-      for (const result of [children, subscriptions, grants, reports, progress, suspensions]) if (result.error) throw result.error;
+      for (const result of [children, subscriptions, grants, reports, progress, suspensions, deletionRequests]) if (result.error) throw result.error;
       const accounts = users.map(user => ({
         id: user.id, email: user.email, createdAt: user.created_at, confirmed: Boolean(user.email_confirmed_at),
         nickname: children.data?.find(row => row.parent_id === user.id)?.nickname || null,
+        subscriptions: subscriptions.data?.filter(row => row.parent_id === user.id) || [],
+        complimentaryAccess: grants.data?.filter(row => row.parent_id === user.id) || [],
         subscription: subscriptions.data?.find(row => row.parent_id === user.id && row.product_code === 'matharia') || null,
         complimentary: grants.data?.find(row => row.parent_id === user.id && row.product_code === 'matharia') || null,
         reports: reports.data?.find(row => row.parent_id === user.id) || null,
-        lastSaved: progress.data?.find(row => row.parent_id === user.id)?.updated_at || null,
+        lastSaved: progress.data?.filter(row => row.parent_id === user.id).sort((a, b) => b.updated_at.localeCompare(a.updated_at))[0]?.updated_at || null,
         suspension: suspensions.data?.find(row => row.parent_id === user.id && !row.cleared_at) || null,
+        deletionRequestedAt: deletionRequests.data?.find(row => row.parent_id === user.id)?.requested_at || null,
       }));
-      return json({ accounts, total, truncated, page }, 200, true);
+      return json({ accounts, total, truncated, page, reportHealth,
+        pendingDeletionRequests: pendingDeletionRequests.count ?? 0 }, 200, true);
     }
 
-    const { action, targetId, reason } = await bodyFor(request);
+    const { action, targetId, reason, product } = await bodyFor(request);
     const targetResult = await db.auth.admin.getUserById(targetId);
     if (targetResult.error || !targetResult.data.user) throw new HttpError(404, 'Account not found.');
     if (targetId === actor.id && (action === 'suspend' || action === 'reactivate')) throw new HttpError(400, 'You cannot change your own suspension.');
@@ -111,17 +149,18 @@ Deno.serve(async request => {
         .eq('outcome', 'succeeded').gte('created_at', new Date(Date.now() - 10 * 60000).toISOString()).limit(1));
       if (recent?.length) throw new HttpError(429, 'A reset email was sent recently. Try again later.');
     }
+    const auditAction = product === 'english' && (action === 'grant' || action === 'revoke') ? `${action}:english` : action;
     const audit = checked(await db.from('admin_actions').insert({ actor_id: actor.id, target_id: targetId,
-      action, reason, outcome: 'started' }).select('id').single());
+      action: auditAction, reason, outcome: 'started' }).select('id').single());
     if (!audit) throw new Error('Unable to record admin action');
     auditId = audit.id;
     if (action === 'grant') {
-      checked(await db.from('complimentary_access').upsert({ parent_id: targetId, product_code: 'matharia',
+      checked(await db.from('complimentary_access').upsert({ parent_id: targetId, product_code: product,
         valid_until: new Date(Date.now() + 365 * 86400000).toISOString(), reason, granted_by: actor.id,
         granted_at: new Date().toISOString(), revoked_at: null }));
     } else if (action === 'revoke') {
       checked(await db.from('complimentary_access').update({ revoked_at: new Date().toISOString() })
-        .eq('parent_id', targetId).eq('product_code', 'matharia'));
+        .eq('parent_id', targetId).eq('product_code', product));
     } else if (action === 'reset') {
       if (!targetResult.data.user.email) throw new HttpError(400, 'This account has no email address.');
       const result = await db.auth.resetPasswordForEmail(targetResult.data.user.email, { redirectTo: `${appUrl()}/reset-password` });

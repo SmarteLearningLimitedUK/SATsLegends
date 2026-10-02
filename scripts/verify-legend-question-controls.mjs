@@ -9,7 +9,7 @@ const profiles = [
   { name: 'pc', browser: chromium, options: { viewport: { width: 1440, height: 900 } } },
   { name: 'ipad-a2hs', browser: webkit, options: { ...devices['iPad (gen 7)'], viewport: { width: 768, height: 1024 } } },
   { name: 'phone-a2hs', browser: webkit, options: { ...devices['iPhone 13'], viewport: { width: 390, height: 844 } } },
-];
+].filter((profile) => !process.env.LEGEND_QA_PROFILE || process.env.LEGEND_QA_PROFILE === profile.name);
 const reports = [];
 for (const profile of profiles) {
   const browser = await profile.browser.launch();
@@ -67,18 +67,18 @@ for (const profile of profiles) {
         break;
       }
     }
-    await page.getByRole('button', { name: 'Reset', exact: true }).click();
+    await page.getByRole('button', { name: 'Reset tray', exact: true }).click();
     await expect(question).toBeVisible();
 
     question = await startMission(routes.conversion_canyon);
-    await page.locator('button').filter({ has: page.locator('img') }).first().click();
     await page.getByRole('button', { name: 'Submit Shipment' }).click();
-    await page.getByText('Still unbalanced. Adjust the weights and try again.', { exact: true }).waitFor();
+    await page.getByRole('status').filter({ hasText: /short\. Add more weight\.|Over by .*Remove excess/ }).waitFor();
+    await expect(question).toContainText('Match');
     await page.getByRole('button', { name: 'Reset Weights' }).click();
     await expect(question).toBeVisible();
 
     question = await startMission(routes.data_detective);
-    await page.locator('button').filter({ has: page.locator('[data-suspect-portrait="true"]') }).first().click();
+    await page.getByRole('button', { name: /^Inspect / }).first().click();
     await page.getByRole('button', { name: 'Close', exact: true }).click();
     await expect(question).toBeVisible();
 
@@ -103,7 +103,7 @@ for (const profile of profiles) {
     await page.mouse.up();
     const placement = page.locator('[data-fraction-placement="true"]').first().locator('button');
     await expect(placement).toHaveText(originalTile);
-    await expect(source.locator('button')).toHaveCount(0);
+    await expect(source.locator('button')).toHaveAttribute('aria-label', /Place selected fraction in source position/);
     await expect(question).toBeVisible();
 
     const placed = await placement.boundingBox();
@@ -134,14 +134,14 @@ for (const profile of profiles) {
     question = await startMission(routes.multiplication_mine);
     const rock = page.locator('[data-mine-rock="true"]');
     await expect(rock).toHaveAttribute('data-rock-health', '4');
-    await expect(rock).toHaveAttribute('src', /^data:image\/png/);
+    await expect(rock).toHaveAttribute('src', /ore-intact\.webp$/);
     const mineAnswers = page.locator('.answer-choice-surface button');
     for (let remaining = 3; remaining >= 0; remaining -= 1) {
-      const multiplication = (await question.innerText()).trim().match(/^(\d+) x (\d+) = \?$/);
+      const multiplication = (await question.innerText()).trim().match(/^(\d+) × (\d+) = \?$/);
       expect(multiplication).not.toBeNull();
       const product = Number(multiplication[1]) * Number(multiplication[2]);
       await expect(mineAnswers).toHaveCount(4);
-      const correctProduct = page.locator('.answer-choice-surface').getByRole('button', { name: String(product), exact: true });
+      const correctProduct = page.locator('.answer-choice-surface').getByRole('button', { name: `Strike with ${product}`, exact: true });
       const previousRockSource = await rock.getAttribute('src');
       await correctProduct.click();
       await expect(correctProduct).toHaveClass(/ui-button-success/);

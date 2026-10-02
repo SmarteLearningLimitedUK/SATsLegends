@@ -11,7 +11,7 @@ try {
     const page = await context.newPage();
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
-    for (const route of ['/for-parents', '/subscriptions', '/signup', '/login', '/forgot-password', '/reset-password', '/parent']) {
+    for (const route of ['/for-parents', '/english', '/subscriptions', '/signup', '/login', '/forgot-password', '/reset-password', '/parent']) {
       await page.goto(base + route);
       await expect(page.locator('main')).toBeVisible();
       await expect(page.locator('header')).toBeVisible();
@@ -20,8 +20,12 @@ try {
       if (route === '/subscriptions') {
         await expect(page.getByText('£4.99', { exact: false }).first()).toBeVisible();
         await expect(page.getByText('£49.99', { exact: false }).first()).toBeVisible();
-        await expect(page.getByText('These subscriptions cover Matharia only.', { exact: false })).toBeVisible();
-        await expect(page.getByText('PayPal will be offered when account activation is complete.', { exact: false })).toBeVisible();
+        await expect(page.getByText('Matharia · The maths adventure · one child profile')).toBeVisible();
+        await expect(page.getByText('Secure card checkout.', { exact: true })).toBeVisible();
+      }
+      if (route === '/english') {
+        await expect(page.getByRole('heading', { level: 1, name: /Lexcoria is on its way/i })).toBeVisible();
+        await expect(page.getByText('Lexcoria is not available to play or purchase yet.', { exact: false })).toBeVisible();
       }
       if (route === '/for-parents') {
         await expect(page.getByRole('heading', { name: 'Big adventures. Small steps to SATs.' })).toBeVisible();

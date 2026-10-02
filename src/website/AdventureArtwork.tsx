@@ -1,5 +1,4 @@
 import { motion } from 'motion/react';
-import { Swords } from 'lucide-react';
 import barratt from '../assets/characters/mobile/Barratt/barratt_happy.png';
 import { COHESIVE_ENEMIES } from '../assets/enemies/cohesive';
 import valley from '../assets/website/adventure-valley-v1.webp';
@@ -14,6 +13,5 @@ export default function AdventureArtwork() {
     <div className="website-scene-character website-scene-goblin"><img src={COHESIVE_ENEMIES.goblin} alt="" decoding="async" /></div>
     <div className="website-scene-character website-scene-cyclops"><img src={COHESIVE_ENEMIES.cyclopsSlime} alt="" decoding="async" /></div>
     <div className="website-scene-character website-scene-barratt"><img src={barratt} alt="" fetchPriority="high" /></div>
-    <div className="website-encounter-caption" aria-hidden="true"><Swords size={16} /><span>A world of challenges awaits</span></div>
   </motion.div>;
 }

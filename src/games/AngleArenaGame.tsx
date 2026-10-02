@@ -634,9 +634,13 @@ const playAngleArenaSfx = (audioRefs: Partial<Record<AngleArenaSfxKey, HTMLAudio
   const audio = audioRefs[key];
   if (!audio) return;
   try {
-    if (localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true') return;
+    const isMuted = localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true';
+    // These Audio instances are not in the DOM, so the shared HUD cannot update
+    // their muted property when the player unmutes during a game.
+    audio.muted = isMuted;
+    if (isMuted) return;
     audio.currentTime = 0;
-    void audio.play();
+    void audio.play().catch(() => undefined);
   } catch {
     // Ignore autoplay failures; the level still works without SFX.
   }

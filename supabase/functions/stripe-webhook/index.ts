@@ -1,5 +1,5 @@
 import { admin, checked, fail, json, secret } from '../_shared/platform.ts';
-import { Stripe, stripeClient, subscriptionRecord } from '../_shared/billing.ts';
+import { productCodes, Stripe, stripeClient, subscriptionRecord } from '../_shared/billing.ts';
 
 Deno.serve(async request => {
   if (request.method !== 'POST') return json({ error: 'Method not allowed' }, 405);
@@ -25,10 +25,14 @@ Deno.serve(async request => {
     const db = admin();
     const customer = checked(await db.from('stripe_customers').select('parent_id').eq('customer_id', customerId).maybeSingle());
     if (!customer) return json({ received: true });
-    const product = checked(await db.from('products').select('monthly_price_id, yearly_price_id').eq('code', 'matharia').single());
-    if (!product) throw new Error('Matharia configuration missing');
-    const record = subscriptionRecord(subscription, customer.parent_id, event.created, product);
-    if (record) checked(await db.rpc('apply_subscription_event', { subscription_data: record }));
+    const [prices, existing] = await Promise.all([
+      db.from('stripe_price_catalog').select('price_id,product_code,interval').in('product_code', [...productCodes]),
+      db.from('subscriptions').select('parent_id,product_code').eq('id', subscription.id).maybeSingle(),
+    ]);
+    const record = subscriptionRecord(subscription, customer.parent_id, event.created,
+      checked(prices) ?? [], checked(existing));
+    if (!record) throw new Error(`Unmapped Stripe subscription ${subscription.id}`);
+    checked(await db.rpc('apply_subscription_event', { subscription_data: record }));
     return json({ received: true });
   } catch (error) { return fail(error); }
 });

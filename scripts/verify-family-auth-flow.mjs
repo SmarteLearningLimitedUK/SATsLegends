@@ -42,12 +42,15 @@ try {
     if (url.pathname.endsWith('/logout')) return reply({});
     if (url.pathname.endsWith('/recover')) return reply({});
     if (url.pathname.endsWith('/billing')) {
-      if (request.method() === 'GET') return reply({ paymentMethods: ['card', 'paypal'], plans: [{ interval: 'month', available: true, amount: 499, currency: 'gbp' }, { interval: 'year', available: true, amount: 4999, currency: 'gbp' }] });
+      if (request.method() === 'GET') return reply({ paymentMethods: ['card', 'paypal'], plans: [{ product: 'matharia', interval: 'month', available: true, amount: 499, currency: 'gbp' }, { product: 'matharia', interval: 'year', available: true, amount: 4999, currency: 'gbp' }] });
       assert.ok(request.headers().authorization.includes(token));
       assert.ok(!body.parent_id && !body.customer_id && !body.price_id);
-      if (body.action === 'checkout') checkoutIntervals.push(body.interval);
+      if (body.action === 'checkout') { assert.equal(body.product, 'matharia'); checkoutIntervals.push(body.interval); }
       return reply({ url: body.action === 'portal' ? 'https://billing.stripe.com/p/session/fixture' : 'https://checkout.stripe.com/c/pay/fixture' });
     }
+    if (url.pathname.endsWith('/rpc/is_staff')) return reply(false);
+    if (url.pathname.endsWith('/complimentary_access')) return reply([]);
+    if (url.pathname.endsWith('/account_deletion_requests')) return reply(null);
     if (url.pathname.endsWith('/rpc/create_child_profile')) {
       children = [{ id: childId, parent_id: parentId, nickname: body.child_nickname }]; return reply(children[0]);
     }
@@ -78,29 +81,32 @@ try {
   await expect(page.getByRole('status')).toContainText('Check your email');
   assert.ok(!(await page.evaluate(() => JSON.stringify(localStorage))).includes('ParentPassword123'));
   console.log('PASS signup email-confirmation state and password never stored');
-  await page.goto(base + '/parent/progress/' + childId);
+  await page.goto(base + '/parent/progress/' + childId + '?game=english');
   await expect(page).toHaveURL(new RegExp('/login\\?next='));
   await page.getByLabel('Parent email address').fill(user.email);
   await page.locator('input[name=password]').fill('ParentPassword123');
   await page.getByRole('button', { name: 'Log in', exact: true }).click();
-  await expect(page).toHaveURL(base + '/parent/progress/' + childId);
+  await expect(page).toHaveURL(base + '/parent/progress/' + childId + '?game=english');
   await expect(page.getByRole('heading', { name: 'Profile not found.' })).toBeVisible();
-  console.log('PASS private report email link resumes after authenticated login');
+  console.log('PASS private Lexcoria report email link resumes after authenticated login');
+  await page.goto(base + '/parent');
+  await expect(page.getByText('Choose a subscription before creating your child’s profile.')).toBeVisible();
+  await page.goto(base + '/play');
+  await expect(page).toHaveURL(base + '/subscriptions');
+  await expect(page.getByText('Card or PayPal at secure checkout.', { exact: false })).toBeVisible();
+  await page.locator('section.family-plan').filter({ has: page.getByRole('heading', { name: 'Matharia monthly' }) }).getByRole('button', { name: 'Choose this plan' }).click();
+  await expect(page).toHaveURL('https://checkout.stripe.com/c/pay/fixture');
+  await page.goto(base + '/subscriptions');
+  await page.locator('section.family-plan').filter({ has: page.getByRole('heading', { name: 'Matharia yearly' }) }).getByRole('button', { name: 'Choose this plan' }).click();
+  await expect(page).toHaveURL('https://checkout.stripe.com/c/pay/fixture');
+  assert.deepEqual(checkoutIntervals, ['month', 'year']);
+  console.log('PASS unpaid child-profile and game gates, monthly/yearly checkout with server-selected prices');
+  paid = true;
   await page.goto(base + '/parent');
   await page.getByLabel('Child’s nickname').fill('MathsLegend');
   await page.getByRole('button', { name: 'Create child profile' }).click();
   await expect(page.getByRole('heading', { name: 'MathsLegend' })).toBeVisible();
-  await page.goto(base + '/play');
-  await expect(page).toHaveURL(base + '/subscriptions');
-  await expect(page.getByText('Card or PayPal. Your choice.', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Choose monthly' }).click();
-  await expect(page).toHaveURL('https://checkout.stripe.com/c/pay/fixture');
-  await page.goto(base + '/subscriptions');
-  await page.getByRole('button', { name: 'Choose yearly' }).click();
-  await expect(page).toHaveURL('https://checkout.stripe.com/c/pay/fixture');
-  assert.deepEqual(checkoutIntervals, ['month', 'year']);
-  console.log('PASS child profile, unpaid game gate, monthly/yearly checkout with server-selected prices');
-  paid = true;
+  console.log('PASS child profile becomes available after confirmed subscription');
   await page.goto(base + '/parent/progress/' + childId);
   await expect(page.getByRole('heading', { name: 'MathsLegend’s progress' })).toBeVisible();
   await expect(page.getByText('80%', { exact: true })).toBeVisible();

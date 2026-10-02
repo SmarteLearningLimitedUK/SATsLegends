@@ -122,7 +122,10 @@ body {
   max-height: 100dvh;
   overflow: hidden;
   background: #020617;
+  overscroll-behavior-x: none;
 }
+
+.iphone-game-viewport-map { touch-action: pan-y pinch-zoom; }
 
 .iphone-game-viewport-scrollable {
   overflow-x: hidden;

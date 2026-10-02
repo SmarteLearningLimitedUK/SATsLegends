@@ -1,5 +1,7 @@
 # SATs Legends: beginner deployment guide
 
+> **Historical preview setup.** This guide records the initial Cloudflare Pages setup and contains statements about services being unconnected that may no longer be true. For the current release checks, use [RELEASE_READINESS.md](RELEASE_READINESS.md) and confirm provider settings in their dashboards before changing the live site.
+
 This guide is for the current React/Vite repository. The website and game build locally, but live parent accounts, payments, saved scores and emails are **not connected yet**. Publishing the files makes the public website viewable; it does not activate those services. Do not invite parents to pay until the final checks below pass.
 
 ## What you need

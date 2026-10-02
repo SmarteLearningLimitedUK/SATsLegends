@@ -1,5 +1,7 @@
 # SATs Legends Matharia: production setup
 
+> **Historical architecture and setup notes.** This file describes an earlier FTP deployment path and service estimates. Use [RELEASE_READINESS.md](RELEASE_READINESS.md) for the current release gate; verify live Cloudflare, Supabase, Stripe and email configuration in their dashboards.
+
 > This document describes the earlier Supabase/Resend/FTP architecture and cost. For the current IONOS domain and a Cloudflare Pages preview, start with [DEPLOYMENT_FOR_BEGINNERS.md](DEPLOYMENT_FOR_BEGINNERS.md). The lower-cost account/report backend discussed there has not been implemented.
 
 ## Agreed product

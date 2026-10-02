@@ -10,8 +10,14 @@ Deno.serve(async request => {
   if (request.method !== 'POST') return json({ error: 'Method not allowed' }, 405);
   const cronSecret = secret('REPORT_CRON_SECRET');
   if (cronSecret.length < 32 || !await sameSecret(request.headers.get('x-report-secret') ?? '', cronSecret)) return json({ error: 'Unauthorized' }, 401);
+  let runId: string | null = null;
+  let db: ReturnType<typeof admin> | null = null;
   try {
-    const db = admin();
+    db = admin();
+    runId = crypto.randomUUID();
+    checked(await db.from('report_job_status').upsert({ id: true, run_id: runId,
+      started_at: new Date().toISOString(), finished_at: null, claimed: 0, sent: 0, failed: 0, error: null },
+    { onConflict: 'id' }));
     // Validate configuration before claiming work.
     const from = secret('REPORT_FROM');
     const apiKey = secret('RESEND_API_KEY');
@@ -28,8 +34,10 @@ Deno.serve(async request => {
           checked(await db.rpc('finish_report_delivery', { delivery_id: delivery.id, email_id: null, skip_delivery: true }));
           continue;
         }
-        const progress = checked(await db.from('child_progress').select('child_id,player,updated_at').eq('parent_id', delivery.parent_id).eq('product_code', 'matharia')) ?? [];
-        const children = profiles.map(profile => ({ ...profile, ...progress.find(p => p.child_id === profile.id) }));
+        const progress = checked(await db.from('child_progress').select('child_id,product_code,player,updated_at')
+          .eq('parent_id', delivery.parent_id).in('product_code', ['matharia', 'english'])) ?? [];
+        const children = profiles.map(profile => ({ ...profile,
+          progress: progress.filter(saved => saved.child_id === profile.id) }));
         const email = reportEmail(origin, children);
         const result = await fetch('https://api.resend.com/emails', {
           method: 'POST', headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json', 'Idempotency-Key': `parent-report/${delivery.id}` },
@@ -48,6 +56,15 @@ Deno.serve(async request => {
       // Resend's default request rate is two per second.
       await new Promise(resolve => setTimeout(resolve, 600));
     }
+    checked(await db.from('report_job_status').update({ finished_at: new Date().toISOString(),
+      claimed: deliveries.length, sent, failed }).eq('run_id', runId));
     return json({ sent, failed, claimed: deliveries.length });
-  } catch (error) { return fail(error); }
+  } catch (error) {
+    if (db && runId) {
+      const message = error instanceof Error ? error.message.slice(0, 200) : 'Report run failed';
+      const update = await db.from('report_job_status').update({ finished_at: new Date().toISOString(), error: message }).eq('run_id', runId);
+      if (update.error) console.error('Failed to record report run failure');
+    }
+    return fail(error);
+  }
 });

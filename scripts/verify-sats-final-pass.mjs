@@ -1,6 +1,6 @@
 import {chromium,webkit,devices,expect} from '@playwright/test';
 import {mkdir,writeFile} from 'node:fs/promises';
-const base='http://localhost:3001';const output='qa-artifacts/sats-final';await mkdir(output,{recursive:true});const rows=[];
+const base=process.env.LEGEND_QA_URL||'http://localhost:3001';const output='qa-artifacts/sats-final';await mkdir(output,{recursive:true});const rows=[];
 const profiles=[{name:'pc-short',engine:chromium,options:{viewport:{width:1264,height:625}}},{name:'ipad-a2hs',engine:webkit,options:{...devices['iPad (gen 7)'],viewport:{width:768,height:1024}}},{name:'phone-a2hs',engine:webkit,options:{...devices['iPhone 13'],viewport:{width:390,height:844}}}];
 for(const profile of profiles){const b=await profile.engine.launch();const context=await b.newContext(profile.options);if(profile.options.hasTouch)await context.addInitScript(()=>Object.defineProperty(navigator,'standalone',{value:true}));const p=await context.newPage();const errors=[];p.on('pageerror',e=>errors.push(e.message));const press=loc=>profile.options.hasTouch?loc.tap():loc.click();
 try{

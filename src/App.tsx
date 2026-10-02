@@ -51,7 +51,6 @@ import { reconcileAchievementState } from './systems/progression/achievementCata
 import { useProgressionStore } from './store/useProgressionStore';
 import { LevelProgress } from './lib/progression/types';
 import { getXpRequiredForLevel } from './lib/progression/getXpRequiredForLevel';
-import { CACHE_BUSTER } from './cacheBuster';
 import { playGameSound } from './audio/gameAudio';
 
 const PHONE_STAGE_MIN_HEIGHT = 635;
@@ -62,7 +61,6 @@ const App: React.FC = () => {
   const [questionCardScale, setQuestionCardScale] = useState(1);
   const [potionCauldronShift, setPotionCauldronShift] = useState('0px');
   const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
-  const buildId = import.meta.env.VITE_BUILD_ID ?? CACHE_BUSTER;
 
   const {
     screen,
@@ -397,6 +395,7 @@ const App: React.FC = () => {
   ]);
 
   const handleGameOver = useCallback((XP: number) => {
+    playGameSound('fail');
     triggerHaptic('error');
     if (selectedLevel?.isPractice) {
       if (!selectedIsland || !selectedLevel) return;
@@ -495,39 +494,6 @@ const App: React.FC = () => {
 
   const hintRuleSet = useMemo(() => getLearnerGuide(selectedLevel?.blueprintKey), [selectedLevel?.blueprintKey]);
   const isMockAssessment = Boolean(selectedLevel?.isBoss && isBossEncounterGameType(selectedLevel.gameType));
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    if (!buildId) return;
-    try {
-      const storageKey = 'sats_legends_build_id';
-      const previous = window.localStorage.getItem(storageKey);
-      if (previous && previous !== buildId) {
-        const clearBrowserState = async () => {
-          try {
-            window.localStorage.clear();
-            window.sessionStorage.clear();
-            if ('caches' in window) {
-              const keys = await caches.keys();
-              await Promise.all(keys.map((key) => caches.delete(key)));
-            }
-          } catch {
-            // Ignore cache/storage errors so we can still recover on reload.
-          }
-        };
-
-        void (async () => {
-          await clearBrowserState();
-          window.localStorage.setItem(storageKey, buildId);
-          window.location.reload();
-        })();
-        return;
-      }
-      window.localStorage.setItem(storageKey, buildId);
-    } catch {
-      // Ignore storage/cache errors to avoid blocking render.
-    }
-  }, [buildId]);
 
   useEffect(() => {
     if (screen === 'profile_setup') {
@@ -846,7 +812,9 @@ const App: React.FC = () => {
       && selectedLevel?.blueprintKey !== 'share_splitter'
       && selectedLevel?.blueprintKey !== 'maths_vs_zombies');
   const useUnboundedStageShell = screen === 'parent_dashboard' || isWellbeingScreen
-    || (isGameplayScreen && hasWideGameViewport && usesResponsiveGameScene);
+    || (isGameplayScreen && hasWideGameViewport && usesResponsiveGameScene)
+    || (isGameplayScreen && selectedLevel?.blueprintKey === 'place_value_panic'
+      && viewportSize.width >= 560 && viewportSize.width > viewportSize.height && viewportSize.height <= 420);
   const globalDockOffsetClass = screen !== 'splash' && !isGameplayScreen && screen !== 'avatar_selection' && screen !== 'profile_setup'
     ? 'pb-[calc((4.35rem+env(safe-area-inset-bottom))/var(--game-stage-scale))] md:pb-[calc((4.65rem+env(safe-area-inset-bottom))/var(--game-stage-scale))]'
     : '';
@@ -878,23 +846,12 @@ const App: React.FC = () => {
   const goToProfile = useCallback(() => {
     setScreen('profile');
   }, [setScreen]);
-  const mapDockButtonClass = [
-    'inline-flex items-center justify-center border text-slate-100',
-    'border-cyan-100/40 bg-[linear-gradient(180deg,rgba(75,137,232,0.9)_0%,rgba(45,102,194,0.9)_54%,rgba(29,75,153,0.92)_100%)]',
-    'shadow-[0_6px_12px_rgba(2,6,23,0.33),inset_0_1px_0_rgba(255,255,255,0.26)]',
-    'transition-[transform,filter,box-shadow,background] duration-150 ease-out',
-    'hover:brightness-105 active:translate-y-[1px] active:brightness-95',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b1e4e]',
-    'h-[42px] w-[42px] rounded-[0.85rem]',
-  ].join(' ');
-  const mapDockIconClass = 'h-[18px] w-[18px] drop-shadow-[0_2px_2px_rgba(0,0,0,0.26)]';
+  const mapDockButtonClass = 'legend-map-dock-button';
+  const mapDockIconClass = 'legend-map-dock-icon';
     const mapHudDock = screen === 'world_map'
       ? (
         <div className="mt-0.5 flex w-full max-w-[calc(100vw-0.7rem)] shrink-0 items-center justify-center overflow-hidden">
-          <div className="relative inline-flex w-auto max-w-full shrink-0 flex-nowrap items-center justify-center rounded-[1.15rem] border border-cyan-100/26 bg-[linear-gradient(180deg,rgba(16,40,96,0.84)_0%,rgba(9,24,64,0.88)_100%)] px-2 py-1.5 shadow-[0_10px_18px_rgba(2,6,23,0.38),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-[2px]">
-            <div className="pointer-events-none absolute inset-[1px] rounded-[1.05rem] border border-cyan-100/14" />
-            <div className="pointer-events-none absolute inset-x-3 top-[3px] h-3 rounded-full bg-cyan-200/10 blur-[2px]" />
-
+          <div className="legend-map-dock">
             <div className="relative flex flex-nowrap items-center justify-center gap-1.5">
               <button
                 type="button"
@@ -902,7 +859,7 @@ const App: React.FC = () => {
                 className={`${mapDockButtonClass} shrink-0`}
                 aria-label="Open player profile"
               >
-                <AssetIcon name="user" className={mapDockIconClass} />
+                <AssetIcon name="user" className={mapDockIconClass} /><span>Profile</span>
               </button>
               <button
                 type="button"
@@ -910,7 +867,7 @@ const App: React.FC = () => {
                 className={`${mapDockButtonClass} shrink-0`}
                 aria-label="Open achievements"
               >
-                <AssetIcon name="trophy" className={mapDockIconClass} />
+                <AssetIcon name="trophy" className={mapDockIconClass} /><span>Rewards</span>
               </button>
               <button
                 type="button"
@@ -918,7 +875,7 @@ const App: React.FC = () => {
                 className={`${mapDockButtonClass} shrink-0`}
                 aria-label="Open parent portal"
               >
-                <AssetIcon name="doc" className={mapDockIconClass} />
+                <AssetIcon name="doc" className={mapDockIconClass} /><span>Parent</span>
               </button>
               <button
                 type="button"
@@ -927,7 +884,7 @@ const App: React.FC = () => {
                 aria-label="Open Calm Grove"
                 title="Open Calm Grove"
               >
-                <TreePine className={mapDockIconClass} />
+                <TreePine className={mapDockIconClass} /><span>Calm</span>
               </button>
             </div>
           </div>
@@ -936,7 +893,10 @@ const App: React.FC = () => {
     : null;
   const isPortraitPhone = viewportSize.width > 0 && viewportSize.width < 700 && viewportSize.height >= viewportSize.width;
   const useScrollableStageShell = !useUnboundedStageShell && viewportSize.width > viewportSize.height;
-  const wideStageScale = viewportSize.width >= 1100 ? 1.3 : viewportSize.width >= 900 ? 1.15 : 1;
+  const preferredWideStageScale = viewportSize.width >= 1100 ? 1.3 : viewportSize.width >= 900 ? 1.15 : 1;
+  const wideStageScale = viewportSize.height >= IPHONE_STAGE_HEIGHT
+    ? Math.min(preferredWideStageScale, viewportSize.height / IPHONE_STAGE_HEIGHT)
+    : 1;
   const effectiveStageScale = useScrollableStageShell ? wideStageScale : stageScale;
   const stageWidth = useScrollableStageShell ? IPHONE_STAGE_WIDTH : isPortraitPhone ? viewportSize.width / stageScale : IPHONE_STAGE_WIDTH;
   const stageHeight = isPortraitPhone ? viewportSize.height / stageScale : IPHONE_STAGE_HEIGHT;
@@ -953,7 +913,7 @@ const App: React.FC = () => {
     : undefined;
 
   return (
-    <div className={`iphone-game-viewport${useScrollableStageShell ? ' iphone-game-viewport-scrollable' : ''}`} style={viewportStyle}>
+    <div className={`iphone-game-viewport${useScrollableStageShell ? ' iphone-game-viewport-scrollable' : ''}${screen === 'world_map' ? ' iphone-game-viewport-map' : ''}`} style={viewportStyle}>
       <div className={`iphone-game-stage${useUnboundedStageShell ? ' iphone-game-stage-unbounded' : ''}${useScrollableStageShell ? ' iphone-game-stage-scrollable' : ''}`} style={stageStyle} data-stage-layout={useUnboundedStageShell ? 'responsive' : useScrollableStageShell ? 'scrollable' : 'portrait'}>
         <div className="iphone-game-stage-inner">
           <div

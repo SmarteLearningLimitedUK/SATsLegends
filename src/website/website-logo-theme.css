@@ -33,7 +33,6 @@ body.legends-website-body { background: #14072f; }
 .legends-website .website-hero-note svg { color: var(--web-gold); }
 .legends-website .website-hero-copy h2 { color: var(--web-white); }
 .legends-website .website-hero-copy h2 span { color: var(--web-gold); }
-.legends-website .website-encounter-caption { color: var(--web-gold); background: #230d4de8; border-color: #a98ee173; }
 
 .legends-website .website-header {
   background: linear-gradient(180deg,#31116bf7,#1c0b43f7);
@@ -163,7 +162,13 @@ body.legends-website-body { background: #14072f; }
 .legends-website .website-account-caption { color: var(--web-lavender); }
 .legends-website .website-account-success p:not(.website-eyebrow) { color: #d3c9e8; }
 
+@media (min-width: 581px) and (max-width: 900px) {
+  .legends-website .website-hero::before {
+    background: linear-gradient(90deg,#17082ff7 0%,#17082ff0 38%,#17082fd0 57%,#17082f55 78%,transparent 100%),linear-gradient(0deg,#170832cc,transparent 27%);
+  }
+}
 @media (max-width: 580px) {
-  .legends-website .website-hero::before { background: linear-gradient(180deg,#17082ff2 0%,#17082ff2 32%,#211043eb 46%,#21104350 59%,transparent 70%,#170832a6 100%); }
+  .legends-website .website-hero::before { background: linear-gradient(180deg,#17082ff7 0%,#17082ff7 52%,#17082fe8 60%,#21104366 75%,#170832a6 100%); }
+  .legends-website .website-hero-note { color: #fff3d8; text-shadow: 0 1px 8px #0b0627; }
   .legends-website .website-world-backdrop::after { background: linear-gradient(90deg,#170832df,#230e4ed1 50%,#170832d9); }
 }
