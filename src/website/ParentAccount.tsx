@@ -1,6 +1,6 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowRight, Eye, EyeOff, Gem } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, Gem, X } from 'lucide-react';
 import barratt from '../assets/characters/mobile/Barratt/barratt_happy.png';
 import { useFamily } from './FamilyAccount';
 import { safeReturnPath, supabase } from './services/supabase';
@@ -14,8 +14,24 @@ export default function ParentAccount({ mode }: { mode: 'signup' | 'login' | 'fo
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const messageRef = useRef<HTMLParagraphElement>(null);
   const signup = mode === 'signup';
   useEffect(() => { setMessage(''); setError(''); setShowPassword(false); }, [mode]);
+  useEffect(() => {
+    if (mode !== 'forgot' || !message) return;
+    const dismissOutside = (event: PointerEvent) => {
+      if (event.target instanceof Node && !messageRef.current?.contains(event.target)) setMessage('');
+    };
+    const dismissOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMessage('');
+    };
+    document.addEventListener('pointerdown', dismissOutside);
+    document.addEventListener('keydown', dismissOnEscape);
+    return () => {
+      document.removeEventListener('pointerdown', dismissOutside);
+      document.removeEventListener('keydown', dismissOnEscape);
+    };
+  }, [message, mode]);
   if (family.session && (mode === 'signup' || mode === 'login') && !family.recovery) return <Navigate to={next} replace />;
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -38,7 +54,9 @@ export default function ParentAccount({ mode }: { mode: 'signup' | 'login' | 'fo
       } else if (mode === 'forgot') {
         const result = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/reset-password` });
         if (result.error) throw result.error;
-        form.reset(); setMessage('If an account exists for this email, a password reset link is on its way.');
+        form.reset();
+        form.querySelector<HTMLInputElement>('input[name="email"]')?.blur();
+        setMessage('If an account exists for this email, a password reset link is on its way.');
       } else if (mode === 'reset') {
         if (!family.session || !family.recovery) throw new Error('Open the password reset link in your email first.');
         const result = await supabase.auth.updateUser({ password });
@@ -58,7 +76,7 @@ export default function ParentAccount({ mode }: { mode: 'signup' | 'login' | 'fo
     <section className="website-account-form-wrap">
       <p className="website-eyebrow">Parent & guardian accounts</p><h2>{title}</h2><p>{signup ? 'Create your parent account, add your child’s nickname, then choose monthly or yearly access.' : 'Your child’s adventures and progress, in one place.'}</p>
       {!family.configured && <p className="family-notice" role="status">Parent accounts and purchases are not available yet. Please check back soon.</p>}
-      {message && <p className="family-notice" role="status">{message}</p>}
+      {message && <p ref={messageRef} className={`family-notice${mode === 'forgot' ? ' family-notice-dismissible' : ''}`} role="status">{message}{mode === 'forgot' && <button className="family-notice-dismiss" type="button" aria-label="Dismiss password reset message" onClick={() => setMessage('')}><X size={18} /></button>}</p>}
       {query.get('reset') === 'success' && <p className="family-notice" role="status">Your password has been updated. Please log in.</p>}
       {error && <p className="family-error" role="alert">{error}</p>}
       <form onSubmit={handleSubmit}>

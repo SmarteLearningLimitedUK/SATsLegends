@@ -208,6 +208,9 @@ body.legends-website-body { position: static; height: auto; min-height: 100vh; o
 .website-account-caption { position: absolute; bottom: 18px; left: 55px; color: #82cbbb; font-size: 13px; }
 .website-account-form-wrap { align-self: center; padding: 36px; background: #102a42; border: 1px solid #36546d; border-radius: 15px; }
 .website-account-form-wrap h2 { font-size: 32px; margin-top: 10px; }.website-account-form-wrap > p:not(.website-eyebrow) { color: #aec3d6; font-size: 14px; margin-top: 10px; }
+.website-account-form-wrap .family-notice-dismissible { position: relative; padding-right: 54px; }
+.website-account-form-wrap .family-notice-dismiss { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: grid; place-items: center; width: 36px; height: 36px; margin: 0; border: 1px solid #b6afe380; border-radius: 9px; background: #ffffff12; color: #f5ecff; text-decoration: none; cursor: pointer; }
+.website-account-form-wrap .family-notice-dismiss:hover { background: #ffffff28; }
 .website-account-preview { border-left: 2px solid #79e0ee; padding: 10px 13px; background: #79e0ee09; margin: 25px 0; font-size: 12px; color: #abc2d7; }
 .website-account-preview strong { display: block; color: #8ae3ee; margin-bottom: 4px; font-weight: 500; }.website-account-preview span { display: block; }
 .website-account-form-wrap form { display: flex; flex-direction: column; gap: 18px; }
