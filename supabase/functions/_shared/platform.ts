@@ -38,10 +38,12 @@ export async function billingBody(request: Request): Promise<{ action: 'checkout
   try { body = JSON.parse(new TextDecoder().decode(bytes)); } catch { throw new HttpError(400, 'Invalid billing request.'); }
   if (!body || Array.isArray(body) || typeof body !== 'object') throw new HttpError(400, 'Invalid billing request.');
   if (body.action === 'portal' && Object.keys(body).length === 1) return { action: 'portal' };
+  // Older Matharia clients omit product while the site and function roll out separately.
+  const product = body.product === undefined ? 'matharia' : body.product;
   if (body.action === 'checkout' && (body.interval === 'month' || body.interval === 'year')
-    && (body.product === 'matharia' || body.product === 'english' || body.product === 'bundle')
+    && (product === 'matharia' || product === 'english' || product === 'bundle')
     && Object.keys(body).every(key => key === 'action' || key === 'interval' || key === 'product')) {
-    return { action: 'checkout', interval: body.interval, product: body.product };
+    return { action: 'checkout', interval: body.interval, product };
   }
   throw new HttpError(400, 'Choose a valid billing action and monthly or yearly plan.');
 }
