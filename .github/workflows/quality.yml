@@ -66,3 +66,22 @@ jobs:
           exit 1
       - name: Parent signup, checkout and saved progress fixture
         run: npm run verify:family-auth
+      - name: Build website with pinned Lexcoria game
+        env:
+          VITE_SUPABASE_URL: https://family-qa.supabase.co
+          VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_fixture
+        run: npm run build:cloudflare-english-test
+      - name: Start combined artifact preview
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 4181 --strictPort > /tmp/sats-combined-preview.log 2>&1 &
+          for attempt in {1..60}; do
+            if curl --fail --silent http://127.0.0.1:4181/english/play/ > /dev/null; then exit 0; fi
+            sleep 2
+          done
+          cat /tmp/sats-combined-preview.log
+          exit 1
+      - name: Verify gated Lexcoria route and unavailable checkout
+        env:
+          LEGEND_QA_URL: http://127.0.0.1:4181
+          LEGEND_ENGLISH_TESTING: 'true'
+        run: npm run verify:lexcoria
