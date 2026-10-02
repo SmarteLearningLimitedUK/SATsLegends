@@ -1,0 +1,117 @@
+/* One grounded action composition replaces viewport-positioned character sprites. */
+.legends-website .website-hero {
+  position: relative;
+  min-height: clamp(620px, 50vw, 760px);
+  overflow: hidden;
+  background: #170832;
+}
+
+.website-hero-action-art {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.website-hero-action-art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 58% 55%;
+}
+
+.legends-website .website-hero::before {
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, #170832ed 0%, #170832d9 18%, #1708328c 39%, #17083226 55%, transparent 67%),
+    linear-gradient(0deg, #1708328c, transparent 23%);
+}
+
+.legends-website .website-hero-glow { display: none; }
+
+.legends-website .website-hero-inner {
+  position: relative;
+  z-index: 2;
+  min-height: clamp(620px, 50vw, 760px);
+  align-items: center;
+}
+
+.legends-website .website-hero-copy {
+  width: min(440px, 100%);
+  flex: 0 0 auto;
+  padding: 28px 0 44px;
+}
+
+.legends-website .website-hero-bottom { z-index: 3; }
+
+@media (max-width: 1250px) {
+  .legends-website .website-hero {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .legends-website .website-hero::before { display: none; }
+
+  .legends-website .website-hero-inner {
+    order: 1;
+    display: block;
+    min-height: 0;
+    padding: 0;
+  }
+
+  .legends-website .website-hero-copy {
+    width: min(660px, 100%);
+    padding: 34px 0 42px;
+  }
+
+  .website-hero-action-art {
+    position: relative;
+    inset: auto;
+    order: 2;
+    height: auto;
+    aspect-ratio: 2 / 1;
+  }
+
+  .website-hero-action-art img {
+    object-fit: contain;
+    object-position: center;
+  }
+}
+
+@media (min-width: 581px) and (max-width: 1250px) {
+  .legends-website .website-hero-copy {
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .legends-website .website-hero-copy > .website-eyebrow,
+  .legends-website .website-hero-actions,
+  .legends-website .website-hero-note { justify-content: center; }
+
+  .legends-website .website-splash-heading,
+  .legends-website .website-hero-description { margin-inline: auto; }
+}
+
+@media (max-width: 580px) {
+  .legends-website .website-hero-copy {
+    width: 100%;
+    padding: 26px 0 32px;
+  }
+
+  .website-hero-action-art { aspect-ratio: 4 / 5; }
+}
+
+@media (max-width: 420px) {
+  .legends-website .website-hero-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .legends-website .website-hero-actions .website-button { width: 100%; }
+}
