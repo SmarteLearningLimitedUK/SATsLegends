@@ -99,5 +99,6 @@ for (const [name, engine, options] of profiles) {
 await writeFile('qa-artifacts/responsive-experience/report.json', JSON.stringify({ results, failures }, null, 2));
 if (failures.length) {
   console.error(`${failures.length} responsive checks failed; see qa-artifacts/responsive-experience/report.json`);
+  for (const failure of failures) console.error(JSON.stringify(failure));
   process.exitCode = 1;
 }
