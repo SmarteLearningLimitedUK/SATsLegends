@@ -265,7 +265,8 @@ record(`Fraction sorting and fixed proper/improper/card-count bands (${sampleCou
     const q = forge.makeRound(tier, sample + 100);
     assert.equal(q.cards.length, [3, 3, 4, 4, 5][tier - 1]);
     assert.equal(new Set(q.cards.map((card) => card.value)).size, q.cards.length);
-    assert.deepEqual(q.sortedIds, [...q.cards].sort((a, b) => a.numerator * b.denominator - b.numerator * a.denominator).map((card) => card.id));
+    const descending = q.prompt.includes('largest to smallest');
+    assert.deepEqual(q.sortedIds, [...q.cards].sort((a, b) => descending ? b.value - a.value : a.value - b.value).map((card) => card.id));
     for (const card of q.cards) {
       near(card.value, card.numerator / card.denominator, 'Fraction value');
       if (tier <= 3) assert.ok(card.numerator < card.denominator);
@@ -489,7 +490,7 @@ record(`Actual Data Detective callback: bounded evidence, one matching culprit, 
       ...detectiveData, difficulty: tier,
       setCaseMode: setter('mode'), setCaseBrief: setter('brief'), setChartType: setter('chart'),
       setCurrentCase: setter('evidence'), setSuspects: setter('suspects'), setGuiltyId: setter('guiltyId'),
-      setFeedback: noop, setSelectedSuspectId: noop, setIncorrectSuspectIds: noop,
+      setFeedback: noop, setSelectedSuspectId: noop, setIncorrectSuspectIds: noop, setPinnedEvidence: noop,
     });
     for (let sample = 0; sample < sampleCount; sample++) {
       build(); const max = [5, 8, 12, 20, 30][tier - 1];

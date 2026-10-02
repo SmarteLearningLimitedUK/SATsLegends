@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import {
   emitMiniGameSessionEvent,
   MiniGameShellContractProps,
@@ -8,6 +8,7 @@ import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import missionBackground from '../assets/maps/premium/rounding-rocket.webp';
 import roundingRocketArt from '../assets/rocktlogo.png';
+import { triggerHaptic } from '../haptics';
 
 interface RoundingRocketGameProps {
   levelId: number;
@@ -123,7 +124,9 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
   isPractice,
   practiceBriefing,
 }) => {
+  const reducedMotion = useReducedMotion();
   const [round, setRound] = useState<RocketRound>(() => generateRound(Math.max(1, levelId), Math.max(1, levelId)));
+  const [directionReady, setDirectionReady] = useState(false);
   const [rocketState, setRocketState] = useState<RocketState>('idle');
   const [selectedPad, setSelectedPad] = useState<number | null>(null);
   const [padFeedback, setPadFeedback] = useState<{ value: number; type: 'success' | 'error' } | null>(null);
@@ -163,6 +166,20 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
     setInputLocked(false);
   };
 
+  const decidingDigit = Math.floor((round.value % round.target) / (round.target / 10));
+  const correctDirection = decidingDigit >= 5 ? 'up' : 'down';
+  const chooseDirection = (choice: 'up' | 'down') => {
+    if (!isSessionActive || inputLockedRef.current || didComplete) return;
+    if (choice !== correctDirection) {
+      triggerHaptic('error');
+      setFeedbackText(`The deciding digit is ${decidingDigit}. Try the other direction.`);
+      return;
+    }
+    triggerHaptic('selection');
+    setDirectionReady(true);
+    setFeedbackText(`${decidingDigit} means round ${choice}. Choose a landing pad.`);
+  };
+
   useEffect(() => () => clearQueuedTimeouts(), []);
 
   useEffect(() => {
@@ -174,6 +191,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
     if (sessionState.timeLeft !== sessionState.totalTime) return;
     clearQueuedTimeouts();
     setRound(generateRound(Math.max(1, levelId), Math.max(1, levelId)));
+    setDirectionReady(false);
     setRocketState('idle');
     setSelectedPad(null);
     setPadFeedback(null);
@@ -218,10 +236,11 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
     const magnitudeLevel = Math.max(1, Math.min(5, levelId));
     setRound(generateRound(Math.max(1, levelId), magnitudeLevel));
     resetRocketToIdle();
+    setDirectionReady(false);
   };
 
   const handlePadTap = (padValue: number) => {
-    if (!isSessionActive || inputLockedRef.current || inputLocked || didComplete) return;
+    if (!isSessionActive || !directionReady || inputLockedRef.current || inputLocked || didComplete) return;
 
     inputLockedRef.current = true;
 
@@ -327,7 +346,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
   const rocketVerticalOffset = 80;
 
   return (
-    <div className="relative h-full w-full overflow-hidden">
+    <div className="relative h-full w-full overflow-hidden" data-rocket-game data-rocket-round={round.id} data-rocket-stage={directionReady ? 'landing' : 'direction'} data-rocket-value={round.value} data-rocket-target={round.target}>
       <img
         src={missionBackground}
         alt=""
@@ -341,7 +360,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Rounding Rocket"
-        body="The Monster Minds have disrupted the launch system.\nChoose the rounded answer that matches the target.\nCheck the digit after the place value before you launch."
+        body="The Monster Minds have disrupted the launch system.\nCheck the deciding digit and choose up or down.\nThen choose the matching landing pad to launch."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
@@ -378,14 +397,14 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
         ) : null}
       </AnimatePresence>
 
-      <div className="relative z-30 flex h-full w-full min-h-0 flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+5.1rem)] pt-1">
+      <div className="relative z-30 flex h-full w-full min-h-0 flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+5.1rem)] pt-1" style={{ height: '80%', flex: '0 0 auto' }}>
         <main className="flex min-h-0 flex-1 flex-col items-center justify-center pt-1">
           <div className="relative flex justify-center" style={{ transform: `translateY(${rocketVerticalOffset}px)` }}>
             <motion.div
-              animate={rocketState === 'idle'
+              animate={reducedMotion ? { y: 0, x: 0, scale: 1 } : rocketState === 'idle'
                 ? { y: [0, -8, 0] }
                 : rocketAnimation}
-              transition={rocketState === 'idle'
+              transition={reducedMotion ? { duration: 0 } : rocketState === 'idle'
                 ? { duration: 2.2, repeat: Infinity, ease: 'easeInOut' }
                 : { duration: rocketState === 'launching' ? 0.58 : 0.35, ease: 'easeOut' }}
               className="relative h-[clamp(17rem,38vh,22.5rem)] w-[clamp(13rem,52vw,19.5rem)] overflow-visible"
@@ -470,10 +489,17 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
         </main>
 
         <section className="mx-auto w-full max-w-[26rem] shrink-0">
-          <div className="mb-2 text-center text-[0.72rem] font-black uppercase tracking-[0.28em] text-amber-100/90">
-            Choose the correct rounding
+          <div className="mb-2 text-center text-[0.72rem] font-black uppercase tracking-[0.16em] text-amber-100/90" role="status">
+            {directionReady ? 'Choose the landing pad' : `Deciding digit: ${decidingDigit} · round up or down?`}
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          {!directionReady ? (
+            <div className="grid grid-cols-2 gap-3">
+              {(['down', 'up'] as const).map(choice => <motion.button key={choice} type="button" data-rocket-direction={choice}
+                onClick={() => chooseDirection(choice)} whileTap={reducedMotion ? undefined : { scale: .96 }}
+                disabled={!isSessionActive || inputLocked || didComplete}
+                className="ui-button-secondary min-h-12 rounded-2xl px-3 text-base font-black capitalize">Round {choice}</motion.button>)}
+            </div>
+          ) : <div className="grid grid-cols-3 gap-3">
             {round.pads.map((padValue) => {
               const isSelected = selectedPad === padValue;
               const successFlash = padFeedback?.value === padValue && padFeedback.type === 'success';
@@ -484,7 +510,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
                   key={`${round.id}-${padValue}`}
                   type="button"
                   onClick={() => handlePadTap(padValue)}
-                  whileTap={(!inputLocked && isSessionActive) ? { scale: 0.96 } : undefined}
+                  whileTap={(!reducedMotion && !inputLocked && isSessionActive) ? { scale: 0.96 } : undefined}
                 disabled={inputLocked || !isSessionActive || didComplete}
                 className={[
                     'relative h-[clamp(3.1rem,8.2vh,3.7rem)] rounded-[1rem] px-2 text-center text-[clamp(1.05rem,4vw,1.4rem)] font-black tabular-nums transition',
@@ -504,7 +530,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
                 </motion.button>
               );
             })}
-          </div>
+          </div>}
         </section>
       </div>
     </div>
