@@ -258,14 +258,16 @@ const scoreToStars = (correct: number, rounds: number, lives: number) => {
   return 1;
 };
 
-const FormulaShapePanel: React.FC<{ round: FormulaRound }> = ({ round }) => {
+const FormulaShapePanel: React.FC<{ round: FormulaRound; chargedLabels: string[]; onToggleRune: (label: string) => void; reducedMotion: boolean }> = ({ round, chargedLabels, onToggleRune, reducedMotion }) => {
+  const charged = chargedLabels.length === round.given.length;
   return (
-    <div data-formula-playfield="true" className="flex h-full min-h-0 flex-col rounded-[1.35rem] border border-cyan-200/14 bg-[linear-gradient(180deg,rgba(8,18,36,0.45),rgba(15,23,42,0.2))] p-2 shadow-[0_12px_22px_rgba(2,6,23,0.12)]">
+    <div data-formula-playfield="true" className={`flex h-full min-h-[8rem] flex-col rounded-[1.35rem] border bg-[linear-gradient(180deg,rgba(8,18,36,0.45),rgba(15,23,42,0.2))] p-2 shadow-[0_12px_22px_rgba(2,6,23,0.12)] ${charged ? 'border-amber-300/70' : 'border-cyan-200/14'}`}>
       <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-2 gap-y-1 text-[11px] font-bold text-cyan-100">
         <span>{round.title}</span>
         <span data-formula-equation="true">{round.formula}</span>
       </div>
-      <div className="relative mt-2 min-h-0 flex-1 overflow-hidden rounded-[1.1rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.16),rgba(15,23,42,0.06)_42%,rgba(8,15,30,0.28)_100%)]">
+      <div className="relative mt-1 min-h-[2.5rem] flex-1 overflow-hidden rounded-[1.1rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.16),rgba(15,23,42,0.06)_42%,rgba(8,15,30,0.28)_100%)]">
+        <motion.div aria-hidden="true" animate={charged && !reducedMotion ? { opacity: [0.2, 0.65, 0.2] } : { opacity: charged ? 0.38 : 0 }} transition={{ duration: 1.8, repeat: charged && !reducedMotion ? Infinity : 0 }} className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(251,191,36,0.6),transparent_62%)]" />
         {round.diagram === 'triangle' ? (
           <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full">
             <polygon points="50,16 18,78 82,78" fill="rgba(56,189,248,0.16)" stroke="rgba(191,219,254,0.9)" strokeWidth="2.2" strokeLinejoin="round" strokeLinecap="round" />
@@ -293,6 +295,27 @@ const FormulaShapePanel: React.FC<{ round: FormulaRound }> = ({ round }) => {
             </g>
           </svg>
         )}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 flex items-center justify-center text-3xl font-black text-amber-200 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] md:text-5xl">{round.targetLabel} = ?</div>
+      </div>
+      <div className="mt-1.5 flex flex-wrap items-center justify-center gap-1.5" aria-label="Given runes">
+        {round.given.map(({ label, value }) => (
+          <motion.button
+            key={label}
+            type="button"
+            data-button-skin="none"
+            data-formula-rune={label}
+            aria-pressed={chargedLabels.includes(label)}
+            aria-label={`${label} equals ${value}. ${chargedLabels.includes(label) ? 'Charged' : 'Tap to charge'}`}
+            onClick={() => onToggleRune(label)}
+            whileTap={reducedMotion ? undefined : { scale: 0.94 }}
+            className={`min-h-10 min-w-16 rounded-xl border px-2 py-1 text-sm font-black focus-visible:outline-2 focus-visible:outline-amber-300 ${chargedLabels.includes(label) ? 'border-amber-300 bg-amber-300/25 text-amber-100 shadow-[0_0_14px_rgba(251,191,36,0.3)]' : 'border-cyan-300/35 bg-slate-900/60 text-cyan-100'}`}
+          >
+            {label} = {value}
+          </motion.button>
+        ))}
+      </div>
+      <div data-formula-rune-status="true" aria-live="polite" className="mt-1 text-center text-[11px] font-bold text-amber-100/90">
+        {charged ? `Runes charged. Use ${round.formula} to find ${round.targetLabel}.` : `Tap the given runes to light the forge (${chargedLabels.length}/${round.given.length}).`}
       </div>
     </div>
   );
@@ -322,6 +345,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
   const [correctCount, setCorrectCount] = useState(0);
   const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
+  const [chargedLabels, setChargedLabels] = useState<string[]>([]);
   const [isFinished, setIsFinished] = useState(false);
   const [showCelebrationSplash, setShowCelebrationSplash] = useState(false);
   const [compactViewport, setCompactViewport] = useState(() => (
@@ -374,6 +398,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
     setCorrectCount(0);
     setFeedback(null);
     setSelectedChoice(null);
+    setChargedLabels([]);
     setIsFinished(false);
     setShowCelebrationSplash(false);
   }, [clearTimers, resolvedLevel]);
@@ -407,6 +432,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
       setRound(createRound(resolvedLevel));
       setFeedback(null);
       setSelectedChoice(null);
+      setChargedLabels([]);
       answerLockRef.current = false;
     }, 520);
     timersRef.current.push(timeoutId);
@@ -479,12 +505,11 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
         <div className={`relative flex w-full max-w-6xl min-h-0 flex-1 flex-col overflow-hidden rounded-[1.7rem] p-2 md:rounded-[2rem] ${compactViewport ? '' : 'md:p-3'}`}>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.12),rgba(15,23,42,0.02)_36%,rgba(15,23,42,0.08)_100%)]" />
 
-          <div className={`relative z-10 flex h-full w-full min-h-0 flex-col px-2 pt-2 ${compactViewport ? 'pb-0' : 'pb-2 md:px-4 md:pb-4'}`}>
+          <div className={`relative z-10 flex h-full w-full min-h-0 flex-col overflow-y-auto px-2 pt-2 ${compactViewport ? 'pb-0' : 'pb-2 md:px-4 md:pb-4'}`}>
             <div className="flex shrink-0 justify-center">
               <GameQuestionCard
-                title="Formula Forge"
-                subtitle={`Question ${roundNumber} of ${totalRounds}`}
-                style={{ position: 'relative', top: 'auto', left: 'auto', right: 'auto', width: '100%', transform: 'none' }}
+                title={`Formula Forge · ${roundNumber}/${totalRounds}`}
+                style={{ position: 'relative', top: 'auto', left: 'auto', right: 'auto', width: '100%', transform: 'none', fontSize: '0.92rem', padding: '5px 8px' }}
                 className="max-w-[860px] border border-cyan-200/22 bg-[linear-gradient(180deg,rgba(8,18,36,0.42),rgba(8,18,36,0.18))] shadow-[0_12px_26px_rgba(2,6,23,0.12)]"
               >
                 {formatFantasyPrompt(buildQuestionStem(round))}
@@ -492,8 +517,8 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
             </div>
 
             <div className="mt-2 flex min-h-0 flex-1 flex-col gap-2">
-              <div className="min-h-0 flex-1">
-                <FormulaShapePanel round={round} />
+              <div className="h-[10rem] shrink-0 md:min-h-[8rem] md:flex-1 md:shrink">
+                <FormulaShapePanel round={round} chargedLabels={chargedLabels} onToggleRune={(label) => setChargedLabels((current) => current.includes(label) ? current.filter((rune) => rune !== label) : [...current, label])} reducedMotion={Boolean(reducedMotion)} />
               </div>
 
               <div data-formula-hint="true" className="shrink-0 rounded-[1rem] border border-white/10 bg-black/10 px-2 py-1 text-[11px] font-semibold text-cyan-100/80">

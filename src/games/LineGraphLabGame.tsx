@@ -6,7 +6,7 @@ import {
   Info,
   Trophy,
 } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameUiShell } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
@@ -227,14 +227,17 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   const [gameState, setGameState] = useState<'playing' | 'success' | 'complete'>('playing');
   const [round, setRound] = useState<RoundData | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [probedPoint, setProbedPoint] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const chartWrapRef = useRef<HTMLDivElement | null>(null);
   const [chartSize, setChartSize] = useState({ width: 0, height: 0 });
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
+  const reducedMotion = useReducedMotion();
 
   const loadLevel = useCallback((_targetLevel: number) => {
     setRound(generateRound(difficulty));
     setSelectedAnswer(null);
+    setProbedPoint(null);
     setFeedback(null);
     setGameState('playing');
   }, [difficulty]);
@@ -298,10 +301,13 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   const yTicks = useMemo(() => {
     if (!round) return [0, 1, 2, 3, 4, 5];
     const maxValue = Math.max(...round.graph.map(point => point.value));
-    const step = difficulty <= 2 ? 1 : 5;
+    const step = difficulty <= 2 ? chartSize.height < 160 ? 2 : 1 : 5;
     const top = Math.ceil(maxValue / step) * step;
     return Array.from({ length: top / step + 1 }, (_, index) => index * step);
-  }, [difficulty, round]);
+  }, [chartSize.height, difficulty, round]);
+
+  const probe = probedPoint == null ? null : round?.graph[probedPoint];
+  const previousPoint = probedPoint == null || probedPoint === 0 ? null : round?.graph[probedPoint - 1];
 
   return (
     <GameUiShell backgroundImage={lineGraphLabBackground} overlayDisabled className="bg-transparent">
@@ -315,11 +321,11 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
       <GameScreenLayout
         className="relative h-full w-full min-h-0 select-none gap-0 text-slate-100"
         main={(
-          <section className="flex min-h-0 flex-1 flex-col px-2 pb-[calc(env(safe-area-inset-bottom)+0.55rem)] pt-2 sm:px-3 md:px-4">
-            <div className="flex flex-1" />
+          <section className="flex min-h-0 flex-1 flex-col overflow-y-auto px-2 pb-[calc(env(safe-area-inset-bottom)+0.55rem)] pt-2 sm:px-3 md:px-4">
+            <div className="hidden min-h-0 flex-1 md:flex" />
 
             <div className="mx-auto flex w-full max-w-[780px] flex-col gap-2 sm:gap-2.5">
-              <GameQuestionCard className="w-full" title="Line Graph Lab" subtitle={round?.helper || ''}>
+              <GameQuestionCard className="w-full" title="Line Graph Lab" style={{ position: 'relative', top: 'auto', left: 'auto', right: 'auto', transform: 'none', fontSize: '0.92rem', padding: '5px 8px' }}>
                 {round?.question ?? ''}
               </GameQuestionCard>
 
@@ -327,10 +333,11 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                 <div
                   ref={chartWrapRef}
                   className="relative w-full overflow-hidden rounded-[1rem] border border-slate-200/10 bg-[linear-gradient(180deg,rgba(7,18,38,0.66),rgba(4,10,24,0.4))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
-                  style={{ height: 'clamp(9.75rem, 24vh, 15.5rem)' }}
+                  style={{ height: 'clamp(7rem, 18vh, 15.5rem)' }}
                 >
                   <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(125,211,252,0.12),transparent_58%)]" />
                   <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),transparent_30%,rgba(255,255,255,0.02))]" />
+                  <span aria-hidden="true" className="pointer-events-none absolute left-1 top-1 z-20 text-[10px] font-bold text-cyan-100">Units</span>
                   {round && chartSize.width > 0 && chartSize.height > 0 && (
                     <div className="relative z-10 h-full w-full">
                       <LineChart
@@ -355,7 +362,6 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                           tick={{ fill: '#e8f3ff', fontSize: 14, fontWeight: 700 }}
                           axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
                           tickLine={{ stroke: 'rgba(191,219,254,0.45)' }}
-                          label={{ value: 'Units', angle: -90, position: 'insideLeft', fill: '#c0e2ff', fontSize: 14, fontWeight: 800 }}
                           width={42}
                         />
                         <Line
@@ -364,25 +370,44 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                           stroke="#34d399"
                           strokeWidth={4}
                           dot={(props) => {
-                            const { cx, cy, payload } = props as { cx?: number; cy?: number; payload?: DataPoint; index?: number };
+                            const { cx, cy, payload, index } = props as { cx?: number; cy?: number; payload?: DataPoint; index?: number };
                             if (cx == null || cy == null || !payload) return null;
+                            const pointIndex = index ?? round.graph.findIndex((point) => point.label === payload.label);
+                            const selected = pointIndex === probedPoint;
                             return (
-                              <circle
-                                cx={cx}
-                                cy={cy}
-                                r={5}
-                                fill="#34d399"
-                                stroke="#ecfeff"
-                                strokeWidth={2}
-                              />
+                              <g key={`probe-${pointIndex}`}>
+                                <circle cx={cx} cy={cy} r={selected ? 10 : 5} fill={selected ? '#fcd34d' : '#34d399'} stroke="#ecfeff" strokeWidth={2} className="pointer-events-none" />
+                                {round.highlightIndex === pointIndex && <text x={cx + 9} y={cy - 10} fill="#fde68a" fontSize="15" fontWeight="900" aria-hidden="true">A</text>}
+                              </g>
                             );
                           }}
                           activeDot={{ r: 7, fill: '#6ee7b7', stroke: '#f0fdfa', strokeWidth: 2 }}
+                          isAnimationActive={!reducedMotion}
                           animationDuration={350}
                         />
                       </LineChart>
                     </div>
                   )}
+                </div>
+                <div className="mt-1.5 grid grid-cols-5 gap-1" aria-label="Inspect graph time points">
+                  {round?.graph.map((point, index) => (
+                    <button
+                      key={point.label}
+                      type="button"
+                      data-graph-time={point.label}
+                      aria-label={`Inspect time ${point.label}${round.highlightIndex === index ? ', point A' : ''}`}
+                      aria-pressed={probedPoint === index}
+                      onClick={() => setProbedPoint(index)}
+                      className={`min-h-10 rounded-lg border text-xs font-black focus-visible:outline-2 focus-visible:outline-amber-300 ${probedPoint === index ? 'border-amber-300 bg-amber-300/25 text-amber-100' : 'border-cyan-200/25 bg-slate-900/60 text-cyan-100'}`}
+                    >
+                      {point.label}
+                    </button>
+                  ))}
+                </div>
+                <div data-graph-probe="true" aria-live="polite" className="mt-1.5 min-h-7 text-center text-xs font-bold text-cyan-100">
+                  {probe
+                    ? `Time ${probe.label}: ${probe.value} units${previousPoint ? ` · ${probe.value - previousPoint.value >= 0 ? '+' : ''}${probe.value - previousPoint.value} since time ${previousPoint.label}` : ''}`
+                    : round?.helper || 'Tap a time point to inspect its value and change.'}
                 </div>
               </div>
 
@@ -414,7 +439,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                 })}
               </div>
 
-              <div className="min-h-[3rem]">
+              <div className={gameState === 'success' ? 'min-h-[3rem]' : 'min-h-0'}>
                 <AnimatePresence mode="wait">
                   {gameState === 'success' ? (
                     <motion.button

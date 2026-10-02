@@ -490,7 +490,7 @@ record(`Actual Data Detective callback: bounded evidence, one matching culprit, 
       ...detectiveData, difficulty: tier,
       setCaseMode: setter('mode'), setCaseBrief: setter('brief'), setChartType: setter('chart'),
       setCurrentCase: setter('evidence'), setSuspects: setter('suspects'), setGuiltyId: setter('guiltyId'),
-      setFeedback: noop, setSelectedSuspectId: noop, setIncorrectSuspectIds: noop, setPinnedEvidence: noop,
+      setFeedback: noop, setSelectedSuspectId: noop, setIncorrectSuspectIds: noop, setPinnedEvidence: noop, setComparedClues: noop,
     });
     for (let sample = 0; sample < sampleCount; sample++) {
       build(); const max = [5, 8, 12, 20, 30][tier - 1];
