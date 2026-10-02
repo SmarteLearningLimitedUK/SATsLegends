@@ -32,7 +32,28 @@ for (const [name, engine, options] of profiles) {
         const width = document.documentElement.clientWidth;
         const heading = document.querySelector('main h1')?.getBoundingClientRect();
         const fields = [...document.querySelectorAll('main input:not([type="checkbox"])')].map(input => parseFloat(getComputedStyle(input).fontSize));
-        return { width, scrollWidth: document.documentElement.scrollWidth, heading: heading && { left: heading.left, right: heading.right }, fields };
+        const scrollWidth = document.documentElement.scrollWidth;
+        const describe = element => {
+          if (!element) return null;
+          const rect = element.getBoundingClientRect();
+          const style = getComputedStyle(element);
+          return {
+            tag: element.tagName.toLowerCase(), id: element.id || undefined,
+            className: typeof element.className === 'string' ? element.className.slice(0, 120) : undefined,
+            left: rect.left, right: rect.right, width: rect.width,
+            clientWidth: element.clientWidth, scrollWidth: element.scrollWidth,
+            cssWidth: style.width, overflowX: style.overflowX, position: style.position,
+          };
+        };
+        const overflow = scrollWidth > width + 1 ? {
+          innerWidth: window.innerWidth,
+          visualViewportWidth: window.visualViewport?.width,
+          structural: [document.documentElement, document.body, document.getElementById('root'), document.querySelector('.legends-website'), document.querySelector('main')].map(describe),
+          offenders: [...document.querySelectorAll('*')]
+            .filter(element => element.getBoundingClientRect().right > width + 1)
+            .slice(0, 16).map(describe),
+        } : undefined;
+        return { width, scrollWidth, heading: heading && { left: heading.left, right: heading.right }, fields, overflow };
       });
       check(layout.scrollWidth <= layout.width + 1 && (!layout.heading || (layout.heading.left >= -1 && layout.heading.right <= layout.width + 1))
         && (layout.width > 580 || layout.fields.every(size => size >= 16)), name, route, layout);
