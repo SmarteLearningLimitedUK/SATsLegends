@@ -72,7 +72,7 @@
 .family-payment-note strong { color: var(--web-gold); font-weight: 500; }
 .family-parent-link { margin-top: 18px; }
 @keyframes parents-scene-entrance { from { opacity: .65; transform: scale(1.025); } to { opacity: 1; transform: scale(1); } }
-/* Six public nav items plus the parent account fit before switching to a menu. */
+/* Seven public nav items plus the parent account fit before switching to a menu. */
 @media (min-width: 1251px) { .website-desktop-nav { margin-left: 0; gap: 20px; white-space: nowrap; }.website-header-inner { gap: 20px; } }
 @media (max-width: 1250px) { .website-desktop-nav { display: none; }.website-menu-button { display: block; }.website-mobile-nav { display: flex; flex-direction: column; padding: 12px 20px 20px; }.website-mobile-nav a { padding: 11px 10px; border-radius: 7px; }.parents-learning-layout,.parents-family-layout { gap: 38px; }.parents-calm-showcase { gap: 30px; } }
 @media (max-width: 800px) {
