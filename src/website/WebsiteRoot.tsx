@@ -1,5 +1,5 @@
 import { lazy, Suspense, useLayoutEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, LoaderCircle } from 'lucide-react';
 import { parseRoute } from '../app/routeConfig';
 import Website from './Website';
@@ -9,11 +9,12 @@ import './website-premium.css';
 import './website-adventure.css';
 import './website-logo-theme.css';
 import './family.css';
+import './english.css';
 import './parents.css';
 
 const Game = lazy(() => import('../App'));
 const GameGate = lazy(() => import('./GameGate'));
-const websiteRoutes = new Set(['/', '/revision', '/videos', '/signup', '/login', '/subscriptions', '/for-parents', '/forgot-password', '/reset-password', '/auth/callback', '/admin']);
+const websiteRoutes = new Set(['/', '/english', '/revision', '/videos', '/signup', '/login', '/subscriptions', '/for-parents', '/forgot-password', '/reset-password', '/auth/callback', '/admin']);
 
 export default function WebsiteRoot() {
   return <FamilyAccount><WebsiteContent /></FamilyAccount>;
@@ -21,7 +22,8 @@ export default function WebsiteRoot() {
 
 function WebsiteContent() {
   const { pathname } = useLocation();
-  const isWebsite = websiteRoutes.has(pathname.replace(/\/+$/, '') || '/') || pathname.startsWith('/parent');
+  const isEnglishSubroute = pathname.startsWith('/english/');
+  const isWebsite = websiteRoutes.has(pathname.replace(/\/+$/, '') || '/') || pathname.startsWith('/parent') || isEnglishSubroute;
   const isMinigame = parseRoute(pathname).screen === 'gameplay';
 
   useLayoutEffect(() => {
@@ -34,6 +36,7 @@ function WebsiteContent() {
     return () => document.body.classList.remove('legends-website-body');
   }, [isWebsite, pathname]);
 
+  if (isEnglishSubroute) return <Navigate to="/english" replace />;
   if (isWebsite) return <Website />;
 
   return <>
