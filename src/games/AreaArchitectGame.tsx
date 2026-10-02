@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import confetti from 'canvas-confetti';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import {
   FeedbackStrip,
   GameQuestionCard,
@@ -14,6 +14,7 @@ import {
   shuffle,
   shuffleOptionsWithCorrect,
 } from '../utils/questionShuffle';
+import { triggerHaptic } from '../haptics';
 
 interface AreaArchitectGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -134,10 +135,12 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
   onVictory,
   onGameOver: _onGameOver,
 }) => {
+  const reducedMotion = useReducedMotion();
   const [roundIndex, setRoundIndex] = useState(0);
   const [attempts, setAttempts] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
+  const [laidRows, setLaidRows] = useState<number[]>([]);
   const [locked, setLocked] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [feedbackTone, setFeedbackTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
@@ -149,6 +152,8 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
     [questionOrder, roundIndex],
   );
   const cellSet = useMemo(() => new Set(question.cells.map((cell) => `${cell.x}-${cell.y}`)), [question.cells]);
+  const activeRows = useMemo(() => [...new Set<number>(question.cells.map(cell => cell.y))].sort((a, b) => a - b), [question.cells]);
+  const floorReady = laidRows.length === activeRows.length;
   const lastQuestion = questionOrder.length ? questionOrder[questionOrder.length - 1] : null;
 
   useEffect(() => {
@@ -163,16 +168,18 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
   }, [isPractice]);
 
   const handleAnswer = (value: number) => {
-    if (locked) return;
+    if (locked || !floorReady) return;
     setSelected(value);
     setAttempts((prev) => prev + 1);
 
     if (value === question.correct) {
+      triggerHaptic('success');
       setCorrectCount((prev) => prev + 1);
       setFeedback('Great measuring! That area is correct.');
       setFeedbackTone('good');
       setLocked(true);
       confetti({
+        disableForReducedMotion: true,
         particleCount: 36,
         spread: 55,
         origin: { y: 0.62 },
@@ -185,6 +192,7 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
           return;
         }
         setRoundIndex((prev) => prev + 1);
+        setLaidRows([]);
         setSelected(null);
         setLocked(false);
         setFeedback('');
@@ -193,15 +201,15 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
       return;
     }
 
+    triggerHaptic('error');
     setFeedback('Not quite. Recount the square units.');
     setFeedbackTone('bad');
     setLocked(true);
     window.setTimeout(() => {
       setLocked(false);
       setSelected(null);
-      setFeedback('');
+      setFeedback('Try again. Count each laid row, then add them together.');
       setFeedbackTone('neutral');
-      setRoundIndex((prev) => prev + 1);
     }, 750);
   };
 
@@ -210,11 +218,11 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Area Architect"
-        body="The Monster Minds have scrambled the floor plan.\nDrag the shapes into the right spaces to rebuild the area.\nCheck the footprint carefully."
+        body="The Monster Minds have scrambled the floor plan.\nLay the shaded floor one row at a time.\nAdd the square units in each row to find the total area."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
-      <div className="flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+1.1rem)] pt-3 text-white">
+      <div className="flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+1.1rem)] pt-3 text-white" style={{ height: '80%', flex: '0 0 auto' }} data-area-game data-area-question={question.id}>
         <div className="flex-1" />
 
         <section className="mx-auto w-full max-w-[44rem] shrink-0">
@@ -229,7 +237,7 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
 
               <div className="rounded-[1.25rem] border border-white/10 bg-slate-950/35 p-2">
                 <div
-                  className="mx-auto grid w-full max-w-[18rem] gap-1.5 rounded-[1rem] border border-white/10 bg-slate-900/20 p-2"
+                  className="mx-auto grid w-full max-w-[13rem] gap-1 rounded-[1rem] border border-white/10 bg-slate-900/20 p-2 sm:max-w-[18rem] sm:gap-1.5"
                   style={{ gridTemplateColumns: `repeat(${question.gridSize}, minmax(0, 1fr))` }}
                 >
                   {Array.from({ length: question.gridSize * question.gridSize }).map((_, index) => {
@@ -237,11 +245,15 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
                     const y = Math.floor(index / question.gridSize) + 1;
                     const key = `${x}-${y}`;
                     const filled = cellSet.has(key);
+                    const laid = filled && laidRows.includes(y);
                     return (
-                      <div
+                      <motion.div
                         key={key}
+                        data-area-cell={key} data-area-covered={laid}
+                        animate={reducedMotion ? undefined : { scale: laid ? [1, 1.13, 1] : 1 }}
+                        transition={{ duration: .28 }}
                         className={`aspect-square rounded-[0.22rem] border ${
-                          filled ? 'border-amber-200/80 bg-amber-300/45' : 'border-white/10 bg-slate-900/50'
+                          laid ? 'border-amber-100 bg-amber-300 shadow-[0_0_12px_#fbbf24a8]' : filled ? 'border-amber-200/80 bg-amber-300/30' : 'border-white/10 bg-slate-900/50'
                         }`}
                       />
                     );
@@ -249,13 +261,24 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
                 </div>
               </div>
 
+              <button type="button" data-area-lay-row className="ui-button-primary w-full min-h-11 rounded-xl px-3 font-black"
+                disabled={locked || floorReady} onClick={() => {
+                  const nextRow = activeRows[laidRows.length];
+                  if (nextRow === undefined) return;
+                  triggerHaptic('selection');
+                  setLaidRows(previous => [...previous, nextRow]);
+                }}>
+                {floorReady ? 'Floor laid · choose its area' : `Lay shaded row ${activeRows[laidRows.length]} · ${laidRows.length + 1} of ${activeRows.length}`}
+              </button>
+
               <section className="answer-choice-surface grid grid-cols-2 gap-2">
                 {question.options.map((option) => (
                   <motion.button
                     key={option}
-                    whileTap={{ scale: 0.96 }}
+                    type="button" data-area-answer={option}
+                    whileTap={reducedMotion ? undefined : { scale: 0.96 }}
                     onClick={() => handleAnswer(option)}
-                    disabled={locked}
+                    disabled={locked || !floorReady}
                     className={`h-12 rounded-[1rem] text-lg font-black ${
                       selected === option
                         ? option === question.correct
