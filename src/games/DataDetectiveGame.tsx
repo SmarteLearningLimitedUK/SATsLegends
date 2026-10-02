@@ -121,6 +121,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
   const [caseBrief, setCaseBrief] = useState(DETECTIVE_BRIEFS[0]);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [selectedSuspectId, setSelectedSuspectId] = useState<number | null>(null);
+  const [comparedClues, setComparedClues] = useState<Record<number, number[]>>({});
   const [lives, setLives] = useState(3);
   const [incorrectSuspectIds, setIncorrectSuspectIds] = useState<number[]>([]);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(useSharedTopHud));
@@ -191,6 +192,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
     setFeedback(null);
     setSelectedSuspectId(null);
     setIncorrectSuspectIds([]);
+    setComparedClues({});
   }, [difficulty]);
 
   const startGame = () => {
@@ -242,6 +244,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
   const selectedSuspect = selectedSuspectId !== null
     ? suspects.find((suspect) => suspect.id === selectedSuspectId) || null
     : null;
+  const selectedComparisons = selectedSuspect ? comparedClues[selectedSuspect.id] || [] : [];
 
   const nextCase = () => {
     if (level < MAX_CASES) {
@@ -526,7 +529,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="absolute inset-0 z-40 flex items-center justify-center bg-slate-950/55 p-2 backdrop-blur-md max-[480px]:p-1"
+                className="absolute inset-0 z-[90] flex items-center justify-center bg-slate-950/55 p-2 backdrop-blur-md max-[480px]:p-1"
               >
                 <div ref={dossierRef} onKeyDown={(event) => {
                   if (event.key === 'Escape') setSelectedSuspectId(null);
@@ -556,15 +559,28 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                     </div>
                   </div>
 
-                  <div className="detective-dossier-items mt-3">
+                  <div className="mt-3 text-center text-[11px] font-bold text-cyan-100" aria-live="polite">Compare at least two clues before making an accusation · {selectedComparisons.length}/2</div>
+                  <div className="detective-dossier-items mt-2">
                     {selectedSuspect.items.map((amount, index) => (
-                      <div key={`${selectedSuspect.id}-item-${index}`} className="flex items-center justify-between rounded-xl border border-white/12 bg-white/6 px-3 py-2 max-[480px]:px-2 max-[480px]:py-1.5">
+                      <button
+                        key={`${selectedSuspect.id}-item-${index}`}
+                        type="button"
+                        data-button-skin="none"
+                        data-detective-compare={index}
+                        aria-label={`Compare ${ITEMS[index].name}: suspect has ${amount}${selectedComparisons.includes(index) ? `, evidence has ${currentCase[index]?.amount}, ${amount === currentCase[index]?.amount ? 'match' : 'different'}` : ''}`}
+                        aria-pressed={selectedComparisons.includes(index)}
+                        onClick={() => {
+                          setComparedClues((current) => ({ ...current, [selectedSuspect.id]: [...new Set([...(current[selectedSuspect.id] || []), index])] }));
+                          setPinnedEvidence(ITEMS[index].name);
+                        }}
+                        className={`flex w-full items-center justify-between rounded-xl border px-3 py-2 text-left transition-colors focus-visible:outline-2 focus-visible:outline-amber-300 max-[480px]:px-2 max-[480px]:py-1.5 ${selectedComparisons.includes(index) ? amount === currentCase[index]?.amount ? 'border-emerald-300/55 bg-emerald-400/15' : 'border-rose-300/55 bg-rose-400/15' : 'border-white/12 bg-white/6'}`}
+                      >
                         <div className="flex items-center gap-2">
                           <span className="h-3 w-3 rounded-full" style={{ backgroundColor: ITEMS[index].color }} />
                           <span className="text-xs font-bold text-white">{ITEMS[index].name}</span>
                         </div>
-                        <span className="text-sm font-black text-amber-200">{amount}</span>
-                      </div>
+                        <span className="text-right text-sm font-black text-amber-200">{amount}{selectedComparisons.includes(index) && <span className="ml-1 text-[10px] text-white">{amount === currentCase[index]?.amount ? 'MATCH' : `≠ ${currentCase[index]?.amount}`}</span>}</span>
+                      </button>
                     ))}
                   </div>
 
@@ -579,7 +595,8 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                     <button
                       type="button"
                       onClick={() => handleAccuse(selectedSuspect.id)}
-                      className="ui-button-primary flex-1 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-[0.14em] max-[480px]:px-3 max-[480px]:py-1.5"
+                      disabled={selectedComparisons.length < 2}
+                      className="ui-button-primary flex-1 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-[0.14em] disabled:cursor-not-allowed disabled:opacity-45 max-[480px]:px-3 max-[480px]:py-1.5"
                     >
                       Accuse
                     </button>
