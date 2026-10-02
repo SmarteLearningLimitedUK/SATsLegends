@@ -1,6 +1,6 @@
 /* The website uses normal document scrolling; game viewport rules remain scoped to the game. */
 html:has(.legends-website-body) { height: auto; overflow-x: clip; overflow-y: auto; overscroll-behavior-x: none; color-scheme: dark; }
-body.legends-website-body { position: static; height: auto; min-height: 100vh; overflow-x: clip; overflow-y: auto; overscroll-behavior-x: none; touch-action: pan-y pinch-zoom; user-select: auto; background: #081b30; }
+body.legends-website-body { position: static; height: auto; min-height: 100vh; overflow-x: clip; overflow-y: visible; overscroll-behavior-x: none; touch-action: pan-y pinch-zoom; user-select: auto; background: #081b30; }
 .legends-website-body #root { height: auto; min-height: 100vh; overflow: visible; }
 .legends-website { --web-gold: #ffd56b; --web-cyan: #79e0ee; --web-muted: #abc2d7; color: #f6f4e9; font-family: 'Fredoka', sans-serif; font-weight: 400; font-size: 16px; line-height: 1.6; background: #081b30; overflow: clip; }
 .legends-website * { box-sizing: border-box; }

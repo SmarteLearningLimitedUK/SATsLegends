@@ -8,6 +8,7 @@ const websiteRoot = fileURLToPath(new URL('../', import.meta.url));
 const englishRoot = path.resolve(process.env.LEXCORIA_DIR || path.join(websiteRoot, '..', 'Lexcoria'));
 const vite = fileURLToPath(new URL('../node_modules/vite/bin/vite.js', import.meta.url));
 const publicEnv = loadEnv('production', websiteRoot, 'VITE_');
+const testLink = process.argv.includes('--test-link');
 
 async function requireProject(root, name) {
   try {
@@ -27,7 +28,9 @@ function build(root, vitePath, env) {
 
 await requireProject(websiteRoot, 'SATs Legends');
 await requireProject(englishRoot, 'Lexcoria');
-build(websiteRoot, vite, { VITE_ASSET_BASE: '/', VITE_ALLOW_GAME_PREVIEW: 'false' });
+build(websiteRoot, vite, { VITE_ASSET_BASE: '/', VITE_ALLOW_GAME_PREVIEW: 'false',
+  ...(testLink ? { VITE_ENGLISH_RELEASED: 'false', VITE_ENGLISH_TESTING: 'true' } : {}),
+});
 build(englishRoot, path.join(englishRoot, 'node_modules', 'vite', 'bin', 'vite.js'), {
   VITE_SITE_EMBED: 'true', VITE_ALLOW_GAME_PREVIEW: 'false',
 });

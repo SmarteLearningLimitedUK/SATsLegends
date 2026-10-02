@@ -25,6 +25,18 @@ The upload folder is `D:\BrainZilla\GitHub\SATsLegends\dist`. Check that both `d
 
 The normal `npm run build` builds the website/Matharia only. A Cloudflare Git build must check out Lexcoria alongside SATsLegends and use `npm run build:with-english`; otherwise `/english/play/` will not exist. For a Direct Upload Pages project, upload the complete combined `dist` folder as one deployment. Test the nested URL directly after deployment. Do not upload the Lexcoria `dist` alone over the website.
 
+## Gated website playtest (no English sales)
+
+To link the English game from `/english` and from eligible child profiles while keeping English checkout disabled, build the combined artifact with the testing switch:
+
+```powershell
+npm run build:with-english -- --test-link
+```
+
+Set the website's public `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` before building; both sibling builds must use the same Supabase project as the deployed website. The switch forces `VITE_ENGLISH_RELEASED=false` for the website build and **does not** set `VITE_ALLOW_GAME_PREVIEW=true`. It does not change the backend catalog or grant access. A signed-in parent still needs an English or bundle entitlement, or a time-limited English complimentary grant, and a selected child profile. If those prerequisites are absent, the game remains gated. The current admin support form grants Matharia only; provision a test grant through the Supabase dashboard with an authorised administrator, not a browser-side bypass.
+
+Deploy this combined `dist` as a Cloudflare Pages preview deployment first (for example, a `lexcoria-test` branch), verify `/english` and `/english/play/`, and run `LEGEND_ENGLISH_TESTING=true` with `LEGEND_QA_URL` pointing to the preview when using `npm run verify:lexcoria`. Pages preview URLs may be publicly reachable, so the entitlement gate must stay enabled. Do not use this build switch as the public English launch flag. A production upload or Git build will not inherit this local testing switch automatically; the uploaded artifact must be the combined test build.
+
 ## Backend and release sequence
 
 1. Apply the Supabase migrations in filename order to the intended project and deploy the `billing`, `stripe-webhook`, `admin-support` and report functions. Preserve existing Matharia Stripe price mappings.

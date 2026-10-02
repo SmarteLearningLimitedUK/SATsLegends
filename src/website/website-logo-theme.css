@@ -33,7 +33,6 @@ body.legends-website-body { background: #14072f; }
 .legends-website .website-hero-note svg { color: var(--web-gold); }
 .legends-website .website-hero-copy h2 { color: var(--web-white); }
 .legends-website .website-hero-copy h2 span { color: var(--web-gold); }
-.legends-website .website-encounter-caption { color: var(--web-gold); background: #230d4de8; border-color: #a98ee173; }
 
 .legends-website .website-header {
   background: linear-gradient(180deg,#31116bf7,#1c0b43f7);

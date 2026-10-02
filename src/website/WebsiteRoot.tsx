@@ -4,7 +4,7 @@ import { ArrowLeft, LoaderCircle } from 'lucide-react';
 import { parseRoute } from '../app/routeConfig';
 import Website from './Website';
 import FamilyAccount from './FamilyAccount';
-import { englishReleased } from './englishRelease';
+import { englishPlayable } from './englishRelease';
 import './website.css';
 import './website-premium.css';
 import './website-adventure.css';
@@ -23,8 +23,8 @@ export default function WebsiteRoot() {
 
 function WebsiteContent() {
   const { pathname } = useLocation();
-  const isUnreleasedEnglishRoute = pathname.startsWith('/english/');
-  const isWebsite = websiteRoutes.has(pathname.replace(/\/+$/, '') || '/') || pathname.startsWith('/parent') || isUnreleasedEnglishRoute;
+  const isEnglishAssetRoute = pathname.startsWith('/english/');
+  const isWebsite = websiteRoutes.has(pathname.replace(/\/+$/, '') || '/') || pathname.startsWith('/parent') || isEnglishAssetRoute;
   const gameScreen = parseRoute(pathname).screen;
   const isMinigame = gameScreen === 'gameplay';
   const hasGameDock = !['splash', 'avatar_selection', 'profile_setup'].includes(gameScreen);
@@ -39,7 +39,7 @@ function WebsiteContent() {
     return () => document.body.classList.remove('legends-website-body');
   }, [isWebsite, pathname]);
 
-  if (isUnreleasedEnglishRoute) return englishReleased
+  if (isEnglishAssetRoute) return englishPlayable
     ? <main id="website-main" className="website-container family-main"><h1>Lexcoria files are not in this deployment.</h1><p>Please contact SATs Legends support.</p><Link to="/english">Back to Lexcoria</Link></main>
     : <Navigate to="/english" replace />;
   if (isWebsite) return <Website />;
