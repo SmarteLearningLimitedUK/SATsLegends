@@ -12,8 +12,9 @@ import Videos from './Videos';
 import Account, { AuthCallback } from './ParentAccount';
 import Subscriptions from './Subscriptions';
 import { useFamily } from './FamilyAccount';
-import AdventureArtwork, { AdventureBackdrop } from './AdventureArtwork';
-import valley from '../assets/website/adventure-valley-v1.webp';
+import { AdventureBackdrop } from './AdventureArtwork';
+import heroActionWide from '../assets/website/hero-action-wide.webp';
+import heroActionMobile from '../assets/website/hero-action-mobile.webp';
 import SplashLogo from './SplashLogo';
 import GameplayGallery from './GameplayGallery';
 import EnglishLanding from './EnglishLanding';
@@ -42,7 +43,10 @@ function Home() {
 
   return <main id="website-main">
     <section className="website-hero">
-      <img className="website-hero-landscape" src={valley} alt="" aria-hidden="true" fetchPriority="high" />
+      <picture className="website-hero-action-art">
+        <source media="(max-width: 580px)" srcSet={heroActionMobile} />
+        <img src={heroActionWide} alt="Barratt and the Monster Minds face off on a Matharia adventure path" fetchPriority="high" decoding="async" />
+      </picture>
       <div className="website-hero-glow" aria-hidden="true" />
       <div className="website-container website-hero-inner">
         <motion.div className="website-hero-copy" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
@@ -56,7 +60,6 @@ function Home() {
           </div>
           <p className="website-hero-note"><Check size={15} /> Matharia · From £4.99/month · One child profile</p>
         </motion.div>
-        <AdventureArtwork />
       </div>
       <div className="website-hero-bottom" aria-hidden="true" />
     </section>
