@@ -29,7 +29,7 @@ export function openBilling(url: string) {
   if (target.protocol !== 'https:' || !['checkout.stripe.com', 'billing.stripe.com'].includes(target.hostname)) throw new Error('Unexpected billing address.');
   window.location.assign(target.href);
 }
-export async function adminSupportRequest(query?: { q?: string; page?: number; pendingDeletion?: boolean }, action?: { action: 'grant' | 'revoke' | 'reset' | 'suspend' | 'reactivate'; targetId: string; reason: string }) {
+export async function adminSupportRequest(query?: { q?: string; page?: number; pendingDeletion?: boolean }, action?: { action: 'grant' | 'revoke' | 'reset' | 'suspend' | 'reactivate'; targetId: string; reason: string; product?: 'matharia' | 'english' }) {
   if (!supabase) throw new Error('Accounts are not available yet.');
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) throw new Error('Please log in again.');

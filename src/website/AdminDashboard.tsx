@@ -6,6 +6,7 @@ import { adminSupportRequest } from './services/supabase';
 import './admin.css';
 
 type Action = 'grant' | 'revoke' | 'reset' | 'suspend' | 'reactivate';
+type GrantProduct = 'matharia' | 'english';
 type PaidPlan = { product_code: string; status: string; interval: string; current_period_end: string; cancel_at_period_end?: boolean };
 type FreeGrant = { product_code: string; valid_until: string; revoked_at: string | null };
 type Account = {
@@ -23,9 +24,13 @@ type ReportHealth = {
 type Listing = { accounts: Account[]; total: number; truncated: boolean; page: number; reportHealth?: ReportHealth; pendingDeletionRequests?: number };
 const date = (value: string | null | undefined) => value ? new Date(value).toLocaleString('en-GB') : '—';
 const labels: Record<Action, string> = {
-  grant: 'Grant one year free Matharia', revoke: 'Revoke free Matharia access', reset: 'Send password reset',
+  grant: 'Grant one year free', revoke: 'Revoke free', reset: 'Send password reset',
   suspend: 'Suspend account', reactivate: 'Reactivate account',
 };
+const actionLabel = (action: Action, product: GrantProduct) =>
+  action === 'grant' || action === 'revoke'
+    ? `${labels[action]} ${product === 'english' ? 'Lexcoria' : 'Matharia'}${action === 'revoke' ? ' access' : ''}`
+    : labels[action];
 
 export default function AdminDashboard() {
   const family = useFamily();
@@ -57,14 +62,16 @@ export default function AdminDashboard() {
   function submitSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setPage(1); setPendingOnly(false); setSearch(searchInput.trim());
   }
-  async function run(account: Account, action: Action) {
+  async function run(account: Account, action: Action, product: GrantProduct = 'matharia') {
     const explanation = (reason[account.id] || '').trim();
     if (explanation.length < 5) { setError('Enter a reason of at least five characters for the audit log.'); return; }
-    if (!window.confirm(`${labels[action]} for ${account.email || account.id}?\n\nReason: ${explanation}`)) return;
-    setBusy(`${account.id}:${action}`); setError(''); setNotice('');
+    const label = actionLabel(action, product);
+    if (!window.confirm(`${label} for ${account.email || account.id}?\n\nReason: ${explanation}`)) return;
+    setBusy(`${account.id}:${action}:${product}`); setError(''); setNotice('');
     try {
-      await adminSupportRequest(undefined, { action, targetId: account.id, reason: explanation });
-      setNotice(`${labels[action]} completed for ${account.email || account.id}.`);
+      await adminSupportRequest(undefined, { action, targetId: account.id, reason: explanation,
+        ...(action === 'grant' || action === 'revoke' ? { product } : {}) });
+      setNotice(`${label} completed for ${account.email || account.id}.`);
       setReason(current => ({ ...current, [account.id]: '' }));
       setRevision(value => value + 1);
       if (account.id === family.session?.user.id) await family.refresh();
@@ -96,6 +103,7 @@ export default function AdminDashboard() {
         && new Date(grant.valid_until).getTime() > Date.now());
       const free = activeGrants.length > 0;
       const mathariaGrant = activeGrants.some(grant => grant.product_code === 'matharia');
+      const englishGrant = activeGrants.some(grant => grant.product_code === 'english');
       return <section className="family-panel admin-account" key={account.id}>
         <div className="admin-account-heading"><div><h2>{account.email || 'No email address'}</h2><p>{account.id}</p></div><strong className={account.suspension ? 'admin-status admin-status-alert' : 'admin-status'}>{account.suspension ? 'Suspended' : paid ? 'Paid plan' : free ? 'Complimentary grant' : 'No active access'}</strong></div>
         <div className="admin-account-facts"><p><strong>Email:</strong> {account.confirmed ? 'Verified' : 'Unverified'}</p><p><strong>Joined:</strong> {date(account.createdAt)}</p><p><strong>Child:</strong> {account.nickname || 'None yet'}</p><p><strong>Progress saved:</strong> {date(account.lastSaved)}</p><p><strong>Paid plans:</strong> {subscriptions.length ? subscriptions.map(plan => `${plan.product_code} · ${plan.status} · ${plan.interval} · to ${date(plan.current_period_end)}`).join('; ') : 'None'}</p><p><strong>Free grants:</strong> {activeGrants.length ? activeGrants.map(grant => `${grant.product_code} · until ${date(grant.valid_until)}`).join('; ') : 'None'}</p><p><strong>Reports:</strong> {account.reports ? account.reports.report_emails ? `On · next ${date(account.reports.next_report_at)}` : 'Off' : 'Unavailable'}</p>{account.deletionRequestedAt && <p><strong>Account deletion requested:</strong> {date(account.deletionRequestedAt)} · Review billing before any deletion.</p>}{account.suspension && <p><strong>Suspension reason:</strong> {account.suspension.reason}</p>}</div>
@@ -103,6 +111,8 @@ export default function AdminDashboard() {
         <div className="admin-actions">
           {!mathariaGrant && <button disabled={Boolean(busy)} onClick={() => void run(account, 'grant')}>Grant one year free Matharia</button>}
           {mathariaGrant && <button disabled={Boolean(busy)} onClick={() => void run(account, 'revoke')}>Revoke free Matharia access</button>}
+          {!englishGrant && <button disabled={Boolean(busy)} onClick={() => void run(account, 'grant', 'english')}>Grant one year free Lexcoria</button>}
+          {englishGrant && <button disabled={Boolean(busy)} onClick={() => void run(account, 'revoke', 'english')}>Revoke free Lexcoria access</button>}
           <button disabled={Boolean(busy) || !account.email} onClick={() => void run(account, 'reset')}>Send password reset</button>
           {account.suspension ? <button disabled={Boolean(busy)} onClick={() => void run(account, 'reactivate')}>Reactivate</button>
             : <button disabled={Boolean(busy) || account.id === family.session?.user.id} onClick={() => void run(account, 'suspend')}>Suspend</button>}

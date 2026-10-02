@@ -3,8 +3,9 @@ import type { User } from 'npm:@supabase/supabase-js@2.117.2';
 
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 type Action = 'grant' | 'revoke' | 'reset' | 'suspend' | 'reactivate';
+type GrantProduct = 'matharia' | 'english';
 
-async function bodyFor(request: Request): Promise<{ action: Action; targetId: string; reason: string }> {
+async function bodyFor(request: Request): Promise<{ action: Action; targetId: string; reason: string; product: GrantProduct }> {
   if (!request.headers.get('content-type')?.toLowerCase().startsWith('application/json')) throw new HttpError(415, 'Send a JSON request.');
   const reader = request.body?.getReader();
   if (!reader) throw new HttpError(400, 'Missing request.');
@@ -26,15 +27,19 @@ async function bodyFor(request: Request): Promise<{ action: Action; targetId: st
     for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.length; }
     body = JSON.parse(new TextDecoder().decode(bytes));
   } catch { throw new HttpError(400, 'Invalid request.'); }
-  if (!body || Array.isArray(body) || typeof body !== 'object' || Object.keys(body).some(key => !['action', 'targetId', 'reason'].includes(key))) {
+  if (!body || Array.isArray(body) || typeof body !== 'object' || Object.keys(body).some(key => !['action', 'targetId', 'reason', 'product'].includes(key))) {
     throw new HttpError(400, 'Invalid request.');
   }
+  const accessAction = body.action === 'grant' || body.action === 'revoke';
   if (!['grant', 'revoke', 'reset', 'suspend', 'reactivate'].includes(String(body.action))
     || typeof body.targetId !== 'string' || !uuid.test(body.targetId)
-    || typeof body.reason !== 'string' || body.reason.trim().length < 5 || body.reason.length > 300) {
+    || typeof body.reason !== 'string' || body.reason.trim().length < 5 || body.reason.length > 300
+    || (body.product !== undefined && (!accessAction || (body.product !== 'matharia' && body.product !== 'english')))) {
     throw new HttpError(400, 'Choose an account and enter a short reason.');
   }
-  return { action: body.action as Action, targetId: body.targetId, reason: body.reason.trim() };
+  // Older Matharia clients omit product during a staged website/function rollout.
+  return { action: body.action as Action, targetId: body.targetId, reason: body.reason.trim(),
+    product: body.product === 'english' ? 'english' : 'matharia' };
 }
 
 Deno.serve(async request => {
@@ -131,7 +136,7 @@ Deno.serve(async request => {
         pendingDeletionRequests: pendingDeletionRequests.count ?? 0 }, 200, true);
     }
 
-    const { action, targetId, reason } = await bodyFor(request);
+    const { action, targetId, reason, product } = await bodyFor(request);
     const targetResult = await db.auth.admin.getUserById(targetId);
     if (targetResult.error || !targetResult.data.user) throw new HttpError(404, 'Account not found.');
     if (targetId === actor.id && (action === 'suspend' || action === 'reactivate')) throw new HttpError(400, 'You cannot change your own suspension.');
@@ -144,17 +149,18 @@ Deno.serve(async request => {
         .eq('outcome', 'succeeded').gte('created_at', new Date(Date.now() - 10 * 60000).toISOString()).limit(1));
       if (recent?.length) throw new HttpError(429, 'A reset email was sent recently. Try again later.');
     }
+    const auditAction = product === 'english' && (action === 'grant' || action === 'revoke') ? `${action}:english` : action;
     const audit = checked(await db.from('admin_actions').insert({ actor_id: actor.id, target_id: targetId,
-      action, reason, outcome: 'started' }).select('id').single());
+      action: auditAction, reason, outcome: 'started' }).select('id').single());
     if (!audit) throw new Error('Unable to record admin action');
     auditId = audit.id;
     if (action === 'grant') {
-      checked(await db.from('complimentary_access').upsert({ parent_id: targetId, product_code: 'matharia',
+      checked(await db.from('complimentary_access').upsert({ parent_id: targetId, product_code: product,
         valid_until: new Date(Date.now() + 365 * 86400000).toISOString(), reason, granted_by: actor.id,
         granted_at: new Date().toISOString(), revoked_at: null }));
     } else if (action === 'revoke') {
       checked(await db.from('complimentary_access').update({ revoked_at: new Date().toISOString() })
-        .eq('parent_id', targetId).eq('product_code', 'matharia'));
+        .eq('parent_id', targetId).eq('product_code', product));
     } else if (action === 'reset') {
       if (!targetResult.data.user.email) throw new HttpError(400, 'This account has no email address.');
       const result = await db.auth.resetPasswordForEmail(targetResult.data.user.email, { redirectTo: `${appUrl()}/reset-password` });
