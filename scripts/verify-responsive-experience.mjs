@@ -27,6 +27,20 @@ for (const [name, engine, options] of profiles) {
     for (const route of ['/', '/for-parents', '/revision', '/videos', '/subscriptions', '/signup', '/login', '/forgot-password']) {
       await page.goto(base + route);
       await page.locator('main').waitFor();
+      let baseStylesReady = false;
+      try {
+        await page.waitForFunction(() => {
+          const root = document.getElementById('root');
+          if (!root) return false;
+          const htmlStyle = getComputedStyle(document.documentElement);
+          const bodyStyle = getComputedStyle(document.body);
+          const rootStyle = getComputedStyle(root);
+          return htmlStyle.getPropertyValue('--sat-pill-height').trim() === '3rem'
+            && bodyStyle.marginLeft === '0px' && bodyStyle.marginRight === '0px'
+            && [htmlStyle, bodyStyle, rootStyle].every(style => style.borderLeftWidth === '0px' && style.borderRightWidth === '0px');
+        }, null, { timeout: 8000 });
+        baseStylesReady = true;
+      } catch { /* Keep collecting layout diagnostics if the base stylesheet never becomes ready. */ }
       await page.evaluate(() => document.fonts.ready);
       const layout = await page.evaluate(() => {
         const width = document.documentElement.clientWidth;
@@ -43,11 +57,15 @@ for (const [name, engine, options] of profiles) {
             left: rect.left, right: rect.right, width: rect.width,
             clientWidth: element.clientWidth, scrollWidth: element.scrollWidth,
             cssWidth: style.width, overflowX: style.overflowX, position: style.position,
+            margin: style.margin, padding: style.padding, border: style.border,
+            boxSizing: style.boxSizing, inlineStyle: element.getAttribute('style') || undefined,
           };
         };
         const overflow = scrollWidth > width + 1 ? {
           innerWidth: window.innerWidth,
           visualViewportWidth: window.visualViewport?.width,
+          styleSources: [...document.querySelectorAll('style[data-vite-dev-id], link[rel="stylesheet"]')]
+            .map(element => element.getAttribute('data-vite-dev-id') || element.getAttribute('href')),
           structural: [document.documentElement, document.body, document.getElementById('root'), document.querySelector('.legends-website'), document.querySelector('main')].map(describe),
           offenders: [...document.querySelectorAll('*')]
             .filter(element => element.getBoundingClientRect().right > width + 1)
@@ -55,8 +73,8 @@ for (const [name, engine, options] of profiles) {
         } : undefined;
         return { width, scrollWidth, heading: heading && { left: heading.left, right: heading.right }, fields, overflow };
       });
-      check(layout.scrollWidth <= layout.width + 1 && (!layout.heading || (layout.heading.left >= -1 && layout.heading.right <= layout.width + 1))
-        && (layout.width > 580 || layout.fields.every(size => size >= 16)), name, route, layout);
+      check(baseStylesReady && layout.scrollWidth <= layout.width + 1 && (!layout.heading || (layout.heading.left >= -1 && layout.heading.right <= layout.width + 1))
+        && (layout.width > 580 || layout.fields.every(size => size >= 16)), name, route, { baseStylesReady, ...layout });
     }
     await page.goto(base + '/map');
     await page.locator('[data-qa-screen="world_map"]').waitFor();
