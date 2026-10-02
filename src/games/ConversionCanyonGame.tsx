@@ -267,7 +267,8 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
             className="shrink-0"
             style={{ position: 'relative', top: 0, width: '100%', transform: 'none' }}
           >
-            {feedback ? <span role="status" aria-live="polite">{feedback.text}</span> : <>Match <strong>{toKgLabel(round.targetGrams)}</strong> exactly.</>}
+            <span className="block">Match <strong>{toKgLabel(round.targetGrams)}</strong> exactly.</span>
+            {feedback && <span role="status" aria-live="polite" className="mt-1 block text-sm leading-snug">{feedback.text}</span>}
           </GameQuestionCard>
 
           <motion.div

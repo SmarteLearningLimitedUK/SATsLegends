@@ -188,6 +188,14 @@ for (const profile of profiles) {
           }
         }
         if (game.key === 'data_detective') {
+          const lineup = page.locator('.detective-lineup');
+          const lineupBounds = await lineup.boundingBox();
+          for (const suspect of await lineup.locator('> button').all()) {
+            const bounds = await suspect.boundingBox();
+            expect(bounds.x).toBeGreaterThanOrEqual(lineupBounds.x - 1);
+            expect(bounds.x + bounds.width).toBeLessThanOrEqual(lineupBounds.x + lineupBounds.width + 1);
+          }
+          expect(await lineup.evaluate(node => node.scrollWidth <= node.clientWidth + 1)).toBe(true);
           const pin = page.locator('.detective-evidence-pin').first();
           await pin.click(); await expect(pin).toHaveAttribute('aria-pressed', 'true');
           for (const suspect of await page.locator('.detective-lineup > button').all()) {

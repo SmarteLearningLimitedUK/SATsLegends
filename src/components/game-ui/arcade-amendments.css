@@ -38,8 +38,8 @@
 .detective-evidence-pins { display:grid; grid-template-columns:1fr 1fr; gap:5px; }
 .detective-evidence-pin { display:flex; align-items:center; gap:6px; min-height:44px; padding:5px 8px; border-radius:8px; border:1px solid #91b9ce70; background:#0b203bea; color:#f1f8ff; text-align:left; font-size:max(14px,calc(14px / var(--game-stage-scale,1))); line-height:1.2; }
 .detective-evidence-pin[aria-pressed=true] { border-color:#8bf5ca; background:#123f4e; }
-.detective-lineup { display:flex!important; gap:8px!important; overflow-x:auto; padding:3px 2px 6px; scroll-snap-type:x mandatory; }
-#root .detective-lineup > button { flex:0 0 88px; height:102px; aspect-ratio:auto!important; scroll-snap-align:start; flex-direction:column; }
+.detective-lineup { display:grid!important; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px!important; overflow:visible; padding:3px 2px 6px; }
+#root .detective-lineup > button { min-width:0; width:100%; height:102px; aspect-ratio:auto!important; flex-direction:column; }
 .detective-suspect-name { font-size:14px; color:#f1f8ff; line-height:1.1; text-align:center; padding-top:4px; }
 .detective-suspect-portrait { flex:1; min-height:0; }
 #root .detective-dossier { max-height:calc(100% - 12px); background:#081c38; }

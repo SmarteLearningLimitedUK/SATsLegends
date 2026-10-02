@@ -260,9 +260,9 @@ async function conversionFlow(page,profile,motion,levels){
   const tokens=await page.locator('[data-conversion-token]').evaluateAll(nodes=>nodes.map(node=>({id:node.dataset.conversionToken,label:node.querySelector('span').textContent.trim()})));
   for(const token of tokens){const match=token.label.match(/^([\d.,]+) (kg|g)$/);expect(match).toBeTruthy();token.grams=number(match[1])*(match[2]==='kg'?1000:1);}
   for(const button of await page.locator('[data-conversion-token]').all())await hit(button);
-  const targetCopy=await page.locator('[data-question-copy]').innerText();const target=number(targetCopy.match(/totals ([\d.,]+) kg/)[1])*1000;
+  const targetCopy=await page.locator('[data-question-copy]').innerText();const targetMatch=targetCopy.match(/(?:totals|Match) ([\d.,]+) kg/);expect(targetMatch,'Visible kilogram target').toBeTruthy();const target=number(targetMatch[1])*1000;
   const before=await telemetry(page);const lifeBefore=await lives(page);
-  await tap(page,profile,page.getByRole('button',{name:'Submit Shipment',exact:true}));await expect(page.getByText('Still unbalanced. Adjust the weights and try again.',{exact:true})).toBeVisible();expect(await lives(page)).toBe(lifeBefore);
+  await tap(page,profile,page.getByRole('button',{name:'Submit Shipment',exact:true}));await expect(page.getByRole('status').filter({hasText:/short\. Add more weight\./})).toBeVisible();await expect(page.locator('[data-question-copy]')).toContainText(`Match ${target/1000} kg exactly.`);expect(await lives(page)).toBe(lifeBefore);
   const token=page.locator(`[data-conversion-token="${tokens[0].id}"]`);await tap(page,profile,token);await expect(page.locator('[data-conversion-load]')).toHaveAttribute('data-conversion-load',String(tokens[0].grams));
   const remove=page.locator('[data-conversion-tray] button').first();await hit(remove);await tap(page,profile,remove);await expect(page.locator('[data-conversion-load]')).toHaveAttribute('data-conversion-load','0');
   let solution=null;

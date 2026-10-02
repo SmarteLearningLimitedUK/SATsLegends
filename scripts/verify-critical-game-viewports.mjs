@@ -15,7 +15,12 @@ const dismissBriefings = async (page) => {
   for (let attempt = 0; attempt < 3; attempt += 1) {
     const action = page.locator('[data-dialog-primary]:visible').first();
     if (await action.count() === 0) break;
-    await action.click();
+    try { await action.click({ timeout: 5000 }); }
+    catch (error) {
+      // The briefing can unmount as the click commits during a viewport resize.
+      if (await action.count() === 0) break;
+      throw error;
+    }
     await page.waitForTimeout(180);
   }
 };
