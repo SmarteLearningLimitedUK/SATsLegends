@@ -43,10 +43,30 @@
 .lava-crossing-art { position: absolute; inset: 0; width: 100%; height: 100%; }
 .lava-crossing-status {
   position: absolute; top: 8px; left: 12px; z-index: 3;
+  max-width: calc(35% - 15px);
   border: 1px solid #ffd89088; border-radius: 9px;
   background: #402216e8; color: #ffedc4; padding: 5px 9px;
-  font-size: var(--legend-label-size, 14px); font-weight: 800;
+  font-size: var(--legend-label-size, 14px); font-weight: 800; line-height: 1.15;
 }
+.lava-conversion-lens {
+  position: absolute; top: 7px; right: 8px; z-index: 5;
+  display: grid; gap: 4px; width: min(61%, 252px); padding: 8px;
+  border: 2px solid #e8c57e; border-radius: 13px;
+  background: linear-gradient(160deg, #133e4fee, #132b3ff5);
+  color: #f5f6e9; box-shadow: 0 8px 18px #20100baa, inset 0 1px 0 #ffffff33;
+}
+.lava-conversion-lens-title { color: #ffd77b; font-size: 11px; font-weight: 950; letter-spacing: .08em; text-transform: uppercase; }
+.lava-conversion-lens-equation { display: flex; flex-wrap: wrap; align-items: center; gap: 3px 7px; font-size: 13px; font-weight: 750; }
+.lava-conversion-lens-equation strong { color: white; font-size: 15px; font-variant-numeric: tabular-nums; }
+.lava-conversion-lens-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px; }
+.lava-conversion-lens-controls button {
+  min-height: max(44px, var(--refinement-hit-size)); padding: 4px; border: 1px solid #80c8d5;
+  border-radius: 8px; background: #185169; color: white; font-size: 14px; font-weight: 900;
+  touch-action: manipulation;
+}
+.lava-conversion-lens-controls button[aria-pressed='true'] { border-color: #fff0ac; background: #f3c558; color: #243343; box-shadow: 0 0 0 2px #f3c55844; }
+.lava-conversion-lens-controls button:focus-visible { outline: 3px solid white; outline-offset: 2px; }
+.lava-conversion-lens-output { min-height: 2.2em; color: #def7ed; font-size: 11px; font-weight: 750; line-height: 1.15; font-variant-numeric: tabular-nums; }
 .lava-crossing-hero { position: absolute; z-index: 4; width: clamp(42px, 10vw, 64px); height: clamp(46px, 11vw, 70px); }
 .lava-crossing-hero img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 6px 2px #29150c88); }
 .lava-crossing-hero-shadow { position: absolute; bottom: 0; left: 18%; width: 64%; height: 9px; border-radius: 50%; background: #1a202bbb; }
@@ -119,6 +139,10 @@
 
 @media (max-height: 700px) {
   .lava-crossing-layout, .perimeter-layout, .reactor-layout, .chrono-layout { gap: 5px; padding-bottom: 5px; }
+  .lava-conversion-lens { gap: 2px; padding: 5px; }
+  .lava-conversion-lens-equation { font-size: 11px; }
+  .lava-conversion-lens-equation strong { font-size: 12px; }
+  .lava-conversion-lens-output { min-height: 1.3em; }
   .perimeter-board { min-height: 280px; }
   .chrono-clock { width: min(100%, max(205px, calc(205px / var(--game-stage-scale, 1)))); }
   .reactor-machine { max-height: 280px; }
