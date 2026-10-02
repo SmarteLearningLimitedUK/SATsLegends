@@ -42,7 +42,7 @@ async function open(page, route) {
     const signature = () => page.evaluate(() => {
       const question = document.querySelector('[data-game-question]');
       if (!question) return null;
-      return [question, ...document.querySelectorAll('.game-shell-host button')].map((node) => {
+      return [question, ...document.querySelectorAll('.game-shell-host button:not([aria-label^="Pop number"])')].map((node) => {
         const r = node.getBoundingClientRect(); return [r.x, r.y, r.width, r.height].map((value) => Math.round(value * 2));
       });
     });

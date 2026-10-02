@@ -6,6 +6,7 @@ import { billingRequest, openBilling, supabase } from './services/supabase';
 import { buildParentReport } from '../systems/progression/reporting';
 import { createDefaultPlayer } from '../app/usePlayerProgression';
 import type { PlayerData } from '../types';
+import ParentPasskeys from './ParentPasskeys';
 
 export function PrivateParentPage({ children }: { children: ReactNode }) {
   const family = useFamily();
@@ -77,6 +78,7 @@ function ParentDashboard() {
           await family.refresh();
         }).finally(() => setPendingReportValue(null));
       }} />Send me progress reports</label><p className="family-small">Switch emails off whenever you like. Your progress dashboard remains available.</p></div></section>
+    <ParentPasskeys />
   </main>;
 }
 

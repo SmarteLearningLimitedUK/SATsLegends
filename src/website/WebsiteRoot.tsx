@@ -22,7 +22,9 @@ export default function WebsiteRoot() {
 function WebsiteContent() {
   const { pathname } = useLocation();
   const isWebsite = websiteRoutes.has(pathname.replace(/\/+$/, '') || '/') || pathname.startsWith('/parent');
-  const isMinigame = parseRoute(pathname).screen === 'gameplay';
+  const gameScreen = parseRoute(pathname).screen;
+  const isMinigame = gameScreen === 'gameplay';
+  const hasGameDock = !['splash', 'avatar_selection', 'profile_setup'].includes(gameScreen);
 
   useLayoutEffect(() => {
     document.body.classList.toggle('legends-website-body', isWebsite);
@@ -40,6 +42,6 @@ function WebsiteContent() {
     <Suspense fallback={<div className="website-game-loading"><LoaderCircle className="website-spinner" /><p>Opening your adventure…</p></div>}><GameGate>
       <Game />
     </GameGate></Suspense>
-    {isMinigame ? null : <Link className="website-return" to="/" aria-label="Return to SATs Legends website"><ArrowLeft size={16} /><span>Website</span></Link>}
+    {isMinigame ? null : <Link className={`website-return${hasGameDock ? ' website-return-above-dock' : ''}`} to="/" aria-label="Return to SATs Legends website"><ArrowLeft size={16} /><span>Website</span></Link>}
   </>;
 }

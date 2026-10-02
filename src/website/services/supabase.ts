@@ -3,8 +3,11 @@ import { createClient } from '@supabase/supabase-js';
 const url = import.meta.env.VITE_SUPABASE_URL?.trim();
 const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim();
 export const accountsConfigured = Boolean(url && key && /^https?:\/\//.test(url));
+export const googleAuthEnabled = accountsConfigured && import.meta.env.VITE_GOOGLE_AUTH_ENABLED === 'true';
+export const appleAuthEnabled = accountsConfigured && import.meta.env.VITE_APPLE_AUTH_ENABLED === 'true';
+export const passkeyAuthEnabled = accountsConfigured && import.meta.env.VITE_PASSKEY_AUTH_ENABLED === 'true';
 export const supabase = accountsConfigured ? createClient(url!, key!, {
-  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
+  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, experimental: { passkey: true } },
 }) : null;
 
 export async function billingRequest(body?: { action: 'checkout' | 'portal'; interval?: 'month' | 'year' }) {

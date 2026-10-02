@@ -1,6 +1,6 @@
 /* The website uses normal document scrolling; game viewport rules remain scoped to the game. */
-html:has(.legends-website-body) { height: auto; overflow: auto; color-scheme: dark; }
-body.legends-website-body { position: static; height: auto; min-height: 100vh; overflow: auto; touch-action: auto; user-select: auto; background: #081b30; }
+html:has(.legends-website-body) { height: auto; overflow-x: clip; overflow-y: auto; overscroll-behavior-x: none; color-scheme: dark; }
+body.legends-website-body { position: static; height: auto; min-height: 100vh; overflow-x: clip; overflow-y: auto; overscroll-behavior-x: none; touch-action: pan-y pinch-zoom; user-select: auto; background: #081b30; }
 .legends-website-body #root { height: auto; min-height: 100vh; overflow: visible; }
 .legends-website { --web-gold: #ffd56b; --web-cyan: #79e0ee; --web-muted: #abc2d7; color: #f6f4e9; font-family: 'Fredoka', sans-serif; font-weight: 400; font-size: 16px; line-height: 1.6; background: #081b30; overflow: clip; }
 .legends-website * { box-sizing: border-box; }
@@ -218,6 +218,16 @@ body.legends-website-body { position: static; height: auto; min-height: 100vh; o
 .website-account-form-wrap input { width: 100%; background: #081d33; border: 1px solid #416079; padding: 13px 14px; border-radius: 8px; color: #fff; font-size: 14px; user-select: text; min-height: 47px; }
 .website-account-form-wrap input::placeholder { color: #728fa8; font-weight: 400; }.website-account-form-wrap form > button { margin-top: 7px; }
 .website-password-field { position: relative; }.website-password-field input { padding-right: 47px; }.website-password-field button { position: absolute; right: 7px; top: 7px; padding: 7px; color: #a6c2d8; background: none; border: none; border-radius: 5px; }
+.website-alternative-auth { margin-top: 27px; }
+.website-auth-divider { display: flex; align-items: center; gap: 12px; color: #c5beeb; font-size: 13px; text-align: center; }
+.website-auth-divider::before,.website-auth-divider::after { content: ''; flex: 1; height: 1px; background: #b6afe34d; }
+.website-social-consent { margin: 20px 0 14px; }
+.website-social-options { display: grid; gap: 11px; }
+.legends-website .website-social-button { width: 100%; min-height: 48px; padding: 11px 16px; color: #f0eef7; border: 1px solid #a98ee199; border-radius: 11px; background: linear-gradient(145deg,#3b1978,#24104f); box-shadow: inset 0 1px 0 #ffffff24,0 3px 0 #120728; font-weight: 600; cursor: pointer; }
+.legends-website .website-social-button:is(:hover,:focus-visible) { background: linear-gradient(145deg,#5126a0,#321468); border-color: #d2bfff; }
+.legends-website .website-social-button:disabled { opacity: .5; cursor: not-allowed; }
+.website-passkey-button { margin-top: 11px; }
+.website-auth-help { margin-top: 12px !important; font-size: 12px !important; color: #c5beeb !important; }
 .website-account-switch { text-align: center; padding-top: 15px; }.website-account-switch a { color: #ffd56b; margin-left: 5px; }
 .website-account-guest { display: flex; align-items: center; justify-content: center; gap: 9px; font-size: 12px; color: #96b2c9 !important; padding-top: 24px; margin-top: 23px; border-top: 1px solid #ffffff14; }
 .website-account-success { display: flex; flex-direction: column; align-items: flex-start; gap: 19px; }.website-account-success > svg { color: #8ce3bd; }.website-account-success h2 { overflow-wrap: anywhere; }.website-account-success p:not(.website-eyebrow) { color: #b0c8dc; font-size: 14px; }.website-account-success .website-text-link { font-size: 13px; }
@@ -245,6 +255,8 @@ body.legends-website-body { position: static; height: auto; min-height: 100vh; o
   .website-account-main { gap: 28px; padding-top: 38px; }.website-account-world h1 { font-size: 34px; }.website-account-world > p { font-size: 14px; }.website-account-world > img { width: 420px; left: -75px; bottom: -45px; }.website-account-caption { left: 15px; bottom: 35px; }.website-account-form-wrap { padding: 25px; }.website-account-form-wrap h2 { font-size: 28px; }
 }
 @media (max-width: 580px) {
+  /* iOS zooms focused fields smaller than 16px, then leaves subsequent pages pannable. */
+  .legends-website :is(input:not([type="checkbox"]), select, textarea) { font-size: 16px; }
   .website-header-inner { height: 72px; }.website-brand b { font-size: 24px; }.website-brand strong { font-size: 13px; }.website-brand-gem { width: 35px; height: 42px; }.website-brand { gap: 8px; }.website-header-actions { gap: 13px; }.website-header-actions > .website-login { display: none; }.website-header-actions .website-button { min-height: 38px; font-size: 12px; padding: 8px 12px; gap: 7px; }.website-menu-button { padding: 6px; }.website-demo-name { max-width: 110px; font-size: 12px; }
   .website-hero,.website-hero-inner { min-height: 765px; }.website-hero-inner { align-items: flex-start; }.website-hero-copy { width: 100%; padding-top: 34px; padding-bottom: 0; }.website-hero-copy > .website-eyebrow { margin-bottom: 20px; font-size: 9px; }.website-hero-title { font-size: 87px !important; }.website-title-star { right: -33px; top: -29px; font-size: 28px; }.website-hero-copy h2 { margin-top: 20px; font-size: 28px; }.website-hero-description { margin-top: 9px !important; font-size: 15px; max-width: 350px; }.website-hero-actions { margin-top: 22px; flex-wrap: nowrap; gap: 10px; }.website-hero-actions .website-button { font-size: 13px; min-height: 49px; padding: 11px 14px; gap: 8px; }.website-hero-actions .website-button svg { width: 18px; }.website-hero-note { font-size: 10px; margin-top: 16px !important; }
   .website-hero-art { width: 100%; top: 255px; background-position: center 68%; }.website-hero::before { background: linear-gradient(180deg,#0a213a 0%,#0a213a 31%,#0a213aea 46%,#0a213a15 71%,#081b30 100%); }.website-hero-glow { width: 80%; height: 40%; top: 58%; }
@@ -257,5 +269,6 @@ body.legends-website-body { position: static; height: auto; min-height: 100vh; o
   .website-video-grid { grid-template-columns: 1fr; gap: 22px; }.website-video-card-copy { padding: 22px; }.website-video-card h2 { font-size: 27px; }.website-video-card-copy > p:not(.website-topic-category) { min-height: 0; }.website-video-learning-tip { gap: 17px; padding: 25px 0; margin-top: 35px; }.website-video-learning-tip > div { min-width: 230px; }.website-video-learning-tip > a { width: 100%; margin-left: 0; }.website-video-learning-tip h2 { font-size: 24px; }.website-video-dialog-content { padding: 20px; }.website-video-dialog-content h2 { font-size: 26px; }
   .website-account-main { grid-template-columns: 1fr; gap: 27px; padding-top: 30px; padding-bottom: 40px; }.website-account-world { min-height: 0; padding-top: 0; }.website-account-world h1 { font-size: 35px; }.website-account-world > img,.website-account-caption,.website-account-world::before { display: none; }.website-account-world > p:not(.website-eyebrow) { margin-top: 12px; }.website-account-world > p > br { display: none; }.website-account-form-wrap { padding: 26px 23px; }.website-account-form-wrap h2 { font-size: 31px; }
   .website-return { right: calc(env(safe-area-inset-right) + 6px); bottom: calc(env(safe-area-inset-bottom) + 8px); padding: 8px 6px; font-size: 11px; }.website-return svg { display: none; }
+  .website-return-above-dock { bottom: calc(env(safe-area-inset-bottom) + 82px); }
 }
 @media (prefers-reduced-motion: reduce) { .legends-website *, .legends-website *::before, .legends-website *::after, .website-spinner { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
