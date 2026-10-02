@@ -15,7 +15,19 @@ interface LavaPathGameProps extends MiniGameShellContractProps {
   onVictory: (stars: number, XP: number) => void;
   onGameOver: (XP: number) => void; onBack: () => void;
 }
-interface LavaPathQuestion { prompt: string; sublabel: string; options: string[]; answerIndex: number; }
+interface LavaPathQuestion {
+  prompt: string;
+  sublabel: string;
+  options: string[];
+  answerIndex: number;
+  conversion: {
+    amount: number;
+    sourceUnit: string;
+    targetUnit: string;
+    factor: number;
+    extraInTargetUnit?: number;
+  };
+}
 const TOTAL_STEPS = 10;
 const MAX_WRONGS = 3;
 const STEP_XP = 140;
@@ -31,13 +43,19 @@ const shuffle = <T,>(items: T[]) => {
   for (let i = copy.length - 1; i > 0; i -= 1) { const j = Math.floor(Math.random() * (i + 1)); [copy[i], copy[j]] = [copy[j], copy[i]]; }
   return copy;
 };
-const conversionQuestion = (prompt: string, sublabel: string, answer: number, unit: string): LavaPathQuestion => {
+const conversionQuestion = (
+  prompt: string,
+  sublabel: string,
+  answer: number,
+  unit: string,
+  conversion: LavaPathQuestion['conversion'],
+): LavaPathQuestion => {
   const value = Number(answer.toFixed(4));
   const wrong = Array.from(new Set([value * 10, value / 10, value * 100, value + 1].map((item) => Number(item.toFixed(4)))))
     .filter((item) => item > 0 && item !== value).slice(0, 3);
   const correct = `${formatQuantity(value)} ${unit}`;
   const options = shuffle([correct, ...wrong.map((item) => `${formatQuantity(item)} ${unit}`)]);
-  return { prompt, sublabel, options, answerIndex: options.indexOf(correct) };
+  return { prompt, sublabel, options, answerIndex: options.indexOf(correct), conversion };
 };
 const resolveQuestion = (tier: number): LavaPathQuestion => {
   if (tier === 5) {
@@ -48,7 +66,8 @@ const resolveQuestion = (tier: number): LavaPathQuestion => {
     const target = category === 0 ? 'cm' : category === 1 ? 'g' : 'ml';
     const factor = category === 0 ? 100 : 1000;
     return conversionQuestion(`Combine ${formatQuantity(first)} ${source} and ${second} ${target}. What is the total in ${target}?`,
-      `Convert to ${target} first, then add.`, first * factor + second, target);
+      `Convert to ${target} first, then add.`, first * factor + second, target,
+      { amount: first, sourceUnit: source, targetUnit: target, factor, extraInTargetUnit: second });
   }
   const categories = tier === 1 ? [['m', 'cm', 100]] : tier === 2 ? [['kg', 'g', 1000], ['l', 'ml', 1000]]
     : [['m', 'cm', 100], ['km', 'm', 1000], ['kg', 'g', 1000], ['l', 'ml', 1000]];
@@ -58,7 +77,8 @@ const resolveQuestion = (tier: number): LavaPathQuestion => {
   const amount = tier <= 2 ? randInt(1, 9) : tier === 3 ? randInt(2, 49) / 10 : randInt(5, 495) / 100;
   const sourceAmount = reverse ? amount * factor : amount;
   return conversionQuestion(`Convert ${formatQuantity(sourceAmount)} ${reverse ? small : large} into ${reverse ? large : small}.`,
-    `1 ${large} = ${factor.toLocaleString('en-GB')} ${small}.`, reverse ? sourceAmount / factor : sourceAmount * factor, String(reverse ? large : small));
+    `1 ${large} = ${factor.toLocaleString('en-GB')} ${small}.`, reverse ? sourceAmount / factor : sourceAmount * factor, String(reverse ? large : small),
+    { amount: sourceAmount, sourceUnit: String(reverse ? small : large), targetUnit: String(reverse ? large : small), factor });
 };
 const starsForRun = (mistakes: number) => mistakes === 0 ? 3 : mistakes === 1 ? 2 : 1;
 
@@ -72,6 +92,7 @@ const LavaPathGame: React.FC<LavaPathGameProps> = ({ levelId, avatarId, isPracti
   const [correctCount, setCorrectCount] = useState(0);
   const [wrongCount, setWrongCount] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [lensOperation, setLensOperation] = useState<'multiply' | 'divide' | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
   const [locked, setLocked] = useState(false);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
@@ -95,7 +116,7 @@ const LavaPathGame: React.FC<LavaPathGameProps> = ({ levelId, avatarId, isPracti
     if (!presentRef.current) return;
     clearTimers(); finishedRef.current = false; answerLockRef.current = false;
     setQuestion(resolveQuestion(tier)); setScore(0); setCorrectCount(0); setWrongCount(0);
-    setSelectedIndex(null); setFeedback(null); setLocked(false);
+    setSelectedIndex(null); setLensOperation(null); setFeedback(null); setLocked(false);
   }, [tier]);
   useEffect(() => {
     if ((sessionState?.lives ?? 0) > 0) observedPositiveLives.current = true;
@@ -113,7 +134,7 @@ const LavaPathGame: React.FC<LavaPathGameProps> = ({ levelId, avatarId, isPracti
   const loadNextQuestion = () => {
     timersRef.current.push(window.setTimeout(() => {
       if (!presentRef.current || finishedRef.current) return;
-      setQuestion(resolveQuestion(tier)); setSelectedIndex(null); setFeedback(null);
+      setQuestion(resolveQuestion(tier)); setSelectedIndex(null); setLensOperation(null); setFeedback(null);
       setLocked(false); answerLockRef.current = false;
     }, 560));
   };
@@ -145,6 +166,10 @@ const LavaPathGame: React.FC<LavaPathGameProps> = ({ levelId, avatarId, isPracti
   };
   const currentStep = Math.min(correctCount, TOTAL_STEPS);
   const point = STONES[currentStep];
+  const { conversion } = question;
+  const convertedValue = lensOperation === null ? null
+    : lensOperation === 'multiply' ? conversion.amount * conversion.factor : conversion.amount / conversion.factor;
+  const lensTotal = convertedValue === null ? null : convertedValue + (conversion.extraInTargetUnit ?? 0);
   return (
     <GameScreenShell className="lava-crossing-game overflow-hidden" backgroundImage={lavaPathBackground} backgroundOpacity={1}>
       <PracticeIntroPopup open={showPracticeIntro} title="Lava Path" body="Convert the units to stabilise the next stone. Cross ten stones to escape the lava."
@@ -155,6 +180,27 @@ const LavaPathGame: React.FC<LavaPathGameProps> = ({ levelId, avatarId, isPracti
         </GameQuestionCard>
         <div className="lava-crossing-playfield" data-lava-playfield>
           <div className="lava-crossing-status">{currentStep}/{TOTAL_STEPS} safe crossings</div>
+          <section className="lava-conversion-lens" aria-label="Conversion lens" data-lava-lens>
+            <span className="lava-conversion-lens-title">Conversion lens</span>
+            <div className="lava-conversion-lens-equation">
+              <strong>{formatQuantity(conversion.amount)} {conversion.sourceUnit}</strong>
+              <span>→ {conversion.targetUnit}</span>
+            </div>
+            <div className="lava-conversion-lens-controls" aria-label="Try a conversion operation">
+              <button type="button" aria-pressed={lensOperation === 'multiply'}
+                onClick={() => setLensOperation('multiply')} disabled={locked || finishedRef.current || Boolean(sessionState?.paused)}
+                data-lava-operation="multiply">× {conversion.factor.toLocaleString('en-GB')}</button>
+              <button type="button" aria-pressed={lensOperation === 'divide'}
+                onClick={() => setLensOperation('divide')} disabled={locked || finishedRef.current || Boolean(sessionState?.paused)}
+                data-lava-operation="divide">÷ {conversion.factor.toLocaleString('en-GB')}</button>
+            </div>
+            <output className="lava-conversion-lens-output" aria-live="polite" data-lava-preview>
+              {lensTotal === null ? 'Try a gear to preview the crossing.' : (
+                <>{formatQuantity(convertedValue!)} {conversion.targetUnit}
+                  {conversion.extraInTargetUnit !== undefined ? ` + ${formatQuantity(conversion.extraInTargetUnit)} ${conversion.targetUnit} = ${formatQuantity(lensTotal)} ${conversion.targetUnit}` : ''}</>
+              )}
+            </output>
+          </section>
           <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="lava-crossing-art" aria-hidden="true">
             <path d="M0 0H100V9L84 7 74 10 58 8 49 12 31 8 17 10 0 7Z" fill="#574335" stroke="#251f22" strokeWidth="1.5" />
             <path d="M0 94L18 91 33 96 50 92 65 96 83 91 100 94V100H0Z" fill="#6f4c37" stroke="#251f22" strokeWidth="1.5" />
