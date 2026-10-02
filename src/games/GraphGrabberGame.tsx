@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import {
   Bar,
@@ -408,20 +408,37 @@ const matchesAnswer = (selected: string[], expected: string[]) => {
   return left.length === right.length && left.every((value, index) => value === right[index]);
 };
 
-const GraphBoard: React.FC<{ round: ChartRound; difficulty: number }> = ({ round, difficulty }) => {
+const InspectionControls: React.FC<{ items: Array<{ label: string; value: number; color?: string }>; selected: string | null; onInspect: (label: string) => void; unit: string }> = ({ items, selected, onInspect, unit }) => {
+  const focused = items.find((item) => item.label === selected);
+  return (
+    <div className="mt-1.5">
+      <div className="grid grid-cols-4 gap-1" aria-label="Inspect chart evidence">
+        {items.map((item) => (
+          <button key={item.label} type="button" data-graph-inspect={item.label} data-button-skin="none" aria-label={`Inspect ${item.label}`} aria-pressed={selected === item.label} onClick={() => onInspect(item.label)} className={`min-h-10 rounded-lg border px-1 text-[10px] font-bold focus-visible:outline-2 focus-visible:outline-amber-300 ${selected === item.label ? 'border-amber-300 bg-amber-300/25 text-amber-100' : 'border-white/20 bg-slate-950/45 text-cyan-100'}`}>
+            <span className="mx-auto mb-0.5 block h-2 w-2 rounded-full" style={{ backgroundColor: item.color || '#60a5fa' }} aria-hidden="true" />
+            {item.label}
+          </button>
+        ))}
+      </div>
+      <div data-graph-inspection="true" aria-live="polite" className="min-h-5 pt-1 text-center text-[11px] font-bold text-cyan-100">{focused ? `${focused.label}: ${focused.value}${unit}` : 'Tap a label to spotlight and read its value.'}</div>
+    </div>
+  );
+};
+
+const GraphBoard: React.FC<{ round: ChartRound; difficulty: number; inspected: string | null; onInspect: (label: string) => void; reducedMotion: boolean }> = ({ round, difficulty, inspected, onInspect, reducedMotion }) => {
   const values = round.bars?.map((point) => point.value) || round.line?.map((point) => point.value) || [1];
-  const tickStep = difficulty <= 2 ? 1 : 2;
+  const tickStep = difficulty <= 2 ? 2 : 5;
   const axisMax = Math.ceil(Math.max(...values) / tickStep) * tickStep;
   const axisTicks = Array.from({ length: axisMax / tickStep + 1 }, (_, index) => index * tickStep);
   if (round.kind === 'bar' && round.bars) {
     return (
       <div className="flex h-full min-h-0 flex-col rounded-[1rem] border border-white/8 bg-[linear-gradient(180deg,rgba(9,19,42,0.5),rgba(7,14,32,0.66))] p-1.5 shadow-[0_14px_24px_rgba(2,6,23,0.16)]">
         <div className="flex items-center justify-between px-1 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/75">
-          <span>X</span>
-          {round.chartCaption}
-          <span>Y</span>
+          <span className="hidden max-w-[25%] truncate sm:block">{round.xLabel}</span>
+          <span className="min-w-0 flex-1 truncate text-center">{round.chartCaption}</span>
+          <span className="hidden max-w-[25%] truncate sm:block">{round.yLabel}</span>
         </div>
-        <div className="mt-1.5 h-[clamp(11rem,26vh,15.5rem)] w-full">
+        <div className="mt-1.5 h-[clamp(8rem,20vh,13rem)] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={round.bars!} margin={{ top: 18, right: 16, left: 10, bottom: 12 }}>
               <CartesianGrid stroke="rgba(255,255,255,0.12)" strokeDasharray="3 3" vertical={false} />
@@ -431,7 +448,6 @@ const GraphBoard: React.FC<{ round: ChartRound; difficulty: number }> = ({ round
                 tick={{ fill: '#fff8ec', fontSize: 14, fontWeight: 800 }}
                 axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
                 tickLine={false}
-                label={{ value: round.xLabel, position: 'insideBottom', offset: -2, fill: '#fff8ec', fontSize: 11, fontWeight: 800 } as never}
               />
               <YAxis
                 domain={[0, axisMax]}
@@ -440,20 +456,20 @@ const GraphBoard: React.FC<{ round: ChartRound; difficulty: number }> = ({ round
                 tick={{ fill: '#fff8ec', fontSize: 14, fontWeight: 800 }}
                 axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
                 tickLine={false}
-                label={{ value: round.yLabel, angle: -90, position: 'insideLeft', fill: '#fff8ec', fontSize: 11, fontWeight: 800 } as never}
               />
               <Tooltip
                 cursor={{ fill: 'rgba(255,255,255,0.08)' }}
                 contentStyle={{ background: 'rgba(8,15,32,0.95)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '14px', color: '#fff8ec' }}
               />
-              <Bar dataKey="value" radius={[12, 12, 0, 0]}>
+              <Bar dataKey="value" radius={[12, 12, 0, 0]} isAnimationActive={!reducedMotion}>
                 {round.bars!.map((bar) => (
-                  <Cell key={bar.label} fill={bar.color} />
+                  <Cell key={bar.label} fill={bar.color} opacity={!inspected || inspected === bar.label ? 1 : 0.3} />
                 ))}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
+        <InspectionControls items={round.bars} selected={inspected} onInspect={onInspect} unit={` ${round.yLabel}`} />
       </div>
     );
   }
@@ -462,11 +478,11 @@ const GraphBoard: React.FC<{ round: ChartRound; difficulty: number }> = ({ round
     return (
       <div className="flex h-full min-h-0 flex-col rounded-[1rem] border border-white/8 bg-[linear-gradient(180deg,rgba(9,19,42,0.5),rgba(7,14,32,0.66))] p-1.5 shadow-[0_14px_24px_rgba(2,6,23,0.16)]">
         <div className="flex items-center justify-between px-1 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/75">
-          <span>X</span>
-          {round.chartCaption}
-          <span>Y</span>
+          <span className="hidden max-w-[25%] truncate sm:block">{round.xLabel}</span>
+          <span className="min-w-0 flex-1 truncate text-center">{round.chartCaption}</span>
+          <span className="hidden max-w-[25%] truncate sm:block">{round.yLabel}</span>
         </div>
-        <div className="mt-1.5 h-[clamp(11rem,26vh,15.5rem)] w-full">
+        <div className="mt-1.5 h-[clamp(8rem,20vh,13rem)] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={round.line!} margin={{ top: 18, right: 16, left: 10, bottom: 12 }}>
               <CartesianGrid stroke="rgba(255,255,255,0.12)" strokeDasharray="3 3" />
@@ -476,7 +492,6 @@ const GraphBoard: React.FC<{ round: ChartRound; difficulty: number }> = ({ round
                 tick={{ fill: '#fff8ec', fontSize: 14, fontWeight: 800 }}
                 axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
                 tickLine={false}
-                label={{ value: round.xLabel, position: 'insideBottom', offset: -2, fill: '#fff8ec', fontSize: 11, fontWeight: 800 } as never}
               />
               <YAxis
                 domain={[0, axisMax]}
@@ -485,15 +500,18 @@ const GraphBoard: React.FC<{ round: ChartRound; difficulty: number }> = ({ round
                 tick={{ fill: '#fff8ec', fontSize: 14, fontWeight: 800 }}
                 axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
                 tickLine={false}
-                label={{ value: round.yLabel, angle: -90, position: 'insideLeft', fill: '#fff8ec', fontSize: 11, fontWeight: 800 } as never}
               />
               <Tooltip
                 contentStyle={{ background: 'rgba(8,15,32,0.95)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '14px', color: '#fff8ec' }}
               />
-              <Line type="monotone" dataKey="value" stroke="#60a5fa" strokeWidth={4} dot={{ r: 5, strokeWidth: 2, stroke: '#fff8ec', fill: '#60a5fa' }} />
+              <Line type="monotone" dataKey="value" stroke="#60a5fa" strokeWidth={4} isAnimationActive={!reducedMotion} dot={(props) => {
+                const { cx, cy, payload } = props as { cx?: number; cy?: number; payload?: LineDatum };
+                return cx == null || cy == null || !payload ? null : <circle cx={cx} cy={cy} r={inspected === payload.label ? 9 : 5} strokeWidth={2} stroke="#fff8ec" fill={inspected === payload.label ? '#facc15' : '#60a5fa'} />;
+              }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
+        <InspectionControls items={round.line} selected={inspected} onInspect={onInspect} unit={` ${round.yLabel}`} />
       </div>
     );
   }
@@ -503,20 +521,20 @@ const GraphBoard: React.FC<{ round: ChartRound; difficulty: number }> = ({ round
   return (
     <div className="flex h-full min-h-0 flex-col rounded-[1rem] border border-white/8 bg-[linear-gradient(180deg,rgba(9,19,42,0.5),rgba(7,14,32,0.66))] p-1.5 shadow-[0_14px_24px_rgba(2,6,23,0.16)]">
       <div className="flex items-center justify-between px-1 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/75">
-        <span>X</span>
-        {round.chartCaption}
-        <span>Y</span>
+        <span className="hidden max-w-[25%] truncate sm:block">{round.xLabel}</span>
+        <span className="min-w-0 flex-1 truncate text-center">{round.chartCaption}</span>
+        <span className="hidden max-w-[25%] truncate sm:block">{round.yLabel}</span>
       </div>
       <div className="mt-1.5 grid min-h-0 flex-1 gap-2 md:grid-cols-[1.08fr_0.92fr]">
-        <div className="h-[clamp(11rem,26vh,15.5rem)]">
+        <div className="h-[clamp(8rem,20vh,13rem)]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Tooltip
                 contentStyle={{ background: 'rgba(8,15,32,0.95)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '14px', color: '#fff8ec' }}
               />
-              <Pie data={round.pie!} dataKey="value" nameKey="label" cx="50%" cy="50%" innerRadius={52} outerRadius={90} paddingAngle={3}>
+              <Pie data={round.pie!} dataKey="value" nameKey="label" cx="50%" cy="50%" innerRadius={40} outerRadius={74} paddingAngle={3} isAnimationActive={!reducedMotion}>
                 {round.pie!.map((slice) => (
-                <Cell key={slice.label} fill={slice.color} />
+                <Cell key={slice.label} fill={slice.color} opacity={!inspected || inspected === slice.label ? 1 : 0.28} />
                 ))}
               </Pie>
             </PieChart>
@@ -524,13 +542,13 @@ const GraphBoard: React.FC<{ round: ChartRound; difficulty: number }> = ({ round
         </div>
         <div className="flex flex-col justify-center gap-2 rounded-[0.95rem] border border-white/8 bg-white/3 p-2">
           <div className="text-[9px] font-black uppercase tracking-[0.18em] text-amber-100/70">Slice labels</div>
-          <div className="grid gap-2">
+          <div className="grid grid-cols-2 gap-1 md:grid-cols-1 md:gap-2">
             {round.pie!.map((slice) => (
-              <div key={slice.label} className="flex items-center gap-2 rounded-[0.9rem] border border-white/10 bg-slate-950/35 px-3 py-2">
+              <button key={slice.label} type="button" data-button-skin="none" data-graph-inspect={slice.label} aria-label={`Inspect ${slice.label} slice`} aria-pressed={inspected === slice.label} onClick={() => onInspect(slice.label)} className={`flex min-h-10 items-center gap-2 rounded-[0.9rem] border px-2 py-1 text-left focus-visible:outline-2 focus-visible:outline-amber-300 ${inspected === slice.label ? 'border-amber-300 bg-amber-300/20' : 'border-white/10 bg-slate-950/35'}`}>
                 <span className="h-3.5 w-3.5 rounded-full border border-white/30" style={{ backgroundColor: slice.color }} />
                 <div className="flex-1 text-left text-sm font-black text-white">{slice.label}</div>
                 <div className="text-xs font-black text-cyan-200">{slice.value}%</div>
-              </div>
+              </button>
             ))}
           </div>
           <div className="mt-1 text-[10px] font-bold leading-relaxed text-white/72">
@@ -539,7 +557,7 @@ const GraphBoard: React.FC<{ round: ChartRound; difficulty: number }> = ({ round
         </div>
       </div>
       <div className="mt-1.5 text-center text-[11px] font-bold text-white/68">
-        Total: {total}%
+        <span data-graph-inspection="true" aria-live="polite">{inspected ? `${inspected}: ${round.pie.find((slice) => slice.label === inspected)?.value}% · ` : 'Tap a slice label to spotlight it · '}</span>Total: {total}%
       </div>
     </div>
   );
@@ -568,7 +586,9 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
   const [isFinished, setIsFinished] = useState(false);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [inspected, setInspected] = useState<string | null>(null);
   const [isLocked, setIsLocked] = useState(false);
+  const reducedMotion = useReducedMotion();
 
   const progress = Math.min((XP / targetScore) * 100, 100);
 
@@ -591,6 +611,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
     setIsFinished(false);
     setShowPracticeIntro(Boolean(isPractice));
     setSelectedIds([]);
+    setInspected(null);
     setIsLocked(false);
   }, [isPractice, levelId]);
 
@@ -622,7 +643,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
       : finalScore >= targetScore && hearts >= 2
         ? 2
         : 1;
-    confetti({
+    if (!reducedMotion) confetti({
       particleCount: 165,
       spread: 70,
       origin: { y: 0.62 },
@@ -642,6 +663,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
       setRound(buildRound(levelId, nextRoundNumber - 1));
       setFeedback(null);
       setSelectedIds([]);
+      setInspected(null);
       setIsLocked(false);
     }, 1150);
     timeoutsRef.current.push(timeoutId);
@@ -688,7 +710,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
     setScore(updatedScore);
     setStreak((previous) => previous + 1);
     setFeedback({ type: 'success', title: 'Graph secured', subtitle: `+${points} XP` });
-    confetti({
+    if (!reducedMotion) confetti({
       particleCount: 42,
       spread: 48,
       origin: { y: 0.72 },
@@ -726,7 +748,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
       : 'grid-cols-2';
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden bg-transparent select-none text-slate-100">
+    <div className="relative flex h-full w-full flex-col overflow-hidden bg-transparent select-none text-slate-100" data-graph-game="true" data-graph-kind={round.kind} data-graph-round={roundNumber}>
       <SceneEnvironment src={graphGrabberBackground} />
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(8,15,32,0.14),rgba(8,15,32,0.24))]" aria-hidden="true" />
       <PracticeIntroPopup
@@ -737,14 +759,15 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
         onAction={() => setShowPracticeIntro(false)}
       />
 
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col px-2 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] pt-2 md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+0.65rem)] md:pt-3">
-        <div className="flex flex-1" />
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col overflow-y-auto px-2 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] pt-2 md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+0.65rem)] md:pt-3">
+        <div className="hidden min-h-0 flex-1 md:flex" />
 
         <div className="mx-auto flex w-full max-w-[56rem] flex-col gap-1.5 md:gap-2">
           <GameQuestionCard
             title={round.title}
             className="w-full !mb-0"
             style={{
+              position: 'relative', top: 'auto', left: 'auto', right: 'auto', transform: 'none', fontSize: '0.92rem',
               ['--question-card-width' as any]: 'min(100%, 56rem)',
               ['--question-card-padding' as any]: '8px 10px',
             }}
@@ -753,7 +776,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
           </GameQuestionCard>
 
           <div className="min-h-0">
-            <GraphBoard round={round} difficulty={levelId} />
+            <GraphBoard round={round} difficulty={levelId} inspected={inspected} onInspect={setInspected} reducedMotion={Boolean(reducedMotion)} />
           </div>
 
           <section className="rounded-[1rem] border border-white/8 bg-[linear-gradient(180deg,rgba(15,23,42,0.62),rgba(10,17,37,0.76))] p-2 shadow-[0_14px_24px_rgba(2,6,23,0.16)] md:p-2.5">
@@ -767,6 +790,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
                 return (
                   <motion.button
                     key={choice.id}
+                    data-graph-option={choice.id}
                     whileTap={{ scale: 0.97 }}
                     onClick={() => handleOptionClick(choice)}
                     disabled={feedback !== null || isFinished}
