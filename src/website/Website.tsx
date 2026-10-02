@@ -17,7 +17,7 @@ import valley from '../assets/website/adventure-valley-v1.webp';
 import SplashLogo from './SplashLogo';
 import GameplayGallery from './GameplayGallery';
 import EnglishLanding from './EnglishLanding';
-import { englishReleased } from './englishRelease';
+import { englishReleased, englishTesting } from './englishRelease';
 
 const ParentArea = lazy(() => import('./ParentArea'));
 const ForParents = lazy(() => import('./ForParents'));
@@ -61,6 +61,15 @@ function Home() {
       <div className="website-hero-bottom" aria-hidden="true" />
     </section>
 
+    <section className="website-english-teaser website-container" aria-labelledby="website-english-title">
+      <div>
+        <p className="website-eyebrow"><BookOpen size={16} /> {englishReleased ? 'English adventure' : englishTesting ? 'Playtest · English adventure' : 'Coming soon · English adventure'}</p>
+        <h2 id="website-english-title">{englishReleased ? 'Enter Lexcoria.' : englishTesting ? 'Lexcoria is ready to test.' : 'Lexcoria is taking shape.'}</h2>
+        <p>{englishReleased ? 'Reading, grammar, punctuation and spelling challenges now sit alongside Matharia.' : englishTesting ? 'Our English revision sister game is open for a gated playtest.' : 'Reading, grammar, punctuation and spelling will become a new SATs Legends adventure.'}</p>
+      </div>
+      <Link className="website-button website-button-outline" to="/english">Discover Lexcoria <ArrowRight size={18} /></Link>
+    </section>
+
     <section className="website-paths website-container" aria-labelledby="website-paths-title">
       <motion.div {...reveal} className="website-section-heading website-heading-center"><p className="website-eyebrow">A little learning. A lot of adventure.</p><h2 id="website-paths-title">Choose your next move.</h2><p>However you like to learn, there’s a path for you.</p></motion.div>
       <div className="website-path-grid">
@@ -82,8 +91,6 @@ function Home() {
     </section>
 
     <GameplayGallery />
-    <section className="website-english-teaser website-container"><div><p className="website-eyebrow"><BookOpen size={16} /> {englishReleased ? 'English adventure' : 'Coming soon · English adventure'}</p><h2>{englishReleased ? 'Explore Lexcoria.' : 'Lexcoria is taking shape.'}</h2><p>{englishReleased ? 'Reading, grammar, punctuation and spelling challenges now sit alongside Matharia in the SATs Legends adventure.' : 'Our next world will bring reading, grammar, punctuation and spelling into the SATs Legends adventure. See what we’re building.'}</p></div><Link className="website-button website-button-gold" to="/english">Discover Lexcoria <ArrowRight size={18} /></Link></section>
-
     <motion.section {...reveal} className="website-parent-intro website-container">
       <div><p className="website-eyebrow">For parents & carers</p><h2>Support every step of their adventure.</h2><p>Explore maths revision, progress reports and moments of calm inside Matharia.</p></div>
       <Link className="website-text-link" to="/for-parents">Meet the parent guide <ArrowRight size={18} /></Link>
@@ -116,9 +123,9 @@ export default function Website() {
       <nav className="website-desktop-nav" aria-label="Main navigation"><NavLink to="/" end>Home</NavLink><Link to="/play">Matharia</Link><NavLink to="/english">Lexcoria</NavLink><NavLink to="/subscriptions">Subscriptions</NavLink><NavLink to="/for-parents">For parents</NavLink><NavLink to="/revision">Revision guide</NavLink><NavLink to="/videos">Videos</NavLink></nav>
       <div className="website-header-actions">{family.session ? <>{family.isAdmin && <Link className="website-login" to="/admin">Admin</Link>}<Link className="website-button website-button-gold website-button-small" to="/parent">Parent account</Link><button className="website-login" onClick={logout}>Log out</button></> : <><Link to="/login" className="website-login">Log in</Link><Link className="website-button website-button-gold website-button-small" to="/signup">Sign up <ArrowRight size={16} /></Link></>}
       <button className="website-menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen} aria-controls="website-mobile-nav" aria-label={menuOpen ? 'Close navigation' : 'Open navigation'}>{menuOpen ? <X /> : <Menu />}</button></div>
-    </div>{menuOpen && <nav id="website-mobile-nav" className="website-mobile-nav" aria-label="Mobile navigation"><NavLink to="/" end>Home</NavLink><Link to="/play">Matharia</Link><Link to="/english">Lexcoria</Link><NavLink to="/subscriptions">Subscriptions</NavLink><NavLink to="/for-parents">For parents</NavLink><NavLink to="/revision">Revision guide</NavLink><NavLink to="/videos">Videos</NavLink>{family.session ? <>{family.isAdmin && <Link to="/admin">Admin</Link>}<Link to="/parent">Parent account</Link><button onClick={logout}>Log out</button></> : <><Link to="/login">Log in</Link><Link to="/signup">Sign up</Link></>}</nav>}</header>
+    </div>{menuOpen && <nav id="website-mobile-nav" className="website-mobile-nav" aria-label="Mobile navigation"><NavLink to="/" end>Home</NavLink><Link to="/play">Matharia</Link><NavLink to="/english">Lexcoria</NavLink><NavLink to="/subscriptions">Subscriptions</NavLink><NavLink to="/for-parents">For parents</NavLink><NavLink to="/revision">Revision guide</NavLink><NavLink to="/videos">Videos</NavLink>{family.session ? <>{family.isAdmin && <Link to="/admin">Admin</Link>}<Link to="/parent">Parent account</Link><button onClick={logout}>Log out</button></> : <><Link to="/login">Log in</Link><Link to="/signup">Sign up</Link></>}</nav>}</header>
     {accountError && <p className="family-error website-container" role="alert">{accountError}</p>}
 <Suspense fallback={<main id="website-main" className="website-container family-main"><p role="status">Loading…</p></main>}><Routes><Route path="/" element={<Home />} /><Route path="/english" element={<EnglishLanding />} /><Route path="/revision" element={<Revision />} /><Route path="/videos" element={<Videos />} /><Route path="/signup" element={<Account mode="signup" />} /><Route path="/login" element={<Account mode="login" />} /><Route path="/forgot-password" element={<Account mode="forgot" />} /><Route path="/reset-password" element={<Account mode="reset" />} /><Route path="/auth/callback" element={<AuthCallback />} /><Route path="/subscriptions" element={<Subscriptions />} /><Route path="/for-parents" element={<ForParents />} /><Route path="/parent" element={<ParentArea />} /><Route path="/parent/progress/:childId" element={<ChildProgressPage />} /><Route path="/admin" element={<AdminDashboard />} /></Routes></Suspense>
-    <footer className="website-footer"><div className="website-container website-footer-top"><Brand small /><p>Small steps. Big adventures.</p><nav aria-label="Footer navigation"><Link to="/for-parents">For parents</Link><Link to="/play">Play</Link><Link to="/revision">Revision guide</Link><Link to="/videos">Videos</Link></nav></div><div className="website-container website-footer-bottom"><span>© {new Date().getFullYear()} SATs Legends</span><span>Made for curious minds.</span></div></footer>
+    <footer className="website-footer"><div className="website-container website-footer-top"><Brand small /><p>Small steps. Big adventures.</p><nav aria-label="Footer navigation"><Link to="/for-parents">For parents</Link><Link to="/play">Matharia</Link><Link to="/english">Lexcoria</Link><Link to="/revision">Revision guide</Link><Link to="/videos">Videos</Link></nav></div><div className="website-container website-footer-bottom"><span>© {new Date().getFullYear()} SATs Legends</span><span>Made for curious minds.</span></div></footer>
   </div>;
 }
