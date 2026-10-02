@@ -32,6 +32,7 @@ interface PercentPowerQuestion {
   answerIndex: number;
   coreLabel: string;
   sideLabel: string;
+  calculation: { mode: 'part' | 'increase'; whole: number; percent: number } | { mode: 'whole'; part: number; percent: number };
 }
 
 const FALLBACK_LIVES = 3;
@@ -95,6 +96,7 @@ const buildDirectQuestion = (tier: number): PercentPowerQuestion => {
     answerIndex,
     coreLabel: `${percent}%`,
     sideLabel: `Whole ${amount}`,
+    calculation: { mode: 'part', whole: amount, percent },
   };
 };
 
@@ -117,6 +119,7 @@ const buildReverseQuestion = (tier: number): PercentPowerQuestion => {
     answerIndex,
     coreLabel: `${part}`,
     sideLabel: `${percent}% chunk`,
+    calculation: { mode: 'whole', part, percent },
   };
 };
 
@@ -138,6 +141,7 @@ const buildIncreaseQuestion = (): PercentPowerQuestion => {
     answerIndex,
     coreLabel: `+${percent}%`,
     sideLabel: `Start ${base}`,
+    calculation: { mode: 'increase', whole: base, percent },
   };
 };
 
@@ -177,6 +181,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
   const [statusText, setStatusText] = useState('');
+  const [dialPercent, setDialPercent] = useState(0);
   const [attempts, setAttempts] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [localLives, setLocalLives] = useState(FALLBACK_LIVES);
@@ -217,6 +222,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
     setSelectedIndex(null);
     setFeedback(null);
     setStatusText('');
+    setDialPercent(0);
     setAttempts(0);
     setCorrectAnswers(0);
     setLocalLives(FALLBACK_LIVES);
@@ -287,6 +293,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
     setSelectedIndex(null);
     setFeedback(null);
     setLocked(false);
+    setDialPercent(0);
     answerLockRef.current = false;
   }, [resolvedLevel]);
 
@@ -352,6 +359,13 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
   };
 
   const coreFill = Math.max(0, Math.min(1, correctAnswers / Math.max(1, totalRounds)));
+  const dialResult = dialPercent === 0 ? null : question.calculation.mode === 'whole'
+    ? question.calculation.part * 100 / dialPercent
+    : question.calculation.mode === 'increase'
+      ? question.calculation.whole * (1 + dialPercent / 100)
+      : question.calculation.whole * dialPercent / 100;
+  const previewValue = dialResult == null ? '' : Number.isInteger(dialResult) ? `${dialResult}` : dialResult.toFixed(1);
+  const previewLabel = question.calculation.mode === 'whole' ? 'estimated whole' : question.calculation.mode === 'increase' ? 'new total' : 'part';
 
   return (
     <div className="reactor-game relative h-full w-full overflow-hidden text-white">
@@ -388,7 +402,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
         </div>
       ) : null}
 
-      <main className="reactor-layout" data-reactor-game data-reactor-tier={resolvedLevel} data-reactor-reaction={feedback || 'idle'} data-reactor-charge={correctAnswers}>
+      <main className="reactor-layout" data-reactor-game data-reactor-tier={resolvedLevel} data-reactor-reaction={feedback || 'idle'} data-reactor-charge={correctAnswers} data-reactor-target-percent={question.calculation.percent} data-reactor-model={question.calculation.mode}>
         <GameQuestionCard title="Restore the reactor" style={{ position: 'relative', top: 0, transform: 'none' }}>
           {question.prompt}
         </GameQuestionCard>
@@ -411,6 +425,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
                 <rect x="115" y="65" width="130" height="170" fill="#103c41"/>
                 <motion.rect x="115" y={235 - (38 + coreFill * 132)} width="130" height={38 + coreFill * 132}
                   fill={`url(#${chamberId}-power)`} animate={!reducedMotion && feedback === 'correct' ? { opacity: [.65,1] } : { opacity: .9 }} transition={{ duration: .4 }}/>
+                <motion.rect x="115" width="130" fill="#67e8f9" opacity=".48" animate={{ y: 235 - dialPercent * 1.7, height: dialPercent * 1.7 }} transition={{ duration: reducedMotion ? 0 : .2 }} />
                 <path d="M148 63V235M215 63V235" stroke="#e3ffff" strokeWidth="7" opacity=".15"/>
                 {[0,1,2].map((index) => <motion.circle key={index} cx={150+index*31} cy={205-index*22} r={5+index}
                   fill="#eeffc0" opacity=".6" animate={!reducedMotion ? { y: [0,-10,0] } : { y: 0 }} transition={{ duration: 2.3 + index*.4, repeat: Infinity }}/>) }
@@ -432,6 +447,11 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
               </motion.g> : null}
             </svg>
           </motion.div>
+          <div className="reactor-dial" data-reactor-dial-panel>
+            <label htmlFor={`${chamberId}-dial`}>Tune the power</label>
+            <input id={`${chamberId}-dial`} data-reactor-dial type="range" min="0" max="100" step="5" value={dialPercent} onChange={(event) => setDialPercent(Number(event.target.value))} disabled={isLocked || Boolean(sessionState?.paused)} aria-label="Test a percentage" aria-valuetext={`${dialPercent} percent${dialResult == null ? '' : `, ${previewLabel} ${previewValue}`}`} />
+            <output data-reactor-preview htmlFor={`${chamberId}-dial`}>{dialResult == null ? 'Move the dial to test a percentage' : `${dialPercent}% → ${previewLabel} ${previewValue}${dialPercent === question.calculation.percent ? ' · target matched' : ''}`}</output>
+          </div>
         </div>
         <div className="answer-choice-surface reactor-answers">
           {question.options.map((option,index) => <motion.button key={`${question.id}-${option}`} type="button"

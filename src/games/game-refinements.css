@@ -95,6 +95,11 @@
 .reactor-playfield { position: relative; display: flex; flex: 1; min-height: 0; width: 100%; align-items: center; justify-content: center; }
 .reactor-machine { position: relative; width: min(100%, 420px); height: 100%; max-height: 360px; min-height: max(185px, calc(185px / var(--game-stage-scale, 1))); }
 .reactor-machine svg { width: 100%; height: 100%; overflow: visible; }
+.reactor-dial { position: absolute; z-index: 5; bottom: 0; left: 50%; width: min(94%, 360px); transform: translateX(-50%); display: grid; grid-template-columns: 1fr; gap: 2px; padding: 5px 12px; border: 1px solid #a5f3fc99; border-radius: 13px; background: #082b3ae8; color: #e0faff; text-align: center; box-shadow: 0 8px 20px #02151888; }
+.reactor-dial label { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
+.reactor-dial input { width: 100%; min-height: 28px; accent-color: #facc15; cursor: pointer; }
+.reactor-dial input:focus-visible { outline: 3px solid #fef08a; outline-offset: 2px; }
+.reactor-dial output { min-height: 1em; font-size: 11px; font-weight: 800; font-variant-numeric: tabular-nums; }
 .reactor-core-caption { font-size: 24px; font-weight: 900; fill: #edfff3; }
 .reactor-plaque { font-size: 24px; font-weight: 800; fill: #ffedb1; }
 .reactor-answers { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; width: 100%; flex-shrink: 0; }

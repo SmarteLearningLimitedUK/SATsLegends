@@ -70,7 +70,7 @@ const QUESTION_BANK: ReasoningQuestion[] = [
     topic: 'ratio',
     prompt: 'A map ink mix is 2:5. You already have 8 parts of ink. How many parts of solvent?',
     options: ['10', '12', '16', '20'],
-    correctIndex: 2,
+    correctIndex: 3,
     shortHint: 'Scale the ratio so 2 parts become 8.',
   },
   {
@@ -106,7 +106,7 @@ const QUESTION_BANK: ReasoningQuestion[] = [
     topic: 'multi_step',
     prompt: 'A ship carries 6 crates. Each crate has 24 items. 30 items are damaged. How many good items?',
     options: ['114', '144', '120', '150'],
-    correctIndex: 1,
+    correctIndex: 0,
     shortHint: 'Find the total first, then subtract.',
   },
   {
@@ -124,7 +124,7 @@ const QUESTION_BANK: ReasoningQuestion[] = [
     topic: 'data',
     prompt: 'A chart shows gems: Red 6, Blue 9, Green 4, Gold 7. How many more blue than green?',
     options: ['3', '4', '5', '6'],
-    correctIndex: 1,
+    correctIndex: 2,
     shortHint: 'Subtract green from blue.',
   },
   {
@@ -133,7 +133,7 @@ const QUESTION_BANK: ReasoningQuestion[] = [
     topic: 'data',
     prompt: 'Scores are 7, 8, 10, 10, 11. What is the mean score?',
     options: ['9.2', '9.0', '10.0', '8.5'],
-    correctIndex: 1,
+    correctIndex: 0,
     shortHint: 'Add and divide by 5.',
   },
   {
@@ -142,7 +142,7 @@ const QUESTION_BANK: ReasoningQuestion[] = [
     topic: 'measurement',
     prompt: 'A ride starts at 14:25 and lasts 1 hour 35 minutes. What time does it end?',
     options: ['15:50', '16:00', '16:05', '16:15'],
-    correctIndex: 2,
+    correctIndex: 1,
     shortHint: 'Add 1 hour, then 35 minutes.',
   },
   {
