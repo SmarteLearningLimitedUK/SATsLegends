@@ -90,9 +90,7 @@ try {
   await expect(page.getByRole('heading', { name: 'Profile not found.' })).toBeVisible();
   console.log('PASS private Lexcoria report email link resumes after authenticated login');
   await page.goto(base + '/parent');
-  await page.getByLabel('Child’s nickname').fill('MathsLegend');
-  await page.getByRole('button', { name: 'Create child profile' }).click();
-  await expect(page.getByRole('heading', { name: 'MathsLegend' })).toBeVisible();
+  await expect(page.getByText('Choose a subscription before creating your child’s profile.')).toBeVisible();
   await page.goto(base + '/play');
   await expect(page).toHaveURL(base + '/subscriptions');
   await expect(page.getByText('Card or PayPal at secure checkout.', { exact: false })).toBeVisible();
@@ -102,8 +100,13 @@ try {
   await page.locator('section.family-plan').filter({ has: page.getByRole('heading', { name: 'Matharia yearly' }) }).getByRole('button', { name: 'Choose this plan' }).click();
   await expect(page).toHaveURL('https://checkout.stripe.com/c/pay/fixture');
   assert.deepEqual(checkoutIntervals, ['month', 'year']);
-  console.log('PASS child profile, unpaid game gate, monthly/yearly checkout with server-selected prices');
+  console.log('PASS unpaid child-profile and game gates, monthly/yearly checkout with server-selected prices');
   paid = true;
+  await page.goto(base + '/parent');
+  await page.getByLabel('Child’s nickname').fill('MathsLegend');
+  await page.getByRole('button', { name: 'Create child profile' }).click();
+  await expect(page.getByRole('heading', { name: 'MathsLegend' })).toBeVisible();
+  console.log('PASS child profile becomes available after confirmed subscription');
   await page.goto(base + '/parent/progress/' + childId);
   await expect(page.getByRole('heading', { name: 'MathsLegend’s progress' })).toBeVisible();
   await expect(page.getByText('80%', { exact: true })).toBeVisible();
