@@ -6,6 +6,7 @@ import AssetIcon from '../components/AssetIcon';
 import { ACHIEVEMENT_CATALOG } from '../systems/progression/achievementCatalog';
 import { GameScreenShell, PrimaryActionButton, ScrollScreenShell } from '../layout/ScreenPrimitives';
 import '../components/game-ui/arcade-amendments.css';
+import './desktop-hub-layout.css';
 
 interface PlayerProfileProps { player: PlayerData; onBack: () => void; }
 
@@ -23,7 +24,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ player, onBack }) => {
   return (
     <GameScreenShell className="player-profile-arcade relative h-full min-h-0 overflow-hidden">
       <ScrollScreenShell className="relative z-10 h-full w-full overflow-y-auto px-4 py-5 md:px-8">
-        <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 pb-6">
+        <div className="profile-page-content mx-auto flex w-full max-w-3xl flex-col gap-4 pb-6">
           <header className="profile-summary-hero">
             <img src={portrait} alt={avatar.name} className="profile-summary-portrait" />
             <div className="min-w-0">

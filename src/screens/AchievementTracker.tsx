@@ -3,6 +3,7 @@ import { PlayerData } from '../types';
 import AssetIcon from '../components/AssetIcon';
 import { FramedPanel } from '../layout/ScreenPrimitives';
 import { ACHIEVEMENT_CATALOG, computeAchievementProgress } from '../systems/progression/achievementCatalog';
+import './desktop-hub-layout.css';
 
 interface AchievementTrackerProps {
   player: PlayerData;
@@ -22,10 +23,10 @@ const AchievementTracker: React.FC<AchievementTrackerProps> = ({ player, onBack 
   const totalCount = ACHIEVEMENT_CATALOG.length;
 
   return (
-    <div className="premium-page-root relative flex h-full w-full flex-col overflow-hidden licensed-shell-bg">
+    <div className="premium-page-root hub-wide-page hub-wide-achievements relative flex h-full w-full flex-col overflow-hidden licensed-shell-bg">
       <div className="absolute inset-0 bg-slate-950/45" />
 
-      <header className="relative z-10 flex items-center justify-between px-4 pb-2.5 pt-[calc(0.75rem+env(safe-area-inset-top))] md:px-8 md:pb-4 md:pt-6">
+      <header className="hub-wide-page-header relative z-10 flex items-center justify-between px-4 pb-2.5 pt-[calc(0.75rem+env(safe-area-inset-top))] md:px-8 md:pb-4 md:pt-6">
         <div className="flex items-center gap-3">
           <button
             type="button"
@@ -45,10 +46,10 @@ const AchievementTracker: React.FC<AchievementTrackerProps> = ({ player, onBack 
       </header>
 
       <div
-        className="relative z-10 flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-4 pb-24 md:gap-4 md:px-8 md:pb-8"
+        className="hub-wide-page-content relative z-10 flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-4 pb-24 md:gap-4 md:px-8 md:pb-8"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
-        <div className="flex flex-col gap-3">
+        <div className="hub-wide-page-grid flex flex-col gap-3">
           {achievements.map((achievement) => (
             <FramedPanel
               key={achievement.id}

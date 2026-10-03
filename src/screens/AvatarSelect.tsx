@@ -4,6 +4,7 @@ import { AVATARS } from '../constants';
 import { triggerHaptic } from '../haptics';
 import avatarSelectBackground from '../assets/maps/backgroundsforgames/charselect.jpg';
 import chooseBanner from '../assets/characters/chooseheroes.png';
+import '../design/desktop-avatar-select.css';
 
 const AVATAR_FOOT_ANCHOR_MAIN_Y_PX: Record<string, number> = {
   barratt: 0,
@@ -70,6 +71,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({
 
       <div className="relative z-10 flex h-full w-full items-center justify-center">
         <div className="avatar-select-layout relative flex h-full w-full flex-col">
+          <h1 className="sr-only">Choose your hero</h1>
           <div className="avatar-carousel-header translate-y-[20px]">
             <div className="avatar-carousel-banner">
               <img
@@ -82,7 +84,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({
             </div>
           </div>
 
-            <div className="relative z-30 mx-auto mt-2 flex w-full max-w-3xl flex-col gap-3 rounded-[1.35rem] border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(8,21,58,0.82),rgba(4,15,44,0.88))] px-4 py-4 text-center shadow-[0_18px_32px_rgba(2,6,23,0.32)] backdrop-blur-md sm:px-5 sm:py-5">
+            <div className="avatar-name-panel relative z-30 mx-auto mt-2 flex w-full max-w-3xl flex-col gap-3 rounded-[1.35rem] border border-cyan-100/18 bg-[linear-gradient(180deg,rgba(8,21,58,0.82),rgba(4,15,44,0.88))] px-4 py-4 text-center shadow-[0_18px_32px_rgba(2,6,23,0.32)] backdrop-blur-md sm:px-5 sm:py-5">
               <div className="text-[0.68rem] font-black uppercase tracking-[0.22em] text-cyan-100/80 sm:text-xs">
                 What should we call you, adventurer?
               </div>
@@ -126,7 +128,8 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({
                   <img
                     src={getAvatarImage(selectedAvatar)}
                     alt={selectedAvatar.name}
-                    className="pointer-events-none h-[2240%] w-auto object-contain object-bottom"
+                    data-avatar-id={selectedAvatar.id}
+                    className="avatar-carousel-main-image pointer-events-none h-[2240%] w-auto object-contain object-bottom"
                     style={getMainFootOffsetStyle(selectedAvatar.id)}
                     draggable={false}
                   />
@@ -148,7 +151,7 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({
           </div>
 
           <div className="legend-avatar-name" aria-live="polite">{selectedAvatar.name}</div>
-          <div className="absolute bottom-[7.5%] left-1/2 z-20 h-14 w-56 -translate-x-1/2 sm:h-16 sm:w-64">
+          <div className="avatar-confirm-control absolute bottom-[7.5%] left-1/2 z-20 h-14 w-56 -translate-x-1/2 sm:h-16 sm:w-64">
             <button
               type="button"
               onClick={() => {

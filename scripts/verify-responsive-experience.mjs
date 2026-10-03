@@ -79,7 +79,7 @@ for (const [name, engine, options] of profiles) {
     await page.goto(base + '/play');
     await page.locator('[data-qa-screen="splash"]').waitFor();
     await page.waitForFunction(() => {
-      if (document.documentElement.clientWidth < 900 || document.documentElement.clientHeight < 600) return true;
+      if (document.documentElement.clientWidth < 700 || document.documentElement.clientHeight < 600) return true;
       return document.querySelector('.iphone-game-stage')?.getAttribute('data-stage-layout') === 'responsive';
     });
     const welcome = await page.evaluate(() => {
@@ -95,7 +95,7 @@ for (const [name, engine, options] of profiles) {
         action: action && { left: action.left, right: action.right, top: action.top, bottom: action.bottom },
       };
     });
-    const welcomeIsDesktop = welcome.width >= 900 && welcome.height >= 600;
+    const welcomeIsDesktop = welcome.width >= 700 && welcome.height >= 600;
     check(welcome.scrollWidth <= welcome.width + 1 && welcome.stage && welcome.stage.left >= -1 && welcome.stage.right <= welcome.width + 1
       && (!welcomeIsDesktop || (welcome.stageLayout === 'responsive' && Math.abs(welcome.stage.left) <= 1 && Math.abs(welcome.stage.right - welcome.width) <= 1))
       && welcome.action && welcome.action.left >= -1 && welcome.action.right <= welcome.width + 1
@@ -103,7 +103,7 @@ for (const [name, engine, options] of profiles) {
     await page.goto(base + '/map');
     await page.locator('[data-qa-screen="world_map"]').waitFor();
     await page.waitForFunction(() => {
-      if (document.documentElement.clientWidth < 900 || document.documentElement.clientHeight < 600) return true;
+      if (document.documentElement.clientWidth < 700 || document.documentElement.clientHeight < 600) return true;
       return document.querySelector('.iphone-game-stage')?.getAttribute('data-stage-layout') === 'responsive';
     });
     const games = await page.evaluate(async () => {
@@ -129,11 +129,38 @@ for (const [name, engine, options] of profiles) {
         stage: stage && { left: stage.left, right: stage.right }, returnOverlapsDock, islands,
       };
     });
-    const mapIsDesktop = map.width >= 900 && map.height >= 600;
+    const mapIsWide = map.width >= 700 && map.height >= 600;
+    const mapUsesDesktopGrid = map.width >= 900 && map.height >= 600;
     check(map.scrollWidth <= map.width + 1 && map.stage && map.stage.left >= -1 && map.stage.right <= map.width + 1
       && !map.returnOverlapsDock && map.islands.length === 8
-      && (!mapIsDesktop || (map.stageLayout === 'responsive' && Math.abs(map.stage.left) <= 1 && Math.abs(map.stage.right - map.width) <= 1
-        && map.islands.every(island => island.left >= -1 && island.right <= map.width + 1 && island.top >= -1 && island.bottom <= map.height + 1))), name, '/map', map);
+      && (!mapIsWide || (map.stageLayout === 'responsive' && Math.abs(map.stage.left) <= 1 && Math.abs(map.stage.right - map.width) <= 1
+        && map.islands.every(island => island.left >= -1 && island.right <= map.width + 1)
+        && (!mapUsesDesktopGrid || map.islands.every(island => island.top >= -1 && island.bottom <= map.height + 1)))), name, '/map', map);
+
+    for (const route of ['/avatar', '/shop', '/achievements', '/profile', '/settings', '/results']) {
+      await page.goto(base + route);
+      await page.locator('.iphone-game-stage[data-stage-layout]').waitFor();
+      await page.waitForFunction(() => {
+        if (document.documentElement.clientWidth < 700 || document.documentElement.clientHeight < 600) return true;
+        return document.querySelector('.iphone-game-stage')?.getAttribute('data-stage-layout') === 'responsive';
+      });
+      await page.evaluate(() => document.fonts.ready);
+      const layout = await page.evaluate(() => {
+        const width = document.documentElement.clientWidth;
+        const height = document.documentElement.clientHeight;
+        const stageElement = document.querySelector('.iphone-game-stage');
+        const stage = stageElement?.getBoundingClientRect();
+        return {
+          width, height, scrollWidth: document.documentElement.scrollWidth,
+          stageLayout: stageElement?.getAttribute('data-stage-layout'),
+          stage: stage && { left: stage.left, right: stage.right },
+        };
+      });
+      const wide = layout.width >= 700 && layout.height >= 600;
+      check(layout.scrollWidth <= layout.width + 1 && layout.stage
+        && (!wide || (layout.stageLayout === 'responsive' && Math.abs(layout.stage.left) <= 1
+          && Math.abs(layout.stage.right - layout.width) <= 1)), name, route, layout);
+    }
 
     for (const islandId of name === 'desktop' ? [8, 1, 3] : [8]) {
       const route = `/island/${islandId}`;
@@ -242,6 +269,34 @@ for (const [name, engine, options] of profiles) {
     await context.close();
     await browser.close();
   }
+}
+
+// A narrowed desktop window can cross the tablet breakpoint while still using a mouse.
+const compactBrowser = await chromium.launch({ headless: true });
+const compactContext = await compactBrowser.newContext({ viewport: { width: 795, height: 918 }, reducedMotion: 'reduce' });
+const compactPage = await compactContext.newPage();
+try {
+  for (const route of ['/play', '/map', '/avatar', '/island/8', '/game/8/1', '/wellbeing', '/shop', '/achievements', '/profile', '/settings', '/results']) {
+    await compactPage.goto(base + route);
+    await compactPage.locator('.iphone-game-stage[data-stage-layout]').waitFor();
+    await compactPage.waitForFunction(() => document.querySelector('.iphone-game-stage')?.getAttribute('data-stage-layout') === 'responsive');
+    const layout = await compactPage.evaluate(() => {
+      const stageElement = document.querySelector('.iphone-game-stage');
+      const stage = stageElement?.getBoundingClientRect();
+      return {
+        width: document.documentElement.clientWidth,
+        scrollWidth: document.documentElement.scrollWidth,
+        stageLayout: stageElement?.getAttribute('data-stage-layout'),
+        stage: stage && { left: stage.left, right: stage.right },
+      };
+    });
+    check(layout.scrollWidth <= layout.width + 1 && layout.stageLayout === 'responsive'
+      && layout.stage && Math.abs(layout.stage.left) <= 1
+      && Math.abs(layout.stage.right - layout.width) <= 1, 'compact desktop', route, layout);
+  }
+} finally {
+  await compactContext.close();
+  await compactBrowser.close();
 }
 await writeFile('qa-artifacts/responsive-experience/report.json', JSON.stringify({ results, failures }, null, 2));
 if (failures.length) {

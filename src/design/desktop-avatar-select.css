@@ -1,0 +1,182 @@
+/* The shared playfield becomes a landscape stage at 700px. Keep the portrait
+   character sizing in index.css for narrower and shorter viewports. */
+@media (min-width: 700px) and (min-height: 600px) {
+  #root .avatar-select-screen {
+    isolation: isolate;
+  }
+
+  #root .avatar-select-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      linear-gradient(90deg, rgba(3, 15, 45, .12) 0%, transparent 32%, rgba(3, 15, 45, .2) 54%, rgba(3, 15, 45, .72) 100%),
+      linear-gradient(0deg, rgba(2, 11, 34, .46), transparent 29%);
+  }
+
+  #root .avatar-select-background {
+    object-position: 50% 65% !important;
+    transform: none;
+  }
+
+  #root .avatar-select-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.08fr) minmax(285px, .92fr);
+    grid-template-rows: minmax(0, 1fr) auto auto auto minmax(0, 1fr);
+    gap: clamp(8px, 1.4vh, 16px) clamp(14px, 2.5vw, 38px);
+    width: 100%;
+    max-width: 1500px;
+    min-height: 0;
+    margin-inline: auto;
+    padding: clamp(18px, 2.5vw, 36px);
+  }
+
+  #root .avatar-carousel-header {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: end;
+    margin: 0;
+    transform: none;
+  }
+
+  #root .avatar-carousel-banner {
+    width: 100%;
+    max-width: none;
+    height: clamp(96px, 16vh, 150px);
+  }
+
+  #root .avatar-carousel-banner-art {
+    width: min(130%, 620px);
+    transform: translate(-50%, -50%);
+  }
+
+  #root .avatar-name-panel {
+    grid-column: 2;
+    grid-row: 3;
+    width: min(100%, 480px);
+    max-width: none;
+    margin: 0 auto;
+    padding: clamp(16px, 2vw, 24px);
+  }
+
+  #root .avatar-name-panel > div:first-child {
+    font-size: clamp(13px, 1.1vw, 17px);
+    line-height: 1.3;
+    letter-spacing: .1em;
+  }
+
+  #root .avatar-name-panel .aaa-name-input {
+    min-height: 54px;
+  }
+
+  #root .avatar-hero-stage {
+    grid-column: 1;
+    grid-row: 1 / 6;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  #root .avatar-carousel-track {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0;
+    transform: none;
+    overflow: hidden;
+  }
+
+  #root .avatar-carousel-main.avatar-carousel-main-only {
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  #root .avatar-carousel-main-image {
+    --avatar-foot-adjust: 0px;
+    flex: 0 0 auto;
+    width: min(116%, 700px) !important;
+    height: auto !important;
+    max-width: none;
+    max-height: none;
+    transform: translateY(calc(clamp(65px, 10vw, 160px) + var(--avatar-foot-adjust))) scale(1) !important;
+  }
+
+  #root .avatar-carousel-main-image[data-avatar-id='bran'] {
+    --avatar-foot-adjust: 8px;
+  }
+
+  #root .avatar-carousel-main-image[data-avatar-id='vex'] {
+    --avatar-foot-adjust: 10px;
+  }
+
+  #root .avatar-carousel-main-image[data-avatar-id='mochi'] {
+    --avatar-foot-adjust: clamp(64px, 8vw, 112px);
+  }
+
+  #root .avatar-hero-arrow {
+    top: 61%;
+    width: clamp(46px, 4.2vw, 62px);
+    height: clamp(46px, 4.2vw, 62px);
+    cursor: pointer;
+  }
+
+  #root .avatar-hero-arrow-left {
+    left: clamp(3px, 1vw, 18px);
+  }
+
+  #root .avatar-hero-arrow-right {
+    right: clamp(3px, 1vw, 18px);
+  }
+
+  #root .legend-avatar-name {
+    position: absolute;
+    left: 0;
+    right: 46%;
+    bottom: 7%;
+    z-index: 20;
+    font-size: clamp(27px, 2.5vw, 38px);
+  }
+
+  #root .avatar-confirm-control {
+    position: relative;
+    grid-column: 2;
+    grid-row: 4;
+    justify-self: center;
+    left: auto;
+    bottom: auto;
+    width: min(100%, 310px);
+    height: 64px;
+    transform: none;
+    translate: none;
+  }
+
+  #root .avatar-confirm-control button {
+    min-height: 64px;
+    font-size: clamp(17px, 1.5vw, 22px);
+  }
+}
+
+@media (min-width: 700px) and (max-width: 899px) and (min-height: 600px) {
+  #root .avatar-select-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(285px, .9fr);
+    column-gap: 12px;
+  }
+
+  #root .avatar-name-panel {
+    padding: 14px;
+  }
+
+  #root .avatar-carousel-banner {
+    height: 100px;
+  }
+}
