@@ -27,6 +27,7 @@ import { isBossEncounterGameType } from '../games/bossEncounterTypes';
 import { GameScreen, IslandData, LevelData, PlayerData } from '../types';
 import { getLevelGameTitle } from '../utils/gameNames';
 import { getGameDifficulty } from '../systems/content/gameDifficulty';
+import { GAME_SCENE_META } from '../gameSceneMeta';
 import splashPoster from '../assets/casual_ui/splashrep1.webp';
 import { LEVEL_TIMERS_DISABLED } from './testingFlags';
 import {
@@ -52,6 +53,7 @@ interface AppRouterProps {
   selectedRuleSet: RuleSet | null;
   hintRuleSet: RuleSet | null;
   gameplayTypeClass: string;
+  adaptPortraitGame: boolean;
   gameplayRestartKey: number;
   usesQuestionMatchFrame: boolean;
   globalMiniGameHudTimeLeft: number;
@@ -91,6 +93,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
   selectedRuleSet,
   hintRuleSet,
   gameplayTypeClass,
+  adaptPortraitGame,
   gameplayRestartKey,
   usesQuestionMatchFrame,
   globalMiniGameHudTimeLeft,
@@ -522,6 +525,17 @@ export const AppRouter: React.FC<AppRouterProps> = ({
           className={`game-shell-host unified-minigame-hud-enabled ${gameplayTypeClass} ${usesQuestionMatchFrame ? 'question-match-shell' : ''} relative flex h-[100dvh] max-h-[100dvh] w-full min-h-0 flex-col overflow-hidden md:h-full md:max-h-full`.trim()}
           style={shellStyle}
         >
+            {adaptPortraitGame && selectedLevel && GAME_SCENE_META[selectedLevel.gameType]?.background ? (
+              <div className="pointer-events-none absolute inset-0 overflow-hidden" data-game-wide-ambient="true" aria-hidden="true">
+                <img
+                  src={GAME_SCENE_META[selectedLevel.gameType].background}
+                  alt=""
+                  draggable={false}
+                  className="absolute inset-0 h-full w-full scale-110 object-cover opacity-60 blur-[18px] saturate-75 brightness-50"
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.42),rgba(12,20,42,0.2)_42%,rgba(10,4,28,0.68))]" />
+              </div>
+            ) : null}
             <div className="game-shell-contract relative z-[2] flex h-full max-h-full w-full min-h-0 flex-col overflow-hidden">
 
             <div
@@ -533,7 +547,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
                 paddingRight: '0.3rem',
               }}
             >
-              <GameplayContentViewport>
+              <GameplayContentViewport boundedWideLayout={adaptPortraitGame}>
                 {renderGameplay()}
               </GameplayContentViewport>
             </div>

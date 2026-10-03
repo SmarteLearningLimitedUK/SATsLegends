@@ -2,6 +2,7 @@ import React, { useLayoutEffect, useRef, useState } from 'react';
 
 interface GameplayContentViewportProps {
   children: React.ReactNode;
+  boundedWideLayout?: boolean;
 }
 
 /**
@@ -9,7 +10,7 @@ interface GameplayContentViewportProps {
  * mini-games should render mission/puzzle/input/feedback only.
  * Shell-level chrome (top HUD + bottom utility dock) is owned by App shell.
  */
-const GameplayContentViewport: React.FC<GameplayContentViewportProps> = ({ children }) => {
+const GameplayContentViewport: React.FC<GameplayContentViewportProps> = ({ children, boundedWideLayout = false }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const [contentScale, setContentScale] = useState(1);
@@ -75,6 +76,8 @@ const GameplayContentViewport: React.FC<GameplayContentViewportProps> = ({ child
             transformOrigin: 'top center',
             height: '100%',
             width: '100%',
+            maxWidth: boundedWideLayout ? '960px' : undefined,
+            marginInline: boundedWideLayout ? 'auto' : undefined,
           }}
           className="flex h-full w-full flex-col"
         >
