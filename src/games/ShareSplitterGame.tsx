@@ -335,12 +335,17 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const platePositions = PLATE_POSITIONS_BY_COUNT[challenge.plateCount] || PLATE_POSITIONS_BY_COUNT[5];
   const isCompactViewport = viewportRect.width < 520;
   const isShortWideViewport = viewportRect.width >= 700 && viewportRect.height < 520;
+  const hasContainedWideScene = typeof window !== 'undefined'
+    && window.innerWidth >= 700 && window.innerHeight >= 600;
   const plateLayoutScale = isCompactViewport ? 0.68 : 1;
   const cakeSourceLayoutScale = isCompactViewport ? 0.76 : 1;
-  const backgroundScale = Math.max(
-    viewportRect.width / SHARE_SPLITTER_BACKGROUND_SIZE.width,
-    viewportRect.height / SHARE_SPLITTER_BACKGROUND_SIZE.height,
-  );
+  const backgroundWidthScale = viewportRect.width / SHARE_SPLITTER_BACKGROUND_SIZE.width;
+  const backgroundHeightScale = viewportRect.height / SHARE_SPLITTER_BACKGROUND_SIZE.height;
+  // SceneEnvironment contains this portrait art on wide screens. Position the
+  // plates against that same painted scene instead of a cropped cover image.
+  const backgroundScale = hasContainedWideScene
+    ? Math.min(backgroundWidthScale, backgroundHeightScale)
+    : Math.max(backgroundWidthScale, backgroundHeightScale);
   const backgroundOffsetX = (viewportRect.width - (SHARE_SPLITTER_BACKGROUND_SIZE.width * backgroundScale)) / 2;
   const plateSizePx = isShortWideViewport
     ? Math.min(106, viewportRect.width * 0.11)
@@ -609,7 +614,12 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         onAction={() => setShowPracticeIntro(false)}
       />
 
-      <div ref={stageRef} className="share-splitter-stage relative h-full w-full" data-share-stage>
+      <div
+        ref={stageRef}
+        className="share-splitter-stage relative h-full w-full"
+        data-share-stage
+        style={{ '--share-scene-width': `${SHARE_SPLITTER_BACKGROUND_SIZE.width * backgroundScale}px` } as React.CSSProperties}
+      >
         <div ref={questionCardRef} className="share-splitter-mission">
           <GameQuestionCard
             title="Target Ratio"

@@ -18,3 +18,12 @@
 .share-splitter-action-buttons > button { min-width: 0; display: flex; align-items: center; justify-content: center; gap: 5px; }
 .share-splitter-drag { position: absolute; z-index: 70; pointer-events: none; }
 .share-splitter-drag img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 3px 4px #57381288); }
+
+@media (min-width: 700px) and (min-height: 600px) {
+  .share-splitter-actions {
+    left: 50%;
+    right: auto;
+    width: min(94%, var(--share-scene-width)) !important;
+    transform: translateX(-50%);
+  }
+}

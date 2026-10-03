@@ -1019,14 +1019,16 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.translate(shakeX, shakeY);
       ctx.clearRect(0, 0, viewWidth, viewHeight);
       const bg = arenaBackdropRef.current;
+      let paintedSceneWidth = viewWidth;
       if (bg?.naturalWidth) {
-        // Fit the complete environment. The world projection below remains
-        // independent so scenery framing does not change aiming or physics.
+        // Fit the complete environment. World physics stays in world units;
+        // only screen positions are scaled into this painted scene below.
         ctx.fillStyle = '#0c2135';
         ctx.fillRect(0, 0, viewWidth, viewHeight);
         const scale = Math.min(viewWidth / bg.naturalWidth, viewHeight / bg.naturalHeight);
         const width = bg.naturalWidth * scale;
         const height = bg.naturalHeight * scale;
+        paintedSceneWidth = width;
         ctx.drawImage(bg, (viewWidth - width) / 2, (viewHeight - height) / 2, width, height);
         // Record the source only once it has actually been painted. Canvas
         // scenery has no image element for the shared visual checks to inspect.
@@ -1044,10 +1046,20 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       }
 
       const cannonAnchor = { x: viewWidth * CANNON_ANCHOR_X_RATIO, y: viewHeight * CANNON_ANCHOR_Y_RATIO };
+      const containedWideScene = window.innerWidth >= 700 && window.innerHeight >= 600 && Boolean(bg?.naturalWidth);
+      const enemySize = Math.min(viewWidth, viewHeight) * (containedWideScene ? 0.18 : 0.26);
+      const sceneProjectionScale = containedWideScene
+        ? Math.min(1, Math.max(0.2,
+          (paintedSceneWidth / 2 - enemySize * 0.41 - 16) / (ENEMY_DISTANCE + 80),
+        ))
+        : 1;
       const screenOffset = projectile?.active ? { x: 0, y: 0 } : { x: cannonAnchor.x - viewWidth / 2, y: cannonAnchor.y - viewHeight / 2 };
       const toScreen = (x: number, y: number) => {
         const base = worldToScreen(x, y, camera.x, camera.y, viewWidth, viewHeight);
-        return { x: base.x + screenOffset.x, y: base.y + screenOffset.y };
+        return {
+          x: cannonAnchor.x + (base.x + screenOffset.x - cannonAnchor.x) * sceneProjectionScale,
+          y: cannonAnchor.y + (base.y + screenOffset.y - cannonAnchor.y) * sceneProjectionScale,
+        };
       };
 
       const originScreen = toScreen(0, 0);
@@ -1105,7 +1117,6 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       if (projectile?.active) {
         ctx.translate(Math.sin(timestamp * 0.02) * 2, Math.cos(timestamp * 0.018) * 1.5);
       }
-      const enemySize = Math.min(viewWidth, viewHeight) * 0.26;
       const enemyTowerWidth = enemySize * 0.7;
       const enemyTowerHeight = enemySize * 0.8;
       ctx.save();
