@@ -7,6 +7,12 @@ const viewports = [
   { name: 'small-portrait', width: 320, height: 568 },
   { name: 'short-landscape', width: 568, height: 320 },
 ];
+const desktopViewports = [
+  { name: 'wide-desktop', width: 1476, height: 938 },
+  { name: 'compact-desktop', width: 795, height: 918 },
+  { name: 'short-desktop', width: 1280, height: 720 },
+  { name: 'minimum-desktop', width: 700, height: 600 },
+];
 const browser = await chromium.launch({ headless: true });
 const failures = [];
 await mkdir('qa-artifacts/critical-game-viewports', { recursive: true });
@@ -45,6 +51,7 @@ const checkLayout = async (page, selectors) => page.evaluate((selectorsToCheck) 
       reachable: centre === element || element.contains(centre),
     };
   });
+  const scene = document.querySelector('[data-game-scene-image]');
   return {
     width,
     height,
@@ -59,6 +66,12 @@ const checkLayout = async (page, selectors) => page.evaluate((selectorsToCheck) 
       withinCard: compactPromptRect.top >= promptCopyRect.top - 1 && compactPromptRect.bottom <= promptCopyRect.bottom + 1,
       bottom: promptCopyRect.bottom,
     } : null,
+    sceneFit: scene ? getComputedStyle(scene).objectFit : null,
+    declaredSceneFit: scene?.getAttribute('data-background-fit'),
+    question: inspect('.legend-pvp-question .game-question-card'),
+    targetPanel: inspect('.legend-pvp-targets'),
+    sourcePanel: inspect('.legend-pvp-sources'),
+    enemy: inspect('.legend-pvp-enemy'),
     targets: inspect(selectorsToCheck.targets),
     sources: inspect(selectorsToCheck.sources),
     submit: inspect(selectorsToCheck.submit),
@@ -164,6 +177,65 @@ for (const viewport of viewports) {
     await page.screenshot({ path: `qa-artifacts/critical-game-viewports/${viewport.name}-prime-pop.png` });
   }
 
+  if (pageErrors.length) failures.push(`${viewport.name} page errors: ${pageErrors.join('; ')}`);
+  await context.close();
+}
+
+for (const viewport of desktopViewports) {
+  const context = await browser.newContext({
+    viewport: { width: viewport.width, height: viewport.height },
+    reducedMotion: 'reduce',
+  });
+  const page = await context.newPage();
+  const pageErrors = [];
+  page.on('pageerror', (error) => pageErrors.push(error.message));
+  for (const [name, route, expectedTargets] of [
+    ['place-value-practice', '/game/1/1', 2],
+    ['place-value-tier-5', '/game/1/37', 7],
+  ]) {
+    try {
+      await page.goto(base + route);
+      await page.locator('[data-pvp-location="target"]').first().waitFor({ timeout: 15000 });
+      await dismissBriefings(page);
+      await page.waitForFunction(() => document.querySelector('.iphone-game-stage')?.getAttribute('data-stage-layout') === 'responsive');
+      const layout = await checkLayout(page, {
+        targets: '[data-pvp-location="target"]',
+        sources: '[data-pvp-location="source"]:not([tabindex="-1"])',
+        submit: '.game-submit-dock-fixed button',
+      });
+      const [question] = layout.question;
+      const [targets] = layout.targetPanel;
+      const [sources] = layout.sourcePanel;
+      const [enemy] = layout.enemy;
+      const [submit] = layout.submit;
+      assert.equal(layout.stageLayout, 'responsive', `${name} should use the desktop stage`);
+      assert.equal(layout.sceneFit, 'cover', `${name} scene leaves a portrait strip on desktop`);
+      assert.equal(layout.declaredSceneFit, 'cover', `${name} scene metadata does not match the rendering`);
+      assert.equal(layout.targets.length, expectedTargets, `${name} target count`);
+      assert.ok(layout.sources.length >= expectedTargets, `${name} source count`);
+      assert.ok(layout.documentScrollWidth <= viewport.width + 1, `${name} horizontal overflow`);
+      assert.ok(question && targets && sources && enemy && submit, `${name} missing game panel`);
+      assert.ok(question.box.bottom + 2 <= targets.box.top, `${name} mission overlaps Number Stones`);
+      assert.ok(targets.box.bottom + 2 <= sources.box.top, `${name} Number Stones overlap digit rack`);
+      assert.ok(sources.box.bottom + 2 <= submit.box.top, `${name} digit rack overlaps Submit`);
+      assert.ok(targets.box.right + 8 <= enemy.box.left && sources.box.right + 8 <= enemy.box.left, `${name} monster overlaps controls`);
+      for (const [group, entries] of Object.entries({ targets: layout.targets, sources: layout.sources, submit: layout.submit })) {
+        assert.ok(entries.every((entry) => entry.inViewport && entry.reachable), `${name} ${group} outside viewport or blocked: ${JSON.stringify(entries)}`);
+      }
+      if (name === 'place-value-practice') {
+        for (let index = 0; index < expectedTargets; index += 1) {
+          await page.locator('[data-pvp-location="source"]:not([tabindex="-1"])').first().click();
+        }
+        const action = page.locator('.game-submit-dock-fixed button');
+        assert.ok(await action.isEnabled(), `${name} Submit stays disabled after placing digits`);
+        await action.click();
+      }
+      console.log(`PASS ${viewport.name} ${name}: panels separate, monster grounded, Submit reachable`);
+    } catch (error) {
+      failures.push(`${viewport.name} ${name}: ${error.message}`);
+      await page.screenshot({ path: `qa-artifacts/critical-game-viewports/${viewport.name}-${name}.png` });
+    }
+  }
   if (pageErrors.length) failures.push(`${viewport.name} page errors: ${pageErrors.join('; ')}`);
   await context.close();
 }

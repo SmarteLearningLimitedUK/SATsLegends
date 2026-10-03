@@ -87,7 +87,7 @@ async function inspect(page) {
     const art = [...document.querySelectorAll('img')].filter((image) => !image.closest('[data-game-wide-ambient]') && (image.hasAttribute('data-game-scene-image') || image.currentSrc.includes('/assets/maps/'))).map((image) => ({
       src: image.currentSrc, loaded: image.complete && image.naturalWidth > 0,
       movingCourse: Boolean(image.closest('.ratio-racer-course')),
-      fit: getComputedStyle(image).objectFit, box: box(image), clipped: clipped(image), natural: { width: image.naturalWidth, height: image.naturalHeight },
+      fit: getComputedStyle(image).objectFit, declaredFit: image.getAttribute('data-background-fit'), box: box(image), clipped: clipped(image), natural: { width: image.naturalWidth, height: image.naturalHeight },
     }));
     const controls = [...document.querySelectorAll('.game-shell-host button')].filter((node) => {
       const r = box(node); return r.width > 1 && r.height > 1 && getComputedStyle(node).visibility !== 'hidden';
@@ -133,7 +133,7 @@ function validate(result) {
   expect(result.question.bottom).toBeLessThan(result.dock.y);
   for (const image of result.art) {
     expect(image.loaded, image.src).toBe(true);
-    expect(image.fit, 'Full scene framing or intentional travelling course: ' + image.src).toBe(image.movingCourse ? 'cover' : 'contain');
+    expect(image.fit, 'Scene framing matches its declared intent: ' + image.src).toBe(image.movingCourse ? 'cover' : image.declaredFit || 'contain');
     expect(image.box.bottom, 'Scene stops above bottom dock').toBeLessThanOrEqual(result.dock.y + 1);
   }
   if (result.staticRaceBackdrop) expect(result.staticRaceBackdrop.split(',').every((size) => size.trim() === 'contain'), 'Complete paddock backdrop').toBe(true);
