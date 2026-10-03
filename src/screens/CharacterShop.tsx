@@ -3,6 +3,7 @@ import { PlayerData, ShopCategory } from '../types';
 import AssetIcon from '../components/AssetIcon';
 import { FramedPanel, PrimaryActionButton, SecondaryActionButton } from '../layout/ScreenPrimitives';
 import { SHOP_CATALOG, SHOP_CATEGORIES } from '../systems/progression/shopCatalog';
+import './desktop-hub-layout.css';
 
 interface CharacterShopProps {
   player: PlayerData;
@@ -67,10 +68,10 @@ const CharacterShop: React.FC<CharacterShopProps> = ({ player, onBack, onUpdateP
   };
 
   return (
-    <div className="premium-page-root relative flex h-full w-full flex-col overflow-hidden licensed-shell-bg">
+    <div className="premium-page-root hub-wide-page hub-wide-shop relative flex h-full w-full flex-col overflow-hidden licensed-shell-bg">
       <div className="absolute inset-0 bg-slate-950/50" />
 
-      <header className="relative z-10 flex items-center justify-between px-4 pb-2.5 pt-[calc(0.75rem+env(safe-area-inset-top))] md:px-8 md:pb-4 md:pt-6">
+      <header className="hub-wide-page-header relative z-10 flex items-center justify-between px-4 pb-2.5 pt-[calc(0.75rem+env(safe-area-inset-top))] md:px-8 md:pb-4 md:pt-6">
         <div className="flex items-center gap-3">
           <button
             onClick={onBack}
@@ -89,7 +90,7 @@ const CharacterShop: React.FC<CharacterShopProps> = ({ player, onBack, onUpdateP
         </div>
       </header>
 
-      <div className="relative z-10 flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-4 pb-24 md:gap-4 md:px-8 md:pb-8">
+      <div className="hub-wide-page-content relative z-10 flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-4 pb-24 md:gap-4 md:px-8 md:pb-8">
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setActiveCategory('all')}
@@ -108,7 +109,7 @@ const CharacterShop: React.FC<CharacterShopProps> = ({ player, onBack, onUpdateP
           ))}
         </div>
 
-        <div className="grid gap-3 md:grid-cols-2">
+        <div className="hub-wide-page-grid grid gap-3 md:grid-cols-2">
           {items.map(item => {
             const owned = shopState.ownedItemIds.includes(item.itemId);
             const equipped = shopState.equippedByCategory[item.category] === item.itemId;
