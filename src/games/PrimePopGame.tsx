@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useSta
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
+import './prime-pop.css';
 import { AVATARS } from '../constants';
 import primePopBackground from '../assets/maps/premium/prime-pop.webp';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
@@ -638,7 +639,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
         onAction={() => setShowPracticeIntro(false)}
       />
       <div className="relative z-10 flex h-full min-h-0 w-full flex-col pt-[env(safe-area-inset-top)]">
-        <div className={`pointer-events-none px-3 ${usesSharedHud ? 'pt-[calc(env(safe-area-inset-top)+3.9rem)]' : 'pt-3'}`}>
+        <div className={`prime-pop-question-slot pointer-events-none px-3 ${usesSharedHud ? 'pt-[calc(env(safe-area-inset-top)+3.9rem)]' : 'pt-3'}`}>
           <GameQuestionCard title="Prime Pop" className="max-w-[22rem]">
             Pick out the <b>PRIME</b> numbers before they cross the line.
           </GameQuestionCard>

@@ -1,0 +1,23 @@
+@media (min-width: 700px) and (max-height: 650px) {
+  .angle-arena-question {
+    padding: 4px 10px !important;
+  }
+
+  .angle-arena-question .game-question-card-inner {
+    gap: 0;
+  }
+
+  .angle-arena-question .game-question-card-title-strip {
+    display: none;
+  }
+
+  .angle-arena-question .game-question-copy {
+    font-size: 15px;
+    line-height: 1.15;
+  }
+
+  .angle-arena-question .question-subtitle {
+    margin-top: 2px;
+    font-size: 11px;
+  }
+}

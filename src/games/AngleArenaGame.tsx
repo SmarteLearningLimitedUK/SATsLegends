@@ -26,6 +26,7 @@ import angleArenaFailSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemake
 import angleArenaCompleteSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/Level/level clear military 1.mp3';
 import goblinMonster from '../assets/enemies/cohesive/goblin.webp';
 import MonsterMindActor, { type MonsterMindReaction } from '../components/game-ui/MonsterMindActor';
+import './angle-arena.css';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
 import { angleToVector, clamp, degreesToRadians, distance, lerp, worldToScreen } from './angleArena/math';
 
@@ -1267,7 +1268,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
               <GameQuestionCard
                 title="Angle Arena"
                 subtitle="Choose the correct angle and fire the glowing ball."
-                className="w-full"
+                className="w-full angle-arena-question"
               >
                 {activeQuestion?.prompt ?? 'Choose the correct angle for the glowing ball.'}
               </GameQuestionCard>

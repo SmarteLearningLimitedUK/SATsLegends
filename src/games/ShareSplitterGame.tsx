@@ -337,6 +337,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const isShortWideViewport = viewportRect.width >= 700 && viewportRect.height < 520;
   const hasContainedWideScene = typeof window !== 'undefined'
     && window.innerWidth >= 700 && window.innerHeight >= 600;
+  const isContainedShortScene = hasContainedWideScene && viewportRect.height < 520;
   const plateLayoutScale = isCompactViewport ? 0.68 : 1;
   const cakeSourceLayoutScale = isCompactViewport ? 0.76 : 1;
   const backgroundWidthScale = viewportRect.width / SHARE_SPLITTER_BACKGROUND_SIZE.width;
@@ -355,8 +356,10 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const minTableCenter = questionDockBottom + SHARE_SPLITTER_TABLE_PLATE_RADIUS_Y * backgroundScale + plateSizePx / 2 + 12;
   const backgroundOffsetY = Math.min(0, Math.max(bottomArtOffset, minTableCenter - SHARE_SPLITTER_TABLE_CENTER.y * backgroundScale));
   const backgroundPositionY = Math.abs(bottomArtOffset) < .01 ? 50 : (backgroundOffsetY / bottomArtOffset) * 100;
-  const cakeSourceSize = isShortWideViewport ? 84 : CAKE_SOURCE_SIZE_PX * backgroundScale * cakeSourceLayoutScale;
-  const cakeSourceCenter = isShortWideViewport ? { x: viewportRect.width / 2, y: viewportRect.height * 0.36 } : {
+  const cakeSourceSize = isContainedShortScene ? 44 : isShortWideViewport ? 84 : CAKE_SOURCE_SIZE_PX * backgroundScale * cakeSourceLayoutScale;
+  const cakeSourceCenter = isContainedShortScene
+    ? { x: viewportRect.width / 2, y: viewportRect.height - 138 }
+    : isShortWideViewport ? { x: viewportRect.width / 2, y: viewportRect.height * 0.36 } : {
     x: backgroundOffsetX + CAKE_SOURCE_POSITION.x * backgroundScale,
     y: Math.min(backgroundOffsetY + CAKE_SOURCE_POSITION.y * backgroundScale, viewportRect.height - 124 - cakeSourceSize / 2 - 10),
   };
