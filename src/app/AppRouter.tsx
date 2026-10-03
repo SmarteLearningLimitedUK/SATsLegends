@@ -29,6 +29,8 @@ import { GameScreen, IslandData, LevelData, PlayerData } from '../types';
 import { getLevelGameTitle } from '../utils/gameNames';
 import { getGameDifficulty } from '../systems/content/gameDifficulty';
 import splashPoster from '../assets/casual_ui/splashrep1.webp';
+import SplashLogo from '../website/SplashLogo';
+import '../design/desktop-welcome.css';
 import { LEVEL_TIMERS_DISABLED } from './testingFlags';
 import {
   bindMiniGameSessionHandlers,
@@ -419,28 +421,44 @@ export const AppRouter: React.FC<AppRouterProps> = ({
   switch (screen) {
     case 'splash':
       return (
-        <div className="relative h-full w-full overflow-hidden">
-          <motion.img
-            initial={{ opacity: 0, scale: 0.985 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.45, ease: 'easeOut' }}
-            src={splashPoster}
-            alt="SATs Legends splash screen"
-            className="absolute inset-0 h-full w-full object-cover"
-            style={{ objectPosition: '50% 0%' }}
-            draggable={false}
-          />
+        <div className="legend-welcome-screen relative h-full w-full overflow-hidden">
+          <div className="legend-welcome-mobile relative h-full w-full">
+            <motion.img
+              initial={{ opacity: 0, scale: 0.985 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.45, ease: 'easeOut' }}
+              src={splashPoster}
+              alt="SATs Legends splash screen"
+              className="absolute inset-0 h-full w-full object-cover"
+              style={{ objectPosition: '50% 0%' }}
+              draggable={false}
+            />
 
-          <div className="legend-welcome-action absolute bottom-[7.5%] left-1/2 w-56 -translate-x-1/2 sm:w-64">
-            <p>{player.playerName.trim() ? `Welcome back, ${player.playerName}.` : 'Big adventures. Brilliant minds.'}</p>
-            <button
-              type="button"
-              onClick={onStartAdventure}
-              aria-label="Start"
-              className="ui-button-primary px-4 py-3 text-lg"
-            >
-              {player.playerName.trim() ? 'Continue adventure' : 'Start adventure'}<ArrowRight aria-hidden="true" />
-            </button>
+            <div className="legend-welcome-action absolute bottom-[7.5%] left-1/2 w-56 -translate-x-1/2 sm:w-64">
+              <p>{player.playerName.trim() ? `Welcome back, ${player.playerName}.` : 'Big adventures. Brilliant minds.'}</p>
+              <button
+                type="button"
+                onClick={onStartAdventure}
+                aria-label="Start"
+                className="ui-button-primary px-4 py-3 text-lg"
+              >
+                {player.playerName.trim() ? 'Continue adventure' : 'Start adventure'}<ArrowRight aria-hidden="true" />
+              </button>
+            </div>
+          </div>
+
+          <div className="legend-desktop-welcome">
+            <div className="legend-desktop-welcome-content">
+              <div className="legend-desktop-welcome-logo" aria-label="SATs Legends"><SplashLogo /></div>
+              <p className="legend-desktop-welcome-eyebrow">Your adventure begins here</p>
+              <h1>Welcome to <span>Matharia</span></h1>
+              <p className="legend-desktop-welcome-copy">
+                {player.playerName.trim() ? `Welcome back, ${player.playerName}. Your next challenge awaits.` : 'Explore the islands, sharpen your maths skills, and become a legend.'}
+              </p>
+              <button type="button" onClick={onStartAdventure} className="ui-button-primary legend-desktop-welcome-cta">
+                {player.playerName.trim() ? 'Continue adventure' : 'Start adventure'}<ArrowRight aria-hidden="true" />
+              </button>
+            </div>
           </div>
         </div>
       );

@@ -76,8 +76,36 @@ for (const [name, engine, options] of profiles) {
       check(baseStylesReady && layout.scrollWidth <= layout.width + 1 && (!layout.heading || (layout.heading.left >= -1 && layout.heading.right <= layout.width + 1))
         && (layout.width > 580 || layout.fields.every(size => size >= 16)), name, route, { baseStylesReady, ...layout });
     }
+    await page.goto(base + '/play');
+    await page.locator('[data-qa-screen="splash"]').waitFor();
+    await page.waitForFunction(() => {
+      if (document.documentElement.clientWidth < 900 || document.documentElement.clientHeight < 600) return true;
+      return document.querySelector('.iphone-game-stage')?.getAttribute('data-stage-layout') === 'responsive';
+    });
+    const welcome = await page.evaluate(() => {
+      const width = document.documentElement.clientWidth;
+      const height = document.documentElement.clientHeight;
+      const stageElement = document.querySelector('.iphone-game-stage');
+      const stage = stageElement?.getBoundingClientRect();
+      const action = document.querySelector('.legend-welcome-action')?.getBoundingClientRect();
+      return {
+        width, height, scrollWidth: document.documentElement.scrollWidth,
+        stageLayout: stageElement?.getAttribute('data-stage-layout'),
+        stage: stage && { left: stage.left, right: stage.right },
+        action: action && { left: action.left, right: action.right, top: action.top, bottom: action.bottom },
+      };
+    });
+    const welcomeIsDesktop = welcome.width >= 900 && welcome.height >= 600;
+    check(welcome.scrollWidth <= welcome.width + 1 && welcome.stage && welcome.stage.left >= -1 && welcome.stage.right <= welcome.width + 1
+      && (!welcomeIsDesktop || (welcome.stageLayout === 'responsive' && Math.abs(welcome.stage.left) <= 1 && Math.abs(welcome.stage.right - welcome.width) <= 1))
+      && welcome.action && welcome.action.left >= -1 && welcome.action.right <= welcome.width + 1
+      && welcome.action.top >= -1 && welcome.action.bottom <= welcome.height + 1, name, '/play', welcome);
     await page.goto(base + '/map');
     await page.locator('[data-qa-screen="world_map"]').waitFor();
+    await page.waitForFunction(() => {
+      if (document.documentElement.clientWidth < 900 || document.documentElement.clientHeight < 600) return true;
+      return document.querySelector('.iphone-game-stage')?.getAttribute('data-stage-layout') === 'responsive';
+    });
     const games = await page.evaluate(async () => {
       const { ISLANDS } = await import('/src/constants.ts');
       const variants = ISLANDS.flatMap(island => island.levels.map(level => ({ route: `/game/${island.id}/${level.id}`, key: level.blueprintKey || level.gameType })));
@@ -85,13 +113,27 @@ for (const [name, engine, options] of profiles) {
     });
     const map = await page.evaluate(() => {
       const width = document.documentElement.clientWidth;
-      const stage = document.querySelector('.iphone-game-stage')?.getBoundingClientRect();
+      const height = document.documentElement.clientHeight;
+      const stageElement = document.querySelector('.iphone-game-stage');
+      const stage = stageElement?.getBoundingClientRect();
       const dock = document.querySelector('.legend-map-dock')?.getBoundingClientRect();
       const website = document.querySelector('.website-return')?.getBoundingClientRect();
       const returnOverlapsDock = Boolean(dock && website && website.left < dock.right && website.right > dock.left && website.top < dock.bottom && website.bottom > dock.top);
-      return { width, scrollWidth: document.documentElement.scrollWidth, stage: stage && { left: stage.left, right: stage.right }, returnOverlapsDock };
+      const islands = [...document.querySelectorAll('.legend-map-hotspot')].map(element => {
+        const rect = element.getBoundingClientRect();
+        return { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom };
+      });
+      return {
+        width, height, scrollWidth: document.documentElement.scrollWidth,
+        stageLayout: stageElement?.getAttribute('data-stage-layout'),
+        stage: stage && { left: stage.left, right: stage.right }, returnOverlapsDock, islands,
+      };
     });
-    check(map.scrollWidth <= map.width + 1 && map.stage && map.stage.left >= -1 && map.stage.right <= map.width + 1 && !map.returnOverlapsDock, name, '/map', map);
+    const mapIsDesktop = map.width >= 900 && map.height >= 600;
+    check(map.scrollWidth <= map.width + 1 && map.stage && map.stage.left >= -1 && map.stage.right <= map.width + 1
+      && !map.returnOverlapsDock && map.islands.length === 8
+      && (!mapIsDesktop || (map.stageLayout === 'responsive' && Math.abs(map.stage.left) <= 1 && Math.abs(map.stage.right - map.width) <= 1
+        && map.islands.every(island => island.left >= -1 && island.right <= map.width + 1 && island.top >= -1 && island.bottom <= map.height + 1))), name, '/map', map);
 
     for (const game of games) {
       try {
