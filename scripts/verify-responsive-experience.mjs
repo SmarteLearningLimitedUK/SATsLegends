@@ -98,6 +98,15 @@ for (const [name, engine, options] of profiles) {
         await page.goto(base + game.route);
         await page.locator('[data-qa-screen="gameplay"]').waitFor({ timeout: 15000 });
         await page.evaluate(() => document.fonts.ready);
+        await page.waitForFunction(() => {
+          const width = document.documentElement.clientWidth;
+          const height = document.documentElement.clientHeight;
+          if (width < 700 || height < 600) return true;
+          const stage = document.querySelector('.iphone-game-stage');
+          if (stage?.getAttribute('data-stage-layout') !== 'responsive') return false;
+          const rect = stage.getBoundingClientRect();
+          return Math.abs(rect.left) <= 1 && Math.abs(rect.right - width) <= 1;
+        }, null, { timeout: 10000 });
         await page.waitForTimeout(220);
         const layout = await page.evaluate(() => {
           const width = document.documentElement.clientWidth;
@@ -111,7 +120,9 @@ for (const [name, engine, options] of profiles) {
           const rect = question?.getBoundingClientRect();
           const mission = document.querySelector('[data-game-question]')?.getBoundingClientRect();
           return {
-            width, scrollWidth: document.documentElement.scrollWidth,
+            width, height: document.documentElement.clientHeight,
+            scrollWidth: document.documentElement.scrollWidth,
+            stageLayout: document.querySelector('.iphone-game-stage')?.getAttribute('data-stage-layout'),
             stage: box('.iphone-game-stage'), top: box('[data-testid="shared-top-hud"]'),
             mission: box('[data-game-question]'), dock: box('[data-testid="shared-bottom-hud"]'),
             questionContained: !question || !rect || !mission || (rect.left >= mission.left - 2 && rect.right <= mission.right + 2 && rect.top >= mission.top - 2 && rect.bottom <= mission.bottom + 2),
@@ -120,6 +131,8 @@ for (const [name, engine, options] of profiles) {
         const within = box => !box || (box.left >= -1 && box.right <= layout.width + 1 && box.height > 0);
         const ok = layout.scrollWidth <= layout.width + 1 && within(layout.stage) && within(layout.top) && within(layout.mission)
           && within(layout.dock) && layout.questionContained
+          && (layout.width < 700 || layout.height < 600 || (layout.stage && layout.stageLayout === 'responsive'
+            && Math.abs(layout.stage.left) <= 1 && Math.abs(layout.stage.right - layout.width) <= 1))
           && (!layout.top || !layout.mission || layout.mission.top >= layout.top.bottom - 16)
           && (!layout.dock || !layout.mission || layout.mission.bottom <= layout.dock.top + 2);
         check(ok, name, game.route, { key: game.key, ...layout });
