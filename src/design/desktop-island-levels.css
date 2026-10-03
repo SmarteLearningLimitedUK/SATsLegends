@@ -1,0 +1,292 @@
+/* The phone mission flow remains a single scrollable column. */
+.legend-island-hero,
+.legend-island-missions {
+  display: contents;
+}
+
+.legend-island-hero-art,
+.legend-island-missions-heading {
+  display: none;
+}
+
+.legend-next-mission-title {
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 700px) and (min-height: 600px) {
+  #root .screen-island-levels .legend-island-content {
+    box-sizing: border-box;
+    max-width: 100%;
+  }
+
+  #root .screen-island-levels .legend-next-mission-title,
+  #root .screen-island-levels .legend-group-title {
+    overflow: visible;
+    white-space: normal;
+    text-overflow: clip;
+    overflow-wrap: anywhere;
+  }
+
+  #root .screen-island-levels .legend-group-header {
+    align-items: center;
+  }
+}
+
+@media (min-width: 900px) and (min-height: 600px) {
+  #root .screen-island-levels .legend-island-root {
+    background: #150c32;
+  }
+
+  #root .screen-island-levels .legend-island-backdrop {
+    display: none;
+  }
+
+  #root .screen-island-levels .legend-island-content {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    grid-template-columns: minmax(315px, 39fr) minmax(0, 61fr);
+    gap: 0;
+    padding: 0 !important;
+  }
+
+  #root .screen-island-levels .legend-island-hero {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    min-width: 0;
+    min-height: 0;
+    flex-direction: column;
+    overflow: hidden;
+    padding: clamp(20px, 2.6vw, 42px);
+    border-right: 2px solid rgba(255, 221, 135, .55);
+  }
+
+  .legend-island-hero-art {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    display: block;
+    background-position: center 34%;
+    background-size: cover;
+    animation: legend-island-art-enter 750ms ease-out both;
+  }
+
+  .legend-island-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(180deg,
+      rgba(11, 10, 39, .64) 0%,
+      rgba(11, 10, 39, .02) 25%,
+      rgba(11, 10, 39, .14) 46%,
+      rgba(14, 8, 42, .86) 74%,
+      #160d3a 100%);
+  }
+
+  #root .screen-island-levels .legend-island-header {
+    display: grid;
+    min-height: 0;
+    flex: 1 1 auto;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      'back tokens'
+      '. .'
+      'title title';
+    align-items: start;
+    gap: 12px;
+    margin: 0 0 clamp(12px, 2vh, 22px);
+  }
+
+  .legend-island-back {
+    grid-area: back;
+  }
+
+  .legend-island-title-block {
+    grid-area: title;
+    min-width: 0;
+    text-align: left;
+    animation: legend-island-content-enter 480ms 110ms ease-out both;
+  }
+
+  #root .screen-island-levels .legend-island-title-block > .flex {
+    justify-content: flex-start;
+  }
+
+  #root .screen-island-levels .legend-island-title-block h1 {
+    max-width: 100%;
+    margin-top: 8px;
+    font-size: clamp(31px, 3.2vw, 53px);
+    line-height: 1.04;
+    letter-spacing: -.02em;
+    text-wrap: balance;
+  }
+
+  #root .screen-island-levels .legend-island-category {
+    color: #ffe18c;
+    font-size: clamp(11px, .9vw, 14px);
+    font-weight: 800;
+    letter-spacing: .13em;
+  }
+
+  .legend-island-token-count {
+    grid-area: tokens;
+    max-width: 176px;
+  }
+
+  #root .screen-island-levels .legend-next-mission {
+    flex: 0 0 auto;
+    width: 100%;
+    margin: 0;
+    padding: clamp(14px, 1.5vw, 21px);
+    border-radius: 18px;
+    animation: legend-island-content-enter 480ms 180ms ease-out both;
+  }
+
+  #root .screen-island-levels .legend-next-mission > div {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 13px;
+  }
+
+  #root .screen-island-levels .legend-next-mission-title {
+    margin-top: 5px;
+    color: #fff;
+    font-size: clamp(17px, 1.45vw, 23px);
+    line-height: 1.22;
+  }
+
+  #root .screen-island-levels .legend-next-mission button {
+    width: 100%;
+    min-height: 48px;
+    font-size: 17px;
+  }
+
+  #root .screen-island-levels .legend-island-missions {
+    display: flex;
+    min-width: 0;
+    min-height: 0;
+    flex-direction: column;
+    overflow: hidden;
+    padding: clamp(21px, 2.3vw, 38px);
+    background: linear-gradient(145deg, #2d145d 0%, #1e174b 42%, #09274a 100%);
+    box-shadow: inset 10px 0 34px rgba(8, 5, 27, .3);
+  }
+
+  #root .screen-island-levels .legend-island-missions-heading {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: end;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 0 0 clamp(16px, 2vh, 22px);
+  }
+
+  #root .screen-island-levels .legend-island-missions-heading h2 {
+    margin: 4px 0 0;
+    color: #fff;
+    font-size: clamp(26px, 2.45vw, 39px);
+    line-height: 1.05;
+  }
+
+  .legend-island-mission-count {
+    flex: 0 0 auto;
+    padding-bottom: 3px;
+    color: #d4c8f3;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  #root .screen-island-levels .legend-island-list {
+    min-width: 0;
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-right: 9px;
+    scrollbar-color: #a58cd1 transparent;
+    scrollbar-width: thin;
+  }
+
+  #root .screen-island-levels .legend-island-list > div {
+    padding-bottom: 12px;
+    gap: 12px;
+  }
+
+  #root .screen-island-levels .legend-group {
+    padding: clamp(15px, 1.5vw, 22px);
+    border-radius: 20px;
+    transition: transform 180ms ease, filter 180ms ease;
+  }
+
+  #root .screen-island-levels .legend-group:hover,
+  #root .screen-island-levels .legend-group:focus-within {
+    filter: brightness(1.07);
+    transform: translateY(-2px);
+  }
+
+  #root .screen-island-levels .legend-group-header {
+    min-height: 66px;
+  }
+
+  #root .screen-island-levels .legend-group-icon {
+    width: clamp(58px, 5vw, 74px);
+    height: clamp(58px, 5vw, 74px);
+  }
+
+  #root .screen-island-levels .legend-group-title {
+    font-size: clamp(18px, 1.45vw, 22px);
+    line-height: 1.16;
+  }
+
+  #root .screen-island-levels .legend-group-progress {
+    margin-top: 5px;
+    font-size: 13px;
+  }
+
+  #root .screen-island-levels .legend-group-header > svg {
+    width: 25px;
+    height: 25px;
+  }
+
+  #root .screen-island-levels .legend-level-row {
+    gap: 10px;
+    padding: 10px 12px;
+  }
+}
+
+@media (min-width: 900px) and (min-height: 600px) and (max-width: 1050px) {
+  #root .screen-island-levels .legend-island-content {
+    grid-template-columns: minmax(305px, 42fr) minmax(0, 58fr);
+  }
+
+  #root .screen-island-levels .legend-island-missions {
+    padding: 18px;
+  }
+}
+
+@keyframes legend-island-art-enter {
+  from { opacity: .5; transform: scale(1.045); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes legend-island-content-enter {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .legend-island-hero-art,
+  .legend-island-title-block,
+  .legend-next-mission {
+    animation: none !important;
+  }
+
+  #root .screen-island-levels .legend-group {
+    transition: none;
+  }
+}

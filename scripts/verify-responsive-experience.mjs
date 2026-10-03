@@ -135,6 +135,59 @@ for (const [name, engine, options] of profiles) {
       && (!mapIsDesktop || (map.stageLayout === 'responsive' && Math.abs(map.stage.left) <= 1 && Math.abs(map.stage.right - map.width) <= 1
         && map.islands.every(island => island.left >= -1 && island.right <= map.width + 1 && island.top >= -1 && island.bottom <= map.height + 1))), name, '/map', map);
 
+    for (const islandId of name === 'desktop' ? [8, 1, 3] : [8]) {
+      const route = `/island/${islandId}`;
+      await page.goto(base + route);
+      await page.locator('[data-qa-screen="island_levels"]').waitFor();
+      await page.waitForFunction(() => {
+        if (document.documentElement.clientWidth < 700 || document.documentElement.clientHeight < 600) return true;
+        return document.querySelector('.iphone-game-stage')?.getAttribute('data-stage-layout') === 'responsive';
+      });
+      await page.evaluate(() => document.fonts.ready);
+      const island = await page.evaluate(() => {
+        const width = document.documentElement.clientWidth;
+        const height = document.documentElement.clientHeight;
+        const stageElement = document.querySelector('.iphone-game-stage');
+        const stage = stageElement?.getBoundingClientRect();
+        const root = document.querySelector('.legend-island-root')?.getBoundingClientRect();
+        const heading = document.querySelector('.legend-island-header h1')?.getBoundingClientRect();
+        const nextMission = document.querySelector('.legend-next-mission')?.getBoundingClientRect();
+        const groupTitles = [...document.querySelectorAll('.legend-group-title')];
+        return {
+          width, height, scrollWidth: document.documentElement.scrollWidth,
+          stageLayout: stageElement?.getAttribute('data-stage-layout'),
+          stage: stage && { left: stage.left, right: stage.right },
+          root: root && { left: root.left, right: root.right },
+          heading: heading && { left: heading.left, right: heading.right },
+          nextMission: nextMission && { left: nextMission.left, right: nextMission.right },
+          groupCount: groupTitles.length,
+          groupTitlesClipped: groupTitles.some(title => title.scrollWidth > title.clientWidth + 1),
+        };
+      });
+      const desktopIsland = island.width >= 700 && island.height >= 600;
+      await page.locator('.legend-group-header').first().click();
+      const expanded = await page.evaluate(() => {
+        const rows = [...document.querySelectorAll('.legend-level-row')];
+        return {
+          rows: rows.length,
+          scrollWidth: document.documentElement.scrollWidth,
+          actionsContained: rows.every(row => {
+            const rowRect = row.getBoundingClientRect();
+            const actionRect = row.querySelector('button')?.getBoundingClientRect();
+            return !actionRect || (actionRect.left >= rowRect.left - 1 && actionRect.right <= rowRect.right + 1);
+          }),
+        };
+      });
+      check(island.scrollWidth <= island.width + 1 && island.stage && island.stage.left >= -1 && island.stage.right <= island.width + 1
+        && island.root && island.root.left >= -1 && island.root.right <= island.width + 1
+        && island.heading && island.heading.left >= -1 && island.heading.right <= island.width + 1
+        && island.groupCount > 0 && expanded.rows > 0 && expanded.scrollWidth <= island.width + 1
+        && (!desktopIsland || (island.stageLayout === 'responsive' && Math.abs(island.stage.left) <= 1
+          && Math.abs(island.stage.right - island.width) <= 1 && !island.groupTitlesClipped && expanded.actionsContained
+          && (!island.nextMission || (island.nextMission.left >= -1 && island.nextMission.right <= island.width + 1)))),
+      name, route, { ...island, expanded });
+    }
+
     for (const game of games) {
       try {
         await page.goto(base + game.route);
