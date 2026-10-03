@@ -315,18 +315,18 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
       <GameScreenLayout
         className="relative h-full w-full min-h-0 select-none gap-0 text-slate-100"
         main={(
-          <section className="flex min-h-0 flex-1 flex-col px-2 pb-[calc(env(safe-area-inset-bottom)+0.55rem)] pt-2 sm:px-3 md:px-4">
-            <div className="flex flex-1" />
+          <section className="line-graph-main flex min-h-0 flex-1 flex-col px-2 pb-[calc(env(safe-area-inset-bottom)+0.55rem)] pt-2 sm:px-3 md:px-4">
+            <div className="line-graph-spacer flex flex-1" />
 
-            <div className="mx-auto flex w-full max-w-[780px] flex-col gap-2 sm:gap-2.5">
+            <div className="line-graph-board mx-auto flex w-full max-w-[780px] flex-col gap-2 sm:gap-2.5">
               <GameQuestionCard className="w-full" title="Line Graph Lab" subtitle={round?.helper || ''}>
                 {round?.question ?? ''}
               </GameQuestionCard>
 
-              <div className="rounded-[1.2rem] border border-cyan-100/12 bg-[linear-gradient(180deg,rgba(8,24,54,0.5),rgba(4,12,28,0.32))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_14px_28px_rgba(2,6,23,0.16)] backdrop-blur-[2px] sm:p-3">
+              <div className="line-graph-plot rounded-[1.2rem] border border-cyan-100/12 bg-[linear-gradient(180deg,rgba(8,24,54,0.5),rgba(4,12,28,0.32))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_14px_28px_rgba(2,6,23,0.16)] backdrop-blur-[2px] sm:p-3">
                 <div
                   ref={chartWrapRef}
-                  className="relative w-full overflow-hidden rounded-[1rem] border border-slate-200/10 bg-[linear-gradient(180deg,rgba(7,18,38,0.66),rgba(4,10,24,0.4))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
+                  className="line-graph-chart relative w-full overflow-hidden rounded-[1rem] border border-slate-200/10 bg-[linear-gradient(180deg,rgba(7,18,38,0.66),rgba(4,10,24,0.4))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
                   style={{ height: 'clamp(9.75rem, 24vh, 15.5rem)' }}
                 >
                   <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(125,211,252,0.12),transparent_58%)]" />
@@ -386,6 +386,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                 </div>
               </div>
 
+              <div className="line-graph-side">
               <div className="answer-choice-surface grid grid-cols-2 gap-2">
                 {round?.options.map(option => {
                   const isSelected = selectedAnswer === option;
@@ -414,7 +415,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                 })}
               </div>
 
-              <div className="min-h-[3rem]">
+              <div className="line-graph-next min-h-[3rem]">
                 <AnimatePresence mode="wait">
                   {gameState === 'success' ? (
                     <motion.button
@@ -443,6 +444,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                   <span>{feedback.message}</span>
                 </div>
               )}
+              </div>
             </div>
           </section>
         )}

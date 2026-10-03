@@ -805,14 +805,8 @@ const App: React.FC = () => {
   const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
   const hasWideGameViewport = viewportSize.width >= 700 && viewportSize.height >= 600;
-  const usesResponsiveGameScene = isMockAssessment || selectedGameType === 'change_counter'
-    || (selectedGameType === 'take_out_rush' && selectedLevel?.blueprintKey !== 'fraction_forge')
-    || selectedGameType === 'ratio_fractions'
-    || (selectedGameType === 'ratio_rapids'
-      && selectedLevel?.blueprintKey !== 'share_splitter'
-      && selectedLevel?.blueprintKey !== 'maths_vs_zombies');
   const useUnboundedStageShell = screen === 'parent_dashboard' || isWellbeingScreen
-    || (isGameplayScreen && hasWideGameViewport && usesResponsiveGameScene)
+    || (isGameplayScreen && hasWideGameViewport)
     || (isGameplayScreen && selectedLevel?.blueprintKey === 'place_value_panic'
       && viewportSize.width >= 560 && viewportSize.width > viewportSize.height && viewportSize.height <= 420);
   const globalDockOffsetClass = screen !== 'splash' && !isGameplayScreen && screen !== 'avatar_selection' && screen !== 'profile_setup'

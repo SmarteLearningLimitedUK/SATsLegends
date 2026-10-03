@@ -1,0 +1,170 @@
+.potion-cauldron-stage {
+  transform: translateY(calc(var(--potion-cauldron-shift, 0px) + 40px));
+}
+
+/* Respond to the actual game stage, which may be narrower than the browser. */
+.formula-forge-scene,
+.potion-panic-scene {
+  container-type: inline-size;
+}
+
+@container (min-width: 700px) {
+  .formula-forge-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    column-gap: 14px;
+    row-gap: 10px;
+  }
+
+  .formula-forge-diagram {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    height: 100%;
+  }
+
+  .formula-forge-body [data-formula-hint] {
+    grid-column: 2;
+    grid-row: 1;
+    padding: 9px 12px;
+    font-size: 14px;
+    line-height: 1.3;
+    background: rgba(7, 22, 39, 0.86);
+  }
+
+  .formula-forge-body [data-formula-answers] {
+    grid-column: 2;
+    grid-row: 2;
+    display: flex;
+    min-height: 0;
+    flex-direction: column;
+    margin-top: 0 !important;
+  }
+
+  .formula-forge-body [data-formula-answers] > div:last-child {
+    flex: 1 1 auto;
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+  }
+
+  .formula-forge-body [data-formula-answers] button {
+    min-height: 52px;
+  }
+
+}
+
+@container (min-width: 800px) {
+  .potion-panic-main {
+    display: grid;
+    max-width: 960px;
+    grid-template-columns: minmax(260px, 290px) minmax(0, 1fr) minmax(215px, 240px);
+    gap: 14px;
+    align-items: stretch;
+  }
+
+  .potion-panic-scene .game-screen-top {
+    display: none;
+  }
+
+  #root .potion-panic-scene .game-screen-layout {
+    padding-top: 0 !important;
+  }
+
+  .potion-panic-stage {
+    grid-column: 1 / 3;
+    display: grid;
+    grid-template-columns: minmax(260px, 290px) minmax(0, 1fr);
+    gap: 14px;
+    height: 100%;
+  }
+
+  .potion-recipe-panel {
+    position: relative;
+    top: auto;
+    left: auto;
+    grid-column: 1;
+    width: 100%;
+    align-self: start;
+    margin-top: 16px;
+    transform: none;
+    translate: none;
+  }
+
+  .potion-recipe-panel .game-question-card {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    padding: 12px 13px;
+    transform: none !important;
+  }
+
+  .potion-recipe-panel .game-question-card [data-question-copy] {
+    font-size: 14px;
+    line-height: 1.25;
+  }
+
+  .potion-recipe-panel .game-question-card [data-question-copy] > div:last-child {
+    max-width: none;
+    font-size: 14px;
+    line-height: 1.3;
+    text-wrap: pretty;
+    overflow-wrap: normal;
+    hyphens: none;
+  }
+
+  .potion-cauldron-stage {
+    position: relative;
+    inset: auto;
+    grid-column: 2;
+    min-width: 0;
+    min-height: 0;
+    transform: none;
+  }
+
+  .potion-cauldron-stage > img {
+    bottom: 4%;
+    height: 72%;
+  }
+
+  .potion-ingredients {
+    grid-column: 3;
+    align-self: center;
+    min-width: 0;
+    padding: 10px;
+  }
+
+  .potion-ingredients > div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .potion-ingredients button {
+    height: clamp(92px, 17vh, 108px);
+  }
+
+  .potion-ingredients button span {
+    font-size: 14px;
+  }
+
+  .potion-feedback-slot:empty {
+    display: none;
+  }
+}
+
+@media (min-width: 1100px) and (min-height: 600px) {
+  .game-shell-host:has(.formula-forge-scene) [data-game-background-layer]::before,
+  .potion-panic-scene [data-game-background-layer]::before {
+    position: absolute;
+    inset: -5%;
+    content: '';
+    filter: blur(17px) brightness(0.5) saturate(0.8);
+  }
+
+  .game-shell-host:has(.formula-forge-scene) [data-game-background-layer]::before {
+    background: url('../assets/maps/premium/formula-forge.webp') center / cover no-repeat;
+  }
+
+  .potion-panic-scene [data-game-background-layer]::before {
+    background: url('../assets/maps/premium/potion-panic.webp') center / cover no-repeat;
+  }
+}

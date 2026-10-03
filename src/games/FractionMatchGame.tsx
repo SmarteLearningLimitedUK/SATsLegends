@@ -339,7 +339,7 @@ const MatchGameShell: React.FC<{
              </div>
            ) : null}
 
-           <div className={`relative z-10 flex h-full w-full items-center justify-center px-2 pb-[calc(env(safe-area-inset-bottom)+0.9rem)] ${useSharedTopHud ? 'pt-28' : 'pt-2'} sm:px-4`}>
+           <div data-match-board-space className={`relative z-10 flex h-full w-full items-center justify-center px-2 pb-[calc(env(safe-area-inset-bottom)+0.9rem)] ${useSharedTopHud ? 'pt-28' : 'pt-2'} sm:px-4`}>
              <AnimatePresence>
                {fireActive ? (
                  <motion.div
@@ -392,6 +392,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [timeLeft, setTimeLeft] = useState(ROUND_SECONDS);
   const [gemSize, setGemSize] = useState(52);
+  const [boardPixelWidth, setBoardPixelWidth] = useState(390);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
   const [fireActive, setFireActive] = useState(false);
   const [firePulse, setFirePulse] = useState(0);
@@ -436,6 +437,16 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   }, [isPractice]);
 
   useEffect(() => {
+    const space = boardGridRef.current?.closest<HTMLElement>('[data-match-board-space]');
+    const updateBoardWidth = () => {
+      if (!space) return;
+      const style = getComputedStyle(space);
+      const usableWidth = space.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const usableHeight = space.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+      // Six square rows need more height than the five columns need width.
+      const nextWidth = Math.max(150, Math.floor(Math.min(390, window.innerWidth * 0.86, usableWidth, usableHeight * 0.82)));
+      setBoardPixelWidth((previous) => previous === nextWidth ? previous : nextWidth);
+    };
     const updateGemSize = () => {
       const node = boardGridRef.current;
       if (!node) return;
@@ -443,16 +454,18 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       const boardWidth = node.clientWidth;
       if (boardWidth <= 0) return;
 
-      const gapPx = 12; // sync with responsive gap-2 / gap-3
+      const gapPx = 3; // The rendered grid uses a 3px gap.
       const rawSize = Math.floor((boardWidth - (gapPx * (GRID_COLS - 1))) / GRID_COLS);
       const clampedSize = Math.max(18, Math.min(58, rawSize));
 
       setGemSize((prev) => (prev === clampedSize ? prev : clampedSize));
     };
 
+    updateBoardWidth();
     updateGemSize();
 
     const resizeListener = () => {
+      updateBoardWidth();
       updateGemSize();
     };
 
@@ -461,9 +474,11 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
     let observer: ResizeObserver | null = null;
     if (typeof ResizeObserver !== 'undefined' && boardGridRef.current) {
       observer = new ResizeObserver(() => {
+        updateBoardWidth();
         updateGemSize();
       });
       observer.observe(boardGridRef.current);
+      if (space) observer.observe(space);
     }
 
     return () => {
@@ -628,7 +643,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
-      <div className="relative box-border w-[min(86vw,24.5rem)] rounded-[2rem] border border-cyan-100/20 bg-[linear-gradient(180deg,rgba(4,16,44,0.9),rgba(3,10,28,0.96))] p-3 shadow-[0_18px_40px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:p-4">
+      <div className="relative box-border shrink-0 rounded-[2rem] border border-cyan-100/20 bg-[linear-gradient(180deg,rgba(4,16,44,0.9),rgba(3,10,28,0.96))] p-3 shadow-[0_18px_40px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:p-4" style={{ width: boardPixelWidth }}>
         <div
           className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-[0.24]"
           style={{

@@ -54,12 +54,21 @@ const makeOptions = (correct: number) => {
   return shuffle([...wrongs, correct]);
 };
 
-/** A chosen tier stays fixed for the whole four-strike run. */
-const makeQuestion = (tier: number): MultiplicationQuestion => {
-  const [minimum, maximum] = [[2, 5], [2, 7], [3, 9], [4, 12], [6, 12]][Math.max(1, Math.min(5, tier)) - 1];
-  const a = minimum + Math.floor(Math.random() * (maximum - minimum + 1));
-  const b = minimum + Math.floor(Math.random() * (maximum - minimum + 1));
-  return { a, b, answer: a * b, options: makeOptions(a * b) };
+/** Four distinct facts and products, selected from the chosen tier's factor band. */
+const makeQuestionDeck = (tier: number): MultiplicationQuestion[] => {
+  const [minimum, maximum, challengingFactor] = [
+    [2, 5, 2], [2, 7, 6], [3, 9, 8], [4, 12, 10], [7, 12, 11],
+  ][Math.max(1, Math.min(5, tier)) - 1];
+  const pairs: [number, number][] = [];
+  for (let a = minimum; a <= maximum; a += 1) for (let b = a; b <= maximum; b += 1) {
+    if (b >= challengingFactor) pairs.push([a, b]);
+  }
+  const seenProducts = new Set<number>();
+  return shuffle(pairs).filter(([a, b]) => {
+    if (seenProducts.has(a * b)) return false;
+    seenProducts.add(a * b);
+    return true;
+  }).slice(0, ROCK_MAX_HEALTH).map(([a, b]) => ({ a, b, answer: a * b, options: makeOptions(a * b) }));
 };
 
 const starsForMistakes = (mistakes: number) => mistakes <= 1 ? 3 : mistakes <= 3 ? 2 : 1;
@@ -71,7 +80,9 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
   const tier = useMemo(() => Math.max(1, Math.min(5, levelId || 1)), [levelId]);
   const isPresent = useIsPresent();
   const reducedMotion = useReducedMotion();
-  const [question, setQuestion] = useState(() => makeQuestion(tier));
+  const questionDeckRef = useRef<MultiplicationQuestion[]>([]);
+  if (questionDeckRef.current.length === 0) questionDeckRef.current = makeQuestionDeck(tier);
+  const [question, setQuestion] = useState(() => questionDeckRef.current[0]);
   const [rockHealth, setRockHealth] = useState(ROCK_MAX_HEALTH);
   const [correctCount, setCorrectCount] = useState(0);
   const [phase, setPhase] = useState<Phase>('playing');
@@ -160,7 +171,8 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
       healthRef.current = ROCK_MAX_HEALTH;
       questionAttemptRef.current = 0;
       questionStartRef.current = Date.now();
-      setQuestion(makeQuestion(tier));
+      questionDeckRef.current = makeQuestionDeck(tier);
+      setQuestion(questionDeckRef.current[0]);
       setRockHealth(ROCK_MAX_HEALTH);
       setCorrectCount(0);
       setPhase('playing');
@@ -231,7 +243,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
       return;
     }
     schedule(() => {
-      setQuestion(makeQuestion(tier));
+      setQuestion(questionDeckRef.current[nextCorrect]);
       setFeedback(null);
       setSelectedChoice(null);
       questionAttemptRef.current = 0;

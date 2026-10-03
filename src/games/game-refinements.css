@@ -104,11 +104,45 @@
 .chrono-actions button { min-height: max(46px, var(--refinement-hit-size)); border-radius: 12px; padding: 8px; font-size: var(--legend-label-size, 14px); font-weight: 850; }
 .chrono-actions .ui-button-primary { font-size: var(--legend-question-size, 18px); }
 
+.mean-machine-stage {
+  width: auto;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+  flex: none;
+}
+
 @media (max-height: 700px) {
   .lava-crossing-layout, .perimeter-layout, .reactor-layout, .chrono-layout { gap: 5px; padding-bottom: 5px; }
   .perimeter-board { min-height: 280px; }
   .chrono-clock { width: min(100%, max(205px, calc(205px / var(--game-stage-scale, 1)))); }
   .reactor-machine { max-height: 280px; }
+}
+@media (min-width: 700px) and (max-height: 700px) {
+  .perimeter-responses { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .chrono-playfield { min-height: max(170px, calc(170px / var(--game-stage-scale, 1))); }
+  [data-mean-game] .mean-power-panel {
+    top: 110px;
+    bottom: auto;
+    left: 4px;
+    width: clamp(180px, 25%, 300px);
+  }
+  [data-mean-game] .mean-machine-stage { transform: translateY(16px); }
+}
+@media (min-width: 700px) and (max-height: 650px) {
+  .chrono-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 5px 10px;
+  }
+  .chrono-layout > [data-game-question] { grid-column: 1 / -1; }
+  .chrono-playfield { grid-column: 1; grid-row: 2; min-height: 0; }
+  .chrono-clock { width: min(100%, 195px); }
+  .chrono-controls { grid-column: 2; grid-row: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 9px; }
+  .chrono-layout > .refinement-feedback { grid-column: 1 / -1; }
+  .chrono-actions { grid-column: 1 / -1; }
 }
 @media (min-width: 700px) and (min-height: 700px) {
   .perimeter-edge-control { min-width: max(72px, var(--refinement-hit-size)); }

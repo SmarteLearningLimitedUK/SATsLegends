@@ -11,6 +11,7 @@ import {
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import meanMachineImage from '../assets/mean.png';
 import meanMachineBackground from '../assets/maps/premium/mean-machine.webp';
+import './game-refinements.css';
 import medianMachineImage from '../assets/median.png';
 import modeMachineImage from '../assets/mode.png';
 import { GameplaySessionEventHandlers, GameplaySessionState, MiniGamePracticeBriefing } from '../app/gameplaySessionContract';
@@ -671,7 +672,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
   const alphaKeyedMachineImage = useAlphaKeyImage(machineImage);
 
   return (
-    <div className="relative h-full w-full overflow-hidden select-none text-white">
+    <div className="relative h-full w-full overflow-hidden select-none text-white" data-mean-game>
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Mean Machine"
@@ -704,8 +705,8 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                   >
 
                       <div
-                        className="relative w-full max-w-[34rem] md:max-w-[36.5rem] isolate"
-                        style={{ aspectRatio: '4 / 5', transform: 'scale(1)', transformOrigin: 'center' }}
+                        className="mean-machine-stage relative isolate"
+                        style={{ aspectRatio: '4 / 5', transformOrigin: 'center' }}
                       >
                       <img
                         src={alphaKeyedMachineImage}

@@ -1,19 +1,54 @@
-.monster-mind-actor { display: block; }
-.monster-mind-recoil, .monster-mind-sway, .monster-mind-breath { width: 100%; height: 100%; transform-origin: 50% 96%; }
+.monster-mind-actor { display: block; position: relative; isolation: isolate; }
+.monster-mind-recoil, .monster-mind-sway, .monster-mind-breath { width: 100%; height: 100%; transform-origin: 50% 90%; }
+.monster-mind-breath { position: relative; }
 .monster-mind-actor [data-monster-image] { display: block; width: 100%; height: 100%; object-fit: contain; user-select: none; }
-.monster-mind-sway { animation: monster-mind-sway var(--monster-sway-duration, 6.1s) ease-in-out var(--monster-sway-delay, -.8s) infinite; }
-.monster-mind-breath { animation: monster-mind-breathe var(--monster-breath-duration, 3.9s) ease-in-out var(--monster-breath-delay, -.4s) infinite; }
-.monster-mind-actor[data-monster-ready="false"] :is(.monster-mind-sway, .monster-mind-breath),
-.monster-mind-actor:not([data-monster-reaction="idle"]) :is(.monster-mind-sway, .monster-mind-breath) { animation-play-state: paused; }
+.monster-mind-part { position: absolute; inset: 0; background-size: contain; background-position: center; background-repeat: no-repeat; pointer-events: none; will-change: transform; }
+.monster-mind-sway { animation: monster-mind-sway var(--monster-sway-duration, 4s) ease-in-out var(--monster-sway-delay, -.8s) infinite; }
+.monster-mind-breath { animation: monster-mind-breathe var(--monster-breath-duration, 3.5s) ease-in-out var(--monster-breath-delay, -.4s) infinite; }
+.monster-mind-actor[data-monster-identity*="jelly"] .monster-mind-breath,
+.monster-mind-actor[data-monster-identity*="cyclops-slime"] .monster-mind-breath { animation-name: monster-mind-jelly; transform-origin: 50% 89%; }
+.monster-mind-actor[data-monster-identity*="rhino"] .monster-mind-breath { animation-name: monster-mind-rhino; }
+.monster-mind-part--head { animation: monster-mind-head 3.4s ease-in-out -.7s infinite; }
+.monster-mind-part--leftArm { animation: monster-mind-left-arm 2.8s ease-in-out -.45s infinite; }
+.monster-mind-part--rightArm { animation: monster-mind-right-arm 2.8s ease-in-out -1.85s infinite; }
+.monster-mind-actor[data-monster-ready="false"] :is(.monster-mind-sway, .monster-mind-breath, .monster-mind-part),
+.monster-mind-actor:not([data-monster-reaction="idle"]) :is(.monster-mind-sway, .monster-mind-breath, .monster-mind-part) { animation-play-state: paused; }
 
 @keyframes monster-mind-breathe {
   0%, 100% { transform: scale(1, 1); }
-  50% { transform: scale(1.004, 1.013); }
+  35% { transform: scale(1.018, .982); }
+  70% { transform: scale(.993, 1.016); }
+}
+@keyframes monster-mind-jelly {
+  0%, 100% { transform: scale(1, 1) skewX(0deg); }
+  25% { transform: scale(1.045, .96) skewX(-1deg); }
+  55% { transform: scale(.965, 1.035) skewX(1.5deg); }
+  78% { transform: scale(1.015, .985) skewX(-.6deg); }
+}
+@keyframes monster-mind-rhino {
+  0%, 100% { transform: scale(1, 1) skewX(0deg); }
+  32% { transform: scale(1.035, .97) skewX(-.5deg); }
+  66% { transform: scale(.99, 1.02) skewX(.35deg); }
 }
 @keyframes monster-mind-sway {
-  0%, 100% { transform: translateX(-.65px) rotate(-.55deg); }
-  50% { transform: translateX(.65px) rotate(.55deg); }
+  0%, 100% { transform: translateX(-1px) rotate(-.8deg); }
+  25% { transform: translateX(.6px) rotate(.35deg); }
+  55% { transform: translateX(1.5px) rotate(1deg); }
+  78% { transform: translateX(-.4px) rotate(-.25deg); }
+}
+@keyframes monster-mind-head {
+  0%, 100% { transform: rotate(-1deg) translateY(0); }
+  38% { transform: rotate(1.5deg) translateY(-.3%); }
+  70% { transform: rotate(-.5deg) translateY(.3%); }
+}
+@keyframes monster-mind-left-arm {
+  0%, 100% { transform: rotate(3deg); }
+  50% { transform: rotate(-5deg); }
+}
+@keyframes monster-mind-right-arm {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(6deg); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .monster-mind-recoil, .monster-mind-sway, .monster-mind-breath { animation: none !important; transform: none; }
+  .monster-mind-recoil, .monster-mind-sway, .monster-mind-breath, .monster-mind-part { animation: none !important; transform: none; }
 }

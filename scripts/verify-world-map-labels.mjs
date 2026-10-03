@@ -366,7 +366,7 @@ async function verifyEnvironment(page, profile, motion, row) {
   await expect(map(page)).toHaveCount(1);
   const canonical = await page.evaluate(async () => { const { ISLANDS } = await import('/src/constants.ts'); return ISLANDS.map(({ id, name, category }) => ({ id, name, category })); });
   expect(canonical).toHaveLength(8); expect(new Set(canonical.map((island) => island.id)).size).toBe(8);
-  expect(canonical.find((island) => island.id === 7).name).toBe('Ratio Racer');
+  expect(canonical.find((island) => island.id === 7).name).toBe('Ratio Rapids');
   await expect(page.locator('[data-map-island-id]')).toHaveCount(8);
   await expect.poll(() => page.locator('[data-map-poster]').evaluate((image) => image.complete && image.naturalWidth > 0)).toBe(true);
   await expect(page.locator('[data-map-poster-frame]')).toHaveAttribute('data-map-label-masks-ready', 'true');
@@ -451,7 +451,7 @@ async function verifyEnvironment(page, profile, motion, row) {
   await revealPlate(page, row.fullPan.lastIsland, row.panTrace);
   await page.screenshot({ path: screenshotPath(profile, motion, 'map-last-island') });
   row.window = await windowStill(page);
-  row.checks = ['All eight names match current canonical ISLANDS, including Ratio Racer and Core.', 'Measured physical text/targets, text containment and five-point label/action visibility.', 'Opaque plate material fully covers original baked lettering and stays above separately masked atmosphere.', 'Trusted keyboard focus and unchanged island details/Explore/Back routing.', 'Native bounded PageDown/PageUp/Tab/arrow map panning with stationary window.', 'Normal subtle effects or static reduced-motion effects.'];
+  row.checks = ['All eight names match current canonical ISLANDS, including Ratio Rapids and Core.', 'Measured physical text/targets, text containment and five-point label/action visibility.', 'Opaque plate material fully covers original baked lettering and stays above separately masked atmosphere.', 'Trusted keyboard focus and unchanged island details/Explore/Back routing.', 'Native bounded PageDown/PageUp/Tab/arrow map panning with stationary window.', 'Normal subtle effects or static reduced-motion effects.'];
   row.passed = true;
 }
 

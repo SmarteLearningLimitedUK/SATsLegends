@@ -129,11 +129,12 @@ const ShapeRenderer: React.FC<{
   shape: Shape;
   scaleX: number;
   scaleY: number;
+  visualUnit: number;
   strokeClass: string;
   isBase?: boolean;
-}> = ({ shape, scaleX, scaleY, strokeClass, isBase = false }) => {
-  const width = shape.baseWidth * scaleX;
-  const height = shape.baseHeight * scaleY;
+}> = ({ shape, scaleX, scaleY, visualUnit, strokeClass, isBase = false }) => {
+  const width = shape.baseWidth * scaleX * visualUnit;
+  const height = shape.baseHeight * scaleY * visualUnit;
 
   if (shape.type === 'rect') {
     return (
@@ -179,7 +180,7 @@ const ShapeRenderer: React.FC<{
     );
   }
 
-  const thickness = 30 * Math.min(scaleX, scaleY);
+  const thickness = Math.min(width, height) * 0.28;
   return (
     <div
       className="absolute transition-all duration-300"
@@ -232,6 +233,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
   const currentLevel = tierLevels[currentLevelIdx];
+  const blueprintVisualUnit = 200 / (Math.max(currentLevel.shape.baseWidth, currentLevel.shape.baseHeight) * Math.max(1, currentLevel.targetScale));
   const completedLevels = currentLevelIdx + (gameState === 'complete' ? 1 : 0);
 
   const finalScore = useMemo(() => {
@@ -386,7 +388,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
 
       <div className="relative z-10 flex h-full min-h-0 w-full flex-col gap-2 px-2 pb-1 pt-[calc(env(safe-area-inset-top)+0.95rem)] md:gap-3 md:px-3">
         <div className="relative mx-auto flex h-full w-full max-w-[780px] min-h-0 flex-1 flex-col overflow-visible">
-          <div className="relative z-10 grid h-full min-h-0 w-full grid-rows-[auto_minmax(0,1fr)_auto] gap-3 p-0 md:gap-4 md:p-0">
+          <div className="scale-builder-board-layout relative z-10 grid h-full min-h-0 w-full grid-rows-[auto_minmax(0,1fr)_auto] gap-3 p-0 md:gap-4 md:p-0">
             <GameQuestionCard title="Scale Builder" bodyClassName="text-[10px] font-black leading-snug md:text-[11px]" style={{ position: 'relative', top: 0, transform: 'none' }}>
               {instructionsText}
             </GameQuestionCard>
@@ -416,6 +418,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                         shape={currentLevel.shape}
                         scaleX={1.0}
                         scaleY={1.0}
+                        visualUnit={blueprintVisualUnit}
                         strokeClass="border-slate-300 border-dashed"
                         isBase
                       />
@@ -425,6 +428,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
                     shape={currentLevel.shape}
                     scaleX={isDimensionMode ? widthScale : currentScale}
                     scaleY={isDimensionMode ? heightScale : currentScale}
+                    visualUnit={blueprintVisualUnit}
                     strokeClass={
                       gameState === 'success'
                         ? 'border-emerald-300 shadow-[0_0_24px_rgba(52,211,153,0.36)]'

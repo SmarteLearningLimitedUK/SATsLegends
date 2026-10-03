@@ -12,6 +12,7 @@ import factorEnemy from '../assets/reskin/factor-sentinel.webp';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import MonsterMindActor from '../components/game-ui/MonsterMindActor';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
+import './factor-frenzy.css';
 
 type FactorProblemType = 'missing_factor' | 'all_factors' | 'common_factors' | 'prime_factors';
 
@@ -176,7 +177,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
         id,
         type,
         number,
-        question: `The Monster Minds broke the factor chain. Find the missing factor: ${factor} x ? = ${number}`,
+        question: `Complete the factor chain: ${factor} × ? = ${number}`,
         options,
         correctAnswers: [answer],
       };
@@ -192,7 +193,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
         id,
         type,
         number,
-        question: `Strike all factors of ${number} to clear the swarm.`,
+        question: `Strike every factor of ${number}.`,
         options,
         correctAnswers,
       };
@@ -214,7 +215,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
         type,
         number,
         number2,
-        question: `Find all common factors of ${number} and ${number2} to break the Monster Minds' defence.`,
+        question: `Strike every common factor of ${number} and ${number2}.`,
         options,
         correctAnswers: commonAnswers,
       };
@@ -229,7 +230,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
       id,
       type,
       number,
-      question: `Find all prime factors of ${number} to disrupt the Monster Minds.`,
+      question: `Strike the prime factors of ${number}.`,
       options,
       correctAnswers,
     };
@@ -390,19 +391,21 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
   return (
     <div
-      className="relative h-full w-full overflow-hidden bg-contain bg-center bg-no-repeat text-white"
+      className="factor-frenzy-game relative h-full w-full overflow-hidden bg-contain bg-center bg-no-repeat text-white"
       style={{ backgroundImage: `url(${factorFrenzyBackground})` }}
     >
       <div className="pointer-events-none fixed left-0 right-0 top-[max(0.5rem,env(safe-area-inset-top))] z-50 flex justify-center px-3">
-        <div className="w-full max-w-[780px]">
+        <div className="relative w-full max-w-[780px]">
           <GameQuestionCard
             title="Factor Frenzy"
-            subtitle={`Level ${state.level}`}
             className="mx-auto w-full"
             bodyClassName="text-[clamp(0.95rem,2.9vw,1.3rem)] font-black leading-snug tracking-[0.01em] text-white md:text-[1.4rem]"
           >
             {state.currentProblem?.question}
           </GameQuestionCard>
+          <div className="factor-timer-chip" role="timer" aria-label={`${state.timeLeft} seconds left`}>
+            {state.timeLeft}s
+          </div>
         </div>
       </div>
 
@@ -448,15 +451,6 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
               >
                 <div className="relative min-h-0 flex-1 overflow-hidden rounded-3xl border border-cyan-100/16 bg-transparent p-3 sm:p-4">
                   <div className="flex h-full min-h-0 flex-col">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/80 sm:text-xs">
-                        Strike every correct factor
-                      </div>
-                      <div className="rounded-full border border-cyan-100/25 bg-slate-950/50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/90">
-                        {state.timeLeft}s left
-                      </div>
-                    </div>
-
                     <div className="relative mt-3 flex min-h-0 flex-1 flex-col items-center justify-center">
                       <div className="w-full max-w-[13rem] rounded-2xl border border-amber-200/24 bg-[linear-gradient(180deg,rgba(15,23,42,0.22),rgba(15,23,42,0.1))] px-3 py-2 shadow-[0_12px_24px_rgba(2,6,23,0.18)]">
                         <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.18em] text-amber-200">
@@ -505,14 +499,14 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                       </AnimatePresence>
                     </div>
 
-                    <div className="mt-auto flex items-center justify-center">
+                    <div className="factor-strike-row mt-auto flex items-center justify-center">
                       {state.status === 'playing' ? (
                         <button
                           onClick={checkAnswer}
                           disabled={selectedOptions.length === 0}
                           className="ui-button-primary inline-flex w-full max-w-sm items-center justify-center rounded-2xl px-4 py-3 text-sm font-black uppercase tracking-[0.14em] disabled:opacity-45"
                         >
-                          Strike
+                          {selectedOptions.length === 0 ? 'Choose a factor' : 'Strike'}
                         </button>
                       ) : (
                         <div className="inline-flex w-full max-w-sm items-center justify-center rounded-2xl border border-cyan-100/45 bg-[#0d2a5a]/70 px-4 py-3 text-xs font-black uppercase tracking-[0.14em] text-cyan-100/95">
@@ -529,7 +523,10 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
         {state.status !== 'complete' && (
           <div className="fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+4.5rem)] z-40 px-3">
-            <div className="answer-choice-surface mx-auto grid w-full max-w-[780px] grid-cols-4 gap-2 sm:gap-2.5 md:gap-3">
+            <div
+              className="factor-option-grid answer-choice-surface mx-auto grid w-full max-w-[780px] grid-cols-4 gap-2 sm:gap-2.5 md:gap-3"
+              style={{ '--factor-option-count': state.currentProblem?.options.length ?? 4 } as React.CSSProperties}
+            >
               {state.currentProblem?.options.map((option, idx) => (
                 <motion.button
                   type="button"

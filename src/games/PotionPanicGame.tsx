@@ -24,6 +24,7 @@ import mossBottle from '../assets/potion_bottles/moss.png';
 import nightBottle from '../assets/potion_bottles/night.png';
 import rubyBottle from '../assets/potion_bottles/ruby.png';
 import sunBottle from '../assets/potion_bottles/sun.png';
+import './forge-potion-layout.css';
 
 interface PotionPanicGameProps {
   levelId: number;
@@ -758,7 +759,7 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
   const roundsToWin = roundsToWinForLevel(levelId);
 
   return (
-    <GameUiShell backgroundImage={potionPanicBackdrop} backgroundOpacity={1} backgroundPosition="center bottom" overlayDisabled>
+    <GameUiShell className="potion-panic-scene" backgroundImage={potionPanicBackdrop} backgroundOpacity={1} backgroundPosition="center bottom" overlayDisabled>
       <GameScreenLayout
         className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-0 text-white"
         top={(
@@ -775,9 +776,9 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
           </div>
         )}
         main={(
-          <div className="mx-auto flex h-full w-full max-w-[780px] min-h-0 flex-col gap-2">
-            <div className="relative flex min-h-0 flex-1 flex-col overflow-visible bg-transparent">
-              <div className="pointer-events-none absolute left-1/2 top-[4%] z-40 w-[min(100%,430px)] -translate-x-1/2">
+          <div className="potion-panic-main mx-auto flex h-full w-full max-w-[780px] min-h-0 flex-col gap-2">
+            <div className="potion-panic-stage relative flex min-h-0 flex-1 flex-col overflow-visible bg-transparent">
+              <div className="potion-recipe-panel pointer-events-none absolute left-1/2 top-[4%] z-40 w-[min(100%,430px)] -translate-x-1/2">
                 <GameQuestionCard
                   title="TARGET RECIPE"
                   className="w-full rounded-[1.45rem] border border-slate-950/70 px-5 py-4 text-center shadow-[0_18px_32px_rgba(1,6,20,0.55)]"
@@ -794,10 +795,7 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
                   </div>
                 </GameQuestionCard>
               </div>
-              <div
-                className="absolute inset-0"
-                style={{ transform: 'translateY(calc(var(--potion-cauldron-shift, 0px) + 40px))' }}
-              >
+              <div className="potion-cauldron-stage absolute inset-0">
                 <div className="pointer-events-none absolute left-1/2 top-[84%] z-0 h-14 w-[72%] -translate-x-1/2 rounded-full bg-black/55 blur-md" />
                 <div className="pointer-events-none absolute left-1/2 top-[76%] z-10 h-[24%] w-[58%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
                 <div className="absolute left-1/2 top-[72%] z-10 flex h-[18%] w-[48%] -translate-x-1/2 translate-y-[48px] items-end justify-between px-5">
@@ -896,7 +894,7 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
               </AnimatePresence>
             </div>
 
-            <div className="shrink-0 rounded-[1.3rem] border border-white/12 bg-[linear-gradient(180deg,rgba(5,10,22,0.5),rgba(6,12,26,0.8))] px-3 py-2 shadow-[0_14px_26px_rgba(2,6,23,0.28)]">
+            <div className="potion-ingredients shrink-0 rounded-[1.3rem] border border-white/12 bg-[linear-gradient(180deg,rgba(5,10,22,0.5),rgba(6,12,26,0.8))] px-3 py-2 shadow-[0_14px_26px_rgba(2,6,23,0.28)]">
               <div className={`grid ${ingredientGridClass} gap-2`}>
                 {activeTargets.map(({ ingredient, index, current, target }) => {
                   const isActive = activeSet.has(index);
@@ -939,7 +937,7 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
         )}
         bottom={(
           <div className="flex flex-col gap-2 pt-1">
-            <div className="min-h-[2.6rem]">
+            <div className="potion-feedback-slot min-h-[2.6rem]">
               {hasBrewed ? (
                 <FeedbackStrip
                   tone={feedback === 'success' ? 'success' : feedback === 'error' || overfilledTargets.length > 0 ? 'warning' : 'neutral'}

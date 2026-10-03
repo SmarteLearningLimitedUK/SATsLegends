@@ -60,6 +60,46 @@
 .pvp-enemy-ground { position: absolute; left: 24%; right: 22%; bottom: 13%; height: 5%; border-radius: 50%; background: #061e2a55; }
 .pvp-prompt-compact { display: none; }
 
+@media (min-width: 900px) {
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-targets,
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-sources {
+    max-width: 520px;
+  }
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-enemy {
+    left: 86% !important;
+    top: 47% !important;
+    width: 170px !important;
+  }
+}
+
+@media (min-width: 700px) and (max-height: 700px) {
+  /* Keep the digit rack clear of the fixed Submit control on short desktops. */
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-sources {
+    top: 68% !important;
+  }
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .pvp-digit-panel {
+    padding: 6px;
+  }
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .pvp-digit-panel .pvp-stone-heading {
+    margin-bottom: 3px;
+  }
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-sources [data-pvp-location='source'] {
+    height: 50px !important;
+  }
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-targets:has([data-pvp-index='6']) {
+    top: 29% !important;
+  }
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-sources:has(.grid-cols-5) {
+    top: 58% !important;
+  }
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-sources:has(.grid-cols-5) .pvp-digit-panel {
+    padding: 4px;
+  }
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-sources:has(.grid-cols-5) [data-pvp-location='source'] {
+    height: 44px !important;
+  }
+}
+
 @media (max-height: 760px) and (max-width: 600px) {
   .legend-pvp-sources { top: calc(100% - 205px - env(safe-area-inset-bottom)) !important; }
   .pvp-digit-panel { padding: 6px; }

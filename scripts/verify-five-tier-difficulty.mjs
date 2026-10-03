@@ -108,6 +108,10 @@ const record = (name, run) => {
 const gcd = (a, b) => b ? gcd(b, a % b) : Math.abs(a);
 const fractionValue = (label) => label.includes('/') ? label.split('/').map(Number).reduce((a, b) => a / b)
   : label.endsWith('%') ? Number(label.slice(0, -1)) / 100 : Number(label);
+const numericFraction = (value) => {
+  const [numerator, denominator] = value.split('/').map(Number);
+  return numerator / denominator;
+};
 
 const difficulty = load('src/systems/content/gameDifficulty.ts');
 const seedCalls = [];
@@ -178,6 +182,70 @@ record('Actual Router sends five-tier generator props and canonical session IDs 
   assert.equal(active.size, 35); // 34 ordinary current games and the shared fixed-paper component.
   assert.equal(active.has('DecimalSniperGame'), false);
   assert.equal(active.has('CalculationCrashGame'), false);
+});
+const mineQuestions = generator('MultiplicationMineGame', ['makeQuestionDeck']);
+record('Mine four-strike decks use distinct facts and products in progressively harder factor bands', () => {
+  for (let tier = 1; tier <= 5; tier++) for (let sample = 0; sample < 100; sample++) {
+    const deck = mineQuestions.makeQuestionDeck(tier);
+    assert.equal(deck.length, 4);
+    assert.equal(new Set(deck.map(({ a, b }) => `${a}x${b}`)).size, 4);
+    assert.equal(new Set(deck.map(({ answer }) => answer)).size, 4);
+    for (const question of deck) {
+      assert.equal(question.answer, question.a * question.b);
+      choices(question.options, question.answer);
+      assert.ok(question.a >= [2, 2, 3, 4, 7][tier - 1]);
+      assert.ok(question.b >= [2, 6, 8, 10, 11][tier - 1]);
+      assert.ok(question.b <= [5, 7, 9, 12, 12][tier - 1]);
+    }
+  }
+});
+const percentQuestions = generator('PercentPowerGame', ['buildQuestion']);
+record('Reactor runs have no repeated prompts or correct answers and retain tier-specific maths', () => {
+  for (let tier = 1; tier <= 5; tier++) for (let sample = 0; sample < 100; sample++) {
+    const run = [];
+    for (let round = 1; round <= Math.min(10, 5 + Math.floor(tier / 2)); round++) {
+      const question = percentQuestions.buildQuestion(tier, round, run);
+      const answer = Number(question.options[question.answerIndex]);
+      choices(question.options, `${answer}`);
+      assert.ok(!run.some((earlier) => earlier.prompt === question.prompt), `Repeated reactor prompt: ${question.prompt}`);
+      assert.ok(!run.some((earlier) => earlier.options[earlier.answerIndex] === `${answer}`), `Repeated reactor answer: ${answer}`);
+      if (question.prompt.startsWith('What is ')) {
+        const [, percent, amount] = question.prompt.match(/^What is (\d+)% of (\d+)\?$/) || [];
+        near(answer, Number(percent) * Number(amount) / 100, 'Direct percentage');
+        if (tier <= 2) assert.ok([10, 50, 25, 75].includes(Number(percent)));
+      } else if (question.prompt.includes('of a number is')) {
+        const [, percent, part] = question.prompt.match(/^(\d+)% of a number is (\d+)\./) || [];
+        near(Number(part), answer * Number(percent) / 100, 'Reverse percentage');
+        assert.ok(tier >= 3);
+      } else {
+        const [, base, percent] = question.prompt.match(/has (\d+) units\. It gains (\d+)%/) || [];
+        near(answer, Number(base) * (1 + Number(percent) / 100), 'Percentage increase');
+        assert.equal(tier, 5);
+      }
+      run.push(question);
+    }
+  }
+});
+const racerQuestions = generator('RatioRacerGame', ['getDifficultyPool', 'buildTierDeck']);
+record('Race tiers offer a full non-repeating lap and only one mathematically correct fuel fraction', () => {
+  for (let tier = 1; tier <= 5; tier++) {
+    const pool = racerQuestions.getDifficultyPool(tier);
+    assert.ok(pool.length >= [9, 11, 11, 13, 13][tier - 1], `Short tier ${tier} race pool: ${pool.length}`);
+    assert.equal(new Set(pool.map((question) => question.prompt)).size, pool.length);
+    const deck = racerQuestions.buildTierDeck(pool, null);
+    for (let index = 1; index < deck.length; index++) {
+      assert.notEqual(numericFraction(deck[index].correctAnswer), numericFraction(deck[index - 1].correctAnswer),
+        `Repeated adjacent fuel answer in tier ${tier}`);
+    }
+    for (const question of deck) {
+      assert.equal(question.ratio.length, tier <= 3 ? 2 : tier - 1);
+      const total = question.ratio.reduce((sum, value) => sum + value, 0);
+      assert.equal(numericFraction(question.correctAnswer), question.ratio[question.labels.indexOf(question.target)] / total);
+      assert.equal(question.options.length, 4);
+      assert.equal(new Set(question.options).size, 4);
+      assert.equal(question.options.filter((option) => numericFraction(option) === numericFraction(question.correctAnswer)).length, 1);
+    }
+  }
 });
 const islandMenu = load('src/screens/IslandLevels.tsx');
 const findElements = (element, predicate) => {

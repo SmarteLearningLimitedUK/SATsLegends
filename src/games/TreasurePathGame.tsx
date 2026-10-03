@@ -291,7 +291,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
   return (
     <GameScreenShell backgroundImage={coordinateQuestBackground} className="overflow-hidden">
 
-      <div className="relative z-10 mx-auto flex h-full min-h-0 w-full max-w-6xl flex-1 flex-col px-2 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] pt-[calc(env(safe-area-inset-top)+3.6rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+2.35rem)] md:pt-[calc(env(safe-area-inset-top)+3.9rem)]">
+      <div className="coordinates-quest-layout relative z-10 mx-auto flex h-full min-h-0 w-full max-w-6xl flex-1 flex-col px-2 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] pt-[calc(env(safe-area-inset-top)+3.6rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+2.35rem)] md:pt-[calc(env(safe-area-inset-top)+3.9rem)]">
         <div className="relative z-10 mb-2">
           <GameQuestionCard
             title={gameTitle || 'Coordinates Quest'}

@@ -12,6 +12,7 @@ import WellbeingHub from '../wellbeing/WellbeingHub';
 import { WELLBEING_ACTIVITIES, WELLBEING_ACTIVITY_BY_ISLAND, WELLBEING_BY_ID } from '../wellbeing/data';
 import { WellbeingActivityId } from '../wellbeing/types';
 import GameplayContentViewport from '../components/GameplayContentViewport';
+import { GAME_SCENE_META } from '../gameSceneMeta';
 import GameLoadBoundary, { GameLoadFallback } from '../components/GameLoadBoundary';
 import {
   FramedPanel,
@@ -533,7 +534,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
                 paddingRight: '0.3rem',
               }}
             >
-              <GameplayContentViewport>
+              <GameplayContentViewport ambientImage={selectedLevel ? GAME_SCENE_META[selectedLevel.gameType]?.background : undefined}>
                 {renderGameplay()}
               </GameplayContentViewport>
             </div>

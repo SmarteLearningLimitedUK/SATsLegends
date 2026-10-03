@@ -8,6 +8,7 @@ import { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gamep
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 import fractionForgeBackground from '../assets/maps/premium/formula-forge.webp';
+import './forge-potion-layout.css';
 
 interface FormulaForgeGameProps {
   levelId: number;
@@ -469,7 +470,7 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
 
   return (
     <GameScreenShell
-      className="overflow-hidden"
+      className="formula-forge-scene overflow-hidden"
       backgroundImage={fractionForgeBackground}
       backgroundOpacity={1}
       overlayDisabled
@@ -491,8 +492,8 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
               </GameQuestionCard>
             </div>
 
-            <div className="mt-2 flex min-h-0 flex-1 flex-col gap-2">
-              <div className="min-h-0 flex-1">
+            <div className="formula-forge-body mt-2 flex min-h-0 flex-1 flex-col gap-2">
+              <div className="formula-forge-diagram min-h-0 flex-1">
                 <FormulaShapePanel round={round} />
               </div>
 

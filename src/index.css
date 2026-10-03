@@ -4879,6 +4879,35 @@ button.avatar-hero-arrow:not(:disabled):active {
   overflow: hidden;
 }
 
+@media (min-width: 700px) and (min-height: 600px) {
+  .screen-gameplay [data-gameplay-content-viewport='true'] {
+    background:
+      radial-gradient(ellipse at 50% 38%, rgba(31, 91, 119, 0.28), transparent 70%),
+      linear-gradient(90deg, #071529, #0b2337 50%, #071529);
+  }
+  .screen-gameplay .gameplay-content-stage {
+    max-width: 960px;
+    margin-inline: auto;
+  }
+  .screen-gameplay [data-game-wide-ambient='true'] {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .screen-gameplay [data-game-wide-ambient='true'] img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.06);
+    filter: blur(24px) saturate(.8) brightness(.42);
+    opacity: .72;
+  }
+}
+@media (max-width: 699px), (max-height: 599px) {
+  .screen-gameplay [data-game-wide-ambient='true'] { display: none; }
+}
+
 .screen-gameplay .game-shell-host [class*='flex-1'] {
   min-height: 0 !important;
 }

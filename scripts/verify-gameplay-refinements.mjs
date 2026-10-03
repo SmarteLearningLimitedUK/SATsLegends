@@ -7,6 +7,7 @@ const output = path.resolve('qa-artifacts/gameplay-refinements');
 const profiles = [
   { name: 'pc', engine: chromium, options: { viewport: { width: 1440, height: 900 } } },
   { name: 'pc-short', engine: chromium, options: { viewport: { width: 1264, height: 625 } } },
+  { name: 'tablet-short', engine: chromium, options: { viewport: { width: 768, height: 600 } } },
   { name: 'ipad-a2hs', engine: webkit, options: { ...devices['iPad (gen 7)'], viewport: { width: 768, height: 1024 } } },
   { name: 'phone-a2hs', engine: webkit, options: { ...devices['iPhone 13'], viewport: { width: 390, height: 844 } } },
 ].filter((entry) => !process.env.LEGEND_QA_PROFILE || entry.name === process.env.LEGEND_QA_PROFILE);
@@ -83,7 +84,7 @@ async function inspect(page) {
       }
       return { text: node.textContent.trim(), pixels: parseFloat(getComputedStyle(node).fontSize) * scale, box: box(node), clipped: clipped(node) };
     };
-    const art = [...document.querySelectorAll('img')].filter((image) => image.hasAttribute('data-game-scene-image') || image.currentSrc.includes('/assets/maps/')).map((image) => ({
+    const art = [...document.querySelectorAll('img')].filter((image) => !image.closest('[data-game-wide-ambient]') && (image.hasAttribute('data-game-scene-image') || image.currentSrc.includes('/assets/maps/'))).map((image) => ({
       src: image.currentSrc, loaded: image.complete && image.naturalWidth > 0,
       movingCourse: Boolean(image.closest('.ratio-racer-course')),
       fit: getComputedStyle(image).objectFit, box: box(image), clipped: clipped(image), natural: { width: image.naturalWidth, height: image.naturalHeight },
@@ -212,7 +213,10 @@ for (const profile of profiles) {
         if (result.formula) {
           expect(result.formula.diagram.height, 'Formula diagram remains usable below the mission').toBeGreaterThanOrEqual(48);
           expect(result.formula.diagram.y).toBeGreaterThanOrEqual(result.question.bottom - 1);
-          expect(result.formula.diagram.bottom).toBeLessThanOrEqual(result.formula.hint.box.y + 1);
+          const formulaStacked = result.formula.diagram.bottom <= result.formula.hint.box.y + 1;
+          const formulaBeside = result.formula.diagram.right <= result.formula.hint.box.x + 1
+            || result.formula.hint.box.right <= result.formula.diagram.x + 1;
+          expect(formulaStacked || formulaBeside, 'Formula diagram and hint do not overlap').toBe(true);
           expect(result.formula.hint.clipped).toEqual([]);
           expect(result.formula.hint.box.bottom).toBeLessThanOrEqual(result.formula.answers.y + 1);
         }

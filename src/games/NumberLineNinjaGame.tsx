@@ -578,7 +578,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
           paddingTop: `${Math.max(0, questionDockBottom + 14)}px`,
         }}
       >
-        <div className="flex min-h-0 flex-1 flex-col items-center justify-start pt-0">
+        <div className="ninja-workspace flex min-h-0 flex-1 flex-col items-center justify-start pt-0">
           <motion.div
             animate={lineShake && !reducedMotion ? { x: [0, -10, 10, -8, 8, -4, 4, 0] } : { x: 0 }}
             transition={{ duration: 0.34, ease: 'easeInOut' }}
@@ -676,7 +676,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
             </div>
           </motion.div>
 
-          <div className="relative mt-2 flex h-[31%] min-h-[220px] w-full max-w-[560px] shrink-0 items-end justify-center">
+          <div className="ninja-enemy-lane relative mt-2 flex h-[31%] min-h-[220px] w-full max-w-[560px] shrink-0 items-end justify-center">
             <div className="qa-enemy-cluster pointer-events-none relative mx-auto flex h-full w-full max-w-[560px] flex-col items-center justify-end gap-2">
               <div className="relative h-[174px] w-[240px] max-w-[80%] shrink-0 sm:w-[256px]">
                 <MonsterMindActor

@@ -98,3 +98,41 @@
 
 #root .arcade-conversion .conversion-load-meter { left:calc(50% + 90px); min-width:100px; z-index:4; }
 #root .arcade-conversion .conversion-load-meter { left:calc(100% + 50px); }
+
+@media (min-width:900px) and (min-height:600px) {
+  #root .arcade-conversion .game-question-card,
+  #root .reactor-layout > [data-game-question] { max-width:780px; }
+  #root .reactor-layout > .reactor-answers,
+  #root .reactor-layout > .refinement-feedback { max-width:780px; margin-inline:auto; }
+}
+
+@media (min-width:700px) and (max-height:650px) {
+  #root .ninja-workspace { display:grid; grid-template-columns:minmax(0,1fr) 185px; align-items:center; gap:10px; width:100%; }
+  #root .ninja-workspace > .qa-number-line { grid-column:1; width:100%; min-height:156px; margin-top:0!important; }
+  #root .ninja-enemy-lane { grid-column:2; width:185px; min-height:0; height:100%; max-height:196px; margin-top:0; align-self:center; }
+  #root .ninja-enemy-lane .qa-enemy-cluster { width:185px; gap:4px; }
+  #root .ninja-enemy-lane .qa-enemy-cluster > div:first-child { width:175px; height:140px; }
+  #root .scale-builder-board-layout { grid-template-columns:minmax(0,1fr) minmax(0,1fr); grid-template-rows:auto minmax(0,1fr); align-items:center; gap:10px; }
+  #root .scale-builder-board-layout > [data-game-question] { grid-column:1 / -1; }
+  #root .scale-builder-board-layout > div:nth-child(2) { grid-column:1; grid-row:2; height:100%; min-height:0; }
+  #root .scale-builder-board-layout > [data-scale-controls] { grid-column:2; grid-row:2; align-self:center; }
+  #root .area-architect-spacer { display:none; }
+  #root .area-architect-content { justify-content:center; padding-top:4px; padding-bottom:4px; }
+  #root .area-architect-board { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); align-items:center; gap:8px; }
+  #root .area-architect-question { grid-column:1 / -1; }
+  #root .area-architect-map { grid-column:1; grid-row:2; }
+  #root .area-architect-map > div { max-width:15rem; }
+  #root .area-architect-answers { grid-column:2; grid-row:2; align-content:center; }
+  #root .area-architect-feedback { grid-column:1 / -1; }
+  #root .coordinates-quest-layout { padding-top:4px!important; padding-bottom:4px!important; }
+  #root .coordinates-quest-layout .coordinates-grid-board { max-width:18rem; }
+  #root .coordinates-quest-layout .coordinates-expedition { display:none; }
+  #root .coordinates-quest-layout .coordinates-hero-portrait { top:-20px; width:52px; height:62px; }
+  #root .line-graph-spacer { display:none; }
+  #root .line-graph-board { display:grid; grid-template-columns:minmax(0,1.65fr) minmax(0,1fr); gap:8px; align-items:center; }
+  #root .line-graph-board > [data-game-question] { grid-column:1 / -1; }
+  #root .line-graph-plot { grid-column:1; grid-row:2; min-width:0; }
+  #root .line-graph-chart { height:220px!important; }
+  #root .line-graph-side { grid-column:2; grid-row:2; display:flex; flex-direction:column; gap:8px; min-width:0; }
+  #root .line-graph-next:empty { display:none; }
+}

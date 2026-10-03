@@ -334,6 +334,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const allCorrect = plateViews.every((plate) => plate.isCorrect);
   const platePositions = PLATE_POSITIONS_BY_COUNT[challenge.plateCount] || PLATE_POSITIONS_BY_COUNT[5];
   const isCompactViewport = viewportRect.width < 520;
+  const isShortWideViewport = viewportRect.width >= 700 && viewportRect.height < 520;
   const plateLayoutScale = isCompactViewport ? 0.68 : 1;
   const cakeSourceLayoutScale = isCompactViewport ? 0.76 : 1;
   const backgroundScale = Math.max(
@@ -341,14 +342,16 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     viewportRect.height / SHARE_SPLITTER_BACKGROUND_SIZE.height,
   );
   const backgroundOffsetX = (viewportRect.width - (SHARE_SPLITTER_BACKGROUND_SIZE.width * backgroundScale)) / 2;
-  const plateSizePx = SHARE_SPLITTER_PLATE_DIAMETER_PX * backgroundScale * plateLayoutScale;
+  const plateSizePx = isShortWideViewport
+    ? Math.min(106, viewportRect.width * 0.11)
+    : SHARE_SPLITTER_PLATE_DIAMETER_PX * backgroundScale * plateLayoutScale;
   const artHeight = SHARE_SPLITTER_BACKGROUND_SIZE.height * backgroundScale;
   const bottomArtOffset = viewportRect.height - artHeight;
   const minTableCenter = questionDockBottom + SHARE_SPLITTER_TABLE_PLATE_RADIUS_Y * backgroundScale + plateSizePx / 2 + 12;
   const backgroundOffsetY = Math.min(0, Math.max(bottomArtOffset, minTableCenter - SHARE_SPLITTER_TABLE_CENTER.y * backgroundScale));
   const backgroundPositionY = Math.abs(bottomArtOffset) < .01 ? 50 : (backgroundOffsetY / bottomArtOffset) * 100;
-  const cakeSourceSize = CAKE_SOURCE_SIZE_PX * backgroundScale * cakeSourceLayoutScale;
-  const cakeSourceCenter = {
+  const cakeSourceSize = isShortWideViewport ? 84 : CAKE_SOURCE_SIZE_PX * backgroundScale * cakeSourceLayoutScale;
+  const cakeSourceCenter = isShortWideViewport ? { x: viewportRect.width / 2, y: viewportRect.height * 0.36 } : {
     x: backgroundOffsetX + CAKE_SOURCE_POSITION.x * backgroundScale,
     y: Math.min(backgroundOffsetY + CAKE_SOURCE_POSITION.y * backgroundScale, viewportRect.height - 124 - cakeSourceSize / 2 - 10),
   };
@@ -620,7 +623,9 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
           <CelebrationSplash active={showCelebrationSplash && !reducedMotion} message="Party Time!" theme="party" />
           {plateViews.map((plate, index) => {
             const position = platePositions[index] || { x: 0, y: 0 };
-            const center = mapBackgroundPointToViewport(position);
+            const center = isShortWideViewport
+              ? { x: viewportRect.width * (0.14 + index * 0.18), y: viewportRect.height * 0.68 }
+              : mapBackgroundPointToViewport(position);
             const sliceCount = plates[index].length;
             const sliceBaseSizePx = Math.max(22, plateSizePx * (sliceCount <= 3 ? .24 : sliceCount <= 6 ? .2 : .16));
             return (

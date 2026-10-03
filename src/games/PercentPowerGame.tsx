@@ -37,8 +37,6 @@ interface PercentPowerQuestion {
 const FALLBACK_LIVES = 3;
 const FALLBACK_TIMER = 80;
 
-const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
-
 const shuffle = <T,>(items: T[]): T[] => {
   const clone = [...items];
   for (let index = clone.length - 1; index > 0; index -= 1) {
@@ -75,11 +73,14 @@ const scoreToStars = (accuracy: number, remainingLives: number) => {
   return 1;
 };
 
-const buildDirectQuestion = (tier: number): PercentPowerQuestion => {
-  const percentages = tier === 1 ? [10, 50] : tier === 2 ? [10, 25, 50, 75] : [10, 20, 25, 40, 50, 75];
-  const amounts = tier === 1 ? [20, 40, 60, 80, 100] : tier === 2 ? [40, 80, 100, 120, 160] : [60, 120, 160, 200, 240, 320];
-  const percent = percentages[randomInt(0, percentages.length - 1)];
-  const amount = amounts[randomInt(0, amounts.length - 1)];
+const directPercentages = (tier: number) => tier === 1 ? [10, 50] : tier === 2 ? [10, 25, 50, 75] : [10, 20, 25, 40, 50, 75];
+const directAmounts = (tier: number) => tier === 1 ? [20, 40, 60, 80, 100] : tier === 2 ? [40, 80, 100, 120, 160] : [60, 120, 160, 200, 240, 320];
+const reversePercentages = (tier: number) => tier === 3 ? [10, 25, 50] : [10, 20, 25, 40, 50];
+const reverseWholes = [80, 120, 160, 200, 240, 320];
+const increaseBases = [40, 60, 80, 120, 160];
+const increasePercentages = [10, 20, 25, 50];
+
+const buildDirectQuestion = (percent: number, amount: number): PercentPowerQuestion => {
   const answer = (amount * percent) / 100;
   const { options, answerIndex } = makeOptions(
     `${answer}`,
@@ -98,10 +99,7 @@ const buildDirectQuestion = (tier: number): PercentPowerQuestion => {
   };
 };
 
-const buildReverseQuestion = (tier: number): PercentPowerQuestion => {
-  const percentages = tier === 3 ? [10, 25, 50] : [10, 20, 25, 40, 50];
-  const percent = percentages[randomInt(0, percentages.length - 1)];
-  const whole = [80, 120, 160, 200, 240, 320][randomInt(0, 5)];
+const buildReverseQuestion = (percent: number, whole: number): PercentPowerQuestion => {
   const part = (whole * percent) / 100;
   const { options, answerIndex } = makeOptions(
     `${whole}`,
@@ -120,9 +118,7 @@ const buildReverseQuestion = (tier: number): PercentPowerQuestion => {
   };
 };
 
-const buildIncreaseQuestion = (): PercentPowerQuestion => {
-  const base = [40, 60, 80, 120, 160][randomInt(0, 4)];
-  const percent = [10, 20, 25, 50][randomInt(0, 3)];
+const buildIncreaseQuestion = (base: number, percent: number): PercentPowerQuestion => {
   const answer = base + ((base * percent) / 100);
   const { options, answerIndex } = makeOptions(
     `${answer}`,
@@ -141,14 +137,20 @@ const buildIncreaseQuestion = (): PercentPowerQuestion => {
   };
 };
 
-const buildQuestion = (level: number, round: number): PercentPowerQuestion => {
-  if (level <= 2) {
-    return buildDirectQuestion(level);
-  }
-  if (level === 3 || level === 4) {
-    return round % 2 === 0 ? buildReverseQuestion(level) : buildDirectQuestion(level);
-  }
-  return round % 3 === 0 ? buildDirectQuestion(level) : round % 3 === 1 ? buildIncreaseQuestion() : buildReverseQuestion(level);
+const buildQuestion = (level: number, round: number, previous: readonly PercentPowerQuestion[] = []): PercentPowerQuestion => {
+  const mode = level <= 2 || (level <= 4 && round % 2 !== 0) || (level === 5 && round % 3 === 0)
+    ? 'direct' : level === 5 && round % 3 === 1 ? 'increase' : 'reverse';
+  const candidates = mode === 'direct'
+    ? directPercentages(level).flatMap((percent) => directAmounts(level).map((amount) => buildDirectQuestion(percent, amount)))
+    : mode === 'reverse'
+      ? reversePercentages(level).flatMap((percent) => reverseWholes.map((whole) => buildReverseQuestion(percent, whole)))
+      : increasePercentages.flatMap((percent) => increaseBases.map((base) => buildIncreaseQuestion(base, percent)));
+  const seenPrompts = new Set(previous.map((question) => question.prompt));
+  const seenAnswers = new Set(previous.map((question) => question.options[question.answerIndex]));
+  const order = shuffle(candidates);
+  return order.find((question) => !seenPrompts.has(question.prompt) && !seenAnswers.has(question.options[question.answerIndex]))
+    ?? order.find((question) => !seenPrompts.has(question.prompt))
+    ?? order[0];
 };
 
 const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
@@ -172,7 +174,12 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
   const chamberId = useId().replace(/:/g, '');
   const totalRounds = useMemo(() => Math.min(10, 5 + Math.floor(resolvedLevel / 2)), [resolvedLevel]);
   const [roundNumber, setRoundNumber] = useState(1);
-  const [question, setQuestion] = useState<PercentPowerQuestion>(() => buildQuestion(resolvedLevel, 1));
+  const usedQuestionsRef = useRef<PercentPowerQuestion[]>([]);
+  const [question, setQuestion] = useState<PercentPowerQuestion>(() => {
+    const first = buildQuestion(resolvedLevel, 1);
+    usedQuestionsRef.current = [first];
+    return first;
+  });
   const [XP, setScore] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
@@ -212,7 +219,9 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
     didEndRef.current = false;
     scoreRef.current = 0;
     setRoundNumber(1);
-    setQuestion(buildQuestion(resolvedLevel, 1));
+    const first = buildQuestion(resolvedLevel, 1);
+    usedQuestionsRef.current = [first];
+    setQuestion(first);
     setScore(0);
     setSelectedIndex(null);
     setFeedback(null);
@@ -281,7 +290,8 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
 
   const advanceQuestion = useCallback((nextRound: number) => {
     if (!presentRef.current || didEndRef.current) return;
-    const nextQuestion = buildQuestion(resolvedLevel, nextRound);
+    const nextQuestion = buildQuestion(resolvedLevel, nextRound, usedQuestionsRef.current);
+    usedQuestionsRef.current.push(nextQuestion);
     setRoundNumber(nextRound);
     setQuestion(nextQuestion);
     setSelectedIndex(null);

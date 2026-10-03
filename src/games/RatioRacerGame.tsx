@@ -181,26 +181,105 @@ const RAW_RATIO_FRACTIONS_QUESTIONS: RatioFractionQuestion[] = [
   },
 ];
 
-export const ratioFractionsQuestions = RAW_RATIO_FRACTIONS_QUESTIONS.map(themeRatioQuestion);
+const makeRatioOptions = (numerator: number, denominator: number, suggestions: string[] = []) => {
+  const correct = `${numerator}/${denominator}`;
+  const candidates = [
+    ...suggestions,
+    ...Array.from({ length: denominator + 2 }, (_, index) => `${index + 1}/${denominator}`),
+    `${numerator}/${denominator + 1}`,
+    `${numerator}/${Math.max(1, denominator - 1)}`,
+    `${denominator}/${numerator}`,
+  ];
+  const wrong = candidates.filter((value, index) => {
+    const match = value.match(/^(\d+)\/([1-9]\d*)$/);
+    return match && candidates.indexOf(value) === index
+      && Number(match[1]) * denominator !== numerator * Number(match[2]);
+  });
+  return [correct, ...wrong.slice(0, 3)];
+};
+
+const generatedRatioQuestions = (): RatioFractionQuestion[] => {
+  const ratios: number[][] = [];
+  for (let a = 1; a <= 8; a++) for (let b = 1; b <= 8; b++) {
+    if (a + b <= 12) ratios.push([a, b]);
+  }
+  for (let a = 1; a <= 3; a++) for (let b = 1; b <= 3; b++) for (let c = 1; c <= 3; c++) {
+    if (a + b + c >= 5) ratios.push([a, b, c]);
+  }
+  for (let a = 1; a <= 3; a++) for (let b = 1; b <= 3; b++) for (let c = 1; c <= 3; c++) for (let d = 1; d <= 3; d++) {
+    if (a + b + c + d >= 7) ratios.push([a, b, c, d]);
+  }
+  return ratios.flatMap((ratio) => ratio.map((part, targetIndex) => {
+    const total = ratio.reduce((sum, value) => sum + value, 0);
+    const target = `Element ${String.fromCharCode(65 + targetIndex)}`;
+    return {
+      id: `rf-${ratio.join('-')}-${targetIndex}`,
+      prompt: '', ratio,
+      labels: ratio.map((_, index) => `Element ${String.fromCharCode(65 + index)}`),
+      target,
+      correctAnswer: `${part}/${total}`,
+      options: makeRatioOptions(part, total),
+      explanation: '',
+    };
+  }));
+};
+
+const seenRatios = new Set<string>();
+export const ratioFractionsQuestions = [...RAW_RATIO_FRACTIONS_QUESTIONS, ...generatedRatioQuestions()]
+  .filter((question) => {
+    const key = `${question.ratio.join(':')}:${question.labels.indexOf(question.target)}`;
+    if (seenRatios.has(key)) return false;
+    seenRatios.add(key);
+    return true;
+  })
+  .map(themeRatioQuestion);
 
 const getDifficultyPool = (level: number) => {
   const tier = Math.max(1, Math.min(5, level));
   return ratioFractionsQuestions.filter((question) => {
     const parts = question.ratio.reduce((total, value) => total + value, 0);
     if (tier === 1) return question.ratio.length === 2 && parts <= 4;
-    if (tier === 2) return question.ratio.length === 2 && parts >= 4 && parts <= 6;
+    if (tier === 2) return question.ratio.length === 2 && parts >= 5 && parts <= 6;
     if (tier === 3) return question.ratio.length === 2 && parts >= 7;
     return question.ratio.length === (tier === 4 ? 3 : 4);
   });
 };
 const FALLBACK_POOL = ratioFractionsQuestions;
 
-const buildTierDeck = (pool: RatioFractionQuestion[], previousLast: RatioFractionQuestion | null) => (
-  reshuffleAvoidingRepeat(pool.length ? pool : FALLBACK_POOL, previousLast, (question) => question.id).map((question) => ({
+const fractionKey = (question: RatioFractionQuestion) => {
+  const [numerator, denominator] = question.correctAnswer.split('/').map(Number);
+  return numerator / denominator;
+};
+
+const buildTierDeck = (pool: RatioFractionQuestion[], previousLast: RatioFractionQuestion | null) => {
+  const remaining = reshuffleAvoidingRepeat(pool.length ? pool : FALLBACK_POOL, previousLast, (question) => question.id);
+  const frequency = new Map<number, number>();
+  remaining.forEach((question) => frequency.set(fractionKey(question), (frequency.get(fractionKey(question)) ?? 0) + 1));
+  const ordered: RatioFractionQuestion[] = [];
+  let lastAnswer = previousLast ? fractionKey(previousLast) : null;
+  while (remaining.length) {
+    let pick = 0;
+    let highestFrequency = -1;
+    remaining.forEach((question, index) => {
+      const answer = fractionKey(question);
+      if (answer === lastAnswer) return;
+      const count = frequency.get(answer) ?? 0;
+      if (count > highestFrequency) { pick = index; highestFrequency = count; }
+    });
+    const [question] = remaining.splice(pick, 1);
+    lastAnswer = fractionKey(question);
+    frequency.set(lastAnswer, (frequency.get(lastAnswer) ?? 1) - 1);
+    ordered.push(question);
+  }
+  return ordered.map((question) => ({
     ...question,
-    options: shuffleOptionsWithCorrect(question.options, question.correctAnswer).options,
-  }))
-);
+    options: shuffleOptionsWithCorrect(
+      makeRatioOptions(question.ratio[question.labels.indexOf(question.target)],
+        question.ratio.reduce((sum, value) => sum + value, 0), question.options),
+      question.correctAnswer,
+    ).options,
+  }));
+};
 
 const buildTierDecks = (level: number, previousLasts: Partial<Record<QuestionTier, RatioFractionQuestion | null>> = {}) => ({
   early: buildTierDeck(getDifficultyPool(level), previousLasts.early ?? null),

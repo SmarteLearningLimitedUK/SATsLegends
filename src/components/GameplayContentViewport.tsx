@@ -2,6 +2,7 @@ import React, { useLayoutEffect, useRef, useState } from 'react';
 
 interface GameplayContentViewportProps {
   children: React.ReactNode;
+  ambientImage?: string;
 }
 
 /**
@@ -9,7 +10,7 @@ interface GameplayContentViewportProps {
  * mini-games should render mission/puzzle/input/feedback only.
  * Shell-level chrome (top HUD + bottom utility dock) is owned by App shell.
  */
-const GameplayContentViewport: React.FC<GameplayContentViewportProps> = ({ children }) => {
+const GameplayContentViewport: React.FC<GameplayContentViewportProps> = ({ children, ambientImage }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const [contentScale, setContentScale] = useState(1);
@@ -66,6 +67,7 @@ const GameplayContentViewport: React.FC<GameplayContentViewportProps> = ({ child
       data-gameplay-content-viewport="true"
       className="game-shell-zone game-shell-zone-playfield minigame-content-viewport relative flex h-full w-full min-h-0 flex-1 flex-col overflow-hidden"
     >
+      {ambientImage ? <div data-game-wide-ambient="true" aria-hidden="true"><img src={ambientImage} alt="" draggable={false} /></div> : null}
       <div className="relative z-[2] flex h-full min-h-0 flex-1 flex-col overflow-hidden">
         <div
           ref={contentRef}
@@ -76,7 +78,7 @@ const GameplayContentViewport: React.FC<GameplayContentViewportProps> = ({ child
             height: '100%',
             width: '100%',
           }}
-          className="flex h-full w-full flex-col"
+          className="gameplay-content-stage flex h-full w-full flex-col"
         >
           {children}
         </div>

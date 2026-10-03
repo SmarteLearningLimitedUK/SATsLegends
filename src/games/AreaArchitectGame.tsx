@@ -214,20 +214,21 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
-      <div className="flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+1.1rem)] pt-3 text-white">
-        <div className="flex-1" />
+      <div className="area-architect-content flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+1.1rem)] pt-3 text-white">
+        <div className="area-architect-spacer flex-1" />
 
         <section className="mx-auto w-full max-w-[44rem] shrink-0">
           <div className="rounded-[1.6rem] border border-white/14 bg-black/28 p-3 shadow-[0_18px_34px_rgba(15,23,42,0.34)] backdrop-blur-sm">
-            <div className="space-y-2">
+            <div className="area-architect-board space-y-2">
               <GameQuestionCard
                 title="Area Architect"
+                className="area-architect-question"
                 style={{ position: 'relative', top: 'auto', left: 'auto', right: 'auto', width: '100%' }}
               >
                 {question.prompt}
               </GameQuestionCard>
 
-              <div className="rounded-[1.25rem] border border-white/10 bg-slate-950/35 p-2">
+              <div className="area-architect-map rounded-[1.25rem] border border-white/10 bg-slate-950/35 p-2">
                 <div
                   className="mx-auto grid w-full max-w-[18rem] gap-1.5 rounded-[1rem] border border-white/10 bg-slate-900/20 p-2"
                   style={{ gridTemplateColumns: `repeat(${question.gridSize}, minmax(0, 1fr))` }}
@@ -249,7 +250,7 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
                 </div>
               </div>
 
-              <section className="answer-choice-surface grid grid-cols-2 gap-2">
+              <section className="area-architect-answers answer-choice-surface grid grid-cols-2 gap-2">
                 {question.options.map((option) => (
                   <motion.button
                     key={option}
@@ -269,11 +270,11 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
                 ))}
               </section>
 
-              {feedback ? (
+              {feedback ? <div className="area-architect-feedback">
                 <FeedbackStrip tone={feedbackTone === 'good' ? 'success' : feedbackTone === 'bad' ? 'warning' : 'neutral'}>
                   {feedback}
                 </FeedbackStrip>
-              ) : null}
+              </div> : null}
             </div>
           </div>
         </section>

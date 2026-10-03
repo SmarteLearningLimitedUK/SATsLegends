@@ -214,11 +214,11 @@ export const ISLANDS: IslandData[] = [
   },
   {
     id: 7,
-    name: 'Ratio Racer',
+    name: 'Ratio Rapids',
     category: 'Ratio',
     isLocked: false,
     color: 'bg-[#2CC7D9]',
-    themeName: 'Ratio Racer',
+    themeName: 'Ratio Rapids',
     bgGradient: 'from-cyan-300 to-sky-200',
     groundColor: 'bg-cyan-700',
     mapImage: world04Map,
