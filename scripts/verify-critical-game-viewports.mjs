@@ -198,6 +198,8 @@ for (const viewport of desktopViewports) {
       await page.locator('[data-pvp-location="target"]').first().waitFor({ timeout: 15000 });
       await dismissBriefings(page);
       await page.waitForFunction(() => document.querySelector('.iphone-game-stage')?.getAttribute('data-stage-layout') === 'responsive');
+      await page.evaluate(() => document.fonts.ready);
+      await page.waitForTimeout(350);
       const layout = await checkLayout(page, {
         targets: '[data-pvp-location="target"]',
         sources: '[data-pvp-location="source"]:not([tabindex="-1"])',
@@ -217,7 +219,7 @@ for (const viewport of desktopViewports) {
       assert.ok(question && targets && sources && enemy && submit, `${name} missing game panel`);
       assert.ok(question.box.bottom + 2 <= targets.box.top, `${name} mission overlaps Number Stones`);
       assert.ok(targets.box.bottom + 2 <= sources.box.top, `${name} Number Stones overlap digit rack`);
-      assert.ok(sources.box.bottom + 2 <= submit.box.top, `${name} digit rack overlaps Submit`);
+      assert.ok(sources.box.bottom + 2 <= submit.box.top, `${name} digit rack overlaps Submit: rack bottom ${sources.box.bottom}, Submit top ${submit.box.top}`);
       assert.ok(targets.box.right + 8 <= enemy.box.left && sources.box.right + 8 <= enemy.box.left, `${name} monster overlaps controls`);
       for (const [group, entries] of Object.entries({ targets: layout.targets, sources: layout.sources, submit: layout.submit })) {
         assert.ok(entries.every((entry) => entry.inViewport && entry.reachable), `${name} ${group} outside viewport or blocked: ${JSON.stringify(entries)}`);

@@ -76,6 +76,9 @@
     translate: none !important;
     transform: none !important;
   }
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-sources:has(.grid-cols-5) {
+    top: 68% !important;
+  }
   .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-enemy {
     left: auto !important;
     right: 4% !important;
