@@ -119,15 +119,17 @@ for (const profile of profiles) {
     expect(expression).not.toBeNull();
     const dividend = Number(expression[1]);
     const divisor = Number(expression[2]);
-    const expectedAnswer = expression[1].includes('.')
-      ? (dividend / divisor).toFixed(2).replace(/\.?0+$/, '')
-      : `${Math.floor(dividend / divisor)} r${dividend % divisor}`;
+    const expectedPods = Math.floor(dividend / divisor);
+    const remainder = dividend % divisor;
+    const expectedLeftover = expression[1].includes('.')
+      ? (remainder / divisor).toFixed(2).replace(/\.?0+$/, '')
+      : String(remainder);
     const division = page.locator('[data-division-problem="true"]');
     await expect(division).toBeVisible();
     const previousProblemId = await division.getAttribute('data-problem-id');
-    const answer = page.locator('.answer-choice-surface').getByRole('button', { name: expectedAnswer, exact: true });
-    await answer.click();
-    await expect(answer).toHaveClass(/ui-button-success/);
+    await page.locator(`[data-remainder-pod-choice="${expectedPods}"]`).click();
+    await page.locator(`[data-remainder-leftover-choice="${expectedLeftover}"]`).click();
+    await page.locator('[data-remainder-submit]').click();
     await expect(division).not.toHaveAttribute('data-problem-id', previousProblemId);
     await expect(question).toBeVisible();
 
