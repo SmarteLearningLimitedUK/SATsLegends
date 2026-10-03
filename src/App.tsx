@@ -54,13 +54,22 @@ import { getXpRequiredForLevel } from './lib/progression/getXpRequiredForLevel';
 import { playGameSound } from './audio/gameAudio';
 
 const PHONE_STAGE_MIN_HEIGHT = 635;
+const getViewportSize = () => {
+  if (typeof window === 'undefined') return { width: 0, height: 0 };
+  // Keep the layout viewport stable while the browser magnifies the visual viewport.
+  const isZoomed = (window.visualViewport?.scale ?? 1) > 1.01;
+  return {
+    width: isZoomed ? window.innerWidth : window.visualViewport?.width ?? window.innerWidth,
+    height: isZoomed ? window.innerHeight : window.visualViewport?.height ?? window.innerHeight,
+  };
+};
 
 const App: React.FC = () => {
   const [stageScale, setStageScale] = useState(1);
   const [stageRenderMultiplier, setStageRenderMultiplier] = useState(1);
   const [questionCardScale, setQuestionCardScale] = useState(1);
   const [potionCauldronShift, setPotionCauldronShift] = useState('0px');
-  const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
+  const [viewportSize, setViewportSize] = useState(getViewportSize);
 
   const {
     screen,
@@ -503,10 +512,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const updateStageScale = () => {
-      // Keep the layout viewport stable while the browser magnifies the visual viewport.
-      const isZoomed = (window.visualViewport?.scale ?? 1) > 1.01;
-      const viewportWidth = isZoomed ? window.innerWidth : window.visualViewport?.width ?? window.innerWidth;
-      const viewportHeight = isZoomed ? window.innerHeight : window.visualViewport?.height ?? window.innerHeight;
+      const { width: viewportWidth, height: viewportHeight } = getViewportSize();
       setViewportSize({ width: viewportWidth, height: viewportHeight });
       const isPortraitPhone = viewportWidth < 700 && viewportHeight >= viewportWidth;
       const baseWidth = IPHONE_STAGE_WIDTH;
@@ -805,6 +811,13 @@ const App: React.FC = () => {
   const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
   const hasWideGameViewport = viewportSize.width >= 700 && viewportSize.height >= 600;
+  const usesWideGameComposition = isMockAssessment || selectedGameType === 'change_counter'
+    || (selectedGameType === 'take_out_rush' && selectedLevel?.blueprintKey !== 'fraction_forge')
+    || selectedGameType === 'ratio_fractions'
+    || (selectedGameType === 'ratio_rapids'
+      && selectedLevel?.blueprintKey !== 'share_splitter'
+      && selectedLevel?.blueprintKey !== 'maths_vs_zombies');
+  const adaptPortraitGame = isGameplayScreen && hasWideGameViewport && !usesWideGameComposition;
   const useUnboundedStageShell = screen === 'parent_dashboard' || isWellbeingScreen
     || (isGameplayScreen && hasWideGameViewport)
     || (isGameplayScreen && selectedLevel?.blueprintKey === 'place_value_panic'
@@ -937,6 +950,7 @@ const App: React.FC = () => {
                   selectedRuleSet={selectedRuleSet}
                   hintRuleSet={hintRuleSet}
                   gameplayTypeClass={gameplayTypeClass}
+                  adaptPortraitGame={adaptPortraitGame}
                   gameplayRestartKey={gameplayRestartKey}
                   usesQuestionMatchFrame={usesQuestionMatchFrame}
                   globalMiniGameHudTimeLeft={globalMiniGameHudTimeLeft}
