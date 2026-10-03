@@ -7,8 +7,10 @@
 }
 .legend-map-ocean {
   isolation:isolate;
+  aspect-ratio:768 / 2500;
   background:#147bb0 url('../assets/maps/matharia-ocean-rich.png') center / 100% 100% no-repeat;
 }
+.legend-map-desktop-route { display:none; }
 .legend-map-ocean::before {
   content:''; position:absolute; inset:0; pointer-events:none;
   background:radial-gradient(ellipse at 10% 40%,#99f5db33,transparent 45%),radial-gradient(ellipse at 90% 80%,#83e6d32b,transparent 40%);
@@ -53,6 +55,41 @@
 #root .legend-world-map .legend-map-details[data-preview-only=false] { padding-top:calc(48 * var(--map-unit)); }
 #root .legend-world-map .legend-map-anchored-card { position:absolute; z-index:40; max-width:none; box-sizing:border-box; animation:none; }
 #root .legend-world-map .legend-map-anchored-card h2 { white-space:normal; text-wrap:balance; }
+
+@media (min-width:900px) and (min-height:600px) {
+  .legend-world-map { align-self:stretch; box-sizing:border-box; height:100%; min-height:100%; padding-bottom:0; }
+  .legend-world-map .legend-map-ocean {
+    height:100%;
+    aspect-ratio:auto;
+    background-size:cover;
+    background-position:center 48%;
+  }
+  .legend-world-map .legend-map-brand-header { left:50%; top:2%; width:min(28%,320px); transform:translateX(-50%); }
+  .legend-world-map .legend-map-atmosphere { opacity:0; }
+  .legend-world-map .legend-map-desktop-route { position:absolute; inset:0; z-index:5; display:block; width:100%; height:100%; pointer-events:none; }
+  .legend-world-map .legend-map-desktop-route path {
+    fill:none;
+    stroke:#e8fcff;
+    stroke-width:3;
+    stroke-linecap:round;
+    stroke-dasharray:2 13;
+    opacity:.7;
+    filter:drop-shadow(0 0 4px #123b75);
+  }
+  .legend-world-map .legend-map-island-position {
+    --map-island-width:min(20%,220px);
+    --map-island-height:min(30%,210px);
+  }
+  .legend-world-map [data-map-island-position="8"] { --map-island-x:14%; --map-island-y:40%; }
+  .legend-world-map [data-map-island-position="6"] { --map-island-x:38%; --map-island-y:40%; }
+  .legend-world-map [data-map-island-position="5"] { --map-island-x:62%; --map-island-y:40%; }
+  .legend-world-map [data-map-island-position="3"] { --map-island-x:86%; --map-island-y:40%; }
+  .legend-world-map [data-map-island-position="1"] { --map-island-x:14%; --map-island-y:76%; }
+  .legend-world-map [data-map-island-position="7"] { --map-island-x:38%; --map-island-y:76%; }
+  .legend-world-map [data-map-island-position="4"] { --map-island-x:62%; --map-island-y:76%; }
+  .legend-world-map [data-map-island-position="2"] { --map-island-x:86%; --map-island-y:76%; }
+}
+
 @keyframes sea-palm-sway { 0%,100% { transform:rotate(-3deg); } 50% { transform:rotate(4deg); } }
 @keyframes sea-flow { 0%,100% { transform:translate(-12px,-4px); } 50% { transform:translate(12px,4px); } }
 @keyframes sea-swim { 0%,100% { transform:translate(-22px,0) rotate(-2deg); } 50% { transform:translate(24px,7px) rotate(2deg); } }

@@ -29,8 +29,6 @@ type IslandState = {
   totalPossibleBrainpower: number;
 };
 
-const MAP_WIDTH_PX = 768;
-const MAP_HEIGHT_PX = 2500;
 // Individual atlas bounds preserve the full peaks and waterfall tips.
 const ISLAND_ATLAS_BOUNDS: Record<number, string> = {
   8:'0 0 444 454', 6:'444 0 444 474',
@@ -142,10 +140,12 @@ const WorldMap: React.FC<WorldMapProps> = ({
       </div>
       <div
         className="legend-map-ocean relative mx-auto w-full overflow-hidden"
-        style={{ aspectRatio: `${MAP_WIDTH_PX} / ${MAP_HEIGHT_PX}` }}
         data-map-poster-frame
       >
         <MapAtmosphere activeIslandId={selectedIslandId ?? activeIslandId} recommendedIslandId={recommendedIsland?.island.id} />
+        <svg className="legend-map-desktop-route" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          <path d="M140 456 H380 H620 H860 Q940 360 860 240 H620 H380 H140" />
+        </svg>
 
         <div className="absolute inset-0 z-20" data-map-island-layer>
           {TERRAIN_ACCENTS.map((hotspot) => {
@@ -157,12 +157,13 @@ const WorldMap: React.FC<WorldMapProps> = ({
             return (
               <div
                 key={`hotspot-${island.id}`}
-                className="absolute"
+                className="legend-map-island-position absolute"
+                data-map-island-position={island.id}
                 style={{
-                  left: `${hotspot.x}%`,
-                  top: `${hotspot.y}%`,
-                  width: `${hotspot.width}%`,
-                  height: `${hotspot.height}%`,
+                  left: `var(--map-island-x, ${hotspot.x}%)`,
+                  top: `var(--map-island-y, ${hotspot.y}%)`,
+                  width: `var(--map-island-width, ${hotspot.width}%)`,
+                  height: `var(--map-island-height, ${hotspot.height}%)`,
                   transform: 'translate(-50%, -50%)',
                 }}
               >
