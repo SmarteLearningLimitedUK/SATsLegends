@@ -6,6 +6,7 @@ import { UNLOCK_ALL_LEVELS } from '../app/testingFlags';
 import { ChevronDown, Lock } from 'lucide-react';
 import { GAME_SCENE_META } from '../gameSceneMeta';
 import { GAME_DIFFICULTY_LABELS, getGameDifficulty, getLevelProgressIds } from '../systems/content/gameDifficulty';
+import '../design/desktop-island-levels.css';
 
 interface IslandLevelsProps {
   island: IslandData;
@@ -191,6 +192,10 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
 
   const earnedBrainpowerTokens = eligibleLevelRows.reduce((sum, row) => sum + row.stars, 0);
   const totalBrainpowerTokens = eligibleLevelRows.length * TOKENS_PER_LEVEL;
+  const featuredLevel = nextPlayableRow?.level ?? gameGroups[0]?.levels[0]?.level;
+  const featuredScene = featuredLevel?.gameType
+    ? GAME_SCENE_META[featuredLevel.gameType]?.background
+    : undefined;
 
   return (
     <div
@@ -204,29 +209,31 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
     >
       <div className="legend-island-backdrop" style={{ backgroundImage: `url(${island.mapImage})` }} aria-hidden="true" />
       <div
-        className="premium-page-content relative z-10 mx-auto flex h-full min-h-0 w-full max-w-4xl flex-col px-3 pb-4 pt-[calc(env(safe-area-inset-top)+0.35rem)] md:px-5 md:pb-6 md:pt-[calc(env(safe-area-inset-top)+0.5rem)]"
+        className="legend-island-content premium-page-content relative z-10 mx-auto flex h-full min-h-0 w-full max-w-4xl flex-col px-3 pb-4 pt-[calc(env(safe-area-inset-top)+0.35rem)] md:px-5 md:pb-6 md:pt-[calc(env(safe-area-inset-top)+0.5rem)]"
         style={{
           flex: '1 1 auto',
           minHeight: 0,
         }}
       >
+        <section className="legend-island-hero">
+          <div className="legend-island-hero-art" style={{ backgroundImage: `url(${featuredScene ?? island.mapImage})` }} aria-hidden="true" />
         <div className="legend-island-header mb-3 flex flex-wrap items-start justify-between gap-2 md:mb-4">
           <button
             onClick={onBack}
-            className="ui-icon-button flex h-11 w-11 items-center justify-center rounded-full p-0 text-white shadow-xl md:h-12 md:w-12"
+            className="legend-island-back ui-icon-button flex h-11 w-11 items-center justify-center rounded-full p-0 text-white shadow-xl md:h-12 md:w-12"
             aria-label="Back to islands"
           >
             <AssetIcon name="back" className="h-6 w-6 md:h-8 md:w-8" />
           </button>
 
-          <div className="flex-1 text-center">
+          <div className="legend-island-title-block flex-1 text-center">
             <div className="legend-island-category">{island.category} · Island {island.id}</div>
             <div className="flex justify-center">
               <h1 className="text-xl font-black text-white drop-shadow-[0_12px_24px_rgba(2,6,23,0.5)] md:text-3xl">{island.name}</h1>
             </div>
           </div>
 
-          <div className="licensed-board-frame flex min-w-[132px] shrink-0 flex-col items-end gap-1 rounded-xl px-3 py-2 text-white md:min-w-[164px]">
+          <div className="legend-island-token-count licensed-board-frame flex min-w-[132px] shrink-0 flex-col items-end gap-1 rounded-xl px-3 py-2 text-white md:min-w-[164px]">
             <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-[10px]">
               Brainpower Tokens
             </div>
@@ -242,7 +249,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
             <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
                 <div className="legend-eyebrow">Next mission</div>
-                <div className="mt-1 truncate text-sm font-black text-cyan-100 md:text-base">
+                <div className="legend-next-mission-title mt-1 text-sm font-black text-cyan-100 md:text-base">
                   {getGroupName(nextPlayableRow.level)} - {nextPlayableLabel}
                 </div>
               </div>
@@ -257,7 +264,18 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
           </div>
         ) : null}
 
-        <div className="min-h-0 flex-1 overflow-y-auto pr-1" style={{ WebkitOverflowScrolling: 'touch' }}>
+        </section>
+
+        <section className="legend-island-missions" aria-label={`${island.name} missions`}>
+          <div className="legend-island-missions-heading">
+            <div>
+              <span className="legend-island-category">Mission board</span>
+              <h2>Choose a challenge</h2>
+            </div>
+            <span className="legend-island-mission-count">{gameGroups.length} {gameGroups.length === 1 ? 'adventure' : 'adventures'}</span>
+          </div>
+
+        <div className="legend-island-list min-h-0 flex-1 overflow-y-auto pr-1" style={{ WebkitOverflowScrolling: 'touch' }}>
           <div className="flex flex-col gap-2.5 pb-[calc(env(safe-area-inset-bottom)+1rem)] md:gap-3 md:pb-[calc(env(safe-area-inset-bottom)+1.2rem)]">
             {gameGroups.map((group) => {
               const isExpanded = expandedGameId === group.id;
@@ -409,6 +427,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
             ) : null}
           </div>
         </div>
+        </section>
       </div>
     </div>
   );

@@ -807,6 +807,7 @@ const App: React.FC = () => {
   const isGameplayScreen = screen === 'gameplay';
   const isMapLayoutScreen = MAP_LAYOUT_SCREENS.includes(screen);
   const isWorldMapScreen = screen === 'world_map';
+  const isIslandLevelsScreen = screen === 'island_levels';
   const selectedGameType = selectedLevel?.gameType;
   const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
@@ -821,6 +822,7 @@ const App: React.FC = () => {
   const adaptPortraitGame = isGameplayScreen && hasWideGameViewport && !usesWideGameComposition;
   const useUnboundedStageShell = screen === 'parent_dashboard' || isWellbeingScreen
     || (isGameplayScreen && hasWideGameViewport)
+    || (isIslandLevelsScreen && hasWideGameViewport)
     || (hasDesktopAdventureViewport && (isSplashScreen || isWorldMapScreen))
     || (isGameplayScreen && selectedLevel?.blueprintKey === 'place_value_panic'
       && viewportSize.width >= 560 && viewportSize.width > viewportSize.height && viewportSize.height <= 420);
