@@ -793,7 +793,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           draggable={false}
           className="absolute inset-0 h-full w-full object-contain object-center"
           data-game-scene-image="true"
-          data-background-fit="contain"
+          data-background-fit={viewport.width >= 700 && viewport.height >= 600 ? 'cover' : 'contain'}
         />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,14,24,0.18)_0%,rgba(7,14,24,0.24)_44%,rgba(7,14,24,0.56)_100%)]" />
       </div>

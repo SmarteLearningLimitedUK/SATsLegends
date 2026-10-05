@@ -1,0 +1,5 @@
+@media (min-width: 700px) and (min-height: 600px) {
+  .prime-pop-question-slot {
+    min-height: 84px;
+  }
+}

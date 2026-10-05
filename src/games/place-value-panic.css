@@ -60,19 +60,46 @@
 .pvp-enemy-ground { position: absolute; left: 24%; right: 22%; bottom: 13%; height: 5%; border-radius: 50%; background: #061e2a55; }
 .pvp-prompt-compact { display: none; }
 
-@media (min-width: 900px) {
+@media (min-width: 700px) and (min-height: 600px) {
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks [data-game-scene-image] {
+    object-fit: cover !important;
+    object-position: center 60%;
+  }
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-question .game-question-card {
+    max-width: 760px;
+  }
   .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-targets,
   .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-sources {
-    max-width: 520px;
+    left: 4% !important;
+    width: min(63%, 600px) !important;
+    max-width: none;
+    translate: none !important;
+    transform: none !important;
+  }
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-sources:has(.grid-cols-5) {
+    top: 68% !important;
   }
   .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-enemy {
-    left: 86% !important;
-    top: 47% !important;
-    width: 170px !important;
+    left: auto !important;
+    right: 4% !important;
+    top: 43% !important;
+    width: min(26%, 220px) !important;
+    translate: none !important;
+    transform: none !important;
+  }
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .game-submit-dock-fixed {
+    left: 4%;
+    right: auto;
+    width: min(63%, 600px);
+    padding-inline: 0;
+  }
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .game-submit-dock-fixed > button {
+    width: min(100%, 320px) !important;
+    height: 52px !important;
   }
 }
 
-@media (min-width: 700px) and (max-height: 700px) {
+@media (min-width: 700px) and (max-height: 760px) {
   /* Keep the digit rack clear of the fixed Submit control on short desktops. */
   .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-sources {
     top: 68% !important;
@@ -97,6 +124,38 @@
   }
   .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-sources:has(.grid-cols-5) [data-pvp-location='source'] {
     height: 44px !important;
+  }
+}
+
+@media (min-width: 700px) and (min-height: 600px) and (max-height: 760px) {
+  /* Keep the instructions and both racks separate when the browser is short. */
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .pvp-prompt-full {
+    display: none;
+  }
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .pvp-prompt-compact {
+    display: inline;
+  }
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-question .game-question-card {
+    padding-block: 6px;
+  }
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-targets,
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-targets:has([data-pvp-index='6']) {
+    top: 28% !important;
+  }
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-sources {
+    top: 62% !important;
+  }
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-sources:has(.grid-cols-5) {
+    top: 59% !important;
+  }
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-sources:has(.grid-cols-5) .pvp-digit-panel {
+    padding-block: 2px;
+  }
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-sources:has(.grid-cols-5) .pvp-stone-heading {
+    margin-bottom: 0;
+  }
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .game-submit-dock-fixed {
+    bottom: calc(env(safe-area-inset-bottom) + 0.2rem) !important;
   }
 }
 
