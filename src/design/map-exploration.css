@@ -90,6 +90,60 @@
   .legend-world-map [data-map-island-position="2"] { --map-island-x:86%; --map-island-y:76%; }
 }
 
+/* A landscape phone has room for a two-row island chart, while its short
+   height needs the map and the shared dock to remain in the first viewport. */
+@media (min-width:560px) and (max-height:599px) and (orientation:landscape) {
+  .iphone-game-stage-unbounded .legend-world-map {
+    align-self:stretch;
+    box-sizing:border-box;
+    height:100%;
+    min-height:100%;
+    padding-bottom:0;
+  }
+  .iphone-game-stage-unbounded .legend-map-ocean {
+    height:100%;
+    aspect-ratio:auto;
+    background-size:cover;
+    background-position:center 48%;
+  }
+  .iphone-game-stage-unbounded .legend-map-brand-header {
+    left:50%;
+    top:1%;
+    width:min(25%,165px);
+    transform:translateX(-50%);
+  }
+  .iphone-game-stage-unbounded .legend-map-atmosphere { opacity:0; }
+  .iphone-game-stage-unbounded .legend-map-desktop-route {
+    position:absolute;
+    inset:0;
+    z-index:5;
+    display:block;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+  }
+  .iphone-game-stage-unbounded .legend-map-desktop-route path {
+    fill:none;
+    stroke:#e8fcff;
+    stroke-width:3;
+    stroke-linecap:round;
+    stroke-dasharray:2 13;
+    opacity:.7;
+  }
+  .iphone-game-stage-unbounded .legend-map-island-position {
+    --map-island-width:min(18%,116px);
+    --map-island-height:min(27%,105px);
+  }
+  .iphone-game-stage-unbounded [data-map-island-position="8"] { --map-island-x:14%; --map-island-y:39%; }
+  .iphone-game-stage-unbounded [data-map-island-position="6"] { --map-island-x:38%; --map-island-y:39%; }
+  .iphone-game-stage-unbounded [data-map-island-position="5"] { --map-island-x:62%; --map-island-y:39%; }
+  .iphone-game-stage-unbounded [data-map-island-position="3"] { --map-island-x:86%; --map-island-y:39%; }
+  .iphone-game-stage-unbounded [data-map-island-position="1"] { --map-island-x:14%; --map-island-y:66%; }
+  .iphone-game-stage-unbounded [data-map-island-position="7"] { --map-island-x:38%; --map-island-y:66%; }
+  .iphone-game-stage-unbounded [data-map-island-position="4"] { --map-island-x:62%; --map-island-y:66%; }
+  .iphone-game-stage-unbounded [data-map-island-position="2"] { --map-island-x:86%; --map-island-y:66%; }
+}
+
 @keyframes sea-palm-sway { 0%,100% { transform:rotate(-3deg); } 50% { transform:rotate(4deg); } }
 @keyframes sea-flow { 0%,100% { transform:translate(-12px,-4px); } 50% { transform:translate(12px,4px); } }
 @keyframes sea-swim { 0%,100% { transform:translate(-22px,0) rotate(-2deg); } 50% { transform:translate(24px,7px) rotate(2deg); } }

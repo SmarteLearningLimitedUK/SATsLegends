@@ -1,4 +1,5 @@
-import { lazy, Suspense, useLayoutEffect } from 'react';
+import { lazy, Suspense, useEffect, useLayoutEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, Navigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, LoaderCircle } from 'lucide-react';
 import { parseRoute } from '../app/routeConfig';
@@ -49,6 +50,33 @@ function WebsiteContent() {
     <Suspense fallback={<div className="website-game-loading"><LoaderCircle className="website-spinner" /><p>Opening your adventure…</p></div>}><GameGate>
       <Game />
     </GameGate></Suspense>
-    {isMinigame ? null : <Link className={`website-return${hasGameDock ? ' website-return-above-dock' : ''}`} to="/" aria-label="Return to SATs Legends website"><ArrowLeft size={16} /><span>Website</span></Link>}
+    {isMinigame ? null : <WebsiteReturn screen={gameScreen} hasGameDock={hasGameDock} />}
   </>;
+}
+
+function WebsiteReturn({ screen, hasGameDock }: { screen: string; hasGameDock: boolean }) {
+  const [mapDock, setMapDock] = useState<HTMLElement | null>(null);
+  const [narrowLandscape, setNarrowLandscape] = useState(() => window.matchMedia('(max-width: 699px) and (orientation: landscape)').matches);
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 699px) and (orientation: landscape)');
+    const update = () => setNarrowLandscape(media.matches);
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
+  useEffect(() => {
+    if (screen !== 'world_map') return;
+    const findDock = () => {
+      const nextDock = document.querySelector<HTMLElement>('.legend-map-dock > div');
+      setMapDock(current => current === nextDock ? current : nextDock);
+    };
+    findDock();
+    const observer = new MutationObserver(findDock);
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [screen]);
+
+  if (screen === 'world_map' && mapDock && !narrowLandscape) {
+    return createPortal(<Link className="legend-map-dock-button website-map-dock-return" to="/" aria-label="Return to SATs Legends website"><ArrowLeft className="legend-map-dock-icon" /><span>Website</span></Link>, mapDock);
+  }
+  return <Link className={`website-return${screen === 'world_map' && !narrowLandscape ? ' website-return-map-dock' : hasGameDock ? ' website-return-beside-dock' : ''}`} to="/" aria-label="Return to SATs Legends website"><ArrowLeft size={16} /><span>Website</span></Link>;
 }

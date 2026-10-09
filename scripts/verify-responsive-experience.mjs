@@ -3,11 +3,16 @@ import { writeFile, mkdir } from 'node:fs/promises';
 
 const base = process.env.LEGEND_QA_URL || 'http://127.0.0.1:3000';
 const profiles = [
+  ['small phone', chromium, { viewport: { width: 320, height: 568 }, isMobile: true, hasTouch: true }],
+  ['small landscape', chromium, { viewport: { width: 568, height: 320 }, isMobile: true, hasTouch: true }],
+  ['phone landscape', chromium, { viewport: { width: 667, height: 375 }, isMobile: true, hasTouch: true }],
   ['iPhone 13', webkit, devices['iPhone 13']],
   ['iPad', webkit, devices['iPad (gen 7)']],
+  ['iPad landscape', webkit, { ...devices['iPad (gen 7)'], viewport: { width: 1024, height: 768 } }],
   ['Android', chromium, devices['Pixel 7']],
+  ['short desktop', chromium, { viewport: { width: 1280, height: 720 } }],
   ['desktop', chromium, { viewport: { width: 1440, height: 900 } }],
-];
+].filter(([name]) => !process.env.LEGEND_QA_PROFILE || name === process.env.LEGEND_QA_PROFILE);
 const results = [];
 const failures = [];
 await mkdir('qa-artifacts/responsive-experience', { recursive: true });
@@ -106,6 +111,8 @@ for (const [name, engine, options] of profiles) {
       if (document.documentElement.clientWidth < 700 || document.documentElement.clientHeight < 600) return true;
       return document.querySelector('.iphone-game-stage')?.getAttribute('data-stage-layout') === 'responsive';
     });
+    await page.waitForFunction(() => window.matchMedia('(max-width: 699px) and (orientation: landscape)').matches
+      || Boolean(document.querySelector('.website-map-dock-return')));
     const games = await page.evaluate(async () => {
       const { ISLANDS } = await import('/src/constants.ts');
       const variants = ISLANDS.flatMap(island => island.levels.map(level => ({ route: `/game/${island.id}/${level.id}`, key: level.blueprintKey || level.gameType })));
@@ -117,22 +124,36 @@ for (const [name, engine, options] of profiles) {
       const stageElement = document.querySelector('.iphone-game-stage');
       const stage = stageElement?.getBoundingClientRect();
       const dock = document.querySelector('.legend-map-dock')?.getBoundingClientRect();
-      const website = document.querySelector('.website-return')?.getBoundingClientRect();
-      const returnOverlapsDock = Boolean(dock && website && website.left < dock.right && website.right > dock.left && website.top < dock.bottom && website.bottom > dock.top);
+      const websiteLink = document.querySelector('.website-return, .website-map-dock-return');
+      const website = websiteLink?.getBoundingClientRect();
+      const websiteInDock = Boolean(websiteLink?.closest('.legend-map-dock'));
+      const websiteHit = website && document.elementFromPoint(website.left + website.width / 2, website.top + website.height / 2);
+      const websiteReachable = Boolean(website && websiteLink && website.left >= -1 && website.right <= width + 1
+        && website.top >= -1 && website.bottom <= height + 1 && websiteHit && websiteLink.contains(websiteHit));
+      const returnOverlapsDock = Boolean(!websiteInDock && dock && website && website.left < dock.right && website.right > dock.left && website.top < dock.bottom && website.bottom > dock.top);
       const islands = [...document.querySelectorAll('.legend-map-hotspot')].map(element => {
         const rect = element.getBoundingClientRect();
         return { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom };
       });
+      const returnOverlapsIsland = Boolean(!websiteInDock && website && islands.some(island =>
+        website.left < island.right && website.right > island.left
+          && website.top < island.bottom && website.bottom > island.top));
       return {
         width, height, scrollWidth: document.documentElement.scrollWidth,
         stageLayout: stageElement?.getAttribute('data-stage-layout'),
-        stage: stage && { left: stage.left, right: stage.right }, returnOverlapsDock, islands,
+        stage: stage && { left: stage.left, right: stage.right },
+        dock: dock && { left: dock.left, right: dock.right, top: dock.top, bottom: dock.bottom },
+        websiteReachable, returnOverlapsDock, returnOverlapsIsland, islands,
       };
     });
     const mapIsWide = map.width >= 700 && map.height >= 600;
     const mapUsesDesktopGrid = map.width >= 900 && map.height >= 600;
+    const mapUsesCompactGrid = map.width >= 560 && map.width > map.height && map.height < 600;
     check(map.scrollWidth <= map.width + 1 && map.stage && map.stage.left >= -1 && map.stage.right <= map.width + 1
-      && !map.returnOverlapsDock && map.islands.length === 8
+      && map.websiteReachable && !map.returnOverlapsDock && !map.returnOverlapsIsland && map.islands.length === 8
+      && (!mapUsesCompactGrid || (map.stageLayout === 'responsive' && map.dock && map.dock.top >= -1
+        && map.dock.bottom <= map.height + 1
+        && map.islands.every(island => island.top >= -1 && island.bottom <= map.dock.top + 1)))
       && (!mapIsWide || (map.stageLayout === 'responsive' && Math.abs(map.stage.left) <= 1 && Math.abs(map.stage.right - map.width) <= 1
         && map.islands.every(island => island.left >= -1 && island.right <= map.width + 1)
         && (!mapUsesDesktopGrid || map.islands.every(island => island.top >= -1 && island.bottom <= map.height + 1)))), name, '/map', map);

@@ -234,6 +234,7 @@ body.legends-website-body { position: static; height: auto; min-height: 100vh; o
 .website-game-loading { height: 100%; display: flex; flex-direction: column; gap: 16px; justify-content: center; align-items: center; background: #081b30; color: #ffd56b; font-family: 'Fredoka',sans-serif; }
 .website-spinner { animation: website-spin 1s linear infinite; } @keyframes website-spin { to { transform: rotate(360deg); } }
 .website-return { position: fixed; right: 12px; bottom: 12px; z-index: 100; display: flex; min-height: 44px; align-items: center; justify-content: center; gap: 7px; border: 2px solid #9b691f; border-radius: 12px; background: linear-gradient(180deg,#ffe79a,#f5c85b 60%,#dda43a); color: #18264a; font-size: 12px; font-weight: 700; padding: 8px 11px; font-family: 'Fredoka',sans-serif; text-decoration: none; box-shadow: 0 4px 0 #75501e,0 8px 18px #0006; }
+.website-map-dock-return { text-decoration: none; font-family: 'Fredoka',sans-serif; }
 
 @media (min-width: 1500px) { .website-hero-art { width: 68%; }.website-hero::before { background: linear-gradient(90deg,#0a213a 0%,#0a213a 25%,#0a213af0 40%,#0a213a30 70%),linear-gradient(0deg,#081b30,transparent 22%); } }
 @media (max-width: 1100px) {
@@ -269,6 +270,13 @@ body.legends-website-body { position: static; height: auto; min-height: 100vh; o
   .website-video-grid { grid-template-columns: 1fr; gap: 22px; }.website-video-card-copy { padding: 22px; }.website-video-card h2 { font-size: 27px; }.website-video-card-copy > p:not(.website-topic-category) { min-height: 0; }.website-video-learning-tip { gap: 17px; padding: 25px 0; margin-top: 35px; }.website-video-learning-tip > div { min-width: 230px; }.website-video-learning-tip > a { width: 100%; margin-left: 0; }.website-video-learning-tip h2 { font-size: 24px; }.website-video-dialog-content { padding: 20px; }.website-video-dialog-content h2 { font-size: 26px; }
   .website-account-main { grid-template-columns: 1fr; gap: 27px; padding-top: 30px; padding-bottom: 40px; }.website-account-world { min-height: 0; padding-top: 0; }.website-account-world h1 { font-size: 35px; }.website-account-world > img,.website-account-caption,.website-account-world::before { display: none; }.website-account-world > p:not(.website-eyebrow) { margin-top: 12px; }.website-account-world > p > br { display: none; }.website-account-form-wrap { padding: 26px 23px; }.website-account-form-wrap h2 { font-size: 31px; }
   .website-return { right: calc(env(safe-area-inset-right) + 6px); bottom: calc(env(safe-area-inset-bottom) + 8px); padding: 8px 6px; font-size: 11px; }.website-return svg { display: none; }
-  .website-return-above-dock { bottom: calc(env(safe-area-inset-bottom) + 82px); }
+  /* The four-button map dock uses the full phone width; other docks leave a right gutter. */
+  .website-return-map-dock { bottom: calc(env(safe-area-inset-bottom) + 82px); }
+  .website-return-beside-dock { bottom: calc(env(safe-area-inset-bottom) + 8px); }
+}
+@media (max-width: 360px) {
+  .legend-map-dock > div { gap: 4px; }
+  .legend-map-dock .legend-map-dock-button { width: 54px; flex-basis: 54px; }
+  .legend-map-dock .legend-map-dock-button span { font-size: 10px; }
 }
 @media (prefers-reduced-motion: reduce) { .legends-website *, .legends-website *::before, .legends-website *::after, .website-spinner { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }

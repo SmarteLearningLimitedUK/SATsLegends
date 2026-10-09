@@ -2,7 +2,9 @@
   display: none;
 }
 
-@media (min-width: 900px) and (min-height: 600px) {
+@media (min-width: 900px) and (min-height: 600px),
+  (min-width: 700px) and (min-height: 600px) and (orientation: landscape),
+  (min-width: 560px) and (max-height: 599px) and (orientation: landscape) {
   .legend-welcome-mobile {
     display: none;
   }
@@ -97,5 +99,41 @@
   .legend-desktop-welcome-cta svg {
     width: 22px;
     height: 22px;
+  }
+}
+
+@media (min-width: 560px) and (max-height: 599px) and (orientation: landscape) {
+  .legend-desktop-welcome-content {
+    width: min(53vw, 380px);
+    padding: 8px 0 12px clamp(16px, 3vw, 36px);
+  }
+
+  .legend-desktop-welcome-logo {
+    width: clamp(120px, 18vw, 180px);
+    margin-bottom: 4px;
+  }
+
+  .legend-desktop-welcome-eyebrow {
+    margin-bottom: 3px;
+    font-size: 9px;
+  }
+
+  .legend-desktop-welcome h1 {
+    font-size: clamp(24px, 3vw, 33px);
+    line-height: 1;
+  }
+
+  .legend-desktop-welcome-copy {
+    max-width: 31ch;
+    margin: 6px 0 9px;
+    font-size: clamp(12px, 1.5vw, 15px);
+    line-height: 1.23;
+  }
+
+  #root .legend-desktop-welcome-cta {
+    min-width: 180px;
+    min-height: 44px;
+    padding: 8px 17px;
+    font-size: 14px;
   }
 }

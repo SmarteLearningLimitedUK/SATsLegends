@@ -822,7 +822,12 @@ const App: React.FC = () => {
       && selectedLevel?.blueprintKey !== 'share_splitter'
       && selectedLevel?.blueprintKey !== 'maths_vs_zombies');
   const adaptPortraitGame = isGameplayScreen && hasWideGameViewport && !usesWideGameComposition;
+  const isShortLandscapeSplash = isSplashScreen && viewportSize.width >= 560
+    && viewportSize.width > viewportSize.height && viewportSize.height < 600;
+  const isShortLandscapeMap = isWorldMapScreen && viewportSize.width >= 560
+    && viewportSize.width > viewportSize.height && viewportSize.height < 600;
   const useUnboundedStageShell = screen === 'parent_dashboard' || isWellbeingScreen
+    || isShortLandscapeSplash || isShortLandscapeMap
     || (isGameplayScreen && hasWideGameViewport)
     || (isResponsiveHubScreen && hasWideGameViewport)
     || (isGameplayScreen && selectedLevel?.blueprintKey === 'place_value_panic'
