@@ -7,7 +7,11 @@ import { isBossEncounterGameType } from '../games/bossEncounterTypes';
 
 export const GLOBAL_MINIGAME_HUD_DURATION_SECONDS = 90;
 export const GLOBAL_MINIGAME_LIVES = 3;
-export const getSessionDurationSeconds = (level: LevelData | null) => isBossEncounterGameType(level?.gameType) ? level?.gameType === 'crystal_core' ? 1800 : 2400 : GLOBAL_MINIGAME_HUD_DURATION_SECONDS;
+export const getSessionDurationSeconds = (level: LevelData | null) => {
+  if (isBossEncounterGameType(level?.gameType)) return level?.gameType === 'crystal_core' ? 1800 : 2400;
+  if (level?.gameType === 'prime_pop' && !level.isPractice) return 60;
+  return GLOBAL_MINIGAME_HUD_DURATION_SECONDS;
+};
 
 interface GameplaySessionArgs {
   screen: GameScreen;

@@ -181,8 +181,15 @@ const WorldMap: React.FC<WorldMapProps> = ({
                     if (event.pointerType === 'mouse' && selectedIslandId === null) { cancelHoverDismiss(); setHoveredIslandId(island.id); }
                   }}
                   onPointerLeave={() => { setActiveIslandId(null); dismissHoverSoon(); }}
-                  onFocus={() => setActiveIslandId(island.id)}
-                  onBlur={() => setActiveIslandId(null)}
+                  onFocus={() => {
+                    cancelHoverDismiss();
+                    setActiveIslandId(island.id);
+                    if (selectedIslandId === null) setHoveredIslandId(island.id);
+                  }}
+                  onBlur={() => {
+                    setActiveIslandId(null);
+                    if (selectedIslandId === null) dismissHoverSoon();
+                  }}
                   aria-label={`${island.name}${isUnlocked ? '' : ', locked'}`}
                   aria-expanded={displayedIslandId === island.id}
                   aria-controls={displayedIslandId === island.id ? "legend-map-island-details" : undefined}

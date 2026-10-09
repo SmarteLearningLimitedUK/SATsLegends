@@ -12,6 +12,7 @@ import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import meanMachineImage from '../assets/mean.png';
 import meanMachineBackground from '../assets/maps/premium/mean-machine.webp';
 import './game-refinements.css';
+import './mean-machine.css';
 import medianMachineImage from '../assets/median.png';
 import modeMachineImage from '../assets/mode.png';
 import { GameplaySessionEventHandlers, GameplaySessionState, MiniGamePracticeBriefing } from '../app/gameplaySessionContract';
@@ -684,24 +685,24 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(56,189,248,0.18),transparent_34%),radial-gradient(circle_at_12%_82%,rgba(59,130,246,0.14),transparent_28%),radial-gradient(circle_at_88%_78%,rgba(251,191,36,0.12),transparent_30%),linear-gradient(180deg,rgba(3,7,18,0.2),rgba(3,7,18,0.5))]" />
       <div className="pointer-events-none absolute inset-x-[16%] top-[10%] h-24 rounded-full bg-cyan-300/12 blur-3xl" />
 
-      <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+4.45rem)] pt-2 md:px-4">
+      <div className="mean-machine-content relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+4.45rem)] pt-2 md:px-4">
         <div className="flex h-full min-h-0 flex-col gap-2.5">
-          <section className="shrink-0">
+          <section className="mean-machine-question shrink-0">
             <GameQuestionCard title="Mean Machine" subtitle={modeCopy.prompt}>
               {modeCopy.title}
             </GameQuestionCard>
           </section>
 
-          <main className="flex min-h-0 flex-1 flex-col gap-2.5">
-            <section className="relative min-h-0 flex-1 overflow-hidden rounded-[1.6rem] border border-transparent bg-transparent px-2 py-2 shadow-none">
+          <main className="mean-machine-main flex min-h-0 flex-1 flex-col gap-2.5">
+            <section className="mean-machine-playfield relative min-h-0 flex-1 overflow-hidden rounded-[1.6rem] border border-transparent bg-transparent px-2 py-2 shadow-none">
 
-              <div className="mean-power-panel"><ArcadeJourney kind="power" completed={level - 1 + (feedback?.type === 'success' ? 1 : 0)} total={TOTAL_LEVELS} danger={showGlitch} /></div>
+              <div className="mean-power-panel mean-power-panel-mobile"><ArcadeJourney kind="power" completed={level - 1 + (feedback?.type === 'success' ? 1 : 0)} total={TOTAL_LEVELS} danger={showGlitch} /></div>
               <div className="relative flex h-full min-h-0 flex-col gap-2.5">
                 <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-[1.35rem] border border-transparent bg-transparent px-1 py-1">
                   <motion.div
                     animate={machineShake ? { x: [0, -6, 6, -4, 4, 0] } : { x: 0 }}
                     transition={{ duration: 0.34 }}
-                    className="relative mx-auto flex h-full w-full max-w-[32rem] items-center justify-center md:max-w-[34rem]"
+                    className="mean-machine-figure relative mx-auto flex h-full w-full max-w-[32rem] items-center justify-center md:max-w-[34rem]"
                   >
 
                       <div
@@ -819,7 +820,8 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
               </div>
             </section>
 
-            <section className="shrink-0 rounded-[1.35rem] border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(10,31,83,0.92),rgba(7,21,58,0.96))] p-2.5 shadow-[0_16px_26px_rgba(2,6,23,0.34)]">
+            <section className="mean-machine-answer-rail shrink-0 rounded-[1.35rem] border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(10,31,83,0.92),rgba(7,21,58,0.96))] p-2.5 shadow-[0_16px_26px_rgba(2,6,23,0.34)]">
+              <div className="mean-power-panel mean-power-panel-desktop"><ArcadeJourney kind="power" completed={level - 1 + (feedback?.type === 'success' ? 1 : 0)} total={TOTAL_LEVELS} danger={showGlitch} /></div>
               <div className="mb-2 flex items-center justify-start gap-2">
                 <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/74">
                   <span className="mean-repair-streak">{repairStreak > 0 ? `${repairStreak} clean repairs · ${3 - repairStreak % 3} to bonus` : 'Three clean repairs earn +75 XP'} · </span>

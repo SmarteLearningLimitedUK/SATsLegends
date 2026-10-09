@@ -1,0 +1,683 @@
+.fraction-forge-game {
+  --ff-amber: #f6b852;
+  --ff-cream: #fff3d8;
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  color: var(--ff-cream);
+  container-type: inline-size;
+}
+
+.ff-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(6, 12, 21, .66), rgba(8, 14, 22, .16) 32%, rgba(4, 8, 15, .61)),
+    linear-gradient(90deg, rgba(4, 9, 17, .38), transparent 48%, rgba(4, 9, 17, .3));
+}
+
+.ff-ui {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(5px, 1.1vh, 10px);
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: clamp(7px, 1.3vh, 14px) clamp(10px, 2.4vw, 30px);
+  box-sizing: border-box;
+}
+
+.ff-brief {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: start;
+  justify-content: space-between;
+  gap: 10px 24px;
+  min-width: 0;
+}
+
+.ff-question.game-question-card {
+  --question-card-padding: 5px 10px;
+  max-width: min(100%, 760px);
+  font-size: clamp(15px, 1.45vw, 19px);
+}
+
+.ff-question .game-question-card-title-strip {
+  min-height: 28px;
+  margin-bottom: 2px;
+}
+
+.ff-brief h1,
+.ff-brief h2,
+.ff-brief p { margin: 0; }
+
+.ff-brief h1,
+.ff-brief h2 {
+  color: #fff6de;
+  font-size: clamp(22px, 2.7vw, 36px);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -.035em;
+  text-shadow: 0 3px 12px rgba(1, 5, 10, .75);
+}
+
+.ff-brief p {
+  max-width: 54ch;
+  color: #f2dfbd;
+  font-size: clamp(13px, 1.2vw, 16px);
+  font-weight: 650;
+  line-height: 1.25;
+  text-shadow: 0 2px 7px #07101c;
+}
+
+.ff-meta {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px 14px;
+  min-height: 21px;
+  color: #ffdf9e;
+  font-size: clamp(11px, 1vw, 13px);
+  font-weight: 850;
+  line-height: 1.2;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 6px #060c14;
+}
+
+.ff-heat-track {
+  flex: 0 1 180px;
+  width: min(180px, 24vw);
+  height: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 232, 188, .3);
+  border-radius: 999px;
+  background: rgba(11, 18, 26, .76);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, .7);
+}
+
+.ff-heat-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #f27d39, #ffc263 78%, #ffe5ac);
+  box-shadow: 0 0 11px rgba(255, 154, 65, .8);
+  transition: width 260ms ease;
+}
+
+.ff-workspace {
+  display: grid;
+  flex: 1 1 auto;
+  grid-template-columns: minmax(0, 1.5fr) minmax(285px, .82fr);
+  gap: clamp(8px, 1.8vw, 22px);
+  width: 100%;
+  min-height: 0;
+  align-items: stretch;
+}
+
+.ff-anvil-zone {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+
+.ff-target {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  max-width: 100%;
+  min-height: 48px;
+  padding: 4px 14px;
+  border: 1px solid rgba(255, 220, 155, .45);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(24, 30, 36, .83), rgba(11, 17, 24, .9));
+  box-shadow: 0 9px 19px rgba(0, 0, 0, .25), inset 0 1px rgba(255, 247, 216, .13);
+  color: #f9e8c7;
+  font-size: clamp(11px, 1.1vw, 14px);
+  font-weight: 850;
+  line-height: 1.15;
+  letter-spacing: .07em;
+  text-align: center;
+  text-transform: uppercase;
+  text-shadow: 0 2px 5px #050b11;
+}
+
+.ff-target-value {
+  color: #ffd276;
+  font-size: clamp(20px, 2.1vw, 28px);
+  font-weight: 950;
+  line-height: 1;
+  letter-spacing: -.035em;
+}
+
+.ff-anvil {
+  position: absolute;
+  left: 50%;
+  bottom: 29px;
+  width: min(100%, 660px);
+  height: min(77%, 305px);
+  min-height: 152px;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 20px 18px rgba(0, 0, 0, .58));
+}
+
+.ff-anvil::before,
+.ff-anvil::after {
+  position: absolute;
+  display: block;
+  content: '';
+  pointer-events: none;
+}
+
+.ff-anvil::before {
+  z-index: 2;
+  top: 23%;
+  left: 4%;
+  width: 92%;
+  height: 35%;
+  clip-path: polygon(0 46%, 14% 23%, 30% 18%, 34% 4%, 67% 4%, 72% 18%, 91% 22%, 100% 43%, 82% 84%, 21% 84%);
+  background: linear-gradient(180deg, #b0bdc0, #718087 13%, #35434a 34%, #202c34 70%, #0c151f);
+}
+
+.ff-anvil::after {
+  z-index: 1;
+  top: 43%;
+  left: 28%;
+  width: 44%;
+  height: 47%;
+  clip-path: polygon(4% 0, 96% 0, 80% 68%, 98% 87%, 2% 87%, 20% 68%);
+  background: linear-gradient(90deg, #111b24, #586972 28%, #25343d 51%, #0b151f);
+}
+
+.ff-anvil-base {
+  position: absolute;
+  z-index: 2;
+  bottom: 5%;
+  left: 20%;
+  width: 60%;
+  height: 12%;
+  clip-path: polygon(6% 0, 94% 0, 100% 55%, 97% 100%, 3% 100%, 0 55%);
+  background: linear-gradient(180deg, #53626a, #202b32 46%, #0b141d);
+}
+
+.ff-recipe {
+  position: absolute;
+  z-index: 4;
+  top: 23%;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(4px, .65vw, 9px);
+  max-width: 100%;
+  transform: translateX(-50%);
+}
+
+.ff-slot {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: clamp(54px, 5.7vw, 75px);
+  height: clamp(57px, 6vw, 80px);
+  min-width: 44px;
+  min-height: 44px;
+  padding: 2px;
+  border: 2px dashed rgba(244, 207, 141, .82);
+  border-radius: 9px;
+  background: rgba(8, 17, 26, .88);
+  box-shadow: inset 0 3px 9px rgba(0, 0, 0, .7), 0 2px rgba(222, 231, 227, .24);
+  color: #fff4d9;
+  cursor: pointer;
+  font: inherit;
+  font-size: clamp(16px, 1.8vw, 23px);
+  font-weight: 900;
+  transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+
+.ff-slot:not(:disabled):hover {
+  transform: translateY(-3px);
+  border-color: #fff0bb;
+  background: #243b47;
+}
+
+.ff-slot-filled {
+  border-style: solid;
+  border-color: rgba(255, 236, 183, .86);
+  background: linear-gradient(160deg, #dae2df, #8fa0a4 30%, #52636d 73%, #35454c);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, .31), inset 0 2px rgba(255, 255, 255, .55);
+  color: #111c26;
+  text-shadow: 0 1px rgba(255, 255, 255, .5);
+}
+
+.ff-slot-number {
+  color: #cba869;
+  font-size: .85em;
+  font-weight: 800;
+}
+
+.ff-fraction {
+  display: inline-flex;
+  min-width: 1.3em;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: clamp(15px, 1.6vw, 21px);
+  font-variant-numeric: tabular-nums;
+  line-height: .88;
+}
+
+.ff-fraction-bar {
+  display: block;
+  width: 100%;
+  min-width: 1.15em;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+.ff-slot .ff-fraction { font-size: clamp(15px, 1.6vw, 20px); }
+
+.ff-operator {
+  flex: 0 0 auto;
+  min-width: 12px;
+  color: #ffcd73;
+  font-size: clamp(15px, 1.7vw, 23px);
+  font-weight: 950;
+  text-align: center;
+  text-shadow: 0 2px 5px #070d14;
+}
+
+.ff-hammer {
+  position: absolute;
+  z-index: 6;
+  top: 5%;
+  right: clamp(0px, 4vw, 45px);
+  width: clamp(56px, 8vw, 110px);
+  height: clamp(56px, 8vw, 110px);
+  transform: rotate(-27deg);
+  transform-origin: 77% 85%;
+  filter: drop-shadow(0 5px 5px rgba(0, 0, 0, .65));
+  pointer-events: none;
+}
+
+.ff-hammer svg { display: block; width: 100%; height: 100%; }
+
+.fraction-forge-game[data-strike-state='success'] .ff-hammer,
+.fraction-forge-game[data-strike-state='error'] .ff-hammer,
+.ff-hammer[data-strike-state='success'],
+.ff-hammer[data-strike-state='error'] {
+  animation: ff-hammer-strike 500ms cubic-bezier(.33, 0, .18, 1) both;
+}
+
+@keyframes ff-hammer-strike {
+  0% { transform: rotate(-32deg) translateY(-14px); }
+  55% { transform: rotate(18deg) translate(-22px, 20px); }
+  72% { transform: rotate(8deg) translate(-16px, 14px); }
+  100% { transform: rotate(-27deg); }
+}
+
+.ff-spark-burst {
+  position: absolute;
+  z-index: 8;
+  top: 39%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  pointer-events: none;
+}
+
+.ff-spark {
+  --spark-angle: calc(var(--spark-index, 0) * 36deg);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 14px;
+  border-radius: 99px;
+  background: #ffe6a0;
+  box-shadow: 0 0 13px #ff9c38;
+  transform: rotate(var(--spark-angle, 0deg));
+  animation: ff-spark-fly 650ms ease-out both;
+}
+
+@keyframes ff-spark-fly {
+  0% { opacity: 1; transform: rotate(var(--spark-angle, 0deg)) translateY(0) scale(.6); }
+  100% { opacity: 0; transform: rotate(var(--spark-angle, 0deg)) translateY(-70px) scale(.1); }
+}
+
+.fraction-forge-game[data-feedback-tone='success'] .ff-anvil::before {
+  animation: ff-anvil-hot 750ms ease-out;
+}
+
+@keyframes ff-anvil-hot {
+  0%, 100% { filter: none; }
+  30% { filter: brightness(1.7) sepia(.5) saturate(2); }
+}
+
+.fraction-forge-game[data-feedback-tone='error'] .ff-anvil {
+  animation: ff-anvil-shudder 420ms ease-in-out;
+}
+
+@keyframes ff-anvil-shudder {
+  0%, 100% { transform: translateX(-50%); }
+  25%, 75% { transform: translateX(calc(-50% - 5px)); }
+  50% { transform: translateX(calc(-50% + 5px)); }
+}
+
+.ff-progress {
+  position: absolute;
+  z-index: 5;
+  right: 12px;
+  bottom: 0;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 24px;
+}
+
+.ff-progress-mark {
+  display: block;
+  width: clamp(21px, 3.5vw, 42px);
+  height: 7px;
+  border: 1px solid rgba(255, 238, 202, .36);
+  border-radius: 99px;
+  background: rgba(13, 20, 25, .8);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, .68);
+}
+
+.ff-progress-mark[data-complete='true'],
+.ff-progress-mark[aria-current='true'],
+.ff-progress-mark.is-complete {
+  border-color: #ffe1a5;
+  background: linear-gradient(90deg, #ea8d3e, #ffd37f);
+  box-shadow: 0 0 9px rgba(255, 176, 78, .5);
+}
+
+.ff-tray {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  gap: clamp(7px, 1.2vh, 13px);
+  padding: clamp(12px, 1.6vw, 22px);
+  border: 1px solid rgba(243, 209, 147, .36);
+  border-radius: clamp(12px, 1.5vw, 20px);
+  background: linear-gradient(150deg, rgba(30, 38, 43, .88), rgba(11, 18, 25, .93));
+  box-shadow: 0 13px 30px rgba(2, 6, 10, .36), inset 0 1px rgba(255, 244, 222, .13);
+  backdrop-filter: blur(7px);
+}
+
+.ff-tray-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 5px 12px;
+  margin: 0;
+  color: #ffe3aa;
+  font-size: clamp(14px, 1.4vw, 19px);
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: .02em;
+  text-shadow: 0 2px 5px #060e17;
+}
+
+.ff-tray-title span {
+  color: #d7c6ab;
+  font-size: clamp(11px, 1vw, 13px);
+  font-weight: 650;
+  letter-spacing: 0;
+  text-align: right;
+}
+
+.ff-bank {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-content: start;
+  gap: clamp(6px, .9vw, 11px);
+  min-height: 0;
+}
+
+.ff-ingredient {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-width: 0;
+  min-height: 58px;
+  padding: 5px 7px;
+  border: 1px solid #bdc9c6;
+  border-radius: 9px;
+  background: linear-gradient(160deg, #e5e8df, #acb8b5 18%, #647781 68%, #344651);
+  box-shadow: 0 5px 0 #17252d, 0 11px 15px rgba(0, 0, 0, .38), inset 0 2px rgba(255, 255, 255, .72);
+  color: #111d26;
+  cursor: pointer;
+  font: inherit;
+  font-size: clamp(20px, 2vw, 29px);
+  font-weight: 950;
+  line-height: 1;
+  text-shadow: 0 1px rgba(255, 255, 255, .58);
+  transition: transform 170ms ease, box-shadow 170ms ease, filter 170ms ease;
+}
+
+.ff-ingredient:not(:disabled):hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 0 #17252d, 0 14px 17px rgba(0, 0, 0, .42), inset 0 2px rgba(255, 255, 255, .72);
+  filter: brightness(1.08);
+}
+
+.ff-ingredient:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 #17252d, 0 6px 10px rgba(0, 0, 0, .4);
+}
+
+.ff-ingredient-used,
+.ff-ingredient:disabled {
+  opacity: .33;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, .5);
+  cursor: default;
+}
+
+.ff-controls {
+  display: grid;
+  grid-template-columns: minmax(90px, .7fr) minmax(0, 1.3fr);
+  gap: 8px;
+  margin-top: auto;
+}
+
+.ff-reset,
+.ff-strike {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 0;
+  min-height: 46px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font: inherit;
+  font-size: clamp(14px, 1.25vw, 17px);
+  font-weight: 900;
+  line-height: 1.1;
+  transition: transform 170ms ease, filter 170ms ease, box-shadow 170ms ease;
+}
+
+.ff-controls svg {
+  flex: 0 0 auto;
+  width: 17px;
+  height: 17px;
+  stroke-width: 2.5;
+}
+
+.ff-reset {
+  border: 1px solid rgba(222, 233, 229, .52);
+  background: rgba(12, 22, 30, .78);
+  color: #f4e6cf;
+}
+
+.ff-strike {
+  border: 1px solid #ffe5b0;
+  background: linear-gradient(180deg, #ffe2a1, #f2ab48 56%, #bb651e);
+  box-shadow: 0 4px 0 #7d4119, 0 10px 13px rgba(0, 0, 0, .25), inset 0 1px rgba(255, 255, 255, .8);
+  color: #21160d;
+  text-shadow: 0 1px rgba(255, 255, 255, .45);
+}
+
+.ff-reset:not(:disabled):hover,
+.ff-strike:not(:disabled):hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
+
+.ff-reset:disabled,
+.ff-strike:disabled {
+  opacity: .48;
+  cursor: default;
+}
+
+.ff-feedback {
+  min-height: 20px;
+  color: #fbe0aa;
+  font-size: clamp(12px, 1.1vw, 14px);
+  font-weight: 750;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.ff-feedback:empty { display: none; }
+.ff-feedback[data-tone='success'] { color: #e2ffd6; }
+.ff-feedback[data-tone='error'] { color: #ffd3b8; }
+
+.fraction-forge-game :is(button, [role='button']):focus-visible {
+  outline: 3px solid #ffde8b;
+  outline-offset: 3px;
+}
+
+@container (max-width: 899px) {
+  .ff-workspace {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(150px, 1fr) auto;
+    gap: 6px;
+  }
+
+  .ff-anvil {
+    bottom: 22px;
+    width: min(100%, 520px);
+    height: min(77%, 280px);
+    min-height: 0;
+  }
+
+  .ff-recipe { gap: clamp(3px, .8vw, 7px); }
+  .ff-slot {
+    width: clamp(43px, 11.7vw, 62px);
+    height: clamp(46px, 12.2vw, 66px);
+    font-size: clamp(16px, 4.3vw, 22px);
+  }
+  .ff-operator { min-width: 9px; font-size: clamp(13px, 3.5vw, 19px); }
+  .ff-hammer {
+    top: 3%;
+    right: 7%;
+    width: clamp(52px, 14vw, 86px);
+    height: clamp(52px, 14vw, 86px);
+  }
+  .ff-tray { gap: 7px; padding: 9px 11px; }
+  .ff-bank {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: start;
+    gap: 5px;
+  }
+  .ff-ingredient {
+    flex: 0 0 calc(20% - 4px);
+    width: calc(20% - 4px);
+    min-height: 49px;
+    padding: 3px;
+    font-size: clamp(18px, 5.3vw, 25px);
+  }
+  .ff-tray-title { font-size: 14px; }
+  .ff-tray-title span { font-size: 11px; }
+  .ff-controls { margin-top: 0; }
+  .ff-fraction { font-size: clamp(15px, 4.2vw, 19px); }
+}
+
+@media (max-height: 690px) {
+  .ff-ui { gap: 4px; padding-block: 5px; }
+  .ff-brief h1, .ff-brief h2 { font-size: clamp(19px, 2.2vw, 28px); }
+  .ff-brief p { font-size: 12px; }
+  .ff-meta { min-height: 17px; font-size: 11px; }
+  .ff-target { min-height: 37px; padding-block: 3px; }
+  .ff-target-value { font-size: 19px; }
+  .ff-tray { gap: 5px; padding: 8px 11px; }
+  .ff-ingredient { min-height: 46px; }
+  .ff-reset, .ff-strike { min-height: 44px; padding-block: 6px; }
+}
+
+@media (max-width: 420px) and (max-height: 650px) {
+  .ff-ui { gap: 4px; }
+  .ff-brief { flex: 0 0 auto; }
+  .ff-brief p { display: none; }
+  .ff-question.game-question-card {
+    --question-card-padding: 3px 6px;
+    font-size: 14px;
+  }
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay .fraction-forge-game .ff-question .game-question-copy {
+    font-size: 14px !important;
+    line-height: 1.1 !important;
+  }
+  .ff-question .game-question-card-title-strip {
+    min-height: 21px;
+    margin-bottom: 0;
+  }
+  .ff-question .game-question-card-inner { gap: 1px; }
+  .ff-meta {
+    gap: 3px 7px;
+    min-height: 13px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    font-size: 10px;
+  }
+  .ff-heat-track {
+    flex: 1 1 65px;
+    width: auto;
+    min-width: 50px;
+  }
+  .ff-workspace { grid-template-rows: minmax(130px, 1fr) auto; }
+  .ff-anvil { bottom: 20px; height: 74%; }
+  .ff-target { min-height: 32px; padding: 3px 8px; font-size: 10px; }
+  .ff-target-value { font-size: 17px; }
+  .ff-hammer { top: 29px; right: 0; width: 38px; height: 38px; }
+  .ff-slot { width: 50px; height: 50px; }
+  .ff-tray-title { display: none; }
+  .ff-tray { padding: 7px; }
+  .ff-bank { flex: 0 0 auto; gap: 4px; }
+  .ff-ingredient { min-height: 50px; }
+  .ff-controls { flex: 0 0 auto; }
+  .ff-reset, .ff-strike { min-height: 50px; }
+  .ff-feedback { min-height: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fraction-forge-game *,
+  .fraction-forge-game *::before,
+  .fraction-forge-game *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}

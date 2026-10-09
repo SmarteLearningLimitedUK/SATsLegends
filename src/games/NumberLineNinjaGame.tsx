@@ -10,6 +10,7 @@ import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import MonsterMindActor, { type MonsterMindReaction } from '../components/game-ui/MonsterMindActor';
 import dojoBackground from '../assets/maps/premium/number-line-ninja.webp';
 import goblinMonster from '../assets/enemies/cohesive/goblin.webp';
+import './number-line-ninja.css';
 interface NumberLineNinjaGameProps {
   levelId: number;
   avatarId: string;
@@ -85,8 +86,8 @@ const formatNumber = (value: number) => {
 const buildPrompt = (missingCount: number) => {
   const isSingle = missingCount === 1;
   return [
-    'The Monster Minds have hidden part of the island path.',
-    `${isSingle ? 'Which number is missing?' : 'What numbers are missing?'}`,
+    isSingle ? 'The Monster Minds have hidden part of the island path.' : 'The Monster Mind erased an extra path marker.',
+    isSingle ? 'Which number is missing?' : 'Use equal gaps to find the glowing marker.',
   ].join('\n');
 };
 
@@ -95,8 +96,12 @@ const createQuestion = (
   values: number[],
   focusIndex: number,
   distractors: number[],
+  roundIndex: number,
 ): NumberLineQuestion => {
   const answer = values[focusIndex];
+  const extraHiddenIndex = roundIndex > 0
+    ? (focusIndex === 2 ? (roundIndex % 2 === 1 ? 1 : 3) : 2)
+    : -1;
   const options = uniqueStrings([
     formatNumber(answer),
     ...distractors.map((value) => formatNumber(value)),
@@ -115,7 +120,7 @@ const createQuestion = (
     id: Date.now() + Math.floor(Math.random() * 1000),
     kind: 'fluency',
     prompt,
-    labels: values.map((value, index) => (index === focusIndex ? '?' : formatNumber(value))),
+    labels: values.map((value, index) => (index === focusIndex ? '?' : index === extraHiddenIndex ? '' : formatNumber(value))),
     focusIndex,
     options: shuffle(options).slice(0, 4),
     answer: formatNumber(answer),
@@ -127,62 +132,63 @@ const difficultyBandForLevel = (levelId: number) => {
   return (tier - 1) * 2 + 1;
 };
 
-const buildQuestion = (levelId: number): NumberLineQuestion => {
+const buildQuestion = (levelId: number, roundIndex: number): NumberLineQuestion => {
   const difficulty = difficultyBandForLevel(levelId);
   const focusIndex = randomInt(1, 3);
+  const prompt = buildPrompt(roundIndex > 0 ? 2 : 1);
 
   if (difficulty <= 2) {
     const start = randomInt(0, 6);
     const step = 1;
     const values = Array.from({ length: 5 }, (_, index) => start + (step * index));
-    return createQuestion(buildPrompt(1), values, focusIndex, [
+    return createQuestion(prompt, values, focusIndex, [
       values[focusIndex] + 1,
       Math.max(0, values[focusIndex] - 1),
       values[focusIndex] + 2,
-    ]);
+    ], roundIndex);
   }
 
   if (difficulty <= 4) {
     const start = randomInt(0, 5) * 2;
     const step = [2, 5][randomInt(0, 1)];
     const values = Array.from({ length: 5 }, (_, index) => start + (step * index));
-    return createQuestion(buildPrompt(1), values, focusIndex, [
+    return createQuestion(prompt, values, focusIndex, [
       values[focusIndex] + step,
       Math.max(0, values[focusIndex] - step),
       values[focusIndex] + (step * 2),
-    ]);
+    ], roundIndex);
   }
 
   if (difficulty <= 6) {
     const start = randomInt(1, 6) * 10;
     const step = 10;
     const values = Array.from({ length: 5 }, (_, index) => start + (step * index));
-    return createQuestion(buildPrompt(1), values, focusIndex, [
+    return createQuestion(prompt, values, focusIndex, [
       values[focusIndex] + 10,
       values[focusIndex] - 10,
       values[focusIndex] + 20,
-    ]);
+    ], roundIndex);
   }
 
   if (difficulty <= 8) {
     const start = randomInt(-6, -2) * 5;
     const step = 5;
     const values = Array.from({ length: 5 }, (_, index) => start + (step * index));
-    return createQuestion(buildPrompt(1), values, focusIndex, [
+    return createQuestion(prompt, values, focusIndex, [
       values[focusIndex] + 5,
       values[focusIndex] - 5,
       values[focusIndex] + 10,
-    ]);
+    ], roundIndex);
   }
 
   const base = randomInt(1, 6) / 10;
   const step = [0.1, 0.2, 0.25][randomInt(0, 2)];
   const values = Array.from({ length: 5 }, (_, index) => Number((base + (step * index)).toFixed(2)));
-  return createQuestion(buildPrompt(1), values, focusIndex, [
+  return createQuestion(prompt, values, focusIndex, [
     Number((values[focusIndex] + step).toFixed(2)),
     Number((values[focusIndex] - step).toFixed(2)),
     Number((values[focusIndex] + (step * 2)).toFixed(2)),
-  ]);
+  ], roundIndex);
 };
 
 const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
@@ -201,7 +207,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   const presentRef = useRef(isPresent);
   presentRef.current = isPresent;
   const reducedMotion = useReducedMotion();
-  const [question, setQuestion] = useState<NumberLineQuestion>(() => buildQuestion(Math.max(levelId, 1)));
+  const [question, setQuestion] = useState<NumberLineQuestion>(() => buildQuestion(Math.max(levelId, 1), 0));
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [feedbackState, setFeedbackState] = useState<FeedbackState>('idle');
   const [XP, setScore] = useState(0);
@@ -286,7 +292,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     if (!presentRef.current) return;
     clearQueuedTimeouts();
     clearMonsterReactionTimeout();
-    setQuestion(buildQuestion(Math.max(levelId, 1)));
+    setQuestion(buildQuestion(Math.max(levelId, 1), 0));
     setSelectedAnswer(null);
     setFeedbackState('idle');
     setScore(0);
@@ -340,9 +346,9 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     onVictoryRef.current(stars, finalScore);
   };
 
-  const advanceQuestion = () => {
+  const advanceQuestion = (nextRoundIndex: number) => {
     if (!presentRef.current || runEndedRef.current) return;
-    setQuestion(buildQuestion(Math.max(levelId, 1)));
+    setQuestion(buildQuestion(Math.max(levelId, 1), nextRoundIndex));
     setSelectedAnswer(null);
     setFeedbackState('idle');
     setLocked(false);
@@ -430,7 +436,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
             completeRun(nextScore, nextCorrect, nextAttempts);
             return;
           }
-          advanceQuestion();
+          advanceQuestion(nextAttempts);
         },
       };
 
@@ -482,7 +488,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
 
     queueTimeout(() => {
       setLineShake(false);
-      advanceQuestion();
+      advanceQuestion(nextAttempts);
     }, QUESTION_FEEDBACK_MS);
   };
 
@@ -578,7 +584,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
           paddingTop: `${Math.max(0, questionDockBottom + 14)}px`,
         }}
       >
-        <div className="ninja-workspace flex min-h-0 flex-1 flex-col items-center justify-start pt-0">
+        <div className="ninja-playfield flex min-h-0 flex-1 flex-col items-center justify-start pt-0">
           <motion.div
             animate={lineShake && !reducedMotion ? { x: [0, -10, 10, -8, 8, -4, 4, 0] } : { x: 0 }}
             transition={{ duration: 0.34, ease: 'easeInOut' }}
@@ -676,7 +682,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
             </div>
           </motion.div>
 
-          <div className="ninja-enemy-lane relative mt-2 flex h-[31%] min-h-[220px] w-full max-w-[560px] shrink-0 items-end justify-center">
+          <div className="ninja-opponent-lane relative mt-2 flex h-[31%] min-h-[220px] w-full max-w-[560px] shrink-0 items-end justify-center">
             <div className="qa-enemy-cluster pointer-events-none relative mx-auto flex h-full w-full max-w-[560px] flex-col items-center justify-end gap-2">
               <div className="relative h-[174px] w-[240px] max-w-[80%] shrink-0 sm:w-[256px]">
                 <MonsterMindActor

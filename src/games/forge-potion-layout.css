@@ -1,5 +1,61 @@
 .potion-cauldron-stage {
-  transform: translateY(calc(var(--potion-cauldron-shift, 0px) + 40px));
+  transform: translateY(var(--potion-cauldron-shift, 0px));
+}
+
+.potion-recipe-copy {
+  font-size: clamp(0.78rem, 1vw, 0.9rem);
+  line-height: 1.35;
+}
+
+.potion-ingredients-heading {
+  display: none;
+}
+
+.potion-vessel {
+  bottom: 0;
+  height: 46%;
+  max-width: 100%;
+  aspect-ratio: 1;
+  transform-origin: 50% 70%;
+}
+
+.potion-vessel-art {
+  display: block;
+}
+
+.potion-liquid-surface {
+  top: 15%;
+  left: 22%;
+  width: 56%;
+  height: 6%;
+  background: rgba(3, 10, 20, 0.94);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.82), 0 0 12px rgba(80, 227, 249, 0.16);
+}
+
+.potion-vessel--shake {
+  animation: potion-vessel-shake 0.52s ease-in-out;
+}
+
+.potion-vessel--surge {
+  animation: potion-vessel-surge 0.7s ease-out;
+}
+
+@keyframes potion-vessel-shake {
+  0%, 100% { rotate: 0deg; }
+  20%, 60% { rotate: -3deg; }
+  40%, 80% { rotate: 3deg; }
+}
+
+@keyframes potion-vessel-surge {
+  0%, 100% { scale: 1; }
+  45% { scale: 1.055; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .potion-vessel--shake,
+  .potion-vessel--surge {
+    animation: none;
+  }
 }
 
 /* Respond to the actual game stage, which may be narrower than the browser. */
@@ -54,11 +110,13 @@
 
 @container (min-width: 800px) {
   .potion-panic-main {
+    --potion-grid-gap: clamp(14px, 1.6vw, 22px);
     display: grid;
-    max-width: 960px;
-    grid-template-columns: minmax(260px, 290px) minmax(0, 1fr) minmax(215px, 240px);
-    gap: 14px;
+    max-width: 1440px;
+    grid-template-columns: minmax(245px, 310px) minmax(0, 1fr) minmax(225px, 300px);
+    gap: var(--potion-grid-gap);
     align-items: stretch;
+    padding-inline: clamp(12px, 2vw, 28px);
   }
 
   .potion-panic-scene .game-screen-top {
@@ -67,13 +125,14 @@
 
   #root .potion-panic-scene .game-screen-layout {
     padding-top: 0 !important;
+    position: relative;
   }
 
   .potion-panic-stage {
     grid-column: 1 / 3;
     display: grid;
-    grid-template-columns: minmax(260px, 290px) minmax(0, 1fr);
-    gap: 14px;
+    grid-template-columns: minmax(245px, 310px) minmax(0, 1fr);
+    gap: var(--potion-grid-gap);
     height: 100%;
   }
 
@@ -83,8 +142,8 @@
     left: auto;
     grid-column: 1;
     width: 100%;
-    align-self: start;
-    margin-top: 16px;
+    align-self: center;
+    margin-top: 0;
     transform: none;
     translate: none;
   }
@@ -95,7 +154,7 @@
     left: auto !important;
     right: auto !important;
     width: 100% !important;
-    padding: 12px 13px;
+    padding: 16px 17px;
     transform: none !important;
   }
 
@@ -106,8 +165,8 @@
 
   .potion-recipe-panel .game-question-card [data-question-copy] > div:last-child {
     max-width: none;
-    font-size: 14px;
-    line-height: 1.3;
+    font-size: 15px;
+    line-height: 1.35;
     text-wrap: pretty;
     overflow-wrap: normal;
     hyphens: none;
@@ -122,38 +181,121 @@
     transform: none;
   }
 
-  .potion-cauldron-stage > img {
+  .potion-vessel {
+    bottom: 2%;
+    height: clamp(230px, 52vh, 380px);
+    max-height: 77%;
+  }
+
+  .potion-vessel-shadow {
+    top: auto;
+    bottom: 1%;
+    width: 62%;
+  }
+
+  .potion-fire-glow {
+    top: auto;
     bottom: 4%;
-    height: 72%;
+    width: 62%;
+  }
+
+  .potion-flames {
+    top: auto;
+    bottom: 5%;
+    width: 42%;
+    transform: translateX(-50%);
   }
 
   .potion-ingredients {
     grid-column: 3;
     align-self: center;
     min-width: 0;
-    padding: 10px;
+    padding: 12px;
+    backdrop-filter: blur(12px);
+  }
+
+  .potion-ingredients-heading {
+    display: block;
+    margin: 2px 2px 10px;
+    color: #fef3c7;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-align: center;
+    text-transform: uppercase;
   }
 
   .potion-ingredients > div {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .potion-ingredients button {
-    height: clamp(92px, 17vh, 108px);
+  .potion-ingredients .potion-ingredient-button {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    align-items: center;
+    justify-items: start;
+    height: clamp(76px, 10vh, 88px);
+    padding: 8px 12px;
+    text-align: left;
   }
 
-  .potion-ingredients button span {
+  .potion-ingredients .potion-ingredient-button > div:first-child {
+    height: 48px;
+    width: 44px;
+  }
+
+  .potion-ingredients .potion-ingredient-button span {
     font-size: 14px;
   }
 
-  .potion-feedback-slot:empty {
-    display: none;
+  .potion-feedback-slot {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    z-index: 50;
+    width: min(330px, 38%);
+    min-height: 0;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+}
+
+@container (min-width: 800px) and (max-width: 1099px) {
+  .potion-panic-main {
+    --potion-grid-gap: 16px;
+    grid-template-columns: 250px minmax(0, 1fr) 230px;
+    padding-inline: 12px;
+  }
+
+  .potion-panic-stage {
+    grid-template-columns: 250px minmax(0, 1fr);
+  }
+}
+
+@media (max-height: 650px) {
+  @container (min-width: 800px) {
+    .potion-ingredients > div {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .potion-ingredients .potion-ingredient-button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      height: 92px;
+      padding: 4px 6px;
+      text-align: center;
+    }
+
+    .potion-ingredients .potion-ingredient-button > div:first-child {
+      height: 32px;
+    }
   }
 }
 
 @media (min-width: 1100px) and (min-height: 600px) {
-  .game-shell-host:has(.formula-forge-scene) [data-game-background-layer]::before,
-  .potion-panic-scene [data-game-background-layer]::before {
+  .game-shell-host:has(.formula-forge-scene) [data-game-background-layer]::before {
     position: absolute;
     inset: -5%;
     content: '';
@@ -164,7 +306,14 @@
     background: url('../assets/maps/premium/formula-forge.webp') center / cover no-repeat;
   }
 
-  .potion-panic-scene [data-game-background-layer]::before {
-    background: url('../assets/maps/premium/potion-panic.webp') center / cover no-repeat;
+}
+
+#root .app-viewport.sat-theme-bluegold.screen-gameplay .potion-panic-scene .game-background-layer img {
+  object-fit: cover !important;
+}
+
+@media (min-width: 900px) and (max-height: 650px) {
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay .potion-panic-scene .game-background-layer img {
+    object-position: center 28% !important;
   }
 }

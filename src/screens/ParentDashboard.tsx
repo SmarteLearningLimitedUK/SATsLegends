@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowLeft, ChevronDown } from 'lucide-react';
 import AssetIcon from '../components/AssetIcon';
 import { ACHIEVEMENT_CATALOG } from '../systems/progression/achievementCatalog';
@@ -66,7 +67,10 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
             <h1>Parent snapshot</h1>
             <p>{player.playerName || 'Your child'}’s progress, practice and play.</p>
           </div>
-          <button type="button" onClick={onBack} className="parent-back ui-button-secondary"><ArrowLeft size={17} aria-hidden="true" />Back to map</button>
+          <div className="parent-header-actions">
+            <button type="button" onClick={onBack} className="parent-back ui-button-secondary"><ArrowLeft size={17} aria-hidden="true" />Back to map</button>
+            <Link to="/" className="parent-back ui-button-secondary" aria-label="Return to SATs Legends website">Website</Link>
+          </div>
         </header>
 
         <div className="parent-summary" aria-label="Progress at a glance">

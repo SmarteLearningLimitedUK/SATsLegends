@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
@@ -48,10 +48,10 @@ interface PrimePopConfig {
 }
 
 const INITIAL_LIVES = 10;
+const CHALLENGE_ROUND_SECONDS = 60;
 const BUBBLE_PIXEL_SCALE = 7.2;
 const DANGER_LINE_Y = 12;
 const PRIME_SPEED_MULTIPLIER = 1.22;
-const PRIME_POP_SCENE_ASPECT = 1024 / 1536;
 
 const BUBBLE_TINTS: BubbleTint[] = ['blue', 'green', 'purple', 'gold', 'red'];
 
@@ -235,11 +235,10 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
   sessionEvents,
 }) => {
   const config = useMemo(() => getConfig(levelId), [levelId]);
+  const roundSeconds = isPractice ? config.roundSeconds : CHALLENGE_ROUND_SECONDS;
   const avatar = AVATARS.find((item) => item.id === avatarId) || AVATARS[0];
   const [isPhone, setIsPhone] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 768 : true));
   const [usesSharedHud, setUsesSharedHud] = useState(false);
-  const [wideSceneWidth, setWideSceneWidth] = useState<number | null>(null);
-  const stageRef = useRef<HTMLDivElement | null>(null);
   const fieldRef = useRef<HTMLDivElement | null>(null);
   const onVictoryRef = useRef(onVictory);
   const onGameOverRef = useRef(onGameOver);
@@ -268,7 +267,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
   const bubblesRef = useRef<Bubble[]>([]);
   const primePopsRef = useRef(0);
   const totalPopsRef = useRef(0);
-  const localTimeRemainingRef = useRef(config.roundSeconds);
+  const localTimeRemainingRef = useRef(roundSeconds);
   const pausedRef = useRef(false);
   pausedRef.current = Boolean(showPracticeIntro || sessionState?.paused);
   const hasSharedSession = Boolean(sessionState);
@@ -323,25 +322,6 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
-  useLayoutEffect(() => {
-    const stage = stageRef.current;
-    if (!stage) return undefined;
-    const updateSceneWidth = () => {
-      const wideViewport = window.innerWidth >= 700 && window.innerHeight >= 600;
-      setWideSceneWidth(wideViewport
-        ? Math.min(stage.clientWidth, stage.clientHeight * PRIME_POP_SCENE_ASPECT)
-        : null);
-    };
-    updateSceneWidth();
-    const observer = new ResizeObserver(updateSceneWidth);
-    observer.observe(stage);
-    window.addEventListener('resize', updateSceneWidth);
-    return () => {
-      observer.disconnect();
-      window.removeEventListener('resize', updateSceneWidth);
-    };
-  }, []);
-
   useEffect(() => {
     if (typeof document === 'undefined') return;
     setUsesSharedHud(Boolean(document.querySelector('[data-unified-minigame-hud="true"]')));
@@ -372,7 +352,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
   const makeBubble = useCallback((existing: Bubble[]) => {
     const radius = randomBetween(bubbleRuntime.minRadius, bubbleRuntime.maxRadius);
     const margin = radius + 2.8;
-    const maxY = maximumBubbleY(radius, fieldRef.current?.clientHeight || stageRef.current?.clientHeight || 400, isPhone);
+    const maxY = maximumBubbleY(radius, fieldRef.current?.clientHeight || 400, isPhone);
     const minY = Math.min(72, maxY);
     let x = randomBetween(margin, 100 - margin);
     let y = randomBetween(minY, maxY);
@@ -434,7 +414,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     primePopsRef.current = 0;
     totalPopsRef.current = 0;
     setScore(0);
-    localTimeRemainingRef.current = config.roundSeconds;
+    localTimeRemainingRef.current = roundSeconds;
     setFeedback(null);
     setMistakeBubbleId(null);
     setPressedBubbleId(null);
@@ -465,7 +445,12 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     }, config.spawnEveryMs);
 
     return () => clearLoops();
-  }, [bubbleRuntime.maxBubbles, bubbleRuntime.minBubbles, clearLoops, config.roundSeconds, config.spawnEveryMs, finalize, hasSharedSession, makeBubble]);
+  }, [bubbleRuntime.maxBubbles, bubbleRuntime.minBubbles, clearLoops, config.spawnEveryMs, finalize, hasSharedSession, makeBubble, roundSeconds]);
+
+  useEffect(() => {
+    if (isPractice || sessionState?.timeLeft !== 0) return;
+    finalize(scoreRef.current);
+  }, [finalize, isPractice, sessionState?.timeLeft]);
 
   const popBubble = useCallback((bubbleId: number) => {
     if (overRef.current || pausedRef.current) return;
@@ -503,7 +488,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
         metadata: { bubbleId, value: target.value },
       });
       window.setTimeout(() => setFeedback(null), 520);
-      if (scoreRef.current >= targetScore) finalize(scoreRef.current);
+      if (isPractice && scoreRef.current >= targetScore) finalize(scoreRef.current);
     } else {
       comboNext = 0;
       if (useLocalLives) livesNext -= 1;
@@ -537,7 +522,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     if (useLocalLives && livesRef.current <= 0) {
       finalize(scoreRef.current);
     }
-  }, [config.comboStep, config.primePoints, finalize, targetScore, useLocalLives]);
+  }, [config.comboStep, config.primePoints, finalize, isPractice, targetScore, useLocalLives]);
 
   const cancelHeldPop = useCallback(() => {
     setPressedBubbleId(null);
@@ -576,7 +561,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
 
       return { ...bubble, x, y, drift };
     });
-    const movedWithoutOverlap = resolveBubbleCollisions(movedBubbles, fieldRef.current?.clientHeight || stageRef.current?.clientHeight || 400, isPhone);
+    const movedWithoutOverlap = resolveBubbleCollisions(movedBubbles, fieldRef.current?.clientHeight || 400, isPhone);
 
     const dangerPrimeBubbles = movedWithoutOverlap.filter((bubble) => bubble.isPrime && (bubble.y - bubble.radius) <= DANGER_LINE_Y);
     const dangerPrimeHits = dangerPrimeBubbles.length;
@@ -629,7 +614,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
 
   return (
     <div
-      ref={stageRef}
+      data-prime-pop-stage="true"
       data-background-fit="contain"
       className="relative z-20 flex h-full min-h-0 w-full flex-col overflow-hidden bg-contain bg-center bg-no-repeat select-none"
       style={{ backgroundImage: `url(${primePopBackground})` }}
@@ -664,12 +649,6 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
             className="pointer-events-none absolute left-0 right-0 z-20 flex items-center justify-center"
             style={{
               top: `${DANGER_LINE_Y}%`,
-              ...(wideSceneWidth === null ? {} : {
-                left: '50%',
-                right: 'auto',
-                width: wideSceneWidth,
-                transform: 'translateX(-50%)',
-              }),
             }}
           >
             <div className="relative flex h-4 w-[88%] items-center justify-center overflow-hidden rounded-full border border-white/20 bg-[repeating-linear-gradient(135deg,#0b0f1a_0px,#0b0f1a_10px,#f9fafb_10px,#f9fafb_20px)] shadow-[0_0_12px_rgba(15,23,42,0.45)]">
@@ -682,12 +661,6 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
             ref={fieldRef}
             data-prime-pop-field="true"
             className="absolute inset-0 z-10 overflow-hidden"
-            style={wideSceneWidth === null ? undefined : {
-              left: '50%',
-              right: 'auto',
-              width: wideSceneWidth,
-              transform: 'translateX(-50%)',
-            }}
           >
             
 

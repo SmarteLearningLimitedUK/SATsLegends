@@ -3,3 +3,7 @@
     min-height: 84px;
   }
 }
+
+.iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay [data-background-fit='contain'][data-prime-pop-stage] {
+  background-size: cover !important;
+}

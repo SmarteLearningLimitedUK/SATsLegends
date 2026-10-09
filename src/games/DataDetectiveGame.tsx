@@ -343,8 +343,8 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                 <div className="pointer-events-none absolute inset-0 bg-slate-950/20" />
                 <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.3)_1px,transparent_1px)] opacity-7 [background-size:20px_20px]" />
 
-                <div className="flex h-full min-h-0 flex-1 flex-col">
-                  <div className="relative min-h-0 w-full flex-1" style={{ minHeight: 0 }}>
+                <div className="detective-evidence-workspace flex h-full min-h-0 flex-1 flex-col">
+                  <div className="detective-evidence-chart relative min-h-0 w-full flex-1" style={{ minHeight: 0 }}>
                     <ResponsiveContainer width="100%" height="100%">
                       {chartType === 'bar' ? (
                         <BarChart data={currentCase} margin={{ top: 12, right: 10, left: -6, bottom: 6 }}>
@@ -417,14 +417,14 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                             ))}
                           </Pie>
                           <Tooltip
-                            contentStyle={{ backgroundColor: '#1c1917', border: '1px solid #444', borderRadius: '8px', fontSize: '10px' }}
+                            contentStyle={{ backgroundColor: '#1c1917', border: '1px solid #444', borderRadius: '8px', fontSize: '14px' }}
                           />
                         </PieChart>
                       )}
                     </ResponsiveContainer>
                   </div>
 
-                  <div className="mt-auto pt-2">
+                  <div className="detective-evidence-pin-dock mt-auto pt-2">
                     <div className="detective-evidence-pins" aria-label="Pin evidence to focus the chart">
                       {currentCase.map(item => (
                         <button key={item.name} type="button" data-button-skin="none" className="detective-evidence-pin" aria-pressed={pinnedEvidence === item.name} onClick={() => setPinnedEvidence((current) => current === item.name ? null : item.name)}>

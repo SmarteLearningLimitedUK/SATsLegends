@@ -12,6 +12,7 @@ import {
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
 import './game-refinements.css';
+import './percent-power.css';
 
 interface PercentPowerGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -91,7 +92,7 @@ const buildDirectQuestion = (percent: number, amount: number): PercentPowerQuest
     id: `direct-${percent}-${amount}-${Math.random().toString(36).slice(2, 7)}`,
     kind: 'fluency',
     prompt: `What is ${percent}% of ${amount}?`,
-    helper: 'Use 10%, 25%, 50% or known fraction facts to build the answer.',
+    helper: 'Find a useful part first: 10%, 25% or 50%.',
     options,
     answerIndex,
     coreLabel: `${percent}%`,
@@ -110,7 +111,7 @@ const buildReverseQuestion = (percent: number, whole: number): PercentPowerQuest
     id: `reverse-${percent}-${whole}-${Math.random().toString(36).slice(2, 7)}`,
     kind: 'fluency',
     prompt: `${percent}% of a number is ${part}. What is the whole number?`,
-    helper: 'Find 1% or 10%, then scale up to the full amount.',
+    helper: 'Find 1% or 10%, then work back to the whole.',
     options,
     answerIndex,
     coreLabel: `${part}`,
@@ -129,7 +130,7 @@ const buildIncreaseQuestion = (base: number, percent: number): PercentPowerQuest
     id: `increase-${base}-${percent}-${Math.random().toString(36).slice(2, 7)}`,
     kind: 'fluency',
     prompt: `A power crystal has ${base} units. It gains ${percent}%. What is the new total?`,
-    helper: 'Work out the percentage gain first, then add it to the original amount.',
+    helper: 'Find the gain, then add it to the start.',
     options,
     answerIndex,
     coreLabel: `+${percent}%`,
@@ -296,6 +297,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
     setQuestion(nextQuestion);
     setSelectedIndex(null);
     setFeedback(null);
+    setStatusText('');
     setLocked(false);
     answerLockRef.current = false;
   }, [resolvedLevel]);
@@ -362,13 +364,13 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
   };
 
   const coreFill = Math.max(0, Math.min(1, correctAnswers / Math.max(1, totalRounds)));
+  const chargePercent = Math.round(coreFill * 100);
 
   return (
-    <div className="reactor-game relative h-full w-full overflow-hidden text-white">
+    <div className="reactor-game pp-game relative h-full w-full overflow-hidden text-white">
       <GameplaySceneBackdrop
         gameType="percent_power"
         backgroundOverride={percentPowerBackground}
-        className="opacity-[0.98]"
       />
 
       <PracticeIntroPopup
@@ -398,58 +400,151 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
         </div>
       ) : null}
 
-      <main className="reactor-layout" data-reactor-game data-reactor-tier={resolvedLevel} data-reactor-reaction={feedback || 'idle'} data-reactor-charge={correctAnswers}>
-        <GameQuestionCard title="Restore the reactor" style={{ position: 'relative', top: 0, transform: 'none' }}>
-          {question.prompt}
-        </GameQuestionCard>
-        <div className="reactor-playfield" data-reactor-playfield>
-          <motion.div className="reactor-machine"
-            animate={!reducedMotion && feedback === 'incorrect' ? { x: [0,-5,5,-3,0] } : { x: 0 }} transition={{ duration: .35 }}>
-            <svg viewBox="0 0 360 310" role="img" aria-label={`Reactor. ${correctAnswers} of ${totalRounds} power cells restored. ${question.sideLabel}. ${question.coreLabel}.`}>
-              <defs>
-                <clipPath id={`${chamberId}-chamber`}><rect x="115" y="65" width="130" height="170" rx="34" /></clipPath>
-                <linearGradient id={`${chamberId}-steel`} x1="0" x2="1"><stop stopColor="#526665"/><stop offset=".5" stopColor="#8caca0"/><stop offset="1" stopColor="#425655"/></linearGradient>
-                <linearGradient id={`${chamberId}-power`} x1="0" y1="0" x2="0" y2="1"><stop stopColor="#dbffa4"/><stop offset="1" stopColor="#48b992"/></linearGradient>
-              </defs>
-              <ellipse cx="180" cy="288" rx="132" ry="12" fill="#05191b" opacity=".55"/>
-              <path d="M117 93H67V165H35V233H114M243 93H293V165H325V233H246" fill="none" stroke="#102c30" strokeWidth="25" strokeLinejoin="round"/>
-              <path d="M117 93H67V165H35V233H114M243 93H293V165H325V233H246" fill="none" stroke="#899785" strokeWidth="15" strokeLinejoin="round"/>
-              <path d="M117 93H67V165H35V233H114M243 93H293V165H325V233H246" fill="none" stroke={feedback === 'incorrect' ? '#f2a353' : '#69dcb1'} strokeWidth="5" strokeLinejoin="round"/>
-              <rect x="94" y="37" width="172" height="237" rx="38" fill={`url(#${chamberId}-steel)`} stroke="#132f33" strokeWidth="7"/>
-              <rect x="111" y="61" width="138" height="178" rx="38" fill="#092c31" stroke="#1e4448" strokeWidth="6"/>
-              <g clipPath={`url(#${chamberId}-chamber)`}>
-                <rect x="115" y="65" width="130" height="170" fill="#103c41"/>
-                <motion.rect x="115" y={235 - (38 + coreFill * 132)} width="130" height={38 + coreFill * 132}
-                  fill={`url(#${chamberId}-power)`} animate={!reducedMotion && feedback === 'correct' ? { opacity: [.65,1] } : { opacity: .9 }} transition={{ duration: .4 }}/>
-                <path d="M148 63V235M215 63V235" stroke="#e3ffff" strokeWidth="7" opacity=".15"/>
-                {[0,1,2].map((index) => <motion.circle key={index} cx={150+index*31} cy={205-index*22} r={5+index}
-                  fill="#eeffc0" opacity=".6" animate={!reducedMotion ? { y: [0,-10,0] } : { y: 0 }} transition={{ duration: 2.3 + index*.4, repeat: Infinity }}/>) }
-                <circle cx="180" cy="143" r="33" fill="#102f37" stroke="#cdf6bb" strokeWidth="3"/>
-                <path d="M183 119L166 145H178L174 167L196 138H182Z" fill={feedback === 'incorrect' ? '#f7ac67' : '#d6ff94'}/>
-              </g>
-              {[{x:104,y:54},{x:256,y:54},{x:104,y:255},{x:256,y:255}].map((bolt,index) => <g key={index}><circle cx={bolt.x} cy={bolt.y} r="7" fill="#d7d2a7" stroke="#203a3c" strokeWidth="2"/><path d={`M${bolt.x-3} ${bolt.y}h6`} stroke="#526758" strokeWidth="2"/></g>)}
-              <rect x="105" y="12" width="150" height="40" rx="8" fill="#10363b" stroke="#dfc278" strokeWidth="3"/>
-              <text x="180" y="39" textAnchor="middle" className="reactor-plaque">POWER CELLS</text>
-              <rect x="106" y="249" width="148" height="26" rx="6" fill="#0d2d32" stroke="#213e3f" strokeWidth="2"/>
-              {Array.from({length:10},(_,index) => <rect key={index} data-reactor-segment={index} data-charged={index < Math.round(coreFill*10)}
-                x={114+index*13.6} y="255" width="9" height="13" rx="2" fill={index < Math.round(coreFill*10) ? '#abec78' : '#3d5955'}/>) }
-              <rect x="124" y="78" width="112" height="27" rx="7" fill="#0c3037"/>
-              <text x="180" y="97" textAnchor="middle" className="reactor-core-caption">{question.coreLabel}</text>
-              <text x="180" y="224" textAnchor="middle" className="reactor-plaque">{question.sideLabel}</text>
-              <text x="180" y="304" textAnchor="middle" className="reactor-plaque">{correctAnswers}/{totalRounds} cells restored</text>
-              {feedback === 'incorrect' ? <motion.g data-reactor-vent animate={!reducedMotion ? { y: [0,-14], opacity: [1,0] } : { opacity: .75 }} transition={{ duration: .55 }}>
-                <path d="M40 167q-14-15 0-24q-5-10 7-13M320 167q14-15 0-24q5-10-7-13" fill="none" stroke="#fbdda9" strokeWidth="6" strokeLinecap="round"/>
-              </motion.g> : null}
-            </svg>
-          </motion.div>
+      <main
+        className="reactor-layout pp-layout"
+        data-reactor-game
+        data-reactor-tier={resolvedLevel}
+        data-reactor-reaction={feedback || 'idle'}
+        data-reactor-charge={correctAnswers}
+      >
+        <div className="pp-head">
+          <GameQuestionCard
+            title="Power grid / mission"
+            className="pp-question"
+            style={{ position: 'relative', top: 'auto', left: 'auto', right: 'auto', width: '100%', transform: 'none' }}
+          >
+            {question.prompt}
+          </GameQuestionCard>
         </div>
-        <div className="answer-choice-surface reactor-answers">
-          {question.options.map((option,index) => <motion.button key={`${question.id}-${option}`} type="button"
-            onClick={() => handleAnswer(index)} disabled={isLocked || didEndRef.current || Boolean(sessionState?.paused)}
-            whileTap={reducedMotion ? undefined : {scale:.98}}
-            className={index === selectedIndex ? feedback === 'correct' ? 'ui-button-success' : 'ui-button-primary' : 'ui-button-secondary'}>{option}</motion.button>)}
+
+        <div className="pp-main">
+          <div className="reactor-playfield pp-reactor-panel" data-reactor-playfield>
+            <div className="pp-panel-topline">
+              <span>CORE STATUS</span>
+              <strong>{correctAnswers} / {totalRounds} CELLS ONLINE</strong>
+            </div>
+            <motion.div
+              className="reactor-machine pp-reactor-machine"
+              animate={!reducedMotion && feedback === 'incorrect' ? { x: [0, -6, 5, -3, 0] } : { x: 0 }}
+              transition={{ duration: .36 }}
+            >
+              <svg
+                className="pp-machine-svg"
+                viewBox="0 0 420 280"
+                role="img"
+                aria-label={'Reactor at ' + chargePercent + ' percent charge. ' + correctAnswers + ' of ' + totalRounds + ' power cells restored.'}
+              >
+                <defs>
+                  <linearGradient id={chamberId + '-steel'} x1="0" y1="0" x2="1" y2="1">
+                    <stop stopColor="#81939a" />
+                    <stop offset=".28" stopColor="#354957" />
+                    <stop offset=".72" stopColor="#152633" />
+                    <stop offset="1" stopColor="#6d8186" />
+                  </linearGradient>
+                  <radialGradient id={chamberId + '-energy'}>
+                    <stop stopColor="#8bf5ed" stopOpacity=".95" />
+                    <stop offset=".42" stopColor="#1c8391" stopOpacity=".78" />
+                    <stop offset="1" stopColor="#052b39" />
+                  </radialGradient>
+                </defs>
+                <ellipse cx="210" cy="263" rx="143" ry="12" fill="#071821" opacity=".62" />
+                <path d="M102 125H35V180H6M318 125H385V180H414" fill="none" stroke="#091d28" strokeWidth="28" strokeLinejoin="round" />
+                <path d="M102 125H35V180H6M318 125H385V180H414" fill="none" stroke="#65777b" strokeWidth="15" strokeLinejoin="round" />
+                <path d="M102 125H35V180H6M318 125H385V180H414" fill="none" stroke={feedback === 'incorrect' ? '#e48571' : '#54c9c9'} strokeWidth="5" strokeLinejoin="round" />
+                <rect x="96" y="13" width="228" height="242" rx="33" fill={'url(#' + chamberId + '-steel)'} stroke="#0a1b27" strokeWidth="7" />
+                <rect x="109" y="26" width="202" height="215" rx="25" fill="#0c2230" stroke="#708b8d" strokeWidth="2" />
+                <path d="M135 27V241M285 27V241" stroke="#9db6aa" strokeWidth="3" opacity=".35" />
+                <circle cx="210" cy="133" r="97" fill="#071c29" stroke="#a5b4a1" strokeWidth="8" />
+                <circle data-reactor-ring cx="210" cy="133" r="87" fill="none" stroke="#294b58" strokeWidth="9" strokeDasharray="4 11" />
+                <circle cx="210" cy="133" r="75" fill="#062330" stroke="#0d4d59" strokeWidth="8" />
+                <motion.circle
+                  data-reactor-pulse
+                  cx="210" cy="133" r="59"
+                  fill={'url(#' + chamberId + '-energy)'}
+                  animate={!reducedMotion ? { opacity: [.52 + coreFill * .3, .75 + coreFill * .2, .52 + coreFill * .3], scale: [1, 1.035, 1] } : { opacity: .68 + coreFill * .2, scale: 1 }}
+                  transition={{ duration: 2.2, repeat: reducedMotion ? 0 : Infinity, ease: 'easeInOut' }}
+                  style={{ transformOrigin: '210px 133px' }}
+                />
+                <circle cx="210" cy="133" r="66" fill="none" stroke="#244b55" strokeWidth="10" />
+                <motion.circle
+                  data-reactor-charge-ring
+                  cx="210" cy="133" r="66" fill="none" stroke={feedback === 'incorrect' ? '#f1a17e' : '#82f3de'}
+                  strokeWidth="10" strokeLinecap="round" strokeDasharray="415"
+                  animate={{ strokeDashoffset: 415 * (1 - coreFill) }}
+                  transition={{ duration: reducedMotion ? 0 : .65, ease: 'easeOut' }}
+                  transform="rotate(-90 210 133)"
+                />
+                <circle cx="210" cy="133" r="49" fill="#071923" opacity=".88" stroke="#90c9ba" strokeWidth="2" />
+                <path d="M147 48L157 57M273 48L263 57M147 218L157 209M273 218L263 209" stroke="#d7d3a5" strokeWidth="6" strokeLinecap="round" />
+                {[{ x: 121, y: 38 }, { x: 299, y: 38 }, { x: 121, y: 229 }, { x: 299, y: 229 }].map((bolt, index) => (
+                  <g key={index}>
+                    <circle cx={bolt.x} cy={bolt.y} r="6" fill="#bfc5ad" stroke="#122e39" strokeWidth="2" />
+                    <path d={'M' + (bolt.x - 3) + ' ' + bolt.y + 'h6'} stroke="#566b69" strokeWidth="2" />
+                  </g>
+                ))}
+                {feedback === 'incorrect' ? (
+                  <motion.g data-reactor-vent animate={!reducedMotion ? { opacity: [1, 0], y: [0, -12] } : { opacity: .8 }} transition={{ duration: .55 }}>
+                    <path d="M34 104q-12-16 2-29q-5-12 9-20M386 104q12-16-2-29q5-12-9-20" fill="none" stroke="#ffc4a9" strokeWidth="7" strokeLinecap="round" />
+                  </motion.g>
+                ) : null}
+              </svg>
+              <div className="pp-core-readout" aria-hidden="true">
+                <span className="pp-readout-label">GRID CHARGE</span>
+                <strong className="pp-readout-value">{chargePercent}%</strong>
+                <span className="pp-readout-foot">{feedback === 'incorrect' ? 'VENTING' : feedback === 'correct' ? 'CELL ONLINE' : 'STANDBY'}</span>
+              </div>
+            </motion.div>
+            <div className="pp-charge-bar" aria-label={correctAnswers + ' of ' + totalRounds + ' cells restored'}>
+              {Array.from({ length: 10 }, (_, index) => (
+                <span
+                  key={index}
+                  data-reactor-segment={index}
+                  data-charged={index < Math.round(coreFill * 10)}
+                  aria-hidden="true"
+                />
+              ))}
+            </div>
+          </div>
+
+          <section className="pp-controls" aria-label="Reactor calculation controls">
+            <div className="pp-console-head">
+              <span>CALCULATION CONSOLE</span>
+              <strong>ROUND {roundNumber} / {totalRounds}</strong>
+            </div>
+            <div className="pp-values">
+              <div className="pp-value">
+                <span className="pp-value-label">FOCUS</span>
+                <strong>{question.coreLabel}</strong>
+              </div>
+              <div className="pp-value">
+                <span className="pp-value-label">REFERENCE</span>
+                <strong>{question.sideLabel}</strong>
+              </div>
+            </div>
+            <div className="pp-answer-caption">SELECT THE CORRECT OUTPUT</div>
+            <div className="answer-choice-surface reactor-answers pp-answers">
+              {question.options.map((option, index) => (
+                <motion.button
+                  key={question.id + '-' + option}
+                  type="button"
+                  data-button-skin="none"
+                  data-reactor-option={index}
+                  onClick={() => handleAnswer(index)}
+                  disabled={isLocked || didEndRef.current || Boolean(sessionState?.paused)}
+                  whileTap={reducedMotion ? undefined : { scale: .98 }}
+                  className={'pp-answer ' + (index === selectedIndex ? feedback === 'correct' ? 'is-correct' : 'is-incorrect' : '')}
+                  aria-label={'Output option ' + (index + 1) + ': ' + option}
+                >
+                  <span className="pp-answer-index">{String(index + 1).padStart(2, '0')}</span>
+                  <strong className="pp-answer-value">{option}</strong>
+                </motion.button>
+              ))}
+            </div>
+            <div className="refinement-feedback pp-feedback" data-tone={feedback || 'info'} role="status" aria-live="polite">
+              {statusText || question.helper}
+            </div>
+          </section>
         </div>
-        <div className="refinement-feedback" role="status" aria-live="polite">{statusText || question.helper}</div>
       </main>
     </div>
   );

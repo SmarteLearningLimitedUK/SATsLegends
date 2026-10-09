@@ -1022,19 +1022,24 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       const bg = arenaBackdropRef.current;
       let paintedSceneWidth = viewWidth;
       if (bg?.naturalWidth) {
-        // Fit the complete environment. World physics stays in world units;
-        // only screen positions are scaled into this painted scene below.
+        // Fill desktop canvases with the arena art. Keep the original contained
+        // projection width for actors so the cannon, target and flight path
+        // remain in the safe playfield when the scenery is cropped.
         ctx.fillStyle = '#0c2135';
         ctx.fillRect(0, 0, viewWidth, viewHeight);
-        const scale = Math.min(viewWidth / bg.naturalWidth, viewHeight / bg.naturalHeight);
+        const containedScale = Math.min(viewWidth / bg.naturalWidth, viewHeight / bg.naturalHeight);
+        const fullBleedDesktop = viewWidth >= 700;
+        const scale = fullBleedDesktop
+          ? Math.max(viewWidth / bg.naturalWidth, viewHeight / bg.naturalHeight)
+          : containedScale;
         const width = bg.naturalWidth * scale;
         const height = bg.naturalHeight * scale;
-        paintedSceneWidth = width;
-        ctx.drawImage(bg, (viewWidth - width) / 2, (viewHeight - height) / 2, width, height);
+        paintedSceneWidth = bg.naturalWidth * containedScale;
+        ctx.drawImage(bg, (viewWidth - width) / 2, (viewHeight - height) * (fullBleedDesktop ? 0.25 : 0.5), width, height);
         // Record the source only once it has actually been painted. Canvas
         // scenery has no image element for the shared visual checks to inspect.
         if (canvas.dataset.renderedBackgroundSrc !== bg.currentSrc) canvas.dataset.renderedBackgroundSrc = bg.currentSrc;
-        canvas.dataset.backgroundFit = 'contain';
+        canvas.dataset.backgroundFit = fullBleedDesktop ? 'cover' : 'contain';
         canvas.dataset.backgroundPaintWidth = String(width);
         canvas.dataset.backgroundPaintHeight = String(height);
         const shade = ctx.createLinearGradient(0, 0, 0, viewHeight);
@@ -1047,13 +1052,19 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       }
 
       const cannonAnchor = { x: viewWidth * CANNON_ANCHOR_X_RATIO, y: viewHeight * CANNON_ANCHOR_Y_RATIO };
-      const containedWideScene = window.innerWidth >= 700 && window.innerHeight >= 600 && Boolean(bg?.naturalWidth);
-      const enemySize = Math.min(viewWidth, viewHeight) * (containedWideScene ? 0.18 : 0.26);
-      const sceneProjectionScale = containedWideScene
-        ? Math.min(1, Math.max(0.2,
-          (paintedSceneWidth / 2 - enemySize * 0.41 - 16) / (ENEMY_DISTANCE + 80),
-        ))
-        : 1;
+      const wideCanvasScene = viewWidth >= 700 && Boolean(bg?.naturalWidth);
+      const enemySize = Math.min(viewWidth, viewHeight) * (wideCanvasScene ? 0.18 : 0.26);
+      const horizontalProjectionScale = Math.min(1, Math.max(0.12,
+        (paintedSceneWidth / 2 - enemySize * 0.41 - 16) / (ENEMY_DISTANCE + 80),
+      ));
+      // On a phone the old 1:1 projection put most angle targets beyond the
+      // edge of the canvas. Keep them below the question without changing the
+      // world-space projectile path or the portrait artwork framing.
+      const phoneTopClearance = cannonAnchor.y - viewHeight * 0.2 - enemySize * 1.16 - 12;
+      const phoneVerticalScale = phoneTopClearance / (Math.abs(enemyWorld.y) + ENEMY_FOREGROUND_LEAD);
+      const sceneProjectionScale = viewWidth < 700
+        ? Math.min(horizontalProjectionScale, Math.max(0.12, phoneVerticalScale))
+        : wideCanvasScene ? horizontalProjectionScale : 1;
       const screenOffset = projectile?.active ? { x: 0, y: 0 } : { x: cannonAnchor.x - viewWidth / 2, y: cannonAnchor.y - viewHeight / 2 };
       const toScreen = (x: number, y: number) => {
         const base = worldToScreen(x, y, camera.x, camera.y, viewWidth, viewHeight);

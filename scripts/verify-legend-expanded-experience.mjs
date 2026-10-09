@@ -282,10 +282,10 @@ async function parentSnapshot(page, context, profile, motion, populated) {
   const fixture = await makeParentFixture(page, populated);
   const fixtureName = populated ? 'populated' : 'empty';
   await context.addInitScript(({ origin, values, name }) => {
-    if (location.origin !== origin || location.pathname !== '/parent' || new URL(location.href).searchParams.get('qa-data') !== name) return;
+    if (location.origin !== origin || location.pathname !== '/play/parent' || new URL(location.href).searchParams.get('qa-data') !== name) return;
     for (const [key, value] of Object.entries(values)) localStorage.setItem(key, value);
   }, { origin: new URL(base).origin, values: fixture.bootstrap, name: fixtureName });
-  await openRoute(page, `/parent?qa-data=${fixtureName}`);
+  await openRoute(page, `/play/parent?qa-data=${fixtureName}`);
   const parent = page.locator('[data-parent-snapshot="true"]');
   const region = page.locator('[data-scroll-region="parent-snapshot"]');
   await expect(region).toHaveCount(1);

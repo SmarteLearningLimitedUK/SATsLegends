@@ -5,14 +5,13 @@ import { defineConfig, loadEnv } from 'vite';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', 'VITE_');
-  const isVercel = process.env.VERCEL === '1';
 
   return {
     plugins: [react(), tailwindcss()],
     optimizeDeps: { entries: ['index.html'] },
-    // Use absolute paths on Vercel to avoid asset resolution issues on rewritten routes.
-    // Keep relative paths for non-Vercel static uploads.
-    base: env.VITE_ASSET_BASE || (isVercel ? '/' : './'),
+    // Browser routes are rewritten to index.html, so assets must resolve from
+    // the site root even when a learner opens a nested game URL directly.
+    base: env.VITE_ASSET_BASE || '/',
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),

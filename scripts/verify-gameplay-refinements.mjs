@@ -116,7 +116,7 @@ async function inspect(page) {
         hint: text(document.querySelector('[data-formula-hint]')),
         answers: box(document.querySelector('[data-formula-answers]')),
       },
-      viewport: { width: innerWidth, height: innerHeight },
+      viewport: { width: innerWidth, height: innerHeight, stageLayout: document.querySelector('.iphone-game-stage')?.getAttribute('data-stage-layout') },
     };
   });
 }
@@ -133,16 +133,23 @@ function validate(result) {
   expect(result.question.bottom).toBeLessThan(result.dock.y);
   for (const image of result.art) {
     expect(image.loaded, image.src).toBe(true);
-    expect(image.fit, 'Scene framing matches its declared intent: ' + image.src).toBe(image.movingCourse ? 'cover' : image.declaredFit || 'contain');
+    const desktopCover = result.viewport.width >= 700 && result.viewport.stageLayout === 'responsive' && image.declaredFit === 'contain';
+    expect(image.fit, 'Scene framing matches its declared intent: ' + image.src).toBe(image.movingCourse || desktopCover ? 'cover' : image.declaredFit || 'contain');
     expect(image.box.bottom, 'Scene stops above bottom dock').toBeLessThanOrEqual(result.dock.y + 1);
   }
   if (result.staticRaceBackdrop) expect(result.staticRaceBackdrop.split(',').every((size) => size.trim() === 'contain'), 'Complete paddock backdrop').toBe(true);
   for (const canvas of result.canvasBackgrounds) {
-    expect(canvas.fit, 'Complete canvas scene is fitted without crop').toBe('contain');
+    const desktopCover = result.viewport.width >= 700 && result.viewport.stageLayout === 'responsive';
+    expect(canvas.fit, 'Canvas scene uses the intended viewport framing').toBe(desktopCover ? 'cover' : 'contain');
     expect(canvas.width).toBeGreaterThan(0);
     expect(canvas.height).toBeGreaterThan(0);
-    expect(canvas.width).toBeLessThanOrEqual(canvas.viewportWidth + 1);
-    expect(canvas.height).toBeLessThanOrEqual(canvas.viewportHeight + 1);
+    if (desktopCover) {
+      expect(canvas.width).toBeGreaterThanOrEqual(canvas.viewportWidth - 1);
+      expect(canvas.height).toBeGreaterThanOrEqual(canvas.viewportHeight - 1);
+    } else {
+      expect(canvas.width).toBeLessThanOrEqual(canvas.viewportWidth + 1);
+      expect(canvas.height).toBeLessThanOrEqual(canvas.viewportHeight + 1);
+    }
     expect(canvas.box.bottom, 'Canvas scenery stays above the dock').toBeLessThanOrEqual(result.dock.y + 1);
   }
   for (const button of result.controls) {

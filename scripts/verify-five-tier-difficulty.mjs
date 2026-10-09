@@ -328,32 +328,95 @@ record(`Rounding target and pad arithmetic remain in selected band (${sampleCoun
   }
 });
 const forge = generator('FractionForgeGame', ['makeRound']);
-record(`Fraction sorting and fixed proper/improper/card-count bands (${sampleCount * 5} questions)`, () => {
+record(`Fraction Forge targets are reachable with exact arithmetic in each ingredient and operation band (${sampleCount * 5} questions)`, () => {
+  const seenOperators = Array.from({ length: 5 }, () => new Set());
+  const reduced = ({ numerator, denominator }) => {
+    const factor = gcd(numerator, denominator);
+    return { numerator: numerator / factor, denominator: denominator / factor };
+  };
   for (let tier = 1; tier <= 5; tier++) for (let sample = 0; sample < sampleCount; sample++) {
     const q = forge.makeRound(tier, sample + 100);
-    assert.equal(q.cards.length, [3, 3, 4, 4, 5][tier - 1]);
-    assert.equal(new Set(q.cards.map((card) => card.value)).size, q.cards.length);
-    const descending = q.prompt.includes('largest to smallest');
-    assert.deepEqual(q.sortedIds, [...q.cards].sort((a, b) => descending
-      ? b.numerator * a.denominator - a.numerator * b.denominator
-      : a.numerator * b.denominator - b.numerator * a.denominator).map((card) => card.id));
+    const slotCount = tier === 5 ? 3 : 2;
+    assert.equal(q.cards.length, [4, 5, 5, 6, 7][tier - 1]);
+    assert.equal(q.solutionIds.length, slotCount);
+    assert.equal(q.operators.length, slotCount - 1);
+    assert.equal(new Set(q.cards.map((card) => card.id)).size, q.cards.length);
+    assert.equal(new Set(q.solutionIds).size, slotCount);
+    assert.ok(Number.isSafeInteger(q.target.numerator) && q.target.numerator > 0);
+    assert.ok(Number.isSafeInteger(q.target.denominator) && q.target.denominator > 0);
+    assert.equal(gcd(q.target.numerator, q.target.denominator), 1, 'Target must be in lowest terms');
     for (const card of q.cards) {
-      near(card.value, card.numerator / card.denominator, 'Fraction value');
-      if (tier <= 3) assert.ok(card.numerator < card.denominator);
-      if (tier === 1) { assert.equal(card.numerator, 1); assert.ok(card.denominator <= 4); }
+      assert.ok(Number.isSafeInteger(card.numerator) && card.numerator > 0);
+      assert.ok(Number.isSafeInteger(card.denominator) && card.denominator > 0);
     }
+    const solution = q.solutionIds.map((id) => {
+      const card = q.cards.find((candidate) => candidate.id === id);
+      assert.ok(card, `Missing solution ingredient ${id}`);
+      return card;
+    });
+    if (tier <= 2) assert.equal(solution[0].denominator, solution[1].denominator, 'Early tiers use like denominators');
+    if (tier === 3 || tier === 4) assert.notEqual(solution[0].denominator, solution[1].denominator, 'Later two-piece tiers use unlike denominators');
+    if (tier === 1 || tier === 3) assert.deepEqual(q.operators, ['+']);
+    assert.ok(q.operators.every((operator) => operator === '+' || operator === '-'));
+    q.operators.forEach((operator) => seenOperators[tier - 1].add(operator));
+    let result = reduced(solution[0]);
+    for (let index = 1; index < solution.length; index++) {
+      const card = solution[index];
+      const sign = q.operators[index - 1] === '+' ? 1 : -1;
+      result = reduced({
+        numerator: result.numerator * card.denominator + sign * card.numerator * result.denominator,
+        denominator: result.denominator * card.denominator,
+      });
+    }
+    assert.deepEqual(result, q.target, 'The ordered solution must produce the exact normalized target');
   }
+  assert.ok(seenOperators[1].has('-'), 'Tier 2 should include subtraction');
+  assert.ok(seenOperators[3].has('-'), 'Tier 4 should include subtraction');
+  assert.ok(seenOperators[4].has('+') && seenOperators[4].has('-'), 'Tier 5 should exercise both operations');
 });
-const simplify = generator('SimplifySprintGame', ['makeQuestion']);
-record(`Simplification equivalence, fully reduced answer and one correct choice (${sampleCount * 5} questions)`, () => {
-  for (let tier = 1; tier <= 5; tier++) for (let sample = 0; sample < sampleCount; sample++) {
-    const q = simplify.makeQuestion(tier, sample + 100);
-    assert.equal(q.prompt.numerator * q.answer.denominator, q.answer.numerator * q.prompt.denominator);
-    assert.equal(gcd(q.answer.numerator, q.answer.denominator), 1);
-    choices(q.options.map((o) => `${o.numerator}/${o.denominator}`), `${q.answer.numerator}/${q.answer.denominator}`);
-    assert.equal(q.options.filter((o) => o.numerator * q.answer.denominator === q.answer.numerator * o.denominator).length, 1);
-    if (tier <= 4) assert.ok(q.answer.numerator < q.answer.denominator);
-    assert.ok(q.answer.denominator <= [4, 6, 10, 16, 24][tier - 1]);
+const simplify = generator('SimplifySprintGame', ['makeQuestion', 'getFactorChoices']);
+record(`Simplify Sprint gates preserve exact reduction and a playable choice (${sampleCount * 5} questions)`, () => {
+  const allowedMultipliers = [[2, 3, 4], [2, 3, 4, 5], [3, 4, 5, 6], [4, 5, 6, 8, 9], [5, 6, 8, 9, 10, 12]];
+  const roundsByTier = [5, 5, 6, 6, 7];
+  for (let tier = 1; tier <= 5; tier++) {
+    const seenPrompts = new Set();
+    for (let sample = 0; sample < sampleCount; sample++) {
+      const q = simplify.makeQuestion(tier, sample + 100, sample % 7);
+      const { numerator, denominator } = q.prompt;
+      assert.ok(Number.isSafeInteger(numerator) && numerator > 0, 'Sprint numerator must be positive');
+      assert.ok(Number.isSafeInteger(denominator) && denominator > 1, 'Sprint denominator must exceed one');
+      const common = gcd(numerator, denominator);
+      assert.ok(common > 1, 'Every sprint fraction must still need simplifying');
+      assert.deepEqual(q.answer, { numerator: numerator / common, denominator: denominator / common });
+      assert.equal(gcd(q.answer.numerator, q.answer.denominator), 1);
+      assert.ok(allowedMultipliers[tier - 1].includes(common), `Tier ${tier} multiplier left its intended band`);
+      assert.ok(q.answer.denominator <= [4, 6, 10, 16, 24][tier - 1]);
+      if (tier <= 4) assert.ok(q.answer.numerator < q.answer.denominator, 'Earlier sprints use proper fractions');
+      seenPrompts.add(`${numerator}/${denominator}`);
+
+      const gates = simplify.getFactorChoices(q.prompt, tier, sample + 100);
+      assert.equal(gates.length, 3, 'Each sprint decision shows three gates');
+      assert.equal(new Set(gates).size, 3, 'Sprint gate factors must differ');
+      assert.ok(gates.every((factor) => Number.isSafeInteger(factor) && factor >= 2));
+      const safe = gates.filter((factor) => numerator % factor === 0 && denominator % factor === 0);
+      assert.ok(safe.length >= 1, 'At least one gate must safely divide both numbers');
+      assert.ok(safe.length < gates.length, 'At least one gate should be a meaningful wrong choice');
+      const reducedPair = { numerator: numerator / safe[0], denominator: denominator / safe[0] };
+      assert.equal(reducedPair.numerator * q.answer.denominator, q.answer.numerator * reducedPair.denominator);
+      if (gcd(reducedPair.numerator, reducedPair.denominator) > 1) {
+        const nextGates = simplify.getFactorChoices(reducedPair, tier, sample + 101);
+        assert.ok(nextGates.some((factor) => reducedPair.numerator % factor === 0 && reducedPair.denominator % factor === 0),
+          'A partially reduced fraction must still have a safe next gate');
+      }
+    }
+    assert.ok(seenPrompts.size >= Math.min(8, sampleCount), `Tier ${tier} repeats too few different fractions`);
+    for (let runOffset = 0; runOffset < 12; runOffset++) {
+      const runPrompts = Array.from({ length: roundsByTier[tier - 1] }, (_, index) => {
+        const q = simplify.makeQuestion(tier, index + 1, runOffset);
+        return `${q.prompt.numerator}/${q.prompt.denominator}`;
+      });
+      assert.equal(new Set(runPrompts).size, runPrompts.length, `Tier ${tier} repeats a fraction within one sprint`);
+    }
   }
 });
 const area = generator('AreaArchitectGame', ['buildQuestionDeck']);
@@ -410,18 +473,36 @@ record(`Potion ratio/total/whole-drop and selected ingredient-count bands (${sam
   }
 });
 const match = generator('FractionMatchGame', ['pickTileLabel', 'createInitialBoard', 'findMatches']);
-record('Fraction-match labels keep exact equivalence; every initial board is match-free', () => {
+record('Match Mastery introduces mixed formats after level 2; level boards stay equivalent and match-free', () => {
   const values = { red: .5, blue: .25, green: .75, yellow: .2, purple: .4 };
+  const formatOf = (label) => label.includes('/') ? 'fraction' : label.endsWith('%') ? 'percentage' : 'decimal';
   for (let tier = 1; tier <= 5; tier++) {
     const formats = new Set();
     for (let sample = 0; sample < sampleCount; sample++) for (const [type, value] of Object.entries(values)) {
       const label = match.pickTileLabel(type, tier); near(fractionValue(label), value, 'Equivalent gem label');
-      formats.add(label.includes('/') ? 'fraction' : label.endsWith('%') ? 'percentage' : 'decimal');
+      formats.add(formatOf(label));
     }
-    assert.deepEqual([...formats].sort(), [['fraction'], ['fraction'], ['fraction', 'percentage'], ['decimal', 'fraction'], ['decimal', 'fraction', 'percentage']][tier - 1]);
+    assert.deepEqual([...formats].sort(), tier <= 2 ? ['fraction'] : ['decimal', 'fraction', 'percentage']);
     for (let sample = 0; sample < 100; sample++) {
       const board = match.createInitialBoard(tier); assert.equal(board.length, 30); assert.deepEqual(match.findMatches(board), []);
+      const boardFormats = new Set(board.map((cell) => formatOf(cell.label)));
+      assert.deepEqual([...boardFormats].sort(), tier <= 2 ? ['fraction'] : ['decimal', 'fraction', 'percentage']);
+      board.forEach((cell) => near(fractionValue(cell.label), values[cell.type], 'Board value'));
     }
+  }
+  const mixedMatch = Array.from({ length: 30 }, () => null);
+  mixedMatch[0] = { type: 'red', label: '1/2' };
+  mixedMatch[1] = { type: 'red', label: '0.5' };
+  mixedMatch[2] = { type: 'red', label: '50%' };
+  assert.deepEqual(match.findMatches(mixedMatch).sort((a, b) => a - b), [0, 1, 2]);
+});
+record('Cloud Collapse keeps its existing format progression', () => {
+  const values = { red: .5, blue: .25, green: .75, yellow: .2, purple: .4 };
+  for (let tier = 1; tier <= 5; tier++) {
+    const board = match.createInitialBoard(tier, false);
+    assert.deepEqual(match.findMatches(board), []);
+    board.forEach((cell) => near(fractionValue(cell.label), values[cell.type], 'Cloud Collapse board value'));
+    if (tier <= 2) assert.ok(board.every((cell) => cell.label.includes('/')));
   }
 });
 const formula = generator('FormulaForgeGame', ['createRound']);

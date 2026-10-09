@@ -26,6 +26,8 @@ export const parseRoute = (pathname: string): RouteState => {
   const [root, first, second] = segments;
 
   switch (root) {
+    case 'play':
+      return { screen: first === 'parent' ? 'parent_dashboard' : 'splash' };
     case 'profile-setup':
       return { screen: 'avatar_selection' };
     case 'avatar':
@@ -89,7 +91,7 @@ export const buildRouteForScreen = (
     case 'achievements_tracker':
       return '/achievements';
     case 'parent_dashboard':
-      return '/parent';
+      return '/play/parent';
     case 'profile':
       return '/profile';
     case 'settings':

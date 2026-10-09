@@ -50,7 +50,9 @@ function WebsiteContent() {
     <Suspense fallback={<div className="website-game-loading"><LoaderCircle className="website-spinner" /><p>Opening your adventure…</p></div>}><GameGate>
       <Game />
     </GameGate></Suspense>
-    {isMinigame ? null : <WebsiteReturn screen={gameScreen} hasGameDock={hasGameDock} />}
+    {isMinigame || gameScreen === 'parent_dashboard'
+      ? null
+      : <WebsiteReturn screen={gameScreen} hasGameDock={hasGameDock} />}
   </>;
 }
 

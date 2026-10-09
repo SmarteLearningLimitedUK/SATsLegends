@@ -1,13 +1,13 @@
-import ArcadeJourney from '../components/game-ui/ArcadeJourney';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Hammer, RotateCcw } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import AssetIcon from '../components/AssetIcon';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import fractionForgeBackground from '../assets/maps/premium/fraction-forge.webp';
 import { triggerHaptic } from '../haptics';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
+import './fraction-forge.css';
 
 interface FractionForgeGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -20,742 +20,291 @@ interface FractionForgeGameProps extends MiniGameShellContractProps {
   onBack: () => void;
 }
 
-type TokenLocation = 'source' | 'target';
-
-interface AnchorPoint {
-  x: number;
-}
-
-interface FractionCard {
+type Operation = '+' | '-';
+type Fraction = { numerator: number; denominator: number };
+type FractionCard = Fraction & { id: string };
+interface ForgeRound {
   id: string;
-  numerator: number;
-  denominator: number;
-  value: number;
-}
-
-interface RoundState {
-  id: string;
-  prompt: string;
+  target: Fraction;
   cards: FractionCard[];
-  sortedIds: string[];
+  operators: Operation[];
+  solutionIds: string[];
+  prompt: string;
 }
 
-interface DragState {
-  token: FractionCard;
-  fromLocation: TokenLocation;
-  fromIndex: number;
-  pointerId: number;
-  clientX: number;
-  clientY: number;
-  startClientX: number;
-  startClientY: number;
-  offsetX: number;
-  offsetY: number;
-  width: number;
-  height: number;
-}
-
-const FRACTION_POOL: ReadonlyArray<readonly [number, number]> = [
-  [1, 8],
-  [1, 6],
-  [1, 5],
-  [1, 4],
-  [1, 3],
-  [3, 8],
-  [2, 5],
-  [1, 2],
-  [3, 5],
-  [2, 3],
-  [3, 4],
-  [4, 5],
-  [5, 6],
-  [7, 8],
-  [5, 4],
-  [4, 3],
-  [3, 2],
+// A commission is written as the actual calculation used to cast its target.
+// Cycling through eight recipes per tier prevents repeats within a run.
+const RECIPES: readonly (readonly string[])[] = [
+  ['1/4+2/4', '1/5+2/5', '2/7+3/7', '1/8+4/8', '2/6+3/6', '3/8+4/8', '2/9+3/9', '1/10+6/10'],
+  ['3/4-1/4', '4/5-1/5', '5/6-2/6', '6/7-2/7', '7/8-3/8', '5/9+2/9', '3/10+4/10', '7/12-5/12'],
+  ['1/2+1/4', '1/3+1/6', '2/5+1/10', '1/4+3/8', '2/3+1/6', '1/5+1/2', '1/3+1/4', '3/5+1/4'],
+  ['2/3+1/4', '5/6-1/3', '3/4+2/3', '7/8-1/4', '5/4-1/2', '2/5+3/4', '7/6-1/3', '5/8+2/3'],
+  ['1/2+2/3-1/4', '5/4+1/3-1/2', '3/4+5/6-1/3', '7/8+2/3-1/4', '5/6+3/4-1/2', '2/3+5/8-1/6', '3/2-1/4+2/3', '7/6+3/5-1/2'],
 ];
-
-const shuffle = <T,>(items: T[]): T[] => {
-  const clone = [...items];
-  for (let i = clone.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [clone[i], clone[j]] = [clone[j], clone[i]];
-  }
-  return clone;
+const DISTRACTORS = ['1/8', '1/6', '1/5', '1/4', '1/3', '3/8', '2/5', '1/2', '3/5', '2/3', '3/4', '4/5', '5/6', '7/8', '5/4', '4/3', '3/2', '1/10', '3/10', '5/8', '7/10', '7/12', '2/9', '5/9'];
+const gcd = (a: number, b: number): number => b === 0 ? Math.abs(a) : gcd(b, a % b);
+const simplify = (value: Fraction): Fraction => {
+  const divisor = gcd(value.numerator, value.denominator);
+  return { numerator: value.numerator / divisor, denominator: value.denominator / divisor };
 };
-
-const clamp = (value: number, min: number, max: number): number => (
-  Math.max(min, Math.min(max, value))
+const fractionKey = (value: Fraction) => {
+  const result = simplify(value);
+  return `${result.numerator}/${result.denominator}`;
+};
+const fractionLabel = (value: Fraction) => value.denominator === 1 ? String(value.numerator) : `${value.numerator}/${value.denominator}`;
+const parseFraction = (text: string): Fraction => {
+  const [numerator, denominator] = text.split('/').map(Number);
+  return { numerator, denominator };
+};
+const calculateRecipe = (parts: readonly Fraction[], operators: readonly Operation[]): Fraction => (
+  parts.slice(1).reduce((value, part, index) => simplify({
+    numerator: value.numerator * part.denominator + (operators[index] === '+' ? 1 : -1) * part.numerator * value.denominator,
+    denominator: value.denominator * part.denominator,
+  }), parts[0])
 );
-
-const createRowAnchors = (
-  count: number,
-  viewportWidth: number,
-  itemWidth: number,
-  minGap: number,
-  sidePadding: number,
-): AnchorPoint[] => {
-  if (count <= 0 || viewportWidth <= 0) return [];
-  if (count === 1) return [{ x: 50 }];
-
-  const usableWidth = Math.max(0, viewportWidth - (sidePadding * 2));
-  const totalItemWidth = itemWidth * count;
-  const rawGap = (usableWidth - totalItemWidth) / (count - 1);
-  const gap = Math.max(0, rawGap < minGap ? rawGap : minGap + ((rawGap - minGap) * 0.45));
-  const totalWidth = totalItemWidth + (gap * (count - 1));
-  const start = ((viewportWidth - totalWidth) / 2) + (itemWidth / 2);
-
-  return Array.from({ length: count }, (_, index) => ({
-    x: ((start + (index * (itemWidth + gap))) / viewportWidth) * 100,
-  }));
+const shuffle = <T,>(items: readonly T[]): T[] => {
+  const copy = [...items];
+  for (let index = copy.length - 1; index > 0; index -= 1) {
+    const other = Math.floor(Math.random() * (index + 1));
+    [copy[index], copy[other]] = [copy[other], copy[index]];
+  }
+  return copy;
 };
 
-const makeRound = (level: number, roundIndex: number): RoundState => {
+const makeRound = (level: number, roundIndex: number, runOffset = 0): ForgeRound => {
   const tier = Math.max(1, Math.min(5, level));
-  const maxCards = [3, 3, 4, 4, 5][tier - 1];
-  const pool = tier === 1 ? FRACTION_POOL.filter(([n, d]) => n === 1 && d <= 4)
-    : tier === 2 ? FRACTION_POOL.filter(([n, d]) => n < d && d <= 5)
-      : tier === 3 ? FRACTION_POOL.filter(([n, d]) => n < d)
-        : tier === 4 ? FRACTION_POOL.filter(([, d]) => d <= 5) : FRACTION_POOL;
-  const picked = shuffle([...pool]).slice(0, maxCards);
-
-  const cards: FractionCard[] = picked.map(([numerator, denominator], idx) => ({
-    id: `ff-${roundIndex}-${numerator}-${denominator}-${idx}`,
-    numerator,
-    denominator,
-    value: numerator / denominator,
-  }));
-
-  const descending = roundIndex % 2 === 0;
-  const sortedIds = [...cards]
-    .sort((a, b) => descending ? b.value - a.value : a.value - b.value)
-    .map((card) => card.id);
-
+  const recipes = RECIPES[tier - 1];
+  const recipe = recipes[(roundIndex - 1 + runOffset) % recipes.length];
+  const pieces = recipe.split(/([+-])/);
+  const solution = pieces.filter((_, index) => index % 2 === 0).map(parseFraction);
+  const operators = pieces.filter((_, index) => index % 2 === 1) as Operation[];
+  const bankSize = [4, 5, 5, 6, 7][tier - 1];
+  const denominator = solution[0].denominator;
+  const sameDenominator = Array.from({ length: denominator }, (_, index) => `${index + 1}/${denominator}`);
+  const pool = tier <= 2 ? [...sameDenominator, ...DISTRACTORS] : [...DISTRACTORS, ...recipes.flatMap((entry) => entry.split(/[+-]/))];
+  const chosen = [...solution];
+  const seen = new Set(chosen.map(fractionKey));
+  const offset = (roundIndex + runOffset) % pool.length;
+  for (const text of [...pool.slice(offset), ...pool.slice(0, offset)]) {
+    if (chosen.length >= bankSize) break;
+    const candidate = parseFraction(text);
+    const key = fractionKey(candidate);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    chosen.push(candidate);
+  }
+  const indexed = chosen.map((value, index) => ({ ...value, id: `ff-${tier}-${roundIndex}-${index}-${value.numerator}-${value.denominator}` }));
+  const target = calculateRecipe(solution, operators);
   return {
-    id: `round-${roundIndex}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-    prompt: descending ? 'Forge the path: largest to smallest!' : 'Forge the path: smallest to largest!',
-    cards,
-    sortedIds,
+    id: `forge-${tier}-${roundIndex}-${runOffset}`,
+    target,
+    cards: shuffle(indexed),
+    operators,
+    solutionIds: indexed.slice(0, solution.length).map((card) => card.id),
+    prompt: `Choose ${solution.length} fraction ingots to make ${fractionLabel(target)}.`,
   };
 };
 
-const scoreToStars = (accuracy: number, lives: number) => {
-  if (accuracy >= 0.9 && lives >= 8) return 3;
-  if (accuracy >= 0.65 && lives >= 4) return 2;
-  return 1;
-};
-
-const FractionCardTile: React.FC<{
-  card: FractionCard;
-  onPointerDown?: (event: React.PointerEvent<HTMLButtonElement>) => void;
-  onKeyboardActivate?: () => void;
-  selected?: boolean;
-  disabled?: boolean;
-  size: { width: number; height: number };
-  compact?: boolean;
-}> = ({ card, onPointerDown, onKeyboardActivate, selected = false, disabled = false, size }) => (
-  <motion.button
-    type="button"
-    onPointerDown={onPointerDown}
-    onClick={(event) => { if (event.detail === 0) onKeyboardActivate?.(); }}
-    aria-label={`Fraction ${card.numerator} over ${card.denominator}`}
-    aria-pressed={selected}
-    disabled={disabled}
-    whileTap={disabled ? undefined : { scale: 0.97 }}
-    className={`relative flex cursor-grab flex-col items-center justify-center rounded-[0.95rem] border border-cyan-200/70 bg-[radial-gradient(circle_at_50%_12%,rgba(255,255,255,0.24),rgba(255,255,255,0)_32%),linear-gradient(180deg,#5ba7ff_0%,#2056c3_58%,#163b8e_100%)] text-white shadow-[0_14px_28px_rgba(8,47,111,0.54),inset_0_1px_0_rgba(255,255,255,0.12)] active:cursor-grabbing disabled:cursor-default touch-none${selected ? ' ring-4 ring-amber-300 ring-offset-2 ring-offset-slate-900' : ''}`}
-    style={{ width: size.width, height: size.height }}
-  >
-    <div className="pointer-events-none absolute inset-0 rounded-[0.85rem] bg-gradient-to-br from-white/24 via-transparent to-transparent" />
-    <span className="relative text-[clamp(1.15rem,3.8vw,2rem)] font-black leading-none drop-shadow-[0_2px_2px_rgba(0,0,0,0.55)]">
-      {card.numerator}
-    </span>
-    <span className="relative my-[0.2rem] h-[1.5px] w-[54%] rounded-full bg-white/88 shadow-[0_0_5px_rgba(255,255,255,0.58)]" />
-    <span className="relative text-[clamp(1.15rem,3.8vw,2rem)] font-black leading-none drop-shadow-[0_2px_2px_rgba(0,0,0,0.55)]">
-      {card.denominator}
-    </span>
-  </motion.button>
+const FractionGlyph: React.FC<{ value: Fraction }> = ({ value }) => (
+  <span className="ff-fraction" aria-hidden="true"><span>{value.numerator}</span><span className="ff-fraction-bar" /><span>{value.denominator}</span></span>
 );
 
 const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
-  levelId,
-  miniGameLevel,
-  avatarId: _avatarId,
-  useSharedTopHud = false,
-  isBoss: _isBoss = false,
-  isPractice,
-  onVictory,
-  onGameOver,
-  onBack: _onBack,
-  practiceBriefing: _practiceBriefing,
-  gameTitle,
+  levelId, miniGameLevel, avatarId: _avatarId, useSharedTopHud: _useSharedTopHud = false,
+  isBoss: _isBoss = false, isPractice = false, practiceBriefing, gameTitle,
+  sessionState, sessionEvents, onVictory, onGameOver, onBack: _onBack,
 }) => {
-  const [viewport, setViewport] = useState(() => ({
-    width: typeof window === 'undefined' ? 390 : window.innerWidth,
-    height: typeof window === 'undefined' ? 844 : window.innerHeight,
-  }));
+  const tier = Math.max(1, Math.min(5, miniGameLevel || levelId || 1));
+  const runOffsetRef = useRef(Math.floor(Math.random() * 8));
   const [roundIndex, setRoundIndex] = useState(1);
-  const [round, setRound] = useState<RoundState>(() => makeRound(Math.max(1, levelId), 1));
-  const [targetSlots, setTargetSlots] = useState<Array<FractionCard | null>>([]);
-  const [sourceSlots, setSourceSlots] = useState<Array<FractionCard | null>>([]);
-  const [dragState, setDragState] = useState<DragState | null>(null);
-  const [selectedCard, setSelectedCard] = useState<{ location: TokenLocation; index: number } | null>(null);
-  const [timeLeft, setTimeLeft] = useState(() => Math.max(40, 58 - (Math.max(1, levelId) * 2)));
-  const [lives, setLives] = useState(10);
-  const [XP, setScore] = useState(0);
-  const [attempts, setAttempts] = useState(0);
-  const [correctAnswers, setCorrectAnswers] = useState(0);
-  const [forgeStreak, setForgeStreak] = useState(0);
-  const [isResolving, setIsResolving] = useState(false);
-  const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; message: string } | null>(null);
-  const [forgeGlow, setForgeGlow] = useState(false);
+  const [round, setRound] = useState(() => makeRound(tier, 1, runOffsetRef.current));
+  const [slots, setSlots] = useState<Array<string | null>>(() => Array(round.solutionIds.length).fill(null));
+  const [score, setScore] = useState(0);
+  const [completed, setCompleted] = useState(0);
+  const [wrongCount, setWrongCount] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const [localLives, setLocalLives] = useState(3);
+  const [localTimeLeft, setLocalTimeLeft] = useState(90);
+  const [resolving, setResolving] = useState(false);
+  const [feedback, setFeedback] = useState<{ tone: 'success' | 'error' | 'info'; message: string } | null>(null);
+  const [strikeState, setStrikeState] = useState<'idle' | 'success' | 'error'>('idle');
+  const [strikeTick, setStrikeTick] = useState(0);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
-
-  const playfieldRef = useRef<HTMLDivElement | null>(null);
-  const forgeGlowTimeoutRef = useRef<number | null>(null);
   const endedRef = useRef(false);
-  const scoreRef = useRef(0);
-  scoreRef.current = XP;
+  const pendingRef = useRef<number[]>([]);
+  const totalRounds = [4, 4, 5, 5, 6][tier - 1];
+  const timeLeft = sessionState?.timeLeft ?? localTimeLeft;
+  const totalTime = sessionState?.totalTime ?? 90;
+  const heatPercent = Math.max(0, Math.min(100, timeLeft / Math.max(1, totalTime) * 100));
 
-  const resolvedLevel = useMemo(
-    () => Math.max(1, Math.min(5, miniGameLevel || levelId || 1)),
-    [levelId, miniGameLevel],
-  );
-  const totalRounds = useMemo(() => Math.min(9, 5 + Math.floor(resolvedLevel / 2)), [resolvedLevel]);
-
-  const layout = useMemo(() => {
-    const cardCount = round.cards.length;
-    const isTablet = Math.min(viewport.width, viewport.height) >= 760;
-    const sidePadding = isTablet ? 48 : 12;
-    const cardGap = isTablet ? 12 : 6;
-
-    const baseCardWidth = isTablet ? 98 : 76;
-    const minCardWidth = isTablet ? 68 : 50;
-    const maxCardWidthByViewport = Math.floor(
-      (viewport.width - (sidePadding * 2) - (cardGap * Math.max(0, cardCount - 1))) / Math.max(1, cardCount),
-    );
-    const cardWidth = clamp(Math.min(baseCardWidth, maxCardWidthByViewport), minCardWidth, baseCardWidth);
-    const cardHeight = Math.round(cardWidth * 1.24);
-
-    const slotWidth = Math.round(cardWidth * 0.88);
-    const slotHeight = Math.round(cardHeight * 0.78);
-
-    const hudTopReserve = useSharedTopHud
-      ? (isTablet ? 132 : 116)
-      : (isTablet ? 92 : 78);
-    const hudBottomReserve = useSharedTopHud
-      ? (isTablet ? 126 : 112)
-      : (isTablet ? 92 : 84);
-    const usableTop = hudTopReserve;
-    const usableBottom = Math.max(usableTop + 340, viewport.height - hudBottomReserve);
-    const usableHeight = Math.max(340, usableBottom - usableTop);
-
-    const targetTop = usableTop + (usableHeight * (isTablet ? 0.41 : 0.39));
-    const sourceTop = targetTop - cardHeight - (isTablet ? 10 : 8);
-    const pedestalTop = targetTop + (slotHeight * 0.5);
-
-    const goblinWidth = Math.round(
-      clamp(isTablet ? viewport.width * 0.26 : viewport.width * 0.3, isTablet ? 224 : 188, isTablet ? 346 : 244),
-    );
-    const goblinHeightEstimate = goblinWidth * 1.28;
-    const suggestedGoblinTop = sourceTop + (cardHeight * 0.52);
-    const maxGoblinTop = targetTop - (slotHeight * 1.04) - (goblinHeightEstimate * 0.76);
-    const goblinTop = Math.max(usableTop + 118, Math.min(suggestedGoblinTop, maxGoblinTop));
-
-    const sourceAnchors = createRowAnchors(cardCount, viewport.width, cardWidth, cardGap, sidePadding);
-    const targetAnchors = createRowAnchors(cardCount, viewport.width, slotWidth, cardGap, sidePadding);
-
-    return {
-      sourceTop,
-      targetTop,
-      pedestalTop,
-      cardSize: {
-        width: cardWidth,
-        height: cardHeight,
-      },
-      slotSize: {
-        width: slotWidth,
-        height: slotHeight,
-      },
-      goblinTop,
-      goblinWidth,
-      sourceAnchors,
-      targetAnchors,
-    };
-  }, [round.cards.length, useSharedTopHud, viewport.height, viewport.width]);
-
-  const activeTargetAnchors = layout.targetAnchors;
-  const activeSourceAnchors = layout.sourceAnchors;
-
-  const resetRound = useCallback((nextRound: RoundState) => {
-    setRound(nextRound);
-    setTargetSlots(Array(nextRound.cards.length).fill(null));
-    setSourceSlots(shuffle(nextRound.cards));
-    setDragState(null);
-    setSelectedCard(null);
-    setIsResolving(false);
+  const clearPending = useCallback(() => {
+    pendingRef.current.forEach((id) => window.clearTimeout(id));
+    pendingRef.current = [];
+  }, []);
+  const delay = useCallback((callback: () => void, milliseconds: number) => {
+    pendingRef.current.push(window.setTimeout(callback, milliseconds));
+  }, []);
+  const beginRound = useCallback((next: ForgeRound) => {
+    setRound(next);
+    setSlots(Array(next.solutionIds.length).fill(null));
     setFeedback(null);
+    setStrikeState('idle');
+    setResolving(false);
   }, []);
 
   useEffect(() => {
-    const updateViewport = () => {
-      const rect = playfieldRef.current?.getBoundingClientRect();
-      if (rect && rect.width > 0 && rect.height > 0) {
-        setViewport({ width: rect.width, height: rect.height });
-        return;
-      }
-      setViewport({ width: window.innerWidth, height: window.innerHeight });
-    };
-    updateViewport();
-    window.addEventListener('resize', updateViewport);
-    return () => window.removeEventListener('resize', updateViewport);
-  }, []);
-
-  useEffect(() => {
+    clearPending();
     endedRef.current = false;
+    runOffsetRef.current = Math.floor(Math.random() * 8);
     setRoundIndex(1);
-    setTimeLeft(Math.max(40, 58 - (resolvedLevel * 2)));
-    setLives(10);
     setScore(0);
-    setAttempts(0);
-    setCorrectAnswers(0);
-    setForgeStreak(0);
-    resetRound(makeRound(resolvedLevel, 1));
-  }, [resolvedLevel, resetRound]);
-
-  useEffect(() => () => {
-    if (forgeGlowTimeoutRef.current !== null) {
-      window.clearTimeout(forgeGlowTimeoutRef.current);
-    }
-  }, []);
-
-  const beginDrag = useCallback((
-    location: TokenLocation,
-    index: number,
-    event: React.PointerEvent<HTMLButtonElement>,
-  ) => {
-    if (isResolving || dragState || endedRef.current) return;
-    const token = location === 'target' ? targetSlots[index] : sourceSlots[index];
-    if (!token) return;
-
-    const rect = event.currentTarget.getBoundingClientRect();
-    // Keep capture on the stable playfield: the source tile is removed while
-    // dragging, and would otherwise lose capture with it.
-    playfieldRef.current?.setPointerCapture(event.pointerId);
-
-    if (location === 'target') {
-      setTargetSlots((prev) => prev.map((card, i) => (i === index ? null : card)));
-    } else {
-      setSourceSlots((prev) => prev.map((card, i) => (i === index ? null : card)));
-    }
-
-    setDragState({
-      token,
-      fromLocation: location,
-      fromIndex: index,
-      pointerId: event.pointerId,
-      clientX: event.clientX,
-      clientY: event.clientY,
-      startClientX: event.clientX,
-      startClientY: event.clientY,
-      offsetX: event.clientX - rect.left,
-      offsetY: event.clientY - rect.top,
-      width: rect.width,
-      height: rect.height,
-    });
-    setSelectedCard(null);
-    triggerHaptic('selection');
-  }, [dragState, isResolving, sourceSlots, targetSlots]);
-
-  const placeSelectedCard = useCallback((location: TokenLocation, index: number) => {
-    if (!selectedCard || isResolving) return;
-    if (selectedCard.location === location && selectedCard.index === index) {
-      setSelectedCard(null);
-      return;
-    }
-    const nextTargets = [...targetSlots];
-    const nextSources = [...sourceSlots];
-    const origin = selectedCard.location === 'target' ? nextTargets : nextSources;
-    const destination = location === 'target' ? nextTargets : nextSources;
-    const token = origin[selectedCard.index];
-    if (!token) return;
-    origin[selectedCard.index] = destination[index];
-    destination[index] = token;
-    setTargetSlots(nextTargets);
-    setSourceSlots(nextSources);
-    setSelectedCard(null);
-    triggerHaptic('selection');
-  }, [isResolving, selectedCard, sourceSlots, targetSlots]);
-
-  const activateCard = useCallback((location: TokenLocation, index: number) => {
-    if (selectedCard) placeSelectedCard(location, index);
-    else setSelectedCard({ location, index });
-  }, [placeSelectedCard, selectedCard]);
-
-  const findDropCandidate = useCallback((clientX: number, clientY: number): { location: TokenLocation; index: number } | null => {
-    const playfield = playfieldRef.current;
-    if (!playfield) return null;
-    const rect = playfield.getBoundingClientRect();
-
-    const threshold = Math.max(50, rect.width * 0.09);
-    let best: { location: TokenLocation; index: number; distance: number } | null = null;
-
-    (['target', 'source'] as const).forEach((location) => {
-      playfield.querySelectorAll<HTMLElement>(`[data-fraction-${location}="true"]`).forEach((slot, index) => {
-        const bounds = slot.getBoundingClientRect();
-        const distance = Math.hypot(clientX - (bounds.x + bounds.width / 2), clientY - (bounds.y + bounds.height / 2));
-        if (!best || distance < best.distance) best = { location, index, distance };
-      });
-    });
-
-    if (!best || best.distance > threshold) return null;
-    return { location: best.location, index: best.index };
-  }, []);
-
-  const placeTokenInArrays = useCallback((candidate: { location: TokenLocation; index: number } | null) => {
-    if (!dragState) return;
-
-    const nextTargets = [...targetSlots];
-    const nextSources = [...sourceSlots];
-
-    const getToken = (location: TokenLocation, index: number): FractionCard | null => (
-      location === 'target' ? nextTargets[index] : nextSources[index]
-    );
-    const setToken = (location: TokenLocation, index: number, token: FractionCard | null) => {
-      if (location === 'target') nextTargets[index] = token;
-      else nextSources[index] = token;
-    };
-
-    if (!candidate) {
-      if (dragState.fromLocation === 'target') {
-        const firstOpen = nextSources.findIndex((card) => card === null);
-        if (firstOpen >= 0) {
-          nextSources[firstOpen] = dragState.token;
-        } else {
-          setToken(dragState.fromLocation, dragState.fromIndex, dragState.token);
-        }
-      } else {
-        setToken(dragState.fromLocation, dragState.fromIndex, dragState.token);
-      }
-      setTargetSlots(nextTargets);
-      setSourceSlots(nextSources);
-      return;
-    }
-
-    const destinationToken = getToken(candidate.location, candidate.index);
-    setToken(candidate.location, candidate.index, dragState.token);
-
-    if (destinationToken) {
-      setToken(dragState.fromLocation, dragState.fromIndex, destinationToken);
-    }
-
-    setTargetSlots(nextTargets);
-    setSourceSlots(nextSources);
-  }, [dragState, sourceSlots, targetSlots]);
-
-  const moveDraggedToken = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (!dragState || event.pointerId !== dragState.pointerId) return;
-    setDragState((current) => current ? { ...current, clientX: event.clientX, clientY: event.clientY } : current);
-  };
-
-  const finishDrag = (event: React.PointerEvent<HTMLDivElement>, cancelled = false) => {
-    if (!dragState || event.pointerId !== dragState.pointerId) return;
-    const wasTap = !cancelled && Math.hypot(event.clientX - dragState.startClientX, event.clientY - dragState.startClientY) < 8;
-    placeTokenInArrays(cancelled || wasTap
-      ? { location: dragState.fromLocation, index: dragState.fromIndex }
-      : findDropCandidate(event.clientX, event.clientY));
-    if (wasTap) setSelectedCard({ location: dragState.fromLocation, index: dragState.fromIndex });
-    setDragState(null);
-    triggerHaptic('selection');
-  };
-
+    setCompleted(0);
+    setWrongCount(0);
+    setStreak(0);
+    setLocalLives(3);
+    setLocalTimeLeft(90);
+    beginRound(makeRound(tier, 1, runOffsetRef.current));
+    return clearPending;
+  }, [beginRound, clearPending, tier]);
+  useEffect(() => setShowPracticeIntro(Boolean(isPractice)), [isPractice]);
   useEffect(() => {
-    if (endedRef.current || isResolving) return;
-    if (targetSlots.length === 0 || targetSlots.some((card) => card === null)) return;
+    if (sessionState || isPractice) return;
+    const id = window.setInterval(() => setLocalTimeLeft((previous) => Math.max(0, previous - 1)), 1000);
+    return () => window.clearInterval(id);
+  }, [isPractice, sessionState]);
+  useEffect(() => {
+    if (sessionState || localTimeLeft > 0 || endedRef.current) return;
+    endedRef.current = true;
+    onGameOver(score);
+  }, [localTimeLeft, onGameOver, score, sessionState]);
 
-    setIsResolving(true);
-    const ordered = targetSlots.map((card) => card?.id);
-    const isCorrect = ordered.every((id, index) => id === round.sortedIds[index]);
-
-    setAttempts((prev) => prev + 1);
-
-    if (isCorrect) {
-      const nextStreak = forgeStreak + 1;
-      setForgeStreak(nextStreak);
-      const awarded = 120 + Math.max(0, Math.floor(timeLeft * 1.25)) + (nextStreak % 3 === 0 ? 60 : 0);
-      const nextScore = XP + awarded;
-      const nextCorrect = correctAnswers + 1;
+  const addIngredient = (cardId: string) => {
+    if (endedRef.current || resolving || slots.includes(cardId)) return;
+    const openIndex = slots.findIndex((id) => id === null);
+    if (openIndex < 0) {
+      setFeedback({ tone: 'info', message: 'Tap an ingot on the anvil to make room.' });
+      return;
+    }
+    setSlots((previous) => previous.map((id, index) => index === openIndex ? cardId : id));
+    setFeedback(null);
+    setStrikeState('idle');
+    triggerHaptic('selection');
+  };
+  const removeIngredient = (index: number) => {
+    if (endedRef.current || resolving || slots[index] === null) return;
+    setSlots((previous) => previous.map((id, position) => position === index ? null : id));
+    setFeedback(null);
+    setStrikeState('idle');
+    triggerHaptic('selection');
+  };
+  const strike = () => {
+    if (endedRef.current || resolving || slots.some((id) => id === null)) return;
+    const selected = slots.map((id) => round.cards.find((card) => card.id === id)).filter((card): card is FractionCard => Boolean(card));
+    if (selected.length !== slots.length) return;
+    const result = calculateRecipe(selected, round.operators);
+    const correct = fractionKey(result) === fractionKey(round.target);
+    setResolving(true);
+    setStrikeState(correct ? 'success' : 'error');
+    setStrikeTick((previous) => previous + 1);
+    if (correct) {
+      const nextStreak = streak + 1;
+      const gained = 130 + Math.floor(heatPercent / 3) + (nextStreak % 3 === 0 ? 50 : 0);
+      const nextScore = score + gained;
+      const nextCompleted = completed + 1;
+      setStreak(nextStreak);
       setScore(nextScore);
-      setCorrectAnswers(nextCorrect);
-      setFeedback({ tone: 'success', message: nextStreak % 3 === 0 ? 'Hot streak! +60 XP. Bridge forged.' : 'Bridge forged! Cross the lava.' });
-      setForgeGlow(true);
+      setCompleted(nextCompleted);
+      setFeedback({ tone: 'success', message: nextStreak % 3 === 0 ? `Perfect run! +${gained} XP.` : `Clean strike! +${gained} XP.` });
       triggerHaptic('success');
-
-      if (forgeGlowTimeoutRef.current !== null) {
-        window.clearTimeout(forgeGlowTimeoutRef.current);
-      }
-      forgeGlowTimeoutRef.current = window.setTimeout(() => {
-        setForgeGlow(false);
-      }, 900);
-
-      if (roundIndex >= totalRounds) {
+      sessionEvents?.onCorrectAnswer?.({ type: 'correct_answer', score: nextScore, metadata: { target: fractionLabel(round.target) } });
+      sessionEvents?.onPuzzleComplete?.({ type: 'puzzle_complete', score: nextScore });
+      if (nextCompleted >= totalRounds) {
         endedRef.current = true;
-        const accuracy = (attempts + 1) > 0 ? (nextCorrect / (attempts + 1)) : 1;
-        const stars = scoreToStars(accuracy, lives);
-        window.setTimeout(() => onVictory(stars, nextScore), 460);
+        const stars = wrongCount === 0 ? 3 : wrongCount === 1 ? 2 : 1;
+        delay(() => {
+          sessionEvents?.onGameComplete?.({ type: 'game_complete', score: nextScore, stars });
+          onVictory(stars, nextScore);
+        }, 850);
+      } else {
+        delay(() => {
+          const nextIndex = roundIndex + 1;
+          setRoundIndex(nextIndex);
+          beginRound(makeRound(tier, nextIndex, runOffsetRef.current));
+        }, 900);
+      }
+      return;
+    }
+    setWrongCount((previous) => previous + 1);
+    setStreak(0);
+    setFeedback({ tone: 'error', message: `That makes ${fractionLabel(result)}. Target: ${fractionLabel(round.target)}. Recut an ingot.` });
+    triggerHaptic('error');
+    sessionEvents?.onIncorrectAnswer?.({ type: 'incorrect_answer', score, metadata: { result: fractionLabel(result), target: fractionLabel(round.target) } });
+    if (!sessionState && !isPractice) {
+      const nextLives = localLives - 1;
+      setLocalLives(nextLives);
+      if (nextLives <= 0) {
+        endedRef.current = true;
+        delay(() => onGameOver(score), 650);
         return;
       }
-
-      const nextRoundIndex = roundIndex + 1;
-      window.setTimeout(() => {
-        setRoundIndex(nextRoundIndex);
-        resetRound(makeRound(resolvedLevel, nextRoundIndex));
-      }, 720);
-      return;
     }
-
-    setForgeStreak(0);
-    const nextLives = lives - 1;
-    setLives(nextLives);
-    setTimeLeft((prev) => Math.max(0, prev - 4));
-    setFeedback({ tone: 'error', message: 'Bridge cracked! Reforge the order.' });
-    triggerHaptic('error');
-
-    if (nextLives <= 0) {
-      endedRef.current = true;
-      window.setTimeout(() => onGameOver(XP), 460);
-      return;
-    }
-
-    window.setTimeout(() => {
-      resetRound(makeRound(resolvedLevel, roundIndex));
-    }, 760);
-  }, [
-    attempts,
-    correctAnswers,
-    forgeStreak,
-    isResolving,
-    lives,
-    onGameOver,
-    onVictory,
-    resetRound,
-    resolvedLevel,
-    round.sortedIds,
-    roundIndex,
-    XP,
-    targetSlots,
-    timeLeft,
-    totalRounds,
-  ]);
-
-  const showSmoke = feedback?.tone === 'error';
-  const playfieldBounds = playfieldRef.current?.getBoundingClientRect();
-  const dragScaleX = playfieldBounds && playfieldRef.current?.clientWidth
-    ? playfieldBounds.width / playfieldRef.current.clientWidth : 1;
-  const dragScaleY = playfieldBounds && playfieldRef.current?.clientHeight
-    ? playfieldBounds.height / playfieldRef.current.clientHeight : 1;
-
-  useEffect(() => {
-    setShowPracticeIntro(Boolean(isPractice));
-  }, [isPractice]);
-
-  useEffect(() => {
-    if (endedRef.current) return undefined;
-    const timer = window.setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          if (!endedRef.current) {
-            endedRef.current = true;
-            window.setTimeout(() => onGameOver(scoreRef.current), 120);
-          }
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => window.clearInterval(timer);
-  }, [onGameOver]);
+    delay(() => setResolving(false), 560);
+  };
 
   return (
-    <div className="relative h-full w-full select-none overflow-hidden">
-      <GameplaySceneBackdrop
-        gameType="take_out_rush"
-        backgroundOverride={fractionForgeBackground}
-      />
-
-      <PracticeIntroPopup
-        open={showPracticeIntro}
-        title={gameTitle || 'Fraction Forge'}
-        body="The Monster Minds have locked the fractions in a cage.\nSolve the fraction order to forge the Elitium.\nCheck each fraction carefully before you answer."
-        briefing={_practiceBriefing}
-        onAction={() => setShowPracticeIntro(false)}
-      />
-
-      <div
-        ref={playfieldRef}
-        className="relative h-full w-full"
-        onPointerMove={moveDraggedToken}
-        onPointerUp={finishDrag}
-        onPointerCancel={(event) => finishDrag(event, true)}
-      >
-        <AnimatePresence>
-          {forgeGlow && (
-            <motion.div
-              key="forge-glow"
-              initial={{ opacity: 0, scale: 0.97 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.02 }}
-              transition={{ duration: 0.28, ease: 'easeOut' }}
-              className="pointer-events-none absolute inset-x-0 bottom-0 top-[30%] z-[1]"
-              style={{
-                background:
-                  'radial-gradient(circle at 50% 70%, rgba(74,222,128,0.72) 0%, rgba(34,197,94,0.44) 14%, rgba(16,185,129,0.18) 28%, transparent 58%)',
-                filter: 'blur(16px)',
-                mixBlendMode: 'screen',
-              }}
-            />
-          )}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {showSmoke && (
-            <motion.div
-              key="forge-smoke"
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.02 }}
-              transition={{ duration: 0.28, ease: 'easeOut' }}
-              className="pointer-events-none absolute inset-0 z-[2]"
-              style={{
-                background:
-                  'radial-gradient(circle at 50% 70%, rgba(15,23,42,0.18) 0%, rgba(15,23,42,0.48) 22%, rgba(2,6,23,0.68) 50%, rgba(2,6,23,0.86) 82%)',
-              }}
-            >
-              <motion.div
-                animate={{ y: [12, -10, 8], x: [0, 14, -10, 0], opacity: [0.24, 0.6, 0.36, 0.5] }}
-                transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute inset-x-0 bottom-[18%] h-[28%] bg-[radial-gradient(circle_at_25%_80%,rgba(148,163,184,0.4),transparent_45%),radial-gradient(circle_at_55%_65%,rgba(15,23,42,0.62),transparent_46%),radial-gradient(circle_at_78%_82%,rgba(100,116,139,0.34),transparent_42%)] blur-2xl"
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <GameQuestionCard
-          title={gameTitle || 'Fraction Forge'}
-          subtitle="Tap a fraction, then a bridge slot, or drag it. Errors cost 4 seconds."
-          className="pointer-events-none"
-          style={{ position: 'absolute', top: 5, width: '94%', transform: 'none' }}
-        >
-          {round.prompt}
-        </GameQuestionCard>
-
-<div className="fraction-crossing"><ArcadeJourney kind="bridge" completed={correctAnswers} total={totalRounds} avatarId={_avatarId} danger={showSmoke} /></div>
-
-        {activeSourceAnchors.map((anchor, index) => {
-          const token = sourceSlots[index];
-          const hidden = dragState?.token.id === token?.id;
-          return (
-            <div
-              key={`source-${round.id}-${index}`}
-              data-fraction-source="true"
-              className="absolute -translate-x-1/2 -translate-y-1/2"
-              style={{ left: `${anchor.x}%`, top: layout.sourceTop, width: layout.cardSize.width, height: layout.cardSize.height }}
-            >
-              {token && !hidden && (
-                <FractionCardTile
-                  card={token}
-                  size={layout.cardSize}
-                  selected={selectedCard?.location === 'source' && selectedCard.index === index}
-                  onKeyboardActivate={() => activateCard('source', index)}
-                  onPointerDown={(event) => selectedCard ? placeSelectedCard('source', index) : beginDrag('source', index, event)}
-                />
-              )}
-              {!token && <button type="button" data-button-skin="none" disabled={!selectedCard || isResolving} onClick={() => placeSelectedCard('source', index)} aria-label={`Place selected fraction in source position ${index + 1}`} className="h-full w-full rounded-xl border-2 border-dashed border-cyan-200/50 bg-slate-900/25 disabled:pointer-events-none disabled:opacity-40" />}
-            </div>
-          );
-        })}
-
-        {activeTargetAnchors.map((anchor, index) => {
-          const token = targetSlots[index];
-          const hidden = dragState?.token.id === token?.id;
-          return (
-            <React.Fragment key={`target-${round.id}-${index}`}>
-              <button
-                type="button"
-                data-fraction-target="true"
-                data-button-skin="none"
-                disabled={!selectedCard || isResolving}
-                onClick={() => placeSelectedCard('target', index)}
-                aria-label={`Place selected fraction in bridge position ${index + 1}`}
-                className="absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-[0.85rem] border border-dashed border-cyan-200/45 bg-cyan-200/12 disabled:pointer-events-none"
-                style={{
-                  left: `${anchor.x}%`,
-                  top: layout.targetTop,
-                  width: layout.slotSize.width,
-                  height: layout.slotSize.height,
-                }}
-              />
-              <div
-                data-fraction-placement="true"
-                className="absolute z-[11] -translate-x-1/2 -translate-y-1/2"
-                style={{ left: `${anchor.x}%`, top: layout.targetTop }}
-              >
-                {token && !hidden && (
-                  <FractionCardTile
-                    card={token}
-                    size={layout.cardSize}
-                    selected={selectedCard?.location === 'target' && selectedCard.index === index}
-                    onKeyboardActivate={() => activateCard('target', index)}
-                    onPointerDown={(event) => selectedCard ? placeSelectedCard('target', index) : beginDrag('target', index, event)}
-                  />
-                )}
+    <div className="fraction-forge-game relative h-full w-full select-none overflow-hidden" data-fraction-forge data-fraction-tier={tier} data-strike-state={strikeState}>
+      <GameplaySceneBackdrop gameType="take_out_rush" backgroundOverride={fractionForgeBackground} />
+      <div className="ff-scrim" aria-hidden="true" />
+      <PracticeIntroPopup open={showPracticeIntro} title={gameTitle || 'Fraction Forge'} body="The workshop needs a precise fraction alloy. Choose the ingots, then strike the anvil to test your recipe." briefing={practiceBriefing} onAction={() => setShowPracticeIntro(false)} />
+      <div className="ff-ui">
+        <div className="ff-brief">
+          <GameQuestionCard title={gameTitle || 'Fraction Forge'} className="ff-question" style={{ position: 'relative', top: 'auto', left: 'auto', right: 'auto', width: '100%', transform: 'none' }}>{round.prompt}</GameQuestionCard>
+        </div>
+        <div className="ff-meta" aria-label={`Commission ${roundIndex} of ${totalRounds}; ${score} XP`}>
+          <span>COMMISSION {roundIndex} / {totalRounds}</span>
+          <div className="ff-heat-track" role="progressbar" aria-label="Forge heat" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(heatPercent)}><div className="ff-heat-fill" style={{ width: `${heatPercent}%` }} /></div>
+          <span>XP {score}</span>
+        </div>
+        <div className="ff-workspace">
+          <div className="ff-anvil-zone">
+            <div className="ff-target"><span>FORGE TARGET</span><strong className="ff-target-value" data-forge-target>{fractionLabel(round.target)}</strong></div>
+            <motion.div key={strikeTick} className="ff-hammer" data-strike-state={strikeState} aria-hidden="true"><Hammer /></motion.div>
+            <div className="ff-anvil">
+              <div className="ff-recipe" aria-label="Fraction recipe">
+                {slots.map((cardId, index) => {
+                  const card = round.cards.find((entry) => entry.id === cardId);
+                  return (
+                    <React.Fragment key={`${round.id}-slot-${index}`}>
+                      {index > 0 ? <span className="ff-operator" aria-label={round.operators[index - 1] === '+' ? 'plus' : 'minus'}>{round.operators[index - 1]}</span> : null}
+                      <button type="button" data-forge-slot={index + 1} data-button-skin="none" className={`ff-slot ${card ? 'ff-slot-filled' : ''}`} disabled={!card || resolving} onClick={() => removeIngredient(index)} aria-label={card ? `Remove fraction ${card.numerator} over ${card.denominator} from mould ${index + 1}` : `Empty forge mould ${index + 1}`}>
+                        {card ? <FractionGlyph value={card} /> : <span className="ff-slot-number">{index + 1}</span>}
+                      </button>
+                    </React.Fragment>
+                  );
+                })}
               </div>
-
-              {index < activeTargetAnchors.length - 1 && (
-                <div
-                  className="pointer-events-none absolute z-[12] -translate-x-1/2 -translate-y-1/2 text-cyan-200/85"
-                  style={{ left: `${(anchor.x + activeTargetAnchors[index + 1].x) / 2}%`, top: layout.pedestalTop }}
-                >
-                  <span className="text-[clamp(1.15rem,2.8vw,1.8rem)] font-black">{roundIndex % 2 === 0 ? '>' : '<'}</span>
-                </div>
-              )}
-            </React.Fragment>
-          );
-        })}
-
-        {selectedCard && <div role="status" aria-live="polite" className="pointer-events-none absolute left-1/2 top-[47%] z-30 -translate-x-1/2 rounded-xl bg-slate-950/85 px-3 py-2 text-center text-xs font-bold text-amber-100">Fraction selected. Tap a bridge slot.</div>}
-
-        <AnimatePresence>
-          {feedback && (
-            <motion.div
-              initial={{ opacity: 0, y: 10, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.96 }}
-              className={`pointer-events-none absolute left-1/2 top-[56%] z-40 -translate-x-1/2 rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.12em] ${
-                feedback.tone === 'success'
-                  ? 'border-emerald-300/65 bg-emerald-300/20 text-emerald-50'
-                  : 'border-rose-300/65 bg-rose-300/20 text-amber-50'
-              }`}
-            >
-              {feedback.message}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {dragState && (
-          <div
-            data-fraction-drag="true"
-            className="pointer-events-none absolute z-50"
-            style={{
-              left: (dragState.clientX - (playfieldBounds?.left ?? 0) - dragState.width / 2) / dragScaleX,
-              top: (dragState.clientY - (playfieldBounds?.top ?? 0) - dragState.height / 2) / dragScaleY,
-              width: dragState.width / dragScaleX,
-              height: dragState.height / dragScaleY,
-            }}
-          >
-            <FractionCardTile card={dragState.token} size={{ width: dragState.width / dragScaleX, height: dragState.height / dragScaleY }} disabled />
+              <div className="ff-anvil-base" aria-hidden="true" />
+              <AnimatePresence>{strikeState === 'success' ? <motion.div key={`sparks-${strikeTick}`} className="ff-spark-burst" aria-hidden="true" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>{Array.from({ length: 10 }, (_, index) => <span key={index} className="ff-spark" style={{ '--spark-index': index } as React.CSSProperties} />)}</motion.div> : null}</AnimatePresence>
+            </div>
+            <div className="ff-progress" aria-label={`${completed} of ${totalRounds} commissions forged`}>
+              {Array.from({ length: totalRounds }, (_, index) => <span key={index} className="ff-progress-mark" data-complete={index < completed ? 'true' : 'false'} aria-hidden="true" />)}
+            </div>
           </div>
-        )}
+          <div className="ff-tray">
+            <div className="ff-tray-title"><strong>INGOT RACK</strong><span>Tap pieces in equation order</span></div>
+            <div className="ff-bank">
+              {round.cards.map((card) => {
+                const used = slots.includes(card.id);
+                return <button type="button" key={card.id} data-forge-ingredient={card.id} data-button-skin="none" className={`ff-ingredient ${used ? 'ff-ingredient-used' : ''}`} disabled={used || resolving} onClick={() => addIngredient(card.id)} aria-label={`Add fraction ${card.numerator} over ${card.denominator} to the anvil`} aria-pressed={used}><FractionGlyph value={card} /></button>;
+              })}
+            </div>
+            <div className="ff-controls">
+              <button type="button" data-button-skin="none" className="ff-reset" onClick={() => { setSlots(Array(round.solutionIds.length).fill(null)); setFeedback(null); setStrikeState('idle'); }} disabled={resolving || slots.every((id) => id === null)} aria-label="Clear the anvil"><RotateCcw aria-hidden="true" />Clear</button>
+              <button type="button" data-button-skin="none" className="ff-strike" data-forge-strike onClick={strike} disabled={resolving || slots.some((id) => id === null)}><Hammer aria-hidden="true" />Strike</button>
+            </div>
+            <div className="ff-feedback" data-forge-feedback data-tone={feedback?.tone || 'info'} role="status" aria-live="polite">{feedback?.message || (tier <= 2 ? 'Same denominator? Work with the numerators.' : 'Find common-sized parts before you strike.')}</div>
+          </div>
+        </div>
       </div>
     </div>
   );

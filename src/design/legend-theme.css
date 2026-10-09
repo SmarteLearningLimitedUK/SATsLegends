@@ -46,6 +46,16 @@
 #root .app-viewport.sat-theme-bluegold.screen-gameplay .game-background-layer img {
   object-fit: contain !important;
 }
+/* Desktop playfields use the scenery edge to edge. The portrait stage keeps
+   the complete illustration, while gameplay overlays stay in their own layout. */
+@media (min-width: 700px) {
+  #root .iphone-game-stage[data-stage-layout='responsive'] .app-viewport.sat-theme-bluegold.screen-gameplay img[data-game-scene-image][data-background-fit='contain'] {
+    object-fit: cover !important;
+  }
+  #root .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay .factor-frenzy-game {
+    background-size: cover !important;
+  }
+}
 .sat-theme-bluegold :is(h1, h2, h3) { font-family: var(--font-display); }
 #root .app-viewport.sat-theme-bluegold :is(.text-amber-100, .text-amber-200, .text-amber-300, .text-yellow-300) {
   color: var(--legend-gold) !important;

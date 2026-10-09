@@ -566,8 +566,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
               }}
             >
               <GameplayContentViewport
-                ambientImage={!adaptPortraitGame && selectedLevel ? GAME_SCENE_META[selectedLevel.gameType]?.background : undefined}
-                boundedWideLayout={adaptPortraitGame}
+                ambientImage={!adaptPortraitGame && selectedLevel?.blueprintKey !== 'maths_vs_zombies' && selectedLevel?.gameType !== 'potion_pour' && selectedLevel ? GAME_SCENE_META[selectedLevel.gameType]?.background : undefined}
               >
                 {renderGameplay()}
               </GameplayContentViewport>

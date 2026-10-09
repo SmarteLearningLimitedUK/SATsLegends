@@ -60,7 +60,6 @@ const CAKE_SLICE_ASSET = cakeSliceAsset;
 const DRAG_SLICE_SIZE = 48;
 const SHARE_SPLITTER_BACKGROUND_SIZE = { width: 2500, height: 5000 };
 const SHARE_SPLITTER_PLATE_DIAMETER_PX = 540;
-const CONTAINED_WIDE_PLATE_SCALE = 0.88;
 const CAKE_SOURCE_POSITION = { x: 1250, y: 3750 };
 const CAKE_SOURCE_SIZE_PX = 660;
 const SHARE_SPLITTER_TABLE_CENTER = { x: 1250, y: 2550 };
@@ -335,37 +334,34 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const allCorrect = plateViews.every((plate) => plate.isCorrect);
   const platePositions = PLATE_POSITIONS_BY_COUNT[challenge.plateCount] || PLATE_POSITIONS_BY_COUNT[5];
   const isCompactViewport = viewportRect.width < 520;
-  const hasContainedWideScene = typeof window !== 'undefined'
-    && window.innerWidth >= 700 && window.innerHeight >= 600;
-  const isContainedShortScene = hasContainedWideScene && viewportRect.height < 520;
-  const isShortWideViewport = (viewportRect.width >= 700 || isContainedShortScene) && viewportRect.height < 520;
+  const isWideShareLayout = viewportRect.width >= 700;
   const plateLayoutScale = isCompactViewport ? 0.68 : 1;
   const cakeSourceLayoutScale = isCompactViewport ? 0.76 : 1;
   const backgroundWidthScale = viewportRect.width / SHARE_SPLITTER_BACKGROUND_SIZE.width;
   const backgroundHeightScale = viewportRect.height / SHARE_SPLITTER_BACKGROUND_SIZE.height;
-  // SceneEnvironment contains this portrait art on wide screens. Position the
-  // plates against that same painted scene instead of a cropped cover image.
-  const backgroundScale = hasContainedWideScene
+  // Keep the portrait artwork coordinates on narrow screens. Desktop uses a
+  // separate full-width playfield, so the targets remain large and spaced out.
+  const backgroundScale = isWideShareLayout
     ? Math.min(backgroundWidthScale, backgroundHeightScale)
     : Math.max(backgroundWidthScale, backgroundHeightScale);
   const backgroundOffsetX = (viewportRect.width - (SHARE_SPLITTER_BACKGROUND_SIZE.width * backgroundScale)) / 2;
-  const plateSizePx = isShortWideViewport
-    ? Math.min(106, viewportRect.width * 0.11)
-    : SHARE_SPLITTER_PLATE_DIAMETER_PX * backgroundScale * plateLayoutScale * (hasContainedWideScene ? CONTAINED_WIDE_PLATE_SCALE : 1);
-  // The short desktop scene has room for a row, with space below it for the
-  // action panel even when its feedback wraps onto another line.
-  const shortWideRowY = isContainedShortScene
-    ? viewportRect.height - 140 - plateSizePx / 2
-    : viewportRect.height * 0.68;
+  const sideRailWidth = Math.min(340, Math.max(260, viewportRect.width * 0.28));
+  const playfieldLeft = sideRailWidth + 36;
+  const playfieldWidth = Math.max(300, viewportRect.width - playfieldLeft - 20);
+  const plateSizePx = isWideShareLayout
+    ? Math.min(132, Math.max(68, Math.min((playfieldWidth / 5) * 0.68, viewportRect.height * 0.2)))
+    : SHARE_SPLITTER_PLATE_DIAMETER_PX * backgroundScale * plateLayoutScale;
   const artHeight = SHARE_SPLITTER_BACKGROUND_SIZE.height * backgroundScale;
   const bottomArtOffset = viewportRect.height - artHeight;
   const minTableCenter = questionDockBottom + SHARE_SPLITTER_TABLE_PLATE_RADIUS_Y * backgroundScale + plateSizePx / 2 + 12;
   const backgroundOffsetY = Math.min(0, Math.max(bottomArtOffset, minTableCenter - SHARE_SPLITTER_TABLE_CENTER.y * backgroundScale));
   const backgroundPositionY = Math.abs(bottomArtOffset) < .01 ? 50 : (backgroundOffsetY / bottomArtOffset) * 100;
-  const cakeSourceSize = isContainedShortScene ? 44 : isShortWideViewport ? 84 : CAKE_SOURCE_SIZE_PX * backgroundScale * cakeSourceLayoutScale;
-  const cakeSourceCenter = isContainedShortScene
-    ? { x: viewportRect.width / 2, y: (questionDockBottom + shortWideRowY - plateSizePx / 2) / 2 }
-    : isShortWideViewport ? { x: viewportRect.width / 2, y: viewportRect.height * 0.36 } : {
+  const cakeSourceSize = isWideShareLayout
+    ? Math.min(124, Math.max(84, viewportRect.height * 0.18))
+    : CAKE_SOURCE_SIZE_PX * backgroundScale * cakeSourceLayoutScale;
+  const cakeSourceCenter = isWideShareLayout
+    ? { x: playfieldLeft + playfieldWidth * 0.5, y: viewportRect.height * 0.74 }
+    : {
     x: backgroundOffsetX + CAKE_SOURCE_POSITION.x * backgroundScale,
     y: Math.min(backgroundOffsetY + CAKE_SOURCE_POSITION.y * backgroundScale, viewportRect.height - 124 - cakeSourceSize / 2 - 10),
   };
@@ -610,9 +606,11 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
   return (
     <GameUiShell
+      className="share-splitter-shell"
       backgroundImage={shareSplitterBackground}
       backgroundOpacity={1}
-      backgroundPosition={`center ${backgroundPositionY}%`}
+      backgroundPosition={isWideShareLayout ? 'center 50%' : `center ${backgroundPositionY}%`}
+      backgroundFit={isWideShareLayout ? 'cover' : 'contain'}
       overlayDisabled
     >
       <PracticeIntroPopup
@@ -627,11 +625,12 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         ref={stageRef}
         className="share-splitter-stage relative h-full w-full"
         data-share-stage
-        style={{ '--share-scene-width': `${SHARE_SPLITTER_BACKGROUND_SIZE.width * backgroundScale}px` } as React.CSSProperties}
+        data-layout={isWideShareLayout ? 'desktop' : 'portrait'}
       >
         <div ref={questionCardRef} className="share-splitter-mission">
           <GameQuestionCard
             title="Target Ratio"
+            subtitle="Choose the cake, then a plate. Or drag slices onto the plates."
             style={{ position: 'relative', top: 0, transform: 'none', width: '100%', padding: '10px 12px' }}
           >
             {promptText}
@@ -642,8 +641,11 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
           <CelebrationSplash active={showCelebrationSplash && !reducedMotion} message="Party Time!" theme="party" />
           {plateViews.map((plate, index) => {
             const position = platePositions[index] || { x: 0, y: 0 };
-            const center = isShortWideViewport
-              ? { x: viewportRect.width * (0.5 + (index - (challenge.plateCount - 1) / 2) * 0.18), y: shortWideRowY }
+            const center = isWideShareLayout
+              ? {
+                x: playfieldLeft + playfieldWidth * (0.1 + index * 0.2),
+                y: viewportRect.height * (0.43 + [0.04, -0.01, -0.03, -0.01, 0.04][index]),
+              }
               : mapBackgroundPointToViewport(position);
             const sliceCount = plates[index].length;
             const sliceBaseSizePx = Math.max(22, plateSizePx * (sliceCount <= 3 ? .24 : sliceCount <= 6 ? .2 : .16));
@@ -714,7 +716,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
         <div className="share-splitter-actions answer-choice-surface" data-share-actions>
           <div className="share-splitter-feedback" role="status" aria-live="polite">
-            {feedback || 'Drag slices, or choose the cake then a plate.'}
+            {feedback}
           </div>
           <div className="share-splitter-action-buttons">
             <SecondaryButton onClick={resetAllocation} disabled={locked || moveHistory.length === 0}>

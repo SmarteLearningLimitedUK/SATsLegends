@@ -52,6 +52,18 @@
 .lava-crossing-answers { width: 100%; flex-shrink: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .lava-crossing-answers button { min-height: max(48px, var(--refinement-hit-size)); padding: 8px; font-weight: 800; font-size: var(--legend-question-size, 18px); border-radius: 12px; }
 .refinement-feedback { min-height: 35px; width: 100%; flex-shrink: 0; text-align: center; font-size: var(--legend-label-size, 14px); line-height: 1.25; font-weight: 750; color: #e0f2fe; }
+.perimeter-game .refinement-feedback,
+.chrono-game .refinement-feedback {
+  display: grid;
+  place-items: center;
+  max-width: 900px;
+  margin-inline: auto;
+  padding: 5px 10px;
+  border: 1px solid rgba(189, 224, 239, .6);
+  border-radius: 10px;
+  background: rgba(7, 28, 43, .94);
+  color: #f3fbff;
+}
 
 .perimeter-board { position: relative; width: 100%; flex: 1; min-height: 300px; overflow: clip; border: 2px solid #e5bf6f; border-radius: 20px; background: #143c39ee; box-shadow: inset 0 0 0 5px #091e23, 0 10px 20px #07132155; }
 .perimeter-board svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }

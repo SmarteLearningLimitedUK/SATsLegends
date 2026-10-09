@@ -48,7 +48,7 @@ for (const profile of profiles) {
     await page.goto(base);
     const routes = await page.evaluate(async () => {
       const { ISLANDS } = await import('/src/constants.ts');
-      const keys = ['take_out_rush', 'fraction_forge', 'conversion_canyon', 'data_detective', 'remainder_run', 'multiplication_mine', 'time_keeper_cove'];
+      const keys = ['take_out_rush', 'fraction_forge', 'simplify_sprint', 'conversion_canyon', 'data_detective', 'remainder_run', 'multiplication_mine', 'time_keeper_cove'];
       return Object.fromEntries(keys.map((key) => {
         for (const island of ISLANDS) {
           const level = island.levels.find((entry) => entry.blueprintKey === key);
@@ -83,36 +83,93 @@ for (const profile of profiles) {
     await expect(question).toBeVisible();
 
     question = await startMission(routes.fraction_forge);
-    const source = page.locator('[data-fraction-source="true"]').first();
-    const target = page.locator('[data-fraction-target="true"]').first();
-    const from = await source.boundingBox();
-    const to = await target.boundingBox();
-    const originalTile = await source.locator('button').textContent();
-    await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
-    await page.mouse.down();
-    await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 12 });
-    const dragging = page.locator('[data-fraction-drag="true"]');
-    await expect(dragging).toBeVisible();
-    const centerX = to.x + to.width / 2;
-    const centerY = to.y + to.height / 2;
-    await expect.poll(async () => {
-      const tile = await dragging.boundingBox();
-      return Math.hypot(tile.x + tile.width / 2 - centerX, tile.y + tile.height / 2 - centerY);
-    }).toBeLessThan(4);
-    await page.screenshot({ path: path.join(output, `${profile.name}-fraction-forge-drag.png`) });
-    await page.mouse.up();
-    const placement = page.locator('[data-fraction-placement="true"]').first().locator('button');
-    await expect(placement).toHaveText(originalTile);
-    await expect(source.locator('button')).toHaveAttribute('aria-label', /Place selected fraction in source position/);
+    await expect(page.locator('[data-forge-target]')).toBeVisible();
+    const ingredients = page.locator('button[data-forge-ingredient]');
+    const slots = page.locator('button[data-forge-slot]');
+    const strike = page.locator('button[data-forge-strike]');
+    await expect(ingredients).toHaveCount(4);
+    await expect(slots).toHaveCount(2);
+    const emptySlotText = (await slots.first().innerText()).trim();
+    await ingredients.first().click();
+    await expect.poll(async () => (await slots.first().innerText()).trim()).not.toBe(emptySlotText);
+    await slots.first().click();
+    await expect.poll(async () => (await slots.first().innerText()).trim()).toBe(emptySlotText);
+    for (let index = 0; index < await slots.count(); index += 1) {
+      const before = (await slots.nth(index).innerText()).trim();
+      await page.locator('button[data-forge-ingredient]:visible:not([disabled]):not([aria-disabled="true"])').first().click();
+      await expect.poll(async () => (await slots.nth(index).innerText()).trim()).not.toBe(before);
+    }
+    await expect(strike).toBeEnabled();
+    await strike.click();
+    await expect(page.locator('[data-forge-feedback]')).toHaveAttribute('data-tone', /^(success|error)$/);
     await expect(question).toBeVisible();
 
-    const placed = await placement.boundingBox();
-    await page.mouse.move(placed.x + placed.width / 2, placed.y + placed.height / 2);
-    await page.mouse.down();
-    await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2, { steps: 12 });
-    await page.mouse.up();
-    await expect(source.locator('button')).toHaveText(originalTile);
-    await expect(placement).toHaveCount(0);
+    question = await startMission(routes.simplify_sprint);
+    const sprint = page.locator('[data-simplify-sprint]');
+    const fraction = page.locator('[data-sprint-fraction]');
+    const gates = page.locator('button[data-sprint-gate]');
+    const sprintProgress = page.locator('[data-sprint-progress]');
+    await expect(sprint).toHaveAttribute('data-phase', /^(idle|dash|burst|crash|checkpoint)$/);
+    await expect(fraction).toBeVisible();
+    await expect(gates).toHaveCount(3);
+    await expect(sprintProgress).toBeVisible();
+    const sprintLayout = await page.evaluate(() => {
+      const box = (element) => {
+        const { left, right, top, bottom, width, height } = element.getBoundingClientRect();
+        return { left, right, top, bottom, width, height };
+      };
+      const questionBox = box(document.querySelector('[data-game-question]'));
+      const sceneBox = box(document.querySelector('[data-sprint-scene]'));
+      const fractionBox = box(document.querySelector('[data-sprint-fraction]'));
+      const gateBoxes = [...document.querySelectorAll('button[data-sprint-gate]')].map((button) => {
+        const rect = box(button);
+        const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        return { ...rect, reachable: hit === button || button.contains(hit) };
+      });
+      return {
+        viewportWidth: document.documentElement.clientWidth,
+        viewportHeight: document.documentElement.clientHeight,
+        scrollWidth: document.documentElement.scrollWidth,
+        questionBox, sceneBox, fractionBox, gateBoxes,
+      };
+    });
+    expect(sprintLayout.scrollWidth).toBeLessThanOrEqual(sprintLayout.viewportWidth + 1);
+    expect(sprintLayout.questionBox.bottom).toBeLessThanOrEqual(sprintLayout.sceneBox.top + 2);
+    expect(sprintLayout.fractionBox.top).toBeGreaterThanOrEqual(sprintLayout.sceneBox.top - 2);
+    expect(sprintLayout.fractionBox.bottom).toBeLessThanOrEqual(sprintLayout.sceneBox.bottom + 2);
+    for (const gate of sprintLayout.gateBoxes) {
+      expect(gate.width).toBeGreaterThan(40);
+      expect(gate.height).toBeGreaterThan(40);
+      expect(gate.left).toBeGreaterThanOrEqual(-1);
+      expect(gate.right).toBeLessThanOrEqual(sprintLayout.viewportWidth + 1);
+      expect(gate.top).toBeGreaterThan(sprintLayout.questionBox.bottom);
+      expect(gate.bottom).toBeLessThanOrEqual(sprintLayout.viewportHeight + 1);
+      expect(gate.reachable).toBe(true);
+    }
+    const initialNumerator = Number(await fraction.getAttribute('data-numerator'));
+    const initialDenominator = Number(await fraction.getAttribute('data-denominator'));
+    expect(initialNumerator).toBeGreaterThan(0);
+    expect(initialDenominator).toBeGreaterThan(0);
+    const factors = await gates.evaluateAll((buttons) => buttons.map((button) => Number(button.getAttribute('data-sprint-gate'))));
+    expect(new Set(factors).size).toBe(3);
+    const wrongGate = factors.findIndex((factor) => initialNumerator % factor !== 0 || initialDenominator % factor !== 0);
+    const safeGate = factors.findIndex((factor) => initialNumerator % factor === 0 && initialDenominator % factor === 0);
+    expect(wrongGate).toBeGreaterThanOrEqual(0);
+    expect(safeGate).toBeGreaterThanOrEqual(0);
+    await gates.nth(wrongGate).click();
+    await expect(page.locator('[data-sprint-feedback]')).toBeVisible();
+    await expect(fraction).toHaveAttribute('data-numerator', String(initialNumerator));
+    await expect(fraction).toHaveAttribute('data-denominator', String(initialDenominator));
+    const clearedBefore = Number(await sprintProgress.getAttribute('data-cleared'));
+    await gates.nth(safeGate).click();
+    const reducedBy = factors[safeGate];
+    await expect.poll(async () => {
+      const top = await fraction.getAttribute('data-numerator');
+      const bottom = await fraction.getAttribute('data-denominator');
+      return `${top}/${bottom}`;
+    }, { timeout: 4000, intervals: [50, 100] }).toBe(`${initialNumerator / reducedBy}/${initialDenominator / reducedBy}`);
+    await expect.poll(async () => Number(await sprintProgress.getAttribute('data-cleared'))).toBeGreaterThan(clearedBefore);
+    await expect(question).toBeVisible();
 
     question = await startMission(routes.remainder_run);
     const expression = (await question.innerText()).trim().match(/^([\d.]+) ÷ (\d+) = \?$/);
@@ -165,7 +222,7 @@ for (const profile of profiles) {
     await page.getByRole('button', { name: 'RESET TIMEKEEPER', exact: false }).click();
     await expect(question).toHaveText(/^Set the clock to \d{2}:\d{2}\.$/);
     expect(errors).toEqual([]);
-    reports.push({ profile: profile.name, passed: true, checks: ['mission after input/reset', 'suspect inspection/close', 'scaled fraction drag follows pointer', 'fraction drop and return', 'visible division expression and correct-answer advance', 'four multiplication choices and four-hit damage progression/results', 'visible clock target and correct-time/reset feedback'] });
+    reports.push({ profile: profile.name, passed: true, checks: ['mission after input/reset', 'suspect inspection/close', 'fraction ingredient placement/removal and Strike', 'Sprint gate risk/reduction and unobstructed controls', 'visible division expression and correct-answer advance', 'four multiplication choices and four-hit damage progression/results', 'visible clock target and correct-time/reset feedback'] });
     console.log(`${profile.name}: question and input checks passed`);
   } catch (error) {
     reports.push({ profile: profile.name, passed: false, error: error.stack, errors });

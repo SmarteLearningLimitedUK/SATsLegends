@@ -1,16 +1,16 @@
-﻿import ArcadeJourney from '../components/game-ui/ArcadeJourney';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
-import { ChevronLeft, CircleDollarSign } from 'lucide-react';
+import { ChevronLeft, Heart, Timer, Zap } from 'lucide-react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
-import AssetIcon from '../components/AssetIcon';
+import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
+import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
+import { AVATARS } from '../constants';
+import { useTrimmedImageSource } from '../utils/trimTransparentImage';
 import { triggerHaptic } from '../haptics';
 import simplifySprintBackground from '../assets/maps/premium/simplify-sprint.webp';
-import successRoundBackground from '../assets/end of round screen/success screen.jpg';
-import failureRoundBackground from '../assets/end of round screen/failure screen.jpg';
+import './simplify-sprint.css';
 
-interface SimplifySprintGameProps {
+interface SimplifySprintGameProps extends MiniGameShellContractProps {
   levelId: number;
   miniGameLevel?: number;
   avatarId: string;
@@ -26,545 +26,361 @@ interface FractionPair {
   denominator: number;
 }
 
-type QuestionKind = 'fluency' | 'reasoning';
-
-interface RoundQuestion {
+interface SprintQuestion {
   id: string;
   prompt: FractionPair;
   answer: FractionPair;
-  options: FractionPair[];
-  kind: QuestionKind;
 }
 
-type RoundResultState = {
-  kind: 'success' | 'failure';
-  title: string;
-  subtitle: string;
-  statLabel: string;
-  statValue: string;
-};
+type SprintPhase = 'idle' | 'dash' | 'burst' | 'crash' | 'checkpoint';
+type FeedbackTone = 'info' | 'success' | 'error';
+
+const BASES: readonly (readonly FractionPair[])[] = [
+  [{ numerator: 1, denominator: 2 }, { numerator: 1, denominator: 3 }, { numerator: 2, denominator: 3 }, { numerator: 1, denominator: 4 }, { numerator: 3, denominator: 4 }],
+  [{ numerator: 1, denominator: 2 }, { numerator: 2, denominator: 3 }, { numerator: 1, denominator: 4 }, { numerator: 3, denominator: 4 }, { numerator: 2, denominator: 5 }, { numerator: 3, denominator: 5 }, { numerator: 4, denominator: 5 }, { numerator: 5, denominator: 6 }],
+  [{ numerator: 2, denominator: 3 }, { numerator: 3, denominator: 4 }, { numerator: 2, denominator: 5 }, { numerator: 3, denominator: 5 }, { numerator: 5, denominator: 6 }, { numerator: 3, denominator: 7 }, { numerator: 4, denominator: 7 }, { numerator: 5, denominator: 8 }, { numerator: 7, denominator: 8 }, { numerator: 7, denominator: 10 }],
+  [{ numerator: 3, denominator: 5 }, { numerator: 5, denominator: 6 }, { numerator: 4, denominator: 7 }, { numerator: 7, denominator: 8 }, { numerator: 5, denominator: 9 }, { numerator: 7, denominator: 9 }, { numerator: 7, denominator: 12 }, { numerator: 11, denominator: 12 }, { numerator: 9, denominator: 16 }, { numerator: 11, denominator: 16 }],
+  [{ numerator: 5, denominator: 4 }, { numerator: 7, denominator: 5 }, { numerator: 9, denominator: 7 }, { numerator: 11, denominator: 8 }, { numerator: 5, denominator: 9 }, { numerator: 7, denominator: 12 }, { numerator: 11, denominator: 12 }, { numerator: 13, denominator: 16 }, { numerator: 17, denominator: 20 }, { numerator: 19, denominator: 24 }, { numerator: 7, denominator: 10 }, { numerator: 13, denominator: 18 }],
+];
+const MULTIPLIERS: readonly (readonly number[])[] = [
+  [2, 3, 4],
+  [2, 3, 4, 5],
+  [3, 4, 5, 6],
+  [4, 5, 6, 8, 9],
+  [5, 6, 8, 9, 10, 12],
+];
+const ROUNDS_PER_TIER = [5, 5, 6, 6, 7];
 
 const gcd = (a: number, b: number): number => {
   let x = Math.abs(a);
   let y = Math.abs(b);
   while (y !== 0) {
-    const t = y;
-    y = x % y;
-    x = t;
+    const remainder = x % y;
+    x = y;
+    y = remainder;
   }
   return Math.max(1, x);
 };
-
+const fractionLabel = (pair: FractionPair) => pair.numerator + '/' + pair.denominator;
 const sameFraction = (a: FractionPair, b: FractionPair) => a.numerator === b.numerator && a.denominator === b.denominator;
 
-const simplify = (pair: FractionPair): FractionPair => {
-  const d = gcd(pair.numerator, pair.denominator);
-  return {
-    numerator: Math.floor(pair.numerator / d),
-    denominator: Math.floor(pair.denominator / d),
-  };
-};
-
-const fractionKey = (pair: FractionPair) => `${pair.numerator}/${pair.denominator}`;
-
-const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
-
-const shuffle = <T,>(items: T[]): T[] => {
-  const clone = [...items];
-  for (let i = clone.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [clone[i], clone[j]] = [clone[j], clone[i]];
-  }
-  return clone;
-};
-
-const makeQuestion = (level: number, round: number): RoundQuestion => {
+// Seven is coprime to every deck length, so a run visits distinct prompts.
+const makeQuestion = (level: number, round: number, runOffset = 0): SprintQuestion => {
   const tier = Math.max(1, Math.min(5, level));
-  const maxDen = [4, 6, 10, 16, 24][tier - 1];
-  let baseDen = randomInt(2, Math.max(4, maxDen));
-  let baseNum = randomInt(1, baseDen - 1);
-  if (level >= 5 && Math.random() > 0.58) {
-    baseNum = randomInt(baseDen + 1, Math.max(baseDen + 2, baseDen * 2));
-  }
-
-  const base = simplify({ numerator: baseNum, denominator: baseDen });
-  const multiplier = randomInt(2, [2, 3, 4, 6, 8][tier - 1]);
-  const prompt = {
-    numerator: base.numerator * multiplier,
-    denominator: base.denominator * multiplier,
-  };
-  const answer = simplify(prompt);
-
-  const distractorPool: FractionPair[] = [
-    { numerator: Math.max(1, answer.numerator + 1), denominator: answer.denominator },
-    { numerator: Math.max(1, answer.numerator - 1), denominator: answer.denominator },
-    { numerator: answer.numerator, denominator: Math.max(2, answer.denominator + 1) },
-    { numerator: answer.numerator, denominator: Math.max(2, answer.denominator - 1) },
-    simplify({ numerator: Math.max(1, prompt.numerator - gcd(prompt.numerator, prompt.denominator)), denominator: prompt.denominator }),
-    simplify({ numerator: prompt.numerator, denominator: Math.max(2, prompt.denominator - gcd(prompt.numerator, prompt.denominator)) }),
-  ]
-    .filter((option) => option.denominator !== 0 && !sameFraction(option, answer))
-    .map((option) => simplify(option));
-
-  const options = shuffle(
-    [answer, ...shuffle(distractorPool).filter((option, idx, arr) => (
-      arr.findIndex((candidate) => fractionKey(candidate) === fractionKey(option)) === idx
-    )).slice(0, 3)],
-  );
-
-  while (options.length < 4) {
-    const fallback = simplify({
-      numerator: Math.max(1, answer.numerator + randomInt(-2, 2)),
-      denominator: Math.max(2, answer.denominator + randomInt(-2, 2)),
-    });
-    if (!options.some((option) => sameFraction(option, fallback))) {
-      options.push(fallback);
-    }
-  }
-
+  const bases = BASES[tier - 1];
+  const multipliers = MULTIPLIERS[tier - 1];
+  const deckLength = bases.length * multipliers.length;
+  const index = ((runOffset + (round - 1) * 7) % deckLength + deckLength) % deckLength;
+  const base = bases[Math.floor(index / multipliers.length)];
+  const multiplier = multipliers[index % multipliers.length];
   return {
-    id: `${Date.now()}-${round}-${Math.random().toString(36).slice(2, 7)}`,
-    prompt,
-    answer,
-    options: shuffle(options),
-    kind: 'fluency',
+    id: 'sprint-' + tier + '-' + index,
+    prompt: { numerator: base.numerator * multiplier, denominator: base.denominator * multiplier },
+    answer: { ...base },
   };
 };
 
-const getFactorChoices = (pair: FractionPair): number[] => {
-  const valid = Array.from({ length: 8 }, (_, index) => index + 2)
+// Every junction has a safe route and a trap. Later tiers can offer two valid
+// routes: the greatest common factor is the one-step shortcut.
+const getFactorChoices = (pair: FractionPair, tier: number, seed: number): number[] => {
+  const greatest = gcd(pair.numerator, pair.denominator);
+  if (greatest <= 1) return [2, 3, 4];
+  const valid = Array.from({ length: greatest - 1 }, (_, index) => index + 2)
     .filter((factor) => pair.numerator % factor === 0 && pair.denominator % factor === 0);
-  const distractors = shuffle(
-    Array.from({ length: 8 }, (_, index) => index + 2)
-      .filter((factor) => !valid.includes(factor)),
-  );
-
-  const merged = [...valid, ...distractors].slice(0, 4);
-  return shuffle(merged);
+  const smaller = valid.filter((factor) => factor < greatest);
+  const safe = [greatest];
+  if (tier >= 2 && smaller.length > 0 && (tier >= 4 || seed % 3 === 0)) {
+    safe.push(smaller[Math.abs(seed) % smaller.length]);
+  }
+  const decoys = Array.from({ length: Math.max(18, greatest + 7) - 1 }, (_, index) => index + 2)
+    .filter((factor) => pair.numerator % factor !== 0 || pair.denominator % factor !== 0)
+    .sort((a, b) => Math.abs(a - greatest) - Math.abs(b - greatest) || a - b);
+  const selected = [...safe];
+  for (let index = 0; selected.length < 3; index++) {
+    const decoy = decoys[(Math.abs(seed) + index) % decoys.length];
+    if (!selected.includes(decoy)) selected.push(decoy);
+  }
+  const rotation = Math.abs(seed) % 3;
+  return [...selected.slice(rotation), ...selected.slice(0, rotation)];
 };
-
-const scoreToStars = (accuracy: number, lives: number, timeLeft: number) => {
-  if (accuracy >= 0.9 && lives >= 3 && timeLeft >= 14) return 3;
-  if (accuracy >= 0.65 && lives >= 2) return 2;
-  return 1;
-};
-
-const FractionView: React.FC<{ pair: FractionPair; className?: string }> = ({ pair, className = '' }) => (
-  <div className={`inline-flex flex-col items-center justify-center ${className}`.trim()}>
-    <span className="text-[clamp(1.65rem,4vw,2.9rem)] font-black leading-none">{pair.numerator}</span>
-    <span className="my-1 h-[3px] w-[72%] rounded-full bg-white/95" />
-    <span className="text-[clamp(1.65rem,4vw,2.9rem)] font-black leading-none">{pair.denominator}</span>
-  </div>
-);
 
 const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
-  levelId,
-  miniGameLevel,
-  avatarId: _avatarId,
-  useSharedTopHud = false,
-  isBoss: _isBoss = false,
-  onVictory,
-  onGameOver,
-  onBack,
+  levelId, miniGameLevel, avatarId, useSharedTopHud = false, isBoss: _isBoss = false,
+  isPractice = false, practiceBriefing, gameTitle, sessionState, sessionEvents,
+  onVictory, onGameOver, onBack,
 }) => {
-  const resolvedLevel = useMemo(
-    () => Math.max(1, Math.min(5, miniGameLevel || levelId || 1)),
-    [levelId, miniGameLevel],
-  );
-  const totalRounds = useMemo(() => Math.min(12, 6 + Math.floor(resolvedLevel / 2)), [resolvedLevel]);
-  const initialTime = useMemo(() => Math.max(36, 64 - (resolvedLevel * 2)), [resolvedLevel]);
-
-  const [roundNumber, setRoundNumber] = useState(1);
-  const [question, setQuestion] = useState<RoundQuestion>(() => makeQuestion(resolvedLevel, 1));
-  const [timeLeft, setTimeLeft] = useState(initialTime);
-  const [XP, setScore] = useState(0);
-  const [lives, setLives] = useState(4);
-  const [attempts, setAttempts] = useState(0);
-  const [correctAnswers, setCorrectAnswers] = useState(0);
+  const tier = Math.max(1, Math.min(5, miniGameLevel || levelId || 1));
+  const totalRounds = ROUNDS_PER_TIER[tier - 1];
+  const runOffsetRef = useRef(Math.floor(Math.random() * 70));
+  const [question, setQuestion] = useState(() => makeQuestion(tier, 1, runOffsetRef.current));
+  const [currentPair, setCurrentPair] = useState<FractionPair>(() => question.prompt);
+  const [roundIndex, setRoundIndex] = useState(1);
+  const [stepIndex, setStepIndex] = useState(0);
+  const [cleared, setCleared] = useState(0);
+  const [score, setScore] = useState(0);
+  const [combo, setCombo] = useState(0);
+  const [mistakes, setMistakes] = useState(0);
+  const [localLives, setLocalLives] = useState(3);
+  const [localTimeLeft, setLocalTimeLeft] = useState(90);
+  const [phase, setPhase] = useState<SprintPhase>('idle');
+  const [selectedLane, setSelectedLane] = useState(2);
   const [locked, setLocked] = useState(false);
-  const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; text: string } | null>(null);
-  const [currentPair, setCurrentPair] = useState<FractionPair>(() => makeQuestion(resolvedLevel, 1).prompt);
-  const [startPair, setStartPair] = useState<FractionPair>(() => makeQuestion(resolvedLevel, 1).prompt);
-  const [factorChain, setFactorChain] = useState<number[]>([]);
-  useEffect(() => setFactorChain([]), [question.id]);
-  const [fractionShake, setFractionShake] = useState(false);
-  const [fractionPulseKey, setFractionPulseKey] = useState(0);
-  const [roundResult, setRoundResult] = useState<RoundResultState | null>(null);
-
-  const scoreRef = useRef(0);
+  const [feedback, setFeedback] = useState<{ tone: FeedbackTone; text: string }>({
+    tone: 'info', text: 'Find a common factor. Biggest one = shortcut!',
+  });
+  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
   const endedRef = useRef(false);
-  const roundResultTimerRef = useRef<number | null>(null);
-  scoreRef.current = XP;
+  const pendingRef = useRef<number[]>([]);
+  const scoreRef = useRef(score);
+  scoreRef.current = score;
+  const timeLeft = sessionState?.timeLeft ?? localTimeLeft;
+  const lives = sessionState?.lives ?? localLives;
+  const totalTime = sessionState?.totalTime ?? 90;
+  const dangerPercent = isPractice ? Math.min(42, 8 + mistakes * 8) : Math.min(88, 8 + (1 - timeLeft / Math.max(1, totalTime)) * 62 + mistakes * 8);
+  const gates = useMemo(
+    () => getFactorChoices(currentPair, tier, roundIndex * 17 + stepIndex * 31),
+    [currentPair, tier, roundIndex, stepIndex],
+  );
+  const avatar = AVATARS.find((entry) => entry.id === avatarId) ?? AVATARS[0];
+  const heroImage = useTrimmedImageSource(avatar.image);
 
-  const clearRoundResultTimer = useCallback(() => {
-    if (roundResultTimerRef.current !== null) {
-      window.clearTimeout(roundResultTimerRef.current);
-      roundResultTimerRef.current = null;
-    }
+  const clearPending = useCallback(() => {
+    pendingRef.current.forEach((id) => window.clearTimeout(id));
+    pendingRef.current = [];
+  }, []);
+  const delay = useCallback((callback: () => void, milliseconds: number) => {
+    pendingRef.current.push(window.setTimeout(callback, milliseconds));
   }, []);
 
   useEffect(() => {
-    clearRoundResultTimer();
-    const initialQuestion = makeQuestion(resolvedLevel, 1);
+    clearPending();
     endedRef.current = false;
-    setRoundNumber(1);
-    setQuestion(initialQuestion);
-    setTimeLeft(initialTime);
+    runOffsetRef.current = Math.floor(Math.random() * 70);
+    const first = makeQuestion(tier, 1, runOffsetRef.current);
+    setQuestion(first);
+    setCurrentPair(first.prompt);
+    setRoundIndex(1);
+    setStepIndex(0);
+    setCleared(0);
     setScore(0);
-    setLives(4);
-    setAttempts(0);
-    setCorrectAnswers(0);
+    setCombo(0);
+    setMistakes(0);
+    setLocalLives(3);
+    setLocalTimeLeft(90);
+    setPhase('idle');
+    setSelectedLane(2);
     setLocked(false);
-    setFeedback(null);
-    setCurrentPair(initialQuestion.prompt);
-    setStartPair(initialQuestion.prompt);
-    setFractionShake(false);
-    setFractionPulseKey(0);
-    setRoundResult(null);
-  }, [clearRoundResultTimer, initialTime, resolvedLevel]);
-
+    setFeedback({ tone: 'info', text: 'Find a common factor. Biggest one = shortcut!' });
+    return clearPending;
+  }, [tier, clearPending]);
+  useEffect(() => setShowPracticeIntro(Boolean(isPractice)), [isPractice]);
   useEffect(() => {
-    setCurrentPair(question.prompt);
-    setStartPair(question.prompt);
-  }, [question]);
-
-  useEffect(() => () => {
-    clearRoundResultTimer();
-  }, [clearRoundResultTimer]);
-
-  useEffect(() => {
-    if (endedRef.current) return undefined;
+    if (sessionState || isPractice || showPracticeIntro) return undefined;
     const timer = window.setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          if (!endedRef.current) {
-            endedRef.current = true;
-            clearRoundResultTimer();
-            setFeedback(null);
-            setRoundResult({
-              kind: 'failure',
-              title: 'Time Up',
-              subtitle: 'The sprint ran out before the fraction was simplified.',
-              statLabel: 'Final XP',
-              statValue: `${scoreRef.current}`,
-            });
-            roundResultTimerRef.current = window.setTimeout(() => onGameOver(scoreRef.current), 1400);
-          }
-          return 0;
-        }
-        return prev - 1;
-      });
+      if (!document.hidden) setLocalTimeLeft((previous) => Math.max(0, previous - 1));
     }, 1000);
     return () => window.clearInterval(timer);
-  }, [clearRoundResultTimer, onGameOver]);
+  }, [sessionState, isPractice, showPracticeIntro]);
+  useEffect(() => {
+    if (sessionState || isPractice || localTimeLeft > 0 || endedRef.current) return;
+    endedRef.current = true;
+    sessionEvents?.onGameFailed?.({ type: 'game_failed', score: scoreRef.current, reason: 'time' });
+    onGameOver(scoreRef.current);
+  }, [sessionState, isPractice, localTimeLeft, onGameOver, sessionEvents]);
 
-  const factorChoices = useMemo(() => getFactorChoices(currentPair), [currentPair]);
-  const startGcd = useMemo(() => gcd(startPair.numerator, startPair.denominator), [startPair]);
-  const currentGcd = useMemo(() => gcd(currentPair.numerator, currentPair.denominator), [currentPair]);
-  const simplifyProgress = startGcd <= 1 ? 1 : Math.max(0, Math.min(1, 1 - (currentGcd - 1) / (startGcd - 1)));
-
-  const handleFactor = (factor: number) => {
-    if (locked || endedRef.current) return;
+  const chooseGate = useCallback((lane: number) => {
+    if (locked || endedRef.current || showPracticeIntro || sessionState?.paused) return;
+    const factor = gates[lane - 1];
+    if (!factor) return;
+    setSelectedLane(lane);
     setLocked(true);
-    const isValid = currentPair.numerator % factor === 0 && currentPair.denominator % factor === 0;
-
-    if (!isValid) {
-      const nextAttempts = attempts + 1;
-      const nextLives = lives - 1;
-      setAttempts(nextAttempts);
-      setLives(nextLives);
-      setFeedback({ tone: 'error', text: `${factor} will not simplify both numbers.` });
-      setFractionShake(true);
-      triggerHaptic('error');
-
-      if (nextLives <= 0) {
-        endedRef.current = true;
-        clearRoundResultTimer();
-        setFeedback(null);
-        setRoundResult({
-          kind: 'failure',
-          title: 'Sprint Failed',
-          subtitle: 'You ran out of lives on this fraction.',
-          statLabel: 'Final XP',
-          statValue: `${XP}`,
+    setPhase('dash');
+    setFeedback({ tone: 'info', text: 'Running for ÷' + factor + '…' });
+    triggerHaptic('selection');
+    delay(() => {
+      const safe = currentPair.numerator % factor === 0 && currentPair.denominator % factor === 0;
+      if (!safe) {
+        setPhase('crash');
+        setMistakes((previous) => previous + 1);
+        setCombo(0);
+        setFeedback({ tone: 'error', text: '÷' + factor + ' cannot divide both ' + currentPair.numerator + ' and ' + currentPair.denominator + '. Try another gate.' });
+        triggerHaptic('error');
+        sessionEvents?.onIncorrectAnswer?.({
+          type: 'incorrect_answer', score,
+          metadata: { prompt: fractionLabel(currentPair), factor },
         });
-        roundResultTimerRef.current = window.setTimeout(() => onGameOver(XP), 1400);
+        if (!sessionState && !isPractice) {
+          const nextLives = localLives - 1;
+          setLocalLives(nextLives);
+          if (nextLives <= 0) {
+            endedRef.current = true;
+            delay(() => {
+              sessionEvents?.onGameFailed?.({ type: 'game_failed', score, reason: 'lives' });
+              onGameOver(score);
+            }, 620);
+            return;
+          }
+        }
+        delay(() => { setPhase('idle'); setLocked(false); }, 690);
         return;
       }
 
-      window.setTimeout(() => {
-        setFeedback(null);
-        setLocked(false);
-        setFractionShake(false);
-      }, 460);
-      return;
-    }
+      const reduced = {
+        numerator: currentPair.numerator / factor,
+        denominator: currentPair.denominator / factor,
+      };
+      const fastest = factor === gcd(currentPair.numerator, currentPair.denominator);
+      const nextCombo = combo + 1;
+      const checkpoint = sameFraction(reduced, question.answer);
+      const gained = 45 + factor * 5 + (fastest ? 35 : 0) + Math.min(5, combo) * 8 + (checkpoint ? 70 : 0);
+      const nextScore = score + gained;
+      setCurrentPair(reduced);
+      setScore(nextScore);
+      setCombo(nextCombo);
+      setPhase(checkpoint ? 'checkpoint' : 'burst');
+      setFeedback({
+        tone: 'success',
+        text: checkpoint
+          ? fractionLabel(question.prompt) + ' → ' + fractionLabel(reduced) + '. Checkpoint clear! +' + gained + ' XP'
+          : 'Both numbers ÷' + factor + '. ' + (fastest ? 'Fast route!' : 'Keep reducing!') + ' +' + gained + ' XP',
+      });
+      triggerHaptic('success');
+      sessionEvents?.onCorrectAnswer?.({
+        type: 'correct_answer', score: nextScore,
+        metadata: { factor, reduced: fractionLabel(reduced), fastest },
+      });
 
-    const reduced = {
-      numerator: currentPair.numerator / factor,
-      denominator: currentPair.denominator / factor,
+      if (!checkpoint) {
+        setStepIndex((previous) => previous + 1);
+        delay(() => { setPhase('idle'); setLocked(false); }, 680);
+        return;
+      }
+      const nextCleared = cleared + 1;
+      setCleared(nextCleared);
+      sessionEvents?.onPuzzleComplete?.({ type: 'puzzle_complete', score: nextScore });
+      if (nextCleared >= totalRounds) {
+        endedRef.current = true;
+        const stars = mistakes === 0 ? 3 : mistakes <= 2 ? 2 : 1;
+        const finish = () => {
+          sessionEvents?.onGameComplete?.({ type: 'game_complete', score: nextScore, stars });
+          onVictory(stars, nextScore);
+        };
+        if (timeLeft <= 2) finish();
+        else delay(finish, 750);
+        return;
+      }
+      delay(() => {
+        const nextRound = roundIndex + 1;
+        const nextQuestion = makeQuestion(tier, nextRound, runOffsetRef.current);
+        setRoundIndex(nextRound);
+        setQuestion(nextQuestion);
+        setCurrentPair(nextQuestion.prompt);
+        setStepIndex(0);
+        setSelectedLane(2);
+        setPhase('idle');
+        setLocked(false);
+        setFeedback({ tone: 'info', text: 'New checkpoint. Pick a common factor.' });
+      }, 870);
+    }, 380);
+  }, [
+    locked, showPracticeIntro, sessionState, gates, delay, currentPair, score, combo,
+    question, cleared, totalRounds, timeLeft, mistakes, localLives, isPractice,
+    sessionEvents, onGameOver, onVictory, roundIndex, tier,
+  ]);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.repeat || event.altKey || event.ctrlKey || event.metaKey) return;
+      if (event.target instanceof HTMLElement && event.target.closest('input, textarea, select, [contenteditable="true"]')) return;
+      const lane = Number(event.key);
+      if (lane >= 1 && lane <= 3) chooseGate(lane);
     };
-
-    setCurrentPair(reduced);
-    setFactorChain((chain) => [...chain, factor]);
-    setFractionPulseKey((prev) => prev + 1);
-    triggerHaptic('success');
-
-    if (!sameFraction(reduced, question.answer)) {
-      setFeedback({ tone: 'success', text: `Nice. ${factor} works. Keep reducing.` });
-      window.setTimeout(() => {
-        setFeedback(null);
-        setLocked(false);
-      }, 420);
-      return;
-    }
-
-    const nextAttempts = attempts + 1;
-    const awarded = 100 + Math.max(0, Math.floor(timeLeft * 0.8)) + (resolvedLevel * 12);
-    const nextScore = XP + awarded;
-    const nextCorrect = correctAnswers + 1;
-    const isFinalRound = roundNumber >= totalRounds;
-    const accuracy = nextAttempts > 0 ? nextCorrect / nextAttempts : 1;
-    const stars = scoreToStars(accuracy, lives, timeLeft);
-
-    setAttempts(nextAttempts);
-    setScore(nextScore);
-    setCorrectAnswers(nextCorrect);
-    setFeedback(null);
-
-    clearRoundResultTimer();
-    setRoundResult({
-      kind: 'success',
-      title: isFinalRound ? 'Vault Escape Complete' : 'Vault Unlocked',
-      subtitle: isFinalRound
-        ? 'You simplified the final fraction.'
-        : 'Brain power collected. Next fraction is loading.',
-      statLabel: isFinalRound ? 'Final XP' : 'XP Earned',
-      statValue: isFinalRound ? `${nextScore}` : `+${awarded}`,
-    });
-
-    if (isFinalRound) {
-      endedRef.current = true;
-      roundResultTimerRef.current = window.setTimeout(() => onVictory(stars, nextScore), 1400);
-      return;
-    }
-
-    roundResultTimerRef.current = window.setTimeout(() => {
-      const nextRound = roundNumber + 1;
-      const nextQuestion = makeQuestion(resolvedLevel, nextRound);
-      setRoundResult(null);
-      setRoundNumber(nextRound);
-      setQuestion(nextQuestion);
-      setFeedback(null);
-      setLocked(false);
-    }, 1400);
-  };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [chooseGate]);
 
   return (
-    <div className="relative h-full w-full overflow-hidden select-none text-white">
-      <GameplaySceneBackdrop
-        gameType="fraction_match"
-        backgroundOverride={simplifySprintBackground}
-        className="opacity-[0.98]"
+    <div
+      className="simplify-sprint-game ss-game"
+      data-simplify-sprint
+      data-phase={phase}
+      data-tier={tier}
+      style={{ '--ss-background': 'url(' + simplifySprintBackground + ')' } as React.CSSProperties}
+    >
+      <GameplaySceneBackdrop gameType="fraction_match" backgroundOverride={simplifySprintBackground} />
+      <div className="ss-scrim" aria-hidden="true" />
+      <PracticeIntroPopup
+        open={showPracticeIntro}
+        title={gameTitle || 'Simplify Sprint'}
+        body="The forest route is blocked by factor gates. Choose a number that divides both parts of the fraction to sprint through."
+        briefing={practiceBriefing}
+        onAction={() => setShowPracticeIntro(false)}
       />
-
-      {!useSharedTopHud && (
-        <div data-local-top-hud="true" className="absolute left-0 right-0 z-30 flex items-center justify-between px-3 py-2 md:px-5" style={{ top: 'calc(env(safe-area-inset-top) + 2px)' }}>
-          <button
-            type="button"
-            onClick={onBack}
-            className="flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-200/45 bg-[#0a1f56]/88 shadow-[0_8px_20px_rgba(0,0,0,0.45)]"
-            aria-label="Back"
+      <div className="ss-layout">
+        <div className="ss-top">
+          <GameQuestionCard
+            title={gameTitle || 'Simplify Sprint'}
+            className="ss-question"
+            style={{ position: 'relative', top: 'auto', left: 'auto', right: 'auto', width: '100%', transform: 'none' }}
           >
-            <ChevronLeft className="h-5 w-5 text-cyan-100" />
-          </button>
-          <div className="flex items-center gap-2 rounded-xl border border-cyan-200/45 bg-[#0a1f56]/92 px-3 py-2 shadow-[0_8px_20px_rgba(0,0,0,0.45)]">
-            <AssetIcon name="timer" className="h-4 w-4" />
-            <span className="text-xs font-black tabular-nums">{timeLeft}s</span>
-            <span className="h-4 w-px bg-cyan-100/35" />
-            <CircleDollarSign className="h-4 w-4 text-yellow-300" />
-            <span className="text-xs font-black tabular-nums">{XP}</span>
+            Reduce <strong>{fractionLabel(currentPair)}</strong>. Pick a gate that divides the top and bottom.
+          </GameQuestionCard>
+          <div className="ss-stats" aria-label={'Checkpoint ' + roundIndex + ' of ' + totalRounds + ', combo ' + combo + ', ' + score + ' XP'}>
+            {!useSharedTopHud && <button type="button" className="ss-back" data-button-skin="none" onClick={onBack} aria-label="Back"><ChevronLeft /></button>}
+            <div className="ss-stat"><span>CHECKPOINT</span><strong className="ss-stat-value">{roundIndex} / {totalRounds}</strong></div>
+            <div className="ss-stat"><span><Zap aria-hidden="true" /> COMBO</span><strong className="ss-stat-value">×{combo}</strong></div>
+            <div className="ss-stat"><span>XP</span><strong className="ss-stat-value">{score}</strong></div>
+            <div className="ss-stat ss-stat-clock"><span>{isPractice ? <Heart aria-hidden="true" /> : <Timer aria-hidden="true" />}{isPractice ? 'PRACTICE' : 'TIME'}</span><strong className="ss-stat-value">{isPractice ? '∞' : timeLeft + 's'}</strong></div>
+            {!useSharedTopHud && <div className="ss-stat"><span>LIVES</span><strong className="ss-stat-value">{lives}</strong></div>}
           </div>
         </div>
-      )}
-
-      <div
-        className={`relative z-20 flex h-full w-full flex-col items-center justify-start px-4 pb-[calc(env(safe-area-inset-bottom)+4.9rem)] ${
-          useSharedTopHud
-            ? 'pt-[calc(env(safe-area-inset-top)+5.45rem)]'
-            : 'pt-[calc(env(safe-area-inset-top)+3.9rem)]'
-        }`}
-      >
-        <div className="w-full max-w-[44rem] px-1">
-          <div className="mt-2">
-            <GameQuestionCard title="Simplify Sprint" className="max-w-[44rem]">
-              Crack the vault locks: divide both numbers by a shared factor.
-            </GameQuestionCard>
+        <div className="ss-arena" data-sprint-arena data-sprint-scene>
+          <div className="ss-scene" aria-hidden="true" />
+          <div className="ss-speedlines" aria-hidden="true" />
+          <div className="ss-arch" aria-hidden="true" />
+          <div className="ss-track" aria-hidden="true" />
+          <div className="ss-fraction-display" aria-label={'Current fraction ' + fractionLabel(currentPair)}>
+            <span className="ss-fraction-label">CARRYING</span>
+            <span className="ss-fraction" data-sprint-fraction data-numerator={currentPair.numerator} data-denominator={currentPair.denominator}>
+              <span>{currentPair.numerator}</span><span className="ss-bar" /><span>{currentPair.denominator}</span>
+            </span>
+            <span className="ss-fraction-note">Reduce to lowest terms</span>
           </div>
-        </div>
-
-        <div className="simplify-vault-panel mt-3 flex w-full max-w-[44rem] flex-1 min-h-0 flex-col items-center justify-center gap-3 rounded-[2rem] border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(15,118,110,0.32),rgba(30,64,175,0.34),rgba(15,23,42,0.86))] px-4 py-5 shadow-[0_22px_50px_rgba(0,0,0,0.45)]">
-          <ArcadeJourney kind="vault" completed={correctAnswers} total={totalRounds} avatarId={_avatarId} danger={fractionShake} />
-          <div className="flex w-full items-center gap-3">
-            <div className="flex-1">
-              <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/80">Simplify meter</div>
-              <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-slate-950/70">
-                <motion.div
-                  className="h-full rounded-full bg-gradient-to-r from-emerald-300 via-cyan-300 to-violet-300"
-                  animate={{ width: `${simplifyProgress * 100}%` }}
-                />
-              </div>
-            </div>
+          <div className="ss-gates" role="group" aria-label="Choose a factor gate">
+            {gates.map((factor, index) => (
+              <button
+                key={question.id + '-' + stepIndex + '-' + factor}
+                type="button"
+                className="ss-gate"
+                data-sprint-gate={factor}
+                data-button-skin="none"
+                disabled={locked || showPracticeIntro || gcd(currentPair.numerator, currentPair.denominator) === 1}
+                onClick={() => chooseGate(index + 1)}
+                aria-label={'Run through gate ' + (index + 1) + ': divide both numbers by ' + factor}
+              >
+                <span className="ss-gate-index">GATE {index + 1}</span>
+                <strong className="ss-gate-factor">÷{factor}</strong>
+                <span className="ss-gate-label">RUN</span>
+              </button>
+            ))}
           </div>
-
-          <motion.div
-            animate={fractionShake ? { x: [0, -10, 10, -8, 8, -4, 4, 0] } : { x: 0 }}
-            transition={{ duration: 0.34, ease: 'easeInOut' }}
-            className="relative mt-2 rounded-[1.7rem] border-2 border-cyan-100/50 bg-gradient-to-b from-cyan-400/95 via-sky-500/95 to-indigo-700/95 px-10 py-6 shadow-[0_18px_34px_rgba(0,0,0,0.5)]"
-          >
-            <motion.div
-              className="absolute inset-0 rounded-[1.7rem] border border-cyan-200/30 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.22),transparent_60%)]"
-              animate={{ opacity: [0.35, 0.7, 0.35] }}
-              transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
-            />
-            <motion.div
-              key={`${question.id}-${fractionKey(currentPair)}-${fractionPulseKey}`}
-              initial={{ scale: 0.94, opacity: 0.86 }}
-              animate={{ scale: [1, 1.1, 1], opacity: 1 }}
-              transition={{ duration: 0.34, ease: 'easeOut' }}
-              className="relative"
-            >
-              <FractionView pair={currentPair} />
-            </motion.div>
-          </motion.div>
-
-          <div className="rounded-full border border-sky-200/40 bg-[linear-gradient(180deg,rgba(14,116,144,0.28),rgba(15,23,42,0.78))] px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-cyan-50">
-            {factorChain.length ? `Locks opened: ${factorChain.map((factor) => `÷ ${factor}`).join(' → ')}` : 'Choose a factor to open the first lock'}
+          <div className="ss-runner" data-lane={selectedLane} aria-hidden="true">
+            <div className="ss-runner-shadow" />
+            <img className="ss-runner-image" src={heroImage} alt="" draggable={false} />
+            <span className="ss-dust ss-dust-one" /><span className="ss-dust ss-dust-two" />
           </div>
+          <div className="ss-slime-front" style={{ width: dangerPercent + '%' }} aria-hidden="true" />
         </div>
-
-        <div className="mt-4 grid w-full max-w-[760px] grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
-          {factorChoices.map((factor) => (
-            <motion.button
-              key={`${question.id}-factor-${factor}-${fractionKey(currentPair)}`}
-              type="button"
-              whileTap={{ scale: 0.97 }}
-              disabled={locked}
-              onClick={() => handleFactor(factor)}
-              className="ui-button-secondary rounded-[1.1rem] px-2 py-4 disabled:opacity-70"
-            >
-              <span className="text-[clamp(1.1rem,2.7vw,1.7rem)] font-black uppercase tracking-[0.1em] text-cyan-50">
-                ÷ {factor}
-              </span>
-            </motion.button>
-          ))}
+        <div className="ss-bottom">
+          <div className="ss-feedback" data-sprint-feedback data-tone={feedback.tone} role="status" aria-live="polite">{feedback.text}</div>
+          <div className="ss-progress" data-sprint-progress data-cleared={cleared} aria-label={cleared + ' of ' + totalRounds + ' checkpoints cleared'}>
+            {Array.from({ length: totalRounds }, (_, index) => <span key={index} className="ss-progress-mark" data-done={index < cleared ? 'true' : 'false'} />)}
+          </div>
+          <div className="ss-hint">Tap a gate · or press 1, 2, 3</div>
         </div>
-
-        <AnimatePresence>
-          {feedback && (
-            <motion.div
-              initial={{ opacity: 0, y: 12, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -12, scale: 0.96 }}
-              className={`mt-3 rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.12em] ${
-                feedback.tone === 'success'
-                  ? 'border-emerald-300/65 bg-emerald-300/20 text-emerald-50'
-                  : 'border-rose-300/65 bg-rose-300/20 text-amber-50'
-              }`}
-            >
-              {feedback.text}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {roundResult && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 overflow-hidden"
-            >
-              <div className="absolute inset-0">
-                <img
-                  src={roundResult.kind === 'success' ? successRoundBackground : failureRoundBackground}
-                  alt=""
-                  className="h-full w-full object-contain"
-                  draggable={false}
-                />
-                <div
-                  className={`absolute inset-0 ${
-                    roundResult.kind === 'success'
-                      ? 'bg-[linear-gradient(180deg,rgba(4,18,45,0.28),rgba(2,6,23,0.68))]'
-                      : 'bg-[linear-gradient(180deg,rgba(35,8,16,0.22),rgba(2,6,23,0.76))]'
-                  }`}
-                />
-                <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/35 to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/55 to-transparent" />
-              </div>
-
-              <div className="relative flex h-full w-full items-center justify-center px-4 py-6">
-                <motion.div
-                  initial={{ scale: 0.92, y: 16 }}
-                  animate={{ scale: 1, y: 0 }}
-                  transition={{ type: 'spring', stiffness: 180, damping: 18 }}
-                  className={`w-full max-w-[24rem] overflow-hidden rounded-[2rem] border px-5 py-6 text-center shadow-[0_24px_60px_rgba(0,0,0,0.45)] backdrop-blur-md ${
-                    roundResult.kind === 'success'
-                      ? 'border-emerald-200/38 bg-[linear-gradient(180deg,rgba(6,39,35,0.78),rgba(5,15,32,0.9))]'
-                      : 'border-rose-200/34 bg-[linear-gradient(180deg,rgba(54,13,24,0.78),rgba(15,11,18,0.92))]'
-                  }`}
-                >
-                  <div className={`inline-flex rounded-full border px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] ${
-                    roundResult.kind === 'success'
-                      ? 'border-emerald-200/45 bg-emerald-200/16 text-emerald-50'
-                      : 'border-rose-200/45 bg-rose-200/16 text-rose-50'
-                  }`}>
-                    {roundResult.kind === 'success' ? 'Success' : 'Failure'}
-                  </div>
-
-                  <h2 className="mt-4 text-[clamp(2.25rem,9vw,3.6rem)] font-black leading-none text-white drop-shadow-[0_6px_16px_rgba(2,6,23,0.52)]">
-                    {roundResult.title}
-                  </h2>
-
-                  <p className="mt-3 text-[0.95rem] font-semibold leading-snug text-white/88">
-                    {roundResult.subtitle}
-                  </p>
-
-                  <div className="mt-5 grid grid-cols-2 gap-3">
-                    <div className="rounded-[1.2rem] border border-white/12 bg-white/8 px-4 py-3 text-left">
-                      <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/56">
-                        Stage
-                      </div>
-                      <div className="mt-1 text-2xl font-black text-white">
-                        {Math.min(roundNumber, totalRounds)} / {totalRounds}
-                      </div>
-                    </div>
-                    <div className="rounded-[1.2rem] border border-white/12 bg-white/8 px-4 py-3 text-left">
-                      <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/56">
-                        {roundResult.statLabel}
-                      </div>
-                      <div className="mt-1 text-2xl font-black text-white">
-                        {roundResult.statValue}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-5 rounded-[1.2rem] border border-white/10 bg-black/18 px-4 py-3 text-[11px] font-black uppercase tracking-[0.16em] text-cyan-50/85">
-                    {roundResult.kind === 'success'
-                      ? 'Next challenge is loading.'
-                      : 'Returning you to the map.'}
-                  </div>
-                </motion.div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
     </div>
   );
 };
 
 export default SimplifySprintGame;
-
-
-

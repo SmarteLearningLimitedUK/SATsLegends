@@ -37,6 +37,7 @@ interface GemCell {
 type BoardCell = GemCell | null;
 
 const GEM_TYPES: GemType[] = ['red', 'blue', 'green', 'yellow', 'purple'];
+const MIXED_FORMATS: TileValueFormat[] = ['fraction', 'decimal', 'percentage'];
 const GRID_COLS = 5;
 const GRID_ROWS = 6;
 const ROUND_SECONDS = 60;
@@ -140,23 +141,25 @@ const wouldCreateImmediateMatch = (board: BoardCell[], row: number, col: number,
   return false;
 };
 
-const pickTileLabel = (type: GemType, tier: number) => {
+const pickTileLabel = (type: GemType, tier: number, isMatchMastery = true, preferredFormat?: TileValueFormat) => {
   const values = GEM_VALUE_POOLS[type];
-  const pool = tier === 1 ? values.slice(0, 1)
+  const pool = isMatchMastery && tier >= 3 ? values
+    : tier === 1 ? values.slice(0, 1)
     : tier === 2 ? values.filter((option) => option.format === 'fraction')
       : tier === 3 ? values.filter((option) => option.format !== 'decimal')
         : tier === 4 ? values.filter((option) => option.format !== 'percentage') : values;
 
-  const selected = pool[Math.floor(Math.random() * pool.length)] ?? GEM_VALUE_POOLS[type][0];
+  const preferredPool = preferredFormat ? pool.filter((option) => option.format === preferredFormat) : pool;
+  const selected = preferredPool[Math.floor(Math.random() * preferredPool.length)] ?? pool[0];
   return selected.label;
 };
 
-const buildCell = (type: GemType, tier: number): GemCell => ({
+const buildCell = (type: GemType, tier: number, isMatchMastery: boolean, preferredFormat?: TileValueFormat): GemCell => ({
   type,
-  label: pickTileLabel(type, tier),
+  label: pickTileLabel(type, tier, isMatchMastery, preferredFormat),
 });
 
-const createInitialBoard = (tier: number): BoardCell[] => {
+const createInitialBoard = (tier: number, isMatchMastery = true): BoardCell[] => {
   const board: BoardCell[] = Array.from({ length: GRID_ROWS * GRID_COLS }, () => null);
 
   for (let row = 0; row < GRID_ROWS; row += 1) {
@@ -164,7 +167,10 @@ const createInitialBoard = (tier: number): BoardCell[] => {
       const candidates = GEM_TYPES.filter((gemType) => !wouldCreateImmediateMatch(board, row, col, gemType));
       const chosenPool = candidates.length > 0 ? candidates : GEM_TYPES;
       const chosenType = chosenPool[Math.floor(Math.random() * chosenPool.length)];
-      board[indexFor(row, col)] = buildCell(chosenType, tier);
+      const preferredFormat = isMatchMastery && tier >= 3
+        ? MIXED_FORMATS[indexFor(row, col) % MIXED_FORMATS.length]
+        : undefined;
+      board[indexFor(row, col)] = buildCell(chosenType, tier, isMatchMastery, preferredFormat);
     }
   }
 
@@ -184,14 +190,16 @@ const BevelledGem: React.FC<{
   label: string;
   size?: number;
   isSelected?: boolean;
+  colourless?: boolean;
   onClick?: () => void;
-}> = ({ type, label, size = 46, isSelected = false, onClick }) => {
+}> = ({ type, label, size = 46, isSelected = false, colourless = false, onClick }) => {
   const colors = GEM_COLORS[type];
 
   return (
     <motion.button
       type="button"
       data-button-skin="none"
+      data-match-tile-appearance={colourless ? 'colourless' : 'coloured'}
       initial={{ scale: 0, opacity: 0 }}
       animate={{
         scale: isSelected ? 1.12 : 1,
@@ -201,20 +209,24 @@ const BevelledGem: React.FC<{
       exit={{ scale: 0.5, opacity: 0, filter: 'brightness(2) blur(4px)' }}
       transition={{ rotate: { repeat: Infinity, duration: 0.5 }, exit: { duration: 0.22 } }}
       onClick={onClick}
-      className="group relative cursor-pointer overflow-hidden rounded-xl shadow-2xl"
+      className={`group relative cursor-pointer overflow-hidden rounded-xl ${colourless ? 'shadow-[0_4px_10px_rgba(0,0,0,0.24)]' : 'shadow-2xl'}`}
       style={{
         width: size,
         height: size,
-        backgroundColor: colors.base,
-        borderTop: `4px solid ${colors.light}`,
-        borderLeft: `4px solid ${colors.light}`,
-        borderBottom: `4px solid ${colors.dark}`,
-        borderRight: `4px solid ${colors.dark}`,
+        backgroundColor: colourless ? 'rgba(235, 243, 255, 0.08)' : colors.base,
+        borderTop: `4px solid ${colourless ? 'rgba(238, 246, 255, 0.32)' : colors.light}`,
+        borderLeft: `4px solid ${colourless ? 'rgba(238, 246, 255, 0.32)' : colors.light}`,
+        borderBottom: `4px solid ${colourless ? 'rgba(238, 246, 255, 0.16)' : colors.dark}`,
+        borderRight: `4px solid ${colourless ? 'rgba(238, 246, 255, 0.16)' : colors.dark}`,
       }}
       aria-label={`Gem ${label}`}
     >
-      <div className="absolute left-0 top-0 h-full w-full bg-gradient-to-br from-white/36 via-transparent to-black/18" />
-      <div className="absolute left-1.5 top-1.5 h-2 w-2 rounded-full bg-white/54 blur-[1px]" />
+      {colourless ? null : (
+        <>
+          <div className="absolute left-0 top-0 h-full w-full bg-gradient-to-br from-white/36 via-transparent to-black/18" />
+          <div className="absolute left-1.5 top-1.5 h-2 w-2 rounded-full bg-white/54 blur-[1px]" />
+        </>
+      )}
       <span className="absolute inset-0 flex items-center justify-center px-0.5 text-center text-[15px] font-black leading-none text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] sm:text-[16px]">
         {label}
       </span>
@@ -251,6 +263,7 @@ const MatchGameShell: React.FC<{
   useSharedTopHud = false,
   onBack,
 }) => {
+  const flowQuestion = variantGameType === 'fraction_match';
   return (
     <div className="relative h-full w-full select-none overflow-hidden font-sans text-white">
       <GameplaySceneBackdrop gameType={variantGameType} className="opacity-45" />
@@ -299,14 +312,14 @@ const MatchGameShell: React.FC<{
           </div>
         ) : null}
 
-        <div className={`relative min-h-0 flex-1 ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.15rem)]' : ''}`}>
+        <div className={`relative min-h-0 flex-1 ${flowQuestion ? 'flex flex-col' : ''} ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.15rem)]' : ''}`}>
            {useSharedTopHud ? (
-             <div className="absolute inset-x-2 top-2 z-20 sm:inset-x-4">
+             <div className={flowQuestion ? 'relative z-20 shrink-0 px-2 pt-1 sm:px-4' : 'absolute inset-x-2 top-2 z-20 sm:inset-x-4'}>
                <div className="mx-auto w-full max-w-[44rem]">
-                 <GameQuestionCard title="Match Mastery" className="bg-[#0a1f56]/76 backdrop-blur-sm">
+                 <GameQuestionCard title="Match Mastery" className="bg-[#0a1f56]/76 backdrop-blur-sm" style={flowQuestion ? { position: 'relative', top: 'auto', left: 'auto', right: 'auto', width: '100%' } : undefined}>
                    {questionText}
                  </GameQuestionCard>
-                 <div className="mt-2 flex items-center gap-2">
+                 <div data-match-status className="mt-2 flex items-center gap-2">
                    <div className={`relative h-2.5 flex-1 overflow-hidden rounded-full border border-cyan-200/40 bg-[#04102c]/90 ${fireActive ? 'shadow-[0_0_18px_rgba(251,146,60,0.85)]' : ''}`}>
                      <motion.div
                        className={`absolute inset-y-0 left-0 rounded-full ${fireActive ? 'bg-[linear-gradient(90deg,#fbbf24,#fb923c,#ef4444,#facc15)]' : 'bg-gradient-to-r from-sky-400 via-cyan-300 to-emerald-300'}`}
@@ -339,7 +352,7 @@ const MatchGameShell: React.FC<{
              </div>
            ) : null}
 
-           <div data-match-board-space className={`relative z-10 flex h-full w-full items-center justify-center px-2 pb-[calc(env(safe-area-inset-bottom)+0.9rem)] ${useSharedTopHud ? 'pt-28' : 'pt-2'} sm:px-4`}>
+           <div data-match-board-space className={`relative z-10 flex w-full items-center justify-center px-2 pb-[calc(env(safe-area-inset-bottom)+0.9rem)] sm:px-4 ${flowQuestion ? 'min-h-0 flex-1 pt-2' : useSharedTopHud ? 'h-full pt-28' : 'h-full pt-2'}`}>
              <AnimatePresence>
                {fireActive ? (
                  <motion.div
@@ -403,17 +416,18 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   const lastMatchAtRef = useRef<number | null>(null);
 
   const resolvedLevel = useMemo(() => Math.max(1, Math.min(5, miniGameLevel || levelId || 1)), [levelId, miniGameLevel]);
+  const isMatchMastery = variantGameType === 'fraction_match';
   const targetScore = useMemo(() => BASE_TARGET_SCORE + (resolvedLevel * TARGET_SCORE_STEP), [resolvedLevel]);
   const levelName = useMemo(() => `Match ${Math.max(1, resolvedLevel)}`, [resolvedLevel]);
 
   const makeRandomCell = useCallback(() => {
     const randomType = GEM_TYPES[Math.floor(Math.random() * GEM_TYPES.length)];
-    return buildCell(randomType, resolvedLevel);
-  }, [resolvedLevel]);
+    return buildCell(randomType, resolvedLevel, isMatchMastery);
+  }, [isMatchMastery, resolvedLevel]);
 
   const resetBoard = useCallback(() => {
     endedRef.current = false;
-    setBoard(createInitialBoard(resolvedLevel));
+    setBoard(createInitialBoard(resolvedLevel, isMatchMastery));
     setSelectedIdx(null);
     setScore(0);
     setIsProcessing(false);
@@ -422,7 +436,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
     lastMatchAtRef.current = null;
     if (fireTimeoutRef.current !== null) window.clearTimeout(fireTimeoutRef.current);
     fireTimeoutRef.current = null;
-  }, [resolvedLevel]);
+  }, [isMatchMastery, resolvedLevel]);
 
   useEffect(() => {
     resetBoard();
@@ -629,7 +643,13 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       completionProgress={completionProgress}
       timeLeft={timeLeft}
       levelName={levelName}
-      questionText="Match equivalent values."
+      questionText={isMatchMastery
+        ? resolvedLevel === 5
+          ? 'No colour clues: match equal fractions, decimals and percentages.'
+          : resolvedLevel >= 3
+            ? 'Match equal fractions, decimals and percentages.'
+            : 'Match equivalent fractions.'
+        : 'Match equivalent values.'}
       fireActive={fireActive}
       firePulse={firePulse}
       variantGameType={variantGameType}
@@ -643,7 +663,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
-      <div className="relative box-border shrink-0 rounded-[2rem] border border-cyan-100/20 bg-[linear-gradient(180deg,rgba(4,16,44,0.9),rgba(3,10,28,0.96))] p-3 shadow-[0_18px_40px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:p-4" style={{ width: boardPixelWidth }}>
+      <div data-match-tier={resolvedLevel} className="relative box-border shrink-0 rounded-[2rem] border border-cyan-100/20 bg-[linear-gradient(180deg,rgba(4,16,44,0.9),rgba(3,10,28,0.96))] p-3 shadow-[0_18px_40px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:p-4" style={{ width: boardPixelWidth }}>
         <div
           className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-[0.24]"
           style={{
@@ -676,6 +696,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
                     label={cell.label}
                     size={Math.max(16, Math.min(gemSize - 2, 69))}
                     isSelected={selectedIdx === idx}
+                    colourless={isMatchMastery && resolvedLevel === 5}
                     onClick={() => {
                       void handleGemClick(idx);
                     }}

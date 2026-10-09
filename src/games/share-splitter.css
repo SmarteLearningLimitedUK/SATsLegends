@@ -6,24 +6,77 @@
 .share-splitter-plate:disabled { opacity: 1; }
 .share-splitter-plate-image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 3px 3px #09232166); }
 .share-splitter-plated-slice { position: absolute; left: 50%; top: 50%; object-fit: contain; filter: drop-shadow(0 2px 2px #57381266); }
-.share-splitter-plate-ratio { position: absolute; z-index: 2; top: -12px; left: 50%; transform: translateX(-50%); padding: 2px 6px; border: 1px solid #bddfeb; border-radius: 8px; background: #123b54f2; color: #fff1c0; font-size: 10px; font-weight: 600; white-space: nowrap; }
-.share-splitter-plate-count { position: absolute; z-index: 3; right: -1px; bottom: -1px; display: grid; place-items: center; min-width: 20px; height: 20px; border: 1px solid #ffe7a1; border-radius: 8px; background: #14354e; color: #fff4d4; font-size: 11px; font-weight: 600; }
+.share-splitter-plate-ratio { position: absolute; z-index: 2; top: -15px; left: 50%; transform: translateX(-50%); padding: 3px 7px; border: 1px solid #bddfeb; border-radius: 8px; background: #123b54f2; color: #fff1c0; font-size: 14px; font-weight: 700; white-space: nowrap; }
+.share-splitter-plate-count { position: absolute; z-index: 3; right: -1px; bottom: -1px; display: grid; place-items: center; min-width: 24px; height: 24px; border: 1px solid #ffe7a1; border-radius: 8px; background: #14354e; color: #fff4d4; font-size: 14px; font-weight: 700; }
 .share-splitter-source { position: absolute; z-index: 30; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; transform: translate(-50%, -50%); border: 2px solid #edd195; border-radius: 16px; padding: 5px; background: #163e5dec; box-shadow: inset 0 1px #eaffff4d, 0 4px 8px #09294059; color: #fff1c4; touch-action: none; pointer-events: auto; }
 .share-splitter-source img { width: 76%; height: 70%; object-fit: contain; pointer-events: none; }
-.share-splitter-source > span { color: #fff1c4; font-size: 10px; font-weight: 600; white-space: nowrap; pointer-events: none; }
+.share-splitter-source > span { color: #fff1c4; font-size: 14px; font-weight: 700; white-space: nowrap; pointer-events: none; }
 .share-splitter-source[aria-pressed="true"] { border-color: #fff0a6; box-shadow: 0 0 0 3px #ffe59e55; }
 .share-splitter-actions { position: absolute; z-index: 40; bottom: 8px; left: 3%; right: 3%; width: auto !important; padding: 8px; }
-.share-splitter-feedback { display: flex; align-items: center; justify-content: center; min-height: 32px; margin-bottom: 6px; color: #eaf8fc; text-align: center; font-size: 12px; line-height: 1.2; }
+.share-splitter-feedback { display: flex; align-items: center; justify-content: center; min-height: 32px; margin-bottom: 6px; color: #eaf8fc; text-align: center; font-size: 14px; line-height: 1.2; }
+.share-splitter-feedback:empty { display: none; }
 .share-splitter-action-buttons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .share-splitter-action-buttons > button { min-width: 0; display: flex; align-items: center; justify-content: center; gap: 5px; }
 .share-splitter-drag { position: absolute; z-index: 70; pointer-events: none; }
 .share-splitter-drag img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 3px 4px #57381288); }
+.share-splitter-mission .game-question-card .question-subtitle { color: #dff6ff; font-size: 14px; line-height: 1.25; }
 
-@media (min-width: 700px) and (min-height: 600px) {
-  .share-splitter-actions {
-    left: 50%;
-    right: auto;
-    width: min(94%, var(--share-scene-width)) !important;
-    transform: translateX(-50%);
+#root .app-viewport.sat-theme-bluegold.screen-gameplay .share-splitter-shell .game-background-layer img[data-background-fit="cover"] {
+  object-fit: cover !important;
+}
+
+.share-splitter-stage[data-layout="desktop"]::before {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  content: '';
+  background: linear-gradient(90deg, rgba(4, 24, 39, 0.64), rgba(4, 24, 39, 0.22) 29%, transparent 57%, rgba(4, 24, 39, 0.2));
+  pointer-events: none;
+}
+
+.share-splitter-stage[data-layout="desktop"] .share-splitter-mission {
+  position: absolute;
+  top: 12px;
+  left: clamp(12px, 2vw, 32px);
+  width: clamp(260px, 28vw, 340px);
+  margin: 0;
+  padding: 0;
+}
+
+.share-splitter-stage[data-layout="desktop"] .share-splitter-mission .game-question-card {
+  text-align: left;
+  font-size: clamp(15px, 1.2vw, 18px);
+  line-height: 1.25;
+}
+
+.share-splitter-stage[data-layout="desktop"] .share-splitter-mission .game-question-copy {
+  hyphens: none;
+  overflow-wrap: normal;
+  text-wrap: wrap;
+}
+
+.share-splitter-stage[data-layout="desktop"] .share-splitter-actions {
+  bottom: 16px;
+  left: clamp(12px, 2vw, 32px);
+  right: auto;
+  width: clamp(260px, 28vw, 340px) !important;
+  transform: none;
+  padding: 12px;
+}
+
+.share-splitter-stage[data-layout="desktop"] .share-splitter-action-buttons > button {
+  min-height: 48px;
+}
+
+@media (max-height: 560px) {
+  .share-splitter-stage[data-layout="desktop"] .share-splitter-mission .game-question-card {
+    font-size: 15px;
+    line-height: 1.18;
+    padding: 7px 10px !important;
+  }
+
+  .share-splitter-stage[data-layout="desktop"] .share-splitter-mission .question-subtitle {
+    font-size: 14px;
+    line-height: 1.15;
   }
 }

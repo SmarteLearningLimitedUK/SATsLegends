@@ -71,6 +71,12 @@
 #root .detective-lineup > button { background:#102c4b!important; color:#f1f8ff!important; border-color:#8fbbd066!important; }
 #root .detective-lineup > button[aria-pressed=true] { border-color:#89f2d2!important; }
 #root .detective-lineup > button .detective-suspect-name { font-size:max(14px,calc(14px / var(--game-stage-scale,1))); }
+@media (min-width:700px) and (max-height:700px) {
+  #root .data-detective-layout .detective-evidence-workspace { flex-direction:row; align-items:stretch; gap:8px; }
+  #root .data-detective-layout .detective-evidence-chart { width:auto; min-width:0; flex:1 1 0; }
+  #root .data-detective-layout .detective-evidence-pin-dock { display:flex; flex:0 0 38%; min-width:0; align-items:center; margin:0; padding:0; }
+  #root .data-detective-layout .detective-evidence-pins { width:100%; }
+}
 #root .arcade-conversion .conversion-load-tray { max-width:calc(100vw - 40px); }
 #root .arcade-conversion .conversion-load-meter { bottom:-4px; min-width:120px; padding:4px; }
 
@@ -79,7 +85,7 @@
 #root .player-profile-arcade .profile-summary-portrait { width:100px; height:110px; }
 #root .player-profile-arcade .profile-summary-stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
 #root .player-profile-arcade .profile-summary-stat { padding:10px; min-width:0; }
-#root .player-profile-arcade .profile-summary-heading { font-size:max(28px,calc(28px / var(--game-stage-scale,1))); overflow-wrap:normal; }
+#root .player-profile-arcade .profile-summary-heading { font-size:max(28px,calc(28px / var(--game-stage-scale,1))); overflow-wrap:anywhere; }
 #root .player-profile-arcade .profile-summary-copy { font-size:max(16px,calc(16px / var(--game-stage-scale,1))); }
 #root .player-profile-arcade .profile-summary-label { font-size:max(14px,calc(14px / var(--game-stage-scale,1))); overflow-wrap:normal; }
 #root .player-profile-arcade .profile-summary-stat strong { font-size:max(24px,calc(24px / var(--game-stage-scale,1))); }
@@ -98,6 +104,22 @@
 
 #root .arcade-conversion .conversion-load-meter { left:calc(50% + 90px); min-width:100px; z-index:4; }
 #root .arcade-conversion .conversion-load-meter { left:calc(100% + 50px); }
+
+@media (max-height:650px) {
+  #root .iphone-game-stage[data-stage-layout='responsive'] .arcade-conversion .conversion-token-grid {
+    grid-template-columns:repeat(6,minmax(0,1fr));
+  }
+  #root .iphone-game-stage[data-stage-layout='responsive'] .conversion-game.arcade-conversion .conversion-scale-frame {
+    flex:none;
+    height:min(100%,136px);
+    max-height:136px;
+    margin-top:0;
+  }
+  #root .iphone-game-stage[data-stage-layout='responsive'] .arcade-conversion .conversion-load-tray {
+    top:12px;
+    min-height:44px;
+  }
+}
 
 @media (min-width:900px) and (min-height:600px) {
   #root .arcade-conversion .game-question-card,
@@ -127,7 +149,7 @@
   #root .coordinates-quest-layout { padding-top:4px!important; padding-bottom:4px!important; }
   #root .coordinates-quest-layout .coordinates-grid-board { max-width:18rem; }
   #root .coordinates-quest-layout .coordinates-expedition { display:none; }
-  #root .coordinates-quest-layout .coordinates-hero-portrait { top:-20px; width:52px; height:62px; }
+  #root .coordinates-quest-layout .coordinates-hero-portrait { left:calc(100% + 10px); right:auto; top:24px; width:72px; height:88px; }
   #root .line-graph-spacer { display:none; }
   #root .line-graph-board { display:grid; grid-template-columns:minmax(0,1.65fr) minmax(0,1fr); gap:8px; align-items:center; }
   #root .line-graph-board > [data-game-question] { grid-column:1 / -1; }

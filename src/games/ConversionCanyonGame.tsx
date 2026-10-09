@@ -246,7 +246,16 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
   };
 
   return (
-    <div ref={rootRef} className="conversion-game arcade-conversion relative h-full w-full overflow-hidden bg-[#94b8d2]" data-conversion-tier={clampStage(levelId) + 1}>
+    <div
+      ref={rootRef}
+      className="conversion-game arcade-conversion relative h-full w-full overflow-hidden bg-[#123650]"
+      style={{
+        backgroundImage: `linear-gradient(90deg, rgba(8,31,51,0.68), rgba(8,31,51,0.28) 50%, rgba(8,31,51,0.68)), url(${conversionCanyonBackground})`,
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+      }}
+      data-conversion-tier={clampStage(levelId) + 1}
+    >
       <img
         src={conversionCanyonBackground}
         alt=""
@@ -319,7 +328,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
 
         <div className="w-full shrink-0 px-4 pb-[calc(env(safe-area-inset-bottom)+0.9rem)] pt-2">
           <div className="mx-auto w-full max-w-[32rem] rounded-[1.6rem] border border-white/14 bg-[linear-gradient(180deg,rgba(15,23,42,0.6),rgba(8,15,28,0.78))] p-2 shadow-[0_18px_44px_rgba(2,6,23,0.55)] backdrop-blur-sm">
-            <div className="grid grid-cols-4 gap-2 px-1 pb-1 pt-1">
+            <div className="conversion-token-grid grid grid-cols-4 gap-2 px-1 pb-1 pt-1">
               {allTokens.map((token) => {
                 const isPlaced = placedIds.includes(token.id);
                 return (

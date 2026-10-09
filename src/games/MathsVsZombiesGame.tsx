@@ -3,12 +3,12 @@ import { Timer as TimerIcon, Heart, Target, Brain } from 'lucide-react';
 import { AnimatePresence, motion, useIsPresent } from 'motion/react';
 import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
 import zombieEnemy from '../assets/enemies/cohesive/zombie.webp';
-import zombiePlayfield from '../assets/maps/premium/maths-vs-zombies.webp';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { MiniGameShellContractProps, emitMiniGameSessionEvent } from '../app/gameplaySessionContract';
 import { formatMultiplicationDisplay } from '../utils/mathDisplay';
 import MonsterMindActor from '../components/game-ui/MonsterMindActor';
+import './maths-vs-zombies.css';
 
 interface MathsVsZombiesGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -46,7 +46,7 @@ const RIGHT_SPAWN_MIN_Y = 18;
 const RIGHT_SPAWN_MAX_Y = 62;
 const TARGET_Y = 78;
 const TARGET_X = 22;
-const ZOMBIE_SIZE = 52;
+const ZOMBIE_SIZE = 'clamp(52px, 5vw, 80px)';
 
 const stateDuration = (state: ZombieState) => {
   if (state === 'attack') return 1.8;
@@ -489,9 +489,8 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 
   return (
     <div
-      className="relative flex h-full w-full flex-col items-center overflow-hidden font-sans text-white select-none"
+      className="maths-vs-zombies relative flex h-full w-full flex-col items-center overflow-hidden font-sans text-white select-none"
       data-zombies-game data-zombies-tier={tier} data-zombies-score={XP} data-zombies-target={victoryTargetScore} data-zombies-time={timeLeft}
-      style={{ backgroundImage: `linear-gradient(#081a35aa, #081a35cc), url(${zombiePlayfield})`, backgroundSize: 'contain', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}
     >
       <PracticeIntroPopup
         open={showPracticeIntro}
@@ -501,27 +500,26 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
         onAction={() => setShowPracticeIntro(false)}
       />
 
-      <div className="relative z-10 flex h-full w-full max-w-[1000px] flex-col gap-2">
+      <div className="relative z-10 flex h-full w-full flex-col gap-2">
         {!useSharedTopHud ? (
           <TopBar XP={XP} brainPoints={zombiesDefeated} health={health} timer={timerLabel} onBack={onBack} />
         ) : null}
 
-        <GameQuestionCard title={gameTitle || 'Maths vs Zombies'} subtitle={`Push back ${victoryTargetScore / 220} minions. ${XP / 220} cleared.`} style={{ position: 'relative', top: '5px', width: '92%', transform: 'none' }}>
+        <GameQuestionCard className="zombies-question-card" title={gameTitle || 'Maths vs Zombies'} subtitle={`Push back ${victoryTargetScore / 220} minions. ${XP / 220} cleared.`} style={{ position: 'relative', top: '5px', width: 'min(92%, 920px)', transform: 'none' }}>
           {question.prompt.split('\n\n').slice(-1)[0]}
         </GameQuestionCard>
 
         <div
-          className={`relative mx-4 flex-1 overflow-hidden rounded-3xl border-4 border-blue-400/30 bg-blue-900/10 shadow-2xl ${useSharedTopHud ? 'mt-2' : 'mt-4'}`}
-          style={{ backgroundImage: `url(${zombiePlayfield})`, backgroundSize: 'contain', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}
+          className={`zombies-playfield relative mx-4 flex-1 overflow-hidden rounded-3xl border-4 border-blue-400/30 shadow-2xl ${useSharedTopHud ? 'mt-2' : 'mt-4'}`}
         >
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_85%,rgba(56,189,248,0.06),transparent_48%)]" />
-          <div className="absolute bottom-4 left-6 flex -translate-x-2.5 flex-col items-center gap-2">
+          <div className="zombies-player absolute flex flex-col items-center">
             <div className="text-[11px] font-black uppercase tracking-[0.18em] text-cyan-100">You</div>
             {avatarImage ? (
               <img
                 src={avatarImage}
                 alt=""
-                className="h-[168px] w-auto object-contain drop-shadow-[0_10px_20px_rgba(2,6,23,0.45)]"
+                className="zombies-player-avatar w-auto object-contain drop-shadow-[0_10px_20px_rgba(2,6,23,0.45)]"
                 draggable={false}
               />
             ) : null}
@@ -538,9 +536,9 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
                   exit={{ opacity: 1 }}
                   className="absolute flex flex-col items-center gap-1"
                   style={{
-                    top: `${zombie.y}%`,
-                    left: `${zombie.x}%`,
-                    width: `${ZOMBIE_SIZE}px`,
+                    top: `min(${zombie.y}%, calc(100% - ${ZOMBIE_SIZE} - 12px))`,
+                    left: `min(${zombie.x}%, calc(100% - ${ZOMBIE_SIZE}))`,
+                    width: ZOMBIE_SIZE,
                   }}
                 >
                   <MonsterMindActor src={zombieEnemy} alt="Cartoon zombie minion" reaction={zombie.state === 'die' ? 'defeated' : zombie.state === 'attack' ? 'taunt' : zombie.state === 'hit' ? 'hit' : 'idle'} reactionKey={`${zombie.id}-${zombie.state}`} style={{ width: ZOMBIE_SIZE, height: ZOMBIE_SIZE }} />
@@ -557,17 +555,17 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 
         </div>
 
-        <div className="licensed-board-frame mx-4 mt-1 rounded-[1.35rem] px-4 py-3">
+        <div className="zombies-answer-board licensed-board-frame mx-4 mt-1 rounded-[1.35rem] px-4 py-3">
           <div
-            className={`min-h-[16px] text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-cyan-100/80 ${feedback ? 'opacity-100' : 'opacity-0'}`}
+            className={`zombies-feedback min-h-[16px] text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-cyan-100/80 ${feedback ? 'opacity-100' : 'opacity-0'}`}
             aria-hidden={!feedback}
           >
             {feedback || '\u00A0'}
           </div>
-          <div className="mt-3 text-center text-[0.68rem] font-black uppercase tracking-[0.24em] text-amber-100/90">
+          <div className="zombies-answer-label mt-3 text-center text-[0.68rem] font-black uppercase tracking-[0.24em] text-amber-100/90">
             Choose the correct answer
           </div>
-          <div className="mt-2 grid grid-cols-4 gap-2">
+          <div className="zombies-answer-options mt-2 grid grid-cols-4 gap-2">
             {question.options.map((option, index) => (
               <button
                 key={`${option}-${index}`}

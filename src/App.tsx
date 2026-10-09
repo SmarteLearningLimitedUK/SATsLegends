@@ -812,23 +812,25 @@ const App: React.FC = () => {
   const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
   const hasWideGameViewport = viewportSize.width >= 700 && viewportSize.height >= 600;
+  const hasWideGameplayViewport = hasWideGameViewport
+    || (viewportSize.width >= 900 && viewportSize.height >= 550);
   const isResponsiveHubScreen = isStartScreen || isWorldMapScreen || isIslandLevelsScreen
     || screen === 'shop' || screen === 'achievements_tracker' || screen === 'profile'
     || screen === 'settings' || screen === 'level_result';
   const usesWideGameComposition = isMockAssessment || selectedGameType === 'change_counter'
+    || selectedGameType === 'potion_pour'
     || (selectedGameType === 'take_out_rush' && selectedLevel?.blueprintKey !== 'fraction_forge')
     || selectedGameType === 'ratio_fractions'
     || (selectedGameType === 'ratio_rapids'
-      && selectedLevel?.blueprintKey !== 'share_splitter'
-      && selectedLevel?.blueprintKey !== 'maths_vs_zombies');
-  const adaptPortraitGame = isGameplayScreen && hasWideGameViewport && !usesWideGameComposition;
+      && selectedLevel?.blueprintKey !== 'share_splitter');
+  const adaptPortraitGame = isGameplayScreen && hasWideGameplayViewport && !usesWideGameComposition;
   const isShortLandscapeSplash = isSplashScreen && viewportSize.width >= 560
     && viewportSize.width > viewportSize.height && viewportSize.height < 600;
   const isShortLandscapeMap = isWorldMapScreen && viewportSize.width >= 560
     && viewportSize.width > viewportSize.height && viewportSize.height < 600;
   const useUnboundedStageShell = screen === 'parent_dashboard' || isWellbeingScreen
     || isShortLandscapeSplash || isShortLandscapeMap
-    || (isGameplayScreen && hasWideGameViewport)
+    || (isGameplayScreen && hasWideGameplayViewport)
     || (isResponsiveHubScreen && hasWideGameViewport)
     || (isGameplayScreen && selectedLevel?.blueprintKey === 'place_value_panic'
       && viewportSize.width >= 560 && viewportSize.width > viewportSize.height && viewportSize.height <= 420);
