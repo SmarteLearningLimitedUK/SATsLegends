@@ -1,11 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { GameQuestionCard, GameUiShell } from '../components/game-ui/GameUiKit';
 import MonsterMindActor from '../components/game-ui/MonsterMindActor';
 import { triggerHaptic } from '../haptics';
-import { formatMultiplicationDisplay } from '../utils/mathDisplay';
 import goblinMonster from '../assets/enemies/cohesive/goblin.webp';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
 
@@ -18,11 +17,13 @@ interface OrderOpsArenaGameProps {
 }
 
 interface OpsRound {
-  expression: string;
+  terms: number[];
+  operators: OpsOperator[];
+  bracketIndex: number | null;
   answer: number;
-  options: number[];
   hint: string;
 }
+type OpsOperator = '+' | '-' | '×';
 
 type FeedbackState = null | {
   type: 'success' | 'error' | 'praise';
@@ -40,20 +41,35 @@ const ENEMY_HEALTH_BY_LEVEL: Record<number, number> = {
 };
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
-const shuffle = <T,>(items: T[]) => [...items].sort(() => Math.random() - 0.5);
+const expressionText = (round: OpsRound) => {
+  const parts: string[] = [];
+  for (let index = 0; index < round.terms.length; index++) {
+    if (round.bracketIndex === index) {
+      parts.push(`(${round.terms[index]} ${round.operators[index]} ${round.terms[index + 1]})`);
+      index++;
+    } else parts.push(String(round.terms[index]));
+    if (index < round.operators.length) parts.push(` ${round.operators[index]} `);
+  }
+  return parts.join('');
+};
 
-const makeOptions = (correct: number) => {
-  const pool = new Set<number>([correct]);
-  const offsets = [-8, -5, -3, -2, 2, 3, 5, 8];
-  for (const offset of shuffle(offsets)) {
-    if (pool.size >= 4) break;
-    const candidate = correct + offset;
-    if (candidate >= 0) pool.add(candidate);
-  }
-  while (pool.size < 4) {
-    pool.add(Math.max(0, correct + randomInt(-9, 9)));
-  }
-  return shuffle(Array.from(pool).slice(0, 4));
+const legalOperationIndices = (round: OpsRound): number[] => {
+  if (round.bracketIndex !== null) return [round.bracketIndex];
+  const multiplication = round.operators.flatMap((operator, index) => operator === '×' ? [index] : []);
+  return multiplication.length ? multiplication : round.operators.length ? [0] : [];
+};
+
+const resolveOperation = (round: OpsRound, index: number): OpsRound => {
+  const left = round.terms[index];
+  const right = round.terms[index + 1];
+  const operator = round.operators[index];
+  const result = operator === '×' ? left * right : operator === '+' ? left + right : left - right;
+  return {
+    ...round,
+    terms: [...round.terms.slice(0, index), result, ...round.terms.slice(index + 2)],
+    operators: [...round.operators.slice(0, index), ...round.operators.slice(index + 1)],
+    bracketIndex: round.bracketIndex === index ? null : round.bracketIndex !== null && round.bracketIndex > index ? round.bracketIndex - 1 : round.bracketIndex,
+  };
 };
 
 const createOpsRound = (levelId: number): OpsRound => {
@@ -68,9 +84,10 @@ const createOpsRound = (levelId: number): OpsRound => {
     const c = randomInt(2, Math.min(9, tier + 3));
     const answer = (a + b) * c;
     return {
-      expression: `(${a} + ${b}) * ${c}`,
+      terms: [a, b, c],
+      operators: ['+', '×'],
+      bracketIndex: 0,
       answer,
-      options: makeOptions(answer),
       hint: 'Brackets first.',
     };
   }
@@ -82,9 +99,10 @@ const createOpsRound = (levelId: number): OpsRound => {
     const d = randomInt(2, Math.max(3, factorMax - 3));
     const answer = (a * b) + (c * d);
     return {
-      expression: `${a} * ${b} + ${c} * ${d}`,
+      terms: [a, b, c, d],
+      operators: ['×', '+', '×'],
+      bracketIndex: null,
       answer,
-      options: makeOptions(answer),
       hint: 'Multiply before add.',
     };
   }
@@ -95,9 +113,10 @@ const createOpsRound = (levelId: number): OpsRound => {
   const d = tier === 1 ? 0 : randomInt(1, Math.min(tier * 2, a + b * c - 1));
   const answer = a + (b * c) - d;
   return {
-    expression: `${a} + ${b} * ${c}${d ? ` - ${d}` : ''}`,
+    terms: d ? [a, b, c, d] : [a, b, c],
+    operators: d ? ['+', '×', '-'] : ['+', '×'],
+    bracketIndex: null,
     answer,
-    options: makeOptions(answer),
     hint: 'Multiply before add or subtract.',
   };
 };
@@ -111,8 +130,9 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
 }) => {
   const tier = Math.max(1, Math.min(5, levelId));
   const maxEnemyHealth = ENEMY_HEALTH_BY_LEVEL[tier];
-  const initialTime = 76 + (tier * 7);
+  const initialTime = 120 + (tier * 20);
   const targetScore = maxEnemyHealth * 210;
+  const reducedMotion = useReducedMotion();
   const timersRef = useRef<number[]>([]);
   const scoreRef = useRef(0);
 
@@ -123,13 +143,15 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
   const [enemyHealth, setEnemyHealth] = useState(maxEnemyHealth);
   const [questionCount, setQuestionCount] = useState(1);
   const [round, setRound] = useState<OpsRound>(() => createOpsRound(levelId));
+  const [working, setWorking] = useState(round);
+  const [stepFeedback, setStepFeedback] = useState('Choose an operation to resolve.');
   const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [isFinished, setIsFinished] = useState(false);
   const orderOpsEnemy = goblinMonster;
   const roundStartRef = useRef<number>(Date.now());
 
 
-  const displayExpression = formatMultiplicationDisplay(round.expression);
+  const displayExpression = expressionText(working);
 
   const clearTimers = () => {
     timersRef.current.forEach((timerId) => window.clearTimeout(timerId));
@@ -151,7 +173,10 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
     setStreak(0);
     setEnemyHealth(maxEnemyHealth);
     setQuestionCount(1);
-    setRound(createOpsRound(levelId));
+    const nextRound = createOpsRound(levelId);
+    setRound(nextRound);
+    setWorking(nextRound);
+    setStepFeedback('Choose an operation to resolve.');
     roundStartRef.current = Date.now();
     setFeedback(null);
     setIsFinished(false);
@@ -196,7 +221,10 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
   const moveToNextQuestion = () => {
     const timeoutId = window.setTimeout(() => {
       setQuestionCount((previous) => previous + 1);
-      setRound(createOpsRound(levelId));
+      const nextRound = createOpsRound(levelId);
+      setRound(nextRound);
+      setWorking(nextRound);
+      setStepFeedback('Choose an operation to resolve.');
       roundStartRef.current = Date.now();
       setFeedback(null);
     }, 620);
@@ -224,16 +252,25 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
       return;
     }
 
-    moveToNextQuestion();
+    const timeoutId = window.setTimeout(() => setFeedback(null), 860);
+    timersRef.current.push(timeoutId);
   };
 
-  const handleAnswer = (choice: number) => {
+  const handleOperation = (index: number) => {
     if (feedback || isFinished) return;
-
-    if (choice !== round.answer) {
-      loseHeart(`Correct value was ${round.answer}.`);
+    if (!legalOperationIndices(working).includes(index)) {
+      loseHeart(round.hint);
       return;
     }
+
+    const next = resolveOperation(working, index);
+    const left = working.terms[index];
+    const right = working.terms[index + 1];
+    const operator = working.operators[index];
+    setWorking(next);
+    setStepFeedback(`${left} ${operator} ${right} = ${next.terms[index]}`);
+    triggerHaptic('selection');
+    if (next.operators.length) return;
 
     const points = 140 + (Combo * 24);
     const updatedScore = XP + points;
@@ -248,7 +285,7 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
     setFeedback({
       type: isPraise ? 'praise' : 'success',
       title: isPraise ? buildPraiseMessage() : 'Order Restored',
-      subtitle: isPraise ? 'Fast first try bonus!' : `Correct order restored - +${points} XP`,
+      subtitle: `${next.terms[0]} · +${points} XP`,
     });
     triggerHaptic('success');
 
@@ -268,16 +305,20 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
       <GameplaySceneBackdrop gameType="equation_grove" />
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(10,16,31,0.22),rgba(3,7,18,0.4))]" />
 
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] pt-[calc(env(safe-area-inset-top)+1rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+1.5rem)] md:pt-[calc(env(safe-area-inset-top)+1.25rem)]">
+      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] pt-[calc(env(safe-area-inset-top)+1rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+1.5rem)] md:pt-[calc(env(safe-area-inset-top)+1.25rem)]"
+        style={{ height: '80%', flex: '0 0 auto' }}>
         <div className="flex h-full min-h-0 w-full max-w-6xl flex-1 flex-col gap-3 md:gap-4">
           <div className="flex justify-center">
             <GameQuestionCard
               title="Order Ops Arena"
-              subtitle="The Monster Minds scrambled the order. Solve it in BIDMAS order."
+              subtitle="Choose which operation to solve next. Follow BIDMAS."
               className="w-full max-w-[860px] border border-amber-200/35 bg-[linear-gradient(180deg,rgba(251,191,36,0.28),rgba(15,23,42,0.18))] px-4 py-2 text-center shadow-[0_12px_26px_rgba(15,23,42,0.14)] md:px-6 md:py-2.5"
               bodyClassName="text-[clamp(1.15rem,2.9vw,2.7rem)] font-black tracking-tight text-white"
             >
-              {displayExpression}
+              <AnimatePresence mode="wait"><motion.span key={displayExpression} data-ops-expression
+                initial={reducedMotion ? false : { opacity: 0, y: 9, scale: .96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }} exit={reducedMotion ? undefined : { opacity: 0, y: -9, scale: 1.04 }}
+                transition={{ duration: .2 }}>{displayExpression}</motion.span></AnimatePresence>
             </GameQuestionCard>
           </div>
 
@@ -285,7 +326,7 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
             <div className="relative z-10 flex h-full min-h-0 flex-col gap-3 p-3 md:p-4">
               <div className="flex min-h-[13rem] flex-1 items-center justify-center">
                 <div className="relative flex h-full w-full max-w-[24rem] items-center justify-center rounded-[1.35rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(251,191,36,0.14),rgba(15,23,42,0.02)_52%,rgba(15,23,42,0.12)_100%)] p-3 md:min-h-[18rem]">
-                    <div className="absolute left-3 top-3 rounded-full border border-rose-200/14 bg-slate-950/35 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-rose-100/82">
+                    <div data-ops-restored={maxEnemyHealth - enemyHealth} className="absolute left-3 top-3 rounded-full border border-rose-200/14 bg-slate-950/35 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-rose-100/82">
                       {Math.max(0, maxEnemyHealth - enemyHealth)} orders restored
                     </div>
                   <MonsterMindActor
@@ -298,18 +339,21 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
                 </div>
               </div>
 
-              <div className="rounded-[1.45rem] border border-white/10 bg-[linear-gradient(180deg,rgba(9,16,31,0.66),rgba(6,10,20,0.82))] p-3 shadow-[0_14px_28px_rgba(2,6,23,0.14)] backdrop-blur-sm md:p-4">
-                <div className="grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-3">
-                  {round.options.map((option) => (
-                    <button
-                      key={`${displayExpression}-${option}`}
-                      type="button"
-                      onClick={() => handleAnswer(option)}
+              <div className="rounded-[1.45rem] border border-amber-100/30 bg-[linear-gradient(180deg,rgba(9,16,31,0.76),rgba(6,10,20,0.9))] p-3 shadow-[0_14px_28px_rgba(2,6,23,0.14)] backdrop-blur-sm md:p-4">
+                <p className="mb-2 text-center text-xs font-black uppercase tracking-widest text-amber-100" role="status">{stepFeedback}</p>
+                <div className="grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-3" role="group" aria-label="Choose the next operation">
+                  {working.operators.map((operator, index) => (
+                    <motion.button
+                      key={`${displayExpression}-${index}`}
+                      type="button" data-ops-action-index={index}
+                      onClick={() => handleOperation(index)}
                       disabled={Boolean(feedback) || isFinished}
+                      whileTap={reducedMotion ? undefined : { scale: .94 }}
                       className="ui-button-primary min-h-[3.2rem] rounded-[1.1rem] px-2 py-2 text-base font-black text-white shadow-[0_12px_20px_rgba(2,6,23,0.2)] disabled:opacity-60 md:min-h-[3.8rem] md:text-2xl"
+                      aria-label={`Resolve ${working.terms[index]} ${operator} ${working.terms[index + 1]}`}
                     >
-                      {option}
-                    </button>
+                      {working.terms[index]} {operator} {working.terms[index + 1]}
+                    </motion.button>
                   ))}
                 </div>
               </div>
