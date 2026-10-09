@@ -141,18 +141,27 @@ const scoreToStars = (XP: number, target: number, primeAccuracy: number) => {
   return 1;
 };
 
-const clampBubbleInsideBounds = (bubble: Bubble): Bubble => {
+const bubbleDiameterPx = (radius: number, isPhone: boolean) => {
+  const scaled = Math.round(radius * BUBBLE_PIXEL_SCALE * (isPhone ? 0.95 : 0.9));
+  return Math.max(isPhone ? 42 : 40, Math.min(isPhone ? 108 : 96, scaled));
+};
+
+const maximumBubbleY = (radius: number, fieldHeight: number, isPhone: boolean) =>
+  Math.min(94, 100 - ((bubbleDiameterPx(radius, isPhone) / 2 + 4) / Math.max(fieldHeight, 1)) * 100);
+
+const clampBubbleInsideBounds = (bubble: Bubble, fieldHeight: number, isPhone: boolean): Bubble => {
   const minX = bubble.radius + 2;
   const maxX = 100 - bubble.radius - 2;
   return {
     ...bubble,
     x: Math.max(minX, Math.min(maxX, bubble.x)),
+    y: Math.min(maximumBubbleY(bubble.radius, fieldHeight, isPhone), bubble.y),
   };
 };
 
-const resolveBubbleCollisions = (items: Bubble[]) => {
-  if (items.length <= 1) return items;
-  const next = items.map((item) => ({ ...item }));
+const resolveBubbleCollisions = (items: Bubble[], fieldHeight: number, isPhone: boolean) => {
+  const next = items.map((item) => clampBubbleInsideBounds(item, fieldHeight, isPhone));
+  if (next.length <= 1) return next;
   const minSeparationPadding = 2.4;
 
   for (let pass = 0; pass < 2; pass += 1) {
@@ -177,8 +186,8 @@ const resolveBubbleCollisions = (items: Bubble[]) => {
         b.x += offsetX;
         b.y += offsetY;
 
-        next[i] = clampBubbleInsideBounds(a);
-        next[j] = clampBubbleInsideBounds(b);
+        next[i] = clampBubbleInsideBounds(a, fieldHeight, isPhone);
+        next[j] = clampBubbleInsideBounds(b, fieldHeight, isPhone);
       }
     }
   }
@@ -188,11 +197,8 @@ const resolveBubbleCollisions = (items: Bubble[]) => {
 
 const PrimeBubble: React.FC<{ bubble: Bubble; isPhone: boolean }> = ({ bubble, isPhone }) => {
   const tint = TINT_STYLE[bubble.tint];
-  const renderScale = isPhone ? 0.95 : 0.9;
-  const bubblePx = Math.round(bubble.radius * BUBBLE_PIXEL_SCALE * renderScale);
-  const minSize = isPhone ? 42 : 40;
-  const maxSize = isPhone ? 108 : 96;
-  const size = `${Math.max(minSize, Math.min(maxSize, bubblePx))}px`;
+  const bubblePx = Math.round(bubble.radius * BUBBLE_PIXEL_SCALE * (isPhone ? 0.95 : 0.9));
+  const size = `${bubbleDiameterPx(bubble.radius, isPhone)}px`;
   const labelSize = Math.max(1, Math.min(2.1, bubblePx / 42));
 
   return (
@@ -234,6 +240,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
   const [usesSharedHud, setUsesSharedHud] = useState(false);
   const [wideSceneWidth, setWideSceneWidth] = useState<number | null>(null);
   const stageRef = useRef<HTMLDivElement | null>(null);
+  const fieldRef = useRef<HTMLDivElement | null>(null);
   const onVictoryRef = useRef(onVictory);
   const onGameOverRef = useRef(onGameOver);
   const sessionEventsRef = useRef(sessionEvents);
@@ -365,8 +372,10 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
   const makeBubble = useCallback((existing: Bubble[]) => {
     const radius = randomBetween(bubbleRuntime.minRadius, bubbleRuntime.maxRadius);
     const margin = radius + 2.8;
+    const maxY = maximumBubbleY(radius, fieldRef.current?.clientHeight || stageRef.current?.clientHeight || 400, isPhone);
+    const minY = Math.min(72, maxY);
     let x = randomBetween(margin, 100 - margin);
-    let y = randomBetween(72, 94);
+    let y = randomBetween(minY, maxY);
 
     for (let i = 0; i < 48; i += 1) {
       const hasOverlap = existing.some((bubble) => {
@@ -376,7 +385,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
       });
       if (!hasOverlap) break;
       x = randomBetween(margin, 100 - margin);
-      y = randomBetween(72, 94);
+      y = randomBetween(minY, maxY);
     }
 
     const pickPrime = Math.random() < config.primeChance;
@@ -412,7 +421,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
       isPrime: prime,
       tint: BUBBLE_TINTS[Math.floor(Math.random() * BUBBLE_TINTS.length)],
     };
-  }, [bubbleRuntime.maxRadius, bubbleRuntime.maxSpeed, bubbleRuntime.minRadius, bubbleRuntime.minSpeed, config.maxNumber, config.primeChance]);
+  }, [bubbleRuntime.maxRadius, bubbleRuntime.maxSpeed, bubbleRuntime.minRadius, bubbleRuntime.minSpeed, config.maxNumber, config.primeChance, isPhone]);
 
   useEffect(() => {
     overRef.current = false;
@@ -567,7 +576,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
 
       return { ...bubble, x, y, drift };
     });
-    const movedWithoutOverlap = resolveBubbleCollisions(movedBubbles);
+    const movedWithoutOverlap = resolveBubbleCollisions(movedBubbles, fieldRef.current?.clientHeight || stageRef.current?.clientHeight || 400, isPhone);
 
     const dangerPrimeBubbles = movedWithoutOverlap.filter((bubble) => bubble.isPrime && (bubble.y - bubble.radius) <= DANGER_LINE_Y);
     const dangerPrimeHits = dangerPrimeBubbles.length;
@@ -604,7 +613,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     }
 
     rafRef.current = requestAnimationFrame(loop);
-  }, [finalize, useLocalLives]);
+  }, [finalize, isPhone, useLocalLives]);
 
   useEffect(() => {
     if (overRef.current) return;
@@ -670,6 +679,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
             </div>
           </div>
           <div
+            ref={fieldRef}
             data-prime-pop-field="true"
             className="absolute inset-0 z-10 overflow-hidden"
             style={wideSceneWidth === null ? undefined : {
