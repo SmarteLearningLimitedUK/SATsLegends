@@ -53,15 +53,28 @@ for (const profile of profiles) {
       await page.goto(base + target.route, { waitUntil: 'domcontentloaded', timeout: 15000 });
       await page.locator('[data-qa-screen="gameplay"]').waitFor({ timeout: 15000 });
       await page.waitForTimeout(280);
-      for (let attempt = 0; attempt < 3; attempt++) {
+      for (let attempt = 0; attempt < 6; attempt++) {
         const intro = page.locator('[role="dialog"] [data-dialog-primary]:visible').first();
         if (!await intro.count()) break;
-        await intro.evaluate(node => node.click()).catch(() => {});
-        await page.waitForTimeout(180);
+        await intro.click({ timeout: 5000 });
+        await intro.waitFor({ state: 'hidden', timeout: 5000 });
       }
       if (target.key === 'ratio_fractions') await page.waitForTimeout(3100);
       await page.evaluate(() => document.fonts.ready);
-      await page.waitForTimeout(170);
+      // The intro and game scene animate independently. Check the settled,
+      // playable frame rather than a transient exit/entrance frame.
+      await page.waitForFunction(() => {
+        const actions = [...document.querySelectorAll('[data-qa-screen="gameplay"] button:not([disabled]), [data-qa-screen="gameplay"] [role="button"]:not([aria-disabled="true"])')]
+          .filter(node => !node.closest('[data-testid="shared-bottom-hud"], [data-testid="shared-top-hud"]'));
+        return actions.some(node => {
+          const rect = node.getBoundingClientRect();
+          const x = rect.left + rect.width / 2;
+          const y = rect.top + rect.height / 2;
+          const hit = document.elementFromPoint(x, y);
+          return rect.width > 0 && rect.height > 0 && rect.left >= -1 && rect.right <= innerWidth + 1
+            && rect.top >= -1 && rect.bottom <= innerHeight + 1 && hit && node.contains(hit);
+        });
+      }, null, { timeout: 5000 }).catch(() => {});
       report.dom = await page.evaluate(() => {
         const inViewport = rect => rect.width > 0 && rect.height > 0 && rect.left >= -1 && rect.right <= innerWidth + 1 && rect.top >= -1 && rect.bottom <= innerHeight + 1;
         const fontSize = node => {
