@@ -1,0 +1,128 @@
+.adventure-settings-root {
+  background: radial-gradient(circle at 17% 16%, #15466d 0, transparent 40%), linear-gradient(145deg, #071726, #0b0c23 70%);
+}
+
+.adventure-settings-scroll {
+  padding: clamp(5.75rem, 13vh, 8rem) 1rem 6.5rem;
+}
+
+.adventure-settings-panel {
+  width: min(100%, 45rem);
+  margin: 0 auto;
+  padding: clamp(1.1rem, 4vw, 2.5rem);
+  border: 1px solid rgba(147, 197, 253, .38);
+  border-radius: 1.6rem;
+  background: linear-gradient(145deg, rgba(20, 53, 90, .97), rgba(28, 18, 67, .97));
+  box-shadow: 0 22px 60px rgba(2, 6, 23, .4), inset 0 1px rgba(255, 255, 255, .12);
+  color: #f6f7ff;
+}
+
+.adventure-settings-kicker {
+  color: #8fe3fb;
+  font-size: .8rem;
+  font-weight: 900;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.adventure-settings-panel h1 {
+  margin: .2rem 0 .35rem;
+  color: #fff;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: 900;
+  line-height: 1.12;
+}
+
+.adventure-settings-intro {
+  max-width: 36rem;
+  margin: 0 0 1.4rem;
+  color: #e1efff;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.adventure-settings-grid {
+  display: grid;
+  gap: .85rem;
+}
+
+.adventure-settings-option {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  min-height: 5.25rem;
+  width: 100%;
+  padding: .8rem 1rem;
+  border: 1px solid rgba(172, 204, 255, .38);
+  border-radius: 1rem;
+  background: rgba(5, 20, 47, .72);
+  color: #fff;
+  text-align: left;
+  box-shadow: inset 0 1px rgba(255, 255, 255, .07);
+  cursor: pointer;
+}
+
+.adventure-settings-option:hover,
+.adventure-settings-option:focus-visible {
+  border-color: #9ee9ff;
+  background: rgba(13, 44, 82, .9);
+}
+
+.adventure-settings-option:focus-visible,
+.adventure-settings-return:focus-visible {
+  outline: 3px solid #ffe17a;
+  outline-offset: 3px;
+}
+
+.adventure-settings-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: .8rem;
+  background: rgba(65, 95, 170, .36);
+  color: #b0efff;
+}
+
+.adventure-settings-icon svg { width: 1.45rem; height: 1.45rem; }
+.adventure-settings-copy { display: grid; gap: .15rem; flex: 1; min-width: 0; }
+.adventure-settings-copy strong { font-size: 1rem; line-height: 1.2; }
+.adventure-settings-copy span { color: #ccdbef; font-size: .88rem; line-height: 1.3; }
+
+.adventure-settings-state {
+  flex: none;
+  min-width: 3.25rem;
+  padding: .35rem .45rem;
+  border: 1px solid rgba(194, 209, 241, .3);
+  border-radius: 2rem;
+  background: rgba(180, 190, 218, .16);
+  color: #e6eaf7;
+  font-size: .85rem;
+  font-weight: 900;
+  text-align: center;
+}
+
+.adventure-settings-state.is-on {
+  border-color: rgba(105, 239, 221, .6);
+  background: rgba(34, 157, 146, .29);
+  color: #b8fff1;
+}
+
+.adventure-settings-return {
+  display: block;
+  min-height: 3.25rem;
+  margin: 1.35rem auto 0;
+  padding: .75rem 2rem;
+  font-size: .94rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+@media (max-width: 360px) {
+  .adventure-settings-scroll { padding-left: .7rem; padding-right: .7rem; }
+  .adventure-settings-panel { padding: 1rem; }
+  .adventure-settings-option { gap: .55rem; padding: .7rem; }
+  .adventure-settings-icon { width: 2.6rem; height: 2.6rem; }
+  .adventure-settings-copy span { font-size: .8rem; }
+}

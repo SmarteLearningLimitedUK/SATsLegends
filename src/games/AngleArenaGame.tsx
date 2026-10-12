@@ -5,7 +5,7 @@ import {
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
 import { triggerHaptic } from '../haptics';
-import { GAME_AUDIO_STORAGE_KEY } from '../gameHudEvents';
+import { playGameSound } from '../audio/gameAudio';
 import {
   FeedbackStrip,
   GameTopBar,
@@ -19,11 +19,6 @@ import cannonFacingLeftSrc from '../assets/angle_arena/cannonanglearena/1.png';
 import cannonFacingRightSrc from '../assets/angle_arena/cannonanglearena/2.png';
 import cannonFacingUpSrc from '../assets/angle_arena/cannonanglearena/3.png';
 import { GAME_SCENE_META } from '../gameSceneMeta';
-import angleArenaLaunchSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/bird shot-a1.wav';
-import angleArenaHitSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/pig/piglette destroyed.wav';
-import angleArenaWoodSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/8d82b5_Angry_Birds_Wood_Damage_Sound_Effect.mp3';
-import angleArenaFailSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/Level/level failed piglets a1.mp3';
-import angleArenaCompleteSfxSrc from '../AngryBirdsRemakeUnity-main/AngryBirdsRemakeUnity-main/Assets/Sounds/Level/level clear military 1.mp3';
 import goblinMonster from '../assets/enemies/cohesive/goblin.webp';
 import MonsterMindActor, { type MonsterMindReaction } from '../components/game-ui/MonsterMindActor';
 import './angle-arena.css';
@@ -55,7 +50,6 @@ type GameState =
 
 type ImpactResult = 'hit' | 'miss';
 
-type AngleArenaSfxKey = 'launch' | 'hit' | 'wood' | 'fail' | 'complete';
 
 type ProjectileState = {
   x: number;
@@ -631,22 +625,6 @@ const normalizeVector = (x: number, y: number) => {
   return { x: x / magnitude, y: y / magnitude };
 };
 
-const playAngleArenaSfx = (audioRefs: Partial<Record<AngleArenaSfxKey, HTMLAudioElement>>, key: AngleArenaSfxKey) => {
-  const audio = audioRefs[key];
-  if (!audio) return;
-  try {
-    const isMuted = localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true';
-    // These Audio instances are not in the DOM, so the shared HUD cannot update
-    // their muted property when the player unmutes during a game.
-    audio.muted = isMuted;
-    if (isMuted) return;
-    audio.currentTime = 0;
-    void audio.play().catch(() => undefined);
-  } catch {
-    // Ignore autoplay failures; the level still works without SFX.
-  }
-};
-
 const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   levelId,
   useSharedTopHud: _useSharedTopHud = true,
@@ -684,7 +662,6 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const cannonSpritesRef = useRef<CannonSprites>({});
   const enemyActorFrameRef = useRef<HTMLDivElement | null>(null);
   const arenaBackdropRef = useRef<HTMLImageElement | null>(null);
-  const angleArenaSfxRef = useRef<Partial<Record<AngleArenaSfxKey, HTMLAudioElement>>>({});
 
   const [gameState, setGameState] = useState<GameState>('intro');
   const [questionIndex, setQuestionIndex] = useState(0);
@@ -720,16 +697,21 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     stopScheduledWork();
   }, [isPresent, stopScheduledWork]);
 
-  const rawQuestions = useMemo(
-    () => questionsProp || buildAngleQuestions({
-      level: levelId,
-      launcherX: 0,
-      groundY: 0,
-      gravity: 0,
-    }),
-    [levelId, questionsProp],
-  );
-  const questions = useMemo(() => rawQuestions, [rawQuestions]);
+  // AppRouter may render again during a round. Keep the chosen mission deck
+  // fixed until this game is mounted for another level.
+  const questionSetRef = useRef<{ levelId: number; questions: AngleQuestion[] } | null>(null);
+  if (questionSetRef.current?.levelId !== levelId) {
+    questionSetRef.current = {
+      levelId,
+      questions: questionsProp || buildAngleQuestions({
+        level: levelId,
+        launcherX: 0,
+        groundY: 0,
+        gravity: 0,
+      }),
+    };
+  }
+  const questions = questionSetRef.current.questions;
   const activeQuestion = questions[questionIndex];
 
   const lives = sessionState?.lives ?? localLives;
@@ -802,23 +784,6 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
   }, []);
 
-  useEffect(() => {
-    const isMuted = localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true';
-    const loadAudio = (key: AngleArenaSfxKey, src: string, volume = 0.8) => {
-      const audio = new Audio(src);
-      audio.preload = 'auto';
-      audio.volume = volume;
-      audio.muted = isMuted;
-      angleArenaSfxRef.current[key] = audio;
-    };
-
-    loadAudio('launch', angleArenaLaunchSfxSrc, 0.85);
-    loadAudio('wood', angleArenaWoodSfxSrc, 0.65);
-    loadAudio('hit', angleArenaHitSfxSrc, 0.8);
-    loadAudio('fail', angleArenaFailSfxSrc, 0.75);
-    loadAudio('complete', angleArenaCompleteSfxSrc, 0.75);
-  }, []);
-
   const resetForNext = () => {
     if (!presentRef.current || terminalRef.current) return;
     clearRoundTimers();
@@ -841,7 +806,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     const earnedStars = Math.min(3, Math.max(1, Math.floor(finalScore / 450)));
     setStars(earnedStars);
     setGameState('levelComplete');
-    playAngleArenaSfx(angleArenaSfxRef.current, 'complete');
+    playGameSound('complete');
     emitMiniGameSessionEvent(callbacksRef.current.sessionEvents, 'game_complete', {
       score: finalScore,
       stars: earnedStars,
@@ -866,8 +831,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     }, 680);
 
     if (result === 'hit') {
-      playAngleArenaSfx(angleArenaSfxRef.current, 'hit');
-      playAngleArenaSfx(angleArenaSfxRef.current, 'wood');
+      playGameSound('impact');
       const nextScore = scoreRef.current + POINTS_PER_HIT;
       scoreRef.current = nextScore;
       setScore(nextScore);
@@ -884,7 +848,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       if (!sessionState) {
         setLocalLives((prev) => Math.max(0, prev - 1));
       }
-      playAngleArenaSfx(angleArenaSfxRef.current, 'fail');
+      playGameSound('fail');
       setGameState('resolvedIncorrect');
     }
 
@@ -898,7 +862,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     const resolvedAngle = Number.isFinite(angleDeg) ? (angleDeg as number) : desiredAngleRef.current;
     const speed = activeQuestion.launchSpeed || PROJECTILE_SPEED;
     projectileRef.current = buildProjectile(resolvedAngle, speed);
-    playAngleArenaSfx(angleArenaSfxRef.current, 'launch');
+    playGameSound('cast');
     cameraTargetRef.current = { x: 0, y: 0 };
     setGameState('projectileFlight');
   };

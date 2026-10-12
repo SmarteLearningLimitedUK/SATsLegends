@@ -14,6 +14,7 @@ export type LevelProgress = {
   bestStars: StarCount;
   bestScore: number;
   bestAccuracy: number;
+  bestAccuracyMeasured?: boolean;
   bestTimeMs: number | null;
   timesPlayed: number;
   firstClearXpAwarded: boolean;
@@ -24,10 +25,18 @@ export type CompleteLevelArgs = {
   completed: boolean;
   score: number;
   accuracy: number; // 0..1
+  /** False when the mini-game has not reported individual answer attempts. */
+  accuracyMeasured?: boolean;
   hintsUsed: number;
   livesRemaining: number;
   mistakes: number;
   timeMs: number;
+  /** Use the mini-game's own earned rating when it has scored the clear. */
+  reportedStars?: StarCount;
+  /** Some scored adventures require a minimum star after meeting their own clear target. */
+  minStarsOnComplete?: StarCount;
+  /** Unsuccessful practice/mock attempts may be recorded without an XP award. */
+  awardFailureXp?: boolean;
 };
 
 export type BonusBreakdown = {

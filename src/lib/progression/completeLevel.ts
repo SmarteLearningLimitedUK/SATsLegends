@@ -11,6 +11,7 @@ const createEmptyProgress = (levelId: string): LevelProgress => ({
   bestStars: 0,
   bestScore: 0,
   bestAccuracy: 0,
+  bestAccuracyMeasured: false,
   bestTimeMs: null,
   timesPlayed: 0,
   firstClearXpAwarded: false,
@@ -35,22 +36,31 @@ export const completeLevel = (
     return (Math.max(0, islandId - 1) * 10) + Math.max(0, levelId - 1);
   };
   const levelIndex = parseLevelIndex();
-  const stars = calculateStars({
+  const calculatedStars = calculateStars({
     completed: args.completed,
     accuracy: args.accuracy,
     hintsUsed: args.hintsUsed,
     mistakes: args.mistakes,
     livesRemaining: args.livesRemaining,
   });
-  const perfectAccuracy = args.completed && args.accuracy === 1 && args.hintsUsed <= 0 && args.mistakes <= 1;
+  const earnedStars = args.completed && Number.isFinite(args.reportedStars)
+    ? Math.max(1, Math.min(3, Math.round(args.reportedStars!)))
+    : calculatedStars;
+  const stars = (args.completed && args.minStarsOnComplete
+    ? Math.max(earnedStars, args.minStarsOnComplete)
+    : earnedStars) as StarCount;
+  const accuracyMeasured = args.accuracyMeasured !== false;
+  const perfectAccuracy = args.completed && accuracyMeasured && args.accuracy === 1 && args.hintsUsed <= 0 && args.mistakes <= 1;
 
-  const { xpGained, bonuses } = calculateXp({
+  const { xpGained, bonuses } = !args.completed && args.awardFailureXp === false
+    ? { xpGained: 0, bonuses: [] }
+    : calculateXp({
     completed: args.completed,
     stars,
     firstClear: firstClear && !previous.firstClearXpAwarded,
     perfectAccuracy,
     levelIndex,
-  });
+    });
 
   const xpOutcome = applyXpGain(player, xpGained);
 
@@ -63,7 +73,8 @@ export const completeLevel = (
     firstClearXpAwarded: previous.firstClearXpAwarded || firstClear,
     bestStars,
     bestScore: Math.max(previous.bestScore, args.score),
-    bestAccuracy: Math.max(previous.bestAccuracy, args.accuracy),
+    bestAccuracy: accuracyMeasured ? Math.max(previous.bestAccuracy, args.accuracy) : previous.bestAccuracy,
+    bestAccuracyMeasured: Boolean(previous.bestAccuracyMeasured || previous.bestAccuracy > 0 || accuracyMeasured),
     bestTimeMs: args.completed
       ? previous.bestTimeMs === null
         ? args.timeMs

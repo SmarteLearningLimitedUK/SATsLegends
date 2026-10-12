@@ -116,7 +116,7 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     rules: makeBossRules(
       'SATs Paper 1: Arithmetic',
       'Charge the arithmetic reactor with a 30-minute, 40-mark calculation adventure.',
-      'Use paper for formal written methods and no calculator; answers appear after the run.'
+      'Use the choices and visual tools on screen. Solutions appear after the run.'
     ),
   },
   prime_pop: {
@@ -378,14 +378,14 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
   },
   equation_grove: {
     label: 'Order Ops Arena',
-    focus: 'Missing numbers, simple algebra and inverse operations',
+    focus: 'Brackets and the order of operations',
     rules: {
       title: 'Order Ops Arena',
-      summary: 'Resolve each expression using the correct operation order to unlock the arena gate.',
+      summary: 'Solve one part of the expression at a time to land a hit.',
       bullets: [
-        'Use brackets first, then multiplication/division, then addition/subtraction.',
-        'Challenges mix single and multi-step expressions with close distractor answers.',
-        'Fast accurate decisions build streaks and keep the arena under control.',
+        'Choose the operation and its result. The expression updates after every correct step.',
+        'Work inside brackets first, then multiply, then add or subtract from left to right.',
+        'A wrong choice leaves the expression in place so you can try again.',
       ],
     },
   },

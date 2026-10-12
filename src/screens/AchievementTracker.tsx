@@ -61,7 +61,7 @@ const AchievementTracker: React.FC<AchievementTrackerProps> = ({ player, onBack 
                 </div>
                 <div className="flex-1">
                   <div className="text-base font-black md:text-lg">{achievement.name}</div>
-                  <div className="text-[11px] font-semibold text-white/60 md:text-[12px]">
+                  <div className="text-[13px] font-semibold leading-snug text-cyan-50/85 md:text-sm">
                     {achievement.description}
                   </div>
                   <div className="mt-2">
@@ -73,13 +73,13 @@ const AchievementTracker: React.FC<AchievementTrackerProps> = ({ player, onBack 
                         }}
                       />
                     </div>
-                    <div className="mt-1 text-aaa-micro text-white/50">
+                    <div className="mt-1 text-xs font-bold text-cyan-100/80">
                       {achievement.earned ? 'Earned' : `${achievement.progress} / ${achievement.target}`}
                     </div>
                   </div>
                 </div>
                 {achievement.earned ? (
-                  <div className="shrink-0 rounded-full border border-emerald-200/40 bg-emerald-200/15 px-3 py-1 text-aaa-micro text-emerald-100">
+                  <div className="shrink-0 rounded-full border border-emerald-200/40 bg-emerald-200/15 px-3 py-1 text-xs font-bold text-emerald-100">
                     Earned
                   </div>
                 ) : null}

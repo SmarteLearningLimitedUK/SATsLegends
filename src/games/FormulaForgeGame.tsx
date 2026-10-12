@@ -21,7 +21,7 @@ interface FormulaForgeGameProps {
   sessionEvents?: GameplaySessionEventHandlers;
 }
 
-type FormulaKind = 'area_rect' | 'perimeter_rect' | 'triangle_area' | 'volume_cuboid';
+type FormulaKind = 'area_rect' | 'perimeter_rect' | 'triangle_area' | 'parallelogram_area' | 'volume_cuboid';
 type SolveMode = 'compute' | 'missing';
 
 interface GivenValue {
@@ -32,7 +32,7 @@ interface GivenValue {
 interface FormulaRound {
   id: string;
   kind: 'fluency' | 'reasoning';
-  diagram: 'rectangle' | 'triangle' | 'cuboid';
+  diagram: 'rectangle' | 'triangle' | 'parallelogram' | 'cuboid';
   title: string;
   formula: string;
   prompt: string;
@@ -195,6 +195,26 @@ const buildTriangleRound = (level: number): FormulaRound => {
   };
 };
 
+const buildParallelogramRound = (mode: SolveMode, level: number): FormulaRound => {
+  const base = randomInt(5, 12 + level);
+  const height = randomInt(3, 9 + level);
+  const area = base * height;
+  const missing = mode === 'missing';
+  return {
+    id: `parallelogram-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+    kind: missing ? 'reasoning' : 'fluency',
+    diagram: 'parallelogram',
+    title: 'Parallelogram Area',
+    formula: 'A = b × h',
+    prompt: missing ? 'The perpendicular height rune is hidden.' : 'Use the base and perpendicular height to restore this rune.',
+    targetLabel: missing ? 'h' : 'A',
+    given: missing ? [{ label: 'A', value: area }, { label: 'b', value: base }] : [{ label: 'b', value: base }, { label: 'h', value: height }],
+    answer: missing ? height : area,
+    options: makeOptions(missing ? height : area),
+    hint: missing ? 'Divide area by base to find the perpendicular height.' : 'Multiply the base by the perpendicular height, not the sloping side.',
+  };
+};
+
 const buildVolumeRound = (mode: SolveMode, level: number): FormulaRound => {
   const length = randomInt(3, 8 + level);
   const width = randomInt(2, 6 + level);
@@ -239,9 +259,9 @@ const buildVolumeRound = (mode: SolveMode, level: number): FormulaRound => {
 const createRound = (level: number): FormulaRound => {
   const modes: FormulaKind[] = level === 1 ? ['area_rect']
     : level === 2 ? ['area_rect', 'perimeter_rect']
-      : level === 3 ? ['triangle_area']
-        : level === 4 ? ['triangle_area', 'volume_cuboid']
-          : ['area_rect', 'perimeter_rect', 'triangle_area', 'volume_cuboid'];
+      : level === 3 ? ['triangle_area', 'parallelogram_area']
+        : level === 4 ? ['triangle_area', 'parallelogram_area', 'volume_cuboid']
+          : ['area_rect', 'perimeter_rect', 'triangle_area', 'parallelogram_area', 'volume_cuboid'];
 
   const mode = modes[randomInt(0, modes.length - 1)];
   const solveMode: SolveMode = level >= 5 && Math.random() > 0.48 ? 'missing' : 'compute';
@@ -249,6 +269,7 @@ const createRound = (level: number): FormulaRound => {
   if (mode === 'area_rect') return buildAreaRound(solveMode, level);
   if (mode === 'perimeter_rect') return buildPerimeterRound(solveMode, level);
   if (mode === 'volume_cuboid') return buildVolumeRound(solveMode, level);
+  if (mode === 'parallelogram_area') return buildParallelogramRound(solveMode, level);
   return buildTriangleRound(level);
 };
 
@@ -267,7 +288,15 @@ const FormulaShapePanel: React.FC<{ round: FormulaRound }> = ({ round }) => {
         <span data-formula-equation="true">{round.formula}</span>
       </div>
       <div className="relative mt-2 min-h-0 flex-1 overflow-hidden rounded-[1.1rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.16),rgba(15,23,42,0.06)_42%,rgba(8,15,30,0.28)_100%)]">
-        {round.diagram === 'triangle' ? (
+        {round.diagram === 'parallelogram' ? (
+          <svg viewBox="0 0 120 100" className="absolute inset-0 h-full w-full" aria-label="Parallelogram with perpendicular height">
+            <polygon points="36,20 102,20 84,80 18,80" fill="rgba(56,189,248,0.16)" stroke="rgba(191,219,254,0.9)" strokeWidth="2.4" strokeLinejoin="round" />
+            <line x1="36" y1="20" x2="36" y2="80" stroke="#fcd34d" strokeWidth="1.8" strokeDasharray="4 3" />
+            <path d="M36 73H43V80" fill="none" stroke="#fcd34d" strokeWidth="1.5" />
+            <text x="40" y="51" fill="#fff8ec" fontSize="10" fontWeight="bold">h</text>
+            <text x="51" y="94" fill="#fff8ec" fontSize="10" fontWeight="bold">b</text>
+          </svg>
+        ) : round.diagram === 'triangle' ? (
           <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full">
             <polygon points="50,16 18,78 82,78" fill="rgba(56,189,248,0.16)" stroke="rgba(191,219,254,0.9)" strokeWidth="2.2" strokeLinejoin="round" strokeLinecap="round" />
             <line x1="50" y1="16" x2="50" y2="78" stroke="rgba(191,219,254,0.45)" strokeDasharray="3 3" strokeWidth="1.2" strokeLinecap="round" />

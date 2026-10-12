@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { motion } from 'motion/react';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
@@ -8,7 +8,7 @@ import {
   GameUiShell,
 } from '../components/game-ui/GameUiKit';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
-import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
+import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import problemPyramidBackground from '../assets/maps/premium/problem-pyramid.webp';
 
 interface ProblemPyramidGameProps extends MiniGameShellContractProps {
@@ -85,6 +85,7 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
   practiceBriefing,
   onVictory,
   onGameOver: _onGameOver,
+  sessionEvents,
 }) => {
   const [roundIndex, setRoundIndex] = useState(0);
   const [attempts, setAttempts] = useState(0);
@@ -95,6 +96,7 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
   const [feedback, setFeedback] = useState('');
   const [feedbackTone, setFeedbackTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
+  const answerPendingRef = useRef(false);
 
   useEffect(() => {
     setShowPracticeIntro(Boolean(isPractice));
@@ -103,9 +105,13 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
   const round = useMemo(() => buildRound(levelId, roundIndex + 1), [levelId, roundIndex]);
 
   const handleAnswer = (option: number) => {
-    if (locked) return;
+    if (locked || answerPendingRef.current) return;
+    answerPendingRef.current = true;
     setSelected(option);
     setAttempts((prev) => prev + 1);
+    emitMiniGameSessionEvent(sessionEvents, option === round.top ? 'correct_answer' : 'incorrect_answer', {
+      metadata: { questionId: round.id, selected: option, target: round.top, roundIndex },
+    });
 
     if (option === round.top) {
       setCorrectCount((prev) => prev + 1);
@@ -132,11 +138,12 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
         setGlow(false);
         setFeedback('');
         setFeedbackTone('neutral');
+        answerPendingRef.current = false;
       }, 750);
       return;
     }
 
-    setFeedback('Still scrambled. Re-check the numbers below.');
+    setFeedback(`The top is ${round.middle[0]} + ${round.middle[1]}. Add those two middle stones and try again.`);
     setFeedbackTone('bad');
     setLocked(true);
     window.setTimeout(() => {
@@ -144,8 +151,8 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
       setSelected(null);
       setFeedback('');
       setFeedbackTone('neutral');
-      setRoundIndex((prev) => prev + 1);
-    }, 800);
+      answerPendingRef.current = false;
+    }, 1600);
   };
 
   const blockClass = (isTop?: boolean) => (

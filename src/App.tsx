@@ -19,6 +19,7 @@ import LevelResultsModal from './components/results/LevelResultsModal';
 import UnifiedMiniGameHud from './components/UnifiedMiniGameHud';
 import AssetIcon from './components/AssetIcon';
 import PracticeIntroPopup from './components/game-ui/PracticeIntroPopup';
+import GlobalWorkpadDialog from './components/game-ui/GlobalWorkpadDialog';
 import { IslandData, LevelData, PlayerData } from './types';
 import { AppRouter } from './app/AppRouter';
 import { useScreenFlow } from './app/useScreenFlow';
@@ -30,6 +31,7 @@ import {
 } from './app/useGameplaySession';
 import { GameplaySessionEventHandlers, GameplaySessionEventPayload, GameplaySessionState } from './app/gameplaySessionContract';
 import { useMiniGameLifecycle } from './app/useMiniGameLifecycle';
+import { reportedAccuracy, victoryHasEarnedProgress } from './app/scoreLevelOutcome';
 import { LevelResultState } from './app/types';
 import {
   IPHONE_STAGE_HEIGHT,
@@ -51,7 +53,7 @@ import { reconcileAchievementState } from './systems/progression/achievementCata
 import { useProgressionStore } from './store/useProgressionStore';
 import { LevelProgress } from './lib/progression/types';
 import { getXpRequiredForLevel } from './lib/progression/getXpRequiredForLevel';
-import { playGameSound } from './audio/gameAudio';
+import { configureGameSoundProfile, playGameSound } from './audio/gameAudio';
 
 const PHONE_STAGE_MIN_HEIGHT = 635;
 const getViewportSize = () => {
@@ -82,6 +84,7 @@ const App: React.FC = () => {
     goToWorldMap,
     goToIslandLevels,
     goToGameplay,
+    goToShop,
     handleIslandSelect: selectIslandInFlow,
     handleLevelSelect: selectLevelInFlow,
     handleGlobalDockBack,
@@ -99,8 +102,13 @@ const App: React.FC = () => {
     hasCompletedProfile,
     saveProfileName,
     claimQuest,
+    recordShopVisit,
     applyGameVictory,
   } = usePlayerProgression();
+
+  useEffect(() => {
+    if (screen === 'shop') recordShopVisit();
+  }, [screen]);
 
   const {
     player: progressionPlayer,
@@ -110,18 +118,22 @@ const App: React.FC = () => {
     setAvatarId: setProgressionAvatarId,
   } = useProgressionStore();
 
-  const [sessionMetrics, setSessionMetrics] = useState({
+  const sessionMetricsRef = useRef({
     correct: 0,
     incorrect: 0,
     hintsUsed: 0,
   });
   const [answerStreak, setAnswerStreak] = useState(0);
   const [gameplayHelpOpen, setGameplayHelpOpen] = useState(false);
+  const [gameplayWorkpadOpen, setGameplayWorkpadOpen] = useState(false);
+  const [gameplayWorkpadValue, setGameplayWorkpadValue] = useState('');
 
   const resetSessionMetrics = useCallback(() => {
-    setSessionMetrics({ correct: 0, incorrect: 0, hintsUsed: 0 });
+    sessionMetricsRef.current = { correct: 0, incorrect: 0, hintsUsed: 0 };
     setAnswerStreak(0);
     setGameplayHelpOpen(false);
+    setGameplayWorkpadOpen(false);
+    setGameplayWorkpadValue('');
   }, []);
 
   const mapProgressionToPlayer = useCallback((levels: Record<string, LevelProgress>) => {
@@ -226,6 +238,11 @@ const App: React.FC = () => {
   const practiceBriefingOpen = Boolean(screen === 'gameplay' && selectedLevel?.isPractice && getLearnerGuide(selectedLevel.blueprintKey) && dismissedPracticeGuide !== practiceGuideKey);
   const legacyHydrationAppliedRef = useRef(false);
   const lastIncorrectLifeLossRef = useRef<{ signature: string; at: number }>({ signature: '', at: 0 });
+  const runSettledRef = useRef(false);
+  const recordTerminalTelemetryRef = useRef<(
+    type: 'game_complete' | 'game_failed',
+    event: GameplaySessionEventPayload,
+  ) => void>(() => {});
   const levelFailCountsRef = useRef<Record<string, number>>({});
   const handleGameOverRef = useRef<(XP: number) => void>(() => {});
   const [wellbeingSignals, setWellbeingSignals] = useState<WellbeingSignals>({
@@ -316,13 +333,20 @@ const App: React.FC = () => {
   } = useGameplaySession({
     screen,
     selectedLevel,
-    paused: gameplayHelpOpen || practiceBriefingOpen || Boolean(levelResult),
+    paused: gameplayHelpOpen || gameplayWorkpadOpen || practiceBriefingOpen || Boolean(levelResult),
     restartKey: gameplayRestartKey,
     onLifeDepleted: () => handleGameOverRef.current(0),
     onTimeDepleted: () => handleGameOverRef.current(0),
   });
 
   useMiniGameLifecycle({ screen, selectedLevel });
+
+  useEffect(() => {
+    configureGameSoundProfile(screen === 'gameplay'
+      ? selectedLevel?.blueprintKey ?? selectedLevel?.gameType
+      : null);
+    return () => configureGameSoundProfile(null);
+  }, [screen, selectedLevel?.blueprintKey, selectedLevel?.gameType]);
 
   useEffect(() => {
     if (screen !== 'gameplay') return undefined;
@@ -349,8 +373,8 @@ const App: React.FC = () => {
     timeLeft: globalMiniGameHudTimeLeft,
     totalTime: getSessionDurationSeconds(selectedLevel),
     lives: globalMiniGameLives,
-    paused: gameplayHelpOpen || practiceBriefingOpen || Boolean(levelResult),
-  }), [gameplayHelpOpen, practiceBriefingOpen, globalMiniGameHudTimeLeft, globalMiniGameLives, levelResult, selectedLevel]);
+    paused: gameplayHelpOpen || gameplayWorkpadOpen || practiceBriefingOpen || Boolean(levelResult),
+  }), [gameplayHelpOpen, gameplayWorkpadOpen, practiceBriefingOpen, globalMiniGameHudTimeLeft, globalMiniGameLives, levelResult, selectedLevel]);
 
   const resolveLevelTitle = useCallback(() => {
     if (!selectedLevel) return 'Level over';
@@ -361,7 +385,7 @@ const App: React.FC = () => {
   const buildPracticeLevelResult = useCallback((
     type: 'victory' | 'gameover',
     score: number,
-    accuracy: number,
+    accuracy: number | null,
     timeMs: number,
   ): LevelResultState | null => {
     if (!selectedIsland || !selectedLevel) return null;
@@ -383,9 +407,10 @@ const App: React.FC = () => {
       currentXp: progressionPlayer.currentXp,
       xpRequiredForNextLevel: getXpRequiredForLevel(progressionPlayer.level),
       leveledUp: false,
-      accuracy,
-      hintsUsed: sessionMetrics.hintsUsed,
-      mistakes: sessionMetrics.incorrect,
+      accuracy: accuracy ?? 0,
+      accuracyMeasured: accuracy !== null,
+      hintsUsed: sessionMetricsRef.current.hintsUsed,
+      mistakes: sessionMetricsRef.current.incorrect,
       timeMs,
       completed: type === 'victory',
       coinsEarned: 0,
@@ -399,17 +424,19 @@ const App: React.FC = () => {
     resolveLevelTitle,
     selectedIsland,
     selectedLevel,
-    sessionMetrics.hintsUsed,
-    sessionMetrics.incorrect,
   ]);
 
-  const handleGameOver = useCallback((XP: number) => {
-    playGameSound('fail');
-    triggerHaptic('error');
+  const handleGameOver = useCallback((XP: number, accuracyOverride?: number) => {
+    if (screen !== 'gameplay' || !selectedLevel || runSettledRef.current) return;
+    runSettledRef.current = true;
+    recordTerminalTelemetryRef.current('game_failed', { score: XP });
+    const metrics = sessionMetricsRef.current;
+    const isMockAttempt = Boolean(selectedLevel?.isBoss && isBossEncounterGameType(selectedLevel.gameType));
+    playGameSound(isMockAttempt ? 'complete' : 'fail');
+    triggerHaptic(isMockAttempt ? 'selection' : 'error');
     if (selectedLevel?.isPractice) {
       if (!selectedIsland || !selectedLevel) return;
-      const totalAttempts = sessionMetrics.correct + sessionMetrics.incorrect;
-      const accuracy = totalAttempts > 0 ? sessionMetrics.correct / totalAttempts : 0;
+      const accuracy = reportedAccuracy(metrics.correct, metrics.incorrect);
       const timeMs = Math.max(0, (sessionState.totalTime - sessionState.timeLeft) * 1000);
       const practiceResult = buildPracticeLevelResult('gameover', XP, accuracy, timeMs);
       if (practiceResult) setLevelResult(practiceResult);
@@ -419,42 +446,51 @@ const App: React.FC = () => {
     const now = Date.now();
     const levelKey = selectedIsland && selectedLevel ? `${selectedIsland.id}-${selectedLevel.id}` : null;
     let levelFailCount = 0;
-    if (levelKey) {
+    if (levelKey && !isMockAttempt) {
       levelFailCountsRef.current[levelKey] = (levelFailCountsRef.current[levelKey] || 0) + 1;
       levelFailCount = levelFailCountsRef.current[levelKey];
     }
     const nextSignals = {
       ...wellbeingSignals,
-      consecutiveFails: wellbeingSignals.consecutiveFails + 1,
+      consecutiveFails: wellbeingSignals.consecutiveFails + (isMockAttempt ? 0 : 1),
       gamesPlayedSinceBreak: wellbeingSignals.gamesPlayedSinceBreak + 1,
     };
-    const wellbeingSuggested = levelFailCount >= 3 || shouldSuggestWellbeing(nextSignals, now);
+    const wellbeingSuggested = !isMockAttempt && (levelFailCount >= 3 || shouldSuggestWellbeing(nextSignals, now));
     setWellbeingSignals(wellbeingSuggested
       ? { ...nextSignals, lastSuggestionTime: now }
       : nextSignals);
     if (!selectedIsland || !selectedLevel) return;
 
-    const totalAttempts = sessionMetrics.correct + sessionMetrics.incorrect;
-    const accuracy = totalAttempts > 0 ? sessionMetrics.correct / totalAttempts : 0;
+    const measuredAccuracy = isMockAttempt && Number.isFinite(accuracyOverride)
+      ? Math.max(0, Math.min(1, accuracyOverride!))
+      : reportedAccuracy(metrics.correct, metrics.incorrect);
+    const accuracyMeasured = measuredAccuracy !== null;
+    const accuracy = measuredAccuracy ?? 0;
     const timeMs = Math.max(0, (sessionState.totalTime - sessionState.timeLeft) * 1000);
     const progressionResult = completeProgressionLevel({
       levelId: levelKey!,
       completed: false,
       score: XP,
       accuracy,
-      hintsUsed: sessionMetrics.hintsUsed,
+      accuracyMeasured,
+      hintsUsed: metrics.hintsUsed,
       livesRemaining: sessionState.lives,
-      mistakes: sessionMetrics.incorrect,
+      mistakes: metrics.incorrect,
       timeMs,
+      awardFailureXp: !isMockAttempt,
     });
 
     const levelTitle = resolveLevelTitle();
     setLevelResult({
       type: 'gameover',
-      title: levelTitle,
-      subtitle: wellbeingSuggested
+      title: isMockAttempt ? 'Core run complete' : levelTitle,
+      subtitle: isMockAttempt
+        ? 'Your score is saved. Recharge the skills in your review, then return for another run. The 50% Core clear target is an in-game milestone, not an official SATs pass mark.'
+        : wellbeingSuggested
         ? "That was a tough round. Take a calm minute, then come back when you're ready."
         : 'No rewards lost forever. Reset, tighten the route, and take another shot.',
+      score: XP,
+      mockAttempt: isMockAttempt,
       stars: progressionResult.stars,
       xpGained: progressionResult.xpGained,
       bonuses: progressionResult.bonuses,
@@ -465,16 +501,17 @@ const App: React.FC = () => {
       xpRequiredForNextLevel: progressionResult.xpRequiredForNextLevel,
       leveledUp: progressionResult.leveledUp,
       accuracy,
-      hintsUsed: sessionMetrics.hintsUsed,
-      mistakes: sessionMetrics.incorrect,
+      accuracyMeasured,
+      hintsUsed: metrics.hintsUsed,
+      mistakes: metrics.incorrect,
       timeMs,
       completed: false,
       coinsEarned: 0,
       xpEarned: progressionResult.xpGained,
       achievementsUnlocked: [],
-      wellbeingSuggested,
+      wellbeingSuggested: isMockAttempt ? false : wellbeingSuggested,
     });
-  }, [buildPracticeLevelResult, completeProgressionLevel, resolveLevelTitle, selectedIsland, selectedLevel, sessionMetrics.correct, sessionMetrics.hintsUsed, sessionMetrics.incorrect, sessionState.lives, sessionState.timeLeft, sessionState.totalTime, setLevelResult, wellbeingSignals]);
+  }, [buildPracticeLevelResult, completeProgressionLevel, resolveLevelTitle, screen, selectedIsland, selectedLevel, sessionState.lives, sessionState.timeLeft, sessionState.totalTime, setLevelResult, wellbeingSignals]);
 
   useEffect(() => {
     handleGameOverRef.current = handleGameOver;
@@ -487,10 +524,12 @@ const App: React.FC = () => {
   }, [selectedIsland, selectedLevel]);
 
   useEffect(() => {
-    if (screen === 'gameplay' && selectedLevel) {
+    if (screen === 'gameplay' && selectedLevel && !levelResult) {
+      runSettledRef.current = false;
+      lastIncorrectLifeLossRef.current = { signature: '', at: 0 };
       resetSessionMetrics();
     }
-  }, [gameplayRestartKey, resetSessionMetrics, screen, selectedLevel?.id]);
+  }, [gameplayRestartKey, levelResult, resetSessionMetrics, screen, selectedLevel?.id]);
 
   const selectedRuleSet = useMemo(
     () => (
@@ -592,13 +631,19 @@ const App: React.FC = () => {
     selectLevelInFlow(level);
   };
 
-  const handleGameVictory = (stars: number, XP: number) => {
+  const handleGameVictory = (stars: number, XP: number, accuracyOverride?: number) => {
+    if (screen !== 'gameplay' || !selectedLevel || runSettledRef.current) return;
+    const metrics = sessionMetricsRef.current;
+    if (!victoryHasEarnedProgress(stars, XP, metrics.correct)) {
+      handleGameOver(Math.max(0, XP));
+      return;
+    }
+    runSettledRef.current = true;
+    recordTerminalTelemetryRef.current('game_complete', { score: XP, stars });
     playGameSound('complete');
     triggerHaptic('success');
     if (selectedLevel?.isPractice) {
-      const totalAttempts = sessionMetrics.correct + sessionMetrics.incorrect;
-      const fallbackAccuracy = stars >= 3 ? 1 : stars === 2 ? 0.85 : stars === 1 ? 0.65 : 0.5;
-      const accuracy = totalAttempts > 0 ? sessionMetrics.correct / totalAttempts : fallbackAccuracy;
+      const accuracy = reportedAccuracy(metrics.correct, metrics.incorrect);
       const timeMs = Math.max(0, (sessionState.totalTime - sessionState.timeLeft) * 1000);
       const practiceResult = buildPracticeLevelResult('victory', XP, accuracy, timeMs);
       if (practiceResult) setLevelResult(practiceResult);
@@ -613,9 +658,11 @@ const App: React.FC = () => {
     handleResetFailCount();
     if (!selectedIsland || !selectedLevel) return;
 
-    const totalAttempts = sessionMetrics.correct + sessionMetrics.incorrect;
-    const fallbackAccuracy = stars >= 3 ? 1 : stars === 2 ? 0.85 : stars === 1 ? 0.65 : 0.5;
-    const accuracy = totalAttempts > 0 ? sessionMetrics.correct / totalAttempts : fallbackAccuracy;
+    const measuredAccuracy = isMockAssessment && Number.isFinite(accuracyOverride)
+      ? Math.max(0, Math.min(1, accuracyOverride!))
+      : reportedAccuracy(metrics.correct, metrics.incorrect);
+    const accuracyMeasured = measuredAccuracy !== null;
+    const accuracy = measuredAccuracy ?? 0;
     const timeMs = Math.max(0, (sessionState.totalTime - sessionState.timeLeft) * 1000);
     const levelKey = `${selectedIsland.id}-${selectedLevel.id}`;
     const progressionResult = completeProgressionLevel({
@@ -623,10 +670,13 @@ const App: React.FC = () => {
       completed: true,
       score: XP,
       accuracy,
-      hintsUsed: sessionMetrics.hintsUsed,
+      accuracyMeasured,
+      hintsUsed: metrics.hintsUsed,
       livesRemaining: sessionState.lives,
-      mistakes: sessionMetrics.incorrect,
+      mistakes: metrics.incorrect,
       timeMs,
+      reportedStars: Math.max(1, Math.min(3, Math.round(stars))) as 1 | 2 | 3,
+      minStarsOnComplete: isMockAssessment ? 1 : undefined,
     });
 
     const totalStarsEarned = useProgressionStore.getState().totalStars;
@@ -637,8 +687,9 @@ const App: React.FC = () => {
       {
         score: XP,
         accuracy,
-        hintsUsed: sessionMetrics.hintsUsed,
-        mistakes: sessionMetrics.incorrect,
+        accuracyMeasured,
+        hintsUsed: metrics.hintsUsed,
+        mistakes: metrics.incorrect,
         timeMs,
       },
       totalStarsEarned,
@@ -656,6 +707,14 @@ const App: React.FC = () => {
   const handleRetryLevel = () => {
     setLevelResult(null);
     setGameplayRestartKey((prev) => prev + 1);
+    goToGameplay();
+  };
+
+  const handlePracticeAfterFailure = () => {
+    const practice = selectedIsland?.levels.find(level => level.isPractice && level.blueprintKey === selectedLevel?.blueprintKey);
+    if (!practice) return;
+    setLevelResult(null);
+    setSelectedLevel(practice);
     goToGameplay();
   };
 
@@ -754,22 +813,25 @@ const App: React.FC = () => {
       };
     });
   }, [buildTelemetryContext, setPlayer]);
+  recordTerminalTelemetryRef.current = recordTelemetryEvent;
 
   const sessionEvents: GameplaySessionEventHandlers = useMemo(() => ({
     onCorrectAnswer: (event) => {
+      if (screen !== 'gameplay' || runSettledRef.current) return;
       playGameSound('correct');
       triggerHaptic('selection');
-      setSessionMetrics((prev) => ({ ...prev, correct: prev.correct + 1 }));
+      sessionMetricsRef.current = { ...sessionMetricsRef.current, correct: sessionMetricsRef.current.correct + 1 };
       setAnswerStreak((previous) => previous + 1);
       recordTelemetryEvent('correct_answer', event);
     },
     onIncorrectAnswer: (event) => {
+      if (screen !== 'gameplay' || runSettledRef.current) return;
       playGameSound('incorrect');
       triggerHaptic('error');
-      setSessionMetrics((prev) => ({ ...prev, incorrect: prev.incorrect + 1 }));
+      sessionMetricsRef.current = { ...sessionMetricsRef.current, incorrect: sessionMetricsRef.current.incorrect + 1 };
       setAnswerStreak(0);
       recordTelemetryEvent('incorrect_answer', event);
-      if (screen === 'gameplay') {
+      if (screen === 'gameplay' && event.metadata?.preservesLives !== true) {
         const metadataKey = JSON.stringify(event.metadata ?? {});
         const signature = `${event.gameType ?? 'unknown'}:${event.levelId ?? 'unknown'}:${metadataKey}`;
         const now = Date.now();
@@ -786,13 +848,11 @@ const App: React.FC = () => {
     onPuzzleComplete: () => {
       triggerHaptic('selection');
     },
-    onGameComplete: (event) => {
-      recordTelemetryEvent('game_complete', event);
-    },
-    onGameFailed: (event) => {
-      recordTelemetryEvent('game_failed', event);
-    },
-  }), [consumeLife, recordTelemetryEvent, screen, setSessionMetrics]);
+    // A mini-game may announce an end before its scored callback. Log only the
+    // accepted shell result so an invalid or racing callback cannot invert it.
+    onGameComplete: () => {},
+    onGameFailed: () => {},
+  }), [consumeLife, recordTelemetryEvent, screen]);
 
   const screenBehavior = SCREEN_BEHAVIOR[screen];
   const backgroundIntensityClass = screenBehavior.family === 'hub'
@@ -840,7 +900,7 @@ const App: React.FC = () => {
   const viewportShellClass = isGameplayScreen
     ? 'sat-shell-standard bg-transparent'
     : isWorldMapScreen
-    ? 'sat-shell-map licensed-playfield-bg bg-transparent pt-3 pb-3'
+    ? 'sat-shell-map licensed-playfield-bg bg-transparent'
     : useUnboundedStageShell
       ? 'sat-shell-standard licensed-playfield-bg bg-transparent'
       : isMapLayoutScreen
@@ -987,6 +1047,8 @@ const App: React.FC = () => {
                   onGameplayVictory={handleGameVictory}
                   onGameplayOver={handleGameOver}
                   onOpenShop={goToProfile}
+                  onOpenCharacterShop={goToShop}
+                  onOpenQuests={() => setShowQuests(true)}
                   onOpenAchievements={goToAchievements}
                   onOpenParentReport={goToParentDashboard}
                   onUpdatePlayer={handleUpdatePlayer}
@@ -1004,7 +1066,12 @@ const App: React.FC = () => {
                 levelLabel={selectedLevel ? selectedLevel.isPractice ? 'Practice' : selectedLevel.isBoss ? 'Mock adventure' : `Level ${selectedLevel.difficultyTier ?? selectedLevel.miniGameLevel ?? 1} of 5` : 'Adventure'}
                 streak={answerStreak}
                 isPractice={Boolean(isGameplayScreen && selectedLevel?.isPractice)}
-                onHelp={isGameplayScreen ? () => setGameplayHelpOpen(true) : undefined}
+                onHelp={isGameplayScreen ? () => {
+                  if (!gameplayHelpOpen) sessionMetricsRef.current.hintsUsed += 1;
+                  setGameplayWorkpadOpen(false);
+                  setGameplayHelpOpen(true);
+                } : undefined}
+                onWork={isGameplayScreen && !isMockAssessment ? () => { setGameplayHelpOpen(false); setGameplayWorkpadOpen(true); } : undefined}
                 timeLeft={globalMiniGameHudTimeLeft}
                 totalTime={getSessionDurationSeconds(selectedLevel)}
                 lives={globalMiniGameLives}
@@ -1031,6 +1098,12 @@ const App: React.FC = () => {
               actionLabel="Back to mission"
               onAction={() => setGameplayHelpOpen(false)}
             />
+            <GlobalWorkpadDialog
+              open={gameplayWorkpadOpen && isGameplayScreen && !isMockAssessment}
+              value={gameplayWorkpadValue}
+              onChange={setGameplayWorkpadValue}
+              onClose={() => setGameplayWorkpadOpen(false)}
+            />
 
             <DailyQuestsModal
               isOpen={showQuests}
@@ -1053,6 +1126,7 @@ const App: React.FC = () => {
                 subtitle: levelResult.subtitle,
                 stars: levelResult.stars as 0 | 1 | 2 | 3,
                 practice: levelResult.practice,
+                mockAttempt: levelResult.mockAttempt,
                 xpGained: levelResult.xpGained,
                 bonuses: levelResult.bonuses,
                 previousLevel: levelResult.previousLevel,
@@ -1062,9 +1136,13 @@ const App: React.FC = () => {
               xpRequiredForNextLevel: levelResult.xpRequiredForNextLevel,
               leveledUp: levelResult.leveledUp,
               accuracy: levelResult.accuracy,
+              accuracyMeasured: levelResult.accuracyMeasured,
               timeMs: levelResult.timeMs,
             } : null}
               onRetry={handleRetryLevel}
+              onPractice={levelResult?.type === 'gameover' && !selectedLevel?.isPractice
+                && selectedIsland?.levels.some(level => level.isPractice && level.blueprintKey === selectedLevel?.blueprintKey)
+                ? handlePracticeAfterFailure : undefined}
               onNext={levelResult?.type === 'victory' ? handleAdvanceAfterVictory : undefined}
               onMap={handleCloseLevelResult}
               calmBreakLabel={levelResult?.type === 'gameover' && levelResult.wellbeingSuggested ? 'Take A Calm Break' : undefined}

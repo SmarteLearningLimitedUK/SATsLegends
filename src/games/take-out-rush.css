@@ -8,6 +8,10 @@
 .rush-kitchen::after { content: ''; position: absolute; z-index: -1; inset: 0; background: linear-gradient(#082e332b, #082e3310 55%, #05233055); pointer-events: none; }
 .rush-order-rail { position: absolute; z-index: 3; top: 8px; left: 8px; right: 8px; display: flex; justify-content: space-between; gap: 8px; padding: 6px 10px; background: #0a3437eb; border-bottom: 3px solid #dba85c; color: #fff0bb; font-size: 10px; }
 .rush-order-rail strong { color: #b9f1ba; }
+.rush-order-rail strong { min-width:0; }
+.rush-shift-clock { flex:0 0 auto; align-self:center; min-width:46px; border:1px solid #fae6b0a8; border-radius:7px; padding:2px 5px; background:#102e34; color:#fff1bd; text-align:center; font-size:14px; font-weight:900; font-variant-numeric:tabular-nums; line-height:1.2; }
+.rush-shift-clock[data-urgent='true'] { border-color:#ffb375; background:#602518; color:#fff5d7; animation:rush-clock-alert 1s ease-in-out infinite; }
+@keyframes rush-clock-alert { 50% { box-shadow:0 0 14px #ff994c99; } }
 .rush-layout[data-takeout-pressure="last-orders"] .rush-order-rail strong { color: #ffbb83; }
 .rush-customer { position: absolute; right: 7%; bottom: 84px; width: min(62%, 230px); height: calc(100% - 138px); min-height: 68px; }
 .rush-customer img { height: 100%; width: 100%; object-fit: contain; object-position: center bottom; filter: drop-shadow(0 8px 5px #092a3255); transform-origin: 50% 95%; }
@@ -42,6 +46,8 @@
 @keyframes rush-steam-rise { from { opacity: 0; transform: translateY(8px) scale(.6); } 35% { opacity: .6; } to { opacity: 0; transform: translateY(-65px) scale(1.6); } }
 @media (min-width: 700px) { .rush-kitchen { min-height: 0; }.rush-customer { right: 10%; width: min(39%, 330px); bottom: 112px; height: calc(100% - 176px); }.rush-customer-quip { max-width: 260px; font-size: 13px; }.rush-order-rail { font-size: 13px; padding: 8px 14px; }.rush-counter { padding: 12px 18px; }.rush-tray-label { font-size: 13px; }.rush-tray-items { max-width: 680px; min-height: 60px; }.rush-tray-items button { min-height: 48px; font-size: 13px; }.rush-tray-items button img { width: 40px; height: 40px; }.rush-food-shelf button { min-height: 77px; }.rush-food-shelf img { width: 47px; height: 47px; }.rush-feedback { font-size: 13px; }.rush-steam { left: 24%; bottom: 112px; } }
 @media (prefers-reduced-motion: reduce) { .rush-steam i { animation: none; opacity: .25; }.rush-food-shelf button { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .rush-shift-clock[data-urgent='true'] { animation:none; } }
+@media (max-width:360px) { .rush-order-rail strong { display:none; } }
 
 @media (min-width: 700px) and (max-height: 720px) {
   .rush-layout { gap: 6px; }

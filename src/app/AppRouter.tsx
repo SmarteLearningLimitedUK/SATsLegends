@@ -1,4 +1,5 @@
 import React, { Suspense, useMemo } from 'react';
+import { Navigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
 import AvatarSelect from '../screens/AvatarSelect';
@@ -6,6 +7,7 @@ import WorldMap from '../screens/WorldMap';
 import IslandLevels from '../screens/IslandLevels';
 import ParentDashboard from '../screens/ParentDashboard';
 import PlayerProfile from '../screens/PlayerProfile';
+import AdventureSettings from '../screens/AdventureSettings';
 import CharacterShop from '../screens/CharacterShop';
 import AchievementTracker from '../screens/AchievementTracker';
 import WellbeingHub from '../wellbeing/WellbeingHub';
@@ -14,14 +16,6 @@ import { WellbeingActivityId } from '../wellbeing/types';
 import GameplayContentViewport from '../components/GameplayContentViewport';
 import { GAME_SCENE_META } from '../gameSceneMeta';
 import GameLoadBoundary, { GameLoadFallback } from '../components/GameLoadBoundary';
-import {
-  FramedPanel,
-  GameScreenShell,
-  HUDBar,
-  PrimaryActionButton,
-  PremiumHeaderBar,
-  RewardPanel,
-} from '../layout/ScreenPrimitives';
 import { getMiniGame, MiniGameRegistryKey } from '../games';
 import { buildAngleQuestions } from '../games/angleArena/questions';
 import { isBossEncounterGameType } from '../games/bossEncounterTypes';
@@ -77,9 +71,11 @@ interface AppRouterProps {
   onCompleteWellbeingActivity: () => void;
   wellbeingActivityId: WellbeingActivityId | null;
   calmTokens: number;
-  onGameplayVictory: (stars: number, XP: number) => void;
-  onGameplayOver: (XP: number) => void;
+  onGameplayVictory: (stars: number, score: number, accuracy?: number) => void;
+  onGameplayOver: (score: number, accuracy?: number) => void;
   onOpenShop: () => void;
+  onOpenCharacterShop: () => void;
+  onOpenQuests: () => void;
   onOpenAchievements: () => void;
   onOpenParentReport: () => void;
   onUpdatePlayer: (updater: (prev: PlayerData) => PlayerData) => void;
@@ -120,6 +116,8 @@ export const AppRouter: React.FC<AppRouterProps> = ({
   onGameplayVictory,
   onGameplayOver,
   onOpenShop,
+  onOpenCharacterShop,
+  onOpenQuests,
   onOpenAchievements,
   onOpenParentReport,
   onUpdatePlayer,
@@ -523,7 +521,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       );
 
     case 'wellbeing_activity': {
-      if (!wellbeingActivityId) return null;
+      if (!wellbeingActivityId) return <Navigate to="/wellbeing" replace />;
       const SelectedWellbeingActivity = WELLBEING_BY_ID[wellbeingActivityId]?.component;
       return SelectedWellbeingActivity ? (
         <SelectedWellbeingActivity onComplete={onCompleteWellbeingActivity} onExit={onExitWellbeing} />
@@ -580,40 +578,15 @@ export const AppRouter: React.FC<AppRouterProps> = ({
       return <ParentDashboard player={player} onBack={onGoHome} />;
 
     case 'profile':
-      return <PlayerProfile player={player} onBack={onGoHome} />;
+      return <PlayerProfile player={player} onBack={onGoHome} onOpenShop={onOpenCharacterShop} onOpenQuests={onOpenQuests} />;
 
     case 'settings':
-      return (
-        <GameScreenShell className="my-auto flex items-center justify-center">
-          <FramedPanel variant="surface" className="flex w-full max-w-md flex-col gap-4 p-4 text-center md:max-w-2xl md:gap-6 md:p-8">
-            <PremiumHeaderBar eyebrow="Adventure menu" title={screen === 'profile' ? 'Profile' : 'Settings'} className="justify-center text-center" />
-            <RewardPanel className="mx-auto max-w-xl">
-              <p className="text-sm font-black leading-relaxed text-amber-950 md:text-base">
-                This screen is parked for the next premium UI pass. The main adventure flow is live and fully playable.
-              </p>
-            </RewardPanel>
-            <PrimaryActionButton onClick={onGoHome} className="mx-auto rounded-[1.25rem] px-8 py-3 text-base md:rounded-2xl md:px-10 md:py-4 md:text-lg">
-              Return to map
-            </PrimaryActionButton>
-          </FramedPanel>
-        </GameScreenShell>
-      );
+      return <AdventureSettings onBack={onGoHome} />;
+
+    case 'level_result':
+      return <Navigate to="/profile" replace />;
 
     default:
-      return (
-        <GameScreenShell className="my-auto flex items-center justify-center">
-          <FramedPanel variant="surface" className="flex w-full max-w-md flex-col gap-4 p-4 text-center md:max-w-2xl md:gap-6 md:p-8">
-            <HUDBar eyebrow="Screen missing" title={`Screen ${screen}`} className="justify-center text-center" />
-            <RewardPanel className="mx-auto max-w-xl">
-              <p className="text-sm font-black text-amber-950 md:text-base">
-                This route is not wired into the live adventure flow yet.
-              </p>
-            </RewardPanel>
-            <PrimaryActionButton onClick={onGoHome} className="mx-auto rounded-[1.25rem] px-8 py-3 text-base md:rounded-2xl md:px-10 md:py-4 md:text-lg">
-              Return to map
-            </PrimaryActionButton>
-          </FramedPanel>
-        </GameScreenShell>
-      );
+      return <Navigate to="/map" replace />;
   }
 };

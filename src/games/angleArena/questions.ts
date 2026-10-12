@@ -18,6 +18,7 @@ interface BuildConfig {
   launcherX: number;
   groundY: number;
   gravity: number;
+  seed?: number;
 }
 
 type QuestionSpec = {
@@ -28,6 +29,8 @@ type QuestionSpec = {
 };
 
 type Rng = () => number;
+
+const isReasoningPrompt = (prompt: string) => !prompt.startsWith('One angle on a straight line');
 
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 
@@ -104,15 +107,15 @@ const buildTargetPoint = (correctAnswer: number, config: BuildConfig, band: numb
   };
 };
 
-const buildQuestion = (spec: QuestionSpec, index: number, config: BuildConfig, band: number): AngleQuestion => {
-  const rng = createRng((config.level * 997) + ((band + 1) * 149) + (index * 43) + spec.correctAnswer);
+const buildQuestion = (spec: QuestionSpec, index: number, config: BuildConfig, band: number, runSeed: number): AngleQuestion => {
+  const rng = createRng(runSeed + (config.level * 997) + ((band + 1) * 149) + (index * 43) + spec.correctAnswer);
   const options = buildOptions(spec.correctAnswer, rng, band);
   const target = buildTargetPoint(spec.correctAnswer, config, band);
 
   return {
     id: `angle-arena-${config.level}-${band}-${index + 1}`,
     topic: 'straight_line',
-    kind: spec.kind ?? 'fluency',
+    kind: spec.kind ?? (isReasoningPrompt(spec.prompt) ? 'reasoning' : 'fluency'),
     difficulty: spec.difficulty,
     prompt: spec.prompt,
     options,
@@ -167,8 +170,73 @@ const QUESTION_BANK: QuestionSpec[][] = [
 
 const selectBand = (level: number) => clamp(Math.floor((Math.max(1, level) - 1) / 1), 0, QUESTION_BANK.length - 1);
 
+const extraQuestionsForBand = (band: number): QuestionSpec[] => {
+  const difficulty = band + 1;
+  const knownAngles = [25, 35, 40, 50, 55, 65, 70, 80, 85, 95, 110];
+  const direct = knownAngles
+    .filter((angle) => band > 0 || angle <= 85)
+    .map((angle) => ({
+      prompt: `One angle on a straight line is ${angle}°. What is the other angle?`,
+      correctAnswer: 180 - angle,
+      difficulty,
+    }));
+  if (band === 0) return direct;
+
+  const differencesByBand = [[], [12, 24, 42], [18, 32, 44], [28, 46, 64], [36, 58, 74]];
+  const differences = differencesByBand[band].map((difference, index) => {
+    const askLarger = index % 2 === 0;
+    return {
+      prompt: `The larger angle is ${difference}° more than the smaller angle. What is the ${askLarger ? 'larger' : 'smaller'} angle?`,
+      correctAnswer: (180 + (askLarger ? difference : -difference)) / 2,
+      difficulty,
+      kind: 'reasoning' as const,
+    };
+  });
+  const ratiosByBand: Array<Array<[number, number]>> = [
+    [], [[1, 3], [2, 3]], [[1, 4], [3, 7]], [[5, 7], [4, 11]], [[2, 13], [9, 11]],
+  ];
+  const ratios = ratiosByBand[band].map(([small, large], index) => {
+    const askLarger = index % 2 === 0;
+    return {
+      prompt: `The angles are in the ratio ${small}:${large} on a straight line. What is the ${askLarger ? 'larger' : 'smaller'} angle?`,
+      correctAnswer: 180 * (askLarger ? large : small) / (small + large),
+      difficulty,
+      kind: 'reasoning' as const,
+    };
+  });
+  return [...direct, ...differences, ...ratios];
+};
+
 export const buildAngleQuestions = (config: BuildConfig): AngleQuestion[] => {
   const level = Math.max(1, Math.floor(config.level || 1));
   const band = selectBand(level);
-  return QUESTION_BANK[band].map((spec, index) => buildQuestion(spec, index, { ...config, level }, band));
+  const runSeed = config.seed ?? Math.floor(Math.random() * 0xFFFFFFFF);
+  const rng = createRng(runSeed);
+  const candidates = shuffle([...QUESTION_BANK[band], ...extraQuestionsForBand(band)], rng);
+  const usedPrompts = new Set<string>();
+  const usedAnswers = new Set<number>();
+  const selected: QuestionSpec[] = [];
+  const takeUnique = (pool: QuestionSpec[], count: number) => {
+    let added = 0;
+    for (const spec of pool) {
+      if (added >= count) break;
+      if (usedPrompts.has(spec.prompt) || usedAnswers.has(spec.correctAnswer)) continue;
+      usedPrompts.add(spec.prompt);
+      usedAnswers.add(spec.correctAnswer);
+      selected.push(spec);
+      added += 1;
+    }
+  };
+
+  if (band === 0) {
+    takeUnique(candidates, 6);
+  } else {
+    // One direct calculation starts the run; later tiers then spend more time
+    // on ratio and difference reasoning instead of randomly drawing easy sums.
+    takeUnique(candidates.filter((spec) => !isReasoningPrompt(spec.prompt)), band === 1 ? 3 : 1);
+    takeUnique(candidates.filter((spec) => isReasoningPrompt(spec.prompt)), band === 1 ? 3 : 5);
+    takeUnique(candidates, 6 - selected.length);
+  }
+  const ordered = band === 0 ? selected : [selected[0], ...shuffle(selected.slice(1), rng)];
+  return ordered.map((spec, index) => buildQuestion(spec, index, { ...config, level }, band, runSeed));
 };

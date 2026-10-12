@@ -1,12 +1,28 @@
 import { GAME_AUDIO_STORAGE_KEY } from '../gameHudEvents';
+import { getGameSoundProfile, type SoundMaterial } from './gameSoundProfiles';
 
-export type GameSoundEffect = 'tap' | 'correct' | 'incorrect' | 'complete' | 'fail';
+export type GameSoundEffect = 'tap' | 'place' | 'cast' | 'impact' | 'correct' | 'incorrect' | 'complete' | 'fail';
 type Voice = { note: number; at: number; length: number; level: number; pan: number; wave: OscillatorType; endNote?: number };
 
 let context: AudioContext | null = null;
 let dry: AudioNode | null = null;
 let echo: AudioNode | null = null;
 let texture: AudioBuffer | null = null;
+let musicBus: GainNode | null = null;
+let musicTimer: number | null = null;
+let musicNextTime = 0;
+let musicStep = 0;
+let musicWanted = false;
+let musicUnlocked = false;
+let musicScene: GameMusicScene = 'map';
+let soundProfile = getGameSoundProfile(null);
+
+export type GameMusicScene = 'map' | 'gameplay';
+
+/** Selects the sound palette for the current minigame without starting audio. */
+export function configureGameSoundProfile(blueprintKey: string | null | undefined) {
+  soundProfile = getGameSoundProfile(blueprintKey);
+}
 
 function getContext() {
   if (typeof window === 'undefined') return null;
@@ -33,6 +49,9 @@ function getContext() {
   returnGain.connect(master);
   dry = master;
   echo = delay;
+  musicBus = context.createGain();
+  musicBus.gain.value = 0;
+  musicBus.connect(master);
   texture = null;
   return context;
 }
@@ -41,6 +60,21 @@ const patterns: Record<GameSoundEffect, Voice[]> = {
   tap: [
     { note: 760, at: 0, length: .075, level: .055, pan: -.16, wave: 'triangle', endNote: 530 },
     { note: 1510, at: .009, length: .045, level: .02, pan: .16, wave: 'sine' },
+  ],
+  place: [
+    { note: 520, at: 0, length: .085, level: .052, pan: -.17, wave: 'triangle', endNote: 340 },
+    { note: 1040, at: .012, length: .055, level: .025, pan: .14, wave: 'sine', endNote: 790 },
+    { note: 260, at: .018, length: .095, level: .028, pan: 0, wave: 'sine' },
+  ],
+  cast: [
+    { note: 360, at: 0, length: .18, level: .038, pan: -.3, wave: 'sine', endNote: 740 },
+    { note: 570, at: .055, length: .21, level: .052, pan: .22, wave: 'triangle', endNote: 1140 },
+    { note: 1420, at: .14, length: .13, level: .018, pan: .35, wave: 'sine', endNote: 1910 },
+  ],
+  impact: [
+    { note: 310, at: 0, length: .12, level: .078, pan: -.12, wave: 'triangle', endNote: 135 },
+    { note: 94, at: .018, length: .17, level: .063, pan: .08, wave: 'sine', endNote: 71 },
+    { note: 810, at: .008, length: .052, level: .025, pan: .27, wave: 'sine', endNote: 410 },
   ],
   correct: [
     { note: 659.25, at: 0, length: .19, level: .065, pan: -.23, wave: 'triangle' },
@@ -78,17 +112,17 @@ function route(ctx: AudioContext, source: AudioNode, pan: number, sendEcho: bool
   }
 }
 
-function playVoice(ctx: AudioContext, voice: Voice, base: number) {
+function playVoice(ctx: AudioContext, voice: Voice, base: number, pitchScale = 1, levelScale = 1) {
   const start = base + voice.at;
   const end = start + voice.length;
   const oscillator = ctx.createOscillator();
   const gain = ctx.createGain();
-  const pitch = 1 + (Math.random() - .5) * .018;
+  const pitch = pitchScale * (1 + (Math.random() - .5) * .028);
   oscillator.type = voice.wave;
   oscillator.frequency.setValueAtTime(voice.note * pitch, start);
   if (voice.endNote) oscillator.frequency.exponentialRampToValueAtTime(voice.endNote * pitch, end);
   gain.gain.setValueAtTime(.0001, start);
-  gain.gain.linearRampToValueAtTime(voice.level, start + Math.min(.018, voice.length * .15));
+  gain.gain.linearRampToValueAtTime(voice.level * levelScale, start + Math.min(.018, voice.length * .15));
   gain.gain.exponentialRampToValueAtTime(.0001, end);
   oscillator.connect(gain);
   route(ctx, gain, voice.pan, voice.length > .18);
@@ -97,7 +131,19 @@ function playVoice(ctx: AudioContext, voice: Voice, base: number) {
   oscillator.onended = () => { oscillator.disconnect(); gain.disconnect(); };
 }
 
-function playTexture(ctx: AudioContext, effect: GameSoundEffect, base: number) {
+const materialTexture: Record<SoundMaterial, { cutoff: number; q: number; level: number; length: number; type: BiquadFilterType }> = {
+  arcane: { cutoff: 1.3, q: 1.2, level: .55, length: 1.3, type: 'bandpass' },
+  metal: { cutoff: 1.65, q: 2.5, level: .7, length: .72, type: 'highpass' },
+  stone: { cutoff: .38, q: .7, level: 1.15, length: 1.25, type: 'lowpass' },
+  water: { cutoff: .66, q: 2.1, level: .85, length: 1.5, type: 'bandpass' },
+  wood: { cutoff: .55, q: 1.1, level: .8, length: .8, type: 'lowpass' },
+  engine: { cutoff: .48, q: .8, level: 1.2, length: 1.35, type: 'lowpass' },
+  digital: { cutoff: 1.55, q: 1.7, level: .5, length: .55, type: 'highpass' },
+  organic: { cutoff: .76, q: 1.3, level: .9, length: 1.35, type: 'bandpass' },
+  paper: { cutoff: 1.1, q: .55, level: 1.1, length: 1.5, type: 'bandpass' },
+};
+
+function playTexture(ctx: AudioContext, effect: GameSoundEffect, base: number, material: SoundMaterial, accent: number) {
   if (!texture) {
     texture = ctx.createBuffer(1, Math.ceil(ctx.sampleRate * .45), ctx.sampleRate);
     const samples = texture.getChannelData(0);
@@ -106,21 +152,79 @@ function playTexture(ctx: AudioContext, effect: GameSoundEffect, base: number) {
   const source = ctx.createBufferSource();
   source.buffer = texture;
   const filter = ctx.createBiquadFilter();
-  filter.type = effect === 'incorrect' || effect === 'fail' ? 'lowpass' : 'bandpass';
-  filter.frequency.value = effect === 'incorrect' || effect === 'fail' ? 700 : 4400;
-  filter.Q.value = .7;
+  const timbre = materialTexture[material];
+  filter.type = timbre.type;
+  const effectCutoff = effect === 'incorrect' || effect === 'fail' ? 700 : effect === 'impact' ? 1600 : effect === 'place' ? 2700 : effect === 'cast' ? 3500 : 4400;
+  filter.frequency.value = Math.min(7000, Math.max(180, effectCutoff * timbre.cutoff));
+  filter.Q.value = timbre.q;
   const gain = ctx.createGain();
-  const length = effect === 'complete' ? .34 : effect === 'correct' ? .13 : .065;
-  const level = effect === 'complete' ? .019 : effect === 'correct' ? .012 : .026;
+  const baseLength = effect === 'complete' ? .34 : effect === 'cast' ? .23 : effect === 'correct' ? .13 : effect === 'impact' ? .12 : .065;
+  const length = Math.min(.42, baseLength * timbre.length);
+  const baseLevel = effect === 'complete' ? .019 : effect === 'cast' ? .012 : effect === 'correct' ? .012 : effect === 'impact' ? .036 : effect === 'place' ? .018 : .026;
+  const level = baseLevel * timbre.level * (.55 + accent * .45);
   gain.gain.setValueAtTime(.0001, base);
   gain.gain.linearRampToValueAtTime(level, base + .01);
   gain.gain.exponentialRampToValueAtTime(.0001, base + length);
   source.connect(filter);
   filter.connect(gain);
-  route(ctx, gain, effect === 'complete' ? .35 : -.25, effect === 'complete');
+  route(ctx, gain, effect === 'complete' || effect === 'cast' ? .35 : -.25, effect === 'complete' || effect === 'cast');
   source.start(base);
   source.stop(base + length + .01);
   source.onended = () => { source.disconnect(); filter.disconnect(); gain.disconnect(); };
+}
+
+function playMaterialAccent(ctx: AudioContext, effect: GameSoundEffect, base: number, material: SoundMaterial, pitch: number, accent: number) {
+  const positive = effect === 'correct' || effect === 'complete' || effect === 'cast';
+  const negative = effect === 'incorrect' || effect === 'fail' || effect === 'impact';
+  const strong = effect === 'complete' || effect === 'impact' || effect === 'cast';
+  const strength = (effect === 'tap' ? .45 : effect === 'place' ? .65 : .9) * (.55 + accent * .45);
+  const root = (positive ? 440 : negative ? 260 : 360) * pitch;
+  const tail = strong ? 1.25 : 1;
+  const tone = (ratio: number, at: number, length: number, level: number, wave: OscillatorType, endRatio?: number, pan = 0) => {
+    playVoice(ctx, {
+      note: root * ratio, at, length: length * tail, level: level * strength, wave, pan,
+      endNote: endRatio === undefined ? undefined : root * endRatio,
+    }, base);
+  };
+
+  switch (material) {
+    case 'arcane':
+      tone(1.5, .025, .18, .026, 'sine', positive ? 2.0 : 1.25, -.28);
+      tone(2.01, .09, .22, .016, 'triangle', positive ? 2.52 : 1.5, .3);
+      break;
+    case 'metal':
+      tone(1.72, 0, .11, .022, 'triangle', 1.64, -.12);
+      tone(2.71, .012, .16, .015, 'sine', 2.62, .18);
+      break;
+    case 'stone':
+      tone(.47, 0, .16, .03, 'triangle', .3, -.12);
+      if (strong) tone(.72, .055, .13, .014, 'sine', .47, .16);
+      break;
+    case 'water':
+      tone(.75, .015, .15, .022, 'sine', 1.13, -.25);
+      tone(.93, .075, .14, .018, 'sine', 1.4, .23);
+      break;
+    case 'wood':
+      tone(.72, 0, .065, .027, 'triangle', .48, -.2);
+      tone(1.43, .026, .06, .012, 'sine', 1.12, .16);
+      break;
+    case 'engine':
+      tone(.42, 0, .2, .022, 'sawtooth', positive ? .76 : .3, -.18);
+      if (strong) tone(.58, .075, .12, .012, 'triangle', positive ? .86 : .38, .2);
+      break;
+    case 'digital':
+      tone(1.3, 0, .055, .015, 'square', positive ? 1.68 : 1.05, -.18);
+      tone(1.93, .055, .075, .012, 'sine', positive ? 2.22 : 1.52, .18);
+      break;
+    case 'organic':
+      tone(.63, 0, .14, .022, 'sine', positive ? .92 : .48, -.25);
+      tone(1.03, .065, .12, .014, 'triangle', positive ? 1.27 : .79, .2);
+      break;
+    case 'paper':
+      tone(1.28, .015, .085, .013, 'triangle', positive ? 1.55 : .95, -.18);
+      if (strong) tone(.9, .095, .1, .01, 'sine', positive ? 1.16 : .68, .2);
+      break;
+  }
 }
 
 export function playGameSound(effect: GameSoundEffect, mutedOverride?: boolean) {
@@ -129,7 +233,116 @@ export function playGameSound(effect: GameSoundEffect, mutedOverride?: boolean) 
   if (!ctx) return false;
   if (ctx.state === 'suspended') void ctx.resume().catch(() => {});
   const base = ctx.currentTime + .015;
-  patterns[effect].forEach(voice => playVoice(ctx, voice, base));
-  playTexture(ctx, effect, base);
+  const pitch = Math.min(1.4, Math.max(.7, soundProfile.pitch));
+  const accent = Math.min(1, Math.max(0, soundProfile.accent));
+  patterns[effect].forEach(voice => playVoice(ctx, voice, base, pitch, .82));
+  playMaterialAccent(ctx, effect, base, soundProfile.material, pitch, accent);
+  playTexture(ctx, effect, base, soundProfile.material, accent);
   return true;
 }
+
+// Original, deliberately quiet two-scene score. All notes are generated here;
+// no licensed recordings or autoplaying media are needed.
+const musicScores = {
+  map: {
+    bpm: 82,
+    chords: [[57, 60, 64], [53, 57, 60], [55, 59, 62], [52, 55, 59]],
+    bass: [45, 41, 43, 40],
+    melody: [69, null, 72, null, 76, null, 72, null, 69, null, 67, null, 64, null, 67, null,
+      69, null, 72, null, 74, null, 72, null, 67, null, 64, null, 67, null, 69, null],
+  },
+  gameplay: {
+    bpm: 106,
+    chords: [[62, 65, 69], [58, 62, 65], [60, 64, 69], [60, 64, 67]],
+    bass: [38, 34, 41, 36],
+    melody: [74, null, 77, null, 81, null, 77, null, 74, null, 72, null, 69, null, 72, null,
+      74, null, 77, null, 79, null, 77, null, 72, null, 69, null, 72, null, 74, null],
+  },
+} as const;
+
+function musicNote(ctx: AudioContext, midi: number, start: number, length: number, level: number, wave: OscillatorType) {
+  if (!musicBus) return;
+  const oscillator = ctx.createOscillator();
+  const gain = ctx.createGain();
+  oscillator.type = wave;
+  oscillator.frequency.setValueAtTime(440 * 2 ** ((midi - 69) / 12), start);
+  gain.gain.setValueAtTime(.0001, start);
+  gain.gain.linearRampToValueAtTime(level, start + Math.min(.035, length * .2));
+  gain.gain.exponentialRampToValueAtTime(.0001, start + length);
+  oscillator.connect(gain);
+  gain.connect(musicBus);
+  oscillator.start(start);
+  oscillator.stop(start + length + .01);
+  oscillator.onended = () => { oscillator.disconnect(); gain.disconnect(); };
+}
+
+function scheduleMusic() {
+  const ctx = context;
+  if (!ctx || ctx.state !== 'running' || !musicWanted || !musicBus || document.hidden) return;
+  const score = musicScores[musicScene];
+  const eighth = 30 / score.bpm;
+  let scheduled = 0;
+  while (musicNextTime < ctx.currentTime + .22 && scheduled++ < 4) {
+    const step = musicStep % 32;
+    const bar = Math.floor(step / 8);
+    if (step % 8 === 0) {
+      score.chords[bar].forEach((note, index) => {
+        musicNote(ctx, note, musicNextTime + index * .012, eighth * 7.5, .017, 'sine');
+      });
+      musicNote(ctx, score.bass[bar], musicNextTime, eighth * 3.2, .052, 'triangle');
+    } else if (musicScene === 'gameplay' && step % 8 === 4) {
+      musicNote(ctx, score.bass[bar] + 7, musicNextTime, eighth * 1.7, .026, 'triangle');
+    }
+    const melody = score.melody[step];
+    if (melody !== null) musicNote(ctx, melody, musicNextTime, eighth * (musicScene === 'map' ? 1.65 : 1.25), .026, 'triangle');
+    musicNextTime += eighth;
+    musicStep++;
+  }
+}
+
+function stopMusic() {
+  if (musicTimer !== null) window.clearInterval(musicTimer);
+  musicTimer = null;
+  if (context && musicBus) musicBus.gain.setTargetAtTime(0, context.currentTime, .045);
+}
+
+function startMusic() {
+  if (!musicWanted || !musicUnlocked || document.hidden || musicTimer !== null) return;
+  const ctx = getContext();
+  if (!ctx || !musicBus) return;
+  if (ctx.state === 'suspended') void ctx.resume().catch(() => {});
+  musicNextTime = ctx.currentTime + .07;
+  musicStep = 0;
+  musicBus.gain.setTargetAtTime(.42, ctx.currentTime, .15);
+  musicTimer = window.setInterval(scheduleMusic, 80);
+  scheduleMusic();
+}
+
+/** Call only in response to an actual pointer or keyboard gesture. */
+export function unlockGameAudioFromGesture() {
+  musicUnlocked = true;
+  // Arm the context during the gesture even if the next route is the first
+  // musical screen; route-change effects may run after activation expires.
+  const ctx = getContext();
+  if (ctx?.state === 'suspended') void ctx.resume().catch(() => {});
+  if (!musicWanted) return;
+  startMusic();
+}
+
+export function configureGameMusic(enabled: boolean, scene: GameMusicScene) {
+  const changedScene = scene !== musicScene;
+  musicWanted = enabled;
+  musicScene = scene;
+  if (!enabled || document.hidden) {
+    stopMusic();
+    return;
+  }
+  if (changedScene) stopMusic();
+  startMusic();
+}
+
+if (import.meta.hot) import.meta.hot.dispose(() => {
+  musicWanted = false;
+  if (typeof window !== 'undefined') stopMusic();
+  if (context && context.state !== 'closed') void context.close();
+});

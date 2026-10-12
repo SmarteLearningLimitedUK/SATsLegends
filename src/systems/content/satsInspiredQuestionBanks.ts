@@ -440,7 +440,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: 'Which translation moves A to Aâ€²?',
+        prompt: 'Which translation moves A to A′?',
         sublabel: 'Read the horizontal move first, then the vertical move.',
         options: ['6 right, 4 up', '6 left, 4 up', '4 right, 6 up', '6 right, 4 down'],
         answerIndex: 0,
@@ -457,7 +457,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: 'Which translation moves B to Bâ€²?',
+        prompt: 'Which translation moves B to B′?',
         sublabel: 'Keep the direction words accurate on the full grid.',
         options: ['2 left, 5 down', '2 left, 5 up', '5 left, 2 down', '2 right, 5 down'],
         answerIndex: 1,
@@ -689,7 +689,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
         prompt: 'The records show the number of crates carried by each supply caravan. Which two caravans deliver 15 crates altogether?',
         sublabel: 'Test each pair and look for the exact total.',
         options: ['Windward and Eden', 'Windward and Jerry', 'Eden and Ivy', 'Jerry and Ivy'],
-        answerIndex: 1,
+        answerIndex: 0,
         visual: {
           type: 'bars',
           caption: 'Supply caravans',
@@ -780,7 +780,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'Rule: black = (white ? 3) + 4. White = 9. Find black beads.',
+        prompt: 'Rule: black = (white × 3) + 4. White = 9. Find black beads.',
         sublabel: 'Substitute the value and then calculate.',
         options: ['27', '31', '36', '13'],
         answerIndex: 1,
@@ -790,7 +790,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: 'Rule: black = (white ? 3) + 4. Black = 25. What is white?',
+        prompt: 'Rule: black = (white × 3) + 4. Black = 25. What is white?',
         sublabel: 'Work backwards through the rule.',
         options: ['5', '6', '7', '8'],
         answerIndex: 2,
@@ -934,7 +934,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'Use A = (b ? h) ? 2. Find the area for b = 12 cm, h = 5 cm.',
+        prompt: 'Use A = (b × h) ÷ 2. Find the area for b = 12 cm, h = 5 cm.',
         sublabel: 'Multiply then halve.',
         options: ['30 cm²', '60 cm²', '17 cm²', '24 cm²'],
         answerIndex: 0,
@@ -964,7 +964,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: 'Use V = l ? w ? h. Find volume for 4, 3, 5.',
+        prompt: 'Use V = l × w × h. Find volume for 4, 3, 5.',
         sublabel: 'Multiply all three values.',
         options: ['60 cm³', '12 cm³', '20 cm³', '75 cm³'],
         answerIndex: 0,
@@ -1006,7 +1006,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 1,
       value: {
-        prompt: 'Function machine: ?3, then +2. What is the output for 7?',
+        prompt: 'Function machine: ×3, then +2. What is the output for 7?',
         sublabel: 'Apply the operations in the given order.',
         options: ['21', '23', '27', '16'],
         answerIndex: 1,

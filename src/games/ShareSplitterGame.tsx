@@ -83,6 +83,14 @@ const SHARE_SPLITTER_TABLE_PLATE_POSITIONS = [
   makeRingPoint(SHARE_SPLITTER_TABLE_CENTER, 198),
 ];
 
+const SHORT_SCREEN_PLATE_POSITIONS = [
+  { x: .5, y: .41 },
+  { x: .78, y: .51 },
+  { x: .65, y: .61 },
+  { x: .35, y: .61 },
+  { x: .22, y: .51 },
+];
+
 const RATIO_PATTERNS_BY_COUNT: Record<number, number[][]> = {
   2: [
     [1, 1],
@@ -335,6 +343,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const platePositions = PLATE_POSITIONS_BY_COUNT[challenge.plateCount] || PLATE_POSITIONS_BY_COUNT[5];
   const isCompactViewport = viewportRect.width < 520;
   const isWideShareLayout = viewportRect.width >= 700;
+  const isShortShareLayout = isCompactViewport && viewportRect.height < 500;
   const plateLayoutScale = isCompactViewport ? 0.68 : 1;
   const cakeSourceLayoutScale = isCompactViewport ? 0.76 : 1;
   const backgroundWidthScale = viewportRect.width / SHARE_SPLITTER_BACKGROUND_SIZE.width;
@@ -358,15 +367,21 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const backgroundPositionY = Math.abs(bottomArtOffset) < .01 ? 50 : (backgroundOffsetY / bottomArtOffset) * 100;
   const cakeSourceSize = isWideShareLayout
     ? Math.min(124, Math.max(84, viewportRect.height * 0.18))
+    : isShortShareLayout
+    ? Math.min(52, CAKE_SOURCE_SIZE_PX * backgroundScale * cakeSourceLayoutScale)
     : CAKE_SOURCE_SIZE_PX * backgroundScale * cakeSourceLayoutScale;
   const cakeSourceCenter = isWideShareLayout
     ? { x: playfieldLeft + playfieldWidth * 0.5, y: viewportRect.height * 0.74 }
+    : isShortShareLayout
+    ? { x: viewportRect.width * .5, y: viewportRect.height * .75 }
     : {
     x: backgroundOffsetX + CAKE_SOURCE_POSITION.x * backgroundScale,
     y: Math.min(backgroundOffsetY + CAKE_SOURCE_POSITION.y * backgroundScale, viewportRect.height - 124 - cakeSourceSize / 2 - 10),
   };
   const promptText = isPractice
     ? `Target ratio: ${challenge.ratios.join(':')}`
+    : isShortShareLayout
+    ? `Share ${challenge.totalSlices} slices in the ratio ${challenge.ratios.join(':')}.`
     : `There are ${challenge.totalSlices} slices of brainpower cake.\nThe Monster Mind demands it is shared in a ratio of ${challenge.ratios.join(':')}.`;
 
   const loadNextChallenge = useCallback((solvedCount: number) => {
@@ -609,8 +624,8 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       className="share-splitter-shell"
       backgroundImage={shareSplitterBackground}
       backgroundOpacity={1}
-      backgroundPosition={isWideShareLayout ? 'center 50%' : `center ${backgroundPositionY}%`}
-      backgroundFit={isWideShareLayout ? 'cover' : 'contain'}
+      backgroundPosition={isShortShareLayout ? 'center 46%' : isWideShareLayout ? 'center 50%' : `center ${backgroundPositionY}%`}
+      backgroundFit={isWideShareLayout || isShortShareLayout ? 'cover' : 'contain'}
       overlayDisabled
     >
       <PracticeIntroPopup
@@ -630,7 +645,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         <div ref={questionCardRef} className="share-splitter-mission">
           <GameQuestionCard
             title="Target Ratio"
-            subtitle="Choose the cake, then a plate. Or drag slices onto the plates."
+            subtitle={isShortShareLayout ? 'Choose cake, then a plate.' : 'Choose the cake, then a plate. Or drag slices onto the plates.'}
             style={{ position: 'relative', top: 0, transform: 'none', width: '100%', padding: '10px 12px' }}
           >
             {promptText}
@@ -641,7 +656,12 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
           <CelebrationSplash active={showCelebrationSplash && !reducedMotion} message="Party Time!" theme="party" />
           {plateViews.map((plate, index) => {
             const position = platePositions[index] || { x: 0, y: 0 };
-            const center = isWideShareLayout
+            const center = isShortShareLayout
+              ? {
+                x: viewportRect.width * SHORT_SCREEN_PLATE_POSITIONS[index].x,
+                y: viewportRect.height * SHORT_SCREEN_PLATE_POSITIONS[index].y,
+              }
+              : isWideShareLayout
               ? {
                 x: playfieldLeft + playfieldWidth * (0.1 + index * 0.2),
                 y: viewportRect.height * (0.43 + [0.04, -0.01, -0.03, -0.01, 0.04][index]),
@@ -655,6 +675,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                 type="button"
                 ref={(node) => { plateRefs.current[index] = node; }}
                 data-testid={`share-splitter-plate-${index + 1}`}
+                data-share-plate-index={index}
                 data-share-ratio={plate.assignedRatioValue}
                 data-slice-count={sliceCount}
                 data-button-skin="none"

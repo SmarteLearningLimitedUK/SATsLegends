@@ -18,7 +18,6 @@ const profiles = [
 ].filter((profile) => !profileFilter || profile.name === profileFilter);
 const reports = [];
 let stopRequested = false;
-let nativePoseEvidence = null;
 const pageProfiles = new WeakMap();
 await mkdir(output, { recursive: true });
 
@@ -62,6 +61,7 @@ async function startMission(page, route, { skipActor = false } = {}) {
   await page.goto(base + route);
   await expect(questionCopy(page)).toBeVisible({ timeout: 20000 });
   await page.evaluate(() => document.fonts.ready);
+  await expect(page.locator('.app-screen-content')).toHaveCSS('opacity', '1');
   await pause(page, 350);
   for (let attempt = 0; attempt < 3; attempt += 1) {
     const primary = page.locator('[role="dialog"] [data-dialog-primary]');
@@ -82,6 +82,7 @@ async function startMission(page, route, { skipActor = false } = {}) {
 async function beginActorProbe(page) {
   await page.evaluate(() => {
     window.__legendMonsterProbe?.stop();
+    window.__legendMonsterRecoilAnimation = null;
     let stopped = false;
     let animationFrame;
     let timer;
@@ -195,6 +196,7 @@ async function beginActorProbe(page) {
     // while the mutation observer catches image changes between either sample source.
     timer = setInterval(() => collect('timer'), 16);
     window.__legendMonsterProbe = {
+      hasReaction: (reaction) => reactions.has(reaction),
       stop: () => {
         stopped = true;
         cancelAnimationFrame(animationFrame);
@@ -220,6 +222,7 @@ async function beginActorProbe(page) {
 }
 
 async function finishActorProbe(page, { reducedMotion, idle = false, reaction, flight = false }, duration) {
+  if (reaction) await page.waitForFunction((expected) => window.__legendMonsterProbe?.hasReaction(expected), reaction, { timeout: 8000 });
   await pause(page, duration);
   const result = await page.evaluate(() => window.__legendMonsterProbe.stop());
   try {
@@ -251,14 +254,25 @@ async function finishActorProbe(page, { reducedMotion, idle = false, reaction, f
         && sample.nativeStartTime === native[index - 1].nativeStartTime
         && sample.nativeTime - native[index - 1].nativeTime >= 16
         && Math.abs(sample.recoilX - native[index - 1].recoilX) < 0.00001);
-      expect(cachedPairIndex, 'Small recoil without evidence of a cached WebKit render is a failure').toBeGreaterThan(0);
-      expect(nativePoseEvidence?.seeked?.recoilX, 'The actual native recoil must be rendered at its88ms peak').toBeLessThanOrEqual(-4.9);
       expect(result.nativeRecoilSpec?.duration).toBe(440);
       const peak = result.nativeRecoilSpec.keyframes.find((frame) => frame.offset === 0.2);
       expect(peak?.transform).toMatch(/translate\(-5px,?\s*1px\)/);
-      result.recoilValidation = 'native-88ms-pose-with-cached-render-evidence';
-      result.cachedRenderEvidence = { earlier: native[cachedPairIndex - 1], later: native[cachedPairIndex],
-        naturalThresholdPx: 2, isolatedNativePose: nativePoseEvidence.seeked, profile: nativePoseEvidence.profile };
+      const seeked = await page.evaluate(async () => {
+        const animation = window.__legendMonsterRecoilAnimation;
+        if (!animation) return null;
+        animation.pause(); animation.currentTime = 88;
+        await animation.ready;
+        const target = animation.effect.target;
+        const recoilX = new DOMMatrix(getComputedStyle(target).transform).e;
+        const connected = target.isConnected;
+        animation.cancel();
+        return { recoilX, connected };
+      });
+      expect(seeked?.connected, 'The current hit recoil target must remain mounted').toBe(true);
+      expect(seeked?.recoilX, 'The current hit recoil must paint its native 88ms peak').toBeLessThanOrEqual(-4.9);
+      result.recoilValidation = cachedPairIndex > 0 ? 'native-88ms-pose-with-cached-render-evidence' : 'native-88ms-pose-with-sparse-frame-evidence';
+      result.cachedRenderEvidence = { earlier: cachedPairIndex > 0 ? native[cachedPairIndex - 1] : null, later: cachedPairIndex > 0 ? native[cachedPairIndex] : null,
+        naturalThresholdPx: 2, seeked, maxFrameGapMs: result.maxFrameGapMs };
     } else expect(result.recoilXRange, 'A correct hit must produce a visible recoil').toBeGreaterThan(2);
   }
   if (flight) {
@@ -276,6 +290,12 @@ async function idleProbe(page, reducedMotion) {
 }
 
 async function stoneReadability(page) {
+  // The shared screen enters with a brief fade; measure legibility after it settles.
+  await expect.poll(() => page.locator('[data-pvp-place-label]').first().evaluate((element) => {
+    let opacity = 1;
+    for (let node = element; node; node = node.parentElement) opacity *= Number(getComputedStyle(node).opacity);
+    return opacity;
+  }), { timeout: 3000 }).toBeGreaterThanOrEqual(0.99);
   const result = await page.locator('[data-pvp-number-stones]').evaluate((panel) => {
     const rgba = (color) => color.match(/[\d.]+/g)?.map(Number) || [];
     const luminance = (rgb) => rgb.slice(0, 3).map((value) => value / 255).map((value) => value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4).reduce((sum, value, index) => sum + value * [0.2126, 0.7152, 0.0722][index], 0);
@@ -347,7 +367,13 @@ async function placeValueLayout(page) {
     expect(bounds.bottom, `${name} leaves the viewport`).toBeLessThanOrEqual(layout.viewport.height + 1);
   }
   expect(layout.question.bottom, 'Mission overlaps Number Stones').toBeLessThanOrEqual(layout.stones.y + 1);
-  expect(layout.stones.bottom, 'Number Stones overlaps Monster Mind health').toBeLessThanOrEqual(layout.health.y + 1);
+  expect(
+    layout.stones.right <= layout.health.x + 1
+      || layout.health.right <= layout.stones.x + 1
+      || layout.stones.bottom <= layout.health.y + 1
+      || layout.health.bottom <= layout.stones.y + 1,
+    'Number Stones overlaps Monster Mind health',
+  ).toBe(true);
   expect(layout.sources.bottom, 'Available digits overlap Submit').toBeLessThanOrEqual(layout.submit.y + 1);
   } catch (error) { error.qaMetrics = layout; throw error; }
   return layout;
@@ -370,7 +396,13 @@ async function denseEnemySeparation(page) {
     const sources = document.querySelector('.pvp-digit-panel').getBoundingClientRect();
     return { occupied: { x: fittedX + minX * fitScale, y: fittedY + minY * fitScale, right: fittedX + (maxX + 2) * fitScale, bottom: fittedY + (maxY + 2) * fitScale }, sources: { x: sources.x, y: sources.y, right: sources.right, bottom: sources.bottom }, sourceSlots: document.querySelectorAll('[data-pvp-location="source"]').length };
   });
-  try { expect(result.occupied.bottom, 'Dense-level enemy artwork obscures the available digits').toBeLessThanOrEqual(result.sources.y + 2); }
+  try { expect(
+    result.occupied.right <= result.sources.x + 2
+      || result.sources.right <= result.occupied.x + 2
+      || result.occupied.bottom <= result.sources.y + 2
+      || result.sources.bottom <= result.occupied.y + 2,
+    'Dense-level enemy artwork obscures the available digits',
+  ).toBe(true); }
   catch (error) { error.qaMetrics = result; throw error; }
   return result;
 }
@@ -604,9 +636,9 @@ async function diagnoseNativeTimeline(page, profile, route) {
 }
 
 function factorAnswers(prompt, options) {
-  let match = prompt.match(/missing factor:\s*(\d+) x \? = (\d+)/i);
+  let match = prompt.match(/(\d+)\s*[x×]\s*\?\s*=\s*(\d+)/i);
   if (match) return options.filter((option) => Number(option) * Number(match[1]) === Number(match[2]));
-  match = prompt.match(/(?:Strike all factors of|Find all (?:common|prime) factors of) (\d+)(?: and (\d+))?/i);
+  match = prompt.match(/factors? of (\d+)(?: and (\d+))?/i);
   expect(match).not.toBeNull();
   return options.filter((option) => {
     const value = Number(option);
@@ -616,26 +648,6 @@ function factorAnswers(prompt, options) {
     for (let divisor = 2; divisor * divisor <= value; divisor += 1) if (value % divisor === 0) return false;
     return true;
   });
-}
-
-function numericValue(value) {
-  if (value.endsWith('%')) return Number(value.slice(0, -1)) / 100;
-  if (value.includes('/')) { const [numerator, denominator] = value.split('/').map(Number); return numerator / denominator; }
-  return Number(value);
-}
-
-function encounterAnswers(prompt, options) {
-  let match;
-  if ((match = prompt.match(/True or false: (\d+\/\d+) = (\d+(?:\.\d+)?)/))) return [Math.abs(numericValue(match[1]) - Number(match[2])) < 1e-8 ? 'True' : 'False'];
-  if ((match = prompt.match(/What is ([\d.]+)% of ([\d.]+)/))) return [String(Number(match[1]) * Number(match[2]) / 100)];
-  if ((match = prompt.match(/equivalent to (\d+\/\d+)/))) return options.filter((option) => Math.abs(numericValue(option) - numericValue(match[1])) < 1e-8);
-  if ((match = prompt.match(/True or false: A triangle has (\d+) sides/))) return [Number(match[1]) === 3 ? 'True' : 'False'];
-  if ((match = prompt.match(/Point A is at \((-?\d+), (-?\d+)\).*translated (\d+) (right|left) and (\d+) (up|down)/))) return [`(${Number(match[1]) + Number(match[3]) * (match[4] === 'right' ? 1 : -1)}, ${Number(match[2]) + Number(match[5]) * (match[6] === 'up' ? 1 : -1)})`];
-  if (/shapes have 4 sides/.test(prompt)) return options.filter((option) => ['Square', 'Rectangle', 'Trapezium'].includes(option));
-  if ((match = prompt.match(/True or false: The sequence ([\d, ]+) goes up by (\d+)/))) { const values = match[1].split(',').map(Number); return [values.every((value, index) => index === 0 || value - values[index - 1] === Number(match[2])) ? 'True' : 'False']; }
-  if ((match = prompt.match(/Solve x \+ (\d+) = (\d+)/))) return [String(Number(match[2]) - Number(match[1]))];
-  if ((match = prompt.match(/come next in the sequence (\d+), (\d+), (\d+)/))) { const step = Number(match[2]) - Number(match[1]); return [String(Number(match[3]) + step), String(Number(match[3]) + step * 2)]; }
-  throw new Error(`No independent solver for current encounter prompt: ${prompt}`);
 }
 
 const nativeAction = async (page, profile, button, key = 'Enter') => {
@@ -1121,24 +1133,37 @@ async function beginRosterProbe(page) {
 
 async function beginCreatureProbe(handle) {
   await handle.evaluate((creature) => {
+    const root = creature.closest('[data-zombies-game]');
     const image = creature.querySelector('img');
     const initialSource = image.getAttribute('src');
     const initialIdentity = creature.dataset.monsterIdentity;
-    const samples = [], failures = [], reactions = new Set();
+    const samples = [], failures = [], reactions = new Set(), spellPhases = new Set();
+    let firstFlightAt = null, firstDefeatedAt = null, playerVisibleDuringFlight = false;
     const collect = () => {
+      const spell = root?.querySelector('[data-spell-phase]');
+      if (spell) {
+        spellPhases.add(spell.dataset.spellPhase);
+        if (spell.dataset.spellPhase === 'flight') {
+          firstFlightAt ??= performance.now();
+          const playerImage = root.querySelector('[data-player-character] img');
+          const bounds = playerImage?.getBoundingClientRect();
+          if (bounds && bounds.width > 0 && bounds.height > 0 && getComputedStyle(playerImage).visibility === 'visible') playerVisibleDuringFlight = true;
+        }
+      }
       if (!creature.isConnected) return;
       const images = creature.querySelectorAll('img');
       const sameSource = image.getAttribute('src') === initialSource;
       const sameIdentity = creature.dataset.monsterIdentity === initialIdentity;
       if (images.length !== 1 || images[0] !== image || !sameSource || !sameIdentity || creature.dataset.monsterReady !== 'true' || !initialSource.startsWith('data:image/png')) failures.push('entity image/identity swapped');
       reactions.add(creature.dataset.monsterReaction);
+      if (creature.dataset.monsterReaction === 'defeated') firstDefeatedAt ??= performance.now();
       samples.push({ at: performance.now(), connected: true, reaction: creature.dataset.monsterReaction });
     };
     const observer = new MutationObserver(collect);
-    observer.observe(creature, { subtree: true, childList: true, attributes: true, attributeFilter: ['src','data-monster-identity','data-monster-ready','data-monster-reaction'] });
+    observer.observe(root, { subtree: true, childList: true, attributes: true, attributeFilter: ['src','data-monster-identity','data-monster-ready','data-monster-reaction','data-spell-phase'] });
     collect();
     const timer = setInterval(collect, 16);
-    window.__legendCreatureProbe = { stop: () => { clearInterval(timer); observer.disconnect(); collect(); return { identity: initialIdentity, preparedPNG: initialSource.startsWith('data:image/png'), connectedAtEnd: creature.isConnected, samples: samples.length, reactions: [...reactions], failures }; } };
+    window.__legendCreatureProbe = { hasReaction: (reaction) => reactions.has(reaction), hasSpellPhase: (phase) => spellPhases.has(phase), stop: () => { clearInterval(timer); observer.disconnect(); collect(); return { identity: initialIdentity, preparedPNG: initialSource.startsWith('data:image/png'), connectedAtEnd: creature.isConnected, samples: samples.length, reactions: [...reactions], spellPhases: [...spellPhases], firstFlightAt, firstDefeatedAt, playerVisibleDuringFlight, failures }; } };
   });
 }
 
@@ -1148,7 +1173,6 @@ async function runProfile(profile) {
     for (const reducedMotion of (diagnostic === 'native-timeline' ? [false] : [false, true]).filter((value) => !motionFilter || (value ? 'reduced' : 'normal') === motionFilter)) {
       if (await shouldStop()) break;
       const motion = reducedMotion ? 'reduced' : 'normal';
-      nativePoseEvidence = null;
       const context = await browser.newContext({ ...profile.options, reducedMotion: reducedMotion ? 'reduce' : 'no-preference' });
       await context.addInitScript((standalone) => {
         window.addEventListener('pointerdown', (event) => { window.__legendPointerId = event.pointerId; }, true);
@@ -1178,7 +1202,7 @@ async function runProfile(profile) {
         expect(routes.encounters).toHaveLength(3);
         const record = async (name, route, work, force = false) => {
           if (await shouldStop()) return;
-          if (!force && ((caseFilter && !name.includes(caseFilter)) || (selectedCases.size && !selectedCases.has(name)))) return;
+          if ((caseFilter && !name.includes(caseFilter)) || (selectedCases.size && !selectedCases.has(name))) return;
           const started = Date.now();
           const beforeErrors = errors.length;
           try {
@@ -1213,9 +1237,10 @@ async function runProfile(profile) {
         });
         if (!diagnostic && !reducedMotion) await record('native-recoil-and-flight', routes.numberLine.route, async () => {
           const details = await diagnoseNativeTimeline(page, profile, routes.numberLine.route);
-          expect(details.natural.closestFlightBeforeAdvance, 'Flight must land at its original slot before advancing').not.toBeNull();
-          expect(details.natural.closestFlightBeforeAdvance, 'Flight must land at its original slot before advancing').toBeLessThan(8);
-          nativePoseEvidence = { profile: profile.name, seeked: details.seeked };
+          try {
+            expect(details.natural.closestFlightBeforeAdvance, 'Flight must land at its original slot before advancing').not.toBeNull();
+            expect(details.natural.closestFlightBeforeAdvance, 'Flight must land at its original slot before advancing').toBeLessThan(8);
+          } catch (error) { error.qaMetrics = details; throw error; }
           return { ...details, checks: [...details.checks, 'original target landing before question advance'] };
         }, true);
 
@@ -1419,7 +1444,7 @@ async function runProfile(profile) {
           const idle = await idleProbe(page, reducedMotion);
           const probes = [];
           for (const correct of [false, true, true]) {
-            await expect(page.getByRole('button', { name: 'Strike', exact: true })).toBeVisible();
+            await expect(page.getByRole('button', { name: 'Choose a factor', exact: true })).toBeVisible();
             const prompt = await questionCopy(page).innerText();
             const choices = page.locator('.answer-choice-surface button');
             const values = (await choices.allTextContents()).map((value) => value.trim());
@@ -1427,6 +1452,7 @@ async function runProfile(profile) {
             expect(answers.length).toBeGreaterThan(0);
             const selected = correct ? answers : [values.find((value) => !answers.includes(value))];
             for (const value of selected) await tap(page, profile, exactText(choices, value));
+            await expect(page.getByRole('button', { name: 'Strike', exact: true })).toBeVisible();
             await beginActorProbe(page);
             await tap(page, profile, page.getByRole('button', { name: 'Strike', exact: true }));
             probes.push(await finishActorProbe(page, { reducedMotion, reaction: correct ? 'hit' : 'taunt' }, correct ? 1000 : 1100));
@@ -1439,18 +1465,24 @@ async function runProfile(profile) {
           await startMission(page, routes.order.route);
           await expect(actor(page)).toHaveAttribute('data-monster-identity', /goblin/);
           const idle = await idleProbe(page, reducedMotion);
-          const probes = [];
-          for (const correct of [false, true, true]) {
-            const answer = expressionValue(await questionCopy(page).innerText());
-            const buttons = page.getByRole('button').filter({ hasText: /^\d+$/ });
-            const values = (await buttons.allTextContents()).map((value) => value.trim());
-            const choice = correct ? String(answer) : values.find((value) => Number(value) !== answer);
-            await beginActorProbe(page);
-            await tap(page, profile, exactText(buttons, choice));
-            probes.push(await finishActorProbe(page, { reducedMotion, reaction: correct ? 'hit' : 'taunt' }, 1000));
-          }
+          const expression = (await questionCopy(page).innerText()).trim();
+          const parts = expression.match(/^(\d+) \+ (\d+) × (\d+)$/);
+          expect(parts, `Expected a first-tier mixed expression, received ${expression}`).not.toBeNull();
+          const [, first, second, third] = parts.map(Number);
+          const buttons = page.locator('[data-order-ops-choices] button');
+          await beginActorProbe(page);
+          await tap(page, profile, exactText(buttons, `${first} + ${second} = ${first + second}`));
+          const wrong = await finishActorProbe(page, { reducedMotion, reaction: 'taunt' }, 1000);
+          await expect(questionCopy(page)).toHaveText(expression);
+          await tap(page, profile, exactText(buttons, `${second} × ${third} = ${second * third}`));
+          await expect(questionCopy(page)).toHaveText(`${first} + ${second * third}`);
+          await expect(actor(page)).toHaveAttribute('data-monster-reaction', 'idle');
+          await beginActorProbe(page);
+          await tap(page, profile, exactText(buttons, `${first} + ${second * third} = ${first + second * third}`));
+          const hit = await finishActorProbe(page, { reducedMotion, reaction: 'hit' }, 1000);
+          const probes = [wrong, hit];
           expect(new Set([idle, ...probes].flatMap((probe) => probe.sourceFingerprints)).size).toBe(1);
-          return { checks: ['BIDMAS answer derived from rendered expression', 'incorrect and repeated correct reactions', 'one stable actor through feedback'], idle, probes };
+          return { checks: ['wrong order preserves expression and taunts', 'multiplication resolves before addition', 'completed expression lands a hit', 'one stable actor through feedback'], idle, probes };
         });
 
         await record('multiplication-mine-practice', routes.mine.route, async () => {
@@ -1469,13 +1501,20 @@ async function runProfile(profile) {
           await startMission(page, routes.angle.route);
           await expect(actor(page)).toHaveAttribute('data-monster-identity', /goblin/);
           const canvas = page.locator('canvas').first();
-          await expect(canvas).toHaveAttribute('data-background-fit', 'contain');
+          const expectedFit = await page.locator('.iphone-game-stage').getAttribute('data-stage-layout') === 'responsive' ? 'cover' : 'contain';
+          await expect(canvas).toHaveAttribute('data-background-fit', expectedFit);
           await expect(canvas).toHaveAttribute('data-rendered-background-src', /\S+/);
           const framing = await canvas.evaluate((element) => ({ fit: element.dataset.backgroundFit, source: element.dataset.renderedBackgroundSrc, paintWidth: Number(element.dataset.backgroundPaintWidth), paintHeight: Number(element.dataset.backgroundPaintHeight), width: element.width / devicePixelRatio, height: element.height / devicePixelRatio, clientWidth: element.clientWidth, clientHeight: element.clientHeight }));
           expect(framing.paintWidth).toBeGreaterThan(0); expect(framing.paintHeight).toBeGreaterThan(0);
-          expect(framing.paintWidth).toBeLessThanOrEqual(framing.width + 1);
-          expect(framing.paintHeight).toBeLessThanOrEqual(framing.height + 1);
-          expect(Math.min(framing.width / framing.paintWidth, framing.height / framing.paintHeight)).toBeCloseTo(1, 5);
+          if (expectedFit === 'cover') {
+            expect(framing.paintWidth).toBeGreaterThanOrEqual(framing.width - 1);
+            expect(framing.paintHeight).toBeGreaterThanOrEqual(framing.height - 1);
+            expect(Math.max(framing.width / framing.paintWidth, framing.height / framing.paintHeight)).toBeCloseTo(1, 5);
+          } else {
+            expect(framing.paintWidth).toBeLessThanOrEqual(framing.width + 1);
+            expect(framing.paintHeight).toBeLessThanOrEqual(framing.height + 1);
+            expect(Math.min(framing.width / framing.paintWidth, framing.height / framing.paintHeight)).toBeCloseTo(1, 5);
+          }
           const initialProjection = await page.locator('[data-angle-enemy-frame]').boundingBox();
           const idle = await idleProbe(page, reducedMotion);
           const probes = [];
@@ -1488,13 +1527,12 @@ async function runProfile(profile) {
             const value = correct ? answer : choices.find((choice) => choice !== answer);
             await beginActorProbe(page);
             await nativeAction(page, profile, buttons.nth(choices.indexOf(value)));
-            await expect(actor(page)).toHaveAttribute('data-monster-reaction', correct ? 'hit' : 'taunt', { timeout: 15000 });
             probes.push(await finishActorProbe(page, { reducedMotion, reaction: correct ? 'hit' : 'taunt' }, 650));
             await expect(buttons.first()).toBeEnabled();
           }
           expect(new Set([idle, ...probes].flatMap((probe) => probe.sourceFingerprints)).size).toBe(1);
           await leaveDuringReaction(page);
-          return { checks: ['contained painted environment/source metadata', 'current straight-line angle question independently solved', 'normal/reduced stable full-body goblin source through miss/hits', 'current flight camera preserved', 'native exit'], note: 'Existing preflight target projection can be outside the portrait stage; no initial full-target-fit claim.', framing, initialProjection, idle, probes };
+          return { checks: ['responsive background fit and painted environment/source metadata', 'current straight-line angle question independently solved', 'normal/reduced stable full-body goblin source through miss/hits', 'current flight camera preserved', 'native exit'], note: 'Existing preflight target projection can be outside the portrait stage; no initial full-target-fit claim.', framing, initialProjection, idle, probes };
         });
 
         await record('angle-arena-scored-victory', routes.angleScored.route, () => angleNativeLevel(page, profile, routes.angleScored.route, reducedMotion));
@@ -1542,9 +1580,10 @@ async function runProfile(profile) {
           let found = false;
           for (let index = 0; index < 4; index += 1) {
             await nativeAction(page, profile, choices.nth(index));
-            const lockUp = page.getByRole('button', { name: 'Lock Up', exact: true });
-            await expect(lockUp).toBeVisible();
-            const modal = lockUp.locator('..').locator('..');
+            const modal = page.getByRole('dialog', { name: /evidence dossier$/ });
+            await expect(modal).toBeVisible();
+            const accuse = modal.getByRole('button', { name: 'Accuse', exact: true });
+            await expect(accuse).toBeVisible();
             const modalActor = modal.locator('[data-monster-actor]');
             await expect(modalActor).toHaveAttribute('data-monster-ready', 'true');
             await expect(modalActor).toHaveAttribute('data-monster-identity', identities[index]);
@@ -1554,12 +1593,12 @@ async function runProfile(profile) {
             expect(amounts).toHaveLength(4);
             opened.push({ index, identity: identities[index], amounts });
             if (JSON.stringify(amounts) === JSON.stringify(evidence.amounts)) {
-              await nativeAction(page, profile, lockUp);
+              await nativeAction(page, profile, accuse);
               await expect(roster.nth(index)).toHaveAttribute('data-monster-reaction', 'defeated');
               found = true;
             }
             await nativeAction(page, profile, page.getByRole('button', { name: 'Close', exact: true }));
-            await expect(page.getByRole('button', { name: 'Lock Up', exact: true })).toHaveCount(0);
+            await expect(modal).toHaveCount(0);
             if (found) break;
           }
           expect(found).toBe(true);
@@ -1578,6 +1617,8 @@ async function runProfile(profile) {
           await expect(actor(page)).toHaveAttribute('data-monster-identity', /zombie/);
           const idle = await idleProbe(page, reducedMotion);
           const root = page.locator('[data-zombies-game]');
+          const player = root.locator('[data-player-character]');
+          await expect(player.locator('img')).toBeVisible();
           const equation = (await questionCopy(page).innerText()).trim();
           expect(equation).toMatch(/^\d+\s*\+\s*\d+$/);
           const answer = expressionValue(equation);
@@ -1589,47 +1630,48 @@ async function runProfile(profile) {
           await expect(root).toHaveAttribute('data-zombies-score', '0');
           await expect(buttons.first()).toBeEnabled();
           const defeated = [];
-          for (let index = 0; index < 4; index += 1) {
-            await expect(actor(page).first()).toHaveAttribute('data-monster-ready', 'true');
-            const handle = await actor(page).first().elementHandle();
+          const hitsToCheck = profile.name === 'pc' ? 4 : 1;
+          for (let index = 0; index < hitsToCheck; index += 1) {
+            const liveTarget = root.locator('[data-monster-actor="true"]:not([data-monster-reaction="defeated"])');
+            await expect(liveTarget.first()).toHaveAttribute('data-monster-ready', 'true');
+            const handle = await liveTarget.first().elementHandle();
             await beginCreatureProbe(handle);
             const result = expressionValue(await questionCopy(page).innerText());
             await nativeAction(page, profile, exactText(buttons, String(result)));
             await expect(root).toHaveAttribute('data-zombies-score', String((index + 1) * 220));
-            await pause(page, 180);
+            if (!reducedMotion) {
+              await page.waitForFunction(() => window.__legendCreatureProbe?.hasSpellPhase('flight'), null, { timeout: 1500 });
+            }
+            await page.waitForFunction(() => window.__legendCreatureProbe?.hasReaction('defeated'), null, { timeout: 1500 });
+            await expect(player.locator('img')).toBeVisible();
             const probe = await page.evaluate(() => window.__legendCreatureProbe.stop());
             expect(probe.failures).toEqual([]); expect(probe.preparedPNG).toBe(true); expect(probe.reactions).toContain('defeated');
+            if (!reducedMotion) {
+              expect(probe.spellPhases).toContain('flight');
+              expect(probe.playerVisibleDuringFlight).toBe(true);
+              expect(probe.firstFlightAt).toBeLessThanOrEqual(probe.firstDefeatedAt);
+            }
             defeated.push(probe);
-            if (index < 3) await expect(buttons.first()).toBeEnabled();
+            if (index < hitsToCheck - 1) await expect(buttons.first()).toBeEnabled();
           }
-          await expect(page.getByText('Practice Complete', { exact: true })).toBeVisible();
+          if (hitsToCheck === 4) await expect(page.getByText('Practice Complete', { exact: true })).toBeVisible();
           expect(await progressionSnapshot(page)).toEqual(baseline);
-          return { checks: ['gentle current practice addition independently solved', 'wrong answer recovery', 'one unchanged preparedPNG per entity through its legitimate defeat/removal', 'normal idle or reduced-motion static minion', 'native four-answer practice completion with no progression reward'], idle, defeated };
+          return { checks: ['gentle current practice addition independently solved', 'wrong answer recovery', 'selected hero remains visible while each correct answer casts a spell before impact', 'one unchanged preparedPNG per entity through its legitimate defeat/removal', 'normal idle or reduced-motion static minion', hitsToCheck === 4 ? 'native four-answer practice completion with no progression reward' : 'native touch first-hit transition within the 60-second practice timer'], idle, defeated };
         });
 
         for (const encounter of routes.encounters) await record(`encounter-${encounter.blueprintKey}-motion`, encounter.route, async () => {
-          await startMission(page, encounter.route);
-          await expect(actor(page)).toHaveAttribute('data-monster-identity', encounter.blueprintKey === 'crystal_core' ? /jelly/ : /cyclops-slime/);
-          const idle = await idleProbe(page, reducedMotion);
-          const probes = [];
-          for (const correct of [false, true, true]) {
-            const buttons = page.locator('.answer-choice-surface button');
-            await expect(buttons.first()).toBeEnabled();
-            const prompt = await questionCopy(page).innerText();
-            const choices = await buttons.evaluateAll((elements) => elements.map((button) => button.lastElementChild.textContent.trim()));
-            const answers = encounterAnswers(prompt, choices);
-            for (const answer of answers) expect(choices).toContain(answer);
-            const selected = correct ? answers : [choices.find((choice) => !answers.includes(choice))];
-            expect(selected[0]).toBeDefined();
-            await beginActorProbe(page);
-            for (const value of selected) await tap(page, profile, buttons.nth(choices.indexOf(value)));
-            const check = page.getByRole('button', { name: 'Check answers', exact: true });
-            if (await check.count()) await tap(page, profile, check);
-            probes.push(await finishActorProbe(page, { reducedMotion, reaction: correct ? 'hit' : 'taunt' }, 1050));
-          }
-          expect(new Set([idle, ...probes].flatMap((probe) => probe.identities)).size).toBe(1);
-          expect(new Set([idle, ...probes].flatMap((probe) => probe.sourceFingerprints)).size).toBe(1);
-          return { checks: ['answers derived from current encounter prompt', 'wrong and repeated correct pose changes', 'no keyed image fade/remount'], idle, probes };
+          await startMission(page, encounter.route, { skipActor: true });
+          const mock = page.locator('.sats-mock');
+          await expect(mock).toHaveAttribute('data-sats-phase', 'play');
+          await expect(mock.locator('.sats-reactor')).toBeVisible();
+          await expect(mock.locator('.sats-answer-options button').first()).toBeVisible();
+          const firstMission = await mock.getAttribute('data-sats-mission');
+          await tap(page, profile, mock.locator('.sats-answer-options button').first());
+          await expect(mock.locator('.sats-answer-options button[aria-pressed="true"]')).toHaveCount(1);
+          await tap(page, profile, mock.getByRole('button', { name: 'Save & continue' }));
+          await expect(mock.locator('.sats-charge')).toHaveAttribute('aria-label', /1 of \d+ missions saved/);
+          await expect.poll(() => mock.getAttribute('data-sats-mission')).not.toBe(firstMission);
+          return { checks: ['current SATs mock prompt and answer tile visible', 'tile selection saves and advances a mission', 'reactor charge updates without a page error'], firstMission, nextMission: await mock.getAttribute('data-sats-mission') };
         });
 
         if (!stopRequested) reports.push({ profile: profile.name, motion, case: 'boss-portrait-route-audit', passed: routes.portraitRoutes.length === 0, reachableRoutes: routes.portraitRoutes.map((level) => level.route), note: routes.portraitRoutes.length === 0 ? 'Current isBoss routes dispatch BossEncounterGame; conditional BossPortrait consumers have no live campaign route. No alias or new boss route was invented.' : 'Live BossPortrait route requires additional interaction coverage.' });

@@ -46,7 +46,7 @@ export default function GameGate({ children }: { children: ReactNode }) {
     return () => { window.clearInterval(clock); window.clearInterval(refresh); };
   }, [family.refresh, family.session?.user.id]);
   if (!family.configured) {
-    if (import.meta.env.DEV || import.meta.env.VITE_ALLOW_GAME_PREVIEW === 'true') return children;
+    if (import.meta.env.DEV) return children;
     return <GateMessage title="Your adventure is nearly ready."><p>Parent accounts and subscriptions are being connected. Please check back soon.</p><Link to="/subscriptions" className="website-button website-button-gold">Explore Matharia</Link></GateMessage>;
   }
   if (family.loading || (family.dataLoading && !family.settings)) return <GateMessage title="Opening your adventure…"><p role="status">Loading your family account.</p></GateMessage>;

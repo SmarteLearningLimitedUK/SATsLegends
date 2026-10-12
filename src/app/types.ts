@@ -6,6 +6,7 @@ export interface LevelResultState {
   subtitle: string;
   score?: number;
   practice?: boolean;
+  mockAttempt?: boolean;
   stars: number;
   xpGained: number;
   bonuses: { label: string; amount: number }[];
@@ -16,6 +17,7 @@ export interface LevelResultState {
   xpRequiredForNextLevel: number;
   leveledUp: boolean;
   accuracy: number;
+  accuracyMeasured?: boolean;
   hintsUsed: number;
   mistakes: number;
   timeMs: number;

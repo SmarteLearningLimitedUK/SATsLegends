@@ -1,0 +1,45 @@
+@media (max-width: 420px) and (max-height: 650px) {
+  #root .game-screen-layout:has(.line-graph-main) {
+    padding-bottom: 0 !important;
+  }
+
+  #root .line-graph-main {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 2rem) !important;
+  }
+
+  #root .line-graph-board .game-question-card-title-strip {
+    display: none;
+  }
+
+  #root .line-graph-chart {
+    height: 13.5rem !important;
+  }
+
+  #root .line-graph-side .answer-choice-surface {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 3px;
+  }
+
+  #root .line-graph-side .answer-choice-surface button {
+    min-width: 0;
+    min-height: 44px;
+    padding-inline: 2px;
+  }
+
+  #root .line-graph-side .answer-choice-surface button span {
+    font-size: 16px;
+    white-space: nowrap;
+  }
+
+  #root .line-graph-next:not(.line-graph-next--visible),
+  #root .line-graph-main--success .answer-choice-surface,
+  #root .line-graph-side > div:last-child:not(.line-graph-next) {
+    display: none;
+  }
+
+  #root .line-graph-answer--wrong {
+    border-color: #fb7185;
+    background: #881337;
+    color: #fff1f2;
+  }
+}

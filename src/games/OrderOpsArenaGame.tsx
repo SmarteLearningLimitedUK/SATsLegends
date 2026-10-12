@@ -1,27 +1,22 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { GameQuestionCard, GameUiShell } from '../components/game-ui/GameUiKit';
 import MonsterMindActor from '../components/game-ui/MonsterMindActor';
 import { triggerHaptic } from '../haptics';
-import { formatMultiplicationDisplay } from '../utils/mathDisplay';
 import goblinMonster from '../assets/enemies/cohesive/goblin.webp';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
+import { applyOperation, createOpsRound, formatOpsTokens, getOperationChoices, type OpsChoice, type OpsRound, type OpsToken } from './orderOpsEngine';
+import { emitMiniGameSessionEvent, type MiniGameShellContractProps } from '../app/gameplaySessionContract';
+import { playGameSound } from '../audio/gameAudio';
 
-interface OrderOpsArenaGameProps {
+interface OrderOpsArenaGameProps extends MiniGameShellContractProps {
   levelId: number;
   avatarId: string;
   onVictory: (stars: number, XP: number) => void;
   onGameOver: (XP: number) => void;
   onBack: () => void;
-}
-
-interface OpsRound {
-  expression: string;
-  answer: number;
-  options: number[];
-  hint: string;
 }
 
 type FeedbackState = null | {
@@ -39,97 +34,41 @@ const ENEMY_HEALTH_BY_LEVEL: Record<number, number> = {
   5: 9,
 };
 
-const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
-const shuffle = <T,>(items: T[]) => [...items].sort(() => Math.random() - 0.5);
-
-const makeOptions = (correct: number) => {
-  const pool = new Set<number>([correct]);
-  const offsets = [-8, -5, -3, -2, 2, 3, 5, 8];
-  for (const offset of shuffle(offsets)) {
-    if (pool.size >= 4) break;
-    const candidate = correct + offset;
-    if (candidate >= 0) pool.add(candidate);
-  }
-  while (pool.size < 4) {
-    pool.add(Math.max(0, correct + randomInt(-9, 9)));
-  }
-  return shuffle(Array.from(pool).slice(0, 4));
-};
-
-const createOpsRound = (levelId: number): OpsRound => {
-  const tier = Math.max(1, Math.min(5, levelId));
-  const factorMax = [3, 5, 7, 10, 12][tier - 1];
-  const modes = tier === 1 ? ['mixed'] as const : tier === 2 ? ['mixed', 'brackets'] as const : ['mixed', 'brackets', 'doubleMultiply'] as const;
-  const mode = modes[randomInt(0, modes.length - 1)];
-
-  if (mode === 'brackets') {
-    const a = randomInt(2, 3 + tier * 2);
-    const b = randomInt(2, factorMax);
-    const c = randomInt(2, Math.min(9, tier + 3));
-    const answer = (a + b) * c;
-    return {
-      expression: `(${a} + ${b}) * ${c}`,
-      answer,
-      options: makeOptions(answer),
-      hint: 'Brackets first.',
-    };
-  }
-
-  if (mode === 'doubleMultiply') {
-    const a = randomInt(2, factorMax);
-    const b = randomInt(2, Math.max(3, factorMax - 2));
-    const c = randomInt(2, factorMax);
-    const d = randomInt(2, Math.max(3, factorMax - 3));
-    const answer = (a * b) + (c * d);
-    return {
-      expression: `${a} * ${b} + ${c} * ${d}`,
-      answer,
-      options: makeOptions(answer),
-      hint: 'Multiply before add.',
-    };
-  }
-
-  const a = randomInt(tier === 1 ? 2 : 5, 12 + tier * 7);
-  const b = randomInt(2, factorMax);
-  const c = randomInt(2, Math.min(9, tier + 2));
-  const d = tier === 1 ? 0 : randomInt(1, Math.min(tier * 2, a + b * c - 1));
-  const answer = a + (b * c) - d;
-  return {
-    expression: `${a} + ${b} * ${c}${d ? ` - ${d}` : ''}`,
-    answer,
-    options: makeOptions(answer),
-    hint: 'Multiply before add or subtract.',
-  };
-};
-
 const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
   levelId,
   avatarId,
+  isPractice,
+  sessionState,
+  sessionEvents,
   onVictory,
   onGameOver,
   onBack: _onBack,
 }) => {
   const tier = Math.max(1, Math.min(5, levelId));
   const maxEnemyHealth = ENEMY_HEALTH_BY_LEVEL[tier];
-  const initialTime = 76 + (tier * 7);
   const targetScore = maxEnemyHealth * 210;
   const timersRef = useRef<number[]>([]);
   const scoreRef = useRef(0);
+  const sessionRef = useRef(sessionState);
+  sessionRef.current = sessionState;
 
   const [XP, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(initialTime);
-  const [hearts, setHearts] = useState(HEARTS_MAX);
+  const [localHearts, setLocalHearts] = useState(HEARTS_MAX);
+  const hearts = sessionState?.lives ?? localHearts;
   const [Combo, setStreak] = useState(0);
   const [enemyHealth, setEnemyHealth] = useState(maxEnemyHealth);
   const [questionCount, setQuestionCount] = useState(1);
   const [round, setRound] = useState<OpsRound>(() => createOpsRound(levelId));
+  const [tokens, setTokens] = useState<OpsToken[]>(() => round.tokens);
+  const [stepNotice, setStepNotice] = useState('Pick the operation that should happen next.');
   const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [isFinished, setIsFinished] = useState(false);
   const orderOpsEnemy = goblinMonster;
   const roundStartRef = useRef<number>(Date.now());
 
 
-  const displayExpression = formatMultiplicationDisplay(round.expression);
+  const displayExpression = formatOpsTokens(tokens);
+  const operationChoices = useMemo(() => getOperationChoices(tokens), [tokens]);
 
   const clearTimers = () => {
     timersRef.current.forEach((timerId) => window.clearTimeout(timerId));
@@ -146,35 +85,21 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
     clearTimers();
     setScore(0);
     scoreRef.current = 0;
-    setTimeLeft(initialTime);
-    setHearts(HEARTS_MAX);
+    setLocalHearts(HEARTS_MAX);
     setStreak(0);
     setEnemyHealth(maxEnemyHealth);
     setQuestionCount(1);
-    setRound(createOpsRound(levelId));
+    const first = createOpsRound(levelId);
+    setRound(first);
+    setTokens(first.tokens);
+    setStepNotice('Pick the operation that should happen next.');
     roundStartRef.current = Date.now();
     setFeedback(null);
     setIsFinished(false);
-  }, [initialTime, levelId, maxEnemyHealth]);
-
-  useEffect(() => {
-    if (isFinished) return undefined;
-    const interval = window.setInterval(() => {
-      setTimeLeft((previous) => {
-        if (previous <= 1) {
-          window.clearInterval(interval);
-          setIsFinished(true);
-          onGameOver(scoreRef.current);
-          return 0;
-        }
-        return previous - 1;
-      });
-    }, 1000);
-    return () => window.clearInterval(interval);
-  }, [isFinished, onGameOver]);
+  }, [levelId, maxEnemyHealth]);
 
   const finishVictory = (finalScore: number, heartsLeft: number) => {
-    if (isFinished) return;
+    if (isFinished || (!isPractice && sessionRef.current && (sessionRef.current.lives <= 0 || sessionRef.current.timeLeft <= 0))) return;
     setIsFinished(true);
     const stars = finalScore >= targetScore * 1.2 && heartsLeft >= 2
       ? 3
@@ -190,13 +115,17 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
       colors: ['#fcd34d', '#67e8f9', '#ffffff'],
     });
 
+    emitMiniGameSessionEvent(sessionEvents, 'game_complete', { score: finalScore, stars });
     onVictory(stars, finalScore);
   };
 
   const moveToNextQuestion = () => {
     const timeoutId = window.setTimeout(() => {
       setQuestionCount((previous) => previous + 1);
-      setRound(createOpsRound(levelId));
+      const next = createOpsRound(levelId);
+      setRound(next);
+      setTokens(next.tokens);
+      setStepNotice('Pick the operation that should happen next.');
       roundStartRef.current = Date.now();
       setFeedback(null);
     }, 620);
@@ -205,37 +134,51 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
 
   const loseHeart = (subtitle: string) => {
     if (feedback || isFinished) return;
-    const nextHearts = hearts - 1;
-    setHearts(nextHearts);
+    const nextHearts = isPractice ? hearts : hearts - 1;
+    if (!sessionState && !isPractice) setLocalHearts(nextHearts);
     setStreak(0);
     setFeedback({
       type: 'error',
       title: 'Order Broken',
       subtitle: `The Monster Mind disrupted the order. ${subtitle}`,
     });
+    emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { score: scoreRef.current, metadata: { expression: formatOpsTokens(tokens) } });
     triggerHaptic('error');
 
-    if (nextHearts <= 0) {
+    if (nextHearts <= 0 && !sessionState) {
       const timeoutId = window.setTimeout(() => {
         setIsFinished(true);
+        emitMiniGameSessionEvent(sessionEvents, 'game_failed', { score: scoreRef.current, reason: 'hearts' });
         onGameOver(scoreRef.current);
       }, 860);
       timersRef.current.push(timeoutId);
       return;
     }
 
-    moveToNextQuestion();
+    const timeoutId = window.setTimeout(() => setFeedback(null), 820);
+    timersRef.current.push(timeoutId);
   };
 
-  const handleAnswer = (choice: number) => {
-    if (feedback || isFinished) return;
+  const handleAnswer = (choice: OpsChoice) => {
+    if (feedback || isFinished || sessionState?.paused || (!isPractice && sessionState && (sessionState.lives <= 0 || sessionState.timeLeft <= 0))) return;
 
-    if (choice !== round.answer) {
-      loseHeart(`Correct value was ${round.answer}.`);
+    if (!choice.correct) {
+      loseHeart(`${round.hint} Check the calculation before trying again.`);
       return;
     }
 
-    const points = 140 + (Combo * 24);
+    const nextTokens = applyOperation(tokens, choice.operationIndex);
+    setTokens(nextTokens);
+    setStepNotice(`${choice.label}. ${nextTokens.length === 1 ? 'Expression solved — hit landed!' : 'Now choose the next operation.'}`);
+    if (nextTokens.length > 1) {
+      playGameSound('cast');
+      triggerHaptic('success');
+      return;
+    }
+
+    playGameSound('impact');
+
+    const points = 210 + (Combo * 24);
     const updatedScore = XP + points;
     const nextEnemyHealth = Math.max(0, enemyHealth - 1);
     const elapsedMs = Date.now() - roundStartRef.current;
@@ -243,6 +186,7 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
 
     setScore(updatedScore);
     scoreRef.current = updatedScore;
+    emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { score: updatedScore, metadata: { expression: formatOpsTokens(round.tokens) } });
     setStreak((previous) => previous + 1);
     setEnemyHealth(nextEnemyHealth);
     setFeedback({
@@ -273,7 +217,7 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
           <div className="flex justify-center">
             <GameQuestionCard
               title="Order Ops Arena"
-              subtitle="The Monster Minds scrambled the order. Solve it in BIDMAS order."
+              subtitle="Choose a correct operation and its result. Resolve the expression to land a hit."
               className="w-full max-w-[860px] border border-amber-200/35 bg-[linear-gradient(180deg,rgba(251,191,36,0.28),rgba(15,23,42,0.18))] px-4 py-2 text-center shadow-[0_12px_26px_rgba(15,23,42,0.14)] md:px-6 md:py-2.5"
               bodyClassName="text-[clamp(1.15rem,2.9vw,2.7rem)] font-black tracking-tight text-white"
             >
@@ -299,16 +243,17 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
               </div>
 
               <div className="rounded-[1.45rem] border border-white/10 bg-[linear-gradient(180deg,rgba(9,16,31,0.66),rgba(6,10,20,0.82))] p-3 shadow-[0_14px_28px_rgba(2,6,23,0.14)] backdrop-blur-sm md:p-4">
-                <div className="grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-3">
-                  {round.options.map((option) => (
+                <p className="mb-2 text-center text-sm font-bold text-cyan-50 md:text-base" role="status">{stepNotice}</p>
+                <div className="grid grid-cols-2 gap-2 md:gap-3" data-order-ops-choices>
+                  {operationChoices.map((option) => (
                     <button
-                      key={`${displayExpression}-${option}`}
+                      key={`${displayExpression}-${option.id}`}
                       type="button"
                       onClick={() => handleAnswer(option)}
                       disabled={Boolean(feedback) || isFinished}
-                      className="ui-button-primary min-h-[3.2rem] rounded-[1.1rem] px-2 py-2 text-base font-black text-white shadow-[0_12px_20px_rgba(2,6,23,0.2)] disabled:opacity-60 md:min-h-[3.8rem] md:text-2xl"
+                      className="ui-button-primary min-h-[3.2rem] rounded-[1.1rem] px-2 py-2 text-base font-black text-white shadow-[0_12px_20px_rgba(2,6,23,0.2)] disabled:opacity-60 md:min-h-[3.8rem] md:text-xl"
                     >
-                      {option}
+                      {option.label}
                     </button>
                   ))}
                 </div>

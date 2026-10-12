@@ -3,8 +3,9 @@ import { AnimatePresence, motion } from 'motion/react';
 import { triggerHaptic } from '../haptics';
 import gameplayBackground from '../assets/maps/premium/rotation-station.webp';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
+import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
 
-interface RotationStationGameProps {
+interface RotationStationGameProps extends MiniGameShellContractProps {
   levelId: number;
   miniGameLevel?: number;
   avatarId: string;
@@ -14,8 +15,9 @@ interface RotationStationGameProps {
   onBack: () => void;
 }
 
-type RotationMode = 'rotate_match' | 'predict_result' | 'identify_turn';
+type RotationMode = 'rotate_match' | 'predict_result' | 'identify_turn' | 'identify_reflection';
 type TurnDirection = 'cw' | 'acw';
+type ReflectionAxis = 'vertical' | 'horizontal';
 type ShapeId = 'arrow' | 'lshape' | 'tshape' | 'flag' | 'hook';
 type QuestionKind = 'fluency' | 'reasoning';
 
@@ -40,6 +42,7 @@ interface RotationQuestion {
   subInstruction: string;
   options: Array<{ id: string; label: string; orientation?: number }>;
   correctOptionIds: string[];
+  reflectionAxis?: ReflectionAxis;
   speedRound: boolean;
   difficultyWeight: number;
   kind: QuestionKind;
@@ -171,8 +174,9 @@ const createIdentifyTurnOptions = (direction: TurnDirection, turns: number) => {
 const createQuestion = (baseLevel: number, solvedCount: number, timeLeft: number): RotationQuestion => {
   const stage = stageFromProgress(baseLevel, solvedCount, timeLeft);
   const speedRound = speedRoundForState(solvedCount, stage);
-  const mode = modeForStage(stage);
-  const shape = SHAPES[randomInt(0, SHAPES.length - 1)];
+  const mode = stage >= 8 && solvedCount % 3 === 2 ? 'identify_reflection' : modeForStage(stage);
+  const shapePool = mode === 'identify_reflection' ? [SHAPES[1], SHAPES[3], SHAPES[4]] : SHAPES;
+  const shape = shapePool[randomInt(0, shapePool.length - 1)];
 
   const startOrientation = randomInt(0, 3);
   const direction: TurnDirection = Math.random() < 0.5 ? 'cw' : 'acw';
@@ -180,6 +184,25 @@ const createQuestion = (baseLevel: number, solvedCount: number, timeLeft: number
   const quarterTurns = speedRound ? 1 : allowedTurns[randomInt(0, allowedTurns.length - 1)];
   const targetOrientation = applyQuarterTurns(startOrientation, direction, quarterTurns);
   const turnText = buildTurnLabel(quarterTurns, direction);
+
+  if (mode === 'identify_reflection') {
+    const reflectionAxis: ReflectionAxis = Math.random() < 0.5 ? 'vertical' : 'horizontal';
+    return {
+      id: createId(), stage, mode, shape, startOrientation,
+      targetOrientation: startOrientation, direction, quarterTurns: 0,
+      reflectionAxis,
+      instruction: 'Which mirror line turns the start shape into the image?',
+      subInstruction: 'Look for a flip. A vertical mirror line runs up and down; a horizontal line runs across.',
+      options: [
+        { id: 'vertical', label: 'Vertical mirror line' },
+        { id: 'horizontal', label: 'Horizontal mirror line' },
+        { id: 'clockwise', label: '90° clockwise turn' },
+        { id: 'half-turn', label: '180° turn' },
+      ],
+      correctOptionIds: [reflectionAxis], speedRound: false,
+      difficultyWeight: 72 + stage * 11, kind: 'reasoning',
+    };
+  }
 
   if (mode === 'rotate_match') {
       return {
@@ -256,11 +279,12 @@ const starsFromPerformance = (XP: number, correct: number, attempts: number, sta
 const ShapeCard: React.FC<{
   shape: ShapeDef;
   orientation: number;
+  reflectionAxis?: ReflectionAxis;
   tone?: 'target' | 'player' | 'neutral';
   showPivot?: boolean;
   className?: string;
   svgClassName?: string;
-}> = ({ shape, orientation, tone = 'neutral', showPivot = true }) => {
+}> = ({ shape, orientation, reflectionAxis, tone = 'neutral', showPivot = true }) => {
   const borderClass = tone === 'target'
     ? 'border-cyan-100/34 bg-blue-950/48'
     : tone === 'player'
@@ -269,6 +293,7 @@ const ShapeCard: React.FC<{
 
   return (
     <div className={`relative flex h-[7.2rem] w-[7.2rem] items-center justify-center rounded-[1.05rem] border ${borderClass}`}>
+      <div style={{ transform: reflectionAxis === 'vertical' ? 'scaleX(-1)' : reflectionAxis === 'horizontal' ? 'scaleY(-1)' : undefined }}>
       <motion.svg
         viewBox="-64 -64 128 128"
         animate={{ rotate: orientationToDegrees(orientation) }}
@@ -284,6 +309,7 @@ const ShapeCard: React.FC<{
         </defs>
         <polygon points={shape.points} fill={`url(#shape-grad-${shape.id})`} stroke={shape.stroke} strokeWidth="4" />
       </motion.svg>
+      </div>
       {showPivot ? <span className="absolute h-1.5 w-1.5 rounded-full bg-white/70" /> : null}
     </div>
   );
@@ -297,6 +323,7 @@ const RotationStationGame: React.FC<RotationStationGameProps> = ({
   onVictory,
   onGameOver: _onGameOver,
   onBack,
+  sessionEvents,
 }) => {
   const baseLevel = Math.max(1, Math.min(5, miniGameLevel || levelId || 1));
   const initialRoundSeconds = useMemo(() => roundSecondsForLevel(baseLevel), [baseLevel]);
@@ -315,6 +342,7 @@ const RotationStationGame: React.FC<RotationStationGameProps> = ({
   const [shapePulse, setShapePulse] = useState<'success' | 'error' | null>(null);
 
   const finishGuardRef = useRef(false);
+  const answerPendingRef = useRef(false);
   const questionStartRef = useRef<number>(Date.now());
   const timeoutRefs = useRef<number[]>([]);
 
@@ -328,6 +356,7 @@ const RotationStationGame: React.FC<RotationStationGameProps> = ({
   useEffect(() => {
     clearTimeouts();
     finishGuardRef.current = false;
+    answerPendingRef.current = false;
     setTimeLeft(initialRoundSeconds);
     setScore(0);
     setStreak(0);
@@ -376,14 +405,20 @@ const RotationStationGame: React.FC<RotationStationGameProps> = ({
       setFeedback(null);
       setShapePulse(null);
       setIsLocked(false);
+      answerPendingRef.current = false;
       questionStartRef.current = Date.now();
     }, delayMs);
     timeoutRefs.current.push(timeout);
   }, [baseLevel, timeLeft]);
 
   const evaluateAnswer = useCallback((isCorrect: boolean, detailText: string) => {
-    if (roundOver || isLocked) return;
+    if (roundOver || isLocked || answerPendingRef.current) return;
+    answerPendingRef.current = true;
     setIsLocked(true);
+    emitMiniGameSessionEvent(sessionEvents, isCorrect ? 'correct_answer' : 'incorrect_answer', {
+      score: XP,
+      metadata: { questionId: question.id, mode: question.mode },
+    });
     const nextAttemptCount = attemptCount + 1;
     const nextSolvedCount = solvedCount + 1;
     setAttemptCount(nextAttemptCount);
@@ -399,7 +434,7 @@ const RotationStationGame: React.FC<RotationStationGameProps> = ({
       setCorrectCount((prev) => prev + 1);
       setStreak((prev) => prev + 1);
       setShapePulse('success');
-      setFeedback({ tone: 'success', title: 'Rotation system restored', subtitle: `+${points} points` });
+      setFeedback({ tone: 'success', title: question.mode === 'identify_reflection' ? 'Mirror line found' : 'Rotation system restored', subtitle: `+${points} points` });
       triggerHaptic('success');
       moveToNextQuestion(nextSolvedCount, 320);
       return;
@@ -411,7 +446,7 @@ const RotationStationGame: React.FC<RotationStationGameProps> = ({
     setFeedback({ tone: 'error', title: 'Still misaligned', subtitle: detailText });
     triggerHaptic('error');
     moveToNextQuestion(nextSolvedCount, 560);
-  }, [attemptCount, isLocked, moveToNextQuestion, question.difficultyWeight, question.speedRound, roundOver, solvedCount, Combo]);
+  }, [attemptCount, isLocked, moveToNextQuestion, question, roundOver, solvedCount, Combo, sessionEvents, XP]);
 
   const handleRotate = (direction: TurnDirection) => {
     if (roundOver || isLocked || question.mode !== 'rotate_match') return;
@@ -444,6 +479,12 @@ const RotationStationGame: React.FC<RotationStationGameProps> = ({
       const isCorrect = question.correctOptionIds.includes(choiceId);
       const answerLabel = question.options.find((option) => question.correctOptionIds.includes(option.id))?.label || '';
       evaluateAnswer(isCorrect, `Correct turn: ${answerLabel}.`);
+      return;
+    }
+
+    if (question.mode === 'identify_reflection') {
+      const isCorrect = question.correctOptionIds.includes(choiceId);
+      evaluateAnswer(isCorrect, `The mirror line was ${question.reflectionAxis}.`);
     }
   };
 
@@ -548,12 +589,12 @@ const RotationStationGame: React.FC<RotationStationGameProps> = ({
                 </div>
               ) : null}
 
-              {question.mode === 'identify_turn' ? (
+              {question.mode === 'identify_turn' || question.mode === 'identify_reflection' ? (
                 <div className={`grid min-h-0 flex-1 grid-rows-[auto_1fr] gap-2 ${shapePulseClass}`}>
                   <div className="flex items-center justify-center gap-2.5">
                     <ShapeCard shape={question.shape} orientation={question.startOrientation} tone="neutral" />
-                    <span className="text-2xl font-black text-cyan-100/75">to</span>
-                    <ShapeCard shape={question.shape} orientation={question.targetOrientation} tone="target" />
+                    <span className="text-2xl font-black text-cyan-100/75">{question.mode === 'identify_reflection' ? 'mirror' : 'to'}</span>
+                    <ShapeCard shape={question.shape} orientation={question.targetOrientation} reflectionAxis={question.reflectionAxis} tone="target" />
                   </div>
                   <div className="answer-choice-surface grid grid-cols-2 gap-1.5">
                     {question.options.map((option) => (

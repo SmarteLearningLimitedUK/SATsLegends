@@ -20,7 +20,7 @@ interface FractionForgeGameProps extends MiniGameShellContractProps {
   onBack: () => void;
 }
 
-type Operation = '+' | '-';
+type Operation = '+' | '-' | '×' | '÷';
 type Fraction = { numerator: number; denominator: number };
 type FractionCard = Fraction & { id: string };
 interface ForgeRound {
@@ -38,10 +38,10 @@ const RECIPES: readonly (readonly string[])[] = [
   ['1/4+2/4', '1/5+2/5', '2/7+3/7', '1/8+4/8', '2/6+3/6', '3/8+4/8', '2/9+3/9', '1/10+6/10'],
   ['3/4-1/4', '4/5-1/5', '5/6-2/6', '6/7-2/7', '7/8-3/8', '5/9+2/9', '3/10+4/10', '7/12-5/12'],
   ['1/2+1/4', '1/3+1/6', '2/5+1/10', '1/4+3/8', '2/3+1/6', '1/5+1/2', '1/3+1/4', '3/5+1/4'],
-  ['2/3+1/4', '5/6-1/3', '3/4+2/3', '7/8-1/4', '5/4-1/2', '2/5+3/4', '7/6-1/3', '5/8+2/3'],
-  ['1/2+2/3-1/4', '5/4+1/3-1/2', '3/4+5/6-1/3', '7/8+2/3-1/4', '5/6+3/4-1/2', '2/3+5/8-1/6', '3/2-1/4+2/3', '7/6+3/5-1/2'],
+  ['2/3+1/4', '2/3×3/4', '5/6-1/3', '3/5×2/3', '3/4+2/3', '4/7×3/5', '7/8-1/4', '5/6×3/4'],
+  ['2/3×3/5', '3/4÷2/1', '5/6×2/5', '4/5÷3/1', '7/8×4/7', '3/5÷2/1', '5/4×2/3', '7/9÷3/1'],
 ];
-const DISTRACTORS = ['1/8', '1/6', '1/5', '1/4', '1/3', '3/8', '2/5', '1/2', '3/5', '2/3', '3/4', '4/5', '5/6', '7/8', '5/4', '4/3', '3/2', '1/10', '3/10', '5/8', '7/10', '7/12', '2/9', '5/9'];
+const DISTRACTORS = ['1/8', '1/6', '1/5', '1/4', '1/3', '3/8', '2/5', '1/2', '3/5', '2/3', '3/4', '4/5', '5/6', '7/8', '5/4', '4/3', '3/2', '1/10', '3/10', '5/8', '7/10', '7/12', '2/9', '5/9', '2/1', '3/1'];
 const gcd = (a: number, b: number): number => b === 0 ? Math.abs(a) : gcd(b, a % b);
 const simplify = (value: Fraction): Fraction => {
   const divisor = gcd(value.numerator, value.denominator);
@@ -57,10 +57,15 @@ const parseFraction = (text: string): Fraction => {
   return { numerator, denominator };
 };
 const calculateRecipe = (parts: readonly Fraction[], operators: readonly Operation[]): Fraction => (
-  parts.slice(1).reduce((value, part, index) => simplify({
-    numerator: value.numerator * part.denominator + (operators[index] === '+' ? 1 : -1) * part.numerator * value.denominator,
-    denominator: value.denominator * part.denominator,
-  }), parts[0])
+  parts.slice(1).reduce((value, part, index) => {
+    const operation = operators[index];
+    if (operation === '×') return simplify({ numerator: value.numerator * part.numerator, denominator: value.denominator * part.denominator });
+    if (operation === '÷') return simplify({ numerator: value.numerator * part.denominator, denominator: value.denominator * part.numerator });
+    return simplify({
+      numerator: value.numerator * part.denominator + (operation === '+' ? 1 : -1) * part.numerator * value.denominator,
+      denominator: value.denominator * part.denominator,
+    });
+  }, parts[0])
 );
 const shuffle = <T,>(items: readonly T[]): T[] => {
   const copy = [...items];
@@ -75,13 +80,13 @@ const makeRound = (level: number, roundIndex: number, runOffset = 0): ForgeRound
   const tier = Math.max(1, Math.min(5, level));
   const recipes = RECIPES[tier - 1];
   const recipe = recipes[(roundIndex - 1 + runOffset) % recipes.length];
-  const pieces = recipe.split(/([+-])/);
+  const pieces = recipe.split(/([+\-×÷])/);
   const solution = pieces.filter((_, index) => index % 2 === 0).map(parseFraction);
   const operators = pieces.filter((_, index) => index % 2 === 1) as Operation[];
   const bankSize = [4, 5, 5, 6, 7][tier - 1];
   const denominator = solution[0].denominator;
   const sameDenominator = Array.from({ length: denominator }, (_, index) => `${index + 1}/${denominator}`);
-  const pool = tier <= 2 ? [...sameDenominator, ...DISTRACTORS] : [...DISTRACTORS, ...recipes.flatMap((entry) => entry.split(/[+-]/))];
+  const pool = tier <= 2 ? [...sameDenominator, ...DISTRACTORS] : [...DISTRACTORS, ...recipes.flatMap((entry) => entry.split(/[+\-×÷]/))];
   const chosen = [...solution];
   const seen = new Set(chosen.map(fractionKey));
   const offset = (roundIndex + runOffset) % pool.length;
@@ -101,13 +106,13 @@ const makeRound = (level: number, roundIndex: number, runOffset = 0): ForgeRound
     cards: shuffle(indexed),
     operators,
     solutionIds: indexed.slice(0, solution.length).map((card) => card.id),
-    prompt: `Choose ${solution.length} fraction ingots to make ${fractionLabel(target)}.`,
+    prompt: `Choose ${solution.length} ingots in order. ${operators.join(' then ')} to make ${fractionLabel(target)}.`,
   };
 };
 
-const FractionGlyph: React.FC<{ value: Fraction }> = ({ value }) => (
-  <span className="ff-fraction" aria-hidden="true"><span>{value.numerator}</span><span className="ff-fraction-bar" /><span>{value.denominator}</span></span>
-);
+const FractionGlyph: React.FC<{ value: Fraction }> = ({ value }) => value.denominator === 1
+  ? <span className="ff-fraction" aria-hidden="true"><span>{value.numerator}</span></span>
+  : <span className="ff-fraction" aria-hidden="true"><span>{value.numerator}</span><span className="ff-fraction-bar" /><span>{value.denominator}</span></span>;
 
 const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
   levelId, miniGameLevel, avatarId: _avatarId, useSharedTopHud: _useSharedTopHud = false,
@@ -198,7 +203,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     triggerHaptic('selection');
   };
   const strike = () => {
-    if (endedRef.current || resolving || slots.some((id) => id === null)) return;
+    if (endedRef.current || resolving || strikeState === 'error' || slots.some((id) => id === null)) return;
     const selected = slots.map((id) => round.cards.find((card) => card.id === id)).filter((card): card is FractionCard => Boolean(card));
     if (selected.length !== slots.length) return;
     const result = calculateRecipe(selected, round.operators);
@@ -236,7 +241,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     }
     setWrongCount((previous) => previous + 1);
     setStreak(0);
-    setFeedback({ tone: 'error', message: `That makes ${fractionLabel(result)}. Target: ${fractionLabel(round.target)}. Recut an ingot.` });
+    setFeedback({ tone: 'error', message: `Wrong answer! Your recipe makes ${fractionLabel(result)}, but the target is ${fractionLabel(round.target)}. Swap an ingot and try again.` });
     triggerHaptic('error');
     sessionEvents?.onIncorrectAnswer?.({ type: 'incorrect_answer', score, metadata: { result: fractionLabel(result), target: fractionLabel(round.target) } });
     if (!sessionState && !isPractice) {
@@ -244,11 +249,11 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
       setLocalLives(nextLives);
       if (nextLives <= 0) {
         endedRef.current = true;
-        delay(() => onGameOver(score), 650);
+        delay(() => onGameOver(score), 1000);
         return;
       }
     }
-    delay(() => setResolving(false), 560);
+    delay(() => setResolving(false), 900);
   };
 
   return (
@@ -270,13 +275,15 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
             <div className="ff-target"><span>FORGE TARGET</span><strong className="ff-target-value" data-forge-target>{fractionLabel(round.target)}</strong></div>
             <motion.div key={strikeTick} className="ff-hammer" data-strike-state={strikeState} aria-hidden="true"><Hammer /></motion.div>
             <div className="ff-anvil">
+              <span className="ff-anvil-fracture ff-anvil-fracture-left" aria-hidden="true" />
+              <span className="ff-anvil-fracture ff-anvil-fracture-right" aria-hidden="true" />
               <div className="ff-recipe" aria-label="Fraction recipe">
                 {slots.map((cardId, index) => {
                   const card = round.cards.find((entry) => entry.id === cardId);
                   return (
                     <React.Fragment key={`${round.id}-slot-${index}`}>
-                      {index > 0 ? <span className="ff-operator" aria-label={round.operators[index - 1] === '+' ? 'plus' : 'minus'}>{round.operators[index - 1]}</span> : null}
-                      <button type="button" data-forge-slot={index + 1} data-button-skin="none" className={`ff-slot ${card ? 'ff-slot-filled' : ''}`} disabled={!card || resolving} onClick={() => removeIngredient(index)} aria-label={card ? `Remove fraction ${card.numerator} over ${card.denominator} from mould ${index + 1}` : `Empty forge mould ${index + 1}`}>
+                      {index > 0 ? <span className="ff-operator" aria-label={{ '+': 'plus', '-': 'minus', '×': 'times', '÷': 'divided by' }[round.operators[index - 1]]}>{round.operators[index - 1]}</span> : null}
+                      <button type="button" data-forge-slot={index + 1} data-button-skin="none" className={`ff-slot ${card ? 'ff-slot-filled' : ''}`} disabled={!card || resolving} onClick={() => removeIngredient(index)} aria-label={card ? `Remove ${card.denominator === 1 ? card.numerator : `${card.numerator} over ${card.denominator}`} from mould ${index + 1}` : `Empty forge mould ${index + 1}`}>
                         {card ? <FractionGlyph value={card} /> : <span className="ff-slot-number">{index + 1}</span>}
                       </button>
                     </React.Fragment>
@@ -284,8 +291,10 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
                 })}
               </div>
               <div className="ff-anvil-base" aria-hidden="true" />
+              {strikeState === 'error' ? <div key={`debris-${strikeTick}`} className="ff-anvil-debris" aria-hidden="true">{Array.from({ length: 8 }, (_, index) => <span key={index} className="ff-anvil-shard" style={{ '--shard-index': index } as React.CSSProperties} />)}</div> : null}
               <AnimatePresence>{strikeState === 'success' ? <motion.div key={`sparks-${strikeTick}`} className="ff-spark-burst" aria-hidden="true" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>{Array.from({ length: 10 }, (_, index) => <span key={index} className="ff-spark" style={{ '--spark-index': index } as React.CSSProperties} />)}</motion.div> : null}</AnimatePresence>
             </div>
+            {strikeState === 'error' ? <div key={`wrong-${strikeTick}`} className="ff-wrong-badge" aria-hidden="true"><strong>WRONG ANSWER</strong><span>ANVIL FRACTURED</span></div> : null}
             <div className="ff-progress" aria-label={`${completed} of ${totalRounds} commissions forged`}>
               {Array.from({ length: totalRounds }, (_, index) => <span key={index} className="ff-progress-mark" data-complete={index < completed ? 'true' : 'false'} aria-hidden="true" />)}
             </div>
@@ -295,14 +304,14 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
             <div className="ff-bank">
               {round.cards.map((card) => {
                 const used = slots.includes(card.id);
-                return <button type="button" key={card.id} data-forge-ingredient={card.id} data-button-skin="none" className={`ff-ingredient ${used ? 'ff-ingredient-used' : ''}`} disabled={used || resolving} onClick={() => addIngredient(card.id)} aria-label={`Add fraction ${card.numerator} over ${card.denominator} to the anvil`} aria-pressed={used}><FractionGlyph value={card} /></button>;
+                return <button type="button" key={card.id} data-forge-ingredient={card.id} data-button-skin="none" className={`ff-ingredient ${used ? 'ff-ingredient-used' : ''}`} disabled={used || resolving} onClick={() => addIngredient(card.id)} aria-label={`Add ${card.denominator === 1 ? card.numerator : `${card.numerator} over ${card.denominator}`} to the anvil`} aria-pressed={used}><FractionGlyph value={card} /></button>;
               })}
             </div>
             <div className="ff-controls">
               <button type="button" data-button-skin="none" className="ff-reset" onClick={() => { setSlots(Array(round.solutionIds.length).fill(null)); setFeedback(null); setStrikeState('idle'); }} disabled={resolving || slots.every((id) => id === null)} aria-label="Clear the anvil"><RotateCcw aria-hidden="true" />Clear</button>
-              <button type="button" data-button-skin="none" className="ff-strike" data-forge-strike onClick={strike} disabled={resolving || slots.some((id) => id === null)}><Hammer aria-hidden="true" />Strike</button>
+              <button type="button" data-button-skin="none" className="ff-strike" data-forge-strike onClick={strike} disabled={resolving || strikeState === 'error' || slots.some((id) => id === null)}><Hammer aria-hidden="true" />Strike</button>
             </div>
-            <div className="ff-feedback" data-forge-feedback data-tone={feedback?.tone || 'info'} role="status" aria-live="polite">{feedback?.message || (tier <= 2 ? 'Same denominator? Work with the numerators.' : 'Find common-sized parts before you strike.')}</div>
+            <div className="ff-feedback" data-forge-feedback data-tone={feedback?.tone || 'info'} role={feedback?.tone === 'error' ? 'alert' : 'status'} aria-live={feedback?.tone === 'error' ? 'assertive' : 'polite'}>{feedback?.message || (tier <= 2 ? 'Same denominator? Work with the numerators.' : tier >= 4 ? 'For ×, multiply across. For ÷ by a whole number, multiply the denominator.' : 'Find common-sized parts before you strike.')}</div>
           </div>
         </div>
       </div>

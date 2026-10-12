@@ -471,12 +471,14 @@ async function delayedVictoryExit(page, profile, level, kind) {
   const answer = async () => {
     if (kind === 'market') {
       const puzzle = await marketPuzzle(page);
-      return page.locator('[data-market-answer]').filter({ hasText: new RegExp(`^${puzzle.correct.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`) });
+      await marketPay(page, profile, puzzle, true);
+      return null;
     }
     const puzzle = await racePuzzle(page); return page.locator(`[data-race-answer="${puzzle.correct[0]}"]`);
   };
   for (let round = 1; round < rounds; round += 1) {
-    await tap(page, profile, await answer());
+    const button = await answer();
+    if (button) await tap(page, profile, button);
     if (kind === 'market') await expect(root).toHaveAttribute('data-market-round', String(round + 1));
     else await expect(root).toHaveAttribute('data-race-state', 'showingQuestion');
   }
@@ -491,12 +493,13 @@ async function delayedVictoryExit(page, profile, level, kind) {
     window.__qaVictoryBoundaryObserver.observe(document.body, { subtree: true, attributes: true, childList: true });
     window.__qaVictoryBoundaryListener = (event) => {
       const button = event.target.closest('button'); if (!button) return;
-      if (button.matches(type === 'market' ? '[data-market-answer]' : '[data-race-answer]')) window.__qaVictoryBoundary.answeredAt = performance.now();
+      if (button.matches(type === 'market' ? '[data-market-submit]' : '[data-race-answer]')) window.__qaVictoryBoundary.answeredAt = performance.now();
       if (button.getAttribute('aria-label') === 'Back' && button.closest('[data-testid="shared-bottom-hud"]')) window.__qaVictoryBoundary.exitedAt = performance.now();
     };
     document.addEventListener('click', window.__qaVictoryBoundaryListener, true);
   }, kind);
-  await tap(page, profile, await answer());
+  const finalButton = await answer();
+  if (finalButton) await tap(page, profile, finalButton);
   await page.locator('[data-testid="shared-bottom-hud"]').getByRole('button', { name: 'Back', exact: true }).focus();
   await page.evaluate(async (duration) => {
     const remaining = duration - 100 - (performance.now() - window.__qaVictoryBoundary.answeredAt);
@@ -520,18 +523,18 @@ async function delayedVictoryExit(page, profile, level, kind) {
 }
 
 async function marketPuzzle(page) {
-  // A 520ms advance can fall between separate protocol reads. Every field below
-  // comes from one settled, answer-enabled receipt in a single DOM evaluation.
+  // A 520ms advance can fall between separate protocol reads. Read one settled,
+  // coin-enabled receipt before building the change.
   let snapshot;
   await expect.poll(async () => {
     snapshot = await page.locator('[data-market-game]').evaluate((root) => {
       const receipt = root.querySelector('[data-market-receipt]');
-      const buttons = [...root.querySelectorAll('[data-market-answer]')];
+      const buttons = [...root.querySelectorAll('[data-market-coin]')];
       if (!receipt) return { ready: false, reason: 'receipt missing' };
       const style = getComputedStyle(receipt);
       const matrix = new DOMMatrix(style.transform === 'none' ? undefined : style.transform);
       const ready = root.dataset.marketState === 'idle' && root.dataset.marketPresent !== 'false'
-        && buttons.length === 4 && buttons.every((button) => !button.disabled)
+        && buttons.length >= 3 && buttons.every((button) => !button.disabled)
         && Number(style.opacity) === 1 && Math.abs(matrix.m42) < .000001;
       if (!ready) return { ready: false, state: root.dataset.marketState, present: root.dataset.marketPresent,
         enabled: buttons.filter((button) => !button.disabled).length, opacity: style.opacity, translateY: matrix.m42 };
@@ -541,10 +544,10 @@ async function marketPuzzle(page) {
         lines: [...receipt.querySelectorAll('[data-market-line]')].map((line) => ({
           quantity: line.querySelector('strong').textContent.trim(),
           unit: line.querySelector('small').textContent.trim(), total: line.querySelector('b').textContent.trim(),
-        })), choices: buttons.map((button) => button.textContent.trim()) };
+        })), coins: buttons.map((button) => Number(button.dataset.marketCoin)) };
     });
     return snapshot.ready;
-  }, { message: 'Wait for one idle, answer-enabled Market receipt with its entrance pose settled', timeout: 10000 }).toBe(true).catch((error) => {
+  }, { message: 'Wait for one idle, coin-enabled Market receipt with its entrance pose settled', timeout: 10000 }).toBe(true).catch((error) => {
     error.qaMetrics = { marketReceiptReadiness: snapshot }; throw error;
   });
   const cost = moneyPence(snapshot.cost);
@@ -562,20 +565,45 @@ async function marketPuzzle(page) {
     expect(lineTotals.length).toBeGreaterThan(0);
     expect(lineTotals.reduce((sum, value) => sum + value, 0)).toBe(cost);
     expect(paid).toBeGreaterThan(cost);
-    expect(snapshot.choices).toHaveLength(4); expect(new Set(snapshot.choices).size).toBe(4);
-    const matching = snapshot.choices.filter((option) => moneyPence(option) === paid - cost);
-    expect(matching).toHaveLength(1);
-    return { cost, paid, lineCount: lineTotals.length, correct: matching[0], wrong: snapshot.choices.find((option) => moneyPence(option) !== paid - cost) };
+    expect(new Set(snapshot.coins).size).toBe(snapshot.coins.length);
+    const due = paid - cost;
+    let remainder = due;
+    for (const coin of [...snapshot.coins].sort((a, b) => b - a)) remainder %= coin;
+    expect(remainder, 'Available coins must make the exact change').toBe(0);
+    return { cost, paid, lineCount: lineTotals.length, correct: formatMarketMoney(due), due, wrongCoin: snapshot.coins.find((coin) => coin !== due), coins: snapshot.coins };
   } catch (error) {
     error.qaMetrics = { marketReceiptSnapshot: snapshot }; throw error;
   }
+}
+
+const formatMarketMoney = (pence) => pence >= 100 ? `£${(pence / 100).toFixed(2)}` : `${pence}p`;
+
+async function marketPay(page, profile, puzzle, correct) {
+  const clear = page.locator('[data-market-clear]');
+  if (await clear.isEnabled()) await tap(page, profile, clear);
+  if (correct) {
+    let remaining = puzzle.due;
+    for (const coin of [...puzzle.coins].sort((a, b) => b - a)) {
+      while (remaining >= coin) {
+        await tap(page, profile, page.locator(`[data-market-coin="${coin}"]`));
+        remaining -= coin;
+      }
+    }
+    expect(remaining).toBe(0);
+    await expect(page.locator('[data-market-till-total]')).toHaveText(puzzle.correct);
+  } else {
+    await tap(page, profile, page.locator(`[data-market-coin="${puzzle.wrongCoin}"]`));
+  }
+  await tap(page, profile, page.locator('[data-market-submit]'));
 }
 
 async function marketReceiptVisibility(page) {
   for (const line of await page.locator('[data-market-line]').all()) await hitVisible(line, { text: true });
   const result = await page.locator('[data-market-line]').evaluateAll((lines) => {
     const box = (node) => { const r = node.getBoundingClientRect(); return { x: r.x, y: r.y, right: r.right, bottom: r.bottom, width: r.width, height: r.height }; };
-    return lines.map((line) => ({ ...box(line), text: line.textContent.trim(), children: [...line.children].map((child) => ({ tag: child.tagName, ...box(child) })) }));
+    return lines.map((line) => ({ ...box(line), text: line.textContent.trim(),
+      children: [...line.querySelectorAll('img,strong,small,b')].filter((child) => getComputedStyle(child).display !== 'none')
+        .map((child) => ({ tag: child.tagName, ...box(child) })) }));
   });
   try {
     for (const line of result) for (const child of line.children) {
@@ -592,20 +620,50 @@ async function marketReceiptVisibility(page) {
   return result;
 }
 
+async function marketLayout(page, profile) {
+  const layout = await stageLayout(page, profile.name === 'phone-a2hs' ? 'portrait' : 'responsive');
+  const question = await hitVisible(page.locator('.game-question-card'), { text: true });
+  const topHud = await box(page.locator('[data-testid="shared-top-hud"]'));
+  const playfield = await box(page.locator('[data-market-playfield]'));
+  const receipt = await box(page.locator('[data-market-receipt]'));
+  const till = await box(page.locator('[data-market-till]'));
+  const feedback = await box(page.locator('.market-feedback'));
+  const dock = await box(page.locator('[data-testid="shared-bottom-hud"]'));
+  try {
+    expect(question.y).toBeGreaterThanOrEqual(topHud.bottom - 1);
+    expect(playfield.y).toBeGreaterThanOrEqual(question.bottom - 1);
+    expect(playfield.height).toBeGreaterThan(120);
+    expect(feedback.y).toBeGreaterThanOrEqual(playfield.bottom - 1);
+    expect(feedback.bottom).toBeLessThanOrEqual(dock.y + 1);
+    for (const panel of [receipt, till]) {
+      expect(panel.x).toBeGreaterThanOrEqual(playfield.x - 1);
+      expect(panel.right).toBeLessThanOrEqual(playfield.right + 1);
+      expect(panel.y).toBeGreaterThanOrEqual(playfield.y - 1);
+      expect(panel.bottom).toBeLessThanOrEqual(playfield.bottom + 1);
+    }
+    expect(receipt.right <= till.x + 1 || receipt.bottom <= till.y + 1, 'Receipt and till must not overlap').toBe(true);
+    for (const button of await page.locator('[data-market-coin], [data-market-undo], [data-market-clear], [data-market-submit]').all()) {
+      await hitVisible(button, { minimumHeight: 44 });
+    }
+    await hitVisible(page.locator('.market-feedback'), { text: true });
+  } catch (error) { error.qaMetrics ||= { question, topHud, playfield, receipt, till, feedback, dock, layout }; throw error; }
+  return { layout, question, topHud, playfield, receipt, till, feedback, dock };
+}
+
 async function marketFlow(page, profile, motion, level, exiting = false) {
   await openRoute(page, level.route); await dismissIntro(page);
   const root = page.locator('[data-market-game]'); await expect(root).toHaveAttribute('data-market-state', 'idle');
-  const art = await paintedImage(page.locator('.market-shop-art [data-game-scene-image]'), profile.name === 'phone-a2hs' ? 'monster-market-shop.webp' : 'monster-market-shop-wide.webp', 'contain');
-  const layouts = [await gameplayLayout(page, profile, '[data-market-playfield]', '.market-answers', '[data-market-answer]', '.market-feedback')];
+  const art = await paintedImage(page.locator('.market-shop-art [data-game-scene-image]'), profile.name === 'phone-a2hs' ? 'monster-market-shop.webp' : 'monster-market-shop-wide.webp', profile.name === 'phone-a2hs' ? 'contain' : 'cover');
+  const layouts = [await marketLayout(page, profile)];
   layouts[0].receipt = await marketReceiptVisibility(page);
   await page.screenshot({ path: path.join(output, `${profile.name}-${motion}-market-ready.png`) });
-  const idle = await ambientMotion(page, '[data-market-game]', motion);
+  const idle = profile.name === 'phone-a2hs' ? { interactionLedMotion: true } : await ambientMotion(page, '[data-market-game]', motion);
   const initial = await marketPuzzle(page);
-  await tap(page, profile, page.locator('[data-market-answer]').filter({ hasText: new RegExp(`^${initial.wrong.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`) }));
-  await rapid(page.locator('[data-market-answer]').first());
+  await marketPay(page, profile, initial, false);
+  await rapid(page.locator('[data-market-submit]'));
   await expect(root).toHaveAttribute('data-market-state', 'incorrect');
   await expect(root).toHaveAttribute('data-market-lives', '2');
-  await expect(page.locator('.market-feedback')).toContainText('Try again');
+  await expect(page.locator('.market-feedback')).toContainText('try again');
   await expect(root).toHaveAttribute('data-market-state', 'idle');
   await expect(root).toHaveAttribute('data-market-round', '1');
   expect(await marketPuzzle(page)).toEqual(initial);
@@ -614,10 +672,10 @@ async function marketFlow(page, profile, motion, level, exiting = false) {
   const puzzles = [];
   for (let index = 0; index < 6; index += 1) {
     const puzzle = await marketPuzzle(page); puzzles.push(puzzle);
-    layouts.push(await gameplayLayout(page, profile, '[data-market-playfield]', '.market-answers', '[data-market-answer]', '.market-feedback'));
+    layouts.push(await marketLayout(page, profile));
     layouts.at(-1).receipt = await marketReceiptVisibility(page);
-    const answer = page.locator('[data-market-answer]').filter({ hasText: new RegExp(`^${puzzle.correct.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`) });
-    if (index === 5) await rapid(answer); else await tap(page, profile, answer);
+    await marketPay(page, profile, puzzle, true);
+    if (index === 5) await rapid(page.locator('[data-market-submit]'));
     await expect(root).toHaveAttribute('data-market-correct', String(index + 1));
     if (exiting) {
       await leaveGame(page, profile, '[data-market-game]'); await pause(page, 1100);
@@ -632,7 +690,7 @@ async function marketFlow(page, profile, motion, level, exiting = false) {
   const savedTelemetry = await telemetry(page);
   expect(savedTelemetry.correctAnswers).toBe(6); expect(savedTelemetry.incorrectAnswers).toBe(1); expect(savedTelemetry.sessionsPlayed).toBe(1);
   if (motion === 'reduced') await expect(page.locator('canvas')).toHaveCount(0);
-  return { checks: ['native incorrect recovery', 'six actual receipt calculations', 'all quantities/unit and total prices visible', 'four unique correct-inclusive answers', 'one same-turn final victory', 'accurate final raw score and shared accuracy', 'one Parent telemetry completion', 'reduced-motion confetti disabled'], art, idle, layouts, puzzles, result, telemetry: savedTelemetry };
+  return { checks: ['native incorrect recovery', 'six actual receipt calculations', 'all quantities/unit and total prices visible', 'exact change built from UK coin denominations', 'one same-turn final victory', 'accurate final raw score and shared accuracy', 'one Parent telemetry completion', 'reduced-motion confetti disabled'], art, idle, layouts, puzzles, result, telemetry: savedTelemetry };
 }
 
 async function restaurantPuzzle(page) {
@@ -663,8 +721,10 @@ async function restaurantHelpPause(page, profile) {
   const help = page.getByRole('dialog', { name: /how to play$/ }); await expect(help).toBeVisible();
   await expect(root).toHaveAttribute('data-takeout-paused', 'true');
   const before = Number(await root.getAttribute('data-takeout-time')); expect(before).toBeGreaterThan(60);
+  await expect(page.locator('[data-takeout-clock]')).toHaveText(`${before}s`);
   await page.clock.runFor(62000);
   await expect(root).toHaveAttribute('data-takeout-time', String(before));
+  await expect(page.locator('[data-takeout-clock]')).toHaveText(`${before}s`);
   await expect(root).toHaveAttribute('data-takeout-pressure', 'steady'); await expect(root).toHaveAttribute('data-takeout-state', 'idle');
   await expect(page.getByRole('dialog', { name: 'Mission results' })).toHaveCount(0);
   await tap(page, profile, help.getByRole('button', { name: 'Back to mission', exact: true }));
@@ -675,6 +735,7 @@ async function restaurantHelpPause(page, profile) {
   const resumed = Number(await root.getAttribute('data-takeout-time')); await page.clock.runFor(1100);
   await expect.poll(async () => Number(await root.getAttribute('data-takeout-time'))).not.toBe(resumed);
   const after = Number(await root.getAttribute('data-takeout-time'));
+  await expect(page.locator('[data-takeout-clock]')).toHaveText(`${after}s`);
   expect(resumed - after).toBeGreaterThanOrEqual(1); expect(resumed - after).toBeLessThanOrEqual(2);
   return { clockAdvancedBehindHelpMs: 62000, timeBefore: before, unchangedWhilePaused: true, resumedTime: resumed, afterResumedTick: after, nativeInput: true };
 }
@@ -732,7 +793,7 @@ async function restaurantFlow(page, profile, motion, level, exiting = false) {
   await installTimerClock(page);
   await openRoute(page, level.route); await dismissIntro(page);
   const root = page.locator('[data-takeout-game]'); await expect(root).toHaveAttribute('data-takeout-state', 'idle');
-  const art = await paintedImage(page.locator('.rush-kitchen-art [data-game-scene-image]'), profile.name === 'phone-a2hs' ? 'restaurant-rush.webp' : 'restaurant-rush-wide.webp', 'contain');
+  const art = await paintedImage(page.locator('.rush-kitchen-art [data-game-scene-image]'), profile.name === 'phone-a2hs' ? 'restaurant-rush.webp' : 'restaurant-rush-wide.webp', profile.name === 'phone-a2hs' ? 'contain' : 'cover');
   const layouts = [await gameplayLayout(page, profile, '[data-takeout-playfield]', '[data-takeout-responses]', '[data-takeout-food], .rush-actions button', '.rush-feedback')];
   await hitVisible(page.locator('.rush-customer-quip'), { text: true });
   const idle = await ambientMotion(page, '[data-takeout-game]', motion);
@@ -1380,8 +1441,10 @@ async function choiceLivesEnd(page, profile, motion, level, kind) {
   const idle = kind === 'market' ? 'idle' : 'showingQuestion'; await expect(root).toHaveAttribute(stateAttribute, idle);
   for (let life = 2; life >= 0; life -= 1) {
     const puzzle = kind === 'market' ? await marketPuzzle(page) : await racePuzzle(page);
-    const button = kind === 'market' ? page.locator(`[data-market-answer="${puzzle.wrong}"]`) : page.locator(`[data-race-answer="${puzzle.wrong}"]`);
-    await tap(page, profile, button); await rapid(button);
+    const button = kind === 'market' ? page.locator('[data-market-submit]') : page.locator(`[data-race-answer="${puzzle.wrong}"]`);
+    if (kind === 'market') await marketPay(page, profile, puzzle, false);
+    else await tap(page, profile, button);
+    await rapid(button);
     await expect.poll(async () => (await telemetry(page)).incorrectAnswers).toBe(3 - life);
     if (life > 0) { await expect(root).toHaveAttribute(stateAttribute, idle); await expect(page.locator('.legend-hud-lives')).toHaveAttribute('aria-label', `${life} of 3 lives remaining`); }
   }
@@ -1396,9 +1459,9 @@ async function choiceLivesEnd(page, profile, motion, level, kind) {
   let correct = 0;
   for (let index = 0; index < 15; index += 1) {
     const puzzle = kind === 'market' ? await marketPuzzle(page) : await racePuzzle(page);
-    const option = kind === 'market' ? puzzle.correct : puzzle.correct[0];
-    const button = kind === 'market' ? page.locator(`[data-market-answer="${option}"]`) : page.locator(`[data-race-answer="${option}"]`);
-    await tap(page, profile, button); correct += 1;
+    if (kind === 'market') await marketPay(page, profile, puzzle, true);
+    else await tap(page, profile, page.locator(`[data-race-answer="${puzzle.correct[0]}"]`));
+    correct += 1;
     await page.waitForFunction(({ selector, attribute, idleState }) => Boolean(document.querySelector('[role="dialog"]')) || document.querySelector(selector)?.getAttribute(attribute) === idleState,
       { selector: kind === 'market' ? '[data-market-game]' : '[data-race-scene]', attribute: stateAttribute, idleState: idle });
     if (await dialog.count()) break;
@@ -1425,7 +1488,7 @@ async function postFailureCalmReturn(page, profile, motion, originalLevel, kind)
         if (life > 0) await expect(page.locator('[data-takeout-submit]')).toBeEnabled();
       } else {
         const puzzle = await marketPuzzle(page);
-        await tap(page, profile, page.locator('[data-market-answer]').filter({ hasText: new RegExp(`^${puzzle.wrong.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`) }));
+        await marketPay(page, profile, puzzle, false);
         if (life > 0) await expect(root).toHaveAttribute('data-market-state', 'idle');
       }
       if (life > 0) await expect(page.locator('.legend-hud-lives')).toHaveAttribute('aria-label', `${life} of 3 lives remaining`);
@@ -1473,7 +1536,7 @@ async function postFailureCalmReturn(page, profile, motion, originalLevel, kind)
     await victoryResult(page, level, score, 1, 0, 4);
   } else {
     for (let round = 1; round <= 6; round += 1) {
-      const puzzle = await marketPuzzle(page); await tap(page, profile, page.locator('[data-market-answer]').filter({ hasText: new RegExp(`^${puzzle.correct.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`) }));
+      const puzzle = await marketPuzzle(page); await marketPay(page, profile, puzzle, true);
       if (round < 6) await expect(root).toHaveAttribute('data-market-round', String(round + 1));
     }
     await victoryResult(page, level, 6 * (150 + level.difficulty * 14), 6, 0, 4);
@@ -1505,7 +1568,7 @@ async function fitOnly(page, profile, motion, level, kind) {
     catch (error) { error.qaMetrics = { artwork: error.qaMetrics, fit }; throw error; }
   }
   if (kind === 'market') {
-    fit = await gameplayLayout(page, profile, '[data-market-playfield]', '.market-answers', '[data-market-answer]', '.market-feedback');
+    fit = await marketLayout(page, profile);
     fit.receipt = await marketReceiptVisibility(page);
   }
   if (kind === 'race') {
@@ -1535,16 +1598,16 @@ async function fourLineMarketFixture(page, profile, motion, level) {
   });
   await expect(page.locator('[data-market-line]')).toHaveCount(4); await pause(page, 350);
   const puzzle = await marketPuzzle(page);
-  const fit = await gameplayLayout(page, profile, '[data-market-playfield]', '.market-answers', '[data-market-answer]', '.market-feedback');
+  const fit = await marketLayout(page, profile);
   fit.receipt = await marketReceiptVisibility(page);
   await page.screenshot({ path: path.join(output, `${profile.name}-${motion}-market-four-line-fixture.png`) });
   await page.setViewportSize({ width: 1264, height: 600 }); await pause(page, 350); await settleScreen(page);
   await expect(page.locator('[data-market-line]')).toHaveCount(4);
-  const boundaryFit = await gameplayLayout(page, profile, '[data-market-playfield]', '.market-answers', '[data-market-answer]', '.market-feedback');
+  const boundaryFit = await marketLayout(page, profile);
   boundaryFit.receipt = await marketReceiptVisibility(page);
   await page.screenshot({ path: path.join(output, `${profile.name}-${motion}-market-four-line-600-boundary.png`) });
   await page.setViewportSize({ width: 1264, height: 625 }); await pause(page, 350); await settleScreen(page);
-  await tap(page, profile, page.locator(`[data-market-answer="${puzzle.correct}"]`)); await expect(page.locator('[data-market-game]')).toHaveAttribute('data-market-correct', '1');
+  await marketPay(page, profile, puzzle, true); await expect(page.locator('[data-market-game]')).toHaveAttribute('data-market-correct', '1');
   await expect(page.locator('[data-market-game]')).toHaveAttribute('data-market-round', '2');
   await page.evaluate(() => { window.__qaMarketFixture.unmount(); delete window.__qaMarketFixture; });
   return { checks: ['isolated current mastery-tier public props', 'four visible receipt rows and exact totals', 'row/text/image containment and HUD/dock fit at625px and600px responsive cutoff', 'four usable answers above dock', 'actual correct calculation advances'], fixture, fit, boundaryFit, puzzle, motion };

@@ -19,10 +19,22 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
+      - name: Production dependency audit
+        run: npm audit --omit=dev --audit-level=high
       - name: Typecheck
         run: npm run lint
       - name: Safe account return links
         run: npm run verify:return-path
+      - name: Maths content and five-tier difficulty
+        run: |
+          npx tsx scripts/verify-sats-content.ts
+          npx tsx scripts/verify-sats-question-integrity.ts
+          npx tsx scripts/verify-recommended-practice.ts
+          node scripts/verify-five-tier-difficulty.mjs
+          node scripts/verify-reasoning-quest-content.mjs
+          npx tsx scripts/verify-angle-question-variety.ts
+          npx tsx scripts/verify-order-ops-engine.ts
+          npx tsx scripts/verify-game-sound-profiles.ts
       - name: Production build
         run: npm run build
       - name: Database rules and migrations
@@ -40,6 +52,19 @@ jobs:
           deno test -A _shared/billing_test.ts
       - name: Install browser engines
         run: npx playwright install --with-deps chromium webkit
+      - name: Start compiled website for security-header checks
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 4173 --strictPort > /tmp/sats-preview.log 2>&1 &
+          for attempt in {1..60}; do
+            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then exit 0; fi
+            sleep 2
+          done
+          cat /tmp/sats-preview.log
+          exit 1
+      - name: Website security policy
+        run: node scripts/verify-parent-site-security.mjs
+      - name: Production paywall fails closed
+        run: node scripts/verify-paywall-fail-closed.mjs
       - name: Start website for viewport checks
         run: |
           npm run dev -- --host 127.0.0.1 > /tmp/sats-vite.log 2>&1 &
@@ -55,12 +80,51 @@ jobs:
           npm run verify:critical-game-viewports
           npm run verify:lexcoria
           npm run verify:family-ui
-      - name: Upload responsive viewport diagnostics
+      - name: SATs mock, on-screen working and scored progression
+        env:
+          TEST_BASE_URL: http://127.0.0.1:3000
+          SATS_TEST_BASE_URL: http://127.0.0.1:3000
+          LEGEND_QA_URL: http://127.0.0.1:3000
+        run: |
+          node scripts/verify-sats-mock-flow.mjs
+          node scripts/verify-game-audio.mjs
+          node scripts/verify-per-game-audio.mjs
+          node scripts/verify-daily-quests-and-core-mastery.mjs
+          node scripts/verify-on-screen-working.mjs
+          node scripts/verify-scored-progression.mjs
+          node scripts/verify-game-result-settlement.mjs
+          node scripts/verify-untracked-accuracy.mjs
+          node scripts/verify-quest-reward-once.mjs
+          node scripts/verify-zero-currency-persistence.mjs
+          node scripts/verify-adventure-settings.mjs
+          node scripts/verify-zombie-hidden-time.mjs
+          node scripts/verify-zombie-targeting.mjs
+          node scripts/verify-area-architect-layout.mjs
+          node scripts/verify-order-ops-interaction.mjs
+          node scripts/verify-change-counter-till.mjs
+          node scripts/verify-factor-frenzy-feedback.mjs
+          node scripts/verify-visual-game-answer-events.mjs
+          node scripts/verify-graph-grabber-layout.mjs
+          node scripts/verify-match-mastery-phone.mjs
+          node scripts/verify-primary-game-text.mjs
+          node scripts/verify-potion-panic-targets.mjs
+          node scripts/verify-all-minigames-smoke.mjs
+          node scripts/verify-ratio-racer-reachability.mjs
+          node scripts/verify-remainder-group-legibility.mjs
+          node scripts/verify-place-value-phone-layout.mjs
+          node scripts/verify-practice-results-layout.mjs
+      - name: Calm Grove interactions
+        env:
+          WELLBEING_QA_URL: http://127.0.0.1:3000
+        run: node scripts/verify-wellbeing-activities.mjs
+      - name: Upload game and viewport diagnostics
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: responsive-viewport-diagnostics
-          path: qa-artifacts/responsive-experience/
+          name: game-viewport-diagnostics
+          path: |
+            qa-artifacts/responsive-experience/
+            qa-artifacts/final-functional-smoke/
           if-no-files-found: ignore
       - name: Start account-flow fixture site
         run: |

@@ -720,6 +720,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
           <div className="rush-order-rail">
             <span>Ticket #{ordersServed + 1}</span>
             <strong>{rushPressure === 'last-orders' ? 'Last orders! Closing soon.' : Combo > 0 ? `Perfect service ×${Combo}` : 'Your café. Your moment.'}</strong>
+            {useSharedTopHud && <span className="rush-shift-clock" data-takeout-clock data-urgent={timeLeft <= 30} aria-label={`${timeLeft} seconds left`}>{timeLeft}s</span>}
           </div>
           <div className="rush-steam" aria-hidden="true"><i /><i /><i /></div>
           <div className="rush-customer">

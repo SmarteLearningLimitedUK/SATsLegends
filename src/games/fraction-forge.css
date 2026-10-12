@@ -133,6 +133,25 @@
   overflow: hidden;
 }
 
+.ff-anvil-zone::before {
+  position: absolute;
+  right: 12%;
+  bottom: 7%;
+  left: 12%;
+  height: 34%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(255, 167, 68, .3), rgba(234, 108, 43, .11) 40%, transparent 72%);
+  filter: blur(18px);
+  pointer-events: none;
+  content: '';
+  animation: ff-forge-embers 3.5s ease-in-out infinite;
+}
+
+@keyframes ff-forge-embers {
+  0%, 100% { opacity: .4; transform: scale(.85); }
+  50% { opacity: .88; transform: scale(1.08); }
+}
+
 .ff-target {
   position: relative;
   z-index: 5;
@@ -201,6 +220,26 @@
   height: 47%;
   clip-path: polygon(4% 0, 96% 0, 80% 68%, 98% 87%, 2% 87%, 20% 68%);
   background: linear-gradient(90deg, #111b24, #586972 28%, #25343d 51%, #0b151f);
+}
+
+.ff-anvil-fracture {
+  position: absolute;
+  z-index: 3;
+  top: 23%;
+  left: 4%;
+  width: 92%;
+  height: 35%;
+  opacity: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, #b0bdc0, #718087 13%, #35434a 34%, #202c34 70%, #0c151f);
+}
+
+.ff-anvil-fracture-left {
+  clip-path: polygon(0 46%, 14% 23%, 30% 18%, 34% 4%, 51% 4%, 48% 28%, 54% 54%, 49% 84%, 21% 84%);
+}
+
+.ff-anvil-fracture-right {
+  clip-path: polygon(51% 4%, 67% 4%, 72% 18%, 91% 22%, 100% 43%, 82% 84%, 49% 84%, 54% 54%, 48% 28%);
 }
 
 .ff-anvil-base {
@@ -360,7 +399,7 @@
   100% { opacity: 0; transform: rotate(var(--spark-angle, 0deg)) translateY(-70px) scale(.1); }
 }
 
-.fraction-forge-game[data-feedback-tone='success'] .ff-anvil::before {
+.fraction-forge-game[data-strike-state='success'] .ff-anvil::before {
   animation: ff-anvil-hot 750ms ease-out;
 }
 
@@ -369,14 +408,126 @@
   30% { filter: brightness(1.7) sepia(.5) saturate(2); }
 }
 
-.fraction-forge-game[data-feedback-tone='error'] .ff-anvil {
-  animation: ff-anvil-shudder 420ms ease-in-out;
+.fraction-forge-game[data-strike-state='error'] .ff-anvil {
+  animation: ff-anvil-shudder 760ms ease-in-out both;
+}
+
+.fraction-forge-game[data-strike-state='error'] .ff-anvil::before {
+  animation: ff-anvil-face-break 760ms linear both;
+}
+
+.fraction-forge-game[data-strike-state='error'] .ff-anvil::after {
+  animation: ff-anvil-stem-break 760ms ease-out both;
+}
+
+.fraction-forge-game[data-strike-state='error'] .ff-anvil-fracture-left {
+  animation: ff-anvil-break-left 760ms cubic-bezier(.2, .8, .25, 1) both;
+}
+
+.fraction-forge-game[data-strike-state='error'] .ff-anvil-fracture-right {
+  animation: ff-anvil-break-right 760ms cubic-bezier(.2, .8, .25, 1) both;
+}
+
+.fraction-forge-game[data-strike-state='error'] .ff-recipe {
+  animation: ff-recipe-jolt 620ms ease-out;
 }
 
 @keyframes ff-anvil-shudder {
+  0%, 15%, 100% { transform: translateX(-50%); }
+  23%, 42% { transform: translateX(calc(-50% - 8px)) rotate(-1deg); }
+  32%, 52% { transform: translateX(calc(-50% + 8px)) rotate(1deg); }
+}
+
+@keyframes ff-anvil-face-break {
+  0%, 23% { opacity: 1; }
+  24%, 100% { opacity: 0; }
+}
+
+@keyframes ff-anvil-break-left {
+  0%, 23% { opacity: 0; transform: translate(0, 0) rotate(0); }
+  24% { opacity: 1; transform: translate(0, 0) rotate(0); }
+  100% { opacity: 1; transform: translate(-34px, 29px) rotate(-12deg); }
+}
+
+@keyframes ff-anvil-break-right {
+  0%, 23% { opacity: 0; transform: translate(0, 0) rotate(0); }
+  24% { opacity: 1; transform: translate(0, 0) rotate(0); }
+  100% { opacity: 1; transform: translate(34px, 25px) rotate(11deg); }
+}
+
+@keyframes ff-anvil-stem-break {
+  0%, 30% { opacity: 1; transform: translateY(0) rotate(0); }
+  100% { opacity: .45; transform: translateY(18px) rotate(7deg); }
+}
+
+@keyframes ff-recipe-jolt {
   0%, 100% { transform: translateX(-50%); }
-  25%, 75% { transform: translateX(calc(-50% - 5px)); }
-  50% { transform: translateX(calc(-50% + 5px)); }
+  28% { transform: translate(-50%, -10px) rotate(-2deg); }
+  48% { transform: translate(-50%, 5px) rotate(2deg); }
+  70% { transform: translate(-50%, -3px); }
+}
+
+.ff-anvil-debris {
+  position: absolute;
+  z-index: 7;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ff-anvil-shard {
+  --shard-angle: calc(var(--shard-index) * 45deg);
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  width: 10px;
+  height: 16px;
+  clip-path: polygon(12% 0, 100% 24%, 68% 100%, 0 72%);
+  background: linear-gradient(145deg, #f6b852, #64757b 32%, #17252c);
+  box-shadow: 0 0 8px rgba(255, 116, 57, .7);
+  animation: ff-anvil-shard-fly 720ms ease-out both;
+}
+
+@keyframes ff-anvil-shard-fly {
+  0% { opacity: 0; transform: translate(-50%, -50%) rotate(var(--shard-angle)) translateY(0) scale(.3); }
+  22% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -50%) rotate(var(--shard-angle)) translateY(-90px) scale(.7); }
+}
+
+.ff-wrong-badge {
+  position: absolute;
+  z-index: 9;
+  top: clamp(45px, 20%, 118px);
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 175px;
+  padding: 8px 16px;
+  border: 2px solid #ff9f87;
+  border-radius: 10px;
+  background: rgba(76, 12, 21, .94);
+  box-shadow: 0 0 28px rgba(255, 69, 44, .55), 0 9px 22px rgba(0, 0, 0, .5);
+  color: #fff7ef;
+  font-size: clamp(15px, 1.5vw, 20px);
+  font-weight: 950;
+  line-height: 1.1;
+  letter-spacing: .04em;
+  text-align: center;
+  pointer-events: none;
+  animation: ff-wrong-badge 1.2s ease-out both;
+}
+
+.ff-wrong-badge span {
+  margin-top: 3px;
+  color: #ffd5b8;
+  font-size: .56em;
+  letter-spacing: .16em;
+}
+
+@keyframes ff-wrong-badge {
+  0% { opacity: 0; transform: translate(-50%, 13px) scale(.85); }
+  18%, 70% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -8px) scale(1.04); }
 }
 
 .ff-progress {
@@ -554,7 +705,7 @@
 .ff-feedback {
   min-height: 20px;
   color: #fbe0aa;
-  font-size: clamp(12px, 1.1vw, 14px);
+  font-size: clamp(14px, 1.1vw, 16px);
   font-weight: 750;
   line-height: 1.25;
   text-align: center;
@@ -562,7 +713,16 @@
 
 .ff-feedback:empty { display: none; }
 .ff-feedback[data-tone='success'] { color: #e2ffd6; }
-.ff-feedback[data-tone='error'] { color: #ffd3b8; }
+.ff-feedback[data-tone='error'] {
+  padding: 7px 10px;
+  border: 2px solid #ff9f87;
+  border-radius: 9px;
+  background: rgba(76, 12, 21, .94);
+  box-shadow: 0 0 16px rgba(255, 69, 44, .28);
+  color: #fff7ef;
+  font-size: clamp(14px, 1.2vw, 16px);
+  font-weight: 850;
+}
 
 .fraction-forge-game :is(button, [role='button']):focus-visible {
   outline: 3px solid #ffde8b;
@@ -635,10 +795,10 @@
   .ff-brief p { display: none; }
   .ff-question.game-question-card {
     --question-card-padding: 3px 6px;
-    font-size: 14px;
+    font-size: 17px;
   }
   #root .app-viewport.sat-theme-bluegold.screen-gameplay .fraction-forge-game .ff-question .game-question-copy {
-    font-size: 14px !important;
+    font-size: 17px !important;
     line-height: 1.1 !important;
   }
   .ff-question .game-question-card-title-strip {
@@ -668,6 +828,7 @@
   .ff-tray { padding: 7px; }
   .ff-bank { flex: 0 0 auto; gap: 4px; }
   .ff-ingredient { min-height: 50px; }
+  .ff-fraction, .ff-slot .ff-fraction { font-size: 16px; }
   .ff-controls { flex: 0 0 auto; }
   .ff-reset, .ff-strike { min-height: 50px; }
   .ff-feedback { min-height: 0; }
@@ -680,4 +841,10 @@
     animation-duration: .01ms !important;
     transition-duration: .01ms !important;
   }
+  .fraction-forge-game .ff-wrong-badge {
+    animation: none !important;
+    opacity: 1;
+    transform: translateX(-50%);
+  }
+  .ff-anvil-zone::before { animation: none; }
 }

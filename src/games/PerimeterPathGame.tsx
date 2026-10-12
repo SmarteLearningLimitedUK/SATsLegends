@@ -254,9 +254,10 @@ const generateQuestion = (level: number): PerimeterQuestion => {
 
 const randomFrom = <T,>(items: T[]) => items[Math.floor(Math.random() * items.length)];
 
-const scoreToStars = (XP: number) => {
-  if (XP >= 3200) return 3;
-  if (XP >= 2200) return 2;
+const scoreToStars = (XP: number, correct: number, incorrect: number) => {
+  const accuracy = correct / Math.max(1, correct + incorrect);
+  if (XP >= 3200 && accuracy >= 0.9) return 3;
+  if (XP >= 2200 && accuracy >= 0.7) return 2;
   return 1;
 };
 
@@ -337,6 +338,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({ levelId, avatarId
   const [locked, setLocked] = useState(false);
   const endedRef = useRef(false);
   const answerLockRef = useRef(false);
+  const incorrectRef = useRef(0);
   const timersRef = useRef<number[]>([]);
   const victoryRef = useRef(onVictory);
   victoryRef.current = onVictory;
@@ -351,6 +353,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({ levelId, avatarId
     clearTimers();
     endedRef.current = false;
     answerLockRef.current = false;
+    incorrectRef.current = 0;
     setScore(0); setQuestion(generateQuestion(tier)); setSelectedOption(null);
     setStreak(0); setCorrectCount(0); setFeedback(null); setSelectedEdgeIds([]); setLocked(false);
   }, [tier]);
@@ -372,13 +375,16 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({ levelId, avatarId
     if (correct) {
       sessionEvents?.onCorrectAnswer?.({ score: nextScore, metadata: { questionId: question.id } });
       sessionEvents?.onPuzzleComplete?.({ score: nextScore, metadata: { completed: nextCorrect, total: TARGET_CORRECT } });
+    } else {
+      incorrectRef.current += 1;
+      sessionEvents?.onIncorrectAnswer?.({ score: nextScore, metadata: { questionId: question.id, preservesLives: true } });
     }
     if (correct && !reducedMotion) confetti({ particleCount: 20, spread: 40, origin: { y: .65 }, colors: ['#f6c75d', '#77d7ba'] });
     timersRef.current.push(window.setTimeout(() => {
       if (!presentRef.current || endedRef.current) return;
       if (nextCorrect >= TARGET_CORRECT) {
         endedRef.current = true;
-        const stars = scoreToStars(nextScore);
+        const stars = scoreToStars(nextScore, nextCorrect, incorrectRef.current);
         sessionEvents?.onGameComplete?.({ score: nextScore, stars });
         victoryRef.current(stars, nextScore);
       } else nextQuestion();

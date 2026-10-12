@@ -166,6 +166,70 @@
   .legend-pvp-sources [data-pvp-location='source'] { height: 50px !important; }
 }
 
+@media (min-width: 341px) and (max-width: 600px) and (min-height: 761px) {
+  .screen-gameplay.game-type-place-value-peaks .legend-pvp-targets .pvp-stone-panel {
+    padding-block: 3px;
+  }
+  /* Lift the character's feet clear of the digit rack without changing its size. */
+  .screen-gameplay.game-type-place-value-peaks .legend-pvp-enemy {
+    top: calc(52.4% - 14px) !important;
+  }
+  .screen-gameplay.game-type-place-value-peaks .legend-pvp-sources:has(.grid-cols-5) {
+    top: calc(72% - 8px) !important;
+  }
+}
+
+@media (max-width: 340px) and (max-height: 650px) and (orientation: portrait) {
+  /* A short phone needs the digit rack beside the character, below the stones. */
+  .screen-gameplay.game-type-place-value-peaks .legend-hud-bar:has(.legend-hud-practice) .legend-hud-title {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+    line-height: 1.05;
+  }
+  .screen-gameplay.game-type-place-value-peaks .pvp-prompt-full { display: none; }
+  .screen-gameplay.game-type-place-value-peaks .pvp-prompt-compact { display: inline; }
+  .screen-gameplay.game-type-place-value-peaks .legend-pvp-question .game-question-card { padding: 2px 6px !important; }
+  .screen-gameplay.game-type-place-value-peaks .legend-pvp-question .game-question-card-title-strip { display: none; }
+  .screen-gameplay.game-type-place-value-peaks .legend-pvp-question .game-question-copy { margin-top: 0 !important; line-height: 1.1 !important; }
+  .screen-gameplay.game-type-place-value-peaks .legend-pvp-targets {
+    top: calc(32% - 55px) !important;
+  }
+  .screen-gameplay.game-type-place-value-peaks .legend-pvp-sources {
+    left: 2% !important;
+    top: calc(100% - 236px - env(safe-area-inset-bottom)) !important;
+    width: 52% !important;
+    translate: none !important;
+    transform: none !important;
+  }
+  .screen-gameplay.game-type-place-value-peaks .legend-pvp-sources .relative.gap-1 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2px;
+  }
+  .screen-gameplay.game-type-place-value-peaks .legend-pvp-sources .relative.gap-1.grid-cols-5 {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+  .screen-gameplay.game-type-place-value-peaks .legend-pvp-sources [data-pvp-location='source'] {
+    height: 48px !important;
+  }
+  .screen-gameplay.game-type-place-value-peaks .pvp-digit-panel { padding: 2px; }
+  .screen-gameplay.game-type-place-value-peaks .pvp-digit-panel .pvp-stone-heading { margin-bottom: 0; }
+  .screen-gameplay.game-type-place-value-peaks .legend-pvp-enemy {
+    left: auto !important;
+    right: 0 !important;
+    top: calc(52.4% - 5px) !important;
+    translate: none !important;
+    transform: none !important;
+  }
+  .screen-gameplay.game-type-place-value-peaks .pvp-enemy-health {
+    width: 142px !important;
+  }
+  .screen-gameplay.game-type-place-value-peaks .legend-pvp-sources:has(.grid-cols-5) + .legend-pvp-enemy .pvp-enemy-health-frame {
+    left: calc(50% - 14px) !important;
+  }
+}
+
 @media (max-width: 340px) and (orientation: portrait) {
   .screen-gameplay.game-type-place-value-peaks .pvp-stone-panel {
     padding: 6px;

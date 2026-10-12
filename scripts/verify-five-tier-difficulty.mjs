@@ -184,18 +184,20 @@ record('Actual Router sends five-tier generator props and canonical session IDs 
   assert.equal(active.has('CalculationCrashGame'), false);
 });
 const mineQuestions = generator('MultiplicationMineGame', ['makeQuestionDeck']);
-record('Mine four-strike decks use distinct facts and products in progressively harder factor bands', () => {
+record('Mine four-strike decks progress from tables to four-digit by two-digit on-screen multiplication', () => {
   for (let tier = 1; tier <= 5; tier++) for (let sample = 0; sample < 100; sample++) {
     const deck = mineQuestions.makeQuestionDeck(tier);
     assert.equal(deck.length, 4);
     assert.equal(new Set(deck.map(({ a, b }) => `${a}x${b}`)).size, 4);
     assert.equal(new Set(deck.map(({ answer }) => answer)).size, 4);
-    for (const question of deck) {
+    for (const [index, question] of deck.entries()) {
       assert.equal(question.answer, question.a * question.b);
       choices(question.options, question.answer);
-      assert.ok(question.a >= [2, 2, 3, 4, 7][tier - 1]);
-      assert.ok(question.b >= [2, 6, 8, 10, 11][tier - 1]);
-      assert.ok(question.b <= [5, 7, 9, 12, 12][tier - 1]);
+      const band = tier === 5 && index === 3 ? [1234, 3987, 12, 29] : [
+        [2, 6, 2, 8], [12, 39, 2, 9], [103, 396, 2, 9], [23, 89, 12, 29], [125, 987, 12, 29],
+      ][tier - 1];
+      assert.ok(question.a >= band[0] && question.a <= band[1]);
+      assert.ok(question.b >= band[2] && question.b <= band[3]);
     }
   }
 });
@@ -283,17 +285,22 @@ record('Actual level menu with testing override off: practice optional, sequenti
 });
 
 const remainder = generator('RemainderRunGame', ['stageForTier', 'createProblem']);
-record(`Remainder arithmetic, unique correct-inclusive choices and fixed tier caps (${sampleCount * 5} questions)`, () => {
+record(`Remainder arithmetic, on-screen group division and fixed tier caps (${sampleCount * 5} questions)`, () => {
   for (let tier = 1; tier <= 5; tier++) for (let sample = 0; sample < sampleCount; sample++) {
-    const q = remainder.createProblem(remainder.stageForTier(tier));
+    const q = remainder.createProblem(remainder.stageForTier(tier), sample);
     assert.equal(q.dividend, q.divisor * q.quotient + q.remainder);
     assert.ok(q.remainder >= 0 && q.remainder < q.divisor);
-    choices(q.options, q.answerLabel);
+    if (q.answerMode === 'group_board') {
+      assert.equal(q.options.length, 0);
+      assert.ok(q.dividend >= 1000 && q.dividend <= 9999);
+      assert.ok(q.divisor >= 12 && q.divisor <= 25);
+    } else choices(q.options, q.answerLabel);
     if (q.answerMode === 'decimal') near(Number(q.answerLabel), q.dividend / q.divisor, 'Exact decimal answer');
     else assert.equal(q.answerLabel, `${q.quotient} r${q.remainder}`);
     if (tier === 1) { assert.ok(q.dividend <= 17); assert.ok(q.divisor <= 4); assert.equal(q.answerMode, 'remainder'); }
     if (tier <= 3) assert.equal(q.answerMode, 'remainder');
-    if (tier >= 4) assert.equal(q.answerMode, 'decimal');
+    if (tier === 4) assert.equal(q.answerMode, 'decimal');
+    if (tier === 5) assert.equal(q.answerMode, sample % 3 === 0 ? 'group_board' : 'decimal');
   }
 });
 const zombies = generator('MathsVsZombiesGame', ['buildQuestion', 'maxZombiesForLevel', 'starsFromAccuracy']);
@@ -336,7 +343,7 @@ record(`Fraction Forge targets are reachable with exact arithmetic in each ingre
   };
   for (let tier = 1; tier <= 5; tier++) for (let sample = 0; sample < sampleCount; sample++) {
     const q = forge.makeRound(tier, sample + 100);
-    const slotCount = tier === 5 ? 3 : 2;
+    const slotCount = 2;
     assert.equal(q.cards.length, [4, 5, 5, 6, 7][tier - 1]);
     assert.equal(q.solutionIds.length, slotCount);
     assert.equal(q.operators.length, slotCount - 1);
@@ -355,24 +362,27 @@ record(`Fraction Forge targets are reachable with exact arithmetic in each ingre
       return card;
     });
     if (tier <= 2) assert.equal(solution[0].denominator, solution[1].denominator, 'Early tiers use like denominators');
-    if (tier === 3 || tier === 4) assert.notEqual(solution[0].denominator, solution[1].denominator, 'Later two-piece tiers use unlike denominators');
+    if (tier === 3 || tier === 4 || tier === 5) assert.notEqual(solution[0].denominator, solution[1].denominator, 'Later two-piece tiers use unlike denominators');
     if (tier === 1 || tier === 3) assert.deepEqual(q.operators, ['+']);
-    assert.ok(q.operators.every((operator) => operator === '+' || operator === '-'));
+    assert.ok(q.operators.every((operator) => ['+', '-', '×', '÷'].includes(operator)));
     q.operators.forEach((operator) => seenOperators[tier - 1].add(operator));
     let result = reduced(solution[0]);
     for (let index = 1; index < solution.length; index++) {
       const card = solution[index];
-      const sign = q.operators[index - 1] === '+' ? 1 : -1;
-      result = reduced({
-        numerator: result.numerator * card.denominator + sign * card.numerator * result.denominator,
-        denominator: result.denominator * card.denominator,
-      });
+      const operation = q.operators[index - 1];
+      result = reduced(operation === '×'
+        ? { numerator: result.numerator * card.numerator, denominator: result.denominator * card.denominator }
+        : operation === '÷'
+          ? { numerator: result.numerator * card.denominator, denominator: result.denominator * card.numerator }
+          : { numerator: result.numerator * card.denominator + (operation === '+' ? 1 : -1) * card.numerator * result.denominator,
+            denominator: result.denominator * card.denominator });
     }
     assert.deepEqual(result, q.target, 'The ordered solution must produce the exact normalized target');
   }
   assert.ok(seenOperators[1].has('-'), 'Tier 2 should include subtraction');
   assert.ok(seenOperators[3].has('-'), 'Tier 4 should include subtraction');
-  assert.ok(seenOperators[4].has('+') && seenOperators[4].has('-'), 'Tier 5 should exercise both operations');
+  assert.ok(seenOperators[3].has('×'), 'Tier 4 should introduce fraction multiplication');
+  assert.ok(seenOperators[4].has('×') && seenOperators[4].has('÷'), 'Tier 5 should exercise multiplication and division by a whole number');
 });
 const simplify = generator('SimplifySprintGame', ['makeQuestion', 'getFactorChoices']);
 record(`Simplify Sprint gates preserve exact reduction and a playable choice (${sampleCount * 5} questions)`, () => {
@@ -420,12 +430,16 @@ record(`Simplify Sprint gates preserve exact reduction and a playable choice (${
   }
 });
 const area = generator('AreaArchitectGame', ['buildQuestionDeck']);
-record('Area cell geometry, choice uniqueness and tier-specific decks', () => {
+record('Area floor geometry and five distinct tile-build rounds per tier', () => {
   for (let tier = 1; tier <= 5; tier++) for (let sample = 0; sample < 100; sample++) {
-    for (const q of area.buildQuestionDeck(tier, null)) {
+    const deck = area.buildQuestionDeck(tier, null);
+    assert.ok(deck.length >= 5, `Tier ${tier} must not recycle a floor in a five-round run`);
+    assert.equal(new Set(deck.map((q) => q.id)).size, deck.length);
+    for (const q of deck) {
       assert.equal(new Set(q.cells.map((c) => `${c.x},${c.y}`)).size, q.correct);
-      assert.ok(q.cells.every((c) => c.x >= 0 && c.x < q.gridSize && c.y >= 0 && c.y < q.gridSize));
-      choices(q.options, q.correct); if (tier === 1) assert.ok(q.correct <= 6);
+      assert.ok(q.cells.every((c) => c.x >= 1 && c.x <= q.gridSize && c.y >= 1 && c.y <= q.gridSize));
+      assert.ok(q.correct >= 4 && q.correct <= 30, `Tier ${tier}: floor must be playable`);
+      if (tier === 1) assert.ok(q.correct <= 12);
     }
   }
 });
@@ -464,16 +478,20 @@ record(`Sharing ratios/counts stay bounded after repeated rounds (${sampleCount 
 const potion = generator('PotionPanicGame', ['generateChallenge']);
 record(`Potion ratio/total/whole-drop and selected ingredient-count bands (${sampleCount * 5} questions)`, () => {
   for (let tier = 1; tier <= 5; tier++) for (let sample = 0; sample < sampleCount; sample++) {
-    const q = potion.generateChallenge(tier, sample + 100);
+    const q = potion.generateChallenge(tier, sample + 100, false);
     assert.equal(q.activeIndices.length, tier <= 2 ? 2 : tier <= 4 ? 3 : 4);
     assert.equal(q.totalDrops, q.targetCounts.reduce((a, b) => a + b));
     q.targetCounts.forEach((count, index) => { assert.ok(Number.isInteger(count)); near(count, q.baseRatio[index] * q.scale, 'Whole-drop ratio'); });
     assert.ok(q.stage <= (tier === 5 ? 6 : tier));
-    if (tier === 1) { assert.deepEqual(q.targetCounts, [2, 5]); assert.equal(q.revealTargets, true); }
+    assert.equal(q.revealTargets, false, 'Scored rounds must not reveal target drops');
+    assert.ok(q.totalDrops <= 20, 'Recipes must fit the timed touch-control round');
+    if (tier === 1) assert.deepEqual(q.targetCounts, [2, 5]);
   }
+  const practice = potion.generateChallenge(1, 100, true);
+  assert.equal(practice.revealTargets, true, 'Practice teaches the target ingredient counts');
 });
-const match = generator('FractionMatchGame', ['pickTileLabel', 'createInitialBoard', 'findMatches']);
-record('Match Mastery introduces mixed formats after level 2; level boards stay equivalent and match-free', () => {
+const match = generator('FractionMatchGame', ['pickTileLabel', 'createInitialBoard', 'findMatches', 'countLegalSwaps', 'ensurePlayableBoard']);
+record('Match Mastery mixed formats and colourless boards with five legal swaps', () => {
   const values = { red: .5, blue: .25, green: .75, yellow: .2, purple: .4 };
   const formatOf = (label) => label.includes('/') ? 'fraction' : label.endsWith('%') ? 'percentage' : 'decimal';
   for (let tier = 1; tier <= 5; tier++) {
@@ -488,7 +506,21 @@ record('Match Mastery introduces mixed formats after level 2; level boards stay 
       const boardFormats = new Set(board.map((cell) => formatOf(cell.label)));
       assert.deepEqual([...boardFormats].sort(), tier <= 2 ? ['fraction'] : ['decimal', 'fraction', 'percentage']);
       board.forEach((cell) => near(fractionValue(cell.label), values[cell.type], 'Board value'));
+      if (tier === 5) assert.ok(match.countLegalSwaps(board) >= 5, 'Colourless board needs five valid swaps');
     }
+  }
+  const stalledBoard = Array.from({ length: 30 }, () => ({ type: 'red', label: '1/2' }));
+  const refreshedBoard = match.ensurePlayableBoard(stalledBoard, 5, true);
+  assert.deepEqual(match.findMatches(refreshedBoard), []);
+  assert.ok(match.countLegalSwaps(refreshedBoard) >= 5, 'A stalled colourless board must be refreshed');
+  const random = Math.random;
+  try {
+    Math.random = () => 0;
+    const deterministicBoard = match.createInitialBoard(5);
+    assert.deepEqual(match.findMatches(deterministicBoard), []);
+    assert.ok(match.countLegalSwaps(deterministicBoard) >= 5, 'Colourless board needs five swaps even with fixed randomness');
+  } finally {
+    Math.random = random;
   }
   const mixedMatch = Array.from({ length: 30 }, () => null);
   mixedMatch[0] = { type: 'red', label: '1/2' };
@@ -507,16 +539,24 @@ record('Cloud Collapse keeps its existing format progression', () => {
 });
 const formula = generator('FormulaForgeGame', ['createRound']);
 record(`Formula substitution and reverse calculation answers (${sampleCount * 5} questions)`, () => {
+  const parallelogramByTier = [0, 0, 0, 0, 0, 0];
   for (let tier = 1; tier <= 5; tier++) for (let sample = 0; sample < sampleCount; sample++) {
     const q = formula.createRound(tier); const given = Object.fromEntries(q.given.map(({ label, value }) => [label, value]));
     const all = { ...given, [q.targetLabel]: q.answer };
     if (q.title === 'Rectangle Area') near(all.A, all.l * all.w, 'Rectangle formula');
     else if (q.title === 'Rectangle Perimeter') near(all.P, 2 * (all.l + all.w), 'Perimeter formula');
     else if (q.title === 'Triangle Area') near(all.A, all.b * all.h / 2, 'Triangle formula');
+    else if (q.title === 'Parallelogram Area') {
+      near(all.A, all.b * all.h, 'Parallelogram formula');
+      assert.equal(q.diagram, 'parallelogram');
+      parallelogramByTier[tier] += 1;
+    }
     else near(all.V, all.l * all.w * all.h, 'Volume formula');
     choices(q.options, q.answer); if (tier === 1) assert.equal(q.title, 'Rectangle Area');
     if (tier < 5) assert.equal(q.kind, 'fluency');
   }
+  assert.ok([3, 4, 5].every((tier) => parallelogramByTier[tier] > 0), 'Parallelogram revision must appear in upper tiers');
+  assert.equal(parallelogramByTier[1] + parallelogramByTier[2], 0, 'Early tiers keep familiar formulae');
 });
 const rotation = generator('RotationStationGame', ['createQuestion', 'stageFromProgress']);
 const polygon = generator('PolygonPalaceGame', ['createQuestion', 'stageFromProgress', 'PROPERTY_POOL', 'SORT_CRITERIA']);
@@ -529,6 +569,11 @@ record(`Rotation and polygon tier caps hold at high round counts and low time ($
       if (q.mode !== 'rotate_match') assert.ok(correct.every((id) => options.some((choice) => choice.id === id)));
       if (api === rotation) {
         assert.equal(q.targetOrientation, (q.startOrientation + (q.direction === 'cw' ? q.quarterTurns : -q.quarterTurns) + 4) % 4);
+        if (q.mode === 'identify_reflection') {
+          assert.ok(tier >= 4);
+          assert.ok(['vertical', 'horizontal'].includes(q.reflectionAxis));
+          assert.deepEqual(q.correctOptionIds, [q.reflectionAxis]);
+        }
         if (tier === 1) { assert.equal(q.mode, 'rotate_match'); assert.equal(q.quarterTurns, 1); }
       } else if (q.mode === 'properties') {
         const trueIds = q.choices.filter((choice) => polygon.PROPERTY_POOL.find((property) => property.id === choice.id).check(q.shape)).map((choice) => choice.id).sort();
@@ -548,6 +593,7 @@ record('Prime bands remain distinct and mathematically classified through 99', (
 
 const graph = generator('GraphGrabberGame', ['buildRound']);
 record(`Graph Grabber valid answers, chart totals and first-tier reading cap (${sampleCount * 5} questions)`, () => {
+  const firstTierPrompts = new Set();
   for (let tier = 1; tier <= 5; tier++) for (let sample = 0; sample < sampleCount; sample++) {
     const q = graph.buildRound(tier, sample + 100);
     assert.ok(q.correctAnswers.length > 0);
@@ -555,18 +601,24 @@ record(`Graph Grabber valid answers, chart totals and first-tier reading cap (${
     assert.ok(q.correctAnswers.every((id) => q.options.some((option) => option.id === id)));
     const data = q.bars || q.line || q.pie;
     assert.ok(data.every((datum) => datum.value >= 0));
-    if (tier === 1) { assert.equal(q.kind, 'bar'); assert.ok(Math.max(...q.bars.map((bar) => bar.value)) <= 10); assert.equal(q.answerMode, 'single'); }
+    if (tier === 1) { assert.equal(q.kind, 'bar'); assert.ok(Math.max(...q.bars.map((bar) => bar.value)) <= 10); assert.equal(q.answerMode, 'single'); firstTierPrompts.add(q.prompt); }
     if (q.pie) assert.equal(q.pie.reduce((sum, slice) => sum + slice.value, 0), 100);
-    if (q.prompt === 'How many crates did Windward deliver?') assert.deepEqual(q.correctAnswers, [String(q.bars.find((bar) => bar.label === 'Windward').value)]);
+    const cratePrompt = q.prompt.match(/^How many crates did (.+) deliver\?$/);
+    if (cratePrompt) assert.deepEqual(q.correctAnswers, [String(q.bars.find((bar) => bar.label === cratePrompt[1]).value)]);
     if (q.prompt === 'Which caravan delivered the most crates?') assert.equal(q.correctAnswers[0], q.bars.reduce((best, bar) => bar.value > best.value ? bar : best).label);
     if (q.prompt === 'Which slice is largest?') assert.equal(q.correctAnswers[0], q.pie.reduce((best, slice) => slice.value > best.value ? slice : best).label);
+    const countPrompt = q.prompt.match(/^There are 200 crates altogether\. How many belong to (.+)\?$/);
+    if (countPrompt) assert.equal(Number(q.correctAnswers[0]), q.pie.find((slice) => slice.label === countPrompt[1]).value * 2);
+    const anglePrompt = q.prompt.match(/^What is the angle of (.+)'s sector in degrees\?$/);
+    if (anglePrompt) assert.equal(Number(q.correctAnswers[0]), q.pie.find((slice) => slice.label === anglePrompt[1]).value * 360 / 100);
   }
+  assert.ok(firstTierPrompts.size >= Math.min(4, sampleCount));
 });
 const line = generator('LineGraphLabGame', ['generateRound']);
 record(`Line graphs correct-inclusive choices and unambiguous greatest rise (${sampleCount * 5} questions)`, () => {
   const seen = new Set();
   for (let tier = 1; tier <= 5; tier++) for (let sample = 0; sample < sampleCount; sample++) {
-    const q = line.generateRound(tier); choices(q.options, q.correctAnswer);
+    const q = line.generateRound(tier, sample); choices(q.options, q.correctAnswer);
     if (tier === 1) assert.ok(q.graph.every((point) => point.value <= 10));
     if (q.question.includes('increase the most')) {
       seen.add('comparison');
@@ -575,20 +627,46 @@ record(`Line graphs correct-inclusive choices and unambiguous greatest rise (${s
       const index = rises.indexOf(max); assert.equal(q.correctAnswer, `${index + 1} to ${index + 2}`);
     } else if (q.question.includes('coordinates')) {
       const point = q.graph[q.highlightIndex]; assert.equal(q.correctAnswer, `(${point.label}, ${point.value})`);
-    } else if (q.question.includes('reach 20')) {
-      const matches = q.graph.filter((point) => point.value === 20); assert.equal(matches.length, 1); assert.equal(q.correctAnswer, matches[0].label);
-    } else assert.equal(q.correctAnswer, String(q.graph[3].value));
+    } else if (q.question.includes('does brainpower reach')) {
+      const target = Number(q.question.match(/reach (\d+) units/)[1]);
+      const matches = q.graph.filter((point) => point.value === target); assert.equal(matches.length, 1); assert.equal(q.correctAnswer, matches[0].label);
+    } else if (q.plotIndex !== undefined) {
+      assert.ok(tier >= 3, 'Plotting starts after numbered graph reading');
+      assert.equal(q.correctAnswer, String((q.graph[q.plotIndex - 1].value + q.graph[q.plotIndex + 1].value) / 2));
+      assert.equal(q.graph[q.plotIndex].value, Number(q.correctAnswer));
+    } else if (q.question.includes('brainpower at time')) {
+      const time = q.question.match(/time (\d+)/)[1];
+      assert.equal(q.correctAnswer, String(q.graph.find((point) => point.label === time).value));
+    } else if (q.question.includes('brainpower rise') || q.question.includes('brainpower fall')) {
+      const [, , from, to] = q.question.match(/brainpower (rise|fall) from time (\d+) to time (\d+)/);
+      assert.equal(Number(q.correctAnswer), Math.abs(q.graph[Number(to) - 1].value - q.graph[Number(from) - 1].value));
+    } else if (q.question.includes('halfway between times')) {
+      const [, from, to] = q.question.match(/between times (\d+) and (\d+)/);
+      assert.equal(Number(q.correctAnswer), (q.graph[Number(from) - 1].value + q.graph[Number(to) - 1].value) / 2);
+    } else assert.fail(`Unrecognised line graph question: ${q.question}`);
   }
   assert.ok(seen.has('comparison'));
 });
 const treasure = generator('TreasurePathGame', ['generateRound']);
-record(`Coordinate/direct and translation targets fit all five grid bands (${sampleCount * 10} questions)`, () => {
+record(`Coordinate, translation and reflection targets fit five bands including all quadrants (${sampleCount * 10} questions)`, () => {
   const source = fs.readFileSync(path.join(root, 'src/games/TreasurePathGame.tsx'), 'utf8');
-  assert.match(source, /const gridSize = difficulty <= 2 \? 5 : difficulty === 3 \? 6 : 7/);
+  assert.match(source, /const gridSize = difficulty <= 2 \? 5 : 7/);
+  let reflectionCount = 0;
   for (let tier = 1; tier <= 5; tier++) for (const translation of [false, true]) for (let sample = 0; sample < sampleCount; sample++) {
-    const size = [5, 5, 6, 7, 7][tier - 1]; const q = treasure.generateRound(size, tier, translation);
-    for (const point of [q.start, q.target]) assert.ok(point.x >= 1 && point.x <= size && point.y >= 1 && point.y <= size);
+    const size = tier <= 2 ? 5 : 7;
+    const minimum = tier <= 2 ? 1 : -3;
+    const maximum = minimum + size - 1;
+    const q = treasure.generateRound(size, tier, translation, sample);
+    for (const point of [q.start, q.target]) assert.ok(point.x >= minimum && point.x <= maximum && point.y >= minimum && point.y <= maximum);
     if (tier === 1 && !translation) assert.equal(q.promptType, 'coordinate');
+    if (q.promptType === 'reflection') {
+      reflectionCount += 1;
+      assert.equal(tier, 5);
+      const axis = q.promptText.match(/in the ([xy])-axis/)?.[1];
+      assert.ok(axis);
+      assert.deepEqual(q.target, axis === 'y' ? { x: -q.start.x, y: q.start.y } : { x: q.start.x, y: -q.start.y });
+      assert.notDeepEqual(q.target, q.start);
+    }
     if (q.promptType === 'movement') {
       const steps = [...q.promptText.matchAll(/Move (\d+) (right|left|up|down)/g)];
       assert.equal(steps.length, tier <= 2 ? 1 : tier === 3 ? 2 : 3);
@@ -596,15 +674,16 @@ record(`Coordinate/direct and translation targets fit all five grid bands (${sam
       for (const [, distance, direction] of steps) {
         calculated.x += direction === 'right' ? Number(distance) : direction === 'left' ? -Number(distance) : 0;
         calculated.y += direction === 'up' ? Number(distance) : direction === 'down' ? -Number(distance) : 0;
-        assert.ok(calculated.x >= 1 && calculated.x <= size && calculated.y >= 1 && calculated.y <= size);
+        assert.ok(calculated.x >= minimum && calculated.x <= maximum && calculated.y >= minimum && calculated.y <= maximum);
       }
       assert.deepEqual(q.target, calculated);
       if (tier === 1) assert.equal(Math.abs(q.start.x - q.target.x) + Math.abs(q.start.y - q.target.y), 1);
     }
   }
+  assert.ok(reflectionCount > 0);
 });
 const mean = generator('MeanMachineGame', ['buildRound']);
-record(`Mean/median/mode/missing arithmetic stays at the chosen band (${sampleCount * 5} questions)`, () => {
+record(`Mean and missing-value arithmetic dominates, with late statistic bonus rounds (${sampleCount * 5} questions)`, () => {
   const allModes = new Set();
   for (let tier = 1; tier <= 5; tier++) {
     let previous = null;
@@ -626,11 +705,13 @@ record(`Mean/median/mode/missing arithmetic stays at the chosen band (${sampleCo
         assert.equal(missing.length, 1); assert.equal(q.correctAnswer, q.actualValues[missing[0]]);
       }
       if (tier === 1) { assert.equal(q.mode, 'mean'); assert.equal(values.length, 2); assert.ok(values.every((value) => value <= 10)); }
-      if (tier === 2) assert.ok(q.mode === 'mean' || q.mode === 'median');
-      if (tier === 3) assert.ok(q.mode !== 'missing');
+      if (tier <= 2) assert.equal(q.mode, 'mean');
+      if (tier === 3 || tier === 4) assert.ok(q.mode === 'mean' || q.mode === 'missing');
     }
   }
   assert.deepEqual([...allModes].sort(), ['mean', 'median', 'missing', 'mode']);
+  const finalModes = Array.from({ length: 10 }, (_, index) => mean.buildRound(5, index + 1).mode);
+  assert.equal(finalModes.filter((mode) => mode === 'median' || mode === 'mode').length, 2);
 });
 const detectiveData = generator('DataDetectiveGame', ['ITEMS', 'MONSTER_NAMES', 'MONSTER_COLORS', 'MUGSHOT_IMAGES', 'DETECTIVE_BRIEFS', 'WHODUNNIT_BRIEFS', 'shuffle']);
 record(`Actual Data Detective callback: bounded evidence, one matching culprit, early bar-only cases (${sampleCount * 5} cases)`, () => {

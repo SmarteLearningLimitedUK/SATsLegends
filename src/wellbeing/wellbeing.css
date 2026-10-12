@@ -209,3 +209,633 @@
   .wellbeing-shell button:active, .wellbeing-complete button:active { transform: none !important; }
   .balloon-actor.is-released { opacity: .25; }
 }
+
+/* Calm Grove: the illustrated scene stays in charge, with one clear interaction layer. */
+.wellbeing-shell {
+  color: #f5f9f5;
+  background: #071b2a;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+.wellbeing-landscape > img {
+  animation: wellbeing-scene-drift 32s ease-in-out infinite alternate;
+  transform-origin: 50% 55%;
+}
+.wellbeing-scene-shade {
+  background: linear-gradient(180deg, #041624dc 0%, #061b2b83 18%, #082b3630 44%, #05213060 73%, #041723e8 100%);
+}
+.wellbeing-haze { opacity: .28; filter: blur(18px); }
+.wellbeing-light { opacity: .3; mix-blend-mode: screen; }
+.wellbeing-header { padding-top: 0; padding-bottom: clamp(8px, 1.5vh, 15px); }
+.wellbeing-heading { max-width: 60rem; }
+.wellbeing-eyebrow {
+  color: #d5e6c7;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: .15em;
+}
+.wellbeing-heading h1,
+.wellbeing-destination h2,
+.wellbeing-complete h2 {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 780;
+  letter-spacing: -.025em;
+}
+.wellbeing-heading h1 { font-size: clamp(28px, 3.4vw, 46px); line-height: 1.08; }
+.wellbeing-how-to { font-size: clamp(15px, 1.22vw, 17px); line-height: 1.38; }
+.wellbeing-purpose { color: #e0ebdf; font-size: 13px; line-height: 1.35; }
+.wellbeing-exit {
+  border-radius: 11px;
+  border-color: #cee4dd70;
+  background: #061d2ddb;
+  color: #f4f7ed;
+  font-size: 13px;
+  backdrop-filter: blur(10px);
+}
+.wellbeing-exit:hover, .wellbeing-quiet-action:hover:not(:disabled) { border-color: #f7daa0; background: #14384a; }
+.wellbeing-action, .wellbeing-quiet-action {
+  border-width: 1px;
+  border-radius: 11px;
+  box-shadow: 0 10px 26px #04192570, inset 0 1px #fff6d790;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 750;
+  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+.wellbeing-action { border-color: #fae1a0; background: linear-gradient(140deg, #ffe6a3, #ecc878); color: #172a32; }
+.wellbeing-quiet-action { border-color: #c3e0d275; background: #0b3542e8; color: #f1faed; box-shadow: 0 8px 22px #0419256b; }
+.wellbeing-action:hover:not(:disabled) { background: linear-gradient(140deg, #ffefba, #f1cf84); transform: translateY(-2px); }
+.wellbeing-action:active:not(:disabled), .wellbeing-quiet-action:active:not(:disabled) { transform: translateY(1px); }
+.wellbeing-action:disabled, .wellbeing-quiet-action:disabled { opacity: .55; }
+
+/* The progress, fact and affirmation read as one compact information rail. */
+.wellbeing-footer {
+  display: grid;
+  grid-template-columns: minmax(170px, .85fr) minmax(230px, 1.45fr) minmax(190px, 1fr);
+  align-items: center;
+  gap: clamp(12px, 2vw, 28px);
+  padding: 12px clamp(12px, 2vw, 22px);
+  border: 1px solid #c5ded250;
+  border-radius: 15px;
+  background: linear-gradient(145deg, #082939e9, #092333e7);
+  box-shadow: 0 18px 38px #03152173, inset 0 1px #d6e9e91a;
+  text-align: left;
+  backdrop-filter: blur(14px);
+}
+.wellbeing-footer-progress { min-width: 0; }
+.wellbeing-footer p { font-size: 13px; line-height: 1.36; }
+.wellbeing-footer-progress > p { color: #f2f8ed; font-weight: 650; }
+.wellbeing-progress { width: 100%; max-width: 300px; height: 5px; margin: 9px 0 0; background: #d2e8d633; }
+.wellbeing-progress > span { background: linear-gradient(90deg, #b7e3d2, #f4d695); box-shadow: 0 0 10px #ffe8a766; }
+.wellbeing-note-row { display: contents; }
+.wellbeing-footer .wellbeing-fact,
+.wellbeing-footer .wellbeing-affirmation {
+  min-width: 0;
+  padding-left: clamp(10px, 1.2vw, 18px);
+  border-left: 1px solid #bfdacf50;
+  color: #e4efea;
+  font-size: 13px;
+  font-weight: 450;
+  overflow-wrap: anywhere;
+}
+.wellbeing-footer .wellbeing-affirmation { color: #fae9c0; font-weight: 570; }
+.wellbeing-fact > span, .wellbeing-affirmation > span {
+  display: block;
+  margin-bottom: 4px;
+  color: #bce3d3;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .15em;
+}
+.wellbeing-affirmation > span { color: #f8d997; }
+
+/* Six image-led destinations rather than a grid of small toy cards. */
+.wellbeing-hub-grid { gap: clamp(12px, 1.5vw, 20px); width: min(100%, 1240px); }
+.wellbeing-destination {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: clamp(195px, 26vh, 275px);
+  border: 1px solid #d8ead88a;
+  border-radius: 14px;
+  background: #0b3140;
+  box-shadow: 0 16px 28px #0316227a, inset 0 0 0 1px #ffffff12;
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+.wellbeing-destination:hover {
+  border-color: #f8dd9e;
+  box-shadow: 0 23px 42px #031622a8, 0 0 0 2px #f3d89938;
+  transform: translateY(-5px);
+}
+.wellbeing-destination-art { position: absolute; z-index: -1; inset: 0; width: 100%; height: 100%; aspect-ratio: auto; }
+.wellbeing-destination-art img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.025); transition: transform 800ms cubic-bezier(.2,.7,.2,1); }
+.wellbeing-destination:hover img { transform: scale(1.09); }
+.wellbeing-destination-art::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, #041b290f 0%, #06233336 37%, #041a28ed 100%); }
+.wellbeing-destination-art > span {
+  z-index: 1;
+  right: 12px;
+  top: 12px;
+  bottom: auto;
+  padding: 5px 9px;
+  border: 1px solid #e5eee066;
+  border-radius: 7px;
+  background: #092837d9;
+  color: #f8edcd;
+  font-size: 12px;
+  font-weight: 650;
+  backdrop-filter: blur(7px);
+}
+.wellbeing-destination-copy { padding: 38px 16px 17px; }
+.wellbeing-destination-index { display: inline-block; margin-right: 9px; color: #f8d793; font-variant-numeric: tabular-nums; }
+.wellbeing-destination h2 { font-size: clamp(19px, 1.75vw, 25px); line-height: 1.15; }
+.wellbeing-destination h2 svg { flex: 0 0 auto; color: #f7d791; transition: transform 220ms ease; }
+.wellbeing-destination:hover h2 svg { transform: translate(2px, -2px); }
+.wellbeing-destination p { color: #e0ebe5; font-size: 13.5px; line-height: 1.38; }
+.wellbeing-hub-note { margin-top: 14px; color: #f7f1d2; font-size: 13px; }
+.wellbeing-hub-note span { color: #dbe9df; font-size: 13px; }
+
+/* Breathing: selectable tempo, a luminous iris and an unhurried control point. */
+.wellbeing-scene[data-breathing-phase] {
+  display: grid;
+  grid-template-rows: auto minmax(88px, 1fr) auto auto;
+  align-items: center;
+  justify-items: center;
+  gap: clamp(7px, 1.2vh, 12px);
+  padding: 2px 0 8px;
+}
+.wellbeing-pace-picker { position: relative; z-index: 3; width: min(100%, 590px); text-align: center; }
+.wellbeing-pace-picker > span, .wellbeing-step-label, .pond-attention-label, .camp-focus > span {
+  display: block;
+  margin-bottom: 6px;
+  color: #e9dfb8;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+.wellbeing-pace-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.wellbeing-pace-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 50px;
+  padding: 5px 9px;
+  border: 1px solid #c3ded28a;
+  border-radius: 10px;
+  background: #092d3dc9;
+  color: #eff8ed;
+  backdrop-filter: blur(8px);
+}
+.wellbeing-pace-option strong { font-size: 13px; }
+.wellbeing-pace-option span { color: #d6e8df; font-size: 11px; }
+.wellbeing-pace-option[aria-pressed='true'] { border-color: #ffe2a1; background: #214b56e8; box-shadow: inset 0 0 0 1px #ffe3a16e, 0 0 22px #ffe5aa25; }
+.wellbeing-bloom {
+  position: relative;
+  top: auto;
+  left: auto;
+  align-self: center;
+  width: min(29vw, 25vh, 245px);
+  min-width: 88px;
+  height: auto;
+  translate: none;
+  filter: drop-shadow(0 18px 40px #031521b3);
+  transition: transform 50ms linear;
+}
+.wellbeing-bloom::before, .wellbeing-bloom::after {
+  content: '';
+  position: absolute;
+  border: 1px solid #dcebd781;
+  border-radius: 50%;
+  box-shadow: 0 0 25px #d8f0c539, inset 0 0 24px #e2f3d722;
+}
+.wellbeing-bloom::before { inset: -13%; animation: wellbeing-iris-orbit 38s linear infinite; }
+.wellbeing-bloom::after { inset: -23%; border-color: #f4dfa65a; opacity: .8; }
+.wellbeing-bloom-petal {
+  border: 1px solid #cff5e0b5;
+  background: linear-gradient(180deg, #c4e7d474, #3b879272 66%, #163f5ba1);
+  box-shadow: inset 0 0 14px #f5ffec66, 0 0 15px #aee4d445;
+}
+.wellbeing-bloom-core {
+  border: 1px solid #fff4c6;
+  background: radial-gradient(circle at 35% 28%, #fffce4, #f0dfaa 32%, #477986 71%, #173c52 100%);
+  box-shadow: 0 0 30px #f7e8ae9c, 0 0 70px #b9e5dc5c, inset 0 0 12px #fff8d1;
+}
+.wellbeing-breath-cue { position: relative; top: auto; width: 100%; }
+.wellbeing-breath-cue strong { font-family: inherit; font-size: clamp(19px, 2vw, 27px); font-weight: 730; }
+.wellbeing-breath-cue span { color: #e2ede8; font-size: 13px; }
+.wellbeing-scene[data-breathing-phase] .wellbeing-controlbar { position: relative; inset: auto; width: 100%; }
+.wellbeing-breath-actions button { min-width: 178px; }
+
+/* Pond: sensing prompt and interactive water remain separate layers. */
+.pond-attention, .camp-focus, .leaf-observation, .thought-reframe {
+  border: 1px solid #cae3d191;
+  border-radius: 13px;
+  background: linear-gradient(145deg, #082a3eea, #0c3540dc);
+  box-shadow: 0 15px 32px #04182685, inset 0 1px #f2fff025;
+  backdrop-filter: blur(12px);
+}
+.pond-attention { position: absolute; z-index: 5; top: 1%; left: 50%; width: min(410px, 94%); translate: -50% 0; padding: 11px 15px; text-align: center; }
+.pond-attention p { margin: 0 0 9px; color: #f6faf2; font-size: 14px; font-weight: 600; line-height: 1.3; }
+.pond-attention-action { min-height: 44px; padding: 8px 18px; }
+.pond-playfield { inset: 20% 3% 2%; }
+.pond-target { width: 68px; height: 68px; border-color: #eaf8e2c9; background: #0b53649c; color: #f3f8e2; font-size: 18px; backdrop-filter: blur(4px); }
+.pond-pad { width: 62px; height: 62px; border-width: 2px; border-color: #e5efac; background: radial-gradient(circle at 35% 24%, #b9d69e, #558e71 61%, #245469); color: #fffde5; box-shadow: 0 8px 20px #08253496, inset 0 2px #ffffff6d; }
+.pond-pad[data-pond-active='true'] { box-shadow: 0 0 0 6px #daf6d337, 0 8px 20px #08253496, inset 0 2px #ffffff6d; animation: wellbeing-target-pulse 2.8s ease-in-out infinite; }
+.pond-pad:disabled:not([aria-pressed='true']) { opacity: .8; }
+
+/* Lantern: one focus prompt, tangible items, then a visible dimmer. */
+.camp-focus { position: absolute; top: 1%; left: 50%; z-index: 4; width: min(510px, 94%); padding: 10px 15px; translate: -50% 0; text-align: center; pointer-events: none; }
+.camp-focus p { margin: 0; color: #f7f9ed; font-size: 14px; font-weight: 600; line-height: 1.32; }
+.camp-gear { width: clamp(60px, 6vw, 76px); height: clamp(66px, 7vw, 82px); border-radius: 11px; background: linear-gradient(145deg, #123a49ee, #092b3bed); backdrop-filter: blur(9px); }
+.camp-gear span { font-size: 11px; font-weight: 700; }
+.camp-gear:hover { border-color: #fbe2a5; background: #1b4c56ee; box-shadow: 0 0 0 4px #ffe4a634, 0 12px 26px #0315219c; }
+.camp-gear[data-camp-item='backpack'], .camp-gear[data-camp-item='book'],
+.camp-gear[data-camp-item='jacket'], .camp-gear[data-camp-item='cup'] { top: 34% !important; }
+.camp-gear[data-camp-item='compass'], .camp-gear[data-camp-item='tablet'] { top: 65% !important; }
+.camp-lantern { width: clamp(125px, 16vw, 180px); }
+.camp-lantern::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: 32%;
+  width: 190%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffdc8559, #eec77a24 35%, transparent 69%);
+  opacity: var(--lantern-light, 1);
+  translate: -50% -50%;
+  pointer-events: none;
+  transition: opacity 220ms ease;
+  animation: wellbeing-lantern-glow 4s ease-in-out infinite alternate;
+}
+.camp-lantern svg { filter: drop-shadow(0 0 18px #ffe1a288); }
+.camp-lantern-flame {
+  transform-box: fill-box;
+  transform-origin: 50% 95%;
+  filter: drop-shadow(0 0 7px #ffe5a4);
+  animation: wellbeing-lantern-flame 2.8s ease-in-out infinite alternate;
+}
+.camp-lantern strong { border-radius: 8px; background: #072b3ede; font-size: 12px; }
+.camp-dimmer { position: absolute; right: 4%; bottom: 8%; z-index: 4; width: min(285px, 30%); padding: 14px 16px; border: 1px solid #e7dfa49c; border-radius: 12px; background: #082d3ee8; box-shadow: 0 14px 28px #0315228c; backdrop-filter: blur(10px); }
+.camp-dimmer label { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; font-weight: 700; }
+.camp-dimmer label span { color: #ffe0a3; }
+.camp-dimmer input { width: 100%; height: 30px; margin: 7px 0; accent-color: #edcf8d; cursor: pointer; }
+.camp-dimmer p { margin: 0; color: #dceee7; font-size: 12px; line-height: 1.35; }
+
+/* Stars: connected path shifts into a distinct, side-to-side focus field. */
+.star-path-line { filter: drop-shadow(0 0 7px #e8f8d0); }
+.star-point { min-width: 62px; min-height: 62px; }
+.star-point.is-current { filter: drop-shadow(0 0 12px #ffe8b7); }
+.star-point.is-current svg { color: #ffe6ad; }
+.star-point.is-future { opacity: .7; }
+.star-focus-field { position: absolute; z-index: 5; inset: 0; background: radial-gradient(ellipse at 50% 50%, #08293840, #041624b5 85%); backdrop-filter: blur(2px); }
+.star-focus-axis { position: absolute; top: 50%; left: 20%; width: 60%; height: 1px; background: linear-gradient(90deg, #e1f6d283, #e8edba42, #e1f6d283); box-shadow: 0 0 18px #e1f6d281; }
+.star-focus-light { position: absolute; top: 50%; z-index: 1; width: 126px; height: 126px; border-radius: 50%; translate: -50% -50%; background: radial-gradient(circle, #fff6c6e0 0%, #f6e7aa9e 10%, #bfead354 32%, transparent 68%); filter: blur(1px); pointer-events: none; }
+.star-focus-point { position: absolute; top: 50%; z-index: 2; display: grid; place-items: center; width: 84px; height: 84px; translate: -50% -50%; border: 1px solid #d9e7cf9c; border-radius: 50%; background: #0c3344d8; color: #f0f6e9; box-shadow: inset 0 0 24px #d7efc233, 0 10px 30px #0315229c; backdrop-filter: blur(8px); }
+.star-focus-point span { font-size: 13px; font-weight: 800; letter-spacing: .12em; }
+.star-focus-point[data-active='true'] { border-color: #fff1bd; background: #254b50e8; box-shadow: 0 0 0 5px #e1eec534, 0 0 30px #f1e4b063, inset 0 0 24px #d7efc254; }
+.star-focus-point:disabled { opacity: .66; }
+.star-focus-caption { position: absolute; right: 10px; bottom: 8%; left: 10px; margin: 0; color: #f5f8eb; font-size: 15px; font-weight: 600; text-align: center; text-shadow: 0 2px 8px #031622; }
+
+/* Star Path: three distinct silhouettes, one quiet reading rail and a deliberate reveal. */
+.stars-board[data-constellation-id='cassiopeia'] { --star-round-accent: #d2f1db; }
+.stars-board[data-constellation-id='orion'] { --star-round-accent: #ffe1a3; }
+.stars-board[data-constellation-id='cygnus'] { --star-round-accent: #bde8f5; }
+.stars-board .star-path-guide {
+  stroke: var(--star-round-accent, #d9f3c8);
+  stroke-width: 1;
+  stroke-dasharray: 3 5;
+  opacity: .28;
+  vector-effect: non-scaling-stroke;
+}
+.stars-board .star-path-line { stroke: var(--star-round-accent, #d9f3c8); }
+.stars-board .star-point.is-done svg { color: var(--star-round-accent, #d9f3c8); }
+.stars-board .star-point.is-current::before {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border: 1px solid var(--star-round-accent, #d9f3c8);
+  border-radius: 50%;
+  box-shadow: 0 0 20px var(--star-round-accent, #d9f3c8);
+  opacity: .5;
+  animation: wellbeing-star-current 2.6s ease-in-out infinite;
+  pointer-events: none;
+}
+.star-round-info {
+  position: absolute;
+  top: clamp(4px, 2.2vh, 20px);
+  left: clamp(4px, 2vw, 22px);
+  z-index: 4;
+  width: min(330px, 45%);
+  padding: 11px 15px 12px;
+  border-left: 2px solid var(--star-round-accent, #d9f3c8);
+  background: linear-gradient(90deg, #041a2be8, #08293f8f 76%, transparent);
+  color: #f4f9f2;
+  text-shadow: 0 2px 7px #041420;
+  pointer-events: none;
+}
+.stars-board[data-constellation-id='orion'] .star-round-info { left: 50%; transform: translateX(-50%); }
+.wellbeing-scene[data-focus-stage='between-rounds'] .star-round-info { opacity: 0; }
+.star-round-kicker {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--star-round-accent, #d9f3c8);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.star-round-name {
+  display: block;
+  margin: 0;
+  color: #fff7e6;
+  font-size: clamp(21px, 2.2vw, 28px);
+  font-weight: 780;
+  letter-spacing: -.02em;
+  line-height: 1.06;
+}
+.star-round-hint {
+  display: block;
+  margin: 5px 0 0;
+  color: #dcece9;
+  font-size: 13px;
+  font-weight: 560;
+  line-height: 1.3;
+}
+.star-round-transition {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 13px;
+  padding: clamp(18px, 3vw, 36px);
+  background: radial-gradient(ellipse 64% 72% at 50% 48%, #051b2fe8 0%, #082639b8 44%, #0415251a 100%);
+  color: #f5f9f2;
+  text-align: center;
+  text-shadow: 0 2px 12px #031421;
+  animation: wellbeing-star-round-reveal 450ms ease-out both;
+}
+.star-round-transition > :first-child:not(p):not(button) {
+  max-width: 34rem;
+  margin: 0;
+  color: var(--star-round-accent, #d9f3c8);
+  font-size: clamp(18px, 2vw, 26px);
+  font-weight: 780;
+  letter-spacing: -.02em;
+  line-height: 1.18;
+}
+.star-round-transition p[data-constellation-fact] {
+  max-width: 34rem;
+  margin: 0;
+  color: #f2f8ed;
+  font-size: clamp(15px, 1.4vw, 18px);
+  font-weight: 550;
+  line-height: 1.4;
+  text-wrap: balance;
+}
+.star-round-next {
+  min-height: 48px;
+  max-width: 100%;
+  padding: 10px 22px;
+  border: 1px solid #f7dfa2;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #ffe7ae, #e8ca83);
+  color: #172c35;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  box-shadow: 0 10px 28px #04152191, inset 0 1px #fff6d5;
+  transition: transform 180ms ease, filter 180ms ease;
+}
+.star-round-next:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-2px); }
+.star-round-next:active:not(:disabled) { transform: translateY(1px); }
+
+@keyframes wellbeing-star-current {
+  0%, 100% { opacity: .34; scale: .92; }
+  50% { opacity: .62; scale: 1.07; }
+}
+@keyframes wellbeing-star-round-reveal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Leaves: an observation choice gives each gesture a reason. */
+.leaf-button { width: 82px; height: 94px; border-radius: 12px; }
+.leaf-button > svg { width: 82px; height: 86px; filter: drop-shadow(0 10px 12px #092b3d88); }
+.leaf-button > span { position: absolute; z-index: 2; bottom: -5px; left: 50%; padding: 4px 8px; border: 1px solid #e0eac17a; border-radius: 7px; background: #0b3442e8; color: #f7f6df; font-size: 11px; font-weight: 800; letter-spacing: .1em; translate: -50% 0; }
+.leaf-button.is-selected > span, .leaf-button:hover > span { border-color: #ffe4a5; background: #195258; }
+.leaf-button.is-selected > svg { filter: drop-shadow(0 0 16px #f5edac); }
+.leaf-stream-goal { width: 145px; height: 68px; border-style: dashed; border-radius: 50%; font-size: 12px; letter-spacing: .04em; }
+.wellbeing-scene[data-leaf-selection]:not([data-leaf-selection='none']) .leaf-stream-goal { opacity: .3; }
+.leaf-observation { position: absolute; z-index: 5; right: 3%; bottom: 3%; left: 3%; width: min(610px, 94%); margin: auto; padding: 13px 16px 15px; text-align: center; }
+.leaf-observation p { margin: 0 0 10px; font-size: 16px; font-weight: 650; line-height: 1.3; }
+.leaf-observation-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.leaf-observation-options button { min-height: 44px; padding: 7px 10px; border: 1px solid #cfebd38a; border-radius: 9px; background: #15505ee6; color: #f1f8ed; font-size: 13px; font-weight: 650; }
+.leaf-observation-options button:hover { border-color: #f8dc9e; background: #246472; }
+
+/* Thought release: balanced thoughts are the primary choice; the balloon is a visual response. */
+.balloon-scene {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(180px, .8fr);
+  grid-template-rows: auto 1fr auto;
+  column-gap: clamp(18px, 4vw, 70px);
+  row-gap: 9px;
+  width: min(100%, 1080px);
+  margin-inline: auto;
+  padding: 4px 5px 8px;
+}
+.balloon-scene .feeling-words { grid-column: 1; grid-row: 1; width: 100%; }
+.feeling-word { border-radius: 8px; background: #0a3041e0; font-size: 13px; font-weight: 680; text-transform: capitalize; }
+.feeling-word:hover:not(:disabled) { border-color: #f9daa1; background: #1d4c57; }
+.feeling-word[aria-pressed='true'] { background: #28585fe8; }
+.thought-reframe { grid-column: 1; grid-row: 2; align-self: center; width: 100%; padding: 12px 14px; }
+.thought-challenge { margin: 0 0 11px; font-size: 14px; font-weight: 600; line-height: 1.35; }
+.thought-challenge > span { display: block; margin-bottom: 5px; color: #f7d99e; font-size: 10px; font-weight: 800; letter-spacing: .14em; }
+.thought-challenge > strong { display: block; margin-top: 3px; color: #d9efdd; font-weight: 750; }
+.thought-reframe-options { display: grid; gap: 6px; }
+.thought-reframe-option { min-height: 40px; padding: 6px 11px; border: 1px solid #d3e9d28a; border-radius: 8px; background: #0c3445d9; color: #edf8ed; font-size: 13px; font-weight: 650; line-height: 1.25; text-align: left; }
+.thought-reframe-option:hover:not(:disabled) { border-color: #ffdfa0; background: #1b5161; }
+.thought-reframe-option[aria-pressed='true'] { border-color: #ffdfa0; background: #28606a; box-shadow: inset 0 0 0 1px #ffdfa080; }
+.balloon-scene .balloon-space { grid-column: 2; grid-row: 1 / -1; height: 100%; }
+.balloon-shape { border-width: 2px; border-color: #f0e7cebd; background: radial-gradient(circle at 28% 20%, #f7e6d5, #bb9fa1 34%, #765b76 73%, #3b435b); box-shadow: inset -12px -8px 18px #27364450, 0 22px 40px #031b2d77; }
+.balloon-shape span { font-family: inherit; font-weight: 700; }
+.balloon-scene .balloon-actions { grid-column: 1; grid-row: 3; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.balloon-mic { border: 1px solid #c7e2d472; border-radius: 9px; background: #0a3043e3; color: #e6f2e8; font-size: 12px; font-weight: 650; }
+
+@keyframes wellbeing-scene-drift { from { transform: scale(1.015) translateX(-.6%); } to { transform: scale(1.07) translateX(.6%); } }
+@keyframes wellbeing-iris-orbit { from { rotate: 0deg; } to { rotate: 360deg; } }
+@keyframes wellbeing-target-pulse { 0%, 100% { box-shadow: 0 0 0 4px #daf6d320, 0 8px 20px #08253496; } 50% { box-shadow: 0 0 0 9px #daf6d333, 0 8px 20px #08253496; } }
+@keyframes wellbeing-lantern-flame { from { transform: scale(.93, .95) rotate(-2deg); } to { transform: scale(1.05, 1.04) rotate(2deg); } }
+@keyframes wellbeing-lantern-glow { from { transform: scale(.91); } to { transform: scale(1.06); } }
+
+@media (max-width: 900px) {
+  .wellbeing-footer { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 9px 15px; }
+  .wellbeing-footer-progress { grid-column: 1 / -1; }
+  .wellbeing-progress { max-width: none; }
+  .wellbeing-footer .wellbeing-fact, .wellbeing-footer .wellbeing-affirmation { padding-left: 10px; }
+  .wellbeing-hub-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .wellbeing-destination { min-height: 205px; }
+}
+@media (max-width: 760px) {
+  .wellbeing-shell { padding-right: 12px; padding-left: 12px; }
+  .wellbeing-heading h1 { font-size: clamp(26px, 6.5vw, 34px); }
+  .wellbeing-how-to { font-size: 14px; }
+  .wellbeing-purpose { font-size: 12px; }
+  .wellbeing-eyebrow { font-size: 10px; }
+  .wellbeing-exit { min-width: 44px; padding: 8px; }
+  .wellbeing-destination { min-height: 185px; }
+  .wellbeing-destination h2 { font-size: 20px; }
+  .wellbeing-destination p { font-size: 13px; }
+  .wellbeing-footer { padding: 9px 11px; }
+  .wellbeing-footer p { font-size: 12px; }
+  .wellbeing-footer .wellbeing-fact, .wellbeing-footer .wellbeing-affirmation { font-size: 13px; }
+  .wellbeing-bloom { width: min(40vw, 20vh, 180px); }
+  .wellbeing-pace-option { padding-inline: 3px; }
+  .camp-gear { width: 60px; height: 68px; }
+  .camp-dimmer { right: auto; bottom: 1%; left: 50%; width: min(350px, 96%); translate: -50% 0; }
+  .wellbeing-scene[data-camp-packed='6'] .camp-lantern { bottom: 28%; }
+  .camp-lantern svg { height: clamp(82px, 17vh, 120px); }
+  .leaf-observation-options button { font-size: 12px; }
+  .balloon-scene { display: flex; flex-direction: column; align-items: stretch; gap: 10px; overflow-y: auto; }
+  .balloon-scene .feeling-words, .balloon-scene .thought-reframe, .balloon-scene .balloon-actions { flex: 0 0 auto; }
+  .balloon-scene .balloon-space { flex: 0 0 108px; min-height: 108px; }
+  .balloon-scene .balloon-actor { height: 106px; }
+  .balloon-scene .balloon-shape { width: 83px; height: 85px; padding: 12px; }
+  .balloon-scene .balloon-shape span { font-size: 11px; }
+  .balloon-scene .balloon-string { height: 21px; }
+  .balloon-scene .balloon-actions { padding-bottom: 5px; }
+}
+@media (max-width: 600px) {
+  .wellbeing-hub-grid { grid-template-columns: 1fr; gap: 10px; }
+  .wellbeing-destination { min-height: 166px; }
+  .wellbeing-destination-copy { padding: 30px 14px 12px; }
+  .wellbeing-hub-note { flex-wrap: wrap; }
+  .wellbeing-footer { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 10px; }
+  .wellbeing-footer .wellbeing-fact, .wellbeing-footer .wellbeing-affirmation { padding-left: 8px; }
+  .wellbeing-fact > span, .wellbeing-affirmation > span { font-size: 11px; letter-spacing: .08em; }
+  .wellbeing-scene[data-breathing-phase] { gap: 7px; }
+  .wellbeing-pace-option strong { font-size: 12px; }
+  .wellbeing-pace-option span { font-size: 10px; }
+  .pond-attention { padding: 8px 10px; }
+  .pond-attention-label { margin-bottom: 2px; }
+  .pond-attention p { margin-bottom: 6px; font-size: 12px; }
+  .pond-playfield { top: 22%; }
+  .pond-target { width: 54px; height: 54px; }
+  .pond-pad { width: 54px; height: 54px; }
+  .camp-focus { padding: 8px 11px; }
+  .camp-focus p { font-size: 12px; }
+  .camp-focus > span { margin-bottom: 2px; }
+  .camp-gear { width: 55px; height: 61px; }
+  .camp-gear svg { width: 25px; height: 25px; }
+  .camp-gear span { font-size: 10px; }
+  .star-focus-point { width: 70px; height: 70px; }
+  .star-focus-light { width: 108px; height: 108px; }
+  .star-focus-caption { font-size: 13px; }
+  .star-round-info { top: 0; left: 0; width: min(250px, 76%); padding: 7px 10px 8px; }
+  .star-round-kicker { font-size: 10px; }
+  .star-round-name { font-size: 20px; }
+  .star-round-hint { margin-top: 3px; font-size: 11px; line-height: 1.25; }
+  .star-round-transition { gap: 10px; padding: 12px 18px; }
+  .star-round-transition > :first-child:not(p):not(button) { font-size: 19px; }
+  .star-round-transition p[data-constellation-fact] { font-size: 14px; }
+  .star-round-next { width: min(100%, 250px); }
+  .leaf-button { width: 66px; height: 78px; }
+  .leaf-button > svg { width: 66px; height: 70px; }
+  .leaf-observation { padding: 10px; }
+  .leaf-observation p { font-size: 14px; }
+  .leaf-observation-options { grid-template-columns: 1fr 1fr; }
+  .leaf-observation-options button:last-child { grid-column: 1 / -1; }
+  .balloon-scene .balloon-actions { flex-direction: column; }
+  .balloon-scene .balloon-actions button { width: 100%; }
+}
+@media (max-height: 670px) {
+  .wellbeing-shell:not(.wellbeing-shell--hub) { overflow-y: auto; overscroll-behavior: contain; }
+  .wellbeing-shell:not(.wellbeing-shell--hub) .wellbeing-content,
+  .wellbeing-shell:not(.wellbeing-shell--hub) .wellbeing-scene { flex: 0 0 340px; height: 340px; min-height: 340px; }
+  .wellbeing-shell:not(.wellbeing-shell--hub) .wellbeing-footer { flex: 0 0 auto; }
+  .wellbeing-shell:not(.wellbeing-shell--hub) .balloon-scene { overflow-y: auto; }
+  .wellbeing-shell--hub .wellbeing-hub-scroll { padding-bottom: 20px; }
+}
+@media (max-width: 600px) and (max-height: 670px) {
+  .wellbeing-shell { padding-top: calc(67px + env(safe-area-inset-top)); }
+  .wellbeing-shell:not(.wellbeing-shell--hub) .wellbeing-content,
+  .wellbeing-shell:not(.wellbeing-shell--hub) .wellbeing-scene { flex-basis: 365px; height: 365px; min-height: 365px; }
+}
+@media (max-width: 600px) {
+  .wellbeing-shell:not(.wellbeing-shell--hub) {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+  .wellbeing-shell:not(.wellbeing-shell--hub) .wellbeing-content,
+  .wellbeing-shell:not(.wellbeing-shell--hub) .wellbeing-scene {
+    flex: 0 0 auto;
+    height: auto;
+    min-height: 355px;
+  }
+  .wellbeing-shell[data-wellbeing-activity='breathing_bloom'] .wellbeing-content,
+  .wellbeing-shell[data-wellbeing-activity='breathing_bloom'] .wellbeing-scene {
+    flex: 0 0 auto;
+    height: auto;
+    min-height: 355px;
+  }
+  .wellbeing-shell[data-wellbeing-activity='thought_sort'] .wellbeing-content,
+  .wellbeing-shell[data-wellbeing-activity='thought_sort'] .balloon-scene {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+  .wellbeing-shell[data-wellbeing-activity='thought_sort'] .balloon-scene {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 66px;
+    grid-template-rows: auto auto auto;
+    align-content: start;
+    gap: 8px;
+    padding: 2px 4px 6px;
+  }
+  .wellbeing-shell[data-wellbeing-activity='thought_sort'] .feeling-words,
+  .wellbeing-shell[data-wellbeing-activity='thought_sort'] .thought-reframe { grid-column: 1 / -1; }
+  .wellbeing-shell[data-wellbeing-activity='thought_sort'] .feeling-words { grid-row: 1; }
+  .wellbeing-shell[data-wellbeing-activity='thought_sort'] .thought-reframe { grid-row: 2; align-self: auto; padding: 10px 12px; }
+  .wellbeing-shell[data-wellbeing-activity='thought_sort'] .balloon-space {
+    grid-column: 2;
+    grid-row: 3;
+    width: 66px;
+    height: 66px;
+    min-height: 66px;
+    align-self: center;
+  }
+  .wellbeing-shell[data-wellbeing-activity='thought_sort'] .balloon-actor { height: 66px; }
+  .wellbeing-shell[data-wellbeing-activity='thought_sort'] .balloon-shape { width: 58px; height: 59px; padding: 7px; }
+  .wellbeing-shell[data-wellbeing-activity='thought_sort'] .balloon-shape span { font-size: 9px; }
+  .wellbeing-shell[data-wellbeing-activity='thought_sort'] .balloon-string { height: 7px; }
+  .wellbeing-shell[data-wellbeing-activity='thought_sort'] .balloon-actions {
+    grid-column: 1;
+    grid-row: 3;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-self: center;
+    justify-content: stretch;
+    gap: 6px;
+    padding: 0;
+  }
+  .wellbeing-shell[data-wellbeing-activity='thought_sort'] .balloon-actions button {
+    flex: 1 1 0;
+    min-width: 0;
+    width: auto;
+    padding: 6px;
+    font-size: 12px;
+    line-height: 1.2;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wellbeing-shell *::before, .wellbeing-shell *::after { animation: none !important; }
+}

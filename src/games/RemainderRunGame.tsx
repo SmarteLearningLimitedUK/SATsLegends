@@ -7,6 +7,7 @@ import { triggerHaptic } from '../haptics';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { MiniGameShellContractProps, emitMiniGameSessionEvent } from '../app/gameplaySessionContract';
+import './remainder-run.css';
 
 interface RemainderRunGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -25,7 +26,7 @@ interface RemainderProblem {
   divisor: number;
   quotient: number;
   remainder: number;
-  answerMode: 'remainder' | 'decimal';
+  answerMode: 'remainder' | 'decimal' | 'group_board';
   answerLabel: string;
   options: string[];
   stage: number;
@@ -49,7 +50,7 @@ const formatDecimalAnswer = (value: number, decimalPlaces: number) => value.toFi
 const roundSecondsForLevel = (level: number) => {
   if (level <= 2) return 90;
   if (level <= 4) return 75;
-  return 60;
+  return 180; // Four-digit division has an on-screen working board.
 };
 
 // A round never promotes itself beyond the difficulty the player selected.
@@ -153,7 +154,27 @@ const createDecimalProblem = (stage: number): RemainderProblem => {
   };
 };
 
-const createProblem = (stage: number): RemainderProblem => {
+const createWrittenProblem = (stage: number): RemainderProblem => {
+  const divisor = randomInt(12, 25);
+  const quotient = randomInt(90, 150);
+  const remainder = randomInt(0, divisor - 1);
+  const dividend = divisor * quotient + remainder;
+  return {
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    dividend,
+    displayDividend: String(dividend),
+    divisor,
+    quotient,
+    remainder,
+    answerMode: 'group_board',
+    answerLabel: makeAnswerLabel(quotient, remainder),
+    options: [],
+    stage,
+  };
+};
+
+const createProblem = (stage: number, questionNumber = 0): RemainderProblem => {
+  if (stage >= 10 && questionNumber % 3 === 0) return createWrittenProblem(stage);
   if (stage >= 7) {
     return createDecimalProblem(stage);
   }
@@ -214,6 +235,13 @@ const starsFromPerformance = (XP: number, correct: number, attempts: number, sta
 };
 
 const digitColors = ['text-violet-500', 'text-emerald-500', 'text-blue-500', 'text-pink-500', 'text-amber-500', 'text-cyan-500'];
+const DIVISION_GROUPS = [100, 50, 20, 10, 5, 2, 1] as const;
+
+interface DivisionWorking {
+  remaining: number;
+  quotient: number;
+  steps: { groups: number; amount: number }[];
+}
 
 const LongDivisionVisual: React.FC<{ problem: RemainderProblem }> = ({ problem }) => {
   const digits = problem.displayDividend.split('');
@@ -289,6 +317,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
   const [problem, setProblem] = useState<RemainderProblem>(() => {
     return createProblem(difficultyStage);
   });
+  const [working, setWorking] = useState<DivisionWorking>(() => ({ remaining: problem.dividend, quotient: 0, steps: [] }));
 
   const questionStartRef = useRef<number>(Date.now());
   const finishGuardRef = useRef(false);
@@ -322,7 +351,9 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
     setFeedback(null);
     setSelectedAnswer(null);
     setIsLocked(false);
-    setProblem(createProblem(difficultyStage));
+    const firstProblem = createProblem(difficultyStage);
+    setProblem(firstProblem);
+    setWorking({ remaining: firstProblem.dividend, quotient: 0, steps: [] });
     questionStartRef.current = Date.now();
   }, [baseLevel, difficultyStage, initialRoundTime]);
 
@@ -360,7 +391,9 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
   const moveToNextProblem = useCallback((nextSolvedCount: number, delayMs: number) => {
     const timer = window.setTimeout(() => {
       if (!presentRef.current || finishGuardRef.current) return;
-      setProblem(createProblem(difficultyStage));
+      const nextProblem = createProblem(difficultyStage, nextSolvedCount);
+      setProblem(nextProblem);
+      setWorking({ remaining: nextProblem.dividend, quotient: 0, steps: [] });
       setFeedback(null);
       setSelectedAnswer(null);
       setIsLocked(false);
@@ -422,26 +455,39 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
     setFeedback({
       tone: 'error',
       title: 'Not quite',
-      subtitle: 'Check your working and try the next one.',
+      subtitle: `Check: ${problem.quotient} × ${problem.divisor} + ${problem.remainder} = ${problem.dividend}.`,
     });
-    moveToNextProblem(nextSolved, 620);
+    moveToNextProblem(nextSolved, 1100);
   }, [attemptCount, baseLevel, combo, isLocked, isPractice, moveToNextProblem, problem, reducedMotion, roundOver, sessionEvents, sessionState?.paused, showPracticeIntro, solvedCount, XP]);
 
+  const takeGroups = useCallback((groups: number) => {
+    if (problem.answerMode !== 'group_board' || !presentRef.current || showPracticeIntro || sessionState?.paused || roundOver || isLocked || answerLockRef.current || finishGuardRef.current) return;
+    const amount = groups * problem.divisor;
+    if (amount > working.remaining) return;
+
+    const remaining = working.remaining - amount;
+    const quotient = working.quotient + groups;
+    setWorking({ remaining, quotient, steps: [...working.steps, { groups, amount }] });
+    if (remaining < problem.divisor) evaluateAnswer(makeAnswerLabel(quotient, remaining));
+  }, [evaluateAnswer, isLocked, problem, roundOver, sessionState?.paused, showPracticeIntro, working]);
+
   const showTopHud = !useSharedTopHud;
+  const timeLabel = `${Math.floor(timeLeft / 60)}:${String(timeLeft % 60).padStart(2, '0')}`;
 
   const title = 'Remainder Run';
 
   return (
     <div className="relative z-20 h-full w-full overflow-hidden select-none bg-slate-950" data-remainder-game data-remainder-tier={baseLevel} data-remainder-stage={difficultyStage} data-remainder-correct={correctCount}>
       <GameplaySceneBackdrop gameType="remainder_run" />
-      <PracticeIntroPopup open={showPracticeIntro} title="Remainder Run" body="Divide the number, then choose the quotient and what is left over. Try five sums at your own pace." briefing={practiceBriefing} onAction={() => setShowPracticeIntro(false)} />
+      <PracticeIntroPopup open={showPracticeIntro} title="Remainder Run" body="Divide by tapping answers. On harder rounds, use the on-screen group buttons to take away multiples of the divisor. Keep going until the amount left is smaller than the divisor." briefing={practiceBriefing} onAction={() => setShowPracticeIntro(false)} />
 
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),rgba(15,23,42,0.06)_32%,rgba(2,6,23,0.36)_100%)]" />
 
       <main
-        className={`relative z-20 flex h-full w-full flex-col ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.3rem)]' : 'pt-[calc(env(safe-area-inset-top)+4.9rem)]'} px-[max(0.75rem,env(safe-area-inset-left))] pb-[max(0.85rem,env(safe-area-inset-bottom))]`}
+        data-group-board={problem.answerMode === 'group_board'}
+        className={`remainder-main relative z-20 flex h-full w-full flex-col overflow-y-auto ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.3rem)]' : 'pt-[calc(env(safe-area-inset-top)+4.9rem)]'} px-[max(0.75rem,env(safe-area-inset-left))] pb-[max(0.85rem,env(safe-area-inset-bottom))]`}
       >
-        <div className="mx-auto flex h-full w-full max-w-[27rem] min-h-0 flex-col gap-1.5">
+        <div className={`remainder-layout mx-auto flex w-full min-h-0 flex-col gap-1.5 ${problem.answerMode === 'group_board' ? 'is-group-board' : 'max-w-[27rem] h-full'}`}>
           {showTopHud ? (
             <header className="rounded-[0.95rem] border border-violet-200/24 bg-[linear-gradient(180deg,rgba(50,14,94,0.94),rgba(19,8,44,0.92))] px-3 py-1.5 shadow-[0_10px_18px_rgba(2,6,23,0.18)] backdrop-blur-sm">
               <div className="flex items-center justify-between gap-2">
@@ -468,22 +514,63 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
             title={title}
             subtitle={problem.answerMode === 'decimal'
               ? 'Give your answer as a decimal.'
-              : 'Give the quotient and remainder.'}
-            className="mx-auto w-full max-w-[27rem] shrink-0"
+              : problem.answerMode === 'group_board' ? 'Tap groups to divide on screen.' : 'Give the quotient and remainder.'}
+            className={`mx-auto w-full shrink-0 ${problem.answerMode === 'group_board' ? '' : 'max-w-[27rem]'}`}
             style={{ position: 'relative', top: 0, transform: 'none' }}
           >
             {problem.displayDividend} ÷ {problem.divisor} = ?
           </GameQuestionCard>
 
-          <section data-division-playfield="true" className="relative flex min-h-0 flex-1 items-center justify-center">
+          <section data-division-playfield="true" className={`relative flex min-h-0 ${problem.answerMode === 'group_board' ? 'flex-col gap-2' : 'flex-1 items-center justify-center'}`}>
             <div data-division-problem="true" data-problem-id={problem.id} className="w-full">
-              <LongDivisionVisual problem={problem} />
+              {problem.answerMode !== 'group_board' ? <LongDivisionVisual problem={problem} /> : null}
             </div>
+            {problem.answerMode === 'group_board' ? (
+              <div data-division-working className="remainder-working w-full rounded-[1.1rem] border border-sky-200/35 bg-slate-950/90 p-2.5 text-white shadow-[0_10px_22px_rgba(2,6,23,0.25)]">
+                <div className="flex items-center justify-between gap-2">
+                  <h2 className="text-sm font-black text-sky-100">Division board</h2>
+                  <div className="remainder-board-actions">
+                    {useSharedTopHud && !isPractice ? <span className="remainder-time" data-remainder-time data-urgent={timeLeft <= 15} aria-label={`${timeLeft} seconds left`}>{timeLabel}</span> : null}
+                    <button type="button" onClick={() => setWorking({ remaining: problem.dividend, quotient: 0, steps: [] })} disabled={isLocked || roundOver || sessionState?.paused} className="min-h-11 rounded-lg border border-sky-100/55 px-3 text-xs font-bold text-sky-100 disabled:opacity-50">Start again</button>
+                  </div>
+                </div>
+                <p className="mt-1 text-sm leading-snug text-slate-100">Tap a group to subtract it. The board adds your groups for you.</p>
+                <div aria-live="polite" className="mt-2 grid grid-cols-2 gap-2 rounded-xl border border-white/20 bg-slate-900/90 p-2 text-center">
+                  <div><span className="block text-xs font-bold text-sky-200">Amount left</span><strong className="text-xl text-white">{working.remaining}</strong></div>
+                  <div><span className="block text-xs font-bold text-sky-200">Groups taken</span><strong className="text-xl text-white">{working.quotient}</strong></div>
+                </div>
+                <div className="remainder-track" role="progressbar" aria-label="Amount divided" aria-valuemin={0} aria-valuemax={problem.dividend} aria-valuenow={problem.dividend - working.remaining}>
+                  <motion.span initial={false} animate={{ width: `${100 * (problem.dividend - working.remaining) / problem.dividend}%` }} transition={{ duration: reducedMotion ? 0 : .38, ease: 'easeOut' }} />
+                </div>
+                <div className="mt-2 grid grid-cols-4 gap-1.5" aria-label="Choose groups to subtract">
+                  {DIVISION_GROUPS.map((groups) => {
+                    const amount = groups * problem.divisor;
+                    return <button
+                      key={groups}
+                      type="button"
+                      aria-label={`Take ${groups} groups of ${problem.divisor}, subtract ${amount}`}
+                      disabled={amount > working.remaining || isLocked || roundOver || sessionState?.paused || showPracticeIntro}
+                      onClick={() => takeGroups(groups)}
+                      className="ui-button-secondary min-h-12 rounded-xl px-1 py-1.5 text-center disabled:opacity-40"
+                    >
+                      <span className="block font-black text-white" style={{ fontSize: 'calc(16px / var(--game-stage-scale, 1))', lineHeight: 1.1 }}>+{groups}</span>
+                      <span className="block font-bold text-sky-100" style={{ fontSize: 'calc(16px / var(--game-stage-scale, 1))', lineHeight: 1.1 }}>−{amount}</span>
+                    </button>;
+                  })}
+                </div>
+                <p aria-live="polite" className="mt-2 min-h-5 text-center text-xs font-bold text-sky-100">
+                  {working.steps.length > 0
+                    ? `${working.steps.at(-1)?.groups} groups took away ${working.steps.at(-1)?.amount}. ${working.remaining} left.`
+                    : `Each group is ${problem.divisor}. Stop when less than ${problem.divisor} is left.`}
+                </p>
+              </div>
+            ) : null}
           </section>
 
-          <section className="shrink-0 rounded-[1.1rem] border border-white/16 bg-[linear-gradient(180deg,rgba(16,25,49,0.8),rgba(8,12,25,0.9))] p-1.5 shadow-[0_10px_18px_rgba(2,6,23,0.16)] backdrop-blur-sm">
-            <div className="text-center text-[8px] font-black uppercase tracking-[0.16em] text-amber-100/80">
-              {problem.answerMode === 'decimal' ? 'Tap the correct decimal' : 'Tap the correct quotient and remainder'}
+          {problem.answerMode !== 'group_board' ? <section className="shrink-0 rounded-[1.1rem] border border-white/16 bg-[linear-gradient(180deg,rgba(16,25,49,0.8),rgba(8,12,25,0.9))] p-1.5 shadow-[0_10px_18px_rgba(2,6,23,0.16)] backdrop-blur-sm">
+            <div className="remainder-answer-header text-xs font-black uppercase tracking-[0.12em] text-amber-100">
+              <span>{problem.answerMode === 'decimal' ? 'Tap the correct decimal' : 'Tap the correct quotient and remainder'}</span>
+              {useSharedTopHud && !isPractice ? <span className="remainder-time" data-remainder-time data-urgent={timeLeft <= 15} aria-label={`${timeLeft} seconds left`}>{timeLabel}</span> : null}
             </div>
             <div className="answer-choice-surface mt-1.5 grid grid-cols-4 gap-1.25">
               {problem.options.map((option, index) => (
@@ -500,11 +587,11 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
                       : 'ui-button-secondary'
                   }`}
                 >
-                  <span className="text-[clamp(0.88rem,3.2vw,1.16rem)] font-black text-white">{option}</span>
+                  <span className="font-black text-white" style={{ fontSize: 'max(18px, calc(15px / var(--game-stage-scale, 1)))' }}>{option}</span>
                 </button>
               ))}
             </div>
-          </section>
+          </section> : null}
         </div>
       </main>
 

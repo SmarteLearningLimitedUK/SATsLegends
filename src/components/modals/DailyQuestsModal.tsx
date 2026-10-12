@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import AssetIcon from '../AssetIcon';
 import { DailyQuest } from '../../types';
+import { useDialogFocus } from '../game-ui/useDialogFocus';
 import {
   FramedPanel,
   PremiumHeaderBar,
@@ -19,19 +20,25 @@ interface DailyQuestsModalProps {
 }
 
 const DailyQuestsModal: React.FC<DailyQuestsModalProps> = ({ isOpen, onClose, quests, onClaimQuest }) => {
+  const dialogRef = useDialogFocus(isOpen, onClose);
   return (
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-3 backdrop-blur-md md:p-4">
           <motion.div
+            ref={dialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Daily Quests"
+            tabIndex={-1}
             initial={{ scale: 0.8, opacity: 0, y: 50 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.8, opacity: 0, y: 50 }}
-            className="app-modal-panel premium-modal-shell licensed-game-card-dark relative flex w-full max-w-xl flex-col overflow-hidden rounded-[1.75rem] p-3.5 shadow-[0_0_100px_rgba(0,0,0,0.35)] backdrop-blur-xl md:max-w-2xl md:rounded-[3rem] md:p-8"
+            className="app-modal-panel premium-modal-shell licensed-game-card-dark relative flex max-h-[calc(100dvh-1.5rem)] w-full max-w-xl flex-col overflow-x-hidden overflow-y-auto overscroll-contain rounded-[1.75rem] p-3.5 shadow-[0_0_100px_rgba(0,0,0,0.35)] backdrop-blur-xl md:max-w-2xl md:rounded-[3rem] md:p-8"
           >
             <button
               onClick={onClose}
-              className="ui-close-button absolute right-4 top-4 z-20 md:right-6 md:top-6"
+              className="ui-close-button sticky top-2 z-20 -mb-11 ml-auto mr-1 shrink-0 md:top-3 md:mr-0"
               aria-label="Close"
             >
               <span aria-hidden="true">×</span>

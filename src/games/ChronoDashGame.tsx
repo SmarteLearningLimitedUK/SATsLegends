@@ -18,7 +18,7 @@ const scoreToStars = (XP: number) => XP >= 1800 ? 3 : XP >= 1100 ? 2 : 1;
 const displayTime = (time: Time) => `${String(time.hours).padStart(2,'0')}:${String(time.minutes).padStart(2,'0')}`;
 const CLOCK_NUMBERS = ['12','1','2','3','4','5','6','7','8','9','10','11'];
 
-const ChronoDashGame: React.FC<ChronoDashGameProps> = ({ levelId, avatarId: _avatarId, onVictory, onGameOver: _onGameOver, onBack: _onBack, sessionState, sessionEvents }) => {
+const ChronoDashGame: React.FC<ChronoDashGameProps> = ({ levelId, avatarId: _avatarId, onVictory, onGameOver, onBack: _onBack, sessionState, sessionEvents }) => {
   const tier = Math.max(1, Math.min(5, levelId));
   const minuteStep = tier === 5 ? 1 : 5;
   const reducedMotion = useReducedMotion();
@@ -39,6 +39,7 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({ levelId, avatarId: _ava
   const feedbackTimerRef = useRef<number|null>(null);
   const scoreRef = useRef(XP); scoreRef.current = XP;
   const victoryRef = useRef(onVictory); victoryRef.current = onVictory;
+  const gameOverRef = useRef(onGameOver); gameOverRef.current = onGameOver;
   const correctCountRef = useRef(0);
   const clearFeedbackTimer = () => { if (feedbackTimerRef.current !== null) window.clearTimeout(feedbackTimerRef.current); feedbackTimerRef.current = null; };
   const generateRandomTime = useCallback((): Time => {
@@ -74,6 +75,11 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({ levelId, avatarId: _ava
     if (!isPresent || sessionState?.paused || gameState !== 'playing' || timeLeft > 0 || finishedRef.current) return;
     finishedRef.current = true; answerLockRef.current = true; clearFeedbackTimer();
     setGameState('complete');
+    if (correctCountRef.current === 0) {
+      sessionEvents?.onGameFailed?.({ score: scoreRef.current, reason: 'no-correct-answers' });
+      gameOverRef.current(scoreRef.current);
+      return;
+    }
     const stars = scoreToStars(scoreRef.current);
     sessionEvents?.onGameComplete?.({ score: scoreRef.current, stars });
     victoryRef.current(stars,scoreRef.current);
@@ -92,6 +98,7 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({ levelId, avatarId: _ava
       feedbackTimerRef.current = window.setTimeout(loadNextQuestion,260);
     } else {
       setFeedback('Still out of sync. Match both hands.');
+      sessionEvents?.onIncorrectAnswer?.({ score: scoreRef.current, metadata: { target: displayTime(targetTime), chosen: displayTime(currentTime) } });
       feedbackTimerRef.current = window.setTimeout(() => {
         if (presentRef.current && !finishedRef.current) setFeedback(null);
       },2000);

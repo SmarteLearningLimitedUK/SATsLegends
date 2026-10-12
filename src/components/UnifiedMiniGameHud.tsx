@@ -15,6 +15,7 @@ interface UnifiedMiniGameHudProps {
   lives?: number;
   onBack?: () => void;
   onHelp?: () => void;
+  onWork?: () => void;
   title?: string;
   levelLabel?: string;
   streak?: number;
@@ -26,7 +27,7 @@ interface UnifiedMiniGameHudProps {
 
 const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
   avatarId, timeLeft, totalTime, hidden = false, hideTimer = false,
-  hideTopBar = false, lives = 3, onBack, onHelp, title = 'SATs Legends',
+  hideTopBar = false, lives = 3, onBack, onHelp, onWork, title = 'SATs Legends',
   levelLabel = 'Adventure', streak = 0, isPractice = false,
   variant = 'gameplay', showActions = true, bottomContent, assessment = false,
 }) => {
@@ -87,7 +88,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
             paddingLeft: '0.35rem', paddingRight: '0.35rem',
           }}>
             <div className="pointer-events-auto max-w-[calc(100vw-0.7rem)] overflow-hidden">
-              {bottomContent ?? (onBack ? <GameActionDock onBack={onBack} onHelp={onHelp} compact variant="global" /> : null)}
+              {bottomContent ?? (onBack ? <GameActionDock onBack={onBack} onHelp={onHelp} onWork={onWork} compact variant="global" /> : null)}
             </div>
           </div>
         </>

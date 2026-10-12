@@ -167,6 +167,7 @@
   max-height: none;
   aspect-ratio: 1.35;
   filter: drop-shadow(0 20px 12px rgba(0, 12, 16, .65));
+  animation: pp-reactor-hum 3.4s ease-in-out infinite;
 }
 
 #root .pp-game .pp-machine-svg {
@@ -417,6 +418,10 @@
 
 @keyframes pp-rotate { to { transform: rotate(360deg); } }
 @keyframes pp-flow { to { stroke-dashoffset: -48; } }
+@keyframes pp-reactor-hum {
+  0%, 100% { filter: drop-shadow(0 20px 12px rgba(0, 12, 16, .65)) drop-shadow(0 0 5px rgba(89, 242, 216, .14)); }
+  50% { filter: drop-shadow(0 20px 12px rgba(0, 12, 16, .65)) drop-shadow(0 0 24px rgba(89, 242, 216, .48)); }
+}
 @keyframes pp-charge {
   0% { filter: brightness(1); }
   45% { filter: brightness(1.9); }

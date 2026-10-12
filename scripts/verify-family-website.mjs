@@ -30,7 +30,7 @@ try {
       if (route === '/for-parents') {
         await expect(page.getByRole('heading', { name: 'Big adventures. Small steps to SATs.' })).toBeVisible();
         await expect(page.locator('tbody tr')).toHaveCount(6);
-        for (const name of ['Peaceful Pond', 'Lantern Camp', 'Star Path', 'Leaf Drift', 'Worry Balloon', 'Bubble Breath']) {
+        for (const name of ['Peaceful Pond', 'Lantern Camp', 'Star Path', 'Leaf Drift', 'Thought Release', 'Breath Bloom']) {
           await page.getByRole('button', { name, exact: true }).click();
           await expect(page.getByRole('heading', { name, exact: true })).toBeVisible();
           await expect(page.getByRole('button', { name, exact: true })).toHaveAttribute('aria-pressed', 'true');

@@ -100,9 +100,10 @@ const buildRound = (levelId: number, roundIndex: number): RoundData => {
   return { targetGrams, tokens };
 };
 
-const scoreToStars = (XP: number) => {
-  if (XP >= 2200) return 3;
-  if (XP >= 1400) return 2;
+const scoreToStars = (XP: number, correct: number, incorrect: number) => {
+  const accuracy = correct / Math.max(1, correct + incorrect);
+  if (XP >= 2200 && accuracy >= 0.9) return 3;
+  if (XP >= 1400 && accuracy >= 0.7) return 2;
   return 1;
 };
 
@@ -132,6 +133,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
   const dropRef = useRef<HTMLDivElement>(null);
   const placedIdsRef = useRef<string[]>([]);
   const resolvingRef = useRef(false);
+  const incorrectRef = useRef(0);
   const timerRef = useRef<number | null>(null);
   const victoryRef = useRef(onVictory);
   victoryRef.current = onVictory;
@@ -147,6 +149,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
     if (timerRef.current !== null) window.clearTimeout(timerRef.current);
     placedIdsRef.current = [];
     resolvingRef.current = false;
+    incorrectRef.current = 0;
     setRoundIndex(0);
     setRound(buildRound(levelId, 0));
     setPlacedIds([]);
@@ -207,6 +210,8 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
     if (!presentRef.current || resolvingRef.current || sessionState?.paused) return;
     const submittedGrams = placedIdsRef.current.reduce((total, id) => total + (tokenMap.get(id)?.grams ?? 0), 0);
     if (submittedGrams !== round.targetGrams) {
+      incorrectRef.current += 1;
+      sessionEvents?.onIncorrectAnswer?.({ score: XP, metadata: { round: roundIndex + 1, submittedGrams, targetGrams: round.targetGrams, preservesLives: true } });
       const excess = submittedGrams - round.targetGrams;
       setBroken(excess > 0);
       setImpact((value) => value + 1);
@@ -230,7 +235,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
       setSuccessPulse(false);
       setFeedback(null);
       if (roundIndex >= TOTAL_ROUNDS - 1) {
-        const stars = scoreToStars(nextScore);
+        const stars = scoreToStars(nextScore, TOTAL_ROUNDS, incorrectRef.current);
         sessionEvents?.onGameComplete?.({ score: nextScore, stars });
         victoryRef.current(stars, nextScore);
         return;

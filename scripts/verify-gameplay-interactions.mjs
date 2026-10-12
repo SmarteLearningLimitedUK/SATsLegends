@@ -255,10 +255,23 @@ async function perimeterFlow(page,profile,motion,levels){
     const before=await telemetry(page);let question=await root.getAttribute('data-perimeter-question');
     const untraced=await solve();await expect(untraced.button).toBeEnabled();await tap(page,profile,untraced.button);
     await expect(root).not.toHaveAttribute('data-perimeter-question',question);expect(await edgeControls.evaluateAll(nodes=>nodes.every(node=>node.getAttribute('aria-pressed')==='false'))).toBe(true);
+    if(tier===1){
+      question=await root.getAttribute('data-perimeter-question');
+      const wrongExpected=(await solve()).sum;
+      const options=await page.locator('.perimeter-responses button').allTextContents();
+      const wrongIndex=options.findIndex(text=>Math.abs(number(text.match(/[\d.,]+/)[0])-wrongExpected)>.00001);
+      expect(wrongIndex,'A deliberate wrong perimeter choice is available').toBeGreaterThanOrEqual(0);
+      const lifeBefore=await lives(page);
+      await tap(page,profile,page.locator('.perimeter-responses button').nth(wrongIndex));
+      await expect(root).not.toHaveAttribute('data-perimeter-question',question);
+      await expect.poll(async()=>Number((await telemetry(page)).incorrectAnswers||0)).toBe(Number(before.incorrectAnswers||0)+1);
+      expect(await lives(page),'Retryable perimeter error preserves shared lives').toBe(lifeBefore);
+    }
     await tap(page,profile,edgeControls.first());await tap(page,profile,edgeControls.nth(1));question=await root.getAttribute('data-perimeter-question');
     const traced=await solve();await tap(page,profile,traced.button);await expect(root).not.toHaveAttribute('data-perimeter-question',question);
     expect(await edgeControls.evaluateAll(nodes=>nodes.every(node=>node.getAttribute('aria-pressed')==='false'))).toBe(true);
     await expect.poll(async()=>Number((await telemetry(page)).correctAnswers||0)).toBe(Number(before.correctAnswers||0)+2);
+    expect(Number((await telemetry(page)).incorrectAnswers||0)).toBe(Number(before.incorrectAnswers||0)+(tier===1?1:0));
     if(motion==='reduced')await expect(page.locator('canvas')).toHaveCount(0);
     await page.screenshot({path:path.join(output,`${profile.name}-${motion}-perimeter-tier${tier}.png`)});
     cases.push({tier,route:level.route,layout,edgeCount:count,bounds,nativeSelect:true,literalSegmentTap:{point:segmentPoint,sameCheckedAndColourState:true},keyboardEnterSpace:true,answersAcceptedUntraced:true,persistentStateResetNextQuestion:true,independentPerimeters:[untraced.sum,traced.sum]});
@@ -292,6 +305,7 @@ async function conversionFlow(page,profile,motion,levels){
   const targetCopy=await page.locator('[data-question-copy]').innerText();const targetMatch=targetCopy.match(/(?:totals|Match) ([\d.,]+) kg/);expect(targetMatch,'Visible kilogram target').toBeTruthy();const target=number(targetMatch[1])*1000;
   const before=await telemetry(page);const lifeBefore=await lives(page);
   await tap(page,profile,page.getByRole('button',{name:'Submit Shipment',exact:true}));await expect(page.getByRole('status').filter({hasText:/short\. Add more weight\./})).toBeVisible();await expect(page.locator('[data-question-copy]')).toContainText(`Match ${target/1000} kg exactly.`);expect(await lives(page)).toBe(lifeBefore);
+  await expect.poll(async()=>Number((await telemetry(page)).incorrectAnswers||0)).toBe(Number(before.incorrectAnswers||0)+1);
   const token=page.locator(`[data-conversion-token="${tokens[0].id}"]`);await tap(page,profile,token);await expect(page.locator('[data-conversion-load]')).toHaveAttribute('data-conversion-load',String(tokens[0].grams));
   const remove=page.locator('[data-conversion-tray] button').first();await hit(remove);await tap(page,profile,remove);await expect(page.locator('[data-conversion-load]')).toHaveAttribute('data-conversion-load','0');
   let solution=null;
@@ -303,6 +317,7 @@ async function conversionFlow(page,profile,motion,levels){
   const oldId=await page.locator('[data-conversion-token]').first().getAttribute('data-conversion-token');await tap(page,profile,page.getByRole('button',{name:'Submit Shipment',exact:true}));
   await expect(page.locator('[data-conversion-token]').first()).not.toHaveAttribute('data-conversion-token',oldId);await expect(page.locator('[data-conversion-load]')).toHaveAttribute('data-conversion-load','0');
   await expect.poll(async()=>Number((await telemetry(page)).correctAnswers||0)).toBe(Number(before.correctAnswers||0)+1);
+  expect(Number((await telemetry(page)).incorrectAnswers||0)).toBe(Number(before.incorrectAnswers||0)+1);
   await page.screenshot({path:path.join(output,`${profile.name}-${motion}-conversion-balanced.png`)});
   return {route:level.route,layout,frame,board,geometrySettling:{stableSamples,samples:settling.length,fonts:geometry.fonts,image:geometry.image,stage:geometry.stage},independentTargetGrams:target,solution:solution.map(({label,grams})=>({label,grams})),nativeAddRemove:true,wrongRetryPreservesLives:true,nextRoundResetsLoad:true};
 }

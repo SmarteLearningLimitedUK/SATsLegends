@@ -271,7 +271,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
   const pausedRef = useRef(false);
   pausedRef.current = Boolean(showPracticeIntro || sessionState?.paused);
   const hasSharedSession = Boolean(sessionState);
-  const useLocalLives = !hasSharedSession || Boolean(isPractice);
+  const useLocalLives = !hasSharedSession && !isPractice;
 
   const targetScore = config.targetScore;
   const progress = Math.min((XP / Math.max(targetScore, 1)) * 100, 100);
@@ -428,7 +428,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     setBubbles(initial);
     lastFrameRef.current = null;
 
-    if (!hasSharedSession) {
+    if (!hasSharedSession && !isPractice) {
       timerRef.current = window.setInterval(() => {
         if (pausedRef.current || document.hidden || overRef.current) return;
         localTimeRemainingRef.current = Math.max(0, localTimeRemainingRef.current - 1);
@@ -445,7 +445,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     }, config.spawnEveryMs);
 
     return () => clearLoops();
-  }, [bubbleRuntime.maxBubbles, bubbleRuntime.minBubbles, clearLoops, config.spawnEveryMs, finalize, hasSharedSession, makeBubble, roundSeconds]);
+  }, [bubbleRuntime.maxBubbles, bubbleRuntime.minBubbles, clearLoops, config.spawnEveryMs, finalize, hasSharedSession, isPractice, makeBubble, roundSeconds]);
 
   useEffect(() => {
     if (isPractice || sessionState?.timeLeft !== 0) return;
@@ -498,7 +498,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
       });
       setMistakeBubbleId(bubbleId);
       setScreenShake(true);
-      setFeedback('-1 life');
+      setFeedback(isPractice ? `${target.value} is not prime. Look for factors besides 1 and itself.` : '-1 life');
 
       window.setTimeout(() => {
         const nextBubbles = bubblesRef.current.filter((bubble) => bubble.id !== bubbleId);
@@ -576,7 +576,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     if (dangerPrimeHits > 0) {
       if (useLocalLives) livesNext -= dangerPrimeHits;
       comboNext = 0;
-      setFeedback(`-${dangerPrimeHits} life${dangerPrimeHits > 1 ? 's' : ''}`);
+      setFeedback(isPractice ? 'A prime crossed the line. Try the next one.' : `-${dangerPrimeHits} life${dangerPrimeHits > 1 ? 's' : ''}`);
       window.setTimeout(() => setFeedback(null), 520);
       dangerPrimeBubbles.forEach((bubble) => emitMiniGameSessionEvent(sessionEventsRef.current, 'incorrect_answer', {
         score: scoreRef.current,
@@ -598,7 +598,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     }
 
     rafRef.current = requestAnimationFrame(loop);
-  }, [finalize, isPhone, useLocalLives]);
+  }, [finalize, isPhone, isPractice, useLocalLives]);
 
   useEffect(() => {
     if (overRef.current) return;
@@ -626,7 +626,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
           <>
             In an attempt to hide the prime numbers, the Monster Minds have hidden them among regular numbers.
             {'\n'}
-            Find and pop the <b>PRIME</b> numbers before they cross the line and you lose a life.
+            {isPractice ? <>Find and pop the <b>PRIME</b> numbers. Take your time; missed bubbles and wrong taps do not end practice.</> : <>Find and pop the <b>PRIME</b> numbers before they cross the line and you lose a life.</>}
           </>
         )}
         briefing={practiceBriefing}

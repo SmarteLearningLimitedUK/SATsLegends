@@ -5,9 +5,7 @@ import {
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  LayoutGrid,
   RotateCcw,
-  Search,
   Trophy,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
@@ -67,11 +65,10 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
   const [XP, setScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [currentLevelData, setCurrentLevelData] = useState<LevelData | null>(null);
-  const [userAnswer, setUserAnswer] = useState('');
+  const [userAnswer, setUserAnswer] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [isSorted, setIsSorted] = useState(false);
   const [didFail, setDidFail] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
   const feedbackTimeoutRef = useRef<number | null>(null);
 
   const timeLeft = sessionState?.timeLeft ?? 1;
@@ -120,10 +117,9 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
       isEven,
       middleIndices,
     });
-    setUserAnswer('');
+    setUserAnswer(null);
     setFeedback(null);
     setIsSorted(false);
-    window.setTimeout(() => inputRef.current?.focus(), 24);
   }, [difficulty]);
 
   useEffect(() => {
@@ -177,10 +173,9 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
     event.preventDefault();
     if (!currentLevelData || gameState !== 'playing' || !isSessionActive) return;
 
-    const parsedAnswer = parseFloat(userAnswer);
-    if (Number.isNaN(parsedAnswer)) return;
+    if (userAnswer === null) return;
 
-    const isCorrect = Math.abs(parsedAnswer - currentLevelData.median) < 0.001;
+    const isCorrect = Math.abs(userAnswer - currentLevelData.median) < 0.001;
 
     if (isCorrect) {
       const gained = 200 + (level * 40);
@@ -194,7 +189,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
         metadata: {
           scoreDelta: gained,
           scoreAfter: nextScore,
-          answer: parsedAnswer,
+          answer: userAnswer,
         },
       });
       emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', {
@@ -211,7 +206,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
     emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
       score: XP,
       metadata: {
-        submitted: parsedAnswer,
+        submitted: userAnswer,
         median: currentLevelData.median,
         level,
       },
@@ -249,6 +244,19 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
     return [...currentLevelData.numbers].sort((a, b) => a.value - b.value);
   }, [currentLevelData, isSorted]);
 
+  const medianChoices = useMemo(() => {
+    if (!currentLevelData) return [];
+    const sorted = currentLevelData.numbers.map(item => item.value).sort((a, b) => a - b);
+    const target = currentLevelData.median;
+    const middle = Math.floor(sorted.length / 2);
+    const step = Number.isInteger(target) ? 1 : 0.5;
+    const candidates = [target, sorted[middle - 1], sorted[middle], sorted[0], sorted[sorted.length - 1], target - step, target + step, target - step * 2, target + step * 2];
+    const choices = [...new Set(candidates.filter(value => value > 0))].slice(0, 4);
+    for (let n = 3; choices.length < 4; n += 1) choices.push(target + step * n);
+    const offset = currentLevelData.numbers.reduce((sum, item) => sum + item.value, 0) % choices.length;
+    return [...choices.slice(offset), ...choices.slice(0, offset)];
+  }, [currentLevelData]);
+
   return (
     <div className="relative h-full w-full overflow-hidden text-white">
       <div
@@ -276,7 +284,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
 
         <GameQuestionCard title="Median Mountain" style={{ position: 'relative', top: 0, transform: 'none', width: '100%' }}
           subtitle={currentLevelData?.isEven ? 'With two middle values, add them and divide by 2.' : 'The middle value in an ordered list is the median.'}>
-          Sort the stones, then enter the median.
+          Sort the stones, then choose the median.
         </GameQuestionCard>
         <main className="relative flex min-h-0 flex-1 items-center justify-center">
           <AnimatePresence mode="wait">
@@ -312,7 +320,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
 
                   <div className="flex flex-wrap justify-center gap-2.5 sm:gap-3">
                     {displayNumbers.map((item, index) => {
-                      const isMiddle = isSorted && currentLevelData.middleIndices.includes(index);
+                      const isMiddle = isSorted && gameState === 'success' && currentLevelData.middleIndices.includes(index);
                       return (
                         <motion.div
                           layout
@@ -340,21 +348,20 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
 
                 <form
                   onSubmit={handleSubmit}
-                  className="mx-auto flex w-full max-w-[700px] flex-col gap-2.5 rounded-2xl border border-cyan-100/30 bg-[#123062]/70 p-3 shadow-[0_12px_24px_rgba(2,6,23,0.4)] sm:flex-row sm:items-center"
+                  className="mx-auto flex w-full max-w-[700px] flex-col gap-2.5 rounded-2xl border border-cyan-100/30 bg-[#123062]/70 p-3 shadow-[0_12px_24px_rgba(2,6,23,0.4)]"
                 >
-                  <div className="relative flex-1">
-                    <input
-                      ref={inputRef}
-                      type="number"
-                      step="0.5"
-                      disabled={gameState === 'success' || !isSessionActive}
-                      value={userAnswer}
-                      onChange={(event) => setUserAnswer(event.target.value)}
-                      placeholder="Enter median"
-                      className="w-full rounded-2xl border border-cyan-100/45 bg-[#0d2a5a]/88 px-4 py-3 text-base font-black text-white placeholder:text-cyan-100/60 focus:border-amber-100 focus:outline-none disabled:opacity-60"
-                    />
-                    <Search className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-cyan-100/70" />
-                  </div>
+                  <fieldset disabled={gameState === 'success' || !isSessionActive} className="min-w-0 border-0 p-0">
+                    <legend className="mb-2 text-sm font-bold text-cyan-50">Choose the middle value</legend>
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                      {medianChoices.map(choice => <button
+                        key={choice}
+                        type="button"
+                        aria-pressed={userAnswer === choice}
+                        onClick={() => setUserAnswer(choice)}
+                        className={`min-h-12 rounded-xl border-2 px-2 py-2 text-lg font-black focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-amber-200 ${userAnswer === choice ? 'border-amber-200 bg-amber-300 text-slate-950' : 'border-cyan-100/50 bg-[#0d2a5a]/88 text-cyan-50 hover:border-cyan-100'}`}
+                      >{formatMedian(choice)}</button>)}
+                    </div>
+                  </fieldset>
 
                   {gameState === 'success' ? (
                     <button
@@ -368,7 +375,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
                   ) : (
                     <button
                       type="submit"
-                      disabled={!userAnswer.trim() || !isSessionActive}
+                      disabled={userAnswer === null || !isSessionActive}
                       className="ui-button-primary inline-flex h-12 min-w-[148px] items-center justify-center rounded-2xl px-5 text-sm font-black uppercase tracking-[0.12em] disabled:opacity-55"
                     >
                       Verify Median
@@ -378,7 +385,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
 
                 {isSorted && (
                   <p className="text-center text-[11px] font-bold uppercase tracking-[0.08em] text-cyan-100/90">
-                    Target median: {formatMedian(currentLevelData.median)}
+                    {currentLevelData.isEven ? 'Read inward from both ends. Add the two middle stones and halve.' : 'Read inward from both ends to find the middle stone.'}
                   </p>
                 )}
               </motion.div>

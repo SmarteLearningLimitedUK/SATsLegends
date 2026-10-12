@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
 import { DEFAULT_AVATAR_ID } from '../assets/characters';
 import { AVATARS, INITIAL_DAILY_QUESTS, ISLANDS } from '../constants';
 import { IslandData, LevelData, PlayerData } from '../types';
@@ -12,21 +12,42 @@ import { useGameSave } from '../website/GameSaveContext';
 export const PLAYER_STORAGE_KEY = 'maths_quest_player_v2';
 const ALL_ISLAND_IDS = ISLANDS.map(island => island.id);
 
+export const getLocalQuestDate = (now = new Date()) => (
+  `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+);
+
+const freshDailyQuests = () => INITIAL_DAILY_QUESTS.map(quest => ({
+  ...quest,
+  reward: { ...quest.reward },
+  current: 0,
+  isClaimed: false,
+}));
+
+export const refreshDailyQuests = (player: PlayerData, now = new Date()): PlayerData => {
+  const date = getLocalQuestDate(now);
+  return player.dailyQuestDate === date
+    ? player
+    : { ...player, dailyQuestDate: date, dailyQuests: freshDailyQuests() };
+};
+
 const resolveAvatarId = (avatarId?: string) => (
   AVATARS.some(avatar => avatar.id === avatarId) ? avatarId! : DEFAULT_AVATAR_ID
 );
 
-export const createDefaultPlayer = (parsed?: Partial<PlayerData> | null): PlayerData => ({
+export const createDefaultPlayer = (parsed?: Partial<PlayerData> | null, now = new Date()): PlayerData => ({
   playerName: parsed?.playerName || '',
   avatarId: resolveAvatarId(parsed?.avatarId),
   level: parsed?.level || 1,
   xp: parsed?.xp || 0,
-  coins: parsed?.coins || 100,
-  gems: parsed?.gems || 10,
+  coins: parsed?.coins ?? 100,
+  gems: parsed?.gems ?? 10,
   unlockedIslands: ALL_ISLAND_IDS,
   completedLevels: parsed?.completedLevels || {},
   levelStars: parsed?.levelStars || {},
-  dailyQuests: parsed?.dailyQuests || INITIAL_DAILY_QUESTS,
+  dailyQuests: parsed?.dailyQuestDate === getLocalQuestDate(now) && parsed.dailyQuests
+    ? parsed.dailyQuests
+    : freshDailyQuests(),
+  dailyQuestDate: getLocalQuestDate(now),
   achievements: parsed?.achievements || [],
   customSpriteUrl: parsed?.customSpriteUrl,
   calmTokens: parsed?.calmTokens || 0,
@@ -66,6 +87,7 @@ export interface PlayerProgressionController {
   hasCompletedProfile: boolean;
   saveProfileName: () => void;
   claimQuest: (questId: string) => void;
+  recordShopVisit: () => void;
   applyGameVictory: (
     selectedIsland: IslandData | null,
     selectedLevel: LevelData | null,
@@ -83,6 +105,7 @@ export interface PlayerProgressionController {
     metrics: {
       score: number;
       accuracy: number;
+      accuracyMeasured: boolean;
       hintsUsed: number;
       mistakes: number;
       timeMs: number;
@@ -95,12 +118,13 @@ export const usePlayerProgression = (): PlayerProgressionController => {
   const cloudSave = useGameSave();
   const grantProgressionXp = useProgressionStore((state) => state.grantXp);
   const [player, setPlayer] = useState<PlayerData>(() => {
-    if (cloudSave) return cloudSave.initialPlayer;
+    if (cloudSave) return refreshDailyQuests(cloudSave.initialPlayer);
     const saved = localStorage.getItem(PLAYER_STORAGE_KEY);
     const parsed = saved ? JSON.parse(saved) : null;
     return createDefaultPlayer(parsed);
   });
   const [draftName, setDraftName] = useState('');
+  const claimedQuestKeysRef = useRef(new Set<string>());
 
   const hasCompletedProfile = useMemo(
     () => Boolean(player.playerName.trim() && player.avatarId),
@@ -124,35 +148,65 @@ export const usePlayerProgression = (): PlayerProgressionController => {
     }
   }, [player.avatarId, setPlayer]);
 
+  useEffect(() => {
+    const refresh = () => setPlayer(prev => refreshDailyQuests(prev));
+    const now = new Date();
+    const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
+    const timer = window.setTimeout(refresh, Math.max(1000, nextMidnight - now.getTime() + 100));
+    window.addEventListener('focus', refresh);
+    document.addEventListener('visibilitychange', refresh);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener('focus', refresh);
+      document.removeEventListener('visibilitychange', refresh);
+    };
+  }, [player.dailyQuestDate, setPlayer]);
+
   const saveProfileName = () => {
     const sanitizedName = draftName.trim() || 'Explorer';
     setPlayer(prev => ({ ...prev, playerName: sanitizedName }));
   };
 
   const claimQuest = (questId: string) => {
+    const visibleQuests = refreshDailyQuests(player);
+    const visibleQuest = visibleQuests.dailyQuests.find((quest) => quest.id === questId);
+    const claimKey = `${visibleQuests.dailyQuestDate}:${questId}`;
+    if (!visibleQuest || visibleQuest.isClaimed || visibleQuest.current < visibleQuest.target
+      || claimedQuestKeysRef.current.has(claimKey)) return;
+    claimedQuestKeysRef.current.add(claimKey);
+
     setPlayer(prev => {
-      const quest = prev.dailyQuests.find(q => q.id === questId);
-      if (!quest || quest.isClaimed || quest.current < quest.target) return prev;
-
-      if (quest.reward.type === 'xp') {
-        grantProgressionXp(quest.reward.amount);
-      }
-
+      const current = refreshDailyQuests(prev);
+      const quest = current.dailyQuests.find(q => q.id === questId);
+      if (!quest || quest.isClaimed || quest.current < quest.target) return current;
       return {
-        ...prev,
-        coins: quest.reward.type === 'coins' ? prev.coins + quest.reward.amount : prev.coins,
-        gems: quest.reward.type === 'gems' ? prev.gems + quest.reward.amount : prev.gems,
-        xp: quest.reward.type === 'xp' ? prev.xp + quest.reward.amount : prev.xp,
+        ...current,
+        coins: quest.reward.type === 'coins' ? current.coins + quest.reward.amount : current.coins,
+        gems: quest.reward.type === 'gems' ? current.gems + quest.reward.amount : current.gems,
+        xp: quest.reward.type === 'xp' ? current.xp + quest.reward.amount : current.xp,
         stats: {
-          ...prev.stats,
-          totalCoinsEarned: (prev.stats?.totalCoinsEarned || 0) + (quest.reward.type === 'coins' ? quest.reward.amount : 0),
+          ...current.stats,
+          totalCoinsEarned: (current.stats?.totalCoinsEarned || 0) + (quest.reward.type === 'coins' ? quest.reward.amount : 0),
         },
-        dailyQuests: prev.dailyQuests.map(q =>
+        dailyQuests: current.dailyQuests.map(q =>
           q.id === questId ? { ...q, isClaimed: true } : q,
         ),
       };
     });
+    // React may replay state updaters; award progression XP once per claim event.
+    if (visibleQuest.reward.type === 'xp') grantProgressionXp(visibleQuest.reward.amount);
   };
+
+  const recordShopVisit = () => setPlayer(prev => {
+    const current = refreshDailyQuests(prev);
+    if (current.dailyQuests.find(quest => quest.id === 'q3')?.current) return current;
+    return {
+      ...current,
+      dailyQuests: current.dailyQuests.map(quest => quest.id === 'q3'
+        ? { ...quest, current: Math.min(quest.target, quest.current + 1) }
+        : quest),
+    };
+  });
 
   const applyGameVictory = (
     selectedIsland: IslandData | null,
@@ -171,6 +225,7 @@ export const usePlayerProgression = (): PlayerProgressionController => {
     metrics: {
       score: number;
       accuracy: number;
+      accuracyMeasured: boolean;
       hintsUsed: number;
       mistakes: number;
       timeMs: number;
@@ -190,7 +245,8 @@ export const usePlayerProgression = (): PlayerProgressionController => {
     const achievementsUnlocked: string[] = [];
 
     setPlayer(prev => {
-      const updatedQuests = prev.dailyQuests.map(quest => {
+      const current = refreshDailyQuests(prev);
+      const updatedQuests = current.dailyQuests.map(quest => {
         if (quest.id === 'q1') {
           return { ...quest, current: Math.min(quest.target, quest.current + 1) };
         }
@@ -202,24 +258,24 @@ export const usePlayerProgression = (): PlayerProgressionController => {
 
       const stats = {
         totalStars: totalStarsEarned,
-        totalGamesPlayed: (prev.stats?.totalGamesPlayed || 0) + 1,
-        totalCoinsEarned: (prev.stats?.totalCoinsEarned || 0) + earnedCoins,
+        totalGamesPlayed: (current.stats?.totalGamesPlayed || 0) + 1,
+        totalCoinsEarned: (current.stats?.totalCoinsEarned || 0) + earnedCoins,
       };
 
-      const nextCoinTotal = prev.coins + earnedCoins;
-      const unlockedIslands = prev.unlockedIslands.includes(nextIslandId) || !selectedLevel.isBoss
-        ? prev.unlockedIslands
-        : [...prev.unlockedIslands, nextIslandId].filter(id => id <= ISLANDS.length);
+      const nextCoinTotal = current.coins + earnedCoins;
+      const unlockedIslands = current.unlockedIslands.includes(nextIslandId) || !selectedLevel.isBoss
+        ? current.unlockedIslands
+        : [...current.unlockedIslands, nextIslandId].filter(id => id <= ISLANDS.length);
 
       return {
-        ...prev,
+        ...current,
         coins: nextCoinTotal,
         xp: progressionResult.currentXp,
         level: progressionResult.newLevel,
         unlockedIslands,
         dailyQuests: updatedQuests,
         stats,
-        achievements: prev.achievements || [],
+        achievements: current.achievements || [],
       };
     });
 
@@ -242,6 +298,7 @@ export const usePlayerProgression = (): PlayerProgressionController => {
       xpRequiredForNextLevel: progressionResult.xpRequiredForNextLevel,
       leveledUp: progressionResult.leveledUp,
       accuracy: metrics.accuracy,
+      accuracyMeasured: metrics.accuracyMeasured,
       hintsUsed: metrics.hintsUsed,
       mistakes: metrics.mistakes,
       timeMs: metrics.timeMs,
@@ -261,6 +318,7 @@ export const usePlayerProgression = (): PlayerProgressionController => {
     hasCompletedProfile,
     saveProfileName,
     claimQuest,
+    recordShopVisit,
     applyGameVictory,
   };
 };

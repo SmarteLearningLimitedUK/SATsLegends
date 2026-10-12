@@ -5,7 +5,8 @@ import factorFrenzyBackground from '../assets/maps/backgroundsforgames/Factor Fr
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
-import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
+import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
+import './fraction-match.css';
 
 
 interface FractionMatchGameProps extends MiniGameShellContractProps {
@@ -38,11 +39,12 @@ type BoardCell = GemCell | null;
 
 const GEM_TYPES: GemType[] = ['red', 'blue', 'green', 'yellow', 'purple'];
 const MIXED_FORMATS: TileValueFormat[] = ['fraction', 'decimal', 'percentage'];
-const GRID_COLS = 5;
-const GRID_ROWS = 6;
+const GRID_COLS = 6;
+const GRID_ROWS = 5;
 const ROUND_SECONDS = 60;
 const BASE_TARGET_SCORE = 900;
 const TARGET_SCORE_STEP = 140;
+const MIN_COLOURLESS_MATCHES = 5;
 
 const GEM_COLORS: Record<GemType, { base: string; light: string; dark: string }> = {
   red: { base: '#ef4444', light: '#f87171', dark: '#b91c1c' },
@@ -159,7 +161,7 @@ const buildCell = (type: GemType, tier: number, isMatchMastery: boolean, preferr
   label: pickTileLabel(type, tier, isMatchMastery, preferredFormat),
 });
 
-const createInitialBoard = (tier: number, isMatchMastery = true): BoardCell[] => {
+const buildRandomBoard = (tier: number, isMatchMastery: boolean): BoardCell[] => {
   const board: BoardCell[] = Array.from({ length: GRID_ROWS * GRID_COLS }, () => null);
 
   for (let row = 0; row < GRID_ROWS; row += 1) {
@@ -176,6 +178,43 @@ const createInitialBoard = (tier: number, isMatchMastery = true): BoardCell[] =>
 
   return board;
 };
+
+const countLegalSwaps = (board: BoardCell[]): number => {
+  let total = 0;
+  for (let row = 0; row < GRID_ROWS; row += 1) {
+    for (let col = 0; col < GRID_COLS; col += 1) {
+      const index = indexFor(row, col);
+      for (const neighbor of [
+        col + 1 < GRID_COLS ? indexFor(row, col + 1) : -1,
+        row + 1 < GRID_ROWS ? indexFor(row + 1, col) : -1,
+      ]) {
+        if (neighbor < 0 || !board[index] || !board[neighbor] || board[index]?.type === board[neighbor]?.type) continue;
+        const swapped = [...board];
+        [swapped[index], swapped[neighbor]] = [swapped[neighbor], swapped[index]];
+        if (findMatches(swapped).length > 0) total += 1;
+      }
+    }
+  }
+  return total;
+};
+
+const ensurePlayableBoard = (board: BoardCell[], tier: number, isMatchMastery: boolean): BoardCell[] => {
+  if (!isMatchMastery || tier !== 5 || countLegalSwaps(board) >= MIN_COLOURLESS_MATCHES) return board;
+
+  for (let attempt = 0; attempt < 40; attempt += 1) {
+    const candidate = buildRandomBoard(tier, isMatchMastery);
+    if (countLegalSwaps(candidate) >= MIN_COLOURLESS_MATCHES) return candidate;
+  }
+
+  // A fixed layout guarantees five choices even if the random generator is unhelpful.
+  const fallbackRows = ['BGPBYP', 'BBGPRG', 'RBBYRY', 'GPGPYY', 'BYRYYR'];
+  const typeForSymbol: Record<string, GemType> = { R: 'red', B: 'blue', G: 'green', Y: 'yellow', P: 'purple' };
+  return [...fallbackRows.join('')].map((symbol, index) =>
+    buildCell(typeForSymbol[symbol], tier, isMatchMastery, MIXED_FORMATS[index % MIXED_FORMATS.length]));
+};
+
+const createInitialBoard = (tier: number, isMatchMastery = true): BoardCell[] =>
+  ensurePlayableBoard(buildRandomBoard(tier, isMatchMastery), tier, isMatchMastery);
 
 const isAdjacent = (first: number, second: number) => {
   const rowA = Math.floor(first / GRID_COLS);
@@ -227,7 +266,7 @@ const BevelledGem: React.FC<{
           <div className="absolute left-1.5 top-1.5 h-2 w-2 rounded-full bg-white/54 blur-[1px]" />
         </>
       )}
-      <span className="absolute inset-0 flex items-center justify-center px-0.5 text-center text-[15px] font-black leading-none text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] sm:text-[16px]">
+      <span className="absolute inset-0 flex items-center justify-center px-0.5 text-center text-[16px] font-black leading-none text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] sm:text-[17px]">
         {label}
       </span>
 
@@ -265,7 +304,7 @@ const MatchGameShell: React.FC<{
 }) => {
   const flowQuestion = variantGameType === 'fraction_match';
   return (
-    <div className="relative h-full w-full select-none overflow-hidden font-sans text-white">
+    <div className={`relative h-full w-full select-none overflow-hidden font-sans text-white ${flowQuestion ? 'match-mastery-shell' : ''}`}>
       <GameplaySceneBackdrop gameType={variantGameType} className="opacity-45" />
 
       <div className="pointer-events-none absolute inset-0">
@@ -312,7 +351,7 @@ const MatchGameShell: React.FC<{
           </div>
         ) : null}
 
-        <div className={`relative min-h-0 flex-1 ${flowQuestion ? 'flex flex-col' : ''} ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.15rem)]' : ''}`}>
+        <div data-match-main className={`relative min-h-0 flex-1 ${flowQuestion ? 'flex flex-col' : ''} ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+5.15rem)]' : ''}`}>
            {useSharedTopHud ? (
              <div className={flowQuestion ? 'relative z-20 shrink-0 px-2 pt-1 sm:px-4' : 'absolute inset-x-2 top-2 z-20 sm:inset-x-4'}>
                <div className="mx-auto w-full max-w-[44rem]">
@@ -393,6 +432,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   isBoss: _isBoss = false,
   isPractice,
   practiceBriefing,
+  sessionEvents,
   variantGameType = 'fraction_match',
   onVictory,
   onGameOver,
@@ -409,8 +449,11 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
   const [fireActive, setFireActive] = useState(false);
   const [firePulse, setFirePulse] = useState(0);
+  const [successfulSwaps, setSuccessfulSwaps] = useState(0);
+  const [swapHint, setSwapHint] = useState<string | null>(null);
 
   const endedRef = useRef(false);
+  const successfulSwapsRef = useRef(0);
   const boardGridRef = useRef<HTMLDivElement | null>(null);
   const fireTimeoutRef = useRef<number | null>(null);
   const lastMatchAtRef = useRef<number | null>(null);
@@ -433,6 +476,9 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
     setIsProcessing(false);
     setTimeLeft(ROUND_SECONDS);
     setFireActive(false);
+    successfulSwapsRef.current = 0;
+    setSuccessfulSwaps(0);
+    setSwapHint(null);
     lastMatchAtRef.current = null;
     if (fireTimeoutRef.current !== null) window.clearTimeout(fireTimeoutRef.current);
     fireTimeoutRef.current = null;
@@ -457,8 +503,9 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       const style = getComputedStyle(space);
       const usableWidth = space.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
       const usableHeight = space.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
-      // Six square rows need more height than the five columns need width.
-      const nextWidth = Math.max(150, Math.floor(Math.min(390, window.innerWidth * 0.86, usableWidth, usableHeight * 0.82)));
+      // A wide six-column board keeps all 30 values large enough to tap on small phones.
+      const compactPortrait = window.innerWidth <= 360 && window.innerHeight >= 500;
+      const nextWidth = Math.max(compactPortrait ? 334 : 150, Math.floor(Math.min(390, window.innerWidth * 0.94, usableWidth, usableHeight * 1.08)));
       setBoardPixelWidth((previous) => previous === nextWidth ? previous : nextWidth);
     };
     const updateGemSize = () => {
@@ -505,14 +552,14 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
     if (endedRef.current) return;
     endedRef.current = true;
 
-    if (finalScore >= targetScore) {
+    if (finalScore >= targetScore && (!isMatchMastery || resolvedLevel !== 5 || successfulSwapsRef.current >= MIN_COLOURLESS_MATCHES)) {
       const stars = finalScore >= targetScore * 1.8 ? 3 : finalScore >= targetScore * 1.3 ? 2 : 1;
       onVictory(stars, finalScore);
       return;
     }
 
     onGameOver(finalScore);
-  }, [onGameOver, onVictory, targetScore]);
+  }, [isMatchMastery, onGameOver, onVictory, resolvedLevel, targetScore]);
 
   useEffect(() => {
     if (endedRef.current) return;
@@ -530,10 +577,10 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
 
   useEffect(() => {
     if (endedRef.current) return;
-    if (XP >= targetScore) {
+    if (XP >= targetScore && (!isMatchMastery || resolvedLevel !== 5 || successfulSwaps >= MIN_COLOURLESS_MATCHES)) {
       finalizeRound(XP);
     }
-  }, [finalizeRound, XP, targetScore]);
+  }, [finalizeRound, isMatchMastery, resolvedLevel, successfulSwaps, XP, targetScore]);
 
   const processBoard = useCallback(async (inputBoard: BoardCell[]) => {
     let workingBoard = [...inputBoard];
@@ -542,7 +589,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
     while (!endedRef.current) {
       const matches = findMatches(workingBoard);
       if (matches.length === 0) {
-        setBoard([...workingBoard]);
+        setBoard([...ensurePlayableBoard(workingBoard, resolvedLevel, isMatchMastery)]);
         setIsProcessing(false);
         return;
       }
@@ -599,12 +646,13 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       await sleep(220);
       if (endedRef.current) return;
     }
-  }, [makeRandomCell]);
+  }, [isMatchMastery, makeRandomCell, resolvedLevel]);
 
   const handleGemClick = useCallback(async (idx: number) => {
     if (endedRef.current || isProcessing) return;
 
     if (selectedIdx === null) {
+      setSwapHint(null);
       setSelectedIdx(idx);
       return;
     }
@@ -627,13 +675,25 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
     const matches = findMatches(swapped);
     if (matches.length === 0) {
       setSelectedIdx(null);
+      setSwapHint('No match. Line up 3 equivalent values and try again.');
+      emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
+        score: XP,
+        metadata: { firstTile: selectedIdx, secondTile: idx },
+      });
       return;
     }
 
     setBoard(swapped);
     setSelectedIdx(null);
+    setSwapHint(null);
+    successfulSwapsRef.current += 1;
+    setSuccessfulSwaps(successfulSwapsRef.current);
+    emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
+      score: XP + matches.length * 10,
+      metadata: { firstTile: selectedIdx, secondTile: idx, matchedTiles: matches.length },
+    });
     await processBoard(swapped);
-  }, [board, isProcessing, processBoard, selectedIdx]);
+  }, [board, isProcessing, processBoard, selectedIdx, sessionEvents, XP]);
 
   const completionProgress = Math.max(0, Math.min(100, (XP / Math.max(1, targetScore)) * 100));
 
@@ -643,9 +703,9 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       completionProgress={completionProgress}
       timeLeft={timeLeft}
       levelName={levelName}
-      questionText={isMatchMastery
+      questionText={swapHint ? <span role="status" aria-live="polite">{swapHint}</span> : isMatchMastery
         ? resolvedLevel === 5
-          ? 'No colour clues: match equal fractions, decimals and percentages.'
+          ? `No colour clues: match equal fractions, decimals & percentages. ${Math.min(successfulSwaps, MIN_COLOURLESS_MATCHES)}/${MIN_COLOURLESS_MATCHES} matches; fill XP.`
           : resolvedLevel >= 3
             ? 'Match equal fractions, decimals and percentages.'
             : 'Match equivalent fractions.'
@@ -663,7 +723,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
-      <div data-match-tier={resolvedLevel} className="relative box-border shrink-0 rounded-[2rem] border border-cyan-100/20 bg-[linear-gradient(180deg,rgba(4,16,44,0.9),rgba(3,10,28,0.96))] p-3 shadow-[0_18px_40px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:p-4" style={{ width: boardPixelWidth }}>
+      <div data-match-tier={resolvedLevel} className="match-mastery-board relative box-border shrink-0 rounded-[2rem] border border-cyan-100/20 bg-[linear-gradient(180deg,rgba(4,16,44,0.9),rgba(3,10,28,0.96))] p-3 shadow-[0_18px_40px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:p-4" style={{ width: boardPixelWidth }}>
         <div
           className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-[0.24]"
           style={{
@@ -680,8 +740,8 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
         />
         <div
           ref={boardGridRef}
-          className="relative z-10 grid w-full grid-cols-5"
-          style={{ gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', gap: '3px' }}
+          className="relative z-10 grid w-full"
+          style={{ gridTemplateColumns: `repeat(${GRID_COLS}, minmax(0, 1fr))`, gap: '3px' }}
         >
           {board.map((cell, idx) => (
             <div
@@ -694,7 +754,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
                     key={`${idx}-${cell.type}-${cell.label}`}
                     type={cell.type}
                     label={cell.label}
-                    size={Math.max(16, Math.min(gemSize - 2, 69))}
+                    size={Math.max(16, Math.min(gemSize, 69))}
                     isSelected={selectedIdx === idx}
                     colourless={isMatchMastery && resolvedLevel === 5}
                     onClick={() => {

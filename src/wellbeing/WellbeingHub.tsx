@@ -12,21 +12,21 @@ interface WellbeingHubProps {
 }
 
 const WellbeingHub: React.FC<WellbeingHubProps> = ({ activities, calmTokens, onSelect, onExit }) => (
-  <WellbeingShell title="Calm Grove" subtitle="Choose a small pause. Explore at your own pace." onExit={onExit}>
+  <WellbeingShell title="Calm Grove" subtitle="Choose a reset: breathe, notice, focus or reframe a thought. Take it at your own pace." onExit={onExit}>
     <div className="wellbeing-hub-scroll" data-wellbeing-scroll-region="hub" data-calm-tokens={calmTokens}>
       <div className="wellbeing-hub-grid">
-        {activities.map((activity) => (
+        {activities.map((activity, index) => (
           <button key={activity.id} type="button" onClick={() => onSelect(activity.id)} className="wellbeing-destination" data-button-skin="none" data-wellbeing-select={activity.id}>
             <div className="wellbeing-destination-art"><img src={WELLBEING_SCENES[activity.id]} alt="" draggable={false} /><span>{activity.durationEstimate}</span></div>
             <div className="wellbeing-destination-copy">
-              <span className="wellbeing-eyebrow">{activity.type}</span>
+              <span className="wellbeing-eyebrow"><span className="wellbeing-destination-index">{String(index + 1).padStart(2, '0')}</span>{activity.type}</span>
               <h2>{activity.title}<ArrowUpRight size={18} aria-hidden="true" /></h2>
               <p>{activity.description}</p>
             </div>
           </button>
         ))}
       </div>
-      <p className="wellbeing-hub-note"><Leaf size={17} aria-hidden="true" />Leaf tokens collected: {calmTokens}<span>Every pause is yours to choose.</span></p>
+      <p className="wellbeing-hub-note"><Leaf size={17} aria-hidden="true" />Leaf tokens collected: {calmTokens}<span>You can leave or change activity whenever you like.</span></p>
     </div>
   </WellbeingShell>
 );

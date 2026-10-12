@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
-import { GAME_HUD_MUTE_EVENT, GAME_HUD_MUTE_SYNC_EVENT } from '../gameHudEvents';
-import { GAME_AUDIO_STORAGE_KEY } from '../gameHudEvents';
+import { configureGameMusic, unlockGameAudioFromGesture } from '../audio/gameAudio';
+import { GAME_AUDIO_STORAGE_KEY, GAME_HUD_MUSIC_EVENT, GAME_HUD_MUSIC_SYNC_EVENT, GAME_HUD_MUTE_EVENT, GAME_HUD_MUTE_SYNC_EVENT, GAME_MUSIC_STORAGE_KEY } from '../gameHudEvents';
 import { GameScreen, LevelData } from '../types';
 import { LEVEL_TIMERS_DISABLED } from './testingFlags';
 import { isBossEncounterGameType } from '../games/bossEncounterTypes';
@@ -10,6 +10,12 @@ export const GLOBAL_MINIGAME_LIVES = 3;
 export const getSessionDurationSeconds = (level: LevelData | null) => {
   if (isBossEncounterGameType(level?.gameType)) return level?.gameType === 'crystal_core' ? 1800 : 2400;
   if (level?.gameType === 'prime_pop' && !level.isPractice) return 60;
+  if (level?.blueprintKey === 'maths_vs_zombies') return 60;
+  // Multi-step rounds need enough time for each in-game decision.
+  const tier = level?.difficultyTier ?? level?.miniGameLevel ?? 1;
+  if (!level?.isPractice && level?.blueprintKey === 'order_ops_arena') return [120, 135, 150, 165, 180][Math.max(0, Math.min(4, tier - 1))];
+  if (!level?.isPractice && level?.blueprintKey === 'multiplication_mine' && tier >= 4) return tier === 5 ? 180 : 135;
+  if (!level?.isPractice && level?.blueprintKey === 'remainder_run' && tier === 5) return 180;
   return GLOBAL_MINIGAME_HUD_DURATION_SECONDS;
 };
 
@@ -47,6 +53,10 @@ export const useGameplaySession = ({
   lifeDepleted.current = onLifeDepleted;
   timeDepleted.current = onTimeDepleted;
   const [isMuted, setIsMuted] = useState(() => localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true');
+  const [isMusicEnabled, setIsMusicEnabled] = useState(() => {
+    const saved = localStorage.getItem(GAME_MUSIC_STORAGE_KEY);
+    return saved === null ? !window.matchMedia('(prefers-reduced-motion: reduce)').matches : saved === 'true';
+  });
   const isUntimedGameplay =
     screen === 'gameplay'
     && (
@@ -100,13 +110,13 @@ export const useGameplaySession = ({
   }, [globalMiniGameLives, screen]);
 
   useEffect(() => {
-    if (screen !== 'gameplay' || isUntimedGameplay || LEVEL_TIMERS_DISABLED || globalMiniGameHudTimeLeft > 0 || timeLock.current) return;
+    if (screen !== 'gameplay' || isUntimedGameplay || LEVEL_TIMERS_DISABLED || selectedLevel?.blueprintKey === 'maths_vs_zombies' || globalMiniGameHudTimeLeft > 0 || timeLock.current) return;
     timeLock.current = true;
     const timeout = window.setTimeout(() => {
       timeDepleted.current();
     }, 140);
     return () => window.clearTimeout(timeout);
-  }, [globalMiniGameHudTimeLeft, isUntimedGameplay, screen]);
+  }, [globalMiniGameHudTimeLeft, isUntimedGameplay, screen, selectedLevel?.blueprintKey]);
 
   useEffect(() => {
     localStorage.setItem(GAME_AUDIO_STORAGE_KEY, String(isMuted));
@@ -115,6 +125,30 @@ export const useGameplaySession = ({
       media.muted = isMuted;
     });
   }, [isMuted, screen]);
+
+  useEffect(() => {
+    const unlockOnPointer = () => unlockGameAudioFromGesture();
+    const unlockOnKey = (event: KeyboardEvent) => {
+      if (event.key === 'Enter' || event.key === ' ') unlockGameAudioFromGesture();
+    };
+    document.addEventListener('pointerdown', unlockOnPointer, { capture: true });
+    document.addEventListener('keydown', unlockOnKey, { capture: true });
+    return () => {
+      document.removeEventListener('pointerdown', unlockOnPointer, { capture: true });
+      document.removeEventListener('keydown', unlockOnKey, { capture: true });
+    };
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(GAME_MUSIC_STORAGE_KEY, String(isMusicEnabled));
+    window.dispatchEvent(new CustomEvent(GAME_HUD_MUSIC_SYNC_EVENT, { detail: { enabled: isMusicEnabled } }));
+    const active = !isMuted && isMusicEnabled && (screen === 'world_map' || screen === 'island_levels' || (screen === 'gameplay' && !paused));
+    const scene = screen === 'gameplay' ? 'gameplay' : 'map';
+    const update = () => configureGameMusic(active && !document.hidden, scene);
+    update();
+    document.addEventListener('visibilitychange', update);
+    return () => document.removeEventListener('visibilitychange', update);
+  }, [isMuted, isMusicEnabled, paused, screen]);
 
   useEffect(() => {
     const handleMuteChange = (event: Event) => {
@@ -126,6 +160,15 @@ export const useGameplaySession = ({
     return () => {
       window.removeEventListener(GAME_HUD_MUTE_EVENT, handleMuteChange as EventListener);
     };
+  }, []);
+
+  useEffect(() => {
+    const handleMusicChange = (event: Event) => {
+      const enabled = (event as CustomEvent<{ enabled?: boolean }>).detail?.enabled;
+      setIsMusicEnabled((previous) => typeof enabled === 'boolean' ? enabled : !previous);
+    };
+    window.addEventListener(GAME_HUD_MUSIC_EVENT, handleMusicChange);
+    return () => window.removeEventListener(GAME_HUD_MUSIC_EVENT, handleMusicChange);
   }, []);
 
   return {

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import {
   Search,
   FileText,
@@ -13,6 +14,7 @@ import {
 } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import '../components/game-ui/arcade-amendments.css';
+import './data-detective.css';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import {
   BarChart,
@@ -47,10 +49,11 @@ interface Suspect {
   portrait?: string;
 }
 
-interface DataDetectiveGameProps {
+interface DataDetectiveGameProps extends MiniGameShellContractProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
+  isPractice?: boolean;
   onVictory: (stars: number, XP: number) => void;
   onGameOver: (XP: number) => void;
   onBack: () => void;
@@ -102,6 +105,8 @@ const scoreToStars = (XP: number) => {
 const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
   levelId,
   useSharedTopHud = false,
+  isPractice = false,
+  sessionEvents,
   onVictory,
   onGameOver,
   onBack,
@@ -110,6 +115,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
   const reducedMotion = useReducedMotion();
   const [pinnedEvidence, setPinnedEvidence] = useState<string | null>(null);
   const difficulty = Math.max(1, Math.min(5, levelId));
+  const caseLimit = isPractice ? 3 : MAX_CASES;
   const [XP, setScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [gameState, setGameState] = useState<'playing' | 'success' | 'complete'>('playing');
@@ -219,24 +225,28 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
 
   const handleAccuse = (id: number) => {
     if (gameState !== 'playing') return;
+    setSelectedSuspectId(null);
     if (id === guiltyId) {
+      emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { metadata: { case: level } });
       setFeedback({ type: 'success', message: 'CASE CLOSED! You found the guilty monster.' });
       setGameState('success');
       setScore(prev => prev + 140);
       return;
     }
 
-    setFeedback({ type: 'error', message: 'WRONG SUSPECT! You lose a life.' });
+    emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { metadata: { case: level } });
+    setFeedback({ type: 'error', message: isPractice ? 'Check each item total against the chart, then try another suspect.' : 'WRONG SUSPECT! You lose a life.' });
     setIncorrectSuspectIds((previous) => (previous.includes(id) ? previous : [...previous, id]));
-    setSelectedSuspectId(id);
     setScore(prev => Math.max(0, prev - 20));
-    setLives((previous) => {
-      const nextLives = Math.max(0, previous - 1);
-      if (nextLives === 0) {
-        window.setTimeout(() => onGameOver(XP), 450);
-      }
-      return nextLives;
-    });
+    if (!isPractice) {
+      setLives((previous) => {
+        const nextLives = Math.max(0, previous - 1);
+        if (nextLives === 0) {
+          window.setTimeout(() => onGameOver(XP), 450);
+        }
+        return nextLives;
+      });
+    }
   };
 
   const selectedSuspect = selectedSuspectId !== null
@@ -244,7 +254,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
     : null;
 
   const nextCase = () => {
-    if (level < MAX_CASES) {
+    if (level < caseLimit) {
       setLevel(prev => prev + 1);
       setGameState('playing');
       generateCase();
@@ -252,7 +262,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
     }
 
     setGameState('complete');
-    onVictory(scoreToStars(XP), XP);
+    onVictory(isPractice ? 3 : scoreToStars(XP), XP);
   };
 
   return (
@@ -295,8 +305,8 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
 
               <div className="flex items-center gap-6">
                 <div className="flex flex-col items-end">
-                  <span className="text-[10px] uppercase text-stone-500">Lives</span>
-                  <span className="text-xs font-black text-rose-300">{lives}</span>
+                  <span className="text-[10px] uppercase text-stone-500">{isPractice ? 'Practice' : 'Lives'}</span>
+                  <span className="text-xs font-black text-rose-300">{isPractice ? 'No limit' : lives}</span>
                 </div>
                 <div className="flex flex-col items-end">
                   <span className="text-[10px] uppercase text-stone-500">Reputation</span>
@@ -305,7 +315,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                 <div className="h-8 w-[1px] bg-stone-800" />
                 <div className="flex flex-col items-end">
                   <span className="text-[10px] uppercase text-stone-500">Case File</span>
-                  <span className="text-xs font-bold text-white">{level} / {MAX_CASES}</span>
+                  <span className="text-xs font-bold text-white">{level} / {caseLimit}</span>
                 </div>
               </div>
             </header>
@@ -314,7 +324,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             className="z-30 mt-0 w-full max-w-[620px] rounded-[1.2rem] px-3 py-2 text-center shadow-[0_10px_20px_rgba(2,6,23,0.38)] max-[480px]:px-2 max-[480px]:py-1.25"
             titleClassName="text-[9px] tracking-[0.26em] text-cyan-50/85"
             title="Data Detective"
-            subtitle="Pin clues. Compare stashes."
+            subtitle="Compare the chart with each stash."
             style={{ position: 'relative', top: 0, transform: 'none' }}
           >
             Find the matching suspect.
@@ -328,7 +338,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                 <div className="flex items-center gap-2 text-amber-500">
                   <FileText className="h-5 w-5" />
                   <h2 className="detective-evidence-heading font-black">
-                    {`Case ${level}/${MAX_CASES} · Evidence board`}
+                    {`Case ${level}/${caseLimit} · Evidence board`}
                   </h2>
                 </div>
                 <div className="flex items-center gap-2 rounded-full border border-stone-700 bg-stone-800 px-3 py-1">
@@ -425,6 +435,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                   </div>
 
                   <div className="detective-evidence-pin-dock mt-auto pt-2">
+                    <div className="detective-evidence-pin-title">Focus a clue</div>
                     <div className="detective-evidence-pins" aria-label="Pin evidence to focus the chart">
                       {currentCase.map(item => (
                         <button key={item.name} type="button" data-button-skin="none" className="detective-evidence-pin" aria-pressed={pinnedEvidence === item.name} onClick={() => setPinnedEvidence((current) => current === item.name ? null : item.name)}>

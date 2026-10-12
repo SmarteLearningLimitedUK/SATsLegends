@@ -1,4 +1,4 @@
-// Enforce the FTP header policy in a browser against the compiled site.
+// Enforce host security-header parity in a browser against the compiled site.
 // This checks browser behavior; the live host must separately verify its headers.
 import { readFile } from 'node:fs/promises';
 import assert from 'node:assert/strict';
@@ -7,9 +7,16 @@ import { expect } from '@playwright/test';
 const base = process.env.FAMILY_QA_URL || 'http://127.0.0.1:4173';
 const apache = await readFile('public/.htaccess', 'utf8');
 const nginx = await readFile('hosting/nginx.conf.example', 'utf8');
+const cloudflare = await readFile('public/_headers', 'utf8');
+const vercel = JSON.parse(await readFile('vercel.json', 'utf8'));
 const headers = Object.fromEntries([...apache.matchAll(/Header always set ([\w-]+) "([^"]+)"/g)].map(match => [match[1].toLowerCase(), match[2]]));
+const cloudflareHeaders = Object.fromEntries([...cloudflare.matchAll(/^\s{2}([\w-]+):\s*(.+)$/gm)].map(match => [match[1].toLowerCase(), match[2]]));
+const vercelHeaders = Object.fromEntries((vercel.headers?.find(rule => rule.source === '/(.*)')?.headers ?? [])
+  .map(header => [header.key.toLowerCase(), header.value]));
 for (const [name, value] of Object.entries(headers)) {
   assert.ok(nginx.toLowerCase().includes(`add_header ${name} "${value.toLowerCase()}" always;`), `${name} must match in both host configurations`);
+  assert.equal(cloudflareHeaders[name], value, `${name} must match the Cloudflare Pages policy`);
+  assert.equal(vercelHeaders[name], value, `${name} must match the Vercel policy`);
 }
 const browser = await chromium.launch();
 try {
@@ -42,5 +49,5 @@ try {
   await expect.poll(() => page.evaluate(() => window.policyViolations.length)).toBeGreaterThan(0);
   assert.equal(await page.evaluate(() => window.unwantedInlineScriptRan), undefined);
   assert.ok((await page.evaluate(() => window.policyViolations)).some(event => event.blocked === 'inline'));
-  console.log('PASS FTP policies match, compiled routes load under CSP, and injected inline script is blocked');
+  console.log('PASS Apache, Nginx, Cloudflare and Vercel policies match; compiled routes load under CSP and injected inline script is blocked');
 } finally { await browser.close(); }

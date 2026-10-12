@@ -20,6 +20,7 @@
     "verify:critical-game-viewports": "node scripts/verify-critical-game-viewports.mjs",
     "verify:lexcoria": "node scripts/verify-lexcoria-readiness.mjs",
     "verify:family-ui": "node scripts/verify-family-website.mjs",
+    "verify:wellbeing": "node scripts/verify-wellbeing-activities.mjs",
     "verify:family-auth": "node scripts/verify-family-auth-flow.mjs",
     "verify:return-path": "tsx scripts/verify-return-path.ts",
     "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",

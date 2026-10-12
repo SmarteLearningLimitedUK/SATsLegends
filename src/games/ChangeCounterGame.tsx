@@ -42,11 +42,9 @@ interface ChangeCounterGameProps extends MiniGameShellContractProps {
 
 interface ChangeQuestion {
   id: string;
-  kind: 'fluency' | 'reasoning';
   item: string;
   costPence: number;
   paidPence: number;
-  options: string[];
   correct: string;
   lines: ReceiptLine[];
   changePence: number;
@@ -89,34 +87,16 @@ const getDifficultyProfile = (levelId: number) => {
   if (levelId <= 1) return { lineCount: 1, minQuantity: 1, maxQuantity: 1, priceStep: 10, maxPrice: 100, changeValues: [10, 20, 30, 50] };
   if (levelId === 2) return { lineCount: 1, minQuantity: 1, maxQuantity: 1, priceStep: 5, maxPrice: 500, changeValues: [5, 10, 20, 25, 50, 75, 100] };
   if (levelId === 3) return { lineCount: 2, minQuantity: 1, maxQuantity: 2, priceStep: 5, maxPrice: 800, changeValues: [10, 15, 25, 35, 50, 75, 100] };
-  if (levelId === 4) return { lineCount: 3, minQuantity: 1, maxQuantity: 3, priceStep: 1, maxPrice: 1500, changeValues: [15, 25, 35, 45, 55, 65, 90, 110] };
-  return { lineCount: 4, minQuantity: 2, maxQuantity: 4, priceStep: 1, maxPrice: 1500, changeValues: [25, 35, 45, 55, 65, 75, 90, 110, 130, 150] };
+  if (levelId === 4) return { lineCount: 3, minQuantity: 1, maxQuantity: 3, priceStep: 1, maxPrice: 1500, changeValues: [17, 28, 46, 59, 73, 91, 112] };
+  return { lineCount: 4, minQuantity: 2, maxQuantity: 4, priceStep: 1, maxPrice: 1500, changeValues: [37, 49, 68, 83, 97, 114, 137, 158] };
 };
 
-const buildAnswerOptions = (correctPence: number, levelId: number) => {
-  const profile = getDifficultyProfile(levelId);
-  const offsets = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
-  const candidates = new Set<number>([correctPence]);
+const coinOptionsForLevel = (levelId: number) => levelId <= 1
+  ? [50, 20, 10]
+  : levelId <= 3 ? [100, 50, 20, 10, 5]
+    : [100, 50, 20, 10, 5, 2, 1];
 
-  profile.changeValues.forEach((value) => {
-    if (candidates.size < 4) {
-      candidates.add(value);
-    }
-  });
-
-  for (const offset of offsets) {
-    if (candidates.size >= 4) break;
-    if (correctPence - offset > 0) candidates.add(correctPence - offset);
-    if (candidates.size >= 4) break;
-    candidates.add(correctPence + offset);
-  }
-
-  while (candidates.size < 4) {
-    candidates.add(correctPence + (candidates.size * 10));
-  }
-
-  return shuffle(Array.from(candidates)).map(formatMoney);
-};
+const coinName = (pence: number) => pence === 100 ? 'one pound' : `${pence} pence`;
 
 const buildReceiptQuestion = (levelId: number, roundIndex: number, order: MarketItem[]): ChangeQuestion => {
   const profile = getDifficultyProfile(levelId);
@@ -150,11 +130,9 @@ const buildReceiptQuestion = (levelId: number, roundIndex: number, order: Market
 
   return {
     id: seeds[0].id,
-    kind: 'reasoning',
     item: itemLabel,
     costPence: totalCostPence,
     paidPence,
-    options: buildAnswerOptions(changePence, levelId),
     correct: formatMoney(changePence),
     lines,
     changePence,
@@ -212,7 +190,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
   const [localLives, setLives] = useState(MAX_LIVES);
   const [score, setScore] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selectedCoins, setSelectedCoins] = useState<number[]>([]);
   const [feedbackTone, setFeedbackTone] = useState<FeedbackTone>('neutral');
   const [feedbackText, setFeedbackText] = useState('');
   const [locked, setLocked] = useState(false);
@@ -231,6 +209,8 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
   const sharedLivesBlocked = usesSharedLives && lives <= 0;
   const sharedLivesBlockedRef = useRef(sharedLivesBlocked);
   sharedLivesBlockedRef.current = sharedLivesBlocked;
+  const selectedTotal = selectedCoins.reduce((sum, coin) => sum + coin, 0);
+  const coinOptions = coinOptionsForLevel(resolvedLevel);
 
   const clearTimers = () => {
     timersRef.current.forEach((timerId) => window.clearTimeout(timerId));
@@ -279,7 +259,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
     setLives(MAX_LIVES);
     setScore(0);
     setCorrectCount(0);
-    setSelected(null);
+    setSelectedCoins([]);
     setFeedbackTone('neutral');
     setFeedbackText('');
     setLocked(false);
@@ -348,7 +328,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
       if (nextOrder !== questionOrder) setQuestionOrder(nextOrder);
       setRoundIndex(nextRound);
       setQuestion(resolveQuestion(resolvedLevel, nextRound, nextOrder));
-      setSelected(null);
+      setSelectedCoins([]);
       setFeedbackTone('neutral');
       setFeedbackText('');
       setLocked(false);
@@ -356,13 +336,41 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
     }, 520);
   }, [questionOrder, roundIndex, resolvedLevel, sessionEvents, reducedMotion]);
 
-  const handleAnswer = (option: string) => {
+  const canEditTill = isPresent && !locked && !answerLockRef.current && !runEndedRef.current && !sharedLivesBlocked;
+
+  const addCoin = (coin: number) => {
+    if (!canEditTill) return;
+    setSelectedCoins((current) => [...current, coin]);
+    setFeedbackTone('neutral');
+    setFeedbackText('');
+    triggerHaptic('tap');
+  };
+
+  const undoCoin = () => {
+    if (!canEditTill || selectedCoins.length === 0) return;
+    setSelectedCoins((current) => current.slice(0, -1));
+    triggerHaptic('selection');
+  };
+
+  const removeCoin = (coinIndex: number) => {
+    if (!canEditTill) return;
+    setSelectedCoins((current) => current.filter((_, index) => index !== coinIndex));
+    triggerHaptic('selection');
+  };
+
+  const resetCoins = () => {
+    if (!canEditTill || selectedCoins.length === 0) return;
+    setSelectedCoins([]);
+    triggerHaptic('selection');
+  };
+
+  const handOverChange = () => {
     if (!presentRef.current || locked || answerLockRef.current || runEndedRef.current || sharedLivesBlockedRef.current) return;
+    if (selectedCoins.length === 0) return;
     answerLockRef.current = true;
-    setSelected(option);
     setLocked(true);
 
-    if (option === question.correct) {
+    if (selectedTotal === question.changePence) {
       const gained = 150 + resolvedLevel * 14;
       const updatedScore = score + gained;
       const nextCorrect = correctCount + 1;
@@ -380,7 +388,8 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
     const nextLives = lives - 1;
     setLives(nextLives);
     setFeedbackTone('warning');
-    setFeedbackText(`The till says nope. Change due: ${question.correct}. Try again.`);
+    const difference = Math.abs(question.changePence - selectedTotal);
+    setFeedbackText(`The till rattles: ${formatMoney(difference)} ${selectedTotal > question.changePence ? 'too much' : 'short'}. Adjust the coins and try again.`);
     triggerHaptic('error');
     emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { score, metadata: { correctAnswer: question.correct } });
 
@@ -390,9 +399,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
     }
 
     queueTimeout(() => {
-      setSelected(null);
       setFeedbackTone('neutral');
-      setFeedbackText('');
       setLocked(false);
       answerLockRef.current = false;
     }, 520);
@@ -407,15 +414,15 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
     <GameScreenShell className="market-game overflow-hidden" backgroundImage={changeCounterBackground} backgroundOpacity={.5}>
       <PracticeIntroPopup open={showPracticeIntro} title="Monster Market"
         body="The till has been slimed. Check every item and quantity.
-Work out the exact change to keep the trade moving."
+Tap coins to make the change. Use Undo or Clear if you need to, then hand it over."
         briefing={practiceBriefing} onAction={() => setShowPracticeIntro(false)} />
       <div className={`market-layout${useSharedTopHud ? ' has-shared-hud' : ''}`}
         data-market-game data-market-state={marketState} data-market-round={roundIndex + 1} data-market-present={isPresent}
         data-market-lives={lives} data-market-correct={correctCount} data-market-score={score}>
         <PuzzleStage className="market-stack">
-          <GameQuestionCard title="Till check" subtitle="Check every quantity on the receipt."
+          <GameQuestionCard title="Till check" subtitle="Read receipt · tap coins · hand over."
             style={{ position: 'relative', top: 0, transform: 'none', width: '100%' }}>
-            The customer paid <strong>{formatMoney(question.paidPence)}</strong>. How much change is due?
+            Paid <strong>{formatMoney(question.paidPence)}</strong>. Give the exact change.
           </GameQuestionCard>
 
           <section className={`market-scene${lives <= 1 ? ' is-last-chance' : ''}`} data-market-playfield>
@@ -426,34 +433,52 @@ Work out the exact change to keep the trade moving."
               style={{ '--receipt-count': question.lines.length, '--receipt-short-rows': Math.ceil(question.lines.length / 2) } as React.CSSProperties}
               initial={reducedMotion ? false : { y: 8, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
               transition={{ duration: reducedMotion ? 0 : .18 }}>
-              <div className="market-receipt-heading"><span>Trade receipt</span><strong>{String(roundIndex + 1).padStart(2, '0')} / {TOTAL_ROUNDS}</strong></div>
-              <div className="market-receipt-lines" style={{ gridTemplateRows: `repeat(${question.lines.length}, minmax(0, 1fr))` }}>
+              <div className="market-receipt-heading"><span><span className="market-receipt-trade">Trade </span>receipt</span><strong>{String(roundIndex + 1).padStart(2, '0')} / {TOTAL_ROUNDS}</strong></div>
+              <div className="market-receipt-lines">
                 {question.lines.map((line) => <div key={line.id} className="market-receipt-line" data-market-line>
                   <img src={line.image} alt={titleCase(line.item)} draggable={false} />
-                  <div><strong>{line.quantity}× {titleCase(line.item)}</strong><small>{formatMoney(line.unitPricePence)} each</small></div>
+                  <div><strong>{line.quantity}× {titleCase(line.item)}</strong><small>{formatMoney(line.unitPricePence)} <span>each</span></small></div>
                   <b>{formatMoney(line.lineTotalPence)}</b>
                 </div>)}
               </div>
               <div className="market-receipt-totals">
-                <div><span>Total cost</span><strong data-market-cost>{formatMoney(question.costPence)}</strong></div>
-                <div><span>Customer paid</span><strong data-market-paid>{formatMoney(question.paidPence)}</strong></div>
+                <div><span>Total</span><strong data-market-cost>{formatMoney(question.costPence)}</strong></div>
+                <div><span>Paid</span><strong data-market-paid>{formatMoney(question.paidPence)}</strong></div>
               </div>
               <div className={`market-receipt-stamp${marketState === 'correct' ? ' is-paid' : ''}`} aria-hidden="true">
                 {marketState === 'correct' ? 'PAID. MOSTLY SLIME-FREE.' : `${TOTAL_ROUNDS - roundIndex} trades to finish`}
               </div>
             </motion.div>
+            <div className="market-till" data-market-till>
+              <div className="market-till-header"><span>Tray</span><strong data-market-till-total aria-live="polite" aria-atomic="true">{formatMoney(selectedTotal)}</strong></div>
+              <div className="market-coin-tray" aria-label="Coins in change tray">
+                {selectedCoins.length === 0 ? <span className="market-empty-tray">Tap coins below</span> : <>
+                  {selectedCoins.length > 5 && <span className="market-more-coins">+{selectedCoins.length - 5} coins</span>}
+                  {selectedCoins.slice(-5).map((coin, index) => {
+                    const coinIndex = selectedCoins.length - Math.min(5, selectedCoins.length) + index;
+                    return <motion.button type="button" data-button-skin="none" className="market-tray-coin" key={`${roundIndex}-${coinIndex}-${coin}`}
+                      data-market-selected-coin={coin} aria-label={`Remove ${coinName(coin)} coin from tray`}
+                      onClick={() => removeCoin(coinIndex)} disabled={!canEditTill}
+                      initial={reducedMotion ? false : { y: -15, opacity: 0, rotate: -16 }} animate={{ y: 0, opacity: 1, rotate: 0 }} transition={{ duration: .2 }}>{formatMoney(coin)}</motion.button>;
+                  })}
+                </>}
+              </div>
+              <div className="market-coin-buttons" role="group" aria-label="Add coins to the change tray">
+                {coinOptions.map((coin) => <motion.button key={coin} type="button" data-button-skin="none" data-market-coin={coin}
+                  aria-label={`Add ${coinName(coin)} coin`} whileTap={reducedMotion ? undefined : { scale: .9 }}
+                  onClick={() => addCoin(coin)} disabled={!canEditTill} className="market-coin-button">
+                  {formatMoney(coin)}
+                </motion.button>)}
+              </div>
+              <div className="market-till-actions">
+                <button type="button" data-button-skin="none" data-market-undo aria-label="Undo last coin" onClick={undoCoin} disabled={!canEditTill || selectedCoins.length === 0}>Undo</button>
+                <button type="button" data-button-skin="none" data-market-clear onClick={resetCoins} disabled={!canEditTill || selectedCoins.length === 0}>Clear</button>
+                <button type="button" data-button-skin="none" data-market-submit aria-label="Hand over exact change" onClick={handOverChange} disabled={!canEditTill || selectedCoins.length === 0}>Give</button>
+              </div>
+            </div>
           </section>
-
-          <div className="market-answers answer-choice-surface" role="group" aria-label="Exact change">
-            {question.options.map((option) => <motion.button key={`${question.id}-${option}`} type="button"
-              data-market-answer={option} whileTap={reducedMotion ? undefined : { scale: .97 }}
-              onClick={() => handleAnswer(option)} disabled={!isPresent || locked || sharedLivesBlocked}
-              className={selected === option ? option === question.correct ? 'ui-button-success' : 'ui-button-primary' : 'ui-button-secondary'}>
-              {option}
-            </motion.button>)}
-          </div>
           <div className={`market-feedback${marketState === 'incorrect' ? ' is-error' : ''}`} role="status" aria-live="polite">
-            {feedbackText || (lives <= 1 ? 'One chance left. Read the receipt, then pay the exact change.' : 'Keep the queue moving. Pay the exact change.')}
+            {feedbackText || (lives <= 1 ? 'One chance left. Check the receipt and adjust the coins.' : 'Tap coins, then Give the change.')}
           </div>
         </PuzzleStage>
       </div>

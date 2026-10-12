@@ -205,7 +205,7 @@
   flex: 0 0 auto; width: clamp(40px, 10vw, 54px); height: clamp(40px, 10vw, 54px);
   border: 2px solid #fde161; border-radius: 12px; background: #2d1265; overflow: hidden;
 }
-.legend-hud-avatar img { height: 100%; width: 100%; object-fit: contain; }
+.legend-hud-avatar img { height: 100%; width: 100%; object-fit: contain; transform: scale(1.9); }
 .legend-hud-mission { min-width: 0; flex: 1; }
 .legend-hud-label { color: #d4c5ff; font-size: var(--legend-label-size); letter-spacing: .035em; text-transform: uppercase; }
 .legend-hud-title { color: #f0eef7; font-size: var(--legend-body-size); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

@@ -212,6 +212,8 @@ export interface PlayerData {
   completedLevels: Record<number, number[]>; // islandId -> levelIds
   levelStars: Record<string, number>; // islandId-levelId -> best stars
   dailyQuests: DailyQuest[];
+  /** Local calendar day for the current set of daily quests. */
+  dailyQuestDate?: string;
   customSpriteUrl?: string;
   achievements: string[];
   calmTokens?: number;

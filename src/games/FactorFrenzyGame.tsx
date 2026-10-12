@@ -7,6 +7,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
+import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import factorFrenzyBackground from '../assets/maps/premium/factor-frenzy.webp';
 import factorEnemy from '../assets/reskin/factor-sentinel.webp';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
@@ -32,7 +33,7 @@ interface FrenzyLevel {
   timeLimit: number;
 }
 
-interface FactorFrenzyGameProps {
+interface FactorFrenzyGameProps extends MiniGameShellContractProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
@@ -108,6 +109,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   onVictory,
   onGameOver: _onGameOver,
   onBack: _onBack,
+  sessionEvents,
 }) => {
   const difficultyTier = Math.max(1, Math.min(5, levelId));
   const levelConfig = FRENZY_LEVELS[difficultyTier - 1];
@@ -121,6 +123,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   const timerRef = useRef<number | null>(null);
   const advanceRef = useRef<number | null>(null);
   const endedRef = useRef(false);
+  const reportedProblemRef = useRef<number | null>(null);
 
   const clearTimer = () => {
     if (timerRef.current !== null) {
@@ -238,6 +241,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
   const startGame = () => {
     endedRef.current = false;
+    reportedProblemRef.current = null;
     const firstProblem = generateProblem(difficultyTier);
     problemStartRef.current = Date.now();
     setSuccessTone('success');
@@ -276,6 +280,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
     timerRef.current = window.setInterval(() => {
       setState((previous) => {
+        if (previous.status !== 'playing') return previous;
         if (previous.timeLeft <= 1) {
           return {
             ...previous,
@@ -294,6 +299,17 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     return () => clearTimer();
   }, [state.status]);
 
+  useEffect(() => {
+    const problem = state.currentProblem;
+    if (state.status !== 'incorrect' || state.timeLeft !== 0 || !problem || reportedProblemRef.current === problem.id) return;
+    reportedProblemRef.current = problem.id;
+    emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
+      reason: 'time_expired',
+      score: state.XP,
+      metadata: { problemId: problem.id, type: problem.type, correctAnswers: problem.correctAnswers },
+    });
+  }, [sessionEvents, state.currentProblem, state.status, state.timeLeft, state.XP]);
+
   const toggleOption = (value: number) => {
     if (state.status !== 'playing') return;
 
@@ -305,11 +321,22 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   };
 
   const checkAnswer = () => {
-    if (!state.currentProblem || state.status !== 'playing') return;
+    if (!state.currentProblem || state.status !== 'playing' || reportedProblemRef.current === state.currentProblem.id) return;
 
     const correct = [...state.currentProblem.correctAnswers].sort((a, b) => a - b);
     const selected = [...selectedOptions].sort((a, b) => a - b);
     const isCorrect = correct.length === selected.length && correct.every((value, index) => value === selected[index]);
+    reportedProblemRef.current = state.currentProblem.id;
+    emitMiniGameSessionEvent(sessionEvents, isCorrect ? 'correct_answer' : 'incorrect_answer', {
+      score: state.XP,
+      metadata: {
+        problemId: state.currentProblem.id,
+        type: state.currentProblem.type,
+        selectedAnswers: selected,
+        correctAnswers: correct,
+        timeLeft: state.timeLeft,
+      },
+    });
 
     if (isCorrect) {
       const timeBonus = state.timeLeft * 10;
@@ -348,6 +375,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
   const nextProblem = () => {
     const problem = generateProblem(difficultyTier);
+    reportedProblemRef.current = null;
     problemStartRef.current = Date.now();
     setSuccessTone('success');
     setSuccessMessage('Direct hit!');
@@ -366,7 +394,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     clearAdvanceTimer();
     if (state.status !== 'correct' && state.status !== 'incorrect') return;
 
-    const delay = state.status === 'correct' ? 620 : 880;
+    const delay = state.status === 'correct' ? 620 : 1500;
     advanceRef.current = window.setTimeout(() => {
       nextProblem();
     }, delay);
@@ -509,8 +537,10 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                           {selectedOptions.length === 0 ? 'Choose a factor' : 'Strike'}
                         </button>
                       ) : (
-                        <div className="inline-flex w-full max-w-sm items-center justify-center rounded-2xl border border-cyan-100/45 bg-[#0d2a5a]/70 px-4 py-3 text-xs font-black uppercase tracking-[0.14em] text-cyan-100/95">
-                          {state.status === 'correct' ? 'Direct hit • loading next challenge' : 'The swarm is still active • loading next challenge'}
+                        <div role="status" aria-live="polite" className="inline-flex min-h-12 w-full max-w-sm items-center justify-center rounded-2xl border border-cyan-100/45 bg-[#0d2a5a]/90 px-3 py-2 text-center text-sm font-black leading-snug text-cyan-50">
+                          {state.status === 'correct'
+                            ? 'Direct hit — next challenge incoming'
+                            : `Correct ${state.currentProblem?.correctAnswers.length === 1 ? 'factor' : 'factors'}: ${state.currentProblem?.correctAnswers.join(', ')}. Next challenge incoming.`}
                         </div>
                       )}
                     </div>
@@ -536,8 +566,10 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                   transition={{ delay: idx * 0.03 }}
                   onClick={() => toggleOption(option)}
                   className={`relative flex h-[clamp(50px,7.2vh,68px)] items-center justify-center rounded-2xl border text-[clamp(0.95rem,3vw,1.55rem)] font-black transition ${
-                    state.status === 'correct' && selectedOptions.includes(option)
+                    state.status !== 'playing' && state.currentProblem?.correctAnswers.includes(option)
                       ? 'ui-button-success'
+                      : state.status === 'incorrect' && selectedOptions.includes(option)
+                        ? 'border-rose-300 bg-rose-700 text-white'
                       : selectedOptions.includes(option)
                         ? 'ui-button-primary'
                         : 'ui-button-secondary'

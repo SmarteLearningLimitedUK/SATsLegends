@@ -1026,8 +1026,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
                 </motion.div>
               ) : null}
             </AnimatePresence>
-            <div className="absolute left-1/2 top-[-6%] z-40 -translate-x-1/2">
-              <div className="w-[160px] rounded-2xl border border-amber-200/35 bg-slate-900/80 p-1.5 shadow-[0_10px_20px_rgba(2,6,23,0.46)] sm:w-[178px]">
+            <div className="pvp-enemy-health-frame absolute left-1/2 top-[-6%] z-40 -translate-x-1/2">
+              <div className="pvp-enemy-health w-[160px] rounded-2xl border border-amber-200/35 bg-slate-900/80 p-1.5 shadow-[0_10px_20px_rgba(2,6,23,0.46)] sm:w-[178px]">
                 <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.12em] text-amber-200 md:text-[9px]">
                   Monster Mind
                 </div>

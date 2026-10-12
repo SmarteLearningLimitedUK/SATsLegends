@@ -1,0 +1,28 @@
+@media (max-width: 360px) and (min-height: 500px) {
+  .match-mastery-shell [data-match-main] {
+    padding-top: calc(env(safe-area-inset-top) + 3.9rem) !important;
+  }
+
+  .match-mastery-shell .game-question-card {
+    padding: 6px 9px;
+    font-size: 1rem;
+    line-height: 1.15;
+  }
+
+  .match-mastery-shell .game-question-card-title-strip {
+    display: none;
+  }
+
+  .match-mastery-shell [data-match-status] {
+    margin-top: 3px;
+  }
+
+  .match-mastery-shell [data-match-board-space] {
+    padding-top: 3px !important;
+    padding-bottom: 2px !important;
+  }
+
+  .match-mastery-shell .match-mastery-board {
+    padding: 4px;
+  }
+}

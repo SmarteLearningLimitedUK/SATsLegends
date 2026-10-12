@@ -12,6 +12,7 @@ interface WellbeingShellProps {
   progress?: number;
   status?: string;
   purpose?: string;
+  fact?: string;
   affirmation?: string;
   paused?: boolean;
   onExit: () => void;
@@ -19,7 +20,7 @@ interface WellbeingShellProps {
 }
 
 const WellbeingShell: React.FC<WellbeingShellProps> = ({
-  title, subtitle, type, activityId, progress, status, purpose, affirmation,
+  title, subtitle, type, activityId, progress, status, purpose, fact, affirmation,
   paused = false, onExit, children,
 }) => {
   const safeProgress = Math.max(0, Math.min(100, progress ?? 0));
@@ -51,15 +52,20 @@ const WellbeingShell: React.FC<WellbeingShellProps> = ({
         </button>
       </header>
       <div className="wellbeing-content">{children}</div>
-      {status || affirmation || progress !== undefined ? (
+      {status || fact || affirmation || progress !== undefined ? (
         <footer className="wellbeing-footer">
-          {status ? <p data-wellbeing-status role="status" aria-live="polite">{status}</p> : null}
-          {progress !== undefined ? (
-            <div className="wellbeing-progress" role="progressbar" aria-label={`${title} progress`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(safeProgress)} data-wellbeing-progress={Math.round(safeProgress)}>
-              <span style={{ width: `${safeProgress}%` }} />
-            </div>
-          ) : null}
-          {affirmation ? <p className="wellbeing-affirmation" data-wellbeing-affirmation>{affirmation}</p> : null}
+          <div className="wellbeing-footer-progress">
+            {status ? <p data-wellbeing-status role="status" aria-live="polite">{status}</p> : null}
+            {progress !== undefined ? (
+              <div className="wellbeing-progress" role="progressbar" aria-label={`${title} progress`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(safeProgress)} data-wellbeing-progress={Math.round(safeProgress)}>
+                <span style={{ width: `${safeProgress}%` }} />
+              </div>
+            ) : null}
+          </div>
+          {fact || affirmation ? <div className="wellbeing-note-row">
+            {fact ? <p className="wellbeing-fact" data-wellbeing-fact><span>GOOD TO KNOW</span>{fact}</p> : null}
+            {affirmation ? <p className="wellbeing-affirmation" data-wellbeing-affirmation><span>TAKE WITH YOU</span>{affirmation}</p> : null}
+          </div> : null}
         </footer>
       ) : null}
     </section>

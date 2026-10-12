@@ -158,7 +158,14 @@ const clampOddCount = (count: number) => {
   return count % 2 === 0 ? count - 1 : count;
 };
 
-const ROUND_MODES: RoundMode[] = ['mean', 'median', 'mode', 'missing'];
+// Keep the campaign centred on the mean; other statistics appear only as late bonus rounds.
+const ROUND_MODES_BY_TIER: Record<number, RoundMode[]> = {
+  1: ['mean'],
+  2: ['mean'],
+  3: ['mean', 'missing'],
+  4: ['mean', 'missing'],
+  5: ['mean', 'missing', 'mean', 'missing', 'median', 'mean', 'missing', 'mean', 'missing', 'mode'],
+};
 
 const buildMeanRound = (level: number): RoundData => {
   const useDoubleDigits = level >= 3;
@@ -365,7 +372,7 @@ const buildMissingRound = (level: number): RoundData => {
 };
 
 const buildRound = (level: number, roundNumber: number, previousMode: RoundMode | null = null) => {
-  const modes = level === 1 ? ROUND_MODES.slice(0, 1) : level === 2 ? ROUND_MODES.slice(0, 2) : level === 3 ? ROUND_MODES.slice(0, 3) : ROUND_MODES;
+  const modes = ROUND_MODES_BY_TIER[Math.max(1, Math.min(5, level))];
   const preferredMode = modes[(roundNumber - 1) % modes.length];
   const mode = preferredMode === previousMode
     ? modes[(modes.indexOf(preferredMode) + 1) % modes.length]

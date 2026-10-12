@@ -12,11 +12,11 @@ export type MissionVisual =
   | { type: 'table'; headings: string[]; rows: string[][] }
   | { type: 'ratio'; labels: string[]; parts: number[] }
   | { type: 'sequence'; values: string[] };
-export interface MissionField { label: string; answer: string; options?: string[]; manual?: boolean; }
+export interface MissionField { label: string; answer: string; options?: string[]; }
 export interface SatsMission {
   id: string; domain: SatsDomain; reference: string; game: string; difficulty: number;
   prompt: string; visual: MissionVisual; fields: MissionField[]; explanation: string;
-  marks: number; formalWorking?: boolean;
+  marks: number;
 }
 export interface SatsPaper { number: number; title: string; seconds: number; marks: number; missions: SatsMission[]; }
 const field = (label: string, answer: string, options?: string[]): MissionField => ({ label, answer, options });
@@ -28,6 +28,9 @@ const reduced = (a: number, b: number) => { const d = gcd(a, b); return b / d ==
 
 export function arithmeticMissions(seed = 1): SatsMission[] {
   const k = 1 + Math.abs(seed % 5);
+  // Independent small digits vary a replay without changing the five-tier difficulty arc.
+  const secondVariant = 1 + Math.abs(Math.floor(seed / 5) % 5);
+  const thirdVariant = 1 + Math.abs(Math.floor(seed / 25) % 5);
   const q = (id: string, ref: string, game: string, difficulty: number, sum: string, answer: string, explanation: string) => mission(`ar-${id}`, ref, game, difficulty, 'Complete the calculation.', equation(sum), [field('Answer', answer)], explanation);
   const questions = [
     q('add', '3C2', 'calculation_clash', 1, `${320 + k} + 140 = □`, String(460 + k), 'Add hundreds, tens and ones in their matching columns.'),
@@ -42,13 +45,13 @@ export function arithmeticMissions(seed = 1): SatsMission[] {
     q('decimal-add', '5F10', 'calculation_clash', 2, `${k}.75 + 2.6 = □`, (k + 3.35).toFixed(2), 'Line up decimal points: 2.6 is 2.60. Then add.'),
     q('decimal-sub', '5F10', 'calculation_clash', 2, `${k + 7}.2 − 3.85 = □`, (k + 3.35).toFixed(2), 'Write the first amount with two decimal places and subtract in columns.'),
     q('square', '5C5', 'prime_pop', 2, `${k + 5}² = □`, String((k + 5) ** 2), 'Squaring means multiplying the number by itself.'),
-    q('cube', '5C5', 'prime_pop', 2, '4³ = □', '64', '4 cubed means 4 × 4 × 4 = 64.'),
+    q('cube', '5C5', 'prime_pop', 2, `${secondVariant + 2}³ = □`, String((secondVariant + 2) ** 3), 'Cubing means multiplying the number by itself three times.'),
     q('short-mult', '5C7', 'multiplication_mine', 2, `${234 + k} × 6 = □`, String((234 + k) * 6), 'Multiply each column by 6 and carry into the next column.'),
     q('short-div', '5C7', 'remainder_run', 2, `${(124 + k) * 7} ÷ 7 = □`, String(124 + k), 'Divide each place-value column in turn, carrying any remainder to the next column.'),
     q('fraction-part', '4F4', 'take_out_rush', 2, `3/4 of ${40 + k * 4} = □`, String((10 + k) * 3), 'Divide by the denominator 4, then multiply by the numerator 3.'),
     q('percentage-ten', '5F12', 'percent_power', 2, `10% of ${250 + k * 10} = □`, String(25 + k), '10% means one tenth, so divide by 10.'),
-    q('fraction-add', '5F4', 'fraction_forge', 3, '2/7 + 3/7 = □', '5/7', 'The parts are the same size. Add numerators and keep the denominator 7.'),
-    q('fraction-sub', '5F4', 'fraction_forge', 3, '7/9 − 2/9 = □', '5/9', 'Subtract numerators while keeping the denominator 9.'),
+    q('fraction-add', '5F4', 'fraction_forge', 3, `2/${thirdVariant + 6} + 3/${thirdVariant + 6} = □`, reduced(5, thirdVariant + 6), `The parts are the same size. Add the numerators, keep denominator ${thirdVariant + 6}, then simplify if possible.`),
+    q('fraction-sub', '5F4', 'fraction_forge', 3, `7/${secondVariant + 8} − 2/${secondVariant + 8} = □`, reduced(5, secondVariant + 8), `Subtract the numerators, keep denominator ${secondVariant + 8}, then simplify if possible.`),
     q('decimal-mult', '6F9', 'multiplication_mine', 3, `${k}.25 × 4 = □`, String(4 * k + 1), 'Multiply as whole numbers, then place the decimal point so the value is sensible.'),
     q('decimal-div', '6F9', 'remainder_run', 3, `${k + 2}.4 ÷ 4 = □`, ((k + 2.4) / 4).toFixed(2), 'Divide each column, continuing past the decimal point as needed.'),
     q('brackets', '6C9', 'order_ops_arena', 3, `(7 + ${k}) × 6 = □`, String((7 + k) * 6), 'Do the calculation in brackets before multiplying.'),
@@ -62,18 +65,24 @@ export function arithmeticMissions(seed = 1): SatsMission[] {
     q('percent-fifteen', '6F12', 'percent_power', 4, `15% of ${200 + k * 20} = □`, String(30 + k * 3), 'Find 10%, halve it for 5%, then add the two amounts.'),
     q('decimal-large', '6F9', 'multiplication_mine', 4, `0.48 × ${k + 6} = □`, (0.48 * (k + 6)).toFixed(2), 'Multiply 48 by the whole number, then divide the product by 100.'),
     q('decimal-quotient', '6C7', 'remainder_run', 4, '7 ÷ 8 = □', '0.875', 'Continue division with decimal zeros: 7.000 ÷ 8 = 0.875.'),
-    q('long-mult-a', '6C7', 'multiplication_mine', 5, `${1234 + k} × 23 = □`, String((1234 + k) * 23), `Multiply by 3, then by 20, then add: ${(1234 + k) * 3} + ${(1234 + k) * 20} = ${(1234 + k) * 23}. Show both rows in your written method.`),
+    q('long-mult-a', '6C7', 'multiplication_mine', 5, `${1234 + k} × 23 = □`, String((1234 + k) * 23), `Multiply by 3, then by 20, then add: ${(1234 + k) * 3} + ${(1234 + k) * 20} = ${(1234 + k) * 23}.`),
     q('long-div-a', '6C7', 'remainder_run', 5, `${(318 + k) * 24} ÷ 24 = □`, String(318 + k), 'Use long division. For each step, divide, multiply, subtract and bring down the next digit.'),
     q('long-mult-b', '6C7', 'multiplication_mine', 5, `${2341 + k} × 36 = □`, String((2341 + k) * 36), `Multiply by 6 and by 30, then add the two rows: ${(2341 + k) * 6} + ${(2341 + k) * 30}.`),
     q('long-div-b', '6C7', 'remainder_run', 5, `${(246 + k) * 32} ÷ 32 = □`, String(246 + k), 'Use long division and check the quotient by multiplying it by 32.'),
   ];
-  for (const q of questions.slice(-4)) { q.marks = 2; q.formalWorking = true; }
+  // The demanding questions award a mark for an on-screen method step and a mark for the result.
+  questions[questions.length - 4].fields = [field('Multiply by 20', String((1234 + k) * 20)), field('Final product', String((1234 + k) * 23))];
+  questions[questions.length - 3].fields = [field('First quotient digit', '3'), field('Final quotient', String(318 + k))];
+  questions[questions.length - 2].fields = [field('Multiply by 30', String((2341 + k) * 30)), field('Final product', String((2341 + k) * 36))];
+  questions[questions.length - 1].fields = [field('First quotient digit', '2'), field('Final quotient', String(246 + k))];
+  for (const question of questions.slice(-4)) question.marks = question.fields.length;
   return questions;
 }
 
 /** Pool deliberately spans all nine tested strands. Each replay varies quantities. */
 export function reasoningMissions(seed = 1): SatsMission[] {
   const k = 1 + Math.abs(seed % 5);
+  const secondVariant = 1 + Math.abs(Math.floor(seed / 5) % 5);
   const q = mission;
   return [
     q('roman', '5N3', 'place_value_panic', 1, 'Decode the Roman numeral on the gate.', equation('MCDXL = □'), [field('Number', '1440')], 'M = 1,000; CD = 400; XL = 40. Total: 1,440.'),
@@ -100,11 +109,11 @@ export function reasoningMissions(seed = 1): SatsMission[] {
     q('recipe', '6R1', 'potion_panic', 3, `A recipe for 4 potions uses ${80 + k * 20} ml. Make 10 potions.`, { type: 'ratio', labels: ['Potions', 'Liquid (ml)'], parts: [4, 80 + k * 20] }, [field('ml for 1 potion', String(20 + k * 5)), field('ml for 10 potions', String(200 + k * 50))], 'Divide by 4 for one potion, then multiply by 10.'),
     q('formula', '6A2', 'formula_forge', 3, `The rule is y = 3x + 4. Use x = ${k + 2}, then reverse the rule for y = 25.`, equation('y = 3x + 4'), [field(`y when x = ${k + 2}`, String(3 * k + 10)), field('x when y = 25', '7')], 'Substitute the first x. For the reverse rule, subtract 4 from 25 and divide by 3.'),
     q('two-unknowns', '6A4', 'formula_forge', 4, 'Two whole numbers sum to 18. Their difference is 4.', equation('a + b = 18', 'a − b = 4'), [field('Larger number', '11'), field('Smaller number', '7')], 'Half of 18 is 9. Move 2 from one number to the other: 11 and 7.'),
-    q('possibilities', '6A5', 'formula_forge', 4, 'a and b are positive whole numbers. a + b = 7 and a < b. Find all pairs.', equation('a + b = 7 · a < b'), [field('Number of possible pairs', '3'), field('Pairs', '1,6;2,5;3,4', undefined)], 'The pairs are (1,6), (2,5), (3,4). (4,3) fails a < b. Zero is not positive.'),
+    q('possibilities', '6A5', 'formula_forge', 4, 'a and b are positive whole numbers. a + b = 7 and a < b. Find all pairs.', equation('a + b = 7 · a < b'), [field('Number of possible pairs', '3'), field('Pairs', '1,6;2,5;3,4', ['1,6;2,5;3,4', '0,7;1,6;2,5', '1,6;2,5;4,3', '1,6;2,5;3,5'])], 'The pairs are (1,6), (2,5), (3,4). (4,3) fails a < b. Zero is not positive.'),
     q('fraction-two', '6F4', 'fraction_forge', 4, 'Combine and simplify the fractions.', { type: 'fractions', values: ['5/6', '+', '3/4'] }, [field('Lowest common denominator', '12'), field('Sum', '19/12')], '5/6 = 10/12 and 3/4 = 9/12, so the sum is 19/12 = 1 7/12.'),
     q('buses', '6C8', 'remainder_run', 4, `${91 + k * 7} explorers travel in vehicles holding 12.`, equation(`${91 + k * 7} ÷ 12`), [field('Full vehicles', String(Math.floor((91 + k * 7) / 12))), field('Vehicles needed in total', String(Math.ceil((91 + k * 7) / 12)))], 'Count full groups, then add one vehicle if any explorers remain. A remainder needs space too.'),
     q('scale', '6R3', 'scale_builder', 4, `A 6 cm by 4 cm model is enlarged by a factor of ${k + 1}.`, { type: 'shape', shape: 'rectangle', labels: ['6 cm', '4 cm'] }, [field('New length (cm)', String(6 * (k + 1))), field('New width (cm)', String(4 * (k + 1)))], 'Multiply both lengths by the same scale factor; do not add the factor.'),
-    q('claim', '6F3', 'fraction_forge', 4, 'A robot says: “1/8 is bigger than 1/6 because 8 is bigger than 6.” Is it right? Explain.', { type: 'fractions', values: ['1/8', '1/6'] }, [field('Is the robot right?', 'No', ['Yes', 'No']), { label: 'Explain why', answer: 'For the same whole, eighths are smaller parts than sixths, so 1/8 is smaller than 1/6.', manual: true }], 'The denominator counts equal parts of the same whole. More equal parts makes each part smaller.'),
+    q('claim', '6F3', 'fraction_forge', 4, 'A robot says: “1/8 is bigger than 1/6 because 8 is bigger than 6.” Is it right? Choose why.', { type: 'fractions', values: ['1/8', '1/6'] }, [field('Is the robot right?', 'No', ['Yes', 'No']), field('Why?', 'Eighths are smaller parts than sixths.', ['Eighths are smaller parts than sixths.', 'Eight pieces are always bigger than six pieces.', 'The numerators are different.', 'The fractions are equal.'])], 'The denominator counts equal parts of the same whole. More equal parts makes each part smaller.'),
     q('percent-claim', '6R2', 'percent_power', 5, 'Team A wins 18 of 24 races. Team B wins 16 of 20. Compare their win rates.', equation('Team A: 18/24', 'Team B: 16/20'), [field('Team A win rate (%)', '75'), field('Team B win rate (%)', '80')], '18/24 = 3/4 = 75%. 16/20 = 4/5 = 80%. Team B has the higher rate despite fewer wins.'),
     q('convert', '6M5', 'unit_mixer', 1, 'Convert the distance to metres.', equation(`${k + 1}.25 km → metres`), [field('Distance (m)', String((k + 1) * 1000 + 250))], '1 km = 1,000 m, so multiply by 1,000.'),
     q('imperial', '5M6', 'unit_mixer', 2, 'Use 1 mile ≈ 1.6 km. Convert 5 miles.', equation('1 mile ≈ 1.6 km'), [field('Distance (km)', '8')], '5 × 1.6 = 8 km. The conversion is approximate.'),
@@ -130,8 +139,8 @@ export function reasoningMissions(seed = 1): SatsMission[] {
     q('counting', '4N1', 'number_line_ninja', 1, 'Count forwards in equal steps. Find the next number.', { type: 'sequence', values: ['−12', '−6', '0', '6', '?'] }, [field('Next number', '12')], 'Each step adds 6, including when crossing zero.'),
     q('reading-number', '6N2', 'place_value_panic', 2, 'Write four million, seventy thousand and six in digits.', equation('Four million · seventy thousand · six'), [field('Number', '4070006')], 'Use zeros to hold the unused places: 4,070,006.'),
     q('number-problem', '6N6', 'number_line_ninja', 3, 'A lift is on floor −3. It rises 8 floors, then falls 2 floors. Where is it?', equation('−3 → +8 → −2'), [field('Final floor', '3')], '−3 + 8 = 5. Then 5 − 2 = 3.'),
-    q('mental', '4C1', 'maths_vs_zombies', 1, 'Find the quickest mental total.', equation('198 + 37'), [field('Total', '235')], 'Add 200, then subtract 2: 198 + 37 = 200 + 37 − 2 = 235.'),
-    q('tickets', '4C4', 'problem_pyramid', 2, 'There are 240 tickets. 86 are sold in the morning and 79 in the afternoon. How many remain?', equation('240 − (86 + 79)'), [field('Tickets remaining', '75')], 'Add sales: 86 + 79 = 165. Then subtract from 240: 75.'),
+    q('mental', '4C1', 'maths_vs_zombies', 1, 'Find the quickest mental total.', equation(`198 + ${30 + secondVariant * 7}`), [field('Total', String(228 + secondVariant * 7))], `Add 200, then subtract 2: 200 + ${30 + secondVariant * 7} − 2 = ${228 + secondVariant * 7}.`),
+    q('tickets', '4C4', 'problem_pyramid', 2, `There are ${240 + secondVariant * 20} tickets. 86 are sold in the morning and 79 in the afternoon. How many remain?`, equation(`${240 + secondVariant * 20} − (86 + 79)`), [field('Tickets remaining', String(75 + secondVariant * 20))], `Add sales: 86 + 79 = 165. Then subtract from ${240 + secondVariant * 20}: ${75 + secondVariant * 20}.`),
     q('fraction-name', '3F1', 'take_out_rush', 1, 'A tray has 8 equal spaces. 3 are filled. What fraction is filled?', { type: 'ratio', labels: ['Filled', 'Empty'], parts: [3, 5] }, [field('Fraction filled', '3/8')], 'Count all 8 equal spaces for the denominator; 3 filled spaces make the numerator.'),
     q('fraction-whole-mult', '5F5', 'take_out_rush', 3, 'Find the total of three portions, each worth 2/5.', { type: 'fractions', values: ['2/5', '2/5', '2/5'] }, [field('Total', '6/5')], '3 × 2/5 = 6/5 = 1 1/5. The total can be more than one whole.'),
     q('decimal-round', '5F7', 'rounding_rocket', 2, 'Round the reading to one decimal place.', equation('6.47'), [field('Rounded reading', '6.5')], 'The hundredths digit is 7. Round the tenths digit up from 4 to 5.'),
@@ -150,9 +159,9 @@ export function reasoningMissions(seed = 1): SatsMission[] {
     q('factor-multiple', '5C5', 'factor_frenzy', 3, 'Find the smallest number in both the 6 and 8 times tables.', equation('Common multiple of 6 and 8'), [field('Smallest common multiple', '24')], 'Multiples of 6: 6, 12, 18, 24. Multiples of 8: 8, 16, 24. First common value: 24.'),
     q('shape-name', '3G1', 'polygon_palace', 1, 'Name this flat shape.', { type: 'shape', shape: 'triangle', labels: [] }, [field('Shape', 'Triangle', ['Triangle', 'Cuboid', 'Circle', 'Pentagon'])], 'A triangle is a flat shape with three straight sides.'),
     q('movement-pattern', '3P1', 'rotation_relay', 2, 'The arrows turn by the same amount each time. Choose the next direction.', { type: 'sequence', values: ['↑', '→', '↓', '?'] }, [field('Next direction', 'Left', ['Up', 'Right', 'Down', 'Left'])], 'Each arrow turns 90° clockwise. After down comes left.'),
-    q('draw-rectangle', '6G3', 'polygon_palace', 3, 'On paper, use a ruler to draw a rectangle 6 cm long and 4 cm wide. Mark its four right angles.', equation('Rectangle: 6 cm × 4 cm'), [{ label: 'Write “drawn” when ready for an adult to check your drawing', answer: 'Four straight sides, opposite lengths 6 cm and 4 cm, and four right angles.', manual: true }], 'Use the ruler from zero to measure each side. Opposite sides are equal and parallel; all four corners are 90°. An adult checks the paper drawing.'),
-    q('draw-angle', '5G4', 'angle_arena', 3, 'On paper, use a protractor to draw a 65° angle. Label its size.', equation('Draw 65°'), [{ label: 'Write “drawn” when ready for an adult to check your angle', answer: 'Two rays meeting at one vertex with a measured angle of 65°.', manual: true }], 'Draw a baseline. Put the protractor centre on the vertex and its zero line on the baseline. Mark 65° using the scale starting at zero on your baseline, then draw the second ray. An adult checks it.'),
-    q('construct-graph', '6S1', 'graph_grabber', 3, 'On paper, draw a bar chart for Red = 10, Blue = 15, Green = 5. Label the axes and use a scale in steps of 5.', { type: 'table', headings: ['Crystal', 'Count'], rows: [['Red', '10'], ['Blue', '15'], ['Green', '5']] }, [{ label: 'Write “drawn” when ready for an adult to check your chart', answer: 'Equal-width bars at 10, 15 and 5; labelled categories and count axis with equal intervals of 5.', manual: true }], 'Draw labelled axes with evenly spaced numbers 0, 5, 10, 15. Use equal-width bars, separate them with gaps, and draw each to its value. An adult checks your chart.'),
+    q('draw-rectangle', '6G3', 'polygon_palace', 3, 'Build a rectangle on the screen that is 6 cm long and 4 cm wide, with four right angles.', equation('Rectangle: 6 cm × 4 cm'), [field('Built rectangle', '6 cm × 4 cm · 4 right angles', ['6 cm × 4 cm · 4 right angles', '6 cm × 4 cm · 2 right angles', '6 cm × 5 cm · 4 right angles', '4 cm × 4 cm · 4 right angles'])], 'Set the long side to 6 cm, the short side to 4 cm, and every corner to a right angle.'),
+    q('draw-angle', '5G4', 'angle_arena', 3, 'Set the on-screen angle to 65° and label its size.', equation('Build 65°'), [field('Angle', '65°', ['45°', '55°', '65°', '75°'])], 'Start from the baseline and turn the ray to 65°. The two rays meet at one vertex.'),
+    q('construct-graph', '6S1', 'graph_grabber', 3, 'Build a bar chart for Red = 10, Blue = 15 and Green = 5, using a scale in steps of 5.', { type: 'table', headings: ['Crystal', 'Count'], rows: [['Red', '10'], ['Blue', '15'], ['Green', '5']] }, [field('Built chart', 'Red 10 · Blue 15 · Green 5', ['Red 10 · Blue 15 · Green 5', 'Red 15 · Blue 10 · Green 5', 'Red 10 · Blue 5 · Green 15', 'Red 5 · Blue 15 · Green 10'])], 'Use equal-width bars with gaps. Mark the count axis 0, 5, 10, 15, then raise each bar to its value.'),
   ];
 }
 
@@ -165,47 +174,121 @@ function seededShuffle<T>(items: T[], seed: number): T[] {
   }
   return output;
 }
+// The two reasoning papers must remain disjoint even when launched with different
+// seeds (for example, on different days or after a saved run is restored).
+const REASONING_PAPER_IDS: [Set<string>, Set<string>] = (() => {
+  const pool = reasoningMissions(1);
+  const assignments: [Set<string>, Set<string>] = [new Set(), new Set()];
+  const usedIds = new Set<string>();
+  const strandAnchors: [SatsDomain, number][] = [
+    ['N', 1], ['C', 1], ['F', 1], ['R', 2], ['A', 1],
+    ['M', 2], ['G', 1], ['P', 1], ['S', 1],
+  ];
+  strandAnchors.forEach(([domain, marks], index) => {
+    const pair = seededShuffle(pool.filter(q => q.domain === domain && q.marks === marks), 911 + index * 29).slice(0, 2);
+    if (pair.length !== 2) throw new Error(`Not enough ${domain} missions for two reasoning papers`);
+    pair.forEach((question, paperIndex) => {
+      assignments[paperIndex].add(question.id);
+      usedIds.add(question.id);
+    });
+  });
+  const numberDomains = new Set<SatsDomain>(['N', 'C', 'F', 'R', 'A']);
+  const groups = [
+    { numeric: true, marks: 1 }, { numeric: true, marks: 2 },
+    { numeric: false, marks: 1 }, { numeric: false, marks: 2 },
+  ];
+  groups.forEach(({ numeric, marks }, index) => {
+    const remaining = seededShuffle(pool.filter(q => !usedIds.has(q.id) && numberDomains.has(q.domain) === numeric && q.marks === marks), 1741 + index * 53);
+    remaining.forEach((question, questionIndex) => assignments[questionIndex % 2].add(question.id));
+  });
+  return assignments;
+})();
+
 export function buildSatsPaper(gameType: string, seed = Date.now()): SatsPaper {
   const number = gameType === 'crystal_core' ? 1 : gameType === 'mirror_gate' ? 2 : 3;
   if (number === 1) return { number, title: 'Arithmetic Reactor', seconds: 1800, marks: 40, missions: arithmeticMissions(seed) };
-  const pool = reasoningMissions(seed + number);
+  const pool = reasoningMissions(seed + number).filter(question => REASONING_PAPER_IDS[number - 2].has(question.id));
   const numberDomains = new Set<SatsDomain>(['N', 'C', 'F', 'R', 'A']);
-  const pick = (numeric: boolean, marks: number, count: number) => seededShuffle(pool.filter(q => numberDomains.has(q.domain) === numeric && q.marks === marks), seed + number * 73 + marks + (numeric ? 100 : 0)).slice(0, count);
-  // 18 number/ratio/algebra missions = 24 marks; 7 M/G/P/S missions = 11 marks.
-  const selected = [...pick(true, 1, 12), ...pick(true, 2, 6), ...pick(false, 1, 3), ...pick(false, 2, 4)];
-  // Ensure every full three-paper set includes all nine strands without narrowing Paper 2 to geometry.
-  for (const domain of ['N', 'C', 'F', 'R', 'A', 'M', 'G', 'P', 'S'] as SatsDomain[]) {
-    if (selected.some(q => q.domain === domain)) continue;
-    const replacement = pool.find(q => q.domain === domain);
-    if (!replacement) continue;
-    const index = selected.findIndex(q => q.marks === replacement.marks && numberDomains.has(q.domain) === numberDomains.has(domain) && selected.filter(other => other.domain === q.domain).length > 1);
-    if (index >= 0) selected[index] = replacement;
-  }
+  const selected: SatsMission[] = [];
+  const usedIds = new Set<string>();
+  // Give each paper all nine strands before filling its mark quotas.
+  const strandAnchors: [SatsDomain, number][] = [
+    ['N', 1], ['C', 1], ['F', 1], ['R', 2], ['A', 1],
+    ['M', 2], ['G', 1], ['P', 1], ['S', 1],
+  ];
+  strandAnchors.forEach(([domain, marks], index) => {
+    const question = seededShuffle(pool.filter(q => q.domain === domain && q.marks === marks), seed + 911 + index * 29)[0];
+    if (!question) throw new Error(`Missing ${domain} mission for reasoning paper ${number}`);
+    selected.push(question);
+    usedIds.add(question.id);
+  });
+  // Per paper: 12 one-mark and 6 two-mark N/C/F/R/A missions, plus
+  // 3 one-mark and 4 two-mark M/G/P/S missions = 35 marks across 25 questions.
+  const quotas = [
+    { numeric: true, marks: 1, count: 12 },
+    { numeric: true, marks: 2, count: 6 },
+    { numeric: false, marks: 1, count: 3 },
+    { numeric: false, marks: 2, count: 4 },
+  ];
+  quotas.forEach(({ numeric, marks, count }, index) => {
+    const needed = count - selected.filter(q => numberDomains.has(q.domain) === numeric && q.marks === marks).length;
+    const candidates = seededShuffle(pool.filter(q => !usedIds.has(q.id) && numberDomains.has(q.domain) === numeric && q.marks === marks), seed + 1741 + index * 53);
+    if (candidates.length < needed) throw new Error(`Not enough missions for reasoning paper ${number}`);
+    selected.push(...candidates.slice(0, needed));
+  });
   return { number, title: number === 2 ? 'Mirror Gate Expedition' : 'Matrix Crystal Quest', seconds: 2400, marks: 35, missions: selected.sort((a, b) => a.difficulty - b.difficulty) };
 }
 
-/** Safe answer parsing: no eval; equivalent fractions, decimals, mixed numbers and times. */
+/** Exact rational matching avoids awarding a mark for a rounded repeating decimal. */
+function rationalAnswer(value: string): string | null {
+  if (value.length > 128) return null;
+  const mixed = value.match(/^(-?\d+)\s+(\d+)\s*\/\s*(\d+)$/);
+  const fraction = value.match(/^(-?\d+)\s*\/\s*(\d+)$/);
+  const decimal = value.match(/^(-?)(\d+)(?:\.(\d+))?$/);
+  let numerator: bigint;
+  let denominator: bigint;
+  if (mixed) {
+    denominator = BigInt(mixed[3]);
+    if (denominator === 0n) return null;
+    const whole = BigInt(mixed[1]);
+    numerator = whole * denominator + (mixed[1].startsWith('-') ? -1n : 1n) * BigInt(mixed[2]);
+  } else if (fraction) {
+    numerator = BigInt(fraction[1]);
+    denominator = BigInt(fraction[2]);
+    if (denominator === 0n) return null;
+  } else if (decimal) {
+    const places = decimal[3]?.length ?? 0;
+    denominator = 10n ** BigInt(places);
+    numerator = BigInt(`${decimal[1]}${decimal[2]}${decimal[3] ?? ''}`);
+  } else return null;
+  let a = numerator < 0n ? -numerator : numerator;
+  let b = denominator;
+  while (b !== 0n) [a, b] = [b, a % b];
+  return `${numerator / a}/${denominator / a}`;
+}
+
+/** Safe answer parsing: no eval; equivalent fractions, exact decimals, mixed numbers and times. */
 export function normaliseAnswer(value: string): string {
   if (value.includes(';')) {
     const pairs = value.trim().split(';').map(part => part.match(/^\s*\(?\s*(-?\d+)\s*,\s*(-?\d+)\s*\)?\s*$/));
     return pairs.every(Boolean) ? pairs.map(pair => `${Number(pair![1])},${Number(pair![2])}`).sort().join(';') : `invalid-pairs:${value}`;
   }
-  const clean = value.trim().replace(/−/g, '-').replace(/[£%°]/g, '').replace(/,/g, '').toLowerCase();
+  const clean = value.trim().replace(/−/g, '-').replace(/^£\s*/, '').replace(/,/g, '').toLowerCase();
   const time = clean.match(/^(\d{1,2}):(\d{2})$/);
-  if (time && +time[2] < 60) return `${+time[1]}:${time[2]}`;
-  const mixed = clean.match(/^(-?\d+)\s+(\d+)\s*\/\s*(\d+)$/);
-  const frac = clean.match(/^(-?\d+)\s*\/\s*(\d+)$/);
-  let numeric: number | undefined;
-  if (mixed && +mixed[3] !== 0) numeric = +mixed[1] + Math.sign(+mixed[1] || 1) * (+mixed[2] / +mixed[3]);
-  else if (frac && +frac[2] !== 0) numeric = +frac[1] / +frac[2];
-  else if (/^-?\d+(\.\d+)?$/.test(clean)) numeric = Number(clean);
-  if (numeric !== undefined && Number.isFinite(numeric)) return numeric.toFixed(8);
+  if (time && +time[2] < 60) return `time:${+time[1]}:${time[2]}`;
+  const symbol = clean.endsWith('%') ? 'percent:' : clean.endsWith('°') ? 'degrees:' : 'number:';
+  const numeric = rationalAnswer(symbol === 'number:' ? clean : clean.slice(0, -1).trim());
+  if (numeric !== null) return symbol + numeric;
   return clean.replace(/\s/g, '').replace(/[()]/g, '').split(';').sort().join(';');
 }
 export const answersMatch = (value: string, expected: string) => normaliseAnswer(value) === normaliseAnswer(expected);
-export function markMission(q: SatsMission, values: string[], methodApproved = false): number {
-  const automatic = q.fields.reduce((sum, f, i) => sum + (!f.manual && answersMatch(values[i] ?? '', f.answer) ? 1 : 0), 0);
-  if (q.formalWorking) return automatic ? q.marks : methodApproved ? 1 : 0;
-  return automatic + (methodApproved && q.fields.some((f, i) => f.manual && values[i]?.trim()) ? 1 : 0);
+export function markMission(q: SatsMission, values: string[]): number {
+  return q.fields.reduce((sum, f, i) => {
+    const answer = values[i] ?? '';
+    const optionalSymbol = /(?:%|percentage|percent)/i.test(f.label) ? '%' : f.label.includes('°') ? '°' : '';
+    const correct = answersMatch(answer, f.answer)
+      || Boolean(optionalSymbol && answer.trim().endsWith(optionalSymbol) && answersMatch(answer.trim().slice(0, -1), f.answer));
+    return sum + Number(correct);
+  }, 0);
 }
-export const getRevisionMissions = (game: string) => [...arithmeticMissions(2), ...reasoningMissions(2)].filter(q => q.game === game);
+export const getRevisionMissions = (game: string, seed = Date.now()) => [...arithmeticMissions(seed), ...reasoningMissions(seed + 1)].filter(q => q.game === game);

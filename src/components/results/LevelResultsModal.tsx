@@ -20,6 +20,7 @@ interface LevelResultsModalProps {
     stars: StarCount;
     xpGained: number;
     practice?: boolean;
+    mockAttempt?: boolean;
     bonuses: BonusBreakdownType[];
     previousLevel: number;
     newLevel: number;
@@ -28,9 +29,11 @@ interface LevelResultsModalProps {
     xpRequiredForNextLevel: number;
     leveledUp: boolean;
     accuracy: number;
+    accuracyMeasured?: boolean;
     timeMs: number;
   } | null;
   onRetry: () => void;
+  onPractice?: () => void;
   onNext?: () => void;
   onMap: () => void;
   calmBreakLabel?: string;
@@ -109,7 +112,7 @@ const ResultStatTile: React.FC<{ label: string; value: React.ReactNode; tone?: '
 
   return (
     <div className={`legend-result-stat rounded-[1rem] border px-3 py-2.5 text-center ${toneClass}`}>
-      <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/58">{label}</div>
+      <div className="text-[11px] font-black uppercase tracking-[0.12em] text-white/80">{label}</div>
       <div className="mt-1 text-base font-black md:text-lg">{value}</div>
     </div>
   );
@@ -119,6 +122,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
   isOpen,
   result,
   onRetry,
+  onPractice,
   onNext,
   onMap,
   calmBreakLabel,
@@ -130,6 +134,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
   const [playXp, setPlayXp] = useState(false);
   const [levelUpPulse, setLevelUpPulse] = useState(false);
   const isPractice = Boolean(result?.practice);
+  const isMockAttempt = Boolean(result?.mockAttempt);
   const handleXpLevelUp = useCallback(() => setLevelUpPulse(true), []);
 
   useEffect(() => {
@@ -159,7 +164,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
   if (!result) return null;
 
   const isVictory = result.type === 'victory';
-  const resultBackground = isVictory ? successRoundBackground : failureRoundBackground;
+  const resultBackground = isVictory || isMockAttempt ? successRoundBackground : failureRoundBackground;
   const celebrationMessage = isPractice
     ? 'Practice Complete!'
     : result.stars === 3
@@ -187,7 +192,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
             />
             <div
               className={`absolute inset-0 ${
-                isVictory
+                isVictory || isMockAttempt
                   ? 'bg-[linear-gradient(180deg,rgba(7,26,39,0.22),rgba(2,6,23,0.72))]'
                   : 'bg-[linear-gradient(180deg,rgba(45,12,24,0.2),rgba(2,6,23,0.76))]'
               }`}
@@ -196,7 +201,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
             <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/55 to-transparent" />
           </div>
 
-          {isVictory && !reducedMotion ? (
+          {isVictory && !isPractice && !reducedMotion ? (
             <CelebrationSplash active message={celebrationMessage} theme="victory" sweepDuration={celebrationDuration} />
           ) : null}
 
@@ -224,18 +229,18 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
             <div className="relative z-10 flex h-full min-h-0 flex-col gap-4">
               <div className="flex-1 min-h-0 overflow-y-auto pr-1">
               <div className="flex flex-col items-center text-center">
-                <span className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] ${isPractice ? 'border-cyan-200/50 bg-cyan-400/20 text-cyan-100' : isVictory ? 'border-emerald-200/50 bg-emerald-400/20 text-emerald-100' : 'border-rose-200/45 bg-rose-400/20 text-amber-100'}`}>
-                  {isPractice ? (isVictory ? 'Practice Complete' : 'Practice Run Over') : isVictory ? 'Level Complete' : 'Try Again'}
+                <span className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] ${isPractice ? 'border-cyan-200/50 bg-cyan-400/20 text-cyan-100' : isVictory || isMockAttempt ? 'border-emerald-200/50 bg-emerald-400/20 text-emerald-100' : 'border-rose-200/45 bg-rose-400/20 text-amber-100'}`}>
+                  {isPractice ? (isVictory ? 'Practice Complete' : 'Practice Run Over') : isMockAttempt ? 'Core Run Logged' : isVictory ? 'Level Complete' : 'Try Again'}
                 </span>
                 <h2 className="mt-2 text-2xl font-black text-amber-100 md:text-3xl">{result.title}</h2>
                 <p className="mt-1 text-sm font-semibold text-white/80 md:text-base">{result.subtitle}</p>
               </div>
 
               <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
-                <ResultStatTile label="Accuracy" value={formatAccuracy(result.accuracy)} tone="emerald" />
+                <ResultStatTile label="Accuracy" value={result.accuracyMeasured === false ? 'Not tracked' : formatAccuracy(result.accuracy)} tone="emerald" />
                 <ResultStatTile
                   label="Time Taken"
-                  value={isVictory ? formatTime(result.timeMs) : 'N/A'}
+                  value={isVictory || isMockAttempt ? formatTime(result.timeMs) : 'N/A'}
                   tone="amber"
                 />
                 <ResultStatTile
@@ -262,7 +267,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
                     <AnimatedStarDisplay stars={result.stars} play={playStars} />
                     {result.stars === 3 ? (
                       <span className="rounded-full border border-amber-200/60 bg-amber-300/20 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100">
-                        Perfect Run
+                        Three-Star Clear
                       </span>
                     ) : null}
                   </div>
@@ -319,7 +324,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
                     className="ui-button-primary py-3 text-sm font-black uppercase tracking-[0.18em]"
                     onClick={onRetry}
                   >
-                    Retry
+                    {isMockAttempt ? 'Run Core Again' : 'Retry'}
                   </button>
                 )}
                 <button
@@ -329,6 +334,15 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
                 >
                   Map
                 </button>
+                {!isVictory && !isPractice && onPractice ? (
+                  <button
+                    type="button"
+                    className="ui-button-secondary col-span-2 py-2 text-xs font-black uppercase tracking-[0.18em]"
+                    onClick={onPractice}
+                  >
+                    Practise This Skill
+                  </button>
+                ) : null}
                 {calmBreakLabel && onCalmBreak ? (
                   <button
                     type="button"

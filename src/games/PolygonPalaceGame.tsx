@@ -3,10 +3,12 @@ import { AnimatePresence, motion } from 'motion/react';
 import { triggerHaptic } from '../haptics';
 import gameplayBackground from '../assets/maps/premium/polygon-palace.webp';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
+import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
 
-interface PolygonPalaceGameProps {
+interface PolygonPalaceGameProps extends MiniGameShellContractProps {
   levelId: number;
   miniGameLevel?: number;
+  isPractice?: boolean;
   avatarId: string;
   useSharedTopHud?: boolean;
   onVictory: (stars: number, XP: number) => void;
@@ -879,11 +881,13 @@ const ShapePreview: React.FC<{
 const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
   levelId,
   miniGameLevel,
+  isPractice = false,
   avatarId: _avatarId,
   useSharedTopHud = false,
   onVictory,
   onGameOver: _onGameOver,
   onBack,
+  sessionEvents,
 }) => {
   const baseLevel = Math.max(1, Math.min(5, miniGameLevel || levelId || 1));
   const initialRoundSeconds = useMemo(() => roundSecondsForLevel(baseLevel), [baseLevel]);
@@ -902,6 +906,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
   const [question, setQuestion] = useState<PolygonQuestion>(() => createQuestion(baseLevel, 0, initialRoundSeconds));
 
   const endedRef = useRef(false);
+  const answerPendingRef = useRef(false);
   const questionStartRef = useRef<number>(Date.now());
   const timeoutsRef = useRef<number[]>([]);
 
@@ -915,6 +920,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
   useEffect(() => {
     clearTimers();
     endedRef.current = false;
+    answerPendingRef.current = false;
     setTimeLeft(initialRoundSeconds);
     setScore(0);
     setStreak(0);
@@ -931,21 +937,28 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
   }, [baseLevel, initialRoundSeconds]);
 
   useEffect(() => {
-    if (roundOver) return undefined;
+    if (roundOver || isPractice) return undefined;
     const interval = window.setInterval(() => {
       setTimeLeft((previous) => Math.max(0, previous - 1));
     }, 1000);
     return () => window.clearInterval(interval);
-  }, [roundOver]);
+  }, [isPractice, roundOver]);
 
   useEffect(() => {
-    if (timeLeft > 0 || endedRef.current) return;
+    if (isPractice || timeLeft > 0 || endedRef.current) return;
     endedRef.current = true;
     setRoundOver(true);
     const finalStage = stageFromProgress(baseLevel, answeredCount, 0);
     const stars = starsFromPerformance(XP, correctCount, attemptCount, finalStage);
     onVictory(stars, XP);
-  }, [answeredCount, attemptCount, baseLevel, correctCount, onVictory, XP, timeLeft]);
+  }, [answeredCount, attemptCount, baseLevel, correctCount, isPractice, onVictory, XP, timeLeft]);
+
+  useEffect(() => {
+    if (!isPractice || correctCount < 5 || endedRef.current) return;
+    endedRef.current = true;
+    setRoundOver(true);
+    onVictory(3, XP);
+  }, [correctCount, isPractice, onVictory, XP]);
 
   const timerProgress = Math.max(0, Math.min(1, timeLeft / initialRoundSeconds));
   const timerFillColor = useMemo(() => {
@@ -961,13 +974,15 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
       setFeedback(null);
       setPulseTone(null);
       setIsLocked(false);
+      answerPendingRef.current = false;
       questionStartRef.current = Date.now();
     }, delayMs);
     timeoutsRef.current.push(timer);
   }, [baseLevel, timeLeft]);
 
   const evaluateSelection = useCallback((rawSelection: string[]) => {
-    if (roundOver || isLocked) return;
+    if (roundOver || isLocked || answerPendingRef.current) return;
+    answerPendingRef.current = true;
     setIsLocked(true);
 
     const nextAttemptCount = attemptCount + 1;
@@ -978,9 +993,13 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
       normalizedSelected.length === normalizedExpected.length
       && normalizedExpected.every((value, index) => normalizedSelected[index] === value)
     );
+    emitMiniGameSessionEvent(sessionEvents, isCorrect ? 'correct_answer' : 'incorrect_answer', {
+      score: XP,
+      metadata: { questionId: question.id, mode: question.mode, selected: normalizedSelected, expected: normalizedExpected },
+    });
 
     setAttemptCount(nextAttemptCount);
-    setAnsweredCount(nextAnsweredCount);
+    if (!isPractice || isCorrect) setAnsweredCount(nextAnsweredCount);
 
     if (isCorrect) {
       const elapsedMs = Math.max(240, Date.now() - questionStartRef.current);
@@ -1016,8 +1035,21 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
       title: 'Still scrambled',
       subtitle: `Correct answer: ${correctLabel}`,
     });
-    loadNextQuestion(nextAnsweredCount, 560);
-  }, [answeredCount, attemptCount, isLocked, loadNextQuestion, question, roundOver, Combo]);
+    if (isPractice) {
+      const retryTimer = window.setTimeout(() => {
+        if (endedRef.current) return;
+        setSelectedChoiceIds([]);
+        setFeedback(null);
+        setIsLocked(false);
+        answerPendingRef.current = false;
+        setPulseTone(null);
+        questionStartRef.current = Date.now();
+      }, 2400);
+      timeoutsRef.current.push(retryTimer);
+    } else {
+      loadNextQuestion(nextAnsweredCount, 560);
+    }
+  }, [answeredCount, attemptCount, isLocked, isPractice, loadNextQuestion, question, roundOver, Combo, sessionEvents, XP]);
   const submitProperties = () => {
     if (isLocked || roundOver || question.mode !== 'properties') return;
     if (selectedChoiceIds.length === 0) {

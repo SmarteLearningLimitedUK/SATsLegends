@@ -10,6 +10,7 @@ import { GameScreenShell } from '../layout/ScreenPrimitives';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
 import coordinateQuestBackground from '../assets/maps/premium/coordinates-quest.webp';
+import './coordinates-quest.css';
 import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
 
 interface TreasurePathGameProps extends MiniGameShellContractProps {
@@ -30,18 +31,19 @@ interface GridCell {
 interface TreasureRound {
   promptTitle: string;
   promptText: string;
-  promptType: 'coordinate' | 'movement';
+  promptType: 'coordinate' | 'movement' | 'reflection';
   start: { x: number; y: number };
   target: { x: number; y: number };
   traps: string[];
 }
 
 const randomInt = (max: number) => Math.floor(Math.random() * max) + 1;
+const randomBetween = (minimum: number, maximum: number) => minimum + Math.floor(Math.random() * (maximum - minimum + 1));
 
 const coordinateKey = (x: number, y: number) => `${x}-${y}`;
 
-const buildMovementRound = (gridSize: number, difficulty: number) => {
-  const start = { x: randomInt(gridSize), y: randomInt(gridSize) };
+const buildMovementRound = (minimum: number, maximum: number, difficulty: number) => {
+  const start = { x: randomBetween(minimum, maximum), y: randomBetween(minimum, maximum) };
   const moves = [
     { label: 'right', dx: 1, dy: 0 },
     { label: 'left', dx: -1, dy: 0 },
@@ -58,7 +60,7 @@ const buildMovementRound = (gridSize: number, difficulty: number) => {
     const validMoves = moves.filter((move) => {
       const nextX = target.x + move.dx * distance;
       const nextY = target.y + move.dy * distance;
-      return nextX >= 1 && nextX <= gridSize && nextY >= 1 && nextY <= gridSize;
+      return nextX >= minimum && nextX <= maximum && nextY >= minimum && nextY <= maximum;
     });
 
     const move = validMoves[Math.floor(Math.random() * validMoves.length)];
@@ -75,16 +77,33 @@ const buildMovementRound = (gridSize: number, difficulty: number) => {
   };
 };
 
-const generateRound = (gridSize: number, difficulty: number, translation: boolean): TreasureRound => {
+const generateRound = (gridSize: number, difficulty: number, translation: boolean, roundIndex = 0): TreasureRound => {
+  const minimum = difficulty >= 3 ? -Math.floor(gridSize / 2) : 1;
+  const maximum = minimum + gridSize - 1;
+  if (difficulty === 5 && roundIndex % 3 === 2) {
+    const axis = roundIndex % 2 === 0 ? 'y' : 'x';
+    const start = { x: randomBetween(minimum, maximum), y: randomBetween(minimum, maximum) };
+    // A point on the mirror line would not move, so keep the changing coordinate nonzero.
+    if (axis === 'y' && start.x === 0) start.x = 2;
+    if (axis === 'x' && start.y === 0) start.y = -2;
+    return {
+      promptTitle: 'Mirror Route',
+      promptText: `Reflect (${start.x}, ${start.y}) in the ${axis}-axis. Tap its image. The ${axis === 'y' ? 'x' : 'y'} sign changes.`,
+      promptType: 'reflection',
+      start,
+      target: axis === 'y' ? { x: -start.x, y: start.y } : { x: start.x, y: -start.y },
+      traps: [],
+    };
+  }
   const directMode = !translation && (difficulty === 1 || Math.random() > (difficulty >= 4 ? 0.8 : 0.4));
 
   if (directMode) {
-    const target = { x: randomInt(gridSize), y: randomInt(gridSize) };
-    const start = { x: randomInt(gridSize), y: randomInt(gridSize) };
+    const target = { x: randomBetween(minimum, maximum), y: randomBetween(minimum, maximum) };
+    const start = { x: randomBetween(minimum, maximum), y: randomBetween(minimum, maximum) };
 
     return {
       promptTitle: 'Route Recovery',
-      promptText: `Tap (${target.x}, ${target.y}) to restore the route. Read x across first, then y up.`,
+      promptText: `Tap (${target.x}, ${target.y}). Read x across first${minimum < 0 ? ' (left of zero is negative)' : ''}, then y up${minimum < 0 ? ' (below zero is negative)' : ''}.`,
       promptType: 'coordinate',
       start,
       target,
@@ -92,7 +111,7 @@ const generateRound = (gridSize: number, difficulty: number, translation: boolea
     };
   }
 
-  const movement = buildMovementRound(gridSize, difficulty);
+  const movement = buildMovementRound(minimum, maximum, difficulty);
   return {
     ...movement,
     traps: [],
@@ -134,7 +153,9 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
   useLayoutEffect(() => { if (!isPresent) { endedRef.current = true; clearTimers(); } }, [isPresent]);
   useEffect(() => () => { endedRef.current = true; clearTimers(); }, []);
   const difficulty = Math.max(1, Math.min(5, levelId));
-  const gridSize = difficulty <= 2 ? 5 : difficulty === 3 ? 6 : 7;
+  const gridSize = difficulty <= 2 ? 5 : 7;
+  const minimumCoordinate = difficulty <= 2 ? 1 : -3;
+  const maximumCoordinate = minimumCoordinate + gridSize - 1;
   const translation = Boolean(gameTitle?.toLowerCase().includes('translation'));
   const [XP, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(115);
@@ -159,8 +180,8 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
 
   const cells: GridCell[] = useMemo(() => {
     const entries: GridCell[] = [];
-    for (let y = gridSize; y >= 1; y -= 1) {
-      for (let x = 1; x <= gridSize; x += 1) {
+    for (let y = maximumCoordinate; y >= minimumCoordinate; y -= 1) {
+      for (let x = minimumCoordinate; x <= maximumCoordinate; x += 1) {
         entries.push({
           x,
           y,
@@ -169,7 +190,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
       }
     }
     return entries;
-  }, [gridSize, round.traps]);
+  }, [gridSize, maximumCoordinate, minimumCoordinate, round.traps]);
 
   useEffect(() => {
     endedRef.current = false;
@@ -180,7 +201,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
     setScore(0);
     setTimeLeft(115 + levelId * 6);
     setRoundIndex(0);
-    setRound(generateRound(gridSize, difficulty, translation));
+    setRound(generateRound(gridSize, difficulty, translation, 0));
     setFeedback(null);
     setLocalLives(3);
     setIsGameOver(false);
@@ -229,7 +250,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
     }
 
     setRoundIndex(nextRoundIndex);
-    setRound(generateRound(gridSize, difficulty, translation));
+    setRound(generateRound(gridSize, difficulty, translation, nextRoundIndex));
     setSelectedTile(null);
     setFeedback(null);
     answerLockedRef.current = false;
@@ -305,13 +326,12 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
         <div className="relative flex min-h-0 flex-1 flex-col items-center justify-center gap-2">
           <div className="coordinates-expedition"><ArcadeJourney kind="expedition" completed={roundIndex + (feedback === 'correct' ? 1 : 0)} total={7} avatarId={avatarId} danger={feedback === 'incorrect'} /></div>
           <div className="coordinates-grid-board relative flex aspect-square w-full max-w-[26.5rem] flex-col rounded-[1.5rem] border border-cyan-100/26 bg-[linear-gradient(180deg,rgba(8,22,52,0.84),rgba(7,18,43,0.92))] p-3 shadow-[0_18px_36px_rgba(2,6,23,0.4)]" role="group" aria-label="Coordinate grid">
-            <img className="coordinates-hero-portrait" src={heroImage} alt={playerAvatar.name} />
             <div className="mb-2 flex items-end gap-2 text-[10px] font-black text-cyan-100">
               <div className="w-8 shrink-0" />
               <div className="min-w-0 flex-1">
                 <div className="mb-1 text-center uppercase tracking-[0.22em]">x-axis</div>
-                <div className="grid text-center" style={{ gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))` }} aria-label={`X coordinates increase from 1 to ${gridSize}`}>
-                  {Array.from({ length: gridSize }, (_, index) => <span key={index + 1}>{index + 1}</span>)}
+                <div className="grid text-center" style={{ gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))` }} aria-label={`X coordinates increase from ${minimumCoordinate} to ${maximumCoordinate}`}>
+                  {Array.from({ length: gridSize }, (_, index) => <span key={minimumCoordinate + index} className={minimumCoordinate + index === 0 ? 'text-amber-200' : ''}>{minimumCoordinate + index}</span>)}
                 </div>
               </div>
             </div>
@@ -320,8 +340,8 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                 <div className="flex w-3 items-center justify-center">
                   <span className="-rotate-90 whitespace-nowrap uppercase tracking-[0.22em]">y-axis</span>
                 </div>
-                <div className="grid min-h-0 flex-1 text-center" style={{ gridTemplateRows: `repeat(${gridSize}, minmax(0, 1fr))` }} aria-label={`Y coordinates increase from 1 at the bottom to ${gridSize} at the top`}>
-                  {Array.from({ length: gridSize }, (_, index) => <span key={gridSize - index} className="flex items-center justify-center">{gridSize - index}</span>)}
+                <div className="grid min-h-0 flex-1 text-center" style={{ gridTemplateRows: `repeat(${gridSize}, minmax(0, 1fr))` }} aria-label={`Y coordinates increase from ${minimumCoordinate} at the bottom to ${maximumCoordinate} at the top`}>
+                  {Array.from({ length: gridSize }, (_, index) => <span key={maximumCoordinate - index} className={`flex items-center justify-center ${maximumCoordinate - index === 0 ? 'text-amber-200' : ''}`}>{maximumCoordinate - index}</span>)}
                 </div>
               </div>
               <div className="relative min-h-0 flex-1 rounded-[1.2rem] border border-cyan-100/14">
@@ -337,9 +357,13 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                     backgroundPosition: '0 0',
                   }}
                 />
+                {minimumCoordinate < 0 ? <>
+                  <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 z-[3] w-[2px] bg-amber-200/70" style={{ left: `${((0 - minimumCoordinate + .5) / gridSize) * 100}%` }} />
+                  <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 z-[3] h-[2px] bg-amber-200/70" style={{ bottom: `${((0 - minimumCoordinate + .5) / gridSize) * 100}%` }} />
+                </> : null}
                 <motion.img src={heroImage} alt="" aria-hidden="true" draggable={false}
                   className="pointer-events-none absolute z-[15] h-[20%] w-[20%] object-contain"
-                  animate={{ left: `${((feedback === 'correct' ? round.target.x : round.start.x) - .5) / gridSize * 100}%`, bottom: `${((feedback === 'correct' ? round.target.y : round.start.y) - .5) / gridSize * 100}%` }}
+                  animate={{ left: `${((feedback === 'correct' ? round.target.x : round.start.x) - minimumCoordinate + .5) / gridSize * 100}%`, bottom: `${((feedback === 'correct' ? round.target.y : round.start.y) - minimumCoordinate + .5) / gridSize * 100}%` }}
                   style={{ transform: 'translate(-50%, 50%)' }} transition={{ duration: reducedMotion ? 0 : .6 }} />
                 <div className="absolute inset-0 z-10 grid overflow-hidden rounded-[1.2rem]" style={{ gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${gridSize}, minmax(0, 1fr))` }}>
               {cells.map((cell) => {

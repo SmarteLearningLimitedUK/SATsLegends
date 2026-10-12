@@ -129,6 +129,7 @@ const SIMPLE_PAIR_RATIOS: PairRatio[] = [
   [5, 4],
   [6, 5],
 ];
+const SCALABLE_PAIR_RATIOS = SIMPLE_PAIR_RATIOS.filter(([first, second]) => first + second <= 10);
 
 const ADVANCED_PAIR_RATIOS: PairRatio[] = [
   [4, 1],
@@ -250,7 +251,7 @@ const stageForMode = (mode: ChallengeMode): number => {
       return 6;
   }
 };
-const roundsToWinForLevel = (levelId: number) => 7 + Math.floor((levelId - 1) / 2);
+const roundsToWinForLevel = (levelId: number) => levelId <= 1 ? 5 : levelId <= 3 ? 4 : 3;
 
 const buildPotionName = (active: Ingredient[]) => {
   const lead = active[0]?.name || 'Star';
@@ -262,78 +263,32 @@ const buildPotionName = (active: Ingredient[]) => {
   return `${lead} Elixir`;
 };
 
-const buildStoryLead = (
-  title: string,
-  stage: number,
-  batchLabel?: Challenge['batchLabel'],
-  mode?: ChallengeMode
-) => {
+const buildStoryLead = (mode: ChallengeMode) => {
   switch (mode) {
     case 'missing_value':
-      return 'The Monster Minds have stolen part of the recipe.';
+      return 'One bottle is ready.';
     case 'fix_mistake':
-      return 'The Monster Minds have messed up the mixture.';
+      return 'One bottle is short.';
     case 'scale_recipe':
-      return 'The Monster Minds have tampered with a larger batch.';
+      return 'Make a larger batch.';
     case 'multi_step':
-      return 'The apothecary records have been scrambled by the Monster Minds.';
+      return 'Records scrambled!';
     case 'word_problem':
-      return 'The Monster Minds caused chaos in the apothecary orders.';
+      return 'Orders scrambled!';
     case 'direct_recipe':
     default:
-      return 'The Monster Minds have pillaged the apothecary supplies.';
+      return 'Supplies scrambled!';
   }
 };
 
 const buildOrderPrompt = (
-  ratioText: string,
   storyLead: string,
-  mode?: ChallengeMode
+  totalDrops: number,
+  mode?: ChallengeMode,
+  revealTargets = false,
 ) => {
-  switch (mode) {
-    case 'missing_value':
-      return [
-        storyLead,
-        `Restore the missing drops using the ratio: ${ratioText}`,
-        'One ingredient is already set.',
-      ].join('\n');
-
-    case 'fix_mistake':
-      return [
-        storyLead,
-        `Fix the potion so the ratio is correct: ${ratioText}`,
-        'One ingredient is wrong.',
-      ].join('\n');
-
-    case 'scale_recipe':
-      return [
-        storyLead,
-        `Scale the potion to keep the ratio correct: ${ratioText}`,
-        'Check the total before you brew.',
-      ].join('\n');
-
-    case 'multi_step':
-      return [
-        storyLead,
-        'Use the total and ratio to rebuild the potion.',
-        'Solve it step by step.',
-      ].join('\n');
-
-    case 'word_problem':
-      return [
-        storyLead,
-        'Use the clue to restore the potion mix.',
-        'Then complete the brew.',
-      ].join('\n');
-
-    case 'direct_recipe':
-    default:
-      return [
-        storyLead,
-        `Restore the correct potion ratio: ${ratioText}`,
-        'Add the drops, then brew.',
-      ].join('\n');
-  }
+  if (mode === 'direct_recipe' && revealTargets) return `${storyLead} Add the shown drops, then brew.`;
+  return `${storyLead} Brew ${totalDrops} drops in the ratio above.`;
 };
 
 const cardLabelsForMode = (mode: ChallengeMode) => {
@@ -390,7 +345,7 @@ const buildOrderFlavor = (stage: number) => {
   return 'Hard: Missing both parts / word problems';
 };
 
-const generateChallenge = (levelId: number, solved: number, previousTitle?: string): Challenge => {
+const generateChallenge = (levelId: number, solved: number, isPractice: boolean, previousTitle?: string): Challenge => {
   let challenge: Challenge;
   let attempts = 0;
 
@@ -404,7 +359,7 @@ const generateChallenge = (levelId: number, solved: number, previousTitle?: stri
       shuffled([0, 1, 2, 3, 4]).slice(0, activeCount).sort((a, b) => a - b);
     let baseRatio: number[] = [...randomPick(SIMPLE_PAIR_RATIOS)];
     let scale = 1;
-    let revealTargets = false;
+    const revealTargets = isPractice;
     let startCounts = Array.from({ length: INGREDIENTS.length }, () => 0);
     let cardHint: string | undefined;
     let batchLabel: Challenge['batchLabel'] = 'single';
@@ -426,9 +381,8 @@ const generateChallenge = (levelId: number, solved: number, previousTitle?: stri
     if (mode === 'direct_recipe') {
       baseRatio = selectBaseRatio();
       scale = 1;
-      revealTargets = true;
     } else if (mode === 'scale_recipe') {
-      baseRatio = selectBaseRatio();
+      baseRatio = [...randomPick(SCALABLE_PAIR_RATIOS)];
       scale = randomPick(stage >= 4 ? [3, 4, 5, 6, 7, 8] : [2, 3]);
     } else if (mode === 'missing_value') {
       baseRatio = activeCount === 2
@@ -470,6 +424,13 @@ const generateChallenge = (levelId: number, solved: number, previousTitle?: stri
       batchLabel = 'single';
     }
 
+    const maxDrops = levelId <= 1 ? 7 : 20;
+    const ratioParts = baseRatio.reduce((sum, value) => sum + value, 0);
+    if (ratioParts * scale > maxDrops) {
+      scale = Math.max(1, Math.floor(maxDrops / ratioParts));
+      batchLabel = 'single';
+    }
+
     const targetCounts = baseRatio.map((value) => Math.round(value * scale));
     const totalDrops = targetCounts.reduce((sum, value) => sum + value, 0);
     const activeIngredients = activeIndices.map((index) => INGREDIENTS[index]);
@@ -483,10 +444,9 @@ const generateChallenge = (levelId: number, solved: number, previousTitle?: stri
       const givenIngredient = activeIngredients[givenRatioIndex];
       cardHint = `${givenIngredient.name} has ${targetCounts[givenRatioIndex]} drops.`;
     } else if (mode === 'fix_mistake') {
-      const shortIndex = targetCounts[1] > targetCounts[0] ? 1 : 0;
       startCounts[activeIndices[0]] = targetCounts[0];
-      startCounts[activeIndices[1]] = Math.max(0, targetCounts[1] - baseRatio[shortIndex === 1 ? 1 : 0]);
-      const shortIngredient = activeIngredients[shortIndex];
+      startCounts[activeIndices[1]] = Math.max(0, targetCounts[1] - baseRatio[1]);
+      const shortIngredient = activeIngredients[1];
       cardHint = `${shortIngredient.name} needs fixing.`;
     } else if (mode === 'word_problem') {
       const givenRatioIndex = 1;
@@ -499,13 +459,12 @@ const generateChallenge = (levelId: number, solved: number, previousTitle?: stri
     }
 
     const orderTitle = buildPotionName(activeIngredients);
-    const ratioText = simplifyRatio(targetCounts).join(':');
-    const storyLead = buildStoryLead(orderTitle, stage, batchLabel, mode);
+    const storyLead = buildStoryLead(mode);
 
     challenge = {
       id: nextChallengeId(),
       orderTitle,
-      orderPrompt: buildOrderPrompt(ratioText, storyLead, mode),
+      orderPrompt: buildOrderPrompt(storyLead, totalDrops, mode, revealTargets),
       orderFlavor: buildOrderFlavor(stage),
       stage,
       mode,
@@ -548,8 +507,9 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
   onBack,
   sessionState,
   sessionEvents,
+  isPractice = false,
 }) => {
-  const [challenge, setChallenge] = useState<Challenge>(() => generateChallenge(levelId, 0));
+  const [challenge, setChallenge] = useState<Challenge>(() => generateChallenge(levelId, 0, isPractice));
   const [counts, setCounts] = useState<number[]>(() => [...challenge.startCounts]);
   const [correctSolved, setCorrectSolved] = useState(0);
   const [attempts, setAttempts] = useState(0);
@@ -736,10 +696,11 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
         onVictory(stars, scoreNow);
         return;
       }
-      const nextChallenge = generateChallenge(levelId, nextCorrect, challenge.orderTitle);
+      const nextChallenge = generateChallenge(levelId, nextCorrect, isPractice, challenge.orderTitle);
       setChallenge(nextChallenge);
       setCounts([...nextChallenge.startCounts]);
       setFeedback(null);
+      setHasBrewed(false);
       setLocked(false);
     }, SUCCESS_DELAY_MS);
   };
@@ -788,7 +749,7 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
                     {challenge.orderTitle}
                   </div>
                   <div className="potion-recipe-meta mt-1 flex items-center justify-center gap-2 text-[11px] font-black uppercase tracking-[0.12em] text-amber-100">
-                    <span>Brew {correctSolved + 1}/{roundsToWin}</span>
+                    <span>Brew {Math.min(correctSolved + 1, roundsToWin)}/{roundsToWin}</span>
                     <span aria-hidden="true">·</span>
                     <span>Ratio {ratioText}</span>
                   </div>
@@ -907,7 +868,9 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
                       whileTap={isActive ? { scale: 0.96, y: 2 } : undefined}
                       onClick={() => addIngredient(index)}
                       disabled={locked || !isActive || isLockedIngredient}
-                      aria-label={isActive ? `Add ${ingredient.name} to the potion` : `${ingredient.name} is not needed for this recipe`}
+                      aria-label={isActive
+                        ? `Add ${ingredient.name} to the potion. ${current} drops added${challenge.revealTargets ? `; target ${target}` : ''}.`
+                        : `${ingredient.name} is not needed for this recipe`}
                       className={`potion-ingredient-button relative flex h-[clamp(76px,10vh,98px)] flex-col items-center justify-between rounded-[1.15rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.35),rgba(15,23,42,0.64))] px-2 py-1.5 shadow-[0_10px_14px_rgba(2,6,23,0.24)] transition ${locked || !isActive || isLockedIngredient ? 'opacity-80 saturate-75' : ''}`}
                       style={isActive && !isLockedIngredient ? { boxShadow: `0 12px 22px rgba(2,6,23,0.28), 0 0 18px ${ingredient.glow}` } : undefined}
                     >
@@ -926,7 +889,7 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
                       </div>
                       <span className="relative z-10 text-[9px] font-black uppercase tracking-[0.02em] text-cyan-50">{ingredient.name}</span>
                       <span className="relative z-10 text-[10px] font-black text-cyan-100">
-                        {current}/{target}
+                        {challenge.revealTargets ? `${current}/${target}` : `${current} drops`}
                       </span>
                     </motion.button>
                   );

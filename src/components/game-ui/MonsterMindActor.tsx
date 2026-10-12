@@ -34,6 +34,20 @@ const RIGS: Record<string, Rig> = {
     rightArm: { pivot: [47, 51], shape: [[43, 45], [55, 45], [65, 53], [66, 69], [53, 73], [46, 65]] },
     head: { pivot: [38, 49], shape: [[15, 22], [21, 12], [35, 9], [44, 12], [53, 19], [58, 30], [57, 41], [50, 50], [39, 55], [27, 53], [18, 45]] },
   },
+  rhino: {
+    leftArm: { pivot: [18, 46], shape: [[13, 38], [24, 42], [27, 52], [22, 70], [12, 75], [2, 69], [3, 58]] },
+    rightArm: { pivot: [48, 48], shape: [[45, 42], [54, 43], [65, 51], [66, 70], [52, 74], [44, 61]] },
+    head: { pivot: [39, 43], shape: [[17, 28], [18, 17], [22, 12], [28, 13], [31, 20], [37, 17], [43, 13], [48, 17], [54, 27], [55, 37], [51, 44], [43, 48], [31, 47], [22, 41]] },
+  },
+  'cyclops-slime': {
+    leftArm: { pivot: [23, 50], shape: [[21, 43], [31, 45], [32, 60], [22, 72], [4, 71], [1, 62], [8, 50]] },
+    rightArm: { pivot: [48, 51], shape: [[44, 44], [53, 44], [63, 48], [65, 61], [60, 70], [48, 64]] },
+    head: { pivot: [37, 51], shape: [[18, 30], [22, 24], [30, 21], [36, 28], [45, 23], [51, 28], [56, 39], [53, 51], [45, 57], [27, 56], [18, 47]] },
+  },
+  jelly: {
+    leftArm: { pivot: [30, 62], shape: [[23, 56], [36, 61], [38, 74], [27, 82], [13, 80], [10, 70], [14, 61]] },
+    rightArm: { pivot: [70, 63], shape: [[64, 58], [76, 57], [89, 63], [92, 74], [83, 80], [69, 77]] },
+  },
 };
 
 const rigCache = new Map<string, PreparedRig>();
@@ -47,8 +61,9 @@ const rigFor = (source: string): Rig | undefined => {
   const cached = scaledRigs.get(name);
   if (cached) return cached;
   // The outlines above are drawn against the 1024px-tall source paintings.
-  // These portraits are 683px wide; only their horizontal coordinates change.
-  const width = 683;
+  // Coordinates are measured against a 1024px-wide reference. The jelly
+  // illustration is wider than the other portraits, so use its own source width.
+  const width = name === 'jelly' ? 974 : 683;
   const scaleX = 1024 / width;
   const scaled: Rig = {};
   for (const part of PARTS) {
@@ -123,33 +138,40 @@ const prepareRig = (source: string, frame: string, rig: Rig): Promise<PreparedRi
 const REACTIONS: Record<Exclude<MonsterMindReaction, 'idle'>, Keyframe[]> = {
   hit: [
     { transform: 'translate(0, 0) rotate(0deg) scale(1)', offset: 0, easing: 'ease-out' },
-    { transform: 'translate(-5px, 1px) rotate(-2deg) scale(.985, 1.01)', offset: .2, easing: 'ease-in-out' },
+    { transform: 'translate(2px, -1px) rotate(1deg) scale(1.018, .984)', offset: .1, easing: 'ease-in' },
+    { transform: 'translate(-5px, 1px) rotate(-2deg) scale(.985, 1.01)', offset: .2, easing: 'ease-out' },
+    { transform: 'translate(-2px, 1px) rotate(-.8deg) scale(.995, 1.005)', offset: .37, easing: 'ease-in-out' },
     { transform: 'translate(2px, 0) rotate(.8deg) scale(1.006, .997)', offset: .56, easing: 'ease-out' },
+    { transform: 'translate(-.5px, 0) rotate(-.2deg) scale(.998, 1.002)', offset: .78, easing: 'ease-out' },
     { transform: 'translate(0, 0) rotate(0deg) scale(1)', offset: 1 },
   ],
   taunt: [
     { transform: 'translate(0, 0) rotate(0deg) scale(1)', offset: 0, easing: 'ease-in-out' },
-    { transform: 'translate(7px, -2px) rotate(4deg) scale(1.05, .96)', offset: .4, easing: 'ease-in-out' },
+    { transform: 'translate(-2px, 1px) rotate(-1.5deg) scale(.98, 1.02)', offset: .14, easing: 'ease-in' },
+    { transform: 'translate(7px, -2px) rotate(4deg) scale(1.05, .96)', offset: .4, easing: 'ease-out' },
+    { transform: 'translate(6px, -2px) rotate(3.5deg) scale(1.04, .97)', offset: .55, easing: 'ease-in-out' },
     { transform: 'translate(-1px, 0) rotate(-1deg) scale(.99, 1.01)', offset: .72, easing: 'ease-out' },
     { transform: 'translate(0, 0) rotate(0deg) scale(1)', offset: 1 },
   ],
   defeated: [
     { transform: 'translate(0, 0) rotate(0deg) scale(1)', offset: 0, easing: 'ease-out' },
+    { transform: 'translate(1px, 1px) rotate(1deg) scale(.99, 1.01)', offset: .12, easing: 'ease-in' },
     { transform: 'translate(-2px, -2px) rotate(-4deg) scale(1.03, .96)', offset: .3, easing: 'ease-in' },
+    { transform: 'translate(-3px, 1px) rotate(3deg) scale(.98, .97)', offset: .62, easing: 'ease-in' },
     { transform: 'translate(0, 5px) rotate(8deg) scale(.94, .9)', offset: 1 },
   ],
 };
 
 const PART_REACTIONS: Record<Exclude<MonsterMindReaction, 'idle'>, Partial<Record<Part, Keyframe[]>>> = {
   hit: {
-    head: [{ transform: 'rotate(0deg)' }, { transform: 'rotate(-4deg)', offset: .25 }, { transform: 'rotate(2deg)', offset: .7 }, { transform: 'rotate(0deg)' }],
-    leftArm: [{ transform: 'rotate(0deg)' }, { transform: 'rotate(-6deg)', offset: .28 }, { transform: 'rotate(3deg)', offset: .75 }, { transform: 'rotate(0deg)' }],
-    rightArm: [{ transform: 'rotate(0deg)' }, { transform: 'rotate(7deg)', offset: .28 }, { transform: 'rotate(-2deg)', offset: .75 }, { transform: 'rotate(0deg)' }],
+    head: [{ transform: 'rotate(0deg)' }, { transform: 'rotate(2deg)', offset: .1 }, { transform: 'rotate(-6deg)', offset: .23 }, { transform: 'rotate(3deg)', offset: .58 }, { transform: 'rotate(0deg)' }],
+    leftArm: [{ transform: 'rotate(0deg)' }, { transform: 'rotate(4deg)', offset: .1 }, { transform: 'rotate(-11deg)', offset: .24 }, { transform: 'rotate(4deg)', offset: .65 }, { transform: 'rotate(0deg)' }],
+    rightArm: [{ transform: 'rotate(0deg)' }, { transform: 'rotate(-4deg)', offset: .1 }, { transform: 'rotate(12deg)', offset: .24 }, { transform: 'rotate(-4deg)', offset: .65 }, { transform: 'rotate(0deg)' }],
   },
   taunt: {
-    head: [{ transform: 'rotate(0deg)' }, { transform: 'rotate(3deg)', offset: .42 }, { transform: 'rotate(-1deg)', offset: .75 }, { transform: 'rotate(0deg)' }],
-    leftArm: [{ transform: 'rotate(0deg)' }, { transform: 'rotate(-6deg)', offset: .35 }, { transform: 'rotate(-2deg)', offset: .72 }, { transform: 'rotate(0deg)' }],
-    rightArm: [{ transform: 'rotate(0deg)' }, { transform: 'rotate(-7deg)', offset: .35 }, { transform: 'rotate(2deg)', offset: .72 }, { transform: 'rotate(0deg)' }],
+    head: [{ transform: 'rotate(0deg)' }, { transform: 'rotate(-2deg)', offset: .14 }, { transform: 'rotate(5deg)', offset: .42 }, { transform: 'rotate(4deg)', offset: .55 }, { transform: 'rotate(-1deg)', offset: .77 }, { transform: 'rotate(0deg)' }],
+    leftArm: [{ transform: 'rotate(0deg)' }, { transform: 'rotate(4deg)', offset: .14 }, { transform: 'rotate(-13deg)', offset: .42 }, { transform: 'rotate(-11deg)', offset: .55 }, { transform: 'rotate(3deg)', offset: .78 }, { transform: 'rotate(0deg)' }],
+    rightArm: [{ transform: 'rotate(0deg)' }, { transform: 'rotate(-5deg)', offset: .14 }, { transform: 'rotate(-16deg)', offset: .42 }, { transform: 'rotate(-14deg)', offset: .55 }, { transform: 'rotate(5deg)', offset: .78 }, { transform: 'rotate(0deg)' }],
   },
   defeated: {
     head: [{ transform: 'rotate(0deg)' }, { transform: 'rotate(-4deg)', offset: .3 }, { transform: 'rotate(7deg)', offset: 1 }],

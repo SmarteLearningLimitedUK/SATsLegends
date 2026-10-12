@@ -19,6 +19,8 @@ import {
   YAxis,
 } from 'recharts';
 import lineGraphLabBackground from '../assets/maps/premium/line-graph-lab.webp';
+import './line-graph-lab.css';
+import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
 
 interface DataPoint {
   label: string;
@@ -32,9 +34,10 @@ interface RoundData {
   correctAnswer: string;
   helper: string;
   highlightIndex?: number;
+  plotIndex?: number;
 }
 
-interface LineGraphLabGameProps {
+interface LineGraphLabGameProps extends MiniGameShellContractProps {
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
@@ -46,7 +49,7 @@ interface LineGraphLabGameProps {
 
 const MAX_LEVEL = 10;
 const X_AXIS_LABELS = ['1', '2', '3', '4', '5'];
-const QUESTION_TYPES = ['basic_reading', 'reading_point', 'interpretation', 'comparison'] as const;
+type QuestionType = 'basic_reading' | 'reading_point' | 'interpretation' | 'comparison' | 'change' | 'interpolation' | 'plot_point';
 
 const scoreToStars = (XP: number) => {
   if (XP >= 1400) return 3;
@@ -65,93 +68,109 @@ const shuffle = <T,>(items: T[]) => {
   return next;
 };
 
-const generateGraph = (level: number): DataPoint[] => {
-  const base = [0, 1, 2, 10, 16, 24][clamp(level, 1, 5)];
-  const values = level <= 2
-    ? [base, base + 1, base + 3, base + 6, base + 4]
-    : [base, base + 2, base + 6, base + 14, base + 9];
-
-  return values.map((value, index) => ({
+const generateGraph = (level: number, roundIndex: number): DataPoint[] => {
+  const patterns = [
+    [1, 3, 6, 4, 8],
+    [3, 7, 5, 6, 2],
+    [2, 5, 4, 9, 7],
+    [4, 2, 6, 7, 3],
+    [1, 5, 7, 3, 6],
+  ];
+  const scale = level <= 2 ? 1 : level === 3 ? 2 : level === 4 ? 3 : 4;
+  const offset = level === 1 ? roundIndex % 2 : level === 2 ? roundIndex % 3 : level * 2 + (roundIndex % 4);
+  return patterns[roundIndex % patterns.length].map((value, index) => ({
     label: X_AXIS_LABELS[index],
-    value,
+    value: offset + value * scale,
   }));
 };
 
-const uniqueHighestIndex = (graph: DataPoint[]) => {
-  const values = graph.map(point => point.value);
-  const max = Math.max(...values);
-  return values.indexOf(max) === values.lastIndexOf(max) ? values.indexOf(max) : -1;
-};
+const numberOptions = (answer: number, step: number) => shuffle([
+  answer,
+  Math.max(0, answer - step),
+  answer + step,
+  answer + step * 2,
+].map(String));
 
-const uniqueLowestIndex = (graph: DataPoint[]) => {
-  const values = graph.map(point => point.value);
-  const min = Math.min(...values);
-  return values.indexOf(min) === values.lastIndexOf(min) ? values.indexOf(min) : -1;
-};
-
-const buildValueQuestion = (graph: DataPoint[]): RoundData => {
-  const targetIndex = 3;
+const buildValueQuestion = (graph: DataPoint[], targetIndex: number): RoundData => {
   const target = graph[targetIndex];
-  const delta = target.value <= 10 ? 1 : 2;
-  const wrongs = shuffle([...new Set([
-    Math.max(0, target.value - delta), target.value + delta,
-    target.value + delta * 2, Math.max(0, target.value - delta * 2),
-  ])]).filter(value => value !== target.value).map(String);
-
-  const options = shuffle([`${target.value}`, ...wrongs.slice(0, 3)]);
   return {
     graph,
-    question: 'The graph shows brainpower levels over time. What is the brainpower at time = 4?',
-    options,
+    question: `What is the brainpower at time ${target.label}?`,
+    options: numberOptions(target.value, target.value <= 12 ? 1 : 2),
     correctAnswer: `${target.value}`,
-    helper: 'Read the point at time 4 and match it to the y-axis.',
+    helper: `Follow time ${target.label} up to the line, then across to the value axis.`,
   };
 };
 
-const buildReadingPointQuestion = (graph: DataPoint[]): RoundData => {
-  const targetIndex = 2;
+const buildReadingPointQuestion = (graph: DataPoint[], targetIndex: number): RoundData => {
   const target = graph[targetIndex];
   const coordinate = `(${target.label}, ${target.value})`;
   const wrongs = shuffle([
-    `(${graph[1].label}, ${target.value})`,
+    `(${graph[(targetIndex + 1) % graph.length].label}, ${target.value})`,
     `(${target.label}, ${target.value + 2})`,
-    `(${graph[3].label}, ${target.value})`,
+    `(${graph[(targetIndex + 2) % graph.length].label}, ${target.value})`,
     `(${target.label}, ${Math.max(0, target.value - 2)})`,
   ]).filter((value, index, values) => value !== coordinate && values.indexOf(value) === index);
 
   return {
     graph,
-    question: 'What are the coordinates of the marked point A?',
+    question: `What are the coordinates of the point at time ${target.label}?`,
     options: shuffle([coordinate, ...wrongs.slice(0, 3)]),
     correctAnswer: coordinate,
-    helper: 'Answer in the form (x, y).',
+    helper: 'A point is written (time, value): read across first, then up.',
     highlightIndex: targetIndex,
   };
 };
 
-const buildInterpretationQuestion = (graph: DataPoint[]): RoundData => {
-  const targetIndex = 1;
+const buildInterpretationQuestion = (graph: DataPoint[], targetIndex: number): RoundData => {
   const targetTime = graph[targetIndex].label;
-  const adjustedGraph = graph.map((point, index) => (
-    index === targetIndex
-      ? { ...point, value: 20 }
-      : point.value === 20
-        ? { ...point, value: point.value + 2 }
-        : point
-  ));
-  const wrongs = shuffle([
-    `${adjustedGraph[0].label}`,
-    `${adjustedGraph[2].label}`,
-    `${adjustedGraph[4].label}`,
-    `${adjustedGraph[3].label}`,
-  ]).filter((value) => value !== targetTime);
-
+  const otherTimes = shuffle(graph.map((point) => point.label).filter((label) => label !== targetTime));
   return {
-    graph: adjustedGraph,
-    question: 'At what time does the brainpower reach 20 units?',
-    options: shuffle([targetTime, ...wrongs.slice(0, 3)]),
+    graph,
+    question: `At what time does brainpower reach ${graph[targetIndex].value} units?`,
+    options: shuffle([targetTime, ...otherTimes.slice(0, 3)]),
     correctAnswer: targetTime,
-    helper: 'Find the point where the line crosses 20 units.',
+    helper: `Find ${graph[targetIndex].value} on the value axis, then read down to the time axis.`,
+  };
+};
+
+const buildChangeQuestion = (graph: DataPoint[], fromIndex: number): RoundData => {
+  const from = graph[fromIndex];
+  const to = graph[fromIndex + 1];
+  const change = Math.abs(to.value - from.value);
+  return {
+    graph,
+    question: `How much does brainpower ${to.value > from.value ? 'rise' : 'fall'} from time ${from.label} to time ${to.label}?`,
+    options: numberOptions(change, change <= 3 ? 1 : 2),
+    correctAnswer: String(change),
+    helper: 'Subtract the smaller plotted value from the larger.',
+  };
+};
+
+const buildInterpolationQuestion = (graph: DataPoint[], fromIndex: number): RoundData => {
+  const from = graph[fromIndex];
+  const to = graph[fromIndex + 1];
+  const midpoint = (from.value + to.value) / 2;
+  return {
+    graph,
+    question: `What value lies halfway between times ${from.label} and ${to.label}?`,
+    options: numberOptions(midpoint, 1),
+    correctAnswer: String(midpoint),
+    helper: `Find the value halfway between ${from.value} and ${to.value}; the line joins these points evenly.`,
+  };
+};
+
+const buildPlotPointQuestion = (graph: DataPoint[], targetIndex: number, level: number): RoundData => {
+  const plotted = graph.map((point) => ({ ...point }));
+  const missingValue = (plotted[targetIndex - 1].value + plotted[targetIndex + 1].value) / 2;
+  plotted[targetIndex].value = missingValue;
+  return {
+    graph: plotted,
+    question: `Plot the missing point at time ${plotted[targetIndex].label}. Its value is halfway between the readings at times ${plotted[targetIndex - 1].label} and ${plotted[targetIndex + 1].label}.`,
+    options: numberOptions(missingValue, level <= 3 ? 1 : 2),
+    correctAnswer: String(missingValue),
+    helper: `Find the halfway value between ${plotted[targetIndex - 1].value} and ${plotted[targetIndex + 1].value}, then place the point above time ${plotted[targetIndex].label}.`,
+    plotIndex: targetIndex,
   };
 };
 
@@ -175,40 +194,34 @@ const buildComparisonQuestion = (graph: DataPoint[]): RoundData | null => {
 
   return {
     graph,
-    question: 'Between which two time points does brainpower increase the most?',
+    question: 'Where does brainpower increase the most?',
     options: shuffle([correct, ...wrongs.slice(0, 3)]),
     correctAnswer: correct,
-    helper: 'Look for the biggest upward jump between neighbouring points.',
+    helper: 'Find the steepest upward section of the line.',
   };
 };
 
-const generateRound = (level: number): RoundData => {
-  let graph = generateGraph(level);
-  let built: RoundData | null = null;
-  let attempts = 0;
+const generateRound = (level: number, roundIndex: number): RoundData => {
+  const graph = generateGraph(level, roundIndex);
+  const typesByLevel: QuestionType[][] = [
+    ['basic_reading'],
+    ['basic_reading', 'reading_point', 'change'],
+    ['basic_reading', 'change', 'plot_point', 'interpretation', 'comparison'],
+    ['change', 'plot_point', 'comparison', 'interpolation', 'interpretation'],
+    ['comparison', 'plot_point', 'interpolation', 'change', 'interpretation', 'reading_point'],
+  ];
+  const types = typesByLevel[clamp(level, 1, 5) - 1];
+  const type = types[roundIndex % types.length];
+  const pointIndex = (roundIndex + Math.floor(roundIndex / types.length)) % graph.length;
+  const segmentIndex = roundIndex % (graph.length - 1);
 
-  while (!built && attempts < 20) {
-    attempts += 1;
-    graph = generateGraph(level);
-    const allowedTypes =
-      level === 1
-        ? ['basic_reading'] as const
-        : level === 2
-          ? ['basic_reading', 'reading_point'] as const
-          : level === 3
-              ? ['basic_reading', 'reading_point', 'interpretation'] as const
-              : level === 4
-                ? ['interpretation', 'comparison'] as const
-                : QUESTION_TYPES;
-    const type = allowedTypes[Math.floor(Math.random() * allowedTypes.length)];
-
-    if (type === 'basic_reading') built = buildValueQuestion(graph);
-    if (type === 'reading_point') built = buildReadingPointQuestion(graph);
-    if (type === 'interpretation') built = buildInterpretationQuestion(graph);
-    if (type === 'comparison') built = buildComparisonQuestion(graph);
-  }
-
-  return built ?? buildValueQuestion(graph);
+  if (type === 'reading_point') return buildReadingPointQuestion(graph, pointIndex);
+  if (type === 'interpretation') return buildInterpretationQuestion(graph, pointIndex);
+  if (type === 'change') return buildChangeQuestion(graph, segmentIndex);
+  if (type === 'plot_point') return buildPlotPointQuestion(graph, 1 + (roundIndex % 3), level);
+  if (type === 'interpolation') return buildInterpolationQuestion(graph, segmentIndex);
+  if (type === 'comparison') return buildComparisonQuestion(graph) ?? buildValueQuestion(graph, pointIndex);
+  return buildValueQuestion(graph, pointIndex);
 };
 
 const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
@@ -217,6 +230,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   useSharedTopHud: _useSharedTopHud = false,
   isPractice,
   practiceBriefing,
+  sessionEvents,
   onVictory,
   onGameOver: _onGameOver,
   onBack,
@@ -226,14 +240,16 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   const [level, setLevel] = useState(1);
   const [gameState, setGameState] = useState<'playing' | 'success' | 'complete'>('playing');
   const [round, setRound] = useState<RoundData | null>(null);
+  const [wrongAttempts, setWrongAttempts] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const chartWrapRef = useRef<HTMLDivElement | null>(null);
   const [chartSize, setChartSize] = useState({ width: 0, height: 0 });
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
-  const loadLevel = useCallback((_targetLevel: number) => {
-    setRound(generateRound(difficulty));
+  const loadLevel = useCallback((targetLevel: number) => {
+    setRound(generateRound(difficulty, targetLevel - 1));
+    setWrongAttempts(0);
     setSelectedAnswer(null);
     setFeedback(null);
     setGameState('playing');
@@ -274,12 +290,15 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
     setSelectedAnswer(answer);
 
     if (answer === round.correctAnswer) {
-      setFeedback({ type: 'success', message: 'Data recovered!' });
-      setXP(prev => prev + 100 + level * 10);
+      emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { metadata: { round: level, question: round.question } });
+      setFeedback({ type: 'success', message: `Data recovered! ${round.helper}` });
+      setXP(prev => prev + Math.max(20, 100 - wrongAttempts * 30) + level * 10);
       setGameState('success');
       return;
     }
 
+    emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { metadata: { round: level, question: round.question } });
+    setWrongAttempts((count) => count + 1);
     setFeedback({ type: 'error', message: `Not quite. ${round.helper}` });
   };
 
@@ -297,29 +316,45 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
 
   const yTicks = useMemo(() => {
     if (!round) return [0, 1, 2, 3, 4, 5];
-    const maxValue = Math.max(...round.graph.map(point => point.value));
-    const step = difficulty <= 2 ? 1 : 5;
+    const plotChoices = round.plotIndex === undefined ? [] : round.options.map(Number).filter(Number.isFinite);
+    const maxValue = Math.max(...round.graph.map(point => point.value), ...plotChoices);
+    const step = difficulty <= 2 ? 1 : difficulty === 5 ? 10 : 5;
     const top = Math.ceil(maxValue / step) * step;
     return Array.from({ length: top / step + 1 }, (_, index) => index * step);
   }, [difficulty, round]);
+
+  const displayedGraph = useMemo(() => round?.graph.map((point, index) => ({
+    ...point,
+    value: index === round.plotIndex && selectedAnswer === null ? null :
+      index === round.plotIndex ? Number(selectedAnswer) : point.value,
+  })) ?? [], [round, selectedAnswer]);
+
+  const chooseOption = (option: string) => {
+    if (round?.plotIndex === undefined) {
+      handleAnswer(option);
+      return;
+    }
+    setSelectedAnswer(option);
+    setFeedback(null);
+  };
 
   return (
     <GameUiShell backgroundImage={lineGraphLabBackground} overlayDisabled className="bg-transparent">
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Line Graph Lab"
-        body="The Monster Minds have scrambled the data points.\nRead the line graph and answer the question.\nFollow the trend across the graph."
+        body="The Monster Minds have scrambled the data points.\nRead the graph, or plot its missing point when asked.\nFollow the numbered axes and the trend."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
       <GameScreenLayout
         className="relative h-full w-full min-h-0 select-none gap-0 text-slate-100"
         main={(
-          <section className="line-graph-main flex min-h-0 flex-1 flex-col px-2 pb-[calc(env(safe-area-inset-bottom)+0.55rem)] pt-2 sm:px-3 md:px-4">
+          <section className={`line-graph-main flex min-h-0 flex-1 flex-col px-2 pb-[calc(env(safe-area-inset-bottom)+0.55rem)] pt-2 sm:px-3 md:px-4 ${gameState === 'success' ? 'line-graph-main--success' : ''}`}>
             <div className="line-graph-spacer flex flex-1" />
 
             <div className="line-graph-board mx-auto flex w-full max-w-[780px] flex-col gap-2 sm:gap-2.5">
-              <GameQuestionCard className="w-full" title="Line Graph Lab" subtitle={round?.helper || ''}>
+              <GameQuestionCard className="w-full" title="Line Graph Lab" subtitle={feedback?.message || round?.helper || ''}>
                 {round?.question ?? ''}
               </GameQuestionCard>
 
@@ -336,7 +371,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                       <LineChart
                         width={chartSize.width}
                         height={chartSize.height}
-                        data={round.graph}
+                        data={displayedGraph}
                         margin={{ top: 18, right: 16, left: 0, bottom: 16 }}
                       >
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.22)" />
@@ -359,7 +394,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                           width={42}
                         />
                         <Line
-                          type="monotone"
+                          type="linear"
                           dataKey="value"
                           stroke="#34d399"
                           strokeWidth={4}
@@ -397,8 +432,9 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                     <motion.button
                       key={option}
                       whileTap={{ scale: 0.98 }}
-                      onClick={() => handleAnswer(option)}
+                      onClick={() => chooseOption(option)}
                       disabled={gameState === 'success'}
+                      aria-pressed={round?.plotIndex !== undefined ? isSelected : undefined}
                       className={`min-h-[3rem] rounded-2xl px-3 py-2.25 text-center sm:min-h-[3.2rem] sm:px-4 ${
                         isCorrect
                           ? 'ui-button-success'
@@ -407,7 +443,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                             : isSelected
                               ? 'ui-button-primary'
                               : 'ui-button-secondary'
-                      } ${gameState === 'success' ? 'cursor-default' : ''}`}
+                      } ${isWrongSelected ? 'line-graph-answer--wrong' : ''} ${gameState === 'success' ? 'cursor-default' : ''}`}
                     >
                       <span className="text-[0.88rem] font-black leading-tight sm:text-base">{option}</span>
                     </motion.button>
@@ -415,7 +451,16 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                 })}
               </div>
 
-              <div className="line-graph-next min-h-[3rem]">
+              {round?.plotIndex !== undefined && gameState === 'playing' ? (
+                <button
+                  type="button"
+                  className="ui-button-primary mt-2 w-full rounded-2xl py-2.5 text-sm font-black"
+                  disabled={selectedAnswer === null}
+                  onClick={() => selectedAnswer !== null && handleAnswer(selectedAnswer)}
+                >Plot point at time {round.graph[round.plotIndex].label}</button>
+              ) : null}
+
+              <div className={`line-graph-next min-h-[3rem] ${gameState === 'success' ? 'line-graph-next--visible' : ''}`}>
                 <AnimatePresence mode="wait">
                   {gameState === 'success' ? (
                     <motion.button

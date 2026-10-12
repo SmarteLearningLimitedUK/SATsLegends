@@ -11,6 +11,12 @@
   display: none;
 }
 
+#root .potion-panic-scene .game-screen-layout {
+  padding-top: 0 !important;
+}
+
+.potion-feedback-slot:empty { display: none; }
+
 .potion-vessel {
   bottom: 0;
   height: 46%;
@@ -21,7 +27,50 @@
 
 .potion-vessel-art {
   display: block;
+  filter: drop-shadow(0 18px 12px rgba(4, 9, 15, .58)) brightness(1.08);
 }
+
+.potion-vessel::before,
+.potion-vessel::after {
+  position: absolute;
+  z-index: 42;
+  top: 0;
+  width: 17px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, rgba(238, 255, 254, 0), rgba(172, 252, 236, .5) 44%, rgba(159, 215, 253, 0));
+  filter: blur(8px);
+  opacity: .64;
+  pointer-events: none;
+  content: '';
+  animation: potion-steam-rise 2.4s ease-out infinite;
+}
+
+.potion-vessel::before { left: 36%; }
+.potion-vessel::after { left: 57%; animation-delay: -1.2s; }
+
+@keyframes potion-steam-rise {
+  0% { opacity: 0; transform: translate(0, 12px) scale(.7); }
+  35% { opacity: .7; }
+  100% { opacity: 0; transform: translate(16px, -47px) scale(1.5); }
+}
+
+.potion-ingredient-button:not(:disabled):is(:hover, :focus-visible) {
+  transform: translateY(-3px);
+  border-color: rgba(225, 250, 255, .8);
+  filter: brightness(1.12);
+}
+
+.potion-ingredient-button:focus-visible { outline: 3px solid #fff4b8; outline-offset: 2px; }
+
+.potion-ingredient-button span {
+  font-size: clamp(12px, 2.9vw, 14px) !important;
+  line-height: 1.1;
+}
+
+.potion-ingredient-button span:last-child { font-variant-numeric: tabular-nums; }
+
+.potion-ingredient-button:disabled span { color: #d4e7e8 !important; }
 
 .potion-liquid-surface {
   top: 15%;
@@ -53,7 +102,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .potion-vessel--shake,
-  .potion-vessel--surge {
+  .potion-vessel--surge,
+  .potion-vessel::before,
+  .potion-vessel::after {
     animation: none;
   }
 }
@@ -291,6 +342,46 @@
     .potion-ingredients .potion-ingredient-button > div:first-child {
       height: 32px;
     }
+  }
+}
+
+@media (max-width: 420px) {
+  .potion-vessel { height: min(46%, 190px); }
+}
+
+@media (max-width: 420px) and (max-height: 650px) {
+  .potion-recipe-copy {
+    font-size: 17px;
+    line-height: 1.16;
+    white-space: normal;
+  }
+  .potion-ingredient-button > div:first-child { height: 30px !important; }
+
+  .potion-ingredients[data-ingredient-count="4"] { padding-block: 4px; }
+  .potion-ingredients[data-ingredient-count="4"] > div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px 6px;
+  }
+  .potion-ingredients[data-ingredient-count="4"] .potion-ingredient-button {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr);
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    height: 50px;
+    min-height: 50px;
+    align-items: center;
+    justify-items: start;
+    padding: 2px 6px;
+    text-align: left;
+  }
+  .potion-ingredients[data-ingredient-count="4"] .potion-ingredient-button > div:first-child {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    width: 28px;
+    height: 28px !important;
+  }
+  .potion-ingredients[data-ingredient-count="4"] .potion-ingredient-button span {
+    grid-column: 2;
+    white-space: nowrap;
   }
 }
 

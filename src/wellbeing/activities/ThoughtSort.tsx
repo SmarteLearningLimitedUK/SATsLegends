@@ -5,10 +5,16 @@ import { WellbeingActivityComponentProps } from '../types';
 import { useWellbeingCompletion } from '../useWellbeingCompletion';
 
 const feelingWords = ['worried', 'frustrated', 'tired', 'nervous', 'sad', 'calm', 'steady', 'brave'];
+const balancedThoughts = [
+  'One question does not define what I know.',
+  'I can try another method.',
+  'Asking for help is a smart next step.',
+];
 
 const ThoughtSort: React.FC<WellbeingActivityComponentProps> = ({ onComplete, onExit }) => {
   const [selected, setSelected] = useState<string[]>([]);
-  const [message, setMessage] = useState('Choose two to four feeling words');
+  const [balancedThought, setBalancedThought] = useState<string | null>(null);
+  const [message, setMessage] = useState('Choose how you feel, then pick a fairer thought.');
   const [micReady, setMicReady] = useState(false);
   const [micPending, setMicPending] = useState(false);
   const selectedRef = useRef(selected);
@@ -42,24 +48,24 @@ const ThoughtSort: React.FC<WellbeingActivityComponentProps> = ({ onComplete, on
   }, [stopMic]);
 
   const releaseBalloon = useCallback(() => {
-    if (releasedRef.current || selectedRef.current.length < 2) return;
+    if (releasedRef.current || selectedRef.current.length < 1 || !balancedThought) return;
     releasedRef.current = true;
-    setMessage('Your balloon is on its way');
+    setMessage('You made room for a more balanced thought.');
     stopMic();
     finish(1200);
-  }, [finish, stopMic]);
+  }, [balancedThought, finish, stopMic]);
 
   const selectWord = (word: string) => {
     if (releasedRef.current) return;
     const current = selectedRef.current;
-    const next = current.includes(word) ? current.filter((item) => item !== word) : current.length < 4 ? [...current, word] : current;
+    const next = current.includes(word) ? current.filter((item) => item !== word) : current.length < 2 ? [...current, word] : current;
     selectedRef.current = next;
     setSelected(next);
-    setMessage(next.length < 2 ? 'Choose two to four feeling words' : 'Release your balloon whenever you are ready');
+    setMessage(next.length < 1 ? 'Choose one or two feeling words.' : balancedThought ? 'Release the balloon when you are ready.' : 'Now choose a more balanced thought.');
   };
 
   const startMic = async () => {
-    if (releasedRef.current || micReady || micPending || selectedRef.current.length < 2) return;
+    if (releasedRef.current || micReady || micPending || selectedRef.current.length < 1 || !balancedThought) return;
     if (!navigator.mediaDevices?.getUserMedia) { setMessage('Microphone unavailable. You can still tap Release balloon.'); return; }
     const request = ++requestRef.current;
     setMicPending(true);
@@ -88,7 +94,7 @@ const ThoughtSort: React.FC<WellbeingActivityComponentProps> = ({ onComplete, on
         for (const value of buffer) total += (value - 128) ** 2;
         const level = Math.sqrt(total / buffer.length) / 128;
         soundFramesRef.current = level > .12 ? soundFramesRef.current + 1 : 0;
-        if (soundFramesRef.current >= 10 && selectedRef.current.length >= 2) { releaseBalloon(); return; }
+        if (soundFramesRef.current >= 10 && selectedRef.current.length >= 1) { releaseBalloon(); return; }
         rafRef.current = requestAnimationFrame(sample);
       };
       rafRef.current = requestAnimationFrame(sample);
@@ -101,13 +107,25 @@ const ThoughtSort: React.FC<WellbeingActivityComponentProps> = ({ onComplete, on
   };
 
   return (
-    <WellbeingShell title="Worry Balloon" activityId="thought_sort" type="Thought Reset"
-      subtitle="Choose two to four words for how you feel, then release the balloon."
-      purpose="Name a feeling without having to explain it." affirmation="Every feeling is allowed. Take your next step when you are ready."
-      status={message} progress={finished ? 100 : selected.length / 4 * 70} onExit={() => { cancel(); onExit(); }}>
-      <div className="wellbeing-scene balloon-scene" data-balloon-released={finished}>
+    <WellbeingShell title="Thought Release" activityId="thought_sort" type="Thought Reset"
+      subtitle="Name a feeling. Then challenge the thought that one hard question means you cannot do this."
+      purpose="Choose a fairer thought. No explanation needed."
+      fact="CBT links thoughts, feelings and actions. It helps us consider other possibilities."
+      affirmation={balancedThought || 'I can feel this and choose my next step.'}
+      status={message} progress={finished ? 100 : (selected.length ? 35 : 0) + (balancedThought ? 40 : 0)} onExit={() => { cancel(); onExit(); }}>
+      <div className="wellbeing-scene balloon-scene" data-balloon-released={finished} data-thought-step={balancedThought ? 'ready' : 'choose'}>
         <div className="feeling-words" role="group" aria-label="Feeling words">
           {feelingWords.map((word) => <button key={word} type="button" onClick={() => selectWord(word)} disabled={finished} aria-pressed={selected.includes(word)} className="feeling-word" data-button-skin="none">{word}</button>)}
+        </div>
+        <div className="thought-reframe" aria-label="Choose a balanced thought">
+          <p className="thought-challenge"><span>THOUGHT CHECK</span>“One hard question means I cannot do this.” <strong>What else could be true?</strong></p>
+          <div className="thought-reframe-options" role="group" aria-label="Balanced thoughts">
+            {balancedThoughts.map((thought) => <button key={thought} type="button" className="thought-reframe-option"
+              data-button-skin="none" data-thought-option aria-pressed={balancedThought === thought}
+              disabled={finished} onClick={() => { setBalancedThought(thought); setMessage(selectedRef.current.length ? 'Release the balloon when you are ready.' : 'Choose a feeling to go with your thought.'); }}>
+              {thought}
+            </button>)}
+          </div>
         </div>
         <div className="balloon-space" aria-hidden="true">
           <div className={'balloon-actor' + (finished ? ' is-released' : '')}>
@@ -116,9 +134,9 @@ const ThoughtSort: React.FC<WellbeingActivityComponentProps> = ({ onComplete, on
           </div>
         </div>
         <div className="balloon-actions">
-          <button type="button" onClick={releaseBalloon} disabled={selected.length < 2 || finished} className="wellbeing-action" data-button-skin="none">Release balloon</button>
+          <button type="button" onClick={releaseBalloon} disabled={selected.length < 1 || !balancedThought || finished} className="wellbeing-action" data-button-skin="none">Release balloon</button>
           <button type="button" onClick={micReady ? () => { stopMic(); setMessage('Release your balloon whenever you are ready'); } : startMic}
-            disabled={selected.length < 2 || finished || micPending} className="balloon-mic" data-button-skin="none">
+            disabled={selected.length < 1 || !balancedThought || finished || micPending} className="balloon-mic" data-button-skin="none">
             {micReady ? <MicOff size={15} aria-hidden="true" /> : <Mic size={15} aria-hidden="true" />}
             {micReady ? 'Turn microphone off' : micPending ? 'Waiting for microphone' : 'Use microphone (optional)'}
           </button>

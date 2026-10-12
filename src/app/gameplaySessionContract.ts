@@ -26,7 +26,10 @@ export interface MiniGameSessionEventPayload {
   score?: number;
   stars?: number;
   reason?: string;
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, unknown> & {
+    /** Retryable mistakes still count toward accuracy without spending a life. */
+    preservesLives?: boolean;
+  };
 }
 
 /**

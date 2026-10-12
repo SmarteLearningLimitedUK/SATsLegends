@@ -10,12 +10,12 @@ import SplashLogo from './SplashLogo';
 import GameplayGallery from './GameplayGallery';
 
 const calmActivities = [
-  { id: 'breathing_bloom', name: 'Bubble Breath', type: 'Breathing', time: 'About 40 seconds', text: 'Follow a gentle breath in and an easy breath out. Children can pause whenever they like and keep to a comfortable pace.' },
-  { id: 'peaceful_pond', name: 'Peaceful Pond', type: 'Grounding', time: 'About 50 seconds', text: 'Guide lily pads home and watch the water ripple. A quiet, simple activity for a change of pace.' },
-  { id: 'candle_calm', name: 'Lantern Camp', type: 'Grounding', time: 'About 35 seconds', text: 'Put the camp supplies away, then dim the lantern and enjoy the evening glow.' },
-  { id: 'constellation_connect', name: 'Star Path', type: 'Focus', time: 'About 40 seconds', text: 'Connect five stars in order, taking one small step at a time.' },
-  { id: 'leaf_drift', name: 'Leaf Drift', type: 'Grounding', time: 'About 35 seconds', text: 'Guide three leaves along a quiet woodland stream and into the glow.' },
-  { id: 'thought_sort', name: 'Worry Balloon', type: 'Thought reset', time: 'About 45 seconds', text: 'Choose words for a feeling and let a balloon drift away. Tapping is enough; the optional microphone works on the device without uploading a recording.' },
+  { id: 'breathing_bloom', name: 'Breath Bloom', type: 'Breathing', time: 'About 1 minute', text: 'Choose a comfortable visual rhythm, follow four breath cycles and check in between them. Pausing is always an option.' },
+  { id: 'peaceful_pond', name: 'Peaceful Pond', type: 'Grounding', time: 'About 50 seconds', text: 'Notice sights, sounds and touch around you while guiding lily pads into place.' },
+  { id: 'candle_calm', name: 'Lantern Camp', type: 'Grounding', time: 'About 35 seconds', text: 'Pack the camp while noticing details in the scene, then dim the lantern yourself.' },
+  { id: 'constellation_connect', name: 'Star Path', type: 'Focus', time: 'About 2 minutes', text: 'Trace three constellations, discover a sky fact after each, then follow a moving light side to side for a brief attention exercise.' },
+  { id: 'leaf_drift', name: 'Leaf Drift', type: 'Grounding', time: 'About 35 seconds', text: 'Choose what you notice through sight, sound and touch as each leaf moves downstream.' },
+  { id: 'thought_sort', name: 'Thought Release', type: 'Thought reset', time: 'About 45 seconds', text: 'Name a feeling and choose a more balanced thought before releasing the balloon. The optional microphone works on the device without uploading a recording.' },
 ] as const;
 const reveal = { initial: { y: 16 }, whileInView: { y: 0 }, viewport: { once: true, amount: 0.15 }, transition: { duration: 0.45 } };
 
@@ -56,7 +56,7 @@ export default function ForParents() {
           <div className="parents-calm-details">
             <div className="parents-calm-options" role="group" aria-label="Explore the calm activities">{calmActivities.map((item, index) => <button key={item.id} type="button" aria-pressed={index === activityIndex} onClick={() => setActivityIndex(index)}>{item.name}</button>)}</div>
             <div className="parents-calm-description" aria-live="polite" aria-atomic="true"><p className="website-eyebrow">{activity.type}</p><h3>{activity.name}</h3><p>{activity.text}</p></div>
-            <p className="parents-calm-note">A small pause, at their pace. These activities support everyday wellbeing; they are not mental health treatment.</p>
+            <p className="parents-calm-note">A small pause, at their pace. These activities support everyday wellbeing; they are not mental health treatment. The side-to-side focus in Star Path is not EMDR therapy, which is provided by trained clinicians.</p>
           </div>
         </div>
       </div>

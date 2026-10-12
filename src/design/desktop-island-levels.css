@@ -290,3 +290,38 @@
     transition: none;
   }
 }
+
+@media (max-width: 399px) {
+  #root .screen-island-levels .legend-level-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 4px 7px;
+    min-height: 66px;
+  }
+
+  #root .screen-island-levels .legend-level-row > div:first-child {
+    grid-column: 1;
+    width: auto;
+    font-size: 13px;
+  }
+
+  #root .screen-island-levels .legend-level-row > div:nth-child(2) {
+    grid-column: 1;
+    font-size: 12px;
+    line-height: 1.2;
+  }
+
+  #root .screen-island-levels .legend-level-row > div:nth-child(3) {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  #root .screen-island-levels .legend-level-row > button {
+    grid-column: 2;
+    grid-row: 2;
+    min-width: 72px;
+    min-height: 40px;
+    margin-left: 0;
+    font-size: 12px;
+  }
+}
