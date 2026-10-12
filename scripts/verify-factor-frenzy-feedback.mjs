@@ -22,7 +22,7 @@ for (const profile of profiles) {
       const { ISLANDS } = await import('/src/constants.ts');
       const levels = ISLANDS.flatMap(island => island.levels.map(level => ({
         key: level.blueprintKey, route: `/game/${island.id}/${level.id}`,
-        practice: Boolean(level.isPractice), tier: level.miniGameLevel,
+        practice: Boolean(level.isPractice), tier: level.difficultyTier,
       }))).filter(level => level.key === 'factor_frenzy');
       return { practice: levels.find(level => level.practice)?.route, tier5: levels.find(level => level.tier === 5)?.route };
     });

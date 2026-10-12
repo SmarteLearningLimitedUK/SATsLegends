@@ -121,7 +121,21 @@ async function runCase(browserType, width, height, tier, fullRun) {
       return `/game/6/${level.id}`;
     }, tier);
     await page.goto(base + route);
-    await page.locator('[data-market-game]').waitFor();
+    try {
+      await page.locator('[data-market-game]').waitFor({ timeout: 20000 });
+    } catch (mountError) {
+      // The shared CI dev server can stall after earlier browser checks. Retry only
+      // a clean, correctly routed pre-mount; gameplay and layout failures still fail.
+      if (errors.length || new URL(page.url()).pathname !== route) throw mountError;
+      console.warn(`Retrying Change Counter pre-mount at ${width}x${height} after a clean navigation stall`);
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      try {
+        await page.locator('[data-market-game]').waitFor({ timeout: 30000 });
+      } catch (retryError) {
+        const visibleText = (await page.locator('body').innerText().catch(() => '')).slice(0, 300);
+        throw new Error(`Change Counter did not mount at ${width}x${height}; route=${page.url()}, pageErrors=${JSON.stringify(errors)}, body=${JSON.stringify(visibleText)}`, { cause: retryError });
+      }
+    }
     const intro = page.locator('[role="dialog"] [data-dialog-primary]');
     if (await intro.count()) await intro.first().click();
     await page.locator('[role="dialog"]').waitFor({ state: 'hidden' });
