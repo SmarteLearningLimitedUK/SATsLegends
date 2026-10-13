@@ -891,3 +891,9 @@
   .wellbeing-footer .wellbeing-slow-note { transition: none; animation: none; }
   .wellbeing-garden-flower { animation: none; }
 }
+/* Ten shuffled pads, with separate upper pad and lower target rows. */
+@media(max-width:430px){
+ .pond-playfield[data-pond-count='10'] .pond-pad {width:44px;height:44px;font-size:22px;}
+ .pond-playfield[data-pond-count='10'] .pond-target {width:44px;height:44px;font-size:19px;}
+}
+@media(max-width:430px){.pond-playfield[data-pond-count='10'] {top:calc(22% + 24px);}}

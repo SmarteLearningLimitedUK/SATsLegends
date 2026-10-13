@@ -1171,14 +1171,15 @@ async function completeCalmInputs(page, profile, id, motion, { pendingExit = fal
     return { states, paused, pausedAnimations, realTimePhases: phases, breathingTrace: trace, phaseTiming, phaseTraceFromNativeEntry: true, noClockAcceleration: true, pendingExitAfterFinalNativeInput: pendingExit };
   }
   if (id === 'peaceful_pond') {
-    for (let number = 1; number <= 4; number += 1) {
-      const pad = root.getByRole('button', { name: `Lily pad ${number}`, exact: true }); const target = root.locator(`[data-pond-target="${number}"]`);
+    for (let number = 1; number <= 10; number += 1) {
+      const pad = root.getByRole('button', { name: `Guide lily pad ${number} to ring ${number}`, exact: true }); const target = root.locator(`[data-pond-target="${number}"]`);
+      await activate(page, profile, root.getByRole('button',{name:'I noticed something',exact:true}), true);
       await expect(target).toHaveText(String(number)); await activate(page, profile, pad, true);
-      if (pendingExit && number === 4) return pendingResult();
+      if (pendingExit && number === 10) return pendingResult();
       await expect(pad).toHaveAttribute('aria-pressed', 'true');
       const [p, t] = await Promise.all([box(pad), box(target)]);
       expect(Math.hypot(p.x + p.width / 2 - t.x - t.width / 2, p.y + p.height / 2 - t.y - t.height / 2)).toBeLessThan(2);
-      await rapid(pad); await progress(number * 25);
+      await rapid(pad); await progress(number * 10);
     }
   } else if (id === 'candle_calm') {
     const lantern = root.getByRole('button', { name: 'Dim the lantern', exact: true }); await expect(lantern).toBeDisabled();
@@ -1237,7 +1238,7 @@ async function pendingCalmExit(page, profile, id, motion) {
   // Measure the stable header before the final input starts its reward timer.
   // Direct native touch avoids spending that interval on locator stability scans.
   const bounds = await hitVisible(exit, { minimumHeight: 44, text: true });
-  const labels = { peaceful_pond: 'Lily pad 4', candle_calm: 'Dim the lantern', constellation_connect: 'Connect star 5', leaf_drift: 'Guide leaf 3', thought_sort: 'Release balloon' };
+  const labels = { peaceful_pond: 'Guide lily pad 10 to ring 10', candle_calm: 'Dim the lantern', constellation_connect: 'Connect star 5', leaf_drift: 'Guide leaf 3', thought_sort: 'Release balloon' };
   const deadline = { breathing_bloom: 1800, peaceful_pond: 1200, candle_calm: 2200, constellation_connect: 2200, leaf_drift: 800, thought_sort: 1200 }[id];
   await page.evaluate(({ activityId, label }) => {
     const root = document.querySelector(`[data-wellbeing-activity="${activityId}"]`);

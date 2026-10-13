@@ -8,12 +8,18 @@ type Fish = { id: number; x: number; y: number; vx: number; vy: number; color: s
 type Pad = { id: number; x: number; y: number; targetX: number; targetY: number; placed: boolean };
 type PadDrag = { id: number; pointerId: number; startX: number; startY: number; originX: number; originY: number; offsetX: number; offsetY: number };
 const colors = ['#edc36e', '#9dd7d7', '#e8a88a', '#bbe3a4'];
-const initialPads: Pad[] = [
-  { id: 0, x: 18, y: 31, targetX: 18, targetY: 68, placed: false },
-  { id: 1, x: 40, y: 22, targetX: 40, targetY: 77, placed: false },
-  { id: 2, x: 62, y: 31, targetX: 63, targetY: 67, placed: false },
-  { id: 3, x: 83, y: 22, targetX: 84, targetY: 57, placed: false },
-];
+const PAD_COUNT = 10;
+const makeInitialPads = (): Pad[] => {
+  const numbers = Array.from({length: PAD_COUNT}, (_, id) => id);
+  for (let i = numbers.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
+  }
+  // Even a rare identity shuffle must start with a jumbled layout.
+  if (numbers.every((id, slot) => id === slot)) numbers.push(numbers.shift()!);
+  return numbers.map((id, slot) => ({id, x: 10 + slot % 5 * 20, y: 14 + Math.floor(slot / 5) * 24,
+    targetX: 10 + id % 5 * 20, targetY: 62 + Math.floor(id / 5) * 24, placed: false}));
+};
 const noticingPrompts = [
   { sense: 'Sight', prompt: 'Find one colour or shape you can see.' },
   { sense: 'Sound', prompt: 'Notice a sound nearby, or a quiet moment.' },
@@ -27,7 +33,7 @@ const makeFish = (id: number): Fish => ({
 const clamp = (value: number) => Math.max(9, Math.min(91, value));
 
 const PeacefulPond: React.FC<WellbeingActivityComponentProps> = ({ onComplete, onExit }) => {
-  const [pads, setPads] = useState(initialPads);
+  const [pads, setPads] = useState(makeInitialPads);
   const [attentionReady, setAttentionReady] = useState(false);
   const [fish, setFish] = useState(() => Array.from({ length: 16 }, (_, index) => makeFish(index)));
   const [pulse, setPulse] = useState<{ x: number; y: number; key: number } | null>(null);
@@ -38,7 +44,7 @@ const PeacefulPond: React.FC<WellbeingActivityComponentProps> = ({ onComplete, o
   const reducedMotion = useReducedMotion();
   const { finished, finish, cancel } = useWellbeingCompletion(onComplete);
   const completeCount = pads.filter((pad) => pad.placed).length;
-  const currentPrompt = noticingPrompts[completeCount];
+  const currentPrompt = completeCount < PAD_COUNT ? noticingPrompts[completeCount % noticingPrompts.length] : null;
 
   useEffect(() => {
     if (reducedMotion || finished) return undefined;
@@ -62,7 +68,7 @@ const PeacefulPond: React.FC<WellbeingActivityComponentProps> = ({ onComplete, o
     return () => window.clearInterval(interval);
   }, [finished, pulse, reducedMotion]);
 
-  useEffect(() => { if (completeCount === initialPads.length) finish(1200); }, [completeCount, finish]);
+  useEffect(() => { if (completeCount === PAD_COUNT) finish(1200); }, [completeCount, finish]);
   useEffect(() => () => { if (pulseTimer.current !== null) window.clearTimeout(pulseTimer.current); dragRef.current = null; }, []);
 
   const getPoint = (clientX: number, clientY: number) => {
@@ -116,18 +122,18 @@ const PeacefulPond: React.FC<WellbeingActivityComponentProps> = ({ onComplete, o
       purpose="Let each movement connect to something you can sense right now."
       fact="Grounding uses sights, sounds, and touch to bring attention to the present moment."
       affirmation="No rush. One thing at a time."
-      status={finished || completeCount === 4 ? 'All four lily pads are home' : attentionReady ? `Place lily pad ${completeCount + 1} of 4` : `Notice ${currentPrompt.sense.toLowerCase()} before placing lily pad ${completeCount + 1}`}
-      progress={completeCount * 25} onExit={() => { cancel(); onExit(); }}>
+      status={finished || completeCount === PAD_COUNT ? 'All ten lily pads are home' : attentionReady ? `Place lily pad ${completeCount + 1} of 10` : `Notice ${currentPrompt?.sense.toLowerCase()} before placing lily pad ${completeCount + 1}`}
+      progress={completeCount * 10} onExit={() => { cancel(); onExit(); }}>
       <div className="wellbeing-scene">
-        {currentPrompt && !finished ? <div className="pond-attention" data-pond-sense={currentPrompt.sense.toLowerCase()}>
-          <span className="pond-attention-label">{currentPrompt.sense} · {completeCount + 1} of 4</span>
+        {currentPrompt && !finished ? <div className="pond-attention" data-pond-sense={currentPrompt?.sense.toLowerCase()}>
+          <span className="pond-attention-label">{currentPrompt.sense} · {completeCount + 1} of 10</span>
           <p>{currentPrompt.prompt}</p>
           <button type="button" className="wellbeing-quiet-action pond-attention-action" data-button-skin="none"
             onClick={() => setAttentionReady(true)} disabled={attentionReady}>
             {attentionReady ? 'Now guide the pad' : 'I noticed something'}
           </button>
         </div> : null}
-        <div ref={pondRef} className="pond-playfield" data-pond-playfield onPointerDown={ripple} onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={cancelDrag}>
+        <div ref={pondRef} className="pond-playfield" data-pond-playfield data-pond-count={PAD_COUNT} onPointerDown={ripple} onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={cancelDrag}>
           {pads.map((pad) => <div key={'target-' + pad.id} className={'pond-target' + (pad.placed ? ' is-placed' : '')} style={{ left: pad.targetX + '%', top: pad.targetY + '%' }} data-pond-target={pad.id + 1} aria-hidden="true">{pad.id + 1}</div>)}
           {fish.map((item) => (
             <div key={item.id} className="pond-fish" data-wellbeing-fish style={{ left: item.x + '%', top: item.y + '%', transform: item.vx < 0 ? 'scaleX(-1)' : 'none' }} aria-hidden="true">

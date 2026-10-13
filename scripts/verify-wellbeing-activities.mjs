@@ -27,7 +27,7 @@ async function completeActivity(page, id, profile) {
       break;
     }
     case 'peaceful_pond':
-      for (let pad = 1; pad <= 4; pad += 1) {
+      for (let pad = 1; pad <= 10; pad += 1) {
         await page.getByRole('button', { name: 'I noticed something' }).click();
         await page.locator(`[data-pond-pad="${pad}"]`).press('Enter');
         await expect(page.locator(`[data-pond-pad="${pad}"]`)).toHaveAttribute('aria-pressed', 'true');
@@ -149,6 +149,18 @@ try {
             return Number(style.opacity) >= .995 && scale >= .999;
           }), { timeout: 2000 }).toBe(true);
           await page.screenshot({ path: `qa-artifacts/wellbeing/${profile.name}-${id}.png`, fullPage: true });
+        }
+        if(id === 'peaceful_pond') {
+          const issues=await page.evaluate(()=>{
+            const prompt=document.querySelector('.pond-attention').getBoundingClientRect();
+            const pads=[...document.querySelectorAll('[data-pond-pad]')];
+            const rings=[...document.querySelectorAll('[data-pond-target]')];
+            const boxes=[...pads,...rings].map(n=>n.getBoundingClientRect());
+            const overlap=(a,b)=>a.left<b.right-1&&a.right>b.left+1&&a.top<b.bottom-1&&a.bottom>b.top+1;
+            const sorted=pads.slice().sort((a,b)=>a.getBoundingClientRect().y-b.getBoundingClientRect().y||a.getBoundingClientRect().x-b.getBoundingClientRect().x);
+            return {count:pads.length,rings:rings.length,ordered:sorted.every((n,i)=>Number(n.dataset.pondPad)===i+1),promptOverlap:boxes.some(b=>overlap(b,prompt)),overlap:boxes.some((b,i)=>boxes.slice(i+1).some(a=>overlap(a,b)))};
+          });
+          expect(issues).toEqual({count:10,rings:10,ordered:false,promptOverlap:false,overlap:false});
         }
         await completeActivity(page, id, profile);
         console.log(`PASS ${profile.name}: ${id} instructions, fact, affirmation and completion`);
