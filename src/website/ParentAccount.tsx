@@ -95,7 +95,7 @@ export default function ParentAccount({ mode }: { mode: 'signup' | 'login' | 'fo
   }
   const title = signup ? 'Your family’s adventure starts here.' : mode === 'forgot' ? 'Reset your password.' : mode === 'reset' ? 'Choose a new password.' : 'Welcome back.';
   return <main className="website-account-main website-container" id="website-main">
-    <section className="website-account-world"><p className="website-eyebrow"><Gem size={17} /> SATs Legends Matharia</p><h1>Big adventures.<br /><span>Little legends.</span></h1><p>One child. A world of maths adventures.<br /> Progress you can follow, every step of the way.</p><img src={barratt} alt="Barratt is ready for an adventure" /><span className="website-account-caption">A brighter next chapter.</span></section>
+    <section className="website-account-world"><p className="website-eyebrow"><Gem size={17} /> SATs Legends Matharia</p><h1>Big adventures.<br /><span>Little legends.</span></h1><p>One child. A world of maths adventures.<br /> Progress you can follow, every step of the way.</p><div className="website-account-character"><img src={barratt} alt="Barratt is ready for an adventure" /><span className="website-account-caption">A brighter next chapter.</span></div></section>
     <section className="website-account-form-wrap">
       <p className="website-eyebrow">Parent & guardian accounts</p><h2>{title}</h2><p>{signup ? 'Create your parent account, add your child’s nickname, then choose monthly or yearly access.' : 'Your child’s adventures and progress, in one place.'}</p>
       {!family.configured && <p className="family-notice" role="status">Parent accounts and purchases are not available yet. Please check back soon.</p>}
