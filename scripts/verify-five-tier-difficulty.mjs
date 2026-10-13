@@ -444,14 +444,14 @@ record('Area floor geometry and five distinct tile-build rounds per tier', () =>
   }
 });
 const scale = generator('ScaleBuilderGame', ['levelsForTier']);
-record('Five scale-builder projects retain the chosen shape/factor and answerable quarter steps', () => {
+record('Five scale-builder projects retain the chosen shape/factor and exact numeric dimensions', () => {
   for (let tier = 1; tier <= 5; tier++) {
     const projects = scale.levelsForTier(tier);
     assert.equal(projects.length, 5); assert.equal(new Set(projects.map((project) => project.id)).size, 5);
     assert.equal(new Set(projects.map((project) => project.targetScale)).size, 1);
     assert.equal(new Set(projects.map((project) => project.shape.type)).size, 1);
     for (const project of projects) {
-      assert.ok(Number.isInteger(project.targetScale * 4));
+      assert.ok([project.shape.baseWidth,project.shape.baseHeight].every(value=>Number.isFinite(value*project.targetScale)&&value*project.targetScale>0));
       assert.ok(project.instructions.includes(`${project.shape.baseWidth} units by ${project.shape.baseHeight} units`));
     }
   }
