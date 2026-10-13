@@ -21,7 +21,7 @@
 .wellbeing-header { position: relative; z-index: 2; display: flex; flex: 0 0 auto; justify-content: space-between; align-items: flex-start; gap: 16px; padding: 10px 0 16px; }
 .wellbeing-heading { min-width: 0; max-width: 56rem; }
 .wellbeing-eyebrow { color: #bce8da; font-size: 10px; font-weight: 600; letter-spacing: .13em; text-transform: uppercase; }
-.wellbeing-heading h1 { margin: 3px 0 5px; color: #f6ffe9; font-family: var(--font-display); font-size: clamp(26px, 3.3vw, 42px); font-weight: 700; line-height: 1.12; text-shadow: 0 3px 14px #071c24b3; }
+.wellbeing-heading h1 { margin: 3px 0 5px; color: #f6ffe9; font-family: var(--font-fredoka); font-size: clamp(26px, 3.3vw, 42px); font-weight: 600; line-height: 1.06; text-shadow: 0 3px 14px #071c24b3; }
 .wellbeing-how-to { max-width: 52rem; margin: 0; font-size: clamp(14px, 1.4vw, 17px); line-height: 1.4; font-weight: 500; text-shadow: 0 1px 5px #071c24; }
 .wellbeing-purpose { max-width: 50rem; margin: 5px 0 0; color: #d1e9e8; font-size: 12px; line-height: 1.35; }
 .wellbeing-exit { display: inline-flex; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; padding: 10px 12px; border: 1px solid #b0d7d155; border-radius: 14px; background: #062934d9; color: #e9f5ef; font-size: 12px; font-weight: 600; }
@@ -48,7 +48,7 @@
 .wellbeing-destination:hover img { transform: scale(1.035); }
 .wellbeing-destination-art > span { position: absolute; right: 10px; bottom: 10px; padding: 4px 8px; border-radius: 8px; background: #082936d9; color: #f8efca; font-size: 11px; }
 .wellbeing-destination-copy { padding: 12px 15px 15px; }
-.wellbeing-destination h2 { display: flex; align-items: center; justify-content: space-between; gap: 5px; margin: 3px 0 5px; font-family: var(--font-display); font-size: 22px; font-weight: 700; line-height: 1.2; }
+.wellbeing-destination h2 { display: flex; align-items: center; justify-content: space-between; gap: 5px; margin: 3px 0 5px; font-family: var(--font-fredoka); font-size: 22px; font-weight: 500; line-height: 1.15; }
 .wellbeing-destination p { margin: 0; color: #c5dfdf; font-size: 13px; line-height: 1.35; }
 .wellbeing-hub-note { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 7px; margin: 17px 0 0; color: #edf8cf; font-size: 13px; }
 .wellbeing-hub-note span { margin-left: 12px; color: #d1e6df; font-size: 12px; }
@@ -56,12 +56,12 @@
 .wellbeing-bloom-petal { position: absolute; left: 36%; top: 8%; width: 28%; height: 58%; border: 2px solid #93dad8; border-radius: 58% 58% 44% 44%; background: linear-gradient(180deg, #d5f2e1de, #8fdac69e 70%, #629caaa8); transform: rotate(var(--petal-angle)) translateY(-20%); transform-origin: 50% 72%; box-shadow: inset 0 1px 3px #efffff8c; }
 .wellbeing-bloom-core { position: absolute; inset: 30%; border: 3px solid #ecc774; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff8c4, #ead18a 58%, #9c8146); box-shadow: 0 0 35px #f6e6a655, inset 0 1px 3px #fff8e3; }
 .wellbeing-breath-cue { position: absolute; left: 0; right: 0; top: 72%; text-align: center; }
-.wellbeing-breath-cue strong { display: block; font-family: var(--font-ui); font-size: clamp(22px, 2.2vw, 30px); font-weight: 600; text-shadow: 0 2px 8px #082936; }
+.wellbeing-breath-cue strong { display: block; font-family: var(--font-fredoka); font-size: clamp(22px, 2.2vw, 30px); font-weight: 500; text-shadow: 0 2px 8px #082936; }
 .wellbeing-breath-cue span { display: block; margin-top: 4px; color: #e4edcc; font-size: 13px; }
 .pond-playfield { position: absolute; inset: 3% 4% 5%; overflow: hidden; touch-action: none; }
 .pond-target { position: absolute; display: grid; place-items: center; width: 74px; height: 74px; translate: -50% -50%; border: 2px dashed #e8f9e9ad; border-radius: 50%; color: #e1efd5; background: #0c6c6a26; font-size: 20px; font-weight: 600; }
 .pond-target.is-placed { border-style: solid; border-color: #dceaba8c; background: #bce89812; }
-.pond-pad { position: absolute; z-index: 3; display: grid; place-items: center; width: 60px; height: 60px; translate: -50% -50%; border: 3px solid #c7e09a; border-radius: 50%; background: radial-gradient(circle at 35% 28%, #b5d970, #4e9650 65%, #26684b); color: #eef3c3; font-family: var(--font-ui); font-size: 23px; font-weight: 600; box-shadow: inset 0 2px #e6f1b44d, 0 4px 8px #06374677; touch-action: none !important; }
+.pond-pad { position: absolute; z-index: 3; display: grid; place-items: center; width: 60px; height: 60px; translate: -50% -50%; border: 3px solid #c7e09a; border-radius: 50%; background: radial-gradient(circle at 35% 28%, #b5d970, #4e9650 65%, #26684b); color: #eef3c3; font-family: var(--font-fredoka); font-size: 23px; font-weight: 600; box-shadow: inset 0 2px #e6f1b44d, 0 4px 8px #06374677; touch-action: none !important; }
 .pond-pad::after { content: ''; position: absolute; width: 2px; height: 60%; bottom: 7px; left: 50%; background: #244e3673; rotate: 28deg; pointer-events: none; }
 .pond-pad span { position: relative; z-index: 1; pointer-events: none; text-shadow: 0 2px #1b5734; }
 .pond-fish { position: absolute; width: 44px; height: 24px; translate: -50% -50%; pointer-events: none; transition: left 110ms linear, top 110ms linear; opacity: .88; }
@@ -97,7 +97,7 @@
 .balloon-actor { display: flex; align-items: center; flex-direction: column; animation: wellbeing-balloon 7s ease-in-out infinite alternate; }
 .balloon-shape { position: relative; display: grid; place-items: center; width: clamp(132px, 23vh, 232px); aspect-ratio: .89; padding: 24px; border: 3px solid #e4eddcad; border-radius: 50% 50% 47% 47%; background: radial-gradient(circle at 28% 24%, #ffecdce6, #e4ba9ed6 26%, #ce9b88d9 67%, #7f758dcf); box-shadow: inset -9px -6px 0 #65536f26, 0 16px 24px #16354340; }
 .balloon-shape::before { content: ''; position: absolute; top: 15%; left: 20%; width: 11%; height: 18%; border-radius: 50%; background: #ffffff70; rotate: 25deg; }
-.balloon-shape span { position: relative; color: #29394a; font-family: var(--font-ui); font-size: clamp(15px, 1.7vw, 19px); font-weight: 500; line-height: 1.35; text-align: center; }
+.balloon-shape span { position: relative; color: #29394a; font-family: var(--font-fredoka); font-size: clamp(15px, 1.7vw, 19px); font-weight: 500; line-height: 1.35; text-align: center; }
 .balloon-string { width: 2px; height: clamp(24px, 4vh, 45px); background: #f4ead6b3; }
 .balloon-actor.is-released { animation: wellbeing-release 1.2s ease-out forwards; }
 .balloon-actions { display: flex; align-items: center; flex-direction: column; gap: 9px; flex: 0 0 auto; width: 100%; }
@@ -106,7 +106,7 @@
 .wellbeing-complete { position: relative; width: min(100%, 410px); max-height: 100%; overflow-y: auto; padding: 29px 24px 24px; border: 2px solid #9fc7bb; border-radius: 24px; background: linear-gradient(155deg, #17404b, #092a3b); color: #f4fbeb; text-align: center; box-shadow: inset 0 1px #dcefe745, 0 24px 60px #04151e73; }
 .wellbeing-complete-close { position: absolute; top: 9px; right: 9px; display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 12px; background: transparent; color: #e2eee5; }
 .wellbeing-complete-emblem { display: grid; place-items: center; width: 64px; height: 64px; margin: 0 auto 13px; border: 1px solid #cfdfa16b; border-radius: 50%; background: #b4d3891c; color: #cdea98; }
-.wellbeing-complete h2 { margin: 0; font-family: var(--font-display); font-size: 26px; font-weight: 700; line-height: 1.2; }
+.wellbeing-complete h2 { margin: 0; font-family: var(--font-fredoka); font-size: 26px; font-weight: 500; line-height: 1.15; }
 .wellbeing-complete p { margin: 9px 0 0; color: #c5dddc; font-size: 14px; line-height: 1.4; }
 .wellbeing-complete-reward { display: flex; align-items: center; justify-content: center; gap: 7px; margin: 20px 0; padding: 10px; border-top: 1px solid #c4dfb933; border-bottom: 1px solid #c4dfb933; color: #e6f1b0; font-size: 13px; }
 .wellbeing-complete-actions { display: flex; flex-direction: column; gap: 9px; }
@@ -214,7 +214,7 @@
 .wellbeing-shell {
   color: #f5f9f5;
   background: #071b2a;
-  font-family: var(--font-ui);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 .wellbeing-landscape > img {
   animation: wellbeing-scene-drift 32s ease-in-out infinite alternate;
@@ -236,9 +236,9 @@
 .wellbeing-heading h1,
 .wellbeing-destination h2,
 .wellbeing-complete h2 {
-  font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: .025em;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 780;
+  letter-spacing: -.025em;
 }
 .wellbeing-heading h1 { font-size: clamp(28px, 3.4vw, 46px); line-height: 1.08; }
 .wellbeing-how-to { font-size: clamp(15px, 1.22vw, 17px); line-height: 1.38; }

@@ -1,4 +1,4 @@
-/* Public website typography follows the game's heroic display / readable UI pairing. */
+/* Rounded original game fonts, with readable website controls and descriptions. */
 .legends-website {
   font-family: var(--font-ui);
   font-size: 17px;
@@ -9,8 +9,8 @@
 .legends-website :is(h1, h2, h3, h4, h5, h6),
 :is(.website-video-dialog, .gameplay-photo-dialog) :is(h1, h2, h3) {
   font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: .025em;
+  font-weight: 800;
+  letter-spacing: -.015em;
   line-height: 1.2;
   text-wrap: balance;
 }
@@ -67,7 +67,32 @@
 .legends-website h3 { text-shadow: none; }
 .legends-website :is(.website-button, .website-eyebrow) { text-shadow: none; }
 
+/* Keep the character in normal flow beneath the copy, across all account modes. */
+.legends-website .website-account-world {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  isolation: isolate;
+}
+.legends-website .website-account-world::before { z-index: -1; pointer-events: none; }
+.legends-website .website-account-character {
+  display: block;
+  flex: 0 0 auto;
+  width: min(280px, 85%);
+  height: auto;
+  margin: 24px auto 0;
+}
+.legends-website .website-account-caption {
+  position: static;
+  align-self: center;
+  margin-top: 16px;
+  font-size: 14px;
+  text-align: center;
+}
+
 @media (max-width: 580px) {
+  .legends-website .website-account-character,
+  .legends-website .website-account-caption { display: none; }
   .legends-website .website-header-actions .website-button { white-space: nowrap; padding-inline: 10px; gap: 6px; }
   .legends-website .website-header-actions .website-button svg { width: 18px; height: 18px; flex-shrink: 0; }
 }

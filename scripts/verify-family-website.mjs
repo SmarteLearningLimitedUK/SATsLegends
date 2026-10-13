@@ -17,6 +17,26 @@ try {
       await expect(page.locator('header')).toBeVisible();
       await expect(page.locator('footer')).toBeVisible();
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+      if (['/signup', '/login', '/forgot-password', '/reset-password'].includes(route)) {
+        await page.evaluate(() => document.fonts.ready);
+        const accountLayout = await page.locator('.website-account-world').evaluate(section => {
+          const character = section.querySelector('.website-account-character');
+          if (!character || getComputedStyle(character).display === 'none') return null;
+          const art = character.getBoundingClientRect();
+          const copy = section.querySelector('p:not(.website-eyebrow)').getBoundingClientRect();
+          const caption = section.querySelector('.website-account-caption').getBoundingClientRect();
+          const bounds = section.getBoundingClientRect();
+          return { artTop: art.top, artBottom: art.bottom, copyBottom: copy.bottom, captionTop: caption.top, artLeft: art.left, artRight: art.right, left: bounds.left, right: bounds.right };
+        });
+        if (width <= 580) expect(accountLayout).toBeNull();
+        else {
+          expect(accountLayout).not.toBeNull();
+          expect(accountLayout.artTop).toBeGreaterThanOrEqual(accountLayout.copyBottom + 20);
+          expect(accountLayout.captionTop).toBeGreaterThanOrEqual(accountLayout.artBottom);
+          expect(accountLayout.artLeft).toBeGreaterThanOrEqual(accountLayout.left);
+          expect(accountLayout.artRight).toBeLessThanOrEqual(accountLayout.right);
+        }
+      }
       if (route === '/subscriptions') {
         await expect(page.getByText('£4.99', { exact: false }).first()).toBeVisible();
         await expect(page.getByText('£49.99', { exact: false }).first()).toBeVisible();

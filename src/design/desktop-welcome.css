@@ -56,7 +56,7 @@
   .legend-desktop-welcome-eyebrow {
     margin: 0 0 9px;
     color: #ffe589;
-    font: 700 clamp(12px, 1.2vw, 17px) / 1.3 var(--font-ui);
+    font: 800 clamp(12px, 1.2vw, 17px) / 1.3 var(--font-fredoka);
     letter-spacing: .13em;
     text-transform: uppercase;
     text-shadow: 0 2px 10px #0c0825;
@@ -66,7 +66,7 @@
     margin: 0;
     color: #fffdfb;
     font: 700 clamp(38px, 4.1vw, 66px) / 1.03 var(--font-display);
-    letter-spacing: .025em;
+    letter-spacing: -.025em;
     text-wrap: balance;
     text-shadow: 0 4px 14px #080521;
   }
@@ -80,7 +80,7 @@
     max-width: 36ch;
     margin: clamp(14px, 2.5vh, 23px) 0 clamp(20px, 3vh, 30px);
     color: #eef4ff;
-    font: 500 clamp(17px, 1.5vw, 22px) / 1.42 var(--font-ui);
+    font: 500 clamp(17px, 1.5vw, 22px) / 1.42 var(--font-fredoka);
     text-shadow: 0 2px 8px #080521;
   }
 

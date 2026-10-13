@@ -247,7 +247,7 @@ const LevelResultModal: React.FC<LevelResultModalProps> = ({ isOpen, result, ene
                 ) : null}
 
                 <h2 className={cn(
-                  'result-title text-2xl md:text-4xl',
+                  'text-2xl font-black tracking-tight md:text-4xl',
                   isVictory ? 'text-amber-100' : 'text-amber-100',
                 )}>
                   {result.title}

@@ -11,18 +11,12 @@
   min-height: 0;
   overflow: hidden;
   color: var(--pp-text);
-  font-family: var(--font-ui);
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
   container-type: size;
 }
 
 #root .pp-game :is(h1, h2, h3, p, button, span, strong) {
-  font-family: var(--font-ui);
-}
-
-#root .pp-game :is(h1, h2, h3) {
-  font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: .025em;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
 }
 
 .pp-game::before {

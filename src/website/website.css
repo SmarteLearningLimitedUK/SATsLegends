@@ -5,8 +5,7 @@ body.legends-website-body { position: static; height: auto; min-height: 100vh; o
 .legends-website { --web-gold: #ffd56b; --web-cyan: #79e0ee; --web-muted: #abc2d7; color: #f6f4e9; font-family: var(--font-ui); font-weight: 400; font-size: 16px; line-height: 1.6; background: #081b30; overflow: clip; }
 .legends-website * { box-sizing: border-box; }
 .legends-website :is(h1,h2,h3,p) { margin: 0; }
-.legends-website :is(h1,h2,h3) { font-family: var(--font-display); line-height: 1.15; font-weight: 700; letter-spacing: .025em; }
-.legends-website :is(h1,h2) { text-shadow: 0 2px 0 #07182e, 0 8px 20px #03122270; }
+.legends-website :is(h1,h2,h3) { font-family: 'Baloo 2', 'Fredoka', sans-serif; line-height: 1.12; font-weight: 800; letter-spacing: -.025em; }
 .legends-website a { color: inherit; text-decoration: none; }
 .legends-website button { font: inherit; }
 .legends-website :is(a,button,input):focus-visible, .website-return:focus-visible { outline: 3px solid #79e0ee; outline-offset: 5px; }
@@ -15,8 +14,8 @@ body.legends-website-body { position: static; height: auto; min-height: 100vh; o
 .website-header-inner { height: 88px; display: flex; align-items: center; justify-content: space-between; gap: 28px; }
 .website-brand { display: flex; gap: 10px; align-items: center; line-height: .9; flex-shrink: 0; }
 .website-brand-gem { width: 41px; height: 48px; display: grid; place-items: center; color: #ffd56b; background: #1b4365; border: 1px solid #ffd56b80; clip-path: polygon(50% 0,100% 18%,92% 72%,50% 100%,8% 72%,0 18%); }
-.website-brand b { display: block; font-size: 26px; letter-spacing: .02em; font-family: var(--font-display); font-weight: 700; }
-.website-brand strong { display: block; color: #ffd56b; font-size: 15px; letter-spacing: .03em; font-family: var(--font-display); font-weight: 700; }
+.website-brand b { display: block; font-size: 26px; letter-spacing: .02em; font-family: 'Baloo 2', sans-serif; }
+.website-brand strong { display: block; color: #ffd56b; font-size: 15px; letter-spacing: .03em; font-family: 'Baloo 2', sans-serif; }
 .website-desktop-nav { display: flex; align-items: center; gap: 30px; margin-left: 36px; font-size: 14px; font-weight: 500; }
 .website-desktop-nav a { padding: 29px 0; color: #bfccdb; position: relative; transition: color .2s; }
 .website-desktop-nav a:hover, .website-desktop-nav a.active { color: #ffd56b; }
