@@ -6,7 +6,7 @@ const base = process.env.FAMILY_QA_URL || 'http://127.0.0.1:3000';
 await mkdir('qa-artifacts/family', { recursive: true });
 const browser = await chromium.launch();
 try {
-  for (const width of [1440, 1251, 768, 390, 320]) {
+  for (const width of [1440, 1280, 1251, 900, 768, 581, 390, 320]) {
     const context = await browser.newContext({ viewport: { width, height: 900 }, reducedMotion: 'reduce' });
     const page = await context.newPage();
     const errors = [];
@@ -48,6 +48,13 @@ try {
       if (route === '/signup') {
         await expect(page.getByRole('button', { name: 'Create parent account' })).toBeDisabled();
         await expect(page.getByText('Sundays at 3 pm and Wednesdays at 4 pm', { exact: false })).toBeVisible();
+      }
+      if (['/signup', '/login', '/forgot-password', '/reset-password'].includes(route) && width > 700) {
+        const intro = await page.locator('.website-account-world > p:not(.website-eyebrow)').boundingBox();
+        const character = await page.locator('.website-account-character').boundingBox();
+        expect(intro).not.toBeNull();
+        expect(character).not.toBeNull();
+        expect(character.y).toBeGreaterThanOrEqual(intro.y + intro.height + 16);
       }
       await page.screenshot({ path: `qa-artifacts/family/${width}-${route.slice(1)}.png`, fullPage: true });
     }
