@@ -29,9 +29,27 @@
 @keyframes market-jar-rattle { 25% { transform: rotate(-8deg); } 75% { transform: rotate(6deg); } }
 .market-answers { display: grid; flex: 0 0 auto; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; width: min(100%, 500px); padding: 5px; margin: 0 auto; }
 .market-answers button { min-width: 0; min-height: 44px; padding: 5px 8px; font-size: 17px; font-weight: 700; }
+.market-till { flex: 0 0 auto; display: grid; gap: 5px; width: min(100%, 560px); margin: 0 auto; padding: 9px; border: 1px solid #e7bf67a8; border-radius: 16px; background: linear-gradient(180deg, #173b49ed, #081c30f5); box-shadow: inset 0 2px #fff4b535, 0 10px 24px #06132282; }
+.market-till-top, .market-till-bottom { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.market-till-top { color: #fff0bf; font-size: 13px; }.market-till-top span { color: #d4f5f4; font-weight: 800; }
+.market-coin-bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; width: 100%; padding: 0; }
+.market-coin-bank button, .market-selected-coins button { flex: 1 1 44px; max-width: 58px; min-width: 44px; min-height: 44px; border: 2px solid #fce8ab; border-radius: 50%; background: radial-gradient(circle at 32% 26%, #fff8d7, #f3ca60 45%, #a76524 95%); color: #27394a; font-size: 12px; font-weight: 900; box-shadow: inset 0 2px #fff9cf, 0 3px 0 #6e4119; cursor: pointer; }
+.market-coin-bank button:hover:not(:disabled), .market-selected-coins button:hover:not(:disabled) { filter: brightness(1.12); transform: translateY(-2px); }
+.market-selected-coins { display: flex; flex: 1; align-items: center; gap: 4px; min-width: 0; min-height: 37px; overflow-x: auto; scrollbar-width: thin; }
+.market-selected-coins button { flex: 0 0 34px; width: 34px; min-width: 34px; min-height: 34px; max-width: 34px; padding: 0; font-size: 10px; }
+.market-selected-coins span { color: #cbe4e5; font-size: 11px; }
+.market-clear { flex: 0 0 auto; min-height: 36px; padding: 4px 11px; border: 1px solid #f8d68c85; border-radius: 8px; background: #314351; color: #fff0bf; font-weight: 800; }
+.market-submit { min-height: 44px; width: 100%; border-radius: 10px; font-size: 15px; font-weight: 900; }
 .market-feedback { display: flex; flex: 0 0 auto; align-items: center; justify-content: center; min-height: 30px; padding: 3px 8px; border-radius: 8px; background: #092e36eb; color: #d0e7c9; text-align: center; font-size: 10px; line-height: 1.2; }.market-feedback.is-error { color: #ffd8ac; }
 @media (min-width: 700px) { .market-layout { padding-inline: 16px; }.market-scene { padding: 38px 8px 12px; }.market-customer-quip { left: 10px; transform: none; font-size: 12px; max-width: 36%; }.market-receipt { width: min(48%, 440px); min-width: 300px; max-height: calc(115px + var(--receipt-count) * 59px); padding: 10px 15px; }.market-receipt-line img { width: 39px; height: 39px; }.market-receipt-line strong { font-size: 13px; }.market-receipt-line small { font-size: 10px; }.market-receipt-line > b { font-size: 14px; }.market-receipt-heading { font-size: 12px; }.market-receipt-totals { font-size: 13px; }.market-receipt-totals strong { font-size: 15px; }.market-slime { left: 12%; width: 58px; height: 74px; }.market-slime::before { width: 58px; }.market-slime i { top: 39px; left: 21px; }.market-slime i:last-child { top: 43px; left: 33px; }.market-feedback { font-size: 12px; } }
 @media (prefers-reduced-motion: reduce) { .market-slime, .market-slime i { animation: none !important; }.market-slime i, .market-receipt-stamp { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .market-coin-bank button, .market-selected-coins button { transition: none; } }
+@media (max-width: 699px) and (max-height: 740px) {
+  .market-layout { overflow-y: auto; overscroll-behavior: contain; }
+  .market-stack { flex: 0 0 auto; height: auto; min-height: 100%; }
+  .market-scene { flex: 0 0 auto; min-height: 270px; }
+  .market-receipt { height: auto; min-height: 205px; }
+}
 
 /* The shell already reserves the HUD/dock. Short wide windows use the
    receipt's horizontal space while keeping every quantity/price readable. */
@@ -65,6 +83,7 @@
 .market-receipt-totals, .market-receipt-totals strong { font-size: var(--legend-body-size, 16px); line-height: 1.25; }
 .market-receipt { max-height: calc(130px + var(--receipt-count) * 58px); }
 .market-answers button { font-size: var(--legend-question-size, 18px); }
+.market-coin-bank button { font-size: 12px; }
 @media (min-width: 700px) and (max-height: 720px) {
   .market-receipt { max-height: calc(125px + var(--receipt-short-rows) * 52px); min-height: calc(100px + var(--receipt-short-rows) * 45px); }
   .market-receipt-lines { grid-template-rows: repeat(var(--receipt-short-rows), minmax(45px, 1fr)) !important; }

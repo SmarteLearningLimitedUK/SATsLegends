@@ -7,6 +7,7 @@ import { triggerHaptic } from '../haptics';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { MiniGameShellContractProps, emitMiniGameSessionEvent } from '../app/gameplaySessionContract';
+import './remainder-run.css';
 
 interface RemainderRunGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -204,6 +205,32 @@ const createProblem = (stage: number): RemainderProblem => {
   };
 };
 
+const podChoices = (problem: RemainderProblem) => shuffle(Array.from(new Set([
+  problem.quotient, Math.max(0, problem.quotient - 1), problem.quotient + 1,
+  problem.quotient + 2, Math.max(0, problem.quotient - 2),
+])).slice(0, 4));
+
+const leftoverChoices = (problem: RemainderProblem) => {
+  if (problem.answerMode === 'remainder') {
+    return shuffle(Array.from({ length: Math.min(4, problem.divisor) }, (_, index) => String((problem.remainder + index) % problem.divisor)));
+  }
+  const step = problem.stage < 10 ? 0.1 : 0.05;
+  const places = problem.stage < 10 ? 1 : 2;
+  const correct = Math.round((problem.remainder / problem.divisor) / step);
+  const max = Math.round(1 / step) - 1;
+  const values = new Set<number>([correct]);
+  for (const offset of [1, -1, 2, -2, 3, -3, 4, -4]) {
+    if (values.size >= 4) break;
+    const candidate = correct + offset;
+    if (candidate >= 1 && candidate <= max) values.add(candidate);
+  }
+  return shuffle(Array.from(values).map(value => formatDecimalAnswer(value * step, places)));
+};
+
+const correctLeftover = (problem: RemainderProblem) => problem.answerMode === 'remainder'
+  ? String(problem.remainder)
+  : formatDecimalAnswer(problem.remainder / problem.divisor, problem.stage < 10 ? 1 : 2);
+
 const starsFromPerformance = (XP: number, correct: number, attempts: number, stage: number) => {
   const accuracy = attempts > 0 ? correct / attempts : 0;
   const target = 1200 + (stage * 150);
@@ -282,13 +309,16 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
   const [correctCount, setCorrectCount] = useState(0);
   const [roundOver, setRoundOver] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackState>(null);
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [selectedPods, setSelectedPods] = useState<number | null>(null);
+  const [selectedLeftover, setSelectedLeftover] = useState<string | null>(null);
   const [isLocked, setIsLocked] = useState(false);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
 
   const [problem, setProblem] = useState<RemainderProblem>(() => {
     return createProblem(difficultyStage);
   });
+  const pods = useMemo(() => podChoices(problem), [problem]);
+  const leftovers = useMemo(() => leftoverChoices(problem), [problem]);
 
   const questionStartRef = useRef<number>(Date.now());
   const finishGuardRef = useRef(false);
@@ -320,7 +350,8 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
     setCorrectCount(0);
     setRoundOver(false);
     setFeedback(null);
-    setSelectedAnswer(null);
+    setSelectedPods(null);
+    setSelectedLeftover(null);
     setIsLocked(false);
     setProblem(createProblem(difficultyStage));
     questionStartRef.current = Date.now();
@@ -357,12 +388,13 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
     return `hsl(${hue} 88% 50%)`;
   }, [timerProgress]);
 
-  const moveToNextProblem = useCallback((nextSolvedCount: number, delayMs: number) => {
+  const moveToNextProblem = useCallback((delayMs: number) => {
     const timer = window.setTimeout(() => {
       if (!presentRef.current || finishGuardRef.current) return;
       setProblem(createProblem(difficultyStage));
       setFeedback(null);
-      setSelectedAnswer(null);
+      setSelectedPods(null);
+      setSelectedLeftover(null);
       setIsLocked(false);
       answerLockRef.current = false;
       questionStartRef.current = Date.now();
@@ -370,18 +402,16 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
     timeoutRefs.current.push(timer);
   }, [difficultyStage]);
 
-  const evaluateAnswer = useCallback((choice: string) => {
-    if (!presentRef.current || showPracticeIntro || sessionState?.paused || roundOver || isLocked || answerLockRef.current || finishGuardRef.current) return;
+  const evaluateAnswer = useCallback(() => {
+    if (!presentRef.current || showPracticeIntro || sessionState?.paused || roundOver || isLocked || answerLockRef.current || finishGuardRef.current || selectedPods === null || selectedLeftover === null) return;
     answerLockRef.current = true;
     setIsLocked(true);
-    setSelectedAnswer(choice);
 
     const nextAttempts = attemptCount + 1;
     const nextSolved = solvedCount + 1;
-    const isCorrect = choice === problem.answerLabel;
+    const isCorrect = selectedPods === problem.quotient && selectedLeftover === correctLeftover(problem);
 
     setAttemptCount(nextAttempts);
-    setSolvedCount(nextSolved);
 
     if (isCorrect) {
       const elapsedMs = Math.max(250, Date.now() - questionStartRef.current);
@@ -396,6 +426,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
       emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { score: XP + points, metadata: { problemId: problem.id, tier: baseLevel } });
       emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', { score: XP + points });
       setCorrectCount((prev) => prev + 1);
+      setSolvedCount(nextSolved);
       setCombo((prev) => prev + 1);
       setFeedback({
         tone: isPraise ? 'praise' : 'success',
@@ -410,7 +441,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
         colors: ['#4ade80', '#facc15', '#ffffff'],
       });
 
-      moveToNextProblem(nextSolved, 320);
+      moveToNextProblem(680);
       return;
     }
 
@@ -421,11 +452,17 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
     emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { score: Math.max(0, XP - 25), metadata: { problemId: problem.id, tier: baseLevel } });
     setFeedback({
       tone: 'error',
-      title: 'Not quite',
-      subtitle: 'Check your working and try the next one.',
+      title: 'Cargo check',
+      subtitle: selectedPods * problem.divisor > problem.dividend ? 'Too many full pods. Try fewer.' : 'The cargo does not balance yet. Adjust and retry.',
     });
-    moveToNextProblem(nextSolved, 620);
-  }, [attemptCount, baseLevel, combo, isLocked, isPractice, moveToNextProblem, problem, reducedMotion, roundOver, sessionEvents, sessionState?.paused, showPracticeIntro, solvedCount, XP]);
+    const timer = window.setTimeout(() => {
+      if (!presentRef.current || finishGuardRef.current) return;
+      setFeedback(null);
+      setIsLocked(false);
+      answerLockRef.current = false;
+    }, 700);
+    timeoutRefs.current.push(timer);
+  }, [attemptCount, baseLevel, combo, isLocked, isPractice, moveToNextProblem, problem, reducedMotion, roundOver, selectedLeftover, selectedPods, sessionEvents, sessionState?.paused, showPracticeIntro, solvedCount, XP]);
 
   const showTopHud = !useSharedTopHud;
 
@@ -434,7 +471,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
   return (
     <div className="relative z-20 h-full w-full overflow-hidden select-none bg-slate-950" data-remainder-game data-remainder-tier={baseLevel} data-remainder-stage={difficultyStage} data-remainder-correct={correctCount}>
       <GameplaySceneBackdrop gameType="remainder_run" />
-      <PracticeIntroPopup open={showPracticeIntro} title="Remainder Run" body="Divide the number, then choose the quotient and what is left over. Try five sums at your own pace." briefing={practiceBriefing} onAction={() => setShowPracticeIntro(false)} />
+      <PracticeIntroPopup open={showPracticeIntro} title="Remainder Run" body="Load equal cargo pods, then choose what is left over. Try five deliveries at your own pace." briefing={practiceBriefing} onAction={() => setShowPracticeIntro(false)} />
 
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),rgba(15,23,42,0.06)_32%,rgba(2,6,23,0.36)_100%)]" />
 
@@ -467,43 +504,47 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
           <GameQuestionCard
             title={title}
             subtitle={problem.answerMode === 'decimal'
-              ? 'Give your answer as a decimal.'
-              : 'Give the quotient and remainder.'}
+              ? 'Pack full pods, then value the leftover as a decimal.'
+              : 'Pack full pods, then place the remainder in the bay.'}
             className="mx-auto w-full max-w-[27rem] shrink-0"
             style={{ position: 'relative', top: 0, transform: 'none' }}
           >
             {problem.displayDividend} ÷ {problem.divisor} = ?
           </GameQuestionCard>
 
-          <section data-division-playfield="true" className="relative flex min-h-0 flex-1 items-center justify-center">
-            <div data-division-problem="true" data-problem-id={problem.id} className="w-full">
+          <section data-division-playfield="true" className="remainder-playfield relative flex shrink-0 flex-col items-center justify-center gap-2">
+            <div data-division-problem="true" data-problem-id={problem.id} className="w-full shrink-0">
               <LongDivisionVisual problem={problem} />
+            </div>
+            <div className="remainder-cargo" aria-label="Cargo loading preview">
+              <div className="remainder-cargo-heading"><strong>Full pods</strong><span>Each holds {problem.divisor}</span></div>
+              <div className="remainder-pods" data-remainder-pods={selectedPods ?? 0}>
+                <AnimatePresence initial={false}>{selectedPods === null ? <span className="remainder-empty" key="empty">Choose a pod count</span>
+                  : <React.Fragment key="loaded">{Array.from({ length: Math.min(selectedPods, 5) }, (_, index) => <motion.span key={`pod-${index}`}
+                    initial={reducedMotion ? false : { y: 16, opacity: 0, scale: .7 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={reducedMotion ? undefined : { y: -8, opacity: 0 }}
+                    transition={{ duration: .22, delay: reducedMotion ? 0 : index * .045 }} className="remainder-pod">{problem.divisor}</motion.span>)}
+                    {selectedPods > 5 && <span className="remainder-more">+{selectedPods - 5}</span>}</React.Fragment>}</AnimatePresence>
+              </div>
+              <div className="remainder-cargo-foot"><span>{selectedPods === null ? 'Cargo waiting' : `${selectedPods} × ${problem.divisor} = ${selectedPods * problem.divisor} packed`}</span>
+                <strong>{selectedPods === null ? '— left' : selectedPods * problem.divisor > problem.dividend ? 'Overfilled' : `${problem.dividend - selectedPods * problem.divisor} left`}</strong></div>
             </div>
           </section>
 
-          <section className="shrink-0 rounded-[1.1rem] border border-white/16 bg-[linear-gradient(180deg,rgba(16,25,49,0.8),rgba(8,12,25,0.9))] p-1.5 shadow-[0_10px_18px_rgba(2,6,23,0.16)] backdrop-blur-sm">
-            <div className="text-center text-[8px] font-black uppercase tracking-[0.16em] text-amber-100/80">
-              {problem.answerMode === 'decimal' ? 'Tap the correct decimal' : 'Tap the correct quotient and remainder'}
-            </div>
-            <div className="answer-choice-surface mt-1.5 grid grid-cols-4 gap-1.25">
-              {problem.options.map((option, index) => (
-                <button
-                  key={`${problem.id}-${option}-${index}`}
-                  type="button"
-                  disabled={!isPresent || showPracticeIntro || isLocked || roundOver || sessionState?.paused}
-                  onClick={() => evaluateAnswer(option)}
-                  className={`relative min-h-[2.65rem] rounded-[0.85rem] border px-2 py-1.5 text-center shadow-[0_8px_18px_rgba(2,6,23,0.16)] transition-transform duration-150 hover:scale-[1.01] disabled:opacity-55 ${
-                    selectedAnswer === option
-                      ? feedback?.tone === 'success' || feedback?.tone === 'praise'
-                        ? 'ui-button-success'
-                        : 'ui-button-primary'
-                      : 'ui-button-secondary'
-                  }`}
-                >
-                  <span className="text-[clamp(0.88rem,3.2vw,1.16rem)] font-black text-white">{option}</span>
-                </button>
-              ))}
-            </div>
+          <section className="remainder-controls shrink-0" aria-label="Load cargo">
+            <div className="remainder-choice-label">1. How many full pods?</div>
+            <div className="remainder-choices" role="group" aria-label="Full pod count">{pods.map(count => <motion.button key={`${problem.id}-pods-${count}`} type="button"
+              data-remainder-pod-choice={count} aria-pressed={selectedPods === count}
+              whileTap={reducedMotion ? undefined : { scale: .92 }}
+              disabled={!isPresent || showPracticeIntro || isLocked || roundOver || sessionState?.paused}
+              onClick={() => { setSelectedPods(count); triggerHaptic('selection'); }}>{count}</motion.button>)}</div>
+            <div className="remainder-choice-label">2. {problem.answerMode === 'decimal' ? 'What is the leftover worth?' : 'How many are left over?'}</div>
+            <div className="remainder-choices" role="group" aria-label="Leftover cargo">{leftovers.map(value => <motion.button key={`${problem.id}-leftover-${value}`} type="button"
+              data-remainder-leftover-choice={value} aria-pressed={selectedLeftover === value}
+              whileTap={reducedMotion ? undefined : { scale: .92 }}
+              disabled={!isPresent || showPracticeIntro || isLocked || roundOver || sessionState?.paused}
+              onClick={() => { setSelectedLeftover(value); triggerHaptic('selection'); }}>{value}</motion.button>)}</div>
+            <button type="button" className="remainder-submit ui-button-primary" data-remainder-submit onClick={evaluateAnswer}
+              disabled={!isPresent || showPracticeIntro || isLocked || roundOver || sessionState?.paused || selectedPods === null || selectedLeftover === null}>Seal the cargo</button>
           </section>
         </div>
       </main>

@@ -1,0 +1,16 @@
+.remainder-cargo { display: flex; flex: 0 0 auto; min-height: 88px; width: 100%; flex-direction: column; justify-content: space-between; gap: 5px; padding: 8px 12px; border: 1px solid #8bdeed78; border-radius: 16px; background: linear-gradient(180deg, #12394edb, #091d33ef); box-shadow: inset 0 1px #b4f5ff55, 0 10px 22px #06122180; color: #e9fcff; }
+.remainder-cargo-heading, .remainder-cargo-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 11px; }
+.remainder-cargo-heading strong { color: #ffe39b; text-transform: uppercase; letter-spacing: .08em; }.remainder-cargo-heading span { color: #bde9f2; }
+.remainder-cargo-foot strong { color: #ffe39b; white-space: nowrap; }
+.remainder-pods { display: flex; align-items: center; justify-content: center; gap: 5px; min-height: 37px; }
+.remainder-pod { display: grid; place-items: center; width: 36px; height: 34px; border: 2px solid #f8d58b; border-radius: 7px; background: linear-gradient(145deg, #ffe7a5, #b9702f); color: #203953; font-weight: 900; box-shadow: inset 0 2px #fff4cc, 0 3px 0 #734023; }
+.remainder-more { color: #ffe39b; font-size: 13px; font-weight: 900; }.remainder-empty { color: #aee5ee; font-size: 12px; }
+.remainder-controls { display: grid; gap: 5px; padding: 8px; border: 1px solid #f3d18a72; border-radius: 16px; background: linear-gradient(180deg, #142a44ef, #08162dee); box-shadow: 0 10px 20px #06122180; }
+.remainder-choice-label { color: #ffe39b; font-size: 11px; font-weight: 900; letter-spacing: .03em; }
+.remainder-choices { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }
+.remainder-choices button { min-height: 44px; border: 1px solid #9edeee9c; border-radius: 10px; background: linear-gradient(180deg, #2a6180, #15344f); color: white; font-size: 18px; font-weight: 900; box-shadow: 0 3px 0 #0a2237; }
+.remainder-choices button[aria-pressed="true"] { border-color: #fff0bd; background: linear-gradient(180deg, #ffe498, #d99d43); color: #1a3550; box-shadow: inset 0 2px #fff5ce, 0 3px 0 #865826; }
+.remainder-choices button:focus-visible, .remainder-submit:focus-visible { outline: 3px solid white; outline-offset: 2px; }
+.remainder-submit { min-height: 44px; border-radius: 10px; font-size: 14px; font-weight: 900; }
+@media (max-height: 700px) { .remainder-cargo { min-height: 72px; padding: 6px 9px; }.remainder-pods { min-height: 28px; }.remainder-pod { width: 30px; height: 27px; }.remainder-controls { gap: 3px; padding: 5px; }.remainder-choices button { min-height: 42px; } }
+@media (prefers-reduced-motion: reduce) { .remainder-choices button, .remainder-submit { transition: none !important; } }
