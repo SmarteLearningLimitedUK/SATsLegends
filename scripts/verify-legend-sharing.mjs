@@ -63,27 +63,20 @@ for (const profile of profiles) {
         const dock = rect(document.querySelector('[data-testid="shared-bottom-hud"]'));
         const actions = rect(document.querySelector('[data-share-actions]'));
         const source = rect(document.querySelector('[data-share-source]'));
-        const backdropNode = document.querySelector('.game-background-layer');
-        const backdrop = rect(backdropNode);
-        const scale = Math.max(backdrop.width / 2500, backdrop.height / 5000);
-        const offsetX = (backdrop.width - 2500 * scale) / 2;
-        const percentage = Number.parseFloat(getComputedStyle(backdropNode).backgroundPosition.split(' ')[1]) / 100;
-        const offsetY = (backdrop.height - 5000 * scale) * percentage;
-        // These painted tabletop bounds come from the visually reviewed 887×1774 image.
-        const table = {
-          left: backdrop.x + offsetX + 2500 * .08 * scale,
-          right: backdrop.x + offsetX + 2500 * .92 * scale,
-          top: backdrop.y + offsetY + 5000 * .397 * scale,
-          bottom: backdrop.y + offsetY + 5000 * .633 * scale,
+        const tableNode = document.querySelector('[data-share-table]');
+        const inverse = tableNode.getScreenCTM().inverse();
+        const onTable = (x,y) => {
+          const p = new DOMPoint(x,y).matrixTransform(inverse);
+          return ((p.x-500)/474)**2 + ((p.y-225)/210)**2 <= 1.03;
         };
         const issues = [];
         for (const plateNode of document.querySelectorAll('[data-testid^="share-splitter-plate-"]')) {
           const plate = rect(plateNode);
           const label = rect(plateNode.querySelector('.share-splitter-plate-ratio'));
-          if (plate.left < table.left - 3 || plate.right > table.right + 3 || plate.top < table.top - 3 || plate.bottom > table.bottom + 3) issues.push(`${plateNode.dataset.testid}: off painted tabletop`);
+          if (![[plate.left,plate.top],[plate.right,plate.top],[plate.left,plate.bottom],[plate.right,plate.bottom]].every(([x,y])=>onTable(x,y))) issues.push(`${plateNode.dataset.testid}: off painted tabletop`);
           if (label.top < question.bottom - 1) issues.push(`${plateNode.dataset.testid}: overlaps question`);
         }
-        if (source.left < stage.left || source.right > stage.right || source.bottom > actions.top) issues.push('source outside clear playfield');
+        if (source.left < stage.left || source.right > stage.right || source.bottom > stage.bottom || (source.left < actions.right && source.right > actions.left && source.bottom > actions.top && source.top < actions.bottom)) issues.push('source outside clear playfield');
         const hit = document.elementFromPoint(source.x + source.width / 2, source.y + source.height / 2);
         if (!document.querySelector('[data-share-source]').contains(hit)) issues.push('source cannot receive pointer');
         if (actions.left < stage.left - 1 || actions.right > stage.right + 1 || actions.bottom > dock.top + 1) issues.push('actions outside gameplay');

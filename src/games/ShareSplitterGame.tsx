@@ -8,7 +8,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from '../components/game-ui/GameUiKit';
-import shareSplitterBackground from '../assets/maps/premium/share-splitter.webp';
+import shareSplitterBackground from '../assets/maps/premium/share-splitter-party-wide.webp';
 import shareSplitterPlate from '../assets/maps/backgroundsforgames/platesharesplit.png';
 import cakeSliceAsset from '../assets/cakeslice.png';
 import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
@@ -16,6 +16,7 @@ import CelebrationSplash from '../components/CelebrationSplash';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { useTrimmedImageSource } from '../utils/trimTransparentImage';
 import './share-splitter.css';
+import SharePartyTable from './SharePartyTable';
 
 interface ShareSplitterGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -58,37 +59,10 @@ const ROUNDS_TO_WIN = 5;
 const BASE_XP_PER_ROUND = 120;
 const CAKE_SLICE_ASSET = cakeSliceAsset;
 const DRAG_SLICE_SIZE = 48;
-const SHARE_SPLITTER_BACKGROUND_SIZE = { width: 2500, height: 5000 };
-const SHARE_SPLITTER_PLATE_DIAMETER_PX = 540;
-const CAKE_SOURCE_POSITION = { x: 1250, y: 3750 };
-const CAKE_SOURCE_SIZE_PX = 660;
-const SHARE_SPLITTER_TABLE_CENTER = { x: 1250, y: 2550 };
-const SHARE_SPLITTER_TABLE_PLATE_RADIUS_X = 725;
-const SHARE_SPLITTER_TABLE_PLATE_RADIUS_Y = 375;
 const SHARE_SPLITTER_PLATE_ICON_SCALE = 1.06;
-
-const makeRingPoint = (center: { x: number; y: number }, angleDegrees: number) => {
-  const angle = (angleDegrees * Math.PI) / 180;
-  return {
-    x: center.x + (Math.cos(angle) * SHARE_SPLITTER_TABLE_PLATE_RADIUS_X),
-    y: center.y + (Math.sin(angle) * SHARE_SPLITTER_TABLE_PLATE_RADIUS_Y),
-  };
-};
-
-const SHARE_SPLITTER_TABLE_PLATE_POSITIONS = [
-  makeRingPoint(SHARE_SPLITTER_TABLE_CENTER, -90),
-  makeRingPoint(SHARE_SPLITTER_TABLE_CENTER, -18),
-  makeRingPoint(SHARE_SPLITTER_TABLE_CENTER, 54),
-  makeRingPoint(SHARE_SPLITTER_TABLE_CENTER, 126),
-  makeRingPoint(SHARE_SPLITTER_TABLE_CENTER, 198),
-];
-
-const SHORT_SCREEN_PLATE_POSITIONS = [
-  { x: .5, y: .41 },
-  { x: .78, y: .51 },
-  { x: .65, y: .61 },
-  { x: .35, y: .61 },
-  { x: .22, y: .51 },
+const PARTY_PLATE_POSITIONS = [
+  { x: .17, y: .38 }, { x: .335, y: .29 }, { x: .5, y: .26 },
+  { x: .665, y: .29 }, { x: .83, y: .38 },
 ];
 
 const RATIO_PATTERNS_BY_COUNT: Record<number, number[][]> = {
@@ -117,25 +91,6 @@ const RATIO_PATTERNS_BY_COUNT: Record<number, number[][]> = {
     [1, 2, 2, 3, 3],
     [2, 1, 2, 3, 4],
   ],
-};
-
-const PLATE_POSITIONS_BY_COUNT: Record<number, Array<{ x: number; y: number }>> = {
-  2: [
-    SHARE_SPLITTER_TABLE_PLATE_POSITIONS[1],
-    SHARE_SPLITTER_TABLE_PLATE_POSITIONS[3],
-  ],
-  3: [
-    SHARE_SPLITTER_TABLE_PLATE_POSITIONS[0],
-    SHARE_SPLITTER_TABLE_PLATE_POSITIONS[1],
-    SHARE_SPLITTER_TABLE_PLATE_POSITIONS[3],
-  ],
-  4: [
-    SHARE_SPLITTER_TABLE_PLATE_POSITIONS[0],
-    SHARE_SPLITTER_TABLE_PLATE_POSITIONS[1],
-    SHARE_SPLITTER_TABLE_PLATE_POSITIONS[2],
-    SHARE_SPLITTER_TABLE_PLATE_POSITIONS[4],
-  ],
-  5: SHARE_SPLITTER_TABLE_PLATE_POSITIONS,
 };
 
 const createEmptyPlates = (plateCount: number) => Array.from({ length: plateCount }, () => [] as string[]);
@@ -209,6 +164,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   isPractice,
   practiceBriefing,
   sessionEvents,
+  sessionState,
   onVictory,
   onGameOver: _onGameOver,
   onBack: _onBack,
@@ -340,44 +296,25 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const hasMoves = moveHistory.length > 0;
   const allSlicesUsed = remainingSlices === 0;
   const allCorrect = plateViews.every((plate) => plate.isCorrect);
-  const platePositions = PLATE_POSITIONS_BY_COUNT[challenge.plateCount] || PLATE_POSITIONS_BY_COUNT[5];
-  const isCompactViewport = viewportRect.width < 520;
-  const isWideShareLayout = viewportRect.width >= 700;
-  const isShortShareLayout = isCompactViewport && viewportRect.height < 500;
-  const plateLayoutScale = isCompactViewport ? 0.68 : 1;
-  const cakeSourceLayoutScale = isCompactViewport ? 0.76 : 1;
-  const backgroundWidthScale = viewportRect.width / SHARE_SPLITTER_BACKGROUND_SIZE.width;
-  const backgroundHeightScale = viewportRect.height / SHARE_SPLITTER_BACKGROUND_SIZE.height;
-  // Keep the portrait artwork coordinates on narrow screens. Desktop uses a
-  // separate full-width playfield, so the targets remain large and spaced out.
-  const backgroundScale = isWideShareLayout
-    ? Math.min(backgroundWidthScale, backgroundHeightScale)
-    : Math.max(backgroundWidthScale, backgroundHeightScale);
-  const backgroundOffsetX = (viewportRect.width - (SHARE_SPLITTER_BACKGROUND_SIZE.width * backgroundScale)) / 2;
-  const sideRailWidth = Math.min(340, Math.max(260, viewportRect.width * 0.28));
-  const playfieldLeft = sideRailWidth + 36;
-  const playfieldWidth = Math.max(300, viewportRect.width - playfieldLeft - 20);
-  const plateSizePx = isWideShareLayout
-    ? Math.min(132, Math.max(68, Math.min((playfieldWidth / 5) * 0.68, viewportRect.height * 0.2)))
-    : SHARE_SPLITTER_PLATE_DIAMETER_PX * backgroundScale * plateLayoutScale;
-  const artHeight = SHARE_SPLITTER_BACKGROUND_SIZE.height * backgroundScale;
-  const bottomArtOffset = viewportRect.height - artHeight;
-  const minTableCenter = questionDockBottom + SHARE_SPLITTER_TABLE_PLATE_RADIUS_Y * backgroundScale + plateSizePx / 2 + 12;
-  const backgroundOffsetY = Math.min(0, Math.max(bottomArtOffset, minTableCenter - SHARE_SPLITTER_TABLE_CENTER.y * backgroundScale));
-  const backgroundPositionY = Math.abs(bottomArtOffset) < .01 ? 50 : (backgroundOffsetY / bottomArtOffset) * 100;
-  const cakeSourceSize = isWideShareLayout
-    ? Math.min(124, Math.max(84, viewportRect.height * 0.18))
-    : isShortShareLayout
-    ? Math.min(52, CAKE_SOURCE_SIZE_PX * backgroundScale * cakeSourceLayoutScale)
-    : CAKE_SOURCE_SIZE_PX * backgroundScale * cakeSourceLayoutScale;
-  const cakeSourceCenter = isWideShareLayout
-    ? { x: playfieldLeft + playfieldWidth * 0.5, y: viewportRect.height * 0.74 }
-    : isShortShareLayout
-    ? { x: viewportRect.width * .5, y: viewportRect.height * .75 }
-    : {
-    x: backgroundOffsetX + CAKE_SOURCE_POSITION.x * backgroundScale,
-    y: Math.min(backgroundOffsetY + CAKE_SOURCE_POSITION.y * backgroundScale, viewportRect.height - 124 - cakeSourceSize / 2 - 10),
-  };
+  const isWideShareLayout = viewportRect.width >= 1100;
+  const isShortShareLayout = viewportRect.height < 500;
+  const sideRailWidth = isWideShareLayout ? 370 : 0;
+  const availableWidth = Math.max(1, viewportRect.width - sideRailWidth - 24);
+  const tableWidth = Math.min(1100, availableWidth);
+  const guestClearance = Math.min(190, tableWidth * .18) * .68 + 18;
+  const roomTop = isWideShareLayout ? guestClearance : questionDockBottom + guestClearance;
+  const roomBottom = viewportRect.height - (isWideShareLayout ? 28 : 125);
+  const tableHeight = Math.min(tableWidth * (isWideShareLayout ? .48 : .75), Math.max(140, roomBottom - roomTop));
+  const tableLeft = sideRailWidth + (viewportRect.width - sideRailWidth - tableWidth) / 2;
+  const tableTop = Math.max(roomTop, roomBottom - tableHeight);
+  const tableRect = { left: tableLeft, top: tableTop, width: tableWidth, height: tableHeight };
+  const plateSizePx = Math.min(120, Math.max(44, Math.min(tableWidth * .125, tableHeight * .29)));
+  const cakeSourceSize = Math.min(110, Math.max(58, tableHeight * .25));
+  const cakeSourceCenter = { x: tableLeft + tableWidth * .5, y: tableTop + tableHeight * .64 };
+  const platePositions = challenge.plateCount === 5 ? PARTY_PLATE_POSITIONS
+    : Array.from({ length: challenge.plateCount }, (_, i) => ({
+      x: .23 + i * .54 / Math.max(1, challenge.plateCount - 1), y: .32,
+    }));
   const promptText = isPractice
     ? `Target ratio: ${challenge.ratios.join(':')}`
     : isShortShareLayout
@@ -401,11 +338,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setFeedback('');
     setFeedbackTone('neutral');
   }, [levelId]);
-
-  const mapBackgroundPointToViewport = useCallback((point: { x: number; y: number }) => ({
-    x: backgroundOffsetX + (point.x * backgroundScale),
-    y: backgroundOffsetY + (point.y * backgroundScale),
-  }), [backgroundOffsetX, backgroundOffsetY, backgroundScale]);
 
   const getPlateSlicePlacement = useCallback((index: number) => {
     // Stack slices in a compact spiral so they read as sitting on the plate.
@@ -621,11 +553,11 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
   return (
     <GameUiShell
-      className="share-splitter-shell"
+      className={`share-splitter-shell ${sessionState?.paused ? 'share-party-paused' : ''}`}
       backgroundImage={shareSplitterBackground}
       backgroundOpacity={1}
-      backgroundPosition={isShortShareLayout ? 'center 46%' : isWideShareLayout ? 'center 50%' : `center ${backgroundPositionY}%`}
-      backgroundFit={isWideShareLayout || isShortShareLayout ? 'cover' : 'contain'}
+      backgroundPosition="center"
+      backgroundFit="cover"
       overlayDisabled
     >
       <PracticeIntroPopup
@@ -652,21 +584,12 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
           </GameQuestionCard>
         </div>
 
+        <SharePartyTable rect={tableRect} positions={platePositions} counts={plates.map(p => p.length)} celebrating={locked} />
         <div className="share-splitter-pieces" data-share-pieces>
           <CelebrationSplash active={showCelebrationSplash && !reducedMotion} message="Party Time!" theme="party" />
           {plateViews.map((plate, index) => {
             const position = platePositions[index] || { x: 0, y: 0 };
-            const center = isShortShareLayout
-              ? {
-                x: viewportRect.width * SHORT_SCREEN_PLATE_POSITIONS[index].x,
-                y: viewportRect.height * SHORT_SCREEN_PLATE_POSITIONS[index].y,
-              }
-              : isWideShareLayout
-              ? {
-                x: playfieldLeft + playfieldWidth * (0.1 + index * 0.2),
-                y: viewportRect.height * (0.43 + [0.04, -0.01, -0.03, -0.01, 0.04][index]),
-              }
-              : mapBackgroundPointToViewport(position);
+            const center = { x: tableLeft + position.x * tableWidth, y: tableTop + position.y * tableHeight };
             const sliceCount = plates[index].length;
             const sliceBaseSizePx = Math.max(22, plateSizePx * (sliceCount <= 3 ? .24 : sliceCount <= 6 ? .2 : .16));
             return (
@@ -696,7 +619,10 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                 {plates[index].map((sliceId, sliceIndex) => {
                   const placement = getPlateSlicePlacement(sliceIndex);
                   return (
-                    <img
+                    <motion.img
+                      initial={reducedMotion ? false : { opacity: 0, scale: .4, x: placement.x * plateSizePx - sliceBaseSizePx / 2, y: placement.y * plateSizePx - sliceBaseSizePx / 2 - 20 }}
+                      animate={{ opacity: 1, scale: 1, x: placement.x * plateSizePx - sliceBaseSizePx / 2, y: placement.y * plateSizePx - sliceBaseSizePx / 2, rotate: sliceIndex % 2 ? 5 : -5 }}
+                      transition={reducedMotion ? { duration: 0 } : { type: 'spring', stiffness: 380, damping: 22 }}
                       key={sliceId}
                       src={trimmedCakeSliceAsset}
                       alt=""
@@ -705,7 +631,6 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                       style={{
                         width: sliceBaseSizePx,
                         height: sliceBaseSizePx,
-                        transform: `translate(calc(-50% + ${placement.x * plateSizePx}px), calc(-50% + ${placement.y * plateSizePx}px)) rotate(${sliceIndex % 2 ? 5 : -5}deg)`,
                       }}
                     />
                   );
@@ -736,7 +661,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         </div>
 
         <div className="share-splitter-actions answer-choice-surface" data-share-actions>
-          <div className="share-splitter-feedback" role="status" aria-live="polite">
+          <div className="share-splitter-feedback" data-tone={feedbackTone} role="status" aria-live="polite">
             {feedback}
           </div>
           <div className="share-splitter-action-buttons">
