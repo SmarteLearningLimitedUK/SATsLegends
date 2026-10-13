@@ -188,7 +188,7 @@
 .legend-island-preview[data-preview-theme=geometry] .legend-island-preview-particles i { background:#f3fbff; border-radius:0; transform:rotate(45deg); }
 .legend-island-preview[data-preview-theme=operations] .legend-island-preview-particles i { background:#ffc46d; }
 .legend-island-preview[data-preview-theme=ratio] .legend-island-preview-particles i { background:#b8ffe0; border:1px solid #eafff4; }
-#root .legend-world-map .legend-map-island-description { margin:calc(8px / var(--game-stage-scale,1)) 0; color:#d4e8f8; font-family:var(--font-fredoka); font-size:var(--map-label-size); line-height:1.4; text-align:center; }
+#root .legend-world-map .legend-map-island-description { margin:calc(8px / var(--game-stage-scale,1)) 0; color:#d4e8f8; font-family:var(--font-ui); font-size:var(--map-label-size); line-height:1.4; text-align:center; }
 .island-glyph-clock { transform-origin:64px 64px; animation:legend-island-clock 12s linear infinite; }
 .island-glyph-operations { transform-origin:64px 64px; animation:legend-island-clock 20s linear infinite; }
 .island-glyph-shape { animation:legend-island-crystal 4s ease-in-out infinite; }
@@ -214,6 +214,6 @@
 }
 
 #root .legend-world-map .legend-map-details [data-map-detail-close] { z-index:5; }
-#root .legend-world-map .legend-map-details h2 { white-space:nowrap; text-wrap:nowrap; }
+#root .legend-world-map .legend-map-details h2 { white-space:normal; overflow-wrap:anywhere; text-wrap:balance; }
 
 /* Give the next destination its own full-width line, matching the map labels. */

@@ -17,7 +17,7 @@
 .gameplay-photo-list h3 { font-size: 25px; margin-top: 8px; }
 .gameplay-photo-list figcaption > p:last-child { font-size: 15px; color: var(--web-muted); margin-top: 9px; }
 .gameplay-gallery-mobile-note { display: none; }
-.gameplay-photo-dialog { padding: 0; background: #211044; color: var(--web-white); font-family: 'Fredoka',sans-serif; border: 1px solid #b6afe380; border-radius: 18px; width: min(840px,calc(100vw - 32px)); max-height: calc(100svh - 32px); margin: auto; box-shadow: 0 30px 100px #000b; overflow: auto; }
+.gameplay-photo-dialog { padding: 0; background: #211044; color: var(--web-white); font-family: var(--font-ui); border: 1px solid #b6afe380; border-radius: 18px; width: min(840px,calc(100vw - 32px)); max-height: calc(100svh - 32px); margin: auto; box-shadow: 0 30px 100px #000b; overflow: auto; }
 .gameplay-photo-dialog::backdrop { background: #100422e8; backdrop-filter: blur(8px); }
 .gameplay-photo-dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px; font-size: 14px; color: var(--web-gold); background: #211044; border-bottom: 1px solid #b6afe330; position: sticky; top: 0; z-index: 1; }
 .gameplay-photo-dialog-header button { display: grid; place-items: center; min-width: 44px; min-height: 44px; border: 1px solid #b6afe366; border-radius: 8px; background: #451ccb4d; color: var(--web-white); cursor: pointer; }

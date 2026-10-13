@@ -46,7 +46,7 @@
 .parents-calm-note { color: var(--web-muted); margin-top: 18px !important; font-size: 14px; }
 .parents-tips ol { list-style: none; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 30px 60px; margin: 35px 0; }
 .parents-tips li { display: flex; gap: 19px; border-top: 1px solid #b6afe330; padding-top: 23px; }
-.parents-tip-number { color: var(--web-gold); font-size: 24px; font-family: 'Baloo 2',sans-serif; font-weight: 800; }
+.parents-tip-number { color: var(--web-gold); font-size: 24px; font-family: var(--font-display); font-weight: 700; }
 .parents-tips li p { color: var(--web-muted); margin-top: 10px; }
 .parents-help { font-size: 15px; color: var(--web-muted); max-width: 930px; }
 .parents-family-section { padding-block: 60px; border-block: 1px solid #b6afe330; background: #23104ee8; }

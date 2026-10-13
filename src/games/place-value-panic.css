@@ -51,7 +51,7 @@
   background: linear-gradient(145deg, #284d66, #17364e);
   box-shadow: inset 0 2px 0 #ffebb238, inset 0 -3px 0 #0c2439, 0 3px 0 #9e7438;
 }
-.pvp-stone-digit { color: #f1fcff; font-family: var(--font-fredoka); font-size: 31px; font-weight: 600; line-height: 1; text-shadow: 0 2px 0 #0b2338; }
+.pvp-stone-digit { color: #f1fcff; font-family: var(--font-ui); font-size: 31px; font-weight: 600; line-height: 1; text-shadow: 0 2px 0 #0b2338; }
 .pvp-stone-digit.is-empty { color: #91b3c4; font-size: 24px; }
 .pvp-number-stone.is-filled .pvp-stone-face { background: linear-gradient(145deg, #356e88, #204f69); }
 .pvp-number-stone.is-error .pvp-stone-face { border-color: #ffa1a9; }

@@ -46,7 +46,7 @@
 .detective-dossier-items { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
 #root .detective-dossier-items > div { padding:8px; gap:6px; }
 #root .detective-dossier-items span { font-size:14px; line-height:1.2; }
-.player-profile-arcade { font-family:var(--font-fredoka), sans-serif; color:#f2f8ff; }
+.player-profile-arcade { font-family:var(--font-ui); color:#f2f8ff; }
 .profile-summary-heading { font-family:var(--font-display), sans-serif; font-size:32px; line-height:1.1; margin:6px 0; overflow-wrap:anywhere; }
 .profile-summary-hero { display:flex; gap:16px; align-items:center; padding:20px; border:1px solid #91c4e15c; background:linear-gradient(135deg,#153b67,#091d3b); border-radius:20px; }
 .profile-summary-portrait { width:110px; height:140px; object-fit:contain; flex-shrink:0; filter:drop-shadow(0 5px 5px #020d20); }

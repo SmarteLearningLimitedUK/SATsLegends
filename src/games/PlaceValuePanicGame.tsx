@@ -761,7 +761,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   }, [advanceRound, attempts, canSubmit, correctAnswers, goblinHealth, initialSourceSlots, question.expectedDigits, question.id, resolvedLevel, scheduleRound, sessionEvents, targetSlots, XP]);
 
   const numberStyle: React.CSSProperties = {
-    fontFamily: 'var(--font-fredoka)',
+    fontFamily: 'var(--font-ui)',
     letterSpacing: '0.01em',
     textShadow: '0 2px 0 rgba(5,11,29,0.7)',
   };

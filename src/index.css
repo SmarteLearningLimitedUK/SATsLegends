@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-  --font-fredoka: "Fredoka", sans-serif;
-  --font-display: "Baloo 2", "Fredoka", sans-serif;
+  --font-ui: "Barlow Semi Condensed", "Segoe UI", sans-serif;
+  --font-sans: "Barlow Semi Condensed", "Segoe UI", sans-serif;
+  --font-display: "Cinzel", Georgia, serif;
+  --font-weight-black: 700;
 }
 
 @layer utilities {
@@ -16,19 +18,28 @@
   }
 
   .text-aaa-h1 {
-    @apply text-xl md:text-2xl font-black uppercase tracking-[0.12em];
+    @apply text-xl md:text-2xl uppercase;
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: .035em;
   }
   .text-aaa-h2 {
-    @apply text-base md:text-lg font-black uppercase tracking-[0.12em];
+    @apply text-base md:text-lg uppercase;
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: .025em;
   }
   .text-aaa-body {
-    @apply text-sm md:text-base font-bold uppercase tracking-[0.12em];
+    @apply text-sm md:text-base;
+    font-family: var(--font-ui);
+    font-weight: 500;
+    letter-spacing: .01em;
   }
   .text-aaa-sm {
-    @apply text-xs md:text-sm font-black uppercase tracking-[0.12em];
+    @apply text-xs md:text-sm font-bold uppercase tracking-[0.06em];
   }
   .text-aaa-micro {
-    @apply text-[10px] md:text-xs font-black uppercase tracking-[0.12em];
+    @apply text-[10px] md:text-xs font-bold uppercase tracking-[0.06em];
   }
 
   .glass-panel {
@@ -94,7 +105,7 @@ body {
   margin: 0;
   position: fixed;
   inset: 0;
-  font-family: var(--font-fredoka);
+  font-family: var(--font-ui);
   overflow: hidden;
   user-select: none;
   background:
@@ -1394,9 +1405,9 @@ button:disabled {
   position: relative;
   z-index: 10;
   font-family: var(--font-display);
-  font-weight: 900;
-  line-height: 0.84;
-  letter-spacing: -0.07em;
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: 0.025em;
   text-transform: uppercase;
   -webkit-text-stroke: 3px #24135d;
   text-shadow:
@@ -1616,7 +1627,7 @@ button:disabled {
   color: #fff8e1;
   font-family: var(--font-display);
   font-size: clamp(0.94rem, 3.4vw, 1.08rem);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.01em;
   text-shadow: 0 2px 8px rgba(2,6,23,0.22);
 }
@@ -2509,9 +2520,9 @@ button:disabled {
   position: relative;
   z-index: 2;
   padding: 1.02rem 3rem 1.12rem;
-  font-family: var(--font-display);
+  font-family: var(--font-ui);
   font-size: clamp(1.16rem, 4.2vw, 1.78rem);
-  font-weight: 900;
+  font-weight: 700;
   line-height: 1;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -2649,9 +2660,9 @@ button:disabled {
   align-items: center;
   justify-content: center;
   padding: 0 1.4rem;
-  font-family: var(--font-display);
+  font-family: var(--font-ui);
   font-size: clamp(1.12rem, 4.2vw, 1.48rem);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.08em;
   line-height: 1;
   text-transform: uppercase;
