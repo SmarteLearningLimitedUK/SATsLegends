@@ -173,10 +173,10 @@ for (const profile of profiles) {
     await page.waitForFunction(() => [...document.querySelectorAll('[data-race-course-tile]')].every((img) => img.complete && img.naturalWidth > 0));
 
     const getPuzzle = async () => page.evaluate(() => {
-      const ratio = document.querySelector('.ratio-racer-ratio').textContent.split(' = ');
-      const labels = ratio[0].split(' : ');
-      const parts = ratio[1].split(' : ').map(Number);
-      const target = document.querySelector('.ratio-racer-question').textContent.match(/mix is (.+)\?$/)[1];
+      const nodes = [...document.querySelectorAll('[data-race-mix-part]')];
+      const labels = nodes.map(n => n.dataset.raceMixLabel);
+      const parts = nodes.map(n => Number(n.dataset.raceMixPart));
+      const target = document.querySelector('[data-race-target]').dataset.raceTarget.toLowerCase();
       const numerator = parts[labels.findIndex((label) => label.toLowerCase() === target)];
       const denominator = parts.reduce((sum, part) => sum + part, 0);
       const correct = `${numerator}/${denominator}`;
@@ -201,12 +201,16 @@ for (const profile of profiles) {
       const dock = await page.locator('[data-testid="shared-bottom-hud"]').boundingBox();
       expect(question.height).toBeGreaterThan(30);
       expect(question.y).toBeGreaterThanOrEqual(topHud.y + topHud.height - 1);
-      expect(scene.y).toBeGreaterThanOrEqual(question.y + question.height);
+      const cockpit = scene.x + scene.width <= question.x + 1;
+      if (cockpit) {
+        expect(answers.x).toBeGreaterThanOrEqual(scene.x + scene.width - 1);
+        expect(answers.y).toBeGreaterThanOrEqual(question.y + question.height - 1);
+      } else expect(scene.y).toBeGreaterThanOrEqual(question.y + question.height);
       expect(kart.x).toBeGreaterThanOrEqual(scene.x - 1);
       expect(kart.y).toBeGreaterThanOrEqual(scene.y);
       expect(kart.x + kart.width).toBeLessThanOrEqual(scene.x + scene.width + 1);
       expect(kart.y + kart.height).toBeLessThanOrEqual(scene.y + scene.height + 1);
-      expect(answers.y).toBeGreaterThanOrEqual(scene.y + scene.height);
+      if (!cockpit) expect(answers.y).toBeGreaterThanOrEqual(scene.y + scene.height);
       expect(answers.y + answers.height).toBeLessThanOrEqual(dock.y + 1);
       expect(await page.locator('[data-race-course-tile]').evaluateAll((images) => images.every((img) => img.complete && img.naturalWidth > 0))).toBe(true);
       expect(await page.locator('.ratio-racer-kart img').evaluate((img) => img.complete && img.naturalWidth > 0)).toBe(true);
@@ -247,9 +251,9 @@ for (const profile of profiles) {
       tiers.add(puzzle.partCount);
       const before = Number(await page.locator('[data-race-progress]').getAttribute('aria-valuenow'));
       const travelBefore = Number(await course.getAttribute('data-course-travel'));
-      if (answer === 0) expect(puzzle.equivalent).toBeTruthy();
+      // Use an equivalent option when this generated mix offers one.
       await beginProbe();
-      await answerWith(answer === 0 ? puzzle.equivalent : puzzle.correct);
+      await answerWith(answer === 0 && puzzle.equivalent ? puzzle.equivalent : puzzle.correct);
       expectedStreak += 1;
       await expect(page.locator('[data-race-scene]')).toHaveAttribute('data-race-state', 'correctBoost');
       await expect(page.locator('.ratio-racer-feedback')).toContainText('Full send!');

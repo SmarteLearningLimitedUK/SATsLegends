@@ -10,8 +10,9 @@ import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gam
 import { DEFAULT_RACE_DIFFICULTY, RACE_TUNING, RaceDifficulty } from './ratioFractionsRace/constants';
 import { QuestionTier } from './ratioFractionsRace/questionSelector';
 import { RatioFractionQuestion } from './ratioFractionsRace/types';
-import courseBackground from '../assets/maps/teen/race-course-crowd.webp';
-import racingPaddock from '../assets/maps/teen/racing-paddock.webp';
+import courseBackground from '../assets/maps/teen/race-course-circuit-v2.webp';
+import RaceFuelMix from './ratioFractionsRace/RaceFuelMix';
+import RaceWheelRig from './ratioFractionsRace/RaceWheelRig';
 import kartBarratt from '../assets/gokarts/karts/1.png';
 import kartBran from '../assets/gokarts/karts/2.png';
 import kartMochi from '../assets/gokarts/karts/3.png';
@@ -594,13 +595,10 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
 
   return (
     <GameUiShell overlayDisabled className="bg-transparent">
-      <div className="ratio-racer-layout relative h-full w-full">
+      <div className="ratio-racer-layout relative h-full w-full" data-race-paused={Boolean(sessionState?.paused)}>
         <div
           aria-hidden="true"
           className="ratio-racer-backdrop pointer-events-none absolute inset-0"
-          style={{
-            backgroundImage: `linear-gradient(180deg, rgba(7,25,45,.64), rgba(7,25,45,.78)), url(${racingPaddock})`,
-          }}
         />
         <div className="ratio-racer-content">
           <GameQuestionCard
@@ -608,10 +606,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
             className="ratio-racer-mission"
             style={{ position: 'relative', top: 0, transform: 'none', width: '100%', padding: '10px 12px', fontSize: 18 }}
           >
-            <span className="ratio-racer-ratio">
-              {question.labels.join(' : ')} = {question.ratio.join(' : ')}
-            </span>
-            <span className="ratio-racer-question">What fraction of the mix is {question.target.toLowerCase()}?</span>
+            <RaceFuelMix labels={question.labels} parts={question.ratio} target={question.target} />
           </GameQuestionCard>
 
           <div className={`ratio-racer-scene${showBoost ? ' is-boost' : showStall ? ' is-stall' : ''}${lives <= 1 ? ' is-last-chance' : ''}`}
@@ -636,6 +631,8 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
               </div>
             </div>
             <div className="ratio-racer-track-shade" aria-hidden="true" />
+            <div className="race-road-motion" aria-hidden="true"><div /></div>
+            <div className="race-speed-streaks" aria-hidden="true">{[0,1,2,3].map(i=><i key={i} style={{top:`${58+i*10}%`,animationDelay:`${i*.18}s`}}/>)}</div>
 
             <div className="ratio-racer-route">
               <div className="ratio-racer-route-labels">
@@ -678,7 +675,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
               </div>
               <motion.div
                 className="ratio-racer-kart"
-                animate={reducedMotion
+                animate={reducedMotion || sessionState?.paused
                   ? { y: 0, rotate: 0 }
                   : showBoost
                     ? { y: [0, -6, 0], rotate: [0, -3, 0] }
@@ -688,6 +685,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
                 transition={{ duration: showBoost || showStall ? .4 : 1.2, repeat: showBoost || showStall || reducedMotion ? 0 : Infinity, ease: 'easeInOut' }}
               >
                 <img src={playerKart} alt="Your racing kart" draggable={false} />
+                <RaceWheelRig src={playerKart} />
               </motion.div>
               <AnimatePresence>
                 {showBoost ? (

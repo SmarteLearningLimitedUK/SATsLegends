@@ -860,9 +860,10 @@ async function restaurantFlow(page, profile, motion, level, exiting = false) {
 
 async function racePuzzle(page) {
   return page.evaluate(() => {
-    const [labelCopy, ratioCopy] = document.querySelector('.ratio-racer-ratio').textContent.split(' = ');
-    const labels = labelCopy.split(' : '); const parts = ratioCopy.split(' : ').map(Number);
-    const target = document.querySelector('.ratio-racer-question').textContent.match(/mix is (.+)\?$/)[1];
+    const nodes = [...document.querySelectorAll('[data-race-mix-part]')];
+    const labels = nodes.map(n => n.dataset.raceMixLabel);
+    const parts = nodes.map(n => Number(n.dataset.raceMixPart));
+    const target = document.querySelector('[data-race-target]').dataset.raceTarget.toLowerCase();
     const numerator = parts[labels.findIndex((label) => label.toLowerCase() === target)]; const denominator = parts.reduce((sum, part) => sum + part, 0);
     const choices = [...document.querySelectorAll('[data-race-answer]')].map((button) => button.dataset.raceAnswer);
     const matches = (option) => { const [n, d] = option.split('/').map(Number); return n * denominator === numerator * d; };
