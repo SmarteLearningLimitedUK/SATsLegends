@@ -345,3 +345,61 @@
     transform: translate(-50%, -50%) scale(0.8);
   }
 }
+
+/* Keep the combat camera close, rather than stretching the duel over a lawn. */
+.maths-vs-zombies { --zombie-size: clamp(104px, 15vh, 164px); }
+.maths-vs-zombies .zombies-playfield {
+  width: min(calc(100% - 32px), 1040px);
+  margin-inline: auto;
+  border-width: 1px;
+  border-color: #9fe8f044;
+  background: linear-gradient(90deg, #08213a55, #08213a08 35%, #08213a22);
+}
+.maths-vs-zombies .zombies-player {
+  left: 30%;
+  bottom: 8%;
+  transform: translateX(-50%);
+  gap: 8px;
+}
+.maths-vs-zombies .zombies-player::before { top: 61%; right: 4%; }
+.maths-vs-zombies .zombies-player-avatar { height: clamp(140px, 26vh, 260px); }
+.zombies-hero-rig { position: relative; }
+.zombies-hero-rig img { width: 100%; height: 100%; object-fit: contain; }
+.zombies-hero-head { position: absolute; inset: 0; background-size: contain; background-position: center; background-repeat: no-repeat; transform-origin: 60% 49%; animation: zombies-hero-look 3.8s ease-in-out infinite; }
+@keyframes zombies-hero-look { 0%, 100% { transform: rotate(-1deg); } 40% { transform: rotate(1.8deg); } 70% { transform: rotate(.4deg); } }
+.maths-vs-zombies .zombies-player[data-casting='true'] .zombies-hero-head { animation: zombies-cast-head 460ms ease-out both; }
+@keyframes zombies-cast-head { 25% { transform: rotate(-5deg); } 60% { transform: rotate(4deg); } }
+.maths-vs-zombies .zombies-player[data-casting='true'] .zombies-player-avatar { animation-name: zombies-hero-strike; }
+@keyframes zombies-hero-strike { 0% { transform: translateX(0); } 22% { transform: translate(-9px, 4px) rotate(-5deg); } 57% { transform: translate(22px, -3px) rotate(6deg); } 80% { transform: translate(9px, 0) rotate(2deg); } 100% { transform: translateX(0); } }
+.zombies-battle-runes { position: absolute; left: 30%; bottom: 4%; width: 230px; height: 60px; transform: translateX(-50%); border: 2px solid #91efffa0; border-radius: 50%; background: radial-gradient(ellipse, #b4f5ff44, #27bbeb22 45%, transparent 65%); box-shadow: 0 0 18px #69d8eb50, inset 0 0 12px #5edce650; animation: zombies-rune-charge 3s ease-in-out infinite; pointer-events: none; }
+.maths-vs-zombies .zombies-answer-board { width: min(calc(100% - 32px), 1040px); margin-inline: auto; }
+.zombies-battle-runes::after { content: ''; position: absolute; inset: 8px 22px; border: 2px dashed #d0f8ff88; border-radius: 50%; }
+@keyframes zombies-rune-charge { 50% { opacity: .55; filter: brightness(1.3); } }
+.zombies-mist { position: absolute; inset: auto -15% 0; height: 22%; pointer-events: none; background: radial-gradient(ellipse at 35% 80%, #d8f5e32e, transparent 50%), radial-gradient(ellipse at 75% 65%, #b6eacf22, transparent 45%); animation: zombies-ground-mist 9s ease-in-out infinite alternate; }
+@keyframes zombies-ground-mist { to { transform: translateX(5%); } }
+.maths-vs-zombies .zombies-target[data-zombie-state='walk'] .monster-mind-part--leftArm { animation: zombies-reaching-arm .9s ease-in-out infinite alternate; }
+.maths-vs-zombies .zombies-target[data-zombie-state='walk'] { animation-name: zombies-grounded-gait; }
+@keyframes zombies-grounded-gait { 0%, 100% { transform: rotate(-.5deg); } 50% { transform: translateY(-1.2px) rotate(.5deg); } }
+.maths-vs-zombies .zombies-target[data-zombie-state='walk'] .monster-mind-part--rightArm { animation: zombies-reaching-arm .9s ease-in-out -.6s infinite alternate-reverse; }
+.maths-vs-zombies .zombies-target[data-zombie-state='walk'] .monster-mind-part--head { animation: zombies-hunting-head 1.8s ease-in-out infinite; }
+@keyframes zombies-reaching-arm { from { transform: rotate(-12deg); } to { transform: rotate(16deg) translateY(-2%); } }
+@keyframes zombies-hunting-head { 50% { transform: rotate(5deg); } }
+.maths-vs-zombies .zombies-enemy-health { width: 72%; height: 5px; }
+.maths-vs-zombies .zombies-spell-projectile { width: 34px; }
+.maths-vs-zombies .zombies-spell-trail { height: 12px; }
+.maths-vs-zombies .zombies-spell-impact { width: 90px; }
+.zombies-impact-spark { position: absolute; left: 50%; top: 50%; width: 20px; height: 5px; border-radius: 50%; background: #fff0a4; box-shadow: 0 0 8px #a8f2ff; animation: zombies-spark-burst 350ms ease-out both; }
+@keyframes zombies-spark-burst { from { transform: rotate(var(--spark-angle)) translateX(10px) scale(.5); opacity: 1; } to { transform: rotate(var(--spark-angle)) translateX(100px) scale(.1); opacity: 0; } }
+.maths-vs-zombies[data-paused='true'] *, .maths-vs-zombies[data-paused='true'] *::before, .maths-vs-zombies[data-paused='true'] *::after { animation-play-state: paused !important; }
+@media (max-width: 699px) {
+  .maths-vs-zombies { --zombie-size: clamp(80px, 12vh, 104px); }
+  .maths-vs-zombies .zombies-player-avatar { height: clamp(120px, 20vh, 175px); }
+  .zombies-battle-runes { width: 125px; height: 36px; }
+  .maths-vs-zombies .zombies-playfield { width: calc(100% - 16px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .zombies-hero-head, .maths-vs-zombies .zombies-player[data-casting='true'] .zombies-hero-head,
+  .zombies-battle-runes, .zombies-mist, .zombies-impact-spark,
+  .maths-vs-zombies .zombies-target[data-zombie-state='walk'] .monster-mind-part { animation: none !important; }
+  .zombies-impact-spark { display: none; }
+}

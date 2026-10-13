@@ -8,6 +8,8 @@ import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { MiniGameShellContractProps, emitMiniGameSessionEvent } from '../app/gameplaySessionContract';
 import { formatMultiplicationDisplay } from '../utils/mathDisplay';
 import MonsterMindActor from '../components/game-ui/MonsterMindActor';
+import ZombieHeroActor from './ZombieHeroActor';
+import { playGameSound } from '../audio/gameAudio';
 import { LEVEL_TIMERS_DISABLED } from '../app/testingFlags';
 import './maths-vs-zombies.css';
 
@@ -60,10 +62,11 @@ const RIGHT_SPAWN_MIN_Y = 18;
 const RIGHT_SPAWN_MAX_Y = 62;
 const TARGET_Y = 78;
 const TARGET_X = 22;
-const ZOMBIE_SIZE = 'clamp(64px, 6.2vw, 96px)';
+const ZOMBIE_SIZE = 'var(--zombie-size, 96px)';
 const ROUND_SECONDS = 60;
 const SPELL_FLIGHT_MS = 460;
 const SPELL_IMPACT_MS = 290;
+const displayZombieX = (x: number) => 30 + (x - TARGET_X) * 0.7;
 
 const stateDuration = (state: ZombieState) => {
   if (state === 'attack') return 1.8;
@@ -550,18 +553,21 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     const startY = inside(avatarBounds && fieldBounds
       ? avatarBounds.top - fieldBounds.top + avatarBounds.height * 0.65 : height * 0.72, height);
     const endX = inside(targetBounds && fieldBounds
-      ? targetBounds.left - fieldBounds.left + targetBounds.width * 0.5 : width * target.x / 100 + 30, width);
+      ? targetBounds.left - fieldBounds.left + targetBounds.width * 0.5 : width * displayZombieX(target.x) / 100 + 30, width);
     const endY = inside(targetBounds && fieldBounds
       ? targetBounds.top - fieldBounds.top + targetBounds.height * 0.46 : height * target.y / 100 + 30, height);
     const shotId = ++spellIdRef.current;
+    playGameSound('cast');
     setIsCasting(!reducedMotion);
     setSpellShot({ id: shotId, targetId: target.id, startX, startY, endX, endY, phase: reducedMotion ? 'impact' : 'flight' });
 
     const impact = () => {
       spellImpactTimerRef.current = null;
       if (!presentRef.current || endedRef.current) return;
+      if (pausedRef.current || document.hidden) { spellImpactTimerRef.current = window.setTimeout(impact, 100); return; }
       const hit = zombiesRef.current.some((zombie) => zombie.id === target.id && zombie.state !== 'die');
       if (hit) {
+        playGameSound('impact');
         const next = zombiesRef.current.map((zombie) => zombie.id === target.id
           ? { ...zombie, health: 0, state: 'die' as ZombieState, stateTime: 0 }
           : zombie);
@@ -577,10 +583,13 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       setIsCasting(false);
       setSpellShot((current) => current?.id === shotId ? { ...current, phase: 'impact' } : current);
       spawnTimerRef.current = spawnDelayMs;
-      spellClearTimerRef.current = window.setTimeout(() => {
+      const clearImpact = () => {
+        if (!presentRef.current || endedRef.current) return;
+        if (pausedRef.current || document.hidden) { spellClearTimerRef.current = window.setTimeout(clearImpact, 100); return; }
         setSpellShot((current) => current?.id === shotId ? null : current);
         spellClearTimerRef.current = null;
-      }, SPELL_IMPACT_MS);
+      };
+      spellClearTimerRef.current = window.setTimeout(clearImpact, SPELL_IMPACT_MS);
     };
     if (reducedMotion) impact();
     else spellImpactTimerRef.current = window.setTimeout(impact, SPELL_FLIGHT_MS);
@@ -650,6 +659,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
   return (
     <div
       className="maths-vs-zombies relative flex h-full w-full flex-col items-center overflow-hidden font-sans text-white select-none"
+      data-paused={paused}
       data-zombies-game data-zombies-tier={tier} data-zombies-score={XP} data-zombies-target={victoryTargetScore} data-zombies-time={timeLeft}
     >
       <PracticeIntroPopup
@@ -665,7 +675,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           <TopBar XP={XP} brainPoints={zombiesDefeated} health={health} timer={timerLabel} onBack={onBack} />
         ) : null}
 
-        <GameQuestionCard className="zombies-question-card" title={gameTitle || 'Maths vs Zombies'} subtitle={isPractice ? `Push back 4 minions. ${XP / 220} cleared.` : `Hold for 60 seconds. Clear at least ${victoryTargetScore / 220} minions. ${XP / 220} cleared.`} style={{ position: 'relative', top: '5px', width: 'min(92%, 920px)', transform: 'none' }}>
+        <GameQuestionCard className="zombies-question-card" title={gameTitle || 'Maths vs Zombies'} subtitle={isPractice ? `Push back 4 minions. ${zombiesDefeated} cleared.` : `Hold for 60 seconds. Clear at least ${victoryTargetScore / 220} minions. ${zombiesDefeated} cleared.`} style={{ position: 'relative', top: '5px', width: 'min(92%, 920px)', transform: 'none' }}>
           {question.prompt.split('\n\n').slice(-1)[0]}
         </GameQuestionCard>
 
@@ -673,7 +683,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           ref={playfieldRef}
           className={`zombies-playfield relative mx-4 flex-1 overflow-hidden rounded-3xl border-4 border-blue-400/30 shadow-2xl ${useSharedTopHud ? 'mt-2' : 'mt-4'}`}
         >
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_85%,rgba(56,189,248,0.06),transparent_48%)]" />
+          <div className="zombies-battle-runes" aria-hidden="true"/><div className="zombies-mist" aria-hidden="true"/>
           {!isPractice ? (
             <div className="zombies-countdown" data-urgent={timeLeft <= 15} role="timer" aria-label={`${timeLeft} seconds remaining`}>
               <TimerIcon aria-hidden="true" />
@@ -682,12 +692,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           ) : null}
           <div ref={playerRef} className="zombies-player absolute flex flex-col items-center" data-player-character="true" data-casting={isCasting}>
             <div className="text-[11px] font-black uppercase tracking-[0.18em] text-cyan-100">You</div>
-            <img
-              src={avatarImage}
-              alt=""
-              className="zombies-player-avatar w-auto object-contain drop-shadow-[0_10px_20px_rgba(2,6,23,0.45)]"
-              draggable={false}
-            />
+            <ZombieHeroActor source={avatarImage} avatarId={avatarId}/>
           </div>
 
           <AnimatePresence>
@@ -714,12 +719,13 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
                   data-zombie-id={zombie.id}
                   style={{
                     top: `min(${zombie.y}%, calc(100% - ${ZOMBIE_SIZE} - 12px))`,
-                    left: `min(${zombie.x}%, calc(100% - ${ZOMBIE_SIZE}))`,
+                    // Bring the camera closer without changing the approach time/difficulty.
+                    left: `min(${displayZombieX(zombie.x)}%, calc(100% - ${ZOMBIE_SIZE}))`,
                     width: ZOMBIE_SIZE,
                   }}
                 >
                   <MonsterMindActor src={zombieEnemy} alt="Cartoon zombie minion" reaction={zombie.state === 'die' ? 'defeated' : zombie.state === 'attack' ? 'taunt' : zombie.state === 'hit' ? 'hit' : 'idle'} reactionKey={`${zombie.id}-${zombie.state}`} style={{ width: ZOMBIE_SIZE, height: ZOMBIE_SIZE }} />
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-black/40">
+                  <div className="zombies-enemy-health h-2 w-full overflow-hidden rounded-full bg-black/40">
                     <div
                       className="h-full bg-emerald-300"
                       style={{ width: `${Math.max(0, Math.min(100, (zombie.health / zombie.maxHealth) * 100))}%` }}
@@ -737,7 +743,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
                   <span className="zombies-spell-trail" />
                   <span className="zombies-spell-projectile"><i /><i /><i /></span>
                 </>
-              ) : <span className="zombies-spell-impact"><i /><i /></span>}
+              ) : <span className="zombies-spell-impact"><i /><i />{Array.from({length: 8}, (_, index) => <b key={index} className="zombies-impact-spark" style={{ '--spark-angle': `${index * 45}deg` } as React.CSSProperties}/>)}</span>}
             </div>
           ) : null}
 
@@ -783,6 +789,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 };
 
 export default MathsVsZombiesGame;
+
 
 
 
