@@ -28,7 +28,7 @@ try {
         await expect(page.getByText('Lexcoria is not available to play or purchase yet.', { exact: false })).toBeVisible();
       }
       if (route === '/for-parents') {
-        await expect(page.getByRole('heading', { name: 'Big adventures. Small steps to SATs.' })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Practice with purpose. Adventure they can explore.' })).toBeVisible();
         await expect(page.locator('tbody tr')).toHaveCount(6);
         for (const name of ['Peaceful Pond', 'Lantern Camp', 'Star Path', 'Leaf Drift', 'Worry Balloon', 'Bubble Breath']) {
           await page.getByRole('button', { name, exact: true }).click();
@@ -43,7 +43,7 @@ try {
         await page.getByRole('link', { name: 'Fractions', exact: false }).click();
         await expect(page.locator('#guide-fractions')).toBeVisible();
         await page.goto(base + route);
-        await expect(page.getByRole('heading', { name: 'Big adventures. Small steps to SATs.' })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Practice with purpose. Adventure they can explore.' })).toBeVisible();
       }
       if (route === '/signup') {
         await expect(page.getByRole('button', { name: 'Create parent account' })).toBeDisabled();
