@@ -4,6 +4,7 @@ import { expect } from '@playwright/test';
 
 const base = process.env.LEGEND_QA_URL || 'http://127.0.0.1:3000';
 const testingLink = process.env.LEGEND_ENGLISH_TESTING === 'true';
+const fixtureApi = process.env.LEGEND_QA_API_URL || 'https://family-qa.supabase.co';
 const browser = await chromium.launch();
 try {
   for (const width of [320, 390, 768, 1440]) {
@@ -51,7 +52,7 @@ try {
     let verifiedEnglish = 0;
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
-    await page.route('https://family-qa.supabase.co/**', async route => {
+    await page.route(`${fixtureApi}/**`, async route => {
       const request = route.request();
       const url = new URL(request.url());
       const headers = { 'Access-Control-Allow-Origin': base, 'Access-Control-Allow-Headers': '*', 'Access-Control-Allow-Methods': '*' };
@@ -70,6 +71,11 @@ try {
         return reply(entitled);
       }
       if (url.pathname.endsWith('/child_progress')) return reply(null);
+      if (url.pathname.endsWith('/rpc/save_child_progress')) {
+        const save = request.postDataJSON();
+        assert.equal(save.game_code, 'english');
+        return reply(save.expected_revision + 1);
+      }
       if (url.pathname.endsWith('/account_deletion_requests')) return reply(null);
       throw new Error(`Unexpected Lexcoria fixture request: ${url.pathname}`);
     });
