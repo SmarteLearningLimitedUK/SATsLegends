@@ -19,7 +19,7 @@ for (const profile of [
     page.on('pageerror', error => errors.push(error.message));
     for (const route of ['/', '/for-parents']) {
       await page.goto(base + route);
-      const gallery = page.getByRole('region', { name: 'Real challenges. Brilliant little adventures.' });
+      const gallery = page.getByRole('region', { name: 'See the challenge. See the maths behind it.' });
       await expect(gallery).toBeVisible();
       await expect(gallery.locator('figure')).toHaveCount(4);
       for (const [index, name] of games.entries()) {

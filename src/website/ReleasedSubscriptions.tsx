@@ -11,7 +11,7 @@ type Plan = { product: Product; interval: Interval; available: boolean; amount: 
 const products: Record<Product, { title: string; subtitle: string; features: string[]; prices: Record<Interval, number> }> = {
   matharia: {
     title: 'Matharia', subtitle: 'The maths adventure', prices: { month: 499, year: 4999 },
-    features: ['Matharia maths adventures', 'One child profile', 'Saved progress across devices', 'Private parent dashboard'],
+    features: ['Matharia maths challenges', 'One child profile', 'Saved progress across devices', 'Parent dashboard with strengths and topics to revisit', 'Optional progress emails', 'Calm Grove pause activities'],
   },
   english: {
     title: 'Lexcoria', subtitle: 'The English adventure', prices: { month: 499, year: 4999 },
@@ -70,7 +70,7 @@ export default function ReleasedSubscriptions() {
   }
 
   return <main id="website-main" className="website-container family-main">
-    <div className="website-resource-heading"><p className="website-eyebrow"><Gamepad2 size={16} /> SATs Legends subscriptions</p><h1>Choose your adventure.<br /><span>Grow every skill.</span></h1><p>One child profile, browser play and progress you can follow.</p></div>
+    <div className="website-resource-heading"><p className="website-eyebrow"><Gamepad2 size={16} /> SATs Legends subscriptions</p><h1>Practice for them.<br /><span>Clear progress for you.</span></h1><p>Choose maths, English or both adventures. Each plan includes browser play and saved progress for one child, with a parent account to follow their learning.</p></div>
     {query.get('checkout') === 'cancelled' && <p className="family-notice" role="status">Checkout was cancelled. Choose a plan whenever you’re ready.</p>}
     {error && <p className="family-error" role="alert">{error}</p>}
     {!family.configured && <p className="family-notice">Secure subscriptions are being connected. Plans cannot be purchased yet.</p>}
@@ -96,7 +96,8 @@ export default function ReleasedSubscriptions() {
         <p className="family-small">{switchingToBundle ? 'Change your existing subscription before starting a combined plan so you are not billed twice.' : `Renews automatically at ${formatPounds(amount)} per ${interval}. Cancel renewal in your parent account; access continues until the end of the paid period.`}</p>
       </section>;
     })}</div>
+    <p className="family-product-intro">Create your parent account, add your child’s nickname and choose the adventures you want to include. Play in the browser on phones, tablets and desktop computers.</p>
     <p className="family-payment-note"><strong>{paypalReady ? 'Card or PayPal at secure checkout.' : 'Secure card checkout.'}</strong> Payment details are handled by the payment provider and are not stored in the game.</p>
-    <p className="family-small"><Mail size={15} /> Progress emails can be switched off in your parent account.</p>
+    <p className="family-small"><Mail size={15} /> Choose whether to receive progress emails. Your private dashboard stays available when emails are off.</p>
   </main>;
 }
