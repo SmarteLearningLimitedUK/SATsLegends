@@ -221,10 +221,25 @@ for (const viewport of desktopViewports) {
       assert.ok(targets.box.bottom + 2 <= sources.box.top, `${name} Number Stones overlap digit rack`);
       assert.ok(sources.box.bottom + 2 <= submit.box.top, `${name} digit rack overlaps Submit: rack bottom ${sources.box.bottom}, Submit top ${submit.box.top}`);
       assert.ok(targets.box.right + 8 <= enemy.box.left && sources.box.right + 8 <= enemy.box.left, `${name} monster overlaps controls`);
+      assert.ok(Math.abs(question.box.left - targets.box.left) <= 1 && Math.abs(targets.box.left - sources.box.left) <= 1, `${name} puzzle panels do not share an alignment`);
+      assert.ok(targets.box.top - question.box.bottom <= 48 && sources.box.top - targets.box.bottom <= 48 && submit.box.top - sources.box.bottom <= 48, `${name} puzzle panels are scattered across the screen`);
+      assert.ok(enemy.inViewport, `${name} monster is outside the viewport`);
       for (const [group, entries] of Object.entries({ targets: layout.targets, sources: layout.sources, submit: layout.submit })) {
         assert.ok(entries.every((entry) => entry.inViewport && entry.reachable), `${name} ${group} outside viewport or blocked: ${JSON.stringify(entries)}`);
       }
       if (name === 'place-value-practice') {
+        const source = page.locator('[data-pvp-location="source"]:not([tabindex="-1"])').first();
+        const target = page.locator('[data-pvp-location="target"]').first();
+        const digit = (await source.getAttribute('aria-label')).replace('Digit ', '');
+        const sourceBox = await source.boundingBox();
+        const targetBox = await target.boundingBox();
+        await page.mouse.move(sourceBox.x + sourceBox.width / 2, sourceBox.y + sourceBox.height / 2);
+        await page.mouse.down();
+        await page.mouse.move(targetBox.x + targetBox.width / 2, targetBox.y + targetBox.height / 2, { steps: 12 });
+        await page.mouse.up();
+        assert.equal(await target.locator('[data-pvp-stone-digit]').innerText(), digit, `${name} desktop drag placed the digit incorrectly`);
+        await target.click();
+        assert.equal(await target.locator('[data-pvp-stone-digit]').innerText(), '—', `${name} tapping a placed digit did not remove it`);
         for (let index = 0; index < expectedTargets; index += 1) {
           await page.locator('[data-pvp-location="source"]:not([tabindex="-1"])').first().click();
         }

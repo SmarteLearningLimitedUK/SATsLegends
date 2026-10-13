@@ -875,6 +875,15 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         </div>
       ) : null}
 
+      <motion.div
+        ref={playfieldRef}
+        className="pvp-playfield-layout absolute inset-0 z-20"
+        onPointerMove={moveDrag}
+        onPointerUp={finishDrag}
+        onPointerCancel={cancelDrag}
+        animate={boardShake && !reducedMotion ? { x: [0, -6, 6, -3, 3, 0] } : { x: 0 }}
+        transition={{ duration: 0.34, ease: 'easeInOut' }}
+      >
       <div className="legend-pvp-question pointer-events-none absolute z-[60]" style={{ inset: '0 0 auto' }}>
         <GameQuestionCard
           title="Place Value Panic"
@@ -888,15 +897,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         </GameQuestionCard>
       </div>
 
-      <motion.div
-        ref={playfieldRef}
-        className="absolute inset-0 z-20"
-        onPointerMove={moveDrag}
-        onPointerUp={finishDrag}
-        onPointerCancel={cancelDrag}
-        animate={boardShake && !reducedMotion ? { x: [0, -6, 6, -3, 3, 0] } : { x: 0 }}
-        transition={{ duration: 0.34, ease: 'easeInOut' }}
-      >
         <div
           className="legend-pvp-targets pointer-events-auto absolute left-1/2 top-[32%] z-10 -translate-x-1/2"
           style={{ width: question.expectedDigits.length > 5 ? '96%' : '83%' }}
