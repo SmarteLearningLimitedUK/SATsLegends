@@ -1,0 +1,73 @@
+/* Public website typography follows the game's heroic display / readable UI pairing. */
+.legends-website {
+  font-family: var(--font-ui);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.55;
+}
+
+.legends-website :is(h1, h2, h3, h4, h5, h6),
+:is(.website-video-dialog, .gameplay-photo-dialog) :is(h1, h2, h3) {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: .025em;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.legends-website :is(button, input, select, textarea) {
+  font-family: var(--font-ui);
+}
+
+.legends-website :is(.website-button, .website-login, .website-text-link, .website-path-link),
+.legends-website :is(.website-filters, .family-product-tabs, .parents-calm-options) button {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: .015em;
+}
+
+.legends-website .website-button-gold { font-weight: 700; }
+.legends-website :is(.website-desktop-nav, .website-mobile-nav) { font-size: 16px; font-weight: 600; }
+
+.legends-website :is(
+  .website-hero-description,
+  .website-path p,
+  .website-section-heading p:not(.website-eyebrow),
+  .website-final-cta p:not(.website-eyebrow),
+  .website-resource-heading > p:not(.website-eyebrow),
+  .website-account-world > p:not(.website-eyebrow),
+  .website-account-form-wrap > p:not(.website-eyebrow),
+  .website-guide p,
+  .website-guide li,
+  .website-video-card p,
+  .parents-help,
+  .parents-section-intro > p:last-child,
+  .parents-security li,
+  .family-plan li,
+  .family-notice,
+  .family-error
+) {
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: .005em;
+}
+
+.legends-website :is(.website-account-form-wrap, .family-form) label {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.legends-website .family-checkbox { font-size: 16px !important; }
+.legends-website :is(.family-price, .family-stats strong) { font-family: var(--font-ui); font-variant-numeric: tabular-nums; }
+
+/* Small labels remain crisp; depth is reserved for prominent display headings. */
+.legends-website h3 { text-shadow: none; }
+.legends-website :is(.website-button, .website-eyebrow) { text-shadow: none; }
+
+@media (max-width: 580px) {
+  .legends-website .website-header-actions .website-button { white-space: nowrap; padding-inline: 10px; gap: 6px; }
+  .legends-website .website-header-actions .website-button svg { width: 18px; height: 18px; flex-shrink: 0; }
+}
