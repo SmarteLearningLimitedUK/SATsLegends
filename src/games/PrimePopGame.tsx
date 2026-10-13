@@ -5,6 +5,7 @@ import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import './prime-pop.css';
 import { AVATARS } from '../constants';
 import primePopBackground from '../assets/maps/premium/prime-pop.webp';
+import primePopDesktopBackground from '../assets/maps/premium/prime-pop-desktop.webp';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
 
@@ -616,8 +617,8 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     <div
       data-prime-pop-stage="true"
       data-background-fit="contain"
-      className="relative z-20 flex h-full min-h-0 w-full flex-col overflow-hidden bg-contain bg-center bg-no-repeat select-none"
-      style={{ backgroundImage: `url(${primePopBackground})` }}
+      className="prime-pop-stage relative z-20 flex h-full min-h-0 w-full flex-col overflow-hidden bg-contain bg-center bg-no-repeat select-none"
+      style={{ '--prime-pop-portrait': `url(${primePopBackground})`, '--prime-pop-landscape': `url(${primePopDesktopBackground})` } as React.CSSProperties}
     >
       <PracticeIntroPopup
         open={showPracticeIntro}
@@ -646,15 +647,15 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
         >
           <div
             data-prime-pop-danger="true"
-            className="pointer-events-none absolute left-0 right-0 z-20 flex items-center justify-center"
+            className={`prime-pop-ward pointer-events-none absolute left-0 right-0 z-20 flex items-center justify-center ${screenShake ? 'prime-pop-ward--hit' : ''}`}
             style={{
               top: `${DANGER_LINE_Y}%`,
             }}
           >
-            <div className="relative flex h-4 w-[88%] items-center justify-center overflow-hidden rounded-full border border-white/20 bg-[repeating-linear-gradient(135deg,#0b0f1a_0px,#0b0f1a_10px,#f9fafb_10px,#f9fafb_20px)] shadow-[0_0_12px_rgba(15,23,42,0.45)]">
-              <span className="rounded-full bg-red-600 px-3 py-0.5 text-[9px] font-black uppercase tracking-[0.26em] text-white shadow-[0_0_12px_rgba(220,38,38,0.6)]">
-                DANGER
-              </span>
+            <div className="prime-pop-ward-rail">
+              <i className="prime-pop-ward-crystal prime-pop-ward-crystal--left" aria-hidden="true" />
+              <span className="prime-pop-ward-label">Danger</span>
+              <i className="prime-pop-ward-crystal prime-pop-ward-crystal--right" aria-hidden="true" />
             </div>
           </div>
           <div
