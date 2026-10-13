@@ -23,13 +23,18 @@ export default function ForParents() {
   const [activityIndex, setActivityIndex] = useState(0);
   const activity = calmActivities[activityIndex];
   return <main id="website-main" className="parents-page">
+    <section className="parents-family-section" aria-labelledby="parents-progress-title"><div className="website-container parents-family-layout">
+      <motion.div {...reveal}><p className="website-eyebrow"><Mail size={16} /> Stay part of their journey</p><h1 id="parents-progress-title">Their adventure.<br /><span>Your window into progress.</span></h1><p>See saved activity, answer accuracy, strengths and areas to revisit in your private parent dashboard. Use it to choose the next small step together.</p><p>Opt in to progress emails on <strong>Sundays at 3 pm</strong> and <strong>Wednesdays at 4 pm</strong>, UK time. Each email links to your child’s progress; you can check it at any time.</p><Link className="website-text-link" to="/parent">Open your parent account <ArrowRight size={17} /></Link></motion.div>
+      <div className="parents-security"><p className="website-eyebrow"><ShieldCheck size={16} /> Built around parents</p><h2>You’re in control.</h2><ul><li><LockKeyhole size={20} /><span><strong>Private child profiles</strong>Reports require the owning parent’s login, including links opened from an email.</span></li><li><ShieldCheck size={20} /><span><strong>Protected checkout</strong>Payment details are handled by the payment provider, outside the game.</span></li><li><Mail size={20} /><span><strong>Your email preferences</strong>Progress emails are optional. Switch them off in your account whenever you like.</span></li></ul></div>
+    </div></section>
+
     <section className="parents-hero">
       <img className="parents-hero-landscape" src={valley} alt="" fetchPriority="high" />
       <div className="website-container parents-hero-inner">
         <motion.div initial={{ y: 18 }} animate={{ y: 0 }} transition={{ duration: 0.55 }} className="parents-hero-copy">
           <p className="website-eyebrow">For parents & carers</p>
           <div className="parents-hero-logo"><SplashLogo /></div>
-          <h1>Big adventures.<br /><span>Small steps to SATs.</span></h1>
+          <h2>Big adventures.<br /><span>Small steps to SATs.</span></h2>
           <p>Matharia brings maths practice, revision and moments of calm into one browser adventure.</p>
           <div className="parents-actions"><Link className="website-button website-button-gold" to="/subscriptions">Explore Matharia plans <ArrowRight size={18} /></Link><a className="website-text-link" href="#calm-spaces">Discover Calm Grove <Leaf size={18} /></a></div>
         </motion.div>
@@ -72,11 +77,6 @@ export default function ForParents() {
       ].map(([title, text], index) => <li key={title}><span className="parents-tip-number">0{index + 1}</span><div><h3>{title}</h3><p>{text}</p></div></li>)}</ol>
       <p className="parents-help">If anxiety or low mood persists, feels severe or affects everyday life, speak with your child’s school or GP. Read the <a href="https://www.nhs.uk/mental-health/children-and-young-adults/advice-for-parents/help-your-child-beat-exam-stress/" target="_blank" rel="noopener noreferrer">NHS advice on supporting children through exam stress</a>.</p>
     </section>
-
-    <section className="parents-family-section"><div className="website-container parents-family-layout">
-      <motion.div {...reveal}><p className="website-eyebrow"><Mail size={16} /> Stay part of their journey</p><h2>Their adventure.<br /><span>Your window into progress.</span></h2><p>See saved activity, answer accuracy, strengths and areas to revisit in your private parent dashboard. Use it to choose the next small step together.</p><p>Opt in to progress emails on <strong>Sundays at 3 pm</strong> and <strong>Wednesdays at 4 pm</strong>, UK time. Each email links to your child’s progress; you can check it at any time.</p><Link className="website-text-link" to="/parent">Open your parent account <ArrowRight size={17} /></Link></motion.div>
-      <div className="parents-security"><p className="website-eyebrow"><ShieldCheck size={16} /> Built around parents</p><h3>You’re in control.</h3><ul><li><LockKeyhole size={20} /><span><strong>Private child profiles</strong>Reports require the owning parent’s login, including links opened from an email.</span></li><li><ShieldCheck size={20} /><span><strong>Protected checkout</strong>Payment details are handled by the payment provider, outside the game.</span></li><li><Mail size={20} /><span><strong>Your email preferences</strong>Progress emails are optional. Switch them off in your account whenever you like.</span></li></ul></div>
-    </div></section>
 
     <section className="website-container parents-final"><div><p className="website-eyebrow">Choose the next chapter</p><h2>Start with Matharia.</h2><p>£4.99 a month or £49.99 a year, for one child profile. An English learning game is in development; current plans cover Matharia only.</p></div><Link className="website-button website-button-gold" to="/subscriptions">View subscriptions <ArrowRight size={18} /></Link></section>
   </main>;

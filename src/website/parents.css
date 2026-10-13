@@ -6,14 +6,14 @@
 .parents-hero-inner { min-height: 570px; display: flex; align-items: center; justify-content: space-between; gap: 30px; padding-block: 46px 60px; }
 .parents-hero-copy { width: min(640px,65%); }
 .parents-hero-logo { width: 285px; max-width: 78%; margin: 10px 0 18px; }
-.parents-hero h1 { font-size: clamp(40px,4.4vw,64px); }
+.parents-hero h2 { font-size: clamp(40px,4.4vw,64px); }
 .parents-page :is(h1,h2) span { color: var(--web-gold); }
 .parents-hero-copy > p:not(.website-eyebrow) { max-width: 470px; margin-top: 18px; color: #e5ddf5; font-size: 19px; }
 .parents-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 26px; margin-top: 28px; }
 .parents-hero-mochi { width: min(34%,340px); filter: drop-shadow(0 24px 25px #14072f99); align-self: flex-end; margin-bottom: -120px; }
 .parents-section { padding-block: 75px; }
 .parents-section-intro { max-width: 710px; }
-.parents-section-intro h2,.parents-family-section h2,.parents-final h2 { font-size: clamp(32px,3.4vw,46px); margin-top: 12px; }
+.parents-section-intro h2,.parents-family-section h1,.parents-final h2 { font-size: clamp(32px,3.4vw,46px); margin-top: 12px; }
 .parents-section-intro > p:last-child { color: var(--web-muted); margin-top: 19px; font-size: 18px; }
 .parents-learning-layout { display: grid; grid-template-columns: .85fr 1.15fr; gap: 70px; margin-top: 38px; align-items: start; }
 .parents-page h3 { font-size: 25px; }
@@ -55,7 +55,7 @@
 .parents-family-layout strong { color: var(--web-white); font-weight: 500; }
 .parents-family-layout .website-text-link { margin-top: 23px; }
 .parents-security { border-left: 1px solid #b6afe34d; padding-left: 45px; }
-.parents-security h3 { margin-top: 10px; font-size: 32px; }
+.parents-security h2 { margin-top: 10px; font-size: 32px; }
 .parents-security ul { list-style: none; padding: 0; margin: 22px 0 0; }
 .parents-security li { display: flex; gap: 13px; margin-top: 20px; color: var(--web-muted); font-size: 15px; }
 .parents-security li svg { flex-shrink: 0; color: var(--web-gold); margin-top: 4px; }
@@ -80,6 +80,6 @@
   .parents-learning-layout,.parents-calm-showcase,.parents-family-layout { grid-template-columns: 1fr; }.parents-calm-picture { aspect-ratio: 1.6; }.parents-calm-description { min-height: 0; }.parents-security { border-left: 0; border-top: 1px solid #b6afe34d; padding: 28px 0 0; }.parents-final,.website-parent-intro { align-items: flex-start; flex-direction: column; gap: 25px; }
 }
 @media (max-width: 580px) {
-  .parents-hero-inner { min-height: 550px; padding-block: 30px 95px; }.parents-hero-copy { width: 100%; }.parents-hero h1 { font-size: 38px; }.parents-hero-logo { width: 230px; }.parents-hero-copy > p:not(.website-eyebrow) { font-size: 17px; max-width: 95%; }.parents-hero-mochi { width: 135px; right: 4px; bottom: 90px; opacity: .9; }.parents-actions { align-items: flex-start; flex-direction: column; gap: 20px; }
-  .parents-section { padding-block: 45px; }.parents-section-intro h2,.parents-family-section h2 { font-size: 32px; }.parents-section-intro > p:last-child { font-size: 16px; }.parents-learning-layout { margin-top: 26px; }.parents-topic-table table { font-size: 14px; }.parents-topic-table tbody :is(th,td) { padding: 12px 9px; }.parents-topic-table tbody th { width: 32%; }.parents-calm-section { padding-block: 45px; }.parents-calm-picture { aspect-ratio: 1.3; }.parents-calm-options button { padding: 9px 11px; font-size: 14px; }.parents-tips ol { grid-template-columns: 1fr; gap: 22px; }.parents-family-section { padding-block: 40px; }.parents-final { padding-block: 45px; }.website-parent-intro h2 { font-size: 30px; }
+  .parents-hero-inner { min-height: 550px; padding-block: 30px 95px; }.parents-hero-copy { width: 100%; }.parents-hero h2 { font-size: 38px; }.parents-hero-logo { width: 230px; }.parents-hero-copy > p:not(.website-eyebrow) { font-size: 17px; max-width: 95%; }.parents-hero-mochi { width: 135px; right: 4px; bottom: 90px; opacity: .9; }.parents-actions { align-items: flex-start; flex-direction: column; gap: 20px; }
+  .parents-section { padding-block: 45px; }.parents-section-intro h2,.parents-family-section h1 { font-size: 32px; }.parents-section-intro > p:last-child { font-size: 16px; }.parents-learning-layout { margin-top: 26px; }.parents-topic-table table { font-size: 14px; }.parents-topic-table tbody :is(th,td) { padding: 12px 9px; }.parents-topic-table tbody th { width: 32%; }.parents-calm-section { padding-block: 45px; }.parents-calm-picture { aspect-ratio: 1.3; }.parents-calm-options button { padding: 9px 11px; font-size: 14px; }.parents-tips ol { grid-template-columns: 1fr; gap: 22px; }.parents-family-section { padding-block: 40px; }.parents-final { padding-block: 45px; }.website-parent-intro h2 { font-size: 30px; }
 }
