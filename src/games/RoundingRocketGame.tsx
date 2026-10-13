@@ -1,13 +1,14 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import { motion } from 'motion/react';
 import {
   emitMiniGameSessionEvent,
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
-import missionBackground from '../assets/maps/premium/rounding-rocket.webp';
-import roundingRocketArt from '../assets/rocktlogo.png';
+import RoundingRocketScene, { ROCKET_PART_NAMES } from './RoundingRocketScene';
+import { GAME_HUD_CINEMATIC_EVENT } from '../gameHudEvents';
+import { playGameSound } from '../audio/gameAudio';
 
 interface RoundingRocketGameProps {
   levelId: number;
@@ -36,9 +37,8 @@ interface RocketRound {
   pads: [number, number, number];
 }
 
-const CORRECT_RESET_MS = 640;
-const FAILED_RESET_MS = 520;
-const FINAL_LAUNCH_COMPLETE_MS = 980;
+const CORRECT_RESET_MS = 850;
+const FAILED_RESET_MS = 1600;
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
@@ -53,8 +53,8 @@ const shuffle = <T,>(items: T[]): T[] => {
 
 const scoreToStars = (XP: number, correct: number, attempts: number) => {
   const accuracy = attempts > 0 ? correct / attempts : 0;
-  if (XP >= 1800 && accuracy >= 0.86) return 3;
-  if (XP >= 1100 && accuracy >= 0.65) return 2;
+  if (accuracy >= 0.86) return 3;
+  if (accuracy >= 0.65) return 2;
   return 1;
 };
 
@@ -112,403 +112,132 @@ const generateRound = (levelId: number, magnitudeLevel: number): RocketRound => 
 };
 
 const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
-  levelId,
-  avatarId: _avatarId,
-  useSharedTopHud: _useSharedTopHud = false,
-  onVictory,
-  onGameOver: _onGameOver,
-  onBack: _onBack,
-  sessionState,
-  sessionEvents,
-  isPractice,
-  practiceBriefing,
+  levelId, avatarId: _avatarId, useSharedTopHud: _useSharedTopHud = false,
+  onVictory, onGameOver: _onGameOver, onBack: _onBack,
+  sessionState, sessionEvents, isPractice, practiceBriefing,
 }) => {
   const [round, setRound] = useState<RocketRound>(() => generateRound(Math.max(1, levelId), Math.max(1, levelId)));
   const [rocketState, setRocketState] = useState<RocketState>('idle');
   const [selectedPad, setSelectedPad] = useState<number | null>(null);
-  const [padFeedback, setPadFeedback] = useState<{ value: number; type: 'success' | 'error' } | null>(null);
   const [feedbackText, setFeedbackText] = useState<string | null>(null);
   const [XP, setScore] = useState(0);
   const [attempts, setAttempts] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
-  const [inputLocked, setInputLocked] = useState(false);
-  const [hasSignalledFailure, setHasSignalledFailure] = useState(false);
   const [didComplete, setDidComplete] = useState(false);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
-
-  const timeoutIdsRef = useRef<number[]>([]);
-  const inputLockedRef = useRef(false);
-
-  const goalCorrect = useMemo(() => Math.min(14, Math.max(7, 6 + Math.floor(levelId / 2))), [levelId]);
-  const timeLeft = sessionState?.timeLeft ?? 1;
-  const lives = sessionState?.lives ?? 3;
-  const isSessionActive = sessionState ? timeLeft > 0 && lives > 0 : true;
-
-  const queueTimeout = (fn: () => void, delayMs: number) => {
-    const timeoutId = window.setTimeout(fn, delayMs);
-    timeoutIdsRef.current.push(timeoutId);
-  };
-
-  const clearQueuedTimeouts = () => {
-    timeoutIdsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId));
-    timeoutIdsRef.current = [];
-  };
-
-  const resetRocketToIdle = () => {
-    inputLockedRef.current = false;
-    setRocketState('idle');
-    setSelectedPad(null);
-    setPadFeedback(null);
-    setFeedbackText(null);
-    setInputLocked(false);
-  };
-
-  useEffect(() => () => clearQueuedTimeouts(), []);
+  const locked = useRef(false);
+  const completed = useRef(false);
+  const pendingResult = useRef<{ score: number; correct: number; attempts: number } | null>(null);
+  const goalCorrect = useMemo(() => Math.min(8, Math.max(7, 6 + Math.floor(levelId / 2))), [levelId]);
+  const isSessionActive = !sessionState || (sessionState.timeLeft > 0 && sessionState.lives > 0);
+  const paused = Boolean(sessionState?.paused || showPracticeIntro);
 
   useEffect(() => {
-    setShowPracticeIntro(Boolean(isPractice));
-  }, [isPractice]);
-
-  useEffect(() => {
-    if (!sessionState) return;
-    if (sessionState.timeLeft !== sessionState.totalTime) return;
-    clearQueuedTimeouts();
     setRound(generateRound(Math.max(1, levelId), Math.max(1, levelId)));
-    setRocketState('idle');
-    setSelectedPad(null);
-    setPadFeedback(null);
-    setFeedbackText(null);
-    setScore(0);
-    setAttempts(0);
-    setCorrectAnswers(0);
-    inputLockedRef.current = false;
-    setInputLocked(false);
-    setHasSignalledFailure(false);
-    setDidComplete(false);
-  }, [levelId, sessionState, sessionState?.timeLeft, sessionState?.totalTime]);
+    setRocketState('idle'); setSelectedPad(null); setFeedbackText(null);
+    setScore(0); setAttempts(0); setCorrectAnswers(0); setDidComplete(false);
+    setShowPracticeIntro(Boolean(isPractice));
+    locked.current = false; completed.current = false; pendingResult.current = null;
+  }, [levelId, isPractice]);
 
   useEffect(() => {
-    if (!sessionState) return;
-    if (didComplete || hasSignalledFailure) return;
-    if (isSessionActive) return;
+    if (rocketState !== 'launching') return;
+    window.dispatchEvent(new CustomEvent(GAME_HUD_CINEMATIC_EVENT, { detail: { playing: true } }));
+    return () => { window.dispatchEvent(new CustomEvent(GAME_HUD_CINEMATIC_EVENT, { detail: { playing: false } })); };
+  }, [rocketState]);
 
-    setHasSignalledFailure(true);
-    emitMiniGameSessionEvent(sessionEvents, 'game_failed', {
-      score: XP,
-      reason: lives <= 0 ? 'lives' : 'time',
-    });
-  }, [didComplete, hasSignalledFailure, isSessionActive, lives, XP, sessionEvents, sessionState]);
+  useEffect(() => {
+    if (rocketState !== 'arming' && rocketState !== 'failed') return;
+    let frame = 0;
+    let elapsed = 0;
+    let previous = performance.now();
+    const delay = rocketState === 'arming' ? CORRECT_RESET_MS : FAILED_RESET_MS;
+    const tick = (now: number) => {
+      if (!paused && !document.hidden) elapsed += Math.min(100, now - previous);
+      previous = now;
+      if (elapsed >= delay) {
+        if (rocketState === 'arming') setRound(generateRound(Math.max(1, levelId), Math.max(1, levelId)));
+        setRocketState('idle'); setSelectedPad(null); setFeedbackText(null); locked.current = false;
+      } else frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [rocketState, paused, levelId]);
 
-  const completeRun = (finalScore: number, totalCorrect: number, totalAttempts: number) => {
-    if (didComplete) return;
+  const completeRun = () => {
+    const result = pendingResult.current;
+    if (completed.current || !result) return;
+    completed.current = true;
     setDidComplete(true);
-    const stars = scoreToStars(finalScore, totalCorrect, totalAttempts);
+    const stars = scoreToStars(result.score, result.correct, result.attempts);
     emitMiniGameSessionEvent(sessionEvents, 'game_complete', {
-      score: finalScore,
-      stars,
-      metadata: {
-        correctAnswers: totalCorrect,
-        attempts: totalAttempts,
-      },
+      score: result.score, stars,
+      metadata: { correctAnswers: result.correct, attempts: result.attempts },
     });
-    onVictory(stars, finalScore);
-  };
-
-  const loadNextRound = (difficultyOffset: number) => {
-    const magnitudeLevel = Math.max(1, Math.min(5, levelId));
-    setRound(generateRound(Math.max(1, levelId), magnitudeLevel));
-    resetRocketToIdle();
+    onVictory(stars, result.score);
   };
 
   const handlePadTap = (padValue: number) => {
-    if (!isSessionActive || inputLockedRef.current || inputLocked || didComplete) return;
-
-    inputLockedRef.current = true;
-
-    const isCorrect = padValue === round.correctAnswer;
+    if (!isSessionActive || paused || locked.current || completed.current) return;
+    locked.current = true;
     const nextAttempts = attempts + 1;
-
-    setAttempts(nextAttempts);
-    setSelectedPad(padValue);
-    setInputLocked(true);
-
-    if (isCorrect) {
+    setAttempts(nextAttempts); setSelectedPad(padValue);
+    if (padValue === round.correctAnswer) {
       const pointGain = round.target === 100 ? 170 : 130;
       const streakBonus = correctAnswers > 0 && (correctAnswers + 1) % 4 === 0 ? 40 : 0;
       const nextScore = XP + pointGain + streakBonus;
       const nextCorrect = correctAnswers + 1;
-
-      setScore(nextScore);
-      setCorrectAnswers(nextCorrect);
-      setRocketState('arming');
-      setPadFeedback({ value: padValue, type: 'success' });
-      setFeedbackText(Math.random() < 0.65 ? 'Rocket fuelled!' : null);
-
+      setScore(nextScore); setCorrectAnswers(nextCorrect);
+      setFeedbackText(`${ROCKET_PART_NAMES[nextCorrect - 1]} installed!`);
+      playGameSound('place');
       emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
         score: XP,
-        metadata: {
-          scoreAfter: nextScore,
-          scoreDelta: pointGain + streakBonus,
-          roundedTo: round.target,
-          selected: padValue,
-          expected: round.correctAnswer,
-        },
+        metadata: { scoreAfter: nextScore, scoreDelta: pointGain + streakBonus, roundedTo: round.target, selected: padValue, expected: round.correctAnswer },
       });
       emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', {
-        score: nextScore,
-        metadata: {
-          roundedTo: round.target,
-          selected: padValue,
-          expected: round.correctAnswer,
-        },
+        score: nextScore, metadata: { roundedTo: round.target, selected: padValue, expected: round.correctAnswer },
       });
-
       if (nextCorrect >= goalCorrect) {
-        queueTimeout(() => setRocketState('launching'), 180);
-        queueTimeout(() => {
-          completeRun(nextScore, nextCorrect, nextAttempts);
-        }, FINAL_LAUNCH_COMPLETE_MS);
-        return;
-      }
-
-      queueTimeout(() => {
-        loadNextRound(Math.floor(nextCorrect / 3));
-      }, CORRECT_RESET_MS);
+        pendingResult.current = { score: nextScore, correct: nextCorrect, attempts: nextAttempts };
+        window.dispatchEvent(new CustomEvent(GAME_HUD_CINEMATIC_EVENT, { detail: { playing: true } }));
+        setRocketState('launching'); setFeedbackText(null);
+      } else setRocketState('arming');
       return;
     }
-
     setRocketState('failed');
-    setPadFeedback({ value: padValue, type: 'error' });
-    setFeedbackText('Launch failed');
-
+    setFeedbackText(`Not quite. ${round.value} rounds to ${round.correctAnswer}.`);
     emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
       score: XP,
-      metadata: {
-        roundedTo: round.target,
-        selected: padValue,
-        expected: round.correctAnswer,
-        livesBefore: lives,
-        livesLost: 1,
-      },
+      metadata: { roundedTo: round.target, selected: padValue, expected: round.correctAnswer, livesBefore: sessionState?.lives ?? 3, livesLost: 1 },
     });
-
-    queueTimeout(() => {
-      if (!didComplete) resetRocketToIdle();
-    }, FAILED_RESET_MS);
   };
 
-  const rocketAnimation = useMemo(() => {
-    if (rocketState === 'arming') {
-      return {
-        x: [0, -3, 3, -2, 2, 0],
-        y: [0, -2, 0],
-        scale: [1, 1.02, 1],
-      };
-    }
-    if (rocketState === 'launching') {
-      return {
-        x: [0, 2, -2, 0],
-        y: [0, -40, -120, -260],
-        scale: [1, 1.04, 1.08],
-      };
-    }
-    if (rocketState === 'failed') {
-      return {
-        x: [0, -9, 9, -6, 6, 0],
-        y: [0, 8, 0],
-        scale: [1, 0.98, 1],
-      };
-    }
-    return {
-      y: [0, -8, 0],
-    };
-  }, [rocketState]);
-
-  const rocketVerticalOffset = 80;
-
-  return (
-    <div className="relative h-full w-full overflow-hidden">
-      <img
-        src={missionBackground}
-        alt=""
-        aria-hidden="true"
-        draggable={false}
-        data-game-scene-image="true"
-        data-background-fit="contain"
-        className="pointer-events-none absolute inset-0 h-full w-full object-contain object-center opacity-85 grayscale-[0.15] saturate-75"
-      />
-
-      <PracticeIntroPopup
-        open={showPracticeIntro}
-        title="Rounding Rocket"
-        body="The Monster Minds have disrupted the launch system.\nChoose the rounded answer that matches the target.\nCheck the digit after the place value before you launch."
-        briefing={practiceBriefing}
-        onAction={() => setShowPracticeIntro(false)}
-      />
-
-      <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
-        <GameQuestionCard
-          title={`Rounding Rocket: nearest ${round.target}`}
-          className="mx-auto max-w-[31rem] border border-amber-300/55 bg-slate-950/58 px-5 py-3 shadow-[0_18px_42px_rgba(2,6,23,0.45)] backdrop-blur-md"
-          titleClassName="flex items-center justify-center gap-3 text-[0.72rem] tracking-[0.28em] text-amber-100"
-          bodyClassName="mt-1 flex flex-col items-center gap-1.5"
-        >
-          <span className="inline-flex min-w-[11rem] items-center justify-center rounded-[1.15rem] border border-violet-300/55 bg-[linear-gradient(180deg,rgba(99,102,241,0.96),rgba(67,56,202,0.94))] px-5 py-2.5 shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_14px_32px_rgba(54,46,126,0.42)]">
-            <span className="text-[clamp(2rem,7vw,2.85rem)] font-black leading-none text-white drop-shadow-[0_2px_6px_rgba(2,6,23,0.6)]">
-              {round.value}
-            </span>
-          </span>
-          <span className="block text-[0.95rem] font-semibold leading-snug text-cyan-100/90">
-            Round correctly to fuel the rocket.
-          </span>
+  const launching = rocketState === 'launching';
+  const inputLocked = rocketState !== 'idle';
+  return <div className="rr-game" data-rounding-rocket="true">
+    <RoundingRocketScene installed={correctAnswers} total={goalCorrect} launch={launching} paused={paused} failed={rocketState === 'failed'} onLaunchComplete={completeRun}/>
+    <PracticeIntroPopup open={showPracticeIntro} title="Rounding Rocket"
+      body="Choose the rounded answer to install a rocket part. Build the whole rocket, then watch it launch into space. Check the digit just after the requested place: 5 or more rounds up."
+      briefing={practiceBriefing} onAction={() => setShowPracticeIntro(false)}/>
+    {!launching && <>
+      <div className="rr-question">
+        <GameQuestionCard title={`Nearest ${round.target}`} className="mx-auto max-w-[31rem]" bodyClassName="flex flex-col items-center gap-1">
+          <span data-rocket-question-value="true" className="text-[clamp(2rem,5vw,3rem)] font-bold leading-none tabular-nums">{round.value}</span>
+          <span className="rr-question-hint text-base leading-snug">Round correctly to install the next part.</span>
         </GameQuestionCard>
       </div>
-
-      <AnimatePresence>
-        {rocketState === 'launching' ? (
-          <motion.div
-            key={`launch-trail-${round.id}`}
-            initial={{ opacity: 0, scaleY: 0.3 }}
-            animate={{ opacity: [0, 0.9, 0.55, 0], scaleY: [0.3, 1.1, 0.9, 0.55] }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.64, ease: 'easeOut' }}
-            className="pointer-events-none absolute left-1/2 z-20 h-[42%] w-[8.75rem] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_top,rgba(250,204,21,0.85),rgba(249,115,22,0.48)_38%,rgba(14,116,144,0.08)_82%,transparent_100%)] blur-md"
-            style={{ top: `calc(44% + ${rocketVerticalOffset}px)` }}
-          />
-        ) : null}
-      </AnimatePresence>
-
-      <div className="relative z-30 flex h-full w-full min-h-0 flex-col px-4 pb-[calc(env(safe-area-inset-bottom)+5.1rem)] pt-1">
-        <main className="flex min-h-0 flex-1 flex-col items-center justify-center pt-1">
-          <div className="relative flex justify-center" style={{ transform: `translateY(${rocketVerticalOffset}px)` }}>
-            <motion.div
-              animate={rocketState === 'idle'
-                ? { y: [0, -8, 0] }
-                : rocketAnimation}
-              transition={rocketState === 'idle'
-                ? { duration: 2.2, repeat: Infinity, ease: 'easeInOut' }
-                : { duration: rocketState === 'launching' ? 0.58 : 0.35, ease: 'easeOut' }}
-              className="relative h-[clamp(17rem,38vh,22.5rem)] w-[clamp(13rem,52vw,19.5rem)] overflow-visible"
-            >
-              <div className="absolute inset-x-[2%] top-0 bottom-[9%] overflow-hidden">
-                <img
-                  src={roundingRocketArt}
-                  alt=""
-                  aria-hidden="true"
-                  draggable={false}
-                  className="absolute left-1/2 top-[-6%] h-[118%] w-[118%] -translate-x-1/2 object-contain object-center drop-shadow-[0_18px_24px_rgba(2,6,23,0.45)]"
-                />
-              </div>
-
-              <AnimatePresence>
-                {rocketState === 'arming' || rocketState === 'launching' ? (
-                  <>
-                    <motion.div
-                      key={`rocket-flame-${round.id}`}
-                      initial={{ opacity: 0, scaleY: 0.5 }}
-                      animate={{
-                        opacity: [0.38, 0.86, 0.62],
-                        scaleY: [0.48, 0.92, 0.72],
-                        scaleX: [0.84, 1.02, 0.9],
-                      }}
-                      exit={{ opacity: 0, scaleY: 0.2 }}
-                      transition={{ duration: 0.24, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
-                      className="absolute left-1/2 top-[82.6%] z-10 h-[3.6rem] w-[2.45rem] -translate-x-1/2 rounded-b-[1.7rem] rounded-t-[0.35rem] bg-[radial-gradient(ellipse_at_top,#fde68a_0%,#fb923c_42%,rgba(239,68,68,0.08)_100%)] shadow-[0_0_24px_rgba(249,115,22,0.58)]"
-                    />
-                    {[0, 1, 2, 3].map((index) => (
-                      <motion.span
-                        key={`rocket-smoke-${round.id}-${index}`}
-                        className="absolute left-1/2 top-[87.2%] z-0 rounded-full bg-white/38 blur-md"
-                        initial={{ opacity: 0, x: '-50%', y: 0, scale: 0.36 }}
-                        animate={{
-                          opacity: [0, 0.36, 0],
-                          x: ['-50%', `${-50 + (index - 1.5) * 8}%`, `${-50 + (index - 1.5) * 15}%`],
-                          y: [0, 10 + index * 3, 24 + index * 6],
-                          scale: [0.36, 0.82, 1.18],
-                        }}
-                        transition={{
-                          duration: 0.98 + index * 0.1,
-                          repeat: Infinity,
-                          ease: 'easeOut',
-                          delay: index * 0.12,
-                        }}
-                        style={{
-                          width: `${1.2 + index * 0.28}rem`,
-                          height: `${0.72 + index * 0.18}rem`,
-                        }}
-                      />
-                    ))}
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: [0.18, 0.3, 0.18], scale: [0.96, 1.04, 0.98] }}
-                      transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut' }}
-                      className="absolute left-1/2 top-[86.8%] z-0 h-[2.6rem] w-[5.3rem] -translate-x-1/2 rounded-full bg-white/18 blur-xl"
-                    />
-                  </>
-                ) : null}
-              </AnimatePresence>
-            </motion.div>
-          </div>
-
-          <AnimatePresence mode="wait">
-            {feedbackText ? (
-              <motion.div
-                key={`${feedbackText}-${round.id}-${rocketState}`}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                className={`mb-2 rounded-full border px-4 py-1 text-sm font-black uppercase tracking-[0.08em] ${
-                  rocketState === 'failed'
-                    ? 'border-rose-200/55 bg-rose-500/25 text-amber-100'
-                    : 'border-amber-200/70 bg-amber-300/22 text-amber-100'
-                }`}
-              >
-                {feedbackText}
-              </motion.div>
-            ) : null}
-          </AnimatePresence>
-        </main>
-
-        <section className="mx-auto w-full max-w-[26rem] shrink-0">
-          <div className="mb-2 text-center text-[0.72rem] font-black uppercase tracking-[0.28em] text-amber-100/90">
-            Choose the correct rounding
-          </div>
-          <div className="grid grid-cols-3 gap-3">
-            {round.pads.map((padValue) => {
-              const isSelected = selectedPad === padValue;
-              const successFlash = padFeedback?.value === padValue && padFeedback.type === 'success';
-              const errorFlash = padFeedback?.value === padValue && padFeedback.type === 'error';
-
-              return (
-                <motion.button
-                  key={`${round.id}-${padValue}`}
-                  type="button"
-                  onClick={() => handlePadTap(padValue)}
-                  whileTap={(!inputLocked && isSessionActive) ? { scale: 0.96 } : undefined}
-                disabled={inputLocked || !isSessionActive || didComplete}
-                className={[
-                    'relative h-[clamp(3.1rem,8.2vh,3.7rem)] rounded-[1rem] px-2 text-center text-[clamp(1.05rem,4vw,1.4rem)] font-black tabular-nums transition',
-                    successFlash
-                      ? 'ui-button-success'
-                      : errorFlash
-                        ? 'ui-button-primary ring-2 ring-rose-300/70 ring-offset-2 ring-offset-slate-950'
-                        : isSelected
-                          ? 'ui-button-primary'
-                          : 'ui-button-secondary',
-                    inputLocked ? 'cursor-not-allowed' : 'hover:brightness-110',
-                  ].join(' ')}
-                  aria-label={`Landing pad ${padValue}`}
-                >
-                  <span className="relative z-10">{padValue}</span>
-                  <span className="pointer-events-none absolute inset-x-3 bottom-2 h-3 rounded-full bg-slate-900/30 blur-sm" />
-                </motion.button>
-              );
-            })}
-          </div>
-        </section>
-      </div>
-    </div>
-  );
+      {feedbackText && <div role="status" className={`rr-feedback ${rocketState === 'failed' ? 'rr-feedback--error' : ''}`}>{feedbackText}</div>}
+      <section className="rr-answers" aria-label="Rounding answers">
+        <div className="rr-answer-label">Choose the nearest {round.target}</div>
+        <div className="rr-answer-buttons">
+          {round.pads.map(padValue => <motion.button key={`${round.id}-${padValue}`} type="button" onClick={() => handlePadTap(padValue)}
+            disabled={inputLocked || !isSessionActive || didComplete || paused}
+            whileTap={!inputLocked ? { scale: .96 } : undefined}
+            className={selectedPad === padValue && rocketState === 'arming' ? 'ui-button-success' : selectedPad === padValue && rocketState === 'failed' ? 'ui-button-secondary ring-2 ring-rose-300' : 'ui-button-secondary'}
+            aria-label={`Landing pad ${padValue}`}><span>{padValue}</span></motion.button>)}
+        </div>
+      </section>
+    </>}
+  </div>;
 };
-
 export default RoundingRocketGame;

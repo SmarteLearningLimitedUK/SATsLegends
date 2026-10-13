@@ -1,0 +1,92 @@
+.rr-game { position: relative; width: 100%; height: 100%; overflow: hidden; background: #09132b; }
+.rr-scene { position: absolute; inset: 0; overflow: hidden; isolation: isolate; }
+.rr-world { position: absolute; width: 100%; height: 400%; bottom: 0; }
+.rr-launchpad { position: absolute; bottom: 0; width: 100%; height: 25%; background-size: cover; background-position: center; }
+.rr-atmosphere { position: absolute; bottom: 25%; height: 50%; width: 100%; background: linear-gradient(#10254b, #215f9c 35%, #62bdde 75%, #43b9f0); }
+.rr-space { position: absolute; top: 0; width: 100%; height: 25%; overflow: hidden; background: radial-gradient(ellipse at 70% 10%, #34376c, #0a142d 55%, #050c1d); }
+.rr-stars { position: absolute; inset: 0; background-image: radial-gradient(circle, #fff 1px, transparent 2px), radial-gradient(circle, #c7dcff 1px, transparent 2px); background-size: 93px 137px, 157px 79px; background-position: 11px 23px, 45px 80px; }
+.rr-earth { position: absolute; width: 140%; height: 110%; left: -20%; top: 66%; border-radius: 50%; background: radial-gradient(ellipse at 48% 0, #72d4c5, #26799d 22%, #153a75 52%); border-top: 10px solid #aeefff; box-shadow: 0 -12px 55px #58baff99, inset 0 12px 45px #a7e7ff; }
+.rr-earth svg { width: 100%; height: 100%; border-radius: 50%; overflow: hidden; }
+.rr-cloud { position: absolute; width: 85%; height: 9%; opacity: .9; filter: drop-shadow(0 8px 15px #13335330); }
+.rr-cloud--one { bottom: 8%; left: -15%; }
+.rr-cloud--two { bottom: 30%; right: -15%; width: 80%; }
+.rr-cloud--three { bottom: 54%; left: -5%; width: 110%; opacity: .65; }
+.rr-world--flying { animation: rr-camera-ascent var(--rr-flight-duration) cubic-bezier(.35, .05, .3, 1) forwards; }
+@keyframes rr-camera-ascent { 0% { transform: translateY(0); } 13% { transform: translateY(5%); } 45% { transform: translateY(34%); } 80%, 100% { transform: translateY(75%); } }
+.rr-vehicle-position { position: absolute; left: 50%; bottom: 22%; height: 43%; max-height: 390px; aspect-ratio: 220 / 360; transform: translateX(-50%); z-index: 3; }
+.rr-vehicle-position--flying { animation: rr-tracked-rocket var(--rr-flight-duration) ease-in-out forwards; }
+@keyframes rr-tracked-rocket { 0% { bottom: 22%; } 20% { bottom: 29%; } 75%, 100% { bottom: 38%; transform: translateX(-50%) scale(.82); } }
+.rr-vehicle { width: 100%; height: 100%; position: relative; }
+.rr-rocket { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 8px 8px #06152c60); }
+.rr-blueprint { opacity: .2; filter: saturate(0); }
+.rr-vehicle--error { animation: rr-error .35s ease-out; }
+@keyframes rr-error { 25% { transform: translateX(-8px); filter: drop-shadow(0 0 12px #ff7676); } 65% { transform: translateX(6px); } }
+.rr-exhaust { position: absolute; top: 90%; left: 41%; width: 18%; height: 68%; z-index: -1; transform-origin: top; clip-path: polygon(8% 0, 92% 0, 80% 35%, 95% 45%, 65% 68%, 50% 100%, 35% 68%, 5% 45%, 20% 35%); background: linear-gradient(#fffdeb, #b2f4ff 16%, #ffc661 42%, #ee7439 75%, #e7704400); filter: drop-shadow(0 0 12px #ffc353); animation: rr-thrust .13s ease-in-out infinite alternate; }
+.rr-exhaust--booster-left { left: 22%; top: 88%; width: 10%; height: 47%; animation-delay: -.06s; }
+.rr-exhaust--booster-right { left: 68%; top: 88%; width: 10%; height: 47%; animation-delay: -.1s; }
+@keyframes rr-thrust { to { transform: scaleY(.84) scaleX(.9); } }
+.rr-smoke-burst { position: absolute; left: -160%; top: 86%; width: 420%; height: 70%; z-index: -2; background: radial-gradient(ellipse at 25% 35%, #fff 0 15%, transparent 40%), radial-gradient(ellipse at 75% 35%, #fff 0 15%, transparent 40%); animation: rr-smoke 1.5s ease-out forwards; }
+@keyframes rr-smoke { from { transform: scale(.15); opacity: 0; } 20% { opacity: .9; } to { transform: translateY(160%) scale(1.8); opacity: 0; } }
+.rr-steam { position: absolute; width: 12%; height: 10%; top: 65%; background: radial-gradient(ellipse, #e7ffff88, transparent 70%); animation: rr-vent 3s ease-out infinite; }
+.rr-steam--left { left: 33%; }.rr-steam--right { right: 33%; animation-delay: -1.5s; }
+@keyframes rr-vent { from { transform: translateY(0) scale(.4); opacity: 0; } 25% { opacity: .8; } to { transform: translateY(-70%) scale(1.4); opacity: 0; } }
+.rr-pad-lights { position: absolute; left: 30%; top: 75%; width: 40%; height: 1%; border-radius: 50%; background: repeating-linear-gradient(90deg, #8deff4 0 6px, transparent 6px 35px); box-shadow: 0 0 14px #7bedf788; animation: rr-lights 2s ease-in-out infinite alternate; }
+@keyframes rr-lights { to { opacity: .4; } }
+.rr-parts-list { position: absolute; left: clamp(12px, 5vw, 90px); bottom: 25%; padding: 14px 18px; margin: 0; list-style: none; border-left: 3px solid #76d7e3; border-radius: 0 12px 12px 0; background: #0c2338ed; color: #c8d7e2; box-shadow: 0 8px 28px #05142450; }
+.rr-parts-list li { display: flex; align-items: center; gap: 10px; font-size: 16px; line-height: 1.8; }
+.rr-parts-list li > span { display: inline-flex; justify-content: center; width: 18px; color: #a1b6c4; }
+.rr-parts-list .rr-part--installed, .rr-parts-list .rr-part--installed > span { color: #7cead4; }
+.rr-parts-list .rr-part--next { color: #ffe3a6; font-weight: 600; }
+.rr-build-status { position: absolute; bottom: 19%; left: 50%; transform: translateX(-50%); padding: 7px 16px; border-radius: 9px; background: #0b203beF; color: #fff2cd; font-size: 15px; text-align: center; white-space: nowrap; z-index: 4; }
+.rr-build-status span { display: block; color: #c5eaf4; font-size: 14px; }
+.rr-flight-status { position: absolute; bottom: 13%; width: 100%; text-align: center; color: #fff6de; text-shadow: 0 2px 4px #031326; z-index: 5; }
+.rr-flight-status strong { display: block; font-size: clamp(32px, 6vw, 64px); line-height: 1.1; }
+.rr-flight-status span { display: inline-block; margin-top: 10px; font-size: clamp(16px, 2vw, 20px); padding: 8px 18px; border-radius: 10px; background: #071a35e6; }
+.rr-question { position: relative; z-index: 5; padding: 12px 12px 0; pointer-events: none; }
+#root .rr-question .game-question-card { position: relative; inset: auto; width: 100%; max-width: 31rem; transform: none; }
+.rr-answers { position: absolute; left: 50%; transform: translateX(-50%); bottom: 18px; width: min(92%, 560px); padding: 10px 16px 14px; border-radius: 14px; background: #0a1d35ed; z-index: 6; }
+.rr-answer-label { margin-bottom: 8px; font-size: 16px; color: #e8f6ff; text-align: center; }
+.rr-answer-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.rr-answer-buttons button { min-height: 52px; font-size: clamp(18px, 2vw, 24px); font-weight: 700; }
+.rr-feedback { position: absolute; left: 50%; bottom: 15%; transform: translateX(-50%); padding: 8px 15px; border-radius: 9px; background: #102b45f5; color: #fff2cd; font-size: 17px; text-align: center; white-space: nowrap; z-index: 7; }
+.rr-feedback--error { background: #631e39f5; color: #fff; }
+.rr-scene--paused *, .rr-scene--paused *::before { animation-play-state: paused !important; }
+@media (max-width: 699px) {
+  .rr-launchpad { background-position: 48% center; }
+  .rr-parts-list { display: none; }
+  .rr-question { padding: 8px 8px 0; }
+  .rr-question .game-question-card { padding: 10px 12px !important; }
+  .rr-vehicle-position { height: 36%; bottom: 29%; }
+  .rr-build-status { bottom: 23%; }
+  .rr-answers { bottom: 12px; padding: 8px 10px 10px; }
+  .rr-answer-label { font-size: 14px; }
+  .rr-answer-buttons { gap: 8px; }
+  .rr-feedback { bottom: 19%; font-size: 15px; max-width: 95%; white-space: normal; }
+}
+@media (max-height: 599px) and (orientation: landscape) {
+  .rr-question { position: absolute; top: 0; left: 12px; width: 35%; }
+  .rr-question .game-question-card { padding: 8px !important; }
+  #root .app-viewport.screen-gameplay .rr-question .game-question-card .question-title { font-size: 14px !important; line-height: 1.15; }
+  .rr-question .game-question-card-title-strip { min-height: 0 !important; margin-bottom: 0; }
+  .rr-question [data-rocket-question-value] { font-size: 28px !important; }
+  .rr-question-hint { display: none; }
+  .rr-parts-list { display: none; }
+  .rr-vehicle-position { left: 58%; height: 42%; bottom: 47%; }
+  .rr-build-status { left: 82%; bottom: 58%; font-size: 12px; padding: 4px 8px; }
+  .rr-build-status span { font-size: 12px; }
+  .rr-answers { width: 65%; bottom: 8px; }
+  .rr-answer-label { display: none; }
+  .rr-answer-buttons button { min-height: 44px; }
+  .rr-vehicle-position--flying { left: 35%; }
+  .rr-flight-status { left: 55%; width: 44%; bottom: auto; top: 22%; }
+  .rr-flight-status strong { font-size: 28px; }
+  .rr-flight-status span { font-size: 14px; padding: 5px 10px; }
+  .rr-feedback { left: 82%; top: 8px; bottom: auto; width: 30%; padding: 6px 8px; font-size: 14px; white-space: normal; }
+  .rr-game:has(.rr-feedback) .rr-build-status { visibility: hidden; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rr-world--flying { animation: none; transform: translateY(75%); }
+  .rr-vehicle-position--flying { animation: none; bottom: 38%; }
+  .rr-exhaust, .rr-steam, .rr-pad-lights, .rr-smoke-burst, .rr-vehicle--error { animation: none; }
+  .rr-smoke-burst { display: none; }
+}

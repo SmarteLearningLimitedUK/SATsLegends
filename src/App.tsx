@@ -892,7 +892,7 @@ const App: React.FC = () => {
     || isShortLandscapeSplash || isShortLandscapeMap
     || (isGameplayScreen && hasWideGameplayViewport)
     || (isResponsiveHubScreen && hasWideGameViewport)
-    || (isGameplayScreen && selectedLevel?.blueprintKey === 'place_value_panic'
+    || (isGameplayScreen && ['place_value_panic', 'rounding_rocket'].includes(selectedLevel?.blueprintKey ?? '')
       && viewportSize.width >= 560 && viewportSize.width > viewportSize.height && viewportSize.height <= 420);
   const globalDockOffsetClass = screen !== 'splash' && !isGameplayScreen && screen !== 'avatar_selection' && screen !== 'profile_setup'
     ? 'pb-[calc((4.35rem+env(safe-area-inset-bottom))/var(--game-stage-scale))] md:pb-[calc((4.65rem+env(safe-area-inset-bottom))/var(--game-stage-scale))]'

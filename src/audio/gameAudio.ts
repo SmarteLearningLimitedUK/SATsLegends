@@ -1,4 +1,4 @@
-import { GAME_AUDIO_STORAGE_KEY } from '../gameHudEvents';
+import { GAME_AUDIO_STORAGE_KEY, GAME_HUD_MUTE_SYNC_EVENT } from '../gameHudEvents';
 import { getGameSoundProfile, type SoundMaterial } from './gameSoundProfiles';
 
 export type GameSoundEffect = 'tap' | 'place' | 'cast' | 'impact' | 'correct' | 'incorrect' | 'complete' | 'fail';
@@ -239,6 +239,72 @@ export function playGameSound(effect: GameSoundEffect, mutedOverride?: boolean) 
   playMaterialAccent(ctx, effect, base, soundProfile.material, pitch, accent);
   playTexture(ctx, effect, base, soundProfile.material, accent);
   return true;
+}
+
+/** Original launch-control beep, sharing the game's master volume and mute setting. */
+export function playRocketCountdownSound() {
+  if (typeof window === 'undefined' || localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true') return;
+  const ctx = getContext();
+  if (!ctx) return;
+  if (ctx.state === 'suspended') void ctx.resume().catch(() => {});
+  playVoice(ctx, { note: 880, at: 0, length: .16, level: .08, pan: 0, wave: 'sine' }, ctx.currentTime + .01);
+}
+
+/** Layered engine rumble and exhaust rush. The caller stops it on pause/unmount. */
+export function playRocketLaunchSound(durationSeconds: number): () => void {
+  if (typeof window === 'undefined' || localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true') return () => {};
+  const ctx = getContext();
+  if (!ctx) return () => {};
+  if (ctx.state === 'suspended') void ctx.resume().catch(() => {});
+  const duration = Math.max(.2, durationSeconds);
+  const start = ctx.currentTime + .01;
+  const buffer = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+  const samples = buffer.getChannelData(0);
+  let brown = 0;
+  for (let index = 0; index < samples.length; index++) {
+    brown = (brown + (Math.random() * 2 - 1) * .025) / 1.025;
+    samples[index] = brown * 3 + (Math.random() * 2 - 1) * .18;
+  }
+  const exhaust = ctx.createBufferSource();
+  exhaust.buffer = buffer;
+  exhaust.loop = true;
+  const filter = ctx.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.setValueAtTime(180, start);
+  filter.frequency.exponentialRampToValueAtTime(1800, start + duration * .45);
+  filter.frequency.exponentialRampToValueAtTime(350, start + duration);
+  const rumble = ctx.createOscillator();
+  rumble.type = 'triangle';
+  rumble.frequency.setValueAtTime(42, start);
+  rumble.frequency.linearRampToValueAtTime(80, start + duration * .55);
+  const engine = ctx.createGain();
+  engine.gain.setValueAtTime(.0001, start);
+  engine.gain.linearRampToValueAtTime(.18, start + Math.min(.65, duration / 3));
+  engine.gain.setValueAtTime(.18, start + duration * .65);
+  engine.gain.exponentialRampToValueAtTime(.0001, start + duration);
+  exhaust.connect(filter);
+  filter.connect(engine);
+  const bass = ctx.createGain();
+  bass.gain.value = .25;
+  rumble.connect(bass);
+  bass.connect(engine);
+  route(ctx, engine, 0, false);
+  exhaust.start(start);
+  rumble.start(start);
+  exhaust.stop(start + duration);
+  rumble.stop(start + duration);
+  let stopped = false;
+  const stop = () => {
+    if (stopped) return;
+    stopped = true;
+    exhaust.stop(); rumble.stop();
+    exhaust.disconnect(); filter.disconnect(); rumble.disconnect(); bass.disconnect(); engine.disconnect();
+    window.removeEventListener(GAME_HUD_MUTE_SYNC_EVENT, muted);
+  };
+  const muted = (event: Event) => { if ((event as CustomEvent<{ muted: boolean }>).detail?.muted) stop(); };
+  window.addEventListener(GAME_HUD_MUTE_SYNC_EVENT, muted);
+  exhaust.onended = stop;
+  return stop;
 }
 
 // Original, deliberately quiet two-scene score. All notes are generated here;

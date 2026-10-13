@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
 import { configureGameMusic, unlockGameAudioFromGesture } from '../audio/gameAudio';
-import { GAME_AUDIO_STORAGE_KEY, GAME_HUD_MUSIC_EVENT, GAME_HUD_MUSIC_SYNC_EVENT, GAME_HUD_MUTE_EVENT, GAME_HUD_MUTE_SYNC_EVENT, GAME_MUSIC_STORAGE_KEY } from '../gameHudEvents';
+import { GAME_AUDIO_STORAGE_KEY, GAME_HUD_CINEMATIC_EVENT, GAME_HUD_MUSIC_EVENT, GAME_HUD_MUSIC_SYNC_EVENT, GAME_HUD_MUTE_EVENT, GAME_HUD_MUTE_SYNC_EVENT, GAME_MUSIC_STORAGE_KEY } from '../gameHudEvents';
 import { GameScreen, LevelData } from '../types';
 import { LEVEL_TIMERS_DISABLED } from './testingFlags';
 import { isBossEncounterGameType } from '../games/bossEncounterTypes';
@@ -46,6 +46,20 @@ export const useGameplaySession = ({
 }: GameplaySessionArgs): GameplaySessionController => {
   const [globalMiniGameHudTimeLeft, setGlobalMiniGameHudTimeLeft] = useState(GLOBAL_MINIGAME_HUD_DURATION_SECONDS);
   const [globalMiniGameLives, setGlobalMiniGameLives] = useState(GLOBAL_MINIGAME_LIVES);
+  const [cinematicPlaying, setCinematicPlaying] = useState(false);
+  const cinematicRef = useRef(false);
+  useEffect(() => {
+    cinematicRef.current = false;
+    setCinematicPlaying(false);
+    if (screen !== 'gameplay' || selectedLevel?.blueprintKey !== 'rounding_rocket') return;
+    const update = (event: Event) => {
+      const playing = (event as CustomEvent<{ playing: boolean }>).detail?.playing === true;
+      cinematicRef.current = playing;
+      setCinematicPlaying(playing);
+    };
+    window.addEventListener(GAME_HUD_CINEMATIC_EVENT, update);
+    return () => window.removeEventListener(GAME_HUD_CINEMATIC_EVENT, update);
+  }, [screen, selectedLevel?.id, selectedLevel?.blueprintKey, restartKey]);
   const lifeLock = useRef(false);
   const timeLock = useRef(false);
   const lifeDepleted = useRef(onLifeDepleted);
@@ -90,15 +104,15 @@ export const useGameplaySession = ({
   }, [screen, selectedLevel?.gameType]);
 
   useEffect(() => {
-    if (screen !== 'gameplay' || !selectedLevel || paused || isUntimedGameplay || LEVEL_TIMERS_DISABLED) return undefined;
+    if (screen !== 'gameplay' || !selectedLevel || paused || cinematicPlaying || isUntimedGameplay || LEVEL_TIMERS_DISABLED) return undefined;
     const timerId = window.setInterval(() => {
-      if (document.hidden) return;
+      if (document.hidden || cinematicRef.current) return;
       setGlobalMiniGameHudTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
     return () => {
       window.clearInterval(timerId);
     };
-  }, [isUntimedGameplay, paused, screen, selectedLevel?.id]);
+  }, [isUntimedGameplay, paused, cinematicPlaying, screen, selectedLevel?.id]);
 
   useEffect(() => {
     if (screen !== 'gameplay' || globalMiniGameLives > 0 || lifeLock.current) return;
@@ -110,13 +124,13 @@ export const useGameplaySession = ({
   }, [globalMiniGameLives, screen]);
 
   useEffect(() => {
-    if (screen !== 'gameplay' || isUntimedGameplay || LEVEL_TIMERS_DISABLED || selectedLevel?.blueprintKey === 'maths_vs_zombies' || globalMiniGameHudTimeLeft > 0 || timeLock.current) return;
+    if (screen !== 'gameplay' || isUntimedGameplay || cinematicPlaying || cinematicRef.current || LEVEL_TIMERS_DISABLED || selectedLevel?.blueprintKey === 'maths_vs_zombies' || globalMiniGameHudTimeLeft > 0 || timeLock.current) return;
     timeLock.current = true;
     const timeout = window.setTimeout(() => {
       timeDepleted.current();
     }, 140);
     return () => window.clearTimeout(timeout);
-  }, [globalMiniGameHudTimeLeft, isUntimedGameplay, screen, selectedLevel?.blueprintKey]);
+  }, [globalMiniGameHudTimeLeft, isUntimedGameplay, cinematicPlaying, screen, selectedLevel?.blueprintKey]);
 
   useEffect(() => {
     localStorage.setItem(GAME_AUDIO_STORAGE_KEY, String(isMuted));
