@@ -839,3 +839,55 @@
 @media (prefers-reduced-motion: reduce) {
   .wellbeing-shell *::before, .wellbeing-shell *::after { animation: none !important; }
 }
+
+/* Calm guidance: a single quiet message, with time to read and a hold control. */
+.wellbeing-shell:not(.wellbeing-shell--hub) .wellbeing-footer {
+  grid-template-columns: minmax(180px, .8fr) minmax(0, 1.8fr);
+  background: #061c2bc9;
+  border-color: #c5ded22b;
+  box-shadow: none;
+}
+.wellbeing-note-row { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.wellbeing-note-slot { display: grid; flex: 1; min-width: 0; align-items: center; }
+.wellbeing-footer .wellbeing-slow-note {
+  grid-area: 1 / 1;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  max-width: none;
+  opacity: 0;
+  transition: opacity 2.4s ease-in-out;
+  pointer-events: none;
+  font-size: 14px;
+  line-height: 1.55;
+}
+.wellbeing-footer .wellbeing-slow-note[data-note-active='true'] { opacity: 1; animation: wellbeing-note-arrive 2.4s ease-in-out; }
+.wellbeing-slow-note > span { display: block; margin-bottom: 4px; font-size: 11px; font-weight: 600; letter-spacing: .09em; color: #c6e7df; }
+.wellbeing-note-toggle { display: inline-flex; flex: 0 0 auto; gap: 6px; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; padding: 7px 10px; border: 1px solid #bddace55; border-radius: 10px; background: #102d3cd9; color: #edf7ed; font-size: 13px; }
+.wellbeing-note-toggle:focus-visible { outline: 2px solid #ffe6ae; outline-offset: 3px; }
+.wellbeing-note-toggle[aria-pressed='true'] { border-color: #f1d69d; }
+@keyframes wellbeing-note-arrive { from { opacity: 0; } to { opacity: 1; } }
+.wellbeing-shell[data-wellbeing-paused='true'] .wellbeing-slow-note { animation-play-state: paused; }
+
+/* Each completed guided breath plants a flower; every bloom shares one rhythm. */
+.wellbeing-bloom-garden { position: relative; width: min(100%, 780px); height: clamp(180px, 30vh, 320px); --garden-flower-base: clamp(100px, 18vh, 175px); }
+.wellbeing-garden-flower { position: absolute; width: calc(var(--flower-size) * var(--garden-flower-base)); aspect-ratio: 1; translate: -50% -50%; animation: wellbeing-flower-emerge 2.8s ease-out both; isolation: isolate; }
+.wellbeing-scene[data-breathing-phase] .wellbeing-garden-flower .wellbeing-bloom { position: relative; inset: auto; width: 100%; min-width: 0; height: 100%; translate: none; filter: drop-shadow(0 8px 18px #041c2444); transition: transform 50ms linear; }
+.wellbeing-garden-flower .wellbeing-bloom::before, .wellbeing-garden-flower .wellbeing-bloom::after { display: none; }
+.wellbeing-garden-flower .wellbeing-bloom-petal { background: linear-gradient(180deg, hsl(var(--flower-hue) 42% 83% / .88), hsl(var(--flower-hue) 32% 55% / .85) 65%, hsl(var(--flower-hue) 28% 35% / .92)); box-shadow: inset 0 1px 7px #f5ffec55; border-color: #def5e399; }
+.wellbeing-garden-flower .wellbeing-bloom-core { box-shadow: 0 0 18px #f7e8ae66, inset 0 0 8px #fff8d1; }
+.wellbeing-flower-stem { position: absolute; left: 49%; top: 50%; height: 62%; width: 4px; z-index: -1; border-radius: 50%; background: linear-gradient(#b1dcc2, #497e73); }
+.wellbeing-flower-stem::before, .wellbeing-flower-stem::after { content: ''; position: absolute; top: 55%; width: 25px; height: 10px; border-radius: 100% 0 100% 0; background: linear-gradient(25deg, #477e72, #b0ceb1); transform-origin: 0 50%; transform: rotate(-30deg); }
+.wellbeing-flower-stem::after { top: 72%; transform: rotate(210deg); }
+@keyframes wellbeing-flower-emerge { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 760px) {
+  .wellbeing-shell:not(.wellbeing-shell--hub) .wellbeing-footer { grid-template-columns: 1fr; gap: 10px; }
+  .wellbeing-note-toggle > span { display: none; }
+  .wellbeing-note-row { gap: 10px; }
+  .wellbeing-footer-progress { grid-column: auto; }
+  .wellbeing-bloom-garden { height: 220px; --garden-flower-base: 135px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wellbeing-footer .wellbeing-slow-note { transition: none; animation: none; }
+  .wellbeing-garden-flower { animation: none; }
+}

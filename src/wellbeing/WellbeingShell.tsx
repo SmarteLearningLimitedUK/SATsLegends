@@ -3,6 +3,7 @@ import { ArrowLeft } from 'lucide-react';
 import { WELLBEING_SCENES } from './scenes';
 import { WellbeingActivityId } from './types';
 import './wellbeing.css';
+import WellbeingNotes from './WellbeingNotes';
 
 interface WellbeingShellProps {
   title: string;
@@ -45,14 +46,13 @@ const WellbeingShell: React.FC<WellbeingShellProps> = ({
           <span className="wellbeing-eyebrow">{activityId ? `Calm Grove · ${type ?? 'A moment for you'}` : 'A moment for you'}</span>
           <h1>{title}</h1>
           {subtitle ? <p className="wellbeing-how-to" data-wellbeing-instructions>{subtitle}</p> : null}
-          {purpose ? <p className="wellbeing-purpose" data-wellbeing-purpose>{purpose}</p> : null}
         </div>
         <button type="button" onClick={onExit} className="wellbeing-exit" data-button-skin="none" data-wellbeing-exit aria-label="Back to adventure">
           <ArrowLeft size={19} aria-hidden="true" /><span>Back to adventure</span>
         </button>
       </header>
       <div className="wellbeing-content">{children}</div>
-      {status || fact || affirmation || progress !== undefined ? (
+      {status || purpose || fact || affirmation || progress !== undefined ? (
         <footer className="wellbeing-footer">
           <div className="wellbeing-footer-progress">
             {status ? <p data-wellbeing-status role="status" aria-live="polite">{status}</p> : null}
@@ -62,10 +62,7 @@ const WellbeingShell: React.FC<WellbeingShellProps> = ({
               </div>
             ) : null}
           </div>
-          {fact || affirmation ? <div className="wellbeing-note-row">
-            {fact ? <p className="wellbeing-fact" data-wellbeing-fact><span>GOOD TO KNOW</span>{fact}</p> : null}
-            {affirmation ? <p className="wellbeing-affirmation" data-wellbeing-affirmation><span>TAKE WITH YOU</span>{affirmation}</p> : null}
-          </div> : null}
+          <WellbeingNotes purpose={purpose} fact={fact} affirmation={affirmation} paused={paused}/>
         </footer>
       ) : null}
     </section>

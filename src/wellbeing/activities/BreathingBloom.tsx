@@ -11,6 +11,13 @@ const paces = [
   { id: 'unhurried', label: 'Unhurried', inMs: 5000, outMs: 6000 },
 ] as const;
 const totalCycles = 4;
+const flowers = [
+  { x: 50, y: 44, size: 1, hue: 160 },
+  { x: 27, y: 57, size: .7, hue: 185 },
+  { x: 74, y: 53, size: .76, hue: 320 },
+  { x: 12, y: 34, size: .53, hue: 220 },
+  { x: 89, y: 31, size: .57, hue: 35 },
+];
 type BreathStep = 'ready' | 'in' | 'out' | 'checkin';
 
 const BreathingBloom: React.FC<WellbeingActivityComponentProps> = ({ onComplete, onExit }) => {
@@ -29,8 +36,9 @@ const BreathingBloom: React.FC<WellbeingActivityComponentProps> = ({ onComplete,
     let previous = performance.now();
     const interval = window.setInterval(() => {
       const now = performance.now();
-      const elapsed = now - previous;
+      const elapsed = Math.min(100, now - previous);
       previous = now;
+      if (document.hidden) return;
       setRemainingMs((current) => Math.max(0, current - elapsed));
     }, 50);
     return () => window.clearInterval(interval);
@@ -67,13 +75,14 @@ const BreathingBloom: React.FC<WellbeingActivityComponentProps> = ({ onComplete,
           : step === 'checkin' ? 'Notice how you feel now'
             : 'Choose a rhythm to begin';
   const status = finished ? 'Four cycles complete'
-    : step === 'checkin' ? `Cycle ${completedCycles} of ${totalCycles} complete. Continue when ready.`
+    : completedCycles >= totalCycles ? 'Four breaths complete. Finish when ready.'
+      : step === 'checkin' ? `Cycle ${completedCycles} of ${totalCycles} complete. Continue when ready.`
       : running ? `Cycle ${completedCycles + 1} of ${totalCycles}` : 'Start whenever you are ready';
 
   return (
     <WellbeingShell title="Breath Bloom" activityId="breathing_bloom" type="Breathing"
-      subtitle="Choose a visual rhythm, then begin each cycle when you are ready. Breathe naturally if a cue feels too long."
-      purpose="Use the moving light as a point of focus between challenges."
+      subtitle="Choose a comfortable pace. Begin each breath when you are ready."
+      purpose="Let your garden grow with each completed guided breath."
       fact="A longer, gentle exhale can help some people feel more settled. Never force a breath or hold it."
       affirmation="Your pace is enough." status={status} progress={progress} paused={paused}
       onExit={() => { cancel(); onExit(); }}>
@@ -82,18 +91,24 @@ const BreathingBloom: React.FC<WellbeingActivityComponentProps> = ({ onComplete,
           <span>Visual pace</span>
           <div className="wellbeing-pace-options">
             {paces.map((option) => <button key={option.id} type="button" className="wellbeing-pace-option"
-              data-button-skin="none" aria-pressed={paceId === option.id} disabled={running || finished}
+              data-button-skin="none" aria-pressed={paceId === option.id} disabled={running || finished || completedCycles >= totalCycles}
               onClick={() => setPaceId(option.id)}>
               <strong>{option.label}</strong><span>{option.inMs / 1000}s in · {option.outMs / 1000}s out</span>
             </button>)}
           </div>
         </div>
-        <div className="wellbeing-bloom" aria-hidden="true" style={{ transform: `scale(${bloomScale})` }}>
-          {Array.from({ length: 8 }, (_, index) => <span key={index} className="wellbeing-bloom-petal" style={{ '--petal-angle': index * 45 + 'deg' } as React.CSSProperties} />)}
-          <span className="wellbeing-bloom-core" />
+        <div className="wellbeing-bloom-garden" aria-hidden="true" data-bloom-flower-count={Math.min(flowers.length, completedCycles + 1)} style={{ '--bloom-scale': bloomScale } as React.CSSProperties}>
+          {flowers.slice(0, completedCycles + 1).map((flower, flowerIndex) => <div key={flowerIndex} className="wellbeing-garden-flower"
+            data-bloom-flower={flowerIndex + 1} style={{ left: `${flower.x}%`, top: `${flower.y}%`, '--flower-size': flower.size, '--flower-hue': flower.hue } as React.CSSProperties}>
+            <span className="wellbeing-flower-stem"/>
+            <div className="wellbeing-bloom" style={{ transform: `scale(${bloomScale})` }}>
+              {Array.from({ length: 8 }, (_, index) => <span key={index} className="wellbeing-bloom-petal" style={{ '--petal-angle': index * 45 + 'deg' } as React.CSSProperties}/>)}
+              <span className="wellbeing-bloom-core"/>
+            </div>
+          </div>)}
         </div>
         <div className="wellbeing-breath-cue" role="status" aria-live="polite">
-          <strong>{cue}</strong><span>{step === 'checkin' ? 'No right answer. Take a moment before the next cycle.' : 'The rhythm is only a guide; comfort comes first.'}</span>
+          <strong>{cue}</strong><span>{completedCycles >= totalCycles ? 'Take a moment to enjoy the garden you have grown.' : step === 'checkin' ? 'No right answer. Take a moment before the next cycle.' : 'The rhythm is only a guide; comfort comes first.'}</span>
         </div>
         <div className="wellbeing-controlbar wellbeing-breath-actions">
           {running ? <button type="button" onClick={() => setPaused((value) => !value)} className="wellbeing-quiet-action"
