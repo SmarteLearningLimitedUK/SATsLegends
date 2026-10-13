@@ -9,12 +9,10 @@ import {
   WandSparkles,
 } from 'lucide-react';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
-import meanMachineImage from '../assets/mean.png';
-import meanMachineBackground from '../assets/maps/premium/mean-machine.webp';
+import MeanPowerEngine from './MeanPowerEngine';
+import meanMachineBackground from '../assets/maps/premium/mean-machine-workshop-wide.webp';
 import './game-refinements.css';
 import './mean-machine.css';
-import medianMachineImage from '../assets/median.png';
-import modeMachineImage from '../assets/mode.png';
 import { GameplaySessionEventHandlers, GameplaySessionState, MiniGamePracticeBriefing } from '../app/gameplaySessionContract';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
@@ -70,71 +68,6 @@ const shuffle = <T,>(values: T[]): T[] => {
 };
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
-
-const useAlphaKeyImage = (src: string, threshold = 220) => {
-  const [processed, setProcessed] = useState(src);
-
-  useEffect(() => {
-    if (typeof window === 'undefined' || typeof Image === 'undefined') {
-      setProcessed(src);
-      return;
-    }
-    let isActive = true;
-    const image = new Image();
-    image.crossOrigin = 'anonymous';
-    image.src = src;
-
-    image.onload = () => {
-      if (!isActive) return;
-      const canvas = document.createElement('canvas');
-      const width = image.naturalWidth || image.width;
-      const height = image.naturalHeight || image.height;
-      if (!width || !height) {
-        setProcessed(src);
-        return;
-      }
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        setProcessed(src);
-        return;
-      }
-      try {
-        ctx.drawImage(image, 0, 0);
-        const imageData = ctx.getImageData(0, 0, width, height);
-        const data = imageData.data;
-        for (let i = 0; i < data.length; i += 4) {
-          const red = data[i];
-          const green = data[i + 1];
-          const blue = data[i + 2];
-          const max = Math.max(red, green, blue);
-          const min = Math.min(red, green, blue);
-          const brightness = (red + green + blue) / 3;
-          const lowSaturation = max - min <= 18;
-
-          if (brightness >= threshold && lowSaturation) {
-            data[i + 3] = 0;
-          }
-        }
-        ctx.putImageData(imageData, 0, 0);
-        setProcessed(canvas.toDataURL('image/png'));
-      } catch {
-        setProcessed(src);
-      }
-    };
-
-    image.onerror = () => {
-      if (isActive) setProcessed(src);
-    };
-
-    return () => {
-      isActive = false;
-    };
-  }, [src, threshold]);
-
-  return processed;
-};
 
 const scoreToStars = (XP: number) => {
   if (XP >= 2400) return 3;
@@ -406,7 +339,7 @@ const ReelWindow: React.FC<{
           ? { x: [0, -5, 5, -4, 4, 0], scale: [1, 0.98, 1] }
           : { y: 0, scale: 1 }}
     transition={spinning ? { duration: 0.16, repeat: Infinity, ease: 'linear' } : { duration: 0.35 }}
-    className={`relative flex h-full w-full items-center justify-center overflow-hidden rounded-[0.9rem] border border-slate-200/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(241,245,249,0.98))] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_2px_8px_rgba(15,23,42,0.18)] ${
+    data-mean-reel data-inactive={isInactive} className={`mean-reel-window relative flex h-full w-full items-center justify-center overflow-hidden rounded-[0.9rem] border border-slate-200/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(241,245,249,0.98))] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_2px_8px_rgba(15,23,42,0.18)] ${
       isInactive ? 'opacity-50 saturate-0' : ''
     }`}
   >
@@ -672,15 +605,8 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
     };
   }, [round]);
 
-  const machineImage = useMemo(() => {
-    if (round?.mode === 'median') return medianMachineImage;
-    if (round?.mode === 'mode') return modeMachineImage;
-    return meanMachineImage;
-  }, [round?.mode]);
-  const alphaKeyedMachineImage = useAlphaKeyImage(machineImage);
-
   return (
-    <div className="relative h-full w-full overflow-hidden select-none text-white" data-mean-game>
+    <div className="relative h-full w-full overflow-hidden select-none text-white" data-mean-game data-mean-paused={Boolean(sessionState?.paused)}>
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Mean Machine"
@@ -716,12 +642,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                         className="mean-machine-stage relative isolate"
                         style={{ aspectRatio: '4 / 5', transformOrigin: 'center' }}
                       >
-                      <img
-                        src={alphaKeyedMachineImage}
-                        alt="Island power calibration machine"
-                        draggable={false}
-                        className="pointer-events-none absolute inset-0 z-[12] h-full w-full object-cover object-center"
-                      />
+                      <MeanPowerEngine mode={round?.mode === 'missing' ? 'Repair' : round?.mode ?? 'Mean'} scanning={gameState === 'spinning'} repaired={showJackpot} fault={showGlitch} paused={Boolean(sessionState?.paused)} />
 
                       {reelDisplay.map((value, index) => (
                         <div
@@ -752,7 +673,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                         disabled={!round || gameState === 'spinning' || !sessionActive}
                         animate={spinPulse && !reducedMotion ? { scale: [1, 0.94, 1.06, 1], y: [0, 2, -1, 0] } : { scale: 1, y: 0 }}
                         transition={{ duration: reducedMotion ? 0 : .34 }}
-                        className="absolute z-30 flex items-center justify-center rounded-[1.2rem] bg-transparent text-[0.98rem] font-black uppercase tracking-[0.18em] text-cyan-50 disabled:cursor-not-allowed disabled:opacity-65 md:text-[1.05rem]"
+                        className="mean-engine-scan-button absolute z-30 flex items-center justify-center rounded-[1.2rem] bg-transparent text-[0.98rem] font-black uppercase tracking-[0.18em] text-cyan-50 disabled:cursor-not-allowed disabled:opacity-65 md:text-[1.05rem]"
                         aria-label="Scan the power cells"
                         style={{
                           left: '31.7%',
@@ -855,6 +776,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                   const isCorrect = feedback?.type === 'success' && isSelected;
                   return (
                     <motion.button
+                      data-mean-answer={option}
                       key={`${option}-${index}`}
                       whileTap={{ scale: 0.97 }}
                       type="button"
