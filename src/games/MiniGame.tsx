@@ -1,4 +1,5 @@
 import React from 'react';
+import GameSetStage from './GameSetStage';
 
 export interface MiniGameInput {
   type: string;
@@ -64,7 +65,7 @@ export const createMiniGame = <P extends Record<string, unknown>>(
       return state;
     },
     render(props: P) {
-      return <Component {...props} />;
+      return <GameSetStage id={id} Component={Component} gameProps={props} />;
     },
   };
 };
