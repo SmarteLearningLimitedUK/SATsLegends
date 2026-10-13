@@ -11,6 +11,7 @@ import MonsterMindActor, { type MonsterMindReaction } from '../components/game-u
 import dojoBackground from '../assets/maps/premium/number-line-ninja.webp';
 import goblinMonster from '../assets/enemies/cohesive/goblin.webp';
 import './number-line-ninja.css';
+import { buildNumberLineQuestion as buildQuestion, type NumberLineQuestion } from './numberLineQuestions';
 interface NumberLineNinjaGameProps {
   levelId: number;
   avatarId: string;
@@ -41,154 +42,18 @@ interface PendingCorrectAnswerAdvance {
   resolve: () => void;
 }
 
-interface NumberLineQuestion {
-  id: number;
-  kind: 'fluency' | 'reasoning';
-  prompt: string;
-  labels: string[];
-  focusIndex: number;
-  options: string[];
-  answer: string;
-}
-
 const QUESTION_ADVANCE_MS = 620;
-const QUESTION_FEEDBACK_MS = 520;
+const QUESTION_FEEDBACK_MS = 1600;
 const MONSTER_HIT_REACTION_MS = 900;
 const MONSTER_TAUNT_REACTION_MS = 660;
 const MONSTER_ESCAPE_LINE = 'The Monster Mind slips deeper into the shadows, hiding more of the path!';
 const MONSTER_DAMAGE_LINES = ['Ouch!', 'Nice hit!', 'Direct hit!', 'Pow!', 'Bullseye!'] as const;
-
-const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
-
-const shuffle = <T,>(items: T[]): T[] => {
-  const next = [...items];
-  for (let index = next.length - 1; index > 0; index -= 1) {
-    const swapIndex = Math.floor(Math.random() * (index + 1));
-    [next[index], next[swapIndex]] = [next[swapIndex], next[index]];
-  }
-  return next;
-};
-
-const uniqueStrings = (values: string[]) => Array.from(new Set(values));
 
 const scoreToStars = (XP: number, correct: number, attempts: number) => {
   const accuracy = attempts > 0 ? correct / attempts : 0;
   if (XP >= 1700 && accuracy >= 0.85) return 3;
   if (XP >= 1000 && accuracy >= 0.65) return 2;
   return 1;
-};
-
-const formatNumber = (value: number) => {
-  if (Number.isInteger(value)) return `${value}`;
-  return value.toFixed(2).replace(/\.?0+$/, '');
-};
-
-const buildPrompt = (missingCount: number) => {
-  const isSingle = missingCount === 1;
-  return [
-    isSingle ? 'The Monster Minds have hidden part of the island path.' : 'The Monster Mind erased an extra path marker.',
-    isSingle ? 'Which number is missing?' : 'Use equal gaps to find the glowing marker.',
-  ].join('\n');
-};
-
-const createQuestion = (
-  prompt: string,
-  values: number[],
-  focusIndex: number,
-  distractors: number[],
-  roundIndex: number,
-): NumberLineQuestion => {
-  const answer = values[focusIndex];
-  const extraHiddenIndex = roundIndex > 0
-    ? (focusIndex === 2 ? (roundIndex % 2 === 1 ? 1 : 3) : 2)
-    : -1;
-  const options = uniqueStrings([
-    formatNumber(answer),
-    ...distractors.map((value) => formatNumber(value)),
-  ]);
-
-  let padCandidate = answer + 3;
-  while (options.length < 4) {
-    const formatted = formatNumber(padCandidate);
-    if (!options.includes(formatted)) {
-      options.push(formatted);
-    }
-    padCandidate += 1;
-  }
-
-  return {
-    id: Date.now() + Math.floor(Math.random() * 1000),
-    kind: 'fluency',
-    prompt,
-    labels: values.map((value, index) => (index === focusIndex ? '?' : index === extraHiddenIndex ? '' : formatNumber(value))),
-    focusIndex,
-    options: shuffle(options).slice(0, 4),
-    answer: formatNumber(answer),
-  };
-};
-
-const difficultyBandForLevel = (levelId: number) => {
-  const tier = Math.max(1, Math.min(5, levelId));
-  return (tier - 1) * 2 + 1;
-};
-
-const buildQuestion = (levelId: number, roundIndex: number): NumberLineQuestion => {
-  const difficulty = difficultyBandForLevel(levelId);
-  const focusIndex = randomInt(1, 3);
-  const prompt = buildPrompt(roundIndex > 0 ? 2 : 1);
-
-  if (difficulty <= 2) {
-    const start = randomInt(0, 6);
-    const step = 1;
-    const values = Array.from({ length: 5 }, (_, index) => start + (step * index));
-    return createQuestion(prompt, values, focusIndex, [
-      values[focusIndex] + 1,
-      Math.max(0, values[focusIndex] - 1),
-      values[focusIndex] + 2,
-    ], roundIndex);
-  }
-
-  if (difficulty <= 4) {
-    const start = randomInt(0, 5) * 2;
-    const step = [2, 5][randomInt(0, 1)];
-    const values = Array.from({ length: 5 }, (_, index) => start + (step * index));
-    return createQuestion(prompt, values, focusIndex, [
-      values[focusIndex] + step,
-      Math.max(0, values[focusIndex] - step),
-      values[focusIndex] + (step * 2),
-    ], roundIndex);
-  }
-
-  if (difficulty <= 6) {
-    const start = randomInt(1, 6) * 10;
-    const step = 10;
-    const values = Array.from({ length: 5 }, (_, index) => start + (step * index));
-    return createQuestion(prompt, values, focusIndex, [
-      values[focusIndex] + 10,
-      values[focusIndex] - 10,
-      values[focusIndex] + 20,
-    ], roundIndex);
-  }
-
-  if (difficulty <= 8) {
-    const start = randomInt(-6, -2) * 5;
-    const step = 5;
-    const values = Array.from({ length: 5 }, (_, index) => start + (step * index));
-    return createQuestion(prompt, values, focusIndex, [
-      values[focusIndex] + 5,
-      values[focusIndex] - 5,
-      values[focusIndex] + 10,
-    ], roundIndex);
-  }
-
-  const base = randomInt(1, 6) / 10;
-  const step = [0.1, 0.2, 0.25][randomInt(0, 2)];
-  const values = Array.from({ length: 5 }, (_, index) => Number((base + (step * index)).toFixed(2)));
-  return createQuestion(prompt, values, focusIndex, [
-    Number((values[focusIndex] + step).toFixed(2)),
-    Number((values[focusIndex] - step).toFixed(2)),
-    Number((values[focusIndex] + (step * 2)).toFixed(2)),
-  ], roundIndex);
 };
 
 const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
@@ -207,7 +72,20 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
   const presentRef = useRef(isPresent);
   presentRef.current = isPresent;
   const reducedMotion = useReducedMotion();
-  const [question, setQuestion] = useState<NumberLineQuestion>(() => buildQuestion(Math.max(levelId, 1), 0));
+  const recentQuestionKeysRef = useRef(new Set<string>());
+  const nextQuestionForRound = (round: number) => {
+    let candidate: NumberLineQuestion;
+    let key: string;
+    let tries = 0;
+    do {
+      candidate = buildQuestion(Math.max(levelId, 1), round, Boolean(isPractice));
+      key = JSON.stringify([candidate.family, candidate.labels]);
+      tries += 1;
+    } while (recentQuestionKeysRef.current.has(key) && tries < 128);
+    recentQuestionKeysRef.current.add(key);
+    return candidate;
+  };
+  const [question, setQuestion] = useState<NumberLineQuestion>(() => nextQuestionForRound(0));
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [feedbackState, setFeedbackState] = useState<FeedbackState>('idle');
   const [XP, setScore] = useState(0);
@@ -292,7 +170,8 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     if (!presentRef.current) return;
     clearQueuedTimeouts();
     clearMonsterReactionTimeout();
-    setQuestion(buildQuestion(Math.max(levelId, 1), 0));
+    recentQuestionKeysRef.current.clear();
+    setQuestion(nextQuestionForRound(0));
     setSelectedAnswer(null);
     setFeedbackState('idle');
     setScore(0);
@@ -309,7 +188,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
     setMonsterReaction('idle');
     setMonsterReactionKey(0);
     setMonsterSpeech(null);
-  }, [levelId]);
+  }, [levelId, isPractice]);
 
   useEffect(() => {
     if (!presentRef.current || !sessionState || runEndedRef.current || didComplete || didFail) return;
@@ -348,7 +227,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
 
   const advanceQuestion = (nextRoundIndex: number) => {
     if (!presentRef.current || runEndedRef.current) return;
-    setQuestion(buildQuestion(Math.max(levelId, 1), nextRoundIndex));
+    setQuestion(nextQuestionForRound(nextRoundIndex));
     setSelectedAnswer(null);
     setFeedbackState('idle');
     setLocked(false);
@@ -893,7 +772,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                   : 'bg-rose-500/95 text-white shadow-[0_0_20px_rgba(244,63,94,0.7)]'
               }`}
             >
-              {feedbackState === 'correct' ? 'Path restored!' : 'The path is still hidden…'}
+              {feedbackState === 'correct' ? 'Path restored!' : `Correct marker: ${question.answer}`}
             </div>
           </motion.div>
         )}

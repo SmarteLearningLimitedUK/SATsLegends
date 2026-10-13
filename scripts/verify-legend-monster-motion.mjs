@@ -568,10 +568,21 @@ async function numberLineAnswer(page) {
   const labels = await page.locator('[data-line-marker]').allTextContents();
   expect(labels).toHaveLength(5);
   const missing = labels.findIndex((label) => label.trim() === '?');
-  expect(missing).toBeGreaterThan(0); expect(missing).toBeLessThan(4);
-  const first = Number(labels[0]); const last = Number(labels[4]);
-  expect(Number.isFinite(first) && Number.isFinite(last)).toBe(true);
-  return Number((first + ((last - first) / 4) * missing).toFixed(2));
+  expect(missing).toBeGreaterThanOrEqual(0); expect(missing).toBeLessThanOrEqual(4);
+  const numeric = (text) => {
+    const mixed = text.trim().match(/^(\d+) (\d+)\/(\d+)$/);
+    if (mixed) return Number(mixed[1]) + Number(mixed[2]) / Number(mixed[3]);
+    const fraction = text.trim().match(/^(-?\d+)\/(\d+)$/);
+    return fraction ? Number(fraction[1]) / Number(fraction[2]) : Number(text.trim());
+  };
+  const marked = labels.flatMap((label, index) => label.trim() && label.trim() !== '?' ? [{ index, value: numeric(label) }] : []);
+  expect(marked.length).toBeGreaterThanOrEqual(2);
+  const [first, second] = marked;
+  const expected = first.value + (second.value - first.value) / (second.index - first.index) * (missing - first.index);
+  const options = await page.locator('[data-number-line-answer]').evaluateAll(buttons => buttons.map(button => button.dataset.numberLineAnswer));
+  const matches = options.filter(option => Math.abs(numeric(option) - expected) < 1e-9);
+  expect(matches).toHaveLength(1);
+  return Number.isFinite(Number(matches[0])) ? Number(matches[0]) : matches[0];
 }
 
 async function traceNativeTap(page, profile) {
