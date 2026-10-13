@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import {
   CheckCircle2,
   Wand2,
@@ -25,6 +25,8 @@ import nightBottle from '../assets/potion_bottles/night.png';
 import rubyBottle from '../assets/potion_bottles/ruby.png';
 import sunBottle from '../assets/potion_bottles/sun.png';
 import './forge-potion-layout.css';
+import { PotionShelfBottles, PotionWorkbench } from './PotionWorkshop';
+import './potion-workshop.css';
 
 interface PotionPanicGameProps {
   levelId: number;
@@ -509,6 +511,8 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
   sessionEvents,
   isPractice = false,
 }) => {
+  const reducedMotion = useReducedMotion();
+  const ambientMotion = !reducedMotion && !sessionState?.paused;
   const [challenge, setChallenge] = useState<Challenge>(() => generateChallenge(levelId, 0, isPractice));
   const [counts, setCounts] = useState<number[]>(() => [...challenge.startCounts]);
   const [correctSolved, setCorrectSolved] = useState(0);
@@ -720,7 +724,8 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
   const roundsToWin = roundsToWinForLevel(levelId);
 
   return (
-    <GameUiShell className="potion-panic-scene" backgroundImage={potionPanicBackdrop} backgroundOpacity={1} backgroundPosition="center 35%" backgroundFit="cover" overlayDisabled>
+    <GameUiShell className={`potion-panic-scene ${sessionState?.paused ? 'potion-panic-scene--paused' : ''}`} backgroundImage={potionPanicBackdrop} backgroundOpacity={1} backgroundPosition="center" backgroundFit="cover" overlayDisabled>
+      <PotionShelfBottles/>
       <GameScreenLayout
         className="px-3 pb-[calc(env(safe-area-inset-bottom)+0.7rem)] pt-0 text-white"
         top={(
@@ -759,6 +764,7 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
                 </GameQuestionCard>
               </div>
               <div className="potion-cauldron-stage absolute inset-0">
+                <PotionWorkbench/>
                 <div className="potion-vessel-shadow pointer-events-none absolute left-1/2 top-[84%] z-0 h-14 w-[72%] -translate-x-1/2 rounded-full bg-black/55 blur-md" />
                 <div className="potion-fire-glow pointer-events-none absolute left-1/2 top-[76%] z-10 h-[24%] w-[58%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,164,48,0.85)_0%,rgba(255,120,32,0.42)_38%,rgba(255,120,32,0)_75%)] blur-[16px]" />
                 <div className="potion-flames absolute left-1/2 top-[72%] z-10 flex h-[18%] w-[48%] -translate-x-1/2 translate-y-[48px] items-end justify-between px-5">
@@ -766,8 +772,8 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
                     <motion.span
                       key={`flame-${idx}`}
                       className="h-12 w-7 rounded-full bg-[radial-gradient(circle at 50% 20%,rgba(255,241,180,0.95)_0%,rgba(255,170,57,0.92)_42%,rgba(255,94,32,0.9)_76%,rgba(255,94,32,0)_100%)] blur-[1px]"
-                      animate={{ scaleY: [0.85, 1.1, 0.92], y: [0, -4, 0] }}
-                      transition={{ repeat: Infinity, duration: 1 + idx * 0.18, ease: 'easeInOut' }}
+                      animate={ambientMotion ? { scaleY: [0.85, 1.1, 0.92], y: [0, -4, 0] } : { scaleY: 1, y: 0 }}
+                      transition={ambientMotion ? { repeat: Infinity, duration: 1 + idx * 0.18, ease: 'easeInOut' } : { duration: 0 }}
                     />
                   ))}
                 </div>
@@ -788,8 +794,8 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
                       key={`bubble-${idx}`}
                       className="absolute bottom-[12%] h-1.5 w-1.5 rounded-full bg-white/60"
                       style={{ left: `${12 + idx * 7}%` }}
-                      animate={{ y: [0, -10 - (idx % 3) * 4, -2], opacity: currentTotal > 0 ? [0, 0.9, 0] : 0, scale: [0.7, 1.12, 0.82] }}
-                      transition={{ repeat: Infinity, duration: 1.05 + (idx % 4) * 0.18, delay: idx * 0.06, ease: 'easeOut' }}
+                      animate={ambientMotion ? { y: [0, -10 - (idx % 3) * 4, -2], opacity: currentTotal > 0 ? [0, 0.9, 0] : 0, scale: [0.7, 1.12, 0.82] } : { y: 0, opacity: currentTotal > 0 ? .5 : 0, scale: 1 }}
+                      transition={ambientMotion ? { repeat: Infinity, duration: 1.05 + (idx % 4) * 0.18, delay: idx * 0.06, ease: 'easeOut' } : { duration: 0 }}
                     />
                   ))}
                   </div>

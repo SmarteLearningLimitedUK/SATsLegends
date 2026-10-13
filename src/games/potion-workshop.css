@@ -1,0 +1,35 @@
+.potion-panic-scene { background: radial-gradient(ellipse at 50% 40%, #284341, #172724 75%) !important; }
+.potion-workshop-shelves { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+.potion-shelf-bottle { transform-box: fill-box; transform-origin: 50% 100%; animation: potion-shelf-wiggle 4.8s ease-in-out var(--bottle-delay) infinite; filter: drop-shadow(0 6px 4px #06181970); }
+.potion-bottle-liquid { animation: potion-bottle-slosh 3.2s ease-in-out var(--bottle-delay) infinite alternate; transform-origin: center; }
+.potion-bottle-bubble { animation: potion-bottle-bubble 2.6s ease-in-out infinite; }
+@keyframes potion-shelf-wiggle { 0%, 55%, 100% { transform: rotate(0); } 65% { transform: rotate(-3deg); } 75% { transform: rotate(2deg); } 85% { transform: rotate(-1deg); } }
+@keyframes potion-bottle-slosh { from { transform: translateY(0) rotate(-2deg); } to { transform: translateY(-2px) rotate(2deg); } }
+@keyframes potion-bottle-bubble { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: .75; } 100% { transform: translateY(-29px); opacity: 0; } }
+.potion-workbench { position: absolute; z-index: 0; left: 50%; bottom: 0; width: 96%; height: 14%; transform: translateX(-50%); overflow: visible; filter: drop-shadow(0 12px 12px #07191c66); }
+.potion-panic-scene .potion-vessel { bottom: 10%; height: 42%; }
+.potion-panic-scene .potion-vessel-shadow { top: auto; bottom: 11%; height: 6%; width: 55%; }
+.potion-panic-scene .potion-fire-glow { top: auto; bottom: 12%; height: 14%; width: 45%; }
+.potion-panic-scene .potion-flames { top: auto; bottom: 13%; height: 8%; width: 30%; transform: translateX(-50%); }
+.potion-panic-scene--paused *, .potion-panic-scene--paused *::before, .potion-panic-scene--paused *::after { animation-play-state: paused !important; }
+@container (min-width: 800px) {
+  .potion-workbench { height: 26%; width: min(110%, 620px); }
+  .potion-panic-scene .potion-vessel { bottom: 20%; height: clamp(220px, 46vh, 330px); max-height: 60%; }
+  .potion-panic-scene .potion-vessel-shadow { bottom: 21%; }
+  .potion-panic-scene .potion-fire-glow { bottom: 22%; height: 16%; width: 60%; }
+  .potion-panic-scene .potion-flames { bottom: 23%; width: 40%; }
+}
+@media (max-width: 899px), (max-height: 599px) {
+  .potion-workshop-shelves { display: none; }
+}
+@media (max-width: 360px) and (max-height: 650px) {
+  .potion-panic-scene .potion-vessel { bottom: 1%; }
+  .potion-workbench { height: 14%; bottom: -9.5%; }
+  .potion-panic-scene .potion-ingredients { position: relative; z-index: 40; }
+  .potion-panic-scene .potion-flames { bottom: 4%; }
+  .potion-panic-scene .potion-fire-glow { bottom: 3%; }
+  .potion-panic-scene .potion-vessel-shadow { bottom: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .potion-shelf-bottle, .potion-bottle-liquid, .potion-bottle-bubble { animation: none; }
+}

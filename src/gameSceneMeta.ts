@@ -24,6 +24,7 @@ import percentPowerBackground from './assets/maps/premium/percent-power.webp';
 import placeValuePanicBackground from './assets/maps/premium/place-value-panic.webp';
 import polygonPalaceBackground from './assets/maps/premium/polygon-palace.webp';
 import potionPanicBackground from './assets/maps/premium/potion-panic.webp';
+import potionPanicWideBackground from './assets/maps/premium/potion-panic-workshop-wide.webp';
 import primePopBackground from './assets/maps/premium/prime-pop.webp';
 import problemPyramidBackground from './assets/maps/premium/problem-pyramid.webp';
 import rotationStationBackground from './assets/maps/premium/rotation-station.webp';
@@ -95,6 +96,7 @@ const withBackground = (scene: GameSceneMeta, background: string): GameSceneMeta
 export const getWideEnvironment = (background: string): string | undefined => {
   if (background === takeOutRushBackground) return takeOutRushWideBackground;
   if (background === changeCounterBackground) return changeCounterWideBackground;
+  if (background === potionPanicBackground) return potionPanicWideBackground;
   return undefined;
 };
 
