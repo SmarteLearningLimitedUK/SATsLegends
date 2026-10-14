@@ -282,12 +282,12 @@ async function perimeterFlow(page,profile,motion,levels){
 async function conversionFlow(page,profile,motion,levels){
   const level=levels.find(entry=>entry.tier===1);await open(page,level.route);
   const layout=await hierarchy(page,'[data-conversion-playfield]','.conversion-game > div.relative > div:last-child');
-  await expect.poll(()=>page.locator('[data-conversion-scale] > img').evaluate(image=>image.complete&&image.naturalWidth>0)).toBe(true);
+  await expect.poll(()=>page.locator('[data-conversion-scale] > svg').evaluate(svg=>svg.getBoundingClientRect().width>0)).toBe(true);
   await page.evaluate(()=>document.fonts.ready);
   const measure=()=>page.evaluate(()=>{
     const rect=node=>{const r=node.getBoundingClientRect();return {x:r.x,y:r.y,right:r.right,bottom:r.bottom,width:r.width,height:r.height};};
-    const frame=document.querySelector('[data-conversion-scale]');const board=document.querySelector('[data-conversion-playfield]');const image=frame.querySelector('img');
-    return {frame:rect(frame),board:rect(board),fonts:document.fonts.status,image:{kind:image.currentSrc.startsWith('data:')?'trimmed-data-uri':image.currentSrc.split('/').at(-1),width:image.naturalWidth,height:image.naturalHeight,loaded:image.complete},stage:getComputedStyle(document.querySelector('[data-gameplay-content-stage]')).transform};
+    const frame=document.querySelector('[data-conversion-scale]');const board=document.querySelector('[data-conversion-playfield]');const image=frame.querySelector('svg');
+    return {frame:rect(frame),board:rect(board),fonts:document.fonts.status,image:{kind:'mechanical-svg',width:image.getBoundingClientRect().width,height:image.getBoundingClientRect().height,loaded:image.getBoundingClientRect().width>0},stage:getComputedStyle(document.querySelector('[data-gameplay-content-stage]')).transform};
   });
   let geometry=null,previous=null,stableSamples=0;const settling=[];
   try{

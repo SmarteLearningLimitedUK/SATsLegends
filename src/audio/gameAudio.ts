@@ -1,7 +1,9 @@
 import { GAME_AUDIO_STORAGE_KEY, GAME_HUD_MUTE_SYNC_EVENT } from '../gameHudEvents';
 import { getGameSoundProfile, type SoundMaterial } from './gameSoundProfiles';
+import { decodeGameSample, preloadGameSamples, sampleForEffect } from './gameSampleLibrary';
 
-export type GameSoundEffect = 'tap' | 'place' | 'cast' | 'impact' | 'correct' | 'incorrect' | 'complete' | 'fail';
+export type MonsterSoundEffect = 'monster_growl' | 'monster_laugh' | 'monster_hurt';
+export type GameSoundEffect = 'tap' | 'place' | 'cast' | 'impact' | 'correct' | 'incorrect' | 'complete' | 'fail' | MonsterSoundEffect;
 type Voice = { note: number; at: number; length: number; level: number; pan: number; wave: OscillatorType; endNote?: number };
 
 let context: AudioContext | null = null;
@@ -16,12 +18,29 @@ let musicWanted = false;
 let musicUnlocked = false;
 let musicScene: GameMusicScene = 'map';
 let soundProfile = getGameSoundProfile(null);
+let sampleEpoch = 0;
+let lastMonsterAt = -Infinity;
+const activeSamples = new Set<AudioBufferSourceNode>();
+const activeEngines = new Set<() => void>();
+
+/** Cancel pending and playing recorded cues when leaving, pausing or muting. */
+export function stopGameSoundEffects() {
+  sampleEpoch += 1;
+  for (const stop of [...activeEngines]) stop();
+  for (const source of activeSamples) {
+    try { source.stop(); } catch { /* Already ended. */ }
+  }
+  activeSamples.clear();
+}
 
 export type GameMusicScene = 'map' | 'gameplay';
 
 /** Selects the sound palette for the current minigame without starting audio. */
 export function configureGameSoundProfile(blueprintKey: string | null | undefined) {
+  stopGameSoundEffects();
+  lastMonsterAt = -Infinity;
   soundProfile = getGameSoundProfile(blueprintKey);
+  if (blueprintKey) preloadGameSamples(soundProfile);
 }
 
 function getContext() {
@@ -30,6 +49,12 @@ function getContext() {
   const Ctor = window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
   if (!Ctor) return null;
   context = new Ctor();
+  window.addEventListener(GAME_HUD_MUTE_SYNC_EVENT, () => {
+    if (localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true') stopGameSoundEffects();
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stopGameSoundEffects();
+  });
   const compressor = context.createDynamicsCompressor();
   compressor.threshold.value = -18;
   compressor.ratio.value = 3;
@@ -56,7 +81,7 @@ function getContext() {
   return context;
 }
 
-const patterns: Record<GameSoundEffect, Voice[]> = {
+const patterns: Record<Exclude<GameSoundEffect, MonsterSoundEffect>, Voice[]> = {
   tap: [
     { note: 760, at: 0, length: .075, level: .055, pan: -.16, wave: 'triangle', endNote: 530 },
     { note: 1510, at: .009, length: .045, level: .02, pan: .16, wave: 'sine' },
@@ -232,13 +257,51 @@ export function playGameSound(effect: GameSoundEffect, mutedOverride?: boolean) 
   const ctx = getContext();
   if (!ctx) return false;
   if (ctx.state === 'suspended') void ctx.resume().catch(() => {});
-  const base = ctx.currentTime + .015;
-  const pitch = Math.min(1.4, Math.max(.7, soundProfile.pitch));
-  const accent = Math.min(1, Math.max(0, soundProfile.accent));
-  patterns[effect].forEach(voice => playVoice(ctx, voice, base, pitch, .82));
-  playMaterialAccent(ctx, effect, base, soundProfile.material, pitch, accent);
-  playTexture(ctx, effect, base, soundProfile.material, accent);
+  const profile = soundProfile;
+  const epoch = sampleEpoch;
+  if (sampleForEffect(profile, effect)) {
+    void decodeGameSample(ctx, profile, effect).then(buffer => {
+      if (epoch !== sampleEpoch || document.hidden || localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true' || ctx.state === 'closed') return;
+      if (!buffer) { playSynthSound(ctx, effect, profile); return; }
+      // Repeated clicks and fast answers must not stack the same long recording.
+      const group = effect.startsWith('monster_') ? 'monster' : effect === 'correct' || effect === 'incorrect' ? 'feedback' : effect;
+      for (const playing of activeSamples) {
+        if (sampleGroups.get(playing) === group) { try { playing.stop(); } catch { /* Ended. */ } }
+      }
+      const source = ctx.createBufferSource();
+      const gain = ctx.createGain();
+      source.buffer = buffer;
+      gain.gain.value = effect.startsWith('monster_') ? .65 : effect === 'tap' ? .55 : .8;
+      source.connect(gain);
+      gain.connect(dry!);
+      activeSamples.add(source);
+      sampleGroups.set(source, group);
+      source.onended = () => { activeSamples.delete(source); source.disconnect(); gain.disconnect(); };
+      source.start(ctx.currentTime + .005);
+    });
+    return true;
+  }
+  playSynthSound(ctx, effect, profile);
   return true;
+}
+
+const sampleGroups = new WeakMap<AudioBufferSourceNode, string>();
+/** Creature ambience waits for the player's first audio gesture, never autoplaying. */
+export function playMonsterSound(effect: MonsterSoundEffect) {
+  if (!context || context.state !== 'running') return false;
+  if (effect !== 'monster_hurt' && context.currentTime - lastMonsterAt < 1.2) return false;
+  const played = playGameSound(effect);
+  if (played) lastMonsterAt = context.currentTime;
+  return played;
+}
+function playSynthSound(ctx: AudioContext, effect: GameSoundEffect, profile: typeof soundProfile) {
+  const base = ctx.currentTime + .015;
+  const pitch = Math.min(1.4, Math.max(.7, profile.pitch));
+  const accent = Math.min(1, Math.max(0, profile.accent));
+  const pattern = effect.startsWith('monster_') ? patterns.impact : patterns[effect as Exclude<GameSoundEffect, MonsterSoundEffect>];
+  pattern.forEach(voice => playVoice(ctx, voice, base, pitch, .82));
+  playMaterialAccent(ctx, effect, base, profile.material, pitch, accent);
+  playTexture(ctx, effect, base, profile.material, accent);
 }
 
 /** Original launch-control beep, sharing the game's master volume and mute setting. */
@@ -252,6 +315,15 @@ export function playRocketCountdownSound() {
 
 /** Layered engine rumble and exhaust rush. The caller stops it on pause/unmount. */
 export function playRocketLaunchSound(durationSeconds: number): () => void {
+  return playEngineRoar(durationSeconds, 'rocket');
+}
+
+/** Finite acceleration or stall cue; caller cancels it on pause/unmount. */
+export function playRaceEngineSound(durationSeconds: number, stalled = false): () => void {
+  return playEngineRoar(durationSeconds, stalled ? 'stall' : 'race');
+}
+
+function playEngineRoar(durationSeconds: number, kind: 'rocket' | 'race' | 'stall'): () => void {
   if (typeof window === 'undefined' || localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true') return () => {};
   const ctx = getContext();
   if (!ctx) return () => {};
@@ -270,17 +342,23 @@ export function playRocketLaunchSound(durationSeconds: number): () => void {
   exhaust.loop = true;
   const filter = ctx.createBiquadFilter();
   filter.type = 'lowpass';
-  filter.frequency.setValueAtTime(180, start);
-  filter.frequency.exponentialRampToValueAtTime(1800, start + duration * .45);
-  filter.frequency.exponentialRampToValueAtTime(350, start + duration);
+  filter.frequency.setValueAtTime(kind === 'stall' ? 850 : 180, start);
+  filter.frequency.exponentialRampToValueAtTime(kind === 'stall' ? 260 : 1800, start + duration * .45);
+  filter.frequency.exponentialRampToValueAtTime(kind === 'stall' ? 100 : 350, start + duration);
   const rumble = ctx.createOscillator();
   rumble.type = 'triangle';
-  rumble.frequency.setValueAtTime(42, start);
-  rumble.frequency.linearRampToValueAtTime(80, start + duration * .55);
+  rumble.frequency.setValueAtTime(kind === 'rocket' ? 42 : kind === 'stall' ? 105 : 65, start);
+  rumble.frequency.linearRampToValueAtTime(kind === 'rocket' ? 80 : kind === 'stall' ? 32 : 150, start + duration * .55);
   const engine = ctx.createGain();
   engine.gain.setValueAtTime(.0001, start);
-  engine.gain.linearRampToValueAtTime(.18, start + Math.min(.65, duration / 3));
-  engine.gain.setValueAtTime(.18, start + duration * .65);
+  const volume = kind === 'rocket' ? .18 : .065;
+  engine.gain.linearRampToValueAtTime(volume, start + Math.min(.65, duration / 3));
+  if (kind === 'stall') {
+    for (let i = 1; i <= 4; i++) {
+      engine.gain.setValueAtTime(volume * .2, start + duration * (.3 + i * .09));
+      engine.gain.linearRampToValueAtTime(volume, start + duration * (.34 + i * .09));
+    }
+  } else engine.gain.setValueAtTime(volume, start + duration * .65);
   engine.gain.exponentialRampToValueAtTime(.0001, start + duration);
   exhaust.connect(filter);
   filter.connect(engine);
@@ -297,12 +375,14 @@ export function playRocketLaunchSound(durationSeconds: number): () => void {
   const stop = () => {
     if (stopped) return;
     stopped = true;
+    activeEngines.delete(stop);
     exhaust.stop(); rumble.stop();
     exhaust.disconnect(); filter.disconnect(); rumble.disconnect(); bass.disconnect(); engine.disconnect();
     window.removeEventListener(GAME_HUD_MUTE_SYNC_EVENT, muted);
   };
   const muted = (event: Event) => { if ((event as CustomEvent<{ muted: boolean }>).detail?.muted) stop(); };
   window.addEventListener(GAME_HUD_MUTE_SYNC_EVENT, muted);
+  activeEngines.add(stop);
   exhaust.onended = stop;
   return stop;
 }

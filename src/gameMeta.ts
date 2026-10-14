@@ -289,10 +289,10 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   transform_temple: {
-    label: 'Rotation Station',
+    label: 'Transformation Station',
     focus: 'Transformations and movement rules',
     rules: {
-      title: 'Rotation Station',
+      title: 'Transformation Station',
       summary: 'Track how a shape moves across the temple grid using translation and reflection clues.',
       bullets: [
         'Follow translation and reflection clues closely.',

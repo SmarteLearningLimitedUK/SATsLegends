@@ -1,4 +1,5 @@
 import { MiniGameType } from './types';
+import { getGameSceneArtwork } from './games/gameSceneArtwork';
 import angleArenaBackground from './assets/maps/premium/angle-arena.webp';
 import matchMasteryBackground from './assets/maps/premium/match-mastery.webp';
 import mirrorGateBackground from './assets/maps/premium/mirror-gate.webp';
@@ -94,6 +95,9 @@ const withBackground = (scene: GameSceneMeta, background: string): GameSceneMeta
 });
 
 export const getWideEnvironment = (background: string): string | undefined => {
+  const scenes: [string,string][] = [[areaArchitectBackground,'area_architect'],[chronoDashTimeTrialBackground,'chrono'],[coordinateQuestBackground,'coordinates_quest'],[calculationCupBackground,'formula_forge'],[dataDetectiveBackground,'data_detective'],[graphGrabberBackground,'graph_grabber'],[lineGraphLabBackground,'line_graph_lab'],[towerOfFactorsBackground,'factor_frenzy'],[scaleMasterBackground,'conversion_canyon'],[matchMasteryBackground,'fraction_match'],[placeValuePanicBackground,'place_value_panic'],[polygonPalaceBackground,'polygon_palace'],[problemPyramidBackground,'problem_pyramid'],[orderOpsArenaBackground,'order_ops_arena'],[rotationStationBackground,'rotation_station'],[remainderRunBackground,'remainder_run'],[scaleBuilderBackground,'scale_builder'],[lavaPathBackground,'lava']];
+  const key=scenes.find(([source])=>source===background)?.[1];
+  if(key&&getGameSceneArtwork(key))return getGameSceneArtwork(key);
   if (background === takeOutRushBackground) return takeOutRushWideBackground;
   if (background === changeCounterBackground) return changeCounterWideBackground;
   if (background === potionPanicBackground) return potionPanicWideBackground;

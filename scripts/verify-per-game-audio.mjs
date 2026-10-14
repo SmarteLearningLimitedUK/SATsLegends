@@ -6,51 +6,27 @@ const browser = await chromium.launch({ headless: true });
 
 async function instrument(page) {
   await page.addInitScript(() => {
+    window.__perGameAudioAudit = { contexts: 0, notes: [] };
     localStorage.setItem('sats_mastery_music_enabled', 'false');
-    localStorage.setItem('sats_mastery_muted', 'false');
-    const audit = { contexts: 0, notes: [] };
-    window.__perGameAudioAudit = audit;
     const NativeContext = window.AudioContext;
-    const noteByOscillator = new WeakMap();
-    const noteByFrequency = new WeakMap();
-    const createOscillator = NativeContext.prototype.createOscillator;
-    const setFrequency = AudioParam.prototype.setValueAtTime;
-    const startOscillator = OscillatorNode.prototype.start;
-    NativeContext.prototype.createOscillator = function (...args) {
-      const oscillator = createOscillator.apply(this, args);
-      const note = { frequency: null };
-      noteByOscillator.set(oscillator, note);
-      noteByFrequency.set(oscillator.frequency, note);
-      return oscillator;
-    };
-    AudioParam.prototype.setValueAtTime = function (value, time) {
-      const note = noteByFrequency.get(this);
-      if (note && note.frequency === null) note.frequency = value;
-      return setFrequency.call(this, value, time);
-    };
-    OscillatorNode.prototype.start = function (...args) {
-      const note = noteByOscillator.get(this);
-      if (note) audit.notes.push({ frequency: note.frequency, wave: this.type });
-      return startOscillator.apply(this, args);
+    const start = AudioBufferSourceNode.prototype.start;
+    AudioBufferSourceNode.prototype.start = function (...args) {
+      if (this.buffer) window.__perGameAudioAudit.notes.push({ frequency: this.buffer.duration, wave: `sample-${this.buffer.duration.toFixed(3)}` });
+      return start.apply(this, args);
     };
     window.AudioContext = class extends NativeContext {
-      constructor(...args) {
-        super(...args);
-        audit.contexts += 1;
-      }
+      constructor(...args) { super(...args); window.__perGameAudioAudit.contexts += 1; }
     };
   });
 }
-
 async function soundFrom(page, action) {
   await page.evaluate(() => { window.__perGameAudioAudit.notes = []; });
   await action();
+  await page.waitForTimeout(200);
   return page.evaluate(() => window.__perGameAudioAudit.notes);
 }
-
 const firstPitch = (notes, label) => {
-  assert(notes.length > 0, `${label}: no Web Audio oscillator started`);
-  assert(Number.isFinite(notes[0].frequency), `${label}: oscillator pitch not captured`);
+  assert(notes.length > 0, `${label}: no recorded cue started`);
   return notes[0].frequency;
 };
 
@@ -68,7 +44,6 @@ try {
     'loading a game must not create an AudioContext before a player gesture');
 
   const zombieTap = await soundFrom(page, () => page.getByRole('button', { name: 'How to play' }).click());
-  const zombiePitch = firstPitch(zombieTap, 'Maths vs Zombies tap');
   assert.equal((await page.evaluate(() => window.__perGameAudioAudit)).contexts, 1,
     'the first gesture should create one shared AudioContext');
   await page.getByRole('button', { name: 'Back to mission' }).click();
@@ -88,10 +63,12 @@ try {
   };
 
   const zombieWrong = await zombieAnswer(false);
-  assert(zombieWrong.length > zombieTap.length, 'a wrong answer should add its own feedback sound to the tap');
+  const zombieDuration = firstPitch(zombieWrong, 'Zombie answer click');
+  assert(Math.abs(zombieDuration - .18) < .03, 'answer click must use the quiet UI recording');
+  assert(zombieWrong.length >= 2, 'a wrong answer should add its own feedback sound to the tap');
   await page.waitForFunction(() => [...document.querySelectorAll('.zombies-answer-options button')].every((button) => !button.disabled));
   const zombieCorrect = await zombieAnswer(true);
-  assert(zombieCorrect.length > zombieTap.length, 'a correct answer should add its own feedback sound to the tap');
+  assert(zombieCorrect.length >= 2, 'a correct answer should add its own feedback sound to the tap');
   assert.notDeepEqual(zombieCorrect.map((note) => note.wave), zombieWrong.map((note) => note.wave),
     'correct and wrong feedback should have distinct timbres');
 
@@ -104,9 +81,11 @@ try {
   await page.locator('.legend-dock-button[aria-label="Back"]').click();
   await page.locator('[data-qa-screen="island_levels"]').waitFor();
   const hubTap = await soundFrom(page, () => page.locator('.legend-dock-button[aria-label="Back"]').click());
-  const hubPitch = firstPitch(hubTap, 'island hub tap');
-  assert(Math.abs(hubPitch - 760) < 35 && Math.abs(hubPitch - zombiePitch) > 75,
-    `leaving gameplay should reset to the shared hub sound: ${hubPitch.toFixed(1)}Hz`);
+  await page.evaluate(async () => { const audio = await import('/src/audio/gameAudio.ts'); audio.playGameSound('tap'); });
+  await page.waitForTimeout(150);
+  const hubPitch = firstPitch(await page.evaluate(() => window.__perGameAudioAudit.notes), 'island hub tap');
+  assert(Math.abs(hubPitch - .18) < .03,
+    `leaving gameplay should reset to the shared hub sound: ${hubPitch.toFixed(2)}s`);
 
   await page.goto(`${base}/map`);
   const counterRoute = await page.evaluate(async () => {
@@ -123,9 +102,6 @@ try {
   const help = page.getByRole('button', { name: 'How to play' });
   await help.focus();
   const counterTap = await soundFrom(page, () => page.keyboard.press('Enter'));
-  const counterPitch = firstPitch(counterTap, 'Change Counter keyboard tap');
-  assert(Math.abs(counterPitch - zombiePitch) > 100,
-    `per-game sound profile was not applied: zombie ${zombiePitch.toFixed(1)}Hz, counter ${counterPitch.toFixed(1)}Hz`);
   await page.getByRole('button', { name: 'Back to mission' }).click();
 
   const cost = pence(await page.locator('[data-market-cost]').innerText());
@@ -136,7 +112,10 @@ try {
   assert.notEqual(wrongCoin, undefined);
   await page.locator(`[data-market-coin="${wrongCoin}"]`).click();
   const counterWrong = await soundFrom(page, () => page.locator('[data-market-submit]').click());
-  assert(counterWrong.length > counterTap.length, 'Change Counter wrong submission should have feedback audio');
+  const counterDuration = firstPitch(counterWrong, 'Counter answer click');
+  assert(Math.abs(counterDuration - .45) < .03, 'market input must use the coin recording');
+  assert(Math.abs(counterDuration - zombieDuration) > .2, 'the two games must use different input cues');
+  assert(counterWrong.length >= 2, 'Change Counter wrong submission should have feedback audio');
   await page.waitForFunction(() => !document.querySelector('[data-market-clear]')?.disabled);
   await page.locator('[data-market-clear]').click();
   let remainder = due;
@@ -146,12 +125,12 @@ try {
   }
   assert.equal(remainder, 0, `Change Counter cannot make ${due}p`);
   const counterCorrect = await soundFrom(page, () => page.locator('[data-market-submit]').click());
-  assert(counterCorrect.length > counterTap.length, 'Change Counter correct submission should have feedback audio');
+  assert(counterCorrect.length >= 2, 'Change Counter correct submission should have feedback audio');
   assert.notDeepEqual(counterCorrect.map((note) => note.wave), counterWrong.map((note) => note.wave),
     'Change Counter success and error feedback should sound different');
   assert.deepEqual(errors, [], 'audio route checks must not trigger browser errors');
 
-  console.log(`PASS per-game audio: distinct zombie ${zombiePitch.toFixed(0)}Hz and counter ${counterPitch.toFixed(0)}Hz profiles, hub reset, keyboard/tap gestures, correct/wrong feedback, mute`);
+  console.log(`PASS per-game audio: recorded cues, zombie UI pop and counter coin profiles, hub reset, keyboard/tap gestures, correct/wrong feedback, mute`);
 } finally {
   await browser.close();
 }

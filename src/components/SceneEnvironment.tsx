@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { GameSceneArtworkContext } from '../games/gameSceneArtwork';
 import { getWideEnvironment } from '../gameSceneMeta';
 
 interface SceneEnvironmentProps {
@@ -11,7 +12,8 @@ interface SceneEnvironmentProps {
 
 /** Contain scenery by default; a game may opt into a full-bleed cover treatment. */
 const SceneEnvironment: React.FC<SceneEnvironmentProps> = ({ src, className = '', alt = '', position = 'center', fit = 'contain' }) => {
-  const wide = getWideEnvironment(src);
+  const scene = useContext(GameSceneArtworkContext);
+  const wide = scene ?? getWideEnvironment(src);
   return (
     <picture className={`pointer-events-none absolute inset-0 block ${className}`.trim()}>
       {wide ? <source media="(min-width: 700px) and (min-height: 600px)" srcSet={wide} /> : null}

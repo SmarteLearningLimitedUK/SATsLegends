@@ -7,6 +7,8 @@ import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameScreenShell } from '../layout/ScreenPrimitives';
 import { triggerHaptic } from '../haptics';
 import lavaPathBackground from '../assets/maps/premium/lava-path.webp';
+import lavaPlatform from '../assets/items/lava-platform.webp';
+import { useTrimmedImageSource } from '../utils/trimTransparentImage';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import './game-refinements.css';
 
@@ -24,6 +26,8 @@ const STONES = [
   { x: 75, y: 62.8 }, { x: 42, y: 56 }, { x: 24, y: 49.2 }, { x: 63, y: 42.4 },
   { x: 37, y: 35.6 }, { x: 70, y: 28.8 }, { x: 50, y: 22 },
 ];
+// The crossing occupies the river in the lower half of the illustrated cavern.
+const DISPLAY_STONES = STONES.map(stone=>({...stone,y:51+(stone.y-22)*.56}));
 const randInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 const formatQuantity = (value: number) => Number(value.toFixed(4)).toLocaleString('en-GB', { maximumFractionDigits: 4 });
 const shuffle = <T,>(items: T[]) => {
@@ -144,7 +148,8 @@ const LavaPathGame: React.FC<LavaPathGameProps> = ({ levelId, avatarId, isPracti
     } else loadNextQuestion();
   };
   const currentStep = Math.min(correctCount, TOTAL_STEPS);
-  const point = STONES[currentStep];
+  const point = DISPLAY_STONES[currentStep];
+  const platformArtwork = useTrimmedImageSource(lavaPlatform);
   return (
     <GameScreenShell className="lava-crossing-game overflow-hidden" backgroundImage={lavaPathBackground} backgroundOpacity={1}>
       <PracticeIntroPopup open={showPracticeIntro} title="Lava Path" body="Convert the units to stabilise the next stone. Cross ten stones to escape the lava."
@@ -154,33 +159,29 @@ const LavaPathGame: React.FC<LavaPathGameProps> = ({ levelId, avatarId, isPracti
           {question.prompt}
         </GameQuestionCard>
         <div className="lava-crossing-playfield" data-lava-playfield>
+          <div className="lava-current" aria-hidden="true">{Array.from({length:7},(_,i)=><i key={i} style={{top:`${12+i*12}%`,animationDelay:`${-i*.9}s`}} />)}</div>
           <div className="lava-crossing-status">{currentStep}/{TOTAL_STEPS} safe crossings</div>
           <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="lava-crossing-art" aria-hidden="true">
-            <path d="M0 0H100V9L84 7 74 10 58 8 49 12 31 8 17 10 0 7Z" fill="#574335" stroke="#251f22" strokeWidth="1.5" />
-            <path d="M0 94L18 91 33 96 50 92 65 96 83 91 100 94V100H0Z" fill="#6f4c37" stroke="#251f22" strokeWidth="1.5" />
             {[{x:13,y:24},{x:85,y:40},{x:14,y:65},{x:85,y:85}].map((bubble, index) => <motion.g key={index}
               animate={!reducedMotion ? { opacity: [.35,.8,.35] } : { opacity: .55 }} transition={{ duration: 2.7 + index * .2, repeat: Infinity }}>
               <ellipse cx={bubble.x} cy={bubble.y} rx="3.4" ry="1.2" fill="#ffd267" stroke="#b33c19" strokeWidth=".6" />
               <path d={`M${bubble.x-1.6} ${bubble.y-.3}q1.3-1.6 3.2-.2`} fill="none" stroke="#fff5bf" strokeWidth=".6" />
             </motion.g>)}
-            {STONES.map((stone, index) => {
+            {DISPLAY_STONES.map((stone, index) => {
               const safe = index <= currentStep;
               const unstable = index === currentStep + 1;
               const radius = 5.1 + (TOTAL_STEPS - index) * .18;
               return <motion.g key={index} data-lava-stone={index} data-stone-safe={safe}
                 animate={!reducedMotion && unstable && feedback === 'incorrect' ? { x: [0,-1.2,1.2,-.6,0] } : { x: 0 }} transition={{ duration: .4 }}>
-                <ellipse cx={stone.x} cy={stone.y+2.4} rx={radius+1.3} ry="3.2" fill="#b23316" opacity=".65" />
-                <path d={`M${stone.x-radius} ${stone.y-.3}L${stone.x-radius*.7} ${stone.y-2.4}L${stone.x+radius*.65} ${stone.y-2.6}L${stone.x+radius} ${stone.y-.4}L${stone.x+radius*.72} ${stone.y+3}L${stone.x-radius*.65} ${stone.y+3.2}Z`}
-                  fill={safe ? '#566c5c' : '#735a47'} stroke="#26312f" strokeWidth=".9" />
-                <path d={`M${stone.x-radius*.9} ${stone.y-.3}L${stone.x-radius*.65} ${stone.y-2.1}L${stone.x+radius*.6} ${stone.y-2.3}L${stone.x+radius*.9} ${stone.y-.4}L${stone.x+radius*.55} ${stone.y+1}L${stone.x-radius*.55} ${stone.y+1.2}Z`}
-                  fill={safe ? '#a7b899' : '#b29772'} stroke={safe ? '#dce7b2' : '#d3b68b'} strokeWidth=".5" />
+                <ellipse cx={stone.x} cy={stone.y+2.4} rx={radius+1.3} ry="3.2" fill="#331908" opacity=".26" />
+                <image href={platformArtwork} x={stone.x-radius} y={stone.y-4.5} width={radius*2} height={9} preserveAspectRatio="none" />
                 {!safe && <path d={`M${stone.x-2} ${stone.y-2}l1.8 1.2-1.2 1.1 2.4.7`} fill="none" stroke={unstable && feedback === 'incorrect' ? '#ffbb4a' : '#564134'} strokeWidth=".8" />}
                 {safe && <path d={`M${stone.x-1.5} ${stone.y-.1}l1 1 2-1.8`} fill="none" stroke="#e9ffc5" strokeWidth=".7" />}
               </motion.g>;
             })}
           </svg>
           <motion.div className="lava-crossing-hero" data-lava-hero
-            animate={{ left: `${point.x}%`, top: `${point.y}%`, x: '-50%', y: '-88%' }}
+            animate={{ left: `${point.x}%`, top: `${point.y}%`, x: '-50%', y: '-75%' }}
             transition={reducedMotion ? { duration: 0 } : { duration: .42, ease: 'easeInOut' }}>
             <div className="lava-crossing-hero-shadow" />
             <motion.img src={playerAvatar.portrait || playerAvatar.image} alt={playerAvatar.name} draggable={false}

@@ -11,8 +11,8 @@ export interface GameSoundProfile {
 }
 
 // Blueprint keys distinguish games that intentionally share the same gameType.
-// These small shifts give each activity a recognisable sound without separate
-// downloaded audio files or a louder soundtrack.
+// These timbres remain the fallback if a recorded cue cannot load. Recorded
+// effects are selected separately by blueprint in gameSampleLibrary.ts.
 const profiles: Record<string, GameSoundProfile> = {
   angle_arena:        { id: 'angle_arena',        material: 'metal',   pitch: 1.07, accent: .55 },
   area_architect:     { id: 'area_architect',     material: 'wood',    pitch: .91, accent: .59 },

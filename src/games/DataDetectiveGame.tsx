@@ -34,6 +34,12 @@ import dataDetectiveBackground from '../assets/maps/premium/data-detective.webp'
 import SceneEnvironment from '../components/SceneEnvironment';
 import MonsterMindActor from '../components/game-ui/MonsterMindActor';
 import { COHESIVE_ENEMIES } from '../assets/enemies/cohesive';
+import { evidenceArtwork } from './evidenceArtwork';
+
+const EvidenceAxisTick = ({x=0,y=0,payload}:{x?:number;y?:number;payload?:{value:string}}) => <g transform={`translate(${x},${y})`}>
+  <image href={evidenceArtwork(payload?.value ?? '')} x={-14} y={1} width={28} height={28} />
+  <text y={44} textAnchor="middle" fill="#fff4dd" fontSize={14} fontWeight={700}>{payload?.value.split(' ').at(-1)}</text>
+</g>;
 
 interface StolenItem {
   name: string;
@@ -363,7 +369,8 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                             dataKey="name"
                             stroke="#a8a29e"
                             fontSize={14}
-                            tick={{ fill: '#f1f5f9' }}
+                            tick={<EvidenceAxisTick />}
+                            height={56}
                             tickFormatter={(name) => String(name).split(' ').at(-1) || String(name)}
                             tickLine={false}
                             axisLine={false}
@@ -439,7 +446,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                     <div className="detective-evidence-pins" aria-label="Pin evidence to focus the chart">
                       {currentCase.map(item => (
                         <button key={item.name} type="button" data-button-skin="none" className="detective-evidence-pin" aria-pressed={pinnedEvidence === item.name} onClick={() => setPinnedEvidence((current) => current === item.name ? null : item.name)}>
-                          <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
+                          <img className="detective-item-icon" src={evidenceArtwork(item.name)} alt="" />
                           <span className="min-w-0 font-semibold">
                             {item.name}
                           </span>
@@ -571,7 +578,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                     {selectedSuspect.items.map((amount, index) => (
                       <div key={`${selectedSuspect.id}-item-${index}`} className="flex items-center justify-between rounded-xl border border-white/12 bg-white/6 px-3 py-2 max-[480px]:px-2 max-[480px]:py-1.5">
                         <div className="flex items-center gap-2">
-                          <span className="h-3 w-3 rounded-full" style={{ backgroundColor: ITEMS[index].color }} />
+                          <img className="detective-item-icon" src={evidenceArtwork(ITEMS[index].name)} alt="" />
                           <span className="text-xs font-bold text-white">{ITEMS[index].name}</span>
                         </div>
                         <span className="text-sm font-black text-amber-200">{amount}</span>

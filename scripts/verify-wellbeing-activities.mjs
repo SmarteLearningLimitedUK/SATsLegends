@@ -129,6 +129,12 @@ try {
       reducedMotion: 'reduce',
     });
     const page = await context.newPage();
+    await page.addInitScript(() => {
+      window.__qaMediaCalls = 0;
+      Object.defineProperty(navigator, 'mediaDevices', { configurable:true, value:{
+        getUserMedia:async()=>{window.__qaMediaCalls += 1;throw new Error('Microphone access must not be requested');},
+      }});
+    });
     const errors = [];
     page.on('pageerror', (error) => errors.push(error.message));
     try {
@@ -139,6 +145,7 @@ try {
         await page.locator(`[data-wellbeing-select="${id}"]`).click();
         const shell = page.locator(`[data-wellbeing-activity="${id}"]`);
         await expect(shell).toBeVisible();
+        await expect(shell.getByRole('button', { name:/microphone/i })).toHaveCount(0);
         await expect(shell.locator('[data-wellbeing-instructions]')).toHaveText(/\S/);
         await expect(shell.locator('[data-wellbeing-fact]')).toHaveText(/\S/);
         await expect(shell.locator('[data-wellbeing-affirmation]')).toHaveText(/\S/);
@@ -165,6 +172,7 @@ try {
         await completeActivity(page, id, profile);
         console.log(`PASS ${profile.name}: ${id} instructions, fact, affirmation and completion`);
       }
+      expect(await page.evaluate(() => window.__qaMediaCalls)).toBe(0);
       expect(errors).toEqual([]);
     } finally {
       await context.close();

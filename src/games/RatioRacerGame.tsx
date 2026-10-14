@@ -1,5 +1,6 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
+import { playRaceEngineSound } from '../audio/gameAudio';
 import { motion, AnimatePresence, useIsPresent, useReducedMotion } from 'motion/react';
 import { Flag, Zap } from 'lucide-react';
 import {
@@ -581,6 +582,10 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
   };
 
   const showBoost = raceState === 'correctBoost';
+  useEffect(() => {
+    if (sessionState?.paused || (raceState !== 'correctBoost' && raceState !== 'incorrectStall')) return;
+    return playRaceEngineSound((tuning.playerMoveDurationMs + tuning.playerBoostAnticipationMs) / 1000, raceState === 'incorrectStall');
+  }, [raceState, sessionState?.paused, tuning.playerMoveDurationMs, tuning.playerBoostAnticipationMs]);
   const showStall = raceState === 'incorrectStall';
   const progressPercent = Math.round(raceProgress * 100);
   const racePressure = showStall ? 'stall' : showBoost ? 'boost' : lives <= 1 ? 'last-chance' : progressPercent >= 80 ? 'final-stretch' : 'steady';

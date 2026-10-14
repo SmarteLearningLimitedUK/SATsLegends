@@ -89,6 +89,8 @@ jobs:
           node scripts/verify-sats-mock-flow.mjs
           node scripts/verify-game-audio.mjs
           node scripts/verify-per-game-audio.mjs
+          node scripts/verify-recorded-sfx.mjs
+          node scripts/verify-engine-cues.mjs
           node scripts/verify-daily-quests-and-core-mastery.mjs
           node scripts/verify-on-screen-working.mjs
           node scripts/verify-scored-progression.mjs

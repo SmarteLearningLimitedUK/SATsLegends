@@ -61,7 +61,7 @@ const areaQuestionsForTier = (level: number): AreaQuestion[] => {
       const height = tier === 1 ? 2 + (Math.floor(variant / 3) % 2) : 2 + (Math.floor(variant / 3) % 3);
       const x = 1 + (variant % (gridSize - width + 1));
       const y = 1 + (Math.floor(variant / 2) % (gridSize - height + 1));
-      return buildQuestion(`${tier}-rectangle-${variant}`, gridSize, rectCells(x, y, width, height), 'Cover the shaded floor. Add the tile areas.');
+      return buildQuestion(`${tier}-rectangle-${variant}`, gridSize, rectCells(x, y, width, height), 'Tile every gold square. Each small square has an area of 1 square unit. Choose a tile, then tap where it fits. Leave no gaps or overlaps.');
     }
     if (tier <= 4) {
       const gridSize = tier === 3 ? 6 : 7;

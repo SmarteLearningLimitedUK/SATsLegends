@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { playMonsterSound } from '../audio/gameAudio';
 import confetti from 'canvas-confetti';
 import { AnimatePresence, motion } from 'motion/react';
 import {
@@ -14,6 +15,7 @@ import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import MonsterMindActor from '../components/game-ui/MonsterMindActor';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
 import './factor-frenzy.css';
+import SceneEnvironment from '../components/SceneEnvironment';
 
 type FactorProblemType = 'missing_factor' | 'all_factors' | 'common_factors' | 'prime_factors';
 
@@ -339,6 +341,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     });
 
     if (isCorrect) {
+      playMonsterSound('monster_hurt');
       const timeBonus = state.timeLeft * 10;
       const points = 500 + timeBonus;
       const newScore = state.XP + points;
@@ -367,6 +370,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
       return;
     }
 
+    playMonsterSound('monster_growl');
     setState((previous) => ({
       ...previous,
       status: 'incorrect',
@@ -420,8 +424,8 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   return (
     <div
       className="factor-frenzy-game relative h-full w-full overflow-hidden bg-contain bg-center bg-no-repeat text-white"
-      style={{ backgroundImage: `url(${factorFrenzyBackground})` }}
     >
+      <SceneEnvironment src={factorFrenzyBackground} />
       <div className="pointer-events-none fixed left-0 right-0 top-[max(0.5rem,env(safe-area-inset-top))] z-50 flex justify-center px-3">
         <div className="relative w-full max-w-[780px]">
           <GameQuestionCard

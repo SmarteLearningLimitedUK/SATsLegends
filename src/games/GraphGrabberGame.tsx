@@ -11,6 +11,7 @@ import {
   Pie,
   PieChart,
   ResponsiveContainer,
+  ReferenceLine,
   Tooltip,
   XAxis,
   YAxis,
@@ -172,22 +173,22 @@ const createBarRound = (levelId: number, variant: number): ChartRound => {
   const truePairs = [
     {
       id: 'most',
-      label: `${maxBar.label} has the largest bar.`,
+      label: `${maxBar.label} is largest.`,
       correct: true,
     },
     {
       id: 'least',
-      label: `${bars[(variant + 1) % bars.length].label} has the smallest bar.`,
+      label: `${bars[(variant + 1) % bars.length].label} is smallest.`,
       correct: bars[(variant + 1) % bars.length].label === minBar.label,
     },
     {
       id: 'pair',
-      label: `${CARAVAN_POOL[1].label} and ${CARAVAN_POOL[2].label} together make ${bars[1].value + bars[2].value}.`,
+      label: `${CARAVAN_POOL[1].label} + ${CARAVAN_POOL[2].label} = ${bars[1].value + bars[2].value}.`,
       correct: true,
     },
     {
       id: 'pair-false',
-      label: `${bars[0].label} and ${bars[3].label} together make ${bars[0].value + bars[3].value + 1}.`,
+      label: `${bars[0].label} + ${bars[3].label} = ${bars[0].value + bars[3].value + 1}.`,
       correct: false,
     },
   ];
@@ -384,10 +385,10 @@ const createPieRound = (levelId: number, variant: number): ChartRound => {
   }
 
   const statements = [
-    { id: 'largest', label: `${largest.label} is the largest slice.`, correct: true },
-    { id: 'equal', label: `${pie[2].label} and ${pie[3].label} are equal slices.`, correct: pie[2].value === pie[3].value },
-    { id: 'bigger', label: `${largest.label} is bigger than Windward.`, correct: largest.label !== 'Windward' },
-    { id: 'half', label: `Windward and Ivy together make half of the chart.`, correct: firstPair === 50 },
+    { id: 'largest', label: `${largest.label} is largest.`, correct: true },
+    { id: 'equal', label: `${pie[2].label} = ${pie[3].label}.`, correct: pie[2].value === pie[3].value },
+    { id: 'bigger', label: `${largest.label} > Windward.`, correct: largest.label !== 'Windward' },
+    { id: 'half', label: `Windward + Ivy = 50%.`, correct: firstPair === 50 },
   ];
 
   return {
@@ -430,6 +431,10 @@ const matchesAnswer = (selected: string[], expected: string[]) => {
 };
 
 const GraphBoard: React.FC<{ round: ChartRound; difficulty: number; previewAngle?: number | null }> = ({ round, difficulty, previewAngle }) => {
+  const [inspected, setInspected] = useState<string | null>(null);
+  const [compactChart,setCompactChart]=useState(()=>window.matchMedia('(max-height:650px)').matches);
+  useEffect(()=>{const query=window.matchMedia('(max-height:650px)');const sync=()=>setCompactChart(query.matches);query.addEventListener('change',sync);return()=>query.removeEventListener('change',sync);},[]);
+  useEffect(()=>setInspected(null),[round.id]);
   const values = round.bars?.map((point) => point.value) || round.line?.map((point) => point.value) || [1];
   const tickStep = difficulty <= 2 ? 1 : 2;
   const axisMax = Math.ceil(Math.max(...values) / tickStep) * tickStep;
@@ -444,37 +449,45 @@ const GraphBoard: React.FC<{ round: ChartRound; difficulty: number; previewAngle
         </div>
         <div className="graph-grabber-cartesian-chart mt-1.5 h-[clamp(11rem,26vh,15.5rem)] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={round.bars!} margin={{ top: 18, right: 16, left: 10, bottom: 12 }}>
-              <CartesianGrid stroke="rgba(255,255,255,0.12)" strokeDasharray="3 3" vertical={false} />
+            <BarChart data={round.bars!} layout={compactChart?'vertical':'horizontal'} margin={{ top: 18, right: 16, left: 10, bottom: 12 }}>
+              <CartesianGrid stroke="rgba(255,255,255,0.12)" strokeDasharray="3 3" vertical={compactChart} horizontal={!compactChart} />
               <XAxis
-                dataKey="label"
+                dataKey={compactChart?undefined:'label'}
+                type={compactChart?'number':'category'}
+                domain={compactChart?[0,axisMax]:undefined}
+                ticks={compactChart?axisTicks:undefined}
                 interval={0}
                 tick={{ fill: '#fff8ec', fontSize: 14, fontWeight: 800 }}
                 axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
                 tickLine={false}
-                label={{ value: round.xLabel, position: 'insideBottom', offset: -2, fill: '#fff8ec', fontSize: 11, fontWeight: 800 } as never}
+                label={{ value: compactChart?round.yLabel:round.xLabel, position: 'insideBottom', offset: -2, fill: '#fff8ec', fontSize: 14, fontWeight: 800 } as never}
               />
               <YAxis
-                domain={[0, axisMax]}
-                ticks={axisTicks}
+                type={compactChart?'category':'number'}
+                dataKey={compactChart?'label':undefined}
+                domain={compactChart?undefined:[0, axisMax]}
+                ticks={compactChart?undefined:axisTicks}
+                width={compactChart?88:60}
                 interval={0}
                 tick={{ fill: '#fff8ec', fontSize: 14, fontWeight: 800 }}
                 axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
                 tickLine={false}
-                label={{ value: round.yLabel, angle: -90, position: 'insideLeft', fill: '#fff8ec', fontSize: 11, fontWeight: 800 } as never}
+                label={compactChart?undefined:{ value: round.yLabel, angle: -90, position: 'insideLeft', fill: '#fff8ec', fontSize: 14, fontWeight: 800 } as never}
               />
               <Tooltip
                 cursor={{ fill: 'rgba(255,255,255,0.08)' }}
                 contentStyle={{ background: 'rgba(8,15,32,0.95)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '14px', color: '#fff8ec' }}
               />
-              <Bar dataKey="value" radius={[12, 12, 0, 0]}>
+              {inspected&&<ReferenceLine {...(compactChart?{x:round.bars.find(bar=>bar.label===inspected)?.value}:{y:round.bars.find(bar=>bar.label===inspected)?.value})} stroke="#fff3ae" strokeWidth={2} strokeDasharray="6 4" />}
+              <Bar dataKey="value" radius={[12, 12, 0, 0]} onClick={(_,index)=>{const bar=round.bars?.[index];if(bar)setInspected(inspected===bar.label?null:bar.label);}}>
                 {round.bars!.map((bar) => (
-                  <Cell key={bar.label} fill={bar.color} />
+                  <Cell key={bar.label} fill={bar.color} opacity={!inspected||inspected===bar.label?1:.45} />
                 ))}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
+        <div className="graph-shipment-tabs" aria-label="Trace a shipment on the chart">{round.bars.map(bar=><button key={bar.label} type="button" aria-pressed={inspected===bar.label} onClick={()=>setInspected(inspected===bar.label?null:bar.label)}><span aria-hidden="true">▣</span>{bar.label}</button>)}</div>
       </div>
     );
   }
@@ -833,7 +846,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
 
           <section className="graph-grabber-answers rounded-[1rem] border border-white/8 bg-[linear-gradient(180deg,rgba(15,23,42,0.62),rgba(10,17,37,0.76))] p-2 shadow-[0_14px_24px_rgba(2,6,23,0.16)] md:p-2.5" data-answer-mode={round.answerMode}>
             <div className="graph-grabber-hint mb-1.5 flex items-center justify-start gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/70">
-              <span>{round.support}</span>
+              <span>{round.answerMode === 'multi' ? 'Select every true statement, then submit.' : round.kind==='bar'?round.support.replace(/y-axis/ig,'numbered axis'):round.support}</span>
             </div>
             <div className={`grid gap-2 ${optionGridClass}`}>
               {round.options.map((choice) => {

@@ -195,6 +195,8 @@ const inspectCompactControls = async () => {
   const controls = compact.locator('.sats-mission-tools button,.sats-answer-options button,.sats-response-actions button');
   expect(await controls.count()).toBeGreaterThanOrEqual(6);
   expect(await compact.locator('.sats-model').evaluate(model => model.getBoundingClientRect().height)).toBeGreaterThanOrEqual(90);
+  const modelCopy = await compact.locator('.sats-model').evaluate(model => { const r=model.getBoundingClientRect();return {fits:model.scrollHeight<=model.clientHeight+3,aboveDock:r.bottom<=document.querySelector('[data-testid=shared-bottom-hud]').getBoundingClientRect().top}; });
+  expect(modelCopy.fits, JSON.stringify(modelCopy)).toBe(true);expect(modelCopy.aboveDock, JSON.stringify(modelCopy)).toBe(true);
   for (let control = 0; control < await controls.count(); control++) {
     const button = controls.nth(control);
     await button.scrollIntoViewIfNeeded();

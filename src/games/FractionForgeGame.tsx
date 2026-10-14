@@ -6,6 +6,7 @@ import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import fractionForgeBackground from '../assets/maps/premium/fraction-forge.webp';
 import { triggerHaptic } from '../haptics';
+import { playGameSound } from '../audio/gameAudio';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import './fraction-forge.css';
 
@@ -190,6 +191,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
       setFeedback({ tone: 'info', message: 'Tap an ingot on the anvil to make room.' });
       return;
     }
+    playGameSound('place');
     setSlots((previous) => previous.map((id, index) => index === openIndex ? cardId : id));
     setFeedback(null);
     setStrikeState('idle');
@@ -204,6 +206,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
   };
   const strike = () => {
     if (endedRef.current || resolving || strikeState === 'error' || slots.some((id) => id === null)) return;
+    playGameSound('impact');
     const selected = slots.map((id) => round.cards.find((card) => card.id === id)).filter((card): card is FractionCard => Boolean(card));
     if (selected.length !== slots.length) return;
     const result = calculateRecipe(selected, round.operators);
@@ -273,8 +276,19 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
         <div className="ff-workspace">
           <div className="ff-anvil-zone">
             <div className="ff-target"><span>FORGE TARGET</span><strong className="ff-target-value" data-forge-target>{fractionLabel(round.target)}</strong></div>
-            <motion.div key={strikeTick} className="ff-hammer" data-strike-state={strikeState} aria-hidden="true"><Hammer /></motion.div>
             <div className="ff-anvil">
+              <motion.div key={strikeTick} className="ff-hammer" data-strike-state={strikeState} aria-hidden="true">
+                <svg viewBox="0 0 100 130" focusable="false">
+                  <defs><linearGradient id="ff-hammer-steel" x2="0" y2="1"><stop stopColor="#edf4eb"/><stop offset=".38" stopColor="#8ba8ad"/><stop offset="1" stopColor="#314d5b"/></linearGradient><linearGradient id="ff-hammer-wood" x2="1" y2="0"><stop stopColor="#704126"/><stop offset=".5" stopColor="#d49755"/><stop offset="1" stopColor="#87502c"/></linearGradient></defs>
+                  <path d="M43 39H60L64 116Q52 130 40 116Z" fill="url(#ff-hammer-wood)" stroke="#242f32" strokeWidth="4"/>
+                  <path d="M42 86L61 81M41 99L62 94M41 112L63 107" stroke="#553c29" strokeWidth="5"/>
+                  <path d="M10 14L23 6H78L90 17V45L78 54H20L10 44Z" fill="url(#ff-hammer-steel)" stroke="#233c45" strokeWidth="5" strokeLinejoin="round"/>
+                  <path d="M23 6V54M77 7V53" fill="none" stroke="#e4b86b" strokeWidth="8"/>
+                  <path d="M29 15H70" stroke="#f4f8e5" strokeWidth="4" strokeLinecap="round"/>
+                  <path d="M11 39H88" stroke="#203e4d" strokeWidth="5"/>
+                  <path d="M44 21H60V36H44Z" fill="#daa55c" stroke="#5b502f" strokeWidth="2"/>
+                </svg>
+              </motion.div>
               <span className="ff-anvil-fracture ff-anvil-fracture-left" aria-hidden="true" />
               <span className="ff-anvil-fracture ff-anvil-fracture-right" aria-hidden="true" />
               <div className="ff-recipe" aria-label="Fraction recipe">

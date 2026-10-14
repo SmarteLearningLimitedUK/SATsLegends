@@ -53,7 +53,7 @@ import { reconcileAchievementState } from './systems/progression/achievementCata
 import { useProgressionStore } from './store/useProgressionStore';
 import { LevelProgress } from './lib/progression/types';
 import { getXpRequiredForLevel } from './lib/progression/getXpRequiredForLevel';
-import { configureGameSoundProfile, playGameSound } from './audio/gameAudio';
+import { configureGameSoundProfile, playGameSound, stopGameSoundEffects } from './audio/gameAudio';
 
 const PHONE_STAGE_MIN_HEIGHT = 635;
 const getViewportSize = () => {
@@ -375,6 +375,10 @@ const App: React.FC = () => {
     lives: globalMiniGameLives,
     paused: gameplayHelpOpen || gameplayWorkpadOpen || practiceBriefingOpen || Boolean(levelResult),
   }), [gameplayHelpOpen, gameplayWorkpadOpen, practiceBriefingOpen, globalMiniGameHudTimeLeft, globalMiniGameLives, levelResult, selectedLevel]);
+
+  useEffect(() => {
+    if (gameplayHelpOpen || gameplayWorkpadOpen || practiceBriefingOpen) stopGameSoundEffects();
+  }, [gameplayHelpOpen, gameplayWorkpadOpen, practiceBriefingOpen]);
 
   const resolveLevelTitle = useCallback(() => {
     if (!selectedLevel) return 'Level over';

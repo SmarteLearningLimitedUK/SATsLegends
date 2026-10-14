@@ -5,7 +5,7 @@ import {
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
 import { triggerHaptic } from '../haptics';
-import { playGameSound } from '../audio/gameAudio';
+import { playGameSound, playMonsterSound } from '../audio/gameAudio';
 import {
   FeedbackStrip,
   GameTopBar,
@@ -832,6 +832,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
     if (result === 'hit') {
       playGameSound('impact');
+      playMonsterSound('monster_hurt');
       const nextScore = scoreRef.current + POINTS_PER_HIT;
       scoreRef.current = nextScore;
       setScore(nextScore);
@@ -849,6 +850,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         setLocalLives((prev) => Math.max(0, prev - 1));
       }
       playGameSound('fail');
+      playMonsterSound('monster_laugh');
       setGameState('resolvedIncorrect');
     }
 
@@ -1110,7 +1112,9 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       const enemyFrame = enemyActorFrameRef.current;
       if (enemyFrame) {
         enemyFrame.style.left = `${enemyScreen.x / viewWidth * 100}%`;
-        enemyFrame.style.top = `${(enemyScreen.y - enemyTowerHeight * .04) / viewHeight * 100}%`;
+        // The platform's top is y + .96h - h + .04h: exactly enemyScreen.y.
+        // Actor artwork includes a transparent bottom margin; compensate once.
+        enemyFrame.style.top = `${(enemyScreen.y + enemySize * .12) / viewHeight * 100}%`;
         enemyFrame.style.width = `${enemySize * .82 / viewWidth * 100}%`;
         enemyFrame.style.height = `${enemySize * 1.16 / viewHeight * 100}%`;
         enemyFrame.style.visibility = 'visible';

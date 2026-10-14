@@ -1,7 +1,7 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import SceneEnvironment from '../components/SceneEnvironment';
 import { motion, useIsPresent, useReducedMotion } from 'motion/react';
 import conversionCanyonBackground from '../assets/maps/premium/conversion-canyon.webp';
-import weighScale from '../assets/maps/backgroundsforgames/Scale Master.png';
 import gemBlue from '../assets/place_value/jewels/diamond_blue.png';
 import gemGreen from '../assets/place_value/jewels/diamond_green.png';
 import gemPurple from '../assets/place_value/jewels/diamond_purple.png';
@@ -9,7 +9,7 @@ import gemRed from '../assets/place_value/jewels/diamond_red.png';
 import gemYellow from '../assets/place_value/jewels/diamond_yellow.png';
 import gemEmerald from '../assets/place_value/jewels/emerald.png';
 import gemSapphire from '../assets/place_value/jewels/sapphire.png';
-import { useTrimmedImageSource, useTrimmedImageSources } from '../utils/trimTransparentImage';
+import { useTrimmedImageSources } from '../utils/trimTransparentImage';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import './game-refinements.css';
@@ -137,7 +137,6 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
   const timerRef = useRef<number | null>(null);
   const victoryRef = useRef(onVictory);
   victoryRef.current = onVictory;
-  const trimmedScaleImage = useTrimmedImageSource(weighScale);
   const trimmedGemImages = useTrimmedImageSources(GEM_IMAGES);
   const gemImageMap = useMemo(
     () => new Map(GEM_IMAGES.map((src, index) => [src, trimmedGemImages[index] ?? src])),
@@ -261,14 +260,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
       }}
       data-conversion-tier={clampStage(levelId) + 1}
     >
-      <img
-        src={conversionCanyonBackground}
-        alt=""
-        aria-hidden="true"
-        draggable={false}
-        data-game-scene-image data-background-fit="contain"
-        className="pointer-events-none absolute inset-0 h-full w-full object-contain object-center"
-      />
+      <SceneEnvironment src={conversionCanyonBackground} />
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.15),rgba(2,6,23,0.26))]"
@@ -292,7 +284,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
             className="relative flex w-full max-w-[35rem] min-h-0 flex-1 items-center justify-center p-1 md:max-w-[40rem]"
           >
             <div className="conversion-scale-frame" data-conversion-scale data-conversion-broken={broken} data-conversion-target={round.targetGrams}>
-              <motion.img
+              <motion.svg viewBox="0 0 300 280"
                   key={`scale-${impact}-${broken}`}
                   initial={reducedMotion ? false : { rotate: 0, y: 0, x: 0 }}
                   animate={reducedMotion ? { rotate: broken ? 12 : 0, y: broken ? 7 : 0 } : broken
@@ -300,12 +292,22 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
                     : currentGrams > round.targetGrams ? { rotate: [0, -2, 1, -1, 0], y: [0, 3, 1, 3, 0] }
                     : impact > 0 ? { rotate: [0, -2, 2, -1, 0], y: [0, 3, -1, 0] } : { rotate: 0, y: 0 }}
                   transition={{ duration: .48, repeat: !reducedMotion && !broken && currentGrams > round.targetGrams ? Infinity : 0 }}
-                  src={trimmedScaleImage}
-                  alt=""
                   aria-hidden="true"
-                  draggable={false}
                   className={`pointer-events-none conversion-scale-art ${broken ? 'is-broken' : currentGrams > round.targetGrams ? 'is-straining' : impact > 0 ? 'is-loading' : ''}`}
-                />
+                >
+                  <defs><linearGradient id="canyon-scale-metal" x2="1" y2="1"><stop stopColor="#f8daa0"/><stop offset=".5" stopColor="#bd8849"/><stop offset="1" stopColor="#644527"/></linearGradient></defs>
+                  <ellipse cx="150" cy="264" rx="120" ry="10" fill="#05243399"/>
+                  <path d="M65 236L88 100Q92 84 110 84H190Q208 84 212 100L235 236Z" fill="url(#canyon-scale-metal)" stroke="#40342a" strokeWidth="6"/>
+                  <path d="M91 112H209L225 231H75Z" fill="#164657" stroke="#edd39a" strokeWidth="4"/>
+                  <circle cx="150" cy="161" r="51" fill="#f4e9c9" stroke="#735630" strokeWidth="6"/>
+                  {Array.from({length:11},(_,i)=><path key={i} d="M150 117V126" transform={`rotate(${-110+i*22} 150 161)`} stroke="#184151" strokeWidth="3"/>)}
+                  <motion.path d="M150 161L150 126" animate={{rotate:Math.min(110,currentGrams/round.targetGrams*110)-110}} style={{transformOrigin:'150px 161px'}} transition={{type:'spring',stiffness:180,damping:14}} stroke={broken?'#df514b':'#cf7541'} strokeWidth="5" strokeLinecap="round"/>
+                  <circle cx="150" cy="161" r="7" fill="#153b49"/>
+                  <path d="M137 94V58H163V94" fill="#b6d8d1" stroke="#334d4d" strokeWidth="5"/>
+                  <path d="M26 55Q150 81 274 55L262 85Q150 109 38 85Z" fill="#4f7781" stroke="#183945" strokeWidth="5"/>
+                  <path d="M26 55Q150 81 274 55" fill="none" stroke="#e9f4e0" strokeWidth="6"/>
+                  <rect x="49" y="232" width="202" height="22" rx="8" fill="url(#canyon-scale-metal)" stroke="#41372a" strokeWidth="5"/>
+                </motion.svg>
               {broken && <><svg className="conversion-crack" viewBox="0 0 100 150" aria-hidden="true"><path d="M65 0 L38 35 L62 54 L30 87 L51 102 L23 150" /></svg></>}
               <div className="conversion-load-meter" data-conversion-load={currentGrams}>
                 <span>Load meter</span><strong>{toGramLabel(currentGrams)}</strong>

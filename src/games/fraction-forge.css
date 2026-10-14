@@ -344,17 +344,17 @@
 .ff-hammer {
   position: absolute;
   z-index: 6;
-  top: 5%;
-  right: clamp(0px, 4vw, 45px);
-  width: clamp(56px, 8vw, 110px);
-  height: clamp(56px, 8vw, 110px);
-  transform: rotate(-27deg);
-  transform-origin: 77% 85%;
+  top: calc(23% - 76px);
+  left: 62%;
+  width: clamp(52px, 8vw, 100px);
+  height: clamp(70px, 10.4vw, 130px);
+  transform: rotate(28deg);
+  transform-origin: 52% 88%;
   filter: drop-shadow(0 5px 5px rgba(0, 0, 0, .65));
   pointer-events: none;
 }
 
-.ff-hammer svg { display: block; width: 100%; height: 100%; }
+.ff-hammer svg { display: block; width: 100%; height: 100%; transform:scale(2.55); transform-origin:52% 88%; }
 
 .fraction-forge-game[data-strike-state='success'] .ff-hammer,
 .fraction-forge-game[data-strike-state='error'] .ff-hammer,
@@ -364,10 +364,10 @@
 }
 
 @keyframes ff-hammer-strike {
-  0% { transform: rotate(-32deg) translateY(-14px); }
-  55% { transform: rotate(18deg) translate(-22px, 20px); }
-  72% { transform: rotate(8deg) translate(-16px, 14px); }
-  100% { transform: rotate(-27deg); }
+  0% { transform: rotate(28deg) translateY(-8px); }
+  55% { transform: rotate(-62deg) translate(-12px, 20px); }
+  72% { transform: rotate(-46deg) translate(-8px, 12px); }
+  100% { transform: rotate(28deg); }
 }
 
 .ff-spark-burst {
@@ -751,10 +751,9 @@
   }
   .ff-operator { min-width: 9px; font-size: clamp(13px, 3.5vw, 19px); }
   .ff-hammer {
-    top: 3%;
-    right: 7%;
-    width: clamp(52px, 14vw, 86px);
-    height: clamp(52px, 14vw, 86px);
+    top: calc(23% - 60px);
+    width: clamp(52px, 14vw, 80px);
+    height: clamp(70px, 18vw, 104px);
   }
   .ff-tray { gap: 7px; padding: 9px 11px; }
   .ff-bank {
@@ -822,7 +821,7 @@
   .ff-anvil { bottom: 20px; height: 74%; }
   .ff-target { min-height: 32px; padding: 3px 8px; font-size: 10px; }
   .ff-target-value { font-size: 17px; }
-  .ff-hammer { top: 29px; right: 0; width: 38px; height: 38px; }
+  .ff-hammer { top: calc(23% - 50px); width: 48px; height: 64px; }
   .ff-slot { width: 50px; height: 50px; }
   .ff-tray-title { display: none; }
   .ff-tray { padding: 7px; }

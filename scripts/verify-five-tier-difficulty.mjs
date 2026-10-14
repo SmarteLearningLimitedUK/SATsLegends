@@ -28,6 +28,7 @@ const actualHelpers = new Set([
   'src/systems/content/island1NumberBaseCamp.ts',
   'src/utils/questionShuffle.ts',
   'src/utils/mathDisplay.ts',
+  'src/games/rotationStationQuestions.ts',
   'src/utils/gameNames.ts',
 ]);
 const load = (relative, names = []) => {
@@ -558,23 +559,21 @@ record(`Formula substitution and reverse calculation answers (${sampleCount * 5}
   assert.ok([3, 4, 5].every((tier) => parallelogramByTier[tier] > 0), 'Parallelogram revision must appear in upper tiers');
   assert.equal(parallelogramByTier[1] + parallelogramByTier[2], 0, 'Early tiers keep familiar formulae');
 });
-const rotation = generator('RotationStationGame', ['createQuestion', 'stageFromProgress']);
+const rotation = load('src/games/rotationStationQuestions.ts', ['createQuestion', 'stageFromProgress']).__difficultyQA;
 const polygon = generator('PolygonPalaceGame', ['createQuestion', 'stageFromProgress', 'PROPERTY_POOL', 'SORT_CRITERIA']);
 record(`Rotation and polygon tier caps hold at high round counts and low time (${sampleCount * 10} questions)`, () => {
   for (let tier = 1; tier <= 5; tier++) for (let sample = 0; sample < sampleCount; sample++) {
     for (const [api, expectedStages] of [[rotation, [1, 4, 6, 8, 11]], [polygon, [1, 3, 5, 8, 11]]]) {
       const q = api.createQuestion(tier, sample + 100, 0); assert.equal(q.stage, expectedStages[tier - 1]);
       const options = q.options || q.choices; const correct = q.correctOptionIds || q.correctChoiceIds;
-      assert.ok(correct.length > 0); assert.equal(new Set(options.map((choice) => choice.id)).size, options.length);
+      if (api !== rotation || q.mode === 'describe') assert.ok(correct.length > 0); assert.equal(new Set(options.map((choice) => choice.id)).size, options.length);
       if (q.mode !== 'rotate_match') assert.ok(correct.every((id) => options.some((choice) => choice.id === id)));
       if (api === rotation) {
-        assert.equal(q.targetOrientation, (q.startOrientation + (q.direction === 'cw' ? q.quarterTurns : -q.quarterTurns) + 4) % 4);
-        if (q.mode === 'identify_reflection') {
-          assert.ok(tier >= 4);
-          assert.ok(['vertical', 'horizontal'].includes(q.reflectionAxis));
-          assert.deepEqual(q.correctOptionIds, [q.reflectionAxis]);
-        }
-        if (tier === 1) { assert.equal(q.mode, 'rotate_match'); assert.equal(q.quarterTurns, 1); }
+        assert.ok(q.source.every(p => p.x >= q.min && p.x <= q.max && p.y >= q.min && p.y <= q.max));
+        assert.ok(q.target.every(p => p.x >= q.min && p.x <= q.max && p.y >= q.min && p.y <= q.max));
+        if (tier === 1) assert.equal(q.mode, 'translate');
+        if (tier === 2) assert.equal(q.mode, 'reflect');
+        if (tier < 4) assert.equal(q.min, 0); else assert.equal(q.min, -5);
       } else if (q.mode === 'properties') {
         const trueIds = q.choices.filter((choice) => polygon.PROPERTY_POOL.find((property) => property.id === choice.id).check(q.shape)).map((choice) => choice.id).sort();
         assert.deepEqual([...correct].sort(), trueIds);

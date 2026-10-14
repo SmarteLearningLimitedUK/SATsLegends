@@ -2,6 +2,7 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, useIsPresent, useReducedMotion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import perimeterBackground from '../assets/maps/premium/perimeter-path.webp';
+import SceneEnvironment from '../components/SceneEnvironment';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { stripLegacyWorldPrefix } from '../utils/fantasyPrompt';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
@@ -92,11 +93,14 @@ const makeRectangleShape = (
   unit: AnswerUnit,
   hiddenEdgeId?: string,
 ): { shape: ShapeModel; perimeter: number } => {
+  const scale = 64 / Math.max(length, width);
+  const halfLength = length * scale / 2;
+  const halfWidth = width * scale / 2;
   const points: Point[] = [
-    { x: 8, y: 12 },
-    { x: 92, y: 12 },
-    { x: 92, y: 88 },
-    { x: 8, y: 88 },
+    { x: 50 - halfLength, y: 50 - halfWidth },
+    { x: 50 + halfLength, y: 50 - halfWidth },
+    { x: 50 + halfLength, y: 50 + halfWidth },
+    { x: 50 - halfLength, y: 50 + halfWidth },
   ];
 
   const perimeter = 2 * (length + width);
@@ -171,7 +175,7 @@ const generateQuestion = (level: number): PerimeterQuestion => {
     return {
       id,
       level,
-      prompt: isSquare ? 'The Monster Minds damaged this square boundary. Find the perimeter to restore it.' : 'The Monster Minds damaged this rectangle boundary. Find the perimeter to restore it.',
+      prompt: sideA === sideB ? 'The Monster Minds damaged this square boundary. Find the perimeter to restore it.' : 'The Monster Minds damaged this rectangle boundary. Find the perimeter to restore it.',
       hint: 'Trace the full outside boundary once.',
       answerUnit: 'm',
       correctPerimeter: model.perimeter,
@@ -271,8 +275,8 @@ const getEdgeLabelPosition = (edge: ShapeEdge) => {
   const y = (edge.from.y + edge.to.y) / 2;
   const horizontal = Math.abs(edge.to.x - edge.from.x) >= Math.abs(edge.to.y - edge.from.y);
   return horizontal
-    ? { x, y: y < 20 ? 12.5 : y > 80 ? 87.5 : y }
-    : { x: x > 80 ? 83 : x < 20 ? 16 : x + 6, y };
+    ? { x, y: y < 50 ? y - 6 : y + 6 }
+    : { x: x < 50 ? x - 6 : x + 6, y };
 };
 
 const PerimeterShapeRenderer: React.FC<{
@@ -281,8 +285,8 @@ const PerimeterShapeRenderer: React.FC<{
   disabled: boolean;
   onSelectEdge: (id: string) => void;
 }> = ({ shape, selectedEdgeIds, disabled, onSelectEdge }) => (
-  <>
-    <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+  <div className="perimeter-drawing">
+    <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
       <defs>
         <pattern id="perimeter-floor-grid" width="8" height="8" patternUnits="userSpaceOnUse">
           <path d="M 8 0 H 0 V 8" fill="none" stroke="#78a58e" strokeWidth=".25" opacity=".25" />
@@ -319,7 +323,7 @@ const PerimeterShapeRenderer: React.FC<{
         <span>{edge.label}</span>
       </button>;
     })}
-  </>
+  </div>
 );
 
 const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({ levelId, avatarId: _avatarId, onVictory, onGameOver: _onGameOver, onBack: _onBack, sessionState, sessionEvents }) => {
@@ -397,7 +401,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({ levelId, avatarId
 
   return (
     <div className="perimeter-game relative h-full w-full overflow-hidden bg-[#85a1b9]" data-perimeter-game data-perimeter-tier={tier} data-perimeter-question={question.id}>
-      <img src={perimeterBackground} alt="" aria-hidden="true" draggable={false} data-game-scene-image data-background-fit="contain" className="pointer-events-none absolute inset-0 h-full w-full object-contain object-center" />
+      <SceneEnvironment src={perimeterBackground} />
       <main className="perimeter-layout">
         <GameQuestionCard title="Secure the boundary" style={{ position: 'relative', top: 0, transform: 'none' }}>
           {stripLegacyWorldPrefix(question.prompt)}

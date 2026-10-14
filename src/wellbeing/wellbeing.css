@@ -101,7 +101,6 @@
 .balloon-string { width: 2px; height: clamp(24px, 4vh, 45px); background: #f4ead6b3; }
 .balloon-actor.is-released { animation: wellbeing-release 1.2s ease-out forwards; }
 .balloon-actions { display: flex; align-items: center; flex-direction: column; gap: 9px; flex: 0 0 auto; width: 100%; }
-.balloon-mic { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 44px; padding: 6px 12px; border: 0; border-radius: 10px; background: #062d3bc7; color: #d4e6dd; font-size: 12px; }
 .wellbeing-complete-backdrop { position: absolute; inset: 0; z-index: 150; display: grid; place-items: center; padding: 20px; overflow-y: auto; background: #041722a8; backdrop-filter: blur(7px); }
 .wellbeing-complete { position: relative; width: min(100%, 410px); max-height: 100%; overflow-y: auto; padding: 29px 24px 24px; border: 2px solid #9fc7bb; border-radius: 24px; background: linear-gradient(155deg, #17404b, #092a3b); color: #f4fbeb; text-align: center; box-shadow: inset 0 1px #dcefe745, 0 24px 60px #04151e73; }
 .wellbeing-complete-close { position: absolute; top: 9px; right: 9px; display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 12px; background: transparent; color: #e2eee5; }
@@ -660,14 +659,13 @@
 .thought-challenge > span { display: block; margin-bottom: 5px; color: #f7d99e; font-size: 10px; font-weight: 800; letter-spacing: .14em; }
 .thought-challenge > strong { display: block; margin-top: 3px; color: #d9efdd; font-weight: 750; }
 .thought-reframe-options { display: grid; gap: 6px; }
-.thought-reframe-option { min-height: 40px; padding: 6px 11px; border: 1px solid #d3e9d28a; border-radius: 8px; background: #0c3445d9; color: #edf8ed; font-size: 13px; font-weight: 650; line-height: 1.25; text-align: left; }
+.thought-reframe-option { min-height: max(44px,calc(44px / var(--game-stage-scale,1))); padding: 6px 11px; border: 1px solid #d3e9d28a; border-radius: 8px; background: #0c3445d9; color: #edf8ed; font-size: 13px; font-weight: 650; line-height: 1.25; text-align: left; }
 .thought-reframe-option:hover:not(:disabled) { border-color: #ffdfa0; background: #1b5161; }
 .thought-reframe-option[aria-pressed='true'] { border-color: #ffdfa0; background: #28606a; box-shadow: inset 0 0 0 1px #ffdfa080; }
 .balloon-scene .balloon-space { grid-column: 2; grid-row: 1 / -1; height: 100%; }
 .balloon-shape { border-width: 2px; border-color: #f0e7cebd; background: radial-gradient(circle at 28% 20%, #f7e6d5, #bb9fa1 34%, #765b76 73%, #3b435b); box-shadow: inset -12px -8px 18px #27364450, 0 22px 40px #031b2d77; }
 .balloon-shape span { font-family: inherit; font-weight: 700; }
 .balloon-scene .balloon-actions { grid-column: 1; grid-row: 3; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 8px; }
-.balloon-mic { border: 1px solid #c7e2d472; border-radius: 9px; background: #0a3043e3; color: #e6f2e8; font-size: 12px; font-weight: 650; }
 
 @keyframes wellbeing-scene-drift { from { transform: scale(1.015) translateX(-.6%); } to { transform: scale(1.07) translateX(.6%); } }
 @keyframes wellbeing-iris-orbit { from { rotate: 0deg; } to { rotate: 360deg; } }

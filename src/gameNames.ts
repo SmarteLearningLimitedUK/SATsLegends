@@ -21,7 +21,7 @@ export const CANONICAL_GAME_LABELS: Partial<Record<MiniGameType, string>> = {
   place_value_peaks: 'Decimal Sniper',
   calculation_clash: 'Calculation Cup',
   coordinate_quest: 'Coordinates Quest',
-  transform_temple: 'Rotation Station',
+  transform_temple: 'Transformation Station',
   mirror_gate: 'SATs Paper 2',
   scale_safari: 'Scale Builder',
   scales_of_the_sun: 'Scale Master',

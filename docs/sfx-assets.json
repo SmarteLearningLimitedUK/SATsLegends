@@ -1,0 +1,122 @@
+[
+  {
+    "asset": "ui-pop.mp3",
+    "source": "pop-robotic-9-2026-05-18-17-42-12-utc\\Pop Robotic 9.wav",
+    "maxSeconds": 0.18,
+    "targetLUFS": -26
+  },
+  {
+    "asset": "incorrect.mp3",
+    "source": "awkward-cartoon-game-beep-4-2026-05-18-03-02-30-utc\\Awkward Cartoon Game Beep 4.wav",
+    "maxSeconds": 0.85,
+    "targetLUFS": -24
+  },
+  {
+    "asset": "correct.mp3",
+    "source": "correct\\correct.wav",
+    "maxSeconds": 2,
+    "targetLUFS": -22
+  },
+  {
+    "asset": "level-up.mp3",
+    "source": "level-up-2026-05-18-17-45-26-utc\\Level Up.wav",
+    "maxSeconds": 2,
+    "targetLUFS": -21
+  },
+  {
+    "asset": "reward.mp3",
+    "source": "game-reward-1-2026-05-18-17-45-35-utc\\Game Reward 1.wav",
+    "maxSeconds": 3.1,
+    "targetLUFS": -22
+  },
+  {
+    "asset": "fairy.mp3",
+    "source": "fantasy-fairy-bonus-1-2026-05-18-17-22-57-utc\\Fantasy Fairy Bonus 1.wav",
+    "maxSeconds": 1.8,
+    "targetLUFS": -23
+  },
+  {
+    "asset": "gem-place.mp3",
+    "source": "gemstone-pouch-handling-1-2026-05-18-17-19-40-utc\\Gemstone Pouch Handling 1.wav",
+    "maxSeconds": 0.6,
+    "targetLUFS": -26
+  },
+  {
+    "asset": "wood-place.mp3",
+    "source": "quest-game-action-wood-box-pick-up-3-2026-05-18-11-32-47-utc\\Quest_Game_Action_Wood_Box_Pick_Up_3.wav",
+    "maxSeconds": 0.75,
+    "targetLUFS": -26
+  },
+  {
+    "asset": "coin-place.mp3",
+    "source": "money-2026-05-18-18-49-04-utc\\Money 1.wav",
+    "maxSeconds": 0.45,
+    "targetLUFS": -26
+  },
+  {
+    "asset": "cash.mp3",
+    "source": "cash-machine-2026-05-18-17-45-22-utc\\Cash Machine.wav",
+    "maxSeconds": 1.9,
+    "targetLUFS": -24
+  },
+  {
+    "asset": "metal-impact.mp3",
+    "source": "collapsing-heavy-metallic-hit-03-2026-05-18-23-31-30-utc\\43526 Collapsing heavy metallic hit 03-full.wav",
+    "maxSeconds": 1.5,
+    "targetLUFS": -25
+  },
+  {
+    "asset": "boost.mp3",
+    "source": "retro-boost-11-2026-05-18-02-59-39-utc\\Retro Boost 11.wav",
+    "maxSeconds": 1.4,
+    "targetLUFS": -25
+  },
+  {
+    "asset": "liquid.mp3",
+    "source": "puzzle-game-ui-liquid-02-2026-05-18-19-54-32-utc\\Puzzle_Game_UI_Liquid_02.wav",
+    "maxSeconds": 0.9,
+    "targetLUFS": -26
+  },
+  {
+    "asset": "scanner.mp3",
+    "source": "granulated-electronic-scanner-2026-05-18-17-39-25-utc\\GranulationEl GFX019004.wav",
+    "maxSeconds": 1.1,
+    "targetLUFS": -26
+  },
+  {
+    "asset": "slime.mp3",
+    "source": "slime-handling-e-06-2026-05-18-16-16-52-utc\\GORESqsh_SMorph_Gore_2_Slime_Handling_E_06.wav",
+    "maxSeconds": 0.85,
+    "targetLUFS": -27
+  },
+  {
+    "asset": "explosion.mp3",
+    "source": "short-explosion-2026-05-18-16-22-36-utc\\ExploShrt1 SDT2020601.wav",
+    "maxSeconds": 1.3,
+    "targetLUFS": -27
+  },
+  {
+    "asset": "jump-hit.mp3",
+    "source": "jump-game-hit-164-2026-05-18-21-04-16-utc\\Jump Game Hit 164.wav",
+    "maxSeconds": 1,
+    "targetLUFS": -26
+  },
+  {
+    "asset": "monster-growl.mp3",
+    "source": "creature-coloss-shout-angry-deep-03-2026-05-18-14-00-28-utc\\CREATURE_COLOSS_Shout_Angry_Deep_03.wav",
+    "maxSeconds": 1.5,
+    "targetLUFS": -29
+  },
+  {
+    "asset": "monster-laugh.mp3",
+    "source": "creature-imp-laugh-04-2026-05-18-14-00-33-utc\\CREATURE_IMP_Laugh_04.wav",
+    "maxSeconds": 1.2,
+    "targetLUFS": -29
+  },
+  {
+    "asset": "monster-hurt.mp3",
+    "source": "goblin-death-14-2026-05-18-16-24-02-utc\\Goblin Death 14.wav",
+    "maxSeconds": 1.5,
+    "targetLUFS": -28
+  }
+]

@@ -109,7 +109,7 @@ async function box(locator) {
   });
 }
 
-async function hitVisible(locator, { minimumHeight = 0, text = false } = {}) {
+async function hitVisible(locator, { minimumHeight = 0, text = false, passive = false } = {}) {
   const result = await locator.evaluate((node, checkText) => {
     const rect = node.getBoundingClientRect();
     const hitOwners = [];
@@ -134,7 +134,7 @@ async function hitVisible(locator, { minimumHeight = 0, text = false } = {}) {
     expect(result.width).toBeGreaterThan(1); expect(result.height).toBeGreaterThanOrEqual(minimumHeight - .01); // Subpixel arithmetic only, after final App pose.
     expect(result.x).toBeGreaterThanOrEqual(-1); expect(result.y).toBeGreaterThanOrEqual(-1);
     expect(result.right).toBeLessThanOrEqual(result.viewport.width + 1); expect(result.bottom).toBeLessThanOrEqual(result.viewport.height + 1);
-    expect(result.points, 'The visible control must receive input across its silhouette').toEqual([true, true, true, true, true]);
+    if (!passive) expect(result.points, 'The visible control must receive input across its silhouette').toEqual([true, true, true, true, true]);
     expect(result.clipped, 'A gameplay control or caption is clipped by its container').toEqual([]);
     for (const line of result.lines) {
       expect(line.x).toBeGreaterThanOrEqual(result.x - 1); expect(line.right).toBeLessThanOrEqual(result.right + 1);
@@ -384,9 +384,10 @@ async function gameplayLayout(page, profile, playfieldSelector, responseSelector
   const dock = await box(page.locator('[data-testid="shared-bottom-hud"]'));
   try {
     expect(question.y).toBeGreaterThanOrEqual(topHud.bottom - 1);
-    expect(playfield.y).toBeGreaterThanOrEqual(question.bottom - 1);
+    const separated = (a, b) => a.right <= b.x + 1 || b.right <= a.x + 1 || a.bottom <= b.y + 1 || b.bottom <= a.y + 1;
+    expect(separated(playfield, question), 'The scene and question must not overlap').toBe(true);
     expect(playfield.height).toBeGreaterThan(120);
-    expect(answers.y).toBeGreaterThanOrEqual(playfield.bottom - 1);
+    expect(separated(answers, playfield), 'Answer controls must not overlap the scene').toBe(true);
     expect(answers.bottom).toBeLessThanOrEqual(dock.y + 1);
     expect(playfield.x).toBeGreaterThanOrEqual(-1); expect(playfield.right).toBeLessThanOrEqual(layout.viewport.width + 1);
     for (const button of await page.locator(buttonsSelector).all()) await hitVisible(button, { minimumHeight: 44, text: true });
@@ -932,9 +933,9 @@ async function racingFlow(page, profile, motion, level, exiting = false) {
   await openRoute(page, level.route); await dismissIntro(page);
   const scene = page.locator('[data-race-scene]'); await expect(scene).toHaveAttribute('data-race-state', 'showingQuestion');
   const backdrop = await page.locator('.ratio-racer-backdrop').evaluate((node) => ({ image: getComputedStyle(node).backgroundImage, size: getComputedStyle(node).backgroundSize }));
-  expect(backdrop.image).toContain('racing-paddock.webp'); expect(backdrop.size.split(',').map((size) => size.trim())).toEqual(['contain', 'contain']);
+  expect(backdrop.image).toContain('linear-gradient');
   const art = [];
-  for (const image of await page.locator('[data-race-course-tile]').all()) art.push(await paintedImage(image, 'race-course-crowd.webp'));
+  for (const image of await page.locator('[data-race-course-tile]').all()) art.push(await paintedImage(image, 'race-course-circuit-v2.webp'));
   expect(art).toHaveLength(3);
   const layouts = []; const motionChecks = []; const tiers = new Set();
   const reading = async () => {
@@ -964,7 +965,7 @@ async function racingFlow(page, profile, motion, level, exiting = false) {
   for (let index = 0; index < 15; index += 1) {
     if (index === 3 && !exiting) { await wrongAnswer(); wrongCount += 1; }
     const puzzle = await racePuzzle(page); tiers.add(puzzle.partCount);
-    const option = index === 0 ? puzzle.correct.find((value) => value !== puzzle.literal) : puzzle.correct[0];
+    const option = index === 0 ? (puzzle.correct.find((value) => value !== puzzle.literal) ?? puzzle.correct[0]) : puzzle.correct[0];
     expect(option).toBeTruthy(); const before = Number(await page.locator('[data-race-course]').getAttribute('data-course-travel'));
     await beginRaceProbe(page);
     await tap(page, profile, page.locator(`[data-race-answer="${option}"]`));
@@ -1056,7 +1057,7 @@ async function enterCalm(page, profile, id) {
 
 async function balloonArtwork(page) {
   const root = shell(page, 'thought_sort');
-  const label = await hitVisible(root.locator('.balloon-shape span'), { text: true });
+  const label = await hitVisible(root.locator('.balloon-shape span'), { text: true, passive: true });
   const endpoints = await root.locator('.balloon-actor').evaluate(async (node) => {
     const animation = node.getAnimations().find((entry) => entry.effect?.getTiming().iterations === Infinity);
     if (!animation) return [];
@@ -1102,8 +1103,12 @@ async function balloonArtwork(page) {
 async function calmLayout(page, id) {
   const root = shell(page, id); const stage = await stageLayout(page, 'responsive');
   const instructions = await hitVisible(root.locator('[data-wellbeing-instructions]'), { text: true });
-  const purpose = await hitVisible(root.locator('[data-wellbeing-purpose]'), { text: true });
-  const affirmation = await hitVisible(root.locator('[data-wellbeing-affirmation]'), { text: true });
+  // Supplementary notes rotate and deliberately ignore pointer events.
+  const activeNote = root.locator('[data-note-active="true"]');
+  await expect(activeNote).toHaveCount(1);
+  await expect.poll(() => activeNote.evaluate(n=>Number(getComputedStyle(n).opacity))).toBe(1);
+  const purpose = await hitVisible(root.locator('[data-wellbeing-purpose]'), { text: true, passive: true });
+  const affirmation = await hitVisible(root.locator('[data-wellbeing-affirmation]'), { text: true, passive: true });
   const status = await hitVisible(root.locator('[data-wellbeing-status]'), { text: true });
   const exit = await hitVisible(root.locator('[data-wellbeing-exit]'), { minimumHeight: 44, text: true });
   const header = await box(root.locator('.wellbeing-header')); const content = await box(root.locator('.wellbeing-content')); const footer = await box(root.locator('.wellbeing-footer'));
@@ -1129,46 +1134,22 @@ async function completeCalmInputs(page, profile, id, motion, { pendingExit = fal
     states.push({ progress: expected, status: caption.text, caption, footer, dock });
   };
   if (id === 'breathing_bloom') {
-    expect(await page.evaluate(() => window.__breathTrace?.samples[0]?.phase), 'The phase trace must start at the actual first breath in').toBe('in');
-    const pauseButton = root.getByRole('button', { name: 'Pause breathing', exact: true });
-    await activate(page, profile, pauseButton, true); await expect(root).toHaveAttribute('data-wellbeing-paused', 'true');
-    const paused = { phase: await root.locator('[data-breathing-phase]').getAttribute('data-breathing-phase'), progress: await root.locator('[data-wellbeing-progress]').getAttribute('aria-valuenow') };
-    await pause(page, 4600);
-    expect(await root.locator('[data-breathing-phase]').getAttribute('data-breathing-phase')).toBe(paused.phase);
-    expect(await root.locator('[data-wellbeing-progress]').getAttribute('aria-valuenow')).toBe(paused.progress);
-    const pausedAnimations = await root.evaluate((node) => node.getAnimations({ subtree: true }).filter((animation) => animation.playState === 'running' && Number(animation.effect?.getComputedTiming().duration) > 1).length);
-    expect(pausedAnimations).toBe(0);
-    await activate(page, profile, root.getByRole('button', { name: 'Resume breathing', exact: true }), true);
-    const phaseWaitStart = await page.evaluate(() => performance.now());
-    try {
-      await expect(root.locator('[data-breathing-phase]')).toHaveAttribute('data-breathing-phase', 'complete', { timeout: 45000 });
-    } catch (error) {
-      error.qaMetrics = await page.evaluate(({ paused, phaseWaitStart }) => {
-        const node = document.querySelector('[data-wellbeing-activity="breathing_bloom"]');
-        return { pausedAtInput: paused, phaseWaitStart, phaseWaitEnd: performance.now(), documentVisibility: document.visibilityState,
-          phase: node?.querySelector('[data-breathing-phase]')?.dataset.breathingPhase, pausedNow: node?.dataset.wellbeingPaused,
-          progress: node?.querySelector('[data-wellbeing-progress]')?.getAttribute('aria-valuenow'),
-          status: node?.querySelector('[data-wellbeing-status]')?.textContent, trace: window.__breathTrace?.samples || [] };
-      }, { paused, phaseWaitStart }).catch(() => ({ phaseWaitStart, browserClosedDuringPhaseWait: true }));
-      throw error;
+    await activate(page, profile, root.getByRole('button', {name:'Begin first cycle',exact:true}), true);
+    await activate(page, profile, root.getByRole('button', {name:'Pause',exact:true}), true);
+    await expect(root).toHaveAttribute('data-wellbeing-paused','true');
+    const pausedProgress=await root.locator('[data-wellbeing-progress]').getAttribute('aria-valuenow');
+    await pause(page,4600);
+    expect(await root.locator('[data-wellbeing-progress]').getAttribute('aria-valuenow')).toBe(pausedProgress);
+    await activate(page,profile,root.getByRole('button',{name:'Resume',exact:true}),true);
+    for(let cycle=0;cycle<4;cycle++) {
+      await expect(root.locator('[data-breathing-phase]')).toHaveAttribute('data-breathing-phase','checkin',{timeout:15000});
+      await expect(root.locator('[data-bloom-flower-count]')).toHaveAttribute('data-bloom-flower-count',String(cycle+2));
+      if(cycle<3) await activate(page,profile,root.getByRole('button',{name:'Begin next cycle',exact:true}),true);
     }
-    const trace = await page.evaluate(() => { window.__breathTrace.observer.disconnect(); const samples = window.__breathTrace.samples; delete window.__breathTrace; return samples; });
-    const phases = trace.filter((sample, index) => index === 0 || sample.phase !== trace[index - 1].phase);
-    const phaseTiming = [];
-    try {
-      expect(phases.map((sample) => sample.phase)).toEqual(['in', 'out', 'in', 'out', 'in', 'out', 'in', 'out', 'complete']);
-      for (let index = 1; index < phases.length; index += 1) {
-        const previous = phases[index - 1]; const next = phases[index];
-        const restart = trace.filter((sample, sampleIndex) => sample.time >= previous.time && sample.time < next.time
-          && sample.phase === previous.phase && !sample.paused && trace[sampleIndex - 1]?.paused).at(-1);
-        const startedAt = restart?.time ?? previous.time;
-        const duration = next.time - startedAt;
-        phaseTiming.push({ phase: previous.phase, startedAt, endedAt: next.time, durationMs: duration, restartedAfterPause: Boolean(restart) });
-        expect(duration).toBeGreaterThanOrEqual(previous.phase === 'in' ? 3700 : 4700); expect(duration).toBeLessThan(7500);
-      }
-    } catch (error) { error.qaMetrics = { paused, trace, phases, phaseTiming }; throw error; }
-    if (!pendingExit) { await expect(root.locator('.wellbeing-breath-cue')).toContainText('Follow your own comfortable rhythm.'); await progress(100); }
-    return { states, paused, pausedAnimations, realTimePhases: phases, breathingTrace: trace, phaseTiming, phaseTraceFromNativeEntry: true, noClockAcceleration: true, pendingExitAfterFinalNativeInput: pendingExit };
+    await activate(page,profile,root.getByRole('button',{name:'Finish reset',exact:true}),true);
+    if(pendingExit)return pendingResult();
+    await progress(100);
+    return {states,permissionFree:true,noClockAcceleration:true};
   }
   if (id === 'peaceful_pond') {
     for (let number = 1; number <= 10; number += 1) {
@@ -1182,7 +1163,7 @@ async function completeCalmInputs(page, profile, id, motion, { pendingExit = fal
       await rapid(pad); await progress(number * 10);
     }
   } else if (id === 'candle_calm') {
-    const lantern = root.getByRole('button', { name: 'Dim the lantern', exact: true }); await expect(lantern).toBeDisabled();
+    await expect(root.getByRole('slider', { name: /Lantern brightness/ })).toHaveCount(0);
     const items = await root.locator('[data-camp-item]').evaluateAll((buttons) => buttons.map((button) => button.dataset.campItem)); expect(items).toHaveLength(6);
     for (let index = 0; index < items.length; index += 1) {
       const item = root.locator(`[data-camp-item="${items[index]}"]`);
@@ -1190,26 +1171,34 @@ async function completeCalmInputs(page, profile, id, motion, { pendingExit = fal
       await expect(root.locator('[data-camp-packed]')).toHaveAttribute('data-camp-packed', String(index + 1));
       await progress(Math.round((index + 1) / 7 * 100));
     }
-    await expect(lantern).toBeEnabled(); await activate(page, profile, lantern, true);
+    const lantern=root.getByRole('slider',{name:/Lantern brightness/});
+    await lantern.focus();await lantern.press('Home');
     if (pendingExit) return pendingResult();
-    await rapid(lantern); await progress(100);
+    await progress(100);
   } else if (id === 'constellation_connect') {
-    const futureStar = root.getByRole('button', { name: 'Connect star 3', exact: true });
+    const futureStar = root.locator('[data-star-point="3"]');
     if (profile.options.hasTouch) { const target = await box(futureStar); await page.touchscreen.tap(target.x + target.width / 2, target.y + target.height / 2); }
-    else await activate(page, profile, futureStar, true);
+    else {const target=await box(futureStar);await page.mouse.click(target.x+target.width/2,target.y+target.height/2);}
     await expect(root.locator('[data-star-path-step]')).toHaveAttribute('data-star-path-step', '0');
-    for (let number = 1; number <= 5; number += 1) {
-      const star = root.getByRole('button', { name: `Connect star ${number}`, exact: true });
-      await activate(page, profile, star, true);
-      if (pendingExit && number === 5) return pendingResult();
-      await rapid(star); await progress(number * 20);
-      if (!profile.options.hasTouch && number < 5) await expect(root.getByRole('button', { name: `Connect star ${number + 1}`, exact: true })).toBeFocused();
+    for (const [roundIndex, stars] of [5,7,5].entries()) {
+      await expect(root.locator('[data-constellation-round]')).toHaveAttribute('data-constellation-round', String(roundIndex+1));
+      for (let number = 1; number <= stars; number += 1) {
+        await activate(page, profile, root.locator(`[data-star-point="${number}"]`), true);
+      }
+      await expect(root.locator('[data-constellation-fact]')).toHaveText(/\S/);
+      await activate(page, profile, root.getByRole('button', { name:roundIndex<2?'Next constellation':'Begin focus finish',exact:true }), true);
     }
+    for (let move=0;move<6;move++) {
+      await activate(page,profile,root.getByRole('button',{name:`Focus on the ${move%2===0?'left':'right'} light`,exact:true}),true);
+      if(pendingExit&&move===5)return pendingResult();
+    }
+    await progress(100);
   } else if (id === 'leaf_drift') {
-    for (let number = 1; number <= 3; number += 1) {
-      const leaf = root.getByRole('button', { name: `Guide leaf ${number}`, exact: true }); await activate(page, profile, leaf, true);
-      if (pendingExit && number === 3) return pendingResult();
-      await rapid(leaf);
+    for (const [index,sense] of ['sight','sound','touch'].entries()) {
+      const number=index+1;
+      await activate(page,profile,root.getByRole('button',{name:`Choose ${sense} leaf`,exact:true}),true);
+      await activate(page,profile,root.locator('.leaf-observation-options button').first(),true);
+      if(pendingExit&&number===3)return pendingResult();
       await expect(root.locator('[data-leaves-guided]')).toHaveAttribute('data-leaves-guided', String(number)); await progress(Math.round(number / 3 * 100));
     }
   } else if (id === 'thought_sort') {
@@ -1219,8 +1208,10 @@ async function completeCalmInputs(page, profile, id, motion, { pendingExit = fal
     await expect(root.getByRole('button', { name: 'Release balloon', exact: true })).toBeDisabled();
     await activate(page, profile, first, true); await expect(first).toHaveAttribute('aria-pressed', 'false');
     for (let index = 0; index < 5; index += 1) await activate(page, profile, words.nth(index), true);
-    expect(await words.evaluateAll((buttons) => buttons.filter((button) => button.getAttribute('aria-pressed') === 'true').length)).toBe(4);
-    await expect(root.locator('[data-wellbeing-progress]')).toHaveAttribute('aria-valuenow', '70');
+    expect(await words.evaluateAll((buttons) => buttons.filter((button) => button.getAttribute('aria-pressed') === 'true').length)).toBe(2);
+    await activate(page,profile,root.locator('[data-thought-option]').first(),true);
+    await expect(root.locator('[data-wellbeing-progress]')).toHaveAttribute('aria-valuenow', '75');
+    await expect(root.getByRole('button',{name:/microphone/i})).toHaveCount(0);
     const filledBalloon = await balloonArtwork(page); states.push({ filledBalloon });
     await page.screenshot({ path: path.join(output, `${profile.name}-${motion}-thought_sort-feelings-filled.png`) });
     expect(await page.evaluate(() => window.__qaMicCalls)).toBe(0);
@@ -1238,7 +1229,7 @@ async function pendingCalmExit(page, profile, id, motion) {
   // Measure the stable header before the final input starts its reward timer.
   // Direct native touch avoids spending that interval on locator stability scans.
   const bounds = await hitVisible(exit, { minimumHeight: 44, text: true });
-  const labels = { peaceful_pond: 'Guide lily pad 10 to ring 10', candle_calm: 'Dim the lantern', constellation_connect: 'Connect star 5', leaf_drift: 'Guide leaf 3', thought_sort: 'Release balloon' };
+  const labels = { peaceful_pond: 'Guide lily pad 10 to ring 10', candle_calm: 'Dim the lantern', constellation_connect: 'Focus on the right light', leaf_drift: 'Guide leaf 3', thought_sort: 'Release balloon' };
   const deadline = { breathing_bloom: 1800, peaceful_pond: 1200, candle_calm: 2200, constellation_connect: 2200, leaf_drift: 800, thought_sort: 1200 }[id];
   await page.evaluate(({ activityId, label }) => {
     const root = document.querySelector(`[data-wellbeing-activity="${activityId}"]`);
@@ -1248,31 +1239,30 @@ async function pendingCalmExit(page, profile, id, motion) {
       if (root.querySelector('[data-wellbeing-progress]')?.getAttribute('aria-valuenow') === '100' && trace.progressAt === null) {
         trace.progressAt = performance.now();
         if (activityId === 'breathing_bloom') trace.finalInputAt = trace.progressAt;
+        else if(trace.lastInput){trace.finalInputAt=trace.lastInput.time;trace.finalEvent=trace.lastInput.event;}
       }
       if (!root.isConnected && trace.unmountedAt === null) trace.unmountedAt = performance.now();
     };
     window.__qaPendingCalmObserver = new MutationObserver(observe);
     window.__qaPendingCalmObserver.observe(document.body, { subtree: true, attributes: true, childList: true });
     window.__qaPendingCalmListener = (event) => {
-      const button = event.target instanceof Element ? event.target.closest('button') : null;
+      const button = event.target instanceof Element ? event.target.closest('button, input[type="range"]') : null;
       if (!button || !root.contains(button)) return;
       const name = button.getAttribute('aria-label') || button.textContent.trim();
-      if (name === label && window.__qaPendingCalm.finalInputAt === null) {
-        window.__qaPendingCalm.finalInputAt = performance.now();
-        window.__qaPendingCalm.finalEvent = { type: event.type, trusted: event.isTrusted, label: name };
-      }
+      if(!button.matches('[data-wellbeing-exit]'))window.__qaPendingCalm.lastInput={time:performance.now(),event:{type:event.type,trusted:event.isTrusted,label:name}};
+
       if (event.type === 'click' && button.matches('[data-wellbeing-exit]')) {
         window.__qaPendingCalm.exitedAt = performance.now(); window.__qaPendingCalm.exitTrusted = event.isTrusted;
       }
     };
-    for (const type of ['pointerup', 'click']) document.addEventListener(type, window.__qaPendingCalmListener, true);
+    for (const type of ['pointerup', 'click', 'input', 'change']) document.addEventListener(type, window.__qaPendingCalmListener, true);
   }, { activityId: id, label: labels[id] });
   const inputs = await completeCalmInputs(page, profile, id, motion, { pendingExit: true });
   if (profile.options.hasTouch) await page.touchscreen.tap(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
   else { await exit.focus(); await page.keyboard.press('Enter'); }
   await expect(root).toHaveCount(0);
   const timing = await page.evaluate(() => {
-    for (const type of ['pointerup', 'click']) document.removeEventListener(type, window.__qaPendingCalmListener, true);
+    for (const type of ['pointerup', 'click', 'input', 'change']) document.removeEventListener(type, window.__qaPendingCalmListener, true);
     window.__qaPendingCalmObserver.disconnect();
     const value = { ...window.__qaPendingCalm, delayMs: window.__qaPendingCalm.exitedAt - window.__qaPendingCalm.finalInputAt };
     delete window.__qaPendingCalm; delete window.__qaPendingCalmListener; delete window.__qaPendingCalmObserver; return value;
@@ -1288,10 +1278,17 @@ async function pendingCalmExit(page, profile, id, motion) {
 
 async function nearDeadlineCalmExit(page, profile, id, exitKind) {
   await enterCalm(page, profile, id);
-  const leaf = id === 'leaf_drift'; const count = leaf ? 3 : 4; const delay = leaf ? 800 : 1200;
-  for (let number = 1; number < count; number += 1) await activate(page, profile,
-    shell(page, id).getByRole('button', { name: leaf ? `Guide leaf ${number}` : `Lily pad ${number}`, exact: true }), true);
-  const finalLabel = leaf ? `Guide leaf ${count}` : `Lily pad ${count}`;
+  const leaf = id === 'leaf_drift'; const count = leaf ? 3 : 10; const delay = leaf ? 800 : 1200;
+  const root=shell(page,id);
+  if(leaf){
+    for(const sense of ['sight','sound']){await activate(page,profile,root.getByRole('button',{name:`Choose ${sense} leaf`,exact:true}),true);await activate(page,profile,root.locator('.leaf-observation-options button').first(),true);}
+    await activate(page,profile,root.getByRole('button',{name:'Choose touch leaf',exact:true}),true);
+  }else{
+    for(let number=1;number<count;number++){await activate(page,profile,root.getByRole('button',{name:'I noticed something',exact:true}),true);await activate(page,profile,root.getByRole('button',{name:`Guide lily pad ${number} to ring ${number}`,exact:true}),true);}
+    await activate(page,profile,root.getByRole('button',{name:'I noticed something',exact:true}),true);
+  }
+  const finalButton=leaf?root.locator('.leaf-observation-options button').first():root.getByRole('button',{name:`Guide lily pad ${count} to ring ${count}`,exact:true});
+  const finalLabel=await finalButton.getAttribute('aria-label')||await finalButton.innerText();
   await page.evaluate(({ label, path }) => {
     const root = document.querySelector('[data-wellbeing-activity]:not([data-wellbeing-activity="hub"])');
     window.__qaCalmBoundary = { completedAt: null, exitedAt: null, unmountedAt: null, exitKind: path };
@@ -1299,7 +1296,7 @@ async function nearDeadlineCalmExit(page, profile, id, exitKind) {
     window.__qaCalmBoundaryObserver.observe(document.body, { subtree: true, childList: true });
     window.__qaCalmBoundaryListener = (event) => {
       const button = event.target.closest('button'); if (!button) return;
-      if (button.getAttribute('aria-label') === label) window.__qaCalmBoundary.completedAt = performance.now();
+      if ((button.getAttribute('aria-label')||button.textContent.trim()) === label) window.__qaCalmBoundary.completedAt = performance.now();
       if ((path === 'header' && button.matches('[data-wellbeing-exit]'))
         || (path === 'dock' && button.getAttribute('aria-label') === 'Back' && button.closest('[data-testid="shared-bottom-hud"]'))) window.__qaCalmBoundary.exitedAt = performance.now();
     };
@@ -1374,25 +1371,20 @@ async function calmFlow(page, profile, motion, id) {
 async function microphoneRecovery(page, profile, motion) {
   await enterCalm(page, profile, 'thought_sort'); const root = shell(page, 'thought_sort'); const before = await calmTokens(page);
   for (const word of ['worried', 'brave']) await activate(page, profile, root.getByRole('button', { name: word, exact: true }), true);
-  await activate(page, profile, root.getByRole('button', { name: 'Use microphone (optional)', exact: true }), true);
-  await expect(root.locator('[data-wellbeing-status]')).toContainText('Microphone unavailable');
-  expect(await page.evaluate(() => window.__qaMicCalls)).toBe(1);
+  await activate(page,profile,root.locator('[data-thought-option]').first(),true);
+  await expect(root.getByRole('button',{name:/microphone/i})).toHaveCount(0);
+  expect(await page.evaluate(() => window.__qaMicCalls)).toBe(0);
   await activate(page, profile, root.getByRole('button', { name: 'Release balloon', exact: true }), true);
   await expect(calmDialog(page)).toBeVisible(); await expect.poll(() => calmTokens(page)).toBe(before + 1);
   await activate(page, profile, calmDialog(page).getByRole('button', { name: 'Back to Calm Grove', exact: true }), true);
   await enterCalm(page, profile, 'thought_sort');
-  await page.evaluate(() => {
-    window.__qaStoppedTracks = 0;
-    navigator.mediaDevices.getUserMedia = () => new Promise((resolve) => { window.__qaResolveMic = () => resolve({ getTracks: () => [{ stop: () => { window.__qaStoppedTracks += 1; } }] }); });
-  });
   for (const word of ['calm', 'steady']) await activate(page, profile, shell(page, 'thought_sort').getByRole('button', { name: word, exact: true }), true);
-  await activate(page, profile, shell(page, 'thought_sort').getByRole('button', { name: 'Use microphone (optional)', exact: true }), true);
-  await expect(shell(page, 'thought_sort').getByRole('button', { name: 'Waiting for microphone', exact: true })).toBeDisabled();
+  await activate(page,profile,shell(page,'thought_sort').locator('[data-thought-option]').first(),true);
   await activate(page, profile, shell(page, 'thought_sort').locator('[data-wellbeing-exit]'), true);
   await expect(shell(page, 'thought_sort')).toHaveCount(0);
-  await page.evaluate(() => window.__qaResolveMic()); await expect.poll(() => page.evaluate(() => window.__qaStoppedTracks)).toBe(1);
+  expect(await page.evaluate(() => window.__qaMicCalls)).toBe(0);
   await pause(page, 1800); await expect(calmDialog(page)).toHaveCount(0); expect(await calmTokens(page)).toBe(before + 1);
-  return { checks: ['isolated mocked microphone denial', 'actual feeling and release controls recover', 'no real microphone permission requested', 'late mock stream stopped after exit', 'no stale completion or duplicate reward'], motion, stoppedTracks: await page.evaluate(() => window.__qaStoppedTracks), reward: before + 1 };
+  return { checks: ['microphone controls absent', 'actual feeling, balanced thought and release controls complete', 'zero microphone permission requests', 'exit cancels unfinished activity', 'no stale completion or duplicate reward'], motion, reward: before + 1 };
 }
 
 async function restaurantLivesEnd(page, profile, motion, level) {
@@ -1649,7 +1641,7 @@ async function formulaCompletion(page, profile, motion, level) {
       expect(fit.question.y).toBeGreaterThanOrEqual(fit.top.bottom - 1);
       expect(fit.playfield.y).toBeGreaterThanOrEqual(fit.question.bottom - 1);
       expect(fit.playfield.height).toBeGreaterThanOrEqual(64);
-      expect(fit.hint.y).toBeGreaterThanOrEqual(fit.playfield.bottom - 1);
+      expect(fit.hint.y >= fit.playfield.bottom - 1 || fit.hint.x >= fit.playfield.right - 1 || fit.hint.right <= fit.playfield.x + 1, 'Hint and diagram must not overlap').toBe(true);
       expect(fit.answers.y).toBeGreaterThanOrEqual(fit.hint.bottom - 1);
       expect(fit.answers.bottom).toBeLessThanOrEqual(fit.dock.y + 1);
       for (const button of await page.locator('[data-formula-answer]').all()) await hitVisible(button, { minimumHeight: 44, text: true });

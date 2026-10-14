@@ -161,6 +161,7 @@ for (const profile of profiles) {
     await expect(fraction).toHaveAttribute('data-numerator', String(initialNumerator));
     await expect(fraction).toHaveAttribute('data-denominator', String(initialDenominator));
     const clearedBefore = Number(await sprintProgress.getAttribute('data-cleared'));
+    await expect(page.locator('[data-simplify-sprint]')).toHaveAttribute('data-phase', 'idle');
     await gates.nth(safeGate).click();
     const reducedBy = factors[safeGate];
     await expect.poll(async () => {
@@ -198,7 +199,7 @@ for (const profile of profiles) {
       expect(multiplication).not.toBeNull();
       const product = Number(multiplication[1]) * Number(multiplication[2]);
       await expect(mineAnswers).toHaveCount(4);
-      const correctProduct = page.locator('.answer-choice-surface').getByRole('button', { name: `Strike with ${product}`, exact: true });
+      const correctProduct = page.locator('.answer-choice-surface').getByRole('button', { name: `Choose ${product}`, exact: true });
       const previousRockSource = await rock.getAttribute('src');
       await correctProduct.click();
       await expect(correctProduct).toHaveClass(/ui-button-success/);

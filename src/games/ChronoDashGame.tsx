@@ -3,6 +3,7 @@ import React, { useState, useCallback, useEffect, useLayoutEffect, useRef } from
 import { motion, useIsPresent, useReducedMotion } from 'motion/react';
 import { RotateCcw, Plus, Minus } from 'lucide-react';
 import missionBackground from '../assets/maps/premium/chrono-dash.webp';
+import SceneEnvironment from '../components/SceneEnvironment';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import './game-refinements.css';
@@ -117,7 +118,7 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({ levelId, avatarId: _ava
   const disabled = resolving || gameState !== 'playing' || timeLeft <= 0 || Boolean(sessionState?.paused);
   return (
     <div className="chrono-game relative h-full w-full overflow-hidden bg-[#7b7c68]" data-chrono-game data-chrono-tier={tier} data-chrono-time={timeLeft}>
-      <img src={missionBackground} alt="" aria-hidden="true" draggable={false} data-game-scene-image data-background-fit="contain" className="pointer-events-none absolute inset-0 h-full w-full object-contain object-center" />
+      <SceneEnvironment src={missionBackground} />
       <main className="chrono-layout">
         <GameQuestionCard title="Synchronise the clock" subtitle="Match both hands to restore time." style={{ position:'relative',top:0,transform:'none' }}>
           Set the clock to {displayTime(targetTime)}.

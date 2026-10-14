@@ -1,4 +1,5 @@
 import ArcadeJourney from '../components/game-ui/ArcadeJourney';
+import { playGameSound } from '../audio/gameAudio';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import {
@@ -468,6 +469,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
 
   const handleSpin = useCallback(() => {
     if (!round || gameState === 'spinning' || !sessionActive) return;
+    playGameSound('cast');
 
     clearTimers();
     answerLockedRef.current = false;

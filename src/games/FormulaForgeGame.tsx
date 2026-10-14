@@ -312,7 +312,7 @@ const FormulaShapePanel: React.FC<{ round: FormulaRound }> = ({ round }) => {
           </svg>
         ) : (
           <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full">
-            <rect x="18" y="18" width="64" height="64" rx="10" fill="rgba(56,189,248,0.16)" stroke="rgba(191,219,254,0.9)" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+            <rect x="18" y="24" width="64" height="52" rx="2" fill="rgba(56,189,248,0.25)" stroke="#8debe2" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
             <g opacity="0.24" stroke="rgba(255,255,255,0.85)" strokeWidth="0.8">
               {Array.from({ length: 4 }).map((_, index) => (
                 <React.Fragment key={`grid-${index}`}>
@@ -324,6 +324,7 @@ const FormulaShapePanel: React.FC<{ round: FormulaRound }> = ({ round }) => {
           </svg>
         )}
       </div>
+      <div className="formula-dimension-values" aria-label="Given measurements">{round.given.map(value=><span key={value.label}><strong>{value.label}</strong> = {value.value}</span>)}</div>
     </div>
   );
 };

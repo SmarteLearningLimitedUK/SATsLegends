@@ -9,6 +9,7 @@ import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import MonsterMindActor, { type MonsterMindReaction } from '../components/game-ui/MonsterMindActor';
 import dojoBackground from '../assets/maps/premium/number-line-ninja.webp';
+import SceneEnvironment from '../components/SceneEnvironment';
 import goblinMonster from '../assets/enemies/cohesive/goblin.webp';
 import './number-line-ninja.css';
 import { buildNumberLineQuestion as buildQuestion, type NumberLineQuestion } from './numberLineQuestions';
@@ -428,14 +429,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
-      <img
-        src={dojoBackground}
-        alt="Number line dojo backdrop"
-        className="absolute inset-0 h-full w-full object-contain object-center"
-        data-game-scene-image="true"
-        data-background-fit="contain"
-        draggable={false}
-      />
+      <SceneEnvironment src={dojoBackground} />
       <div className="absolute inset-0 bg-slate-950/25" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_52%,rgba(56,189,248,0.14),transparent_64%)]" />
 

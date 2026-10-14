@@ -1,3 +1,4 @@
+import { playGameSound } from '../audio/gameAudio';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import confetti from 'canvas-confetti';
@@ -356,6 +357,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const placeOnPlate = (plateIndex: number, sliceId: string) => {
     if (locked || remainingSlicesRef.current <= 0) return;
 
+    playGameSound('place');
     remainingSlicesRef.current -= 1;
     setRemainingSlices(remainingSlicesRef.current);
     lastCheckedAllocationRef.current = null;

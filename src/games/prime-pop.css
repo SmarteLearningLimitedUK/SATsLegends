@@ -18,10 +18,11 @@
 .prime-pop-ward-rail {
   position: relative;
   width: 88%;
-  height: 4px;
+  height: 10px;
+  border: 2px solid #253149;
   background: linear-gradient(90deg, #eab866, #fff1ba 20%, #ffc981 50%, #fff1ba 80%, #eab866);
-  border-radius: 100%;
-  box-shadow: 0 0 6px #fff0bb, 0 0 16px #eab866a8;
+  border-radius: 999px;
+  box-shadow: 0 2px 5px #071a35cc, 0 0 0 2px #fff0bb, 0 0 18px #eab866b8;
 }
 
 .prime-pop-ward-label {
@@ -29,12 +30,13 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  padding: 3px 18px;
-  border: 1px solid #f7d98c;
+  padding: 5px 20px;
+  border: 2px solid #f7d98c;
   border-radius: 5px 12px;
-  background: #253149;
+  background: #571f31;
   color: #fff3cd;
-  font-size: 14px;
+  box-shadow: 0 3px 8px #071a35b3;
+  font-size: 16px;
   line-height: 1.35;
   font-weight: 700;
   letter-spacing: .08em;
@@ -45,8 +47,8 @@
 .prime-pop-ward-crystal {
   position: absolute;
   top: 50%;
-  width: 17px;
-  height: 30px;
+  width: 21px;
+  height: 36px;
   transform: translateY(-50%);
   clip-path: polygon(50% 0, 100% 38%, 85% 80%, 50% 100%, 15% 80%, 0 38%);
   background: linear-gradient(110deg, #fff3c0 0 35%, #f4bf57 36% 62%, #a8792c 63%);

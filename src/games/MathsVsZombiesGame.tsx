@@ -9,7 +9,7 @@ import { MiniGameShellContractProps, emitMiniGameSessionEvent } from '../app/gam
 import { formatMultiplicationDisplay } from '../utils/mathDisplay';
 import MonsterMindActor from '../components/game-ui/MonsterMindActor';
 import ZombieHeroActor from './ZombieHeroActor';
-import { playGameSound } from '../audio/gameAudio';
+import { playGameSound, playMonsterSound } from '../audio/gameAudio';
 import { LEVEL_TIMERS_DISABLED } from '../app/testingFlags';
 import './maths-vs-zombies.css';
 
@@ -356,6 +356,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     const next = [...zombiesRef.current, zombie];
     zombiesRef.current = next;
     setZombies(next);
+    playMonsterSound('monster_growl');
     return zombie;
   }, [baseZombieHealth, isPractice, tier]);
 
@@ -568,6 +569,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       const hit = zombiesRef.current.some((zombie) => zombie.id === target.id && zombie.state !== 'die');
       if (hit) {
         playGameSound('impact');
+        playMonsterSound('monster_hurt');
         const next = zombiesRef.current.map((zombie) => zombie.id === target.id
           ? { ...zombie, health: 0, state: 'die' as ZombieState, stateTime: 0 }
           : zombie);
@@ -619,6 +621,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', { score: scoreRef.current });
     } else {
       setFeedback('Close! Try the next one.');
+      playMonsterSound('monster_laugh');
       emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { score: scoreRef.current, metadata: { tier, equation: question.prompt } });
       if (!isPractice) setHealth((value) => Math.max(0, value - 1));
       if (!isPractice && health <= 1) {

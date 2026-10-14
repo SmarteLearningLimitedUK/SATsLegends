@@ -46,7 +46,10 @@ for (const profile of profiles) {
         case 'area_architect': target = gamePage.getByRole('button', { name: 'Check floor' }); break;
         case 'problem_pyramid': target = gamePage.locator('.answer-choice-surface button').first(); break;
         case 'polygon_palace': target = gamePage.locator('main section').last().locator('button').first(); break;
-        default: target = gamePage.getByRole('button', { name: 'Submit', exact: true });
+        default:
+          await gamePage.locator('.rs-grid').focus();
+          for (let corner = 0; corner < 3; corner++) await gamePage.keyboard.press('Enter');
+          target = gamePage.getByRole('button', { name: 'Check image', exact: true });
       }
       await target.waitFor();
       assert(await target.isVisible(), `${profile.name}: ${game.action} must be visible`);

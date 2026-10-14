@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import rhinoEnemy from '../assets/enemies/cohesive/rhino.webp';
 import forestBackground from '../assets/maps/premium/place-value-panic.webp';
+import SceneEnvironment from '../components/SceneEnvironment';
 import hudAvatarName from '../assets/ui_frames/hudfortextplace_slices/hud_avatar_name.png';
 import hourglassIcon from '../assets/casual_ui/icons/hourglass.png';
 import { triggerHaptic } from '../haptics';
@@ -542,6 +543,9 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     event: React.PointerEvent<HTMLButtonElement>,
   ) => {
     if (isResolving || dragState) return;
+    // Motion's keyboard press gesture has no active pointer. onClick handles
+    // keyboard activation separately; it must not enter the drag lifecycle.
+    if (!event.pointerType) return;
     const token = location === 'target' ? targetSlots[index] : sourceSlots[index];
     if (!token) return;
 
@@ -549,7 +553,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
     const rect = event.currentTarget.getBoundingClientRect();
     const scale = getPlayfieldScale();
-    event.currentTarget.setPointerCapture(event.pointerId);
+    try { event.currentTarget.setPointerCapture(event.pointerId); }
+    catch { return; }
     event.currentTarget.dataset.dragStartX = String(event.clientX);
     event.currentTarget.dataset.dragStartY = String(event.clientY);
 
@@ -786,15 +791,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         onAction={() => setShowPracticeIntro(false)}
       />
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-        <img
-          src={forestBackground}
-          alt=""
-          aria-hidden="true"
-          draggable={false}
-          className="absolute inset-0 h-full w-full object-contain object-center"
-          data-game-scene-image="true"
-          data-background-fit={viewport.width >= 700 && viewport.height >= 600 ? 'cover' : 'contain'}
-        />
+        <SceneEnvironment src={forestBackground} />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,14,24,0.18)_0%,rgba(7,14,24,0.24)_44%,rgba(7,14,24,0.56)_100%)]" />
       </div>
       {!useSharedTopHud ? (

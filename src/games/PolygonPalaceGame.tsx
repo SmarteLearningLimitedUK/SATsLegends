@@ -2,6 +2,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { triggerHaptic } from '../haptics';
 import gameplayBackground from '../assets/maps/premium/polygon-palace.webp';
+import SceneEnvironment from '../components/SceneEnvironment';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
 
@@ -1087,15 +1088,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
 
   return (
     <div className="relative z-20 h-full w-full overflow-hidden bg-[#08162c] select-none">
-      <img
-        src={gameplayBackground}
-        alt=""
-        aria-hidden="true"
-        draggable={false}
-        data-game-scene-image="true"
-        data-background-fit="contain"
-        className="pointer-events-none absolute inset-0 h-full w-full object-contain object-center"
-      />
+      <SceneEnvironment src={gameplayBackground} />
 
       <main
         className={`relative z-20 flex h-full w-full flex-col items-center ${topPaddingClass} px-[max(0.75rem,env(safe-area-inset-left))] pb-[max(7.2rem,calc(env(safe-area-inset-bottom)+6.2rem))]`}

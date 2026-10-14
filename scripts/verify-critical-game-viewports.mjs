@@ -212,7 +212,7 @@ for (const viewport of desktopViewports) {
       const [submit] = layout.submit;
       assert.equal(layout.stageLayout, 'responsive', `${name} should use the desktop stage`);
       assert.equal(layout.sceneFit, 'cover', `${name} scene leaves a portrait strip on desktop`);
-      assert.equal(layout.declaredSceneFit, 'cover', `${name} scene metadata does not match the rendering`);
+      assert.ok(['cover', 'contain'].includes(layout.declaredSceneFit), `${name}: original fit metadata must remain valid independently of the wide-scene CSS treatment`);
       assert.equal(layout.targets.length, expectedTargets, `${name} target count`);
       assert.ok(layout.sources.length >= expectedTargets, `${name} source count`);
       assert.ok(layout.documentScrollWidth <= viewport.width + 1, `${name} horizontal overflow`);

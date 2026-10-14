@@ -226,9 +226,9 @@ const BossEncounterGame: React.FC<Props> = ({ gameType, levelId, sessionEvents, 
             <g className="sats-reactor-ring">{Array.from({length:6},(_,i)=><path key={i} d="M28 6H36L38 13H26Z" transform={`rotate(${i*60} 32 32)`} fill={completed / paper.missions.length >= (i+1)/6 ? '#ffcf57' : '#2c657d'} />)}</g>
             <path d="M32 17L44 28L38 46H26L20 28Z" fill="#65ddea" stroke="#bafaff" strokeWidth="2" /><path d="M32 17V46M20 28H44" stroke="#082e52" strokeWidth="2" />
           </motion.svg>
-          <div className="sats-charge-readout"><span>{completed}/{paper.missions.length} crystals charged</span><div><motion.i initial={false} animate={{ width: `${completed / paper.missions.length * 100}%` }} transition={{ duration: .4 }} /></div></div>
+          <div className="sats-charge-readout"><span>{completed}/{paper.missions.length}<span className="sats-charge-suffix"> crystals charged</span></span><div><motion.i initial={false} animate={{ width: `${completed / paper.missions.length * 100}%` }} transition={{ duration: .4 }} /></div></div>
         </div>
-        <div className="sats-model">{isConstructionMission(q.id)
+        <div className="sats-model"><svg className="core-mission-frame" viewBox="0 0 760 360" preserveAspectRatio="none" aria-hidden="true"><path d="M24 24H736V336H24Z" fill="none" stroke="#c4a875" strokeWidth="5"/><path d="M40 38H720V322H40Z" fill="none" stroke="#70dcd1" strokeWidth="2" strokeDasharray="30 10"/>{[0,1,2,3,4,5].map(i=><g key={i}><path d={`M${i<3?14:726} ${72+(i%3)*82}l10 -18 10 18 -10 18Z`} fill={completed/paper.missions.length>(i/6)?'#b5fff0':'#277489'} stroke="#ffdfa4" strokeWidth="2"/></g>)}</svg>{isConstructionMission(q.id)
           ? <SatsConstructionControl mission={q} value={draft[0] ?? ''} onChange={(value) => update(value, 0)} />
           : <SatsMissionVisual visual={q.visual} />}</div>
         <div className="sats-mission-tools"><button type="button" onClick={() => { save(); setNavOpen(true); }}>Mission list</button><button type="button" onClick={() => { save(); setFinishOpen(true); }}>Finish run</button></div>

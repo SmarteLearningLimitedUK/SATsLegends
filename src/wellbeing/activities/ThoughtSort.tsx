@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Mic, MicOff } from 'lucide-react';
 import WellbeingShell from '../WellbeingShell';
 import { WellbeingActivityComponentProps } from '../types';
 import { useWellbeingCompletion } from '../useWellbeingCompletion';
@@ -15,45 +14,18 @@ const ThoughtSort: React.FC<WellbeingActivityComponentProps> = ({ onComplete, on
   const [selected, setSelected] = useState<string[]>([]);
   const [balancedThought, setBalancedThought] = useState<string | null>(null);
   const [message, setMessage] = useState('Choose how you feel, then pick a fairer thought.');
-  const [micReady, setMicReady] = useState(false);
-  const [micPending, setMicPending] = useState(false);
   const selectedRef = useRef(selected);
   const releasedRef = useRef(false);
-  const mountedRef = useRef(true);
-  const requestRef = useRef(0);
-  const streamRef = useRef<MediaStream | null>(null);
-  const audioRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const rafRef = useRef<number | null>(null);
-  const soundFramesRef = useRef(0);
 
   useEffect(() => { selectedRef.current = selected; }, [selected]);
-  const stopMic = useCallback(() => {
-    requestRef.current += 1;
-    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
-    rafRef.current = null;
-    streamRef.current?.getTracks().forEach((track) => track.stop());
-    streamRef.current = null;
-    audioRef.current?.close().catch(() => {});
-    audioRef.current = null;
-    analyserRef.current = null;
-    soundFramesRef.current = 0;
-    if (mountedRef.current) { setMicReady(false); setMicPending(false); }
-  }, []);
-  const { finished, finish, cancel } = useWellbeingCompletion(onComplete, stopMic);
-
-  useEffect(() => {
-    mountedRef.current = true;
-    return () => { mountedRef.current = false; stopMic(); };
-  }, [stopMic]);
+  const { finished, finish, cancel } = useWellbeingCompletion(onComplete);
 
   const releaseBalloon = useCallback(() => {
     if (releasedRef.current || selectedRef.current.length < 1 || !balancedThought) return;
     releasedRef.current = true;
     setMessage('You made room for a more balanced thought.');
-    stopMic();
     finish(1200);
-  }, [balancedThought, finish, stopMic]);
+  }, [balancedThought, finish]);
 
   const selectWord = (word: string) => {
     if (releasedRef.current) return;
@@ -62,48 +34,6 @@ const ThoughtSort: React.FC<WellbeingActivityComponentProps> = ({ onComplete, on
     selectedRef.current = next;
     setSelected(next);
     setMessage(next.length < 1 ? 'Choose one or two feeling words.' : balancedThought ? 'Release the balloon when you are ready.' : 'Now choose a more balanced thought.');
-  };
-
-  const startMic = async () => {
-    if (releasedRef.current || micReady || micPending || selectedRef.current.length < 1 || !balancedThought) return;
-    if (!navigator.mediaDevices?.getUserMedia) { setMessage('Microphone unavailable. You can still tap Release balloon.'); return; }
-    const request = ++requestRef.current;
-    setMicPending(true);
-    let acquired: MediaStream | null = null;
-    try {
-      acquired = await navigator.mediaDevices.getUserMedia({ audio: true });
-      if (!mountedRef.current || request !== requestRef.current || releasedRef.current) { acquired.getTracks().forEach((track) => track.stop()); return; }
-      const AudioContextCtor = window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-      if (!AudioContextCtor) { acquired.getTracks().forEach((track) => track.stop()); setMessage('Microphone unavailable. You can still tap Release balloon.'); return; }
-      const audio = new AudioContextCtor();
-      streamRef.current = acquired;
-      audioRef.current = audio;
-      const analyser = audio.createAnalyser();
-      analyser.fftSize = 512;
-      audio.createMediaStreamSource(acquired).connect(analyser);
-      analyserRef.current = analyser;
-      audio.resume().catch(() => {});
-      setMicReady(true);
-      setMessage('Make a gentle sound, or tap Release balloon');
-      const buffer = new Uint8Array(analyser.frequencyBinCount);
-      const sample = () => {
-        const node = analyserRef.current;
-        if (!node || !mountedRef.current || releasedRef.current) return;
-        node.getByteTimeDomainData(buffer);
-        let total = 0;
-        for (const value of buffer) total += (value - 128) ** 2;
-        const level = Math.sqrt(total / buffer.length) / 128;
-        soundFramesRef.current = level > .12 ? soundFramesRef.current + 1 : 0;
-        if (soundFramesRef.current >= 10 && selectedRef.current.length >= 1) { releaseBalloon(); return; }
-        rafRef.current = requestAnimationFrame(sample);
-      };
-      rafRef.current = requestAnimationFrame(sample);
-    } catch {
-      acquired?.getTracks().forEach((track) => track.stop());
-      if (mountedRef.current && request === requestRef.current) { setMessage('Microphone unavailable. You can still tap Release balloon.'); stopMic(); }
-    } finally {
-      if (mountedRef.current && request === requestRef.current) setMicPending(false);
-    }
   };
 
   return (
@@ -135,11 +65,6 @@ const ThoughtSort: React.FC<WellbeingActivityComponentProps> = ({ onComplete, on
         </div>
         <div className="balloon-actions">
           <button type="button" onClick={releaseBalloon} disabled={selected.length < 1 || !balancedThought || finished} className="wellbeing-action" data-button-skin="none">Release balloon</button>
-          <button type="button" onClick={micReady ? () => { stopMic(); setMessage('Release your balloon whenever you are ready'); } : startMic}
-            disabled={selected.length < 1 || !balancedThought || finished || micPending} className="balloon-mic" data-button-skin="none">
-            {micReady ? <MicOff size={15} aria-hidden="true" /> : <Mic size={15} aria-hidden="true" />}
-            {micReady ? 'Turn microphone off' : micPending ? 'Waiting for microphone' : 'Use microphone (optional)'}
-          </button>
         </div>
       </div>
     </WellbeingShell>
