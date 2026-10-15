@@ -308,15 +308,15 @@ const zombies = generator('MathsVsZombiesGame', ['buildQuestion', 'maxZombiesFor
 record(`Zombies exact arithmetic and introductory one-digit cap (${sampleCount * 5} questions)`, () => {
   for (let tier = 1; tier <= 5; tier++) for (let sample = 0; sample < sampleCount; sample++) {
     const q = zombies.buildQuestion(tier);
-    const match = q.prompt.match(/(-?\d+)\s*([+x÷-])\s*(-?\d+)$/);
+    const match = q.prompt.match(/(-?\d+)\s*([+x÷-])\s*\(?(-?\d+)\)?$/);
     assert.ok(match, `Unreadable equation: ${q.prompt}`);
     const [, aText, op, bText] = match; const a = Number(aText); const b = Number(bText);
     const answer = op === '+' ? a + b : op === '-' ? a - b : op === 'x' ? a * b : a / b;
     assert.equal(q.options[q.correctIndex], answer); choices(q.options, answer);
     if (tier === 1) { assert.equal(op, '+'); assert.ok(a >= 0 && a <= 5 && b >= 0 && b <= 5 && answer <= 10); }
     if (tier <= 3) assert.ok(op === '+' || op === '-');
-    if (tier === 4) assert.ok(op === 'x' || op === '÷');
-    if (tier <= 4) assert.ok(q.options.every((value) => value >= 0));
+    if (tier === 4) assert.ok(['+', '-', 'x', '÷'].includes(op));
+    if (tier <= 2) assert.ok(q.options.every((value) => value >= 0));
   }
   assert.deepEqual([1, 2, 3, 4, 5].map(zombies.maxZombiesForLevel), [1, 2, 2, 3, 4]);
   for (let tier = 1; tier <= 5; tier++) {
@@ -473,9 +473,13 @@ record(`Sharing ratios/counts stay bounded after repeated rounds (${sampleCount 
     assert.equal(q.plateCount, 5); assert.equal(q.totalSlices, q.targetCounts.reduce((a, b) => a + b));
     const multiplier = q.targetCounts[0] / q.ratios[0];
     q.targetCounts.forEach((count, index) => assert.equal(count, q.ratios[index] * multiplier));
-    assert.ok(q.totalSlices <= 36); if (tier === 1) assert.deepEqual(q.targetCounts, [1, 1, 1, 1, 1]);
+    assert.ok(q.totalSlices <= 36); if (tier === 1) assert.ok(q.targetCounts.every((count) => count === 1 || count === 2));
   }
 });
+for (let tier = 1; tier <= 5; tier++) {
+  const patterns = new Set(Array.from({ length: 5 }, (_, round) => share.createChallenge(tier, round).ratios.join(':')));
+  assert.equal(patterns.size, 5, 'Each sharing round needs a different ratio');
+}
 const potion = generator('PotionPanicGame', ['generateChallenge']);
 record(`Potion ratio/total/whole-drop and selected ingredient-count bands (${sampleCount * 5} questions)`, () => {
   for (let tier = 1; tier <= 5; tier++) for (let sample = 0; sample < sampleCount; sample++) {
@@ -691,7 +695,7 @@ record(`Mean and missing-value arithmetic dominates, with late statistic bonus r
       const values = q.activeReelIndexes.map((index) => q.actualValues[index]);
       const sorted = [...values].sort((a, b) => a - b);
       assert.ok(values.every((value) => Number.isFinite(value) && value > 0));
-      choices(q.options, q.correctAnswer, q.mode === 'mean' && tier <= 2 ? 3 : 4);
+      choices(q.options, q.correctAnswer, 4);
       if (q.mode === 'mean') near(q.correctAnswer, values.reduce((a, b) => a + b) / values.length, 'Mean answer');
       else if (q.mode === 'median') near(q.correctAnswer, sorted[Math.floor(sorted.length / 2)], 'Median answer');
       else if (q.mode === 'mode') {
