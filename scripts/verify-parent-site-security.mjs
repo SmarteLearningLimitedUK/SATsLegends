@@ -40,7 +40,7 @@ try {
     assert.deepEqual(errors, []);
   }
   await page.goto(base + '/for-parents');
-  await expect(page.getByRole('heading', { name: 'Big adventures. Small steps to SATs.' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Practice with purpose. Adventure they can explore.' })).toBeVisible();
   await page.evaluate(() => {
     const inline = document.createElement('script');
     inline.textContent = 'window.unwantedInlineScriptRan = true';

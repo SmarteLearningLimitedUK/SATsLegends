@@ -50,13 +50,13 @@ function Home() {
       <div className="website-hero-glow" aria-hidden="true" />
       <div className="website-container website-hero-inner">
         <motion.div className="website-hero-copy" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
-          <p className="website-eyebrow"><span /> Big adventures. Brilliant brains.</p>
+          <p className="website-eyebrow"><span /> KS2 maths practice, made adventurous.</p>
           <h1 className="website-splash-heading" aria-label="SATs Legends"><SplashLogo /></h1>
-          <h2>Play. Learn. <span>Level up.</span></h2>
-          <p className="website-hero-description">Follow forest trails. Face mischievous foes. Turn your maths skills into your next great adventure.</p>
+          <h2>Build skills. <span>Grow confidence.</span></h2>
+          <p className="website-hero-description">Give maths practice a world to explore. Your child takes on Matharia’s challenges; you follow their strengths and next practice in your parent dashboard.</p>
           <div className="website-hero-actions">
-            <Link className="website-button website-button-gold" to="/play"><Gamepad2 size={21} /> Let’s play <ArrowRight size={20} /></Link>
-            <Link className="website-button website-button-outline" to="/revision"><BookOpen size={19} /> Explore revision</Link>
+            <Link className="website-button website-button-gold" to="/play"><Gamepad2 size={21} /> Explore Matharia <ArrowRight size={20} /></Link>
+            <Link className="website-button website-button-outline" to="/for-parents"><BookOpen size={19} /> For parents</Link>
           </div>
           <p className="website-hero-note"><Check size={15} /> Matharia · From £4.99/month · One child profile</p>
         </motion.div>
@@ -74,12 +74,12 @@ function Home() {
     </section>
 
     <section className="website-paths website-container" aria-labelledby="website-paths-title">
-      <motion.div {...reveal} className="website-section-heading website-heading-center"><p className="website-eyebrow">A little learning. A lot of adventure.</p><h2 id="website-paths-title">Choose your next move.</h2><p>However you like to learn, there’s a path for you.</p></motion.div>
+      <motion.div {...reveal} className="website-section-heading website-heading-center"><p className="website-eyebrow">Play. Understand. Practise.</p><h2 id="website-paths-title">More ways to make maths click.</h2><p>Combine game challenges, clear explanations and visual lessons to revisit the skills that need practice.</p></motion.div>
       <div className="website-path-grid">
         {[
-          { icon: Gamepad2, number: '01', title: 'Enter the adventure', description: 'Pick your hero. Explore the islands. Put your maths skills to the test.', label: 'Play the game', route: '/play', className: 'website-path-play' },
-          { icon: BookOpen, number: '02', title: 'Build your brainpower', description: 'Break tricky topics into simple steps, then give a quick challenge a go.', label: 'Open revision guide', route: '/revision', className: 'website-path-learn' },
-          { icon: Video, number: '03', title: 'See it. Get it.', description: 'Watch bite-sized visual lessons and make those “ohhh!” moments happen.', label: 'Explore videos', route: '/videos', className: 'website-path-watch' },
+          { icon: Gamepad2, number: '01', title: 'Put skills into action', description: 'Explore islands and tackle challenges in number, fractions, geometry and more.', label: 'Explore Matharia', route: '/play', className: 'website-path-play' },
+          { icon: BookOpen, number: '02', title: 'Understand the method', description: 'Work through a clear explanation and example, then try a question for yourself.', label: 'Open revision guide', route: '/revision', className: 'website-path-learn' },
+          { icon: Video, number: '03', title: 'See how it works', description: 'Use short visual lessons to revisit a topic before trying it in a challenge.', label: 'Explore videos', route: '/videos', className: 'website-path-watch' },
         ].map(({ icon: Icon, ...path }, index) => <motion.div {...reveal} transition={{ duration: 0.45, delay: index * 0.08 }} key={path.number}>
           <Link className={`website-path ${path.className}`} to={path.route}><div className="website-path-top"><span className="website-path-icon"><Icon size={26} /></span><span className="website-path-number">{path.number}</span></div><h3>{path.title}</h3><p>{path.description}</p><span className="website-path-link">{path.label}<ArrowRight size={19} /></span></Link>
         </motion.div>)}
@@ -95,13 +95,13 @@ function Home() {
 
     <GameplayGallery />
     <motion.section {...reveal} className="website-parent-intro website-container">
-      <div><p className="website-eyebrow">For parents & carers</p><h2>Support every step of their adventure.</h2><p>Explore maths revision, progress reports and moments of calm inside Matharia.</p></div>
-      <Link className="website-text-link" to="/for-parents">Meet the parent guide <ArrowRight size={18} /></Link>
+      <div><p className="website-eyebrow">For parents & carers</p><h2>Know where to help next.</h2><p>See saved activity, answer accuracy and topics to revisit in your private parent dashboard. Optional progress emails keep you connected.</p></div>
+      <Link className="website-text-link" to="/for-parents">See how you can support them <ArrowRight size={18} /></Link>
     </motion.section>
     <motion.section {...reveal} className="website-final-cta website-container">
       <img src={mochi} alt="Mochi, the panda hero" loading="lazy" />
-      <div><p className="website-eyebrow"><Star size={16} /> Every legend starts somewhere</p><h2>Your next level starts here.</h2><p>One challenge. One new skill. One step closer.</p></div>
-      <Link className="website-button website-button-gold" to="/play">Start your adventure <ArrowRight size={19} /></Link>
+      <div><p className="website-eyebrow"><Star size={16} /> Practice with purpose</p><h2>Make room for maths confidence.</h2><p>Explore the adventure and choose a plan that fits your family.</p></div>
+      <Link className="website-button website-button-gold" to="/subscriptions">See Matharia plans <ArrowRight size={19} /></Link>
     </motion.section>
   </main>;
 }
@@ -129,6 +129,6 @@ export default function Website() {
     </div>{menuOpen && <nav id="website-mobile-nav" className="website-mobile-nav" aria-label="Mobile navigation"><NavLink to="/" end>Home</NavLink><Link to="/play">Matharia</Link><NavLink to="/english">Lexcoria</NavLink><NavLink to="/subscriptions">Subscriptions</NavLink><NavLink to="/for-parents">For parents</NavLink><NavLink to="/revision">Revision guide</NavLink><NavLink to="/videos">Videos</NavLink>{family.session ? <>{family.isAdmin && <Link to="/admin">Admin</Link>}<Link to="/parent">Parent account</Link><button onClick={logout}>Log out</button></> : <><Link to="/login">Log in</Link><Link to="/signup">Sign up</Link></>}</nav>}</header>
     {accountError && <p className="family-error website-container" role="alert">{accountError}</p>}
 <Suspense fallback={<main id="website-main" className="website-container family-main"><p role="status">Loading…</p></main>}><Routes><Route path="/" element={<Home />} /><Route path="/english" element={<EnglishLanding />} /><Route path="/revision" element={<Revision />} /><Route path="/videos" element={<Videos />} /><Route path="/signup" element={<Account mode="signup" />} /><Route path="/login" element={<Account mode="login" />} /><Route path="/forgot-password" element={<Account mode="forgot" />} /><Route path="/reset-password" element={<Account mode="reset" />} /><Route path="/auth/callback" element={<AuthCallback />} /><Route path="/subscriptions" element={<Subscriptions />} /><Route path="/for-parents" element={<ForParents />} /><Route path="/parent" element={<ParentArea />} /><Route path="/parent/progress/:childId" element={<ChildProgressPage />} /><Route path="/admin" element={<AdminDashboard />} /></Routes></Suspense>
-    <footer className="website-footer"><div className="website-container website-footer-top"><Brand small /><p>Small steps. Big adventures.</p><nav aria-label="Footer navigation"><Link to="/for-parents">For parents</Link><Link to="/play">Matharia</Link><Link to="/english">Lexcoria</Link><Link to="/revision">Revision guide</Link><Link to="/videos">Videos</Link></nav></div><div className="website-container website-footer-bottom"><span>© {new Date().getFullYear()} SATs Legends</span><span>Made for curious minds.</span></div></footer>
+    <footer className="website-footer"><div className="website-container website-footer-top"><Brand small /><p>Big challenges. Brilliant minds.</p><nav aria-label="Footer navigation"><Link to="/for-parents">For parents</Link><Link to="/play">Matharia</Link><Link to="/english">Lexcoria</Link><Link to="/revision">Revision guide</Link><Link to="/videos">Videos</Link></nav></div><div className="website-container website-footer-bottom"><span>© {new Date().getFullYear()} SATs Legends</span><span>Made for curious minds.</span></div></footer>
   </div>;
 }

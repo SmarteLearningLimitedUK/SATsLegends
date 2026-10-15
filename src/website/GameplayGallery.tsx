@@ -46,7 +46,7 @@ export default function GameplayGallery() {
   };
   return <section className="website-container gameplay-gallery" aria-labelledby={titleId}>
     <motion.div className="gameplay-gallery-heading" initial={{ y: 12 }} whileInView={{ y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4 }}>
-      <div><p className="website-eyebrow"><Gamepad2 size={16} /> A peek inside Matharia</p><h2 id={titleId}>Real challenges.<br /><span>Brilliant little adventures.</span></h2><p>See what children play, from rebuilding numbers to mixing potions. Tap a screenshot for a closer look.</p></div>
+      <div><p className="website-eyebrow"><Gamepad2 size={16} /> Actual Matharia gameplay</p><h2 id={titleId}>See the challenge.<br /><span>See the maths behind it.</span></h2><p>Number, fractions, geometry and ratio take different forms in Matharia. Open a screenshot to see the questions and controls your child will use.</p></div>
       <Link className="website-text-link" to="/subscriptions">Explore Matharia <ArrowRight size={18} /></Link>
     </motion.div>
     <ul className="gameplay-photo-list" aria-label="Matharia minigame screenshots">{games.map(game => <li key={game.title}>
