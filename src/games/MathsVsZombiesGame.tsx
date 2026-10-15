@@ -56,17 +56,17 @@ interface SpellShot {
 }
 
 const LANES = 4;
-const SPAWN_Y = 6;
-const SPAWN_RIGHT_X = 96;
-const RIGHT_SPAWN_MIN_Y = 18;
+const SPAWN_Y = 42;
+const SPAWN_RIGHT_X = 94;
+const RIGHT_SPAWN_MIN_Y = 42;
 const RIGHT_SPAWN_MAX_Y = 62;
 const TARGET_Y = 78;
-const TARGET_X = 22;
+const TARGET_X = 20;
 const ZOMBIE_SIZE = 'var(--zombie-size, 96px)';
 const ROUND_SECONDS = 60;
 const SPELL_FLIGHT_MS = 460;
 const SPELL_IMPACT_MS = 290;
-const displayZombieX = (x: number) => 30 + (x - TARGET_X) * 0.7;
+const displayZombieX = (x: number) => x;
 
 const stateDuration = (state: ZombieState) => {
   if (state === 'attack') return 1.8;
@@ -342,7 +342,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     const maxZombies = isPractice ? 1 : maxZombiesForLevel(tier);
     if (zombiesRef.current.filter((enemy) => enemy.state !== 'die').length >= maxZombies) return null;
     const spawnSide = Math.random() < 0.5 ? 'top' : 'right';
-    const laneX = 18 + lane * 20;
+    const laneX = 72 + lane * 8;
     const startX = spawnSide === 'right' ? SPAWN_RIGHT_X : laneX;
     const startY = spawnSide === 'right'
       ? RIGHT_SPAWN_MIN_Y + Math.random() * (RIGHT_SPAWN_MAX_Y - RIGHT_SPAWN_MIN_Y)
@@ -354,7 +354,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       y: startY,
       health: baseZombieHealth,
       maxHealth: baseZombieHealth,
-      speed: isPractice ? 0 : [0.9, 1.2, 1.6, 2, 2.4][tier - 1],
+      speed: isPractice ? 0.7 : [1.6, 1.9, 2.2, 2.5, 2.8][tier - 1],
       state: 'appear',
       stateTime: 0,
     };
@@ -480,7 +480,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
         const dx = TARGET_X - zombie.x;
         const dy = TARGET_Y - zombie.y;
         const distance = Math.max(0.001, Math.hypot(dx, dy));
-        const step = zombie.speed * dt;
+        const step = Math.min(distance, zombie.speed * dt);
         nextX += (dx / distance) * step;
         nextY += (dy / distance) * step;
       }
@@ -501,7 +501,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
         return null;
       }
 
-      if (nextY >= TARGET_Y && nextState !== 'attack' && nextState !== 'die') {
+      if (Math.hypot(nextX - TARGET_X, nextY - TARGET_Y) <= 2 && nextState !== 'attack' && nextState !== 'die') {
         nextState = 'attack';
         nextStateTime = 0;
         breaches += 1;
@@ -717,6 +717,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
                   className={`zombies-target absolute flex flex-col items-center gap-1 ${selectedTargetId === zombie.id ? 'zombies-target-selected' : ''}`}
                   data-button-skin="none"
                   data-zombie-state={zombie.state}
+                  data-zombie-gait={['walk', 'creep', 'crawl'][zombie.id % 3]}
                   onClick={() => {
                     if (!canSelectTarget || zombie.state === 'die' || paused || locked || !gameActive) return;
                     selectedTargetRef.current = zombie.id;
@@ -727,9 +728,9 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
                   aria-pressed={canSelectTarget ? selectedTargetId === zombie.id : undefined}
                   data-zombie-id={zombie.id}
                   style={{
-                    top: `min(${zombie.y}%, calc(100% - ${ZOMBIE_SIZE} - 12px))`,
-                    // Bring the camera closer without changing the approach time/difficulty.
-                    left: `min(${displayZombieX(zombie.x)}%, calc(100% - ${ZOMBIE_SIZE}))`,
+                    top: `calc(${zombie.y}% - ${ZOMBIE_SIZE} * .85)`,
+                    // Positions describe the feet on the lawn, including entrances beyond its edge.
+                    left: `calc(${displayZombieX(zombie.x)}% - ${ZOMBIE_SIZE} * .5)`,
                     width: ZOMBIE_SIZE,
                   }}
                 >

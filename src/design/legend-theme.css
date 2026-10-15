@@ -330,3 +330,12 @@
   --text-3xl:calc(1.875rem * var(--game-text-scale));
   --text-4xl:calc(2.25rem * var(--game-text-scale));
 }
+
+/* Semibold keeps the rounded type clear across gameplay, menus and dialogs. */
+#root :is(.iphone-game-stage, .legend-dialog, .legend-hud) *,
+#root .app-viewport.sat-theme-bluegold * {
+  font-weight: 600 !important;
+}
+#root :is(.iphone-game-stage, .legend-dialog) :is(button, .question-title, .question-subtitle, .game-question-context, .game-question-copy) {
+  text-shadow: none !important;
+}

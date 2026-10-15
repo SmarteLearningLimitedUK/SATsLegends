@@ -69,3 +69,7 @@
 .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay [data-background-fit='contain'][data-prime-pop-stage] {
   background-size: cover !important;
 }
+
+/* Reserve the complete question height before the bubble field starts. */
+#root .prime-pop-question-slot { position:relative; flex:none; min-height:0; padding-bottom:28px; }
+#root .prime-pop-question-slot .game-question-card { position:relative; inset:auto; transform:none; width:100%; max-width:780px; margin-inline:auto; }

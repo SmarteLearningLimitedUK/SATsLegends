@@ -403,3 +403,11 @@
   .maths-vs-zombies .zombies-target[data-zombie-state='walk'] .monster-mind-part { animation: none !important; }
   .zombies-impact-spark { display: none; }
 }
+
+.maths-vs-zombies .zombies-player, .maths-vs-zombies .zombies-battle-runes { left:20%; }
+.maths-vs-zombies .zombies-target > :first-child { transform-origin:50% 90%; }
+.maths-vs-zombies .zombies-target[data-zombie-state='walk'][data-zombie-gait='creep'] > :first-child { animation:zombies-creep 1.6s ease-in-out infinite; }
+.maths-vs-zombies .zombies-target[data-zombie-state='walk'][data-zombie-gait='crawl'] > :first-child { animation:zombies-crawl 1.3s ease-in-out infinite; }
+@keyframes zombies-creep { 0%,100% { transform:rotate(-5deg) scaleY(.94); } 50% { transform:rotate(3deg) scaleY(.98); } }
+@keyframes zombies-crawl { 0%,100% { transform:rotate(-9deg) scaleY(.7); } 50% { transform:rotate(-3deg) scaleY(.76); } }
+@media(prefers-reduced-motion:reduce) { .maths-vs-zombies .zombies-target > :first-child { animation:none !important; } }

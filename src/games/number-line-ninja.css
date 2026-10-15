@@ -93,6 +93,18 @@
 /* Keep the guard's feet on the scene's bridge independently of question wrapping. */
 @media(min-width:700px) and (min-height:651px) {
   #root .ninja-opponent-lane, #root .ninja-opponent-lane .qa-enemy-cluster { position:static; }
-  #root .ninja-opponent-lane .qa-enemy-cluster > div:first-child { position:absolute; top:calc(53.7% - 154px); left:50%; translate:0; transform:translateX(-50%); }
+  #root .ninja-opponent-lane .qa-enemy-cluster > div:first-child { position:absolute; top:calc(64.4% - 144px); left:50%; translate:0; transform:translateX(-50%); }
   #root .ninja-playfield > .qa-number-line { margin-top:0 !important; }
+}
+
+/* Move the illustrated bridge and its guard down as one composition. */
+@media(min-width:700px) and (min-height:651px) {
+  #root [data-number-line-game] img[data-game-scene-image] { transform:translateY(10%) scale(1.2); }
+  #root .ninja-opponent-lane .qa-enemy-cluster > div:last-child { position:absolute; top:70%; left:50%; transform:translateX(-50%); }
+}
+
+@media(max-width:699px) {
+  #root [data-number-line-game] > .relative.z-10.flex { overflow-y:auto; }
+  #root .ninja-playfield { flex:none; min-height:440px; }
+  #root .ninja-opponent-lane { flex:none; min-height:220px; }
 }
