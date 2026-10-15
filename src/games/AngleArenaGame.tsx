@@ -73,8 +73,8 @@ const CAMERA_LERP = 0.08;
 const RETURN_LERP = 0.12;
 const PROJECTILE_SPEED = 520;
 const MAX_FLIGHT_DISTANCE = 980;
-const CANNON_ANCHOR_X_RATIO = 0.5;
-const CANNON_ANCHOR_Y_RATIO = 0.5;
+const CANNON_ANCHOR_X_RATIO = 0.12;
+const CANNON_ANCHOR_Y_RATIO = 0.68;
 const CAMERA_LEAD_DISTANCE = 340;
 const CAMERA_ACTIVE_LERP = 0.22;
 const ENEMY_FOREGROUND_LEAD = 110;
@@ -1019,7 +1019,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
       const cannonAnchor = { x: viewWidth * CANNON_ANCHOR_X_RATIO, y: viewHeight * CANNON_ANCHOR_Y_RATIO };
       const wideCanvasScene = viewWidth >= 700 && Boolean(bg?.naturalWidth);
-      const enemySize = Math.min(viewWidth, viewHeight) * (wideCanvasScene ? 0.18 : 0.26);
+      const enemySize = Math.min(viewWidth, viewHeight) * (wideCanvasScene ? 0.12 : 0.18);
       const horizontalProjectionScale = Math.min(1, Math.max(0.12,
         (paintedSceneWidth / 2 - enemySize * 0.41 - 16) / (ENEMY_DISTANCE + 80),
       ));
@@ -1033,21 +1033,18 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         : wideCanvasScene ? horizontalProjectionScale : 1;
       const screenOffset = projectile?.active ? { x: 0, y: 0 } : { x: cannonAnchor.x - viewWidth / 2, y: cannonAnchor.y - viewHeight / 2 };
       const toScreen = (x: number, y: number) => {
-        const base = worldToScreen(x, y, camera.x, camera.y, viewWidth, viewHeight);
+        const distance = Math.hypot(x, y);
+        const progress = distance / enemyRadius;
+        const crossTrack = x * enemyVector.y - y * enemyVector.x;
         return {
-          x: cannonAnchor.x + (base.x + screenOffset.x - cannonAnchor.x) * sceneProjectionScale,
-          y: cannonAnchor.y + (base.y + screenOffset.y - cannonAnchor.y) * sceneProjectionScale,
+          x: cannonAnchor.x + progress * viewWidth * .72,
+          y: cannonAnchor.y - Math.sin(Math.min(1, progress) * Math.PI) * viewHeight * .23 + crossTrack / enemyRadius * viewHeight * .25,
         };
       };
 
       const originScreen = toScreen(0, 0);
       const travel = projectile?.active ? normalizeVector(projectile.vx, projectile.vy) : { x: 0, y: 0 };
-      const enemyVisualWorld = projectile?.active
-        ? {
-            x: enemyWorld.x + (travel.x * ENEMY_FOREGROUND_LEAD),
-            y: enemyWorld.y + (travel.y * ENEMY_FOREGROUND_LEAD),
-          }
-        : enemyWorld;
+      const enemyVisualWorld = enemyWorld;
       const enemyScreen = toScreen(enemyVisualWorld.x, enemyVisualWorld.y);
       const groundOffsetX = camera.x * GROUND_DRIFT_FACTOR;
       const groundOffsetY = camera.y * GROUND_DRIFT_FACTOR * 0.2;
@@ -1058,8 +1055,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       ctx.arc(originScreen.x, originScreen.y, WORLD_RADIUS * 0.35, 0, Math.PI * 2);
       ctx.stroke();
 
-      const cannonTowerWidth = viewWidth * 0.17;
-      const cannonTowerHeight = viewHeight * 0.24;
+      const cannonTowerWidth = Math.min(viewWidth * 0.12, viewHeight * .18);
+      const cannonTowerHeight = viewHeight * 0.12;
       const cannonTowerPos = {
         x: originScreen.x,
         y: originScreen.y + (cannonTowerHeight * 0.96),
@@ -1088,7 +1085,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
       ctx.save();
       ctx.translate(originScreen.x, originScreen.y - (cannonTowerHeight * 0.08));
-      drawCannonSprite(ctx, desiredAngleRef.current, cannonSpritesRef.current, Math.min(viewWidth, viewHeight) * 0.22);
+      drawCannonSprite(ctx, 35, cannonSpritesRef.current, Math.min(viewWidth, viewHeight) * 0.13);
       ctx.restore();
 
       ctx.save();
@@ -1277,7 +1274,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
                   ))}
                 </div>
                 {selectedAnswer !== null ? (
-                  <div className="mt-1 text-center text-[11px] font-bold uppercase tracking-[0.16em] text-cyan-100/80">
+                  <div className="mt-1 text-center text-[13px] font-bold uppercase tracking-[0.16em] text-cyan-100/80">
                     Launch angle locked: {selectedAnswer}°
                   </div>
                 ) : null}

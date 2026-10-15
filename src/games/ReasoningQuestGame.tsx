@@ -323,7 +323,7 @@ const ReasoningQuestGame: React.FC<ReasoningQuestGameProps> = ({
                 <div className="game-question-copy mt-1 text-white md:text-lg">{activeQuestion.prompt}</div>
               </div>
             </div>
-            <div className="mt-2 text-[11px] font-semibold text-cyan-100/85 md:text-sm">
+            <div className="mt-2 text-[13px] font-semibold text-cyan-100/85 md:text-sm">
               Think it through before you answer.
             </div>
           </TaskCard>

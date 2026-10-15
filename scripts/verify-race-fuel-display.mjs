@@ -7,6 +7,8 @@ try{for(const [width,height,reduce=false,route='/game/7/4'] of [[1920,1080],[128
  const page=await browser.newPage({viewport:{width,height},reducedMotion:reduce?'reduce':'no-preference'});const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(base+route);await page.locator('[data-race-scene]').waitFor();const intro=page.locator('[data-dialog-primary]:visible').first();if(await intro.count())await intro.click();
  await page.waitForFunction(()=>document.querySelector('[data-race-scene]').dataset.raceState==='showingQuestion');
+ const idleMotion=await page.locator('[data-race-scene]').evaluate(scene=>[...scene.querySelectorAll('.race-wheel-spin,.race-road-motion > div')].map(node=>getComputedStyle(node).animationName==='none'?'paused':getComputedStyle(node).animationPlayState));
+ assert.ok(idleMotion.length>0 && idleMotion.every(state=>state==='paused'),'Road and wheels remain stopped before answering');
  const puzzle=await page.locator('[data-race-mix-part]').evaluateAll(nodes=>nodes.map(n=>({label:n.dataset.raceMixLabel,value:Number(n.dataset.raceMixPart),circle:n.querySelector('.race-fuel-number').textContent,colour:getComputedStyle(n).getPropertyValue('--fuel-colour')})));
  assert.equal(puzzle[0].label,'Fuel');assert.equal(puzzle[1].label,'Oxygen');assert.equal(puzzle[0].colour,'#dc3349');assert.equal(puzzle[1].colour,'#2674d9');for(const p of puzzle)assert.equal(p.circle,String(p.value));
  const issues=await page.evaluate(()=>{

@@ -44,16 +44,16 @@ export function buildNumberLineQuestion(
     start = integer(0, 18);
     step = pick([1, 2]);
   } else if (tier === 1) {
-    start = integer(11, 79);
-    step = pick([2, 3, 4, 6, 8]);
+    start = integer(0, 30);
+    step = pick(roundIndex < 3 ? [1, 2, 3] : [2, 3, 4, 6]);
   } else if (tier === 2) {
-    start = integer(37, 849);
-    step = pick([3, 4, 6, 7, 8, 12, 15, 25]);
+    start = integer(20, 200);
+    step = pick(roundIndex < 3 ? [2, 4, 5, 10] : [3, 4, 6, 8, 12, 15, 25]);
   } else if (tier === 3 || (tier === 5 && roundIndex % 3 === 0)) {
     family = 'decimal';
     denominator = 1000;
     start = tier === 3 ? integer(5, 95) * 10 : integer(115, 2995);
-    step = tier === 3 ? pick([100, 200, 250, 400, 500, 750, 1250]) : pick([25, 40, 75, 125, 150, 250]);
+    step = tier === 3 ? pick(roundIndex < 3 ? [100, 200, 500] : [100, 200, 250, 400, 500]) : pick([25, 40, 75, 125, 150, 250]);
   } else if ((tier === 4 && roundIndex % 2 === 1) || (tier === 5 && roundIndex % 3 === 1)) {
     family = 'fraction';
     denominator = tier === 4 ? pick([4, 5, 8, 10]) : pick([6, 8, 10, 12]);
@@ -66,11 +66,11 @@ export function buildNumberLineQuestion(
     start = -step * integer(1, 3) + (tier === 5 ? integer(1, step - 1) : 0);
   }
 
-  const extrapolate = !isPractice && tier >= 2 && roundIndex % 3 === 2;
+  const extrapolate = !isPractice && tier >= 2 && roundIndex >= 3 && roundIndex % 3 === 2;
   const focusIndex = extrapolate ? pick([0, 4]) : integer(1, 3);
   const visible = new Set(extrapolate ? [1, 3] : [0, 4]);
   if (isPractice) for (let index = 0; index < 5; index += 1) visible.add(index);
-  else if (tier === 1 && roundIndex < 2) visible.add(focusIndex === 1 ? 2 : focusIndex - 1);
+  else if (roundIndex < 3) visible.add(focusIndex === 1 ? 2 : focusIndex - 1);
 
   const units = Array.from({ length: 5 }, (_, index) => start + step * index);
   const format = (value: number) => family === 'fraction' ? fraction(value, denominator) : decimal(value / denominator);

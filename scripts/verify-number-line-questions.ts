@@ -34,9 +34,10 @@ for (const practice of [true, false]) {
         assert(Math.abs(inferred - value(q.answer)) < 1e-9, 'The labelled scale must give exactly the marked answer');
         assert.equal(q.options.filter(choice => Math.abs(value(choice) - inferred) < 1e-9).length, 1, 'Only one option may be mathematically correct');
         q.values.forEach((n, index) => assert(Math.abs(n - (q.values[0] + step * index)) < 1e-9));
-        if (!practice && tier <= 2) assert(![1, 5, 10].includes(step), 'Scored early levels must move beyond routine counting');
-        if (!practice && tier >= 2) assert.equal(labelled.length, 2);
-        if (!practice && tier >= 2 && round % 3 === 2) assert([0, 4].includes(q.focusIndex));
+        if (!practice && tier === 1 && round >= 3) assert(![1, 5, 10].includes(step), 'Later questions must move beyond routine counting');
+        if (!practice && round < 3) assert.equal(labelled.length, 3, 'Opening questions include a supporting labelled tick');
+        if (!practice && round >= 3) assert.equal(labelled.length, 2);
+        if (!practice && tier >= 2 && round >= 3 && round % 3 === 2) assert([0, 4].includes(q.focusIndex));
         if (q.family === 'negative') assert(q.values[0] < 0 && q.values[4] > 0);
         samples += 1;
       }

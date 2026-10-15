@@ -4,8 +4,8 @@ import confetti from 'canvas-confetti';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import './prime-pop.css';
 import { AVATARS } from '../constants';
-import primePopBackground from '../assets/maps/premium/prime-pop.webp';
-import primePopDesktopBackground from '../assets/maps/premium/prime-pop-desktop.webp';
+import primePopBackground from '../assets/maps/premium/prime-pop-wide-v2.png';
+import primePopDesktopBackground from '../assets/maps/premium/prime-pop-wide-v2.png';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
 

@@ -70,7 +70,7 @@ const TopBar: React.FC<{ XP: number; coins: number; gems: number; timer: string;
   customersServed,
 }) => (
   <header className="ui-panel-unified flex items-center justify-between gap-2 rounded-[1.2rem] border border-white/14 bg-[linear-gradient(180deg,rgba(45,18,12,0.92),rgba(77,34,20,0.88))] px-3 py-2 text-white shadow-[0_12px_28px_rgba(0,0,0,0.28)] md:rounded-[1.45rem] md:px-4">
-    <button className="flex items-center gap-2 rounded-full bg-black/22 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] md:px-3 md:text-xs">
+    <button className="flex items-center gap-2 rounded-full bg-black/22 px-2.5 py-1 text-[12px] font-black uppercase tracking-[0.12em] md:px-3 md:text-xs">
       <span>Market Brief</span>
       <AssetIcon name="question" className="h-4 w-4" />
     </button>
@@ -352,7 +352,7 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
                 <div className="absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100 bg-black/10" />
                 <div className="relative z-10 flex h-full flex-col items-center justify-center">
                   <img src={item.image} alt={item.name} className="h-8 w-8 object-contain drop-shadow-md md:h-9 md:w-9" draggable={false} />
-                  <span className="mt-1 rounded-full bg-black/40 px-1.5 text-[10px] font-black">{item.value}</span>
+                  <span className="mt-1 rounded-full bg-black/40 px-1.5 text-[12px] font-black">{item.value}</span>
                 </div>
               </motion.button>
             ))}

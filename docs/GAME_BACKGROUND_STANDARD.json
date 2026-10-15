@@ -1,0 +1,17 @@
+{
+  "benchmark": "src/assets/maps/premium/rounding-rocket-launchpad.webp",
+  "audience": "Young teens",
+  "aspectRatio": "16:9 panoramic landscape; crop responsively without stretching",
+  "qualityCriteria": [
+    "Subject and props must support the game's setting and task",
+    "Crisp, richly detailed illustration with coherent perspective and material textures",
+    "Foreground, middle distance and background establish a complete scene",
+    "Deliberate lighting, atmospheric depth and readable silhouettes",
+    "Keep the playable area open and reserve quieter areas for text",
+    "No baked-in UI, text, numbers or disconnected flat cog decorations"
+  ],
+  "reviewDate": "2026-10-14",
+  "replacedWeakerScenes": ["Percent Power", "Angle Arena", "Maths vs Zombies", "Prime Pop", "Ratio Racer levels 1 through 4"],
+  "retained": "Existing detailed environments, including Ratio Racer's coastal fifth course, retain their game-specific scenery.",
+  "verification": "qa-artifacts/background-quality-2026-10-14/report.json"
+}

@@ -11,7 +11,11 @@ import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gam
 import { DEFAULT_RACE_DIFFICULTY, RACE_TUNING, RaceDifficulty } from './ratioFractionsRace/constants';
 import { QuestionTier } from './ratioFractionsRace/questionSelector';
 import { RatioFractionQuestion } from './ratioFractionsRace/types';
-import courseBackground from '../assets/maps/teen/race-course-circuit-v2.webp';
+import courseBackground from '../assets/maps/premium/race-circuit-wide-v2.png';
+import crowdBackground from '../assets/maps/premium/race-grandstand-wide-v2.png';
+import castleBackground from '../assets/maps/premium/race-castle-wide-v2.png';
+import valleyBackground from '../assets/maps/premium/race-valley-wide-v2.png';
+import coastalBackground from '../assets/maps/teen/race-course-coastal.png';
 import RaceFuelMix from './ratioFractionsRace/RaceFuelMix';
 import RaceWheelRig from './ratioFractionsRace/RaceWheelRig';
 import kartBarratt from '../assets/gokarts/karts/1.png';
@@ -609,7 +613,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
           <GameQuestionCard
             title="Fix the fuel mix"
             className="ratio-racer-mission"
-            style={{ position: 'relative', top: 0, transform: 'none', width: '100%', padding: '10px 12px', fontSize: 18 }}
+            style={{ position: 'relative', top: 0, transform: 'none', width: '100%', padding: '10px 12px', fontSize: 22 }}
           >
             <RaceFuelMix labels={question.labels} parts={question.ratio} target={question.target} />
           </GameQuestionCard>
@@ -627,7 +631,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
                     key={tile}
                     className="ratio-racer-track"
                     data-race-course-tile={tile}
-                    src={courseBackground}
+                    src={[castleBackground, crowdBackground, valleyBackground, courseBackground, coastalBackground][Math.max(0, Math.min(4, levelId - 1))]}
                     alt=""
                     draggable={false}
                     style={{ marginRight: `${-COURSE_TILE_OVERLAP / COURSE_STRIP_WIDTH * 100}%`, zIndex: COURSE_TILES.length - tile }}
@@ -686,8 +690,8 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
                     ? { y: [0, -6, 0], rotate: [0, -3, 0] }
                     : showStall
                       ? { x: [0, -4, 4, -2, 0], y: 0, rotate: 0 }
-                      : { y: [0, -1.5, 0], x: 0, rotate: 0 }}
-                transition={{ duration: showBoost || showStall ? .4 : 1.2, repeat: showBoost || showStall || reducedMotion ? 0 : Infinity, ease: 'easeInOut' }}
+                      : { y: 0, x: 0, rotate: 0 }}
+                transition={{ duration: .4, repeat: 0, ease: 'easeInOut' }}
               >
                 <img src={playerKart} alt="Your racing kart" draggable={false} />
                 <RaceWheelRig src={playerKart} />

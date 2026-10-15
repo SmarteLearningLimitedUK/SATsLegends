@@ -885,7 +885,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         <GameQuestionCard
           title="Place Value Panic"
           className="mx-auto rounded-[0.95rem] px-3.25 py-2.25 text-center"
-          titleClassName="text-[9px] tracking-[0.28em] md:text-[10px]"
+          titleClassName="text-[11px] tracking-[0.28em] md:text-[12px]"
           bodyClassName="mt-1 text-[clamp(0.82rem,1.65vw,0.98rem)] leading-snug md:text-[clamp(0.9rem,1.7vw,1.04rem)]"
           style={{ position: 'relative', top: '5px', width: '94%', transform: 'none' }}
         >
@@ -1025,7 +1025,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
             </AnimatePresence>
             <div className="pvp-enemy-health-frame absolute left-1/2 top-[-6%] z-40 -translate-x-1/2">
               <div className="pvp-enemy-health w-[160px] rounded-2xl border border-amber-200/35 bg-slate-900/80 p-1.5 shadow-[0_10px_20px_rgba(2,6,23,0.46)] sm:w-[178px]">
-                <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.12em] text-amber-200 md:text-[9px]">
+                <div className="mb-1 text-center text-[10px] font-black uppercase tracking-[0.12em] text-amber-200 md:text-[11px]">
                   Monster Mind
                 </div>
                 <div className="relative h-2 overflow-hidden rounded-full border border-slate-700/80 bg-slate-950/80" role="progressbar" aria-label="Monster Mind strength" aria-valuemin={0} aria-valuemax={GOBLIN_MAX_HEALTH} aria-valuenow={goblinHealth} data-pvp-health={goblinHealth}>

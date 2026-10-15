@@ -378,19 +378,19 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                         <XAxis
                           dataKey="label"
                           interval={0}
-                          tick={{ fill: '#e8f3ff', fontSize: 14, fontWeight: 700 }}
+                          tick={{ fill: '#e8f3ff', fontSize: 17, fontWeight: 700 }}
                           axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
                           tickLine={{ stroke: 'rgba(191,219,254,0.45)' }}
-                          label={{ value: 'Time', position: 'insideBottom', offset: -6, fill: '#c0e2ff', fontSize: 14, fontWeight: 800 }}
+                          label={{ value: 'Time', position: 'insideBottom', offset: -6, fill: '#c0e2ff', fontSize: 17, fontWeight: 800 }}
                         />
                         <YAxis
                           ticks={yTicks}
                           domain={[0, yTicks[yTicks.length - 1]]}
                           interval={0}
-                          tick={{ fill: '#e8f3ff', fontSize: 14, fontWeight: 700 }}
+                          tick={{ fill: '#e8f3ff', fontSize: 17, fontWeight: 700 }}
                           axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
                           tickLine={{ stroke: 'rgba(191,219,254,0.45)' }}
-                          label={{ value: 'Units', angle: -90, position: 'insideLeft', fill: '#c0e2ff', fontSize: 14, fontWeight: 800 }}
+                          label={{ value: 'Units', angle: -90, position: 'insideLeft', fill: '#c0e2ff', fontSize: 17, fontWeight: 800 }}
                           width={42}
                         />
                         <Line
@@ -479,10 +479,11 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
 
               {feedback && (
                 <div
-                  className={`flex w-full items-center justify-center gap-3 rounded-full border px-5 py-3 text-center text-[11px] font-bold uppercase tracking-wide shadow-2xl sm:text-xs ${
+                  role="status"
+                  className={`line-graph-feedback flex w-full items-center justify-center gap-3 rounded-xl border px-4 py-3 text-center text-base font-semibold shadow-2xl ${
                     feedback.type === 'success'
-                      ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-300'
-                      : 'border-rose-500/50 bg-rose-500/10 text-amber-300'
+                      ? 'border-emerald-300 bg-[#123c32] text-white'
+                      : 'border-rose-300 bg-[#4b1830] text-white'
                   }`}
                 >
                   {feedback.type === 'success' ? <CheckCircle2 className="h-4 w-4 shrink-0" /> : <AlertCircle className="h-4 w-4 shrink-0" />}
@@ -510,7 +511,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                       You read every line graph carefully and answered with precision.
                     </p>
                     <div className="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-6">
-                      <span className="mb-1 block text-[10px] uppercase text-slate-500">Final XP</span>
+                      <span className="mb-1 block text-[12px] uppercase text-slate-500">Final XP</span>
                       <span className="text-4xl font-black text-emerald-500">{XP}</span>
                     </div>
                     <button

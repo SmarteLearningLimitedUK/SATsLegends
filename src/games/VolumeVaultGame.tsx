@@ -575,7 +575,7 @@ const VolumeVaultGame: React.FC<VolumeVaultGameShellProps> = ({
         <header className="shrink-0 pt-1">
           <div className="mx-auto flex w-full max-w-[760px] flex-col items-center gap-1.5">
             <div className="flex w-full items-center justify-between rounded-2xl border border-cyan-100/30 bg-slate-900/55 px-3 py-2">
-              <p className="text-[11px] font-black uppercase tracking-[0.14em] text-cyan-100">{activeLevel.title}</p>
+              <p className="text-[13px] font-black uppercase tracking-[0.14em] text-cyan-100">{activeLevel.title}</p>
             </div>
             <div className="relative flex w-full items-center justify-center">
               <div className="pointer-events-none absolute top-1/2 h-20 w-56 -translate-y-1/2 rounded-full bg-amber-300/25 blur-2xl" />
@@ -680,7 +680,7 @@ const VolumeVaultGame: React.FC<VolumeVaultGameShellProps> = ({
         </section>
 
         <section className="shrink-0 pt-1.5">
-          <div className="mx-auto grid w-full max-w-[760px] grid-cols-2 gap-2 rounded-2xl border border-cyan-100/35 bg-slate-900/52 px-3 py-2 text-[11px] font-black uppercase tracking-[0.11em] text-cyan-100">
+          <div className="mx-auto grid w-full max-w-[760px] grid-cols-2 gap-2 rounded-2xl border border-cyan-100/35 bg-slate-900/52 px-3 py-2 text-[13px] font-black uppercase tracking-[0.11em] text-cyan-100">
             <div className="rounded-xl bg-slate-950/45 px-2 py-1">Volume: <span className="text-amber-100">{currentVolume}</span></div>
             <div className="rounded-xl bg-slate-950/45 px-2 py-1 text-right">Target: <span className="text-amber-100">{question.targetVolume ?? '--'}</span></div>
             <div className="rounded-xl bg-slate-950/45 px-2 py-1">{question.targetDimensions ? `Dims: ${formatDims(question.targetDimensions)}` : 'Dims: Free build'}</div>

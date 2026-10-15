@@ -417,14 +417,14 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
   },
   area_architect: {
     label: 'Area Architect',
-    focus: 'Area and perimeter of composite shapes',
+    focus: 'Area of rectangles and compound room plans',
     rules: {
       title: 'Area Architect',
-      summary: 'Calculate area and perimeter for compound shapes step by step.',
+      summary: 'Read the room plan and choose its area in square metres.',
       bullets: [
         'Split shapes into rectangles and add their areas.',
         'Subtract cut-outs carefully when shapes have holes.',
-        'Perimeter counts the outside edges only.',
+        'Each blue square is 1 m². Choose an answer, then move to the next room.',
       ],
     },
   },

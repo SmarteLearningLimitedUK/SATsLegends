@@ -1,7 +1,7 @@
 .remainder-layout.is-group-board { max-width: min(100%, 760px); }
 .remainder-board-actions,.remainder-answer-header { display:flex; align-items:center; justify-content:space-between; gap:8px; }
 .remainder-answer-header { text-align:left; }
-.remainder-time { display:inline-flex; flex:0 0 auto; min-width:48px; align-items:center; justify-content:center; border:1px solid #b9eaff94; border-radius:8px; padding:5px 7px; background:#06313dcc; color:#e8fcff; font-size:14px; font-weight:900; font-variant-numeric:tabular-nums; letter-spacing:.02em; box-shadow:inset 0 1px #b9eaff4d; }
+.remainder-time { display:inline-flex; flex:0 0 auto; min-width:48px; align-items:center; justify-content:center; border:1px solid #b9eaff94; border-radius:8px; padding:5px 7px; background:#06313dcc; color:#e8fcff; font-size:calc(14px * var(--game-text-scale, 1.2)); font-weight:900; font-variant-numeric:tabular-nums; letter-spacing:.02em; box-shadow:inset 0 1px #b9eaff4d; }
 .remainder-time[data-urgent='true'] { border-color:#ffcb7899; background:#542114; color:#fff4d2; animation:remainder-urgent 1.1s ease-in-out infinite; }
 @keyframes remainder-urgent { 50% { box-shadow:0 0 18px #ff9e4588; } }
 .remainder-track { position:relative; height:12px; margin-top:12px; overflow:hidden; border:1px solid #9bd8dd80; border-radius:999px; background:#061d2c; box-shadow:inset 0 2px 5px #010d18a6; }

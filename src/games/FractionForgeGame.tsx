@@ -4,7 +4,9 @@ import { AnimatePresence, motion } from 'motion/react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
-import fractionForgeBackground from '../assets/maps/premium/fraction-forge.webp';
+import fractionForgeBackground from '../assets/maps/premium/fraction-forge-wide.png';
+import forgeAnvil from '../assets/reskin/forge-anvil.png';
+import forgeBlacksmith from '../assets/reskin/forge-blacksmith.png';
 import { triggerHaptic } from '../haptics';
 import { playGameSound } from '../audio/gameAudio';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
@@ -107,7 +109,9 @@ const makeRound = (level: number, roundIndex: number, runOffset = 0): ForgeRound
     cards: shuffle(indexed),
     operators,
     solutionIds: indexed.slice(0, solution.length).map((card) => card.id),
-    prompt: `Choose ${solution.length} ingots in order. ${operators.join(' then ')} to make ${fractionLabel(target)}.`,
+    prompt: operators.length === 1
+      ? `Choose two fraction ingots. ${operators[0] === '+' ? 'Add them' : operators[0] === '-' ? 'Subtract the second from the first' : operators[0] === '×' ? 'Multiply them' : 'Divide the first by the second'} to make ${fractionLabel(target)}. Then strike the anvil.`
+      : `Place ${solution.length} fraction ingots on the anvil. Follow ${operators.map(op => op === '+' ? 'addition' : op === '-' ? 'subtraction' : op === '×' ? 'multiplication' : 'division').join(' then ')} from left to right to make ${fractionLabel(target)}.`,
   };
 };
 
@@ -263,6 +267,9 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     <div className="fraction-forge-game relative h-full w-full select-none overflow-hidden" data-fraction-forge data-fraction-tier={tier} data-strike-state={strikeState}>
       <GameplaySceneBackdrop gameType="take_out_rush" backgroundOverride={fractionForgeBackground} />
       <div className="ff-scrim" aria-hidden="true" />
+      <div className="ff-blacksmith-route" data-paused={Boolean(sessionState?.paused) || showPracticeIntro} aria-hidden="true">
+        <div className="ff-blacksmith-worker"><img src={forgeBlacksmith} alt="" draggable={false} /><span className="ff-work-sparks" /></div>
+      </div>
       <PracticeIntroPopup open={showPracticeIntro} title={gameTitle || 'Fraction Forge'} body="The workshop needs a precise fraction alloy. Choose the ingots, then strike the anvil to test your recipe." briefing={practiceBriefing} onAction={() => setShowPracticeIntro(false)} />
       <div className="ff-ui">
         <div className="ff-brief">
@@ -277,6 +284,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
           <div className="ff-anvil-zone">
             <div className="ff-target"><span>FORGE TARGET</span><strong className="ff-target-value" data-forge-target>{fractionLabel(round.target)}</strong></div>
             <div className="ff-anvil">
+              <img className="ff-anvil-art" src={forgeAnvil} alt="" draggable={false} aria-hidden="true" />
               <motion.div key={strikeTick} className="ff-hammer" data-strike-state={strikeState} aria-hidden="true">
                 <svg viewBox="0 0 100 130" focusable="false">
                   <defs><linearGradient id="ff-hammer-steel" x2="0" y2="1"><stop stopColor="#edf4eb"/><stop offset=".38" stopColor="#8ba8ad"/><stop offset="1" stopColor="#314d5b"/></linearGradient><linearGradient id="ff-hammer-wood" x2="1" y2="0"><stop stopColor="#704126"/><stop offset=".5" stopColor="#d49755"/><stop offset="1" stopColor="#87502c"/></linearGradient></defs>

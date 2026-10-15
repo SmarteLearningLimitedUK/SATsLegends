@@ -750,7 +750,7 @@ const App: React.FC = () => {
     setLevelResult(null);
 
     if (nextLevel) {
-      const canEnterNextLevel = nextLevel.isBoss
+      const canEnterNextLevel = isBossEncounterGameType(nextLevel.gameType) ? true : nextLevel.isBoss
         ? selectedIsland.levels
             .filter(level => !level.isPractice && !level.isBoss && level.id < nextLevel.id)
             .every(isLevelConsideredComplete)

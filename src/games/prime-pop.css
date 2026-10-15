@@ -36,7 +36,7 @@
   background: #571f31;
   color: #fff3cd;
   box-shadow: 0 3px 8px #071a35b3;
-  font-size: 16px;
+  font-size: calc(16px * var(--game-text-scale, 1.2));
   line-height: 1.35;
   font-weight: 700;
   letter-spacing: .08em;

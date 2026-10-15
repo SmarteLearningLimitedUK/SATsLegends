@@ -138,7 +138,7 @@ const buildMeanRound = (level: number): RoundData => {
     const activeIndex = activeReelIndexes.indexOf(index);
     return activeIndex >= 0 ? activeValues[activeIndex] : null;
   });
-  const optionCount = level <= 2 ? 3 : 4;
+  const optionCount = 4;
   const options = new Set<number>([targetMean]);
   while (options.size < optionCount) {
     const candidate = targetMean + randomInt(useDoubleDigits ? -6 : -3, useDoubleDigits ? 6 : 3);
@@ -753,7 +753,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
             <section className="mean-machine-answer-rail shrink-0 rounded-[1.35rem] border border-cyan-100/22 bg-[linear-gradient(180deg,rgba(10,31,83,0.92),rgba(7,21,58,0.96))] p-2.5 shadow-[0_16px_26px_rgba(2,6,23,0.34)]">
               <div className="mean-power-panel mean-power-panel-desktop"><ArcadeJourney kind="power" completed={level - 1 + (feedback?.type === 'success' ? 1 : 0)} total={TOTAL_LEVELS} danger={showGlitch} /></div>
               <div className="mb-2 flex items-center justify-start gap-2">
-                <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/74">
+                <div className="text-[13px] font-black uppercase tracking-[0.16em] text-cyan-100/74">
                   <span className="mean-repair-streak">{repairStreak > 0 ? `${repairStreak} clean repairs · ${3 - repairStreak % 3} to bonus` : 'Three clean repairs earn +75 XP'} · </span>
                   {round?.mode === 'mean' ? (
                     <>
@@ -772,7 +772,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                   )}
                 </div>
               </div>
-              <div className={`answer-choice-surface grid gap-2 ${round && round.options.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
+              <div className="answer-choice-surface grid grid-cols-2 gap-2">
                 {round?.options.map((option, index) => {
                   const isSelected = selectedAnswer === option;
                   const isCorrect = feedback?.type === 'success' && isSelected;
@@ -819,13 +819,13 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                     className="absolute inset-[-10px] rounded-full border-2 border-dashed border-amber-200/30"
                   />
                 </div>
-                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/75">Island Machine</div>
+                <div className="text-[12px] font-black uppercase tracking-[0.18em] text-cyan-100/75">Island Machine</div>
                 <h2 className="mt-1 text-2xl font-black uppercase tracking-[0.04em] text-amber-100">Machine Restored</h2>
                 <p className="mt-2 text-sm font-semibold leading-relaxed text-cyan-100/82">
                   The sabotaged machine has been fully recalibrated.
                 </p>
                 <div className="mt-4 rounded-[1.25rem] border border-cyan-100/18 bg-slate-950/24 px-4 py-4">
-                  <div className="text-[9px] font-black uppercase tracking-[0.18em] text-cyan-100/72">Final XP</div>
+                  <div className="text-[11px] font-black uppercase tracking-[0.18em] text-cyan-100/72">Final XP</div>
                   <div className="mt-1 text-4xl font-black text-amber-100">{XP}</div>
                 </div>
                 <button
@@ -834,7 +834,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                     window.dispatchEvent(new Event(GAME_HUD_RESTART_EVENT));
                     restart();
                   }}
-                  className="mx-auto mt-5 flex min-h-[3rem] items-center gap-2 rounded-full bg-[linear-gradient(180deg,#f8d66b_0%,#f2a82c_100%)] px-7 py-3 text-[11px] font-black uppercase tracking-[0.16em] text-slate-950 shadow-[0_8px_0_rgba(146,87,8,0.72),0_16px_24px_rgba(2,6,23,0.22)]"
+                  className="mx-auto mt-5 flex min-h-[3rem] items-center gap-2 rounded-full bg-[linear-gradient(180deg,#f8d66b_0%,#f2a82c_100%)] px-7 py-3 text-[13px] font-black uppercase tracking-[0.16em] text-slate-950 shadow-[0_8px_0_rgba(146,87,8,0.72),0_16px_24px_rgba(2,6,23,0.22)]"
                 >
                   <RotateCcw className="h-4 w-4" /> Restart
                 </button>
@@ -856,7 +856,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
               }`}
             >
               {feedback.type === 'success' ? <CheckCircle2 className="h-4 w-4 shrink-0" /> : <WandSparkles className="h-4 w-4 shrink-0" />}
-              <span className="text-[11px] font-black uppercase tracking-[0.12em]">{feedback.message}</span>
+              <span className="text-[13px] font-black uppercase tracking-[0.12em]">{feedback.message}</span>
             </motion.div>
           ) : null}
         </AnimatePresence>

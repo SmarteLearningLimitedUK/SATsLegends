@@ -492,7 +492,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
             <header className="rounded-[0.95rem] border border-violet-200/24 bg-[linear-gradient(180deg,rgba(50,14,94,0.94),rgba(19,8,44,0.92))] px-3 py-1.5 shadow-[0_10px_18px_rgba(2,6,23,0.18)] backdrop-blur-sm">
               <div className="flex items-center justify-between gap-2">
                 <div className="min-w-0 flex-1">
-                  <div className="text-[9px] font-black uppercase tracking-[0.18em] text-violet-500/70">Time</div>
+                  <div className="text-[11px] font-black uppercase tracking-[0.18em] text-violet-500/70">Time</div>
                   <div className="relative mt-1 h-3 overflow-hidden rounded-full border border-violet-200/30 bg-violet-50">
                     <motion.div
                       className="absolute inset-y-0 left-0 rounded-full"
@@ -503,7 +503,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
                   </div>
                 </div>
                 <div className="shrink-0 rounded-full border border-violet-100/20 bg-[linear-gradient(180deg,rgba(104,39,255,0.22),rgba(31,12,68,0.82))] px-3 py-1 text-center">
-                  <div className="text-[8px] font-black uppercase tracking-[0.16em] text-violet-500/70">XP</div>
+                  <div className="text-[10px] font-black uppercase tracking-[0.16em] text-violet-500/70">XP</div>
                   <div className="text-sm font-black text-white">{XP}</div>
                 </div>
               </div>
@@ -514,11 +514,13 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
             title={title}
             subtitle={problem.answerMode === 'decimal'
               ? 'Give your answer as a decimal.'
-              : problem.answerMode === 'group_board' ? 'Tap groups to divide on screen.' : 'Give the quotient and remainder.'}
+              : problem.answerMode === 'group_board' ? 'Use the group board to work out full boxes and leftovers.' : 'Quotient = full boxes. Remainder = crates left over.'}
             className={`mx-auto w-full shrink-0 ${problem.answerMode === 'group_board' ? '' : 'max-w-[27rem]'}`}
             style={{ position: 'relative', top: 0, transform: 'none' }}
           >
-            {problem.displayDividend} ÷ {problem.divisor} = ?
+            {problem.answerMode === 'decimal'
+              ? `Share ${problem.displayDividend} metres of rope equally between ${problem.divisor} boats. How many metres does each boat get?`
+              : `Pack ${problem.displayDividend} crates, ${problem.divisor} per box. How many full boxes and leftover crates?`}
           </GameQuestionCard>
 
           <section data-division-playfield="true" className={`relative flex min-h-0 ${problem.answerMode === 'group_board' ? 'flex-col gap-2' : 'flex-1 items-center justify-center'}`}>
@@ -569,10 +571,10 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
 
           {problem.answerMode !== 'group_board' ? <section className="shrink-0 rounded-[1.1rem] border border-white/16 bg-[linear-gradient(180deg,rgba(16,25,49,0.8),rgba(8,12,25,0.9))] p-1.5 shadow-[0_10px_18px_rgba(2,6,23,0.16)] backdrop-blur-sm">
             <div className="remainder-answer-header text-xs font-black uppercase tracking-[0.12em] text-amber-100">
-              <span>{problem.answerMode === 'decimal' ? 'Tap the correct decimal' : 'Tap the correct quotient and remainder'}</span>
+              <span>{problem.answerMode === 'decimal' ? 'Choose the decimal answer' : 'Choose full boxes and leftovers'}</span>
               {useSharedTopHud && !isPractice ? <span className="remainder-time" data-remainder-time data-urgent={timeLeft <= 15} aria-label={`${timeLeft} seconds left`}>{timeLabel}</span> : null}
             </div>
-            <div className="answer-choice-surface mt-1.5 grid grid-cols-4 gap-1.25">
+            <div className="answer-choice-surface mt-1.5 grid grid-cols-2 gap-2">
               {problem.options.map((option, index) => (
                 <button
                   key={`${problem.id}-${option}-${index}`}
@@ -587,7 +589,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
                       : 'ui-button-secondary'
                   }`}
                 >
-                  <span className="font-black text-white" style={{ fontSize: 'max(18px, calc(15px / var(--game-stage-scale, 1)))' }}>{option}</span>
+                  <span className="font-black text-white" style={{ fontSize: 'max(18px, calc(15px / var(--game-stage-scale, 1)))' }}>{problem.answerMode === 'decimal' ? option : option.replace(' r', ' remainder ')}</span>
                 </button>
               ))}
             </div>
@@ -610,8 +612,8 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
                 : 'border-rose-100/62 bg-rose-500/30 text-amber-50'
             }`}
           >
-            <div className="text-[11px] font-black uppercase tracking-[0.12em]">{feedback.title}</div>
-            <div className="mt-0.5 text-[10px] font-bold">{feedback.subtitle}</div>
+            <div className="text-[13px] font-black uppercase tracking-[0.12em]">{feedback.title}</div>
+            <div className="mt-0.5 text-[12px] font-bold">{feedback.subtitle}</div>
           </motion.div>
         ) : null}
       </AnimatePresence>

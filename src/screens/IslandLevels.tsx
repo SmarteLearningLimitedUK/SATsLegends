@@ -94,7 +94,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
         ? previousRequiredComplete && hasBossCoins
         : Boolean(level.isPractice) || previousRequiredComplete;
 
-      if (UNLOCK_ALL_LEVELS) {
+      if (UNLOCK_ALL_LEVELS || (level.isBoss && islandMockKeys.has(level.gameType ?? ''))) {
         isUnlocked = true;
       }
 
@@ -234,7 +234,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
           </div>
 
           <div className="legend-island-token-count licensed-board-frame flex min-w-[132px] shrink-0 flex-col items-end gap-1 rounded-xl px-3 py-2 text-white md:min-w-[164px]">
-            <div className="text-[9px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-[10px]">
+            <div className="text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/75 md:text-[12px]">
               Brainpower Tokens
             </div>
             <div className="flex items-center gap-1.5 text-sm font-black md:text-base">
@@ -313,7 +313,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                         className="h-5 w-5 text-cyan-100 md:h-6 md:w-6"
                       />
                       {group.hasNextPlayable ? (
-                        <span className="absolute -right-0.5 -top-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-amber-300 text-[9px] font-black text-amber-950">
+                        <span className="absolute -right-0.5 -top-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-amber-300 text-[11px] font-black text-amber-950">
                           !
                         </span>
                       ) : null}
@@ -322,7 +322,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                     <div className="min-w-0 flex-1">
                       <div className="legend-group-title truncate">{group.name}</div>
                       <div className="legend-group-progress">{group.completedCount}/{group.levels.length} missions complete{group.hasNextPlayable ? ' · Up next' : ''}</div>
-                      <div className="mt-0.5 inline-flex items-center gap-1 rounded-full border border-white/12 bg-white/5 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100/80 md:text-[11px]">
+                      <div className="mt-0.5 inline-flex items-center gap-1 rounded-full border border-white/12 bg-white/5 px-2 py-0.5 text-[12px] font-black uppercase tracking-[0.14em] text-cyan-100/80 md:text-[13px]">
                         <AssetIcon name="brainpowerToken" className="h-3.5 w-3.5 md:h-4 md:w-4" />
                         <span>{group.totalStars}/{totalPossibleBrainpowerTokens}</span>
                         {group.hasNextPlayable ? <span className="text-amber-100">Next</span> : null}

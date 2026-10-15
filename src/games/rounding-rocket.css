@@ -11,11 +11,11 @@
 .rr-cloud--one { bottom: 8%; left: -15%; }
 .rr-cloud--two { bottom: 30%; right: -15%; width: 80%; }
 .rr-cloud--three { bottom: 54%; left: -5%; width: 110%; opacity: .65; }
-.rr-world--flying { animation: rr-camera-ascent var(--rr-flight-duration) cubic-bezier(.35, .05, .3, 1) forwards; }
-@keyframes rr-camera-ascent { 0% { transform: translateY(0); } 13% { transform: translateY(5%); } 45% { transform: translateY(34%); } 80%, 100% { transform: translateY(75%); } }
-.rr-vehicle-position { position: absolute; left: 50%; bottom: 22%; height: 43%; max-height: 390px; aspect-ratio: 220 / 360; transform: translateX(-50%); z-index: 3; }
-.rr-vehicle-position--flying { animation: rr-tracked-rocket var(--rr-flight-duration) ease-in-out forwards; }
-@keyframes rr-tracked-rocket { 0% { bottom: 22%; } 20% { bottom: 29%; } 75%, 100% { bottom: 38%; transform: translateX(-50%) scale(.82); } }
+.rr-world--flying { animation: rr-camera-ascent var(--rr-flight-duration) cubic-bezier(.42, 0, .58, 1) forwards; will-change: transform; }
+@keyframes rr-camera-ascent { from { transform: translateY(0); } to { transform: translateY(75%); } }
+.rr-vehicle-position { --rr-launch-bottom: 22%; position: absolute; left: 50%; bottom: var(--rr-launch-bottom); height: 43%; max-height: 390px; aspect-ratio: 220 / 360; transform: translateX(-50%); z-index: 3; }
+.rr-vehicle-position--flying { animation: rr-tracked-rocket var(--rr-flight-duration) cubic-bezier(.42, 0, .58, 1) forwards; }
+@keyframes rr-tracked-rocket { from { bottom: var(--rr-launch-bottom); transform: translateX(-50%) scale(1); } to { bottom: max(38%, calc(var(--rr-launch-bottom) + 8%)); transform: translateX(-50%) scale(.82); } }
 .rr-vehicle { width: 100%; height: 100%; position: relative; }
 .rr-rocket { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 8px 8px #06152c60); }
 .rr-blueprint { opacity: .2; filter: saturate(0); }
@@ -33,22 +33,22 @@
 .rr-pad-lights { position: absolute; left: 30%; top: 75%; width: 40%; height: 1%; border-radius: 50%; background: repeating-linear-gradient(90deg, #8deff4 0 6px, transparent 6px 35px); box-shadow: 0 0 14px #7bedf788; animation: rr-lights 2s ease-in-out infinite alternate; }
 @keyframes rr-lights { to { opacity: .4; } }
 .rr-parts-list { position: absolute; left: clamp(12px, 5vw, 90px); bottom: 25%; padding: 14px 18px; margin: 0; list-style: none; border-left: 3px solid #76d7e3; border-radius: 0 12px 12px 0; background: #0c2338ed; color: #c8d7e2; box-shadow: 0 8px 28px #05142450; }
-.rr-parts-list li { display: flex; align-items: center; gap: 10px; font-size: 16px; line-height: 1.8; }
+.rr-parts-list li { display: flex; align-items: center; gap: 10px; font-size: calc(16px * var(--game-text-scale, 1.2)); line-height: 1.8; }
 .rr-parts-list li > span { display: inline-flex; justify-content: center; width: 18px; color: #a1b6c4; }
 .rr-parts-list .rr-part--installed, .rr-parts-list .rr-part--installed > span { color: #7cead4; }
 .rr-parts-list .rr-part--next { color: #ffe3a6; font-weight: 600; }
-.rr-build-status { position: absolute; bottom: 19%; left: 50%; transform: translateX(-50%); padding: 7px 16px; border-radius: 9px; background: #0b203beF; color: #fff2cd; font-size: 15px; text-align: center; white-space: nowrap; z-index: 4; }
-.rr-build-status span { display: block; color: #c5eaf4; font-size: 14px; }
+.rr-build-status { position: absolute; bottom: 19%; left: 50%; transform: translateX(-50%); padding: 7px 16px; border-radius: 9px; background: #0b203beF; color: #fff2cd; font-size: calc(15px * var(--game-text-scale, 1.2)); text-align: center; white-space: nowrap; z-index: 4; }
+.rr-build-status span { display: block; color: #c5eaf4; font-size: calc(14px * var(--game-text-scale, 1.2)); }
 .rr-flight-status { position: absolute; bottom: 13%; width: 100%; text-align: center; color: #fff6de; text-shadow: 0 2px 4px #031326; z-index: 5; }
-.rr-flight-status strong { display: block; font-size: clamp(32px, 6vw, 64px); line-height: 1.1; }
-.rr-flight-status span { display: inline-block; margin-top: 10px; font-size: clamp(16px, 2vw, 20px); padding: 8px 18px; border-radius: 10px; background: #071a35e6; }
+.rr-flight-status strong { display: block; font-size: calc(clamp(32px, 6vw, 64px) * var(--game-text-scale, 1.2)); line-height: 1.1; }
+.rr-flight-status span { display: inline-block; margin-top: 10px; font-size: calc(clamp(16px, 2vw, 20px) * var(--game-text-scale, 1.2)); padding: 8px 18px; border-radius: 10px; background: #071a35e6; }
 .rr-question { position: relative; z-index: 5; padding: 12px 12px 0; pointer-events: none; }
 #root .rr-question .game-question-card { position: relative; inset: auto; width: 100%; max-width: 31rem; transform: none; }
 .rr-answers { position: absolute; left: 50%; transform: translateX(-50%); bottom: 18px; width: min(92%, 560px); padding: 10px 16px 14px; border-radius: 14px; background: #0a1d35ed; z-index: 6; }
-.rr-answer-label { margin-bottom: 8px; font-size: 16px; color: #e8f6ff; text-align: center; }
+.rr-answer-label { margin-bottom: 8px; font-size: calc(16px * var(--game-text-scale, 1.2)); color: #e8f6ff; text-align: center; }
 .rr-answer-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.rr-answer-buttons button { min-height: 52px; font-size: clamp(18px, 2vw, 24px); font-weight: 700; }
-.rr-feedback { position: absolute; left: 50%; bottom: 15%; transform: translateX(-50%); padding: 8px 15px; border-radius: 9px; background: #102b45f5; color: #fff2cd; font-size: 17px; text-align: center; white-space: nowrap; z-index: 7; }
+.rr-answer-buttons button { min-height: 52px; font-size: calc(clamp(18px, 2vw, 24px) * var(--game-text-scale, 1.2)); font-weight: 700; }
+.rr-feedback { position: absolute; left: 50%; bottom: 15%; transform: translateX(-50%); padding: 8px 15px; border-radius: 9px; background: #102b45f5; color: #fff2cd; font-size: calc(17px * var(--game-text-scale, 1.2)); text-align: center; white-space: nowrap; z-index: 7; }
 .rr-feedback--error { background: #631e39f5; color: #fff; }
 .rr-scene--paused *, .rr-scene--paused *::before { animation-play-state: paused !important; }
 @media (max-width: 699px) {
@@ -56,32 +56,31 @@
   .rr-parts-list { display: none; }
   .rr-question { padding: 8px 8px 0; }
   .rr-question .game-question-card { padding: 10px 12px !important; }
-  .rr-vehicle-position { height: 36%; bottom: 29%; }
+  .rr-vehicle-position { --rr-launch-bottom: 29%; height: 36%; }
   .rr-build-status { bottom: 23%; }
   .rr-answers { bottom: 12px; padding: 8px 10px 10px; }
-  .rr-answer-label { font-size: 14px; }
+  .rr-answer-label { font-size: calc(14px * var(--game-text-scale, 1.2)); }
   .rr-answer-buttons { gap: 8px; }
-  .rr-feedback { bottom: 19%; font-size: 15px; max-width: 95%; white-space: normal; }
+  .rr-feedback { bottom: 19%; font-size: calc(15px * var(--game-text-scale, 1.2)); max-width: 95%; white-space: normal; }
 }
 @media (max-height: 599px) and (orientation: landscape) {
   .rr-question { position: absolute; top: 0; left: 12px; width: 35%; }
   .rr-question .game-question-card { padding: 8px !important; }
-  #root .app-viewport.screen-gameplay .rr-question .game-question-card .question-title { font-size: 14px !important; line-height: 1.15; }
+  #root .app-viewport.screen-gameplay .rr-question .game-question-card .question-title { font-size: calc(14px * var(--game-text-scale, 1.2)) !important; line-height: 1.15; }
   .rr-question .game-question-card-title-strip { min-height: 0 !important; margin-bottom: 0; }
-  .rr-question [data-rocket-question-value] { font-size: 28px !important; }
+  .rr-question [data-rocket-question-value] { font-size: calc(28px * var(--game-text-scale, 1.2)) !important; }
   .rr-question-hint { display: none; }
   .rr-parts-list { display: none; }
-  .rr-vehicle-position { left: 58%; height: 42%; bottom: 47%; }
-  .rr-build-status { left: 82%; bottom: 58%; font-size: 12px; padding: 4px 8px; }
-  .rr-build-status span { font-size: 12px; }
+  .rr-vehicle-position { --rr-launch-bottom: 47%; left: 58%; height: 42%; }
+  .rr-build-status { left: 82%; bottom: 58%; font-size: calc(12px * var(--game-text-scale, 1.2)); padding: 4px 8px; }
+  .rr-build-status span { font-size: calc(12px * var(--game-text-scale, 1.2)); }
   .rr-answers { width: 65%; bottom: 8px; }
   .rr-answer-label { display: none; }
   .rr-answer-buttons button { min-height: 44px; }
-  .rr-vehicle-position--flying { left: 35%; }
   .rr-flight-status { left: 55%; width: 44%; bottom: auto; top: 22%; }
-  .rr-flight-status strong { font-size: 28px; }
-  .rr-flight-status span { font-size: 14px; padding: 5px 10px; }
-  .rr-feedback { left: 82%; top: 8px; bottom: auto; width: 30%; padding: 6px 8px; font-size: 14px; white-space: normal; }
+  .rr-flight-status strong { font-size: calc(28px * var(--game-text-scale, 1.2)); }
+  .rr-flight-status span { font-size: calc(14px * var(--game-text-scale, 1.2)); padding: 5px 10px; }
+  .rr-feedback { left: 82%; top: 8px; bottom: auto; width: 30%; padding: 6px 8px; font-size: calc(14px * var(--game-text-scale, 1.2)); white-space: normal; }
   .rr-game:has(.rr-feedback) .rr-build-status { visibility: hidden; }
 }
 @media (prefers-reduced-motion: reduce) {

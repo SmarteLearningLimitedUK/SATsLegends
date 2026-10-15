@@ -12,12 +12,12 @@
   }
 
   .angle-arena-question .game-question-copy {
-    font-size: 15px;
+    font-size: calc(15px * var(--game-text-scale, 1.2));
     line-height: 1.15;
   }
 
   .angle-arena-question .question-subtitle {
     margin-top: 2px;
-    font-size: 11px;
+    font-size: calc(11px * var(--game-text-scale, 1.2));
   }
 }

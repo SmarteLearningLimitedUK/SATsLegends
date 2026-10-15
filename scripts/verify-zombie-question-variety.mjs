@@ -25,6 +25,13 @@ for (let tier = 1; tier <= 5; tier += 1) {
     assert.equal(question.options.length, 4);
     assert.equal(new Set(question.options).size, 4);
     assert.ok(question.correctIndex >= 0 && question.correctIndex < 4);
+    const equation = question.prompt.split('\n\n').at(-1);
+    const operands = equation.match(/^(-?\d+)\s*([+\-x÷])\s*\(?(-?\d+)\)?$/);
+    assert.ok(operands, `Unreadable equation: ${equation}`);
+    const a = Number(operands[1]), b = Number(operands[3]);
+    const expected = operands[2] === '+' ? a + b : operands[2] === '-' ? a - b : operands[2] === 'x' ? a * b : a / b;
+    assert.equal(question.options[question.correctIndex], expected, `Incorrect marking: ${equation}`);
+    if (tier <= 2) assert.ok(a >= 0 && b >= 0 && expected >= 0, 'Opening levels stay non-negative');
     assert.equal(used.size, index + 1, `tier ${tier} repeated a question on draw ${index + 1}`);
     assert.ok(used.has(questionSignature(question)));
   }

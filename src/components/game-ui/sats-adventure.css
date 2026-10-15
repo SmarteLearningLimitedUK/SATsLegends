@@ -2,7 +2,7 @@
 .sats-mock-content { position:relative; z-index:1; height:100%; display:flex; flex-direction:column; gap:8px; padding:8px 14px; }
 .sats-mission-strip { flex:none; width:100%; margin:0!important; }
 .sats-playfield { flex:1; min-height:0; display:flex; flex-direction:column; align-items:center; gap:6px; }
-.sats-charge { display:flex; align-items:center; gap:10px; width:min(420px,100%); font-size:16px; text-align:center; color:#fff4c7; text-shadow:0 2px 4px #05152d; }
+.sats-charge { display:flex; align-items:center; gap:10px; width:min(420px,100%); font-size:calc(16px * var(--game-text-scale, 1.2)); text-align:center; color:#fff4c7; text-shadow:0 2px 4px #05152d; }
 .sats-reactor { flex:none; width:46px; height:46px; filter:drop-shadow(0 0 5px #63e7e855); }
 .sats-reactor-ring { transform-origin:32px 32px; animation:sats-reactor-orbit 14s linear infinite; }
 @keyframes sats-reactor-orbit { to { transform:rotate(360deg); } }
@@ -11,102 +11,102 @@
 .sats-charge i { display:block; height:100%; background:linear-gradient(90deg,#53d5e5,#ffd05b); }
 .sats-model { flex:1; min-height:0; width:min(580px,100%); display:flex; align-items:center; justify-content:center; border-radius:20px; padding:8px; background:#05233beb; border:1px solid #8bdeed66; box-shadow:0 8px 28px #04142955; overflow:auto; }
 .sats-diagram { max-width:100%; max-height:100%; width:auto; height:100%; min-height:0; overflow:visible; }
-.sats-diagram text { fill:#f1faff; font-family:inherit; font-size:20px; font-weight:600; }
+.sats-diagram text { fill:#f1faff; font-family:inherit; font-size:calc(20px * var(--game-text-scale, 1.2)); font-weight:600; }
 .sats-grid-line { stroke:#82c5e444; stroke-width:1; }
-.sats-equation { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; width:100%; color:#f1faff; font-size:clamp(22px,3vw,36px); font-weight:700; text-align:center; }
+.sats-equation { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; width:100%; color:#f1faff; font-size:calc(clamp(22px,3vw,36px) * var(--game-text-scale, 1.2)); font-weight:700; text-align:center; }
 .sats-equation span { padding:6px; }
 .sats-fractions { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:20px; }
-.sats-fraction { display:flex; flex-direction:column; align-items:center; font-size:32px; font-weight:700; }
+.sats-fraction { display:flex; flex-direction:column; align-items:center; font-size:calc(32px * var(--game-text-scale, 1.2)); font-weight:700; }
 .sats-fraction span+span { border-top:3px solid #f1faff; min-width:45px; text-align:center; }
-.sats-table { border-collapse:collapse; width:100%; font-size:18px; color:#f1faff; }
+.sats-table { border-collapse:collapse; width:100%; font-size:calc(18px * var(--game-text-scale, 1.2)); color:#f1faff; }
 .sats-table th,.sats-table td { padding:10px; border:1px solid #8fdde873; text-align:center; }
 .sats-table th { background:#13506b; }
-.sats-ratio { display:flex; gap:20px; flex-wrap:wrap; justify-content:center; font-size:20px; }
+.sats-ratio { display:flex; gap:20px; flex-wrap:wrap; justify-content:center; font-size:calc(20px * var(--game-text-scale, 1.2)); }
 .sats-ratio>div>div { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; max-width:190px; }
 .sats-ratio span { width:25px; height:25px; background:#65deea; border:2px solid #d4faff; border-radius:8px; }
 .sats-ratio>div:nth-child(2) span { background:#ffc94c; }
 .sats-mission-tools { display:flex; justify-content:space-between; width:100%; gap:8px; }
-.sats-mission-tools button { min-height:44px; padding:8px 14px; font-size:16px; background:#082844ee; border:1px solid #8fdded80; border-radius:12px; color:#f1faff; }
+.sats-mission-tools button { min-height:44px; padding:8px 14px; font-size:calc(16px * var(--game-text-scale, 1.2)); background:#082844ee; border:1px solid #8fdded80; border-radius:12px; color:#f1faff; }
 .sats-response { flex:none; display:flex; flex-direction:column; gap:6px; padding:8px!important; background:#06213eed!important; border-radius:18px; }
 .sats-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
 .sats-fields>fieldset { min-width:0; margin:0; padding:0; border:0; }
 .sats-fields>fieldset:only-child { grid-column:1/-1; }
-.sats-fields legend { color:#ecfaff; font-size:16px; font-weight:700; margin-bottom:6px; }
+.sats-fields legend { color:#ecfaff; font-size:calc(16px * var(--game-text-scale, 1.2)); font-weight:700; margin-bottom:6px; }
 .sats-answer-options { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
-.sats-answer-options button { min-height:46px; padding:7px 10px; border:2px solid #68cfe2; border-radius:12px; background:#0b355b; color:#f4fcff; font-size:17px; font-weight:700; line-height:1.25; overflow-wrap:anywhere; }
+.sats-answer-options button { min-height:46px; padding:7px 10px; border:2px solid #68cfe2; border-radius:12px; background:#0b355b; color:#f4fcff; font-size:calc(17px * var(--game-text-scale, 1.2)); font-weight:700; line-height:1.25; overflow-wrap:anywhere; }
 .sats-answer-options button[aria-pressed='true'] { border-color:#ffd25c; background:#86551c; color:#fff9e5; box-shadow:0 0 0 2px #ffd25c55; }
-.sats-construct-readout { align-self:center; color:#ecfaff; font-size:16px; font-weight:700; }
+.sats-construct-readout { align-self:center; color:#ecfaff; font-size:calc(16px * var(--game-text-scale, 1.2)); font-weight:700; }
 .sats-construction { width:100%; min-height:0; display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap; }
 .sats-construction svg { display:block; width:min(270px,100%); height:auto; max-height:180px; flex:none; }
-.sats-construction svg text { fill:#f4fcff; font-size:15px; font-weight:700; }
+.sats-construction svg text { fill:#f4fcff; font-size:calc(15px * var(--game-text-scale, 1.2)); font-weight:700; }
 .sats-construction-controls { display:flex; flex-direction:column; gap:8px; flex:1; min-width:220px; }
 .sats-construction-controls>div { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
-.sats-construction-controls span { flex:1; min-width:110px; font-size:16px; font-weight:700; }
-.sats-construction-controls button { min-width:46px; min-height:46px; padding:6px 10px; border:2px solid #8fdded; border-radius:10px; background:#124e6b; color:#f4fcff; font-size:17px; font-weight:800; }
+.sats-construction-controls span { flex:1; min-width:110px; font-size:calc(16px * var(--game-text-scale, 1.2)); font-weight:700; }
+.sats-construction-controls button { min-width:46px; min-height:46px; padding:6px 10px; border:2px solid #8fdded; border-radius:10px; background:#124e6b; color:#f4fcff; font-size:calc(17px * var(--game-text-scale, 1.2)); font-weight:800; }
 .sats-construction-controls button[aria-pressed='true'] { border-color:#ffd25c; background:#86551c; }
-.sats-tap-workpad { color:#edfaff; font-size:16px; }
+.sats-tap-workpad { color:#edfaff; font-size:calc(16px * var(--game-text-scale, 1.2)); }
 .sats-tap-workpad summary { cursor:pointer; display:flex; align-items:center; min-height:44px; padding:7px 10px; border:1px solid #8fdded88; border-radius:10px; background:#0b355b; font-weight:700; }
 .sats-tap-workpad[open] { padding:8px; border:1px solid #8fdded; border-radius:12px; background:#062642; }
 .sats-mock .sats-tap-workpad[open] { position:absolute; z-index:100; left:16px; right:16px; bottom:12px; max-height:min(55vh,420px); overflow:auto; box-shadow:0 18px 50px #031525dd; }
-.sats-tap-workpad p { margin:7px 0; font-size:15px; line-height:1.4; }
-.sats-workpad-display { min-height:56px; max-height:125px; overflow:auto; white-space:pre-wrap; overflow-wrap:anywhere; padding:10px; border:2px solid #79d6e8; border-radius:10px; background:#ecfaff; color:#08233c; font-size:20px; font-weight:700; }
+.sats-tap-workpad p { margin:7px 0; font-size:calc(15px * var(--game-text-scale, 1.2)); line-height:1.4; }
+.sats-workpad-display { min-height:56px; max-height:125px; overflow:auto; white-space:pre-wrap; overflow-wrap:anywhere; padding:10px; border:2px solid #79d6e8; border-radius:10px; background:#ecfaff; color:#08233c; font-size:calc(20px * var(--game-text-scale, 1.2)); font-weight:700; }
 .sats-workpad-tiles { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:5px; margin-top:8px; }
-.sats-workpad-tiles button,.revision-workshop .sats-workpad-tiles button { width:auto; min-height:44px; margin:0; padding:5px; border:1px solid #b6ecf5; border-radius:9px; background:#185879; color:#f5fcff; font-size:18px; font-weight:800; }
+.sats-workpad-tiles button,.revision-workshop .sats-workpad-tiles button { width:auto; min-height:44px; margin:0; padding:5px; border:1px solid #b6ecf5; border-radius:9px; background:#185879; color:#f5fcff; font-size:calc(18px * var(--game-text-scale, 1.2)); font-weight:800; }
 .global-workpad-scrim { position:fixed; z-index:2000; inset:0; display:flex; align-items:center; justify-content:center; padding:12px; background:#031123c9; }
 .global-workpad-dialog { width:min(520px,100%); max-height:calc(100dvh - 24px); overflow-y:auto; padding:16px; border:2px solid #8fdded; border-radius:18px; background:#092946; color:#f1faff; box-shadow:0 24px 70px #031123; }
 .global-workpad-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
-.global-workpad-heading h2 { margin:0; color:#fff4c7; font-size:23px; }
-.global-workpad-heading button { min-height:46px; padding:7px 12px; border:2px solid #ffd25c; border-radius:10px; background:#6f4215; color:#fff9e5; font-size:16px; font-weight:700; }
+.global-workpad-heading h2 { margin:0; color:#fff4c7; font-size:calc(23px * var(--game-text-scale, 1.2)); }
+.global-workpad-heading button { min-height:46px; padding:7px 12px; border:2px solid #ffd25c; border-radius:10px; background:#6f4215; color:#fff9e5; font-size:calc(16px * var(--game-text-scale, 1.2)); font-weight:700; }
 .global-workpad-dialog .sats-tap-workpad[open] { border:0; background:transparent; padding:0; }
 .global-workpad-dialog :is(button,summary):focus-visible { outline:3px solid #ffd25c; outline-offset:3px; }
 .sats-fields>label:only-child { grid-column:1/-1; }
-.sats-fields label,.sats-working label,.revision-workshop label { display:flex; flex-direction:column; gap:4px; color:#ecfaff; font-size:16px; font-weight:600; }
-.sats-fields input,.sats-fields select,.sats-fields textarea,.sats-working textarea,.revision-workshop input,.revision-workshop select { width:100%; min-height:44px; padding:8px 10px; color:#06233b!important; background:#f0fbff!important; border:2px solid #68cfe2; border-radius:10px; font-family:inherit; font-size:18px; font-weight:600; line-height:1.3; }
+.sats-fields label,.sats-working label,.revision-workshop label { display:flex; flex-direction:column; gap:4px; color:#ecfaff; font-size:calc(16px * var(--game-text-scale, 1.2)); font-weight:600; }
+.sats-fields input,.sats-fields select,.sats-fields textarea,.sats-working textarea,.revision-workshop input,.revision-workshop select { width:100%; min-height:44px; padding:8px 10px; color:#06233b!important; background:#f0fbff!important; border:2px solid #68cfe2; border-radius:10px; font-family:inherit; font-size:calc(18px * var(--game-text-scale, 1.2)); font-weight:600; line-height:1.3; }
 .sats-response-actions { display:grid; grid-template-columns:1fr 2fr; gap:8px; }
-.sats-response-actions button { min-height:46px; padding:8px!important; font-size:18px!important; }
-.sats-working { font-size:16px; max-height:110px; overflow:auto; }
+.sats-response-actions button { min-height:46px; padding:8px!important; font-size:calc(18px * var(--game-text-scale, 1.2))!important; }
+.sats-working { font-size:calc(16px * var(--game-text-scale, 1.2)); max-height:110px; overflow:auto; }
 .sats-working summary { cursor:pointer; padding:4px 0; }
-.sats-notice { font-size:16px; color:#fff4c7; }
+.sats-notice { font-size:calc(16px * var(--game-text-scale, 1.2)); color:#fff4c7; }
 .sats-notice:empty { display:none; }
 .sats-inset-overlay { position:absolute; z-index:8; inset:0; overflow:auto; display:flex; flex-direction:column; gap:12px; padding:24px 18px; border-radius:20px; background:#06203ff5; color:#f1faff; }
-.sats-inset-overlay h3,.sats-review h2 { font-size:26px; color:#fff4c7; }
-.sats-inset-overlay p,.sats-review p { font-size:17px; line-height:1.5; }
+.sats-inset-overlay h3,.sats-review h2 { font-size:calc(26px * var(--game-text-scale, 1.2)); color:#fff4c7; }
+.sats-inset-overlay p,.sats-review p { font-size:calc(17px * var(--game-text-scale, 1.2)); line-height:1.5; }
 .sats-mission-list { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:8px; }
-.sats-mission-list button { min-height:44px; background:#114c6d; border:1px solid #83dfea; border-radius:10px; font-size:17px; }
+.sats-mission-list button { min-height:44px; background:#114c6d; border:1px solid #83dfea; border-radius:10px; font-size:calc(17px * var(--game-text-scale, 1.2)); }
 .sats-mission-list button[aria-current] { outline:3px solid #ffd25c; }
 .sats-review { position:relative; z-index:1; overflow:auto; height:100%; padding:16px; background:#06213eea; border-radius:18px; touch-action:pan-y; }
-.sats-review h3 { font-size:21px; margin:18px 0 8px; color:#a9f0f5; }
-.sats-review .sats-score { font-size:32px; color:#ffd25c; font-weight:700; }
+.sats-review h3 { font-size:calc(21px * var(--game-text-scale, 1.2)); margin:18px 0 8px; color:#a9f0f5; }
+.sats-review .sats-score { font-size:calc(32px * var(--game-text-scale, 1.2)); color:#ffd25c; font-weight:700; }
 .sats-review-item { padding:10px 0; border-top:1px solid #a5d7eb55; }
-.sats-review-item summary { cursor:pointer; font-size:17px; min-height:44px; padding:10px 0; }
+.sats-review-item summary { cursor:pointer; font-size:calc(17px * var(--game-text-scale, 1.2)); min-height:44px; padding:10px 0; }
 .sats-review-item .sats-diagram { max-height:240px; display:block; margin:10px auto; }
 .sats-review-item p { margin:8px 0; }
 .sats-review a { color:#a6f4ff; text-decoration:underline; min-height:44px; display:inline-flex; align-items:center; }
-.sats-method-check { display:flex; align-items:center; gap:10px; font-size:16px; }
+.sats-method-check { display:flex; align-items:center; gap:10px; font-size:calc(16px * var(--game-text-scale, 1.2)); }
 .sats-method-check input { width:24px; height:24px; flex:none; }
 .sats-practice-link { display:block!important; }
 .sats-review>.ui-button-primary { width:100%; min-height:48px; margin-top:14px; }
 .revision-workshop { margin-top:18px; border-top:1px solid #93dae966; padding-top:16px; color:#f1faff; text-align:left; }
-.revision-workshop h3 { font-size:21px; color:#fff2bf; }
-.revision-workshop p { font-size:17px; line-height:1.5; margin:10px 0; }
+.revision-workshop h3 { font-size:calc(21px * var(--game-text-scale, 1.2)); color:#fff2bf; }
+.revision-workshop p { font-size:calc(17px * var(--game-text-scale, 1.2)); line-height:1.5; margin:10px 0; }
 .revision-workshop .sats-diagram { display:block; width:100%; max-height:230px; margin:8px auto; }
-.revision-workshop .sats-equation { font-size:24px; margin:12px 0; }
+.revision-workshop .sats-equation { font-size:calc(24px * var(--game-text-scale, 1.2)); margin:12px 0; }
 .revision-workshop form { display:flex; flex-direction:column; gap:10px; }
-.revision-workshop button { min-height:44px; width:100%; padding:10px!important; font-size:16px!important; margin-top:8px; }
+.revision-workshop button { min-height:44px; width:100%; padding:10px!important; font-size:calc(16px * var(--game-text-scale, 1.2))!important; margin-top:8px; }
 .revision-choice-field { min-width:0; margin:0; padding:0; border:0; }
-.revision-choice-field legend { margin-bottom:8px; color:#ecfaff; font-size:16px; font-weight:700; }
+.revision-choice-field legend { margin-bottom:8px; color:#ecfaff; font-size:calc(16px * var(--game-text-scale, 1.2)); font-weight:700; }
 .revision-choice-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
 .revision-workshop .revision-choice-button { min-height:48px; margin:0; border:2px solid #68cfe2; border-radius:12px; background:#0b355b; color:#ecfaff; font-weight:700; overflow-wrap:anywhere; text-align:center; }
 .revision-workshop .revision-choice-button[aria-pressed='true'] { border-color:#ffd25c; background:#7b4a13; color:#fff9e5; box-shadow:0 0 0 2px #ffd25c66; }
 .revision-workshop button:disabled { cursor:not-allowed; opacity:.55; }
 @media (max-width:480px) { .revision-choice-grid { grid-template-columns:1fr; } }
 .revision-solution { background:#0c4a58; padding:12px; border-radius:12px; margin:12px 0; }
-.legend-worked-example { margin-top:16px; padding:12px; color:#f1faff; background:#092b4be6; border:1px solid #8bd8e85e; border-radius:12px; font-size:17px; line-height:1.5; text-align:left; }
+.legend-worked-example { margin-top:16px; padding:12px; color:#f1faff; background:#092b4be6; border:1px solid #8bd8e85e; border-radius:12px; font-size:calc(17px * var(--game-text-scale, 1.2)); line-height:1.5; text-align:left; }
 .sats-mock :is(button,input,select,textarea,a,summary):focus-visible,.revision-workshop :is(button,input,select):focus-visible { outline:3px solid #ffd25c; outline-offset:3px; }
 @media(max-width:600px) { .sats-fields { grid-template-columns:1fr; gap:6px; } .sats-construction-controls { min-width:0; width:100%; } }
 @media(max-width:600px) { .sats-mock--construction .sats-mock-content { overflow-y:auto; padding-bottom:88px; } .sats-mock--construction .sats-playfield { flex:none; } .sats-mock--construction .sats-model { flex:none; min-height:300px; height:auto; overflow:visible; } .sats-mock--construction .sats-construction { flex-direction:column; } .sats-mock--construction .sats-construction svg { width:175px; max-height:115px; } }
-@media(max-width:480px) { .sats-mock-content { padding:4px 7px; gap:5px; } .sats-fields legend { font-size:15px; } .sats-table { font-size:16px; } .sats-table td,.sats-table th { padding:6px; } .sats-model { padding:5px; } .sats-answer-options button { font-size:16px; } }
-@media(max-width:480px) { .sats-mock .sats-answer-options { grid-template-columns:repeat(4,minmax(0,1fr)); } .sats-mock .sats-answer-options button { min-width:0; min-height:44px; padding:4px; font-size:clamp(12px,3.8vw,16px); } }
+@media(max-width:480px) { .sats-mock-content { padding:4px 7px; gap:5px; } .sats-fields legend { font-size:calc(15px * var(--game-text-scale, 1.2)); } .sats-table { font-size:calc(16px * var(--game-text-scale, 1.2)); } .sats-table td,.sats-table th { padding:6px; } .sats-model { padding:5px; } .sats-answer-options button { font-size:calc(16px * var(--game-text-scale, 1.2)); } }
+@media(max-width:480px) { .sats-mock .sats-answer-options { grid-template-columns:repeat(4,minmax(0,1fr)); } .sats-mock .sats-answer-options button { min-width:0; min-height:44px; padding:4px; font-size:calc(clamp(12px,3.8vw,16px) * var(--game-text-scale, 1.2)); } }
 @media(max-width:480px) and (max-height:700px) { .sats-mock:not(.sats-mock--construction) .sats-mock-content { overflow-y:auto; touch-action:pan-y; scrollbar-width:thin; } .sats-mock:not(.sats-mock--construction) .sats-playfield { flex:none; min-height:220px; } .sats-mock:not(.sats-mock--construction) .sats-model { min-height:110px; } }
 @media(min-width:700px) { .sats-response { display:grid; grid-template-columns:minmax(0,1fr) 280px; align-items:end; gap:8px 10px; } .sats-fields,.sats-construct-readout,.sats-tap-workpad { grid-column:1; } .sats-response-actions { grid-column:2; grid-row:1 / span 2; align-self:end; } .sats-notice { grid-column:1/-1; } }
 @media(min-width:900px) { .sats-fields>fieldset:only-child .sats-answer-options { grid-template-columns:repeat(4,minmax(0,1fr)); } }

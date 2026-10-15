@@ -573,13 +573,13 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
         <button
           type="button"
           onClick={() => setIsPaused((previous) => !previous)}
-          className="ui-button-primary rounded-lg px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white md:px-4 md:py-2 md:text-xs"
+          className="ui-button-primary rounded-lg px-3 py-1.5 text-[12px] font-black uppercase tracking-[0.14em] text-white md:px-4 md:py-2 md:text-xs"
         >
           {isPaused ? 'Resume' : 'Pause'}
         </button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 text-[10px] font-black uppercase tracking-[0.14em] md:text-xs">
+      <div className="flex flex-wrap items-center gap-2 text-[12px] font-black uppercase tracking-[0.14em] md:text-xs">
         <span className="licensed-slice-cyan-pill rounded-full px-2.5 py-1 text-white">Accuracy {accuracy}%</span>
       </div>
     </div>
@@ -625,7 +625,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="pointer-events-none absolute z-10 rounded-full border border-white/12 bg-slate-900/52 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-white/75"
+            className="pointer-events-none absolute z-10 rounded-full border border-white/12 bg-slate-900/52 px-3 py-1 text-[12px] font-black uppercase tracking-[0.12em] text-white/75"
             style={{ top: `${Math.max(10, arenaLayout.topZoneHeight - 34)}px`, left: `${arenaLayout.sidePadding + 4}px` }}
           >
             Drag to aim or tap a target
@@ -712,7 +712,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
           </div>
         </button>
 
-        <div className="pointer-events-none mt-2 text-center text-[10px] font-black uppercase tracking-[0.14em] text-white/75">
+        <div className="pointer-events-none mt-2 text-center text-[12px] font-black uppercase tracking-[0.14em] text-white/75">
           Drag and release, or tap a target
         </div>
       </div>
@@ -739,7 +739,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
             }`}
           >
             <div className="text-xs font-black uppercase tracking-[0.16em]">{feedback.title}</div>
-            <div className="text-[11px] font-semibold md:text-xs">{feedback.detail}</div>
+            <div className="text-[13px] font-semibold md:text-xs">{feedback.detail}</div>
           </div>
         </motion.div>
       )}

@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useIsPresent, useReducedMotion } from 'motion/react';
 import confetti from 'canvas-confetti';
-import CelebrationSplash from '../components/CelebrationSplash';
 import { GameScreenShell } from '../layout/ScreenPrimitives';
 import { triggerHaptic } from '../haptics';
 import { GameplaySessionEventHandlers, GameplaySessionState } from '../app/gameplaySessionContract';
@@ -283,7 +282,7 @@ const scoreToStars = (correct: number, rounds: number, lives: number) => {
 const FormulaShapePanel: React.FC<{ round: FormulaRound }> = ({ round }) => {
   return (
     <div data-formula-playfield="true" className="flex h-full min-h-0 flex-col rounded-[1.35rem] border border-cyan-200/14 bg-[linear-gradient(180deg,rgba(8,18,36,0.45),rgba(15,23,42,0.2))] p-2 shadow-[0_12px_22px_rgba(2,6,23,0.12)]">
-      <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-2 gap-y-1 text-[11px] font-bold text-cyan-100">
+      <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-2 gap-y-1 text-[13px] font-bold text-cyan-100">
         <span>{round.title}</span>
         <span data-formula-equation="true">{round.formula}</span>
       </div>
@@ -293,8 +292,8 @@ const FormulaShapePanel: React.FC<{ round: FormulaRound }> = ({ round }) => {
             <polygon points="36,20 102,20 84,80 18,80" fill="rgba(56,189,248,0.16)" stroke="rgba(191,219,254,0.9)" strokeWidth="2.4" strokeLinejoin="round" />
             <line x1="36" y1="20" x2="36" y2="80" stroke="#fcd34d" strokeWidth="1.8" strokeDasharray="4 3" />
             <path d="M36 73H43V80" fill="none" stroke="#fcd34d" strokeWidth="1.5" />
-            <text x="40" y="51" fill="#fff8ec" fontSize="10" fontWeight="bold">h</text>
-            <text x="51" y="94" fill="#fff8ec" fontSize="10" fontWeight="bold">b</text>
+            <text x="40" y="51" fill="#fff8ec" fontSize="12" fontWeight="bold">h</text>
+            <text x="51" y="94" fill="#fff8ec" fontSize="12" fontWeight="bold">b</text>
           </svg>
         ) : round.diagram === 'triangle' ? (
           <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full">
@@ -311,7 +310,7 @@ const FormulaShapePanel: React.FC<{ round: FormulaRound }> = ({ round }) => {
             <line x1="50" y1="40" x2="50" y2="82" stroke="rgba(191,219,254,0.45)" strokeWidth="1.2" strokeLinecap="round" />
           </svg>
         ) : (
-          <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full">
+          <svg viewBox="10 16 80 68" className="absolute inset-0 h-full w-full">
             <rect x="18" y="24" width="64" height="52" rx="2" fill="rgba(56,189,248,0.25)" stroke="#8debe2" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
             <g opacity="0.24" stroke="rgba(255,255,255,0.85)" strokeWidth="0.8">
               {Array.from({ length: 4 }).map((_, index) => (
@@ -527,12 +526,12 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
                 <FormulaShapePanel round={round} />
               </div>
 
-              <div data-formula-hint="true" className="shrink-0 rounded-[1rem] border border-white/10 bg-black/10 px-2 py-1 text-[11px] font-semibold text-cyan-100/80">
+              <div data-formula-hint="true" className="shrink-0 rounded-[1rem] border border-white/10 bg-black/10 px-2 py-1 text-[13px] font-semibold text-cyan-100/80">
                 Rune hint: {round.hint}
               </div>
 
               <div data-formula-answers="true" className="answer-choice-surface shrink-0 rounded-[1.25rem] border border-white/12 bg-[linear-gradient(180deg,rgba(30,64,175,0.08),rgba(15,23,42,0.46))] p-2 shadow-[0_14px_26px_rgba(2,6,23,0.12)]">
-                <div className="text-[11px] font-bold text-amber-100/85">Choose {round.targetLabel}</div>
+                <div className="text-[13px] font-bold text-amber-100/85">Choose {round.targetLabel}</div>
                 <div className="mt-1.5 grid grid-cols-2 gap-2">
                   {round.options.map((option) => (
                     <motion.button
@@ -560,7 +559,11 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
             </div>
           </div>
 
-          <CelebrationSplash active={showCelebrationSplash} message="Forge Restored!" theme="forge" />
+          <AnimatePresence>{showCelebrationSplash && !reducedMotion && <motion.div
+            aria-hidden="true" className="pointer-events-none absolute inset-0 z-20"
+            style={{background:'radial-gradient(ellipse at center, rgba(110,231,210,.2), transparent 65%)'}}
+            initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} transition={{duration:.3}}
+          />}</AnimatePresence>
 
           <AnimatePresence>
             {feedback && feedback.tone === 'error' ? (

@@ -38,7 +38,7 @@ import { evidenceArtwork } from './evidenceArtwork';
 
 const EvidenceAxisTick = ({x=0,y=0,payload}:{x?:number;y?:number;payload?:{value:string}}) => <g transform={`translate(${x},${y})`}>
   <image href={evidenceArtwork(payload?.value ?? '')} x={-14} y={1} width={28} height={28} />
-  <text y={44} textAnchor="middle" fill="#fff4dd" fontSize={14} fontWeight={700}>{payload?.value.split(' ').at(-1)}</text>
+  <text y={44} textAnchor="middle" fill="#fff4dd" fontSize={17} fontWeight={700}>{payload?.value.split(' ').at(-1)}</text>
 </g>;
 
 interface StolenItem {
@@ -303,7 +303,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                   <h1 className="text-sm font-black uppercase tracking-widest text-white">
                     {caseMode === 'whodunnit' ? 'Whodunnit Files' : 'Data Detective Agency'}
                   </h1>
-                  <p className="text-[10px] italic uppercase tracking-tighter text-stone-500">
+                  <p className="text-[12px] italic uppercase tracking-tighter text-stone-500">
                     {caseMode === 'whodunnit' ? 'Clues hidden in the charts' : 'Solving crimes with statistics'}
                   </p>
                 </div>
@@ -311,16 +311,16 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
 
               <div className="flex items-center gap-6">
                 <div className="flex flex-col items-end">
-                  <span className="text-[10px] uppercase text-stone-500">{isPractice ? 'Practice' : 'Lives'}</span>
+                  <span className="text-[12px] uppercase text-stone-500">{isPractice ? 'Practice' : 'Lives'}</span>
                   <span className="text-xs font-black text-rose-300">{isPractice ? 'No limit' : lives}</span>
                 </div>
                 <div className="flex flex-col items-end">
-                  <span className="text-[10px] uppercase text-stone-500">Reputation</span>
+                  <span className="text-[12px] uppercase text-stone-500">Reputation</span>
                   <span className="text-xs font-bold text-amber-500">{XP} PTS</span>
                 </div>
                 <div className="h-8 w-[1px] bg-stone-800" />
                 <div className="flex flex-col items-end">
-                  <span className="text-[10px] uppercase text-stone-500">Case File</span>
+                  <span className="text-[12px] uppercase text-stone-500">Case File</span>
                   <span className="text-xs font-bold text-white">{level} / {caseLimit}</span>
                 </div>
               </div>
@@ -328,7 +328,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
           ) : null}
           <GameQuestionCard
             className="z-30 mt-0 w-full max-w-[620px] rounded-[1.2rem] px-3 py-2 text-center shadow-[0_10px_20px_rgba(2,6,23,0.38)] max-[480px]:px-2 max-[480px]:py-1.25"
-            titleClassName="text-[9px] tracking-[0.26em] text-cyan-50/85"
+            titleClassName="text-[11px] tracking-[0.26em] text-cyan-50/85"
             title="Data Detective"
             subtitle="Compare the chart with each stash."
             style={{ position: 'relative', top: 0, transform: 'none' }}
@@ -344,14 +344,14 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                 <div className="flex items-center gap-2 text-amber-500">
                   <FileText className="h-5 w-5" />
                   <h2 className="detective-evidence-heading font-black">
-                    {`Case ${level}/${caseLimit} · Evidence board`}
+                    {`Case ${level} of ${caseLimit}`}
                   </h2>
                 </div>
                 <div className="flex items-center gap-2 rounded-full border border-stone-700 bg-stone-800 px-3 py-1">
                   {chartType === 'bar'
                     ? <BarChart3 className="h-3 w-3 text-amber-400" />
                     : <PieChartIcon className="h-3 w-3 text-amber-400" />}
-                  <span className="text-[10px] font-bold uppercase text-stone-400">{chartType} Chart</span>
+                  <span className="text-[12px] font-bold uppercase text-stone-400">{chartType} Chart</span>
                 </div>
               </div>
 
@@ -368,7 +368,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                           <XAxis
                             dataKey="name"
                             stroke="#a8a29e"
-                            fontSize={14}
+                            fontSize={17}
                             tick={<EvidenceAxisTick />}
                             height={56}
                             tickFormatter={(name) => String(name).split(' ').at(-1) || String(name)}
@@ -381,13 +381,14 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                             domain={[0, barAxisMax]}
                             interval={0}
                             stroke="#a8a29e"
-                            fontSize={17}
+                            fontSize={20}
                             tickLine={false}
                             axisLine={false}
                             allowDecimals={false}
                             width={38}
                           />
                           <Tooltip
+                            cursor={false}
                             contentStyle={{ backgroundColor: '#1c1917', border: '1px solid #444', borderRadius: '8px', fontSize: '17px' }}
                             itemStyle={{ color: '#fff' }}
                           />
@@ -419,7 +420,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                                   x={x}
                                   y={y}
                                   fill="#f8fafc"
-                                  fontSize={17}
+                                  fontSize={20}
                                   fontWeight={700}
                                   textAnchor="middle"
                                   dominantBaseline="central"
@@ -464,7 +465,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             <div className="rounded-[1.2rem] border border-cyan-200/14 bg-[linear-gradient(180deg,rgba(8,16,36,0.66),rgba(4,10,24,0.78))] px-3 pt-2 pb-2.5 shadow-[0_14px_30px_rgba(0,0,0,0.34)] backdrop-blur-md">
               <div className="mb-1 flex items-center gap-2 text-cyan-100/75">
                 <Users className="h-4.5 w-4.5" />
-                <h2 className="text-[10px] font-black uppercase tracking-[0.2em]">Choose the thief</h2>
+                <h2 className="text-[12px] font-black uppercase tracking-[0.2em]">Choose the thief</h2>
               </div>
               <div className="detective-lineup">
                 {suspects.map((suspect) => (
@@ -620,7 +621,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                     All cases solved. The city is safe once again thanks to your expert data interpretation.
                   </p>
                   <div className="mb-8 rounded-2xl border border-stone-800 bg-stone-900 p-6 max-[480px]:mb-5 max-[480px]:p-4">
-                    <span className="mb-1 block text-[10px] uppercase text-stone-500">Final Reputation</span>
+                    <span className="mb-1 block text-[12px] uppercase text-stone-500">Final Reputation</span>
                     <span className="text-4xl font-black text-amber-500 max-[480px]:text-3xl">{XP} PTS</span>
                   </div>
                   <button
@@ -648,7 +649,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                       : 'border-rose-300/75 bg-[linear-gradient(180deg,rgba(127,29,29,0.96),rgba(69,10,10,0.96))] text-rose-50'
                   }`}
                 >
-                  <div className="text-[11px] font-black uppercase tracking-[0.2em] opacity-75">
+                  <div className="text-[13px] font-black uppercase tracking-[0.2em] opacity-75">
                     {feedback.type === 'success' ? 'Success' : 'Failure'}
                   </div>
                   <div className="mt-1 text-lg font-black">{feedback.message}</div>

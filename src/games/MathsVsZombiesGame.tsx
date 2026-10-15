@@ -110,7 +110,7 @@ const buildQuestion = (levelId: number, forced?: QuestionOperands): Question => 
     b = roll(10, 40);
   } else if (levelId === 4) {
     // Introduce multiplication/division with manageable factors.
-    opPool = ['×', '÷'];
+    opPool = ['×', '÷', '+', '-'];
     a = roll(2, 8);
     b = roll(2, 8);
   } else {
@@ -120,6 +120,12 @@ const buildQuestion = (levelId: number, forced?: QuestionOperands): Question => 
   }
 
   const op = forced?.op ?? opPool[Math.floor(Math.random() * opPool.length)];
+  if (!forced && levelId === 3 && Math.random() < 1 / 3) {
+    a = roll(-10, -1); b = roll(1, 10);
+  }
+  if (!forced && levelId === 4 && (op === '+' || op === '-')) {
+    a = roll(-15, 15); b = roll(1, 12);
+  }
   if (!forced && levelId === 5 && (op === '+' || op === '-')) {
     a = roll(-20, 30); b = roll(-20, 20);
   }
@@ -127,13 +133,13 @@ const buildQuestion = (levelId: number, forced?: QuestionOperands): Question => 
 
   if (op === '+') {
     answer = a + b;
-    equation = `${a} + ${b}`;
+    equation = `${a} + ${b < 0 ? `(${b})` : b}`;
   } else if (op === '-') {
-    if (levelId <= 3) {
+    if (levelId <= 2) {
       if (a < b) [a, b] = [b, a];
     }
     answer = a - b;
-    equation = `${a} - ${b}`;
+    equation = `${a} - ${b < 0 ? `(${b})` : b}`;
   } else if (op === '×') {
     answer = a * b;
     equation = `${a} × ${b}`;
@@ -148,7 +154,7 @@ const buildQuestion = (levelId: number, forced?: QuestionOperands): Question => 
   while (options.size < 4) {
     const delta = Math.floor(Math.random() * 8) + 1;
     const candidate = Math.random() < 0.5 ? answer + delta : answer - delta;
-    if (candidate !== answer && (levelId === 5 || candidate >= 0)) options.add(candidate);
+    if (candidate !== answer && (levelId >= 3 || candidate >= 0)) options.add(candidate);
   }
   const shuffled = Array.from(options).sort(() => Math.random() - 0.5);
   return {
@@ -178,13 +184,13 @@ const buildFreshQuestion = (levelId: number, used: Set<string>): Question => {
   const pools: { ops: Operation[]; minA: number; maxA: number; minB: number; maxB: number }[] = [
     { ops: ['+'], minA: 0, maxA: 5, minB: 0, maxB: 5 },
     { ops: ['+', '-'], minA: 0, maxA: 10, minB: 0, maxB: 8 },
-    { ops: ['+', '-'], minA: 10, maxA: 50, minB: 10, maxB: 40 },
-    { ops: ['×', '÷'], minA: 2, maxA: 8, minB: 2, maxB: 8 },
+    { ops: ['+', '-'], minA: -10, maxA: 50, minB: 1, maxB: 40 },
+    { ops: ['×', '÷', '+', '-'], minA: 2, maxA: 8, minB: 2, maxB: 8 },
     { ops: ['+', '-', '×', '÷'], minA: 2, maxA: 12, minB: 2, maxB: 12 },
   ];
   const pool = pools[Math.max(0, Math.min(4, levelId - 1))];
   for (const op of pool.ops) {
-    const minA = levelId >= 5 && (op === '+' || op === '-') ? -20 : pool.minA;
+    const minA = levelId >= 4 && (op === '+' || op === '-') ? (levelId === 4 ? -15 : -20) : pool.minA;
     const maxA = levelId >= 5 && (op === '+' || op === '-') ? 30 : pool.maxA;
     const minB = levelId >= 5 && (op === '+' || op === '-') ? -20 : pool.minB;
     const maxB = levelId >= 5 && (op === '+' || op === '-') ? 20 : pool.maxB;
@@ -222,11 +228,11 @@ const TopBar = ({ XP, brainPoints, health, timer, onBack }: { XP: number; brainP
               <Heart key={index} className={`h-4 w-4 ${index < health ? 'fill-red-500 text-amber-500' : 'text-gray-600'}`} />
             ))}
           </div>
-          <span className="mt-1 text-[10px] font-black uppercase text-blue-200">Base Health</span>
+          <span className="mt-1 text-[12px] font-black uppercase text-blue-200">Base Health</span>
         </div>
         <div className="h-8 w-[2px] bg-blue-400/20" />
         <div className="flex flex-col">
-          <span className="text-[10px] font-bold uppercase tracking-tighter text-blue-200">XP</span>
+          <span className="text-[12px] font-bold uppercase tracking-tighter text-blue-200">XP</span>
           <span className="text-xl font-black leading-none text-white">{XP.toLocaleString()}</span>
         </div>
       </div>
@@ -678,7 +684,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           <TopBar XP={XP} brainPoints={zombiesDefeated} health={health} timer={timerLabel} onBack={onBack} />
         ) : null}
 
-        <GameQuestionCard className="zombies-question-card" title={gameTitle || 'Maths vs Zombies'} subtitle={isPractice ? `Push back 4 minions. ${zombiesDefeated} cleared.` : `Hold for 60 seconds. Clear at least ${victoryTargetScore / 220} minions. ${zombiesDefeated} cleared.`} style={{ position: 'relative', top: '5px', width: 'min(92%, 920px)', transform: 'none' }}>
+        <GameQuestionCard className="zombies-question-card" title={gameTitle || 'Maths vs Zombies'} subtitle={isPractice ? `Defeat 4 zombies to finish practice. ${zombiesDefeated} defeated.` : `Survive for 60 seconds and defeat at least ${victoryTargetScore / 220} zombies to win. Zombies that reach you cost hearts; zero hearts ends the run. ${zombiesDefeated} defeated.`} style={{ position: 'relative', top: '5px', width: 'min(92%, 920px)', transform: 'none' }}>
           {question.prompt.split('\n\n').slice(-1)[0]}
         </GameQuestionCard>
 
@@ -694,7 +700,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
             </div>
           ) : null}
           <div ref={playerRef} className="zombies-player absolute flex flex-col items-center" data-player-character="true" data-casting={isCasting}>
-            <div className="text-[11px] font-black uppercase tracking-[0.18em] text-cyan-100">You</div>
+            <div className="text-[13px] font-black uppercase tracking-[0.18em] text-cyan-100">You</div>
             <ZombieHeroActor source={avatarImage} avatarId={avatarId}/>
           </div>
 
@@ -754,7 +760,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 
         <div className="zombies-answer-board licensed-board-frame mx-4 mt-1 rounded-[1.35rem] px-4 py-3">
           <div
-            className={`zombies-feedback min-h-[16px] text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-cyan-100/80 ${feedback ? 'opacity-100' : 'opacity-0'}`}
+            className={`zombies-feedback min-h-[16px] text-center text-[13px] font-semibold uppercase tracking-[0.14em] text-cyan-100/80 ${feedback ? 'opacity-100' : 'opacity-0'}`}
             aria-hidden={!feedback}
           >
             {feedback || '\u00A0'}

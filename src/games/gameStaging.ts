@@ -15,7 +15,7 @@ export const GAME_SETS:Record<string,GameSet>={
  data_detective:set('Detective evidence station','archive','.data-detective-layout main > section:first-child, main > section:first-child','#e0cf96','lens'),
  decimal_sniper:set('Decimal targeting range','instrument','.structured-playfield-frame','#88e2dc','lens'),
  factor_frenzy:set('Factor crystal laboratory','reactor','main','#acedd1','crystal'),
- formula_forge:set('Formula assembly workbench','bench','[data-formula-playfield]','#ffd69d','gear'),
+ formula_forge:set('Formula assembly workbench','bench','[data-formula-playfield]','#ffd69d','rune'),
  fraction_forge:set('Fraction smithy anvil','native',undefined,'#ffba79','torch'),
  fraction_match:set('Equivalence mosaic gallery','gallery','.match-mastery-board','#cdb6ff','rune'),
  line_graph_lab:set('Weather observatory plotting desk','instrument','.line-graph-board','#b5e2ff','lens'),

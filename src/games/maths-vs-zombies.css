@@ -1,7 +1,7 @@
 .maths-vs-zombies {
   background-image:
     linear-gradient(180deg, rgba(5, 15, 34, 0.2), rgba(5, 15, 34, 0.08) 45%, rgba(5, 15, 34, 0.27)),
-    url('../assets/maps/premium/maths-vs-zombies.webp');
+    url('../assets/maps/premium/zombies-garden-wide-v2.png');
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -47,7 +47,7 @@
   background: rgba(5, 24, 41, .88);
   box-shadow: 0 8px 18px rgba(2, 13, 25, .35), inset 0 1px rgba(255, 255, 255, .16);
   color: #f0fbff;
-  font-size: clamp(16px, 1.5vw, 21px);
+  font-size: calc(clamp(16px, 1.5vw, 21px) * var(--game-text-scale, 1.2));
   font-weight: 900;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -58,12 +58,12 @@
 .maths-vs-zombies .zombies-countdown[data-urgent='true'] svg { color: #ffd0a8; }
 
 #root .app-viewport.sat-theme-bluegold.screen-gameplay .maths-vs-zombies .zombies-question-card .game-question-copy {
-  font-size: clamp(1.35rem, 2.1vw, 1.9rem) !important;
+  font-size: calc(clamp(1.35rem, 2.1vw, 1.9rem) * var(--game-text-scale, 1.2)) !important;
   line-height: 1.08 !important;
 }
 
 #root .app-viewport.sat-theme-bluegold.screen-gameplay .maths-vs-zombies .zombies-answer-options button {
-  font-size: clamp(1rem, 1.6vw, 1.3rem) !important;
+  font-size: calc(clamp(1rem, 1.6vw, 1.3rem) * var(--game-text-scale, 1.2)) !important;
 }
 
 @keyframes zombies-advance-step {
@@ -112,7 +112,7 @@
 }
 
 .maths-vs-zombies .zombies-answer-label {
-  font-size: clamp(0.75rem, 1.1vw, 0.88rem);
+  font-size: calc(clamp(0.75rem, 1.1vw, 0.88rem) * var(--game-text-scale, 1.2));
   letter-spacing: 0.08em;
   line-height: 1.25;
 }
@@ -280,7 +280,7 @@
   .maths-vs-zombies {
     background-image:
       linear-gradient(180deg, rgba(5, 15, 34, 0.24), rgba(5, 15, 34, 0.04) 42%, rgba(5, 15, 34, 0.25)),
-      url('../assets/zombies/zombiebkground.png');
+      url('../assets/maps/premium/zombies-garden-wide-v2.png');
     background-position: center 38%;
   }
 
@@ -362,7 +362,7 @@
   gap: 8px;
 }
 .maths-vs-zombies .zombies-player::before { top: 61%; right: 4%; }
-.maths-vs-zombies .zombies-player-avatar { height: clamp(140px, 26vh, 260px); }
+.maths-vs-zombies .zombies-player-avatar { height: clamp(105px, 19.5vh, 195px); }
 .zombies-hero-rig { position: relative; }
 .zombies-hero-rig img { width: 100%; height: 100%; object-fit: contain; }
 .zombies-hero-head { position: absolute; inset: 0; background-size: contain; background-position: center; background-repeat: no-repeat; transform-origin: 60% 49%; animation: zombies-hero-look 3.8s ease-in-out infinite; }
@@ -393,7 +393,7 @@
 .maths-vs-zombies[data-paused='true'] *, .maths-vs-zombies[data-paused='true'] *::before, .maths-vs-zombies[data-paused='true'] *::after { animation-play-state: paused !important; }
 @media (max-width: 699px) {
   .maths-vs-zombies { --zombie-size: clamp(80px, 12vh, 104px); }
-  .maths-vs-zombies .zombies-player-avatar { height: clamp(120px, 20vh, 175px); }
+  .maths-vs-zombies .zombies-player-avatar { height: clamp(90px, 15vh, 131px); }
   .zombies-battle-runes { width: 125px; height: 36px; }
   .maths-vs-zombies .zombies-playfield { width: calc(100% - 16px); }
 }

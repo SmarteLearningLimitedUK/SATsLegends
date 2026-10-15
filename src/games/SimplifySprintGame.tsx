@@ -7,7 +7,7 @@ import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import { AVATARS } from '../constants';
 import { useTrimmedImageSource } from '../utils/trimTransparentImage';
 import { triggerHaptic } from '../haptics';
-import simplifySprintBackground from '../assets/maps/premium/simplify-sprint.webp';
+import simplifySprintBackground from '../assets/maps/premium/simplify-sprint-ruins.png';
 import './simplify-sprint.css';
 
 interface SimplifySprintGameProps extends MiniGameShellContractProps {
@@ -203,7 +203,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
         setPhase('crash');
         setMistakes((previous) => previous + 1);
         setCombo(0);
-        setFeedback({ tone: 'error', text: '÷' + factor + ' cannot divide both ' + currentPair.numerator + ' and ' + currentPair.denominator + '. Try another gate.' });
+        setFeedback({ tone: 'error', text: 'Wrong gate. ' + (isPractice ? '' : 'One heart lost. ') + '÷' + factor + ' does not divide both ' + currentPair.numerator + ' and ' + currentPair.denominator + ' exactly. Try a common factor.' });
         triggerHaptic('error');
         sessionEvents?.onIncorrectAnswer?.({
           type: 'incorrect_answer', score,
@@ -242,7 +242,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
         tone: 'success',
         text: checkpoint
           ? fractionLabel(question.prompt) + ' → ' + fractionLabel(reduced) + '. Checkpoint clear! +' + gained + ' XP'
-          : 'Both numbers ÷' + factor + '. ' + (fastest ? 'Fast route!' : 'Keep reducing!') + ' +' + gained + ' XP',
+          : 'Correct! ' + fractionLabel(currentPair) + ' ÷' + factor + ' → ' + fractionLabel(reduced) + '. Keep reducing! +' + gained + ' XP',
       });
       triggerHaptic('success');
       sessionEvents?.onCorrectAnswer?.({
@@ -304,6 +304,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
       className="simplify-sprint-game ss-game"
       data-simplify-sprint
       data-phase={phase}
+      data-sprint-paused={sessionState?.paused || false}
       data-tier={tier}
       style={{ '--ss-background': 'url(' + simplifySprintBackground + ')' } as React.CSSProperties}
     >
@@ -324,6 +325,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
             style={{ position: 'relative', top: 'auto', left: 'auto', right: 'auto', width: '100%', transform: 'none' }}
           >
             Reduce <strong>{fractionLabel(currentPair)}</strong>. Pick a gate that divides the top and bottom.
+            <span className="ss-failure-rules">{isPractice ? 'Practice: try again after a wrong gate.' : 'Wrong gate: lose a heart. No hearts or no time: run ends.'}</span>
           </GameQuestionCard>
           <div className="ss-stats" aria-label={'Checkpoint ' + roundIndex + ' of ' + totalRounds + ', combo ' + combo + ', ' + score + ' XP'}>
             {!useSharedTopHud && <button type="button" className="ss-back" data-button-skin="none" onClick={onBack} aria-label="Back"><ChevronLeft /></button>}
@@ -366,7 +368,11 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
           </div>
           <div className="ss-runner" data-lane={selectedLane} aria-hidden="true">
             <div className="ss-runner-shadow" />
-            <img className="ss-runner-image" src={heroImage} alt="" draggable={false} />
+            <div className="ss-running-sprite">
+              <img className="ss-runner-image ss-runner-body" src={heroImage} alt="" draggable={false} />
+              <img className="ss-runner-leg ss-runner-leg-left" src={heroImage} alt="" draggable={false} />
+              <img className="ss-runner-leg ss-runner-leg-right" src={heroImage} alt="" draggable={false} />
+            </div>
             <span className="ss-dust ss-dust-one" /><span className="ss-dust ss-dust-two" />
           </div>
           <div className="ss-slime-front" style={{ width: dangerPercent + '%' }} aria-hidden="true" />

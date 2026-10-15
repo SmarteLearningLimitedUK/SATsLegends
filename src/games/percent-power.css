@@ -80,7 +80,7 @@
 
 #root .pp-game .pp-question .question-title {
   color: #a2e8dd;
-  font-size: clamp(10px, .8vw, 12px) !important;
+  font-size: calc(clamp(10px, .8vw, 12px) * var(--game-text-scale, 1.2)) !important;
   font-weight: 850;
   letter-spacing: .1em;
   line-height: 1.1;
@@ -89,7 +89,7 @@
 #root .pp-game .pp-question .game-question-copy {
   margin-top: 1px;
   color: #fffef8;
-  font-size: clamp(16px, 1.45vw, 23px) !important;
+  font-size: calc(clamp(16px, 1.45vw, 23px) * var(--game-text-scale, 1.2)) !important;
   font-weight: 790;
   line-height: 1.2;
   text-align: left;
@@ -143,7 +143,7 @@
   gap: 6px 16px;
   min-width: 0;
   color: #d6f8ef;
-  font-size: clamp(10px, .85vw, 13px);
+  font-size: calc(clamp(10px, .85vw, 13px) * var(--game-text-scale, 1.2));
   font-weight: 780;
   line-height: 1.2;
   letter-spacing: .09em;
@@ -210,7 +210,7 @@
 .pp-readout-label,
 .pp-readout-foot {
   color: #c6f2e6;
-  font-size: clamp(9px, .8vw, 11px);
+  font-size: calc(clamp(9px, .8vw, 11px) * var(--game-text-scale, 1.2));
   font-weight: 780;
   line-height: 1.1;
   letter-spacing: .08em;
@@ -219,7 +219,7 @@
 
 .pp-readout-value {
   color: #f3fff3;
-  font-size: clamp(24px, 4vw, 50px);
+  font-size: calc(clamp(24px, 4vw, 50px) * var(--game-text-scale, 1.2));
   font-weight: 850;
   line-height: 1;
   letter-spacing: -.04em;
@@ -295,7 +295,7 @@
 
 .pp-value-label {
   color: #bde9df;
-  font-size: clamp(11px, .9vw, 13px);
+  font-size: calc(clamp(11px, .9vw, 13px) * var(--game-text-scale, 1.2));
   font-weight: 750;
   line-height: 1.1;
   letter-spacing: .07em;
@@ -305,7 +305,7 @@
 .pp-value strong {
   overflow: hidden;
   color: #fffef6;
-  font-size: clamp(16px, 1.65vw, 23px);
+  font-size: calc(clamp(16px, 1.65vw, 23px) * var(--game-text-scale, 1.2));
   font-weight: 850;
   line-height: 1.15;
   text-overflow: ellipsis;
@@ -316,7 +316,7 @@
 .pp-answer-caption {
   margin-top: auto;
   color: #e4f6ef;
-  font-size: clamp(13px, 1vw, 16px);
+  font-size: calc(clamp(13px, 1vw, 16px) * var(--game-text-scale, 1.2));
   font-weight: 740;
   line-height: 1.2;
 }
@@ -365,7 +365,7 @@
   border: 1px solid rgba(202, 255, 236, .37);
   border-radius: 5px;
   color: #d0ece3;
-  font-size: 12px;
+  font-size: calc(12px * var(--game-text-scale, 1.2));
   font-weight: 760;
   line-height: 1;
 }
@@ -373,7 +373,7 @@
 .pp-answer-value {
   flex: 1 1 auto;
   color: #ffffff;
-  font-size: clamp(20px, 2vw, 29px) !important;
+  font-size: calc(clamp(20px, 2vw, 29px) * var(--game-text-scale, 1.2)) !important;
   font-weight: 830;
   line-height: 1;
   text-align: center;
@@ -398,7 +398,7 @@
   min-height: 34px;
   width: 100%;
   color: #eafaf4;
-  font-size: clamp(14px, 1.05vw, 16px);
+  font-size: calc(clamp(14px, 1.05vw, 16px) * var(--game-text-scale, 1.2));
   font-weight: 650;
   line-height: 1.28;
   text-align: left;
@@ -436,41 +436,41 @@
   #root .pp-game .pp-layout { gap: 5px; padding: 5px 7px 6px; }
   .pp-main { grid-template-columns: 1fr; grid-template-rows: minmax(0, .86fr) auto; gap: 5px; }
   #root .pp-game .pp-question.game-question-card { padding: 6px 10px; }
-  #root .pp-game .pp-question .game-question-copy { font-size: clamp(15px, 4vw, 18px) !important; line-height: 1.17; }
+  #root .pp-game .pp-question .game-question-copy { font-size: calc(clamp(15px, 4vw, 18px) * var(--game-text-scale, 1.2)) !important; line-height: 1.17; }
   #root .pp-game .pp-reactor-panel { padding: 6px 10px; border-radius: 12px; }
-  .pp-panel-topline { font-size: 10px; }
+  .pp-panel-topline { font-size: calc(10px * var(--game-text-scale, 1.2)); }
   #root .pp-game .pp-reactor-machine { width: min(100%, 270px); height: 100%; min-height: 0; max-height: none; }
   .pp-core-readout { width: min(31%, 94px); min-height: 35px; padding: 3px; }
-  .pp-readout-value { font-size: clamp(22px, 7vw, 29px); }
-  .pp-readout-label, .pp-readout-foot { font-size: 8px; }
+  .pp-readout-value { font-size: calc(clamp(22px, 7vw, 29px) * var(--game-text-scale, 1.2)); }
+  .pp-readout-label, .pp-readout-foot { font-size: calc(8px * var(--game-text-scale, 1.2)); }
   .pp-charge-bar > span { height: 8px; }
   .pp-controls { gap: 5px; padding: 8px 10px 9px; border-radius: 12px; }
-  .pp-console-head { padding-bottom: 4px; font-size: 10px; }
+  .pp-console-head { padding-bottom: 4px; font-size: calc(10px * var(--game-text-scale, 1.2)); }
   .pp-values { gap: 5px; }
   .pp-value { min-height: 42px; padding: 5px 8px; }
-  .pp-value-label { font-size: 11px; }
-  .pp-value strong { font-size: 16px; }
-  .pp-answer-caption { font-size: 12px; }
+  .pp-value-label { font-size: calc(11px * var(--game-text-scale, 1.2)); }
+  .pp-value strong { font-size: calc(16px * var(--game-text-scale, 1.2)); }
+  .pp-answer-caption { font-size: calc(12px * var(--game-text-scale, 1.2)); }
   #root .pp-game .pp-answers { gap: 5px; }
   #root .pp-game .pp-answer { min-height: 44px; padding: 5px 8px; }
-  .pp-answer-value { font-size: 19px !important; }
-  .pp-feedback { min-height: 22px; font-size: 12px; }
+  .pp-answer-value { font-size: calc(19px * var(--game-text-scale, 1.2)) !important; }
+  .pp-feedback { min-height: 22px; font-size: calc(12px * var(--game-text-scale, 1.2)); }
 }
 
 @media (max-width: 700px) and (max-height: 650px) {
   #root .pp-game .pp-layout { gap: 3px; padding: 3px 6px 4px; }
   #root .pp-game .pp-question.game-question-card { padding: 4px 8px; }
-  #root .pp-game .pp-question .question-title { font-size: 9px !important; }
-  #root .pp-game .pp-question .game-question-copy { font-size: 14px !important; line-height: 1.13; }
+  #root .pp-game .pp-question .question-title { font-size: calc(9px * var(--game-text-scale, 1.2)) !important; }
+  #root .pp-game .pp-question .game-question-copy { font-size: calc(14px * var(--game-text-scale, 1.2)) !important; line-height: 1.13; }
   .pp-main { grid-template-rows: minmax(88px, 1fr) auto; gap: 3px; }
   .pp-controls { gap: 3px; padding: 5px 7px; }
   .pp-value { min-height: 34px; padding: 3px 6px; }
-  .pp-value strong { font-size: 14px; }
-  .pp-answer-caption { font-size: 11px; }
+  .pp-value strong { font-size: calc(14px * var(--game-text-scale, 1.2)); }
+  .pp-answer-caption { font-size: calc(11px * var(--game-text-scale, 1.2)); }
   #root .pp-game .pp-answer { min-height: 42px; padding: 3px 6px; }
-  .pp-answer-index { width: 19px; height: 19px; font-size: 10px; }
-  .pp-answer-value { font-size: 17px !important; }
-  .pp-feedback { min-height: 17px; font-size: 11px; }
+  .pp-answer-index { width: 19px; height: 19px; font-size: calc(10px * var(--game-text-scale, 1.2)); }
+  .pp-answer-value { font-size: calc(17px * var(--game-text-scale, 1.2)) !important; }
+  .pp-feedback { min-height: 17px; font-size: calc(11px * var(--game-text-scale, 1.2)); }
 }
 
 @media (max-width: 420px) and (max-height: 650px) {
@@ -479,13 +479,13 @@
   .pp-answer-caption { display: none; }
   .pp-console-head { justify-content: flex-end; padding-bottom: 2px; }
   #root .pp-game .pp-answer { min-height: 50px; }
-  .pp-feedback { min-height: 32px; font-size: 13px; line-height: 1.18; }
+  .pp-feedback { min-height: 32px; font-size: calc(13px * var(--game-text-scale, 1.2)); line-height: 1.18; }
 }
 
 @media (min-width: 701px) and (max-height: 660px) {
   #root .pp-game .pp-layout { gap: 6px; padding-block: 5px; }
   #root .pp-game .pp-question.game-question-card { padding-block: 5px; }
-  #root .pp-game .pp-question .game-question-copy { font-size: clamp(16px, 1.35vw, 19px) !important; }
+  #root .pp-game .pp-question .game-question-copy { font-size: calc(clamp(16px, 1.35vw, 19px) * var(--game-text-scale, 1.2)) !important; }
   .pp-controls { gap: 6px; padding: 10px 13px; }
   .pp-value { min-height: 47px; }
   #root .pp-game .pp-answer { min-height: 46px; }
@@ -494,3 +494,9 @@
 @media (prefers-reduced-motion: reduce) {
   .pp-game *, .pp-game *::before, .pp-game *::after { animation: none !important; transition-duration: .01ms !important; }
 }
+/* Let the illustrated power station remain visible behind the reactor. */
+#root .pp-game::before { background:linear-gradient(180deg,#071d2a22,transparent 45%,#071d2a44); }
+#root .pp-game .pp-reactor-panel { background:radial-gradient(ellipse at 50% 61%,#0a324940,transparent 70%); border-color:#b8dfec88; }
+#root .pp-game .pp-controls { background:linear-gradient(145deg,#071f36ed,#10384de0); }
+#root .pp-game [data-game-scene-image] { object-fit:cover !important; }
+#root .pp-game .pp-panel-topline { padding:6px 10px; border-radius:7px; background:#071f36ed; color:#f5fff9; }

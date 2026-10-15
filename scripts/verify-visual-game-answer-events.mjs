@@ -43,7 +43,7 @@ for (const profile of profiles) {
       }
       let target;
       switch (game.key) {
-        case 'area_architect': target = gamePage.getByRole('button', { name: 'Check floor' }); break;
+        case 'area_architect': target = gamePage.locator('[data-area-answer]').first(); break;
         case 'problem_pyramid': target = gamePage.locator('.answer-choice-surface button').first(); break;
         case 'polygon_palace': target = gamePage.locator('main section').last().locator('button').first(); break;
         default:

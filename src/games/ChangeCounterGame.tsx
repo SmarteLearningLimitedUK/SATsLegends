@@ -84,19 +84,16 @@ const pick = <T,>(values: T[]) => values[Math.floor(Math.random() * values.lengt
 const titleCase = (value: string) => value.replace(/\b\w/g, (character) => character.toUpperCase());
 
 const getDifficultyProfile = (levelId: number) => {
-  if (levelId <= 1) return { lineCount: 1, minQuantity: 1, maxQuantity: 1, priceStep: 10, maxPrice: 100, changeValues: [10, 20, 30, 50] };
-  if (levelId === 2) return { lineCount: 1, minQuantity: 1, maxQuantity: 1, priceStep: 5, maxPrice: 500, changeValues: [5, 10, 20, 25, 50, 75, 100] };
+  if (levelId <= 1) return { lineCount: 1, minQuantity: 1, maxQuantity: 1, priceStep: 1, maxPrice: 400, changeValues: [10, 20, 30, 50] };
+  if (levelId === 2) return { lineCount: 1, minQuantity: 1, maxQuantity: 1, priceStep: 1, maxPrice: 999, changeValues: [5, 10, 20, 25, 50, 75, 100] };
   if (levelId === 3) return { lineCount: 2, minQuantity: 1, maxQuantity: 2, priceStep: 5, maxPrice: 800, changeValues: [10, 15, 25, 35, 50, 75, 100] };
   if (levelId === 4) return { lineCount: 3, minQuantity: 1, maxQuantity: 3, priceStep: 1, maxPrice: 1500, changeValues: [17, 28, 46, 59, 73, 91, 112] };
   return { lineCount: 4, minQuantity: 2, maxQuantity: 4, priceStep: 1, maxPrice: 1500, changeValues: [37, 49, 68, 83, 97, 114, 137, 158] };
 };
 
-const coinOptionsForLevel = (levelId: number) => levelId <= 1
-  ? [50, 20, 10]
-  : levelId <= 3 ? [100, 50, 20, 10, 5]
-    : [100, 50, 20, 10, 5, 2, 1];
+const coinOptionsForLevel = (_levelId: number) => [200, 100, 50, 20, 10, 5, 2, 1];
 
-const coinName = (pence: number) => pence === 100 ? 'one pound' : `${pence} pence`;
+const coinName = (pence: number) => pence === 200 ? 'two pounds' : pence === 100 ? 'one pound' : `${pence} pence`;
 
 const buildReceiptQuestion = (levelId: number, roundIndex: number, order: MarketItem[]): ChangeQuestion => {
   const profile = getDifficultyProfile(levelId);
@@ -109,7 +106,8 @@ const buildReceiptQuestion = (levelId: number, roundIndex: number, order: Market
       ? 1
       : randomInt(profile.minQuantity, profile.maxQuantity);
     const unitPricePence = levelId <= 1
-      ? Math.max(20, ((Math.round(seed.costPence / 10) % 9) + 1) * 10)
+      ? [72, 85, 135, 149, 225, 375][roundIndex % 6]
+      : levelId === 2 ? [739, 425, 875, 649, 389, 912][roundIndex % 6]
       : Math.min(profile.maxPrice, Math.max(profile.priceStep, Math.round(seed.costPence / profile.priceStep) * profile.priceStep));
     return {
       id: `${seed.id}-${index}`,
@@ -122,8 +120,8 @@ const buildReceiptQuestion = (levelId: number, roundIndex: number, order: Market
   });
 
   const totalCostPence = lines.reduce((sum, line) => sum + line.lineTotalPence, 0);
-  const changePence = pick(profile.changeValues);
-  const paidPence = totalCostPence + changePence;
+  const paidPence = levelId <= 1 ? 500 : Math.ceil((totalCostPence + 1) / 500) * 500 + (levelId >= 3 ? pick([0, 500, 1000]) : 0);
+  const changePence = paidPence - totalCostPence;
   const itemLabel = lineCount === 1
     ? titleCase(lines[0].item)
     : `${titleCase(lines[0].item)} + ${lineCount - 1} more`;
@@ -420,7 +418,7 @@ Tap coins to make the change. Use Undo or Clear if you need to, then hand it ove
         data-market-game data-market-state={marketState} data-market-round={roundIndex + 1} data-market-present={isPresent}
         data-market-lives={lives} data-market-correct={correctCount} data-market-score={score}>
         <PuzzleStage className="market-stack">
-          <GameQuestionCard title="Till check" subtitle="Read receipt · tap coins · hand over."
+          <GameQuestionCard title="Till check" subtitle="Read the receipt. Select coins for the change, then submit."
             style={{ position: 'relative', top: 0, transform: 'none', width: '100%' }}>
             Paid <strong>{formatMoney(question.paidPence)}</strong>. Give the exact change.
           </GameQuestionCard>

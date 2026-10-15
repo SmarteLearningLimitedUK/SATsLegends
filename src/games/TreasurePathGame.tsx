@@ -1,4 +1,4 @@
-﻿import { useTrimmedImageSource } from '../utils/trimTransparentImage';
+import { useTrimmedImageSource } from '../utils/trimTransparentImage';
 import ArcadeJourney from '../components/game-ui/ArcadeJourney';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useLayoutEffect, useRef } from 'react';
@@ -70,7 +70,7 @@ const buildMovementRound = (minimum: number, maximum: number, difficulty: number
 
   return {
     promptTitle: 'Marker Recovery',
-    promptText: `Start at (${start.x}, ${start.y}). ${instructions.join('. ')}. Tap your finishing point.`,
+    promptText: `Start at (${start.x}, ${start.y}). ${instructions.join('. ')}. Select your finishing point.`,
     promptType: 'movement' as const,
     start,
     target,
@@ -88,7 +88,7 @@ const generateRound = (gridSize: number, difficulty: number, translation: boolea
     if (axis === 'x' && start.y === 0) start.y = -2;
     return {
       promptTitle: 'Mirror Route',
-      promptText: `Reflect (${start.x}, ${start.y}) in the ${axis}-axis. Tap its image. The ${axis === 'y' ? 'x' : 'y'} sign changes.`,
+      promptText: `Reflect (${start.x}, ${start.y}) in the ${axis}-axis. Select its reflected position. The ${axis === 'y' ? 'x' : 'y'} sign changes.`,
       promptType: 'reflection',
       start,
       target: axis === 'y' ? { x: -start.x, y: start.y } : { x: start.x, y: -start.y },
@@ -103,7 +103,7 @@ const generateRound = (gridSize: number, difficulty: number, translation: boolea
 
     return {
       promptTitle: 'Route Recovery',
-      promptText: `Tap (${target.x}, ${target.y}). Read x across first${minimum < 0 ? ' (left of zero is negative)' : ''}, then y up${minimum < 0 ? ' (below zero is negative)' : ''}.`,
+      promptText: `Select the point (${target.x}, ${target.y}). Read x across first${minimum < 0 ? ' (left of zero is negative)' : ''}, then y up${minimum < 0 ? ' (below zero is negative)' : ''}.`,
       promptType: 'coordinate',
       start,
       target,
@@ -326,7 +326,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
         <div className="relative flex min-h-0 flex-1 flex-col items-center justify-center gap-2">
           <div className="coordinates-expedition"><ArcadeJourney kind="expedition" completed={roundIndex + (feedback === 'correct' ? 1 : 0)} total={7} avatarId={avatarId} danger={feedback === 'incorrect'} /></div>
           <div className="coordinates-grid-board relative flex aspect-square w-full max-w-[26.5rem] flex-col rounded-[1.5rem] border border-cyan-100/26 bg-[linear-gradient(180deg,rgba(8,22,52,0.84),rgba(7,18,43,0.92))] p-3 shadow-[0_18px_36px_rgba(2,6,23,0.4)]" role="group" aria-label="Coordinate grid">
-            <div className="mb-2 flex items-end gap-2 text-[10px] font-black text-cyan-100">
+            <div className="mb-2 flex items-end gap-2 text-[12px] font-black text-cyan-100">
               <div className="w-8 shrink-0" />
               <div className="min-w-0 flex-1">
                 <div className="mb-1 text-center uppercase tracking-[0.22em]">x-axis</div>
@@ -336,7 +336,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
               </div>
             </div>
             <div className="flex min-h-0 flex-1 items-stretch gap-2">
-              <div className="flex w-8 shrink-0 items-stretch gap-1 text-[10px] font-black text-cyan-100">
+              <div className="flex w-8 shrink-0 items-stretch gap-1 text-[12px] font-black text-cyan-100">
                 <div className="flex w-3 items-center justify-center">
                   <span className="-rotate-90 whitespace-nowrap uppercase tracking-[0.22em]">y-axis</span>
                 </div>
@@ -398,7 +398,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                             className="h-full w-full object-contain"
                           />
                         ) : (
-                          <span className="text-[10px] font-black text-white">You</span>
+                          <span className="text-[12px] font-black text-white">You</span>
                         )}
                       </motion.div>
                     )}
@@ -454,7 +454,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
                   {isVictory ? 'Route Restored!' : 'Route Lost!'}
                 </div>
                 <div>
-                  <div className="text-[10px] font-black uppercase tracking-[0.24em] text-white/54">Final XP</div>
+                  <div className="text-[12px] font-black uppercase tracking-[0.24em] text-white/54">Final XP</div>
                   <div className="mt-2 text-5xl font-black text-white">{XP}</div>
                 </div>
                 <button

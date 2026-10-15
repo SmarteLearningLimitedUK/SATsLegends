@@ -33,6 +33,6 @@ export const createQuestion = (level: number, solved = 0, _time = 0) => {
         [options[i], options[j]] = [options[j], options[i]];
     }
     return { id: `${Date.now()}-${Math.random()}`, stage: stageFromProgress(tier), mode, min, max, source, target, dx, dy, axis, mirror, options, correctOptionIds: mode === 'describe' ? ['correct'] : [],
-        instruction: mode === 'reflect' ? `Make a mirror image of the blue triangle across the pink line${tier >= 4 ? ` (${line})` : ''}.` : mode === 'describe' ? 'How did the blue triangle slide to the gold triangle?' : `Slide the blue triangle ${move}.`,
+        instruction: mode === 'reflect' ? `Make a mirror image of the blue triangle across the pink line${tier >= 4 ? ` (${line})` : ''}.` : mode === 'describe' ? 'How does the blue triangle need to be moved to match the gold triangle?' : `The blue triangle needs to be moved ${move}.`,
         explanation: mode === 'reflect' ? `Each image vertex is the same distance from ${line}, on the opposite side.` : `Every vertex moves ${move}. The shape keeps its size and orientation.` };
 };

@@ -228,8 +228,8 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
           <div className="relative min-h-0 flex-1 overflow-hidden rounded-[1.5rem] border border-white/10 bg-transparent">
             <div className="relative z-10 flex h-full min-h-0 flex-col gap-3 p-3 md:p-4">
               <div className="flex min-h-[13rem] flex-1 items-center justify-center">
-                <div className="relative flex h-full w-full max-w-[24rem] items-center justify-center rounded-[1.35rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(251,191,36,0.14),rgba(15,23,42,0.02)_52%,rgba(15,23,42,0.12)_100%)] p-3 md:min-h-[18rem]">
-                    <div className="absolute left-3 top-3 rounded-full border border-rose-200/14 bg-slate-950/35 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.16em] text-rose-100/82">
+                <div className="relative flex h-full w-full max-w-[24rem] items-center justify-center p-3 md:min-h-[18rem]">
+                    <div className="absolute left-3 top-3 rounded-full border border-rose-200/14 bg-slate-950/35 px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-rose-100/82">
                       {Math.max(0, maxEnemyHealth - enemyHealth)} orders restored
                     </div>
                   <MonsterMindActor
@@ -242,7 +242,7 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
                 </div>
               </div>
 
-              <div className="rounded-[1.45rem] border border-white/10 bg-[linear-gradient(180deg,rgba(9,16,31,0.66),rgba(6,10,20,0.82))] p-3 shadow-[0_14px_28px_rgba(2,6,23,0.14)] backdrop-blur-sm md:p-4">
+              <div className="mx-auto w-full max-w-[640px] shrink-0 rounded-[1.45rem] border border-white/10 bg-[linear-gradient(180deg,rgba(9,16,31,0.66),rgba(6,10,20,0.82))] p-3 shadow-[0_14px_28px_rgba(2,6,23,0.14)] backdrop-blur-sm md:p-4">
                 <p className="mb-2 text-center text-sm font-bold text-cyan-50 md:text-base" role="status">{stepNotice}</p>
                 <div className="grid grid-cols-2 gap-2 md:gap-3" data-order-ops-choices>
                   {operationChoices.map((option) => (
@@ -251,7 +251,7 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
                       type="button"
                       onClick={() => handleAnswer(option)}
                       disabled={Boolean(feedback) || isFinished}
-                      className="ui-button-primary min-h-[3.2rem] rounded-[1.1rem] px-2 py-2 text-base font-black text-white shadow-[0_12px_20px_rgba(2,6,23,0.2)] disabled:opacity-60 md:min-h-[3.8rem] md:text-xl"
+                      className="ui-button-primary min-h-[44px] rounded-xl px-2 py-2 text-base font-black text-white shadow-[0_12px_20px_rgba(2,6,23,0.2)] disabled:opacity-60 md:text-lg"
                     >
                       {option.label}
                     </button>

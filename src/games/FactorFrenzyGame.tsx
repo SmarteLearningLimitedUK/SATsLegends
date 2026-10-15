@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { playMonsterSound } from '../audio/gameAudio';
 import confetti from 'canvas-confetti';
 import { AnimatePresence, motion } from 'motion/react';
@@ -419,6 +419,17 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   };
 
   const enemyHealthPercent = (state.enemyHealth / ENEMY_MAX_HEALTH) * 100;
+  const optionsRef = useRef<HTMLDivElement>(null);
+  const [answerHeight, setAnswerHeight] = useState(68);
+  useLayoutEffect(() => {
+    const node = optionsRef.current;
+    if (!node) return;
+    const measure = () => setAnswerHeight(node.offsetHeight);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [state.currentProblem?.id]);
   const playingState = state.status === 'playing' || state.status === 'correct' || state.status === 'incorrect';
 
   return (
@@ -441,7 +452,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
         </div>
       </div>
 
-      <div className="relative z-10 flex h-full flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+11rem)] pt-[calc(env(safe-area-inset-top)+7.4rem)] sm:px-4 sm:pb-[calc(env(safe-area-inset-bottom)+11.5rem)] sm:pt-[calc(env(safe-area-inset-top)+7.8rem)] md:px-5 md:pb-[calc(env(safe-area-inset-bottom)+12rem)] md:pt-[calc(env(safe-area-inset-top)+8.1rem)]">
+      <div style={{paddingBottom:`calc(env(safe-area-inset-bottom) + ${answerHeight + 100}px)`}} className="relative z-10 flex h-full flex-col px-3 pt-[calc(env(safe-area-inset-top)+7.4rem)] sm:px-4 sm:pt-[calc(env(safe-area-inset-top)+7.8rem)] md:px-5 md:pt-[calc(env(safe-area-inset-top)+8.1rem)]">
         <main className="relative flex min-h-0 flex-1 flex-col">
           <AnimatePresence mode="wait">
             {state.status === 'complete' ? (
@@ -455,7 +466,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                 <h2 className="mt-3 text-3xl font-black uppercase text-amber-50 sm:text-4xl">Monster Mind Defeated</h2>
                 <p className="mt-2 text-sm font-semibold text-cyan-50/85">The Monster Minds have been pushed back.</p>
                 <div className="mt-4 rounded-2xl border border-cyan-100/30 bg-[#0d2a5a]/80 px-4 py-3">
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100/80">Final XP</p>
+                  <p className="text-[12px] font-black uppercase tracking-[0.2em] text-cyan-100/80">Final XP</p>
                   <p className="mt-1 text-4xl font-black text-amber-100">{state.XP.toLocaleString()}</p>
                 </div>
                 <div className="mt-5 flex flex-col gap-2.5">
@@ -485,7 +496,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                   <div className="flex h-full min-h-0 flex-col">
                     <div className="relative mt-3 flex min-h-0 flex-1 flex-col items-center justify-center">
                       <div className="w-full max-w-[13rem] rounded-2xl border border-amber-200/24 bg-[linear-gradient(180deg,rgba(15,23,42,0.22),rgba(15,23,42,0.1))] px-3 py-2 shadow-[0_12px_24px_rgba(2,6,23,0.18)]">
-                        <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.18em] text-amber-200">
+                        <div className="mb-1 text-center text-[10px] font-black uppercase tracking-[0.18em] text-amber-200">
                           Monster Mind
                         </div>
                         <div className="h-2 overflow-hidden rounded-full border border-slate-700/80 bg-slate-950/70">
@@ -499,7 +510,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
                       <div className="mt-3 flex w-full justify-center">
                         <div
-                          className="relative w-[min(36vw,10rem)] max-w-full"
+                          className="factor-visible-monster relative max-w-full"
                         >
                           <MonsterMindActor
                             src={factorEnemy}
@@ -558,6 +569,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
         {state.status !== 'complete' && (
           <div className="fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+4.5rem)] z-40 px-3">
             <div
+              ref={optionsRef}
               className="factor-option-grid answer-choice-surface mx-auto grid w-full max-w-[780px] grid-cols-4 gap-2 sm:gap-2.5 md:gap-3"
               style={{ '--factor-option-count': state.currentProblem?.options.length ?? 4 } as React.CSSProperties}
             >

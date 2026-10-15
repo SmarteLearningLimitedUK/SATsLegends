@@ -6,7 +6,7 @@
   border-radius: 10px 10px 0 0;
   background: rgba(5, 24, 49, .9);
   color: #e3f8ff;
-  font-size: 14px;
+  font-size: calc(14px * var(--game-text-scale, 1.2));
   font-weight: 800;
 }
 

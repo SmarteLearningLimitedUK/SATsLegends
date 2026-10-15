@@ -290,7 +290,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
-            className={`absolute left-1/2 top-[calc(env(safe-area-inset-top)+6.2rem)] z-30 -translate-x-1/2 rounded-full border px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] ${
+            className={`absolute left-1/2 top-[calc(env(safe-area-inset-top)+6.2rem)] z-30 -translate-x-1/2 rounded-full border px-4 py-1.5 text-[12px] font-black uppercase tracking-[0.14em] ${
               feedback.tone === 'success'
                 ? 'border-emerald-200/75 bg-emerald-500/25 text-emerald-50'
                 : 'border-rose-200/75 bg-rose-500/25 text-amber-50'
@@ -315,15 +315,15 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
               <p className="mt-2 text-sm text-cyan-50/80">Time is up. Here is your quick-fire result.</p>
               <div className="mt-4 grid grid-cols-3 gap-2">
                 <div className="rounded-xl border border-cyan-100/30 bg-slate-900/70 px-2 py-2">
-                  <p className="text-[10px] font-black uppercase tracking-[0.08em] text-cyan-100/70">Solved</p>
+                  <p className="text-[12px] font-black uppercase tracking-[0.08em] text-cyan-100/70">Solved</p>
                   <p className="text-lg font-black text-cyan-50">{solved}</p>
                 </div>
                 <div className="rounded-xl border border-amber-100/30 bg-slate-900/70 px-2 py-2">
-                  <p className="text-[10px] font-black uppercase tracking-[0.08em] text-amber-100/70">Accuracy</p>
+                  <p className="text-[12px] font-black uppercase tracking-[0.08em] text-amber-100/70">Accuracy</p>
                   <p className="text-lg font-black text-amber-100">{accuracy}%</p>
                 </div>
                 <div className="rounded-xl border border-emerald-100/30 bg-slate-900/70 px-2 py-2">
-                  <p className="text-[10px] font-black uppercase tracking-[0.08em] text-emerald-100/70">XP</p>
+                  <p className="text-[12px] font-black uppercase tracking-[0.08em] text-emerald-100/70">XP</p>
                   <p className="text-lg font-black text-emerald-100">{XP.toLocaleString()}</p>
                 </div>
               </div>

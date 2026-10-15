@@ -476,7 +476,13 @@ const SHAPES: ShapeDefinition[] = [
     stroke: '#fce7f3',
   },
 ];
-const EARLY_SHAPE_IDS = ['square', 'rectangle', 'triangle-equilateral', 'triangle-right', 'circle', 'cube', 'cuboid'];
+SHAPES.push(...[10, 12].map((sides): ShapeDefinition => ({
+  id: sides === 10 ? 'decagon' : 'dodecagon', name: sides === 10 ? 'Decagon' : 'Dodecagon',
+  family: 'polygon', sides, rightAngles: 0, parallelPairs: sides / 2,
+  equalSideMode: 'all', regular: true, symmetryLines: sides, kind: 'polygon',
+  points: regularPolygonPoints(sides, 39), defaultRotation: 0, fill: '#22d3ee', stroke: '#e0fcff',
+})));
+const EARLY_SHAPE_IDS = ['square', 'rectangle', 'triangle-equilateral', 'triangle-right', 'triangle-isosceles', 'triangle-scalene', 'pentagon', 'hexagon', 'circle', 'cube', 'cuboid'];
 const MID_SHAPE_IDS = [
   ...EARLY_SHAPE_IDS,
   'triangle-isosceles',
@@ -497,6 +503,8 @@ const LATE_SHAPE_IDS = [
   ...MID_SHAPE_IDS,
   'octagon',
   'nonagon',
+  'decagon',
+  'dodecagon',
 ];
 
 const PROPERTY_POOL: PropertyDefinition[] = [
@@ -583,9 +591,9 @@ const SORT_CRITERIA: SortCriterion[] = [
 ];
 
 const roundSecondsForLevel = (level: number) => {
-  if (level <= 2) return 90;
-  if (level <= 4) return 75;
-  return 60;
+  if (level <= 2) return 60;
+  if (level <= 4) return 50;
+  return 45;
 };
 
 const stageFromProgress = (baseLevel: number, answeredCount: number, timeLeft: number) => {
@@ -769,8 +777,8 @@ const createQuestion = (baseLevel: number, answeredCount: number, timeLeft: numb
   const shapePool = getShapePool(stage);
   const solidPool = shapePool.filter((shape) => shape.kind === 'solid');
   const shape = mode === 'count' && solidPool.length
-    ? solidPool[randomInt(0, solidPool.length - 1)]
-    : shapePool[randomInt(0, shapePool.length - 1)];
+    ? solidPool[answeredCount % solidPool.length]
+    : shapePool[answeredCount % shapePool.length];
 
   if (mode === 'name') return buildNameQuestion(shape, stage, speedRound);
   if (mode === 'count') return buildCountQuestion(shape, stage, speedRound) || buildNameQuestion(shape, stage, speedRound);
@@ -781,7 +789,7 @@ const createQuestion = (baseLevel: number, answeredCount: number, timeLeft: numb
 
 const starsFromPerformance = (XP: number, correctCount: number, attemptCount: number, stage: number) => {
   const accuracy = attemptCount > 0 ? correctCount / attemptCount : 0;
-  const target = 1300 + (stage * 170);
+  const target = (1300 + (stage * 170)) * .7;
   if (XP >= target * 1.2 && accuracy >= 0.8) return 3;
   if (XP >= target * 0.82 && accuracy >= 0.6) return 2;
   return 1;
@@ -864,9 +872,11 @@ const ShapePreview: React.FC<{
       }}
     >
       <defs>
-        <linearGradient id="shapeFill" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor={shape.fill} stopOpacity={0.98} />
-          <stop offset="100%" stopColor={shape.fill} stopOpacity={0.62} />
+        <linearGradient id="shapeFill" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#f2feff" />
+          <stop offset="26%" stopColor={shape.fill} />
+          <stop offset="72%" stopColor={shape.fill} />
+          <stop offset="100%" stopColor="#15344f" />
         </linearGradient>
       </defs>
 
@@ -1212,7 +1222,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
             }`}
           >
             <div className="text-xs font-black uppercase tracking-[0.12em]">{feedback.title}</div>
-            <div className="mt-0.5 text-[11px] font-bold">{feedback.subtitle}</div>
+            <div className="mt-0.5 text-[13px] font-bold">{feedback.subtitle}</div>
           </motion.div>
         ) : null}
       </AnimatePresence>

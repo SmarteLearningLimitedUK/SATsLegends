@@ -19,7 +19,7 @@ export default function ScaleBlueprintBoard({shape,baseLength,baseWidth,length,w
   <rect x="1" y="1" width="318" height="318" rx="18" fill="#102e49" stroke="#8ccddb" strokeWidth="2"/><rect width="320" height="320" rx="18" fill={`url(#${id})`}/>
   {showBase&&<path data-scale-original-shape d={path(baseLength*unit,baseWidth*unit)} fill="none" stroke="#e6eaf0" strokeWidth="2" strokeDasharray="6 5" opacity=".55"/>}
   <path data-scale-new-shape d={path(w,h)} fill="#38bdf822" stroke={locked?'#68e4a4':'#70dcf0'} strokeWidth="3"/>
-  <text x="16" y="27" fill="#fff1ce" fontSize="15" fontWeight="700">YOUR BLUEPRINT</text>
+  <text x="16" y="27" fill="#fff1ce" fontSize="18" fontWeight="700">YOUR BLUEPRINT</text>
   {([0,1] as const).map(axis=><g key={axis} className="scale-resize-handle" role="slider" tabIndex={locked?-1:0} aria-label={`Drag new ${axis===0?'length':'width'}`} aria-valuemin={.5} aria-valuemax={Math.round(240/unit*2)/2} aria-valuenow={axis===0?length:width} aria-valuetext={`${axis===0?length:width} units`} aria-disabled={locked} transform={`translate(${axis===0?50+w:50+w/2} ${axis===0?50+h/2:50+h})`}
    onPointerDown={e=>{if(locked)return;e.preventDefault();e.currentTarget.setPointerCapture(e.pointerId);onResize(axis,axis===0?length:width);}}
    onPointerMove={e=>{if(!locked&&e.currentTarget.hasPointerCapture(e.pointerId))resize(e,axis);}}

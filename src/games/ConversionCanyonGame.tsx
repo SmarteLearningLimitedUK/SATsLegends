@@ -171,6 +171,9 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
     .filter((token): token is WeightToken => !!token);
 
   const currentGrams = placedTokens.reduce((sum, token) => sum + token.grams, 0);
+  const needleAngle = -110 + Math.min(1, currentGrams / round.targetGrams) * 220;
+  const needleRadians = needleAngle * Math.PI / 180;
+  const needlePath = `M150 161L${150 + Math.sin(needleRadians) * 35} ${161 - Math.cos(needleRadians) * 35}`;
   const allTokens = round.tokens;
 
   const isInsideDrop = (x: number, y: number) => {
@@ -301,7 +304,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
                   <path d="M91 112H209L225 231H75Z" fill="#164657" stroke="#edd39a" strokeWidth="4"/>
                   <circle cx="150" cy="161" r="51" fill="#f4e9c9" stroke="#735630" strokeWidth="6"/>
                   {Array.from({length:11},(_,i)=><path key={i} d="M150 117V126" transform={`rotate(${-110+i*22} 150 161)`} stroke="#184151" strokeWidth="3"/>)}
-                  <motion.path d="M150 161L150 126" animate={{rotate:Math.min(110,currentGrams/round.targetGrams*110)-110}} style={{transformOrigin:'150px 161px'}} transition={{type:'spring',stiffness:180,damping:14}} stroke={broken?'#df514b':'#cf7541'} strokeWidth="5" strokeLinecap="round"/>
+                  <motion.path initial={false} animate={{ d: needlePath }} data-conversion-needle data-needle-angle={needleAngle} transition={{ duration: reducedMotion ? 0 : .22, ease: 'easeOut' }} stroke={broken || currentGrams > round.targetGrams ? '#df514b' : '#cf7541'} strokeWidth="5" strokeLinecap="round"/>
                   <circle cx="150" cy="161" r="7" fill="#153b49"/>
                   <path d="M137 94V58H163V94" fill="#b6d8d1" stroke="#334d4d" strokeWidth="5"/>
                   <path d="M26 55Q150 81 274 55L262 85Q150 109 38 85Z" fill="#4f7781" stroke="#183945" strokeWidth="5"/>
@@ -325,7 +328,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
                     onClick={() => removePlacedToken(token.id)}
                   >
                     <img src={gemImageMap.get(token.gem) ?? token.gem} alt="" className="h-5 w-5 object-contain" draggable={false} />
-                    <span className="text-[9px] font-black leading-none">{getMeasurementDisplay(token.grams).primary}</span>
+                    <span className="text-[11px] font-black leading-none">{getMeasurementDisplay(token.grams).primary}</span>
                   </button>
                 ))}
               </div>
@@ -361,8 +364,8 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
                     }`}
                   >
                     <img src={gemImageMap.get(token.gem) ?? token.gem} alt="" className="h-6 w-6 object-contain" draggable={false} />
-                    <span className="text-[11px] font-black leading-none">{getMeasurementDisplay(token.grams).primary}</span>
-                    <span className="mt-0.5 text-[9px] font-bold leading-none text-white/70">
+                    <span className="text-[13px] font-black leading-none">{getMeasurementDisplay(token.grams).primary}</span>
+                    <span className="mt-0.5 text-[11px] font-bold leading-none text-white/70">
                       {getMeasurementDisplay(token.grams).secondary}
                     </span>
                   </motion.button>

@@ -1,6 +1,4 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import confetti from 'canvas-confetti';
-import { motion } from 'motion/react';
 import {
   FeedbackStrip,
   GameQuestionCard,
@@ -31,8 +29,6 @@ interface AreaQuestion {
   correct: number;
 }
 
-interface FloorTile { label: string; width: number; height: number }
-interface PlacedTile { id: string; cells: string[]; label: string }
 
 const ROUNDS_TO_WIN = 5;
 const BASE_XP = 160;
@@ -61,7 +57,7 @@ const areaQuestionsForTier = (level: number): AreaQuestion[] => {
       const height = tier === 1 ? 2 + (Math.floor(variant / 3) % 2) : 2 + (Math.floor(variant / 3) % 3);
       const x = 1 + (variant % (gridSize - width + 1));
       const y = 1 + (Math.floor(variant / 2) % (gridSize - height + 1));
-      return buildQuestion(`${tier}-rectangle-${variant}`, gridSize, rectCells(x, y, width, height), 'Tile every gold square. Each small square has an area of 1 square unit. Choose a tile, then tap where it fits. Leave no gaps or overlaps.');
+      return buildQuestion(`${tier}-rectangle-${variant}`, gridSize, rectCells(x, y, width, height), 'What is the floor area?');
     }
     if (tier <= 4) {
       const gridSize = tier === 3 ? 6 : 7;
@@ -74,7 +70,7 @@ const areaQuestionsForTier = (level: number): AreaQuestion[] => {
       return buildQuestion(`${tier}-corner-${variant}`, gridSize, [
         ...rectCells(x, y, topWidth, topHeight),
         ...rectCells(x, y + topHeight, lowerWidth, lowerHeight),
-      ], 'Tile around the corner. Add the tile areas.');
+      ], 'What is the floor area?');
     }
     const width = 5 + (variant % 2);
     const height = 4 + (Math.floor(variant / 2) % 2);
@@ -83,21 +79,13 @@ const areaQuestionsForTier = (level: number): AreaQuestion[] => {
     const gapWidth = 1 + (variant % 2);
     return buildQuestion(`${tier}-cutout-${variant}`, 7, rectCells(1, 1, width, height).filter((cell) =>
       !(cell.x > gapX && cell.x <= gapX + gapWidth && cell.y > gapY && cell.y <= gapY + 1)),
-    'Tile around the gap. Leave empty squares uncovered.');
+    'What is the floor area?');
   });
 };
 
 const buildQuestionDeck = (level: number, previousLast: AreaQuestion | null) => (
   reshuffleAvoidingRepeat(areaQuestionsForTier(level), previousLast, (question) => question.id)
 );
-
-const floorTilesForTier = (tier: number): FloorTile[] => [
-  { label: '1 × 1', width: 1, height: 1 },
-  { label: '1 × 2', width: 1, height: 2 },
-  { label: '2 × 1', width: 2, height: 1 },
-  ...(tier >= 2 ? [{ label: '2 × 2', width: 2, height: 2 }] : []),
-  ...(tier >= 3 ? [{ label: '2 × 3', width: 2, height: 3 }, { label: '3 × 2', width: 3, height: 2 }] : []),
-];
 
 const starsForAccuracy = (correct: number, attempts: number) => {
   if (attempts === 0) return 0;
@@ -107,201 +95,65 @@ const starsForAccuracy = (correct: number, attempts: number) => {
   return 1;
 };
 
-const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({
-  levelId,
-  isPractice,
-  practiceBriefing,
-  onVictory,
-  onGameOver: _onGameOver,
-  sessionEvents,
-}) => {
-  const [roundIndex, setRoundIndex] = useState(0);
-  const [attempts, setAttempts] = useState(0);
-  const [correctCount, setCorrectCount] = useState(0);
-  const [selectedTool, setSelectedTool] = useState('1 × 1');
-  const [placedTiles, setPlacedTiles] = useState<PlacedTile[]>([]);
-  const [hoveredCell, setHoveredCell] = useState<string | null>(null);
-  const [locked, setLocked] = useState(false);
-  const [feedback, setFeedback] = useState('');
-  const [feedbackTone, setFeedbackTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
-  const [questionOrder, setQuestionOrder] = useState<AreaQuestion[]>(() => buildQuestionDeck(levelId, null));
-  const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
-  const lastCheckedCoverageRef = useRef('');
-
-  const question = useMemo(
-    () => questionOrder[roundIndex % questionOrder.length],
-    [questionOrder, roundIndex],
-  );
-  const tileTools = useMemo(() => floorTilesForTier(levelId), [levelId]);
-  const activeTool = tileTools.find((tool) => tool.label === selectedTool) ?? tileTools[0];
-  const cellSet = useMemo(() => new Set(question.cells.map((cell) => `${cell.x}-${cell.y}`)), [question.cells]);
-  const coveredSet = useMemo(() => new Set(placedTiles.flatMap((tile) => tile.cells)), [placedTiles]);
-  const hoveredCells = useMemo(() => {
-    if (!hoveredCell) return new Set<string>();
-    const [x, y] = hoveredCell.split('-').map(Number);
-    return new Set(Array.from({ length: activeTool.width * activeTool.height }, (_, index) =>
-      `${x + index % activeTool.width}-${y + Math.floor(index / activeTool.width)}`));
-  }, [activeTool, hoveredCell]);
-  const lastQuestion = questionOrder.length ? questionOrder[questionOrder.length - 1] : null;
-
-  useEffect(() => {
-    if (!questionOrder.length) return;
-    if (roundIndex > 0 && roundIndex % questionOrder.length === 0) {
-      setQuestionOrder(buildQuestionDeck(levelId, lastQuestion));
+const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({levelId,isPractice,practiceBriefing,sessionState,sessionEvents,onVictory}) => {
+  const [deck] = useState(() => buildQuestionDeck(levelId,null));
+  const [roundIndex,setRoundIndex] = useState(0);
+  const [attempts,setAttempts] = useState(0);
+  const [correctCount,setCorrectCount] = useState(0);
+  const [selected,setSelected] = useState<number|null>(null);
+  const [feedback,setFeedback] = useState('');
+  const [solved,setSolved] = useState(false);
+  const [wrong,setWrong] = useState<number[]>([]);
+  const [showIntro,setShowIntro] = useState(Boolean(isPractice));
+  const locked = useRef(false);
+  const timeout = useRef<ReturnType<typeof setTimeout>|null>(null);
+  useEffect(()=>()=>{if(timeout.current)clearTimeout(timeout.current);},[]);
+  const question=deck[roundIndex%deck.length];
+  const minX=Math.min(...question.cells.map(c=>c.x)),minY=Math.min(...question.cells.map(c=>c.y));
+  const width=Math.max(...question.cells.map(c=>c.x))-minX+1,height=Math.max(...question.cells.map(c=>c.y))-minY+1;
+  const rectangle=question.correct===width*height;
+  const options=useMemo(()=>{
+    const values=new Set([question.correct]);
+    for(const candidate of [2*(width+height),width*height,question.correct+width,question.correct-1,question.correct+1]){
+      if(candidate>0)values.add(candidate);if(values.size===4)break;
     }
-  }, [lastQuestion, questionOrder.length, roundIndex]);
-
-  useEffect(() => {
-    setShowPracticeIntro(Boolean(isPractice));
-  }, [isPractice]);
-
-  const placeTile = (x: number, y: number) => {
-    if (locked) return;
-    const cells = Array.from({ length: activeTool.width * activeTool.height }, (_, index) =>
-      `${x + index % activeTool.width}-${y + Math.floor(index / activeTool.width)}`);
-    if (cells.some((cell) => !cellSet.has(cell) || coveredSet.has(cell))) {
-      setFeedback('That tile crosses the floor edge or a tile already laid. Try another spot or tile size.');
-      setFeedbackTone('bad');
-      return;
-    }
-    setPlacedTiles((previous) => [...previous, { id: `${roundIndex}-${Date.now()}-${previous.length}`, cells, label: activeTool.label }]);
-    playGameSound('place');
-    setFeedback(`${activeTool.label} covers ${cells.length} square unit${cells.length === 1 ? '' : 's'}.`);
-    setFeedbackTone('neutral');
+    return [...values].sort((a,b)=>((a*13+roundIndex*7)%23)-((b*13+roundIndex*7)%23));
+  },[question.correct,width,height,roundIndex]);
+  const choose=(answer:number)=>{
+    if(locked.current||sessionState?.paused||showIntro||wrong.includes(answer))return;
+    setSelected(answer);setAttempts(n=>n+1);
+    const correct=answer===question.correct;
+    emitMiniGameSessionEvent(sessionEvents,correct?'correct_answer':'incorrect_answer',{metadata:{questionId:question.id,answer,target:question.correct,roundIndex}});
+    if(!correct){setWrong(previous=>[...previous,answer]);setFeedback(rectangle?'Not quite. Area is length × width, not the distance around the edge.':'Not quite. Count only blue squares, or split the room into rectangles. Empty spaces are outside the room.');return;}
+    locked.current=true;setSolved(true);setCorrectCount(n=>n+1);playGameSound('impact');
+    setFeedback(rectangle?`Correct! ${width} × ${height} = ${question.correct} m².`:`Correct! ${question.correct} blue squares × 1 m² = ${question.correct} m².`);
   };
-
-  const checkFloor = () => {
-    if (locked) return;
-    const coverageKey = `${question.id}:${[...coveredSet].sort().join(',')}`;
-    if (lastCheckedCoverageRef.current === coverageKey) return;
-    lastCheckedCoverageRef.current = coverageKey;
-    setAttempts((prev) => prev + 1);
-    const isCorrect = coveredSet.size === question.correct;
-    emitMiniGameSessionEvent(sessionEvents, isCorrect ? 'correct_answer' : 'incorrect_answer', {
-      metadata: { questionId: question.id, covered: coveredSet.size, target: question.correct, roundIndex },
-    });
-
-    if (isCorrect) {
-      playGameSound('impact');
-      setCorrectCount((prev) => prev + 1);
-      setFeedback(`Floor complete: ${question.correct} square units of area.`);
-      setFeedbackTone('good');
-      setLocked(true);
-      confetti({
-        particleCount: 36,
-        spread: 55,
-        origin: { y: 0.62 },
-        colors: ['#facc15', '#60a5fa', '#34d399'],
-      });
-      window.setTimeout(() => {
-        if (roundIndex + 1 >= ROUNDS_TO_WIN) {
-          const xp = BASE_XP * ROUNDS_TO_WIN + levelId * 50;
-          onVictory(starsForAccuracy(correctCount + 1, attempts + 1), xp);
-          return;
-        }
-        setRoundIndex((prev) => prev + 1);
-        setPlacedTiles([]);
-        setSelectedTool('1 × 1');
-        setHoveredCell(null);
-        setLocked(false);
-        setFeedback('');
-        setFeedbackTone('neutral');
-      }, 700);
-      return;
-    }
-
-    setFeedback(`${question.correct - coveredSet.size} square unit${question.correct - coveredSet.size === 1 ? '' : 's'} still need covering. Try a tile that fits the outline.`);
-    setFeedbackTone('bad');
+  const next=()=>{
+    if(!solved||sessionState?.paused||timeout.current)return;
+    if(roundIndex+1===ROUNDS_TO_WIN){timeout.current=setTimeout(()=>onVictory(starsForAccuracy(correctCount,attempts),BASE_XP*ROUNDS_TO_WIN+levelId*50),0);return;}
+    setRoundIndex(n=>n+1);setSelected(null);setFeedback('');setSolved(false);setWrong([]);locked.current=false;
   };
-
-  return (
-    <GameUiShell backgroundImage={areaBackdrop} overlayDisabled>
-      <PracticeIntroPopup
-        open={showPracticeIntro}
-        title="Area Architect"
-        body="Cover every highlighted floor square with the tile sizes below. Tap a tile size, then tap where its top-left corner should go. Add the areas of your tiles; unshaded squares are outside the floor. Undo or clear whenever you need."
-        briefing={practiceBriefing}
-        onAction={() => setShowPracticeIntro(false)}
-      />
-      <div className="area-architect-content flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+1.1rem)] pt-3 text-white">
-        <div className="area-architect-spacer flex-1" />
-
-        <section className="mx-auto w-full max-w-[52rem] shrink-0">
-          <div className="rounded-[1.6rem] border border-white/14 bg-black/28 p-3 shadow-[0_18px_34px_rgba(15,23,42,0.34)] backdrop-blur-sm">
-            <div className="area-architect-board space-y-2">
-              <GameQuestionCard
-                title="Area Architect"
-                className="area-architect-question"
-                style={{ position: 'relative', top: 'auto', left: 'auto', right: 'auto', width: '100%' }}
-              >
-                {question.prompt}
-              </GameQuestionCard>
-
-              <div className="area-architect-map rounded-[1.25rem] border border-white/10 bg-slate-950/35 p-2" data-area-board data-area-covered={coveredSet.size} data-area-target={question.correct}>
-                <div
-                  className="mx-auto grid w-full max-w-[20rem] gap-1 rounded-[1rem] border border-white/10 bg-slate-900/20 p-2"
-                  style={{ gridTemplateColumns: `repeat(${question.gridSize}, minmax(0, 1fr))` }}
-                >
-                  {Array.from({ length: question.gridSize * question.gridSize }).map((_, index) => {
-                    const x = (index % question.gridSize) + 1;
-                    const y = Math.floor(index / question.gridSize) + 1;
-                    const key = `${x}-${y}`;
-                    const filled = cellSet.has(key);
-                    const covered = coveredSet.has(key);
-                    const preview = hoveredCells.has(key) && filled && !covered;
-                    return (
-                      <button
-                        type="button"
-                        key={key}
-                        onMouseEnter={() => setHoveredCell(key)}
-                        onMouseLeave={() => setHoveredCell(null)}
-                        onFocus={() => setHoveredCell(key)}
-                        onBlur={() => setHoveredCell(null)}
-                        onClick={() => placeTile(x, y)}
-                        disabled={!filled || locked}
-                        aria-label={`Row ${y}, column ${x}: ${!filled ? 'outside floor' : covered ? 'covered' : 'empty floor square'}`}
-                        className={`area-architect-cell aspect-square rounded-[0.22rem] border ${
-                          covered ? 'border-cyan-100 bg-cyan-400 shadow-[inset_0_0_0_2px_rgba(255,255,255,0.3)]'
-                            : preview ? 'border-white bg-cyan-300/55'
-                              : filled ? 'border-amber-200/80 bg-amber-300/45' : 'border-white/10 bg-slate-900/50'
-                        }`}
-                      />
-                    );
-                  })}
-                </div>
-              </div>
-
-              <section className="area-architect-controls answer-choice-surface" aria-label="Floor tiles and tools">
-                <div className="area-architect-tool-list">
-                  {tileTools.map((tool) => <motion.button
-                    key={tool.label}
-                    type="button"
-                    whileTap={{ scale: 0.97 }}
-                    onClick={() => { setSelectedTool(tool.label); setFeedback(''); }}
-                    disabled={locked}
-                    aria-pressed={activeTool.label === tool.label}
-                    className={`area-architect-tool ${activeTool.label === tool.label ? 'ui-button-primary' : 'ui-button-secondary'}`}
-                  >{tool.label}<small>{tool.width * tool.height} sq</small></motion.button>)}
-                </div>
-                <div className="area-architect-actions">
-                  <strong aria-live="polite">Laid {coveredSet.size} square unit{coveredSet.size === 1 ? '' : 's'}</strong>
-                  <button type="button" className="ui-button-secondary" onClick={() => setPlacedTiles((previous) => previous.slice(0, -1))} disabled={locked || placedTiles.length === 0}>Undo</button>
-                  <button type="button" className="ui-button-secondary" onClick={() => setPlacedTiles([])} disabled={locked || placedTiles.length === 0}>Clear</button>
-                  <button type="button" className="ui-button-primary" onClick={checkFloor} disabled={locked}>Check floor</button>
-                </div>
-              </section>
-
-              {feedback ? <div className="area-architect-feedback">
-                <FeedbackStrip tone={feedbackTone === 'good' ? 'success' : feedbackTone === 'bad' ? 'warning' : 'neutral'}>
-                  {feedback}
-                </FeedbackStrip>
-              </div> : null}
-            </div>
-          </div>
-        </section>
+  return <GameUiShell backgroundImage={areaBackdrop} overlayDisabled>
+    <PracticeIntroPopup open={showIntro} title="Area Architect" body="Find the area of each room plan. For a rectangle, multiply length by width. Each blue square is 1 square metre. Choose an area below; you do not need to place tiles." briefing={practiceBriefing} onAction={()=>setShowIntro(false)}/>
+    <main className="area-room-game" data-area-game>
+      <GameQuestionCard title="Area Architect" className="area-room-question" subtitle="Choose the area in square metres (m²)." style={{position:'relative',top:'auto',left:'auto',right:'auto',transform:'none',width:'100%'}}>
+        What is the floor area of this room?
+      </GameQuestionCard>
+      <div className="area-room-progress">Room {roundIndex+1} of {ROUNDS_TO_WIN}</div>
+      <figure className="area-room-plan" data-area-board data-area-target={question.correct}>
+        <svg viewBox={`0 0 ${(width+2)*24} ${(height+2)*24}`} role="img" aria-label={rectangle?`Rectangular room, ${width} metres long and ${height} metres wide`:'Room plan made of blue unit squares. Each square is one square metre.'}>
+          <defs><linearGradient id="area-room-blue" x2="1" y2="1"><stop stopColor="#79e3ec"/><stop offset="1" stopColor="#2f83b1"/></linearGradient></defs>
+          {question.cells.map(cell=><rect key={`${cell.x}-${cell.y}`} x={(cell.x-minX+1)*24} y={(cell.y-minY+1)*24} width="24" height="24" fill="url(#area-room-blue)" stroke="#e2faff" strokeWidth="1.5"/>)}
+          {rectangle&&<><text x={(width+2)*12} y="15" textAnchor="middle">{width} m</text><text x="5" y={(height+2)*12} textAnchor="middle" transform={`rotate(-90 5 ${(height+2)*12})`}>{height} m</text></>}
+        </svg>
+        <figcaption>{rectangle&&<strong className="area-room-dimensions">Length {width} m · Width {height} m</strong>}Each blue square = 1 m²</figcaption>
+      </figure>
+      <div className="area-room-answers answer-choice-surface" role="group" aria-label="Choose the floor area">
+        {options.map(answer=><button key={answer} type="button" data-area-answer={answer} className={solved&&selected===answer?'ui-button-success':wrong.includes(answer)?'ui-button-secondary area-room-wrong':'ui-button-secondary'} disabled={solved||showIntro||sessionState?.paused||wrong.includes(answer)} onClick={()=>choose(answer)}>{answer} m²</button>)}
       </div>
-    </GameUiShell>
-  );
+      <div className="area-room-feedback" data-tone={solved?'success':feedback?'error':'neutral'} role="status">{feedback||'Read the plan, then choose an area.'}</div>
+      {solved&&<button className="ui-button-primary area-room-next" disabled={sessionState?.paused} onClick={next}>{roundIndex+1===ROUNDS_TO_WIN?'Finish rooms':'Next room'}</button>}
+    </main>
+  </GameUiShell>;
 };
-
 export default AreaArchitectGame;

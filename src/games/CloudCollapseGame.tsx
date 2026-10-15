@@ -134,17 +134,17 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
 
           <div className="casual-panel-strong structured-playfield-frame relative flex min-h-0 w-full flex-1 flex-col items-center overflow-hidden rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(18,28,55,0.985),rgba(8,14,27,0.995))] px-2 py-2 md:rounded-[2.4rem] md:px-4 md:py-4">
           <div className="relative z-10 mb-2 flex w-full shrink-0 items-center justify-between gap-2 px-1 md:mb-3">
-            <div className="casual-ribbon-chip inline-flex items-center gap-2 rounded-full px-3 py-1 text-[9px] font-black uppercase tracking-[0.2em] md:px-4 md:py-1.5 md:text-[10px]">
+            <div className="casual-ribbon-chip inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] md:px-4 md:py-1.5 md:text-[12px]">
               <AssetIcon name="star" className="h-4 w-4" />
               Crystal Grid
             </div>
-            <div className="rounded-full bg-slate-950/30 px-3 py-1 text-[9px] font-black uppercase tracking-[0.18em] text-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:text-[10px]">
+            <div className="rounded-full bg-slate-950/30 px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:text-[12px]">
               {level.gridSize} x {level.gridSize}
             </div>
           </div>
 
           <div className="relative z-10 mb-2 w-full shrink-0 px-2 text-center md:mb-3">
-            <div className="mx-auto max-w-3xl rounded-[1.1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(10,18,34,0.92),rgba(7,12,23,0.96))] px-3 py-2 text-[10px] font-bold text-white/92 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] md:rounded-[1.4rem] md:px-4 md:py-2.5 md:text-sm">
+            <div className="mx-auto max-w-3xl rounded-[1.1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(10,18,34,0.92),rgba(7,12,23,0.96))] px-3 py-2 text-[12px] font-bold text-white/92 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] md:rounded-[1.4rem] md:px-4 md:py-2.5 md:text-sm">
               {helperText}
             </div>
           </div>
@@ -182,7 +182,7 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
                 <span aria-hidden="true">×</span>
               </button>
 
-              <div className="casual-ribbon-chip inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] md:text-xs">
+              <div className="casual-ribbon-chip inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[12px] font-black uppercase tracking-[0.18em] md:text-xs">
                 <AssetIcon name={isVictory ? 'trophy' : 'timer'} className="h-4 w-4" />
                 {isVictory ? 'Crystal Cleared' : 'Out of Time'}
               </div>
@@ -212,11 +212,11 @@ const CloudCollapseGame: React.FC<CloudCollapseGameProps> = ({
 
               <div className="grid w-full grid-cols-2 gap-3">
                 <div className="casual-panel-surface rounded-[1.2rem] p-3 md:rounded-[1.5rem] md:p-4">
-                  <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/60 md:text-[10px]">XP</div>
+                  <div className="text-[11px] font-black uppercase tracking-[0.2em] text-white/60 md:text-[12px]">XP</div>
                   <div className="mt-1 text-2xl font-black text-white md:text-4xl">{XP}</div>
                 </div>
                 <div className="casual-panel-surface rounded-[1.2rem] p-3 md:rounded-[1.5rem] md:p-4">
-                  <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/60 md:text-[10px]">Target</div>
+                  <div className="text-[11px] font-black uppercase tracking-[0.2em] text-white/60 md:text-[12px]">Target</div>
                   <div className="mt-1 text-2xl font-black text-white md:text-4xl">{level.targetScore}</div>
                 </div>
               </div>

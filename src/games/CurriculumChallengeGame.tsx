@@ -729,7 +729,7 @@ const renderCoordinates = (visual: Extract<VisualData, { type: 'coordinates' }>)
     <div className="relative aspect-square w-full max-w-[17rem] overflow-hidden rounded-[1.5rem] border border-[#f2d182]/35 bg-[linear-gradient(180deg,rgba(14,34,48,0.88),rgba(8,18,30,0.96))] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_20px_50px_rgba(2,6,23,0.28)] md:max-w-[22rem] md:rounded-[1.8rem]">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(186,230,253,0.18),rgba(186,230,253,0)_30%),radial-gradient(circle_at_bottom,rgba(34,197,94,0.16),rgba(34,197,94,0)_26%)]" />
       <div className="absolute inset-[0.85rem] rounded-[1.15rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.01))] md:inset-4 md:rounded-[1.4rem]" />
-      <div className="absolute left-1/2 top-3 -translate-x-1/2 rounded-full border border-[#f2d182]/35 bg-black/24 px-3 py-1 text-[9px] font-black uppercase tracking-[0.24em] text-[#fff1c2] shadow-[0_12px_24px_rgba(0,0,0,0.22)] md:top-4 md:text-[10px]">
+      <div className="absolute left-1/2 top-3 -translate-x-1/2 rounded-full border border-[#f2d182]/35 bg-black/24 px-3 py-1 text-[11px] font-black uppercase tracking-[0.24em] text-[#fff1c2] shadow-[0_12px_24px_rgba(0,0,0,0.22)] md:top-4 md:text-[12px]">
         Quest Grid
       </div>
       <div
@@ -745,10 +745,10 @@ const renderCoordinates = (visual: Extract<VisualData, { type: 'coordinates' }>)
       </div>
       <div className="absolute inset-y-4 left-1/2 w-px bg-white/18" />
       <div className="absolute inset-x-4 top-1/2 h-px bg-white/18" />
-      <div className="absolute left-5 top-1/2 -translate-y-1/2 text-[9px] font-black uppercase tracking-[0.2em] text-white/45 md:text-[10px]">W</div>
-      <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[9px] font-black uppercase tracking-[0.2em] text-white/45 md:text-[10px]">E</div>
-      <div className="absolute left-1/2 top-5 -translate-x-1/2 text-[9px] font-black uppercase tracking-[0.2em] text-white/45 md:text-[10px]">N</div>
-      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 text-[9px] font-black uppercase tracking-[0.2em] text-white/45 md:text-[10px]">S</div>
+      <div className="absolute left-5 top-1/2 -translate-y-1/2 text-[11px] font-black uppercase tracking-[0.2em] text-white/45 md:text-[12px]">W</div>
+      <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[11px] font-black uppercase tracking-[0.2em] text-white/45 md:text-[12px]">E</div>
+      <div className="absolute left-1/2 top-5 -translate-x-1/2 text-[11px] font-black uppercase tracking-[0.2em] text-white/45 md:text-[12px]">N</div>
+      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 text-[11px] font-black uppercase tracking-[0.2em] text-white/45 md:text-[12px]">S</div>
       {targetPoint && (
         <div
           className="absolute left-0 top-0 h-[2px] origin-left rounded-full bg-[linear-gradient(90deg,rgba(125,211,252,0.16),rgba(255,226,128,0.95))] shadow-[0_0_14px_rgba(125,211,252,0.32)]"
@@ -764,7 +764,7 @@ const renderCoordinates = (visual: Extract<VisualData, { type: 'coordinates' }>)
         className="absolute -translate-x-1/2 -translate-y-1/2"
         style={{ left: `${originLeft}%`, top: `${originTop}%` }}
       >
-        <div className="relative flex h-7 w-7 items-center justify-center rounded-full border-2 border-white/50 bg-[linear-gradient(180deg,#f8fafc,#bfdbfe)] text-[9px] font-black uppercase text-slate-950 shadow-[0_10px_20px_rgba(0,0,0,0.28)] md:h-8 md:w-8">
+        <div className="relative flex h-7 w-7 items-center justify-center rounded-full border-2 border-white/50 bg-[linear-gradient(180deg,#f8fafc,#bfdbfe)] text-[11px] font-black uppercase text-slate-950 shadow-[0_10px_20px_rgba(0,0,0,0.28)] md:h-8 md:w-8">
           S
           <div className="absolute inset-[-5px] rounded-full border border-cyan-200/28" />
         </div>
@@ -790,13 +790,13 @@ const renderCoordinates = (visual: Extract<VisualData, { type: 'coordinates' }>)
                 />
               </>
             )}
-            <div className={`relative flex h-8 w-8 items-center justify-center rounded-full border-2 ${point.isTarget ? 'border-yellow-100/90 ring-2 ring-yellow-300/40' : 'border-white/40'} ${point.tone || 'bg-cyan-300'} text-[11px] font-black text-slate-950 shadow-[0_8px_18px_rgba(0,0,0,0.3)] md:h-9 md:w-9`}>
+            <div className={`relative flex h-8 w-8 items-center justify-center rounded-full border-2 ${point.isTarget ? 'border-yellow-100/90 ring-2 ring-yellow-300/40' : 'border-white/40'} ${point.tone || 'bg-cyan-300'} text-[13px] font-black text-slate-950 shadow-[0_8px_18px_rgba(0,0,0,0.3)] md:h-9 md:w-9`}>
               {point.label}
             </div>
           </div>
         </div>
       ))}
-      <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/10 bg-black/26 px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.18em] text-white/78 shadow-[0_12px_24px_rgba(0,0,0,0.18)] md:bottom-4 md:text-[10px]">
+      <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/10 bg-black/26 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-white/78 shadow-[0_12px_24px_rgba(0,0,0,0.18)] md:bottom-4 md:text-[12px]">
         <span className="inline-flex h-2 w-2 rounded-full bg-yellow-300 shadow-[0_0_10px_rgba(253,224,71,0.55)]" />
         Beacon {visual.targetLabel}
       </div>
@@ -818,7 +818,7 @@ const renderPercentPulse = (visual: Extract<VisualData, { type: 'pulse' }>) => {
       <div className="absolute bottom-3 right-4 h-16 w-16 rounded-full bg-cyan-300/16 blur-2xl md:h-24 md:w-24" />
 
       <div className="relative flex flex-col items-center">
-        <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-cyan-200/18 bg-white/8 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.22em] text-cyan-100 md:mb-3 md:px-3 md:text-[10px]">
+        <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-cyan-200/18 bg-white/8 px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.22em] text-cyan-100 md:mb-3 md:px-3 md:text-[12px]">
           <span className="inline-flex h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.7)]" />
           Pulse Lane
         </div>
@@ -850,7 +850,7 @@ const renderPercentPulse = (visual: Extract<VisualData, { type: 'pulse' }>) => {
               key={`${label}-${index}`}
               animate={{ y: [0, index === 1 ? -5 : -3, 0], x: [0, index === 2 ? 2 : -1, 0] }}
               transition={{ duration: 2.2 + (index * 0.35), repeat: Infinity, ease: 'easeInOut' }}
-              className={`absolute ${orbitPositions[index]} rounded-full border border-white/14 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(255,255,255,0.04))] px-2.5 py-1.5 text-[10px] font-black text-white shadow-[0_12px_22px_rgba(0,0,0,0.22)] md:px-3 md:py-2 md:text-xs`}
+              className={`absolute ${orbitPositions[index]} rounded-full border border-white/14 bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(255,255,255,0.04))] px-2.5 py-1.5 text-[12px] font-black text-white shadow-[0_12px_22px_rgba(0,0,0,0.22)] md:px-3 md:py-2 md:text-xs`}
             >
               {label}
             </motion.div>
@@ -858,7 +858,7 @@ const renderPercentPulse = (visual: Extract<VisualData, { type: 'pulse' }>) => {
         </div>
 
         <div className="mt-1 w-full rounded-[1rem] border border-white/10 bg-slate-950/30 p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] md:mt-2 md:rounded-[1.2rem] md:p-3">
-          <div className="mb-1 flex items-center justify-between text-[9px] font-black uppercase tracking-[0.18em] text-white/60 md:text-[10px]">
+          <div className="mb-1 flex items-center justify-between text-[11px] font-black uppercase tracking-[0.18em] text-white/60 md:text-[12px]">
             <span>Pulse Meter</span>
             <span>{visual.meterLabel}</span>
           </div>
@@ -896,7 +896,7 @@ const renderTransformTemple = (visual: Extract<VisualData, { type: 'transform' }
       <div className="absolute inset-x-0 top-0 h-14 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0))]" />
 
       <div className="relative flex flex-col items-center">
-        <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-amber-200/18 bg-white/8 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.22em] text-amber-100 md:mb-3 md:px-3 md:text-[10px]">
+        <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-amber-200/18 bg-white/8 px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.22em] text-amber-100 md:mb-3 md:px-3 md:text-[12px]">
           <span className="inline-flex h-2 w-2 rounded-full bg-amber-300 shadow-[0_0_10px_rgba(252,211,77,0.65)]" />
           Temple Route
         </div>
@@ -947,10 +947,10 @@ const renderTransformTemple = (visual: Extract<VisualData, { type: 'transform' }
           </div>
 
           <div className="absolute bottom-3 left-3 flex gap-1.5 md:bottom-4 md:left-4">
-            <div className="rounded-full border border-amber-200/16 bg-black/24 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.18em] text-amber-100/80">
+            <div className="rounded-full border border-amber-200/16 bg-black/24 px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/80">
               Horizontal move {Math.abs(dx)}
             </div>
-            <div className="rounded-full border border-sky-200/16 bg-black/24 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.18em] text-sky-100/80">
+            <div className="rounded-full border border-sky-200/16 bg-black/24 px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-sky-100/80">
               Vertical move {Math.abs(dy)}
             </div>
           </div>
@@ -988,7 +988,7 @@ const renderVisual = (visual: VisualData, compactBars = false) => {
       return (
         <div className="grid w-full max-w-[22rem] grid-cols-2 gap-2 md:max-w-[24rem] md:gap-3">
           {visual.items.map((item) => (
-          <div key={item} className="rounded-[1rem] border border-white/12 bg-white/8 px-2.5 py-2 text-center text-[11px] font-black text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:rounded-[1.2rem] md:px-3 md:py-3 md:text-lg">
+          <div key={item} className="rounded-[1rem] border border-white/12 bg-white/8 px-2.5 py-2 text-center text-[13px] font-black text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:rounded-[1.2rem] md:px-3 md:py-3 md:text-lg">
               {item}
             </div>
           ))}
@@ -1003,7 +1003,7 @@ const renderVisual = (visual: VisualData, compactBars = false) => {
             <div className="absolute bottom-3 right-3 h-14 w-14 rounded-full bg-cyan-300/16 blur-2xl md:h-20 md:w-20" />
             <div className="relative">
               {visual.badge && (
-                <div className="mb-2 inline-flex items-center gap-1 rounded-full border border-sky-200/28 bg-white/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.18em] text-sky-100 md:mb-3 md:px-3 md:text-[10px] md:tracking-[0.22em]">
+                <div className="mb-2 inline-flex items-center gap-1 rounded-full border border-sky-200/28 bg-white/10 px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-sky-100 md:mb-3 md:px-3 md:text-[12px] md:tracking-[0.22em]">
                   <span className="inline-flex h-2 w-2 rounded-full bg-yellow-300 shadow-[0_0_10px_rgba(253,224,71,0.55)]" />
                   {visual.badge}
                 </div>
@@ -1032,7 +1032,7 @@ const renderVisual = (visual: VisualData, compactBars = false) => {
       return (
         <div className="w-full max-w-[22rem] rounded-[1.2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] p-3 text-center shadow-[0_18px_44px_rgba(0,0,0,0.22)] md:max-w-[24rem] md:rounded-[1.5rem] md:p-5">
           {visual.badge && (
-            <div className="mb-2 inline-flex rounded-full border border-white/12 bg-white/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.18em] text-white/70 md:mb-3 md:px-3 md:text-[10px] md:tracking-[0.22em]">
+            <div className="mb-2 inline-flex rounded-full border border-white/12 bg-white/10 px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-white/70 md:mb-3 md:px-3 md:text-[12px] md:tracking-[0.22em]">
               {visual.badge}
             </div>
           )}
@@ -1055,10 +1055,10 @@ const renderVisual = (visual: VisualData, compactBars = false) => {
                   <div className="flex h-18 w-full items-end rounded-t-[0.65rem] border border-white/10 bg-white/6 p-1 md:h-28 md:rounded-t-[0.9rem]">
                     <div className={`w-full rounded-[0.65rem] bg-gradient-to-t ${bar.color}`} style={{ height: `${Math.max(18, bar.value * 10)}%` }} />
                   </div>
-                  <div className="text-[8px] font-black uppercase tracking-[0.08em] text-white/72 md:text-[9px] md:tracking-[0.1em]">
+                  <div className="text-[10px] font-black uppercase tracking-[0.08em] text-white/72 md:text-[11px] md:tracking-[0.1em]">
                     {bar.label}
                   </div>
-                  <div className="text-[8px] font-black text-cyan-100/78 md:text-[9px]">{bar.value}</div>
+                  <div className="text-[10px] font-black text-cyan-100/78 md:text-[11px]">{bar.value}</div>
                 </div>
               ))}
             </div>
@@ -1069,11 +1069,11 @@ const renderVisual = (visual: VisualData, compactBars = false) => {
         <div className="flex w-full max-w-[22rem] items-end justify-between gap-1.5 rounded-[1.2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] px-2.5 pb-2.5 pt-4 shadow-[0_18px_44px_rgba(0,0,0,0.22)] md:max-w-[24rem] md:gap-3 md:rounded-[1.5rem] md:px-4 md:pb-4 md:pt-8">
           {visual.bars.map((bar) => (
             <div key={bar.label} className="flex flex-1 flex-col items-center gap-1.5 md:gap-2">
-              <div className="text-[9px] font-black uppercase tracking-[0.12em] text-white/55 md:text-[10px] md:tracking-[0.18em]">{bar.value}</div>
+              <div className="text-[11px] font-black uppercase tracking-[0.12em] text-white/55 md:text-[12px] md:tracking-[0.18em]">{bar.value}</div>
               <div className="flex h-20 md:h-40 w-full items-end rounded-t-[0.8rem] border border-white/10 bg-white/6 p-1 md:rounded-t-[1rem]">
                 <div className={`w-full rounded-[0.8rem] bg-gradient-to-t ${bar.color}`} style={{ height: `${Math.max(18, bar.value * 10)}%` }} />
               </div>
-              <div className="max-w-[2.6rem] whitespace-normal break-words text-center text-[7px] font-black uppercase leading-tight tracking-[0.06em] text-white/80 md:max-w-[4.2rem] md:text-[9px] md:tracking-[0.1em]">
+              <div className="max-w-[2.6rem] whitespace-normal break-words text-center text-[8px] font-black uppercase leading-tight tracking-[0.06em] text-white/80 md:max-w-[4.2rem] md:text-[11px] md:tracking-[0.1em]">
                 {bar.label.split(' ').map((part, index) => (
                   <span key={`${bar.label}-${index}`} className="block">
                     {part}
@@ -1105,11 +1105,11 @@ const renderVisual = (visual: VisualData, compactBars = false) => {
       return (
         <div className="grid w-full max-w-[22rem] grid-cols-2 gap-2 md:max-w-[24rem] md:gap-3">
           <div className="rounded-[1.1rem] border border-white/12 bg-white/10 p-2.5 text-center shadow-[0_16px_34px_rgba(0,0,0,0.2)] md:rounded-[1.3rem] md:p-4">
-            <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/55">{visual.leftLabel}</div>
+            <div className="text-[12px] font-black uppercase tracking-[0.22em] text-white/55">{visual.leftLabel}</div>
             <div className="mt-1 text-lg font-black text-white md:mt-2 md:text-3xl">{visual.leftValue}</div>
           </div>
           <div className="rounded-[1.1rem] border border-white/12 bg-white/10 p-2.5 text-center shadow-[0_16px_34px_rgba(0,0,0,0.2)] md:rounded-[1.3rem] md:p-4">
-            <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/55">{visual.rightLabel}</div>
+            <div className="text-[12px] font-black uppercase tracking-[0.22em] text-white/55">{visual.rightLabel}</div>
             <div className="mt-1 text-lg font-black text-white md:mt-2 md:text-3xl">{visual.rightValue}</div>
           </div>
         </div>
@@ -1390,7 +1390,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                       </div>
                     </div>
                   </motion.div>
-                  <div className={`w-full rounded-[1rem] px-3 py-2 text-center font-bold shadow-[0_12px_24px_rgba(0,0,0,0.18)] md:rounded-[1.15rem] md:px-4 md:py-2.5 text-[9px] md:text-sm bg-black/22 text-white/84`}>
+                  <div className={`w-full rounded-[1rem] px-3 py-2 text-center font-bold shadow-[0_12px_24px_rgba(0,0,0,0.18)] md:rounded-[1.15rem] md:px-4 md:py-2.5 text-[11px] md:text-sm bg-black/22 text-white/84`}>
                     {visualCaption || statusMessage}
                   </div>
                 </div>
@@ -1446,7 +1446,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
                     )}
                     <div className={`absolute inset-x-[8%] top-[10%] h-[34%] ${isPlaceValuePeaks ? 'rounded-[0.9rem]' : 'rounded-full'} bg-white/18 blur-md`} />
                     <div className="relative z-10 flex w-full items-center gap-2.5 md:gap-3">
-                      <div className={`flex h-7 w-7 shrink-0 items-center justify-center border text-[9px] font-black uppercase md:h-8 md:w-8 md:text-[11px] ${isPlaceValuePeaks ? 'rounded-[0.7rem] border-amber-100/14 bg-black/14 text-amber-50' : usesBlueAnswers ? `rounded-[0.65rem] ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/45 text-slate-900' : 'border-white/16 bg-white/12 text-white'}` : `rounded-full ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/35 text-slate-900' : 'border-white/14 bg-white/10 text-white'}`}`}>
+                      <div className={`flex h-7 w-7 shrink-0 items-center justify-center border text-[11px] font-black uppercase md:h-8 md:w-8 md:text-[13px] ${isPlaceValuePeaks ? 'rounded-[0.7rem] border-amber-100/14 bg-black/14 text-amber-50' : usesBlueAnswers ? `rounded-[0.65rem] ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/45 text-slate-900' : 'border-white/16 bg-white/12 text-white'}` : `rounded-full ${isCorrect || isWrongSelected || isSelected ? 'border-black/10 bg-white/35 text-slate-900' : 'border-white/14 bg-white/10 text-white'}`}`}>
                         {String.fromCharCode(65 + index)}
                       </div>
                       <div className={`flex-1 text-center ${isPlaceValuePeaks ? 'text-[1.1rem] md:text-[1.7rem] text-amber-50' : isScaleBuilder || isCalculationClash || isRuleRunner ? 'text-[1rem] md:text-[1.35rem] text-white' : 'text-[1.02rem] md:text-[1.45rem] text-white'} font-black leading-none tracking-[-0.02em] drop-shadow-[0_2px_2px_rgba(0,0,0,0.42)]`}>
@@ -1492,7 +1492,7 @@ const CurriculumChallengeGame: React.FC<CurriculumChallengeGameProps> = ({
 
                 <div className="grid w-full grid-cols-1 gap-3">
                   <div className="rounded-[1.2rem] bg-white/80 p-3 text-center">
-                    <div className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">XP</div>
+                    <div className="text-[12px] font-black uppercase tracking-[0.22em] text-slate-500">XP</div>
                     <div className="mt-1 text-2xl font-black text-slate-900">{XP}</div>
                   </div>
                 </div>

@@ -69,12 +69,12 @@
 .ss-question .game-question-card-title-strip { min-height: 0; margin-bottom: 0; }
 #root .ss-game .ss-question .question-title {
   color: var(--ss-lime);
-  font-size: clamp(10px,.9vw,12px);
+  font-size: calc(clamp(10px,.9vw,12px) * var(--game-text-scale, 1.2));
   letter-spacing: .12em;
 }
 #root .ss-game .ss-question .game-question-copy {
   color: #fffef0;
-  font-size: clamp(15px,1.55vw,20px);
+  font-size: calc(clamp(15px,1.55vw,20px) * var(--game-text-scale, 1.2));
   font-weight: 850;
   line-height: 1.12;
   text-align: left;
@@ -95,7 +95,7 @@
   gap: 4px;
   white-space: nowrap;
   color: #dcefc9;
-  font-size: clamp(11px,1.05vw,13px);
+  font-size: calc(clamp(11px,1.05vw,13px) * var(--game-text-scale, 1.2));
   font-weight: 800;
   line-height: 1.15;
 }
@@ -116,7 +116,7 @@
 .ss-back svg { width: 21px; height: 21px; }
 .ss-stat-value {
   color: #fff9dd;
-  font-size: clamp(15px,1.55vw,20px);
+  font-size: calc(clamp(15px,1.55vw,20px) * var(--game-text-scale, 1.2));
   font-variant-numeric: tabular-nums;
   font-weight: 950;
   letter-spacing: -.035em;
@@ -230,7 +230,7 @@
 .ss-fraction-label {
   max-width: 12ch;
   color: var(--ss-lime);
-  font-size: clamp(10px,1vw,12px);
+  font-size: calc(clamp(10px,1vw,12px) * var(--game-text-scale, 1.2));
   font-weight: 900;
   line-height: 1.1;
   letter-spacing: .07em;
@@ -243,7 +243,7 @@
   justify-content: center;
   min-width: 1.3em;
   gap: 1px;
-  font-size: clamp(17px,2.2vw,28px);
+  font-size: calc(clamp(17px,2.2vw,28px) * var(--game-text-scale, 1.2));
   font-variant-numeric: tabular-nums;
   font-weight: 950;
   line-height: .86;
@@ -252,7 +252,7 @@
 .ss-fraction-note {
   max-width: 12ch;
   color: #dbe9c8;
-  font-size: clamp(10px,.9vw,12px);
+  font-size: calc(clamp(10px,.9vw,12px) * var(--game-text-scale, 1.2));
   font-weight: 700;
   line-height: 1.1;
 }
@@ -324,20 +324,20 @@
 .ss-gate:disabled { cursor: default; }
 .ss-gate-index {
   color: #bcdfb0;
-  font-size: clamp(9px,.75vw,11px);
+  font-size: calc(clamp(9px,.75vw,11px) * var(--game-text-scale, 1.2));
   font-weight: 950;
   letter-spacing: .12em;
   text-transform: uppercase;
 }
 .ss-gate-factor {
   color: #f9ffe3;
-  font-size: clamp(25px,3.1vw,42px);
+  font-size: calc(clamp(25px,3.1vw,42px) * var(--game-text-scale, 1.2));
   font-variant-numeric: tabular-nums;
   font-weight: 1000;
   line-height: .98;
   letter-spacing: -.045em;
 }
-.ss-gate-label { color: #dcefc9; font-size: clamp(10px,.9vw,12px); font-weight: 850; line-height: 1.1; }
+.ss-gate-label { color: #dcefc9; font-size: calc(clamp(10px,.9vw,12px) * var(--game-text-scale, 1.2)); font-weight: 850; line-height: 1.1; }
 
 .ss-runner {
   position: absolute;
@@ -457,7 +457,7 @@
   min-width: 0;
   min-height: 18px;
   color: #f6ffe6;
-  font-size: max(15px,calc(14px / var(--game-stage-scale,1)));
+  font-size: calc(max(15px,calc(14px / var(--game-stage-scale,1))) * var(--game-text-scale, 1.2));
   font-weight: 800;
   line-height: 1.2;
 }
@@ -483,7 +483,7 @@
 .ss-hint {
   grid-column: 1 / -1;
   color: #e7f4d2;
-  font-size: max(13px,calc(12px / var(--game-stage-scale,1)));
+  font-size: calc(max(13px,calc(12px / var(--game-stage-scale,1))) * var(--game-text-scale, 1.2));
   font-weight: 650;
   line-height: 1.2;
 }
@@ -510,14 +510,14 @@
     border-radius: 6px;
     background: rgba(4,24,27,.72);
   }
-  .ss-stat { font-size: 11px; }
-  .ss-stat-value { font-size: 15px; }
+  .ss-stat { font-size: calc(11px * var(--game-text-scale, 1.2)); }
+  .ss-stat-value { font-size: calc(15px * var(--game-text-scale, 1.2)); }
   .ss-gates { width: min(88%,500px); top: 29%; gap: 6px; }
   .ss-gate { height: clamp(70px,18vh,108px); border-width: 5px; border-bottom-width: 7px; }
-  .ss-gate-factor { font-size: clamp(25px,7vw,34px); }
+  .ss-gate-factor { font-size: calc(clamp(25px,7vw,34px) * var(--game-text-scale, 1.2)); }
   .ss-fraction-display { min-height: 44px; padding: 3px 9px; }
-  .ss-fraction-label { font-size: 10px; }
-  .ss-fraction { font-size: 21px; }
+  .ss-fraction-label { font-size: calc(10px * var(--game-text-scale, 1.2)); }
+  .ss-fraction { font-size: calc(21px * var(--game-text-scale, 1.2)); }
   .ss-runner { width: clamp(58px,17vw,82px); height: clamp(66px,19vw,92px); }
   .ss-runner[data-lane='1'] { left: 21%; }
   .ss-runner[data-lane='3'] { left: 79%; }
@@ -545,16 +545,16 @@
   .ss-bottom { min-height: 21px; padding-block: 0; }
 }
 @media (max-width: 420px) and (max-height: 650px) {
-  #root .ss-game .ss-question .game-question-copy { font-size: 14px; line-height: 1.1; }
-  .ss-stat { font-size: 10px; }
-  .ss-stat-value { font-size: 14px; }
+  #root .ss-game .ss-question .game-question-copy { font-size: calc(14px * var(--game-text-scale, 1.2)); line-height: 1.1; }
+  .ss-stat { font-size: calc(10px * var(--game-text-scale, 1.2)); }
+  .ss-stat-value { font-size: calc(14px * var(--game-text-scale, 1.2)); }
   .ss-fraction-display { min-height: 39px; }
-  .ss-fraction { font-size: 18px; }
+  .ss-fraction { font-size: calc(18px * var(--game-text-scale, 1.2)); }
   .ss-gates { top: 28%; }
   .ss-gate { height: 68px; min-height: 68px; gap: 1px; padding-block: 3px; }
-  .ss-gate-index { font-size: 8px; }
-  .ss-gate-factor { font-size: 25px; }
-  .ss-gate-label { font-size: 9px; }
+  .ss-gate-index { font-size: calc(8px * var(--game-text-scale, 1.2)); }
+  .ss-gate-factor { font-size: calc(25px * var(--game-text-scale, 1.2)); }
+  .ss-gate-label { font-size: calc(9px * var(--game-text-scale, 1.2)); }
   .ss-runner { width: 55px; height: 62px; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -563,3 +563,18 @@
     transition-duration: .01ms !important;
   }
 }
+
+.ss-feedback { padding:10px 14px; border:2px solid #9dbec5; border-radius:10px; background:#102e36; color:#fff; font-size:calc(17px * var(--game-text-scale, 1.2));line-height:1.35; }
+.ss-feedback[data-tone='success'] {background:#123e30;color:#fff;border-color:#8ff0bd;}
+.ss-feedback[data-tone='error'] {background:#571d30;color:#fff;border-color:#ffb4b4;}
+.ss-failure-rules {display:block;margin-top:5px;font-size:calc(14px * var(--game-text-scale, 1.2));font-weight:600;color:#f0e6ff;}
+.ss-running-sprite {position:relative;width:100%;height:100%;animation:ss-running-body .32s ease-in-out infinite;}
+.ss-runner-body {clip-path:inset(0 0 26% 0);animation:none !important;}
+.ss-runner-leg {position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center bottom;transform-origin:50% 72%;animation:ss-running-leg .32s ease-in-out infinite alternate;}
+.ss-runner-leg-left {clip-path:polygon(0 74%,50% 74%,50% 100%,0 100%);}
+.ss-runner-leg-right {clip-path:polygon(50% 74%,100% 74%,100% 100%,50% 100%);animation-delay:-.32s;}
+@keyframes ss-running-leg {from{transform:rotate(-12deg) translateY(-1px);}to{transform:rotate(12deg) translateY(2px);}}
+@keyframes ss-running-body {0%,100%{transform:translateY(0) rotate(-2deg);}50%{transform:translateY(-5px) rotate(2deg);}}
+.ss-game[data-phase='dash'] .ss-running-sprite,.ss-game[data-phase='dash'] .ss-runner-leg {animation-duration:.2s;}
+.ss-game[data-sprint-paused='true'] .ss-running-sprite,.ss-game[data-sprint-paused='true'] .ss-runner-leg {animation-play-state:paused;}
+@media(prefers-reduced-motion:reduce){.ss-running-sprite,.ss-runner-leg{animation:none !important;}}

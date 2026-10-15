@@ -134,14 +134,14 @@ const createChallenge = (levelId: number, solved: number): ShareChallenge => {
   const mode = shareModeForLevel(levelId);
   const plateCount = MAX_PLATE_COUNT;
   const tierPatterns: number[][][] = [
-    [[1, 1, 1, 1, 1]],
-    [[1, 1, 1, 1, 2], [1, 1, 1, 2, 2]],
-    [[1, 1, 2, 2, 3], [1, 2, 1, 2, 3]],
-    [[1, 2, 2, 3, 3], [2, 1, 2, 3, 3]],
-    [[2, 1, 2, 3, 4], [1, 2, 3, 2, 4]],
+    [[1, 1, 1, 1, 1], [1, 1, 1, 1, 2], [1, 1, 2, 1, 1], [2, 1, 1, 1, 1], [1, 2, 1, 1, 1]],
+    [[1, 1, 1, 1, 2], [1, 1, 1, 2, 2], [1, 2, 1, 2, 1], [2, 1, 2, 1, 2], [1, 2, 2, 1, 1]],
+    [[1, 1, 2, 2, 3], [1, 2, 1, 2, 3], [2, 1, 3, 1, 2], [3, 2, 1, 2, 1], [1, 3, 2, 1, 2]],
+    [[1, 2, 2, 3, 3], [2, 1, 2, 3, 3], [3, 2, 1, 3, 2], [2, 3, 3, 1, 2], [3, 1, 2, 2, 3]],
+    [[2, 1, 2, 3, 4], [1, 2, 3, 2, 4], [4, 2, 1, 3, 2], [3, 4, 2, 1, 2], [2, 3, 4, 2, 1]],
   ];
   const patternOptions = tierPatterns[tier - 1];
-  const pattern = [...randomPick(patternOptions)];
+  const pattern = [...patternOptions[solved % patternOptions.length]];
   const totalUnits = pattern.reduce((sum, value) => sum + value, 0);
   const unitValue = [1, 1, 2, 2, 3][tier - 1];
   const totalSlices = totalUnits * unitValue;
@@ -299,12 +299,12 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const allCorrect = plateViews.every((plate) => plate.isCorrect);
   const isWideShareLayout = viewportRect.width >= 1100;
   const isShortShareLayout = viewportRect.height < 500;
-  const sideRailWidth = isWideShareLayout ? 370 : 0;
+  const sideRailWidth = 0;
   const availableWidth = Math.max(1, viewportRect.width - sideRailWidth - 24);
   const tableWidth = Math.min(1100, availableWidth);
   const guestClearance = Math.min(190, tableWidth * .18) * .68 + 18;
-  const roomTop = isWideShareLayout ? guestClearance : questionDockBottom + guestClearance;
-  const roomBottom = viewportRect.height - (isWideShareLayout ? 28 : 125);
+  const roomTop = questionDockBottom + guestClearance;
+  const roomBottom = viewportRect.height - 125;
   const tableHeight = Math.min(tableWidth * (isWideShareLayout ? .48 : .75), Math.max(140, roomBottom - roomTop));
   const tableLeft = sideRailWidth + (viewportRect.width - sideRailWidth - tableWidth) / 2;
   const tableTop = Math.max(roomTop, roomBottom - tableHeight);

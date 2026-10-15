@@ -1,3 +1,4 @@
+import { gameQuestionContext } from '../../utils/gameQuestionCopy';
 import React from 'react';
 import { motion } from 'motion/react';
 import {
@@ -124,7 +125,7 @@ const QuestionCardFrame: React.FC<QuestionCardFrameProps> = ({
             backgroundSize: '100% 100%',
           }}
         >
-          <div className={cn('question-title text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/90', titleClassName)}>
+          <div className={cn('question-title text-[13px] font-black uppercase tracking-[0.18em] text-amber-100/90', titleClassName)}>
             {title}
           </div>
         </div>
@@ -153,7 +154,10 @@ export const GameQuestionCard: React.FC<GameQuestionCardProps> = ({
   titleClassName,
   bodyClassName,
   style,
-}) => (
+}) => {
+  const promptText = typeof children === 'string' ? children : '';
+  const context = gameQuestionContext(title, promptText);
+  return (
   <QuestionCardFrame
     className={className}
     title={title}
@@ -162,9 +166,11 @@ export const GameQuestionCard: React.FC<GameQuestionCardProps> = ({
     bodyClassName={bodyClassName}
     style={style}
   >
+    {context ? <span className="game-question-context">{context} </span> : null}
     {children}
   </QuestionCardFrame>
-);
+  );
+};
 
 export const IconButton: React.FC<IconButtonProps> = ({ icon, label, onClick, disabled }) => (
   <button
@@ -262,7 +268,7 @@ export const SecondaryButton: React.FC<ButtonProps> = ({ children, className, on
     data-ui-sound="handled"
     className={cn(
       'ui-button-secondary inline-flex h-[48px] items-center justify-center border-0 bg-transparent',
-      'px-3 text-[10px] font-black uppercase tracking-[0.1em]',
+      'px-3 text-[12px] font-black uppercase tracking-[0.1em]',
       'disabled:cursor-not-allowed disabled:opacity-50',
       className,
     )}
@@ -293,7 +299,7 @@ export const FeedbackStrip: React.FC<{ tone?: FeedbackTone; children: React.Reac
   className,
 }) => {
   const baseClassName = cn(
-    'licensed-game-card mission-panel-shell rounded-[1.1rem] border px-3 py-2 text-center text-[13px] font-black shadow-[0_10px_18px_rgba(15,23,42,0.22)]',
+    'licensed-game-card mission-panel-shell rounded-[1.1rem] border px-3 py-2 text-center text-[16px] font-black shadow-[0_10px_18px_rgba(15,23,42,0.22)]',
     tone === 'success'
       ? 'border-emerald-200/50 text-emerald-50'
       : tone === 'warning'
@@ -345,14 +351,14 @@ export const GameTopBar: React.FC<GameTopBarProps> = ({
       <div className="flex items-center gap-1.5">
         <IconButton icon={<ArrowLeft className="h-5 w-5" />} label="Back" onClick={onBack} />
         {progressLabel ? (
-          <div className="inline-flex h-9 items-center rounded-full border border-white/20 bg-white/10 px-2.5 text-[10px] font-black uppercase tracking-[0.1em] text-white">
+          <div className="inline-flex h-9 items-center rounded-full border border-white/20 bg-white/10 px-2.5 text-[12px] font-black uppercase tracking-[0.1em] text-white">
             {progressLabel}
           </div>
         ) : null}
       </div>
       <div className="flex items-center gap-1.5">
         {typeof lives === 'number' ? (
-          <div className="inline-flex h-9 items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-2.5 text-[10px] font-black uppercase tracking-[0.1em] text-white">
+          <div className="inline-flex h-9 items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-2.5 text-[12px] font-black uppercase tracking-[0.1em] text-white">
             <Heart className="h-3.5 w-3.5 text-amber-200" />
             {lives}
           </div>

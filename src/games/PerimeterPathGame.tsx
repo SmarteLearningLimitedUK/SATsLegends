@@ -293,7 +293,7 @@ const PerimeterShapeRenderer: React.FC<{
         </pattern>
       </defs>
       <rect width="100" height="100" fill="url(#perimeter-floor-grid)" />
-      <polygon points={shape.points.map((point) => `${point.x},${point.y}`).join(' ')} fill="#2d6158" />
+      <polygon points={shape.points.map((point) => `${point.x},${point.y}`).join(' ')} fill="rgba(16, 44, 47, .72)" />
       {shape.edges.map((edge) => {
         const selected = selectedEdgeIds.includes(edge.id);
         const label = getEdgeLabelPosition(edge);

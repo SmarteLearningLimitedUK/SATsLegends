@@ -51,8 +51,8 @@
   background: linear-gradient(145deg, #284d66, #17364e);
   box-shadow: inset 0 2px 0 #ffebb238, inset 0 -3px 0 #0c2439, 0 3px 0 #9e7438;
 }
-.pvp-stone-digit { color: #f1fcff; font-family: var(--font-fredoka); font-size: 31px; font-weight: 600; line-height: 1; text-shadow: 0 2px 0 #0b2338; }
-.pvp-stone-digit.is-empty { color: #91b3c4; font-size: 24px; }
+.pvp-stone-digit { color: #f1fcff; font-family: var(--font-fredoka); font-size: calc(31px * var(--game-text-scale, 1.2)); font-weight: 600; line-height: 1; text-shadow: 0 2px 0 #0b2338; }
+.pvp-stone-digit.is-empty { color: #91b3c4; font-size: calc(24px * var(--game-text-scale, 1.2)); }
 .pvp-number-stone.is-filled .pvp-stone-face { background: linear-gradient(145deg, #356e88, #204f69); }
 .pvp-number-stone.is-error .pvp-stone-face { border-color: #ffa1a9; }
 .pvp-number-stone.is-solved .pvp-stone-face { border-color: #9af0bd; box-shadow: inset 0 2px #cdf9dc38, inset 0 -3px #143f45, 0 3px #497d5d; }
@@ -88,7 +88,7 @@
   .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks :is(.pvp-stone-panel, .pvp-digit-panel) { padding: 14px 16px; }
   .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .pvp-stone-row { min-height: 0; gap: 8px; }
   .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks [data-pvp-location='target'] { max-width: 112px !important; height: 104px !important; }
-  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .pvp-stone-digit { font-size: 42px; }
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .pvp-stone-digit { font-size: calc(42px * var(--game-text-scale, 1.2)); }
   .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-sources > .pvp-digit-panel > .relative { gap: 8px; }
   .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks [data-pvp-location='source'] { max-width: 88px !important; height: 64px !important; justify-self: center; width: 100%; }
   .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .legend-pvp-enemy {
@@ -116,7 +116,7 @@
   .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .pvp-stone-row { gap: 6px; }
   .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks [data-pvp-location='target'] { height: 72px !important; max-width: 92px !important; }
   .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks [data-pvp-location='source'] { height: 44px !important; }
-  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .pvp-stone-digit { font-size: 32px; }
+  .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .pvp-stone-digit { font-size: calc(32px * var(--game-text-scale, 1.2)); }
   .iphone-game-stage[data-stage-layout='responsive'] .screen-gameplay.game-type-place-value-peaks .game-submit-dock-fixed > button { height: 48px !important; }
 }
 
@@ -200,7 +200,7 @@
   }
   .screen-gameplay.game-type-place-value-peaks .pvp-place-label {
     overflow: hidden;
-    font-size: 11px;
+    font-size: calc(11px * var(--game-text-scale, 1.2));
     text-overflow: ellipsis;
   }
 }
@@ -226,7 +226,7 @@
     max-height: 25px;
     margin-top: 0;
     overflow: hidden;
-    font-size: 10px !important;
+    font-size: calc(10px * var(--game-text-scale, 1.2)) !important;
     line-height: 1.15 !important;
     white-space: normal;
     -webkit-box-orient: vertical;
@@ -254,7 +254,7 @@
   }
   .screen-gameplay.game-type-place-value-peaks:has(.legend-pvp-question) .pvp-stone-heading {
     margin-bottom: 2px;
-    font-size: 10px;
+    font-size: calc(10px * var(--game-text-scale, 1.2));
   }
   .screen-gameplay.game-type-place-value-peaks:has(.legend-pvp-question) .pvp-stone-row {
     gap: 3px;
@@ -264,19 +264,19 @@
     height: 46px !important;
   }
   .screen-gameplay.game-type-place-value-peaks:has(.legend-pvp-question) .pvp-place-label {
-    font-size: 10px;
+    font-size: calc(10px * var(--game-text-scale, 1.2));
   }
   .screen-gameplay.game-type-place-value-peaks:has(.legend-pvp-question) .pvp-stone-face {
     min-height: 32px;
   }
   .screen-gameplay.game-type-place-value-peaks:has(.legend-pvp-question) .pvp-stone-digit {
-    font-size: 22px;
+    font-size: calc(22px * var(--game-text-scale, 1.2));
   }
   .screen-gameplay.game-type-place-value-peaks:has(.legend-pvp-question) .legend-pvp-sources [data-pvp-location='source'] {
     height: 42px !important;
   }
   .screen-gameplay.game-type-place-value-peaks:has(.legend-pvp-question) .legend-pvp-sources [data-pvp-location='source'] span {
-    font-size: 26px !important;
+    font-size: calc(26px * var(--game-text-scale, 1.2)) !important;
   }
   .screen-gameplay.game-type-place-value-peaks:has(.legend-pvp-question) .legend-pvp-enemy {
     display: none;

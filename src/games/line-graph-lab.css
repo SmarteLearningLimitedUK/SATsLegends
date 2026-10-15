@@ -27,7 +27,7 @@
   }
 
   #root .line-graph-side .answer-choice-surface button span {
-    font-size: 16px;
+    font-size: calc(16px * var(--game-text-scale, 1.2));
     white-space: nowrap;
   }
 
@@ -42,4 +42,10 @@
     background: #881337;
     color: #fff1f2;
   }
+}
+@media (min-width:900px) and (min-height:700px) {
+  #root .line-graph-board { max-width:1050px; }
+  #root .line-graph-spacer { display:none; }
+  #root .line-graph-main { justify-content:center; }
+  #root .line-graph-chart { height:clamp(300px,40vh,420px) !important; }
 }

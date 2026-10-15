@@ -753,8 +753,8 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
                   <div className="text-[clamp(1rem,4vw,1.28rem)] font-black tracking-[0.01em] text-white">
                     {challenge.orderTitle}
                   </div>
-                  <div className="potion-recipe-meta mt-1 flex items-center justify-center gap-2 text-[11px] font-black uppercase tracking-[0.12em] text-amber-100">
-                    <span>Brew {Math.min(correctSolved + 1, roundsToWin)}/{roundsToWin}</span>
+                  <div className="potion-recipe-meta mt-1 flex items-center justify-center gap-2 text-[13px] font-black uppercase tracking-[0.12em] text-amber-100">
+                    <span>Brew {Math.min(correctSolved + 1, roundsToWin)} of {roundsToWin}</span>
                     <span aria-hidden="true">·</span>
                     <span>Ratio {ratioText}</span>
                   </div>
@@ -813,7 +813,7 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
                     <div className="flex h-14 w-14 items-center justify-center rounded-full border border-emerald-200/80 bg-emerald-400/92 shadow-[0_0_28px_rgba(52,211,153,0.7)]">
                       <CheckCircle2 className="h-7 w-7 text-slate-950" />
                     </div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.14em] text-emerald-100">Perfect brew!</p>
+                    <p className="text-[12px] font-black uppercase tracking-[0.14em] text-emerald-100">Perfect brew!</p>
                   </motion.div>
                 ) : feedback === 'error' ? (
                   <motion.div
@@ -893,8 +893,8 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
                           />
                         ) : null}
                       </div>
-                      <span className="relative z-10 text-[9px] font-black uppercase tracking-[0.02em] text-cyan-50">{ingredient.name}</span>
-                      <span className="relative z-10 text-[10px] font-black text-cyan-100">
+                      <span className="relative z-10 text-[11px] font-black uppercase tracking-[0.02em] text-cyan-50">{ingredient.name}</span>
+                      <span className="relative z-10 text-[12px] font-black text-cyan-100">
                         {challenge.revealTargets ? `${current}/${target}` : `${current} drops`}
                       </span>
                     </motion.button>

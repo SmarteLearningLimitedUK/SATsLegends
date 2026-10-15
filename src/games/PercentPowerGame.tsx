@@ -3,7 +3,7 @@ import { motion, useIsPresent, useReducedMotion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { ChevronLeft, CircleDollarSign } from 'lucide-react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
-import percentPowerBackground from '../assets/maps/premium/percent-power.webp';
+import percentPowerBackground from '../assets/maps/premium/percent-power-station-wide-v2.png';
 import { triggerHaptic } from '../haptics';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';

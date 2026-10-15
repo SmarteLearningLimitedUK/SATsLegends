@@ -46,7 +46,7 @@
 .ff-question.game-question-card {
   --question-card-padding: 5px 10px;
   max-width: min(100%, 760px);
-  font-size: clamp(15px, 1.45vw, 19px);
+  font-size: calc(clamp(15px, 1.45vw, 19px) * var(--game-text-scale, 1.2));
 }
 
 .ff-question .game-question-card-title-strip {
@@ -61,7 +61,7 @@
 .ff-brief h1,
 .ff-brief h2 {
   color: #fff6de;
-  font-size: clamp(22px, 2.7vw, 36px);
+  font-size: calc(clamp(22px, 2.7vw, 36px) * var(--game-text-scale, 1.2));
   font-weight: 900;
   line-height: 1.05;
   letter-spacing: -.035em;
@@ -71,7 +71,7 @@
 .ff-brief p {
   max-width: 54ch;
   color: #f2dfbd;
-  font-size: clamp(13px, 1.2vw, 16px);
+  font-size: calc(clamp(13px, 1.2vw, 16px) * var(--game-text-scale, 1.2));
   font-weight: 650;
   line-height: 1.25;
   text-shadow: 0 2px 7px #07101c;
@@ -85,7 +85,7 @@
   gap: 5px 14px;
   min-height: 21px;
   color: #ffdf9e;
-  font-size: clamp(11px, 1vw, 13px);
+  font-size: calc(clamp(11px, 1vw, 13px) * var(--game-text-scale, 1.2));
   font-weight: 850;
   line-height: 1.2;
   letter-spacing: .09em;
@@ -166,7 +166,7 @@
   background: linear-gradient(180deg, rgba(24, 30, 36, .83), rgba(11, 17, 24, .9));
   box-shadow: 0 9px 19px rgba(0, 0, 0, .25), inset 0 1px rgba(255, 247, 216, .13);
   color: #f9e8c7;
-  font-size: clamp(11px, 1.1vw, 14px);
+  font-size: calc(clamp(11px, 1.1vw, 14px) * var(--game-text-scale, 1.2));
   font-weight: 850;
   line-height: 1.15;
   letter-spacing: .07em;
@@ -177,7 +177,7 @@
 
 .ff-target-value {
   color: #ffd276;
-  font-size: clamp(20px, 2.1vw, 28px);
+  font-size: calc(clamp(20px, 2.1vw, 28px) * var(--game-text-scale, 1.2));
   font-weight: 950;
   line-height: 1;
   letter-spacing: -.035em;
@@ -282,7 +282,7 @@
   color: #fff4d9;
   cursor: pointer;
   font: inherit;
-  font-size: clamp(16px, 1.8vw, 23px);
+  font-size: calc(clamp(16px, 1.8vw, 23px) * var(--game-text-scale, 1.2));
   font-weight: 900;
   transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
 }
@@ -304,7 +304,7 @@
 
 .ff-slot-number {
   color: #cba869;
-  font-size: .85em;
+  font-size: calc(.85em * var(--game-text-scale, 1.2));
   font-weight: 800;
 }
 
@@ -315,7 +315,7 @@
   align-items: center;
   justify-content: center;
   gap: 2px;
-  font-size: clamp(15px, 1.6vw, 21px);
+  font-size: calc(clamp(15px, 1.6vw, 21px) * var(--game-text-scale, 1.2));
   font-variant-numeric: tabular-nums;
   line-height: .88;
 }
@@ -329,13 +329,13 @@
   background: currentColor;
 }
 
-.ff-slot .ff-fraction { font-size: clamp(15px, 1.6vw, 20px); }
+.ff-slot .ff-fraction { font-size: calc(clamp(23px, 2.3vw, 30px) * var(--game-text-scale, 1.2)); }
 
 .ff-operator {
   flex: 0 0 auto;
   min-width: 12px;
   color: #ffcd73;
-  font-size: clamp(15px, 1.7vw, 23px);
+  font-size: calc(clamp(15px, 1.7vw, 23px) * var(--game-text-scale, 1.2));
   font-weight: 950;
   text-align: center;
   text-shadow: 0 2px 5px #070d14;
@@ -354,7 +354,7 @@
   pointer-events: none;
 }
 
-.ff-hammer svg { display: block; width: 100%; height: 100%; transform:scale(2.55); transform-origin:52% 88%; }
+.ff-hammer svg { display: block; width: 100%; height: 100%; transform:scale(1.45); transform-origin:52% 88%; }
 
 .fraction-forge-game[data-strike-state='success'] .ff-hammer,
 .fraction-forge-game[data-strike-state='error'] .ff-hammer,
@@ -508,7 +508,7 @@
   background: rgba(76, 12, 21, .94);
   box-shadow: 0 0 28px rgba(255, 69, 44, .55), 0 9px 22px rgba(0, 0, 0, .5);
   color: #fff7ef;
-  font-size: clamp(15px, 1.5vw, 20px);
+  font-size: calc(clamp(15px, 1.5vw, 20px) * var(--game-text-scale, 1.2));
   font-weight: 950;
   line-height: 1.1;
   letter-spacing: .04em;
@@ -520,7 +520,7 @@
 .ff-wrong-badge span {
   margin-top: 3px;
   color: #ffd5b8;
-  font-size: .56em;
+  font-size: calc(.56em * var(--game-text-scale, 1.2));
   letter-spacing: .16em;
 }
 
@@ -582,7 +582,7 @@
   gap: 5px 12px;
   margin: 0;
   color: #ffe3aa;
-  font-size: clamp(14px, 1.4vw, 19px);
+  font-size: calc(clamp(14px, 1.4vw, 19px) * var(--game-text-scale, 1.2));
   font-weight: 900;
   line-height: 1.15;
   letter-spacing: .02em;
@@ -591,7 +591,7 @@
 
 .ff-tray-title span {
   color: #d7c6ab;
-  font-size: clamp(11px, 1vw, 13px);
+  font-size: calc(clamp(11px, 1vw, 13px) * var(--game-text-scale, 1.2));
   font-weight: 650;
   letter-spacing: 0;
   text-align: right;
@@ -619,7 +619,7 @@
   color: #111d26;
   cursor: pointer;
   font: inherit;
-  font-size: clamp(20px, 2vw, 29px);
+  font-size: calc(clamp(20px, 2vw, 29px) * var(--game-text-scale, 1.2));
   font-weight: 950;
   line-height: 1;
   text-shadow: 0 1px rgba(255, 255, 255, .58);
@@ -663,7 +663,7 @@
   border-radius: 10px;
   cursor: pointer;
   font: inherit;
-  font-size: clamp(14px, 1.25vw, 17px);
+  font-size: calc(clamp(14px, 1.25vw, 17px) * var(--game-text-scale, 1.2));
   font-weight: 900;
   line-height: 1.1;
   transition: transform 170ms ease, filter 170ms ease, box-shadow 170ms ease;
@@ -705,7 +705,7 @@
 .ff-feedback {
   min-height: 20px;
   color: #fbe0aa;
-  font-size: clamp(14px, 1.1vw, 16px);
+  font-size: calc(clamp(14px, 1.1vw, 16px) * var(--game-text-scale, 1.2));
   font-weight: 750;
   line-height: 1.25;
   text-align: center;
@@ -720,7 +720,7 @@
   background: rgba(76, 12, 21, .94);
   box-shadow: 0 0 16px rgba(255, 69, 44, .28);
   color: #fff7ef;
-  font-size: clamp(14px, 1.2vw, 16px);
+  font-size: calc(clamp(14px, 1.2vw, 16px) * var(--game-text-scale, 1.2));
   font-weight: 850;
 }
 
@@ -747,9 +747,9 @@
   .ff-slot {
     width: clamp(43px, 11.7vw, 62px);
     height: clamp(46px, 12.2vw, 66px);
-    font-size: clamp(16px, 4.3vw, 22px);
+    font-size: calc(clamp(16px, 4.3vw, 22px) * var(--game-text-scale, 1.2));
   }
-  .ff-operator { min-width: 9px; font-size: clamp(13px, 3.5vw, 19px); }
+  .ff-operator { min-width: 9px; font-size: calc(clamp(13px, 3.5vw, 19px) * var(--game-text-scale, 1.2)); }
   .ff-hammer {
     top: calc(23% - 60px);
     width: clamp(52px, 14vw, 80px);
@@ -768,21 +768,21 @@
     width: calc(20% - 4px);
     min-height: 49px;
     padding: 3px;
-    font-size: clamp(18px, 5.3vw, 25px);
+    font-size: calc(clamp(18px, 5.3vw, 25px) * var(--game-text-scale, 1.2));
   }
-  .ff-tray-title { font-size: 14px; }
-  .ff-tray-title span { font-size: 11px; }
+  .ff-tray-title { font-size: calc(14px * var(--game-text-scale, 1.2)); }
+  .ff-tray-title span { font-size: calc(11px * var(--game-text-scale, 1.2)); }
   .ff-controls { margin-top: 0; }
-  .ff-fraction { font-size: clamp(15px, 4.2vw, 19px); }
+  .ff-fraction { font-size: calc(clamp(15px, 4.2vw, 19px) * var(--game-text-scale, 1.2)); }
 }
 
 @media (max-height: 690px) {
   .ff-ui { gap: 4px; padding-block: 5px; }
-  .ff-brief h1, .ff-brief h2 { font-size: clamp(19px, 2.2vw, 28px); }
-  .ff-brief p { font-size: 12px; }
-  .ff-meta { min-height: 17px; font-size: 11px; }
+  .ff-brief h1, .ff-brief h2 { font-size: calc(clamp(19px, 2.2vw, 28px) * var(--game-text-scale, 1.2)); }
+  .ff-brief p { font-size: calc(12px * var(--game-text-scale, 1.2)); }
+  .ff-meta { min-height: 17px; font-size: calc(11px * var(--game-text-scale, 1.2)); }
   .ff-target { min-height: 37px; padding-block: 3px; }
-  .ff-target-value { font-size: 19px; }
+  .ff-target-value { font-size: calc(19px * var(--game-text-scale, 1.2)); }
   .ff-tray { gap: 5px; padding: 8px 11px; }
   .ff-ingredient { min-height: 46px; }
   .ff-reset, .ff-strike { min-height: 44px; padding-block: 6px; }
@@ -794,10 +794,10 @@
   .ff-brief p { display: none; }
   .ff-question.game-question-card {
     --question-card-padding: 3px 6px;
-    font-size: 17px;
+    font-size: calc(17px * var(--game-text-scale, 1.2));
   }
   #root .app-viewport.sat-theme-bluegold.screen-gameplay .fraction-forge-game .ff-question .game-question-copy {
-    font-size: 17px !important;
+    font-size: calc(17px * var(--game-text-scale, 1.2)) !important;
     line-height: 1.1 !important;
   }
   .ff-question .game-question-card-title-strip {
@@ -810,7 +810,7 @@
     min-height: 13px;
     flex-wrap: nowrap;
     white-space: nowrap;
-    font-size: 10px;
+    font-size: calc(10px * var(--game-text-scale, 1.2));
   }
   .ff-heat-track {
     flex: 1 1 65px;
@@ -819,15 +819,15 @@
   }
   .ff-workspace { grid-template-rows: minmax(130px, 1fr) auto; }
   .ff-anvil { bottom: 20px; height: 74%; }
-  .ff-target { min-height: 32px; padding: 3px 8px; font-size: 10px; }
-  .ff-target-value { font-size: 17px; }
+  .ff-target { min-height: 32px; padding: 3px 8px; font-size: calc(10px * var(--game-text-scale, 1.2)); }
+  .ff-target-value { font-size: calc(17px * var(--game-text-scale, 1.2)); }
   .ff-hammer { top: calc(23% - 50px); width: 48px; height: 64px; }
   .ff-slot { width: 50px; height: 50px; }
   .ff-tray-title { display: none; }
   .ff-tray { padding: 7px; }
   .ff-bank { flex: 0 0 auto; gap: 4px; }
   .ff-ingredient { min-height: 50px; }
-  .ff-fraction, .ff-slot .ff-fraction { font-size: 16px; }
+  .ff-fraction, .ff-slot .ff-fraction { font-size: calc(16px * var(--game-text-scale, 1.2)); }
   .ff-controls { flex: 0 0 auto; }
   .ff-reset, .ff-strike { min-height: 50px; }
   .ff-feedback { min-height: 0; }
@@ -847,3 +847,22 @@
   }
   .ff-anvil-zone::before { animation: none; }
 }
+/* The recipe rests above the illustrated anvil's working face. */
+.ff-anvil::before, .ff-anvil::after, .ff-anvil-base, .ff-anvil-fracture { display:none; }
+.ff-anvil-art { position:absolute; inset:0; width:100%; height:100%; object-fit:fill; pointer-events:none; }
+.ff-recipe { top:-12%; }
+.ff-slot { width:clamp(64px,7vw,94px); height:clamp(70px,7.5vw,100px); }
+.ff-slot-number { font-size:calc(clamp(30px,3vw,42px) * var(--game-text-scale, 1.2)); color:#fff3ce; }
+.ff-slot .ff-fraction { font-size:calc(clamp(28px,2.8vw,38px) * var(--game-text-scale, 1.2)); }
+.ff-operator { font-size:calc(clamp(26px,2.8vw,38px) * var(--game-text-scale, 1.2)); }
+.ff-blacksmith-route { position:absolute; z-index:0; top:35%; left:38%; width:clamp(85px,10vw,150px); pointer-events:none; animation:ff-smith-walk 18s linear infinite; }
+.ff-blacksmith-worker { position:relative; transform-origin:50% 95%; animation:ff-smith-work 18s linear infinite; }
+.ff-blacksmith-worker img { width:100%; display:block; filter:drop-shadow(0 8px 4px #050b14aa); }
+.ff-work-sparks { position:absolute; top:44%; left:15%; width:8px; height:8px; background:#ffd186; border-radius:50%; box-shadow:12px -8px 0 -2px #ffc453,-10px -15px 0 -2px #ffe4ad; animation:ff-smith-sparks 18s linear infinite; }
+@keyframes ff-smith-walk { 0%,20% {left:38%;} 40%,60% {left:53%;} 80%,100% {left:38%;} }
+@keyframes ff-smith-work { 0%,4%,8%,12%,16%,20%,40%,44%,48%,52%,56%,60%,80%,84%,88%,92%,96%,100% {transform:rotate(0deg) translateY(0);} 2%,6%,10%,14%,18%,42%,46%,50%,54%,58%,82%,86%,90%,94%,98% {transform:rotate(-7deg) translateY(2px);} 22%,26%,30%,34%,38%,62%,66%,70%,74%,78% {transform:rotate(2deg) translateY(-3px);} 24%,28%,32%,36%,64%,68%,72%,76% {transform:rotate(-2deg) translateY(0);} }
+@keyframes ff-smith-sparks { 0%,20%,40%,60%,80%,100% {opacity:0;} 4%,8%,12%,16%,44%,48%,52%,56%,84%,88%,92%,96% {opacity:1;} 5%,9%,13%,17%,45%,49%,53%,57%,85%,89%,93%,97% {opacity:0;} }
+.ff-blacksmith-route[data-paused='true'], .ff-blacksmith-route[data-paused='true'] * { animation-play-state:paused; }
+@media(max-width:699px) { .ff-blacksmith-route { top:30%; width:85px; } }
+@media(prefers-reduced-motion:reduce) { .ff-blacksmith-route, .ff-blacksmith-route * { animation:none; } .ff-work-sparks { display:none; } }
+.ff-slot:disabled { opacity:1 !important; filter:none !important; }

@@ -1,3 +1,4 @@
+import shipmentBoat from '../assets/boats/1.png';
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
@@ -19,7 +20,6 @@ import {
 import graphGrabberBackground from '../assets/maps/premium/graph-grabber.webp';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
-import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 import SceneEnvironment from '../components/SceneEnvironment';
 import './graph-grabber.css';
 import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
@@ -117,10 +117,10 @@ const createBarRound = (levelId: number, variant: number): ChartRound => {
       kind: 'bar',
       answerMode: 'single',
       title: 'Bar Chart',
-      prompt: `How many crates did ${targetBar.label} deliver?`,
+      prompt: `Castle supplies have arrived! How many crates did ${targetBar.label} bring?`,
       support: 'Read the y-axis.',
-      chartCaption: 'Supply crates by caravan',
-      xLabel: 'Caravans',
+      chartCaption: 'Supply crates by boat',
+      xLabel: 'Boats',
       yLabel: 'Crates',
       bars,
       options: [
@@ -139,10 +139,10 @@ const createBarRound = (levelId: number, variant: number): ChartRound => {
       kind: 'bar',
       answerMode: 'single',
       title: 'Most Crates',
-      prompt: 'Which caravan delivered the most crates?',
+      prompt: 'The castle stores need filling. Which boat brought the most crates?',
       support: 'Compare the heights before you answer.',
-      chartCaption: 'Supply crates by caravan',
-      xLabel: 'Caravans',
+      chartCaption: 'Supply crates by boat',
+      xLabel: 'Boats',
       yLabel: 'Crates',
       bars,
       options: shuffle(CARAVAN_POOL.map((caravan) => ({ id: caravan.label, label: caravan.label }))),
@@ -156,10 +156,10 @@ const createBarRound = (levelId: number, variant: number): ChartRound => {
       kind: 'bar',
       answerMode: 'trueFalse',
       title: 'Bar Graph Check',
-      prompt: `True or false: ${bars[variant % 2].label} delivered more crates than ${bars[2 + (variant % 2)].label}.`,
+      prompt: `Check the delivery ledger. True or false: ${bars[variant % 2].label} brought more crates than ${bars[2 + (variant % 2)].label}.`,
       support: 'Read the graph, then decide whether the statement is true.',
-      chartCaption: 'Supply crates by caravan',
-      xLabel: 'Caravans',
+      chartCaption: 'Supply crates by boat',
+      xLabel: 'Boats',
       yLabel: 'Crates',
       bars,
       options: [
@@ -198,10 +198,10 @@ const createBarRound = (levelId: number, variant: number): ChartRound => {
     kind: 'bar',
     answerMode: 'multi',
     title: 'Graph Check',
-    prompt: 'Select all statements that are true.',
+    prompt: 'Check the delivery ledger. Select every true statement.',
     support: 'Check each bar height. Add the two named amounts when a claim gives a total.',
-    chartCaption: 'Supply crates by caravan',
-    xLabel: 'Caravans',
+    chartCaption: 'Supply crates by boat',
+    xLabel: 'Boats',
     yLabel: 'Crates',
     bars,
     options: shuffle(truePairs.map((item) => ({ id: item.id, label: item.label }))),
@@ -442,7 +442,7 @@ const GraphBoard: React.FC<{ round: ChartRound; difficulty: number; previewAngle
   if (round.kind === 'bar' && round.bars) {
     return (
       <div className="flex h-full min-h-0 flex-col rounded-[1rem] border border-white/8 bg-[linear-gradient(180deg,rgba(9,19,42,0.5),rgba(7,14,32,0.66))] p-1.5 shadow-[0_14px_24px_rgba(2,6,23,0.16)]">
-        <div className="graph-grabber-chart-caption flex items-center justify-between px-1 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/75">
+        <div className="graph-grabber-chart-caption flex items-center justify-between px-1 text-[12px] font-black uppercase tracking-[0.18em] text-amber-100/75">
           <span>X</span>
           {round.chartCaption}
           <span>Y</span>
@@ -457,10 +457,10 @@ const GraphBoard: React.FC<{ round: ChartRound; difficulty: number; previewAngle
                 domain={compactChart?[0,axisMax]:undefined}
                 ticks={compactChart?axisTicks:undefined}
                 interval={0}
-                tick={{ fill: '#fff8ec', fontSize: 14, fontWeight: 800 }}
+                tick={{ fill: '#fff8ec', fontSize: 17, fontWeight: 800 }}
                 axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
                 tickLine={false}
-                label={{ value: compactChart?round.yLabel:round.xLabel, position: 'insideBottom', offset: -2, fill: '#fff8ec', fontSize: 14, fontWeight: 800 } as never}
+                label={{ value: compactChart?round.yLabel:round.xLabel, position: 'insideBottom', offset: -2, fill: '#fff8ec', fontSize: 17, fontWeight: 800 } as never}
               />
               <YAxis
                 type={compactChart?'category':'number'}
@@ -469,17 +469,27 @@ const GraphBoard: React.FC<{ round: ChartRound; difficulty: number; previewAngle
                 ticks={compactChart?undefined:axisTicks}
                 width={compactChart?88:60}
                 interval={0}
-                tick={{ fill: '#fff8ec', fontSize: 14, fontWeight: 800 }}
+                tick={{ fill: '#fff8ec', fontSize: 17, fontWeight: 800 }}
                 axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
                 tickLine={false}
-                label={compactChart?undefined:{ value: round.yLabel, angle: -90, position: 'insideLeft', fill: '#fff8ec', fontSize: 14, fontWeight: 800 } as never}
+                label={compactChart?undefined:{ value: round.yLabel, angle: -90, position: 'insideLeft', fill: '#fff8ec', fontSize: 17, fontWeight: 800 } as never}
               />
               <Tooltip
                 cursor={{ fill: 'rgba(255,255,255,0.08)' }}
                 contentStyle={{ background: 'rgba(8,15,32,0.95)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '14px', color: '#fff8ec' }}
               />
               {inspected&&<ReferenceLine {...(compactChart?{x:round.bars.find(bar=>bar.label===inspected)?.value}:{y:round.bars.find(bar=>bar.label===inspected)?.value})} stroke="#fff3ae" strokeWidth={2} strokeDasharray="6 4" />}
-              <Bar dataKey="value" radius={[12, 12, 0, 0]} onClick={(_,index)=>{const bar=round.bars?.[index];if(bar)setInspected(inspected===bar.label?null:bar.label);}}>
+              <Bar dataKey="value" shape={(raw: unknown) => {
+                const {x=0,y=0,width=0,height=0,payload,opacity=1}=raw as {x?:number;y?:number;width?:number;height?:number;payload?:BarDatum;opacity?:number};
+                const count=Math.max(1,payload?.value??1);
+                return <g opacity={opacity} data-crate-bar={payload?.label}>{Array.from({length:count},(_,i)=>{
+                  const unitWidth=compactChart?width/count:width,unitHeight=compactChart?height:height/count;
+                  const side=Math.min(unitWidth,unitHeight);
+                  const w=side,h=side;
+                  const left=x+(compactChart?i*unitWidth:0)+(unitWidth-side)/2,top=y+(compactChart?0:i*unitHeight)+(unitHeight-side)/2;
+                  return <g key={i}><rect x={left+.5} y={top+.5} width={Math.max(0,w-1)} height={Math.max(0,h-1)} rx={2} fill="#b87b3f" stroke="#ffdb96" strokeWidth={1}/><path d={`M${left+2} ${top+2}L${left+w-2} ${top+h-2}M${left+w-2} ${top+2}L${left+2} ${top+h-2}`} stroke="#543820" strokeWidth={1}/></g>;
+                })}</g>;
+              }} onClick={(_,index)=>{const bar=round.bars?.[index];if(bar)setInspected(inspected===bar.label?null:bar.label);}}>
                 {round.bars!.map((bar) => (
                   <Cell key={bar.label} fill={bar.color} opacity={!inspected||inspected===bar.label?1:.45} />
                 ))}
@@ -487,7 +497,7 @@ const GraphBoard: React.FC<{ round: ChartRound; difficulty: number; previewAngle
             </BarChart>
           </ResponsiveContainer>
         </div>
-        <div className="graph-shipment-tabs" aria-label="Trace a shipment on the chart">{round.bars.map(bar=><button key={bar.label} type="button" aria-pressed={inspected===bar.label} onClick={()=>setInspected(inspected===bar.label?null:bar.label)}><span aria-hidden="true">▣</span>{bar.label}</button>)}</div>
+        <div className="graph-shipment-tabs" aria-label="Trace a shipment on the chart">{round.bars.map(bar=><button key={bar.label} type="button" aria-pressed={inspected===bar.label} onClick={()=>setInspected(inspected===bar.label?null:bar.label)}><img src={shipmentBoat} alt="" draggable={false} />{bar.label}</button>)}</div>
       </div>
     );
   }
@@ -495,7 +505,7 @@ const GraphBoard: React.FC<{ round: ChartRound; difficulty: number; previewAngle
   if (round.kind === 'line' && round.line) {
     return (
       <div className="flex h-full min-h-0 flex-col rounded-[1rem] border border-white/8 bg-[linear-gradient(180deg,rgba(9,19,42,0.5),rgba(7,14,32,0.66))] p-1.5 shadow-[0_14px_24px_rgba(2,6,23,0.16)]">
-        <div className="graph-grabber-chart-caption flex items-center justify-between px-1 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/75">
+        <div className="graph-grabber-chart-caption flex items-center justify-between px-1 text-[12px] font-black uppercase tracking-[0.18em] text-amber-100/75">
           <span>X</span>
           {round.chartCaption}
           <span>Y</span>
@@ -507,19 +517,19 @@ const GraphBoard: React.FC<{ round: ChartRound; difficulty: number; previewAngle
               <XAxis
                 dataKey="label"
                 interval={0}
-                tick={{ fill: '#fff8ec', fontSize: 14, fontWeight: 800 }}
+                tick={{ fill: '#fff8ec', fontSize: 17, fontWeight: 800 }}
                 axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
                 tickLine={false}
-                label={{ value: round.xLabel, position: 'insideBottom', offset: -2, fill: '#fff8ec', fontSize: 11, fontWeight: 800 } as never}
+                label={{ value: round.xLabel, position: 'insideBottom', offset: -2, fill: '#fff8ec', fontSize: 13, fontWeight: 800 } as never}
               />
               <YAxis
                 domain={[0, axisMax]}
                 ticks={axisTicks}
                 interval={0}
-                tick={{ fill: '#fff8ec', fontSize: 14, fontWeight: 800 }}
+                tick={{ fill: '#fff8ec', fontSize: 17, fontWeight: 800 }}
                 axisLine={{ stroke: 'rgba(255,255,255,0.35)' } as never}
                 tickLine={false}
-                label={{ value: round.yLabel, angle: -90, position: 'insideLeft', fill: '#fff8ec', fontSize: 11, fontWeight: 800 } as never}
+                label={{ value: round.yLabel, angle: -90, position: 'insideLeft', fill: '#fff8ec', fontSize: 13, fontWeight: 800 } as never}
               />
               <Tooltip
                 contentStyle={{ background: 'rgba(8,15,32,0.95)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '14px', color: '#fff8ec' }}
@@ -565,7 +575,7 @@ const GraphBoard: React.FC<{ round: ChartRound; difficulty: number; previewAngle
 
   return (
     <div className="flex h-full min-h-0 flex-col rounded-[1rem] border border-white/8 bg-[linear-gradient(180deg,rgba(9,19,42,0.5),rgba(7,14,32,0.66))] p-1.5 shadow-[0_14px_24px_rgba(2,6,23,0.16)]">
-      <div className="flex items-center justify-center px-1 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/75">
+      <div className="flex items-center justify-center px-1 text-[12px] font-black uppercase tracking-[0.18em] text-amber-100/75">
         {round.chartCaption}
       </div>
       <div className="graph-grabber-pie-layout mt-1.5 grid min-h-0 flex-1 gap-2 md:grid-cols-[1.08fr_0.92fr]">
@@ -584,7 +594,7 @@ const GraphBoard: React.FC<{ round: ChartRound; difficulty: number; previewAngle
           </ResponsiveContainer>
         </div>
         <div className="graph-grabber-pie-labels flex flex-col justify-center gap-2 rounded-[0.95rem] border border-white/8 bg-white/3 p-2">
-          <div className="text-[9px] font-black uppercase tracking-[0.18em] text-amber-100/70">Slice labels</div>
+          <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-100/70">Slice labels</div>
           <div className="grid gap-2">
             {round.pie!.map((slice) => (
               <div key={slice.label} className="graph-grabber-slice-row flex items-center gap-2 rounded-[0.9rem] border border-white/10 bg-slate-950/35 px-3 py-2">
@@ -594,12 +604,12 @@ const GraphBoard: React.FC<{ round: ChartRound; difficulty: number; previewAngle
               </div>
             ))}
           </div>
-          <div className="graph-grabber-pie-note mt-1 text-[10px] font-bold leading-relaxed text-white/72">
+          <div className="graph-grabber-pie-note mt-1 text-[12px] font-bold leading-relaxed text-white/72">
             Pie charts are labelled clearly here so the learner can match the slice to the statement.
           </div>
         </div>
       </div>
-      <div className="graph-grabber-total mt-1.5 text-center text-[11px] font-bold text-white/68">
+      <div className="graph-grabber-total mt-1.5 text-center text-[13px] font-bold text-white/68">
         Total: {total}%
       </div>
     </div>
@@ -837,7 +847,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
               width: '100%',
             }}
           >
-            {formatFantasyPrompt(round.prompt)}
+            {round.prompt}
           </GameQuestionCard>
 
           <div className="graph-grabber-board min-h-0">
@@ -845,7 +855,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
           </div>
 
           <section className="graph-grabber-answers rounded-[1rem] border border-white/8 bg-[linear-gradient(180deg,rgba(15,23,42,0.62),rgba(10,17,37,0.76))] p-2 shadow-[0_14px_24px_rgba(2,6,23,0.16)] md:p-2.5" data-answer-mode={round.answerMode}>
-            <div className="graph-grabber-hint mb-1.5 flex items-center justify-start gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100/70">
+            <div className="graph-grabber-hint mb-1.5 flex items-center justify-start gap-2 text-[12px] font-black uppercase tracking-[0.18em] text-amber-100/70">
               <span>{round.answerMode === 'multi' ? 'Select every true statement, then submit.' : round.kind==='bar'?round.support.replace(/y-axis/ig,'numbered axis'):round.support}</span>
             </div>
             <div className={`grid gap-2 ${optionGridClass}`}>
@@ -882,7 +892,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
                   type="button"
                   onClick={handleMultiSubmit}
                   disabled={feedback !== null || isFinished}
-                  className="ui-button-primary min-w-[10rem] rounded-[0.95rem] px-4 py-2.5 text-[11px] font-black uppercase tracking-[0.16em] disabled:opacity-45"
+                  className="ui-button-primary min-w-[10rem] rounded-[0.95rem] px-4 py-2.5 text-[13px] font-black uppercase tracking-[0.16em] disabled:opacity-45"
                 >
                   Submit Answers
                 </button>
@@ -915,7 +925,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
             >
               <div className="rounded-full border border-white/12 bg-slate-950/40 px-4 py-1.5 text-sm font-black uppercase tracking-[0.14em] shadow-[0_10px_18px_rgba(0,0,0,0.2)]">
                 <div>{feedback.title}</div>
-                <div className="mt-0.5 text-[11px] font-semibold normal-case tracking-normal text-white/92">
+                <div className="mt-0.5 text-[13px] font-semibold normal-case tracking-normal text-white/92">
                   {feedback.subtitle}
                 </div>
               </div>

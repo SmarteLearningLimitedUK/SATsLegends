@@ -266,7 +266,7 @@ const BevelledGem: React.FC<{
           <div className="absolute left-1.5 top-1.5 h-2 w-2 rounded-full bg-white/54 blur-[1px]" />
         </>
       )}
-      <span className="absolute inset-0 flex items-center justify-center px-0.5 text-center text-[16px] font-black leading-none text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] sm:text-[17px]">
+      <span className="absolute inset-0 flex items-center justify-center px-0.5 text-center text-[19px] font-black leading-none text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] sm:text-[20px]">
         {label}
       </span>
 
@@ -378,10 +378,10 @@ const MatchGameShell: React.FC<{
                      ) : null}
                    </div>
                    <div className="flex items-center gap-2">
-                     <div className="rounded-lg border border-cyan-100/26 bg-[#0a1f56]/70 px-2 py-1 text-[11px] font-black tabular-nums text-cyan-50">
+                     <div className="rounded-lg border border-cyan-100/26 bg-[#0a1f56]/70 px-2 py-1 text-[13px] font-black tabular-nums text-cyan-50">
                        {timeLeft}s
                      </div>
-                     <div className="flex items-center gap-1 rounded-lg border border-yellow-200/55 bg-[#0a1f56]/70 px-2 py-1 text-[11px] font-black text-yellow-100">
+                     <div className="flex items-center gap-1 rounded-lg border border-yellow-200/55 bg-[#0a1f56]/70 px-2 py-1 text-[13px] font-black text-yellow-100">
                        <span>XP</span>
                        <span>{XP}</span>
                      </div>

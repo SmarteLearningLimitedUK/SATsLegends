@@ -276,7 +276,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
-            <div className="rounded-full border border-amber-200/55 bg-[#123062]/75 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-amber-100">
+            <div className="rounded-full border border-amber-200/55 bg-[#123062]/75 px-3 py-1 text-[12px] font-black uppercase tracking-[0.14em] text-amber-100">
               Median Master
             </div>
           </div>
@@ -301,13 +301,13 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
                   <div className="pointer-events-none absolute inset-x-8 top-0 h-14 bg-[radial-gradient(circle_at_50%_0%,rgba(56,189,248,0.24),transparent_72%)]" />
 
                   <div className="mb-3 flex items-center justify-between gap-3">
-                    <p className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/90">
+                    <p className="text-[12px] font-black uppercase tracking-[0.16em] text-cyan-100/90">
                       {currentLevelData.isEven ? 'Even set: average the middle two' : 'Odd set: choose the middle value'}
                     </p>
                     <button
                       type="button"
                       onClick={toggleSort}
-                      className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] ${
+                      className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-[12px] font-black uppercase tracking-[0.12em] ${
                         isSorted
                           ? 'ui-button-primary'
                           : 'ui-button-secondary'
@@ -384,7 +384,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
                 </form>
 
                 {isSorted && (
-                  <p className="text-center text-[11px] font-bold uppercase tracking-[0.08em] text-cyan-100/90">
+                  <p className="text-center text-[13px] font-bold uppercase tracking-[0.08em] text-cyan-100/90">
                     {currentLevelData.isEven ? 'Read inward from both ends. Add the two middle stones and halve.' : 'Read inward from both ends to find the middle stone.'}
                   </p>
                 )}
@@ -408,7 +408,7 @@ const MedianMountainGame: React.FC<MedianMountainGameShellProps> = ({
               <h2 className="text-3xl font-black uppercase tracking-tight text-amber-100">Challenge Complete</h2>
               <p className="mt-2 text-sm font-semibold text-cyan-100/85">You mastered the median route.</p>
               <div className="mt-4 rounded-2xl border border-cyan-100/35 bg-[#0d2a5a]/82 p-4">
-                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/75">Final XP</p>
+                <p className="text-[12px] font-black uppercase tracking-[0.18em] text-cyan-100/75">Final XP</p>
                 <p className="mt-1 text-4xl font-black text-amber-100">{XP}</p>
               </div>
               <button

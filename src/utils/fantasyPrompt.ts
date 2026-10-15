@@ -48,18 +48,6 @@ const isAllCapsWords = (prompt: string) => {
   return trimmed === trimmed.toUpperCase() && /^[A-Z0-9 ,.'-]+$/.test(trimmed);
 };
 
-const pickScenarioPrefix = (prompt: string) => {
-  const lower = prompt.toLowerCase();
-  if (/(fuel|ratio|fraction|percent|share|split|mix)/.test(lower)) return 'The Monster Mind has mixed the fuel.';
-  if (/(graph|chart|bar|mean|data|record|ledger)/.test(lower)) return 'The Monster Mind has corrupted the records.';
-  if (/(angle|triangle|polygon|turn|rotate|reflection)/.test(lower)) return 'The Monster Mind has built a barrier.';
-  if (/(area|perimeter|volume|formula|cuboid|rectangle|length|width|height)/.test(lower)) return 'The Monster Mind has warped the forge.';
-  if (/(coordinate|translate|beacon|scout|route|map)/.test(lower)) return 'The Monster Mind has torn the map.';
-  if (/(time|clock|hour|minute|duration)/.test(lower)) return 'The Monster Mind has jammed the clock.';
-  if (/(place value|round|digit|number)/.test(lower)) return 'The Monster Mind has scrambled the numbers.';
-  return 'The Monster Mind has scrambled the numbers.';
-};
-
 const rewriteFuelMixPrompt = (prompt: string) => {
   const match = prompt.match(/^Fuel mix\s+([\d:]+)\.\s*Which fraction is\s+(.+?)\?$/i);
   if (!match) return null;
@@ -90,9 +78,8 @@ export const formatFantasyPrompt = (prompt: string) => {
   });
 
   if (isMathExpression(trimmed)) {
-    return `The Monster Mind has scrambled the numbers. Solve ${formatMultiplicationDisplay(trimmed)}.`;
+    return `Work out ${formatMultiplicationDisplay(trimmed)}.`;
   }
 
-  const prefix = pickScenarioPrefix(next);
-  return prefix.endsWith('.') ? `${prefix} ${next}` : `${prefix} ${next}`;
+  return next;
 };

@@ -14,6 +14,7 @@ export default function SharePartyTable({rect, positions, counts, celebrating}: 
   const guestHeight = Math.min(190, rect.width * .18);
   return <div className="share-party-scene" aria-hidden="true">
     {positions.map((point, i) => <div key={i} className="share-party-guest" data-served={counts[i] > 0} style={{left: rect.left + point.x * rect.width, top: rect.top - guestHeight * .68, width: guestHeight * .72, height: guestHeight}}>
+      <svg className="share-party-bench" viewBox="0 0 100 100"><path d="M12 20H88V62H12Z" fill="#85502c" stroke="#422d25" strokeWidth="5"/><path d="M10 68H90V80H10Z M18 80V98 M82 80V98" fill="#ba7b3c" stroke="#422d25" strokeWidth="6"/><path d="M20 32H80M20 45H80" stroke="#d7a665" strokeWidth="3"/></svg>
       <MonsterMindActor src={guests[i]} alt="" reaction={celebrating ? 'taunt' : 'idle'} reactionKey={counts[i]} />
       {counts[i] > 0 && <span key={counts[i]} className="share-party-thanks">{celebrating ? 'Party time!' : ['Cake? Yes please!', 'Excellent taste.', 'More cake magic!', 'Brilliant!', 'Nom.'][i]}</span>}
     </div>)}

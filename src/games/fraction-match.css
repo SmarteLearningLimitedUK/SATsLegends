@@ -5,7 +5,7 @@
 
   .match-mastery-shell .game-question-card {
     padding: 6px 9px;
-    font-size: 1rem;
+    font-size: calc(1rem * var(--game-text-scale, 1.2));
     line-height: 1.15;
   }
 

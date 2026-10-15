@@ -199,7 +199,7 @@ const LogicSort: React.FC<LogicSortProps> = ({ onVictory, onGameOver, onBack }) 
               </AnimatePresence>
             </div>
             <div className="bg-white/10 px-3 py-1 rounded-full border border-white/20">
-              <span className="text-white text-[10px] font-black uppercase text-center block leading-tight">
+              <span className="text-white text-[12px] font-black uppercase text-center block leading-tight">
                 {tube.label}
               </span>
             </div>

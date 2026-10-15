@@ -139,7 +139,7 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({ levelId, avatarId: _ava
               {CLOCK_NUMBERS.map((label,index) => {
                 const angle=index*Math.PI/6;
                 return <text key={label} x={100+Math.sin(angle)*62} y={100-Math.cos(angle)*62} textAnchor="middle" dominantBaseline="central"
-                  fill="#183842" fontSize="15" fontWeight="850">{label}</text>;
+                  fill="#183842" fontSize="18" fontWeight="850">{label}</text>;
               })}
               <circle cx="100" cy="100" r="47" fill="none" stroke="#799496" strokeWidth=".7" strokeDasharray="1 3"/>
               <motion.g data-clock-hour-hand animate={{rotate:rotationHours+currentTime.minutes*.5}}

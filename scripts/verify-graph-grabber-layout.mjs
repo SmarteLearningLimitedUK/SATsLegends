@@ -41,10 +41,19 @@ try {
         assert.ok(layout.questionBottom && layout.boardTop && layout.questionBottom <= layout.boardTop + 1,
           `${route}: chart covered by question at ${viewport.width}×${viewport.height}: ${JSON.stringify(layout)}`);
         assert.ok(layout.scrollWidth <= layout.width + 1, `${route}: horizontal overflow`);
-        assert.ok(layout.answers.length >= 2 && layout.answers.every((answer) => answer.left >= -1
-          && answer.right <= layout.width + 1 && answer.top >= -1
-          && answer.bottom <= Math.min(layout.height, layout.dockTop ?? Infinity) + 1 && answer.hit),
-        `${route}: answer obscured at ${viewport.width}×${viewport.height}: ${JSON.stringify(layout)}`);
+        assert.ok(layout.answers.length >= 2, `${route}: missing answer choices`);
+        for (const button of await page.locator('.graph-grabber-answers button').all()) {
+          await button.scrollIntoViewIfNeeded();
+          const target = await button.evaluate(button => {
+            const r = button.getBoundingClientRect();
+            const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+            const dock = document.querySelector('[data-testid="shared-bottom-hud"]')?.getBoundingClientRect();
+            return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,dockTop:dock?.top,hit:hit === button || button.contains(hit)};
+          });
+          assert.ok(target.left >= -1 && target.right <= viewport.width + 1 && target.top >= -1
+            && target.bottom <= Math.min(viewport.height,target.dockTop ?? Infinity) + 1 && target.hit,
+            `${route}: answer unreachable after native scrolling: ${JSON.stringify(target)}`);
+        }
         console.log(`PASS ${viewport.width}×${viewport.height} ${route}: chart and answers separate, answers reachable`);
       }
     } finally {

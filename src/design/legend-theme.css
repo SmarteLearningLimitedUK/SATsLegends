@@ -1,9 +1,10 @@
 /* One material language, applied after existing game-specific layout rules.
    This file skins the established bounds; it does not change stage/safe-area maths. */
 :root {
-  --legend-label-size: 14px;
-  --legend-body-size: 16px;
-  --legend-question-size: 18px;
+  --game-text-scale: 1.2;
+  --legend-label-size: 17px;
+  --legend-body-size: 19px;
+  --legend-question-size: 22px;
   --legend-ink: #261047;
   --legend-blue: #451ccb;
   --legend-cyan: #d4c5ff;
@@ -22,9 +23,9 @@
 }
 
 .iphone-game-stage {
-  --legend-label-size: max(14px, calc(14px / var(--game-stage-scale, 1)));
-  --legend-body-size: max(16px, calc(16px / var(--game-stage-scale, 1)));
-  --legend-question-size: max(18px, calc(18px / var(--game-stage-scale, 1)));
+  --legend-label-size: max(17px, calc(17px / var(--game-stage-scale, 1)));
+  --legend-body-size: max(19px, calc(19px / var(--game-stage-scale, 1)));
+  --legend-question-size: max(22px, calc(22px / var(--game-stage-scale, 1)));
 }
 
 /* The viewport already scales this logical stage once. A viewport-height cap
@@ -232,7 +233,7 @@
 .legend-map-dock-button:active { transform: translateY(2px); }
 .legend-map-dock-button:focus-visible { outline: 3px solid var(--legend-gold); outline-offset: 2px; }
 .legend-map-dock-icon { width: 19px; height: 19px; }
-.legend-map-dock-button span { font-size: 11px; line-height: 1.05; font-weight: 600; }
+.legend-map-dock-button span { font-size: calc(11px * var(--game-text-scale, 1.2)); line-height: 1.05; font-weight: 600; }
 
 /* Briefings and results share the same surface and typography. */
 .legend-dialog {
@@ -240,47 +241,47 @@
   background: var(--legend-surface) !important; border: 2px solid var(--legend-edge) !important;
   border-radius: 24px; box-shadow: var(--legend-sheen), 0 24px 70px rgba(2, 20, 43, .38);
 }
-.legend-dialog h2 { font-family: var(--font-display); font-size: clamp(25px, 5vw, 34px); line-height: 1.1; }
-.legend-dialog-eyebrow { font-size: 10px; text-transform: uppercase; letter-spacing: .16em; color: var(--legend-cyan); }
+.legend-dialog h2 { font-family: var(--font-display); font-size: calc(clamp(25px, 5vw, 34px) * var(--game-text-scale, 1.2)); line-height: 1.1; }
+.legend-dialog-eyebrow { font-size: calc(10px * var(--game-text-scale, 1.2)); text-transform: uppercase; letter-spacing: .16em; color: var(--legend-cyan); }
 .legend-dialog-emblem { margin: 0 auto 12px; width: 56px; height: 56px; display: grid; place-items: center; border: 2px solid #fde161; border-radius: 17px; color: var(--legend-gold); background: #2d1265; box-shadow: inset 0 2px 0 rgba(255,255,255,.18); }
 .legend-dialog-emblem svg { width: 28px; height: 28px; }
-.legend-briefing-copy { color: #e0d8ff; font-size: 16px; line-height: 1.5; white-space: pre-line; }
+.legend-briefing-copy { color: #e0d8ff; font-size: calc(16px * var(--game-text-scale, 1.2)); line-height: 1.5; white-space: pre-line; }
 .legend-briefing-steps { text-align: left; display: grid; gap: 10px; padding: 0; list-style: none; }
-.legend-briefing-steps li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: #e0d8ff; }
+.legend-briefing-steps li { display: flex; gap: 10px; align-items: flex-start; font-size: calc(14px * var(--game-text-scale, 1.2)); color: #e0d8ff; }
 .legend-step-number { flex-shrink: 0; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 8px; background: #451ccb; color: #fde161; font-weight: 600; }
-.legend-briefing-note { font-size: 12px; color: #9fc6dc; }
+.legend-briefing-note { font-size: calc(12px * var(--game-text-scale, 1.2)); color: #9fc6dc; }
 
 /* The art remains the hero of the island journey. */
 .legend-island-root { isolation: isolate; }
 .legend-island-backdrop { position: absolute; inset: 0; z-index: -1; background-size: cover; background-position: center; opacity: .24; }
 .legend-island-root::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(#0b244a55, #081a35ee 75%); pointer-events: none; }
-.legend-island-header h1 { font-size: 25px; line-height: 1.1; }
-.legend-island-category { color: #90c7df; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+.legend-island-header h1 { font-size: calc(25px * var(--game-text-scale, 1.2)); line-height: 1.1; }
+.legend-island-category { color: #90c7df; font-size: calc(11px * var(--game-text-scale, 1.2)); letter-spacing: .1em; text-transform: uppercase; }
 .legend-next-mission { border: 2px solid #c6a667; background: linear-gradient(140deg, #385064, #182e44); box-shadow: var(--legend-sheen), var(--legend-shadow); }
-.legend-next-mission .legend-eyebrow { color: #ffda8b; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
+.legend-next-mission .legend-eyebrow { color: #ffda8b; font-size: calc(10px * var(--game-text-scale, 1.2)); text-transform: uppercase; letter-spacing: .1em; }
 .legend-group { position: relative; }
 .legend-group[data-next='true'] { border-color: #d9b773 !important; }
 .legend-group-header { min-height: 48px; }
-.legend-group-title { font-size: 17px; color: #f0f8ff; font-weight: 600; }
-.legend-group-progress { color: #abccdf; font-size: 11px; margin-top: 3px; }
+.legend-group-title { font-size: calc(17px * var(--game-text-scale, 1.2)); color: #f0f8ff; font-weight: 600; }
+.legend-group-progress { color: #abccdf; font-size: calc(11px * var(--game-text-scale, 1.2)); margin-top: 3px; }
 .legend-group-icon { width: 48px; height: 48px; flex-shrink: 0; object-fit: cover; border-radius: 12px; border: 2px solid #6396b7; }
 .legend-level-row { min-height: 54px; }
 .legend-level-row .ui-button-primary { min-height: 44px; min-width: 64px; }
 .legend-map-guidance { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px; margin: 0 8px; border: 2px solid #6192b4; border-radius: 18px; background: var(--legend-surface); box-shadow: var(--legend-sheen), var(--legend-shadow); }
-.legend-map-guidance .legend-eyebrow { color: #99cfdf; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
-.legend-map-guidance strong { font-size: 15px; font-weight: 600; }
-.legend-map-guidance button { min-height: 44px; padding: 8px 12px; font-size: 13px; flex-shrink: 0; }
+.legend-map-guidance .legend-eyebrow { color: #99cfdf; font-size: calc(10px * var(--game-text-scale, 1.2)); text-transform: uppercase; letter-spacing: .1em; }
+.legend-map-guidance strong { font-size: calc(15px * var(--game-text-scale, 1.2)); font-weight: 600; }
+.legend-map-guidance button { min-height: 44px; padding: 8px 12px; font-size: calc(13px * var(--game-text-scale, 1.2)); flex-shrink: 0; }
 .legend-map-hotspot:focus-visible { outline-offset: -5px !important; border-radius: 20px; background: rgba(255, 212, 107, .15) !important; }
 .legend-map-details { animation: legend-enter 220ms ease-out; }
 .legend-map-details img { width: 100%; height: 110px; object-fit: cover; border-radius: 12px; margin-bottom: 12px; }
 .legend-map-details h2 { line-height: 1.15; }
-.legend-map-details .legend-map-category { color: var(--legend-cyan); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+.legend-map-details .legend-map-category { color: var(--legend-cyan); font-size: calc(11px * var(--game-text-scale, 1.2)); letter-spacing: .1em; text-transform: uppercase; }
 
 .legend-welcome-action { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-.legend-welcome-action p { color: #deefff; text-shadow: 0 2px 8px #081a35; font-size: 14px; margin: 0; }
+.legend-welcome-action p { color: #deefff; text-shadow: 0 2px 8px #081a35; font-size: calc(14px * var(--game-text-scale, 1.2)); margin: 0; }
 .legend-welcome-action button { width: 100%; min-height: 56px; display: flex; align-items: center; justify-content: center; gap: 8px; }
 .legend-welcome-action button svg { height: 20px; width: 20px; }
-.legend-avatar-name { position: absolute; bottom: 20%; left: 0; right: 0; z-index: 15; text-align: center; pointer-events: none; font-family: var(--font-display); font-size: 25px; color: #ffe6a2; text-shadow: 0 3px 12px #071b36; }
+.legend-avatar-name { position: absolute; bottom: 20%; left: 0; right: 0; z-index: 15; text-align: center; pointer-events: none; font-family: var(--font-display); font-size: calc(25px * var(--game-text-scale, 1.2)); color: #ffe6a2; text-shadow: 0 3px 12px #071b36; }
 .sat-theme-bluegold .aaa-name-input { border: 2px solid #598dad; background: #0b2642; box-shadow: inset 0 2px 6px #07192b; }
 .sat-theme-bluegold .legend-pvp-sources [data-pvp-location='source'] {
   background: linear-gradient(145deg, #3e81a7, #205579) !important;
@@ -297,4 +298,35 @@
 @keyframes legend-enter { from { opacity: 0; translate: 0 8px; } to { opacity: 1; translate: 0 0; } }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
+/* Compact answer groups retain room for words and a full-sized touch target. */
+@media (min-width: 700px) {
+  #root .screen-gameplay .answer-choice-surface:not(.area-architect-controls):not(.share-splitter-actions):not(.sats-response) {
+    width: min(100%, 640px);
+    max-width: 640px;
+    margin-inline: auto;
+    align-self: center;
+  }
+  #root .screen-gameplay .answer-choice-surface:not(.area-architect-controls):not(.share-splitter-actions):not(.sats-response) button {
+    min-height: max(44px, calc(44px / var(--game-stage-scale, 1))) !important;
+    height: auto;
+    border-radius: 12px !important;
+    padding: 8px 12px !important;
+    line-height: 1.25;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    box-shadow: inset 0 2px 0 #ffffff26, 0 4px 0 #07152e88 !important;
+  }
+}
+.game-question-context { display:block; margin-bottom:4px; font-size:calc(max(16px,calc(14px / var(--game-stage-scale,1))) * var(--game-text-scale, 1.2)); line-height:1.35; font-weight:650; letter-spacing:normal; }
+/* Tailwind's standard text utilities inherit the same gameplay scale. */
+.iphone-game-stage, .legend-dialog {
+  --text-xs:calc(.75rem * var(--game-text-scale));
+  --text-sm:calc(.875rem * var(--game-text-scale));
+  --text-base:calc(1rem * var(--game-text-scale));
+  --text-lg:calc(1.125rem * var(--game-text-scale));
+  --text-xl:calc(1.25rem * var(--game-text-scale));
+  --text-2xl:calc(1.5rem * var(--game-text-scale));
+  --text-3xl:calc(1.875rem * var(--game-text-scale));
+  --text-4xl:calc(2.25rem * var(--game-text-scale));
 }

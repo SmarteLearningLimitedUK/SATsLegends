@@ -25,7 +25,7 @@ export default function MeanPowerEngine({mode,scanning,repaired,fault,paused}:Pr
   <rect x="78" y="148" width="244" height="273" rx="27" fill="none" stroke="#badade" strokeWidth="3" opacity=".6"/>
   <path d="M94 177V91Q200 40 306 91V177Z" fill={`url(#${id}-brass)`} stroke="#143246" strokeWidth="6"/>
   <rect x="109" y="143" width="183" height="35" rx="10" fill="#112e48" stroke="#e6c67a" strokeWidth="2"/>
-  <text x="200" y="167" textAnchor="middle" fill="#fff2c5" fontSize="21" fontWeight="750" fontFamily="var(--font-fredoka)">{mode.toUpperCase()}</text>
+  <text x="200" y="167" textAnchor="middle" fill="#fff2c5" fontSize="25" fontWeight="750" fontFamily="var(--font-fredoka)">{mode.toUpperCase()}</text>
   <circle cx="200" cy="104" r="30" fill="#0b2a42" stroke="#f2d28a" strokeWidth="5"/>
   <circle cx="200" cy="104" r="21" fill={fault?'#c45365':'#4baeb4'} className="mean-core-light"/>
   <path d="M200 84l-12 23h12l-4 17 18-26h-13l5-14z" fill="#fff2b8"/>

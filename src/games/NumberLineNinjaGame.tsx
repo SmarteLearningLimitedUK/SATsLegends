@@ -442,7 +442,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       <GameQuestionCard
           title="Number Line Ninja"
           className="mx-auto w-[min(88vw,38rem)] rounded-[0.95rem] px-3.5 py-2.5 text-center"
-          titleClassName="text-[9px] tracking-[0.28em] md:text-[10px]"
+          titleClassName="text-[11px] tracking-[0.28em] md:text-[12px]"
           bodyClassName="mt-1 text-[clamp(0.84rem,1.7vw,0.98rem)] leading-snug md:text-[clamp(0.92rem,1.8vw,1rem)]"
         >
           {question.prompt}
@@ -454,7 +454,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
         style={{
           // Keep the number line docked below the fixed question card (even when the text wraps).
           // Requirement: number line should be below the question card without touching it.
-          paddingTop: `${Math.max(0, questionDockBottom + 14)}px`,
+          paddingTop: `${Math.max(0, questionDockBottom + 8)}px`,
         }}
       >
         <div className="ninja-playfield flex min-h-0 flex-1 flex-col items-center justify-start pt-0">
@@ -528,7 +528,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                                 ],
                               }}
                               transition={{ duration: 1.05, repeat: Infinity, ease: 'easeInOut' }}
-                              className="flex h-[52px] w-[52px] items-center justify-center rounded-full border-2 border-amber-300/95 bg-slate-900/82 text-[30px] font-black leading-none text-amber-100"
+                              className="flex h-[52px] w-[52px] items-center justify-center rounded-full border-2 border-amber-300/95 bg-slate-900/82 text-[36px] font-black leading-none text-amber-100"
                             >
                               ?
                             </motion.div>
@@ -585,7 +585,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
               </div>
 
               <div className="w-[144px] shrink-0 self-center rounded-2xl border border-amber-200/35 bg-slate-900/76 p-1.5 shadow-[0_8px_16px_rgba(2,6,23,0.35)] sm:w-[162px]">
-                <div className="mb-1 text-center text-[8px] font-black uppercase tracking-[0.12em] text-amber-200 md:text-[9px]">
+                <div className="mb-1 text-center text-[10px] font-black uppercase tracking-[0.12em] text-amber-200 md:text-[11px]">
                   Monster Mind
                 </div>
                 <div
@@ -610,7 +610,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
         </div>
 
         <div data-number-line-answers="true" className="shrink-0 pb-1 pt-2">
-          <div className="mb-2 text-center text-[11px] font-black uppercase tracking-[0.16em] text-cyan-100/88">
+          <div className="mb-2 text-center text-[13px] font-black uppercase tracking-[0.16em] text-cyan-100/88">
             Reveal the missing marker
           </div>
           <div className="mx-auto flex w-full max-w-[620px] flex-wrap items-center justify-center gap-3.5 sm:gap-4">
