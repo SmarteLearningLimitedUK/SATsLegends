@@ -300,9 +300,11 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const isWideShareLayout = viewportRect.width >= 700;
   const narrowTable = !isWideShareLayout;
   const tableWidth = Math.min(1440, Math.max(1, viewportRect.width - (narrowTable ? 8 : 24)));
-  const guestHeight = Math.min(270, tableWidth * (narrowTable ? .27 : .22));
+  const actionClearance = 144;
+  const guestRoom = Math.max(90, (viewportRect.height - questionDockBottom - actionClearance - 190) / .82);
+  const guestHeight = Math.min(270, tableWidth * (narrowTable ? .27 : .22), guestRoom);
   const roomTop = questionDockBottom + guestHeight * .82 + (narrowTable ? 12 : 10);
-  const roomBottom = viewportRect.height - (narrowTable ? 124 : 118);
+  const roomBottom = viewportRect.height - actionClearance;
   const tableHeight = Math.min(tableWidth * (narrowTable ? .88 : .40), Math.max(180, roomBottom - roomTop));
   const tableLeft = (viewportRect.width - tableWidth) / 2;
   const tableTop = Math.max(roomTop, roomBottom - tableHeight);
