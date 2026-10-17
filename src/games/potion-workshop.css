@@ -33,3 +33,17 @@
 @media (prefers-reduced-motion: reduce) {
   .potion-shelf-bottle, .potion-bottle-liquid, .potion-bottle-bubble { animation: none; }
 }
+
+/* Recipe, cauldron and bottles share a scrollable phone workbench. */
+@media(max-width:699px) and (orientation:portrait) {
+ #root .potion-panic-scene .game-screen-main {overflow-y:auto;overflow-x:hidden;touch-action:pan-y;}
+ #root .potion-panic-scene .potion-panic-main {height:auto;min-height:100%;}
+ #root .potion-panic-scene .potion-panic-stage {flex:none;display:flex;flex-direction:column;gap:8px;}
+ #root .potion-panic-scene .potion-recipe-panel {position:relative;inset:auto;width:100%;transform:none;translate:none;}
+ #root .potion-panic-scene .potion-recipe-card {position:relative;inset:auto;width:100%;transform:none;padding:8px;}
+ #root .potion-panic-scene .potion-recipe-card .game-question-context {display:none;}
+ #root .potion-panic-scene .potion-cauldron-stage {position:relative;inset:auto;height:130px;flex:none;transform:none;}
+ #root .potion-panic-scene .potion-vessel {height:120px;max-height:none;bottom:4px;}
+ #root .potion-panic-scene .potion-ingredients {flex:none;}
+ #root .potion-panic-scene .potion-ingredient-button {min-height:64px;height:auto;}
+}

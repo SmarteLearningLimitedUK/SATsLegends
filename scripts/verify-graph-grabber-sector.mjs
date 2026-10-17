@@ -64,10 +64,18 @@ try {
       if (process.env.LEGEND_QA_DEBUG) console.log(`${viewport.width}×${viewport.height}`, layout);
       assert.ok(layout.questionBottom <= layout.boardTop + 1, `Question overlaps sector: ${JSON.stringify(layout)}`);
       assert.ok(layout.scrollWidth <= layout.width + 1, `Horizontal overflow: ${JSON.stringify(layout)}`);
-      assert.ok(layout.buttons.length === 5 && layout.buttons.every((button) => button.left >= -1
-        && button.right <= layout.width + 1 && button.top >= -1
-        && button.bottom <= Math.min(layout.height, layout.dockTop ?? Infinity) + 1 && button.hit),
-      `Sector controls are obscured: ${JSON.stringify(layout)}`);
+      assert.equal(layout.buttons.length, 5);
+      const controls = page.locator('.graph-grabber-answers button');
+      for (let i=0;i<await controls.count();i++) {
+        const control=controls.nth(i);
+        const scroll=await control.evaluate(n=>{
+          for(let p=n.parentElement;p;p=p.parentElement) if(/auto|scroll/.test(getComputedStyle(p).overflowY)&&p.scrollHeight>p.clientHeight+2){const r=p.getBoundingClientRect();return{x:r.x+r.width/2,y:r.y+r.height/2}}return null;
+        });
+        if(scroll){await page.mouse.move(scroll.x,scroll.y);await page.mouse.wheel(0,500);await page.waitForTimeout(200)}
+        const reachable=await control.evaluate(n=>{const r=n.getBoundingClientRect();const dock=document.querySelector('[data-testid="shared-bottom-hud"]').getBoundingClientRect();return r.top>=0&&r.bottom<=dock.top+1&&(n.disabled||n.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)))});
+
+        assert.ok(reachable,`Sector control ${i+1} is unreachable through normal scrolling`);
+      }
 
       await choice.click();
       assert.equal(await choice.getAttribute('aria-pressed'), 'true');

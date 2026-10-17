@@ -411,3 +411,6 @@
 @keyframes zombies-creep { 0%,100% { transform:rotate(-5deg) scaleY(.94); } 50% { transform:rotate(3deg) scaleY(.98); } }
 @keyframes zombies-crawl { 0%,100% { transform:rotate(-9deg) scaleY(.7); } 50% { transform:rotate(-3deg) scaleY(.76); } }
 @media(prefers-reduced-motion:reduce) { .maths-vs-zombies .zombies-target > :first-child { animation:none !important; } }
+
+/* Keep the complete mission readable instead of clipping the last rule. */
+#root .maths-vs-zombies .zombies-question-card {max-height:none;flex-shrink:0;}

@@ -520,6 +520,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       } as Zombie;
     }).filter(Boolean) as Zombie[];
 
+    if (breaches > 0) playGameSound('impact');
     if (breaches > 0 && !isPractice) {
       attemptsRef.current += breaches;
       for (let index = 0; index < breaches; index += 1) emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { score: scoreRef.current, metadata: { breach: timestamp, index } });
@@ -684,7 +685,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           <TopBar XP={XP} brainPoints={zombiesDefeated} health={health} timer={timerLabel} onBack={onBack} />
         ) : null}
 
-        <GameQuestionCard className="zombies-question-card" title={gameTitle || 'Maths vs Zombies'} subtitle={isPractice ? `Defeat 4 zombies to finish practice. ${zombiesDefeated} defeated.` : `Survive for 60 seconds and defeat at least ${victoryTargetScore / 220} zombies to win. Zombies that reach you cost hearts; zero hearts ends the run. ${zombiesDefeated} defeated.`} style={{ position: 'relative', top: '5px', width: 'min(92%, 920px)', transform: 'none' }}>
+        <GameQuestionCard context="" className="zombies-question-card" title={gameTitle || 'Maths vs Zombies'} subtitle={isPractice ? `Defeat 4 zombies to finish practice. ${zombiesDefeated} defeated.` : `Defend the garden for 60 seconds. Stop ${victoryTargetScore / 220} zombies to win; each one that reaches you costs a heart. ${zombiesDefeated} stopped.`} style={{ position: 'relative', top: '5px', width: 'min(92%, 920px)', transform: 'none' }}>
           {question.prompt.split('\n\n').slice(-1)[0]}
         </GameQuestionCard>
 
@@ -734,7 +735,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
                     width: ZOMBIE_SIZE,
                   }}
                 >
-                  <MonsterMindActor src={zombieEnemy} alt="Cartoon zombie minion" reaction={zombie.state === 'die' ? 'defeated' : zombie.state === 'attack' ? 'taunt' : zombie.state === 'hit' ? 'hit' : 'idle'} reactionKey={`${zombie.id}-${zombie.state}`} style={{ width: ZOMBIE_SIZE, height: ZOMBIE_SIZE }} />
+                  <MonsterMindActor soundMode="off" src={zombieEnemy} alt="Cartoon zombie minion" reaction={zombie.state === 'die' ? 'defeated' : zombie.state === 'attack' ? 'taunt' : zombie.state === 'hit' ? 'hit' : 'idle'} reactionKey={`${zombie.id}-${zombie.state}`} style={{ width: ZOMBIE_SIZE, height: ZOMBIE_SIZE }} />
                   <div className="zombies-enemy-health h-2 w-full overflow-hidden rounded-full bg-black/40">
                     <div
                       className="h-full bg-emerald-300"

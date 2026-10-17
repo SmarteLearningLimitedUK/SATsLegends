@@ -18,7 +18,7 @@ for (const profile of profiles) {
   try {
     const context = await browser.newContext({ viewport: profile.viewport, isMobile: profile.isMobile, hasTouch: profile.isMobile, reducedMotion: 'reduce' });
     const page = await context.newPage();
-    await page.goto(base + '/map');
+    await page.goto(base + '/map',{waitUntil:'domcontentloaded'});
     const routes = await page.evaluate(async () => {
       const { ISLANDS } = await import('/src/constants.ts');
       return ISLANDS.flatMap(island => island.levels.map(level => ({
@@ -34,7 +34,7 @@ for (const profile of profiles) {
       const gamePage = await gameContext.newPage();
       const errors = [];
       gamePage.on('pageerror', error => errors.push(error.message));
-      await gamePage.goto(base + route);
+      await gamePage.goto(base + route,{waitUntil:'domcontentloaded'});
       await gamePage.locator('[data-qa-screen="gameplay"]').waitFor();
       for (let attempt = 0; attempt < 3; attempt += 1) {
         const intro = gamePage.locator('[role="dialog"] [data-dialog-primary]:visible').first();

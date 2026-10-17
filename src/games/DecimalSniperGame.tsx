@@ -1,3 +1,4 @@
+import { playGameSound } from '../audio/gameAudio';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { AVATARS } from '../constants';
@@ -292,7 +293,8 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
   }, [resolveGameOver, setFeedbackState]);
 
   const resolveProjectileHit = useCallback((hitTarget: MovingTarget) => {
-    if (resultStateRef.current !== 'running') return;
+    if (resultStateRef.current !== 'running' || isPausedRef.current) return;
+    playGameSound('impact');
 
     setProjectile(null);
     projectileRef.current = null;
@@ -342,6 +344,7 @@ const DecimalSniperGame: React.FC<DecimalSniperGameProps> = ({
     const layout = layoutRef.current;
     if (layout.playfieldRect.width <= 0) return;
 
+    playGameSound('cast');
     const shot = createProjectile(layout.launcherOrigin, aimVectorRef.current, 760);
     projectileRef.current = shot;
     setProjectile(shot);

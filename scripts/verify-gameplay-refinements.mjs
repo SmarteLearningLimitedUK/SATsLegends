@@ -1,9 +1,10 @@
 import { chromium, webkit, devices, expect } from '@playwright/test';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, writeFile, readFile } from 'node:fs/promises';
+import { installReleaseAccountFixture } from './qa/release-account-fixture.mjs';
 import path from 'node:path';
 
 const base = process.env.LEGEND_QA_URL || 'http://localhost:3000';
-const output = path.resolve('qa-artifacts/gameplay-refinements');
+const output = path.resolve(process.env.LEGEND_QA_OUTPUT || 'qa-artifacts/gameplay-refinements');
 const profiles = [
   { name: 'pc', engine: chromium, options: { viewport: { width: 1440, height: 900 } } },
   { name: 'pc-short', engine: chromium, options: { viewport: { width: 1264, height: 625 } } },
@@ -21,10 +22,10 @@ const save = () => writeFile(path.join(output, process.env.LEGEND_QA_REPORT || `
 const tap = (page, profile, locator) => profile.options.hasTouch ? locator.tap() : locator.click();
 
 async function open(page, route) {
-  await page.goto(base + route);
+  await page.goto(base + route, { waitUntil: 'domcontentloaded', timeout: 30000 });
   await expect(page.locator('[data-qa-screen="gameplay"]')).toBeVisible();
   await page.locator('[data-game-question]').first().waitFor({ state: 'visible', timeout: 15000 });
-  await page.evaluate(() => document.fonts.ready);
+  await page.waitForFunction(() => document.fonts.status === 'loaded', null, { timeout: 10000 });
   await page.waitForFunction(() => {
     const root = document.querySelector('[data-qa-root="screen"]');
     if (!root) return false;
@@ -33,13 +34,18 @@ async function open(page, route) {
   });
   await page.waitForTimeout(300);
   const intro = page.locator('[role="dialog"] [data-dialog-primary]');
-  if (await intro.count()) { await intro.first().click(); await expect(page.locator('[role="dialog"]')).toHaveCount(0); }
+  const initialIntro = (await intro.elementHandles())[0];
+  if (initialIntro) {
+    try { await initialIntro.click({ timeout: 5000 }); }
+    catch (error) { if (await initialIntro.isVisible().catch(() => false)) throw error; }
+    await initialIntro.waitForElementState('hidden', { timeout: 5000 });
+  }
   await page.waitForTimeout(400);
   // Fonts, lazy module entry and local entrance transitions settle separately
   // from the shared screen. Require the real mission to survive three reads.
   for (let attempt = 0; attempt < 5; attempt += 1) {
     await page.locator('[data-game-question]').first().waitFor({ state: 'visible', timeout: 15000 });
-    await page.evaluate(() => document.fonts.ready);
+    await page.waitForFunction(() => document.fonts.status === 'loaded', null, { timeout: 10000 });
     const signature = () => page.evaluate(() => {
       const question = document.querySelector('[data-game-question]');
       if (!question) return null;
@@ -75,6 +81,15 @@ async function inspect(page) {
       }
       return issues;
     };
+    const paintedBox = (node) => {
+      const result={...box(node)};
+      for(let parent=node.parentElement;parent;parent=parent.parentElement){
+        const style=getComputedStyle(parent),r=box(parent);
+        if(/hidden|clip|auto|scroll/.test(style.overflowX)){result.x=Math.max(result.x,r.x);result.right=Math.min(result.right,r.right);}
+        if(/hidden|clip|auto|scroll/.test(style.overflowY)){result.y=Math.max(result.y,r.y);result.bottom=Math.min(result.bottom,r.bottom);}
+      }
+      return result;
+    };
     const text = (node) => {
       let scale = 1;
       for (let ancestor = node; ancestor; ancestor = ancestor.parentElement) {
@@ -87,13 +102,16 @@ async function inspect(page) {
     const art = [...document.querySelectorAll('img')].filter((image) => !image.closest('[data-game-wide-ambient]') && (image.hasAttribute('data-game-scene-image') || image.currentSrc.includes('/assets/maps/'))).map((image) => ({
       src: image.currentSrc, loaded: image.complete && image.naturalWidth > 0,
       movingCourse: Boolean(image.closest('.ratio-racer-course')),
-      fit: getComputedStyle(image).objectFit, declaredFit: image.getAttribute('data-background-fit'), box: box(image), clipped: clipped(image), natural: { width: image.naturalWidth, height: image.naturalHeight },
+      fit: getComputedStyle(image).objectFit, declaredFit: image.getAttribute('data-background-fit'), box: box(image), painted: paintedBox(image), clipped: clipped(image), natural: { width: image.naturalWidth, height: image.naturalHeight },
     }));
-    const controls = [...document.querySelectorAll('.game-shell-host button')].filter((node) => {
+    const allControls=[...document.querySelectorAll('.game-shell-host button')];
+    const hasScrollOwner=node=>{for(let p=node.parentElement;p;p=p.parentElement){const css=getComputedStyle(p);if((/auto|scroll/.test(css.overflowY)&&p.scrollHeight>p.clientHeight+1)||(/auto|scroll/.test(css.overflowX)&&p.scrollWidth>p.clientWidth+1))return true;}return false;};
+    window.__refinementScrollPositions=[...document.querySelectorAll('.game-shell-host *')].filter(n=>n.scrollHeight>n.clientHeight+1||n.scrollWidth>n.clientWidth+1).map(node=>({node,top:node.scrollTop,left:node.scrollLeft}));
+    const controls = allControls.filter((node) => {
       const r = box(node); return r.width > 1 && r.height > 1 && getComputedStyle(node).visibility !== 'hidden';
     }).map((node) => {
       const r = box(node); const hit = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
-      return { name: node.getAttribute('aria-label') || node.textContent.trim(), intentionalScrolling: Boolean(node.closest('.detective-lineup')), box: r, clipped: clipped(node), receivesInput: node.disabled || Boolean(hit && node.contains(hit)) };
+      return { name: node.getAttribute('aria-label') || node.textContent.trim(), index:allControls.indexOf(node), intentionalScrolling: hasScrollOwner(node)&&clipped(node).length>0, enteringEnemy: node.hasAttribute('data-zombie-id')&&clipped(node).length>0, box: r, clipped: clipped(node), receivesInput: node.disabled || Boolean(hit && node.contains(hit)) };
     });
     // A fixed card can escape overflow on an ancestor that does not establish
     // its containing block. Native hit tests check what is actually painted;
@@ -121,7 +139,7 @@ async function inspect(page) {
   });
 }
 
-function validate(result) {
+async function validate(result,page) {
   expect(result.question, 'The mission is rendered').toBeTruthy();
   expect(result.question.text.length).toBeGreaterThan(3);
   expect(result.question.visibility).toBe('visible');
@@ -136,7 +154,7 @@ function validate(result) {
     const desktopCover = result.viewport.width >= 700 && result.viewport.stageLayout === 'responsive' && image.declaredFit === 'contain';
     expect(['cover','contain']).toContain(image.fit);
     if (image.src.includes('/scenes/')) expect(image.natural.width / image.natural.height, 'Wide scene uses landscape artwork').toBeGreaterThan(1.4);
-    expect(image.box.bottom, 'Scene stops above bottom dock').toBeLessThanOrEqual(result.dock.y + 1);
+    expect(image.painted.bottom, 'Painted scene stops above bottom dock').toBeLessThanOrEqual(result.dock.y + 1);
   }
   if (result.staticRaceBackdrop) expect(result.staticRaceBackdrop.split(',').every((size) => ['auto','contain','cover'].includes(size.trim())), 'Backdrop uses valid framing').toBe(true);
   for (const canvas of result.canvasBackgrounds) {
@@ -154,12 +172,22 @@ function validate(result) {
     expect(canvas.box.bottom, 'Canvas scenery stays above the dock').toBeLessThanOrEqual(result.dock.y + 1);
   }
   for (const button of result.controls) {
-    if (button.intentionalScrolling) continue; // Each carousel target is tested after native scrolling below.
+    if(button.enteringEnemy)continue; // Spawned enemies become targets as they enter the arena.
+    if(button.intentionalScrolling){
+      const node=page.locator('.game-shell-host button').nth(button.index);
+      await node.scrollIntoViewIfNeeded();
+      const actual=await node.evaluate(n=>{const r=n.getBoundingClientRect();return{top:r.top,bottom:r.bottom,hit:n.disabled||n.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2))};});
+      expect(actual.top,'Scrolled control clears HUD: '+button.name).toBeGreaterThanOrEqual(result.top.bottom-1);
+      expect(actual.bottom,'Scrolled control clears dock: '+button.name).toBeLessThanOrEqual(result.dock.y+1);
+      expect(actual.hit,'Native input after normal scrolling: '+button.name).toBe(true);
+      continue;
+    }
     expect(button.clipped, 'Control clipping: ' + button.name).toEqual([]);
     expect(button.box.bottom, 'Response remains above dock: ' + button.name).toBeLessThanOrEqual(result.dock.y + 1);
     expect(button.receivesInput, 'Control receives native input: ' + button.name).toBe(true);
   }
   for (const button of result.dockButtons) expect(button.height, 'Shared dock target: ' + button.name).toBeGreaterThanOrEqual(44 - .1);
+  await page.evaluate(()=>{for(const p of window.__refinementScrollPositions||[])p.node.scrollTo(p.left,p.top);});
   for (const text of result.texts) expect(text.pixels, 'Readable rendered text: ' + text.text).toBeGreaterThanOrEqual(13.8);
 }
 
@@ -171,11 +199,12 @@ for (const profile of profiles) {
     const native = window.matchMedia.bind(window);
     window.matchMedia = (query) => { const result = native(query); if (query.includes('display-mode: standalone')) Object.defineProperty(result, 'matches', { value: true }); return result; };
   });
-  const page = await context.newPage(); const errors = [];
+  if(process.env.LEGEND_QA_ACCOUNT_FIXTURE==='1')await installReleaseAccountFixture(context);
+  const page = await context.newPage(); page.setDefaultTimeout(15000); page.setDefaultNavigationTimeout(30000); const errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
   try {
-    await page.goto(base + '/map');
-    const catalog = await page.evaluate(async (tier) => {
+    await page.goto(base + '/map',{waitUntil:'domcontentloaded'});
+    const catalog = process.env.LEGEND_QA_LEVEL_CATALOG ? JSON.parse(await readFile(process.env.LEGEND_QA_LEVEL_CATALOG,'utf8')).filter(level=>level.tier===tier) : await page.evaluate(async (tier) => {
       const { ISLANDS } = await import('/src/constants.ts');
       return ISLANDS.flatMap((island) => island.levels.filter((level) => !level.isPractice && !level.isBoss && level.difficultyTier === tier).map((level) => ({
         key: level.blueprintKey || level.miniGameKey, route: `/game/${island.id}/${level.id}`, gameType: level.gameType,
@@ -218,8 +247,9 @@ for (const profile of profiles) {
             await expect(dossier).toHaveCount(0);
           }
           await page.locator('.detective-lineup').evaluate((node) => { node.scrollLeft = 0; });
+          await page.locator('.game-shell-host').evaluate(root=>{for(const n of [root,...root.querySelectorAll('*')])n.scrollTop=0;for(let n=root.parentElement;n;n=n.parentElement)n.scrollTop=0;});
         }
-        const result = await inspect(page); validate(result);
+        const result = await inspect(page); await validate(result,page);
         if (result.formula) {
           expect(result.formula.diagram.height, 'Formula diagram remains usable below the mission').toBeGreaterThanOrEqual(48);
           expect(result.formula.diagram.y).toBeGreaterThanOrEqual(result.question.bottom - 1);

@@ -1,3 +1,4 @@
+import { playGameSound } from '../audio/gameAudio';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronLeft } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
@@ -355,7 +356,7 @@ const MatchGameShell: React.FC<{
            {useSharedTopHud ? (
              <div className={flowQuestion ? 'relative z-20 shrink-0 px-2 pt-1 sm:px-4' : 'absolute inset-x-2 top-2 z-20 sm:inset-x-4'}>
                <div className="mx-auto w-full max-w-[44rem]">
-                 <GameQuestionCard title="Match Mastery" className="bg-[#0a1f56]/76 backdrop-blur-sm" style={flowQuestion ? { position: 'relative', top: 'auto', left: 'auto', right: 'auto', width: '100%' } : undefined}>
+                 <GameQuestionCard context="" title="Match Mastery" className="bg-[#0a1f56]/76 backdrop-blur-sm" style={flowQuestion ? { position: 'relative', top: 'auto', left: 'auto', right: 'auto', width: '100%' } : undefined}>
                    {questionText}
                  </GameQuestionCard>
                  <div data-match-status className="mt-2 flex items-center gap-2">
@@ -609,6 +610,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
         fireTimeoutRef.current = window.setTimeout(() => setFireActive(false), 900);
       }
 
+      playGameSound('impact');
       matches.forEach((idx) => {
         workingBoard[idx] = null;
       });
@@ -705,7 +707,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       levelName={levelName}
       questionText={swapHint ? <span role="status" aria-live="polite">{swapHint}</span> : isMatchMastery
         ? resolvedLevel === 5
-          ? `No colour clues: match equal fractions, decimals & percentages. ${Math.min(successfulSwaps, MIN_COLOURLESS_MATCHES)}/${MIN_COLOURLESS_MATCHES} matches; fill XP.`
+          ? `Restore the board: line up 3 equal values. ${Math.min(successfulSwaps, MIN_COLOURLESS_MATCHES)}/${MIN_COLOURLESS_MATCHES} matches.`
           : resolvedLevel >= 3
             ? 'Match equal fractions, decimals and percentages.'
             : 'Match equivalent fractions.'

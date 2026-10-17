@@ -1,3 +1,4 @@
+import { playGameSound } from '../audio/gameAudio';
 import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
@@ -197,6 +198,7 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
     if (tower.includes(num)) return;
 
     if (problem.factors.includes(num)) {
+      if (!isBoss) playGameSound('impact');
       triggerHaptic('selection');
       setFeedback('correct');
       setTower(prev => [...prev, num]);
@@ -227,6 +229,7 @@ const TowerOfFactorsGame: React.FC<TowerOfFactorsGameProps> = ({
     } else {
       triggerHaptic('error');
       setFeedback('incorrect');
+      if (!isBoss) playGameSound('impact');
       setShake(true);
       setStreak(0);
       setScore(prev => Math.max(0, prev - 20));

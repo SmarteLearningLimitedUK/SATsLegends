@@ -1,3 +1,4 @@
+import { playGameSound } from '../audio/gameAudio';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import {
@@ -652,6 +653,7 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
 
   const onBrew = () => {
     if (locked || endedRef.current) return;
+    playGameSound('impact');
     setHasBrewed(true);
 
     if (!isRecipeComplete) {

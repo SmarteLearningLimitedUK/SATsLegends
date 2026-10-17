@@ -1,3 +1,4 @@
+import { playGameSound } from '../audio/gameAudio';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
@@ -462,6 +463,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     let comboNext = comboRef.current;
     let livesNext = livesRef.current;
 
+    playGameSound('impact');
     totalPopsRef.current += 1;
 
     if (target.isPrime) {

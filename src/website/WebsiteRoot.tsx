@@ -1,7 +1,8 @@
 import { lazy, Suspense, useEffect, useLayoutEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, Navigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, LoaderCircle } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
+import GameLoadBoundary, { GameLoadingFallback } from '../components/GameLoadBoundary';
 import { parseRoute } from '../app/routeConfig';
 import Website from './Website';
 import FamilyAccount from './FamilyAccount';
@@ -48,9 +49,9 @@ function WebsiteContent() {
   if (isWebsite) return <Website />;
 
   return <>
-    <Suspense fallback={<div className="website-game-loading"><LoaderCircle className="website-spinner" /><p>Opening your adventure…</p></div>}><GameGate>
+    <GameLoadBoundary><Suspense fallback={<GameLoadingFallback message="Opening your adventure…" />}><GameGate>
       <Game />
-    </GameGate></Suspense>
+    </GameGate></Suspense></GameLoadBoundary>
     {isMinigame || gameScreen === 'parent_dashboard'
       ? null
       : <WebsiteReturn screen={gameScreen} hasGameDock={hasGameDock} />}

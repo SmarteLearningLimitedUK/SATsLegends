@@ -10,7 +10,7 @@ try {
   for (const viewport of [{ width: 320, height: 568 }, { width: 700, height: 600 }]) {
     const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });
     const page = await context.newPage();
-    await page.goto(`${base}/game/7/4`);
+    await page.goto(`${base}/game/7/4`,{waitUntil:'domcontentloaded'});
     await page.locator('[data-race-scene]').waitFor({ timeout: 15000 });
     for (let step = 0; step < 3; step += 1) {
       const briefing = page.locator('[data-dialog-primary]:visible').first();
@@ -24,6 +24,8 @@ try {
     }
     await page.locator('[data-dialog-primary]:visible').waitFor({ state: 'hidden', timeout: 5000 });
     await page.locator('[data-race-answer]').first().waitFor({ timeout: 15000 });
+    await page.waitForFunction(()=>document.fonts.status==='loaded',null,{timeout:10000});
+    await page.waitForTimeout(300);
     const layout = await page.evaluate(() => {
       const rect = (selector) => {
         const element = document.querySelector(selector);
@@ -52,7 +54,7 @@ try {
     assert.ok(layout.answers.every((answer) => answer.left >= -1 && answer.right <= viewport.width + 1), 'answers should fit horizontally');
     assert.ok(layout.answers.every((answer) => answer.top >= 0 && answer.bottom <= viewport.height), 'answers should fit vertically');
     assert.ok(layout.answers.every((answer) => answer.reachable), 'each answer should be pointer-reachable');
-    assert.ok(layout.answerPanel.bottom <= layout.content.bottom + 1, 'answer panel should fit the clipped playfield');
+    assert.ok(layout.answerPanel.bottom <= layout.content.bottom + 1, 'answer panel should fit the clipped playfield: '+JSON.stringify(layout));
     assert.ok(layout.answers.every((answer) => answer.bottom + 4 <= layout.dockTop), 'answers should clear the fixed action dock');
     assert.ok(layout.overflowX <= 1, 'page should not overflow horizontally');
     await page.waitForFunction(() => [...document.querySelectorAll('[data-race-answer]')].some((button) => !button.disabled));

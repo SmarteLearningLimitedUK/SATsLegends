@@ -506,10 +506,10 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
     >
 
       <div data-formula-game="true" data-formula-tier={resolvedLevel} data-formula-question={roundNumber} data-formula-state={isFinished ? 'finished' : feedback?.tone || 'idle'} className={`relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 ${compactViewport ? 'pb-0' : 'pb-[calc(env(safe-area-inset-bottom)+2.1rem)]'} ${useSharedTopHud ? 'pt-[calc(env(safe-area-inset-top)+4.75rem)] md:pt-[calc(env(safe-area-inset-top)+5rem)]' : 'pt-[calc(env(safe-area-inset-top)+2.5rem)]'}`}>
-        <div className={`relative flex w-full max-w-6xl min-h-0 flex-1 flex-col overflow-hidden rounded-[1.7rem] p-2 md:rounded-[2rem] ${compactViewport ? '' : 'md:p-3'}`}>
+        <div className={`formula-forge-scroll relative flex w-full max-w-6xl min-h-0 flex-1 flex-col overflow-hidden rounded-[1.7rem] p-2 md:rounded-[2rem] ${compactViewport ? '' : 'md:p-3'}`}>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.12),rgba(15,23,42,0.02)_36%,rgba(15,23,42,0.08)_100%)]" />
 
-          <div className={`relative z-10 flex h-full w-full min-h-0 flex-col px-2 pt-2 ${compactViewport ? 'pb-0' : 'pb-2 md:px-4 md:pb-4'}`}>
+          <div className={`formula-forge-content relative z-10 flex h-full w-full min-h-0 flex-col px-2 pt-2 ${compactViewport ? 'pb-0' : 'pb-2 md:px-4 md:pb-4'}`}>
             <div className="flex shrink-0 justify-center">
               <GameQuestionCard
                 title="Formula Forge"

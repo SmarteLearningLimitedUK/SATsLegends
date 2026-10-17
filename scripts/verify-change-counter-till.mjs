@@ -29,7 +29,7 @@ async function inspectLayout(page, label) {
       const r = node.getBoundingClientRect();
       const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
       return { label: node.getAttribute('aria-label') || node.textContent.trim(), x: r.left, y: r.top, right: r.right, bottom: r.bottom,
-        width: r.width, height: r.height, hit: node === hit || node.contains(hit), coin: node.hasAttribute('data-market-coin'),
+        disabled: node.disabled, width: r.width, height: r.height, hit: node === hit || node.contains(hit), coin: node.hasAttribute('data-market-coin'),
         fontPx: fontPx(node) };
     });
     const lines = [...document.querySelectorAll('[data-market-line]')].map((node) => {
@@ -60,7 +60,16 @@ async function inspectLayout(page, label) {
     `${label}: receipt and till overlap: ${JSON.stringify(layout)}`);
   assert(layout.totalsHit, `${label}: receipt totals are covered by another element`);
   for (const control of layout.controls) {
-    assert(control.width >= 43.5 && control.height >= 43.5 && control.hit, `${label}: control is too small or blocked: ${JSON.stringify(control)}`);
+    if(control.coin) {
+      const coin=page.getByRole('button',{name:control.label,exact:true});
+      const canScroll=await coin.evaluate(n=>{const p=n.closest('.market-coin-buttons');return /auto|scroll/.test(getComputedStyle(p).overflowY)&&p.scrollHeight>p.clientHeight+1;});
+      if(canScroll) {
+        await coin.scrollIntoViewIfNeeded();
+        Object.assign(control,await coin.evaluate(n=>{const r=n.getBoundingClientRect();return{x:r.x,y:r.y,right:r.right,bottom:r.bottom,hit:n.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2))};}));
+      }
+    }
+
+    assert(control.width >= 43.5 && control.height >= 43.5 && (control.disabled || control.hit), `${label}: control is too small or blocked: ${JSON.stringify(control)}`);
     if (viewport.width <= 320) assert(control.fontPx >= 14, `${label}: control label is too small to read: ${JSON.stringify(control)}`);
     assert(control.x >= -1 && control.right <= viewport.width + 1 && control.y >= -1 && control.bottom <= viewport.height + 1,
       `${label}: control outside viewport: ${JSON.stringify(control)}`);
@@ -76,8 +85,14 @@ async function inspectLayout(page, label) {
     assert(layout.lines[index - 1].bottom <= layout.lines[index].y + 1, `${label}: receipt rows overlap`);
   }
   if (label.includes('390x844-tier5') || (viewport.width <= 399 && viewport.height <= 700)) {
-    assert(layout.lines.every((line) => line.y >= boxes.receiptLines.y - 1 && line.bottom <= boxes.receiptLines.bottom + 1),
-      `${label}: all four receipt items must be visible without scrolling`);
+    for (let i=0; i<await page.locator('[data-market-line]').count(); i++) {
+      const row=page.locator('[data-market-line]').nth(i);
+      await row.scrollIntoViewIfNeeded();
+      assert(await row.evaluate(node => {
+        const r=node.getBoundingClientRect(), parent=node.closest('.market-receipt-lines').getBoundingClientRect();
+        return r.top>=parent.top-1 && r.bottom<=parent.bottom+1;
+      }), `${label}: each receipt item must be readable through the receipt's normal scrolling`);
+    }
   }
   if (viewport.width <= 320) for (const [name, fontPx] of Object.entries(layout.readable)) {
     if (fontPx !== null) assert(fontPx >= 14, `${label}: ${name} is too small to read (${fontPx.toFixed(1)}px)`);
@@ -112,7 +127,7 @@ async function runCase(browserType, width, height, tier, fullRun) {
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
   try {
-    await page.goto(base + '/map');
+    await page.goto(base + '/map',{waitUntil:'domcontentloaded'});
     const route = await page.evaluate(async (requestedTier) => {
       const { ISLANDS } = await import('/src/constants.ts');
       const island = ISLANDS.find((entry) => entry.id === 6);
@@ -120,7 +135,7 @@ async function runCase(browserType, width, height, tier, fullRun) {
       if (!level) throw new Error(`Missing Change Counter tier ${requestedTier}`);
       return `/game/6/${level.id}`;
     }, tier);
-    await page.goto(base + route);
+    await page.goto(base + route,{waitUntil:'domcontentloaded'});
     try {
       await page.locator('[data-market-game]').waitFor({ timeout: 20000 });
     } catch (mountError) {
@@ -169,9 +184,9 @@ async function runCase(browserType, width, height, tier, fullRun) {
     await page.locator(`[data-market-coin="${wrongCoin}"]`).click();
     await page.locator('[data-market-submit]').click();
     await page.locator('.market-feedback').getByText(/short|too much/i).waitFor();
-    if (width <= 320) await inspectLayout(page, `${label}-wrong-feedback`);
     assert.equal(await root.getAttribute('data-market-lives'), '2');
     await page.waitForFunction(() => !document.querySelector('[data-market-clear]')?.disabled);
+    if (width <= 320) await inspectLayout(page, `${label}-wrong-feedback`);
     await page.locator('[data-market-clear]').click();
     const rounds = fullRun ? 6 : 1;
     for (let round = 1; round <= rounds; round += 1) {

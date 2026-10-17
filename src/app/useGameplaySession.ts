@@ -106,7 +106,7 @@ export const useGameplaySession = ({
   useEffect(() => {
     if (screen !== 'gameplay' || !selectedLevel || paused || cinematicPlaying || isUntimedGameplay || LEVEL_TIMERS_DISABLED) return undefined;
     const timerId = window.setInterval(() => {
-      if (document.hidden || cinematicRef.current) return;
+      if (document.hidden || cinematicRef.current || !document.querySelector('[data-game-set] [data-game-question]')) return;
       setGlobalMiniGameHudTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
     return () => {
@@ -158,11 +158,11 @@ export const useGameplaySession = ({
     window.dispatchEvent(new CustomEvent(GAME_HUD_MUSIC_SYNC_EVENT, { detail: { enabled: isMusicEnabled } }));
     const active = !isMuted && isMusicEnabled && (screen === 'world_map' || screen === 'island_levels' || (screen === 'gameplay' && !paused));
     const scene = screen === 'gameplay' ? 'gameplay' : 'map';
-    const update = () => configureGameMusic(active && !document.hidden, scene);
+    const update = () => configureGameMusic(active && !document.hidden, scene, selectedLevel?.blueprintKey ?? selectedLevel?.gameType);
     update();
     document.addEventListener('visibilitychange', update);
     return () => document.removeEventListener('visibilitychange', update);
-  }, [isMuted, isMusicEnabled, paused, screen]);
+  }, [isMuted, isMusicEnabled, paused, screen, selectedLevel?.blueprintKey, selectedLevel?.gameType]);
 
   useEffect(() => {
     const handleMuteChange = (event: Event) => {

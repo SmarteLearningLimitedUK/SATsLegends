@@ -15,7 +15,7 @@ import { WELLBEING_ACTIVITIES, WELLBEING_ACTIVITY_BY_ISLAND, WELLBEING_BY_ID } f
 import { WellbeingActivityId } from '../wellbeing/types';
 import GameplayContentViewport from '../components/GameplayContentViewport';
 import { GAME_SCENE_META } from '../gameSceneMeta';
-import GameLoadBoundary, { GameLoadFallback } from '../components/GameLoadBoundary';
+import GameLoadBoundary, { GameLoadFallback, GameLoadingFallback } from '../components/GameLoadBoundary';
 import { getMiniGame, MiniGameRegistryKey } from '../games';
 import { buildAngleQuestions } from '../games/angleArena/questions';
 import { isBossEncounterGameType } from '../games/bossEncounterTypes';
@@ -145,13 +145,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         }}
       >
         <Suspense
-          fallback={(
-            <div className="flex h-full w-full items-center justify-center rounded-[2rem] border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(10,31,83,0.72),rgba(6,19,56,0.86))] text-center shadow-[0_18px_36px_rgba(2,6,23,0.35)]">
-              <div className="px-6 py-8 text-sm font-black uppercase tracking-[0.2em] text-cyan-100/80">
-                Loading game…
-              </div>
-            </div>
-          )}
+          fallback={<GameLoadingFallback />}
         >
           {getMiniGame(key).render(props)}
         </Suspense>

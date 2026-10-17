@@ -1,5 +1,5 @@
 /* The evidence stays dominant while the suspects remain readable game characters. */
-@media (min-width: 900px) and (min-height: 701px) {
+@media (min-width: 900px) {
   #root .data-detective-layout .detective-evidence-workspace {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(230px, 28%);
@@ -95,3 +95,33 @@
     height: 100%;
   }
 }
+
+/* Preserve text and axis space instead of squeezing evidence under the lineup. */
+#root .data-detective-layout { overflow-y:auto; overflow-x:hidden; }
+#root .data-detective-layout .game-screen-top,
+#root .data-detective-layout .game-screen-bottom { flex-shrink:0; }
+#root .data-detective-layout .game-screen-main { flex:1 0 380px; min-height:380px !important; }
+#root .data-detective-layout .detective-evidence-workspace { height:auto !important; min-height:270px !important; }
+#root .data-detective-layout .detective-evidence-chart { height:auto !important; min-height:240px !important; }
+#root .data-detective-layout .detective-evidence-pin-dock { flex-shrink:0; }
+#root .data-detective-layout .detective-evidence-pin { height:auto; white-space:normal; }
+@media(max-width:899px) {
+  #root .data-detective-layout .game-screen-main { flex-basis:460px; min-height:460px !important; }
+  #root .data-detective-layout .detective-evidence-workspace { min-height:370px !important; }
+  #root .data-detective-layout .detective-evidence-chart { flex:1 0 240px; }
+}
+@media(max-width:480px) {
+  #root .data-detective-layout .detective-lineup { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  #root .data-detective-layout .detective-lineup > button { height:125px; }
+  #root .data-detective-layout .detective-suspect-name { white-space:normal; line-height:1.3; }
+}
+
+@media(min-width:900px) and (min-height:760px) {
+  #root .data-detective-layout .detective-lineup > button { height:125px; }
+}
+@media(max-width:899px) {
+  #root .data-detective-layout .detective-evidence-pin-dock { display:block !important; }
+}
+
+/* A dossier stays in the viewport even when its suspect was reached by scrolling. */
+#root .data-detective-layout > div:has(> .detective-dossier) { position:fixed; inset:0; }

@@ -232,7 +232,7 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
                     <div className="absolute left-3 top-3 rounded-full border border-rose-200/14 bg-slate-950/35 px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-rose-100/82">
                       {Math.max(0, maxEnemyHealth - enemyHealth)} orders restored
                     </div>
-                  <MonsterMindActor
+                  <MonsterMindActor soundMode="voice"
                     src={orderOpsEnemy}
                     alt="Order Ops enemy"
                     reaction={enemyHealth <= 0 ? 'defeated' : feedback ? feedback.type === 'error' ? 'taunt' : 'hit' : 'idle'}

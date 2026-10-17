@@ -1,3 +1,4 @@
+import { useGameSave } from '../website/GameSaveContext';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { buildSatsPaper, markMission, type SatsMission } from '../systems/content/satsAdventure';
@@ -54,7 +55,10 @@ function readCheckpoint(key: string): MockCheckpoint | null {
   } catch { return null; }
 }
 const BossEncounterGame: React.FC<Props> = ({ gameType, levelId, sessionEvents, onVictory, onGameOver }) => {
-  const key = checkpointKey(gameType, levelId);
+  const gameSave = useGameSave();
+  const historyKey = gameSave?.storageKey ? `${HISTORY_KEY}:${gameSave.storageKey}` : HISTORY_KEY;
+  const baseCheckpointKey = checkpointKey(gameType, levelId);
+  const key = gameSave?.storageKey ? `${baseCheckpointKey}:${gameSave.storageKey}` : baseCheckpointKey;
   const checkpoint = useMemo(() => readCheckpoint(key), [key]);
   const seed = useMemo(() => checkpoint?.seed ?? Date.now(), [checkpoint]);
   const paper = useMemo(() => buildSatsPaper(gameType, seed), [gameType, seed]);
@@ -99,7 +103,7 @@ const BossEncounterGame: React.FC<Props> = ({ gameType, levelId, sessionEvents, 
   const previousAttempts = useMemo(() => {
     if (phase !== 'review') return [] as MockAttempt[];
     try {
-      const stored = JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}')?.[paper.number];
+      const stored = JSON.parse(localStorage.getItem(historyKey) || '{}')?.[paper.number];
       if (Array.isArray(stored?.attempts)) return stored.attempts as MockAttempt[];
       return Number.isFinite(stored?.score) ? [{
         id: `legacy:${paper.number}:${stored.completedAt ?? 'unknown'}`,
@@ -109,7 +113,7 @@ const BossEncounterGame: React.FC<Props> = ({ gameType, levelId, sessionEvents, 
         secondsUsed: stored.secondsUsed ?? paper.seconds,
       }] : [];
     } catch { return [] as MockAttempt[]; }
-  }, [phase, paper.number, paper.marks, paper.seconds]);
+  }, [phase, paper.number, paper.marks, paper.seconds, historyKey]);
   const revisionPriorities = useMemo(() => {
     return paper.missions.map((mission, index) => ({
       mission, index, marksToReview: mission.marks - markMission(mission, answers[mission.id] ?? []),
@@ -154,7 +158,7 @@ const BossEncounterGame: React.FC<Props> = ({ gameType, levelId, sessionEvents, 
   useEffect(() => {
     if (phase !== 'review') return;
     try {
-      const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}');
+      const history = JSON.parse(localStorage.getItem(historyKey) || '{}');
       const prior = history[paper.number];
       const attempts: MockAttempt[] = Array.isArray(prior?.attempts) ? prior.attempts :
         Number.isFinite(prior?.score) ? [{
@@ -175,9 +179,9 @@ const BossEncounterGame: React.FC<Props> = ({ gameType, levelId, sessionEvents, 
         completedAt: new Date().toISOString(), score, maxMarks: paper.marks,
         secondsUsed: paper.seconds - seconds, answers, workpad, missions: paper.missions, attempts,
       };
-      localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+      localStorage.setItem(historyKey, JSON.stringify(history));
     } catch { /* Review remains available when storage is unavailable. */ }
-  }, [phase, score, answers, workpad, paper, seconds, attemptId]);
+  }, [phase, score, answers, workpad, paper, seconds, attemptId, historyKey]);
   const update = (value: string, fieldIndex: number) => setDraft(old => { const next = [...old]; next[fieldIndex] = value; return next; });
   const submit = (event: React.FormEvent) => {
     event.preventDefault();

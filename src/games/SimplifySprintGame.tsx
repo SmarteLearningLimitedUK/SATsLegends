@@ -1,3 +1,4 @@
+import { playGameSound } from '../audio/gameAudio';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronLeft, Heart, Timer, Zap } from 'lucide-react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
@@ -203,6 +204,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
         setPhase('crash');
         setMistakes((previous) => previous + 1);
         setCombo(0);
+        playGameSound('impact');
         setFeedback({ tone: 'error', text: 'Wrong gate. ' + (isPractice ? '' : 'One heart lost. ') + '÷' + factor + ' does not divide both ' + currentPair.numerator + ' and ' + currentPair.denominator + ' exactly. Try a common factor.' });
         triggerHaptic('error');
         sessionEvents?.onIncorrectAnswer?.({

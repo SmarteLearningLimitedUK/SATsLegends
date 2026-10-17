@@ -236,6 +236,8 @@ record('Race tiers offer a full non-repeating lap and only one mathematically co
     assert.ok(pool.length >= [9, 11, 11, 13, 13][tier - 1], `Short tier ${tier} race pool: ${pool.length}`);
     assert.equal(new Set(pool.map((question) => question.prompt)).size, pool.length);
     const deck = racerQuestions.buildTierDeck(pool, null);
+    assert.equal(new Set(deck.slice(0, 5).map((question) => numericFraction(question.correctAnswer))).size, 5,
+      'The opening race questions should not alternate predictable answers');
     for (let index = 1; index < deck.length; index++) {
       assert.notEqual(numericFraction(deck[index].correctAnswer), numericFraction(deck[index - 1].correctAnswer),
         `Repeated adjacent fuel answer in tier ${tier}`);
@@ -244,6 +246,14 @@ record('Race tiers offer a full non-repeating lap and only one mathematically co
       assert.equal(question.ratio.length, tier <= 3 ? 2 : tier - 1);
       const total = question.ratio.reduce((sum, value) => sum + value, 0);
       assert.equal(numericFraction(question.correctAnswer), question.ratio[question.labels.indexOf(question.target)] / total);
+      assert.ok(total >= [6, 10, 16, 16, 24][tier - 1], `Race tier ${tier} should use its harder quantity band`);
+      const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+      const [numerator, denominator] = question.correctAnswer.split('/').map(Number);
+      assert.equal(gcd(numerator, denominator), 1, 'Fuel answers must be in simplest form');
+      if (tier >= 3) assert.ok(gcd(question.ratio[question.labels.indexOf(question.target)], total) > 1,
+        'Higher race tiers must require fraction simplification');
+      assert.ok(question.options.every((option) => numericFraction(option) > 0 && numericFraction(option) < 1),
+        'Distractors should be plausible fractions of the whole');
       assert.equal(question.options.length, 4);
       assert.equal(new Set(question.options).size, 4);
       assert.equal(question.options.filter((option) => numericFraction(option) === numericFraction(question.correctAnswer)).length, 1);
@@ -463,9 +473,11 @@ record(`Pyramid sums and within-run magnitude limits (${sampleCount * 5} questio
     const q = pyramid.buildRound(tier, sample + 100);
     assert.deepEqual(q.middle, [q.base[0] + q.base[1], q.base[1] + q.base[2]]);
     assert.equal(q.top, q.base[0] + 2 * q.base[1] + q.base[2]); choices(q.options, q.top);
-    assert.ok(q.base.every((value) => value <= [4, 8, 12, 18, 30][tier - 1]));
+    assert.ok(q.base.every((value) => value >= [12, 25, 50, 100, 200][tier - 1] && value <= [39, 75, 150, 350, 999][tier - 1]));
   }
 });
+const practicePyramid = pyramid.buildRound(1, 1, true);
+assert.ok(practicePyramid.base.every(value => value >= 1 && value <= 4), 'Practice retains small introductory sums');
 const share = generator('ShareSplitterGame', ['createChallenge']);
 record(`Sharing ratios/counts stay bounded after repeated rounds (${sampleCount * 5} questions)`, () => {
   for (let tier = 1; tier <= 5; tier++) for (let sample = 0; sample < sampleCount; sample++) {

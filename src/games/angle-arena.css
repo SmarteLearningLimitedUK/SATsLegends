@@ -1,23 +1,124 @@
-@media (min-width: 700px) and (max-height: 650px) {
-  .angle-arena-question {
-    padding: 4px 10px !important;
-  }
-
-  .angle-arena-question .game-question-card-inner {
-    gap: 0;
-  }
-
-  .angle-arena-question .game-question-card-title-strip {
-    display: none;
-  }
-
-  .angle-arena-question .game-question-copy {
-    font-size: calc(15px * var(--game-text-scale, 1.2));
-    line-height: 1.15;
-  }
-
-  .angle-arena-question .question-subtitle {
-    margin-top: 2px;
-    font-size: calc(11px * var(--game-text-scale, 1.2));
-  }
+/* Angle Arena's ice-and-gold skin is scoped to this game, including its shared HUD. */
+#root .app-viewport.sat-theme-bluegold.game-type-angle-arena {
+  --arena-navy: #071d3a;
+  --arena-ice: #8bdcf3;
+  --arena-gold: #d7b66f;
+}
+#root .app-viewport.sat-theme-bluegold.game-type-angle-arena .legend-hud-bar,
+#root .app-viewport.sat-theme-bluegold.game-type-angle-arena .legend-dock-surface {
+  background: linear-gradient(160deg, #123c65, #07172f 75%) !important;
+  border-color: #8bdcf3 !important;
+  box-shadow: inset 0 0 0 2px #0b2845, 0 3px 0 #a58b55, 0 6px 18px #03112566 !important;
+  border-radius: 14px !important;
+}
+#root .app-viewport.sat-theme-bluegold.game-type-angle-arena .legend-hud-label { color: #a9dcec; }
+#root .app-viewport.sat-theme-bluegold.game-type-angle-arena .legend-hud-title { font-weight: 800; letter-spacing: .035em; }
+#root .app-viewport.sat-theme-bluegold.game-type-angle-arena .legend-hud-avatar { border-color: #d7b66f; background: #08213b; }
+#root .app-viewport.sat-theme-bluegold.game-type-angle-arena .legend-dock-base { background: linear-gradient(0deg, #06172f, #06172f00) !important; }
+#root .app-viewport.sat-theme-bluegold.game-type-angle-arena .legend-dock-button {
+  background: linear-gradient(#204a72, #102a49) !important;
+  border-color: #76b9d2 !important;
+  box-shadow: inset 0 1px 0 #ffffff22, 0 2px 0 #07172b !important;
+}
+#root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena { font-family: 'Fredoka Variable', sans-serif; }
+#root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena .angle-arena-question {
+  width: min(100%, 760px) !important;
+  margin-inline: auto;
+  padding: clamp(10px, 1.5vh, 18px) clamp(14px, 3vw, 36px) !important;
+  border: 1px solid #97d9ed !important;
+  border-bottom: 3px solid #d7b66f !important;
+  border-radius: 14px !important;
+  background: linear-gradient(145deg, #12385cf5, #06162ff5) !important;
+  box-shadow: inset 0 0 0 3px #17426599, 0 6px 18px #04132c44 !important;
+  text-align: center;
+}
+#root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena-question .game-question-card-shell,
+#root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena-question .game-question-card-title-strip { display: none !important; }
+#root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena .angle-arena-question .game-question-card-inner { gap: 0; }
+#root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena .angle-arena-question .game-question-copy {
+  font-size: clamp(16px, 2.3vh, 25px) !important;
+  font-weight: 650;
+  line-height: 1.3 !important;
+  text-wrap: balance;
+  white-space: normal;
+}
+#root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena-rule {
+  display: block;
+  margin-bottom: 5px;
+  color: #b9e5f5;
+  font-size: .78em;
+  font-weight: 500;
+}
+#root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena-controls {
+  width: min(100%, 880px);
+  margin: 0 auto 8px;
+  padding: 10px 14px 14px;
+  border: 1px solid #8bdcf3;
+  border-top: 2px solid #d7b66f;
+  border-radius: 16px;
+  background: linear-gradient(155deg, #133a60f5, #06172ff5);
+  box-shadow: inset 0 0 0 3px #17395899, 0 6px 16px #04132c55;
+}
+#root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena-control-label {
+  color: #e8f7ff;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: clamp(11px, 1.7vh, 16px);
+  font-weight: 650;
+  letter-spacing: .14em;
+}
+#root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena .angle-arena-answers {
+  max-width: none;
+  gap: clamp(6px, 1vw, 14px);
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+#root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena .angle-arena-answer {
+  min-height: clamp(44px, 7.5vh, 76px) !important;
+  border: 1px solid #a2e2f6 !important;
+  border-radius: 10px !important;
+  background: linear-gradient(165deg, #255783, #0b2347 80%) !important;
+  box-shadow: inset 0 2px 0 #d7f5ff44, inset 0 -3px 0 #020e2455, 0 3px 0 #051329 !important;
+  color: #f5fbff !important;
+  font-size: clamp(22px, 3.7vh, 36px) !important;
+  font-weight: 650;
+  transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+}
+#root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena .angle-arena-answer:enabled:hover {
+  transform: translateY(-2px);
+  border-color: #ffe2a1 !important;
+  background: linear-gradient(165deg, #36749c, #123657) !important;
+}
+#root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena .angle-arena-answer:active { transform: translateY(1px); }
+#root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena .angle-arena-answer:focus-visible { outline: 3px solid #ffe2a1; outline-offset: 3px; }
+#root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena .angle-arena-answer[aria-pressed='true'] { border-color: #ffe2a1 !important; opacity: 1; }
+#root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena .angle-arena-answer.ui-button-success { background: linear-gradient(#247369, #10423d) !important; }
+#root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena .angle-arena-feedback {
+  min-height: 0;
+  padding: 5px 8px !important;
+  border: 0 !important;
+  background: #07182f !important;
+  box-shadow: none !important;
+  border-radius: 6px;
+}
+#root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena-feedback:empty { display: none; }
+@media (max-width: 699px) {
+  #root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena .angle-arena-question { padding: 10px 12px !important; }
+  #root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena .angle-arena-question .game-question-copy { font-size: 17px !important; }
+  #root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena-controls { padding: 8px 8px 10px; margin-bottom: 4px; }
+  #root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena .angle-arena-answer { padding-inline: 2px; }
+}
+@media (max-height: 500px) {
+  #root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena .angle-arena-question { padding: 5px 12px !important; }
+  #root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena .angle-arena-question .game-question-copy { font-size: 14px !important; line-height: 1.2 !important; }
+  #root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena-rule { display: none; }
+  #root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena-controls { padding: 5px 8px 8px; gap: 4px; margin-bottom: 2px; }
+  #root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena-control-label { font-size: 10px; }
+  #root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena .angle-arena-answer { min-height: 38px !important; font-size: 22px !important; padding-block: 2px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena .angle-arena-answer { transition: none; }
+  #root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena .angle-arena-answer:enabled:hover { transform: none; }
 }

@@ -2,6 +2,48 @@
 
 This checklist applies to the React/Vite site, Matharia, and the Supabase functions and migrations in this repository. It is a release procedure, not evidence that the connected production services have passed it.
 
+## Device support standard — agreed 16 October 2026
+
+The intended minimum for the App Store app is **iOS 16.0** (and **iPadOS 16.0** if iPad is offered). This is a support policy, not a claim that a native iOS build or any physical device has passed testing. Newer SE and mini models remain in scope; small screens alone are not grounds for excluding a supported device.
+
+### Native enforcement before App Store submission
+
+The checked-in `ios/` folder currently contains Capacitor configuration and copied web assets, but no Xcode project, `Info.plist`, Podfile or native deployment-target setting. `package.json` also has no native iOS build command. There is therefore no enforceable App Store minimum configured in this repository yet.
+
+When preparing the native project on macOS:
+
+1. Set the app's Xcode iOS Deployment Target to **16.0**; align extension and native dependency targets as needed. Use the deployment target to generate the OS minimum rather than hand-editing the generated `MinimumOSVersion` value.
+2. Archive the exact release candidate and confirm its reported minimum OS is 16.0 in the archive/App Store Connect compatibility information. Record the archive/build identifier and evidence.
+3. Keep the native app unavailable for release until the physical-device gate below passes. Do not add hardware requirements the game does not actually need to exclude particular screen sizes.
+
+The website remains accessible according to browser capability. This policy does not add an iOS user-agent block to the web game. Billing remains intentionally deferred; adopting this device policy does not clear the separate billing release gate.
+
+### Supported-screen checks
+
+The regular `npm run verify:responsive` matrix now includes **375 × 667** (SE-size) and **375 × 812** (mini-size) WebKit profiles alongside the existing standard phone, Android, tablet, landscape and desktop profiles. These test CSS viewport sizes, not physical display pixels or a particular installed iOS release. The existing 320 × 568 case remains an additional layout stress check; it does not promise support for the original SE/iOS 15.
+
+`npm run verify:screen-overlaps` checks the affected place-value, café, racing and all three SAT-paper screens across the same compact sizes, with question-text containment, panel separation, button-label containment and normally scrollable control reachability. It is a focused regression check, not a complete playthrough of every game. CI runs it against the dev test server, saves diagnostics under `qa-artifacts/screen-overlaps/`, and uploads them on failure.
+
+Run these commands against a started test server using `LEGEND_QA_URL`. The responsive suite defaults to port 3000; the focused suite defaults to port 4183. For a compiled build, use the existing isolated account fixtures and the exported game catalog as described by the QA scripts. Retain initial failures and rechecks separately.
+
+Automated baseline adoption evidence is saved locally in `qa-artifacts/device-support-standard-2026-10-16/`: the initial SE/mini sweeps, separate clean route rechecks, build/typecheck logs and a five-project Scale Builder mini-size completion. The expanded sweep found and fixed a Scale Builder question/HUD overlap. This evidence does not close the physical-device gate.
+
+### Physical-device release gate
+
+For each supported device class, record the physical model, OS version, orientation, exact app build, tester, date, result and evidence. Require coverage of a newer SE, a mini and a standard iPhone; include a real iPad if offered. Cover the lowest supported OS on compatible hardware and a current supported OS, recording the actual versions tested. Browser emulation alone cannot close this gate.
+
+Every game must be playable through completion on supported devices, with:
+
+- Complete, readable questions, diagrams, labels and feedback, with no overlapping panels or hidden answers.
+- Reachable controls in portrait and landscape. Where space is limited, normal scrolling must reveal controls without clipping or trapping interaction; taps and drags must still work.
+- Reliable Help/pause, back navigation, audio controls, game completion and progress recovery after interruption/relaunch.
+- Measured loading and play performance on the least capable supported device; no unresolved crashes or freezes. Record any required loading retries rather than counting them as a clean load.
+- Accessibility checks for readable text/contrast, larger text, reduced motion, essential screen-reader navigation and information conveyed through more than colour or sound alone.
+
+A failed supported-device case blocks device-support sign-off until fixed and retested. Retest failures must not be hidden by raising the OS minimum or dropping a model without an explicit support-policy decision. Physical results are **pending**; no physical iPhone certification is recorded by this change.
+
+Files changed for this standard: `docs/RELEASE_READINESS.md`, `package.json`, `scripts/verify-responsive-experience.mjs`, `scripts/verify-screen-overlaps.mjs`, `.github/workflows/quality.yml`, and `src/games/scale-builder.css` (mini-screen question overlap found by the expanded matrix). Assumptions: the agreed iOS 16+ baseline applies to a future native App Store release, the current React/Vite architecture remains in use, and browser emulation is supporting evidence rather than physical certification. No external legacy assumptions were used.
+
 ## 1. Repository checks
 
 GitHub Actions runs `.github/workflows/quality.yml` for pushes and pull requests. Before promoting a commit, require a green run for that exact commit. Locally, the equivalent checks are:

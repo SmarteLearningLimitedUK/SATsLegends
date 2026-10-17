@@ -52,6 +52,7 @@
 .lava-crossing-answers { width: 100%; flex-shrink: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .lava-crossing-answers button { min-height: max(48px, var(--refinement-hit-size)); padding: 8px; font-weight: 800; font-size: var(--legend-question-size, 18px); border-radius: 12px; }
 .refinement-feedback { min-height: 35px; width: 100%; flex-shrink: 0; text-align: center; font-size: var(--legend-label-size, 14px); line-height: 1.25; font-weight: 750; color: #e0f2fe; }
+.lava-crossing-game .refinement-feedback,
 .perimeter-game .refinement-feedback,
 .chrono-game .refinement-feedback {
   display: grid;
@@ -184,4 +185,18 @@
 }
 .lava-crossing-game, .perimeter-game, .conversion-game, .reactor-game, .chrono-game {
   --refinement-hit-size: max(44px, calc(44px / var(--game-stage-scale, 1)));
+}
+
+.lava-crossing-game .refinement-feedback { background:#071c2b; text-shadow:none; }
+
+/* Native keyframes keep the crossing reactions visible in WebKit as well. */
+.lava-crossing-hero img.lava-hero-hop {animation:lava-hero-hop .42s ease-in-out;}
+.lava-crossing-hero img.lava-hero-recoil {animation:lava-hero-recoil .42s ease-in-out;}
+@keyframes lava-hero-hop {0%,100%{transform:translateY(0) rotate(0);}50%{transform:translateY(-18px) rotate(-4deg);}}
+@keyframes lava-hero-recoil {0%,100%{transform:rotate(0);}33%{transform:rotate(-7deg);}67%{transform:rotate(7deg);}}
+@media(prefers-reduced-motion:reduce){.lava-crossing-hero img{animation:none !important;}}
+
+@media(min-width:700px) and (max-height:650px) {
+ #root [data-game-set='timekeeper_temple'] .chrono-playfield {container-type:size;}
+ #root [data-game-set='timekeeper_temple'] .chrono-clock {width:min(100cqw,100cqh);height:min(100cqw,100cqh);max-width:100%;max-height:100%;}
 }

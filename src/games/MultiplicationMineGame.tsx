@@ -1,3 +1,4 @@
+import { playGameSound } from '../audio/gameAudio';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useIsPresent, useReducedMotion } from 'motion/react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
@@ -246,6 +247,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
     scoreRef.current = nextScore;
     setCorrectCount(nextCorrect);
     setRockHealth(nextHealth);
+    playGameSound('impact');
     setImpactTick((value) => value + 1);
     const praise = shouldShowPraise(questionAttemptRef.current, Date.now() - questionStartRef.current);
     setFeedback({ tone: praise ? 'praise' : 'ok', text: nextHealth === 0 ? 'Crystal recovered. Mine cleared!' : praise ? buildPraiseMessage() : 'Clean strike. The crystal seam is opening.' });

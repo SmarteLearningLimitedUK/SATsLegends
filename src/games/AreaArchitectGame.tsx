@@ -106,6 +106,7 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({levelId,isPractice
   const [wrong,setWrong] = useState<number[]>([]);
   const [showIntro,setShowIntro] = useState(Boolean(isPractice));
   const locked = useRef(false);
+  const rejectedAnswers = useRef(new Set<number>());
   const timeout = useRef<ReturnType<typeof setTimeout>|null>(null);
   useEffect(()=>()=>{if(timeout.current)clearTimeout(timeout.current);},[]);
   const question=deck[roundIndex%deck.length];
@@ -120,18 +121,18 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({levelId,isPractice
     return [...values].sort((a,b)=>((a*13+roundIndex*7)%23)-((b*13+roundIndex*7)%23));
   },[question.correct,width,height,roundIndex]);
   const choose=(answer:number)=>{
-    if(locked.current||sessionState?.paused||showIntro||wrong.includes(answer))return;
+    if(locked.current||sessionState?.paused||showIntro||rejectedAnswers.current.has(answer))return;
     setSelected(answer);setAttempts(n=>n+1);
     const correct=answer===question.correct;
     emitMiniGameSessionEvent(sessionEvents,correct?'correct_answer':'incorrect_answer',{metadata:{questionId:question.id,answer,target:question.correct,roundIndex}});
-    if(!correct){setWrong(previous=>[...previous,answer]);setFeedback(rectangle?'Not quite. Area is length × width, not the distance around the edge.':'Not quite. Count only blue squares, or split the room into rectangles. Empty spaces are outside the room.');return;}
+    if(!correct){rejectedAnswers.current.add(answer);setWrong(previous=>[...previous,answer]);setFeedback(rectangle?'Not quite. Area is length × width, not the distance around the edge.':'Not quite. Count only blue squares, or split the room into rectangles. Empty spaces are outside the room.');return;}
     locked.current=true;setSolved(true);setCorrectCount(n=>n+1);playGameSound('impact');
     setFeedback(rectangle?`Correct! ${width} × ${height} = ${question.correct} m².`:`Correct! ${question.correct} blue squares × 1 m² = ${question.correct} m².`);
   };
   const next=()=>{
     if(!solved||sessionState?.paused||timeout.current)return;
     if(roundIndex+1===ROUNDS_TO_WIN){timeout.current=setTimeout(()=>onVictory(starsForAccuracy(correctCount,attempts),BASE_XP*ROUNDS_TO_WIN+levelId*50),0);return;}
-    setRoundIndex(n=>n+1);setSelected(null);setFeedback('');setSolved(false);setWrong([]);locked.current=false;
+    setRoundIndex(n=>n+1);setSelected(null);setFeedback('');setSolved(false);setWrong([]);rejectedAnswers.current.clear();locked.current=false;
   };
   return <GameUiShell backgroundImage={areaBackdrop} overlayDisabled>
     <PracticeIntroPopup open={showIntro} title="Area Architect" body="Find the area of each room plan. For a rectangle, multiply length by width. Each blue square is 1 square metre. Choose an area below; you do not need to place tiles." briefing={practiceBriefing} onAction={()=>setShowIntro(false)}/>

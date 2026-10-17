@@ -13,7 +13,7 @@ import { QuestionTier } from './ratioFractionsRace/questionSelector';
 import { RatioFractionQuestion } from './ratioFractionsRace/types';
 import courseBackground from '../assets/maps/premium/race-circuit-wide-v2.png';
 import crowdBackground from '../assets/maps/premium/race-grandstand-wide-v2.png';
-import castleBackground from '../assets/maps/premium/race-castle-wide-v2.png';
+import castleBackground from '../assets/ratio-racer/castle-circuit-v1.png';
 import valleyBackground from '../assets/maps/premium/race-valley-wide-v2.png';
 import coastalBackground from '../assets/maps/teen/race-course-coastal.png';
 import RaceFuelMix from './ratioFractionsRace/RaceFuelMix';
@@ -90,8 +90,8 @@ const themeRatioQuestion = (question: RatioFractionQuestion): RatioFractionQuest
     ...question,
     labels,
     target: targetLabel,
-    prompt: `The Monster Minds have tampered with the kart fuel mix. It now has ${joinLabelList(labels)} in a ${ratioText} ratio. What fraction of the whole is ${targetLabel.toLowerCase()}?`,
-    explanation: `Total parts = ${totalParts}. ${targetLabel} is ${question.ratio[targetIndex]} parts, so the fraction is ${question.correctAnswer}.`,
+    prompt: `The Monster Minds have tampered with the kart fuel mix. It now has ${joinLabelList(labels)} in a ${ratioText} ratio. What fraction of the whole is ${targetLabel.toLowerCase()}? Give the simplest form.`,
+    explanation: `Total parts = ${totalParts}. ${targetLabel} is ${question.ratio[targetIndex]} parts. Simplify ${question.ratio[targetIndex]}/${totalParts} to get ${question.correctAnswer}.`,
   };
 };
 
@@ -187,18 +187,33 @@ const RAW_RATIO_FRACTIONS_QUESTIONS: RatioFractionQuestion[] = [
   },
 ];
 
+const ratioGcd = (a: number, b: number): number => b === 0 ? a : ratioGcd(b, a % b);
+const simplestRatioFraction = (numerator: number, denominator: number) => {
+  const divisor = ratioGcd(numerator, denominator);
+  return `${numerator / divisor}/${denominator / divisor}`;
+};
+
 const makeRatioOptions = (numerator: number, denominator: number, suggestions: string[] = []) => {
-  const correct = `${numerator}/${denominator}`;
+  const correct = simplestRatioFraction(numerator, denominator);
   const candidates = [
+    `${numerator}/${denominator - numerator}`,
+    `${numerator + 1}/${denominator}`,
+    `${Math.max(1, numerator - 1)}/${denominator}`,
+    `${numerator}/${denominator + 2}`,
     ...suggestions,
     ...Array.from({ length: denominator + 2 }, (_, index) => `${index + 1}/${denominator}`),
     `${numerator}/${denominator + 1}`,
     `${numerator}/${Math.max(1, denominator - 1)}`,
     `${denominator}/${numerator}`,
   ];
-  const wrong = candidates.filter((value, index) => {
+  const normalized = candidates.map((value) => {
+    const [n, d] = value.split('/').map(Number);
+    return simplestRatioFraction(n, d);
+  });
+  const wrong = normalized.filter((value, index) => {
     const match = value.match(/^(\d+)\/([1-9]\d*)$/);
-    return match && candidates.indexOf(value) === index
+    return match && normalized.indexOf(value) === index
+      && Number(match[1]) > 0 && Number(match[1]) < Number(match[2])
       && Number(match[1]) * denominator !== numerator * Number(match[2]);
   });
   return [correct, ...wrong.slice(0, 3)];
@@ -206,14 +221,15 @@ const makeRatioOptions = (numerator: number, denominator: number, suggestions: s
 
 const generatedRatioQuestions = (): RatioFractionQuestion[] => {
   const ratios: number[][] = [];
-  for (let a = 1; a <= 8; a++) for (let b = 1; b <= 8; b++) {
-    if (a + b <= 12) ratios.push([a, b]);
+  for (let a = 1; a <= 14; a++) for (let b = 1; b <= 14; b++) {
+    if (a !== b && a + b <= 28) ratios.push([a, b]);
   }
-  for (let a = 1; a <= 3; a++) for (let b = 1; b <= 3; b++) for (let c = 1; c <= 3; c++) {
-    if (a + b + c >= 5) ratios.push([a, b, c]);
+  for (let a = 2; a <= 9; a++) for (let b = 3; b <= 8; b++) for (let c = 2; c <= 5; c++) {
+    if (a + b + c >= 16 && new Set([a, b, c]).size >= 2) ratios.push([a, b, c]);
   }
-  for (let a = 1; a <= 3; a++) for (let b = 1; b <= 3; b++) for (let c = 1; c <= 3; c++) for (let d = 1; d <= 3; d++) {
-    if (a + b + c + d >= 7) ratios.push([a, b, c, d]);
+  for (let a = 2; a <= 6; a++) for (let b = 3; b <= 7; b++) for (let c = 2; c <= 4; c++) {
+    const d = a + b - c + 2 + (a % 3);
+    if (a + b + c + d >= 24 && new Set([a, b, c, d]).size >= 3) ratios.push([a, b, c, d]);
   }
   return ratios.flatMap((ratio) => ratio.map((part, targetIndex) => {
     const total = ratio.reduce((sum, value) => sum + value, 0);
@@ -223,7 +239,7 @@ const generatedRatioQuestions = (): RatioFractionQuestion[] => {
       prompt: '', ratio,
       labels: ratio.map((_, index) => `Element ${String.fromCharCode(65 + index)}`),
       target,
-      correctAnswer: `${part}/${total}`,
+      correctAnswer: simplestRatioFraction(part, total),
       options: makeRatioOptions(part, total),
       explanation: '',
     };
@@ -238,16 +254,23 @@ export const ratioFractionsQuestions = [...RAW_RATIO_FRACTIONS_QUESTIONS, ...gen
     seenRatios.add(key);
     return true;
   })
-  .map(themeRatioQuestion);
+  .map((question) => {
+    const numerator = question.ratio[question.labels.indexOf(question.target)];
+    const denominator = question.ratio.reduce((sum, value) => sum + value, 0);
+    return themeRatioQuestion({ ...question, correctAnswer: simplestRatioFraction(numerator, denominator), options: makeRatioOptions(numerator, denominator) });
+  });
 
 const getDifficultyPool = (level: number) => {
   const tier = Math.max(1, Math.min(5, level));
   return ratioFractionsQuestions.filter((question) => {
     const parts = question.ratio.reduce((total, value) => total + value, 0);
-    if (tier === 1) return question.ratio.length === 2 && parts <= 4;
-    if (tier === 2) return question.ratio.length === 2 && parts >= 5 && parts <= 6;
-    if (tier === 3) return question.ratio.length === 2 && parts >= 7;
-    return question.ratio.length === (tier === 4 ? 3 : 4);
+    const targetParts = question.ratio[question.labels.indexOf(question.target)];
+    if (new Set(question.ratio).size < 2) return false;
+    if (tier === 1) return question.ratio.length === 2 && parts >= 6 && parts <= 9;
+    if (tier === 2) return question.ratio.length === 2 && parts >= 10 && parts <= 15;
+    if (tier === 3) return question.ratio.length === 2 && parts >= 16 && ratioGcd(targetParts, parts) > 1;
+    return question.ratio.length === (tier === 4 ? 3 : 4)
+      && parts >= (tier === 4 ? 16 : 24) && ratioGcd(targetParts, parts) > 1;
   });
 };
 const FALLBACK_POOL = ratioFractionsQuestions;
@@ -263,17 +286,22 @@ const buildTierDeck = (pool: RatioFractionQuestion[], previousLast: RatioFractio
   remaining.forEach((question) => frequency.set(fractionKey(question), (frequency.get(fractionKey(question)) ?? 0) + 1));
   const ordered: RatioFractionQuestion[] = [];
   let lastAnswer = previousLast ? fractionKey(previousLast) : null;
+  const recentAnswers = previousLast ? [fractionKey(previousLast)] : [];
   while (remaining.length) {
     let pick = 0;
     let highestFrequency = -1;
+    const hasFreshAnswer = remaining.some((question) => !recentAnswers.includes(fractionKey(question)));
     remaining.forEach((question, index) => {
       const answer = fractionKey(question);
       if (answer === lastAnswer) return;
+      if (hasFreshAnswer && recentAnswers.includes(answer)) return;
       const count = frequency.get(answer) ?? 0;
       if (count > highestFrequency) { pick = index; highestFrequency = count; }
     });
     const [question] = remaining.splice(pick, 1);
     lastAnswer = fractionKey(question);
+    recentAnswers.push(lastAnswer);
+    if (recentAnswers.length > 4) recentAnswers.shift();
     frequency.set(lastAnswer, (frequency.get(lastAnswer) ?? 1) - 1);
     ordered.push(question);
   }
@@ -615,6 +643,8 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
             className="ratio-racer-mission"
             style={{ position: 'relative', top: 0, transform: 'none', width: '100%', padding: '10px 12px', fontSize: 22 }}
           >
+            <div className="ratio-racer-lab-title">✦ Fuel lab ✦</div>
+            <h2 className="ratio-racer-lab-heading">Fix the fuel mix</h2>
             <RaceFuelMix labels={question.labels} parts={question.ratio} target={question.target} />
           </GameQuestionCard>
 

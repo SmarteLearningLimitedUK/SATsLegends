@@ -1,3 +1,4 @@
+import {loadEnv} from 'vite';
 import { chromium } from 'playwright';
 import { expect } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
@@ -66,7 +67,8 @@ try {
         await expect(page.getByRole('heading', { name: 'Practice with purpose. Adventure they can explore.' })).toBeVisible();
       }
       if (route === '/signup') {
-        await expect(page.getByRole('button', { name: 'Create parent account' })).toBeDisabled();
+        const signup=page.getByRole('button', { name: 'Create parent account' });
+        if(loadEnv('production',process.cwd(),'VITE_').VITE_SUPABASE_URL)await expect(signup).toBeEnabled();else await expect(signup).toBeDisabled();
         await expect(page.getByText('Sundays at 3 pm and Wednesdays at 4 pm', { exact: false })).toBeVisible();
       }
       if (['/signup', '/login', '/forgot-password', '/reset-password'].includes(route) && width > 700) {

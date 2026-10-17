@@ -17,6 +17,7 @@
     "verify:production-db": "node scripts/verify-production-database.mjs",
     "verify:admin-db": "node scripts/verify-admin-database.mjs",
     "verify:responsive": "node scripts/verify-responsive-experience.mjs",
+    "verify:screen-overlaps": "node scripts/verify-screen-overlaps.mjs",
     "verify:critical-game-viewports": "node scripts/verify-critical-game-viewports.mjs",
     "verify:lexcoria": "node scripts/verify-lexcoria-readiness.mjs",
     "verify:family-ui": "node scripts/verify-family-website.mjs",

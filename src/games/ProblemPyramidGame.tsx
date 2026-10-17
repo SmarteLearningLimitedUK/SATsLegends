@@ -43,10 +43,10 @@ const shuffle = <T,>(items: T[]) => {
   return next;
 };
 
-const buildRound = (level: number, round: number): PyramidRound => {
+const buildRound = (level: number, round: number, isPractice = false): PyramidRound => {
   const tier = Math.max(1, Math.min(5, level));
-  const min = [1, 2, 3, 4, 6][tier - 1];
-  const max = [4, 8, 12, 18, 30][tier - 1];
+  const min = isPractice ? 1 : [12, 25, 50, 100, 200][tier - 1];
+  const max = isPractice ? 4 : [39, 75, 150, 350, 999][tier - 1];
   const base: [number, number, number] = [
     clamp(min + Math.floor(Math.random() * (max - min + 1)), min, max),
     clamp(min + Math.floor(Math.random() * (max - min + 1)), min, max),
@@ -55,19 +55,19 @@ const buildRound = (level: number, round: number): PyramidRound => {
   const middle: [number, number] = [base[0] + base[1], base[1] + base[2]];
   const top = middle[0] + middle[1];
 
-  const distractors = new Set<number>();
-  const jitter = level <= 3 ? 6 : 10;
-  while (distractors.size < 3) {
-    const guess = top + (Math.floor(Math.random() * (jitter * 2 + 1)) - jitter);
-    if (guess !== top && guess > 0) distractors.add(guess);
-  }
+  const candidates = [
+    top - 10, top + 10, top - 1, top + 1,
+    base[0] + base[1] + base[2],
+    middle[0], middle[1], top - 2, top + 2,
+  ];
+  const distractors = shuffle([...new Set(candidates.filter(value => value > 0 && value !== top))]).slice(0, 3);
 
   return {
     id: `pyr-${round}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
     base,
     middle,
     top,
-    options: shuffle([top, ...Array.from(distractors)]),
+    options: shuffle([top, ...distractors]),
   };
 };
 
@@ -102,7 +102,7 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
     setShowPracticeIntro(Boolean(isPractice));
   }, [isPractice]);
 
-  const round = useMemo(() => buildRound(levelId, roundIndex + 1), [levelId, roundIndex]);
+  const round = useMemo(() => buildRound(levelId, roundIndex + 1, Boolean(isPractice)), [levelId, roundIndex, isPractice]);
 
   const handleAnswer = (option: number) => {
     if (locked || answerPendingRef.current) return;

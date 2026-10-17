@@ -15,3 +15,9 @@
     max-width: 18rem;
   }
 }
+
+/* Keep every grid row below the complete prompt, with room for readable cells. */
+#root .coordinates-quest-layout {padding:8px !important;gap:8px;overflow-y:auto;overflow-x:hidden;touch-action:pan-y;}
+#root .coordinates-quest-layout > div:first-child {flex:none;margin-bottom:0;}
+#root .coordinates-quest-layout > div:last-child {flex:1 0 380px;min-height:380px;justify-content:flex-start;}
+#root .app-viewport .coordinates-quest-layout .coordinates-grid-board {flex:none;width:min(100%,420px);height:auto;max-height:none;aspect-ratio:1;}

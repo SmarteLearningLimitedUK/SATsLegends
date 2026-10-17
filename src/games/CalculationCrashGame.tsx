@@ -1,3 +1,4 @@
+import { playGameSound } from '../audio/gameAudio';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ChevronRight, RotateCcw, Trophy } from 'lucide-react';
@@ -204,6 +205,7 @@ const CalculationCupGame: React.FC<CalculationCrashGameProps> = ({
       queueFeedback('success', nextStreak > 1 ? `+${earned} - Combo x${nextStreak}` : `+${earned}`);
     } else {
       setStreak(0);
+      playGameSound('impact');
       setScreenShake(true);
       queueFeedback('error', `Answer: ${question.answer}`);
       window.setTimeout(() => setScreenShake(false), 260);

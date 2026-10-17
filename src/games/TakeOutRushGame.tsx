@@ -1,3 +1,4 @@
+import { playMonsterSound } from '../audio/gameAudio';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useIsPresent, useReducedMotion } from 'motion/react';
 import confetti from 'canvas-confetti';
@@ -12,7 +13,6 @@ import food7 from '../assets/take_out/food/7.png';
 import food8 from '../assets/take_out/food/8.png';
 import food9 from '../assets/take_out/food/9.png';
 import FoodGameShell from '../components/FoodGameShell';
-import SceneEnvironment from '../components/SceneEnvironment';
 import { triggerHaptic } from '../haptics';
 import CelebrationSplash from '../components/CelebrationSplash';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
@@ -515,7 +515,8 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
   }, [baseLevel, pausedDurationAt]);
 
   const resolveCorrectOrder = useCallback(() => {
-    if (!presentRef.current || roundFinishedRef.current) return;
+    if (!presentRef.current || roundFinishedRef.current || sessionState?.paused) return;
+    playMonsterSound('monster_laugh');
     const now = Date.now();
     const pausedOrderMs = Math.max(0, pausedDurationAt(now) - orderPauseBaselineRef.current);
     const orderSolveMs = Math.max(350, now - orderStartMs - pausedOrderMs);
@@ -561,7 +562,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
       setIsResolvingOrder(false);
       resolvingOrderRef.current = false;
     }, 1280);
-  }, [nextOrder, order.id, order.stage, orderStartMs, pausedDurationAt, timeLeft, reducedMotion, sessionEvents]);
+  }, [nextOrder, order.id, order.stage, orderStartMs, pausedDurationAt, timeLeft, reducedMotion, sessionEvents, sessionState?.paused]);
 
   const resolveIncorrectOrder = useCallback(() => {
     if (!presentRef.current || roundFinishedRef.current) return;
@@ -710,15 +711,13 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
           <div style={{ width: `${timerProgress * 100}%`, backgroundColor: timerFillColor }} />
         </div>}
         <GameQuestionCard title="Order ticket"
-          subtitle={`90s café service. ${isPractice ? 'Practice exact orders.' : 'Wrong orders cost a life.'}${activeConstraints.minItems > 1 ? ` Use at least ${activeConstraints.minItems} portions.` : ''}`}
+          subtitle={`${isPractice ? 'Practice exact orders.' : 'Wrong orders cost one heart.'}${activeConstraints.minItems > 1 ? ` Use at least ${activeConstraints.minItems} portions.` : ''}`}
           className="rush-mission" style={{ position: 'relative', top: 0, width: '100%', transform: 'none' }}>
           Build an order worth <strong>{asDisplayFraction(order.target)}</strong>.
         </GameQuestionCard>
 
         <section data-takeout-playfield className={`rush-kitchen${overTarget ? ' is-overfilled' : ''}`}
           data-takeout-target={`${order.target.n}/${order.target.d}`} data-takeout-total={`${runningTotal.n}/${runningTotal.d}`}>
-          <SceneEnvironment src={takeOutLevelBg} alt="Fantasy kitchen with a serving counter, diners and bubbling sauce"
-            className="rush-kitchen-art" />
           <div className="rush-order-rail">
             <span>Ticket #{ordersServed + 1}</span>
             <strong>{rushPressure === 'last-orders' ? 'Last orders! Closing soon.' : Combo > 0 ? `Perfect service ×${Combo}` : 'Your café. Your moment.'}</strong>
@@ -731,7 +730,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
               const customerId=ordersServed+index;
               const wait=Math.max(0,shiftElapsed-customerId*20);
               return <motion.div key={customerId} className="rush-queued-customer" data-impatience={wait>=40?'urgent':wait>=20?'restless':'calm'}
-                initial={reducedMotion?false:{x:80,opacity:0}} animate={{x:0,opacity:1}} exit={{x:-80,opacity:0}}
+                initial={reducedMotion?false:{x:-80,opacity:0}} animate={{x:0,opacity:1}} exit={{x:80,opacity:0}}
                 transition={{duration:reducedMotion?0:.65,ease:'easeInOut'}} layout={!reducedMotion}>
                 {index===0&&<div className="rush-customer-quip">{wait>=40?'Please! My order is still waiting!':wait>=20?'Is my food ready yet?':customerLine}</div>}
                 <img src={MONSTER_IMAGES[customerId%MONSTER_IMAGES.length]} alt={index===0?'Your hungry customer':'Customer waiting in the queue'} draggable={false}/>
@@ -739,7 +738,11 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
               </motion.div>;
             })}</AnimatePresence>
           </div>
-          <motion.div className="rush-counter" data-takeout-tray
+
+        </section>
+
+        <div className="rush-responses" data-takeout-responses>
+          <motion.div className={`rush-counter${overTarget ? ' is-overfilled' : ''}`} data-takeout-tray
             animate={feedback?.tone === 'success' && !reducedMotion ? { x: [0, 12, 0], y: [0, -4, 0] } : { x: 0, y: 0 }} transition={{ duration: .45 }}>
             <div className="rush-tray-label"><span>Your tray <strong>{asDisplayFraction(runningTotal)}</strong> / {asDisplayFraction(order.target)}</span>
               <span>{overTarget ? 'Too much! Remove a portion.' : isExact && !constraintsMet ? `Need ${activeConstraints.minItems} portions.` : isExact ? 'Exact. Order up!' : 'Build the exact total.'}</span>
@@ -754,12 +757,9 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
                   <FoodSprite item={item} /><span>{asDisplayFraction(item.value)} <b>×{count}</b></span><small aria-hidden="true">−</small>
                 </motion.button>)}
               </AnimatePresence>
-              {!trayGroups.length && <div className="rush-empty-tray">New ticket. Build something brilliant.</div>}
+              {!trayGroups.length && <div className="rush-empty-tray">Choose portions below to fill the tray.</div>}
             </div>
           </motion.div>
-        </section>
-
-        <div className="rush-responses" data-takeout-responses>
           <div className="rush-food-shelf" style={{ gridTemplateColumns: `repeat(${availableItems.length}, minmax(0, 1fr))` }}>
             {availableItems.map((item) => <button key={item.id} type="button" data-button-skin="none"
               data-takeout-food={item.id} data-food-fraction={`${item.value.n}/${item.value.d}`}

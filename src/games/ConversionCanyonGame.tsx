@@ -1,3 +1,4 @@
+import { playGameSound } from '../audio/gameAudio';
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import SceneEnvironment from '../components/SceneEnvironment';
 import { motion, useIsPresent, useReducedMotion } from 'motion/react';
@@ -186,6 +187,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
     if (!presentRef.current || resolvingRef.current || sessionState?.paused || placedIdsRef.current.includes(id) || !tokenMap.has(id)) return;
     placedIdsRef.current = [...placedIdsRef.current, id];
     setPlacedIds(placedIdsRef.current);
+    playGameSound('impact');
     setImpact((value) => value + 1);
     setFeedback(null);
   };
@@ -216,6 +218,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
       sessionEvents?.onIncorrectAnswer?.({ score: XP, metadata: { round: roundIndex + 1, submittedGrams, targetGrams: round.targetGrams, preservesLives: true } });
       const excess = submittedGrams - round.targetGrams;
       setBroken(excess > 0);
+      playGameSound('impact');
       setImpact((value) => value + 1);
       setFeedback({ tone: 'error', text: excess > 0
         ? `Scale snapped! Over by ${toGramLabel(excess)} (${toKgLabel(excess)}). Remove excess to repair.`

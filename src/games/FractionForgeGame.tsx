@@ -273,7 +273,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
       <PracticeIntroPopup open={showPracticeIntro} title={gameTitle || 'Fraction Forge'} body="The workshop needs a precise fraction alloy. Choose the ingots, then strike the anvil to test your recipe." briefing={practiceBriefing} onAction={() => setShowPracticeIntro(false)} />
       <div className="ff-ui">
         <div className="ff-brief">
-          <GameQuestionCard title={gameTitle || 'Fraction Forge'} className="ff-question" style={{ position: 'relative', top: 'auto', left: 'auto', right: 'auto', width: '100%', transform: 'none' }}>{round.prompt}</GameQuestionCard>
+          <GameQuestionCard context="" title={gameTitle || 'Fraction Forge'} className="ff-question" style={{ position: 'relative', top: 'auto', left: 'auto', right: 'auto', width: '100%', transform: 'none' }}>{round.prompt}</GameQuestionCard>
         </div>
         <div className="ff-meta" aria-label={`Commission ${roundIndex} of ${totalRounds}; ${score} XP`}>
           <span>COMMISSION {roundIndex} / {totalRounds}</span>

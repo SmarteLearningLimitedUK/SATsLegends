@@ -509,7 +509,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
           <section className="pp-controls" aria-label="Reactor calculation controls">
             <div className="pp-console-head">
               <span>CALCULATION CONSOLE</span>
-              <strong>ROUND {roundNumber} / {totalRounds}</strong>
+              <strong>ROUND {roundNumber} of {totalRounds}</strong>
             </div>
             <div className="pp-values">
               <div className="pp-value">
@@ -535,7 +535,6 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
                   className={'pp-answer ' + (index === selectedIndex ? feedback === 'correct' ? 'is-correct' : 'is-incorrect' : '')}
                   aria-label={'Output option ' + (index + 1) + ': ' + option}
                 >
-                  <span className="pp-answer-index">{String(index + 1).padStart(2, '0')}</span>
                   <strong className="pp-answer-value">{option}</strong>
                 </motion.button>
               ))}

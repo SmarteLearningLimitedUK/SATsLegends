@@ -142,7 +142,7 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({ levelId, avatarId: _ava
                   fill="#183842" fontSize="18" fontWeight="850">{label}</text>;
               })}
               <circle cx="100" cy="100" r="47" fill="none" stroke="#799496" strokeWidth=".7" strokeDasharray="1 3"/>
-              <motion.g data-clock-hour-hand animate={{rotate:rotationHours+currentTime.minutes*.5}}
+              <motion.g data-clock-hour-hand animate={{rotate:rotationHours}}
                 transition={reducedMotion ? {duration:0} : {duration:.2,ease:'easeOut'}} style={{transformOrigin:'50% 50%',transformBox:'view-box'}}>
                 <path d="M100 53L105 65V108H95V65Z" fill="#54a9bd" stroke="#173744" strokeWidth="2"/>
               </motion.g>

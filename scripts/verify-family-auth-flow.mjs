@@ -1,3 +1,4 @@
+import {loadEnv} from 'vite';
 // Browser integration using an in-memory API fixture. Never creates real accounts or charges cards.
 import { chromium } from 'playwright';
 import { expect } from '@playwright/test';
@@ -29,7 +30,7 @@ try {
   const page = await context.newPage();
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
-  await page.route('https://family-qa.supabase.co/**', async route => {
+  await page.route((process.env.LEGEND_QA_API_URL||loadEnv('production',process.cwd(),'VITE_').VITE_SUPABASE_URL||'https://family-qa.supabase.co')+'/**', async route => {
     const request = route.request();
     const url = new URL(request.url());
     const headers = { 'Access-Control-Allow-Origin': base, 'Access-Control-Allow-Headers': '*', 'Access-Control-Allow-Methods': '*' };
@@ -116,7 +117,7 @@ try {
   await page.goto(base + '/parent');
   await page.getByLabel('Send me progress reports', { exact: true }).uncheck();
   await expect(page.getByLabel('Send me progress reports', { exact: true })).not.toBeChecked();
-  assert.equal(reportEmails, false);
+  await expect.poll(() => reportEmails).toBe(false);
   console.log('PASS saved parent report, other-child denial and report email opt-out');
   await page.clock.install();
   await page.getByRole('link', { name: 'Play Matharia' }).click();

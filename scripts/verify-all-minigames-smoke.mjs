@@ -1,5 +1,9 @@
 import { chromium, webkit } from 'playwright';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { installReleaseAccountFixture } from './qa/release-account-fixture.mjs';
+import { mkdir, writeFile, readFile } from 'node:fs/promises';
+
+// Keep native navigation/CDN delivery outside the account simulation.
+if(process.env.LEGEND_QA_ACCOUNT_FIXTURE==='1'&&!process.env.LEGEND_QA_FETCH_FIXTURE)process.env.LEGEND_QA_FETCH_FIXTURE='1';
 
 // Run against a started Vite server: LEGEND_QA_URL=http://127.0.0.1:3004 node scripts/verify-all-minigames-smoke.mjs
 // Optional LEGEND_QA_PROFILE=desktop|small-phone and LEGEND_QA_KEYS=blueprint_key[,blueprint_key].
@@ -15,9 +19,10 @@ if (!profiles.length) throw new Error(`Unknown LEGEND_QA_PROFILE: ${process.env.
 const reports = [];
 
 for (const profile of profiles) {
-  const browser = await profile.engine.launch();
-  const context = await browser.newContext({ viewport: profile.viewport, hasTouch: profile.hasTouch, isMobile: profile.isMobile, reducedMotion: 'reduce' });
-  const page = await context.newPage();
+  let browser = await profile.engine.launch();
+  let context = await browser.newContext({ viewport: profile.viewport, hasTouch: profile.hasTouch, isMobile: profile.isMobile, reducedMotion: 'reduce' });
+  if (process.env.LEGEND_QA_ACCOUNT_FIXTURE === '1') await installReleaseAccountFixture(context);
+  let page = await context.newPage();
   let errors = [];
   let assetFailures = [];
   page.on('pageerror', error => errors.push(error.message));
@@ -28,7 +33,7 @@ for (const profile of profiles) {
     if (response.status() >= 400 && /\.(?:webp|png|jpe?g|svg|avif|gif|mp3|ogg|woff2)(?:\?|$)/i.test(response.url())) assetFailures.push(`${response.status()} ${response.url()}`);
   });
   await page.goto(base + '/map');
-  const catalog = await page.evaluate(async () => {
+  const catalog = process.env.LEGEND_QA_CATALOG ? JSON.parse(await readFile(process.env.LEGEND_QA_CATALOG, 'utf8')) : await page.evaluate(async () => {
     const { ISLANDS } = await import('/src/constants.ts');
     const rows = ISLANDS.flatMap(island => island.levels.map(level => ({
       key: level.blueprintKey, route: `/game/${island.id}/${level.id}`,
@@ -46,21 +51,42 @@ for (const profile of profiles) {
   const targets = catalog.filter(row => !excluded.has(row.key) && (!onlyKeys.size || onlyKeys.has(row.key)));
   if (!targets.length) throw new Error(`No games selected for ${profile.name}; check the catalog and LEGEND_QA_KEYS/LEGEND_QA_EXCLUDE filters`);
   for (const target of targets) {
+    await page.close();
+    if (process.env.LEGEND_QA_FRESH_CONTEXTS === '1' || process.env.LEGEND_QA_FRESH_BROWSERS === '1') {
+      await context.close();
+      if(process.env.LEGEND_QA_FRESH_BROWSERS==='1'){await browser.close();browser=await profile.engine.launch();}
+      context = await browser.newContext({ viewport: profile.viewport, hasTouch: profile.hasTouch, isMobile: profile.isMobile, reducedMotion: 'reduce' });
+      if (process.env.LEGEND_QA_ACCOUNT_FIXTURE === '1') await installReleaseAccountFixture(context);
+    }
+    page = await context.newPage();
+    page.on('pageerror', error => errors.push(error.message));
+    page.on('requestfailed', request => {
+      if (/\.(?:webp|png|jpe?g|svg|mp3|woff2)(?:\?|$)/i.test(request.url()) && !/ERR_ABORTED|Load request cancelled/i.test(request.failure()?.errorText || '')) assetFailures.push(`${request.url()}: ${request.failure()?.errorText}`);
+    });
+    page.on('response', response => {
+      if (response.status() >= 400 && /\.(?:webp|png|jpe?g|svg|mp3|woff2)(?:\?|$)/i.test(response.url())) assetFailures.push(`${response.status()} ${response.url()}`);
+    });
     errors = [];
     assetFailures = [];
     const report = { profile: profile.name, ...target };
     try {
+      const navigationStarted=Date.now();
+      report.accountFixture=process.env.LEGEND_QA_FETCH_FIXTURE==='1'?'fetch':'route';
       await page.goto(base + target.route, { waitUntil: 'domcontentloaded', timeout: 15000 });
       await page.locator('[data-qa-screen="gameplay"]').waitFor({ timeout: 15000 });
+      await page.locator('[data-game-set]').waitFor({timeout:20000});
+      report.loadMs=Date.now()-navigationStarted;
       await page.waitForTimeout(280);
       for (let attempt = 0; attempt < 6; attempt++) {
         const intro = page.locator('[role="dialog"] [data-dialog-primary]:visible').first();
         if (!await intro.count()) break;
-        await intro.click({ timeout: 5000 });
-        await intro.waitFor({ state: 'hidden', timeout: 5000 });
+        const handle=(await intro.elementHandles())[0];
+        if(!handle)continue;
+        try { await handle.click({timeout:5000}); } catch(error) { if(await handle.isVisible().catch(()=>false))throw error; }
+        await handle.waitForElementState('hidden',{timeout:5000});
       }
       if (target.key === 'ratio_fractions') await page.waitForTimeout(3100);
-      await page.evaluate(() => document.fonts.ready);
+      await page.waitForFunction(() => document.fonts.status === 'loaded', null, { timeout: 10000 });
       // The intro and game scene animate independently. Check the settled,
       // playable frame rather than a transient exit/entrance frame.
       await page.waitForFunction(() => {
@@ -107,6 +133,25 @@ for (const profile of profiles) {
           }).map(node => node.currentSrc || node.src);
         return { question, dock, actions, brokenImages, scrollWidth: document.documentElement.scrollWidth, width: document.documentElement.clientWidth, height: document.documentElement.clientHeight, body: document.querySelector('.game-shell-host')?.textContent?.trim().slice(0, 240) };
       });
+      if (!report.dom.actions.some(a => a.visible && a.reachable)) {
+        const candidates = page.locator('[data-qa-screen="gameplay"] button:not([disabled])');
+        for (let index = 0; index < await candidates.count(); index++) {
+          const candidate = candidates.nth(index);
+          const scrollable = await candidate.evaluate(node => {
+            for (let p = node.parentElement; p; p = p.parentElement) {
+              if (/auto|scroll/.test(getComputedStyle(p).overflowY) && p.scrollHeight > p.clientHeight + 2) return true;
+            }
+            return false;
+          });
+          if (!scrollable || !await candidate.isVisible()) continue;
+          await candidate.scrollIntoViewIfNeeded({timeout:1500}).catch(() => {});
+          const reachable = await candidate.evaluate(node => {
+            const r=node.getBoundingClientRect(); const hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);
+            return r.top>=0 && r.bottom<=innerHeight && node.contains(hit);
+          });
+          if (reachable) { report.scrollActionReachable = true; break; }
+        }
+      }
       report.errors = errors;
       report.assetFailures = [...assetFailures];
       report.violations = [
@@ -115,20 +160,37 @@ for (const profile of profiles) {
         ...(report.dom.brokenImages.length ? [`broken visible images: ${report.dom.brokenImages.join(' | ')}`] : []),
         ...(!report.dom.question.some(q => q.text && q.visible) ? ['no visible question or instruction'] : []),
         ...(report.dom.question.some(q => q.clipped) ? ['clipped question or instruction'] : []),
-        ...(!report.dom.actions.some(a => a.visible && a.reachable) ? ['no reachable gameplay action'] : []),
+        ...(!report.dom.actions.some(a => a.visible && a.reachable) && !report.scrollActionReachable ? ['no reachable gameplay action, including normal scroll surfaces'] : []),
         ...(report.dom.scrollWidth > report.dom.width + 1 ? [`horizontal page overflow: ${report.dom.scrollWidth}px > ${report.dom.width}px`] : []),
       ];
       report.smallQuestionText = report.dom.question.flatMap(q => q.textFonts.filter(sample => sample.text?.length >= 15 && sample.size < 14).map(sample => ({ question: q.selector, ...sample })));
       report.smallActionText = report.dom.actions.filter(action => action.visible && action.reachable && action.text && action.textFont > 0 && action.textFont < 14).map(action => ({ text: action.text, font: action.textFont }));
-      if (report.violations.length) await page.screenshot({ path: `${output}/${profile.name}-${target.key}-${target.tier || 'practice'}.png` });
+      if (report.violations.length || process.env.LEGEND_QA_SCREENSHOTS === '1') await page.screenshot({ path: `${output}/${profile.name}-${target.key}-${target.tier || 'practice'}.png` });
+      if (process.env.LEGEND_QA_PLAYTEST === '1' && !report.violations.length) {
+        const candidates = page.locator('[data-qa-screen="gameplay"] button:not([disabled])');
+        for (let i = 0; i < await candidates.count(); i++) {
+          const candidate = candidates.nth(i);
+          if (await candidate.evaluate(n => Boolean(n.closest('[data-testid="shared-bottom-hud"], [data-testid="shared-top-hud"]')))) continue;
+          const reachable = await candidate.evaluate(n => {const r=n.getBoundingClientRect();return r.width>0 && r.height>0 && r.top>=0 && r.bottom<=innerHeight && n.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2));});
+          if (!reachable) continue;
+          report.nativeAction = (await candidate.innerText()).trim().slice(0,80);
+          const box = await candidate.boundingBox();
+          if (profile.hasTouch) await page.touchscreen.tap(box.x+box.width/2,box.y+box.height/2); else await page.mouse.click(box.x+box.width/2,box.y+box.height/2);
+          await page.waitForTimeout(400);
+          report.postActionErrors = [...errors];
+          if (errors.length) report.violations.push('browser error after native action');
+          break;
+        }
+      }
       console.log(`${report.violations.length ? 'FAIL' : 'PASS'} ${profile.name} ${target.key} ${target.tier || 'practice'}: Q=${report.dom.question.length} A=${report.dom.actions.length} errors=${errors.length}${report.violations.length ? ` ${report.violations.join('; ')}` : ''}`);
     } catch (error) {
       report.error = error.message;
       report.errors = errors;
       console.log(`FAIL ${profile.name} ${target.key} ${target.tier || 'practice'}: ${error.message}`);
-      await page.screenshot({ path: `${output}/${profile.name}-${target.key}-${target.tier || 'practice'}-failure.png` });
+      await page.screenshot({ path: `${output}/${profile.name}-${target.key}-${target.tier || 'practice'}-failure.png`, timeout: 5000 }).catch(() => {});
     }
     reports.push(report);
+    await writeFile(`${output}/report.json`, JSON.stringify(reports, null, 2));
   }
   await context.close();
   await browser.close();

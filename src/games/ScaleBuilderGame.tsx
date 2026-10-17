@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ChevronRight, Trophy } from 'lucide-react';
+import { Trophy } from 'lucide-react';
 import scaleBuilderBackground from '../assets/maps/premium/scale-builder.webp';
 import { GameQuestionCard, GameUiShell, PrimaryButton } from '../components/game-ui/GameUiKit';
 import ScaleBlueprintBoard from './ScaleBlueprintBoard';
@@ -148,21 +148,33 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
     setFeedback({type:'error',message});setMistakeCount(n=>n+1);
     emitMiniGameSessionEvent(sessionEvents,'incorrect_answer',{metadata:{project:currentLevel.id,answer:values.join(' × ')}});
   };
-  const proceed=()=>{
-    if(gameState!=='success')return;
-    if(currentLevelIdx===tierLevels.length-1){setGameState('complete');return;}
-    setCurrentLevelIdx(n=>n+1);resetAnswer();setGameState('playing');
-  };
+  useEffect(() => {
+    if (gameState !== 'success' || sessionState?.paused) return;
+    const timer = window.setTimeout(() => {
+      if (currentLevelIdx === tierLevels.length - 1) {
+        setGameState('complete');
+        return;
+      }
+      setCurrentLevelIdx(index => index + 1);
+      setValues(['', '']);
+      setActive(0);
+      setFeedback(null);
+      checkedRef.current = null;
+      setCheckedSignature(null);
+      setGameState('playing');
+    }, 1100);
+    return () => window.clearTimeout(timer);
+  }, [gameState, currentLevelIdx, tierLevels.length, sessionState?.paused]);
   const finish=()=>{if(endedRef.current)return;endedRef.current=true;onVictory(starRating,finalScore);};
   const completionRef=useDialogFocus(gameState==='complete',()=>{});
 
   return <GameUiShell className="scale-numeric-game" backgroundImage={scaleBuilderBackground} backgroundOpacity={1} backgroundFit="cover" overlayDisabled>
     <PracticeIntroPopup open={showPracticeIntro} title="Scale Builder" body={SCALE_BUILDER_INTRO} briefing={practiceBriefing} onAction={()=>setShowPracticeIntro(false)}/>
     <div className="scale-builder-board-layout scale-numeric-layout" data-scale-project={currentLevelIdx+1} data-scale-factor={currentLevel.targetScale} data-scale-base-length={baseLength} data-scale-base-width={baseWidth}>
-      <GameQuestionCard title={`Scale Builder · Project ${currentLevelIdx+1} of 5`} className="scale-numeric-question" style={{position:'relative',top:0,transform:'none',width:'100%'}}>
+      <GameQuestionCard context="" title={`Scale Builder · Project ${currentLevelIdx+1} of 5`} className="scale-numeric-question" style={{position:'relative',top:0,transform:'none',width:'100%'}}>
         <span>Original: <strong>{baseLength} × {baseWidth} units</strong></span>
         <span>Scale factor: <strong>×{formatBlueprintValue(currentLevel.targetScale)}</strong></span>
-        <span>What are the two new lengths?</span>
+        <span>Enlarge the blueprint. What are the new lengths?</span>
       </GameQuestionCard>
       <div className="scale-numeric-board-area">
         <ScaleBlueprintBoard shape={currentLevel.shape.type} baseLength={baseLength} baseWidth={baseWidth} length={length} width={width} unit={unit} showBase={showBase} locked={!playing} onResize={(axis,value)=>{setActive(axis);changeAnswer(axis,formatBlueprintValue(value));}}/>
@@ -175,7 +187,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
         <div className="scale-numeric-feedback" data-tone={feedback?.type} role="status" aria-live="polite">{feedback?.message ?? 'Enter both answers, then check your blueprint.'}</div>
         <div className="scale-numeric-actions">
           <button type="button" className="ui-button-secondary" disabled={!playing||!values.some(Boolean)} onClick={resetAnswer}>Clear</button>
-          {gameState==='success'?<PrimaryButton onClick={proceed}>Next project <ChevronRight size={18}/></PrimaryButton>:<PrimaryButton onClick={verifyScale} disabled={!playing||!result.complete||checkedSignature===signature}>Check lengths</PrimaryButton>}
+          <PrimaryButton onClick={verifyScale} disabled={!playing||!result.complete||checkedSignature===signature}>{gameState==='success' ? 'Correct!' : 'Check lengths'}</PrimaryButton>
         </div>
       </div>
     </div>

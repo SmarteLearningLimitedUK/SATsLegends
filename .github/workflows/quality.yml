@@ -77,6 +77,7 @@ jobs:
       - name: Phone, tablet and desktop viewport checks
         run: |
           npm run verify:responsive
+          LEGEND_QA_URL=http://127.0.0.1:3000 npm run verify:screen-overlaps
           npm run verify:critical-game-viewports
           npm run verify:lexcoria
           npm run verify:family-ui
@@ -126,6 +127,7 @@ jobs:
           name: game-viewport-diagnostics
           path: |
             qa-artifacts/responsive-experience/
+            qa-artifacts/screen-overlaps/
             qa-artifacts/final-functional-smoke/
           if-no-files-found: ignore
       - name: Start account-flow fixture site

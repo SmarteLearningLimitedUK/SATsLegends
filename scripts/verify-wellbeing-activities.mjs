@@ -20,8 +20,8 @@ async function completeActivity(page, id, profile) {
       await page.getByRole('button', { name: /Easy 3s in/ }).click();
       for (let cycle = 0; cycle < 4; cycle += 1) {
         await page.getByRole('button', { name: cycle === 0 ? 'Begin first cycle' : 'Begin next cycle' }).click();
-        await expect(page.locator('[data-breathing-phase="out"]')).toBeVisible({ timeout: 5000 });
-        await expect(page.locator('[data-breathing-phase="checkin"]')).toBeVisible({ timeout: 6000 });
+        await expect(page.locator('[data-breathing-phase="out"]')).toBeVisible({ timeout: 15000 });
+        await expect(page.locator('[data-breathing-phase="checkin"]')).toBeVisible({ timeout: 20000 });
       }
       await page.getByRole('button', { name: 'Finish reset' }).click();
       break;

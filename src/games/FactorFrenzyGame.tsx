@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { playMonsterSound } from '../audio/gameAudio';
+import { playGameSound, playMonsterSound } from '../audio/gameAudio';
 import confetti from 'canvas-confetti';
 import { AnimatePresence, motion } from 'motion/react';
 import {
@@ -341,6 +341,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     });
 
     if (isCorrect) {
+      playGameSound('impact');
       playMonsterSound('monster_hurt');
       const timeBonus = state.timeLeft * 10;
       const points = 500 + timeBonus;
@@ -512,7 +513,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
                         <div
                           className="factor-visible-monster relative max-w-full"
                         >
-                          <MonsterMindActor
+                          <MonsterMindActor soundMode="off"
                             src={factorEnemy}
                             alt="Monster Mind"
                             reaction={state.enemyHealth <= 0 ? 'defeated' : showHitFx ? 'hit' : state.status === 'incorrect' ? 'taunt' : 'idle'}

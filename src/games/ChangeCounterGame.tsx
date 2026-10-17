@@ -418,9 +418,9 @@ Tap coins to make the change. Use Undo or Clear if you need to, then hand it ove
         data-market-game data-market-state={marketState} data-market-round={roundIndex + 1} data-market-present={isPresent}
         data-market-lives={lives} data-market-correct={correctCount} data-market-score={score}>
         <PuzzleStage className="market-stack">
-          <GameQuestionCard title="Till check" subtitle="Read the receipt. Select coins for the change, then submit."
+          <GameQuestionCard context="" title="Till check" subtitle="Read the receipt. Select coins for the change, then submit."
             style={{ position: 'relative', top: 0, transform: 'none', width: '100%' }}>
-            Paid <strong>{formatMoney(question.paidPence)}</strong>. Give the exact change.
+            A customer paid <strong>{formatMoney(question.paidPence)}</strong>. Give the exact change.
           </GameQuestionCard>
 
           <section className={`market-scene${lives <= 1 ? ' is-last-chance' : ''}`} data-market-playfield>

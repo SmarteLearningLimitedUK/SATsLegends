@@ -866,3 +866,12 @@
 @media(max-width:699px) { .ff-blacksmith-route { top:30%; width:85px; } }
 @media(prefers-reduced-motion:reduce) { .ff-blacksmith-route, .ff-blacksmith-route * { animation:none; } .ff-work-sparks { display:none; } }
 .ff-slot:disabled { opacity:1 !important; filter:none !important; }
+
+@media(max-height:700px) {
+ @container(max-width:899px) {
+  .ff-ui {overflow-y:auto;overflow-x:hidden;touch-action:pan-y;}
+  .ff-workspace {flex:none;grid-template-rows:260px auto;}
+  .ff-anvil-zone {min-height:260px;}
+  .ff-anvil {height:60%;max-height:180px;}
+ }
+}

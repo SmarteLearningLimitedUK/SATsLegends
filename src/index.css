@@ -5052,7 +5052,6 @@ button.avatar-hero-arrow:not(:disabled):active {
 
 .screen-gameplay .unified-minigame-hud-enabled main {
   min-height: 0 !important;
-  overflow: hidden !important;
 }
 
 /* Global gameplay viewport contract:

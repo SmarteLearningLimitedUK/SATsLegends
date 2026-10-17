@@ -80,6 +80,8 @@ const QUESTION_CARD_SHELL = '/reference-assets/new-sheet-2026-04-22/slice_01_x21
 const QUESTION_CARD_TITLE_STRIP = '/reference-assets/new-sheet-2026-04-22/slice_15_x709_y396_w338_h68.png';
 
 type GameQuestionCardProps = {
+  /** Override automatic story copy when the question already includes its context. */
+  context?: string;
   title?: string;
   subtitle?: React.ReactNode;
   children: React.ReactNode;
@@ -147,6 +149,7 @@ const QuestionCardFrame: React.FC<QuestionCardFrameProps> = ({
  * Visual source of truth lives in `.game-question-card` (src/index.css).
  */
 export const GameQuestionCard: React.FC<GameQuestionCardProps> = ({
+  context: suppliedContext,
   title = 'Mission',
   subtitle,
   children,
@@ -156,7 +159,7 @@ export const GameQuestionCard: React.FC<GameQuestionCardProps> = ({
   style,
 }) => {
   const promptText = typeof children === 'string' ? children : '';
-  const context = gameQuestionContext(title, promptText);
+  const context = suppliedContext ?? gameQuestionContext(title, promptText);
   return (
   <QuestionCardFrame
     className={className}

@@ -316,6 +316,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
         <div className="relative z-10 mb-2">
           <GameQuestionCard
             title={gameTitle || 'Coordinates Quest'}
+            style={{ position: 'relative', top: 'auto', left: 'auto', right: 'auto', transform: 'none', width: '100%' }}
             subtitle={round.promptText}
             bodyClassName="mt-1 text-[1.35rem] font-black leading-none text-white md:text-[1.8rem]"
           >

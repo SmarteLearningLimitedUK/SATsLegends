@@ -1001,6 +1001,9 @@ const App: React.FC = () => {
         <div className="iphone-game-stage-inner">
           <div
             data-screen-family={screenBehavior.family}
+            data-game-island={isGameplayScreen ? selectedIsland?.id : undefined}
+            data-game-island-name={isGameplayScreen ? selectedIsland?.name : undefined}
+            data-active-game={isGameplayScreen ? selectedLevel?.blueprintKey : undefined}
             className={`app-viewport sat-theme-bluegold app-background-intensity ${backgroundIntensityClass} app-shell-family-${screenBehavior.family} screen-${screen.replace(/_/g, '-')} ${isGameplayScreen ? gameplayTypeClass : ''} relative w-full flex flex-col items-center overflow-hidden ${viewportShellClass}`}
           >
             <AnimatePresence mode="wait">
