@@ -1,0 +1,32 @@
+import {chromium,webkit,devices} from 'playwright';
+import {installReleaseAccountFixture} from './qa/release-account-fixture.mjs';
+import {mkdir,writeFile} from 'node:fs/promises';
+import assert from 'node:assert/strict';
+const base=process.env.LEGEND_QA_URL||'http://127.0.0.1:4183';
+const output=process.env.LEGEND_QA_OUTPUT||'qa-artifacts/screen-overlaps';
+const profiles=[
+ ['small-phone',webkit,{viewport:{width:320,height:568},hasTouch:true,isMobile:true}],
+ ['small-landscape',chromium,{viewport:{width:568,height:320},hasTouch:true,isMobile:true}],
+ ['phone-landscape',chromium,{viewport:{width:667,height:375},hasTouch:true,isMobile:true}],
+ ['iphone-se',webkit,{viewport:{width:375,height:667},hasTouch:true,isMobile:true}],
+ ['iphone-mini',webkit,{viewport:{width:375,height:812},hasTouch:true,isMobile:true}],
+ ['iphone',webkit,devices['iPhone 13']],['ipad',webkit,devices['iPad (gen 7)']],
+ ['ipad-landscape',webkit,{...devices['iPad (gen 7)'],viewport:{width:1024,height:768}}],
+ ['android',chromium,devices['Pixel 7']],['short-desktop',chromium,{viewport:{width:1280,height:720}}],['desktop',chromium,{viewport:{width:1440,height:900}}]
+].filter(([name])=>!process.env.LEGEND_QA_PROFILE||process.env.LEGEND_QA_PROFILE===name);
+const selectedGames=new Set((process.env.LEGEND_QA_GAMES||'').split(',').filter(Boolean));
+const targets=[['place-value','/game/1/37','.game-submit-dock-fixed button,[data-pvp-location]'],['take-out','/game/2/10','.rush-food-shelf button,.rush-actions button'],['ratio','/game/7/19','.ratio-racer-answer'],...['1','2','3'].map(n=>['paper-'+n,'/game/8/'+n,'.sats-mission-tools button,.sats-response-actions button'])].filter(([name])=>!selectedGames.size||selectedGames.has(name));
+await mkdir(output,{recursive:true});const rows=[];
+for(const [profile,engine,options] of profiles){const browser=await engine.launch();try{for(const [game,route,controls] of targets){const context=await browser.newContext({...options,reducedMotion:'reduce'});if(process.env.LEGEND_QA_ACCOUNT_FIXTURE==='1')await installReleaseAccountFixture(context);const page=await context.newPage();page.setDefaultTimeout(10000);const errors=[];page.on('pageerror',e=>errors.push(e.message));const row={profile,game,route,passed:false};try{
+ await page.goto(base+route,{waitUntil:'domcontentloaded',timeout:20000});await page.locator('[data-game-set]').waitFor({timeout:20000});
+ for(let i=0;i<4;i++){const h=(await page.locator('[data-dialog-primary]:visible').elementHandles())[0];if(!h)break;try{await h.click({timeout:3000});}catch(e){if(await h.isVisible().catch(()=>false))throw e;}await page.waitForTimeout(200);}
+ await page.waitForFunction(()=>document.fonts.status==='loaded',null,{timeout:10000});await page.waitForTimeout(250);
+ const geometry=await page.evaluate(()=>{const q=document.querySelector('[data-game-question]'),r=q.getBoundingClientRect(),top=document.querySelector('[data-testid="shared-top-hud"]').getBoundingClientRect(),dock=document.querySelector('[data-testid="shared-bottom-hud"]').getBoundingClientRect();const clipped=[];const walker=document.createTreeWalker(q,NodeFilter.SHOW_TEXT);let n;while(n=walker.nextNode()){if(!n.textContent.trim())continue;const range=document.createRange();range.selectNodeContents(n);for(const rect of range.getClientRects()){if(rect.width&&rect.height&&(rect.top<r.top-1||rect.bottom>r.bottom+1||rect.left<r.left-1||rect.right>r.right+1))clipped.push(n.textContent.trim());}}return{q:r.toJSON(),hudBottom:top.bottom,dockTop:dock.top,clipped,scrollWidth:document.documentElement.scrollWidth,width:innerWidth};});row.geometry=geometry;
+ assert(geometry.q.top>=geometry.hudBottom-1,'Question overlaps top HUD');assert(geometry.q.bottom<=geometry.dockTop+1,'Question overlaps bottom dock');assert(geometry.clipped.length===0,'Clipped question text: '+geometry.clipped.join(' / '));assert(geometry.scrollWidth<=geometry.width+1,'Horizontal page overflow');
+ await page.screenshot({path:`${output}/${profile}-${game}.png`,timeout:10000});
+ if(game==='place-value'){const regions=await page.locator('[data-game-question],.legend-pvp-targets,.legend-pvp-sources,.game-submit-dock-fixed').evaluateAll(nodes=>nodes.map(n=>({name:n.className,rect:n.getBoundingClientRect().toJSON()})).filter(n=>n.rect.width&&n.rect.height));for(let i=0;i<regions.length;i++)for(let j=i+1;j<regions.length;j++){const a=regions[i],b=regions[j];assert(Math.min(a.rect.right,b.rect.right)-Math.max(a.rect.left,b.rect.left)<=1||Math.min(a.rect.bottom,b.rect.bottom)-Math.max(a.rect.top,b.rect.top)<=1,'Overlapping place-value panels: '+a.name+' / '+b.name);}}
+ const buttons=await page.locator(controls).all();assert(buttons.length>0,'Missing response controls');
+ for(const button of buttons){await button.scrollIntoViewIfNeeded();const c=await button.evaluate(n=>{const r=n.getBoundingClientRect(),top=document.querySelector('[data-testid="shared-top-hud"]').getBoundingClientRect(),dock=document.querySelector('[data-testid="shared-bottom-hud"]').getBoundingClientRect();const clipped=[];const walker=document.createTreeWalker(n,NodeFilter.SHOW_TEXT);let text;while(text=walker.nextNode()){if(!text.textContent.trim())continue;const range=document.createRange();range.selectNodeContents(text);for(const box of range.getClientRects())if(box.width&&box.height&&(box.top<r.top-1||box.bottom>r.bottom+1||box.left<r.left-1||box.right>r.right+1))clipped.push(text.textContent.trim());}return{clipped,text:n.textContent,disabled:n.disabled,visible:r.width>0&&r.height>0,hit:n.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)),top:r.top,bottom:r.bottom,hud:top.bottom,dock:dock.top};});if(!c.visible)continue;assert(c.clipped.length===0,'Clipped control label: '+JSON.stringify(c));assert(c.top>=c.hud-1&&c.bottom<=c.dock+1,'Control behind chrome: '+JSON.stringify(c));assert(c.disabled||c.hit,'Control is covered: '+JSON.stringify(c));}
+ assert.deepEqual(errors,[]);row.passed=true;console.log('PASS',profile,game);
+ }catch(e){row.error=e.message;console.log('FAIL',profile,game,e.message);await page.screenshot({path:`${output}/${profile}-${game}-failure.png`,timeout:5000}).catch(()=>{});}finally{rows.push(row);await writeFile(`${output}/report.json`,JSON.stringify(rows,null,2));await context.close();}}}finally{await browser.close();}}
+console.log(JSON.stringify({total:rows.length,passed:rows.filter(r=>r.passed).length}));if(rows.some(r=>!r.passed))process.exitCode=1;

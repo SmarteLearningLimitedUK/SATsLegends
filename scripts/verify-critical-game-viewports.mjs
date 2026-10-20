@@ -31,6 +31,24 @@ const dismissBriefings = async (page) => {
   }
 };
 
+// The support standard permits normal scrolling; every control must become
+// uncovered by the shared HUD and dock when scrolled into view.
+async function assertControlsReachable(page, name) {
+  for (const selector of ['[data-pvp-location="target"]','[data-pvp-location="source"]:not([tabindex="-1"])','.game-submit-dock-fixed button']) {
+    for (const control of await page.locator(selector).all()) {
+      await control.scrollIntoViewIfNeeded();
+      const result=await control.evaluate(node=>{
+        const r=node.getBoundingClientRect();
+        const top=document.querySelector('[data-testid="shared-top-hud"]').getBoundingClientRect();
+        const dock=document.querySelector('[data-testid="shared-bottom-hud"]').getBoundingClientRect();
+        return {label:node.getAttribute('aria-label')||node.textContent,reachable:node.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)),within:r.top>=top.bottom-1&&r.bottom<=dock.top+1};
+      });
+      assert.ok(result.reachable&&result.within,`${name}: control blocked after normal scrolling: ${JSON.stringify(result)}`);
+    }
+  }
+  await page.locator('.pvp-playfield-layout').evaluate(node=>{node.scrollTop=0;});
+}
+
 const checkLayout = async (page, selectors) => page.evaluate((selectorsToCheck) => {
   const viewport = document.querySelector('.iphone-game-viewport');
   const compactPrompt = document.querySelector('.pvp-prompt-compact');
@@ -116,7 +134,7 @@ for (const viewport of viewports) {
     ['place-value-tier-5', '/game/1/37', 7],
   ]) {
     try {
-      await page.goto(base + route);
+      await page.goto(base + route,{waitUntil:'domcontentloaded'});
       await page.locator('[data-pvp-location="target"]').first().waitFor({ timeout: 15000 });
       await dismissBriefings(page);
       await page.waitForFunction((landscape) => {
@@ -136,9 +154,7 @@ for (const viewport of viewports) {
       assert.ok(layout.sources.length >= expectedTargets, `${name} source count`);
       assert.equal(layout.submit.length, 1, `${name} Submit count`);
       assert.ok(layout.documentScrollWidth <= viewport.width + 1, `${name} horizontal overflow`);
-      for (const [group, entries] of Object.entries({ targets: layout.targets, sources: layout.sources, submit: layout.submit })) {
-        assert.ok(entries.every((entry) => entry.inViewport && entry.reachable), `${name} ${group} outside viewport or blocked: ${JSON.stringify(entries)}`);
-      }
+      await assertControlsReachable(page,name);
       if (viewport.name === 'short-landscape') {
         assert.equal(layout.stageLayout, 'responsive', `${name} should use compact landscape stage`);
         assert.ok(layout.viewportScrollHeight <= layout.viewportClientHeight + 1, `${name} requires vertical scrolling`);
@@ -194,11 +210,11 @@ for (const viewport of desktopViewports) {
     ['place-value-tier-5', '/game/1/37', 7],
   ]) {
     try {
-      await page.goto(base + route);
+      await page.goto(base + route,{waitUntil:'domcontentloaded'});
       await page.locator('[data-pvp-location="target"]').first().waitFor({ timeout: 15000 });
       await dismissBriefings(page);
       await page.waitForFunction(() => document.querySelector('.iphone-game-stage')?.getAttribute('data-stage-layout') === 'responsive');
-      await page.evaluate(() => document.fonts.ready);
+      await page.waitForFunction(() => document.fonts.status === 'loaded',null,{timeout:10000});
       await page.waitForTimeout(350);
       const layout = await checkLayout(page, {
         targets: '[data-pvp-location="target"]',
@@ -224,9 +240,7 @@ for (const viewport of desktopViewports) {
       assert.ok(Math.abs(question.box.left - targets.box.left) <= 1 && Math.abs(targets.box.left - sources.box.left) <= 1, `${name} puzzle panels do not share an alignment`);
       assert.ok(targets.box.top - question.box.bottom <= 48 && sources.box.top - targets.box.bottom <= 48 && submit.box.top - sources.box.bottom <= 48, `${name} puzzle panels are scattered across the screen`);
       assert.ok(enemy.inViewport, `${name} monster is outside the viewport`);
-      for (const [group, entries] of Object.entries({ targets: layout.targets, sources: layout.sources, submit: layout.submit })) {
-        assert.ok(entries.every((entry) => entry.inViewport && entry.reachable), `${name} ${group} outside viewport or blocked: ${JSON.stringify(entries)}`);
-      }
+      await assertControlsReachable(page,name);
       if (name === 'place-value-practice') {
         const source = page.locator('[data-pvp-location="source"]:not([tabindex="-1"])').first();
         const target = page.locator('[data-pvp-location="target"]').first();

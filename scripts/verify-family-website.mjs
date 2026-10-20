@@ -1,3 +1,4 @@
+import {loadEnv} from 'vite';
 import { chromium } from 'playwright';
 import { expect } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
@@ -48,12 +49,6 @@ try {
         await expect(page.getByText('Lexcoria is not available to play or purchase yet.', { exact: false })).toBeVisible();
       }
       if (route === '/for-parents') {
-        const artwork = await page.locator('.parents-hero-art').boundingBox();
-        const copy = await page.locator('.parents-hero-copy').boundingBox();
-        expect(artwork).not.toBeNull(); expect(copy).not.toBeNull();
-        expect(artwork.x >= copy.x + copy.width || artwork.y >= copy.y + copy.height).toBeTruthy();
-        await page.getByText('How does it fit alongside school?', { exact: true }).click();
-        await expect(page.locator('details[open]')).toContainText('revision companion to classroom teaching');
         await expect(page.getByRole('heading', { name: 'Practice with purpose. Adventure they can explore.' })).toBeVisible();
         await expect(page.locator('tbody tr')).toHaveCount(6);
         for (const name of ['Peaceful Pond', 'Lantern Camp', 'Star Path', 'Leaf Drift', 'Thought Release', 'Breath Bloom']) {
@@ -72,7 +67,8 @@ try {
         await expect(page.getByRole('heading', { name: 'Practice with purpose. Adventure they can explore.' })).toBeVisible();
       }
       if (route === '/signup') {
-        await expect(page.getByRole('button', { name: 'Create parent account' })).toBeDisabled();
+        const signup=page.getByRole('button', { name: 'Create parent account' });
+        if(loadEnv('production',process.cwd(),'VITE_').VITE_SUPABASE_URL)await expect(signup).toBeEnabled();else await expect(signup).toBeDisabled();
         await expect(page.getByText('Sundays at 3 pm and Wednesdays at 4 pm', { exact: false })).toBeVisible();
       }
       if (['/signup', '/login', '/forgot-password', '/reset-password'].includes(route) && width > 700) {

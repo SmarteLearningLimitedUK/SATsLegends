@@ -1,5 +1,6 @@
+import { playGameSound } from '../audio/gameAudio';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ChevronLeft, Heart, Timer, Zap } from 'lucide-react';
+import { ChevronLeft, Heart, Timer } from 'lucide-react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
@@ -9,6 +10,9 @@ import { useTrimmedImageSource } from '../utils/trimTransparentImage';
 import { triggerHaptic } from '../haptics';
 import simplifySprintBackground from '../assets/maps/premium/simplify-sprint-ruins.png';
 import './simplify-sprint.css';
+import forestFactorGate from '../assets/game-visions/objects/forest-factor-gate-v1.webp';
+import { getVisionCharacter, getVisionEnvironment, visionPlayerIdentity } from './visionScene';
+import VisionCharacter from '../components/game-ui/VisionCharacter';
 
 interface SimplifySprintGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -203,6 +207,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
         setPhase('crash');
         setMistakes((previous) => previous + 1);
         setCombo(0);
+        playGameSound('impact');
         setFeedback({ tone: 'error', text: 'Wrong gate. ' + (isPractice ? '' : 'One heart lost. ') + '÷' + factor + ' does not divide both ' + currentPair.numerator + ' and ' + currentPair.denominator + ' exactly. Try a common factor.' });
         triggerHaptic('error');
         sessionEvents?.onIncorrectAnswer?.({
@@ -306,7 +311,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
       data-phase={phase}
       data-sprint-paused={sessionState?.paused || false}
       data-tier={tier}
-      style={{ '--ss-background': 'url(' + simplifySprintBackground + ')' } as React.CSSProperties}
+      style={{ '--ss-gate-art': 'url(' + forestFactorGate + ')', '--ss-background': 'url(' + (getVisionEnvironment('simplify_sprint')??simplifySprintBackground) + ')' } as React.CSSProperties}
     >
       <GameplaySceneBackdrop gameType="fraction_match" backgroundOverride={simplifySprintBackground} />
       <div className="ss-scrim" aria-hidden="true" />
@@ -320,18 +325,15 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
       <div className="ss-layout">
         <div className="ss-top">
           <GameQuestionCard
-            title={gameTitle || 'Simplify Sprint'}
+            title={gameTitle || 'Simplify Sprint'} context=""
             className="ss-question"
             style={{ position: 'relative', top: 'auto', left: 'auto', right: 'auto', width: '100%', transform: 'none' }}
           >
-            Reduce <strong>{fractionLabel(currentPair)}</strong>. Pick a gate that divides the top and bottom.
-            <span className="ss-failure-rules">{isPractice ? 'Practice: try again after a wrong gate.' : 'Wrong gate: lose a heart. No hearts or no time: run ends.'}</span>
+            Choose a factor that divides both numbers.
           </GameQuestionCard>
           <div className="ss-stats" aria-label={'Checkpoint ' + roundIndex + ' of ' + totalRounds + ', combo ' + combo + ', ' + score + ' XP'}>
             {!useSharedTopHud && <button type="button" className="ss-back" data-button-skin="none" onClick={onBack} aria-label="Back"><ChevronLeft /></button>}
             <div className="ss-stat"><span>CHECKPOINT</span><strong className="ss-stat-value">{roundIndex} / {totalRounds}</strong></div>
-            <div className="ss-stat"><span><Zap aria-hidden="true" /> COMBO</span><strong className="ss-stat-value">×{combo}</strong></div>
-            <div className="ss-stat"><span>XP</span><strong className="ss-stat-value">{score}</strong></div>
             <div className="ss-stat ss-stat-clock"><span>{isPractice ? <Heart aria-hidden="true" /> : <Timer aria-hidden="true" />}{isPractice ? 'PRACTICE' : 'TIME'}</span><strong className="ss-stat-value">{isPractice ? '∞' : timeLeft + 's'}</strong></div>
             {!useSharedTopHud && <div className="ss-stat"><span>LIVES</span><strong className="ss-stat-value">{lives}</strong></div>}
           </div>
@@ -342,7 +344,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
           <div className="ss-arch" aria-hidden="true" />
           <div className="ss-track" aria-hidden="true" />
           <div className="ss-fraction-display" aria-label={'Current fraction ' + fractionLabel(currentPair)}>
-            <span className="ss-fraction-label">CARRYING</span>
+            <span className="ss-fraction-label">REDUCE</span>
             <span className="ss-fraction" data-sprint-fraction data-numerator={currentPair.numerator} data-denominator={currentPair.denominator}>
               <span>{currentPair.numerator}</span><span className="ss-bar" /><span>{currentPair.denominator}</span>
             </span>
@@ -355,6 +357,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
                 type="button"
                 className="ss-gate"
                 data-sprint-gate={factor}
+                data-selected={selectedLane === index + 1 && phase !== 'idle'}
                 data-button-skin="none"
                 disabled={locked || showPracticeIntro || gcd(currentPair.numerator, currentPair.denominator) === 1}
                 onClick={() => chooseGate(index + 1)}
@@ -362,16 +365,18 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
               >
                 <span className="ss-gate-index">GATE {index + 1}</span>
                 <strong className="ss-gate-factor">÷{factor}</strong>
-                <span className="ss-gate-label">RUN</span>
+                <span className="ss-gate-label">Choose gate</span>
               </button>
             ))}
           </div>
           <div className="ss-runner" data-lane={selectedLane} aria-hidden="true">
             <div className="ss-runner-shadow" />
             <div className="ss-running-sprite">
+              {getVisionCharacter(visionPlayerIdentity(avatarId)) ? <VisionCharacter identity={visionPlayerIdentity(avatarId)} walking decorative /> : <>
               <img className="ss-runner-image ss-runner-body" src={heroImage} alt="" draggable={false} />
               <img className="ss-runner-leg ss-runner-leg-left" src={heroImage} alt="" draggable={false} />
               <img className="ss-runner-leg ss-runner-leg-right" src={heroImage} alt="" draggable={false} />
+              </>}
             </div>
             <span className="ss-dust ss-dust-one" /><span className="ss-dust ss-dust-two" />
           </div>

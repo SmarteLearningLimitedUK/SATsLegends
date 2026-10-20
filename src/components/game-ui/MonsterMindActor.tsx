@@ -1,7 +1,10 @@
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { useReducedMotion } from 'motion/react';
 import { useStaticEnemyFrame } from '../../utils/staticEnemyFrame';
+import { playGameSound, playMonsterSound } from '../../audio/gameAudio';
 import './monster-mind-actor.css';
+import VisionCharacter from './VisionCharacter';
+import { getVisionCharacter, visionIdentity } from '../../games/visionScene';
 
 export type MonsterMindReaction = 'idle' | 'hit' | 'taunt' | 'defeated';
 
@@ -12,6 +15,9 @@ export interface MonsterMindActorProps {
   reactionKey?: number | string;
   className?: string;
   style?: React.CSSProperties;
+  /** Combat owners can supply precisely timed cues themselves. */
+  soundMode?: 'all' | 'voice' | 'off';
+  walking?: boolean;
 }
 
 const EMPTY_FRAME = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/%3E';
@@ -187,6 +193,7 @@ const MonsterMindActor: React.FC<MonsterMindActorProps> = ({
   reactionKey,
   className = '',
   style,
+  soundMode = 'all',
 }) => {
   const { frame, failed } = useStaticEnemyFrame(src);
   const reducedMotion = useReducedMotion();
@@ -197,6 +204,21 @@ const MonsterMindActor: React.FC<MonsterMindActorProps> = ({
   const animatedRig = Boolean(rig) && !reducedMotion && rigFailure !== src;
   const currentRig = animatedRig && preparedRig?.source === src ? preparedRig : null;
   const ready = Boolean(frame) && (!animatedRig || Boolean(currentRig));
+  const lastSound = useRef('');
+  useEffect(() => {
+    if (!ready || soundMode === 'off') return;
+    const node = recoilRef.current;
+    if (!node || document.hidden || document.querySelector('[role="dialog"][aria-modal="true"]') || node.closest('[inert], [data-stage-paused="true"]') || getComputedStyle(node).visibility === 'hidden') return;
+    const signature = `${src}:${reaction}:${reactionKey ?? ''}`;
+    if (lastSound.current === signature) return;
+    const firstAppearance = !lastSound.current.startsWith(`${src}:`);
+    lastSound.current = signature;
+    if (reaction === 'hit' || reaction === 'defeated') {
+      if (soundMode === 'all') playGameSound('impact');
+      playMonsterSound('monster_hurt');
+    } else if (reaction === 'taunt') playMonsterSound('monster_laugh');
+    else if (firstAppearance) playMonsterSound('monster_growl');
+  }, [ready, reaction, reactionKey, soundMode, src]);
   const timing = useMemo(() => {
     let seed = 0;
     for (let index = 0; index < src.length; index += 1) {
@@ -267,4 +289,10 @@ const MonsterMindActor: React.FC<MonsterMindActorProps> = ({
   );
 };
 
-export default memo(MonsterMindActor);
+const ProductionMonsterActor = memo(function ProductionMonsterActor(props: MonsterMindActorProps) {
+  const identity = visionIdentity(props.src);
+  return identity && getVisionCharacter(identity)
+    ? <VisionCharacter identity={identity} walking={props.walking} legacyIdentity={props.src} soundMode={props.soundMode??'all'} alt={props.alt} reaction={props.reaction} reactionKey={props.reactionKey} className={props.className} style={props.style} />
+    : <MonsterMindActor {...props} />;
+});
+export default ProductionMonsterActor;

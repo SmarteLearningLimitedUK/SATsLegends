@@ -1,0 +1,12 @@
+{
+  "kind": "characters",
+  "key": "desert-scholar",
+  "file": "characters/desert-scholar-v2.webp",
+  "source": "C:/Users/samva/.codex/generated_images/01a149fc-7e91-7bd3-86fc-f9095e88fd36/exec-530075c7-2e8d-4ebd-92bd-71c866a96904.png",
+  "prompt": "Create a production animation sprite atlas on genuinely transparent alpha, using the attached Graph Grabber gameplay concept as EXACT character identity. Extract/recreate the leopard scholar sitting on the LEFT: round small leopard ears, golden spotted leopard fur, green eyes, cream muzzle, green scarf and draped dark green and gold scholarly cloak, cream trousers, soft furry paws, gold medallion, curled spotted tail. Seated on invisible support with feet/paws grounded, torso facing three quarters right, one hand pointing to the right at the graph. Match the concept faithfully, do not add pilot goggles, tall fox ears, backpack or boots. Beautiful highly detailed stylized 3D character of the same quality as the concept. Output ONLY 3 columns x 2 rows, 1536x1024, six equally sized SQUARE 512x512 cells. Transparent background, no text, frames or scenery or chair. Consistent scale, exact same camera, identical planted feet baseline at y=488 within every 512px cell, centered x=256. Top row: 1 seated idle pointing right, 2 same body with closed eye blink, 3 slight pointing anticipation. Bottom row: 4 clear friendly pointing gesture, 5 pleased approving smile and nod, 6 thoughtful retry gesture. Keep head and paws aligned to avoid animation jumps; all cells contain entire character, ears, tail, hands and paws with margin. Preserve the leopard's specific identity, not a generic fox explorer.\n",
+  "dimensions": [
+    1536,
+    1024
+  ],
+  "bytes": 546828
+}

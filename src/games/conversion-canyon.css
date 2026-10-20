@@ -1,0 +1,42 @@
+/* Keep the tray and its contents on one continuous mechanical spring. */
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-scale-frame.mechanical-scale {
+ position:relative;aspect-ratio:360/400;width:auto;height:100%;max-height:100%;min-height:0;max-width:100%;margin:0;overflow:visible;container-type:size;
+}
+#root [data-game-set='conversion_canyon'] .mechanical-scale .conversion-scale-art {position:absolute;inset:0;width:100%;height:100%;animation:none!important;transform:none!important;filter:drop-shadow(0 9px 6px #08223655);}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .mechanical-scale .conversion-load-tray {
+ top:auto!important;left:6%!important;width:88%!important;translate:none!important;transform:none!important;
+ display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-end;gap:3px;min-height:28px;max-height:none;max-width:none;
+ padding:0 2px;border:0;background:none;box-shadow:none;overflow:visible;z-index:5;
+}
+#root [data-game-set='conversion_canyon'] .mechanical-scale .conversion-load-tray>span {color:#f3f7ff;background:#0c2d49;padding:4px 9px;border:1px solid #b1d5df;border-radius:6px;font-size:12px!important;line-height:1.2;width:auto;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .mechanical-scale .conversion-load-tray button {
+ flex:0 0 auto;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1px;min-width:44px;min-height:44px;height:44px;padding:2px 5px;
+ background:linear-gradient(100deg,#35677a,#0d3048 65%,#618a96);border:1px solid #e8d5a0;border-bottom:3px solid #8d713e;border-radius:5px 5px 2px 2px;box-shadow:inset 1px 0 #e6f1e64d;color:#fff;
+}
+#root [data-game-set='conversion_canyon'] .mechanical-scale .conversion-load-tray button>span {font-size:10px!important;line-height:11px;}
+#root [data-game-set='conversion_canyon'] .mechanical-scale .conversion-load-tray img {width:18px;height:18px;}
+#root [data-game-set='conversion_canyon'] .mechanical-scale .conversion-load-meter {top:auto;bottom:4%;left:50%;translate:-50% 0;transform:none;min-width:116px;padding:3px 8px;border:2px solid #dfc58c;background:#0b2d45;color:#f1faff;z-index:6;}
+#root [data-game-set='conversion_canyon'] .mechanical-scale .conversion-load-meter span {font-size:10px;line-height:12px;color:#c1dfec;}
+#root [data-game-set='conversion_canyon'] .mechanical-scale .conversion-load-meter strong {display:block;font-size:18px;line-height:23px;}
+#root [data-game-set='conversion_canyon'] .mechanical-scale[data-conversion-broken='true'] .conversion-load-meter {background:#512638;border-color:#e8a791;}
+#root [data-game-set='conversion_canyon'] .conversion-token-grid button[aria-pressed='true'] {outline:2px solid #e3c47f;outline-offset:-2px;}
+.conversion-stack-count {display:none;}
+@media(orientation:landscape) and (max-height:550px) {
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .mechanical-scale .conversion-load-tray button {min-width:23px;min-height:24px;height:24px;padding:1px 2px;}
+ #root [data-game-set='conversion_canyon'] .mechanical-scale .conversion-load-tray button>span {font-size:8px!important;line-height:9px;}
+ #root [data-game-set='conversion_canyon'] .mechanical-scale .conversion-load-tray img {width:11px;height:11px;}
+ #root [data-game-set='conversion_canyon'] .mechanical-scale .conversion-load-tray>span {font-size:9px!important;max-width:100%;padding:2px 4px;}
+ #root [data-game-set='conversion_canyon'] .mechanical-scale .conversion-load-meter {min-width:70px;padding:1px 5px;bottom:3%;border-width:1px;}
+ #root [data-game-set='conversion_canyon'] .mechanical-scale .conversion-load-meter span {display:none;}
+ #root [data-game-set='conversion_canyon'] .mechanical-scale .conversion-load-meter strong {font-size:12px;line-height:17px;}
+}
+
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .mechanical-scale .conversion-load-meter {left:50%!important;transform:none!important;translate:-50% 0!important;top:auto!important;}
+
+@media(orientation:landscape) and (max-height:550px) {
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .mechanical-scale .conversion-load-tray {flex-wrap:nowrap;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .mechanical-scale .conversion-load-tray button {flex:1 1 0;width:0;min-width:0;max-width:34px;height:28px;min-height:28px;gap:0;border-bottom-width:2px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .mechanical-scale .conversion-load-tray button>span {display:none;}
+ #root [data-game-set='conversion_canyon'] .mechanical-scale .conversion-stack-count {display:block;font-size:8px;line-height:9px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .mechanical-scale .conversion-load-tray img {width:11px!important;height:11px!important;}
+}

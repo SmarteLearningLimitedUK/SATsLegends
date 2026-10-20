@@ -10,9 +10,12 @@ import CelebrationSplash from '../CelebrationSplash';
 import successRoundBackground from '../../assets/end of round screen/success screen.jpg';
 import failureRoundBackground from '../../assets/end of round screen/failure screen.jpg';
 import { useDialogFocus } from '../game-ui/useDialogFocus';
+import './level-results.css';
 
 interface LevelResultsModalProps {
   isOpen: boolean;
+  gameKey?: string;
+  islandName?: string;
   result: {
     type: 'victory' | 'gameover';
     title: string;
@@ -120,6 +123,8 @@ const ResultStatTile: React.FC<{ label: string; value: React.ReactNode; tone?: '
 
 const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
   isOpen,
+  gameKey,
+  islandName,
   result,
   onRetry,
   onPractice,
@@ -181,15 +186,18 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[140] flex items-center justify-center overflow-hidden bg-slate-950/88"
+          className={`level-result-overlay fixed inset-0 z-[140] flex items-center justify-center overflow-hidden ${gameKey?'level-result-overlay--themed':'bg-slate-950/88'}`}
+          data-result-game={gameKey}
+          data-result-scene={gameKey==='rounding_rocket'&&isVictory?'orbit':'level'}
+          data-result-outcome={result.type}
         >
           <div className="pointer-events-none absolute inset-0">
-            <img
+            {!gameKey && <img
               src={resultBackground}
               alt=""
               className="h-full w-full object-cover object-center"
               draggable={false}
-            />
+            />}
             <div
               className={`absolute inset-0 ${
                 isVictory || isMockAttempt
@@ -201,7 +209,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
             <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/55 to-transparent" />
           </div>
 
-          {isVictory && !isPractice && !reducedMotion ? (
+          {isVictory && !isPractice && !reducedMotion && !gameKey ? (
             <CelebrationSplash active message={celebrationMessage} theme="victory" sweepDuration={celebrationDuration} />
           ) : null}
 
@@ -211,13 +219,15 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
             aria-modal="true"
             aria-label="Mission results"
             tabIndex={-1}
-            initial={{ y: 24, scale: 0.96, opacity: 0 }}
+            initial={reducedMotion?false:{ y: 24, scale: 0.96, opacity: 0 }}
             animate={{ y: 0, scale: 1, opacity: 1 }}
             exit={{ y: 16, scale: 0.98, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 220, damping: 20 }}
-            className="legend-dialog relative z-10 flex h-[min(92vh,58rem)] w-full max-w-md flex-col overflow-hidden p-4 md:max-w-2xl md:p-6"
+            className="legend-dialog level-result-card relative z-10 flex h-[min(92vh,58rem)] w-full max-w-md flex-col overflow-hidden p-4 md:max-w-2xl md:p-6"
           >
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(56,189,248,0.18),transparent_55%),radial-gradient(circle_at_50%_100%,rgba(251,191,36,0.18),transparent_60%)]" />
+            <div className="level-result-sheen pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(56,189,248,0.18),transparent_55%),radial-gradient(circle_at_50%_100%,rgba(251,191,36,0.18),transparent_60%)]" />
+            <div className={gameKey?'level-result-toolbar':undefined}>
+            {gameKey&&islandName?<p className="level-result-location">{islandName}</p>:null}
             <button
               onClick={onMap}
               className="ui-close-button absolute right-4 top-4 z-20 md:right-5 md:top-5"
@@ -225,18 +235,19 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
             >
               <span aria-hidden="true">×</span>
             </button>
+            </div>
 
-            <div className="relative z-10 flex h-full min-h-0 flex-col gap-4">
-              <div className="flex-1 min-h-0 overflow-y-auto pr-1">
-              <div className="flex flex-col items-center text-center">
-                <span className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] ${isPractice ? 'border-cyan-200/50 bg-cyan-400/20 text-cyan-100' : isVictory || isMockAttempt ? 'border-emerald-200/50 bg-emerald-400/20 text-emerald-100' : 'border-rose-200/45 bg-rose-400/20 text-amber-100'}`}>
+            <div className="level-result-layout relative z-10 flex h-full min-h-0 flex-col gap-4">
+              <div className="level-result-scroll flex-1 min-h-0 overflow-y-auto pr-1">
+              <div className="level-result-heading flex flex-col items-center text-center">
+                <span className={`level-result-status rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] ${isPractice ? 'border-cyan-200/50 bg-cyan-400/20 text-cyan-100' : isVictory || isMockAttempt ? 'border-emerald-200/50 bg-emerald-400/20 text-emerald-100' : 'border-rose-200/45 bg-rose-400/20 text-amber-100'}`}>
                   {isPractice ? (isVictory ? 'Practice Complete' : 'Practice Run Over') : isMockAttempt ? 'Core Run Logged' : isVictory ? 'Level Complete' : 'Try Again'}
                 </span>
                 <h2 className="mt-2 text-2xl font-black text-amber-100 md:text-3xl">{result.title}</h2>
                 <p className="mt-1 text-sm font-semibold text-white/80 md:text-base">{result.subtitle}</p>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+              <div className="level-result-stats grid grid-cols-2 gap-2 md:grid-cols-4">
                 <ResultStatTile label="Accuracy" value={result.accuracyMeasured === false ? 'Not tracked' : formatAccuracy(result.accuracy)} tone="emerald" />
                 <ResultStatTile
                   label="Time Taken"
@@ -263,7 +274,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
                 </div>
                 ) : (
                   <>
-                  <div className="flex flex-col items-center gap-2">
+                  <div className="level-result-medals flex flex-col items-center gap-2">
                     <AnimatedStarDisplay stars={result.stars} play={playStars} />
                     {result.stars === 3 ? (
                       <span className="rounded-full border border-amber-200/60 bg-amber-300/20 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-amber-100">
@@ -272,7 +283,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
                     ) : null}
                   </div>
 
-                  <div className="rounded-[1.2rem] border border-white/12 bg-white/5 p-3 md:p-4">
+                  <div className="level-result-progression rounded-[1.2rem] border border-white/12 bg-white/5 p-3 md:p-4">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold uppercase tracking-[0.18em] text-white/60">XP Earned</span>
                       <span className="text-lg font-black text-cyan-200">+{result.xpGained} XP</span>
@@ -292,12 +303,12 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
                     </div>
                   </div>
 
-                    <BonusBreakdown bonuses={result.bonuses} />
+                    <div className="level-result-bonuses"><BonusBreakdown bonuses={result.bonuses} /></div>
                   </>
                 )}
               </div>
 
-              <div className="mt-auto grid grid-cols-2 gap-2 pt-2">
+              <div className="level-result-actions mt-auto grid grid-cols-2 gap-2 pt-2">
                 {isPractice ? (
                   <>
                     <button

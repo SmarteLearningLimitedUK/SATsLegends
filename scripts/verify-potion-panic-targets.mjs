@@ -24,7 +24,7 @@ for (const [browserName, browserType] of [['chromium', chromium], ['webkit', web
         await page.waitForTimeout(150);
       }
       await page.locator('.potion-recipe-card').waitFor();
-      await page.evaluate(() => document.fonts.ready);
+      await page.waitForFunction(() => document.fonts.status === 'loaded', null, {timeout:10000});
       const view = await page.evaluate(() => {
         const rect = (selector) => document.querySelector(selector)?.getBoundingClientRect().toJSON();
         const copy = document.querySelector('.potion-recipe-copy');
@@ -78,7 +78,7 @@ for (const [browserName, browserType] of [['chromium', chromium], ['webkit', web
       console.log(JSON.stringify({ browser: browserName, name, recipeHeight: Math.round(view.recipe.height), visibleVessel: Math.round(view.vessel.bottom - Math.max(view.vessel.top, view.recipe.bottom)), copyFont: Number(view.copyFont.toFixed(2)), overflow: view.overflow }));
 
       if (name === 'tier5' && browserName === 'chromium') {
-        const brews = Number((await page.locator('.potion-recipe-meta').textContent())?.match(/Brew\s+\d+\/(\d+)/i)?.[1]);
+        const brews = Number((await page.locator('.potion-recipe-meta').textContent())?.match(/Brew\s+\d+\s*(?:of|\/)\s*(\d+)/i)?.[1]);
         assert.ok(brews >= 3 && brews <= 5, 'tier5 must ask for a small, meaningful set of brews');
         let taps = 1;
         for (let round = 1; round <= brews; round += 1) {
@@ -103,7 +103,7 @@ for (const [browserName, browserType] of [['chromium', chromium], ['webkit', web
           await page.waitForTimeout(900);
           console.log(JSON.stringify({ round, ratio, total, metaAfterBrew: await page.locator('.potion-recipe-meta').textContent(), feedback: await page.locator('.potion-feedback-slot').textContent() }));
           if (round < brews) {
-            await page.waitForFunction((nextRound) => document.querySelector('.potion-recipe-meta')?.textContent?.includes(`Brew ${nextRound}/`), round + 1, { timeout: 5000 });
+            await page.waitForFunction((nextRound) => document.querySelector('.potion-recipe-meta')?.textContent?.match(new RegExp(`Brew ${nextRound} (?:of|/)`)), round + 1, { timeout: 5000 });
           } else {
             await page.getByRole('dialog', { name: 'Mission results' }).waitFor({ timeout: 5000 });
             assert.match(await page.getByRole('dialog', { name: 'Mission results' }).textContent(), /Level Complete/i);

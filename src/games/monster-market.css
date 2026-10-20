@@ -140,3 +140,16 @@
   .market-slime,.market-slime i,.market-layout[data-market-state] .market-till,.market-layout[data-market-state] .market-till-header strong { animation:none !important; }
   .market-receipt-stamp { transform:none; }
 }
+
+/* Keep selected coins separate when feedback takes two lines on a short phone. */
+@media (max-width:399px) and (max-height:700px) {
+  #root .market-till-header, #root .market-coin-tray {flex-shrink:0;}
+  #root .market-coin-tray {min-height:calc(max(44px,calc(44px / var(--game-stage-scale,1))) + 10px);}
+  #root .market-coin-buttons {overflow-y:auto;align-content:start;grid-auto-rows:max-content;}
+}
+
+@media(min-width:700px) and (max-height:700px) {
+ #root .market-till {overflow-y:auto;touch-action:pan-y;}
+ #root .market-till-header, #root .market-coin-tray {flex-shrink:0;}
+ #root .market-coin-buttons {flex:0 0 auto;grid-auto-rows:max-content;align-content:start;}
+}

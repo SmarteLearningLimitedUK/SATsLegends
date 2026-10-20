@@ -38,3 +38,20 @@
  #root .rs-vertices small{font-size:calc(max(16px,calc(14px / var(--game-stage-scale,1))) * var(--game-text-scale, 1.2));}
  #root .rs-actions button{font-size:calc(max(16px,calc(14px / var(--game-stage-scale,1))) * var(--game-text-scale, 1.2));min-height:max(50px,calc(44px / var(--game-stage-scale,1)));padding:4px;}
 }
+
+/* Instructions expand naturally; only the full game page scrolls when needed. */
+#root .rs-main { overflow-y:auto; overflow-x:hidden; }
+#root .rs-workspace { grid-template-columns:minmax(0,1.1fr) minmax(320px,.85fr); flex:1 0 auto; align-items:center; }
+#root .rs-controls { min-width:0; max-height:none; overflow:visible; }
+#root .rs-vertices { grid-template-columns:repeat(3,minmax(0,1fr)); }
+#root .rs-vertices button { min-width:0; padding:5px 3px; white-space:normal; overflow-wrap:anywhere; line-height:1.2; }
+#root .rs-grid-stage { height:auto; min-height:300px; }
+#root .rs-grid { width:100%; height:auto; max-height:none; }
+#root .rs-actions { display:grid; grid-template-columns:1fr 1fr 1.6fr; gap:8px; }
+#root .rs-actions button { min-width:0; white-space:normal; }
+@media(max-width:760px) {
+  #root .rs-workspace { display:flex; flex-direction:column; flex:none; }
+  #root .rs-grid-stage { flex:none; width:100%; min-height:0; }
+  #root .rs-grid { width:min(100%,400px); height:auto; }
+  #root .rs-controls { flex:none; width:100%; }
+}

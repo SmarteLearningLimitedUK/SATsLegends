@@ -61,8 +61,7 @@ try {
       if (url.pathname.endsWith('/token')) return reply({ user, access_token: token, refresh_token: 'fixture_refresh', expires_in: 3600, token_type: 'bearer' });
       if (url.pathname.endsWith('/user')) return reply(user);
       if (url.pathname.endsWith('/child_profiles')) return reply([{ id: childId, parent_id: parentId, nickname: 'EnglishLegend' }]);
-      if (url.pathname.endsWith('/subscriptions')) return reply([]);
-      if (url.pathname.endsWith('/rpc/account_subscriptions')) return reply([]);
+      if ((url.pathname.endsWith('/subscriptions') || url.pathname.endsWith('/rpc/account_subscriptions'))) return reply([]);
       if (url.pathname.endsWith('/complimentary_access')) return reply(entitled ? [{ product_code: 'english', valid_until: new Date(Date.now() + 86400000).toISOString(), revoked_at: null }] : []);
       if (url.pathname.endsWith('/parent_settings')) return reply({ report_emails: false, next_report_at: null });
       if (url.pathname.endsWith('/rpc/is_staff')) return reply(false);
@@ -90,7 +89,7 @@ try {
     await page.getByRole('link', { name: 'Play Lexcoria', exact: true }).click();
     await page.waitForURL(`${base}/english/play/`, { waitUntil: 'networkidle' });
     await expect.poll(() => verifiedEnglish).toBeGreaterThan(0);
-    await page.locator('.english-access-gate').waitFor({ state: 'hidden', timeout: 20000 });
+    try { await page.locator('.english-access-gate').waitFor({ state: 'hidden', timeout: 20000 }); } catch (error) { console.error('Lexcoria entry state:', await page.locator('body').innerText(), errors); throw error; }
     assert.ok(verifiedEnglish > 0, 'English game must verify access with the server');
     assert.equal(await page.evaluate(id => sessionStorage.getItem(`legends-child:${id}`), parentId), childId);
     await page.goto(`${base}/english`);

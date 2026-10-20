@@ -1,7 +1,16 @@
 import React, {useId} from 'react';
+import {getVisionObject} from './visionScene';
 interface Props {mode:string;scanning:boolean;repaired:boolean;fault:boolean;paused:boolean;}
 export default function MeanPowerEngine({mode,scanning,repaired,fault,paused}:Props){
  const id=useId().replace(/:/g,'');
+ const artwork=getVisionObject('mean-engine');
+ if(artwork) return <svg className="mean-power-engine" viewBox="0 0 400 500" aria-hidden="true" data-scanning={scanning} data-repaired={repaired} data-fault={fault} data-paused={paused}>
+  <image href={artwork} width="400" height="500" preserveAspectRatio="none"/>
+  <text x="200" y="172" textAnchor="middle" fill="#fff2c5" fontSize="23" fontWeight="750" fontFamily="var(--font-fredoka)">{mode.toUpperCase()}</text>
+  <rect className="mean-scan-beam" x="106" y="195" width="185" height="3" rx="2" fill="#afffe5"/>
+  <circle cx="200" cy="108" r="29" fill={fault?'#ff8177':'#6bffe4'} opacity=".24" className="mean-core-light"/>
+  {[0,1,2,3,4].map(i=><rect key={i} className="mean-status-light" x={139+i*26} y="341" width="13" height="8" rx="3" fill={fault?'#fc9290':repaired?'#baffdb':'#83f6ff'} style={{animationDelay:`${i*.3}s`}}/>)}
+ </svg>;
  return <svg className="mean-power-engine" viewBox="0 0 400 500" aria-hidden="true" data-scanning={scanning} data-repaired={repaired} data-fault={fault} data-paused={paused}>
   <defs>
    <linearGradient id={`${id}-metal`} x2="1" y2="1"><stop stopColor="#d2e7e9"/><stop offset=".3" stopColor="#417d92"/><stop offset=".7" stopColor="#1c405c"/><stop offset="1" stopColor="#6498a7"/></linearGradient>

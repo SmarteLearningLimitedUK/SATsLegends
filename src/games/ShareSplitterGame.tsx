@@ -9,15 +9,16 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from '../components/game-ui/GameUiKit';
-import shareSplitterBackground from '../assets/maps/premium/share-splitter-party-wide.webp';
+import shareSplitterBackground from '../assets/share-splitter/party-background-v1.webp';
 import shareSplitterPlate from '../assets/maps/backgroundsforgames/platesharesplit.png';
-import cakeSliceAsset from '../assets/cakeslice.png';
+import cakeSliceAsset from '../assets/share-splitter/strawberry-cake-v1.webp';
 import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import CelebrationSplash from '../components/CelebrationSplash';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { useTrimmedImageSource } from '../utils/trimTransparentImage';
 import './share-splitter.css';
 import SharePartyTable from './SharePartyTable';
+import SceneEnvironment from '../components/SceneEnvironment';
 
 interface ShareSplitterGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -60,10 +61,10 @@ const ROUNDS_TO_WIN = 5;
 const BASE_XP_PER_ROUND = 120;
 const CAKE_SLICE_ASSET = cakeSliceAsset;
 const DRAG_SLICE_SIZE = 48;
-const SHARE_SPLITTER_PLATE_ICON_SCALE = 1.06;
+const SHARE_SPLITTER_PLATE_ICON_SCALE = 1;
 const PARTY_PLATE_POSITIONS = [
-  { x: .17, y: .38 }, { x: .335, y: .29 }, { x: .5, y: .26 },
-  { x: .665, y: .29 }, { x: .83, y: .38 },
+  { x: .12, y: .43 }, { x: .31, y: .35 }, { x: .5, y: .32 },
+  { x: .69, y: .35 }, { x: .88, y: .43 },
 ];
 
 const RATIO_PATTERNS_BY_COUNT: Record<number, number[][]> = {
@@ -297,30 +298,30 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const hasMoves = moveHistory.length > 0;
   const allSlicesUsed = remainingSlices === 0;
   const allCorrect = plateViews.every((plate) => plate.isCorrect);
-  const isWideShareLayout = viewportRect.width >= 1100;
-  const isShortShareLayout = viewportRect.height < 500;
-  const sideRailWidth = 0;
-  const availableWidth = Math.max(1, viewportRect.width - sideRailWidth - 24);
-  const tableWidth = Math.min(1100, availableWidth);
-  const guestClearance = Math.min(190, tableWidth * .18) * .68 + 18;
-  const roomTop = questionDockBottom + guestClearance;
-  const roomBottom = viewportRect.height - 125;
-  const tableHeight = Math.min(tableWidth * (isWideShareLayout ? .48 : .75), Math.max(140, roomBottom - roomTop));
-  const tableLeft = sideRailWidth + (viewportRect.width - sideRailWidth - tableWidth) / 2;
+  const compactLandscape = viewportRect.width > viewportRect.height && viewportRect.height < 500;
+  const isWideShareLayout = viewportRect.width >= 700 || compactLandscape;
+  const narrowTable = !isWideShareLayout;
+  const tableWidth = Math.min(1440, Math.max(1, viewportRect.width - (narrowTable ? 8 : 24)));
+  const actionClearance = compactLandscape ? 52 : 144;
+  const guestRoom = compactLandscape ? Math.max(50,(viewportRect.height-questionDockBottom-actionClearance)*.60) : Math.max(90, (viewportRect.height - questionDockBottom - actionClearance - 190) / .82);
+  const guestHeight = Math.min(270, tableWidth * (narrowTable ? .27 : .22), guestRoom);
+  const roomTop = questionDockBottom + guestHeight * (compactLandscape ? .65 : .82) + (compactLandscape ? 2 : narrowTable ? 12 : 10);
+  const roomBottom = viewportRect.height - actionClearance;
+  const tableHeight = Math.min(tableWidth * (narrowTable ? .88 : .40), Math.max(compactLandscape ? 80 : 180, roomBottom - roomTop));
+  const tableLeft = (viewportRect.width - tableWidth) / 2;
   const tableTop = Math.max(roomTop, roomBottom - tableHeight);
   const tableRect = { left: tableLeft, top: tableTop, width: tableWidth, height: tableHeight };
-  const plateSizePx = Math.min(120, Math.max(44, Math.min(tableWidth * .125, tableHeight * .29)));
-  const cakeSourceSize = Math.min(110, Math.max(58, tableHeight * .25));
-  const cakeSourceCenter = { x: tableLeft + tableWidth * .5, y: tableTop + tableHeight * .64 };
-  const platePositions = challenge.plateCount === 5 ? PARTY_PLATE_POSITIONS
-    : Array.from({ length: challenge.plateCount }, (_, i) => ({
-      x: .23 + i * .54 / Math.max(1, challenge.plateCount - 1), y: .32,
-    }));
-  const promptText = isPractice
-    ? `Target ratio: ${challenge.ratios.join(':')}`
-    : isShortShareLayout
-    ? `Share ${challenge.totalSlices} slices in the ratio ${challenge.ratios.join(':')}.`
-    : `There are ${challenge.totalSlices} slices of brainpower cake.\nThe Monster Mind demands it is shared in a ratio of ${challenge.ratios.join(':')}.`;
+  const plateSizePx = Math.min(230, Math.max(64, Math.min(tableWidth * (narrowTable ? .25 : .165), tableHeight * (narrowTable ? .37 : .58))));
+  const platePositions = narrowTable
+    ? [{ x: .2, y: .27 }, { x: .5, y: .22 }, { x: .8, y: .27 }, { x: .32, y: .55 }, { x: .68, y: .55 }]
+    : PARTY_PLATE_POSITIONS;
+  const cakeSourceCenter = { x: tableLeft + tableWidth * .5, y: tableTop + tableHeight * (narrowTable ? .82 : .78) };
+  const cakeSourceWidth = Math.min(380, tableWidth * (narrowTable ? .66 : .32));
+  const cakeSourceHeight = compactLandscape ? 44 : Math.min(100, Math.max(62, tableHeight * .24));
+  const equalShares = challenge.ratios.every(value => value === challenge.ratios[0]);
+  const promptText = equalShares
+    ? `Share ${challenge.totalSlices} cakes equally between ${challenge.plateCount} guests.`
+    : `Share ${challenge.totalSlices} cakes between ${challenge.plateCount} guests.`;
 
   const loadNextChallenge = useCallback((solvedCount: number) => {
     dragCleanupRef.current?.();
@@ -340,17 +341,15 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setFeedbackTone('neutral');
   }, [levelId]);
 
-  const getPlateSlicePlacement = useCallback((index: number) => {
-    // Stack slices in a compact spiral so they read as sitting on the plate.
-    const angleDegrees = index * 137.50776405;
-    const angle = (angleDegrees * Math.PI) / 180;
-    const radius = Math.min(0.18, 0.04 + (index * 0.022));
-    const stretchX = index % 2 === 0 ? 1 : 0.9;
-    const stretchY = index % 3 === 0 ? 0.82 : 0.72;
-
+  const getPlateSlicePlacement = useCallback((index: number, count: number): SlicePlacement => {
+    // Cakes occupy a readable grid on the ceramic surface, never a hidden stack.
+    const columns = count <= 2 ? count : count <= 6 ? 3 : 4;
+    const rows = Math.ceil(count / columns);
+    const row = Math.floor(index / columns);
+    const inRow = Math.min(columns, count - row * columns);
     return {
-      x: Math.cos(angle) * radius * stretchX,
-      y: Math.sin(angle) * radius * stretchY,
+      x: (index % columns - (inRow - 1) / 2) * (count <= 2 ? .32 : .21),
+      y: (row - (rows - 1) / 2) * .19 - .03,
     };
   }, []);
 
@@ -405,7 +404,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
         if (Math.hypot(move.clientX - origin.x, move.clientY - origin.y) < 6) return;
         revealed = true;
         setSourceSelected(false);
-        setFeedback('Drop the slice onto a plate.');
+        setFeedback('Drop the cake onto a plate.');
         setFeedbackTone('neutral');
       }
       const stage = stageRef.current;
@@ -468,7 +467,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     if (locked || remainingSlicesRef.current <= 0) return;
     if (event.detail > 0 && Date.now() < ignoreNativeClickUntilRef.current) return;
     setSourceSelected(true);
-    setFeedback('Choose a plate to add one slice. Keep choosing plates to share the rest.');
+    setFeedback('Choose a plate to add a cake. Keep choosing plates to share the rest.');
     setFeedbackTone('neutral');
     if (event.detail === 0) plateRefs.current[0]?.focus();
   };
@@ -477,7 +476,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     if (locked || remainingSlicesRef.current <= 0) return;
     if (event.detail > 0 && Date.now() < ignoreNativeClickUntilRef.current) return;
     if (!sourceSelected) {
-      setFeedback('Choose the cake first, then choose a plate. You can also drag a slice.');
+      setFeedback('Choose the tray first, then a plate. You can also drag a cake.');
       setFeedbackTone('neutral');
       cakeSourceButtonRef.current?.focus();
       return;
@@ -515,7 +514,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
 
     if (!allSlicesUsed || !allCorrect) {
       emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { reason: 'sharing_ratio', metadata: { challengeId: challenge.id } });
-      setFeedback(!allSlicesUsed ? 'Share every slice, then check the ratio again.' : 'The parts need a different split. Reset and try again.');
+      setFeedback(!allSlicesUsed ? 'Share every cake, then check the ratio again.' : 'The parts need a different split. Reset and try again.');
       setFeedbackTone('bad');
       return;
     }
@@ -556,16 +555,13 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   return (
     <GameUiShell
       className={`share-splitter-shell ${sessionState?.paused ? 'share-party-paused' : ''}`}
-      backgroundImage={shareSplitterBackground}
-      backgroundOpacity={1}
-      backgroundPosition="center"
-      backgroundFit="cover"
       overlayDisabled
     >
+      <div className="share-party-backdrop" aria-hidden="true"><SceneEnvironment src={shareSplitterBackground} fit="cover" /></div>
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Share Splitter"
-        body="Share the cake to match each plate’s ratio. Drag a slice to a plate, or choose the cake and then choose a plate. Keep the parts in the correct proportion."
+        body="Share the cakes between the guests. Drag a cake to a plate, or choose the tray and then a plate. Match the ratio from left to right."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
@@ -578,22 +574,23 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       >
         <div ref={questionCardRef} className="share-splitter-mission">
           <GameQuestionCard
-            title="Target Ratio"
-            subtitle={isShortShareLayout ? 'Choose cake, then a plate.' : 'Choose the cake, then a plate. Or drag slices onto the plates.'}
+            title="Share Splitter"
+            context=""
             style={{ position: 'relative', top: 0, transform: 'none', width: '100%', padding: '10px 12px' }}
           >
-            {promptText}
+            <span className="share-party-prompt">{promptText}</span>
+            <span className="share-party-ratio" data-share-ratio-prompt>Ratio {challenge.ratios.join(' : ')}</span>
           </GameQuestionCard>
         </div>
 
-        <SharePartyTable rect={tableRect} positions={platePositions} counts={plates.map(p => p.length)} celebrating={locked} />
+        <SharePartyTable rect={tableRect} positions={platePositions} counts={plates.map(p => p.length)} celebrating={locked} guestHeight={guestHeight} />
         <div className="share-splitter-pieces" data-share-pieces>
           <CelebrationSplash active={showCelebrationSplash && !reducedMotion} message="Party Time!" theme="party" />
           {plateViews.map((plate, index) => {
             const position = platePositions[index] || { x: 0, y: 0 };
             const center = { x: tableLeft + position.x * tableWidth, y: tableTop + position.y * tableHeight };
             const sliceCount = plates[index].length;
-            const sliceBaseSizePx = Math.max(22, plateSizePx * (sliceCount <= 3 ? .24 : sliceCount <= 6 ? .2 : .16));
+            const sliceBaseSizePx = Math.max(16, plateSizePx * (sliceCount <= 2 ? .38 : sliceCount <= 6 ? .27 : .215));
             return (
               <button
                 key={plate.id}
@@ -607,9 +604,9 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                 data-selected={sourceSelected || hoverPlateIndex === index}
                 onClick={(event) => choosePlate(index, event)}
                 disabled={locked || remainingSlices <= 0}
-                aria-label={`Plate ${index + 1}, ${plate.assignedRatioValue} ${plate.assignedRatioValue === 1 ? 'part' : 'parts'}, ${sliceCount} slices`}
+                aria-label={`Plate ${index + 1}, ${plate.assignedRatioValue} ${plate.assignedRatioValue === 1 ? 'part' : 'parts'}, ${sliceCount} cakes`}
                 className="share-splitter-plate"
-                style={{ left: center.x, top: center.y, width: plateSizePx, height: plateSizePx }}
+                style={{ left: center.x, top: center.y, width: plateSizePx, height: plateSizePx * .76 }}
               >
                 <img
                   src={shareSplitterPlate}
@@ -619,11 +616,11 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                   style={{ transform: `scale(${SHARE_SPLITTER_PLATE_ICON_SCALE})` }}
                 />
                 {plates[index].map((sliceId, sliceIndex) => {
-                  const placement = getPlateSlicePlacement(sliceIndex);
+                  const placement = getPlateSlicePlacement(sliceIndex, sliceCount);
                   return (
                     <motion.img
                       initial={reducedMotion ? false : { opacity: 0, scale: .4, x: placement.x * plateSizePx - sliceBaseSizePx / 2, y: placement.y * plateSizePx - sliceBaseSizePx / 2 - 20 }}
-                      animate={{ opacity: 1, scale: 1, x: placement.x * plateSizePx - sliceBaseSizePx / 2, y: placement.y * plateSizePx - sliceBaseSizePx / 2, rotate: sliceIndex % 2 ? 5 : -5 }}
+                      animate={{ opacity: 1, scale: 1, x: placement.x * plateSizePx - sliceBaseSizePx / 2, y: placement.y * plateSizePx - sliceBaseSizePx / 2, rotate: 0 }}
                       transition={reducedMotion ? { duration: 0 } : { type: 'spring', stiffness: 380, damping: 22 }}
                       key={sliceId}
                       src={trimmedCakeSliceAsset}
@@ -637,8 +634,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
                     />
                   );
                 })}
-                <span className="share-splitter-plate-ratio">{plate.assignedRatioValue} {plate.assignedRatioValue === 1 ? 'part' : 'parts'}</span>
-                <span className="share-splitter-plate-count">{sliceCount}</span>
+                <span className="share-splitter-plate-count" data-filled={sliceCount > 0}>{sliceCount}</span>
               </button>
             );
           })}
@@ -653,16 +649,18 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
             onClick={selectCakeSource}
             disabled={locked || remainingSlices <= 0}
             className="share-splitter-source"
-            style={{ left: cakeSourceCenter.x, top: cakeSourceCenter.y, width: cakeSourceSize, height: cakeSourceSize }}
-            aria-label={remainingSlices > 0 ? 'Choose the cake, then choose a plate, or drag a slice' : 'No cake slices left'}
+            style={{ left: cakeSourceCenter.x, top: cakeSourceCenter.y, width: cakeSourceWidth, height: cakeSourceHeight }}
+            aria-label={remainingSlices > 0 ? 'Choose the cake tray, then a plate, or drag a cake' : 'No cakes left'}
             aria-pressed={sourceSelected}
           >
-            <img src={trimmedCakeSliceAsset} alt="" draggable={false} />
-            <span>{remainingSlices} slices</span>
+            <span className="share-party-tray-label">Cakes left</span>
+            <strong className="share-party-tray-count" aria-live="polite">{remainingSlices}</strong>
+            {remainingSlices > 0 ? <img src={trimmedCakeSliceAsset} alt="" draggable={false} /> : null}
           </button>
         </div>
 
         <div className="share-splitter-actions answer-choice-surface" data-share-actions>
+          <p className="share-party-instruction">{sourceSelected ? 'Choose a plate to serve a cake' : 'Drag a cake, or choose the tray then a plate'}</p>
           <div className="share-splitter-feedback" data-tone={feedbackTone} role="status" aria-live="polite">
             {feedback}
           </div>

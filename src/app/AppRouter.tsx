@@ -15,14 +15,14 @@ import { WELLBEING_ACTIVITIES, WELLBEING_ACTIVITY_BY_ISLAND, WELLBEING_BY_ID } f
 import { WellbeingActivityId } from '../wellbeing/types';
 import GameplayContentViewport from '../components/GameplayContentViewport';
 import { GAME_SCENE_META } from '../gameSceneMeta';
-import GameLoadBoundary, { GameLoadFallback } from '../components/GameLoadBoundary';
+import GameLoadBoundary, { GameLoadFallback, GameLoadingFallback } from '../components/GameLoadBoundary';
 import { getMiniGame, MiniGameRegistryKey } from '../games';
 import { buildAngleQuestions } from '../games/angleArena/questions';
 import { isBossEncounterGameType } from '../games/bossEncounterTypes';
 import { GameScreen, IslandData, LevelData, PlayerData } from '../types';
 import { getLevelGameTitle } from '../utils/gameNames';
 import { getGameDifficulty } from '../systems/content/gameDifficulty';
-import splashPoster from '../assets/casual_ui/splashrep1.webp';
+import splashPoster from '../assets/website/hero-action-wide.webp';
 import SplashLogo from '../website/SplashLogo';
 import '../design/desktop-welcome.css';
 import { LEVEL_TIMERS_DISABLED } from './testingFlags';
@@ -145,13 +145,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         }}
       >
         <Suspense
-          fallback={(
-            <div className="flex h-full w-full items-center justify-center rounded-[2rem] border border-cyan-100/30 bg-[linear-gradient(180deg,rgba(10,31,83,0.72),rgba(6,19,56,0.86))] text-center shadow-[0_18px_36px_rgba(2,6,23,0.35)]">
-              <div className="px-6 py-8 text-sm font-black uppercase tracking-[0.2em] text-cyan-100/80">
-                Loading game…
-              </div>
-            </div>
-          )}
+          fallback={<GameLoadingFallback />}
         >
           {getMiniGame(key).render(props)}
         </Suspense>
@@ -428,10 +422,11 @@ export const AppRouter: React.FC<AppRouterProps> = ({
               src={splashPoster}
               alt="SATs Legends splash screen"
               className="absolute inset-0 h-full w-full object-cover"
-              style={{ objectPosition: '50% 0%' }}
+              style={{ objectPosition: '80% 50%' }}
               draggable={false}
             />
 
+            <div className="legend-welcome-mobile-logo"><SplashLogo /></div>
             <div className="legend-welcome-action absolute bottom-[7.5%] left-1/2 w-56 -translate-x-1/2 sm:w-64">
               <p>{player.playerName.trim() ? `Welcome back, ${player.playerName}.` : 'Big adventures. Brilliant minds.'}</p>
               <button

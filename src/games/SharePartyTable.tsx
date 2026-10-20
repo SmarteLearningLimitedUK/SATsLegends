@@ -1,41 +1,48 @@
-import React from 'react';
-import MonsterMindActor from '../components/game-ui/MonsterMindActor';
-import { COHESIVE_ENEMIES } from '../assets/enemies/cohesive';
+import React, { useId, type CSSProperties } from 'react';
+import seatedGuests from '../assets/share-splitter/party-guests-v2.webp';
+import table from '../assets/share-splitter/banquet-table-v1.webp';
+import { useTrimmedImageSource } from '../utils/trimTransparentImage';
+import { getVisionObject } from './visionScene';
 
-const guests = [COHESIVE_ENEMIES.goblin, COHESIVE_ENEMIES.jelly, COHESIVE_ENEMIES.cyclopsSlime, COHESIVE_ENEMIES.zombie, COHESIVE_ENEMIES.rhino];
 interface Props {
   rect: { left: number; top: number; width: number; height: number };
-  positions: Array<{x: number; y: number}>;
+  positions: Array<{ x: number; y: number }>;
   counts: number[];
   celebrating: boolean;
+  guestHeight: number;
 }
-/** The table and serving targets share one coordinate system, independent of scenery cropping. */
-export default function SharePartyTable({rect, positions, counts, celebrating}: Props) {
-  const guestHeight = Math.min(190, rect.width * .18);
+
+// The existing banquet atlas contains five distinct seated monsters, not the player cast.
+// Atlas silhouettes have unequal widths; explicit cells prevent neighbours leaking in.
+const GUEST_CELLS = [[0, 212], [212, 400], [400, 594], [594, 775], [775, 1000]] as const;
+const PARTY_ENEMIES = ['goblin', 'crystal-jelly', 'horned-slime', 'purple-monster', 'rhino'] as const;
+
+/** Artwork layers share the interactive plates' coordinates at every viewport. */
+export default function SharePartyTable({ rect, positions, counts, celebrating, guestHeight }: Props) {
+  const clipPrefix = useId().replace(/:/g, '');
+  const tableSource = useTrimmedImageSource(getVisionObject('banquet-table')??table);
   return <div className="share-party-scene" aria-hidden="true">
-    {positions.map((point, i) => <div key={i} className="share-party-guest" data-served={counts[i] > 0} style={{left: rect.left + point.x * rect.width, top: rect.top - guestHeight * .68, width: guestHeight * .72, height: guestHeight}}>
-      <svg className="share-party-bench" viewBox="0 0 100 100"><path d="M12 20H88V62H12Z" fill="#85502c" stroke="#422d25" strokeWidth="5"/><path d="M10 68H90V80H10Z M18 80V98 M82 80V98" fill="#ba7b3c" stroke="#422d25" strokeWidth="6"/><path d="M20 32H80M20 45H80" stroke="#d7a665" strokeWidth="3"/></svg>
-      <MonsterMindActor src={guests[i]} alt="" reaction={celebrating ? 'taunt' : 'idle'} reactionKey={counts[i]} />
-      {counts[i] > 0 && <span key={counts[i]} className="share-party-thanks">{celebrating ? 'Party time!' : ['Cake? Yes please!', 'Excellent taste.', 'More cake magic!', 'Brilliant!', 'Nom.'][i]}</span>}
-    </div>)}
-    <svg data-share-table className="share-party-table" style={rect} viewBox="0 0 1000 500" preserveAspectRatio="none">
-      <defs>
-        <linearGradient id="party-wood" x2="0" y2="1"><stop stopColor="#ebbc72"/><stop offset=".5" stopColor="#bc7638"/><stop offset="1" stopColor="#ecb567"/></linearGradient>
-        <linearGradient id="party-rim" x2="0" y2="1"><stop stopColor="#96532b"/><stop offset="1" stopColor="#4c2f2d"/></linearGradient>
-        <clipPath id="party-top-clip"><ellipse cx="500" cy="225" rx="474" ry="210"/></clipPath>
-      </defs>
-      <ellipse cx="500" cy="467" rx="430" ry="28" fill="#092832" opacity=".4"/>
-      <path d="M145 340 L135 479 Q168 497 200 478 L228 340 M772 340 L800 478 Q832 497 865 479 L855 340" fill="url(#party-rim)" stroke="#382b30" strokeWidth="8"/>
-      <ellipse cx="500" cy="252" rx="474" ry="210" fill="url(#party-rim)" stroke="#382b30" strokeWidth="9"/>
-      <ellipse data-share-tabletop cx="500" cy="225" rx="474" ry="210" fill="url(#party-wood)" stroke="#573528" strokeWidth="8"/>
-      <g clipPath="url(#party-top-clip)" fill="none" stroke="#734522">
-        {[95,185,275,365].map(y => <path key={y} d={`M0 ${y} Q500 ${y+18} 1000 ${y}`} strokeWidth="5" opacity=".45"/>)}
-        {[120,300,650,790].map((x,i)=><path key={x} d={`M${x} ${100+i*55} q70 -18 130 0 q-70 16 -130 0 m15 -7 q50 -9 100 0`} strokeWidth="3" opacity=".2"/>)}
-      </g>
-      <ellipse cx="500" cy="225" rx="462" ry="199" fill="none" stroke="#ffdfa2" strokeWidth="4" opacity=".6"/>
-      <path d="M32 350 Q250 405 500 414 Q750 405 968 350" fill="none" stroke="#ffe69b" strokeWidth="4"/>
-      {[120,280,440,600,760,920].map((x,i)=><path key={x} d={`M${x} ${386-Math.abs(x-500)*.085} l28 5 -15 32 z`} fill={['#27c9bd','#8f6fde','#ffbf4a'][i%3]} stroke="#49384c" strokeWidth="3"/>)}
-    </svg>
-    <div className="share-party-sparks">{[12,26,44,68,85].map((x,i)=><i key={x} style={{left:`${x}%`,animationDelay:`${i*1.7}s`}}/>)}</div>
+    {positions.map((point, index) => {
+      const [cropLeft, cropRight] = GUEST_CELLS[index];
+      const x = rect.width < 600 ? .1 + index * .2 : point.x;
+      return <div key={index} className="share-party-guest" data-party-enemy={PARTY_ENEMIES[index]} data-party-posture="seated" data-served={counts[index] > 0}
+        style={{ left: rect.left + x * rect.width, top: rect.top - guestHeight * .68 + rect.height * .035, width: guestHeight * .66, height: guestHeight, '--guest-delay': `${index * -.65}s` } as CSSProperties}>
+        <svg className="share-party-chair" viewBox="0 0 100 150">
+          <path d="M16 8Q50 -4 84 8V93H16Z" fill="#63412b" stroke="#d3a05d" strokeWidth="4" />
+          <path d="M25 17V85M50 14V85M75 17V85" stroke="#a57340" strokeWidth="5" />
+          <path d="M12 90H88V104H12ZM23 104V148M77 104V148" fill="#946031" stroke="#452e24" strokeWidth="5" />
+        </svg>
+        <div className="share-party-guest-idle">
+          <div key={`${counts[index]}-${celebrating}`} className="share-party-guest-reaction" data-celebrating={celebrating} data-has-cake={counts[index] > 0}>
+            <svg className="share-party-portrait" viewBox={`${cropLeft} 45 ${cropRight - cropLeft} 265`}>
+              <defs><clipPath id={`${clipPrefix}-${index}`}><rect x={cropLeft} y="45" width={cropRight - cropLeft} height="265" /></clipPath></defs>
+              <image href={seatedGuests} width="1000" height="333.333" clipPath={`url(#${clipPrefix}-${index})`} />
+            </svg>
+          </div>
+        </div>
+      </div>;
+    })}
+    <img src={tableSource} alt="" draggable={false} data-share-table data-share-tabletop className="share-party-table" style={rect} />
+    <div className="share-party-sparks">{[6, 18, 82, 94].map((x, index) => <i key={x} style={{ left: `${x}%`, animationDelay: `${index * 1.7}s` }} />)}</div>
   </div>;
 }

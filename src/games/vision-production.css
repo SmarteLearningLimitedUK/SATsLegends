@@ -1,0 +1,50 @@
+/* Production layers from the approved catalogue: exact maths remains DOM/SVG. */
+.vision-companion { display:block; position:absolute; pointer-events:none; }
+.vision-companion--stage { z-index:5; left:1%; bottom:16%; width:clamp(150px,21vw,290px); height:clamp(180px,34vh,330px); }
+.vision-companion--question { display:none; }
+[data-vision-game='graph_grabber'] .vision-companion--stage { width:190px; left:1%; }
+[data-vision-game='line_graph_lab'] .vision-companion--stage { width:170px; left:0; }
+[data-vision-game='formula_forge'] .vision-companion--stage { width:135px; left:0; }
+[data-vision-game='scale_builder'] .vision-companion--stage { width:135px; left:0; }
+[data-vision-game='change_counter'] .vision-companion--stage { width:190px; left:1%; bottom:7%; }
+[data-vision-game='problem_pyramid'] .vision-companion--stage { width:230px; left:3%; bottom:12%; }
+:is([data-vision-game='crystal_core'],[data-vision-game='mirror_gate'],[data-vision-game='matrix_match']) .vision-companion--stage { width:240px; left:3%; bottom:31%; height:270px; }
+[data-vision-game='potion_panic'] .vision-companion--stage { width:190px; left:26%; }
+[data-vision-game='data_detective'] .vision-companion--stage { display:none; }
+.pvp-enemy-ground { bottom:4%!important; }
+#root .pp-game .pp-core-readout { top:47.6%; }
+#root [data-vision-game='percent_power'] .pp-reactor-machine { aspect-ratio:4/5; width:auto; max-width:100%; }
+#root [data-vision-game='potion_panic'] .potion-liquid-surface { top:20%!important; left:15%!important; width:70%!important; height:12%!important; }
+#root [data-vision-game='potion_panic'] .potion-vessel { translate:0 5%; }
+.zombies-player-avatar:has(.vision-character) { animation:none!important; }
+.ss-running-sprite:has(.vision-character) { position:absolute; inset:0; }
+#root [data-vision-game] .game-question-card { border-radius:14px; }
+#root [data-vision-game] img[data-vision-environment] { object-fit:cover!important; }
+#root [data-vision-game='percent_power'] { font-family:var(--font-fredoka); }
+#root [data-vision-game] .game-question-card-title-strip { display:none!important; }
+#root [data-vision-game] .game-question-card-copy { text-wrap:balance; line-height:1.35; }
+#root [data-vision-game] .game-question-context { font-size:.82em; font-weight:650; opacity:.9; }
+#root [data-vision-game] :is(.game-question-card,.legend-hud-bar) { border-color:var(--island-trim)!important; }
+#root [data-vision-game] :is(.pvp-stone-panel,.pvp-digit-panel,.coordinates-grid-board,.line-graph-board,.match-mastery-board,.rs-grid-wrap,[data-formula-playfield]) {
+  border-color:var(--island-trim)!important;
+  box-shadow:inset 0 2px 0 #ffffff26,inset 0 0 0 4px #05101e66,0 6px 0 color-mix(in srgb,var(--island-deep) 70%,#000),0 12px 20px #02132144!important;
+}
+#root [data-vision-game] :is(.pvp-stone-face,.ff-ingredient) { background-image:linear-gradient(120deg,#ffffff26,transparent 38%,#0002),linear-gradient(25deg,#516d73,#264048)!important; border-color:var(--island-trim)!important; }
+#root [data-vision-game] .match-mastery-board { border-width:5px; border-radius:18px; }
+#root [data-vision-game='match3_equivalence'] .match-mastery-board button { box-shadow:inset 0 3px 0 #ffffff55,inset 0 -4px 0 #0004,0 3px 4px #0004; }
+#root [data-vision-game='polygon_palace'] .polygon-shape { filter:drop-shadow(0 5px 5px #001d4c55); }
+@media(max-width:999px),(max-height:599px){
+ .vision-companion--stage { display:none; }
+ .game-question-card-inner:has(>.vision-companion--question) { position:relative; padding-left:66px!important; min-height:70px; }
+ .vision-companion--question { display:block; left:-4px; top:50%; transform:translateY(-50%); width:70px; height:82px; }
+}
+@media(min-width:700px) and (min-height:651px){
+ #root [data-vision-game='factor_frenzy'] .factor-visible-monster { translate:0 62px; }
+ #root [data-vision-game='number_line_ninja'] .ninja-opponent-lane .qa-enemy-cluster > div:first-child { top:calc(64.4% - 120px); }
+}
+@media(prefers-reduced-motion:reduce){.vision-companion *{animation:none!important;transition:none!important}}
+.lava-hero-motion{display:block;width:100%;height:100%}
+.lava-hero-motion.lava-hero-hop{animation:lava-hero-hop .42s ease-in-out}
+.lava-hero-motion.lava-hero-recoil{animation:lava-hero-recoil .42s ease-in-out}
+[data-stage-paused='true'] .lava-hero-motion{animation-play-state:paused}
+@media(prefers-reduced-motion:reduce){.lava-hero-motion{animation:none!important}}

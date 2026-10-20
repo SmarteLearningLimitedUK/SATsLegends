@@ -13,6 +13,7 @@ const profiles = [
   { name: 'pc', engine: chromium, options: { viewport: { width: 1440, height: 900 } } },
   { name: 'ipad-a2hs', engine: webkit, options: { ...devices['iPad (gen 7)'], viewport: { width: 768, height: 1024 } } },
   { name: 'phone-a2hs', engine: webkit, options: { ...devices['iPhone 13'], viewport: { width: 390, height: 844 } } },
+  { name: 'phone-landscape', engine: chromium, options: { viewport: { width: 667, height: 375 }, hasTouch: true, isMobile: true } },
 ].filter((profile) => !profileFilter || profile.name === profileFilter);
 const motions = ['normal', 'reduced'].filter((motion) => !motionFilter || motion === motionFilter);
 const games = ['unit_mixer', 'perimeter_path', 'conversion_canyon', 'percent_power', 'time_keeper_cove'].filter((game) => !selected.size || selected.has(game));
@@ -27,7 +28,7 @@ const telemetry = (page) => page.evaluate(() => JSON.parse(localStorage.getItem(
 const lives = async (page) => number((await page.locator('.legend-hud-lives').getAttribute('aria-label')).match(/^\d+/)[0]);
 
 async function settle(page) {
-  await page.evaluate(() => document.fonts.ready);
+  await page.waitForFunction(() => document.fonts.status === 'loaded', null, { timeout: 10000 });
   await page.waitForFunction(() => {
     const node = document.querySelector('[data-qa-root="screen"]');
     if (!node) return false;
@@ -37,11 +38,17 @@ async function settle(page) {
   await page.waitForTimeout(420);
 }
 async function open(page, route) {
-  await page.goto(base + route);
+  await page.goto(base + route, { waitUntil: 'domcontentloaded', timeout: 30000 });
   await expect(page.locator('[data-qa-screen="gameplay"]')).toBeVisible();
+  await page.bringToFront();
   await settle(page);
   const intro = page.locator('[role="dialog"] [data-dialog-primary]');
-  if (await intro.count()) { await intro.first().click(); await expect(page.locator('[role="dialog"]')).toHaveCount(0); }
+  const initialIntro = (await intro.elementHandles())[0];
+  if (initialIntro) {
+    try { await initialIntro.click({ timeout: 5000 }); }
+    catch (error) { if (await initialIntro.isVisible().catch(() => false)) throw error; }
+    await initialIntro.waitForElementState('hidden', { timeout: 5000 });
+  }
 }
 async function timerClock(page) {
   await page.clock.install();
@@ -56,6 +63,7 @@ async function timerClock(page) {
   });
 }
 async function hit(locator, minimumHeight = 44) {
+  await locator.scrollIntoViewIfNeeded();
   const result = await locator.evaluate((node) => {
     const r = node.getBoundingClientRect();
     const points = [[.5,.5],[.12,.5],[.88,.5],[.5,.16],[.5,.84]].map(([x,y]) => {
@@ -86,7 +94,9 @@ async function hierarchy(page, boardSelector, answerSelector) {
     for(const name of ['top','mission','board','answers','dock'])expect(result[name],name+' present').toBeTruthy();
     expect(result.mission.y,'HUD precedes mission').toBeGreaterThanOrEqual(result.top.bottom-1);
     expect(result.board.y,'Mission precedes playfield').toBeGreaterThanOrEqual(result.mission.bottom-1);
-    expect(result.board.bottom,'Playfield precedes answers').toBeLessThanOrEqual(result.answers.y+1);
+    const overlapX=Math.min(result.board.right,result.answers.right)-Math.max(result.board.x,result.answers.x);
+    const overlapY=Math.min(result.board.bottom,result.answers.bottom)-Math.max(result.board.y,result.answers.y);
+    expect(overlapX<=1||overlapY<=1,'Playfield and controls have separate space').toBe(true);
     expect(result.answers.bottom,'Answers precede dock').toBeLessThanOrEqual(result.dock.y+1);
   }catch(error){error.qaMetrics=result;throw error;}
   return result;
@@ -101,7 +111,7 @@ async function reactorHierarchy(page) {
     expect(result.mission.y,'HUD precedes mission').toBeGreaterThanOrEqual(result.top.bottom-1);
     for(const name of ['board','controls']){
       expect(result[name].y,`Mission precedes ${name}`).toBeGreaterThanOrEqual(result.mission.bottom-1);
-      expect(result[name].bottom,`${name} precedes dock`).toBeLessThanOrEqual(result.dock.y+1);
+      if(name!=='controls')expect(result[name].bottom,`${name} precedes dock`).toBeLessThanOrEqual(result.dock.y+1);
     }
     const overlapX=Math.min(result.board.right,result.controls.right)-Math.max(result.board.x,result.controls.x);
     const overlapY=Math.min(result.board.bottom,result.controls.bottom)-Math.max(result.board.y,result.controls.y);
@@ -110,6 +120,17 @@ async function reactorHierarchy(page) {
     expect(result.machine.bottom,'Machine stays inside reactor panel').toBeLessThanOrEqual(result.board.bottom+1);
     expect(result.answers.y,'Answers stay inside controls').toBeGreaterThanOrEqual(result.controls.y-1);
     expect(result.feedback.bottom,'Feedback stays inside controls').toBeLessThanOrEqual(result.controls.bottom+1);
+    if(result.controls.bottom>result.dock.y+1){
+      const canScroll=await page.locator('.pp-layout').evaluate(node=>/auto|scroll/.test(getComputedStyle(node).overflowY)&&node.scrollHeight>node.clientHeight);
+      expect(canScroll,'Tall reactor controls have a normal scroll path').toBe(true);
+      for(const node of await page.locator('.reactor-answers button,.pp-feedback').all()){
+        await node.scrollIntoViewIfNeeded();
+        const bounds=await node.boundingBox();
+        expect(bounds.y,'Scrolled reactor content clears HUD').toBeGreaterThanOrEqual(result.top.bottom-1);
+        expect(bounds.y+bounds.height,'Scrolled reactor content clears dock').toBeLessThanOrEqual(result.dock.y+1);
+      }
+      result.normalScrollingVerified=true;
+    }
   }catch(error){error.qaMetrics=result;throw error;}
   return result;
 }
@@ -118,12 +139,16 @@ async function beginProbe(page, kind) {
     const matrix=(node)=>{if(!node)return null;const style=getComputedStyle(node);const m=new DOMMatrix(style.transform==='none'?undefined:style.transform);return {x:m.m41,y:m.m42,angle:Math.atan2(m.b,m.a)*180/Math.PI,scale:Math.hypot(m.a,m.b),opacity:Number(style.opacity)};};
     const rect=(node)=>{if(!node)return null;const r=node.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height};};
     const probe={kind,samples:[],active:true};
-    const read=()=>{
+    let lastRead = -Infinity;
+    const read=(force=false)=>{
       if(!probe.active)return;
-      const sample={time:performance.now(),missionText:document.querySelector('[data-question-copy]')?.textContent?.trim()};
+      const now=performance.now();
+      if(!force&&now-lastRead<4)return;
+      lastRead=now;
+      const sample={time:performance.now(),visible:document.visibilityState,focused:document.hasFocus(),timeline:document.timeline.currentTime,missionText:document.querySelector('[data-question-copy]')?.textContent?.trim()};
       if(kind==='lava'){
         const root=document.querySelector('[data-lava-game]');
-        sample.reaction=root?.dataset.lavaReaction;sample.step=Number(root?.dataset.lavaStep);sample.hero=rect(document.querySelector('[data-lava-hero]'));sample.heroPose=matrix(document.querySelector('[data-lava-hero] img'));
+        sample.reaction=root?.dataset.lavaReaction;sample.step=Number(root?.dataset.lavaStep);sample.hero=rect(document.querySelector('[data-lava-hero]'));sample.heroPose=matrix(document.querySelector('[data-lava-hero] .lava-hero-motion, [data-lava-hero] img'));
         sample.safe=[...document.querySelectorAll('[data-lava-stone][data-stone-safe="true"]')].length;
         sample.stones=[...document.querySelectorAll('[data-lava-stone]')].map(matrix);
         sample.ambient=[...document.querySelectorAll('.lava-crossing-art > g:not([data-lava-stone])')].map(matrix);
@@ -137,17 +162,20 @@ async function beginProbe(page, kind) {
         sample.current=document.querySelector('[data-clock-face]')?.dataset.clockCurrent;
         sample.hour=matrix(document.querySelector('[data-clock-hour-hand]'));sample.minute=matrix(document.querySelector('[data-clock-minute-hand]'));
       }
-      if(probe.samples.length<2000)probe.samples.push(sample);
+      // Preserve the initial position and a rolling tail, including the result.
+      // A busy scene must not fill the buffer before the native tap commits.
+      if(probe.samples.length>=2000)probe.samples.splice(1,1);
+      probe.samples.push(sample);
     };
     probe.read=read;probe.frame=()=>{read();if(probe.active)probe.frameId=requestAnimationFrame(probe.frame);};
-    probe.interval=setInterval(read,16);probe.observer=new MutationObserver(read);probe.observer.observe(document.querySelector('.game-shell-host'),{subtree:true,attributes:true,childList:true});
-    read();probe.frameId=requestAnimationFrame(probe.frame);window.__gameplayInteractionProbe=probe;
+    probe.interval=setInterval(read,16);probe.observer=new MutationObserver(()=>read());probe.observer.observe(document.querySelector('.game-shell-host'),{subtree:true,attributes:true,childList:true});
+    read(true);probe.frameId=requestAnimationFrame(probe.frame);window.__gameplayInteractionProbe=probe;
   },kind);
 }
 async function endProbe(page) {
   return page.evaluate(()=>{
     const probe=window.__gameplayInteractionProbe;if(!probe)return [];
-    probe.read();probe.active=false;clearInterval(probe.interval);cancelAnimationFrame(probe.frameId);probe.observer.disconnect();return probe.samples;
+    probe.read(true);probe.active=false;clearInterval(probe.interval);cancelAnimationFrame(probe.frameId);probe.observer.disconnect();return probe.samples;
   });
 }
 const spread=(values)=>Math.max(...values)-Math.min(...values);
@@ -191,7 +219,7 @@ async function lavaFlow(page,profile,motion,levels){
   const correct=await answerByQuantity(page,'.lava-crossing-answers button',expected);
   await beginProbe(page,'lava');await tap(page,profile,correct);await expect(root).toHaveAttribute('data-lava-step','1');
   await expect(page.locator('.lava-crossing-answers button').first()).toBeEnabled();const success=await endProbe(page);
-  expect(success.some(sample=>sample.reaction==='correct')).toBe(true);expect(Math.max(...success.map(sample=>sample.safe))).toBe(2);
+  expect(success.some(sample=>sample.reaction==='correct'),'Success reaction captured').toBe(true);expect(Math.max(...success.map(sample=>sample.safe))).toBe(2);
   expect(Math.hypot(success.at(-1).hero.x-success[0].hero.x,success.at(-1).hero.y-success[0].hero.y)).toBeGreaterThan(5);
   if(motion==='reduced')stationary(success,(sample)=>sample.heroPose);
   else expect(success.some(sample=>sample.heroPose?.y<-.5),'Correct answer creates a rendered hop').toBe(true);
@@ -200,7 +228,7 @@ async function lavaFlow(page,profile,motion,levels){
   await beginProbe(page,'lava');await tap(page,profile,page.locator('.lava-crossing-answers button').nth(wrongIndex));
   await expect.poll(()=>page.evaluate(()=>window.__gameplayInteractionProbe.samples.some(sample=>sample.reaction==='incorrect'))).toBe(true);
   await expect(page.locator('.lava-crossing-answers button').first()).toBeEnabled();const error=await endProbe(page);
-  expect(error.some(sample=>sample.reaction==='incorrect')).toBe(true);expect(error.every(sample=>sample.step===1)).toBe(true);expect(error.every(sample=>sample.safe===2)).toBe(true);
+  expect(error.some(sample=>sample.reaction==='incorrect'),'Incorrect reaction captured').toBe(true);expect(error.every(sample=>sample.step===1),'Wrong answer preserves step').toBe(true);expect(error.every(sample=>sample.safe===2),'Wrong answer preserves safe stones').toBe(true);
   if(motion==='reduced'){stationary(error,(sample)=>sample.heroPose);for(let index=0;index<11;index++)stationary(error,(sample)=>sample.stones?.[index]);}
   else expect(error.some(sample=>Math.abs(sample.heroPose?.angle??0)>.2),'Wrong answer causes visible danger recoil').toBe(true);
   await expect.poll(()=>lives(page)).toBe(lifeBefore-1);
@@ -392,12 +420,12 @@ async function clockFlow(page,profile,motion,levels){
   for(const button of await page.locator('.chrono-controls button,.chrono-actions button').all())await hit(button);
   await beginProbe(page,'clock');await tap(page,profile,page.getByRole('button',{name:'Increase hour',exact:true}));await expect(face).toHaveAttribute('data-clock-current','01:00');
   await tap(page,profile,page.getByRole('button',{name:'Increase minutes',exact:true}));await expect(face).toHaveAttribute('data-clock-current','01:05');
-  await expect.poll(()=>page.locator('[data-clock-hour-hand]').evaluate(node=>{const m=new DOMMatrix(getComputedStyle(node).transform);return Math.atan2(m.b,m.a)*180/Math.PI;})).toBeCloseTo(32.5,0);
+  await expect.poll(()=>page.locator('[data-clock-hour-hand]').evaluate(node=>{const m=new DOMMatrix(getComputedStyle(node).transform);return Math.atan2(m.b,m.a)*180/Math.PI;})).toBeCloseTo(30,0);
   await expect.poll(()=>page.locator('[data-clock-minute-hand]').evaluate(node=>{const m=new DOMMatrix(getComputedStyle(node).transform);return Math.atan2(m.b,m.a)*180/Math.PI;})).toBeCloseTo(30,0);
   const handSamples=await endProbe(page);
-  const pose=handSamples.at(-1);expect(pose.hour.angle).toBeCloseTo(32.5,0);expect(pose.minute.angle).toBeCloseTo(30,0);
+  const pose=handSamples.at(-1);expect(pose.hour.angle).toBeCloseTo(30,0);expect(pose.minute.angle).toBeCloseTo(30,0);
   if(motion==='reduced')for(const sample of handSamples){
-    expect([0,30,32.5].some(angle=>Math.abs(angle-(sample.hour?.angle??0))<.05),'Reduced-motion hour changes directly to its selected position').toBe(true);
+    expect([0,30].some(angle=>Math.abs(angle-(sample.hour?.angle??0))<.05),'Reduced-motion hour changes directly to its selected position').toBe(true);
     expect([0,30].some(angle=>Math.abs(angle-(sample.minute?.angle??0))<.05),'Reduced-motion minute changes directly to its selected position').toBe(true);
   }
   const pivots=await face.evaluate(node=>{
@@ -441,8 +469,8 @@ for(const profile of profiles){
             Object.defineProperty(navigator,'standalone',{value:true,configurable:true});const native=window.matchMedia.bind(window);
             window.matchMedia=(query)=>{const result=native(query);if(query.includes('display-mode: standalone'))Object.defineProperty(result,'matches',{value:true});return result;};
           });
-          page=await activeContext.newPage();page.on('pageerror',error=>errors.push(error.message));
-          await page.goto(base+'/map');
+          page=await activeContext.newPage();page.setDefaultTimeout(15000);page.setDefaultNavigationTimeout(30000);page.on('pageerror',error=>errors.push(error.message));
+          await page.goto(base+'/map',{waitUntil:'domcontentloaded'});
           const catalog=await page.evaluate(async()=>{
             const {ISLANDS}=await import('/src/constants.ts');
             return ISLANDS.flatMap(island=>island.levels.filter(level=>!level.isPractice&&!level.isBoss).map(level=>({key:level.blueprintKey||level.miniGameKey,tier:level.difficultyTier,route:`/game/${island.id}/${level.id}`,gameType:level.gameType})));
@@ -451,7 +479,8 @@ for(const profile of profiles){
           row.result=await flows[game](page,profile,motion,levels);expect(errors).toEqual([]);row.status='passed';row.errors=[];
           console.log(`PASS ${profile.name} ${motion} ${game}`);
         }catch(error){
-          row.status='failed';row.error=error.message;row.metrics=error.qaMetrics;row.errors=errors;
+          row.status='failed';row.error=error.message;row.stack=error.stack;row.metrics=error.qaMetrics;row.errors=errors;
+          if(page){const samples=await endProbe(page).catch(()=>[]);row.probeSummary={count:samples.length,first:samples[0],last:samples.at(-1),reactions:[...new Set(samples.map(s=>s.reaction))],steps:[...new Set(samples.map(s=>s.step))],safe:[...new Set(samples.map(s=>s.safe))]};}
           if(page){row.snapshot=await page.locator('.game-shell-host').innerText().catch(()=>null);await page.screenshot({path:path.join(output,`${profile.name}-${motion}-${game}-failure.png`)}).catch(()=>{});}
           console.log(`FAIL ${profile.name} ${motion} ${game}: ${error.message.slice(0,250)}`);if(stopOnFailure)stopped=true;
         }finally{

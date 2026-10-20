@@ -1,0 +1,12 @@
+{
+  "kind": "characters",
+  "key": "goblin-hit",
+  "file": "characters/goblin-hit-v3.webp",
+  "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-93f83048-3711-4773-b610-23a579d4b78f.png",
+  "prompt": "Use case: identity-preserve. Production game sprite animation sheet. Reference is the EXACT goblin identity to preserve: lime green skin, large ears, brown eyes, navy blue wizard hat with gold crescent and gold trim, navy/gold coat, brown belt and boots. Same premium detailed stylized 3D rendering as reference. Generate exactly 20 full-body frames in a strict FIVE columns by FOUR rows grid, read left-to-right top-to-bottom. Transparent background with real alpha, no shadows outside silhouette, no ground, no text or frame numbers. Entire hat, hands, feet in every cell with generous empty gutters. Camera, lighting, costume, body proportions and character scale IDENTICAL throughout. Boot soles on the same baseline within each cell, torso centred; no zoom or camera motion. These are consecutive closely spaced animation in-betweens, NOT 20 different poses. One continuous 900ms gentle impact recoil and recovery with 20 evenly spaced in-betweens: start relaxed standing neutral frame 1, flinch and lean slightly backward frames 2-6, eyes briefly close and shoulders contract frames 7-9, gently lean forward recovering balance frames 10-14, settle smoothly back to original relaxed standing neutral frames 15-20. Boots stay planted. No injury, no effects, no walking, keep changes between adjacent frames SMALL.",
+  "dimensions": [
+    1402,
+    1122
+  ],
+  "bytes": 800074
+}

@@ -223,7 +223,7 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
       <div className="rr-question">
         <GameQuestionCard title={`Nearest ${round.target}`} className="mx-auto max-w-[31rem]" bodyClassName="flex flex-col items-center gap-1">
           <span data-rocket-question-value="true" className="text-[clamp(2rem,5vw,3rem)] font-bold leading-none tabular-nums">{round.value}</span>
-          <span className="rr-question-hint text-base leading-snug">The rocket needs a new part. Round this number to the place value above.</span>
+          <span className="rr-rounding-target">Round to the nearest {round.target}.</span>
         </GameQuestionCard>
       </div>
       {feedbackText && <div role="status" className={`rr-feedback ${rocketState === 'failed' ? 'rr-feedback--error' : ''}`}>{feedbackText}</div>}

@@ -895,3 +895,31 @@
  .pond-playfield[data-pond-count='10'] .pond-target {width:44px;height:44px;font-size:19px;}
 }
 @media(max-width:430px){.pond-playfield[data-pond-count='10'] {top:calc(22% + 24px);}}
+/* The noticing prompt and draggable pads occupy separate rows. Reserve a
+   usable pond even when the activity scrolls on a short landscape screen. */
+#root .wellbeing-shell[data-wellbeing-activity='peaceful_pond'] .wellbeing-content,
+#root .wellbeing-shell[data-wellbeing-activity='peaceful_pond'] .wellbeing-scene {
+  min-height:440px;
+  flex-basis:440px;
+}
+#root .wellbeing-shell[data-wellbeing-activity='peaceful_pond'] .wellbeing-scene {
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  height:auto;
+}
+#root .wellbeing-shell[data-wellbeing-activity='peaceful_pond'] .pond-attention {
+  position:relative;
+  inset:auto;
+  translate:none;
+  margin-inline:auto;
+  flex:0 0 auto;
+}
+#root .wellbeing-shell[data-wellbeing-activity='peaceful_pond'] .pond-playfield {
+  position:relative;
+  inset:auto;
+  width:94%;
+  margin-inline:auto;
+  flex:1 0 280px;
+  min-height:280px;
+}

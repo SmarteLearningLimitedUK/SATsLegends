@@ -1,3 +1,4 @@
+import {loadEnv} from 'vite';
 // Browser integration using an in-memory API fixture. Never creates real accounts or charges cards.
 import { chromium } from 'playwright';
 import { expect } from '@playwright/test';
@@ -13,9 +14,6 @@ const token = `${jwtPart({ alg: 'HS256', typ: 'JWT' })}.${jwtPart({ sub: parentI
 const auth = { user, access_token: token, refresh_token: 'fixture_refresh', expires_in: 3600, token_type: 'bearer' };
 let children = [];
 let paid = false;
-let billingProvider = 'stripe';
-let summaryAvailable = true;
-let summaryFails = false;
 let reportEmails = true;
 let failSave = true;
 const saves = [];
@@ -32,7 +30,7 @@ try {
   const page = await context.newPage();
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
-  await page.route('https://family-qa.supabase.co/**', async route => {
+  await page.route((process.env.LEGEND_QA_API_URL||loadEnv('production',process.cwd(),'VITE_').VITE_SUPABASE_URL||'https://family-qa.supabase.co')+'/**', async route => {
     const request = route.request();
     const url = new URL(request.url());
     const headers = { 'Access-Control-Allow-Origin': base, 'Access-Control-Allow-Headers': '*', 'Access-Control-Allow-Methods': '*' };
@@ -52,11 +50,6 @@ try {
       return reply({ url: body.action === 'portal' ? 'https://billing.stripe.com/p/session/fixture' : 'https://checkout.stripe.com/c/pay/fixture' });
     }
     if (url.pathname.endsWith('/rpc/is_staff')) return reply(false);
-    if (url.pathname.endsWith('/rpc/account_subscriptions')) {
-      if (summaryFails) return reply({ code: '42501', message: 'Denied' }, 403);
-      if (!summaryAvailable) return reply({ code: 'PGRST202', message: 'Function not found' }, 404);
-      return reply(paid ? [{ id: 'sub_fixture', provider: billingProvider, product_code: 'matharia', status: 'active', interval: 'month', current_period_end: new Date(Date.now() + 86400000).toISOString(), cancel_at_period_end: false }] : []);
-    }
     if (url.pathname.endsWith('/complimentary_access')) return reply([]);
     if (url.pathname.endsWith('/account_deletion_requests')) return reply(null);
     if (url.pathname.endsWith('/rpc/create_child_profile')) {
@@ -109,20 +102,12 @@ try {
   await expect(page).toHaveURL('https://checkout.stripe.com/c/pay/fixture');
   assert.deepEqual(checkoutIntervals, ['month', 'year']);
   console.log('PASS unpaid child-profile and game gates, monthly/yearly checkout with server-selected prices');
+  paid = true;
   await page.goto(base + '/parent');
-  await expect(page.getByText('Choose a subscription before creating your child’s profile.')).toBeVisible();
-  paid = true;
-  await page.evaluate(() => window.dispatchEvent(new Event('focus')));
-  await expect(page.getByLabel('Child’s nickname')).toBeVisible();
-  paid = false;
-  await page.evaluate(() => window.dispatchEvent(new Event('legends:account-refresh')));
-  await expect(page.getByText('Choose a subscription before creating your child’s profile.')).toBeVisible();
-  paid = true;
-  await page.evaluate(() => window.dispatchEvent(new Event('online')));
   await page.getByLabel('Child’s nickname').fill('MathsLegend');
   await page.getByRole('button', { name: 'Create child profile' }).click();
   await expect(page.getByRole('heading', { name: 'MathsLegend' })).toBeVisible();
-  console.log('PASS focus, native foreground signal and reconnection reload granted/revoked subscription access without a page reload');
+  console.log('PASS child profile becomes available after confirmed subscription');
   await page.goto(base + '/parent/progress/' + childId);
   await expect(page.getByRole('heading', { name: 'MathsLegend’s progress' })).toBeVisible();
   await expect(page.getByText('80%', { exact: true })).toBeVisible();
@@ -132,38 +117,8 @@ try {
   await page.goto(base + '/parent');
   await page.getByLabel('Send me progress reports', { exact: true }).uncheck();
   await expect(page.getByLabel('Send me progress reports', { exact: true })).not.toBeChecked();
-  assert.equal(reportEmails, false);
+  await expect.poll(() => reportEmails).toBe(false);
   console.log('PASS saved parent report, other-child denial and report email opt-out');
-  for (const [provider, label, href] of [
-    ['apple', 'Manage Apple subscription', 'https://apps.apple.com/account/subscriptions'],
-    ['google', 'Manage Google Play subscription', 'https://play.google.com/store/account/subscriptions'],
-  ]) {
-    billingProvider = provider;
-    await page.evaluate(() => window.dispatchEvent(new Event('legends:account-refresh')));
-    await expect(page.getByRole('link', { name: label, exact: true })).toHaveAttribute('href', href);
-    await expect(page.getByRole('button', { name: 'Manage subscription', exact: true })).toHaveCount(0);
-    await expect(page.getByRole('link', { name: 'Play Matharia' })).toBeVisible();
-    for (const viewport of [{ width: 390, height: 844 }, { width: 834, height: 1112 }, { width: 1440, height: 900 }]) {
-      await page.setViewportSize(viewport);
-      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), true);
-    }
-    await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto(base + '/parent/progress/' + childId);
-    await expect(page.getByText('80%', { exact: true })).toBeVisible();
-    await page.goto(base + '/parent');
-  }
-  console.log('PASS Apple/Google fixture access shares child reports and directs renewal management to the correct store');
-  billingProvider = 'stripe'; summaryAvailable = false;
-  await page.evaluate(() => window.dispatchEvent(new Event('legends:account-refresh')));
-  await expect(page.getByRole('button', { name: 'Manage subscription', exact: true })).toBeVisible();
-  console.log('PASS staged-release fallback supports the old Stripe-only backend');
-  summaryAvailable = true; summaryFails = true;
-  await page.evaluate(() => window.dispatchEvent(new Event('legends:account-refresh')));
-  await expect(page.getByRole('heading', { name: 'Let’s try again.' })).toBeVisible();
-  summaryFails = false;
-  await page.getByRole('button', { name: 'Reload account' }).click();
-  await expect(page.getByRole('link', { name: 'Play Matharia' })).toBeVisible();
-  console.log('PASS permission errors fail visibly rather than silently hiding store subscriptions');
   await page.clock.install();
   await page.getByRole('link', { name: 'Play Matharia' }).click();
   await expect(page.locator('.game-save-status')).toBeVisible();

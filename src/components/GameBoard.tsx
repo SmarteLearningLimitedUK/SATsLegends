@@ -1,3 +1,4 @@
+import { playGameSound } from '../audio/gameAudio';
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Grid, TileData, CloudCollapseLevelConfig } from '../types';
@@ -102,6 +103,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ level, onScoreUpdate, onMatch }) 
         break;
       }
 
+      playGameSound('impact');
       matches.forEach(({ x, y }) => {
         const tile = workingGrid[y][x];
         if (tile?.powerUp === 'BOMB') addEffect('bomb', x, y);

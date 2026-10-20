@@ -11,6 +11,8 @@ import {
 } from 'lucide-react';
 import { playGameSound } from '../../audio/gameAudio';
 import SceneEnvironment from '../SceneEnvironment';
+import VisionCompanion from './VisionCompanion';
+import ViewportQuestion from './ViewportQuestion';
 
 type WrapperProps = {
   children: React.ReactNode;
@@ -80,6 +82,8 @@ const QUESTION_CARD_SHELL = '/reference-assets/new-sheet-2026-04-22/slice_01_x21
 const QUESTION_CARD_TITLE_STRIP = '/reference-assets/new-sheet-2026-04-22/slice_15_x709_y396_w338_h68.png';
 
 type GameQuestionCardProps = {
+  /** Override automatic story copy when the question already includes its context. */
+  context?: string;
   title?: string;
   subtitle?: React.ReactNode;
   children: React.ReactNode;
@@ -106,6 +110,7 @@ const QuestionCardFrame: React.FC<QuestionCardFrameProps> = ({
   bodyClassName,
   style,
 }) => (
+  <ViewportQuestion>
   <div className={cn('game-question-card', className)} data-game-question="true" style={style}>
     <img
       className="game-question-card-shell"
@@ -115,6 +120,7 @@ const QuestionCardFrame: React.FC<QuestionCardFrameProps> = ({
       draggable={false}
     />
     <div className="game-question-card-inner">
+      <VisionCompanion placement="question" />
       {title ? (
         <div
           className="game-question-card-title-strip"
@@ -140,6 +146,7 @@ const QuestionCardFrame: React.FC<QuestionCardFrameProps> = ({
       ) : null}
     </div>
   </div>
+  </ViewportQuestion>
 );
 
 /**
@@ -147,6 +154,7 @@ const QuestionCardFrame: React.FC<QuestionCardFrameProps> = ({
  * Visual source of truth lives in `.game-question-card` (src/index.css).
  */
 export const GameQuestionCard: React.FC<GameQuestionCardProps> = ({
+  context: suppliedContext,
   title = 'Mission',
   subtitle,
   children,
@@ -156,7 +164,7 @@ export const GameQuestionCard: React.FC<GameQuestionCardProps> = ({
   style,
 }) => {
   const promptText = typeof children === 'string' ? children : '';
-  const context = gameQuestionContext(title, promptText);
+  const context = suppliedContext ?? gameQuestionContext(title, promptText);
   return (
   <QuestionCardFrame
     className={className}

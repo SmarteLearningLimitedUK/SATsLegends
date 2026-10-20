@@ -5,6 +5,7 @@ import gameplayBackground from '../assets/maps/premium/polygon-palace.webp';
 import SceneEnvironment from '../components/SceneEnvironment';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
+import './polygon-palace.css';
 
 interface PolygonPalaceGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -801,66 +802,37 @@ const ShapePreview: React.FC<{
   const { shape, shapeRotation } = question;
 
   const renderSolid = () => {
-    if (shape.solidType === 'cube') {
-      return (
-        <>
-          <polygon points="-18,-6 10,-24 38,-6 10,12" fill="url(#shapeFill)" stroke={shape.stroke} strokeWidth="3.8" />
-          <polygon points="-18,-6 10,12 10,42 -18,24" fill="rgba(255,255,255,0.14)" stroke={shape.stroke} strokeWidth="3.8" />
-          <polygon points="10,12 38,-6 38,24 10,42" fill="rgba(255,255,255,0.2)" stroke={shape.stroke} strokeWidth="3.8" />
-          <line x1="-18" y1="-6" x2="-18" y2="24" stroke={shape.stroke} strokeWidth="2.5" />
-          <line x1="38" y1="-6" x2="38" y2="24" stroke={shape.stroke} strokeWidth="2.5" />
-          <line x1="10" y1="-24" x2="10" y2="12" stroke={shape.stroke} strokeWidth="2.5" />
-        </>
-      );
-    }
-
-    if (shape.solidType === 'cuboid') {
-      return (
-        <>
-          <polygon points="-26,-8 12,-24 42,-10 4,8" fill="url(#shapeFill)" stroke={shape.stroke} strokeWidth="3.8" />
-          <polygon points="-26,-8 4,8 4,38 -26,20" fill="rgba(255,255,255,0.14)" stroke={shape.stroke} strokeWidth="3.8" />
-          <polygon points="4,8 42,-10 42,20 4,38" fill="rgba(255,255,255,0.18)" stroke={shape.stroke} strokeWidth="3.8" />
-          <line x1="-26" y1="-8" x2="-26" y2="20" stroke={shape.stroke} strokeWidth="2.5" />
-          <line x1="42" y1="-10" x2="42" y2="20" stroke={shape.stroke} strokeWidth="2.5" />
-          <line x1="12" y1="-24" x2="12" y2="8" stroke={shape.stroke} strokeWidth="2.5" />
-        </>
-      );
-    }
-
-    if (shape.solidType === 'triangularPrism') {
-      return (
-        <>
-          <polygon points="-28,10 -8,-24 16,8" fill="url(#shapeFill)" stroke={shape.stroke} strokeWidth="3.8" />
-          <polygon points="-12,6 12,-10 36,12 12,28" fill="rgba(255,255,255,0.18)" stroke={shape.stroke} strokeWidth="3.8" />
-          <line x1="-28" y1="10" x2="-12" y2="6" stroke={shape.stroke} strokeWidth="2.5" />
-          <line x1="-8" y1="-24" x2="12" y2="-10" stroke={shape.stroke} strokeWidth="2.5" />
-          <line x1="16" y1="8" x2="36" y2="12" stroke={shape.stroke} strokeWidth="2.5" />
-          <line x1="-28" y1="10" x2="12" y2="28" stroke={shape.stroke} strokeWidth="2.5" />
-          <line x1="-8" y1="-24" x2="36" y2="12" stroke={shape.stroke} strokeWidth="2.5" />
-        </>
-      );
-    }
-
-    return (
-      <>
-        <polygon points="-24,20 0,-30 24,20" fill="url(#shapeFill)" stroke={shape.stroke} strokeWidth="3.8" />
-        <polygon points="-24,20 24,20 24,40 -24,40" fill="rgba(255,255,255,0.14)" stroke={shape.stroke} strokeWidth="3.8" />
-        <line x1="0" y1="-30" x2="-24" y2="20" stroke={shape.stroke} strokeWidth="2.5" />
-        <line x1="0" y1="-30" x2="24" y2="20" stroke={shape.stroke} strokeWidth="2.5" />
-        <line x1="0" y1="-30" x2="0" y2="40" stroke={shape.stroke} strokeWidth="2.5" />
-      </>
-    );
+    const faces = shape.solidType === 'cube'
+      ? ['-42,-14 -5,-36 38,-14 0,10', '-42,-14 0,10 0,54 -42,30', '0,10 38,-14 38,30 0,54']
+      : shape.solidType === 'cuboid'
+        ? ['-58,-14 0,-38 56,-14 -2,10', '-58,-14 -2,10 -2,46 -58,22', '-2,10 56,-14 56,22 -2,46']
+        : shape.solidType === 'triangularPrism'
+          ? ['-18,-32 36,-52 64,12 10,32', '-46,32 -18,-32 10,32']
+          : ['0,-48 -48,28 0,50', '0,-48 0,50 48,28'];
+    const hidden = shape.solidType === 'cube'
+      ? 'M-5,-36V8L-42,30 M-5,8L38,30'
+      : shape.solidType === 'cuboid'
+        ? 'M0,-38V-2L-58,22 M0,-2L56,22'
+        : shape.solidType === 'triangularPrism'
+          ? 'M-46,32L8,12L36,-52 M8,12H64'
+          : 'M0,-48V8L-48,28 M0,8L48,28';
+    return <g stroke={shape.stroke} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round">
+      {faces.map((points, index) => <polygon key={index} data-solid-face points={points} fill={`url(#solidFace${index})`} />)}
+      <path data-hidden-edges d={hidden} fill="none" strokeDasharray="4 4" strokeWidth="1.3" opacity=".7" />
+    </g>;
   };
 
   return (
     <motion.svg
-      viewBox="-62 -62 124 124"
-      className="h-[10.8rem] w-[10.8rem] md:h-[12.4rem] md:w-[12.4rem]"
+      viewBox={shape.kind === 'solid' ? "-72 -66 144 132" : "-62 -62 124 124"}
+      role="img" aria-label={shape.kind === 'solid' ? "Three-dimensional solid with dashed hidden edges" : "Shape to identify"}
+      data-polygon-shape={shape.id}
+      className="h-full max-h-[340px] w-full max-w-[340px] min-h-0"
       initial={{ opacity: 0, scale: 0.93 }}
       animate={{
         opacity: 1,
         scale: 1,
-        rotate: shapeRotation + shape.defaultRotation,
+        rotate: shape.kind === 'solid' ? 0 : shapeRotation + shape.defaultRotation,
       }}
       transition={{ duration: 0.32, ease: 'easeOut' }}
       style={{
@@ -872,6 +844,7 @@ const ShapePreview: React.FC<{
       }}
     >
       <defs>
+        {[['#fff9de', shape.fill], [shape.fill, '#225478'], [shape.fill, '#0d203c']].map(([from, to], index) => <linearGradient key={index} id={`solidFace${index}`} x1="0%" y1="0%" x2="100%" y2="100%"><stop stopColor={from}/><stop offset=".18" stopColor={index===0?'#ffedbd':shape.fill}/><stop offset="1" stopColor={to}/></linearGradient>)}
         <linearGradient id="shapeFill" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor="#f2feff" />
           <stop offset="26%" stopColor={shape.fill} />
@@ -1093,7 +1066,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
 
 
   const topPaddingClass = useSharedTopHud
-    ? 'pt-[calc(env(safe-area-inset-top)+5.75rem)]'
+    ? 'pt-2'
     : 'pt-[max(0.5rem,env(safe-area-inset-top))]';
 
   return (
@@ -1101,25 +1074,29 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
       <SceneEnvironment src={gameplayBackground} />
 
       <main
-        className={`relative z-20 flex h-full w-full flex-col items-center ${topPaddingClass} px-[max(0.75rem,env(safe-area-inset-left))] pb-[max(7.2rem,calc(env(safe-area-inset-bottom)+6.2rem))]`}
+        className={`polygon-palace-scroll relative z-20 flex h-full w-full flex-col items-center overflow-y-auto ${topPaddingClass} px-[max(0.75rem,env(safe-area-inset-left))] pb-3`}
       >
-        <div className="flex h-full w-full max-w-[30rem] min-h-0 flex-col gap-3">
+        <div className="polygon-composition flex h-full w-full max-w-[40rem] min-h-[640px] shrink-0 flex-col gap-3">
           <section className="shrink-0">
             <GameQuestionCard
               title={question.speedRound ? 'Polygon Palace: Challenge Mode' : 'Polygon Palace'}
+              style={{ position:'relative', inset:'auto', transform:'none', width:'100%', maxWidth:'none' }}
               subtitle={question.subPrompt}
             >
               {question.prompt}
             </GameQuestionCard>
           </section>
 
-          <section className="min-h-0 flex-1 rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/54 p-3 shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
+          <section className="polygon-crystal-stage min-h-0 flex-1 rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/54 p-3 shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
             <div className="relative flex h-full min-h-0 flex-1 items-center justify-center rounded-[1.15rem] border border-cyan-100/16 bg-blue-950/36 p-2">
-              <ShapePreview question={question} pulseTone={pulseTone} />
+              <div className="flex h-full min-h-0 w-full flex-col items-center justify-center gap-3">
+                <ShapePreview question={question} pulseTone={pulseTone} />
+                {question.shape.kind === 'solid' && <p className="polygon-shape-guidance shrink-0 text-center text-base leading-snug text-cyan-50"><span className="polygon-guidance-full">Dashed lines show hidden edges. Some faces are behind the solid.</span><span className="polygon-guidance-compact">Dashed edges are hidden.</span></p>}
+              </div>
             </div>
           </section>
 
-          <section className="shrink-0 rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/56 p-3 shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
+          <section className="polygon-answer-dock shrink-0 rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/56 p-3 shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
             {question.mode === 'name' ? (
               <div className="grid grid-cols-2 gap-2.5">
                 {question.choices.map((choice) => (
@@ -1215,7 +1192,8 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 1.08 }}
-            className={`pointer-events-none absolute left-1/2 top-[calc(env(safe-area-inset-top)+5.2rem)] z-50 -translate-x-1/2 rounded-[1rem] border px-4 py-2 text-center shadow-[0_14px_24px_rgba(2,6,23,0.45)] ${
+            data-polygon-feedback={feedback.tone}
+            className={`polygon-feedback pointer-events-none absolute left-1/2 top-[calc(env(safe-area-inset-top)+5.2rem)] z-50 -translate-x-1/2 rounded-[1rem] border px-4 py-2 text-center shadow-[0_14px_24px_rgba(2,6,23,0.45)] ${
               feedback.tone === 'success'
                 ? 'border-emerald-100/62 bg-emerald-500/28 text-emerald-50'
                 : 'border-rose-100/62 bg-rose-500/30 text-amber-50'

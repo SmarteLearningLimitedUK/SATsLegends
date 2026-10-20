@@ -1,0 +1,12 @@
+{
+  "kind": "objects",
+  "key": "ice-cannon",
+  "file": "objects/ice-cannon-v1.webp",
+  "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-255cae1d-04b0-4017-b219-688767408f0d.png",
+  "prompt": "Production game asset, reference is the approved art direction only. Generate Only a high-end blue crystal and brass cannon on its two sturdy wheels, barrel HORIZONTAL pointing RIGHT at zero degrees. Complete object side view with a slight threequarter depth; no base crate, no ground, no projectile, no arc or angle markings. Barrel rear pivot at40percentwidth50percentheight. One coherent separate game prop. Genuinely transparent alpha background everywhere outside the isolated object, no coloured matte, no backdrop. This must be a separate compositing asset for live gameplay. Same high-end sculpted3D family fantasy rendering, real material detail, correct perspective and lighting. No labels, captions, image border, interface, watermark or extra objects.",
+  "dimensions": [
+    1672,
+    941
+  ],
+  "bytes": 361554
+}

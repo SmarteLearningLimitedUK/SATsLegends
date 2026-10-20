@@ -1,0 +1,66 @@
+/* One full-viewport racing world: question above the track, answers below it. */
+.ratio-racer-world{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.ratio-racer-world .ratio-racer-track{object-fit:cover;object-position:center 70%}
+#root .app-viewport[data-active-game='ratio_fractions']>.vision-world-backdrop,
+#root .app-viewport[data-active-game='ratio_fractions'] [data-game-wide-ambient]{display:none!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-layout{background:transparent}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-content{display:grid;width:100%;height:100%;min-height:0;margin:0;padding:6px;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;gap:7px;overflow:hidden}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-scene{grid-column:1;grid-row:2;width:100%;height:100%;min-height:0;container-type:size;overflow:hidden;border:0;border-radius:0;background:transparent;box-shadow:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-course{display:block;position:absolute;inset:0;overflow:hidden}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-track-shade{display:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-track{object-fit:cover;object-position:center 70%}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-kart-anchor{left:var(--race-player-x,30%)!important;bottom:5%;width:min(36cqw,calc(150cqh - 60px));height:auto;max-width:40%;aspect-ratio:3/2}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-kart{translate:0 var(--race-suspension,0px)}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-route{left:10px;right:10px;top:8px;width:auto;padding:6px 10px;background:#082444eb}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-route-labels{font-size:13px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-route-labels>span:first-child{display:block}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-pit-board,.ratio-racer-track-flags{display:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-mission{grid-column:1;grid-row:1;justify-self:center;position:relative;z-index:10;align-self:stretch;width:min(94%,1100px)!important;max-height:100%;padding:7px!important;min-height:0;border:2px solid #d0af57!important;border-radius:14px!important;overflow:hidden}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-answers{grid-column:1;grid-row:3;justify-self:center;position:relative;z-index:10;align-self:stretch;justify-content:center;width:min(94%,900px);padding:10px;min-height:0;border:2px solid #d0af57;border-radius:14px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-lab-heading{display:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-lab-title{display:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .race-fuel-mix{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:18px;max-width:900px;margin:auto}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .race-fuel-parts{gap:8px;margin:0;max-width:none;width:auto}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .race-fuel-part{width:58px;max-width:58px;height:85px;aspect-ratio:auto}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .race-fuel-number{font-size:24px!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .race-fuel-legend{font-size:11px!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-question{font-size:17px;line-height:1.2}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-simplify-hint{font-size:12px;margin-top:2px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-answer-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-answer{min-height:66px!important;height:66px;padding:4px!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-fraction{font-size:23px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-feedback{font-size:13px!important;line-height:1.2;min-height:30px;margin:8px 0 0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-countdown{justify-content:center;padding:0;background:#09283d55}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-countdown>span{display:block;font-size:16px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-countdown>strong{font-size:44px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .race-road-motion>div{animation:none;transform:translate3d(var(--race-road-x,0px),0,0) skewX(28deg);bottom:15%;height:5px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .race-wheel-spin{animation:none;transform:rotate(var(--race-wheel-angle,0deg))}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .race-rival{position:absolute;z-index:2;bottom:8%;width:min(21cqw,65cqh);aspect-ratio:3/2;transition:left 1.4s ease-out;filter:brightness(.85);pointer-events:none}
+@media(orientation:landscape) and (max-height:550px){
+/* Crop the same panorama upward so the road meets the compact racing lane. */
+.ratio-racer-world .ratio-racer-track{height:165%;top:-65%}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-kart-anchor{width:min(36cqw,140cqh);bottom:0}
+
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-content{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;gap:4px;padding:3px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-mission{padding:3px!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-lab-heading{display:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .race-fuel-mix{gap:8px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .race-fuel-parts{gap:3px;margin:0;max-width:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .race-fuel-part{width:38px;max-width:38px;height:52px;aspect-ratio:auto}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .race-fuel-number{font-size:16px!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .race-fuel-legend{font-size:10px!important;bottom:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-question{font-size:12px;line-height:1.15}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-simplify-hint{font-size:9px;margin-top:1px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-answers{padding:5px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-answer{min-height:48px!important;height:48px;padding:2px!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-fraction{font-size:17px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-feedback{font-size:10px!important;line-height:1.2;min-height:12px;margin-top:2px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-route{left:auto;right:5px;top:4px;width:min(38%,240px);padding:3px 6px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-route-labels{font-size:10px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-route-labels>span:last-child{font-size:11px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-progress{height:3px;margin-top:3px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-countdown>span{font-size:12px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-countdown>strong{font-size:28px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-start-lights i{width:14px;height:14px}
+}
+@media(prefers-reduced-motion:reduce){#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .race-rival{transition:none}}

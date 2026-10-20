@@ -1,5 +1,12 @@
 {
-  "exclude": ["supabase/functions", "node_modules", "dist"],
+  "exclude": [
+    "supabase/functions",
+    "node_modules",
+    "dist",
+    ".deploy",
+    ".tmp",
+    "qa-artifacts"
+  ],
   "compilerOptions": {
     "target": "ES2022",
     "experimentalDecorators": true,

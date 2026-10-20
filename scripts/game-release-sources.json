@@ -1,0 +1,13 @@
+{
+  "capturedAt": "2026-10-20",
+  "matharia": {
+    "baseCommit": "fe35bdcf49b6a5c5a302e9582e486c742441e30d",
+    "snapshotSha256": "3ae32a9087b592cfcb2b420ea5606f293e5cd0dce0b7c2622fdb2dcde373499b",
+    "source": "Owner-authorized latest local working tree; website-specific integration retained"
+  },
+  "lexcoria": {
+    "commit": "bc1ac8941dc2439c9923e1081c1a670427a80933",
+    "snapshotSha256": "dd086796f0f5b6cc6ab174808cfd3ecf8db7e4def7ae9781e719cfb3c01a1c62",
+    "releaseFix": "Require a pending save and cloud row before acknowledging an offline request"
+  }
+}

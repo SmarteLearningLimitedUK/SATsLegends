@@ -1,18 +1,18 @@
+import { playGameSound } from '../audio/gameAudio';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useIsPresent, useReducedMotion } from 'motion/react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import mineBackground from '../assets/maps/premium/multiplication-mine.webp';
-import intactOre from '../assets/mine/ore/ore-intact.webp';
-import crackedOre from '../assets/mine/ore/ore-cracked.webp';
-import splitOre from '../assets/mine/ore/ore-split.webp';
-import openOre from '../assets/mine/ore/ore-open.webp';
+import oreAtlas from '../assets/mine/ore/ore-atlas-v2.png';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { emitMiniGameSessionEvent, type MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import { triggerHaptic } from '../haptics';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
 import './multiplication-mine.css';
+import MultiplicationColumns from './MultiplicationColumns';
+import { multiplicationSteps } from './multiplicationMineMath';
 
 interface MultiplicationMineGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -32,9 +32,7 @@ interface MultiplicationQuestion {
 }
 
 type Phase = 'playing' | 'exploding' | 'treasure';
-type MineStep = 'tens' | 'ones' | 'combine';
 const ROCK_MAX_HEALTH = 4;
-const ORE_STATES = [intactOre, crackedOre, splitOre, openOre];
 
 const shuffle = <T,>(values: T[]) => {
   const result = [...values];
@@ -60,7 +58,7 @@ const makeQuestionDeck = (tier: number): MultiplicationQuestion[] => {
   const band = Math.max(1, Math.min(5, tier));
   if (band === 1) {
     const pairs: [number, number][] = [];
-    for (let a = 2; a <= 6; a += 1) for (let b = a; b <= 8; b += 1) pairs.push([a, b]);
+    for (const a of [2, 5, 10]) for (let b = 2; b <= 12; b += 1) pairs.push([a, b]);
     const seen = new Set<number>();
     return shuffle(pairs).filter(([a, b]) => {
       if (seen.has(a * b)) return false;
@@ -70,14 +68,13 @@ const makeQuestionDeck = (tier: number): MultiplicationQuestion[] => {
   }
   const range = (min: number, max: number) => min + Math.floor(Math.random() * (max - min + 1));
   const bands: Array<[number, number, number, number]> = [
-    [12, 39, 2, 9], [103, 396, 2, 9], [23, 89, 12, 29], [125, 987, 12, 29],
+    [12, 39, 2, 9], [103, 999, 2, 9], [23, 999, 12, 29], [1234, 9999, 12, 99],
   ];
   const [minA, maxA, minB, maxB] = bands[band - 2];
   const seenProducts = new Set<number>();
   const questions: MultiplicationQuestion[] = [];
   while (questions.length < ROCK_MAX_HEALTH) {
-    // The last level-five strike reaches the Year 6 four-digit by two-digit method.
-    const a = band === 5 && questions.length === ROCK_MAX_HEALTH - 1 ? range(1234, 3987) : range(minA, maxA);
+    const a = range(minA, maxA);
     const b = range(minB, maxB);
     if (seenProducts.has(a * b)) continue;
     seenProducts.add(a * b);
@@ -104,9 +101,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
   const [feedback, setFeedback] = useState<{ tone: 'ok' | 'error' | 'praise'; text: string } | null>(null);
   const [impactTick, setImpactTick] = useState(0);
   const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
-  const [mineStep, setMineStep] = useState<MineStep>('tens');
-  const [showWorkpad, setShowWorkpad] = useState(false);
-  const [workUsed, setWorkUsed] = useState<number[]>([]);
+  const [columnStep, setColumnStep] = useState(0);
   const [locked, setLocked] = useState(false);
   const [runEnded, setRunEnded] = useState(false);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
@@ -164,7 +159,8 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
 
   useEffect(() => {
     // Static states share one registered canvas; prepare them before the first strike.
-    const images = ORE_STATES.map((src) => { const image = new Image(); image.src = src; return image; });
+    const image = new Image(); image.src = oreAtlas;
+    const images = [image];
     return () => images.forEach((image) => { image.onload = null; image.onerror = null; });
   }, []);
 
@@ -196,9 +192,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
       setPhase('playing');
       setFeedback(null);
       setSelectedChoice(null);
-      setMineStep('tens');
-      setShowWorkpad(false);
-      setWorkUsed([]);
+      setColumnStep(0);
       setLocked(false);
       setRunEnded(false);
     };
@@ -227,7 +221,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
     if (selectedAnswer !== question.answer) {
       mistakesRef.current += 1;
       emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { score: scoreRef.current });
-      setFeedback({ tone: 'error', text: tier >= 4 ? 'The ore is holding. Use the workpad to add both partial products, then choose again.' : 'The ore is holding. Check the multiplication and try again.' });
+      setFeedback({ tone: 'error', text: 'Check the multiplication and try again.' });
       triggerHaptic('error');
       schedule(() => {
         setFeedback(null);
@@ -246,6 +240,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
     scoreRef.current = nextScore;
     setCorrectCount(nextCorrect);
     setRockHealth(nextHealth);
+    playGameSound('impact');
     setImpactTick((value) => value + 1);
     const praise = shouldShowPraise(questionAttemptRef.current, Date.now() - questionStartRef.current);
     setFeedback({ tone: praise ? 'praise' : 'ok', text: nextHealth === 0 ? 'Crystal recovered. Mine cleared!' : praise ? buildPraiseMessage() : 'Clean strike. The crystal seam is opening.' });
@@ -267,80 +262,62 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
       setQuestion(questionDeckRef.current[nextCorrect]);
       setFeedback(null);
       setSelectedChoice(null);
-      setMineStep('tens');
-      setShowWorkpad(false);
-      setWorkUsed([]);
+      setColumnStep(0);
       questionAttemptRef.current = 0;
       questionStartRef.current = Date.now();
       answerLockRef.current = false;
       setLocked(false);
-    }, 320);
+    }, 1000);
   };
 
-  const tensFactor = Math.floor(question.b / 10) * 10;
-  const onesFactor = question.b % 10;
-  const tensProduct = question.a * tensFactor;
-  const onesProduct = question.a * onesFactor;
-  const stepOptions = useMemo(() => ({
-    tens: makeOptions(tensProduct),
-    ones: makeOptions(onesProduct),
-  }), [tensProduct, onesProduct]);
-  const displayedOptions = tier < 4 || mineStep === 'combine'
-    ? question.options
-    : stepOptions[mineStep];
-  const stepFactor = mineStep === 'tens' ? tensFactor : onesFactor;
-  const workParts = mineStep === 'combine'
-    ? [tensProduct, onesProduct]
-    : String(question.a).split('').map((digit, index, digits) => Number(digit) * 10 ** (digits.length - index - 1) * stepFactor).filter((value) => value > 0);
-  const workTotal = workUsed.reduce((total, index) => total + (workParts[index] ?? 0), 0);
-
-  const solvePartial = (selectedAnswer: number) => {
+  const methodSteps = useMemo(() => multiplicationSteps(question.a, question.b), [question.a, question.b]);
+  const currentStep = methodSteps[Math.min(columnStep, methodSteps.length - 1)];
+  const displayedOptions = useMemo(() => tier === 1 ? question.options : makeOptions(currentStep.answer), [tier, question, columnStep]);
+  const solveColumn = (answer: number) => {
+    if (tier === 1) { solveQuestion(answer); return; }
     if (!canContinue() || answerLockRef.current || phase !== 'playing' || sessionRef.current?.paused || showPracticeIntro) return;
-    const correctAnswer = mineStep === 'tens' ? tensProduct : onesProduct;
-    answerLockRef.current = true;
-    setLocked(true);
-    setSelectedChoice(selectedAnswer);
-    questionAttemptRef.current += 1;
-    if (selectedAnswer !== correctAnswer) {
+    if (answer !== currentStep.answer) {
+      answerLockRef.current = true;
+      setLocked(true);
+      setSelectedChoice(answer);
       mistakesRef.current += 1;
+      questionAttemptRef.current += 1;
       emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { score: scoreRef.current });
-      setFeedback({ tone: 'error', text: 'That product does not match. Tap Workpad to add the place-value shards here.' });
+      setFeedback({ tone: 'error', text: currentStep.kind === 'placeholder' ? 'The tens row starts with a zero in the ones column.' : currentStep.kind === 'sum' ? 'Add the two rows, keeping each place-value column aligned.' : `Try ${currentStep.digit} × ${currentStep.multiplier}${currentStep.carry ? ` + ${currentStep.carry} carried` : ''} again.` });
       triggerHaptic('error');
-      schedule(() => {
-        setFeedback(null);
-        setSelectedChoice(null);
-        answerLockRef.current = false;
-        setLocked(false);
-      }, 700);
+      schedule(() => { setFeedback(null); setSelectedChoice(null); answerLockRef.current = false; setLocked(false); }, 1100);
       return;
     }
-    setFeedback({ tone: 'ok', text: mineStep === 'tens' ? 'Tens product stored. Now build the ones.' : 'Both products stored. Combine them to strike the ore.' });
+    setColumnStep(value => value + 1);
+    if (columnStep === methodSteps.length - 1) {
+      solveQuestion(question.answer);
+      setSelectedChoice(answer);
+      return;
+    }
+    answerLockRef.current = true;
+    setLocked(true);
+    setSelectedChoice(null);
+    const carry = Math.floor(answer / 10);
+    setFeedback({ tone: 'ok', text: currentStep.kind === 'placeholder' ? 'Zero placed: this row represents tens.' : currentStep.kind === 'zero' ? 'Multiplying by zero gives zero.' : `Write ${answer % 10}${carry ? ` and ${currentStep.lastColumn ? 'write the final' : 'carry'} ${carry}` : ''}.` });
     triggerHaptic('success');
-    schedule(() => {
-      setMineStep(mineStep === 'tens' ? 'ones' : 'combine');
-      setFeedback(null);
-      setSelectedChoice(null);
-      setWorkUsed([]);
-      answerLockRef.current = false;
-      setLocked(false);
-    }, 430);
+    schedule(() => { setFeedback(null); setSelectedChoice(null); answerLockRef.current = false; setLocked(false); }, 400);
   };
 
-  const oreSource = ORE_STATES[Math.min(ORE_STATES.length - 1, ROCK_MAX_HEALTH - rockHealth)];
-  const struck = (feedback?.tone === 'ok' || feedback?.tone === 'praise') && (tier < 4 || mineStep === 'combine');
+  const oreFrame = rockHealth === 0 ? 3 : Math.min(2, ROCK_MAX_HEALTH - rockHealth);
+  const struck = (feedback?.tone === 'ok' || feedback?.tone === 'praise') && (tier === 1 || columnStep >= methodSteps.length);
 
   return (
-    <div className="multiplication-mine" data-mine-game="true" data-mine-tier={tier} data-mine-state={runEnded ? 'ended' : phase} data-mine-correct={correctCount} data-mine-present={isPresent} data-mine-paused={Boolean(sessionState?.paused)} data-mine-reduced={Boolean(reducedMotion)}>
+    <div className="multiplication-mine mine-academy" data-mine-a={question.a} data-mine-b={question.b} data-mine-column={columnStep} data-mine-locked={locked} data-mine-game="true" data-mine-tier={tier} data-mine-state={runEnded ? 'ended' : phase} data-mine-correct={correctCount} data-mine-present={isPresent} data-mine-paused={Boolean(sessionState?.paused)} data-mine-reduced={Boolean(reducedMotion)}>
       <GameplaySceneBackdrop gameType="calculation_clash" backgroundOverride={mineBackground} />
       <PracticeIntroPopup open={showPracticeIntro} title={practiceBriefing?.title ?? 'Multiplication Mine'} body={practiceBriefing?.summary ?? 'Solve each multiplication and choose the result.\nFour accurate strikes open the ore and reveal its crystal.'} briefing={practiceBriefing} onAction={() => { setShowPracticeIntro(false); questionStartRef.current = Date.now(); }} />
-      <div className="mine-layout" data-mine-shared-hud={useSharedTopHud} data-mine-guided={tier >= 4}>
-        <GameQuestionCard title="Multiplication Mine" subtitle={tier >= 4 ? undefined : 'Solve the multiplication. Four accurate strikes uncover the crystal.'} className="mine-mission" bodyClassName="mine-equation" style={{ position: 'relative', top: 0, transform: 'none' }}>
-          {question.a} × {question.b} = ?
+      <div className="mine-layout" data-mine-shared-hud={useSharedTopHud} data-mine-guided={tier >= 2}>
+        <GameQuestionCard title="Multiplication Mine" context="" className="mine-mission" bodyClassName="mine-equation">
+          <span>{question.a.toLocaleString()} × {question.b} = ?</span><span className="mine-task-progress">Crystals {correctCount} / {ROCK_MAX_HEALTH}</span>
         </GameQuestionCard>
         <div className="mine-playfield" data-mine-playfield="true">
           <div className="mine-ground" aria-hidden="true" />
           <div ref={oreRef} className={`mine-ore ${phase === 'treasure' ? 'is-recovered' : ''}`}>
-            <img data-mine-rock="true" data-rock-health={rockHealth} src={oreSource} alt={phase === 'treasure' ? 'The recovered crystal inside its opened ore boulder' : 'A heavy crystal ore boulder developing cracks with each accurate strike'} draggable={false} />
+            <div className="mine-ore-art" role="img" data-mine-rock data-rock-health={rockHealth} data-ore-frame={oreFrame} aria-label={rockHealth === 0 ? 'Opened ore revealing its crystal core' : 'Textured crystal ore on the mine floor'} style={{ backgroundImage: `url(${oreAtlas})`, backgroundPosition: `${oreFrame / 3 * 100}% 50%` }} />
             <span className="mine-seam-light" aria-hidden="true" />
             {struck && !reducedMotion && !sessionState?.paused && <div key={impactTick} className="mine-impact" aria-hidden="true">
               <svg className="mine-pick-strike" viewBox="0 0 120 120"><path d="M27 94 86 29" stroke="#132b40" strokeWidth="13" strokeLinecap="round" /><path d="M27 94 86 29" stroke="#bd813b" strokeWidth="7" strokeLinecap="round" /><path d="M52 27 Q82 6 111 37 L101 42 Q79 26 56 37Z" fill="#c8e6f0" stroke="#173449" strokeWidth="5" strokeLinejoin="round" /><path d="M85 17 87 34" stroke="#f4d58b" strokeWidth="7" /></svg>
@@ -353,24 +330,17 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
             <div aria-hidden="true">{Array.from({ length: ROCK_MAX_HEALTH }, (_, index) => <i key={index} className={index < rockHealth ? 'is-solid' : ''} />)}</div>
           </div>
         </div>
-        <div className="mine-solution-zone">
-          {tier >= 4 && <div className="mine-calculation" data-mine-step={mineStep}>
-            <div className="mine-calculation-head">
-              <span className="mine-step-name">{mineStep === 'tens' ? '1 · Tens' : mineStep === 'ones' ? '2 · Ones' : '3 · Combine'}</span>
-              <strong>{mineStep === 'combine' ? `${tensProduct.toLocaleString()} + ${onesProduct.toLocaleString()} = ?` : `${question.a.toLocaleString()} × ${stepFactor.toLocaleString()} = ?`}</strong>
-              <button type="button" className="mine-workpad-toggle" aria-expanded={showWorkpad} aria-controls="mine-workpad" onClick={() => setShowWorkpad((value) => !value)}>{showWorkpad ? 'Hide workpad' : 'Use workpad'}</button>
+        <section className="mine-lesson" aria-label="Multiplication working">
+          {tier >= 2 && <MultiplicationColumns a={question.a} b={question.b} completed={columnStep} />}
+          <div className="mine-step-controls">
+            <div className="mine-method-heading">{tier === 1 ? 'Times-table practice' : `Written method · ${Math.min(columnStep + 1, methodSteps.length)} / ${methodSteps.length}`}</div>
+            <p className="mine-column-question" data-mine-column-question>{tier === 1 ? 'Choose the product to mine a crystal.' : currentStep.prompt}</p>
+            <div className="answer-choice-surface mine-answers" data-mine-answers="true">
+              {displayedOptions.map(option => <button key={`${question.a}-${question.b}-${columnStep}-${option}`} type="button" data-mine-answer={option} aria-label={`Choose ${option.toLocaleString()}`} onClick={() => solveColumn(option)} disabled={locked || phase !== 'playing' || runEnded || !isPresent || Boolean(sessionState?.paused)} className={selectedChoice === option ? feedback?.tone === 'error' ? 'mine-answer-error ui-button-secondary' : 'ui-button-success' : 'ui-button-secondary'}>{option.toLocaleString()}</button>)}
             </div>
-            {showWorkpad && <div id="mine-workpad" className="mine-workpad" data-mine-workpad="true">
-              <span>Tap each shard to add it:</span>
-              <div className="mine-workpad-parts">{workParts.map((value, index) => <button key={`${mineStep}-${index}`} type="button" aria-pressed={workUsed.includes(index)} onClick={() => setWorkUsed((used) => used.includes(index) ? used.filter((part) => part !== index) : [...used, index])} disabled={locked || phase !== 'playing' || runEnded || !isPresent || Boolean(sessionState?.paused)}>{value.toLocaleString()}</button>)}</div>
-              <output aria-live="polite">Total so far: <strong>{workTotal.toLocaleString()}</strong></output>
-            </div>}
-          </div>}
-          <div className="answer-choice-surface mine-answers" data-mine-answers="true">
-            {displayedOptions.map((option) => <button key={`${question.a}x${question.b}-${mineStep}-${option}`} type="button" data-mine-answer={option} aria-label={`Choose ${option.toLocaleString()}`} onClick={() => tier >= 4 && mineStep !== 'combine' ? solvePartial(option) : solveQuestion(option)} disabled={locked || phase !== 'playing' || runEnded || !isPresent || Boolean(sessionState?.paused)} className={selectedChoice === option ? feedback?.tone === 'error' ? 'mine-answer-error ui-button-secondary' : 'ui-button-success' : 'ui-button-secondary'}>{option.toLocaleString()}</button>)}
+            <p className={`mine-feedback ${feedback?.tone ?? ''}`} role="status" aria-live="polite" data-mine-feedback>{feedback?.text ?? (tier === 1 ? 'Four correct products uncover the crystals.' : currentStep.kind === 'placeholder' ? 'The zero shifts the tens row left.' : currentStep.kind === 'sum' ? 'Add matching place-value columns.' : 'Write the digit; carry any tens.')}</p>
           </div>
-        </div>
-        <p className={`mine-feedback ${feedback?.tone ?? ''}`} role="status" aria-live="polite" data-mine-feedback="true">{feedback?.text ?? (tier >= 4 ? '' : 'Choose the result to strike the ore.')}</p>
+        </section>
       </div>
     </div>
   );

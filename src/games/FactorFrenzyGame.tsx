@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { playMonsterSound } from '../audio/gameAudio';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { playGameSound, playMonsterSound } from '../audio/gameAudio';
 import confetti from 'canvas-confetti';
-import { AnimatePresence, motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import {
   Trophy,
   RotateCcw,
@@ -16,6 +16,7 @@ import MonsterMindActor from '../components/game-ui/MonsterMindActor';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
 import './factor-frenzy.css';
 import SceneEnvironment from '../components/SceneEnvironment';
+import { VisionSceneContext } from './visionScene';
 
 type FactorProblemType = 'missing_factor' | 'all_factors' | 'common_factors' | 'prime_factors';
 
@@ -112,7 +113,11 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   onGameOver: _onGameOver,
   onBack: _onBack,
   sessionEvents,
+  sessionState,
 }) => {
+  const scene = useContext(VisionSceneContext);
+  const paused = Boolean(sessionState?.paused || scene.paused);
+  const reducedMotion = useReducedMotion();
   const difficultyTier = Math.max(1, Math.min(5, levelId));
   const levelConfig = FRENZY_LEVELS[difficultyTier - 1];
   const [state, setState] = useState<LocalState>(INITIAL_STATE);
@@ -198,7 +203,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
         id,
         type,
         number,
-        question: `Strike every factor of ${number}.`,
+        question: `Select all the factors of ${number}.`,
         options,
         correctAnswers,
       };
@@ -220,7 +225,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
         type,
         number,
         number2,
-        question: `Strike every common factor of ${number} and ${number2}.`,
+        question: `Select all the common factors of ${number} and ${number2}.`,
         options,
         correctAnswers: commonAnswers,
       };
@@ -235,7 +240,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
       id,
       type,
       number,
-      question: `Strike the prime factors of ${number}.`,
+      question: `Select all the prime factors of ${number}.`,
       options,
       correctAnswers,
     };
@@ -278,7 +283,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   useEffect(() => {
     clearTimer();
 
-    if (state.status !== 'playing') return;
+    if (state.status !== 'playing' || paused) return;
 
     timerRef.current = window.setInterval(() => {
       setState((previous) => {
@@ -299,7 +304,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     }, 1000);
 
     return () => clearTimer();
-  }, [state.status]);
+  }, [state.status, paused]);
 
   useEffect(() => {
     const problem = state.currentProblem;
@@ -313,7 +318,11 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   }, [sessionEvents, state.currentProblem, state.status, state.timeLeft, state.XP]);
 
   const toggleOption = (value: number) => {
-    if (state.status !== 'playing') return;
+    if (state.status !== 'playing' || paused) return;
+    if (state.currentProblem?.type === 'missing_factor') {
+      setSelectedOptions(previous => previous.includes(value) ? [] : [value]);
+      return;
+    }
 
     setSelectedOptions((previous) => (
       previous.includes(value)
@@ -323,7 +332,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   };
 
   const checkAnswer = () => {
-    if (!state.currentProblem || state.status !== 'playing' || reportedProblemRef.current === state.currentProblem.id) return;
+    if (paused || !state.currentProblem || state.status !== 'playing' || reportedProblemRef.current === state.currentProblem.id) return;
 
     const correct = [...state.currentProblem.correctAnswers].sort((a, b) => a - b);
     const selected = [...selectedOptions].sort((a, b) => a - b);
@@ -341,6 +350,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     });
 
     if (isCorrect) {
+      playGameSound('impact');
       playMonsterSound('monster_hurt');
       const timeBonus = state.timeLeft * 10;
       const points = 500 + timeBonus;
@@ -396,15 +406,15 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
 
   useEffect(() => {
     clearAdvanceTimer();
-    if (state.status !== 'correct' && state.status !== 'incorrect') return;
+    if (paused || (state.status !== 'correct' && state.status !== 'incorrect')) return;
 
-    const delay = state.status === 'correct' ? 620 : 1500;
+    const delay = state.status === 'correct' ? 900 : 2200;
     advanceRef.current = window.setTimeout(() => {
       nextProblem();
     }, delay);
 
     return () => clearAdvanceTimer();
-  }, [state.status]);
+  }, [state.status, paused]);
 
   useEffect(() => {
     if (!showHitFx) return;
@@ -418,189 +428,77 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     onVictory(scoreToStars(state.XP, levelConfig.timeLimit), state.XP);
   };
 
-  const enemyHealthPercent = (state.enemyHealth / ENEMY_MAX_HEALTH) * 100;
-  const optionsRef = useRef<HTMLDivElement>(null);
-  const [answerHeight, setAnswerHeight] = useState(68);
-  useLayoutEffect(() => {
-    const node = optionsRef.current;
-    if (!node) return;
-    const measure = () => setAnswerHeight(node.offsetHeight);
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [state.currentProblem?.id]);
-  const playingState = state.status === 'playing' || state.status === 'correct' || state.status === 'incorrect';
+  const problem = state.currentProblem;
+  const openedLocks = ENEMY_MAX_HEALTH - state.enemyHealth;
+  const instruction = !problem ? '' : problem.type === 'missing_factor'
+    ? 'Choose one rune to complete the multiplication.'
+    : problem.type === 'common_factors'
+      ? `Choose every number that divides both ${problem.number} and ${problem.number2}.`
+      : problem.type === 'prime_factors'
+        ? `Choose every prime number that divides ${problem.number}.`
+        : `Choose every number that divides ${problem.number} exactly.`;
+  const feedback = state.status === 'correct' ? `${successMessage} One lock opened.`
+    : state.status === 'incorrect' ? `${state.timeLeft === 0 ? 'Time up.' : 'Not quite.'} Correct: ${problem?.correctAnswers.join(', ')}.`
+    : selectedOptions.length ? `Loaded: ${selectedOptions.join(' · ')}` : 'Tap the runes to load your pulse.';
 
   return (
-    <div
-      className="factor-frenzy-game relative h-full w-full overflow-hidden bg-contain bg-center bg-no-repeat text-white"
-    >
+    <div className="factor-frenzy-game frenzy-arena" data-factor-id={problem?.id} data-factor-type={problem?.type} data-factor-number={problem?.number} data-factor-number2={problem?.number2} data-factor-health={state.enemyHealth} data-factor-status={state.status} data-paused={paused}>
       <SceneEnvironment src={factorFrenzyBackground} />
-      <div className="pointer-events-none fixed left-0 right-0 top-[max(0.5rem,env(safe-area-inset-top))] z-50 flex justify-center px-3">
-        <div className="relative w-full max-w-[780px]">
-          <GameQuestionCard
-            title="Factor Frenzy"
-            className="mx-auto w-full"
-            bodyClassName="text-[clamp(0.95rem,2.9vw,1.3rem)] font-black leading-snug tracking-[0.01em] text-white md:text-[1.4rem]"
-          >
-            {state.currentProblem?.question}
-          </GameQuestionCard>
-          <div className="factor-timer-chip" role="timer" aria-label={`${state.timeLeft} seconds left`}>
-            {state.timeLeft}s
-          </div>
-        </div>
-      </div>
-
-      <div style={{paddingBottom:`calc(env(safe-area-inset-bottom) + ${answerHeight + 100}px)`}} className="relative z-10 flex h-full flex-col px-3 pt-[calc(env(safe-area-inset-top)+7.4rem)] sm:px-4 sm:pt-[calc(env(safe-area-inset-top)+7.8rem)] md:px-5 md:pt-[calc(env(safe-area-inset-top)+8.1rem)]">
-        <main className="relative flex min-h-0 flex-1 flex-col">
-          <AnimatePresence mode="wait">
-            {state.status === 'complete' ? (
-              <motion.div
-                key="complete"
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="my-auto mx-auto w-full max-w-xl rounded-3xl border border-amber-200/40 bg-[#16356f]/88 p-6 text-center shadow-[0_20px_40px_rgba(2,6,23,0.5)]"
-              >
-                <Trophy className="mx-auto h-14 w-14 text-amber-200" />
-                <h2 className="mt-3 text-3xl font-black uppercase text-amber-50 sm:text-4xl">Monster Mind Defeated</h2>
-                <p className="mt-2 text-sm font-semibold text-cyan-50/85">The Monster Minds have been pushed back.</p>
-                <div className="mt-4 rounded-2xl border border-cyan-100/30 bg-[#0d2a5a]/80 px-4 py-3">
-                  <p className="text-[12px] font-black uppercase tracking-[0.2em] text-cyan-100/80">Final XP</p>
-                  <p className="mt-1 text-4xl font-black text-amber-100">{state.XP.toLocaleString()}</p>
-                </div>
-                <div className="mt-5 flex flex-col gap-2.5">
-                  <button
-                    onClick={submitRun}
-                    className="ui-button-success inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-black uppercase tracking-[0.12em]"
-                  >
-                    <CheckCircle2 className="h-4 w-4" /> Claim Victory
-                  </button>
-                  <button
-                    onClick={() => {
-                      window.dispatchEvent(new Event(GAME_HUD_RESTART_EVENT));
-                      startGame();
-                    }}
-                    className="ui-button-primary inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-black uppercase tracking-[0.12em]"
-                  >
-                    <RotateCcw className="h-4 w-4" /> Restart
-                  </button>
-                </div>
-              </motion.div>
-            ) : (
-              <div
-                key="playing"
-                className="flex min-h-0 flex-1 flex-col"
-              >
-                <div className="relative min-h-0 flex-1 overflow-hidden rounded-3xl border border-cyan-100/16 bg-transparent p-3 sm:p-4">
-                  <div className="flex h-full min-h-0 flex-col">
-                    <div className="relative mt-3 flex min-h-0 flex-1 flex-col items-center justify-center">
-                      <div className="w-full max-w-[13rem] rounded-2xl border border-amber-200/24 bg-[linear-gradient(180deg,rgba(15,23,42,0.22),rgba(15,23,42,0.1))] px-3 py-2 shadow-[0_12px_24px_rgba(2,6,23,0.18)]">
-                        <div className="mb-1 text-center text-[10px] font-black uppercase tracking-[0.18em] text-amber-200">
-                          Monster Mind
-                        </div>
-                        <div className="h-2 overflow-hidden rounded-full border border-slate-700/80 bg-slate-950/70">
-                          <motion.div
-                            className="h-full rounded-full bg-gradient-to-r from-rose-500 via-rose-400 to-orange-300 shadow-[0_0_12px_rgba(251,113,133,0.75)]"
-                            animate={{ width: `${enemyHealthPercent}%` }}
-                            transition={{ type: 'spring', stiffness: 210, damping: 26 }}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="mt-3 flex w-full justify-center">
-                        <div
-                          className="factor-visible-monster relative max-w-full"
-                        >
-                          <MonsterMindActor
-                            src={factorEnemy}
-                            alt="Monster Mind"
-                            reaction={state.enemyHealth <= 0 ? 'defeated' : showHitFx ? 'hit' : state.status === 'incorrect' ? 'taunt' : 'idle'}
-                            reactionKey={state.currentProblem?.id}
-                            className="relative h-auto w-full object-contain drop-shadow-[0_18px_26px_rgba(2,6,23,0.38)]"
-                          />
-                        </div>
-                      </div>
-
-                      <AnimatePresence>
-                        {state.status === 'correct' || state.status === 'incorrect' ? (
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0.92 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 1.06 }}
-                            className={`pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-6xl font-black uppercase tracking-tight sm:text-7xl ${
-                              state.status === 'correct'
-                                ? successTone === 'praise'
-                                  ? 'text-amber-100 drop-shadow-[0_0_24px_rgba(251,191,36,0.75)]'
-                                  : 'text-emerald-200/35'
-                                : 'text-amber-200/35'
-                            }`}
-                          >
-                            {state.status === 'correct' ? successMessage : 'Miss'}
-                          </motion.div>
-                        ) : null}
-                      </AnimatePresence>
-                    </div>
-
-                    <div className="factor-strike-row mt-auto flex items-center justify-center">
-                      {state.status === 'playing' ? (
-                        <button
-                          onClick={checkAnswer}
-                          disabled={selectedOptions.length === 0}
-                          className="ui-button-primary inline-flex w-full max-w-sm items-center justify-center rounded-2xl px-4 py-3 text-sm font-black uppercase tracking-[0.14em] disabled:opacity-45"
-                        >
-                          {selectedOptions.length === 0 ? 'Choose a factor' : 'Strike'}
-                        </button>
-                      ) : (
-                        <div role="status" aria-live="polite" className="inline-flex min-h-12 w-full max-w-sm items-center justify-center rounded-2xl border border-cyan-100/45 bg-[#0d2a5a]/90 px-3 py-2 text-center text-sm font-black leading-snug text-cyan-50">
-                          {state.status === 'correct'
-                            ? 'Direct hit — next challenge incoming'
-                            : `Correct ${state.currentProblem?.correctAnswers.length === 1 ? 'factor' : 'factors'}: ${state.currentProblem?.correctAnswers.join(', ')}. Next challenge incoming.`}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </AnimatePresence>
-        </main>
-
-        {state.status !== 'complete' && (
-          <div className="fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+4.5rem)] z-40 px-3">
-            <div
-              ref={optionsRef}
-              className="factor-option-grid answer-choice-surface mx-auto grid w-full max-w-[780px] grid-cols-4 gap-2 sm:gap-2.5 md:gap-3"
-              style={{ '--factor-option-count': state.currentProblem?.options.length ?? 4 } as React.CSSProperties}
-            >
-              {state.currentProblem?.options.map((option, idx) => (
-                <motion.button
-                  type="button"
-                  key={`${state.currentProblem?.id}-${option}-${idx}`}
-                  initial={{ opacity: 0, y: 6, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ delay: idx * 0.03 }}
-                  onClick={() => toggleOption(option)}
-                  className={`relative flex h-[clamp(50px,7.2vh,68px)] items-center justify-center rounded-2xl border text-[clamp(0.95rem,3vw,1.55rem)] font-black transition ${
-                    state.status !== 'playing' && state.currentProblem?.correctAnswers.includes(option)
-                      ? 'ui-button-success'
-                      : state.status === 'incorrect' && selectedOptions.includes(option)
-                        ? 'border-rose-300 bg-rose-700 text-white'
-                      : selectedOptions.includes(option)
-                        ? 'ui-button-primary'
-                        : 'ui-button-secondary'
-                  }`}
-                >
-                  {option}
-                </motion.button>
-              ))}
+      <div className="frenzy-scene-shade" aria-hidden="true" />
+      {state.status === 'complete' ? (
+        <section className="frenzy-complete">
+          <Trophy aria-hidden="true" />
+          <h2>Sentinel unlocked!</h2>
+          <p>All ten factor locks opened.</p>
+          <strong>{state.XP.toLocaleString()} XP</strong>
+          <button className="ui-button-success" onClick={submitRun}><CheckCircle2 aria-hidden="true" /> Claim Victory</button>
+          <button className="ui-button-secondary" onClick={() => { window.dispatchEvent(new Event(GAME_HUD_RESTART_EVENT)); startGame(); }}><RotateCcw aria-hidden="true" /> Restart</button>
+        </section>
+      ) : (
+        <div className="frenzy-workspace">
+          <header className="frenzy-question">
+            <GameQuestionCard title="Factor Frenzy" context="" className="frenzy-question-card">{problem?.question}</GameQuestionCard>
+            <div className="frenzy-clock" role="timer" aria-label={`${state.timeLeft} seconds left`} data-urgent={state.timeLeft <= 5}>
+              <strong>{state.timeLeft}s</strong><span>this pulse</span>
             </div>
-          </div>
-        )}
-      </div>
+            <div className="frenzy-time-track" aria-hidden="true"><div style={{ width: `${state.timeLeft / levelConfig.timeLimit * 100}%` }} /></div>
+          </header>
+          <section className="frenzy-stage" aria-label="Factor sentinel">
+            <div className="frenzy-lock-panel">
+              <div><strong>Sentinel locks</strong><span>{openedLocks} / {ENEMY_MAX_HEALTH} open</span></div>
+              <div className="frenzy-locks" role="progressbar" aria-label="Sentinel locks opened" aria-valuenow={openedLocks} aria-valuemin={0} aria-valuemax={ENEMY_MAX_HEALTH}>
+                {Array.from({ length: ENEMY_MAX_HEALTH }, (_, i) => <span key={i} data-open={i < openedLocks} />)}
+              </div>
+            </div>
+            <div className="frenzy-shield" data-charged={selectedOptions.length > 0} aria-hidden="true"><i /><i /></div>
+            <div className="frenzy-ground-glow" aria-hidden="true" />
+            <div className="frenzy-sentinel">
+              <MonsterMindActor soundMode="off" src={factorEnemy} alt="Factor sentinel" reaction={showHitFx ? 'hit' : state.status === 'incorrect' ? 'taunt' : 'idle'} reactionKey={problem?.id} className="frenzy-sentinel-actor" />
+            </div>
+            <div className="frenzy-target-label">{problem?.type === 'missing_factor' ? 'Complete the chain' : 'Target'} <strong>{problem?.number}{problem?.number2 ? ` & ${problem.number2}` : ''}</strong></div>
+            {showHitFx && !reducedMotion && !paused && <svg className="frenzy-pulse" viewBox="0 0 600 400" preserveAspectRatio="none" aria-hidden="true">
+              <motion.path d="M590 340 Q430 90 300 225" fill="none" stroke="#b4ffff" strokeWidth="7" strokeLinecap="round" initial={{ pathLength: 0, opacity: 1 }} animate={{ pathLength: 1, opacity: [1, 1, 0] }} transition={{ duration: .5 }} />
+            </svg>}
+            {showHitFx && <span className="frenzy-impact" aria-hidden="true" />}
+          </section>
+          <section className="frenzy-console" aria-label="Load factor runes">
+            <div className="frenzy-console-heading"><span>Load your pulse</span><strong>{problem?.type === 'missing_factor' ? 'Choose 1 rune' : 'Select all that apply'}</strong></div>
+            <p className="frenzy-instruction">{instruction}</p>
+            <div className="frenzy-runes" data-many={Boolean(problem && problem.options.length > 6)}>
+              {problem?.options.map(option => <motion.button key={`${problem.id}-${option}`} type="button" data-factor-option={option} aria-label={`Factor ${option}`} aria-pressed={selectedOptions.includes(option)} disabled={state.status !== 'playing' || paused} whileTap={reducedMotion ? undefined : { scale: .95 }} onClick={() => toggleOption(option)} data-answer={state.status !== 'playing' && problem.correctAnswers.includes(option)}>
+                <span>{option}</span><i aria-hidden="true">{selectedOptions.includes(option) ? '✓' : '◆'}</i>
+              </motion.button>)}
+            </div>
+            <div className="frenzy-loaded" role="status" aria-live="polite" data-tone={state.status}>{feedback}</div>
+            <button type="button" className="frenzy-fire ui-button-primary" onClick={checkAnswer} disabled={state.status !== 'playing' || selectedOptions.length === 0 || paused}>
+              {state.status === 'correct' ? 'Pulse connected!' : state.status === 'incorrect' ? 'Recharging…' : selectedOptions.length ? 'Fire pulse' : 'Select runes above'}
+            </button>
+            <p className="frenzy-goal">Correct set = one pulse. Open all 10 locks.</p>
+          </section>
+        </div>
+      )}
     </div>
   );
 };
 
 export default FactorFrenzyGame;
-

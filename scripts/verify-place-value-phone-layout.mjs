@@ -54,6 +54,7 @@ try {
           assert.ok(separate(geometry.target, geometry.healthCard), `${route} number stones touch enemy health: ${JSON.stringify(geometry)}`);
           assert.ok(separate(geometry.occupied, geometry.sources), `${route} enemy touches digit panel: ${JSON.stringify(geometry)}`);
           assert.ok(separate(geometry.healthCard, geometry.sources), `${route} health touches digit panel: ${JSON.stringify(geometry)}`);
+          assert.ok(separate(geometry.healthCard, geometry.occupied), `${route} health covers character: ${JSON.stringify(geometry)}`);
           assert.ok(separate(geometry.occupied, geometry.submit), `${route} enemy touches Submit: ${JSON.stringify(geometry)}`);
           assert.ok(geometry.sourceToSubmitGap >= -1, `${route} digits touch Submit: ${JSON.stringify(geometry)}`);
           assert.ok(geometry.healthCard.right <= Math.min(viewport.width, geometry.stage.right) - (viewport.width <= 340 ? 8 : 0), `${route} health clips stage edge: ${JSON.stringify(geometry)}`);

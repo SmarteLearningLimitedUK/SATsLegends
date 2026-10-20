@@ -1,0 +1,1229 @@
+{
+  "tool": "Built-in image_gen",
+  "assets": [
+    {
+      "kind": "characters",
+      "key": "acropolis-caster",
+      "file": "characters/acropolis-caster-v2.webp",
+      "source": "C:/Users/samva/.codex/generated_images/01a149fc-7e91-7bd3-86fc-f9095e88fd36/exec-1de43239-a8ca-455e-be11-cb5a341c5b0b.png",
+      "prompt": "Production game CHARACTER ANIMATION atlas on genuinely transparent alpha. Use the attached approved gameplay concept as the EXACT IDENTITY reference, not merely stylistic inspiration. Subject: the small spotted golden-orange LEOPARD kitten on the LEFT of the reference: round feline face and muzzle, green eyes, spotted golden fur and spotted tail, green and gold tunic and draped green cloak, gold medallion, brown leather bracers and soft paws. No goggles, no pilot clothing, no backpack. Match the exact reference's heroic reaching posture, face and costume. Output a strictly regular THREE-COLUMN TWO-ROW sprite atlas, 1536 by 1024 pixels, six square 512px cells with large TRANSPARENT GUTTERS. Every figure must fit inside x=64..448 and y=40..488 of its OWN cell, with no overlap into neighbours. Whole body and ears and hands and held tool and tail all visible; reduce the whole figure if necessary to leave 64px side margins. All figures exactly the same camera, size, lighting, same planted foot baseline y=480. NO text, UI, scenery, floor, shadows or labels. Premium detailed stylized 3D rendering matching concept lighting and material quality. Six poses in reading order: 1 idle ready pose; 2 exact same body with eyes closed for blink; 3 small preparatory gesture; 4 character-specific action: reach to pop a glowing orb at the right, with both feet still planted; 5 small pleased approving smile; 6 thoughtful retry. All poses must maintain the same face, costume, fixed camera and planted foot location. The top and bottom row MUST use identical framing, scale and baseline. Do not drift identity or add equipment. Transparent background everywhere outside the six characters.\n",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 434912
+    },
+    {
+      "kind": "characters",
+      "key": "acropolis-pilot",
+      "file": "characters/acropolis-pilot-v1.webp",
+      "source": "C:/Users/samva/.codex/generated_images/01a149fc-7e91-7bd3-86fc-f9095e88fd36/exec-01dac537-1dcf-4984-a1ad-998aff609690.png",
+      "prompt": "Production transparent CHARACTER ANIMATION ATLAS for existing React family fantasy game. Reference is character appearance and sculpted3D quality only. Subject: The appealing orange-and-white furry fox pilot with green tunic, brass goggles, small leather belt and boots from the approved concept. Create ONE strictly regular THREE-COLUMN TWO-ROW sheet of SIX equally sized square cells, overall3:2aspectratio, genuinely transparent alpha background. SAME SINGLE character in every cell, identical camera, scale, lighting, costume, proportions, body position and baseline. Full body in each cell, centred, maximum usable size with8percent side margins, feet or seatedbase on95percentheight line in EVERY cell. NO cell overlaps, NO external props or platforms, NO floor, NO shadows baked across cells, NO text, labels, borders or grid lines. High-end stylized3D cinematic character rendering matching reference, detailed groomed fur/skin, convincing materials, expressive face and hands, not flat2D. Six poses in reading order: top-left neutral idle with eyes open; top-middle EXACT SAME neutral body with eyes gently CLOSED for blink; top-right focused anticipation looking at gameplay with small preparatory hand pose; bottom-left character-specific action using its tool or arms with convincing weight, SAME feet baseline and no jump; bottom-middle warm success reaction, happy face and small hand gesture, feet anchored; bottom-right thoughtful encouraging retry expression, feet anchored. Every cell must contain the whole character and no scenery. Changes between cells confined to head, expression and arms; feet and costume silhouette stay stable. The atlas will be animated at runtime. Preserve genuine transparent background everywhere outside figures.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 419884
+    },
+    {
+      "kind": "characters",
+      "key": "alchemist",
+      "file": "characters/alchemist-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-0ae9708b-7663-4d6d-94e2-d8c2fd8f9b86.png",
+      "prompt": "Production transparent CHARACTER ANIMATION ATLAS for existing React family fantasy game. Reference is character appearance and sculpted3D quality only. Subject: Friendly orange-white furry fox potion maker, brass goggles, leather apron, green scarf, gloved hands, holds clear glass flask with blue liquid. Create ONE strictly regular THREE-COLUMN TWO-ROW sheet of SIX equally sized square cells, overall3:2aspectratio, genuinely transparent alpha background. SAME SINGLE character in every cell, identical camera, scale, lighting, costume, proportions, body position and baseline. Full body in each cell, centred, maximum usable size with8percent side margins, feet or seatedbase on95percentheight line in EVERY cell. NO cell overlaps, NO external props or platforms, NO floor, NO shadows baked across cells, NO text, labels, borders or grid lines. High-end stylized3D cinematic character rendering matching reference, detailed groomed fur/skin, convincing materials, expressive face and hands, not flat2D. Six poses in reading order: top-left neutral idle with eyes open; top-middle EXACT SAME neutral body with eyes gently CLOSED for blink; top-right focused anticipation looking at gameplay with small preparatory hand pose; bottom-left character-specific action using its tool or arms with convincing weight, SAME feet baseline and no jump; bottom-middle warm success reaction, happy face and small hand gesture, feet anchored; bottom-right thoughtful encouraging retry expression, feet anchored. Every cell must contain the whole character and no scenery. Changes between cells confined to head, expression and arms; feet and costume silhouette stay stable. The atlas will be animated at runtime. Preserve genuine transparent background everywhere outside figures.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 453906
+    },
+    {
+      "kind": "characters",
+      "key": "alchemist",
+      "file": "characters/alchemist-v2.webp",
+      "source": "C:/Users/samva/.codex/generated_images/01a149fc-7e91-7bd3-86fc-f9095e88fd36/exec-f1188549-252e-4216-ab85-599f935f6223.png",
+      "prompt": "Production game CHARACTER ANIMATION atlas on genuinely transparent alpha. Use the attached approved gameplay concept as the EXACT IDENTITY reference, not merely stylistic inspiration. Subject: the spotted orange lynx/cat alchemist in the center LEFT of the reference: tall black-tufted ears, short rounded feline muzzle, green eyes, golden orange spotted fur and spotted tail, brass and emerald goggles on forehead, green scarf and green leather/brown belted alchemist tunic, brown leather gloves and bracers. Hold a clear glass flask of blue liquid in the right-side hand, angled toward a cauldron to the RIGHT. Match the exact face, costume and pose in the reference. No generic fox, no unspotted replacement, no extra goggles over eyes. Output a strictly regular THREE-COLUMN TWO-ROW sprite atlas, 1536 by 1024 pixels, six square 512px cells with large TRANSPARENT GUTTERS. Every figure must fit inside x=64..448 and y=40..488 of its OWN cell, with no overlap into neighbours. Whole body and ears and hands and held tool and tail all visible; reduce the whole figure if necessary to leave 64px side margins. All figures exactly the same camera, size, lighting, same planted foot baseline y=480. NO text, UI, scenery, floor, shadows or labels. Premium detailed stylized 3D rendering matching concept lighting and material quality. Six poses in reading order: 1 idle ready pose; 2 exact same body with eyes closed for blink; 3 small preparatory gesture; 4 character-specific action: tilt the flask to pour blue liquid toward a cauldron on the right (do not paint the cauldron or a long stream outside the figure); 5 small pleased approving smile; 6 thoughtful retry. All poses must maintain the same face, costume, fixed camera and planted foot location. The top and bottom row MUST use identical framing, scale and baseline. Do not drift identity or add equipment. Transparent background everywhere outside the six characters.\n",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 469000
+    },
+    {
+      "kind": "characters",
+      "key": "bran",
+      "file": "characters/bran-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-0dcda12d-20fb-45fb-8441-f22a9efa532a.png",
+      "prompt": "Production transparent CHARACTER ANIMATION ATLAS for existing React family fantasy game. Reference is character appearance and sculpted3D quality only. Subject: Friendly red-orange baby dragon hero, golden horns, tiny wings, leather adventurer armour, orange eyes, fire-tipped tail, preserve this selected player identity. Create ONE strictly regular THREE-COLUMN TWO-ROW sheet of SIX equally sized square cells, overall3:2aspectratio, genuinely transparent alpha background. SAME SINGLE character in every cell, identical camera, scale, lighting, costume, proportions, body position and baseline. Full body in each cell, centred, maximum usable size with8percent side margins, feet or seatedbase on95percentheight line in EVERY cell. NO cell overlaps, NO external props or platforms, NO floor, NO shadows baked across cells, NO text, labels, borders or grid lines. High-end stylized3D cinematic character rendering matching reference, detailed groomed fur/skin, convincing materials, expressive face and hands, not flat2D. Six poses in reading order: top-left neutral idle with eyes open; top-middle EXACT SAME neutral body with eyes gently CLOSED for blink; top-right focused anticipation looking at gameplay with small preparatory hand pose; bottom-left character-specific action using its tool or arms with convincing weight, SAME feet baseline and no jump; bottom-middle warm success reaction, happy face and small hand gesture, feet anchored; bottom-right thoughtful encouraging retry expression, feet anchored. Every cell must contain the whole character and no scenery. Changes between cells confined to head, expression and arms; feet and costume silhouette stay stable. The atlas will be animated at runtime. Preserve genuine transparent background everywhere outside figures. MANDATORY render as actual sculpted3D character with soft volumetric lighting, tangible fur/skin/material highlights, NO ink outlines, NO flat 2D cartoon illustration. Reference1 identity only; reference2 mandatory sculpted3D art style.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 454728
+    },
+    {
+      "kind": "characters",
+      "key": "bran",
+      "file": "characters/bran-v3.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-b39fcb38-b04e-43ab-92e6-444bc5479a16.png",
+      "prompt": "Edit target: Image 1 is the existing 20-frame performance sheet. Image 2 is the authoritative original Bran character identity.\nCRITICAL SPACING REPAIR. Keep the exact same sculpted-3D hero design, materials, colours, outfit, 20 poses and their reading order from Image 1. Re-layout this sheet as exactly FIVE columns FOUR rows, 5:4 canvas, genuinely transparent background.\nMake EVERY complete figure, INCLUDING wings, horns, tail, flames, hands and clothing, MUCH SMALLER inside its cell: the entire silhouette must occupy at most 65% of cell WIDTH and 70% of cell HEIGHT, with at least 15% clear transparent margin on every side. Centre each complete figure consistently. No neighbouring silhouettes may touch. Do not draw any floating particles, surrounding light haze or detached flames. Bran's flame stays small and attached to his hand/tail; Vex's complete tail stays in his own cell.\nDo not crop off any part of a hero. Do not expand a hand, wing or tail into the gutters. Gaps between all twenty silhouettes must be completely transparent alpha zero. No floor, no shadows, no scenery, no checkerboard, no labels. Keep four rows of FIVE separate full-body heroes each.\nPreserve this exact sequence: row 1 neutral/open, half-blink, closed-blink, half-blink, neutral/open; row 2 neutral, action wind-up, signature action, recovery, neutral; row 3 neutral, smile, success gesture, settling, neutral; row 4 neutral, head tilt, thoughtful hand-to-chin, settling, neutral.\nThis edit changes only figure size, spacing and unwanted outer effects. Keep the character's identity and premium rendered style faithful to both references.",
+      "dimensions": [
+        1402,
+        1122
+      ],
+      "bytes": 612042
+    },
+    {
+      "kind": "characters",
+      "key": "core-guide",
+      "file": "characters/core-guide-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-b2e62a66-c16f-4ae5-bb05-f5550c0ec9f1.png",
+      "prompt": "Production transparent CHARACTER ANIMATION ATLAS for existing React family fantasy game. Reference is character appearance and sculpted3D quality only. Subject: Friendly orange-white furry fox guardian-scholar, violet and green embroidered ceremonial cloak with gold trim, small crystal crown, calming expressive face. Create ONE strictly regular THREE-COLUMN TWO-ROW sheet of SIX equally sized square cells, overall3:2aspectratio, genuinely transparent alpha background. SAME SINGLE character in every cell, identical camera, scale, lighting, costume, proportions, body position and baseline. Full body in each cell, centred, maximum usable size with8percent side margins, feet or seatedbase on95percentheight line in EVERY cell. NO cell overlaps, NO external props or platforms, NO floor, NO shadows baked across cells, NO text, labels, borders or grid lines. High-end stylized3D cinematic character rendering matching reference, detailed groomed fur/skin, convincing materials, expressive face and hands, not flat2D. Six poses in reading order: top-left neutral idle with eyes open; top-middle EXACT SAME neutral body with eyes gently CLOSED for blink; top-right focused anticipation looking at gameplay with small preparatory hand pose; bottom-left character-specific action using its tool or arms with convincing weight, SAME feet baseline and no jump; bottom-middle warm success reaction, happy face and small hand gesture, feet anchored; bottom-right thoughtful encouraging retry expression, feet anchored. Every cell must contain the whole character and no scenery. Changes between cells confined to head, expression and arms; feet and costume silhouette stay stable. The atlas will be animated at runtime. Preserve genuine transparent background everywhere outside figures.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 507840
+    },
+    {
+      "kind": "characters",
+      "key": "deer",
+      "file": "characters/deer-v1.webp",
+      "source": "C:/Users/samva/.codex/generated_images/01a149fc-7e91-7bd3-86fc-f9095e88fd36/exec-25628cef-3918-420f-9250-68465cc5f2fc.png",
+      "prompt": "Production transparent CHARACTER ANIMATION ATLAS for existing React family fantasy game. Reference is character appearance and sculpted3D quality only. Subject: Only the heroic small deer archer with antlers, warm tan fur, green cape and leather armour, quiver, wooden bow; preserve identity. Create ONE strictly regular THREE-COLUMN TWO-ROW sheet of SIX equally sized square cells, overall3:2aspectratio, genuinely transparent alpha background. SAME SINGLE character in every cell, identical camera, scale, lighting, costume, proportions, body position and baseline. Full body in each cell, centred, maximum usable size with8percent side margins, feet or seatedbase on95percentheight line in EVERY cell. NO cell overlaps, NO external props or platforms, NO floor, NO shadows baked across cells, NO text, labels, borders or grid lines. High-end stylized3D cinematic character rendering matching reference, detailed groomed fur/skin, convincing materials, expressive face and hands, not flat2D. Six poses in reading order: top-left neutral idle with eyes open; top-middle EXACT SAME neutral body with eyes gently CLOSED for blink; top-right focused anticipation looking at gameplay with small preparatory hand pose; bottom-left character-specific action using its tool or arms with convincing weight, SAME feet baseline and no jump; bottom-middle warm success reaction, happy face and small hand gesture, feet anchored; bottom-right thoughtful encouraging retry expression, feet anchored. Every cell must contain the whole character and no scenery. Changes between cells confined to head, expression and arms; feet and costume silhouette stay stable. The atlas will be animated at runtime. Preserve genuine transparent background everywhere outside figures.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 453456
+    },
+    {
+      "kind": "characters",
+      "key": "deer",
+      "file": "characters/deer-v3.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-aa43c151-9c34-461a-8642-cd8a2d5ea743.png",
+      "prompt": "Use case: identity-preserve / style-transfer. This is a production animation SPRITE SHEET, not a character redesign.\nIMAGE 1 is the authoritative ORIGINAL hero design. IMAGE 2 is the freshly upgraded sculpted-3D rendering reference for this same hero. Preserve the original identity from image 1, and match image 2's premium soft 3D materials and lighting. Keep the original head/body proportions, exact face/eye shape and colour, ears/horns, markings, clothing, equipment and palette. No extra accessories or altered anatomy.\nOutput exactly TWENTY complete full-body frames in a strict FIVE COLUMN by FOUR ROW regular grid. Aim for 2560 x 2048 pixels (5:4 aspect ratio), with twenty equal square cells. Correct cell count and registration are essential. No text, frame numbers, grids, borders, scenery or floor.\nGENUINELY TRANSPARENT ALPHA background; outside each hero alpha must be ZERO. No visible background, no checkerboard, no glow behind the hero, no cast shadows. Each hero entirely inside its own cell with 8% empty margins. Identical camera in every cell, three-quarter facing screen right, same character scale, no camera movement or zoom, common central anchor and feet at 94% cell height. Render the same hero consistently twenty times. Carefully separate neighbouring frames, including weapons, antlers, wings and tails.\n\nIDENTITY LOCK:\nBarratt is the original SMALL GOLDEN TAN DEER ARCHER: GREEN eyes, cream muzzle/inner ears, short branching tan antlers matching the original simple branching silhouette, golden forelock, green hooded cape hanging from shoulders (hood down), original brown leather tunic and gloves, crossed leather straps, rectangular brass belt buckle, brown boots, quiver with GREEN-fletched arrows behind shoulder, short curved WOODEN bow held LOW across his body. The bow shape and cape clasp must match Image 1. NO giant elaborate antlers, NO gold round chest medallion, NO altered white eyebrow markings. Signature action is drawing his original small bow with a green-fletched arrow; keep original face and equipment.\nANIMATION ORDER: four five-frame micro-sequences, one per row, progressing continuously left to right within that row. Every row begins and ends in the EXACT SAME neutral body pose to transition cleanly.\nROW 1, frames 0-4: natural blink in otherwise identical idle stance: eyes open, eyelids half closed, closed, half open, open. Body and hands remain registered.\nROW 2, frames 5-9: signature action: neutral, small wind-up, signature action extended, controlled recovery, exact neutral again. Keep feet planted; interpolate the arms and expression gradually.\nROW 3, frames 10-14: success: neutral, gentle smile, happy face and small celebration, settling, exact neutral. Keep identity, scale and planted feet unchanged.\nROW 4, frames 15-19: retry/thinking: neutral, gentle head tilt, thoughtful hand near chin, return halfway, exact neutral. Supportive expression, never frightened or defeated.\nThe row sequences must be animation in-betweens of one consistent model, not twenty different drawings/designs.",
+      "dimensions": [
+        1402,
+        1122
+      ],
+      "bytes": 716916
+    },
+    {
+      "kind": "characters",
+      "key": "desert-detective",
+      "file": "characters/desert-detective-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-88a24da3-3b43-43d5-a504-f159db54b623.png",
+      "prompt": "Production transparent CHARACTER ANIMATION ATLAS for existing React family fantasy game. Reference is character appearance and sculpted3D quality only. Subject: Friendly furry orange-white fox detective, large ears, green wide-brim expedition hat, leather coat, green scarf, brass magnifying glass. Create ONE strictly regular THREE-COLUMN TWO-ROW sheet of SIX equally sized square cells, overall3:2aspectratio, genuinely transparent alpha background. SAME SINGLE character in every cell, identical camera, scale, lighting, costume, proportions, body position and baseline. Full body in each cell, centred, maximum usable size with8percent side margins, feet or seatedbase on95percentheight line in EVERY cell. NO cell overlaps, NO external props or platforms, NO floor, NO shadows baked across cells, NO text, labels, borders or grid lines. High-end stylized3D cinematic character rendering matching reference, detailed groomed fur/skin, convincing materials, expressive face and hands, not flat2D. Six poses in reading order: top-left neutral idle with eyes open; top-middle EXACT SAME neutral body with eyes gently CLOSED for blink; top-right focused anticipation looking at gameplay with small preparatory hand pose; bottom-left character-specific action using its tool or arms with convincing weight, SAME feet baseline and no jump; bottom-middle warm success reaction, happy face and small hand gesture, feet anchored; bottom-right thoughtful encouraging retry expression, feet anchored. Every cell must contain the whole character and no scenery. Changes between cells confined to head, expression and arms; feet and costume silhouette stay stable. The atlas will be animated at runtime. Preserve genuine transparent background everywhere outside figures.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 469900
+    },
+    {
+      "kind": "characters",
+      "key": "desert-scholar",
+      "file": "characters/desert-scholar-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-0858401c-619a-4bb8-b9eb-f00f2e9aa612.png",
+      "prompt": "Production transparent CHARACTER ANIMATION ATLAS for existing React family fantasy game. Reference is character appearance and sculpted3D quality only. Subject: Friendly orange-white fennec fox scholar with very large ears, brass goggles, teal-green desert scarf and embroidered robe, holds short stylus. Create ONE strictly regular THREE-COLUMN TWO-ROW sheet of SIX equally sized square cells, overall3:2aspectratio, genuinely transparent alpha background. SAME SINGLE character in every cell, identical camera, scale, lighting, costume, proportions, body position and baseline. Full body in each cell, centred, maximum usable size with8percent side margins, feet or seatedbase on95percentheight line in EVERY cell. NO cell overlaps, NO external props or platforms, NO floor, NO shadows baked across cells, NO text, labels, borders or grid lines. High-end stylized3D cinematic character rendering matching reference, detailed groomed fur/skin, convincing materials, expressive face and hands, not flat2D. Six poses in reading order: top-left neutral idle with eyes open; top-middle EXACT SAME neutral body with eyes gently CLOSED for blink; top-right focused anticipation looking at gameplay with small preparatory hand pose; bottom-left character-specific action using its tool or arms with convincing weight, SAME feet baseline and no jump; bottom-middle warm success reaction, happy face and small hand gesture, feet anchored; bottom-right thoughtful encouraging retry expression, feet anchored. Every cell must contain the whole character and no scenery. Changes between cells confined to head, expression and arms; feet and costume silhouette stay stable. The atlas will be animated at runtime. Preserve genuine transparent background everywhere outside figures.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 479218
+    },
+    {
+      "kind": "characters",
+      "key": "desert-scholar",
+      "file": "characters/desert-scholar-v2.webp",
+      "source": "C:/Users/samva/.codex/generated_images/01a149fc-7e91-7bd3-86fc-f9095e88fd36/exec-530075c7-2e8d-4ebd-92bd-71c866a96904.png",
+      "prompt": "Create a production animation sprite atlas on genuinely transparent alpha, using the attached Graph Grabber gameplay concept as EXACT character identity. Extract/recreate the leopard scholar sitting on the LEFT: round small leopard ears, golden spotted leopard fur, green eyes, cream muzzle, green scarf and draped dark green and gold scholarly cloak, cream trousers, soft furry paws, gold medallion, curled spotted tail. Seated on invisible support with feet/paws grounded, torso facing three quarters right, one hand pointing to the right at the graph. Match the concept faithfully, do not add pilot goggles, tall fox ears, backpack or boots. Beautiful highly detailed stylized 3D character of the same quality as the concept. Output ONLY 3 columns x 2 rows, 1536x1024, six equally sized SQUARE 512x512 cells. Transparent background, no text, frames or scenery or chair. Consistent scale, exact same camera, identical planted feet baseline at y=488 within every 512px cell, centered x=256. Top row: 1 seated idle pointing right, 2 same body with closed eye blink, 3 slight pointing anticipation. Bottom row: 4 clear friendly pointing gesture, 5 pleased approving smile and nod, 6 thoughtful retry gesture. Keep head and paws aligned to avoid animation jumps; all cells contain entire character, ears, tail, hands and paws with margin. Preserve the leopard's specific identity, not a generic fox explorer.\n",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 546828
+    },
+    {
+      "kind": "characters",
+      "key": "forest-chef",
+      "file": "characters/forest-chef-v1.webp",
+      "source": "C:/Users/samva/.codex/generated_images/01a149fc-7e91-7bd3-86fc-f9095e88fd36/exec-228378bd-e263-43b3-b17e-65a07348dd26.png",
+      "prompt": "Production transparent CHARACTER ANIMATION ATLAS for existing React family fantasy game. Reference is character appearance and sculpted3D quality only. Subject: Only the furry orange-and-white fox chef, green leaf cap and apron, holds a ceramic serving plate; premium appealing face. Create ONE strictly regular THREE-COLUMN TWO-ROW sheet of SIX equally sized square cells, overall3:2aspectratio, genuinely transparent alpha background. SAME SINGLE character in every cell, identical camera, scale, lighting, costume, proportions, body position and baseline. Full body in each cell, centred, maximum usable size with8percent side margins, feet or seatedbase on95percentheight line in EVERY cell. NO cell overlaps, NO external props or platforms, NO floor, NO shadows baked across cells, NO text, labels, borders or grid lines. High-end stylized3D cinematic character rendering matching reference, detailed groomed fur/skin, convincing materials, expressive face and hands, not flat2D. Six poses in reading order: top-left neutral idle with eyes open; top-middle EXACT SAME neutral body with eyes gently CLOSED for blink; top-right focused anticipation looking at gameplay with small preparatory hand pose; bottom-left character-specific action using its tool or arms with convincing weight, SAME feet baseline and no jump; bottom-middle warm success reaction, happy face and small hand gesture, feet anchored; bottom-right thoughtful encouraging retry expression, feet anchored. Every cell must contain the whole character and no scenery. Changes between cells confined to head, expression and arms; feet and costume silhouette stay stable. The atlas will be animated at runtime. Preserve genuine transparent background everywhere outside figures.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 461826
+    },
+    {
+      "kind": "characters",
+      "key": "forest-chef",
+      "file": "characters/forest-chef-v2.webp",
+      "source": "C:/Users/samva/.codex/generated_images/01a149fc-7e91-7bd3-86fc-f9095e88fd36/exec-1639c1ee-daea-4229-864d-0be52c44f6a4.png",
+      "prompt": "Production game CHARACTER ANIMATION atlas on genuinely transparent alpha. Use the attached approved gameplay concept as the EXACT IDENTITY reference, not merely stylistic inspiration. Subject: the orange SQUIRREL chef in the middle of the reference, NOT a fox: enormous fluffy curled squirrel tail, short rounded muzzle, green eyes, orange and cream fur, green leaf-print head scarf tied at the back, cream puff-sleeved shirt, green apron dress, leather utility belt. Three-quarter profile facing LEFT toward customers, holding a shallow wooden bowl of green vegetables. Match the reference exactly; no tall chef hat, no animal substitution. Output a strictly regular THREE-COLUMN TWO-ROW sprite atlas, 1536 by 1024 pixels, six square 512px cells with large TRANSPARENT GUTTERS. Every figure must fit inside x=64..448 and y=40..488 of its OWN cell, with no overlap into neighbours. Whole body and ears and hands and held tool and tail all visible; reduce the whole figure if necessary to leave 64px side margins. All figures exactly the same camera, size, lighting, same planted foot baseline y=480. NO text, UI, scenery, floor, shadows or labels. Premium detailed stylized 3D rendering matching concept lighting and material quality. Six poses in reading order: 1 idle ready pose; 2 exact same body with eyes closed for blink; 3 small preparatory gesture; 4 character-specific action: offer the wooden serving bowl toward customers on the left while keeping feet planted; 5 small pleased approving smile; 6 thoughtful retry. All poses must maintain the same face, costume, fixed camera and planted foot location. The top and bottom row MUST use identical framing, scale and baseline. Do not drift identity or add equipment. Transparent background everywhere outside the six characters.\n",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 440506
+    },
+    {
+      "kind": "characters",
+      "key": "forest-guardian",
+      "file": "characters/forest-guardian-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-c0586d9d-a974-449a-8022-1c40edd018c0.png",
+      "prompt": "Production transparent CHARACTER ANIMATION ATLAS for existing React family fantasy game. Reference is character appearance and sculpted3D quality only. Subject: The friendly orange-white fox botanist with green leaf crown and leaf cloak, leather bracers, emerald pendant, leafy outfit from concept. Create ONE strictly regular THREE-COLUMN TWO-ROW sheet of SIX equally sized square cells, overall3:2aspectratio, genuinely transparent alpha background. SAME SINGLE character in every cell, identical camera, scale, lighting, costume, proportions, body position and baseline. Full body in each cell, centred, maximum usable size with8percent side margins, feet or seatedbase on95percentheight line in EVERY cell. NO cell overlaps, NO external props or platforms, NO floor, NO shadows baked across cells, NO text, labels, borders or grid lines. High-end stylized3D cinematic character rendering matching reference, detailed groomed fur/skin, convincing materials, expressive face and hands, not flat2D. Six poses in reading order: top-left neutral idle with eyes open; top-middle EXACT SAME neutral body with eyes gently CLOSED for blink; top-right focused anticipation looking at gameplay with small preparatory hand pose; bottom-left character-specific action using its tool or arms with convincing weight, SAME feet baseline and no jump; bottom-middle warm success reaction, happy face and small hand gesture, feet anchored; bottom-right thoughtful encouraging retry expression, feet anchored. Every cell must contain the whole character and no scenery. Changes between cells confined to head, expression and arms; feet and costume silhouette stay stable. The atlas will be animated at runtime. Preserve genuine transparent background everywhere outside figures.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 481842
+    },
+    {
+      "kind": "characters",
+      "key": "glacier-builder",
+      "file": "characters/glacier-builder-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-19048424-0243-492e-9670-c6bf1c669153.png",
+      "prompt": "Production transparent CHARACTER ANIMATION ATLAS for existing React family fantasy game. Reference is character appearance and sculpted3D quality only. Subject: The orange-white furry fox glacier builder, brass goggles, teal blue fur-lined winter coat, leather gloves and boots, holds rolled blueprint. Create ONE strictly regular THREE-COLUMN TWO-ROW sheet of SIX equally sized square cells, overall3:2aspectratio, genuinely transparent alpha background. SAME SINGLE character in every cell, identical camera, scale, lighting, costume, proportions, body position and baseline. Full body in each cell, centred, maximum usable size with8percent side margins, feet or seatedbase on95percentheight line in EVERY cell. NO cell overlaps, NO external props or platforms, NO floor, NO shadows baked across cells, NO text, labels, borders or grid lines. High-end stylized3D cinematic character rendering matching reference, detailed groomed fur/skin, convincing materials, expressive face and hands, not flat2D. Six poses in reading order: top-left neutral idle with eyes open; top-middle EXACT SAME neutral body with eyes gently CLOSED for blink; top-right focused anticipation looking at gameplay with small preparatory hand pose; bottom-left character-specific action using its tool or arms with convincing weight, SAME feet baseline and no jump; bottom-middle warm success reaction, happy face and small hand gesture, feet anchored; bottom-right thoughtful encouraging retry expression, feet anchored. Every cell must contain the whole character and no scenery. Changes between cells confined to head, expression and arms; feet and costume silhouette stay stable. The atlas will be animated at runtime. Preserve genuine transparent background everywhere outside figures.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 471712
+    },
+    {
+      "kind": "characters",
+      "key": "glacier-builder",
+      "file": "characters/glacier-builder-v2.webp",
+      "source": "C:/Users/samva/.codex/generated_images/01a149fc-7e91-7bd3-86fc-f9095e88fd36/exec-e596d647-a2d0-46d4-9127-6e386f43d498.png",
+      "prompt": "Production game CHARACTER ANIMATION atlas on genuinely transparent alpha. Use the attached approved gameplay concept as the EXACT IDENTITY reference, not merely stylistic inspiration. Subject: the orange lynx-like winter builder on the LEFT of the reference: large pointed tufted black-tipped ears, rounded feline muzzle, green eyes, orange and cream fur, brass goggles on forehead, teal fur-lined winter coat, green scarf, leather work gloves and boots, rolled parchment blueprint. Kneeling or crouched working posture pointing RIGHT. Match the specific reference face, head proportions and costume. No invented green cap. Keep ears and whole backpack inside each cell. Output a strictly regular THREE-COLUMN TWO-ROW sprite atlas, 1536 by 1024 pixels, six square 512px cells with large TRANSPARENT GUTTERS. Every figure must fit inside x=64..448 and y=40..488 of its OWN cell, with no overlap into neighbours. Whole body and ears and hands and held tool and tail all visible; reduce the whole figure if necessary to leave 64px side margins. All figures exactly the same camera, size, lighting, same planted foot baseline y=480. NO text, UI, scenery, floor, shadows or labels. Premium detailed stylized 3D rendering matching concept lighting and material quality. Six poses in reading order: 1 idle ready pose; 2 exact same body with eyes closed for blink; 3 small preparatory gesture; 4 character-specific action: point toward a floor plan at the right; maintain the crouched grounded stance; 5 small pleased approving smile; 6 thoughtful retry. All poses must maintain the same face, costume, fixed camera and planted foot location. The top and bottom row MUST use identical framing, scale and baseline. Do not drift identity or add equipment. Transparent background everywhere outside the six characters.\n",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 515486
+    },
+    {
+      "kind": "characters",
+      "key": "glacier-guide",
+      "file": "characters/glacier-guide-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-3d0be681-db64-4f2d-a06a-4b4733857798.png",
+      "prompt": "Production transparent CHARACTER ANIMATION ATLAS for existing React family fantasy game. Reference is character appearance and sculpted3D quality only. Subject: The friendly fluffy snow leopard guide with white-and-grey spotted fur, blue eyes, regal blue winter cape, gold and ice-crystal crown, warm expressive face. Create ONE strictly regular THREE-COLUMN TWO-ROW sheet of SIX equally sized square cells, overall3:2aspectratio, genuinely transparent alpha background. SAME SINGLE character in every cell, identical camera, scale, lighting, costume, proportions, body position and baseline. Full body in each cell, centred, maximum usable size with8percent side margins, feet or seatedbase on95percentheight line in EVERY cell. NO cell overlaps, NO external props or platforms, NO floor, NO shadows baked across cells, NO text, labels, borders or grid lines. High-end stylized3D cinematic character rendering matching reference, detailed groomed fur/skin, convincing materials, expressive face and hands, not flat2D. Six poses in reading order: top-left neutral idle with eyes open; top-middle EXACT SAME neutral body with eyes gently CLOSED for blink; top-right focused anticipation looking at gameplay with small preparatory hand pose; bottom-left character-specific action using its tool or arms with convincing weight, SAME feet baseline and no jump; bottom-middle warm success reaction, happy face and small hand gesture, feet anchored; bottom-right thoughtful encouraging retry expression, feet anchored. Every cell must contain the whole character and no scenery. Changes between cells confined to head, expression and arms; feet and costume silhouette stay stable. The atlas will be animated at runtime. Preserve genuine transparent background everywhere outside figures.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 527916
+    },
+    {
+      "kind": "characters",
+      "key": "goblin-hit",
+      "file": "characters/goblin-hit-v3.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-93f83048-3711-4773-b610-23a579d4b78f.png",
+      "prompt": "Use case: identity-preserve. Production game sprite animation sheet. Reference is the EXACT goblin identity to preserve: lime green skin, large ears, brown eyes, navy blue wizard hat with gold crescent and gold trim, navy/gold coat, brown belt and boots. Same premium detailed stylized 3D rendering as reference. Generate exactly 20 full-body frames in a strict FIVE columns by FOUR rows grid, read left-to-right top-to-bottom. Transparent background with real alpha, no shadows outside silhouette, no ground, no text or frame numbers. Entire hat, hands, feet in every cell with generous empty gutters. Camera, lighting, costume, body proportions and character scale IDENTICAL throughout. Boot soles on the same baseline within each cell, torso centred; no zoom or camera motion. These are consecutive closely spaced animation in-betweens, NOT 20 different poses. One continuous 900ms gentle impact recoil and recovery with 20 evenly spaced in-betweens: start relaxed standing neutral frame 1, flinch and lean slightly backward frames 2-6, eyes briefly close and shoulders contract frames 7-9, gently lean forward recovering balance frames 10-14, settle smoothly back to original relaxed standing neutral frames 15-20. Boots stay planted. No injury, no effects, no walking, keep changes between adjacent frames SMALL.",
+      "dimensions": [
+        1402,
+        1122
+      ],
+      "bytes": 800074
+    },
+    {
+      "kind": "characters",
+      "key": "goblin-idle",
+      "file": "characters/goblin-idle-v3.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-8e42fce2-1520-421c-803a-e74bae6722f9.png",
+      "prompt": "Use case: identity-preserve. Production game sprite animation sheet. Reference is the EXACT goblin identity to preserve: lime green skin, large ears, brown eyes, navy blue wizard hat with gold crescent and gold trim, navy/gold coat, brown belt and boots. Same premium detailed stylized 3D rendering as reference. Generate exactly 20 full-body frames in a strict FIVE columns by FOUR rows grid, read left-to-right top-to-bottom. Transparent background with real alpha, no shadows outside silhouette, no ground, no text or frame numbers. Entire hat, hands, feet in every cell with generous empty gutters. Camera, lighting, costume, body proportions and character scale IDENTICAL throughout. Boot soles on the same baseline within each cell, torso centred; no zoom or camera motion. These are consecutive closely spaced animation in-betweens, NOT 20 different poses. One subtle seamless breathing and blinking loop lasting one second. Feet stay planted. Arms relaxed by sides; chest rises and falls VERY slightly, hat tip gently follows, one quick blink in middle. Frame 20 returns almost exactly to frame 1. No steps, no gesture, no large bounce.",
+      "dimensions": [
+        1402,
+        1122
+      ],
+      "bytes": 829346
+    },
+    {
+      "kind": "characters",
+      "key": "goblin-taunt",
+      "file": "characters/goblin-taunt-v3.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-2ed95ebe-0503-44ae-a82a-05023aa9dd40.png",
+      "prompt": "Use case: identity-preserve. Production game sprite animation sheet. Reference is the EXACT goblin identity to preserve: lime green skin, large ears, brown eyes, navy blue wizard hat with gold crescent and gold trim, navy/gold coat, brown belt and boots. Same premium detailed stylized 3D rendering as reference. Generate exactly 20 full-body frames in a strict FIVE columns by FOUR rows grid, read left-to-right top-to-bottom. Transparent background with real alpha, no shadows outside silhouette, no ground, no text or frame numbers. Entire hat, hands, feet in every cell with generous empty gutters. Camera, lighting, costume, body proportions and character scale IDENTICAL throughout. Boot soles on the same baseline within each cell, torso centred; no zoom or camera motion. These are consecutive closely spaced animation in-betweens, NOT 20 different poses. One continuous 660ms playful taunt gesture with 20 evenly spaced in-betweens: start relaxed standing neutral frames 1-3, gently bend knees and lift hands frames 4-8, open arms in mischievous grin frames 9-12, smoothly lower arms and straighten frames 13-18, end exactly in original relaxed neutral frames 19-20. Boots stay planted, no jumps or walking; keep changes between adjacent frames SMALL.",
+      "dimensions": [
+        1402,
+        1122
+      ],
+      "bytes": 810320
+    },
+    {
+      "kind": "characters",
+      "key": "goblin",
+      "file": "characters/goblin-v1.webp",
+      "source": "C:/Users/samva/.codex/generated_images/01a149fc-7e91-7bd3-86fc-f9095e88fd36/exec-59b9261c-08a2-41b6-b26f-c9f501fb3336.png",
+      "prompt": "Production transparent CHARACTER ANIMATION ATLAS for existing React family fantasy game. Reference is character appearance and sculpted3D quality only. Subject: Green goblin wizard, big ears, blue pointed hat and gold-trimmed blue robe, holds glowing wooden torch-staff, exactly the reference goblin. Create ONE strictly regular THREE-COLUMN TWO-ROW sheet of SIX equally sized square cells, overall3:2aspectratio, genuinely transparent alpha background. SAME SINGLE character in every cell, identical camera, scale, lighting, costume, proportions, body position and baseline. Full body in each cell, centred, maximum usable size with8percent side margins, feet or seatedbase on95percentheight line in EVERY cell. NO cell overlaps, NO external props or platforms, NO floor, NO shadows baked across cells, NO text, labels, borders or grid lines. High-end stylized3D cinematic character rendering matching reference, detailed groomed fur/skin, convincing materials, expressive face and hands, not flat2D. Six poses in reading order: top-left neutral idle with eyes open; top-middle EXACT SAME neutral body with eyes gently CLOSED for blink; top-right focused anticipation looking at gameplay with small preparatory hand pose; bottom-left character-specific action using its tool or arms with convincing weight, SAME feet baseline and no jump; bottom-middle warm success reaction, happy face and small hand gesture, feet anchored; bottom-right thoughtful encouraging retry expression, feet anchored. Every cell must contain the whole character and no scenery. Changes between cells confined to head, expression and arms; feet and costume silhouette stay stable. The atlas will be animated at runtime. Preserve genuine transparent background everywhere outside figures.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 504754
+    },
+    {
+      "kind": "characters",
+      "key": "goblin",
+      "file": "characters/goblin-v2.webp",
+      "source": "C:/Users/samva/.codex/generated_images/01a149fc-7e91-7bd3-86fc-f9095e88fd36/exec-8c692fb1-4968-4216-90d5-2240cf2f758a.png",
+      "prompt": "Create a production animation sprite atlas on genuinely transparent alpha. Use the attached Number Line Ninja gameplay concept as the EXACT CHARACTER IDENTITY reference: the small GREEN-SKINNED GOBLIN wizard at the bridge, very long pointed green ears, smooth green skin, goblin humanlike face, small humanlike nose, bright eyes, navy and gold wizard hat and tunic, tan boots and belt. This is a humanoid goblin, absolutely NO fur, NO cat, NO feline muzzle, NO pink animal nose, NO whiskers. Preserve the character in the concept precisely, including face and costume. Render beautiful high quality stylized 3D matching the reference. Output ONLY a 3-column x 2-row sprite sheet, 1536x1024, with six equally sized SQUARE 512x512 cells with transparent background and no text, frames or scenery. Each full-body goblin is exactly the same size and feet baseline at y=488 within each cell, centered x=256, no hat or hand cropped. Top row: 1 neutral alert ready idle, 2 identical idle blinking closed eyes with ALL body placement unchanged, 3 slight action anticipation with bent knees. Bottom row: 4 balanced bridge landing with outstretched hands like the concept, 5 happy approving gesture, 6 thoughtful retry. Keep fixed camera, same lighting, same proportions, same head position and planted boots across cells. No torch or staff; both hands visible as in the concept. Do not redesign or substitute an animal. This atlas replaces the incorrect cat-like character in the playable game.\n",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 464506
+    },
+    {
+      "kind": "characters",
+      "key": "jelly",
+      "file": "characters/jelly-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-a56a8d8e-6fd4-4046-abae-23d1a022fbf1.png",
+      "prompt": "Production transparent CHARACTER ANIMATION ATLAS for existing React family fantasy game. Reference is character appearance and sculpted3D quality only. Subject: Friendly translucent turquoise crystal jelly creature with cute expressive eyes, ice-crystal crown, soft rounded limbs. Preserve Crystal Jelly from the reference. Create ONE strictly regular THREE-COLUMN TWO-ROW sheet of SIX equally sized square cells, overall3:2aspectratio, genuinely transparent alpha background. SAME SINGLE character in every cell, identical camera, scale, lighting, costume, proportions, body position and baseline. Full body in each cell, centred, maximum usable size with8percent side margins, feet or seatedbase on95percentheight line in EVERY cell. NO cell overlaps, NO external props or platforms, NO floor, NO shadows baked across cells, NO text, labels, borders or grid lines. High-end stylized3D cinematic character rendering matching reference, detailed groomed fur/skin, convincing materials, expressive face and hands, not flat2D. Six poses in reading order: top-left neutral idle with eyes open; top-middle EXACT SAME neutral body with eyes gently CLOSED for blink; top-right focused anticipation looking at gameplay with small preparatory hand pose; bottom-left character-specific action using its tool or arms with convincing weight, SAME feet baseline and no jump; bottom-middle warm success reaction, happy face and small hand gesture, feet anchored; bottom-right thoughtful encouraging retry expression, feet anchored. Every cell must contain the whole character and no scenery. Changes between cells confined to head, expression and arms; feet and costume silhouette stay stable. The atlas will be animated at runtime. Preserve genuine transparent background everywhere outside figures.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 328754
+    },
+    {
+      "kind": "characters",
+      "key": "merchant",
+      "file": "characters/merchant-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-1093bca7-d5ae-4c30-a79e-c124851465dd.png",
+      "prompt": "Production transparent CHARACTER ANIMATION ATLAS for existing React family fantasy game. Reference is character appearance and sculpted3D quality only. Subject: Friendly lime-green goblin merchant with big ears, teal bandana, cream shirt with rolled sleeves, leather vest and belt, holds no coin labels. Create ONE strictly regular THREE-COLUMN TWO-ROW sheet of SIX equally sized square cells, overall3:2aspectratio, genuinely transparent alpha background. SAME SINGLE character in every cell, identical camera, scale, lighting, costume, proportions, body position and baseline. Full body in each cell, centred, maximum usable size with8percent side margins, feet or seatedbase on95percentheight line in EVERY cell. NO cell overlaps, NO external props or platforms, NO floor, NO shadows baked across cells, NO text, labels, borders or grid lines. High-end stylized3D cinematic character rendering matching reference, detailed groomed fur/skin, convincing materials, expressive face and hands, not flat2D. Six poses in reading order: top-left neutral idle with eyes open; top-middle EXACT SAME neutral body with eyes gently CLOSED for blink; top-right focused anticipation looking at gameplay with small preparatory hand pose; bottom-left character-specific action using its tool or arms with convincing weight, SAME feet baseline and no jump; bottom-middle warm success reaction, happy face and small hand gesture, feet anchored; bottom-right thoughtful encouraging retry expression, feet anchored. Every cell must contain the whole character and no scenery. Changes between cells confined to head, expression and arms; feet and costume silhouette stay stable. The atlas will be animated at runtime. Preserve genuine transparent background everywhere outside figures.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 394146
+    },
+    {
+      "kind": "characters",
+      "key": "mochi",
+      "file": "characters/mochi-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-b66bc464-cc3e-43b1-a9a3-918c2686c694.png",
+      "prompt": "Production transparent CHARACTER ANIMATION ATLAS for existing React family fantasy game. Reference is character appearance and sculpted3D quality only. Subject: Friendly black-white panda ninja hero, red headband, charcoal scarf, leather bracers, red sash, preserve this selected player identity. Create ONE strictly regular THREE-COLUMN TWO-ROW sheet of SIX equally sized square cells, overall3:2aspectratio, genuinely transparent alpha background. SAME SINGLE character in every cell, identical camera, scale, lighting, costume, proportions, body position and baseline. Full body in each cell, centred, maximum usable size with8percent side margins, feet or seatedbase on95percentheight line in EVERY cell. NO cell overlaps, NO external props or platforms, NO floor, NO shadows baked across cells, NO text, labels, borders or grid lines. High-end stylized3D cinematic character rendering matching reference, detailed groomed fur/skin, convincing materials, expressive face and hands, not flat2D. Six poses in reading order: top-left neutral idle with eyes open; top-middle EXACT SAME neutral body with eyes gently CLOSED for blink; top-right focused anticipation looking at gameplay with small preparatory hand pose; bottom-left character-specific action using its tool or arms with convincing weight, SAME feet baseline and no jump; bottom-middle warm success reaction, happy face and small hand gesture, feet anchored; bottom-right thoughtful encouraging retry expression, feet anchored. Every cell must contain the whole character and no scenery. Changes between cells confined to head, expression and arms; feet and costume silhouette stay stable. The atlas will be animated at runtime. Preserve genuine transparent background everywhere outside figures. MANDATORY render as actual sculpted3D character with soft volumetric lighting, tangible fur/skin/material highlights, NO ink outlines, NO flat 2D cartoon illustration. Reference1 identity only; reference2 mandatory sculpted3D art style.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 342984
+    },
+    {
+      "kind": "characters",
+      "key": "mochi",
+      "file": "characters/mochi-v3.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-cf068246-edcf-438a-9f0f-f44b8dc308de.png",
+      "prompt": "Use case: identity-preserve / style-transfer. This is a production animation SPRITE SHEET, not a character redesign.\nIMAGE 1 is the authoritative ORIGINAL hero design. IMAGE 2 is the freshly upgraded sculpted-3D rendering reference for this same hero. Preserve the original identity from image 1, and match image 2's premium soft 3D materials and lighting. Keep the original head/body proportions, exact face/eye shape and colour, ears/horns, markings, clothing, equipment and palette. No extra accessories or altered anatomy.\nOutput exactly TWENTY complete full-body frames in a strict FIVE COLUMN by FOUR ROW regular grid. Aim for 2560 x 2048 pixels (5:4 aspect ratio), with twenty equal square cells. Correct cell count and registration are essential. No text, frame numbers, grids, borders, scenery or floor.\nGENUINELY TRANSPARENT ALPHA background; outside each hero alpha must be ZERO. No visible background, no checkerboard, no glow behind the hero, no cast shadows. Each hero entirely inside its own cell with 8% empty margins. Identical camera in every cell, three-quarter facing screen right, same character scale, no camera movement or zoom, common central anchor and feet at 94% cell height. Render the same hero consistently twenty times. Carefully separate neighbouring frames, including weapons, antlers, wings and tails.\n\nIDENTITY LOCK:\nMochi is the original soft ROUND BLACK AND WHITE PANDA NINJA. Match Image 1: broad round panda head, small rounded black ears, BLACK oval eye patches and dark pupils, short white muzzle and tiny black nose, red cloth headband tied at side, original charcoal scarf and tunic with white belly, red waist sash, dark pants, original brown leather bracers and soft dark footwear. Keep his slightly stout proportions, original friendly mouth and white forelock. No green eyes, swords, armour, medals or altered clothing. Signature action is a friendly open-palm martial arts strike, same planted feet.\nANIMATION ORDER: four five-frame micro-sequences, one per row, progressing continuously left to right within that row. Every row begins and ends in the EXACT SAME neutral body pose to transition cleanly.\nROW 1, frames 0-4: natural blink in otherwise identical idle stance: eyes open, eyelids half closed, closed, half open, open. Body and hands remain registered.\nROW 2, frames 5-9: signature action: neutral, small wind-up, signature action extended, controlled recovery, exact neutral again. Keep feet planted; interpolate the arms and expression gradually.\nROW 3, frames 10-14: success: neutral, gentle smile, happy face and small celebration, settling, exact neutral. Keep identity, scale and planted feet unchanged.\nROW 4, frames 15-19: retry/thinking: neutral, gentle head tilt, thoughtful hand near chin, return halfway, exact neutral. Supportive expression, never frightened or defeated.\nThe row sequences must be animation in-betweens of one consistent model, not twenty different drawings/designs.",
+      "dimensions": [
+        1402,
+        1122
+      ],
+      "bytes": 571630
+    },
+    {
+      "kind": "characters",
+      "key": "mountain-explorer",
+      "file": "characters/mountain-explorer-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-981aa624-4c94-49e1-90c0-a1435fb75697.png",
+      "prompt": "Production transparent CHARACTER ANIMATION ATLAS for existing React family fantasy game. Reference is character appearance and sculpted3D quality only. Subject: Friendly tawny spotted leopard explorer with brass goggles, green scarf, leather expedition jacket, backpack, brown boots, appealing expressive face. Create ONE strictly regular THREE-COLUMN TWO-ROW sheet of SIX equally sized square cells, overall3:2aspectratio, genuinely transparent alpha background. SAME SINGLE character in every cell, identical camera, scale, lighting, costume, proportions, body position and baseline. Full body in each cell, centred, maximum usable size with8percent side margins, feet or seatedbase on95percentheight line in EVERY cell. NO cell overlaps, NO external props or platforms, NO floor, NO shadows baked across cells, NO text, labels, borders or grid lines. High-end stylized3D cinematic character rendering matching reference, detailed groomed fur/skin, convincing materials, expressive face and hands, not flat2D. Six poses in reading order: top-left neutral idle with eyes open; top-middle EXACT SAME neutral body with eyes gently CLOSED for blink; top-right focused anticipation looking at gameplay with small preparatory hand pose; bottom-left character-specific action using its tool or arms with convincing weight, SAME feet baseline and no jump; bottom-middle warm success reaction, happy face and small hand gesture, feet anchored; bottom-right thoughtful encouraging retry expression, feet anchored. Every cell must contain the whole character and no scenery. Changes between cells confined to head, expression and arms; feet and costume silhouette stay stable. The atlas will be animated at runtime. Preserve genuine transparent background everywhere outside figures.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 466162
+    },
+    {
+      "kind": "characters",
+      "key": "outpost-miner",
+      "file": "characters/outpost-miner-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-03f46de8-9919-4b23-8e5e-32f62a878b42.png",
+      "prompt": "Production transparent CHARACTER ANIMATION ATLAS for existing React family fantasy game. Reference is character appearance and sculpted3D quality only. Subject: Friendly orange-white furry fox miner, leather mining helmet with lantern, brass goggles, leather gloves, green workscarf, boots, small pickaxe. Create ONE strictly regular THREE-COLUMN TWO-ROW sheet of SIX equally sized square cells, overall3:2aspectratio, genuinely transparent alpha background. SAME SINGLE character in every cell, identical camera, scale, lighting, costume, proportions, body position and baseline. Full body in each cell, centred, maximum usable size with8percent side margins, feet or seatedbase on95percentheight line in EVERY cell. NO cell overlaps, NO external props or platforms, NO floor, NO shadows baked across cells, NO text, labels, borders or grid lines. High-end stylized3D cinematic character rendering matching reference, detailed groomed fur/skin, convincing materials, expressive face and hands, not flat2D. Six poses in reading order: top-left neutral idle with eyes open; top-middle EXACT SAME neutral body with eyes gently CLOSED for blink; top-right focused anticipation looking at gameplay with small preparatory hand pose; bottom-left character-specific action using its tool or arms with convincing weight, SAME feet baseline and no jump; bottom-middle warm success reaction, happy face and small hand gesture, feet anchored; bottom-right thoughtful encouraging retry expression, feet anchored. Every cell must contain the whole character and no scenery. Changes between cells confined to head, expression and arms; feet and costume silhouette stay stable. The atlas will be animated at runtime. Preserve genuine transparent background everywhere outside figures.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 544370
+    },
+    {
+      "kind": "characters",
+      "key": "outpost-miner",
+      "file": "characters/outpost-miner-v2.webp",
+      "source": "C:/Users/samva/.codex/generated_images/01a149fc-7e91-7bd3-86fc-f9095e88fd36/exec-12bff327-aa25-4488-abea-6b404c7729e9.png",
+      "prompt": "Production game CHARACTER ANIMATION atlas on genuinely transparent alpha. Use the attached approved gameplay concept as the EXACT IDENTITY reference, not merely stylistic inspiration. Subject: the orange tabby kitten miner on the LEFT of the reference: rounded expressive feline face and muzzle, green eyes, triangular cat ears, golden-orange striped fur with cream cheeks and a fluffy striped tail, brown leather mining helmet with glowing brass headlamp, green neck scarf, rugged brown leather clothes, gloves and boots, brown tool belt and pickaxe. Preserve reference identity and outfit exactly; no fox muzzle or tall fox proportions. Output a strictly regular THREE-COLUMN TWO-ROW sprite atlas, 1536 by 1024 pixels, six square 512px cells with large TRANSPARENT GUTTERS. Every figure must fit inside x=64..448 and y=40..488 of its OWN cell, with no overlap into neighbours. Whole body and ears and hands and held tool and tail all visible; reduce the whole figure if necessary to leave 64px side margins. All figures exactly the same camera, size, lighting, same planted foot baseline y=480. NO text, UI, scenery, floor, shadows or labels. Premium detailed stylized 3D rendering matching concept lighting and material quality. Six poses in reading order: 1 idle ready pose; 2 exact same body with eyes closed for blink; 3 small preparatory gesture; 4 character-specific action: a controlled pickaxe strike to the right, feet staying on the same planted baseline; 5 small pleased approving smile; 6 thoughtful retry. All poses must maintain the same face, costume, fixed camera and planted foot location. The top and bottom row MUST use identical framing, scale and baseline. Do not drift identity or add equipment. Transparent background everywhere outside the six characters.\n",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 609832
+    },
+    {
+      "kind": "characters",
+      "key": "owl",
+      "file": "characters/owl-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-9eb482d5-b94c-460b-9dc7-1de26286593c.png",
+      "prompt": "Production transparent CHARACTER ANIMATION ATLAS for existing React family fantasy game. Reference is character appearance and sculpted3D quality only. Subject: Only the majestic friendly brown-and-ivory owl with emerald leaf cloak, golden crown and green gemstone, detailed fluffy feathers, perched on NO external prop; claws at ground baseline. Create ONE strictly regular THREE-COLUMN TWO-ROW sheet of SIX equally sized square cells, overall3:2aspectratio, genuinely transparent alpha background. SAME SINGLE character in every cell, identical camera, scale, lighting, costume, proportions, body position and baseline. Full body in each cell, centred, maximum usable size with8percent side margins, feet or seatedbase on95percentheight line in EVERY cell. NO cell overlaps, NO external props or platforms, NO floor, NO shadows baked across cells, NO text, labels, borders or grid lines. High-end stylized3D cinematic character rendering matching reference, detailed groomed fur/skin, convincing materials, expressive face and hands, not flat2D. Six poses in reading order: top-left neutral idle with eyes open; top-middle EXACT SAME neutral body with eyes gently CLOSED for blink; top-right focused anticipation looking at gameplay with small preparatory hand pose; bottom-left character-specific action using its tool or arms with convincing weight, SAME feet baseline and no jump; bottom-middle warm success reaction, happy face and small hand gesture, feet anchored; bottom-right thoughtful encouraging retry expression, feet anchored. Every cell must contain the whole character and no scenery. Changes between cells confined to head, expression and arms; feet and costume silhouette stay stable. The atlas will be animated at runtime. Preserve genuine transparent background everywhere outside figures.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 530150
+    },
+    {
+      "kind": "characters",
+      "key": "rhino-hit",
+      "file": "characters/rhino-hit-v3.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-aca652db-9efd-44ac-a980-8f02b889d3f2.png",
+      "prompt": "Use case: identity-preserve. Production game animation atlas. Reference image is the EXACT character to preserve: friendly white rhino with ivory horns, amber eyes, polished BLUE armour with ORANGE and GOLD trim, rounded chunky proportions. Preserve its 3/4 view facing right and exact detailed sculpted game rendering. Exactly TWENTY consecutive frames in FIVE columns FOUR rows read left-to-right top-to-bottom. These are small consecutive animation in-betweens, NOT separate unrelated poses. Each cell contains entire rhino including ears, horns, fists and feet with generous transparent gutters so silhouettes never touch. Actual transparent alpha background. No text, labels, effects, ground or shadows outside silhouette. Identical camera lighting armour and character scale throughout. Feet planted on same baseline, no camera motion or zoom. One continuous 900ms gentle recoil and recovery. Start original neutral stance frame1, flinch slightly backward raising shoulders frames2-6, brief closed eyes at frames7-9, slowly recover balance frames10-14, return smoothly to original neutral stance frames15-20. Feet stay planted. Small changes between adjacent frames. No injury or effects, no falling. CRITICAL grid correction: exactly FIVE columns and FOUR rows = 20 rhinos, not six columns or three rows. Fill all four rows. Match the neutral reference and sequence described. Every frame separated by wide transparent gutters.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 579412
+    },
+    {
+      "kind": "characters",
+      "key": "rhino-idle",
+      "file": "characters/rhino-idle-v3.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-5281da0b-471f-4c66-9967-5defefb863af.png",
+      "prompt": "Use case: identity-preserve. Production game animation atlas. Reference image is the EXACT character to preserve: friendly white rhino with ivory horns, amber eyes, polished BLUE armour with ORANGE and GOLD trim, rounded chunky proportions. Preserve its 3/4 view facing right and exact detailed sculpted game rendering. Exactly TWENTY consecutive frames in FIVE columns FOUR rows read left-to-right top-to-bottom. These are small consecutive animation in-betweens, NOT separate unrelated poses. Each cell contains entire rhino including ears, horns, fists and feet with generous transparent gutters so silhouettes never touch. Actual transparent alpha background. No text, labels, effects, ground or shadows outside silhouette. Identical camera lighting armour and character scale throughout. Feet planted on same baseline, no camera motion or zoom. One seamless one-second breathing and blinking loop. Neutral ready stance from first reference pose. Very subtle chest movement, gentle blink at midpoint, fists stay in place, boots/toes planted. Frame20 almost identical to frame1. No bouncing or walking.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 591126
+    },
+    {
+      "kind": "characters",
+      "key": "rhino-taunt",
+      "file": "characters/rhino-taunt-v3.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-0adb6ec8-4a03-4476-8068-9bdacce08de2.png",
+      "prompt": "Use case: identity-preserve. Production game animation atlas. Reference image is the EXACT character to preserve: friendly white rhino with ivory horns, amber eyes, polished BLUE armour with ORANGE and GOLD trim, rounded chunky proportions. Preserve its 3/4 view facing right and exact detailed sculpted game rendering. Exactly TWENTY consecutive frames in FIVE columns FOUR rows read left-to-right top-to-bottom. These are small consecutive animation in-betweens, NOT separate unrelated poses. Each cell contains entire rhino including ears, horns, fists and feet with generous transparent gutters so silhouettes never touch. Actual transparent alpha background. No text, labels, effects, ground or shadows outside silhouette. Identical camera lighting armour and character scale throughout. Feet planted on same baseline, no camera motion or zoom. One continuous 660ms playful ready-up gesture. Start reference relaxed stance frames1-3, slowly lift both fists into guard frames4-9, playful determined grin frames10-12, lower fists smoothly frames13-18, return to identical original neutral stance frames19-20. Feet never move. Small motion between adjacent frames. No punch, jump or attack effects.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 590400
+    },
+    {
+      "kind": "characters",
+      "key": "rhino",
+      "file": "characters/rhino-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-26d4ae58-12c6-41d2-b751-95baa5efc996.png",
+      "prompt": "Production transparent CHARACTER ANIMATION ATLAS for existing React family fantasy game. Reference is character appearance and sculpted3D quality only. Subject: White rhino knight in detailed blue enamel armour with orange trim, expressive amber eyes and two horns, exactly the reference rhino. Create ONE strictly regular THREE-COLUMN TWO-ROW sheet of SIX equally sized square cells, overall3:2aspectratio, genuinely transparent alpha background. SAME SINGLE character in every cell, identical camera, scale, lighting, costume, proportions, body position and baseline. Full body in each cell, centred, maximum usable size with8percent side margins, feet or seatedbase on95percentheight line in EVERY cell. NO cell overlaps, NO external props or platforms, NO floor, NO shadows baked across cells, NO text, labels, borders or grid lines. High-end stylized3D cinematic character rendering matching reference, detailed groomed fur/skin, convincing materials, expressive face and hands, not flat2D. Six poses in reading order: top-left neutral idle with eyes open; top-middle EXACT SAME neutral body with eyes gently CLOSED for blink; top-right focused anticipation looking at gameplay with small preparatory hand pose; bottom-left character-specific action using its tool or arms with convincing weight, SAME feet baseline and no jump; bottom-middle warm success reaction, happy face and small hand gesture, feet anchored; bottom-right thoughtful encouraging retry expression, feet anchored. Every cell must contain the whole character and no scenery. Changes between cells confined to head, expression and arms; feet and costume silhouette stay stable. The atlas will be animated at runtime. Preserve genuine transparent background everywhere outside figures.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 485576
+    },
+    {
+      "kind": "characters",
+      "key": "sentinel",
+      "file": "characters/sentinel-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-25b67ae4-25ae-4dfd-b3c9-a11455b484f7.png",
+      "prompt": "Production transparent CHARACTER ANIMATION ATLAS for existing React family fantasy game. Reference is character appearance and sculpted3D quality only. Subject: Only the friendly squat yellow-gold armoured robot sentinel with turquoise crystal face inside glass front, blue enamel trim, sturdy legs and expressive gemstone eyes. Create ONE strictly regular THREE-COLUMN TWO-ROW sheet of SIX equally sized square cells, overall3:2aspectratio, genuinely transparent alpha background. SAME SINGLE character in every cell, identical camera, scale, lighting, costume, proportions, body position and baseline. Full body in each cell, centred, maximum usable size with8percent side margins, feet or seatedbase on95percentheight line in EVERY cell. NO cell overlaps, NO external props or platforms, NO floor, NO shadows baked across cells, NO text, labels, borders or grid lines. High-end stylized3D cinematic character rendering matching reference, detailed groomed fur/skin, convincing materials, expressive face and hands, not flat2D. Six poses in reading order: top-left neutral idle with eyes open; top-middle EXACT SAME neutral body with eyes gently CLOSED for blink; top-right focused anticipation looking at gameplay with small preparatory hand pose; bottom-left character-specific action using its tool or arms with convincing weight, SAME feet baseline and no jump; bottom-middle warm success reaction, happy face and small hand gesture, feet anchored; bottom-right thoughtful encouraging retry expression, feet anchored. Every cell must contain the whole character and no scenery. Changes between cells confined to head, expression and arms; feet and costume silhouette stay stable. The atlas will be animated at runtime. Preserve genuine transparent background everywhere outside figures.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 493108
+    },
+    {
+      "kind": "characters",
+      "key": "slime",
+      "file": "characters/slime-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-651067e0-4190-4fd3-a47a-8ab49614491f.png",
+      "prompt": "Production transparent CHARACTER ANIMATION ATLAS for existing React family fantasy game. Reference is character appearance and sculpted3D quality only. Subject: Friendly teal horned slime creature with brown leather satchel and expressive eyes, preserving Slime Sneak from the reference. Create ONE strictly regular THREE-COLUMN TWO-ROW sheet of SIX equally sized square cells, overall3:2aspectratio, genuinely transparent alpha background. SAME SINGLE character in every cell, identical camera, scale, lighting, costume, proportions, body position and baseline. Full body in each cell, centred, maximum usable size with8percent side margins, feet or seatedbase on95percentheight line in EVERY cell. NO cell overlaps, NO external props or platforms, NO floor, NO shadows baked across cells, NO text, labels, borders or grid lines. High-end stylized3D cinematic character rendering matching reference, detailed groomed fur/skin, convincing materials, expressive face and hands, not flat2D. Six poses in reading order: top-left neutral idle with eyes open; top-middle EXACT SAME neutral body with eyes gently CLOSED for blink; top-right focused anticipation looking at gameplay with small preparatory hand pose; bottom-left character-specific action using its tool or arms with convincing weight, SAME feet baseline and no jump; bottom-middle warm success reaction, happy face and small hand gesture, feet anchored; bottom-right thoughtful encouraging retry expression, feet anchored. Every cell must contain the whole character and no scenery. Changes between cells confined to head, expression and arms; feet and costume silhouette stay stable. The atlas will be animated at runtime. Preserve genuine transparent background everywhere outside figures.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 374662
+    },
+    {
+      "kind": "characters",
+      "key": "smith",
+      "file": "characters/smith-v1.webp",
+      "source": "C:/Users/samva/.codex/generated_images/01a149fc-7e91-7bd3-86fc-f9095e88fd36/exec-af7be54c-3c0f-4748-9e4c-6b91a9a9050a.png",
+      "prompt": "Production transparent CHARACTER ANIMATION ATLAS for existing React family fantasy game. Reference is character appearance and sculpted3D quality only. Subject: Only the red-bearded dwarf blacksmith, braided beard, leather apron over teal shirt, thick gloves and boots, holds short heavy hammer. Create ONE strictly regular THREE-COLUMN TWO-ROW sheet of SIX equally sized square cells, overall3:2aspectratio, genuinely transparent alpha background. SAME SINGLE character in every cell, identical camera, scale, lighting, costume, proportions, body position and baseline. Full body in each cell, centred, maximum usable size with8percent side margins, feet or seatedbase on95percentheight line in EVERY cell. NO cell overlaps, NO external props or platforms, NO floor, NO shadows baked across cells, NO text, labels, borders or grid lines. High-end stylized3D cinematic character rendering matching reference, detailed groomed fur/skin, convincing materials, expressive face and hands, not flat2D. Six poses in reading order: top-left neutral idle with eyes open; top-middle EXACT SAME neutral body with eyes gently CLOSED for blink; top-right focused anticipation looking at gameplay with small preparatory hand pose; bottom-left character-specific action using its tool or arms with convincing weight, SAME feet baseline and no jump; bottom-middle warm success reaction, happy face and small hand gesture, feet anchored; bottom-right thoughtful encouraging retry expression, feet anchored. Every cell must contain the whole character and no scenery. Changes between cells confined to head, expression and arms; feet and costume silhouette stay stable. The atlas will be animated at runtime. Preserve genuine transparent background everywhere outside figures.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 481206
+    },
+    {
+      "kind": "characters",
+      "key": "timekeeper",
+      "file": "characters/timekeeper-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-2334e62f-bb2f-4ce7-b61d-1c61fc39a0c2.png",
+      "prompt": "Production transparent CHARACTER ANIMATION ATLAS for existing React family fantasy game. Reference is character appearance and sculpted3D quality only. Subject: Friendly orange-white furry fox timekeeper scholar with brass goggles, ornate green and gold long coat, pocket watches, holds small clockwork book. Create ONE strictly regular THREE-COLUMN TWO-ROW sheet of SIX equally sized square cells, overall3:2aspectratio, genuinely transparent alpha background. SAME SINGLE character in every cell, identical camera, scale, lighting, costume, proportions, body position and baseline. Full body in each cell, centred, maximum usable size with8percent side margins, feet or seatedbase on95percentheight line in EVERY cell. NO cell overlaps, NO external props or platforms, NO floor, NO shadows baked across cells, NO text, labels, borders or grid lines. High-end stylized3D cinematic character rendering matching reference, detailed groomed fur/skin, convincing materials, expressive face and hands, not flat2D. Six poses in reading order: top-left neutral idle with eyes open; top-middle EXACT SAME neutral body with eyes gently CLOSED for blink; top-right focused anticipation looking at gameplay with small preparatory hand pose; bottom-left character-specific action using its tool or arms with convincing weight, SAME feet baseline and no jump; bottom-middle warm success reaction, happy face and small hand gesture, feet anchored; bottom-right thoughtful encouraging retry expression, feet anchored. Every cell must contain the whole character and no scenery. Changes between cells confined to head, expression and arms; feet and costume silhouette stay stable. The atlas will be animated at runtime. Preserve genuine transparent background everywhere outside figures.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 489472
+    },
+    {
+      "kind": "characters",
+      "key": "vex",
+      "file": "characters/vex-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-1792cb73-3af5-430d-8efa-da8088ff9841.png",
+      "prompt": "Production transparent CHARACTER ANIMATION ATLAS for existing React family fantasy game. Reference is character appearance and sculpted3D quality only. Subject: Friendly pale green fox mage hero, big green-white tail, purple hooded robe with turquoise runic trim, cyan eyes, preserve this selected player identity. Create ONE strictly regular THREE-COLUMN TWO-ROW sheet of SIX equally sized square cells, overall3:2aspectratio, genuinely transparent alpha background. SAME SINGLE character in every cell, identical camera, scale, lighting, costume, proportions, body position and baseline. Full body in each cell, centred, maximum usable size with8percent side margins, feet or seatedbase on95percentheight line in EVERY cell. NO cell overlaps, NO external props or platforms, NO floor, NO shadows baked across cells, NO text, labels, borders or grid lines. High-end stylized3D cinematic character rendering matching reference, detailed groomed fur/skin, convincing materials, expressive face and hands, not flat2D. Six poses in reading order: top-left neutral idle with eyes open; top-middle EXACT SAME neutral body with eyes gently CLOSED for blink; top-right focused anticipation looking at gameplay with small preparatory hand pose; bottom-left character-specific action using its tool or arms with convincing weight, SAME feet baseline and no jump; bottom-middle warm success reaction, happy face and small hand gesture, feet anchored; bottom-right thoughtful encouraging retry expression, feet anchored. Every cell must contain the whole character and no scenery. Changes between cells confined to head, expression and arms; feet and costume silhouette stay stable. The atlas will be animated at runtime. Preserve genuine transparent background everywhere outside figures. MANDATORY render as actual sculpted3D character with soft volumetric lighting, tangible fur/skin/material highlights, NO ink outlines, NO flat 2D cartoon illustration. Reference1 identity only; reference2 mandatory sculpted3D art style.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 376122
+    },
+    {
+      "kind": "characters",
+      "key": "vex",
+      "file": "characters/vex-v3.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-41f00118-8024-438c-a782-ef7419c7526c.png",
+      "prompt": "Edit target: Image 1 is the existing 20-frame performance sheet. Image 2 is the authoritative original Vex character identity.\nCRITICAL SPACING REPAIR. Keep the exact same sculpted-3D hero design, materials, colours, outfit, 20 poses and their reading order from Image 1. Re-layout this sheet as exactly FIVE columns FOUR rows, 5:4 canvas, genuinely transparent background.\nMake EVERY complete figure, INCLUDING wings, horns, tail, flames, hands and clothing, MUCH SMALLER inside its cell: the entire silhouette must occupy at most 65% of cell WIDTH and 70% of cell HEIGHT, with at least 15% clear transparent margin on every side. Centre each complete figure consistently. No neighbouring silhouettes may touch. Do not draw any floating particles, surrounding light haze or detached flames. Bran's flame stays small and attached to his hand/tail; Vex's complete tail stays in his own cell.\nDo not crop off any part of a hero. Do not expand a hand, wing or tail into the gutters. Gaps between all twenty silhouettes must be completely transparent alpha zero. No floor, no shadows, no scenery, no checkerboard, no labels. Keep four rows of FIVE separate full-body heroes each.\nPreserve this exact sequence: row 1 neutral/open, half-blink, closed-blink, half-blink, neutral/open; row 2 neutral, action wind-up, signature action, recovery, neutral; row 3 neutral, smile, success gesture, settling, neutral; row 4 neutral, head tilt, thoughtful hand-to-chin, settling, neutral.\nThis edit changes only figure size, spacing and unwanted outer effects. Keep the character's identity and premium rendered style faithful to both references.",
+      "dimensions": [
+        1402,
+        1122
+      ],
+      "bytes": 491826
+    },
+    {
+      "kind": "characters",
+      "key": "zombie",
+      "file": "characters/zombie-v1.webp",
+      "source": "C:/Users/samva/.codex/generated_images/01a149fc-7e91-7bd3-86fc-f9095e88fd36/exec-574df0e9-0cae-486e-9f0f-dd8b6721587b.png",
+      "prompt": "Production transparent CHARACTER ANIMATION ATLAS for existing React family fantasy game. Reference is character appearance and sculpted3D quality only. Subject: Only the friendly teal-green zombie opponent with tousled black hair, brown ragged vest and boots. No deer. Funny and child-friendly. Create ONE strictly regular THREE-COLUMN TWO-ROW sheet of SIX equally sized square cells, overall3:2aspectratio, genuinely transparent alpha background. SAME SINGLE character in every cell, identical camera, scale, lighting, costume, proportions, body position and baseline. Full body in each cell, centred, maximum usable size with8percent side margins, feet or seatedbase on95percentheight line in EVERY cell. NO cell overlaps, NO external props or platforms, NO floor, NO shadows baked across cells, NO text, labels, borders or grid lines. High-end stylized3D cinematic character rendering matching reference, detailed groomed fur/skin, convincing materials, expressive face and hands, not flat2D. Six poses in reading order: top-left neutral idle with eyes open; top-middle EXACT SAME neutral body with eyes gently CLOSED for blink; top-right focused anticipation looking at gameplay with small preparatory hand pose; bottom-left character-specific action using its tool or arms with convincing weight, SAME feet baseline and no jump; bottom-middle warm success reaction, happy face and small hand gesture, feet anchored; bottom-right thoughtful encouraging retry expression, feet anchored. Every cell must contain the whole character and no scenery. Changes between cells confined to head, expression and arms; feet and costume silhouette stay stable. The atlas will be animated at runtime. Preserve genuine transparent background everywhere outside figures.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 422038
+    },
+    {
+      "kind": "environments",
+      "key": "angle_arena",
+      "file": "environments/angle_arena-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-bb94b70c-7d29-486f-99cb-ff02131a474a.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Angle Arena concept, Geometry Glacier. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. Sculpted ice cannon and expressive glacier opponent, accurate readable angle wedge and quiet snowy arena. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 467312
+    },
+    {
+      "kind": "environments",
+      "key": "area_architect",
+      "file": "environments/area_architect-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-bf3667d8-59bf-49a9-b13a-7484dd1a5102.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Area Architect concept, Geometry Glacier. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. A snowy construction platform with accurate square grid, tangible tiles and a glacier builder. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 524892
+    },
+    {
+      "kind": "environments",
+      "key": "change_counter",
+      "file": "environments/change_counter-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-79037fca-d63c-4605-8fbf-917831f831d2.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Change Counter concept, Measurement Mountain. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. A mountain trading stall with tactile coins, readable prices and an expressive merchant. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 423156
+    },
+    {
+      "kind": "environments",
+      "key": "conversion_canyon",
+      "file": "environments/conversion_canyon-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-0beeaeec-cd0a-4101-a364-a8e32bb9ffe9.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Conversion Canyon concept, Geometry Glacier. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. Glacial measuring apparatus bridging the canyon, physical unit tokens and a richly rendered guide. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 478162
+    },
+    {
+      "kind": "environments",
+      "key": "coordinates_quest",
+      "file": "environments/coordinates_quest-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-ce914e0c-f1e7-4a98-8ed9-c241c21dd8ec.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Coordinates Quest concept, Geometry Glacier. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. A frozen expedition map with crisp axes, plotted targets and a premium explorer creature. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1671,
+        941
+      ],
+      "bytes": 573448
+    },
+    {
+      "kind": "environments",
+      "key": "crystal_core",
+      "file": "environments/crystal_core-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-eca3c20f-81fd-4e13-8dca-11102a46cf05.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED SATs Paper 1: Arithmetic concept, Core of Calculation. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. A luminous crystal examination chamber with a calm readable arithmetic paper and sculpted guardian. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 471972
+    },
+    {
+      "kind": "environments",
+      "key": "data_detective",
+      "file": "environments/data_detective-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-b2a12902-0a90-4dc2-81a0-8ce50adcdc90.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Data Detective concept, Data Desert. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. An archaeological evidence desk with readable data clues, amber lighting and a premium detective creature. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 456660
+    },
+    {
+      "kind": "environments",
+      "key": "factor_frenzy",
+      "file": "environments/factor_frenzy-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-5127762a-45e1-4c07-913e-710d9516ec70.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Factor Frenzy concept, Operations Outpost. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. A rugged outpost factor mechanism with tactile number targets and a sculpted workshop creature. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 530822
+    },
+    {
+      "kind": "environments",
+      "key": "formula_forge",
+      "file": "environments/formula_forge-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-659c66e3-c047-47f6-9f3b-fa955e9e7846.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Formula Forge concept, Operations Outpost. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. A volcanic outpost forge with a readable formula workbench, warm metal reflections and a premium smith. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 580068
+    },
+    {
+      "kind": "environments",
+      "key": "fraction_forge",
+      "file": "environments/fraction_forge-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-1d189dec-c1a9-4266-b4e9-f3c0d6260af1.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Fraction Forge concept, Fraction Forest. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. A woodland workshop with tangible fraction pieces, warm furnace bounce light and a skilled creature artisan. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 524448
+    },
+    {
+      "kind": "environments",
+      "key": "graph_grabber",
+      "file": "environments/graph_grabber-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-c429447c-b207-48d6-9215-121eba0257bd.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Graph Grabber concept, Data Desert. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. An oasis data station with accurately aligned bar chart and tactile controls, expressive desert guide. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 485992
+    },
+    {
+      "kind": "environments",
+      "key": "line_graph_lab",
+      "file": "environments/line_graph_lab-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-52e58c15-69ba-4db1-88cd-a77c700ead30.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Line Graph Lab concept, Data Desert. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. A desert observatory workbench with a crisp line plot and warm copper instruments. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 445974
+    },
+    {
+      "kind": "environments",
+      "key": "match3_equivalence",
+      "file": "environments/match3_equivalence-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-4fa40742-3d20-495a-b055-497c14d47de2.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Match Mastery concept, Fraction Forest. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. Jewel-like fraction tiles on a carved forest board, calm behind every number, premium creature companion. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 579496
+    },
+    {
+      "kind": "environments",
+      "key": "matrix_match",
+      "file": "environments/matrix_match-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-96f44972-8615-4d44-a59b-e1399ceb4fba.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED SATs Paper 3: Reasoning concept, Core of Calculation. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. A refined violet crystal chamber with a calm reasoning-paper surface, exact Roman-numeral question and sculpted guide. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 436010
+    },
+    {
+      "kind": "environments",
+      "key": "mean_machine",
+      "file": "environments/mean_machine-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-8fecc7a0-b718-4ce0-9f2a-50f23bf7c3b3.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Mean Machine concept, Data Desert. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. A brass desert calculating machine with clear number inputs, sandstone materials and a sculpted operator. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 420374
+    },
+    {
+      "kind": "environments",
+      "key": "mirror_gate",
+      "file": "environments/mirror_gate-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-937deaeb-aca7-4f8f-9cb6-23ca771c27fd.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED SATs Paper 2: Reasoning concept, Core of Calculation. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. A mysterious violet mirror chamber with readable reasoning task, reflective stone and a premium guide. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 506602
+    },
+    {
+      "kind": "environments",
+      "key": "multiplication_mine",
+      "file": "environments/multiplication_mine-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-9af61d4b-277c-4784-b881-baf52dda73d6.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Multiplication Mine concept, Operations Outpost. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. A lantern-lit outpost mine with a tangible ore boulder and a richly rendered miner. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 457472
+    },
+    {
+      "kind": "environments",
+      "key": "order_ops_arena",
+      "file": "environments/order_ops_arena-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-62ebf07d-cbaa-4834-ad40-e1debc5d871a.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Order Ops Arena concept, Operations Outpost. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. An outpost equation mechanism with unmistakable operator order and sculpted creature contestants. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 544698
+    },
+    {
+      "kind": "environments",
+      "key": "percent_power",
+      "file": "environments/percent_power-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-1247bc79-f2ea-4cd1-92ac-94ef82e3ba57.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Percent Power concept, Fraction Forest. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. A forest energy device with visible percentage fill, botanical metalwork and an expressive guardian. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 558576
+    },
+    {
+      "kind": "environments",
+      "key": "perimeter_path",
+      "file": "environments/perimeter_path-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-a5746eab-b07f-4647-b67b-3cc7fdba2c63.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Perimeter Path concept, Geometry Glacier. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. A snow-edged path with exact labelled segments, physical boundary markers and a glacier explorer. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 479406
+    },
+    {
+      "kind": "environments",
+      "key": "polygon_palace",
+      "file": "environments/polygon_palace-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-e2e4dc67-218b-4051-baf6-f11776e33e35.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Polygon Palace concept, Geometry Glacier. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. An ice palace of clear polygon silhouettes, bevelled crystal edges and a sculpted glacier guide. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 463618
+    },
+    {
+      "kind": "environments",
+      "key": "potion_panic",
+      "file": "environments/potion_panic-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-dd2be8c5-7cd4-4a9b-a671-885e702f0083.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Potion Panic concept, Ratio Rapids. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. A riverside alchemy bench with transparent vessels, accurate liquid proportions and a polished potion-maker. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 484482
+    },
+    {
+      "kind": "environments",
+      "key": "prime_pop",
+      "file": "environments/prime_pop-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-33a6d876-b579-4832-a55c-06b182f4dbb6.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Prime Pop concept, Arithmetic Acropolis. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. Luminous numbered targets with tactile glass surfaces against mossy ruins; strong target hierarchy. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 539008
+    },
+    {
+      "kind": "environments",
+      "key": "problem_pyramid",
+      "file": "environments/problem_pyramid-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-789d1767-7ed7-4b79-a9fd-614967c2eacb.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Problem Pyramid concept, Measurement Mountain. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. A mountain expedition puzzle with readable problem steps, carved stone staging and a premium explorer. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 493934
+    },
+    {
+      "kind": "environments",
+      "key": "ratio_fractions",
+      "file": "environments/ratio_fractions-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-e7e30736-b568-47dd-86a2-bf7e9999cf02.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Ratio Racer concept, Ratio Rapids. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. A riverside kart pit with richly rendered driver, tactile fuel ingredients and clear fraction choices. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1671,
+        941
+      ],
+      "bytes": 520366
+    },
+    {
+      "kind": "environments",
+      "key": "remainder_run",
+      "file": "environments/remainder_run-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-4350b03e-6b21-43bd-a7c5-312946f3b96b.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Remainder Run concept, Operations Outpost. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. An outpost shipping dock with grouped cargo, a clear remainder bay and an expressive dock worker. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 495156
+    },
+    {
+      "kind": "environments",
+      "key": "rotation_relay",
+      "file": "environments/rotation_relay-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-9c85daa3-87fe-4fb9-a54d-e4bf4dda26c6.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Transformation Station concept, Geometry Glacier. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. An icy transformation workbench with a precise grid and a polished glacier companion. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 569200
+    },
+    {
+      "kind": "environments",
+      "key": "rounding_rocket",
+      "file": "environments/rounding_rocket-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-117d82c4-dd90-46c3-9049-657ab0f57489.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Rounding Rocket concept, Arithmetic Acropolis. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. Polished rocket launch cradle among acropolis ruins, sculpted pilot, legible rounding destinations. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 419884
+    },
+    {
+      "kind": "environments",
+      "key": "scale_builder",
+      "file": "environments/scale_builder-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-0e22f627-20cc-4974-87e6-79813fcefd03.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Scale Builder concept, Ratio Rapids. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. A riverside model-building bench with exact scale measurements, tactile pieces and a premium builder. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 553102
+    },
+    {
+      "kind": "environments",
+      "key": "share_splitter",
+      "file": "environments/share_splitter-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-574362a9-8e7f-44bf-882f-1f7020879f0d.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Share Splitter concept, Ratio Rapids. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. Warm riverside cake banquet, premium five seated guests, ceramic plates and strawberry cakes; no part labels. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 570718
+    },
+    {
+      "kind": "environments",
+      "key": "simplify_sprint",
+      "file": "environments/simplify_sprint-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-74269d67-f566-4f56-9200-1128daa237d5.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Simplify Sprint concept, Fraction Forest. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. A mossy woodland sprint course with tactile fraction choices and a clear running lane. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 591730
+    },
+    {
+      "kind": "environments",
+      "key": "take_out_rush",
+      "file": "environments/take_out_rush-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-71638607-e00e-4ad2-93a8-bd8ddd893cca.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Take Out Rush concept, Fraction Forest. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. A handcrafted forest food counter with appetising non-pizza food, physical portions and expressive customers. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 408540
+    },
+    {
+      "kind": "environments",
+      "key": "time_keeper_cove",
+      "file": "environments/time_keeper_cove-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-f48a7990-51f3-4b86-a712-754693c07015.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Chrono Dash: Time Trial concept, Measurement Mountain. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. A mountain clockwork trial with clear clock hands, legible time controls and a sculpted timekeeper. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 565302
+    },
+    {
+      "kind": "environments",
+      "key": "unit_mixer",
+      "file": "environments/unit_mixer-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-d419fca9-dd12-41a6-9a1c-95b80c395bd1.png",
+      "prompt": "Use case: game production environment asset. Reference is the APPROVED Lava Path concept, Measurement Mountain. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. A mountain lava crossing with safe readable unit choices, glowing rock and a grounded explorer. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 510348
+    },
+    {
+      "kind": "objects",
+      "key": "banquet-table",
+      "file": "objects/banquet-table-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-55f3b41c-1dec-4c7a-853e-713317e5cedd.png",
+      "prompt": "Production game asset, reference is the approved art direction only. Generate Only the elegant wide oval banquet table from the vision, warm rich wood with carved golden edge, beautiful dark navy and gold embroidered cloth runner and rope-trimmed placemats WITHOUT any plates. Frontal elevated view, long table spans96percentimagewidth, just tabletop and front edge, no legs, no chairs, no cakes, no characters, no scenery, no UI, no words. Landscape3:1aspectratio, genuinelytransparent outside table. Genuinely transparent alpha background everywhere outside the isolated object, no coloured matte, no backdrop. This must be a separate compositing asset for live gameplay. Same high-end sculpted3D family fantasy rendering, real material detail, correct perspective and lighting. No labels, captions, image border, interface, watermark or extra objects.",
+      "dimensions": [
+        2172,
+        724
+      ],
+      "bytes": 559174
+    },
+    {
+      "kind": "objects",
+      "key": "cauldron",
+      "file": "objects/cauldron-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-918937be-84c6-4856-b547-37428cc67780.png",
+      "prompt": "Production game asset, reference is the approved art direction only. Generate Only the beautiful dark bronze and black iron potion cauldron, polished rim, round sculpted bowl, two small handles and three squat legs. Frontal3quarter view. Open empty elliptical mouth at top, rim edges, solid body below; no liquid, no bubbles, no smoke, no fire, no table, no scenery, no character. Portraitsquare composition entirepropvisible. Genuinely transparent alpha background everywhere outside the isolated object, no coloured matte, no backdrop. This must be a separate compositing asset for live gameplay. Same high-end sculpted3D family fantasy rendering, real material detail, correct perspective and lighting. No labels, captions, image border, interface, watermark or extra objects.",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "bytes": 365626
+    },
+    {
+      "kind": "objects",
+      "key": "desert-frame",
+      "file": "objects/desert-frame-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-8a267367-0d31-4e8a-9d04-b82dfe929aec.png",
+      "prompt": "Use case: background-extraction. Extract the large framed graph chalkboard from this screenshot, 2:1 landscape ratio. Exact sandstone and worn brass gold trim with rivets/corner brackets, dark charcoal blackboard center. Remove ALL grid lines, labels, crates, text, numbers, characters. One empty blank board, front elevation with no perspective, transparent outside 3% margins, no other objects/scenery. Match screenshot rendering/materials exactly.",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "bytes": 407264
+    },
+    {
+      "kind": "objects",
+      "key": "forest-frame",
+      "file": "objects/forest-frame-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-6c0c7983-6787-46a1-8f2c-8f9d9b7258b6.png",
+      "prompt": "Use case: background-extraction. Extract and faithfully recreate the rectangular INGOT RACK frame from reference, front-facing without perspective. Exact carved brown wood branches with green leaves corners, dark forest green smooth inner surface. Remove ALL text, numbers, ingots, buttons. One empty rectangular panel only, 2:1 landscape aspect, narrow thick frame around blank green inner surface, no legs, no scenery, transparent outside frame. Frame within4%canvas margin. Faithfully match reference lighting and materials.",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "bytes": 331132
+    },
+    {
+      "kind": "objects",
+      "key": "forest-reactor",
+      "file": "objects/forest-reactor-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-7cfc9266-88c0-4385-a26e-09666aeb1cd8.png",
+      "prompt": "Production game asset, reference is the approved art direction only. Generate Only a vertical forest energy reactor cabinet, brass and carved botanical supports, one large circular gauge opening in center. Front-facing portrait4:5, central circular window occupies x20to80percent and y23to77percent, filled uniform dark teal with no numbers or fill. No text, percentage, labels, attached floor, surrounding scenery or character. Detailed believable mechanical materials. Genuinely transparent alpha background everywhere outside the isolated object, no coloured matte, no backdrop. This must be a separate compositing asset for live gameplay. Same high-end sculpted3D family fantasy rendering, real material detail, correct perspective and lighting. No labels, captions, image border, interface, watermark or extra objects.",
+      "dimensions": [
+        1122,
+        1402
+      ],
+      "bytes": 531094
+    },
+    {
+      "kind": "objects",
+      "key": "forge-anvil",
+      "file": "objects/forge-anvil-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-a5aab252-1b01-4ffa-b362-55e1fef923b5.png",
+      "prompt": "Use case: background-extraction. Extract and faithfully recreate the large black steel anvil and wooden stump from this reference screenshot. Exact same silhouette, texture, amber furnace rim lighting, engraved gold leaf motif. Remove character, hammer, number ingots, all text, background, other objects. Single anvil on stump as one isolated transparent game prop, wide 3:2 canvas, object occupies 92%width and 94%height, base aligned95%height. Preserve reference camera angle, no redesign. Production stylized3D.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 700814
+    },
+    {
+      "kind": "objects",
+      "key": "forge-hammer",
+      "file": "objects/forge-hammer-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-b0f95b7a-3861-402a-aa98-4d64b607d519.png",
+      "prompt": "Production game prop isolated on transparent background: premium sculpted 3D blacksmith hammer, vertical wooden leather wrapped handle downwards, rectangular worn dark steel head horizontal at top, brass edge bands and rivets, emerald inlay, realistic bevels and wood grain, bright warm forge light from left, cool rim from right. Full complete hammer fills portrait frame with 5 percent padding, straight-on three quarter view, no angle/rotation. Believable heavy crafted object in polished family fantasy console game. No letters, text, numbers, UI, background, ground, characters.",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "bytes": 423150
+    },
+    {
+      "kind": "objects",
+      "key": "glacier-frame",
+      "file": "objects/glacier-frame-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-b0d8f976-6acf-409f-b84c-ef2d62b927fd.png",
+      "prompt": "Use case: background-extraction. Extract the square dark navy crystal-framed mathematical board from this screenshot. Recreate its exact thick blue stone and ice frame, small cyan crystals and brass corner brackets, snow on top. Remove ALL grid, axes, letters, numbers, triangles, arrows. Blank dark navy smooth center, square orthographic front view, frame fullywithin5%canvas margin,transparent outside panel, no background. Production game UI prop matching screenshot materials exactly.",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "bytes": 412954
+    },
+    {
+      "kind": "objects",
+      "key": "ice-cannon",
+      "file": "objects/ice-cannon-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-255cae1d-04b0-4017-b219-688767408f0d.png",
+      "prompt": "Production game asset, reference is the approved art direction only. Generate Only a high-end blue crystal and brass cannon on its two sturdy wheels, barrel HORIZONTAL pointing RIGHT at zero degrees. Complete object side view with a slight threequarter depth; no base crate, no ground, no projectile, no arc or angle markings. Barrel rear pivot at40percentwidth50percentheight. One coherent separate game prop. Genuinely transparent alpha background everywhere outside the isolated object, no coloured matte, no backdrop. This must be a separate compositing asset for live gameplay. Same high-end sculpted3D family fantasy rendering, real material detail, correct perspective and lighting. No labels, captions, image border, interface, watermark or extra objects.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 361554
+    },
+    {
+      "kind": "objects",
+      "key": "ice-plinth",
+      "file": "objects/ice-plinth-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-eb315c03-7c3e-43ab-b5fc-17dd1b60042f.png",
+      "prompt": "Production game prop, isolated transparent background. One low solid octagonal glacier stone pedestal, front three quarter view, broad flat horizontal top at upper 16 percent of image, base at 95 percent, polished icy blue carved stone, restrained worn brass rim, royal navy engraved sunburst medallion, tiny frost in joints. Premium sculpted 3D fantasy console game material quality, real bevels, fine microtexture, physically based materials, soft daylight, strong solid silhouette. No lettering, numbers, UI, people, ground plane, snow cloud or backdrop. Wide 4:3 prop fills frame with 5 percent margin, camera nearly front facing so gameplay character can stand on its horizontal top.",
+      "dimensions": [
+        1448,
+        1086
+      ],
+      "bytes": 656344
+    },
+    {
+      "kind": "objects",
+      "key": "kart-barratt",
+      "file": "objects/kart-barratt-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-37924b97-1b63-4a33-99fd-6228e166323d.png",
+      "prompt": "Production game asset, reference is the approved art direction only. Generate Only a premium polished fantasy racing kart driven by a tan deer with antlers, green hooded archer costume. Preserve green leaf-inspired kart body, leather seat, chrome wheels, detailed mechanical material, high-end sculpted3D animatedfilm appearance. Full kart and driver visible, threequarter sideview facing RIGHT, same camera and framing as approved concept. Transparent canvas3:2 landscape, no road, scenery, flames, speedtrails or text. Visible front wheel centered about70percentwidth75percentheight, rear wheel about25percentwidth70percentheight. Driver grips the steering wheel; vehicle and wheels grounded at samebaseline. Genuinely transparent alpha background everywhere outside the isolated object, no coloured matte, no backdrop. This must be a separate compositing asset for live gameplay. Same high-end sculpted3D family fantasy rendering, real material detail, correct perspective and lighting. No labels, captions, image border, interface, watermark or extra objects.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 331088
+    },
+    {
+      "kind": "objects",
+      "key": "kart-bran",
+      "file": "objects/kart-bran-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-1d5efcb3-ef94-46f8-9179-e94df862a4b7.png",
+      "prompt": "Production game asset, reference is the approved art direction only. Generate Only a premium polished fantasy racing kart driven by a red-orange baby dragon with golden horns and small wings. Preserve green leaf-inspired kart body, leather seat, chrome wheels, detailed mechanical material, high-end sculpted3D animatedfilm appearance. Full kart and driver visible, threequarter sideview facing RIGHT, same camera and framing as approved concept. Transparent canvas3:2 landscape, no road, scenery, flames, speedtrails or text. Visible front wheel centered about70percentwidth75percentheight, rear wheel about25percentwidth70percentheight. Driver grips the steering wheel; vehicle and wheels grounded at samebaseline. Genuinely transparent alpha background everywhere outside the isolated object, no coloured matte, no backdrop. This must be a separate compositing asset for live gameplay. Same high-end sculpted3D family fantasy rendering, real material detail, correct perspective and lighting. No labels, captions, image border, interface, watermark or extra objects.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 365182
+    },
+    {
+      "kind": "objects",
+      "key": "kart-mochi",
+      "file": "objects/kart-mochi-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-463b39ce-7e9b-401f-b708-323ee5a8b1fc.png",
+      "prompt": "Production game asset, reference is the approved art direction only. Generate Only a premium polished fantasy racing kart driven by a black-white panda ninja with red headband and black scarf. Preserve green leaf-inspired kart body, leather seat, chrome wheels, detailed mechanical material, high-end sculpted3D animatedfilm appearance. Full kart and driver visible, threequarter sideview facing RIGHT, same camera and framing as approved concept. Transparent canvas3:2 landscape, no road, scenery, flames, speedtrails or text. Visible front wheel centered about70percentwidth75percentheight, rear wheel about25percentwidth70percentheight. Driver grips the steering wheel; vehicle and wheels grounded at samebaseline. Genuinely transparent alpha background everywhere outside the isolated object, no coloured matte, no backdrop. This must be a separate compositing asset for live gameplay. Same high-end sculpted3D family fantasy rendering, real material detail, correct perspective and lighting. No labels, captions, image border, interface, watermark or extra objects.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 385916
+    },
+    {
+      "kind": "objects",
+      "key": "kart-vex",
+      "file": "objects/kart-vex-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-65e73971-37dc-4286-a542-4d70894648df.png",
+      "prompt": "Production game asset, reference is the approved art direction only. Generate Only a premium polished fantasy racing kart driven by a pale green fox mage wearing purple hooded robe with turquoise trim. Preserve green leaf-inspired kart body, leather seat, chrome wheels, detailed mechanical material, high-end sculpted3D animatedfilm appearance. Full kart and driver visible, threequarter sideview facing RIGHT, same camera and framing as approved concept. Transparent canvas3:2 landscape, no road, scenery, flames, speedtrails or text. Visible front wheel centered about70percentwidth75percentheight, rear wheel about25percentwidth70percentheight. Driver grips the steering wheel; vehicle and wheels grounded at samebaseline. Genuinely transparent alpha background everywhere outside the isolated object, no coloured matte, no backdrop. This must be a separate compositing asset for live gameplay. Same high-end sculpted3D family fantasy rendering, real material detail, correct perspective and lighting. No labels, captions, image border, interface, watermark or extra objects.",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "bytes": 353296
+    },
+    {
+      "kind": "objects",
+      "key": "mean-engine",
+      "file": "objects/mean-engine-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-97581c4f-a0be-4224-9136-dff2dfa50d8a.png",
+      "prompt": "Production game asset, reference is the approved art direction only. Generate Only the brass desert calculating machine, front view, portrait4:5 aspect ratio. MUST match these overlay positions: central dark rectangular display occupies x22to75percent,y38to69percent; mode title blank panel x27to73percent,y28to35percent; round glowing cyan core x50percent,y21percent; side tubes x11and89percent; blank SCAN BUTTON body x32to64percent,y80to87percent. Machine base at96percentheight. No text, symbols or number cells; all labels/buttons rendered later. High-end worn sandstone-and-brass craftsmanship. Genuinely transparent alpha background everywhere outside the isolated object, no coloured matte, no backdrop. This must be a separate compositing asset for live gameplay. Same high-end sculpted3D family fantasy rendering, real material detail, correct perspective and lighting. No labels, captions, image border, interface, watermark or extra objects.",
+      "dimensions": [
+        1122,
+        1402
+      ],
+      "bytes": 460166
+    },
+    {
+      "kind": "objects",
+      "key": "number-stone",
+      "file": "objects/number-stone-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-0def55e7-98c0-44e6-b49f-48091e897b35.png",
+      "prompt": "Use case: background-extraction. Extract and faithfully recreate ONE of the carved blue number stones from the lower row in this reference screenshot, but REMOVE the number completely. Exact same style: thick chipped sandstone gold bevels, small moss corners, luminous blue octagonal inset, dark navy blank center. Front view with slight top thickness. Single square stone occupies 90% of square canvas with 5% transparent margin, no ground, no environment, no other objects, no text or numbers. Production transparent sprite, premium sculpted 3D matching reference exactly.",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "bytes": 655212
+    },
+    {
+      "kind": "objects",
+      "key": "rocket",
+      "file": "objects/rocket-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-d490a34e-562f-4cf1-854c-e88b74b380ff.png",
+      "prompt": "Production game asset, reference is the approved art direction only. Generate Only the complete premium ivory and navy-blue brass-trimmed rocket, upright frontal view, engine at bottom, central long fuel tank, symmetric slim left/right boosters, crew capsule window near top and pointed nose. Whole vehicle fits inside portrait canvas, no launchpad, no flames, no smoke, no ground, no markings or text. Preserve the approved white polished material and mechanical detail. Genuinely transparent alpha background everywhere outside the isolated object, no coloured matte, no backdrop. This must be a separate compositing asset for live gameplay. Same high-end sculpted3D family fantasy rendering, real material detail, correct perspective and lighting. No labels, captions, image border, interface, watermark or extra objects.",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "bytes": 219520
+    },
+    {
+      "kind": "walks",
+      "key": "bran",
+      "file": "walks/bran-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-2946fb74-0b15-4d3c-a6ab-09fdbfc7bc03.png",
+      "prompt": "Production animation sprite atlas. Character identity: Friendly red-orange baby dragon hero, golden horns, tiny wings, leather adventurer armour, orange eyes, fire-tipped tail, preserve this selected player identity. Reference1 identifies the character; reference2 is the mandatory premium sculpted3D rendering style. Render as true stylized3D with cinematic soft shading, tangible skin/fur, NO ink outlines, NO flat illustration. Create EIGHT animation frames on a strictly regular FOUR-COLUMN TWO-ROW sheet, overall2:1aspectratio, equal square cells. Genuinely transparent alpha background. A complete seamless walk/run gait cycle moving toward RIGHT but character stays centred in everycell. Fullbodyfixedscale, consistentcamera3quarter sideview, no camera shifts. Frames in reading order: leftcontact, down, passing, up, rightcontact, down, passing, up. Correct alternating legs and arms, heels and toes roll through contact, grounded foot baseline at95percentheight EVERY cell; modest natural bob confinedwithinupperbody. Same costume and face everyframe. No scenery, floor, label, border, UI, grids, shadows outsidecells, extra figures or overlappingframes. World-class3D familyfantasy game animation asset.",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "bytes": 560930
+    },
+    {
+      "kind": "walks",
+      "key": "bran",
+      "file": "walks/bran-v2.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-56970e1c-72bf-4cfb-b77e-94e3ee7b60ae.png",
+      "prompt": "Use case: identity-preserve / style-transfer. This is a production animation SPRITE SHEET, not a character redesign.\nIMAGE 1 is the authoritative ORIGINAL hero design. IMAGE 2 is the freshly upgraded sculpted-3D rendering reference for this same hero. Preserve the original identity from image 1, and match image 2's premium soft 3D materials and lighting. Keep the original head/body proportions, exact face/eye shape and colour, ears/horns, markings, clothing, equipment and palette. No extra accessories or altered anatomy.\nOutput exactly TWENTY complete full-body frames in a strict FIVE COLUMN by FOUR ROW regular grid. Aim for 2560 x 2048 pixels (5:4 aspect ratio), with twenty equal square cells. Correct cell count and registration are essential. No text, frame numbers, grids, borders, scenery or floor.\nGENUINELY TRANSPARENT ALPHA background; outside each hero alpha must be ZERO. No visible background, no checkerboard, no glow behind the hero, no cast shadows. Each hero entirely inside its own cell with 8% empty margins. Identical camera in every cell, three-quarter facing screen right, same character scale, no camera movement or zoom, common central anchor and feet at 94% cell height. Render the same hero consistently twenty times. Carefully separate neighbouring frames, including weapons, antlers, wings and tails.\n\nIDENTITY LOCK:\nBran is the original compact RED DRAGON HERO, not a fox. Preserve the original short cream muzzle, amber-gold eyes, two swept ivory horns, golden flame crest on forehead, red cheek spikes, cream chest fur/scales, small orange bat-membrane wings, red tail with orange flame, original brown leather chest harness and belt, dark grey metal shoulder and knee armour, brown boots, cream claws. Exactly the markings and armour from Image 1. No extra cheek spots or ear tufts. Signature action is a small controlled flame gathering near one clawed hand; no floating fireball replacing his limbs.\nANIMATION ORDER: TWENTY sequential in-between frames of ONE seamless walking-in-place cycle, in reading order across all four rows. This is a continuous 20-frame gait, NOT separate gestures or poses. Frame 0 left foot forward heel contact; frame 5 passing position; frame 10 right foot forward heel contact; frame 15 passing position; frame 19 is just before returning to frame 0. Smooth gradual leg and arm movement through every intervening frame. Natural small body rise and fall and gentle secondary motion in cloth/tail, but NO jumping or floating. Keep the hero centred, same scale, identical face and costume throughout. At least one supporting foot contacts the same 94% cell-height baseline in every frame. Tail/wings/bow stay within the cell; tail stays above foot baseline. Weapons and equipment remain attached and consistent. Twenty genuinely distinct in-between frames, no row breaks or camera changes. Do NOT perform the signature action during this walk.",
+      "dimensions": [
+        1402,
+        1122
+      ],
+      "bytes": 850974
+    },
+    {
+      "kind": "walks",
+      "key": "deer",
+      "file": "walks/deer-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-b11d2cba-d0fa-4728-9deb-6bcc67d7d6eb.png",
+      "prompt": "Production animation sprite atlas. Character identity: Only the heroic small deer archer with antlers, warm tan fur, green cape and leather armour, quiver, wooden bow; preserve identity. Reference1 identifies the character; reference2 is the mandatory premium sculpted3D rendering style. Render as true stylized3D with cinematic soft shading, tangible skin/fur, NO ink outlines, NO flat illustration. Create EIGHT animation frames on a strictly regular FOUR-COLUMN TWO-ROW sheet, overall2:1aspectratio, equal square cells. Genuinely transparent alpha background. A complete seamless walk/run gait cycle moving toward RIGHT but character stays centred in everycell. Fullbodyfixedscale, consistentcamera3quarter sideview, no camera shifts. Frames in reading order: leftcontact, down, passing, up, rightcontact, down, passing, up. Correct alternating legs and arms, heels and toes roll through contact, grounded foot baseline at95percentheight EVERY cell; modest natural bob confinedwithinupperbody. Same costume and face everyframe. No scenery, floor, label, border, UI, grids, shadows outsidecells, extra figures or overlappingframes. World-class3D familyfantasy game animation asset.",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "bytes": 534650
+    },
+    {
+      "kind": "walks",
+      "key": "deer",
+      "file": "walks/deer-v2.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-46eced97-6647-4cbe-9fba-97badca8d6e9.png",
+      "prompt": "Use case: identity-preserve / style-transfer. This is a production animation SPRITE SHEET, not a character redesign.\nIMAGE 1 is the authoritative ORIGINAL hero design. IMAGE 2 is the freshly upgraded sculpted-3D rendering reference for this same hero. Preserve the original identity from image 1, and match image 2's premium soft 3D materials and lighting. Keep the original head/body proportions, exact face/eye shape and colour, ears/horns, markings, clothing, equipment and palette. No extra accessories or altered anatomy.\nOutput exactly TWENTY complete full-body frames in a strict FIVE COLUMN by FOUR ROW regular grid. Aim for 2560 x 2048 pixels (5:4 aspect ratio), with twenty equal square cells. Correct cell count and registration are essential. No text, frame numbers, grids, borders, scenery or floor.\nGENUINELY TRANSPARENT ALPHA background; outside each hero alpha must be ZERO. No visible background, no checkerboard, no glow behind the hero, no cast shadows. Each hero entirely inside its own cell with 8% empty margins. Identical camera in every cell, three-quarter facing screen right, same character scale, no camera movement or zoom, common central anchor and feet at 94% cell height. Render the same hero consistently twenty times. Carefully separate neighbouring frames, including weapons, antlers, wings and tails.\n\nIDENTITY LOCK:\nBarratt is the original SMALL GOLDEN TAN DEER ARCHER: GREEN eyes, cream muzzle/inner ears, short branching tan antlers matching the original simple branching silhouette, golden forelock, green hooded cape hanging from shoulders (hood down), original brown leather tunic and gloves, crossed leather straps, rectangular brass belt buckle, brown boots, quiver with GREEN-fletched arrows behind shoulder, short curved WOODEN bow held LOW across his body. The bow shape and cape clasp must match Image 1. NO giant elaborate antlers, NO gold round chest medallion, NO altered white eyebrow markings. Signature action is drawing his original small bow with a green-fletched arrow; keep original face and equipment.\nANIMATION ORDER: TWENTY sequential in-between frames of ONE seamless walking-in-place cycle, in reading order across all four rows. This is a continuous 20-frame gait, NOT separate gestures or poses. Frame 0 left foot forward heel contact; frame 5 passing position; frame 10 right foot forward heel contact; frame 15 passing position; frame 19 is just before returning to frame 0. Smooth gradual leg and arm movement through every intervening frame. Natural small body rise and fall and gentle secondary motion in cloth/tail, but NO jumping or floating. Keep the hero centred, same scale, identical face and costume throughout. At least one supporting foot contacts the same 94% cell-height baseline in every frame. Tail/wings/bow stay within the cell; tail stays above foot baseline. Weapons and equipment remain attached and consistent. Twenty genuinely distinct in-between frames, no row breaks or camera changes. Do NOT perform the signature action during this walk.",
+      "dimensions": [
+        1402,
+        1122
+      ],
+      "bytes": 697204
+    },
+    {
+      "kind": "walks",
+      "key": "mochi",
+      "file": "walks/mochi-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-c25496d5-dc5f-43d7-a415-63aa76f99988.png",
+      "prompt": "Production animation sprite atlas. Character identity: Friendly black-white panda ninja hero, red headband, charcoal scarf, leather bracers, red sash, preserve this selected player identity. Reference1 identifies the character; reference2 is the mandatory premium sculpted3D rendering style. Render as true stylized3D with cinematic soft shading, tangible skin/fur, NO ink outlines, NO flat illustration. Create EIGHT animation frames on a strictly regular FOUR-COLUMN TWO-ROW sheet, overall2:1aspectratio, equal square cells. Genuinely transparent alpha background. A complete seamless walk/run gait cycle moving toward RIGHT but character stays centred in everycell. Fullbodyfixedscale, consistentcamera3quarter sideview, no camera shifts. Frames in reading order: leftcontact, down, passing, up, rightcontact, down, passing, up. Correct alternating legs and arms, heels and toes roll through contact, grounded foot baseline at95percentheight EVERY cell; modest natural bob confinedwithinupperbody. Same costume and face everyframe. No scenery, floor, label, border, UI, grids, shadows outsidecells, extra figures or overlappingframes. World-class3D familyfantasy game animation asset.",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "bytes": 451370
+    },
+    {
+      "kind": "walks",
+      "key": "mochi",
+      "file": "walks/mochi-v2.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-e441ad9c-d7a0-4acf-b987-7cc3d75146ca.png",
+      "prompt": "Use case: identity-preserve / style-transfer. This is a production animation SPRITE SHEET, not a character redesign.\nIMAGE 1 is the authoritative ORIGINAL hero design. IMAGE 2 is the freshly upgraded sculpted-3D rendering reference for this same hero. Preserve the original identity from image 1, and match image 2's premium soft 3D materials and lighting. Keep the original head/body proportions, exact face/eye shape and colour, ears/horns, markings, clothing, equipment and palette. No extra accessories or altered anatomy.\nOutput exactly TWENTY complete full-body frames in a strict FIVE COLUMN by FOUR ROW regular grid. Aim for 2560 x 2048 pixels (5:4 aspect ratio), with twenty equal square cells. Correct cell count and registration are essential. No text, frame numbers, grids, borders, scenery or floor.\nGENUINELY TRANSPARENT ALPHA background; outside each hero alpha must be ZERO. No visible background, no checkerboard, no glow behind the hero, no cast shadows. Each hero entirely inside its own cell with 8% empty margins. Identical camera in every cell, three-quarter facing screen right, same character scale, no camera movement or zoom, common central anchor and feet at 94% cell height. Render the same hero consistently twenty times. Carefully separate neighbouring frames, including weapons, antlers, wings and tails.\n\nIDENTITY LOCK:\nMochi is the original soft ROUND BLACK AND WHITE PANDA NINJA. Match Image 1: broad round panda head, small rounded black ears, BLACK oval eye patches and dark pupils, short white muzzle and tiny black nose, red cloth headband tied at side, original charcoal scarf and tunic with white belly, red waist sash, dark pants, original brown leather bracers and soft dark footwear. Keep his slightly stout proportions, original friendly mouth and white forelock. No green eyes, swords, armour, medals or altered clothing. Signature action is a friendly open-palm martial arts strike, same planted feet.\nANIMATION ORDER: TWENTY sequential in-between frames of ONE seamless walking-in-place cycle, in reading order across all four rows. This is a continuous 20-frame gait, NOT separate gestures or poses. Frame 0 left foot forward heel contact; frame 5 passing position; frame 10 right foot forward heel contact; frame 15 passing position; frame 19 is just before returning to frame 0. Smooth gradual leg and arm movement through every intervening frame. Natural small body rise and fall and gentle secondary motion in cloth/tail, but NO jumping or floating. Keep the hero centred, same scale, identical face and costume throughout. At least one supporting foot contacts the same 94% cell-height baseline in every frame. Tail/wings/bow stay within the cell; tail stays above foot baseline. Weapons and equipment remain attached and consistent. Twenty genuinely distinct in-between frames, no row breaks or camera changes. Do NOT perform the signature action during this walk.",
+      "dimensions": [
+        1402,
+        1122
+      ],
+      "bytes": 569348
+    },
+    {
+      "kind": "walks",
+      "key": "vex",
+      "file": "walks/vex-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-6b049e61-333e-4ffd-9d8a-8f05bd43df75.png",
+      "prompt": "Production animation sprite atlas. Character identity: Friendly pale green fox mage hero, big green-white tail, purple hooded robe with turquoise runic trim, cyan eyes, preserve this selected player identity. Reference1 identifies the character; reference2 is the mandatory premium sculpted3D rendering style. Render as true stylized3D with cinematic soft shading, tangible skin/fur, NO ink outlines, NO flat illustration. Create EIGHT animation frames on a strictly regular FOUR-COLUMN TWO-ROW sheet, overall2:1aspectratio, equal square cells. Genuinely transparent alpha background. A complete seamless walk/run gait cycle moving toward RIGHT but character stays centred in everycell. Fullbodyfixedscale, consistentcamera3quarter sideview, no camera shifts. Frames in reading order: leftcontact, down, passing, up, rightcontact, down, passing, up. Correct alternating legs and arms, heels and toes roll through contact, grounded foot baseline at95percentheight EVERY cell; modest natural bob confinedwithinupperbody. Same costume and face everyframe. No scenery, floor, label, border, UI, grids, shadows outsidecells, extra figures or overlappingframes. World-class3D familyfantasy game animation asset.",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "bytes": 408268
+    },
+    {
+      "kind": "walks",
+      "key": "vex",
+      "file": "walks/vex-v2.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-2694e807-f852-4e1a-9d2d-0df0e6628e6e.png",
+      "prompt": "Use case: identity-preserve / style-transfer. This is a production animation SPRITE SHEET, not a character redesign.\nIMAGE 1 is the authoritative ORIGINAL hero design. IMAGE 2 is the freshly upgraded sculpted-3D rendering reference for this same hero. Preserve the original identity from image 1, and match image 2's premium soft 3D materials and lighting. Keep the original head/body proportions, exact face/eye shape and colour, ears/horns, markings, clothing, equipment and palette. No extra accessories or altered anatomy.\nOutput exactly TWENTY complete full-body frames in a strict FIVE COLUMN by FOUR ROW regular grid. Aim for 2560 x 2048 pixels (5:4 aspect ratio), with twenty equal square cells. Correct cell count and registration are essential. No text, frame numbers, grids, borders, scenery or floor.\nGENUINELY TRANSPARENT ALPHA background; outside each hero alpha must be ZERO. No visible background, no checkerboard, no glow behind the hero, no cast shadows. Each hero entirely inside its own cell with 8% empty margins. Identical camera in every cell, three-quarter facing screen right, same character scale, no camera movement or zoom, common central anchor and feet at 94% cell height. Render the same hero consistently twenty times. Carefully separate neighbouring frames, including weapons, antlers, wings and tails.\n\nIDENTITY LOCK:\nVex is the original PALE LIME GREEN AND CREAM FOX ALCHEMIST. Match his large cyan-turquoise eyes, short cream muzzle, large pointed lime-and-cream ears emerging through the deep purple hood, original green forehead tufts and dark cheek markings, huge bushy pale-lime tail with exactly the original angular green pattern and pale tip. Match deep purple hooded robe, turquoise rune-like stitched edging on hood and cuffs, original brown belt and THREE small differently coloured potion vials hanging on his right side as in the reference, small dark boots. NO wand/staff, NO added chest brooch, NO stars, NO new armour. Signature action is examining or offering one of his existing small potion vials; no new prop.\nANIMATION ORDER: TWENTY sequential in-between frames of ONE seamless walking-in-place cycle, in reading order across all four rows. This is a continuous 20-frame gait, NOT separate gestures or poses. Frame 0 left foot forward heel contact; frame 5 passing position; frame 10 right foot forward heel contact; frame 15 passing position; frame 19 is just before returning to frame 0. Smooth gradual leg and arm movement through every intervening frame. Natural small body rise and fall and gentle secondary motion in cloth/tail, but NO jumping or floating. Keep the hero centred, same scale, identical face and costume throughout. At least one supporting foot contacts the same 94% cell-height baseline in every frame. Tail/wings/bow stay within the cell; tail stays above foot baseline. Weapons and equipment remain attached and consistent. Twenty genuinely distinct in-between frames, no row breaks or camera changes. Do NOT perform the signature action during this walk.",
+      "dimensions": [
+        1402,
+        1122
+      ],
+      "bytes": 643984
+    },
+    {
+      "kind": "walks",
+      "key": "zombie",
+      "file": "walks/zombie-v1.webp",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-99da1dd1-1887-403b-8863-65a529c859fb.png",
+      "prompt": "Production animation sprite atlas. Character identity: Only the friendly teal-green zombie opponent with tousled black hair, brown ragged vest and boots. No deer. Funny and child-friendly. Reference1 identifies the character; reference2 is the mandatory premium sculpted3D rendering style. Render as true stylized3D with cinematic soft shading, tangible skin/fur, NO ink outlines, NO flat illustration. Create EIGHT animation frames on a strictly regular FOUR-COLUMN TWO-ROW sheet, overall2:1aspectratio, equal square cells. Genuinely transparent alpha background. A complete seamless walk/run gait cycle moving toward RIGHT but character stays centred in everycell. Fullbodyfixedscale, consistentcamera3quarter sideview, no camera shifts. Frames in reading order: leftcontact, down, passing, up, rightcontact, down, passing, up. Correct alternating legs and arms, heels and toes roll through contact, grounded foot baseline at95percentheight EVERY cell; modest natural bob confinedwithinupperbody. Same costume and face everyframe. No scenery, floor, label, border, UI, grids, shadows outsidecells, extra figures or overlappingframes. World-class3D familyfantasy game animation asset.",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "bytes": 505790
+    }
+  ]
+}

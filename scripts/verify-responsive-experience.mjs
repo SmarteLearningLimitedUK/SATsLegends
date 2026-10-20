@@ -1,11 +1,17 @@
+import {installReleaseAccountFixture} from './qa/release-account-fixture.mjs';
+import {writeFileSync} from 'node:fs';
+process.env.PW_TEST_SCREENSHOT_NO_FONTS_READY='1';
 import { chromium, webkit, devices } from 'playwright';
-import { writeFile, mkdir } from 'node:fs/promises';
+import { writeFile, mkdir, readFile } from 'node:fs/promises';
 
 const base = process.env.LEGEND_QA_URL || 'http://127.0.0.1:3000';
 const profiles = [
   ['small phone', chromium, { viewport: { width: 320, height: 568 }, isMobile: true, hasTouch: true }],
   ['small landscape', chromium, { viewport: { width: 568, height: 320 }, isMobile: true, hasTouch: true }],
   ['phone landscape', chromium, { viewport: { width: 667, height: 375 }, isMobile: true, hasTouch: true }],
+  // Modern compact iPhones remain supported by the iOS 16+ release baseline.
+  ['iPhone SE', webkit, { viewport: { width: 375, height: 667 }, isMobile: true, hasTouch: true }],
+  ['iPhone mini', webkit, { viewport: { width: 375, height: 812 }, isMobile: true, hasTouch: true }],
   ['iPhone 13', webkit, devices['iPhone 13']],
   ['iPad', webkit, devices['iPad (gen 7)']],
   ['iPad landscape', webkit, { ...devices['iPad (gen 7)'], viewport: { width: 1024, height: 768 } }],
@@ -15,22 +21,24 @@ const profiles = [
 ].filter(([name]) => !process.env.LEGEND_QA_PROFILE || name === process.env.LEGEND_QA_PROFILE);
 const results = [];
 const failures = [];
-await mkdir('qa-artifacts/responsive-experience', { recursive: true });
+const output=process.env.LEGEND_QA_OUTPUT||'qa-artifacts/responsive-experience';
+await mkdir(output, { recursive: true });
 
 function check(ok, name, route, detail) {
   results.push({ profile: name, route, ok, detail });
   if (!ok) failures.push({ profile: name, route, detail });
+  if(results.length%10===0)writeFileSync(`${output}/report.json`,JSON.stringify({results,failures,status:'running'},null,2));
 }
 
 for (const [name, engine, options] of profiles) {
-  const browser = await engine.launch({ headless: true });
-  const context = await browser.newContext({ ...options, reducedMotion: 'reduce' });
-  const page = await context.newPage();
+  let browser = await engine.launch({ headless: true });
+  let context = await browser.newContext({ ...options, reducedMotion: 'reduce' });
+  let page = await context.newPage();
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   try {
     for (const route of ['/', '/for-parents', '/revision', '/videos', '/subscriptions', '/signup', '/login', '/forgot-password']) {
-      await page.goto(base + route);
+      await page.goto(base + route,{waitUntil:'domcontentloaded'});
       await page.locator('main').waitFor();
       let baseStylesReady = false;
       try {
@@ -46,7 +54,7 @@ for (const [name, engine, options] of profiles) {
         }, null, { timeout: 8000 });
         baseStylesReady = true;
       } catch { /* Keep collecting layout diagnostics if the base stylesheet never becomes ready. */ }
-      await page.evaluate(() => document.fonts.ready);
+      await page.waitForFunction(() => document.fonts.status === 'loaded', null, {polling:100,timeout:10000});
       const layout = await page.evaluate(() => {
         const width = document.documentElement.clientWidth;
         const heading = document.querySelector('main h1')?.getBoundingClientRect();
@@ -81,7 +89,8 @@ for (const [name, engine, options] of profiles) {
       check(baseStylesReady && layout.scrollWidth <= layout.width + 1 && (!layout.heading || (layout.heading.left >= -1 && layout.heading.right <= layout.width + 1))
         && (layout.width > 580 || layout.fields.every(size => size >= 16)), name, route, { baseStylesReady, ...layout });
     }
-    await page.goto(base + '/play');
+    if(process.env.LEGEND_QA_ACCOUNT_FIXTURE==='1')await installReleaseAccountFixture(context);
+    await page.goto(base + '/play',{waitUntil:'domcontentloaded'});
     await page.locator('[data-qa-screen="splash"]').waitFor();
     await page.waitForFunction(() => {
       if (document.documentElement.clientWidth < 700 || document.documentElement.clientHeight < 600) return true;
@@ -105,7 +114,7 @@ for (const [name, engine, options] of profiles) {
       && (!welcomeIsDesktop || (welcome.stageLayout === 'responsive' && Math.abs(welcome.stage.left) <= 1 && Math.abs(welcome.stage.right - welcome.width) <= 1))
       && welcome.action && welcome.action.left >= -1 && welcome.action.right <= welcome.width + 1
       && welcome.action.top >= -1 && welcome.action.bottom <= welcome.height + 1, name, '/play', welcome);
-    await page.goto(base + '/map');
+    await page.goto(base + '/map',{waitUntil:'domcontentloaded'});
     await page.locator('[data-qa-screen="world_map"]').waitFor();
     await page.waitForFunction(() => {
       if (document.documentElement.clientWidth < 700 || document.documentElement.clientHeight < 600) return true;
@@ -113,7 +122,7 @@ for (const [name, engine, options] of profiles) {
     });
     await page.waitForFunction(() => window.matchMedia('(max-width: 699px) and (orientation: landscape)').matches
       || Boolean(document.querySelector('.website-map-dock-return')));
-    const games = await page.evaluate(async () => {
+    const games = process.env.LEGEND_QA_CATALOG ? [...new Map(JSON.parse(await readFile(process.env.LEGEND_QA_CATALOG,'utf8')).map(game=>[game.key,{key:game.key,route:game.route}])).values()] : await page.evaluate(async () => {
       const { ISLANDS } = await import('/src/constants.ts');
       const variants = ISLANDS.flatMap(island => island.levels.map(level => ({ route: `/game/${island.id}/${level.id}`, key: level.blueprintKey || level.gameType })));
       return [...new Map(variants.map(game => [game.key, game])).values()];
@@ -159,13 +168,13 @@ for (const [name, engine, options] of profiles) {
         && (!mapUsesDesktopGrid || map.islands.every(island => island.top >= -1 && island.bottom <= map.height + 1)))), name, '/map', map);
 
     for (const route of ['/avatar', '/shop', '/achievements', '/profile', '/settings', '/results']) {
-      await page.goto(base + route);
+      await page.goto(base + route,{waitUntil:'domcontentloaded'});
       await page.locator('.iphone-game-stage[data-stage-layout]').waitFor();
       await page.waitForFunction(() => {
         if (document.documentElement.clientWidth < 700 || document.documentElement.clientHeight < 600) return true;
         return document.querySelector('.iphone-game-stage')?.getAttribute('data-stage-layout') === 'responsive';
       });
-      await page.evaluate(() => document.fonts.ready);
+      await page.waitForFunction(() => document.fonts.status === 'loaded', null, {polling:100,timeout:10000});
       const layout = await page.evaluate(() => {
         const width = document.documentElement.clientWidth;
         const height = document.documentElement.clientHeight;
@@ -185,13 +194,13 @@ for (const [name, engine, options] of profiles) {
 
     for (const islandId of name === 'desktop' ? [8, 1, 3] : [8]) {
       const route = `/island/${islandId}`;
-      await page.goto(base + route);
+      await page.goto(base + route,{waitUntil:'domcontentloaded'});
       await page.locator('[data-qa-screen="island_levels"]').waitFor();
       await page.waitForFunction(() => {
         if (document.documentElement.clientWidth < 700 || document.documentElement.clientHeight < 600) return true;
         return document.querySelector('.iphone-game-stage')?.getAttribute('data-stage-layout') === 'responsive';
       });
-      await page.evaluate(() => document.fonts.ready);
+      await page.waitForFunction(() => document.fonts.status === 'loaded', null, {polling:100,timeout:10000});
       const island = await page.evaluate(() => {
         const width = document.documentElement.clientWidth;
         const height = document.documentElement.clientHeight;
@@ -236,11 +245,20 @@ for (const [name, engine, options] of profiles) {
       name, route, { ...island, expanded });
     }
 
-    for (const game of games) {
+    for (const game of games.filter(game=>!process.env.LEGEND_QA_GAME_KEYS||process.env.LEGEND_QA_GAME_KEYS.split(',').includes(game.key))) {
+      if(process.env.LEGEND_QA_FRESH_BROWSERS==='1'){
+        await context.close();await browser.close();browser=await engine.launch({headless:true});
+        context=await browser.newContext({...options,reducedMotion:'reduce'});
+        if(process.env.LEGEND_QA_ACCOUNT_FIXTURE==='1')await installReleaseAccountFixture(context);
+        page=await context.newPage();page.on('pageerror',error=>errors.push(error.message));
+      }
       try {
-        await page.goto(base + game.route);
+        await page.goto(base + game.route,{waitUntil:'domcontentloaded'});
         await page.locator('[data-qa-screen="gameplay"]').waitFor({ timeout: 15000 });
-        await page.evaluate(() => document.fonts.ready);
+        await page.locator('[data-game-set]').waitFor({timeout:20000});
+        for(let i=0;i<3;i++){const intro=page.locator('[data-dialog-primary]:visible').first();if(!await intro.count())break;const handle=(await intro.elementHandles())[0];if(!handle)continue;try{await handle.click({timeout:5000});}catch(error){if(await handle.isVisible().catch(()=>false))throw error;}}
+
+        await page.waitForFunction(() => document.fonts.status === 'loaded', null, {polling:100,timeout:10000});
         await page.waitForFunction(() => {
           const width = document.documentElement.clientWidth;
           const height = document.documentElement.clientHeight;
@@ -279,7 +297,7 @@ for (const [name, engine, options] of profiles) {
           && (!layout.top || !layout.mission || layout.mission.top >= layout.top.bottom - 16)
           && (!layout.dock || !layout.mission || layout.mission.bottom <= layout.dock.top + 2);
         check(ok, name, game.route, { key: game.key, ...layout });
-        if (!ok && failures.length <= 12) await page.screenshot({ path: `qa-artifacts/responsive-experience/${name.replaceAll(' ', '-')}-${game.key}.png` });
+        if (!ok && failures.length <= 12) await page.screenshot({ path: `${output}/${name.replaceAll(' ', '-')}-${game.key}.png` });
       } catch (error) {
         check(false, name, game.route, { key: game.key, error: String(error) });
       }
@@ -292,9 +310,12 @@ for (const [name, engine, options] of profiles) {
   }
 }
 
+// Keep a selected device run scoped to that device. Full runs include desktop menus.
+if (!process.env.LEGEND_QA_PROFILE) {
 // A narrowed desktop window can cross the tablet breakpoint while still using a mouse.
 const compactBrowser = await chromium.launch({ headless: true });
 const compactContext = await compactBrowser.newContext({ viewport: { width: 795, height: 918 }, reducedMotion: 'reduce' });
+if(process.env.LEGEND_QA_ACCOUNT_FIXTURE==='1')await installReleaseAccountFixture(compactContext);
 const compactPage = await compactContext.newPage();
 try {
   for (const route of ['/play', '/map', '/avatar', '/island/8', '/game/8/1', '/wellbeing', '/shop', '/achievements', '/profile', '/settings', '/results']) {
@@ -319,7 +340,8 @@ try {
   await compactContext.close();
   await compactBrowser.close();
 }
-await writeFile('qa-artifacts/responsive-experience/report.json', JSON.stringify({ results, failures }, null, 2));
+}
+await writeFile(`${output}/report.json`, JSON.stringify({ results, failures }, null, 2));
 if (failures.length) {
   console.error(`${failures.length} responsive checks failed; see qa-artifacts/responsive-experience/report.json`);
   for (const failure of failures) console.error(JSON.stringify(failure));

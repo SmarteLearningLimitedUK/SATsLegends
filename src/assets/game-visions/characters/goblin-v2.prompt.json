@@ -1,0 +1,12 @@
+{
+  "kind": "characters",
+  "key": "goblin",
+  "file": "characters/goblin-v2.webp",
+  "source": "C:/Users/samva/.codex/generated_images/01a149fc-7e91-7bd3-86fc-f9095e88fd36/exec-8c692fb1-4968-4216-90d5-2240cf2f758a.png",
+  "prompt": "Create a production animation sprite atlas on genuinely transparent alpha. Use the attached Number Line Ninja gameplay concept as the EXACT CHARACTER IDENTITY reference: the small GREEN-SKINNED GOBLIN wizard at the bridge, very long pointed green ears, smooth green skin, goblin humanlike face, small humanlike nose, bright eyes, navy and gold wizard hat and tunic, tan boots and belt. This is a humanoid goblin, absolutely NO fur, NO cat, NO feline muzzle, NO pink animal nose, NO whiskers. Preserve the character in the concept precisely, including face and costume. Render beautiful high quality stylized 3D matching the reference. Output ONLY a 3-column x 2-row sprite sheet, 1536x1024, with six equally sized SQUARE 512x512 cells with transparent background and no text, frames or scenery. Each full-body goblin is exactly the same size and feet baseline at y=488 within each cell, centered x=256, no hat or hand cropped. Top row: 1 neutral alert ready idle, 2 identical idle blinking closed eyes with ALL body placement unchanged, 3 slight action anticipation with bent knees. Bottom row: 4 balanced bridge landing with outstretched hands like the concept, 5 happy approving gesture, 6 thoughtful retry. Keep fixed camera, same lighting, same proportions, same head position and planted boots across cells. No torch or staff; both hands visible as in the concept. Do not redesign or substitute an animal. This atlas replaces the incorrect cat-like character in the playable game.\n",
+  "dimensions": [
+    1536,
+    1024
+  ],
+  "bytes": 464506
+}

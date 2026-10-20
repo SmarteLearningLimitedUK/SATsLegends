@@ -1,3 +1,4 @@
+import { createLevelMusicPlayer, getLevelMusicUrl } from './gameMusicLibrary';
 import { GAME_AUDIO_STORAGE_KEY, GAME_HUD_MUTE_SYNC_EVENT } from '../gameHudEvents';
 import { getGameSoundProfile, type SoundMaterial } from './gameSoundProfiles';
 import { decodeGameSample, preloadGameSamples, sampleForEffect } from './gameSampleLibrary';
@@ -17,13 +18,16 @@ let musicStep = 0;
 let musicWanted = false;
 let musicUnlocked = false;
 let musicScene: GameMusicScene = 'map';
+let levelMusicKey: string | null = null;
+let levelMusicPlayer: ReturnType<typeof createLevelMusicPlayer> | null = null;
 let soundProfile = getGameSoundProfile(null);
 let sampleEpoch = 0;
 let lastMonsterAt = -Infinity;
 const activeSamples = new Set<AudioBufferSourceNode>();
+const activeSynthSources = new Set<AudioScheduledSourceNode>();
 const activeEngines = new Set<() => void>();
 
-/** Cancel pending and playing recorded cues when leaving, pausing or muting. */
+/** Cancel pending and playing cues when leaving, pausing or muting. */
 export function stopGameSoundEffects() {
   sampleEpoch += 1;
   for (const stop of [...activeEngines]) stop();
@@ -31,6 +35,10 @@ export function stopGameSoundEffects() {
     try { source.stop(); } catch { /* Already ended. */ }
   }
   activeSamples.clear();
+  for (const source of activeSynthSources) {
+    try { source.stop(); } catch { /* Already ended. */ }
+  }
+  activeSynthSources.clear();
 }
 
 export type GameMusicScene = 'map' | 'gameplay';
@@ -152,8 +160,9 @@ function playVoice(ctx: AudioContext, voice: Voice, base: number, pitchScale = 1
   oscillator.connect(gain);
   route(ctx, gain, voice.pan, voice.length > .18);
   oscillator.start(start);
+  activeSynthSources.add(oscillator);
   oscillator.stop(end + .01);
-  oscillator.onended = () => { oscillator.disconnect(); gain.disconnect(); };
+  oscillator.onended = () => { activeSynthSources.delete(oscillator); oscillator.disconnect(); gain.disconnect(); };
 }
 
 const materialTexture: Record<SoundMaterial, { cutoff: number; q: number; level: number; length: number; type: BiquadFilterType }> = {
@@ -194,8 +203,9 @@ function playTexture(ctx: AudioContext, effect: GameSoundEffect, base: number, m
   filter.connect(gain);
   route(ctx, gain, effect === 'complete' || effect === 'cast' ? .35 : -.25, effect === 'complete' || effect === 'cast');
   source.start(base);
+  activeSynthSources.add(source);
   source.stop(base + length + .01);
-  source.onended = () => { source.disconnect(); filter.disconnect(); gain.disconnect(); };
+  source.onended = () => { activeSynthSources.delete(source); source.disconnect(); filter.disconnect(); gain.disconnect(); };
 }
 
 function playMaterialAccent(ctx: AudioContext, effect: GameSoundEffect, base: number, material: SoundMaterial, pitch: number, accent: number) {
@@ -253,7 +263,7 @@ function playMaterialAccent(ctx: AudioContext, effect: GameSoundEffect, base: nu
 }
 
 export function playGameSound(effect: GameSoundEffect, mutedOverride?: boolean) {
-  if (typeof window === 'undefined' || (mutedOverride ?? localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true')) return false;
+  if (typeof window === 'undefined' || document.hidden || (mutedOverride ?? localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true')) return false;
   const ctx = getContext();
   if (!ctx) return false;
   if (ctx.state === 'suspended') void ctx.resume().catch(() => {});
@@ -294,7 +304,44 @@ export function playMonsterSound(effect: MonsterSoundEffect) {
   if (played) lastMonsterAt = context.currentTime;
   return played;
 }
+/** A dry muzzle crack and short low thump, rather than a rising boost cue. */
+function playCannonShot(ctx: AudioContext) {
+  const start = ctx.currentTime + .005;
+  const buffer = ctx.createBuffer(1, Math.ceil(ctx.sampleRate * .24), ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+  const noise = ctx.createBufferSource();
+  noise.buffer = buffer;
+  const filter = ctx.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.setValueAtTime(6200, start);
+  filter.frequency.exponentialRampToValueAtTime(420, start + .2);
+  const crack = ctx.createGain();
+  crack.gain.setValueAtTime(.0001, start);
+  crack.gain.linearRampToValueAtTime(.32, start + .002);
+  crack.gain.exponentialRampToValueAtTime(.0001, start + .18);
+  noise.connect(filter); filter.connect(crack); crack.connect(dry!);
+  const body = ctx.createOscillator();
+  body.type = 'sine';
+  body.frequency.setValueAtTime(155, start);
+  body.frequency.exponentialRampToValueAtTime(42, start + .2);
+  const thump = ctx.createGain();
+  thump.gain.setValueAtTime(.0001, start);
+  thump.gain.linearRampToValueAtTime(.25, start + .004);
+  thump.gain.exponentialRampToValueAtTime(.0001, start + .22);
+  body.connect(thump); thump.connect(dry!);
+  const stop = () => { try { noise.stop(); } catch { /* Already ended. */ } try { body.stop(); } catch { /* Already ended. */ } };
+  activeEngines.add(stop);
+  noise.onended = () => {
+    activeEngines.delete(stop);
+    noise.disconnect(); filter.disconnect(); crack.disconnect(); body.disconnect(); thump.disconnect();
+  };
+  noise.start(start); noise.stop(start + .24);
+  body.start(start); body.stop(start + .23);
+}
+
 function playSynthSound(ctx: AudioContext, effect: GameSoundEffect, profile: typeof soundProfile) {
+  if (profile.id === 'angle_arena' && effect === 'cast') { playCannonShot(ctx); return; }
   const base = ctx.currentTime + .015;
   const pitch = Math.min(1.4, Math.max(.7, profile.pitch));
   const accent = Math.min(1, Math.max(0, profile.accent));
@@ -306,7 +353,7 @@ function playSynthSound(ctx: AudioContext, effect: GameSoundEffect, profile: typ
 
 /** Original launch-control beep, sharing the game's master volume and mute setting. */
 export function playRocketCountdownSound() {
-  if (typeof window === 'undefined' || localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true') return;
+  if (typeof window === 'undefined' || document.hidden || localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true') return;
   const ctx = getContext();
   if (!ctx) return;
   if (ctx.state === 'suspended') void ctx.resume().catch(() => {});
@@ -324,7 +371,7 @@ export function playRaceEngineSound(durationSeconds: number, stalled = false): (
 }
 
 function playEngineRoar(durationSeconds: number, kind: 'rocket' | 'race' | 'stall'): () => void {
-  if (typeof window === 'undefined' || localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true') return () => {};
+  if (typeof window === 'undefined' || document.hidden || localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true') return () => {};
   const ctx = getContext();
   if (!ctx) return () => {};
   if (ctx.state === 'suspended') void ctx.resume().catch(() => {});
@@ -387,8 +434,7 @@ function playEngineRoar(durationSeconds: number, kind: 'rocket' | 'race' | 'stal
   return stop;
 }
 
-// Original, deliberately quiet two-scene score. All notes are generated here;
-// no licensed recordings or autoplaying media are needed.
+// Quiet generated score for the map. Gameplay uses the supplied recordings.
 const musicScores = {
   map: {
     bpm: 82,
@@ -447,6 +493,7 @@ function scheduleMusic() {
 }
 
 function stopMusic() {
+  levelMusicPlayer?.pause();
   if (musicTimer !== null) window.clearInterval(musicTimer);
   musicTimer = null;
   if (context && musicBus) musicBus.gain.setTargetAtTime(0, context.currentTime, .045);
@@ -457,6 +504,12 @@ function startMusic() {
   const ctx = getContext();
   if (!ctx || !musicBus) return;
   if (ctx.state === 'suspended') void ctx.resume().catch(() => {});
+  if (musicScene === 'gameplay') {
+    levelMusicPlayer ??= createLevelMusicPlayer(ctx, musicBus);
+    musicBus.gain.setTargetAtTime(.3, ctx.currentTime, .15);
+    levelMusicPlayer.play(getLevelMusicUrl(levelMusicKey));
+    return;
+  }
   musicNextTime = ctx.currentTime + .07;
   musicStep = 0;
   musicBus.gain.setTargetAtTime(.42, ctx.currentTime, .15);
@@ -475,8 +528,10 @@ export function unlockGameAudioFromGesture() {
   startMusic();
 }
 
-export function configureGameMusic(enabled: boolean, scene: GameMusicScene) {
-  const changedScene = scene !== musicScene;
+export function configureGameMusic(enabled: boolean, scene: GameMusicScene, blueprintKey?: string | null) {
+  const nextKey = blueprintKey ?? null;
+  const changedScene = scene !== musicScene || nextKey !== levelMusicKey;
+  levelMusicKey = nextKey;
   musicWanted = enabled;
   musicScene = scene;
   if (!enabled || document.hidden) {
@@ -490,5 +545,7 @@ export function configureGameMusic(enabled: boolean, scene: GameMusicScene) {
 if (import.meta.hot) import.meta.hot.dispose(() => {
   musicWanted = false;
   if (typeof window !== 'undefined') stopMusic();
+  levelMusicPlayer?.dispose();
+  levelMusicPlayer = null;
   if (context && context.state !== 'closed') void context.close();
 });

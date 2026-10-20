@@ -244,7 +244,7 @@ const makeQuestion = (level: number): QuestionState => {
   const placeHints = FULL_PLACE_VALUE_HINTS.slice(FULL_PLACE_VALUE_HINTS.length - slotCount);
   return {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    prompt: `The Monster Minds have scrambled the number stones.\nRebuild ${numberToWords(promptNumber)}.`,
+    prompt: `Write ${numberToWords(promptNumber)} in digits.`,
     expectedDigits,
     tokenValues,
     placeHints,
@@ -976,7 +976,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               tabIndex={token ? 0 : -1}
               initial={reducedMotion ? false : { opacity: 0, y: 8, scale: 0.96 }}
               animate={{ opacity: token ? 1 : 0, y: 0, scale: token ? 1 : 0.94 }}
-              transition={{ duration: 0.26, ease: 'easeOut', delay: idx * 0.04 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
               style={{
                 maxWidth: '64px',
                 minWidth: 0,

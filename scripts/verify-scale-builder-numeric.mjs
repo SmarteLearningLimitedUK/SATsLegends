@@ -4,9 +4,14 @@ import {mkdir} from 'node:fs/promises';
 const browser=await chromium.launch();const base=process.env.LEGEND_QA_URL||'http://127.0.0.1:4180';await mkdir('qa-artifacts/scale-numeric',{recursive:true});
 try{for(const [width,height,route] of [[1920,1080,20],[1280,720,21],[390,844,22],[320,568,23],[1280,720,24]]){
  const page=await browser.newPage({viewport:{width,height}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto(`${base}/game/7/${route}`);await page.locator('[data-scale-project]').waitFor();const intro=page.locator('[data-dialog-primary]:visible').first();if(await intro.count())await intro.click();await page.waitForTimeout(350);
+ await page.goto(`${base}/game/7/${route}`,{waitUntil:'domcontentloaded'});await page.locator('[data-scale-project]').waitFor();const intro=page.locator('[data-dialog-primary]:visible').first();if(await intro.count())await intro.click();await page.waitForTimeout(350);
  const geometry=await page.evaluate(()=>{const r=s=>document.querySelector(s).getBoundingClientRect();const c=r('[data-scale-controls]'),q=r('.scale-numeric-question'),dock=r('[data-testid="shared-bottom-hud"]');return{blocked:[...document.querySelectorAll('.scale-number-pad button,.scale-dimension-fields input,.scale-numeric-actions button')].some(b=>{const p=b.getBoundingClientRect();return !b.contains(document.elementFromPoint(p.x+p.width/2,p.y+p.height/2));}),overlap:c.top<q.bottom-1&&c.left<q.right&&c.right>q.left,overflow:document.documentElement.scrollWidth>innerWidth,bottom:c.bottom,dock:dock.top};});
- assert.equal(geometry.blocked,false,JSON.stringify(geometry));assert.equal(geometry.overlap,false,JSON.stringify(geometry));assert.equal(geometry.overflow,false);assert.ok(geometry.bottom<=geometry.dock+1,JSON.stringify(geometry));
+ for(const control of await page.locator('.scale-number-pad button:not(:disabled),.scale-dimension-fields input,.scale-numeric-actions button:not(:disabled)').all()) {
+  const scrollable=await control.evaluate(n=>{for(let p=n.parentElement;p;p=p.parentElement)if(/auto|scroll/.test(getComputedStyle(p).overflowY)&&p.scrollHeight>p.clientHeight+2)return true;return false});
+  if(scrollable)await control.scrollIntoViewIfNeeded();
+  assert(await control.evaluate(n=>{const r=n.getBoundingClientRect();const dock=document.querySelector('[data-testid="shared-bottom-hud"]').getBoundingClientRect();return r.top>=0&&r.bottom<=dock.top+1&&n.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2))}),'Every enabled scale control must be reachable through normal scrolling');
+ }
+ assert.equal(geometry.overlap,false,JSON.stringify(geometry));assert.equal(geometry.overflow,false);
  await page.screenshot({path:`qa-artifacts/scale-numeric/${width}x${height}.png`});
  for(let project=1;project<=5;project++){
   const [length,widthValue,factor]=await page.locator('[data-scale-project]').evaluate(e=>[Number(e.dataset.scaleBaseLength),Number(e.dataset.scaleBaseWidth),Number(e.dataset.scaleFactor)]);
@@ -25,7 +30,12 @@ try{for(const [width,height,route] of [[1920,1080,20],[1280,720,21],[390,844,22]
     await input.click();for(const char of value)await page.getByRole('button',{name:char==='.'?'Decimal point':char,exact:true}).click();assert.equal(await input.inputValue(),value);
    }
   }else{await l.fill(String(length*factor));await w.fill(String(widthValue*factor));}
-  await check.click();await page.getByRole('button',{name:'Next project',exact:true}).waitFor();assert.equal(await page.locator('[data-game-set]').getAttribute('data-stage-cue'),'reward');await page.getByRole('button',{name:'Next project',exact:true}).click();
+  await check.click();
+  await page.getByRole('button',{name:'Correct!',exact:true}).waitFor();
+  assert.equal(await page.getByRole('button',{name:'Next project',exact:true}).count(),0);
+  assert.equal(await page.locator('[data-game-set]').getAttribute('data-stage-cue'),'reward');
+  if(project<5) await page.waitForFunction(expected=>document.querySelector('[data-scale-project]')?.dataset.scaleProject===String(expected),project+1);
+  else await page.getByRole('dialog',{name:'Blueprints restored'}).waitFor();
  }
  await page.getByRole('dialog',{name:'Blueprints restored'}).waitFor();assert.equal(await page.getByRole('button',{name:'Continue',exact:true}).isEnabled(),true);await page.getByRole('button',{name:'Continue',exact:true}).click();await page.getByRole('dialog',{name:'Mission results'}).waitFor();const report=await page.getByRole('dialog',{name:'Mission results'}).innerText();assert.ok(report.includes('83%'),report);assert.ok(report.includes('3/3'),report);assert.deepEqual(errors,[]);console.log('PASS',width,height,'route',route,'five numerical projects, retry, drag and completion');await page.close();
 }}finally{await browser.close();}

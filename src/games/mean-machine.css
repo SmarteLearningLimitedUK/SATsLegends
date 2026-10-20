@@ -189,3 +189,13 @@
 @media(min-width:900px) and (min-height:550px) {
   [data-mean-game] .mean-machine-figure { justify-content:flex-end; }
 }
+
+@media(max-width:699px) and (min-height:651px) {
+ #root [data-mean-game] .mean-machine-content {overflow-y:auto;overflow-x:hidden;touch-action:pan-y;}
+ #root [data-mean-game] .mean-machine-main {flex:none;height:auto;min-height:600px;}
+ #root [data-mean-game] .mean-machine-playfield {flex:none;height:280px;min-height:280px;overflow:visible;}
+ #root [data-mean-game] .mean-machine-playfield > div:last-child {height:100%;overflow:visible;}
+ #root [data-mean-game] .mean-machine-stage {width:200px;height:250px;max-height:none;}
+ #root [data-mean-game] .mean-engine-scan-button {min-width:44px;min-height:44px;}
+ #root [data-mean-game] .mean-machine-answer-rail {flex:none;}
+}

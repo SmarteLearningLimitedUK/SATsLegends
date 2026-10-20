@@ -1,0 +1,12 @@
+{
+  "kind": "objects",
+  "key": "banquet-table",
+  "file": "objects/banquet-table-v1.webp",
+  "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-55f3b41c-1dec-4c7a-853e-713317e5cedd.png",
+  "prompt": "Production game asset, reference is the approved art direction only. Generate Only the elegant wide oval banquet table from the vision, warm rich wood with carved golden edge, beautiful dark navy and gold embroidered cloth runner and rope-trimmed placemats WITHOUT any plates. Frontal elevated view, long table spans96percentimagewidth, just tabletop and front edge, no legs, no chairs, no cakes, no characters, no scenery, no UI, no words. Landscape3:1aspectratio, genuinelytransparent outside table. Genuinely transparent alpha background everywhere outside the isolated object, no coloured matte, no backdrop. This must be a separate compositing asset for live gameplay. Same high-end sculpted3D family fantasy rendering, real material detail, correct perspective and lighting. No labels, captions, image border, interface, watermark or extra objects.",
+  "dimensions": [
+    2172,
+    724
+  ],
+  "bytes": 559174
+}

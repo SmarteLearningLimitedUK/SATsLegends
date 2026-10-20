@@ -1,0 +1,12 @@
+{
+  "kind": "characters",
+  "key": "goblin-idle",
+  "file": "characters/goblin-idle-v3.webp",
+  "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-8e42fce2-1520-421c-803a-e74bae6722f9.png",
+  "prompt": "Use case: identity-preserve. Production game sprite animation sheet. Reference is the EXACT goblin identity to preserve: lime green skin, large ears, brown eyes, navy blue wizard hat with gold crescent and gold trim, navy/gold coat, brown belt and boots. Same premium detailed stylized 3D rendering as reference. Generate exactly 20 full-body frames in a strict FIVE columns by FOUR rows grid, read left-to-right top-to-bottom. Transparent background with real alpha, no shadows outside silhouette, no ground, no text or frame numbers. Entire hat, hands, feet in every cell with generous empty gutters. Camera, lighting, costume, body proportions and character scale IDENTICAL throughout. Boot soles on the same baseline within each cell, torso centred; no zoom or camera motion. These are consecutive closely spaced animation in-betweens, NOT 20 different poses. One subtle seamless breathing and blinking loop lasting one second. Feet stay planted. Arms relaxed by sides; chest rises and falls VERY slightly, hat tip gently follows, one quick blink in middle. Frame 20 returns almost exactly to frame 1. No steps, no gesture, no large bounce.",
+  "dimensions": [
+    1402,
+    1122
+  ],
+  "bytes": 829346
+}

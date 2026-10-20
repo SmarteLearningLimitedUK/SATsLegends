@@ -1,0 +1,19 @@
+{
+  "tool": "builtin image_gen.imagegen",
+  "transparent_background": true,
+  "brief": "Preserve each original hero identity, outfit and rich concept rendering. Four complete activity poses on a transparent 2 by 2 atlas: kneeling with blueprint, pointing, map reading, carrying supplies. Keep transparent gutters and complete silhouettes.",
+  "references": [
+    "barratt-v2.png",
+    "bran-v2.png",
+    "mochi-v2.png",
+    "vex-v2.png"
+  ],
+  "outputs": {
+    "barratt": "exec-dbc15635-4728-458c-a9f6-93447400073a.png",
+    "bran": "exec-ba501c00-ef94-4e89-8ec5-374ac3b0e54b.png",
+    "mochi": "exec-f3709884-db65-4274-a3cb-754b193d8386.png",
+    "vex": "exec-a456d9fe-e4f2-45b6-9879-7c95e83d2542.png"
+  },
+  "bran_revision": "Spacing edit to leave empty transparent centre gutters and keep each complete figure inside its own quarter.",
+  "runtime": "Original atlases retained; the renderer measures and samples one pose cell. No rewritten image files."
+}

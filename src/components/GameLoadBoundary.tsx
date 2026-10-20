@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 type GameLoadContext = {
   gameType?: string;
@@ -116,4 +116,19 @@ class GameLoadBoundary extends React.Component<GameLoadBoundaryProps, GameLoadBo
 }
 
 export default GameLoadBoundary;
+export function GameLoadingFallback({ message = 'Loading game…' }: { message?: string }) {
+  const [waiting, setWaiting] = useState(false);
+  useEffect(() => {
+    const timer = window.setTimeout(() => setWaiting(true), 12000);
+    return () => window.clearTimeout(timer);
+  }, []);
+  return (
+    <div className="flex h-full min-h-[180px] w-full items-center justify-center bg-slate-950/90 p-4 text-center text-white">
+      <div className="flex max-w-md flex-col items-center gap-4">
+        <p role="status" className="text-lg font-semibold">{waiting ? 'This adventure is taking longer to open.' : message}</p>
+        {waiting && <><p>You can try loading it again.</p><button type="button" className="ui-button-primary min-h-[44px] rounded-xl px-5 py-2" onClick={() => window.location.reload()}>Try again</button></>}
+      </div>
+    </div>
+  );
+}
 export { GameLoadFallback };

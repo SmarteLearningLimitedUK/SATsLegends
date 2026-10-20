@@ -1,3 +1,4 @@
+import { playMonsterSound } from '../audio/gameAudio';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Check,
@@ -260,6 +261,7 @@ const MonsterMarketGame: React.FC<MonsterMarketGameProps> = ({
     if (!currentOrder.length) return;
 
     if (currentTotal === customer.targetValue) {
+      playMonsterSound('monster_laugh');
       setFeedback('correct');
       const earned = 900 + Math.floor(customer.patience * 8) + (Math.max(0, currentOrder.length - 2) * 40);
       setScore((value) => value + earned);

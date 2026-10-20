@@ -4,8 +4,8 @@ const browser=await chromium.launch();const base=process.env.LEGEND_QA_URL||'htt
 try{for(const viewport of [{width:320,height:568},{width:390,height:844},{width:700,height:600},{width:1280,height:720}]){
  const page=await browser.newPage({viewport,reducedMotion:'reduce'});
  for(const route of ['/game/3/3','/game/3/22']){
-  await page.goto(base+route);await page.locator('[data-area-game]').waitFor();
-  for(let i=0;i<3;i++){const intro=page.locator('[data-dialog-primary]:visible').first();if(await intro.count()){await intro.focus();await intro.press('Enter');}else break;}
+  await page.goto(base+route,{waitUntil:'domcontentloaded'});await page.locator('[data-area-game]').waitFor();
+  for(let i=0;i<4;i++){const h=(await page.locator('[data-dialog-primary]:visible').elementHandles())[0];if(!h)break;try{await h.click({timeout:5000});}catch(e){if(await h.isVisible().catch(()=>false))throw e;}await h.waitForElementState('hidden',{timeout:5000});}
   for(let room=1;room<=5;room++){
    const target=Number(await page.locator('[data-area-target]').getAttribute('data-area-target'));
    const options=await page.locator('[data-area-answer]').evaluateAll(nodes=>nodes.map(node=>Number(node.dataset.areaAnswer)));

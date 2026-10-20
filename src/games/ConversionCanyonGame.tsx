@@ -1,3 +1,4 @@
+import { playGameSound } from '../audio/gameAudio';
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import SceneEnvironment from '../components/SceneEnvironment';
 import { motion, useIsPresent, useReducedMotion } from 'motion/react';
@@ -13,6 +14,8 @@ import { useTrimmedImageSources } from '../utils/trimTransparentImage';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import './game-refinements.css';
+import MechanicalScale from './MechanicalScale';
+import './conversion-canyon.css';
 import '../components/game-ui/arcade-amendments.css';
 
 interface ConversionCanyonGameProps extends MiniGameShellContractProps {
@@ -125,7 +128,6 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
   const [placedIds, setPlacedIds] = useState<string[]>([]);
   const [XP, setScore] = useState(0);
   const [successPulse, setSuccessPulse] = useState(false);
-  const [impact, setImpact] = useState(0);
   const [broken, setBroken] = useState(false);
   const [feedback, setFeedback] = useState<null | { tone: 'success' | 'error'; text: string }>(null);
 
@@ -153,7 +155,6 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
     setRound(buildRound(levelId, 0));
     setPlacedIds([]);
     setBroken(false);
-    setImpact(0);
     setScore(0);
     setSuccessPulse(false);
     setFeedback(null);
@@ -171,9 +172,12 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
     .filter((token): token is WeightToken => !!token);
 
   const currentGrams = placedTokens.reduce((sum, token) => sum + token.grams, 0);
-  const needleAngle = -110 + Math.min(1, currentGrams / round.targetGrams) * 220;
-  const needleRadians = needleAngle * Math.PI / 180;
-  const needlePath = `M150 161L${150 + Math.sin(needleRadians) * 35} ${161 - Math.cos(needleRadians) * 35}`;
+  const placedGroups = new Map<number, { token: WeightToken; count: number }>();
+  placedTokens.forEach(token => {
+    const group = placedGroups.get(token.grams);
+    if (group) group.count += 1;
+    else placedGroups.set(token.grams, { token, count: 1 });
+  });
   const allTokens = round.tokens;
 
   const isInsideDrop = (x: number, y: number) => {
@@ -186,7 +190,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
     if (!presentRef.current || resolvingRef.current || sessionState?.paused || placedIdsRef.current.includes(id) || !tokenMap.has(id)) return;
     placedIdsRef.current = [...placedIdsRef.current, id];
     setPlacedIds(placedIdsRef.current);
-    setImpact((value) => value + 1);
+    playGameSound('impact');
     setFeedback(null);
   };
 
@@ -216,7 +220,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
       sessionEvents?.onIncorrectAnswer?.({ score: XP, metadata: { round: roundIndex + 1, submittedGrams, targetGrams: round.targetGrams, preservesLives: true } });
       const excess = submittedGrams - round.targetGrams;
       setBroken(excess > 0);
-      setImpact((value) => value + 1);
+      playGameSound('impact');
       setFeedback({ tone: 'error', text: excess > 0
         ? `Scale snapped! Over by ${toGramLabel(excess)} (${toKgLabel(excess)}). Remove excess to repair.`
         : `${toGramLabel(-excess)} (${toKgLabel(-excess)}) short. Add more weight.` });
@@ -272,11 +276,11 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
         <div className="flex min-h-0 flex-1 flex-col items-center justify-start gap-3 px-4 pt-[calc(env(safe-area-inset-top)+0.6rem)]">
           <GameQuestionCard
             title="Conversion Canyon"
-            subtitle={feedback ? undefined : "Tap or drop weights onto the tray."}
+            subtitle={feedback ? undefined : reducedMotion ? "Tap weights to put them on the tray." : "Tap or drop weights onto the tray."}
             className="shrink-0"
             style={{ position: 'relative', top: 0, width: '100%', transform: 'none' }}
           >
-            <span className="block">Match <strong>{toKgLabel(round.targetGrams)}</strong> exactly.</span>
+            <span className="block">Choose weights with a total mass of <strong>{toKgLabel(round.targetGrams)}</strong>.</span>
             {feedback && <span role="status" aria-live="polite" className="mt-1 block text-sm leading-snug">{feedback.text}</span>}
           </GameQuestionCard>
 
@@ -286,53 +290,21 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
             data-conversion-playfield="true"
             className="relative flex w-full max-w-[35rem] min-h-0 flex-1 items-center justify-center p-1 md:max-w-[40rem]"
           >
-            <div className="conversion-scale-frame" data-conversion-scale data-conversion-broken={broken} data-conversion-target={round.targetGrams}>
-              <motion.svg viewBox="0 0 300 280"
-                  key={`scale-${impact}-${broken}`}
-                  initial={reducedMotion ? false : { rotate: 0, y: 0, x: 0 }}
-                  animate={reducedMotion ? { rotate: broken ? 12 : 0, y: broken ? 7 : 0 } : broken
-                    ? { rotate: [0, -5, 4, 12], y: [0, 1, -2, 7] }
-                    : currentGrams > round.targetGrams ? { rotate: [0, -2, 1, -1, 0], y: [0, 3, 1, 3, 0] }
-                    : impact > 0 ? { rotate: [0, -2, 2, -1, 0], y: [0, 3, -1, 0] } : { rotate: 0, y: 0 }}
-                  transition={{ duration: .48, repeat: !reducedMotion && !broken && currentGrams > round.targetGrams ? Infinity : 0 }}
-                  aria-hidden="true"
-                  className={`pointer-events-none conversion-scale-art ${broken ? 'is-broken' : currentGrams > round.targetGrams ? 'is-straining' : impact > 0 ? 'is-loading' : ''}`}
-                >
-                  <defs><linearGradient id="canyon-scale-metal" x2="1" y2="1"><stop stopColor="#f8daa0"/><stop offset=".5" stopColor="#bd8849"/><stop offset="1" stopColor="#644527"/></linearGradient></defs>
-                  <ellipse cx="150" cy="264" rx="120" ry="10" fill="#05243399"/>
-                  <path d="M65 236L88 100Q92 84 110 84H190Q208 84 212 100L235 236Z" fill="url(#canyon-scale-metal)" stroke="#40342a" strokeWidth="6"/>
-                  <path d="M91 112H209L225 231H75Z" fill="#164657" stroke="#edd39a" strokeWidth="4"/>
-                  <circle cx="150" cy="161" r="51" fill="#f4e9c9" stroke="#735630" strokeWidth="6"/>
-                  {Array.from({length:11},(_,i)=><path key={i} d="M150 117V126" transform={`rotate(${-110+i*22} 150 161)`} stroke="#184151" strokeWidth="3"/>)}
-                  <motion.path initial={false} animate={{ d: needlePath }} data-conversion-needle data-needle-angle={needleAngle} transition={{ duration: reducedMotion ? 0 : .22, ease: 'easeOut' }} stroke={broken || currentGrams > round.targetGrams ? '#df514b' : '#cf7541'} strokeWidth="5" strokeLinecap="round"/>
-                  <circle cx="150" cy="161" r="7" fill="#153b49"/>
-                  <path d="M137 94V58H163V94" fill="#b6d8d1" stroke="#334d4d" strokeWidth="5"/>
-                  <path d="M26 55Q150 81 274 55L262 85Q150 109 38 85Z" fill="#4f7781" stroke="#183945" strokeWidth="5"/>
-                  <path d="M26 55Q150 81 274 55" fill="none" stroke="#e9f4e0" strokeWidth="6"/>
-                  <rect x="49" y="232" width="202" height="22" rx="8" fill="url(#canyon-scale-metal)" stroke="#41372a" strokeWidth="5"/>
-                </motion.svg>
-              {broken && <><svg className="conversion-crack" viewBox="0 0 100 150" aria-hidden="true"><path d="M65 0 L38 35 L62 54 L30 87 L51 102 L23 150" /></svg></>}
-              <div className="conversion-load-meter" data-conversion-load={currentGrams}>
-                <span>Load meter</span><strong>{toGramLabel(currentGrams)}</strong>
-              </div>
-              <div
-                ref={dropRef}
-                className="conversion-load-tray" data-conversion-tray
-              >
+            <MechanicalScale grams={currentGrams} target={round.targetGrams} paused={Boolean(sessionState?.paused)} broken={broken} dropRef={dropRef}>
                 {placedTokens.length === 0 ? <span>Tap or drop weights here</span> : null}
-                {placedTokens.map((token) => (
+                {[...placedGroups.values()].map(({ token, count }) => (
                   <button
-                    key={token.id}
+                    key={token.grams}
                     type="button" disabled={successPulse || Boolean(sessionState?.paused)}
                     aria-label={`Remove ${getMeasurementDisplay(token.grams).primary} weight`}
                     onClick={() => removePlacedToken(token.id)}
                   >
                     <img src={gemImageMap.get(token.gem) ?? token.gem} alt="" className="h-5 w-5 object-contain" draggable={false} />
-                    <span className="text-[11px] font-black leading-none">{getMeasurementDisplay(token.grams).primary}</span>
+                    <span className="text-[11px] font-black leading-none">{getMeasurementDisplay(token.grams).primary}{count > 1 ? ` ×${count}` : ''}</span>
+                    {count > 1 ? <small className="conversion-stack-count">×{count}</small> : null}
                   </button>
                 ))}
-              </div>
-            </div>
+            </MechanicalScale>
           </motion.div>
         </div>
 
@@ -343,23 +315,25 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
                 const isPlaced = placedIds.includes(token.id);
                 return (
                   <motion.button
-                    key={token.id}
-                    drag={!isPlaced && !successPulse && !sessionState?.paused}
+                    key={`${token.id}:${Boolean(reducedMotion)}`}
+                    style={reducedMotion ? { transform: 'none' } : undefined}
+                    drag={!reducedMotion && !isPlaced && !successPulse && !sessionState?.paused}
                     dragConstraints={rootRef}
                     dragSnapToOrigin
                     whileTap={reducedMotion ? undefined : { scale: 1.03 }}
-                    onClick={() => placeToken(token.id)}
+                    onClick={() => isPlaced ? removePlacedToken(token.id) : placeToken(token.id)}
                     onDragEnd={(_, info) => {
                       if (isInsideDrop(info.point.x, info.point.y)) {
                         placeToken(token.id);
                       }
                     }}
-                    disabled={isPlaced || successPulse || Boolean(sessionState?.paused)}
-                    aria-label={`Add ${getMeasurementDisplay(token.grams).primary} weight`}
+                    disabled={successPulse || Boolean(sessionState?.paused)}
+                    aria-label={`${isPlaced ? 'Remove' : 'Add'} ${getMeasurementDisplay(token.grams).primary} weight`}
+                    aria-pressed={isPlaced}
                     data-conversion-token={token.id} data-token-grams={token.grams}
                     className={`flex h-[4.25rem] w-full flex-col items-center justify-center rounded-xl px-1 text-white shadow-[0_10px_16px_rgba(0,0,0,0.28)] ring-2 ring-white/10 touch-none ${
                       isPlaced
-                        ? 'bg-slate-900/30 opacity-40'
+                        ? 'bg-slate-900/80 ring-amber-200 opacity-100'
                         : 'bg-[linear-gradient(180deg,rgba(15,23,42,0.7),rgba(15,23,42,0.35))]'
                     }`}
                   >

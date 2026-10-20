@@ -127,5 +127,5 @@ function SavedGame({ id, nickname, saved, pending, children }: { id: string; nic
     return () => { alive.current = false; window.clearTimeout(firstSync); if (retry !== null) window.clearInterval(retry); window.removeEventListener('online', online); document.removeEventListener('visibilitychange', hide); void flush(); };
   }, [id]);
   if (!ready) return <GateMessage title="Preparing your adventure…"><p role="status">One moment, legend.</p></GateMessage>;
-  return <GameSaveContext.Provider value={{ initialPlayer: initialPlayer.current, storageKey: `${PLAYER_STORAGE_KEY}:${id}`, queue }}>{children}<div className="game-save-status" role="status">{status}{status !== 'Progress saved' && <Link to="/parent">Parent account</Link>}</div></GameSaveContext.Provider>;
+  return <GameSaveContext.Provider value={{ initialPlayer: initialPlayer.current, storageKey: `${PLAYER_STORAGE_KEY}:${id}`, queue }}>{children}<div className="game-save-status" data-routine={['Progress saved', 'Saving progress…', 'Syncing saved progress…', 'Progress waiting to sync'].includes(status)} role="status">{status}{status !== 'Progress saved' && <Link to="/parent">Parent account</Link>}</div></GameSaveContext.Provider>;
 }

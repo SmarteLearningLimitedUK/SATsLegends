@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Timer as TimerIcon, Heart, Target, Brain } from 'lucide-react';
 import { AnimatePresence, motion, useIsPresent, useReducedMotion } from 'motion/react';
 import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
@@ -9,6 +9,8 @@ import { MiniGameShellContractProps, emitMiniGameSessionEvent } from '../app/gam
 import { formatMultiplicationDisplay } from '../utils/mathDisplay';
 import MonsterMindActor from '../components/game-ui/MonsterMindActor';
 import ZombieHeroActor from './ZombieHeroActor';
+import SceneEnvironment from '../components/SceneEnvironment';
+import { getVisionEnvironment, VisionSceneContext } from './visionScene';
 import { playGameSound, playMonsterSound } from '../audio/gameAudio';
 import { LEVEL_TIMERS_DISABLED } from '../app/testingFlags';
 import './maths-vs-zombies.css';
@@ -26,7 +28,6 @@ type ZombieState = 'appear' | 'walk' | 'hit' | 'attack' | 'die';
 
 interface Zombie {
   id: number;
-  lane: number;
   x: number; // 0..100
   y: number; // 0..100
   health: number;
@@ -38,6 +39,7 @@ interface Zombie {
 
 interface Question {
   prompt: string;
+  equation: string;
   options: number[];
   correctIndex: number;
 }
@@ -55,12 +57,8 @@ interface SpellShot {
   phase: 'flight' | 'impact';
 }
 
-const LANES = 4;
-const SPAWN_Y = 42;
 const SPAWN_RIGHT_X = 94;
-const RIGHT_SPAWN_MIN_Y = 42;
-const RIGHT_SPAWN_MAX_Y = 62;
-const TARGET_Y = 78;
+const TARGET_Y = 90;
 const TARGET_X = 20;
 const ZOMBIE_SIZE = 'var(--zombie-size, 96px)';
 const ROUND_SECONDS = 60;
@@ -84,7 +82,15 @@ const starsFromAccuracy = (correct: number, attempts: number) => {
   return accuracy >= 0.9 ? 3 : accuracy >= 0.7 ? 2 : 1;
 };
 
-const buildQuestion = (levelId: number, forced?: QuestionOperands): Question => {
+const formatZombieQuestion = (equation: string, variant: number): string => {
+  const words = equation.replace(/ ([+\-×÷]) /g, (_, operation: string) => ` ${{'+':'plus','-':'minus','×':'multiplied by','÷':'divided by'}[operation]} `)
+    .replace(/\((-\d+)\)/g, (_, value: string) => `negative ${Math.abs(Number(value))}`);
+  if (variant % 3 === 1) return `${words} = ?`;
+  if (variant % 3 === 2) return `What is ${words}?`;
+  return `${formatMultiplicationDisplay(equation)} = ?`;
+};
+
+const buildQuestion = (levelId: number, forced?: QuestionOperands, wordingVariant = 1): Question => {
   const roll = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
   let opPool: Operation[] = ['+', '-'];
@@ -127,7 +133,7 @@ const buildQuestion = (levelId: number, forced?: QuestionOperands): Question => 
     a = roll(-15, 15); b = roll(1, 12);
   }
   if (!forced && levelId === 5 && (op === '+' || op === '-')) {
-    a = roll(-20, 30); b = roll(-20, 20);
+    a = roll(-20, 30); b = roll(1, 20);
   }
   if (forced) { a = forced.a; b = forced.b; }
 
@@ -158,13 +164,14 @@ const buildQuestion = (levelId: number, forced?: QuestionOperands): Question => 
   }
   const shuffled = Array.from(options).sort(() => Math.random() - 0.5);
   return {
-    prompt: `the monster minds have sent their minions - solve the sum to defeat them\n\n${formatMultiplicationDisplay(equation)}`,
+    prompt: formatZombieQuestion(equation, wordingVariant),
+    equation: formatMultiplicationDisplay(equation),
     options: shuffled,
     correctIndex: shuffled.indexOf(answer),
   };
 };
 
-const questionSignature = (question: Question) => `${question.prompt}\u0000${question.options[question.correctIndex]}`;
+const questionSignature = (question: Question) => `${question.equation}\u0000${question.options[question.correctIndex]}`;
 
 const buildFreshQuestion = (levelId: number, used: Set<string>): Question => {
   const claim = (candidate: Question) => {
@@ -175,7 +182,7 @@ const buildFreshQuestion = (levelId: number, used: Set<string>): Question => {
   };
 
   for (let attempt = 0; attempt < 32; attempt += 1) {
-    const candidate = buildQuestion(levelId);
+    const candidate = buildQuestion(levelId, undefined, (used.size + 1) % 3);
     if (claim(candidate)) return candidate;
   }
 
@@ -192,11 +199,11 @@ const buildFreshQuestion = (levelId: number, used: Set<string>): Question => {
   for (const op of pool.ops) {
     const minA = levelId >= 4 && (op === '+' || op === '-') ? (levelId === 4 ? -15 : -20) : pool.minA;
     const maxA = levelId >= 5 && (op === '+' || op === '-') ? 30 : pool.maxA;
-    const minB = levelId >= 5 && (op === '+' || op === '-') ? -20 : pool.minB;
+    const minB = levelId >= 5 && (op === '+' || op === '-') ? 1 : pool.minB;
     const maxB = levelId >= 5 && (op === '+' || op === '-') ? 20 : pool.maxB;
     for (let a = minA; a <= maxA; a += 1) {
       for (let b = minB; b <= maxB; b += 1) {
-        const candidate = buildQuestion(levelId, { a, b, op });
+        const candidate = buildQuestion(levelId, { a, b, op }, (used.size + 1) % 3);
         if (claim(candidate)) return candidate;
       }
     }
@@ -288,6 +295,9 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
   const [gameActive, setGameActive] = useState(true);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
   const paused = Boolean(sessionState?.paused || showPracticeIntro);
+  const scene = useContext(VisionSceneContext);
+  // Enemies react to their own hits/attacks, not the player's celebration cue.
+  const enemyScene = useMemo(() => ({key:scene.key,cue:'idle' as const,sequence:0,paused:scene.paused}), [scene.key,scene.paused]);
   const usesSharedLives = Boolean(sessionState && !isPractice);
   const timeLeft = sessionState && !LEVEL_TIMERS_DISABLED && !isPractice ? sessionState.timeLeft : localTimeLeft;
   const pausedRef = useRef(paused); pausedRef.current = paused;
@@ -297,6 +307,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
   const spawnTimerRef = useRef(0);
   const endedRef = useRef(false);
   const idRef = useRef(1);
+  const queueSpacingRef = useRef(0);
   const answerLockRef = useRef(false);
   const answerTimerRef = useRef<number | null>(null);
   const spellImpactTimerRef = useRef<number | null>(null);
@@ -312,7 +323,8 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 
   const zombiesRef = useRef<Zombie[]>([]);
   const selectedTargetRef = useRef<number | null>(null);
-  useEffect(() => { zombiesRef.current = zombies; }, [zombies]);
+  // The frame loop, spawn and hit paths own this live state. Copying a
+  // delayed React commit back here rewinds positions when a new enemy enters.
 
   useEffect(() => {
     if (selectedTargetId === null || zombies.some((enemy) => enemy.id === selectedTargetId && enemy.state !== 'die')) return;
@@ -338,20 +350,21 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
   ), [avatarId]);
 
   const spawnZombie = useCallback((): Zombie | null => {
-    const lane = Math.floor(Math.random() * LANES);
     const maxZombies = isPractice ? 1 : maxZombiesForLevel(tier);
     if (zombiesRef.current.filter((enemy) => enemy.state !== 'die').length >= maxZombies) return null;
-    const spawnSide = Math.random() < 0.5 ? 'top' : 'right';
-    const laneX = 72 + lane * 8;
-    const startX = spawnSide === 'right' ? SPAWN_RIGHT_X : laneX;
-    const startY = spawnSide === 'right'
-      ? RIGHT_SPAWN_MIN_Y + Math.random() * (RIGHT_SPAWN_MAX_Y - RIGHT_SPAWN_MIN_Y)
-      : SPAWN_Y;
+    // Queue at the lawn's right edge, with a full target-width gap between
+    // entrances. All approach along the same grounded route.
+    const field = playfieldRef.current;
+    const actor = field?.querySelector<HTMLElement>('.zombies-target');
+    const actorWidth = actor?.offsetWidth ?? field?.querySelector<HTMLElement>('.zombies-player-avatar')?.offsetWidth ?? 96;
+    const spawnX = Math.min(SPAWN_RIGHT_X, 100 - (actorWidth / 2 + 12) / Math.max(1, field?.clientWidth ?? 800) * 100);
+    const spacing = (actorWidth + 12) / Math.max(1, field?.clientWidth ?? 800) * 100;
+    queueSpacingRef.current = spacing;
+    if (zombiesRef.current.some(enemy => enemy.state !== 'die' && spawnX - enemy.x < spacing)) return null;
     const zombie: Zombie = {
       id: idRef.current++,
-      lane,
-      x: startX,
-      y: startY,
+      x: spawnX,
+      y: TARGET_Y,
       health: baseZombieHealth,
       maxHealth: baseZombieHealth,
       speed: isPractice ? 0.7 : [1.6, 1.9, 2.2, 2.5, 2.8][tier - 1],
@@ -468,21 +481,18 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
 
     spawnTimerRef.current += deltaMs;
     if (spawnTimerRef.current >= spawnDelayMs) {
-      spawnTimerRef.current = 0;
-      spawnZombie();
+      // Retry as soon as the entrance clears, without waiting another interval.
+      if (spawnZombie()) spawnTimerRef.current = 0;
     }
 
     let breaches = 0;
-    const zombiesNext = zombiesRef.current.map((zombie) => {
-      let nextY = zombie.y;
+    let leadX: number | undefined;
+    const zombiesNext = [...zombiesRef.current].sort((a,b)=>a.x-b.x).map((zombie) => {
+      const nextY = TARGET_Y;
       let nextX = zombie.x;
       if (zombie.state !== 'attack' && zombie.state !== 'die') {
-        const dx = TARGET_X - zombie.x;
-        const dy = TARGET_Y - zombie.y;
-        const distance = Math.max(0.001, Math.hypot(dx, dy));
-        const step = Math.min(distance, zombie.speed * dt);
-        nextX += (dx / distance) * step;
-        nextY += (dy / distance) * step;
+        const clearance = leadX === undefined ? TARGET_X : leadX + queueSpacingRef.current;
+        nextX = Math.max(TARGET_X, zombie.x - zombie.speed * dt, Math.min(zombie.x, clearance));
       }
 
       let nextState = zombie.state;
@@ -511,6 +521,8 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
         return null;
       }
 
+      if (nextState !== 'die') leadX = nextX;
+
       return {
         ...zombie,
         x: nextX,
@@ -520,6 +532,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       } as Zombie;
     }).filter(Boolean) as Zombie[];
 
+    if (breaches > 0) playGameSound('impact');
     if (breaches > 0 && !isPractice) {
       attemptsRef.current += breaches;
       for (let index = 0; index < breaches; index += 1) emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { score: scoreRef.current, metadata: { breach: timestamp, index } });
@@ -669,8 +682,9 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     <div
       className="maths-vs-zombies relative flex h-full w-full flex-col items-center overflow-hidden font-sans text-white select-none"
       data-paused={paused}
-      data-zombies-game data-zombies-tier={tier} data-zombies-score={XP} data-zombies-target={victoryTargetScore} data-zombies-time={timeLeft}
+      data-zombies-game data-zombies-equation={question.equation} data-zombies-tier={tier} data-zombies-score={XP} data-zombies-target={victoryTargetScore} data-zombies-time={timeLeft}
     >
+      <SceneEnvironment src={getVisionEnvironment('maths_vs_zombies')??''} fit="cover" />
       <PracticeIntroPopup
         open={showPracticeIntro}
         title={gameTitle || 'Maths vs Zombies'}
@@ -679,13 +693,13 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
         onAction={() => setShowPracticeIntro(false)}
       />
 
-      <div className="relative z-10 flex h-full w-full flex-col gap-2">
+      <div className="zombies-layout relative z-10 flex h-full w-full flex-col gap-2">
         {!useSharedTopHud ? (
           <TopBar XP={XP} brainPoints={zombiesDefeated} health={health} timer={timerLabel} onBack={onBack} />
         ) : null}
 
-        <GameQuestionCard className="zombies-question-card" title={gameTitle || 'Maths vs Zombies'} subtitle={isPractice ? `Defeat 4 zombies to finish practice. ${zombiesDefeated} defeated.` : `Survive for 60 seconds and defeat at least ${victoryTargetScore / 220} zombies to win. Zombies that reach you cost hearts; zero hearts ends the run. ${zombiesDefeated} defeated.`} style={{ position: 'relative', top: '5px', width: 'min(92%, 920px)', transform: 'none' }}>
-          {question.prompt.split('\n\n').slice(-1)[0]}
+        <GameQuestionCard context="" className="zombies-question-card" title={gameTitle || 'Maths vs Zombies'} subtitle={isPractice ? `Choose an answer to cast a spell. Stop 4 zombies to finish practice. ${zombiesDefeated} stopped.` : `Choose an answer to cast a spell. Stop ${victoryTargetScore / 220} zombies before time runs out. ${zombiesDefeated} stopped.`} style={{ position: 'relative', top: '5px', width: 'min(92%, 920px)', transform: 'none' }}>
+          {question.prompt}
         </GameQuestionCard>
 
         <div
@@ -693,31 +707,25 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           className={`zombies-playfield relative mx-4 flex-1 overflow-hidden rounded-3xl border-4 border-blue-400/30 shadow-2xl ${useSharedTopHud ? 'mt-2' : 'mt-4'}`}
         >
           <div className="zombies-battle-runes" aria-hidden="true"/><div className="zombies-mist" aria-hidden="true"/>
-          {!isPractice ? (
-            <div className="zombies-countdown" data-urgent={timeLeft <= 15} role="timer" aria-label={`${timeLeft} seconds remaining`}>
-              <TimerIcon aria-hidden="true" />
-              <span>{timerLabel}</span>
-            </div>
-          ) : null}
           <div ref={playerRef} className="zombies-player absolute flex flex-col items-center" data-player-character="true" data-casting={isCasting}>
             <div className="text-[13px] font-black uppercase tracking-[0.18em] text-cyan-100">You</div>
-            <ZombieHeroActor source={avatarImage} avatarId={avatarId}/>
+            <ZombieHeroActor source={avatarImage} avatarId={avatarId} casting={isCasting}/>
           </div>
 
+          <VisionSceneContext.Provider value={enemyScene}>
           <AnimatePresence>
             {zombies.map((zombie) => {
               return (
                 <motion.button
                   key={zombie.id}
                   type="button"
-                  initial={{ opacity: 1 }}
+                  initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.2 }}
                   exit={{ opacity: 1 }}
                   className={`zombies-target absolute flex flex-col items-center gap-1 ${selectedTargetId === zombie.id ? 'zombies-target-selected' : ''}`}
                   data-button-skin="none"
                   data-zombie-state={zombie.state}
-                  data-zombie-gait={['walk', 'creep', 'crawl'][zombie.id % 3]}
                   onClick={() => {
                     if (!canSelectTarget || zombie.state === 'die' || paused || locked || !gameActive) return;
                     selectedTargetRef.current = zombie.id;
@@ -727,14 +735,17 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
                   aria-label={canSelectTarget ? `Aim at minion ${zombie.id}` : undefined}
                   aria-pressed={canSelectTarget ? selectedTargetId === zombie.id : undefined}
                   data-zombie-id={zombie.id}
+                  data-zombie-x={zombie.x}
+                  data-zombie-ground={TARGET_Y}
                   style={{
-                    top: `calc(${zombie.y}% - ${ZOMBIE_SIZE} * .85)`,
+                    ['--zombie-y' as string]: `${zombie.y}%`,
+                    top: `clamp(0px, calc(${TARGET_Y}% - ${ZOMBIE_SIZE} * .95), max(0px, calc(100% - ${ZOMBIE_SIZE} - 10px)))`,
                     // Positions describe the feet on the lawn, including entrances beyond its edge.
                     left: `calc(${displayZombieX(zombie.x)}% - ${ZOMBIE_SIZE} * .5)`,
                     width: ZOMBIE_SIZE,
                   }}
                 >
-                  <MonsterMindActor src={zombieEnemy} alt="Cartoon zombie minion" reaction={zombie.state === 'die' ? 'defeated' : zombie.state === 'attack' ? 'taunt' : zombie.state === 'hit' ? 'hit' : 'idle'} reactionKey={`${zombie.id}-${zombie.state}`} style={{ width: ZOMBIE_SIZE, height: ZOMBIE_SIZE }} />
+                  <MonsterMindActor soundMode="off" src={zombieEnemy} walking={zombie.state==='walk'||zombie.state==='appear'} alt="Cartoon zombie minion" reaction={zombie.state === 'die' ? 'defeated' : zombie.state === 'attack' ? 'taunt' : zombie.state === 'hit' ? 'hit' : 'idle'} reactionKey={`${zombie.id}-${zombie.state}`} style={{ width: ZOMBIE_SIZE, height: ZOMBIE_SIZE }} />
                   <div className="zombies-enemy-health h-2 w-full overflow-hidden rounded-full bg-black/40">
                     <div
                       className="h-full bg-emerald-300"
@@ -745,6 +756,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
               );
             })}
           </AnimatePresence>
+          </VisionSceneContext.Provider>
 
           {spellShot ? (
             <div className="zombies-spell-layer" data-spell-shot={spellShot.id} data-spell-target={spellShot.targetId} data-spell-phase={spellShot.phase} style={spellStyle} aria-hidden="true">
@@ -766,12 +778,20 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
           >
             {feedback || '\u00A0'}
           </div>
+          <div className="zombies-response-header">
           <div className="zombies-answer-label mt-3 text-center font-black uppercase text-amber-100/90" role="status" aria-live="polite">
             {canSelectTarget
               ? selectedTargetId === null
                 ? 'Tap a minion to aim, or answer for auto-aim'
                 : `Minion ${selectedTargetId} targeted · answer to fire`
               : 'Choose the correct answer'}
+          </div>
+          {!isPractice ? (
+            <div className="zombies-countdown" data-urgent={timeLeft <= 15} role="timer" aria-label={`${timeLeft} seconds remaining`}>
+              <TimerIcon aria-hidden="true" />
+              <span>{timerLabel}</span>
+            </div>
+          ) : null}
           </div>
           <div className="zombies-answer-options mt-2 grid grid-cols-4 gap-2">
             {question.options.map((option, index) => (

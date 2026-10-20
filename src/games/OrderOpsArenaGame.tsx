@@ -212,7 +212,7 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
       <GameplaySceneBackdrop gameType="equation_grove" />
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(10,16,31,0.22),rgba(3,7,18,0.4))]" />
 
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] pt-[calc(env(safe-area-inset-top)+1rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+1.5rem)] md:pt-[calc(env(safe-area-inset-top)+1.25rem)]">
+      <div className="order-composition relative z-10 flex h-full min-h-0 w-full flex-1 flex-col items-center px-2 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] pt-[calc(env(safe-area-inset-top)+1rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+1.5rem)] md:pt-[calc(env(safe-area-inset-top)+1.25rem)]">
         <div className="flex h-full min-h-0 w-full max-w-6xl flex-1 flex-col gap-3 md:gap-4">
           <div className="flex justify-center">
             <GameQuestionCard
@@ -227,12 +227,12 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
 
           <div className="relative min-h-0 flex-1 overflow-hidden rounded-[1.5rem] border border-white/10 bg-transparent">
             <div className="relative z-10 flex h-full min-h-0 flex-col gap-3 p-3 md:p-4">
-              <div className="flex min-h-[13rem] flex-1 items-center justify-center">
+              <div className="order-actor-stage flex min-h-[13rem] flex-1 items-center justify-center">
                 <div className="relative flex h-full w-full max-w-[24rem] items-center justify-center p-3 md:min-h-[18rem]">
                     <div className="absolute left-3 top-3 rounded-full border border-rose-200/14 bg-slate-950/35 px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-rose-100/82">
                       {Math.max(0, maxEnemyHealth - enemyHealth)} orders restored
                     </div>
-                  <MonsterMindActor
+                  <MonsterMindActor soundMode="voice"
                     src={orderOpsEnemy}
                     alt="Order Ops enemy"
                     reaction={enemyHealth <= 0 ? 'defeated' : feedback ? feedback.type === 'error' ? 'taunt' : 'hit' : 'idle'}
@@ -242,7 +242,7 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
                 </div>
               </div>
 
-              <div className="mx-auto w-full max-w-[640px] shrink-0 rounded-[1.45rem] border border-white/10 bg-[linear-gradient(180deg,rgba(9,16,31,0.66),rgba(6,10,20,0.82))] p-3 shadow-[0_14px_28px_rgba(2,6,23,0.14)] backdrop-blur-sm md:p-4">
+              <div className="order-answer-console mx-auto w-full max-w-[640px] shrink-0 rounded-[1.45rem] border border-white/10 bg-[linear-gradient(180deg,rgba(9,16,31,0.66),rgba(6,10,20,0.82))] p-3 shadow-[0_14px_28px_rgba(2,6,23,0.14)] backdrop-blur-sm md:p-4">
                 <p className="mb-2 text-center text-sm font-bold text-cyan-50 md:text-base" role="status">{stepNotice}</p>
                 <div className="grid grid-cols-2 gap-2 md:gap-3" data-order-ops-choices>
                   {operationChoices.map((option) => (

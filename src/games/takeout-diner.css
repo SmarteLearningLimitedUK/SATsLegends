@@ -1,0 +1,83 @@
+/* A close diner stage: large front customer, working chef, live gas range. */
+#root [data-game-set='take_out_rush'] .rush-layout {position:relative;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);grid-template-rows:auto minmax(0,1fr) auto;gap:8px 12px;flex:1;min-height:0;height:100%;padding:0 2% 4px;overflow:hidden;color:#fff0d1;}
+#root [data-game-set='take_out_rush'] .rush-mission {grid-column:1/-1;grid-row:1;position:relative;min-height:0;width:100%;max-width:900px;justify-self:center;--question-card-padding:6px 14px;}
+.rush-mission .game-question-card-inner {display:block;}.rush-mission .game-question-card-title-strip {display:none;}
+.rush-mission .game-question-copy {margin:0;font-size:clamp(16px,1.9vw,23px);line-height:1.2;}.rush-mission .question-subtitle {font-size:13px;line-height:1.2;margin-top:3px;}
+#root [data-game-set='take_out_rush'] .rush-kitchen {grid-column:1;grid-row:2;position:relative;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;min-height:0;gap:4px;overflow:visible;}
+.rush-order-rail {position:relative;z-index:8;display:flex;justify-content:space-between;align-items:center;gap:6px;padding:4px 8px;border:1px solid #d2aa65;border-radius:6px;background:#153e36ed;font-size:12px;line-height:15px;}.rush-order-rail strong {font-size:11px;color:#cfdfb4;}.rush-shift-clock {font-variant-numeric:tabular-nums;font-weight:800;color:#ffe5a6;}.rush-shift-clock[data-urgent='true'] {color:#ffae92;}
+.rush-customer-quip {justify-self:end;max-width:95%;background:#fff0d3;color:#324438;padding:4px 10px;border-radius:10px 10px 2px 10px;font-size:13px;line-height:16px;z-index:8;}
+.rush-queue {position:relative;min-height:0;isolation:isolate;}
+.rush-queued-customer {position:absolute;bottom:0;right:0;width:62%;height:100%;z-index:5;pointer-events:none;}
+.rush-queued-customer[data-queue-position='1'] {right:37%;bottom:3%;width:48%;height:81%;z-index:4;}
+.rush-queued-customer[data-queue-position='2'] {right:62%;bottom:7%;width:36%;height:63%;z-index:3;}
+.rush-queued-customer[data-queue-position='3'] {right:74%;bottom:12%;width:26%;height:46%;z-index:2;}
+.rush-queued-customer[data-queue-position='4'] {right:82%;bottom:16%;width:20%;height:34%;z-index:1;}
+.rush-queued-customer>.vision-character {position:absolute;inset:0;width:100%;height:100%;}
+.rush-customer-position {position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);padding:2px 8px;border:1px solid #debe7f;background:#153e36ed;border-radius:5px;white-space:nowrap;font-size:11px;font-weight:700;line-height:14px;}
+.rush-queued-customer:not(:first-child) .rush-customer-position {display:none;}
+.rush-queue-status {position:relative;z-index:8;justify-self:start;padding:3px 7px;border-radius:4px;background:#143a32ed;font-size:11px;line-height:15px;}
+#root [data-game-set='take_out_rush'] .rush-server-bay {grid-column:2;grid-row:2;position:relative;min-width:0;min-height:0;container-type:size;isolation:isolate;overflow:visible;}
+.rush-server-bay>.vision-character {position:absolute;left:8%;bottom:13%;width:78%;height:86%;}
+.rush-chef-sign {position:absolute;right:0;top:3px;z-index:5;padding:3px 9px;background:#193e35ee;border:1px solid #d6b36f;border-radius:5px;font-size:12px;font-weight:700;}
+.rush-prep-bench {position:absolute;bottom:0;left:50%;translate:-50% 0;width:min(100cqw,102cqh);aspect-ratio:3/2;z-index:3;pointer-events:none;}
+.rush-range-art {position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 5px 4px #17231966);}
+.rush-cooking-pan {position:absolute;left:18%;top:19%;width:47%;height:40%;transform-origin:70% 70%;animation:diner-pan-simmer 2.8s ease-in-out infinite;}
+.rush-pan-art {position:absolute;inset:0;width:100%;height:100%;object-fit:contain;}
+.rush-cooking-pan[data-pan-action='toss'] {animation:diner-pan-toss .8s cubic-bezier(.25,.7,.3,1) both;}
+.rush-pan-food {position:absolute;left:13%;top:0;width:34%;height:70%;object-fit:contain;animation:diner-food-toss .8s cubic-bezier(.25,.7,.3,1) both;}
+.rush-pass-shelf {position:absolute;left:-5%;top:45%;width:25%;height:11%;border:2px solid #d4a769;border-bottom:5px solid #4d3020;border-radius:4px;background:linear-gradient(#b78248,#79522f);box-shadow:0 5px 6px #19251755;}
+.rush-pass-shelf::before {content:'';position:absolute;left:8%;right:8%;height:38%;top:-15%;border:2px solid #d2c7a7;border-radius:50%;background:#fff5d9;}
+.rush-pass-shelf img {position:absolute;left:20%;width:60%;height:140%;bottom:80%;object-fit:contain;animation:diner-plate-food .45s ease-out both;}
+.rush-burner-flame {position:absolute;left:24%;top:34%;width:18%;height:10%;border:2px solid #8dd7ff;border-radius:50%;box-shadow:0 0 8px #38a5ff,inset 0 0 6px #2895ef;animation:diner-burner 1.1s ease-in-out infinite alternate;}
+.rush-steam {position:absolute;z-index:4;pointer-events:none;width:32%;height:58%;opacity:.85;}
+.rush-steam--pan {left:18%;top:-18%;}.rush-steam--pot {left:56%;top:-38%;}
+.rush-steam svg {width:100%;height:100%;overflow:visible;}
+.rush-steam path {fill:none;stroke:#fff4d8;stroke-width:9px;stroke-linecap:round;stroke-dasharray:55 93;opacity:.7;filter:drop-shadow(0 0 2px #fff7e4);animation:diner-steam 2.8s linear infinite;}
+.rush-steam path:nth-child(2) {animation-delay:-.9s;stroke-width:10px;}.rush-steam path:nth-child(3) {animation-delay:-1.8s;stroke-width:5px;}
+.rush-soup-bubbles {position:absolute;left:63%;top:15%;width:17%;height:7%;}
+.rush-soup-bubbles i {position:absolute;left:10%;top:30%;width:13%;aspect-ratio:1;border:1px solid #fff0a4;background:#ffc14a80;border-radius:50%;animation:diner-bubble 1.5s ease-out infinite;}
+.rush-soup-bubbles i:nth-child(2) {left:42%;animation-delay:-.4s;}.rush-soup-bubbles i:nth-child(3) {left:70%;animation-delay:-.8s;}.rush-soup-bubbles i:nth-child(4) {left:30%;animation-delay:-1.2s;}
+.rush-stove-status {position:absolute;left:18%;right:17%;bottom:18%;padding:3px 4px;text-align:center;border:1px solid #cfac69;border-radius:4px;background:#173832eb;color:#ffedbc;font-size:11px;font-weight:700;line-height:14px;}
+#root [data-game-set='take_out_rush'] .rush-responses {grid-column:1/-1;grid-row:3;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);grid-template-rows:auto 44px;gap:7px 14px;min-height:0;padding:10px 14px 7px;border:2px solid #dab170;border-top:5px solid #ffe0a4;border-bottom:6px solid #583a23;border-radius:12px;background:linear-gradient(110deg,#855631f5,#b6824ef5 50%,#79502efa)!important;box-shadow:0 -4px 10px #1d1a1455,inset 0 2px #fff6cf55;}
+.rush-counter {grid-column:1;grid-row:1;min-width:0;}
+.rush-tray-label {display:flex;align-items:center;justify-content:space-between;gap:5px;font-size:13px;line-height:17px;margin-bottom:4px;}.rush-tray-label strong {color:#ddffc1;font-size:1.15em;}.rush-tray-label>span:last-child {font-size:11px;text-align:right;max-width:48%;}.rush-counter.is-overfilled .rush-tray-label strong {color:#ffb99b;}
+.rush-tray-items {position:relative;display:grid;gap:3px;min-height:54px;padding:3px;border:2px solid #a4b6a9;border-radius:10px;background:linear-gradient(#e8efdb,#b6c2ad);box-shadow:inset 0 2px 3px #18373230;}
+.rush-tray-items button {position:relative;display:flex;align-items:center;justify-content:center;gap:4px;min-width:0;min-height:44px;padding:2px;border-radius:5px;background:#fcf2d4;color:#173b34;font-size:12px;}.rush-tray-items button img {width:30px;height:30px;object-fit:contain;}.rush-tray-items button span {display:flex;flex-direction:column;line-height:1.1;}.rush-tray-items small {position:absolute;top:0;right:2px;}.rush-empty-tray {display:flex;align-items:center;justify-content:center;color:#3c5849;text-align:center;font-size:12px;}
+#root [data-game-set='take_out_rush'] .rush-food-shelf {grid-column:2;grid-row:1;display:grid;align-self:stretch;gap:5px;min-width:0;}
+.rush-food-shelf button {display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-height:64px;min-width:0;padding:3px;border:1px solid #f2ce8b;border-radius:8px;background:linear-gradient(#2e5947,#153b32);color:#fff0bc;box-shadow:0 3px #3e2b19;}.rush-food-shelf img {width:35px;height:35px;object-fit:contain;}.rush-food-shelf strong {font-size:19px;line-height:1.1;}.rush-food-shelf button:disabled {opacity:.55;}
+.rush-feedback {grid-column:1;grid-row:2;display:flex;align-items:center;min-width:0;min-height:0;font-size:12px;line-height:15px;}.rush-feedback.is-error {color:#ffe4a8;}
+.rush-actions {grid-column:2;grid-row:2;display:grid;grid-template-columns:1fr 1.3fr;gap:6px;}#root [data-game-set='take_out_rush'] .rush-actions button {min-height:44px;padding:3px 6px;font-size:14px;line-height:1.1;}
+.rush-local-clock {position:absolute;top:0;left:0;right:0;z-index:9;display:flex;justify-content:space-between;font-size:11px;}.rush-local-clock>div {position:absolute;bottom:0;left:0;height:2px;}
+@keyframes diner-steam {from{stroke-dashoffset:0;transform:translateY(5px)}to{stroke-dashoffset:-148;transform:translateY(-10px)}}
+@keyframes diner-bubble {0%{transform:scale(.4);opacity:0}35%{opacity:.9}100%{transform:scale(1.3) translateY(-9px);opacity:0}}
+@keyframes diner-burner {from{opacity:.55;scale:.97}to{opacity:1;scale:1.04}}
+@keyframes diner-pan-simmer {0%,100%{transform:rotate(0)}50%{transform:rotate(-1deg) translateY(-1px)}}
+@keyframes diner-pan-toss {0%,100%{transform:rotate(0)}35%{transform:rotate(-11deg) translateY(-6px)}65%{transform:rotate(5deg)}}
+@keyframes diner-food-toss {0%{transform:translateY(4px);opacity:0}35%{transform:translateY(-40px) rotate(-15deg);opacity:1}100%{transform:translateY(0);opacity:1}}
+@keyframes diner-plate-food {from{transform:translateY(-15px) scale(.8);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+.rush-layout[data-takeout-paused='true'] *,[data-stage-paused='true'] .rush-layout * {animation-play-state:paused!important;}
+@media(orientation:landscape) and (max-height:550px) {
+ #root [data-game-set='take_out_rush'] .rush-layout {padding:0 1%;gap:3px 8px;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);}
+ #root [data-game-set='take_out_rush'] .rush-mission {--question-card-padding:3px 8px;max-width:100%;}.rush-mission .game-question-copy {font-size:15px;line-height:17px;}.rush-mission .question-subtitle {font-size:10px;line-height:12px;margin-top:1px;}
+ .rush-order-rail {padding:2px 4px;font-size:10px;line-height:12px;}.rush-order-rail strong,.rush-customer-quip {display:none;}
+ #root [data-game-set='take_out_rush'] .rush-kitchen {grid-template-rows:auto minmax(0,1fr) auto;gap:1px;}
+ .rush-queue-status {font-size:9px;padding:1px 4px;line-height:11px;}.rush-customer-position {display:none;}
+ .rush-chef-sign {font-size:10px;padding:1px 5px;top:0;}.rush-stove-status {font-size:9px;line-height:11px;padding:1px;bottom:16%;}
+ #root [data-game-set='take_out_rush'] .rush-responses {grid-template-rows:44px 44px;gap:4px 7px;padding:4px 6px;border-top-width:3px;border-bottom-width:3px;}
+ .rush-counter {display:grid;grid-template-columns:50px minmax(0,1fr);gap:4px;align-items:center;}.rush-tray-label {font-size:11px;line-height:12px;margin:0;}.rush-tray-label>span:last-child {display:none;}
+ .rush-tray-items {min-height:44px;padding:0 2px;border-width:1px;}.rush-empty-tray {font-size:10px;}.rush-tray-items button {min-height:42px;flex-direction:column;gap:1px;font-size:10px;}.rush-tray-items button img {width:18px;height:18px;}.rush-tray-items button span {flex-direction:row;gap:2px;}
+ .rush-food-shelf button {min-height:44px;flex-direction:row;gap:3px;padding:1px;}.rush-food-shelf img {width:23px;height:23px;}.rush-food-shelf strong {font-size:15px;}
+ .rush-feedback {font-size:10px;line-height:12px;background:#173e34df;border-radius:4px;padding:2px 4px;}#root [data-game-set='take_out_rush'] .rush-actions button {font-size:12px;}
+ #root [data-game-set='take_out_rush'] img[data-vision-environment] {object-position:50% 100%!important;}
+}
+@media(orientation:landscape) and (max-height:550px) {
+ #root [data-game-set='take_out_rush'] .rush-layout {grid-template-columns:minmax(0,.55fr) minmax(0,.5fr) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);gap:3px 5px;}
+ #root [data-game-set='take_out_rush'] .rush-kitchen {grid-column:1;grid-row:2;margin-bottom:24px;}#root [data-game-set='take_out_rush'] .rush-server-bay {grid-column:2;grid-row:2;margin-bottom:24px;}
+ #root [data-game-set='take_out_rush'] .rush-responses {grid-column:3;grid-row:2;grid-template-columns:minmax(0,1fr);grid-template-rows:44px 44px 44px;padding:3px 4px;gap:4px;align-self:center;}
+ .rush-counter {grid-column:1;grid-row:1;}#root [data-game-set='take_out_rush'] .rush-food-shelf {grid-column:1;grid-row:2;gap:3px;}.rush-actions {grid-column:1;grid-row:3;}
+ .rush-feedback {position:absolute;bottom:0;left:1%;width:49%;min-height:23px;}.rush-chef-sign,.rush-order-rail strong {display:none;}.rush-order-rail {flex-wrap:wrap;}.rush-queue-status {font-size:8px;line-height:10px;}
+ .rush-queued-customer[data-queue-position='0'] {width:86%;}.rush-queued-customer[data-queue-position='1'] {right:50%;width:49%;}.rush-queued-customer[data-queue-position='2'] {right:71%;width:29%;}
+ .rush-food-shelf img {width:18px;height:18px;}.rush-food-shelf strong {font-size:12px;}.rush-food-shelf button {gap:1px;}.rush-stove-status {font-size:7px;line-height:8px;}
+}
+@media(prefers-reduced-motion:reduce) {.rush-layout * {animation:none!important;transition:none!important;}.rush-steam path {stroke-dasharray:none;opacity:.35;}}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='take_out_rush'] .rush-responses {background:linear-gradient(110deg,#855631f5,#b6824ef5 50%,#79502efa)!important;border-color:#e5bf7d!important;}

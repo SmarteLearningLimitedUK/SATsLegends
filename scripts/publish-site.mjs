@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { closeSync, existsSync, mkdirSync, openSync, unlinkSync, writeFileSync } from 'node:fs';
+import { closeSync, existsSync, mkdirSync, openSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -30,6 +30,7 @@ try {
     writeFileSync(path.join(root, 'dist', 'site-release.json'), JSON.stringify({
       releaseId: randomUUID(), builtAt: new Date().toISOString(),
       sourceCommit: revision.status === 0 ? revision.stdout.trim() : null,
+      games: JSON.parse(readFileSync(path.join(root, 'scripts', 'game-release-sources.json'), 'utf8')),
     }, null, 2) + '\n');
   }
   run('python', [path.join(root, 'scripts', 'publish-ftps.py'), mode]);

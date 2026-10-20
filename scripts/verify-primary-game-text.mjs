@@ -1,3 +1,4 @@
+import {installReleaseAccountFixture} from './qa/release-account-fixture.mjs';
 import assert from 'node:assert/strict';
 import { chromium, webkit } from 'playwright';
 
@@ -16,8 +17,10 @@ const metrics = (selector) => {
 for (const [browserName, browserType] of [['chromium', chromium], ['webkit', webkit]]) {
   const browser = await browserType.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 320, height: 568 }, reducedMotion: 'reduce' });
+  if(process.env.LEGEND_QA_ACCOUNT_FIXTURE==='1')await installReleaseAccountFixture(page.context());
   for (const [name, route] of [['forge', '/game/2/14'], ['share', '/game/7/12']]) {
-    await page.goto(base + route, { waitUntil: 'networkidle' });
+    await page.goto(base + route, { waitUntil: 'domcontentloaded' });
+    await page.locator('[data-game-set]').waitFor();
     for (let i = 0; i < 3; i++) {
       const primary = page.locator('[data-dialog-primary]:visible').first();
       if (!(await primary.count())) break;
@@ -26,6 +29,19 @@ for (const [browserName, browserType] of [['chromium', chromium], ['webkit', web
     }
     await page.evaluate(() => document.fonts.ready);
     await page.waitForTimeout(550);
+    if (name === 'share') {
+      const actions = page.locator('.share-splitter-actions');
+      const scroll = await actions.evaluate(n => {
+        for (let p = n.parentElement; p; p = p.parentElement) {
+          if (/auto|scroll/.test(getComputedStyle(p).overflowY) && p.scrollHeight > p.clientHeight + 2) {
+            const r = p.getBoundingClientRect(); return {x:r.x+r.width/2,y:r.y+r.height/2};
+          }
+        }
+        return null;
+      });
+      if (scroll) { await page.mouse.move(scroll.x, scroll.y); await page.mouse.wheel(0, 1000); await page.waitForTimeout(400); }
+      await actions.locator('button').first().evaluate(n => { const r=n.getBoundingClientRect(); if(!n.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2))) throw Error('Action dock is not reachable after normal scrolling'); });
+    }
     const data = await page.evaluate(({ name, metricsSource }) => {
       const textMetrics = eval(`(${metricsSource})`);
       const box = (selector) => document.querySelector(selector)?.getBoundingClientRect().toJSON();
@@ -67,6 +83,14 @@ for (const [browserName, browserType] of [['chromium', chromium], ['webkit', web
     if (name === 'forge') assert.ok(data.questionBottom <= data.workTop + 2, `${browserName}: forge question overlaps workspace`);
     if (name === 'share') assert.ok(data.sourceBottom <= data.actionsTop + 2, `${browserName}: cake overlaps actions`);
     assert.equal(data.badgeCollisions.length, 0, `${browserName} ${name}: plate badges overlap: ${JSON.stringify(data.badgeCollisions)}`);
+    if (name === 'share') {
+      await page.locator('[data-share-source]').click();
+      const plate = page.locator('[data-share-plate-index="0"]');
+      await plate.click();
+      assert.equal(await plate.getAttribute('data-slice-count'), '1', 'Cake can be served after scrolling');
+      await page.locator('.share-splitter-action-buttons button').first().click();
+      assert.equal(await plate.getAttribute('data-slice-count'), '0', 'Undo remains reachable');
+    }
     console.log(JSON.stringify({ browser: browserName, name, minPhysicalPx: Math.min(...values), overflow: data.overflow, controlsGap: data.hudTop - data.controlsBottom, badgeCollisions: data.badgeCollisions }));
   }
   await browser.close();

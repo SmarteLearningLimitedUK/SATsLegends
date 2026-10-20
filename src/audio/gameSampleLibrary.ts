@@ -6,15 +6,17 @@ type Clip = 'ui-pop' | 'incorrect' | 'correct' | 'level-up' | 'reward' | 'fairy'
 const defaults: Record<GameSoundEffect, Clip | null> = {
   tap: 'ui-pop', place: 'gem-place', cast: 'fairy', impact: 'jump-hit',
   correct: 'correct', incorrect: 'incorrect', complete: 'level-up', fail: null,
-  monster_growl: null, monster_laugh: null, monster_hurt: null,
+  monster_growl: 'monster-growl', monster_laugh: 'monster-laugh', monster_hurt: 'monster-hurt',
 };
 const overrides: Record<string, Partial<Record<GameSoundEffect, Clip>>> = {
   change_counter: { tap: 'coin-place', place: 'coin-place', correct: 'cash', complete: 'reward' },
   take_out_rush: { place: 'wood-place', correct: 'cash', complete: 'reward' },
+  conversion_canyon: { impact: 'metal-impact' },
+  calculation_crash: { impact: 'metal-impact' },
   potion_panic: { tap: 'liquid', place: 'liquid', cast: 'liquid', impact: 'slime' },
   prime_pop: { correct: 'ui-pop', impact: 'slime' },
   maths_vs_zombies: { cast: 'fairy', impact: 'slime', monster_growl: 'monster-growl', monster_laugh: 'monster-laugh', monster_hurt: 'monster-hurt' },
-  angle_arena: { cast: 'boost', impact: 'explosion', monster_laugh: 'monster-laugh', monster_hurt: 'monster-hurt' },
+  angle_arena: { impact: 'explosion', monster_laugh: 'monster-laugh', monster_hurt: 'monster-hurt' },
   rounding_rocket: { place: 'metal-impact', cast: 'boost', complete: 'reward' },
   ratio_fractions: { cast: 'boost', correct: 'boost', impact: 'jump-hit' },
   remainder_run: { correct: 'boost', impact: 'jump-hit' },
@@ -29,7 +31,8 @@ const overrides: Record<string, Partial<Record<GameSoundEffect, Clip>>> = {
 };
 const bytes = new Map<Clip, Promise<ArrayBuffer | null>>();
 const decoded = new WeakMap<BaseAudioContext, Map<Clip, Promise<AudioBuffer | null>>>();
-export const sampleForEffect = (profile: GameSoundProfile, effect: GameSoundEffect) => overrides[profile.id]?.[effect] ?? defaults[effect];
+export const sampleForEffect = (profile: GameSoundProfile, effect: GameSoundEffect) =>
+  profile.id === 'angle_arena' && effect === 'cast' ? null : overrides[profile.id]?.[effect] ?? defaults[effect];
 const urlFor = (clip: Clip) => assets[`../assets/audio/sfx/${clip}.mp3`];
 function load(clip: Clip) {
   let request = bytes.get(clip);

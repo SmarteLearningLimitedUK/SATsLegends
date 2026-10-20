@@ -1,6 +1,7 @@
+import { playGameSound } from '../audio/gameAudio';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronLeft } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import factorFrenzyBackground from '../assets/maps/backgroundsforgames/Factor Frenzy.jpg';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
@@ -31,6 +32,7 @@ interface GemValueOption {
 }
 
 interface GemCell {
+  id: number;
   type: GemType;
   label: string;
 }
@@ -86,10 +88,6 @@ const GEM_VALUE_POOLS: Record<GemType, GemValueOption[]> = {
     { label: '0.4', format: 'decimal' },
   ],
 };
-
-const sleep = (ms: number) => new Promise<void>((resolve) => {
-  window.setTimeout(resolve, ms);
-});
 
 const indexFor = (row: number, col: number) => (row * GRID_COLS) + col;
 
@@ -156,7 +154,9 @@ const pickTileLabel = (type: GemType, tier: number, isMatchMastery = true, prefe
   return selected.label;
 };
 
+let nextTileId = 0;
 const buildCell = (type: GemType, tier: number, isMatchMastery: boolean, preferredFormat?: TileValueFormat): GemCell => ({
+  id: ++nextTileId,
   type,
   label: pickTileLabel(type, tier, isMatchMastery, preferredFormat),
 });
@@ -235,18 +235,10 @@ const BevelledGem: React.FC<{
   const colors = GEM_COLORS[type];
 
   return (
-    <motion.button
+    <button
       type="button"
       data-button-skin="none"
       data-match-tile-appearance={colourless ? 'colourless' : 'coloured'}
-      initial={{ scale: 0, opacity: 0 }}
-      animate={{
-        scale: isSelected ? 1.12 : 1,
-        opacity: 1,
-        rotate: isSelected ? [0, -4, 4, 0] : 0,
-      }}
-      exit={{ scale: 0.5, opacity: 0, filter: 'brightness(2) blur(4px)' }}
-      transition={{ rotate: { repeat: Infinity, duration: 0.5 }, exit: { duration: 0.22 } }}
       onClick={onClick}
       className={`group relative cursor-pointer overflow-hidden rounded-xl ${colourless ? 'shadow-[0_4px_10px_rgba(0,0,0,0.24)]' : 'shadow-2xl'}`}
       style={{
@@ -259,6 +251,7 @@ const BevelledGem: React.FC<{
         borderRight: `4px solid ${colourless ? 'rgba(238, 246, 255, 0.16)' : colors.dark}`,
       }}
       aria-label={`Gem ${label}`}
+      aria-pressed={isSelected}
     >
       {colourless ? null : (
         <>
@@ -271,9 +264,9 @@ const BevelledGem: React.FC<{
       </span>
 
       {isSelected && (
-        <div className="absolute inset-0 animate-pulse border-2 border-white shadow-[0_0_15px_white]" />
+        <div className="absolute inset-0 border-2 border-white shadow-[0_0_15px_white]" />
       )}
-    </motion.button>
+    </button>
   );
 };
 
@@ -303,18 +296,20 @@ const MatchGameShell: React.FC<{
   onBack,
 }) => {
   const flowQuestion = variantGameType === 'fraction_match';
+  const reducedMotion = useReducedMotion();
+  const particles = useMemo(() => Array.from({length:20}, () => ({x:Math.random()*100,y:Math.random()*100,duration:Math.random()*10+10})), []);
   return (
     <div className={`relative h-full w-full select-none overflow-hidden font-sans text-white ${flowQuestion ? 'match-mastery-shell' : ''}`}>
       <GameplaySceneBackdrop gameType={variantGameType} className="opacity-45" />
 
       <div className="pointer-events-none absolute inset-0">
-        {[...Array(20)].map((_, idx) => (
+        {!reducedMotion && particles.map((particle, idx) => (
           <motion.div
             key={`particle-${idx}`}
             className="absolute h-1 w-1 rounded-full bg-blue-300/20"
-            initial={{ x: `${Math.random() * 100}%`, y: `${Math.random() * 100}%` }}
+            initial={{ x: `${particle.x}%`, y: `${particle.y}%` }}
             animate={{ y: ['-10%', '110%'], opacity: [0, 0.5, 0] }}
-            transition={{ duration: Math.random() * 10 + 10, repeat: Infinity, ease: 'linear' }}
+            transition={{ duration: particle.duration, repeat: Infinity, ease: 'linear' }}
           />
         ))}
       </div>
@@ -355,7 +350,7 @@ const MatchGameShell: React.FC<{
            {useSharedTopHud ? (
              <div className={flowQuestion ? 'relative z-20 shrink-0 px-2 pt-1 sm:px-4' : 'absolute inset-x-2 top-2 z-20 sm:inset-x-4'}>
                <div className="mx-auto w-full max-w-[44rem]">
-                 <GameQuestionCard title="Match Mastery" className="bg-[#0a1f56]/76 backdrop-blur-sm" style={flowQuestion ? { position: 'relative', top: 'auto', left: 'auto', right: 'auto', width: '100%' } : undefined}>
+                 <GameQuestionCard context="" title="Match Mastery" className="bg-[#0a1f56]/76 backdrop-blur-sm" style={flowQuestion ? { position: 'relative', top: 'auto', left: 'auto', right: 'auto', width: '100%' } : undefined}>
                    {questionText}
                  </GameQuestionCard>
                  <div data-match-status className="mt-2 flex items-center gap-2">
@@ -433,12 +428,14 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   isPractice,
   practiceBriefing,
   sessionEvents,
+  sessionState,
   variantGameType = 'fraction_match',
   onVictory,
   onGameOver,
   onBack,
   gameTitle,
 }) => {
+  const reducedMotion = useReducedMotion();
   const [board, setBoard] = useState<BoardCell[]>([]);
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   const [XP, setScore] = useState(0);
@@ -453,6 +450,19 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   const [swapHint, setSwapHint] = useState<string | null>(null);
 
   const endedRef = useRef(false);
+  const epochRef = useRef(0);
+  const pausedRef = useRef(false);
+  pausedRef.current = Boolean(sessionState?.paused) || showPracticeIntro;
+  const waitForMotion = useCallback((duration: number) => new Promise<boolean>(resolve => {
+    const epoch = epochRef.current; let elapsed = 0; let last: number | undefined;
+    const tick = (now: number) => {
+      if (endedRef.current || epoch !== epochRef.current) { resolve(false); return; }
+      if (!pausedRef.current && !document.hidden && last !== undefined) elapsed += Math.min(50, now - last);
+      last = now;
+      if (elapsed >= duration) resolve(true); else requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }), []);
   const successfulSwapsRef = useRef(0);
   const boardGridRef = useRef<HTMLDivElement | null>(null);
   const fireTimeoutRef = useRef<number | null>(null);
@@ -469,6 +479,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   }, [isMatchMastery, resolvedLevel]);
 
   const resetBoard = useCallback(() => {
+    epochRef.current += 1;
     endedRef.current = false;
     setBoard(createInitialBoard(resolvedLevel, isMatchMastery));
     setSelectedIdx(null);
@@ -489,6 +500,8 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   }, [resolvedLevel, resetBoard]);
 
   useEffect(() => () => {
+    endedRef.current = true;
+    epochRef.current += 1;
     if (fireTimeoutRef.current !== null) window.clearTimeout(fireTimeoutRef.current);
   }, []);
 
@@ -505,7 +518,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       const usableHeight = space.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
       // A wide six-column board keeps all 30 values large enough to tap on small phones.
       const compactPortrait = window.innerWidth <= 360 && window.innerHeight >= 500;
-      const nextWidth = Math.max(compactPortrait ? 334 : 150, Math.floor(Math.min(390, window.innerWidth * 0.94, usableWidth, usableHeight * 1.08)));
+      const nextWidth = Math.max(compactPortrait ? 334 : 150, Math.floor(Math.min(760, window.innerWidth * 0.94, usableWidth, (usableHeight - 32) * 1.2 + 32)));
       setBoardPixelWidth((previous) => previous === nextWidth ? previous : nextWidth);
     };
     const updateGemSize = () => {
@@ -562,7 +575,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   }, [isMatchMastery, onGameOver, onVictory, resolvedLevel, targetScore]);
 
   useEffect(() => {
-    if (endedRef.current) return;
+    if (endedRef.current || sessionState?.paused || showPracticeIntro) return;
     if (timeLeft <= 0) {
       finalizeRound(XP);
       return;
@@ -573,7 +586,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
     }, 1000);
 
     return () => window.clearTimeout(timer);
-  }, [finalizeRound, XP, timeLeft]);
+  }, [finalizeRound, XP, timeLeft, sessionState?.paused, showPracticeIntro]);
 
   useEffect(() => {
     if (endedRef.current) return;
@@ -589,7 +602,9 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
     while (!endedRef.current) {
       const matches = findMatches(workingBoard);
       if (matches.length === 0) {
-        setBoard([...ensurePlayableBoard(workingBoard, resolvedLevel, isMatchMastery)]);
+        const playable = ensurePlayableBoard(workingBoard, resolvedLevel, isMatchMastery);
+        setBoard([...playable]);
+        if (playable !== workingBoard && !await waitForMotion(reducedMotion ? 0 : 260)) return;
         setIsProcessing(false);
         return;
       }
@@ -609,6 +624,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
         fireTimeoutRef.current = window.setTimeout(() => setFireActive(false), 900);
       }
 
+      playGameSound('impact');
       matches.forEach((idx) => {
         workingBoard[idx] = null;
       });
@@ -616,8 +632,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       setBoard([...workingBoard]);
       setScore((prev) => prev + (matches.length * 10));
 
-      await sleep(250);
-      if (endedRef.current) return;
+      if (!await waitForMotion(reducedMotion ? 0 : 180)) return;
 
       // Gravity.
       for (let col = 0; col < GRID_COLS; col += 1) {
@@ -643,13 +658,12 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       }
 
       setBoard([...workingBoard]);
-      await sleep(220);
-      if (endedRef.current) return;
+      if (!await waitForMotion(reducedMotion ? 0 : 320)) return;
     }
-  }, [isMatchMastery, makeRandomCell, resolvedLevel]);
+  }, [isMatchMastery, makeRandomCell, reducedMotion, resolvedLevel, waitForMotion]);
 
   const handleGemClick = useCallback(async (idx: number) => {
-    if (endedRef.current || isProcessing) return;
+    if (endedRef.current || pausedRef.current || isProcessing) return;
 
     if (selectedIdx === null) {
       setSwapHint(null);
@@ -683,6 +697,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       return;
     }
 
+    setIsProcessing(true);
     setBoard(swapped);
     setSelectedIdx(null);
     setSwapHint(null);
@@ -692,8 +707,9 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       score: XP + matches.length * 10,
       metadata: { firstTile: selectedIdx, secondTile: idx, matchedTiles: matches.length },
     });
+    if (!await waitForMotion(reducedMotion ? 0 : 260)) return;
     await processBoard(swapped);
-  }, [board, isProcessing, processBoard, selectedIdx, sessionEvents, XP]);
+  }, [board, isProcessing, processBoard, reducedMotion, selectedIdx, sessionEvents, waitForMotion, XP]);
 
   const completionProgress = Math.max(0, Math.min(100, (XP / Math.max(1, targetScore)) * 100));
 
@@ -705,12 +721,12 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       levelName={levelName}
       questionText={swapHint ? <span role="status" aria-live="polite">{swapHint}</span> : isMatchMastery
         ? resolvedLevel === 5
-          ? `No colour clues: match equal fractions, decimals & percentages. ${Math.min(successfulSwaps, MIN_COLOURLESS_MATCHES)}/${MIN_COLOURLESS_MATCHES} matches; fill XP.`
+          ? `Restore the board: line up 3 equal values. ${Math.min(successfulSwaps, MIN_COLOURLESS_MATCHES)}/${MIN_COLOURLESS_MATCHES} matches.`
           : resolvedLevel >= 3
             ? 'Match equal fractions, decimals and percentages.'
             : 'Match equivalent fractions.'
         : 'Match equivalent values.'}
-      fireActive={fireActive}
+      fireActive={fireActive && !reducedMotion}
       firePulse={firePulse}
       variantGameType={variantGameType}
       useSharedTopHud={useSharedTopHud}
@@ -723,7 +739,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
-      <div data-match-tier={resolvedLevel} className="match-mastery-board relative box-border shrink-0 rounded-[2rem] border border-cyan-100/20 bg-[linear-gradient(180deg,rgba(4,16,44,0.9),rgba(3,10,28,0.96))] p-3 shadow-[0_18px_40px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:p-4" style={{ width: boardPixelWidth }}>
+      <div data-match-tier={resolvedLevel} data-match-processing={isProcessing} data-match-score={XP} className="match-mastery-board relative box-border shrink-0 rounded-[2rem] border border-cyan-100/20 bg-[linear-gradient(180deg,rgba(4,16,44,0.9),rgba(3,10,28,0.96))] p-3 shadow-[0_18px_40px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:p-4" style={{ width: boardPixelWidth }}>
         <div
           className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-[0.24]"
           style={{
@@ -740,31 +756,24 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
         />
         <div
           ref={boardGridRef}
-          className="relative z-10 grid w-full"
+          className="match-tile-grid relative z-10 grid w-full"
           style={{ gridTemplateColumns: `repeat(${GRID_COLS}, minmax(0, 1fr))`, gap: '3px' }}
         >
-          {board.map((cell, idx) => (
-            <div
-              key={idx}
-              className="relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-2xl border border-cyan-100/16 bg-[#020816]/50 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.35)]"
-            >
-              <AnimatePresence mode="popLayout">
-                {cell && (
-                  <BevelledGem
-                    key={`${idx}-${cell.type}-${cell.label}`}
-                    type={cell.type}
-                    label={cell.label}
-                    size={Math.max(16, Math.min(gemSize, 69))}
-                    isSelected={selectedIdx === idx}
-                    colourless={isMatchMastery && resolvedLevel === 5}
-                    onClick={() => {
-                      void handleGemClick(idx);
-                    }}
-                  />
-                )}
-              </AnimatePresence>
-            </div>
-          ))}
+          {Array.from({ length: GRID_ROWS * GRID_COLS }, (_, idx) => <div key={idx} aria-hidden="true" className="match-cell-well aspect-square rounded-xl bg-[#06221e]" />)}
+          <AnimatePresence initial={false}>
+            {board.map((cell, idx) => cell && <motion.div key={cell.id}
+              data-match-cell={idx} data-match-id={cell.id} data-match-value={cell.type}
+              className="match-moving-tile"
+              initial={reducedMotion ? false : { opacity: 0, y: -16 }}
+              animate={{ left: `calc(${idx % GRID_COLS} * (100% + 3px) / ${GRID_COLS})`, top: `calc(${Math.floor(idx / GRID_COLS)} * (100% + 3px) / ${GRID_ROWS})`, opacity: 1, y: 0 }}
+              exit={reducedMotion ? { opacity: 0 } : { opacity: 0, scale: .82 }}
+              transition={{ duration: reducedMotion ? 0 : .26, ease: [.22, .61, .36, 1], opacity: { duration: reducedMotion ? 0 : .16 } }}
+              style={{ left: `calc(${idx % GRID_COLS} * (100% + 3px) / ${GRID_COLS})`, top: `calc(${Math.floor(idx / GRID_COLS)} * (100% + 3px) / ${GRID_ROWS})` }}>
+              <BevelledGem type={cell.type} label={cell.label} size={Math.max(16, Math.min(gemSize, 69))}
+                isSelected={selectedIdx === idx} colourless={isMatchMastery && resolvedLevel === 5}
+                onClick={() => { void handleGemClick(idx); }} />
+            </motion.div>)}
+          </AnimatePresence>
         </div>
       </div>
     </MatchGameShell>

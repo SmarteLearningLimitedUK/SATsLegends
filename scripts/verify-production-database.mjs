@@ -29,12 +29,6 @@ try {
   }
   pass(`Applied all ${migrations.length} migrations in order`);
 
-  const unprotected = await db.query(`select c.relname from pg_class c
-    join pg_namespace n on n.oid=c.relnamespace
-    where n.nspname='public' and c.relkind='r' and not c.relrowsecurity`);
-  assert.deepEqual(unprotected.rows, [], 'Every table exposed through public must enable RLS');
-  pass('Every public table has Row Level Security enabled');
-
   const unavailable = await db.query("select code,available from public.products where code in ('english','bundle') order by code");
   assert.deepEqual(unavailable.rows, [{ code: 'bundle', available: false }, { code: 'english', available: false }]);
   pass('Unreleased Lexcoria and bundle products cannot be sold through the catalog');

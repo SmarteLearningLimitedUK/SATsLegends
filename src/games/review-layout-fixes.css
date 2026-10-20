@@ -1,0 +1,31 @@
+/* Screenshot-review corrections. Keep actors, questions and inputs in separate bays. */
+@media (orientation:landscape) {
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-response {align-items:stretch;justify-content:flex-start;min-width:0;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-response > * {width:100%;max-width:none;align-self:stretch;grid-area:auto;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-fields {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-fields > fieldset {width:100%;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-answer-options {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;gap:6px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-answer-options button {width:100%;min-height:44px;font-size:18px!important;padding:4px!important;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='rounding_rocket'] .rr-parts-list {left:auto;right:2%;bottom:29%;max-width:25%;padding:10px 14px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='rotation_relay'] .rs-workspace {grid-template-columns:minmax(0,1.35fr) minmax(0,.8fr);}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='rotation_relay'] .rs-grid {padding:3%;height:calc(100% - 24px);}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='unit_mixer'] .lava-crossing-hero {width:clamp(120px,16vw,190px);height:clamp(140px,19vw,220px);filter:drop-shadow(0 0 3px #dfffff) drop-shadow(0 6px 6px #080e21);}
+}
+@media (orientation:landscape) and (max-height:550px) {
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-fields {grid-template-columns:1fr;gap:6px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-response {overflow:auto;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-tap-workpad {flex:none;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-fields legend {font-size:13px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='coordinates_quest'] .coordinates-quest-layout {width:80%;margin-left:19%;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);grid-template-rows:minmax(0,1fr);gap:8px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='coordinates_quest'] .vision-companion--stage {left:0;bottom:10%;width:18%;height:66%;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='coordinates_quest'] .game-question-card-inner {padding:3px 6px!important;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='rotation_relay'] .rs-workspace {grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='unit_mixer'] .lava-crossing-answers {grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='unit_mixer'] .lava-crossing-answers button {min-height:44px;font-size:18px!important;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='unit_mixer'] .lava-crossing-hero {width:120px;height:140px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='unit_mixer'] .refinement-feedback {min-height:24px;padding:2px 6px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='scale_builder'] .scale-numeric-layout {grid-template-columns:1fr 1.1fr;grid-template-rows:auto minmax(0,1fr);}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='scale_builder'] .scale-numeric-question {grid-column:1/-1;grid-row:1;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='scale_builder'] .scale-numeric-controls {grid-column:2;grid-row:2;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='scale_builder'] .scale-numeric-question .game-question-copy {font-size:13px!important;line-height:1.15!important;}
+}

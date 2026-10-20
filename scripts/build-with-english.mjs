@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { cp, mkdir, stat } from 'node:fs/promises';
+import { cp, mkdir, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadEnv } from 'vite';
@@ -37,4 +37,6 @@ build(englishRoot, path.join(englishRoot, 'node_modules', 'vite', 'bin', 'vite.j
 const target = path.join(websiteRoot, 'dist', 'english', 'play');
 await mkdir(target, { recursive: true });
 await cp(path.join(englishRoot, 'dist'), target, { recursive: true });
+const englishRevision = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: englishRoot, encoding: 'utf8' });
+await writeFile(path.join(target, 'game-release.json'), JSON.stringify({ game: 'lexcoria', sourceCommit: englishRevision.status === 0 ? englishRevision.stdout.trim() : null }, null, 2) + '\n');
 console.log(`Combined website and English game ready: ${path.join(websiteRoot, 'dist')}`);
