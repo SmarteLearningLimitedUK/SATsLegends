@@ -30,3 +30,14 @@ Changed areas: `src/` game code/assets (excluding the website redesign), `src/we
 Checks use Chromium emulation; they do not replace physical iOS/Android testing. Existing bundle-size build warnings remain.
 
 Assumptions: the owner-authorized local working trees are the desired newest games. Release-specific compatibility fixes live in the isolated snapshots/website checkout. No external legacy project assumptions were used.
+
+
+## Published verification
+
+Published website source `49e2c32e7d8803af9eb238d708250c42d1375bd5` and Lexcoria `bc1ac8941dc2439c9923e1081c1a670427a80933` to https://satslegends.com. The combined artifact contains 781 files; 395 changed files (171.7 MB) were uploaded. FTPS publication and HTTPS verification completed successfully.
+
+Live version records matched both tested source snapshots. An isolated account fixture loaded the new Matharia scene with no runtime errors; the homepage purple palette remained intact. Live Lexcoria checks passed at 320, 390, 768 and 1440 px, including shared parent login, selected-child entry, and denial without English entitlement. Signed-out access remains gated. These browser fixtures did not create or alter real accounts, subscriptions or progress.
+
+Current Lexcoria interaction suites passed native touch gestures, construction and defence at six sizes, all nine bridge checkpoints at 390/320/667 px, life loss/retry, curriculum keystones and completion. An additional older adventure-workbench test also references a retired selector; the current action-adventures suite validates its replacement. No game functionality was removed to satisfy legacy tests.
+
+Live evidence: ignored `.deploy/game-sync-live*.log`, `qa-artifacts/game-sync/live/release.json` and `matharia-desktop.png`. The original development folders remain untouched. Reopen an existing game tab after publication to replace its already-loaded JavaScript.
