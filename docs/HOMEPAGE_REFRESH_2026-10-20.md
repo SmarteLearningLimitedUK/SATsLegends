@@ -32,3 +32,9 @@ Gallery layout is two landscape columns on desktop/tablet and one column on phon
 `src/website/HomePage.tsx`, `homepage-refresh.css`, `Website.tsx`, `WebsiteRoot.tsx`, `GameplayGallery.tsx`, `gameplay-gallery.css`, eight desktop JPEGs, capture/gallery verification scripts and documentation.
 
 Assumptions: “refresh everything” refers to the homepage presentation and its shared gameplay previews. Account, billing and gameplay behaviour are unchanged. No external legacy project assumptions were used.
+
+## Published and verified
+
+Published to `https://satslegends.com/` through the verified FTPS publisher from source `763c1c37d12c8c9fb910cd245848f1aa5b939d8c`. This release uploaded the complete 609-file combined artifact (158.1 MB). The publisher confirmed website, Matharia and Lexcoria publication and HTTPS entry-file verification.
+
+Fresh live-browser checks passed at 390, 768 and 1440 px: new homepage heading and two game choices, no Journal links, no horizontal overflow, all four new desktop image sources, a working 2560-pixel screenshot viewer, Escape closing and no runtime errors. Live `site-release.json` matched the source commit. Live first-screen captures are stored under ignored `qa-artifacts/home-refresh/live-*-top.png`.
