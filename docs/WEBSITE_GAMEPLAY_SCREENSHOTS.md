@@ -1,5 +1,13 @@
 # Minigame screenshots on the website
 
+## Current update — 20 October 2026
+
+The gallery now uses fresh desktop screenshots, not the portrait images described in the historical notes below. It shows two landscape columns on desktop/tablet and a single column on phones. Full-size images are 2560 × 1600 with separate 1280 × 800 responsive preview JPEGs. See `HOMEPAGE_REFRESH_2026-10-20.md` for the current scope and verification.
+
+Capture current desktop assets with `LEGENDS_CAPTURE_FORMAT=desktop node scripts/capture-website-gameplay.mjs` against the local dev server. The default capture mode still produces portrait references. `GALLERY_QA_ENGINES=chromium` explicitly limits gallery verification to available Chromium; the default also attempts WebKit. This refresh was verified in Chromium only.
+
+## Historical portrait implementation
+
 The home page and public parent page now show four real minigame screenshots with skill captions. Each opens a larger image in a keyboard-accessible native dialog. Phone layouts use a horizontal strip so the portrait game screens remain readable without cropping the questions or controls.
 
 Screenshots were captured from the current React app in an isolated local browser at 390 × 844 CSS pixels and twice the pixel density. The actual introductory panels were dismissed using their Start buttons. Game routes were looked up from the repository's current `ISLANDS` catalog; no game screens were invented or composited.
