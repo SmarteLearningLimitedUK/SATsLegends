@@ -34,6 +34,13 @@ export function Brand({ small = false }: { small?: boolean }) {
 const reveal = { initial: { opacity: 1, y: 14 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: 0.15 }, transition: { duration: 0.45 } };
 
 function Home() {
+  const { hash } = useLocation();
+  useEffect(() => {
+    if (!['#what-is-sats-legends', '#revision-subjects', '#why-sats-legends'].includes(hash)) return;
+    // React renders these targets after the browser's initial fragment lookup.
+    const frame = requestAnimationFrame(() => document.getElementById(hash.slice(1))?.scrollIntoView({ block: 'start' }));
+    return () => cancelAnimationFrame(frame);
+  }, [hash]);
   const adventures = [
     { name: 'Place Value Panic', subject: 'Number', image: numberArt, island: 1, color: 'mint' },
     { name: 'Fraction Forge', subject: 'Fractions', image: fractionArt, island: 2, color: 'cyan' },
