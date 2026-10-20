@@ -38,3 +38,9 @@ Assumptions: “refresh everything” refers to the homepage presentation and it
 Published to `https://satslegends.com/` through the verified FTPS publisher from source `763c1c37d12c8c9fb910cd245848f1aa5b939d8c`. This release uploaded the complete 609-file combined artifact (158.1 MB). The publisher confirmed website, Matharia and Lexcoria publication and HTTPS entry-file verification.
 
 Fresh live-browser checks passed at 390, 768 and 1440 px: new homepage heading and two game choices, no Journal links, no horizontal overflow, all four new desktop image sources, a working 2560-pixel screenshot viewer, Escape closing and no runtime errors. Live `site-release.json` matched the source commit. Live first-screen captures are stored under ignored `qa-artifacts/home-refresh/live-*-top.png`.
+
+## Purple palette amendment
+
+Replaced the two cream homepage section backgrounds with muted purple (#28163f), using light lavender body text and gold labels/links. Only `src/website/homepage-refresh.css` changed in the interface. Assumption: the request refers to the light homepage sections; layout and artwork are retained. No external legacy assumptions were used.
+
+Chromium checks at 390 and 1440 px passed: both section backgrounds correct, sampled headings/body/links/captions exceed 4.5:1 contrast, and no horizontal page overflow. Screenshots visually inspected; evidence is under ignored `qa-artifacts/home-refresh/purple-*`.
