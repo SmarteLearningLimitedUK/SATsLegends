@@ -11,6 +11,8 @@ import {
 } from 'lucide-react';
 import { playGameSound } from '../../audio/gameAudio';
 import SceneEnvironment from '../SceneEnvironment';
+import VisionCompanion from './VisionCompanion';
+import ViewportQuestion from './ViewportQuestion';
 
 type WrapperProps = {
   children: React.ReactNode;
@@ -108,6 +110,7 @@ const QuestionCardFrame: React.FC<QuestionCardFrameProps> = ({
   bodyClassName,
   style,
 }) => (
+  <ViewportQuestion>
   <div className={cn('game-question-card', className)} data-game-question="true" style={style}>
     <img
       className="game-question-card-shell"
@@ -117,6 +120,7 @@ const QuestionCardFrame: React.FC<QuestionCardFrameProps> = ({
       draggable={false}
     />
     <div className="game-question-card-inner">
+      <VisionCompanion placement="question" />
       {title ? (
         <div
           className="game-question-card-title-strip"
@@ -142,6 +146,7 @@ const QuestionCardFrame: React.FC<QuestionCardFrameProps> = ({
       ) : null}
     </div>
   </div>
+  </ViewportQuestion>
 );
 
 /**

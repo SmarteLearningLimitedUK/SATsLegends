@@ -1,0 +1,12 @@
+{
+  "kind": "characters",
+  "key": "glacier-builder",
+  "file": "characters/glacier-builder-v1.webp",
+  "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-19048424-0243-492e-9670-c6bf1c669153.png",
+  "prompt": "Production transparent CHARACTER ANIMATION ATLAS for existing React family fantasy game. Reference is character appearance and sculpted3D quality only. Subject: The orange-white furry fox glacier builder, brass goggles, teal blue fur-lined winter coat, leather gloves and boots, holds rolled blueprint. Create ONE strictly regular THREE-COLUMN TWO-ROW sheet of SIX equally sized square cells, overall3:2aspectratio, genuinely transparent alpha background. SAME SINGLE character in every cell, identical camera, scale, lighting, costume, proportions, body position and baseline. Full body in each cell, centred, maximum usable size with8percent side margins, feet or seatedbase on95percentheight line in EVERY cell. NO cell overlaps, NO external props or platforms, NO floor, NO shadows baked across cells, NO text, labels, borders or grid lines. High-end stylized3D cinematic character rendering matching reference, detailed groomed fur/skin, convincing materials, expressive face and hands, not flat2D. Six poses in reading order: top-left neutral idle with eyes open; top-middle EXACT SAME neutral body with eyes gently CLOSED for blink; top-right focused anticipation looking at gameplay with small preparatory hand pose; bottom-left character-specific action using its tool or arms with convincing weight, SAME feet baseline and no jump; bottom-middle warm success reaction, happy face and small hand gesture, feet anchored; bottom-right thoughtful encouraging retry expression, feet anchored. Every cell must contain the whole character and no scenery. Changes between cells confined to head, expression and arms; feet and costume silhouette stay stable. The atlas will be animated at runtime. Preserve genuine transparent background everywhere outside figures.",
+  "dimensions": [
+    1536,
+    1024
+  ],
+  "bytes": 471712
+}

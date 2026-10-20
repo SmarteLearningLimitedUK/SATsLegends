@@ -3,6 +3,8 @@ import { useReducedMotion } from 'motion/react';
 import { useStaticEnemyFrame } from '../../utils/staticEnemyFrame';
 import { playGameSound, playMonsterSound } from '../../audio/gameAudio';
 import './monster-mind-actor.css';
+import VisionCharacter from './VisionCharacter';
+import { getVisionCharacter, visionIdentity } from '../../games/visionScene';
 
 export type MonsterMindReaction = 'idle' | 'hit' | 'taunt' | 'defeated';
 
@@ -15,6 +17,7 @@ export interface MonsterMindActorProps {
   style?: React.CSSProperties;
   /** Combat owners can supply precisely timed cues themselves. */
   soundMode?: 'all' | 'voice' | 'off';
+  walking?: boolean;
 }
 
 const EMPTY_FRAME = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/%3E';
@@ -286,4 +289,10 @@ const MonsterMindActor: React.FC<MonsterMindActorProps> = ({
   );
 };
 
-export default memo(MonsterMindActor);
+const ProductionMonsterActor = memo(function ProductionMonsterActor(props: MonsterMindActorProps) {
+  const identity = visionIdentity(props.src);
+  return identity && getVisionCharacter(identity)
+    ? <VisionCharacter identity={identity} walking={props.walking} legacyIdentity={props.src} soundMode={props.soundMode??'all'} alt={props.alt} reaction={props.reaction} reactionKey={props.reactionKey} className={props.className} style={props.style} />
+    : <MonsterMindActor {...props} />;
+});
+export default ProductionMonsterActor;

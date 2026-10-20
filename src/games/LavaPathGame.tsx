@@ -8,6 +8,8 @@ import { GameScreenShell } from '../layout/ScreenPrimitives';
 import { triggerHaptic } from '../haptics';
 import lavaPathBackground from '../assets/maps/premium/lava-path.webp';
 import lavaPlatform from '../assets/items/lava-platform.webp';
+import VisionCharacter from '../components/game-ui/VisionCharacter';
+import { getVisionCharacter, visionPlayerIdentity } from './visionScene';
 import { useTrimmedImageSource } from '../utils/trimTransparentImage';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import './game-refinements.css';
@@ -181,11 +183,11 @@ const LavaPathGame: React.FC<LavaPathGameProps> = ({ levelId, avatarId, isPracti
             })}
           </svg>
           <div className="lava-crossing-hero" data-lava-hero
-            style={{ left: `${point.x}%`, top: `${point.y}%`, transform: 'translate(-50%, -75%)',
+            style={{ left: `${point.x}%`, top: `${point.y}%`, transform: getVisionCharacter(visionPlayerIdentity(avatarId))?'translate(-50%, -95%)':'translate(-50%, -75%)',
               transition: reducedMotion ? 'none' : 'left .42s ease-in-out, top .42s ease-in-out' }}>
             <div className="lava-crossing-hero-shadow" />
-            <img src={playerAvatar.portrait || playerAvatar.image} alt={playerAvatar.name} draggable={false}
-              className={reducedMotion ? undefined : feedback === 'correct' ? 'lava-hero-hop' : feedback === 'incorrect' ? 'lava-hero-recoil' : undefined} />
+            {getVisionCharacter(visionPlayerIdentity(avatarId)) ? <span className={`lava-hero-motion ${reducedMotion ? '' : feedback === 'correct' ? 'lava-hero-hop' : feedback === 'incorrect' ? 'lava-hero-recoil' : ''}`}><VisionCharacter identity={visionPlayerIdentity(avatarId)} alt={playerAvatar.name} /></span> : <img src={playerAvatar.portrait || playerAvatar.image} alt={playerAvatar.name} draggable={false}
+              className={reducedMotion ? undefined : feedback === 'correct' ? 'lava-hero-hop' : feedback === 'incorrect' ? 'lava-hero-recoil' : undefined} />}
           </div>
         </div>
         <div className="answer-choice-surface lava-crossing-answers">

@@ -1,0 +1,90 @@
+/* Current-review fixes: keep activities, actors and controls in their own space. */
+.perimeter-edge-length{display:none;pointer-events:all;cursor:pointer;}
+.perimeter-edge-length:focus-visible{outline:none;filter:drop-shadow(0 0 1px white);}
+#root [data-vision-game='change_counter'] .market-till-header strong{min-width:0;width:100%;}
+@media(orientation:landscape) and (max-height:550px){.perimeter-edge-length{display:block;}}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='data_detective'] .detective-suspect-portrait .vision-character{height:100%!important;width:100%!important;min-height:0;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='data_detective'] .detective-lineup>button{height:156px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='data_detective'] .detective-suspect-portrait{flex:1 1 0;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='fraction_forge'] .ff-tray{padding:18px 18px 26px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='fraction_forge'] .ff-controls{position:relative;z-index:3;background:#092c2a;border-radius:10px;padding:4px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='formula_forge'] [data-formula-playfield] svg{filter:drop-shadow(0 6px 5px #020a18aa);}
+@media(orientation:landscape) and (max-height:550px){
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='change_counter'] .market-scene{padding:0!important;gap:6px;align-items:stretch;overflow:visible;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='change_counter'] .game-question-card .question-subtitle{display:none;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='change_counter'] .market-stack{gap:3px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='change_counter'] .market-till{display:grid;grid-template-columns:72px minmax(0,1fr);grid-template-rows:44px 88px 44px;gap:3px;padding:3px;border-width:2px;align-content:center;overflow:visible;max-height:none;min-height:188px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='change_counter'] .market-till-header{grid-column:1;grid-row:1;display:flex;flex-direction:column;justify-content:center;padding:1px;font-size:12px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='change_counter'] .market-coin-tray{grid-column:2;grid-row:1;min-height:44px!important;height:44px;overflow:hidden;font-size:12px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='change_counter'] .market-coin-buttons{grid-column:1/-1;grid-row:2;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:44px 44px;gap:0;justify-items:center;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='change_counter'] .market-till-actions{grid-column:1/-1;grid-row:3;display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:4px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='change_counter'] .market-till-actions button{height:44px;min-height:44px;font-size:13px!important;padding:2px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='change_counter'] .market-receipt{padding:4px;gap:2px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='change_counter'] .market-receipt-heading{font-size:11px;padding:0;border-width:1px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='change_counter'] .market-receipt-lines{overflow:visible;gap:1px;grid-auto-rows:minmax(0,1fr);}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='change_counter'] .market-receipt-line{min-height:0!important;gap:3px;padding:0;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='change_counter'] .market-receipt-line img{width:20px;height:20px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='change_counter'] .market-receipt-line strong,.market-receipt-line>b{font-size:12px!important;line-height:1.05;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='change_counter'] .market-receipt-line small{font-size:11px;line-height:1;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='change_counter'] .market-receipt-totals{font-size:13px;gap:1px;padding:2px 0 0;border-width:1px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='change_counter'] .market-receipt-stamp{display:none;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='change_counter'] .market-feedback{font-size:10px;line-height:12px;padding:0;min-height:12px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='rounding_rocket'] .rr-ground-crew .vision-companion--stage{left:0;bottom:34%;height:38%;width:27%;}
+@media(orientation:landscape) and (max-height:550px){
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='rounding_rocket'] .rr-ground-crew .vision-companion--stage{height:62%;}
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='order_ops_arena'] .order-actor-stage{overflow:hidden;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='order_ops_arena'] .order-actor-stage .monster-mind-actor{height:100%!important;max-height:100%;width:100%!important;transform:scale(.74);transform-origin:50% 100%;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='multiplication_mine'] .vision-companion--stage[data-vision-companion]{left:0;width:20%;height:62%;bottom:14%;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='data_detective'] .data-detective-game .detective-lineup>button{height:96px;padding:2px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='data_detective'] .data-detective-game .detective-suspect-name{font-size:11px!important;line-height:12px!important;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='data_detective'] .data-detective-game .detective-suspect-portrait{height:70px;min-height:0;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='fraction_forge'] .ff-tray{padding:8px 12px 18px;gap:4px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='fraction_forge'] .ff-controls{margin:0 0 4px;flex-shrink:0;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='fraction_forge'] .ff-feedback{font-size:11px;line-height:13px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='perimeter_path'] .perimeter-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(130px,.48fr);grid-template-rows:auto minmax(0,1fr) auto;width:84%;margin-left:15%;gap:4px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='perimeter_path'] .game-question-card{grid-column:1/-1;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='perimeter_path'] .perimeter-board{grid-column:1;grid-row:2;width:100%;height:100%;min-height:0;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='perimeter_path'] .perimeter-drawing{display:block;position:relative;inset:auto;width:100%;height:100%;transform:none;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='perimeter_path'] .perimeter-drawing>svg{position:absolute;width:100%;height:100%;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='perimeter_path'] .perimeter-edge-controls{display:none;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='perimeter_path'] .perimeter-edge-number{display:none;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='perimeter_path'] .perimeter-responses{grid-column:2;grid-row:2;display:flex;flex-direction:column;justify-content:center;gap:4px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='perimeter_path'] .perimeter-responses button{min-height:44px;padding:2px;font-size:15px!important;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='perimeter_path'] .refinement-feedback{grid-column:1/-1;font-size:11px;min-height:14px;padding:0;}
+}
+@media(orientation:landscape) and (min-width:560px) and (max-height:550px){
+#root .avatar-select-layout{display:grid;grid-template-columns:45% 55%;grid-template-rows:auto minmax(0,1fr) auto;gap:4px;padding:8px 18px 58px;height:100%;}
+#root .avatar-hero-stage{grid-column:1;grid-row:1/4;min-height:0;height:100%;margin:0;padding:0;}
+#root .avatar-carousel-track,#root .avatar-carousel-main.avatar-carousel-main-only{height:100%;min-height:0;padding:0;align-items:center;}
+#root .avatar-carousel-main-image{height:100%!important;width:auto!important;max-height:100%;object-fit:contain;transform:none!important;}
+#root .avatar-carousel-header{grid-column:2;grid-row:1;margin:0;}
+#root .avatar-carousel-header{transform:none;}
+#root .avatar-carousel-banner{height:56px;display:flex;align-items:center;justify-content:center;}
+#root .avatar-carousel-banner::after{content:'Choose your hero';font-size:26px;font-weight:800;color:#ffe5a3;text-shadow:0 2px 3px #082038;}
+#root .avatar-carousel-banner-art{display:none;}
+#root .avatar-name-panel{grid-column:2;grid-row:2;align-self:center;width:100%;margin:0;padding:8px;}
+#root .avatar-name-panel .aaa-name-input{min-height:44px;}
+#root .avatar-select-layout>button{grid-column:2;grid-row:3;min-height:44px;margin:0;}
+#root .avatar-confirm-control{position:relative;grid-column:2;grid-row:3;left:auto;bottom:auto;width:100%;height:48px;transform:none;translate:none;}
+#root .avatar-confirm-control button{min-height:48px;font-size:16px;}
+#root .avatar-hero-arrow{width:44px;height:44px;top:50%;}
+#root .avatar-hero-arrow-left{left:0;}
+#root .avatar-hero-arrow-right{right:0;}
+#root .legend-avatar-name{position:absolute;left:0;right:55%;bottom:48px;font-size:20px;}
+#root .app-viewport:is(.screen-settings,.screen-profile){padding:4px 16px;}
+#root .screen-settings .adventure-settings-panel{padding:8px 12px;max-width:100%;width:100%;min-height:0;}
+#root .screen-settings .adventure-settings-kicker{display:none;}
+#root .screen-settings .adventure-settings-panel h1{font-size:24px;margin:0;}
+#root .screen-settings .adventure-settings-intro{font-size:12px;line-height:15px;margin:4px 0;}
+#root .screen-settings .adventure-settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0;}
+#root .screen-settings .adventure-settings-option{padding:6px;min-height:60px;gap:6px;}
+#root .screen-settings .adventure-settings-copy strong{font-size:14px;}
+#root .screen-settings .adventure-settings-copy>span{font-size:11px;}
+#root .screen-settings .adventure-settings-icon{width:28px;height:28px;}
+#root .screen-settings .adventure-settings-state{padding:4px;font-size:11px;min-width:32px;}
+#root .screen-settings .adventure-settings-return{min-height:44px;margin:4px auto 0;padding:6px 14px;font-size:13px;}
+}
+
+
+

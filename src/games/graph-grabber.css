@@ -1,4 +1,11 @@
 /* Keep the chart a readable instrument panel over the scenic background. */
+/* Category labels remain on the chart; compact phones omit duplicate ship tabs and hints. */
+@media (orientation: landscape) and (max-height: 360px) {
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='graph_grabber'] [data-graph-round] :is(.graph-shipment-tabs,.graph-grabber-hint,.graph-grabber-chart-caption) {display:none;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='graph_grabber'] [data-graph-round] .graph-grabber-board {padding:5px 16px;min-height:100px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='graph_grabber'] [data-graph-round] .game-question-card {padding:4px 8px!important;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='graph_grabber'] [data-graph-round] [data-question-copy] {font-size:12px!important;line-height:14px!important;}
+}
 #root .graph-grabber-board > div {
   border-color: rgba(169, 225, 239, .42);
   background: linear-gradient(180deg, rgba(7, 24, 43, .93), rgba(6, 20, 38, .89));

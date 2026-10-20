@@ -1,0 +1,19 @@
+/* Native WKWebView has no browser chrome. The shared game owns its layout. */
+html[data-app-target='ios'], html[data-app-target='ios'] body, html[data-app-target='ios'] #root {
+  width:100%;min-height:100%;background:#081b29;
+}
+html[data-app-target='ios'] body {overscroll-behavior:none;}
+.ios-app-recovery {min-height:100svh;display:flex;align-items:center;background:#081b29;color:white;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px);}
+html[data-app-target='ios'] .iphone-game-stage-unbounded {
+  left:env(safe-area-inset-left,0px);
+  width:calc(100% - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));
+}
+/* Production clocks and hearts must fit the same short bar as the title. */
+html[data-app-target='ios'] #root .app-viewport .legend-hud-bar > div:last-child {
+  flex-direction:row;align-items:center;gap:8px;
+}
+html[data-app-target='ios'] #root .app-viewport .legend-hud-streak {
+  font-size:13px;line-height:1;white-space:nowrap;
+}
+html[data-app-target='ios'] #root .app-viewport .legend-hud-practice {font-size:10px;line-height:1.1;}
+html[data-app-target='ios'] #root .app-viewport .legend-hud-lives svg {width:12px;height:12px;}

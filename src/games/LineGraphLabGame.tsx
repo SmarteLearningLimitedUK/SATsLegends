@@ -1,9 +1,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
-  AlertCircle,
-  CheckCircle2,
   ChevronRight,
-  Info,
   Trophy,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
@@ -15,6 +12,7 @@ import {
   CartesianGrid,
   Line,
   LineChart,
+  ReferenceLine,
   XAxis,
   YAxis,
 } from 'recharts';
@@ -95,7 +93,7 @@ const buildValueQuestion = (graph: DataPoint[], targetIndex: number): RoundData 
   const target = graph[targetIndex];
   return {
     graph,
-    question: `What is the brainpower at time ${target.label}?`,
+    question: `What is the water temperature after ${target.label} minutes?`,
     options: numberOptions(target.value, target.value <= 12 ? 1 : 2),
     correctAnswer: `${target.value}`,
     helper: `Follow time ${target.label} up to the line, then across to the value axis.`,
@@ -114,10 +112,10 @@ const buildReadingPointQuestion = (graph: DataPoint[], targetIndex: number): Rou
 
   return {
     graph,
-    question: `What are the coordinates of the point at time ${target.label}?`,
+    question: `What are the coordinates (time, temperature) of the point at ${target.label} minutes?`,
     options: shuffle([coordinate, ...wrongs.slice(0, 3)]),
     correctAnswer: coordinate,
-    helper: 'A point is written (time, value): read across first, then up.',
+    helper: 'Write the time first and the temperature second.',
     highlightIndex: targetIndex,
   };
 };
@@ -127,7 +125,7 @@ const buildInterpretationQuestion = (graph: DataPoint[], targetIndex: number): R
   const otherTimes = shuffle(graph.map((point) => point.label).filter((label) => label !== targetTime));
   return {
     graph,
-    question: `At what time does brainpower reach ${graph[targetIndex].value} units?`,
+    question: `After how many minutes is the water temperature ${graph[targetIndex].value}°C?`,
     options: shuffle([targetTime, ...otherTimes.slice(0, 3)]),
     correctAnswer: targetTime,
     helper: `Find ${graph[targetIndex].value} on the value axis, then read down to the time axis.`,
@@ -140,7 +138,7 @@ const buildChangeQuestion = (graph: DataPoint[], fromIndex: number): RoundData =
   const change = Math.abs(to.value - from.value);
   return {
     graph,
-    question: `How much does brainpower ${to.value > from.value ? 'rise' : 'fall'} from time ${from.label} to time ${to.label}?`,
+    question: `By how many degrees does the water temperature ${to.value > from.value ? 'rise' : 'fall'} between ${from.label} and ${to.label} minutes?`,
     options: numberOptions(change, change <= 3 ? 1 : 2),
     correctAnswer: String(change),
     helper: 'Subtract the smaller plotted value from the larger.',
@@ -153,7 +151,7 @@ const buildInterpolationQuestion = (graph: DataPoint[], fromIndex: number): Roun
   const midpoint = (from.value + to.value) / 2;
   return {
     graph,
-    question: `What value lies halfway between times ${from.label} and ${to.label}?`,
+    question: `What is the water temperature halfway between ${from.label} and ${to.label} minutes?`,
     options: numberOptions(midpoint, 1),
     correctAnswer: String(midpoint),
     helper: `Find the value halfway between ${from.value} and ${to.value}; the line joins these points evenly.`,
@@ -166,7 +164,7 @@ const buildPlotPointQuestion = (graph: DataPoint[], targetIndex: number, level: 
   plotted[targetIndex].value = missingValue;
   return {
     graph: plotted,
-    question: `Plot the missing point at time ${plotted[targetIndex].label}. Its value is halfway between the readings at times ${plotted[targetIndex - 1].label} and ${plotted[targetIndex + 1].label}.`,
+    question: `At ${plotted[targetIndex].label} minutes, the temperature is halfway between ${plotted[targetIndex - 1].value}°C and ${plotted[targetIndex + 1].value}°C. Which temperature should be plotted?`,
     options: numberOptions(missingValue, level <= 3 ? 1 : 2),
     correctAnswer: String(missingValue),
     helper: `Find the halfway value between ${plotted[targetIndex - 1].value} and ${plotted[targetIndex + 1].value}, then place the point above time ${plotted[targetIndex].label}.`,
@@ -194,10 +192,10 @@ const buildComparisonQuestion = (graph: DataPoint[]): RoundData | null => {
 
   return {
     graph,
-    question: 'Where does brainpower increase the most?',
+    question: 'Between which two times does the water temperature increase the most?',
     options: shuffle([correct, ...wrongs.slice(0, 3)]),
     correctAnswer: correct,
-    helper: 'Find the steepest upward section of the line.',
+    helper: 'Compare the rise between each pair of neighbouring points. Choose the biggest increase.',
   };
 };
 
@@ -291,7 +289,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
 
     if (answer === round.correctAnswer) {
       emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { metadata: { round: level, question: round.question } });
-      setFeedback({ type: 'success', message: `Data recovered! ${round.helper}` });
+      setFeedback({ type: 'success', message: 'Reading recovered! Continue to the next graph.' });
       setXP(prev => prev + Math.max(20, 100 - wrongAttempts * 30) + level * 10);
       setGameState('success');
       return;
@@ -299,7 +297,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
 
     emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { metadata: { round: level, question: round.question } });
     setWrongAttempts((count) => count + 1);
-    setFeedback({ type: 'error', message: `Not quite. ${round.helper}` });
+    setFeedback({ type: 'error', message: 'Not quite. Check the graph and try another answer.' });
   };
 
   const nextLevel = () => {
@@ -319,9 +317,14 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
     const plotChoices = round.plotIndex === undefined ? [] : round.options.map(Number).filter(Number.isFinite);
     const maxValue = Math.max(...round.graph.map(point => point.value), ...plotChoices);
     const step = difficulty <= 2 ? 1 : difficulty === 5 ? 10 : 5;
-    const top = Math.ceil(maxValue / step) * step;
+    const top = (Math.floor(maxValue / step) + 1) * step;
     return Array.from({ length: top / step + 1 }, (_, index) => index * step);
   }, [difficulty, round]);
+
+  const compactChart = chartSize.height < 220;
+  const plotHeight = chartSize.height - (compactChart ? 40 : 54);
+  const tickStride = Math.max(1, Math.ceil((yTicks.length - 1) / Math.max(2, Math.floor(plotHeight / (compactChart ? 16 : 24)))));
+  const visibleYTicks = yTicks.filter((_, index) => index % tickStride === 0);
 
   const displayedGraph = useMemo(() => round?.graph.map((point, index) => ({
     ...point,
@@ -339,7 +342,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
   };
 
   return (
-    <GameUiShell backgroundImage={lineGraphLabBackground} overlayDisabled className="bg-transparent">
+    <GameUiShell backgroundImage={lineGraphLabBackground} overlayDisabled className="line-graph-lab bg-transparent">
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Line Graph Lab"
@@ -350,19 +353,23 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
       <GameScreenLayout
         className="relative h-full w-full min-h-0 select-none gap-0 text-slate-100"
         main={(
-          <section className={`line-graph-main flex min-h-0 flex-1 flex-col px-2 pb-[calc(env(safe-area-inset-bottom)+0.55rem)] pt-2 sm:px-3 md:px-4 ${gameState === 'success' ? 'line-graph-main--success' : ''}`}>
+          <section data-line-round={level} data-line-state={gameState} data-line-plot-time={round?.plotIndex !== undefined ? round.graph[round.plotIndex].label : undefined} className={`line-graph-main flex min-h-0 flex-1 flex-col px-2 pb-[calc(env(safe-area-inset-bottom)+0.55rem)] pt-2 sm:px-3 md:px-4 ${gameState === 'success' ? 'line-graph-main--success' : ''}`}>
             <div className="line-graph-spacer flex flex-1" />
 
             <div className="line-graph-board mx-auto flex w-full max-w-[780px] flex-col gap-2 sm:gap-2.5">
-              <GameQuestionCard className="w-full" title="Line Graph Lab" subtitle={feedback?.message || round?.helper || ''}>
-                {round?.question ?? ''}
-              </GameQuestionCard>
+              <header className="line-graph-question">
+                <div className="line-graph-mission"><span>Reading {level} / {MAX_LEVEL}</span><span>Recover all 10 lab readings</span></div>
+                <GameQuestionCard className="w-full" context="" title="Line Graph Lab" subtitle={round?.helper || ''}>
+                  {round?.question ?? ''}
+                </GameQuestionCard>
+              </header>
 
               <div className="line-graph-plot rounded-[1.2rem] border border-cyan-100/12 bg-[linear-gradient(180deg,rgba(8,24,54,0.5),rgba(4,12,28,0.32))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_14px_28px_rgba(2,6,23,0.16)] backdrop-blur-[2px] sm:p-3">
+                <div className="line-graph-chart-title"><span>Water temperature (°C)</span><span>Time (minutes) →</span></div>
                 <div
                   ref={chartWrapRef}
                   className="line-graph-chart relative w-full overflow-hidden rounded-[1rem] border border-slate-200/10 bg-[linear-gradient(180deg,rgba(7,18,38,0.66),rgba(4,10,24,0.4))] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
-                  style={{ height: 'clamp(9.75rem, 24vh, 15.5rem)' }}
+                  role="img" aria-label="Brainpower in units plotted against time. Read the graph, then choose an answer."
                 >
                   <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(125,211,252,0.12),transparent_58%)]" />
                   <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),transparent_30%,rgba(255,255,255,0.02))]" />
@@ -372,31 +379,33 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                         width={chartSize.width}
                         height={chartSize.height}
                         data={displayedGraph}
-                        margin={{ top: 18, right: 16, left: 0, bottom: 16 }}
+                        margin={{ top: 12, right: 12, left: 8, bottom: 4 }}
                       >
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.22)" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(211,232,236,0.34)" />
                         <XAxis
                           dataKey="label"
                           interval={0}
-                          tick={{ fill: '#e8f3ff', fontSize: 17, fontWeight: 700 }}
+                          tick={{ fill: '#e8f3ff', fontSize: 14, fontWeight: 700 }}
                           axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
                           tickLine={{ stroke: 'rgba(191,219,254,0.45)' }}
-                          label={{ value: 'Time', position: 'insideBottom', offset: -6, fill: '#c0e2ff', fontSize: 17, fontWeight: 800 }}
+                          height={compactChart ? 24 : 38}
+                          label={compactChart ? undefined : { value: 'Time', position: 'insideBottom', offset: 0, fill: '#fff5db', fontSize: 13, fontWeight: 800 }}
                         />
                         <YAxis
-                          ticks={yTicks}
+                          ticks={visibleYTicks}
                           domain={[0, yTicks[yTicks.length - 1]]}
                           interval={0}
-                          tick={{ fill: '#e8f3ff', fontSize: 17, fontWeight: 700 }}
+                          tick={{ fill: '#e8f3ff', fontSize: 14, fontWeight: 700 }}
                           axisLine={{ stroke: 'rgba(191,219,254,0.45)' }}
                           tickLine={{ stroke: 'rgba(191,219,254,0.45)' }}
-                          label={{ value: 'Units', angle: -90, position: 'insideLeft', fill: '#c0e2ff', fontSize: 17, fontWeight: 800 }}
-                          width={42}
+                          label={compactChart ? undefined : { value: 'Temperature (°C)', angle: -90, position: 'insideLeft', fill: '#fff5db', fontSize: 13, fontWeight: 800 }}
+                          width={compactChart ? 34 : 58}
                         />
+                        {round.plotIndex !== undefined && <ReferenceLine x={round.graph[round.plotIndex].label} stroke="#f9d27d" strokeDasharray="5 4" />}
                         <Line
                           type="linear"
                           dataKey="value"
-                          stroke="#34d399"
+                          stroke="#63f4c4"
                           strokeWidth={4}
                           dot={(props) => {
                             const { cx, cy, payload } = props as { cx?: number; cy?: number; payload?: DataPoint; index?: number };
@@ -405,7 +414,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                               <circle
                                 cx={cx}
                                 cy={cy}
-                                r={5}
+                                data-line-point={payload.label} data-line-value={payload.value} r={round.highlightIndex === Number(payload.label) - 1 ? 8 : 5}
                                 fill="#34d399"
                                 stroke="#ecfeff"
                                 strokeWidth={2}
@@ -413,7 +422,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                             );
                           }}
                           activeDot={{ r: 7, fill: '#6ee7b7', stroke: '#f0fdfa', strokeWidth: 2 }}
-                          animationDuration={350}
+                          isAnimationActive={false}
                         />
                       </LineChart>
                     </div>
@@ -422,6 +431,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
               </div>
 
               <div className="line-graph-side">
+                <div className="line-graph-answer-instruction" aria-live="polite">{feedback?.message || (round?.plotIndex !== undefined ? 'Choose a height, then plot the point.' : 'Read the graph. Choose your answer below.')}</div>
               <div className="answer-choice-surface grid grid-cols-2 gap-2">
                 {round?.options.map(option => {
                   const isSelected = selectedAnswer === option;
@@ -454,7 +464,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
               {round?.plotIndex !== undefined && gameState === 'playing' ? (
                 <button
                   type="button"
-                  className="ui-button-primary mt-2 w-full rounded-2xl py-2.5 text-sm font-black"
+                  data-line-plot-submit className="ui-button-primary mt-2 w-full rounded-2xl py-2.5 text-sm font-black"
                   disabled={selectedAnswer === null}
                   onClick={() => selectedAnswer !== null && handleAnswer(selectedAnswer)}
                 >Plot point at time {round.graph[round.plotIndex].label}</button>
@@ -477,19 +487,7 @@ const LineGraphLabGame: React.FC<LineGraphLabGameProps> = ({
                 </AnimatePresence>
               </div>
 
-              {feedback && (
-                <div
-                  role="status"
-                  className={`line-graph-feedback flex w-full items-center justify-center gap-3 rounded-xl border px-4 py-3 text-center text-base font-semibold shadow-2xl ${
-                    feedback.type === 'success'
-                      ? 'border-emerald-300 bg-[#123c32] text-white'
-                      : 'border-rose-300 bg-[#4b1830] text-white'
-                  }`}
-                >
-                  {feedback.type === 'success' ? <CheckCircle2 className="h-4 w-4 shrink-0" /> : <AlertCircle className="h-4 w-4 shrink-0" />}
-                  <span>{feedback.message}</span>
-                </div>
-              )}
+
               </div>
             </div>
           </section>

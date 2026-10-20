@@ -1,0 +1,7 @@
+{
+  "reference": "src/assets/game-visions/environments/multiplication_mine-v1.webp",
+  "asset": "ore-atlas-v2.png",
+  "layout": "Four equal horizontal frames, 2172 x 724; CSS crops the transparent vertical padding.",
+  "description": "Same grounded squat basalt boulder in intact, cracked, split and opened states; soft sculpted stone, cyan quartz, warm amber light, no black outlines. Transparent alpha.",
+  "generatedWith": "imagegen"
+}

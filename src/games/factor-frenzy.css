@@ -1,66 +1,113 @@
-.factor-frenzy-game::after {
-  content: '';
-  position: absolute;
-  z-index: 1;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 34px;
-  background: linear-gradient(transparent, #140b2e);
-  pointer-events: none;
+/* Gearworks arena: readable maths, tactile runes, and a reactive sentinel. */
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena {position:relative;height:100%;width:100%;min-height:0;padding:10px;color:#fff8e8;overflow:hidden;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-scene-shade {position:absolute;inset:0;background:linear-gradient(90deg,#071f3733,#08182c70);pointer-events:none;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-workspace {position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(300px,1fr);grid-template-rows:auto minmax(0,1fr);gap:14px;height:100%;min-height:0;max-width:1120px;margin:auto;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-question {grid-column:1 / -1;position:relative;display:flex;min-width:0;padding-right:90px;padding-bottom:8px;background:#10293ff5;border:1px solid #e2c88e;border-radius:15px;overflow:hidden;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-question-card {position:relative!important;inset:auto!important;transform:none!important;width:100%;max-width:none!important;margin:0!important;padding:12px 16px!important;background:transparent!important;border:0!important;box-shadow:none!important;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-question [data-question-copy] {font-size:24px!important;line-height:1.2!important;color:#fff8e8!important;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-clock {position:absolute;right:12px;top:8px;bottom:10px;width:64px;display:flex;flex-direction:column;justify-content:center;align-items:center;background:#092035;border:1px solid #9acdd8;border-radius:9px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-clock strong {font-size:23px;line-height:25px;color:#fff7db;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-clock span {font-size:10px;line-height:13px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-clock[data-urgent=true] {background:#6a243a;border-color:#ffc7b8;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-time-track {position:absolute;left:0;right:0;bottom:0;height:5px;background:#071a2b;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-time-track>div {height:100%;background:#7af2db;transition:width .3s linear;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-stage {position:relative;min-height:0;overflow:hidden;border-radius:18px;background:radial-gradient(ellipse at 50% 70%,#164a7166,transparent 68%);}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-lock-panel {position:absolute;top:3%;left:6%;right:6%;z-index:3;background:#10293ff5;padding:10px 12px;border:1px solid #d8bc81;border-radius:10px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-lock-panel>div:first-child {display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:15px;line-height:20px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-lock-panel span {color:#b9f9ec;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-locks {display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:4px;margin-top:6px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-locks>span {height:8px;background:#233e52;border:1px solid #7597a8;border-radius:3px;transition:background .2s,box-shadow .2s;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-locks>span[data-open=true] {background:#8ff8de;border-color:#c0fff1;box-shadow:0 0 10px #4fe8c7;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-sentinel {position:absolute;left:15%;right:15%;bottom:6%;height:66%;z-index:2;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-sentinel-actor {position:relative!important;width:100%!important;height:100%!important;filter:drop-shadow(0 12px 8px #061a2c88);}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-ground-glow {position:absolute;bottom:5%;left:20%;right:20%;height:9%;border-radius:50%;background:#62e9ed66;box-shadow:0 0 24px #5fe9ed77;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-target-label {position:absolute;left:50%;top:20%;translate:-50% 0;display:flex;align-items:center;gap:8px;white-space:nowrap;padding:4px 12px;border:1px solid #cfb37c;border-radius:8px;background:#10293ff5;font-size:13px;z-index:3;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-target-label strong {font-size:30px;line-height:34px;color:#fff0bd;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-shield {position:absolute;left:18%;right:18%;top:29%;aspect-ratio:1;border:2px solid #8be3ea77;border-radius:50%;box-shadow:inset 0 0 25px #75edff22,0 0 24px #75edff22;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-shield i {position:absolute;inset:-8%;border:2px dashed #9eeef166;border-radius:50%;animation:frenzy-orbit 22s linear infinite;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-shield i:last-child {inset:7%;border-style:dotted;animation-direction:reverse;animation-duration:16s;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-shield[data-charged=true] {border-color:#ffe3a4;box-shadow:0 0 28px #ffe2a555,inset 0 0 24px #ffe2a522;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-pulse {position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4;filter:drop-shadow(0 0 10px #3ff3ff);}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-impact {position:absolute;left:26%;top:41%;width:48%;aspect-ratio:1;border:5px solid #b8fff6;border-radius:50%;z-index:4;pointer-events:none;animation:frenzy-impact .5s ease-out both;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-console {min-height:0;display:flex;flex-direction:column;justify-content:center;gap:12px;padding:20px;background:linear-gradient(145deg,#183c55fa,#0a1d32fa);border:2px solid #c4ab76;border-radius:18px;box-shadow:inset 0 2px #fff0c333,0 10px 20px #06192c55;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-console-heading {display:flex;flex-direction:column;gap:3px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-console-heading>span {font-size:12px;line-height:16px;text-transform:uppercase;letter-spacing:.1em;color:#c7e7ee;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-console-heading strong {font-size:23px;line-height:28px;color:#fff0c4;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-instruction {font-size:16px;line-height:1.35;margin:0;color:#f0f6ed;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-runes {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-runes button {position:relative;display:flex;align-items:center;justify-content:center;min-width:44px;min-height:54px;height:clamp(54px,8vh,74px);padding:5px;background:linear-gradient(145deg,#24556b,#0b263d)!important;color:#fff6df!important;border:2px solid #8fd8e4!important;border-bottom:5px solid #14344d;border-radius:12px;box-shadow:inset 0 2px #d9fdff44,0 3px 8px #0004!important;transition:background .15s,border-color .15s,box-shadow .15s;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-runes button>span {font-size:30px;font-weight:750;line-height:1.1;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-runes button>i {position:absolute;right:6px;top:3px;font-size:11px;line-height:13px;font-style:normal;color:#80d6e4!important;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-runes button[aria-pressed=true] {background:linear-gradient(145deg,#fff0b7,#edbc5e)!important;border-color:#fff0b5!important;border-bottom-color:#927135!important;color:#102a3d!important;box-shadow:0 0 18px #ffda8544!important;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-runes button[aria-pressed=true]>i {color:#173d41!important;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-runes button[data-answer=true] {border-color:#a1ffe6!important;background:#145647!important;color:#fff8db!important;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-runes button:focus-visible {outline:3px solid #fff6b4;outline-offset:3px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-loaded {min-height:40px;display:flex;align-items:center;padding:6px 9px;background:#081e32;border-radius:7px;font-size:14px;line-height:1.25;color:#d7f6f3;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-loaded[data-tone=incorrect] {background:#61243a;color:#fff5e4;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-loaded[data-tone=correct] {background:#145647;color:#fff9df;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-fire {display:block;flex-shrink:0;width:100%;min-height:48px;padding:10px!important;font-size:18px!important;line-height:22px!important;letter-spacing:.02em;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-fire:disabled {opacity:1!important;filter:none!important;background:#294455!important;color:#e1edf0!important;border-color:#97afba!important;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-goal {margin:0;text-align:center;font-size:12px;line-height:16px;color:#d7ebe8;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-complete {position:relative;z-index:4;display:grid;gap:12px;margin:auto;max-width:520px;padding:24px;border:2px solid #dcc080;border-radius:18px;background:#102b43;color:#fff7db;text-align:center;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-complete>svg {margin:auto;width:48px;height:48px;color:#ffe49b;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-complete h2 {font-size:28px;line-height:1.1;margin:0;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-complete p {font-size:16px;margin:0;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-complete>strong {font-size:28px;line-height:32px;color:#9cfbe5;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-complete button {display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:9px;font-size:15px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-complete button svg {width:18px;height:18px;}
+@keyframes frenzy-orbit {to{transform:rotate(360deg)}}
+@keyframes frenzy-impact {from{transform:scale(.6);opacity:1}to{transform:scale(1.5);opacity:0}}
+
+@media(orientation:landscape) and (max-height:550px) {
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena {padding:3px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-workspace {grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr);gap:5px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-question {padding-right:56px;padding-bottom:4px;border-radius:9px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-question-card {padding:5px 7px!important;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-question [data-question-copy] {font-size:14px!important;line-height:17px!important;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-clock {top:3px;bottom:5px;right:4px;width:44px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-clock strong {font-size:16px;line-height:18px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-clock span {display:none;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-lock-panel {left:2%;right:2%;top:2px;padding:4px 5px;border-radius:6px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-lock-panel>div:first-child {font-size:10px;line-height:12px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-locks {gap:2px;margin-top:3px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-locks>span {height:5px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-target-label {top:20%;padding:2px 5px;gap:4px;font-size:10px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-target-label strong {font-size:19px;line-height:22px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-sentinel {left:13%;right:13%;bottom:5%;height:60%;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-shield {top:34%;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-console {padding:5px;gap:5px;border-radius:10px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-console-heading,.frenzy-instruction,.frenzy-goal {display:none;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-runes {grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-runes button {height:44px;min-height:44px;min-width:44px;border-bottom-width:3px;border-radius:7px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-runes button>span {font-size:22px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-runes button>i {font-size:8px;right:3px;top:1px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-loaded {min-height:18px;padding:2px 4px;font-size:11px;line-height:14px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-fire {min-height:44px;padding:5px!important;font-size:14px!important;line-height:18px!important;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-complete {grid-template-columns:1fr 1fr;gap:6px;padding:10px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-complete>svg {display:none;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-complete h2,.frenzy-complete p,.frenzy-complete>strong {grid-column:1 / -1;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-complete h2 {font-size:20px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-complete p {font-size:12px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-complete>strong {font-size:22px;line-height:25px;}
 }
 
-.factor-frenzy-game .factor-timer-chip {
-  position: absolute;
-  z-index: 61;
-  top: 9px;
-  right: 12px;
-  min-width: 54px;
-  padding: 4px 8px;
-  border: 1px solid #8cd5e5;
-  border-radius: 999px;
-  background: #092b3e;
-  color: #f1fbff;
-  font-size: calc(14px * var(--game-text-scale, 1.2));
-  font-weight: 850;
-  line-height: 1.2;
-  text-align: center;
-  font-variant-numeric: tabular-nums;
+@media(prefers-reduced-motion:reduce) { #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena * {animation:none!important;transition:none!important;} }
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena[data-paused=true] * {animation-play-state:paused!important;}
+
+@media(orientation:landscape) and (max-height:550px) {
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-fire {position:absolute;left:0;bottom:0;width:calc(37.5% - 4px);z-index:5;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-instruction {display:block;font-size:12px;line-height:14px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-sentinel {bottom:52px;height:50%;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-target-label {display:none;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-ground-glow {bottom:50px;}
 }
 
-.factor-frenzy-game .factor-strike-row {
-  position: relative;
-  align-self: center;
-  width: min(100%, 420px);
-  padding: 4px;
-  border: 1px solid #81a9ba;
-  border-radius: 20px;
-  background: #0a2038;
-  box-shadow: 0 8px 18px #06142677;
-  transform: translateY(14px);
+@media(min-height:551px) and (max-height:800px) {
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-console {gap:8px;padding:12px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-console-heading strong {font-size:20px;line-height:24px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-runes button {height:54px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-loaded {min-height:32px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-goal {font-size:11px;line-height:14px;}
 }
 
-.factor-frenzy-game .factor-strike-row > button {
-  max-width: none;
-  min-height: 48px;
-}
-
-.factor-frenzy-game .factor-strike-row > button:disabled {
-  opacity: 1 !important;
-  border: 1px solid #7594a7 !important;
-  background: linear-gradient(#344c60, #22384d) !important;
-  color: #e0ecf4 !important;
-  box-shadow: inset 0 1px 0 #ffffff30 !important;
-  filter: grayscale(.6) brightness(.8);
-}
-
-@media (min-width: 700px) and (max-height: 700px) {
-  .iphone-game-stage[data-stage-layout='responsive'] .factor-frenzy-game .factor-option-grid {
-    grid-template-columns: repeat(var(--factor-option-count, 4), minmax(0, 1fr));
-  }
-}
-
-.factor-visible-monster {width:clamp(160px,30vh,280px);height:clamp(175px,33vh,310px);}
-.factor-visible-monster .monster-mind-actor {width:100%;height:100%;}
-@media(min-width:700px){.factor-frenzy-game .factor-option-grid{grid-template-columns:repeat(var(--factor-option-count,4),minmax(0,1fr));}}
-@media(max-height:650px){.factor-visible-monster{width:135px;height:150px;}}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='factor_frenzy'] .factor-frenzy-game.frenzy-arena .frenzy-runes button:disabled {opacity:1!important;filter:none!important;}

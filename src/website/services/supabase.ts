@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { IS_IOS_APP } from '../../platform/nativeApp';
 export { safeReturnPath } from './returnPath';
 
 const url = import.meta.env.VITE_SUPABASE_URL?.trim();
@@ -12,6 +13,7 @@ export const supabase = accountsConfigured ? createClient(url!, key!, {
 }) : null;
 
 export async function billingRequest(body?: { action: 'checkout'; product: 'matharia' | 'english' | 'bundle'; interval: 'month' | 'year' } | { action: 'portal' }) {
+  if (IS_IOS_APP) throw new Error('Use Apple subscriptions in the iPhone app.');
   if (!supabase) throw new Error('Accounts and subscriptions are not available yet.');
   const { data: { session } } = await supabase.auth.getSession();
   const response = await fetch(`${url}/functions/v1/billing`, {

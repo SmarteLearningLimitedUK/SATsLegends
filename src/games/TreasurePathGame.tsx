@@ -1,16 +1,13 @@
-import { useTrimmedImageSource } from '../utils/trimTransparentImage';
-import ArcadeJourney from '../components/game-ui/ArcadeJourney';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLayoutEffect, useRef } from 'react';
 import { AnimatePresence, motion, useIsPresent, useReducedMotion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { Coins } from '../components/GameIcons';
-import AssetIcon from '../components/AssetIcon';
 import { GameScreenShell } from '../layout/ScreenPrimitives';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
-import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
 import coordinateQuestBackground from '../assets/maps/premium/coordinates-quest.webp';
 import './coordinates-quest.css';
+import CoordinateGrid from './CoordinateGrid';
 import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
 
 interface TreasurePathGameProps extends MiniGameShellContractProps {
@@ -20,12 +17,6 @@ interface TreasurePathGameProps extends MiniGameShellContractProps {
   onVictory: (stars: number, XP: number) => void;
   onGameOver: (XP: number) => void;
   onBack: () => void;
-}
-
-interface GridCell {
-  x: number;
-  y: number;
-  trap: boolean;
 }
 
 interface TreasureRound {
@@ -169,28 +160,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
   const [isVictory, setIsVictory] = useState(false);
   const [selectedTile, setSelectedTile] = useState<string | null>(null);
 
-  const playerAvatar = useMemo(() => (
-    CHARACTER_AVATARS.find((avatar) => avatar.id === avatarId)
-    || CHARACTER_AVATARS.find((avatar) => avatar.id === DEFAULT_AVATAR_ID)
-    || CHARACTER_AVATARS[0]
-  ), [avatarId]);
-
-  const heroImage = useTrimmedImageSource(playerAvatar.image);
   const targetScore = 950 + levelId * 100;
-
-  const cells: GridCell[] = useMemo(() => {
-    const entries: GridCell[] = [];
-    for (let y = maximumCoordinate; y >= minimumCoordinate; y -= 1) {
-      for (let x = minimumCoordinate; x <= maximumCoordinate; x += 1) {
-        entries.push({
-          x,
-          y,
-          trap: round.traps.includes(coordinateKey(x, y)),
-        });
-      }
-    }
-    return entries;
-  }, [gridSize, maximumCoordinate, minimumCoordinate, round.traps]);
 
   useEffect(() => {
     endedRef.current = false;
@@ -315,123 +285,22 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
       <div className="coordinates-quest-layout relative z-10 mx-auto flex h-full min-h-0 w-full max-w-6xl flex-1 flex-col px-2 pb-[calc(env(safe-area-inset-bottom)+2.1rem)] pt-[calc(env(safe-area-inset-top)+3.6rem)] md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+2.35rem)] md:pt-[calc(env(safe-area-inset-top)+3.9rem)]">
         <div className="relative z-10 mb-2">
           <GameQuestionCard
-            title={gameTitle || 'Coordinates Quest'}
+            title={gameTitle || 'Coordinates Quest'} context=""
             style={{ position: 'relative', top: 'auto', left: 'auto', right: 'auto', transform: 'none', width: '100%' }}
             subtitle={round.promptText}
             bodyClassName="mt-1 text-[1.35rem] font-black leading-none text-white md:text-[1.8rem]"
           >
             {round.promptTitle}
           </GameQuestionCard>
+          <div className="coordinate-result" data-coordinate-feedback={feedback || 'idle'} role="status" aria-live="polite">
+            {feedback === 'correct' ? 'Correct point!' : feedback === 'incorrect' ? 'Try another intersection.' : ''}
+          </div>
         </div>
 
-        <div className="relative flex min-h-0 flex-1 flex-col items-center justify-center gap-2">
-          <div className="coordinates-expedition"><ArcadeJourney kind="expedition" completed={roundIndex + (feedback === 'correct' ? 1 : 0)} total={7} avatarId={avatarId} danger={feedback === 'incorrect'} /></div>
-          <div className="coordinates-grid-board relative flex aspect-square w-full max-w-[26.5rem] flex-col rounded-[1.5rem] border border-cyan-100/26 bg-[linear-gradient(180deg,rgba(8,22,52,0.84),rgba(7,18,43,0.92))] p-3 shadow-[0_18px_36px_rgba(2,6,23,0.4)]" role="group" aria-label="Coordinate grid">
-            <div className="mb-2 flex items-end gap-2 text-[12px] font-black text-cyan-100">
-              <div className="w-8 shrink-0" />
-              <div className="min-w-0 flex-1">
-                <div className="mb-1 text-center uppercase tracking-[0.22em]">x-axis</div>
-                <div className="grid text-center" style={{ gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))` }} aria-label={`X coordinates increase from ${minimumCoordinate} to ${maximumCoordinate}`}>
-                  {Array.from({ length: gridSize }, (_, index) => <span key={minimumCoordinate + index} className={minimumCoordinate + index === 0 ? 'text-amber-200' : ''}>{minimumCoordinate + index}</span>)}
-                </div>
-              </div>
-            </div>
-            <div className="flex min-h-0 flex-1 items-stretch gap-2">
-              <div className="flex w-8 shrink-0 items-stretch gap-1 text-[12px] font-black text-cyan-100">
-                <div className="flex w-3 items-center justify-center">
-                  <span className="-rotate-90 whitespace-nowrap uppercase tracking-[0.22em]">y-axis</span>
-                </div>
-                <div className="grid min-h-0 flex-1 text-center" style={{ gridTemplateRows: `repeat(${gridSize}, minmax(0, 1fr))` }} aria-label={`Y coordinates increase from ${minimumCoordinate} at the bottom to ${maximumCoordinate} at the top`}>
-                  {Array.from({ length: gridSize }, (_, index) => <span key={maximumCoordinate - index} className={`flex items-center justify-center ${maximumCoordinate - index === 0 ? 'text-amber-200' : ''}`}>{maximumCoordinate - index}</span>)}
-                </div>
-              </div>
-              <div className="relative min-h-0 flex-1 rounded-[1.2rem] border border-cyan-100/14">
-                <div
-                  aria-hidden="true"
-                  className="pointer-events-none absolute inset-0 rounded-[1.2rem]"
-                  style={{
-                    backgroundImage: [
-                      'linear-gradient(to right, rgba(191,219,254,0.38) 1px, transparent 1px)',
-                      'linear-gradient(to bottom, rgba(191,219,254,0.38) 1px, transparent 1px)',
-                    ].join(', '),
-                    backgroundSize: `calc(100% / ${gridSize}) calc(100% / ${gridSize})`,
-                    backgroundPosition: '0 0',
-                  }}
-                />
-                {minimumCoordinate < 0 ? <>
-                  <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 z-[3] w-[2px] bg-amber-200/70" style={{ left: `${((0 - minimumCoordinate + .5) / gridSize) * 100}%` }} />
-                  <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 z-[3] h-[2px] bg-amber-200/70" style={{ bottom: `${((0 - minimumCoordinate + .5) / gridSize) * 100}%` }} />
-                </> : null}
-                <motion.img src={heroImage} alt="" aria-hidden="true" draggable={false}
-                  className="pointer-events-none absolute z-[15] h-[20%] w-[20%] object-contain"
-                  animate={{ left: `${((feedback === 'correct' ? round.target.x : round.start.x) - minimumCoordinate + .5) / gridSize * 100}%`, bottom: `${((feedback === 'correct' ? round.target.y : round.start.y) - minimumCoordinate + .5) / gridSize * 100}%` }}
-                  style={{ transform: 'translate(-50%, 50%)' }} transition={{ duration: reducedMotion ? 0 : .6 }} />
-                <div className="absolute inset-0 z-10 grid overflow-hidden rounded-[1.2rem]" style={{ gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${gridSize}, minmax(0, 1fr))` }}>
-              {cells.map((cell) => {
-                const key = coordinateKey(cell.x, cell.y);
-                const isStart = cell.x === round.start.x && cell.y === round.start.y;
-                const isSelected = selectedTile === key;
+        <div className="coordinate-board-space relative flex min-h-0 flex-1 flex-col items-center justify-center gap-2">
+          <CoordinateGrid minimum={minimumCoordinate} maximum={maximumCoordinate} start={round.start}
+            selected={selectedTile} feedback={feedback} onSelect={handleTileTap} />
 
-                return (
-                  <button
-                    key={key}
-                    onClick={() => handleTileTap(cell.x, cell.y)}
-                    disabled={!!feedback}
-                    aria-label={`Marker at x=${cell.x}, y=${cell.y}${isStart ? ', current explorer position' : ''}`}
-                    className={`relative border text-left transition-all ${
-                      isSelected
-                        ? feedback === 'correct'
-                          ? 'border-emerald-300 bg-emerald-400/30'
-                          : 'border-rose-300 bg-rose-500/26'
-                        : 'border-cyan-100/12 bg-transparent hover:bg-white/10'
-                    }`}
-                  >
-                    {isStart && !playerAvatar.image && (
-                      <motion.div
-                        layout
-                        className="absolute left-1/2 top-1/2 flex h-[66%] w-[66%] -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full border border-white/22 bg-[linear-gradient(180deg,rgba(245,158,11,0.95),rgba(194,65,12,0.95))] shadow-[0_10px_20px_rgba(0,0,0,0.24)]"
-                      >
-                        {playerAvatar?.image ? (
-                          <img
-                            src={playerAvatar.image}
-                            alt=""
-                            draggable={false}
-                            className="h-full w-full object-contain"
-                          />
-                        ) : (
-                          <span className="text-[12px] font-black text-white">You</span>
-                        )}
-                      </motion.div>
-                    )}
-                  </button>
-                );
-              })}
-                </div>
-              </div>
-            </div>
-
-            <AnimatePresence>
-              {feedback && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center bg-black/18 backdrop-blur-[2px]"
-                >
-                  <div className={`rounded-[2rem] border px-8 py-6 text-center shadow-[0_20px_40px_rgba(0,0,0,0.34)] ${
-                    feedback === 'correct'
-                      ? 'border-emerald-300/60 bg-emerald-500/16 text-emerald-300'
-                      : 'border-rose-300/60 bg-rose-500/16 text-amber-300'
-                  }`}>
-                    <div className="text-4xl font-black">{feedback === 'correct' ? 'Route Restored!' : 'Wrong Marker!'}</div>
-                    <div className="mt-2 text-sm font-bold text-white/82">
-                      {feedback === 'correct' ? 'You found the correct marker.' : 'That was not the correct route tile.'}
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
         </div>
 
         <AnimatePresence>

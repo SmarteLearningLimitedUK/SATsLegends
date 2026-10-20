@@ -1,0 +1,12 @@
+{
+  "kind": "characters",
+  "key": "rhino-taunt",
+  "file": "characters/rhino-taunt-v3.webp",
+  "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-0adb6ec8-4a03-4476-8068-9bdacce08de2.png",
+  "prompt": "Use case: identity-preserve. Production game animation atlas. Reference image is the EXACT character to preserve: friendly white rhino with ivory horns, amber eyes, polished BLUE armour with ORANGE and GOLD trim, rounded chunky proportions. Preserve its 3/4 view facing right and exact detailed sculpted game rendering. Exactly TWENTY consecutive frames in FIVE columns FOUR rows read left-to-right top-to-bottom. These are small consecutive animation in-betweens, NOT separate unrelated poses. Each cell contains entire rhino including ears, horns, fists and feet with generous transparent gutters so silhouettes never touch. Actual transparent alpha background. No text, labels, effects, ground or shadows outside silhouette. Identical camera lighting armour and character scale throughout. Feet planted on same baseline, no camera motion or zoom. One continuous 660ms playful ready-up gesture. Start reference relaxed stance frames1-3, slowly lift both fists into guard frames4-9, playful determined grin frames10-12, lower fists smoothly frames13-18, return to identical original neutral stance frames19-20. Feet never move. Small motion between adjacent frames. No punch, jump or attack effects.",
+  "dimensions": [
+    1536,
+    1024
+  ],
+  "bytes": 590400
+}

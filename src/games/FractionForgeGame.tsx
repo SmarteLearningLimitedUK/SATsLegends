@@ -6,7 +6,9 @@ import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import fractionForgeBackground from '../assets/maps/premium/fraction-forge-wide.png';
 import forgeAnvil from '../assets/reskin/forge-anvil.png';
-import forgeBlacksmith from '../assets/reskin/forge-blacksmith.png';
+import VisionCharacter from '../components/game-ui/VisionCharacter';
+import {originalHeroId} from '../assets/characters/originalHeroes';
+import {getVisionObject} from './visionScene';
 import { triggerHaptic } from '../haptics';
 import { playGameSound } from '../audio/gameAudio';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
@@ -42,7 +44,7 @@ const RECIPES: readonly (readonly string[])[] = [
   ['3/4-1/4', '4/5-1/5', '5/6-2/6', '6/7-2/7', '7/8-3/8', '5/9+2/9', '3/10+4/10', '7/12-5/12'],
   ['1/2+1/4', '1/3+1/6', '2/5+1/10', '1/4+3/8', '2/3+1/6', '1/5+1/2', '1/3+1/4', '3/5+1/4'],
   ['2/3+1/4', '2/3×3/4', '5/6-1/3', '3/5×2/3', '3/4+2/3', '4/7×3/5', '7/8-1/4', '5/6×3/4'],
-  ['2/3×3/5', '3/4÷2/1', '5/6×2/5', '4/5÷3/1', '7/8×4/7', '3/5÷2/1', '5/4×2/3', '7/9÷3/1'],
+  ['2/3×3/5', '3/4÷2/1', '5/6×2/5', '4/5÷3/1', '7/8×4/7', '3/5÷2/1', '4/5×2/3', '7/9÷3/1'],
 ];
 const DISTRACTORS = ['1/8', '1/6', '1/5', '1/4', '1/3', '3/8', '2/5', '1/2', '3/5', '2/3', '3/4', '4/5', '5/6', '7/8', '5/4', '4/3', '3/2', '1/10', '3/10', '5/8', '7/10', '7/12', '2/9', '5/9', '2/1', '3/1'];
 const gcd = (a: number, b: number): number => b === 0 ? Math.abs(a) : gcd(b, a % b);
@@ -110,7 +112,9 @@ const makeRound = (level: number, roundIndex: number, runOffset = 0): ForgeRound
     operators,
     solutionIds: indexed.slice(0, solution.length).map((card) => card.id),
     prompt: operators.length === 1
-      ? `Choose two fraction ingots. ${operators[0] === '+' ? 'Add them' : operators[0] === '-' ? 'Subtract the second from the first' : operators[0] === '×' ? 'Multiply them' : 'Divide the first by the second'} to make ${fractionLabel(target)}. Then strike the anvil.`
+      ? operators[0] === '÷'
+        ? `Choose a proper fraction, then a whole number. Divide the fraction by the whole number to make ${fractionLabel(target)}.`
+        : `${operators[0] === '-' ? 'Choose two fractions. Subtract the second from the first' : `Choose two fractions that ${operators[0] === '+' ? 'add' : 'multiply'}`} to make ${fractionLabel(target)}. Then strike the anvil.`
       : `Place ${solution.length} fraction ingots on the anvil. Follow ${operators.map(op => op === '+' ? 'addition' : op === '-' ? 'subtraction' : op === '×' ? 'multiplication' : 'division').join(' then ')} from left to right to make ${fractionLabel(target)}.`,
   };
 };
@@ -188,8 +192,17 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     onGameOver(score);
   }, [localTimeLeft, onGameOver, score, sessionState]);
 
+  const cardAllowedInNextSlot = (card: Fraction) => {
+    const operation = round.operators[0];
+    if (operation === '×') return card.numerator < card.denominator;
+    if (operation !== '÷') return true;
+    return slots.findIndex(id => id === null) === 0
+      ? card.numerator < card.denominator : card.denominator === 1;
+  };
   const addIngredient = (cardId: string) => {
     if (endedRef.current || resolving || slots.includes(cardId)) return;
+    const card = round.cards.find(value => value.id === cardId);
+    if (!card || !cardAllowedInNextSlot(card)) return;
     const openIndex = slots.findIndex((id) => id === null);
     if (openIndex < 0) {
       setFeedback({ tone: 'info', message: 'Tap an ingot on the anvil to make room.' });
@@ -267,9 +280,6 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     <div className="fraction-forge-game relative h-full w-full select-none overflow-hidden" data-fraction-forge data-fraction-tier={tier} data-strike-state={strikeState}>
       <GameplaySceneBackdrop gameType="take_out_rush" backgroundOverride={fractionForgeBackground} />
       <div className="ff-scrim" aria-hidden="true" />
-      <div className="ff-blacksmith-route" data-paused={Boolean(sessionState?.paused) || showPracticeIntro} aria-hidden="true">
-        <div className="ff-blacksmith-worker"><img src={forgeBlacksmith} alt="" draggable={false} /><span className="ff-work-sparks" /></div>
-      </div>
       <PracticeIntroPopup open={showPracticeIntro} title={gameTitle || 'Fraction Forge'} body="The workshop needs a precise fraction alloy. Choose the ingots, then strike the anvil to test your recipe." briefing={practiceBriefing} onAction={() => setShowPracticeIntro(false)} />
       <div className="ff-ui">
         <div className="ff-brief">
@@ -282,11 +292,14 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
         </div>
         <div className="ff-workspace">
           <div className="ff-anvil-zone">
+            <div className="ff-blacksmith-route" data-paused={Boolean(sessionState?.paused) || showPracticeIntro} aria-hidden="true">
+              <div className="ff-blacksmith-worker"><VisionCharacter identity={originalHeroId(_avatarId)} activity="forge" reaction={strikeState==='success'?'taunt':strikeState==='error'?'hit':'idle'} reactionKey={strikeTick} decorative /><span className="ff-work-sparks" /></div>
+            </div>
             <div className="ff-target"><span>FORGE TARGET</span><strong className="ff-target-value" data-forge-target>{fractionLabel(round.target)}</strong></div>
             <div className="ff-anvil">
-              <img className="ff-anvil-art" src={forgeAnvil} alt="" draggable={false} aria-hidden="true" />
+              <img className="ff-anvil-art" src={getVisionObject('forge-anvil') ?? forgeAnvil} alt="" draggable={false} aria-hidden="true" />
               <motion.div key={strikeTick} className="ff-hammer" data-strike-state={strikeState} aria-hidden="true">
-                <svg viewBox="0 0 100 130" focusable="false">
+                {getVisionObject('forge-hammer') ? <img src={getVisionObject('forge-hammer')} alt="" className="h-full w-full object-contain"/> : <svg viewBox="0 0 100 130" focusable="false">
                   <defs><linearGradient id="ff-hammer-steel" x2="0" y2="1"><stop stopColor="#edf4eb"/><stop offset=".38" stopColor="#8ba8ad"/><stop offset="1" stopColor="#314d5b"/></linearGradient><linearGradient id="ff-hammer-wood" x2="1" y2="0"><stop stopColor="#704126"/><stop offset=".5" stopColor="#d49755"/><stop offset="1" stopColor="#87502c"/></linearGradient></defs>
                   <path d="M43 39H60L64 116Q52 130 40 116Z" fill="url(#ff-hammer-wood)" stroke="#242f32" strokeWidth="4"/>
                   <path d="M42 86L61 81M41 99L62 94M41 112L63 107" stroke="#553c29" strokeWidth="5"/>
@@ -295,7 +308,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
                   <path d="M29 15H70" stroke="#f4f8e5" strokeWidth="4" strokeLinecap="round"/>
                   <path d="M11 39H88" stroke="#203e4d" strokeWidth="5"/>
                   <path d="M44 21H60V36H44Z" fill="#daa55c" stroke="#5b502f" strokeWidth="2"/>
-                </svg>
+                </svg>}
               </motion.div>
               <span className="ff-anvil-fracture ff-anvil-fracture-left" aria-hidden="true" />
               <span className="ff-anvil-fracture ff-anvil-fracture-right" aria-hidden="true" />
@@ -326,7 +339,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
             <div className="ff-bank">
               {round.cards.map((card) => {
                 const used = slots.includes(card.id);
-                return <button type="button" key={card.id} data-forge-ingredient={card.id} data-button-skin="none" className={`ff-ingredient ${used ? 'ff-ingredient-used' : ''}`} disabled={used || resolving} onClick={() => addIngredient(card.id)} aria-label={`Add ${card.denominator === 1 ? card.numerator : `${card.numerator} over ${card.denominator}`} to the anvil`} aria-pressed={used}><FractionGlyph value={card} /></button>;
+                return <button type="button" key={card.id} data-forge-ingredient={card.id} data-button-skin="none" className={`ff-ingredient ${used ? 'ff-ingredient-used' : ''}`} disabled={used || resolving || !cardAllowedInNextSlot(card)} onClick={() => addIngredient(card.id)} aria-label={`Add ${card.denominator === 1 ? card.numerator : `${card.numerator} over ${card.denominator}`} to the anvil`} aria-pressed={used}><FractionGlyph value={card} /></button>;
               })}
             </div>
             <div className="ff-controls">

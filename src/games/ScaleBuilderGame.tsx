@@ -117,7 +117,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
   const playing = gameState==='playing' && !sessionState?.paused;
   const length = parseDimension(values[0]) ?? baseLength;
   const width = parseDimension(values[1]) ?? baseWidth;
-  const unit = 220 / (Math.max(baseLength,baseWidth) * Math.max(1,currentLevel.targetScale) * 1.5);
+  const unit = 220 / (Math.max(baseLength,baseWidth) * Math.max(1,currentLevel.targetScale));
   const completedLevels = currentLevelIdx + (gameState==='complete'?1:0);
   const finalScore = Math.max(300,900+completedLevels*220+levelId*60-mistakeCount*90);
   const starRating = mistakeCount<=1?3:mistakeCount<=4?2:1;
@@ -177,9 +177,13 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
         <span>Enlarge the blueprint. What are the new lengths?</span>
       </GameQuestionCard>
       <div className="scale-numeric-board-area">
+        <h3 className="scale-blueprint-title">Your blueprint</h3>
         <ScaleBlueprintBoard shape={currentLevel.shape.type} baseLength={baseLength} baseWidth={baseWidth} length={length} width={width} unit={unit} showBase={showBase} locked={!playing} onResize={(axis,value)=>{setActive(axis);changeAnswer(axis,formatBlueprintValue(value));}}/>
+        <div className="scale-board-footer">
+        <div className="scale-blueprint-measurements" aria-live="polite"><span>Length: <strong>{formatBlueprintValue(length)}</strong></span><span>Width: <strong>{formatBlueprintValue(width)}</strong></span></div>
         <div className="scale-board-caption">Drag the gold handles. Dashed outline = original.</div>
         <button type="button" className="scale-guide-button" disabled={gameState==='complete'} onClick={()=>setShowBase(n=>!n)} aria-pressed={showBase}>{showBase?'Hide original':'Show original'}</button>
+        </div>
       </div>
       <div data-scale-controls className="scale-numeric-controls">
         <p className="scale-pad-hint">Choose a length, then use the number pad.</p>

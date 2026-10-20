@@ -1,6 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, ReactNode } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import { accountsConfigured, supabase } from './services/supabase';
+import { IS_IOS_APP } from '../platform/nativeApp';
+import { appleStore, nativeAppleStoreAvailable, syncAppleSubscriptions } from '../platform/ios/appleSubscriptions';
 
 export type ChildProfile = { id: string; parent_id: string; nickname: string };
 export type Subscription = { id: string; product_code: string; status: string; interval: 'month' | 'year'; current_period_end: string; cancel_at_period_end: boolean };
@@ -79,6 +81,46 @@ export default function FamilyAccount({ children: content }: { children: ReactNo
     setChildren([]); setSubscriptions([]); setComplimentary([]); setIsAdmin(false); setSettings(null); setSelectedId('');
     if (parentId) { setSelectedId(sessionStorage.getItem(`legends-child:${parentId}`) || ''); void refresh(); }
     return () => { generation.current++; };
+  }, [parentId, refresh]);
+  useEffect(() => {
+    if (!parentId) return;
+    let timer: number | undefined;
+    // Purchases and account changes can happen on a different device. Refresh
+    // when returning to this client; never infer access from a checkout redirect.
+    const refreshOnReturn = () => {
+      if (document.visibilityState === 'hidden') return;
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => void refresh(), 200);
+    };
+    window.addEventListener('focus', refreshOnReturn);
+    window.addEventListener('online', refreshOnReturn);
+    window.addEventListener('legends:account-refresh', refreshOnReturn);
+    document.addEventListener('visibilitychange', refreshOnReturn);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener('focus', refreshOnReturn);
+      window.removeEventListener('online', refreshOnReturn);
+      window.removeEventListener('legends:account-refresh', refreshOnReturn);
+      document.removeEventListener('visibilitychange', refreshOnReturn);
+    };
+  }, [parentId, refresh]);
+  useEffect(() => {
+    if (!IS_IOS_APP || !parentId || !nativeAppleStoreAvailable()) return;
+    let alive = true, running = false, last = -Infinity;
+    let listener: { remove: () => Promise<void> } | undefined;
+    const sync = async () => {
+      if (!alive || running || document.hidden || Date.now() - last < 10000) return;
+      running = true; last = Date.now();
+      try { await syncAppleSubscriptions(); if (alive) await refresh(); }
+      catch { /* Access is always determined by server rows; Restore can retry. */ }
+      finally { running = false; }
+    };
+    const changed = () => { last = -Infinity; void sync(); };
+    void appleStore.addListener('transactionsChanged', changed).then(value => { if (alive) listener = value; else void value.remove(); }).catch(() => {});
+    window.addEventListener('legends:account-refresh', changed);
+    window.addEventListener('online', changed);
+    void sync();
+    return () => { alive = false; void listener?.remove(); window.removeEventListener('legends:account-refresh', changed); window.removeEventListener('online', changed); };
   }, [parentId, refresh]);
   const selectChild = useCallback((id: string) => {
     if (!parentId || !children.some(child => child.id === id)) return;

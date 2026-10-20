@@ -24,9 +24,10 @@ let soundProfile = getGameSoundProfile(null);
 let sampleEpoch = 0;
 let lastMonsterAt = -Infinity;
 const activeSamples = new Set<AudioBufferSourceNode>();
+const activeSynthSources = new Set<AudioScheduledSourceNode>();
 const activeEngines = new Set<() => void>();
 
-/** Cancel pending and playing recorded cues when leaving, pausing or muting. */
+/** Cancel pending and playing cues when leaving, pausing or muting. */
 export function stopGameSoundEffects() {
   sampleEpoch += 1;
   for (const stop of [...activeEngines]) stop();
@@ -34,6 +35,10 @@ export function stopGameSoundEffects() {
     try { source.stop(); } catch { /* Already ended. */ }
   }
   activeSamples.clear();
+  for (const source of activeSynthSources) {
+    try { source.stop(); } catch { /* Already ended. */ }
+  }
+  activeSynthSources.clear();
 }
 
 export type GameMusicScene = 'map' | 'gameplay';
@@ -155,8 +160,9 @@ function playVoice(ctx: AudioContext, voice: Voice, base: number, pitchScale = 1
   oscillator.connect(gain);
   route(ctx, gain, voice.pan, voice.length > .18);
   oscillator.start(start);
+  activeSynthSources.add(oscillator);
   oscillator.stop(end + .01);
-  oscillator.onended = () => { oscillator.disconnect(); gain.disconnect(); };
+  oscillator.onended = () => { activeSynthSources.delete(oscillator); oscillator.disconnect(); gain.disconnect(); };
 }
 
 const materialTexture: Record<SoundMaterial, { cutoff: number; q: number; level: number; length: number; type: BiquadFilterType }> = {
@@ -197,8 +203,9 @@ function playTexture(ctx: AudioContext, effect: GameSoundEffect, base: number, m
   filter.connect(gain);
   route(ctx, gain, effect === 'complete' || effect === 'cast' ? .35 : -.25, effect === 'complete' || effect === 'cast');
   source.start(base);
+  activeSynthSources.add(source);
   source.stop(base + length + .01);
-  source.onended = () => { source.disconnect(); filter.disconnect(); gain.disconnect(); };
+  source.onended = () => { activeSynthSources.delete(source); source.disconnect(); filter.disconnect(); gain.disconnect(); };
 }
 
 function playMaterialAccent(ctx: AudioContext, effect: GameSoundEffect, base: number, material: SoundMaterial, pitch: number, accent: number) {
@@ -256,7 +263,7 @@ function playMaterialAccent(ctx: AudioContext, effect: GameSoundEffect, base: nu
 }
 
 export function playGameSound(effect: GameSoundEffect, mutedOverride?: boolean) {
-  if (typeof window === 'undefined' || (mutedOverride ?? localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true')) return false;
+  if (typeof window === 'undefined' || document.hidden || (mutedOverride ?? localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true')) return false;
   const ctx = getContext();
   if (!ctx) return false;
   if (ctx.state === 'suspended') void ctx.resume().catch(() => {});
@@ -346,7 +353,7 @@ function playSynthSound(ctx: AudioContext, effect: GameSoundEffect, profile: typ
 
 /** Original launch-control beep, sharing the game's master volume and mute setting. */
 export function playRocketCountdownSound() {
-  if (typeof window === 'undefined' || localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true') return;
+  if (typeof window === 'undefined' || document.hidden || localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true') return;
   const ctx = getContext();
   if (!ctx) return;
   if (ctx.state === 'suspended') void ctx.resume().catch(() => {});
@@ -364,7 +371,7 @@ export function playRaceEngineSound(durationSeconds: number, stalled = false): (
 }
 
 function playEngineRoar(durationSeconds: number, kind: 'rocket' | 'race' | 'stall'): () => void {
-  if (typeof window === 'undefined' || localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true') return () => {};
+  if (typeof window === 'undefined' || document.hidden || localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true') return () => {};
   const ctx = getContext();
   if (!ctx) return () => {};
   if (ctx.state === 'suspended') void ctx.resume().catch(() => {});

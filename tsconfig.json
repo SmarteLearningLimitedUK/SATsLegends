@@ -1,5 +1,5 @@
 {
-  "exclude": ["supabase/functions", "node_modules", "dist"],
+  "exclude": ["supabase/functions", "node_modules", "dist", "dist-ios", "native/ios/App/App/public"],
   "compilerOptions": {
     "target": "ES2022",
     "experimentalDecorators": true,

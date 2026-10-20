@@ -18,6 +18,7 @@ import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { useTrimmedImageSource } from '../utils/trimTransparentImage';
 import './share-splitter.css';
 import SharePartyTable from './SharePartyTable';
+import SceneEnvironment from '../components/SceneEnvironment';
 
 interface ShareSplitterGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -297,15 +298,16 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const hasMoves = moveHistory.length > 0;
   const allSlicesUsed = remainingSlices === 0;
   const allCorrect = plateViews.every((plate) => plate.isCorrect);
-  const isWideShareLayout = viewportRect.width >= 700;
+  const compactLandscape = viewportRect.width > viewportRect.height && viewportRect.height < 500;
+  const isWideShareLayout = viewportRect.width >= 700 || compactLandscape;
   const narrowTable = !isWideShareLayout;
   const tableWidth = Math.min(1440, Math.max(1, viewportRect.width - (narrowTable ? 8 : 24)));
-  const actionClearance = 144;
-  const guestRoom = Math.max(90, (viewportRect.height - questionDockBottom - actionClearance - 190) / .82);
+  const actionClearance = compactLandscape ? 52 : 144;
+  const guestRoom = compactLandscape ? Math.max(50,(viewportRect.height-questionDockBottom-actionClearance)*.60) : Math.max(90, (viewportRect.height - questionDockBottom - actionClearance - 190) / .82);
   const guestHeight = Math.min(270, tableWidth * (narrowTable ? .27 : .22), guestRoom);
-  const roomTop = questionDockBottom + guestHeight * .82 + (narrowTable ? 12 : 10);
+  const roomTop = questionDockBottom + guestHeight * (compactLandscape ? .65 : .82) + (compactLandscape ? 2 : narrowTable ? 12 : 10);
   const roomBottom = viewportRect.height - actionClearance;
-  const tableHeight = Math.min(tableWidth * (narrowTable ? .88 : .40), Math.max(180, roomBottom - roomTop));
+  const tableHeight = Math.min(tableWidth * (narrowTable ? .88 : .40), Math.max(compactLandscape ? 80 : 180, roomBottom - roomTop));
   const tableLeft = (viewportRect.width - tableWidth) / 2;
   const tableTop = Math.max(roomTop, roomBottom - tableHeight);
   const tableRect = { left: tableLeft, top: tableTop, width: tableWidth, height: tableHeight };
@@ -315,7 +317,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     : PARTY_PLATE_POSITIONS;
   const cakeSourceCenter = { x: tableLeft + tableWidth * .5, y: tableTop + tableHeight * (narrowTable ? .82 : .78) };
   const cakeSourceWidth = Math.min(380, tableWidth * (narrowTable ? .66 : .32));
-  const cakeSourceHeight = Math.min(100, Math.max(62, tableHeight * .24));
+  const cakeSourceHeight = compactLandscape ? 44 : Math.min(100, Math.max(62, tableHeight * .24));
   const equalShares = challenge.ratios.every(value => value === challenge.ratios[0]);
   const promptText = equalShares
     ? `Share ${challenge.totalSlices} cakes equally between ${challenge.plateCount} guests.`
@@ -555,7 +557,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
       className={`share-splitter-shell ${sessionState?.paused ? 'share-party-paused' : ''}`}
       overlayDisabled
     >
-      <div className="share-party-backdrop" aria-hidden="true"><img src={shareSplitterBackground} alt="" draggable={false} data-game-scene-image data-background-fit="cover" /></div>
+      <div className="share-party-backdrop" aria-hidden="true"><SceneEnvironment src={shareSplitterBackground} fit="cover" /></div>
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Share Splitter"

@@ -143,9 +143,9 @@ const AreaArchitectGame: React.FC<AreaArchitectGameProps> = ({levelId,isPractice
       <div className="area-room-progress">Room {roundIndex+1} of {ROUNDS_TO_WIN}</div>
       <figure className="area-room-plan" data-area-board data-area-target={question.correct}>
         <svg viewBox={`0 0 ${(width+2)*24} ${(height+2)*24}`} role="img" aria-label={rectangle?`Rectangular room, ${width} metres long and ${height} metres wide`:'Room plan made of blue unit squares. Each square is one square metre.'}>
-          <defs><linearGradient id="area-room-blue" x2="1" y2="1"><stop stopColor="#79e3ec"/><stop offset="1" stopColor="#2f83b1"/></linearGradient></defs>
+          <defs><linearGradient id="area-room-blue" x2="1" y2="1"><stop stopColor="#a7f8ff"/><stop offset=".4" stopColor="#59c9e2"/><stop offset="1" stopColor="#2f83b1"/></linearGradient><marker id="area-room-dimension-arrow" markerWidth="4" markerHeight="4" refX="2" refY="2" orient="auto-start-reverse"><path d="M4 0L0 2L4 4" fill="none" stroke="#ffe8ad" strokeWidth="1"/></marker></defs>
           {question.cells.map(cell=><rect key={`${cell.x}-${cell.y}`} x={(cell.x-minX+1)*24} y={(cell.y-minY+1)*24} width="24" height="24" fill="url(#area-room-blue)" stroke="#e2faff" strokeWidth="1.5"/>)}
-          {rectangle&&<><text x={(width+2)*12} y="15" textAnchor="middle">{width} m</text><text x="5" y={(height+2)*12} textAnchor="middle" transform={`rotate(-90 5 ${(height+2)*12})`}>{height} m</text></>}
+          {rectangle&&<><path d={`M24 19H${(width+1)*24}M19 24V${(height+1)*24}`} fill="none" stroke="#ffe8ad" strokeWidth="1" markerStart="url(#area-room-dimension-arrow)" markerEnd="url(#area-room-dimension-arrow)"/><text x={(width+2)*12} y="12" textAnchor="middle">{width} m</text><text x="8" y={(height+2)*12} textAnchor="middle" transform={`rotate(-90 8 ${(height+2)*12})`}>{height} m</text></>}
         </svg>
         <figcaption>{rectangle&&<strong className="area-room-dimensions">Length {width} m · Width {height} m</strong>}Each blue square = 1 m²</figcaption>
       </figure>

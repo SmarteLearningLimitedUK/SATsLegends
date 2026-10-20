@@ -1,4 +1,5 @@
 import { playGameSound } from '../audio/gameAudio';
+import {getVisionObject} from './visionScene';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import {
@@ -28,6 +29,7 @@ import sunBottle from '../assets/potion_bottles/sun.png';
 import './forge-potion-layout.css';
 import { PotionShelfBottles, PotionWorkbench } from './PotionWorkshop';
 import './potion-workshop.css';
+import './potion-playable-layout.css';
 
 interface PotionPanicGameProps {
   levelId: number;
@@ -744,7 +746,7 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
           </div>
         )}
         main={(
-          <div className="potion-panic-main mx-auto flex h-full w-full min-h-0 flex-col gap-2">
+          <div data-potion-workspace data-potion-round={correctSolved} className="potion-panic-main mx-auto flex h-full w-full min-h-0 flex-col gap-2">
             <div className="potion-panic-stage relative flex min-h-0 flex-1 flex-col overflow-visible bg-transparent">
               <div className="potion-recipe-panel pointer-events-none absolute left-1/2 top-[4%] z-40 w-[min(100%,430px)] -translate-x-1/2">
                 <GameQuestionCard
@@ -752,7 +754,7 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
                   className="potion-recipe-card w-full rounded-[1.45rem] border border-slate-950/70 px-5 py-4 text-center shadow-[0_18px_32px_rgba(1,6,20,0.55)]"
                   bodyClassName="mt-0.5"
                 >
-                  <div className="text-[clamp(1rem,4vw,1.28rem)] font-black tracking-[0.01em] text-white">
+                  <div className="potion-order-title text-[clamp(1rem,4vw,1.28rem)] font-black tracking-[0.01em] text-white">
                     {challenge.orderTitle}
                   </div>
                   <div className="potion-recipe-meta mt-1 flex items-center justify-center gap-2 text-[13px] font-black uppercase tracking-[0.12em] text-amber-100">
@@ -761,7 +763,7 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
                     <span>Ratio {ratioText}</span>
                   </div>
                   <div className="potion-recipe-copy mx-auto mt-2 max-w-[24rem] whitespace-pre-line font-semibold text-cyan-100/90">
-                    {challenge.orderPrompt || 'Use the ratio to complete the potion.'}
+                    {`Brew ${challenge.totalDrops} drops in the ratio above.`}
                   </div>
                 </GameQuestionCard>
               </div>
@@ -780,7 +782,7 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
                   ))}
                 </div>
                 <div className={`potion-vessel pointer-events-none absolute left-1/2 z-30 -translate-x-1/2 ${feedback === 'error' ? 'potion-vessel--shake' : feedback === 'success' ? 'potion-vessel--surge' : ''}`}>
-                  <img src={cauldrenAndPotionArt} alt="" aria-hidden="true" className="potion-vessel-art h-full w-full object-contain" />
+                  <img src={getVisionObject('cauldron') || cauldrenAndPotionArt} alt="" aria-hidden="true" className="potion-vessel-art h-full w-full object-contain" />
                   <div className="potion-liquid-surface absolute z-40 overflow-hidden rounded-[50%]">
                   <motion.div
                     className="absolute inset-0 rounded-[50%]"
@@ -788,7 +790,7 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
                       background: `linear-gradient(180deg, rgba(255,255,255,0.34) 0%, ${mixColor} 18%, rgba(15,23,42,0.18) 100%)`,
                       boxShadow: `0 0 30px ${mixColor}`,
                     }}
-                    animate={{ opacity: currentTotal > 0 ? 1 : 0, scaleX: Math.min(1, Math.max(0.25, currentTotal / Math.max(1, targetTotal))) }}
+                    animate={{ opacity: currentTotal > 0 ? 1 : 0, scaleX: 1 }}
                     transition={{ duration: 0.32, ease: 'easeOut' }}
                   />
                   {Array.from({ length: 10 }).map((_, idx) => (
@@ -810,7 +812,7 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
                     initial={{ opacity: 0, scale: 0.82 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
-                    className="pointer-events-none absolute right-4 top-4 flex flex-col items-center gap-1.5"
+                    className="potion-success-mark pointer-events-none absolute right-4 top-4 flex flex-col items-center gap-1.5"
                   >
                     <div className="flex h-14 w-14 items-center justify-center rounded-full border border-emerald-200/80 bg-emerald-400/92 shadow-[0_0_28px_rgba(52,211,153,0.7)]">
                       <CheckCircle2 className="h-7 w-7 text-slate-950" />
@@ -823,7 +825,7 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.92 }}
-                    className="pointer-events-none absolute inset-x-0 bottom-[18%] top-[12%] flex items-end justify-center"
+                    className="potion-error-mark pointer-events-none absolute inset-x-0 bottom-[18%] top-[12%] flex items-end justify-center"
                   >
                     <div className="relative h-full w-full max-w-[420px]">
                       {Array.from({ length: 7 }).map((_, idx) => {
@@ -873,6 +875,8 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
                     <motion.button
                       key={ingredient.id}
                       type="button"
+                      data-potion-ingredient={ingredient.id}
+                      data-potion-current={current}
                       whileTap={isActive ? { scale: 0.96, y: 2 } : undefined}
                       onClick={() => addIngredient(index)}
                       disabled={locked || !isActive || isLockedIngredient}
@@ -922,7 +926,7 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
             <div className="mx-auto flex w-full max-w-[780px] items-center gap-2">
               <PrimaryButton onClick={onBrew} disabled={locked} className="flex-[1.2] potion-brew-button">
                 <Wand2 className="h-4.5 w-4.5" />
-                {isRecipeComplete ? 'Brew Potion' : 'Brew Potion'}
+                {feedback === 'success' ? 'Perfect brew!' : feedback === 'error' ? 'Try again' : 'Brew Potion'}
               </PrimaryButton>
               <SecondaryButton onClick={resetCurrent} disabled={locked} className="w-[128px]">
                 Reset

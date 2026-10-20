@@ -1,0 +1,23 @@
+/* Primary questions are independent of actor/board columns and occupy a real header band. */
+.viewport-question-content{display:contents}
+.game-staging-host[data-question-layout='viewport']{display:block;position:relative;box-sizing:border-box;width:100%;height:100%;min-height:0;flex:1;padding-top:var(--viewport-question-space,0px)}
+.game-staging-host[data-question-layout='viewport']>.viewport-question-content{display:block;position:relative;width:100%;height:100%;min-height:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(.vision-world-backdrop) [data-vision-game]>.viewport-question-content>:first-child{background-color:transparent!important;background-image:none!important}
+.viewport-question-layer{position:absolute;inset:0;z-index:65;pointer-events:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game] .game-question-card[data-viewport-question='true']{
+ position:absolute!important;left:50%!important;top:4px!important;right:auto!important;bottom:auto!important;
+ width:min(94%,1100px)!important;max-width:none!important;min-width:0!important;margin:0!important;
+ translate:-50% 0!important;transform:none!important;z-index:65!important;
+}
+#root .game-question-card[data-viewport-question='true'] .game-question-copy>span{display:block}
+
+/* This board already has a dedicated top band at desktop heights. */
+@media(orientation:landscape) and (min-height:600px){
+ .game-staging-host[data-question-layout='viewport'][data-vision-game='place_value_panic']{padding-top:0}
+}
+@media(orientation:landscape) and (max-height:550px){
+ #root .game-question-card[data-viewport-question='true'].scale-numeric-question .game-question-copy{display:grid;grid-template-columns:1fr 1fr;gap:2px 6px}
+ #root .game-question-card[data-viewport-question='true'].scale-numeric-question .game-question-copy>span:last-child{grid-column:1/-1}
+}
+/* A measurement and its unit stay together when the response grid narrows. */
+#root [data-vision-game='perimeter_path'] .perimeter-edge-control>span:last-child{white-space:nowrap;line-height:1.2!important}

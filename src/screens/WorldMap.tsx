@@ -207,6 +207,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
                       <image href={islandAtlas} width="888" height="1776" clipPath={`url(#map-island-crop-${island.id})`} />
                     </svg>
                   </span>
+                  <span className="legend-map-island-label">{island.name}{!isUnlocked ? ' · Locked' : ''}</span>
                 </button>
               </div>
             );

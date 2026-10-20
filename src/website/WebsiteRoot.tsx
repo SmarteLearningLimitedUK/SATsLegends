@@ -16,6 +16,7 @@ import './english.css';
 import './parents.css';
 import './website-hero-action.css';
 import './website-typography.css';
+import { IS_IOS_APP } from '../platform/nativeApp';
 
 const Game = lazy(() => import('../App'));
 const GameGate = lazy(() => import('./GameGate'));
@@ -52,7 +53,7 @@ function WebsiteContent() {
     <GameLoadBoundary><Suspense fallback={<GameLoadingFallback message="Opening your adventure…" />}><GameGate>
       <Game />
     </GameGate></Suspense></GameLoadBoundary>
-    {isMinigame || gameScreen === 'parent_dashboard'
+    {IS_IOS_APP || isMinigame || gameScreen === 'parent_dashboard'
       ? null
       : <WebsiteReturn screen={gameScreen} hasGameDock={hasGameDock} />}
   </>;

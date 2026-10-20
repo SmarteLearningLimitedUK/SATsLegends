@@ -1,0 +1,66 @@
+import type { MissionField, MissionVisual, SatsMission } from './satsAdventure';
+const roman=(n:number):string=>{let result='';for(const [value,symbol] of [[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']] as const)while(n>=value){result+=symbol;n-=value;}return result;};
+/** Seeded breadth tasks are also available through the existing guided revision workshops. */
+export function extendedReasoningMissions(seed:number):SatsMission[]{
+ const k=1+Math.abs(seed%23),j=1+Math.abs(Math.floor(seed/23)%17),q:SatsMission[]=[];
+ const f=(label:string,answer:string|number,options?:string[]):MissionField=>({label,answer:String(answer),options});
+ const add=(id:string,reference:string,game:string,difficulty:number,prompt:string,visual:MissionVisual,fields:MissionField[],explanation:string)=>{const m:SatsMission={id:'ext-'+id,reference,domain:reference.match(/[NCFRAMGPS]/)![0] as SatsMission['domain'],game,difficulty,prompt,visual,fields,explanation,marks:fields.length};q.push(m);return m;};
+ const eq=(...lines:string[]):MissionVisual=>({type:'equation',lines});
+ const number=210+k*17,delta=[10,100][j%2];
+ add('ten-hundred','3N2b','place_value_panic',1,`What is ${delta} ${j%3?'more':'less'} than ${number}?`,eq(String(number)),[f('Number',number+(j%3?delta:-delta))],`Change the ${delta===10?'tens':'hundreds'} place by one ${j%3?'up':'down'}.`);
+ const thousands=1200+k*187;
+ add('thousand','4N2b','place_value_panic',1,`Write the number that is 1,000 ${j%2?'more':'less'} than ${thousands}.`,eq(String(thousands)),[f('Number',thousands+(j%2?1000:-1000))],'Add or subtract one thousand; the other places retain their values.');
+ const rn=1+Math.abs(seed%100);
+ add('roman-hundred','4N3b','place_value_panic',1,'Write this Roman numeral as a number.',eq(roman(rn)),[f('Number',rn)],`${roman(rn)} represents ${rn}. Read subtractive pairs such as IV, IX, XL and XC together.`);
+ const mental=10000+k*1000,change=j*100;
+ add('mental-large','5C1','maths_vs_zombies',2,`A harbour has ${mental} crates. It sends ${change} crates away. Work out how many remain mentally.`,eq(`${mental} − ${change}`),[f('Crates remaining',mental-change)],`Subtract ${j} hundreds from ${mental}.`);
+ add('mental-large-add','5C1','maths_vs_zombies',2,`A harbour has ${mental} crates. It receives ${change} more crates. Work out the new total mentally.`,eq(`${mental} + ${change}`),[f('Total crates',mental+change)],`Add ${j} hundreds to ${mental}.`);
+ const a=35428+k*127,b=16789+j*93;
+ add('written-add','5C2','problem_pyramid',3,`Work out ${a} + ${b}. You may use the working board.`,eq(`${a} + ${b}`),[f('Sum',a+b)],`Align matching places, add each column and carry tens. The total is ${a+b}.`);
+ add('written-sub','5C2','problem_pyramid',3,`Work out ${a} − ${b}. You may use the working board.`,eq(`${a} − ${b}`),[f('Difference',a-b)],`Align matching places and exchange where needed. Check with ${a-b} + ${b} = ${a}.`);
+ const hour=1+k%12,minute=(j%12)*5;
+ add('clock-24','3M4b','time_keeper_cove',2,'This clock shows an afternoon time. Write it using the 24-hour clock.',{type:'clock',hours:hour,minutes:minute,roman:k%2===0},[f('24-hour time (HH:MM)',`${hour===12?12:hour+12}:${String(minute).padStart(2,'0')}`)],`For an afternoon time, add 12 to the hour, except that noon is 12. The minutes stay the same.`);
+ const cap=1000+k*50,pour=100+j*25;
+ add('capacity','3M9d','unit_mixer',2,`A jug contains ${cap} ml. Another ${pour} ml is poured in. Then 250 ml is used. How much remains?`,eq(`${cap} ml`,`${pour} ml added; 250 ml used`),[f('Amount left (ml)',cap+pour-250)],`Add the capacity poured in, then subtract the amount used: ${cap+pour-250} ml.`);
+ const cells:[number,number][]=[[0,k%3],[1,(k+1)%3],[2,(j+2)%3]];
+ add('symmetry','4G2c','rotation_relay',3,'Complete the pattern so that the dashed line is a line of symmetry. Tap squares on the right.',{type:'symmetry',cells},[f('Reflected squares',cells.map(([x,y])=>`${5-x},${y}`).join(';'))],'Every coloured square needs a matching square the same distance from the mirror line.');
+ const hundredths=200+k*10+j,decimal=hundredths/100;
+ add('decimal-round-whole','5F7','rounding_rocket',2,`Round ${decimal.toFixed(2)} to the nearest whole number.`,eq(decimal.toFixed(2)),[f('Rounded number',Math.round(decimal))],'Look at the tenths digit. Five or more rounds the whole number up.');
+ add('decimal-round-tenth','5F7','rounding_rocket',3,`Round ${decimal.toFixed(2)} to one decimal place.`,eq(decimal.toFixed(2)),[f('Rounded number',(Math.floor((hundredths+5)/10)/10).toFixed(1))],'Look at the hundredths digit to decide whether to round the tenths up.');
+ const threeDecimal=(k+1)+j/1000;
+ add('decimal-order-three','5F8','match3_equivalence',3,'Put these decimals in order, starting with the smallest. Separate your answers with commas.',eq(`${threeDecimal.toFixed(3)}, ${(threeDecimal+.1).toFixed(3)}, ${(threeDecimal+.01).toFixed(3)}`),[{...f('Ascending order',`${threeDecimal.toFixed(3)}, ${(threeDecimal+.01).toFixed(3)}, ${(threeDecimal+.1).toFixed(3)}`),response:'ordered'}],'Compare whole numbers, then tenths, hundredths and thousandths.');
+ const max=[100,200,500,1000][k%4],intervals=10,position=1+j%9;
+ add('read-scale','3M2b','conversion_canyon',3,'The numbered marks are equally spaced. Read the mass shown by the pointer.',{type:'scale',max,intervals,position,unit:'g'},[f('Mass (g)',max*position/intervals)],`Each small interval represents ${max/intervals} g. Count ${position} intervals from zero.`);
+ const acute=25+k*2;
+ add('opposite-angle','6G4b','angle_arena',4,'Two straight lines cross. Find the angle opposite the marked angle.',{type:'angles',kind:'cross',angle:acute},[f('Opposite angle (°)',acute)],'Vertically opposite angles are equal.');
+ const apex=30+(k%9)*10;
+ add('isosceles','6G4a','angle_arena',4,'The triangle is isosceles. Its two sloping sides are equal. Find one base angle.',{type:'angles',kind:'isosceles',angle:apex},[f('Base angle (°)',(180-apex)/2)],`The base angles are equal and all three angles total 180°. Calculate (180 − ${apex}) ÷ 2.`);
+ const sides=[5,6,8][k%3];
+ add('regular-polygon','6G4a','angle_arena',4,`This regular polygon has ${sides} sides. Its outside angles are equal and total 360°. Find one outside angle, then one inside angle.`,{type:'polygon',sides},[f('Outside angle (°)',360/sides),f('Inside angle (°)',180-360/sides)],`Divide 360° by ${sides} for an outside angle. Subtract it from 180° for the inside angle.`);
+ const den=3+k%7,whole=2+j,remainder=1+k%(den-1);
+ add('fractional-remainder','6C7c','remainder_run',4,`${whole*den+remainder} metres of ribbon are shared equally between ${den} people. Write each share as a mixed number in simplest form.`,eq(`${whole*den+remainder} ÷ ${den}`),[f('Ribbon per person (m)',`${whole} ${remainder/greatest(remainder,den)}/${den/greatest(remainder,den)}`)],`Each person gets ${whole} whole metres and ${remainder}/${den} of another metre. Simplify the fractional part.`);
+ const radius=2+k;
+ add('circle-terms','6G5','polygon_palace',2,'The line shown passes through the centre and joins two points on the circle. What is this line called?',{type:'shape',shape:'circle',labels:[],diameter:true},[f('Name','diameter',['radius','diameter','circumference','chord'])],'A diameter crosses the centre. The circumference is the distance around the circle.');
+ const n=4+k,denominator=n+2;
+ add('mixed-improper','5F2b','fraction_forge',3,`Write ${n}/${denominator-3} as a mixed number in simplest form.`,{type:'fractions',values:[`${n}/${denominator-3}`]},[f('Mixed number',`${Math.floor(n/(n-1))} ${1}/${n-1}`)],`Divide ${n} by ${n-1}; the remainder is 1. This gives 1 and 1/${n-1}.`);
+ const total=36+6*k,first=3,second=6,b1=(total-2*first)/3,b2=(total-2*second)/3;
+ const pairs=add('valid-pairs','6A5','formula_forge',4,`A and B are positive whole numbers. 2 × A + 3 × B = ${total} and A < B. Give two different pairs of values for A and B.`,eq(`2 × A + 3 × B = ${total}`),[f('First pair (A, B)',`${first},${b1}`),f('Different pair (A, B)',`${second},${b2}`)],`For example, (${first}, ${b1}) and (${second}, ${b2}). Other distinct positive pairs with A < B that satisfy the equation are accepted.`);
+ pairs.marking={kind:'pairs',total,min:1,ascending:true,coefficientA:2,coefficientB:3};
+ const mixedWhole=2+j%5,mixedDen=3+k%5,mixedNum=1+k%(mixedDen-1),common=greatest(mixedNum,mixedDen);
+ add('mixed-to-improper','5F2b','fraction_forge',3,'Write this mixed number as an improper fraction in simplest form.',{type:'fractions',values:[`${mixedWhole} ${mixedNum}/${mixedDen}`]},[f('Improper fraction',`${(mixedWhole*mixedDen+mixedNum)/common}/${mixedDen/common}`)],'Multiply the whole number by the denominator, add the numerator, then simplify.');
+ const short=2+j,long=short+2+k,height=4+j;
+ const shaded=add('shaded-area','5M7b','area_architect',5,'A triangular opening is cut from a rectangular banner. Find the area left. Show your calculations on the working board.',{type:'cutout',width:long,height,cutBase:short,cutHeight:height},[f('Area left (cm²)',long*height-short*height/2),{...f('Calculations (optional)',`${long} × ${height} − ${short} × ${height} ÷ 2`),response:'working'}],`The rectangle is ${long*height} cm². The triangle is ${short*height/2} cm². Subtract to leave ${long*height-short*height/2} cm².`);
+ shaded.marks=3;shaded.marking={kind:'method',intermediates:[long*height,short*height/2]};
+ const full=12+k,removed=3+j%5,length=3+j,width=2+k%6;
+ const volume=add('compound-volume','6M8a','area_architect',5,'A cuboid container is filled to the top. Some water is removed. Find the volume of water remaining. Show your calculations.',{type:'shape',shape:'cuboid',labels:[`${length} cm`,`${width} cm`,`${full} cm high; ${removed} cm removed`]},[f('Volume remaining (cm³)',length*width*(full-removed)),{...f('Calculations (optional)',`${length} × ${width} × (${full} − ${removed})`),response:'working'}],`The base area is ${length*width} cm². The remaining depth is ${full-removed} cm, giving ${length*width*(full-removed)} cm³.`);
+ volume.marks=3;volume.marking={kind:'method',intermediates:[length*width,full-removed]};
+ const distance=2+k,trip=15+j,rest=5+k;
+ const journey=add('journey-time','5M4','time_keeper_cove',5,`A boat makes ${distance} trips. Each trip takes ${trip} minutes. It stops for ${rest} minutes after every trip except the last. Find the total time. Show your calculations.`,eq(`${distance} trips`,`${trip} minutes each; ${rest} minutes between trips`),[f('Total time (minutes)',distance*trip+(distance-1)*rest),{...f('Calculations (optional)',`${distance} × ${trip} + (${distance} − 1) × ${rest}`),response:'working'}],`Travel takes ${distance*trip} minutes. There are ${distance-1} stops, taking ${(distance-1)*rest} minutes. Total: ${distance*trip+(distance-1)*rest}.`);
+ journey.marks=3;journey.marking={kind:'method',intermediates:[distance*trip,(distance-1)*rest]};
+ const capacity=500+k*20,pieces=3+j%4,each=10+j;
+ const measure=add('capacity-reasoning','3M9d','unit_mixer',5,`A tank contains ${capacity} litres. ${pieces} containers are filled with ${each} litres each. Then ${each} litres are added to the tank. How much is in the tank now? Show your calculations.`,eq(`${capacity} litres`,`${pieces} containers of ${each} litres`),[f('Amount remaining (litres)',capacity-pieces*each+each),{...f('Calculations (optional)',`${capacity} − ${pieces} × ${each} + ${each}`),response:'working'}],`The containers use ${pieces*each} litres. ${capacity-pieces*each} litres remain before ${each} litres are added, leaving ${capacity-pieces*each+each}.`);
+ measure.marks=3;measure.marking={kind:'method',intermediates:[pieces*each,capacity-pieces*each]};
+ return q;
+}
+
+function greatest(a:number,b:number):number{return b?greatest(b,a%b):a;}

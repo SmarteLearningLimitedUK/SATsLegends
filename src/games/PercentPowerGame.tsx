@@ -4,6 +4,7 @@ import confetti from 'canvas-confetti';
 import { ChevronLeft, CircleDollarSign } from 'lucide-react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import percentPowerBackground from '../assets/maps/premium/percent-power-station-wide-v2.png';
+import {getVisionObject} from './visionScene';
 import { triggerHaptic } from '../haptics';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
@@ -430,7 +431,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
             >
               <svg
                 className="pp-machine-svg"
-                viewBox="0 0 420 280"
+                viewBox="0 0 420 525"
                 role="img"
                 aria-label={'Reactor at ' + chargePercent + ' percent charge. ' + correctAnswers + ' of ' + totalRounds + ' power cells restored.'}
               >
@@ -447,14 +448,8 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
                     <stop offset="1" stopColor="#052b39" />
                   </radialGradient>
                 </defs>
-                <ellipse cx="210" cy="263" rx="143" ry="12" fill="#071821" opacity=".62" />
-                <path d="M102 125H35V180H6M318 125H385V180H414" fill="none" stroke="#091d28" strokeWidth="28" strokeLinejoin="round" />
-                <path d="M102 125H35V180H6M318 125H385V180H414" fill="none" stroke="#65777b" strokeWidth="15" strokeLinejoin="round" />
-                <path d="M102 125H35V180H6M318 125H385V180H414" fill="none" stroke={feedback === 'incorrect' ? '#e48571' : '#54c9c9'} strokeWidth="5" strokeLinejoin="round" />
-                <rect x="96" y="13" width="228" height="242" rx="33" fill={'url(#' + chamberId + '-steel)'} stroke="#0a1b27" strokeWidth="7" />
-                <rect x="109" y="26" width="202" height="215" rx="25" fill="#0c2230" stroke="#708b8d" strokeWidth="2" />
-                <path d="M135 27V241M285 27V241" stroke="#9db6aa" strokeWidth="3" opacity=".35" />
-                <circle cx="210" cy="133" r="97" fill="#071c29" stroke="#a5b4a1" strokeWidth="8" />
+                <image href={getVisionObject('forest-reactor')} width="420" height="525"/>
+                <g transform="translate(0 117)">
                 <circle data-reactor-ring cx="210" cy="133" r="87" fill="none" stroke="#294b58" strokeWidth="9" strokeDasharray="4 11" />
                 <circle cx="210" cy="133" r="75" fill="#062330" stroke="#0d4d59" strokeWidth="8" />
                 <motion.circle
@@ -487,6 +482,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
                     <path d="M34 104q-12-16 2-29q-5-12 9-20M386 104q12-16-2-29q5-12-9-20" fill="none" stroke="#ffc4a9" strokeWidth="7" strokeLinecap="round" />
                   </motion.g>
                 ) : null}
+                </g>
               </svg>
               <div className="pp-core-readout" aria-hidden="true">
                 <span className="pp-readout-label">GRID CHARGE</span>

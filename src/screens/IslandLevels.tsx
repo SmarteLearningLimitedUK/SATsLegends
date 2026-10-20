@@ -5,6 +5,7 @@ import { getLevelGameTitle, getLevelGroupKey } from '../utils/gameNames';
 import { UNLOCK_ALL_LEVELS } from '../app/testingFlags';
 import { ChevronDown, Lock } from 'lucide-react';
 import { GAME_SCENE_META } from '../gameSceneMeta';
+import { getVisionEnvironment } from '../games/visionScene';
 import { GAME_DIFFICULTY_LABELS, getGameDifficulty, getLevelProgressIds } from '../systems/content/gameDifficulty';
 import '../design/desktop-island-levels.css';
 
@@ -194,7 +195,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
   const totalBrainpowerTokens = eligibleLevelRows.length * TOKENS_PER_LEVEL;
   const featuredLevel = nextPlayableRow?.level ?? gameGroups[0]?.levels[0]?.level;
   const featuredScene = featuredLevel?.gameType
-    ? GAME_SCENE_META[featuredLevel.gameType]?.background
+    ? getVisionEnvironment(getLevelGroupKey(featuredLevel)) ?? GAME_SCENE_META[featuredLevel.gameType]?.background
     : undefined;
 
   return (
@@ -300,7 +301,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                     data-button-skin="none"
                   >
                     {group.levels[0]?.level.gameType && GAME_SCENE_META[group.levels[0].level.gameType]?.background ? (
-                      <img src={GAME_SCENE_META[group.levels[0].level.gameType!]?.background} className="legend-group-icon" alt="" draggable={false} loading="lazy" />
+                      <img src={getVisionEnvironment(group.id) ?? GAME_SCENE_META[group.levels[0].level.gameType!]?.background} className="legend-group-icon" alt="" draggable={false} loading="lazy" />
                     ) : <div className={`relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 md:h-12 md:w-12 ${
                       group.completedCount === group.levels.length
                         ? 'border-emerald-300 bg-emerald-500/28'

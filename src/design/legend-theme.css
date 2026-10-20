@@ -241,7 +241,7 @@
   background: var(--legend-surface) !important; border: 2px solid var(--legend-edge) !important;
   border-radius: 24px; box-shadow: var(--legend-sheen), 0 24px 70px rgba(2, 20, 43, .38);
 }
-.legend-dialog h2 { font-family: var(--font-display); font-size: calc(clamp(25px, 5vw, 34px) * var(--game-text-scale, 1.2)); line-height: 1.1; }
+.legend-dialog h2 { font-family: var(--font-display); font-size: calc(clamp(25px, 5vw, 34px) * var(--game-text-scale, 1.2)); line-height: 1.75; }
 .legend-dialog-eyebrow { font-size: calc(10px * var(--game-text-scale, 1.2)); text-transform: uppercase; letter-spacing: .16em; color: var(--legend-cyan); }
 .legend-dialog-emblem { margin: 0 auto 12px; width: 56px; height: 56px; display: grid; place-items: center; border: 2px solid #fde161; border-radius: 17px; color: var(--legend-gold); background: #2d1265; box-shadow: inset 0 2px 0 rgba(255,255,255,.18); }
 .legend-dialog-emblem svg { width: 28px; height: 28px; }
@@ -255,7 +255,7 @@
 .legend-island-root { isolation: isolate; }
 .legend-island-backdrop { position: absolute; inset: 0; z-index: -1; background-size: cover; background-position: center; opacity: .24; }
 .legend-island-root::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(#0b244a55, #081a35ee 75%); pointer-events: none; }
-.legend-island-header h1 { font-size: calc(25px * var(--game-text-scale, 1.2)); line-height: 1.1; }
+.legend-island-header h1 { font-size: calc(25px * var(--game-text-scale, 1.2)); line-height: 1.65 !important; }
 .legend-island-category { color: #90c7df; font-size: calc(11px * var(--game-text-scale, 1.2)); letter-spacing: .1em; text-transform: uppercase; }
 .legend-next-mission { border: 2px solid #c6a667; background: linear-gradient(140deg, #385064, #182e44); box-shadow: var(--legend-sheen), var(--legend-shadow); }
 .legend-next-mission .legend-eyebrow { color: #ffda8b; font-size: calc(10px * var(--game-text-scale, 1.2)); text-transform: uppercase; letter-spacing: .1em; }
@@ -339,3 +339,7 @@
 #root :is(.iphone-game-stage, .legend-dialog) :is(button, .question-title, .question-subtitle, .game-question-context, .game-question-copy) {
   text-shadow: none !important;
 }
+/* Narrow quest cards must keep wrapped task descriptions on separate lines. */
+#root [role='dialog'][aria-label='Daily Quests'] h3 { line-height:1.6; }
+/* The close control has its own row, outside the scrolling instructions. */
+.legend-dialog>.ui-close-button { position:relative!important;inset:auto!important;min-width:44px;min-height:44px;width:44px;height:44px;flex-shrink:0;align-self:flex-end; }

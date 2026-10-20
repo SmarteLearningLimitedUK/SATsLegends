@@ -74,3 +74,35 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
+/* Scrollable content has a real boundary before fixed navigation, so scrolling
+   cannot carry labels or hit areas underneath the HUD or dock. */
+#root .screen-world-map>.app-screen-content {
+  margin-bottom:calc(74px / var(--game-stage-scale,1));
+  padding-bottom:0!important;
+  min-height:0;
+}
+#root .app-viewport:is(.screen-shop,.screen-settings,.screen-wellbeing-hub,.screen-wellbeing-activity)>.app-screen-content {
+  margin-top:calc(80px / var(--game-stage-scale,1));
+  margin-bottom:calc(74px / var(--game-stage-scale,1));
+  padding-block:0!important;
+  min-height:0;
+  overflow:hidden!important;
+}
+#root .screen-shop .hub-wide-shop { padding-top:0; }
+#root .screen-settings :is(.adventure-settings-root,.adventure-settings-scroll) { height:100%;max-height:100%; }
+#root .screen-settings .adventure-settings-scroll { padding-top:8px; }
+#root .app-viewport:is(.screen-wellbeing-hub,.screen-wellbeing-activity) .wellbeing-shell { padding-top:8px; }
+/* Viewport breakpoints can exceed the narrower game stage. Size these grids
+   from their actual available width so action labels retain enough space. */
+#root .hub-wide-shop .hub-wide-page-grid {
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));
+}
+#root .player-profile-arcade nav[aria-label='Player activities'] {
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));
+}
+#root .player-profile-arcade nav[aria-label='Player activities']>* {
+  grid-column:auto;
+  min-width:0;
+  white-space:normal;
+  overflow-wrap:anywhere;
+}

@@ -1,5 +1,8 @@
 import { playMonsterSound } from '../audio/gameAudio';
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import VisionCharacter from '../components/game-ui/VisionCharacter';
+import React, { useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { VisionSceneContext } from './visionScene';
+import {originalHeroId} from '../assets/characters/originalHeroes';
 import { AnimatePresence, motion, useIsPresent, useReducedMotion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import takeOutLevelBg from '../assets/maps/teen/restaurant-rush.webp';
@@ -17,7 +20,8 @@ import { triggerHaptic } from '../haptics';
 import CelebrationSplash from '../components/CelebrationSplash';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
-import './take-out-rush.css';
+import DinerCookingStation from './DinerCookingStation';
+import './takeout-diner.css';
 
 interface TakeOutRushGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -134,21 +138,7 @@ const FOOD_ITEMS: FoodItem[] = [
   },
 ];
 
-const loadSortedImages = (record: Record<string, string>) => (
-  Object.entries(record)
-    .sort(([a], [b]) => {
-      const anum = Number(a.match(/(\d+)/)?.[1] ?? 0);
-      const bnum = Number(b.match(/(\d+)/)?.[1] ?? 0);
-      return anum - bnum;
-    })
-    .map(([, value]) => value)
-);
-
-const takeOutMonsterImages = loadSortedImages(
-  import.meta.glob('../assets/take_out/monsters/*.png', { eager: true, import: 'default' }) as Record<string, string>,
-);
-
-const MONSTER_IMAGES = takeOutMonsterImages;
+const CUSTOMER_CAST = ['goblin', 'slime', 'jelly', 'rhino'] as const;
 
 const ITEM_BY_ID: Record<string, FoodItem> = FOOD_ITEMS.reduce<Record<string, FoodItem>>((map, item) => {
   map[item.id] = item;
@@ -328,6 +318,8 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
   isPractice,
 }) => {
   const reducedMotion = useReducedMotion();
+  const scene = useContext(VisionSceneContext);
+  const customerScene = useMemo(() => ({ key: scene.key, paused: scene.paused, cue: 'idle' as const, sequence: 0 }), [scene.key, scene.paused]);
   const isPresent = useIsPresent();
   const presentRef = useRef(isPresent);
   presentRef.current = isPresent;
@@ -338,11 +330,12 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
   const [Combo, setStreak] = useState(0);
   const [ordersServed, setOrdersServed] = useState(0);
   const shiftElapsed = ROUND_DURATION_SECONDS - timeLeft;
-  const arrivals = 1 + Math.floor(shiftElapsed / 20);
+  const arrivals = 3 + Math.floor(shiftElapsed / 20);
   const queuedCustomers = Math.max(0, arrivals - ordersServed);
   const [wrongOrders, setWrongOrders] = useState(0);
   const [feedback, setFeedback] = useState<FeedbackState | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [preparation, setPreparation] = useState<{ itemId: string; sequence: number } | null>(null);
   const [isResolvingOrder, setIsResolvingOrder] = useState(false);
   const [showCelebrationSplash, setShowCelebrationSplash] = useState(false);
   const [orderStartMs, setOrderStartMs] = useState<number>(() => Date.now());
@@ -654,6 +647,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     triggerHaptic('selection');
     selectedIdsRef.current = [...selectedIdsRef.current, itemId];
     setSelectedIds(selectedIdsRef.current);
+    setPreparation(previous => ({ itemId, sequence: (previous?.sequence ?? 0) + 1 }));
   };
 
   const removeSelectedItem = (itemId: string) => {
@@ -710,45 +704,61 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
           <span>Kitchen closes in {timeLeft}s</span><span>{XP} XP</span>
           <div style={{ width: `${timerProgress * 100}%`, backgroundColor: timerFillColor }} />
         </div>}
-        <GameQuestionCard title="Order ticket"
-          subtitle={`${isPractice ? 'Practice exact orders.' : 'Wrong orders cost one heart.'}${activeConstraints.minItems > 1 ? ` Use at least ${activeConstraints.minItems} portions.` : ''}`}
+        <GameQuestionCard title="Order ticket" context=""
+          subtitle={`${isPractice ? 'Practice orders' : 'Wrong order: lose a heart'}${activeConstraints.minItems > 1 ? ` · ${activeConstraints.minItems}+ portions` : ''}`}
           className="rush-mission" style={{ position: 'relative', top: 0, width: '100%', transform: 'none' }}>
-          Build an order worth <strong>{asDisplayFraction(order.target)}</strong>.
+          Choose portions that add up to <strong>{asDisplayFraction(order.target)}</strong> of a whole meal.
         </GameQuestionCard>
 
         <section data-takeout-playfield className={`rush-kitchen${overTarget ? ' is-overfilled' : ''}`}
           data-takeout-target={`${order.target.n}/${order.target.d}`} data-takeout-total={`${runningTotal.n}/${runningTotal.d}`}>
           <div className="rush-order-rail">
             <span>Ticket #{ordersServed + 1}</span>
-            <strong>{rushPressure === 'last-orders' ? 'Last orders! Closing soon.' : Combo > 0 ? `Perfect service ×${Combo}` : 'Your café. Your moment.'}</strong>
+            <strong>{rushPressure === 'last-orders' ? 'Last orders!' : Combo > 0 ? `Perfect service ×${Combo}` : 'Customer counter'}</strong>
             {useSharedTopHud && <span className="rush-shift-clock" data-takeout-clock data-urgent={timeLeft <= 30} aria-label={`${timeLeft} seconds left`}>{timeLeft}s</span>}
           </div>
-          <div className="rush-steam" aria-hidden="true"><i /><i /><i /></div>
-          <div className="rush-queue" data-customer-queue={queuedCustomers}>
-            <span className="rush-queue-status" role="status">{queuedCustomers ? `${queuedCustomers} waiting · Next arrival in ${20 - shiftElapsed % 20}s` : `Next customer in ${20 - shiftElapsed % 20}s`}</span>
-            <AnimatePresence initial={false}>{Array.from({length:queuedCustomers},(_,index)=>{
+          <div className="rush-customer-quip" role="status">{queuedCustomers ? customerLine : 'Your next customer is on the way.'}</div>
+          <div className="rush-queue" data-customer-queue={queuedCustomers} aria-label="Monster customer queue">
+            <VisionSceneContext.Provider value={customerScene}>
+            <AnimatePresence initial={false} mode="popLayout">
+            {Array.from({length:Math.min(5,queuedCustomers)},(_,index)=>{
               const customerId=ordersServed+index;
               const wait=Math.max(0,shiftElapsed-customerId*20);
-              return <motion.div key={customerId} className="rush-queued-customer" data-impatience={wait>=40?'urgent':wait>=20?'restless':'calm'}
-                initial={reducedMotion?false:{x:-80,opacity:0}} animate={{x:0,opacity:1}} exit={{x:80,opacity:0}}
-                transition={{duration:reducedMotion?0:.65,ease:'easeInOut'}} layout={!reducedMotion}>
-                {index===0&&<div className="rush-customer-quip">{wait>=40?'Please! My order is still waiting!':wait>=20?'Is my food ready yet?':customerLine}</div>}
-                <img src={MONSTER_IMAGES[customerId%MONSTER_IMAGES.length]} alt={index===0?'Your hungry customer':'Customer waiting in the queue'} draggable={false}/>
-                <span className="rush-patience">{wait>=40?'Very impatient':wait>=20?'Getting impatient':'Waiting'}</span>
+              return <motion.div key={customerId} layout={!reducedMotion && !scene.paused}
+                initial={reducedMotion ? false : { opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }}
+                exit={reducedMotion ? { opacity: 0 } : { opacity: 0, x: 35 }} transition={{ duration: reducedMotion ? 0 : .45, ease: 'easeOut' }}
+                className="rush-queued-customer" data-queue-position={index} data-customer-id={customerId} data-impatience={wait>=40?'urgent':wait>=20?'restless':'calm'}>
+                <VisionCharacter steady identity={CUSTOMER_CAST[customerId%CUSTOMER_CAST.length]} alt={index===0?'Monster ordering at the counter':'Monster waiting in the queue'}/>
+                <span className="rush-customer-position">{index === 0 ? 'Your order, please!' : 'Waiting'}</span>
               </motion.div>;
-            })}</AnimatePresence>
+            })}
+            </AnimatePresence>
+            </VisionSceneContext.Provider>
           </div>
+          <span className="rush-queue-status" role="status">{queuedCustomers} waiting · {ordersServed} served · Next: {20 - shiftElapsed % 20}s</span>
+        </section>
 
+        <section className="rush-server-bay" aria-label="Chef cooking behind the counter"
+          data-chef-preparation={preparation?.sequence ?? 0} data-chef-cooking={selectedIds.length > 0 && !isResolvingOrder}>
+          <span className="rush-chef-sign">Sizzle · plate · serve</span>
+          <VisionSceneContext.Provider value={customerScene}>
+            <VisionCharacter steady activity={selectedIds.length?'cook':'idle'} identity={originalHeroId(scene.heroIdentity)} alt="Your hero chef"
+              reaction={preparation && selectedIds.length ? 'taunt' : 'idle'} reactionKey={preparation?.sequence} />
+          </VisionSceneContext.Provider>
+          <DinerCookingStation sequence={preparation?.sequence ?? 0}
+            food={preparation && selectedIds.length > 0 ? ITEM_BY_ID[preparation.itemId].image : undefined}
+            cold={preparation ? ![food8,food9].includes(ITEM_BY_ID[preparation.itemId].image) : false}
+            serving={isResolvingOrder && feedback?.tone === 'success'} />
         </section>
 
         <div className="rush-responses" data-takeout-responses>
           <motion.div className={`rush-counter${overTarget ? ' is-overfilled' : ''}`} data-takeout-tray
-            animate={feedback?.tone === 'success' && !reducedMotion ? { x: [0, 12, 0], y: [0, -4, 0] } : { x: 0, y: 0 }} transition={{ duration: .45 }}>
+            animate={{ x: 0, y: 0 }}>
             <div className="rush-tray-label"><span>Your tray <strong>{asDisplayFraction(runningTotal)}</strong> / {asDisplayFraction(order.target)}</span>
               <span>{overTarget ? 'Too much! Remove a portion.' : isExact && !constraintsMet ? `Need ${activeConstraints.minItems} portions.` : isExact ? 'Exact. Order up!' : 'Build the exact total.'}</span>
             </div>
             <div className="rush-tray-items" style={{ gridTemplateColumns: `repeat(${Math.max(1, trayGroups.length)}, minmax(0, 1fr))` }}>
-              <AnimatePresence initial={false}>
+              <AnimatePresence initial={false} mode="popLayout">
                 {trayGroups.map(({ item, count }) => <motion.button key={item.id} type="button"
                   data-takeout-remove={item.id} aria-label={`Remove one ${asDisplayFraction(item.value)} portion`}
                   disabled={!isPresent || isResolvingOrder || roundFinished || sharedLivesBlocked} onClick={() => removeSelectedItem(item.id)}
@@ -768,8 +778,8 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
               <FoodSprite item={item} /><strong>{asDisplayFraction(item.value)}</strong>
             </button>)}
           </div>
-          <div className={`rush-feedback${feedback?.tone === 'error' ? ' is-error' : ''}`} role="status" aria-live="polite">
-            {feedback?.text || (Combo > 0 ? 'Keep the combo alive. Exact portions only.' : 'Build the exact order. Three perfect orders earn a +60 XP service stamp.')}
+          <div className={`rush-feedback${feedback?.tone === 'error' ? ' is-error' : ''}`} data-feedback-active={Boolean(feedback)} role="status" aria-live="polite">
+            {feedback?.text || (Combo > 0 ? 'Keep the combo alive.' : 'Choose portions to match the ticket.')}
           </div>
           <div className="rush-actions">
             <button type="button" onClick={clearTray} disabled={!isPresent || !selectedIds.length || isResolvingOrder || roundFinished || sharedLivesBlocked} className="ui-button-secondary">Reset tray</button>

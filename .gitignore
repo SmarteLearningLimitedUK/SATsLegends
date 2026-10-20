@@ -1,6 +1,11 @@
 node_modules/
 build/
 dist/
+dist-ios/
+native/ios/App/App/public/
+native/ios/App/App/capacitor.config.json
+native/ios/**/xcuserdata/
+native/ios/**/.build/
 coverage/
 .DS_Store
 *.log

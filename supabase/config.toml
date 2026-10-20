@@ -1,5 +1,9 @@
 project_id = "sats-legends"
 
+[functions.apple-subscriptions]
+# The handler validates the parent JWT with Auth.getUser before any lookup/write.
+verify_jwt = false
+
 [functions.billing]
 # JWT is verified explicitly with Auth.getUser for every authenticated action.
 verify_jwt = false

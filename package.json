@@ -25,9 +25,20 @@
     "verify:family-auth": "node scripts/verify-family-auth-flow.mjs",
     "verify:return-path": "tsx scripts/verify-return-path.ts",
     "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "build:ios": "node --max-old-space-size=4096 ./node_modules/vite/bin/vite.js build --mode ios",
+    "ios:sync": "npm run build:ios && cap sync ios",
+    "ios:open": "cap open ios",
+    "ios:run": "cap run ios",
+    "ios:check:release": "node scripts/ios-release-config.mjs",
+    "ios:build:simulator": "node scripts/build-ios-simulator.mjs",
+    "dev:ios": "vite --mode ios --port 3013 --host 127.0.0.1",
+    "verify:ios": "node scripts/verify-ios-app.mjs"
   },
   "dependencies": {
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/core": "^8.5.3",
+    "@capacitor/ios": "^8.5.3",
     "@fontsource-variable/fredoka": "^5.3.0",
     "@fontsource/baloo-2": "^5.3.0",
     "@google/genai": "^1.29.0",
@@ -47,6 +58,7 @@
     "zustand": "^5.0.12"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.5.3",
     "@electric-sql/pglite": "^0.3.14",
     "@playwright/test": "^1.59.1",
     "@types/canvas-confetti": "^1.9.0",

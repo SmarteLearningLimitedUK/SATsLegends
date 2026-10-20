@@ -5,6 +5,8 @@ import { hasMathariaAccess, useFamily } from './FamilyAccount';
 import { billingRequest, openBilling } from './services/supabase';
 import { englishReleased } from './englishRelease';
 import ReleasedSubscriptions from './ReleasedSubscriptions';
+import { IS_IOS_APP } from '../platform/nativeApp';
+import AppleSubscriptions from '../platform/ios/IOSSubscriptionScreen';
 
 type Interval = 'month' | 'year';
 type Plan = { product: string; interval: Interval; available: boolean; amount: number; currency: string };
@@ -14,6 +16,7 @@ const features = ['Matharia maths challenges', 'One child profile', 'Saved progr
 const formatPounds = (pence: number) => new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(pence / 100);
 
 export default function Subscriptions() {
+  if (IS_IOS_APP) return <AppleSubscriptions />;
   return englishReleased ? <ReleasedSubscriptions /> : <MathariaSubscriptions />;
 }
 

@@ -4,6 +4,8 @@ import { ArrowRight, Eye, EyeOff, Gem, X } from 'lucide-react';
 import barratt from '../assets/characters/mobile/Barratt/barratt_happy.png';
 import { useFamily } from './FamilyAccount';
 import { appleAuthEnabled, googleAuthEnabled, passkeyAuthEnabled, safeReturnPath, supabase } from './services/supabase';
+import { IS_IOS_APP } from '../platform/nativeApp';
+import { accountReturnUrl } from '../platform/ios/nativeAuthReturn';
 
 export default function ParentAccount({ mode }: { mode: 'signup' | 'login' | 'forgot' | 'reset' }) {
   const family = useFamily();
@@ -45,7 +47,7 @@ export default function ParentAccount({ mode }: { mode: 'signup' | 'login' | 'fo
     try {
       if (signup) {
         const result = await supabase.auth.signUp({ email, password, options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+          emailRedirectTo: accountReturnUrl(`/auth/callback?next=${encodeURIComponent(next)}`),
           data: { report_emails: data.get('reports') === 'on' },
         } });
         if (result.error) throw result.error;
@@ -53,7 +55,7 @@ export default function ParentAccount({ mode }: { mode: 'signup' | 'login' | 'fo
         if (result.data.session) navigate(next, { replace: true });
         else setMessage('Check your email to confirm your parent account, then log in to choose your subscription.');
       } else if (mode === 'forgot') {
-        const result = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/reset-password` });
+        const result = await supabase.auth.resetPasswordForEmail(email, { redirectTo: accountReturnUrl('/reset-password') });
         if (result.error) throw result.error;
         form.reset();
         form.querySelector<HTMLInputElement>('input[name="email"]')?.blur();
@@ -113,7 +115,7 @@ export default function ParentAccount({ mode }: { mode: 'signup' | 'login' | 'fo
         {signup && <><label className="family-checkbox"><input type="checkbox" required disabled={!family.configured || busy} />I’m the child’s parent or guardian and I’m creating my own account.</label><label className="family-checkbox"><input type="checkbox" name="reports" defaultChecked disabled={!family.configured || busy} />Email me my child’s progress on Sundays at 3 pm and Wednesdays at 4 pm, UK time. I can turn these emails off in my account.</label></>}
         <button className="website-button website-button-gold" type="submit" disabled={!family.configured || busy}>{busy ? 'Please wait…' : signup ? 'Create parent account' : mode === 'forgot' ? 'Send reset link' : mode === 'reset' ? 'Save new password' : 'Log in'}<ArrowRight size={19} /></button>
       </form>
-      {(mode === 'signup' || mode === 'login') && (googleAuthEnabled || appleAuthEnabled || passkeyAuthEnabled) && <div className="website-alternative-auth">
+      {!IS_IOS_APP && (mode === 'signup' || mode === 'login') && (googleAuthEnabled || appleAuthEnabled || passkeyAuthEnabled) && <div className="website-alternative-auth">
         <p className="website-auth-divider"><span>Or continue securely</span></p>
         {(googleAuthEnabled || appleAuthEnabled) && <>
           <label className="family-checkbox website-social-consent"><input type="checkbox" checked={socialConsent} onChange={event => setSocialConsent(event.target.checked)} disabled={busy} />I’m the parent or guardian creating or accessing this family account.</label>
