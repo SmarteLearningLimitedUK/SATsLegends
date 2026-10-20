@@ -44,3 +44,9 @@ Release evidence is collected under ignored `qa-artifacts/website-assets`, `qa-a
 - Visually inspected desktop home, parents, English and signup captures. Source artwork is decoded before full-page review so below-the-fold lazy images are included.
 - WebKit verification is outstanding: its executable was absent and Windows refused the downloaded executable with EPERM. System CA trust resolved the initial download-certificate error, but did not resolve the executable write failure. These checks are Chromium layout emulation, not iPhone/iPad device certification.
 - FTPS login/read check and the dry-run upload plan passed. Publication status is recorded after the actual upload.
+
+### Published
+
+Published to **https://satslegends.com/** through the verified FTPS publisher. Release source: `1ccdc7f7e0ef759a4ac2c6ed333c0a16e8319157`; release ID `b9388fb1-5c06-4e72-9feb-8a98bb3b7ba0`. Uploaded 141 changed files (8.1 MB) from a 609-file combined artifact. Publisher confirmed successful website, Matharia and Lexcoria publication and HTTPS verification. Source changes were pushed to `codex/secure-ftps-publish` in the SATsLegends repository.
+
+Fresh live-browser checks cover home, parents, English, login and subscription routes at phone (390 × 844), tablet (834 × 1112) and desktop (1440 × 900) sizes. Check real source-resource dimensions for responsive images: browser `naturalWidth` is density-corrected for `srcset` and is not the stored file's pixel width.

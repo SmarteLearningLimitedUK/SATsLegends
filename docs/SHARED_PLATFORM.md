@@ -50,9 +50,9 @@ Before live activation: release the RLS migration to production and verify renew
 
 ## Purchase integration contract
 
-### Prepared foundation, 20 October 2026 — not deployed
+### Prepared backend foundation, 20 October 2026 — stores disabled
 
-The owner confirmed that neither mobile store is ready. The following code is prepared and tested locally; it does **not** enable mobile purchases:
+The owner confirmed that neither mobile store is ready. The following backend code is prepared and tested locally; it does **not** enable mobile purchases. The account UI shipped with the subsequent website artwork/content refresh, using the old-schema Stripe fallback until the backend migration is released. Neither the store migration nor the updated billing function has been deployed:
 
 - Migration `20261020144412_shared_store_entitlements.sql` adds a server-only entitlement ledger, immutable parent ownership through its ingestion RPC, separate sandbox/production identities and disabled-by-default provider settings. No receipt verifier or public grant endpoint exists.
 - `apply_verified_store_entitlement` is executable only by the server role. It accepts normalized **already verified** state; it does not verify Apple signatures or Google tokens. A future verifier must validate app/package ID, environment, product mapping, account binding and current provider state before calling it. Use a SHA-256 purchase identity; retain any raw Google token needed for reconciliation in separate protected server storage, not in client-visible account data.
