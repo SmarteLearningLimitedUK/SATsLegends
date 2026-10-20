@@ -42,6 +42,7 @@ jobs:
           npm run verify:family-db
           npm run verify:admin-db
           npm run verify:production-db
+          npm run verify:store-entitlements
           node scripts/verify-stripe-subscription-mapping.mjs
       - uses: denoland/setup-deno@v2
         with:

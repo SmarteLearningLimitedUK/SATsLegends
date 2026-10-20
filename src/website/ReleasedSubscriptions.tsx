@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowRight, BookOpen, Check, Gamepad2, Mail } from 'lucide-react';
 import { hasGameAccess, useFamily } from './FamilyAccount';
 import { billingRequest, openBilling } from './services/supabase';
@@ -27,6 +27,7 @@ const formatPounds = (pence: number) => new Intl.NumberFormat('en-GB', { style: 
 
 export default function ReleasedSubscriptions() {
   const family = useFamily();
+  const navigate = useNavigate();
   const [query] = useSearchParams();
   const requested = query.get('product');
   const [selected, setSelected] = useState<Product>(requested === 'english' || requested === 'bundle' ? requested : 'matharia');
@@ -64,6 +65,9 @@ export default function ReleasedSubscriptions() {
     catch (caught) { setError(caught instanceof Error ? caught.message : 'Unable to open checkout.'); setBusy(''); }
   }
   async function manage() {
+    if (family.subscriptions.some(subscription => subscription.provider === 'apple' || subscription.provider === 'google')) {
+      navigate('/parent#subscription-management'); return;
+    }
     setBusy('portal'); setError('');
     try { openBilling((await billingRequest({ action: 'portal' })).url); }
     catch (caught) { setError(caught instanceof Error ? caught.message : 'Unable to open billing.'); setBusy(''); }

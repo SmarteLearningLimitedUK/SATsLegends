@@ -34,6 +34,10 @@ Deno.serve(async request => {
       const suspension = checked(await db.from('account_suspensions').select('parent_id')
         .eq('parent_id', parent.id).is('cleared_at', null).maybeSingle());
       requireCheckoutAccountActive(Boolean(suspension));
+      const storeConflict = checked(await db.rpc('store_access_conflicts', {
+        target_parent: parent.id, target_product: body.product,
+      }));
+      if (storeConflict) throw new HttpError(409, 'This access is already covered by an Apple or Google subscription. Manage it in your parent account.');
     }
     const existing = checked(await db.from('stripe_customers').select('customer_id').eq('parent_id', parent.id).maybeSingle());
     let customerId = existing?.customer_id;

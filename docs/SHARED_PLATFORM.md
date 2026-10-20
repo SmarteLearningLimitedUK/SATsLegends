@@ -50,6 +50,39 @@ Before live activation: release the RLS migration to production and verify renew
 
 ## Purchase integration contract
 
+### Prepared foundation, 20 October 2026 — not deployed
+
+The owner confirmed that neither mobile store is ready. The following code is prepared and tested locally; it does **not** enable mobile purchases:
+
+- Migration `20261020144412_shared_store_entitlements.sql` adds a server-only entitlement ledger, immutable parent ownership through its ingestion RPC, separate sandbox/production identities and disabled-by-default provider settings. No receipt verifier or public grant endpoint exists.
+- `apply_verified_store_entitlement` is executable only by the server role. It accepts normalized **already verified** state; it does not verify Apple signatures or Google tokens. A future verifier must validate app/package ID, environment, product mapping, account binding and current provider state before calling it. Use a SHA-256 purchase identity; retain any raw Google token needed for reconciliation in separate protected server storage, not in client-visible account data.
+- Duplicate/older verification snapshots are ignored. `verified_at` must be a server-generated verification ordering value, never a device timestamp. Future handlers must serialize verification per purchase, re-query authoritative provider state for notifications, and handle Google linked-token upgrades before ingestion. Database ordering alone does not verify a webhook or resolve stale provider responses.
+- `account_subscriptions()` projects safe Stripe/store summaries for the authenticated parent only. Purchase hashes and raw receipts are not exposed. A verified grace period maps to active access through the supplied grace expiry. Pending, held, paused, expired and revoked purchases do not grant access. Cancellation is an active paid period with renewal off until expiry.
+- Existing `has_game_access`, child creation and cloud-save validation now consume this shared account access. Stripe and complimentary access remain supported. Reports retain the same parent/child/game keys, and losing access does not erase saved report data.
+- The website account loader uses the shared summary, with fallback to the old Stripe query only if the RPC is absent during staged rollout (`PGRST202`). Other failures remain visible. Apple/Google subscriptions have their own renewal-management links; they are not sent to Stripe's portal.
+- Web checkout checks for overlapping active store coverage before creating a Stripe customer/session. This does not replace the equivalent native pre-purchase check, cross-channel race handling or reconciliation of previously open checkouts.
+
+Verification: 13 PGlite integration checks pass for default-off state, environment separation, Apple/Google/bundle access, one-child enforcement, cloud saves, ownership isolation, restore conflicts, replay ordering, cancellation, revocation, expiry, existing Stripe/complimentary access and deletion protection. Browser API fixtures pass for shared child reports, correct store-management links, foreground refresh, old-schema fallback and visible permission failures. Fixtures are not store sandbox purchase tests.
+
+Deployment order when approved: apply the migrations to testing, verify the RPC permissions and existing Stripe regression there, deploy the billing function, then publish the website. Repeat the reviewed migration/function/site order for production. Both store providers must remain disabled until their complete integration passes release checks. The additional RLS migration also remains pending in production.
+
+Files changed for this foundation:
+
+- `supabase/migrations/20261020144412_shared_store_entitlements.sql` and `supabase/functions/billing/index.ts`: ledger, shared access and web checkout conflict check.
+- `src/website/FamilyAccount.tsx`, `src/website/ParentArea.tsx`, `src/website/Subscriptions.tsx`, `src/website/ReleasedSubscriptions.tsx`: account loading and subscription management.
+- `scripts/verify-store-entitlements.mjs`, `scripts/verify-family-auth-flow.mjs`, `scripts/verify-lexcoria-readiness.mjs`, `package.json`, `.github/workflows/quality.yml`: verification and CI.
+- `docs/SHARED_PLATFORM.md`: status and release requirements.
+
+Assumptions: one shared production backend, the same authenticated parent account on each client, one child profile per current plan, and separate game access unless the purchased product is a bundle. No external legacy project assumptions were used.
+
+Still required before any claim of cross-platform purchase support:
+
+1. Apple paid membership/App Store Connect and Google Play Console, app entries and real approved product IDs.
+2. StoreKit and Google Billing clients, authenticated purchase binding, Restore Purchases and native account/deep-link handling. Update and test both the native app source and pinned Lexcoria client against the new account projection; they were not modified in this pass.
+3. Server receipt/API verification, product allowlists, secure reconciliation credentials/token storage, Apple notifications, authenticated Google RTDN and Google acknowledgement/retry handling.
+4. Device tests for web-to-app and app-to-web access, saved reports, renewals, verified grace, refunds/revocations, restored purchases, upgrades/linked tokens, wrong-account restores and prevention of duplicate subscriptions.
+5. Enable each provider in the correct backend/environment only after those tests pass. Never enable sandbox access in the production service.
+
 The payment provider collects payment; the shared backend decides access.
 
 | Purchase channel | Payment mechanism | Required server input |

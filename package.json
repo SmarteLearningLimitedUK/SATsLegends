@@ -22,6 +22,7 @@
     "verify:website-release": "node scripts/verify-website-release.mjs",
     "verify:family-db": "node scripts/verify-family-database.mjs",
     "verify:production-db": "node scripts/verify-production-database.mjs",
+    "verify:store-entitlements": "node scripts/verify-store-entitlements.mjs",
     "verify:admin-db": "node scripts/verify-admin-database.mjs",
     "verify:responsive": "node scripts/verify-responsive-experience.mjs",
     "verify:critical-game-viewports": "node scripts/verify-critical-game-viewports.mjs",

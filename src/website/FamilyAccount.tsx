@@ -3,7 +3,7 @@ import type { Session } from '@supabase/supabase-js';
 import { accountsConfigured, supabase } from './services/supabase';
 
 export type ChildProfile = { id: string; parent_id: string; nickname: string };
-export type Subscription = { id: string; product_code: string; status: string; interval: 'month' | 'year'; current_period_end: string; cancel_at_period_end: boolean };
+export type Subscription = { id: string; product_code: string; status: string; interval: 'month' | 'year'; current_period_end: string; cancel_at_period_end: boolean; provider?: 'stripe' | 'apple' | 'google' };
 export type ComplimentaryAccess = { product_code: string; valid_until: string; revoked_at: string | null };
 type Settings = { report_emails: boolean; next_report_at: string };
 type Family = {
@@ -26,6 +26,16 @@ export const hasGameAccess = (product: 'matharia' | 'english', subscriptions: Su
 
 export const hasMathariaAccess = (subscriptions: Subscription[], complimentary: ComplimentaryAccess[] = []) =>
   hasGameAccess('matharia', subscriptions, complimentary);
+
+async function loadSubscriptions() {
+  const result = await supabase!.rpc('account_subscriptions');
+  // Permit a staged release against the old Stripe-only schema. Other errors
+  // must remain visible rather than silently hiding store access.
+  if (result.error?.code === 'PGRST202') {
+    return supabase!.from('subscriptions').select('id,product_code,status,interval,current_period_end,cancel_at_period_end');
+  }
+  return result;
+}
 
 export default function FamilyAccount({ children: content }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
@@ -64,7 +74,7 @@ export default function FamilyAccount({ children: content }: { children: ReactNo
     try {
       const [profiles, billing, preferences, grants, staff] = await Promise.all([
         supabase.from('child_profiles').select('id,parent_id,nickname').order('created_at'),
-        supabase.from('subscriptions').select('id,product_code,status,interval,current_period_end,cancel_at_period_end'),
+        loadSubscriptions(),
         supabase.from('parent_settings').select('report_emails,next_report_at').single(),
         supabase.from('complimentary_access').select('product_code,valid_until,revoked_at'),
         supabase.rpc('is_staff'),

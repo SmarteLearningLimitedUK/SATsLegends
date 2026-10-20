@@ -62,6 +62,7 @@ try {
       if (url.pathname.endsWith('/user')) return reply(user);
       if (url.pathname.endsWith('/child_profiles')) return reply([{ id: childId, parent_id: parentId, nickname: 'EnglishLegend' }]);
       if (url.pathname.endsWith('/subscriptions')) return reply([]);
+      if (url.pathname.endsWith('/rpc/account_subscriptions')) return reply([]);
       if (url.pathname.endsWith('/complimentary_access')) return reply(entitled ? [{ product_code: 'english', valid_until: new Date(Date.now() + 86400000).toISOString(), revoked_at: null }] : []);
       if (url.pathname.endsWith('/parent_settings')) return reply({ report_emails: false, next_report_at: null });
       if (url.pathname.endsWith('/rpc/is_staff')) return reply(false);
