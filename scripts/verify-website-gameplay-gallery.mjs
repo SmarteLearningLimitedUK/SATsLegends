@@ -11,7 +11,7 @@ for (const profile of [
   { name: 'phone', engine: chromium, width: 390, height: 844 },
   { name: 'small-phone', engine: chromium, width: 320, height: 750 },
   { name: 'webkit-phone', engine: webkit, width: 390, height: 844 },
-]) {
+].filter(profile => !process.env.GALLERY_QA_ENGINES || process.env.GALLERY_QA_ENGINES.split(',').includes(profile.engine === chromium ? 'chromium' : 'webkit'))) {
   const browser = await profile.engine.launch();
   try {
     const page = await browser.newPage({ viewport: { width: profile.width, height: profile.height }, reducedMotion: 'reduce' });
@@ -25,13 +25,15 @@ for (const profile of [
       for (const [index, name] of games.entries()) {
         const button = gallery.getByRole('button', { name: `Enlarge ${name} screenshot` });
         await button.scrollIntoViewIfNeeded();
-        await expect.poll(() => button.locator('img').evaluate(image => image.naturalWidth)).toBe(780);
+        await expect.poll(() => button.locator('img').evaluate(image => image.complete && image.naturalWidth > 0 && image.currentSrc.includes('-desktop')), { timeout: 20000 }).toBe(true);
+        await expect(button.locator('img')).toHaveAttribute('srcset', /1440w, .*2880w/);
         const originalOverflow = await page.evaluate(() => document.body.style.overflow);
         await button.click();
         const viewer = page.getByRole('dialog', { name });
         await expect(viewer).toBeVisible();
         await expect(viewer.getByRole('heading', { name, exact: true })).toBeVisible();
         await expect(viewer.locator('img')).toBeVisible();
+        await expect.poll(() => viewer.locator('img').evaluate(image => image.naturalWidth)).toBe(2880);
         await expect(viewer.getByRole('button', { name: 'Close screenshot' })).toBeFocused();
         const picture = await viewer.locator('img').boundingBox();
         expect(picture.x).toBeGreaterThanOrEqual(0);

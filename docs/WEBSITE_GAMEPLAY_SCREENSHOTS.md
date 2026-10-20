@@ -1,10 +1,18 @@
 # Minigame screenshots on the website
 
-## Current update — 20 October 2026
+## Current update — after local game synchronization, 20 October 2026
 
-The gallery now uses fresh desktop screenshots, not the portrait images described in the historical notes below. It shows two landscape columns on desktop/tablet and a single column on phones. Full-size images are 2560 × 1600 with separate 1280 × 800 responsive preview JPEGs. See `HOMEPAGE_REFRESH_2026-10-20.md` for the current scope and verification.
+All four gallery scenes were recaptured from the newly published Matharia source snapshot (`3ae32a9087b592cfcb2b420ea5606f293e5cd0dce0b7c2622fdb2dcde373499b`), replacing the older artwork in both previews and enlarged views. The homepage and parents page share this gallery. Captures show the current detailed rhino and adventurer, fraction tile board, crystal cannon in the frozen courtyard, and copper cauldron in the woodland workshop.
 
-Capture current desktop assets with `LEGENDS_CAPTURE_FORMAT=desktop node scripts/capture-website-gameplay.mjs` against the local dev server. The default capture mode still produces portrait references. `GALLERY_QA_ENGINES=chromium` explicitly limits gallery verification to available Chromium; the default also attempts WebKit. This refresh was verified in Chromium only.
+Captures use 1440 × 900 CSS pixels at 2× density. Full-size JPEGs are 2880 × 1800 and responsive previews are 1440 × 900. They preserve the actual desktop screen without cropping or compositing. Questions vary because practice rounds are randomised; no real parent account or child's progress was used. Captures were visually inspected, including the place-value labels and current control dock.
+
+`node scripts/capture-website-gameplay.mjs` captures the current catalog against the local development server (or `LEGENDS_CAPTURE_URL`). Desktop is now the default; portrait mode stops with a clear message because current Matharia gameplay requests landscape. The optional `LEGENDS_CAPTURE_GAMES` can restrict a reference capture; a publishable manifest requires all four scenes.
+
+`capture-manifest.json` records the Matharia snapshot, capture commit, routes, questions and SHA-256 digests of all eight images. `scripts/verify-website-gameplay-source.mjs` checks that they match the current game snapshot and file contents. The publisher runs this check before building, preventing another game snapshot being published with stale gallery captures.
+
+Updated files: eight desktop JPEGs and their capture manifest under `src/assets/website/gameplay`, `src/website/GameplayGallery.tsx` (dimensions and accurate image descriptions), `gameplay-gallery.css` (matching aspect-ratio notation), `scripts/capture-website-gameplay.mjs`, `verify-website-gameplay-gallery.mjs`, `verify-website-gameplay-source.mjs`, `publish-site.mjs` and this document. Assumptions: replace every existing gameplay screenshot, retain the established gallery and actual-game content. No external legacy assumptions were used.
+
+Gallery verification covers home and parents at 1440, 768, 390 and 320 px, full-resolution sources, Close/Escape, focus restoration and horizontal overflow. `GALLERY_QA_ENGINES=chromium` selects the available engine. These checks use browser emulation, not physical Safari/iOS hardware.
 
 ## Historical portrait implementation
 
@@ -39,3 +47,7 @@ Completed verification: TypeScript, FTP and preview builds passed. The gallery p
 - This document and the appended `docs/WEBSITE_NOTES.md` entry.
 
 Assumptions: screenshots belong on the home and parent information pages; current practice-mode screens are representative examples; original portrait framing should be preserved. Changes are limited to the screenshot feature. No external legacy project assumptions were used.
+
+## Verification of the post-sync captures
+
+All eight JPEG dimensions were checked. TypeScript, the capture-source/hash check and the gallery checks passed on home and parents at 1440, 768, 390 and 320 px in Chromium. Checks include responsive image candidates, 2880-pixel full-size images, Close/Escape, focus restoration, and no horizontal overflow. Evidence is under ignored `qa-artifacts/website-gameplay` and `.deploy/gameplay-gallery-*.log`.

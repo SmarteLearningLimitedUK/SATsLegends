@@ -24,6 +24,7 @@ try {
   if (mode === 'plan' || mode === 'publish') {
     const npmCli = process.env.npm_execpath;
     if (!npmCli || !existsSync(npmCli)) throw new Error('Run this command through npm run publish:plan or npm run publish:site.');
+    run(process.execPath, [path.join(root, 'scripts', 'verify-website-gameplay-source.mjs')]);
     // Include both games and enforce the existing account gates.
     run(process.execPath, [npmCli, 'run', 'build:cloudflare-english-test']);
     const revision = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' });
