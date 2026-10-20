@@ -23,3 +23,12 @@ Website changes are limited to `scripts/lexcoria.commit`, `scripts/game-release-
 - Current Matharia screenshot-source verification passed before release packaging.
 
 Evidence is in ignored `.deploy/lexcoria-full-upload-*.log` and the isolated Lexcoria `qa-artifacts/start-screen` directory. These are Chromium emulation checks, not physical Safari/iOS/Android certification. Existing bundle-size warnings remain.
+
+
+## Published and verified
+
+Published website source `a934b14` with the complete Lexcoria package pinned to `9a6740259128eb0bb556ae2f335ce82f2281f2ad`. The combined artifact contains 781 files; 78 changed files (1.5 MB) were uploaded. The publisher completed verified FTPS publication and HTTPS checks.
+
+Live `site-release.json` and `/english/play/game-release.json` both match the new Lexcoria revision. Fresh live checks passed the signed-out gate, phone/tablet/desktop entry pages, responsive embedded welcome, shared parent login, child-scoped English save/restoration, and denial without English access. Authentication and save operations were exercised through an isolated in-memory browser fixture; no real accounts or progress were altered.
+
+Live logs: ignored `.deploy/lexcoria-full-upload-live-version.log` and `.deploy/lexcoria-full-upload-live-account.log`. Testing entry: `https://satslegends.com/english/play/?v=a934b14`. Existing game tabs should be reopened to load this release.
