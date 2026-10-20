@@ -51,3 +51,5 @@ Assumptions: screenshots belong on the home and parent information pages; curren
 ## Verification of the post-sync captures
 
 All eight JPEG dimensions were checked. TypeScript, the capture-source/hash check and the gallery checks passed on home and parents at 1440, 768, 390 and 320 px in Chromium. Checks include responsive image candidates, 2880-pixel full-size images, Close/Escape, focus restoration, and no horizontal overflow. Evidence is under ignored `qa-artifacts/website-gameplay` and `.deploy/gameplay-gallery-*.log`.
+
+Published and verified from source `6997e2e` on https://satslegends.com. The publisher uploaded 144 changed files (9.3 MB) and verified the combined website/game entries. Fresh live checks passed on home and parents at 1440 and 390 px, including full-size 2880-pixel viewers, Escape, restored focus and no horizontal overflow. SHA-256 checks confirmed that the eight image assets served by the live site exactly match the new captures. Live evidence: ignored `.deploy/gameplay-gallery-live.log` and `qa-artifacts/website-gameplay/live/gallery.png`.
