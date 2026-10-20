@@ -29,3 +29,11 @@ Target: `https://satslegends.com`, existing Apache/FTPS hosting.
 - Native apps and Apple/Google purchase integration are outside this website release. See `SHARED_PLATFORM.md`.
 
 This is a website/playtest release, not evidence that paid production launch is complete. The secure publisher verifies live entry files and keeps rollback copies; its actual upload outcome must be read from the deployment log.
+
+## Verified live outcome
+
+- Published source `f6f4504b003f527ac4545cd4dabae3e8c0955870` to `https://satslegends.com`. The public `site-release.json` confirms that commit. Initial upload and the route correction both completed successfully, with backups retained locally.
+- Live testing caught Apache treating the physical `/english` folder as a directory listing. An explicit server rewrite and corrected client handling now serve the landing page at both `/english` and `/english/`.
+- The final production artifact passed **99** Chromium checks, adding the trailing-slash landing route at every tested size.
+- Live browser checks passed at 390px, 768px and 1440px: homepage, login, both English landing URLs, parents page and both game login gates. No JavaScript errors or failed main website asset responses were recorded in those checks. Live HTML responses return `Cache-Control: no-cache, must-revalidate`.
+- Stripe setup, live payment/email acceptance, deferred business policy details and real-device/Safari testing remain open as listed above.
