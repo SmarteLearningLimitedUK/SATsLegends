@@ -1,0 +1,9 @@
+{
+  "siteUrl": "https://satslegends.com",
+  "filezillaSite": "Matharia",
+  "savedHost": "ftp.smart-el.co.uk",
+  "tlsHost": "mars.exacthosting.com",
+  "port": 21,
+  "remoteRoot": "/",
+  "workers": 3
+}
