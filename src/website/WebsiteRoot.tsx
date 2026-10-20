@@ -26,7 +26,7 @@ export default function WebsiteRoot() {
 
 function WebsiteContent() {
   const { pathname } = useLocation();
-  const isEnglishAssetRoute = pathname.startsWith('/english/');
+  const isEnglishAssetRoute = pathname === '/english/play' || pathname.startsWith('/english/play/');
   const isWebsite = websiteRoutes.has(pathname.replace(/\/+$/, '') || '/') || pathname.startsWith('/parent') || isEnglishAssetRoute;
   const gameScreen = parseRoute(pathname).screen;
   const isMinigame = gameScreen === 'gameplay';

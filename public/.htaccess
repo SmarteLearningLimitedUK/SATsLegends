@@ -5,6 +5,9 @@
   RewriteBase /
   # Never serve hidden files accidentally uploaded by an FTP client.
   RewriteRule (^|/)\.(?!well-known(?:/|$)) - [F,L]
+  # /english is a landing page as well as the parent of the embedded game.
+  # Serve the SPA before Apache treats the physical folder as a directory index.
+  RewriteRule ^english/?$ index.html [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule ^ index.html [L]

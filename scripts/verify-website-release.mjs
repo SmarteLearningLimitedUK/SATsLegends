@@ -6,7 +6,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 
 const base = process.env.WEBSITE_RELEASE_URL || 'http://127.0.0.1:4181';
 const out = 'qa-artifacts/website-release';
-const routes = ['/', '/for-parents', '/english', '/revision', '/videos', '/subscriptions', '/signup', '/login', '/forgot-password'];
+const routes = ['/', '/for-parents', '/english', '/english/', '/revision', '/videos', '/subscriptions', '/signup', '/login', '/forgot-password'];
 const sizes = [[320, 568], [390, 844], [412, 915], [568, 320], [768, 1024], [1024, 768], [1280, 720], [1440, 900], [1920, 1080]];
 const results = [];
 await mkdir(out, { recursive: true });
@@ -59,7 +59,7 @@ try {
           await page.evaluate(() => scrollTo(0, 0));
         }
         if (route === '/for-parents') assert.match(await page.locator('main h1').innerText(), /Your window into progress/i);
-        if (route === '/english') await page.getByRole('link', { name: 'Log in to play Lexcoria' }).waitFor();
+        if (route === '/english' || route === '/english/') await page.getByRole('link', { name: 'Log in to play Lexcoria' }).waitFor();
         if (route === '/login' && width <= 768) {
           const recovery = await page.getByRole('link', { name: 'Forgot password?' }).boundingBox();
           const submit = await page.getByRole('button', { name: 'Log in', exact: true }).boundingBox();
