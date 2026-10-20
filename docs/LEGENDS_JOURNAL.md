@@ -1,5 +1,13 @@
 # The Legends Journal
 
+## Retired at owner request — 20 October 2026
+
+The owner chose to post manually on Facebook and Instagram and requested removal of the website Journal. Public navigation, article pages, staff editor, social export code and the editor browser test have been removed. Old `/journal` and `/admin/journal` URLs redirect to the homepage. No automatic social publishing was ever enabled.
+
+The existing database schema and content are retained without deletion. Cloud access rules were not changed as part of this website removal; this is not a database erasure. Database migrations and privacy checks remain as historical records. Do not reapply the migration or restore the Journal unless the owner requests it.
+
+The sections below describe the retired implementation, not currently available website functionality.
+
 ## Routes and workflow
 
 - `/journal`: public stories, newest first (up to 100).

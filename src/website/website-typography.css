@@ -96,3 +96,6 @@
   .legends-website .website-header-actions .website-button { white-space: nowrap; padding-inline: 10px; gap: 6px; }
   .legends-website .website-header-actions .website-button svg { width: 18px; height: 18px; flex-shrink: 0; }
 }
+/* Keep staff navigation inside narrow phone viewports. Admin remains in the menu. */
+@media (max-width:1250px) { .website-header-actions > .website-login[href="/admin"] { display: none; } }
+@media (max-width:380px) { .legends-website .website-header-inner { gap: 8px; }.legends-website .website-header-actions { gap: 8px; }.legends-website .website-header-actions .website-button-small { padding-inline: 10px; font-size: 13px; } }

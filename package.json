@@ -25,7 +25,6 @@
     "verify:store-entitlements": "node scripts/verify-store-entitlements.mjs",
     "verify:admin-db": "node scripts/verify-admin-database.mjs",
     "verify:journal-db": "node scripts/verify-journal-database.mjs",
-    "verify:journal-ui": "node scripts/verify-journal-ui.mjs",
     "verify:responsive": "node scripts/verify-responsive-experience.mjs",
     "verify:critical-game-viewports": "node scripts/verify-critical-game-viewports.mjs",
     "verify:lexcoria": "node scripts/verify-lexcoria-readiness.mjs",

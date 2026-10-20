@@ -16,11 +16,10 @@ import './parents.css';
 import './website-hero-action.css';
 import './website-typography.css';
 import './website-revision-refresh.css';
-import './journal.css';
 
 const Game = lazy(() => import('../App'));
 const GameGate = lazy(() => import('./GameGate'));
-const websiteRoutes = new Set(['/', '/english', '/revision', '/videos', '/signup', '/login', '/subscriptions', '/for-parents', '/forgot-password', '/reset-password', '/auth/callback', '/admin', '/admin/journal', '/journal']);
+const websiteRoutes = new Set(['/', '/english', '/revision', '/videos', '/signup', '/login', '/subscriptions', '/for-parents', '/forgot-password', '/reset-password', '/auth/callback', '/admin']);
 
 export default function WebsiteRoot() {
   return <FamilyAccount><WebsiteContent /></FamilyAccount>;
@@ -29,7 +28,8 @@ export default function WebsiteRoot() {
 function WebsiteContent() {
   const { pathname } = useLocation();
   const isEnglishAssetRoute = pathname === '/english/play' || pathname.startsWith('/english/play/');
-  const isWebsite = websiteRoutes.has(pathname.replace(/\/+$/, '') || '/') || pathname.startsWith('/parent') || pathname === '/journal' || pathname.startsWith('/journal/') || pathname === '/admin/journal' || isEnglishAssetRoute;
+  const retiredJournalRoute = /^\/(?:journal|admin\/journal)(?:\/|$)/.test(pathname);
+  const isWebsite = websiteRoutes.has(pathname.replace(/\/+$/, '') || '/') || pathname.startsWith('/parent') || retiredJournalRoute || isEnglishAssetRoute;
   const gameScreen = parseRoute(pathname).screen;
   const isMinigame = gameScreen === 'gameplay';
   const hasGameDock = !['splash', 'avatar_selection', 'profile_setup'].includes(gameScreen);
@@ -44,6 +44,7 @@ function WebsiteContent() {
     return () => document.body.classList.remove('legends-website-body');
   }, [isWebsite, pathname]);
 
+  if (retiredJournalRoute) return <Navigate to="/" replace />;
   if (isEnglishAssetRoute) return englishPlayable
     ? <main id="website-main" className="website-container family-main"><h1>Lexcoria files are not in this deployment.</h1><p>Please contact SATs Legends support.</p><Link to="/english">Back to Lexcoria</Link></main>
     : <Navigate to="/english" replace />;
