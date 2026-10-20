@@ -42,9 +42,9 @@ A disposable, API-confirmed test parent completed hosted Stripe Checkout with St
 | Yearly Checkout / repurchase | A new checkout after cancellation opened for GBP 4999, `livemode=false`; expired unpaid after verification. No annual payment was submitted. |
 | Final fixture state | Test subscription `sub_1USdGjDFXVy0TQ8iTSQzgvg9` is canceled, no game access remains, and the new unpaid yearly checkout is expired. |
 
-The cancellation mapper fix is deployed to **testing only** and committed in source with regression tests. It has not been deployed to the production backend.
+The cancellation mapper fix is deployed to testing and, following owner authorization on 20 October 2026, to the production `stripe-webhook` function. The production source was backed up before deployment. Downloading the deployed ZIP confirmed all three files match the tested source and only the shared billing mapper changed. A production GET probe returned the expected HTTP 405, confirming that the function starts and rejects unsupported methods. No live payment was submitted for this verification.
 
-Before live activation: correct Stripe's customer-facing merchant branding, which currently says **laserlush.com** in Checkout and the portal; release the verified mapper/RLS changes to production; and verify renewals, failed-payment recovery and the annual payment flow. The public website remains separate from sandbox billing. A local sandbox preview uses ignored public-client configuration; no server keys are placed in its environment.
+Before live activation: correct Stripe's customer-facing merchant branding, which currently says **laserlush.com** in Checkout and the portal; release the RLS migration to production; and verify renewals, failed-payment recovery and the annual payment flow. The public website remains separate from sandbox billing. A local sandbox preview uses ignored public-client configuration; no server keys are placed in its environment.
 
 ## Purchase integration contract
 
