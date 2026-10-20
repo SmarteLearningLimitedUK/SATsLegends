@@ -96,7 +96,7 @@ export default function ReleasedSubscriptions() {
         <p className="family-small">{switchingToBundle ? 'Change your existing subscription before starting a combined plan so you are not billed twice.' : `Renews automatically at ${formatPounds(amount)} per ${interval}. Cancel renewal in your parent account; access continues until the end of the paid period.`}</p>
       </section>;
     })}</div>
-    <p className="family-product-intro">Create your parent account, add your child’s nickname and choose the adventures you want to include. Play in the browser on phones, tablets and desktop computers.</p>
+    <p className="family-product-intro">Create your parent account, choose the adventures you want to include, then add your child’s nickname. Play in the browser on phones, tablets and desktop computers.</p>
     <p className="family-payment-note"><strong>{paypalReady ? 'Card or PayPal at secure checkout.' : 'Secure card checkout.'}</strong> Payment details are handled by the payment provider and are not stored in the game.</p>
     <p className="family-small"><Mail size={15} /> Choose whether to receive progress emails. Your private dashboard stays available when emails are off.</p>
   </main>;

@@ -75,7 +75,7 @@ function MathariaSubscriptions() {
         <p className="family-small">{otherPaidPlan && !mathariaActive ? 'Manage your existing subscription before choosing another plan so you are not billed twice.' : `Renews automatically at ${formatPounds(amount)} per ${interval}. Cancel renewal in your parent account; access continues until the end of the paid period.`}</p>
       </section>;
     })}</div>
-    <p className="family-product-intro">Getting started is simple: create your parent account, add your child’s nickname and choose a plan. Matharia plays in the browser on phones, tablets and desktop computers.</p>
+    <p className="family-product-intro">Getting started is simple: create your parent account, choose a plan, then add your child’s nickname. Matharia plays in the browser on phones, tablets and desktop computers.</p>
     <p className="family-payment-note"><strong>{paypalReady ? 'Card or PayPal at secure checkout.' : 'Secure card checkout.'}</strong> Payment details are handled by the payment provider and are not stored in the game.</p>
     <p className="family-small"><Mail size={15} /> Choose whether to receive progress emails. Your private dashboard stays available when emails are off.</p>
   </main>;

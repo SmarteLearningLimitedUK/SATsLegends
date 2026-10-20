@@ -60,3 +60,9 @@
 .game-save-status a,.game-save-status button { color: #fde161; text-decoration: underline; margin-left: 8px; }
 @media(max-width:800px) { .family-plan,.family-panel { padding: 24px; }.family-stats { grid-template-columns: repeat(2,1fr); } }
 @media(max-width:580px) { .family-main { padding-top: 30px; }.family-plans,.family-dashboard-grid { grid-template-columns: 1fr; gap: 18px; }.family-plan .family-price { font-size: 46px; }.family-coming-soon { flex-wrap: wrap; gap: 15px; }.family-coming-soon > div { flex-basis: 75%; }.family-email-panel { gap: 15px; }.family-email-panel > svg { width: 22px; }.family-stats > div { padding: 20px; }.family-actions .website-button { width: 100%; } }
+.website-account-form-wrap .website-forgot-password {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 12px;
+}

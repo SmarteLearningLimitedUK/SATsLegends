@@ -102,7 +102,7 @@ export default function ParentAccount({ mode }: { mode: 'signup' | 'login' | 'fo
       <span className="website-account-caption">A brighter next chapter.</span>
     </section>
     <section className="website-account-form-wrap">
-      <p className="website-eyebrow">Parent & guardian accounts</p><h2>{title}</h2><p>{signup ? 'Create your parent account, add your child’s nickname, then choose monthly or yearly access.' : 'Your child’s adventures and progress, in one place.'}</p>
+      <p className="website-eyebrow">Parent & guardian accounts</p><h2>{title}</h2><p>{signup ? 'Create your parent account, choose monthly or yearly access, then add your child’s nickname.' : 'Your child’s adventures and progress, in one place.'}</p>
       {!family.configured && <p className="family-notice" role="status">Parent accounts and purchases are not available yet. Please check back soon.</p>}
       {message && <p ref={messageRef} className={`family-notice${mode === 'forgot' ? ' family-notice-dismissible' : ''}`} role="status">{message}{mode === 'forgot' && <button className="family-notice-dismiss" type="button" aria-label="Dismiss password reset message" onClick={() => setMessage('')}><X size={18} /></button>}</p>}
       {query.get('reset') === 'success' && <p className="family-notice" role="status">Your password has been updated. Please log in.</p>}
@@ -125,7 +125,7 @@ export default function ParentAccount({ mode }: { mode: 'signup' | 'login' | 'fo
         </>}
         {mode === 'login' && passkeyAuthEnabled && <button type="button" className="website-social-button website-passkey-button" onClick={() => void handlePasskey()} disabled={busy || typeof window === 'undefined' || !window.PublicKeyCredential || !window.isSecureContext}>Log in with a passkey</button>}
       </div>}
-      {mode === 'login' && <Link className="website-text-link" to="/forgot-password">Forgot password?</Link>}
+      {mode === 'login' && <Link className="website-text-link website-forgot-password" to="/forgot-password">Forgot password?</Link>}
       <p className="website-account-switch">{signup ? 'Already have an account?' : 'New to SATs Legends?'} <Link to={`${signup ? '/login' : '/signup'}?next=${encodeURIComponent(next)}`}>{signup ? 'Log in' : 'Sign up'}</Link></p>
       <Link to="/subscriptions" className="website-account-guest">See Matharia subscriptions <ArrowRight size={16} /></Link>
     </section>
