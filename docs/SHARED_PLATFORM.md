@@ -44,7 +44,9 @@ A disposable, API-confirmed test parent completed hosted Stripe Checkout with St
 
 The cancellation mapper fix is deployed to testing and, following owner authorization on 20 October 2026, to the production `stripe-webhook` function. The production source was backed up before deployment. Downloading the deployed ZIP confirmed all three files match the tested source and only the shared billing mapper changed. A production GET probe returned the expected HTTP 405, confirming that the function starts and rejects unsupported methods. No live payment was submitted for this verification.
 
-Before live activation: correct Stripe's customer-facing merchant branding, which currently says **laserlush.com** in Checkout and the portal; release the RLS migration to production; and verify renewals, failed-payment recovery and the annual payment flow. The public website remains separate from sandbox billing. A local sandbox preview uses ignored public-client configuration; no server keys are placed in its environment.
+Following owner approval on 20 October 2026, saved **SATs Legends** as the Stripe account's public trading name. A fresh reload of Stripe's business-details page confirmed the saved value in both the business and public-details sections. This corrects the public name that previously fell back to **laserlush.com** during checkout testing.
+
+Before live activation: release the RLS migration to production and verify renewals, failed-payment recovery and the annual payment flow. The public website remains separate from sandbox billing. A local sandbox preview uses ignored public-client configuration; no server keys are placed in its environment.
 
 ## Purchase integration contract
 
