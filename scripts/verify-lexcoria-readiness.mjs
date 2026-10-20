@@ -50,6 +50,9 @@ try {
     const token = `${jwtPart({ alg: 'HS256', typ: 'JWT' })}.${jwtPart({ sub: parentId, role: 'authenticated', exp: Math.floor(Date.now() / 1000) + 3600 })}.fixture`;
     let entitled = true;
     let verifiedEnglish = 0;
+    let savedEnglish = null;
+    let savedCount = 0;
+    const savedRequests = new Map();
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     await page.route(`${fixtureApi}/**`, async route => {
@@ -70,11 +73,17 @@ try {
         verifiedEnglish++;
         return reply(entitled);
       }
-      if (url.pathname.endsWith('/child_progress')) return reply(null);
+      if (url.pathname.endsWith('/child_progress')) return reply(savedEnglish);
       if (url.pathname.endsWith('/rpc/save_child_progress')) {
         const save = request.postDataJSON();
         assert.equal(save.game_code, 'english');
-        return reply(save.expected_revision + 1);
+        assert.equal(save.target_child, childId);
+        if (savedRequests.has(save.request_id)) return reply(savedRequests.get(save.request_id));
+        assert.equal(save.expected_revision, savedEnglish?.revision ?? 0);
+        savedCount++;
+        savedEnglish = { player: save.player_data, progression: save.progression_data, revision: save.expected_revision + 1, last_request_id: save.request_id };
+        savedRequests.set(save.request_id, savedEnglish.revision);
+        return reply(savedEnglish.revision);
       }
       if (url.pathname.endsWith('/account_deletion_requests')) return reply(null);
       throw new Error(`Unexpected Lexcoria fixture request: ${url.pathname}`);
@@ -92,6 +101,37 @@ try {
     try { await page.locator('.english-access-gate').waitFor({ state: 'hidden', timeout: 20000 }); } catch (error) { console.error('Lexcoria entry state:', await page.locator('body').innerText(), errors); throw error; }
     assert.ok(verifiedEnglish > 0, 'English game must verify access with the server');
     assert.equal(await page.evaluate(id => sessionStorage.getItem(`legends-child:${id}`), parentId), childId);
+
+    for (const viewport of [{ width: 390, height: 844 }, { width: 1440, height: 900 }]) {
+      await page.setViewportSize(viewport);
+      await expect(page.locator('.lexcoria-welcome')).toBeVisible();
+      await page.waitForFunction(() => document.querySelector('.iphone-game-stage')?.getAttribute('data-stage-layout') === 'responsive');
+      const bounds = await page.locator('.lexcoria-welcome').boundingBox();
+      assert.ok(Math.abs(bounds.width - viewport.width) <= 1 && Math.abs(bounds.height - viewport.height) <= 1, 'Embedded welcome must fill the viewport');
+    }
+    await page.getByRole('button', { name: 'Start', exact: true }).click();
+    await page.locator('.avatar-select-screen').waitFor();
+    await page.getByRole('button', { name: 'Next hero', exact: true }).click();
+    await page.getByRole('button', { name: 'Begin adventure', exact: true }).click();
+    await expect.poll(() => savedCount, { timeout: 15000 }).toBeGreaterThan(0);
+    assert.equal(savedEnglish.player.playerName, 'EnglishLegend');
+    const expectedAvatar = await page.evaluate(id => JSON.parse(localStorage.getItem(`maths_quest_player_v2:english:${id}`) || '{}').avatarId, childId);
+    await expect.poll(() => savedEnglish?.player.avatarId, { timeout: 15000 }).toBe(expectedAvatar);
+    await expect(page.locator('.english-save-status')).toHaveCount(0);
+    const chosenAvatar = savedEnglish.player.avatarId;
+    await page.evaluate(id => {
+      localStorage.removeItem(`maths_quest_player_v2:english:${id}`);
+      localStorage.removeItem(`sats-legends-save:english:${id}`);
+    }, childId);
+    await page.goto(`${base}/english/play/`);
+    await page.locator('.lexcoria-welcome').waitFor();
+    await expect(page.locator('.lexcoria-welcome-copy')).toContainText('Welcome back, EnglishLegend');
+    await expect.poll(() => page.evaluate(id => JSON.parse(localStorage.getItem(`maths_quest_player_v2:english:${id}`) || '{}').avatarId, childId)).toBe(chosenAvatar);
+    await page.getByRole('button', { name: 'Start', exact: true }).click();
+    await page.locator('.avatar-select-screen').waitFor();
+    await page.getByRole('button', { name: 'Begin adventure', exact: true }).click();
+    assert.equal(savedEnglish.player.avatarId, chosenAvatar);
+
     await page.goto(`${base}/english`);
     await page.getByRole('link', { name: 'Play Lexcoria', exact: true }).waitFor();
     entitled = false;
@@ -102,7 +142,7 @@ try {
     await page.getByRole('heading', { name: 'Choose your English adventure' }).waitFor();
     assert.deepEqual(errors, []);
     await context.close();
-    console.log('PASS shared parent login, selected-child Lexcoria entry and server denial without English access');
+    console.log('PASS shared login, responsive welcome, child-scoped English save/reload and server denial without English access');
   }
 } finally {
   await browser.close();

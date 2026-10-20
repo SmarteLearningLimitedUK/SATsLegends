@@ -6,8 +6,8 @@
     "source": "Owner-authorized latest local working tree; website-specific integration retained"
   },
   "lexcoria": {
-    "commit": "bc1ac8941dc2439c9923e1081c1a670427a80933",
-    "snapshotSha256": "dd086796f0f5b6cc6ab174808cfd3ecf8db7e4def7ae9781e719cfb3c01a1c62",
+    "commit": "9a6740259128eb0bb556ae2f335ce82f2281f2ad",
+    "snapshotSha256": "1479ff1abe7ef04db73a25dd9fe9ec769d980ab5e0d43f565492faf97c2905f5",
     "releaseFix": "Require a pending save and cloud row before acknowledging an offline request"
   }
 }
