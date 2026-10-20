@@ -39,11 +39,17 @@ export function subscriptionRecord(subscription: Stripe.Subscription, parentId: 
   const productCode = match?.product_code ?? (existing?.parent_id === parentId
     && productCodes.includes(existing.product_code) ? existing.product_code : null);
   if (!productCode) return null;
+  // Flexible-billing portal cancellations can set cancel_at without setting
+  // cancel_at_period_end. Show an ending plan only when it ends this period;
+  // a later scheduled cancellation must not shorten the paid access window.
+  const scheduledEnd = subscription.cancel_at;
+  const endsThisPeriod = typeof scheduledEnd === 'number' && scheduledEnd > 0
+    && scheduledEnd <= item.current_period_end;
   return {
     id: subscription.id, parent_id: parentId, product_code: productCode,
     status: subscription.pause_collection ? 'paused' : subscription.status,
     interval,
-    current_period_end: new Date(item.current_period_end * 1000).toISOString(),
-    cancel_at_period_end: subscription.cancel_at_period_end, last_event_created: eventCreated,
+    current_period_end: new Date((endsThisPeriod ? scheduledEnd : item.current_period_end) * 1000).toISOString(),
+    cancel_at_period_end: subscription.cancel_at_period_end || endsThisPeriod, last_event_created: eventCreated,
   };
 }

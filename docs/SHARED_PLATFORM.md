@@ -24,7 +24,27 @@ The isolated Supabase Free project **SATsLegends Testing** (`wcinuayogriuiupykty
 - Remote checks passed: billing GET exposes the two correct Matharia prices; an untrusted origin receives 403; unauthenticated checkout receives 401; webhook GET receives 405; missing and invalid signatures receive 400; a locally generated, correctly signed connection probe receives 200. This probe is not a Stripe-originated delivery or a completed purchase.
 - Local database verification passes 19 checks, including an added regression check requiring RLS on every public table. Lexcoria and bundle sales remain disabled.
 
-Still required: run a completed Stripe test Checkout through a test parent account and verify webhook delivery, subscription access, cancellation, renewal and portal behavior. A website preview must explicitly use the testing project's public client settings; the public website is not connected to sandbox billing. Live Stripe activation is a separate step.
+### Completed sandbox purchase test, 20 October 2026
+
+A disposable, API-confirmed test parent completed hosted Stripe Checkout with Stripe's published Visa test card. This tested the deployed backend and hosted payment/portal UI, not the website's email-confirmation flow or native store purchases.
+
+| Check | Result |
+| --- | --- |
+| Access before payment | Matharia and Lexcoria both false. |
+| Monthly Checkout | Completed, paid, GBP 499, `livemode=false`. |
+| Real Stripe webhooks | Checkout completed, subscription created and subscription updated deliveries returned HTTP 200. |
+| Access after payment | Matharia true; Lexcoria false; active subscription mirrored to the correct parent. |
+| Repeat checkout | Open session reused; a second purchase after activation rejected with HTTP 409. |
+| Portal | Opened and allowed the test customer to cancel at the end of the paid period. |
+| Scheduled cancellation | Stripe used `cancel_at` with `cancel_at_period_end=false`. Found and fixed the mapper so the app correctly marks the plan as ending this period. A replay of the real Stripe event confirmed the fix in the testing backend; paid-period access remained true. |
+| Immediate test cancellation | Stripe and the backend both changed to canceled; Matharia access became false. |
+| Cloud saving | A test child saved revision 1 while entitled. A save after cancellation was rejected, and revision 1 remained unchanged. |
+| Yearly Checkout / repurchase | A new checkout after cancellation opened for GBP 4999, `livemode=false`; expired unpaid after verification. No annual payment was submitted. |
+| Final fixture state | Test subscription `sub_1USdGjDFXVy0TQ8iTSQzgvg9` is canceled, no game access remains, and the new unpaid yearly checkout is expired. |
+
+The cancellation mapper fix is deployed to **testing only** and committed in source with regression tests. It has not been deployed to the production backend.
+
+Before live activation: correct Stripe's customer-facing merchant branding, which currently says **laserlush.com** in Checkout and the portal; release the verified mapper/RLS changes to production; and verify renewals, failed-payment recovery and the annual payment flow. The public website remains separate from sandbox billing. A local sandbox preview uses ignored public-client configuration; no server keys are placed in its environment.
 
 ## Purchase integration contract
 

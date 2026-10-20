@@ -14,7 +14,7 @@
       "intervalCount": 1
     }
   },
-  "status": "Testing backend configured and verified; completed test checkout and entitlement lifecycle verification pending",
+  "status": "Monthly sandbox purchase, real webhook delivery, portal cancellation, access removal, save protection and yearly checkout creation verified; renewal and annual payment not simulated",
   "verifiedOn": "2026-10-20",
   "supabaseTestProject": "wcinuayogriuiupyktyv",
   "appUrl": "http://localhost:4181",
