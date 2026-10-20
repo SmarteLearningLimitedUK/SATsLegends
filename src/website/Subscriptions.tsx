@@ -10,7 +10,7 @@ type Interval = 'month' | 'year';
 type Plan = { product: string; interval: Interval; available: boolean; amount: number; currency: string };
 
 const prices: Record<Interval, number> = { month: 499, year: 4999 };
-const features = ['Matharia maths challenges', 'One child profile', 'Saved progress across devices', 'Parent dashboard with strengths and topics to revisit', 'Optional progress emails', 'Calm Grove pause activities'];
+const features = ['KS2 maths challenges across arithmetic and reasoning topics', 'One private child profile', 'Saved progress across devices', 'Parent reports showing accuracy, strengths and topics to revisit', 'Optional progress emails', 'Calm Grove pause activities'];
 const formatPounds = (pence: number) => new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(pence / 100);
 
 export default function Subscriptions() {
@@ -56,7 +56,7 @@ function MathariaSubscriptions() {
   }
 
   return <main id="website-main" className="website-container family-main">
-    <div className="website-resource-heading"><p className="website-eyebrow"><Gamepad2 size={16} /> SATs Legends subscriptions</p><h1>Purposeful revision.<br /><span>A plan that fits your family.</span></h1><p>Choose the same Matharia experience with monthly or yearly billing: KS2 maths game challenges for your child, saved progress and a private dashboard to help you follow their practice.</p></div>
+    <div className="website-resource-heading"><p className="website-eyebrow"><Gamepad2 size={16} /> SATs Legends subscriptions</p><h1>Support their SATs revision.<br /><span>Choose the plan that fits.</span></h1><p>Give your child regular access to Matharia’s maths challenges and keep track of their practice in your private parent dashboard. Both plans include the same game access for one child; choose monthly flexibility or save with yearly billing.</p></div>
     {query.get('checkout') === 'cancelled' && <p className="family-notice" role="status">Checkout was cancelled. Choose a plan whenever you’re ready.</p>}
     {(query.get('product') === 'english' || query.get('product') === 'bundle') && <p className="family-notice" role="status">Lexcoria is in development. English and combined plans are not on sale yet; the subscriptions below cover Matharia only.</p>}
     {error && <p className="family-error" role="alert">{error}</p>}

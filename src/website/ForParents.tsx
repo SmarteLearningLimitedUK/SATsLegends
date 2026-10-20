@@ -5,6 +5,7 @@ import { ArrowRight, BookOpen, Check, Leaf, LockKeyhole, Mail, ShieldCheck } fro
 import valley from '../assets/website/premium/place_value_panic-world.webp';
 import PremiumArtwork from './PremiumArtwork';
 import ParentQuestions from './ParentQuestions';
+import { RevisionBenefits } from './RevisionContent';
 import { WELLBEING_SCENES } from '../wellbeing/scenes';
 import { revisionTopics } from './content';
 import SplashLogo from './SplashLogo';
@@ -36,7 +37,7 @@ export default function ForParents() {
           <p className="website-eyebrow">For parents & carers</p>
           <div className="parents-hero-logo"><SplashLogo /></div>
           <h2>Practice with purpose.<br /><span>Adventure they can explore.</span></h2>
-          <p>A familiar school topic can become a fresh challenge at home. Matharia combines KS2 maths games, worked examples and visual lessons, giving your child different ways to revisit a method and try it out.</p>
+          <p>Help your child prepare for KS2 maths SATs with a regular revision routine that fits around school. Matharia combines game challenges, worked examples and visual lessons, so there is a way to practise a skill and a place to turn when the method feels unclear.</p>
           <div className="parents-actions"><Link className="website-button website-button-gold" to="/subscriptions">Explore Matharia plans <ArrowRight size={18} /></Link><a className="website-text-link" href="#calm-spaces">Discover Calm Grove <Leaf size={18} /></a></div>
         </motion.div>
         <motion.figure className="parents-hero-art" initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}><PremiumArtwork hero="mochi" /><figcaption>Mochi · One of Matharia’s adventurers</figcaption></motion.figure>
@@ -44,7 +45,7 @@ export default function ForParents() {
     </section>
 
     <section className="website-container parents-section" aria-labelledby="parents-learning-title">
-      <motion.div {...reveal} className="parents-section-intro"><p className="website-eyebrow"><BookOpen size={16} /> Skills for school and SATs</p><h2 id="parents-learning-title">Give tricky topics<br /><span>another way to click.</span></h2><p>Whether your child needs to revisit a foundation or is ready for another challenge, Matharia offers practice in calculations, patterns and problem-solving. Return to a topic, try a different method and talk through what they’ve learned.</p></motion.div>
+      <motion.div {...reveal} className="parents-section-intro"><p className="website-eyebrow"><BookOpen size={16} /> Skills for school and SATs</p><h2 id="parents-learning-title">Give tricky topics<br /><span>another way to click.</span></h2><p>From number and arithmetic to fractions, geometry, data and ratio, Matharia gives your child opportunities to revisit the foundations used in KS2 maths. Choose a familiar topic to consolidate, or return to a skill that has felt difficult in class.</p></motion.div>
       <div className="parents-learning-layout">
         <div className="parents-learning-copy"><h3>Support for the SATs journey</h3><p>Key stage 2 maths SATs in England assess arithmetic and mathematical reasoning. Matharia’s topics offer practice in many of the foundations used in those tests.</p><p>Use a game challenge alongside the revision guide and visual lessons: revisit a method, try it out, then talk through how the answer was found.</p><Link className="website-text-link" to="/revision">See the revision guide <ArrowRight size={17} /></Link><p className="parents-source">For the official test content, see the <a href="https://www.gov.uk/government/publications/key-stage-2-mathematics-test-framework" target="_blank" rel="noopener noreferrer">GOV.UK maths test framework</a>.</p></div>
         <div className="parents-topic-table"><table><caption>Matharia revision topics and skills to practise</caption><thead><tr><th scope="col">Topic</th><th scope="col">Skills to practise</th></tr></thead><tbody>{revisionTopics.map(topic => <tr key={topic.id}><th scope="row"><Link to={`/revision?topic=${topic.id}`}>{topic.category}<ArrowRight size={14} /></Link></th><td>{topic.description}</td></tr>)}</tbody></table></div>
@@ -52,6 +53,7 @@ export default function ForParents() {
       <p className="parents-context"><Check size={19} /><span>Use Matharia alongside school learning, written working and past papers. The dashboard helps you choose topics to practise; it does not predict a SATs score. Older learners can revisit these maths foundations too.</span></p>
     </section>
 
+    <RevisionBenefits />
     <GameplayGallery />
 
     <section id="calm-spaces" className="parents-calm-section" aria-labelledby="parents-calm-title">

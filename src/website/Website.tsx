@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ArrowRight, BookOpen, Check, ChevronRight, Gamepad2, Menu, Play, Sparkles, Star, Video, X } from 'lucide-react';
+import { ArrowRight, BookOpen, Check, ChevronRight, Gamepad2, Menu, Play, Sparkles, Star, X } from 'lucide-react';
 import PremiumArtwork from './PremiumArtwork';
 import numberArt from '../assets/website/premium/place_value_panic-world.webp';
 import fractionArt from '../assets/website/premium/fraction_forge-world.webp';
@@ -17,8 +17,8 @@ import heroActionWide from '../assets/website/premium/hero-cinematic-wide.webp';
 import heroActionMobile from '../assets/website/premium/hero-cinematic-mobile.webp';
 import SplashLogo from './SplashLogo';
 import GameplayGallery from './GameplayGallery';
+import { RevisionOverview, RevisionBenefits, RevisionCoverage } from './RevisionContent';
 import EnglishLanding from './EnglishLanding';
-import { englishReleased, englishTesting } from './englishRelease';
 
 const ParentArea = lazy(() => import('./ParentArea'));
 const ForParents = lazy(() => import('./ForParents'));
@@ -50,10 +50,10 @@ function Home() {
       <div className="website-hero-glow" aria-hidden="true" />
       <div className="website-container website-hero-inner">
         <motion.div className="website-hero-copy" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
-          <p className="website-eyebrow"><span /> Your KS2 SATs revision companion</p>
+          <p className="website-eyebrow"><span /> KS2 SATs revision for Years 5 & 6</p>
           <h1 className="website-splash-heading" aria-label="SATs Legends"><SplashLogo /></h1>
-          <h2>SATs revision.<br /><span>An adventure worth taking.</span></h2>
-          <p className="website-hero-description">Make time for focused maths practice in a world they can explore. Matharia brings KS2 skills into game challenges, while your parent dashboard shows what’s going well and what to revisit.</p>
+          <h2>Build maths skills.<br /><span>Grow SATs confidence.</span></h2>
+          <p className="website-hero-description">Support your child’s maths revision with interactive challenges, clear explanations and visual lessons. Follow their practice in your parent dashboard and find the topics that need another look.</p>
           <div className="website-hero-actions">
             <Link className="website-button website-button-gold" to="/play"><Gamepad2 size={21} /> Explore Matharia <ArrowRight size={20} /></Link>
             <Link className="website-button website-button-outline" to="/for-parents"><BookOpen size={19} /> For parents</Link>
@@ -65,27 +65,9 @@ function Home() {
       <div className="website-hero-bottom" aria-hidden="true" />
     </section>
 
-    <section className="website-english-teaser website-container" aria-labelledby="website-english-title">
-      <div>
-        <p className="website-eyebrow"><BookOpen size={16} /> {englishReleased ? 'English adventure' : englishTesting ? 'Playtest · English adventure' : 'Coming soon · English adventure'}</p>
-        <h2 id="website-english-title">{englishReleased ? 'Enter Lexcoria.' : englishTesting ? 'Lexcoria is ready to test.' : 'Lexcoria is taking shape.'}</h2>
-        <p>{englishReleased ? 'Reading, grammar, punctuation and spelling challenges now sit alongside Matharia.' : englishTesting ? 'Our English revision sister game is open for a gated playtest.' : 'Reading, grammar, punctuation and spelling will become a new SATs Legends adventure.'}</p>
-      </div>
-      <Link className="website-button website-button-outline" to="/english">Discover Lexcoria <ArrowRight size={18} /></Link>
-    </section>
-
-    <section className="website-paths website-container" aria-labelledby="website-paths-title">
-      <motion.div {...reveal} className="website-section-heading website-heading-center"><p className="website-eyebrow">A clear way to practise at home</p><h2 id="website-paths-title">A challenge. A method. Another try.</h2><p>Pick a topic, revisit the method and put it into practice. You don’t need to plan a lesson to get started.</p></motion.div>
-      <div className="website-path-grid">
-        {[
-          { icon: Gamepad2, number: '01', title: 'Put skills into action', description: 'Explore islands and tackle challenges in number, fractions, geometry and more.', label: 'Explore Matharia', route: '/play', className: 'website-path-play' },
-          { icon: BookOpen, number: '02', title: 'Understand the method', description: 'Work through a clear explanation and example, then try a question for yourself.', label: 'Open revision guide', route: '/revision', className: 'website-path-learn' },
-          { icon: Video, number: '03', title: 'See how it works', description: 'Use short visual lessons to revisit a topic before trying it in a challenge.', label: 'Explore videos', route: '/videos', className: 'website-path-watch' },
-        ].map(({ icon: Icon, ...path }, index) => <motion.div {...reveal} transition={{ duration: 0.45, delay: index * 0.08 }} key={path.number}>
-          <Link className={`website-path ${path.className}`} to={path.route}><div className="website-path-top"><span className="website-path-icon"><Icon size={26} /></span><span className="website-path-number">{path.number}</span></div><h3>{path.title}</h3><p>{path.description}</p><span className="website-path-link">{path.label}<ArrowRight size={19} /></span></Link>
-        </motion.div>)}
-      </div>
-    </section>
+    <RevisionOverview />
+    <RevisionCoverage />
+    <RevisionBenefits />
 
     <section className="website-adventures website-container" aria-labelledby="website-adventure-title">
       <motion.div {...reveal} className="website-section-heading"><div><p className="website-eyebrow"><Sparkles size={15} /> Inside the game</p><h2 id="website-adventure-title">Maths skills. Epic worlds.</h2><p>Explore number, fractions, geometry and ratio through distinct game challenges.</p></div><Link className="website-text-link" to="/map">Explore the world map <ArrowRight size={18} /></Link></motion.div>
