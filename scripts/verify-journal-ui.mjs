@@ -13,7 +13,7 @@ const user = { id:'10000000-0000-4000-8000-000000000001',email:'journal-staff@ex
 const part=value=>Buffer.from(JSON.stringify(value)).toString('base64url');
 const token=`${part({alg:'HS256',typ:'JWT'})}.${part({sub:user.id,role:'authenticated',exp:Math.floor(Date.now()/1000)+3600})}.fixture`;
 const session={user,access_token:token,refresh_token:'fixture',expires_in:3600,expires_at:Math.floor(Date.now()/1000)+3600,token_type:'bearer'};
-const initial={id:'10000000-0000-4000-8000-000000000003',slug:'revision-confidence',title:'Revision that builds confidence.',summary:'Make room for practice and celebrate every effort.',body:'## Start with one focus\n\nRevision is a companion to classroom learning. Give your child time to practise, reflect and celebrate the effort they put in.',category:'For parents',artwork:'adventure',revision:1,captions:{x:'Ideas for your next revision session.',instagram:'A new chapter. Read the story via the link in our bio.',facebook:'Make room for revision.'},published_at:new Date().toISOString()};
+const initial={id:'10000000-0000-4000-8000-000000000003',slug:'revision-confidence',title:'Revision that builds confidence.',summary:'Make room for practice and celebrate every effort.',body:'## Start with one focus\n\nRevision is a companion to classroom learning. Give your child time to practise, reflect and celebrate the effort they put in.',category:'For parents',artwork:'adventure',revision:1,captions:{instagram:'A new chapter. Read the story via the link in our bio.',facebook:'Make room for revision.'},published_at:new Date().toISOString()};
 let draft={...initial}, published={...initial}, deliveries=[], staff=true, schemaReady=true;
 await mkdir('qa-artifacts/journal',{recursive:true});
 const browser=await chromium.launch();
@@ -48,7 +48,7 @@ try {
   assert.equal(published.title,initial.title);
   const downloadPromise=page.waitForEvent('download');await page.getByRole('button',{name:'Download social image',exact:false}).click();
   const download=await downloadPromise;await download.saveAs('qa-artifacts/journal/social-fixture.jpg');assert.ok(download.suggestedFilename().endsWith('.jpg'));
-  await page.getByRole('checkbox',{name:'X Connection required',exact:true}).check();
+  await page.getByRole('checkbox',{name:'Facebook Connection required',exact:true}).check();
   await page.getByRole('button',{name:'Publish to website',exact:false}).click();
   await expect(page.getByRole('status')).toContainText('Your story is live');
   await expect(page.getByText('Revision 2 · awaiting connection')).toBeVisible();

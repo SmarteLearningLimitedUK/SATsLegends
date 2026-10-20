@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 const db = new PGlite();
 const staff = '10000000-0000-4000-8000-000000000001';
 const parent = '10000000-0000-4000-8000-000000000002';
-const draft = { id:'10000000-0000-4000-8000-000000000003',title:'Revision that builds confidence',slug:'revision-confidence',summary:'Practical ideas for parents.',body:'A short revision session can help children revisit what they have learnt at school. Make space to celebrate effort.',category:'Revision tips',artwork:'adventure',captions:{ x:'Read our latest story.',instagram:'Meet the legends.',facebook:'Revision ideas for your family.' } };
+const draft = { id:'10000000-0000-4000-8000-000000000003',title:'Revision that builds confidence',slug:'revision-confidence',summary:'Practical ideas for parents.',body:'A short revision session can help children revisit what they have learnt at school. Make space to celebrate effort.',category:'Revision tips',artwork:'adventure',captions:{ instagram:'Meet the legends.',facebook:'Revision ideas for your family.' } };
 let checks=0;
 function pass(message) { checks++; console.log(`PASS ${message}`); }
 async function role(name, id='') { await db.exec(`reset role; set role ${name}; select set_config('request.jwt.claim.sub','${id}',false)`); }
@@ -34,8 +34,8 @@ try {
   await assert.rejects(()=>save(draft,0),/another session/);
   await assert.rejects(()=>db.query('update public.journal_drafts set revision=99'),/permission denied/);
   await assert.rejects(()=>publish(1,['youtube']),/Invalid social channels/);
-  await publish(1,['x','instagram','facebook']); await publish(1,['x','instagram','facebook']);
-  assert.equal((await db.query('select * from public.journal_deliveries')).rows.length,3);
+  await publish(1,['instagram','facebook']); await publish(1,['instagram','facebook']);
+  assert.equal((await db.query('select * from public.journal_deliveries')).rows.length,2);
   assert.ok((await db.query('select * from public.journal_deliveries')).rows.every(r=>r.status==='awaiting_connection'));
   pass('Staff can save and publish; stale edits, direct writes and duplicate social requests are blocked');
   await save({...draft,title:'Private next revision'},1);

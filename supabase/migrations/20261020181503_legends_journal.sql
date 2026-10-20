@@ -25,7 +25,7 @@ create table public.journal_deliveries (
   id uuid primary key default gen_random_uuid(),
   post_id uuid not null references public.journal_drafts(id) on delete cascade,
   revision integer not null,
-  channel text not null check (channel in ('x','instagram','facebook')),
+  channel text not null check (channel in ('instagram','facebook')),
   status text not null default 'awaiting_connection' check (status in ('awaiting_connection','queued','sending','sent','needs_review','failed','cancelled')),
   snapshot jsonb not null,
   error text,
@@ -56,8 +56,8 @@ begin
   select * into existing from public.journal_drafts where id=target for update;
   if coalesce(existing.revision,0) <> expected_revision then raise exception 'This draft changed in another session. Reload before saving.'; end if;
   if existing.published_slug is not null and existing.published_slug <> payload->>'slug' then raise exception 'A published story address cannot be changed'; end if;
-  captions := jsonb_build_object('x',coalesce(payload->'captions'->>'x',''),'instagram',coalesce(payload->'captions'->>'instagram',''),'facebook',coalesce(payload->'captions'->>'facebook',''));
-  if length(captions->>'x')>240 or length(captions->>'instagram')>2000 or length(captions->>'facebook')>4000 then raise exception 'Social caption is too long'; end if;
+  captions := jsonb_build_object('instagram',coalesce(payload->'captions'->>'instagram',''),'facebook',coalesce(payload->'captions'->>'facebook',''));
+  if length(captions->>'instagram')>2000 or length(captions->>'facebook')>4000 then raise exception 'Social caption is too long'; end if;
   insert into public.journal_drafts(id,slug,title,summary,body,category,artwork,captions,revision,updated_by)
     values(target,payload->>'slug',trim(payload->>'title'),trim(payload->>'summary'),trim(payload->>'body'),payload->>'category',payload->>'artwork',captions,expected_revision+1,auth.uid())
   on conflict(id) do update set slug=excluded.slug,title=excluded.title,summary=excluded.summary,body=excluded.body,category=excluded.category,artwork=excluded.artwork,captions=excluded.captions,revision=excluded.revision,updated_at=now(),updated_by=auth.uid()
@@ -72,7 +72,7 @@ begin
   if not public.is_staff() then raise exception 'Staff access required'; end if;
   select * into draft from public.journal_drafts where id=draft_id for update;
   if draft.id is null or draft.revision <> expected_revision then raise exception 'Draft changed. Save and reload before publishing.'; end if;
-  if cardinality(selected_channels)>3 or not selected_channels <@ array['x','instagram','facebook']::text[] then raise exception 'Invalid social channels'; end if;
+  if cardinality(selected_channels)>2 or not selected_channels <@ array['instagram','facebook']::text[] then raise exception 'Invalid social channels'; end if;
   if exists(select 1 from public.journal_posts where id=draft_id and slug<>draft.slug) then raise exception 'A published story address cannot be changed'; end if;
   insert into public.journal_posts(id,slug,title,summary,body,category,artwork,revision)
     values(draft.id,draft.slug,draft.title,draft.summary,draft.body,draft.category,draft.artwork,draft.revision)

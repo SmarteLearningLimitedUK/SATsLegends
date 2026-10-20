@@ -4,15 +4,15 @@ import mobile from '../../assets/website/premium/hero-cinematic-mobile.webp';
 
 export const journalArt = { adventure: landscape, legends: mobile };
 export type JournalArt = keyof typeof journalArt;
-export const channels = ['x', 'instagram', 'facebook'] as const;
+export const channels = ['instagram', 'facebook'] as const;
 export type Channel = typeof channels[number];
-export const channelNames: Record<Channel, string> = { x: 'X', instagram: 'Instagram', facebook: 'Facebook' };
+export const channelNames: Record<Channel, string> = { instagram: 'Instagram', facebook: 'Facebook' };
 export type JournalPost = { id: string; slug: string; title: string; summary: string; body: string; category: string; artwork: JournalArt; published_at: string; revision: number };
 export type JournalSummary = Omit<JournalPost, 'body'>;
 export type JournalDraft = Omit<JournalPost, 'published_at'> & { captions: Record<Channel, string>; updated_at?: string };
 export type SocialDelivery = { id: string; post_id: string; revision: number; channel: Channel; status: string; error: string | null; remote_url: string | null };
 
-export const newDraft = (): JournalDraft => ({ id: crypto.randomUUID(), slug: '', title: '', summary: '', body: '', category: 'Revision tips', artwork: 'adventure', revision: 0, captions: { x: '', instagram: '', facebook: '' } });
+export const newDraft = (): JournalDraft => ({ id: crypto.randomUUID(), slug: '', title: '', summary: '', body: '', category: 'Revision tips', artwork: 'adventure', revision: 0, captions: { instagram: '', facebook: '' } });
 export function articleUrl(slug: string) { return `https://satslegends.com/journal/${encodeURIComponent(slug)}`; }
 export function readingTime(body: string) { return Math.max(1, Math.ceil(body.trim().split(/\s+/).length / 200)); }
 export async function listPosts() {
