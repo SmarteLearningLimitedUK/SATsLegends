@@ -1,0 +1,34 @@
+{
+  "environment": "sandbox",
+  "currency": "gbp",
+  "productCode": "matharia",
+  "prices": {
+    "month": {
+      "id": "price_1USc0nDFXVy0TQ8iQ9o0BKuA",
+      "amount": 499,
+      "intervalCount": 1
+    },
+    "year": {
+      "id": "price_1USc1zDFXVy0TQ8ikqyYGzqV",
+      "amount": 4999,
+      "intervalCount": 1
+    }
+  },
+  "status": "Testing backend configured and verified; completed test checkout and entitlement lifecycle verification pending",
+  "verifiedOn": "2026-10-20",
+  "supabaseTestProject": "wcinuayogriuiupyktyv",
+  "appUrl": "http://localhost:4181",
+  "webhook": {
+    "id": "we_1USd0EDFXVy0TQ8iH40P2VTt",
+    "url": "https://wcinuayogriuiupyktyv.supabase.co/functions/v1/stripe-webhook",
+    "apiVersion": "2026-09-30.endive",
+    "events": [
+      "checkout.session.completed",
+      "customer.subscription.created",
+      "customer.subscription.updated",
+      "customer.subscription.deleted",
+      "customer.subscription.paused",
+      "customer.subscription.resumed"
+    ]
+  }
+}

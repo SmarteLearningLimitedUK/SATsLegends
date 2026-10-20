@@ -12,6 +12,20 @@ Agreed product requirement, 20 October 2026.
 - Cloud progress is keyed by child ID and game code. Existing revision checks reject stale writes; clients must offer the latest cloud save when another device has saved. Do not silently overwrite a newer save or promise simultaneous-device merging.
 - Never copy browser tokens into URLs or FTP files. Never ship server credentials inside a mobile bundle.
 
+## Stripe testing backend, configured 20 October 2026
+
+The isolated Supabase Free project **SATsLegends Testing** (`wcinuayogriuiupyktyv`, Ireland) is for Stripe sandbox testing. It does not share production accounts, child profiles, subscriptions or saves. Production clients continue using `znwqfeqzzlyytbfsakqj`.
+
+- Applied the six existing schema migrations and the additional `enable_price_catalog_rls` migration. A remote SQL check confirmed zero public tables without RLS and zero copied auth users. The additional RLS migration has not been applied to production in this setup.
+- Saved `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` only in the testing project's Edge Function secrets. `APP_URL` is `http://localhost:4181` for an isolated local preview. No test secrets were added to source, frontend configuration or the FTP website.
+- Deployed the existing `billing` and `stripe-webhook` handlers with their internal parent-token and Stripe-signature validation. Legacy gateway JWT verification is off, matching `supabase/config.toml`.
+- Stripe confirmed active, non-live GBP recurring prices: £4.99/month and £49.99/year. Public identifiers and the six registered webhook events are recorded in `scripts/stripe-sandbox-prices.json`.
+- Created active Stripe test destination `we_1USd0EDFXVy0TQ8iH40P2VTt` using snapshot API version `2026-09-30.endive`. The receiver reads event identifiers and retrieves the latest subscription through its pinned SDK.
+- Remote checks passed: billing GET exposes the two correct Matharia prices; an untrusted origin receives 403; unauthenticated checkout receives 401; webhook GET receives 405; missing and invalid signatures receive 400; a locally generated, correctly signed connection probe receives 200. This probe is not a Stripe-originated delivery or a completed purchase.
+- Local database verification passes 19 checks, including an added regression check requiring RLS on every public table. Lexcoria and bundle sales remain disabled.
+
+Still required: run a completed Stripe test Checkout through a test parent account and verify webhook delivery, subscription access, cancellation, renewal and portal behavior. A website preview must explicitly use the testing project's public client settings; the public website is not connected to sandbox billing. Live Stripe activation is a separate step.
+
 ## Purchase integration contract
 
 The payment provider collects payment; the shared backend decides access.
