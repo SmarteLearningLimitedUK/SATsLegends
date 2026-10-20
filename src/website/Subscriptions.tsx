@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowRight, Check, Gamepad2, Mail } from 'lucide-react';
 import { hasMathariaAccess, useFamily } from './FamilyAccount';
 import { billingRequest, openBilling } from './services/supabase';
@@ -19,6 +19,7 @@ export default function Subscriptions() {
 
 function MathariaSubscriptions() {
   const family = useFamily();
+  const navigate = useNavigate();
   const [query] = useSearchParams();
   const [plans, setPlans] = useState<Plan[]>([]);
   const [paypalReady, setPaypalReady] = useState(false);
@@ -46,17 +47,21 @@ function MathariaSubscriptions() {
     catch (caught) { setError(caught instanceof Error ? caught.message : 'Unable to open checkout.'); setBusy(''); }
   }
   async function manage() {
+    if (family.subscriptions.some(subscription => subscription.provider === 'apple' || subscription.provider === 'google')) {
+      navigate('/parent#subscription-management'); return;
+    }
     setBusy('portal'); setError('');
     try { openBilling((await billingRequest({ action: 'portal' })).url); }
     catch (caught) { setError(caught instanceof Error ? caught.message : 'Unable to open billing.'); setBusy(''); }
   }
 
   return <main id="website-main" className="website-container family-main">
-    <div className="website-resource-heading"><p className="website-eyebrow"><Gamepad2 size={16} /> SATs Legends subscriptions</p><h1>Maths practice for them.<br /><span>Clear progress for you.</span></h1><p>Choose monthly flexibility or a year of Matharia. Both plans include game challenges, saved progress and a private parent dashboard for one child.</p></div>
+    <div className="website-resource-heading"><p className="website-eyebrow"><Gamepad2 size={16} /> SATs Legends subscriptions</p><h1>Purposeful revision.<br /><span>A plan that fits your family.</span></h1><p>Choose the same Matharia experience with monthly or yearly billing: KS2 maths game challenges for your child, saved progress and a private dashboard to help you follow their practice.</p></div>
     {query.get('checkout') === 'cancelled' && <p className="family-notice" role="status">Checkout was cancelled. Choose a plan whenever you’re ready.</p>}
     {(query.get('product') === 'english' || query.get('product') === 'bundle') && <p className="family-notice" role="status">Lexcoria is in development. English and combined plans are not on sale yet; the subscriptions below cover Matharia only.</p>}
     {error && <p className="family-error" role="alert">{error}</p>}
     {!family.configured && <p className="family-notice">Secure subscriptions are being connected. Plans cannot be purchased yet.</p>}
+    <p className="family-revision-context">A SATs revision companion to support classroom learning, written practice and the conversations you have at home.</p>
     <p className="family-product-intro">Matharia · The maths adventure · one child profile</p>
     <div className="family-plans">{(['month', 'year'] as const).map(interval => {
       const amount = prices[interval];

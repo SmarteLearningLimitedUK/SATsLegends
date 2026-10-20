@@ -1,0 +1,19 @@
+{
+  "tool": "built-in image_gen",
+  "wide": {
+    "file": "hero-cinematic-wide.webp",
+    "dimensions": [
+      1774,
+      887
+    ],
+    "prompt": "Use case: compositing / style-transfer. Asset: SATs Legends premium website hero illustration, very wide landscape 2:1, target 3840x1920 high resolution. Image 1 Barratt, image 2 Mochi, image 3 Bran, image 4 Vex are the exact upgraded game characters: preserve their species, faces, costumes, colors, detailed cinematic materials and identities. Image 5 is ONLY geography/composition inspiration from our old website: upgrade its flat cartoon scenery to the same richly detailed animated fantasy-film rendering as images 1-4. A beautiful Matharia world of mossy stone paths, ancient ruined arches, waterfalls and distant islands in luminous dusk, deep indigo shadows and warm golden sunlight. All four upgraded heroes are together on the RIGHT HALF, full bodies with feet visibly contacting the same broad stone path, convincing contact shadows, lively exploratory stances, Barratt leading holding his bow safely down, panda companion Mochi, small red dragon Bran, green fox mage Vex. No enemies. No character in water, floating, cropped, or standing on another character. Characters entirely between 55% and 96% of image width, with generous top/bottom margins. LEFT HALF is a quiet dark plum forest and atmospheric path, low detail and NO characters or bright focal objects, deliberately usable for white headline overlay. One continuous cinematic illustration, crisp fur, woven cloth, engraved metal, tactile stone, elegant magical light, premium game key art. No text, no lettering, no logo, no UI, no frame, no collage."
+  },
+  "mobile": {
+    "file": "hero-cinematic-mobile.webp",
+    "dimensions": [
+      1122,
+      1402
+    ],
+    "prompt": "Use case: compositing. Asset: mobile website key art, portrait 4:5 composition at the highest available resolution. Make a dedicated portrait version of the supplied SATs Legends cinematic artwork. Preserve EXACTLY these four upgraded characters and their detailed rendering: Barratt deer archer green cloak foreground, Mochi panda red/gold outfit, Bran red dragon leather armour, Vex green fox purple robe. All four visible entirely inside the image, all feet grounded on a broad continuous ancient stone path with contact shadows. Arrange them as an energetic adventuring group naturally in depth, with waterfalls, mossy ruined arches and twilight sky behind them. Show the same premium detailed fur, cloth and materials, warm sunset and indigo atmosphere. Fill portrait frame with scenery and characters with safe margins. This artwork appears BELOW website text: no text area needed and no typography, lettering, logos, borders, cards, UI, screenshots or extra characters. No floating figures, no feet in water, no cropped feet or ears. Keep each identity and costume matching the reference exactly."
+  }
+}

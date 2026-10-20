@@ -1,0 +1,105 @@
+/* Upgrade the public artwork without changing gameplay layout or controls. */
+.legends-website .website-school-note {
+  margin-top: 18px;
+  color: var(--web-muted);
+  font-size: 14px;
+}
+.legends-website .website-hero-copy h2 { font-size: clamp(28px, 2.3vw, 38px); }
+.legends-website .website-hero-copy { width: min(470px, 100%); }
+.legends-website .website-hero-description { max-width: 445px; }
+.legends-website .website-splash-heading { width: min(340px, 100%); }
+.legends-website .website-hero-action-art img { object-fit: contain; object-position: right center; }
+.legends-website .website-adventure-image img { transition: transform .45s ease; }
+.legends-website .website-adventure:hover .website-adventure-image img { transform: scale(1.035); }
+
+/* Characters occupy their own grid cell; no overlay on headings or buttons. */
+.legends-website .parents-hero-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr);
+  gap: clamp(30px, 5vw, 80px);
+  min-height: 600px;
+  padding-block: 48px;
+}
+.legends-website .parents-hero-copy { width: 100%; min-width: 0; }
+.legends-website .parents-hero-art,
+.legends-website .english-landing-art {
+  position: relative;
+  isolation: isolate;
+  margin: 0;
+  width: min(100%, 330px);
+  justify-self: center;
+  align-self: end;
+  text-align: center;
+}
+.legends-website :is(.parents-hero-art, .english-landing-art)::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: auto 4% 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #bcb2cf55, #311b4a 60%, transparent 72%);
+  box-shadow: 0 12px 22px #0d052b55;
+}
+.legends-website :is(.parents-hero-art, .english-landing-art) img { display: block; width: 100%; height: auto; }
+.legends-website :is(.parents-hero-art, .english-landing-art) figcaption { margin-top: 12px; color: var(--web-muted); font-size: 13px; }
+.legends-website .parents-hero::before { background: linear-gradient(90deg,#17082ff7,#251149ed 48%,#17082fc4); }
+.legends-website .parents-hero-landscape { opacity: .5; }
+.legends-website .website-account-character { width: min(240px, 80%); }
+
+.legends-website .website-final-cta {
+  display: grid;
+  grid-template-columns: 125px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 30px;
+  padding: 30px;
+  background: linear-gradient(125deg, #301461, #1a0b38);
+}
+.legends-website .website-final-cta > .website-final-character {
+  position: static;
+  width: 125px;
+  height: auto;
+  margin: 0;
+  filter: drop-shadow(0 10px 9px #0d052b88);
+}
+.legends-website .website-final-cta .website-button { margin: 0; }
+.legends-website .family-revision-context { margin-block: 22px; max-width: 760px; color: var(--web-muted); }
+.parent-questions {
+  display: grid;
+  grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+  gap: clamp(30px, 6vw, 80px);
+  padding-block: 60px;
+  border-top: 1px solid #b6afe345;
+}
+.parent-questions h2 { font-size: clamp(30px, 3vw, 42px); margin-block: 12px 16px; }
+.parent-questions p { color: var(--web-muted); }
+.parent-questions details { border-bottom: 1px solid #b6afe345; }
+.parent-questions summary { padding: 20px 8px; font-weight: 600; cursor: pointer; }
+.parent-questions summary::marker { color: var(--web-gold); }
+.parent-questions details p { margin: 0 8px 24px; }
+.parent-questions details a { color: var(--web-gold); text-decoration: underline; text-underline-offset: 3px; }
+.parent-questions summary:focus-visible { outline: 2px solid var(--web-gold); outline-offset: 2px; }
+
+@media (max-width: 1250px) {
+  .legends-website .website-hero-copy { width: min(680px, 100%); }
+  .legends-website .website-final-cta { grid-template-columns: 110px minmax(0, 1fr); }
+  .legends-website .website-final-cta .website-button { grid-column: 2; justify-self: start; }
+  .legends-website .website-final-cta > .website-final-character { grid-row: span 2; width: 110px; }
+}
+@media (max-width: 800px) {
+  .legends-website .parents-hero-inner { grid-template-columns: 1fr; min-height: 0; }
+  .legends-website .parents-hero-art { width: min(65vw, 280px); }
+  .parent-questions { grid-template-columns: 1fr; gap: 20px; padding-block: 40px; }
+}
+@media (max-width: 580px) {
+  .legends-website .website-splash-heading { width: min(265px, 100%); }
+  .legends-website .website-hero-copy h2 { font-size: 29px; }
+  .legends-website .parents-hero-art { width: min(60vw, 235px); }
+  .legends-website .english-landing-art { width: min(65vw, 250px); }
+  .legends-website .website-final-cta { grid-template-columns: 1fr; padding: 24px; gap: 22px; }
+  .legends-website .website-final-cta > .website-final-character { grid-row: auto; justify-self: center; width: 135px; }
+  .legends-website .website-final-cta .website-button { grid-column: auto; width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .legends-website .website-adventure-image img { transition: none; }
+}

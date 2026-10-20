@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { ArrowRight, BookOpen, Feather, Sparkles, SpellCheck2 } from 'lucide-react';
 import { englishPlayable, englishReleased, englishTesting } from './englishRelease';
 import { hasGameAccess, useFamily } from './FamilyAccount';
+import PremiumArtwork from './PremiumArtwork';
 
 const strands = [
   { icon: BookOpen, title: 'Reading', copy: 'Find evidence, explore meaning and compare ideas across stories and information texts.' },
@@ -30,7 +31,7 @@ export default function EnglishLanding() {
           <div className="english-landing-actions">{englishPlayable ? <>{entry}<Link className="website-button website-button-outline" to={englishReleased ? '/subscriptions?product=english' : '/parent'}>{englishReleased ? 'See English plans' : 'Open parent account'}</Link></> : <><Link className="website-button website-button-gold" to="/play">Play Matharia <ArrowRight size={18} /></Link><Link className="website-button website-button-outline" to="/revision">Explore revision</Link></>}</div>
           <p className="english-landing-note">{englishReleased ? 'Use your SATs Legends parent login. An English or combined subscription and a child profile are required to play.' : englishTesting ? 'This is a gated playtest. Use the same parent login as Matharia, then choose your child’s profile. An English access grant is required; English and combined plans are not on sale yet.' : 'Lexcoria is not available to play or purchase yet. Current subscriptions cover Matharia only.'}</p>
         </motion.div>
-        <div className="english-landing-emblem" aria-hidden="true"><BookOpen size={155} strokeWidth={1.15} /><span>READ · WRITE · DISCOVER</span></div>
+        <figure className="english-landing-art"><PremiumArtwork hero="vex" eager /><figcaption>The next chapter in the SATs Legends world.</figcaption></figure>
       </div>
     </section>
     <section className="english-landing-strands website-container" aria-labelledby="english-strands-title">

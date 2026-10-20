@@ -1,0 +1,74 @@
+[
+  {
+    "asset": "barratt",
+    "source": "D:\\BrainZilla\\GitHub\\SATsLegends\\src\\assets\\characters\\premium\\barratt-v2.png",
+    "sourceSha256": "2da3bec39748abe1e363e0526c932402c68efb3d0f32c05225754376d4c429bc",
+    "dimensions": [
+      1024,
+      1536
+    ]
+  },
+  {
+    "asset": "mochi",
+    "source": "D:\\BrainZilla\\GitHub\\SATsLegends\\src\\assets\\characters\\premium\\mochi-v2.png",
+    "sourceSha256": "9c8061e9c87b1935d409d83e9f8da0cfc56ef992f7ea5e6545a28705e4ed68a3",
+    "dimensions": [
+      1024,
+      1536
+    ]
+  },
+  {
+    "asset": "bran",
+    "source": "D:\\BrainZilla\\GitHub\\SATsLegends\\src\\assets\\characters\\premium\\bran-v2.png",
+    "sourceSha256": "61dc030499ec0afc15c6376e2e8f07865108ea01f0cff804e5c03b4b6a606276",
+    "dimensions": [
+      1024,
+      1536
+    ]
+  },
+  {
+    "asset": "vex",
+    "source": "D:\\BrainZilla\\GitHub\\SATsLegends\\src\\assets\\characters\\premium\\vex-v2.png",
+    "sourceSha256": "4534dd6f17a001da5b95270565c4abde859be3d9a568c107f23dcf7a2386d620",
+    "dimensions": [
+      1024,
+      1536
+    ]
+  },
+  {
+    "asset": "place_value_panic",
+    "source": "D:\\BrainZilla\\GitHub\\SATsLegends\\src\\assets\\game-visions\\environments\\place_value_panic-v1.webp",
+    "sourceSha256": "79ad988d54aace4cdbf1b99ad3aebfcdd84e92620bf2b03d572effb747c631b2",
+    "dimensions": [
+      1672,
+      941
+    ]
+  },
+  {
+    "asset": "fraction_forge",
+    "source": "D:\\BrainZilla\\GitHub\\SATsLegends\\src\\assets\\game-visions\\environments\\fraction_forge-v1.webp",
+    "sourceSha256": "dfad1f3c3c2339ceb13762a27c3d7477c838d852a7e53d297251954c64ee44d6",
+    "dimensions": [
+      1672,
+      941
+    ]
+  },
+  {
+    "asset": "angle_arena",
+    "source": "D:\\BrainZilla\\GitHub\\SATsLegends\\src\\assets\\game-visions\\environments\\angle_arena-v1.webp",
+    "sourceSha256": "67442708648081ca5ec37f047a1b94bea1526e1c91eee31f9608dc468870b7ea",
+    "dimensions": [
+      1672,
+      941
+    ]
+  },
+  {
+    "asset": "potion_panic",
+    "source": "D:\\BrainZilla\\GitHub\\SATsLegends\\src\\assets\\game-visions\\environments\\potion_panic-v1.webp",
+    "sourceSha256": "2d322f1b0ab5b166eaf6753fc298a89efa2074c8c03e3dee60efd8b1bddbefbc",
+    "dimensions": [
+      1672,
+      941
+    ]
+  }
+]

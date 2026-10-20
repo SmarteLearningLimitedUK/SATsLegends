@@ -15,6 +15,7 @@ import './english.css';
 import './parents.css';
 import './website-hero-action.css';
 import './website-typography.css';
+import './website-revision-refresh.css';
 
 const Game = lazy(() => import('../App'));
 const GameGate = lazy(() => import('./GameGate'));

@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowRight, Eye, EyeOff, Gem, X } from 'lucide-react';
-import barratt from '../assets/characters/mobile/Barratt/barratt_happy.png';
+import PremiumArtwork from './PremiumArtwork';
 import { useFamily } from './FamilyAccount';
 import { appleAuthEnabled, googleAuthEnabled, passkeyAuthEnabled, safeReturnPath, supabase } from './services/supabase';
 
@@ -96,9 +96,7 @@ export default function ParentAccount({ mode }: { mode: 'signup' | 'login' | 'fo
   const title = signup ? 'Your family’s adventure starts here.' : mode === 'forgot' ? 'Reset your password.' : mode === 'reset' ? 'Choose a new password.' : 'Welcome back.';
   return <main className="website-account-main website-container" id="website-main">
     <section className="website-account-world"><p className="website-eyebrow"><Gem size={17} /> SATs Legends parent account</p><h1>Big adventures.<br /><span>Little legends.</span></h1><p>One parent login for your child’s adventures.<br /> Saved progress you can follow, in one place.</p>
-      <svg className="website-account-character" viewBox="81 179 254 315" role="img" aria-label="Barratt is ready for an adventure">
-        <image href={barratt} width="420" height="630" />
-      </svg>
+      <PremiumArtwork hero="barratt" className="website-account-character" eager sizes="280px" />
       <span className="website-account-caption">A brighter next chapter.</span>
     </section>
     <section className="website-account-form-wrap">

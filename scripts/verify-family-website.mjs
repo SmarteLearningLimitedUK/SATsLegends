@@ -48,6 +48,12 @@ try {
         await expect(page.getByText('Lexcoria is not available to play or purchase yet.', { exact: false })).toBeVisible();
       }
       if (route === '/for-parents') {
+        const artwork = await page.locator('.parents-hero-art').boundingBox();
+        const copy = await page.locator('.parents-hero-copy').boundingBox();
+        expect(artwork).not.toBeNull(); expect(copy).not.toBeNull();
+        expect(artwork.x >= copy.x + copy.width || artwork.y >= copy.y + copy.height).toBeTruthy();
+        await page.getByText('How does it fit alongside school?', { exact: true }).click();
+        await expect(page.locator('details[open]')).toContainText('revision companion to classroom teaching');
         await expect(page.getByRole('heading', { name: 'Practice with purpose. Adventure they can explore.' })).toBeVisible();
         await expect(page.locator('tbody tr')).toHaveCount(6);
         for (const name of ['Peaceful Pond', 'Lantern Camp', 'Star Path', 'Leaf Drift', 'Thought Release', 'Breath Bloom']) {

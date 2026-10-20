@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ArrowRight, BookOpen, Check, Leaf, LockKeyhole, Mail, ShieldCheck } from 'lucide-react';
-import valley from '../assets/website/adventure-valley-v1.webp';
-import mochi from '../assets/characters/mobile/Mochi/mochi_happy.png';
+import valley from '../assets/website/premium/place_value_panic-world.webp';
+import PremiumArtwork from './PremiumArtwork';
+import ParentQuestions from './ParentQuestions';
 import { WELLBEING_SCENES } from '../wellbeing/scenes';
 import { revisionTopics } from './content';
 import SplashLogo from './SplashLogo';
@@ -24,7 +25,7 @@ export default function ForParents() {
   const activity = calmActivities[activityIndex];
   return <main id="website-main" className="parents-page">
     <section className="parents-family-section" aria-labelledby="parents-progress-title"><div className="website-container parents-family-layout">
-      <motion.div {...reveal}><p className="website-eyebrow"><Mail size={16} /> Stay part of their journey</p><h1 id="parents-progress-title">Their adventure.<br /><span>Your window into progress.</span></h1><p>Know what’s going well and where to help next. Your private dashboard brings together saved activity, answer accuracy and topics to revisit, so you can support practice with a clearer picture.</p><p>Stay informed with optional progress emails on <strong>Sundays at 3 pm</strong> and <strong>Wednesdays at 4 pm</strong>, UK time. Each email links to your child’s private progress page, available whenever you want to check in.</p><Link className="website-text-link" to="/parent">Open your parent account <ArrowRight size={17} /></Link></motion.div>
+      <motion.div {...reveal}><p className="website-eyebrow"><Mail size={16} /> Stay part of their journey</p><h1 id="parents-progress-title">Their adventure.<br /><span>Your window into progress.</span></h1><p>You don’t have to guess which topics need another look. See saved activity, answer accuracy and strengths in one private dashboard, then choose a manageable focus together for the next session.</p><p>Stay informed with optional progress emails on <strong>Sundays at 3 pm</strong> and <strong>Wednesdays at 4 pm</strong>, UK time. Each email links to your child’s private progress page, available whenever you want to check in.</p><Link className="website-text-link" to="/parent">Open your parent account <ArrowRight size={17} /></Link></motion.div>
       <div className="parents-security"><p className="website-eyebrow"><ShieldCheck size={16} /> Built around parents</p><h2>You’re in control.</h2><ul><li><LockKeyhole size={20} /><span><strong>Private child profiles</strong>Reports require the owning parent’s login, including links opened from an email.</span></li><li><ShieldCheck size={20} /><span><strong>Protected checkout</strong>Payment details are handled by the payment provider, outside the game.</span></li><li><Mail size={20} /><span><strong>Your email preferences</strong>Progress emails are optional. Switch them off in your account whenever you like.</span></li></ul></div>
     </div></section>
 
@@ -35,10 +36,10 @@ export default function ForParents() {
           <p className="website-eyebrow">For parents & carers</p>
           <div className="parents-hero-logo"><SplashLogo /></div>
           <h2>Practice with purpose.<br /><span>Adventure they can explore.</span></h2>
-          <p>Matharia turns KS2 maths practice into game challenges, with revision guides and visual lessons to help your child revisit tricky topics.</p>
+          <p>A familiar school topic can become a fresh challenge at home. Matharia combines KS2 maths games, worked examples and visual lessons, giving your child different ways to revisit a method and try it out.</p>
           <div className="parents-actions"><Link className="website-button website-button-gold" to="/subscriptions">Explore Matharia plans <ArrowRight size={18} /></Link><a className="website-text-link" href="#calm-spaces">Discover Calm Grove <Leaf size={18} /></a></div>
         </motion.div>
-        <motion.img className="parents-hero-mochi" src={mochi} alt="Mochi, Matharia’s friendly panda adventurer" initial={{ y: 18 }} animate={{ y: 0 }} transition={{ duration: 0.7, delay: 0.1 }} />
+        <motion.figure className="parents-hero-art" initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}><PremiumArtwork hero="mochi" /><figcaption>Mochi · One of Matharia’s adventurers</figcaption></motion.figure>
       </div>
     </section>
 
@@ -77,6 +78,8 @@ export default function ForParents() {
       ].map(([title, text], index) => <li key={title}><span className="parents-tip-number">0{index + 1}</span><div><h3>{title}</h3><p>{text}</p></div></li>)}</ol>
       <p className="parents-help">If anxiety or low mood persists, feels severe or affects everyday life, speak with your child’s school or GP. Read the <a href="https://www.nhs.uk/mental-health/children-and-young-adults/advice-for-parents/help-your-child-beat-exam-stress/" target="_blank" rel="noopener noreferrer">NHS advice on supporting children through exam stress</a>.</p>
     </section>
+
+    <ParentQuestions />
 
     <section className="website-container parents-final"><div><p className="website-eyebrow">A clear next step</p><h2>Choose practice that fits your family.</h2><p>Matharia is £4.99 a month or £49.99 a year for one child profile, with saved progress and your private dashboard. Lexcoria, our English adventure, is in development and is not included in current plans.</p></div><Link className="website-button website-button-gold" to="/subscriptions">Compare Matharia plans <ArrowRight size={18} /></Link></section>
   </main>;
