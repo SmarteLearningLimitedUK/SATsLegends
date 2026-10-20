@@ -66,3 +66,5 @@ The owner found the first pass insufficiently similar in content to the requeste
 New content is original and uses the actual product features in the repository. No borrowed testimonials, awards, trial offers or numerical efficacy claims were added. Parent progress stays first on the parents page. Existing upgraded artwork is retained.
 
 Additional files: `src/website/RevisionContent.tsx`; changes to `Website.tsx`, `ForParents.tsx`, `Subscriptions.tsx` and `website-revision-refresh.css`. Stable homepage anchors: `#what-is-sats-legends`, `#revision-subjects`, `#why-sats-legends`.
+
+Published the expanded content and first-load section-link handling from source `3a9c53e03b8312275283f81c47bffdac0460517f` (release `d1c2e361-71ad-4132-83d7-efa5e462c17b`). Publisher confirmed website and both games over HTTPS. Verification for this follow-up: TypeScript passed, 18 local page/layout checks across six widths passed, nine fresh live page/layout checks across phone/tablet/desktop passed, and all three section links opened at the intended heading on both phone and desktop. No external legacy assumptions were used.
