@@ -82,7 +82,7 @@ export default function AdminDashboard() {
   const reportNeedsAttention = !reportHealth || reportHealth.schedulerStale || reportHealth.failedDeliveries > 0
     || reportHealth.overdueDeliveries > 0 || Boolean(reportHealth.latestRun?.error) || Boolean(reportHealth.latestRun?.failed);
   return <main id="website-main" className="website-container family-main admin-main">
-    <div className="website-resource-heading"><p className="website-eyebrow"><ShieldCheck size={17} /> Staff only</p><h1>SATs Legends admin</h1><p>Find parent accounts, check access and reports, and record support actions.</p></div>
+    <div className="website-resource-heading"><p className="website-eyebrow"><ShieldCheck size={17} /> Staff only</p><h1>SATs Legends admin</h1><Link className="website-button website-button-gold" to="/admin/journal">Write in The Legends Journal</Link><p>Find parent accounts, check access and reports, and record support actions.</p></div>
     <p className="family-small">Account actions are logged with your reason. Paid charges and cancellations stay in Stripe. Password reset emails need the project’s email service configured.</p>
     {error && <p className="family-error" role="alert">{error}</p>}
     {notice && <p className="family-notice" role="status">{notice}</p>}

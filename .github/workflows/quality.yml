@@ -41,6 +41,7 @@ jobs:
         run: |
           npm run verify:family-db
           npm run verify:admin-db
+          npm run verify:journal-db
           npm run verify:production-db
           npm run verify:store-entitlements
           node scripts/verify-stripe-subscription-mapping.mjs

@@ -16,6 +16,7 @@ import './parents.css';
 import './website-hero-action.css';
 import './website-typography.css';
 import './website-revision-refresh.css';
+import './journal.css';
 
 const Game = lazy(() => import('../App'));
 const GameGate = lazy(() => import('./GameGate'));
@@ -28,7 +29,7 @@ export default function WebsiteRoot() {
 function WebsiteContent() {
   const { pathname } = useLocation();
   const isEnglishAssetRoute = pathname === '/english/play' || pathname.startsWith('/english/play/');
-  const isWebsite = websiteRoutes.has(pathname.replace(/\/+$/, '') || '/') || pathname.startsWith('/parent') || isEnglishAssetRoute;
+  const isWebsite = websiteRoutes.has(pathname.replace(/\/+$/, '') || '/') || pathname.startsWith('/parent') || pathname === '/journal' || pathname.startsWith('/journal/') || pathname === '/admin/journal' || isEnglishAssetRoute;
   const gameScreen = parseRoute(pathname).screen;
   const isMinigame = gameScreen === 'gameplay';
   const hasGameDock = !['splash', 'avatar_selection', 'profile_setup'].includes(gameScreen);
