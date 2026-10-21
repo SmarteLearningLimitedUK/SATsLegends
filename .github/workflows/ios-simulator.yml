@@ -34,6 +34,15 @@ jobs:
       # Compilation only: no account secrets, signing, paid products or upload.
       - run: npm run ios:sync
       - run: npm run ios:build:simulator
+      - name: Install and launch in iPhone simulator
+        run: node scripts/smoke-ios-simulator.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: iphone-simulator-launch-evidence
+          path: qa-artifacts/ios-simulator-smoke/
+          if-no-files-found: warn
+          retention-days: 7
       - uses: actions/upload-artifact@v4
         with:
           name: unsigned-iphone-simulator-app
