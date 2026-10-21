@@ -16,6 +16,7 @@ import './games/review-polish.css';
 import './games/presentation-quality.css';
 import './components/game-ui/viewport-question.css';
 import './games/qa-readability-fixes.css';
+import './components/game-ui/gameplay-dock-layout.css';
 
 const WebsiteRoot = lazy(() => import('./website/WebsiteRoot'));
 const IOSAppRoot = lazy(() => import('./platform/ios/IOSAppRoot'));

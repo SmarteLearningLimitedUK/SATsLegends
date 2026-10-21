@@ -1,4 +1,8 @@
 /* Current-review fixes: keep activities, actors and controls in their own space. */
+@media(orientation:landscape) and (max-height:550px) {
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='perimeter_path'] .perimeter-responses {display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='perimeter_path'] .perimeter-layout {grid-template-columns:minmax(0,1fr) minmax(180px,.65fr)!important;}
+}
 .perimeter-edge-length{display:none;pointer-events:all;cursor:pointer;}
 .perimeter-edge-length:focus-visible{outline:none;filter:drop-shadow(0 0 1px white);}
 #root [data-vision-game='change_counter'] .market-till-header strong{min-width:0;width:100%;}

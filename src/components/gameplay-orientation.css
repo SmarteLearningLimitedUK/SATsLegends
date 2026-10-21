@@ -9,3 +9,6 @@
 .gameplay-orientation-symbol svg:last-child{position:absolute;width:34px;height:34px;right:-5px;top:16px}
 @keyframes gameplay-turn-phone{0%,18%{transform:rotate(0)}55%,85%{transform:rotate(90deg)}100%{transform:rotate(0)}}
 @media(prefers-reduced-motion:reduce){.gameplay-orientation-symbol svg:first-child{animation:none;transform:rotate(90deg)}}
+.gameplay-orientation-gate[data-required-orientation='portrait'] .gameplay-orientation-symbol svg:first-child{animation-name:gameplay-turn-upright}
+@keyframes gameplay-turn-upright{0%,18%{transform:rotate(90deg)}55%,85%{transform:rotate(0)}100%{transform:rotate(90deg)}}
+@media(prefers-reduced-motion:reduce){.gameplay-orientation-gate[data-required-orientation='portrait'] .gameplay-orientation-symbol svg:first-child{animation:none;transform:none}}

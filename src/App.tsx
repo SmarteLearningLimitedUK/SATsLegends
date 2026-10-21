@@ -18,6 +18,7 @@ import AchievementsModal from './components/modals/AchievementsModal';
 import LevelResultsModal from './components/results/LevelResultsModal';
 import UnifiedMiniGameHud from './components/UnifiedMiniGameHud';
 import GameplayOrientationGate from './components/GameplayOrientationGate';
+import { getGameOrientation, needsGameRotation } from './app/gameOrientation';
 import { useNativeAppBackgrounded } from './platform/nativeApp';
 import { getVisionEnvironment } from './games/visionScene';
 import AssetIcon from './components/AssetIcon';
@@ -329,7 +330,8 @@ const App: React.FC = () => {
     });
   }, [player.calmTokens, setPlayer, wellbeingActivityId]);
 
-  const gameplayRotationRequired = screen === 'gameplay' && viewportSize.width > 0 && viewportSize.width < 700 && viewportSize.height > viewportSize.width;
+  const gameplayOrientation = getGameOrientation(selectedLevel);
+  const gameplayRotationRequired = screen === 'gameplay' && needsGameRotation(gameplayOrientation, viewportSize.width, viewportSize.height);
   const nativeBackgrounded = useNativeAppBackgrounded();
   const {
     globalMiniGameHudTimeLeft,
@@ -899,6 +901,7 @@ const App: React.FC = () => {
   const isShortLandscapeMap = isWorldMapScreen && viewportSize.width >= 560
     && viewportSize.width > viewportSize.height && viewportSize.height < 600;
   const useUnboundedStageShell = screen === 'parent_dashboard' || isWellbeingScreen
+    || (isGameplayScreen && gameplayOrientation === 'portrait')
     || isShortLandscapeSplash || isShortLandscapeMap
     || (isGameplayScreen && (hasWideGameplayViewport || viewportSize.width > viewportSize.height))
     || (isResponsiveHubScreen && hasWideGameViewport)
@@ -1003,7 +1006,7 @@ const App: React.FC = () => {
 
   return (
     <div className={`iphone-game-viewport${useScrollableStageShell ? ' iphone-game-viewport-scrollable' : ''}${screen === 'world_map' ? ' iphone-game-viewport-map' : ''}`} style={viewportStyle}>
-      {gameplayRotationRequired && <GameplayOrientationGate onBack={goToIslandLevels} />}
+      {gameplayRotationRequired && <GameplayOrientationGate orientation={gameplayOrientation} onBack={goToIslandLevels} />}
       <div inert={gameplayRotationRequired || undefined} className={`iphone-game-stage${useUnboundedStageShell ? ' iphone-game-stage-unbounded' : ''}${useScrollableStageShell ? ' iphone-game-stage-scrollable' : ''}`} style={stageStyle} data-stage-layout={useUnboundedStageShell ? 'responsive' : useScrollableStageShell ? 'scrollable' : 'portrait'}>
         <div className="iphone-game-stage-inner">
           <div
@@ -1092,7 +1095,7 @@ const App: React.FC = () => {
                 lives={globalMiniGameLives}
                 hideTimer={isMockAssessment ? false : hideShellTimer}
                 assessment={isMockAssessment}
-                hideTopBar={screen === 'world_map' || screen === 'island_levels' || screen === 'profile' || screen === 'achievements_tracker' || screen === 'parent_dashboard'}
+                hideTopBar={isWellbeingScreen || screen === 'world_map' || screen === 'island_levels' || screen === 'profile' || screen === 'achievements_tracker' || screen === 'parent_dashboard'}
                 onBack={isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
                 variant={isGameplayScreen ? 'gameplay' : 'hub'}
                 bottomContent={mapHudDock || undefined}
@@ -1100,12 +1103,12 @@ const App: React.FC = () => {
             ) : null}
 
             <PracticeIntroPopup
-              open={practiceBriefingOpen}
+              open={practiceBriefingOpen && !gameplayRotationRequired}
               title={canonicalGameTitle || 'Practice'} body="Learn the method, then try the mission." briefing={hintRuleSet}
               onAction={() => setDismissedPracticeGuide(practiceGuideKey)}
             />
             <PracticeIntroPopup
-              open={gameplayHelpOpen && isGameplayScreen}
+              open={gameplayHelpOpen && isGameplayScreen && !gameplayRotationRequired}
               kind="help"
               title={canonicalGameTitle || 'Your mission'}
               body="Read the mission, explore the playfield, then choose your answer."
@@ -1114,7 +1117,7 @@ const App: React.FC = () => {
               onAction={() => setGameplayHelpOpen(false)}
             />
             <GlobalWorkpadDialog
-              open={gameplayWorkpadOpen && isGameplayScreen && !isMockAssessment}
+              open={gameplayWorkpadOpen && isGameplayScreen && !isMockAssessment && !gameplayRotationRequired}
               value={gameplayWorkpadValue}
               onChange={setGameplayWorkpadValue}
               onClose={() => setGameplayWorkpadOpen(false)}

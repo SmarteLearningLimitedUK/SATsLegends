@@ -1,0 +1,23 @@
+/* Gameplay owns two physical rows: the playable region and the utility dock.
+   The illustration remains full-bleed behind both. Dock growth and the iPhone
+   home-indicator inset therefore reduce the play area instead of covering it. */
+#root .app-viewport.screen-gameplay > [data-unified-minigame-hud='true'][data-hud-variant='gameplay'] {
+  display:contents !important;
+}
+#root .app-viewport.screen-gameplay > [data-unified-minigame-hud='true'] > .legend-hud-top-anchor {
+  z-index:120;
+}
+#root .app-viewport.screen-gameplay > [data-unified-minigame-hud='true'] > [data-testid='shared-bottom-hud'] {
+  position:relative !important;inset:auto !important;z-index:120;
+  flex:0 0 auto;width:100%;padding-top:8px;
+}
+#root .app-viewport.screen-gameplay > .app-screen-content {
+  flex:1 1 0%;min-height:0;
+}
+#root .app-viewport.screen-gameplay > .app-screen-content .game-shell-host {
+  height:100% !important;max-height:100% !important;
+  --shared-minigame-reserved-bottom:0px !important;
+}
+#root .app-viewport.screen-gameplay > .app-screen-content .game-shell-host > .game-shell-contract > .structured-game-layout {
+  padding-bottom:0 !important;
+}

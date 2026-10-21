@@ -12,6 +12,8 @@ try {
   for (const viewport of [{width:390,height:844},{width:375,height:667},{width:430,height:932},{width:844,height:390}]) {
     const context = await browser.newContext({viewport, hasTouch:true, reducedMotion:'reduce'});
     const errors = [], requests = [], parent = '10000000-0000-4000-8000-000000000001';
+    let saved = null, revision = 0;
+    const savedRequests = new Map();
     const user = {id:parent,email:'app-qa@example.invalid',aud:'authenticated',role:'authenticated',app_metadata:{},user_metadata:{}};
     const part = value => Buffer.from(JSON.stringify(value)).toString('base64url');
     const auth = {user,access_token:part({alg:'HS256'})+'.'+part({sub:parent,exp:Math.floor(Date.now()/1000)+3600})+'.fixture',refresh_token:'fixture',expires_in:3600,token_type:'bearer'};
@@ -20,10 +22,10 @@ try {
       window.CapacitorCustomPlatform = {name:'ios'};
       window.Capacitor = {PluginHeaders:[
         {name:'App',methods:[{name:'getState',rtype:'promise'},{name:'addListener'},{name:'removeListener',rtype:'promise'}]},
-        {name:'ScreenOrientation',methods:[{name:'lock',rtype:'promise'}]},
+        {name:'ScreenOrientation',methods:[{name:'lock',rtype:'promise'},{name:'unlock',rtype:'promise'}]},
         {name:'LegendsStore',methods:[{name:'entitlements',rtype:'promise'},{name:'addListener'},{name:'removeListener',rtype:'promise'}]}
       ],nativePromise:async(plugin,method,options)=>{
-        if(plugin==='ScreenOrientation') window.__orientationCalls.push(options.orientation);
+        if(plugin==='ScreenOrientation') window.__orientationCalls.push(method === 'unlock' ? 'unlock' : options.orientation);
         if(plugin==='App') return {isActive:true};
         if(plugin==='LegendsStore') return {transactionIds:[]};
         return {};
@@ -47,7 +49,14 @@ try {
       if(url.pathname.endsWith('/parent_settings')) return reply({report_emails:false});
       if(url.pathname.endsWith('/complimentary_access')) return reply([]);
       if(url.pathname.endsWith('/rpc/is_staff')) return reply(false);
-      if(url.pathname.endsWith('/child_progress')) return reply(null);
+      if(url.pathname.endsWith('/child_progress')) return reply(saved);
+      if(url.pathname.endsWith('/rpc/save_child_progress')) {
+        const body = req.postDataJSON();
+        if(savedRequests.has(body.request_id)) return reply(savedRequests.get(body.request_id));
+        revision++; savedRequests.set(body.request_id,revision);
+        saved = {player:body.player_data,progression:body.progression_data,revision,last_request_id:body.request_id};
+        return reply(revision);
+      }
       if(url.pathname.endsWith('/apple-subscriptions')) return reply({ready:false});
       throw Error('Unexpected account request: '+url.pathname);
     });
@@ -77,8 +86,36 @@ try {
     await page.screenshot({path:out+'/'+stem+'-learners.png',fullPage:true});
     assert.equal(await page.evaluate(()=>document.documentElement.dataset.appOrientation),'portrait');
     await page.getByRole('button',{name:/Robin/}).click();
-    await expect(page.locator('html')).toHaveAttribute('data-app-orientation','landscape');
-    await expect.poll(()=>page.evaluate(()=>window.__orientationCalls.at(-1))).toBe('landscape');
+    await expect(page.locator('html')).toHaveAttribute('data-app-orientation','portrait');
+    await expect.poll(()=>page.evaluate(()=>window.__orientationCalls.at(-1))).toBe('portrait-primary');
+    // Menus stay portrait. Only a minigame permits physical rotation.
+    // Match the app's client-side level navigation, preserving the mounted
+    // save controller rather than reloading during a pending save.
+    await page.evaluate(() => {
+      history.pushState(null, '', '/game/1/1');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+    await expect(page.locator('html')).toHaveAttribute('data-app-orientation','landscape-required');
+    await expect.poll(()=>page.evaluate(()=>window.__orientationCalls.at(-1))).toBe('unlock');
+    await page.setViewportSize({width:390,height:844});
+    const rotate = page.locator('[data-gameplay-orientation-gate]');
+    try { await expect(rotate).toBeVisible({timeout:60000}); }
+    catch(error) {
+      console.error('Game-screen diagnostic',JSON.stringify({url:page.url(),errors,text:(await page.locator('body').innerText()).slice(0,1200)}));
+      await page.screenshot({path:out+'/'+stem+'-rotation-failure.png',fullPage:true});
+      throw error;
+    }
+    await expect(page.locator('.iphone-game-stage')).toHaveAttribute('inert','');
+    await expect(rotate.getByText('Your game is paused.')).toBeVisible();
+    await page.screenshot({path:out+'/'+stem+'-turn-phone.png',fullPage:true});
+    await page.setViewportSize({width:844,height:390});
+    await expect(rotate).toHaveCount(0);
+    await expect(page.locator('.iphone-game-stage')).not.toHaveAttribute('inert','');
+    await page.setViewportSize({width:390,height:844});
+    await expect(rotate).toBeVisible();
+    await rotate.getByRole('button',{name:'Back to island'}).click();
+    await expect(rotate).toHaveCount(0);
+    await expect.poll(()=>page.evaluate(()=>window.__orientationCalls.at(-1))).toBe('portrait-primary');
     await page.goto(base+'/parent');
     await expect(page.getByRole('heading',{name:'Who’s playing?'})).toBeVisible();
     await expect.poll(()=>page.evaluate(()=>window.__orientationCalls.at(-1))).toBe('portrait-primary');

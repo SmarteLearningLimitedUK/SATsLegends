@@ -401,6 +401,17 @@
 @media(prefers-reduced-motion:reduce) { .maths-vs-zombies .zombies-target > :first-child { animation:none !important; } }
 
 /* Keep the complete mission readable instead of clipping the last rule. */
+.maths-vs-zombies .zombies-scene-backdrop img {
+ filter:brightness(.78) saturate(.7);
+}
+.maths-vs-zombies .zombies-scene-backdrop::after {
+ content:'';position:absolute;inset:0;
+ background:radial-gradient(ellipse at 20% 72%,#071a35a8,transparent 58%);
+ pointer-events:none;
+}
+.maths-vs-zombies .zombies-player-avatar {
+ filter:drop-shadow(0 0 3px #ffe8a8) drop-shadow(0 8px 8px #031022b3);
+}
 #root .maths-vs-zombies .zombies-question-card {max-height:none;flex-shrink:0;}
 
 /* Short landscape phones need a real ground plane, not the strip left

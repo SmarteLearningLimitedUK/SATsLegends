@@ -588,7 +588,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       const hit = zombiesRef.current.some((zombie) => zombie.id === target.id && zombie.state !== 'die');
       if (hit) {
         playGameSound('impact');
-        playMonsterSound('monster_hurt');
+        playMonsterSound('monster_defeat');
         const next = zombiesRef.current.map((zombie) => zombie.id === target.id
           ? { ...zombie, health: 0, state: 'die' as ZombieState, stateTime: 0 }
           : zombie);
@@ -684,7 +684,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       data-paused={paused}
       data-zombies-game data-zombies-equation={question.equation} data-zombies-tier={tier} data-zombies-score={XP} data-zombies-target={victoryTargetScore} data-zombies-time={timeLeft}
     >
-      <SceneEnvironment src={getVisionEnvironment('maths_vs_zombies')??''} fit="cover" />
+      <SceneEnvironment className="zombies-scene-backdrop" src={getVisionEnvironment('maths_vs_zombies')??''} fit="cover" />
       <PracticeIntroPopup
         open={showPracticeIntro}
         title={gameTitle || 'Maths vs Zombies'}

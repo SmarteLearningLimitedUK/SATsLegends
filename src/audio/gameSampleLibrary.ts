@@ -7,6 +7,7 @@ const defaults: Record<GameSoundEffect, Clip | null> = {
   tap: 'ui-pop', place: 'gem-place', cast: 'fairy', impact: 'jump-hit',
   correct: 'correct', incorrect: 'incorrect', complete: 'level-up', fail: null,
   monster_growl: 'monster-growl', monster_laugh: 'monster-laugh', monster_hurt: 'monster-hurt',
+  monster_defeat: 'monster-growl',
 };
 const overrides: Record<string, Partial<Record<GameSoundEffect, Clip>>> = {
   change_counter: { tap: 'coin-place', place: 'coin-place', correct: 'cash', complete: 'reward' },

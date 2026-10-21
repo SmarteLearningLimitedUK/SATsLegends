@@ -48,9 +48,9 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
   if (hidden) return null;
 
   return (
-    <div data-unified-minigame-hud="true" className="pointer-events-none absolute inset-0 z-[120]">
+    <div data-unified-minigame-hud="true" data-hud-variant={variant} className="pointer-events-none absolute inset-0 z-[120]">
       {hideTopBar ? null : (
-        <div className="absolute inset-x-0 top-0 flex justify-center" style={{
+        <div className="legend-hud-top-anchor absolute inset-x-0 top-0 flex justify-center" style={{
           paddingTop: 'calc((env(safe-area-inset-top) + 0.35rem) / var(--game-stage-scale, 1))',
           paddingLeft: '0.4rem', paddingRight: '0.4rem',
         }}>

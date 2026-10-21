@@ -2,6 +2,9 @@ import { lazy, Suspense, useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { Capacitor } from '@capacitor/core';
 import { ScreenOrientation } from '@capacitor/screen-orientation';
+import { parseRoute } from '../../app/routeConfig';
+import { ISLANDS } from '../../constants';
+import { getGameOrientation } from '../../app/gameOrientation';
 import FamilyAccount, { hasMathariaAccess, useFamily } from '../../website/FamilyAccount';
 import ParentAccount from '../../website/ParentAccount';
 import GameGate from '../../website/GameGate';
@@ -11,7 +14,6 @@ import IOSFamilyScreen from './IOSFamilyScreen';
 import AppleSubscriptions from './IOSSubscriptionScreen';
 
 const Game = lazy(() => import('../../App'));
-const accountPath = (path: string) => /^\/(login|signup|forgot-password|reset-password|auth|parent|subscriptions)(\/|$)/.test(path);
 let orientationQueue = Promise.resolve();
 
 export default function IOSAppRoot() {
@@ -19,14 +21,21 @@ export default function IOSAppRoot() {
 }
 function IOSRoutes() {
   const { pathname } = useLocation(), family = useFamily();
-  const playing = !accountPath(pathname) && Boolean(family.session && family.selectedChild && hasMathariaAccess(family.subscriptions, family.complimentary));
+  const playing = parseRoute(pathname).screen === 'gameplay' && Boolean(family.session && family.selectedChild && hasMathariaAccess(family.subscriptions, family.complimentary));
+  const route = parseRoute(pathname);
+  const level = ISLANDS.find(island => island.id === route.islandId)?.levels.find(item => item.id === route.levelId);
+  const landscapeGame = playing && getGameOrientation(level) === 'landscape';
   useEffect(() => {
     document.body.classList.remove('legends-website-body');
-    document.documentElement.dataset.appOrientation = playing ? 'landscape' : 'portrait';
+    document.documentElement.dataset.appOrientation = landscapeGame ? 'landscape-required' : 'portrait';
     if (!Capacitor.isNativePlatform()) return;
     // Serialize native requests so a quick redirect cannot leave an old lock active.
-    orientationQueue = orientationQueue.catch(() => {}).then(() => ScreenOrientation.lock({ orientation: playing ? 'landscape' : 'portrait-primary' })).catch(error => console.error('Screen orientation could not be updated', error));
-  }, [playing]);
+    // Let the learner physically turn the phone. App's shared orientation gate
+    // pauses a portrait game instead of forcing the UI sideways on entry.
+    orientationQueue = orientationQueue.catch(() => {}).then(() => landscapeGame
+      ? ScreenOrientation.unlock()
+      : ScreenOrientation.lock({ orientation: 'portrait-primary' })).catch(error => console.error('Screen orientation could not be updated', error));
+  }, [landscapeGame]);
   return <Routes>
     <Route path="/login" element={<ParentAccount mode="login" />} />
     <Route path="/signup" element={<ParentAccount mode="signup" />} />

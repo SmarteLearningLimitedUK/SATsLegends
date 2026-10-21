@@ -1,4 +1,7 @@
 .rr-game { position: relative; width: 100%; height: 100%; overflow: hidden; background: #09132b; }
+@media(orientation:portrait) and (max-width:699px) {
+ .rr-game:has(.rr-feedback) .rr-build-status {visibility:hidden;}
+}
 .rr-scene { position: absolute; inset: 0; overflow: hidden; isolation: isolate; }
 .rr-world { position: absolute; width: 100%; height: 400%; bottom: 0; background:linear-gradient(to bottom,#050c1d 0%,#10254b 24%,#215f9c 48%,#62bdde 73%,#43b9f0 100%); }
 .rr-launchpad { position: absolute; bottom: 0; width: 100%; height: 25%; background-size: cover; background-position: center; }

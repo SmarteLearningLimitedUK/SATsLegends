@@ -923,3 +923,32 @@
   flex:1 0 280px;
   min-height:280px;
 }
+
+/* Calm screens have their own title and exit; no adventure header above them. */
+#root .app-viewport:is(.screen-wellbeing-hub,.screen-wellbeing-activity) > .app-screen-content {
+ margin-top:0;
+ margin-bottom:calc(74px / var(--game-stage-scale,1) + env(safe-area-inset-bottom));
+}
+#root .app-viewport:is(.screen-wellbeing-hub,.screen-wellbeing-activity) .wellbeing-shell {padding-top:calc(16px + env(safe-area-inset-top));}
+
+/* The flower is the flexible row. Instructions and controls never scroll away. */
+#root .wellbeing-shell[data-wellbeing-activity='breathing_bloom'] {overflow:hidden;}
+#root .wellbeing-shell[data-wellbeing-activity='breathing_bloom'] .wellbeing-content {flex:1 1 0;min-height:0;height:auto;}
+#root .wellbeing-shell[data-wellbeing-activity='breathing_bloom'] .wellbeing-scene {
+ flex:1 1 0;height:auto;min-height:0;
+ grid-template-rows:auto minmax(40px,1fr) auto auto;
+ gap:clamp(4px,1vh,10px);padding:0 0 6px;
+}
+#root .wellbeing-shell[data-wellbeing-activity='breathing_bloom'] .wellbeing-bloom-garden {
+ height:100%;min-height:0;container-type:size;--garden-flower-base:min(135px,80cqh);
+}
+@media(orientation:portrait) and (max-height:740px) {
+ #root .wellbeing-shell[data-wellbeing-activity='breathing_bloom'] {padding:calc(10px + env(safe-area-inset-top)) 12px 8px;}
+ #root .wellbeing-shell[data-wellbeing-activity='breathing_bloom'] .wellbeing-header {padding-bottom:8px;}
+ #root .wellbeing-shell[data-wellbeing-activity='breathing_bloom'] .wellbeing-heading h1 {font-size:25px;}
+ #root .wellbeing-shell[data-wellbeing-activity='breathing_bloom'] .wellbeing-how-to {font-size:13px;line-height:1.3;}
+ #root .wellbeing-shell[data-wellbeing-activity='breathing_bloom'] .wellbeing-breath-cue strong {font-size:18px;line-height:1.2;}
+ #root .wellbeing-shell[data-wellbeing-activity='breathing_bloom'] .wellbeing-breath-cue span {font-size:12px;line-height:1.3;}
+ #root .wellbeing-shell[data-wellbeing-activity='breathing_bloom'] .wellbeing-footer {padding:8px;gap:5px;}
+ #root .wellbeing-shell[data-wellbeing-activity='breathing_bloom'] .wellbeing-slow-note {font-size:12px;line-height:1.35;}
+}

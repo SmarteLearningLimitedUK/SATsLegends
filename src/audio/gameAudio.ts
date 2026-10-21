@@ -3,7 +3,7 @@ import { GAME_AUDIO_STORAGE_KEY, GAME_HUD_MUTE_SYNC_EVENT } from '../gameHudEven
 import { getGameSoundProfile, type SoundMaterial } from './gameSoundProfiles';
 import { decodeGameSample, preloadGameSamples, sampleForEffect } from './gameSampleLibrary';
 
-export type MonsterSoundEffect = 'monster_growl' | 'monster_laugh' | 'monster_hurt';
+export type MonsterSoundEffect = 'monster_growl' | 'monster_laugh' | 'monster_hurt' | 'monster_defeat';
 export type GameSoundEffect = 'tap' | 'place' | 'cast' | 'impact' | 'correct' | 'incorrect' | 'complete' | 'fail' | MonsterSoundEffect;
 type Voice = { note: number; at: number; length: number; level: number; pan: number; wave: OscillatorType; endNote?: number };
 
@@ -274,13 +274,14 @@ export function playGameSound(effect: GameSoundEffect, mutedOverride?: boolean) 
       if (epoch !== sampleEpoch || document.hidden || localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true' || ctx.state === 'closed') return;
       if (!buffer) { playSynthSound(ctx, effect, profile); return; }
       // Repeated clicks and fast answers must not stack the same long recording.
-      const group = effect.startsWith('monster_') ? 'monster' : effect === 'correct' || effect === 'incorrect' ? 'feedback' : effect;
+      const group = effect === 'monster_defeat' ? 'monster-defeat' : effect.startsWith('monster_') ? 'monster' : effect === 'correct' || effect === 'incorrect' ? 'feedback' : effect;
       for (const playing of activeSamples) {
-        if (sampleGroups.get(playing) === group) { try { playing.stop(); } catch { /* Ended. */ } }
+        if (group !== 'monster-defeat' && sampleGroups.get(playing) === group) { try { playing.stop(); } catch { /* Ended. */ } }
       }
       const source = ctx.createBufferSource();
       const gain = ctx.createGain();
       source.buffer = buffer;
+      if (effect === 'monster_defeat') source.playbackRate.value = .78;
       gain.gain.value = effect.startsWith('monster_') ? .65 : effect === 'tap' ? .55 : .8;
       source.connect(gain);
       gain.connect(dry!);
@@ -299,7 +300,7 @@ const sampleGroups = new WeakMap<AudioBufferSourceNode, string>();
 /** Creature ambience waits for the player's first audio gesture, never autoplaying. */
 export function playMonsterSound(effect: MonsterSoundEffect) {
   if (!context || context.state !== 'running') return false;
-  if (effect !== 'monster_hurt' && context.currentTime - lastMonsterAt < 1.2) return false;
+  if (effect !== 'monster_hurt' && effect !== 'monster_defeat' && context.currentTime - lastMonsterAt < 1.2) return false;
   const played = playGameSound(effect);
   if (played) lastMonsterAt = context.currentTime;
   return played;
@@ -341,6 +342,14 @@ function playCannonShot(ctx: AudioContext) {
 }
 
 function playSynthSound(ctx: AudioContext, effect: GameSoundEffect, profile: typeof soundProfile) {
+  if (effect === 'monster_defeat') {
+    // A descending vocal-like tail if the recorded groan cannot be decoded.
+    const base = ctx.currentTime + .01;
+    [{note:120,endNote:54,level:.085,wave:'sawtooth' as const},
+      {note:245,endNote:110,level:.025,wave:'triangle' as const}]
+      .forEach(voice => playVoice(ctx,{...voice,at:0,length:.85,pan:0},base));
+    return;
+  }
   if (profile.id === 'angle_arena' && effect === 'cast') { playCannonShot(ctx); return; }
   const base = ctx.currentTime + .015;
   const pitch = Math.min(1.4, Math.max(.7, profile.pitch));

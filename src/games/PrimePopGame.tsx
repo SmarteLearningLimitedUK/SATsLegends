@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import './prime-pop.css';
+import { choosePrimePopValue, crossedPrimePopLine, isPrimeNumber } from './primePopRules';
 import { AVATARS } from '../constants';
 import SceneEnvironment from '../components/SceneEnvironment';
 import primePopBackground from '../assets/maps/premium/prime-pop-wide-v2.png';
@@ -67,17 +68,6 @@ const TINT_STYLE: Record<BubbleTint, { from: string; to: string; ring: string }>
 };
 
 const randomBetween = (min: number, max: number) => min + (Math.random() * (max - min));
-const randomInt = (min: number, max: number) => Math.floor(randomBetween(min, max + 1));
-
-const isPrime = (n: number) => {
-  if (n < 2) return false;
-  if (n === 2) return true;
-  if (n % 2 === 0) return false;
-  for (let i = 3; i * i <= n; i += 2) {
-    if (n % i === 0) return false;
-  }
-  return true;
-};
 
 const getConfig = (levelId: number): PrimePopConfig => {
   const tier = Math.max(1, Math.min(5, levelId));
@@ -305,9 +295,9 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
 
     return {
       minBubbles: Math.max(3, config.minBubbles - 1),
-      maxBubbles: Math.max(4, config.maxBubbles - 1),
+      maxBubbles: Math.min(6, Math.max(4, config.maxBubbles - 1)),
       minRadius: config.minRadius * 1.02,
-      maxRadius: config.maxRadius * 1.1,
+      maxRadius: Math.min(7.8, config.maxRadius * 1.1),
       minSpeed: config.minSpeed * 0.9,
       maxSpeed: config.maxSpeed * 0.9,
     };
@@ -386,27 +376,8 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
       y = randomBetween(minY, maxY);
     }
 
-    const pickPrime = Math.random() < config.primeChance;
-    let value = randomInt(2, config.maxNumber);
-    if (pickPrime) {
-      for (let i = 0; i < 18; i += 1) {
-        const candidate = randomInt(2, config.maxNumber);
-        if (isPrime(candidate)) {
-          value = candidate;
-          break;
-        }
-      }
-    } else {
-      for (let i = 0; i < 18; i += 1) {
-        const candidate = randomInt(4, config.maxNumber);
-        if (!isPrime(candidate)) {
-          value = candidate;
-          break;
-        }
-      }
-    }
-
-    const prime = isPrime(value);
+    const value = choosePrimePopValue(config.maxNumber, config.primeChance, existing.map(bubble => bubble.value));
+    const prime = isPrimeNumber(value);
 
     return {
       id: bubbleIdRef.current++,
@@ -456,8 +427,14 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
 
     spawnRef.current = window.setInterval(() => {
       if (overRef.current || pausedRef.current || document.hidden) return;
-      if (bubblesRef.current.length >= bubbleRuntime.maxBubbles) return;
-      const next = [...bubblesRef.current, makeBubble(bubblesRef.current)];
+      let active = bubblesRef.current;
+      if (active.length >= bubbleRuntime.maxBubbles) {
+        if (active.filter(bubble => bubble.isPrime).length >= 2) return;
+        // A field of untouched distractors must never block the next prime.
+        const replace = active.find(bubble => !bubble.isPrime);
+        active = active.filter(bubble => bubble.id !== replace?.id);
+      }
+      const next = [...active, makeBubble(active)];
       bubblesRef.current = next;
       setBubbles(next);
     }, config.spawnEveryMs);
@@ -507,7 +484,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
         metadata: { bubbleId, value: target.value },
       });
       later(() => setFeedback(null), 520);
-      if (isPractice && scoreRef.current >= targetScore) finalize(scoreRef.current);
+      if (scoreRef.current >= targetScore) finalize(scoreRef.current);
     } else {
       comboNext = 0;
       if (useLocalLives) livesNext -= 1;
@@ -582,12 +559,11 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     });
     const movedWithoutOverlap = resolveBubbleCollisions(movedBubbles, fieldRef.current?.clientWidth || 600, fieldRef.current?.clientHeight || 400, isPhone);
 
-    const dangerPrimeBubbles = movedWithoutOverlap.filter((bubble) => bubble.isPrime && (bubble.y - bubble.radius) <= DANGER_LINE_Y);
+    const crossedLine = (bubble: Bubble) => crossedPrimePopLine(bubble.y, bubbleDiameterPx(bubble.radius, isPhone), fieldRef.current?.clientHeight || 400, DANGER_LINE_Y);
+    const dangerPrimeBubbles = movedWithoutOverlap.filter((bubble) => bubble.isPrime && crossedLine(bubble));
     const dangerPrimeHits = dangerPrimeBubbles.length;
-    const nextBubbles = movedWithoutOverlap.filter((bubble) => {
-      if ((bubble.y - bubble.radius) <= DANGER_LINE_Y && bubble.isPrime) return false;
-      return bubble.y >= -(bubble.radius + 3);
-    });
+    // All bubbles leave at the same visible boundary. Only missed primes cost a life.
+    const nextBubbles = movedWithoutOverlap.filter((bubble) => !crossedLine(bubble));
     let scoreNext = scoreRef.current;
     let comboNext = comboRef.current;
     let livesNext = livesRef.current;
@@ -599,7 +575,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
       later(() => setFeedback(null), 520);
       dangerPrimeBubbles.forEach((bubble) => emitMiniGameSessionEvent(sessionEventsRef.current, 'incorrect_answer', {
         score: scoreRef.current,
-        metadata: { bubbleId: bubble.id, reason: 'escaped' },
+        metadata: { bubbleId: bubble.id, value: bubble.value, reason: 'escaped' },
       }));
     }
 
@@ -655,9 +631,8 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
       <div className="relative z-10 flex h-full min-h-0 w-full flex-col pt-[env(safe-area-inset-top)]">
         <div className={`prime-pop-question-slot pointer-events-none px-3 ${usesSharedHud ? 'pt-[calc(env(safe-area-inset-top)+3.9rem)]' : 'pt-3'}`}>
           <GameQuestionCard title="Prime Pop" className="max-w-[22rem]">
-            Pick out the <b>PRIME</b> numbers before they cross the line.
+            Pop the <b>PRIME</b> numbers before the danger line. Let other numbers pass.
           </GameQuestionCard>
-          <span className="prime-pop-ward-label">Danger</span>
         </div>
 
         <motion.div
@@ -666,24 +641,19 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
           className="relative min-h-0 flex-1 overflow-hidden bg-transparent pt-1"
         >
           <div
-            data-prime-pop-danger="true"
-            className={`prime-pop-ward pointer-events-none absolute left-0 right-0 z-20 flex items-center justify-center ${screenShake ? 'prime-pop-ward--hit' : ''}`}
-            style={{
-              top: `${DANGER_LINE_Y}%`,
-            }}
-          >
-            <div className="prime-pop-ward-rail">
-              <i className="prime-pop-ward-crystal prime-pop-ward-crystal--left" aria-hidden="true" />
-              <i className="prime-pop-ward-crystal prime-pop-ward-crystal--right" aria-hidden="true" />
-            </div>
-          </div>
-          <div
             ref={fieldRef}
             data-prime-pop-field="true"
             className="absolute inset-0 z-10 overflow-hidden"
           >
-            
-
+            <div data-prime-pop-danger="true"
+              className={`prime-pop-ward pointer-events-none absolute left-0 right-0 z-20 flex items-center justify-center ${screenShake ? 'prime-pop-ward--hit' : ''}`}
+              style={{top: `${DANGER_LINE_Y}%`, transform: 'translateY(-50%)'}}>
+              <div className="prime-pop-ward-rail">
+                <span className="prime-pop-ward-label">Danger</span>
+                <i className="prime-pop-ward-crystal prime-pop-ward-crystal--left" aria-hidden="true" />
+                <i className="prime-pop-ward-crystal prime-pop-ward-crystal--right" aria-hidden="true" />
+              </div>
+            </div>
             <AnimatePresence>
               {bubbles.map((bubble) => (
                 <motion.button
