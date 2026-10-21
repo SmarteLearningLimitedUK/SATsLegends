@@ -1,9 +1,12 @@
 import { loadEnv } from 'vite';
 import { pathToFileURL } from 'node:url';
 
-export function validateIOSReleaseConfig(env) {
+function validateIOSConfig(env, internalTesting) {
   const errors = [];
-  for (const name of ['VITE_SUPABASE_URL', 'VITE_IOS_PRIVACY_URL', 'VITE_IOS_TERMS_URL', 'VITE_IOS_AUTH_ORIGIN']) {
+  const required=['VITE_SUPABASE_URL','VITE_IOS_AUTH_ORIGIN',...(!internalTesting?['VITE_IOS_PRIVACY_URL','VITE_IOS_TERMS_URL']:[])];
+  if(internalTesting && env.VITE_IOS_INTERNAL_TESTING!=='true')errors.push('VITE_IOS_INTERNAL_TESTING: internal-test packages must disable new purchases.');
+  if(!internalTesting && env.VITE_IOS_INTERNAL_TESTING==='true')errors.push('VITE_IOS_INTERNAL_TESTING: internal test builds cannot be public releases.');
+  for (const name of required) {
     try {
       const url = new URL(env[name] || '');
       if (url.protocol !== 'https:' || url.username || url.password || /(^|\.)(localhost|invalid|test|example\.com|example\.org|example\.net)$/.test(url.hostname)
@@ -24,9 +27,13 @@ export function validateIOSReleaseConfig(env) {
   return errors;
 }
 
+export const validateIOSReleaseConfig = env => validateIOSConfig(env,false);
+export const validateIOSInternalTestConfig = env => validateIOSConfig(env,true);
+
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const env = { ...loadEnv('production', process.cwd(), 'VITE_'), ...loadEnv('ios', process.cwd(), 'VITE_'), ...process.env };
-  const errors = validateIOSReleaseConfig(env);
+  const internal=process.argv.includes('--internal-testing');
+  const errors = internal?validateIOSInternalTestConfig(env):validateIOSReleaseConfig(env);
   if (errors.length) { console.error('iOS release configuration is incomplete:\n' + errors.map(e => `- ${e}`).join('\n')); process.exitCode = 1; }
-  else console.log('PASS iOS public release configuration structure. This does not verify live services, legal content or Apple product readiness.');
+  else console.log(`PASS iOS ${internal?'internal-test':'public release'} configuration structure. This does not verify live services, legal content or Apple product readiness.`);
 }

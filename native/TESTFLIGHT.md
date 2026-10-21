@@ -1,0 +1,52 @@
+# Internal iPhone testing
+
+App Store Connect record: `6825120444`; bundle ID: `com.smartelearning.satslegends`; Apple team: `D8L3PZ8Y72`. These were verified in the owner's Apple portal. The first unsigned Mac build passed; signed packaging and Apple processing are separate checks.
+
+## Prepared upload path
+
+The unsigned simulator workflow also runs `scripts/smoke-ios-simulator.mjs`: it installs and launches the packaged app in an available iPhone simulator, checks process survival and captures a screenshot and app logs. This is a startup smoke test, not an automated gameplay or payment test. It needs a cloud run before claiming a pass.
+
+`.github/workflows/ios-testflight.yml` uses a macOS/Xcode 26 runner and the `ios-testflight` GitHub environment. It runs on manual dispatch or an explicit `ios/testflight-upload-*` branch push. It does not run on pull requests. Keep this environment restricted to those branches and require owner approval before credentials are released to a job.
+
+The upload script authenticates to Apple's fixed API endpoint and verifies the exact app/bundle before allowing Xcode provisioning updates. Automatic signing may create signing certificates and provisioning profiles on the team. The proposed team API key has Admin access because cloud-managed distribution signing requires it. This is broad access across the Apple account, not an app-limited key; get explicit owner approval before generating or storing it. Do not paste keys into chat or source files. Revoke it in Apple if compromised or no longer needed.
+
+Store these as environment secrets, available only to the archive/upload step:
+
+- `ASC_KEY_ID`
+- `ASC_ISSUER_ID`
+- `ASC_PRIVATE_KEY_P8` (raw P8 file content)
+
+Store the existing public production configuration as environment variables:
+
+- `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`
+- `VITE_IOS_PRIVACY_URL`, `VITE_IOS_TERMS_URL`, `VITE_IOS_AUTH_ORIGIN`
+
+Public account configuration is currently missing in this worktree; do not ship a build that opens an unusable account gate. The release-config checker deliberately blocks upload until valid settings exist. Never use service-role keys in public configuration. Legal URLs must point to actual published documents. The build keeps preview/paywall bypass disabled and Apple purchases still require the server's independent readiness check.
+
+Update, 21 October: the owner supplied the existing project's public URL/publishable key; the public Auth settings endpoint accepted them and reported email sign-in enabled. These settings are stored as GitHub environment variables, not hardcoded in source. `VITE_IOS_AUTH_ORIGIN` retains the existing `https://satslegends.com` account-return origin.
+
+The first internal package explicitly sets `VITE_IOS_INTERNAL_TESTING=true`, disabling new Apple purchases in its subscription screen, even if the server and products are ready. It retains normal account and entitlement checks: the tester needs an existing paid or complimentary Matharia account. This package uses the internal-test configuration validator (account URL/key and HTTPS auth origin required); missing published legal URLs do not block this purchase-disabled internal test. The public-release validator remains strict, requires legal links and rejects the internal-test flag. Billing testing needs a later configured sandbox build and a validated legal setup.
+
+## Commands and behaviour
+
+- `node scripts/verify-ios-testflight.mjs` tests packaging configuration and JWT signing without Apple credentials or external requests.
+- `npm run ios:check:release` validates public settings without printing their values.
+- `npm run ios:sync` builds and copies the web game into the native project.
+- `npm run ios:package:testflight` archives and exports a signed internal-testing package on Mac; it does not upload.
+- `npm run ios:upload:testflight` archives and uploads using Xcode's authenticated distribution flow.
+
+`IOS_BUILD_NUMBER` is generated as `100.<workflow run number>.<attempt>`; the marketing version remains `1.0`. Temporary P8 files are deleted in a `finally` block. Credentials never enter artifacts. The workflow publishes only a non-secret build-result JSON; app archives stay on the ephemeral runner.
+
+The export has `testFlightInternalTestingOnly=true`. It is intended for the owner's internal testing and cannot be used for public App Store submission. Xcode upload success is not Apple processing success. After upload:
+
+1. Open the app's TestFlight tab and wait for processing. Address any Apple validation/export-compliance questions accurately.
+2. Create/select an internal testing group and add the owner's App Store Connect user and processed build. Do not invite other people without explicit instruction.
+3. Install Apple's TestFlight app on the iPhone, accept the owner's test invitation and install SATs Legends.
+4. Test both landscape orientations, account creation/login/recovery, saved progress after restart, interrupted/offline saves, sound interruptions and background/foreground state.
+5. When sandbox subscriptions are configured, test purchase, pending approval, cancellation, restore/reinstall and original-account ownership. Never treat fixture tests as a real payment test.
+
+Account deletion, billing reconciliation, final app artwork, legal/privacy metadata and the other gates in `APP_STORE_PREPARATION.md` remain separate from this internal test upload. No App Review submission or public release is performed by this workflow.
+
+Changed files in this pass: `.github/workflows/ios-testflight.yml`, `scripts/{ios-testflight-config.mjs,build-ios-testflight.mjs,verify-ios-testflight.mjs}`, `package.json`, this document and the preparation-document link. Assumptions: use the verified Apple team and existing app, internal testing first, and existing production account services. No external legacy assumptions were used.
+
+Primary references: [Apple API keys and access](https://developer.apple.com/help/app-store-connect/get-started/app-store-connect-api), [cloud signing](https://developer.apple.com/videos/play/wwdc2021/10204/), [upload builds and processing](https://developer.apple.com/help/app-store-connect/manage-builds/upload-builds/).

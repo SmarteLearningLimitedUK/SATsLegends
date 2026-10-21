@@ -8,7 +8,7 @@ const base=process.env.LEGEND_IOS_STORE_QA_URL||'http://127.0.0.1:3021';
 const out='qa-artifacts/ios-store-preparation';await mkdir(out,{recursive:true});
 const browser=await chromium.launch(),rows=[];
 const product='com.smartelearning.satslegends.matharia.monthly';
-try{for(const mode of ['purchased','pending','cancelled','verify-error','restore','not-ready','browser']){
+try{for(const mode of process.env.LEGEND_IOS_INTERNAL_QA==='true'?['internal']:['purchased','pending','cancelled','verify-error','restore','not-ready','browser']){
  const context=await browser.newContext({viewport:{width:844,height:390},reducedMotion:'reduce',hasTouch:true});
  await installReleaseAccountFixture(context);
  await context.addInitScript(({mode,product})=>{
@@ -47,7 +47,12 @@ try{for(const mode of ['purchased','pending','cancelled','verify-error','restore
   if(mode==='browser'){await expect(page.getByText('This browser preview cannot make purchases.',{exact:false})).toBeVisible();await expect(page.getByRole('button',{name:'Restore purchases'})).toBeDisabled();}
   else {
    const buy=page.getByRole('button',{name:'Subscribe with Apple'}).first();await buy.waitFor();
-   if(mode==='not-ready')await expect(buy).toBeDisabled();
+   if(mode==='internal'){
+    await expect(page.getByRole('status').filter({hasText:'Internal test build: new purchases are disabled'})).toBeVisible();
+    for(const button of await page.getByRole('button',{name:'Subscribe with Apple'}).all())await expect(button).toBeDisabled();
+    assert.equal((await page.evaluate(()=>window.__storeEvents)).filter(e=>e.method==='purchase').length,0);
+   }
+   else if(mode==='not-ready')await expect(buy).toBeDisabled();
    else {
     await expect(buy).toBeEnabled();await page.evaluate(()=>window.__storeEvents=[]);
     if(mode==='restore')await page.getByRole('button',{name:'Restore purchases'}).click();else await buy.click();

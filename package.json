@@ -32,6 +32,8 @@
     "ios:run": "cap run ios",
     "ios:check:release": "node scripts/ios-release-config.mjs",
     "ios:build:simulator": "node scripts/build-ios-simulator.mjs",
+    "ios:package:testflight": "node scripts/build-ios-testflight.mjs",
+    "ios:upload:testflight": "node scripts/build-ios-testflight.mjs --upload",
     "dev:ios": "vite --mode ios --port 3013 --host 127.0.0.1",
     "verify:ios": "node scripts/verify-ios-app.mjs"
   },

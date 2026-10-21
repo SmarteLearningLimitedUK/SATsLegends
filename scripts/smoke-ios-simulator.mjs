@@ -26,11 +26,12 @@ try{
  await new Promise(resolve=>setTimeout(resolve,15000));
  const pid=launched.match(/:\s*(\d+)\s*$/)?.[1];
  if(!pid)throw Error('Simulator did not provide the launched process ID.');
- const processes=run(['spawn',device.udid,'launchctl','list']).stdout;
- if(!processes.split('\n').some(line=>line.includes(IOS_BUNDLE_ID)&&line.trim().split(/\s+/)[0]===pid))throw Error('The app process did not survive startup.');
  run(['io',device.udid,'screenshot',resolve(out,'native-launch.png')]);
- const logs=run(['spawn',device.udid,'log','show','--last','1m','--style','compact','--predicate','process == "App"'],false);
+ const processState=spawnSync('ps',['-p',pid,'-o','pid=,comm='],{encoding:'utf8'});
+ writeFileSync(resolve(out,'process.txt'),processState.stdout||processState.stderr||'App process missing.');
+ const logs=run(['spawn',device.udid,'log','show','--last','1m','--style','compact','--predicate',`processIdentifier == ${pid}`],false);
  writeFileSync(resolve(out,'native-launch.log'),logs.stdout || logs.stderr || 'No application logs returned.');
+ if(processState.status!==0 || !processState.stdout.includes('App.app/App'))throw Error('The app process did not survive startup. Inspect the saved screenshot and diagnostics.');
  writeFileSync(resolve(out,'result.json'),JSON.stringify({bundleId:IOS_BUNDLE_ID,device:device.name,pid:Number(pid),
    processSurvived:true,commit:process.env.GITHUB_SHA||null,scope:'Native install, launch and process survival only; inspect screenshot. No gameplay or StoreKit purchase certification.'},null,2));
  console.log('PASS native install, launch and process survival. Inspect the captured launch screenshot.');

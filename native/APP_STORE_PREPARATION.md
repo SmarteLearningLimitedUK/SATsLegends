@@ -1,6 +1,16 @@
 # iOS subscription preparation
 
+See [internal TestFlight packaging](TESTFLIGHT.md) for the signed upload workflow and credential/configuration requirements added after the app record was created.
+
 Prepared on 20 October 2026. This is source preparation on Windows, not a signed, simulator-tested or App Store-approved app.
+
+## First cloud Mac compilation — 21 October 2026
+
+The unsigned build passed on GitHub's macOS runner, including TypeScript, 14 entitlement fixtures, configuration-test fixtures, the Vite iOS bundle, Capacitor sync and Xcode simulator compilation of the Swift/StoreKit plugin. Build: https://github.com/SmarteLearningLimitedUK/SATsLegends/actions/runs/39514026409 . Snapshot commit: `25eea08f58e4036806f65f6981de20718bd7d4e7`, isolated branch `ios/unsigned-build-20261020-231614`.
+
+Artifact `unsigned-iphone-simulator-app` is approximately 244 MB compressed, retained on GitHub until 28 October 2026 in UK local time. This confirms native compilation only: no simulator launch, real purchase, iPhone installation, signing, TestFlight upload or production configuration validation was performed. The remaining sections describe preparation and outstanding release gates; their earlier “not compiled” statements are superseded by this build result.
+
+This pass changed only `.github/workflows/ios-simulator.yml` (allow an isolated build branch to trigger its own workflow) and this evidence entry. A separate commit snapshots the existing current game and required assets so the cloud runner can compile it; the local HEAD/index and default website branch were preserved. No external legacy assumptions were used.
 
 ## Implemented
 

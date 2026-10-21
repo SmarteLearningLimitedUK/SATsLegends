@@ -15,6 +15,7 @@ export default function AppleSubscriptions() {
   const privacy = legalHttpsUrl(import.meta.env.VITE_IOS_PRIVACY_URL);
   const terms = legalHttpsUrl(import.meta.env.VITE_IOS_TERMS_URL);
   const native = nativeAppleStoreAvailable();
+  const internalTesting = import.meta.env.VITE_IOS_INTERNAL_TESTING === 'true';
   const active = hasMathariaAccess(family.subscriptions, family.complimentary);
   useEffect(() => {
     let alive = true; setReady(false); setLoading(true); setError('');
@@ -34,7 +35,8 @@ export default function AppleSubscriptions() {
   }
   return <main id="website-main" className="apple-subscriptions website-container family-main">
     <p className="website-eyebrow">For parents · Matharia</p><h1>A little practice.<br />A bigger adventure.</h1>
-    <p>37 maths games, SATs practice papers and saved progress for one child. Choose an Apple subscription to unlock Matharia.</p>
+    <p>37 maths games, SATs practice papers and saved progress for one child. {internalTesting ? 'Sign in with an existing family account that has Matharia access to test the game.' : 'Choose an Apple subscription to unlock Matharia.'}</p>
+    {internalTesting && <p className="family-notice" role="status">Internal test build: new purchases are disabled. This build is for gameplay and account testing.</p>}
     {active && <p className="family-notice" role="status">Your family already has Matharia access. <Link to="/parent">Continue to your parent account</Link>.</p>}
     {!family.session && <p className="family-notice">A parent account keeps your child’s progress safe. <Link to="/login?next=/subscriptions">Sign in</Link> or <Link to="/signup?next=/subscriptions">create a parent account</Link> before choosing a plan.</p>}
     {loading && <p role="status">Loading Apple subscription options…</p>}
@@ -44,7 +46,8 @@ export default function AppleSubscriptions() {
       <h2>{product.period === 'month' ? 'Monthly adventures' : 'A year of adventures'}</h2>
       <p className="apple-plan-price">{product.price}<span> / {product.period}</span></p>
       <p>Matharia access · One child profile · Parent progress dashboard</p>
-      <button type="button" className="website-button website-button-gold" disabled={active || !ready || !privacy || !terms || Boolean(busy)} onClick={() => void action(product.id, async () => {
+      <button type="button" className="website-button website-button-gold" disabled={internalTesting || active || !ready || !privacy || !terms || Boolean(busy)} onClick={() => void action(product.id, async () => {
+        if (internalTesting) throw new Error('New purchases are disabled in this internal test build.');
         if (!family.session) throw new Error('Please sign in first.');
         const result = await appleStore.purchase({ productId: product.id, appAccountToken: family.session.user.id });
         if (result.status === 'cancelled') { setMessage('Purchase cancelled. You have not started a subscription.'); return; }
