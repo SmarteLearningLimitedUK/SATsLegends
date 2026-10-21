@@ -29,6 +29,8 @@ The first internal package explicitly sets `VITE_IOS_INTERNAL_TESTING=true`, dis
 
 ## Commands and behaviour
 
+The first archive attempt used development provisioning and Apple rejected it because the new team has no registered devices. The revised archive disables build-time code signing; the following automatic App Store Connect export performs distribution signing. This revision still needs a successful cloud export before claiming an installable package. No device UDID has been collected or registered.
+
 - `node scripts/verify-ios-testflight.mjs` tests packaging configuration and JWT signing without Apple credentials or external requests.
 - `npm run ios:check:release` validates public settings without printing their values.
 - `npm run ios:sync` builds and copies the web game into the native project.
@@ -50,3 +52,5 @@ Account deletion, billing reconciliation, final app artwork, legal/privacy metad
 Changed files in this pass: `.github/workflows/ios-testflight.yml`, `scripts/{ios-testflight-config.mjs,build-ios-testflight.mjs,verify-ios-testflight.mjs}`, `package.json`, this document and the preparation-document link. Assumptions: use the verified Apple team and existing app, internal testing first, and existing production account services. No external legacy assumptions were used.
 
 Primary references: [Apple API keys and access](https://developer.apple.com/help/app-store-connect/get-started/app-store-connect-api), [cloud signing](https://developer.apple.com/videos/play/wwdc2021/10204/), [upload builds and processing](https://developer.apple.com/help/app-store-connect/manage-builds/upload-builds/).
+
+Additional preparation changes: `scripts/ios-release-config.mjs` separates internal and public release validation; `src/platform/ios/IOSSubscriptionScreen.tsx` disables purchases in internal builds; `scripts/verify-ios-subscriptions.mjs` checks that behaviour; `.env.example` documents the flag. The ignored `.env.ios.local` holds only owner-supplied public settings. The Vite lockfile patch moves the build tooling to 6.4.4 after an audit finding; the production dependency audit reports no vulnerabilities. Existing moderate findings in development-only Capacitor tooling have no non-breaking automatic fix and were not force-upgraded.

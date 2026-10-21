@@ -1,5 +1,6 @@
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync, readdirSync, copyFileSync, statSync } from 'node:fs';
+import { homedir } from 'node:os';
 import { resolve } from 'node:path';
 import { IOS_BUNDLE_ID } from './ios-testflight-config.mjs';
 
@@ -21,6 +22,7 @@ try{
  run(['bootstatus',device.udid,'-b']);
  run(['install',device.udid,app]);
  const launched=run(['launch',device.udid,IOS_BUNDLE_ID]).stdout;
+ writeFileSync(resolve(out,'launch.txt'),launched);
  if(!launched.includes(IOS_BUNDLE_ID))throw Error('Simulator did not report an app launch.');
  // Allow the packaged WKWebView to initialise, then require the process to survive.
  await new Promise(resolve=>setTimeout(resolve,15000));
@@ -29,8 +31,12 @@ try{
  run(['io',device.udid,'screenshot',resolve(out,'native-launch.png')]);
  const processState=spawnSync('ps',['-p',pid,'-o','pid=,comm='],{encoding:'utf8'});
  writeFileSync(resolve(out,'process.txt'),processState.stdout||processState.stderr||'App process missing.');
- const logs=run(['spawn',device.udid,'log','show','--last','1m','--style','compact','--predicate',`processIdentifier == ${pid}`],false);
+ const logs=run(['spawn',device.udid,'log','show','--last','2m','--style','compact','--predicate',`processIdentifier == ${pid} OR eventMessage CONTAINS "${IOS_BUNDLE_ID}"`],false);
  writeFileSync(resolve(out,'native-launch.log'),logs.stdout || logs.stderr || 'No application logs returned.');
+ const reports=resolve(homedir(),'Library/Logs/DiagnosticReports');
+ if(existsSync(reports))for(const name of readdirSync(reports).filter(n=>/^App[-_.].*\.(ips|crash)$/.test(n))){
+  const source=resolve(reports,name);if(statSync(source).isFile())copyFileSync(source,resolve(out,name));
+ }
  if(processState.status!==0 || !processState.stdout.includes('App.app/App'))throw Error('The app process did not survive startup. Inspect the saved screenshot and diagnostics.');
  writeFileSync(resolve(out,'result.json'),JSON.stringify({bundleId:IOS_BUNDLE_ID,device:device.name,pid:Number(pid),
    processSurvived:true,commit:process.env.GITHUB_SHA||null,scope:'Native install, launch and process survival only; inspect screenshot. No gameplay or StoreKit purchase certification.'},null,2));

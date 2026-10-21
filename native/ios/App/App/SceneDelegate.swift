@@ -5,12 +5,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        guard let windowScene = scene as? UIWindowScene else { return }
-
-        window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = GameViewController()
-        window?.makeKeyAndVisible()
-
+        guard scene is UIWindowScene else { return }
+        // UIKit owns the scene window and instantiates GameViewController from
+        // Main.storyboard. Replacing it here creates a second WKWebView at launch.
         SceneDelegateProxy.shared.scene(scene, willConnectTo: session, options: connectionOptions)
     }
 

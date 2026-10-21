@@ -40,6 +40,6 @@ export function archiveArguments(config, keyPath, archivePath) {
   return ['-project','native/ios/App/App.xcodeproj','-scheme','App','-configuration','Release',
     '-destination','generic/platform=iOS','-archivePath',archivePath,
     '-allowProvisioningUpdates','-authenticationKeyPath',keyPath,'-authenticationKeyID',config.keyId,'-authenticationKeyIssuerID',config.issuer,
-    `DEVELOPMENT_TEAM=${config.teamId}`,'CODE_SIGN_STYLE=Automatic',`CURRENT_PROJECT_VERSION=${config.build}`,
+    `DEVELOPMENT_TEAM=${config.teamId}`,'CODE_SIGN_STYLE=Automatic','CODE_SIGNING_ALLOWED=NO',`CURRENT_PROJECT_VERSION=${config.build}`,
     `PRODUCT_BUNDLE_IDENTIFIER=${IOS_BUNDLE_ID}`,'MARKETING_VERSION=1.0','archive'];
 }
