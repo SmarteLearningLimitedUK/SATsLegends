@@ -28,7 +28,7 @@ assert.ok(validateIOSInternalTestConfig({...account,VITE_IOS_INTERNAL_TESTING:'f
 const screen=readFileSync('src/platform/ios/IOSSubscriptionScreen.tsx','utf8');assert.ok(screen.includes('disabled={internalTesting ||'));
 const capacitorConfig=readFileSync('capacitor.config.ts','utf8');
 assert.ok(!/appStartPath\s*:/.test(capacitorConfig),'Native startup must load the bundled index.html, not a client-side route.');
-assert.ok(readFileSync('src/platform/nativeApp.ts','utf8').includes("history.replaceState(null, '', '/play')"));
+assert.ok(readFileSync('src/platform/nativeApp.ts','utf8').includes("history.replaceState(null, '', '/parent')"));
 assert.ok(readFileSync('native/ios/App/App/Base.lproj/Main.storyboard','utf8').includes('customClass="GameViewController" customModule="App"'));
 assert.ok(!readFileSync('native/ios/App/App/SceneDelegate.swift','utf8').includes('UIWindow(windowScene:'),'Use the storyboard scene window; do not construct a second WebView.');
 const workflow=readFileSync('.github/workflows/ios-testflight.yml','utf8');

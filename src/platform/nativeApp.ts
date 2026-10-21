@@ -26,7 +26,7 @@ export async function initializeNativeApp() {
   if (!IS_IOS_APP) return;
   document.documentElement.dataset.appTarget = 'ios';
   // Also makes the standalone iOS bundle usable in a browser for layout QA.
-  if (location.pathname === '/') history.replaceState(null, '', '/play');
+  if (location.pathname === '/') history.replaceState(null, '', '/parent');
   const { Capacitor } = await import('@capacitor/core');
   if (!Capacitor.isNativePlatform()) return;
   const { App } = await import('@capacitor/app');

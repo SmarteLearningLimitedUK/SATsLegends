@@ -6,6 +6,8 @@ import { DEFAULT_AVATAR_ID } from '../assets/characters';
 import { hasMathariaAccess, useFamily } from './FamilyAccount';
 import { supabase } from './services/supabase';
 import { GameSaveContext, ProgressionSnapshot, ProgressSnapshot } from './GameSaveContext';
+import { IS_IOS_APP } from '../platform/nativeApp';
+import IOSAccountLayout from '../platform/ios/IOSAccountLayout';
 
 type SaveRow = { player: Partial<ProgressSnapshot['player']>; progression: Partial<ProgressionSnapshot>; revision: number; last_request_id: string | null };
 type Attempt = ProgressSnapshot & { requestId: string };
@@ -15,6 +17,7 @@ function readOutbox(id: string): Outbox | null {
   try { return JSON.parse(localStorage.getItem(outboxKey(id)) || 'null'); } catch { return null; }
 }
 function GateMessage({ title, children }: { title: string; children: ReactNode }) {
+  if (IS_IOS_APP) return <IOSAccountLayout title={title}>{children}</IOSAccountLayout>;
   return <div className="legends-website"><main className="website-container family-main" id="website-main"><h1>{title}</h1>{children}</main></div>;
 }
 export default function GameGate({ children }: { children: ReactNode }) {

@@ -24,7 +24,6 @@ final class GameViewController: CAPBridgeViewController {
     override func capacitorDidLoad() {
         bridge?.registerPluginInstance(LegendsStorePlugin())
     }
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask { .landscape }
-    override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation { .landscapeRight }
+    override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation { .portrait }
     override var prefersStatusBarHidden: Bool { true }
 }

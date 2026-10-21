@@ -7,7 +7,8 @@ import './apple-subscriptions.css';
 export function legalHttpsUrl(value: string | undefined): string | null {
   try { const url = new URL(value || ''); return url.protocol === 'https:' && !url.username && !url.password ? url.href : null; } catch { return null; }
 }
-export default function AppleSubscriptions() {
+export default function AppleSubscriptions({ embedded = false }: { embedded?: boolean }) {
+  const Container = embedded ? 'section' : 'main';
   const family = useFamily();
   const [products, setProducts] = useState<AppleProduct[]>([]);
   const [ready, setReady] = useState(false), [loading, setLoading] = useState(true);
@@ -33,7 +34,7 @@ export default function AppleSubscriptions() {
     try { await task(); } catch (e) { setError(e instanceof Error ? e.message : 'Please try again.'); }
     finally { setBusy(''); }
   }
-  return <main id="website-main" className="apple-subscriptions website-container family-main">
+  return <Container id={embedded ? 'app-subscriptions' : 'website-main'} className="apple-subscriptions website-container family-main">
     <p className="website-eyebrow">For parents · Matharia</p><h1>A little practice.<br />A bigger adventure.</h1>
     <p>37 maths games, SATs practice papers and saved progress for one child. {internalTesting ? 'Sign in with an existing family account that has Matharia access to test the game.' : 'Choose an Apple subscription to unlock Matharia.'}</p>
     {internalTesting && <p className="family-notice" role="status">Internal test build: new purchases are disabled. This build is for gameplay and account testing.</p>}
@@ -65,5 +66,5 @@ export default function AppleSubscriptions() {
     {message && <p className="family-notice" role="status">{message}</p>}{error && <p className="family-error" role="alert">{error}</p>}
     <p className="family-small">Payment is charged to your Apple account when you confirm. Subscriptions renew automatically unless cancelled in Apple subscription settings before renewal. The price and billing period are shown by Apple before purchase. Restore purchases uses the original Apple and parent accounts.</p>
     <p className="family-small">{privacy && <a href={privacy} target="_blank" rel="noreferrer">Privacy policy</a>}{privacy && terms && ' · '}{terms && <a href={terms} target="_blank" rel="noreferrer">Terms of use</a>}</p>
-  </main>;
+  </Container>;
 }
