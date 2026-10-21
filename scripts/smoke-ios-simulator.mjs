@@ -21,7 +21,7 @@ try{
  if(bootedHere)run(['boot',device.udid]);
  run(['bootstatus',device.udid,'-b']);
  run(['install',device.udid,app]);
- const launched=run(['launch',device.udid,IOS_BUNDLE_ID]).stdout;
+ const launched=run(['launch',`--stdout=${resolve(out,'app-stdout.log')}`,`--stderr=${resolve(out,'app-stderr.log')}`,device.udid,IOS_BUNDLE_ID]).stdout;
  writeFileSync(resolve(out,'launch.txt'),launched);
  if(!launched.includes(IOS_BUNDLE_ID))throw Error('Simulator did not report an app launch.');
  // Allow the packaged WKWebView to initialise, then require the process to survive.

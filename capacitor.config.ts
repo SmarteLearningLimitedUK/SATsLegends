@@ -12,6 +12,7 @@ const config: CapacitorConfig = {
     contentInset: 'never',
     preferredContentMode: 'mobile',
   },
-  server: { appStartPath: '/play' },
+  // Load the bundled index.html. initializeNativeApp selects the /play React
+  // route; appStartPath would require a physical public/play file on iOS.
 };
 export default config;
