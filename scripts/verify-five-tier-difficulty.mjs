@@ -27,6 +27,7 @@ const resolveFile = (request, parent) => {
     .find((candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile());
 };
 const actualHelpers = new Set([
+  'src/games/primePopRules.ts',
   'src/systems/content/gameDifficulty.ts',
   'src/systems/content/island1NumberBaseCamp.ts',
   'src/utils/questionShuffle.ts',
@@ -608,7 +609,7 @@ record(`Rotation and polygon tier caps hold at high round counts and low time ($
     }
   }
 });
-const prime = generator('PrimePopGame', ['getConfig', 'isPrime']);
+const prime = { ...generator('PrimePopGame', ['getConfig']), isPrime: load('src/games/primePopRules.ts').isPrimeNumber };
 record('Prime bands remain distinct and mathematically classified through 99', () => {
   assert.deepEqual([1, 2, 3, 4, 5].map((tier) => prime.getConfig(tier).maxNumber), [20, 40, 60, 80, 99]);
   for (let value = 0; value <= 99; value++) {
