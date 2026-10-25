@@ -1,0 +1,89 @@
+{
+  "tool": "Built-in image_gen",
+  "assets": [
+    {
+      "key": "pond",
+      "prompt": "Use case: precise-object-edit. Asset type: playable game background, not a UI screenshot. Input image 1 is an edit target and exact art direction reference. Keep the full peaceful pond scenery, the small seated red baby dragon on the wooden jetty at far left, duck family, willow, bridge, water and flowers. Remove all UI: top header, question boards, buttons, numbers, lily-pad playing pieces and dashed target rings, footer controls and bottom-left information panel. Fill removed areas with continuous pond water and scenery. Keep the water open in the central and lower playing area. Match the supplied polished children's 3D fantasy rendering, colours, camera and lighting; do not redesign. Output a single clean edge-to-edge landscape 16:9 background only. No text, no UI, no frames, no watermark, no new main characters.",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a15aa4-c510-7e53-b8e1-c4b9888c4aaa\\exec-bec48efa-ac84-4a3b-bf23-12bd34e129ef.png",
+      "destination": "src/assets/reference-batch-three/pond.png"
+    },
+    {
+      "key": "match",
+      "prompt": "Use case: precise-object-edit. Asset type: playable game background, not a UI screenshot. Input image 1 is an edit target and exact art direction reference. Extract the colourful enchanted forest village background from between the black sidebars and fill a wide 16:9 canvas with it. Remove all black sidebars, all UI, letters, numbers, game panels, grid tiles, HUD, buttons, and deer character. Preserve the waterfall, ornate treehouse village, hanging lanterns, crystal at lower left, winding stone terrace and sunlight. Match the supplied polished children's 3D fantasy rendering, colours, camera and lighting; do not redesign. Output a single clean edge-to-edge landscape 16:9 background only. No text, no UI, no frames, no watermark, no new main characters.",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a15aa4-c510-7e53-b8e1-c4b9888c4aaa\\exec-e8d74213-ca5c-4d24-8d58-d54c685c7b69.png",
+      "destination": "src/assets/reference-batch-three/match.png"
+    },
+    {
+      "key": "percent",
+      "prompt": "Use case: precise-object-edit. Asset type: playable game background, not a UI screenshot. Input image 1 is an edit target and exact art direction reference. Extract the forest ruins landscape from between the black sidebars into a wide 16:9 canvas. Remove black sidebars, all UI, panels, header, text, charge meter, answers, bottom controls, the big central cylindrical energy machine, and deer character. Preserve the lush stone arches, castle/treehouse, waterfall and circular stone floor. Leave an open centre and left character platform. Match the supplied polished children's 3D fantasy rendering, colours, camera and lighting; do not redesign. Output a single clean edge-to-edge landscape 16:9 background only. No text, no UI, no frames, no watermark, no new main characters.",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a15aa4-c510-7e53-b8e1-c4b9888c4aaa\\exec-a1a7d983-40aa-4bd2-9642-f663c5b6fc59.png",
+      "destination": "src/assets/reference-batch-three/percent.png"
+    },
+    {
+      "key": "forge",
+      "prompt": "Use case: precise-object-edit. Asset type: playable game background, not a UI screenshot. Input image 1 is an edit target and exact art direction reference. Extract the warm blacksmith workshop scene from between the black sidebars into a wide 16:9 canvas. Remove all UI, text, numbers, panels, HUD and buttons, deer character AND centre anvil/stump. Preserve forge fire at left, wooden ceiling, tools, ivy, gold metal, windows, work floor and distant sunny terrace. Fill missing areas naturally. Match the supplied polished children's 3D fantasy rendering, colours, camera and lighting; do not redesign. Output a single clean edge-to-edge landscape 16:9 background only. No text, no UI, no frames, no watermark, no new main characters.",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a15aa4-c510-7e53-b8e1-c4b9888c4aaa\\exec-512b90bf-6ab5-49c8-a77e-585053f91af7.png",
+      "destination": "src/assets/reference-batch-three/forge.png"
+    },
+    {
+      "key": "takeout",
+      "prompt": "Use case: precise-object-edit. Asset type: playable game background, not a UI screenshot. Input image 1 is an edit target and exact art direction reference. Extract the cosy fantasy restaurant kitchen from between the black sidebars into wide 16:9. Remove all UI, text, numbers, panels, buttons, HUD and all characters, the foreground stove and pans. Keep the warm brick restaurant with hanging copper pans, plant-covered ceiling beams, windows, tableware, cooking shelves and open tiled floor. Match the supplied polished children's 3D fantasy rendering, colours, camera and lighting; do not redesign. Output a single clean edge-to-edge landscape 16:9 background only. No text, no UI, no frames, no watermark, no new main characters.",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a15aa4-c510-7e53-b8e1-c4b9888c4aaa\\exec-979da05a-09ac-4cb7-ade0-d2ac3b63f622.png",
+      "destination": "src/assets/reference-batch-three/takeout.png"
+    },
+    {
+      "key": "graph",
+      "prompt": "Use case: precise-object-edit. Asset type: playable game background, not a UI screenshot. Input image 1 is an edit target and exact art direction reference. Preserve the sunny fantasy harbour scene exactly in a wide 16:9 composition. Remove all UI, text, charts, chart frames, answers, buttons, HUD and deer character. Keep the hanging navy gold banners, timber harbour awning, crates, ropes, blue sea, ornate castle skyline, sailboats and stone dock floor. Reconstruct the open background under the removed graph and character. Match the supplied polished children's 3D fantasy rendering, colours, camera and lighting; do not redesign. Output a single clean edge-to-edge landscape 16:9 background only. No text, no UI, no frames, no watermark, no new main characters.",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a15aa4-c510-7e53-b8e1-c4b9888c4aaa\\exec-a29c09d7-f441-417a-b5e2-88203c0cb4ab.png",
+      "destination": "src/assets/reference-batch-three/graph.png"
+    },
+    {
+      "key": "line",
+      "prompt": "Use case: precise-object-edit. Asset type: playable game background, not a UI screenshot. Input image 1 is an edit target and exact art direction reference. Preserve the bright blue fantasy harbour and castle scene in wide 16:9 composition. Remove all UI, text, graph, board frame, panels, answers, HUD, buttons and cat wizard character. Keep the awning, navy gold flags, crates, ropes, turquoise harbour, sunlight, sailboat and open stone dock. Match the supplied polished children's 3D fantasy rendering, colours, camera and lighting; do not redesign. Output a single clean edge-to-edge landscape 16:9 background only. No text, no UI, no frames, no watermark, no new main characters.",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a15aa4-c510-7e53-b8e1-c4b9888c4aaa\\exec-c09b2444-8066-4880-bb48-659e448dce92.png",
+      "destination": "src/assets/reference-batch-three/line.png"
+    },
+    {
+      "key": "detective",
+      "prompt": "Use case: precise-object-edit. Asset type: playable game background, not a UI screenshot. Input image 1 is an edit target and exact art direction reference. Preserve the lush bright fantasy harbour scene in wide 16:9. Remove all UI, labels, charts, frames, panels, character cards, text, HUD and controls, and deer detective character. Keep the timber awning and docks, gold navy flags, hanging ivy, turquoise sea, ropes and crates, castle skyline and open stone ground. Match the supplied polished children's 3D fantasy rendering, colours, camera and lighting; do not redesign. Output a single clean edge-to-edge landscape 16:9 background only. No text, no UI, no frames, no watermark, no new main characters.",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a15aa4-c510-7e53-b8e1-c4b9888c4aaa\\exec-03978e1c-1359-4b6e-bd3c-02277ea4a7c4.png",
+      "destination": "src/assets/reference-batch-three/detective.png"
+    },
+    {
+      "key": "potion",
+      "prompt": "Use case: precise-object-edit. Asset type: playable game background, not a UI screenshot. Input image 1 is an edit target and exact art direction reference. Preserve this exact warm fantasy potion workshop terrace in wide 16:9. Remove all UI, panels, labels, numbers, header, buttons, ingredient bottles in UI, the deer character and the central cauldron and its stone pedestal. Preserve wood ceiling and pillars, hanging lantern, potion shelves along far edges, the golden distant town and waterfalls, water and open foreground workshop floor. Match the supplied polished children's 3D fantasy rendering, colours, camera and lighting; do not redesign. Output a single clean edge-to-edge landscape 16:9 background only. No text, no UI, no frames, no watermark, no new main characters.",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a15aa4-c510-7e53-b8e1-c4b9888c4aaa\\exec-2c861a95-c3c1-4809-a54b-1d4e4569c16c.png",
+      "destination": "src/assets/reference-batch-three/potion.png"
+    },
+    {
+      "key": "share",
+      "prompt": "Use case: precise-object-edit. Asset type: playable game background, not a UI screenshot. Input image 1 is an edit target and exact art direction reference. Preserve the warm festive fantasy garden restaurant terrace in wide 16:9. Remove all UI, text, numbers, boards, buttons, HUD, all six characters, the large foreground banquet table, plates and cakes. Keep background tables, party bunting, glowing lanterns, flowers, waterfalls, stone terrace, wooden awning and distant golden castle. Open central space for live game props. Match the supplied polished children's 3D fantasy rendering, colours, camera and lighting; do not redesign. Output a single clean edge-to-edge landscape 16:9 background only. No text, no UI, no frames, no watermark, no new main characters.",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a15aa4-c510-7e53-b8e1-c4b9888c4aaa\\exec-87986186-7fad-4b4c-9039-55fdbbd09e77.png",
+      "destination": "src/assets/reference-batch-three/share.png"
+    },
+    {
+      "key": "cauldron",
+      "prompt": "Use case: background-extraction. Input image is reference and edit target. Extract ONLY the central ornate round bronze cauldron with its gold leaf emblem, blue magical glow below and small stone pedestal, matching its exact materials, 3D children's fantasy style, shape and front camera. Remove green vapour (it will be animated separately), all scenery, UI, buttons, lettering and characters. Single isolated cauldron and low stone base, centered, tightly framed with clear edges. Genuinely transparent background. No text or shadow rectangle.",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a15aa4-c510-7e53-b8e1-c4b9888c4aaa\\exec-21a926e6-fb43-4be7-8f32-f793b1b787a1.png",
+      "destination": "src/assets/reference-batch-three/cauldron.png"
+    },
+    {
+      "key": "lily",
+      "prompt": "Use case: background-extraction. Input image is reference and edit target. Extract one lush green oval floating lily pad matching the numbered pads in the middle of this pond game reference, but REMOVE the numeral and keep the entire leaf green and natural. A small pink lotus blossom sits near the back-right leaf edge. Front view slightly from above, exact shiny 3D children's fantasy style of the reference. Single pad only centered and tightly framed. Genuinely transparent background, no water or scenery, no numbers, no text, no UI.",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a15aa4-c510-7e53-b8e1-c4b9888c4aaa\\exec-478868a7-630d-4f48-b5bd-e6642a3312e9.png",
+      "destination": "src/assets/reference-batch-three/lily.png"
+    },
+    {
+      "key": "detective-hero",
+      "prompt": "Use case: background-extraction. Edit target and exact identity reference: input image. Extract ONLY the deer detective holding a magnifying glass and parchment at the left of the scene. Preserve the exact character identity, face, clothes, proportions, pose, expression, lighting and materials. Make the complete full body visible including boots, ears, antlers or hat and all carried items. Single character facing slightly right, tightly framed on a genuinely transparent background. Remove all UI, graph, labels, buttons, scenery, ground and shadows. No text or other objects. Polished 3D fantasy children's game art exactly as the reference.",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a15aa4-c510-7e53-b8e1-c4b9888c4aaa\\exec-72fcc8fa-57a3-444c-bec6-b0529fbc6723.png",
+      "destination": "src/assets/reference-batch-three/detective-hero.png"
+    },
+    {
+      "key": "line-hero",
+      "prompt": "Use case: background-extraction. Edit target and exact identity reference: input image. Extract ONLY the orange fox/cat wizard wearing the blue star-covered hat and cape and holding a glowing blue crystal staff at far left. Preserve the exact character identity, face, clothes, proportions, pose, expression, lighting and materials. Make the complete full body visible including boots, ears, antlers or hat and all carried items. Single character facing slightly right, tightly framed on a genuinely transparent background. Remove all UI, graph, labels, buttons, scenery, ground and shadows. No text or other objects. Polished 3D fantasy children's game art exactly as the reference.",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a15aa4-c510-7e53-b8e1-c4b9888c4aaa\\exec-1cfaf926-1e46-4b85-8daf-e542809d9fd4.png",
+      "destination": "src/assets/reference-batch-three/line-hero.png"
+    }
+  ]
+}

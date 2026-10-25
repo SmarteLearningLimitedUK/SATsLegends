@@ -1,0 +1,1098 @@
+{
+  "reviewed": "2026-10-20",
+  "meaning": "Representative means a matched task exists, not exhaustive mastery or exam equivalence. Partial records a known breadth, format or method limitation. Not evidenced is a review finding, not a claim that an inaccessible or untested route cannot contain it.",
+  "evidence": [
+    {
+      "code": "3N3",
+      "source": "src/games/PlaceValuePanicGame.tsx",
+      "status": "representative",
+      "note": "Rebuild numbers from words using place-value slots; progressively larger whole numbers."
+    },
+    {
+      "code": "4N3a",
+      "source": "src/games/PlaceValuePanicGame.tsx",
+      "status": "representative",
+      "note": "Rebuild numbers from words using place-value slots; progressively larger whole numbers."
+    },
+    {
+      "code": "5N3a",
+      "source": "src/games/PlaceValuePanicGame.tsx",
+      "status": "representative",
+      "note": "Rebuild numbers from words using place-value slots; progressively larger whole numbers."
+    },
+    {
+      "code": "3N1b",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Varied forward/backward equal-step sequences in 4, 8, 50 and 100 require independently entered continuations."
+    },
+    {
+      "code": "4N1",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Forward/backward sequences include 6, 7, 9, 25 and 1000 steps."
+    },
+    {
+      "code": "5N1",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Forward/backward powers-of-ten sequences include 10 through 100000 within the year-five number range."
+    },
+    {
+      "code": "3N2a",
+      "source": "src/systems/content/satsInspiredQuestionBanks.ts",
+      "status": "partial",
+      "note": "Number reading/writing and greatest-number selection exist. Multi-number ordering and the complete end-of-KS2 range need wider practice."
+    },
+    {
+      "code": "4N2a",
+      "source": "src/systems/content/satsInspiredQuestionBanks.ts",
+      "status": "partial",
+      "note": "Number reading/writing and greatest-number selection exist. Multi-number ordering and the complete end-of-KS2 range need wider practice."
+    },
+    {
+      "code": "5N2",
+      "source": "src/systems/content/satsInspiredQuestionBanks.ts",
+      "status": "partial",
+      "note": "Number reading/writing and greatest-number selection exist. Multi-number ordering and the complete end-of-KS2 range need wider practice."
+    },
+    {
+      "code": "6N2",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Independently order four seven-digit whole numbers, including close place-value distractors."
+    },
+    {
+      "code": "3N4",
+      "source": "src/games/numberLineQuestions.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "New sparsely labelled number-line estimation extends labelled readings; wider numerical and estimation contexts remain limited."
+    },
+    {
+      "code": "4N4a",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Read existing labelled lines and independently estimate a pointer on a sparsely labelled number line."
+    },
+    {
+      "code": "4N4b",
+      "source": "src/games/RoundingRocketGame.tsx",
+      "status": "representative",
+      "note": "Whole-number rounding to 10, 100 and 1,000."
+    },
+    {
+      "code": "5N4",
+      "source": "src/games/RoundingRocketGame.tsx",
+      "status": "partial",
+      "note": "Game targets stop at 1,000; one shared 10,000 question exists. Broader accuracy and 100,000 rounding need practice."
+    },
+    {
+      "code": "6N4",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Round generated large numbers to varied accuracies from tens through hundred-thousands."
+    },
+    {
+      "code": "4N5",
+      "source": "src/games/numberLineQuestions.ts",
+      "status": "representative",
+      "note": "Equal signed-number scales cross zero, including scales without a zero tick."
+    },
+    {
+      "code": "5N5",
+      "source": "src/games/numberLineQuestions.ts",
+      "status": "representative",
+      "note": "Equal signed-number scales cross zero, including scales without a zero tick."
+    },
+    {
+      "code": "6N5",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Negative-floor midpoint problems complement existing temperature and interval contexts."
+    },
+    {
+      "code": "3N6",
+      "source": "src/systems/content/satsInspiredQuestionBanks.ts",
+      "status": "partial",
+      "note": "Isolated number clues and place-value problems exist; wider independent problem selection is not established."
+    },
+    {
+      "code": "4N6",
+      "source": "src/systems/content/satsInspiredQuestionBanks.ts",
+      "status": "partial",
+      "note": "Isolated number clues and place-value problems exist; wider independent problem selection is not established."
+    },
+    {
+      "code": "5N6",
+      "source": "src/systems/content/satsInspiredQuestionBanks.ts",
+      "status": "partial",
+      "note": "Isolated number clues and place-value problems exist; wider independent problem selection is not established."
+    },
+    {
+      "code": "3C1",
+      "source": "src/games/MathsVsZombiesGame.tsx",
+      "status": "representative",
+      "note": "Timed arithmetic facts. Answer accuracy does not prove use of a mental method."
+    },
+    {
+      "code": "3C6",
+      "source": "src/games/MathsVsZombiesGame.tsx",
+      "status": "representative",
+      "note": "Timed arithmetic facts. Answer accuracy does not prove use of a mental method."
+    },
+    {
+      "code": "4C6a",
+      "source": "src/games/MathsVsZombiesGame.tsx",
+      "status": "representative",
+      "note": "Timed arithmetic facts. Answer accuracy does not prove use of a mental method."
+    },
+    {
+      "code": "3C7",
+      "source": "src/games/multiplicationMineMath.ts",
+      "status": "representative",
+      "note": "Actual column products, carries, tens placeholder and final totals independently tested through four-digit by two-digit products."
+    },
+    {
+      "code": "4C7",
+      "source": "src/games/multiplicationMineMath.ts",
+      "status": "representative",
+      "note": "Actual column products, carries, tens placeholder and final totals independently tested through four-digit by two-digit products."
+    },
+    {
+      "code": "5C7a",
+      "source": "src/games/multiplicationMineMath.ts",
+      "status": "representative",
+      "note": "Actual column products, carries, tens placeholder and final totals independently tested through four-digit by two-digit products."
+    },
+    {
+      "code": "6C7a",
+      "source": "src/games/multiplicationMineMath.ts",
+      "status": "representative",
+      "note": "Actual column products, carries, tens placeholder and final totals independently tested through four-digit by two-digit products."
+    },
+    {
+      "code": "5C7b",
+      "source": "src/games/RemainderRunGame.tsx",
+      "status": "partial",
+      "note": "Grouping and quotient/remainder calculations are present, but unprompted short/long-division written methods are not assessed authentically."
+    },
+    {
+      "code": "6C7b",
+      "source": "src/games/RemainderRunGame.tsx",
+      "status": "partial",
+      "note": "Grouping and quotient/remainder calculations are present, but unprompted short/long-division written methods are not assessed authentically."
+    },
+    {
+      "code": "6C7c",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Vehicle contexts require rounding up and interpreting empty seats; existing full-box, ribbon fractional-share and decimal-quotient tasks provide other remainder interpretations."
+    },
+    {
+      "code": "4C6c",
+      "source": "src/games/FactorFrenzyGame.tsx",
+      "status": "partial",
+      "note": "Factor/prime/common-factor selection and square/cube revision exist; complete factor-pair enumeration and a broader set of classification tasks need evidence."
+    },
+    {
+      "code": "5C5a",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Independently enumerate every positive factor of generated composite numbers; unordered unique sets are marked."
+    },
+    {
+      "code": "5C5b",
+      "source": "src/games/FactorFrenzyGame.tsx",
+      "status": "partial",
+      "note": "Factor/prime/common-factor selection and square/cube revision exist; complete factor-pair enumeration and a broader set of classification tasks need evidence."
+    },
+    {
+      "code": "5C5c",
+      "source": "src/games/FactorFrenzyGame.tsx",
+      "status": "partial",
+      "note": "Factor/prime/common-factor selection and square/cube revision exist; complete factor-pair enumeration and a broader set of classification tasks need evidence."
+    },
+    {
+      "code": "5C5d",
+      "source": "src/games/FactorFrenzyGame.tsx",
+      "status": "partial",
+      "note": "Factor/prime/common-factor selection and square/cube revision exist; complete factor-pair enumeration and a broader set of classification tasks need evidence."
+    },
+    {
+      "code": "6C5",
+      "source": "src/games/FactorFrenzyGame.tsx",
+      "status": "partial",
+      "note": "Factor/prime/common-factor selection and square/cube revision exist; complete factor-pair enumeration and a broader set of classification tasks need evidence."
+    },
+    {
+      "code": "5C6a",
+      "source": "src/games/MathsVsZombiesGame.tsx; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "Larger mental products now require selecting an equivalent efficient strategy; a complete spread of mental strategies remains limited."
+    },
+    {
+      "code": "6C6",
+      "source": "src/games/MathsVsZombiesGame.tsx; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "Larger mental products now require selecting an equivalent efficient strategy; a complete spread of mental strategies remains limited."
+    },
+    {
+      "code": "5C6b",
+      "source": "src/systems/content/satsAdventure.ts",
+      "status": "partial",
+      "note": "Decimal powers-of-ten arithmetic and conversion are present; explicit decimal digit-value and all multiplier/divisor cases need broader coverage."
+    },
+    {
+      "code": "4F9",
+      "source": "src/systems/content/satsAdventure.ts",
+      "status": "partial",
+      "note": "Decimal powers-of-ten arithmetic and conversion are present; explicit decimal digit-value and all multiplier/divisor cases need broader coverage."
+    },
+    {
+      "code": "6F9a",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Explicit digit value and both multiplication/division by 10, 100 and 1000; quotients remain within three decimal places."
+    },
+    {
+      "code": "3C3",
+      "source": "src/systems/content/satsAdventure.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "Reasonableness checks now use rounded estimates to reject implausible products. Independently selecting the accuracy of an estimate remains limited."
+    },
+    {
+      "code": "4C3",
+      "source": "src/systems/content/satsAdventure.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "Reasonableness checks now use rounded estimates to reject implausible products. Independently selecting the accuracy of an estimate remains limited."
+    },
+    {
+      "code": "5C3",
+      "source": "src/systems/content/satsAdventure.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "Reasonableness checks now use rounded estimates to reject implausible products. Independently selecting the accuracy of an estimate remains limited."
+    },
+    {
+      "code": "6C3",
+      "source": "src/systems/content/satsAdventure.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "Reasonableness checks now use rounded estimates to reject implausible products. Independently selecting the accuracy of an estimate remains limited."
+    },
+    {
+      "code": "3C4",
+      "source": "src/systems/content/satsAdventure.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "New independently entered money, division and decimal-measure problems do not supply an equation or intermediate plan. Existing guided games retain scaffolds; a wider spread of unprompted multi-step strategies remains to be demonstrated."
+    },
+    {
+      "code": "4C4",
+      "source": "src/systems/content/satsAdventure.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "New independently entered money, division and decimal-measure problems do not supply an equation or intermediate plan. Existing guided games retain scaffolds; a wider spread of unprompted multi-step strategies remains to be demonstrated."
+    },
+    {
+      "code": "5C4",
+      "source": "src/systems/content/satsAdventure.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "New independently entered money, division and decimal-measure problems do not supply an equation or intermediate plan. Existing guided games retain scaffolds; a wider spread of unprompted multi-step strategies remains to be demonstrated."
+    },
+    {
+      "code": "6C4",
+      "source": "src/systems/content/satsAdventure.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "New independently entered money, division and decimal-measure problems do not supply an equation or intermediate plan. Existing guided games retain scaffolds; a wider spread of unprompted multi-step strategies remains to be demonstrated."
+    },
+    {
+      "code": "3C8",
+      "source": "src/systems/content/satsRevisionGapMissions.ts; src/systems/content/satsAdventure.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "Independent pairing of two choice sets now has menu/outfit/flag contexts. Broader problem variety remains a separate depth question."
+    },
+    {
+      "code": "4C8",
+      "source": "src/systems/content/satsRevisionGapMissions.ts; src/systems/content/satsAdventure.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "Multiplication correspondence problems now combine independent choice sets. This adds the identified application; it does not certify every multistep strategy."
+    },
+    {
+      "code": "5C8a",
+      "source": "src/systems/content/satsAdventure.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "New independently entered money, division and decimal-measure problems do not supply an equation or intermediate plan. Existing guided games retain scaffolds; a wider spread of unprompted multi-step strategies remains to be demonstrated."
+    },
+    {
+      "code": "5C8b",
+      "source": "src/systems/content/satsAdventure.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "New independently entered money, division and decimal-measure problems do not supply an equation or intermediate plan. Existing guided games retain scaffolds; a wider spread of unprompted multi-step strategies remains to be demonstrated."
+    },
+    {
+      "code": "5C8c",
+      "source": "src/systems/content/satsAdventure.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "New independently entered money, division and decimal-measure problems do not supply an equation or intermediate plan. Existing guided games retain scaffolds; a wider spread of unprompted multi-step strategies remains to be demonstrated."
+    },
+    {
+      "code": "6C8",
+      "source": "src/systems/content/satsAdventure.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "New independently entered money, division and decimal-measure problems do not supply an equation or intermediate plan. Existing guided games retain scaffolds; a wider spread of unprompted multi-step strategies remains to be demonstrated."
+    },
+    {
+      "code": "6C9",
+      "source": "src/games/orderOpsEngine.ts",
+      "status": "representative",
+      "note": "Mixed expressions and brackets resolve through legal operation choices; includes equal-priority cases in revision."
+    },
+    {
+      "code": "3F1a",
+      "source": "src/games/numberLineQuestions.ts",
+      "status": "partial",
+      "note": "Fractional equal steps are present but a dedicated tenths counting/partitioning sequence is limited."
+    },
+    {
+      "code": "3F1b",
+      "source": "src/games/FractionMatchGame.tsx",
+      "status": "partial",
+      "note": "Equivalent fractions, decimals and percentages are practised. Every named representation, improper/mixed conversion and mental-equivalence demand is not independently established."
+    },
+    {
+      "code": "3F1c",
+      "source": "src/games/FractionMatchGame.tsx",
+      "status": "partial",
+      "note": "Equivalent fractions, decimals and percentages are practised. Every named representation, improper/mixed conversion and mental-equivalence demand is not independently established."
+    },
+    {
+      "code": "3F2",
+      "source": "src/systems/content/satsRevisionGapMissions.ts; src/games/FractionMatchGame.tsx",
+      "status": "representative",
+      "note": "Shaded-strip equivalent fractions include small-denominator variants; the hundred-square task provides later-year practice too."
+    },
+    {
+      "code": "4F1",
+      "source": "src/games/FractionMatchGame.tsx",
+      "status": "partial",
+      "note": "Equivalent fractions, decimals and percentages are practised. Every named representation, improper/mixed conversion and mental-equivalence demand is not independently established."
+    },
+    {
+      "code": "4F2",
+      "source": "src/systems/content/satsRevisionGapMissions.ts; src/games/FractionMatchGame.tsx",
+      "status": "representative",
+      "note": "Equivalent shaded-strip fractions vary partitions and denominators; learners also construct an equivalent shaded hundred-square."
+    },
+    {
+      "code": "5F2a",
+      "source": "src/games/FractionMatchGame.tsx",
+      "status": "partial",
+      "note": "Equivalent fractions, decimals and percentages are practised. Every named representation, improper/mixed conversion and mental-equivalence demand is not independently established."
+    },
+    {
+      "code": "5F2b",
+      "source": "src/systems/content/satsRevisionGapMissions.ts; src/systems/content/satsExtendedMissions.ts; src/systems/content/satsReplayVariations.ts",
+      "status": "representative",
+      "note": "Direct shaded-diagram equivalence, including tenths/hundredths, replaces the earlier mixed/improper-conversion misclassification as evidence for this objective."
+    },
+    {
+      "code": "6F2",
+      "source": "src/games/FractionMatchGame.tsx",
+      "status": "partial",
+      "note": "Equivalent fractions, decimals and percentages are practised. Every named representation, improper/mixed conversion and mental-equivalence demand is not independently established."
+    },
+    {
+      "code": "4F6a",
+      "source": "src/games/FractionMatchGame.tsx",
+      "status": "partial",
+      "note": "Equivalent fractions, decimals and percentages are practised. Every named representation, improper/mixed conversion and mental-equivalence demand is not independently established."
+    },
+    {
+      "code": "4F6b",
+      "source": "src/games/FractionMatchGame.tsx",
+      "status": "partial",
+      "note": "Equivalent fractions, decimals and percentages are practised. Every named representation, improper/mixed conversion and mental-equivalence demand is not independently established."
+    },
+    {
+      "code": "5F6a",
+      "source": "src/games/FractionMatchGame.tsx",
+      "status": "partial",
+      "note": "Equivalent fractions, decimals and percentages are practised. Every named representation, improper/mixed conversion and mental-equivalence demand is not independently established."
+    },
+    {
+      "code": "5F6b",
+      "source": "src/games/FractionMatchGame.tsx",
+      "status": "partial",
+      "note": "Equivalent fractions, decimals and percentages are practised. Every named representation, improper/mixed conversion and mental-equivalence demand is not independently established."
+    },
+    {
+      "code": "6F6",
+      "source": "src/games/FractionMatchGame.tsx",
+      "status": "partial",
+      "note": "Equivalent fractions, decimals and percentages are practised. Every named representation, improper/mixed conversion and mental-equivalence demand is not independently established."
+    },
+    {
+      "code": "5F11",
+      "source": "src/games/FractionMatchGame.tsx",
+      "status": "partial",
+      "note": "Equivalent fractions, decimals and percentages are practised. Every named representation, improper/mixed conversion and mental-equivalence demand is not independently established."
+    },
+    {
+      "code": "6F11",
+      "source": "src/games/FractionMatchGame.tsx",
+      "status": "partial",
+      "note": "Equivalent fractions, decimals and percentages are practised. Every named representation, improper/mixed conversion and mental-equivalence demand is not independently established."
+    },
+    {
+      "code": "3F3",
+      "source": "src/systems/content/satsAdventure.ts",
+      "status": "partial",
+      "note": "Some pairwise comparisons exist; multi-item ordering and fractions greater than one need broader assessed practice."
+    },
+    {
+      "code": "5F3",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Independently order several unlike-denominator fractions, including values above one."
+    },
+    {
+      "code": "6F3",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Independently order several unlike-denominator fractions, including values above one."
+    },
+    {
+      "code": "3F4",
+      "source": "src/games/FractionForgeGame.tsx",
+      "status": "representative",
+      "note": "Actual recipes independently recomputed, including proper-fraction multiplication, division by whole numbers and unlike/mixed addition in revision."
+    },
+    {
+      "code": "4F4",
+      "source": "src/games/FractionForgeGame.tsx",
+      "status": "representative",
+      "note": "Actual recipes independently recomputed, including proper-fraction multiplication, division by whole numbers and unlike/mixed addition in revision."
+    },
+    {
+      "code": "5F4",
+      "source": "src/games/FractionForgeGame.tsx",
+      "status": "representative",
+      "note": "Actual recipes independently recomputed, including proper-fraction multiplication, division by whole numbers and unlike/mixed addition in revision."
+    },
+    {
+      "code": "6F4",
+      "source": "src/games/FractionForgeGame.tsx",
+      "status": "representative",
+      "note": "Actual recipes independently recomputed, including proper-fraction multiplication, division by whole numbers and unlike/mixed addition in revision."
+    },
+    {
+      "code": "5F5",
+      "source": "src/games/FractionForgeGame.tsx",
+      "status": "representative",
+      "note": "Actual recipes independently recomputed, including proper-fraction multiplication, division by whole numbers and unlike/mixed addition in revision."
+    },
+    {
+      "code": "6F5a",
+      "source": "src/games/FractionForgeGame.tsx",
+      "status": "representative",
+      "note": "Actual recipes independently recomputed, including proper-fraction multiplication, division by whole numbers and unlike/mixed addition in revision."
+    },
+    {
+      "code": "6F5b",
+      "source": "src/games/FractionForgeGame.tsx",
+      "status": "representative",
+      "note": "Actual recipes independently recomputed, including proper-fraction multiplication, division by whole numbers and unlike/mixed addition in revision."
+    },
+    {
+      "code": "4F7",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Generated decimal rounding to whole numbers, tenths and hundredths, checked with exact integer/rational arithmetic."
+    },
+    {
+      "code": "5F7",
+      "source": "src/systems/content/satsExtendedMissions.ts; src/systems/content/satsReplayVariations.ts",
+      "status": "representative",
+      "note": "Seeded two-decimal readings round to a whole number and one decimal place. Half-way decisions use integer hundredths and are independently recalculated."
+    },
+    {
+      "code": "4F8",
+      "source": "src/systems/content/satsAdventure.ts",
+      "status": "partial",
+      "note": "Smallest-decimal selection and decimal number lines exist; broad multi-item ordering to three decimal places is limited."
+    },
+    {
+      "code": "5F8",
+      "source": "src/systems/content/satsExtendedMissions.ts; src/systems/content/satsReplayVariations.ts",
+      "status": "representative",
+      "note": "Seeded three-item decimal ordering to three decimal places uses independently entered ordered responses, alongside decimal comparison and number-line practice."
+    },
+    {
+      "code": "6F9b",
+      "source": "src/systems/content/satsAdventure.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "New three-decimal measure contexts require independently choosing subtraction and division; existing exact fraction/decimal operations remain. Wider contexts and representation changes remain limited."
+    },
+    {
+      "code": "6F9c",
+      "source": "src/systems/content/satsAdventure.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "New three-decimal measure contexts require independently choosing subtraction and division; existing exact fraction/decimal operations remain. Wider contexts and representation changes remain limited."
+    },
+    {
+      "code": "5F10",
+      "source": "src/systems/content/satsAdventure.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "New three-decimal measure contexts require independently choosing subtraction and division; existing exact fraction/decimal operations remain. Wider contexts and representation changes remain limited."
+    },
+    {
+      "code": "6F10",
+      "source": "src/systems/content/satsRevisionGapMissions.ts; src/systems/content/satsAdventure.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "A shared-length context requires calculating in centimetres and rounding the result to a specified accuracy."
+    },
+    {
+      "code": "3F10",
+      "source": "src/systems/content/satsAdventure.ts",
+      "status": "partial",
+      "note": "Several exact decimal and fraction calculations and contexts exist; varied three-decimal problems and independent operation selection remain limited."
+    },
+    {
+      "code": "4F10a",
+      "source": "src/systems/content/satsAdventure.ts",
+      "status": "partial",
+      "note": "Several exact decimal and fraction calculations and contexts exist; varied three-decimal problems and independent operation selection remain limited."
+    },
+    {
+      "code": "4F10b",
+      "source": "src/systems/content/satsAdventure.ts",
+      "status": "partial",
+      "note": "Several exact decimal and fraction calculations and contexts exist; varied three-decimal problems and independent operation selection remain limited."
+    },
+    {
+      "code": "5F12",
+      "source": "src/games/PercentPowerGame.tsx",
+      "status": "representative",
+      "note": "Percentages of amounts, reverse percentages and increases; discounts and percentage comparison in revision."
+    },
+    {
+      "code": "6R2",
+      "source": "src/games/PercentPowerGame.tsx",
+      "status": "representative",
+      "note": "Percentages of amounts, reverse percentages and increases; discounts and percentage comparison in revision."
+    },
+    {
+      "code": "6R1",
+      "source": "src/games/PotionPanicGame.tsx; src/games/ShareSplitterGame.tsx",
+      "status": "representative",
+      "note": "Scale recipes and unequal shares; part-to-whole and inverse whole questions also appear in revision."
+    },
+    {
+      "code": "6R4",
+      "source": "src/games/PotionPanicGame.tsx; src/games/ShareSplitterGame.tsx",
+      "status": "representative",
+      "note": "Scale recipes and unequal shares; part-to-whole and inverse whole questions also appear in revision."
+    },
+    {
+      "code": "6R3",
+      "source": "src/systems/content/satsRevisionGapMissions.ts; src/games/ScaleBuilderGame.tsx",
+      "status": "representative",
+      "note": "Similar-rectangle tasks require finding an unknown scale factor and missing corresponding side. The main Scale Builder retains supplied-factor scaling."
+    },
+    {
+      "code": "6A1",
+      "source": "src/systems/content/satsAdventure.ts",
+      "status": "representative",
+      "note": "Revised task now asks learners to express a stated unknown-number relationship as an equation."
+    },
+    {
+      "code": "6A2",
+      "source": "src/games/FormulaForgeGame.tsx",
+      "status": "representative",
+      "note": "Use simple area, perimeter and volume formulae; find missing dimensions and reverse a simple rule."
+    },
+    {
+      "code": "6A3",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Identify and describe equal-step rules; generate terms from a position-number rule and find a later term."
+    },
+    {
+      "code": "6A4",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Independently list all possible positive integer values under a sum and ordering constraint; duplicates and omissions are rejected."
+    },
+    {
+      "code": "6A5",
+      "source": "src/systems/content/satsExtendedMissions.ts; src/systems/content/satsReplayVariations.ts",
+      "status": "representative",
+      "note": "Seeded linear constraints accept different independently produced positive integer pairs, reject duplicate pairs, and retain exhaustive-pair tasks."
+    },
+    {
+      "code": "3M1a",
+      "source": "src/systems/content/satsInspiredQuestionBanks.ts",
+      "status": "partial",
+      "note": "Conversions and one explicit length comparison exist. Direct ordering/comparison across all measures is sparse."
+    },
+    {
+      "code": "3M1b",
+      "source": "src/systems/content/satsInspiredQuestionBanks.ts",
+      "status": "partial",
+      "note": "Conversions and one explicit length comparison exist. Direct ordering/comparison across all measures is sparse."
+    },
+    {
+      "code": "3M1c",
+      "source": "src/systems/content/satsInspiredQuestionBanks.ts",
+      "status": "partial",
+      "note": "Conversions and one explicit length comparison exist. Direct ordering/comparison across all measures is sparse."
+    },
+    {
+      "code": "4M1",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Compare and order lengths, masses and capacities expressed in mixed metric units after converting to a common unit."
+    },
+    {
+      "code": "3M2a",
+      "source": "src/systems/content/satsAdventure.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "Offset ruler reading with millimetre divisions is present. Practical ruler placement and broader length-estimation contexts remain outside the validated tasks."
+    },
+    {
+      "code": "3M2b",
+      "source": "src/systems/content/satsExtendedMissions.ts; src/systems/content/satsReplayVariations.ts",
+      "status": "partial",
+      "note": "Real graduated mass scales now require counting unnumbered intervals. A full range of estimation and practical mass measurement contexts remains to be established."
+    },
+    {
+      "code": "3M2c",
+      "source": "src/systems/content/satsAdventure.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "Graduated measuring-cylinder readings use varied capacities. Practical filling and capacity estimation still need separate activity."
+    },
+    {
+      "code": "4M2",
+      "source": "src/systems/content/satsRevisionGapMissions.ts; src/systems/content/satsAdventure.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Choose plausible real-world lengths, masses, capacities and a monetary estimate. Physical measurement is not required by this revision task."
+    },
+    {
+      "code": "3M4a",
+      "source": "src/games/ChronoDashGame.tsx",
+      "status": "partial",
+      "note": "Read/set clocks, convert clock formats and calculate durations. Some year-specific breadth remains sparse."
+    },
+    {
+      "code": "4M4b",
+      "source": "src/games/ChronoDashGame.tsx",
+      "status": "partial",
+      "note": "Read/set clocks, convert clock formats and calculate durations. Some year-specific breadth remains sparse."
+    },
+    {
+      "code": "4M4c",
+      "source": "src/systems/content/satsRevisionGapMissions.ts; src/games/ChronoDashGame.tsx",
+      "status": "representative",
+      "note": "Years/months conversion works in both directions. Existing clock and seconds/minutes/weeks/days examples remain."
+    },
+    {
+      "code": "3M4c",
+      "source": "src/systems/content/satsInspiredQuestionBanks.ts",
+      "status": "partial",
+      "note": "Elapsed times and selected minute/second conversions exist; calendar facts and varied multi-unit durations need wider practice."
+    },
+    {
+      "code": "3M4d",
+      "source": "src/systems/content/satsInspiredQuestionBanks.ts",
+      "status": "partial",
+      "note": "Elapsed times and selected minute/second conversions exist; calendar facts and varied multi-unit durations need wider practice."
+    },
+    {
+      "code": "3M4e",
+      "source": "src/systems/content/satsRevisionGapMissions.ts; src/systems/content/satsInspiredQuestionBanks.ts",
+      "status": "representative",
+      "note": "Month lengths include February in ordinary/leap years; year-length facts now have direct revision tasks. Existing seconds/minutes practice remains."
+    },
+    {
+      "code": "3M4f",
+      "source": "src/systems/content/satsInspiredQuestionBanks.ts",
+      "status": "partial",
+      "note": "Elapsed times and selected minute/second conversions exist; calendar facts and varied multi-unit durations need wider practice."
+    },
+    {
+      "code": "5M4",
+      "source": "src/systems/content/satsInspiredQuestionBanks.ts",
+      "status": "partial",
+      "note": "Elapsed times and selected minute/second conversions exist; calendar facts and varied multi-unit durations need wider practice."
+    },
+    {
+      "code": "4M5",
+      "source": "src/games/LavaPathGame.tsx",
+      "status": "representative",
+      "note": "Metric conversions include mm/cm/m/km, g/kg and ml/l, with decimal quantities."
+    },
+    {
+      "code": "5M5",
+      "source": "src/games/LavaPathGame.tsx",
+      "status": "representative",
+      "note": "Metric conversions include mm/cm/m/km, g/kg and ml/l, with decimal quantities."
+    },
+    {
+      "code": "6M5",
+      "source": "src/games/LavaPathGame.tsx",
+      "status": "representative",
+      "note": "Metric conversions include mm/cm/m/km, g/kg and ml/l, with decimal quantities."
+    },
+    {
+      "code": "5M6",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Provided approximate factors cover inches, pounds, pints and miles, in both conversion directions."
+    },
+    {
+      "code": "6M6",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Provided approximate factors cover inches, pounds, pints and miles, in both conversion directions."
+    },
+    {
+      "code": "3M7",
+      "source": "src/games/PerimeterPathGame.tsx",
+      "status": "representative",
+      "note": "Rectangular, missing-side, rectilinear and mixed-unit perimeter models independently checked."
+    },
+    {
+      "code": "4M7a",
+      "source": "src/games/PerimeterPathGame.tsx",
+      "status": "representative",
+      "note": "Rectangular, missing-side, rectilinear and mixed-unit perimeter models independently checked."
+    },
+    {
+      "code": "5M7a",
+      "source": "src/games/PerimeterPathGame.tsx",
+      "status": "representative",
+      "note": "Rectangular, missing-side, rectilinear and mixed-unit perimeter models independently checked."
+    },
+    {
+      "code": "4M7b",
+      "source": "src/games/AreaArchitectGame.tsx",
+      "status": "partial",
+      "note": "Count square units and compound rectilinear areas. Area conversion and estimating irregular area are not established."
+    },
+    {
+      "code": "5M7b",
+      "source": "src/systems/content/satsExtendedMissions.ts; src/systems/content/satsReplayVariations.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "Exact half-square irregular grids and existing cutout reasoning provide estimation and calculation tasks. Natural irregular outlines and practical area estimation need more breadth."
+    },
+    {
+      "code": "6M7a",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Compare equal-area rectangles with equal and different perimeters; independently calculate their dimensions and perimeters."
+    },
+    {
+      "code": "6M7b",
+      "source": "src/games/FormulaForgeGame.tsx",
+      "status": "representative",
+      "note": "Calculate triangle and parallelogram areas, including missing perpendicular heights."
+    },
+    {
+      "code": "6M7c",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Choose a triangle formula and calculate triangular area in a context without a supplied formula; existing models cover other area formulae."
+    },
+    {
+      "code": "6M8b",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Choose a cuboid formula and independently find cube counts from a dimensional context without a supplied formula."
+    },
+    {
+      "code": "5M8",
+      "source": "src/systems/content/satsAdventure.ts",
+      "status": "partial",
+      "note": "Cuboid volume calculations exist; estimating capacity with practical materials requires separate activity and cannot be fully replaced by this app."
+    },
+    {
+      "code": "6M8a",
+      "source": "src/games/FormulaForgeGame.tsx",
+      "status": "representative",
+      "note": "Calculate cuboid volume and a missing dimension; broader unit conversion/comparison is limited."
+    },
+    {
+      "code": "3M9a",
+      "source": "src/systems/content/satsInspiredQuestionBanks.ts",
+      "status": "partial",
+      "note": "Money, measures and conversion contexts are present; the complete spread of independent four-operation contexts needs expansion."
+    },
+    {
+      "code": "4M9",
+      "source": "src/systems/content/satsInspiredQuestionBanks.ts",
+      "status": "partial",
+      "note": "Money, measures and conversion contexts are present; the complete spread of independent four-operation contexts needs expansion."
+    },
+    {
+      "code": "5M9a",
+      "source": "src/systems/content/satsInspiredQuestionBanks.ts",
+      "status": "partial",
+      "note": "Money, measures and conversion contexts are present; the complete spread of independent four-operation contexts needs expansion."
+    },
+    {
+      "code": "5M9b",
+      "source": "src/systems/content/satsInspiredQuestionBanks.ts",
+      "status": "partial",
+      "note": "Money, measures and conversion contexts are present; the complete spread of independent four-operation contexts needs expansion."
+    },
+    {
+      "code": "5M9c",
+      "source": "src/systems/content/satsInspiredQuestionBanks.ts",
+      "status": "partial",
+      "note": "Money, measures and conversion contexts are present; the complete spread of independent four-operation contexts needs expansion."
+    },
+    {
+      "code": "5M9d",
+      "source": "src/systems/content/satsInspiredQuestionBanks.ts",
+      "status": "partial",
+      "note": "Money, measures and conversion contexts are present; the complete spread of independent four-operation contexts needs expansion."
+    },
+    {
+      "code": "6M9",
+      "source": "src/systems/content/satsInspiredQuestionBanks.ts",
+      "status": "partial",
+      "note": "Money, measures and conversion contexts are present; the complete spread of independent four-operation contexts needs expansion."
+    },
+    {
+      "code": "4G2a",
+      "source": "src/games/PolygonPalaceGame.tsx",
+      "status": "representative",
+      "note": "Name/classify polygons and solids, select properties and count faces/edges/vertices."
+    },
+    {
+      "code": "5G2b",
+      "source": "src/games/PolygonPalaceGame.tsx",
+      "status": "representative",
+      "note": "Name/classify polygons and solids, select properties and count faces/edges/vertices."
+    },
+    {
+      "code": "6G2a",
+      "source": "src/games/PolygonPalaceGame.tsx",
+      "status": "representative",
+      "note": "Name/classify polygons and solids, select properties and count faces/edges/vertices."
+    },
+    {
+      "code": "6G2b",
+      "source": "src/games/PolygonPalaceGame.tsx",
+      "status": "representative",
+      "note": "Name/classify polygons and solids, select properties and count faces/edges/vertices."
+    },
+    {
+      "code": "4G2b",
+      "source": "src/games/PolygonPalaceGame.tsx; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "Select and draw symmetry axes on turned squares and rectangles. Wider polygons and unrestricted line drawing remain limited."
+    },
+    {
+      "code": "5G2a",
+      "source": "src/games/PerimeterPathGame.tsx",
+      "status": "partial",
+      "note": "Deduce a missing rectangular side; further related-angle and shape deductions are sparse."
+    },
+    {
+      "code": "3G3a",
+      "source": "src/components/game-ui/SatsConstructionControl.tsx",
+      "status": "partial",
+      "note": "Build a preset rectangle and set an angle digitally. Free drawing, varied givens and ruler/protractor measurement remain gaps."
+    },
+    {
+      "code": "6G3a",
+      "source": "src/components/game-ui/SatsConstructionControl.tsx; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "Construct rectangles from varied area/perimeter givens and draw varied angles digitally. Free ruler-based construction and practical accuracy remain unverified."
+    },
+    {
+      "code": "3G3b",
+      "source": "src/systems/content/satsAdventure.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "Varied orientations of a valid cube net are distinguished from overlapping or incomplete folds; the independent oracle folds the six faces in 3D. Making physical nets and wider 3D modelling remain unverified."
+    },
+    {
+      "code": "5G3b",
+      "source": "src/systems/content/satsAdventure.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "Varied orientations of a valid cube net are distinguished from overlapping or incomplete folds; the independent oracle folds the six faces in 3D. Making physical nets and wider 3D modelling remain unverified."
+    },
+    {
+      "code": "6G3b",
+      "source": "src/systems/content/satsAdventure.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "Varied orientations of a valid cube net are distinguished from overlapping or incomplete folds; the independent oracle folds the six faces in 3D. Making physical nets and wider 3D modelling remain unverified."
+    },
+    {
+      "code": "3G4a",
+      "source": "src/games/PolygonPalaceGame.tsx",
+      "status": "partial",
+      "note": "Right-angle properties and turns appear; systematic acute/obtuse/reflex estimation, comparison and measurement need expansion."
+    },
+    {
+      "code": "3G4b",
+      "source": "src/games/PolygonPalaceGame.tsx",
+      "status": "partial",
+      "note": "Right-angle properties and turns appear; systematic acute/obtuse/reflex estimation, comparison and measurement need expansion."
+    },
+    {
+      "code": "4G4",
+      "source": "src/games/PolygonPalaceGame.tsx",
+      "status": "partial",
+      "note": "Right-angle properties and turns appear; systematic acute/obtuse/reflex estimation, comparison and measurement need expansion."
+    },
+    {
+      "code": "5G4a",
+      "source": "src/games/PolygonPalaceGame.tsx; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "Angle classification, visual estimation, protractor reading and drawing now exist. A wider range of comparison and physical measurement contexts remains limited."
+    },
+    {
+      "code": "5G4b",
+      "source": "src/games/angleArena/questions.ts",
+      "status": "representative",
+      "note": "Straight-line missing angles, ratio/difference reasoning, and point-angle totals in revision."
+    },
+    {
+      "code": "5G4c",
+      "source": "src/components/game-ui/SatsConstructionControl.tsx; src/systems/content/satsDepthMissions.ts",
+      "status": "partial",
+      "note": "Read dual-scale protractors in both baseline directions and digitally draw varied angles. Physical protractor placement and unrestricted drawing remain unverified."
+    },
+    {
+      "code": "6G4a",
+      "source": "src/systems/content/satsExtendedMissions.ts; src/systems/content/satsReplayVariations.ts",
+      "status": "representative",
+      "note": "Seeded isosceles deduction and regular-polygon outside/inside angles supplement triangle and quadrilateral angle totals."
+    },
+    {
+      "code": "6G4b",
+      "source": "src/systems/content/satsExtendedMissions.ts; src/systems/content/satsReplayVariations.ts",
+      "status": "representative",
+      "note": "Crossing-line diagrams test vertically opposite angles; seeded point and straight-line totals remain available."
+    },
+    {
+      "code": "6G5",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Identify highlighted radius, diameter and circumference; existing radius/diameter calculations retained."
+    },
+    {
+      "code": "4P2",
+      "source": "src/games/rotationStationQuestions.ts; src/games/TreasurePathGame.tsx",
+      "status": "representative",
+      "note": "Translations/reflections and coordinates in appropriate quadrants; exact targets independently checked."
+    },
+    {
+      "code": "5P2",
+      "source": "src/games/rotationStationQuestions.ts; src/games/TreasurePathGame.tsx",
+      "status": "representative",
+      "note": "Translations/reflections and coordinates in appropriate quadrants; exact targets independently checked."
+    },
+    {
+      "code": "6P2",
+      "source": "src/games/rotationStationQuestions.ts; src/games/TreasurePathGame.tsx",
+      "status": "representative",
+      "note": "Translations/reflections and coordinates in appropriate quadrants; exact targets independently checked."
+    },
+    {
+      "code": "4P3a",
+      "source": "src/games/rotationStationQuestions.ts; src/games/TreasurePathGame.tsx",
+      "status": "representative",
+      "note": "Translations/reflections and coordinates in appropriate quadrants; exact targets independently checked."
+    },
+    {
+      "code": "4P3b",
+      "source": "src/games/rotationStationQuestions.ts; src/games/TreasurePathGame.tsx",
+      "status": "representative",
+      "note": "Translations/reflections and coordinates in appropriate quadrants; exact targets independently checked."
+    },
+    {
+      "code": "6P3",
+      "source": "src/games/rotationStationQuestions.ts; src/games/TreasurePathGame.tsx",
+      "status": "representative",
+      "note": "Translations/reflections and coordinates in appropriate quadrants; exact targets independently checked."
+    },
+    {
+      "code": "4S1",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Construct all points and connecting segments of a complete line graph from a table, alongside existing bar/time-graph work."
+    },
+    {
+      "code": "3S2",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Table completion and scaled-pictogram totals extend existing bar-chart comparisons and differences."
+    },
+    {
+      "code": "4S2",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Complete missing group counts and totals in generated tables, alongside existing chart comparison and pictogram tasks."
+    },
+    {
+      "code": "6S1",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Construct a complete pie chart from category counts and interpret existing line/pie charts; partial plot credit is available."
+    },
+    {
+      "code": "6S3",
+      "source": "src/games/MeanMachineGame.tsx",
+      "status": "representative",
+      "note": "Mean and missing-value generators are independently recomputed; later mean rounds include decimal answers and zero values."
+    },
+    {
+      "code": "3M9b",
+      "source": "src/games/PerimeterPathGame.tsx",
+      "status": "representative",
+      "note": "Add the lengths of the sides of rectangular and compound boundaries, including mixed cm/m labels."
+    },
+    {
+      "code": "3M9c",
+      "source": "src/games/ConversionCanyonGame.tsx",
+      "status": "representative",
+      "note": "Combine and remove mass tokens to make a requested load, using grams and kilograms."
+    },
+    {
+      "code": "3G2",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Identify horizontal and vertical lines, parallel properties and perpendicular lines in turned diagrams."
+    },
+    {
+      "code": "4M4a",
+      "source": "src/games/ChronoDashGame.tsx",
+      "status": "partial",
+      "note": "Set an analogue clock from digital 12-hour times; wider read/write conversion practice remains limited."
+    },
+    {
+      "code": "4C6b",
+      "source": "src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Explicit multiplication by zero/one, division by one and regrouping three-factor mental products."
+    },
+    {
+      "code": "3S1",
+      "source": "src/systems/content/satsRevisionGapMissions.ts; src/games/GraphGrabberGame.tsx; src/systems/content/satsAdventure.ts; src/systems/content/satsDepthMissions.ts",
+      "status": "representative",
+      "note": "Pictograms are now constructed from category totals with varied keys and whole/half symbols. Bar/table/pictogram reading remains."
+    },
+    {
+      "code": "5S1",
+      "source": "src/systems/content/satsAdventure.ts",
+      "status": "representative",
+      "note": "Read a timetable and use its entries; broader table-completion tasks remain limited."
+    },
+    {
+      "code": "5S2",
+      "source": "src/games/LineGraphLabGame.tsx",
+      "status": "representative",
+      "note": "Solve comparison and difference problems and compare rises between points on a line graph."
+    }
+  ]
+}

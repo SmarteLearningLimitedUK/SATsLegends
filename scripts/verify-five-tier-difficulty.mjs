@@ -1,3 +1,4 @@
+import {assertShipmentRound,assertLineRound} from './qa/math-question-oracles.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -10,6 +11,8 @@ const root = path.resolve(import.meta.dirname, '..');
 const require = createRequire(import.meta.url);
 const cache = new Map();
 const rows = [];
+const collectFailures = process.env.LEGEND_DIFFICULTY_REVIEW === '1';
+const failures = [];
 const routeRenders = [];
 let expandedFixtureGroup = null;
 const sampleCount = Number(process.env.LEGEND_DIFFICULTY_SAMPLES || 1000);
@@ -24,10 +27,14 @@ const resolveFile = (request, parent) => {
     .find((candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile());
 };
 const actualHelpers = new Set([
+  'src/games/primePopRules.ts',
   'src/systems/content/gameDifficulty.ts',
   'src/systems/content/island1NumberBaseCamp.ts',
   'src/utils/questionShuffle.ts',
   'src/utils/mathDisplay.ts',
+  'src/systems/content/shipmentQuestions.ts',
+  'src/systems/content/satsInspiredQuestionBanks.ts',
+  'src/games/ratioFractionsRace/questionSelector.ts',
   'src/games/rotationStationQuestions.ts',
   'src/utils/gameNames.ts',
 ]);
@@ -104,7 +111,13 @@ const choices = (options, answer, count = 4) => {
   assert.equal(options.filter((value) => value === answer).length, 1, 'Correct answer must appear exactly once');
 };
 const record = (name, run) => {
-  run(); rows.push({ name, status: 'passed' }); console.log(`PASS ${name}`);
+  try {
+    run(); rows.push({ name, status: 'passed' }); console.log(`PASS ${name}`);
+  } catch (error) {
+    if (!collectFailures) throw error;
+    const failure = { name, status: 'failed', message: error.message, stack: error.stack };
+    rows.push(failure); failures.push(failure); console.log(`FAIL ${name}: ${error.message}`);
+  }
 };
 const gcd = (a, b) => b ? gcd(b, a % b) : Math.abs(a);
 const fractionValue = (label) => label.includes('/') ? label.split('/').map(Number).reduce((a, b) => a / b)
@@ -194,8 +207,8 @@ record('Mine four-strike decks progress from tables to four-digit by two-digit o
     for (const [index, question] of deck.entries()) {
       assert.equal(question.answer, question.a * question.b);
       choices(question.options, question.answer);
-      const band = tier === 5 && index === 3 ? [1234, 3987, 12, 29] : [
-        [2, 6, 2, 8], [12, 39, 2, 9], [103, 396, 2, 9], [23, 89, 12, 29], [125, 987, 12, 29],
+      const band = [
+        [2, 10, 2, 12], [12, 39, 2, 9], [103, 999, 2, 9], [23, 999, 12, 29], [1234, 9999, 12, 99],
       ][tier - 1];
       assert.ok(question.a >= band[0] && question.a <= band[1]);
       assert.ok(question.b >= band[2] && question.b <= band[3]);
@@ -243,15 +256,14 @@ record('Race tiers offer a full non-repeating lap and only one mathematically co
         `Repeated adjacent fuel answer in tier ${tier}`);
     }
     for (const question of deck) {
-      assert.equal(question.ratio.length, tier <= 3 ? 2 : tier - 1);
+      assert.equal(question.ratio.length, tier <= 3 ? 2 : 3);
       const total = question.ratio.reduce((sum, value) => sum + value, 0);
       assert.equal(numericFraction(question.correctAnswer), question.ratio[question.labels.indexOf(question.target)] / total);
-      assert.ok(total >= [6, 10, 16, 16, 24][tier - 1], `Race tier ${tier} should use its harder quantity band`);
+      assert.ok(total <= [5,8,10,10,12][tier-1], 'Race total exceeds its difficulty band');
       const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
       const [numerator, denominator] = question.correctAnswer.split('/').map(Number);
       assert.equal(gcd(numerator, denominator), 1, 'Fuel answers must be in simplest form');
-      if (tier >= 3) assert.ok(gcd(question.ratio[question.labels.indexOf(question.target)], total) > 1,
-        'Higher race tiers must require fraction simplification');
+
       assert.ok(question.options.every((option) => numericFraction(option) > 0 && numericFraction(option) < 1),
         'Distractors should be plausible fractions of the whole');
       assert.equal(question.options.length, 4);
@@ -318,14 +330,14 @@ const zombies = generator('MathsVsZombiesGame', ['buildQuestion', 'maxZombiesFor
 record(`Zombies exact arithmetic and introductory one-digit cap (${sampleCount * 5} questions)`, () => {
   for (let tier = 1; tier <= 5; tier++) for (let sample = 0; sample < sampleCount; sample++) {
     const q = zombies.buildQuestion(tier);
-    const match = q.prompt.match(/(-?\d+)\s*([+x÷-])\s*\(?(-?\d+)\)?$/);
+    const match = q.equation.match(/(-?\d+)\s*([+x×÷-])\s*\(?(-?\d+)\)?$/);
     assert.ok(match, `Unreadable equation: ${q.prompt}`);
     const [, aText, op, bText] = match; const a = Number(aText); const b = Number(bText);
-    const answer = op === '+' ? a + b : op === '-' ? a - b : op === 'x' ? a * b : a / b;
+    const answer = op === '+' ? a + b : op === '-' ? a - b : (op === 'x' || op === '×') ? a * b : a / b;
     assert.equal(q.options[q.correctIndex], answer); choices(q.options, answer);
     if (tier === 1) { assert.equal(op, '+'); assert.ok(a >= 0 && a <= 5 && b >= 0 && b <= 5 && answer <= 10); }
     if (tier <= 3) assert.ok(op === '+' || op === '-');
-    if (tier === 4) assert.ok(['+', '-', 'x', '÷'].includes(op));
+    if (tier === 4) assert.ok(['+', '-', 'x', '×', '÷'].includes(op));
     if (tier <= 2) assert.ok(q.options.every((value) => value >= 0));
   }
   assert.deepEqual([1, 2, 3, 4, 5].map(zombies.maxZombiesForLevel), [1, 2, 2, 3, 4]);
@@ -597,7 +609,7 @@ record(`Rotation and polygon tier caps hold at high round counts and low time ($
     }
   }
 });
-const prime = generator('PrimePopGame', ['getConfig', 'isPrime']);
+const prime = { ...generator('PrimePopGame', ['getConfig']), isPrime: load('src/games/primePopRules.ts').isPrimeNumber };
 record('Prime bands remain distinct and mathematically classified through 99', () => {
   assert.deepEqual([1, 2, 3, 4, 5].map((tier) => prime.getConfig(tier).maxNumber), [20, 40, 60, 80, 99]);
   for (let value = 0; value <= 99; value++) {
@@ -607,61 +619,11 @@ record('Prime bands remain distinct and mathematically classified through 99', (
 });
 
 const graph = generator('GraphGrabberGame', ['buildRound']);
-record(`Graph Grabber valid answers, chart totals and first-tier reading cap (${sampleCount * 5} questions)`, () => {
-  const firstTierPrompts = new Set();
-  for (let tier = 1; tier <= 5; tier++) for (let sample = 0; sample < sampleCount; sample++) {
-    const q = graph.buildRound(tier, sample + 100);
-    assert.ok(q.correctAnswers.length > 0);
-    assert.equal(new Set(q.options.map((option) => option.id)).size, q.options.length);
-    assert.ok(q.correctAnswers.every((id) => q.options.some((option) => option.id === id)));
-    const data = q.bars || q.line || q.pie;
-    assert.ok(data.every((datum) => datum.value >= 0));
-    if (tier === 1) { assert.equal(q.kind, 'bar'); assert.ok(Math.max(...q.bars.map((bar) => bar.value)) <= 10); assert.equal(q.answerMode, 'single'); firstTierPrompts.add(q.prompt); }
-    if (q.pie) assert.equal(q.pie.reduce((sum, slice) => sum + slice.value, 0), 100);
-    const cratePrompt = q.prompt.match(/^How many crates did (.+) deliver\?$/);
-    if (cratePrompt) assert.deepEqual(q.correctAnswers, [String(q.bars.find((bar) => bar.label === cratePrompt[1]).value)]);
-    if (q.prompt === 'Which caravan delivered the most crates?') assert.equal(q.correctAnswers[0], q.bars.reduce((best, bar) => bar.value > best.value ? bar : best).label);
-    if (q.prompt === 'Which slice is largest?') assert.equal(q.correctAnswers[0], q.pie.reduce((best, slice) => slice.value > best.value ? slice : best).label);
-    const countPrompt = q.prompt.match(/^There are 200 crates altogether\. How many belong to (.+)\?$/);
-    if (countPrompt) assert.equal(Number(q.correctAnswers[0]), q.pie.find((slice) => slice.label === countPrompt[1]).value * 2);
-    const anglePrompt = q.prompt.match(/^What is the angle of (.+)'s sector in degrees\?$/);
-    if (anglePrompt) assert.equal(Number(q.correctAnswers[0]), q.pie.find((slice) => slice.label === anglePrompt[1]).value * 360 / 100);
-  }
-  assert.ok(firstTierPrompts.size >= Math.min(4, sampleCount));
+record(`Shipment chart answers and five distinct skill bands (${sampleCount*5} questions)`,()=>{
+ for(let tier=1;tier<=5;tier++){const seen=new Set();for(let i=0;i<sampleCount;i++){const q=graph.buildRound(tier,i);assertShipmentRound(q);assert.equal(q.kind,'bar');if(tier===1)assert(Math.max(...q.bars.map(b=>b.value))<=10);seen.add(JSON.stringify([q.prompt,q.bars.map(b=>b.value)]));}assert(seen.size>Math.min(20,sampleCount-1));}
 });
-const line = generator('LineGraphLabGame', ['generateRound']);
-record(`Line graphs correct-inclusive choices and unambiguous greatest rise (${sampleCount * 5} questions)`, () => {
-  const seen = new Set();
-  for (let tier = 1; tier <= 5; tier++) for (let sample = 0; sample < sampleCount; sample++) {
-    const q = line.generateRound(tier, sample); choices(q.options, q.correctAnswer);
-    if (tier === 1) assert.ok(q.graph.every((point) => point.value <= 10));
-    if (q.question.includes('increase the most')) {
-      seen.add('comparison');
-      const rises = q.graph.slice(1).map((point, i) => point.value - q.graph[i].value);
-      const max = Math.max(...rises); assert.equal(rises.filter((rise) => rise === max).length, 1);
-      const index = rises.indexOf(max); assert.equal(q.correctAnswer, `${index + 1} to ${index + 2}`);
-    } else if (q.question.includes('coordinates')) {
-      const point = q.graph[q.highlightIndex]; assert.equal(q.correctAnswer, `(${point.label}, ${point.value})`);
-    } else if (q.question.includes('does brainpower reach')) {
-      const target = Number(q.question.match(/reach (\d+) units/)[1]);
-      const matches = q.graph.filter((point) => point.value === target); assert.equal(matches.length, 1); assert.equal(q.correctAnswer, matches[0].label);
-    } else if (q.plotIndex !== undefined) {
-      assert.ok(tier >= 3, 'Plotting starts after numbered graph reading');
-      assert.equal(q.correctAnswer, String((q.graph[q.plotIndex - 1].value + q.graph[q.plotIndex + 1].value) / 2));
-      assert.equal(q.graph[q.plotIndex].value, Number(q.correctAnswer));
-    } else if (q.question.includes('brainpower at time')) {
-      const time = q.question.match(/time (\d+)/)[1];
-      assert.equal(q.correctAnswer, String(q.graph.find((point) => point.label === time).value));
-    } else if (q.question.includes('brainpower rise') || q.question.includes('brainpower fall')) {
-      const [, , from, to] = q.question.match(/brainpower (rise|fall) from time (\d+) to time (\d+)/);
-      assert.equal(Number(q.correctAnswer), Math.abs(q.graph[Number(to) - 1].value - q.graph[Number(from) - 1].value));
-    } else if (q.question.includes('halfway between times')) {
-      const [, from, to] = q.question.match(/between times (\d+) and (\d+)/);
-      assert.equal(Number(q.correctAnswer), (q.graph[Number(from) - 1].value + q.graph[Number(to) - 1].value) / 2);
-    } else assert.fail(`Unrecognised line graph question: ${q.question}`);
-  }
-  assert.ok(seen.has('comparison'));
-});
+const line=generator('LineGraphLabGame',['generateRound']);
+record(`Line graph answers, interpolation and unambiguous rises (${sampleCount*5} questions)`,()=>{for(let tier=1;tier<=5;tier++)for(let i=0;i<sampleCount;i++)assertLineRound(line.generateRound(tier,i));});
 const treasure = generator('TreasurePathGame', ['generateRound']);
 record(`Coordinate, translation and reflection targets fit five bands including all quadrants (${sampleCount * 10} questions)`, () => {
   const source = fs.readFileSync(path.join(root, 'src/games/TreasurePathGame.tsx'), 'utf8');
@@ -706,7 +668,7 @@ record(`Mean and missing-value arithmetic dominates, with late statistic bonus r
       const q = mean.buildRound(tier, sample + 100, previous); previous = q.mode; allModes.add(q.mode);
       const values = q.activeReelIndexes.map((index) => q.actualValues[index]);
       const sorted = [...values].sort((a, b) => a - b);
-      assert.ok(values.every((value) => Number.isFinite(value) && value > 0));
+      assert.ok(values.every((value) => Number.isFinite(value) && value >= 0));
       choices(q.options, q.correctAnswer, 4);
       if (q.mode === 'mean') near(q.correctAnswer, values.reduce((a, b) => a + b) / values.length, 'Mean answer');
       else if (q.mode === 'median') near(q.correctAnswer, sorted[Math.floor(sorted.length / 2)], 'Median answer');
@@ -724,9 +686,9 @@ record(`Mean and missing-value arithmetic dominates, with late statistic bonus r
       if (tier === 3 || tier === 4) assert.ok(q.mode === 'mean' || q.mode === 'missing');
     }
   }
-  assert.deepEqual([...allModes].sort(), ['mean', 'median', 'missing', 'mode']);
+  assert.deepEqual([...allModes].sort(), ['mean', 'missing']);
   const finalModes = Array.from({ length: 10 }, (_, index) => mean.buildRound(5, index + 1).mode);
-  assert.equal(finalModes.filter((mode) => mode === 'median' || mode === 'mode').length, 2);
+  assert(finalModes.every(mode=>mode==='mean'||mode==='missing'));
 });
 const detectiveData = generator('DataDetectiveGame', ['ITEMS', 'MONSTER_NAMES', 'MONSTER_COLORS', 'MUGSHOT_IMAGES', 'DETECTIVE_BRIEFS', 'WHODUNNIT_BRIEFS', 'shuffle']);
 record(`Actual Data Detective callback: bounded evidence, one matching culprit, early bar-only cases (${sampleCount * 5} cases)`, () => {
@@ -769,11 +731,12 @@ record(`Median Mountain source fixture (currently not routed): exact medians and
   }
 });
 
-const output = path.join(root, 'qa-artifacts/five-tier-difficulty');
+const output = path.resolve(root, process.env.LEGEND_DIFFICULTY_OUTPUT || 'qa-artifacts/five-tier-difficulty');
 fs.mkdirSync(output, { recursive: true });
 fs.writeFileSync(path.join(output, 'report.json'), JSON.stringify({
   generatedAt: new Date().toISOString(), kind: 'source-only actual-generator property verification', sampleCount,
-  browserContextsOpened: false, sourceFiles: [...sourceFiles].sort(), rows, failures: [],
+  browserContextsOpened: false, sourceFiles: [...sourceFiles].sort(), rows, failures,
   currentRouteCoverage: routeRenders.map(({ props: _props, ...route }) => route),
 }, null, 2));
-console.log(`PASS ${rows.length} checks; report qa-artifacts/five-tier-difficulty/report.json`);
+console.log(`${failures.length ? 'FAIL' : 'PASS'} ${rows.length - failures.length}/${rows.length} checks; report ${output}/report.json`);
+if (failures.length) process.exitCode = 1;

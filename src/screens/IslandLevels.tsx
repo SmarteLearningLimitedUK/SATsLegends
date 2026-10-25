@@ -3,10 +3,13 @@ import AssetIcon from '../components/AssetIcon';
 import { IslandData, LevelData, PlayerData } from '../types';
 import { getLevelGameTitle, getLevelGroupKey } from '../utils/gameNames';
 import { UNLOCK_ALL_LEVELS } from '../app/testingFlags';
-import { ChevronDown, Lock } from 'lucide-react';
+import { ArrowLeft, ChevronDown, Lock } from 'lucide-react';
 import { GAME_SCENE_META } from '../gameSceneMeta';
+import { getVisionEnvironment } from '../games/visionScene';
 import { GAME_DIFFICULTY_LABELS, getGameDifficulty, getLevelProgressIds } from '../systems/content/gameDifficulty';
 import '../design/desktop-island-levels.css';
+import { ReferenceArt } from '../components/game-ui/ReferenceScreenArt';
+import referenceGuide from '../assets/reference-screens/island-guide.png';
 
 interface IslandLevelsProps {
   island: IslandData;
@@ -194,12 +197,12 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
   const totalBrainpowerTokens = eligibleLevelRows.length * TOKENS_PER_LEVEL;
   const featuredLevel = nextPlayableRow?.level ?? gameGroups[0]?.levels[0]?.level;
   const featuredScene = featuredLevel?.gameType
-    ? GAME_SCENE_META[featuredLevel.gameType]?.background
+    ? getVisionEnvironment(getLevelGroupKey(featuredLevel)) ?? GAME_SCENE_META[featuredLevel.gameType]?.background
     : undefined;
 
   return (
     <div
-      className="legend-island-root premium-page-root relative h-full min-h-0 w-full overflow-hidden bg-[#07111f]"
+      className={`legend-island-root ${island.id === 1 ? 'reference-island' : ''} premium-page-root relative h-full min-h-0 w-full overflow-hidden bg-[#07111f]`}
       style={{
         height: '100%',
         minHeight: 0,
@@ -216,6 +219,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
         }}
       >
         <section className="legend-island-hero">
+          {island.id === 1 && <img className="reference-island-guide" src={referenceGuide} alt="" aria-hidden="true" draggable={false} />}
           <div className="legend-island-hero-art" style={{ backgroundImage: `url(${featuredScene ?? island.mapImage})` }} aria-hidden="true" />
         <div className="legend-island-header mb-3 flex flex-wrap items-start justify-between gap-2 md:mb-4">
           <button
@@ -223,10 +227,11 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
             className="legend-island-back ui-icon-button flex h-11 w-11 items-center justify-center rounded-full p-0 text-white shadow-xl md:h-12 md:w-12"
             aria-label="Back to islands"
           >
-            <AssetIcon name="back" className="h-6 w-6 md:h-8 md:w-8" />
+            {island.id === 1 ? <ArrowLeft className="h-8 w-8 text-amber-100" strokeWidth={4} aria-hidden="true" /> : <AssetIcon name="back" className="h-6 w-6 md:h-8 md:w-8" />}
           </button>
 
           <div className="legend-island-title-block flex-1 text-center">
+            {island.id === 1 && <ReferenceArt part="island-title" />}
             <div className="legend-island-category">{island.category} · Island {island.id}</div>
             <div className="flex justify-center">
               <h1 className="text-xl font-black text-white drop-shadow-[0_12px_24px_rgba(2,6,23,0.5)] md:text-3xl">{island.name}</h1>
@@ -246,7 +251,9 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
 
         {nextPlayableRow ? (
           <div className="legend-next-mission mb-3 rounded-2xl p-3 md:mb-4 md:p-3.5">
+            {island.id === 1 && <ReferenceArt part="island-next" />}
             <div className="flex items-center justify-between gap-3">
+              {island.id === 1 && featuredScene && <img className="reference-next-thumbnail" src={featuredScene} alt="" />}
                 <div className="min-w-0">
                 <div className="legend-eyebrow">Next mission</div>
                 <div className="legend-next-mission-title mt-1 text-sm font-black text-cyan-100 md:text-base">
@@ -299,8 +306,10 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                     aria-controls={`mission-group-${island.id}-${group.id}`}
                     data-button-skin="none"
                   >
+                    {island.id === 1 && <ReferenceArt part="island-row" />}
+                    {island.id === 1 && ['place_value_panic','number_line_ninja','prime_pop','rounding_rocket'].includes(group.id) ? <span className="legend-group-icon reference-group-thumbnail"><img className="reference-desktop-thumbnail" src={getVisionEnvironment(group.id)} alt="" /><ReferenceArt part={`island-thumb-${({place_value_panic:'pvp',number_line_ninja:'ninja',prime_pop:'prime',rounding_rocket:'rocket'} as Record<string,string>)[group.id]}`} /></span> : <>
                     {group.levels[0]?.level.gameType && GAME_SCENE_META[group.levels[0].level.gameType]?.background ? (
-                      <img src={GAME_SCENE_META[group.levels[0].level.gameType!]?.background} className="legend-group-icon" alt="" draggable={false} loading="lazy" />
+                      <img src={getVisionEnvironment(group.id) ?? GAME_SCENE_META[group.levels[0].level.gameType!]?.background} className="legend-group-icon" alt="" draggable={false} loading="lazy" />
                     ) : <div className={`relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 md:h-12 md:w-12 ${
                       group.completedCount === group.levels.length
                         ? 'border-emerald-300 bg-emerald-500/28'
@@ -318,11 +327,13 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                         </span>
                       ) : null}
                     </div>}
+                    </>}
 
                     <div className="min-w-0 flex-1">
                       <div className="legend-group-title truncate">{group.name}</div>
-                      <div className="legend-group-progress">{group.completedCount}/{group.levels.length} missions complete{group.hasNextPlayable ? ' · Up next' : ''}</div>
-                      <div className="mt-0.5 inline-flex items-center gap-1 rounded-full border border-white/12 bg-white/5 px-2 py-0.5 text-[12px] font-black uppercase tracking-[0.14em] text-cyan-100/80 md:text-[13px]">
+                      <div className="legend-group-progress">{group.completedCount}/{group.levels.length} missions complete{group.hasNextPlayable && island.id !== 1 ? ' · Up next' : ''}</div>
+                      {island.id === 1 && <div className="reference-mission-progress" role="progressbar" aria-label={`${group.name} missions completed`} aria-valuemin={0} aria-valuemax={group.levels.length} aria-valuenow={group.completedCount}><span style={{width:`${group.completedCount/group.levels.length*100}%`}} /></div>}
+                      <div className="reference-group-tokens mt-0.5 inline-flex items-center gap-1 rounded-full border border-white/12 bg-white/5 px-2 py-0.5 text-[12px] font-black uppercase tracking-[0.14em] text-cyan-100/80 md:text-[13px]">
                         <AssetIcon name="brainpowerToken" className="h-3.5 w-3.5 md:h-4 md:w-4" />
                         <span>{group.totalStars}/{totalPossibleBrainpowerTokens}</span>
                         {group.hasNextPlayable ? <span className="text-amber-100">Next</span> : null}

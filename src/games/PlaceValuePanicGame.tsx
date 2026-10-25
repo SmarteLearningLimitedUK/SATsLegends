@@ -8,6 +8,7 @@ import hourglassIcon from '../assets/casual_ui/icons/hourglass.png';
 import { triggerHaptic } from '../haptics';
 import { AVATARS } from '../constants';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
+import { ReferenceArt } from '../components/game-ui/ReferenceScreenArt';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import MonsterMindActor from '../components/game-ui/MonsterMindActor';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
@@ -244,7 +245,7 @@ const makeQuestion = (level: number): QuestionState => {
   const placeHints = FULL_PLACE_VALUE_HINTS.slice(FULL_PLACE_VALUE_HINTS.length - slotCount);
   return {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    prompt: `The Monster Minds have scrambled the number stones.\nRebuild ${numberToWords(promptNumber)}.`,
+    prompt: `Write ${numberToWords(promptNumber)} in digits.`,
     expectedDigits,
     tokenValues,
     placeHints,
@@ -884,13 +885,14 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       <div className="legend-pvp-question pointer-events-none absolute z-[60]" style={{ inset: '0 0 auto' }}>
         <GameQuestionCard
           title="Place Value Panic"
+          context=""
           className="mx-auto rounded-[0.95rem] px-3.25 py-2.25 text-center"
           titleClassName="text-[11px] tracking-[0.28em] md:text-[12px]"
           bodyClassName="mt-1 text-[clamp(0.82rem,1.65vw,0.98rem)] leading-snug md:text-[clamp(0.9rem,1.7vw,1.04rem)]"
           style={{ position: 'relative', top: '5px', width: '94%', transform: 'none' }}
         >
-          <span className="pvp-prompt-full">{questionPrompt}</span>
-          <span className="pvp-prompt-compact">{question.prompt.split('\n').find((line) => line.startsWith('Rebuild ')) || question.prompt}</span>
+          <span className="reference-question-number">Question {Math.min(10, GOBLIN_MAX_HEALTH - goblinHealth + 1)} of 10</span>
+          <span className="pvp-prompt-text">{questionPrompt.split(/(in digits)/).map((text,index)=><span key={index} className={text==='in digits'?'reference-emphasis':undefined}>{text}</span>)}</span>
         </GameQuestionCard>
       </div>
 
@@ -937,9 +939,11 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               }}
             >
               <span className="pvp-place-label" data-pvp-place-label aria-hidden="true">
+                <ReferenceArt part="place-label" />
                 {question.placeHints.length <= 4 ? PLACE_NAMES[question.placeHints[idx]] : question.placeHints[idx]}
               </span>
               <span className="pvp-stone-face" aria-hidden="true">
+                <ReferenceArt part="gem" />
                 <span className={`pvp-stone-digit${token ? '' : ' is-empty'}`} data-pvp-stone-digit>{token?.value ?? '—'}</span>
               </span>
               {isDraggingThis ? <span className="sr-only">Dragging</span> : null}
@@ -976,7 +980,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               tabIndex={token ? 0 : -1}
               initial={reducedMotion ? false : { opacity: 0, y: 8, scale: 0.96 }}
               animate={{ opacity: token ? 1 : 0, y: 0, scale: token ? 1 : 0.94 }}
-              transition={{ duration: 0.26, ease: 'easeOut', delay: idx * 0.04 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
               style={{
                 maxWidth: '64px',
                 minWidth: 0,
@@ -984,6 +988,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               }}
             >
               {/* Keep the touch target mounted while the digit is lifted. */}
+              <ReferenceArt part="gem" />
               <span
                 className="pointer-events-none absolute left-1/2 top-1/2 block -translate-x-1/2 -translate-y-1/2 font-black text-white"
                 style={{ ...numberStyle, fontSize: '2.2rem' }}
@@ -1066,10 +1071,11 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               height: `${layout.submitHeight}%`,
             }}
           >
+            <ReferenceArt part="submit" />
             <span
               className="pointer-events-none absolute inset-x-[14%] top-1/2 -translate-y-1/2 text-center text-[clamp(0.9rem,2.5vw,1.18rem)] font-black uppercase tracking-[0.08em] text-[#16233d]"
             >
-              Submit
+              Submit answer
             </span>
           </button>
         </div>

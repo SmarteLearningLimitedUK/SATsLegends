@@ -1,0 +1,36 @@
+import assert from 'node:assert/strict';
+import { generateKeyPairSync, verify } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import { IOS_TEAM_ID, IOS_APP_ID, IOS_BUNDLE_ID, signingConfiguration, connectToken, exportOptions, archiveArguments } from './ios-testflight-config.mjs';
+import { validateIOSInternalTestConfig,validateIOSReleaseConfig } from './ios-release-config.mjs';
+const pair=generateKeyPairSync('ec',{namedCurve:'prime256v1'});
+const env={ASC_KEY_ID:'ABCDEFGHIJ',ASC_ISSUER_ID:'11111111-2222-3333-4444-555555555555',ASC_PRIVATE_KEY_P8:pair.privateKey.export({type:'pkcs8',format:'pem'}),APPLE_TEAM_ID:IOS_TEAM_ID,IOS_BUILD_NUMBER:'100.1.1'};
+const config=signingConfiguration(env);
+for(const [name,value] of [['ASC_KEY_ID','../key'],['ASC_ISSUER_ID','bad'],['APPLE_TEAM_ID','OTHERTEAM1'],['IOS_BUILD_NUMBER','1;echo bad'],['ASC_PRIVATE_KEY_P8','private-secret-sentinel']]) {
+  assert.throws(()=>signingConfiguration({...env,[name]:value}),error=>!error.message.includes(value));
+}
+const jwt=connectToken(config,1000000000000),[header,payload,signature]=jwt.split('.');
+assert.equal(JSON.parse(Buffer.from(header,'base64url')).alg,'ES256');
+const body=JSON.parse(Buffer.from(payload,'base64url'));assert.equal(body.exp-body.iat,300);assert.equal(body.aud,'appstoreconnect-v1');
+assert.ok(verify('sha256',Buffer.from(header+'.'+payload),{key:pair.publicKey,dsaEncoding:'ieee-p1363'},Buffer.from(signature,'base64url')));
+assert.ok(exportOptions(config,true).includes('<string>upload</string>'));
+assert.ok(exportOptions(config).includes('<string>export</string>'));
+assert.ok(exportOptions(config,true).includes('<key>testFlightInternalTestingOnly</key><true/>'));
+const args=archiveArguments(config,'/tmp/key.p8','/tmp/game.xcarchive');
+assert.equal(args.at(-1),'archive');assert.ok(args.includes('generic/platform=iOS'));assert.ok(args.includes('CURRENT_PROJECT_VERSION=100.1.1'));assert.ok(args.includes(`PRODUCT_BUNDLE_IDENTIFIER=${IOS_BUNDLE_ID}`));
+assert.ok(args.includes('CODE_SIGNING_ALLOWED=NO'),'Archive must not request a development-device profile; distribution signing happens during export.');
+assert.equal(IOS_APP_ID,'6825120444');assert.ok(!args.join('').includes(config.privateKey));
+const account={VITE_SUPABASE_URL:'https://project.supabase.co',VITE_SUPABASE_PUBLISHABLE_KEY:'sb_publishable_'+'a'.repeat(30),VITE_IOS_AUTH_ORIGIN:'https://revision.school',VITE_IOS_INTERNAL_TESTING:'true'};
+assert.deepEqual(validateIOSInternalTestConfig(account),[]);
+assert.ok(validateIOSReleaseConfig(account).some(e=>e.includes('VITE_IOS_INTERNAL_TESTING')));
+assert.ok(validateIOSInternalTestConfig({...account,VITE_ALLOW_GAME_PREVIEW:'true'}).length);
+assert.ok(validateIOSInternalTestConfig({...account,VITE_IOS_INTERNAL_TESTING:'false'}).length);
+const screen=readFileSync('src/platform/ios/IOSSubscriptionScreen.tsx','utf8');assert.ok(screen.includes('disabled={internalTesting ||'));
+const capacitorConfig=readFileSync('capacitor.config.ts','utf8');
+assert.ok(!/appStartPath\s*:/.test(capacitorConfig),'Native startup must load the bundled index.html, not a client-side route.');
+assert.ok(readFileSync('src/platform/nativeApp.ts','utf8').includes("history.replaceState(null, '', '/parent')"));
+assert.ok(readFileSync('native/ios/App/App/Base.lproj/Main.storyboard','utf8').includes('customClass="GameViewController" customModule="App"'));
+assert.ok(!readFileSync('native/ios/App/App/SceneDelegate.swift','utf8').includes('UIWindow(windowScene:'),'Use the storyboard scene window; do not construct a second WebView.');
+const workflow=readFileSync('.github/workflows/ios-testflight.yml','utf8');
+assert.ok(workflow.includes('environment: ios-testflight'));assert.ok(!workflow.includes('pull_request:'));assert.ok(workflow.includes('VITE_ALLOW_GAME_PREVIEW: \'false\''));
+console.log('PASS internal TestFlight packaging: identity/build validation, JWT signature, internal-only export, no credential content in command arguments, controlled workflow.');

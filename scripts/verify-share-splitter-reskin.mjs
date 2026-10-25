@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { chromium } from 'playwright';
 import { installReleaseAccountFixture } from './qa/release-account-fixture.mjs';
 
 const base = process.env.LEGEND_QA_URL || 'http://127.0.0.1:3012';
-const output = 'qa-artifacts/share-splitter-cake-party';
+const output = process.env.LEGEND_SHARE_OUTPUT || 'qa-artifacts/share-splitter-cake-party';
 const profiles = [
   { name: 'desktop', width: 1440, height: 900 },
   { name: 'short-desktop', width: 1280, height: 720 },
@@ -46,16 +46,20 @@ async function reachable(locator) {
 }
 
 try {
+  let routes;
+  if (process.env.LEGEND_QA_CATALOG) routes = JSON.parse(await readFile(process.env.LEGEND_QA_CATALOG, 'utf8'));
+  else {
   const context = await browser.newContext();
   await installReleaseAccountFixture(context);
   const page = await context.newPage();
   await page.goto(base + '/game/7/3', { waitUntil: 'domcontentloaded' });
   await page.locator('[data-share-source]').waitFor();
-  const routes = await page.evaluate(async () => {
+  routes = await page.evaluate(async () => {
     const { ISLANDS } = await import('/src/constants.ts');
     return ISLANDS.find(i => i.id === 7).levels.filter(l => l.blueprintKey === 'share_splitter').map(l => ({ route: `/game/7/${l.id}`, tier: l.isPractice ? 'practice' : l.miniGameLevel }));
   });
   await context.close();
+  }
   for (const profile of profiles) for (const target of routes) {
     const context = await browser.newContext({ viewport: profile, hasTouch: profile.width < 700, isMobile: profile.width < 700, reducedMotion: 'reduce' });
     await installReleaseAccountFixture(context);
@@ -66,9 +70,26 @@ try {
       await open(page, target.route);
       assert.equal(await page.locator('.share-splitter-plate-ratio').count(), 0, 'No part labels');
       assert.equal(await page.locator('.share-party-guest').count(), 5);
+      const enemies = await page.locator('.share-party-guest').evaluateAll(ns => ns.map(n => n.dataset.partyEnemy));
+      assert.deepEqual(enemies, ['goblin', 'crystal-jelly', 'horned-slime', 'purple-monster', 'rhino'], 'Only the five distinct banquet enemies are guests');
+      assert.equal(new Set(enemies).size, 5, 'No duplicate guests');
+      assert.equal(await page.locator('.share-party-guest [data-original-hero]').count(), 0, 'No player heroes in the guest chairs');
+      assert.equal(await page.locator('[data-party-posture="seated"]').count(), 5);
+      assert.equal(await page.locator('.share-party-portrait image').count(), 5, 'Each guest uses a clipped seated portrait');
       assert.equal(await page.locator('.share-splitter-plate').count(), 5);
       assert.match(await page.locator('.share-party-prompt').innerText(), /cakes/);
       const source = page.locator('[data-share-source]');
+      assert.ok(await source.evaluate(n => {
+        const tray = n.getBoundingClientRect();
+        return [...n.querySelectorAll('.share-party-tray-label, .share-party-tray-count')].every(child => {
+          const text = child.getBoundingClientRect();
+          return text.top >= tray.top + 5 && text.bottom <= tray.bottom - 5;
+        });
+      }), 'Tray label and count stay inside its border');
+      assert.ok(await page.locator('.share-party-guest').evaluateAll(ns => {
+        const table = document.querySelector('[data-share-table]').getBoundingClientRect();
+        return ns.every(n => n.getBoundingClientRect().bottom > table.top + 10);
+      }), 'Guests sit behind the tabletop');
       const plates = page.locator('.share-splitter-plate');
       const ratios = await plates.evaluateAll(ns => ns.map(n => Number(n.dataset.shareRatio)));
       assert.equal((await page.locator('[data-share-ratio-prompt]').innerText()).replace(/\s/g, ''), 'Ratio' + ratios.join(':'));
@@ -102,7 +123,8 @@ try {
       const check = page.getByRole('button', { name: 'Check', exact: true });
       await reachable(check); await check.click();
       await page.waitForFunction(() => document.querySelector('.share-splitter-feedback')?.textContent.includes('Perfect split'));
-      const telemetry = await page.evaluate(() => JSON.parse(localStorage.getItem('maths_quest_player_v2') || '{}').telemetry || {});
+      await page.waitForFunction(() => Object.keys(localStorage).filter(k => k.startsWith('maths_quest_player_v2')).some(k => JSON.parse(localStorage.getItem(k) || '{}').telemetry?.correctAnswers === 1), null, { timeout: 10000 });
+      const telemetry = await page.evaluate(() => Object.keys(localStorage).filter(k => k.startsWith('maths_quest_player_v2')).map(k => JSON.parse(localStorage.getItem(k) || '{}').telemetry).find(t => t?.correctAnswers === 1) || {});
       assert.equal(telemetry.correctAnswers, 1, 'One correct answer event');
       assert.equal(telemetry.incorrectAnswers || 0, 0);
       await page.waitForFunction(() => Number(document.querySelector('[data-share-source]')?.getAttribute('data-remaining-slices')) > 0);

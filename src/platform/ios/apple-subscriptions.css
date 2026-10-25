@@ -1,0 +1,9 @@
+.apple-subscriptions {max-width:1050px;padding-bottom:max(32px,env(safe-area-inset-bottom));}
+.apple-subscriptions h1 {font-size:clamp(30px,5vw,58px);line-height:1.08;}
+.apple-plan-list {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin:24px 0;}
+.apple-plan-list section {border-top:2px solid #d5b574;padding-top:16px;min-width:0;}
+.apple-plan-price {font-size:32px;font-weight:700;margin:12px 0;}
+.apple-plan-price span {font-size:16px;font-weight:400;}
+.apple-plan-list button,.apple-subscription-actions button {min-height:48px;white-space:normal;}
+.apple-subscription-actions {display:flex;flex-wrap:wrap;gap:12px;margin:24px 0;}
+@media(max-width:550px) {.apple-plan-list{grid-template-columns:1fr;}}

@@ -8,6 +8,7 @@ import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { formatFantasyPrompt } from '../utils/fantasyPrompt';
 import fractionForgeBackground from '../assets/maps/premium/formula-forge.webp';
 import './forge-potion-layout.css';
+import './formula-forge.css';
 
 interface FormulaForgeGameProps {
   levelId: number;
@@ -84,16 +85,16 @@ const FORGE_TARGET_LABELS: Record<string, string> = {
   w: 'width',
 };
 
-const formatGivenValues = (given: GivenValue[]) => given.map(({ label, value }) => `${label} = ${value}`).join(', ');
+const formatGivenValues = (given: GivenValue[]) => given.map(({ label, value }) => `${label === 'A' ? 'an' : 'a'} ${FORGE_TARGET_LABELS[label] || label} of ${value} ${label === 'A' ? 'cm²' : label === 'V' ? 'cm³' : 'cm'}`).join(', ').replace(/, ([^,]*)$/, ' and $1');
 
 const describeTargetLabel = (label: string) => FORGE_TARGET_LABELS[label] || label;
 
 const buildQuestionStem = (round: FormulaRound) => {
-  const givenText = formatGivenValues(round.given);
-  const targetText = describeTargetLabel(round.targetLabel);
-  const leadIn = round.kind === 'reasoning' ? 'Find the missing' : 'Work out the';
-
-  return `The forge shows ${givenText}.\n${leadIn} ${targetText}, ${round.targetLabel}.`;
+  const givenText = formatGivenValues(round.given).replace(/\bheight\b/g, round.diagram === 'triangle' || round.diagram === 'parallelogram' ? 'perpendicular height' : 'height');
+  const targetText = round.targetLabel === 'h' && round.diagram === 'parallelogram' ? 'perpendicular height' : describeTargetLabel(round.targetLabel);
+  const shape = round.diagram === 'cuboid' ? 'cuboid' : round.diagram;
+  const unit = round.targetLabel === 'A' ? 'cm²' : round.targetLabel === 'V' ? 'cm³' : 'cm';
+  return `A ${shape} has ${givenText}.\nWhat is its ${targetText} in ${unit}?`;
 };
 
 const buildAreaRound = (mode: SolveMode, level: number): FormulaRound => {
@@ -280,8 +281,14 @@ const scoreToStars = (correct: number, rounds: number, lives: number) => {
 };
 
 const FormulaShapePanel: React.FC<{ round: FormulaRound }> = ({ round }) => {
+  const material=React.useId().replace(/:/g,'');
   return (
     <div data-formula-playfield="true" className="flex h-full min-h-0 flex-col rounded-[1.35rem] border border-cyan-200/14 bg-[linear-gradient(180deg,rgba(8,18,36,0.45),rgba(15,23,42,0.2))] p-2 shadow-[0_12px_22px_rgba(2,6,23,0.12)]">
+      <svg width="0" height="0" aria-hidden="true" style={{position:'absolute'}}><defs>
+        <linearGradient id={`${material}-front`} x2="1" y2="1"><stop stopColor="#d8fbff"/><stop offset=".12" stopColor="#5bc4df"/><stop offset=".55" stopColor="#236380"/><stop offset="1" stopColor="#0d344d"/></linearGradient>
+        <linearGradient id={`${material}-top`} x2="0" y2="1"><stop stopColor="#efffff"/><stop offset="1" stopColor="#599db9"/></linearGradient>
+        <linearGradient id={`${material}-side`} x2="1" y2="1"><stop stopColor="#36708e"/><stop offset="1" stopColor="#102c43"/></linearGradient>
+      </defs></svg>
       <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-2 gap-y-1 text-[13px] font-bold text-cyan-100">
         <span>{round.title}</span>
         <span data-formula-equation="true">{round.formula}</span>
@@ -289,7 +296,7 @@ const FormulaShapePanel: React.FC<{ round: FormulaRound }> = ({ round }) => {
       <div className="relative mt-2 min-h-0 flex-1 overflow-hidden rounded-[1.1rem] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.16),rgba(15,23,42,0.06)_42%,rgba(8,15,30,0.28)_100%)]">
         {round.diagram === 'parallelogram' ? (
           <svg viewBox="0 0 120 100" className="absolute inset-0 h-full w-full" aria-label="Parallelogram with perpendicular height">
-            <polygon points="36,20 102,20 84,80 18,80" fill="rgba(56,189,248,0.16)" stroke="rgba(191,219,254,0.9)" strokeWidth="2.4" strokeLinejoin="round" />
+            <polygon points="36,20 102,20 84,80 18,80" fill={`url(#${material}-front)`} stroke="#d8f9ff" strokeWidth="2.4" strokeLinejoin="round" />
             <line x1="36" y1="20" x2="36" y2="80" stroke="#fcd34d" strokeWidth="1.8" strokeDasharray="4 3" />
             <path d="M36 73H43V80" fill="none" stroke="#fcd34d" strokeWidth="1.5" />
             <text x="40" y="51" fill="#fff8ec" fontSize="12" fontWeight="bold">h</text>
@@ -297,21 +304,21 @@ const FormulaShapePanel: React.FC<{ round: FormulaRound }> = ({ round }) => {
           </svg>
         ) : round.diagram === 'triangle' ? (
           <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full">
-            <polygon points="50,16 18,78 82,78" fill="rgba(56,189,248,0.16)" stroke="rgba(191,219,254,0.9)" strokeWidth="2.2" strokeLinejoin="round" strokeLinecap="round" />
+            <polygon points="50,16 18,78 82,78" fill={`url(#${material}-front)`} stroke="#d8f9ff" strokeWidth="2.2" strokeLinejoin="round" strokeLinecap="round" />
             <line x1="50" y1="16" x2="50" y2="78" stroke="rgba(191,219,254,0.45)" strokeDasharray="3 3" strokeWidth="1.2" strokeLinecap="round" />
           </svg>
         ) : round.diagram === 'cuboid' ? (
           <svg viewBox="0 0 120 100" className="absolute inset-0 h-full w-full">
-            <polygon points="28,24 70,24 92,40 50,40" fill="rgba(56,189,248,0.18)" stroke="rgba(191,219,254,0.9)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
-            <polygon points="28,24 28,66 50,82 50,40" fill="rgba(14,165,233,0.12)" stroke="rgba(191,219,254,0.85)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
-            <polygon points="50,40 92,40 92,82 50,82" fill="rgba(15,118,110,0.12)" stroke="rgba(191,219,254,0.85)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+            <polygon points="28,24 70,24 92,40 50,40" fill={`url(#${material}-top)`} stroke="#d8f9ff" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+            <polygon points="28,24 28,66 50,82 50,40" fill={`url(#${material}-side)`} stroke="#b4deef" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+            <polygon points="50,40 92,40 92,82 50,82" fill={`url(#${material}-front)`} stroke="#b4deef" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
             <line x1="28" y1="24" x2="50" y2="40" stroke="rgba(191,219,254,0.45)" strokeWidth="1.2" strokeLinecap="round" />
             <line x1="70" y1="24" x2="92" y2="40" stroke="rgba(191,219,254,0.45)" strokeWidth="1.2" strokeLinecap="round" />
             <line x1="50" y1="40" x2="50" y2="82" stroke="rgba(191,219,254,0.45)" strokeWidth="1.2" strokeLinecap="round" />
           </svg>
         ) : (
           <svg viewBox="10 16 80 68" className="absolute inset-0 h-full w-full">
-            <rect x="18" y="24" width="64" height="52" rx="2" fill="rgba(56,189,248,0.25)" stroke="#8debe2" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+            <rect x="18" y="24" width="64" height="52" rx="2" fill={`url(#${material}-front)`} stroke="#b4f8ef" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
             <g opacity="0.24" stroke="rgba(255,255,255,0.85)" strokeWidth="0.8">
               {Array.from({ length: 4 }).map((_, index) => (
                 <React.Fragment key={`grid-${index}`}>

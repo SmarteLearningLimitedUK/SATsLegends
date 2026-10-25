@@ -1,0 +1,26 @@
+/* Guidance and feedback remain legible over the bright palace floor. */
+#root [data-game-set='polygon_palace'] .polygon-shape-guidance {
+  width:100%;max-width:620px;margin:0;padding:7px 12px;
+  border:1px solid #8bc8e2;border-radius:9px;background:#0b2347;
+  color:#f3f8ff!important;opacity:1;font-weight:600;line-height:1.3;text-shadow:none;
+}
+#root [data-game-set='polygon_palace'] .polygon-feedback {
+  max-width:calc(100% - 24px);color:#f3f8ff;opacity:1;text-shadow:none;
+}
+#root [data-game-set='polygon_palace'] .polygon-feedback[data-polygon-feedback='success'] {background:#103d38;border-color:#8ad8b4;}
+#root [data-game-set='polygon_palace'] .polygon-feedback[data-polygon-feedback='error'] {background:#502033;border-color:#edb4c4;}
+.polygon-guidance-compact {display:none;}
+@media(orientation:landscape) and (max-height:550px) {
+  #root [data-game-set='polygon_palace'] .polygon-shape-guidance {padding:4px 7px;font-size:11px;line-height:1.25;}
+  .polygon-guidance-full {display:none;}
+  .polygon-guidance-compact {display:inline;}
+  /* Six property choices and their submit action share the full right column. */
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-composition:has(.answer-choice-surface) > .game-question-card {grid-column:1;}
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-answer-dock:has(.answer-choice-surface) {grid-row:1 / -1;align-self:stretch;display:flex;flex-direction:column;justify-content:center;}
+  /* Six two-line properties and Submit share the available column. Intrinsic
+     label padding used to make this stack taller than its grid track. */
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-answer-dock:has(.answer-choice-surface) > div {gap:6px;min-height:0;}
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .answer-choice-surface {gap:4px;}
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .answer-choice-surface button {min-height:44px;padding:4px 6px!important;font-size:16px!important;line-height:1.1!important;}
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-answer-dock:has(.answer-choice-surface) > div > button {min-height:44px;padding-block:6px;}
+}

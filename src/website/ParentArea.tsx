@@ -8,6 +8,13 @@ import { createDefaultPlayer } from '../app/usePlayerProgression';
 import type { PlayerData } from '../types';
 import ParentPasskeys from './ParentPasskeys';
 import { englishPlayable, englishReleased } from './englishRelease';
+import { IS_IOS_APP } from '../platform/nativeApp';
+import { appleStore } from '../platform/ios/appleSubscriptions';
+
+const manageParentSubscription = async () => {
+  if (IS_IOS_APP) await appleStore.manage();
+  else openBilling((await billingRequest({ action: 'portal' })).url);
+};
 
 export function PrivateParentPage({ children }: { children: ReactNode }) {
   const family = useFamily();
@@ -76,7 +83,7 @@ function ParentDashboard() {
         {currentSubscriptions.length ? currentSubscriptions.map(subscription => <p key={subscription.id}>{subscription.product_code === 'bundle' ? 'Matharia + Lexcoria' : subscription.product_code === 'english' ? 'Lexcoria' : 'Matharia'} · {subscription.interval === 'month' ? 'Monthly' : 'Yearly'} · One child profile<br />{subscription.cancel_at_period_end ? 'Access ends' : 'Next renewal'} {new Date(subscription.current_period_end).toLocaleDateString('en-GB')}.</p>)
           : active ? <p>{mathariaActive && englishActive ? 'Matharia and Lexcoria' : mathariaActive ? 'Matharia' : 'Lexcoria'} complimentary access · One child profile. There is no automatic renewal.</p>
             : <p>{englishReleased ? 'Choose Matharia, Lexcoria or both adventures.' : 'Choose a Matharia subscription. Lexcoria is still in development.'}</p>}
-        {family.subscriptions.length ? <button className="website-button website-button-outline" disabled={Boolean(busy)} onClick={() => void action('billing', async () => openBilling((await billingRequest({ action: 'portal' })).url))}>{busy === 'billing' ? 'Opening…' : 'Manage subscription'}</button>
+        {family.subscriptions.length ? <button className="website-button website-button-outline" disabled={Boolean(busy)} onClick={() => void action('billing', manageParentSubscription)}>{busy === 'billing' ? 'Opening…' : 'Manage subscription'}</button>
           : <Link className="website-button website-button-gold" to="/subscriptions">See subscriptions <ArrowRight size={17} /></Link>}
         {family.subscriptions.length > 0 && <p className="family-small">Manage payments, download invoices or cancel renewal through secure Stripe billing.</p>}
       </section>
@@ -91,7 +98,7 @@ function ParentDashboard() {
         }).finally(() => setPendingReportValue(null));
       }} />Send me progress reports</label><p className="family-small">Switch emails off whenever you like. Your progress dashboard remains available.</p></div></section>
     <ParentPasskeys />
-    <section className="family-panel family-account-data"><p className="website-eyebrow">Your data and account</p><h2>You're in control.</h2><p>Your child plays with a nickname, and their progress is linked to your parent account. You can switch report emails off above.{family.subscriptions.length > 0 && <> To stop renewal, open <button className="family-inline-button" type="button" disabled={Boolean(busy)} onClick={() => void action('billing', async () => openBilling((await billingRequest({ action: 'portal' })).url))}>Manage subscription</button>.</>}</p>
+    <section className="family-panel family-account-data"><p className="website-eyebrow">Your data and account</p><h2>You're in control.</h2><p>Your child plays with a nickname, and their progress is linked to your parent account. You can switch report emails off above.{family.subscriptions.length > 0 && <> To stop renewal, open <button className="family-inline-button" type="button" disabled={Boolean(busy)} onClick={() => void action('billing', manageParentSubscription)}>Manage subscription</button>.</>}</p>
       {deletionRequestedAt ? <p className="family-notice" role="status">Your account deletion request was recorded on {new Date(deletionRequestedAt).toLocaleDateString('en-GB')}. Our support team can see it. If you have a paid subscription, cancel renewal in billing too.</p>
         : confirmDeletionRequest ? <div className="family-deletion-confirm"><p>Sending this request does not cancel a paid subscription or delete your account immediately. Our support team will review it, including any active billing.</p><div className="family-actions"><button className="website-button website-button-outline" type="button" disabled={Boolean(busy)} onClick={() => setConfirmDeletionRequest(false)}>Keep my account</button><button className="website-button website-button-gold" type="button" disabled={Boolean(busy)} onClick={() => void action('deletion', async () => {
           const result = await supabase!.rpc('request_account_deletion');

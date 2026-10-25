@@ -1,0 +1,37 @@
+/* Keep the forge visible and reserve a separate lane for the animated hero. */
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] .formula-forge-scene .game-background-layer{display:none!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] .formula-forge-scene{background:none!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] [data-formula-game]{width:68%;margin-left:31%;padding:4px!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] .vision-companion--stage{left:1%;width:28%;max-width:28%;height:68%;bottom:9%}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] .formula-forge-scroll{background:none!important;backdrop-filter:none!important;overflow:hidden!important;padding:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] .formula-forge-scroll>.absolute.inset-0{display:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] .formula-forge-content{height:100%;min-height:0;padding:0!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] .formula-forge-body{width:100%;flex:1 1 0;min-height:0;margin:12px 0 0;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);gap:12px;align-content:center;max-height:480px;align-self:center}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] [data-formula-playfield]{min-height:0!important;height:100%;padding:12px;background:rgba(17,27,39,.72)!important;backdrop-filter:blur(5px);box-shadow:0 8px 24px #0004!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] [data-formula-playfield]>div:first-child{font-size:16px;padding:7px;gap:8px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] [data-formula-playfield]>div:nth-child(2){background:rgba(6,24,38,.38)!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] [data-formula-hint]{max-height:none;overflow:visible;font-size:15px!important;line-height:1.35;padding:10px;background:rgba(17,27,39,.78)!important;align-self:end}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] [data-formula-answers]{padding:10px;align-self:start;overflow:visible;background:rgba(17,27,39,.78)!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] [data-formula-answers] button{height:56px;min-height:48px;font-size:22px!important;line-height:1.1!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] .formula-dimension-values span{font-size:20px;padding:6px 10px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] .game-question-card{background:rgba(26,29,42,.83)!important}
+#root .game-shell-host:has(.formula-forge-scene) [data-game-background-layer]::before{display:none!important}
+@media (orientation:landscape) and (max-height:550px){
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] [data-formula-game]{width:74%;margin-left:25%;padding:2px!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] .vision-companion--stage{width:23%;max-width:23%;height:73%;left:0;bottom:5%}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] .formula-forge-body{margin-top:5px;gap:5px;max-height:none;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] [data-formula-playfield]{padding:5px;overflow:hidden!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] [data-formula-playfield]>div:first-child{font-size:11px!important;line-height:1.1;padding:3px;gap:3px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] [data-formula-playfield]>div:nth-child(2){margin-top:3px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] .formula-dimension-values{gap:4px;padding-top:4px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] .formula-dimension-values span{font-size:13px;padding:3px 5px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] [data-formula-hint]{font-size:11px!important;line-height:1.2;padding:5px;max-height:none;overflow:visible}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] [data-formula-answers]{padding:5px;align-self:start}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] [data-formula-answers]>.grid{grid-template-rows:repeat(2,44px);gap:4px;margin-top:3px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] [data-formula-answers] button{height:44px;min-height:44px;font-size:18px!important}
+}
+
+@media (orientation:landscape) and (max-height:350px){
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] [data-formula-hint]{display:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='formula_forge'] [data-formula-answers]{grid-row:1/3;align-self:center}
+}

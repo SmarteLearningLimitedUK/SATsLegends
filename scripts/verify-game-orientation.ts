@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import {getGameOrientation,needsGameRotation} from '../src/app/gameOrientation';
+assert.equal(getGameOrientation({blueprintKey:'rounding_rocket',gameType:'place_value_peaks'}),'portrait');
+assert.equal(getGameOrientation({blueprintKey:'prime_pop',gameType:'prime_pop'}),'portrait');
+assert.equal(getGameOrientation({blueprintKey:'place_value_panic',gameType:'place_value_peaks'}),'portrait');
+assert.equal(getGameOrientation(undefined),'landscape');
+assert.equal(needsGameRotation('portrait',390,844),false);
+assert.equal(needsGameRotation('portrait',844,390),true);
+assert.equal(needsGameRotation('portrait',1440,900),false);
+assert.equal(needsGameRotation('landscape',390,844),true);
+assert.equal(needsGameRotation('landscape',844,390),false);
+console.log('PASS portrait exceptions, landscape defaults and desktop compatibility');

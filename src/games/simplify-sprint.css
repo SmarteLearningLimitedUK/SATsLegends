@@ -578,3 +578,103 @@
 .ss-game[data-phase='dash'] .ss-running-sprite,.ss-game[data-phase='dash'] .ss-runner-leg {animation-duration:.2s;}
 .ss-game[data-sprint-paused='true'] .ss-running-sprite,.ss-game[data-sprint-paused='true'] .ss-runner-leg {animation-play-state:paused;}
 @media(prefers-reduced-motion:reduce){.ss-running-sprite,.ss-runner-leg{animation:none !important;}}
+
+/* A clear forest race: runner bay, fraction banner and three separate gates. */
+#root [data-game-set='simplify_sprint'] .ss-game {background:#103b2d var(--ss-background) center/cover no-repeat;}
+#root [data-game-set='simplify_sprint'] .ss-game::before,
+#root [data-game-set='simplify_sprint'] .ss-game>.game-background-layer {display:none;}
+#root [data-game-set='simplify_sprint'] .ss-scrim {background:linear-gradient(#061e2844,transparent 30%,transparent 75%,#061e2866);}
+#root [data-game-set='simplify_sprint'] .ss-layout {padding:8px 3%;gap:10px;}
+#root [data-game-set='simplify_sprint'] .ss-top {grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:18px;}
+#root [data-game-set='simplify_sprint'] .ss-question {max-width:650px;}
+#root [data-game-set='simplify_sprint'] .ss-question .game-question-copy {font-size:clamp(14px,1.6vw,21px);line-height:1.3;text-align:center;}
+#root [data-game-set='simplify_sprint'] .ss-stats {gap:20px;flex-wrap:nowrap;padding:10px 14px;background:#0b302de8;border:1px solid #dfc68a;border-radius:10px;}
+#root [data-game-set='simplify_sprint'] .ss-arena {border:0;background:none;box-shadow:none;overflow:visible;}
+#root [data-game-set='simplify_sprint'] :is(.ss-scene,.ss-arch,.ss-track,.ss-speedlines,.ss-slime-front) {display:none;}
+#root [data-game-set='simplify_sprint'] .ss-fraction-display {left:0;top:4%;width:32%;min-height:88px;justify-content:center;gap:16px;padding:10px;border:2px solid #dfc68a;border-radius:10px;background:#0d342fed;box-shadow:0 6px 14px #09251b55;}
+#root [data-game-set='simplify_sprint'] .ss-fraction-label {color:#e7cd91;font-size:14px;letter-spacing:.12em;}
+#root [data-game-set='simplify_sprint'] .ss-fraction {font-size:clamp(28px,4vw,48px);line-height:.95;}
+#root [data-game-set='simplify_sprint'] .ss-fraction-note {display:none;}
+#root [data-game-set='simplify_sprint'] .ss-runner {left:0!important;bottom:2%!important;width:33%;height:72%;transform:none;animation:none;transition:none;}
+#root [data-game-set='simplify_sprint'] .ss-running-sprite {position:absolute;inset:0;animation:none;}
+#root [data-game-set='simplify_sprint'] .ss-runner-shadow {animation:none;opacity:.45;height:5%;left:22%;right:22%;}
+#root [data-game-set='simplify_sprint'] .ss-runner::after {display:none;}
+#root [data-game-set='simplify_sprint'] .ss-gates {left:auto;right:0;top:28%;width:63%;height:49%;align-items:stretch;gap:16px;transform:none;animation:none;perspective:none;}
+#root [data-game-set='simplify_sprint'] .ss-gate {height:100%;min-height:80px;gap:12px;border:10px solid #a2a080;border-top-color:#e0d1a0;border-bottom-color:#6d795e;border-radius:45% 45% 9px 9px / 24% 24% 9px 9px;background:radial-gradient(ellipse at 50% 75%,#8fd44a55,transparent 68%),linear-gradient(#0c332eea,#07221ff5);box-shadow:inset 0 0 0 2px #dfc68a,0 8px 0 #424d35,0 14px 20px #09231966;transition:filter .18s,box-shadow .18s;}
+#root [data-game-set='simplify_sprint'] .ss-gate:hover:not(:disabled) {transform:none;filter:brightness(1.18);}
+#root [data-game-set='simplify_sprint'] .ss-gate-index {font-size:clamp(10px,1.1vw,14px);color:#dfc68a;letter-spacing:.15em;}
+#root [data-game-set='simplify_sprint'] .ss-gate-factor {font-size:clamp(30px,5vw,64px);line-height:1;color:#fff0c4;}
+#root [data-game-set='simplify_sprint'] .ss-gate-label {font-size:clamp(10px,1.2vw,15px);color:#c7e5ce;}
+#root [data-game-set='simplify_sprint'] .ss-gate[data-selected='true'] {border-color:#f4d484;box-shadow:inset 0 0 25px #e6db8c66,0 8px 0 #424d35,0 0 25px #e6db8c66;}
+#root [data-game-set='simplify_sprint'] .ss-game[data-phase='crash'] .ss-gate[data-selected='true'] {border-color:#efb59a;}
+#root [data-game-set='simplify_sprint'] .ss-bottom {display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:0;min-height:34px;}
+#root [data-game-set='simplify_sprint'] .ss-feedback {padding:8px 12px;min-height:34px;font-size:clamp(11px,1.3vw,16px);line-height:1.25;border:0;background:#0a302cec;}
+#root [data-game-set='simplify_sprint'] .ss-hint {display:none;}
+#root [data-game-set='simplify_sprint'] .ss-progress {position:static;}
+#root [data-game-set='simplify_sprint'] .ss-game[data-sprint-paused='true'] * {animation-play-state:paused!important;}
+@media(orientation:landscape) and (max-height:550px) {
+ #root [data-game-set='simplify_sprint'] .ss-layout {padding:2px 2%;gap:4px;}
+ #root [data-game-set='simplify_sprint'] .ss-top {grid-template-columns:minmax(0,1fr) auto;gap:8px;}
+ #root [data-game-set='simplify_sprint'] .ss-question .game-question-copy {font-size:12px;line-height:15px;}
+ #root [data-game-set='simplify_sprint'] .ss-stats {padding:4px 7px;gap:10px;}
+ #root [data-game-set='simplify_sprint'] .ss-stat {font-size:9px;gap:3px;}
+ #root [data-game-set='simplify_sprint'] .ss-stat-value {font-size:13px;}
+ #root [data-game-set='simplify_sprint'] .ss-fraction-display {min-height:44px;width:30%;gap:8px;padding:3px;top:0;}
+ #root [data-game-set='simplify_sprint'] .ss-fraction-label {font-size:10px;}
+ #root [data-game-set='simplify_sprint'] .ss-fraction {font-size:24px;}
+ #root [data-game-set='simplify_sprint'] .ss-runner {height:65%;width:31%;bottom:0!important;}
+ #root [data-game-set='simplify_sprint'] .ss-gates {top:12%;height:73%;gap:8px;width:65%;}
+ #root [data-game-set='simplify_sprint'] .ss-gate {min-height:70px;padding:4px;border-width:6px;gap:5px;}
+ #root [data-game-set='simplify_sprint'] .ss-gate-factor {font-size:32px;}
+ #root [data-game-set='simplify_sprint'] .ss-gate-index {font-size:9px;}
+ #root [data-game-set='simplify_sprint'] .ss-gate-label {font-size:10px;}
+ #root [data-game-set='simplify_sprint'] .ss-feedback {font-size:11px;min-height:27px;padding:4px 6px;}
+ #root [data-game-set='simplify_sprint'] .ss-bottom {min-height:27px;}
+ #root [data-game-set='simplify_sprint'] .ss-progress {gap:3px;}
+ #root [data-game-set='simplify_sprint'] .ss-progress-mark {width:14px;height:5px;}
+}
+
+#root [data-game-set='simplify_sprint'] .ss-arena::before, #root [data-game-set='simplify_sprint'] .ss-arena::after {display:none;}
+
+@media(orientation:landscape) and (max-height:550px) {
+ #root [data-game-set='simplify_sprint'] .ss-fraction-display {left:auto;right:0;width:65%;height:44px;min-height:44px;padding:2px;border-width:1px;}
+ #root [data-game-set='simplify_sprint'] .ss-fraction {font-size:18px;line-height:.8;}
+ #root [data-game-set='simplify_sprint'] .ss-runner {height:92%;width:31%;}
+ #root [data-game-set='simplify_sprint'] .ss-gates {top:34%;height:62%;}
+ #root [data-game-set='simplify_sprint'] .ss-gate-label {display:none;}
+}
+
+/* Illustrated portals retain live, accessible factor labels and buttons. */
+#root [data-game-set='simplify_sprint'] .ss-gate {border:0;border-radius:0;background:var(--ss-gate-art) center/100% 100% no-repeat;box-shadow:none;padding:15% 8% 8%;gap:6px;filter:drop-shadow(0 6px 4px #06251a66);}
+#root [data-game-set='simplify_sprint'] .ss-gate::before,
+#root [data-game-set='simplify_sprint'] .ss-gate::after {display:none;}
+#root [data-game-set='simplify_sprint'] .ss-gate-factor {font-size:clamp(28px,3.7vw,46px);}
+#root [data-game-set='simplify_sprint'] .ss-gate[data-selected='true'] {box-shadow:none;filter:brightness(1.2) drop-shadow(0 0 9px #dbe98c);}
+#root [data-game-set='simplify_sprint'] .ss-game[data-phase='crash'] .ss-gate[data-selected='true'] {filter:sepia(.4) drop-shadow(0 0 8px #ff8860);}
+@media(orientation:landscape) and (max-height:550px) {
+ #root [data-game-set='simplify_sprint'] .ss-gate {padding:10% 8% 5%;gap:2px;}
+ #root [data-game-set='simplify_sprint'] .ss-gate-factor {font-size:clamp(21px,3.4vw,29px);}
+ #root [data-game-set='simplify_sprint'] .ss-gate-index {font-size:9px;letter-spacing:0;}
+}
+
+/* The near-left paving is inside the bridge, beyond the waterfall margin. */
+#root [data-game-set='simplify_sprint'] .ss-runner {
+ left:20%!important;width:16%;
+}
+#root [data-game-set='simplify_sprint'] .ss-runner-shadow {
+ left:18%;right:18%;bottom:0;height:4%;opacity:.5;filter:blur(2px);
+ background:radial-gradient(ellipse,#082217bb,transparent 72%);
+}
+@media(orientation:landscape) and (max-height:550px) {
+ #root [data-game-set='simplify_sprint'] .ss-gates {width:62%;}
+ #root [data-game-set='simplify_sprint'] .ss-fraction-display {width:62%;}
+}
+
+/* The hero renderer already places a shadow at its painted foot baseline. */
+#root [data-game-set='simplify_sprint'] .ss-runner:has(.vision-character--original-hero)>.ss-runner-shadow {display:none;}
+@media(orientation:landscape) and (max-height:550px) {
+ #root .app-viewport[data-active-game='simplify_sprint']>.vision-world-backdrop {object-position:50% 100%;}
+}
+
+/* Match the actor's square rendering bounds, rather than reserving empty air above it. */
+#root [data-game-set='simplify_sprint'] .ss-runner {height:auto;aspect-ratio:1;}

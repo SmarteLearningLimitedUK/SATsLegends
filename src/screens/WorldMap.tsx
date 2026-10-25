@@ -12,6 +12,7 @@ import { islandPreviewCategory } from '../components/world-map/IslandPreviewScen
 import '../design/map-effects.css';
 import '../design/map-exploration.css';
 import { UNLOCK_ALL_LEVELS } from '../app/testingFlags';
+import ReferenceWorldMap from '../components/world-map/ReferenceWorldMap';
 
 interface WorldMapProps {
   player: PlayerData;
@@ -44,6 +45,8 @@ const WorldMap: React.FC<WorldMapProps> = ({
   onOpenAchievements,
   onOpenParentReport,
 }) => {
+  const [portrait,setPortrait]=useState(()=>window.innerHeight>window.innerWidth);
+  useEffect(()=>{const resize=()=>setPortrait(window.innerHeight>window.innerWidth);window.addEventListener('resize',resize);return()=>window.removeEventListener('resize',resize);},[]);
   const [selectedIslandId, setSelectedIslandId] = useState<number | null>(null);
   const [activeIslandId, setActiveIslandId] = useState<number | null>(null);
   const [hoveredIslandId, setHoveredIslandId] = useState<number | null>(null);
@@ -133,6 +136,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
     </div>
   );
 
+  if(portrait)return <ReferenceWorldMap states={islandStates} recommended={recommendedIsland} onSelect={onSelectIsland} atlas={islandAtlas} bounds={ISLAND_ATLAS_BOUNDS}/>;
   return (
     <div ref={mapRef} className="legend-world-map relative w-full overflow-visible">
       <div className="legend-map-brand-header">
@@ -207,6 +211,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
                       <image href={islandAtlas} width="888" height="1776" clipPath={`url(#map-island-crop-${island.id})`} />
                     </svg>
                   </span>
+                  <span className="legend-map-island-label">{island.name}{!isUnlocked ? ' · Locked' : ''}</span>
                 </button>
               </div>
             );

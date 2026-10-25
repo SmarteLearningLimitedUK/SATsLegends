@@ -1,0 +1,27 @@
+.gameplay-orientation-gate{position:fixed;inset:0;z-index:2147483000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:max(24px,env(safe-area-inset-top)) max(24px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(24px,env(safe-area-inset-left));background:radial-gradient(ellipse at 50% 25%,#154b59,#071625 75%);color:#fff6dc;text-align:center;font-family:var(--font-fredoka);outline:none}
+.gameplay-orientation-gate h1{max-width:16ch;font-size:clamp(26px,7vw,34px);line-height:1.15;margin:0}
+.gameplay-orientation-gate p{max-width:28ch;font-size:17px;line-height:1.5;margin:0}
+.gameplay-orientation-gate .gameplay-orientation-status{font-size:14px;color:#a2cec9}
+.gameplay-orientation-gate button{min-height:48px;margin-top:12px;padding:10px 24px;border:2px solid #e6bc6d;border-radius:12px;background:#143e48;color:#fff6dc;font-weight:650}
+.gameplay-orientation-gate button:focus-visible{outline:3px solid #fff;outline-offset:5px}
+.gameplay-orientation-gate .gameplay-start-button{min-width:180px;background:#f3cd79;color:#132e37;font-size:20px}
+.gameplay-orientation-gate .gameplay-start-button:disabled{opacity:.45;cursor:not-allowed}
+.gameplay-orientation-gate[data-ready='true'] .gameplay-orientation-symbol{display:none}
+@media(orientation:landscape) and (max-height:500px){.gameplay-orientation-gate{gap:8px}.gameplay-orientation-gate .gameplay-orientation-symbol{width:60px;height:64px}.gameplay-orientation-symbol svg:first-child{width:44px;height:58px}.gameplay-orientation-symbol svg:last-child{width:24px;height:24px}.gameplay-orientation-gate button{margin-top:4px}}
+.gameplay-orientation-symbol{position:relative;width:104px;height:110px;color:#f6cf7e}
+.gameplay-orientation-symbol svg:first-child{width:76px;height:90px;animation:gameplay-turn-phone 2.6s ease-in-out infinite}
+.gameplay-orientation-symbol svg:last-child{position:absolute;width:34px;height:34px;right:-5px;top:16px}
+@keyframes gameplay-turn-phone{0%,18%{transform:rotate(0)}55%,85%{transform:rotate(90deg)}100%{transform:rotate(0)}}
+@media(prefers-reduced-motion:reduce){.gameplay-orientation-symbol svg:first-child{animation:none;transform:rotate(90deg)}}
+.gameplay-orientation-gate[data-required-orientation='portrait'] .gameplay-orientation-symbol svg:first-child{animation-name:gameplay-turn-upright}
+@media(orientation:portrait) and (max-height:700px){
+ .gameplay-orientation-gate{gap:8px;padding:16px}
+ .gameplay-orientation-gate p{font-size:15px;line-height:1.4}
+ .gameplay-orientation-gate .gameplay-orientation-status{font-size:13px}
+ .gameplay-orientation-gate button{margin-top:4px}
+ .gameplay-orientation-gate .gameplay-orientation-symbol{width:76px;height:76px}
+ .gameplay-orientation-gate .gameplay-orientation-symbol svg:first-child{width:54px;height:70px}
+ .gameplay-orientation-gate .gameplay-orientation-symbol svg:last-child{width:26px;height:26px}
+}
+@keyframes gameplay-turn-upright{0%,18%{transform:rotate(90deg)}55%,85%{transform:rotate(0)}100%{transform:rotate(90deg)}}
+@media(prefers-reduced-motion:reduce){.gameplay-orientation-gate[data-required-orientation='portrait'] .gameplay-orientation-symbol svg:first-child{animation:none;transform:none}}

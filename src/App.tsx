@@ -17,6 +17,12 @@ import DailyQuestsModal from './components/modals/DailyQuestsModal';
 import AchievementsModal from './components/modals/AchievementsModal';
 import LevelResultsModal from './components/results/LevelResultsModal';
 import UnifiedMiniGameHud from './components/UnifiedMiniGameHud';
+import { isReferenceGame, isRatioReferenceGame, isBatchThreeGame } from './components/game-ui/ReferenceScreenArt';
+import GameplayOrientationGate from './components/GameplayOrientationGate';
+import { getGameOrientation, needsGameRotation } from './app/gameOrientation';
+import { usesFlowGameLayout } from './app/gameLayoutPolicy';
+import { useNativeAppBackgrounded } from './platform/nativeApp';
+import { getVisionEnvironment } from './games/visionScene';
 import AssetIcon from './components/AssetIcon';
 import PracticeIntroPopup from './components/game-ui/PracticeIntroPopup';
 import GlobalWorkpadDialog from './components/game-ui/GlobalWorkpadDialog';
@@ -125,6 +131,7 @@ const App: React.FC = () => {
   });
   const [answerStreak, setAnswerStreak] = useState(0);
   const [gameplayHelpOpen, setGameplayHelpOpen] = useState(false);
+  const [gameplayHelpTips, setGameplayHelpTips] = useState<string[]>([]);
   const [gameplayWorkpadOpen, setGameplayWorkpadOpen] = useState(false);
   const [gameplayWorkpadValue, setGameplayWorkpadValue] = useState('');
 
@@ -233,6 +240,12 @@ const App: React.FC = () => {
   const [wellbeingCompletion, setWellbeingCompletion] = useState<WellbeingCompletionState | null>(null);
   const [storedLevelResult, setStoredLevelResult] = useState<LevelResultState | null>(null);
   const [gameplayRestartKey, setGameplayRestartKey] = useState(0);
+  const [startedGameplayKey, setStartedGameplayKey] = useState<string | null>(null);
+  const gameplayRoundKey = `${selectedIsland?.id}:${selectedLevel?.blueprintKey}:${selectedLevel?.id}:${gameplayRestartKey}`;
+  const gameplayStartRequired = screen === 'gameplay' && Boolean(selectedLevel) && startedGameplayKey !== gameplayRoundKey;
+  useEffect(() => {
+    if (screen !== 'gameplay') setStartedGameplayKey(null);
+  }, [screen]);
   const [dismissedPracticeGuide, setDismissedPracticeGuide] = useState('');
   const practiceGuideKey = `${selectedLevel?.blueprintKey}:${selectedLevel?.id}:${gameplayRestartKey}`;
   const practiceBriefingOpen = Boolean(screen === 'gameplay' && selectedLevel?.isPractice && getLearnerGuide(selectedLevel.blueprintKey) && dismissedPracticeGuide !== practiceGuideKey);
@@ -326,6 +339,10 @@ const App: React.FC = () => {
     });
   }, [player.calmTokens, setPlayer, wellbeingActivityId]);
 
+  const gameplayOrientation = getGameOrientation(selectedLevel);
+  const gameplayRotationRequired = screen === 'gameplay' && needsGameRotation(gameplayOrientation, viewportSize.width, viewportSize.height);
+  const gameplayEntryBlocked = gameplayRotationRequired || gameplayStartRequired;
+  const nativeBackgrounded = useNativeAppBackgrounded();
   const {
     globalMiniGameHudTimeLeft,
     globalMiniGameLives,
@@ -333,13 +350,13 @@ const App: React.FC = () => {
   } = useGameplaySession({
     screen,
     selectedLevel,
-    paused: gameplayHelpOpen || gameplayWorkpadOpen || practiceBriefingOpen || Boolean(levelResult),
+    paused: nativeBackgrounded || gameplayEntryBlocked || gameplayHelpOpen || gameplayWorkpadOpen || practiceBriefingOpen || Boolean(levelResult),
     restartKey: gameplayRestartKey,
     onLifeDepleted: () => handleGameOverRef.current(0),
     onTimeDepleted: () => handleGameOverRef.current(0),
   });
 
-  useMiniGameLifecycle({ screen, selectedLevel });
+  useMiniGameLifecycle({ screen, selectedLevel: gameplayStartRequired ? null : selectedLevel });
 
   useEffect(() => {
     configureGameSoundProfile(screen === 'gameplay'
@@ -373,12 +390,12 @@ const App: React.FC = () => {
     timeLeft: globalMiniGameHudTimeLeft,
     totalTime: getSessionDurationSeconds(selectedLevel),
     lives: globalMiniGameLives,
-    paused: gameplayHelpOpen || gameplayWorkpadOpen || practiceBriefingOpen || Boolean(levelResult),
-  }), [gameplayHelpOpen, gameplayWorkpadOpen, practiceBriefingOpen, globalMiniGameHudTimeLeft, globalMiniGameLives, levelResult, selectedLevel]);
+    paused: nativeBackgrounded || gameplayEntryBlocked || gameplayHelpOpen || gameplayWorkpadOpen || practiceBriefingOpen || Boolean(levelResult),
+  }), [nativeBackgrounded, gameplayEntryBlocked, gameplayHelpOpen, gameplayWorkpadOpen, practiceBriefingOpen, globalMiniGameHudTimeLeft, globalMiniGameLives, levelResult, selectedLevel]);
 
   useEffect(() => {
-    if (gameplayHelpOpen || gameplayWorkpadOpen || practiceBriefingOpen) stopGameSoundEffects();
-  }, [gameplayHelpOpen, gameplayWorkpadOpen, practiceBriefingOpen]);
+    if (nativeBackgrounded || gameplayEntryBlocked || gameplayHelpOpen || gameplayWorkpadOpen || practiceBriefingOpen) stopGameSoundEffects();
+  }, [nativeBackgrounded, gameplayEntryBlocked, gameplayHelpOpen, gameplayWorkpadOpen, practiceBriefingOpen]);
 
   const resolveLevelTitle = useCallback(() => {
     if (!selectedLevel) return 'Level over';
@@ -822,7 +839,7 @@ const App: React.FC = () => {
   const sessionEvents: GameplaySessionEventHandlers = useMemo(() => ({
     onCorrectAnswer: (event) => {
       if (screen !== 'gameplay' || runSettledRef.current) return;
-      playGameSound('correct');
+      if (event.metadata?.assessment !== true) playGameSound('correct');
       triggerHaptic('selection');
       sessionMetricsRef.current = { ...sessionMetricsRef.current, correct: sessionMetricsRef.current.correct + 1 };
       setAnswerStreak((previous) => previous + 1);
@@ -830,7 +847,7 @@ const App: React.FC = () => {
     },
     onIncorrectAnswer: (event) => {
       if (screen !== 'gameplay' || runSettledRef.current) return;
-      playGameSound('incorrect');
+      if (event.metadata?.assessment !== true) playGameSound('incorrect');
       triggerHaptic('error');
       sessionMetricsRef.current = { ...sessionMetricsRef.current, incorrect: sessionMetricsRef.current.incorrect + 1 };
       setAnswerStreak(0);
@@ -875,7 +892,8 @@ const App: React.FC = () => {
   const selectedGameType = selectedLevel?.gameType;
   const gameplayTypeClass = selectedGameType ? `game-type-${selectedGameType.replace(/_/g, '-')}` : '';
   const usesQuestionMatchFrame = Boolean(selectedGameType && QUESTION_MATCH_FRAME_GAMES.includes(selectedGameType));
-  const hasWideGameViewport = viewportSize.width >= 700 && viewportSize.height >= 600;
+  const hasWideGameViewport = (viewportSize.width >= 700 && viewportSize.height >= 600)
+    || (viewportSize.width >= 560 && viewportSize.width > viewportSize.height && viewportSize.height >= 300);
   const hasWideGameplayViewport = hasWideGameViewport
     || (viewportSize.width >= 900 && viewportSize.height >= 550);
   const isResponsiveHubScreen = isStartScreen || isWorldMapScreen || isIslandLevelsScreen
@@ -892,9 +910,10 @@ const App: React.FC = () => {
     && viewportSize.width > viewportSize.height && viewportSize.height < 600;
   const isShortLandscapeMap = isWorldMapScreen && viewportSize.width >= 560
     && viewportSize.width > viewportSize.height && viewportSize.height < 600;
-  const useUnboundedStageShell = screen === 'parent_dashboard' || isWellbeingScreen
+  const useUnboundedStageShell = screen === 'parent_dashboard' || isWellbeingScreen || isWorldMapScreen
+    || (isGameplayScreen && gameplayOrientation === 'portrait')
     || isShortLandscapeSplash || isShortLandscapeMap
-    || (isGameplayScreen && hasWideGameplayViewport)
+    || (isGameplayScreen && (hasWideGameplayViewport || viewportSize.width > viewportSize.height))
     || (isResponsiveHubScreen && hasWideGameViewport)
     || (isGameplayScreen && ['place_value_panic', 'rounding_rocket'].includes(selectedLevel?.blueprintKey ?? '')
       && viewportSize.width >= 560 && viewportSize.width > viewportSize.height && viewportSize.height <= 420);
@@ -997,15 +1016,21 @@ const App: React.FC = () => {
 
   return (
     <div className={`iphone-game-viewport${useScrollableStageShell ? ' iphone-game-viewport-scrollable' : ''}${screen === 'world_map' ? ' iphone-game-viewport-map' : ''}`} style={viewportStyle}>
-      <div className={`iphone-game-stage${useUnboundedStageShell ? ' iphone-game-stage-unbounded' : ''}${useScrollableStageShell ? ' iphone-game-stage-scrollable' : ''}`} style={stageStyle} data-stage-layout={useUnboundedStageShell ? 'responsive' : useScrollableStageShell ? 'scrollable' : 'portrait'}>
+      {gameplayEntryBlocked && <GameplayOrientationGate orientation={gameplayOrientation} ready={!gameplayRotationRequired} gameTitle={canonicalGameTitle}
+        onStart={gameplayStartRequired ? () => { if (!gameplayRotationRequired) setStartedGameplayKey(gameplayRoundKey); } : undefined} onBack={goToIslandLevels} />}
+      <div inert={gameplayEntryBlocked || undefined} className={`iphone-game-stage${useUnboundedStageShell ? ' iphone-game-stage-unbounded' : ''}${useScrollableStageShell ? ' iphone-game-stage-scrollable' : ''}`} style={stageStyle} data-stage-layout={useUnboundedStageShell ? 'responsive' : useScrollableStageShell ? 'scrollable' : 'portrait'}>
         <div className="iphone-game-stage-inner">
           <div
             data-screen-family={screenBehavior.family}
             data-game-island={isGameplayScreen ? selectedIsland?.id : undefined}
             data-game-island-name={isGameplayScreen ? selectedIsland?.name : undefined}
             data-active-game={isGameplayScreen ? selectedLevel?.blueprintKey : undefined}
-            className={`app-viewport sat-theme-bluegold app-background-intensity ${backgroundIntensityClass} app-shell-family-${screenBehavior.family} screen-${screen.replace(/_/g, '-')} ${isGameplayScreen ? gameplayTypeClass : ''} relative w-full flex flex-col items-center overflow-hidden ${viewportShellClass}`}
+            data-reference-screen={isGameplayScreen ? selectedLevel?.blueprintKey : screen === 'world_map' ? 'world_map' : screen === 'wellbeing_activity' && (wellbeingActivityId === 'breathing_bloom' || wellbeingActivityId === 'peaceful_pond') ? wellbeingActivityId : screen === 'island_levels' && selectedIsland?.id === 1 ? 'island_1' : undefined}
+            data-game-layout={isGameplayScreen && usesFlowGameLayout(selectedLevel) ? 'flow' : undefined}
+            data-game-tips-enabled={isGameplayScreen && Boolean(hintRuleSet)}
+            className={`app-viewport sat-theme-bluegold ${isGameplayScreen && isReferenceGame(selectedLevel?.blueprintKey) ? 'reference-game-screen' : ''} ${isGameplayScreen && isRatioReferenceGame(selectedLevel?.blueprintKey) ? 'reference-ratio-screen' : ''} ${isGameplayScreen && isBatchThreeGame(selectedLevel?.blueprintKey) ? 'reference-batch-three' : ''} app-background-intensity ${backgroundIntensityClass} app-shell-family-${screenBehavior.family} screen-${screen.replace(/_/g, '-')} ${isGameplayScreen ? gameplayTypeClass : ''} relative w-full flex flex-col items-center overflow-hidden ${viewportShellClass}`}
           >
+            {isGameplayScreen && selectedLevel?.blueprintKey && getVisionEnvironment(selectedLevel.blueprintKey) && <img className="vision-world-backdrop" src={getVisionEnvironment(selectedLevel.blueprintKey)} alt="" aria-hidden="true" draggable={false} />}
             <AnimatePresence mode="wait">
               <motion.div
                 key={screen}
@@ -1019,7 +1044,7 @@ const App: React.FC = () => {
                 style={screenBehavior.scrollable ? { WebkitOverflowScrolling: 'touch' } : undefined}
               >
                 <LearnerGuideContext.Provider value={{ guide: hintRuleSet, introManaged: Boolean(selectedLevel?.isPractice), introDismissed: dismissedPracticeGuide === practiceGuideKey }}>
-                <AppRouter
+                {!gameplayStartRequired && <AppRouter
                   screen={screen}
                   player={player}
                   draftName={draftName}
@@ -1059,7 +1084,7 @@ const App: React.FC = () => {
                   onOpenAchievements={goToAchievements}
                   onOpenParentReport={goToParentDashboard}
                   onUpdatePlayer={handleUpdatePlayer}
-                />
+                />}
 
                 </LearnerGuideContext.Provider>
                 {null}
@@ -1068,6 +1093,7 @@ const App: React.FC = () => {
 
             {!isStartScreen ? (
               <UnifiedMiniGameHud
+                referenceKey={isGameplayScreen ? selectedLevel?.blueprintKey : screen === 'wellbeing_activity' && (wellbeingActivityId === 'breathing_bloom' || wellbeingActivityId === 'peaceful_pond') ? wellbeingActivityId : screen === 'island_levels' && selectedIsland?.id === 1 ? 'island_1' : undefined}
                 avatarId={player.avatarId}
                 title={isGameplayScreen ? canonicalGameTitle : 'SATs Legends'}
                 levelLabel={selectedLevel ? selectedLevel.isPractice ? 'Practice' : selectedLevel.isBoss ? 'Mock adventure' : `Level ${selectedLevel.difficultyTier ?? selectedLevel.miniGameLevel ?? 1} of 5` : 'Adventure'}
@@ -1075,6 +1101,17 @@ const App: React.FC = () => {
                 isPractice={Boolean(isGameplayScreen && selectedLevel?.isPractice)}
                 onHelp={isGameplayScreen ? () => {
                   if (!gameplayHelpOpen) sessionMetricsRef.current.hintsUsed += 1;
+                  const root = document.querySelector('.app-viewport.screen-gameplay');
+                  const tips = Array.from(root?.querySelectorAll('[data-game-tip="true"]') ?? [])
+                    .filter(node => !node.parentElement?.closest('[data-game-tip="true"]'))
+                    .map(node => {
+                      const copy = node.cloneNode(true) as HTMLElement;
+                      copy.querySelectorAll('.game-question-card-title-strip,.game-question-context,[aria-hidden="true"],button').forEach(child => child.remove());
+                      const walker = document.createTreeWalker(copy, NodeFilter.SHOW_TEXT), parts: string[] = [];
+                      while (walker.nextNode()) parts.push(walker.currentNode.textContent ?? '');
+                      return parts.join(' ').replace(/\s+/g, ' ').trim();
+                    }).filter(Boolean);
+                  setGameplayHelpTips([...new Set(tips)]);
                   setGameplayWorkpadOpen(false);
                   setGameplayHelpOpen(true);
                 } : undefined}
@@ -1084,7 +1121,7 @@ const App: React.FC = () => {
                 lives={globalMiniGameLives}
                 hideTimer={isMockAssessment ? false : hideShellTimer}
                 assessment={isMockAssessment}
-                hideTopBar={screen === 'world_map' || screen === 'island_levels' || screen === 'profile' || screen === 'achievements_tracker' || screen === 'parent_dashboard'}
+                hideTopBar={isWellbeingScreen || screen === 'world_map' || screen === 'island_levels' || screen === 'profile' || screen === 'achievements_tracker' || screen === 'parent_dashboard'}
                 onBack={isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
                 variant={isGameplayScreen ? 'gameplay' : 'hub'}
                 bottomContent={mapHudDock || undefined}
@@ -1092,21 +1129,22 @@ const App: React.FC = () => {
             ) : null}
 
             <PracticeIntroPopup
-              open={practiceBriefingOpen}
+              open={practiceBriefingOpen && !gameplayEntryBlocked}
               title={canonicalGameTitle || 'Practice'} body="Learn the method, then try the mission." briefing={hintRuleSet}
               onAction={() => setDismissedPracticeGuide(practiceGuideKey)}
             />
             <PracticeIntroPopup
-              open={gameplayHelpOpen && isGameplayScreen}
-              kind="help"
+              open={gameplayHelpOpen && isGameplayScreen && !gameplayEntryBlocked}
+              kind="tips"
               title={canonicalGameTitle || 'Your mission'}
               body="Read the mission, explore the playfield, then choose your answer."
               briefing={hintRuleSet || selectedRuleSet}
+              roundTips={gameplayHelpTips}
               actionLabel="Back to mission"
               onAction={() => setGameplayHelpOpen(false)}
             />
             <GlobalWorkpadDialog
-              open={gameplayWorkpadOpen && isGameplayScreen && !isMockAssessment}
+              open={gameplayWorkpadOpen && isGameplayScreen && !isMockAssessment && !gameplayEntryBlocked}
               value={gameplayWorkpadValue}
               onChange={setGameplayWorkpadValue}
               onClose={() => setGameplayWorkpadOpen(false)}
@@ -1127,6 +1165,8 @@ const App: React.FC = () => {
 
             <LevelResultsModal
               isOpen={Boolean(levelResult)}
+              gameKey={selectedLevel?.blueprintKey}
+              islandName={selectedIsland?.name}
               result={levelResult ? {
                 type: levelResult.type,
                 title: levelResult.title,

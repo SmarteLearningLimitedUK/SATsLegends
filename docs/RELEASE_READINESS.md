@@ -8,8 +8,7 @@ The intended minimum for the App Store app is **iOS 16.0** (and **iPadOS 16.0** 
 
 ### Native enforcement before App Store submission
 
-The checked-in `ios/` folder currently contains Capacitor configuration and copied web assets, but no Xcode project, `Info.plist`, Podfile or native deployment-target setting. `package.json` also has no native iOS build command. There is therefore no enforceable App Store minimum configured in this repository yet.
-
+The active native project is now `native/ios/App/App.xcodeproj`; its Debug and Release deployment targets are 16.0. `npm run build:ios` creates its separate web bundle. App Store source preparation and remaining release gates are tracked in `native/APP_STORE_PREPARATION.md`. A Mac archive must still confirm the enforced minimum.
 When preparing the native project on macOS:
 
 1. Set the app's Xcode iOS Deployment Target to **16.0**; align extension and native dependency targets as needed. Use the deployment target to generate the OS minimum rather than hand-editing the generated `MinimumOSVersion` value.

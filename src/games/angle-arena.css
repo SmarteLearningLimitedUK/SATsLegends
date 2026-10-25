@@ -116,7 +116,7 @@
   #root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena-rule { display: none; }
   #root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena-controls { padding: 5px 8px 8px; gap: 4px; margin-bottom: 2px; }
   #root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena-control-label { font-size: 10px; }
-  #root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena .angle-arena-answer { min-height: 38px !important; font-size: 22px !important; padding-block: 2px; }
+  #root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena .angle-arena-answer { min-height: 44px !important; font-size: 22px !important; padding-block: 2px; }
 }
 @media (prefers-reduced-motion: reduce) {
   #root .app-viewport.sat-theme-bluegold.game-type-angle-arena .angle-arena .angle-arena-answer { transition: none; }

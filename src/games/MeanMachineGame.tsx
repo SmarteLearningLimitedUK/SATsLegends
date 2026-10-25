@@ -49,14 +49,14 @@ interface MeanMachineGameProps {
 const TOTAL_LEVELS = 10;
 const REEL_COUNT = 8;
 const REEL_LAYOUT = [
-  { left: 23.5, top: 39.6, width: 10.7, height: 13.2 },
-  { left: 36.4, top: 39.6, width: 10.7, height: 13.2 },
-  { left: 49.4, top: 39.6, width: 10.7, height: 13.2 },
-  { left: 62.3, top: 39.6, width: 10.7, height: 13.2 },
-  { left: 23.5, top: 54.1, width: 10.7, height: 12.6 },
-  { left: 36.4, top: 54.1, width: 10.7, height: 12.6 },
-  { left: 49.4, top: 54.1, width: 10.7, height: 12.6 },
-  { left: 62.3, top: 54.1, width: 10.7, height: 12.6 },
+  { left: 28, top: 40, width: 9.5, height: 10.2 },
+  { left: 39.5, top: 40, width: 9.5, height: 10.2 },
+  { left: 51, top: 40, width: 9.5, height: 10.2 },
+  { left: 62.5, top: 40, width: 9.5, height: 10.2 },
+  { left: 28, top: 52, width: 9.5, height: 10.2 },
+  { left: 39.5, top: 52, width: 9.5, height: 10.2 },
+  { left: 51, top: 52, width: 9.5, height: 10.2 },
+  { left: 62.5, top: 52, width: 9.5, height: 10.2 },
 ] as const;
 
 const shuffle = <T,>(values: T[]): T[] => {
@@ -92,13 +92,13 @@ const clampOddCount = (count: number) => {
   return count % 2 === 0 ? count - 1 : count;
 };
 
-// Keep the campaign centred on the mean; other statistics appear only as late bonus rounds.
+// KS2 statistics assesses the mean; keep every scored round within that domain.
 const ROUND_MODES_BY_TIER: Record<number, RoundMode[]> = {
   1: ['mean'],
   2: ['mean'],
   3: ['mean', 'missing'],
   4: ['mean', 'missing'],
-  5: ['mean', 'missing', 'mean', 'missing', 'median', 'mean', 'missing', 'mean', 'missing', 'mode'],
+  5: ['mean', 'missing'],
 };
 
 const buildMeanRound = (level: number): RoundData => {
@@ -109,10 +109,11 @@ const buildMeanRound = (level: number): RoundData => {
   const activeReelIndexes = getActiveReelIndexes(activeCount);
   const targetMean = useDoubleDigits ? randomInt(10, 18 + level) : randomInt(3, 10);
 
+  const includeZero = level >= 4 && Math.random() < .3;
   let coreValues: number[] = [];
   let total = 0;
   for (let index = 0; index < activeCount - 1; index += 1) {
-    const value = randomInt(minValue, maxValue);
+    const value = includeZero && index === 0 ? 0 : randomInt(minValue, maxValue);
     coreValues.push(value);
     total += value;
   }
@@ -122,14 +123,17 @@ const buildMeanRound = (level: number): RoundData => {
     coreValues = [];
     total = 0;
     for (let index = 0; index < activeCount - 1; index += 1) {
-      const value = randomInt(minValue, maxValue);
+      const value = includeZero && index === 0 ? 0 : randomInt(minValue, maxValue);
       coreValues.push(value);
       total += value;
     }
     finalValue = targetMean * activeCount - total;
   }
 
-  const activeValues = shuffle([...coreValues, finalValue]);
+  // Later tiers include decimal means; even counts permit exact halves.
+  const fractional = level >= 3 && Math.random() < .5;
+  const activeValues = shuffle([...coreValues, finalValue + (fractional ? activeCount % 2 === 0 ? activeCount / 2 : 1 : 0)]);
+  const answerMean = activeValues.reduce((sum, value) => sum + value, 0) / activeCount;
   const actualValues = Array.from({ length: REEL_COUNT }, (_, index) => {
     const activeIndex = activeReelIndexes.indexOf(index);
     return activeIndex >= 0 ? activeValues[activeIndex] : 0;
@@ -139,9 +143,9 @@ const buildMeanRound = (level: number): RoundData => {
     return activeIndex >= 0 ? activeValues[activeIndex] : null;
   });
   const optionCount = 4;
-  const options = new Set<number>([targetMean]);
+  const options = new Set<number>([answerMean]);
   while (options.size < optionCount) {
-    const candidate = targetMean + randomInt(useDoubleDigits ? -6 : -3, useDoubleDigits ? 6 : 3);
+    const candidate = answerMean + randomInt(useDoubleDigits ? -6 : -3, useDoubleDigits ? 6 : 3);
     if (candidate > 0) options.add(candidate);
   }
 
@@ -150,8 +154,8 @@ const buildMeanRound = (level: number): RoundData => {
     kind: 'fluency',
     visibleValues,
     actualValues,
-    targetMean,
-    correctAnswer: targetMean,
+    targetMean: answerMean,
+    correctAnswer: answerMean,
     options: shuffle(Array.from(options)),
     activeReelIndexes,
   };
@@ -585,7 +589,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
     if (!round) return { title: 'Scan the power cells', prompt: 'Recalibrate the machine to begin.' };
     if (round.mode === 'mean') {
       return {
-        title: `Scan ${round.activeReelIndexes.length} cells. Restore their MEAN.`,
+        title: `What is the mean of the ${round.activeReelIndexes.length} readings?`,
         prompt: `Add them, then divide by ${round.activeReelIndexes.length} to get the MEAN.`,
       };
     }
@@ -602,7 +606,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
       };
     }
     return {
-      title: 'Fix the missing reel.',
+      title: `The mean of ${round.activeReelIndexes.length} readings is ${round.targetMean}. Find the missing reading.`,
       prompt: `Choose the number that repairs the MEAN of ${round.activeReelIndexes.length} reels.`,
     };
   }, [round]);
@@ -679,7 +683,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                         aria-label="Scan the power cells"
                         style={{
                           left: '31.7%',
-                          top: '79.6%',
+                          top: '74.4%',
                           width: '31.2%',
                           height: 'max(6.9%, calc(44px / var(--game-stage-scale, 1)))',
                         }}

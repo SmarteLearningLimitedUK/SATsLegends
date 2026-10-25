@@ -25,7 +25,7 @@
 }
 
 .maths-vs-zombies .zombies-target[data-zombie-state='walk'] {
-  animation: zombies-advance-step .7s ease-in-out infinite;
+  animation: none;
 }
 
 .maths-vs-zombies .zombies-target[data-zombie-state='die'] {
@@ -66,15 +66,9 @@
   font-size: calc(clamp(1rem, 1.6vw, 1.3rem) * var(--game-text-scale, 1.2)) !important;
 }
 
-@keyframes zombies-advance-step {
-  0%, 100% { transform: translateY(0) rotate(-1.3deg); }
-  50% { transform: translateY(-4px) rotate(1.3deg); }
-}
-
 @keyframes zombies-collapse {
-  0% { transform: translateY(0) rotate(0); opacity: 1; }
-  45% { transform: translateY(-9px) rotate(12deg); opacity: 1; }
-  100% { transform: translateY(30px) rotate(42deg) scale(.5); opacity: 0; }
+  0% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 .maths-vs-zombies .zombies-target:not(:disabled) {
@@ -378,8 +372,6 @@
 .zombies-mist { position: absolute; inset: auto -15% 0; height: 22%; pointer-events: none; background: radial-gradient(ellipse at 35% 80%, #d8f5e32e, transparent 50%), radial-gradient(ellipse at 75% 65%, #b6eacf22, transparent 45%); animation: zombies-ground-mist 9s ease-in-out infinite alternate; }
 @keyframes zombies-ground-mist { to { transform: translateX(5%); } }
 .maths-vs-zombies .zombies-target[data-zombie-state='walk'] .monster-mind-part--leftArm { animation: zombies-reaching-arm .9s ease-in-out infinite alternate; }
-.maths-vs-zombies .zombies-target[data-zombie-state='walk'] { animation-name: zombies-grounded-gait; }
-@keyframes zombies-grounded-gait { 0%, 100% { transform: rotate(-.5deg); } 50% { transform: translateY(-1.2px) rotate(.5deg); } }
 .maths-vs-zombies .zombies-target[data-zombie-state='walk'] .monster-mind-part--rightArm { animation: zombies-reaching-arm .9s ease-in-out -.6s infinite alternate-reverse; }
 .maths-vs-zombies .zombies-target[data-zombie-state='walk'] .monster-mind-part--head { animation: zombies-hunting-head 1.8s ease-in-out infinite; }
 @keyframes zombies-reaching-arm { from { transform: rotate(-12deg); } to { transform: rotate(16deg) translateY(-2%); } }
@@ -406,11 +398,82 @@
 
 .maths-vs-zombies .zombies-player, .maths-vs-zombies .zombies-battle-runes { left:20%; }
 .maths-vs-zombies .zombies-target > :first-child { transform-origin:50% 90%; }
-.maths-vs-zombies .zombies-target[data-zombie-state='walk'][data-zombie-gait='creep'] > :first-child { animation:zombies-creep 1.6s ease-in-out infinite; }
-.maths-vs-zombies .zombies-target[data-zombie-state='walk'][data-zombie-gait='crawl'] > :first-child { animation:zombies-crawl 1.3s ease-in-out infinite; }
-@keyframes zombies-creep { 0%,100% { transform:rotate(-5deg) scaleY(.94); } 50% { transform:rotate(3deg) scaleY(.98); } }
-@keyframes zombies-crawl { 0%,100% { transform:rotate(-9deg) scaleY(.7); } 50% { transform:rotate(-3deg) scaleY(.76); } }
 @media(prefers-reduced-motion:reduce) { .maths-vs-zombies .zombies-target > :first-child { animation:none !important; } }
 
-/* Keep the complete mission readable instead of clipping the last rule. */
+/* Preserve the richly coloured terrace. Separation belongs to the combat
+   region, rather than a grey/blur filter over the entire environment. */
+.maths-vs-zombies .zombies-scene-backdrop img {
+ filter:none;
+ transform:none;
+}
+#root .app-viewport[data-active-game='maths_vs_zombies'] > .vision-world-backdrop {
+ filter:none;
+ transform:none;
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='maths_vs_zombies'] .zombies-feedback {
+ display:block!important;height:20px;min-height:20px;line-height:20px;
+}
+.maths-vs-zombies .zombies-playfield::before {
+ content:'';position:absolute;inset:0;z-index:0;
+ background:radial-gradient(ellipse 24% 70% at 20% 58%,#071c2ab3,transparent 100%),radial-gradient(ellipse 52% 20% at 55% 90%,#06212b52,transparent 100%);
+ pointer-events:none;
+}
+.maths-vs-zombies .zombies-player-avatar {
+ filter:drop-shadow(0 7px 5px #031022ad);
+}
 #root .maths-vs-zombies .zombies-question-card {max-height:none;flex-shrink:0;}
+
+/* Short landscape phones need a real ground plane, not the strip left
+   between two stacked panels. Keep instructions beside the battlefield. */
+@media(orientation:landscape) and (max-height:550px) {
+  #root .maths-vs-zombies>.relative.z-10 {display:grid;grid-template-columns:minmax(0,34fr) minmax(0,66fr);grid-template-rows:minmax(0,1fr) auto;gap:8px;padding:4px}
+  #root .maths-vs-zombies .zombies-question-card {grid-column:1;grid-row:1;align-self:center;top:0!important;width:100%!important;max-height:100%;overflow-y:auto;margin:0!important}
+  #root .maths-vs-zombies .zombies-playfield {grid-column:2;grid-row:1;width:100%!important;height:100%;min-width:0;min-height:90px!important;margin:0!important}
+  #root .maths-vs-zombies .zombies-answer-board {grid-column:1/-1;grid-row:2;width:100%!important;margin:0!important;padding:4px 6px!important}
+  #root .maths-vs-zombies .zombies-question-card .question-subtitle {font-size:12px!important;line-height:1.35!important}
+}
+
+/* Let the terrace be the arena: no tinted rectangle over the scenery. */
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='maths_vs_zombies'] .maths-vs-zombies .zombies-layout {
+ display:flex;flex-direction:column;gap:6px;padding:0;min-height:0;
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='maths_vs_zombies'] .maths-vs-zombies .zombies-playfield {
+ container-type:size;--combat-actor-size:min(70cqh,24cqw);--zombie-size:var(--combat-actor-size);--hero-actor-size:min(84cqh,30cqw);
+ width:100%!important;max-width:none;flex:1;min-height:0!important;margin:0!important;
+ background:none!important;border:0;box-shadow:none;backdrop-filter:none;border-radius:0;
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='maths_vs_zombies'] .maths-vs-zombies :is(.zombies-mist,.zombies-battle-runes) {display:none;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='maths_vs_zombies'] .maths-vs-zombies .zombies-player-avatar {
+ width:var(--hero-actor-size);height:var(--hero-actor-size);max-width:none;
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='maths_vs_zombies'] .maths-vs-zombies .zombies-player {
+ width:var(--hero-actor-size);height:var(--hero-actor-size);
+ bottom:auto;top:calc(var(--zombies-ground) - var(--hero-actor-size)*.95)!important;
+ gap:0;
+}
+.maths-vs-zombies .zombies-player-label {
+ position:absolute;bottom:calc(100% + 2px);left:50%;translate:-50% 0;
+ padding:2px 8px;border-radius:5px;background:#071c2ae6;color:#fff0bb;
+}
+.maths-vs-zombies .zombies-hero-footing {
+ position:absolute;z-index:2;left:20%;top:calc(var(--zombies-ground) - 1px);translate:-50% 0;
+ width:calc(var(--hero-actor-size)*.95);height:clamp(8px,3cqh,18px);
+ border-radius:50%;border-top:2px solid #e3d2a1;
+ background:linear-gradient(#a69e7f,#495c58);
+ box-shadow:0 6px 6px #03131de6;
+ pointer-events:none;
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='maths_vs_zombies'] .maths-vs-zombies .zombies-answer-board {width:min(94%,1100px)!important;margin:0 auto!important;}
+
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='maths_vs_zombies'] .zombies-question-card {
+ width:min(94%,1100px)!important;margin-inline:auto!important;align-self:center;top:0!important;
+}
+@media(orientation:landscape) and (max-height:550px) {
+ .maths-vs-zombies .zombies-player-label {top:5%;bottom:auto;left:0;translate:-40% 0;}
+ #root [data-vision-game='maths_vs_zombies'] .zombies-answer-board {position:relative;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='maths_vs_zombies'] .zombies-feedback {
+  position:absolute;top:4px;left:10px;right:100px;
+ }
+ #root [data-vision-game='maths_vs_zombies'] .zombies-answer-board:has(.zombies-feedback[aria-hidden='false']) .zombies-answer-label {visibility:hidden;}
+ #root .app-viewport[data-active-game='maths_vs_zombies']>.vision-world-backdrop {object-position:50% 100%;}
+}

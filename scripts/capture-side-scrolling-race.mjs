@@ -1,0 +1,24 @@
+import assert from 'node:assert/strict';
+import {chromium} from 'playwright';
+import {writeFile,copyFile} from 'node:fs/promises';
+import {auditLayout} from './qa/layout-overlap-audit.mjs';
+import {installReleaseAccountFixture} from './qa/release-account-fixture.mjs';
+process.env.LEGEND_QA_FETCH_FIXTURE='1';
+const base='http://127.0.0.1:3012',out='qa-artifacts/cohesive-cast',results=[],browser=await chromium.launch();
+const sample=(page,id,duration)=>page.evaluate(({id,duration})=>new Promise(resolve=>{const samples=[],gaps=[],start=performance.now();let previous;function tick(now){const n=document.querySelector(`[data-cohesive-cast="${id}"]`);samples.push({time:Number(n.dataset.visionTime||0),pose:(n.dataset.visionDeformation||'0,0,0,0,0').split(',').map(Number)});if(previous!==undefined)gaps.push(now-previous);previous=now;if(now-start<duration)requestAnimationFrame(tick);else resolve({samples,gaps});}requestAnimationFrame(tick);}),{id,duration});
+try{
+ const context=await browser.newContext({viewport:{width:1187,height:884},recordVideo:{dir:out+'/recordings',size:{width:1187,height:884}}});await installReleaseAccountFixture(context);await context.addInitScript(()=>{localStorage.setItem('maths_quest_player_v2',JSON.stringify({avatarId:'barratt',level:100,playerName:'Race motion QA'}));localStorage.setItem('__release_qa_api_state__',JSON.stringify({revision:1,saved:{player:{avatarId:'barratt',level:100},revision:1},requests:{}}));});const p=await context.newPage(),runtime=[];p.on('pageerror',e=>runtime.push(e.message));await p.goto(base+'/map');await p.locator('[data-qa-screen="world_map"]').waitFor();await p.evaluate(()=>{history.pushState({},'','/game/7/19');dispatchEvent(new PopStateEvent('popstate'));});await p.locator('[data-race-scene]').waitFor();
+ for(let i=0;i<5;i++){await p.waitForTimeout(150);const d=p.locator('[role="dialog"]:visible').last();if(!await d.count())break;const button=d.locator('[data-dialog-primary]').first();if(!await button.count())break;const node=await d.elementHandle();await button.click();await p.waitForFunction(n=>!n.isConnected,node);}
+ await p.waitForFunction(()=>document.querySelector('[data-race-scene]').dataset.raceState==='showingQuestion');await p.waitForTimeout(300);
+ const race=p.locator('[data-race-scene]'),distance=()=>race.getAttribute('data-camera-distance');const before=await distance();await p.waitForTimeout(500);assert.ok(Number(await distance())>Number(before),'scenery scrolls while choosing answer');assert.equal(await p.locator('[data-race-progress]').getAttribute('data-race-progress'),'0','cruising awards no unearned progress');
+ const audit=await p.evaluate(auditLayout);assert.deepEqual(audit.issues,[]);assert.equal(audit.overflow,false);await p.screenshot({path:out+'/racing-in-play.png'});await copyFile(out+'/racing-in-play.png','qa-artifacts/current-game-screenshots/desktop/ratio_fractions.png');
+ for(const profile of [{name:'phone',width:844,height:390},{name:'small-phone',width:568,height:320}]){await p.setViewportSize({width:profile.width,height:profile.height});await p.waitForTimeout(200);const fit=await p.evaluate(auditLayout);assert.deepEqual(fit.issues,[]);assert.equal(fit.overflow,false);await p.screenshot({path:out+'/racing-'+profile.name+'.png'});if(profile.name==='phone')await copyFile(out+'/racing-phone.png','qa-artifacts/current-game-screenshots/phone/ratio_fractions.png');}
+ await p.setViewportSize({width:1187,height:884});await p.waitForTimeout(150);
+ const answer=await p.evaluate(()=>{const mix=document.querySelector('[data-race-target]'),parts=[...document.querySelectorAll('[data-race-mix-part]')],target=parts.find(n=>n.dataset.raceMixLabel===mix.dataset.raceTarget),amount=Number(target.dataset.raceMixPart),sum=parts.reduce((a,n)=>a+Number(n.dataset.raceMixPart),0);return [...document.querySelectorAll('[data-race-answer]')].map(n=>n.dataset.raceAnswer).find(o=>{const[a,b]=o.split('/').map(Number);return a*sum===b*amount;});});
+ await p.locator(`[data-race-answer="${answer}"]`).click();await p.waitForFunction(()=>document.querySelector('[data-race-scene]').dataset.raceState==='correctBoost');await p.waitForTimeout(160);assert.ok(Number(await race.getAttribute('data-camera-speed'))>.1,'correct answer accelerates');
+
+ await p.waitForFunction(()=>document.querySelector('[data-race-scene]').dataset.raceState==='showingQuestion');await p.waitForTimeout(1800);
+ const video=p.video();await p.close();await context.close();await video.saveAs(out+'/racing-in-play.webm');
+ const cast=await browser.newPage({viewport:{width:1400,height:1000}});await cast.goto(base+'/'+out+'/index.html');await cast.waitForFunction(()=>document.querySelectorAll('[data-cohesive-cast][data-vision-ready="true"]').length===10);await cast.screenshot({path:out+'/cast-preview.png',fullPage:true});await cast.close();
+ console.log('PASS final race capture, cruise, boost and desktop/phone screenshots');
+}finally{await browser.close();}

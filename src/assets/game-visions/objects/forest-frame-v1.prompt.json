@@ -1,0 +1,12 @@
+{
+  "kind": "objects",
+  "key": "forest-frame",
+  "file": "objects/forest-frame-v1.webp",
+  "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-6c0c7983-6787-46a1-8f2c-8f9d9b7258b6.png",
+  "prompt": "Use case: background-extraction. Extract and faithfully recreate the rectangular INGOT RACK frame from reference, front-facing without perspective. Exact carved brown wood branches with green leaves corners, dark forest green smooth inner surface. Remove ALL text, numbers, ingots, buttons. One empty rectangular panel only, 2:1 landscape aspect, narrow thick frame around blank green inner surface, no legs, no scenery, transparent outside frame. Frame within4%canvas margin. Faithfully match reference lighting and materials.",
+  "dimensions": [
+    1774,
+    887
+  ],
+  "bytes": 331132
+}

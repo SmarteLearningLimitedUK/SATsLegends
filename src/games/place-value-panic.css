@@ -347,3 +347,14 @@
  #root .game-type-place-value-peaks .pvp-enemy-health-frame {position:relative;inset:auto;transform:none;translate:none;width:100%;}
  #root .game-type-place-value-peaks .legend-pvp-enemy [data-monster-actor] {flex:none;translate:none;transform:none;}
 }
+
+/* Bring the digit bank into the puzzle area, above the separate utility row. */
+@media(orientation:landscape) and (max-height:550px) and (min-width:760px) {
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='place_value_panic'] .legend-pvp-sources {left:34%!important;width:64%!important;top:calc(60% - 16px)!important;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='place_value_panic'] .legend-pvp-sources .relative.gap-1 {display:grid!important;grid-template-columns:none!important;grid-template-rows:52px;grid-auto-flow:column;grid-auto-columns:minmax(44px,1fr);gap:4px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='place_value_panic'] [data-pvp-location='source'] {width:100%!important;max-width:none!important;height:52px!important;}
+}
+@media(orientation:landscape) and (max-height:550px) and (max-width:759px) {
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='place_value_panic'] [data-pvp-location='target'] {height:64px!important;aspect-ratio:auto!important;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='place_value_panic'] .legend-pvp-sources {top:calc(48% - 12px)!important;}
+}

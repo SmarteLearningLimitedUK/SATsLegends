@@ -32,7 +32,8 @@ const GameLoadFallback: React.FC<{
   details?: string;
   onRetry?: () => void;
   onBack?: () => void;
-}> = ({ title, subtitle, details, onRetry, onBack }) => (
+  backLabel?: string;
+}> = ({ title, subtitle, details, onRetry, onBack, backLabel = 'Back to Map' }) => (
   <div className="flex h-full w-full items-center justify-center px-4 py-6">
     <div className="relative w-full max-w-xl overflow-hidden rounded-[1.6rem] border border-cyan-100/25 bg-[linear-gradient(180deg,rgba(14,37,94,0.92),rgba(9,20,52,0.92))] p-6 text-center shadow-[0_18px_34px_rgba(2,6,23,0.45)]">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(125,211,252,0.12),rgba(2,6,23,0)_55%)]" />
@@ -68,7 +69,7 @@ const GameLoadFallback: React.FC<{
               onClick={onBack}
               className="ui-button-secondary inline-flex min-h-[44px] items-center justify-center rounded-[1.1rem] border border-white/12 px-5 text-xs font-black uppercase tracking-[0.16em] text-white/90"
             >
-              Back to Map
+              {backLabel}
             </button>
           ) : null}
         </div>

@@ -1,0 +1,63 @@
+name: iOS internal TestFlight upload
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'ios/testflight-upload-*'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-testflight-upload
+  cancel-in-progress: false
+
+jobs:
+  testflight:
+    runs-on: macos-15
+    environment: ios-testflight
+    timeout-minutes: 45
+    env:
+      APPLE_TEAM_ID: D8L3PZ8Y72
+      IOS_BUILD_NUMBER: 100.${{ github.run_number }}.${{ github.run_attempt }}
+      VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+      VITE_IOS_PRIVACY_URL: ${{ vars.VITE_IOS_PRIVACY_URL }}
+      VITE_IOS_TERMS_URL: ${{ vars.VITE_IOS_TERMS_URL }}
+      VITE_IOS_AUTH_ORIGIN: ${{ vars.VITE_IOS_AUTH_ORIGIN }}
+      VITE_ALLOW_GAME_PREVIEW: 'false'
+      VITE_IOS_INTERNAL_TESTING: 'true'
+      VITE_ASSET_BASE: '/'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Select Xcode 26
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcode_path=$(find /Applications -maxdepth 1 -name 'Xcode_26*.app' | sort | tail -n 1)
+          test -n "$xcode_path" || { echo 'Xcode 26 is required.'; exit 1; }
+          sudo xcode-select -s "$xcode_path/Contents/Developer"
+      - run: npm ci
+      - run: node scripts/ios-release-config.mjs --internal-testing
+      - run: npm run lint
+      - run: node scripts/verify-ios-testflight.mjs
+      - run: npx tsx scripts/verify-apple-entitlements.ts
+      - run: npm run ios:sync
+      - name: Archive, sign and upload internal build
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_PRIVATE_KEY_P8: ${{ secrets.ASC_PRIVATE_KEY_P8 }}
+        run: npm run ios:upload:testflight
+      # Publish evidence only, never the API key or its temporary directory.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: testflight-build-result
+          path: qa-artifacts/ios-testflight/build-result.json
+          if-no-files-found: error
+          retention-days: 30

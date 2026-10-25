@@ -1,0 +1,61 @@
+/* Results inherit the played island's materials and retain its live scenery. */
+.level-result-overlay--themed {
+  --result-deep:var(--island-deep,#112d2b);
+  --result-panel:var(--island-panel,#274c40);
+  --result-accent:var(--island-accent,#a5d6a1);
+  --result-trim:var(--island-trim,#ebcf88);
+  --result-light:var(--island-light,#deeed1);
+  background:#02081566;
+  backdrop-filter:blur(3px);
+}
+.level-result-overlay--themed[data-result-scene='orbit'] {
+  --island-deep:#08152b; --island-panel:#173451; --island-control:#214563;
+  --island-accent:#99ddf5; --island-trim:#ebcf88; --island-light:#e4f5ff;
+  --island-button:linear-gradient(155deg,#214563,#08152b);
+  --sat-button-secondary-skin:var(--island-button);
+  --sat-button-accent-skin:var(--island-button);
+  --result-deep:#08152b; --result-panel:#173451;
+  --result-accent:#99ddf5; --result-trim:#ebcf88; --result-light:#e4f5ff;
+}
+#root .level-result-overlay--themed .level-result-card {
+  height:auto; max-height:calc(100dvh - 32px); width:min(680px,calc(100vw - 32px));
+  max-width:none; padding:24px;
+  border:2px solid var(--result-trim); border-color:var(--result-trim)!important; border-radius:20px;
+  background:linear-gradient(150deg,var(--result-panel),var(--result-deep) 72%)!important;
+  box-shadow:inset 0 0 0 4px #ffffff08,0 24px 80px #0009;
+  color:var(--result-light);
+}
+.level-result-overlay--themed .level-result-layout {height:auto;max-height:calc(100dvh - 136px)}
+.level-result-overlay--themed .level-result-scroll {display:flex;flex-direction:column;gap:16px;scrollbar-width:thin;scrollbar-color:var(--result-trim) transparent}
+.level-result-overlay--themed .level-result-heading {padding-inline:32px}
+.level-result-toolbar {display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0;min-height:44px;margin-bottom:12px}
+#root .level-result-overlay--themed .level-result-toolbar>.ui-close-button {position:static!important;inset:auto!important;min-width:44px;min-height:44px;flex-shrink:0}
+.level-result-overlay--themed .level-result-heading h2 {color:var(--result-trim);line-height:1.2}
+.level-result-overlay--themed .level-result-heading p {color:var(--result-light)}
+.level-result-location {font-size:11px;text-transform:uppercase;letter-spacing:.16em;line-height:1.4;margin:0;opacity:.75}
+.level-result-overlay--themed .level-result-status {color:var(--result-light);border-color:color-mix(in srgb,var(--result-accent) 50%,transparent);background:color-mix(in srgb,var(--result-accent) 14%,transparent)}
+.level-result-overlay--themed[data-result-outcome='gameover'] .level-result-status {border-color:#f4ac8b99;background:#943d351f}
+.level-result-overlay--themed .level-result-sheen {background:linear-gradient(125deg,#ffffff07,transparent 40%)}
+.level-result-overlay--themed .legend-result-stat {border-color:color-mix(in srgb,var(--result-trim) 32%,transparent);background:color-mix(in srgb,var(--result-deep) 70%,transparent);color:var(--result-light);border-radius:10px}
+.level-result-overlay--themed .legend-result-stat>div:first-child {color:var(--result-light);opacity:.75;line-height:1.4}
+.level-result-overlay--themed .legend-result-stat>div:last-child {color:var(--result-accent)}
+.level-result-overlay--themed .level-result-bonuses>div>div {border-radius:10px;gap:12px;border-color:color-mix(in srgb,var(--result-trim) 25%,transparent);background:#ffffff05}
+.level-result-overlay--themed .level-result-bonuses>div>div>span:last-child {flex-shrink:0;white-space:nowrap;color:var(--result-trim)}
+#root .level-result-overlay--themed .ui-button-primary {background:linear-gradient(var(--result-trim),color-mix(in srgb,var(--result-trim) 75%,#674728))!important;border-color:var(--result-trim)!important;color:#17232c!important}
+#root .level-result-overlay--themed :is(.ui-button-secondary,.ui-close-button) {background:var(--result-deep)!important;border-color:var(--result-trim)!important;color:var(--result-light)!important}
+.level-result-overlay--themed .level-result-actions button {min-height:44px}
+@media(orientation:landscape) and (max-height:550px) {
+  .level-result-overlay--themed[data-result-outcome='gameover'] .level-result-medals {display:none}
+  /* The XP total stays in the stats row; omit the detailed breakdown on short screens. */
+  .level-result-overlay--themed :is(.level-result-progression,.level-result-bonuses) {display:none}
+  #root .level-result-overlay--themed .level-result-card {padding:12px;max-height:calc(100dvh - 16px);width:min(760px,calc(100vw - 24px));border-radius:14px}
+  .level-result-overlay--themed .level-result-layout {max-height:calc(100dvh - 92px);gap:8px}
+  .level-result-toolbar {margin-bottom:8px}
+  .level-result-overlay--themed .level-result-scroll {gap:12px}
+  .level-result-overlay--themed .level-result-heading h2 {font-size:24px}
+  .level-result-overlay--themed .level-result-heading p:not(.level-result-location) {font-size:13px;line-height:1.4}
+  .level-result-overlay--themed .level-result-stats {grid-template-columns:repeat(4,minmax(0,1fr))}
+  .level-result-overlay--themed .legend-result-stat {padding:6px 4px}
+  .level-result-overlay--themed .legend-result-stat>div:first-child {font-size:9px;letter-spacing:.06em}
+  .level-result-overlay--themed .level-result-actions {padding-top:0}
+}

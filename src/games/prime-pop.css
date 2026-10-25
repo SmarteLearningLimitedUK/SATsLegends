@@ -18,9 +18,9 @@
 .prime-pop-ward-rail {
   position: relative;
   width: 88%;
-  height: 10px;
+  height: 14px;
   border: 2px solid #253149;
-  background: linear-gradient(90deg, #eab866, #fff1ba 20%, #ffc981 50%, #fff1ba 80%, #eab866);
+  background: repeating-linear-gradient(135deg, #ffdc72 0 14px, #8b2935 14px 28px);
   border-radius: 999px;
   box-shadow: 0 2px 5px #071a35cc, 0 0 0 2px #fff0bb, 0 0 18px #eab866b8;
 }
@@ -73,3 +73,19 @@
 /* Reserve the complete question height before the bubble field starts. */
 #root .prime-pop-question-slot { position:relative; flex:none; min-height:0; padding-bottom:28px; }
 #root .prime-pop-question-slot .game-question-card { position:relative; inset:auto; transform:none; width:100%; max-width:780px; margin-inline:auto; }
+
+/* The helper occupies the left side of the scene. Bubble coordinates and
+   collision distances use this narrower field, so drift cannot enter it. */
+#root .prime-pop-stage [data-prime-pop-field] { left:44%; }
+#root .prime-pop-stage .prime-pop-feedback {
+  left:22%;bottom:12px;max-width:38%;padding:4px 8px;
+  text-align:center;white-space:normal;
+}
+
+/* Portrait play uses the width above the character's floor area. */
+@media(orientation:portrait) and (max-width:699px) {
+ #root .prime-pop-question-slot .game-question-context {display:none;}
+ #root .prime-pop-stage [data-prime-pop-field] {left:5%;right:5%;bottom:23%;}
+ #root .prime-pop-stage .prime-pop-feedback {left:70%;bottom:8%;max-width:50%;}
+ #root .prime-pop-stage .prime-pop-ward {right:0;bottom:auto;}
+}

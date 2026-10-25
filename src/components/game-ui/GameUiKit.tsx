@@ -1,5 +1,7 @@
 import { gameQuestionContext } from '../../utils/gameQuestionCopy';
-import React from 'react';
+import React, { useContext } from 'react';
+import { VisionSceneContext } from '../../games/visionScene';
+import { isReferenceGame, ReferenceArt } from './ReferenceScreenArt';
 import { motion } from 'motion/react';
 import {
   ArrowLeft,
@@ -11,6 +13,8 @@ import {
 } from 'lucide-react';
 import { playGameSound } from '../../audio/gameAudio';
 import SceneEnvironment from '../SceneEnvironment';
+import VisionCompanion from './VisionCompanion';
+import ViewportQuestion from './ViewportQuestion';
 
 type WrapperProps = {
   children: React.ReactNode;
@@ -80,6 +84,7 @@ const QUESTION_CARD_SHELL = '/reference-assets/new-sheet-2026-04-22/slice_01_x21
 const QUESTION_CARD_TITLE_STRIP = '/reference-assets/new-sheet-2026-04-22/slice_15_x709_y396_w338_h68.png';
 
 type GameQuestionCardProps = {
+  subtitleIsTip?: boolean;
   /** Override automatic story copy when the question already includes its context. */
   context?: string;
   title?: string;
@@ -92,6 +97,7 @@ type GameQuestionCardProps = {
 };
 
 type QuestionCardFrameProps = WrapperProps & {
+  subtitleIsTip?: boolean;
   title?: React.ReactNode;
   subtitle?: React.ReactNode;
   titleClassName?: string;
@@ -104,11 +110,17 @@ const QuestionCardFrame: React.FC<QuestionCardFrameProps> = ({
   className,
   title,
   subtitle,
+  subtitleIsTip,
   titleClassName,
   bodyClassName,
   style,
-}) => (
-  <div className={cn('game-question-card', className)} data-game-question="true" style={style}>
+}) => {
+  const { key } = useContext(VisionSceneContext);
+  const referenceGame = isReferenceGame(key) ? key : undefined;
+  return (
+  <ViewportQuestion>
+  <div className={cn('game-question-card', referenceGame && 'reference-question', className)} data-game-question="true" style={style}>
+    {referenceGame && <ReferenceArt part="question" game={referenceGame} />}
     <img
       className="game-question-card-shell"
       src={QUESTION_CARD_SHELL}
@@ -117,6 +129,7 @@ const QuestionCardFrame: React.FC<QuestionCardFrameProps> = ({
       draggable={false}
     />
     <div className="game-question-card-inner">
+      <VisionCompanion placement="question" />
       {title ? (
         <div
           className="game-question-card-title-strip"
@@ -136,13 +149,15 @@ const QuestionCardFrame: React.FC<QuestionCardFrameProps> = ({
         {children}
       </div>
       {subtitle ? (
-        <div className="question-subtitle mt-1 text-xs font-semibold text-white/75 md:text-sm">
+        <div className="question-subtitle mt-1 text-xs font-semibold text-white/75 md:text-sm" data-game-tip={subtitleIsTip || undefined}>
           {subtitle}
         </div>
       ) : null}
     </div>
   </div>
-);
+  </ViewportQuestion>
+  );
+};
 
 /**
  * Standard question/prompt surface used across mini-games.
@@ -150,6 +165,7 @@ const QuestionCardFrame: React.FC<QuestionCardFrameProps> = ({
  */
 export const GameQuestionCard: React.FC<GameQuestionCardProps> = ({
   context: suppliedContext,
+  subtitleIsTip,
   title = 'Mission',
   subtitle,
   children,
@@ -165,11 +181,12 @@ export const GameQuestionCard: React.FC<GameQuestionCardProps> = ({
     className={className}
     title={title}
     subtitle={subtitle}
+    subtitleIsTip={subtitleIsTip}
     titleClassName={titleClassName}
     bodyClassName={bodyClassName}
     style={style}
   >
-    {context ? <span className="game-question-context">{context} </span> : null}
+    {context ? <span className="game-question-context" data-game-tip={suppliedContext === undefined || undefined}>{context} </span> : null}
     {children}
   </QuestionCardFrame>
   );

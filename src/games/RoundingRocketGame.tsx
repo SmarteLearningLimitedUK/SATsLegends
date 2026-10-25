@@ -5,6 +5,7 @@ import {
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
+import { ReferenceArt } from '../components/game-ui/ReferenceScreenArt';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import RoundingRocketScene, { ROCKET_PART_NAMES } from './RoundingRocketScene';
 import { GAME_HUD_CINEMATIC_EVENT } from '../gameHudEvents';
@@ -223,18 +224,19 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
       <div className="rr-question">
         <GameQuestionCard title={`Nearest ${round.target}`} className="mx-auto max-w-[31rem]" bodyClassName="flex flex-col items-center gap-1">
           <span data-rocket-question-value="true" className="text-[clamp(2rem,5vw,3rem)] font-bold leading-none tabular-nums">{round.value}</span>
-          <span className="rr-question-hint text-base leading-snug">Round the number to add a rocket part.</span>
+          <span className="rr-rounding-target">Round to the <span className="reference-emphasis">nearest {round.target}</span>.</span>
         </GameQuestionCard>
       </div>
       {feedbackText && <div role="status" className={`rr-feedback ${rocketState === 'failed' ? 'rr-feedback--error' : ''}`}>{feedbackText}</div>}
       <section className="rr-answers" aria-label="Rounding answers">
-        <div className="rr-answer-label">Choose the nearest {round.target}</div>
+        <ReferenceArt part="rocket-answers" />
+        <div className="rr-answer-label" data-game-tip="true">Choose the nearest {round.target}</div>
         <div className="rr-answer-buttons">
           {round.pads.map(padValue => <motion.button key={`${round.id}-${padValue}`} type="button" onClick={() => handlePadTap(padValue)}
             disabled={inputLocked || !isSessionActive || didComplete || paused}
             whileTap={!inputLocked ? { scale: .96 } : undefined}
             className={selectedPad === padValue && rocketState === 'arming' ? 'ui-button-success' : selectedPad === padValue && rocketState === 'failed' ? 'ui-button-secondary ring-2 ring-rose-300' : 'ui-button-secondary'}
-            aria-label={`Landing pad ${padValue}`}><span>{padValue}</span></motion.button>)}
+            aria-label={`Landing pad ${padValue}`}><ReferenceArt part="green-answer" /><span>{padValue}</span></motion.button>)}
         </div>
       </section>
     </>}

@@ -7,6 +7,7 @@ import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { stripLegacyWorldPrefix } from '../utils/fantasyPrompt';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import './game-refinements.css';
+import './perimeter-path.css';
 
 interface PerimeterPathGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -286,8 +287,9 @@ const PerimeterShapeRenderer: React.FC<{
   onSelectEdge: (id: string) => void;
 }> = ({ shape, selectedEdgeIds, disabled, onSelectEdge }) => (
   <div className="perimeter-drawing">
-    <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+    <svg viewBox="-12 -12 124 124" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Boundary with labelled edge lengths">
       <defs>
+        <linearGradient id="perimeter-crystal" x2="1" y2="1"><stop stopColor="#e6ffff"/><stop offset=".45" stopColor="#70deef"/><stop offset="1" stopColor="#248cb5"/></linearGradient>
         <pattern id="perimeter-floor-grid" width="8" height="8" patternUnits="userSpaceOnUse">
           <path d="M 8 0 H 0 V 8" fill="none" stroke="#78a58e" strokeWidth=".25" opacity=".25" />
         </pattern>
@@ -311,7 +313,23 @@ const PerimeterShapeRenderer: React.FC<{
             onClick={() => { if (!disabled) onSelectEdge(edge.id); }} />
         </g>;
       })}
+      {shape.points.map((point,index)=><g key={`post-${index}`} className="perimeter-crystal-post">
+        <ellipse cx={point.x} cy={point.y+1} rx="3" ry="1.2" fill="#062b3c88"/>
+        <path d={`M${point.x} ${point.y-6}l2 3.5 -1 3.5h-2l-1 -3.5Z`} fill="url(#perimeter-crystal)" stroke="#d5faff" strokeWidth=".35"/>
+        <path d={`M${point.x} ${point.y-6}v7`} stroke="#fff" strokeWidth=".35"/>
+      </g>)}
+      {shape.edges.map((edge,index)=>{
+        const label=getEdgeLabelPosition(edge),selected=selectedEdgeIds.includes(edge.id);
+        return <g key={`length-${edge.id}`} className="perimeter-edge-length" role="button" tabIndex={disabled?-1:0}
+          aria-label={`Edge ${index+1}: ${edge.label}`} aria-pressed={selected} aria-disabled={disabled}
+          onClick={()=>{if(!disabled)onSelectEdge(edge.id);}}
+          onKeyDown={event=>{if(!disabled&&(event.key==='Enter'||event.key===' ')){event.preventDefault();onSelectEdge(edge.id);}}}>
+          <rect x={label.x-14} y={label.y-5} width="28" height="10" rx="2" fill={selected?'#f6c75d':'#0a2c40'} stroke="#a7dbe8" strokeWidth=".5"/>
+          <text x={label.x} y={label.y+2.4} textAnchor="middle" fill={selected?'#102c35':'#fff7d5'} fontSize="7" fontWeight="800">{edge.label}</text>
+        </g>;
+      })}
     </svg>
+    <div className="perimeter-edge-controls">
     {shape.edges.map((edge, index) => {
       const position = getEdgeLabelPosition(edge);
       const selected = selectedEdgeIds.includes(edge.id);
@@ -320,9 +338,11 @@ const PerimeterShapeRenderer: React.FC<{
         aria-pressed={selected} aria-label={`Edge ${index + 1}: ${edge.label}. ${selected ? 'Checked' : 'Unchecked'}`}
         disabled={disabled} onClick={() => onSelectEdge(edge.id)}>
         <span className="perimeter-edge-check" aria-hidden="true">{selected ? '✓' : '○'}</span>
+        <span className="perimeter-edge-index" aria-hidden="true">{index+1}.</span>
         <span>{edge.label}</span>
       </button>;
     })}
+    </div>
   </div>
 );
 
@@ -398,6 +418,8 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({ levelId, avatarId
     if (answerLockRef.current || endedRef.current || !presentRef.current || sessionState?.paused) return;
     setSelectedEdgeIds((previous) => previous.includes(id) ? previous.filter((edge) => edge !== id) : [...previous, id]);
   };
+  const nextUncheckedEdgeIndex = question.shape.edges.findIndex((edge) => !selectedEdgeIds.includes(edge.id));
+  const nextUncheckedEdge = question.shape.edges[nextUncheckedEdgeIndex];
 
   return (
     <div className="perimeter-game relative h-full w-full overflow-hidden bg-[#85a1b9]" data-perimeter-game data-perimeter-tier={tier} data-perimeter-question={question.id}>
@@ -410,12 +432,29 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({ levelId, avatarId
           animate={!reducedMotion && feedback?.type === 'incorrect' ? { x: [0, -5, 5, -3, 0] } : { x: 0 }} transition={{ duration: .3 }}>
           <PerimeterShapeRenderer shape={question.shape} selectedEdgeIds={selectedEdgeIds} disabled={locked || Boolean(sessionState?.paused)} onSelectEdge={toggleEdge} />
         </motion.div>
+        <div className="perimeter-response-tools">
+        <button type="button" className="perimeter-edge-review" data-perimeter-check-next
+          data-edges-checked={selectedEdgeIds.length}
+          disabled={locked || Boolean(sessionState?.paused)}
+          aria-label={nextUncheckedEdge
+            ? `Check edge ${nextUncheckedEdgeIndex + 1}: ${nextUncheckedEdge.label}. ${selectedEdgeIds.length} of ${question.shape.edges.length} edges checked`
+            : `Reset edge checks. All ${question.shape.edges.length} edges checked`}
+          onClick={() => {
+            if (locked || answerLockRef.current || endedRef.current || !presentRef.current || sessionState?.paused) return;
+            if (nextUncheckedEdge) toggleEdge(nextUncheckedEdge.id);
+            else setSelectedEdgeIds([]);
+          }}>
+          <span>{nextUncheckedEdge ? 'Check next edge' : 'Reset edge checks'}</span>
+          <strong>{nextUncheckedEdge ? `${nextUncheckedEdgeIndex + 1}: ${nextUncheckedEdge.label}` : 'All edges checked'}</strong>
+          <small>{selectedEdgeIds.length}/{question.shape.edges.length} checked</small>
+        </button>
         <div className="answer-choice-surface perimeter-responses">
           {question.options.map((option) => <motion.button key={`${question.id}-${option}`} type="button"
             whileTap={reducedMotion ? undefined : { scale: .98 }} onClick={() => handleAnswer(option)} disabled={locked || Boolean(sessionState?.paused)}
             className={selectedOption === option ? feedback?.type === 'correct' ? 'ui-button-success' : 'ui-button-primary' : 'ui-button-secondary'}>
             {option} {question.answerUnit}
           </motion.button>)}
+        </div>
         </div>
         <div className="refinement-feedback" role="status" aria-live="polite">
           {feedback?.message || `Check edges as you count (${selectedEdgeIds.length}/${question.shape.edges.length}). You can answer any time.`}

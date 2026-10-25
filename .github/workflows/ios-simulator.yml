@@ -1,0 +1,51 @@
+name: iOS unsigned simulator build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'ios/unsigned-build-*'
+
+permissions:
+  contents: read
+
+jobs:
+  simulator:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Select installed Xcode 26
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcode_path=$(find /Applications -maxdepth 1 -name 'Xcode_26*.app' | sort | tail -n 1)
+          test -n "$xcode_path" || { echo 'This runner needs Xcode 26 or later.'; exit 1; }
+          sudo xcode-select -s "$xcode_path/Contents/Developer"
+          xcodebuild -version
+      - run: npm ci
+      - run: npm run lint
+      - run: npx tsx scripts/verify-apple-entitlements.ts
+      - run: node scripts/verify-ios-release-config.mjs
+      # Compilation only: no account secrets, signing, paid products or upload.
+      - run: npm run ios:sync
+      - run: npm run ios:build:simulator
+      - name: Install and launch in iPhone simulator
+        run: node scripts/smoke-ios-simulator.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: iphone-simulator-launch-evidence
+          path: qa-artifacts/ios-simulator-smoke/
+          if-no-files-found: warn
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        with:
+          name: unsigned-iphone-simulator-app
+          path: qa-artifacts/ios-simulator/DerivedData/Build/Products/Debug-iphonesimulator/App.app
+          if-no-files-found: error
+          retention-days: 7

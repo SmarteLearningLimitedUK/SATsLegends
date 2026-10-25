@@ -3,21 +3,21 @@ import React, { useState, useCallback, useEffect, useLayoutEffect, useRef } from
 import { motion, useIsPresent, useReducedMotion } from 'motion/react';
 import { RotateCcw, Plus, Minus } from 'lucide-react';
 import missionBackground from '../assets/maps/premium/chrono-dash.webp';
+import chronometerArtwork from '../assets/game-visions/instruments/chronometer-v1.png';
 import SceneEnvironment from '../components/SceneEnvironment';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
+import { CLOCK_VARIANTS, clockLabels, clockQuestion, displayClockTime as displayTime, type ClockTime as Time } from './chronoDashQuestions';
 import './game-refinements.css';
+import './chrono-dash.css';
 
 interface ChronoDashGameProps extends MiniGameShellContractProps {
   levelId: number; avatarId: string;
   onVictory: (stars: number, XP: number) => void;
   onGameOver: (XP: number) => void; onBack: () => void;
 }
-interface Time { hours: number; minutes: number; }
 const ROUND_DURATION_SECONDS = 90;
 const scoreToStars = (XP: number) => XP >= 1800 ? 3 : XP >= 1100 ? 2 : 1;
-const displayTime = (time: Time) => `${String(time.hours).padStart(2,'0')}:${String(time.minutes).padStart(2,'0')}`;
-const CLOCK_NUMBERS = ['12','1','2','3','4','5','6','7','8','9','10','11'];
 
 const ChronoDashGame: React.FC<ChronoDashGameProps> = ({ levelId, avatarId: _avatarId, onVictory, onGameOver, onBack: _onBack, sessionState, sessionEvents }) => {
   const tier = Math.max(1, Math.min(5, levelId));
@@ -28,6 +28,9 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({ levelId, avatarId: _ava
   const pausedRef = useRef(Boolean(sessionState?.paused)); pausedRef.current = Boolean(sessionState?.paused);
   const [gameState, setGameState] = useState<'playing'|'complete'>('playing');
   const [targetTime, setTargetTime] = useState<Time>({ hours: 10, minutes: 0 });
+  const [variantIndex, setVariantIndex] = useState(0);
+  const nextVariantRef = useRef(0);
+  const variant = CLOCK_VARIANTS[variantIndex];
   const [currentTime, setCurrentTime] = useState<Time>({ hours: 12, minutes: 0 });
   const [rotationHours, setRotationHours] = useState(360);
   const [rotationMinutes, setRotationMinutes] = useState(0);
@@ -51,6 +54,8 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({ levelId, avatarId: _ava
   }, [tier]);
   const loadNextQuestion = useCallback(() => {
     if (!presentRef.current || finishedRef.current) return;
+    setVariantIndex(nextVariantRef.current % CLOCK_VARIANTS.length);
+    nextVariantRef.current += 1;
     setTargetTime(generateRandomTime()); setCurrentTime({hours:12,minutes:0});
     setRotationHours(360); setRotationMinutes(0); setFeedback(null);
     answerLockRef.current = false; setResolving(false);
@@ -58,6 +63,7 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({ levelId, avatarId: _ava
   const startGame = useCallback(() => {
     if (!presentRef.current) return;
     clearFeedbackTimer(); finishedRef.current = false; answerLockRef.current = false;
+    nextVariantRef.current = Math.floor(Math.random() * CLOCK_VARIANTS.length);
     scoreRef.current = 0; correctCountRef.current = 0; setScore(0); setTimeLeft(ROUND_DURATION_SECONDS); setGameState('playing'); loadNextQuestion();
   }, [loadNextQuestion]);
   useEffect(() => { startGame(); }, [startGame]);
@@ -117,38 +123,37 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({ levelId, avatarId: _ava
   };
   const disabled = resolving || gameState !== 'playing' || timeLeft <= 0 || Boolean(sessionState?.paused);
   return (
-    <div className="chrono-game relative h-full w-full overflow-hidden bg-[#7b7c68]" data-chrono-game data-chrono-tier={tier} data-chrono-time={timeLeft}>
+    <div className="chrono-game relative h-full w-full overflow-hidden bg-[#7b7c68]" data-chrono-game data-chrono-tier={tier} data-chrono-time={timeLeft}
+      data-clock-target={displayTime(targetTime)} data-clock-question-format={variant.question}>
       <SceneEnvironment src={missionBackground} />
       <main className="chrono-layout">
-        <GameQuestionCard title="Synchronise the clock" subtitle="Match both hands to restore time." style={{ position:'relative',top:0,transform:'none' }}>
-          Set the clock to {displayTime(targetTime)}.
+        <GameQuestionCard title="Synchronise the clock" subtitle={variant.question === 'roman' ? 'The time is written in Roman numerals. Set both hands.' : 'Match both hands to restore time.'} style={{ position:'relative',top:0,transform:'none' }}>
+          {clockQuestion(targetTime, variant.question)}
         </GameQuestionCard>
         <div className="chrono-playfield" data-clock-playfield>
-          <div className="chrono-clock" data-clock-face data-clock-current={displayTime(currentTime)}>
-            <svg viewBox="0 0 200 200" role="img" aria-label={`Clock set to ${displayTime(currentTime)}. Short cyan hour hand. Long gold minute hand.`}>
-              <circle cx="100" cy="104" r="94" fill="#092632"/>
-              <circle cx="100" cy="100" r="94" fill="#c69a48" stroke="#102b37" strokeWidth="5"/>
-              <circle cx="100" cy="100" r="85" fill="#edf1de" stroke="#fbe6a5" strokeWidth="3"/>
+          <div className="chrono-clock" data-clock-face data-clock-current={displayTime(currentTime)} data-clock-numerals={variant.face}>
+            <svg viewBox="0 0 200 200" role="img" aria-label={`Clock with ${variant.face === 'roman' ? 'Roman numerals' : 'standard digits'}, set to ${displayTime(currentTime)}. Short cyan hour hand. Long gold minute hand.`}>
+              <image href={chronometerArtwork} x="0" y="3.5" width="200" height="200" />
               {Array.from({length:60},(_,index) => {
                 const angle = index*Math.PI/30;
-                const outer = 81;
-                const inner = index%5 === 0 ? 72 : 77;
+                const outer = 61;
+                const inner = index%5 === 0 ? 54 : 58;
                 return <line key={index} x1={100+Math.sin(angle)*inner} y1={100-Math.cos(angle)*inner}
                   x2={100+Math.sin(angle)*outer} y2={100-Math.cos(angle)*outer} stroke="#29444b" strokeWidth={index%5 === 0 ? 2.6 : 1}/>
               })}
-              {CLOCK_NUMBERS.map((label,index) => {
+              {clockLabels(variant.face).map((label,index) => {
                 const angle=index*Math.PI/6;
-                return <text key={label} x={100+Math.sin(angle)*62} y={100-Math.cos(angle)*62} textAnchor="middle" dominantBaseline="central"
-                  fill="#183842" fontSize="18" fontWeight="850">{label}</text>;
+                return <text key={label} x={100+Math.sin(angle)*46} y={100-Math.cos(angle)*46} textAnchor="middle" dominantBaseline="central"
+                  fill="#183842" style={{fontSize: variant.face === 'roman' ? 11 : 14}} fontWeight="850">{label}</text>;
               })}
-              <circle cx="100" cy="100" r="47" fill="none" stroke="#799496" strokeWidth=".7" strokeDasharray="1 3"/>
+              <circle cx="100" cy="100" r="34" fill="none" stroke="#799496" strokeWidth=".7" strokeDasharray="1 3"/>
               <motion.g data-clock-hour-hand animate={{rotate:rotationHours}}
                 transition={reducedMotion ? {duration:0} : {duration:.2,ease:'easeOut'}} style={{transformOrigin:'50% 50%',transformBox:'view-box'}}>
-                <path d="M100 53L105 65V108H95V65Z" fill="#54a9bd" stroke="#173744" strokeWidth="2"/>
+                <path d="M100 64L104 73V108H96V73Z" fill="#54a9bd" stroke="#173744" strokeWidth="2"/>
               </motion.g>
               <motion.g data-clock-minute-hand animate={{rotate:rotationMinutes}}
                 transition={reducedMotion ? {duration:0} : {duration:.2,ease:'easeOut'}} style={{transformOrigin:'50% 50%',transformBox:'view-box'}}>
-                <path d="M100 30L103 40V112H97V40Z" fill="#d79a2b" stroke="#3d382a" strokeWidth="1.5"/>
+                <path d="M100 44L103 53V112H97V53Z" fill="#d79a2b" stroke="#3d382a" strokeWidth="1.5"/>
               </motion.g>
               <circle cx="100" cy="100" r="7" fill="#183944" stroke="#f4d17f" strokeWidth="2"/>
             </svg>
@@ -164,7 +169,7 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({ levelId, avatarId: _ava
             <ControlButton label="Increase minutes" disabled={disabled} onClick={() => adjustTime('minutes',minuteStep)} icon={<Plus size={20}/>} />
           </div></div>
         </div>
-        <div className="refinement-feedback" role="status" aria-live="polite">{feedback || 'Short hand: hours. Long hand: minutes.'}</div>
+        <div className="refinement-feedback" data-tone={feedback ? 'feedback' : undefined} data-game-tip={!feedback || undefined} role="status" aria-live="polite">{feedback || 'Short hand: hours. Long hand: minutes.'}</div>
         <div className="chrono-actions game-submit-dock">
           <motion.button type="button" className="ui-button-primary" disabled={disabled} onClick={checkTime}
             whileTap={reducedMotion ? undefined : {scale:.98}}>{gameState === 'complete' ? 'TIME RESTORED' : 'RESTORE TIME'}</motion.button>

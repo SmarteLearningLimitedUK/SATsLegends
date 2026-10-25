@@ -1,4 +1,11 @@
 .scale-numeric-layout {position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,400px);grid-template-rows:auto minmax(0,1fr);align-items:center;gap:16px;width:calc(100% - 32px);max-width:1100px;height:100%;min-height:0;margin:0 auto;padding:12px 0;}
+@media(orientation:landscape) and (max-height:420px) {
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='scale_builder'] .scale-numeric-controls {align-self:end!important;padding:2px 8px!important;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='scale_builder'] .scale-dimension-fields {margin:0!important;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='scale_builder'] .scale-dimension-fields label {min-height:44px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='scale_builder'] .scale-dimension-fields input {height:30px!important;margin:0!important;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='scale_builder'] .scale-number-pad {gap:2px!important;margin:0!important;}
+}
 .scale-numeric-question {grid-column:1 / -1;}
 .scale-numeric-question .game-question-copy {font-size:calc(20px * var(--game-text-scale, 1.2));line-height:1.3;}
 .scale-numeric-question .game-question-copy > span {display:block;}
@@ -13,6 +20,7 @@
 .scale-pad-hint {color:#edf5ff;font-size:calc(16px * var(--game-text-scale, 1.2));line-height:1.2;margin:0 0 12px;}
 .scale-dimension-fields {display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
 .scale-dimension-fields label {min-width:0;color:#fff4dc;font-size:calc(17px * var(--game-text-scale, 1.2));font-weight:650;}
+.scale-dimension-fields label > span {display:block;padding:4px 6px 3px;line-height:1.2;}
 .scale-dimension-fields small {font-size:calc(14px * var(--game-text-scale, 1.2));font-weight:500;}
 .scale-dimension-fields input {display:block;width:100%;height:48px;background:#061b30;border:2px solid #83afc8;border-radius:10px;margin-top:4px;text-align:center;color:#fff;font-size:calc(26px * var(--game-text-scale, 1.2));outline:none;}
 .scale-dimension-fields label[data-active='true'] input {border-color:#ffdc83;box-shadow:0 0 0 2px #ffdc8333;}
@@ -88,4 +96,53 @@
 @media(max-width:699px) and (min-height:701px) {
  #root .scale-numeric-game {overflow-y:auto;touch-action:pan-y;}
  #root .scale-numeric-layout {height:auto;min-height:100%;grid-template-rows:max-content minmax(160px,1fr) max-content;align-items:start;}
+}
+
+/* Keep the complete hero beside, rather than behind, the blueprint. */
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='scale_builder'] .scale-numeric-layout[data-scale-project]{width:72%;margin-left:27%;margin-right:1%}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='scale_builder'] .vision-companion--stage[data-vision-companion]{left:0;width:24%;max-width:24%;height:70%;bottom:7%}
+@media(orientation:landscape) and (max-height:550px){
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='scale_builder'] .scale-numeric-layout[data-scale-project]{width:77%;margin-left:22%;grid-template-columns:minmax(0,.6fr) minmax(0,1.4fr)}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='scale_builder'] .vision-companion--stage[data-vision-companion]{left:0;width:20%;max-width:20%;height:68%;bottom:7%}
+}
+
+/* The SVG is the blueprint surface; its layout wrapper is not another panel.
+   An intrinsic footer reserves room for the outline toggle before sizing the SVG. */
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='scale_builder'] .scale-numeric-board-area {
+ display:grid;grid-template-rows:minmax(0,1fr) auto;justify-items:center;
+ align-items:center;align-content:center;gap:8px;min-width:0;padding:0;
+ background:none;border:0;border-radius:0;box-shadow:none;
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='scale_builder'] .scale-numeric-blueprint {
+ width:100%;height:100%;max-width:100%;max-height:100%;min-height:0;
+}
+.scale-board-footer {display:flex;flex-direction:column;align-items:center;gap:6px;max-width:100%;min-width:0;}
+.scale-board-footer .scale-board-caption {margin:0;font-size:clamp(12px,1.05vw,18px);line-height:1.3;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='scale_builder'] .scale-board-footer .scale-guide-button {display:block;flex:none;min-height:44px;margin:0;max-width:100%;}
+@media(orientation:landscape) and (max-height:550px) {
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='scale_builder'] .scale-numeric-board-area {gap:4px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='scale_builder'] .scale-board-footer .scale-guide-button {font-size:12px;line-height:1.2;padding:4px 8px;}
+}
+
+/* Dimension text belongs to the UI, so resizing the SVG cannot shrink it. */
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='scale_builder'] .scale-numeric-board-area {grid-template-rows:auto minmax(0,1fr) auto;}
+.scale-blueprint-title {margin:0;padding:6px 10px;color:#fff5dc;background:#082637f5;border:1px solid #91b8bd80;border-radius:8px;font-size:18px;font-weight:750;line-height:1.2;text-shadow:0 1px 2px #03131e;}
+.scale-blueprint-measurements {display:flex;flex-wrap:wrap;justify-content:center;gap:4px 12px;font-size:16px;line-height:1.3;color:#fff1ce;background:#092b3de8;border-radius:6px;padding:3px 8px;}
+@media(orientation:landscape) and (max-height:550px){
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='scale_builder'] .scale-numeric-layout[data-scale-project]{grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);}
+ .scale-blueprint-title{font-size:15px;}.scale-blueprint-measurements{font-size:14px;gap:2px 8px;padding:2px 4px;}
+ .scale-board-footer .scale-board-caption{display:none;}
+}
+
+@media(orientation:landscape) and (max-height:550px){
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='scale_builder'] .scale-numeric-board-area{position:relative;}
+ .scale-blueprint-title{min-height:44px;width:100%;display:flex;align-items:center;padding-right:100px;font-size:14px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='scale_builder'] .scale-board-footer .scale-guide-button{position:absolute;top:0;right:0;}
+}
+
+/* Six keypad columns need 6 × 44px, gaps and panel padding on the shortest phone. */
+@media (orientation:landscape) and (max-width:740px) and (max-height:550px) {
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='scale_builder'] .scale-numeric-layout[data-scale-project] {
+  grid-template-columns:minmax(0,.8fr) minmax(290px,1.2fr);
+ }
 }

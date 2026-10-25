@@ -1,5 +1,6 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
+import {createPortal} from 'react-dom';
 import { playRaceEngineSound } from '../audio/gameAudio';
 import { motion, AnimatePresence, useIsPresent, useReducedMotion } from 'motion/react';
 import { Flag, Zap } from 'lucide-react';
@@ -9,25 +10,20 @@ import {
 } from '../components/game-ui/GameUiKit';
 import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import { DEFAULT_RACE_DIFFICULTY, RACE_TUNING, RaceDifficulty } from './ratioFractionsRace/constants';
-import { QuestionTier } from './ratioFractionsRace/questionSelector';
+import { getQuestionTier, isQuestionForDifficulty, QuestionTier } from './ratioFractionsRace/questionSelector';
 import { RatioFractionQuestion } from './ratioFractionsRace/types';
-import courseBackground from '../assets/maps/premium/race-circuit-wide-v2.png';
-import crowdBackground from '../assets/maps/premium/race-grandstand-wide-v2.png';
-import castleBackground from '../assets/ratio-racer/castle-circuit-v1.png';
-import valleyBackground from '../assets/maps/premium/race-valley-wide-v2.png';
-import coastalBackground from '../assets/maps/teen/race-course-coastal.png';
+import castleBackground from '../assets/ratio-racer/premium/side-scroll-circuit-v2.png';
 import RaceFuelMix from './ratioFractionsRace/RaceFuelMix';
-import RaceWheelRig from './ratioFractionsRace/RaceWheelRig';
-import kartBarratt from '../assets/gokarts/karts/1.png';
-import kartBran from '../assets/gokarts/karts/2.png';
-import kartMochi from '../assets/gokarts/karts/3.png';
-import kartVex from '../assets/gokarts/karts/4.png';
+import RaceKartSprite from './ratioFractionsRace/RaceKartSprite';
+import {useSideScrollingRace} from './ratioFractionsRace/useSideScrollingRace';
+import {RACE_KARTS} from '../assets/ratio-racer/premium/karts';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
 import {
   reshuffleAvoidingRepeat,
   shuffleOptionsWithCorrect,
 } from '../utils/questionShuffle';
 import './ratioFractionsRace/ratio-racer.css';
+import './ratioFractionsRace/ratio-racer-restored.css';
 
 interface RatioRacerGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -53,17 +49,9 @@ const RACER_LERP = 0.16;
 const BASE_XP = 160;
 const COURSE_TILE_WIDTH = 2;
 const COURSE_TILE_OVERLAP = 0.1;
-const COURSE_REPEAT_DISTANCE = COURSE_TILE_WIDTH - COURSE_TILE_OVERLAP;
 const COURSE_TILES = [0, 1, 2];
 const COURSE_STRIP_WIDTH = COURSE_TILE_WIDTH * COURSE_TILES.length;
-const COURSE_START_OFFSET = 0.5;
 const COURSE_TRAVEL_PER_ANSWER = 0.9;
-const PLAYER_KARTS: Record<string, string> = {
-  barratt: kartBran,
-  bran: kartMochi,
-  mochi: kartBarratt,
-  vex: kartVex,
-};
 
 const MIXTURE_LABELS_BY_PART_COUNT: Record<number, string[]> = {
   2: ['Fuel', 'Oxygen'],
@@ -90,7 +78,7 @@ const themeRatioQuestion = (question: RatioFractionQuestion): RatioFractionQuest
     ...question,
     labels,
     target: targetLabel,
-    prompt: `The Monster Minds have tampered with the kart fuel mix. It now has ${joinLabelList(labels)} in a ${ratioText} ratio. What fraction of the whole is ${targetLabel.toLowerCase()}? Give the simplest form.`,
+    prompt: `The ratio of ${joinLabelList(labels)} in the mixture is ${ratioText}. What fraction of the mixture is ${targetLabel.toLowerCase()}? Give your answer in its simplest form.`,
     explanation: `Total parts = ${totalParts}. ${targetLabel} is ${question.ratio[targetIndex]} parts. Simplify ${question.ratio[targetIndex]}/${totalParts} to get ${question.correctAnswer}.`,
   };
 };
@@ -224,8 +212,8 @@ const generatedRatioQuestions = (): RatioFractionQuestion[] => {
   for (let a = 1; a <= 14; a++) for (let b = 1; b <= 14; b++) {
     if (a !== b && a + b <= 28) ratios.push([a, b]);
   }
-  for (let a = 2; a <= 9; a++) for (let b = 3; b <= 8; b++) for (let c = 2; c <= 5; c++) {
-    if (a + b + c >= 16 && new Set([a, b, c]).size >= 2) ratios.push([a, b, c]);
+  for (let a = 1; a <= 5; a++) for (let b = 1; b <= 5; b++) for (let c = 1; c <= 5; c++) {
+    if (a + b + c <= 12) ratios.push([a, b, c]);
   }
   for (let a = 2; a <= 6; a++) for (let b = 3; b <= 7; b++) for (let c = 2; c <= 4; c++) {
     const d = a + b - c + 2 + (a % 3);
@@ -260,19 +248,8 @@ export const ratioFractionsQuestions = [...RAW_RATIO_FRACTIONS_QUESTIONS, ...gen
     return themeRatioQuestion({ ...question, correctAnswer: simplestRatioFraction(numerator, denominator), options: makeRatioOptions(numerator, denominator) });
   });
 
-const getDifficultyPool = (level: number) => {
-  const tier = Math.max(1, Math.min(5, level));
-  return ratioFractionsQuestions.filter((question) => {
-    const parts = question.ratio.reduce((total, value) => total + value, 0);
-    const targetParts = question.ratio[question.labels.indexOf(question.target)];
-    if (new Set(question.ratio).size < 2) return false;
-    if (tier === 1) return question.ratio.length === 2 && parts >= 6 && parts <= 9;
-    if (tier === 2) return question.ratio.length === 2 && parts >= 10 && parts <= 15;
-    if (tier === 3) return question.ratio.length === 2 && parts >= 16 && ratioGcd(targetParts, parts) > 1;
-    return question.ratio.length === (tier === 4 ? 3 : 4)
-      && parts >= (tier === 4 ? 16 : 24) && ratioGcd(targetParts, parts) > 1;
-  });
-};
+export const getDifficultyPool = (level: number) => ratioFractionsQuestions.filter(question => isQuestionForDifficulty(question, level));
+const difficultyForStage = (level: number, stage: QuestionTier) => stage === 'early' ? 1 : stage === 'mid' ? Math.max(1, level - 1) : level;
 const FALLBACK_POOL = ratioFractionsQuestions;
 
 const fractionKey = (question: RatioFractionQuestion) => {
@@ -316,8 +293,8 @@ const buildTierDeck = (pool: RatioFractionQuestion[], previousLast: RatioFractio
 };
 
 const buildTierDecks = (level: number, previousLasts: Partial<Record<QuestionTier, RatioFractionQuestion | null>> = {}) => ({
-  early: buildTierDeck(getDifficultyPool(level), previousLasts.early ?? null),
-  mid: buildTierDeck(getDifficultyPool(level), previousLasts.mid ?? null),
+  early: buildTierDeck(getDifficultyPool(1), previousLasts.early ?? null),
+  mid: buildTierDeck(getDifficultyPool(difficultyForStage(level, 'mid')), previousLasts.mid ?? null),
   final: buildTierDeck(getDifficultyPool(level), previousLasts.final ?? null),
 });
 
@@ -342,19 +319,25 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
   levelId,
   avatarId,
   onVictory,
+  onGameOver,
   sessionState,
   sessionEvents,
 }) => {
   const [attempts, setAttempts] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
+  const [localLives, setLocalLives] = useState(3);
   const [feedback, setFeedback] = useState('');
   const [selected, setSelected] = useState<string | null>(null);
   const [locked, setLocked] = useState(false);
   const [raceState, setRaceState] = useState<RaceState>('introCountdown');
   const [countdown, setCountdown] = useState(3);
   const [raceProgress, setRaceProgress] = useState(0);
+  const raceSceneRef=useRef<HTMLDivElement>(null),courseStripRef=useRef<HTMLDivElement>(null);
+  const [raceWorldHost,setRaceWorldHost]=useState<HTMLElement|null>(null);
+  useLayoutEffect(()=>{setRaceWorldHost(raceSceneRef.current?.closest<HTMLElement>('.app-viewport')??null);},[]);
   const reducedMotion = useReducedMotion();
   const isPresent = useIsPresent();
+  useSideScrollingRace({scene:raceSceneRef,strip:courseStripRef,state:raceState,paused:Boolean(sessionState?.paused)||!isPresent,reduced:Boolean(reducedMotion)});
   const presentRef = useRef(isPresent);
   presentRef.current = isPresent;
   const initialDecks = useMemo(() => buildTierDecks(levelId), [levelId]);
@@ -376,20 +359,23 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
   const reportedResultRef = useRef(false);
   const onVictoryRef = useRef(onVictory);
   onVictoryRef.current = onVictory;
+  const onGameOverRef = useRef(onGameOver);
+  onGameOverRef.current = onGameOver;
   const answerLockedRef = useRef(false);
   const pendingTimeoutsRef = useRef<Set<number>>(new Set());
   const animationFrameRef = useRef<number | null>(null);
   const countdownTimerRef = useRef<number | null>(null);
 
-  const lives = sessionState?.lives ?? 3;
+  const lives = sessionState?.lives ?? localLives;
   const livesRef = useRef(lives);
   livesRef.current = lives;
-  const hasSharedLivesRef = useRef(Boolean(sessionState));
-  hasSharedLivesRef.current = Boolean(sessionState);
-  const observedPositiveLifeRef = useRef(Boolean(sessionState && lives > 0));
-  const playerKart = PLAYER_KARTS[avatarId] || PLAYER_KARTS.barratt;
+  const pausedRef=useRef(Boolean(sessionState?.paused));
+  pausedRef.current=Boolean(sessionState?.paused);
+  const observedPositiveLifeRef = useRef(lives > 0);
+  const playerKart = RACE_KARTS[avatarId] ?? RACE_KARTS.barratt;
+  const rivalKart = RACE_KARTS[avatarId==='bran'?'mochi':'bran'];
   const canContinueRace = () => presentRef.current && !reportedResultRef.current
-    && !(hasSharedLivesRef.current && livesRef.current <= 0);
+    && livesRef.current > 0;
 
   // AnimatePresence keeps this component alive during the outgoing transition.
   useLayoutEffect(() => {
@@ -424,11 +410,12 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
     setRaceProgress(0);
     setAttempts(0);
     setCorrectCount(0);
+    setLocalLives(3);
     setSelected(null);
     setFeedback('');
     setLocked(false);
     answerLockedRef.current = false;
-    observedPositiveLifeRef.current = Boolean(sessionState && lives > 0);
+    observedPositiveLifeRef.current = lives > 0;
     setRaceState('introCountdown');
     return () => {
       reportedResultRef.current = true;
@@ -448,7 +435,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
       const dt = Math.min(0.12, Math.max(0, (timestamp - last) / 1000));
       lastTime = timestamp;
 
-      if (!document.hidden && canContinueRace()) {
+      if (!document.hidden && !pausedRef.current && canContinueRace()) {
         const playerX = playerPosRef.current;
         const playerTarget = playerTargetRef.current;
         if (Math.abs(playerTarget - playerX) > 0.01) {
@@ -471,8 +458,8 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
 
   useEffect(() => {
     if (!presentRef.current) return;
-    if (sessionState && lives > 0) observedPositiveLifeRef.current = true;
-    if (sessionState && lives <= 0 && observedPositiveLifeRef.current && !reportedResultRef.current) {
+    if (lives > 0) observedPositiveLifeRef.current = true;
+    if (lives <= 0 && observedPositiveLifeRef.current && !reportedResultRef.current) {
       reportedResultRef.current = true;
       answerLockedRef.current = true;
       playerTargetRef.current = playerPosRef.current;
@@ -482,6 +469,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
       setRaceState('playerLoss');
       const xp = Math.max(20, BASE_XP * 0.35 + correctCount * 20);
       emitMiniGameSessionEvent(sessionEvents, 'game_failed', { score: xp, reason: 'lives' });
+      onGameOverRef.current(xp);
       return;
     }
 
@@ -503,7 +491,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
     if (!isPresent || raceState !== 'introCountdown') return;
     setCountdown(3);
     const interval = window.setInterval(() => {
-      if (!presentRef.current || reportedResultRef.current) return;
+      if (!presentRef.current || reportedResultRef.current || pausedRef.current || document.hidden) return;
       setCountdown((prev) => {
         if (!presentRef.current || reportedResultRef.current) return prev;
         if (prev <= 1) {
@@ -531,7 +519,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
     const nextIndex = index + 1;
     if (nextIndex % deck.length === 0) {
       const previousLast = deck[deck.length - 1] ?? null;
-      const nextDeck = buildTierDeck(getDifficultyPool(levelId), previousLast);
+      const nextDeck = buildTierDeck(getDifficultyPool(difficultyForStage(levelId, tier)), previousLast);
       const nextDecks = { ...decks, [tier]: nextDeck };
       setTierDecks(nextDecks);
       tierDecksRef.current = nextDecks;
@@ -544,11 +532,19 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
 
   const schedule = (callback: () => void, delay: number) => {
     if (!canContinueRace()) return;
-    const timeout = window.setTimeout(() => {
-      pendingTimeoutsRef.current.delete(timeout);
-      if (canContinueRace()) callback();
-    }, delay);
-    pendingTimeoutsRef.current.add(timeout);
+    let remaining=delay,previous=performance.now();
+    const poll=()=>{
+      const timeout=window.setTimeout(()=>{
+        pendingTimeoutsRef.current.delete(timeout);
+        if(!canContinueRace())return;
+        const now=performance.now();
+        if(!pausedRef.current&&!document.hidden)remaining-=now-previous;
+        previous=now;
+        if(remaining<=0)callback();else poll();
+      },Math.min(32,Math.max(1,remaining)));
+      pendingTimeoutsRef.current.add(timeout);
+    };
+    poll();
   };
 
   const handleAnswer = (option: string) => {
@@ -576,8 +572,8 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
       }, boostDelay);
 
       schedule(() => {
-        // Finish the boost before unlocking another answer, so the course rests
-        // while the player reads and resumes from the exact race distance.
+        // Finish the scored boost before unlocking another answer. The camera
+        // keeps cruising, while only correct answers award race distance.
         playerPosRef.current = playerTargetRef.current;
         setRaceProgress(clamp(playerPosRef.current / tuning.trackLength, 0, 1));
         if (playerTargetRef.current >= tuning.trackLength) {
@@ -591,7 +587,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
           return;
         }
 
-        setQuestion(advanceQuestionForTier('early'));
+        setQuestion(advanceQuestionForTier(getQuestionTier(playerPosRef.current / tuning.trackLength)));
         questionStartRef.current = Date.now();
         setSelected(null);
         setLocked(false);
@@ -603,6 +599,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
     }
 
     emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { metadata: { question: question.id } });
+    if (!sessionState) setLocalLives(previous => Math.max(0, previous - 1));
     setFeedback('Fuel hiccup! Add every ratio part, then retry.');
     setRaceState('incorrectStall');
     schedule(() => {
@@ -625,13 +622,34 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
   const courseTravel = reducedMotion ? 0 : (
     raceProgress * tuning.trackLength / tuning.playerAdvanceDistance * COURSE_TRAVEL_PER_ANSWER
   );
-  // Keep the camera inside the repeated tiles so each wrap shows the same blend.
-  const courseOffset = COURSE_REPEAT_DISTANCE + (
-    (COURSE_START_OFFSET + courseTravel) % COURSE_REPEAT_DISTANCE
-  );
+
+  // Mount the scrolling panorama behind the whole game viewport, including the HUD.
+  // A local fallback supports standalone previews without an app viewport.
+  const raceWorld = <div className="ratio-racer-world" data-race-world aria-hidden="true">
+            <div className="ratio-racer-course" data-race-course data-course-travel={courseTravel} aria-hidden="true">
+              <div
+                ref={courseStripRef}
+                className="ratio-racer-course-strip"
+                data-race-course-strip
+              >
+                {COURSE_TILES.map((tile) => (
+                  <img
+                    key={tile}
+                    className="ratio-racer-track"
+                    data-race-course-tile={tile}
+                    src={castleBackground}
+                    alt=""
+                    draggable={false}
+                    style={{ marginRight: `${-COURSE_TILE_OVERLAP / COURSE_STRIP_WIDTH * 100}%`, zIndex: COURSE_TILES.length - tile }}
+                  />
+                ))}
+              </div>
+            </div>
+  </div>;
 
   return (
     <GameUiShell overlayDisabled className="bg-transparent">
+      {raceWorldHost ? createPortal(raceWorld,raceWorldHost) : null}
       <div className="ratio-racer-layout relative h-full w-full" data-race-paused={Boolean(sessionState?.paused)}>
         <div
           aria-hidden="true"
@@ -648,27 +666,9 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
             <RaceFuelMix labels={question.labels} parts={question.ratio} target={question.target} />
           </GameQuestionCard>
 
-          <div className={`ratio-racer-scene${showBoost ? ' is-boost' : showStall ? ' is-stall' : ''}${lives <= 1 ? ' is-last-chance' : ''}`}
+          <div ref={raceSceneRef} className={`ratio-racer-scene${showBoost ? ' is-boost' : showStall ? ' is-stall' : ''}${lives <= 1 ? ' is-last-chance' : ''}`}
             data-race-scene data-race-state={raceState} data-race-pressure={racePressure} data-race-lives={lives} data-race-present={isPresent}>
-            <div className="ratio-racer-course" data-race-course data-course-travel={courseTravel} aria-hidden="true">
-              <div
-                className="ratio-racer-course-strip"
-                data-race-course-strip
-                style={{ transform: `translate3d(${-courseOffset / COURSE_STRIP_WIDTH * 100}%, 0, 0)` }}
-              >
-                {COURSE_TILES.map((tile) => (
-                  <img
-                    key={tile}
-                    className="ratio-racer-track"
-                    data-race-course-tile={tile}
-                    src={[castleBackground, crowdBackground, valleyBackground, courseBackground, coastalBackground][Math.max(0, Math.min(4, levelId - 1))]}
-                    alt=""
-                    draggable={false}
-                    style={{ marginRight: `${-COURSE_TILE_OVERLAP / COURSE_STRIP_WIDTH * 100}%`, zIndex: COURSE_TILES.length - tile }}
-                  />
-                ))}
-              </div>
-            </div>
+            {!raceWorldHost ? raceWorld : null}
             <div className="ratio-racer-track-shade" aria-hidden="true" />
             <div className="race-road-motion" aria-hidden="true"><div /></div>
             <div className="race-speed-streaks" aria-hidden="true">{[0,1,2,3].map(i=><i key={i} style={{top:`${58+i*10}%`,animationDelay:`${i*.18}s`}}/>)}</div>
@@ -695,9 +695,12 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
               <span>Pit wall</span><strong>{pitMessage}</strong>
             </div>
             <div className="ratio-racer-track-flags" aria-hidden="true"><i /><i /></div>
+            <div className="race-rival" aria-label="Rival kart" style={{left:`${76-raceProgress*64}%`}}>
+              <div className="ratio-racer-kart"><RaceKartSprite src={rivalKart}/></div>
+            </div>
 
             {raceProgress > .75 ? (
-              <div className="ratio-racer-finish" aria-hidden="true" style={{ left: `${125 - raceProgress * 67}%` }}>
+              <div className="ratio-racer-finish" aria-hidden="true" style={{ left: `${145 - raceProgress * 110}%` }}>
                 <span />
               </div>
             ) : null}
@@ -705,7 +708,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
             <div
               className="ratio-racer-kart-anchor"
               data-player-kart
-              style={{ left: `${44 + raceProgress * 12}%` }}
+              style={{ '--race-player-x': `${30 + raceProgress * 10}%` } as React.CSSProperties}
             >
               <div className="ratio-racer-kart-shadow" aria-hidden="true" />
               <div className={`ratio-racer-exhaust${showBoost ? ' is-boost' : showStall ? ' is-stall' : ''}`}
@@ -723,8 +726,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
                       : { y: 0, x: 0, rotate: 0 }}
                 transition={{ duration: .4, repeat: 0, ease: 'easeInOut' }}
               >
-                <img src={playerKart} alt="Your racing kart" draggable={false} />
-                <RaceWheelRig src={playerKart} />
+                <RaceKartSprite src={playerKart} alt="Your racing kart" />
               </motion.div>
               <AnimatePresence>
                 {showBoost ? (
@@ -782,7 +784,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
                   aria-pressed={selected === option}
                   whileTap={reducedMotion ? undefined : { scale: 0.96 }}
                   onClick={() => handleAnswer(option)}
-                  disabled={!isPresent || locked || raceState !== 'showingQuestion' || (Boolean(sessionState) && lives <= 0)}
+                  disabled={!isPresent || locked || raceState !== 'showingQuestion' || lives <= 0}
                   className={`ratio-racer-answer ${
                     selected === option
                       ? equivalentFractions(option, question.correctAnswer)

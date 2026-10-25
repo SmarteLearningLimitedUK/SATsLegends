@@ -121,7 +121,7 @@ body:has(.screen-gameplay[data-game-island='8']),
   .mean-machine-control-panel, .factor-console, .factor-answer-panel,
   [data-formula-playfield], [data-formula-answers], [data-formula-hint],
   .order-ops-console, .chrono-controls, .scale-numeric-controls,
-  .scale-numeric-board-area, .share-splitter-actions, .ratio-racer-mission,
+  .share-splitter-actions, .ratio-racer-mission,
   .ratio-racer-answer-panel, .ratio-racer-answers, .race-question-panel, .potion-workshop-controls,
   .sats-model, .sats-response, .sats-charge, .sats-mission-tools,
   .refinement-feedback, .angle-arena-controls

@@ -1,7 +1,14 @@
 .rr-game { position: relative; width: 100%; height: 100%; overflow: hidden; background: #09132b; }
+@media(orientation:portrait) and (max-width:699px) {
+ .rr-game:has(.rr-feedback) .rr-build-status {visibility:hidden;}
+}
 .rr-scene { position: absolute; inset: 0; overflow: hidden; isolation: isolate; }
 .rr-world { position: absolute; width: 100%; height: 400%; bottom: 0; background:linear-gradient(to bottom,#050c1d 0%,#10254b 24%,#215f9c 48%,#62bdde 73%,#43b9f0 100%); }
 .rr-launchpad { position: absolute; bottom: 0; width: 100%; height: 25%; background-size: cover; background-position: center; }
+.rr-ground-crew { position:absolute; bottom:0; width:100%; height:25%; }
+.rr-scene[data-rocket-phase='orbit'] .rr-ground-crew { visibility:hidden; }
+.rr-scene--cinematic .rr-flight-status { bottom:2%; }
+.rr-scene--cinematic .rr-flight-status strong { font-size:clamp(28px,4vw,56px); }
 .rr-atmosphere { position: absolute; bottom: 25%; height: 50%; width: 100%; background: linear-gradient(#10254b, #215f9c 35%, #62bdde 75%, #43b9f0); }
 .rr-space { position: absolute; top: 0; width: 100%; height: 25%; overflow: hidden; background: radial-gradient(ellipse at 70% 10%, #34376c, #0a142d 55%, #050c1d); }
 .rr-stars { position: absolute; inset: 0; background-image: radial-gradient(circle, #fff 1px, transparent 2px), radial-gradient(circle, #c7dcff 1px, transparent 2px); background-size: 93px 137px, 157px 79px; background-position: 11px 23px, 45px 80px; }
@@ -18,7 +25,8 @@
 @keyframes rr-tracked-rocket { from { bottom: var(--rr-launch-bottom); transform: translateX(-50%) scale(1); } to { bottom: max(38%, calc(var(--rr-launch-bottom) + 8%)); transform: translateX(-50%) scale(.82); } }
 .rr-vehicle { width: 100%; height: 100%; position: relative; }
 .rr-rocket { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 8px 8px #06152c60); }
-.rr-blueprint { opacity: .2; filter: saturate(0); }
+.rr-blueprint { opacity: .62; filter: saturate(.28) contrast(1.15); }
+.rr-next-part { opacity:.9; filter:saturate(.8) drop-shadow(0 0 2px #ffe3a6); }
 .rr-vehicle--error { animation: rr-error .35s ease-out; }
 @keyframes rr-error { 25% { transform: translateX(-8px); filter: drop-shadow(0 0 12px #ff7676); } 65% { transform: translateX(6px); } }
 .rr-exhaust { position: absolute; top: 90%; left: 41%; width: 18%; height: 68%; z-index: -1; transform-origin: top; clip-path: polygon(8% 0, 92% 0, 80% 35%, 95% 45%, 65% 68%, 50% 100%, 35% 68%, 5% 45%, 20% 35%); background: linear-gradient(#fffdeb, #b2f4ff 16%, #ffc661 42%, #ee7439 75%, #e7704400); filter: drop-shadow(0 0 12px #ffc353); animation: rr-thrust .13s ease-in-out infinite alternate; }
@@ -80,12 +88,14 @@
   .rr-flight-status { left: 55%; width: 44%; bottom: auto; top: 22%; }
   .rr-flight-status strong { font-size: calc(28px * var(--game-text-scale, 1.2)); }
   .rr-flight-status span { font-size: calc(14px * var(--game-text-scale, 1.2)); padding: 5px 10px; }
+  .rr-scene--cinematic .rr-flight-status { left:70%; width:28%; top:8%; bottom:auto; }
+  .rr-scene--cinematic .rr-flight-status strong { line-height:1.3; }
   .rr-feedback { left: 82%; top: 8px; bottom: auto; width: 30%; padding: 6px 8px; font-size: calc(14px * var(--game-text-scale, 1.2)); white-space: normal; }
   .rr-game:has(.rr-feedback) .rr-build-status { visibility: hidden; }
 }
 @media (prefers-reduced-motion: reduce) {
   .rr-world--flying { animation: none; transform: translateY(75%); }
-  .rr-vehicle-position--flying { animation: none; bottom: 38%; }
+  .rr-vehicle-position--flying { animation: none; bottom:max(38%,calc(var(--rr-launch-bottom) + 8%)); transform:translateX(-50%) scale(.82); }
   .rr-exhaust, .rr-steam, .rr-pad-lights, .rr-smoke-burst, .rr-vehicle--error { animation: none; }
   .rr-smoke-burst { display: none; }
 }
@@ -95,3 +105,13 @@
 .rr-atmosphere { bottom:18%; height:64%; background:transparent; }
 .rr-space { height:36%; background:transparent; mask-image:linear-gradient(to bottom,#000 0%,#000 68%,transparent 100%); }
 .rr-cloud { opacity:.7; mask-image:linear-gradient(to bottom,transparent,#000 20%,#000 55%,transparent); }
+
+/* The ascent replaces scenery behind the HUD and dock as well as the playfield. */
+#root .app-viewport.screen-gameplay:has(.rr-scene:is([data-rocket-phase='launching'],[data-rocket-phase='orbit'])) {
+  background:radial-gradient(ellipse at 70% 10%,#101d39,#050c1d 70%)!important;
+}
+#root .app-viewport.screen-gameplay:has(.rr-scene:is([data-rocket-phase='launching'],[data-rocket-phase='orbit'])) > .vision-world-backdrop,
+#root .app-viewport.screen-gameplay:has(.rr-scene:is([data-rocket-phase='launching'],[data-rocket-phase='orbit'])) [data-game-wide-ambient],
+#root [data-game-set='rounding_rocket']:has(.rr-scene:is([data-rocket-phase='launching'],[data-rocket-phase='orbit'])) .island-scene-effects {
+  display:none!important;
+}

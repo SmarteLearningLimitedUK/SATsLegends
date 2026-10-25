@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowLeft, CircleHelp, LayoutGrid, Music2, Volume2, VolumeX } from 'lucide-react';
+import { ArrowLeft, Lightbulb, HelpCircle, LayoutGrid, Music2, Volume2, VolumeX } from 'lucide-react';
+import { ReferenceArt } from './game-ui/ReferenceScreenArt';
 import { triggerHaptic } from '../haptics';
 import { playGameSound } from '../audio/gameAudio';
 import { GAME_AUDIO_STORAGE_KEY, GAME_HUD_MUSIC_EVENT, GAME_HUD_MUSIC_SYNC_EVENT, GAME_HUD_MUTE_EVENT, GAME_HUD_MUTE_SYNC_EVENT, GAME_MUSIC_STORAGE_KEY } from '../gameHudEvents';
 
 interface GameActionDockProps {
+  referenceSkin?: boolean;
   onBack: () => void;
   onHelp?: () => void;
   onWork?: () => void;
@@ -12,7 +14,7 @@ interface GameActionDockProps {
   compact?: boolean;
   variant?: 'local' | 'global';
 }
-const GameActionDock: React.FC<GameActionDockProps> = ({ onBack, onHelp, onWork, variant = 'local' }) => {
+const GameActionDock: React.FC<GameActionDockProps> = ({ onBack, onHelp, onWork, variant = 'local', referenceSkin = false }) => {
   const [isMuted, setIsMuted] = useState(() => localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true');
   const [isMusicEnabled, setIsMusicEnabled] = useState(() => {
     const saved = localStorage.getItem(GAME_MUSIC_STORAGE_KEY);
@@ -37,23 +39,23 @@ const GameActionDock: React.FC<GameActionDockProps> = ({ onBack, onHelp, onWork,
   if (variant !== 'global') return null;
   const tap = (action: () => void) => { playGameSound('tap', isMuted); triggerHaptic('tap'); action(); };
   return (
-    <nav className="legend-dock-surface" aria-label="Game controls">
-      <button type="button" className="legend-dock-button" data-button-skin="none" data-ui-sound="handled" aria-label="Back" title="Back to islands" onClick={() => tap(onBack)}><ArrowLeft aria-hidden="true" /><span>Back</span></button>
-      {onHelp ? <button type="button" className="legend-dock-button" data-button-skin="none" data-ui-sound="handled" aria-label="How to play" onClick={(event) => { event.currentTarget.focus({ preventScroll: true }); tap(onHelp); }}><CircleHelp aria-hidden="true" /><span>Help</span></button> : null}
-      {onWork ? <button type="button" className="legend-dock-button" data-button-skin="none" data-ui-sound="handled" aria-label="Open on-screen working board" onClick={() => tap(onWork)}><LayoutGrid aria-hidden="true" /><span>Board</span></button> : null}
+    <nav className={`legend-dock-surface${referenceSkin ? ' reference-controls' : ''}`} aria-label="Game controls">
+      <button type="button" className="legend-dock-button" data-button-skin="none" data-ui-sound="handled" aria-label="Back" title="Back to islands" onClick={() => tap(onBack)}>{referenceSkin && <ReferenceArt part="dock-button" />}<ArrowLeft aria-hidden="true" /><span>Back</span></button>
+      {onHelp ? <button type="button" className="legend-dock-button" data-button-skin="none" data-ui-sound="handled" data-game-tips-control aria-label="How to play" aria-haspopup="dialog" title="Rules and tips" onClick={(event) => { event.currentTarget.focus({ preventScroll: true }); tap(onHelp); }}>{referenceSkin && <ReferenceArt part="dock-button" />}{referenceSkin ? <HelpCircle aria-hidden="true" /> : <Lightbulb aria-hidden="true" />}<span>{referenceSkin ? 'Help' : 'Tips'}</span></button> : null}
+      {onWork ? <button type="button" className="legend-dock-button" data-button-skin="none" data-ui-sound="handled" aria-label="Open on-screen working board" onClick={() => tap(onWork)}>{referenceSkin && <ReferenceArt part="dock-button" />}<LayoutGrid aria-hidden="true" /><span>Board</span></button> : null}
       <button type="button" className="legend-dock-button" data-button-skin="none" data-ui-sound="handled" aria-label={isMuted ? 'Unmute audio' : 'Mute audio'} aria-pressed={isMuted} onClick={() => tap(() => {
         const muted = !isMuted;
         setIsMuted(muted);
         window.dispatchEvent(new CustomEvent(GAME_HUD_MUTE_EVENT, { detail: { muted } }));
       })}>
-        {isMuted ? <VolumeX aria-hidden="true" /> : <Volume2 aria-hidden="true" />}<span>Sound</span>
+        {referenceSkin && <ReferenceArt part="dock-button" />}{isMuted ? <VolumeX aria-hidden="true" /> : <Volume2 aria-hidden="true" />}<span>Sound</span>
       </button>
       <button type="button" className="legend-dock-button" data-button-skin="none" data-ui-sound="handled" aria-label={isMusicEnabled ? 'Turn music off' : 'Turn music on'} aria-pressed={isMusicEnabled} onClick={() => tap(() => {
         const enabled = !isMusicEnabled;
         setIsMusicEnabled(enabled);
         window.dispatchEvent(new CustomEvent(GAME_HUD_MUSIC_EVENT, { detail: { enabled } }));
       })}>
-        <Music2 aria-hidden="true" opacity={isMusicEnabled ? 1 : .45} /><span>Music</span>
+        {referenceSkin && <ReferenceArt part="dock-button" />}<Music2 aria-hidden="true" opacity={isMusicEnabled ? 1 : .45} /><span>Music</span>
       </button>
     </nav>
   );

@@ -28,8 +28,6 @@
 .detective-item-icon {width:36px;height:36px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 2px 2px #0006);}
 #root [data-game-set='data_detective'] .recharts-cartesian-axis-tick text {fill:#fff4dc;font-size:calc(16px * var(--game-text-scale, 1.2));font-weight:700;}
 #root [data-game-set='data_detective'] main > section:first-child > div:first-child {background:#072438ed;border-radius:9px;padding:9px 12px;}
-#root [data-game-set='coordinates_quest'] .coordinates-grid-board {margin-inline:auto;border:3px solid #e0b970;background:linear-gradient(135deg,#123d51f5,#062536f5);box-shadow:0 12px 0 #573e2e,0 18px 24px #05243966;}
-#root [data-game-set='coordinates_quest'] .coordinates-grid-board :is(.text-\[10px\],.text-\[11px\]) {font-size:calc(16px * var(--game-text-scale, 1.2));color:#fff4d5;}
 #root [data-game-set='fraction_forge'] .ff-tray {justify-content:center;align-self:center;max-height:360px;gap:14px;border:2px solid #d4a163;background:linear-gradient(145deg,#203a45f5,#071d2cf5);}
 #root [data-game-set='fraction_forge'] .ff-tray-actions {margin-top:6px;}
 #root [data-game-set='fraction_forge'] .ff-controls {margin-top:6px;}
@@ -82,8 +80,6 @@
  #root [data-game-set='formula_forge'] .formula-forge-body {width:min(1100px,100%);align-self:center;}
  #root [data-game-set='formula_forge'] [data-formula-playfield] {min-height:420px;}
  #root [data-game-set='formula_forge'] [data-formula-answers] {align-self:start;}
- #root [data-game-set='coordinates_quest'] .coordinates-grid-board {max-width:510px;max-height:calc(100% - 55px);aspect-ratio:1;width:auto;height:100%;}
- #root [data-game-set='coordinates_quest'] .coordinates-expedition {width:min(510px,100%);}
  #root [data-game-set='graph_grabber'] .graph-grabber-cartesian-chart {height:300px;}
  #root [data-game-set='graph_grabber'] .graph-grabber-spacer {display:none;}
  #root [data-game-set='graph_grabber'] .graph-grabber-stack {max-width:1000px;}

@@ -3,6 +3,13 @@ import { useReducedMotion } from 'motion/react';
 import WellbeingShell from '../WellbeingShell';
 import { WellbeingActivityComponentProps } from '../types';
 import { useWellbeingCompletion } from '../useWellbeingCompletion';
+import {createPortal} from 'react-dom';
+import {HelpCircle} from 'lucide-react';
+import GameplayOrientationGate from '../../components/GameplayOrientationGate';
+import {needsGameRotation} from '../../app/gameOrientation';
+import {WELLBEING_ORIENTATION_EVENT} from '../orientation';
+import {useDialogFocus} from '../../components/game-ui/useDialogFocus';
+import {PondAvatar} from '../../components/game-ui/ReferenceBatchThreeArt';
 
 type Fish = { id: number; x: number; y: number; vx: number; vy: number; color: string };
 type Pad = { id: number; x: number; y: number; targetX: number; targetY: number; placed: boolean };
@@ -33,6 +40,11 @@ const makeFish = (id: number): Fish => ({
 const clamp = (value: number) => Math.max(9, Math.min(91, value));
 
 const PeacefulPond: React.FC<WellbeingActivityComponentProps> = ({ onComplete, onExit }) => {
+  const [viewport,setViewport]=useState(()=>({width:innerWidth,height:innerHeight}));
+  const [helpOpen,setHelpOpen]=useState(false);
+  const helpRef=useDialogFocus(helpOpen,()=>setHelpOpen(false));
+  const rotationRequired=needsGameRotation('landscape',viewport.width,viewport.height);
+  useEffect(()=>{const resize=()=>setViewport({width:innerWidth,height:innerHeight});window.addEventListener('resize',resize);window.dispatchEvent(new CustomEvent(WELLBEING_ORIENTATION_EVENT,{detail:{landscape:true}}));return()=>{window.removeEventListener('resize',resize);window.dispatchEvent(new CustomEvent(WELLBEING_ORIENTATION_EVENT,{detail:{landscape:false}}));};},[]);
   const [pads, setPads] = useState(makeInitialPads);
   const [attentionReady, setAttentionReady] = useState(false);
   const [fish, setFish] = useState(() => Array.from({ length: 16 }, (_, index) => makeFish(index)));
@@ -47,7 +59,7 @@ const PeacefulPond: React.FC<WellbeingActivityComponentProps> = ({ onComplete, o
   const currentPrompt = completeCount < PAD_COUNT ? noticingPrompts[completeCount % noticingPrompts.length] : null;
 
   useEffect(() => {
-    if (reducedMotion || finished) return undefined;
+    if (reducedMotion || finished || rotationRequired || helpOpen) return undefined;
     const interval = window.setInterval(() => {
       setFish((current) => current.map((item) => {
         let vx = item.vx;
@@ -66,7 +78,7 @@ const PeacefulPond: React.FC<WellbeingActivityComponentProps> = ({ onComplete, o
       }));
     }, 110);
     return () => window.clearInterval(interval);
-  }, [finished, pulse, reducedMotion]);
+  }, [finished, pulse, reducedMotion,rotationRequired,helpOpen]);
 
   useEffect(() => { if (completeCount === PAD_COUNT) finish(1200); }, [completeCount, finish]);
   useEffect(() => () => { if (pulseTimer.current !== null) window.clearTimeout(pulseTimer.current); dragRef.current = null; }, []);
@@ -116,14 +128,17 @@ const PeacefulPond: React.FC<WellbeingActivityComponentProps> = ({ onComplete, o
     pulseTimer.current = window.setTimeout(() => { setPulse(null); pulseTimer.current = null; }, 1100);
   };
 
-  return (
+  return (<>
+    {rotationRequired&&<GameplayOrientationGate orientation="landscape" onBack={()=>{cancel();onExit();}}/>}
+    {helpOpen&&createPortal(<div className="reference-pond-help-overlay"><div ref={helpRef} role="dialog" aria-modal="true" aria-label="Peaceful Pond rules"><h2>Peaceful Pond</h2><p>Notice something you can sense around you. Choose “I noticed something”, then tap the matching numbered lily pad or drag it to its ring. Repeat for all ten pads, at your own pace.</p><button type="button" onClick={()=>setHelpOpen(false)}>Back to the pond</button></div></div>,document.body)}
+    <div style={{display:'contents'}} inert={rotationRequired||helpOpen||undefined}>
     <WellbeingShell title="Peaceful Pond" activityId="peaceful_pond" type="Grounding"
       subtitle="Notice something around you, then guide its lily pad into place. Tap a pad or drag it to its numbered ring."
-      purpose="Let each movement connect to something you can sense right now."
       fact="Grounding uses sights, sounds, and touch to bring attention to the present moment."
-      affirmation="No rush. One thing at a time."
       status={finished || completeCount === PAD_COUNT ? 'All ten lily pads are home' : attentionReady ? `Place lily pad ${completeCount + 1} of 10` : `Notice ${currentPrompt?.sense.toLowerCase()} before placing lily pad ${completeCount + 1}`}
       progress={completeCount * 10} onExit={() => { cancel(); onExit(); }}>
+      <div className="reference-pond-top"><PondAvatar/><div><strong>Peaceful Pond</strong><div role="progressbar" aria-label="Lily pads home" aria-valuemin={0} aria-valuemax={10} aria-valuenow={completeCount}><span style={{width:`${completeCount*10}%`}}/></div></div><span>{completeCount}/10</span></div>
+      <button className="reference-pond-help" type="button" onClick={()=>setHelpOpen(true)}><HelpCircle/><span>Help</span></button>
       <div className="wellbeing-scene">
         {currentPrompt && !finished ? <div className="pond-attention" data-pond-sense={currentPrompt?.sense.toLowerCase()}>
           <span className="pond-attention-label">{currentPrompt.sense} · {completeCount + 1} of 10</span>
@@ -134,7 +149,7 @@ const PeacefulPond: React.FC<WellbeingActivityComponentProps> = ({ onComplete, o
           </button>
         </div> : null}
         <div ref={pondRef} className="pond-playfield" data-pond-playfield data-pond-count={PAD_COUNT} onPointerDown={ripple} onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={cancelDrag}>
-          {pads.map((pad) => <div key={'target-' + pad.id} className={'pond-target' + (pad.placed ? ' is-placed' : '')} style={{ left: pad.targetX + '%', top: pad.targetY + '%' }} data-pond-target={pad.id + 1} aria-hidden="true">{pad.id + 1}</div>)}
+          {pads.map((pad) => <div key={'target-' + pad.id} className={'pond-target' + (pad.placed ? ' is-placed' : '')} style={{ left: pad.targetX + '%', top: pad.targetY + '%' }} data-pond-target={pad.id + 1} aria-hidden="true">{pad.placed ? null : pad.id + 1}</div>)}
           {fish.map((item) => (
             <div key={item.id} className="pond-fish" data-wellbeing-fish style={{ left: item.x + '%', top: item.y + '%', transform: item.vx < 0 ? 'scaleX(-1)' : 'none' }} aria-hidden="true">
               <svg viewBox="0 0 48 24"><path d="M10 12 2 3 2 21Z" fill={item.color} stroke="#315d66" strokeWidth="1.5" /><ellipse cx="28" cy="12" rx="17" ry="10" fill={item.color} stroke="#315d66" strokeWidth="1.5" /><path d="M18 6Q27 1 34 6" stroke="#ffffff60" strokeWidth="2" fill="none" /><circle cx="38" cy="10" r="2.5" fill="#f7f2dc" /><circle cx="39" cy="10" r="1.3" fill="#294251" /></svg>
@@ -152,7 +167,7 @@ const PeacefulPond: React.FC<WellbeingActivityComponentProps> = ({ onComplete, o
           {pulse ? <div key={pulse.key} className="pond-ripple" style={{ left: pulse.x + '%', top: pulse.y + '%' }} aria-hidden="true" /> : null}
         </div>
       </div>
-    </WellbeingShell>
+    </WellbeingShell></div></>
   );
 };
 

@@ -6,6 +6,8 @@ import {
   MiniGameShellContractProps,
 } from '../app/gameplaySessionContract';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
+import { ReferenceArt } from '../components/game-ui/ReferenceScreenArt';
+import referenceWizard from '../assets/reference-screens/fox-wizard.png';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import MonsterMindActor, { type MonsterMindReaction } from '../components/game-ui/MonsterMindActor';
 import dojoBackground from '../assets/maps/premium/number-line-ninja.webp';
@@ -430,6 +432,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
         onAction={() => setShowPracticeIntro(false)}
       />
       <SceneEnvironment src={dojoBackground} />
+      <img className="reference-ninja-guide" src={referenceWizard} alt="Fox wizard guide" draggable={false} />
       <div className="absolute inset-0 bg-slate-950/25" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_52%,rgba(56,189,248,0.14),transparent_64%)]" />
 
@@ -441,11 +444,13 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
       >
       <GameQuestionCard
           title="Number Line Ninja"
+          context=""
+          subtitle={question.prompt.split('\n').slice(1).join(' ')}
           className="mx-auto w-[min(88vw,38rem)] rounded-[0.95rem] px-3.5 py-2.5 text-center"
           titleClassName="text-[11px] tracking-[0.28em] md:text-[12px]"
           bodyClassName="mt-1 text-[clamp(0.84rem,1.7vw,0.98rem)] leading-snug md:text-[clamp(0.92rem,1.8vw,1rem)]"
         >
-          {question.prompt}
+          {question.prompt.split('\n')[0]}
         </GameQuestionCard>
       </div>
 
@@ -637,8 +642,9 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
                   }}
                   transition={{ duration: isCorrect ? 0.72 : 0.4, ease: 'easeInOut' }}
                   className="group relative h-[66px] w-[66px] sm:h-[74px] sm:w-[74px]"
-                  style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
+                  style={{ transformStyle: 'preserve-3d', perspective: 1000, '--reference-answer-length': option.length } as React.CSSProperties}
                 >
+                  <ReferenceArt part="blue-answer" />
                   <div
                     className={`absolute inset-0 rounded-full border-[2px] transition-colors ${
                       isSelected

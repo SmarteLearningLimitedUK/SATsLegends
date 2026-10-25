@@ -1,0 +1,40 @@
+/* Give the instrument the full activity height; action controls use the other column. */
+@media (orientation: landscape) and (max-height: 550px) {
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='time_keeper_cove'] .chrono-game .chrono-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+  }
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='time_keeper_cove'] .chrono-game .chrono-playfield {
+    grid-row: 2 / 4;
+    container-type: size;
+  }
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='time_keeper_cove'] .chrono-game .chrono-clock {
+    width: min(100cqw, 100cqh);
+    height: min(100cqw, 100cqh);
+    max-width: 100%;
+  }
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='time_keeper_cove'] .chrono-game .chrono-controls {
+    align-self: center;
+    padding: 8px 4px 28px;
+  }
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='time_keeper_cove'] .chrono-game .chrono-control-group > span {
+    font-size: 12px !important;
+    line-height: 16px;
+  }
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='time_keeper_cove'] .chrono-game .chrono-actions {
+    grid-column: 2;
+    grid-row: 3;
+  }
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='time_keeper_cove'] .chrono-game .chrono-actions button {
+    font-size: 12px !important;
+    min-height: 48px;
+    line-height: 1.15;
+  }
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='time_keeper_cove'] .chrono-game .refinement-feedback[data-tone] {
+    left: 51%;
+    width: 49%;
+    bottom: 54px;
+    font-size: 12px !important;
+    line-height: 16px;
+  }
+}

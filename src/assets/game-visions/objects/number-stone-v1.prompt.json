@@ -1,0 +1,12 @@
+{
+  "kind": "objects",
+  "key": "number-stone",
+  "file": "objects/number-stone-v1.webp",
+  "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-0def55e7-98c0-44e6-b49f-48091e897b35.png",
+  "prompt": "Use case: background-extraction. Extract and faithfully recreate ONE of the carved blue number stones from the lower row in this reference screenshot, but REMOVE the number completely. Exact same style: thick chipped sandstone gold bevels, small moss corners, luminous blue octagonal inset, dark navy blank center. Front view with slight top thickness. Single square stone occupies 90% of square canvas with 5% transparent margin, no ground, no environment, no other objects, no text or numbers. Production transparent sprite, premium sculpted 3D matching reference exactly.",
+  "dimensions": [
+    1254,
+    1254
+  ],
+  "bytes": 655212
+}

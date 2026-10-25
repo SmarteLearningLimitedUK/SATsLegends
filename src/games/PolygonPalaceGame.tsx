@@ -5,6 +5,7 @@ import gameplayBackground from '../assets/maps/premium/polygon-palace.webp';
 import SceneEnvironment from '../components/SceneEnvironment';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
+import './polygon-palace.css';
 
 interface PolygonPalaceGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -577,7 +578,7 @@ const SORT_CRITERIA: SortCriterion[] = [
     prompt: 'Sort this shape by the number of faces',
     trueLabel: '6 faces',
     falseLabel: 'Not 6 faces',
-    minStage: 8,
+    minStage: 4,
     check: (shape) => shape.faces === 6,
   },
   {
@@ -585,7 +586,7 @@ const SORT_CRITERIA: SortCriterion[] = [
     prompt: 'Sort this shape by the number of vertices',
     trueLabel: '8 vertices',
     falseLabel: 'Not 8 vertices',
-    minStage: 8,
+    minStage: 7,
     check: (shape) => shape.vertices === 8,
   },
 ];
@@ -664,6 +665,7 @@ const buildNameQuestion = (shape: ShapeDefinition, stage: number, speedRound: bo
 const buildPropertyQuestion = (shape: ShapeDefinition, stage: number, speedRound: boolean): PolygonQuestion | null => {
   const activeProperties = PROPERTY_POOL.filter((property) => (
     stage >= property.minStage && (property.maxStage === undefined || stage <= property.maxStage)
+    && (shape.kind !== 'solid' || property.id === 'solid' || /^(faces|edges|vertices)-/.test(property.id))
   ));
   const trueProperties = activeProperties.filter((property) => property.check(shape));
   const falseProperties = activeProperties.filter((property) => !property.check(shape));
@@ -746,7 +748,10 @@ const buildCountQuestion = (shape: ShapeDefinition, stage: number, speedRound: b
 };
 
 const buildSortQuestion = (shape: ShapeDefinition, stage: number, speedRound: boolean): PolygonQuestion => {
-  const criteria = SORT_CRITERIA.filter((criterion) => stage >= criterion.minStage);
+  const criteria = SORT_CRITERIA.filter((criterion) => (
+    stage >= criterion.minStage
+    && (shape.kind === 'solid' ? criterion.id.startsWith('sort-solid-') : !criterion.id.startsWith('sort-solid-'))
+  ));
   const criterion = criteria[randomInt(0, criteria.length - 1)];
   const isTrue = criterion.check(shape);
 
@@ -843,7 +848,7 @@ const ShapePreview: React.FC<{
       }}
     >
       <defs>
-        {[['#fff4cd', shape.fill], [shape.fill, shape.fill], [shape.fill, '#132c48']].map(([from, to], index) => <linearGradient key={index} id={`solidFace${index}`} x1="0%" y1="0%" x2="100%" y2="100%"><stop stopColor={from}/><stop offset="1" stopColor={to}/></linearGradient>)}
+        {[['#fff9de', shape.fill], [shape.fill, '#225478'], [shape.fill, '#0d203c']].map(([from, to], index) => <linearGradient key={index} id={`solidFace${index}`} x1="0%" y1="0%" x2="100%" y2="100%"><stop stopColor={from}/><stop offset=".18" stopColor={index===0?'#ffedbd':shape.fill}/><stop offset="1" stopColor={to}/></linearGradient>)}
         <linearGradient id="shapeFill" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor="#f2feff" />
           <stop offset="26%" stopColor={shape.fill} />
@@ -1075,7 +1080,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
       <main
         className={`polygon-palace-scroll relative z-20 flex h-full w-full flex-col items-center overflow-y-auto ${topPaddingClass} px-[max(0.75rem,env(safe-area-inset-left))] pb-3`}
       >
-        <div className="flex h-full w-full max-w-[40rem] min-h-[640px] shrink-0 flex-col gap-3">
+        <div className="polygon-composition flex h-full w-full max-w-[40rem] min-h-[640px] shrink-0 flex-col gap-3">
           <section className="shrink-0">
             <GameQuestionCard
               title={question.speedRound ? 'Polygon Palace: Challenge Mode' : 'Polygon Palace'}
@@ -1086,16 +1091,16 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
             </GameQuestionCard>
           </section>
 
-          <section className="min-h-0 flex-1 rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/54 p-3 shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
+          <section className="polygon-crystal-stage min-h-0 flex-1 rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/54 p-3 shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
             <div className="relative flex h-full min-h-0 flex-1 items-center justify-center rounded-[1.15rem] border border-cyan-100/16 bg-blue-950/36 p-2">
               <div className="flex h-full min-h-0 w-full flex-col items-center justify-center gap-3">
                 <ShapePreview question={question} pulseTone={pulseTone} />
-                {question.shape.kind === 'solid' && <p className="shrink-0 text-center text-base leading-snug text-cyan-50">Dashed lines show hidden edges. Some faces are behind the solid.</p>}
+                {question.shape.kind === 'solid' && <p className="polygon-shape-guidance shrink-0 text-center text-base leading-snug text-cyan-50"><span className="polygon-guidance-full">Dashed lines show hidden edges. Some faces are behind the solid.</span><span className="polygon-guidance-compact">Dashed edges are hidden.</span></p>}
               </div>
             </div>
           </section>
 
-          <section className="shrink-0 rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/56 p-3 shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
+          <section className="polygon-answer-dock shrink-0 rounded-[1.45rem] border border-cyan-100/18 bg-slate-950/56 p-3 shadow-[0_12px_24px_rgba(2,6,23,0.45)]">
             {question.mode === 'name' ? (
               <div className="grid grid-cols-2 gap-2.5">
                 {question.choices.map((choice) => (
@@ -1154,6 +1159,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
                       <button
                         key={choice.id}
                         type="button"
+                        aria-pressed={selected}
                         disabled={isLocked || roundOver}
                         onClick={() => onChoiceTap(choice.id)}
                         className={`rounded-[0.92rem] px-2 py-2 text-left text-[0.77rem] font-bold disabled:opacity-55 ${
@@ -1191,7 +1197,8 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 1.08 }}
-            className={`pointer-events-none absolute left-1/2 top-[calc(env(safe-area-inset-top)+5.2rem)] z-50 -translate-x-1/2 rounded-[1rem] border px-4 py-2 text-center shadow-[0_14px_24px_rgba(2,6,23,0.45)] ${
+            data-polygon-feedback={feedback.tone}
+            className={`polygon-feedback pointer-events-none absolute left-1/2 top-[calc(env(safe-area-inset-top)+5.2rem)] z-50 -translate-x-1/2 rounded-[1rem] border px-4 py-2 text-center shadow-[0_14px_24px_rgba(2,6,23,0.45)] ${
               feedback.tone === 'success'
                 ? 'border-emerald-100/62 bg-emerald-500/28 text-emerald-50'
                 : 'border-rose-100/62 bg-rose-500/30 text-amber-50'

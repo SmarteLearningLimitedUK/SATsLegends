@@ -117,7 +117,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
   const playing = gameState==='playing' && !sessionState?.paused;
   const length = parseDimension(values[0]) ?? baseLength;
   const width = parseDimension(values[1]) ?? baseWidth;
-  const unit = 220 / (Math.max(baseLength,baseWidth) * Math.max(1,currentLevel.targetScale) * 1.5);
+  const unit = 220 / (Math.max(baseLength,baseWidth) * Math.max(1,currentLevel.targetScale));
   const completedLevels = currentLevelIdx + (gameState==='complete'?1:0);
   const finalScore = Math.max(300,900+completedLevels*220+levelId*60-mistakeCount*90);
   const starRating = mistakeCount<=1?3:mistakeCount<=4?2:1;
@@ -174,17 +174,21 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
       <GameQuestionCard context="" title={`Scale Builder · Project ${currentLevelIdx+1} of 5`} className="scale-numeric-question" style={{position:'relative',top:0,transform:'none',width:'100%'}}>
         <span>Original: <strong>{baseLength} × {baseWidth} units</strong></span>
         <span>Scale factor: <strong>×{formatBlueprintValue(currentLevel.targetScale)}</strong></span>
-        <span>Enlarge the blueprint. What are the new lengths?</span>
+        <span>{currentLevel.targetScale < 1 ? 'Reduce' : 'Enlarge'} the blueprint. What are the new lengths?</span>
       </GameQuestionCard>
       <div className="scale-numeric-board-area">
+        <h3 className="scale-blueprint-title">{values.some(Boolean)?'Your blueprint':'Original blueprint'}</h3>
         <ScaleBlueprintBoard shape={currentLevel.shape.type} baseLength={baseLength} baseWidth={baseWidth} length={length} width={width} unit={unit} showBase={showBase} locked={!playing} onResize={(axis,value)=>{setActive(axis);changeAnswer(axis,formatBlueprintValue(value));}}/>
-        <div className="scale-board-caption">Drag the gold handles. Dashed outline = original.</div>
+        <div className="scale-board-footer">
+        <div className="scale-blueprint-measurements" aria-live="polite"><span>Length: <strong>{formatBlueprintValue(length)}</strong></span><span>Width: <strong>{formatBlueprintValue(width)}</strong></span></div>
+        <div className="scale-board-caption" data-game-tip="true">Drag the gold handles. Dashed outline = original.</div>
         <button type="button" className="scale-guide-button" disabled={gameState==='complete'} onClick={()=>setShowBase(n=>!n)} aria-pressed={showBase}>{showBase?'Hide original':'Show original'}</button>
+        </div>
       </div>
       <div data-scale-controls className="scale-numeric-controls">
-        <p className="scale-pad-hint">Choose a length, then use the number pad.</p>
+        <p className="scale-pad-hint" data-game-tip="true">Choose a length, then use the number pad.</p>
         <ScaleNumberPad values={values} active={active} locked={!playing} onActive={setActive} onChange={changeAnswer} onSubmit={verifyScale}/>
-        <div className="scale-numeric-feedback" data-tone={feedback?.type} role="status" aria-live="polite">{feedback?.message ?? 'Enter both answers, then check your blueprint.'}</div>
+        <div className="scale-numeric-feedback" data-game-tip={!feedback || undefined} data-tone={feedback?.type} role="status" aria-live="polite">{feedback?.message ?? 'Enter both answers, then check your blueprint.'}</div>
         <div className="scale-numeric-actions">
           <button type="button" className="ui-button-secondary" disabled={!playing||!values.some(Boolean)} onClick={resetAnswer}>Clear</button>
           <PrimaryButton onClick={verifyScale} disabled={!playing||!result.complete||checkedSignature===signature}>{gameState==='success' ? 'Correct!' : 'Check lengths'}</PrimaryButton>

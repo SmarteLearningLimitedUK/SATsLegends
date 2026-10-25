@@ -4,6 +4,9 @@ import { ArrowRight, Eye, EyeOff, Gem, X } from 'lucide-react';
 import barratt from '../assets/characters/mobile/Barratt/barratt_happy.png';
 import { useFamily } from './FamilyAccount';
 import { appleAuthEnabled, googleAuthEnabled, passkeyAuthEnabled, safeReturnPath, supabase } from './services/supabase';
+import { IS_IOS_APP } from '../platform/nativeApp';
+import { accountReturnUrl } from '../platform/ios/nativeAuthReturn';
+import IOSAccountLayout from '../platform/ios/IOSAccountLayout';
 
 export default function ParentAccount({ mode }: { mode: 'signup' | 'login' | 'forgot' | 'reset' }) {
   const family = useFamily();
@@ -45,7 +48,7 @@ export default function ParentAccount({ mode }: { mode: 'signup' | 'login' | 'fo
     try {
       if (signup) {
         const result = await supabase.auth.signUp({ email, password, options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+          emailRedirectTo: accountReturnUrl(`/auth/callback?next=${encodeURIComponent(next)}`),
           data: { report_emails: data.get('reports') === 'on' },
         } });
         if (result.error) throw result.error;
@@ -53,7 +56,7 @@ export default function ParentAccount({ mode }: { mode: 'signup' | 'login' | 'fo
         if (result.data.session) navigate(next, { replace: true });
         else setMessage('Check your email to confirm your parent account, then log in to choose your subscription.');
       } else if (mode === 'forgot') {
-        const result = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/reset-password` });
+        const result = await supabase.auth.resetPasswordForEmail(email, { redirectTo: accountReturnUrl('/reset-password') });
         if (result.error) throw result.error;
         form.reset();
         form.querySelector<HTMLInputElement>('input[name="email"]')?.blur();
@@ -94,6 +97,24 @@ export default function ParentAccount({ mode }: { mode: 'signup' | 'login' | 'fo
     finally { setBusy(false); }
   }
   const title = signup ? 'Your family’s adventure starts here.' : mode === 'forgot' ? 'Reset your password.' : mode === 'reset' ? 'Choose a new password.' : 'Welcome back.';
+  const accountForm = <form onSubmit={handleSubmit}>
+        {mode !== 'reset' && <label>Parent email address<input name="email" type="email" autoComplete="email" placeholder="you@example.com" required maxLength={254} disabled={!family.configured || busy} /></label>}
+        {mode !== 'forgot' && <label>Password<span className="website-password-field"><input name="password" type={showPassword ? 'text' : 'password'} autoComplete={signup || mode === 'reset' ? 'new-password' : 'current-password'} placeholder={signup || mode === 'reset' ? 'At least 10 characters' : 'Your password'} minLength={mode === 'login' ? 1 : 10} maxLength={128} required disabled={!family.configured || busy} /><button type="button" aria-label={showPassword ? 'Hide password' : 'Show password'} aria-pressed={showPassword} onClick={() => setShowPassword(!showPassword)}>{showPassword ? <EyeOff size={20} /> : <Eye size={20} />}</button></span></label>}
+        {signup && <><label className="family-checkbox"><input type="checkbox" required disabled={!family.configured || busy} />I’m the child’s parent or guardian and I’m creating my own account.</label><label className="family-checkbox"><input type="checkbox" name="reports" defaultChecked disabled={!family.configured || busy} />Email me my child’s progress on Sundays at 3 pm and Wednesdays at 4 pm, UK time. I can turn these emails off in my account.</label></>}
+        <button className="website-button website-button-gold" type="submit" disabled={!family.configured || busy}>{busy ? 'Please wait…' : signup ? 'Create parent account' : mode === 'forgot' ? 'Send reset link' : mode === 'reset' ? 'Save new password' : 'Log in'}<ArrowRight size={19} /></button>
+      </form>;
+  if (IS_IOS_APP) return <IOSAccountLayout title={signup ? 'Create your account' : mode === 'forgot' ? 'Reset your password' : mode === 'reset' ? 'Choose a new password' : 'Welcome back'}>
+    <p>{signup ? 'A parent or guardian account keeps each learner’s progress safe.' : mode === 'forgot' ? 'Enter your parent email. After resetting your password from the email, return here to sign in.' : mode === 'reset' ? 'Choose a password for your shared SATs Legends account.' : 'Sign in with the same email and password you use on the website.'}</p>
+    {!family.configured && <p role="alert">Account services are unavailable. Please try again later.</p>}
+    {message && <p ref={messageRef} role="status">{message}</p>}
+    {query.get('reset') === 'success' && <p role="status">Password updated. Sign in to continue.</p>}
+    {error && <p role="alert">{error}</p>}
+    {accountForm}
+    <nav className="ios-account-links" aria-label="Sign-in options">
+      {mode === 'login' && <Link to="/forgot-password">Forgot password?</Link>}
+      <Link to={`${signup || mode === 'forgot' || mode === 'reset' ? '/login' : '/signup'}?next=${encodeURIComponent(next)}`}>{signup || mode === 'forgot' || mode === 'reset' ? 'Back to sign in' : 'Create parent account'}</Link>
+    </nav>
+  </IOSAccountLayout>;
   return <main className="website-account-main website-container" id="website-main">
     <section className="website-account-world"><p className="website-eyebrow"><Gem size={17} /> SATs Legends parent account</p><h1>Big adventures.<br /><span>Little legends.</span></h1><p>One parent login for your child’s adventures.<br /> Saved progress you can follow, in one place.</p>
       <svg className="website-account-character" viewBox="81 179 254 315" role="img" aria-label="Barratt is ready for an adventure">
@@ -107,13 +128,8 @@ export default function ParentAccount({ mode }: { mode: 'signup' | 'login' | 'fo
       {message && <p ref={messageRef} className={`family-notice${mode === 'forgot' ? ' family-notice-dismissible' : ''}`} role="status">{message}{mode === 'forgot' && <button className="family-notice-dismiss" type="button" aria-label="Dismiss password reset message" onClick={() => setMessage('')}><X size={18} /></button>}</p>}
       {query.get('reset') === 'success' && <p className="family-notice" role="status">Your password has been updated. Please log in.</p>}
       {error && <p className="family-error" role="alert">{error}</p>}
-      <form onSubmit={handleSubmit}>
-        {mode !== 'reset' && <label>Parent email address<input name="email" type="email" autoComplete="email" placeholder="you@example.com" required maxLength={254} disabled={!family.configured || busy} /></label>}
-        {mode !== 'forgot' && <label>Password<span className="website-password-field"><input name="password" type={showPassword ? 'text' : 'password'} autoComplete={signup || mode === 'reset' ? 'new-password' : 'current-password'} placeholder={signup || mode === 'reset' ? 'At least 10 characters' : 'Your password'} minLength={mode === 'login' ? 1 : 10} maxLength={128} required disabled={!family.configured || busy} /><button type="button" aria-label={showPassword ? 'Hide password' : 'Show password'} aria-pressed={showPassword} onClick={() => setShowPassword(!showPassword)}>{showPassword ? <EyeOff size={20} /> : <Eye size={20} />}</button></span></label>}
-        {signup && <><label className="family-checkbox"><input type="checkbox" required disabled={!family.configured || busy} />I’m the child’s parent or guardian and I’m creating my own account.</label><label className="family-checkbox"><input type="checkbox" name="reports" defaultChecked disabled={!family.configured || busy} />Email me my child’s progress on Sundays at 3 pm and Wednesdays at 4 pm, UK time. I can turn these emails off in my account.</label></>}
-        <button className="website-button website-button-gold" type="submit" disabled={!family.configured || busy}>{busy ? 'Please wait…' : signup ? 'Create parent account' : mode === 'forgot' ? 'Send reset link' : mode === 'reset' ? 'Save new password' : 'Log in'}<ArrowRight size={19} /></button>
-      </form>
-      {(mode === 'signup' || mode === 'login') && (googleAuthEnabled || appleAuthEnabled || passkeyAuthEnabled) && <div className="website-alternative-auth">
+      {accountForm}
+      {!IS_IOS_APP && (mode === 'signup' || mode === 'login') && (googleAuthEnabled || appleAuthEnabled || passkeyAuthEnabled) && <div className="website-alternative-auth">
         <p className="website-auth-divider"><span>Or continue securely</span></p>
         {(googleAuthEnabled || appleAuthEnabled) && <>
           <label className="family-checkbox website-social-consent"><input type="checkbox" checked={socialConsent} onChange={event => setSocialConsent(event.target.checked)} disabled={busy} />I’m the parent or guardian creating or accessing this family account.</label>

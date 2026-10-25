@@ -4,6 +4,9 @@ import { Pause, Play } from 'lucide-react';
 import WellbeingShell from '../WellbeingShell';
 import { WellbeingActivityComponentProps } from '../types';
 import { useWellbeingCompletion } from '../useWellbeingCompletion';
+import GameplayOrientationGate from '../../components/GameplayOrientationGate';
+import { needsGameRotation } from '../../app/gameOrientation';
+import { WELLBEING_ORIENTATION_EVENT } from '../orientation';
 
 const paces = [
   { id: 'easy', label: 'Easy', inMs: 3000, outMs: 4000 },
@@ -21,11 +24,20 @@ const flowers = [
 type BreathStep = 'ready' | 'in' | 'out' | 'checkin';
 
 const BreathingBloom: React.FC<WellbeingActivityComponentProps> = ({ onComplete, onExit }) => {
+  useEffect(()=>{window.dispatchEvent(new CustomEvent(WELLBEING_ORIENTATION_EVENT,{detail:{landscape:true}}));return()=>{window.dispatchEvent(new CustomEvent(WELLBEING_ORIENTATION_EVENT,{detail:{landscape:false}}));};},[]);
   const [paceId, setPaceId] = useState<(typeof paces)[number]['id']>('steady');
   const [step, setStep] = useState<BreathStep>('ready');
   const [completedCycles, setCompletedCycles] = useState(0);
   const [remainingMs, setRemainingMs] = useState(0);
-  const [paused, setPaused] = useState(false);
+  const [manuallyPaused, setPaused] = useState(false);
+  const [viewport, setViewport] = useState(() => ({width: window.innerWidth, height: window.innerHeight}));
+  useEffect(() => {
+    const resize = () => setViewport({width: window.innerWidth, height: window.innerHeight});
+    window.addEventListener('resize', resize);
+    return () => window.removeEventListener('resize', resize);
+  }, []);
+  const rotationRequired = needsGameRotation('landscape', viewport.width, viewport.height);
+  const paused = manuallyPaused || rotationRequired;
   const reducedMotion = useReducedMotion();
   const { finished, finish, cancel } = useWellbeingCompletion(onComplete);
   const pace = paces.find((option) => option.id === paceId) ?? paces[1];
@@ -79,12 +91,13 @@ const BreathingBloom: React.FC<WellbeingActivityComponentProps> = ({ onComplete,
       : step === 'checkin' ? `Cycle ${completedCycles} of ${totalCycles} complete. Continue when ready.`
       : running ? `Cycle ${completedCycles + 1} of ${totalCycles}` : 'Start whenever you are ready';
 
-  return (
+  return (<>
+    {rotationRequired && <GameplayOrientationGate orientation="landscape" onBack={() => {cancel(); onExit();}} />}
+    <div style={{display:'contents'}} inert={rotationRequired || undefined}>
     <WellbeingShell title="Breath Bloom" activityId="breathing_bloom" type="Breathing"
       subtitle="Choose a comfortable pace. Begin each breath when you are ready."
-      purpose="Let your garden grow with each completed guided breath."
       fact="A longer, gentle exhale can help some people feel more settled. Never force a breath or hold it."
-      affirmation="Your pace is enough." status={status} progress={progress} paused={paused}
+      status={status} progress={progress} paused={paused}
       onExit={() => { cancel(); onExit(); }}>
       <div className="wellbeing-scene" data-breathing-phase={finished ? 'complete' : step}>
         <div className="wellbeing-pace-picker" role="group" aria-label="Choose a comfortable visual pace">
@@ -121,7 +134,7 @@ const BreathingBloom: React.FC<WellbeingActivityComponentProps> = ({ onComplete,
           </button> : null}
         </div>
       </div>
-    </WellbeingShell>
+    </WellbeingShell></div></>
   );
 };
 

@@ -20,12 +20,13 @@
 .share-party-scene { position: absolute; inset: 0; z-index: 10; pointer-events: none; }
 .share-party-table { position: absolute; z-index: 2; object-fit: fill; filter: drop-shadow(0 10px 10px #05192e66); }
 .share-party-guest { position: absolute; z-index: 1; transform: translateX(-50%); isolation: isolate; }
-.share-party-chair { position: absolute; left: 10%; top: 55%; width: 80%; height: 105%; z-index: -1; }
+.share-party-chair { position: absolute; left: 6%; top: 34%; width: 88%; height: 88%; z-index: -1; }
 .share-party-guest-idle, .share-party-guest-reaction, .share-party-portrait { width: 100%; height: 100%; }
 .share-party-guest-idle { transform-origin: center bottom; animation: share-guest-breathe 4.5s var(--guest-delay) ease-in-out infinite; }
+.share-party-guest-reaction { transform-origin: center bottom; }
 .share-party-guest-reaction[data-has-cake='true'] { animation: share-guest-thanks 550ms ease-out both; }
 .share-party-guest-reaction[data-celebrating='true'] { animation: share-guest-cheer 700ms ease-in-out both; }
-.share-party-portrait { overflow: hidden; filter: drop-shadow(0 4px 4px #021b3155); }
+.share-party-portrait { display: block; overflow: hidden; filter: drop-shadow(0 4px 4px #021b3155); }
 .share-party-sparks { position: absolute; inset: 0; overflow: hidden; }
 .share-party-sparks i { position: absolute; top: 35%; width: 4px; height: 4px; border-radius: 50%; background: #ffe9a0; box-shadow: 0 0 8px #ffca68; animation: share-firefly 9s ease-in-out infinite; }
 .share-splitter-pieces { position: absolute; z-index: 20; inset: 0; pointer-events: none; }
@@ -48,7 +49,7 @@
 .share-splitter-plate:focus-visible, .share-splitter-source:focus-visible { outline: 3px solid #fff1bc; outline-offset: 4px; }
 .share-splitter-plated-slice { position: absolute; left: 50%; top: 48%; object-fit: contain; filter: drop-shadow(0 2px 1px #6b392766); }
 .share-splitter-plate-count {
-  position: absolute; z-index: 3; right: 2%; bottom: -4%; min-width: 25px; height: 25px;
+  position: absolute; z-index: 3; right: 2%; bottom: 2%; min-width: 25px; height: 25px;
   display: grid; place-items: center; border: 1px solid #e3c382; border-radius: 50%;
   background: #0a3846; color: #fff5d7; font-size: 16px; line-height: 1;
 }
@@ -69,8 +70,8 @@
 .share-splitter-source[aria-pressed='true'] { border-color: #fff0b7; box-shadow: inset 0 0 0 2px #fff0b744, 0 0 0 3px #ffdb9155; }
 #root .share-splitter-source:disabled { opacity: 1; }
 .share-splitter-source > img { position: absolute; left: 8%; top: 14%; height: 75%; width: 25%; object-fit: contain; pointer-events: none; }
-.share-party-tray-label { font-size: clamp(12px, 1.25vw, 18px); text-transform: uppercase; letter-spacing: .08em; line-height: 1.15; }
-.share-party-tray-count { font-size: clamp(28px, 3.6vw, 48px); line-height: 1; font-variant-numeric: tabular-nums; }
+#root .share-party-tray-label { display: block; flex-shrink: 0; margin: 0; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; line-height: 16px; }
+#root .share-party-tray-count { display: block; flex-shrink: 0; margin: 0; font-size: 30px; line-height: 32px; font-variant-numeric: tabular-nums; }
 #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-game-island] [data-game-set] .share-splitter-actions {
   position: absolute; z-index: 40; bottom: 6px; left: 50%; right: auto;
   width: min(620px, calc(100% - 24px)) !important; transform: translateX(-50%);
@@ -88,9 +89,9 @@
 .share-splitter-drag { position: absolute; z-index: 70; pointer-events: none; }
 .share-splitter-drag img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 6px 5px #432a2466); }
 .share-party-paused .share-party-scene * { animation-play-state: paused !important; }
-@keyframes share-guest-breathe { 0%,100% { transform: translateY(0) rotate(-.4deg); } 50% { transform: translateY(-4px) rotate(.4deg); } }
-@keyframes share-guest-thanks { 0%,100% { transform: translateY(0); } 45% { transform: translateY(-8px) rotate(2deg); } }
-@keyframes share-guest-cheer { 0%,100% { transform: translateY(0); } 30%,70% { transform: translateY(-12px) scale(1.035); } 50% { transform: translateY(-3px); } }
+@keyframes share-guest-breathe { 0%,100% { transform: scale(1) rotate(-.4deg); } 50% { transform: scale(1.012, 1.02) rotate(.4deg); } }
+@keyframes share-guest-thanks { 0%,100% { transform: rotate(0); } 45% { transform: rotate(2deg) scale(1.025); } }
+@keyframes share-guest-cheer { 0%,100% { transform: scale(1); } 30%,70% { transform: scale(1.035) rotate(-2deg); } 50% { transform: scale(1.02) rotate(2deg); } }
 @keyframes share-firefly { 0%,100% { opacity: 0; transform: translate(0,30px); } 30%,70% { opacity: .7; } 50% { transform: translate(14px,-20px); } }
 @media (max-width: 699px) {
   .share-splitter-mission { width: calc(100% - 12px); }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Leaf } from 'lucide-react';
 import { WELLBEING_SCENES } from './scenes';
 import { WellbeingActivityId } from './types';
 import './wellbeing.css';
@@ -44,7 +44,7 @@ const WellbeingShell: React.FC<WellbeingShellProps> = ({
       <header className="wellbeing-header">
         <div className="wellbeing-heading">
           <span className="wellbeing-eyebrow">{activityId ? `Calm Grove · ${type ?? 'A moment for you'}` : 'A moment for you'}</span>
-          <h1>{title}</h1>
+          <h1>{activityId==='breathing_bloom'?<>Breath <span className="reference-bloom-emphasis">Bloom</span></>:title}</h1>
           {subtitle ? <p className="wellbeing-how-to" data-wellbeing-instructions>{subtitle}</p> : null}
         </div>
         <button type="button" onClick={onExit} className="wellbeing-exit" data-button-skin="none" data-wellbeing-exit aria-label="Back to adventure">
@@ -54,6 +54,7 @@ const WellbeingShell: React.FC<WellbeingShellProps> = ({
       <div className="wellbeing-content">{children}</div>
       {status || purpose || fact || affirmation || progress !== undefined ? (
         <footer className="wellbeing-footer">
+          {activityId==='breathing_bloom'&&<span className="reference-bloom-leaf" aria-hidden="true"><Leaf/></span>}
           <div className="wellbeing-footer-progress">
             {status ? <p data-wellbeing-status role="status" aria-live="polite">{status}</p> : null}
             {progress !== undefined ? (

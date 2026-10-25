@@ -1,0 +1,17 @@
+/* Only opted-in helper copy moves into the shared lightbulb panel. */
+#root .app-viewport[data-game-tips-enabled='true'] [data-game-tip='true'] {display:none!important;}
+.legend-round-tips {margin-top:18px;text-align:left;}
+.legend-round-tips h3 {margin:0 0 8px;color:#ffe3a2;font-size:16px;}
+.legend-round-tips ul {margin:0;padding-left:20px;}
+.legend-round-tips li {margin-bottom:8px;color:#eef6ef;font-size:15px;line-height:1.5;}
+/* Keep actual rules visible when the phone is sideways. Decoration must not
+   consume the scrollport; the close and return controls remain reachable. */
+@media (max-height: 500px) and (orientation: landscape) {
+  .legend-dialog[data-dialog-kind='tips'] {max-width:640px;padding:12px 18px;}
+  .legend-dialog[data-dialog-kind='tips'] .legend-dialog-emblem {display:none;}
+  .legend-dialog[data-dialog-kind='tips'] h2 {font-size:22px;line-height:1.2;margin:4px 0 8px;}
+  .legend-dialog[data-dialog-kind='tips'] .legend-briefing-copy {font-size:15px;line-height:1.35;}
+  .legend-dialog[data-dialog-kind='tips'] .legend-briefing-steps {margin-top:10px;gap:8px;}
+  .legend-dialog[data-dialog-kind='tips'] .legend-briefing-steps li {font-size:14px;line-height:1.4;}
+  .legend-dialog[data-dialog-kind='tips'] > div:last-child {margin-top:10px;}
+}

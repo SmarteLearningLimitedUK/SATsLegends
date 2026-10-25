@@ -1,13 +1,17 @@
 import { useGameSave } from '../website/GameSaveContext';
+import { playGameSound } from '../audio/gameAudio';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { buildSatsPaper, markMission, type SatsMission } from '../systems/content/satsAdventure';
-import { getMissionFieldChoices } from '../systems/content/satsAnswerChoices';
+import SatsAnswerFields from '../components/game-ui/SatsAnswerFields';
 import type { MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import SatsMissionVisual from '../components/game-ui/SatsMissionVisual';
+import { revisionAnswerSummary } from '../components/game-ui/satsRevisionFeedback';
+import CorePaperFrame from '../components/game-ui/CorePaperFrame';
+import '../components/game-ui/core-paper-presentation.css';
 import SatsConstructionControl, { isConstructionMission } from '../components/game-ui/SatsConstructionControl';
 import SatsTapWorkpad from '../components/game-ui/SatsTapWorkpad';
 import { useDialogFocus } from '../components/game-ui/useDialogFocus';
@@ -39,33 +43,44 @@ interface MockCheckpoint {
   workpad: Record<string, string>;
   draft: string[];
   draftWorkpad: string;
+  pausedAt?: number | null;
 }
 // Reasoning selection changed; old saved indices must not reopen on a different mission.
-const checkpointKey = (gameType: string, levelId: number) => `sats-legends-mock-checkpoint-v${gameType === 'crystal_core' ? 1 : 2}:${gameType}:${levelId}`;
+const checkpointKey = (gameType: string, levelId: number) => `sats-legends-mock-checkpoint-v4:${gameType}:${levelId}`;
 function readCheckpoint(key: string): MockCheckpoint | null {
   try {
     const saved = JSON.parse(sessionStorage.getItem(key) || 'null') as Partial<MockCheckpoint> | null;
     if (saved?.version !== 1 || !Number.isFinite(saved.seed) || !Number.isFinite(saved.deadline)
       || !Number.isInteger(saved.index) || typeof saved.answers !== 'object' || !saved.answers
       || typeof saved.workpad !== 'object' || !saved.workpad || !Array.isArray(saved.draft)
-      || !Object.values(saved.answers).every(value => Array.isArray(value) && value.every(entry => typeof entry === 'string'))
+      || !Object.values(saved.answers).every(value => Array.isArray(value) && value.every(entry => typeof entry === 'string' || entry === null))
       || !Object.values(saved.workpad).every(value => typeof value === 'string')
-      || !saved.draft.every(value => typeof value === 'string') || typeof saved.draftWorkpad !== 'string') return null;
-    return saved as MockCheckpoint;
+      || !saved.draft.every(value => typeof value === 'string' || value === null) || typeof saved.draftWorkpad !== 'string'
+      || (saved.pausedAt != null && !Number.isFinite(saved.pausedAt))) return null;
+    // Older final-answer-only arithmetic drafts can contain JSON nulls for
+    // a hidden method field. Preserve their answers when resuming the paper.
+    return {
+      ...saved,
+      answers: Object.fromEntries(Object.entries(saved.answers).map(([id, values]) => [id, values.map(value => value ?? '')])),
+      draft: saved.draft.map(value => value ?? ''),
+    } as MockCheckpoint;
   } catch { return null; }
 }
-const BossEncounterGame: React.FC<Props> = ({ gameType, levelId, sessionEvents, onVictory, onGameOver }) => {
+const BossEncounterGame: React.FC<Props> = ({ gameType, levelId, sessionState, sessionEvents, onVictory, onGameOver }) => {
   const gameSave = useGameSave();
   const historyKey = gameSave?.storageKey ? `${HISTORY_KEY}:${gameSave.storageKey}` : HISTORY_KEY;
   const baseCheckpointKey = checkpointKey(gameType, levelId);
   const key = gameSave?.storageKey ? `${baseCheckpointKey}:${gameSave.storageKey}` : baseCheckpointKey;
   const checkpoint = useMemo(() => readCheckpoint(key), [key]);
+  const restoredDeadline = useMemo(() => checkpoint
+    ? checkpoint.deadline + (checkpoint.pausedAt != null ? Math.max(0, Date.now() - checkpoint.pausedAt) : 0)
+    : 0, [checkpoint]);
   const seed = useMemo(() => checkpoint?.seed ?? Date.now(), [checkpoint]);
   const paper = useMemo(() => buildSatsPaper(gameType, seed), [gameType, seed]);
   const savedIndex = checkpoint ? Math.max(0, Math.min(checkpoint.index, paper.missions.length - 1)) : 0;
   const restoredAnswers = checkpoint ? { ...checkpoint.answers, [paper.missions[savedIndex].id]: checkpoint.draft } : {};
   const restoredWorkpad = checkpoint ? { ...checkpoint.workpad, [paper.missions[savedIndex].id]: checkpoint.draftWorkpad } : {};
-  const [phase, setPhase] = useState<'intro' | 'play' | 'review'>(checkpoint ? checkpoint.deadline > Date.now() ? 'play' : 'review' : 'intro');
+  const [phase, setPhase] = useState<'intro' | 'play' | 'review'>(checkpoint ? restoredDeadline > Date.now() ? 'play' : 'review' : 'intro');
   const [index, setIndex] = useState(savedIndex);
   const [answers, setAnswers] = useState<Record<string, string[]>>(restoredAnswers);
   const [workpad, setWorkpad] = useState<Record<string, string>>(restoredWorkpad);
@@ -75,8 +90,11 @@ const BossEncounterGame: React.FC<Props> = ({ gameType, levelId, sessionEvents, 
   const [finishOpen, setFinishOpen] = useState(false);
   const [pulse, setPulse] = useState(0);
   const [notice, setNotice] = useState('');
-  const [seconds, setSeconds] = useState(checkpoint ? Math.max(0, Math.ceil((checkpoint.deadline - Date.now()) / 1000)) : paper.seconds);
-  const deadline = useRef(checkpoint?.deadline ?? 0);
+  const [seconds, setSeconds] = useState(checkpoint ? Math.max(0, Math.ceil((restoredDeadline - Date.now()) / 1000)) : paper.seconds);
+  const deadline = useRef(restoredDeadline);
+  const pausedAt = useRef<number | null>(null);
+  const clockPaused = Boolean(sessionState?.paused);
+  const clockPausedRef = useRef(clockPaused); clockPausedRef.current = clockPaused;
   const answersRef = useRef(answers); answersRef.current = answers;
   const draftRef = useRef(draft); draftRef.current = draft;
   const workpadRef = useRef(draftWorkpad); workpadRef.current = draftWorkpad;
@@ -87,16 +105,28 @@ const BossEncounterGame: React.FC<Props> = ({ gameType, levelId, sessionEvents, 
   const reduced = useReducedMotion();
   const panelRef = useDialogFocus(navOpen || finishOpen, () => { setNavOpen(false); setFinishOpen(false); });
   const q = paper.missions[index];
+  // The paper owns an absolute deadline, so the shared shell's pause must
+  // preserve that deadline as well as stop its visible countdown.
+  useEffect(() => {
+    if (phase !== 'play') { pausedAt.current = null; return; }
+    const now = Date.now();
+    if (clockPaused) {
+      if (pausedAt.current === null) pausedAt.current = now;
+    } else if (pausedAt.current !== null) {
+      deadline.current += Math.max(0, now - pausedAt.current);
+      pausedAt.current = null;
+    }
+  }, [phase, clockPaused]);
   useEffect(() => {
     try {
       if (phase === 'review') sessionStorage.removeItem(key);
       else if (phase === 'play') sessionStorage.setItem(key, JSON.stringify({
-        version: 1, seed, deadline: deadline.current, index, answers, workpad, draft, draftWorkpad,
+        version: 1, seed, deadline: deadline.current, pausedAt: pausedAt.current, index, answers, workpad, draft, draftWorkpad,
       } satisfies MockCheckpoint));
     } catch { /* The mock remains playable if tab storage is unavailable. */ }
-  }, [key, seed, phase, index, answers, workpad, draft, draftWorkpad]);
+  }, [key, seed, phase, index, answers, workpad, draft, draftWorkpad, clockPaused]);
   const completed = paper.missions.filter(q => answers[q.id]?.some(v => v.trim())).length;
-  const score = paper.missions.reduce((sum, mission) => sum + markMission(mission, answers[mission.id] ?? []), 0);
+  const score = paper.missions.reduce((sum, mission) => sum + markMission(mission, answers[mission.id] ?? [], workpad[mission.id] ?? ''), 0);
   const clearTarget = Math.ceil(paper.marks * CORE_CLEAR_RATIO);
   const cleared = score >= clearTarget;
   const attemptId = `${gameType}:${seed}:${deadline.current}`;
@@ -116,11 +146,11 @@ const BossEncounterGame: React.FC<Props> = ({ gameType, levelId, sessionEvents, 
   }, [phase, paper.number, paper.marks, paper.seconds, historyKey]);
   const revisionPriorities = useMemo(() => {
     return paper.missions.map((mission, index) => ({
-      mission, index, marksToReview: mission.marks - markMission(mission, answers[mission.id] ?? []),
+      mission, index, marksToReview: mission.marks - markMission(mission, answers[mission.id] ?? [], workpad[mission.id] ?? ''),
     })).filter(({ marksToReview }) => marksToReview > 0)
       .sort((a, b) => b.marksToReview - a.marksToReview || a.index - b.index)
       .slice(0, 4);
-  }, [paper.missions, answers]);
+  }, [paper.missions, answers, workpad]);
   const save = () => {
     setAnswers(old => ({ ...old, [q.id]: draft }));
     setWorkpad(old => ({ ...old, [q.id]: draftWorkpad }));
@@ -134,6 +164,7 @@ const BossEncounterGame: React.FC<Props> = ({ gameType, levelId, sessionEvents, 
   useEffect(() => {
     if (phase !== 'play') return;
     const tick = () => {
+      if (clockPausedRef.current) return;
       const remaining = Math.max(0, Math.ceil((deadline.current - Date.now()) / 1000));
       setSeconds(remaining);
       window.dispatchEvent(new CustomEvent(CLOCK_EVENT, { detail: { timeLeft: remaining, totalTime: paper.seconds } }));
@@ -149,6 +180,8 @@ const BossEncounterGame: React.FC<Props> = ({ gameType, levelId, sessionEvents, 
   useEffect(() => {
     if (phase !== 'review' || emitted.current) return;
     emitted.current = true;
+    // Marking the whole paper emits many answer events; announce review once.
+    playGameSound('complete');
     for (const mission of paper.missions) {
       const full = markMission(mission, answersRef.current[mission.id] ?? []) === mission.marks;
       const event = { type: full ? 'correct_answer' as const : 'incorrect_answer' as const, metadata: { assessment: true, mission: mission.id } };
@@ -182,7 +215,12 @@ const BossEncounterGame: React.FC<Props> = ({ gameType, levelId, sessionEvents, 
       localStorage.setItem(historyKey, JSON.stringify(history));
     } catch { /* Review remains available when storage is unavailable. */ }
   }, [phase, score, answers, workpad, paper, seconds, attemptId, historyKey]);
-  const update = (value: string, fieldIndex: number) => setDraft(old => { const next = [...old]; next[fieldIndex] = value; return next; });
+  const update = (value: string, fieldIndex: number) => setDraft(old => {
+    const next = [...old];
+    while (next.length <= fieldIndex) next.push('');
+    next[fieldIndex] = value;
+    return next;
+  });
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
     if (!draft.some(v => v.trim())) { setNotice('Choose an answer, or choose Later to return to this mission.'); return; }
@@ -201,17 +239,17 @@ const BossEncounterGame: React.FC<Props> = ({ gameType, levelId, sessionEvents, 
     }
   };
   const reviewMission = (mission: SatsMission) => {
-    const earned = markMission(mission, answers[mission.id] ?? []);
+    const earned = markMission(mission, answers[mission.id] ?? [], workpad[mission.id] ?? '');
     return <details key={mission.id} id={`sats-review-${mission.id}`} className="sats-review-item"><summary>Mission {paper.missions.indexOf(mission) + 1}: {mission.prompt} — {earned}/{mission.marks}</summary>
       <p>{mission.prompt}</p><SatsMissionVisual visual={mission.visual} />
-      <p>Your answer: {(answers[mission.id] ?? []).filter(Boolean).join(' · ') || 'Not answered'}</p>
-      <p><strong>Solution:</strong> {mission.fields.map(f => `${f.label}: ${f.answer}`).join(' · ')}</p><p>{mission.explanation}</p>
+      <p>Your answer: {revisionAnswerSummary(mission, answers[mission.id] ?? [])}</p>
+      <p><strong>Solution:</strong> {revisionAnswerSummary(mission)}</p><p>{mission.explanation}</p>
       {workpad[mission.id] ? <p>Your on-screen steps: {workpad[mission.id]}</p> : null}
     </details>;
   };
   return <div className={`sats-mock${isConstructionMission(q.id) ? ' sats-mock--construction' : ''}`} data-sats-paper={paper.number} data-sats-mission={q.id} data-sats-phase={phase}>
     <GameplaySceneBackdrop gameType={gameType} />
-    <PracticeIntroPopup kind="mock" open={phase === 'intro'} title={`Paper ${paper.number}: ${paper.title}`} body={`${paper.seconds / 60} minutes · ${paper.marks} marks · ${paper.missions.length} missions. Choose answers on screen and open the tap-to-plan board for any working. Save answers to charge the Core. Skip and return whenever you need; mistakes cannot end the run. Your answers are reviewed after you finish.`} actionLabel="Launch mock adventure" onAction={() => { deadline.current = Date.now() + paper.seconds * 1000; setPhase('play'); }} />
+    <PracticeIntroPopup kind="mock" open={phase === 'intro'} title={`Paper ${paper.number}: ${paper.title}`} body={`${paper.seconds / 60} minutes · ${paper.marks} marks · ${paper.missions.length} missions. Enter your answers using the answer pad or keyboard. Use the working board for calculations. Save answers to charge the Core. Skip and return whenever you need; mistakes cannot end the run. Your answers are reviewed after you finish.`} actionLabel="Launch mock adventure" onAction={() => { deadline.current = Date.now() + paper.seconds * 1000; setPhase('play'); }} />
     {phase === 'review' ? <div className="sats-review" tabIndex={0} aria-label="Mock adventure review">
       <h2>Core run complete</h2><p className="sats-score">{score} / {paper.marks} marks</p>
       <p role="status">{cleared ? 'Core clear earned!' : `${clearTarget} marks charges the Core clear. Your run is still saved and ready to review.`} This 50% target is an in-game milestone, not an official SATs pass mark.</p>
@@ -232,18 +270,15 @@ const BossEncounterGame: React.FC<Props> = ({ gameType, levelId, sessionEvents, 
           </motion.svg>
           <div className="sats-charge-readout"><span>{completed}/{paper.missions.length}<span className="sats-charge-suffix"> crystals charged</span></span><div><motion.i initial={false} animate={{ width: `${completed / paper.missions.length * 100}%` }} transition={{ duration: .4 }} /></div></div>
         </div>
-        <div className="sats-model"><svg className="core-mission-frame" viewBox="0 0 760 360" preserveAspectRatio="none" aria-hidden="true"><path d="M24 24H736V336H24Z" fill="none" stroke="#c4a875" strokeWidth="5"/><path d="M40 38H720V322H40Z" fill="none" stroke="#70dcd1" strokeWidth="2" strokeDasharray="30 10"/>{[0,1,2,3,4,5].map(i=><g key={i}><path d={`M${i<3?14:726} ${72+(i%3)*82}l10 -18 10 18 -10 18Z`} fill={completed/paper.missions.length>(i/6)?'#b5fff0':'#277489'} stroke="#ffdfa4" strokeWidth="2"/></g>)}</svg>{isConstructionMission(q.id)
-          ? <SatsConstructionControl mission={q} value={draft[0] ?? ''} onChange={(value) => update(value, 0)} />
-          : <SatsMissionVisual visual={q.visual} />}</div>
+        <div className="sats-model"><CorePaperFrame paper={paper.number} title={paper.title} charged={completed / paper.missions.length} /><div className="sats-model-canvas">{isConstructionMission(q.id)
+          ? <SatsConstructionControl mission={q} value={draft[0] ?? ''} onChange={(value) => update(value, 0)} part="model" />
+          : <SatsMissionVisual visual={q.visual} />}</div></div>
         <div className="sats-mission-tools"><button type="button" onClick={() => { save(); setNavOpen(true); }}>Mission list</button><button type="button" onClick={() => { save(); setFinishOpen(true); }}>Finish run</button></div>
       </div>
       <form className="sats-response answer-choice-surface" onSubmit={submit}>
         {isConstructionMission(q.id)
-          ? <p className="sats-construct-readout" role="status">{draft[0] ? `Current build: ${draft[0]}` : 'Use the controls above to build the answer.'}</p>
-          : <div className="sats-fields">{q.fields.map((field, fieldIndex) => <fieldset key={`${q.id}-${fieldIndex}`}>
-            <legend>{field.label}</legend>
-            <div className="sats-answer-options">{getMissionFieldChoices(q, fieldIndex).map(choice => <button type="button" key={choice} aria-pressed={draft[fieldIndex] === choice} onClick={() => update(choice, fieldIndex)}>{choice}</button>)}</div>
-          </fieldset>)}</div>}
+          ? <SatsConstructionControl mission={q} value={draft[0]??''} onChange={value=>update(value,0)} part="controls" />
+          : <div key={q.id}><SatsAnswerFields mission={q} values={draft} onChange={update} /></div>}
         <SatsTapWorkpad value={draftWorkpad} onChange={setDraftWorkpad} />
         <div className="sats-response-actions"><button type="button" className="ui-button-secondary" onClick={() => go((index + 1) % paper.missions.length)}>Later</button><button className="ui-button-primary" type="submit">Save & continue</button></div>
         <span role="status" className="sats-notice">{notice}</span>

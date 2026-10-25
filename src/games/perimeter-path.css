@@ -1,0 +1,40 @@
+/* Accessible sequential checking shares the answer column, not the diagram's
+   tightly packed edge labels. It never submits a perimeter answer. */
+.perimeter-response-tools {
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  min-width:0;
+  min-height:0;
+  gap:6px;
+}
+.perimeter-edge-review {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:2px 8px;
+  align-items:center;
+  width:100%;
+  min-height:44px;
+  padding:6px 10px;
+  border:1px solid #b7d9ba;
+  border-radius:10px;
+  background:#0a2c40f5;
+  color:#fff7d5;
+  text-align:left;
+}
+.perimeter-edge-review > span {font-size:12px;line-height:1.2;font-weight:650;}
+.perimeter-edge-review > strong {grid-column:2;grid-row:1 / 3;font-size:15px;line-height:1.2;}
+.perimeter-edge-review > small {font-size:11px;line-height:1.2;color:#c7e6da;}
+.perimeter-edge-review:focus-visible {outline:3px solid #ffe29b;outline-offset:2px;}
+.perimeter-edge-review:disabled {opacity:.65;}
+@media (orientation:landscape) {
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-game .perimeter-response-tools {
+  grid-column:2;
+  grid-row:2;
+  align-self:center;
+ }
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-game .perimeter-responses {
+  width:100%;
+  margin:0;
+ }
+}

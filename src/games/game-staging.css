@@ -21,7 +21,6 @@
 /* Each installation uses its own materials and field mark; surrounding artwork stays in charge. */
 [data-game-set='place_value_panic'] .pvp-stone-panel {background:linear-gradient(145deg,#15394be8,#192b41f0);border-color:#e0c58d;}
 [data-game-set='graph_grabber'] .graph-grabber-board,[data-game-set='line_graph_lab'] .line-graph-board {border-radius:12px;}
-[data-game-set='scale_builder'] .scale-numeric-board-area {border-radius:16px;background:linear-gradient(145deg,#0c253759,#274c5b22);}
 [data-game-set='number_line_ninja'] [data-stage-surface] {border-radius:15px;}
 #root [data-stage-surface].game-stage-positioned {position:relative !important;inset:auto !important;}
 .game-set-atmosphere {position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;}

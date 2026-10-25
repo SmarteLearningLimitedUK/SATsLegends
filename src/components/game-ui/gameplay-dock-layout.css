@@ -1,0 +1,50 @@
+/* Gameplay owns two physical rows: the playable region and the utility dock.
+   The illustration remains full-bleed behind both. Dock growth and the iPhone
+   home-indicator inset therefore reduce the play area instead of covering it. */
+#root .app-viewport.screen-gameplay > [data-unified-minigame-hud='true'][data-hud-variant='gameplay'] {
+  display:contents !important;
+}
+#root .app-viewport.screen-gameplay > [data-unified-minigame-hud='true'] > .legend-hud-top-anchor {
+  z-index:120;
+}
+#root .app-viewport.screen-gameplay > [data-unified-minigame-hud='true'] > [data-testid='shared-bottom-hud'] {
+  position:relative !important;inset:auto !important;z-index:120;
+  flex:0 0 auto;width:100%;padding-top:8px;
+}
+#root .app-viewport.screen-gameplay > .app-screen-content {
+  flex:1 1 0%;min-height:0;
+}
+#root .app-viewport.screen-gameplay > .app-screen-content .game-shell-host {
+  height:100% !important;max-height:100% !important;
+  --shared-minigame-reserved-bottom:0px !important;
+}
+#root .app-viewport.screen-gameplay > .app-screen-content .game-shell-host > .game-shell-contract > .structured-game-layout {
+  padding-bottom:0 !important;
+}
+
+/* Migrated games use physical HUD rows and one safe rectangle. Scenery can
+   still bleed to the screen edge; maths and controls live inside this box. */
+#root .app-viewport.screen-gameplay[data-game-layout='flow'] {
+  --game-safe-top:env(safe-area-inset-top,0px);
+  --game-safe-right:env(safe-area-inset-right,0px);
+  --game-safe-bottom:env(safe-area-inset-bottom,0px);
+  --game-safe-left:env(safe-area-inset-left,0px);
+  box-sizing:border-box;
+  padding:var(--game-safe-top) var(--game-safe-right) var(--game-safe-bottom) var(--game-safe-left)!important;
+}
+#root .app-viewport.screen-gameplay[data-game-layout='flow'] > [data-unified-minigame-hud] > .legend-hud-top-anchor {
+  position:relative!important;inset:auto!important;order:0;flex:0 0 auto;
+  width:100%;padding:5px 6px 4px!important;
+}
+#root .app-viewport.screen-gameplay[data-game-layout='flow'] > .app-screen-content {order:1;}
+#root .app-viewport.screen-gameplay[data-game-layout='flow'] > [data-unified-minigame-hud] > [data-testid='shared-bottom-hud'] {
+  order:2;padding:6px 6px 0!important;
+}
+#root .app-viewport.screen-gameplay[data-game-layout='flow'] .game-shell-host {
+  --shared-minigame-hud-reserved-top:0px;
+  --shared-minigame-reserved-bottom:0px;
+}
+#root .app-viewport.screen-gameplay[data-game-layout='flow'] > .app-screen-content .game-shell-host > .game-shell-contract > .structured-game-layout {padding-top:0!important;}
+html[data-app-target='ios'] .iphone-game-stage-unbounded:has([data-game-layout='flow']) {
+  left:0;width:100%;
+}

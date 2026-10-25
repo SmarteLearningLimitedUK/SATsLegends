@@ -1,0 +1,14 @@
+/* Activity-specific staging keeps varied silhouettes on real scene surfaces. */
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='area_architect'] .area-room-game{width:69%;max-width:none;margin:0 28% 0 3%;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='area_architect'] .area-room-progress{position:static;align-self:flex-start;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='area_architect'] .vision-companion--stage[data-helper-pose]{left:auto;right:1%;width:25%;height:64%;bottom:3%;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='coordinates_quest'] .coordinates-quest-layout{width:100%;margin:0;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='coordinates_quest'] .vision-companion--stage[data-helper-pose]{left:auto;right:1%;width:24%;height:62%;bottom:9%;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set]:is([data-vision-game='area_architect'],[data-vision-game='coordinates_quest']) .vision-companion--stage[data-helper-pose]>.vision-character{transform:scaleX(-1);}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='rotation_relay'] .vision-companion--stage[data-helper-pose]{left:0;right:auto;width:20%;height:66%;bottom:9%;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='conversion_canyon'] .vision-companion--stage[data-helper-pose]{left:1%;right:auto;width:22%;height:58%;bottom:12%;}
+@media(orientation:landscape) and (max-height:550px){
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='conversion_canyon'] .vision-companion--stage[data-helper-pose]{bottom:0%;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='area_architect'] .vision-companion--stage[data-helper-pose]{width:25%;height:67%;bottom:0%;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='coordinates_quest'] .vision-companion--stage[data-helper-pose]{height:65%;bottom:8%;}
+}

@@ -1,51 +1,65 @@
-@media (max-width: 420px) and (max-height: 650px) {
-  #root .game-screen-layout:has(.line-graph-main) {
-    padding-bottom: 0 !important;
-  }
+/* Reserve a bounded question, readable plot, and visible answer area. */
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-main {width:76%;margin-left:22%;height:100%;min-height:0;padding:6px;overflow:hidden;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-spacer {display:none;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-board {display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;align-items:stretch;height:100%;min-height:0;max-width:none;gap:10px;padding:0;background:none!important;border:0;box-shadow:none!important;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-question {grid-column:1;grid-row:1;min-width:0;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-mission {display:flex;justify-content:space-between;gap:8px;padding:3px 8px;margin-bottom:4px;border-radius:4px;background:#112b3a;color:#fff0c7;font-size:12px;font-weight:750;line-height:16px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-mission span:first-child {text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .game-question-card {position:relative!important;inset:auto!important;transform:none!important;width:100%;margin:0!important;padding:10px 14px!important;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .game-question-context {display:none;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab [data-question-copy] {font-size:20px!important;line-height:1.25!important;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .question-subtitle {font-size:14px!important;line-height:1.3!important;margin-top:5px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-plot {grid-column:1;grid-row:2;display:flex;flex-direction:column;min-width:0;min-height:0;padding:18px 25px 20px;background:var(--vision-desert-frame) center/100% 100% no-repeat!important;border:0;box-shadow:none;backdrop-filter:none;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-chart-title {flex-shrink:0;display:flex;justify-content:center;gap:8px;text-align:center;font-size:14px;line-height:18px;font-weight:750;color:#fff4d8;background:#112b3a;border-radius:4px;padding-inline:6px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-chart {height:auto!important;flex:1;min-height:0;padding:0;overflow:hidden;background:#0d2434!important;border:0;border-radius:5px;box-shadow:none;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-chart .recharts-text {font-size:16px!important;fill:#f8f6e9!important;stroke:none!important;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-side {grid-column:1;grid-row:3;display:flex;flex-direction:column;gap:7px;min-width:0;min-height:0;padding:8px;background:#112b3af5;border:1px solid #bfa570;border-radius:12px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-answer-instruction {font-size:14px;font-weight:650;line-height:1.25;color:#f8f2dc;text-align:center;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-side .answer-choice-surface {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;background:none;padding:0;border:0;box-shadow:none;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-side button {min-height:44px;padding:8px!important;margin:0;font-size:16px;line-height:1.15;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-side button span {font-size:17px!important;line-height:1.1;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-next:not(.line-graph-next--visible) {display:none;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-next--visible {min-height:0;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-main--success .answer-choice-surface {display:none;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-answer--wrong {border-color:#fda4af!important;background:#6a2338!important;color:#fff!important;}
 
-  #root .line-graph-main {
-    padding-bottom: calc(env(safe-area-inset-bottom) + 2rem) !important;
-  }
-
-  #root .line-graph-board .game-question-card-title-strip {
-    display: none;
-  }
-
-  #root .line-graph-chart {
-    height: 13.5rem !important;
-  }
-
-  #root .line-graph-side .answer-choice-surface {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 3px;
-  }
-
-  #root .line-graph-side .answer-choice-surface button {
-    min-width: 0;
-    min-height: 44px;
-    padding-inline: 2px;
-  }
-
-  #root .line-graph-side .answer-choice-surface button span {
-    font-size: calc(16px * var(--game-text-scale, 1.2));
-    white-space: nowrap;
-  }
-
-  #root .line-graph-next:not(.line-graph-next--visible),
-  #root .line-graph-main--success .answer-choice-surface,
-  #root .line-graph-side > div:last-child:not(.line-graph-next) {
-    display: none;
-  }
-
-  #root .line-graph-answer--wrong {
-    border-color: #fb7185;
-    background: #881337;
-    color: #fff1f2;
-  }
+@media (orientation:landscape) and (max-height:550px) {
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-main {padding:3px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-board {grid-template-columns:minmax(0,1.6fr) minmax(140px,1fr);grid-template-rows:auto minmax(0,1fr);gap:5px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-question {grid-column:1 / -1;grid-row:1;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-mission {font-size:10px;line-height:12px;padding:2px 6px;margin-bottom:3px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .game-question-card {padding:5px 8px!important;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab [data-question-copy] {font-size:14px!important;line-height:16px!important;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .question-subtitle {display:none;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-plot {grid-column:1;grid-row:2;padding:6px 12px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-chart-title {justify-content:space-between;font-size:10px;line-height:13px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-chart .recharts-text {font-size:11px!important;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-chart .recharts-yAxis .recharts-label {display:none;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-side {grid-column:2;grid-row:2;justify-content:center;gap:5px;padding:5px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-side .answer-choice-surface {grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-answer-instruction {font-size:11px;line-height:13px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-side button span {font-size:13px!important;}
 }
-@media (min-width:900px) and (min-height:700px) {
-  #root .line-graph-board { max-width:1050px; }
-  #root .line-graph-spacer { display:none; }
-  #root .line-graph-main { justify-content:center; }
-  #root .line-graph-chart { height:clamp(300px,40vh,420px) !important; }
+
+@media (max-width:550px) and (orientation:portrait) {
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-main {width:100%;margin-left:0;padding:5px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-mission span:last-child {display:none;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab [data-question-copy] {font-size:16px!important;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .question-subtitle {display:none;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-side .answer-choice-surface {grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+
+@media (orientation:landscape) and (max-height:550px) {
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-main:has([data-line-plot-submit]) .line-graph-board {grid-template-columns:minmax(0,1fr) 195px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-main:has([data-line-plot-submit]) .answer-choice-surface {grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;}
+}
+
+#root .line-graph-lab .line-graph-chart-title span:last-child {display:none;}
+@media(orientation:landscape) and (max-height:550px) {#root .line-graph-lab .line-graph-chart-title span:last-child {display:inline;}}
+/* Reclaim the blank answer-column space for labelled graph data on short phones. */
+@media (orientation:landscape) and (max-height:550px) {
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-board {grid-template-columns:minmax(0,1fr) minmax(176px,.48fr);}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-chart-title {font-size:12px;line-height:16px;flex-wrap:wrap;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-chart .recharts-text {font-size:13px!important;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-lab .line-graph-side {align-self:end;}
 }

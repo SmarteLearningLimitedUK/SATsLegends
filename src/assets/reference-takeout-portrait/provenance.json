@@ -1,0 +1,18 @@
+{
+  "tool": "Built-in image_gen",
+  "reference": "reference.jpg",
+  "assets": [
+    {
+      "key": "scene",
+      "prompt": "Create the CLEAN BACKGROUND PLATE for the attached portrait mobile game reference, closely preserve this exact warm richly detailed illustrated fantasy take-out restaurant and its vertical composition. Portrait 9:16 image. Sunlit window at left, warm wooden beams, hanging copper pendant lamps, copper pots and shelves at right, rich emerald and gold touches, tiled terracotta floor and gingham foreground table corners. The central kitchen zone between 24% and 52% down is clear for live characters and stove. The lower half is open warm restaurant floor with softly defocused foreground produce framing only the edges. REMOVE ALL text, labels, signs, chalkboard writing, digits, game HUD, UI frames, buttons, food choice panels, progress bars, characters, monsters, hero, front stove and pans. Fill those removed areas naturally with continuous kitchen background, never blank rectangles. Preserve the supplied image's exquisite hand painted 3D storybook finish, lighting, palette, depth and camera. No interface, no typography, no people or animals.",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a15aa4-c510-7e53-b8e1-c4b9888c4aaa\\exec-5e282da2-991e-47b5-8b6c-c6d2e969900a.png",
+      "destination": "kitchen.png"
+    },
+    {
+      "key": "chef",
+      "prompt": "Make a polished transparent-background isolated character sprite from the deer hero cooking in the attached reference. Preserve the exact cute orange deer archer hero: big expressive green eyes, antlers, green cloak, leather adventurer tunic, little quiver. Three-quarter view facing right, looking down and smiling while actively stirring a pot just in front of him with a long wooden spoon held in his right hand, other hand poised near the pot. Full character standing with boots visible, medium upright pose, compact antlers. Do NOT draw the pot, stove, floor, kitchen, scenery, text or interface; only the deer hero and his wooden spoon. The pot and range will be a separate interactive layer in front of his lower torso. Storybook high-end 3D illustrated game art precisely consistent with reference. Crisp cutout edge, transparent background, complete silhouette, no cropping.",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a15aa4-c510-7e53-b8e1-c4b9888c4aaa\\exec-d2531403-bee0-4357-8c46-a27f57f91d86.png",
+      "destination": "chef.png"
+    }
+  ]
+}

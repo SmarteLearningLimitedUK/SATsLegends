@@ -17,6 +17,7 @@
   animation:legend-map-current 11s ease-in-out infinite alternate;
 }
 .legend-map-brand-header { position:absolute; z-index:30; left:5%; top:0; width:90%; aspect-ratio:1995 / 788; pointer-events:none; }
+.legend-map-island-label {position:absolute;z-index:2;bottom:-4px;left:50%;transform:translateX(-50%);width:max-content;max-width:180px;padding:3px 7px;border:1px solid #f4d58b88;border-radius:7px;background:#082b45ed;color:#fff6d9;font-size:clamp(11px,1.2vw,16px);font-weight:700;line-height:1.2;text-align:center;pointer-events:none;}
 .legend-map-brand { display:block; width:100%; height:100%; object-fit:contain; pointer-events:none; }
 .legend-map-island-sprite {
   position:absolute; inset:0; display:block; overflow:hidden; pointer-events:none;

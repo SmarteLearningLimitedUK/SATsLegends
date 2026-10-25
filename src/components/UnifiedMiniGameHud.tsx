@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { BookOpen, Flame, Heart } from 'lucide-react';
+import { BookOpen, Flame, Heart, Timer } from 'lucide-react';
+import { isReferenceGame, ReferenceArt } from './game-ui/ReferenceScreenArt';
 import { CHARACTER_AVATARS, DEFAULT_AVATAR_ID } from '../assets/characters';
 import GameActionDock from './GameActionDock';
 import { LEVEL_TIMERS_DISABLED } from '../app/testingFlags';
 
 interface UnifiedMiniGameHudProps {
+  referenceKey?: string;
   avatarId?: string;
   assessment?: boolean;
   timeLeft: number;
@@ -29,7 +31,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
   avatarId, timeLeft, totalTime, hidden = false, hideTimer = false,
   hideTopBar = false, lives = 3, onBack, onHelp, onWork, title = 'SATs Legends',
   levelLabel = 'Adventure', streak = 0, isPractice = false,
-  variant = 'gameplay', showActions = true, bottomContent, assessment = false,
+  variant = 'gameplay', showActions = true, bottomContent, assessment = false, referenceKey,
 }) => {
   const avatar = CHARACTER_AVATARS.find((entry) => entry.id === avatarId)
     ?? CHARACTER_AVATARS.find((entry) => entry.id === DEFAULT_AVATAR_ID)
@@ -46,15 +48,17 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
   const showTimer = !hideTimer && (assessment ? Boolean(mockClock) : !LEVEL_TIMERS_DISABLED);
   const progress = Math.max(0, Math.min(1, totalTime > 0 ? timeLeft / totalTime : 0));
   if (hidden) return null;
+  const referenceGame = isReferenceGame(referenceKey) ? referenceKey : undefined;
 
   return (
-    <div data-unified-minigame-hud="true" className="pointer-events-none absolute inset-0 z-[120]">
+    <div data-unified-minigame-hud="true" data-hud-variant={variant} className="pointer-events-none absolute inset-0 z-[120]">
       {hideTopBar ? null : (
-        <div className="absolute inset-x-0 top-0 flex justify-center" style={{
+        <div className="legend-hud-top-anchor absolute inset-x-0 top-0 flex justify-center" style={{
           paddingTop: 'calc((env(safe-area-inset-top) + 0.35rem) / var(--game-stage-scale, 1))',
           paddingLeft: '0.4rem', paddingRight: '0.4rem',
         }}>
-          <div className="legend-hud-bar" data-testid="shared-top-hud">
+          <div className={`legend-hud-bar${referenceGame ? ' reference-hud' : ''}`} data-testid="shared-top-hud">
+            {referenceGame && <ReferenceArt part="hud" game={referenceGame} />}
             <div className="legend-hud-avatar"><img src={avatar?.portrait || avatar?.image} alt={avatar?.name || 'Your hero'} draggable={false} /></div>
             <div className="legend-hud-mission">
               <div className="legend-hud-label">{isPractice ? 'Warm-up mission' : levelLabel}</div>
@@ -74,7 +78,8 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
                 )
               ) : null}
               <span className="legend-hud-streak" aria-live={assessment ? 'off' : 'polite'} aria-atomic="true">
-                {!assessment && streak > 1 ? <><Flame size={13} aria-hidden="true" />{streak} in a row</> : showTimer ? assessment ? `${Math.floor(timeLeft / 60)}:${String(timeLeft % 60).padStart(2, '0')}` : `${Math.max(0, Math.floor(timeLeft))}s` : null}
+                {referenceGame && showTimer && <Timer aria-hidden="true" />}
+                {!referenceGame && !assessment && streak > 1 ? <><Flame size={13} aria-hidden="true" />{streak} in a row</> : showTimer ? assessment ? `${Math.floor(timeLeft / 60)}:${String(timeLeft % 60).padStart(2, '0')}` : `${Math.max(0, Math.floor(timeLeft))}s` : null}
               </span>
             </div>
           </div>
@@ -88,7 +93,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
             paddingLeft: '0.35rem', paddingRight: '0.35rem',
           }}>
             <div className="pointer-events-auto max-w-[calc(100vw-0.7rem)] overflow-hidden">
-              {bottomContent ?? (onBack ? <GameActionDock onBack={onBack} onHelp={onHelp} onWork={onWork} compact variant="global" /> : null)}
+              {bottomContent ?? (onBack ? <GameActionDock onBack={onBack} onHelp={onHelp} onWork={onWork} compact variant="global" referenceSkin={Boolean(referenceGame || referenceKey === 'island_1' || referenceKey === 'breathing_bloom' || referenceKey === 'peaceful_pond')} /> : null)}
             </div>
           </div>
         </>
