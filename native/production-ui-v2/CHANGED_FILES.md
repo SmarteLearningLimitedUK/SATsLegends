@@ -1,0 +1,99 @@
+# Changed files for the production UI brief
+
+Compared with the saved source baseline, excluding changes that already existed when this brief began.
+
+- src/app/gameOrientation.ts — modified
+- src/App.tsx — modified
+- src/components/game-ui/AngleWorkingDiagram.tsx — new
+- src/components/game-ui/companion-staging.css — modified
+- src/components/game-ui/core-paper-presentation.css — modified
+- src/components/game-ui/GamePauseMenu.tsx — new
+- src/components/game-ui/reference-batch-three.css — modified
+- src/components/game-ui/reference-batch-two.css — modified
+- src/components/game-ui/reference-screen-layout.css — modified
+- src/components/game-ui/reference-takeout-portrait.css — modified
+- src/components/game-ui/sats-adventure.css — modified
+- src/components/game-ui/SatsAnswerFields.tsx — modified
+- src/components/game-ui/ViewportQuestion.tsx — modified
+- src/components/GameActionDock.tsx — modified
+- src/components/UnifiedMiniGameHud.tsx — modified
+- src/components/world-map/reference-world-map.css — new
+- src/components/world-map/ReferenceWorldMap.tsx — modified
+- src/design/production-landscape-scenes.css — new
+- src/design/production-proof-scenes.css — new
+- src/design/production-scene-compositions.css — new
+- src/design/production-tokens.css — modified
+- src/design/production-ui-v2.css — new
+- src/design/restored-fantasy-materials.css — new
+- src/games/AngleArenaGame.tsx — modified
+- src/games/change-counter-shop.css — modified
+- src/games/data-detective.css — modified
+- src/games/fraction-match.css — modified
+- src/games/FractionMatchGame.tsx — modified
+- src/games/line-graph-lab.css — modified
+- src/games/OrderOpsArenaGame.tsx — modified
+- src/games/PerimeterPathGame.tsx — modified
+- src/games/potion-playable-layout.css — modified
+- src/games/presentation-quality.css — modified
+- src/games/review-layout-fixes.css — modified
+- src/games/review-polish.css — modified
+- src/games/TakeOutRushGame.tsx — modified
+- src/games/vision-action-compositions.css — modified
+- src/games/vision-board-compositions.css — modified
+- src/games/vision-compositions.css — modified
+- src/games/vision-instrument-compositions.css — modified
+- src/games/vision-workshop-compositions.css — modified
+- src/games/visionScene.ts — modified
+- src/main.tsx — modified
+- src/platform/ios/ios-account.css — modified
+- src/platform/ios/IOSAccountLayout.tsx — modified
+- src/platform/ios/IOSAppRoot.tsx — modified
+- src/screens/adventure-settings.css — modified
+- src/screens/AdventureSettings.tsx — modified
+- src/screens/player-summary.css — new
+- src/screens/PlayerProfile.tsx — modified
+- src/screens/WorldMap.tsx — modified
+- src/wellbeing/integration/wellbeingRewards.ts — modified
+
+Additional assets, native configuration and QA files:
+
+- native/ios/App/App/Info.plist
+- native/production-rebuild/visual-source-exceptions.json
+- native/production-rebuild/game-inventory.json
+- src/assets/production-ui-v2/food-burger_meal.svg
+- src/assets/production-ui-v2/food-ribs_plate.svg
+- src/assets/production-ui-v2/food-berry_dessert.svg
+- src/assets/production-ui-v2/food-salad_bowl.svg
+- src/assets/production-ui-v2/food-rice_bowl.svg
+- src/assets/production-ui-v2/food-pizza_slice.svg
+- src/assets/production-ui-v2/food-hotdog_combo.svg
+- src/assets/production-ui-v2/food-roast_chicken.svg
+- src/assets/production-ui-v2/food-fries.svg
+- src/assets/production-ui-v2/coin-copper.svg
+- src/assets/production-ui-v2/coin-silver.svg
+- src/assets/production-ui-v2/coin-gold.svg
+- src/assets/production-ui-v2/coin-heptagon.svg
+- src/assets/production-ui-v2/rocket-fantasy-v2.webp
+- scripts/production-content-guard.mjs
+- scripts/verify-production-visual-boundaries.mjs
+- scripts/capture-production-rebuild.mjs
+- scripts/capture-production-entry.mjs
+- scripts/verify-production-ui-v2-blockers.mjs
+- scripts/full-campaign-playtest.mjs
+- scripts/playtest-full-core-papers.mjs
+- scripts/qa/core-playtest-actions.mjs
+- scripts/qa/release-account-fixture.mjs
+- scripts/verify-production-v2-special-games.mjs
+- scripts/verify-production-v2-entry.mjs
+- scripts/verify-production-v2-results.mjs
+- scripts/verify-restored-conversion.mjs
+- native/graphics-restore/HANDOVER.md
+- scripts/verify-production-v2-utilities.mjs
+- scripts/verify-production-v2-motion.mjs
+- scripts/verify-production-v2-safe-area.mjs
+- scripts/verify-production-v2-angle-rounds.mjs
+- scripts/finalize-production-v2-review.mjs
+- scripts/build-production-v2-review.mjs
+- scripts/build-production-v2-contact-sheets.py
+
+Documentation and screenshots are under native/production-ui-v2/ and qa-artifacts/production-ui-v2/. Temporary build/diagnostic logs remain in .tmp/.

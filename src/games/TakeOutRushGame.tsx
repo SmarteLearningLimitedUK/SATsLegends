@@ -753,6 +753,9 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
             serving={isResolvingOrder && feedback?.tone === 'success'} />
         </section>
 
+          <div className={`rush-feedback${feedback?.tone === 'error' ? ' is-error' : ''}`} data-feedback-active={Boolean(feedback)} role="status" aria-live="polite">
+            {feedback?.text || (Combo > 0 ? 'Keep the combo alive.' : 'Choose portions to match the ticket.')}
+          </div>
         <div className="rush-responses" data-takeout-responses>
           <motion.div className={`rush-counter${overTarget ? ' is-overfilled' : ''}`} data-takeout-tray
             animate={{ x: 0, y: 0 }}>
@@ -779,9 +782,6 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
               disabled={!isPresent || isResolvingOrder || roundFinished || sharedLivesBlocked || activeConstraints.bannedIds.has(item.id)}>
               <FoodSprite item={item} /><strong>{asDisplayFraction(item.value)}</strong>
             </button>)}
-          </div>
-          <div className={`rush-feedback${feedback?.tone === 'error' ? ' is-error' : ''}`} data-feedback-active={Boolean(feedback)} role="status" aria-live="polite">
-            {feedback?.text || (Combo > 0 ? 'Keep the combo alive.' : 'Choose portions to match the ticket.')}
           </div>
           <div className="rush-actions">
             <button type="button" onClick={clearTray} disabled={!isPresent || !selectedIds.length || isResolvingOrder || roundFinished || sharedLivesBlocked} className="ui-button-secondary">Reset tray</button>

@@ -4,7 +4,7 @@ import {loadEnv} from 'vite';
 import {installReleaseAccountFixture} from './qa/release-account-fixture.mjs';
 process.env.VITE_SUPABASE_URL=loadEnv('ios',process.cwd(),'VITE_').VITE_SUPABASE_URL;
 process.env.LEGEND_QA_FETCH_FIXTURE='1';
-const phase=process.env.QA_PHASE||'before',out=`qa-artifacts/production-rebuild/${phase}/entry`,base='http://127.0.0.1:3025';
+const phase=process.env.QA_PHASE||'before',out=`${process.env.QA_OUT_ROOT||'qa-artifacts/production-rebuild'}/${phase}/entry`,base=process.env.QA_BASE||'http://127.0.0.1:3025';
 await mkdir(out,{recursive:true});const browser=await chromium.launch(),results=[];
 const keys=new Set((process.env.QA_ENTRY_KEYS||'').split(',').filter(Boolean));
 if(keys.size){try{results.push(...JSON.parse(await readFile(out+'/report.json')).filter(row=>!keys.has(row.key)));}catch{}}

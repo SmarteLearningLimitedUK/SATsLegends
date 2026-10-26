@@ -1,0 +1,591 @@
+{
+  "source": "USER_BRIEF.md",
+  "release": "Local candidate; no new TestFlight upload. Browser validation does not certify an iOS release.",
+  "games": [
+    {
+      "key": "place_value_panic",
+      "name": "Place Value Panic",
+      "orientation": "portrait",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "playtest/ledger.json"
+    },
+    {
+      "key": "number_line_ninja",
+      "name": "Number Line Ninja",
+      "orientation": "landscape",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "playtest/ledger.json"
+    },
+    {
+      "key": "prime_pop",
+      "name": "Prime Pop",
+      "orientation": "portrait",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "playtest/ledger.json"
+    },
+    {
+      "key": "rounding_rocket",
+      "name": "Rounding Rocket",
+      "orientation": "portrait",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "playtest/ledger.json"
+    },
+    {
+      "key": "maths_vs_zombies",
+      "name": "Maths vs Zombies",
+      "orientation": "landscape",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "playtest/ledger.json"
+    },
+    {
+      "key": "take_out_rush",
+      "name": "Take-Out Rush",
+      "orientation": "portrait",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "special-playtest/results.json"
+    },
+    {
+      "key": "fraction_forge",
+      "name": "Fraction Forge",
+      "orientation": "landscape",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "special-playtest/results.json"
+    },
+    {
+      "key": "match3_equivalence",
+      "name": "Match Mastery",
+      "orientation": "portrait",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "blockers/results.json"
+    },
+    {
+      "key": "percent_power",
+      "name": "Percent Power",
+      "orientation": "portrait",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "playtest/ledger.json"
+    },
+    {
+      "key": "simplify_sprint",
+      "name": "Simplify Sprint",
+      "orientation": "landscape",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "playtest/ledger.json"
+    },
+    {
+      "key": "angle_arena",
+      "name": "Angle Arena",
+      "orientation": "portrait",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "angle-rounds/results.json"
+    },
+    {
+      "key": "polygon_palace",
+      "name": "Polygon Palace",
+      "orientation": "portrait",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "polygon-retest/ledger-focused.json"
+    },
+    {
+      "key": "area_architect",
+      "name": "Area Architect",
+      "orientation": "portrait",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "playtest/ledger.json"
+    },
+    {
+      "key": "rotation_relay",
+      "name": "Transformation Station",
+      "orientation": "landscape",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "playtest/ledger.json"
+    },
+    {
+      "key": "coordinates_quest",
+      "name": "Coordinates Quest",
+      "orientation": "portrait",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "playtest/ledger.json"
+    },
+    {
+      "key": "conversion_canyon",
+      "name": "Conversion Canyon",
+      "orientation": "portrait",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "playtest/ledger.json"
+    },
+    {
+      "key": "perimeter_path",
+      "name": "Perimeter Path",
+      "orientation": "landscape",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "playtest/ledger.json"
+    },
+    {
+      "key": "mean_machine",
+      "name": "Mean Machine",
+      "orientation": "portrait",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "playtest/ledger.json"
+    },
+    {
+      "key": "graph_grabber",
+      "name": "Graph Grabber",
+      "orientation": "landscape",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "playtest/ledger.json"
+    },
+    {
+      "key": "line_graph_lab",
+      "name": "Line Graph Lab",
+      "orientation": "landscape",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "playtest/ledger.json"
+    },
+    {
+      "key": "data_detective",
+      "name": "Data Detective",
+      "orientation": "landscape",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "playtest/ledger.json"
+    },
+    {
+      "key": "factor_frenzy",
+      "name": "Factor Frenzy",
+      "orientation": "portrait",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "playtest/ledger.json"
+    },
+    {
+      "key": "multiplication_mine",
+      "name": "Multiplication Mine",
+      "orientation": "landscape",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "playtest/ledger.json"
+    },
+    {
+      "key": "order_ops_arena",
+      "name": "Order Ops Arena",
+      "orientation": "portrait",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "playtest/ledger.json"
+    },
+    {
+      "key": "formula_forge",
+      "name": "Formula Forge",
+      "orientation": "portrait",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "playtest/ledger.json"
+    },
+    {
+      "key": "remainder_run",
+      "name": "Remainder Run",
+      "orientation": "landscape",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "playtest/ledger.json"
+    },
+    {
+      "key": "time_keeper_cove",
+      "name": "Chrono Dash: Time Trial",
+      "orientation": "portrait",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "playtest/ledger.json"
+    },
+    {
+      "key": "problem_pyramid",
+      "name": "Problem Pyramid",
+      "orientation": "portrait",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "playtest/ledger.json"
+    },
+    {
+      "key": "unit_mixer",
+      "name": "Lava Path",
+      "orientation": "landscape",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "playtest/ledger.json"
+    },
+    {
+      "key": "change_counter",
+      "name": "Change Counter",
+      "orientation": "portrait",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "playtest/ledger.json"
+    },
+    {
+      "key": "crystal_core",
+      "name": "SATs Paper 1: Arithmetic",
+      "orientation": "portrait",
+      "adaptiveLandscape": true,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "paper-landscape-final/results.json + paper-portrait-final/results.json",
+      "compactFallback": "320×568 launch requests landscape; complete tasks tested at 667×375 and 375×667."
+    },
+    {
+      "key": "mirror_gate",
+      "name": "SATs Paper 2: Reasoning",
+      "orientation": "portrait",
+      "adaptiveLandscape": true,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "paper-landscape-final/results.json + paper-portrait-final/results.json",
+      "compactFallback": "320×568 launch requests landscape; complete tasks tested at 667×375 and 375×667."
+    },
+    {
+      "key": "matrix_match",
+      "name": "SATs Paper 3: Reasoning",
+      "orientation": "portrait",
+      "adaptiveLandscape": true,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "paper-landscape-final/results.json + paper-portrait-final/results.json",
+      "compactFallback": "320×568 launch requests landscape; complete tasks tested at 667×375 and 375×667."
+    },
+    {
+      "key": "potion_panic",
+      "name": "Potion Panic",
+      "orientation": "portrait",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "special-playtest/results.json"
+    },
+    {
+      "key": "share_splitter",
+      "name": "Share Splitter",
+      "orientation": "landscape",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "special-playtest/results.json"
+    },
+    {
+      "key": "ratio_fractions",
+      "name": "Ratio Racer",
+      "orientation": "landscape",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "playtest/ledger.json"
+    },
+    {
+      "key": "scale_builder",
+      "name": "Scale Builder",
+      "orientation": "landscape",
+      "adaptiveLandscape": false,
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/report.json",
+        "qa-artifacts/production-ui-v2/utilities/results.json",
+        "qa-artifacts/production-ui-v2/safe-area/results.json",
+        "qa-artifacts/production-ui-v2/first-tier/report.json"
+      ],
+      "interactionEvidence": "special-playtest/results.json"
+    }
+  ],
+  "entryAndMap": [
+    {
+      "key": "welcome",
+      "name": "Welcome",
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/entry/report.json",
+        "qa-artifacts/production-ui-v2/entry-stress/results.json"
+      ]
+    },
+    {
+      "key": "learners",
+      "name": "Learner selection",
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/entry/report.json",
+        "qa-artifacts/production-ui-v2/entry-stress/results.json"
+      ]
+    },
+    {
+      "key": "login",
+      "name": "Sign-in",
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/entry/report.json",
+        "qa-artifacts/production-ui-v2/entry-stress/results.json"
+      ]
+    },
+    {
+      "key": "settings",
+      "name": "Settings",
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/after/entry/report.json",
+        "qa-artifacts/production-ui-v2/entry-stress/results.json"
+      ]
+    },
+    {
+      "key": "profile",
+      "name": "Player summary",
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/blockers/results.json"
+      ]
+    },
+    {
+      "key": "world_map",
+      "name": "World map",
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/blockers/results.json"
+      ]
+    },
+    {
+      "key": "mission_results",
+      "name": "Mission results",
+      "status": "browser verified; native sign-off pending",
+      "evidence": [
+        "qa-artifacts/production-ui-v2/results/results.json"
+      ]
+    }
+  ],
+  "nativeValidation": "Pending: no Xcode/iOS Simulator, physical device or WebKit installation on this Windows host.",
+  "completedBrowserReviewAt": "2026-10-26T14:23:40.472Z"
+}

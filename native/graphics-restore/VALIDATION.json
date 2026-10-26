@@ -1,0 +1,14 @@
+{
+  "captured": 148,
+  "viewportIssues": [],
+  "conversionDeviceMotionPasses": 8,
+  "compactGameplayPasses": [
+    "rounding_rocket",
+    "conversion_canyon"
+  ],
+  "scaleSourceUnchanged": true,
+  "originalGraphicsRestored": true,
+  "newLayoutsRetained": true,
+  "checkedAt": "2026-10-26T15:05:47.505Z",
+  "native": "pending candidate build"
+}

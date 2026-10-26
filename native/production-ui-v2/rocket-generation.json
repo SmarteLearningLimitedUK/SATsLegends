@@ -1,0 +1,14 @@
+{
+  "tool": "Built-in image_gen",
+  "intent": "Replacement rocket prop using current repository rocket and hero style references",
+  "prompt": "Edit target: the first reference is the existing SATs Legends rocket. Recreate that rocket in the cohesive game art style of the second reference (the deer hero is style/material reference only; do not include any character). Production transparent game prop, front view, symmetric, vertically composed full silhouette entirely visible. Premium playful 3D-inspired toy fantasy style with broad rounded surfaces, teal painted enamel hull, warm brushed brass fittings, soft ivory panels, a friendly large blue crystal porthole and two rounded side boosters. Keep the same tall central hull, nose and two booster composition and approximate proportions so existing live assembly regions still align. Rocket should occupy almost all image height with modest transparent margin. Broad warm upper-left lighting, cool ambient fill, clear silhouette, restrained highlights, no photographic chrome or realistic spacecraft texture. No text, no numbers, no symbols representing mathematics, no logos, no platform, no ground, no flames or smoke. True transparent background. This is a replacement game prop belonging naturally beside the established cute fantasy deer hero.",
+  "source": "native/production-ui-v2/source-art/rocket-fantasy-v2.png",
+  "export": "src/assets/production-ui-v2/rocket-fantasy-v2.webp",
+  "sourceDimensions": [
+    1024,
+    1536
+  ],
+  "alpha": "Preserved; RGBA alpha range 0–254 verified",
+  "exportOperation": "WebP encoding only, quality 90; no semantic image edits",
+  "notes": "Custom project-requested output. No external stock imagery."
+}

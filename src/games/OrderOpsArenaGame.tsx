@@ -228,6 +228,41 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
           <div className="relative min-h-0 flex-1 overflow-hidden rounded-[1.5rem] border border-white/10 bg-transparent">
             <div className="relative z-10 flex h-full min-h-0 flex-col gap-3 p-3 md:p-4">
               <div className="order-actor-stage flex min-h-[13rem] flex-1 items-center justify-center">
+        <AnimatePresence>
+          {feedback && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.82 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.08 }}
+                className={`order-answer-feedback pointer-events-none absolute inset-0 z-40 flex items-center justify-center backdrop-blur-md ${
+                  feedback.type === 'praise'
+                    ? 'bg-[radial-gradient(circle_at_center,rgba(255,230,138,0.34),rgba(56,189,248,0.14))]'
+                    : feedback.type === 'success'
+                      ? 'bg-emerald-500/16'
+                      : 'bg-red-500/16'
+                }`}
+              >
+                <div className={`rounded-[2rem] border px-8 py-6 text-center shadow-[0_24px_36px_rgba(0,0,0,0.24)] ${
+                  feedback.type === 'praise'
+                    ? 'border-amber-100/70 bg-[linear-gradient(180deg,rgba(255,248,214,0.98),rgba(125,211,252,0.92))]'
+                    : 'border-white/14 bg-slate-950/60'
+                }`}>
+                  <div className={`text-4xl font-black uppercase tracking-[0.12em] md:text-6xl ${
+                    feedback.type === 'success'
+                      ? 'text-emerald-100'
+                      : feedback.type === 'praise'
+                        ? 'text-slate-950'
+                        : 'text-amber-100'
+                  }`}>
+                    {feedback.title}
+                  </div>
+                  <div className={`mt-2 text-lg font-bold md:text-2xl ${feedback.type === 'praise' ? 'text-slate-950/90' : 'text-white/92'}`}>
+                    {feedback.subtitle}
+                  </div>
+                </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
                 <div className="relative flex h-full w-full max-w-[24rem] items-center justify-center p-3 md:min-h-[18rem]">
                     <div className="absolute left-3 top-3 rounded-full border border-rose-200/14 bg-slate-950/35 px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-rose-100/82">
                       {Math.max(0, maxEnemyHealth - enemyHealth)} orders restored
@@ -262,41 +297,6 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
           </div>
         </div>
 
-        <AnimatePresence>
-          {feedback && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.82 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.08 }}
-                className={`pointer-events-none absolute inset-0 z-40 flex items-center justify-center backdrop-blur-md ${
-                  feedback.type === 'praise'
-                    ? 'bg-[radial-gradient(circle_at_center,rgba(255,230,138,0.34),rgba(56,189,248,0.14))]'
-                    : feedback.type === 'success'
-                      ? 'bg-emerald-500/16'
-                      : 'bg-red-500/16'
-                }`}
-              >
-                <div className={`rounded-[2rem] border px-8 py-6 text-center shadow-[0_24px_36px_rgba(0,0,0,0.24)] ${
-                  feedback.type === 'praise'
-                    ? 'border-amber-100/70 bg-[linear-gradient(180deg,rgba(255,248,214,0.98),rgba(125,211,252,0.92))]'
-                    : 'border-white/14 bg-slate-950/60'
-                }`}>
-                  <div className={`text-4xl font-black uppercase tracking-[0.12em] md:text-6xl ${
-                    feedback.type === 'success'
-                      ? 'text-emerald-100'
-                      : feedback.type === 'praise'
-                        ? 'text-slate-950'
-                        : 'text-amber-100'
-                  }`}>
-                    {feedback.title}
-                  </div>
-                  <div className={`mt-2 text-lg font-bold md:text-2xl ${feedback.type === 'praise' ? 'text-slate-950/90' : 'text-white/92'}`}>
-                    {feedback.subtitle}
-                  </div>
-                </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
     </GameUiShell>
   );

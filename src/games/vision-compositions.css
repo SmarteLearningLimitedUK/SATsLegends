@@ -1,169 +1,117 @@
 /* Approved concept compositions. Coordinates belong to the playable viewport;
    the shared HUD and dock retain their own safe areas. */
 .vision-world-backdrop{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:not([data-game-layout='flow']):has(.vision-world-backdrop) .structured-game-layout{padding-top:var(--shared-minigame-hud-reserved-top)!important;padding-bottom:var(--shared-minigame-reserved-bottom)!important;padding-inline:0!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(.vision-world-backdrop) [data-gameplay-content-viewport]{background:none!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(.vision-world-backdrop) [data-gameplay-content-viewport]::before,
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(.vision-world-backdrop) [data-gameplay-content-viewport]::after{display:none!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(.vision-world-backdrop) [data-game-wide-ambient]{display:none!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(.vision-world-backdrop) [data-vision-game]>:first-child{background-color:transparent!important;background-image:none!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(.vision-world-backdrop) img[data-vision-environment]{opacity:0}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-dock-base{background:transparent!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-hud-label{display:none}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-hud-bar{border-color:var(--island-trim)!important;min-height:54px;padding:5px 10px;width:min(94vw,520px)}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-hud-title{font-size:20px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-hud-avatar{width:44px;height:44px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(.vision-world-backdrop) .unified-minigame-hud-enabled{--shared-minigame-hud-reserved-top:76px;--shared-minigame-reserved-bottom:68px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game] .game-question-card{border:2px solid var(--island-trim)!important;box-shadow:inset 0 0 0 3px #ffffff14,0 3px 0 #071525a0,0 8px 18px #05182a55!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island]:not([data-game-layout='flow']):has(.vision-world-backdrop) .structured-game-layout{padding-top:var(--shared-minigame-hud-reserved-top)!important;padding-bottom:var(--shared-minigame-reserved-bottom)!important;padding-inline:0!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island]:has(.vision-world-backdrop) [data-gameplay-content-viewport]{background:none!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island]:has(.vision-world-backdrop) [data-gameplay-content-viewport]::before,
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island]:has(.vision-world-backdrop) [data-gameplay-content-viewport]::after{display:none!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island]:has(.vision-world-backdrop) [data-game-wide-ambient]{display:none!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island]:has(.vision-world-backdrop) [data-vision-game]>:first-child{background-color:transparent!important;background-image:none!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island]:has(.vision-world-backdrop) img[data-vision-environment]{opacity:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-dock-base{background:transparent!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-hud-label{display:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-hud-bar{border-color:var(--island-trim)!important;min-height:54px;padding:5px 10px;width:min(94vw,520px)}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-hud-title{font-size:20px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-hud-avatar{width:44px;height:44px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island]:has(.vision-world-backdrop) .unified-minigame-hud-enabled{--shared-minigame-hud-reserved-top:76px;--shared-minigame-reserved-bottom:68px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game] .game-question-card{border:2px solid var(--island-trim)!important;box-shadow:inset 0 0 0 3px #ffffff14,0 3px 0 #071525a0,0 8px 18px #05182a55!important}
 
 @media(orientation:landscape){
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game] .vision-companion--question{display:none}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game] .game-question-card-inner:has(>.vision-companion--question){padding-left:var(--question-card-padding-x,12px)!important;min-height:0}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game] .vision-companion--stage{display:block;max-width:38%;height:64%;width:32%;bottom:13%;left:1%}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='data_detective'] .vision-companion--stage{display:none}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game] .vision-companion--question{display:none}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game] .game-question-card-inner:has(>.vision-companion--question){padding-left:var(--question-card-padding-x,12px)!important;min-height:0}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game] .vision-companion--stage{display:block;max-width:38%;height:64%;width:32%;bottom:13%;left:1%}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='data_detective'] .vision-companion--stage{display:none}
 
  /* Acropolis: rhino on the left; stone mechanism on the right. */
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .pvp-playfield-layout{display:block;padding:0;overflow:hidden}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] :is(.legend-pvp-question,.legend-pvp-targets,.legend-pvp-sources,.legend-pvp-enemy,.game-submit-dock-fixed){position:absolute!important;inset:auto!important;max-width:none!important;translate:none!important;transform:none!important}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .legend-pvp-question{left:6%!important;top:1%!important;width:36%!important}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .legend-pvp-question .game-question-card{width:100%!important;max-width:none!important;top:0!important;padding:16px!important}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .legend-pvp-enemy{display:block!important;left:5%!important;bottom:9%!important;width:35%!important;z-index:6}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .pvp-enemy-health-frame{top:auto;bottom:0;width:70%}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .pvp-enemy-health{width:100%;padding:3px;background:#071c2c99}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .pvp-enemy-health>div:first-child{display:none}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .legend-pvp-targets{left:43%!important;top:24%!important;width:45%!important}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .legend-pvp-sources{left:40%!important;top:66%!important;width:50%!important}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] :is(.pvp-stone-panel,.pvp-digit-panel){background:transparent!important;border:0!important;box-shadow:none!important;outline:0!important;padding:0!important}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .game-set-fixture{display:none}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .pvp-stone-panel>.pvp-stone-heading{display:none}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .pvp-stone-row{gap:16px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-location='target']{container-type:size;max-width:min(124px,18vh)!important;height:auto!important;aspect-ratio:1/1.5}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .pvp-place-label{font-size:clamp(15px,2vw,28px);padding:6px 16px;background:#172937;border:2px solid #d7ae67;border-radius:8px;line-height:1.15}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .pvp-stone-face{border:0;background:var(--vision-number-stone) center/contain no-repeat!important;box-shadow:none!important;min-height:0!important;aspect-ratio:1;flex:none;width:min(100cqw,calc(100cqh - 32px));height:auto;align-self:center;container-type:inline-size}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .pvp-stone-digit{font-size:clamp(14px,52cqw,64px)!important;text-shadow:0 3px #102743}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-location='source']{container-type:size;max-width:124px!important;height:clamp(50px,13vh,115px)!important;background:var(--vision-number-stone) center/contain no-repeat!important;border:0!important;box-shadow:none!important}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-location='source']>span{font-size:clamp(14px,50cqmin,54px)!important}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .game-submit-dock-fixed{left:52%!important;bottom:1%!important;width:27%!important;padding:0}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .game-submit-dock-fixed>button{width:100%!important;height:clamp(44px,7vh,64px)!important}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic']:has([data-pvp-index='4'][data-pvp-location='target']) .legend-pvp-targets{left:37%!important;width:60%!important}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic']:has([data-pvp-index='4'][data-pvp-location='target']) .pvp-place-label{font-size:clamp(10px,1.2vw,17px);padding:5px 2px}
 
  /* Glacier palace: crystal in open space, with the royal guide at its side. */
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-palace-scroll{padding:6px 0 0;overflow:hidden}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-composition{width:56%;max-width:850px;min-height:0;height:100%;gap:8px;margin-left:8%}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-crystal-stage,
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-crystal-stage>div{background:transparent!important;border:0;box-shadow:none;padding:0;outline:0}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-crystal-stage .game-set-fixture{display:none}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] [data-polygon-shape]{max-height:100%;max-width:75%;filter:drop-shadow(0 0 10px #80edff) drop-shadow(0 8px 18px #008dcd)!important}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-answer-dock{padding:7px;background:#09284488;border:1px solid #76dfff55;box-shadow:0 5px 20px #001c4644}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-answer-dock button{min-height:48px;font-size:clamp(14px,1.5vw,22px);border-radius:12px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .vision-companion--stage{width:36%;height:78%;left:0;bottom:16%}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-palace-scroll{padding:6px 0 0;overflow:hidden}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-composition{width:56%;max-width:850px;min-height:0;height:100%;gap:8px;margin-left:8%}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-crystal-stage,
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-crystal-stage>div{background:transparent!important;border:0;box-shadow:none;padding:0;outline:0}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-crystal-stage .game-set-fixture{display:none}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='polygon_palace'] [data-polygon-shape]{max-height:100%;max-width:75%;filter:drop-shadow(0 0 10px #80edff) drop-shadow(0 8px 18px #008dcd)!important}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-answer-dock{padding:7px;background:#09284488;border:1px solid #76dfff55;box-shadow:0 5px 20px #001c4644}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-answer-dock button{min-height:48px;font-size:clamp(14px,1.5vw,22px);border-radius:12px}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .vision-companion--stage{width:36%;height:78%;left:0;bottom:16%}
 
  /* Forest forge: smith behind the anvil; the rack stays on the right. */
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-scrim{opacity:.3}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-ui{padding:6px 3%;overflow:hidden}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-brief{justify-content:center}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-question{max-width:80%}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-workspace{flex:1;grid-template-columns:58% 40%;grid-template-rows:minmax(0,1fr);gap:2%}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-anvil-zone{min-height:0;overflow:visible}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-anvil-art{object-fit:contain}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-tray{align-self:center;margin-top:14%;padding:24px 24px 18px;background:var(--vision-forest-frame) center/100% 100% no-repeat!important;border:0!important;box-shadow:none!important;outline:0}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-tray-title{justify-content:center;font-size:clamp(15px,2vw,26px)}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-tray-title span{display:none}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-ingredient{background:linear-gradient(135deg,#f3fbf9,#9eb6bc 30%,#75949e 85%,#d1e6e9)!important;color:#0b2029;border:3px solid #c7e1e3!important;border-radius:5px;box-shadow:inset 0 0 0 2px #66858b,0 5px 4px #0007!important;min-height:65px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-slot{clip-path:polygon(8% 0,92% 0,100% 100%,0 100%);border:3px solid #e8c17d;background:linear-gradient(120deg,#72848b,#273941);box-shadow:inset 0 0 12px #ffcb6d66}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-slot-filled{background:linear-gradient(130deg,#ffeb9d,#ce8a20);color:#29200e}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-hammer{top:-90%;left:36%;width:20%;height:80%;transform:rotate(20deg)}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-target{align-self:flex-start;min-height:32px;font-size:12px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='prime_pop'] .vision-companion--stage{left:11%;bottom:10%;width:31%;height:61%}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='rounding_rocket'] .vision-companion--stage{left:8%;bottom:16%;width:30%;height:62%}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='match3_equivalence'] .vision-companion--stage{left:0;bottom:23%;width:32%;height:70%}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='percent_power'] .vision-companion--stage{left:0;bottom:17%;width:32%;height:70%}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-scrim{opacity:.3}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-ui{padding:6px 3%;overflow:hidden}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-brief{justify-content:center}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-question{max-width:80%}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-workspace{flex:1;grid-template-columns:58% 40%;grid-template-rows:minmax(0,1fr);gap:2%}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-anvil-zone{min-height:0;overflow:visible}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-anvil-art{object-fit:contain}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-tray{align-self:center;margin-top:14%;padding:24px 24px 18px;background:var(--vision-forest-frame) center/100% 100% no-repeat!important;border:0!important;box-shadow:none!important;outline:0}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-tray-title{justify-content:center;font-size:clamp(15px,2vw,26px)}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-tray-title span{display:none}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-ingredient{background:linear-gradient(135deg,#f3fbf9,#9eb6bc 30%,#75949e 85%,#d1e6e9)!important;color:#0b2029;border:3px solid #c7e1e3!important;border-radius:5px;box-shadow:inset 0 0 0 2px #66858b,0 5px 4px #0007!important;min-height:65px}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-slot{clip-path:polygon(8% 0,92% 0,100% 100%,0 100%);border:3px solid #e8c17d;background:linear-gradient(120deg,#72848b,#273941);box-shadow:inset 0 0 12px #ffcb6d66}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-slot-filled{background:linear-gradient(130deg,#ffeb9d,#ce8a20);color:#29200e}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-hammer{top:-90%;left:36%;width:20%;height:80%;transform:rotate(20deg)}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-target{align-self:flex-start;min-height:32px;font-size:12px}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='prime_pop'] .vision-companion--stage{left:11%;bottom:10%;width:31%;height:61%}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='rounding_rocket'] .vision-companion--stage{left:8%;bottom:16%;width:30%;height:62%}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='match3_equivalence'] .vision-companion--stage{left:0;bottom:23%;width:32%;height:70%}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='percent_power'] .vision-companion--stage{left:0;bottom:17%;width:32%;height:70%}
 }
 
 @media(orientation:landscape) and (max-height:550px){
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(.vision-world-backdrop) .unified-minigame-hud-enabled{--shared-minigame-hud-reserved-top:46px;--shared-minigame-reserved-bottom:50px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-hud-bar{height:36px;min-height:36px;width:340px;max-width:58vw;padding:2px 7px;gap:6px;border-radius:12px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-hud-avatar{width:29px;height:29px;border-radius:7px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-hud-title{font-size:15px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-hud-practice{font-size:11px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-dock-surface{padding:2px 5px;gap:4px;border-radius:12px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-dock-button{height:44px;min-height:44px;width:48px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-dock-button span{font-size:var(--prod-label-compact,12px)}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game] .game-question-card{padding:4px 8px!important;border-radius:10px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game] :is(.game-question-card-copy,.game-question-copy){font-size:var(--prod-question-compact,16px)!important;line-height:1.25!important}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game] .game-question-context{font-size:var(--prod-label-compact,12px)!important}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .pvp-prompt-full{display:none}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .pvp-prompt-compact{display:inline}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .legend-pvp-question .game-question-card{padding:7px!important}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .pvp-digit-status{font-size:11px;margin:0}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .legend-pvp-targets{top:12%!important}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .legend-pvp-sources{top:56%!important}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .pvp-stone-row{gap:4px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-composition{width:64%;margin-left:18%;gap:3px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-answer-dock{padding:3px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-answer-dock button{min-height:44px;padding:3px;font-size:13px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-answer-dock .grid{gap:4px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-crystal-stage p{font-size:11px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-meta{font-size:10px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-tray{margin-top:8%;padding:14px 13px 10px;gap:4px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-bank{flex-wrap:wrap;gap:4px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-ingredient{min-height:44px;flex:1 0 20%;width:auto;padding:2px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-fraction{font-size:17px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-slot{width:48px;height:45px;min-height:44px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-slot .ff-fraction{font-size:19px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-feedback{font-size:10px;line-height:1.15;min-height:0}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-target{font-size:10px;padding:2px 6px;min-height:26px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-progress{bottom:0}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island]:has(.vision-world-backdrop) .unified-minigame-hud-enabled{--shared-minigame-hud-reserved-top:46px;--shared-minigame-reserved-bottom:50px}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-hud-bar{height:36px;min-height:36px;width:340px;max-width:58vw;padding:2px 7px;gap:6px;border-radius:12px}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-hud-avatar{width:29px;height:29px;border-radius:7px}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-hud-title{font-size:15px}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-hud-practice{font-size:11px}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-dock-surface{padding:2px 5px;gap:4px;border-radius:12px}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-dock-button{height:44px;min-height:44px;width:48px}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-dock-button span{font-size:var(--prod-label-compact,12px)}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game] .game-question-card{padding:4px 8px!important;border-radius:10px}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game] :is(.game-question-card-copy,.game-question-copy){font-size:var(--prod-question-compact,16px)!important;line-height:1.25!important}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game] .game-question-context{font-size:var(--prod-label-compact,12px)!important}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-composition{width:64%;margin-left:18%;gap:3px}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-answer-dock{padding:3px}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-answer-dock button{min-height:44px;padding:3px;font-size:13px}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-answer-dock .grid{gap:4px}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-crystal-stage p{font-size:11px}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-meta{font-size:10px}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-tray{margin-top:8%;padding:14px 13px 10px;gap:4px}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-bank{flex-wrap:wrap;gap:4px}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-ingredient{min-height:44px;flex:1 0 20%;width:auto;padding:2px}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-fraction{font-size:17px}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-slot{width:48px;height:45px;min-height:44px}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-slot .ff-fraction{font-size:19px}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-feedback{font-size:10px;line-height:1.15;min-height:0}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-target{font-size:10px;padding:2px 6px;min-height:26px}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-progress{bottom:0}
 }
 
 
 
 @media(orientation:landscape) and (max-height:550px){
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .legend-pvp-sources{top:60%!important;z-index:50}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .game-submit-dock-fixed{left:58%!important;bottom:0!important}
 }
 /* Keep information and input bands separate on short landscape screens. */
 @media(orientation:landscape) and (max-height:550px){
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .legend-pvp-question{left:4%!important;width:32%!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .legend-pvp-targets{left:40%!important;top:5%!important;width:58%!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] :is(.pvp-stone-row){min-height:0}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-location='target']{height:auto!important;min-height:0}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .pvp-stone-face{min-height:0!important;flex:none}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .pvp-place-label{font-size:clamp(10px,17cqw,12px)!important;max-width:100%;box-sizing:border-box;padding:3px 1px;line-height:14px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .legend-pvp-sources{left:40%!important;top:auto!important;bottom:8px!important;width:58%!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-location='source']{height:44px!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .game-submit-dock-fixed{left:5%!important;bottom:4px!important;width:29%!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .game-submit-dock-fixed>button{height:44px!important;min-height:44px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] :is(.pvp-digit-status){line-height:14px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] :is(.pvp-digit-panel>.grid){grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] :is(.legend-pvp-enemy){width:30%!important;left:4%!important;bottom:24%!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic']:has([data-pvp-index='4'][data-pvp-location='target']) .legend-pvp-targets{left:40%!important;width:58%!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-composition{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);grid-template-rows:auto minmax(0,1fr);width:78%;margin-left:20%;height:100%;min-height:0}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-composition>.game-question-card{grid-column:1/-1}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-crystal-stage{grid-row:2;grid-column:1;height:100%;min-height:0;overflow:hidden}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-answer-dock{grid-row:2;grid-column:2;min-height:0;max-height:100%;overflow:auto;align-self:center}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .vision-companion--stage{width:25%;height:65%}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-tray{align-self:stretch;margin-top:0;max-height:100%;overflow:auto;padding:6px 10px;gap:3px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-slot-number{font-size:24px;line-height:1}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-controls{flex-shrink:0;margin-top:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-composition{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);grid-template-rows:auto minmax(0,1fr);width:78%;margin-left:20%;height:100%;min-height:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-composition>.game-question-card{grid-column:1/-1}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-crystal-stage{grid-row:2;grid-column:1;height:100%;min-height:0;overflow:hidden}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-answer-dock{grid-row:2;grid-column:2;min-height:0;max-height:100%;overflow:auto;align-self:center}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .vision-companion--stage{width:25%;height:65%}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-tray{align-self:stretch;margin-top:0;max-height:100%;overflow:auto;padding:6px 10px;gap:3px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-slot-number{font-size:24px;line-height:1}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-controls{flex-shrink:0;margin-top:0}
 }
 /* Bounds verified against question, response and navigation regions. */
 @media(orientation:landscape) and (min-height:551px){
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .legend-pvp-question{width:30%!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .legend-pvp-sources{top:auto!important;bottom:72px!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .game-submit-dock-fixed{bottom:0!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic']:has([data-pvp-index='4'][data-pvp-location='target']) .legend-pvp-targets{left:43%!important;width:54%!important}
 }
 @media(orientation:landscape) and (max-height:550px){
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-meta{display:none}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-tray{display:grid;grid-template-rows:minmax(0,1fr) auto;gap:3px;overflow:hidden}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-tray-title{display:none}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-bank{min-height:0;overflow:auto;align-content:start;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-ingredient{height:44px;min-height:44px!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-feedback[data-tone='info']{display:none}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-feedback:not([data-tone='info']){position:absolute;left:3%;bottom:4px;width:52%;padding:4px;background:#092c35ed;border-radius:6px;pointer-events:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-meta{display:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-tray{display:grid;grid-template-rows:minmax(0,1fr) auto;gap:3px;overflow:hidden}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-tray-title{display:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-bank{min-height:0;overflow:auto;align-content:start;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-ingredient{height:44px;min-height:44px!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-feedback[data-tone='info']{display:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-feedback:not([data-tone='info']){position:absolute;left:3%;bottom:4px;width:52%;padding:4px;background:#092c35ed;border-radius:6px;pointer-events:none}
 }
 @media(orientation:landscape) and (min-height:551px){
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .pvp-place-label{font-size:clamp(12px,1.25vw,20px)!important;max-width:100%;box-sizing:border-box;padding:4px 6px;white-space:normal;overflow-wrap:anywhere;line-height:1.3}
 }

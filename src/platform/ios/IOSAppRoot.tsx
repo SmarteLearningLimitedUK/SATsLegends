@@ -5,7 +5,7 @@ import { Capacitor } from '@capacitor/core';
 import { ScreenOrientation } from '@capacitor/screen-orientation';
 import { parseRoute } from '../../app/routeConfig';
 import { ISLANDS } from '../../constants';
-import { getGameOrientation } from '../../app/gameOrientation';
+import { allowsAdaptiveGameOrientation, getGameOrientation } from '../../app/gameOrientation';
 import FamilyAccount, { hasMathariaAccess, useFamily } from '../../website/FamilyAccount';
 import ParentAccount from '../../website/ParentAccount';
 import GameGate from '../../website/GameGate';
@@ -27,19 +27,20 @@ function IOSRoutes() {
   const playing = parseRoute(pathname).screen === 'gameplay' && Boolean(family.session && family.selectedChild && hasMathariaAccess(family.subscriptions, family.complimentary));
   const route = parseRoute(pathname);
   const level = ISLANDS.find(island => island.id === route.islandId)?.levels.find(item => item.id === route.levelId);
+  const adaptiveGame = playing && allowsAdaptiveGameOrientation(level);
   const landscapeGame = (playing && getGameOrientation(level) === 'landscape')
     || (route.screen === 'wellbeing_activity' && landscapeActivity);
   useEffect(() => {
     document.body.classList.remove('legends-website-body');
-    document.documentElement.dataset.appOrientation = landscapeGame ? 'landscape-required' : 'portrait';
+    document.documentElement.dataset.appOrientation = adaptiveGame ? 'adaptive' : landscapeGame ? 'landscape-required' : 'portrait';
     if (!Capacitor.isNativePlatform()) return;
     // Serialize native requests so a quick redirect cannot leave an old lock active.
     // Let the learner physically turn the phone. App's shared orientation gate
     // pauses a portrait game instead of forcing the UI sideways on entry.
-    orientationQueue = orientationQueue.catch(() => {}).then(() => landscapeGame
+    orientationQueue = orientationQueue.catch(() => {}).then(() => landscapeGame || adaptiveGame
       ? ScreenOrientation.unlock()
       : ScreenOrientation.lock({ orientation: 'portrait-primary' })).catch(error => console.error('Screen orientation could not be updated', error));
-  }, [landscapeGame]);
+  }, [landscapeGame,adaptiveGame]);
   return <Routes>
     <Route path="/login" element={<ParentAccount mode="login" />} />
     <Route path="/signup" element={<ParentAccount mode="signup" />} />

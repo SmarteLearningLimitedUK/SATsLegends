@@ -7,16 +7,16 @@ import {auditLayout} from './qa/layout-overlap-audit.mjs';
 process.env.LEGEND_QA_FETCH_FIXTURE='1';
 process.env.VITE_SUPABASE_URL=loadEnv('ios',process.cwd(),'VITE_').VITE_SUPABASE_URL;
 const phase=process.env.QA_PHASE||'before',base=process.env.QA_BASE||'http://127.0.0.1:3025';
-const out=`qa-artifacts/production-rebuild/${phase}`;await mkdir(out,{recursive:true});
+const out=`${process.env.QA_OUT_ROOT||'qa-artifacts/production-rebuild'}/${phase}`;await mkdir(out,{recursive:true});
 const {games:catalog}=JSON.parse(await readFile('native/production-rebuild/game-inventory.json'));
 const profiles={compact:[320,568,667,375],standard:[390,844,844,390],large:[430,932,932,430],tablet:[768,1024,1024,768]};
 const selected=(process.env.QA_PROFILES||(phase==='before'?'standard':'compact,standard,large,tablet')).split(',');
 const keys=new Set((process.env.QA_KEYS||'').split(',').filter(Boolean));
 const jobs=selected.flatMap(profile=>catalog.filter(game=>!keys.size||keys.has(game.key)).map(game=>{
- const [pw,ph,lw,lh]=profiles[profile];return {...game,profile,width:game.orientation==='portrait'?pw:lw,height:game.orientation==='portrait'?ph:lh};
+ const [pw,ph,lw,lh]=profiles[profile];const compactPaper=profile==='compact'&&['crystal_core','mirror_gate','matrix_match'].includes(game.key);const orientation=compactPaper?'landscape':game.orientation;const firstTier=process.env.QA_FIRST_TIER==='1',firstLevel=game.levels.find(level=>!level.practice)?.id;return {...game,...(firstTier&&firstLevel?{route:game.route.replace(/\/\d+$/,'/'+firstLevel),tier:1,title:game.title.replace(/ L\d+$/,' L1')}:{}),preferredOrientation:game.orientation,orientation,profile,width:orientation==='portrait'?pw:lw,height:orientation==='portrait'?ph:lh,compactPaperFallback:compactPaper};
 }));
 const browser=await chromium.launch(),results=[];
-if(keys.size){try{const old=JSON.parse(await readFile(out+'/report.json'));results.push(...old.filter(row=>!keys.has(row.key)));}catch{}}
+if(keys.size){try{const old=JSON.parse(await readFile(out+'/report.json'));results.push(...old.filter(row=>!keys.has(row.key)||!selected.includes(row.profile)));}catch{}}
 async function worker(){while(jobs.length){
  const job=jobs.shift(),context=await browser.newContext({viewport:{width:job.width,height:job.height},hasTouch:true,reducedMotion:'reduce'});
  await installReleaseAccountFixture(context);
@@ -36,6 +36,7 @@ async function worker(){while(jobs.length){
    await page.waitForTimeout(250);
   }
   await page.evaluate(()=>document.fonts.ready);
+  if(phase!=='before')await page.waitForFunction(()=>{const n=document.querySelector('.app-viewport[data-layout-revision="production-v2"]');return n&&getComputedStyle(n).fontFamily.includes('Segoe UI');},{},{timeout:30000});
   await page.waitForFunction(()=>{const n=document.querySelector('.app-screen-content');return n&&Number(getComputedStyle(n).opacity)>=.999;},{},{timeout:30000});
   await page.waitForTimeout(job.key==='ratio_fractions'?3300:500);
   row.geometry=await page.evaluate(auditLayout);

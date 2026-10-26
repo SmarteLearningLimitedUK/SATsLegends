@@ -1,7 +1,7 @@
 /* Each instrument belongs to the same crystal Core. Layout and answer semantics stay shared. */
 /* Review uses a scrolling reading surface, so the stage companion must not
  * cover its text or the links to worked solutions. */
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter']:has(.sats-mock[data-sats-phase='review']) .vision-companion--stage {
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-game-set='boss_encounter']:has(.sats-mock[data-sats-phase='review']) .vision-companion--stage {
   display:none;
 }
 .sats-mock[data-sats-paper='1'] {
@@ -16,7 +16,7 @@
   --core-accent:#a2edcf; --core-metal:#e3be80; --core-surface:#123930;
   --core-button:#225247; --core-glow:#6debb626; --core-radius:8px;
 }
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] .sats-model {
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] .sats-model {
   background:var(--core-surface)!important;
   border:1px solid var(--core-metal)!important;
   border-radius:var(--core-radius);
@@ -24,29 +24,29 @@
   padding:48px 46px 24px;
   isolation:isolate;
 }
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] .sats-model::before {
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] .sats-model::before {
   content:''; position:absolute; inset:9px; z-index:-1; pointer-events:none;
   border-radius:inherit; opacity:.22;
   background:radial-gradient(ellipse at 50% 0%,var(--core-accent),transparent 65%);
 }
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper][data-sats-paper='3'] .sats-model::before {
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper][data-sats-paper='3'] .sats-model::before {
   background:linear-gradient(#a2edcf18 1px,transparent 1px),linear-gradient(90deg,#a2edcf18 1px,transparent 1px);
   background-size:40px 40px; opacity:.5;
 }
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] :is(.sats-response,.sats-charge,.sats-mission-tools) {
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] :is(.sats-response,.sats-charge,.sats-mission-tools) {
   background:var(--core-surface)!important; border-color:var(--core-metal)!important;
   box-shadow:inset 0 1px 0 #ffffff12,0 4px 12px #020e2033!important;
 }
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] :is(.sats-answer-options button,.sats-mission-tools button,.sats-response-actions .ui-button-secondary,.sats-tap-workpad summary) {
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] :is(.sats-answer-options button,.sats-mission-tools button,.sats-response-actions .ui-button-secondary,.sats-tap-workpad summary) {
   background:var(--core-button)!important; border-color:var(--core-accent)!important;
   color:#f5fcff!important;
 }
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] .sats-answer-options button[aria-pressed='true'] {
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] .sats-answer-options button[aria-pressed='true'] {
   background:#785320!important; border-color:#ffe29b!important;
   box-shadow:0 0 0 2px #ffe29b55!important;
 }
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] .sats-answer-options button:focus-visible {outline:3px solid #fff2be;outline-offset:2px;}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] .sats-charge i {background:linear-gradient(90deg,var(--core-accent),#ffdc87);}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] .sats-answer-options button:focus-visible {outline:3px solid #fff2be;outline-offset:2px;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] .sats-charge i {background:linear-gradient(90deg,var(--core-accent),#ffdc87);}
 .core-paper-inscription {
   position:absolute; top:32px; left:40px; right:40px; text-align:center;
   color:var(--core-accent); font-size:clamp(11px,1vw,16px); line-height:1.2;
@@ -54,22 +54,22 @@
   z-index:2; background:var(--core-surface); padding:0 8px;
   width:max-content; max-width:calc(100% - 60px); margin-inline:auto;
 }
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] .core-frame-metal {stroke:var(--core-metal);}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] .core-frame-detail {stroke:var(--core-accent);animation:core-instrument-breathe 7s ease-in-out infinite;}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] .core-frame-crystal {fill:var(--core-button);stroke:var(--core-metal);}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] .core-frame-crystal.is-charged {fill:var(--core-accent);}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] .core-frame-metal {stroke:var(--core-metal);}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] .core-frame-detail {stroke:var(--core-accent);animation:core-instrument-breathe 7s ease-in-out infinite;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] .core-frame-crystal {fill:var(--core-button);stroke:var(--core-metal);}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] .core-frame-crystal.is-charged {fill:var(--core-accent);}
 @keyframes core-instrument-breathe {0%,100%{opacity:.45}50%{opacity:.9}}
 @media(min-height:700px) and (min-width:1000px) {
-  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] .sats-model {width:94%;max-height:440px;align-self:center;justify-self:center;}
-  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper][data-sats-paper='1'] .sats-model {width:88%;max-height:390px;}
-  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper][data-sats-paper='2'] .sats-model {width:92%;}
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] .sats-model {width:94%;max-height:440px;align-self:center;justify-self:center;}
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper][data-sats-paper='1'] .sats-model {width:88%;max-height:390px;}
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper][data-sats-paper='2'] .sats-model {width:92%;}
 }
 @media(orientation:landscape) and (max-height:550px) {
-  #root .screen-gameplay:has(.sats-mock) .legend-hud-practice {display:none;}
-  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] .sats-model {padding:30px 14px 12px;border-radius:12px;}
+  #root .screen-gameplay:not([data-layout-revision='production-v2']):has(.sats-mock) .legend-hud-practice {display:none;}
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] .sats-model {padding:30px 14px 12px;border-radius:12px;}
   .core-paper-inscription {top:17px;left:20px;right:20px;font-size:9px;letter-spacing:0;}
 }
-@media(prefers-reduced-motion:reduce) {#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] .core-frame-detail {animation:none;opacity:.7;}}
+@media(prefers-reduced-motion:reduce) {#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock[data-sats-paper] .core-frame-detail {animation:none;opacity:.7;}}
 [data-stage-paused='true'] .core-frame-detail {animation-play-state:paused!important;}
 
 /* Nested construction diagrams must share the same bounded canvas as direct
@@ -135,10 +135,10 @@
 .sats-choice-pairs li {margin:2px 0;overflow-wrap:anywhere;}
 .sats-choice-pairs-pairing {flex:none;border-top:1px solid #a3c8d266;padding-top:6px;color:#ffda79;text-align:center;}
 @media (orientation:landscape) and (max-height:550px) {
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock .sats-playfield {grid-template-columns:minmax(44px,.55fr) minmax(0,1.45fr);grid-template-rows:minmax(60px,1fr) 44px!important;}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock .sats-charge {grid-column:1;grid-row:2;}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock .sats-mission-tools {grid-column:2;grid-row:2;gap:3px;}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock .sats-mission-tools button {min-width:0;flex:1;overflow-wrap:normal;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock .sats-playfield {grid-template-columns:minmax(44px,.55fr) minmax(0,1.45fr);grid-template-rows:minmax(60px,1fr) 44px!important;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock .sats-charge {grid-column:1;grid-row:2;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock .sats-mission-tools {grid-column:2;grid-row:2;gap:3px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock .sats-mission-tools button {min-width:0;flex:1;overflow-wrap:normal;}
  .sats-model-canvas {inset:8px 10px;}
  .sats-choice-pairs {gap:3px;line-height:1.2;}
  .sats-choice-pairs-groups p {margin:0;}
@@ -152,7 +152,7 @@
 
 @media (orientation:landscape) and (max-height:550px) {
  /* Given choice lists need width; the single numeric answer needs less. */
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock:has(.sats-choice-pairs) .sats-mock-content {grid-template-columns:1.25fr .75fr;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-mock:has(.sats-choice-pairs) .sats-mock-content {grid-template-columns:1.25fr .75fr;}
 }
 /* Keep the generic input cue readable inside the compact numeric response;
    entered answers retain their full-size type and complete field label. */

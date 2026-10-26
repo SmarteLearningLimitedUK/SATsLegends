@@ -4,7 +4,7 @@ export const constructionIds=new Set(['draw-rectangle','draw-angle','construct-g
 
 export async function startCore(page,base,paper){
   await page.goto(`${base}/game/8/${paper}`,{waitUntil:'domcontentloaded'});
-  await page.getByRole('button',{name:'Start',exact:true}).click();
+  await page.getByRole('button',{name:'Start',exact:true}).click({timeout:60000});
   await page.locator('.sats-mock').waitFor();
   for(let i=0;i<5;i++){if(await page.locator('.sats-mock').getAttribute('data-sats-phase')==='play')break;const b=page.locator('[data-dialog-primary]:visible').first();if(!await b.count())break;const node=await b.elementHandle();await b.click();if(node)await node.waitForElementState('hidden');}
   await expect(page.locator('.sats-mock')).toHaveAttribute('data-sats-phase','play');

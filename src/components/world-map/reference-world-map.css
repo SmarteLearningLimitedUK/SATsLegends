@@ -1,0 +1,36 @@
+/* The camera owns only the unobstructed rectangle between the HUD and dock. */
+#root .app-viewport.sat-theme-bluegold[data-reference-screen='world_map'] [data-reference-world-map] {
+  display:grid;grid-template-rows:auto minmax(0,1fr) auto;
+  padding-bottom:var(--map-navigation-height,calc(88px + env(safe-area-inset-bottom,0px)));
+  background:#0b3b42;
+}
+#root .app-viewport.sat-theme-bluegold[data-reference-screen='world_map'] [data-reference-world-map] .reference-map-header {
+  position:relative;inset:auto;width:100%;height:auto;min-height:64px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:calc(env(safe-area-inset-top,0px) + 8px) 12px 8px;
+  pointer-events:auto;background:#0b3437;color:#fff6de;box-sizing:border-box;
+}
+.reference-map-brand>span {font:600 12px/1.2 var(--prod-font-body);letter-spacing:.09em;color:#d3e6dc;}
+.reference-map-brand h1 {margin:0;font:700 24px/1.15 var(--prod-font-display);}
+#root .app-viewport.sat-theme-bluegold[data-reference-screen='world_map'] [data-reference-world-map] .reference-map-tokens {
+  flex:none;min-width:105px;max-width:50%;border:0;background:none;align-items:flex-end;
+  border-radius:0;overflow-wrap:anywhere;font-variant-numeric:tabular-nums;
+}
+#root .app-viewport.sat-theme-bluegold[data-reference-screen='world_map'] [data-reference-world-map] .reference-map-tokens>span {font-size:12px;letter-spacing:0;text-transform:none;}
+#root .app-viewport.sat-theme-bluegold[data-reference-screen='world_map'] [data-reference-world-map] .reference-map-tokens strong {font-size:20px;}
+#root .app-viewport.sat-theme-bluegold[data-reference-screen='world_map'] [data-reference-world-map] .reference-map-scroll {
+  position:relative;inset:auto;min-height:0;padding:0;
+  scroll-padding:12px;overflow:auto;overscroll-behavior:contain;
+}
+#root .app-viewport.sat-theme-bluegold[data-reference-screen='world_map'] [data-reference-world-map] .reference-map-art {mask-image:none;}
+.reference-map-recommendation {position:relative;background:#0b3437;border-top:1px solid #ad772c;padding:4px 12px 8px;color:#fff6de;}
+.reference-map-recommendation-toggle {min-height:44px;width:100%;display:flex;align-items:center;justify-content:space-between;background:none;border:0;color:#d3e6dc;font:500 16px var(--prod-font-body);padding:0;}
+.reference-map-recommendation-toggle svg {width:20px;height:20px;transition:transform .16s;}
+.reference-map-recommendation-toggle[aria-expanded='true'] svg {transform:rotate(180deg);}
+.reference-map-recommendation-row {display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;}
+.reference-map-recommendation-row>strong {font:600 18px/1.2 var(--prod-font-body);overflow-wrap:anywhere;}
+.reference-map-continue {display:flex;align-items:center;gap:5px;min-height:48px;padding:8px 12px;border:1px solid #ad772c;border-radius:12px;background:var(--prod-action);color:var(--prod-ink);font:600 16px var(--prod-font-body);}
+.reference-map-continue svg {width:18px;height:18px;}
+#root .app-viewport.sat-theme-bluegold[data-reference-screen='world_map'] [data-reference-world-map] .reference-map-current {width:100%;margin-top:8px;border:0;box-shadow:none;background:none;grid-template-columns:44px minmax(0,1fr);}
+#root .app-viewport.sat-theme-bluegold[data-reference-screen='world_map'] [data-reference-world-map] .reference-map-current[hidden] {display:none;}
+@media(prefers-reduced-motion:reduce){.reference-map-recommendation-toggle svg{transition:none;}}

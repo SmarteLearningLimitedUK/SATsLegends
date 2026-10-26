@@ -1,5 +1,6 @@
 /* Mean Machine keeps its compact portrait composition on phones. */
 [data-mean-game] .mean-power-panel-desktop { display: none; }
+[data-mean-game] .mean-portrait-readings {display:none;}
 
 @media (min-width: 900px) and (min-height: 550px) {
   [data-mean-game] [data-game-scene-image] {
@@ -164,24 +165,6 @@
 [data-mean-game] .mean-power-panel-desktop {display:block;position:relative;inset:auto;width:100%;margin-bottom:8px;pointer-events:none;}
 [data-mean-game] .mean-power-panel-desktop .arcade-journey-window {height:40px;}
 #root [data-mean-game] [data-game-scene-image] {object-fit:cover !important;}
-@media(max-width:430px) and (max-height:650px){
- [data-mean-game] .mean-machine-content {padding-inline:7px;padding-top:4px;}
- [data-mean-game] .mean-machine-question .game-question-card {padding:7px 9px;}
- [data-mean-game] .mean-machine-question .game-question-copy {font-size:calc(16px * var(--game-text-scale, 1.2));line-height:1.2;}
- [data-mean-game] .mean-machine-question .question-subtitle {font-size:calc(14px * var(--game-text-scale, 1.2));line-height:1.2;}
- [data-mean-game] .mean-machine-main {display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:5px;align-items:center;}
- [data-mean-game] .mean-machine-playfield {height:100%;padding:0;}
- [data-mean-game] .mean-machine-stage {height:auto;width:100%;aspect-ratio:4/5;}
- [data-mean-game] .mean-machine-answer-rail {padding:6px;}
- [data-mean-game] .mean-machine-answer-rail > div:nth-child(2) {display:none;}
- [data-mean-game] .mean-machine-answer-rail .answer-choice-surface {grid-template-columns:1fr;gap:5px;}
- [data-mean-game] .mean-machine-answer-rail .answer-choice-surface button {min-height:44px;font-size:calc(18px * var(--game-text-scale, 1.2));padding:3px;}
- [data-mean-game] .mean-power-panel .arcade-journey-caption {font-size:calc(12px * var(--game-text-scale, 1.2));}
- [data-mean-game] .mean-power-panel .arcade-journey-caption > span {display:none;}
- [data-mean-game] .mean-power-panel .arcade-journey-world {grid-template-columns:repeat(5,minmax(0,1fr));gap:3px;align-content:center;}
- [data-mean-game] .mean-power-panel .arcade-journey-window {height:53px;}
- [data-mean-game] .mean-power-panel .arcade-journey-section {height:20px;}
-}
 @media(min-width:900px) and (min-height:550px) {
   [data-mean-game] .mean-machine-main { width:min(100%,960px); grid-template-columns:minmax(0,1fr) 340px; gap:16px; }
 }
@@ -190,13 +173,99 @@
   [data-mean-game] .mean-machine-figure { justify-content:flex-end; }
 }
 
-@media(max-width:699px) and (min-height:651px) {
- #root [data-mean-game] .mean-machine-content {overflow-y:auto;overflow-x:hidden;touch-action:pan-y;}
- #root [data-mean-game] .mean-machine-main {flex:none;height:auto;min-height:600px;}
- #root [data-mean-game] .mean-machine-playfield {flex:none;height:280px;min-height:280px;overflow:visible;}
- #root [data-mean-game] .mean-machine-playfield > div:last-child {height:100%;overflow:visible;}
- #root [data-mean-game] .mean-machine-stage {width:200px;height:250px;max-height:none;}
- #root [data-mean-game] .mean-machine-answer-rail {flex:none;}
+/* Portrait uses the shared shell's usable height: question, engine, answers.
+   The engine yields space to text and 44px controls; gameplay never scrolls. */
+@media (orientation: portrait) {
+  #root [data-mean-game] .mean-machine-content {
+    display:grid;grid-template-rows:minmax(0,1fr) auto;gap:4px;
+    width:100%;height:100%;margin:0;padding:4px 10px 8px;
+    overflow:visible;
+  }
+  #root [data-mean-game] .mean-machine-content > div:first-child {
+    display:grid;grid-template-rows:auto minmax(0,1fr);gap:8px;
+  }
+  #root [data-mean-game] .mean-machine-question .game-question-card {
+    --legend-label-size:var(--prod-instruction-compact,14px);
+    width:100%;padding:10px 12px;
+  }
+  #root [data-mean-game] .mean-machine-main {
+    display:grid;grid-template-columns:minmax(0,1fr);
+    grid-template-rows:minmax(0,1fr) auto;gap:8px;
+    width:100%;height:100%;min-height:0;padding:0;
+  }
+  #root [data-mean-game] .mean-machine-playfield {
+    height:100%;min-height:0;padding:0;
+  }
+  #root [data-mean-game] .mean-machine-stage {
+    width:auto;height:100%;max-height:100%;max-width:100%;
+  }
+  #root [data-mean-game] .mean-machine-answer-rail {
+    width:100%;padding:8px 10px;align-self:end;
+  }
+  #root [data-mean-game] .mean-power-panel {display:none;}
+  #root [data-mean-game] .mean-repair-streak {display:none;}
+  #root [data-mean-game] .mean-machine-answer-rail > div:nth-child(2) {
+    margin:0 0 6px;
+  }
+  #root [data-mean-game] .mean-machine-answer-rail > div:nth-child(2) > div {
+    font-size:var(--prod-helper-size,14px);line-height:1.25;letter-spacing:.03em;
+  }
+  #root [data-mean-game] .mean-machine-answer-rail .answer-choice-surface {
+    grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;
+  }
+  #root [data-mean-game] .mean-machine-answer-rail .answer-choice-surface button {
+    min-height:48px;padding:6px;font-size:24px;line-height:1.2;
+  }
+  #root [data-mean-game] .mean-reel-window > div {
+    font-size:clamp(22px,7vw,34px);
+  }
+  /* Feedback gets a real layout row instead of covering the answer buttons. */
+  #root [data-mean-game] .mean-machine-content > div:has(> svg + span) {
+    position:relative;inset:auto;width:100%;max-width:none;min-height:32px;
+    transform:none!important;translate:none!important;justify-content:center;
+    padding:4px 8px;border-radius:12px;background:var(--prod-surface-deep);
+  }
+  #root [data-mean-game] .mean-machine-content > div:has(> svg + span) > span {
+    font-size:14px;line-height:1.2;letter-spacing:0;text-transform:none;
+  }
+}
+@media (orientation:portrait) and (max-height:700px) {
+  #root [data-mean-game] .mean-machine-content {padding:2px 7px 4px;}
+  #root [data-mean-game] .mean-machine-content > div:first-child,
+  #root [data-mean-game] .mean-machine-main {gap:4px;}
+  #root [data-mean-game] .mean-machine-question .game-question-card {padding:7px 9px;}
+  #root [data-mean-game] .vision-companion--question {display:none!important;}
+  #root .app-viewport.screen-gameplay[data-active-game][data-game-island] [data-mean-game] .game-question-card-inner:has(>.vision-companion--question) {
+    padding-left:0!important;min-height:0;
+  }
+  #root [data-mean-game] .mean-portrait-readings {
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;
+    margin-top:5px;
+  }
+  #root [data-mean-game] .mean-portrait-readings > span {
+    display:flex;justify-content:center;align-items:center;min-height:28px;
+    border:1px solid var(--prod-gold-edge);border-radius:8px;
+    background:var(--prod-surface-deep);color:var(--prod-text);
+    font-size:22px;line-height:1.2;
+  }
+  #root [data-mean-game] .mean-reel-window {visibility:hidden;}
+  #root [data-mean-game] .mean-machine-stage > .pointer-events-none {display:none;}
+  #root [data-mean-game] .mean-machine-stage {
+    display:flex;align-items:center;justify-content:center;gap:12px;
+    width:100%;height:100%;aspect-ratio:auto!important;
+  }
+  #root [data-mean-game] .mean-power-engine {
+    position:relative;inset:auto;width:90px;height:100%;max-height:140px;flex:none;
+  }
+  #root [data-mean-game] .mean-engine-scan-button {
+    position:relative;inset:auto!important;width:128px!important;height:48px!important;
+    flex:none;padding:4px;font-size:18px;
+  }
+  #root [data-mean-game] .mean-machine-answer-rail {padding:6px 8px;}
+  #root [data-mean-game] .mean-machine-answer-rail .answer-choice-surface {
+    grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;
+  }
+  #root [data-mean-game] .mean-machine-answer-rail .answer-choice-surface button {min-height:44px;}
 }
 /* The engine itself scales; retain the hit area in every orientation. */
 #root [data-mean-game] .mean-engine-scan-button {min-width:max(46px,calc(44px / var(--game-stage-scale,1)));min-height:max(44px,calc(44px / var(--game-stage-scale,1)));}

@@ -1,7 +1,47 @@
 {
   "src/app/gameOrientation.ts": {
     "before": "9bac2a6db0a618e4cd3fc91cab948c95786ad1861fdb95b98f733d77503d6329",
-    "after": "9f5835d3ac9620922fa6d5ed72eadd3843037bbb4ce6394ad503ba5748c4f1c9",
-    "reason": "Presentation-only orientation correction: explicit Fraction Forge blueprint remains landscape even though it shares the take_out_rush game type. No educational, scoring, timer, lives or progression logic changed."
+    "after": "09ae8af325d7290b9590d098c7b763a9bc80127787a1a8f228f9ac78fb16f075",
+    "reason": "Current brief phone orientation matrix plus adaptive papers. Only presentation rotation gating changes; no content or gameplay rules."
+  },
+  "src/games/MeanMachineGame.tsx": {
+    "before": "31f4890880cc46507a1fbb01acd415efbfe49238269437c9d06798252aebc135",
+    "after": "a86613579689d63c8587cf86d501d3ab7cd89f5b18333d34ae390a050ca7032f",
+    "reason": "Read-only compact portrait JSX repeats the existing reelDisplay values for active cells in a larger strip. Removing this exact block reproduces release 98a0bbd6 source byte for byte (LF normalized). No generator, question, answer, handler, score, timer, lives or progression code changed."
+  },
+  "src/games/FractionMatchGame.tsx": {
+    "before": "3383631c7923caced9f3c53bf35447ac59f45a20cf47632e33652a015ef969a5",
+    "after": "c120992f4cd2a483ba177953e97153feddfc9b20611402b89810e5f3a92e041f",
+    "reason": "Layout-only board fit: remove the 334px width floor and calculate border/padding budgets from the actual available rectangle. All board generation, labels, matching, timing, score and progression source is retained."
+  },
+  "src/App.tsx": {
+    "before": "52dc0b992b6a382d6c70924941cf4438541ad6cde6788533a7ed1a3507d38f27",
+    "after": "625e79676250b7446661c3929291ede53a00bd26118bf8a58ec2b78966115183",
+    "reason": "Reviewed production shell, adaptive orientation gate, settings full-viewport presentation and dock visibility, contextual Help and pause integration. Exact pre-rebuild App source is reconstructed by verify-production-visual-boundaries.mjs. All educational logic, timer durations and progression are unchanged."
+  },
+  "src/games/TakeOutRushGame.tsx": {
+    "before": "032bf3531178d41d4248d2ed17e1250137c7c747cf72d9390d9d88f170a69058",
+    "after": "091d06f8cd0c62c1e2166ec0fcb56acf1ccebeffed4cbb648980e0ca780c784f",
+    "reason": "Unchanged feedback JSX moved to the reserved scene track; original food image imports restored at the owner request. Exact pre-rebuild source reconstructed by verify-production-visual-boundaries.mjs. No educational or gameplay logic changed."
+  },
+  "src/games/AngleArenaGame.tsx": {
+    "before": "da4c5e015422c8520da0bb7006d9c748523b759141c91cb151013529e6dce11b",
+    "after": "aaa90da24dca43e2f24b92cbfbd8e77e93a96f8d4999e678cab7397211a9906c",
+    "reason": "Presentation import and JSX replace the supplied straight-line angle canvas diagram with an accessible larger SVG using the same supplied angle. Duplicate canvas diagram suppressed in the new layout only; exact baseline reconstructed by boundary check. No answer or physics logic changed."
+  },
+  "src/games/PerimeterPathGame.tsx": {
+    "before": "880339c00c7d66b41e8972b1d90db5aad2a5e707268092ea9238dfd7a009bb85",
+    "after": "ed1a9e282867829c60b0af4a6fe2425b419cda3581e6628933189aac1441a6b7",
+    "reason": "Only diagram label plates and font size enlarged; every point, edge, length, generator, validator and event is unchanged. Exact pre-rebuild reconstruction is checked in verify-production-visual-boundaries.mjs."
+  },
+  "src/games/OrderOpsArenaGame.tsx": {
+    "before": "90829248086ad3dbf036c14c101c9dcb93af781f885a6abce7ecafffa8b0decf",
+    "after": "ba243ce19232d3e80e0e3db43e5b7d4809c57ce03a979072773fde69eb643005",
+    "reason": "Moves the unchanged feedback JSX into its reserved actor region and adds a presentation class. Exact pre-rebuild source is reconstructed by verify-production-visual-boundaries.mjs. No handlers, questions, answer expressions, state, scoring, lives, timing or progression changed."
+  },
+  "src/games/visionScene.ts": {
+    "before": "4b522686301f1e8121ca84e3566ee23defa96781c21b96bec709a8f4b010f180",
+    "after": "014aa310e8b2829d606f60bf7a804c27513bc7b70027bb76c93521f06f19f332",
+    "reason": "Original rocket resolver restored at the owner request; retains the environment catalogue present before the UI rebuild. Image catalogue only, with no educational values or gameplay rules. Exact pre-rebuild source is reconstructed by verify-production-visual-boundaries.mjs."
   }
 }

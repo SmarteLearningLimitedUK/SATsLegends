@@ -61,12 +61,12 @@ const AdventureSettings: React.FC<AdventureSettingsProps> = ({ onBack }) => {
           <h1>Settings</h1>
           <p className="adventure-settings-intro">Set the sound that feels right for you. Your choices save automatically.</p>
           <div className="adventure-settings-grid">
-            <button type="button" data-button-skin="none" className="adventure-settings-option" aria-label="Sound effects" aria-pressed={soundEnabled} onClick={toggleSound}>
+            <button type="button" role="switch" data-button-skin="none" className="adventure-settings-option" aria-label="Sound effects" aria-checked={soundEnabled} onClick={toggleSound}>
               <span className="adventure-settings-icon" aria-hidden="true">{soundEnabled ? <Volume2 /> : <VolumeX />}</span>
               <span className="adventure-settings-copy"><strong>Sound effects</strong><span>Action sounds and answer feedback</span></span>
               <span className={`adventure-settings-state ${soundEnabled ? 'is-on' : ''}`} aria-hidden="true">{soundEnabled ? 'On' : 'Off'}</span>
             </button>
-            <button type="button" data-button-skin="none" className="adventure-settings-option" aria-label="Background music" aria-pressed={musicEnabled} onClick={toggleMusic}>
+            <button type="button" role="switch" data-button-skin="none" className="adventure-settings-option" aria-label="Background music" aria-checked={musicEnabled} onClick={toggleMusic}>
               <span className="adventure-settings-icon" aria-hidden="true"><Music2 /></span>
               <span className="adventure-settings-copy"><strong>Background music</strong><span>Music while exploring and playing</span></span>
               <span className={`adventure-settings-state ${musicEnabled ? 'is-on' : ''}`} aria-hidden="true">{musicEnabled ? 'On' : 'Off'}</span>

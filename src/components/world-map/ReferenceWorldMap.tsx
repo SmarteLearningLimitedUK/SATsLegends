@@ -1,8 +1,9 @@
-import React, { useLayoutEffect, useRef } from 'react';
-import { Gem, Leaf, BarChart3, Landmark, Waves, Snowflake, Star, Lock, Clock3, Settings } from 'lucide-react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
+import { Gem, Leaf, BarChart3, Landmark, Waves, Snowflake, Star, Lock, Clock3, Settings, ChevronDown, ArrowRight } from 'lucide-react';
 import type { IslandData } from '../../types';
 import mapScene from '../../assets/reference-batch-two/map-continuous-v2.png';
 import guide from '../../assets/reference-screens/island-guide.png';
+import './reference-world-map.css';
 
 type IslandState = {
   island: IslandData;
@@ -14,6 +15,7 @@ type IslandState = {
 interface Props {
   states: IslandState[];
   recommended?: IslandState;
+  suggestedGame?: string;
   onSelect: (island: IslandData) => void;
 }
 
@@ -33,20 +35,34 @@ const icons: Record<number, React.ElementType> = {
   5: Settings, 6: Clock3, 7: Waves, 8: Gem,
 };
 
-export default function ReferenceWorldMap({ states, recommended, onSelect }: Props) {
+export default function ReferenceWorldMap({ states, recommended, suggestedGame, onSelect }: Props) {
   const scroll = useRef<HTMLDivElement>(null);
+  const map = useRef<HTMLDivElement>(null);
+  const [recommendationOpen, setRecommendationOpen] = useState(false);
   const current = recommended ?? states[0];
   const currentId = current?.island.id;
 
   useLayoutEffect(() => {
+    const root = map.current, navigation = document.querySelector<HTMLElement>('.legend-map-dock');
+    if (!root || !navigation) return;
+    const reserve = () => root.style.setProperty('--map-navigation-height', `${Math.max(0,root.getBoundingClientRect().bottom-navigation.getBoundingClientRect().top)}px`);
+    const observer = new ResizeObserver(reserve);
+    observer.observe(root); observer.observe(navigation); reserve();
+    return () => observer.disconnect();
+  }, []);
+
+  useLayoutEffect(() => {
     const viewport = scroll.current;
     if (!viewport || currentId === undefined) return;
+    let saved: string | null = null;
+    try { saved = sessionStorage.getItem(`matharia-map-camera:${currentId}`); } catch { /* A map remains usable when storage is unavailable. */ }
     const align = () => {
       const island = viewport.querySelector<HTMLElement>(`[data-map-island-id="${currentId}"]`);
-      if (island) viewport.scrollTop = island.offsetTop - viewport.clientHeight * 0.67;
+      if (saved !== null && Number.isFinite(Number(saved))) viewport.scrollTop = Number(saved);
+      else if (island) viewport.scrollTop = island.offsetTop - viewport.clientHeight * 0.55;
     };
     align();
-    const resize = new ResizeObserver(align);
+    const resize = new ResizeObserver(() => { viewport.scrollTop = Math.min(viewport.scrollTop, viewport.scrollHeight - viewport.clientHeight); });
     resize.observe(viewport);
     return () => resize.disconnect();
   }, [currentId]);
@@ -54,8 +70,12 @@ export default function ReferenceWorldMap({ states, recommended, onSelect }: Pro
   if (!current) return null;
 
   return (
-    <div className="reference-world-map" data-reference-world-map>
-      <div className="reference-map-scroll" ref={scroll} aria-label="Island map. Scroll to explore all eight islands" tabIndex={0}>
+    <div className="reference-world-map" ref={map} data-reference-world-map>
+      <header className="reference-map-header">
+        <div className="reference-map-brand"><span>YOUR ADVENTURE</span><h1>Matharia</h1></div>
+        <div className="reference-map-tokens"><span>Brainpower tokens</span><strong><Gem aria-hidden="true" />{current.earnedBrainpower}/{current.totalPossibleBrainpower}</strong></div>
+      </header>
+      <div className="reference-map-scroll" ref={scroll} onScroll={event => { try { sessionStorage.setItem(`matharia-map-camera:${currentId}`, String(event.currentTarget.scrollTop)); } catch { /* Camera persistence is optional. */ } }} aria-label="Island map. Scroll to explore all eight islands" tabIndex={0}>
         <div className="reference-map-canvas" data-reference-map-scene>
           <img className="reference-map-art" src={mapScene} width={724} height={2172} alt="" draggable={false} />
           {sites.map(site => {
@@ -89,12 +109,18 @@ export default function ReferenceWorldMap({ states, recommended, onSelect }: Pro
           })}
         </div>
       </div>
-      <header className="reference-map-header">
-        <div className="reference-map-current">
+      <aside className="reference-map-recommendation" aria-label="Suggested adventure">
+        <button className="reference-map-recommendation-toggle" type="button" aria-expanded={recommendationOpen} aria-controls="map-recommendation-details" onClick={() => setRecommendationOpen(open => !open)}>
+          <span>Suggested adventure</span><ChevronDown aria-hidden="true" />
+        </button>
+        <div className="reference-map-recommendation-row">
+          <strong>{suggestedGame ?? current.island.name}</strong>
+          <button type="button" className="reference-map-continue" onClick={() => onSelect(current.island)} aria-label={`Continue to ${current.island.name}`}>Continue <ArrowRight aria-hidden="true" /></button>
+        </div>
+        <div id="map-recommendation-details" hidden={!recommendationOpen} className="reference-map-current">
           <span className="reference-map-avatar"><img src={guide} alt="" /></span>
           <div>
             <span className="reference-map-category">{current.island.category} · Island {currentId}</span>
-            <h1>{current.island.name}</h1>
             <div className="reference-map-completion">
               <div role="progressbar" aria-label={`${current.island.name} completion`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={current.completion}>
                 <span style={{ width: `${current.completion}%` }} />
@@ -103,8 +129,7 @@ export default function ReferenceWorldMap({ states, recommended, onSelect }: Pro
             </div>
           </div>
         </div>
-        <div className="reference-map-tokens"><span>Brainpower<br />Tokens</span><strong><Gem aria-hidden="true" />{current.earnedBrainpower}/{current.totalPossibleBrainpower}</strong></div>
-      </header>
+      </aside>
     </div>
   );
 }

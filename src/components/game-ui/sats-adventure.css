@@ -114,18 +114,18 @@
 
 /* The mock-run header wraps on a narrow phone; leave a clear gap below it. */
 @media(max-width:480px) and (max-height:700px) {
- #root [data-game-set='boss_encounter'] .sats-mock-content {padding-top:calc(20px / var(--game-stage-scale,1)) !important;}
+ #root .app-viewport:not([data-layout-revision='production-v2']) [data-game-set='boss_encounter'] .sats-mock-content {padding-top:calc(20px / var(--game-stage-scale,1)) !important;}
 }
 @media(max-height:700px) {
- #root [data-game-set='boss_encounter'] .sats-playfield {grid-template-rows:56px minmax(170px,auto) !important;}
- #root [data-game-set='boss_encounter'] :is(.sats-mission-tools,.sats-charge) {height:56px !important;}
- #root [data-game-set='boss_encounter'] .sats-mission-tools button {line-height:1.15;}
+ #root .app-viewport:not([data-layout-revision='production-v2']) [data-game-set='boss_encounter'] .sats-playfield {grid-template-rows:56px minmax(170px,auto) !important;}
+ #root .app-viewport:not([data-layout-revision='production-v2']) [data-game-set='boss_encounter'] :is(.sats-mission-tools,.sats-charge) {height:56px !important;}
+ #root .app-viewport:not([data-layout-revision='production-v2']) [data-game-set='boss_encounter'] .sats-mission-tools button {line-height:1.15;}
 }
 
 /* Multi-part answers and expanded working must flow below the model. */
 @media(max-height:700px) {
- #root [data-game-set='boss_encounter'] .sats-mock-content:has(.sats-fields > fieldset:nth-child(2), .sats-tap-workpad[open]) {overflow-y:auto;touch-action:pan-y;}
- #root [data-game-set='boss_encounter'] .sats-mock-content:has(.sats-fields > fieldset:nth-child(2), .sats-tap-workpad[open]) .sats-playfield {flex:none;min-height:232px;}
+ #root .app-viewport:not([data-layout-revision='production-v2']) [data-game-set='boss_encounter'] .sats-mock-content:has(.sats-fields > fieldset:nth-child(2), .sats-tap-workpad[open]) {overflow-y:auto;touch-action:pan-y;}
+ #root .app-viewport:not([data-layout-revision='production-v2']) [data-game-set='boss_encounter'] .sats-mock-content:has(.sats-fields > fieldset:nth-child(2), .sats-tap-workpad[open]) .sats-playfield {flex:none;min-height:232px;}
 }
 
 /* Constructed responses retain the same reserved question/model/response zones. */
@@ -181,7 +181,7 @@
 .sats-depth-nets figure{flex:1;min-width:0;margin:0;text-align:center;}
 .sats-depth-nets svg{width:100%;height:150px;}
 @media(orientation:landscape) and (max-height:550px){
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-model:has(.sats-depth-host,.sats-depth-pictogram,.sats-depth-nets){padding:12px 14px 8px!important;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-model:has(.sats-depth-host,.sats-depth-pictogram,.sats-depth-nets){padding:12px 14px 8px!important;}
  .sats-model:has(.sats-depth-host,.sats-depth-pictogram,.sats-depth-nets) .core-paper-inscription{display:none;}
  #root .sats-mock .sats-depth-tabs button small{font-size:12px!important;}
  .sats-depth-construction{gap:3px;}

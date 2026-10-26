@@ -1,0 +1,105 @@
+/* Restore the existing fantasy artwork and tactile materials over the new
+   measured layouts. Geometry, questions and interaction rules stay with their owners. */
+#root .app-viewport[data-layout-revision='production-v2'] {
+ --prod-panel:linear-gradient(150deg,#256c52,#084639 58%,#032c2c);
+ --prod-gold:#ffdc83;
+ --prod-gold-edge:#d6a842;
+ --restore-frame:url('../assets/game-visions/objects/forest-frame-v1.webp');
+ --restore-button:linear-gradient(145deg,#3a8c67 0%,#145c47 40%,#05372f 100%);
+ --restore-highlight:inset 0 2px 0 #d9ffe780,inset 0 -3px 0 #001d2480,inset 0 0 0 3px #c3f4cf25;
+}
+#root .app-viewport[data-layout-revision='production-v2'][data-game-island='3'] {
+ --restore-frame:url('../assets/game-visions/objects/glacier-frame-v1.webp');
+ --restore-button:linear-gradient(145deg,#3677ac,#164d7d 45%,#08294e);
+}
+#root .app-viewport[data-layout-revision='production-v2'][data-game-island='4'] {
+ --restore-frame:url('../assets/game-visions/objects/desert-frame-v1.webp');
+ --restore-button:linear-gradient(145deg,#9b6b35,#6b4128 45%,#382717);
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-layout-revision='production-v2'] .legend-hud-bar {
+ border-color:#ffdf89!important;
+ background:linear-gradient(110deg,#134f42,#073a34 65%,#002c2b)!important;
+ box-shadow:inset 0 0 0 2px #7c531f,inset 0 3px 0 #fff0b455,0 2px 0 #624316,0 4px 8px #001c3566!important;
+}
+#root .app-viewport[data-layout-revision='production-v2'] .legend-hud-title {font-family:var(--prod-font-display);font-weight:800;color:#fff8de;text-shadow:0 1px 1px #001f2d;}
+#root .app-viewport[data-layout-revision='production-v2'] .legend-hud-timer {background:#032b31;border-color:#d5e9b366;box-shadow:inset 0 2px 3px #001b26;}
+#root .app-viewport[data-layout-revision='production-v2'] .legend-hud-timer>div {background:linear-gradient(90deg,#72ed8a,#c8ffd1 75%,#fff2b3);box-shadow:0 0 7px #a9f5ad55;}
+#root .app-viewport[data-layout-revision='production-v2'] .legend-hud-avatar {border:2px solid #f5ce6e;border-radius:50%;background:#174e46;box-shadow:inset 0 0 0 1px #fff1ba,0 2px 3px #001b35;}
+#root .app-viewport[data-layout-revision='production-v2'] .production-game-controls>button {
+ background:var(--restore-button)!important;border-color:#e3c879!important;
+ box-shadow:var(--restore-highlight),0 2px 0 #58421b!important;
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island][data-layout-revision='production-v2'] .game-staging-host[data-game-set][data-vision-game] .game-question-card {
+ background:linear-gradient(135deg,#145344,#043b35 65%,#032a2e)!important;
+ border-color:#f1d37b!important;
+ border-image:var(--restore-frame) 12% / 8px / 0 stretch!important;
+ box-shadow:inset 0 0 0 3px #062e30,0 3px 5px #001a2644!important;
+}
+/* These are the actual pre-rebuild reference panels, with sample copy already
+   patched out by ReferenceArt. Live questions remain above the illustration. */
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island][data-layout-revision='production-v2'] .game-staging-host[data-game-set][data-vision-game] .reference-question:has(>.reference-art--question) {
+ border-image:none!important;border-color:transparent!important;background:transparent!important;box-shadow:none!important;
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island][data-layout-revision='production-v2'] .game-staging-host[data-game-set][data-vision-game] .game-question-card>.reference-art--question {
+ display:block!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;pointer-events:none;z-index:0;
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island][data-layout-revision='production-v2'] .game-staging-host[data-game-set][data-vision-game] .reference-question:has(>.reference-art--question) .game-question-card-inner {
+ position:relative;z-index:1;padding-left:23%!important;
+}
+#root .app-viewport[data-layout-revision='production-v2'] .game-question-copy strong {color:#ffe98e;}
+/* Control skins are appearance only: no new padding, dimensions or transforms. */
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island][data-layout-revision='production-v2'] .game-staging-host[data-game-set][data-vision-game] :is(.answer-choice-surface button,.rr-answer-buttons button,.zombies-answer-options button,.pp-answer,.angle-arena-answer,.perimeter-responses button,.line-graph-side button,.graph-grabber-answers button,.conversion-token-grid button,.scale-keypad button,.scale-numeric-panel button,.cargo-batch,.pyramid-composition button,.frenzy-selection-card,.mean-answer,.ui-button-secondary,[data-number-line-answer],[data-formula-answer],[data-mean-answer]) {
+ background:var(--restore-button)!important;border-color:#bce1ae!important;
+ box-shadow:var(--restore-highlight),0 2px 0 #062c31,0 3px 5px #001a2633!important;
+ color:#fff9e6;text-shadow:0 1px 1px #001c32;
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island][data-layout-revision='production-v2'] .game-staging-host[data-game-set][data-vision-game] :is(.ui-button-primary,.game-submit-dock-fixed button,.potion-brew-button,.cargo-send) {
+ background:linear-gradient(155deg,#fff1a2,#ffda58 42%,#f2b930)!important;
+ border-color:#ffd879!important;color:#202a23!important;
+ box-shadow:inset 0 0 0 2px #ffe99c,inset 0 3px 0 #fff9d1,inset 0 -4px 0 #c18a20,0 3px 0 #765022!important;
+ text-shadow:0 1px 0 #fff0b1;
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island][data-layout-revision='production-v2'] .game-staging-host[data-game-set][data-vision-game] :is(.rr-answers,.zombies-answer-board,.scale-numeric-panel,.graph-grabber-answers,.pp-answer-console,.cargo-console,.pvp-digit-panel) {
+ border-image:var(--restore-frame) 12% / 6px / 0 stretch!important;
+ box-shadow:inset 0 0 0 2px #f7d77d55,0 3px 5px #001f3155!important;
+}
+/* Restore rich scenery; the question and mathematics keep their own surfaces. */
+#root .app-viewport[data-layout-revision='production-v2'] .game-background-layer {background:transparent!important;}
+#root .app-viewport[data-layout-revision='production-v2'] .game-background-layer img[data-vision-environment] {opacity:0!important;}
+#root .app-viewport[data-layout-revision='production-v2'] [data-game-wide-ambient] {display:none!important;}
+#root .app-viewport[data-layout-revision='production-v2'] [data-gameplay-content-viewport] {background:none!important;}
+#root .app-viewport[data-layout-revision='production-v2'] [data-gameplay-content-viewport]::before,
+#root .app-viewport[data-layout-revision='production-v2'] [data-gameplay-content-viewport]::after {display:none!important;}
+/* Keep the approved mechanical scale. Separate weight tiles and the action row,
+   and constrain each label to its own line rather than letting skins overlap. */
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island][data-layout-revision='production-v2'] .game-staging-host[data-game-set][data-vision-game] :is(.pvp-stone-face,.pvp-number-stone,.rr-answer-buttons button,.zombies-answer-options button):has(>.reference-art) {position:relative;isolation:isolate;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island][data-layout-revision='production-v2'] .game-staging-host[data-game-set][data-vision-game] :is(.reference-art--gem,.reference-art--green-answer) {display:block!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;z-index:-1;pointer-events:none;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island][data-layout-revision='production-v2'] .game-staging-host[data-game-set][data-vision-game] .rr-build-status {background:linear-gradient(#173f5a,#09263d)!important;box-shadow:inset 0 0 0 2px #f2cc77,inset 0 0 0 4px #80643b,0 3px 5px #01203966!important;color:#fff3bd;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island][data-layout-revision='production-v2'] .game-staging-host[data-game-set][data-vision-game] .market-coin-button {background:radial-gradient(circle at 32% 25%,#fff0bc,#d3a455 58%,#866331)!important;border-color:#f4dfa0!important;box-shadow:inset 0 0 0 2px #ae8445,0 2px 0 #74552c!important;text-shadow:0 1px #fff2cc;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island][data-layout-revision='production-v2'] .game-staging-host[data-game-set][data-vision-game] .market-coin-button:is([data-market-coin='5'],[data-market-coin='10'],[data-market-coin='20'],[data-market-coin='50']) {background:radial-gradient(circle at 32% 25%,#fafdfb,#bdcfd2 58%,#647e87)!important;box-shadow:inset 0 0 0 2px #819da3,0 2px 0 #55717a!important;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island][data-layout-revision='production-v2'] .game-staging-host[data-game-set][data-vision-game] .market-coin-button:is([data-market-coin='1'],[data-market-coin='2']) {background:radial-gradient(circle at 32% 25%,#ffdcaf,#c88555 58%,#8d4b32)!important;box-shadow:inset 0 0 0 2px #b46c43,0 2px 0 #794830!important;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island][data-layout-revision='production-v2'] .game-staging-host[data-game-set][data-vision-game] .conversion-token-grid {
+ gap:8px!important;grid-auto-rows:minmax(64px,auto);align-items:stretch;
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island][data-layout-revision='production-v2'] .game-staging-host[data-game-set][data-vision-game] .conversion-token-grid button {
+ display:flex!important;flex-direction:column!important;justify-content:center;align-items:center;
+ height:64px!important;min-height:64px!important;gap:4px!important;padding:4px!important;min-width:0;
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island][data-layout-revision='production-v2'] .game-staging-host[data-game-set][data-vision-game] .conversion-token-grid button>span {
+ display:block!important;position:static!important;margin:0!important;font:700 24px/1.05 var(--prod-font-body)!important;white-space:nowrap;
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island][data-layout-revision='production-v2'] .game-staging-host[data-game-set][data-vision-game] .conversion-token-grid button>span:last-child {font:600 14px/1.1 var(--prod-font-body)!important;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island][data-layout-revision='production-v2'] .game-staging-host[data-game-set][data-vision-game] .conversion-token-grid :is(button,button>span)::before,
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island][data-layout-revision='production-v2'] .game-staging-host[data-game-set][data-vision-game] .conversion-token-grid :is(button,button>span)::after {content:none!important;display:none!important;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island][data-layout-revision='production-v2'] .game-staging-host[data-game-set][data-vision-game] .conversion-token-grid button>span {background:none!important;border:0!important;box-shadow:none!important;text-decoration:none!important;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island][data-layout-revision='production-v2'] .game-staging-host[data-game-set][data-vision-game] .conversion-game .game-submit-dock {margin-top:10px!important;}
+#root .app-viewport[data-layout-revision='production-v2'][data-active-game='conversion_canyon'] .scene-water-glints {display:none!important;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island][data-layout-revision='production-v2'] .game-staging-host[data-game-set='place_value_panic'][data-vision-game] .reference-question .game-question-card-inner {padding-left:0!important;padding-top:18px!important;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island][data-layout-revision='production-v2'] .game-staging-host[data-game-set='place_value_panic'][data-vision-game] .reference-question-number {position:absolute!important;inset:1px auto auto 50%!important;transform:translateX(-50%)!important;width:40%;height:20px;margin:0;padding:0;z-index:3;font:600 14px/20px var(--prod-font-body)!important;white-space:nowrap;color:#392a15!important;text-align:center;}
+@media(orientation:portrait) and (max-height:650px) {
+ #root .app-viewport[data-layout-revision='production-v2'] .conversion-load-tray>span {display:none;}
+}
+@media(orientation:portrait) and (min-width:375px) {
+ #root .app-viewport[data-layout-revision='production-v2'] .legend-hud-bar {padding-left:40px!important;}
+ #root .app-viewport[data-layout-revision='production-v2'] .legend-hud-avatar {display:block;position:absolute;left:6px;top:50%;transform:translateY(-50%);}
+}

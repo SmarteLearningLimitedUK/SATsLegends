@@ -1,0 +1,230 @@
+{
+  "assets": [
+    {
+      "original": "src/assets/take_out/food/1.png",
+      "replacement": "src/assets/production-ui-v2/food-burger_meal.svg",
+      "reason": "Consistent rounded vector material and lighting; same existing food subject and live fraction.",
+      "target": "Take-Out Rush",
+      "dimensions": [
+        64,
+        64
+      ],
+      "format": "SVG",
+      "provenance": "Custom project-authored programmatic artwork; no external stock.",
+      "activeDefault": false,
+      "status": "Earlier generated replacement retained for provenance; original graphics restored by owner request.",
+      "bytes": 423,
+      "sha256": "ce76b12d00d1a6bd09b0b7cee32008774844a1ea032b1c529383661915992d94"
+    },
+    {
+      "original": "src/assets/take_out/food/2.png",
+      "replacement": "src/assets/production-ui-v2/food-ribs_plate.svg",
+      "reason": "Consistent rounded vector material and lighting; same existing food subject and live fraction.",
+      "target": "Take-Out Rush",
+      "dimensions": [
+        64,
+        64
+      ],
+      "format": "SVG",
+      "provenance": "Custom project-authored programmatic artwork; no external stock.",
+      "activeDefault": false,
+      "status": "Earlier generated replacement retained for provenance; original graphics restored by owner request.",
+      "bytes": 360,
+      "sha256": "eb73e58ad1b14059c6ffbd39db11cf2981ae4c830c05c0646ab5c55baae39e9e"
+    },
+    {
+      "original": "src/assets/take_out/food/3.png",
+      "replacement": "src/assets/production-ui-v2/food-berry_dessert.svg",
+      "reason": "Consistent rounded vector material and lighting; same existing food subject and live fraction.",
+      "target": "Take-Out Rush",
+      "dimensions": [
+        64,
+        64
+      ],
+      "format": "SVG",
+      "provenance": "Custom project-authored programmatic artwork; no external stock.",
+      "activeDefault": false,
+      "status": "Earlier generated replacement retained for provenance; original graphics restored by owner request.",
+      "bytes": 423,
+      "sha256": "759bd69fb7001b0e7bb70206d5e787b83197a9efc28048dfacb3889ff4739942"
+    },
+    {
+      "original": "src/assets/take_out/food/4.png",
+      "replacement": "src/assets/production-ui-v2/food-salad_bowl.svg",
+      "reason": "Consistent rounded vector material and lighting; same existing food subject and live fraction.",
+      "target": "Take-Out Rush",
+      "dimensions": [
+        64,
+        64
+      ],
+      "format": "SVG",
+      "provenance": "Custom project-authored programmatic artwork; no external stock.",
+      "activeDefault": false,
+      "status": "Earlier generated replacement retained for provenance; original graphics restored by owner request.",
+      "bytes": 449,
+      "sha256": "69fa3779e11475b04605be7451d83528bfd40151c6ae81fa701dbfa7bdf62fd4"
+    },
+    {
+      "original": "src/assets/take_out/food/5.png",
+      "replacement": "src/assets/production-ui-v2/food-rice_bowl.svg",
+      "reason": "Consistent rounded vector material and lighting; same existing food subject and live fraction.",
+      "target": "Take-Out Rush",
+      "dimensions": [
+        64,
+        64
+      ],
+      "format": "SVG",
+      "provenance": "Custom project-authored programmatic artwork; no external stock.",
+      "activeDefault": false,
+      "status": "Earlier generated replacement retained for provenance; original graphics restored by owner request.",
+      "bytes": 364,
+      "sha256": "81f00de4ab348bd34b1de67f1e128e1b7376cd7ed594268ba52b473d48340803"
+    },
+    {
+      "original": "src/assets/take_out/food/6.png",
+      "replacement": "src/assets/production-ui-v2/food-pizza_slice.svg",
+      "reason": "Consistent rounded vector material and lighting; same existing food subject and live fraction.",
+      "target": "Take-Out Rush",
+      "dimensions": [
+        64,
+        64
+      ],
+      "format": "SVG",
+      "provenance": "Custom project-authored programmatic artwork; no external stock.",
+      "activeDefault": false,
+      "status": "Earlier generated replacement retained for provenance; original graphics restored by owner request.",
+      "bytes": 409,
+      "sha256": "cf6ad7b2bbce6d7cbf3fcf87eca77850c9fa9c0648ddfb590fe5a02ab8f12381"
+    },
+    {
+      "original": "src/assets/take_out/food/7.png",
+      "replacement": "src/assets/production-ui-v2/food-hotdog_combo.svg",
+      "reason": "Consistent rounded vector material and lighting; same existing food subject and live fraction.",
+      "target": "Take-Out Rush",
+      "dimensions": [
+        64,
+        64
+      ],
+      "format": "SVG",
+      "provenance": "Custom project-authored programmatic artwork; no external stock.",
+      "activeDefault": false,
+      "status": "Earlier generated replacement retained for provenance; original graphics restored by owner request.",
+      "bytes": 367,
+      "sha256": "5b324e82ab7fc745babbd1e2ccd4748edb2d963d6860f86d6f5820944c8118d0"
+    },
+    {
+      "original": "src/assets/take_out/food/8.png",
+      "replacement": "src/assets/production-ui-v2/food-roast_chicken.svg",
+      "reason": "Consistent rounded vector material and lighting; same existing food subject and live fraction.",
+      "target": "Take-Out Rush",
+      "dimensions": [
+        64,
+        64
+      ],
+      "format": "SVG",
+      "provenance": "Custom project-authored programmatic artwork; no external stock.",
+      "activeDefault": false,
+      "status": "Earlier generated replacement retained for provenance; original graphics restored by owner request.",
+      "bytes": 443,
+      "sha256": "d800c51fb9af750ec581d70c8660438e8840fb9b7245eeef19ae0c163cb82e99"
+    },
+    {
+      "original": "src/assets/take_out/food/9.png",
+      "replacement": "src/assets/production-ui-v2/food-fries.svg",
+      "reason": "Consistent rounded vector material and lighting; same existing food subject and live fraction.",
+      "target": "Take-Out Rush",
+      "dimensions": [
+        64,
+        64
+      ],
+      "format": "SVG",
+      "provenance": "Custom project-authored programmatic artwork; no external stock.",
+      "activeDefault": false,
+      "status": "Earlier generated replacement retained for provenance; original graphics restored by owner request.",
+      "bytes": 363,
+      "sha256": "e59be5d14bf00a94b53112f92ef0947259bfec33f09e74934ffd50b004d7de5f"
+    },
+    {
+      "original": "Existing CSS coin skin",
+      "replacement": "src/assets/production-ui-v2/coin-copper.svg",
+      "reason": "Consistent metal family; denominations remain live text.",
+      "target": "Change Counter",
+      "dimensions": [
+        64,
+        64
+      ],
+      "format": "SVG",
+      "provenance": "Custom project-authored programmatic artwork; no external stock.",
+      "activeDefault": false,
+      "status": "Earlier generated replacement retained for provenance; original graphics restored by owner request.",
+      "bytes": 354,
+      "sha256": "ad82d989545b298ee64210bdd69a9e0a3510e1f2df5b7baf24505838e465d647"
+    },
+    {
+      "original": "Existing CSS coin skin",
+      "replacement": "src/assets/production-ui-v2/coin-silver.svg",
+      "reason": "Consistent metal family; denominations remain live text.",
+      "target": "Change Counter",
+      "dimensions": [
+        64,
+        64
+      ],
+      "format": "SVG",
+      "provenance": "Custom project-authored programmatic artwork; no external stock.",
+      "activeDefault": false,
+      "status": "Earlier generated replacement retained for provenance; original graphics restored by owner request.",
+      "bytes": 354,
+      "sha256": "948b9d48f2a5bd65af94c4543299a83acb3c198f8bed4f50c88cd57faef2812e"
+    },
+    {
+      "original": "Existing CSS coin skin",
+      "replacement": "src/assets/production-ui-v2/coin-gold.svg",
+      "reason": "Consistent metal family; denominations remain live text.",
+      "target": "Change Counter",
+      "dimensions": [
+        64,
+        64
+      ],
+      "format": "SVG",
+      "provenance": "Custom project-authored programmatic artwork; no external stock.",
+      "activeDefault": false,
+      "status": "Earlier generated replacement retained for provenance; original graphics restored by owner request.",
+      "bytes": 354,
+      "sha256": "6425311b5ca0df32e2546b57ea8b5861585ef7d0aff8adc808f6b1e906c67522"
+    },
+    {
+      "original": "Existing CSS coin skin",
+      "replacement": "src/assets/production-ui-v2/coin-heptagon.svg",
+      "reason": "Consistent metal family; denominations remain live text.",
+      "target": "Change Counter",
+      "dimensions": [
+        64,
+        64
+      ],
+      "format": "SVG",
+      "provenance": "Custom project-authored programmatic artwork; no external stock.",
+      "activeDefault": false,
+      "status": "Earlier generated replacement retained for provenance; original graphics restored by owner request.",
+      "bytes": 372,
+      "sha256": "3712a7f61d3d934387ec93296ba50f0bba65760b1058ec7058a13ece3afd47ef"
+    },
+    {
+      "original": "src/assets/game-visions/objects/rocket-v1.webp",
+      "replacement": "src/assets/production-ui-v2/rocket-fantasy-v2.webp",
+      "source": "native/production-ui-v2/source-art/rocket-fantasy-v2.png",
+      "reason": "Replaces photographic shuttle material with a rounded teal, ivory and brass fantasy prop; same live assembly regions.",
+      "target": "Rounding Rocket",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "format": "WebP alpha",
+      "provenance": "Created for this project with built-in image generation and repository references. Prompt and source retained in rocket-generation.json. No external stock.",
+      "activeDefault": false,
+      "status": "Earlier generated replacement retained for provenance; original graphics restored by owner request.",
+      "bytes": 193618,
+      "sha256": "83e15e0c6d22f4fb905d4fcf3d78fd4f88deb01feb97f5dcc1892219a93ce146"
+    }
+  ],
+  "exportBytes": 198653
+}

@@ -19,7 +19,7 @@ import LevelResultsModal from './components/results/LevelResultsModal';
 import UnifiedMiniGameHud from './components/UnifiedMiniGameHud';
 import { isReferenceGame, isRatioReferenceGame, isBatchThreeGame } from './components/game-ui/ReferenceScreenArt';
 import GameplayOrientationGate from './components/GameplayOrientationGate';
-import { getGameOrientation, needsGameRotation } from './app/gameOrientation';
+import { allowsAdaptiveGameOrientation, getGameOrientation, needsGameRotation } from './app/gameOrientation';
 import { usesFlowGameLayout } from './app/gameLayoutPolicy';
 import { useNativeAppBackgrounded } from './platform/nativeApp';
 import { getVisionEnvironment } from './games/visionScene';
@@ -131,6 +131,7 @@ const App: React.FC = () => {
   });
   const [answerStreak, setAnswerStreak] = useState(0);
   const [gameplayHelpOpen, setGameplayHelpOpen] = useState(false);
+  const [gameplayMenuOpen, setGameplayMenuOpen] = useState(false);
   const [gameplayHelpTips, setGameplayHelpTips] = useState<string[]>([]);
   const [gameplayWorkpadOpen, setGameplayWorkpadOpen] = useState(false);
   const [gameplayWorkpadValue, setGameplayWorkpadValue] = useState('');
@@ -139,6 +140,7 @@ const App: React.FC = () => {
     sessionMetricsRef.current = { correct: 0, incorrect: 0, hintsUsed: 0 };
     setAnswerStreak(0);
     setGameplayHelpOpen(false);
+    setGameplayMenuOpen(false);
     setGameplayWorkpadOpen(false);
     setGameplayWorkpadValue('');
   }, []);
@@ -339,8 +341,9 @@ const App: React.FC = () => {
     });
   }, [player.calmTokens, setPlayer, wellbeingActivityId]);
 
-  const gameplayOrientation = getGameOrientation(selectedLevel);
-  const gameplayRotationRequired = screen === 'gameplay' && needsGameRotation(gameplayOrientation, viewportSize.width, viewportSize.height);
+  const compactPaperLandscape = allowsAdaptiveGameOrientation(selectedLevel) && Math.min(viewportSize.width, viewportSize.height) < 360 && Math.max(viewportSize.width, viewportSize.height) < 700;
+  const gameplayOrientation = compactPaperLandscape ? 'landscape' : getGameOrientation(selectedLevel);
+  const gameplayRotationRequired = screen === 'gameplay' && (!allowsAdaptiveGameOrientation(selectedLevel) || compactPaperLandscape) && needsGameRotation(gameplayOrientation, viewportSize.width, viewportSize.height);
   const gameplayEntryBlocked = gameplayRotationRequired || gameplayStartRequired;
   const nativeBackgrounded = useNativeAppBackgrounded();
   const {
@@ -350,7 +353,7 @@ const App: React.FC = () => {
   } = useGameplaySession({
     screen,
     selectedLevel,
-    paused: nativeBackgrounded || gameplayEntryBlocked || gameplayHelpOpen || gameplayWorkpadOpen || practiceBriefingOpen || Boolean(levelResult),
+    paused: nativeBackgrounded || gameplayEntryBlocked || gameplayHelpOpen || gameplayMenuOpen || gameplayWorkpadOpen || practiceBriefingOpen || Boolean(levelResult),
     restartKey: gameplayRestartKey,
     onLifeDepleted: () => handleGameOverRef.current(0),
     onTimeDepleted: () => handleGameOverRef.current(0),
@@ -390,12 +393,12 @@ const App: React.FC = () => {
     timeLeft: globalMiniGameHudTimeLeft,
     totalTime: getSessionDurationSeconds(selectedLevel),
     lives: globalMiniGameLives,
-    paused: nativeBackgrounded || gameplayEntryBlocked || gameplayHelpOpen || gameplayWorkpadOpen || practiceBriefingOpen || Boolean(levelResult),
-  }), [nativeBackgrounded, gameplayEntryBlocked, gameplayHelpOpen, gameplayWorkpadOpen, practiceBriefingOpen, globalMiniGameHudTimeLeft, globalMiniGameLives, levelResult, selectedLevel]);
+    paused: nativeBackgrounded || gameplayEntryBlocked || gameplayHelpOpen || gameplayMenuOpen || gameplayWorkpadOpen || practiceBriefingOpen || Boolean(levelResult),
+  }), [nativeBackgrounded, gameplayEntryBlocked, gameplayHelpOpen, gameplayMenuOpen, gameplayWorkpadOpen, practiceBriefingOpen, globalMiniGameHudTimeLeft, globalMiniGameLives, levelResult, selectedLevel]);
 
   useEffect(() => {
-    if (nativeBackgrounded || gameplayEntryBlocked || gameplayHelpOpen || gameplayWorkpadOpen || practiceBriefingOpen) stopGameSoundEffects();
-  }, [nativeBackgrounded, gameplayEntryBlocked, gameplayHelpOpen, gameplayWorkpadOpen, practiceBriefingOpen]);
+    if (nativeBackgrounded || gameplayEntryBlocked || gameplayHelpOpen || gameplayMenuOpen || gameplayWorkpadOpen || practiceBriefingOpen) stopGameSoundEffects();
+  }, [nativeBackgrounded, gameplayEntryBlocked, gameplayHelpOpen, gameplayMenuOpen, gameplayWorkpadOpen, practiceBriefingOpen]);
 
   const resolveLevelTitle = useCallback(() => {
     if (!selectedLevel) return 'Level over';
@@ -886,6 +889,7 @@ const App: React.FC = () => {
   const isStartScreen = isSplashScreen || screen === 'profile_setup' || screen === 'avatar_selection';
   const isAvatarSelectionScreen = screen === 'avatar_selection';
   const isGameplayScreen = screen === 'gameplay';
+  const productionGameplay = isGameplayScreen && usesFlowGameLayout(selectedLevel);
   const isMapLayoutScreen = MAP_LAYOUT_SCREENS.includes(screen);
   const isWorldMapScreen = screen === 'world_map';
   const isIslandLevelsScreen = screen === 'island_levels';
@@ -910,7 +914,7 @@ const App: React.FC = () => {
     && viewportSize.width > viewportSize.height && viewportSize.height < 600;
   const isShortLandscapeMap = isWorldMapScreen && viewportSize.width >= 560
     && viewportSize.width > viewportSize.height && viewportSize.height < 600;
-  const useUnboundedStageShell = screen === 'parent_dashboard' || isWellbeingScreen || isWorldMapScreen
+  const useUnboundedStageShell = screen === 'parent_dashboard' || screen === 'settings' || isWellbeingScreen || isWorldMapScreen
     || (isGameplayScreen && gameplayOrientation === 'portrait')
     || isShortLandscapeSplash || isShortLandscapeMap
     || (isGameplayScreen && (hasWideGameplayViewport || viewportSize.width > viewportSize.height))
@@ -1025,6 +1029,7 @@ const App: React.FC = () => {
             data-game-island={isGameplayScreen ? selectedIsland?.id : undefined}
             data-game-island-name={isGameplayScreen ? selectedIsland?.name : undefined}
             data-active-game={isGameplayScreen ? selectedLevel?.blueprintKey : undefined}
+            data-layout-revision={productionGameplay?'production-v2':undefined}
             data-reference-screen={isGameplayScreen ? selectedLevel?.blueprintKey : screen === 'world_map' ? 'world_map' : screen === 'wellbeing_activity' && (wellbeingActivityId === 'breathing_bloom' || wellbeingActivityId === 'peaceful_pond') ? wellbeingActivityId : screen === 'island_levels' && selectedIsland?.id === 1 ? 'island_1' : undefined}
             data-game-layout={isGameplayScreen && usesFlowGameLayout(selectedLevel) ? 'flow' : undefined}
             data-game-tips-enabled={isGameplayScreen && Boolean(hintRuleSet)}
@@ -1091,8 +1096,10 @@ const App: React.FC = () => {
               </motion.div>
             </AnimatePresence>
 
-            {!isStartScreen ? (
+            {!isStartScreen && screen !== 'settings' ? (
               <UnifiedMiniGameHud
+                production={productionGameplay}
+                onPauseChange={setGameplayMenuOpen}
                 referenceKey={isGameplayScreen ? selectedLevel?.blueprintKey : screen === 'wellbeing_activity' && (wellbeingActivityId === 'breathing_bloom' || wellbeingActivityId === 'peaceful_pond') ? wellbeingActivityId : screen === 'island_levels' && selectedIsland?.id === 1 ? 'island_1' : undefined}
                 avatarId={player.avatarId}
                 title={isGameplayScreen ? canonicalGameTitle : 'SATs Legends'}
@@ -1102,7 +1109,7 @@ const App: React.FC = () => {
                 onHelp={isGameplayScreen ? () => {
                   if (!gameplayHelpOpen) sessionMetricsRef.current.hintsUsed += 1;
                   const root = document.querySelector('.app-viewport.screen-gameplay');
-                  const tips = Array.from(root?.querySelectorAll('[data-game-tip="true"]') ?? [])
+                  const tips = Array.from(root?.querySelectorAll('[data-game-tip="true"],.rs-feedback:not(:has(strong)),.polygon-shape-guidance,.frenzy-instruction,.frenzy-goal,.rush-tray-label>span:last-child,.rush-feedback[data-feedback-active="false"],.market-stack .question-subtitle') ?? [])
                     .filter(node => !node.parentElement?.closest('[data-game-tip="true"]'))
                     .map(node => {
                       const copy = node.cloneNode(true) as HTMLElement;

@@ -1,0 +1,19 @@
+{
+  "screenshots": 148,
+  "firstTierCompactScreenshots": 37,
+  "gameInventories": 37,
+  "blockerPasses": 16,
+  "utilityPasses": 37,
+  "realCssSafeAreaEmulationPasses": 37,
+  "specialInteractionPasses": 10,
+  "entryStressPasses": 4,
+  "resultStatePasses": 8,
+  "liveMotionPasses": 4,
+  "angleFullRoundPasses": 2,
+  "paperRuns": 6,
+  "paperMissionsPerOrientation": 86,
+  "paperLayoutsWithOverflow": 0,
+  "education": "157 protected files unchanged; nine reviewed presentation exceptions; exact source reconstruction for seven presentation boundaries.",
+  "native": "not tested; release gate outstanding",
+  "testFlightUpload": false
+}

@@ -9,6 +9,7 @@ import { getRecommendedPractice } from '../systems/content/recommendedPractice';
 import { GameScreenShell, PrimaryActionButton, ScrollScreenShell } from '../layout/ScreenPrimitives';
 import '../components/game-ui/arcade-amendments.css';
 import './desktop-hub-layout.css';
+import './player-summary.css';
 
 interface PlayerProfileProps {
   player: PlayerData;
@@ -47,6 +48,8 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ player, onBack, onOpenSho
               <span className="profile-summary-label">{stat.label}</span><strong>{stat.value}</strong>
             </div>)}
           </section>
+          <details className="profile-secondary-destinations">
+          <summary>Adventure activities</summary>
           <nav className="grid grid-cols-2 gap-3 md:grid-cols-3" aria-label="Player activities">
             <PrimaryActionButton type="button" onClick={onOpenQuests} className="min-h-12 rounded-xl px-3 py-3 text-sm md:text-base">
               Daily Quests{player.dailyQuests.some(quest => quest.current >= quest.target && !quest.isClaimed) ? ' · Claim' : ''}
@@ -58,15 +61,21 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ player, onBack, onOpenSho
               Sound &amp; music settings
             </Link>
           </nav>
-          <section aria-labelledby="profile-next-practice">
+          </details>
+          <section className="profile-next-practice" aria-labelledby="profile-next-practice">
             <h2 id="profile-next-practice" className="mb-2 text-2xl font-bold text-white">Your next practice</h2>
-            <p className="profile-summary-copy mb-3">Revisit a skill, then try its level again. A short session today and another later in the week will help it stick.</p>
             {recommendedPractice.length ? <div className="profile-achievement-list">
-              {recommendedPractice.map((item) => <Link className="profile-achievement block min-h-11 transition-colors hover:border-cyan-200 focus-visible:outline focus-visible:outline-3 focus-visible:outline-amber-300" to={item.href} key={item.key} aria-label={`Practise ${item.name} on ${item.islandName}`}>
+              {recommendedPractice.slice(0,1).map((item) => <Link className="profile-achievement block min-h-11 transition-colors hover:border-cyan-200 focus-visible:outline focus-visible:outline-3 focus-visible:outline-amber-300" to={item.href} key={item.key} aria-label={`Practise ${item.name} on ${item.islandName}`}>
                 <div><h3>{item.name} →</h3><p className="profile-summary-copy">{item.islandName} · {item.reason}</p></div>
               </Link>)}
             </div> : <p className="profile-summary-copy rounded-xl border border-cyan-100/20 bg-slate-950/60 p-4">Once you have played a few levels, your practice picks will appear here.</p>}
+            <details className="profile-practice-details"><summary>Practice details</summary>
+              <p className="profile-summary-copy mb-3">Revisit a skill, then try its level again. A short session today and another later in the week will help it stick.</p>
+              {recommendedPractice.slice(1).map(item=><Link className="profile-achievement" to={item.href} key={item.key} aria-label={`Practise ${item.name} on ${item.islandName}`}><div><h3>{item.name} →</h3><p className="profile-summary-copy">{item.islandName} · {item.reason}</p></div></Link>)}
+            </details>
           </section>
+          <details className="profile-achievement-details">
+            <summary>Your achievements</summary>
           <section aria-labelledby="profile-achievements">
             <h2 id="profile-achievements" className="mb-3 text-2xl font-bold text-white">Your achievements</h2>
             <div className="profile-achievement-list">
@@ -76,6 +85,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ player, onBack, onOpenSho
               </article>) : <p className="profile-summary-copy rounded-xl border border-cyan-100/20 bg-slate-950/60 p-4">Your first badge is waiting. Explore an island and complete a challenge.</p>}
             </div>
           </section>
+          </details>
           <PrimaryActionButton onClick={onBack} className="mx-auto rounded-xl px-8 py-3 text-base">Back to map</PrimaryActionButton>
         </div>
       </ScrollScreenShell>

@@ -13,6 +13,7 @@ export default function ViewportQuestion({children}:{children:ReactElement<any>}
   const node=card.current,host=node?.closest<HTMLElement>('[data-game-set]');
   const viewport=host?.closest<HTMLElement>('.app-viewport'),layer=host?.querySelector<HTMLElement>('[data-question-dock]');
   if(!node||!host||!viewport||!layer)return;
+  if(viewport.dataset.layoutRevision==='production-v2')return;
   if(isReferenceGame(viewport.dataset.activeGame))return;
   const measure=()=>{
    if(owners.has(host)&&owners.get(host)!==owner.current)return;

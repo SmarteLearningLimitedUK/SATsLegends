@@ -13,6 +13,7 @@ import '../design/map-effects.css';
 import '../design/map-exploration.css';
 import { UNLOCK_ALL_LEVELS } from '../app/testingFlags';
 import ReferenceWorldMap from '../components/world-map/ReferenceWorldMap';
+import { getLevelGameTitle } from '../utils/gameNames';
 
 interface WorldMapProps {
   player: PlayerData;
@@ -136,7 +137,8 @@ const WorldMap: React.FC<WorldMapProps> = ({
     </div>
   );
 
-  if(portrait)return <ReferenceWorldMap states={islandStates} recommended={recommendedIsland} onSelect={onSelectIsland}/>;
+  const suggestedLevel = recommendedIsland?.island.levels.find(level => !(player.completedLevels[recommendedIsland.island.id] || []).includes(level.id));
+  if(portrait)return <ReferenceWorldMap states={islandStates} recommended={recommendedIsland} suggestedGame={suggestedLevel ? getLevelGameTitle(suggestedLevel) : undefined} onSelect={onSelectIsland}/>;
   return (
     <div ref={mapRef} className="legend-world-map relative w-full overflow-visible">
       <div className="legend-map-brand-header">

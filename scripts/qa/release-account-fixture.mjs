@@ -1,11 +1,12 @@
 // Isolated browser fixture: intercepts account requests; never calls a live service.
 import {loadEnv} from 'vite';
-export async function installReleaseAccountFixture(context) {
+export async function installReleaseAccountFixture(context,{learnerNames=['Release QA']}={}) {
  const origin=loadEnv('production',process.cwd(),'VITE_').VITE_SUPABASE_URL;
  if(!origin)throw Error('Production account configuration is missing');
  const host=new URL(origin).hostname;
  const parent='10000000-0000-4000-8000-000000000001';
  const child='20000000-0000-4000-8000-000000000001';
+ const profiles=learnerNames.map((nickname,i)=>({id:child.slice(0,-1)+String(i+1),parent_id:parent,nickname}));
  const user={id:parent,email:'release-qa@example.invalid',aud:'authenticated',role:'authenticated',email_confirmed_at:new Date().toISOString(),app_metadata:{provider:'email',providers:['email']},user_metadata:{}};
  const part=x=>Buffer.from(JSON.stringify(x)).toString('base64url');
  const token=part({alg:'HS256',typ:'JWT'})+'.'+part({sub:parent,role:'authenticated',exp:Math.floor(Date.now()/1000)+3600})+'.fixture';
@@ -17,7 +18,7 @@ export async function installReleaseAccountFixture(context) {
  // Broad visual sweeps can mock only account fetches in the page, leaving asset
  // delivery and navigation outside Playwright's global network interception.
  if(process.env.LEGEND_QA_FETCH_FIXTURE==='1') {
-  await context.addInitScript(({host,parent,child,user,auth})=>{
+  await context.addInitScript(({host,parent,child,user,auth,profiles})=>{
    const originalFetch=window.fetch.bind(window);
    window.fetch=async(input,init)=>{
     const url=new URL(typeof input==='string'||input instanceof URL?String(input):input.url,location.href);
@@ -31,7 +32,7 @@ export async function installReleaseAccountFixture(context) {
     if(method==='OPTIONS')return reply({});
     if(url.pathname.endsWith('/user'))return reply(user);
     if(url.pathname.endsWith('/token'))return reply(auth);
-    if(url.pathname.endsWith('/child_profiles'))return reply([{id:child,parent_id:parent,nickname:'Release QA'}]);
+    if(url.pathname.endsWith('/child_profiles'))return reply(profiles);
     if(url.pathname.endsWith('/subscriptions'))return reply([{id:'fixture',product_code:'matharia',status:'active',interval:'month',current_period_end:new Date(Date.now()+86400000).toISOString(),cancel_at_period_end:false}]);
     if(url.pathname.endsWith('/parent_settings'))return reply({report_emails:false,next_report_at:null});
     if(url.pathname.endsWith('/complimentary_access'))return reply([]);
@@ -45,7 +46,7 @@ export async function installReleaseAccountFixture(context) {
     }
     throw Error('Unexpected account fixture request: '+url.pathname);
    };
-  },{host,parent,child,user,auth});
+  },{host,parent,child,user,auth,profiles});
   return;
  }
  let revision=0;let saved=null;const requests=new Map();
@@ -55,7 +56,7 @@ export async function installReleaseAccountFixture(context) {
   if(req.method()==='OPTIONS')return reply({});
   if(url.pathname.endsWith('/user'))return reply(user);
   if(url.pathname.endsWith('/token'))return reply(auth);
-  if(url.pathname.endsWith('/child_profiles'))return reply([{id:child,parent_id:parent,nickname:'Release QA'}]);
+  if(url.pathname.endsWith('/child_profiles'))return reply(profiles);
   if(url.pathname.endsWith('/subscriptions'))return reply([{id:'fixture',product_code:'matharia',status:'active',interval:'month',current_period_end:new Date(Date.now()+86400000).toISOString(),cancel_at_period_end:false}]);
   if(url.pathname.endsWith('/parent_settings'))return reply({report_emails:false,next_report_at:null});
   if(url.pathname.endsWith('/complimentary_access'))return reply([]);

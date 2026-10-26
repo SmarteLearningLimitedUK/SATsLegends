@@ -42,7 +42,7 @@ Existing QA adapters updated to current routes/orientation and UI controls: `scr
 
 The current repository is the source of truth for all 37 games, artwork identities and game rules. Existing account handlers and shared credentials are retained. The learner-card portrait represents the shared guide, not an inferred personal avatar. iPhone remains the native target; tablet browser coverage does not add native iPad support.
 
-No external legacy assumptions, prior-project systems or unrelated backend changes were used. The protected baseline was established before this rebuild. Questions, answers, generators, scoring, XP, timers, lives and progression retain their source hashes. Only the explicitly recorded orientation policy exception changes a protected source file.
+No external legacy assumptions, prior-project systems or unrelated backend changes were used. The protected baseline was established before this rebuild. Questions, answers, generators, scoring, XP, timers, lives and progression remain unchanged. Exact visual-source exceptions record the orientation policy and the subsequent compact Mean Machine readout; removing the new read-only JSX reproduces that game's released source exactly. The baseline was not replaced. See `../MEAN_MACHINE_PORTRAIT_REVIEW.md` for the subsequent portrait amendment and `../CURRENT_TESTFLIGHT_UPDATE.md` for the separate released-build status.
 
 ## Release hold
 

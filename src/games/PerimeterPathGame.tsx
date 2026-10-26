@@ -324,8 +324,8 @@ const PerimeterShapeRenderer: React.FC<{
           aria-label={`Edge ${index+1}: ${edge.label}`} aria-pressed={selected} aria-disabled={disabled}
           onClick={()=>{if(!disabled)onSelectEdge(edge.id);}}
           onKeyDown={event=>{if(!disabled&&(event.key==='Enter'||event.key===' ')){event.preventDefault();onSelectEdge(edge.id);}}}>
-          <rect x={label.x-14} y={label.y-5} width="28" height="10" rx="2" fill={selected?'#f6c75d':'#0a2c40'} stroke="#a7dbe8" strokeWidth=".5"/>
-          <text x={label.x} y={label.y+2.4} textAnchor="middle" fill={selected?'#102c35':'#fff7d5'} fontSize="7" fontWeight="800">{edge.label}</text>
+          <rect x={label.x-20} y={label.y-6} width="40" height="12" rx="2" fill={selected?'#f6c75d':'#0a2c40'} stroke="#a7dbe8" strokeWidth=".5"/>
+          <text x={label.x} y={label.y+3.3} textAnchor="middle" fill={selected?'#102c35':'#fff7d5'} fontSize="10" fontWeight="600">{edge.label}</text>
         </g>;
       })}
     </svg>

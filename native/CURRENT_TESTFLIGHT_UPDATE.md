@@ -1,4 +1,18 @@
-# Latest internal TestFlight update — 25 October 2026
+# Latest available internal TestFlight update — 26 October 2026
+
+Version `1.0`, build `100.7.1`, is available to the existing internal tester group. Apple reports `IN_BETA_TESTING`; group assignment was independently read back at `2026-10-26T09:54:59.314Z`. Apple processing completed without errors or warnings, and the previously approved standard-platform encryption classification was applied. No new tester invitations or public App Store submission were made.
+
+Release commit `98a0bbd6c705647bcc5e228cf94bda4bcb31eaba`, branch `ios/testflight-upload-20261026-064608`, passed signed archive/upload in https://github.com/SmarteLearningLimitedUK/SATsLegends/actions/runs/40282811577 after approval of the protected environment. The uploaded artifact confirms the exact commit, build number and internal-only export.
+
+The snapshot contains the visual rebuild, continuous world map, updated entry/account artwork, shared presentation system and game layout refinements. The protected-content guard passed for 165 unchanged source files and the single documented presentation-only orientation exception. TypeScript, the iOS web build, packaging/configuration/entitlement checks, orientation checks, 28 difficulty checks and all 148 visual cases passed locally. Native compilation, installation, launch and process survival passed on iPhone 16 Pro for this exact commit in https://github.com/SmarteLearningLimitedUK/SATsLegends/actions/runs/40281916421 . The unsigned simulator has no production account configuration, so it does not certify live login or gameplay. Broader website Release checks run `40281916420` was cancelled during its viewport step; it is not represented as a passing full CI run. Evidence: `qa-artifacts/visual-testflight-native/` and `qa-artifacts/visual-testflight-upload/{build-result.json,apple-processing.json,testflight-ready.json}`.
+
+The release snapshot used an alternate Git index; the original worktree HEAD and index are preserved. Assumptions: existing Apple app and existing internal tester group, internal testing with purchases disabled, no public App Store submission. No external legacy assumptions were used.
+
+## Subsequent local amendment — not in build 100.7.1
+
+The owner requested portrait Mean Machine while the earlier snapshot was already signing. Its portrait policy, responsive composition and screenshot updates are subsequent local changes. They are not present in `100.7.1`, and no additional upload has been started for this amendment.
+
+## Previous internal TestFlight update — 25 October 2026
 
 Version `1.0`, build `100.6.1`, is available to the existing internal tester group. Apple reports `IN_BETA_TESTING`; assignment was independently read back and verified at `2026-10-25T22:32:23Z`. Apple processing completed without errors or warnings. The previously approved standard-platform encryption classification was applied. No public App Store submission or new tester invitation was made.
 

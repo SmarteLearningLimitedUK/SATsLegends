@@ -1,197 +1,197 @@
 /* Concept layout; compact landscape overrides follow the base composition. */
 @media(orientation:landscape){
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-reactor-panel{grid-template-rows:minmax(0,1fr) auto}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-panel-topline{display:none}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-reactor-machine{grid-row:1;aspect-ratio:4/5!important;width:auto;height:100%;justify-self:center}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-charge-bar{grid-row:2}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-reactor-panel{grid-template-rows:minmax(0,1fr) auto}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-panel-topline{display:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-reactor-machine{grid-row:1;aspect-ratio:4/5!important;width:auto;height:100%;justify-self:center}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-charge-bar{grid-row:2}
 }
 @media(orientation:landscape){
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='data_detective'] .data-detective-layout{width:78%!important;max-width:78%!important;min-width:0!important;margin-right:1%;box-sizing:border-box}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='data_detective'] .game-question-card{max-width:100%!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='data_detective'] .detective-suspect-portrait .monster-mind-actor{display:block!important;height:100%;width:100%}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-backdrop{display:none}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-game{width:70%;max-width:1000px;margin:0 5% 0 25%;padding:4px;gap:6px;overflow:hidden}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-plan{width:100%;min-height:0;max-height:none;padding:4px;background:transparent!important;border:0!important;box-shadow:none!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-plan svg{min-height:0;max-height:100%;filter:drop-shadow(0 8px 0 #256f9c) drop-shadow(0 12px 12px #0a335355)}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-answers{width:100%;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-progress{position:absolute;left:-27%;top:12%;font-size:12px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-feedback[data-tone='neutral']{display:none}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-plan figcaption{padding:2px;font-size:13px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-dimensions{font-size:14px;margin:0}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-layout{width:74%;margin-left:24%;padding:4px;gap:5px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-board{min-height:0;flex:1}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-responses{flex-shrink:0;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-game>.relative.z-10{width:74%;margin-left:24%}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-game>.relative.z-10>div:first-child{padding:4px;gap:4px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-game>.relative.z-10>div:last-child{padding:4px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-scale-frame{max-height:100%;height:100%;width:auto;aspect-ratio:1.3}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-token-grid button{height:48px;min-height:44px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .game-submit-dock{margin-top:4px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='mean_machine'] .mean-machine-content{width:76%;margin-left:22%;padding:4px;height:100%}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='mean_machine'] .mean-machine-question .game-question-card{position:relative!important;inset:auto!important;transform:none;width:100%}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='mean_machine'] .mean-machine-main{display:grid;grid-template-columns:1.1fr .9fr;grid-template-rows:minmax(0,1fr);padding:0;gap:10px;min-height:0;width:100%}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='mean_machine'] .mean-machine-playfield{min-height:0;background:transparent!important;border:0;box-shadow:none!important;padding:0}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='mean_machine'] .mean-machine-stage{height:100%;max-height:100%;width:auto;max-width:100%;transform:none!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='mean_machine'] .mean-machine-answer-rail{min-height:0;max-height:100%;align-self:center;padding:10px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='mean_machine'] .mean-power-panel{display:none}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-layout{display:flex;width:79%;margin:0 1% 0 20%;height:100%;min-height:0;padding:4px;gap:6px;overflow:hidden}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-main{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:minmax(0,1fr);flex:1;min-height:0;gap:8px;width:100%;align-items:center}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-reactor-panel{height:100%;min-height:0;gap:3px;padding:0}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-reactor-machine{width:auto;height:100%;max-height:100%;min-height:0;max-width:100%}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-controls{padding:12px;gap:8px;max-height:100%;overflow:auto;min-height:0}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-answer{min-height:48px;padding:5px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-content{width:75%;margin-left:23%;padding:4px;overflow:hidden}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-spacer{display:none}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-stack{display:flex;height:100%;gap:6px;min-height:0}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-board{flex:1;min-height:0;overflow:hidden;background:var(--vision-desert-frame) center/100% 100% no-repeat;padding:3% 4%}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-board>div{height:100%;min-height:0;background:transparent!important;box-shadow:none;border:0;padding:0;display:flex;flex-direction:column}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-cartesian-chart{height:100%!important;flex:1;min-height:0}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-answers{flex-shrink:0;padding:5px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-main{width:76%;margin-left:22%;padding:4px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-spacer{display:none}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-board{height:100%;min-height:0;max-width:none;background:none!important;border:0;box-shadow:none!important;gap:6px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-plot{display:flex;flex-direction:column;flex:1;min-height:0;padding:3% 4%;background:var(--vision-desert-frame) center/100% 100% no-repeat!important;border:0}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-chart{height:100%!important;flex:1;min-height:0;background:none!important;border:0;padding:0}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-side{flex-shrink:0}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-next:not(.line-graph-next--visible){display:none}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-side .answer-choice-surface{grid-template-columns:repeat(4,minmax(0,1fr))}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='data_detective'] .data-detective-layout{width:78%!important;max-width:78%!important;min-width:0!important;margin-right:1%;box-sizing:border-box}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='data_detective'] .game-question-card{max-width:100%!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='data_detective'] .detective-suspect-portrait .monster-mind-actor{display:block!important;height:100%;width:100%}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='ratio_fractions'] .ratio-racer-backdrop{display:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-game{width:70%;max-width:1000px;margin:0 5% 0 25%;padding:4px;gap:6px;overflow:hidden}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-plan{width:100%;min-height:0;max-height:none;padding:4px;background:transparent!important;border:0!important;box-shadow:none!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-plan svg{min-height:0;max-height:100%;filter:drop-shadow(0 8px 0 #256f9c) drop-shadow(0 12px 12px #0a335355)}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-answers{width:100%;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-progress{position:absolute;left:-27%;top:12%;font-size:12px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-feedback[data-tone='neutral']{display:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-plan figcaption{padding:2px;font-size:13px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-dimensions{font-size:14px;margin:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-layout{width:74%;margin-left:24%;padding:4px;gap:5px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-board{min-height:0;flex:1}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-responses{flex-shrink:0;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-game>.relative.z-10{width:74%;margin-left:24%}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-game>.relative.z-10>div:first-child{padding:4px;gap:4px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-game>.relative.z-10>div:last-child{padding:4px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-scale-frame{max-height:100%;height:100%;width:auto;aspect-ratio:1.3}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-token-grid button{height:48px;min-height:44px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .game-submit-dock{margin-top:4px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='mean_machine'] .mean-machine-content{width:76%;margin-left:22%;padding:4px;height:100%}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='mean_machine'] .mean-machine-question .game-question-card{position:relative!important;inset:auto!important;transform:none;width:100%}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='mean_machine'] .mean-machine-main{display:grid;grid-template-columns:1.1fr .9fr;grid-template-rows:minmax(0,1fr);padding:0;gap:10px;min-height:0;width:100%}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='mean_machine'] .mean-machine-playfield{min-height:0;background:transparent!important;border:0;box-shadow:none!important;padding:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='mean_machine'] .mean-machine-stage{height:100%;max-height:100%;width:auto;max-width:100%;transform:none!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='mean_machine'] .mean-machine-answer-rail{min-height:0;max-height:100%;align-self:center;padding:10px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='mean_machine'] .mean-power-panel{display:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-layout{display:flex;width:79%;margin:0 1% 0 20%;height:100%;min-height:0;padding:4px;gap:6px;overflow:hidden}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-main{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:minmax(0,1fr);flex:1;min-height:0;gap:8px;width:100%;align-items:center}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-reactor-panel{height:100%;min-height:0;gap:3px;padding:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-reactor-machine{width:auto;height:100%;max-height:100%;min-height:0;max-width:100%}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-controls{padding:12px;gap:8px;max-height:100%;overflow:auto;min-height:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-answer{min-height:48px;padding:5px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-content{width:75%;margin-left:23%;padding:4px;overflow:hidden}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-spacer{display:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-stack{display:flex;height:100%;gap:6px;min-height:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-board{flex:1;min-height:0;overflow:hidden;background:var(--vision-desert-frame) center/100% 100% no-repeat;padding:3% 4%}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-board>div{height:100%;min-height:0;background:transparent!important;box-shadow:none;border:0;padding:0;display:flex;flex-direction:column}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-cartesian-chart{height:100%!important;flex:1;min-height:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-answers{flex-shrink:0;padding:5px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-main{width:76%;margin-left:22%;padding:4px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-spacer{display:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-board{height:100%;min-height:0;max-width:none;background:none!important;border:0;box-shadow:none!important;gap:6px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-plot{display:flex;flex-direction:column;flex:1;min-height:0;padding:3% 4%;background:var(--vision-desert-frame) center/100% 100% no-repeat!important;border:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-chart{height:100%!important;flex:1;min-height:0;background:none!important;border:0;padding:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-side{flex-shrink:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-next:not(.line-graph-next--visible){display:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-side .answer-choice-surface{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
 @media(orientation:landscape) and (max-height:550px){
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='data_detective'] .game-question-context{display:none}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='data_detective'] .detective-lineup{padding:0}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='data_detective'] .game-screen-bottom>div>div>div:last-child{margin:0}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='data_detective'] .detective-evidence-workspace{grid-template-columns:1fr .25fr}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='data_detective'] .detective-evidence-pin{min-height:32px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='data_detective'] .detective-suspect-portrait{padding-bottom:14px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='data_detective'] .detective-suspect-name{font-size:10px!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-answers button{font-size:16px;min-height:44px;padding:3px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-feedback{padding:3px;font-size:12px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .refinement-feedback{min-height:0;font-size:11px;padding:3px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-responses button{min-height:44px;font-size:14px;padding:3px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-token-grid{gap:4px;padding:0}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-token-grid button{height:44px;padding:2px;flex-direction:row;gap:3px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-token-grid button img{width:18px;height:18px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-token-grid button>span:last-child{display:none}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .game-submit-dock button{height:44px;min-height:44px;padding:3px;font-size:12px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='mean_machine'] .mean-machine-answer-rail{padding:6px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='mean_machine'] .mean-machine-answer-rail .answer-choice-surface{gap:5px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='mean_machine'] .mean-machine-answer-rail button{height:44px;min-height:44px;font-size:20px;padding:3px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='mean_machine'] .mean-repair-streak{display:none}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-controls{padding:6px;gap:4px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='percent_power'] :is(.pp-console-head,.pp-answer-caption,.pp-panel-topline){display:none}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-values{gap:4px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-value{min-height:32px;padding:3px;font-size:12px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-value strong{font-size:17px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-answers{gap:4px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-answer{min-height:44px;font-size:17px;padding:3px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-feedback{font-size:11px;min-height:0;padding:2px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-stack{gap:3px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-answers>.grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-answers[data-answer-mode='multi']>.grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-answers button{min-height:44px;padding:3px!important;font-size:13px!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-hint{font-size:10px;letter-spacing:0;margin-bottom:2px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='graph_grabber'] :is(.graph-grabber-chart-caption,.graph-grabber-total){font-size:11px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-side button{min-height:44px;padding:3px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-side button span{font-size:13px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-feedback{font-size:12px;padding:3px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='data_detective'] .game-question-context{display:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='data_detective'] .detective-lineup{padding:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='data_detective'] .game-screen-bottom>div>div>div:last-child{margin:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='data_detective'] .detective-evidence-workspace{grid-template-columns:1fr .25fr}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='data_detective'] .detective-evidence-pin{min-height:32px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='data_detective'] .detective-suspect-portrait{padding-bottom:14px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='data_detective'] .detective-suspect-name{font-size:10px!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-answers button{font-size:16px;min-height:44px;padding:3px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-feedback{padding:3px;font-size:12px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .refinement-feedback{min-height:0;font-size:11px;padding:3px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-responses button{min-height:44px;font-size:14px;padding:3px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-token-grid{gap:4px;padding:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-token-grid button{height:44px;padding:2px;flex-direction:row;gap:3px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-token-grid button img{width:18px;height:18px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-token-grid button>span:last-child{display:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .game-submit-dock button{height:44px;min-height:44px;padding:3px;font-size:12px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='mean_machine'] .mean-machine-answer-rail{padding:6px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='mean_machine'] .mean-machine-answer-rail .answer-choice-surface{gap:5px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='mean_machine'] .mean-machine-answer-rail button{height:44px;min-height:44px;font-size:20px;padding:3px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='mean_machine'] .mean-repair-streak{display:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-controls{padding:6px;gap:4px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='percent_power'] :is(.pp-console-head,.pp-answer-caption,.pp-panel-topline){display:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-values{gap:4px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-value{min-height:32px;padding:3px;font-size:12px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-value strong{font-size:17px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-answers{gap:4px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-answer{min-height:44px;font-size:17px;padding:3px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-feedback{font-size:11px;min-height:0;padding:2px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-stack{gap:3px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-answers>.grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-answers[data-answer-mode='multi']>.grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-answers button{min-height:44px;padding:3px!important;font-size:13px!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-hint{font-size:10px;letter-spacing:0;margin-bottom:2px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='graph_grabber'] :is(.graph-grabber-chart-caption,.graph-grabber-total){font-size:11px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-side button{min-height:44px;padding:3px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-side button span{font-size:13px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .line-graph-feedback{font-size:12px;padding:3px}
 }
 @media(orientation:landscape) and (max-height:550px){
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-stack{padding:0;gap:4px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-board{padding:10px 20px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-chart-caption{font-size:11px!important;line-height:14px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-cartesian-chart{margin-top:0}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-hint{font-size:11px!important;line-height:13px;margin-bottom:3px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .recharts-text{font-size:11px!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='data_detective'] .recharts-text{font-size:11px!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='data_detective'] .detective-suspect-portrait .vision-character{position:absolute!important;inset:0 0 14px!important;width:100%!important;height:calc(100% - 14px)!important;transform:none!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='data_detective'] .game-question-card{padding:4px!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='data_detective'] .question-subtitle{display:none}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='data_detective'] .detective-evidence-pin{min-height:26px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-plan{padding:0;width:100%;gap:0}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-plan svg{max-height:none;flex:1;min-height:0}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-plan figcaption{font-size:11px!important;line-height:14px;padding-top:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-stack{padding:0;gap:4px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-board{padding:10px 20px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-chart-caption{font-size:11px!important;line-height:14px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-cartesian-chart{margin-top:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-hint{font-size:11px!important;line-height:13px;margin-bottom:3px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .recharts-text{font-size:11px!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='data_detective'] .recharts-text{font-size:11px!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='data_detective'] .detective-suspect-portrait .vision-character{position:absolute!important;inset:0 0 14px!important;width:100%!important;height:calc(100% - 14px)!important;transform:none!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='data_detective'] .game-question-card{padding:4px!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='data_detective'] .question-subtitle{display:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='data_detective'] .detective-evidence-pin{min-height:26px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-plan{padding:0;width:100%;gap:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-plan svg{max-height:none;flex:1;min-height:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-plan figcaption{font-size:11px!important;line-height:14px;padding-top:0}
 }
 @media(orientation:landscape) and (max-height:550px){
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game] .game-question-context{display:none}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game] .question-subtitle{font-size:var(--prod-instruction-compact,14px)!important;line-height:1.25!important;margin-top:2px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .game-question-card{position:relative!important;inset:auto!important;transform:none;width:100%;flex-shrink:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game] .game-question-context{display:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game] .question-subtitle{font-size:var(--prod-instruction-compact,14px)!important;line-height:1.25!important;margin-top:2px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .game-question-card{position:relative!important;inset:auto!important;transform:none;width:100%;flex-shrink:0}
 }
 .perimeter-edge-controls{display:contents}
 .perimeter-edge-index,.perimeter-edge-number{display:none}
 @media(orientation:landscape){
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-plan svg{transform:perspective(800px) rotateX(22deg) rotateZ(-6deg);transform-origin:50% 70%}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-plan svg{transform:perspective(800px) rotateX(22deg) rotateZ(-6deg);transform-origin:50% 70%}
 }
 @media(orientation:landscape) and (max-height:550px){
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-drawing{position:absolute;inset:0;width:100%;height:100%;transform:none;display:grid;grid-template-columns:.9fr 1.1fr;gap:5px;align-items:center}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-drawing>svg{position:static;width:100%;height:100%}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-edge-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;gap:4px;max-height:100%;overflow:auto;padding:2px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-edge-control{position:static;left:auto!important;top:auto!important;translate:none;transform:none;min-height:44px!important;min-width:0!important;gap:2px;padding:2px;flex-wrap:wrap;align-content:center}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-edge-control span{font-size:10px!important;line-height:12px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-edge-index{display:inline}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-edge-number{display:block}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-edge-number text{font-size:4px!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-drawing{position:absolute;inset:0;width:100%;height:100%;transform:none;display:grid;grid-template-columns:.9fr 1.1fr;gap:5px;align-items:center}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-drawing>svg{position:static;width:100%;height:100%}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-edge-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;gap:4px;max-height:100%;overflow:auto;padding:2px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-edge-control{position:static;left:auto!important;top:auto!important;translate:none;transform:none;min-height:44px!important;min-width:0!important;gap:2px;padding:2px;flex-wrap:wrap;align-content:center}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-edge-control span{font-size:10px!important;line-height:12px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-edge-index{display:inline}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-edge-number{display:block}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-edge-number text{font-size:4px!important}
 }
 
 @media(orientation:landscape) and (max-height:550px){
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-layout{display:grid;grid-template-columns:1.4fr 1fr;grid-template-rows:auto minmax(0,1fr) auto;gap:4px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-layout>.game-question-card{grid-column:1/-1}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-board{grid-row:2;grid-column:1;height:100%;min-height:0}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-responses{grid-column:2;grid-row:2;grid-template-columns:1fr 1fr;align-self:center}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .refinement-feedback{grid-column:1/-1;font-size:10px!important;line-height:12px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-edge-control{min-width:36px!important;min-height:44px!important;padding:2px;font-size:10px!important;line-height:12px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .relative.z-10{display:grid!important;grid-template-columns:1fr 1fr;width:75%;margin-left:24%;padding:4px;gap:5px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .relative.z-10>div:first-child{padding:0;gap:3px;min-height:0}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .relative.z-10>div:last-child{padding:0;align-self:center;max-height:100%;overflow:auto}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-token-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] [data-conversion-playfield]{height:100%;min-height:0}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-scale-frame{height:100%;min-height:0;max-height:100%;width:auto;aspect-ratio:300/280}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-load-tray{min-height:32px;font-size:10px!important;max-height:44px;overflow:auto}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-load-tray{max-height:96px;min-height:44px;z-index:30}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-load-tray button{min-height:44px;height:44px;flex-direction:row;padding:2px;font-size:10px!important}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-load-tray button>span{font-size:10px!important;line-height:12px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-load-tray img{width:16px;height:16px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-layout{display:grid;grid-template-columns:1.4fr 1fr;grid-template-rows:auto minmax(0,1fr) auto;gap:4px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-layout>.game-question-card{grid-column:1/-1}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-board{grid-row:2;grid-column:1;height:100%;min-height:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-responses{grid-column:2;grid-row:2;grid-template-columns:1fr 1fr;align-self:center}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .refinement-feedback{grid-column:1/-1;font-size:10px!important;line-height:12px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='perimeter_path'] .perimeter-edge-control{min-width:36px!important;min-height:44px!important;padding:2px;font-size:10px!important;line-height:12px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .relative.z-10{display:grid!important;grid-template-columns:1fr 1fr;width:75%;margin-left:24%;padding:4px;gap:5px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .relative.z-10>div:first-child{padding:0;gap:3px;min-height:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .relative.z-10>div:last-child{padding:0;align-self:center;max-height:100%;overflow:auto}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-token-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] [data-conversion-playfield]{height:100%;min-height:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-scale-frame{height:100%;min-height:0;max-height:100%;width:auto;aspect-ratio:300/280}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-load-tray{min-height:32px;font-size:10px!important;max-height:44px;overflow:auto}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-load-tray{max-height:96px;min-height:44px;z-index:30}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-load-tray button{min-height:44px;height:44px;flex-direction:row;padding:2px;font-size:10px!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-load-tray button>span{font-size:10px!important;line-height:12px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-load-tray img{width:16px;height:16px}
 }
 
 @media(orientation:landscape){
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-load-tray{top:8%!important;left:50%!important;width:90%!important;translate:-50% 0!important;transform:none!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-load-tray{top:8%!important;left:50%!important;width:90%!important;translate:-50% 0!important;transform:none!important}
 }
 /* Keep information and input bands separate on short landscape screens. */
 @media(orientation:landscape) and (max-height:550px){
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-token-grid button>span{font-size:16px!important;line-height:20px!important;white-space:nowrap;letter-spacing:0}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .game-submit-dock button{font-size:14px!important;line-height:18px!important;letter-spacing:0!important;padding:3px!important;min-height:48px;white-space:normal;overflow-wrap:normal}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-token-grid button{padding:2px!important;gap:0}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='data_detective'] .detective-evidence-workspace{padding-top:5px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='data_detective'] .game-question-card{position:relative!important;inset:auto!important;transform:none}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='scale_builder'] .scale-numeric-controls{overflow:auto;align-self:stretch}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='mean_machine'] .mean-engine-scan-button{font-size:12px!important;line-height:16px!important;letter-spacing:0;padding:2px!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-token-grid button>span{font-size:16px!important;line-height:20px!important;white-space:nowrap;letter-spacing:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .game-submit-dock button{font-size:14px!important;line-height:18px!important;letter-spacing:0!important;padding:3px!important;min-height:48px;white-space:normal;overflow-wrap:normal}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-token-grid button{padding:2px!important;gap:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='data_detective'] .detective-evidence-workspace{padding-top:5px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='data_detective'] .game-question-card{position:relative!important;inset:auto!important;transform:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='scale_builder'] .scale-numeric-controls{overflow:auto;align-self:stretch}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='mean_machine'] .mean-engine-scan-button{font-size:12px!important;line-height:16px!important;letter-spacing:0;padding:2px!important}
 }
 /* Bounds verified against question, response and navigation regions. */
 @media(orientation:landscape) and (max-height:550px){
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='scale_builder'] .scale-number-pad{grid-template-columns:repeat(6,minmax(0,1fr));gap:2px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='scale_builder'] .scale-number-pad button{min-height:44px!important;height:44px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='scale_builder'] .scale-numeric-actions button{min-height:44px!important;height:44px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='scale_builder'] .scale-number-pad{grid-template-columns:repeat(6,minmax(0,1fr));gap:2px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='scale_builder'] .scale-number-pad button{min-height:44px!important;height:44px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='scale_builder'] .scale-numeric-actions button{min-height:44px!important;height:44px}
 }
 @media(orientation:landscape) and (max-height:550px){
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-question .game-question-copy{line-height:1.4!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-question .game-question-copy{line-height:1.4!important}
 }
 @media(orientation:landscape) and (max-height:550px){
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-readout-label{line-height:1.5}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='percent_power'] .pp-readout-label{line-height:1.5}
 }
 @media(orientation:landscape){
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-load-meter{left:50%;transform:translateX(-50%)}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-load-meter{left:50%;transform:translateX(-50%)}
 }
 @media(orientation:landscape) and (min-height:551px){
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-token-grid button{display:grid;grid-template-columns:26px minmax(0,1fr);grid-template-rows:repeat(2,18px);align-items:center;justify-items:center;column-gap:4px;padding:4px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-token-grid button>img{grid-row:1/3;width:24px;height:24px}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-token-grid button>span{font-size:13px!important;line-height:16px!important;margin:0;white-space:nowrap}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-token-grid button{display:grid;grid-template-columns:26px minmax(0,1fr);grid-template-rows:repeat(2,18px);align-items:center;justify-items:center;column-gap:4px;padding:4px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-token-grid button>img{grid-row:1/3;width:24px;height:24px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-token-grid button>span{font-size:13px!important;line-height:16px!important;margin:0;white-space:nowrap}
 }
 @media(orientation:landscape){
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-stack>.game-question-card{flex-shrink:0;min-height:fit-content}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='graph_grabber'] .graph-grabber-stack>.game-question-card{flex-shrink:0;min-height:fit-content}
 }
 
 /* These chart workspaces start at 22–23%; the generic 32% actor bay covered them. */
 @media(orientation:landscape){
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] :is([data-vision-game='graph_grabber'],[data-vision-game='line_graph_lab']) .vision-companion--stage {
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] :is([data-vision-game='graph_grabber'],[data-vision-game='line_graph_lab']) .vision-companion--stage {
   left:1%;width:20%;max-width:20%;
  }
 }

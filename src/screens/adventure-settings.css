@@ -1,11 +1,11 @@
 /* A quiet terrace behind one functional sound panel. Safe areas belong to
    the shared viewport and HUD; this screen reserves their existing bounds. */
-#root .screen-settings > .app-screen-content {padding:0}
+#root .screen-settings > .app-screen-content {padding:0!important;margin:0!important;height:100%;max-height:100%;}
 #root .app-viewport.screen-settings {padding:0}
 .adventure-settings-root {
   background:#123f3b url('../assets/production-entry/account-portrait.webp') center / cover no-repeat;
 }
-.adventure-settings-scroll {padding:100px 16px 100px}
+.adventure-settings-scroll {padding:calc(env(safe-area-inset-top,0px) + 20px) 16px calc(env(safe-area-inset-bottom,0px) + 20px)}
 .adventure-settings-panel {
   width:min(100%,560px);margin:0 auto;padding:clamp(20px,4vw,32px);
   border:1px solid var(--prod-gold);border-radius:var(--prod-radius-panel);
@@ -22,7 +22,7 @@
   background:var(--prod-surface-deep);color:var(--prod-text);text-align:left;cursor:pointer;
   transition:background var(--prod-duration-press),transform var(--prod-duration-press);
 }
-.adventure-settings-option[aria-pressed='true'] {background:#245b47}
+.adventure-settings-option[aria-checked='true'] {background:#245b47}
 .adventure-settings-option:active {transform:translateY(1px)}
 .adventure-settings-option:focus-visible,.adventure-settings-return:focus-visible {outline:3px solid var(--prod-focus);outline-offset:3px}
 .adventure-settings-icon {display:grid;flex:none;place-items:center;width:40px;height:44px;color:var(--prod-gold)}
@@ -34,7 +34,7 @@
 .adventure-settings-state.is-on {background:var(--prod-success);border-color:var(--prod-success);color:var(--prod-ink)}
 .adventure-settings-return {display:block;min-height:52px;margin:24px auto 0;padding:12px 24px;font-size:16px;font-weight:800}
 @media (max-width:360px) {
- .adventure-settings-scroll {padding:88px 12px 88px}
+ .adventure-settings-scroll {padding:calc(env(safe-area-inset-top,0px) + 12px) 12px calc(env(safe-area-inset-bottom,0px) + 12px)}
  .adventure-settings-panel {padding:16px}
  .adventure-settings-option {gap:8px;padding:10px}
  .adventure-settings-icon {width:28px}
@@ -42,7 +42,7 @@
 }
 @media (orientation:landscape) {
  .adventure-settings-root {background-image:url('../assets/production-entry/welcome-landscape.webp')}
- .adventure-settings-scroll {padding-top:94px}
+ .adventure-settings-scroll {padding-top:calc(env(safe-area-inset-top,0px) + 20px)}
  .adventure-settings-panel {width:min(100%,720px)}
  .adventure-settings-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
 }

@@ -28,7 +28,7 @@
 }
 
 /* Nine-slice the frame around the grid rather than stretching its rails under cells. */
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='match3_equivalence'] .match-mastery-board {
+#root .app-viewport.sat-theme-bluegold.screen-gameplay:not([data-layout-revision='production-v2'])[data-active-game][data-game-island] [data-vision-game='match3_equivalence'] .match-mastery-board {
  padding:0!important;border:16px solid transparent!important;border-radius:12px;
  border-image:var(--vision-forest-frame) 190 110 180 110 fill / 16px / 0 stretch!important;
  background:#0b302b!important;box-shadow:0 8px 20px #031a2266!important;backdrop-filter:none;

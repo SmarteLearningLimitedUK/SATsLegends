@@ -15,6 +15,7 @@ import {
   GameQuestionCard,
 } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
+import AngleWorkingDiagram from '../components/game-ui/AngleWorkingDiagram';
 import cannonFacingLeftSrc from '../assets/angle_arena/cannonanglearena/1.png';
 import { getVisionEnvironment, getVisionObject } from './visionScene';
 import cannonFacingRightSrc from '../assets/angle_arena/cannonanglearena/2.png';
@@ -1074,7 +1075,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       // Only fluency prompts explicitly supply an angle. Reasoning questions
       // retain their original information instead of exposing a derived value.
       const knownAngle = activeQuestion?.prompt.match(/^One angle on a straight line is (\d+)°/);
-      if (knownAngle && gameState === 'awaitingAnswer') {
+      if (knownAngle && gameState === 'awaitingAnswer' && !canvas.closest('[data-layout-revision="production-v2"]')) {
         const angle = degreesToRadians(Number(knownAngle[1]));
         const radius = Math.min(viewWidth * .16, viewHeight * .20);
         const cx = viewWidth * .49;
@@ -1321,7 +1322,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
               </GameQuestionCard>
             </div>
           )}
-          main={<div className="min-h-0 flex-1" />}
+          main={<AngleWorkingDiagram prompt={activeQuestion?.prompt ?? ''} visible={gameState === 'awaitingAnswer'} />}
           bottom={(
             <div className="angle-arena-controls flex flex-col gap-2">
               <div className="angle-arena-control-label">{showPromptAndAnswers ? 'Choose your angle' : 'Launch angle locked'}</div>

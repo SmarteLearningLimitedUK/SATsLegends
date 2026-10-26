@@ -19,14 +19,15 @@ The generated `game-inventory.json` lists all 37 campaign games, current routes,
 | Prime Pop | Portrait | Vertical rising targets and danger boundary. The existing scored round remains 60 seconds. |
 | Rounding Rocket | Portrait | Vertical assembly/launch subject with an answer rail. |
 | Take-Out Rush | Portrait | Kitchen above a tray workspace; larger question band leaves all controls visible. |
+| Mean Machine | Portrait | Question above the scanner, followed by four answers. Compact phones get a full-width strip of the same live readings and a single answer row; larger phones retain the machine readout and two answer rows. Feedback has its own layout row. No gameplay scrolling. |
 | Number Line Ninja; Maths vs Zombies; Ratio Racer | Landscape | Horizontal scale, defended lane or race track. |
 | Fraction Forge; Match Mastery; Percent Power; Simplify Sprint | Landscape | Side-by-side subject and recipe/board/answers. |
-| All geometry, measurement, data, operations, reasoning and core-paper games | Landscape | Graphs, grids, construction surfaces or multi-field answers need horizontal room. Individual keys are listed in the JSON matrix. |
+| Remaining geometry, measurement, data, operations, reasoning and core-paper games | Landscape | Graphs, grids, construction surfaces or multi-field answers need horizontal room. Individual keys are listed in the JSON matrix. |
 | Potion Panic; Share Splitter; Scale Builder | Landscape | Vessel/party/blueprint beside the response workspace. |
 | Breath Bloom; Peaceful Pond | Landscape | Current activity-owned wide scene and physical-turn gate. |
 | Candle Calm; Constellation Connect; Leaf Drift; Thought Sort | Adaptive | Existing activity layout follows the usable view. |
 
-Fraction Forge previously inherited Take-Out Rush's portrait policy because they share a legacy renderer identifier. Its explicit blueprint identity now takes priority. This presentation-only policy change is recorded with before/after hashes in `visual-source-exceptions.json`. Its questions, scoring and gameplay implementation did not change.
+Fraction Forge previously inherited Take-Out Rush's portrait policy because they share a legacy renderer identifier. Its explicit blueprint identity now takes priority. Mean Machine was subsequently changed to portrait at the owner's explicit request. These presentation-only policy decisions are recorded with before/after hashes in `visual-source-exceptions.json`; the protected baseline itself was not replaced. Questions, scoring and gameplay implementations did not change. Native orientation requests use the same policy through `IOSAppRoot.tsx`; physical-device validation of the new Mean Machine amendment remains outstanding.
 
 ## Device targets and limits
 

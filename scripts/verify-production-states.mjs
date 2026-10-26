@@ -7,7 +7,12 @@ process.env.VITE_SUPABASE_URL=loadEnv('ios',process.cwd(),'VITE_').VITE_SUPABASE
 const base=process.env.QA_BASE||'http://127.0.0.1:3025',out='qa-artifacts/production-rebuild/states';
 await mkdir(out,{recursive:true});
 const {games}=JSON.parse(await readFile('native/production-rebuild/game-inventory.json'));
-const jobs=[...games],rows=[],browser=await chromium.launch();
+const keys=new Set((process.env.QA_KEYS||'').split(',').filter(Boolean));
+const jobs=games.filter(game=>!keys.size||keys.has(game.key)),rows=[],browser=await chromium.launch();
+if(keys.size){
+ const previous=JSON.parse(await readFile(out+'/report.json'));
+ rows.push(...previous.filter(row=>!keys.has(row.key)));
+}
 async function worker(){while(jobs.length){
  const game=jobs.shift(),portrait=game.orientation==='portrait',size=portrait?{width:390,height:844}:{width:844,height:390};
  const context=await browser.newContext({viewport:size,hasTouch:true,reducedMotion:'reduce'});

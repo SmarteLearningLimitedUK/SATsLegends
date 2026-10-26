@@ -174,7 +174,7 @@
     {
       "key": "mean_machine",
       "title": "Mean Machine L5",
-      "orientation": "landscape",
+      "orientation": "portrait",
       "visualCases": 4,
       "interactionPassed": true,
       "evidence": "Campaign independent-answer actions",

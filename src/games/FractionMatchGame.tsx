@@ -516,13 +516,13 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       const style = getComputedStyle(space);
       const usableWidth = space.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
       const usableHeight = space.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
-      // A wide six-column board keeps all 30 values large enough to tap on small phones.
-      const compactPortrait = window.innerWidth <= 360 && window.innerHeight >= 500;
       const board = boardGridRef.current?.parentElement;
-      const border = board ? parseFloat(getComputedStyle(board).borderLeftWidth) * 2 : 32;
-      // Five square rows plus four 3px gaps; use the actual frame budget.
-      const heightLimitedWidth = (usableHeight - border - 12) * GRID_COLS / GRID_ROWS + 15 + border;
-      const nextWidth = Math.max(compactPortrait ? 334 : 150, Math.floor(Math.min(760, window.innerWidth * 0.94, usableWidth, heightLimitedWidth)));
+      const frame = board ? getComputedStyle(board) : null;
+      const horizontalFrame = frame ? parseFloat(frame.borderLeftWidth)+parseFloat(frame.borderRightWidth)+parseFloat(frame.paddingLeft)+parseFloat(frame.paddingRight) : 8;
+      const verticalFrame = frame ? parseFloat(frame.borderTopWidth)+parseFloat(frame.borderBottomWidth)+parseFloat(frame.paddingTop)+parseFloat(frame.paddingBottom) : 8;
+      // Five square rows and six columns fit inside the remaining physical region.
+      const heightLimitedWidth = Math.max(0,usableHeight-verticalFrame-12)*GRID_COLS/GRID_ROWS+15+horizontalFrame;
+      const nextWidth = Math.max(0,Math.floor(Math.min(760,usableWidth,heightLimitedWidth)));
       setBoardPixelWidth((previous) => previous === nextWidth ? previous : nextWidth);
     };
     const updateGemSize = () => {

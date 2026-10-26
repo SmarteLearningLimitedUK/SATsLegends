@@ -23,7 +23,7 @@ Browser gates: passed. No TestFlight upload was performed.
 | Coordinates Quest L5 | landscape | 4/4 | Pass | Pass |
 | Conversion Canyon L5 | landscape | 4/4 | Pass | Pass |
 | Perimeter Path L5 | landscape | 4/4 | Pass | Pass |
-| Mean Machine L5 | landscape | 4/4 | Pass | Pass |
+| Mean Machine L5 | portrait | 4/4 | Pass | Pass |
 | Graph Grabber L5 | landscape | 4/4 | Pass | Pass |
 | Line Graph Lab L5 | landscape | 4/4 | Pass | Pass |
 | Data Detective L5 | landscape | 4/4 | Pass | Pass |
@@ -44,7 +44,7 @@ Browser gates: passed. No TestFlight upload was performed.
 | Ratio Racer L5 | landscape | 4/4 | Pass | Pass |
 | Scale Builder L5 | landscape | 4/4 | Pass | Pass |
 
-All three full core papers, blank-paper handling and timeout draft recovery passed. All six calm activities completed at phone and desktop sizes (12 cases). Correct/wrong answers, selected completions, retry, result settlement and audio lifecycle have rendered evidence under qa-artifacts/production-rebuild. The protected-source guard retains 165 identical files plus one exactly hashed orientation exception. The curriculum regression covered 600 complete paper variants, 53 topic families, 70 readable prompts, 12 data puzzles and all 28 difficulty checks.
+All three full core papers, blank-paper handling and timeout draft recovery passed. All six calm activities completed at phone and desktop sizes (12 cases). Correct/wrong answers, selected completions, retry, result settlement and audio lifecycle have rendered evidence under qa-artifacts/production-rebuild. The protected-source guard retains 164 identical files plus two exactly hashed presentation exceptions (orientation and the compact Mean Machine readout). The curriculum regression covered 600 complete paper variants, 53 topic families, 70 readable prompts, 12 data puzzles and all 28 difficulty checks.
 
 ## Required native release gates
 

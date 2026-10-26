@@ -25,13 +25,15 @@ interface UnifiedMiniGameHudProps {
   variant?: 'gameplay' | 'hub';
   showActions?: boolean;
   bottomContent?: React.ReactNode;
+  production?: boolean;
+  onPauseChange?: (open:boolean)=>void;
 }
 
 const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
   avatarId, timeLeft, totalTime, hidden = false, hideTimer = false,
   hideTopBar = false, lives = 3, onBack, onHelp, onWork, title = 'SATs Legends',
   levelLabel = 'Adventure', streak = 0, isPractice = false,
-  variant = 'gameplay', showActions = true, bottomContent, assessment = false, referenceKey,
+  variant = 'gameplay', showActions = true, bottomContent, assessment = false, referenceKey, production=false,onPauseChange,
 }) => {
   const avatar = CHARACTER_AVATARS.find((entry) => entry.id === avatarId)
     ?? CHARACTER_AVATARS.find((entry) => entry.id === DEFAULT_AVATAR_ID)
@@ -83,9 +85,10 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
               </span>
             </div>
           </div>
+          {production&&onBack&&<GameActionDock onBack={onBack} onHelp={onHelp} onWork={onWork} variant="global" production onPauseChange={onPauseChange}/>}
         </div>
       )}
-      {(bottomContent || (showActions && onBack)) ? (
+      {!production&&(bottomContent || (showActions && onBack)) ? (
         <>
           <div className="legend-dock-base" aria-hidden="true" />
           <div data-testid="shared-bottom-hud" className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center" style={{

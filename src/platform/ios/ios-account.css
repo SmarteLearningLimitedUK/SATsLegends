@@ -1,12 +1,13 @@
 .ios-account {
   --account-safe-top:env(safe-area-inset-top,0px);--account-safe-bottom:env(safe-area-inset-bottom,0px);
-  min-height:100svh;width:100%;color:var(--prod-text);background:#0d3d4a;
-  display:grid;grid-template-rows:auto 1fr;gap:20px;align-content:start;
+  height:var(--account-viewport-height,100dvh);min-height:0;overflow-y:auto;width:100%;color:var(--prod-text);background:#0d3d4a;
+  display:grid;grid-template-rows:auto auto;gap:20px;align-content:start;
   padding:calc(var(--account-safe-top) + 18px) max(20px,env(safe-area-inset-right,0px)) calc(var(--account-safe-bottom) + 24px) max(20px,env(safe-area-inset-left,0px));
   font-family:var(--prod-font-body);overflow-wrap:anywhere;isolation:isolate;
 }
 .ios-account::before {content:'';position:fixed;inset:0;z-index:-1;background:url('../../assets/production-entry/account-portrait.webp') center/cover no-repeat;pointer-events:none}
 .ios-account * {box-sizing:border-box}
+.ios-account :is(input,button,a) {scroll-margin-block:24px;}
 .ios-account-brand {text-align:center;align-self:start;animation:ios-account-in var(--prod-duration-enter) var(--prod-ease) both}
 .ios-account-brand a {display:block;width:min(48vw,210px);margin:auto;text-decoration:none}
 .ios-account-brand svg {display:block;width:100%;height:auto;filter:drop-shadow(0 3px 3px #17385466)}
@@ -33,9 +34,10 @@
 .ios-account a {color:var(--prod-gold)}
 .ios-account-links a,.ios-account-links button {font-size:14px;min-height:44px;display:inline-flex;align-items:center;text-decoration:none}
 .ios-account-links button {background:transparent;color:var(--prod-text-muted);border:0;box-shadow:none;padding:0 6px}
-.ios-account[data-account-variant='learners'] {grid-template-rows:minmax(130px,29svh) auto}
+.ios-account[data-account-variant='learners'] {grid-template-rows:auto auto;gap:14px;}
+.ios-account[data-account-variant='learners'] .ios-account-brand a {width:min(36vw,150px);}
 .ios-learner-list {display:grid;gap:14px;margin:20px 0}
-.ios-learner-list>button {min-height:124px;justify-content:flex-start;text-align:left;gap:16px;padding:14px 18px;background:linear-gradient(150deg,#2b6b54,#103e36 80%);color:var(--prod-text);border:1px solid #d3bd80;box-shadow:inset 0 2px #bddec02e,0 4px #082824,0 8px 18px #041e2f44}
+.ios-learner-list>button {min-height:100px;justify-content:flex-start;text-align:left;gap:16px;padding:12px 16px;background:linear-gradient(150deg,#2b6b54,#103e36 80%);color:var(--prod-text);border:1px solid #d3bd80;box-shadow:inset 0 2px #bddec02e,0 4px #082824,0 8px 18px #041e2f44}
 .ios-learner-hero {width:76px;height:84px;flex-shrink:0;display:block;position:relative;border:2px solid #d8c282;border-radius:40% 40% 35% 35%;background:linear-gradient(#527a62,#15493f);overflow:hidden}
 .ios-learner-hero img {width:100%;height:100%;object-fit:cover;object-position:60% 0}
 .ios-learner-name {min-width:0;flex:1;display:flex;flex-direction:column;gap:5px}
@@ -53,7 +55,7 @@
 .ios-parent-settings summary {min-height:44px;display:list-item;align-content:center;cursor:pointer;color:var(--prod-text-muted);font-size:15px}
 .ios-parent-settings>button {margin:12px 8px 0 0;background:#22594a;color:var(--prod-text);border-color:#a0bda1;box-shadow:none}
 @media(max-width:360px){.ios-account{padding-right:14px;padding-left:14px;gap:14px}.ios-account-content{padding:18px}.ios-account-content p{font-size:15px}.ios-learner-list>button{padding:12px;gap:12px}.ios-learner-hero{width:62px;height:76px}.ios-learner-name>strong{font-size:24px}}
-@media(min-width:700px){.ios-account{padding-top:calc(var(--account-safe-top) + 28px)}.ios-account-content{padding:28px}.ios-account[data-account-variant='learners']{grid-template-rows:minmax(180px,28svh) auto}}
+@media(min-width:700px){.ios-account{padding-top:calc(var(--account-safe-top) + 28px)}.ios-account-content{padding:28px}}
 @media(orientation:landscape){
  .ios-account {grid-template-columns:minmax(180px,1fr) minmax(300px,440px);grid-template-rows:auto;gap:32px;align-items:center;padding-top:calc(var(--account-safe-top) + 28px)}
  .ios-account::before {background-image:url('../../assets/reference-screens/terrace-scene.png');background-position:center}

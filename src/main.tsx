@@ -23,6 +23,11 @@ import './components/game-ui/reference-screen-layout.css';
 import './components/game-ui/reference-batch-two.css';
 import './components/game-ui/reference-batch-three.css';
 import './components/game-ui/reference-takeout-portrait.css';
+import './design/production-ui-v2.css';
+import './design/production-proof-scenes.css';
+import './design/production-scene-compositions.css';
+import './design/production-landscape-scenes.css';
+import './design/restored-fantasy-materials.css';
 
 const WebsiteRoot = lazy(() => import('./website/WebsiteRoot'));
 const IOSAppRoot = lazy(() => import('./platform/ios/IOSAppRoot'));

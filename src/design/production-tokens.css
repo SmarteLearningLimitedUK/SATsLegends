@@ -1,7 +1,7 @@
 /* Presentation tokens. Game values and layout measurements live in their existing owners. */
 :root {
   --prod-font-display:'Baloo 2','Fredoka Variable',sans-serif;
-  --prod-font-body:'Fredoka Variable',sans-serif;
+  --prod-font-body:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   --prod-text:#fff6de;
   --prod-text-muted:#d3e6dc;
   --prod-ink:#17392e;
@@ -22,8 +22,8 @@
   --prod-radius-control:14px;
   --prod-radius-panel:24px;
   --prod-touch-min:44px;
-  --prod-question-compact:16px;
-  --prod-instruction-compact:14px;
+  --prod-question-compact:18px;
+  --prod-instruction-compact:16px;
   --prod-label-compact:12px;
   --prod-action:linear-gradient(170deg,#fff1b5,#ffda76 45%,#efb947);
   --prod-panel:linear-gradient(150deg,#20544a,#082f32 80%);

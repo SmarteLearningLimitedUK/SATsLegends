@@ -1,6 +1,7 @@
 import { createContext } from 'react';
 import { VISION_ATLAS_LAYOUT } from './visionAtlasLayout';
 import { HERO_ATLAS_LAYOUT } from './heroAtlasLayout';
+import fantasyRocket from '../assets/production-ui-v2/rocket-fantasy-v2.webp';
 
 export type VisionCue = 'idle' | 'reward' | 'error';
 export interface VisionSceneState { key: string; cue: VisionCue; sequence: number; paused: boolean; heroIdentity?: string; }

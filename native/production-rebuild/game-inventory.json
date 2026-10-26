@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-25T23:17:40.998Z",
+  "generatedAt": "2026-10-26T11:07:42.736Z",
   "source": "Current constants, difficulty and native orientation policy",
   "count": 37,
   "games": [
@@ -254,7 +254,7 @@
       "islandId": 2,
       "island": "Fraction Forest",
       "title": "Match Mastery L5",
-      "orientation": "landscape",
+      "orientation": "portrait",
       "tier": 5,
       "levels": [
         {
@@ -289,7 +289,7 @@
       "islandId": 2,
       "island": "Fraction Forest",
       "title": "Percent Power L5",
-      "orientation": "landscape",
+      "orientation": "portrait",
       "tier": 5,
       "levels": [
         {
@@ -359,7 +359,7 @@
       "islandId": 3,
       "island": "Geometry Glacier",
       "title": "Angle Arena L5",
-      "orientation": "landscape",
+      "orientation": "portrait",
       "tier": 5,
       "levels": [
         {
@@ -394,7 +394,7 @@
       "islandId": 3,
       "island": "Geometry Glacier",
       "title": "Polygon Palace L5",
-      "orientation": "landscape",
+      "orientation": "portrait",
       "tier": 5,
       "levels": [
         {
@@ -429,7 +429,7 @@
       "islandId": 3,
       "island": "Geometry Glacier",
       "title": "Area Architect L5",
-      "orientation": "landscape",
+      "orientation": "portrait",
       "tier": 5,
       "levels": [
         {
@@ -499,7 +499,7 @@
       "islandId": 3,
       "island": "Geometry Glacier",
       "title": "Coordinates Quest L5",
-      "orientation": "landscape",
+      "orientation": "portrait",
       "tier": 5,
       "levels": [
         {
@@ -534,7 +534,7 @@
       "islandId": 3,
       "island": "Geometry Glacier",
       "title": "Conversion Canyon L5",
-      "orientation": "landscape",
+      "orientation": "portrait",
       "tier": 5,
       "levels": [
         {
@@ -604,7 +604,7 @@
       "islandId": 4,
       "island": "Data Desert",
       "title": "Mean Machine L5",
-      "orientation": "landscape",
+      "orientation": "portrait",
       "tier": 5,
       "levels": [
         {
@@ -744,7 +744,7 @@
       "islandId": 5,
       "island": "Operations Outpost",
       "title": "Factor Frenzy L5",
-      "orientation": "landscape",
+      "orientation": "portrait",
       "tier": 5,
       "levels": [
         {
@@ -814,7 +814,7 @@
       "islandId": 5,
       "island": "Operations Outpost",
       "title": "Order Ops Arena L5",
-      "orientation": "landscape",
+      "orientation": "portrait",
       "tier": 5,
       "levels": [
         {
@@ -849,7 +849,7 @@
       "islandId": 5,
       "island": "Operations Outpost",
       "title": "Formula Forge L5",
-      "orientation": "landscape",
+      "orientation": "portrait",
       "tier": 5,
       "levels": [
         {
@@ -919,7 +919,7 @@
       "islandId": 6,
       "island": "Measurement Mountain",
       "title": "Chrono Dash: Time Trial L5",
-      "orientation": "landscape",
+      "orientation": "portrait",
       "tier": 5,
       "levels": [
         {
@@ -954,7 +954,7 @@
       "islandId": 6,
       "island": "Measurement Mountain",
       "title": "Problem Pyramid L5",
-      "orientation": "landscape",
+      "orientation": "portrait",
       "tier": 5,
       "levels": [
         {
@@ -1024,7 +1024,7 @@
       "islandId": 6,
       "island": "Measurement Mountain",
       "title": "Change Counter L5",
-      "orientation": "landscape",
+      "orientation": "portrait",
       "tier": 5,
       "levels": [
         {
@@ -1059,7 +1059,7 @@
       "islandId": 8,
       "island": "Core of Calculation",
       "title": "SATs Paper 1: Arithmetic",
-      "orientation": "landscape",
+      "orientation": "portrait",
       "tier": 1,
       "levels": [
         {
@@ -1074,7 +1074,7 @@
       "islandId": 8,
       "island": "Core of Calculation",
       "title": "SATs Paper 2: Reasoning",
-      "orientation": "landscape",
+      "orientation": "portrait",
       "tier": 1,
       "levels": [
         {
@@ -1089,7 +1089,7 @@
       "islandId": 8,
       "island": "Core of Calculation",
       "title": "SATs Paper 3: Reasoning",
-      "orientation": "landscape",
+      "orientation": "portrait",
       "tier": 1,
       "levels": [
         {
@@ -1104,7 +1104,7 @@
       "islandId": 7,
       "island": "Ratio Rapids",
       "title": "Potion Panic L5",
-      "orientation": "landscape",
+      "orientation": "portrait",
       "tier": 5,
       "levels": [
         {

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowLeft, Lightbulb, LayoutGrid, Music2, Volume2, VolumeX } from 'lucide-react';
+import { ArrowLeft, Lightbulb, LayoutGrid, Music2, Volume2, VolumeX, Pause } from 'lucide-react';
+import GamePauseMenu from './game-ui/GamePauseMenu';
 import { ReferenceArt } from './game-ui/ReferenceScreenArt';
 import { triggerHaptic } from '../haptics';
 import { playGameSound } from '../audio/gameAudio';
@@ -13,8 +14,12 @@ interface GameActionDockProps {
   accentClass?: string;
   compact?: boolean;
   variant?: 'local' | 'global';
+  production?: boolean;
+  onPauseChange?: (open:boolean)=>void;
 }
-const GameActionDock: React.FC<GameActionDockProps> = ({ onBack, onHelp, onWork, variant = 'local', referenceSkin = false }) => {
+const GameActionDock: React.FC<GameActionDockProps> = ({ onBack, onHelp, onWork, variant = 'local', referenceSkin = false, production=false,onPauseChange }) => {
+  const [menuOpen,setMenuOpen]=useState(false);
+  useEffect(()=>()=>onPauseChange?.(false),[onPauseChange]);
   const [isMuted, setIsMuted] = useState(() => localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true');
   const [isMusicEnabled, setIsMusicEnabled] = useState(() => {
     const saved = localStorage.getItem(GAME_MUSIC_STORAGE_KEY);
@@ -38,6 +43,17 @@ const GameActionDock: React.FC<GameActionDockProps> = ({ onBack, onHelp, onWork,
   }, []);
   if (variant !== 'global') return null;
   const tap = (action: () => void) => { playGameSound('tap', isMuted); triggerHaptic('tap'); action(); };
+  const menu=(open:boolean)=>{setMenuOpen(open);onPauseChange?.(open);};
+  const sound=()=>{const muted=!isMuted;setIsMuted(muted);window.dispatchEvent(new CustomEvent(GAME_HUD_MUTE_EVENT,{detail:{muted}}));};
+  const music=()=>{const enabled=!isMusicEnabled;setIsMusicEnabled(enabled);window.dispatchEvent(new CustomEvent(GAME_HUD_MUSIC_EVENT,{detail:{enabled}}));};
+  if(production)return <>
+    <nav className="production-game-controls" aria-label="Game controls">
+      <button type="button" aria-label="Pause game" aria-haspopup="dialog" onClick={()=>tap(()=>menu(true))}><Pause aria-hidden="true"/><span>Pause</span></button>
+      {onHelp&&<button type="button" aria-label="How to play" aria-haspopup="dialog" data-game-tips-control onClick={event=>{event.currentTarget.focus({preventScroll:true});tap(onHelp);}}><Lightbulb aria-hidden="true"/><span>Help</span></button>}
+      {onWork&&<button type="button" aria-label="Open on-screen working board" onClick={()=>tap(onWork)}><LayoutGrid aria-hidden="true"/><span>Work</span></button>}
+    </nav>
+    {menuOpen&&<GamePauseMenu onClose={()=>menu(false)} onBack={onBack} onHelp={onHelp} onWork={onWork} muted={isMuted} music={isMusicEnabled} onSound={()=>tap(sound)} onMusic={()=>tap(music)}/>}
+  </>;
   return (
     <nav className={`legend-dock-surface${referenceSkin ? ' reference-controls' : ''}`} aria-label="Game controls">
       <button type="button" className="legend-dock-button" data-button-skin="none" data-ui-sound="handled" aria-label="Back" title="Back to islands" onClick={() => tap(onBack)}>{referenceSkin && <ReferenceArt part="dock-button" />}<ArrowLeft aria-hidden="true" /><span>Back</span></button>

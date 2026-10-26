@@ -630,6 +630,12 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
             <GameQuestionCard title="Mean Machine" subtitle={modeCopy.prompt}>
               {modeCopy.title}
             </GameQuestionCard>
+            {/* Compact portrait readout: the same live values at a readable size. */}
+            <div className="mean-portrait-readings" aria-label="Power cell readings">
+              {reelDisplay.map((value, index) => round?.activeReelIndexes.includes(index) ? (
+                <span key={`portrait-reading-${index}`} data-mean-portrait-reading>{value}</span>
+              ) : null)}
+            </div>
           </section>
 
           <main className="mean-machine-main flex min-h-0 flex-1 flex-col gap-2.5">
