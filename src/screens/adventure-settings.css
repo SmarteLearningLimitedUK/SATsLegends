@@ -1,128 +1,49 @@
+/* A quiet terrace behind one functional sound panel. Safe areas belong to
+   the shared viewport and HUD; this screen reserves their existing bounds. */
+#root .screen-settings > .app-screen-content {padding:0}
+#root .app-viewport.screen-settings {padding:0}
 .adventure-settings-root {
-  background: radial-gradient(circle at 17% 16%, #15466d 0, transparent 40%), linear-gradient(145deg, #071726, #0b0c23 70%);
+  background:#123f3b url('../assets/production-entry/account-portrait.webp') center / cover no-repeat;
 }
-
-.adventure-settings-scroll {
-  padding: clamp(5.75rem, 13vh, 8rem) 1rem 6.5rem;
-}
-
+.adventure-settings-scroll {padding:100px 16px 100px}
 .adventure-settings-panel {
-  width: min(100%, 45rem);
-  margin: 0 auto;
-  padding: clamp(1.1rem, 4vw, 2.5rem);
-  border: 1px solid rgba(147, 197, 253, .38);
-  border-radius: 1.6rem;
-  background: linear-gradient(145deg, rgba(20, 53, 90, .97), rgba(28, 18, 67, .97));
-  box-shadow: 0 22px 60px rgba(2, 6, 23, .4), inset 0 1px rgba(255, 255, 255, .12);
-  color: #f6f7ff;
+  width:min(100%,560px);margin:0 auto;padding:clamp(20px,4vw,32px);
+  border:1px solid var(--prod-gold);border-radius:var(--prod-radius-panel);
+  background:var(--prod-panel);box-shadow:var(--prod-shadow),inset 0 1px #fff3c544;
+  color:var(--prod-text);font-family:var(--prod-font-body);
 }
-
-.adventure-settings-kicker {
-  color: #8fe3fb;
-  font-size: .8rem;
-  font-weight: 900;
-  letter-spacing: .13em;
-  text-transform: uppercase;
-}
-
-.adventure-settings-panel h1 {
-  margin: .2rem 0 .35rem;
-  color: #fff;
-  font-size: clamp(1.8rem, 4vw, 2.5rem);
-  font-weight: 900;
-  line-height: 1.12;
-}
-
-.adventure-settings-intro {
-  max-width: 36rem;
-  margin: 0 0 1.4rem;
-  color: #e1efff;
-  font-size: 1rem;
-  line-height: 1.45;
-}
-
-.adventure-settings-grid {
-  display: grid;
-  gap: .85rem;
-}
-
+.adventure-settings-kicker {color:var(--prod-gold);font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase}
+.adventure-settings-panel h1 {margin:4px 0 8px;color:var(--prod-text);font-size:32px;font-weight:800;line-height:1.15}
+.adventure-settings-intro {margin:0 0 24px;color:var(--prod-text-muted);font-size:16px;line-height:1.45}
+.adventure-settings-grid {display:grid;gap:12px}
 .adventure-settings-option {
-  display: flex;
-  align-items: center;
-  gap: .8rem;
-  min-height: 5.25rem;
-  width: 100%;
-  padding: .8rem 1rem;
-  border: 1px solid rgba(172, 204, 255, .38);
-  border-radius: 1rem;
-  background: rgba(5, 20, 47, .72);
-  color: #fff;
-  text-align: left;
-  box-shadow: inset 0 1px rgba(255, 255, 255, .07);
-  cursor: pointer;
+  display:flex;align-items:center;gap:12px;min-height:88px;width:100%;padding:12px;
+  border:1px solid #8cb5a5;border-radius:var(--prod-radius-control);
+  background:var(--prod-surface-deep);color:var(--prod-text);text-align:left;cursor:pointer;
+  transition:background var(--prod-duration-press),transform var(--prod-duration-press);
 }
-
-.adventure-settings-option:hover,
-.adventure-settings-option:focus-visible {
-  border-color: #9ee9ff;
-  background: rgba(13, 44, 82, .9);
+.adventure-settings-option[aria-pressed='true'] {background:#245b47}
+.adventure-settings-option:active {transform:translateY(1px)}
+.adventure-settings-option:focus-visible,.adventure-settings-return:focus-visible {outline:3px solid var(--prod-focus);outline-offset:3px}
+.adventure-settings-icon {display:grid;flex:none;place-items:center;width:40px;height:44px;color:var(--prod-gold)}
+.adventure-settings-icon svg {width:26px;height:26px}
+.adventure-settings-copy {display:grid;gap:4px;flex:1;min-width:0}
+.adventure-settings-copy strong {font-size:17px;line-height:1.2}
+.adventure-settings-copy span {color:var(--prod-text-muted);font-size:14px;line-height:1.3}
+.adventure-settings-state {flex:none;min-width:44px;padding:6px;border:1px solid #8cb5a5;border-radius:24px;color:var(--prod-text);font-size:14px;font-weight:700;text-align:center}
+.adventure-settings-state.is-on {background:var(--prod-success);border-color:var(--prod-success);color:var(--prod-ink)}
+.adventure-settings-return {display:block;min-height:52px;margin:24px auto 0;padding:12px 24px;font-size:16px;font-weight:800}
+@media (max-width:360px) {
+ .adventure-settings-scroll {padding:88px 12px 88px}
+ .adventure-settings-panel {padding:16px}
+ .adventure-settings-option {gap:8px;padding:10px}
+ .adventure-settings-icon {width:28px}
+ .adventure-settings-copy strong {font-size:16px}
 }
-
-.adventure-settings-option:focus-visible,
-.adventure-settings-return:focus-visible {
-  outline: 3px solid #ffe17a;
-  outline-offset: 3px;
+@media (orientation:landscape) {
+ .adventure-settings-root {background-image:url('../assets/production-entry/welcome-landscape.webp')}
+ .adventure-settings-scroll {padding-top:94px}
+ .adventure-settings-panel {width:min(100%,720px)}
+ .adventure-settings-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
 }
-
-.adventure-settings-icon {
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: 3rem;
-  height: 3rem;
-  border-radius: .8rem;
-  background: rgba(65, 95, 170, .36);
-  color: #b0efff;
-}
-
-.adventure-settings-icon svg { width: 1.45rem; height: 1.45rem; }
-.adventure-settings-copy { display: grid; gap: .15rem; flex: 1; min-width: 0; }
-.adventure-settings-copy strong { font-size: 1rem; line-height: 1.2; }
-.adventure-settings-copy span { color: #ccdbef; font-size: .88rem; line-height: 1.3; }
-
-.adventure-settings-state {
-  flex: none;
-  min-width: 3.25rem;
-  padding: .35rem .45rem;
-  border: 1px solid rgba(194, 209, 241, .3);
-  border-radius: 2rem;
-  background: rgba(180, 190, 218, .16);
-  color: #e6eaf7;
-  font-size: .85rem;
-  font-weight: 900;
-  text-align: center;
-}
-
-.adventure-settings-state.is-on {
-  border-color: rgba(105, 239, 221, .6);
-  background: rgba(34, 157, 146, .29);
-  color: #b8fff1;
-}
-
-.adventure-settings-return {
-  display: block;
-  min-height: 3.25rem;
-  margin: 1.35rem auto 0;
-  padding: .75rem 2rem;
-  font-size: .94rem;
-  font-weight: 900;
-  text-transform: uppercase;
-}
-
-@media (max-width: 360px) {
-  .adventure-settings-scroll { padding-left: .7rem; padding-right: .7rem; }
-  .adventure-settings-panel { padding: 1rem; }
-  .adventure-settings-option { gap: .55rem; padding: .7rem; }
-  .adventure-settings-icon { width: 2.6rem; height: 2.6rem; }
-  .adventure-settings-copy span { font-size: .8rem; }
-}
+@media (hover:hover) {.adventure-settings-option:hover {background:var(--prod-surface-raised)}}

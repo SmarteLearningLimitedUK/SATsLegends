@@ -1,0 +1,15 @@
+{
+  "tool": "built-in image_gen",
+  "prompt": "Recompose the supplied SATs Legends fantasy terrace background as a purpose-built landscape Maths vs Zombies mobile game fighting arena. Keep the same premium tactile 3D fantasy toy-world art direction, white-and-gold Acropolis architecture, turquoise waterfalls, blue sky, sapphire banners and warm late-afternoon light. Output wide landscape approximately 2.16:1. NO CHARACTERS, NO text, NO interface, NO frame. The playable horizontal lane runs left to right across y55-65% of the canvas: one continuous physically coherent pale warm limestone terrace with clear perspective, simple large stone slabs, and a small subtle sapphire/gold circular floor medallion at center. The LEFT DEFENDER area x8-30%, y29-61% must be especially clean: pale warm ivory stone and open light-blue atmosphere behind a future orange deer hero in a dark green cape. No bushes, dark cypress, intricate columns, fires, foreground clutter or strong patterned edges in that area. The RIGHT enemy area x72-93%, y30-61% has an equally readable calm pale blue/ivory backdrop for small green zombie characters. Put intricate fantasy buildings and distant waterfalls mostly in the central distance x35-70%, controlled contrast and softer atmospheric depth without generic blur. Architectural columns/vines/banners ONLY on the outermost edges. Top 25% is calm sky for live HUD/question panels. Bottom 30% is a quiet warm stone floor for live answer controls. Make foreground subjects easy to read through the scene's natural luminance and colour separation. No opaque overlay, no glow, no illustrated panels or cards. The environment must be deliberately composed for game actors, not a postcard of busy scenery. Preserve the supplied world's cheerful saturated fantasy identity while making the arena dramatically clearer.",
+  "inputReferences": [
+    "src/assets/reference-screens/terrace-scene.png"
+  ],
+  "export": "src/assets/production-scenes/zombies-arena.webp",
+  "source": "native/production-rebuild/art-source/zombies-arena.png",
+  "dimensions": {
+    "width": 1600,
+    "height": 740,
+    "format": "webp"
+  },
+  "licensing": "Generated from the repository's supplied terrace reference; no stock imagery introduced."
+}

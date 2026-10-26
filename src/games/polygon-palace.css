@@ -21,6 +21,6 @@
      label padding used to make this stack taller than its grid track. */
   #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-answer-dock:has(.answer-choice-surface) > div {gap:6px;min-height:0;}
   #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .answer-choice-surface {gap:4px;}
-  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .answer-choice-surface button {min-height:44px;padding:4px 6px!important;font-size:16px!important;line-height:1.1!important;}
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .answer-choice-surface button {min-height:52px;padding:4px 6px!important;font-size:16px!important;line-height:1.25!important;}
   #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='polygon_palace'] .polygon-answer-dock:has(.answer-choice-surface) > div > button {min-height:44px;padding-block:6px;}
 }

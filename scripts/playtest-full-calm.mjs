@@ -25,6 +25,9 @@ try{for(const profile of profiles){
   await page.goto(base+'/wellbeing');
   await expect(page.locator('[data-wellbeing-activity="hub"]')).toBeVisible();
   for(const id of ids){
+   // Follow the activity's actual orientation, including the physical turn
+   // required for the two wide scenes, instead of clicking through its gate.
+   if(profile.name==='phone')await page.setViewportSize(['breathing_bloom','peaceful_pond'].includes(id)?{width:667,height:375}:{width:375,height:667});
    const row={profile:profile.name,width:profile.width,height:profile.height,id,passed:false};results.push(row);
    try{
     await page.locator(`[data-wellbeing-select="${id}"]`).click();

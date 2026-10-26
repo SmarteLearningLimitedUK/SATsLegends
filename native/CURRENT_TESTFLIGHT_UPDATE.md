@@ -1,4 +1,16 @@
-# Internal TestFlight update — 22 October 2026
+# Latest internal TestFlight update — 25 October 2026
+
+Version `1.0`, build `100.6.1`, is available to the existing internal tester group. Apple reports `IN_BETA_TESTING`; assignment was independently read back and verified at `2026-10-25T22:32:23Z`. Apple processing completed without errors or warnings. The previously approved standard-platform encryption classification was applied. No public App Store submission or new tester invitation was made.
+
+Release commit: `3900a4b7c4f1f6cab30c25b8cb2d3152fcde3015`; isolated branch: `ios/testflight-upload-20261025-221414`. Signed upload succeeded in https://github.com/SmarteLearningLimitedUK/SATsLegends/actions/runs/40239781707 after the owner approved the protected environment. The snapshot includes the accumulated game amendments and latest reference layouts, including portrait Take-Out Rush. The original worktree HEAD and index were preserved; credentials, local QA artifacts and an unused source archive were excluded from the release snapshot.
+
+Verification: TypeScript and iOS web build passed; internal-test configuration, packaging, Apple entitlement preparation, game orientation, Prime Pop rules, all 28 five-tier difficulty checks and question integrity checks passed. The latest compiled portrait screen passed ten layout cases and six touch interaction flows. Native compilation, installation, launch and process survival passed on iPhone 16 Pro in https://github.com/SmarteLearningLimitedUK/SATsLegends/actions/runs/40239339128 using this exact commit. Native startup evidence does not certify gameplay, live login or purchases; the unsigned simulator has no production account configuration. The signed workflow separately validated the protected account configuration. Broader website Release checks were still running when TestFlight availability was confirmed; they are not represented as a passing full CI run.
+
+Evidence: `qa-artifacts/latest-testflight-native/{result.json,native-launch.png}` and `qa-artifacts/latest-testflight-upload/{build-result.json,apple-processing.json,testflight-ready.json}`. This completion step changed only this release record and ignored local release helpers/evidence; no additional game code changed after the snapshot.
+
+Assumptions: existing Apple app and internal tester group; internal testing with purchases disabled; no public release. No external legacy assumptions were used.
+
+## Previous internal TestFlight update — 22 October 2026
 
 The owner authorised pushing the latest accumulated changes to TestFlight. Release snapshot `ff82ac16eba33f03907581717fa592a02ddf07cf` is pushed to `ios/testflight-upload-20261021-001832`.
 

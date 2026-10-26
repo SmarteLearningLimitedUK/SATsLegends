@@ -136,7 +136,7 @@ const WorldMap: React.FC<WorldMapProps> = ({
     </div>
   );
 
-  if(portrait)return <ReferenceWorldMap states={islandStates} recommended={recommendedIsland} onSelect={onSelectIsland} atlas={islandAtlas} bounds={ISLAND_ATLAS_BOUNDS}/>;
+  if(portrait)return <ReferenceWorldMap states={islandStates} recommended={recommendedIsland} onSelect={onSelectIsland}/>;
   return (
     <div ref={mapRef} className="legend-world-map relative w-full overflow-visible">
       <div className="legend-map-brand-header">

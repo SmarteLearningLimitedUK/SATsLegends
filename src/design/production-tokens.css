@@ -1,0 +1,35 @@
+/* Presentation tokens. Game values and layout measurements live in their existing owners. */
+:root {
+  --prod-font-display:'Baloo 2','Fredoka Variable',sans-serif;
+  --prod-font-body:'Fredoka Variable',sans-serif;
+  --prod-text:#fff6de;
+  --prod-text-muted:#d3e6dc;
+  --prod-ink:#17392e;
+  --prod-surface:#123f3b;
+  --prod-surface-deep:#082d30;
+  --prod-surface-raised:#1d5a50;
+  --prod-gold:#f7cc6b;
+  --prod-gold-light:#fff0ae;
+  --prod-gold-edge:#ad772c;
+  --prod-success:#83e5a0;
+  --prod-error:#ffb2ac;
+  --prod-focus:#fff3b1;
+  --prod-space-1:4px;
+  --prod-space-2:8px;
+  --prod-space-3:12px;
+  --prod-space-4:16px;
+  --prod-space-6:24px;
+  --prod-radius-control:14px;
+  --prod-radius-panel:24px;
+  --prod-touch-min:44px;
+  --prod-question-compact:16px;
+  --prod-instruction-compact:14px;
+  --prod-label-compact:12px;
+  --prod-action:linear-gradient(170deg,#fff1b5,#ffda76 45%,#efb947);
+  --prod-panel:linear-gradient(150deg,#20544a,#082f32 80%);
+  --prod-shadow:0 12px 28px #041d3266;
+  --prod-ease:cubic-bezier(.2,.75,.25,1);
+  --prod-duration-press:120ms;
+  --prod-duration-enter:360ms;
+}
+@media(prefers-reduced-motion:reduce){:root{--prod-duration-press:0ms;--prod-duration-enter:0ms}}

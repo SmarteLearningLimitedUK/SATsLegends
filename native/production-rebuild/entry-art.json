@@ -1,0 +1,65 @@
+{
+  "welcome-portrait": {
+    "tool": "built-in image_gen",
+    "prompt": "Create production background artwork for SATs Legends, portrait 9:19.5 mobile game opening screen. Supporting references: first supplied image is the exact existing Barratt deer hero identity; second is the established richly rendered 3D fantasy world style. Preserve recognizable orange deer, green eyes, white muzzle, small antlers, emerald hooded cape, leather adventurer clothes with gold leaf clasps, bow and green arrows. One adorable expressive premium toy-like 3D character with tactile fur and fabric, not flat comic illustration. Full body standing confidently on a sunlit golden stone circular terrace, both boots physically touching the ground, relaxed friendly smile, one hand greeting the player, bow held down safely. Character centered x52%, head at y38%, boots at y77%, taking about 44% of image height. Grand white-and-gold Acropolis towers, turquoise waterfalls and floating fantasy cliffs in distant background. Calm bright blue sky occupies TOP 30% with gentle clouds and no foreground objects: reserved for live logo and title. LOWER 20% is clean low-detail warm dark-teal stone terrace reserved for live menu text and button. Deliberate luminous sky behind green silhouette, natural contact shadow, warm rim light, background lower contrast than hero, no general blur or dark overlay. Forest vines and jewel flowers ONLY at far edges. Coherent deliberate game key art; bright saturated, premium cinematic 3D fantasy adventure, cute cursed-kawaii spirit but inviting and confident. No text, no logo, no UI, no buttons, no frame, no extra characters or cropped body. Do not use the dark studio backdrop from the character reference.",
+    "inputReferences": [
+      "src/assets/characters/premium/barratt-v2.png",
+      "src/assets/reference-batch-two/map-scene.png"
+    ],
+    "export": "src/assets/production-entry/welcome-portrait.webp",
+    "source": "native/production-rebuild/art-source/welcome-portrait.png",
+    "licensing": "Generated from the repository's supplied reference assets; no stock imagery introduced.",
+    "dimensions": {
+      "width": 851,
+      "height": 1848,
+      "format": "webp"
+    }
+  },
+  "account-portrait": {
+    "tool": "built-in image_gen",
+    "prompt": "Create a production environment for the parent sign-in and learner selection screens of SATs Legends. Reference supplied world image establishes exact rich 3D fantasy art style; supplied deer image establishes the same universe, but NO characters in this output. Portrait 9:19.5 composition. A welcoming Acropolis garden gateway with white stone arch at the far left/right outer edges, small emerald/gold architectural accents, sunlit castle towers and turquoise waterfalls far away in the upper middle, gentle blue sky in top quarter. Lower 65% is a physically coherent broad calm dark-teal shaded stone terrace with subtle large stone blocks and a low parapet, deliberately low texture and shadow detail for live controls. Small golden lanterns, flowering ivy and polished sapphire crystal clusters at extreme corners only. Ground floor at bottom must read as continuous clean terrace. Warm early evening sunlight on distant buildings against cool shade in the foreground, subtle atmospheric perspective. The exact same detailed tactile 3D fantasy miniature aesthetic as the supplied world reference, rounded friendly forms, bright jewel colours with controlled saturation where UI will sit. This must be a clean real environment, not a picture of a UI and not a generic dark corporate background. No character, no labels, no letters, no logo, no painted panels, no buttons, no border. Central 85% of the lower two-thirds is clean uncluttered negative space for live readable forms. Do not paint decorative horizontal lines or isolated floating interface shapes.",
+    "inputReferences": [
+      "src/assets/characters/premium/barratt-v2.png",
+      "src/assets/reference-batch-two/map-scene.png"
+    ],
+    "export": "src/assets/production-entry/account-portrait.webp",
+    "source": "native/production-rebuild/art-source/account-portrait.png",
+    "licensing": "Generated from the repository's supplied reference assets; no stock imagery introduced.",
+    "dimensions": {
+      "width": 853,
+      "height": 1844,
+      "format": "webp"
+    }
+  },
+  "welcome-landscape": {
+    "tool": "built-in image_gen",
+    "prompt": "Create production wide opening-screen artwork for SATs Legends, landscape 16:9, intentionally composed for wide tablets and horizontal desktop windows. Supporting image 1: exact Barratt deer hero identity. Image 2: established premium richly rendered 3D fantasy Acropolis universe. Preserve orange deer, green eyes, white muzzle, small antlers, emerald hooded cape, leather/gold leaf adventurer costume, bow and green arrows. ONE cute expressive tactile 3D hero, full body at RIGHT x73%, head at y25%, boots at y84%, smiling welcome with one hand lifted and bow held down; natural feet contact with golden stone terrace and soft contact shadow. LEFT half must be calm open blue sky and distant turquoise waterfalls in upper half, clean shaded dark-teal terrace in lower half, with no close objects, allocated for a live logo and menu. White-and-gold Acropolis towers in far background, bright floating fantasy cliffs, sunny warm light with controlled background contrast; large clean silhouette gap around hero. Small flowering vines and jewel crystals only at far image edges. Same polished toy-like 3D fantasy adventure style as supplied references, not flat drawing, not studio render, not stock photography. No logo, no lettering, no UI, no frame, no second character. Preserve clear designed negative space on entire LEFT 48%.",
+    "inputReferences": [
+      "src/assets/characters/premium/barratt-v2.png",
+      "src/assets/reference-batch-two/map-scene.png"
+    ],
+    "export": "src/assets/production-entry/welcome-landscape.webp",
+    "source": "native/production-rebuild/art-source/welcome-landscape.png",
+    "licensing": "Generated from the repository's supplied reference assets; no stock imagery introduced.",
+    "dimensions": {
+      "width": 1600,
+      "height": 900,
+      "format": "webp"
+    }
+  },
+  "zombies-arena": {
+    "tool": "built-in image_gen",
+    "prompt": "Recompose the supplied SATs Legends fantasy terrace background as a purpose-built landscape Maths vs Zombies mobile game fighting arena. Keep the same premium tactile 3D fantasy toy-world art direction, white-and-gold Acropolis architecture, turquoise waterfalls, blue sky, sapphire banners and warm late-afternoon light. Output wide landscape approximately 2.16:1. NO CHARACTERS, NO text, NO interface, NO frame. The playable horizontal lane runs left to right across y55-65% of the canvas: one continuous physically coherent pale warm limestone terrace with clear perspective, simple large stone slabs, and a small subtle sapphire/gold circular floor medallion at center. The LEFT DEFENDER area x8-30%, y29-61% must be especially clean: pale warm ivory stone and open light-blue atmosphere behind a future orange deer hero in a dark green cape. No bushes, dark cypress, intricate columns, fires, foreground clutter or strong patterned edges in that area. The RIGHT enemy area x72-93%, y30-61% has an equally readable calm pale blue/ivory backdrop for small green zombie characters. Put intricate fantasy buildings and distant waterfalls mostly in the central distance x35-70%, controlled contrast and softer atmospheric depth without generic blur. Architectural columns/vines/banners ONLY on the outermost edges. Top 25% is calm sky for live HUD/question panels. Bottom 30% is a quiet warm stone floor for live answer controls. Make foreground subjects easy to read through the scene's natural luminance and colour separation. No opaque overlay, no glow, no illustrated panels or cards. The environment must be deliberately composed for game actors, not a postcard of busy scenery. Preserve the supplied world's cheerful saturated fantasy identity while making the arena dramatically clearer.",
+    "inputReferences": [
+      "src/assets/reference-screens/terrace-scene.png"
+    ],
+    "export": "src/assets/production-scenes/zombies-arena.webp",
+    "source": "native/production-rebuild/art-source/zombies-arena.png",
+    "dimensions": {
+      "width": 1600,
+      "height": 740,
+      "format": "webp"
+    },
+    "licensing": "Generated from the repository's supplied terrace reference; no stock imagery introduced."
+  }
+}

@@ -9,6 +9,13 @@
 .gameplay-orientation-gate[data-ready='true'] .gameplay-orientation-symbol{display:none}
 @media(orientation:landscape) and (max-height:500px){.gameplay-orientation-gate{gap:8px}.gameplay-orientation-gate .gameplay-orientation-symbol{width:60px;height:64px}.gameplay-orientation-symbol svg:first-child{width:44px;height:58px}.gameplay-orientation-symbol svg:last-child{width:24px;height:24px}.gameplay-orientation-gate button{margin-top:4px}}
 .gameplay-orientation-symbol{position:relative;width:104px;height:110px;color:#f6cf7e}
+.gameplay-orientation-gate {background:#123f3b url('../assets/production-entry/account-portrait.webp') center/cover no-repeat}
+.gameplay-ready-panel {display:flex;flex-direction:column;align-items:center;gap:inherit;width:min(100%,400px);padding:24px;border:1px solid var(--prod-gold);border-radius:var(--prod-radius-panel);background:var(--prod-panel);box-shadow:var(--prod-shadow)}
+.gameplay-ready-panel h1 {color:var(--prod-text)}
+.gameplay-ready-panel button {border-color:var(--prod-gold);background:var(--prod-surface-deep);transition:transform var(--prod-duration-press)}
+.gameplay-ready-panel button:active {transform:translateY(1px)}
+.gameplay-ready-panel .gameplay-start-button {background:var(--prod-action);color:var(--prod-ink)}
+@media(orientation:landscape){.gameplay-orientation-gate{background-image:url('../assets/production-entry/welcome-landscape.webp')}.gameplay-ready-panel{width:min(100%,480px);padding:18px 24px}}
 .gameplay-orientation-symbol svg:first-child{width:76px;height:90px;animation:gameplay-turn-phone 2.6s ease-in-out infinite}
 .gameplay-orientation-symbol svg:last-child{position:absolute;width:34px;height:34px;right:-5px;top:16px}
 @keyframes gameplay-turn-phone{0%,18%{transform:rotate(0)}55%,85%{transform:rotate(90deg)}100%{transform:rotate(0)}}

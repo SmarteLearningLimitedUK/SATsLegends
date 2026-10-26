@@ -1,0 +1,389 @@
+{
+  "scope": "Local implementation and Chromium verification. Not an App Store/native device certification.",
+  "rows": [
+    {
+      "key": "place_value_panic",
+      "title": "Place Value Panic L5",
+      "orientation": "portrait",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "number_line_ninja",
+      "title": "Number Line Ninja L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "prime_pop",
+      "title": "Prime Pop L5",
+      "orientation": "portrait",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "rounding_rocket",
+      "title": "Rounding Rocket L5",
+      "orientation": "portrait",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "maths_vs_zombies",
+      "title": "Maths vs Zombies L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "take_out_rush",
+      "title": "Take-Out Rush L5",
+      "orientation": "portrait",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Fraction/ratio independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "fraction_forge",
+      "title": "Fraction Forge L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Fraction/ratio independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "match3_equivalence",
+      "title": "Match Mastery L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Fraction/ratio independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "percent_power",
+      "title": "Percent Power L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "simplify_sprint",
+      "title": "Simplify Sprint L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "angle_arena",
+      "title": "Angle Arena L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "polygon_palace",
+      "title": "Polygon Palace L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "area_architect",
+      "title": "Area Architect L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "rotation_relay",
+      "title": "Transformation Station L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "coordinates_quest",
+      "title": "Coordinates Quest L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "conversion_canyon",
+      "title": "Conversion Canyon L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "perimeter_path",
+      "title": "Perimeter Path L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "mean_machine",
+      "title": "Mean Machine L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "graph_grabber",
+      "title": "Graph Grabber L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "line_graph_lab",
+      "title": "Line Graph Lab L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "data_detective",
+      "title": "Data Detective L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "factor_frenzy",
+      "title": "Factor Frenzy L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "multiplication_mine",
+      "title": "Multiplication Mine L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "order_ops_arena",
+      "title": "Order Ops Arena L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "formula_forge",
+      "title": "Formula Forge L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "remainder_run",
+      "title": "Remainder Run L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "time_keeper_cove",
+      "title": "Chrono Dash: Time Trial L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "problem_pyramid",
+      "title": "Problem Pyramid L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "unit_mixer",
+      "title": "Lava Path L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "change_counter",
+      "title": "Change Counter L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "crystal_core",
+      "title": "SATs Paper 1: Arithmetic",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Full core paper completion/review",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "mirror_gate",
+      "title": "SATs Paper 2: Reasoning",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Full core paper completion/review",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "matrix_match",
+      "title": "SATs Paper 3: Reasoning",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Full core paper completion/review",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "potion_panic",
+      "title": "Potion Panic L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Fraction/ratio independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "share_splitter",
+      "title": "Share Splitter L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Fraction/ratio independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "ratio_fractions",
+      "title": "Ratio Racer L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Campaign independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    },
+    {
+      "key": "scale_builder",
+      "title": "Scale Builder L5",
+      "orientation": "landscape",
+      "visualCases": 4,
+      "interactionPassed": true,
+      "evidence": "Fraction/ratio independent-answer actions",
+      "statesPassed": true,
+      "native": "Not run on this Windows host"
+    }
+  ],
+  "browserGatesPassed": true,
+  "nativeReleaseGates": [
+    "Xcode simulator build/archive of this candidate",
+    "Physical iPhone: safe areas, rotation lock, home indicator and background/resume",
+    "VoiceOver and supported accessibility text sizes",
+    "Native frame pacing and decoded texture memory",
+    "Safari/WebKit verification (browser runtime unavailable on this Windows host)"
+  ],
+  "knownCoverageLimits": [
+    "Random game generators are tested representatively, not through every possible sequence. Polygon Palace solid counting/sorting and its 3D property branch were covered in complementary seeded runs.",
+    "Account tests use an isolated local API fixture, not real credentials or account writes.",
+    "Tablet sizes are browser stress tests; the native project targets iPhone."
+  ],
+  "deployment": "Not uploaded to TestFlight"
+}

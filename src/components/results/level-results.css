@@ -56,6 +56,6 @@
   .level-result-overlay--themed .level-result-heading p:not(.level-result-location) {font-size:13px;line-height:1.4}
   .level-result-overlay--themed .level-result-stats {grid-template-columns:repeat(4,minmax(0,1fr))}
   .level-result-overlay--themed .legend-result-stat {padding:6px 4px}
-  .level-result-overlay--themed .legend-result-stat>div:first-child {font-size:9px;letter-spacing:.06em}
+  .level-result-overlay--themed .legend-result-stat>div:first-child {font-size:12px;letter-spacing:.02em}
   .level-result-overlay--themed .level-result-actions {padding-top:0}
 }

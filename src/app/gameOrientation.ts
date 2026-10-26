@@ -3,7 +3,8 @@ import type { LevelData } from '../types';
 export type GameOrientation = 'portrait' | 'landscape';
 
 export function getGameOrientation(level: Pick<LevelData, 'blueprintKey' | 'gameType'> | null | undefined): GameOrientation {
-  return level?.blueprintKey === 'take_out_rush' || level?.gameType === 'take_out_rush' || level?.blueprintKey === 'place_value_panic' || level?.blueprintKey === 'rounding_rocket' || level?.blueprintKey === 'prime_pop' || level?.gameType === 'prime_pop'
+  // A shared legacy gameType must not override a game's explicit blueprint.
+  return level?.blueprintKey === 'take_out_rush' || (!level?.blueprintKey && level?.gameType === 'take_out_rush') || level?.blueprintKey === 'place_value_panic' || level?.blueprintKey === 'rounding_rocket' || level?.blueprintKey === 'prime_pop' || level?.gameType === 'prime_pop'
     ? 'portrait' : 'landscape';
 }
 

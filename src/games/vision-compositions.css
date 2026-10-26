@@ -89,10 +89,10 @@
  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-hud-practice{font-size:11px}
  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-dock-surface{padding:2px 5px;gap:4px;border-radius:12px}
  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-dock-button{height:44px;min-height:44px;width:48px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-dock-button span{font-size:10px}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(.vision-world-backdrop) .legend-dock-button span{font-size:var(--prod-label-compact,12px)}
  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game] .game-question-card{padding:4px 8px!important;border-radius:10px}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game] :is(.game-question-card-copy,.game-question-copy){font-size:14px!important;line-height:1.2!important}
- #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game] .game-question-context{font-size:11px!important}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game] :is(.game-question-card-copy,.game-question-copy){font-size:var(--prod-question-compact,16px)!important;line-height:1.25!important}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game] .game-question-context{font-size:var(--prod-label-compact,12px)!important}
  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .pvp-prompt-full{display:none}
  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .pvp-prompt-compact{display:inline}
  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .legend-pvp-question .game-question-card{padding:7px!important}

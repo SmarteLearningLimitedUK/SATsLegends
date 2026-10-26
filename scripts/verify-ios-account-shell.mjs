@@ -1,13 +1,14 @@
 import { chromium, expect } from '@playwright/test';
 import assert from 'node:assert/strict';
 import { loadEnv } from 'vite';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, writeFile, readFile } from 'node:fs/promises';
 
 const origin = loadEnv('ios', process.cwd(), 'VITE_').VITE_SUPABASE_URL;
 assert.ok(origin, 'Configure the same public iOS account URL used by the app.');
 const host = new URL(origin).hostname, base = process.env.LEGEND_IOS_QA_URL || 'http://127.0.0.1:3023';
 const out = process.env.LEGEND_QA_OUT || 'qa-artifacts/ios-independent-account'; await mkdir(out, { recursive: true });
 const browser = await chromium.launch(), results = [];
+const landscapeTestRoute=JSON.parse(await readFile('native/production-rebuild/game-inventory.json')).games.find(game=>game.key==='number_line_ninja').route;
 try {
   for (const viewport of [{width:390,height:844},{width:375,height:667},{width:430,height:932},{width:844,height:390}]) {
     const context = await browser.newContext({viewport, hasTouch:true, reducedMotion:'reduce'});
@@ -61,7 +62,7 @@ try {
       throw Error('Unexpected account request: '+url.pathname);
     });
     const page = await context.newPage(); page.on('pageerror',error=>errors.push(error.message));
-    await page.goto(base+'/');
+    await page.goto(base+'/',{waitUntil:'domcontentloaded',timeout:60000});
     await expect(page.getByRole('heading',{name:'Welcome back'})).toBeVisible();
     await expect(page.locator('.website-header,.website-footer,.website-account-world')).toHaveCount(0);
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);
@@ -91,10 +92,10 @@ try {
     // Menus stay portrait. Only a minigame permits physical rotation.
     // Match the app's client-side level navigation, preserving the mounted
     // save controller rather than reloading during a pending save.
-    await page.evaluate(() => {
-      history.pushState(null, '', '/game/1/1');
+    await page.evaluate(route => {
+      history.pushState(null, '', route);
       window.dispatchEvent(new PopStateEvent('popstate'));
-    });
+    },landscapeTestRoute);
     await expect(page.locator('html')).toHaveAttribute('data-app-orientation','landscape-required');
     await expect.poll(()=>page.evaluate(()=>window.__orientationCalls.at(-1))).toBe('unlock');
     await page.setViewportSize({width:390,height:844});

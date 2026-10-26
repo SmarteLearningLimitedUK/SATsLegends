@@ -1,0 +1,3437 @@
+{
+  "generatedAt": "2026-10-26T00:12:58.547Z",
+  "newArt": {
+    "welcome-portrait": {
+      "tool": "built-in image_gen",
+      "prompt": "Create production background artwork for SATs Legends, portrait 9:19.5 mobile game opening screen. Supporting references: first supplied image is the exact existing Barratt deer hero identity; second is the established richly rendered 3D fantasy world style. Preserve recognizable orange deer, green eyes, white muzzle, small antlers, emerald hooded cape, leather adventurer clothes with gold leaf clasps, bow and green arrows. One adorable expressive premium toy-like 3D character with tactile fur and fabric, not flat comic illustration. Full body standing confidently on a sunlit golden stone circular terrace, both boots physically touching the ground, relaxed friendly smile, one hand greeting the player, bow held down safely. Character centered x52%, head at y38%, boots at y77%, taking about 44% of image height. Grand white-and-gold Acropolis towers, turquoise waterfalls and floating fantasy cliffs in distant background. Calm bright blue sky occupies TOP 30% with gentle clouds and no foreground objects: reserved for live logo and title. LOWER 20% is clean low-detail warm dark-teal stone terrace reserved for live menu text and button. Deliberate luminous sky behind green silhouette, natural contact shadow, warm rim light, background lower contrast than hero, no general blur or dark overlay. Forest vines and jewel flowers ONLY at far edges. Coherent deliberate game key art; bright saturated, premium cinematic 3D fantasy adventure, cute cursed-kawaii spirit but inviting and confident. No text, no logo, no UI, no buttons, no frame, no extra characters or cropped body. Do not use the dark studio backdrop from the character reference.",
+      "inputReferences": [
+        "src/assets/characters/premium/barratt-v2.png",
+        "src/assets/reference-batch-two/map-scene.png"
+      ],
+      "export": "src/assets/production-entry/welcome-portrait.webp",
+      "source": "native/production-rebuild/art-source/welcome-portrait.png",
+      "licensing": "Generated from the repository's supplied reference assets; no stock imagery introduced.",
+      "dimensions": {
+        "width": 851,
+        "height": 1848,
+        "format": "webp"
+      }
+    },
+    "account-portrait": {
+      "tool": "built-in image_gen",
+      "prompt": "Create a production environment for the parent sign-in and learner selection screens of SATs Legends. Reference supplied world image establishes exact rich 3D fantasy art style; supplied deer image establishes the same universe, but NO characters in this output. Portrait 9:19.5 composition. A welcoming Acropolis garden gateway with white stone arch at the far left/right outer edges, small emerald/gold architectural accents, sunlit castle towers and turquoise waterfalls far away in the upper middle, gentle blue sky in top quarter. Lower 65% is a physically coherent broad calm dark-teal shaded stone terrace with subtle large stone blocks and a low parapet, deliberately low texture and shadow detail for live controls. Small golden lanterns, flowering ivy and polished sapphire crystal clusters at extreme corners only. Ground floor at bottom must read as continuous clean terrace. Warm early evening sunlight on distant buildings against cool shade in the foreground, subtle atmospheric perspective. The exact same detailed tactile 3D fantasy miniature aesthetic as the supplied world reference, rounded friendly forms, bright jewel colours with controlled saturation where UI will sit. This must be a clean real environment, not a picture of a UI and not a generic dark corporate background. No character, no labels, no letters, no logo, no painted panels, no buttons, no border. Central 85% of the lower two-thirds is clean uncluttered negative space for live readable forms. Do not paint decorative horizontal lines or isolated floating interface shapes.",
+      "inputReferences": [
+        "src/assets/characters/premium/barratt-v2.png",
+        "src/assets/reference-batch-two/map-scene.png"
+      ],
+      "export": "src/assets/production-entry/account-portrait.webp",
+      "source": "native/production-rebuild/art-source/account-portrait.png",
+      "licensing": "Generated from the repository's supplied reference assets; no stock imagery introduced.",
+      "dimensions": {
+        "width": 853,
+        "height": 1844,
+        "format": "webp"
+      }
+    },
+    "welcome-landscape": {
+      "tool": "built-in image_gen",
+      "prompt": "Create production wide opening-screen artwork for SATs Legends, landscape 16:9, intentionally composed for wide tablets and horizontal desktop windows. Supporting image 1: exact Barratt deer hero identity. Image 2: established premium richly rendered 3D fantasy Acropolis universe. Preserve orange deer, green eyes, white muzzle, small antlers, emerald hooded cape, leather/gold leaf adventurer costume, bow and green arrows. ONE cute expressive tactile 3D hero, full body at RIGHT x73%, head at y25%, boots at y84%, smiling welcome with one hand lifted and bow held down; natural feet contact with golden stone terrace and soft contact shadow. LEFT half must be calm open blue sky and distant turquoise waterfalls in upper half, clean shaded dark-teal terrace in lower half, with no close objects, allocated for a live logo and menu. White-and-gold Acropolis towers in far background, bright floating fantasy cliffs, sunny warm light with controlled background contrast; large clean silhouette gap around hero. Small flowering vines and jewel crystals only at far image edges. Same polished toy-like 3D fantasy adventure style as supplied references, not flat drawing, not studio render, not stock photography. No logo, no lettering, no UI, no frame, no second character. Preserve clear designed negative space on entire LEFT 48%.",
+      "inputReferences": [
+        "src/assets/characters/premium/barratt-v2.png",
+        "src/assets/reference-batch-two/map-scene.png"
+      ],
+      "export": "src/assets/production-entry/welcome-landscape.webp",
+      "source": "native/production-rebuild/art-source/welcome-landscape.png",
+      "licensing": "Generated from the repository's supplied reference assets; no stock imagery introduced.",
+      "dimensions": {
+        "width": 1600,
+        "height": 900,
+        "format": "webp"
+      }
+    },
+    "zombies-arena": {
+      "tool": "built-in image_gen",
+      "prompt": "Recompose the supplied SATs Legends fantasy terrace background as a purpose-built landscape Maths vs Zombies mobile game fighting arena. Keep the same premium tactile 3D fantasy toy-world art direction, white-and-gold Acropolis architecture, turquoise waterfalls, blue sky, sapphire banners and warm late-afternoon light. Output wide landscape approximately 2.16:1. NO CHARACTERS, NO text, NO interface, NO frame. The playable horizontal lane runs left to right across y55-65% of the canvas: one continuous physically coherent pale warm limestone terrace with clear perspective, simple large stone slabs, and a small subtle sapphire/gold circular floor medallion at center. The LEFT DEFENDER area x8-30%, y29-61% must be especially clean: pale warm ivory stone and open light-blue atmosphere behind a future orange deer hero in a dark green cape. No bushes, dark cypress, intricate columns, fires, foreground clutter or strong patterned edges in that area. The RIGHT enemy area x72-93%, y30-61% has an equally readable calm pale blue/ivory backdrop for small green zombie characters. Put intricate fantasy buildings and distant waterfalls mostly in the central distance x35-70%, controlled contrast and softer atmospheric depth without generic blur. Architectural columns/vines/banners ONLY on the outermost edges. Top 25% is calm sky for live HUD/question panels. Bottom 30% is a quiet warm stone floor for live answer controls. Make foreground subjects easy to read through the scene's natural luminance and colour separation. No opaque overlay, no glow, no illustrated panels or cards. The environment must be deliberately composed for game actors, not a postcard of busy scenery. Preserve the supplied world's cheerful saturated fantasy identity while making the arena dramatically clearer.",
+      "inputReferences": [
+        "src/assets/reference-screens/terrace-scene.png"
+      ],
+      "export": "src/assets/production-scenes/zombies-arena.webp",
+      "source": "native/production-rebuild/art-source/zombies-arena.png",
+      "dimensions": {
+        "width": 1600,
+        "height": 740,
+        "format": "webp"
+      },
+      "licensing": "Generated from the repository's supplied terrace reference; no stock imagery introduced."
+    }
+  },
+  "exports": [
+    {
+      "file": "src/assets/production-entry/account-portrait.webp",
+      "bytes": 322796,
+      "sha256": "c81dcc5a14886fed93418d936b306396bc4c63300c288c7fd2283828d20e08cf"
+    },
+    {
+      "file": "src/assets/production-entry/welcome-landscape.webp",
+      "bytes": 360674,
+      "sha256": "b3120498de148dbd32b74492219fb0af4d1a052be67a44346e845db727985e5c"
+    },
+    {
+      "file": "src/assets/production-entry/welcome-portrait.webp",
+      "bytes": 372102,
+      "sha256": "3f7a6459d5c375be2d4faae18ba0a95d5ec9fc7260eae0414bc6c98b23979637"
+    },
+    {
+      "file": "src/assets/production-scenes/zombies-arena.webp",
+      "bytes": 355626,
+      "sha256": "20095bdae67b828b22d904cb2dcb2da8061f02a6974f262d167a419772b07a7e"
+    }
+  ],
+  "newExportBytes": 1411198,
+  "replacementDecisions": [
+    {
+      "original": "src/assets/casual_ui/splashrep1.webp poster composition",
+      "reason": "Oversized badge hid the character; poster did not reserve a live action area.",
+      "replacement": "Separate portrait/landscape welcome artwork; original badge retained as live SplashLogo",
+      "targets": [
+        "welcome"
+      ]
+    },
+    {
+      "original": "Plain account backdrop and initial-only learner card",
+      "reason": "Disconnected from the game world and its characters.",
+      "replacement": "Purpose-painted garden plus functional live learner card",
+      "targets": [
+        "sign-in",
+        "learner-selection",
+        "settings",
+        "Start/turn prompt"
+      ]
+    },
+    {
+      "original": "src/assets/reference-screens/terrace-scene.png",
+      "reason": "Dark plants and busy architecture competed with the defender silhouette.",
+      "replacement": "src/assets/production-scenes/zombies-arena.webp",
+      "targets": [
+        "maths_vs_zombies"
+      ]
+    }
+  ],
+  "ownership": "Generated from repository-provided references using the built-in image tool; no stock imagery. Existing reference ownership is assumed to be held by the project and has not been independently audited.",
+  "productionBundle": {
+    "bytes": 331668714,
+    "files": 602,
+    "largest": [
+      {
+        "file": "dist-ios/assets/Calculation Cup-BdbQ1R8e.png",
+        "bytes": 3857407
+      },
+      {
+        "file": "dist-ios/assets/side-scroll-circuit-v2-D5DMX-2P.png",
+        "bytes": 3320924
+      },
+      {
+        "file": "dist-ios/assets/island-scene-BzFGinXs.png",
+        "bytes": 3281783
+      },
+      {
+        "file": "dist-ios/assets/map-continuous-v2-CjrvRSGk.png",
+        "bytes": 3211636
+      },
+      {
+        "file": "dist-ios/assets/simplify-sprint-ruins-EgEdDep3.png",
+        "bytes": 3158544
+      },
+      {
+        "file": "dist-ios/assets/percent-B4Llsd41.png",
+        "bytes": 3151894
+      },
+      {
+        "file": "dist-ios/assets/match-79WX9NX3.png",
+        "bytes": 3099365
+      },
+      {
+        "file": "dist-ios/assets/pvp-scene-DlbtntrM.png",
+        "bytes": 3041294
+      },
+      {
+        "file": "dist-ios/assets/share-scene-Be5Na0X7.png",
+        "bytes": 3035653
+      },
+      {
+        "file": "dist-ios/assets/vex-v2-GoBabZ8v.png",
+        "bytes": 3006785
+      },
+      {
+        "file": "dist-ios/assets/ninja-scene-CkBBR3ZO.png",
+        "bytes": 2963193
+      },
+      {
+        "file": "dist-ios/assets/mochi-v2-B6AtvWSf.png",
+        "bytes": 2961009
+      },
+      {
+        "file": "dist-ios/assets/potion-scene-CCurbkIj.png",
+        "bytes": 2955739
+      },
+      {
+        "file": "dist-ios/assets/potion-W0RKeDKy.png",
+        "bytes": 2922541
+      },
+      {
+        "file": "dist-ios/assets/graph-1Q0hfSiS.png",
+        "bytes": 2916105
+      },
+      {
+        "file": "dist-ios/assets/line-Ny8obKPk.png",
+        "bytes": 2894255
+      },
+      {
+        "file": "dist-ios/assets/zombies-garden-wide-v2-C3HUo1BF.png",
+        "bytes": 2888168
+      },
+      {
+        "file": "dist-ios/assets/goblin-v2-DsJ-a0wx.png",
+        "bytes": 2883134
+      },
+      {
+        "file": "dist-ios/assets/racer-scene-Hv6ZOkAp.png",
+        "bytes": 2877353
+      },
+      {
+        "file": "dist-ios/assets/forge-DOTlaVil.png",
+        "bytes": 2875567
+      }
+    ]
+  },
+  "notes": [
+    "Original PNGs and prompts are kept under native/production-rebuild/art-source and are not imported into the production bundle.",
+    "The bundle includes the existing scene and character library. Bundle bytes are not a measurement of runtime decoded texture memory."
+  ],
+  "existingAssets": [
+    {
+      "file": "src/assets/angle_arena/cannonanglearena/1.png",
+      "bytes": 40281
+    },
+    {
+      "file": "src/assets/angle_arena/cannonanglearena/2.png",
+      "bytes": 40184
+    },
+    {
+      "file": "src/assets/angle_arena/cannonanglearena/3.png",
+      "bytes": 43243
+    },
+    {
+      "file": "src/assets/audio/music/creation-of-the-universe-by-soundroll.mp3",
+      "bytes": 2427132
+    },
+    {
+      "file": "src/assets/audio/music/cs-funk-09-d-110-bpm-2.mp3",
+      "bytes": 1430299
+    },
+    {
+      "file": "src/assets/audio/music/desert-heat-only-guitar.mp3",
+      "bytes": 927076
+    },
+    {
+      "file": "src/assets/audio/music/desert-heat.mp3",
+      "bytes": 927076
+    },
+    {
+      "file": "src/assets/audio/music/forest.mp3",
+      "bytes": 480937
+    },
+    {
+      "file": "src/assets/audio/music/full-track.mp3",
+      "bytes": 1697013
+    },
+    {
+      "file": "src/assets/audio/music/opener-version.mp3",
+      "bytes": 929225
+    },
+    {
+      "file": "src/assets/audio/music/passing-the-torch-main-full.mp3",
+      "bytes": 2274158
+    },
+    {
+      "file": "src/assets/audio/music/reconciliation-main-full.mp3",
+      "bytes": 2401218
+    },
+    {
+      "file": "src/assets/audio/music/sahara-desert.mp3",
+      "bytes": 1690288
+    },
+    {
+      "file": "src/assets/audio/music/short-version.mp3",
+      "bytes": 1185015
+    },
+    {
+      "file": "src/assets/audio/music/silk-way.mp3",
+      "bytes": 1007742
+    },
+    {
+      "file": "src/assets/audio/music/tabula-rasa-main-full.mp3",
+      "bytes": 2792428
+    },
+    {
+      "file": "src/assets/audio/music/tribal-1mn30s-128bpm-loop.mp3",
+      "bytes": 1441166
+    },
+    {
+      "file": "src/assets/audio/music/tribal-1mn33s-128bpm-drumsonly.mp3",
+      "bytes": 1489231
+    },
+    {
+      "file": "src/assets/audio/music/tribal-1mn33s-128bpm-std.mp3",
+      "bytes": 1489339
+    },
+    {
+      "file": "src/assets/audio/music/wile-jungle-main-full.mp3",
+      "bytes": 2491497
+    },
+    {
+      "file": "src/assets/audio/sfx/boost.mp3",
+      "bytes": 22194
+    },
+    {
+      "file": "src/assets/audio/sfx/cash.mp3",
+      "bytes": 30554
+    },
+    {
+      "file": "src/assets/audio/sfx/coin-place.mp3",
+      "bytes": 8402
+    },
+    {
+      "file": "src/assets/audio/sfx/correct.mp3",
+      "bytes": 31390
+    },
+    {
+      "file": "src/assets/audio/sfx/explosion.mp3",
+      "bytes": 21776
+    },
+    {
+      "file": "src/assets/audio/sfx/fairy.mp3",
+      "bytes": 28882
+    },
+    {
+      "file": "src/assets/audio/sfx/gem-place.mp3",
+      "bytes": 9656
+    },
+    {
+      "file": "src/assets/audio/sfx/incorrect.mp3",
+      "bytes": 14671
+    },
+    {
+      "file": "src/assets/audio/sfx/jump-hit.mp3",
+      "bytes": 17179
+    },
+    {
+      "file": "src/assets/audio/sfx/level-up.mp3",
+      "bytes": 31390
+    },
+    {
+      "file": "src/assets/audio/sfx/liquid.mp3",
+      "bytes": 14671
+    },
+    {
+      "file": "src/assets/audio/sfx/metal-impact.mp3",
+      "bytes": 23448
+    },
+    {
+      "file": "src/assets/audio/sfx/monster-growl.mp3",
+      "bytes": 25120
+    },
+    {
+      "file": "src/assets/audio/sfx/monster-hurt.mp3",
+      "bytes": 25120
+    },
+    {
+      "file": "src/assets/audio/sfx/monster-laugh.mp3",
+      "bytes": 18433
+    },
+    {
+      "file": "src/assets/audio/sfx/reward.mp3",
+      "bytes": 50198
+    },
+    {
+      "file": "src/assets/audio/sfx/scanner.mp3",
+      "bytes": 18851
+    },
+    {
+      "file": "src/assets/audio/sfx/slime.mp3",
+      "bytes": 14671
+    },
+    {
+      "file": "src/assets/audio/sfx/ui-pop.mp3",
+      "bytes": 3804
+    },
+    {
+      "file": "src/assets/audio/sfx/wood-place.mp3",
+      "bytes": 10492
+    },
+    {
+      "file": "src/assets/boats/1.png",
+      "bytes": 9366
+    },
+    {
+      "file": "src/assets/boats/2.png",
+      "bytes": 8111
+    },
+    {
+      "file": "src/assets/boats/3.png",
+      "bytes": 8797
+    },
+    {
+      "file": "src/assets/boats/4.png",
+      "bytes": 9613
+    },
+    {
+      "file": "src/assets/boats/5.png",
+      "bytes": 9268
+    },
+    {
+      "file": "src/assets/boats/6.png",
+      "bytes": 8795
+    },
+    {
+      "file": "src/assets/boats/7.png",
+      "bytes": 7213
+    },
+    {
+      "file": "src/assets/bosses/a.jpg",
+      "bytes": 206251
+    },
+    {
+      "file": "src/assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_but_different_colours_create_me_an_armored_white_rhino-1.jpg",
+      "bytes": 231793
+    },
+    {
+      "file": "src/assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_but_different_colours_create_me_an_armored_white_rhino-2.jpg",
+      "bytes": 269198
+    },
+    {
+      "file": "src/assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_but_different_colours_create_me_an_evil_pink_and_light_pur-2.jpg",
+      "bytes": 229308
+    },
+    {
+      "file": "src/assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_but_different_colours_create_me_a_snake-2.jpg",
+      "bytes": 245978
+    },
+    {
+      "file": "src/assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_create_me_a_kracken-1.jpg",
+      "bytes": 250699
+    },
+    {
+      "file": "src/assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_create_me_a_zombie-0.jpg",
+      "bytes": 185981
+    },
+    {
+      "file": "src/assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_create_me_a_zombie-1.jpg",
+      "bytes": 188302
+    },
+    {
+      "file": "src/assets/bosses/gemini-2.5-flash-image_in_the_same_aesthetic_create_me_a_zombie-2.jpg",
+      "bytes": 170881
+    },
+    {
+      "file": "src/assets/bosses/goblin.png",
+      "bytes": 2432646
+    },
+    {
+      "file": "src/assets/bosses/goblinwiz.jpg",
+      "bytes": 236711
+    },
+    {
+      "file": "src/assets/bosses/index.ts",
+      "bytes": 632
+    },
+    {
+      "file": "src/assets/bosses/library.ts",
+      "bytes": 1076
+    },
+    {
+      "file": "src/assets/cakeslice.png",
+      "bytes": 121194
+    },
+    {
+      "file": "src/assets/casual_ui/dialogs_panels/card_1.png",
+      "bytes": 4116
+    },
+    {
+      "file": "src/assets/casual_ui/dialogs_panels/card_2.png",
+      "bytes": 3182
+    },
+    {
+      "file": "src/assets/casual_ui/dialogs_panels/dialog__popup_1.png",
+      "bytes": 1976
+    },
+    {
+      "file": "src/assets/casual_ui/dialogs_panels/dialog__speech_box.png",
+      "bytes": 4841
+    },
+    {
+      "file": "src/assets/casual_ui/dialogs_panels/dialog__tag.png",
+      "bytes": 1821
+    },
+    {
+      "file": "src/assets/casual_ui/dialogs_panels/panel.png",
+      "bytes": 9396
+    },
+    {
+      "file": "src/assets/casual_ui/dialogs_panels/panel_2.png",
+      "bytes": 12724
+    },
+    {
+      "file": "src/assets/casual_ui/dialogs_panels/panel_3.png",
+      "bytes": 6594
+    },
+    {
+      "file": "src/assets/casual_ui/hud/progress_bar_1__bg.png",
+      "bytes": 1000
+    },
+    {
+      "file": "src/assets/casual_ui/hud/progress_bar_1__fg.png",
+      "bytes": 1315
+    },
+    {
+      "file": "src/assets/casual_ui/icons/brainpowertoken.png",
+      "bytes": 1685158
+    },
+    {
+      "file": "src/assets/casual_ui/icons/hourglass.png",
+      "bytes": 907156
+    },
+    {
+      "file": "src/assets/casual_ui/icons/icon__heart.png",
+      "bytes": 6165
+    },
+    {
+      "file": "src/assets/casual_ui/inputs/btn_1.png",
+      "bytes": 2686
+    },
+    {
+      "file": "src/assets/casual_ui/inputs/btn_2.png",
+      "bytes": 2688
+    },
+    {
+      "file": "src/assets/casual_ui/inputs/btn_4.png",
+      "bytes": 2577
+    },
+    {
+      "file": "src/assets/casual_ui/inputs/btn_5.png",
+      "bytes": 2013
+    },
+    {
+      "file": "src/assets/casual_ui/inputs/btn_6a.png",
+      "bytes": 2397
+    },
+    {
+      "file": "src/assets/casual_ui/inputs/btn_7.png",
+      "bytes": 2428
+    },
+    {
+      "file": "src/assets/casual_ui/inputs/btn_8.png",
+      "bytes": 3482
+    },
+    {
+      "file": "src/assets/casual_ui/splashrep1.png",
+      "bytes": 2261362
+    },
+    {
+      "file": "src/assets/casual_ui/splashrep1.webp",
+      "bytes": 241842
+    },
+    {
+      "file": "src/assets/casual_ui/updaed_sockets_slices/socket_h.png",
+      "bytes": 13531
+    },
+    {
+      "file": "src/assets/casual_ui/updaed_sockets_slices/socket_hth.png",
+      "bytes": 13785
+    },
+    {
+      "file": "src/assets/casual_ui/updaed_sockets_slices/socket_m.png",
+      "bytes": 13750
+    },
+    {
+      "file": "src/assets/casual_ui/updaed_sockets_slices/socket_t.png",
+      "bytes": 13504
+    },
+    {
+      "file": "src/assets/casual_ui/updaed_sockets_slices/socket_th.png",
+      "bytes": 13575
+    },
+    {
+      "file": "src/assets/casual_ui/updaed_sockets_slices/socket_tth.png",
+      "bytes": 13646
+    },
+    {
+      "file": "src/assets/casual_ui/updaed_sockets_slices/socket_u.png",
+      "bytes": 13679
+    },
+    {
+      "file": "src/assets/change counter/changecounter.jpg",
+      "bytes": 249605
+    },
+    {
+      "file": "src/assets/change counter/itemsforsale/1.png",
+      "bytes": 38735
+    },
+    {
+      "file": "src/assets/change counter/itemsforsale/10.png",
+      "bytes": 206809
+    },
+    {
+      "file": "src/assets/change counter/itemsforsale/2.png",
+      "bytes": 248911
+    },
+    {
+      "file": "src/assets/change counter/itemsforsale/3.png",
+      "bytes": 1060966
+    },
+    {
+      "file": "src/assets/change counter/itemsforsale/4.png",
+      "bytes": 196366
+    },
+    {
+      "file": "src/assets/change counter/itemsforsale/5.png",
+      "bytes": 352445
+    },
+    {
+      "file": "src/assets/change counter/itemsforsale/6.png",
+      "bytes": 119837
+    },
+    {
+      "file": "src/assets/change counter/itemsforsale/7.png",
+      "bytes": 82470
+    },
+    {
+      "file": "src/assets/change counter/itemsforsale/8.png",
+      "bytes": 327704
+    },
+    {
+      "file": "src/assets/change counter/itemsforsale/9.png",
+      "bytes": 334876
+    },
+    {
+      "file": "src/assets/characters/chooseheroes.png",
+      "bytes": 280946
+    },
+    {
+      "file": "src/assets/characters/cohesiveCast.ts",
+      "bytes": 647
+    },
+    {
+      "file": "src/assets/characters/index.ts",
+      "bytes": 1889
+    },
+    {
+      "file": "src/assets/characters/mobile/Barratt/barratt_happy.png",
+      "bytes": 150048
+    },
+    {
+      "file": "src/assets/characters/mobile/Barratt/barratt_think.png",
+      "bytes": 361346
+    },
+    {
+      "file": "src/assets/characters/mobile/Barratt/barrat_neutral.png",
+      "bytes": 151367
+    },
+    {
+      "file": "src/assets/characters/mobile/Bran/bran_attack.png",
+      "bytes": 391482
+    },
+    {
+      "file": "src/assets/characters/mobile/Bran/bran_happy.png",
+      "bytes": 132963
+    },
+    {
+      "file": "src/assets/characters/mobile/Bran/bran_neutral.png",
+      "bytes": 132632
+    },
+    {
+      "file": "src/assets/characters/mobile/Bran/bran_think.png",
+      "bytes": 126343
+    },
+    {
+      "file": "src/assets/characters/mobile/Mochi/mochi_happy.png",
+      "bytes": 107148
+    },
+    {
+      "file": "src/assets/characters/mobile/Mochi/mochi_neutral.png",
+      "bytes": 107119
+    },
+    {
+      "file": "src/assets/characters/mobile/Mochi/mochi_smile.png",
+      "bytes": 301751
+    },
+    {
+      "file": "src/assets/characters/mobile/Vex/vex_neutral.png",
+      "bytes": 137061
+    },
+    {
+      "file": "src/assets/characters/mobile/Vex/vex_smile.png",
+      "bytes": 282706
+    },
+    {
+      "file": "src/assets/characters/mobile/Vex/vex_think.png",
+      "bytes": 190787
+    },
+    {
+      "file": "src/assets/characters/originalHeroActivities.ts",
+      "bytes": 1562
+    },
+    {
+      "file": "src/assets/characters/originalHeroes.ts",
+      "bytes": 818
+    },
+    {
+      "file": "src/assets/characters/premium/barratt-activities-v1.png",
+      "bytes": 1892193
+    },
+    {
+      "file": "src/assets/characters/premium/barratt-v1.png",
+      "bytes": 2457672
+    },
+    {
+      "file": "src/assets/characters/premium/barratt-v2.png",
+      "bytes": 2734449
+    },
+    {
+      "file": "src/assets/characters/premium/bran-activities-v1.png",
+      "bytes": 1517843
+    },
+    {
+      "file": "src/assets/characters/premium/bran-v1.png",
+      "bytes": 2468790
+    },
+    {
+      "file": "src/assets/characters/premium/bran-v2.png",
+      "bytes": 2828829
+    },
+    {
+      "file": "src/assets/characters/premium/concept-cast-v2.json",
+      "bytes": 5977
+    },
+    {
+      "file": "src/assets/characters/premium/hero-activities-v1.prompt.json",
+      "bytes": 975
+    },
+    {
+      "file": "src/assets/characters/premium/mochi-activities-v1.png",
+      "bytes": 2347696
+    },
+    {
+      "file": "src/assets/characters/premium/mochi-v1.png",
+      "bytes": 2415269
+    },
+    {
+      "file": "src/assets/characters/premium/mochi-v2.png",
+      "bytes": 2961009
+    },
+    {
+      "file": "src/assets/characters/premium/vex-activities-v1.png",
+      "bytes": 2378373
+    },
+    {
+      "file": "src/assets/characters/premium/vex-v1.png",
+      "bytes": 2521891
+    },
+    {
+      "file": "src/assets/characters/premium/vex-v2.png",
+      "bytes": 3006785
+    },
+    {
+      "file": "src/assets/characters/upscaled/barratt-v2.png",
+      "bytes": 2024379
+    },
+    {
+      "file": "src/assets/characters/upscaled/bran-v2.png",
+      "bytes": 1962044
+    },
+    {
+      "file": "src/assets/characters/upscaled/mochi-v2.png",
+      "bytes": 1647509
+    },
+    {
+      "file": "src/assets/characters/upscaled/vex-v2.png",
+      "bytes": 1814813
+    },
+    {
+      "file": "src/assets/coul.png",
+      "bytes": 252426
+    },
+    {
+      "file": "src/assets/crates/1.png",
+      "bytes": 15281
+    },
+    {
+      "file": "src/assets/crates/2.png",
+      "bytes": 28779
+    },
+    {
+      "file": "src/assets/crates/3.png",
+      "bytes": 19580
+    },
+    {
+      "file": "src/assets/crates/4.png",
+      "bytes": 21458
+    },
+    {
+      "file": "src/assets/datadetective/mugshots/mugshot_24_10.png",
+      "bytes": 461702
+    },
+    {
+      "file": "src/assets/datadetective/mugshots/mugshot_24_11.png",
+      "bytes": 524145
+    },
+    {
+      "file": "src/assets/datadetective/mugshots/mugshot_25_10.png",
+      "bytes": 460569
+    },
+    {
+      "file": "src/assets/datadetective/mugshots/mugshot_25_11.png",
+      "bytes": 471372
+    },
+    {
+      "file": "src/assets/datadetective/mugshots/mugshot_26_10.png",
+      "bytes": 466766
+    },
+    {
+      "file": "src/assets/datadetective/mugshots/mugshot_26_11.png",
+      "bytes": 483674
+    },
+    {
+      "file": "src/assets/end of round screen/failure screen.jpg",
+      "bytes": 200916
+    },
+    {
+      "file": "src/assets/end of round screen/success screen.jpg",
+      "bytes": 256667
+    },
+    {
+      "file": "src/assets/enemies/cohesive/cyclops-slime.webp",
+      "bytes": 75086
+    },
+    {
+      "file": "src/assets/enemies/cohesive/goblin.webp",
+      "bytes": 97636
+    },
+    {
+      "file": "src/assets/enemies/cohesive/index.ts",
+      "bytes": 531
+    },
+    {
+      "file": "src/assets/enemies/cohesive/jelly.webp",
+      "bytes": 108858
+    },
+    {
+      "file": "src/assets/enemies/cohesive/rhino.webp",
+      "bytes": 101572
+    },
+    {
+      "file": "src/assets/enemies/cohesive/zombie.webp",
+      "bytes": 83004
+    },
+    {
+      "file": "src/assets/enemies/premium/goblin-v1.png",
+      "bytes": 2393756
+    },
+    {
+      "file": "src/assets/enemies/premium/goblin-v2.png",
+      "bytes": 2883134
+    },
+    {
+      "file": "src/assets/enemies/premium/jelly-v1.png",
+      "bytes": 2264944
+    },
+    {
+      "file": "src/assets/enemies/premium/jelly-v2.png",
+      "bytes": 2645986
+    },
+    {
+      "file": "src/assets/enemies/premium/rhino-v1.png",
+      "bytes": 2521912
+    },
+    {
+      "file": "src/assets/enemies/premium/rhino-v2.png",
+      "bytes": 2729966
+    },
+    {
+      "file": "src/assets/enemies/premium/sentinel-v1.png",
+      "bytes": 2427615
+    },
+    {
+      "file": "src/assets/enemies/premium/sentinel-v2.png",
+      "bytes": 2540793
+    },
+    {
+      "file": "src/assets/enemies/premium/slime-v1.png",
+      "bytes": 2321926
+    },
+    {
+      "file": "src/assets/enemies/premium/slime-v2.png",
+      "bytes": 2746334
+    },
+    {
+      "file": "src/assets/enemies/premium/zombie-v1.png",
+      "bytes": 2394709
+    },
+    {
+      "file": "src/assets/enemies/premium/zombie-v2.png",
+      "bytes": 2705169
+    },
+    {
+      "file": "src/assets/fantasy_hero/cloud_collapse/board_bg.png",
+      "bytes": 1865
+    },
+    {
+      "file": "src/assets/fantasy_hero/cloud_collapse/board_border.png",
+      "bytes": 2082
+    },
+    {
+      "file": "src/assets/fantasy_hero/cloud_collapse/board_gradient.png",
+      "bytes": 1946
+    },
+    {
+      "file": "src/assets/fantasy_hero/cloud_collapse/board_inner_border.png",
+      "bytes": 490
+    },
+    {
+      "file": "src/assets/fantasy_hero/cloud_collapse/sparkle.png",
+      "bytes": 991
+    },
+    {
+      "file": "src/assets/fantasy_hero/cloud_collapse/tile_blue.png",
+      "bytes": 2328
+    },
+    {
+      "file": "src/assets/fantasy_hero/cloud_collapse/tile_focus_border.png",
+      "bytes": 2652
+    },
+    {
+      "file": "src/assets/fantasy_hero/cloud_collapse/tile_focus_glow.png",
+      "bytes": 3532
+    },
+    {
+      "file": "src/assets/fantasy_hero/cloud_collapse/tile_glow.png",
+      "bytes": 7141
+    },
+    {
+      "file": "src/assets/fantasy_hero/cloud_collapse/tile_gradient.png",
+      "bytes": 1438
+    },
+    {
+      "file": "src/assets/fantasy_hero/cloud_collapse/tile_green.png",
+      "bytes": 2294
+    },
+    {
+      "file": "src/assets/fantasy_hero/cloud_collapse/tile_inner_deco.png",
+      "bytes": 2242
+    },
+    {
+      "file": "src/assets/fantasy_hero/cloud_collapse/tile_navy.png",
+      "bytes": 2353
+    },
+    {
+      "file": "src/assets/fantasy_hero/cloud_collapse/tile_red.png",
+      "bytes": 2904
+    },
+    {
+      "file": "src/assets/fantasy_hero/cloud_collapse/tile_yellow.png",
+      "bytes": 2837
+    },
+    {
+      "file": "src/assets/fantasy_hero/demo_bg/background_01.png",
+      "bytes": 1684028
+    },
+    {
+      "file": "src/assets/fantasy_hero/frames/card_bg.png",
+      "bytes": 1865
+    },
+    {
+      "file": "src/assets/fantasy_hero/frames/card_gradient.png",
+      "bytes": 1946
+    },
+    {
+      "file": "src/assets/fantasy_hero/frames/item_bg.png",
+      "bytes": 557
+    },
+    {
+      "file": "src/assets/fantasy_hero/frames/item_border.png",
+      "bytes": 2099
+    },
+    {
+      "file": "src/assets/fantasy_hero/frames/item_deco.png",
+      "bytes": 2242
+    },
+    {
+      "file": "src/assets/fantasy_hero/frames/item_gradient.png",
+      "bytes": 1438
+    },
+    {
+      "file": "src/assets/fantasy_hero/icons/sound.svg",
+      "bytes": 1552
+    },
+    {
+      "file": "src/assets/fantasy_hero/icons/sound_mute.svg",
+      "bytes": 1208
+    },
+    {
+      "file": "src/assets/fantasy_hero/labels/tapered_bg.png",
+      "bytes": 581
+    },
+    {
+      "file": "src/assets/fantasy_hero/labels/tapered_border.png",
+      "bytes": 686
+    },
+    {
+      "file": "src/assets/fantasy_hero/labels/tapered_inner.png",
+      "bytes": 490
+    },
+    {
+      "file": "src/assets/fantasy_hero/ui/coin.png",
+      "bytes": 5444
+    },
+    {
+      "file": "src/assets/fantasy_hero/ui/gem.png",
+      "bytes": 3961
+    },
+    {
+      "file": "src/assets/game-visions/asset-prompts.json",
+      "bytes": 189477
+    },
+    {
+      "file": "src/assets/game-visions/characters/acropolis-caster-v2.prompt.json",
+      "bytes": 2021
+    },
+    {
+      "file": "src/assets/game-visions/characters/acropolis-caster-v2.webp",
+      "bytes": 434912
+    },
+    {
+      "file": "src/assets/game-visions/characters/acropolis-pilot-v1.prompt.json",
+      "bytes": 2087
+    },
+    {
+      "file": "src/assets/game-visions/characters/acropolis-pilot-v1.webp",
+      "bytes": 419884
+    },
+    {
+      "file": "src/assets/game-visions/characters/alchemist-v1.prompt.json",
+      "bytes": 2090
+    },
+    {
+      "file": "src/assets/game-visions/characters/alchemist-v1.webp",
+      "bytes": 453906
+    },
+    {
+      "file": "src/assets/game-visions/characters/alchemist-v2.prompt.json",
+      "bytes": 2245
+    },
+    {
+      "file": "src/assets/game-visions/characters/alchemist-v2.webp",
+      "bytes": 469000
+    },
+    {
+      "file": "src/assets/game-visions/characters/bran-v1.prompt.json",
+      "bytes": 2334
+    },
+    {
+      "file": "src/assets/game-visions/characters/bran-v1.webp",
+      "bytes": 454728
+    },
+    {
+      "file": "src/assets/game-visions/characters/bran-v3.prompt.json",
+      "bytes": 1948
+    },
+    {
+      "file": "src/assets/game-visions/characters/bran-v3.webp",
+      "bytes": 612042
+    },
+    {
+      "file": "src/assets/game-visions/characters/core-guide-v1.prompt.json",
+      "bytes": 2105
+    },
+    {
+      "file": "src/assets/game-visions/characters/core-guide-v1.webp",
+      "bytes": 507840
+    },
+    {
+      "file": "src/assets/game-visions/characters/deer-v1.prompt.json",
+      "bytes": 2061
+    },
+    {
+      "file": "src/assets/game-visions/characters/deer-v1.webp",
+      "bytes": 453456
+    },
+    {
+      "file": "src/assets/game-visions/characters/deer-v3.prompt.json",
+      "bytes": 3390
+    },
+    {
+      "file": "src/assets/game-visions/characters/deer-v3.webp",
+      "bytes": 716916
+    },
+    {
+      "file": "src/assets/game-visions/characters/desert-detective-v1.prompt.json",
+      "bytes": 2097
+    },
+    {
+      "file": "src/assets/game-visions/characters/desert-detective-v1.webp",
+      "bytes": 469900
+    },
+    {
+      "file": "src/assets/game-visions/characters/desert-scholar-v1.prompt.json",
+      "bytes": 2099
+    },
+    {
+      "file": "src/assets/game-visions/characters/desert-scholar-v1.webp",
+      "bytes": 479218
+    },
+    {
+      "file": "src/assets/game-visions/characters/desert-scholar-v2.prompt.json",
+      "bytes": 1733
+    },
+    {
+      "file": "src/assets/game-visions/characters/desert-scholar-v2.webp",
+      "bytes": 546828
+    },
+    {
+      "file": "src/assets/game-visions/characters/forest-chef-v1.prompt.json",
+      "bytes": 2066
+    },
+    {
+      "file": "src/assets/game-visions/characters/forest-chef-v1.webp",
+      "bytes": 461826
+    },
+    {
+      "file": "src/assets/game-visions/characters/forest-chef-v2.prompt.json",
+      "bytes": 2107
+    },
+    {
+      "file": "src/assets/game-visions/characters/forest-chef-v2.webp",
+      "bytes": 440506
+    },
+    {
+      "file": "src/assets/game-visions/characters/forest-guardian-v1.prompt.json",
+      "bytes": 2095
+    },
+    {
+      "file": "src/assets/game-visions/characters/forest-guardian-v1.webp",
+      "bytes": 481842
+    },
+    {
+      "file": "src/assets/game-visions/characters/glacier-builder-v1.prompt.json",
+      "bytes": 2099
+    },
+    {
+      "file": "src/assets/game-visions/characters/glacier-builder-v1.webp",
+      "bytes": 471712
+    },
+    {
+      "file": "src/assets/game-visions/characters/glacier-builder-v2.prompt.json",
+      "bytes": 2136
+    },
+    {
+      "file": "src/assets/game-visions/characters/glacier-builder-v2.webp",
+      "bytes": 515486
+    },
+    {
+      "file": "src/assets/game-visions/characters/glacier-guide-v1.prompt.json",
+      "bytes": 2110
+    },
+    {
+      "file": "src/assets/game-visions/characters/glacier-guide-v1.webp",
+      "bytes": 527916
+    },
+    {
+      "file": "src/assets/game-visions/characters/goblin-hit-v3.prompt.json",
+      "bytes": 1640
+    },
+    {
+      "file": "src/assets/game-visions/characters/goblin-hit-v3.webp",
+      "bytes": 800074
+    },
+    {
+      "file": "src/assets/game-visions/characters/goblin-idle-v3.prompt.json",
+      "bytes": 1469
+    },
+    {
+      "file": "src/assets/game-visions/characters/goblin-idle-v3.webp",
+      "bytes": 829346
+    },
+    {
+      "file": "src/assets/game-visions/characters/goblin-taunt-v3.prompt.json",
+      "bytes": 1587
+    },
+    {
+      "file": "src/assets/game-visions/characters/goblin-taunt-v3.webp",
+      "bytes": 810320
+    },
+    {
+      "file": "src/assets/game-visions/characters/goblin-v1.prompt.json",
+      "bytes": 2073
+    },
+    {
+      "file": "src/assets/game-visions/characters/goblin-v1.webp",
+      "bytes": 504754
+    },
+    {
+      "file": "src/assets/game-visions/characters/goblin-v2.prompt.json",
+      "bytes": 1796
+    },
+    {
+      "file": "src/assets/game-visions/characters/goblin-v2.webp",
+      "bytes": 464506
+    },
+    {
+      "file": "src/assets/game-visions/characters/jelly-v1.prompt.json",
+      "bytes": 2100
+    },
+    {
+      "file": "src/assets/game-visions/characters/jelly-v1.webp",
+      "bytes": 328754
+    },
+    {
+      "file": "src/assets/game-visions/characters/merchant-v1.prompt.json",
+      "bytes": 2086
+    },
+    {
+      "file": "src/assets/game-visions/characters/merchant-v1.webp",
+      "bytes": 394146
+    },
+    {
+      "file": "src/assets/game-visions/characters/mochi-v1.prompt.json",
+      "bytes": 2310
+    },
+    {
+      "file": "src/assets/game-visions/characters/mochi-v1.webp",
+      "bytes": 342984
+    },
+    {
+      "file": "src/assets/game-visions/characters/mochi-v3.prompt.json",
+      "bytes": 3280
+    },
+    {
+      "file": "src/assets/game-visions/characters/mochi-v3.webp",
+      "bytes": 571630
+    },
+    {
+      "file": "src/assets/game-visions/characters/mountain-explorer-v1.prompt.json",
+      "bytes": 2111
+    },
+    {
+      "file": "src/assets/game-visions/characters/mountain-explorer-v1.webp",
+      "bytes": 466162
+    },
+    {
+      "file": "src/assets/game-visions/characters/outpost-miner-v1.prompt.json",
+      "bytes": 2098
+    },
+    {
+      "file": "src/assets/game-visions/characters/outpost-miner-v1.webp",
+      "bytes": 544370
+    },
+    {
+      "file": "src/assets/game-visions/characters/outpost-miner-v2.prompt.json",
+      "bytes": 2106
+    },
+    {
+      "file": "src/assets/game-visions/characters/outpost-miner-v2.webp",
+      "bytes": 609832
+    },
+    {
+      "file": "src/assets/game-visions/characters/owl-v1.prompt.json",
+      "bytes": 2119
+    },
+    {
+      "file": "src/assets/game-visions/characters/owl-v1.webp",
+      "bytes": 530150
+    },
+    {
+      "file": "src/assets/game-visions/characters/rhino-hit-v3.prompt.json",
+      "bytes": 1755
+    },
+    {
+      "file": "src/assets/game-visions/characters/rhino-hit-v3.webp",
+      "bytes": 579412
+    },
+    {
+      "file": "src/assets/game-visions/characters/rhino-idle-v3.prompt.json",
+      "bytes": 1428
+    },
+    {
+      "file": "src/assets/game-visions/characters/rhino-idle-v3.webp",
+      "bytes": 591126
+    },
+    {
+      "file": "src/assets/game-visions/characters/rhino-taunt-v3.prompt.json",
+      "bytes": 1525
+    },
+    {
+      "file": "src/assets/game-visions/characters/rhino-taunt-v3.webp",
+      "bytes": 590400
+    },
+    {
+      "file": "src/assets/game-visions/characters/rhino-v1.prompt.json",
+      "bytes": 2071
+    },
+    {
+      "file": "src/assets/game-visions/characters/rhino-v1.webp",
+      "bytes": 485576
+    },
+    {
+      "file": "src/assets/game-visions/characters/sentinel-v1.prompt.json",
+      "bytes": 2111
+    },
+    {
+      "file": "src/assets/game-visions/characters/sentinel-v1.webp",
+      "bytes": 493108
+    },
+    {
+      "file": "src/assets/game-visions/characters/slime-v1.prompt.json",
+      "bytes": 2064
+    },
+    {
+      "file": "src/assets/game-visions/characters/slime-v1.webp",
+      "bytes": 374662
+    },
+    {
+      "file": "src/assets/game-visions/characters/smith-v1.prompt.json",
+      "bytes": 2066
+    },
+    {
+      "file": "src/assets/game-visions/characters/smith-v1.webp",
+      "bytes": 481206
+    },
+    {
+      "file": "src/assets/game-visions/characters/timekeeper-v1.prompt.json",
+      "bytes": 2095
+    },
+    {
+      "file": "src/assets/game-visions/characters/timekeeper-v1.webp",
+      "bytes": 489472
+    },
+    {
+      "file": "src/assets/game-visions/characters/vex-v1.prompt.json",
+      "bytes": 2324
+    },
+    {
+      "file": "src/assets/game-visions/characters/vex-v1.webp",
+      "bytes": 376122
+    },
+    {
+      "file": "src/assets/game-visions/characters/vex-v3.prompt.json",
+      "bytes": 1945
+    },
+    {
+      "file": "src/assets/game-visions/characters/vex-v3.webp",
+      "bytes": 491826
+    },
+    {
+      "file": "src/assets/game-visions/characters/zombie-v1.prompt.json",
+      "bytes": 2067
+    },
+    {
+      "file": "src/assets/game-visions/characters/zombie-v1.webp",
+      "bytes": 422038
+    },
+    {
+      "file": "src/assets/game-visions/environments/angle_arena-v1.prompt.json",
+      "bytes": 1704
+    },
+    {
+      "file": "src/assets/game-visions/environments/angle_arena-v1.webp",
+      "bytes": 467312
+    },
+    {
+      "file": "src/assets/game-visions/environments/angle_arena-v2.prompt.json",
+      "bytes": 443
+    },
+    {
+      "file": "src/assets/game-visions/environments/angle_arena-v2.webp",
+      "bytes": 177738
+    },
+    {
+      "file": "src/assets/game-visions/environments/angle_arena-v3.png",
+      "bytes": 2772453
+    },
+    {
+      "file": "src/assets/game-visions/environments/angle_arena-v3.prompt.json",
+      "bytes": 408
+    },
+    {
+      "file": "src/assets/game-visions/environments/area_architect-v1.prompt.json",
+      "bytes": 1702
+    },
+    {
+      "file": "src/assets/game-visions/environments/area_architect-v1.webp",
+      "bytes": 524892
+    },
+    {
+      "file": "src/assets/game-visions/environments/change_counter-v1.prompt.json",
+      "bytes": 1700
+    },
+    {
+      "file": "src/assets/game-visions/environments/change_counter-v1.webp",
+      "bytes": 423156
+    },
+    {
+      "file": "src/assets/game-visions/environments/change_counter-v2.png",
+      "bytes": 2473659
+    },
+    {
+      "file": "src/assets/game-visions/environments/change_counter-v2.prompt.json",
+      "bytes": 1810
+    },
+    {
+      "file": "src/assets/game-visions/environments/conversion_canyon-v1.prompt.json",
+      "bytes": 1715
+    },
+    {
+      "file": "src/assets/game-visions/environments/conversion_canyon-v1.webp",
+      "bytes": 478162
+    },
+    {
+      "file": "src/assets/game-visions/environments/coordinates_quest-v1.prompt.json",
+      "bytes": 1706
+    },
+    {
+      "file": "src/assets/game-visions/environments/coordinates_quest-v1.webp",
+      "bytes": 573448
+    },
+    {
+      "file": "src/assets/game-visions/environments/crystal_core-v1.prompt.json",
+      "bytes": 1716
+    },
+    {
+      "file": "src/assets/game-visions/environments/crystal_core-v1.webp",
+      "bytes": 471972
+    },
+    {
+      "file": "src/assets/game-visions/environments/data_detective-v1.prompt.json",
+      "bytes": 1709
+    },
+    {
+      "file": "src/assets/game-visions/environments/data_detective-v1.webp",
+      "bytes": 456660
+    },
+    {
+      "file": "src/assets/game-visions/environments/factor_frenzy-v1.prompt.json",
+      "bytes": 1702
+    },
+    {
+      "file": "src/assets/game-visions/environments/factor_frenzy-v1.webp",
+      "bytes": 530822
+    },
+    {
+      "file": "src/assets/game-visions/environments/formula_forge-v1.prompt.json",
+      "bytes": 1710
+    },
+    {
+      "file": "src/assets/game-visions/environments/formula_forge-v1.webp",
+      "bytes": 580068
+    },
+    {
+      "file": "src/assets/game-visions/environments/fraction_forge-v1.prompt.json",
+      "bytes": 1715
+    },
+    {
+      "file": "src/assets/game-visions/environments/fraction_forge-v1.webp",
+      "bytes": 524448
+    },
+    {
+      "file": "src/assets/game-visions/environments/graph_grabber-v1.prompt.json",
+      "bytes": 1702
+    },
+    {
+      "file": "src/assets/game-visions/environments/graph_grabber-v1.webp",
+      "bytes": 485992
+    },
+    {
+      "file": "src/assets/game-visions/environments/line_graph_lab-v1.prompt.json",
+      "bytes": 1685
+    },
+    {
+      "file": "src/assets/game-visions/environments/line_graph_lab-v1.webp",
+      "bytes": 445974
+    },
+    {
+      "file": "src/assets/game-visions/environments/match3_equivalence-v1.prompt.json",
+      "bytes": 1719
+    },
+    {
+      "file": "src/assets/game-visions/environments/match3_equivalence-v1.webp",
+      "bytes": 579496
+    },
+    {
+      "file": "src/assets/game-visions/environments/maths_vs_zombies-v1.webp",
+      "bytes": 455442
+    },
+    {
+      "file": "src/assets/game-visions/environments/matrix_match-v1.prompt.json",
+      "bytes": 1734
+    },
+    {
+      "file": "src/assets/game-visions/environments/matrix_match-v1.webp",
+      "bytes": 436010
+    },
+    {
+      "file": "src/assets/game-visions/environments/mean_machine-v1.prompt.json",
+      "bytes": 1702
+    },
+    {
+      "file": "src/assets/game-visions/environments/mean_machine-v1.webp",
+      "bytes": 420374
+    },
+    {
+      "file": "src/assets/game-visions/environments/mirror_gate-v1.prompt.json",
+      "bytes": 1716
+    },
+    {
+      "file": "src/assets/game-visions/environments/mirror_gate-v1.webp",
+      "bytes": 506602
+    },
+    {
+      "file": "src/assets/game-visions/environments/multiplication_mine-v1.prompt.json",
+      "bytes": 1708
+    },
+    {
+      "file": "src/assets/game-visions/environments/multiplication_mine-v1.webp",
+      "bytes": 457472
+    },
+    {
+      "file": "src/assets/game-visions/environments/number_line_ninja-v1.webp",
+      "bytes": 430814
+    },
+    {
+      "file": "src/assets/game-visions/environments/order_ops_arena-v1.prompt.json",
+      "bytes": 1710
+    },
+    {
+      "file": "src/assets/game-visions/environments/order_ops_arena-v1.webp",
+      "bytes": 544698
+    },
+    {
+      "file": "src/assets/game-visions/environments/percent_power-v1.prompt.json",
+      "bytes": 1704
+    },
+    {
+      "file": "src/assets/game-visions/environments/percent_power-v1.webp",
+      "bytes": 558576
+    },
+    {
+      "file": "src/assets/game-visions/environments/perimeter_path-v1.prompt.json",
+      "bytes": 1705
+    },
+    {
+      "file": "src/assets/game-visions/environments/perimeter_path-v1.webp",
+      "bytes": 479406
+    },
+    {
+      "file": "src/assets/game-visions/environments/place_value_panic-v1.webp",
+      "bytes": 543758
+    },
+    {
+      "file": "src/assets/game-visions/environments/polygon_palace-v1.prompt.json",
+      "bytes": 1704
+    },
+    {
+      "file": "src/assets/game-visions/environments/polygon_palace-v1.webp",
+      "bytes": 463618
+    },
+    {
+      "file": "src/assets/game-visions/environments/potion_panic-v1.prompt.json",
+      "bytes": 1706
+    },
+    {
+      "file": "src/assets/game-visions/environments/potion_panic-v1.webp",
+      "bytes": 484482
+    },
+    {
+      "file": "src/assets/game-visions/environments/prime_pop-v1.prompt.json",
+      "bytes": 1696
+    },
+    {
+      "file": "src/assets/game-visions/environments/prime_pop-v1.webp",
+      "bytes": 539008
+    },
+    {
+      "file": "src/assets/game-visions/environments/problem_pyramid-v1.prompt.json",
+      "bytes": 1717
+    },
+    {
+      "file": "src/assets/game-visions/environments/problem_pyramid-v1.webp",
+      "bytes": 493934
+    },
+    {
+      "file": "src/assets/game-visions/environments/problem_pyramid-v2.png",
+      "bytes": 2799239
+    },
+    {
+      "file": "src/assets/game-visions/environments/ratio_fractions-v1.prompt.json",
+      "bytes": 1705
+    },
+    {
+      "file": "src/assets/game-visions/environments/ratio_fractions-v1.webp",
+      "bytes": 520366
+    },
+    {
+      "file": "src/assets/game-visions/environments/remainder_run-v1.prompt.json",
+      "bytes": 1704
+    },
+    {
+      "file": "src/assets/game-visions/environments/remainder_run-v1.webp",
+      "bytes": 495156
+    },
+    {
+      "file": "src/assets/game-visions/environments/rotation_relay-v1.prompt.json",
+      "bytes": 1701
+    },
+    {
+      "file": "src/assets/game-visions/environments/rotation_relay-v1.webp",
+      "bytes": 569200
+    },
+    {
+      "file": "src/assets/game-visions/environments/rounding_rocket-v1.prompt.json",
+      "bytes": 1714
+    },
+    {
+      "file": "src/assets/game-visions/environments/rounding_rocket-v1.webp",
+      "bytes": 419884
+    },
+    {
+      "file": "src/assets/game-visions/environments/scale_builder-v1.prompt.json",
+      "bytes": 1702
+    },
+    {
+      "file": "src/assets/game-visions/environments/scale_builder-v1.webp",
+      "bytes": 553102
+    },
+    {
+      "file": "src/assets/game-visions/environments/share_splitter-v1.prompt.json",
+      "bytes": 1713
+    },
+    {
+      "file": "src/assets/game-visions/environments/share_splitter-v1.webp",
+      "bytes": 570718
+    },
+    {
+      "file": "src/assets/game-visions/environments/simplify_sprint-v1.prompt.json",
+      "bytes": 1696
+    },
+    {
+      "file": "src/assets/game-visions/environments/simplify_sprint-v1.webp",
+      "bytes": 591730
+    },
+    {
+      "file": "src/assets/game-visions/environments/take_out_rush-v1.prompt.json",
+      "bytes": 1713
+    },
+    {
+      "file": "src/assets/game-visions/environments/take_out_rush-v1.webp",
+      "bytes": 408540
+    },
+    {
+      "file": "src/assets/game-visions/environments/take_out_rush-v2.prompt.json",
+      "bytes": 431
+    },
+    {
+      "file": "src/assets/game-visions/environments/take_out_rush-v2.webp",
+      "bytes": 361752
+    },
+    {
+      "file": "src/assets/game-visions/environments/take_out_rush-v3.png",
+      "bytes": 2619235
+    },
+    {
+      "file": "src/assets/game-visions/environments/take_out_rush-v4.png",
+      "bytes": 2415280
+    },
+    {
+      "file": "src/assets/game-visions/environments/time_keeper_cove-v1.prompt.json",
+      "bytes": 1724
+    },
+    {
+      "file": "src/assets/game-visions/environments/time_keeper_cove-v1.webp",
+      "bytes": 565302
+    },
+    {
+      "file": "src/assets/game-visions/environments/unit_mixer-v1.prompt.json",
+      "bytes": 1694
+    },
+    {
+      "file": "src/assets/game-visions/environments/unit_mixer-v1.webp",
+      "bytes": 510348
+    },
+    {
+      "file": "src/assets/game-visions/instruments/chronometer-v1.png",
+      "bytes": 2534093
+    },
+    {
+      "file": "src/assets/game-visions/instruments/diner-pan-v1.png",
+      "bytes": 1302151
+    },
+    {
+      "file": "src/assets/game-visions/instruments/diner-range-v1.png",
+      "bytes": 2103176
+    },
+    {
+      "file": "src/assets/game-visions/instruments/forge-anvil-stylized-v1.png",
+      "bytes": 1940119
+    },
+    {
+      "file": "src/assets/game-visions/instruments/pyramid-tablets-v1.png",
+      "bytes": 2318826
+    },
+    {
+      "file": "src/assets/game-visions/instruments/scale-housing-v1.png",
+      "bytes": 2090621
+    },
+    {
+      "file": "src/assets/game-visions/objects/banquet-table-v1.prompt.json",
+      "bytes": 1176
+    },
+    {
+      "file": "src/assets/game-visions/objects/banquet-table-v1.webp",
+      "bytes": 559174
+    },
+    {
+      "file": "src/assets/game-visions/objects/cauldron-v1.prompt.json",
+      "bytes": 1092
+    },
+    {
+      "file": "src/assets/game-visions/objects/cauldron-v1.webp",
+      "bytes": 365626
+    },
+    {
+      "file": "src/assets/game-visions/objects/desert-frame-v1.prompt.json",
+      "bytes": 770
+    },
+    {
+      "file": "src/assets/game-visions/objects/desert-frame-v1.webp",
+      "bytes": 407264
+    },
+    {
+      "file": "src/assets/game-visions/objects/forest-factor-gate-v1.prompt.json",
+      "bytes": 400
+    },
+    {
+      "file": "src/assets/game-visions/objects/forest-factor-gate-v1.webp",
+      "bytes": 480388
+    },
+    {
+      "file": "src/assets/game-visions/objects/forest-frame-v1.prompt.json",
+      "bytes": 847
+    },
+    {
+      "file": "src/assets/game-visions/objects/forest-frame-v1.webp",
+      "bytes": 331132
+    },
+    {
+      "file": "src/assets/game-visions/objects/forest-reactor-v1.prompt.json",
+      "bytes": 1148
+    },
+    {
+      "file": "src/assets/game-visions/objects/forest-reactor-v1.webp",
+      "bytes": 531094
+    },
+    {
+      "file": "src/assets/game-visions/objects/forge-anvil-v1.prompt.json",
+      "bytes": 834
+    },
+    {
+      "file": "src/assets/game-visions/objects/forge-anvil-v1.webp",
+      "bytes": 700814
+    },
+    {
+      "file": "src/assets/game-visions/objects/forge-hammer-v1.prompt.json",
+      "bytes": 904
+    },
+    {
+      "file": "src/assets/game-visions/objects/forge-hammer-v1.webp",
+      "bytes": 423150
+    },
+    {
+      "file": "src/assets/game-visions/objects/glacier-frame-v1.prompt.json",
+      "bytes": 812
+    },
+    {
+      "file": "src/assets/game-visions/objects/glacier-frame-v1.webp",
+      "bytes": 412954
+    },
+    {
+      "file": "src/assets/game-visions/objects/ice-cannon-v1.prompt.json",
+      "bytes": 1079
+    },
+    {
+      "file": "src/assets/game-visions/objects/ice-cannon-v1.webp",
+      "bytes": 361554
+    },
+    {
+      "file": "src/assets/game-visions/objects/ice-plinth-v1.prompt.json",
+      "bytes": 1005
+    },
+    {
+      "file": "src/assets/game-visions/objects/ice-plinth-v1.webp",
+      "bytes": 656344
+    },
+    {
+      "file": "src/assets/game-visions/objects/kart-barratt-v1.prompt.json",
+      "bytes": 1384
+    },
+    {
+      "file": "src/assets/game-visions/objects/kart-barratt-v1.webp",
+      "bytes": 331088
+    },
+    {
+      "file": "src/assets/game-visions/objects/kart-bran-v1.prompt.json",
+      "bytes": 1384
+    },
+    {
+      "file": "src/assets/game-visions/objects/kart-bran-v1.webp",
+      "bytes": 365182
+    },
+    {
+      "file": "src/assets/game-visions/objects/kart-mochi-v1.prompt.json",
+      "bytes": 1387
+    },
+    {
+      "file": "src/assets/game-visions/objects/kart-mochi-v1.webp",
+      "bytes": 385916
+    },
+    {
+      "file": "src/assets/game-visions/objects/kart-vex-v1.prompt.json",
+      "bytes": 1392
+    },
+    {
+      "file": "src/assets/game-visions/objects/kart-vex-v1.webp",
+      "bytes": 353296
+    },
+    {
+      "file": "src/assets/game-visions/objects/mean-engine-v1.prompt.json",
+      "bytes": 1272
+    },
+    {
+      "file": "src/assets/game-visions/objects/mean-engine-v1.webp",
+      "bytes": 460166
+    },
+    {
+      "file": "src/assets/game-visions/objects/number-stone-v1.prompt.json",
+      "bytes": 895
+    },
+    {
+      "file": "src/assets/game-visions/objects/number-stone-v1.webp",
+      "bytes": 655212
+    },
+    {
+      "file": "src/assets/game-visions/objects/rocket-v1.prompt.json",
+      "bytes": 1133
+    },
+    {
+      "file": "src/assets/game-visions/objects/rocket-v1.webp",
+      "bytes": 219520
+    },
+    {
+      "file": "src/assets/game-visions/stylized/angle_arena-v1.png",
+      "bytes": 1814991
+    },
+    {
+      "file": "src/assets/game-visions/stylized/area_architect-v1.png",
+      "bytes": 2222215
+    },
+    {
+      "file": "src/assets/game-visions/stylized/art-direction.json",
+      "bytes": 45494
+    },
+    {
+      "file": "src/assets/game-visions/stylized/change_counter-v1.png",
+      "bytes": 2080120
+    },
+    {
+      "file": "src/assets/game-visions/stylized/conversion_canyon-v1.png",
+      "bytes": 1740849
+    },
+    {
+      "file": "src/assets/game-visions/stylized/coordinates_quest-v1.png",
+      "bytes": 1974832
+    },
+    {
+      "file": "src/assets/game-visions/stylized/crystal_core-v1.png",
+      "bytes": 1941236
+    },
+    {
+      "file": "src/assets/game-visions/stylized/data_detective-v1.png",
+      "bytes": 2031124
+    },
+    {
+      "file": "src/assets/game-visions/stylized/factor_frenzy-v1.png",
+      "bytes": 2031215
+    },
+    {
+      "file": "src/assets/game-visions/stylized/formula_forge-v1.png",
+      "bytes": 2001661
+    },
+    {
+      "file": "src/assets/game-visions/stylized/fraction_forge-v1.png",
+      "bytes": 2406983
+    },
+    {
+      "file": "src/assets/game-visions/stylized/graph_grabber-v1.png",
+      "bytes": 2021675
+    },
+    {
+      "file": "src/assets/game-visions/stylized/line_graph_lab-v1.png",
+      "bytes": 1839391
+    },
+    {
+      "file": "src/assets/game-visions/stylized/match3_equivalence-v1.png",
+      "bytes": 2486958
+    },
+    {
+      "file": "src/assets/game-visions/stylized/maths_vs_zombies-v1.png",
+      "bytes": 2181176
+    },
+    {
+      "file": "src/assets/game-visions/stylized/matrix_match-v1.png",
+      "bytes": 2141432
+    },
+    {
+      "file": "src/assets/game-visions/stylized/mean_machine-v1.png",
+      "bytes": 1962222
+    },
+    {
+      "file": "src/assets/game-visions/stylized/mirror_gate-v1.png",
+      "bytes": 2052526
+    },
+    {
+      "file": "src/assets/game-visions/stylized/multiplication_mine-v1.png",
+      "bytes": 1862959
+    },
+    {
+      "file": "src/assets/game-visions/stylized/number_line_ninja-v1.png",
+      "bytes": 1925633
+    },
+    {
+      "file": "src/assets/game-visions/stylized/order_ops_arena-v1.png",
+      "bytes": 1958551
+    },
+    {
+      "file": "src/assets/game-visions/stylized/percent_power-v1.png",
+      "bytes": 2295930
+    },
+    {
+      "file": "src/assets/game-visions/stylized/perimeter_path-v1.png",
+      "bytes": 2053303
+    },
+    {
+      "file": "src/assets/game-visions/stylized/place_value_panic-v1.png",
+      "bytes": 2053242
+    },
+    {
+      "file": "src/assets/game-visions/stylized/polygon_palace-v1.png",
+      "bytes": 1869008
+    },
+    {
+      "file": "src/assets/game-visions/stylized/potion_panic-v1.png",
+      "bytes": 2025838
+    },
+    {
+      "file": "src/assets/game-visions/stylized/prime_pop-v1.png",
+      "bytes": 2146279
+    },
+    {
+      "file": "src/assets/game-visions/stylized/problem_pyramid-v1.png",
+      "bytes": 1948722
+    },
+    {
+      "file": "src/assets/game-visions/stylized/ratio_fractions-v1.png",
+      "bytes": 1951830
+    },
+    {
+      "file": "src/assets/game-visions/stylized/remainder_run-v1.png",
+      "bytes": 1966716
+    },
+    {
+      "file": "src/assets/game-visions/stylized/rotation_relay-v1.png",
+      "bytes": 1939076
+    },
+    {
+      "file": "src/assets/game-visions/stylized/rounding_rocket-v1.png",
+      "bytes": 1897613
+    },
+    {
+      "file": "src/assets/game-visions/stylized/scale_builder-v1.png",
+      "bytes": 2110269
+    },
+    {
+      "file": "src/assets/game-visions/stylized/share_splitter-v1.png",
+      "bytes": 2016160
+    },
+    {
+      "file": "src/assets/game-visions/stylized/simplify_sprint-v1.png",
+      "bytes": 2084071
+    },
+    {
+      "file": "src/assets/game-visions/stylized/take_out_rush-v1.png",
+      "bytes": 1813237
+    },
+    {
+      "file": "src/assets/game-visions/stylized/time_keeper_cove-v1.png",
+      "bytes": 2128519
+    },
+    {
+      "file": "src/assets/game-visions/stylized/unit_mixer-v1.png",
+      "bytes": 1912722
+    },
+    {
+      "file": "src/assets/game-visions/walks/bran-v1.prompt.json",
+      "bytes": 1513
+    },
+    {
+      "file": "src/assets/game-visions/walks/bran-v1.webp",
+      "bytes": 560930
+    },
+    {
+      "file": "src/assets/game-visions/walks/bran-v2.prompt.json",
+      "bytes": 3219
+    },
+    {
+      "file": "src/assets/game-visions/walks/bran-v2.webp",
+      "bytes": 850974
+    },
+    {
+      "file": "src/assets/game-visions/walks/deer-v1.prompt.json",
+      "bytes": 1483
+    },
+    {
+      "file": "src/assets/game-visions/walks/deer-v1.webp",
+      "bytes": 534650
+    },
+    {
+      "file": "src/assets/game-visions/walks/deer-v2.prompt.json",
+      "bytes": 3338
+    },
+    {
+      "file": "src/assets/game-visions/walks/deer-v2.webp",
+      "bytes": 697204
+    },
+    {
+      "file": "src/assets/game-visions/walks/mochi-v1.prompt.json",
+      "bytes": 1489
+    },
+    {
+      "file": "src/assets/game-visions/walks/mochi-v1.webp",
+      "bytes": 451370
+    },
+    {
+      "file": "src/assets/game-visions/walks/mochi-v2.prompt.json",
+      "bytes": 3228
+    },
+    {
+      "file": "src/assets/game-visions/walks/mochi-v2.webp",
+      "bytes": 569348
+    },
+    {
+      "file": "src/assets/game-visions/walks/vex-v1.prompt.json",
+      "bytes": 1503
+    },
+    {
+      "file": "src/assets/game-visions/walks/vex-v1.webp",
+      "bytes": 408268
+    },
+    {
+      "file": "src/assets/game-visions/walks/vex-v2.prompt.json",
+      "bytes": 3341
+    },
+    {
+      "file": "src/assets/game-visions/walks/vex-v2.webp",
+      "bytes": 643984
+    },
+    {
+      "file": "src/assets/game-visions/walks/zombie-v1.prompt.json",
+      "bytes": 1489
+    },
+    {
+      "file": "src/assets/game-visions/walks/zombie-v1.webp",
+      "bytes": 505790
+    },
+    {
+      "file": "src/assets/gokarts/bkgroundratiofractionkarts.png",
+      "bytes": 10019087
+    },
+    {
+      "file": "src/assets/gokarts/karts/1.png",
+      "bytes": 640528
+    },
+    {
+      "file": "src/assets/gokarts/karts/2.png",
+      "bytes": 872210
+    },
+    {
+      "file": "src/assets/gokarts/karts/3.png",
+      "bytes": 844503
+    },
+    {
+      "file": "src/assets/gokarts/karts/4.png",
+      "bytes": 903336
+    },
+    {
+      "file": "src/assets/items/cookie.webp",
+      "bytes": 313398
+    },
+    {
+      "file": "src/assets/items/lava-platform.webp",
+      "bytes": 215140
+    },
+    {
+      "file": "src/assets/items/sock.webp",
+      "bytes": 278146
+    },
+    {
+      "file": "src/assets/licensed/slices/icon_back.png",
+      "bytes": 8723
+    },
+    {
+      "file": "src/assets/licensed/slices/icon_big_heart.png",
+      "bytes": 11996
+    },
+    {
+      "file": "src/assets/licensed/slices/icon_chat.png",
+      "bytes": 4739
+    },
+    {
+      "file": "src/assets/licensed/slices/icon_check.png",
+      "bytes": 8467
+    },
+    {
+      "file": "src/assets/licensed/slices/icon_coin.png",
+      "bytes": 9977
+    },
+    {
+      "file": "src/assets/licensed/slices/icon_doc.png",
+      "bytes": 9531
+    },
+    {
+      "file": "src/assets/licensed/slices/icon_gamepad.png",
+      "bytes": 10724
+    },
+    {
+      "file": "src/assets/licensed/slices/icon_gear.png",
+      "bytes": 11859
+    },
+    {
+      "file": "src/assets/licensed/slices/icon_gem.png",
+      "bytes": 7220
+    },
+    {
+      "file": "src/assets/licensed/slices/icon_heart.png",
+      "bytes": 6657
+    },
+    {
+      "file": "src/assets/licensed/slices/icon_heart_outline.png",
+      "bytes": 7541
+    },
+    {
+      "file": "src/assets/licensed/slices/icon_home.png",
+      "bytes": 8072
+    },
+    {
+      "file": "src/assets/licensed/slices/icon_medal.png",
+      "bytes": 9456
+    },
+    {
+      "file": "src/assets/licensed/slices/icon_minus.png",
+      "bytes": 7760
+    },
+    {
+      "file": "src/assets/licensed/slices/icon_people.png",
+      "bytes": 9396
+    },
+    {
+      "file": "src/assets/licensed/slices/icon_play.png",
+      "bytes": 6038
+    },
+    {
+      "file": "src/assets/licensed/slices/icon_plus.png",
+      "bytes": 8487
+    },
+    {
+      "file": "src/assets/licensed/slices/icon_plus_square.png",
+      "bytes": 4921
+    },
+    {
+      "file": "src/assets/licensed/slices/icon_question.png",
+      "bytes": 7215
+    },
+    {
+      "file": "src/assets/licensed/slices/icon_refresh.png",
+      "bytes": 12497
+    },
+    {
+      "file": "src/assets/licensed/slices/icon_stopwatch.png",
+      "bytes": 18663
+    },
+    {
+      "file": "src/assets/licensed/slices/icon_timer.png",
+      "bytes": 9627
+    },
+    {
+      "file": "src/assets/licensed/slices/icon_trophy.png",
+      "bytes": 9917
+    },
+    {
+      "file": "src/assets/licensed/slices/icon_user.png",
+      "bytes": 7023
+    },
+    {
+      "file": "src/assets/licensed/slices/label_blue.png",
+      "bytes": 18161
+    },
+    {
+      "file": "src/assets/licensed/slices/label_green_long.png",
+      "bytes": 62337
+    },
+    {
+      "file": "src/assets/licensed/slices/panel_paper.png",
+      "bytes": 27787
+    },
+    {
+      "file": "src/assets/licensed/slices/progress_bar.png",
+      "bytes": 96420
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/area architect.jpg",
+      "bytes": 293965
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/Calculation Cup.png",
+      "bytes": 3857407
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/castle.jpg",
+      "bytes": 313993
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/changecounter.jpg",
+      "bytes": 418667
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/charselect.jpg",
+      "bytes": 299073
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/chrono dash numb.jpg",
+      "bytes": 258253
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/chrono dash roman.jpg",
+      "bytes": 242710
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/Chrono Dash Time Trial.jpg",
+      "bytes": 307273
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/chrono dash.jpg",
+      "bytes": 307273
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/Cloud Collapse.jpg",
+      "bytes": 380464
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/conversion canyon.jpg",
+      "bytes": 287173
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/coodinatequestt.jpg",
+      "bytes": 275942
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/coordinate quest.jpg",
+      "bytes": 205095
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/crystal core.jpg",
+      "bytes": 207452
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/data detective.jpg",
+      "bytes": 187358
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/End Trial.jpg",
+      "bytes": 285393
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/Factor Frenzy.jpg",
+      "bytes": 289646
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/forestbackground.png",
+      "bytes": 2798399
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/fraction forge map.jpg",
+      "bytes": 206351
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/gemini-2.5-flash-image_use_graphical_style_of_the_reference_images_provided._do_not_add_in_any_text_we_-0.jpg",
+      "bytes": 243021
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/gemini-2.5-flash-image_use_only_the_art_and_graphical_style_of_the_reference_images_provided._create_a_-0 (1).jpg",
+      "bytes": 209411
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/graph grabber.jpg",
+      "bytes": 215331
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/lava-path.jpg",
+      "bytes": 423974
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/linegraphlab.jpg",
+      "bytes": 308512
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/map.png",
+      "bytes": 3857407
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/mean.jpg",
+      "bytes": 202010
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/meanmachine.jpg",
+      "bytes": 253630
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/meanmachine2.jpg",
+      "bytes": 298683
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/Mixed Mastery.jpg",
+      "bytes": 318199
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/Monster Market.png",
+      "bytes": 2087464
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/Multi Step Marathon.jpg",
+      "bytes": 319735
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/multiplication mine background.jpg",
+      "bytes": 283601
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/numberlineninja.jpg",
+      "bytes": 231313
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/orderopsarena.jpg",
+      "bytes": 327506
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/percent power.jpg",
+      "bytes": 350065
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/peremeter path.jpg",
+      "bytes": 287298
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/Perimeter Path.jpg",
+      "bytes": 287298
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/Place Value Panic.png",
+      "bytes": 2798399
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/platesharesplit.png",
+      "bytes": 67810
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/polygon palace.jpg",
+      "bytes": 187530
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/potionpanic.jpg",
+      "bytes": 313039
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/primepopbkground.jpg",
+      "bytes": 483777
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/problem pyramid.jpg",
+      "bytes": 317533
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/Rotation Reflection.jpg",
+      "bytes": 313993
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/rotationstation.jpg",
+      "bytes": 253248
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/roundingrocketbackground.jpg",
+      "bytes": 304966
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/Scale Master.png",
+      "bytes": 479137
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/scalebuilder-construction.png",
+      "bytes": 10057637
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/sharesplitterfinal.png",
+      "bytes": 1346954
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/simplifysprint.jpg",
+      "bytes": 290046
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/tableshresplit.png",
+      "bytes": 7273609
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/Take-Out Rush.png",
+      "bytes": 2087464
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/tower of factors.jpg",
+      "bytes": 229778
+    },
+    {
+      "file": "src/assets/maps/backgroundsforgames/Volume Vault.png",
+      "bytes": 3857407
+    },
+    {
+      "file": "src/assets/maps/clockfaceblank.png",
+      "bytes": 175745
+    },
+    {
+      "file": "src/assets/maps/ezgif-261d69e7ae90ee8c.webp",
+      "bytes": 3781752
+    },
+    {
+      "file": "src/assets/maps/facctor frenzy.jpg",
+      "bytes": 289646
+    },
+    {
+      "file": "src/assets/maps/finalamendedworldmap.png",
+      "bytes": 2266980
+    },
+    {
+      "file": "src/assets/maps/finalamendedworldmap.webp",
+      "bytes": 197080
+    },
+    {
+      "file": "src/assets/maps/finalmap.png",
+      "bytes": 3857407
+    },
+    {
+      "file": "src/assets/maps/finalmap.webp",
+      "bytes": 298606
+    },
+    {
+      "file": "src/assets/maps/forect.jpg",
+      "bytes": 312827
+    },
+    {
+      "file": "src/assets/maps/harbour.jpg",
+      "bytes": 268717
+    },
+    {
+      "file": "src/assets/maps/island-atlas-cartoon.png",
+      "bytes": 2508528
+    },
+    {
+      "file": "src/assets/maps/island-atlas-rich.png",
+      "bytes": 2736998
+    },
+    {
+      "file": "src/assets/maps/island-atlas-rich.webp",
+      "bytes": 693470
+    },
+    {
+      "file": "src/assets/maps/mapselect-unlabelled.png",
+      "bytes": 2011843
+    },
+    {
+      "file": "src/assets/maps/mapselect.png",
+      "bytes": 8169562
+    },
+    {
+      "file": "src/assets/maps/matharia-logo.png",
+      "bytes": 1752603
+    },
+    {
+      "file": "src/assets/maps/matharia-ocean-rich.png",
+      "bytes": 2235157
+    },
+    {
+      "file": "src/assets/maps/premium/angle-arena-wide-v2.png",
+      "bytes": 2544296
+    },
+    {
+      "file": "src/assets/maps/premium/angle-arena.webp",
+      "bytes": 171860
+    },
+    {
+      "file": "src/assets/maps/premium/area-architect.webp",
+      "bytes": 201684
+    },
+    {
+      "file": "src/assets/maps/premium/change-counter.webp",
+      "bytes": 260480
+    },
+    {
+      "file": "src/assets/maps/premium/chrono-dash.webp",
+      "bytes": 225794
+    },
+    {
+      "file": "src/assets/maps/premium/conversion-canyon.webp",
+      "bytes": 199190
+    },
+    {
+      "file": "src/assets/maps/premium/coordinates-quest.webp",
+      "bytes": 206214
+    },
+    {
+      "file": "src/assets/maps/premium/crystal-core.webp",
+      "bytes": 231872
+    },
+    {
+      "file": "src/assets/maps/premium/data-detective.webp",
+      "bytes": 162494
+    },
+    {
+      "file": "src/assets/maps/premium/factor-frenzy.webp",
+      "bytes": 277920
+    },
+    {
+      "file": "src/assets/maps/premium/formula-forge.webp",
+      "bytes": 232712
+    },
+    {
+      "file": "src/assets/maps/premium/fraction-forge-wide.png",
+      "bytes": 2733059
+    },
+    {
+      "file": "src/assets/maps/premium/fraction-forge.webp",
+      "bytes": 183740
+    },
+    {
+      "file": "src/assets/maps/premium/graph-grabber.webp",
+      "bytes": 225012
+    },
+    {
+      "file": "src/assets/maps/premium/lava-path.webp",
+      "bytes": 158458
+    },
+    {
+      "file": "src/assets/maps/premium/line-graph-lab.webp",
+      "bytes": 225040
+    },
+    {
+      "file": "src/assets/maps/premium/match-mastery.webp",
+      "bytes": 220546
+    },
+    {
+      "file": "src/assets/maps/premium/maths-vs-zombies.webp",
+      "bytes": 191988
+    },
+    {
+      "file": "src/assets/maps/premium/matrix-match.webp",
+      "bytes": 200694
+    },
+    {
+      "file": "src/assets/maps/premium/mean-machine-workshop-wide.webp",
+      "bytes": 419254
+    },
+    {
+      "file": "src/assets/maps/premium/mean-machine.webp",
+      "bytes": 223206
+    },
+    {
+      "file": "src/assets/maps/premium/mirror-gate.webp",
+      "bytes": 206336
+    },
+    {
+      "file": "src/assets/maps/premium/multiplication-mine.webp",
+      "bytes": 170418
+    },
+    {
+      "file": "src/assets/maps/premium/number-line-ninja.webp",
+      "bytes": 179092
+    },
+    {
+      "file": "src/assets/maps/premium/order-ops-arena.webp",
+      "bytes": 225858
+    },
+    {
+      "file": "src/assets/maps/premium/percent-power-station-wide-v2.png",
+      "bytes": 2667272
+    },
+    {
+      "file": "src/assets/maps/premium/percent-power.webp",
+      "bytes": 245628
+    },
+    {
+      "file": "src/assets/maps/premium/perimeter-path.webp",
+      "bytes": 220802
+    },
+    {
+      "file": "src/assets/maps/premium/place-value-panic.webp",
+      "bytes": 265780
+    },
+    {
+      "file": "src/assets/maps/premium/polygon-palace.webp",
+      "bytes": 186128
+    },
+    {
+      "file": "src/assets/maps/premium/potion-panic-workshop-wide.webp",
+      "bytes": 377874
+    },
+    {
+      "file": "src/assets/maps/premium/potion-panic.webp",
+      "bytes": 229350
+    },
+    {
+      "file": "src/assets/maps/premium/prime-pop-desktop.webp",
+      "bytes": 481292
+    },
+    {
+      "file": "src/assets/maps/premium/prime-pop-wide-v2.png",
+      "bytes": 2814002
+    },
+    {
+      "file": "src/assets/maps/premium/prime-pop.webp",
+      "bytes": 259498
+    },
+    {
+      "file": "src/assets/maps/premium/problem-pyramid.webp",
+      "bytes": 186394
+    },
+    {
+      "file": "src/assets/maps/premium/race-castle-wide-v2.png",
+      "bytes": 2690368
+    },
+    {
+      "file": "src/assets/maps/premium/race-circuit-wide-v2.png",
+      "bytes": 2602518
+    },
+    {
+      "file": "src/assets/maps/premium/race-grandstand-wide-v2.png",
+      "bytes": 2795344
+    },
+    {
+      "file": "src/assets/maps/premium/race-valley-wide-v2.png",
+      "bytes": 2962282
+    },
+    {
+      "file": "src/assets/maps/premium/ratio-racer-course.webp",
+      "bytes": 178452
+    },
+    {
+      "file": "src/assets/maps/premium/ratio-racer.webp",
+      "bytes": 200816
+    },
+    {
+      "file": "src/assets/maps/premium/remainder-run.webp",
+      "bytes": 247124
+    },
+    {
+      "file": "src/assets/maps/premium/rotation-station.webp",
+      "bytes": 222596
+    },
+    {
+      "file": "src/assets/maps/premium/rounding-rocket-launchpad.webp",
+      "bytes": 459650
+    },
+    {
+      "file": "src/assets/maps/premium/rounding-rocket.webp",
+      "bytes": 212478
+    },
+    {
+      "file": "src/assets/maps/premium/scale-builder.webp",
+      "bytes": 247022
+    },
+    {
+      "file": "src/assets/maps/premium/share-splitter-party-wide.webp",
+      "bytes": 526208
+    },
+    {
+      "file": "src/assets/maps/premium/share-splitter.webp",
+      "bytes": 222110
+    },
+    {
+      "file": "src/assets/maps/premium/simplify-sprint-ruins.png",
+      "bytes": 3158544
+    },
+    {
+      "file": "src/assets/maps/premium/simplify-sprint.webp",
+      "bytes": 284184
+    },
+    {
+      "file": "src/assets/maps/premium/take-out-rush.webp",
+      "bytes": 214798
+    },
+    {
+      "file": "src/assets/maps/premium/zombies-garden-wide-v2.png",
+      "bytes": 2888168
+    },
+    {
+      "file": "src/assets/maps/reef2.jpg",
+      "bytes": 380464
+    },
+    {
+      "file": "src/assets/maps/scale.png",
+      "bytes": 561310
+    },
+    {
+      "file": "src/assets/maps/scenes/area_architect.webp",
+      "bytes": 548232
+    },
+    {
+      "file": "src/assets/maps/scenes/chrono.webp",
+      "bytes": 546504
+    },
+    {
+      "file": "src/assets/maps/scenes/conversion_canyon.webp",
+      "bytes": 549308
+    },
+    {
+      "file": "src/assets/maps/scenes/coordinates_quest.webp",
+      "bytes": 536006
+    },
+    {
+      "file": "src/assets/maps/scenes/data_detective.webp",
+      "bytes": 469468
+    },
+    {
+      "file": "src/assets/maps/scenes/factor_frenzy.webp",
+      "bytes": 530600
+    },
+    {
+      "file": "src/assets/maps/scenes/formula_forge.webp",
+      "bytes": 558376
+    },
+    {
+      "file": "src/assets/maps/scenes/fraction_match.webp",
+      "bytes": 629998
+    },
+    {
+      "file": "src/assets/maps/scenes/graph_grabber.webp",
+      "bytes": 563998
+    },
+    {
+      "file": "src/assets/maps/scenes/lava.webp",
+      "bytes": 455814
+    },
+    {
+      "file": "src/assets/maps/scenes/line_graph_lab.webp",
+      "bytes": 533016
+    },
+    {
+      "file": "src/assets/maps/scenes/multiplication_mine.webp",
+      "bytes": 550746
+    },
+    {
+      "file": "src/assets/maps/scenes/number_line_ninja.webp",
+      "bytes": 596366
+    },
+    {
+      "file": "src/assets/maps/scenes/order_ops_arena.webp",
+      "bytes": 631312
+    },
+    {
+      "file": "src/assets/maps/scenes/perimeter_path.webp",
+      "bytes": 640120
+    },
+    {
+      "file": "src/assets/maps/scenes/place_value_panic.webp",
+      "bytes": 601434
+    },
+    {
+      "file": "src/assets/maps/scenes/polygon_palace.webp",
+      "bytes": 561832
+    },
+    {
+      "file": "src/assets/maps/scenes/problem_pyramid.webp",
+      "bytes": 382084
+    },
+    {
+      "file": "src/assets/maps/scenes/remainder_run.webp",
+      "bytes": 521364
+    },
+    {
+      "file": "src/assets/maps/scenes/rotation_station.webp",
+      "bytes": 580146
+    },
+    {
+      "file": "src/assets/maps/scenes/scale_builder.webp",
+      "bytes": 489236
+    },
+    {
+      "file": "src/assets/maps/teen/monster-market-shop-wide.webp",
+      "bytes": 389690
+    },
+    {
+      "file": "src/assets/maps/teen/monster-market-shop.webp",
+      "bytes": 336006
+    },
+    {
+      "file": "src/assets/maps/teen/race-course-circuit-v2.webp",
+      "bytes": 543312
+    },
+    {
+      "file": "src/assets/maps/teen/race-course-coastal.png",
+      "bytes": 2558700
+    },
+    {
+      "file": "src/assets/maps/teen/race-course-crowd.webp",
+      "bytes": 241942
+    },
+    {
+      "file": "src/assets/maps/teen/racing-paddock.webp",
+      "bytes": 316122
+    },
+    {
+      "file": "src/assets/maps/teen/restaurant-rush-wide.webp",
+      "bytes": 290840
+    },
+    {
+      "file": "src/assets/maps/teen/restaurant-rush.webp",
+      "bytes": 272070
+    },
+    {
+      "file": "src/assets/mean.png",
+      "bytes": 794164
+    },
+    {
+      "file": "src/assets/median.png",
+      "bytes": 797627
+    },
+    {
+      "file": "src/assets/mine/18.png",
+      "bytes": 507945
+    },
+    {
+      "file": "src/assets/mine/19.png",
+      "bytes": 476027
+    },
+    {
+      "file": "src/assets/mine/20.png",
+      "bytes": 549814
+    },
+    {
+      "file": "src/assets/mine/21.png",
+      "bytes": 474776
+    },
+    {
+      "file": "src/assets/mine/ore/ore-atlas-v2.png",
+      "bytes": 1341090
+    },
+    {
+      "file": "src/assets/mine/ore/ore-atlas-v2.prompt.json",
+      "bytes": 444
+    },
+    {
+      "file": "src/assets/mine/ore/ore-cracked.webp",
+      "bytes": 84090
+    },
+    {
+      "file": "src/assets/mine/ore/ore-intact.webp",
+      "bytes": 82072
+    },
+    {
+      "file": "src/assets/mine/ore/ore-open.webp",
+      "bytes": 94768
+    },
+    {
+      "file": "src/assets/mine/ore/ore-split.webp",
+      "bytes": 92882
+    },
+    {
+      "file": "src/assets/mode.png",
+      "bytes": 804216
+    },
+    {
+      "file": "src/assets/place_value/frames/large_avatar_frame.png",
+      "bytes": 12891
+    },
+    {
+      "file": "src/assets/place_value/jewels/diamond_blue.png",
+      "bytes": 3603
+    },
+    {
+      "file": "src/assets/place_value/jewels/diamond_green.png",
+      "bytes": 3769
+    },
+    {
+      "file": "src/assets/place_value/jewels/diamond_purple.png",
+      "bytes": 3567
+    },
+    {
+      "file": "src/assets/place_value/jewels/diamond_red.png",
+      "bytes": 3725
+    },
+    {
+      "file": "src/assets/place_value/jewels/diamond_yellow.png",
+      "bytes": 3599
+    },
+    {
+      "file": "src/assets/place_value/jewels/emerald.png",
+      "bytes": 67
+    },
+    {
+      "file": "src/assets/place_value/jewels/sapphire.png",
+      "bytes": 67
+    },
+    {
+      "file": "src/assets/potion_bottles/azure.png",
+      "bytes": 74980
+    },
+    {
+      "file": "src/assets/potion_bottles/moss.png",
+      "bytes": 87431
+    },
+    {
+      "file": "src/assets/potion_bottles/night.png",
+      "bytes": 80418
+    },
+    {
+      "file": "src/assets/potion_bottles/ruby.png",
+      "bytes": 83081
+    },
+    {
+      "file": "src/assets/potion_bottles/sun.png",
+      "bytes": 88234
+    },
+    {
+      "file": "src/assets/production-entry/account-portrait.webp",
+      "bytes": 322796,
+      "sha256": "c81dcc5a14886fed93418d936b306396bc4c63300c288c7fd2283828d20e08cf"
+    },
+    {
+      "file": "src/assets/production-entry/welcome-landscape.webp",
+      "bytes": 360674,
+      "sha256": "b3120498de148dbd32b74492219fb0af4d1a052be67a44346e845db727985e5c"
+    },
+    {
+      "file": "src/assets/production-entry/welcome-portrait.webp",
+      "bytes": 372102,
+      "sha256": "3f7a6459d5c375be2d4faae18ba0a95d5ec9fc7260eae0414bc6c98b23979637"
+    },
+    {
+      "file": "src/assets/production-scenes/zombies-arena.webp",
+      "bytes": 355626,
+      "sha256": "20095bdae67b828b22d904cb2dcb2da8061f02a6974f262d167a419772b07a7e"
+    },
+    {
+      "file": "src/assets/pyramid.png",
+      "bytes": 581313
+    },
+    {
+      "file": "src/assets/ratio-racer/castle-circuit-v1.png",
+      "bytes": 2758474
+    },
+    {
+      "file": "src/assets/ratio-racer/fuel-canister-v1.png",
+      "bytes": 2384114
+    },
+    {
+      "file": "src/assets/ratio-racer/premium/kart-barratt-v2.png",
+      "bytes": 2344794
+    },
+    {
+      "file": "src/assets/ratio-racer/premium/kart-bran-v2.png",
+      "bytes": 2381599
+    },
+    {
+      "file": "src/assets/ratio-racer/premium/kart-mochi-v2.png",
+      "bytes": 2388629
+    },
+    {
+      "file": "src/assets/ratio-racer/premium/kart-vex-v2.png",
+      "bytes": 2465811
+    },
+    {
+      "file": "src/assets/ratio-racer/premium/karts.ts",
+      "bytes": 235
+    },
+    {
+      "file": "src/assets/ratio-racer/premium/side-scroll-circuit-v2.png",
+      "bytes": 3320924
+    },
+    {
+      "file": "src/assets/ratio-racer/README.md",
+      "bytes": 2139
+    },
+    {
+      "file": "src/assets/reference-batch-three/cauldron.png",
+      "bytes": 2131085
+    },
+    {
+      "file": "src/assets/reference-batch-three/detective-hero.png",
+      "bytes": 1617602
+    },
+    {
+      "file": "src/assets/reference-batch-three/detective.png",
+      "bytes": 2804478
+    },
+    {
+      "file": "src/assets/reference-batch-three/forge.png",
+      "bytes": 2875567
+    },
+    {
+      "file": "src/assets/reference-batch-three/graph.png",
+      "bytes": 2916105
+    },
+    {
+      "file": "src/assets/reference-batch-three/lily.png",
+      "bytes": 2027648
+    },
+    {
+      "file": "src/assets/reference-batch-three/line-hero.png",
+      "bytes": 1820071
+    },
+    {
+      "file": "src/assets/reference-batch-three/line.png",
+      "bytes": 2894255
+    },
+    {
+      "file": "src/assets/reference-batch-three/match.png",
+      "bytes": 3099365
+    },
+    {
+      "file": "src/assets/reference-batch-three/percent.png",
+      "bytes": 3151894
+    },
+    {
+      "file": "src/assets/reference-batch-three/pond.png",
+      "bytes": 2759113
+    },
+    {
+      "file": "src/assets/reference-batch-three/potion.png",
+      "bytes": 2922541
+    },
+    {
+      "file": "src/assets/reference-batch-three/provenance.json",
+      "bytes": 13907
+    },
+    {
+      "file": "src/assets/reference-batch-three/reference-1.jpg",
+      "bytes": 320818
+    },
+    {
+      "file": "src/assets/reference-batch-three/reference-10.jpg",
+      "bytes": 354975
+    },
+    {
+      "file": "src/assets/reference-batch-three/reference-2.jpg",
+      "bytes": 270151
+    },
+    {
+      "file": "src/assets/reference-batch-three/reference-3.jpg",
+      "bytes": 255915
+    },
+    {
+      "file": "src/assets/reference-batch-three/reference-4.jpg",
+      "bytes": 247237
+    },
+    {
+      "file": "src/assets/reference-batch-three/reference-5.jpg",
+      "bytes": 236246
+    },
+    {
+      "file": "src/assets/reference-batch-three/reference-6.jpg",
+      "bytes": 322082
+    },
+    {
+      "file": "src/assets/reference-batch-three/reference-7.jpg",
+      "bytes": 324376
+    },
+    {
+      "file": "src/assets/reference-batch-three/reference-8.jpg",
+      "bytes": 310418
+    },
+    {
+      "file": "src/assets/reference-batch-three/reference-9.jpg",
+      "bytes": 328368
+    },
+    {
+      "file": "src/assets/reference-batch-three/share.png",
+      "bytes": 2792242
+    },
+    {
+      "file": "src/assets/reference-batch-three/takeout.png",
+      "bytes": 2394842
+    },
+    {
+      "file": "src/assets/reference-batch-two/bloom-scene.png",
+      "bytes": 2604495
+    },
+    {
+      "file": "src/assets/reference-batch-two/map-continuous-v2.png",
+      "bytes": 3211636
+    },
+    {
+      "file": "src/assets/reference-batch-two/map-continuous-v2.prompt.json",
+      "bytes": 2581
+    },
+    {
+      "file": "src/assets/reference-batch-two/map-scene.png",
+      "bytes": 2838279
+    },
+    {
+      "file": "src/assets/reference-batch-two/potion-scene.png",
+      "bytes": 2955739
+    },
+    {
+      "file": "src/assets/reference-batch-two/provenance.json",
+      "bytes": 7457
+    },
+    {
+      "file": "src/assets/reference-batch-two/racer-scene.png",
+      "bytes": 2877353
+    },
+    {
+      "file": "src/assets/reference-batch-two/reference-1.jpg",
+      "bytes": 326522
+    },
+    {
+      "file": "src/assets/reference-batch-two/reference-2.jpg",
+      "bytes": 392351
+    },
+    {
+      "file": "src/assets/reference-batch-two/reference-3.jpg",
+      "bytes": 318459
+    },
+    {
+      "file": "src/assets/reference-batch-two/scale-scene.png",
+      "bytes": 2742961
+    },
+    {
+      "file": "src/assets/reference-batch-two/share-scene.png",
+      "bytes": 3035653
+    },
+    {
+      "file": "src/assets/reference-screens/art-manifest.json",
+      "bytes": 3268
+    },
+    {
+      "file": "src/assets/reference-screens/fox-wizard.png",
+      "bytes": 1874873
+    },
+    {
+      "file": "src/assets/reference-screens/island-guide.png",
+      "bytes": 1997087
+    },
+    {
+      "file": "src/assets/reference-screens/island-scene.png",
+      "bytes": 3281783
+    },
+    {
+      "file": "src/assets/reference-screens/ninja-scene.png",
+      "bytes": 2963193
+    },
+    {
+      "file": "src/assets/reference-screens/prime-scene.png",
+      "bytes": 2461550
+    },
+    {
+      "file": "src/assets/reference-screens/pvp-scene.png",
+      "bytes": 3041294
+    },
+    {
+      "file": "src/assets/reference-screens/reference-1.jpg",
+      "bytes": 377278
+    },
+    {
+      "file": "src/assets/reference-screens/reference-2.jpg",
+      "bytes": 312483
+    },
+    {
+      "file": "src/assets/reference-screens/reference-3.jpg",
+      "bytes": 338963
+    },
+    {
+      "file": "src/assets/reference-screens/reference-4.jpg",
+      "bytes": 315601
+    },
+    {
+      "file": "src/assets/reference-screens/reference-5.jpg",
+      "bytes": 342572
+    },
+    {
+      "file": "src/assets/reference-screens/reference-6.jpg",
+      "bytes": 357504
+    },
+    {
+      "file": "src/assets/reference-screens/rocket-scene.png",
+      "bytes": 2439764
+    },
+    {
+      "file": "src/assets/reference-screens/terrace-scene.png",
+      "bytes": 2741666
+    },
+    {
+      "file": "src/assets/reference-takeout-portrait/chef.png",
+      "bytes": 1496442
+    },
+    {
+      "file": "src/assets/reference-takeout-portrait/kitchen.png",
+      "bytes": 2546244
+    },
+    {
+      "file": "src/assets/reference-takeout-portrait/provenance.json",
+      "bytes": 2490
+    },
+    {
+      "file": "src/assets/reference-takeout-portrait/reference.jpg",
+      "bytes": 332214
+    },
+    {
+      "file": "src/assets/reskin/factor-sentinel.webp",
+      "bytes": 874254
+    },
+    {
+      "file": "src/assets/reskin/forge-anvil.png",
+      "bytes": 2696414
+    },
+    {
+      "file": "src/assets/reskin/forge-blacksmith.png",
+      "bytes": 1626998
+    },
+    {
+      "file": "src/assets/reskin/guiSlices.ts",
+      "bytes": 563
+    },
+    {
+      "file": "src/assets/reskin/mainPng.ts",
+      "bytes": 318
+    },
+    {
+      "file": "src/assets/reskin/main_png/booster_holder.png",
+      "bytes": 13452
+    },
+    {
+      "file": "src/assets/reskin/main_png/mission.png",
+      "bytes": 934281
+    },
+    {
+      "file": "src/assets/reskin/main_png/text_box.png",
+      "bytes": 15097
+    },
+    {
+      "file": "src/assets/rocktlogo.png",
+      "bytes": 822314
+    },
+    {
+      "file": "src/assets/share-splitter/asset-prompts.json",
+      "bytes": 6065
+    },
+    {
+      "file": "src/assets/share-splitter/banquet-table-v1.webp",
+      "bytes": 262648
+    },
+    {
+      "file": "src/assets/share-splitter/party-background-v1.webp",
+      "bytes": 433020
+    },
+    {
+      "file": "src/assets/share-splitter/party-guests-v2.webp",
+      "bytes": 304050
+    },
+    {
+      "file": "src/assets/share-splitter/strawberry-cake-v1.webp",
+      "bytes": 21278
+    },
+    {
+      "file": "src/assets/take_out/food/1.png",
+      "bytes": 8877
+    },
+    {
+      "file": "src/assets/take_out/food/2.png",
+      "bytes": 12917
+    },
+    {
+      "file": "src/assets/take_out/food/3.png",
+      "bytes": 19005
+    },
+    {
+      "file": "src/assets/take_out/food/4.png",
+      "bytes": 16104
+    },
+    {
+      "file": "src/assets/take_out/food/5.png",
+      "bytes": 7784
+    },
+    {
+      "file": "src/assets/take_out/food/6.png",
+      "bytes": 13462
+    },
+    {
+      "file": "src/assets/take_out/food/7.png",
+      "bytes": 8692
+    },
+    {
+      "file": "src/assets/take_out/food/8.png",
+      "bytes": 11004
+    },
+    {
+      "file": "src/assets/take_out/food/9.png",
+      "bytes": 15008
+    },
+    {
+      "file": "src/assets/take_out/monsters/10.png",
+      "bytes": 1366138
+    },
+    {
+      "file": "src/assets/take_out/monsters/11.png",
+      "bytes": 1529409
+    },
+    {
+      "file": "src/assets/take_out/monsters/12.png",
+      "bytes": 1978747
+    },
+    {
+      "file": "src/assets/take_out/monsters/13.png",
+      "bytes": 1852550
+    },
+    {
+      "file": "src/assets/take_out/monsters/14.png",
+      "bytes": 1494049
+    },
+    {
+      "file": "src/assets/take_out/monsters/15.png",
+      "bytes": 1926544
+    },
+    {
+      "file": "src/assets/take_out/monsters/16.png",
+      "bytes": 1557313
+    },
+    {
+      "file": "src/assets/take_out/monsters/17.png",
+      "bytes": 1518968
+    },
+    {
+      "file": "src/assets/take_out/monsters/18.png",
+      "bytes": 1598211
+    },
+    {
+      "file": "src/assets/take_out/monsters/5.png",
+      "bytes": 1215545
+    },
+    {
+      "file": "src/assets/take_out/monsters/6.png",
+      "bytes": 1388168
+    },
+    {
+      "file": "src/assets/take_out/monsters/7.png",
+      "bytes": 1508512
+    },
+    {
+      "file": "src/assets/take_out/monsters/8.png",
+      "bytes": 1177125
+    },
+    {
+      "file": "src/assets/take_out/monsters/9.png",
+      "bytes": 1294094
+    },
+    {
+      "file": "src/assets/ui_frames/hudfortextplace_slices/hud_avatar_name.png",
+      "bytes": 178959
+    },
+    {
+      "file": "src/assets/ui_frames/hudfortextplace_slices/text_bar_medium.png",
+      "bytes": 171750
+    },
+    {
+      "file": "src/assets/ui_frames/hudfortextplace_slices/text_bar_small.png",
+      "bytes": 149378
+    },
+    {
+      "file": "src/assets/vault.png",
+      "bytes": 6881993
+    },
+    {
+      "file": "src/assets/website/adventure-valley-v1.png",
+      "bytes": 2586792
+    },
+    {
+      "file": "src/assets/website/adventure-valley-v1.webp",
+      "bytes": 388932
+    },
+    {
+      "file": "src/assets/website/gameplay/angle-arena.jpg",
+      "bytes": 220643
+    },
+    {
+      "file": "src/assets/website/gameplay/match3-equivalence.jpg",
+      "bytes": 241746
+    },
+    {
+      "file": "src/assets/website/gameplay/place-value-panic.jpg",
+      "bytes": 234368
+    },
+    {
+      "file": "src/assets/website/gameplay/potion-panic.jpg",
+      "bytes": 230760
+    },
+    {
+      "file": "src/assets/website/hero-action-mobile.webp",
+      "bytes": 488252
+    },
+    {
+      "file": "src/assets/website/hero-action-wide.webp",
+      "bytes": 343318
+    },
+    {
+      "file": "src/assets/wellbeing/scenes/breathing-bloom.webp",
+      "bytes": 271442
+    },
+    {
+      "file": "src/assets/wellbeing/scenes/lantern-camp.webp",
+      "bytes": 233260
+    },
+    {
+      "file": "src/assets/wellbeing/scenes/leaf-drift.webp",
+      "bytes": 313048
+    },
+    {
+      "file": "src/assets/wellbeing/scenes/peaceful-pond.webp",
+      "bytes": 267834
+    },
+    {
+      "file": "src/assets/wellbeing/scenes/star-path.webp",
+      "bytes": 127778
+    },
+    {
+      "file": "src/assets/wellbeing/scenes/worry-balloon.webp",
+      "bytes": 253500
+    },
+    {
+      "file": "src/assets/zombies/zombie.png",
+      "bytes": 23171
+    },
+    {
+      "file": "src/assets/zombies/zombiebkground.png",
+      "bytes": 3472340
+    }
+  ]
+}

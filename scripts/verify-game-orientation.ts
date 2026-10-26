@@ -3,6 +3,8 @@ import {getGameOrientation,needsGameRotation} from '../src/app/gameOrientation';
 assert.equal(getGameOrientation({blueprintKey:'rounding_rocket',gameType:'place_value_peaks'}),'portrait');
 assert.equal(getGameOrientation({blueprintKey:'prime_pop',gameType:'prime_pop'}),'portrait');
 assert.equal(getGameOrientation({blueprintKey:'place_value_panic',gameType:'place_value_peaks'}),'portrait');
+assert.equal(getGameOrientation({blueprintKey:'fraction_forge',gameType:'take_out_rush'}),'landscape');
+assert.equal(getGameOrientation({blueprintKey:'take_out_rush',gameType:'take_out_rush'}),'portrait');
 assert.equal(getGameOrientation(undefined),'landscape');
 assert.equal(needsGameRotation('portrait',390,844),false);
 assert.equal(needsGameRotation('portrait',844,390),true);

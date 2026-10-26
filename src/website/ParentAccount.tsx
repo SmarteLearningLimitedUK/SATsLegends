@@ -104,7 +104,7 @@ export default function ParentAccount({ mode }: { mode: 'signup' | 'login' | 'fo
         <button className="website-button website-button-gold" type="submit" disabled={!family.configured || busy}>{busy ? 'Please wait…' : signup ? 'Create parent account' : mode === 'forgot' ? 'Send reset link' : mode === 'reset' ? 'Save new password' : 'Log in'}<ArrowRight size={19} /></button>
       </form>;
   if (IS_IOS_APP) return <IOSAccountLayout title={signup ? 'Create your account' : mode === 'forgot' ? 'Reset your password' : mode === 'reset' ? 'Choose a new password' : 'Welcome back'}>
-    <p>{signup ? 'A parent or guardian account keeps each learner’s progress safe.' : mode === 'forgot' ? 'Enter your parent email. After resetting your password from the email, return here to sign in.' : mode === 'reset' ? 'Choose a password for your shared SATs Legends account.' : 'Sign in with the same email and password you use on the website.'}</p>
+    <p>{signup ? 'A parent or guardian account keeps each learner’s progress safe.' : mode === 'forgot' ? 'Enter your parent email. After resetting your password from the email, return here to sign in.' : mode === 'reset' ? 'Choose a password for your shared SATs Legends account.' : 'Use your SATs Legends email and password.'}</p>
     {!family.configured && <p role="alert">Account services are unavailable. Please try again later.</p>}
     {message && <p ref={messageRef} role="status">{message}</p>}
     {query.get('reset') === 'success' && <p role="status">Password updated. Sign in to continue.</p>}

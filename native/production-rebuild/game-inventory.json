@@ -1,0 +1,1242 @@
+{
+  "generatedAt": "2026-10-25T23:17:40.998Z",
+  "source": "Current constants, difficulty and native orientation policy",
+  "count": 37,
+  "games": [
+    {
+      "key": "place_value_panic",
+      "route": "/game/1/37",
+      "islandId": 1,
+      "island": "Arithmetic Acropolis",
+      "title": "Place Value Panic L5",
+      "orientation": "portrait",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 1,
+          "practice": true
+        },
+        {
+          "id": 5,
+          "practice": false
+        },
+        {
+          "id": 13,
+          "practice": false
+        },
+        {
+          "id": 21,
+          "practice": false
+        },
+        {
+          "id": 29,
+          "practice": false
+        },
+        {
+          "id": 37,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "number_line_ninja",
+      "route": "/game/1/38",
+      "islandId": 1,
+      "island": "Arithmetic Acropolis",
+      "title": "Number Line Ninja L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 2,
+          "practice": true
+        },
+        {
+          "id": 6,
+          "practice": false
+        },
+        {
+          "id": 14,
+          "practice": false
+        },
+        {
+          "id": 22,
+          "practice": false
+        },
+        {
+          "id": 30,
+          "practice": false
+        },
+        {
+          "id": 38,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "prime_pop",
+      "route": "/game/1/39",
+      "islandId": 1,
+      "island": "Arithmetic Acropolis",
+      "title": "Prime Pop L5",
+      "orientation": "portrait",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 3,
+          "practice": true
+        },
+        {
+          "id": 7,
+          "practice": false
+        },
+        {
+          "id": 15,
+          "practice": false
+        },
+        {
+          "id": 23,
+          "practice": false
+        },
+        {
+          "id": 31,
+          "practice": false
+        },
+        {
+          "id": 39,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "rounding_rocket",
+      "route": "/game/1/40",
+      "islandId": 1,
+      "island": "Arithmetic Acropolis",
+      "title": "Rounding Rocket L5",
+      "orientation": "portrait",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 4,
+          "practice": true
+        },
+        {
+          "id": 8,
+          "practice": false
+        },
+        {
+          "id": 16,
+          "practice": false
+        },
+        {
+          "id": 24,
+          "practice": false
+        },
+        {
+          "id": 32,
+          "practice": false
+        },
+        {
+          "id": 40,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "maths_vs_zombies",
+      "route": "/game/1/46",
+      "islandId": 1,
+      "island": "Arithmetic Acropolis",
+      "title": "Maths vs Zombies L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 41,
+          "practice": false
+        },
+        {
+          "id": 42,
+          "practice": true
+        },
+        {
+          "id": 43,
+          "practice": false
+        },
+        {
+          "id": 44,
+          "practice": false
+        },
+        {
+          "id": 45,
+          "practice": false
+        },
+        {
+          "id": 46,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "take_out_rush",
+      "route": "/game/2/10",
+      "islandId": 2,
+      "island": "Fraction Forest",
+      "title": "Take-Out Rush L5",
+      "orientation": "portrait",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 1,
+          "practice": true
+        },
+        {
+          "id": 6,
+          "practice": false
+        },
+        {
+          "id": 7,
+          "practice": false
+        },
+        {
+          "id": 8,
+          "practice": false
+        },
+        {
+          "id": 9,
+          "practice": false
+        },
+        {
+          "id": 10,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "fraction_forge",
+      "route": "/game/2/15",
+      "islandId": 2,
+      "island": "Fraction Forest",
+      "title": "Fraction Forge L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 2,
+          "practice": true
+        },
+        {
+          "id": 11,
+          "practice": false
+        },
+        {
+          "id": 12,
+          "practice": false
+        },
+        {
+          "id": 13,
+          "practice": false
+        },
+        {
+          "id": 14,
+          "practice": false
+        },
+        {
+          "id": 15,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "match3_equivalence",
+      "route": "/game/2/20",
+      "islandId": 2,
+      "island": "Fraction Forest",
+      "title": "Match Mastery L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 3,
+          "practice": true
+        },
+        {
+          "id": 16,
+          "practice": false
+        },
+        {
+          "id": 17,
+          "practice": false
+        },
+        {
+          "id": 18,
+          "practice": false
+        },
+        {
+          "id": 19,
+          "practice": false
+        },
+        {
+          "id": 20,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "percent_power",
+      "route": "/game/2/25",
+      "islandId": 2,
+      "island": "Fraction Forest",
+      "title": "Percent Power L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 4,
+          "practice": true
+        },
+        {
+          "id": 21,
+          "practice": false
+        },
+        {
+          "id": 22,
+          "practice": false
+        },
+        {
+          "id": 23,
+          "practice": false
+        },
+        {
+          "id": 24,
+          "practice": false
+        },
+        {
+          "id": 25,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "simplify_sprint",
+      "route": "/game/2/30",
+      "islandId": 2,
+      "island": "Fraction Forest",
+      "title": "Simplify Sprint L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 5,
+          "practice": true
+        },
+        {
+          "id": 26,
+          "practice": false
+        },
+        {
+          "id": 27,
+          "practice": false
+        },
+        {
+          "id": 28,
+          "practice": false
+        },
+        {
+          "id": 29,
+          "practice": false
+        },
+        {
+          "id": 30,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "angle_arena",
+      "route": "/game/3/12",
+      "islandId": 3,
+      "island": "Geometry Glacier",
+      "title": "Angle Arena L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 1,
+          "practice": true
+        },
+        {
+          "id": 8,
+          "practice": false
+        },
+        {
+          "id": 9,
+          "practice": false
+        },
+        {
+          "id": 10,
+          "practice": false
+        },
+        {
+          "id": 11,
+          "practice": false
+        },
+        {
+          "id": 12,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "polygon_palace",
+      "route": "/game/3/17",
+      "islandId": 3,
+      "island": "Geometry Glacier",
+      "title": "Polygon Palace L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 2,
+          "practice": true
+        },
+        {
+          "id": 13,
+          "practice": false
+        },
+        {
+          "id": 14,
+          "practice": false
+        },
+        {
+          "id": 15,
+          "practice": false
+        },
+        {
+          "id": 16,
+          "practice": false
+        },
+        {
+          "id": 17,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "area_architect",
+      "route": "/game/3/22",
+      "islandId": 3,
+      "island": "Geometry Glacier",
+      "title": "Area Architect L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 3,
+          "practice": true
+        },
+        {
+          "id": 18,
+          "practice": false
+        },
+        {
+          "id": 19,
+          "practice": false
+        },
+        {
+          "id": 20,
+          "practice": false
+        },
+        {
+          "id": 21,
+          "practice": false
+        },
+        {
+          "id": 22,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "rotation_relay",
+      "route": "/game/3/27",
+      "islandId": 3,
+      "island": "Geometry Glacier",
+      "title": "Transformation Station L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 4,
+          "practice": true
+        },
+        {
+          "id": 23,
+          "practice": false
+        },
+        {
+          "id": 24,
+          "practice": false
+        },
+        {
+          "id": 25,
+          "practice": false
+        },
+        {
+          "id": 26,
+          "practice": false
+        },
+        {
+          "id": 27,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "coordinates_quest",
+      "route": "/game/3/32",
+      "islandId": 3,
+      "island": "Geometry Glacier",
+      "title": "Coordinates Quest L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 5,
+          "practice": true
+        },
+        {
+          "id": 28,
+          "practice": false
+        },
+        {
+          "id": 29,
+          "practice": false
+        },
+        {
+          "id": 30,
+          "practice": false
+        },
+        {
+          "id": 31,
+          "practice": false
+        },
+        {
+          "id": 32,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "conversion_canyon",
+      "route": "/game/3/37",
+      "islandId": 3,
+      "island": "Geometry Glacier",
+      "title": "Conversion Canyon L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 6,
+          "practice": true
+        },
+        {
+          "id": 33,
+          "practice": false
+        },
+        {
+          "id": 34,
+          "practice": false
+        },
+        {
+          "id": 35,
+          "practice": false
+        },
+        {
+          "id": 36,
+          "practice": false
+        },
+        {
+          "id": 37,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "perimeter_path",
+      "route": "/game/3/42",
+      "islandId": 3,
+      "island": "Geometry Glacier",
+      "title": "Perimeter Path L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 7,
+          "practice": true
+        },
+        {
+          "id": 38,
+          "practice": false
+        },
+        {
+          "id": 39,
+          "practice": false
+        },
+        {
+          "id": 40,
+          "practice": false
+        },
+        {
+          "id": 41,
+          "practice": false
+        },
+        {
+          "id": 42,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "mean_machine",
+      "route": "/game/4/10",
+      "islandId": 4,
+      "island": "Data Desert",
+      "title": "Mean Machine L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 1,
+          "practice": true
+        },
+        {
+          "id": 2,
+          "practice": false
+        },
+        {
+          "id": 4,
+          "practice": false
+        },
+        {
+          "id": 6,
+          "practice": false
+        },
+        {
+          "id": 8,
+          "practice": false
+        },
+        {
+          "id": 10,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "graph_grabber",
+      "route": "/game/4/18",
+      "islandId": 4,
+      "island": "Data Desert",
+      "title": "Graph Grabber L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 11,
+          "practice": true
+        },
+        {
+          "id": 14,
+          "practice": false
+        },
+        {
+          "id": 15,
+          "practice": false
+        },
+        {
+          "id": 16,
+          "practice": false
+        },
+        {
+          "id": 17,
+          "practice": false
+        },
+        {
+          "id": 18,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "line_graph_lab",
+      "route": "/game/4/23",
+      "islandId": 4,
+      "island": "Data Desert",
+      "title": "Line Graph Lab L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 12,
+          "practice": true
+        },
+        {
+          "id": 19,
+          "practice": false
+        },
+        {
+          "id": 20,
+          "practice": false
+        },
+        {
+          "id": 21,
+          "practice": false
+        },
+        {
+          "id": 22,
+          "practice": false
+        },
+        {
+          "id": 23,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "data_detective",
+      "route": "/game/4/28",
+      "islandId": 4,
+      "island": "Data Desert",
+      "title": "Data Detective L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 13,
+          "practice": true
+        },
+        {
+          "id": 24,
+          "practice": false
+        },
+        {
+          "id": 25,
+          "practice": false
+        },
+        {
+          "id": 26,
+          "practice": false
+        },
+        {
+          "id": 27,
+          "practice": false
+        },
+        {
+          "id": 28,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "factor_frenzy",
+      "route": "/game/5/10",
+      "islandId": 5,
+      "island": "Operations Outpost",
+      "title": "Factor Frenzy L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 1,
+          "practice": true
+        },
+        {
+          "id": 2,
+          "practice": false
+        },
+        {
+          "id": 4,
+          "practice": false
+        },
+        {
+          "id": 6,
+          "practice": false
+        },
+        {
+          "id": 8,
+          "practice": false
+        },
+        {
+          "id": 10,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "multiplication_mine",
+      "route": "/game/5/19",
+      "islandId": 5,
+      "island": "Operations Outpost",
+      "title": "Multiplication Mine L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 11,
+          "practice": true
+        },
+        {
+          "id": 15,
+          "practice": false
+        },
+        {
+          "id": 16,
+          "practice": false
+        },
+        {
+          "id": 17,
+          "practice": false
+        },
+        {
+          "id": 18,
+          "practice": false
+        },
+        {
+          "id": 19,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "order_ops_arena",
+      "route": "/game/5/24",
+      "islandId": 5,
+      "island": "Operations Outpost",
+      "title": "Order Ops Arena L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 12,
+          "practice": true
+        },
+        {
+          "id": 20,
+          "practice": false
+        },
+        {
+          "id": 21,
+          "practice": false
+        },
+        {
+          "id": 22,
+          "practice": false
+        },
+        {
+          "id": 23,
+          "practice": false
+        },
+        {
+          "id": 24,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "formula_forge",
+      "route": "/game/5/29",
+      "islandId": 5,
+      "island": "Operations Outpost",
+      "title": "Formula Forge L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 13,
+          "practice": true
+        },
+        {
+          "id": 25,
+          "practice": false
+        },
+        {
+          "id": 26,
+          "practice": false
+        },
+        {
+          "id": 27,
+          "practice": false
+        },
+        {
+          "id": 28,
+          "practice": false
+        },
+        {
+          "id": 29,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "remainder_run",
+      "route": "/game/5/34",
+      "islandId": 5,
+      "island": "Operations Outpost",
+      "title": "Remainder Run L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 14,
+          "practice": true
+        },
+        {
+          "id": 30,
+          "practice": false
+        },
+        {
+          "id": 31,
+          "practice": false
+        },
+        {
+          "id": 32,
+          "practice": false
+        },
+        {
+          "id": 33,
+          "practice": false
+        },
+        {
+          "id": 34,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "time_keeper_cove",
+      "route": "/game/6/9",
+      "islandId": 6,
+      "island": "Measurement Mountain",
+      "title": "Chrono Dash: Time Trial L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 1,
+          "practice": false
+        },
+        {
+          "id": 5,
+          "practice": true
+        },
+        {
+          "id": 6,
+          "practice": false
+        },
+        {
+          "id": 7,
+          "practice": false
+        },
+        {
+          "id": 8,
+          "practice": false
+        },
+        {
+          "id": 9,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "problem_pyramid",
+      "route": "/game/6/14",
+      "islandId": 6,
+      "island": "Measurement Mountain",
+      "title": "Problem Pyramid L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 2,
+          "practice": false
+        },
+        {
+          "id": 10,
+          "practice": true
+        },
+        {
+          "id": 11,
+          "practice": false
+        },
+        {
+          "id": 12,
+          "practice": false
+        },
+        {
+          "id": 13,
+          "practice": false
+        },
+        {
+          "id": 14,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "unit_mixer",
+      "route": "/game/6/19",
+      "islandId": 6,
+      "island": "Measurement Mountain",
+      "title": "Lava Path L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 3,
+          "practice": false
+        },
+        {
+          "id": 15,
+          "practice": true
+        },
+        {
+          "id": 16,
+          "practice": false
+        },
+        {
+          "id": 17,
+          "practice": false
+        },
+        {
+          "id": 18,
+          "practice": false
+        },
+        {
+          "id": 19,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "change_counter",
+      "route": "/game/6/24",
+      "islandId": 6,
+      "island": "Measurement Mountain",
+      "title": "Change Counter L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 4,
+          "practice": false
+        },
+        {
+          "id": 20,
+          "practice": true
+        },
+        {
+          "id": 21,
+          "practice": false
+        },
+        {
+          "id": 22,
+          "practice": false
+        },
+        {
+          "id": 23,
+          "practice": false
+        },
+        {
+          "id": 24,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "crystal_core",
+      "route": "/game/8/1",
+      "islandId": 8,
+      "island": "Core of Calculation",
+      "title": "SATs Paper 1: Arithmetic",
+      "orientation": "landscape",
+      "tier": 1,
+      "levels": [
+        {
+          "id": 1,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "mirror_gate",
+      "route": "/game/8/2",
+      "islandId": 8,
+      "island": "Core of Calculation",
+      "title": "SATs Paper 2: Reasoning",
+      "orientation": "landscape",
+      "tier": 1,
+      "levels": [
+        {
+          "id": 2,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "matrix_match",
+      "route": "/game/8/3",
+      "islandId": 8,
+      "island": "Core of Calculation",
+      "title": "SATs Paper 3: Reasoning",
+      "orientation": "landscape",
+      "tier": 1,
+      "levels": [
+        {
+          "id": 3,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "potion_panic",
+      "route": "/game/7/9",
+      "islandId": 7,
+      "island": "Ratio Rapids",
+      "title": "Potion Panic L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 1,
+          "practice": true
+        },
+        {
+          "id": 2,
+          "practice": false
+        },
+        {
+          "id": 6,
+          "practice": false
+        },
+        {
+          "id": 7,
+          "practice": false
+        },
+        {
+          "id": 8,
+          "practice": false
+        },
+        {
+          "id": 9,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "share_splitter",
+      "route": "/game/7/14",
+      "islandId": 7,
+      "island": "Ratio Rapids",
+      "title": "Share Splitter L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 3,
+          "practice": true
+        },
+        {
+          "id": 10,
+          "practice": false
+        },
+        {
+          "id": 11,
+          "practice": false
+        },
+        {
+          "id": 12,
+          "practice": false
+        },
+        {
+          "id": 13,
+          "practice": false
+        },
+        {
+          "id": 14,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "ratio_fractions",
+      "route": "/game/7/19",
+      "islandId": 7,
+      "island": "Ratio Rapids",
+      "title": "Ratio Racer L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 4,
+          "practice": true
+        },
+        {
+          "id": 15,
+          "practice": false
+        },
+        {
+          "id": 16,
+          "practice": false
+        },
+        {
+          "id": 17,
+          "practice": false
+        },
+        {
+          "id": 18,
+          "practice": false
+        },
+        {
+          "id": 19,
+          "practice": false
+        }
+      ]
+    },
+    {
+      "key": "scale_builder",
+      "route": "/game/7/24",
+      "islandId": 7,
+      "island": "Ratio Rapids",
+      "title": "Scale Builder L5",
+      "orientation": "landscape",
+      "tier": 5,
+      "levels": [
+        {
+          "id": 5,
+          "practice": true
+        },
+        {
+          "id": 20,
+          "practice": false
+        },
+        {
+          "id": 21,
+          "practice": false
+        },
+        {
+          "id": 22,
+          "practice": false
+        },
+        {
+          "id": 23,
+          "practice": false
+        },
+        {
+          "id": 24,
+          "practice": false
+        }
+      ]
+    }
+  ]
+}

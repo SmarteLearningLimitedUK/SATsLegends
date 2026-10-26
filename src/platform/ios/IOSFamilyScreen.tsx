@@ -3,6 +3,8 @@ import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { hasMathariaAccess, useFamily } from '../../website/FamilyAccount';
 import { supabase } from '../../website/services/supabase';
 import IOSAccountLayout from './IOSAccountLayout';
+import {ArrowRight} from 'lucide-react';
+import guide from '../../assets/reference-screens/island-guide.png';
 
 export default function IOSFamilyScreen() {
   const family = useFamily(), navigate = useNavigate();
@@ -26,13 +28,13 @@ export default function IOSFamilyScreen() {
       await family.refresh();
     });
   }
-  return <IOSAccountLayout title="Who’s playing?">
-    <p>Your learners and progress are shared with your SATs Legends account.</p>
+  return <IOSAccountLayout title="Who’s playing?" variant="learners">
+    <p>Choose your learner and return to Matharia.</p>
     {(error || family.error) && <p role="alert">{error || family.error}</p>}
     {message && <p role="status">{message}</p>}
     {family.error ? <button type="button" disabled={busy} onClick={() => void action(family.refresh)}>Reload account</button> : <>
       {!active ? <><p>Matharia access is needed to begin.</p><Link className="ios-primary" to="/subscriptions">View Matharia access</Link></> :
-        family.children.length ? <div className="ios-learner-list">{family.children.map(child => <button key={child.id} type="button" onClick={() => { family.selectChild(child.id); navigate('/play'); }}><span className="ios-learner-initial" aria-hidden="true">{child.nickname.slice(0, 1)}</span><span>{child.nickname}<small>Continue adventure →</small></span></button>)}</div> :
+        family.children.length ? <div className="ios-learner-list">{family.children.map(child => <button key={child.id} type="button" onClick={() => { family.selectChild(child.id); navigate('/play'); }}><span className="ios-learner-hero" aria-hidden="true"><img src={guide} alt="" /></span><span className="ios-learner-name"><small>Your adventure</small><strong>{child.nickname}</strong><span>Continue adventure <ArrowRight aria-hidden="true" /></span></span></button>)}</div> :
           <form onSubmit={addChild}><label>Learner nickname<input name="nickname" required maxLength={24} autoComplete="off" disabled={busy} /></label><button type="submit" disabled={busy}>{busy ? 'Creating…' : 'Create learner'}</button></form>}
     </>}
     <nav className="ios-account-links" aria-label="Account"><Link to="/subscriptions">Matharia access</Link><button type="button" disabled={busy} onClick={() => void action(async () => { await family.signOut(); navigate('/login', { replace: true }); })}>Sign out</button></nav>

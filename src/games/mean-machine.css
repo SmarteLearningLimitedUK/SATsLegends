@@ -196,6 +196,7 @@
  #root [data-mean-game] .mean-machine-playfield {flex:none;height:280px;min-height:280px;overflow:visible;}
  #root [data-mean-game] .mean-machine-playfield > div:last-child {height:100%;overflow:visible;}
  #root [data-mean-game] .mean-machine-stage {width:200px;height:250px;max-height:none;}
- #root [data-mean-game] .mean-engine-scan-button {min-width:44px;min-height:44px;}
  #root [data-mean-game] .mean-machine-answer-rail {flex:none;}
 }
+/* The engine itself scales; retain the hit area in every orientation. */
+#root [data-mean-game] .mean-engine-scan-button {min-width:max(46px,calc(44px / var(--game-stage-scale,1)));min-height:max(44px,calc(44px / var(--game-stage-scale,1)));}

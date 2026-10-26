@@ -113,7 +113,7 @@
 }
 @media(orientation:landscape) and (max-height:550px){
 #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game] .game-question-context{display:none}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game] .question-subtitle{font-size:12px!important;line-height:1.15!important;margin-top:2px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game] .question-subtitle{font-size:var(--prod-instruction-compact,14px)!important;line-height:1.25!important;margin-top:2px}
 #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='line_graph_lab'] .game-question-card{position:relative!important;inset:auto!important;transform:none;width:100%;flex-shrink:0}
 }
 .perimeter-edge-controls{display:contents}
@@ -157,13 +157,13 @@
 }
 /* Keep information and input bands separate on short landscape screens. */
 @media(orientation:landscape) and (max-height:550px){
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-token-grid button>span{font-size:11px!important;line-height:12px!important;white-space:nowrap;letter-spacing:0}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .game-submit-dock button{font-size:11px!important;line-height:13px!important;letter-spacing:0!important;padding:3px!important;min-height:48px;white-space:normal;overflow-wrap:normal}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-token-grid button>span{font-size:16px!important;line-height:20px!important;white-space:nowrap;letter-spacing:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .game-submit-dock button{font-size:14px!important;line-height:18px!important;letter-spacing:0!important;padding:3px!important;min-height:48px;white-space:normal;overflow-wrap:normal}
 #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='conversion_canyon'] .conversion-token-grid button{padding:2px!important;gap:0}
 #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='data_detective'] .detective-evidence-workspace{padding-top:5px}
 #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='data_detective'] .game-question-card{position:relative!important;inset:auto!important;transform:none}
 #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='scale_builder'] .scale-numeric-controls{overflow:auto;align-self:stretch}
-#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='mean_machine'] .mean-engine-scan-button{font-size:11px!important;line-height:14px!important;letter-spacing:0;padding:2px!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='mean_machine'] .mean-engine-scan-button{font-size:12px!important;line-height:16px!important;letter-spacing:0;padding:2px!important}
 }
 /* Bounds verified against question, response and navigation regions. */
 @media(orientation:landscape) and (max-height:550px){

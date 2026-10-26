@@ -1,53 +1,65 @@
 .ios-account {
-  min-height:100svh; width:100%; color:#fff7de; background:#081b29;
-  background-image:linear-gradient(180deg,rgba(8,27,41,.12),#081b29 260px),url('../../assets/maps/backgroundsforgames/charselect.jpg');
-  background-position:center top;background-size:cover;background-repeat:no-repeat;
-  padding:calc(env(safe-area-inset-top,0px) + 28px) max(24px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 28px) max(24px,env(safe-area-inset-left,0px));
-  font-family:'Fredoka Variable',sans-serif;overflow-wrap:anywhere;
+  --account-safe-top:env(safe-area-inset-top,0px);--account-safe-bottom:env(safe-area-inset-bottom,0px);
+  min-height:100svh;width:100%;color:var(--prod-text);background:#0d3d4a;
+  display:grid;grid-template-rows:auto 1fr;gap:20px;align-content:start;
+  padding:calc(var(--account-safe-top) + 18px) max(20px,env(safe-area-inset-right,0px)) calc(var(--account-safe-bottom) + 24px) max(20px,env(safe-area-inset-left,0px));
+  font-family:var(--prod-font-body);overflow-wrap:anywhere;isolation:isolate;
 }
-.ios-account * {box-sizing:border-box;}
-.ios-account-brand {text-align:center;padding:34px 0 60px;animation:ios-account-in .45s ease-out both;}
-.ios-account-brand a {font-size:clamp(30px,9vw,44px);font-weight:650;color:#fff7de;text-decoration:none;text-shadow:0 3px 12px #081b29;}
-.ios-account-brand span {color:#ffcf63;}
-.ios-account-brand p {margin:2px 0 0;letter-spacing:.24em;text-transform:uppercase;font-size:13px;}
-.ios-account-content {max-width:420px;margin:auto;animation:ios-account-in .35s .08s ease-out both;}
-.ios-account-content h1 {font-size:30px;line-height:1.1;margin:0 0 12px;font-weight:600;}
-.ios-account-content p {font-size:15px;line-height:1.5;color:#ccd9dc;margin:0 0 20px;}
-.ios-account form {display:grid;gap:16px;margin-top:22px;}
-.ios-account label {display:grid;gap:7px;font-size:15px;line-height:1.4;}
-.ios-account input:not([type='checkbox']) {min-width:0;width:100%;min-height:50px;padding:12px 14px;border:1px solid #66818a;border-radius:12px;background:#122e3e;color:#fff;font:inherit;font-size:16px;}
-.ios-account input:focus-visible,.ios-account button:focus-visible,.ios-account a:focus-visible {outline:3px solid #ffcf63;outline-offset:3px;}
-.ios-account .website-password-field {display:flex;position:relative;}
-.ios-account .website-password-field input {padding-right:54px;}
-.ios-account button,.ios-account .ios-primary {display:inline-flex;justify-content:center;align-items:center;gap:10px;min-height:48px;border-radius:12px;padding:12px 16px;background:#ffcf63;color:#172c36;font:inherit;font-weight:600;border:0;text-decoration:none;cursor:pointer;transition:transform .15s ease,background .15s ease;}
-.ios-account button:active {transform:scale(.98);}
-.ios-account button:disabled {opacity:.55;cursor:default;}
-.ios-account .website-password-field button {position:absolute;right:3px;top:3px;min-height:44px;width:44px;padding:10px;background:transparent;color:#d8e5e6;}
-.ios-account .family-checkbox {display:flex;align-items:flex-start;font-size:13px;color:#ccd9dc;gap:10px;}
-.ios-account .family-checkbox input {width:20px;height:20px;flex-shrink:0;accent-color:#ffcf63;}
-.ios-account [role='alert'],.ios-account [role='status'] {padding:12px;border-left:3px solid #ffcf63;background:#173d49;color:#fff7de;border-radius:4px;}
-.ios-account [role='alert'] {border-color:#ff9c9c;}
-.ios-account-links {display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:24px;flex-wrap:wrap;}
-.ios-account a {color:#ffcf63;}
-.ios-account-links a,.ios-account-links button {font-size:14px;min-height:44px;display:inline-flex;align-items:center;}
-.ios-account-links button {background:transparent;color:#ccd9dc;padding:0;}
-.ios-learner-list {display:grid;gap:12px;margin:24px 0;}
-.ios-learner-list button {justify-content:flex-start;text-align:left;background:#173d49;color:#fff7de;padding:16px;}
-.ios-learner-list small {display:block;font-size:13px;font-weight:400;color:#c1d4d7;margin-top:4px;}
-.ios-learner-initial {display:grid;place-items:center;flex-shrink:0;width:48px;height:48px;border-radius:50%;background:#ffcf63;color:#173340;font-size:24px;}
-.ios-account .apple-subscriptions {padding:0;max-width:none;min-height:0;}
-.ios-account .apple-subscriptions h1 {display:none;}
-.ios-account .apple-subscriptions h2 {font-size:22px;}
-.ios-account .apple-plan-list {display:grid;gap:16px;}
-.ios-account .apple-subscription-actions {display:grid;gap:12px;margin-top:20px;}
-.ios-account .family-small {font-size:12px;}
-.ios-parent-settings {margin-top:28px;border-top:1px solid #31505e;padding-top:16px;}
-.ios-parent-settings summary {min-height:44px;cursor:pointer;color:#ccd9dc;}
-.ios-parent-settings > button {margin-top:16px;margin-right:8px;background:#173d49;color:#fff7de;}
-@keyframes ios-account-in {from {opacity:0;transform:translateY(8px);}to {opacity:1;transform:translateY(0);}}
-@media (orientation:landscape) and (max-height:600px) {
-  .ios-account {background-size:cover;background-image:linear-gradient(90deg,rgba(8,27,41,.6),#081b29 60%),url('../../assets/maps/backgroundsforgames/charselect.jpg');display:grid;grid-template-columns:minmax(180px,1fr) minmax(280px,420px);gap:28px;align-items:start;}
-  .ios-account-brand {position:sticky;top:40px;padding:30px 0;}
-  .ios-account-content {width:100%;}
+.ios-account::before {content:'';position:fixed;inset:0;z-index:-1;background:url('../../assets/production-entry/account-portrait.webp') center/cover no-repeat;pointer-events:none}
+.ios-account * {box-sizing:border-box}
+.ios-account-brand {text-align:center;align-self:start;animation:ios-account-in var(--prod-duration-enter) var(--prod-ease) both}
+.ios-account-brand a {display:block;width:min(48vw,210px);margin:auto;text-decoration:none}
+.ios-account-brand svg {display:block;width:100%;height:auto;filter:drop-shadow(0 3px 3px #17385466)}
+.ios-account-brand p {margin:0;letter-spacing:.25em;text-transform:uppercase;font-size:12px;color:#fff8db;text-shadow:0 2px 3px #124358}
+.ios-account-content {width:min(100%,440px);margin:0 auto;align-self:start;padding:22px;border:1px solid #d7c38b;border-radius:var(--prod-radius-panel);background:linear-gradient(145deg,#18493ff5,#082f32f7);box-shadow:var(--prod-shadow);animation:ios-account-in var(--prod-duration-enter) 70ms var(--prod-ease) both}
+.ios-account-content h1 {font:700 30px/1.1 var(--prod-font-display);margin:0 0 10px;color:var(--prod-text);text-wrap:balance}
+.ios-account-content p {font-size:16px;line-height:1.45;color:var(--prod-text-muted);margin:0 0 18px}
+.ios-account form {display:grid;gap:16px;margin-top:18px}
+.ios-account label {display:grid;gap:7px;font-size:16px;line-height:1.35}
+.ios-account input:not([type='checkbox']) {min-width:0;width:100%;min-height:50px;padding:12px 14px;border:1px solid #a9c4b7;border-radius:12px;background:#082d30;color:#fff8e3;font:inherit;font-size:16px;box-shadow:inset 0 2px 4px #011c2044}
+.ios-account input::placeholder {color:#aac2bc;opacity:1}
+.ios-account :is(input,button,a,summary):focus-visible {outline:3px solid var(--prod-focus);outline-offset:3px}
+.ios-account .website-password-field {display:flex;position:relative}
+.ios-account .website-password-field input {padding-right:56px}
+.ios-account button,.ios-account .ios-primary {display:inline-flex;justify-content:center;align-items:center;gap:10px;min-height:50px;border:1px solid var(--prod-gold-edge);border-radius:var(--prod-radius-control);padding:12px 16px;background:var(--prod-action);color:var(--prod-ink);font:650 17px/1.25 var(--prod-font-body);text-decoration:none;cursor:pointer;box-shadow:inset 0 2px #fff5cf,0 3px #916221;transition:transform var(--prod-duration-press) var(--prod-ease),box-shadow var(--prod-duration-press) var(--prod-ease)}
+.ios-account button:active {transform:translateY(2px);box-shadow:inset 0 1px #fff5cf,0 1px #916221}
+.ios-account button:disabled {opacity:.6;cursor:default}
+.ios-account .website-password-field button {position:absolute;right:3px;top:3px;min-height:44px;width:44px;padding:10px;background:transparent;border:0;box-shadow:none;color:var(--prod-text-muted)}
+.ios-account .family-checkbox {display:flex;align-items:flex-start;min-height:44px;font-size:14px;color:var(--prod-text-muted);gap:10px;line-height:1.45}
+.ios-account .family-checkbox input {width:22px;height:22px;flex-shrink:0;accent-color:var(--prod-gold)}
+.ios-account [role='alert'],.ios-account [role='status'] {padding:12px;border-left:3px solid var(--prod-gold);background:#214f49;color:var(--prod-text);border-radius:8px}
+.ios-account [role='alert'] {border-color:var(--prod-error)}
+.ios-account-links {display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:20px;flex-wrap:wrap}
+.ios-account a {color:var(--prod-gold)}
+.ios-account-links a,.ios-account-links button {font-size:14px;min-height:44px;display:inline-flex;align-items:center;text-decoration:none}
+.ios-account-links button {background:transparent;color:var(--prod-text-muted);border:0;box-shadow:none;padding:0 6px}
+.ios-account[data-account-variant='learners'] {grid-template-rows:minmax(130px,29svh) auto}
+.ios-learner-list {display:grid;gap:14px;margin:20px 0}
+.ios-learner-list>button {min-height:124px;justify-content:flex-start;text-align:left;gap:16px;padding:14px 18px;background:linear-gradient(150deg,#2b6b54,#103e36 80%);color:var(--prod-text);border:1px solid #d3bd80;box-shadow:inset 0 2px #bddec02e,0 4px #082824,0 8px 18px #041e2f44}
+.ios-learner-hero {width:76px;height:84px;flex-shrink:0;display:block;position:relative;border:2px solid #d8c282;border-radius:40% 40% 35% 35%;background:linear-gradient(#527a62,#15493f);overflow:hidden}
+.ios-learner-hero img {width:100%;height:100%;object-fit:cover;object-position:60% 0}
+.ios-learner-name {min-width:0;flex:1;display:flex;flex-direction:column;gap:5px}
+.ios-learner-name>small {font-size:12px;font-weight:500;letter-spacing:.06em;color:#d6dfbd}
+.ios-learner-name>strong {font:700 27px/1.05 var(--prod-font-display);overflow-wrap:anywhere}
+.ios-learner-name>span {display:flex;align-items:center;gap:8px;font-size:14px;line-height:1.25;color:#ffe19b}
+.ios-learner-name svg {width:18px;height:18px;flex-shrink:0}
+.ios-account .apple-subscriptions {padding:0;max-width:none;min-height:0}
+.ios-account .apple-subscriptions h1 {display:none}
+.ios-account .apple-subscriptions h2 {font-size:22px}
+.ios-account .apple-plan-list {display:grid;gap:16px}
+.ios-account .apple-subscription-actions {display:grid;gap:12px;margin-top:20px}
+.ios-account .family-small {font-size:14px}
+.ios-parent-settings {margin-top:20px;border-top:1px solid #7d9d85;padding-top:8px}
+.ios-parent-settings summary {min-height:44px;display:list-item;align-content:center;cursor:pointer;color:var(--prod-text-muted);font-size:15px}
+.ios-parent-settings>button {margin:12px 8px 0 0;background:#22594a;color:var(--prod-text);border-color:#a0bda1;box-shadow:none}
+@media(max-width:360px){.ios-account{padding-right:14px;padding-left:14px;gap:14px}.ios-account-content{padding:18px}.ios-account-content p{font-size:15px}.ios-learner-list>button{padding:12px;gap:12px}.ios-learner-hero{width:62px;height:76px}.ios-learner-name>strong{font-size:24px}}
+@media(min-width:700px){.ios-account{padding-top:calc(var(--account-safe-top) + 28px)}.ios-account-content{padding:28px}.ios-account[data-account-variant='learners']{grid-template-rows:minmax(180px,28svh) auto}}
+@media(orientation:landscape){
+ .ios-account {grid-template-columns:minmax(180px,1fr) minmax(300px,440px);grid-template-rows:auto;gap:32px;align-items:center;padding-top:calc(var(--account-safe-top) + 28px)}
+ .ios-account::before {background-image:url('../../assets/reference-screens/terrace-scene.png');background-position:center}
+ .ios-account-brand {position:sticky;top:calc(var(--account-safe-top) + 30px);align-self:start;padding-top:12px}
+ .ios-account-brand a {width:min(30vw,280px)}
+ .ios-account[data-account-variant='learners'] {grid-template-rows:auto}
 }
-@media (prefers-reduced-motion:reduce) {.ios-account * {animation:none!important;transition:none!important;}}
+@keyframes ios-account-in {from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.ios-account *{animation:none!important;transition:none!important}}

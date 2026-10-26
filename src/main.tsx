@@ -7,6 +7,7 @@ import '@fontsource/baloo-2/latin-600.css';
 import '@fontsource/baloo-2/latin-700.css';
 import '@fontsource/baloo-2/latin-800.css';
 import './index.css';
+import './design/production-tokens.css';
 import './design/legend-theme.css';
 import './design/island-game-theme.css';
 import { initializeNativeApp, IS_IOS_APP } from './platform/nativeApp';

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowLeft, Lightbulb, HelpCircle, LayoutGrid, Music2, Volume2, VolumeX } from 'lucide-react';
+import { ArrowLeft, Lightbulb, LayoutGrid, Music2, Volume2, VolumeX } from 'lucide-react';
 import { ReferenceArt } from './game-ui/ReferenceScreenArt';
 import { triggerHaptic } from '../haptics';
 import { playGameSound } from '../audio/gameAudio';
@@ -41,7 +41,7 @@ const GameActionDock: React.FC<GameActionDockProps> = ({ onBack, onHelp, onWork,
   return (
     <nav className={`legend-dock-surface${referenceSkin ? ' reference-controls' : ''}`} aria-label="Game controls">
       <button type="button" className="legend-dock-button" data-button-skin="none" data-ui-sound="handled" aria-label="Back" title="Back to islands" onClick={() => tap(onBack)}>{referenceSkin && <ReferenceArt part="dock-button" />}<ArrowLeft aria-hidden="true" /><span>Back</span></button>
-      {onHelp ? <button type="button" className="legend-dock-button" data-button-skin="none" data-ui-sound="handled" data-game-tips-control aria-label="How to play" aria-haspopup="dialog" title="Rules and tips" onClick={(event) => { event.currentTarget.focus({ preventScroll: true }); tap(onHelp); }}>{referenceSkin && <ReferenceArt part="dock-button" />}{referenceSkin ? <HelpCircle aria-hidden="true" /> : <Lightbulb aria-hidden="true" />}<span>{referenceSkin ? 'Help' : 'Tips'}</span></button> : null}
+      {onHelp ? <button type="button" className="legend-dock-button" data-button-skin="none" data-ui-sound="handled" data-game-tips-control aria-label="How to play" aria-haspopup="dialog" title="Rules and tips" onClick={(event) => { event.currentTarget.focus({ preventScroll: true }); tap(onHelp); }}>{referenceSkin && <ReferenceArt part="dock-button" />}<Lightbulb aria-hidden="true" /><span>{referenceSkin ? 'Help' : 'Tips'}</span></button> : null}
       {onWork ? <button type="button" className="legend-dock-button" data-button-skin="none" data-ui-sound="handled" aria-label="Open on-screen working board" onClick={() => tap(onWork)}>{referenceSkin && <ReferenceArt part="dock-button" />}<LayoutGrid aria-hidden="true" /><span>Board</span></button> : null}
       <button type="button" className="legend-dock-button" data-button-skin="none" data-ui-sound="handled" aria-label={isMuted ? 'Unmute audio' : 'Mute audio'} aria-pressed={isMuted} onClick={() => tap(() => {
         const muted = !isMuted;

@@ -5,20 +5,20 @@
   --legend-label-size: 17px;
   --legend-body-size: 19px;
   --legend-question-size: 22px;
-  --legend-ink: #261047;
-  --legend-blue: #451ccb;
-  --legend-cyan: #d4c5ff;
-  --legend-gold: #fde161;
-  --legend-paper: #f0eef7;
-  --legend-muted: #c6bddf;
-  --legend-surface: linear-gradient(145deg, #391878 0%, #25114f 55%, #1b0b3c 100%);
-  --legend-edge: #9271c8;
-  --legend-shadow: 0 8px 24px rgba(20, 7, 47, .3);
-  --legend-sheen: inset 0 2px 0 rgba(220, 212, 255, .2);
+  --legend-ink: var(--prod-ink);
+  --legend-blue: var(--prod-surface-raised);
+  --legend-cyan: var(--prod-text-muted);
+  --legend-gold: var(--prod-gold);
+  --legend-paper: var(--prod-text);
+  --legend-muted: var(--prod-text-muted);
+  --legend-surface: var(--prod-panel);
+  --legend-edge: var(--prod-gold);
+  --legend-shadow: var(--prod-shadow);
+  --legend-sheen: inset 0 2px 0 #e0f4dc33;
   --sat-button-primary-skin: linear-gradient(160deg, #ffe9a0, #ffd56b 36%, #efb83d);
-  --sat-button-secondary-skin: linear-gradient(150deg, #5b2cb1, #391878 55%, #25114f);
+  --sat-button-secondary-skin: var(--prod-panel);
   --sat-button-success-skin: linear-gradient(150deg, #9ae6b6, #63cba4 60%, #42ad92);
-  --sat-button-accent-skin: linear-gradient(145deg, #5b2cb1, #2d1265);
+  --sat-button-accent-skin: var(--prod-panel);
   --sat-button-cta-skin: linear-gradient(160deg, #ffe9a0, #ffd56b 36%, #efb83d);
 }
 
@@ -77,13 +77,13 @@
 #root .app-viewport.sat-theme-bluegold :is(.licensed-board-frame, .licensed-overlay-card)::before,
 #root .app-viewport.sat-theme-bluegold :is(.licensed-board-frame, .licensed-overlay-card)::after { content: none !important; }
 #root .app-viewport.sat-theme-bluegold.screen-gameplay .game-shell-host .aaa-playfield-shell:not(.border-0) {
-  background: linear-gradient(145deg, rgba(57, 24, 120, .7), rgba(20, 7, 47, .86)) !important;
-  border: 2px solid rgba(182, 175, 227, .55) !important;
+  background: var(--prod-panel) !important;
+  border: 2px solid var(--prod-gold) !important;
   box-shadow: var(--legend-sheen), var(--legend-shadow) !important;
 }
 
 /* Root scoping gives this skin priority over the existing contextual button resets. */
-/* Shared controls: warm gold actions, blue options, mint success. */
+/* Shared controls: warm gold actions, emerald options, mint success. */
 #root .app-viewport.sat-theme-bluegold :is(.ui-button-primary, .ui-action-button, .game-button-primary, .licensed-submit-button, .licensed-wood-button, .fantasy-cta-button, .hero-cta-button, .gold-pill-shell, .mission-action-btn-primary, .potion-brew-button),
 .legend-dialog .ui-button-primary {
   border: 2px solid #be8425 !important;
@@ -97,11 +97,11 @@
 }
 #root .app-viewport.sat-theme-bluegold :is(.ui-button-secondary, .game-button-secondary, .licensed-answer-button, .licensed-wood-button-secondary, .casual-action-button, .mission-action-btn-secondary),
 .legend-dialog .ui-button-secondary {
-  border: 2px solid #a98ee1 !important;
+  border: 2px solid var(--prod-gold) !important;
   border-radius: 14px !important;
-  background: linear-gradient(150deg, #5b2cb1, #391878 55%, #25114f) !important;
-  color: #f0eef7 !important;
-  box-shadow: inset 0 2px 0 rgba(220, 212, 255, .24), 0 3px 0 #14072f !important;
+  background: var(--prod-panel) !important;
+  color: var(--prod-text) !important;
+  box-shadow: var(--legend-sheen), 0 3px 0 var(--prod-surface-deep) !important;
   transition: transform 140ms ease, filter 140ms ease, box-shadow 140ms ease !important;
 }
 #root .app-viewport.sat-theme-bluegold :is(.ui-button-success, .mission-action-btn-success),
@@ -114,10 +114,10 @@
 }
 #root .app-viewport.sat-theme-bluegold :is(.ui-icon-button, .ui-close-button, .avatar-hero-arrow, .legend-dock-button),
 .legend-dialog :is(.ui-icon-button, .ui-close-button) {
-  border: 2px solid #a98ee1 !important;
+  border: 2px solid var(--prod-gold) !important;
   border-radius: 13px !important;
-  background: linear-gradient(145deg, #5b2cb1, #2d1265) !important;
-  box-shadow: var(--legend-sheen), 0 3px 0 #14072f !important;
+  background: var(--prod-panel) !important;
+  box-shadow: var(--legend-sheen), 0 3px 0 var(--prod-surface-deep) !important;
   color: #fff !important;
   transition: transform 140ms ease, filter 140ms ease !important;
 }
@@ -144,7 +144,7 @@
 
 /* Mission frame: one quiet surface, no competing illustrated banner. */
 #root .app-viewport.sat-theme-bluegold .game-question-card {
-  border: 2px solid rgba(182, 175, 227, .72) !important;
+  border: 2px solid var(--prod-gold) !important;
   border-radius: 18px;
   background: var(--legend-surface) !important;
   box-shadow: var(--legend-sheen), var(--legend-shadow) !important;
@@ -163,7 +163,7 @@
   text-shadow: none;
 }
 .sat-theme-bluegold .game-question-card .game-question-copy { font-size: var(--legend-question-size); font-weight: 500; line-height: 1.35; }
-.sat-theme-bluegold .game-question-card .question-subtitle { color: #e0d8ff; font-size: var(--legend-label-size); line-height: 1.4; }
+.sat-theme-bluegold .game-question-card .question-subtitle { color: var(--prod-text-muted); font-size: var(--legend-label-size); line-height: 1.4; }
 
 /* Essential labels share one readable floor even when the stage is scaled. */
 #root .app-viewport.sat-theme-bluegold.screen-gameplay .game-shell-host :is(.text-xs, .text-sm, .text-aaa-micro, .text-aaa-sm, [class*="text-[0."], [class*="text-[clamp(0."], .text-\[8px\], .text-\[9px\], .text-\[10px\], .text-\[11px\], .text-\[12px\], .text-\[13px\], .text-\[14px\]) {
@@ -204,12 +204,12 @@
 }
 .legend-hud-avatar {
   flex: 0 0 auto; width: clamp(40px, 10vw, 54px); height: clamp(40px, 10vw, 54px);
-  border: 2px solid #fde161; border-radius: 12px; background: #2d1265; overflow: hidden;
+  border: 2px solid var(--prod-gold); border-radius: 12px; background: var(--prod-surface-deep); overflow: hidden;
 }
 .legend-hud-avatar img { height: 100%; width: 100%; object-fit: contain; transform: scale(1.9); }
 .legend-hud-mission { min-width: 0; flex: 1; }
-.legend-hud-label { color: #d4c5ff; font-size: var(--legend-label-size); letter-spacing: .035em; text-transform: uppercase; }
-.legend-hud-title { color: #f0eef7; font-size: var(--legend-body-size); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.legend-hud-label { color: var(--prod-text-muted); font-size: var(--legend-label-size); letter-spacing: .035em; text-transform: uppercase; }
+.legend-hud-title { color: var(--prod-text); font-size: var(--legend-body-size); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .legend-hud-streak { color: var(--legend-gold); font-size: var(--legend-label-size); display: inline-flex; align-items: center; gap: 3px; }
 .legend-hud-lives { flex-shrink: 0; display: flex; align-items: center; gap: 3px; color: #fb8694; }
 .legend-hud-lives svg { width: 15px; height: 15px; }
@@ -226,7 +226,7 @@
 .legend-dock-button { display: flex; width: max(52px, calc(52px / var(--game-stage-scale, 1))); height: max(46px, calc(46px / var(--game-stage-scale, 1))); flex-direction: column; align-items: center; justify-content: center; gap: 1px; }
 .legend-dock-button svg { height: max(18px, calc(18px / var(--game-stage-scale, 1))); width: max(18px, calc(18px / var(--game-stage-scale, 1))); }
 .legend-dock-button span { font-size: var(--legend-label-size); line-height: 1.1; }
-.legend-dock-base { pointer-events: none; position: absolute; inset: auto 0 0; height: calc((4.25rem + env(safe-area-inset-bottom)) / var(--game-stage-scale, 1)); background: #14072f; }
+.legend-dock-base { pointer-events: none; position: absolute; inset: auto 0 0; height: calc((4.25rem + env(safe-area-inset-bottom)) / var(--game-stage-scale, 1)); background: var(--prod-surface-deep); }
 .legend-map-dock { position: relative; display: inline-flex; flex: 0 0 auto; align-items: center; justify-content: center; max-width: 100%; padding: 6px 8px; border: 2px solid var(--legend-edge); border-radius: 18px; background: var(--legend-surface); box-shadow: var(--legend-sheen), var(--legend-shadow); }
 .legend-map-dock-button { display: flex; flex: 0 0 62px; width: 62px; height: 54px; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border: 2px solid #a98ee1; border-radius: 13px; background: linear-gradient(145deg,#5b2cb1,#2d1265); color: #f0eef7; box-shadow: inset 0 1px 0 #dcd4ff44,0 3px 0 #14072f; transition: transform 140ms ease, filter 140ms ease; }
 .legend-map-dock-button:hover { filter: brightness(1.12); }
@@ -332,9 +332,9 @@
 }
 
 /* Semibold keeps the rounded type clear across gameplay, menus and dialogs. */
-#root :is(.iphone-game-stage, .legend-dialog, .legend-hud) *,
-#root .app-viewport.sat-theme-bluegold * {
-  font-weight: 600 !important;
+#root :is(.iphone-game-stage, .legend-dialog, .legend-hud),
+#root .app-viewport.sat-theme-bluegold {
+  font-weight: 600;
 }
 #root :is(.iphone-game-stage, .legend-dialog) :is(button, .question-title, .question-subtitle, .game-question-context, .game-question-copy) {
   text-shadow: none !important;

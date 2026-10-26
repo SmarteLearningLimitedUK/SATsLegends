@@ -1,0 +1,43 @@
+.production-welcome {
+  position:relative;width:100%;height:100%;min-height:0;isolation:isolate;
+  color:var(--prod-text);font-family:var(--prod-font-body);background:#11667b;
+  display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+  padding:calc(env(safe-area-inset-top,0px) + 22px) 20px calc(env(safe-area-inset-bottom,0px) + 26px);
+}
+.production-welcome-scene {position:absolute;inset:0;z-index:-1;animation:production-scene-enter var(--prod-duration-enter) var(--prod-ease) both}
+.production-welcome-scene img {display:block;width:100%;height:100%;object-fit:cover;object-position:center bottom}
+.production-welcome-brand {width:min(67%,300px);text-align:center;animation:production-entry-reveal var(--prod-duration-enter) var(--prod-ease) both}
+.production-welcome-brand svg {display:block;width:100%;height:auto;filter:drop-shadow(0 4px 3px #17385466)}
+.production-welcome-brand p {color:#fff7d4;font-size:12px;letter-spacing:.26em;text-transform:uppercase;margin:0;text-shadow:0 2px 3px #173d53;font-weight:600}
+.production-welcome-action {width:min(100%,390px);padding:12px;border:1px solid #e4c783;border-radius:20px;background:var(--prod-panel);box-shadow:var(--prod-shadow);text-align:center;animation:production-entry-reveal var(--prod-duration-enter) 100ms var(--prod-ease) both}
+.production-welcome-action p {margin:0 0 10px;font-size:18px;line-height:1.25;color:var(--prod-text);overflow-wrap:anywhere}
+.production-welcome-action button {width:100%;min-height:56px;display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 16px;border:1px solid var(--prod-gold-edge);border-radius:var(--prod-radius-control);color:var(--prod-ink);background:var(--prod-action);box-shadow:inset 0 2px #fff6cd,0 3px #946622;font-family:var(--prod-font-body);font-weight:650;font-size:19px;line-height:1.2;cursor:pointer;transition:transform var(--prod-duration-press) var(--prod-ease),box-shadow var(--prod-duration-press) var(--prod-ease)}
+.production-welcome-action button:active {transform:translateY(2px);box-shadow:inset 0 2px #fff6cd,0 1px #946622}
+.production-welcome-action button:focus-visible {outline:3px solid var(--prod-focus);outline-offset:4px}
+.production-welcome-mote {position:absolute;pointer-events:none;top:45%;left:9%;width:5px;height:5px;border-radius:50%;background:#fff2b6;box-shadow:0 0 8px #ffe692;animation:production-mote 4s ease-in-out infinite}
+/* Allow the opening art to bleed to the real screen, independent of the old poster gutter. */
+#root .app-viewport.screen-splash {padding:0!important;background:#11667b}
+#root .app-viewport.screen-splash>.app-screen-content {padding:0!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important}
+@media(orientation:landscape){
+ .production-welcome {align-items:flex-start;justify-content:center;gap:18px;padding:calc(env(safe-area-inset-top,0px) + 20px) max(24px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 24px) max(28px,env(safe-area-inset-left,0px))}
+ .production-welcome-brand {width:min(38%,280px);margin-left:3%;}
+ .production-welcome-action {width:min(43%,390px)}
+ .production-welcome-scene img {object-position:center center}
+ .production-welcome-mote {left:43%;top:29%}
+}
+@media(max-height:620px) and (orientation:portrait){
+ .production-welcome {padding-top:calc(env(safe-area-inset-top,0px) + 12px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + 16px)}
+ .production-welcome-brand {width:min(44%,160px)}
+ .production-welcome-action {padding:10px}
+ .production-welcome-action p {font-size:16px}
+}
+/* The shorter portrait canvas reserves the sky for the badge and keeps the
+   deer's antlers clear. The optional world-name line yields to the hero. */
+@media(orientation:portrait) and (min-aspect-ratio:1/2){
+ .production-welcome-brand {width:min(44%,160px)}
+ .production-welcome-brand p {display:none}
+}
+@keyframes production-entry-reveal {from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes production-scene-enter {from{opacity:.6}to{opacity:1}}
+@keyframes production-mote {0%,100%{opacity:.15;transform:translateY(5px)}50%{opacity:.8;transform:translateY(-7px)}}
+@media(prefers-reduced-motion:reduce){.production-welcome *{animation:none!important;transition:none!important}.production-welcome-mote{display:none}}

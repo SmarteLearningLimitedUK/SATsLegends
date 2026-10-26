@@ -1,0 +1,7 @@
+{
+  "src/app/gameOrientation.ts": {
+    "before": "9bac2a6db0a618e4cd3fc91cab948c95786ad1861fdb95b98f733d77503d6329",
+    "after": "9f5835d3ac9620922fa6d5ed72eadd3843037bbb4ce6394ad503ba5748c4f1c9",
+    "reason": "Presentation-only orientation correction: explicit Fraction Forge blueprint remains landscape even though it shares the take_out_rush game type. No educational, scoring, timer, lives or progression logic changed."
+  }
+}
