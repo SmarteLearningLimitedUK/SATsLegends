@@ -1,0 +1,89 @@
+name: iOS internal TestFlight upload
+
+on:
+  workflow_dispatch:
+    inputs:
+      upload:
+        description: Upload this candidate to existing internal TestFlight after native checks
+        type: boolean
+        default: true
+  push:
+    branches:
+      - 'ios/testflight-upload-*'
+    paths:
+      - '.github/workflows/ios-testflight.yml'
+      - 'variants/matharia/release/candidate.json'
+      - 'variants/matharia/scripts/*native*'
+      - 'variants/matharia/scripts/ios-testflight-config.mjs'
+
+permissions:
+  # GitHub requires write-role access to read unpublished draft releases.
+  # This workflow downloads the pinned draft only; it never publishes a release.
+  contents: write
+
+concurrency:
+  group: ios-testflight-upload
+  cancel-in-progress: false
+
+jobs:
+  native-checks:
+    runs-on: macos-26
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Download pinned native candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          candidate_tag=$(node -p "JSON.parse(require('fs').readFileSync('variants/matharia/release/candidate.json','utf8')).tag")
+          gh release download "$candidate_tag" --repo "$GITHUB_REPOSITORY" --pattern matharia-mac-testflight-candidate.zip --dir "$RUNNER_TEMP/matharia-download"
+      - name: Compile and launch on iPhone and iPad simulators
+        env:
+          CANDIDATE_ZIP: ${{ runner.temp }}/matharia-download/matharia-mac-testflight-candidate.zip
+        run: node variants/matharia/scripts/run-native-ci.mjs --simulator
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: matharia-native-checks
+          path: qa-artifacts/ios-matharia/simulator/
+          if-no-files-found: warn
+          retention-days: 14
+
+  testflight:
+    needs: native-checks
+    if: github.event_name == 'push' || inputs.upload
+    runs-on: macos-26
+    environment: ios-testflight
+    timeout-minutes: 40
+    env:
+      APPLE_TEAM_ID: D8L3PZ8Y72
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Download pinned native candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          candidate_tag=$(node -p "JSON.parse(require('fs').readFileSync('variants/matharia/release/candidate.json','utf8')).tag")
+          gh release download "$candidate_tag" --repo "$GITHUB_REPOSITORY" --pattern matharia-mac-testflight-candidate.zip --dir "$RUNNER_TEMP/matharia-download"
+      - name: Verify existing Apple record, archive, sign and upload
+        env:
+          CANDIDATE_ZIP: ${{ runner.temp }}/matharia-download/matharia-mac-testflight-candidate.zip
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_PRIVATE_KEY_P8: ${{ secrets.ASC_PRIVATE_KEY_P8 }}
+        run: node variants/matharia/scripts/run-native-ci.mjs --upload
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: matharia-testflight-result
+          path: qa-artifacts/ios-matharia/upload/
+          if-no-files-found: warn
+          retention-days: 30
