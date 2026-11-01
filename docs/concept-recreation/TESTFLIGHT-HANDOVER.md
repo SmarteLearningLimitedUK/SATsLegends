@@ -31,7 +31,7 @@ The user explicitly approved the CI branch, draft candidate upload and Mac build
 GitHub draft visibility reference: https://docs.github.com/en/organizations/managing-user-access-to-your-organizations-repositories/managing-repository-roles/repository-roles-for-an-organization
 
 
-Native run 41336267261 compiled with Xcode 26.6 but caught a real startup failure: `server.appStartPath=/play` referred to a missing bundled file. The variant now uses Capacitor’s default bundled index. Existing `initializeNativeApp` synchronously selects the React `/play` route before rendering. The packager rejects nonexistent startup files. Candidate v2 preserves all 856 compiled web files; native simulator checks are rerun before signing. The original project remains unchanged.
+Native run 41336267261 compiled with Xcode 26.6 but caught a real startup failure: `server.appStartPath=/play` referred to a missing bundled file. The variant now uses Capacitorâ€™s default bundled index. Existing `initializeNativeApp` synchronously selects the React `/play` route before rendering. The packager rejects nonexistent startup files. Candidate v2 preserves all 856 compiled web files; native simulator checks are rerun before signing. The original project remains unchanged.
 
 
 Run 41336929647 compiled successfully and verified install, launch and process survival on iPhone 17 Pro and iPad Pro 13-inch (M5). Native screenshot inspection rejected its iPhone account header because the Dynamic Island covered the signup control. The waiting upload was cancelled before signing. Added variant-only `src/native-account.css`, imported by `src/main.ts`, to inset account header controls and footer content using native safe areas. Six browser profiles with simulated insets passed header bounds, menu interaction, signup navigation and footer clearance. Candidate v3 reruns the actual native check and screenshot review. Gameplay logic/content and the original project remain unchanged. Native gameplay, StoreKit and an iOS 16.4 runtime remain unverified.
@@ -42,7 +42,7 @@ Current candidate v3: SHA-256 `c1084c884d59ab0266769b68dde09145fc0574c3199a359af
 The signed upload job is waiting at the existing `ios-testflight` environment review. On the run page select **Review deployments**, select **ios-testflight**, then **Approve and deploy**. Apple credentials have not been accessed by the waiting job and no Apple upload has started. After approval, verify `matharia-testflight-result/result.json` and Apple processing; do not infer upload success from this native-check pass. No external legacy assumptions were used.
 
 
-## Verified upload — 1 November 2026
+## Verified upload â€” 1 November 2026
 
 The user approved the existing GitHub environment review. Run https://github.com/SmarteLearningLimitedUK/SATsLegends/actions/runs/41338330116 completed successfully. Apple confirmed the existing **SATs Legends** record (`6825120444`, `com.smartelearning.satslegends`). The Matharia reskin uploaded as **1.0 (100.10.1)** with minimum iOS/iPadOS **16.4**. The signed archive identity/minimum OS were verified before upload. Apple build ID: `4e37f290-4edc-4f31-97c0-608638bfac29`; processing state **VALID**; not expired. Export was **internal TestFlight only**. No public App Store submission or source merge occurred.
 
@@ -74,7 +74,27 @@ Scoped files: `.github/workflows/ios-testflight.yml`; `variants/matharia/scripts
 API maintenance commit `7eae291d7fed990217f194a4b1984715f483361a` is queued at https://github.com/SmarteLearningLimitedUK/SATsLegends/actions/runs/41341912056 . Native checks and the binary-upload job are skipped for this operation. It is waiting for the existing `ios-testflight` reviewer before Apple credentials can be used. No Apple metadata or tester membership has been changed by this waiting job.
 
 
-Maintenance run 41341912056 verified build 100.10.1 was MISSING_EXPORT_COMPLIANCE and successfully saved `usesNonExemptEncryption=false`. Its following tester-association read failed with HTTP 403 because the implementation used GET on the build betaGroups relationship. Corrected those reads to Apple’s documented `/v1/betaGroups?filter[app]=...&filter[builds]=...&filter[isInternalGroup]=true` endpoint. POST assignment still uses the documented write relationship. The tests now reject the unsupported GET route and validate the app/build/internal filters. Seven checks pass. The same already approved build and internal-testing scope is retried; no replacement binary, new testers or external distribution.
+Maintenance run 41341912056 verified build 100.10.1 was MISSING_EXPORT_COMPLIANCE and successfully saved `usesNonExemptEncryption=false`. Its following tester-association read failed with HTTP 403 because the implementation used GET on the build betaGroups relationship. Corrected those reads to Appleâ€™s documented `/v1/betaGroups?filter[app]=...&filter[builds]=...&filter[isInternalGroup]=true` endpoint. POST assignment still uses the documented write relationship. The tests now reject the unsupported GET route and validate the app/build/internal filters. Seven checks pass. The same already approved build and internal-testing scope is retried; no replacement binary, new testers or external distribution.
 
 
 Retry 41342725780 confirmed `usesNonExemptEncryption=false` and `READY_FOR_BETA_TESTING`, but the live API rejected the combined global betaGroups filter with HTTP 400 despite its documented parameters. Changed verification to read the supported related-builds collection for each existing internal group. Tester counts are now persisted before association queries. Existing all-builds group access is respected; no users, groups or invitations are created. Seven regression checks pass, including rejection of both failed read forms. The same approved operation for 100.10.1 is retried.
+
+
+## Confirmed install availability â€” 1 November 2026
+
+Authoritative Apple check: `qa-artifacts/testflight/availability-run-41343203778/result.json`; successful operation: https://github.com/SmarteLearningLimitedUK/SATsLegends/actions/runs/41343203778 . Existing **SATs Legends 1.0 (100.10.1)** now has `usesNonExemptEncryption=false`, `processingState=VALID`, `expired=false`, and **internalBuildState=IN_BETA_TESTING**. The operation associated the build with the existing internal group, which has one tester membership, and re-read the groupâ€™s build list and Apple testing state to confirm access. No new tester, group, public link, external testing submission or replacement binary was created. The user-authorized GitHub review was recorded through the standard reviewer API; protection rules were unchanged.
+
+The current build is available to that existing internal tester in TestFlight on iOS/iPadOS 16.4 or later. This is server-side install eligibility, not a claim that installation or native gameplay has been performed on a physical device. Native gameplay/StoreKit/physical-device and iOS 16.4 runtime checks remain the separately documented production work. The original uploaded snapshot and its receipt remain immutable; this operation changed Apple metadata/group association only. The local native Info.plist exemption flag applies to future binary builds.
+
+Earlier missing-compliance/unknown-availability statements above are dated history, superseded by this result. The original source/native project and working branch were preserved. No external legacy assumptions were used.
+
+
+## Confirmed TestFlight availability: 1.0 (100.15.1)
+
+Apple returned VALID processing and IN_BETA_TESTING for this newest app-opening build. Export compliance is cleared (usesNonExemptEncryption=false), and 1 existing internal group with 1 tester membership has access. No new testers were invited and external testing was not enabled.
+
+Receipt: `qa-artifacts/app-opening/run-41346382705/matharia-testflight-result/result.json`. Native launch captures were inspected on iPhone and iPad. The new splash and three-free-practice flow are included. Subscription product IDs, App Store-only cloud integration, real native purchases/gameplay, physical devices and an iOS 16.4 runtime remain unverified or unfinished as described above. This is a verified internal beta upload, not production certification.
+
+No external legacy assumptions were used.
+
+Source and build details: `APP-OPENING-TESTFLIGHT.md`.

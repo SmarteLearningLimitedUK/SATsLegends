@@ -1,4 +1,4 @@
-# App-opening internal TestFlight update — 1 November 2026
+# App-opening internal TestFlight update â€” 1 November 2026
 
 Requested destination: the existing SATs Legends internal TestFlight app,
 `com.smartelearning.satslegends` (App Store Connect `6825120444`). Minimum iOS 16.4.
@@ -52,4 +52,38 @@ were used.
 
 ## Native build and upload
 
-Pending. The protected `ios-testflight` signing environment is retained.
+Current candidate: `matharia-ci-20261101-app-opening-v3`, SHA-256
+`c77b854e13c3bff06326221964052e463b656f4082519c08564cb03a75a03cb4`.
+The 358,822,732-byte archive contains 838 hash-verified compiled web files plus
+native source and the local Capacitor App package. It was rebuilt and synced
+before packaging. A Swift bridge value was corrected to use Capacitor's typed
+`JSValue` dictionary before the signed build.
+
+CI commit: `edcb18ad6c3d9d6457d926d529d50c53d5e3b5f5` on the existing isolated
+`ios/testflight-upload-matharia-20261101-v1` branch. The local source branch and
+index remain unchanged. The superseded v2 native check was cancelled before
+signing; its draft candidate is retained.
+
+Native workflow: https://github.com/SmarteLearningLimitedUK/SATsLegends/actions/runs/41346382705.
+Native compilation passed with Xcode 26.6. iPhone 17 Pro and iPad Pro 13-inch (M5)
+both installed, launched and survived. Actual launch captures were inspected:
+the app opens to the new splash rather than the website; controls fit, and the
+iPhone account action clears the Dynamic Island. Evidence is in
+`qa-artifacts/app-opening/run-41346382705/matharia-native-checks/` and
+`native-captures-accepted.json`.
+
+The protected `ios-testflight` signing environment is retained. The user approved
+its standard review for this exact candidate, and that review was recorded using
+GitHub's normal API with the protection rules unchanged. The signing job started.
+Upload and Apple processing are not yet confirmed. These
+launch checks do not certify native gameplay, purchases, a physical device or
+an iOS 16.4 runtime.
+
+
+## Confirmed TestFlight availability: 1.0 (100.15.1)
+
+Apple returned VALID processing and IN_BETA_TESTING for this newest app-opening build. Export compliance is cleared (usesNonExemptEncryption=false), and 1 existing internal group with 1 tester membership has access. No new testers were invited and external testing was not enabled.
+
+Receipt: `qa-artifacts/app-opening/run-41346382705/matharia-testflight-result/result.json`. Native launch captures were inspected on iPhone and iPad. The new splash and three-free-practice flow are included. Subscription product IDs, App Store-only cloud integration, real native purchases/gameplay, physical devices and an iOS 16.4 runtime remain unverified or unfinished as described above. This is a verified internal beta upload, not production certification.
+
+No external legacy assumptions were used.
