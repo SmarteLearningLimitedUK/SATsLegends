@@ -4,6 +4,7 @@ import {createReadStream, readFileSync, writeFileSync, mkdirSync, existsSync, mk
 import {tmpdir} from 'node:os';
 import {resolve, join} from 'node:path';
 import {IOS_APP_ID, IOS_BUNDLE_ID, IOS_TEAM_ID, NATIVE_PROJECT, signingConfiguration, connectToken, nextBuild, exportOptions} from './ios-testflight-config.mjs';
+import {enableInternalTesting} from './testflight-availability.mjs';
 
 const mode = process.argv[2];
 if (process.argv.length !== 3 || !['--simulator','--upload'].includes(mode)) throw Error('Use --simulator or --upload.');
@@ -119,7 +120,7 @@ with zipfile.ZipFile(sys.argv[1]) as z:
       const response = await fetch(url,{...options,headers:{Authorization:`Bearer ${connectToken(signing)}`,...options.headers},
         redirect:'error',signal:AbortSignal.timeout(30000)});
       if (!response.ok) throw Error(`Apple record check failed (HTTP ${response.status}).`);
-      return response.json();
+      return response.status===204?null:response.json();
     }
     const app = await apple(`/v1/apps/${IOS_APP_ID}?fields[apps]=bundleId,name`);
     if (app.data?.id !== IOS_APP_ID || app.data.attributes?.bundleId !== IOS_BUNDLE_ID) throw Error('Live Apple app does not match the existing SATs Legends record.');
@@ -167,6 +168,18 @@ with zipfile.ZipFile(sys.argv[1]) as z:
       if (['FAILED','INVALID'].includes(result.processingState)) throw Error(`Apple processing returned ${result.processingState}.`);
     }
     result.processingState ||= 'PENDING';
+    if(result.processingState==='VALID'){
+      const availability=await enableInternalTesting({
+        api:(path,options={})=>apple(path,{...options,
+          body:options.body?JSON.stringify(options.body):undefined,
+          headers:options.body?{'Content-Type':'application/json'}:{}}),
+        buildId:result.appleBuildId,expectedVersion:version,expectedBuild:build,
+        onProgress:part=>{result.testflightAvailability=part;save();}
+      });
+      result.usesNonExemptEncryption=availability.usesNonExemptEncryption;
+      result.internalBuildState=availability.internalBuildState;
+      result.availableForInternalTesting=availability.availableForInternalTesting;
+    }
     console.log(`Uploaded ${version} (${build}). Apple processing: ${result.processingState}.`);
   }
   result.success = true; save();

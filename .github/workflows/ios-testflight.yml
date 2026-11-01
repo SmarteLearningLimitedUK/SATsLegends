@@ -3,6 +3,13 @@ name: iOS internal TestFlight upload
 on:
   workflow_dispatch:
     inputs:
+      operation:
+        description: Upload a candidate or enable the already uploaded build
+        type: choice
+        options:
+          - upload
+          - enable-existing-build
+        default: upload
       upload:
         description: Upload this candidate to existing internal TestFlight after native checks
         type: boolean
@@ -27,6 +34,7 @@ concurrency:
 
 jobs:
   native-checks:
+    if: github.event_name == 'push' || inputs.operation != 'enable-existing-build'
     runs-on: macos-26
     timeout-minutes: 35
     steps:
@@ -55,7 +63,7 @@ jobs:
 
   testflight:
     needs: native-checks
-    if: github.event_name == 'push' || inputs.upload
+    if: (github.event_name == 'push' || inputs.upload) && inputs.operation != 'enable-existing-build'
     runs-on: macos-26
     environment: ios-testflight
     timeout-minutes: 40
@@ -85,5 +93,37 @@ jobs:
         with:
           name: matharia-testflight-result
           path: qa-artifacts/ios-matharia/upload/
+          if-no-files-found: warn
+          retention-days: 30
+
+  enable-existing-build:
+    if: github.event_name == 'workflow_dispatch' && inputs.operation == 'enable-existing-build'
+    runs-on: ubuntu-latest
+    environment: ios-testflight
+    timeout-minutes: 8
+    permissions:
+      contents: read
+    env:
+      APPLE_TEAM_ID: D8L3PZ8Y72
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            variants/matharia/scripts
+            variants/matharia/release
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Resolve exemption and enable existing internal testing
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_PRIVATE_KEY_P8: ${{ secrets.ASC_PRIVATE_KEY_P8 }}
+        run: node variants/matharia/scripts/enable-testflight-build.mjs --apply
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: matharia-testflight-availability
+          path: qa-artifacts/ios-matharia/availability/result.json
           if-no-files-found: warn
           retention-days: 30

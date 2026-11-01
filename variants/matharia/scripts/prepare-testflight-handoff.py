@@ -9,6 +9,7 @@ import argparse
 import hashlib
 import json
 import posixpath
+import plistlib
 import re
 import subprocess
 
@@ -30,6 +31,7 @@ spm = (native / 'App/CapApp-SPM/Package.swift').read_text()
 assert re.findall(r'IPHONEOS_DEPLOYMENT_TARGET = ([^;]+);', pbx) == ['16.4'] * 4
 assert re.findall(r'PRODUCT_BUNDLE_IDENTIFIER = ([^;]+);', pbx) == [bundle] * 2
 assert '.iOS("16.4")' in spm
+assert plistlib.loads((native / 'App/App/Info.plist').read_bytes()).get('ITSAppUsesNonExemptEncryption') is False, 'Record the reviewed encryption exemption in the native app.'
 native_config = json.loads((native / 'App/App/capacitor.config.json').read_text())
 assert native_config['appId'] == bundle
 assert not native_config.get('server', {}).get('url'), 'Package must use bundled web assets.'
