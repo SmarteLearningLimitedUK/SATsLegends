@@ -33,7 +33,10 @@ export async function enableInternalTesting({api,buildId,expectedBuild,expectedV
   const memberships=await Promise.all(groups.map(async group=>({group,
     members:(await all(`/v1/betaGroups/${group.id}/relationships/betaTesters?limit=200`)).length})));
   const eligible=memberships.filter(item=>item.members>0);
-  let linked=await all(`/v1/builds/${buildId}/relationships/betaGroups?limit=200`);
+  // Apple's build->betaGroups relationship supports writes; read associations
+  // using the documented betaGroups filters instead of GET on that relationship.
+  const linkedPath=`/v1/betaGroups?filter[app]=${IOS_APP_ID}&filter[builds]=${buildId}&filter[isInternalGroup]=true&limit=200`;
+  let linked=await all(linkedPath);
   const hasAccess=group=>group.attributes?.hasAccessToAllBuilds===true || linked.some(row=>row.id===group.id);
   const missing=eligible.filter(({group})=>!hasAccess(group));
   report.existingInternalGroupsWithTesters=eligible.length;
@@ -49,7 +52,7 @@ export async function enableInternalTesting({api,buildId,expectedBuild,expectedV
     const current=await api(`/v1/builds/${buildId}?include=buildBetaDetail`);
     const detail=current.included?.find(row=>row.type==='buildBetaDetails') ||
       (await api(`/v1/builds/${buildId}/buildBetaDetail`)).data;
-    linked=await all(`/v1/builds/${buildId}/relationships/betaGroups?limit=200`);
+    linked=await all(linkedPath);
     report.usesNonExemptEncryption=current.data.attributes.usesNonExemptEncryption;
     report.processingState=current.data.attributes.processingState;
     report.expired=current.data.attributes.expired;

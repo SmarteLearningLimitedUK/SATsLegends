@@ -16,11 +16,18 @@ function fixture(options={}){
       if(request.method==='PATCH'){assert.equal(request.body.data.attributes.usesNonExemptEncryption,false);state.encryption=false;return resource();}
       assert.equal(request.method,'POST');assert.equal(state.internal,true);assert.deepEqual(request.body.data,[{type:'betaGroups',id:'g'}]);state.assigned=true;return null;
     }
+    if(path.includes('/relationships/betaGroups'))throw Error('Unsupported public GET relationship endpoint.');
+    if(path.startsWith('/v1/betaGroups?')){
+      const query=new URL(path,'https://api.appstoreconnect.apple.com').searchParams;
+      assert.equal(query.get('filter[app]'),IOS_APP_ID);
+      assert.equal(query.get('filter[builds]'),id);
+      assert.equal(query.get('filter[isInternalGroup]'),'true');
+      return {data:state.assigned?[{id:'g',type:'betaGroups'}]:[]};
+    }
     if(path.startsWith('/v1/apps/')&&path.includes('?fields'))return {data:{id:IOS_APP_ID,attributes:{bundleId:IOS_BUNDLE_ID}}};
     if(path.startsWith('/v1/apps/'))return {data:[{id:'g',type:'betaGroups',attributes:{isInternalGroup:state.internal,hasAccessToAllBuilds:state.allBuilds}}]};
     if(path.includes('/relationships/betaTesters'))return {data:Array.from({length:state.members},(_,i)=>({id:'t'+i,type:'betaTesters'}))};
     if(path.includes('/relationships/individualTesters'))return {data:[]};
-    if(path.includes('/relationships/betaGroups'))return {data:state.assigned?[{id:'g',type:'betaGroups'}]:[]};
     if(path.startsWith('/v1/builds/'))return resource();
     throw Error('Unexpected request '+path);
   };

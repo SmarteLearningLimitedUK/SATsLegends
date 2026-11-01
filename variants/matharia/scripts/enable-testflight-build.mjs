@@ -16,7 +16,11 @@ async function api(path,options={}){
   const response=await fetch(url,{method:options.method||'GET',headers:{Authorization:`Bearer ${connectToken(signing)}`,
     ...(options.body?{'Content-Type':'application/json'}:{})},body:options.body?JSON.stringify(options.body):undefined,
     redirect:'error',signal:AbortSignal.timeout(30000)});
-  if(!response.ok)throw Error(`Apple API ${options.method||'GET'} ${url.pathname} returned HTTP ${response.status}.`);
+  if(!response.ok){
+    const error=await response.json().catch(()=>({}));
+    const reason=error.errors?.[0];
+    throw Error(`Apple API ${options.method||'GET'} ${url.pathname} returned HTTP ${response.status}${reason?` (${reason.code}: ${reason.title})`:''}.`);
+  }
   return response.status===204?null:response.json();
 }
 try{
