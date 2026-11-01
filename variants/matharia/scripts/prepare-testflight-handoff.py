@@ -15,11 +15,14 @@ import subprocess
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--tag', required=True)
+parser.add_argument('--output-dir', default='qa-artifacts/testflight')
 args = parser.parse_args()
 if not re.fullmatch(r'matharia-ci-[a-zA-Z0-9-]+', args.tag):
     raise SystemExit('Use a matharia-ci- prefixed candidate tag.')
 root = Path(__file__).resolve().parents[3]
-out = root / 'qa-artifacts/testflight'
+out = (root / args.output_dir).resolve()
+if not out.is_relative_to(root / 'qa-artifacts'):
+    raise SystemExit('Candidate output must stay in this repository’s qa-artifacts directory.')
 out.mkdir(parents=True, exist_ok=True)
 native = root / 'variants/matharia/native/ios'
 plugin = root / 'node_modules/@capacitor/app'

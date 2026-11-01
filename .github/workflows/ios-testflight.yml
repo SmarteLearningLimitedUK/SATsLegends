@@ -9,6 +9,7 @@ on:
         options:
           - upload
           - enable-existing-build
+          - verify-app-flow
         default: upload
       upload:
         description: Upload this candidate to existing internal TestFlight after native checks
@@ -34,7 +35,7 @@ concurrency:
 
 jobs:
   native-checks:
-    if: github.event_name == 'push' || inputs.operation != 'enable-existing-build'
+    if: github.event_name == 'push' || inputs.operation == 'upload' || inputs.operation == 'verify-app-flow'
     runs-on: macos-26
     timeout-minutes: 35
     steps:
@@ -63,7 +64,7 @@ jobs:
 
   testflight:
     needs: native-checks
-    if: (github.event_name == 'push' || inputs.upload) && inputs.operation != 'enable-existing-build'
+    if: github.event_name == 'push' || (inputs.operation == 'upload' && inputs.upload)
     runs-on: macos-26
     environment: ios-testflight
     timeout-minutes: 40
@@ -125,5 +126,37 @@ jobs:
         with:
           name: matharia-testflight-availability
           path: qa-artifacts/ios-matharia/availability/result.json
+          if-no-files-found: warn
+          retention-days: 30
+
+  inspect-app-services:
+    needs: native-checks
+    if: github.event_name == 'workflow_dispatch' && inputs.operation == 'verify-app-flow'
+    runs-on: ubuntu-latest
+    environment: ios-testflight
+    timeout-minutes: 8
+    permissions:
+      contents: read
+    env:
+      APPLE_TEAM_ID: D8L3PZ8Y72
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            variants/matharia/scripts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Read this app's subscription and Apple sign-in configuration
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_PRIVATE_KEY_P8: ${{ secrets.ASC_PRIVATE_KEY_P8 }}
+        run: node variants/matharia/scripts/inspect-app-services.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: matharia-app-services
+          path: qa-artifacts/ios-matharia/app-services/result.json
           if-no-files-found: warn
           retention-days: 30
