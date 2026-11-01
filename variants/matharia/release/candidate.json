@@ -1,7 +1,7 @@
 {
-  "tag": "matharia-ci-20261101-app-opening-v2",
+  "tag": "matharia-ci-20261101-app-opening-v3",
   "asset": "matharia-mac-testflight-candidate.zip",
-  "sha256": "c30e008bd45b4a694cc6a98b15d8c29fc9c8a225ac61120a3ae8dfe51ed441a1",
+  "sha256": "c77b854e13c3bff06326221964052e463b656f4082519c08564cb03a75a03cb4",
   "bundleId": "com.smartelearning.satslegends",
   "minimumIOS": "16.4",
   "sourceGitHead": "fe35bdcf49b6a5c5a302e9582e486c742441e30d"
