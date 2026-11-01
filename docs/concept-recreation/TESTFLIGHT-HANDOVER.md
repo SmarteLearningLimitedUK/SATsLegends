@@ -32,3 +32,6 @@ GitHub draft visibility reference: https://docs.github.com/en/organizations/mana
 
 
 Native run 41336267261 compiled with Xcode 26.6 but caught a real startup failure: `server.appStartPath=/play` referred to a missing bundled file. The variant now uses Capacitor’s default bundled index. Existing `initializeNativeApp` synchronously selects the React `/play` route before rendering. The packager rejects nonexistent startup files. Candidate v2 preserves all 856 compiled web files; native simulator checks are rerun before signing. The original project remains unchanged.
+
+
+Run 41336929647 compiled successfully and verified install, launch and process survival on iPhone 17 Pro and iPad Pro 13-inch (M5). Native screenshot inspection rejected its iPhone account header because the Dynamic Island covered the signup control. The waiting upload was cancelled before signing. Added variant-only `src/native-account.css`, imported by `src/main.ts`, to inset account header controls and footer content using native safe areas. Six browser profiles with simulated insets passed header bounds, menu interaction, signup navigation and footer clearance. Candidate v3 reruns the actual native check and screenshot review. Gameplay logic/content and the original project remain unchanged. Native gameplay, StoreKit and an iOS 16.4 runtime remain unverified.
