@@ -19,7 +19,7 @@ async function api(path,options={}){
   if(!response.ok){
     const error=await response.json().catch(()=>({}));
     const reason=error.errors?.[0];
-    throw Error(`Apple API ${options.method||'GET'} ${url.pathname} returned HTTP ${response.status}${reason?` (${reason.code}: ${reason.title})`:''}.`);
+    throw Error(`Apple API ${options.method||'GET'} ${url.pathname} returned HTTP ${response.status}${reason?` (${reason.code}: ${reason.title}; ${String(reason.detail||'').slice(0,400)})`:''}.`);
   }
   return response.status===204?null:response.json();
 }

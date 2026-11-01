@@ -33,26 +33,34 @@ export async function enableInternalTesting({api,buildId,expectedBuild,expectedV
   const memberships=await Promise.all(groups.map(async group=>({group,
     members:(await all(`/v1/betaGroups/${group.id}/relationships/betaTesters?limit=200`)).length})));
   const eligible=memberships.filter(item=>item.members>0);
-  // Apple's build->betaGroups relationship supports writes; read associations
-  // using the documented betaGroups filters instead of GET on that relationship.
-  const linkedPath=`/v1/betaGroups?filter[app]=${IOS_APP_ID}&filter[builds]=${buildId}&filter[isInternalGroup]=true&limit=200`;
-  let linked=await all(linkedPath);
-  const hasAccess=group=>group.attributes?.hasAccessToAllBuilds===true || linked.some(row=>row.id===group.id);
-  const missing=eligible.filter(({group})=>!hasAccess(group));
+  report.existingInternalGroupCount=groups.length;
   report.existingInternalGroupsWithTesters=eligible.length;
   report.existingTesterMemberships=eligible.reduce((sum,item)=>sum+item.members,0);
+  save();
+  const individuals=eligible.length?[]:await all(`/v1/builds/${buildId}/relationships/individualTesters?limit=200`);
+  report.individuallyAssignedTesters=individuals.length;
+  if(!eligible.length&&!individuals.length)throw Error('No existing internal tester membership was found; no new testers were invited.');
+  // Read each group's supported related-builds resource. Apple's live service
+  // rejected both a build-relationship GET and a combined global-group filter.
+  let linkedGroups=new Set();
+  const refreshAccess=async()=>{
+    const access=await Promise.all(eligible.map(async({group})=>({id:group.id,
+      assigned:group.attributes?.hasAccessToAllBuilds===true ||
+        (await all(`/v1/betaGroups/${group.id}/builds?limit=200&fields[builds]=version`)).some(row=>row.id===buildId)})));
+    linkedGroups=new Set(access.filter(item=>item.assigned).map(item=>item.id));
+  };
+  await refreshAccess();
+  const hasAccess=group=>linkedGroups.has(group.id);
+  const missing=eligible.filter(({group})=>!hasAccess(group));
   report.newGroupAssociations=missing.length;save();
   if(missing.length){
     await api(`/v1/builds/${buildId}/relationships/betaGroups`,{method:'POST',body:{data:missing.map(({group})=>({type:'betaGroups',id:group.id}))}});
   }
-  const individuals=eligible.length?[]:await all(`/v1/builds/${buildId}/relationships/individualTesters?limit=200`);
-  report.individuallyAssignedTesters=individuals.length;
-  if(!eligible.length&&!individuals.length)throw Error('No existing internal tester membership was found; no new testers were invited.');
   for(let attempt=0;attempt<13;attempt++){
     const current=await api(`/v1/builds/${buildId}?include=buildBetaDetail`);
     const detail=current.included?.find(row=>row.type==='buildBetaDetails') ||
       (await api(`/v1/builds/${buildId}/buildBetaDetail`)).data;
-    linked=await all(linkedPath);
+    await refreshAccess();
     report.usesNonExemptEncryption=current.data.attributes.usesNonExemptEncryption;
     report.processingState=current.data.attributes.processingState;
     report.expired=current.data.attributes.expired;
