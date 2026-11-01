@@ -30,7 +30,12 @@ spm = (native / 'App/CapApp-SPM/Package.swift').read_text()
 assert re.findall(r'IPHONEOS_DEPLOYMENT_TARGET = ([^;]+);', pbx) == ['16.4'] * 4
 assert re.findall(r'PRODUCT_BUNDLE_IDENTIFIER = ([^;]+);', pbx) == [bundle] * 2
 assert '.iOS("16.4")' in spm
-assert json.loads((native / 'App/App/capacitor.config.json').read_text())['appId'] == bundle
+native_config = json.loads((native / 'App/App/capacitor.config.json').read_text())
+assert native_config['appId'] == bundle
+assert not native_config.get('server', {}).get('url'), 'Package must use bundled web assets.'
+start_path = native_config.get('server', {}).get('appStartPath')
+if start_path:
+    assert (web / start_path.lstrip('/')).is_file(), 'Native appStartPath must name an existing bundled file, not a React route.'
 plugin_relative = re.search(r'\.package\(name: "CapacitorApp", path: "([^"]+)"\)', spm).group(1)
 assert posixpath.normpath(str(PurePosixPath('variants/matharia/native/ios/App/CapApp-SPM') / plugin_relative)) == 'node_modules/@capacitor/app'
 
