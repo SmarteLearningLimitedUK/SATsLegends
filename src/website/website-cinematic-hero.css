@@ -1,0 +1,21 @@
+/* A single scene keeps the character grounded in the world. */
+.home-opening-brand { width: 164px; margin-bottom: 22px; }
+.home-opening-brand svg { display: block; width: 100%; height: auto; }
+.home-opening-inner { position: relative; min-height: min(740px, calc(100svh - 88px)); }
+.home-opening-copy { position: relative; z-index: 1; }
+.home-opening-art { object-position: 65% center; }
+.home-opening::before { background: linear-gradient(90deg,#120827fa 0%,#1a0b38f0 24%,#1a0b38b3 44%,#13092c20 70%),linear-gradient(0deg,#11062670,transparent 25%); }
+.home-opening-character { display: none; }
+.gameplay-gallery-mobile-note { display: block; color: var(--web-muted); font-size: 13px; margin-top: 24px !important; }
+@media (max-width: 760px) {
+  .home-opening-inner { min-height: 0; display: flex; flex-direction: column; align-items: stretch; gap: 22px; padding-block: 34px 0; }
+  .home-opening-art { display: none; }
+  .home-opening::before { background: #180c30; }
+  .home-opening-brand { display: none; }
+  .home-opening h1 { font-size: clamp(38px, 8vw, 52px); margin-block: 16px 18px !important; }
+  .home-opening-description { font-size: 17px; line-height: 1.6; }
+  .home-opening-character { display: block; margin: 0 -20px; height: clamp(270px, 76vw, 410px); overflow: hidden; }
+  .home-opening-character img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 72% center; }
+}
+@media (min-width:581px) and (max-width:760px) { .home-opening-character { margin-inline: -28px; } }
+@media (min-width:761px) and (max-height:780px) { .home-opening-inner { padding-block: 30px; }.home-opening-brand { width: 135px; margin-bottom: 12px; }.home-opening h1 { font-size: 48px; margin-block: 14px !important; } }

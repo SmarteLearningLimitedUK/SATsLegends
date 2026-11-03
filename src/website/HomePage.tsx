@@ -2,11 +2,10 @@ import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ArrowRight, BookOpen, Check, Gamepad2, Video } from 'lucide-react';
-import hero from '../assets/website/matharia-current/courtyard.webp';
+import hero from '../assets/website/matharia-current/cinematic-hero.png';
 import matharia from '../assets/website/matharia-current/forest-world.webp';
 import PremiumArtwork from './PremiumArtwork';
 import SplashLogo from './SplashLogo';
-import rhino from '../assets/website/matharia-current/rhino.png';
 import GameplayGallery from './GameplayGallery';
 import ParentQuestions from './ParentQuestions';
 import { englishReleased, englishTesting } from './englishRelease';
@@ -22,14 +21,14 @@ export default function HomePage() {
   }, [hash]);
   return <main id="website-main" className="home-refresh">
     <section className="home-opening" aria-labelledby="home-title">
-      <img className="home-opening-art" src={hero} alt="Matharia’s golden acropolis terraces and waterfalls" fetchPriority="high" decoding="async" />
+      <img className="home-opening-art" src={hero} alt="" aria-hidden="true" fetchPriority="high" decoding="async" />
       <div className="website-container home-opening-inner"><motion.div className="home-opening-copy" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .5 }}>
         <div className="home-opening-brand"><SplashLogo /></div><p className="website-eyebrow">Matharia · KS2 maths revision</p>
         <h1 id="home-title">Big challenges.<br /><span>Brilliant minds.</span></h1>
         <p className="home-opening-description">Maths revision through game challenges, worked examples and a clear view of your child’s progress.</p>
         <div className="home-actions"><Link className="website-button website-button-gold" to="/play"><Gamepad2 size={20} /> Explore Matharia <ArrowRight size={19} /></Link><Link className="home-secondary-link" to="/for-parents">How it works for parents <ArrowRight size={18} /></Link></div>
         <p className="home-opening-note"><Check size={16} /> From £4.99/month · One child profile</p>
-      </motion.div><motion.figure className="home-opening-character" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: .6 }}><img className="home-opening-character-world" src={hero} alt="" aria-hidden="true" /><img className="home-opening-character-hero" src={rhino} alt="The armoured rhino from Matharia’s Place Value Panic challenge" fetchPriority="high" /></motion.figure></div>
+      </motion.div><figure className="home-opening-character"><img src={hero} alt="An armoured Matharia character on a stone terrace overlooking a city of waterfalls" /></figure></div>
     </section>
     <div className="home-facts"><div className="website-container"><span>KS2 maths revision</span><span>Arithmetic & reasoning</span><span>Private parent progress</span><span>Phone, tablet & desktop</span></div></div>
 
