@@ -1,7 +1,7 @@
 {
-  "tag": "matharia-ci-20261103-allgames-parentgate-v1",
+  "tag": "matharia-ci-20261103-swipe-v1",
   "asset": "matharia-mac-testflight-candidate.zip",
-  "sha256": "649d5be8a0e38932c6603bcfd8c251c145de06bfa56c7c276a7cb27d913e14b6",
+  "sha256": "ca1258ef47278b35376dfe774ab2fe3720bbbf2f629bc1611f7f5b13bca0d4e3",
   "bundleId": "com.smartelearning.satslegends",
   "minimumIOS": "16.4",
   "sourceGitHead": "fe35bdcf49b6a5c5a302e9582e486c742441e30d"
