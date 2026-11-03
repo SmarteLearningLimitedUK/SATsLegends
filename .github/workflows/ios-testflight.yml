@@ -18,7 +18,6 @@ on:
   push:
     branches:
       - 'ios/testflight-upload-*'
-      - 'codex/testflight-upload-*'
     paths:
       - '.github/workflows/ios-testflight.yml'
       - 'variants/matharia/release/candidate.json'
