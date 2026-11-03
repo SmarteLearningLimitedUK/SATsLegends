@@ -1,0 +1,8 @@
+{
+  "tag": "matharia-ci-2026-11-03-independent-app",
+  "asset": "matharia-mac-testflight-candidate.zip",
+  "sha256": "9402830a5b6949927dc2a71b9babf547284899f06dd44232ddf0f721f4f986d4",
+  "bundleId": "com.smartelearning.satslegends",
+  "minimumIOS": "16.4",
+  "sourceGitHead": "fe35bdcf49b6a5c5a302e9582e486c742441e30d"
+}

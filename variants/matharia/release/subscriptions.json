@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "appId": "6825120444",
+  "bundleId": "com.smartelearning.satslegends",
+  "groupId": "22540959",
+  "groupName": "Matharia Full Access",
+  "baseStorefront": "GBR",
+  "baseCurrency": "GBP",
+  "verifiedOn": "2026-11-03",
+  "products": [
+    { "id": "com.smartelearning.satslegends.matharia.monthly", "appleId": "6830158618", "period": "ONE_MONTH", "approvedBasePrice": "4.99" },
+    { "id": "com.smartelearning.satslegends.matharia.yearly", "appleId": "6830160702", "period": "ONE_YEAR", "approvedBasePrice": "49.99" }
+  ]
+}

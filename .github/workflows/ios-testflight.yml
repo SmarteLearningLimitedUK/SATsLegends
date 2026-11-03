@@ -2,62 +2,164 @@ name: iOS internal TestFlight upload
 
 on:
   workflow_dispatch:
+    inputs:
+      operation:
+        description: Upload a candidate or enable the already uploaded build
+        type: choice
+        options:
+          - upload
+          - enable-existing-build
+          - verify-app-flow
+        default: upload
+      upload:
+        description: Upload this candidate to existing internal TestFlight after native checks
+        type: boolean
+        default: true
   push:
     branches:
       - 'ios/testflight-upload-*'
+      - 'codex/testflight-upload-*'
+    paths:
+      - '.github/workflows/ios-testflight.yml'
+      - 'variants/matharia/release/candidate.json'
+      - 'variants/matharia/release/subscriptions.json'
+      - 'variants/matharia/scripts/*native*'
+      - 'variants/matharia/scripts/ios-testflight-config.mjs'
+      - 'variants/matharia/scripts/subscription-config.mjs'
 
 permissions:
-  contents: read
+  # GitHub requires write-role access to read unpublished draft releases.
+  # This workflow downloads the pinned draft only; it never publishes a release.
+  contents: write
 
 concurrency:
   group: ios-testflight-upload
   cancel-in-progress: false
 
 jobs:
-  testflight:
-    runs-on: macos-15
-    environment: ios-testflight
-    timeout-minutes: 45
-    env:
-      APPLE_TEAM_ID: D8L3PZ8Y72
-      IOS_BUILD_NUMBER: 100.${{ github.run_number }}.${{ github.run_attempt }}
-      VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
-      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
-      VITE_IOS_PRIVACY_URL: ${{ vars.VITE_IOS_PRIVACY_URL }}
-      VITE_IOS_TERMS_URL: ${{ vars.VITE_IOS_TERMS_URL }}
-      VITE_IOS_AUTH_ORIGIN: ${{ vars.VITE_IOS_AUTH_ORIGIN }}
-      VITE_ALLOW_GAME_PREVIEW: 'false'
-      VITE_IOS_INTERNAL_TESTING: 'true'
-      VITE_ASSET_BASE: '/'
+  native-checks:
+    if: github.event_name == 'push' || inputs.operation == 'upload' || inputs.operation == 'verify-app-flow'
+    runs-on: macos-26
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: npm
-      - name: Select Xcode 26
-        shell: bash
+      - name: Download pinned native candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          xcode_path=$(find /Applications -maxdepth 1 -name 'Xcode_26*.app' | sort | tail -n 1)
-          test -n "$xcode_path" || { echo 'Xcode 26 is required.'; exit 1; }
-          sudo xcode-select -s "$xcode_path/Contents/Developer"
-      - run: npm ci
-      - run: node scripts/ios-release-config.mjs --internal-testing
-      - run: npm run lint
-      - run: node scripts/verify-ios-testflight.mjs
-      - run: npx tsx scripts/verify-apple-entitlements.ts
-      - run: npm run ios:sync
-      - name: Archive, sign and upload internal build
+          candidate_tag=$(node -p "JSON.parse(require('fs').readFileSync('variants/matharia/release/candidate.json','utf8')).tag")
+          gh release download "$candidate_tag" --repo "$GITHUB_REPOSITORY" --pattern matharia-mac-testflight-candidate.zip --dir "$RUNNER_TEMP/matharia-download"
+      - name: Compile and launch on iPhone and iPad simulators
+        env:
+          CANDIDATE_ZIP: ${{ runner.temp }}/matharia-download/matharia-mac-testflight-candidate.zip
+        run: node variants/matharia/scripts/run-native-ci.mjs --simulator
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: matharia-native-checks
+          path: qa-artifacts/ios-matharia/simulator/
+          if-no-files-found: warn
+          retention-days: 14
+
+  testflight:
+    needs: native-checks
+    if: github.event_name == 'push' || (inputs.operation == 'upload' && inputs.upload)
+    runs-on: macos-26
+    environment: ios-testflight
+    timeout-minutes: 40
+    env:
+      APPLE_TEAM_ID: D8L3PZ8Y72
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Download pinned native candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          candidate_tag=$(node -p "JSON.parse(require('fs').readFileSync('variants/matharia/release/candidate.json','utf8')).tag")
+          gh release download "$candidate_tag" --repo "$GITHUB_REPOSITORY" --pattern matharia-mac-testflight-candidate.zip --dir "$RUNNER_TEMP/matharia-download"
+      - name: Verify existing Apple record, archive, sign and upload
+        env:
+          CANDIDATE_ZIP: ${{ runner.temp }}/matharia-download/matharia-mac-testflight-candidate.zip
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_PRIVATE_KEY_P8: ${{ secrets.ASC_PRIVATE_KEY_P8 }}
+        run: node variants/matharia/scripts/run-native-ci.mjs --upload
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: matharia-testflight-result
+          path: qa-artifacts/ios-matharia/upload/
+          if-no-files-found: warn
+          retention-days: 30
+
+  enable-existing-build:
+    if: github.event_name == 'workflow_dispatch' && inputs.operation == 'enable-existing-build'
+    runs-on: ubuntu-latest
+    environment: ios-testflight
+    timeout-minutes: 8
+    permissions:
+      contents: read
+    env:
+      APPLE_TEAM_ID: D8L3PZ8Y72
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            variants/matharia/scripts
+            variants/matharia/release
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Resolve exemption and enable existing internal testing
         env:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           ASC_PRIVATE_KEY_P8: ${{ secrets.ASC_PRIVATE_KEY_P8 }}
-        run: npm run ios:upload:testflight
-      # Publish evidence only, never the API key or its temporary directory.
+        run: node variants/matharia/scripts/enable-testflight-build.mjs --apply
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: testflight-build-result
-          path: qa-artifacts/ios-testflight/build-result.json
-          if-no-files-found: error
+          name: matharia-testflight-availability
+          path: qa-artifacts/ios-matharia/availability/result.json
+          if-no-files-found: warn
+          retention-days: 30
+
+  inspect-app-services:
+    needs: native-checks
+    if: github.event_name == 'workflow_dispatch' && inputs.operation == 'verify-app-flow'
+    runs-on: ubuntu-latest
+    environment: ios-testflight
+    timeout-minutes: 8
+    permissions:
+      contents: read
+    env:
+      APPLE_TEAM_ID: D8L3PZ8Y72
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            variants/matharia/scripts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Read this app's subscription and Apple sign-in configuration
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_PRIVATE_KEY_P8: ${{ secrets.ASC_PRIVATE_KEY_P8 }}
+        run: node variants/matharia/scripts/inspect-app-services.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: matharia-app-services
+          path: qa-artifacts/ios-matharia/app-services/result.json
+          if-no-files-found: warn
           retention-days: 30
