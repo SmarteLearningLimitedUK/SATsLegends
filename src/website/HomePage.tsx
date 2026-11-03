@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ArrowRight, BookOpen, Check, Gamepad2, Video } from 'lucide-react';
-import hero from '../assets/website/matharia-current/cinematic-hero.png';
+import hero from '../assets/website/premium/hero-cinematic-wide.webp';
 import matharia from '../assets/website/matharia-current/forest-world.webp';
 import lexcoria from '../assets/website/lexcoria-world.webp';
 import PremiumArtwork from './PremiumArtwork';
@@ -22,24 +22,25 @@ export default function HomePage() {
   }, [hash]);
   return <main id="website-main" className="home-refresh">
     <section className="home-opening" aria-labelledby="home-title">
-
+      <img className="home-opening-art" src={hero} alt="" aria-hidden="true" fetchPriority="high" decoding="async" />
       <div className="website-container home-opening-inner"><motion.div className="home-opening-copy" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .5 }}>
         <div className="home-opening-brand"><SplashLogo /></div><p className="website-eyebrow">The SATs Legends universe · KS2 revision</p>
         <h1 id="home-title">Big challenges.<br /><span>Brilliant minds.</span></h1>
         <p className="home-opening-description">Two worlds of revision. Explore maths in Matharia and English in Lexcoria, with adventures designed to complement learning at school.</p>
         <div className="home-actions"><a className="website-button website-button-gold" href="#revision-subjects"><Gamepad2 size={20} /> Explore the worlds <ArrowRight size={19} /></a><Link className="home-secondary-link" to="/for-parents">How it works for parents <ArrowRight size={18} /></Link></div>
         <p className="home-opening-note"><Check size={16} /> Matharia plans from £4.99/month · Lexcoria access is separate</p>
-      </motion.div><div className="universe-worlds" aria-label="Explore the SATs Legends worlds"><Link className="universe-world" to="/play"><img src={hero} alt="" /><span><small>Maths adventure</small><strong>Matharia</strong><span>Explore maths <ArrowRight size={17} /></span></span></Link><Link className="universe-world" to="/english"><img src={lexcoria} alt="" /><span><small>English adventure</small><strong>Lexcoria</strong><span>{englishReleased ? 'Explore English' : englishTesting ? 'Explore the playtest' : 'Discover Lexcoria'} <ArrowRight size={17} /></span></span></Link></div></div>
+      </motion.div><figure className="home-opening-character"><img src={hero} alt="SATs Legends adventurers explore a world of waterfalls" /></figure></div>
     </section>
-    <div className="home-facts"><div className="website-container"><span>KS2 maths & English</span><span>Two adventure worlds</span><span>Private parent progress</span><span>Phone, tablet & desktop</span></div></div>
+
 
     <section id="revision-subjects" className="home-worlds website-container" aria-labelledby="home-worlds-title">
-      <motion.div {...reveal} className="home-section-intro"><div><p className="website-eyebrow">Meet the adventures</p><h2 id="home-worlds-title">Maths and English.<br /><span>A world for each.</span></h2></div><p>Two sister worlds, each with its own challenges and a shared love of learning.</p></motion.div>
+      <motion.div {...reveal} className="home-section-intro"><div><p className="website-eyebrow">Choose your adventure</p><h2 id="home-worlds-title">Maths and English.<br /><span>A world for each.</span></h2></div><p>Two sister worlds, each with its own challenges and a shared love of learning.</p></motion.div>
       <div className="home-world-list">
         <article className="home-world"><Link className="home-world-art" to="/play" aria-label="Explore Matharia maths revision"><img src={matharia} alt="The forest realm of Matharia’s fraction challenges" loading="lazy" /><span>Maths adventure</span></Link><div className="home-world-copy"><p className="website-eyebrow">Matharia · Available now</p><h3>Make maths an adventure.</h3><p>Practise number, calculations, fractions, geometry, ratio and reasoning across distinct game challenges.</p><Link className="website-button website-button-gold" to="/play">Explore Matharia <ArrowRight size={18} /></Link><small>Maths revision for one child profile.</small></div></article>
         <article className="home-world"><Link className="home-world-art home-world-english" to="/english" aria-label="Explore Lexcoria English revision"><img src={lexcoria} alt="A library and waterfall canyon in Lexcoria" loading="lazy" /><span>English adventure</span></Link><div className="home-world-copy"><p className="website-eyebrow">Lexcoria · {englishReleased ? 'Available now' : englishTesting ? 'Gated playtest' : 'In development'}</p><h3>Discover the power of words.</h3><p>A sister adventure for reading comprehension, grammar, punctuation and spelling, with its own access and progress.</p><Link className="website-button website-button-outline" to="/english">Discover Lexcoria <ArrowRight size={18} /></Link><small>{englishReleased ? 'An English or combined plan is required.' : 'English plans are not on sale yet. Not included in Matharia plans.'}</small></div></article>
       </div>
     </section>
+    <div className="home-facts"><div className="website-container"><span>KS2 maths & English</span><span>Two adventure worlds</span><span>Private parent progress</span><span>Phone, tablet & desktop</span></div></div>
 
     <section id="what-is-sats-legends" className="home-overview home-paper" aria-labelledby="home-overview-title"><div className="website-container">
       <motion.div {...reveal} className="home-section-intro"><div><p className="website-eyebrow">What is SATs Legends?</p><h2 id="home-overview-title">A fresh way to revisit<br />what they learn at school.</h2></div><p>A revision companion for home, bringing maths and English adventures, clear explanations and your child’s progress together. Choose one useful focus, give it a go and build from there.</p></motion.div>
