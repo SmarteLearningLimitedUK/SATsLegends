@@ -1,7 +1,7 @@
 {
-  "tag": "matharia-ci-2026-11-03-independent-app",
+  "tag": "matharia-ci-20261103-allgames-parentgate-v1",
   "asset": "matharia-mac-testflight-candidate.zip",
-  "sha256": "9402830a5b6949927dc2a71b9babf547284899f06dd44232ddf0f721f4f986d4",
+  "sha256": "649d5be8a0e38932c6603bcfd8c251c145de06bfa56c7c276a7cb27d913e14b6",
   "bundleId": "com.smartelearning.satslegends",
   "minimumIOS": "16.4",
   "sourceGitHead": "fe35bdcf49b6a5c5a302e9582e486c742441e30d"
