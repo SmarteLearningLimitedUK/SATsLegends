@@ -42,6 +42,10 @@ jobs:
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            variants/matharia/scripts
+            variants/matharia/release
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -74,6 +78,10 @@ jobs:
       APPLE_TEAM_ID: D8L3PZ8Y72
     steps:
       - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            variants/matharia/scripts
+            variants/matharia/release
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
