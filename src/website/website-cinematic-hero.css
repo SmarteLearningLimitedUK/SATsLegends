@@ -1,29 +1,29 @@
-/* A single scene keeps the character grounded in the world. */
-.home-opening-brand { width: 164px; margin-bottom: 22px; }
-.home-opening-brand svg { display: block; width: 100%; height: auto; }
-.home-opening-inner { position: relative; min-height: min(740px, calc(100svh - 88px)); }
-.home-opening-copy { position: relative; z-index: 1; }
-.home-opening-art { object-position: 65% center; }
-.home-opening::before { background: linear-gradient(90deg,#120827fa 0%,#1a0b38f0 24%,#1a0b38b3 44%,#13092c20 70%),linear-gradient(0deg,#11062670,transparent 25%); }
-.home-opening-character { display: none; }
-.gameplay-gallery-mobile-note { display: block; color: var(--web-muted); font-size: 13px; margin-top: 24px !important; }
-@media (max-width: 760px) {
-  .home-opening-inner { min-height: 0; display: flex; flex-direction: column; align-items: stretch; gap: 22px; padding-block: 34px 0; }
-  .home-opening-art { display: none; }
-  .home-opening::before { background: #180c30; }
-  .home-opening-brand { display: none; }
-  .home-opening h1 { font-size: clamp(38px, 8vw, 52px); margin-block: 16px 18px !important; }
-  .home-opening-description { font-size: 17px; line-height: 1.6; }
-  .home-opening-character { display: block; margin: 0 -20px; height: clamp(270px, 76vw, 410px); overflow: hidden; }
-  .home-opening-character img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 100% center; }
-}
-@media (min-width:581px) and (max-width:760px) { .home-opening-character { margin-inline: -28px; } }
-@media (min-width:761px) and (max-height:780px) { .home-opening-inner { padding-block: 30px; }.home-opening-brand { width: 135px; margin-bottom: 12px; }.home-opening h1 { font-size: 48px; margin-block: 14px !important; } }
-
-/* The hero is a single scene; the game choices sit in the next section. */
-.home-opening { background: #170b30; }
-.home-opening::before { display: block; background: linear-gradient(90deg,#120827fa 0%,#1a0b38ed 28%,#1a0b38a8 46%,#13092c15 75%),linear-gradient(0deg,#1106268a,transparent 26%); }
-.home-opening-inner { display: flex; align-items: center; }
+/* A centred, cinematic introduction to the shared SATs Legends universe. */
+.home-opening { background: #160a2f; }
+.home-opening::before { display: none; }
+.home-opening-stage { position: relative; isolation: isolate; overflow: hidden; background: #130a33; }
+.home-opening .home-opening-art { position: relative; z-index: auto; display: block; width: 100%; height: clamp(500px, 47vw, 760px); object-fit: cover; object-position: center 60%; }
+.home-opening-stage::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg,#13082b77,transparent 35%,transparent 80%,#160a2fbd); }
+.home-opening-headline { position: absolute; z-index: 1; top: clamp(26px,4vw,60px); left: 20px; right: 20px; text-align: center; color: #fff9ed; text-shadow: 0 3px 18px #0d062e,0 1px 4px #0d062e; }
+.home-opening-headline .website-eyebrow { color: #ffe277; justify-content: center; }
+.home-opening-headline h1 { font-size: clamp(40px,4.8vw,68px); line-height: 1.02; margin-block: 14px !important; }
+.home-opening-headline h1 span { color: #ffe277; }
+.home-opening-intro { padding-block: 24px 36px; text-align: center; }
+.home-opening-intro .home-opening-description { max-width: 690px; margin-inline: auto; }
+.home-opening-intro .home-actions { align-items: center; margin-top: 22px; gap: 14px; }
+.home-opening-intro .home-opening-note { justify-content: center; margin-top: 20px !important; }
 .home-worlds { scroll-margin-top: 100px; }
 .home-world-english > img { object-fit: cover; padding: 0; filter: none; }
-@media (max-width:760px) { .home-opening::before { display: none; }.home-opening-inner { display: flex; gap: 22px; padding-block: 34px 0; }.home-opening-character { display: block; }.home-worlds { scroll-margin-top: 80px; } }
+.gameplay-gallery-mobile-note { display: block; color: var(--web-muted); font-size: 13px; margin-top: 24px !important; }
+@media (max-width:760px) {
+ .home-opening { display: block; }
+ .home-opening-stage { display: flex; flex-direction: column; }
+ .home-opening-headline { position: relative; inset: auto; padding: 30px 20px 18px; background: #170b35; }
+ .home-opening-headline h1 { font-size: clamp(37px,8vw,51px); }
+ .home-opening .home-opening-art { position: relative; order: 2; height: auto; aspect-ratio: 1.75; object-position: center 65%; }
+ .home-opening-stage::after { background: linear-gradient(0deg,#160a2f99,transparent 24%); }
+ .home-opening-intro { padding-block: 22px 32px; }
+ .home-opening-intro .home-opening-description { font-size: 16px; line-height: 1.6; }
+ .home-opening-intro .home-opening-note { font-size: 12px; }
+ .home-worlds { scroll-margin-top: 80px; }
+}

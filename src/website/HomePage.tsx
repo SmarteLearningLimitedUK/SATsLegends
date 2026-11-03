@@ -2,11 +2,10 @@ import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ArrowRight, BookOpen, Check, Gamepad2, Video } from 'lucide-react';
-import hero from '../assets/website/premium/hero-cinematic-wide.webp';
+import hero from '../assets/website/universe-hero-centered.png';
 import matharia from '../assets/website/matharia-current/forest-world.webp';
 import lexcoria from '../assets/website/lexcoria-world.webp';
 import PremiumArtwork from './PremiumArtwork';
-import SplashLogo from './SplashLogo';
 import GameplayGallery from './GameplayGallery';
 import ParentQuestions from './ParentQuestions';
 import { englishReleased, englishTesting } from './englishRelease';
@@ -22,14 +21,18 @@ export default function HomePage() {
   }, [hash]);
   return <main id="website-main" className="home-refresh">
     <section className="home-opening" aria-labelledby="home-title">
-      <img className="home-opening-art" src={hero} alt="" aria-hidden="true" fetchPriority="high" decoding="async" />
-      <div className="website-container home-opening-inner"><motion.div className="home-opening-copy" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .5 }}>
-        <div className="home-opening-brand"><SplashLogo /></div><p className="website-eyebrow">The SATs Legends universe · KS2 revision</p>
-        <h1 id="home-title">Big challenges.<br /><span>Brilliant minds.</span></h1>
+      <div className="home-opening-stage">
+        <img className="home-opening-art" src={hero} alt="" aria-hidden="true" fetchPriority="high" decoding="async" />
+        <motion.div className="home-opening-headline" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .5 }}>
+          <p className="website-eyebrow">The SATs Legends universe · KS2 revision</p>
+          <h1 id="home-title">Big challenges.<br /><span>Brilliant minds.</span></h1>
+        </motion.div>
+      </div>
+      <div className="website-container home-opening-intro">
         <p className="home-opening-description">Two worlds of revision. Explore maths in Matharia and English in Lexcoria, with adventures designed to complement learning at school.</p>
         <div className="home-actions"><a className="website-button website-button-gold" href="#revision-subjects"><Gamepad2 size={20} /> Explore the worlds <ArrowRight size={19} /></a><Link className="home-secondary-link" to="/for-parents">How it works for parents <ArrowRight size={18} /></Link></div>
         <p className="home-opening-note"><Check size={16} /> Matharia plans from £4.99/month · Lexcoria access is separate</p>
-      </motion.div><figure className="home-opening-character"><img src={hero} alt="SATs Legends adventurers explore a world of waterfalls" /></figure></div>
+      </div>
     </section>
 
 
