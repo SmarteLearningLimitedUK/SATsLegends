@@ -33,3 +33,7 @@ The four gallery scenes are fresh, uncropped browser captures from the latest re
 Evidence is in ignored `qa-artifacts/matharia-website-20261103/`, `qa-artifacts/website-gameplay/` and `.deploy/matharia-website-*.log`.
 
 No external legacy assumptions were used. References came from the current repository and the explicitly opened owner-supplied current Matharia files.
+
+## Live deployment follow-up
+
+The first release (`0a81cbd`) uploaded 147 files (12.0 MB). Its live release record retained both game source versions, all eleven artwork/screenshot hashes matched, and desktop checks passed for home, parents, subscriptions and login. Live testing caught Apache’s canonical `/english/` redirect: the theme exclusion originally checked only `/english`. The path check now tolerates trailing slashes, preserving Lexcoria’s existing theme on direct navigation.
