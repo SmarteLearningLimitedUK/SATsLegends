@@ -1,0 +1,25 @@
+{
+  "referenceDate": "2026-11-03",
+  "source": "Owner-supplied latest Matharia development files",
+  "scope": "Website visuals only; playable game sources retained",
+  "referenceDigest": "2cdd895a6401d4a34aabf69993f57bc41e10be9802b8533c1a2c02f02cf1e9cc",
+  "codeFiles": 491,
+  "artwork": [
+    {
+      "file": "courtyard.webp",
+      "source": "src/assets/game-visions/environments/place_value_panic-v1.webp",
+      "sha256": "79ad988d54aace4cdbf1b99ad3aebfcdd84e92620bf2b03d572effb747c631b2"
+    },
+    {
+      "file": "forest-world.webp",
+      "source": "src/assets/game-visions/environments/match3_equivalence-v1.webp",
+      "sha256": "2fc39d3e0d16dc5552dfe53a4d18b402531f38ee30538d7713daaccf45ff38d5"
+    },
+    {
+      "file": "rhino.png",
+      "source": "src/assets/place_value/scene/hero_rhino_idle.png",
+      "sha256": "1a08d82d616cdedf0d1131f581297a0c312dfa95a6c4884e2865574875d50fcf"
+    }
+  ],
+  "referenceFiles": 1236
+}

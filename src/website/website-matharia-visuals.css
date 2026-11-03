@@ -1,0 +1,101 @@
+/* Website presentation only. The playable games keep their own styles. */
+body.legends-website-body:has(.website-matharia-theme) { background: #08272c; }
+.legends-website.website-matharia-theme {
+  --web-gold: #ffe196; --web-gold-edge: #b77e24; --web-gold-hairline: #dcb76145;
+  --web-midnight: #08272c; --web-white: #fff8e7; --web-muted: #c0d7d3;
+  --web-cyan: #b4e4d8; --web-lavender: #c0d7d3; --web-purple: #17545c; --web-purple-deep: #092d33;
+  --web-metal: linear-gradient(145deg,#fff5c9,#f6ce6c 36%,#dca33d 70%,#b77e24);
+  --web-enamel: linear-gradient(145deg,#164951,#0b3239 65%,#08282e);
+  background: #08272c; color: var(--web-white);
+}
+.website-matharia-theme :is(a,button,input,summary):focus-visible { outline-color: #ffe196; }
+.website-matharia-theme .website-header { background: #08272cf5; border-bottom-color: #dcb76166; box-shadow: 0 5px 24px #03161b55; }
+.website-matharia-theme .website-desktop-nav a { color: #d1e3dd; }
+.website-matharia-theme .website-desktop-nav a:is(:hover,.active) { color: #ffe196; }
+.website-matharia-theme .website-header::after { background: linear-gradient(90deg,transparent,#dcb76188,transparent); }
+.website-matharia-theme .website-mobile-nav { background: #0c333a; border-color: #dcb76166; }
+.website-matharia-theme .website-menu-button { color: #ffe196; min-width: 44px; min-height: 44px; }
+.website-matharia-theme .website-button-gold {
+  color: #30220d; background: linear-gradient(160deg,#fff1b0,#f7d276 50%,#e5b149);
+  border: 1px solid #fff0b6; border-bottom-color: #b27a27;
+  box-shadow: inset 0 1px 0 #fffbe0,0 4px 0 #886025,0 9px 23px #02181c33;
+}
+.website-matharia-theme .website-button-outline { background: #123e46; border-color: #b79d5d9c; color: #fff8e7; box-shadow: inset 0 1px 0 #ffffff12,0 3px 0 #041d23; }
+.website-matharia-theme .website-button-outline:hover { background: #1b515a; }
+.website-matharia-theme .website-world-backdrop::after { background: linear-gradient(90deg,#06272af2,#082b30e8 50%,#092f33dc); }
+.website-matharia-theme .website-world-backdrop > img { opacity: .62; }
+.website-matharia-theme .home-refresh { --home-paper: #103a40; --home-ink: #fff8e7; --home-muted: #c0d7d3; }
+.website-matharia-theme .home-opening { background: #08272c; }
+.website-matharia-theme .home-opening-art { object-position: 66% 70%; }
+.website-matharia-theme .home-opening::before { background: linear-gradient(90deg,#06282efc 0%,#082b30f5 25%,#082b30b8 48%,#082b3020 73%,#082b300a); }
+.website-matharia-theme .home-opening-inner { display: grid; grid-template-columns: minmax(0,1.1fr) minmax(0,.9fr); gap: 36px; min-height: min(700px,calc(100svh - 88px)); padding-block: 42px; align-items: center; }
+.website-matharia-theme .home-opening-copy { max-width: 520px; }
+.home-opening-brand { width: 188px; margin-bottom: 20px; }
+.home-opening-brand > svg { display: block; width: 100%; height: auto; }
+.website-matharia-theme .home-opening .website-eyebrow { color: #ffe196; letter-spacing: .12em; font-size: 12px; }
+.website-matharia-theme .home-opening h1 { font-size: clamp(42px,4.1vw,59px); line-height: 1.05; margin-block: 16px 20px !important; }
+.website-matharia-theme .home-opening h1 span { color: #ffe196; }
+.website-matharia-theme .home-opening-description { color: #e0ebe3; font-size: 18px; line-height: 1.65; max-width: 440px; }
+.website-matharia-theme .home-actions { gap: 16px; margin-top: 24px; }
+.website-matharia-theme .home-opening-note { margin-top: 23px !important; color: #c8dcd6; }
+.home-opening-character { position: relative; margin: 0; width: 100%; height: clamp(340px,37vw,510px); align-self: end; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 18px; isolation: isolate; }
+.home-opening-character::after { content: ''; position: absolute; bottom: 13px; width: 70%; height: 26px; border-radius: 50%; background: #0a292c70; filter: blur(8px); z-index: -1; }
+.home-opening-character-hero { display: block; width: min(100%,490px); height: auto; max-height: 100%; object-fit: contain; object-position: center bottom; filter: drop-shadow(0 12px 12px #092b3455); }
+.home-opening-character-world { display: none; }
+.website-matharia-theme .home-facts { background: #0e343a; border-color: #dcb76138; }
+.website-matharia-theme .home-facts > div { color: #dce9df; }
+.website-matharia-theme .home-facts span + span { border-color: #dcb76145; }
+.website-matharia-theme .home-practice-steps li { border-color: #dcb76145; }
+.website-matharia-theme .home-practice-steps li > div { color: #e8c982; }
+.website-matharia-theme .home-practice-steps a { color: #ffe196; }
+.website-matharia-theme .home-world { border-color: #dcb76145; }
+.website-matharia-theme .home-world-art { border: 1px solid #dcb76166; border-radius: 14px; background-color: #143c42; }
+.website-matharia-theme .home-world-art > span { background: #06282eeb; border-color: #dcb76188; color: #ffe196; }
+.website-matharia-theme .home-gameplay { background: #071e27; border-color: #dcb76138; }
+.website-matharia-theme .gameplay-photo-button { border-color: #be9a51aa; background: #08272c; box-shadow: 0 9px 23px #020f1460; }
+.website-matharia-theme .gameplay-photo-button > span { background: #082c32f0; color: #ffe196; border-color: #dcb76188; }
+.website-matharia-theme .gameplay-gallery-mobile-note { display: block; color: #b9d0ce; font-size: 13px; margin-top: 24px !important; }
+.website-matharia-theme .home-parent li { border-color: #dcb76145; }
+.website-matharia-theme .home-parent li > svg { color: #e8c982; }
+.website-matharia-theme .home-parent h2 span { color: #ffe196; }
+.website-matharia-theme .home-parent figcaption { color: #c0d7d3; }
+.website-matharia-theme .home-parent figure { padding-bottom: 12px; border-bottom: 1px solid #dcb76145; }
+.website-matharia-theme .home-close { background: #123e45; border-color: #dcb76145; }
+.website-matharia-theme .home-close p:not(.website-eyebrow),.website-matharia-theme .home-close small { color: #c9ddd7; }
+.website-matharia-theme .parent-questions details { border-color: #dcb76145; }
+.website-matharia-theme .website-footer { background: #061e24; border-color: #dcb76145; }
+.website-matharia-theme .website-footer :is(nav,.website-footer-top > p,.website-footer-bottom) { color: #c0d7d3; border-color: #dcb76138; }
+.website-matharia-theme .parents-hero::before { background: linear-gradient(90deg,#08272cf7,#0a3239e8 55%,#08272cc4); }
+.website-matharia-theme .parents-hero-landscape { opacity: .65; }
+.website-matharia-theme .parents-hero-art::before { background: radial-gradient(ellipse,#98c9bc40,#103a40 58%,transparent 72%); box-shadow: none; }
+.website-matharia-theme :is(.parents-family-section,.parents-calm-section,.parents-final,.website-final-cta) { background: #103a40; border-color: #dcb76145; }
+.website-matharia-theme :is(.parents-security,.parents-topic-table,.parents-calm-options button,.parents-calm-details) { border-color: #dcb76145; }
+.website-matharia-theme :is(.website-resource-heading,.website-account-world)::before { background: radial-gradient(ellipse,#c2a35e20,transparent 70%); }
+.website-matharia-theme :is(.website-resource-heading > p:last-child,.website-account-world > p:not(.website-eyebrow),.parents-page p,.family-small) { color: #c0d7d3; }
+.website-matharia-theme :is(.website-account-form-wrap,.family-plans > article,.family-panel,.family-dashboard-card,.website-guide,.website-worked-example,.website-quick-check,.website-video-card,.website-topic-toggle) { background: #0d343b; border-color: #a98b4f80; }
+.website-matharia-theme :is(.website-account-form-wrap input:not([type=checkbox]),.website-search input,.website-search,.website-filters button,.website-answer-options button,.website-social-button) { background: #08272e; border-color: #9abbb56b; color: #fff8e7; }
+.website-matharia-theme :is(.family-notice,.family-payment-note,.family-product-intro,.website-video-learning-tip,.website-tip) { background: #174950; border-color: #be9a5166; color: #e6eee4; }
+.website-matharia-theme .family-plans article > p { color: #d1e1d9; }
+.website-matharia-theme .website-account-character { filter: drop-shadow(0 12px 12px #031c2455); }
+.website-matharia-theme .revision-overview,.website-matharia-theme .revision-coverage { background: #0b3036f5; }
+.website-matharia-theme .revision-benefits { background: #123f46f5; border-color: #dcb76138; }
+.website-matharia-theme .revision-subjects article { border-color: #bfa15d88; }
+.website-matharia-theme .revision-benefits li,.website-matharia-theme .revision-tools article { border-color: #dcb76145; }
+body:has(.website-matharia-theme) .gameplay-photo-dialog { --web-gold: #ffe196; --web-white: #fff8e7; --web-muted: #c0d7d3; background: #0b3036; border-color: #dcb76188; color: #fff8e7; }
+body:has(.website-matharia-theme) .gameplay-photo-dialog-header { background: #0b3036; border-color: #dcb76145; color: #ffe196; }
+body:has(.website-matharia-theme) .gameplay-photo-dialog-header button { background: #174b54; color: #fff8e7; border-color: #a98b4f88; }
+@media (max-width:1100px) { .website-matharia-theme .home-opening-inner { gap: 22px; padding-block: 34px; }.home-opening-brand { width: 155px; margin-bottom: 16px; }.website-matharia-theme .home-opening h1 { font-size: 43px; }.website-matharia-theme .home-opening-description { font-size: 17px; } }
+@media (min-width:761px) and (max-height:780px) { .home-opening-brand { width: 140px; margin-bottom: 12px; }.website-matharia-theme .home-opening-inner { padding-block: 26px; }.website-matharia-theme .home-opening h1 { font-size: 45px; margin-block: 12px 16px !important; }.website-matharia-theme .home-opening-description { font-size: 17px; }.website-matharia-theme .home-actions { margin-top: 20px; gap: 13px; }.home-opening-character { height: 430px; } }
+@media (max-width:760px) {
+ .website-matharia-theme .home-opening-inner { display: flex; flex-direction: column; padding-block: 32px 0; gap: 25px; min-height: 0; align-items: stretch; }
+ .website-matharia-theme .home-opening-art { display: none; }.website-matharia-theme .home-opening::before { display: none; }.home-opening-brand { display: none; }
+ .website-matharia-theme .home-opening-copy { max-width: 600px; }.website-matharia-theme .home-opening h1 { font-size: clamp(38px,8vw,52px); margin-block: 15px 18px !important; }
+ .website-matharia-theme .home-opening-description { font-size: 17px; line-height: 1.65; }.website-matharia-theme .home-actions { gap: 18px; margin-top: 23px; }
+ .home-opening-character { height: clamp(270px,76vw,410px); width: calc(100% + 40px); margin-inline: -20px; padding-block: 14px 17px; overflow: hidden; }
+ .home-opening-character-world { display: block; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 75%; z-index: -2; }
+ .home-opening-character::before { content: ''; position: absolute; inset: 0; background: linear-gradient(#08272c,transparent 22%,transparent 88%,#08272c88); z-index: -1; }
+ .home-opening-character-hero { width: 66%; max-height: 100%; }.home-opening-character::after { bottom: 14px; width: 46%; height: 18px; }
+}
+@media (min-width:581px) and (max-width:760px) { .home-opening-character { width: calc(100% + 56px); margin-inline: -28px; } }
+@media (max-width:380px) { .website-matharia-theme .home-opening h1 { font-size: 37px; }.website-matharia-theme .home-opening-description { font-size: 16px; }.website-matharia-theme .home-opening .website-eyebrow { font-size: 11px; } }
+@media (prefers-reduced-motion:reduce) { .website-matharia-theme .website-button,.website-matharia-theme .home-world-art > img { transition: none; }.website-matharia-theme .website-button:hover { transform: none; } }

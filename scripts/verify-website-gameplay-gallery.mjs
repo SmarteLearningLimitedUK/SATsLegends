@@ -18,7 +18,7 @@ for (const profile of [
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     for (const route of ['/', '/for-parents']) {
-      await page.goto(base + route);
+      await page.goto(base + route, { waitUntil: 'domcontentloaded' });
       const gallery = page.getByRole('region', { name: 'See the challenge. See the maths behind it.' });
       await expect(gallery).toBeVisible();
       await expect(gallery.locator('figure')).toHaveCount(4);

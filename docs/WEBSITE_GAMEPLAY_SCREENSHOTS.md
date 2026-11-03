@@ -1,3 +1,15 @@
+# Latest visual-reference previews — 3 November 2026
+
+The current gallery is explicitly labelled **Latest Matharia preview**. Its four captures show the owner-authorised latest Matharia development reference, including the ornate gold frames, teal controls and updated environments. They preview the next visual update; the website's playable Matharia snapshot remains unchanged by this website-only pass. Older release notes below are historical.
+
+The isolated reference was copied without credentials or development changes to the original game folder. The reference digest is `2cdd895a6401d4a34aabf69993f57bc41e10be9802b8533c1a2c02f02cf1e9cc`. Set `LEGENDS_CAPTURE_REFERENCE_MANIFEST=src/assets/website/matharia-current/source-manifest.json` and point `LEGENDS_CAPTURE_URL` at that reference server when recapturing this preview. Without the reference setting, the capture script records a deployed-game capture.
+
+The capture script rejects failed artwork/font requests, failed fonts and page errors. The prepublish guard checks all eight screenshot hashes, the declared reference digest/date, the three source-art hashes and the retained hosted game snapshot. Keep the preview label whenever the visual reference is ahead of the hosted game.
+
+See [the visual refresh report](WEBSITE_MATHARIA_VISUALS_2026-11-03.md) for scope and verification.
+
+---
+
 # Minigame screenshots on the website
 
 ## Current update — after local game synchronization, 20 October 2026

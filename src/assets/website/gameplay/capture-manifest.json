@@ -1,18 +1,21 @@
 {
   "mathariaSnapshot": "3ae32a9087b592cfcb2b420ea5606f293e5cd0dce0b7c2622fdb2dcde373499b",
-  "capturedFromCommit": "a8ef22975a437fc44122828a8d419f070a34b911",
+  "captureKind": "development-preview",
+  "referenceDigest": "2cdd895a6401d4a34aabf69993f57bc41e10be9802b8533c1a2c02f02cf1e9cc",
+  "referenceDate": "2026-11-03",
+  "capturedFromCommit": "059c27e6ed15d6440750a5f12b75695a158210a3",
   "games": [
     {
       "key": "place_value_panic",
       "title": "Place Value Panic",
       "route": "/game/1/1",
       "file": "place-value-panic-desktop.jpg",
-      "question": "Put the number stones in the correct places to repair the number.\nWrite thirty-five in digits.\n\nUse place value to put the number back in order.\nWrite thirty-five in digits.",
+      "question": "Write sixty-four in digits.\n\nUse place value to put the number back in order.",
       "viewport": "1440x900 at 2x",
-      "capturedAt": "2026-10-20T21:59:03.242Z",
-      "sha256": "ccddba3ae9c8d5612b91f7af0562aacec949839ac549a0f15feb19d5722a0ebd",
+      "capturedAt": "2026-11-03T10:29:35.344Z",
+      "sha256": "6c3b499adc44b3d873ad3e1eddc7db44b77512f11ffa80a68cd33d40c73decd5",
       "previewFile": "place-value-panic-desktop-preview.jpg",
-      "previewSha256": "ec9fa6cedfe592bb8deffde24c3729bfb5dd278c82c3ea464c108a6ffcb8332b"
+      "previewSha256": "0091218119f6c7648b85da55ebd3946927fdaa918205efea77997aba6056d8dd"
     },
     {
       "key": "match3_equivalence",
@@ -21,22 +24,22 @@
       "file": "match3-equivalence-desktop.jpg",
       "question": "Match equivalent fractions.",
       "viewport": "1440x900 at 2x",
-      "capturedAt": "2026-10-20T21:59:14.421Z",
-      "sha256": "2f74894113247bdb7f7de5474fa010da2468badac7febdf84166dcdd42ac056a",
+      "capturedAt": "2026-11-03T10:29:41.606Z",
+      "sha256": "aeca078944e2c70021ae26c9a11ff28e63fee731e21065de78d9d13af1ecdd8f",
       "previewFile": "match3-equivalence-desktop-preview.jpg",
-      "previewSha256": "ee6b9ee4417e1f568c944c0ce47960dcb74ba5da35c3362bebc6217b027b4136"
+      "previewSha256": "bef6ce0b0af94eefece4286192f4c8500bd636f5aa15cc4b174c41fd9b6f246a"
     },
     {
       "key": "angle_arena",
       "title": "Angle Arena",
       "route": "/game/3/1",
       "file": "angle-arena-desktop.jpg",
-      "question": "Angles on a straight line total 180°.\nOne angle on a straight line is 90°. What is the other angle?",
+      "question": "Angles on a straight line total 180°.\nOne angle on a straight line is 80°. What is the other angle?",
       "viewport": "1440x900 at 2x",
-      "capturedAt": "2026-10-20T21:59:42.656Z",
-      "sha256": "1973fb3c3827b4a53b2d028d8d1dc3c5c624988706abba24e12b0fea4c066e50",
+      "capturedAt": "2026-11-03T10:29:48.374Z",
+      "sha256": "77fcb5cccb61700639c15acb01f3ee81202d57d76e3dc79bcb7c31fe2cdf0d28",
       "previewFile": "angle-arena-desktop-preview.jpg",
-      "previewSha256": "b6048de6c9b68d6be9c3995f9596737700589c1f9c733f61ebbdbe7bdf11285d"
+      "previewSha256": "db23873e938bde6942778a8633de6496fe186392039daf36731cfa9346274e61"
     },
     {
       "key": "potion_panic",
@@ -45,10 +48,10 @@
       "file": "potion-panic-desktop.jpg",
       "question": "Azure Cleanse\nBREW 1 OF 5\n·\nRATIO 2:5\nBrew 7 drops in the ratio above.",
       "viewport": "1440x900 at 2x",
-      "capturedAt": "2026-10-20T21:59:49.847Z",
-      "sha256": "bc3f05d07bb541c71eafcbe6aa582119e1fceff0c7bf033710786050ac2068b0",
+      "capturedAt": "2026-11-03T10:29:56.042Z",
+      "sha256": "3c380b1b17233ecb81f6cc68d2d4cb5c5857c5aed61c190d9704c6a5e7b26ce8",
       "previewFile": "potion-panic-desktop-preview.jpg",
-      "previewSha256": "2c016a2feb3d89c6f66c7c0c02605bfc90c12dda45a98f607bd2be155f7fc308"
+      "previewSha256": "1232882ecea7740fd588347d61755ad5557ffb1a79448b3eeb5a00275478778d"
     }
   ]
 }

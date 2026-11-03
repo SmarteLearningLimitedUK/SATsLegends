@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ArrowRight, BookOpen, Check, Leaf, LockKeyhole, Mail, ShieldCheck } from 'lucide-react';
-import valley from '../assets/website/premium/place_value_panic-world.webp';
+import valley from '../assets/website/matharia-current/forest-world.webp';
 import PremiumArtwork from './PremiumArtwork';
 import ParentQuestions from './ParentQuestions';
 import { RevisionBenefits } from './RevisionContent';

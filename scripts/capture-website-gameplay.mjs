@@ -22,6 +22,8 @@ try {
   page.setDefaultTimeout(45000);
   page.setDefaultNavigationTimeout(60000);
   const errors = [];
+  const assetFailures = [];
+  page.on('response', response => { if (response.status() >= 400 && /\.(?:woff2?|png|webp|jpe?g|svg)(?:\?|$)/i.test(response.url())) assetFailures.push(`${response.status()} ${response.url()}`); });
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(base + '/map');
   await expect(page.locator('[data-qa-screen="world_map"]')).toBeVisible();
@@ -54,6 +56,8 @@ try {
     await stage.screenshot({ path: path.join(output, file), type: 'jpeg', quality: 90, animations: 'disabled' });
     if (desktop) await stage.screenshot({ path: path.join(output, file.replace('.jpg', '-preview.jpg')), type: 'jpeg', quality: 88, scale: 'css', animations: 'disabled' });
     expect(errors).toEqual([]);
+    expect(assetFailures).toEqual([]);
+    expect(await page.evaluate(() => [...document.fonts].filter(font => font.status === 'error').map(font => font.family))).toEqual([]);
     const question = await page.locator('[data-game-question]').first().innerText();
     report.push({ ...game, file, question, viewport: desktop ? '1440x900 at 2x' : '390x844 at 2x', capturedAt: new Date().toISOString() });
     console.log(`Captured ${game.title}: ${game.route} -> ${file}`);
@@ -62,6 +66,7 @@ try {
   if (desktop && report.length === 4) {
     const sources = JSON.parse(await readFile('scripts/game-release-sources.json', 'utf8'));
     const revision = spawnSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' });
+    const reference = process.env.LEGENDS_CAPTURE_REFERENCE_MANIFEST ? JSON.parse(await readFile(process.env.LEGENDS_CAPTURE_REFERENCE_MANIFEST, 'utf8')) : null;
     for (const row of report) {
       row.sha256 = createHash('sha256').update(await readFile(path.join(output, row.file))).digest('hex');
       row.previewFile = row.file.replace('.jpg', '-preview.jpg');
@@ -69,6 +74,8 @@ try {
     }
     await writeFile(path.join(output, 'capture-manifest.json'), JSON.stringify({
       mathariaSnapshot: sources.matharia.snapshotSha256,
+      captureKind: reference ? 'development-preview' : 'deployed-game',
+      ...(reference ? { referenceDigest: reference.referenceDigest, referenceDate: reference.referenceDate } : {}),
       capturedFromCommit: revision.status === 0 ? revision.stdout.trim() : null,
       games: report,
     }, null, 2) + '\n');

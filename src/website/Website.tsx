@@ -45,7 +45,7 @@ export default function Website() {
     document.title = `SATs Legends · ${page}`;
   }, [pathname]);
 
-  return <div className={`legends-website${pathname === "/" ? " homepage-refresh" : ""}`}>
+  return <div className={`legends-website${pathname === "/" ? " homepage-refresh" : ""}${pathname === "/english" ? "" : " website-matharia-theme"}`}>
     {pathname !== "/" && <AdventureBackdrop />}
     <a className="website-skip-link" href="#website-main">Skip to content</a>
     <header className="website-header"><div className="website-container website-header-inner">

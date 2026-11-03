@@ -18,6 +18,7 @@ import './website-hero-action.css';
 import './website-typography.css';
 import './website-revision-refresh.css';
 import './homepage-refresh.css';
+import './website-matharia-visuals.css';
 
 const Game = lazy(() => import('../App'));
 const GameGate = lazy(() => import('./GameGate'));
