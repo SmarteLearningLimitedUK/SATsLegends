@@ -1,0 +1,65 @@
+name: iOS native device verification
+
+on:
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: Native UI coverage
+        type: choice
+        options: [smoke, games, all-tiers]
+        default: games
+  push:
+    branches: ['codex/native-device-qa-*']
+    paths:
+      - '.github/workflows/ios-device-qa.yml'
+      - 'variants/matharia/scripts/run-native-device-tests.mjs'
+      - 'variants/matharia/scripts/native-device-tests/**'
+      - 'variants/matharia/release/device-qa-candidate.json'
+
+# Required to READ the unpublished candidate in this public repository.
+# No signing credentials, deployment environment or App Store upload is used.
+permissions:
+  contents: write
+
+concurrency:
+  group: native-device-qa-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  devices:
+    runs-on: macos-26
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        profile: [reference]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            variants/matharia/scripts
+            variants/matharia/release
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Download unpublished pinned app snapshot
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag=$(node -p "JSON.parse(require('fs').readFileSync('variants/matharia/release/device-qa-candidate.json','utf8')).tag")
+          gh release download "$tag" --repo "$GITHUB_REPOSITORY" --pattern matharia-mac-testflight-candidate.zip --dir "$RUNNER_TEMP/matharia-download"
+      - name: Run native gameplay, lifecycle and rotation checks
+        env:
+          CANDIDATE_ZIP: ${{ runner.temp }}/matharia-download/matharia-mac-testflight-candidate.zip
+          QA_DEVICE: ${{ matrix.profile }}
+          QA_SCOPE: ${{ inputs.scope || 'smoke' }}
+        run: node variants/matharia/scripts/run-native-device-tests.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: matharia-device-${{ matrix.profile }}
+          path: qa-artifacts/native-device-qa/
+          retention-days: 14
+          if-no-files-found: warn

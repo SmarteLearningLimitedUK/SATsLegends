@@ -1,0 +1,8 @@
+{
+  "tag": "matharia-ci-20261104-release-readiness",
+  "asset": "matharia-mac-testflight-candidate.zip",
+  "sha256": "1f06b7d8453ba4e2f27bd3c5aeb5722d7237a004f8c51f7ccce81e40f887ee7b",
+  "bundleId": "com.smartelearning.satslegends",
+  "minimumIOS": "16.4",
+  "sourceGitHead": "e7083fb7b03ebe80d4c9becd6b14338310c9ff70"
+}
