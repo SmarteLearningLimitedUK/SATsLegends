@@ -38,7 +38,9 @@ concurrency:
 jobs:
   native-checks:
     if: github.event_name == 'push' || inputs.operation == 'upload' || inputs.operation == 'verify-app-flow'
-    runs-on: macos-26
+    runs-on: macos-15-intel
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
@@ -71,11 +73,12 @@ jobs:
   testflight:
     needs: native-checks
     if: github.event_name == 'push' || (inputs.operation == 'upload' && inputs.upload)
-    runs-on: macos-26
+    runs-on: macos-15-intel
     environment: ios-testflight
     timeout-minutes: 40
     env:
       APPLE_TEAM_ID: D8L3PZ8Y72
+      DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
     steps:
       - uses: actions/checkout@v4
         with:

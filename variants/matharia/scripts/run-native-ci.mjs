@@ -55,6 +55,7 @@ with zipfile.ZipFile(sys.argv[1]) as z:
   assert not stat.S_ISLNK(i.external_attr>>16)
  z.extractall(sys.argv[2])`,zipPath,nativeRoot]);
   const candidate = JSON.parse(readFileSync(join(nativeRoot,'MATHARIA-CANDIDATE.json'),'utf8'));
+  if (candidate.internalTestingOnly === true && release.internalTestingOnly !== true) throw Error('An internal review candidate must retain its internal-only export restriction.');
   if (candidate.bundleId !== IOS_BUNDLE_ID || candidate.minimumIOS !== '16.4') throw Error('Wrong native candidate identity.');
   if (candidate.sourceGitHead !== release.sourceGitHead) throw Error('Candidate source provenance mismatch.');
   const subscriptions = subscriptionConfiguration(nativeRoot);
@@ -145,10 +146,10 @@ with zipfile.ZipFile(sys.argv[1]) as z:
       page = await apple(page.links.next); builds.push(...(page.data || []));
     }
     const build = nextBuild(builds.map(item=>item.attributes.version),process.env.GITHUB_RUN_NUMBER,process.env.GITHUB_RUN_ATTEMPT);
-    Object.assign(result,{version,build,internalTestingOnly:false,uploadCommandSucceeded:false}); save();
+    Object.assign(result,{version,build,internalTestingOnly:release.internalTestingOnly===true,uploadCommandSucceeded:false}); save();
     const keyPath = join(work,`AuthKey_${signing.keyId}.p8`),optionsPath = join(work,'ExportOptions.plist');
     writeFileSync(keyPath,signing.privateKey,{mode:0o600});
-    writeFileSync(optionsPath,exportOptions(signing),{mode:0o600});
+    writeFileSync(optionsPath,exportOptions(signing,{internalOnly:result.internalTestingOnly}),{mode:0o600});
     const archive = join(work,'Matharia.xcarchive');
     const auth = ['-allowProvisioningUpdates','-authenticationKeyPath',keyPath,'-authenticationKeyID',signing.keyId,'-authenticationKeyIssuerID',signing.issuer];
     console.log(`Archiving Matharia ${version} (${build}) for existing app ${IOS_APP_ID}.`);
@@ -176,6 +177,20 @@ with zipfile.ZipFile(sys.argv[1]) as z:
     }
     result.processingState ||= 'PENDING';
     if(result.processingState==='VALID'){
+      if (release.testerNotes) {
+        try {
+          if (typeof release.testerNotes !== 'string' || release.testerNotes.length > 4000 || !/^[a-z]{2}(?:-[A-Z]{2})?$/.test(release.testerLocale || 'en-GB')) throw Error('Invalid TestFlight review notes.');
+          const locale = release.testerLocale || 'en-GB';
+          const localizations = await apple(`/v1/builds/${result.appleBuildId}/betaBuildLocalizations?limit=200`);
+          const existing = localizations.data?.find(row => row.attributes.locale === locale);
+          const data = existing ? {type:'betaBuildLocalizations',id:existing.id,attributes:{whatsNew:release.testerNotes}} :
+            {type:'betaBuildLocalizations',attributes:{locale,whatsNew:release.testerNotes},relationships:{build:{data:{type:'builds',id:result.appleBuildId}}}};
+          await apple(existing ? `/v1/betaBuildLocalizations/${existing.id}` : '/v1/betaBuildLocalizations',
+            {method:existing?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data})});
+          result.testerNotesUpdated = true;
+        } catch (error) { result.testerNotesError = error.message; }
+        save();
+      }
       const availability=await enableInternalTesting({
         api:(path,options={})=>apple(path,{...options,
           body:options.body?JSON.stringify(options.body):undefined,

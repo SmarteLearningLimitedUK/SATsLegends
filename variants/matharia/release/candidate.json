@@ -1,8 +1,11 @@
 {
-  "tag": "matharia-ci-20261103-swipe-v1",
+  "tag": "matharia-ci-20261104-testflight-review-v3",
   "asset": "matharia-mac-testflight-candidate.zip",
-  "sha256": "ca1258ef47278b35376dfe774ab2fe3720bbbf2f629bc1611f7f5b13bca0d4e3",
+  "sha256": "6a15ec9093d2316ad244c9713f8a05a9c2fba294c5aa265c8382cddbe51e5539",
   "bundleId": "com.smartelearning.satslegends",
   "minimumIOS": "16.4",
-  "sourceGitHead": "fe35bdcf49b6a5c5a302e9582e486c742441e30d"
+  "sourceGitHead": "e7083fb7b03ebe80d4c9becd6b14338310c9ff70",
+  "internalTestingOnly": true,
+  "testerLocale": "en-GB",
+  "testerNotes": "Internal review build: all games and levels are unlocked for testing. Includes the latest content, readability and App Store access-loading work.\n\nNative simulator QA still has unresolved StoreKit fixture and UI-interaction failures (1 of 6 checks passed); the full device matrix is unverified. Please test mission launch, answer input, device rotation and returning to the island on a real device."
 }
