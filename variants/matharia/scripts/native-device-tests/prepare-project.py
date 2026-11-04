@@ -117,10 +117,16 @@ def reference(parent, identifier, name, product):
 for identifier, name, product in [('504EC3031FED79650016851F', 'App', 'App.app'), (uid(16), 'MathariaUITests', 'MathariaUITests.xctest')]:
     entry = ET.SubElement(entries, 'BuildActionEntry', buildForTesting='YES', buildForRunning='NO', buildForProfiling='NO', buildForArchiving='NO', buildForAnalyzing='NO')
     reference(entry, identifier, name, product)
-test = ET.SubElement(scheme, 'TestAction', buildConfiguration='Debug', selectedDebuggerIdentifier='Xcode.DebuggerFoundation.Debugger.LLDB', selectedLauncherIdentifier='Xcode.IDEFoundation.Launcher.LLDB', shouldUseLaunchSchemeArgsEnv='NO')
+test = ET.SubElement(scheme, 'TestAction', buildConfiguration='Debug', selectedDebuggerIdentifier='Xcode.DebuggerFoundation.Debugger.LLDB', selectedLauncherIdentifier='Xcode.IDEFoundation.Launcher.LLDB', shouldUseLaunchSchemeArgsEnv='YES')
 testables = ET.SubElement(test, 'Testables')
 testable = ET.SubElement(testables, 'TestableReference', skipped='NO', parallelizable='NO')
 reference(testable, uid(16), 'MathariaUITests', 'MathariaUITests.xctest')
+macro = ET.SubElement(test, 'MacroExpansion')
+reference(macro, '504EC3031FED79650016851F', 'App', 'App.app')
+launch = ET.SubElement(scheme, 'LaunchAction', buildConfiguration='Debug', selectedDebuggerIdentifier='Xcode.DebuggerFoundation.Debugger.LLDB', selectedLauncherIdentifier='Xcode.IDEFoundation.Launcher.LLDB', launchStyle='0', useCustomWorkingDirectory='NO', ignoresPersistentStateOnLaunch='NO', debugDocumentVersioning='YES', debugServiceExtension='internal', allowLocationSimulation='YES')
+runnable = ET.SubElement(launch, 'BuildableProductRunnable', runnableDebuggingMode='0')
+reference(runnable, '504EC3031FED79650016851F', 'App', 'App.app')
+ET.SubElement(launch, 'StoreKitConfigurationFileReference', identifier='../../MathariaUITests/Matharia.storekit')
 scheme_dir = project / 'App.xcodeproj/xcshareddata/xcschemes'
 scheme_dir.mkdir(parents=True, exist_ok=True)
 ET.indent(scheme)

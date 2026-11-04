@@ -20,6 +20,12 @@ export function selectRuntime(runtimes, requested = 'latest') {
   return available.sort((a, b) => b.version.localeCompare(a.version, undefined, {numeric: true}))[0] ?? null;
 }
 
+export function completeTestEvidence(summary, gameCases, scope) {
+  const expected = gameCases + 3 + (scope === 'smoke' ? 0 : 6);
+  return !!summary && summary.totalTestCount === expected && summary.passedTests === expected &&
+    summary.failedTests === 0 && summary.skippedTests === 0;
+}
+
 async function hash(path) {
   const digest = createHash('sha256');
   for await (const chunk of createReadStream(path)) digest.update(chunk);
@@ -135,10 +141,12 @@ with zipfile.ZipFile(sys.argv[1]) as z:
       if (summary.status === 0) {writeFileSync(join(out, 'test-summary.json'), summary.stdout); result.tests = JSON.parse(summary.stdout);}
       run('xcrun', ['xcresulttool', 'export', 'attachments', '--path', xcresult, '--output-path', join(out, 'screenshots')], {allowed: true});
     }
-    run('xcrun', ['simctl', 'spawn', device, 'log', 'show', '--last', '2m', '--style', 'compact', '--predicate', 'process == "App"'], {log: 'app-system.log', allowed: true});
-    result.status = execution.status === 0 ? 'passed' : 'failed';
-    result.nativeUIFlowChecksPassed = execution.status === 0;
-    if (execution.status !== 0) throw Error('Native XCTest checks failed; inspect xcresult and screenshots.');
+    run('xcrun', ['simctl', 'spawn', device, 'log', 'show', '--last', '15m', '--style', 'compact', '--predicate', 'process == "App" AND (eventMessage CONTAINS "Matharia access" OR messageType == error)'], {log: 'app-system.log', allowed: true});
+    result.expectedTests = cases.length + 3 + (scope === 'smoke' ? 0 : 6);
+    const complete = completeTestEvidence(result.tests, cases.length, scope);
+    result.status = execution.status === 0 && complete ? 'passed' : 'failed';
+    result.nativeUIFlowChecksPassed = result.status === 'passed';
+    if (result.status !== 'passed') throw Error('Native XCTest checks failed or required test evidence is incomplete; inspect xcresult and screenshots.');
   } catch (error) {
     if (result.status !== 'unavailable') result.status = 'failed';
     result.error = error.message;

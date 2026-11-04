@@ -32,6 +32,8 @@ for scope in ['smoke', 'games', 'all-tiers']:
         assert all(pbx.count(x) >= 2 for x in definitions), 'Dangling project object'
         scheme = ET.parse(generated / 'App.xcodeproj/xcshareddata/xcschemes/MathariaDeviceQA.xcscheme')
         assert scheme.find('.//TestableReference').get('parallelizable') == 'NO'
+        assert scheme.find('.//TestAction').get('shouldUseLaunchSchemeArgsEnv') == 'YES'
+        assert scheme.find('.//LaunchAction/StoreKitConfigurationFileReference') is not None
         cases = json.loads((root / 'selected-native-cases.json').read_text())
         swift = (generated / 'MathariaUITests/MathariaUITests.swift').read_text()
         assert swift.count('func testGame_') == len(cases)
