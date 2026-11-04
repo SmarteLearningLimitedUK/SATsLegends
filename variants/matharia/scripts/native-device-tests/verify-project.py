@@ -35,6 +35,7 @@ for scope in ['smoke', 'games', 'all-tiers']:
         cases = json.loads((root / 'selected-native-cases.json').read_text())
         swift = (generated / 'MathariaUITests/MathariaUITests.swift').read_text()
         assert swift.count('func testGame_') == len(cases)
+        assert swift.count('func testCalm_') == (0 if scope == 'smoke' else 6)
         assert 'GENERATED_GAME_TESTS' not in swift
         if scope == 'smoke': assert len(cases) == 3
         if scope == 'all-tiers': assert len(cases) == 178

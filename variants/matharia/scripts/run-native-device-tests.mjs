@@ -1,6 +1,6 @@
 import {createHash} from 'node:crypto';
 import {createReadStream, existsSync, mkdirSync, readFileSync, writeFileSync, mkdtempSync, openSync, closeSync, rmSync} from 'node:fs';
-import {spawnSync} from 'node:child_process';
+import {spawnSync, spawn} from 'node:child_process';
 import {tmpdir} from 'node:os';
 import {resolve, join} from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -62,6 +62,7 @@ async function main() {
     return {status: p.status, stdout: p.stdout?.trim() || '', stderr: p.stderr || ''};
   };
   let device;
+  let video;
   save();
   try {
     if (!/^[a-f0-9]{64}$/.test(manifest.sha256) || manifest.bundleId !== 'com.smartelearning.satslegends' || await hash(zip) !== manifest.sha256) throw Error('Candidate identity/checksum mismatch.');
@@ -122,6 +123,10 @@ with zipfile.ZipFile(sys.argv[1]) as z:
     run('xcrun', ['simctl', 'bootstatus', device, '-b']);
     const xcresult = join(out, 'DeviceTests.xcresult');
     result.phase = 'native-ui-tests';
+    if (scope === 'smoke') {
+      video = spawn('xcrun', ['simctl', 'io', device, 'recordVideo', '--codec=h264', join(out, 'native-smoke.mp4')], {stdio: 'ignore'});
+      video.on('error', error => {result.videoError = error.message;});
+    }
     const execution = run('xcodebuild', [...common, '-resultBundlePath', xcresult, '-parallel-testing-enabled', 'NO',
       '-maximum-concurrent-test-simulator-destinations', '1', 'test-without-building'], {log: 'tests.log', allowed: true, timeout: 6300000});
     result.testExitCode = execution.status;
@@ -139,6 +144,12 @@ with zipfile.ZipFile(sys.argv[1]) as z:
     result.error = error.message;
     process.exitCode = 1;
   } finally {
+    if (video && video.exitCode === null) {
+      const closed = new Promise(resolve => video.once('close', resolve));
+      video.kill('SIGINT');
+      await Promise.race([closed, new Promise(resolve => setTimeout(resolve, 5000))]);
+      result.videoCaptured = existsSync(join(out, 'native-smoke.mp4'));
+    }
     if (device) {
       run('xcrun', ['simctl', 'shutdown', device], {allowed: true});
       run('xcrun', ['simctl', 'delete', device], {allowed: true});
