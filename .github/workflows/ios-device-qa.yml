@@ -27,7 +27,7 @@ concurrency:
 
 jobs:
   probe:
-    runs-on: macos-15
+    runs-on: macos-15-intel
     timeout-minutes: 35
     env:
       QA_DEVICE: reference
@@ -64,7 +64,7 @@ jobs:
 
   devices:
     needs: probe
-    runs-on: macos-15
+    runs-on: macos-15-intel
     timeout-minutes: 120
     strategy:
       fail-fast: false
