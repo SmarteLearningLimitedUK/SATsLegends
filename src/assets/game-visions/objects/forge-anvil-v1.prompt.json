@@ -1,0 +1,12 @@
+{
+  "kind": "objects",
+  "key": "forge-anvil",
+  "file": "objects/forge-anvil-v1.webp",
+  "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-a5aab252-1b01-4ffa-b362-55e1fef923b5.png",
+  "prompt": "Use case: background-extraction. Extract and faithfully recreate the large black steel anvil and wooden stump from this reference screenshot. Exact same silhouette, texture, amber furnace rim lighting, engraved gold leaf motif. Remove character, hammer, number ingots, all text, background, other objects. Single anvil on stump as one isolated transparent game prop, wide 3:2 canvas, object occupies 92%width and 94%height, base aligned95%height. Preserve reference camera angle, no redesign. Production stylized3D.",
+  "dimensions": [
+    1536,
+    1024
+  ],
+  "bytes": 700814
+}

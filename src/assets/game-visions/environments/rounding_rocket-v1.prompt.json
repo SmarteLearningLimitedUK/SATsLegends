@@ -1,0 +1,12 @@
+{
+  "kind": "environments",
+  "key": "rounding_rocket",
+  "file": "environments/rounding_rocket-v1.webp",
+  "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-117d82c4-dd90-46c3-9049-657ab0f57489.png",
+  "prompt": "Use case: game production environment asset. Reference is the APPROVED Rounding Rocket concept, Arithmetic Acropolis. Recreate ONLY its atmospheric environmental background layer in the same premium sculpted stylized3D family fantasy quality. Island architecture, materials, lighting, palette and camera depth must match that approved vision. Polished rocket launch cradle among acropolis ruins, sculpted pilot, legible rounding destinations. CRITICAL REMOVE all characters, all UI, every panel, all text, numbers, labels, logos, symbols, answer buttons, progress meters, charts, grids, diagram lines, outlined game shapes, and ALL interactive foreground game objects. No baked-in people or creatures, no tables across the foreground unless part of the room structure, no cannon, rocket, kart, cauldron, anvil, machine, measuring scale or interactive puzzle pieces: these will be separate live layers. Keep the architecture and distant environment only, with a calm EMPTY playable center and lower60percent. Put detailed scenic storytelling at outer left/right edges and in upperthird, gently defocused background depth. Landscape16:9 fullbleed environment, ground visible with coherent perspective and warm/cold island light, safe to crop to phone portrait around center. Not a screenshot, not a UI mockup. Absolutely no lettering, interface, characters or interactive objects.",
+  "dimensions": [
+    1672,
+    941
+  ],
+  "bytes": 419884
+}

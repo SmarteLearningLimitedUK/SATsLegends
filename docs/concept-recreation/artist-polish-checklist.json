@@ -1,0 +1,1275 @@
+{
+  "scope": "37 games and 6 calm activities; shared result/HUD/audio/native haptics",
+  "assumptions": [
+    "Current Matharia variant and repository approved manifest remain authoritative.",
+    "Scoring amounts, curriculum, timers and progression are preserved.",
+    "No deployment or upload is part of this work."
+  ],
+  "screens": [
+    {
+      "key": "place_value_panic",
+      "name": "Place Value Panic",
+      "approvedReference": "variants/matharia/reference/approved/place_value_panic.png",
+      "referenceDimensions": [
+        972,
+        1619
+      ],
+      "rendering": "variants/matharia/src/screens/PlaceValueScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "Give placement a clear seat/snap and distinguish an accepted digit from a submitted correct answer.",
+      "implemented": "Shared material feedback, quieter rewards, grounded character response and consistent point/token terminology applied; existing specialised interaction retained.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "place_value_panic.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/pvp_submit_v2",
+        "heroes/hero_pvp_rhino_v2"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "number_line_ninja",
+      "name": "Number Line Ninja",
+      "approvedReference": "variants/matharia/reference/approved/number_line_ninja.png",
+      "referenceDimensions": [
+        1844,
+        853
+      ],
+      "rendering": "variants/matharia/src/screens/NinjaScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "Keep flight/landing feedback attached to the marker; secondary ornament should not compete with scale labels.",
+      "implemented": "Shared material feedback, quieter rewards, grounded character response and consistent point/token terminology applied; existing specialised interaction retained.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "number_line_ninja.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "frames/question_scalable_v2",
+        "gameplay/ninja_medallion_v2",
+        "heroes/hero_ninja_fox_v2",
+        "props/ninja_pillar_v5",
+        "props/ninja_rail_v5"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "prime_pop",
+      "name": "Prime Pop",
+      "approvedReference": "variants/matharia/reference/approved/prime_pop.png",
+      "referenceDimensions": [
+        853,
+        1844
+      ],
+      "rendering": "variants/matharia/src/screens/PrimeScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "Make pop, harmless pass and mistake unmistakably different; check fast moving edge targets on a physical phone.",
+      "implemented": "Shared material feedback, quieter rewards, grounded character response and consistent point/token terminology applied; existing specialised interaction retained.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "prime_pop.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "gameplay/prime_danger_rail_v2",
+        "gameplay/prime_orb_glass_v2"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "rounding_rocket",
+      "name": "Rounding Rocket",
+      "approvedReference": "variants/matharia/reference/approved/rounding_rocket.png",
+      "referenceDimensions": [
+        853,
+        1844
+      ],
+      "rendering": "variants/matharia/src/screens/RocketScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "Emphasise each installed part and its contact point, then make the final launch the largest payoff.",
+      "implemented": "Shared material feedback, quieter rewards, grounded character response and consistent point/token terminology applied; existing specialised interaction retained.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "rounding_rocket.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "frames/pvp_question_v3_hollow",
+        "gameplay/rocket_answer_v3",
+        "props/rocket_pad_v2",
+        "props/rocket_vehicle_v2"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "maths_vs_zombies",
+      "name": "Maths vs Zombies",
+      "approvedReference": "variants/matharia/reference/approved/maths_vs_zombies.png",
+      "referenceDimensions": [
+        1844,
+        853
+      ],
+      "rendering": "variants/matharia/src/screens/ZombiesScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "The fighters remain small within the stage. Strengthen aiming/cast/contact silhouettes and restrained enemy reactions.",
+      "implemented": "Added a restrained rim to separate the nighttime fighters.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "maths_vs_zombies.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/emerald_answer_wide_v3"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "take_out_rush",
+      "name": "Takeout Rush",
+      "approvedReference": "variants/matharia/reference/approved/take_out_rush.png",
+      "referenceDimensions": [
+        853,
+        1844
+      ],
+      "rendering": "variants/matharia/src/screens/TakeoutScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "Placing, validating and serving deserve different feedback; a plate handoff/customer response would complete the existing serving beat.",
+      "implemented": "Measured tray-to-customer handoff using the existing tray and food artwork.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "take_out_rush.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [
+        "compact",
+        "ipad",
+        "large"
+      ],
+      "functionalChecks": [
+        {
+          "engine": "chromium",
+          "profile": "compact",
+          "passed": true,
+          "evidence": "takeout-checks/checks.json"
+        },
+        {
+          "engine": "chromium",
+          "profile": "phone",
+          "passed": true,
+          "evidence": "takeout-checks/checks.json"
+        },
+        {
+          "engine": "chromium",
+          "profile": "ipad",
+          "passed": true,
+          "evidence": "takeout-checks/checks.json"
+        },
+        {
+          "engine": "webkit",
+          "profile": "compact",
+          "passed": true,
+          "evidence": "takeout-checks/checks.json"
+        },
+        {
+          "engine": "webkit",
+          "profile": "phone",
+          "passed": true,
+          "evidence": "takeout-checks/checks.json"
+        },
+        {
+          "engine": "webkit",
+          "profile": "ipad",
+          "passed": true,
+          "evidence": "takeout-checks/checks.json"
+        }
+      ],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/paper_gold_v3",
+        "buttons/scale_key_v4",
+        "frames/glacier_panel_v3",
+        "frames/pvp_question_v3_hollow",
+        "frames/takeout_board_v3",
+        "frames/takeout_food_card_v3",
+        "props/prop_takeout_tray",
+        "props/takeout_stove_v3"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "fraction_forge",
+      "name": "Fraction Forge",
+      "approvedReference": "variants/matharia/reference/approved/fraction_forge-v2.png",
+      "referenceDimensions": [
+        1844,
+        853
+      ],
+      "rendering": "variants/matharia/src/screens/ForgeScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "Refine hand/tool/anvil contact. In-round XP wording and banked result XP need to distinguish their different meanings.",
+      "implemented": "Shared material feedback, quieter rewards, grounded character response and consistent point/token terminology applied; existing specialised interaction retained.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "fraction_forge.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/forge_clear_v2",
+        "buttons/forge_strike_v2",
+        "frames/forge_rack_v3",
+        "frames/question_scalable_v2",
+        "gameplay/forge_ingot_v2",
+        "gameplay/forge_mould_v2",
+        "heroes/hero_forge_barratt_v2",
+        "props/forge_anvil_v3",
+        "props/forge_hammer_v3"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "match3_equivalence",
+      "name": "Match Mastery",
+      "approvedReference": "variants/matharia/reference/approved/match3_equivalence-v2.png",
+      "referenceDimensions": [
+        853,
+        1844
+      ],
+      "rendering": "variants/matharia/src/screens/MatchScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "The captured screen shows a board clock near 60s alongside a run clock near 90s. Explain the two roles. Cascades need a clear local reward hierarchy.",
+      "implemented": "Labelled board and run clocks separately; round points are distinct from banked XP.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "match3_equivalence.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [
+        "compact",
+        "ipad",
+        "large"
+      ],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "frames/question_scalable_v2"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "percent_power",
+      "name": "Percent Power",
+      "approvedReference": "variants/matharia/reference/approved/percent_power.png",
+      "referenceDimensions": [
+        853,
+        1844
+      ],
+      "rendering": "variants/matharia/src/screens/PercentScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "The machine is already very luminous at 0%; reserve a stronger visual/audio change for actual charge gains.",
+      "implemented": "Idle energy is subdued; charge gains receive a local digital contact cue.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "percent_power.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [
+        "compact",
+        "ipad",
+        "large"
+      ],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "frames/pvp_question_v3_hollow",
+        "gameplay/rocket_answer_v3",
+        "props/percent_reactor_display_v4"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "simplify_sprint",
+      "name": "Simplify Sprint",
+      "approvedReference": "variants/matharia/reference/approved/simplify_sprint.png",
+      "referenceDimensions": [
+        1844,
+        853
+      ],
+      "rendering": "variants/matharia/src/screens/SprintScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "Prioritise commitment, foot contact and arrival at the chosen gate over generic running/bobbing. Right-gate behaviour was not re-exercised in this review.",
+      "implemented": "Shared material feedback, quieter rewards, grounded character response and consistent point/token terminology applied; existing specialised interaction retained.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "simplify_sprint.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "frames/pvp_question_v3_hollow",
+        "props/sprint_gate_v4"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "angle_arena",
+      "name": "Angle Arena",
+      "approvedReference": "variants/matharia/reference/approved/angle_arena-physics-aim-v2.png",
+      "referenceDimensions": [
+        1844,
+        853
+      ],
+      "rendering": "variants/matharia/src/screens/AngleScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "Breakage and defeat must read clearly within the existing short result window. Judge the full fall/settle on device, rather than counting a collision trigger as visual approval.",
+      "implemented": "Added a short opponent knockdown within the existing result window; physics and next-round timing remain source-owned.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "angle_arena.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [
+        "compact",
+        "ipad",
+        "large"
+      ],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "frames/glacier_panel_v3",
+        "heroes/angle_rhino_v3"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "polygon_palace",
+      "name": "Polygon Palace",
+      "approvedReference": "variants/matharia/reference/approved/polygon_palace.png",
+      "referenceDimensions": [
+        853,
+        1844
+      ],
+      "rendering": "variants/matharia/src/screens/PolygonScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "The simple diagram material and elaborate world differ strongly; use lighting/outline consistency without compromising geometric clarity.",
+      "implemented": "Shared material feedback, quieter rewards, grounded character response and consistent point/token terminology applied; existing specialised interaction retained.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "polygon_palace.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/pvp_submit_v2",
+        "frames/glacier_panel_v3",
+        "props/polygon_pedestal_v3"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "area_architect",
+      "name": "Area Architect",
+      "approvedReference": "variants/matharia/reference/approved/area_architect.png",
+      "referenceDimensions": [
+        1844,
+        853
+      ],
+      "rendering": "variants/matharia/src/screens/AreaScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "Make each completed room feel constructed through local tile/build feedback; keep dimension labels stable during room transitions.",
+      "implemented": "Added a local construction highlight to the completed plan; the existing Next room control remains over the plan.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "area_architect.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/pvp_submit_v2",
+        "buttons/sapphire_answer_v3",
+        "frames/glacier_panel_v3",
+        "props/area_table_v3"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "rotation_relay",
+      "name": "Transformation Station",
+      "approvedReference": "variants/matharia/reference/approved/rotation_relay.png",
+      "referenceDimensions": [
+        1844,
+        853
+      ],
+      "rendering": "variants/matharia/src/screens/TransformationScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "Make the active corner, target placement and checked transformation visually distinct, with a short trace that explains the operation.",
+      "implemented": "Confirmed transformation receives a local outline highlight.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "rotation_relay.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "frames/chart_hollow_v8",
+        "frames/glacier_panel_v3"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "coordinates_quest",
+      "name": "Coordinates Quest",
+      "approvedReference": "variants/matharia/reference/approved/coordinates_quest-v2.png",
+      "referenceDimensions": [
+        1844,
+        853
+      ],
+      "rendering": "variants/matharia/src/screens/CoordinatesScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "The grid is visually modest compared with surrounding decoration. Emphasise the current point and travelled path.",
+      "implemented": "Added an x-then-y route to the player-controlled cursor.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "coordinates_quest.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/pvp_submit_v2",
+        "buttons/sapphire_answer_v3",
+        "frames/chart_hollow_v8",
+        "frames/glacier_panel_v3",
+        "props/coordinates_console_v3"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "conversion_canyon",
+      "name": "Conversion Canyon",
+      "approvedReference": "variants/matharia/reference/approved/conversion_canyon.png",
+      "referenceDimensions": [
+        853,
+        1844
+      ],
+      "rendering": "variants/matharia/src/screens/ConversionScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "Give weights visible weight: short settling, scale response and a separate contact cue; avoid using a generic success chime as the physical payoff.",
+      "implemented": "Shared material feedback, quieter rewards, grounded character response and consistent point/token terminology applied; existing specialised interaction retained.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "conversion_canyon.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/angle_answer_v4",
+        "buttons/pvp_submit_v2",
+        "frames/glacier_panel_v3"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "perimeter_path",
+      "name": "Perimeter Path",
+      "approvedReference": "variants/matharia/reference/approved/perimeter_path.png",
+      "referenceDimensions": [
+        1844,
+        853
+      ],
+      "rendering": "variants/matharia/src/screens/PerimeterScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "Keep inspected edges and the whole-boundary total distinct; make the tracing affordance obvious without relying on hover.",
+      "implemented": "Inspected edges have persistent selected emphasis and a short colour transition.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "perimeter_path.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/sapphire_answer_v3",
+        "frames/glacier_panel_v3",
+        "props/perimeter_board_v4"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "mean_machine",
+      "name": "Mean Machine",
+      "approvedReference": "variants/matharia/reference/approved/mean_machine.png",
+      "referenceDimensions": [
+        866,
+        1817
+      ],
+      "rendering": "variants/matharia/src/screens/MeanScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "Make the successful repair alter the machine more clearly than the ordinary scan; the current correct card carries much of the payoff.",
+      "implemented": "Repair changes reel lighting and receives metal contact; resolved scans cannot be reactivated.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "mean_machine.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [
+        "compact",
+        "ipad",
+        "large"
+      ],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/amber_answer_v4",
+        "frames/glacier_panel_v3",
+        "props/mean_engine_v4"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "graph_grabber",
+      "name": "Graph Grabber",
+      "approvedReference": "variants/matharia/reference/approved/graph_grabber.png",
+      "referenceDimensions": [
+        1844,
+        853
+      ],
+      "rendering": "variants/matharia/src/screens/GraphScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "The iPad capture measured the clickable boat labels at 24px high. Enlarge their hit regions and make Trace discoverable.",
+      "implemented": "Boat-label touch regions are at least 44 px.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "graph_grabber.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [
+        "compact",
+        "ipad",
+        "large"
+      ],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/amber_answer_v4",
+        "buttons/pvp_submit_v2",
+        "frames/chart_wood_hollow_v4",
+        "frames/glacier_panel_v3"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "line_graph_lab",
+      "name": "Line Graph Lab",
+      "approvedReference": "variants/matharia/reference/approved/line_graph_lab.png",
+      "referenceDimensions": [
+        1844,
+        853
+      ],
+      "rendering": "variants/matharia/src/screens/LineScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "Use a deliberate point/axis trace and selected-point feedback; plain right/wrong feedback misses the opportunity to show how the reading was found.",
+      "implemented": "Added keyboard/touch point inspection, axis tracing and a contextual reading; corrected caption space.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "line_graph_lab.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [
+        "compact",
+        "ipad"
+      ],
+      "functionalChecks": [
+        {
+          "engine": "chromium",
+          "profile": "compact",
+          "passed": true,
+          "evidence": "line-checks/checks.json"
+        },
+        {
+          "engine": "chromium",
+          "profile": "phone",
+          "passed": true,
+          "evidence": "line-checks/checks.json"
+        },
+        {
+          "engine": "chromium",
+          "profile": "ipad",
+          "passed": true,
+          "evidence": "line-checks/checks.json"
+        },
+        {
+          "engine": "webkit",
+          "profile": "compact",
+          "passed": true,
+          "evidence": "line-checks/checks.json"
+        },
+        {
+          "engine": "webkit",
+          "profile": "phone",
+          "passed": true,
+          "evidence": "line-checks/checks.json"
+        },
+        {
+          "engine": "webkit",
+          "profile": "ipad",
+          "passed": true,
+          "evidence": "line-checks/checks.json"
+        }
+      ],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/amber_answer_v4",
+        "buttons/pvp_submit_v2",
+        "frames/chart_wood_hollow_v4",
+        "frames/glacier_panel_v3"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "data_detective",
+      "name": "Data Detective",
+      "approvedReference": "variants/matharia/reference/approved/data_detective.png",
+      "referenceDimensions": [
+        1844,
+        853
+      ],
+      "rendering": "variants/matharia/src/screens/DataScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "Differentiate inspect from accuse and keep evidence-to-suspect emphasis clear. Source supports a dossier; the full case loop was not played in this review.",
+      "implemented": "Shared material feedback, quieter rewards, grounded character response and consistent point/token terminology applied; existing specialised interaction retained.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "data_detective.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/amber_answer_v4",
+        "buttons/pvp_submit_v2",
+        "frames/chart_wood_hollow_v4",
+        "frames/concept_round_rim_v2",
+        "frames/glacier_panel_v3"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "factor_frenzy",
+      "name": "Factor Frenzy",
+      "approvedReference": "variants/matharia/reference/approved/factor_frenzy.png",
+      "referenceDimensions": [
+        853,
+        1844
+      ],
+      "rendering": "variants/matharia/src/screens/FactorScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "A successful pulse changed health 10 \u2192 9 and displayed confetti/text, but the current scene adapter renders no outgoing pulse effect. Add a visible origin/contact beat; reserve large confetti for completion.",
+      "implemented": "Restored an outgoing pulse, timed contact ring and rigid sentinel recoil; full confetti is reserved for completion.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "factor_frenzy.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [
+        "compact",
+        "ipad",
+        "large"
+      ],
+      "functionalChecks": [
+        {
+          "engine": "chromium",
+          "profile": "phone",
+          "passed": true,
+          "evidence": "factor-checks/checks.json"
+        },
+        {
+          "engine": "webkit",
+          "profile": "phone",
+          "passed": true,
+          "evidence": "factor-checks/checks.json"
+        }
+      ],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/pvp_submit_v2",
+        "buttons/sapphire_answer_v3",
+        "characters/factor_sentinel_v3",
+        "frames/glacier_panel_v3",
+        "frames/sapphire_crest_v3",
+        "props/factor_pedestal_v3"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "multiplication_mine",
+      "name": "Multiplication Mine",
+      "approvedReference": "variants/matharia/reference/approved/multiplication_mine.png",
+      "referenceDimensions": [
+        853,
+        1844
+      ],
+      "rendering": "variants/matharia/src/screens/MineScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "Highest art/acting gap: the pickaxe is oversized and unattached while the small hero reads a scroll. Rebuild the hand/tool/rock relationship; keep the existing maths and damage progression.",
+      "implemented": "Created eight registered work poses for all four saved heroes; replaced floating pickaxe/scroll acting with held-tool contact, delayed visual ore damage and stone impact.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "multiplication_mine.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [
+        "compact",
+        "ipad",
+        "large"
+      ],
+      "functionalChecks": [
+        {
+          "engine": "chromium",
+          "profile": "compact",
+          "passed": true,
+          "evidence": "mine-checks/checks.json"
+        },
+        {
+          "engine": "chromium",
+          "profile": "phone",
+          "passed": true,
+          "evidence": "mine-checks/checks.json"
+        },
+        {
+          "engine": "chromium",
+          "profile": "ipad",
+          "passed": true,
+          "evidence": "mine-checks/checks.json"
+        }
+      ],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/mine_answer_v3",
+        "frames/glacier_panel_v3",
+        "props/mine_floor_v4"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic.",
+      "newAssetManifest": "variants/matharia/reference/mining-work-v4.json"
+    },
+    {
+      "key": "order_ops_arena",
+      "name": "Order Ops Arena",
+      "approvedReference": "variants/matharia/reference/approved/order_ops_arena.png",
+      "referenceDimensions": [
+        866,
+        1817
+      ],
+      "rendering": "variants/matharia/src/screens/OpsScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "Make the chosen operation visibly resolve within the expression; the hero/world should reinforce that change, not merely occupy the centre.",
+      "implemented": "The updated expression resolves locally rather than changing without feedback.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "order_ops_arena.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/ops_answer_v3",
+        "frames/glacier_panel_v3",
+        "frames/sapphire_crest_v3",
+        "heroes/hero_mage_idle",
+        "props/ops_pedestal_v5"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "formula_forge",
+      "name": "Formula Forge",
+      "approvedReference": "variants/matharia/reference/approved/formula_forge.png",
+      "referenceDimensions": [
+        866,
+        1817
+      ],
+      "rendering": "variants/matharia/src/screens/FormulaScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "Animate the relevant dimensions/product on the diagram. Keep symbolic labels understandable before adding atmospheric effects.",
+      "implemented": "The correct diagram receives a restrained confirmation highlight.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "formula_forge.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [
+        "compact",
+        "ipad",
+        "large"
+      ],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/sapphire_answer_v3",
+        "frames/chart_wood_hollow_v4",
+        "frames/concept_round_rim_v2",
+        "frames/glacier_panel_v3",
+        "props/ops_pedestal_v5"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "remainder_run",
+      "name": "Remainder Run",
+      "approvedReference": "variants/matharia/reference/approved/remainder_run.png",
+      "referenceDimensions": [
+        1844,
+        853
+      ],
+      "rendering": "variants/matharia/src/screens/RemainderScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "The actual crate row is still tiny compared with the question and answer furniture. Enlarge the mathematical objects; the configured boost/jump palette is a weak dock/material identity.",
+      "implemented": "Enlarged actual cargo, reflected remaining quantity, clarified batch labels and rope counters, and changed dock contact to wood.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "remainder_run.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [
+        "compact",
+        "ipad",
+        "large"
+      ],
+      "functionalChecks": [
+        {
+          "engine": "chromium",
+          "profile": "compact",
+          "passed": true,
+          "evidence": "remainder-checks/checks.json"
+        },
+        {
+          "engine": "chromium",
+          "profile": "phone",
+          "passed": true,
+          "evidence": "remainder-checks/checks.json"
+        },
+        {
+          "engine": "chromium",
+          "profile": "ipad",
+          "passed": true,
+          "evidence": "remainder-checks/checks.json"
+        },
+        {
+          "engine": "webkit",
+          "profile": "compact",
+          "passed": true,
+          "evidence": "remainder-checks/checks.json"
+        },
+        {
+          "engine": "webkit",
+          "profile": "phone",
+          "passed": true,
+          "evidence": "remainder-checks/checks.json"
+        },
+        {
+          "engine": "webkit",
+          "profile": "ipad",
+          "passed": true,
+          "evidence": "remainder-checks/checks.json"
+        }
+      ],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/remainder_batch_v3",
+        "buttons/remainder_ship_v3",
+        "buttons/remainder_unload_v3",
+        "frames/chart_wood_hollow_v4",
+        "props/remainder_conveyor_v3",
+        "props/remainder_crate_v3",
+        "props/remainder_rope_v3"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "time_keeper_cove",
+      "name": "Chrono Dash: Time Trial",
+      "approvedReference": "variants/matharia/reference/approved/time_keeper_cove.png",
+      "referenceDimensions": [
+        853,
+        1844
+      ],
+      "rendering": "variants/matharia/src/screens/ChronoScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "The four increment controls make it procedural; stronger selected-hand emphasis and a restrained mechanism/restore cue would improve feel without changing input rules.",
+      "implemented": "Selected hour/minute controls and their corresponding hand receive consistent emphasis.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "time_keeper_cove.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/angle_answer_v4",
+        "buttons/ops_answer_v3",
+        "frames/glacier_panel_v3",
+        "frames/sapphire_crest_v3"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "problem_pyramid",
+      "name": "Problem Pyramid",
+      "approvedReference": "variants/matharia/reference/approved/problem_pyramid.png",
+      "referenceDimensions": [
+        862,
+        1825
+      ],
+      "rendering": "variants/matharia/src/screens/PyramidScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "Give solved stones an unmistakable seating/locking beat and carry the eye to the next active stone.",
+      "implemented": "Solved stones seat locally with a short stone contact cue.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "problem_pyramid.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [
+        "compact",
+        "ipad",
+        "large"
+      ],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/sapphire_answer_v3",
+        "frames/glacier_panel_v3",
+        "frames/sapphire_crest_v3",
+        "props/pyramid_stone_v4"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "unit_mixer",
+      "name": "Lava Path",
+      "approvedReference": "variants/matharia/reference/approved/unit_mixer.png",
+      "referenceDimensions": [
+        1844,
+        853
+      ],
+      "rendering": "variants/matharia/src/screens/LavaScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "Keep takeoff/landing and the next question visually coordinated; a material landing cue would support the existing movement better than shared correctness audio alone.",
+      "implemented": "Landing receives a timed stone contact cue.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "unit_mixer.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/angle_answer_v4",
+        "frames/glacier_panel_v3",
+        "props/lava_platform_v3"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "change_counter",
+      "name": "Change Counter",
+      "approvedReference": "variants/matharia/reference/approved/change_counter.png",
+      "referenceDimensions": [
+        1844,
+        853
+      ],
+      "rendering": "variants/matharia/src/screens/ChangeScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "Selected coins should visibly accumulate and the completed transaction should close clearly. Verify the full long-receipt/large-change states separately.",
+      "implemented": "New coins settle into the tray; successful transactions receive a local closure beat.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "change_counter.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/amber_answer_v4",
+        "buttons/angle_answer_v4",
+        "frames/change_coin_slot_v3",
+        "frames/change_receipt_v3",
+        "frames/glacier_panel_v3",
+        "props/change_counter_v3"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "potion_panic",
+      "name": "Potion Panic",
+      "approvedReference": "variants/matharia/reference/approved/potion_panic.png",
+      "referenceDimensions": [
+        1844,
+        853
+      ],
+      "rendering": "variants/matharia/src/screens/PotionScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "Differentiate adding a drop, reaching the recipe and brewing; ensure mixture changes, not decorative glow, carry progress.",
+      "implemented": "A successful mixture receives a distinct settling highlight.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "potion_panic.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/paper_gold_v3",
+        "buttons/potion_reset_v3",
+        "frames/potion_panel_v3",
+        "props/potion_cauldron_open_v3",
+        "props/potion_hearth_v3"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "share_splitter",
+      "name": "Share Splitter",
+      "approvedReference": "variants/matharia/reference/approved/share_splitter.png",
+      "referenceDimensions": [
+        1844,
+        853
+      ],
+      "rendering": "variants/matharia/src/screens/ShareScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "Strengthen item-to-recipient movement and the final equal-share comparison; keep faces and counts separated.",
+      "implemented": "Actual increases in plate counts trigger a measured cake transfer, separate from drag input.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "share_splitter.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [],
+      "functionalChecks": [
+        {
+          "engine": "chromium",
+          "profile": "compact",
+          "passed": true,
+          "evidence": "share-checks/checks.json"
+        },
+        {
+          "engine": "chromium",
+          "profile": "phone",
+          "passed": true,
+          "evidence": "share-checks/checks.json"
+        },
+        {
+          "engine": "chromium",
+          "profile": "ipad",
+          "passed": true,
+          "evidence": "share-checks/checks.json"
+        },
+        {
+          "engine": "webkit",
+          "profile": "compact",
+          "passed": true,
+          "evidence": "share-checks/checks.json"
+        },
+        {
+          "engine": "webkit",
+          "profile": "phone",
+          "passed": true,
+          "evidence": "share-checks/checks.json"
+        },
+        {
+          "engine": "webkit",
+          "profile": "ipad",
+          "passed": true,
+          "evidence": "share-checks/checks.json"
+        }
+      ],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/paper_gold_v3",
+        "buttons/sapphire_answer_v3",
+        "food/share_cake_v3",
+        "frames/potion_panel_v3",
+        "props/share_plate_v3",
+        "props/share_table_v3"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "ratio_fractions",
+      "name": "Ratio Racer",
+      "approvedReference": "variants/matharia/reference/approved/ratio_fractions.png",
+      "referenceDimensions": [
+        1844,
+        853
+      ],
+      "rendering": "variants/matharia/src/screens/RaceScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "Judge acceleration, suspension and rival response together on device. Avoid calling it a static jeep, but do not equate wheel rotation alone with a convincing race.",
+      "implemented": "Shared material feedback, quieter rewards, grounded character response and consistent point/token terminology applied; existing specialised interaction retained.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "ratio_fractions.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/sapphire_answer_v3",
+        "frames/potion_panel_v3"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "scale_builder",
+      "name": "Scale Builder",
+      "approvedReference": "variants/matharia/reference/approved/scale_builder.png",
+      "referenceDimensions": [
+        1844,
+        853
+      ],
+      "rendering": "variants/matharia/src/screens/ScaleScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "The keypad dominates the small blueprint. Make original and scaled outlines the main comparison and animate the constructed result.",
+      "implemented": "The two live outlines fit the workspace; projection stays stable during dragging, touch handles retain 44 px regions, and valid construction receives local feedback.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "scale_builder.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [
+        "compact",
+        "ipad",
+        "large"
+      ],
+      "functionalChecks": [
+        {
+          "engine": "chromium",
+          "profile": "compact",
+          "passed": true,
+          "evidence": "scale-checks/checks.json"
+        },
+        {
+          "engine": "chromium",
+          "profile": "phone",
+          "passed": true,
+          "evidence": "scale-checks/checks.json"
+        },
+        {
+          "engine": "chromium",
+          "profile": "ipad",
+          "passed": true,
+          "evidence": "scale-checks/checks.json"
+        },
+        {
+          "engine": "webkit",
+          "profile": "compact",
+          "passed": true,
+          "evidence": "scale-checks/checks.json"
+        },
+        {
+          "engine": "webkit",
+          "profile": "phone",
+          "passed": true,
+          "evidence": "scale-checks/checks.json"
+        },
+        {
+          "engine": "webkit",
+          "profile": "ipad",
+          "passed": true,
+          "evidence": "scale-checks/checks.json"
+        }
+      ],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/paper_gold_v3",
+        "buttons/sapphire_answer_v3",
+        "frames/chart_wood_hollow_v4",
+        "frames/potion_panel_v3",
+        "props/scale_bench_v3"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "crystal_core",
+      "name": "SATs Paper 1: Arithmetic",
+      "approvedReference": "variants/matharia/reference/approved/crystal_core.png",
+      "referenceDimensions": [
+        866,
+        1817
+      ],
+      "rendering": "variants/matharia/src/screens/PaperScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "Keep assessment feedback restrained. The working preview opens a separate board; make that context change explicit and preserve long-form review readability.",
+      "implemented": "Shared material feedback, quieter rewards, grounded character response and consistent point/token terminology applied; existing specialised interaction retained.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "crystal_core.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [
+        "compact",
+        "ipad",
+        "large"
+      ],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/paper_gold_v3",
+        "frames/glacier_panel_v3"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "mirror_gate",
+      "name": "SATs Paper 2: Reasoning",
+      "approvedReference": "variants/matharia/reference/approved/mirror_gate.png",
+      "referenceDimensions": [
+        1844,
+        853
+      ],
+      "rendering": "variants/matharia/src/screens/PaperScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "This review captured one item only. Verify long prose and diagram items; do not add action-game animation that interrupts reasoning.",
+      "implemented": "Shared material feedback, quieter rewards, grounded character response and consistent point/token terminology applied; existing specialised interaction retained.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "mirror_gate.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/paper_gold_v3",
+        "frames/glacier_panel_v3"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "matrix_match",
+      "name": "SATs Paper 3: Reasoning",
+      "approvedReference": "variants/matharia/reference/approved/matrix_match.png",
+      "referenceDimensions": [
+        1844,
+        853
+      ],
+      "rendering": "variants/matharia/src/screens/PaperScene.tsx through variants/matharia/presentation-transform.ts",
+      "reviewRecommendation": "As with Paper 2, evidence here is one captured item. Test the variety of diagrams and response types before judging the whole paper polished.",
+      "implemented": "Shared material feedback, quieter rewards, grounded character response and consistent point/token terminology applied; existing specialised interaction retained.",
+      "status": "implemented; representative running layout inspected",
+      "visualEvidence": "matrix_match.png",
+      "layoutCaptured": true,
+      "additionalLayouts": [],
+      "functionalChecks": [],
+      "remainingVerification": "Physical iOS sound, haptics, interruptions, Dynamic Type and performance. Full activity loop not replayed in this pass unless functional checks are listed.",
+      "requiredAssets": [
+        "buttons/paper_gold_v3",
+        "frames/glacier_panel_v3"
+      ],
+      "assetDefinition": "variants/matharia/src/compositions.ts plus the scene asset imports; saved-hero variations remain dynamic."
+    },
+    {
+      "key": "breathing_bloom",
+      "name": "Breath Bloom",
+      "rendering": "React wellbeing presenter through presentation-transform.ts",
+      "implemented": "Calm music routing, named shared ornate HUD and consistent materials. Gentle existing activity animation retained.",
+      "status": "running activity captured; full activity completion not claimed",
+      "visualEvidence": "breathing_bloom.png",
+      "layoutCaptured": true,
+      "remainingVerification": "Physical iOS and audio mix. Browser capture is not a native test."
+    },
+    {
+      "key": "peaceful_pond",
+      "name": "Peaceful Pond",
+      "rendering": "React wellbeing presenter through presentation-transform.ts",
+      "implemented": "Calm music routing, named shared ornate HUD and consistent materials. Gentle existing activity animation retained.",
+      "status": "running activity captured; full activity completion not claimed",
+      "visualEvidence": "peaceful_pond.png",
+      "layoutCaptured": true,
+      "remainingVerification": "Physical iOS and audio mix. Browser capture is not a native test."
+    },
+    {
+      "key": "candle_calm",
+      "name": "Lantern Camp",
+      "rendering": "React wellbeing presenter through presentation-transform.ts",
+      "implemented": "Calm music routing, named shared ornate HUD and consistent materials. Gentle existing activity animation retained.",
+      "status": "running activity captured; full activity completion not claimed",
+      "visualEvidence": "candle_calm.png",
+      "layoutCaptured": true,
+      "remainingVerification": "Physical iOS and audio mix. Browser capture is not a native test."
+    },
+    {
+      "key": "thought_sort",
+      "name": "Thought Release",
+      "rendering": "React wellbeing presenter through presentation-transform.ts",
+      "implemented": "Calm music routing, named shared ornate HUD and consistent materials. Gentle existing activity animation retained.",
+      "status": "running activity captured; full activity completion not claimed",
+      "visualEvidence": "thought_sort.png",
+      "layoutCaptured": true,
+      "remainingVerification": "Physical iOS and audio mix. Browser capture is not a native test."
+    },
+    {
+      "key": "constellation_connect",
+      "name": "Star Path",
+      "rendering": "React wellbeing presenter through presentation-transform.ts",
+      "implemented": "Calm music routing, named shared ornate HUD and consistent materials. Gentle existing activity animation retained.",
+      "status": "running activity captured; full activity completion not claimed",
+      "visualEvidence": "constellation_connect.png",
+      "layoutCaptured": true,
+      "remainingVerification": "Physical iOS and audio mix. Browser capture is not a native test."
+    },
+    {
+      "key": "leaf_drift",
+      "name": "Leaf Drift",
+      "rendering": "React wellbeing presenter through presentation-transform.ts",
+      "implemented": "Calm music routing, named shared ornate HUD and consistent materials. Gentle existing activity animation retained.",
+      "status": "running activity captured; full activity completion not claimed",
+      "visualEvidence": "leaf_drift.png",
+      "layoutCaptured": true,
+      "remainingVerification": "Physical iOS and audio mix. Browser capture is not a native test."
+    }
+  ],
+  "sharedResults": [
+    "Points and banked XP have distinct labels.",
+    "Tokens use gem artwork and consistent text.",
+    "Reduced motion shows earned tokens and settled XP without animation."
+  ],
+  "limitations": [
+    "Native Swift was not compiled on this Windows host.",
+    "Browser viewport checks with simulated insets are not native iOS testing.",
+    "Material samples and music lifecycle were measured; final mix and loop seams require listening on hardware."
+  ],
+  "verificationSummary": "qa-artifacts/artist-polish-2026-11-03/verification-summary.json",
+  "additionalPresentationChecks": "qa-artifacts/artist-polish-2026-11-03/presentation-checks.json",
+  "nativeBundleVerification": "qa-artifacts/artist-polish-2026-11-03/native-bundle-check.json"
+}

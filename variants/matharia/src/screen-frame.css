@@ -1,0 +1,3 @@
+/* A child with pointer-events:auto must never reactivate an outgoing viewport. */
+html[data-presentation='matharia'] #root [data-presentation-screen-frame][data-frame-present='false'],
+html[data-presentation='matharia'] #root [data-presentation-screen-frame][data-frame-present='false'] * {pointer-events:none!important;}

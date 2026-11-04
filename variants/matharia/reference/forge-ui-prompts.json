@@ -1,0 +1,22 @@
+[
+  [
+    "forge_rack",
+    "Create ONE empty independent ingredient-rack panel matching the large rack at the right of the supplied Fraction Forge reference. Thick dark walnut wooden frame with polished warm gold corner fittings and blue sapphire at the top centre, large uncluttered flat deep teal enamel interior, and a narrow royal-blue gold-edged hanging cloth pennant at the outside of its right edge. No shelves dividing the face. The wood rectangle is slightly wider than tall, about 1.17 width/height; with the small outside pennant, complete artwork width/height about 1.32. The blank content face takes the left 87% of the overall artwork. Tightly framed front view, premium detailed painted cartoon game style and lighting exactly like the reference. True transparency outside the complete frame/pennant. No cards, fractions, buttons, numbers, letters, icons, marks, animals, scenery or additional UI. The face must be completely blank for live controls."
+  ],
+  [
+    "forge_ingot",
+    "Create ONE independent empty fraction ingot tile matching the seven pale silver-blue tiles in the right rack of this approved Fraction Forge reference. Tall octagonal rectangle, width/height 0.86, softly chamfered corners, a broad smooth pale icy blue-grey metal face, crisp light silver bevel, soft top-left sheen, a subtle dark lower edge. Perfect front view, symmetrical, tightly framed, premium detailed painted cartoon game style. True transparency outside the tile. Completely blank: no fraction, divider line, letter, number, icon, rune or any mark; live numbers will be rendered on top. No environment or shadow plate."
+  ],
+  [
+    "forge_mould",
+    "Create ONE independent empty mould tile matching the two tall tiles over the anvil in this approved Fraction Forge concept. Tall octagonal rectangle width/height 0.75, chamfered corners, a smooth muted grey enamel face, narrow polished warm GOLD bevel rim, slightly luminous warm edges. Front view, crisp high quality painted cartoon game asset, symmetry and optically centred. True transparency outside; tightly framed. No numbers, letters, fraction lines, labels, symbols, icons, flame, particles, scenery or any other element. The centre is a blank grey surface for live values."
+  ],
+  [
+    "forge_clear",
+    "Create ONE independent completely BLANK blue action button matching the Clear button at the lower left of the rack in this approved Fraction Forge reference. Outer width/height about 2.1. Chamfered rounded rectangle, narrow bright polished gold bevel frame with crisp corner fittings, large sapphire-blue enamel face with subtle top-left lighting. Front-facing, symmetrical, premium detailed painted cartoon game asset. True transparent outside background with tightly trimmed bounds. No text, label, arrow, icon, number, rune or any mark on the face. No scene, shadow plate or additional buttons."
+  ],
+  [
+    "forge_strike",
+    "Create ONE independent completely BLANK gold action button matching the Strike button at the lower right of the rack in this approved Fraction Forge reference. Outer width/height about 2.1. Chamfered rounded rectangle, polished gold bevel frame and crisp corner fittings, broad warm yellow-gold enamel face with soft creamy top-left sheen and amber lower shading. Preserve the material and style of the reference. Front-facing, symmetrical, high quality painted cartoon game asset. True transparency outside, tight bounds. No text, label, hammer, icon, number, rune or any mark; the face must be blank for a live label. No scene, shadow plate or additional buttons."
+  ]
+]

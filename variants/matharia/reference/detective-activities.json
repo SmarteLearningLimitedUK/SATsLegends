@@ -1,0 +1,129 @@
+{
+  "processing": "Four separate identities, regular quadrant slices with verified transparent gutters, alpha-margin trim only. Live actors preserve source mesh, motion and saved identity.",
+  "assets": [
+    {
+      "identity": "barratt",
+      "role": "detective",
+      "name": "hero_barratt_detective_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-a62b2434-e5bc-4af9-8216-8ea348785c3d.png",
+      "atlasCell": [
+        0,
+        0,
+        627,
+        627
+      ],
+      "alphaBoundsCrop": [
+        83,
+        14,
+        561,
+        616
+      ],
+      "dimensions": [
+        478,
+        602
+      ],
+      "avatarBounds": [
+        38,
+        15,
+        335,
+        335
+      ],
+      "production": "variants/matharia/assets/png/heroes/hero_barratt_detective_v3@2x.webp",
+      "bytes": 143792,
+      "sha256": "8159c24260f4350ab8bc9efba32d21f906f9d04e8934581191b84eb168e18de1"
+    },
+    {
+      "identity": "bran",
+      "role": "detective",
+      "name": "hero_bran_detective_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-a62b2434-e5bc-4af9-8216-8ea348785c3d.png",
+      "atlasCell": [
+        627,
+        0,
+        1254,
+        627
+      ],
+      "alphaBoundsCrop": [
+        71,
+        15,
+        581,
+        617
+      ],
+      "dimensions": [
+        510,
+        602
+      ],
+      "avatarBounds": [
+        41,
+        15,
+        357,
+        357
+      ],
+      "production": "variants/matharia/assets/png/heroes/hero_bran_detective_v3@2x.webp",
+      "bytes": 153538,
+      "sha256": "c95d712568da1e815531edef0e4973a811a563278468594ee9131b9ab09efae2"
+    },
+    {
+      "identity": "mochi",
+      "role": "detective",
+      "name": "hero_mochi_detective_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-a62b2434-e5bc-4af9-8216-8ea348785c3d.png",
+      "atlasCell": [
+        0,
+        627,
+        627,
+        1254
+      ],
+      "alphaBoundsCrop": [
+        46,
+        33,
+        601,
+        606
+      ],
+      "dimensions": [
+        555,
+        573
+      ],
+      "avatarBounds": [
+        44,
+        14,
+        388,
+        388
+      ],
+      "production": "variants/matharia/assets/png/heroes/hero_mochi_detective_v3@2x.webp",
+      "bytes": 141476,
+      "sha256": "eb55898d1173ffeb33bb17c34220c85d79112c479a8351d7a6ffc77a6b862acd"
+    },
+    {
+      "identity": "vex",
+      "role": "detective",
+      "name": "hero_vex_detective_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-a62b2434-e5bc-4af9-8216-8ea348785c3d.png",
+      "atlasCell": [
+        627,
+        627,
+        1254,
+        1254
+      ],
+      "alphaBoundsCrop": [
+        55,
+        18,
+        585,
+        612
+      ],
+      "dimensions": [
+        530,
+        594
+      ],
+      "avatarBounds": [
+        42,
+        15,
+        371,
+        371
+      ],
+      "production": "variants/matharia/assets/png/heroes/hero_vex_detective_v3@2x.webp",
+      "bytes": 148846,
+      "sha256": "ca8aa808c4dbff5ae2769aa7153357274b3d5d90d42792c7b68fed77490cc762"
+    }
+  ]
+}

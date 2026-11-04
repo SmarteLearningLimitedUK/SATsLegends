@@ -1,0 +1,99 @@
+{
+  "reference": "variants/matharia/reference/approved/data_detective.png",
+  "intent": "Independent polished3D sapphire diamond, chocolate-chip cookie, purple/green socks with small smell wisps, and gold star coins. No UI/text/quantities/background.",
+  "processing": "Inspected full objects; clear alpha cross gutters; regular quarter slicing, alpha-margin trim and aspect-preserving256px WebP export only.",
+  "assets": [
+    {
+      "name": "gem",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-d0da2038-91cc-4d79-94b7-9e01b91e9ebf.png",
+      "atlasCell": [
+        0,
+        0,
+        627,
+        627
+      ],
+      "alphaBoundsCrop": [
+        96,
+        133,
+        573,
+        551
+      ],
+      "dimensions": [
+        256,
+        224
+      ],
+      "production": "variants/matharia/assets/png/icons/evidence_gem_v3@2x.webp",
+      "bytes": 20642,
+      "sha256": "51c37a41737fae17847da2b25e3a39cb8daaaf1796822021b3c9b9022792a4ee"
+    },
+    {
+      "name": "cookie",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-d0da2038-91cc-4d79-94b7-9e01b91e9ebf.png",
+      "atlasCell": [
+        627,
+        0,
+        1254,
+        627
+      ],
+      "alphaBoundsCrop": [
+        82,
+        126,
+        547,
+        555
+      ],
+      "dimensions": [
+        256,
+        236
+      ],
+      "production": "variants/matharia/assets/png/icons/evidence_cookie_v3@2x.webp",
+      "bytes": 38186,
+      "sha256": "54b25147faa488fae69b4837ce222065f8c7bf6686e89f211dd7e333a5a8937b"
+    },
+    {
+      "name": "socks",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-d0da2038-91cc-4d79-94b7-9e01b91e9ebf.png",
+      "atlasCell": [
+        0,
+        627,
+        627,
+        1254
+      ],
+      "alphaBoundsCrop": [
+        111,
+        55,
+        604,
+        529
+      ],
+      "dimensions": [
+        256,
+        246
+      ],
+      "production": "variants/matharia/assets/png/icons/evidence_socks_v3@2x.webp",
+      "bytes": 37766,
+      "sha256": "06da626c3ae2400460e317cddefc76c0c58458bae122e0c9a1453868e1b37e08"
+    },
+    {
+      "name": "coins",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-d0da2038-91cc-4d79-94b7-9e01b91e9ebf.png",
+      "atlasCell": [
+        627,
+        627,
+        1254,
+        1254
+      ],
+      "alphaBoundsCrop": [
+        57,
+        130,
+        562,
+        507
+      ],
+      "dimensions": [
+        256,
+        191
+      ],
+      "production": "variants/matharia/assets/png/icons/evidence_coins_v3@2x.webp",
+      "bytes": 23050,
+      "sha256": "fc1f7f7e77fea6d9eeda90a469329b9d0bf120a11fdce9f6820a9cbd7a3df19b"
+    }
+  ]
+}

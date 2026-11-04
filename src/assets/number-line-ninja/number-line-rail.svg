@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 8" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="rail" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#fff2ca"/><stop offset=".45" stop-color="#e1c38d"/><stop offset="1" stop-color="#a8753f"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="600" height="8" rx="4" fill="url(#rail)"/>
+</svg>

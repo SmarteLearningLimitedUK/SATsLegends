@@ -1,4 +1,7 @@
 import assert from 'node:assert/strict';
+import {formatFantasyPrompt} from '../src/utils/fantasyPrompt.ts';
+assert.equal(formatFantasyPrompt('There are 24 pupils on a train. How many groups of 6 pupils are there?'), 'There are 24 pupils on a train. How many groups of 6 pupils are there?');
+assert.equal(formatFantasyPrompt('A shop sells 8 books each day. How many books are sold in 5 days?'), 'A shop sells 8 books each day. How many books are sold in 5 days?');
 import {
   getSatsInspiredChallengeQuestion,
   getSatsInspiredDataDungeonPuzzle,
@@ -28,7 +31,7 @@ for (const game of challengeGames) {
     assert(question.answerIndex >= 0 && question.answerIndex < question.options.length);
     assert.equal(new Set(question.options).size, question.options.length, `${game}: duplicate answer tile`);
     seenPrompts.add(question.prompt);
-    if (question.prompt.includes('Which two caravans deliver 15 crates')) {
+    if (question.prompt.includes('Which two boats deliver 15 crates')) {
       if (question.visual.type !== 'bars') throw new Error('Graph pair question needs displayed bars');
       const bars = new Map(question.visual.bars.map(bar => [bar.label, bar.value]));
       const valid = question.options.filter(option => {
@@ -40,13 +43,13 @@ for (const game of challengeGames) {
     }
   }
 }
-assert(checkedGraphPair, 'Exercise the two-caravan graph question');
+assert(checkedGraphPair, 'Exercise the two-boat graph question');
 
 for (const expected of [
-  'Rule: black = (white × 3) + 4. White = 9. Find black beads.',
-  'Rule: black = (white × 3) + 4. Black = 25. What is white?',
+  'The number of black beads is 4 more than 3 times the number of white beads. There are 9 white beads. How many black beads are there?',
+  'The number of black beads is 4 more than 3 times the number of white beads. There are 25 black beads. How many white beads are there?',
   'Use A = (b × h) ÷ 2. Find the area for b = 12 cm, h = 5 cm.',
-  'Use V = l × w × h. Find volume for 4, 3, 5.',
+  'A cuboid is 4 cm long, 3 cm wide and 5 cm high. What is its volume in cm³?',
   'Function machine: ×3, then +2. What is the output for 7?',
   'Which translation moves A to A′?',
   'Which translation moves B to B′?',
@@ -62,6 +65,7 @@ for (let attempt = 0; attempt < 80; attempt += 1) {
   const puzzle = getSatsInspiredDataDungeonPuzzle(5);
   assert(puzzle);
   assertReadable(puzzle);
+  assert(!['median', 'mode'].includes(puzzle.type), 'KS2 statistics rounds must not assess median or mode');
   assert.equal(puzzle.options.filter(option => option === puzzle.answer).length, 1, puzzle.id);
   checkedDataPuzzles.add(puzzle.id);
   if (puzzle.type === 'mean') assert.equal(puzzle.answer, puzzle.data.reduce((sum, value) => sum + value, 0) / puzzle.data.length, puzzle.id);

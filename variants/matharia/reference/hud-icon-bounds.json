@@ -1,0 +1,37 @@
+[
+  {
+    "source": "variants/matharia/assets/vector/icons/icon_back.svg",
+    "destination": "variants/matharia/assets/vector/icons/ui_back_v2.svg",
+    "viewBox": "22 4.5 87 87"
+  },
+  {
+    "source": "variants/matharia/assets/vector/icons/icon_help.svg",
+    "destination": "variants/matharia/assets/vector/icons/ui_help_v2.svg",
+    "viewBox": "19 3 90 90"
+  },
+  {
+    "source": "variants/matharia/assets/vector/icons/icon_board.svg",
+    "destination": "variants/matharia/assets/vector/icons/ui_board_v2.svg",
+    "viewBox": "25 8 78 78"
+  },
+  {
+    "source": "variants/matharia/assets/vector/icons/icon_sound.svg",
+    "destination": "variants/matharia/assets/vector/icons/ui_sound_v2.svg",
+    "viewBox": "18 1.25 93.5 93.5"
+  },
+  {
+    "source": "variants/matharia/assets/vector/icons/icon_sound_off.svg",
+    "destination": "variants/matharia/assets/vector/icons/ui_sound_off_v2.svg",
+    "viewBox": "15 -1.75 99.5 99.5"
+  },
+  {
+    "source": "variants/matharia/assets/vector/icons/icon_music.svg",
+    "destination": "variants/matharia/assets/vector/icons/ui_music_v2.svg",
+    "viewBox": "22 8 83 83"
+  },
+  {
+    "source": "variants/matharia/assets/vector/icons/icon_music_off.svg",
+    "destination": "variants/matharia/assets/vector/icons/ui_music_off_v2.svg",
+    "viewBox": "19 2 92 92"
+  }
+]

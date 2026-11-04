@@ -1,5 +1,8 @@
 import { playMonsterSound } from '../audio/gameAudio';
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import VisionCharacter from '../components/game-ui/VisionCharacter';
+import React, { useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { VisionSceneContext } from './visionScene';
+import {originalHeroId} from '../assets/characters/originalHeroes';
 import { AnimatePresence, motion, useIsPresent, useReducedMotion } from 'motion/react';
 import confetti from 'canvas-confetti';
 import takeOutLevelBg from '../assets/maps/teen/restaurant-rush.webp';
@@ -10,14 +13,16 @@ import food4 from '../assets/take_out/food/4.png';
 import food5 from '../assets/take_out/food/5.png';
 import food6 from '../assets/take_out/food/6.png';
 import food7 from '../assets/take_out/food/7.png';
-import food8 from '../assets/take_out/food/8.png';
+import food8 from '../assets/take_out/matharia/food_chicken.png';
 import food9 from '../assets/take_out/food/9.png';
 import FoodGameShell from '../components/FoodGameShell';
 import { triggerHaptic } from '../haptics';
 import CelebrationSplash from '../components/CelebrationSplash';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
-import './take-out-rush.css';
+import dinerServingCounter from '../assets/game-visions/instruments/diner-serving-counter-v1.png';
+import './takeout-diner.css';
+import {TAKEOUT_PORTIONS,addFractions,asDisplayFraction,compareFractions,evaluateTakeoutTray,fractionToNumber,generateTakeoutOrder,restrictionsFor,type Fraction,type OrderConstraint} from './takeoutRules';
 
 interface TakeOutRushGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -27,19 +32,6 @@ interface TakeOutRushGameProps extends MiniGameShellContractProps {
   onVictory: (stars: number, XP: number) => void;
   onGameOver: (XP: number) => void;
   onBack: () => void;
-}
-
-interface Fraction {
-  n: number;
-  d: number;
-}
-
-type ConstraintKind = 'ban' | 'min_items';
-
-interface OrderConstraint {
-  kind: ConstraintKind;
-  itemId?: string;
-  minItems?: number;
 }
 
 interface TakeOutOrder {
@@ -66,232 +58,84 @@ interface FeedbackState {
 }
 
 const ROUND_DURATION_SECONDS = 90;
-const AUTO_VALIDATE_DELAY_MS = 140;
 
 const FOOD_ITEMS: FoodItem[] = [
   {
     id: 'burger_meal',
     name: 'Burger Meal',
     image: food1,
-    value: { n: 1, d: 4 },
+    value: TAKEOUT_PORTIONS.burger_meal,
     colorClass: 'from-amber-300 to-orange-400',
   },
   {
     id: 'ribs_plate',
     name: 'Ribs Plate',
     image: food2,
-    value: { n: 1, d: 3 },
+    value: TAKEOUT_PORTIONS.ribs_plate,
     colorClass: 'from-orange-300 to-amber-500',
   },
   {
     id: 'berry_dessert',
     name: 'Berry Dessert',
     image: food3,
-    value: { n: 1, d: 8 },
+    value: TAKEOUT_PORTIONS.berry_dessert,
     colorClass: 'from-rose-300 to-pink-400',
   },
   {
     id: 'salad_bowl',
     name: 'Salad Bowl',
     image: food4,
-    value: { n: 1, d: 6 },
+    value: TAKEOUT_PORTIONS.salad_bowl,
     colorClass: 'from-emerald-300 to-lime-400',
   },
   {
     id: 'rice_bowl',
     name: 'Rice Bowl',
     image: food5,
-    value: { n: 1, d: 2 },
+    value: TAKEOUT_PORTIONS.rice_bowl,
     colorClass: 'from-sky-300 to-cyan-400',
   },
   {
     id: 'pizza_slice',
     name: 'Pizza Slice',
     image: food6,
-    value: { n: 1, d: 4 },
+    value: TAKEOUT_PORTIONS.pizza_slice,
     colorClass: 'from-amber-300 to-orange-400',
   },
   {
     id: 'hotdog_combo',
     name: 'Hotdog Combo',
     image: food7,
-    value: { n: 1, d: 6 },
+    value: TAKEOUT_PORTIONS.hotdog_combo,
     colorClass: 'from-yellow-300 to-amber-400',
   },
   {
     id: 'roast_chicken',
     name: 'Roast Chicken',
     image: food8,
-    value: { n: 1, d: 6 },
+    value: TAKEOUT_PORTIONS.roast_chicken,
     colorClass: 'from-orange-300 to-amber-500',
   },
   {
     id: 'fries',
     name: 'Fries',
     image: food9,
-    value: { n: 1, d: 8 },
+    value: TAKEOUT_PORTIONS.fries,
     colorClass: 'from-yellow-300 to-amber-400',
   },
 ];
 
-const loadSortedImages = (record: Record<string, string>) => (
-  Object.entries(record)
-    .sort(([a], [b]) => {
-      const anum = Number(a.match(/(\d+)/)?.[1] ?? 0);
-      const bnum = Number(b.match(/(\d+)/)?.[1] ?? 0);
-      return anum - bnum;
-    })
-    .map(([, value]) => value)
-);
-
-const takeOutMonsterImages = loadSortedImages(
-  import.meta.glob('../assets/take_out/monsters/*.png', { eager: true, import: 'default' }) as Record<string, string>,
-);
-
-const MONSTER_IMAGES = takeOutMonsterImages;
+const CUSTOMER_CAST = ['goblin', 'slime', 'jelly', 'rhino'] as const;
 
 const ITEM_BY_ID: Record<string, FoodItem> = FOOD_ITEMS.reduce<Record<string, FoodItem>>((map, item) => {
   map[item.id] = item;
   return map;
 }, {});
 
-const gcd = (a: number, b: number): number => {
-  let x = Math.abs(a);
-  let y = Math.abs(b);
-  while (y !== 0) {
-    const temp = y;
-    y = x % y;
-    x = temp;
-  }
-  return x || 1;
-};
-
-const normalize = (fraction: Fraction): Fraction => {
-  if (fraction.d === 0) return { n: 0, d: 1 };
-  const sign = fraction.d < 0 ? -1 : 1;
-  const n = fraction.n * sign;
-  const d = Math.abs(fraction.d);
-  const divisor = gcd(n, d);
-  return { n: n / divisor, d: d / divisor };
-};
-
-const addFractions = (a: Fraction, b: Fraction): Fraction => {
-  return normalize({ n: (a.n * b.d) + (b.n * a.d), d: a.d * b.d });
-};
-
-const compareFractions = (a: Fraction, b: Fraction): number => {
-  return (a.n * b.d) - (b.n * a.d);
-};
-
-const equalFractions = (a: Fraction, b: Fraction): boolean => compareFractions(a, b) === 0;
-
-const asDisplayFraction = (fraction: Fraction): string => {
-  const reduced = normalize(fraction);
-  if (reduced.d === 1) return `${reduced.n}`;
-  const whole = Math.trunc(reduced.n / reduced.d);
-  const remainder = Math.abs(reduced.n % reduced.d);
-  if (whole > 0 && remainder > 0) {
-    const remainderReduced = normalize({ n: remainder, d: reduced.d });
-    return `${whole} ${remainderReduced.n}/${remainderReduced.d}`;
-  }
-  return `${reduced.n}/${reduced.d}`;
-};
-
-const fractionToNumber = (fraction: Fraction): number => {
-  const reduced = normalize(fraction);
-  return reduced.n / reduced.d;
-};
-
-const pick = <T,>(list: T[]): T => list[Math.floor(Math.random() * list.length)];
-
-const shuffle = <T,>(items: T[]): T[] => {
-  const clone = [...items];
-  for (let i = clone.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [clone[i], clone[j]] = [clone[j], clone[i]];
-  }
-  return clone;
-};
-
 const stageFromProgress = (baseLevel: number, _ordersServed: number, _timeLeft: number): number => Math.max(1, Math.min(5, baseLevel));
-
-const allowedIdsByStage = (stage: number): string[] => {
-  if (stage === 1) return ['rice_bowl', 'burger_meal', 'pizza_slice'];
-  if (stage === 2) {
-    return ['rice_bowl', 'pizza_slice', 'fries', 'burger_meal'];
-  }
-  if (stage === 3) {
-    return ['rice_bowl', 'pizza_slice', 'fries', 'salad_bowl', 'hotdog_combo', 'roast_chicken', 'berry_dessert'];
-  }
-  return FOOD_ITEMS.map((item) => item.id);
-};
-
-const makeId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-
-const buildOrderText = (target: Fraction): string => {
-  return `Target fraction: ${asDisplayFraction(target)}.`;
-};
-
 const generateOrder = (stage: number): TakeOutOrder => {
-  const maxAttempts = 220;
-  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
-    const pool = allowedIdsByStage(stage);
-    const shuffledPool = shuffle(pool);
-
-    let bannedItemId: string | undefined;
-    if (stage >= 4 && Math.random() < (stage === 5 ? 0.7 : 0.44) && pool.length >= 5) {
-      bannedItemId = pick(pool);
-    }
-
-    const trayIds = shuffledPool.filter((id) => id !== bannedItemId);
-    const traySize = Math.min(stage === 1 ? 3 : stage === 2 ? 4 : 5, trayIds.length);
-    const trayItemIds = trayIds.slice(0, traySize);
-    if (trayItemIds.length < 2) continue;
-
-    const minItems = stage === 5 ? 3 : stage >= 3 ? 2 : 1;
-    const maxItems = stage === 1 ? 2 : stage === 2 ? 4 : stage === 3 ? 4 : stage === 4 ? 5 : 6;
-    const itemCount = Math.floor(Math.random() * (maxItems - minItems + 1)) + minItems;
-
-    const selectionIds = Array.from({ length: itemCount }, () => pick(trayItemIds));
-
-    let target = normalize({ n: 0, d: 1 });
-    selectionIds.forEach((id) => {
-      target = addFractions(target, ITEM_BY_ID[id].value);
-    });
-
-    if (compareFractions(target, { n: 0, d: 1 }) <= 0) continue;
-    if (compareFractions(target, { n: 1, d: 1 }) > 0) continue;
-
-    const hasVariety = new Set(selectionIds).size >= (stage >= 3 ? 2 : 1);
-    if (!hasVariety) continue;
-
-    const constraints: OrderConstraint[] = [];
-    if (bannedItemId) {
-      constraints.push({ kind: 'ban', itemId: bannedItemId });
-    }
-    if (minItems > 1) {
-      constraints.push({ kind: 'min_items', minItems });
-    }
-
-    return {
-      id: makeId(),
-      target,
-      constraints,
-      stage,
-      text: buildOrderText(target),
-      trayItemIds,
-      rushTag: stage === 5 ? 'Rush Order' : undefined,
-    };
-  }
-
-  return {
-    id: makeId(),
-    target: { n: 3, d: 4 },
-    constraints: [{ kind: 'min_items', minItems: 2 }],
-    stage,
-    text: 'Target fraction: 3/4.',
-    trayItemIds: ['rice_bowl', 'pizza_slice', 'fries', 'burger_meal'],
-  };
+  const spec = generateTakeoutOrder(stage);
+  return { ...spec, id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, text: `Target fraction: ${asDisplayFraction(spec.target)}.` };
 };
 
 const starsForPerformance = (XP: number, correct: number, incorrect: number): number => {
@@ -328,6 +172,8 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
   isPractice,
 }) => {
   const reducedMotion = useReducedMotion();
+  const scene = useContext(VisionSceneContext);
+  const customerScene = useMemo(() => ({ key: scene.key, paused: scene.paused, cue: 'idle' as const, sequence: 0 }), [scene.key, scene.paused]);
   const isPresent = useIsPresent();
   const presentRef = useRef(isPresent);
   presentRef.current = isPresent;
@@ -338,11 +184,12 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
   const [Combo, setStreak] = useState(0);
   const [ordersServed, setOrdersServed] = useState(0);
   const shiftElapsed = ROUND_DURATION_SECONDS - timeLeft;
-  const arrivals = 1 + Math.floor(shiftElapsed / 20);
+  const arrivals = 3 + Math.floor(shiftElapsed / 20);
   const queuedCustomers = Math.max(0, arrivals - ordersServed);
   const [wrongOrders, setWrongOrders] = useState(0);
   const [feedback, setFeedback] = useState<FeedbackState | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [preparation, setPreparation] = useState<{ itemId: string; sequence: number } | null>(null);
   const [isResolvingOrder, setIsResolvingOrder] = useState(false);
   const [showCelebrationSplash, setShowCelebrationSplash] = useState(false);
   const [orderStartMs, setOrderStartMs] = useState<number>(() => Date.now());
@@ -350,7 +197,6 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
 
   const [order, setOrder] = useState<TakeOutOrder>(() => generateOrder(stageFromProgress(baseLevel, 0, ROUND_DURATION_SECONDS)));
 
-  const autoValidateTimeoutRef = useRef<number | null>(null);
   const feedbackTimeoutRef = useRef<number | null>(null);
   const shiftTimerRef = useRef<number | null>(null);
   const roundFinishedRef = useRef(false);
@@ -377,10 +223,6 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     if (unlockTimeoutRef.current !== null) {
       window.clearTimeout(unlockTimeoutRef.current);
       unlockTimeoutRef.current = null;
-    }
-    if (autoValidateTimeoutRef.current !== null) {
-      window.clearTimeout(autoValidateTimeoutRef.current);
-      autoValidateTimeoutRef.current = null;
     }
     if (feedbackTimeoutRef.current !== null) {
       window.clearTimeout(feedbackTimeoutRef.current);
@@ -466,22 +308,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     onVictoryRef.current(stars, result.XP);
   }, [isPresent, sessionEvents, sessionState?.paused, timeLeft]);
 
-  const activeConstraints = useMemo(() => {
-    const bannedIds = new Set(
-      order.constraints
-        .filter((constraint) => constraint.kind === 'ban' && constraint.itemId)
-        .map((constraint) => constraint.itemId as string),
-    );
-
-    const minItems = order.constraints
-      .filter((constraint) => constraint.kind === 'min_items')
-      .reduce((max, constraint) => Math.max(max, constraint.minItems || 0), 0);
-
-    return {
-      bannedIds,
-      minItems,
-    };
-  }, [order.constraints]);
+  const activeConstraints = useMemo(() => restrictionsFor(order.constraints), [order.constraints]);
 
   const selectedItems = useMemo(() => selectedIds.map((id) => ITEM_BY_ID[id]).filter(Boolean), [selectedIds]);
 
@@ -489,18 +316,10 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     return selectedItems.reduce<Fraction>((sum, item) => addFractions(sum, item.value), { n: 0, d: 1 });
   }, [selectedItems]);
 
-  const isExact = useMemo(() => equalFractions(runningTotal, order.target), [order.target, runningTotal]);
-
-  const constraintsMet = useMemo(() => {
-    if (activeConstraints.minItems > 0 && selectedIds.length < activeConstraints.minItems) {
-      return false;
-    }
-    const hasBanned = selectedIds.some((id) => activeConstraints.bannedIds.has(id));
-    if (hasBanned) return false;
-    return true;
-  }, [activeConstraints.bannedIds, activeConstraints.minItems, selectedIds]);
-
-  const canSubmit = queuedCustomers > 0 && isPresent && selectedIds.length > 0 && !isResolvingOrder && !roundFinished && !sharedLivesBlocked;
+  const trayAssessment = useMemo(() => evaluateTakeoutTray(order, selectedIds), [order, selectedIds]);
+  const {exact:isExact,constraintsMet,counts:selectedCounts} = trayAssessment;
+  const paused = Boolean(sessionState?.paused || scene.paused);
+  const canSubmit = queuedCustomers > 0 && isPresent && selectedIds.length > 0 && !isResolvingOrder && !roundFinished && !sharedLivesBlocked && !paused;
 
   const nextOrder = useCallback((servedCount: number, nextTimeLeft: number) => {
     if (!presentRef.current || roundFinishedRef.current) return;
@@ -564,7 +383,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     }, 1280);
   }, [nextOrder, order.id, order.stage, orderStartMs, pausedDurationAt, timeLeft, reducedMotion, sessionEvents, sessionState?.paused]);
 
-  const resolveIncorrectOrder = useCallback(() => {
+  const resolveIncorrectOrder = useCallback((reason?:string) => {
     if (!presentRef.current || roundFinishedRef.current) return;
     const nextPerformance = {
       ...performanceRef.current,
@@ -577,7 +396,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     setWrongOrders(nextPerformance.wrong);
     setStreak(0);
     setScore(nextPerformance.XP);
-    setFeedback({ tone: 'error', text: `Order needs adjusting. Make exactly ${asDisplayFraction(order.target)}.` });
+    setFeedback({ tone: 'error', text: reason || `Order needs adjusting. Make exactly ${asDisplayFraction(order.target)}.` });
     emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { score: nextPerformance.XP, metadata: { order: order.id, attempt: nextPerformance.wrong } });
 
     if (feedbackTimeoutRef.current !== null) {
@@ -590,24 +409,19 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     }, 520);
   }, [order.id, order.target, sessionEvents]);
 
-  const submitOrder = useCallback((fromAuto = false) => {
-    if (queuedCustomers === 0 || !presentRef.current || sharedLivesBlocked || resolvingOrderRef.current || roundFinishedRef.current || isResolvingOrder || roundFinished) return;
+  const submitOrder = useCallback(() => {
+    if (paused || queuedCustomers === 0 || !selectedIdsRef.current.length || !presentRef.current || sharedLivesBlocked || resolvingOrderRef.current || roundFinishedRef.current || isResolvingOrder || roundFinished) return;
     resolvingOrderRef.current = true;
     setIsResolvingOrder(true);
 
     const selected = selectedIdsRef.current;
-    const total = selected.reduce<Fraction>((sum, id) => addFractions(sum, ITEM_BY_ID[id].value), { n: 0, d: 1 });
-    const valid = equalFractions(total, order.target)
-      && selected.length >= activeConstraints.minItems
-      && !selected.some((id) => activeConstraints.bannedIds.has(id));
-    if (valid) {
+    const assessment = evaluateTakeoutTray(order, selected);
+    if (assessment.valid) {
       resolveCorrectOrder();
       return;
     } else {
-      resolveIncorrectOrder();
-      if (!fromAuto) {
-        // Keep current selection so the learner can fix quickly.
-      }
+      // Keep the current selection and customer so the learner can correct it.
+      resolveIncorrectOrder(assessment.restrictionError);
     }
 
     unlockTimeoutRef.current = window.setTimeout(() => {
@@ -616,34 +430,22 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
       setIsResolvingOrder(false);
       resolvingOrderRef.current = false;
     }, 170);
-  }, [activeConstraints.bannedIds, activeConstraints.minItems, isResolvingOrder, order.target, queuedCustomers, resolveCorrectOrder, resolveIncorrectOrder, roundFinished, sharedLivesBlocked]);
+  }, [paused, isResolvingOrder, order, queuedCustomers, resolveCorrectOrder, resolveIncorrectOrder, roundFinished, sharedLivesBlocked]);
 
-  useEffect(() => {
-    if (!presentRef.current || sharedLivesBlocked || roundFinishedRef.current || resolvingOrderRef.current || roundFinished || isResolvingOrder) return;
-    if (!isExact || !constraintsMet) return;
-
-    if (autoValidateTimeoutRef.current !== null) {
-      window.clearTimeout(autoValidateTimeoutRef.current);
+  const clearEditingFeedback = () => {
+    if (feedbackTimeoutRef.current !== null) {
+      window.clearTimeout(feedbackTimeoutRef.current);
+      feedbackTimeoutRef.current = null;
     }
-
-    autoValidateTimeoutRef.current = window.setTimeout(() => {
-      submitOrder(true);
-    }, AUTO_VALIDATE_DELAY_MS);
-
-    return () => {
-      if (autoValidateTimeoutRef.current !== null) {
-        window.clearTimeout(autoValidateTimeoutRef.current);
-        autoValidateTimeoutRef.current = null;
-      }
-    };
-  }, [constraintsMet, isExact, isPresent, isResolvingOrder, roundFinished, sharedLivesBlocked, submitOrder]);
+    setFeedback(null);
+  };
 
   const addItem = (itemId: string) => {
-    if (!presentRef.current || sharedLivesBlocked || roundFinishedRef.current || resolvingOrderRef.current || roundFinished || isResolvingOrder) return;
+    if (paused || !order.trayItemIds.includes(itemId) || !presentRef.current || sharedLivesBlocked || roundFinishedRef.current || resolvingOrderRef.current || roundFinished || isResolvingOrder) return;
 
     if (activeConstraints.bannedIds.has(itemId)) {
       triggerHaptic('warning');
-      setFeedback({ tone: 'error', text: `${ITEM_BY_ID[itemId].name} is blocked for this order.` });
+      setFeedback({ tone: 'error', text: 'That item is blocked for this order.' });
       if (feedbackTimeoutRef.current !== null) window.clearTimeout(feedbackTimeoutRef.current);
       feedbackTimeoutRef.current = window.setTimeout(() => {
         if (presentRef.current && !roundFinishedRef.current) setFeedback(null);
@@ -651,23 +453,36 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
       return;
     }
 
+    const used = selectedIdsRef.current.filter(id => id === itemId).length;
+    if (used >= (activeConstraints.limits[itemId] ?? Infinity)) {
+      triggerHaptic('warning');
+      setFeedback({ tone: 'info', text: 'Item limit reached. Remove a portion to use it again.' });
+      if (feedbackTimeoutRef.current !== null) window.clearTimeout(feedbackTimeoutRef.current);
+      feedbackTimeoutRef.current = window.setTimeout(() => { if (presentRef.current && !roundFinishedRef.current) setFeedback(null); }, 520);
+      return;
+    }
+
     triggerHaptic('selection');
+    clearEditingFeedback();
     selectedIdsRef.current = [...selectedIdsRef.current, itemId];
     setSelectedIds(selectedIdsRef.current);
+    setPreparation(previous => ({ itemId, sequence: (previous?.sequence ?? 0) + 1 }));
   };
 
   const removeSelectedItem = (itemId: string) => {
-    if (!presentRef.current || sharedLivesBlocked || roundFinishedRef.current || resolvingOrderRef.current || roundFinished || isResolvingOrder) return;
+    if (paused || !presentRef.current || sharedLivesBlocked || roundFinishedRef.current || resolvingOrderRef.current || roundFinished || isResolvingOrder) return;
     const index = selectedIdsRef.current.indexOf(itemId);
     if (index < 0) return;
     triggerHaptic('light');
+    clearEditingFeedback();
     selectedIdsRef.current = selectedIdsRef.current.filter((_, i) => i !== index);
     setSelectedIds(selectedIdsRef.current);
   };
 
   const clearTray = () => {
-    if (!presentRef.current || sharedLivesBlocked || roundFinishedRef.current || resolvingOrderRef.current || roundFinished || isResolvingOrder) return;
+    if (paused || !presentRef.current || sharedLivesBlocked || roundFinishedRef.current || resolvingOrderRef.current || roundFinished || isResolvingOrder) return;
     triggerHaptic('light');
+    clearEditingFeedback();
     selectedIdsRef.current = [];
     setSelectedIds([]);
   };
@@ -693,6 +508,14 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     return [...groups.values()];
   }, [selectedIds]);
   const overTarget = compareFractions(runningTotal, order.target) > 0;
+  const nextCustomerIn = 20 - shiftElapsed % 20;
+  const submitLabel = isResolvingOrder ? feedback?.tone === 'success' ? 'Serving…' : 'Checking…'
+    : queuedCustomers === 0 ? `Waiting ${nextCustomerIn}s` : 'Send order';
+  const trayHint = queuedCustomers === 0 ? `${isExact && constraintsMet ? 'Tray ready. ' : ''}Next customer in ${nextCustomerIn}s.`
+    : overTarget ? 'Too much! Remove a portion.'
+      : isExact ? constraintsMet ? 'Exact. Tap Send order.' : trayAssessment.restrictionError
+        : selectedIds.length ? `Add portions to make ${asDisplayFraction(order.target)}.`
+          : isPractice ? 'Choose portions to fill the tray.' : 'Wrong order: lose a heart. Build your tray.';
   const rushPressure = timeLeft <= 30 ? 'last-orders' : Combo >= 3 ? 'combo' : 'steady';
   const customerLine = feedback?.tone === 'success' ? 'Slime-free. Mostly.'
     : feedback?.tone === 'error' ? "Could you check my order?"
@@ -705,50 +528,64 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
         data-takeout-game data-takeout-state={roundFinished ? 'finished' : feedback?.tone || 'idle'}
         data-takeout-time={timeLeft} data-takeout-paused={sessionState?.paused || false} data-takeout-present={isPresent}
         data-takeout-served={ordersServed} data-takeout-combo={Combo} data-takeout-pressure={rushPressure}
-        data-takeout-selected-count={selectedIds.length} data-takeout-wrong={wrongOrders} data-takeout-score={XP}>
+        data-takeout-selected-count={selectedIds.length} data-takeout-wrong={wrongOrders} data-takeout-score={XP}
+        data-takeout-min-items={activeConstraints.minItems} data-takeout-min-values={activeConstraints.minValues} data-takeout-constraints-met={constraintsMet}>
         {!useSharedTopHud && <div className="rush-local-clock" aria-label="Existing restaurant round timer">
           <span>Kitchen closes in {timeLeft}s</span><span>{XP} XP</span>
           <div style={{ width: `${timerProgress * 100}%`, backgroundColor: timerFillColor }} />
         </div>}
-        <GameQuestionCard title="Order ticket"
-          subtitle={`${isPractice ? 'Practice exact orders.' : 'Wrong orders cost one heart.'}${activeConstraints.minItems > 1 ? ` Use at least ${activeConstraints.minItems} portions.` : ''}`}
+        <GameQuestionCard title="Order ticket" context=""
+          subtitle={`${activeConstraints.minItems}+ portions · ${activeConstraints.minValues} fraction sizes · ${isPractice ? 'Practice' : 'Wrong order: lose a heart'}`}
           className="rush-mission" style={{ position: 'relative', top: 0, width: '100%', transform: 'none' }}>
-          Build an order worth <strong>{asDisplayFraction(order.target)}</strong>.
+          Choose portions that add up to <strong>{asDisplayFraction(order.target)}</strong> of a whole meal.
         </GameQuestionCard>
 
         <section data-takeout-playfield className={`rush-kitchen${overTarget ? ' is-overfilled' : ''}`}
           data-takeout-target={`${order.target.n}/${order.target.d}`} data-takeout-total={`${runningTotal.n}/${runningTotal.d}`}>
           <div className="rush-order-rail">
             <span>Ticket #{ordersServed + 1}</span>
-            <strong>{rushPressure === 'last-orders' ? 'Last orders! Closing soon.' : Combo > 0 ? `Perfect service ×${Combo}` : 'Your café. Your moment.'}</strong>
+            <strong>{rushPressure === 'last-orders' ? 'Last orders!' : Combo > 0 ? `Perfect service ×${Combo}` : 'Customer counter'}</strong>
             {useSharedTopHud && <span className="rush-shift-clock" data-takeout-clock data-urgent={timeLeft <= 30} aria-label={`${timeLeft} seconds left`}>{timeLeft}s</span>}
           </div>
-          <div className="rush-steam" aria-hidden="true"><i /><i /><i /></div>
-          <div className="rush-queue" data-customer-queue={queuedCustomers}>
-            <span className="rush-queue-status" role="status">{queuedCustomers ? `${queuedCustomers} waiting · Next arrival in ${20 - shiftElapsed % 20}s` : `Next customer in ${20 - shiftElapsed % 20}s`}</span>
-            <AnimatePresence initial={false}>{Array.from({length:queuedCustomers},(_,index)=>{
+          <div className="rush-customer-quip" role="status">{queuedCustomers ? customerLine : 'Your next customer is on the way.'}</div>
+          <div className="rush-queue" data-customer-queue={queuedCustomers} aria-label="Monster customer queue">
+            <VisionSceneContext.Provider value={customerScene}>
+            <AnimatePresence initial={false} mode="popLayout">
+            {Array.from({length:Math.min(5,queuedCustomers)},(_,index)=>{
               const customerId=ordersServed+index;
               const wait=Math.max(0,shiftElapsed-customerId*20);
-              return <motion.div key={customerId} className="rush-queued-customer" data-impatience={wait>=40?'urgent':wait>=20?'restless':'calm'}
-                initial={reducedMotion?false:{x:-80,opacity:0}} animate={{x:0,opacity:1}} exit={{x:80,opacity:0}}
-                transition={{duration:reducedMotion?0:.65,ease:'easeInOut'}} layout={!reducedMotion}>
-                {index===0&&<div className="rush-customer-quip">{wait>=40?'Please! My order is still waiting!':wait>=20?'Is my food ready yet?':customerLine}</div>}
-                <img src={MONSTER_IMAGES[customerId%MONSTER_IMAGES.length]} alt={index===0?'Your hungry customer':'Customer waiting in the queue'} draggable={false}/>
-                <span className="rush-patience">{wait>=40?'Very impatient':wait>=20?'Getting impatient':'Waiting'}</span>
+              return <motion.div key={customerId} layout={!reducedMotion && !scene.paused}
+                initial={reducedMotion ? false : { opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }}
+                exit={reducedMotion ? { opacity: 0 } : { opacity: 0, x: 35 }} transition={{ duration: reducedMotion ? 0 : .45, ease: 'easeOut' }}
+                className="rush-queued-customer" data-queue-position={index} data-customer-id={customerId} data-impatience={wait>=40?'urgent':wait>=20?'restless':'calm'}>
+                <VisionCharacter steady identity={CUSTOMER_CAST[customerId%CUSTOMER_CAST.length]} alt={index===0?'Monster ordering at the counter':'Monster waiting in the queue'}/>
+                <span className="rush-customer-position">{index === 0 ? 'Your order, please!' : 'Waiting'}</span>
               </motion.div>;
-            })}</AnimatePresence>
+            })}
+            </AnimatePresence>
+            </VisionSceneContext.Provider>
           </div>
+          <span className="rush-queue-status" role="status">{queuedCustomers} waiting · {ordersServed} served · Next: {20 - shiftElapsed % 20}s</span>
+        </section>
 
+        <section className="rush-server-bay" aria-label="Server behind the diner counter"
+          data-chef-preparation={preparation?.sequence ?? 0} data-chef-cooking={selectedIds.length > 0 && !isResolvingOrder}>
+          <span className="rush-chef-sign">Order · plate · serve</span>
+          <VisionSceneContext.Provider value={customerScene}>
+            <VisionCharacter steady activity={selectedIds.length?'cook':'idle'} identity={originalHeroId(scene.heroIdentity)} alt="Your hero chef"
+              reaction={preparation && selectedIds.length ? 'taunt' : 'idle'} reactionKey={preparation?.sequence} />
+          </VisionSceneContext.Provider>
+          <img className="rush-serving-counter" src={dinerServingCounter} alt="" aria-hidden="true" draggable={false} />
         </section>
 
         <div className="rush-responses" data-takeout-responses>
           <motion.div className={`rush-counter${overTarget ? ' is-overfilled' : ''}`} data-takeout-tray
-            animate={feedback?.tone === 'success' && !reducedMotion ? { x: [0, 12, 0], y: [0, -4, 0] } : { x: 0, y: 0 }} transition={{ duration: .45 }}>
+            animate={{ x: 0, y: 0 }}>
             <div className="rush-tray-label"><span>Your tray <strong>{asDisplayFraction(runningTotal)}</strong> / {asDisplayFraction(order.target)}</span>
-              <span>{overTarget ? 'Too much! Remove a portion.' : isExact && !constraintsMet ? `Need ${activeConstraints.minItems} portions.` : isExact ? 'Exact. Order up!' : 'Build the exact total.'}</span>
+              <span>{trayHint}</span>
             </div>
             <div className="rush-tray-items" style={{ gridTemplateColumns: `repeat(${Math.max(1, trayGroups.length)}, minmax(0, 1fr))` }}>
-              <AnimatePresence initial={false}>
+              <AnimatePresence initial={false} mode="popLayout">
                 {trayGroups.map(({ item, count }) => <motion.button key={item.id} type="button"
                   data-takeout-remove={item.id} aria-label={`Remove one ${asDisplayFraction(item.value)} portion`}
                   disabled={!isPresent || isResolvingOrder || roundFinished || sharedLivesBlocked} onClick={() => removeSelectedItem(item.id)}
@@ -763,17 +600,19 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
           <div className="rush-food-shelf" style={{ gridTemplateColumns: `repeat(${availableItems.length}, minmax(0, 1fr))` }}>
             {availableItems.map((item) => <button key={item.id} type="button" data-button-skin="none"
               data-takeout-food={item.id} data-food-fraction={`${item.value.n}/${item.value.d}`}
+              data-food-limit={activeConstraints.limits[item.id]} data-food-remaining={activeConstraints.limits[item.id] === undefined ? undefined : Math.max(0, activeConstraints.limits[item.id] - (selectedCounts[item.id] || 0))} data-food-blocked={activeConstraints.bannedIds.has(item.id)}
               aria-label={`Add ${asDisplayFraction(item.value)} portion`} onClick={() => addItem(item.id)}
-              disabled={!isPresent || isResolvingOrder || roundFinished || sharedLivesBlocked || activeConstraints.bannedIds.has(item.id)}>
+              disabled={paused || !isPresent || isResolvingOrder || roundFinished || sharedLivesBlocked || activeConstraints.bannedIds.has(item.id) || (selectedCounts[item.id] || 0) >= (activeConstraints.limits[item.id] ?? Infinity)}>
+              {activeConstraints.bannedIds.has(item.id) ? <small>Blocked</small> : activeConstraints.limits[item.id] !== undefined ? <small>{Math.max(0, activeConstraints.limits[item.id] - (selectedCounts[item.id] || 0))} left</small> : null}
               <FoodSprite item={item} /><strong>{asDisplayFraction(item.value)}</strong>
             </button>)}
           </div>
-          <div className={`rush-feedback${feedback?.tone === 'error' ? ' is-error' : ''}`} role="status" aria-live="polite">
-            {feedback?.text || (Combo > 0 ? 'Keep the combo alive. Exact portions only.' : 'Build the exact order. Three perfect orders earn a +60 XP service stamp.')}
+          <div className={`rush-feedback${feedback?.tone === 'error' ? ' is-error' : ''}`} data-feedback-active={Boolean(feedback)} role="status" aria-live="polite">
+            {feedback?.text || trayHint}
           </div>
           <div className="rush-actions">
             <button type="button" onClick={clearTray} disabled={!isPresent || !selectedIds.length || isResolvingOrder || roundFinished || sharedLivesBlocked} className="ui-button-secondary">Reset tray</button>
-            <button type="button" data-takeout-submit onClick={() => submitOrder(false)} disabled={!canSubmit} className="ui-button-primary">Send order</button>
+            <button type="button" data-takeout-submit onClick={submitOrder} disabled={!canSubmit} className="ui-button-primary">{submitLabel}</button>
           </div>
         </div>
         <CelebrationSplash active={showCelebrationSplash && !reducedMotion} message="Order Up!" theme="takeout" sweepDuration={1.35} />

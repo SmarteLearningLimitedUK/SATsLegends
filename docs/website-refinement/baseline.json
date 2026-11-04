@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-28",
+  "originalBranch": "codex/ios-app",
+  "refinementBranch": "codex/website-refinement-2026-10-28",
+  "baseCommit": "fe35bdcf49b6a5c5a302e9582e486c742441e30d",
+  "checkpointRef": "refs/checkpoints/website-refinement-2026-10-28",
+  "checkpointCommit": "caad813bdad97b57ee644ae9a1f8c40b5b6d9132",
+  "checkpointTree": "08c64204479398f1eb99283d3dd92dcf78c75fd1",
+  "includedCount": 654,
+  "excludedPaths": [
+    "scripts/qa/__pycache__/sats_depth_oracle.cpython-314.pyc",
+    "scripts/qa/__pycache__/sats_revision_gap_oracle.cpython-314.pyc"
+  ],
+  "note": "Local recoverable source checkpoint; original working tree and user index preserved. No credentials or new generated build files included. Not pushed."
+}

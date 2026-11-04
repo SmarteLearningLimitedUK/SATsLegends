@@ -1,0 +1,23 @@
+{
+  "name": "matharia-ios",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node ../../node_modules/vite/bin/vite.js --config vite.config.ts --mode ios",
+    "build": "node --max-old-space-size=4096 ../../node_modules/vite/bin/vite.js build --config vite.config.ts --mode ios",
+    "typecheck": "node ../../node_modules/typescript/bin/tsc --noEmit -p tsconfig.json",
+    "ios:sync": "npm run build && node ../../node_modules/@capacitor/cli/bin/capacitor sync ios",
+    "ios:open": "node ../../node_modules/@capacitor/cli/bin/capacitor open ios",
+    "ios:check": "node scripts/ensure-ios-minimum.mjs --check",
+    "capacitor:update:after": "node scripts/ensure-ios-minimum.mjs",
+    "capacitor:sync:after": "node scripts/ensure-ios-minimum.mjs"
+  },
+  "dependencies": {
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/core": "^8.5.3",
+    "@capacitor/ios": "^8.5.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.5.3"
+  }
+}

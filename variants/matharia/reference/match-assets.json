@@ -1,0 +1,125 @@
+{
+  "tool": "built-in image_gen",
+  "backgroundSource": "exec-0d010b64-64d6-4d03-9178-5301c5c04086.png",
+  "gemSource": "exec-91dd3d5c-09db-4d24-a7ea-c5de2e89d6a3.png",
+  "processing": "Independent transparent sprites exported from six equal atlas cells, trimmed to their alpha bounds; no recolouring, warping, or background concealment.",
+  "sprites": [
+    {
+      "file": "variants/matharia/assets/png/gameplay/match_gem_sapphire@2x.png",
+      "dimensions": [
+        440,
+        418
+      ],
+      "sourceCell": [
+        0,
+        0,
+        512,
+        512
+      ],
+      "alphaExtrema": [
+        0,
+        254
+      ]
+    },
+    {
+      "file": "variants/matharia/assets/png/gameplay/match_gem_ruby@2x.png",
+      "dimensions": [
+        442,
+        418
+      ],
+      "sourceCell": [
+        512,
+        0,
+        512,
+        512
+      ],
+      "alphaExtrema": [
+        0,
+        254
+      ]
+    },
+    {
+      "file": "variants/matharia/assets/png/gameplay/match_gem_amethyst@2x.png",
+      "dimensions": [
+        440,
+        418
+      ],
+      "sourceCell": [
+        1024,
+        0,
+        512,
+        512
+      ],
+      "alphaExtrema": [
+        0,
+        254
+      ]
+    },
+    {
+      "file": "variants/matharia/assets/png/gameplay/match_gem_amber@2x.png",
+      "dimensions": [
+        440,
+        418
+      ],
+      "sourceCell": [
+        0,
+        512,
+        512,
+        512
+      ],
+      "alphaExtrema": [
+        0,
+        254
+      ]
+    },
+    {
+      "file": "variants/matharia/assets/png/gameplay/match_gem_emerald@2x.png",
+      "dimensions": [
+        442,
+        418
+      ],
+      "sourceCell": [
+        512,
+        512,
+        512,
+        512
+      ],
+      "alphaExtrema": [
+        0,
+        254
+      ]
+    },
+    {
+      "file": "variants/matharia/assets/png/gameplay/match_gem_cyan@2x.png",
+      "dimensions": [
+        440,
+        417
+      ],
+      "sourceCell": [
+        1024,
+        512,
+        512,
+        512
+      ],
+      "alphaExtrema": [
+        0,
+        254
+      ]
+    }
+  ],
+  "boardFrame": {
+    "source": "exec-e2fe8549-e245-40d8-8eb5-307eda45c212.png",
+    "production": "assets/png/frames/match_board_v3@2x.webp",
+    "alphaBounds": [
+      10,
+      15,
+      1329,
+      1147
+    ],
+    "dimensions": [
+      1200,
+      1030
+    ],
+    "opening": "9.5% top, 5.5% sides, 4% bottom; all percentages of board width"
+  }
+}

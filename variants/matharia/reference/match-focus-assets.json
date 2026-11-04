@@ -1,0 +1,43 @@
+{
+  "frame": {
+    "tool": "built-in image_gen",
+    "source": "C:/Users/samva/.codex/generated_images/01a18eee-903b-74c2-89bb-fb8e6f1cf5ef/exec-24c6d693-7dae-426c-a69b-c2d434dd075b.png",
+    "production": "variants/matharia/assets/png/frames/match_board_slim_v4@2x.webp",
+    "dimensions": [
+      1354,
+      1162
+    ],
+    "reference": "variants/matharia/assets/png/frames/match_board_v3@2x.webp",
+    "prompt": "Use case: stylized-concept. Create one independent production GAME BOARD FRAME asset on a transparent outer background, same portrait-wide aspect ratio as the supplied 1200 x 1031 reference. The source is a style reference, not a finished screen. Rebuild as a much SLIMMER Matharia sapphire-and-antique-gold frame so live jewel tiles can be larger inside.\nOne straight rectangular delicate polished gold rail with small ornate corner flourishes and tiny blue sapphire corner details. Retain this reference's premium sculpted family-fantasy quality, deep teal opaque perfectly blank central backing, and warm gold/emerald leaf accents. Reduce decorative thickness strongly: side and bottom rails occupy only about 2.5\u00e2\u20ac\u201c3% of width, upper rail about 3%; ONE small sapphire crest centred at the very top reaches at most 4.5% down the canvas. Small restrained leaves at corners only. No big side gemstones or wide flowers protruding into the playable area. Central 94% width and 90% height are a completely empty deep-teal material. Upper and lower rails straight, all corners proportionate, no curved oval, no perspective. Keep the frame facing the viewer square on. High quality edges, delicate gold highlights, no blurry glow.\nGenuinely transparent OUTSIDE the rectangular frame/ornaments, including corners; centre stays opaque dark teal. Fill the whole 1200 x 1031 composition closely with minimal transparent exterior margins.\nAbsolutely NO text, numbers, lettering, labels, tiles, gems in the central area, grids, buttons, icons, scenery, characters, shadows on a canvas, backdrop, checkerboard or extra frames. This is just the blank frame/material asset; all game pieces and live controls are separate.",
+    "refinementPrompt": "Edit target: the supplied newly generated slim Matharia board frame. Preserve its exact gold rim, small sapphires, leaf details, outer silhouette, straight-on rectangular proportions and transparent exterior. Produce ONLY a HOLLOW FRAME: remove ALL of the dark teal centre/backing entirely. Every pixel in the large central rectangular opening must be genuinely 100% transparent, uniformly clear, right up to the gold inner rim. No residual material, texture, mottling, shadows, checkerboard or coloured patches inside the opening. The separate live UI will provide its own flat panel material under the frame. Do not create a backdrop. Keep all opaque gold/leaf/sapphire pixels and their high-quality antialiased edges. Keep the same close canvas fit. No text, tile, grid, character or extra object. Real alpha transparency in BOTH the central hole and the exterior.",
+    "processing": "Full RGBA WebP export; centre alpha 0-1/255, 99.916% exactly zero. No opaque centre pixels or controls. Alpha preserved without cleanup, masks or paint. Renderer supplies a separate solid teal panel material beneath the hollow frame, with live gems on top.",
+    "inspected": true,
+    "alphaCheck": {
+      "dimensions": [
+        1354,
+        1162
+      ],
+      "centreAlphaExtrema": [
+        0,
+        1
+      ],
+      "centreZeroPercent": 99.91578572208714,
+      "centreOpaquePixels": 0,
+      "processing": "Full RGBA export; alpha preserved without cleanup or masks",
+      "bytes": 118426
+    }
+  },
+  "tool": "built-in image_gen",
+  "kind": "background scenery only",
+  "source": "C:/Users/samva/.codex/generated_images/01a18eee-903b-74c2-89bb-fb8e6f1cf5ef/exec-2ea58b4b-330d-43b3-94cc-6e526c592b85.png",
+  "production": "variants/matharia/assets/png/backgrounds/bg_match_mastery_quiet_v3@2x.webp",
+  "dimensions": [
+    852,
+    1846
+  ],
+  "bytes": 216866,
+  "referenceRole": "Old Match Mastery scenery used for rendering style/material reference; generated new calmer composition in response to the user's rejection.",
+  "prompt": "Use case: stylized-concept. Production game background ONLY for Matharia Match Mastery, portrait 9:19.5. The attached courtyard is a STYLE reference only: retain its polished sculpted family fantasy rendering, sapphire/antique gold/ivory stone material language. Create a NEW MUCH CALMER courtyard composition for a large independently rendered jewel board.\nA quiet, beautifully crafted ivory-stone terrace at the edge of a magical forest. Soft cool morning light; desaturated teal and blue-green distance, gentle ivory/gold sun on the terrace. A pale, simple open stone wall/sky region in the upper third, especially the LEFT upper-middle 18\u00e2\u20ac\u201c36% of image, provides clean contrast behind a separately placed brown deer hero wearing a green cloak. A coherent horizontal terrace ground plane at around 35% height lets that hero stand naturally. Lower 60% is broad quiet paving in deep, low-contrast blue-teal stone, with subtle large-scale stone joints, for a separate large board to sit in front. Scenery at outermost edges only: two restrained ivory columns, a small amount of muted foliage, one small sapphire cloth detail high at an edge. A SINGLE tiny distant palace silhouette near the upper right may establish Matharia. Very sparse flowers, no bright flower clusters. Gentle depth and ambient light, crisp crafted materials at edges, subdued scene contrast overall. It must feel elegant and magical, not dull, but the colorful jewel board and hero must dominate once added. Keep the CENTER deliberately low-detail. Make the scene naturally calm through its actual composition and materials.\nNO interface, no frames, panels, buttons, text, numerals, logos, borders, jewels, grids, game board, character, creature, platform cutout, foreground prop or baked controls. NO dense castle city, waterfalls, busy architecture, high-frequency leaves or glaring sky. No blur patch, mask, vignette cover, fake UI-shaped clearing or screenshot. Edge-to-edge environment illustration only.",
+  "processing": "Whole-image RGB WebP export, quality 92; no masks, filters, painted covers, stretching or background controls.",
+  "inspected": true
+}

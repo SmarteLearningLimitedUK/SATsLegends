@@ -1,0 +1,51 @@
+{
+  "tool": "built-in image_gen",
+  "processing": "Transparent bounds trimmed and production WebP exported; artwork never stretched or reconstructed with masks.",
+  "frames": [
+    {
+      "file": "variants\\matharia\\assets\\png\\frames\\concept_hud_v2@2x.webp",
+      "source": "exec-5f0762cc-6f6c-4640-abbe-ed227cad52b3.png",
+      "alphaBoundsCrop": [
+        20,
+        184,
+        2153,
+        496
+      ],
+      "dimensions": [
+        1800,
+        263
+      ],
+      "bytes": 87876
+    },
+    {
+      "file": "variants\\matharia\\assets\\png\\frames\\concept_question_v2@2x.webp",
+      "source": "exec-49ab7ea6-2385-4739-b18d-4f55f26a9044.png",
+      "alphaBoundsCrop": [
+        13,
+        159,
+        2086,
+        546
+      ],
+      "dimensions": [
+        1800,
+        336
+      ],
+      "bytes": 128096
+    },
+    {
+      "file": "variants\\matharia\\assets\\png\\frames\\concept_nav_v2@2x.webp",
+      "source": "exec-34d3b7b7-c579-4b30-9a1c-16be347505b4.png",
+      "alphaBoundsCrop": [
+        5,
+        27,
+        1556,
+        945
+      ],
+      "dimensions": [
+        1551,
+        918
+      ],
+      "bytes": 260948
+    }
+  ]
+}

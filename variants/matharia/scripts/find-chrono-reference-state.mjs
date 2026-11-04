@@ -1,0 +1,5 @@
+// QA-only preparation using the unchanged current target-time generator.
+import {readFile,writeFile} from 'node:fs/promises';
+const source=await readFile('src/games/ChronoDashGame.tsx','utf8'),a=source.indexOf('    const hours = Math.floor(Math.random()*12)+1;'),b=source.indexOf('  }, [tier]);',a);if(a<0||b<a)throw Error('Source time generator changed');const generate=new Function('tier',source.slice(a,b));
+function sample(seed){let state=seed;Math.random=()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state/4294967296};for(let n=0;n<5;n++)Math.random();const variant=Math.floor(Math.random()*4);return{variant,...generate(5)}}
+const q=sample(72419);console.log('Calibration',q);if(q.variant!==0||q.hours!==8||q.minutes!==31)throw Error('QA calibration differs from current running screen');for(let seed=1;seed<100000;seed++){const q=sample(seed);if(q.variant===0&&q.hours===11&&q.minutes===6){const row={seed,target:q,method:'Unchanged source generator; QA-only initialization calibrated against running08:31 digit clock.'};await writeFile('qa-artifacts/concept-recreation/chrono-reference-candidate.json',JSON.stringify(row,null,2));console.log(row);break}}

@@ -1,0 +1,2375 @@
+{
+  "phase": "website refinement",
+  "date": "2026-10-28",
+  "sharedQuestionAlignmentReview": "Question-card text centred across gameplay. Desktop browser alignment checked across the catalogue; the first nine games were additionally checked at short desktop, phone and tablet landscape sizes. Native iOS testing and visual approval remain outstanding. Screenshots: qa-artifacts/website-refinement-2026-10-28/question-alignment-check/index.html and question-alignment-catalogue-check/index.html.",
+  "baseline": {
+    "branch": "codex/website-refinement-2026-10-28",
+    "checkpointRef": "refs/checkpoints/website-refinement-2026-10-28",
+    "commit": "caad813bdad97b57ee644ae9a1f8c40b5b6d9132",
+    "buildHash": "4332b6058694cb2d3352638a20a258fcd74f998629cfcbc9e8adc40d289ad9ef"
+  },
+  "decisions": {
+    "baseline": "current project",
+    "order": "games in island/catalogue order, starting Place Value Panic",
+    "review": "one screen at a time; user approves before advancing",
+    "desktop": [
+      {
+        "width": 1440,
+        "height": 900
+      },
+      {
+        "width": 1280,
+        "height": 720
+      }
+    ],
+    "websiteGameplay": "landscape",
+    "native": "deferred until web approval and freeze",
+    "payments": "deferred"
+  },
+  "games": [
+    {
+      "key": "place_value_panic",
+      "title": "Place Value Panic",
+      "island": 1,
+      "islandName": "Arithmetic Acropolis",
+      "status": "review-paused-user-requested-next-game-approval-pending",
+      "approved": false,
+      "routes": [
+        {
+          "key": "place_value_panic",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Place Value Panic",
+          "route": "/game/1/1",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "place_value_panic",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Place Value Panic L1",
+          "route": "/game/1/5",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "place_value_panic",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Place Value Panic L2",
+          "route": "/game/1/13",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "place_value_panic",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Place Value Panic L3",
+          "route": "/game/1/21",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "place_value_panic",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Place Value Panic L4",
+          "route": "/game/1/29",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "place_value_panic",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Place Value Panic L5",
+          "route": "/game/1/37",
+          "practice": false,
+          "tier": 5
+        }
+      ],
+      "reviewNotes": [
+        "User selected blue-and-gold reference and requested grounded enemy.",
+        "User requires independent assets for later iPhone/iPad layouts.",
+        "Scenery, foreground ledge, rhino, question/labels and digit controls are separate runtime layers.",
+        "No overall game approval yet.",
+        "On 28 October the user asked to move to the next game; explicit approval remains pending."
+      ],
+      "proposedRevision": "qa-artifacts/website-refinement-2026-10-28/place-value-reference-v4/index.html"
+    },
+    {
+      "key": "number_line_ninja",
+      "title": "Number Line Ninja",
+      "island": 1,
+      "islandName": "Arithmetic Acropolis",
+      "status": "review-paused-user-requested-next-game-approval-pending",
+      "approved": false,
+      "routes": [
+        {
+          "key": "number_line_ninja",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Number Line Ninja",
+          "route": "/game/1/2",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "number_line_ninja",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Number Line Ninja L1",
+          "route": "/game/1/6",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "number_line_ninja",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Number Line Ninja L2",
+          "route": "/game/1/14",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "number_line_ninja",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Number Line Ninja L3",
+          "route": "/game/1/22",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "number_line_ninja",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Number Line Ninja L4",
+          "route": "/game/1/30",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "number_line_ninja",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Number Line Ninja L5",
+          "route": "/game/1/38",
+          "practice": false,
+          "tier": 5
+        }
+      ],
+      "currentReview": "qa-artifacts/website-refinement-2026-10-28/number-line-ninja-initial/index.html",
+      "reviewNotes": [
+        "User requested faceted gem answer choices and a visible enemy topple and damage on a correct answer.",
+        "Gems are independent HTML/CSS elements and the character reaction is a separate animation for later iOS layout.",
+        "Overall game approval is pending.",
+        "User requested the next game; approval remains pending."
+      ],
+      "proposedRevision": "qa-artifacts/website-refinement-2026-10-28/number-line-gems-v1/index.html"
+    },
+    {
+      "key": "prime_pop",
+      "title": "Prime Pop",
+      "island": 1,
+      "islandName": "Arithmetic Acropolis",
+      "status": "review-paused-user-requested-next-game-approval-pending",
+      "approved": false,
+      "routes": [
+        {
+          "key": "prime_pop",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Prime Pop",
+          "route": "/game/1/3",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "prime_pop",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Prime Pop L1",
+          "route": "/game/1/7",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "prime_pop",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Prime Pop L2",
+          "route": "/game/1/15",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "prime_pop",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Prime Pop L3",
+          "route": "/game/1/23",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "prime_pop",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Prime Pop L4",
+          "route": "/game/1/31",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "prime_pop",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Prime Pop L5",
+          "route": "/game/1/39",
+          "practice": false,
+          "tier": 5
+        }
+      ],
+      "initialReview": "qa-artifacts/website-refinement-2026-10-28/prime-pop-initial/index.html",
+      "proposedRevision": "qa-artifacts/website-refinement-2026-10-28/prime-pop-barber-line-v1/index.html",
+      "reviewNotes": [
+        "User requested more space between moving bubbles; revised spawn and movement separation, with reduced gap on compact phones.",
+        "User requested a more prominent danger line; its appearance was strengthened without changing its gameplay threshold.",
+        "Danger line uses red-and-white diagonal stripes with its label embedded in the line.",
+        "User requested the next game; approval remains pending."
+      ]
+    },
+    {
+      "key": "rounding_rocket",
+      "title": "Rounding Rocket",
+      "island": 1,
+      "islandName": "Arithmetic Acropolis",
+      "status": "background-revision-awaiting-review-complete-experience-pending",
+      "approved": false,
+      "routes": [
+        {
+          "key": "rounding_rocket",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Rounding Rocket",
+          "route": "/game/1/4",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "rounding_rocket",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Rounding Rocket L1",
+          "route": "/game/1/8",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "rounding_rocket",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Rounding Rocket L2",
+          "route": "/game/1/16",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "rounding_rocket",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Rounding Rocket L3",
+          "route": "/game/1/24",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "rounding_rocket",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Rounding Rocket L4",
+          "route": "/game/1/32",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "rounding_rocket",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Rounding Rocket L5",
+          "route": "/game/1/40",
+          "practice": false,
+          "tier": 5
+        }
+      ],
+      "initialReview": "qa-artifacts/website-refinement-2026-10-28/rounding-rocket-initial/index.html",
+      "proposedRevision": "qa-artifacts/website-refinement-2026-10-28/rounding-rocket-expression-v1/index.html",
+      "reviewNotes": [
+        "User requested removal of faded assembly overlay and a mechanical launchpad. Uses existing separate launchpad scene asset; flight retains sky transition.",
+        "Replaced hero with a smaller, separate transparent goblin construction engineer; gameplay unchanged.",
+        "Added idle blinking and angry correct-answer reaction, and the Monster Minds hidden rocket parts story.",
+        "User said “perfect - next game” after the animated engineer and story revision; that earlier gameplay screen was approved, complete experience still pending.",
+        "Removed duplicate launchpad during assembly; continuous shared backdrop is a material visual change awaiting review. Verified assembly and launch in Chromium."
+      ],
+      "approvedGameplayScreen": "qa-artifacts/website-refinement-2026-10-28/rounding-rocket-expression-v1/index.html"
+    },
+    {
+      "key": "maths_vs_zombies",
+      "title": "Maths vs Zombies",
+      "island": 1,
+      "islandName": "Arithmetic Acropolis",
+      "status": "review-paused-user-requested-next-game-approval-pending",
+      "approved": false,
+      "routes": [
+        {
+          "key": "maths_vs_zombies",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Maths vs Zombies L1",
+          "route": "/game/1/41",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "maths_vs_zombies",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Maths vs Zombies",
+          "route": "/game/1/42",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "maths_vs_zombies",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Maths vs Zombies L2",
+          "route": "/game/1/43",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "maths_vs_zombies",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Maths vs Zombies L3",
+          "route": "/game/1/44",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "maths_vs_zombies",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Maths vs Zombies L4",
+          "route": "/game/1/45",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "maths_vs_zombies",
+          "island": 1,
+          "islandName": "Arithmetic Acropolis",
+          "title": "Maths vs Zombies L5",
+          "route": "/game/1/46",
+          "practice": false,
+          "tier": 5
+        }
+      ],
+      "initialReview": "qa-artifacts/website-refinement-2026-10-28/maths-vs-zombies-initial/index.html",
+      "proposedRevision": "qa-artifacts/website-refinement-2026-10-28/maths-vs-zombies-timer-v1/index.html",
+      "reviewNotes": [
+        "User requested a lush graveyard with flying bats and blinking glowing eyes. Background and animated decorations are independent layers.",
+        "User requested removal of the duplicate timer from the answer bar; the HUD timer and game timing remain.",
+        "User requested intermittent bat flights; bats now appear with staggered intervals and pause with the game.",
+        "User requested the next game; approval remains pending."
+      ]
+    },
+    {
+      "key": "take_out_rush",
+      "title": "Take-Out Rush",
+      "island": 2,
+      "islandName": "Fraction Forest",
+      "status": "review-paused-user-requested-next-game-approval-pending",
+      "approved": false,
+      "routes": [
+        {
+          "key": "take_out_rush",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Take-Out Rush",
+          "route": "/game/2/1",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "take_out_rush",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Take-Out Rush L1",
+          "route": "/game/2/6",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "take_out_rush",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Take-Out Rush L2",
+          "route": "/game/2/7",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "take_out_rush",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Take-Out Rush L3",
+          "route": "/game/2/8",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "take_out_rush",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Take-Out Rush L4",
+          "route": "/game/2/9",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "take_out_rush",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Take-Out Rush L5",
+          "route": "/game/2/10",
+          "practice": false,
+          "tier": 5
+        }
+      ],
+      "initialReview": "qa-artifacts/website-refinement-2026-10-28/take-out-rush-initial/index.html",
+      "proposedRevision": "qa-artifacts/website-refinement-2026-10-28/take-out-rush-diner-v1/index.html",
+      "reviewNotes": [
+        "User requested a diner counter instead of a kitchen; diner interior and movable serving counter are separate from the characters and controls.",
+        "User approved the iPhone landscape visual concept; full website game approval remains pending."
+      ],
+      "approvedIosConcept": "qa-artifacts/website-refinement-2026-10-28/take-out-rush-diner-v1/ios-landscape-concept.png"
+    },
+    {
+      "key": "fraction_forge",
+      "title": "Fraction Forge",
+      "island": 2,
+      "islandName": "Fraction Forest",
+      "status": "hero-hammer-and-forge-layout-awaiting-user-review",
+      "approved": false,
+      "routes": [
+        {
+          "key": "fraction_forge",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Fraction Forge",
+          "route": "/game/2/2",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "fraction_forge",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Fraction Forge L1",
+          "route": "/game/2/11",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "fraction_forge",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Fraction Forge L2",
+          "route": "/game/2/12",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "fraction_forge",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Fraction Forge L3",
+          "route": "/game/2/13",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "fraction_forge",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Fraction Forge L4",
+          "route": "/game/2/14",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "fraction_forge",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Fraction Forge L5",
+          "route": "/game/2/15",
+          "practice": false,
+          "tier": 5
+        }
+      ],
+      "initialReview": "qa-artifacts/website-refinement-2026-10-28/fraction-forge-initial/index.html",
+      "proposedRevision": "qa-artifacts/website-refinement-2026-10-28/fraction-forge-phone-grounded-v2/index.html",
+      "reviewNotes": [
+        "Removed hero; added separately layered animated hearth flame and embers plus ornate wooden and iron ingot rack.",
+        "Fixed hidden forge background and stray question-card hero in tall practice view; checked practice and landscape gameplay.",
+        "User requested selected hero with a hammer strike, smaller scenery and correctly aligned flame in the tall view, and a more distinct rack. Visual elements remain separately positioned.",
+        "Removed the duplicate portrait scenery layer; portrait hearth effect is hidden when the shared cover crop places the hearth off screen. Awaiting review.",
+        "Added gold, silver and bronze metallic finishes to independently interactive rack ingots; colours follow shuffled rack positions. Verified correct selection and strike in desktop, short desktop and phone landscape browser views; website build passed. Awaiting review.",
+        "Anchored hero's renderer foot baseline to the anvil's shared floor line. Checked desktop, short desktop and phone landscape during correct strikes, and incorrect strikes with reduced motion.",
+        "Lowered the hero further onto the visible paving in compact landscape and moved the progress markers clear of the feet. Checked correct strikes at desktop, short desktop and phone landscape; website build passed. Awaiting review."
+      ],
+      "portraitPracticeFix": "qa-artifacts/website-refinement-2026-10-28/fraction-forge-practice-fixed-final.png"
+    },
+    {
+      "key": "match3_equivalence",
+      "title": "Match Mastery",
+      "island": 2,
+      "islandName": "Fraction Forest",
+      "status": "initial-gameplay-review-awaiting-user-feedback",
+      "approved": false,
+      "initialReview": "qa-artifacts/website-refinement-2026-10-28/match-mastery-initial/index.html",
+      "proposedRevision": "qa-artifacts/website-refinement-2026-10-28/match-mastery-hero-guide-v1/index.html",
+      "reviewNotes": ["Adapted the user-supplied gold-set gemstone tile with coloured insets and separate live labels. Hero provides tier-dependent guidance and dances after a successful swap; successful swap, feedback, animation and score verified. Build and TypeScript checks passed. Awaiting user review.", "Chromium touch emulation showed 30 tiles and successful selection at 812 × 375 and 1024 × 768; level 5 rendered neutral tiles. Phone tiles measured 37 × 37 CSS pixels and need mobile layout review. WebKit and native iOS testing remain outstanding."],
+      "routes": [
+        {
+          "key": "match3_equivalence",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Match Mastery",
+          "route": "/game/2/3",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "match3_equivalence",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Match Mastery L1",
+          "route": "/game/2/16",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "match3_equivalence",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Match Mastery L2",
+          "route": "/game/2/17",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "match3_equivalence",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Match Mastery L3",
+          "route": "/game/2/18",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "match3_equivalence",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Match Mastery L4",
+          "route": "/game/2/19",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "match3_equivalence",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Match Mastery L5",
+          "route": "/game/2/20",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "key": "percent_power",
+      "title": "Percent Power",
+      "island": 2,
+      "islandName": "Fraction Forest",
+      "status": "initial-gameplay-review-awaiting-user-feedback",
+      "approved": false,
+      "initialReview": "qa-artifacts/website-refinement-2026-10-28/percent-power-initial/index.html",
+      "proposedRevision": "qa-artifacts/website-refinement-2026-10-28/percent-power-centred-v1/index.html",
+      "reviewNotes": ["Centred the question instruction and prompt in the shared header. Website build passed; awaiting review."],
+      "routes": [
+        {
+          "key": "percent_power",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Percent Power",
+          "route": "/game/2/4",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "percent_power",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Percent Power L1",
+          "route": "/game/2/21",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "percent_power",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Percent Power L2",
+          "route": "/game/2/22",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "percent_power",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Percent Power L3",
+          "route": "/game/2/23",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "percent_power",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Percent Power L4",
+          "route": "/game/2/24",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "percent_power",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Percent Power L5",
+          "route": "/game/2/25",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "key": "simplify_sprint",
+      "title": "Simplify Sprint",
+      "island": 2,
+      "islandName": "Fraction Forest",
+      "status": "initial-gameplay-review-awaiting-user-feedback",
+      "approved": false,
+      "initialReview": "qa-artifacts/website-refinement-2026-10-28/simplify-sprint-initial/index.html",
+      "proposedRevision": "qa-artifacts/website-refinement-2026-10-28/simplify-sprint-gate-reactions-v1/index.html",
+      "reviewNotes": ["Hero travels to the chosen gate and reacts to correct and incorrect choices; browser checks covered desktop, short desktop and phone landscape. Website build and TypeScript checks passed. Awaiting user review."],
+      "routes": [
+        {
+          "key": "simplify_sprint",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Simplify Sprint",
+          "route": "/game/2/5",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "simplify_sprint",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Simplify Sprint L1",
+          "route": "/game/2/26",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "simplify_sprint",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Simplify Sprint L2",
+          "route": "/game/2/27",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "simplify_sprint",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Simplify Sprint L3",
+          "route": "/game/2/28",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "simplify_sprint",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Simplify Sprint L4",
+          "route": "/game/2/29",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "simplify_sprint",
+          "island": 2,
+          "islandName": "Fraction Forest",
+          "title": "Simplify Sprint L5",
+          "route": "/game/2/30",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "key": "angle_arena",
+      "title": "Angle Arena",
+      "island": 3,
+      "islandName": "Geometry Glacier",
+      "status": "initial-gameplay-review-awaiting-user-feedback",
+      "approved": false,
+      "initialReview": "qa-artifacts/website-refinement-2026-10-28/angle-arena-initial/index.html",
+      "proposedRevision": "qa-artifacts/website-refinement-2026-10-28/angle-arena-single-background-v1/index.html",
+      "reviewNotes": ["Raised enemy target podium and made the angle diagram an optional lightbulb hint, with question-specific guidance for reasoning questions. Correct and incorrect shot outcomes, hint controls, desktop and compact browser views checked; build and TypeScript checks passed. Awaiting review.", "Grouped canvas scene sizing and positioning in angleArena/layout.ts for later device adaptation. Chromium phone and tablet landscape viewport checks passed; native iOS and Safari testing remain outstanding. Review: qa-artifacts/website-refinement-2026-10-28/angle-arena-ios-web-check/index.html.", "Removed the canvas copy of the scenic background when the full-viewport backdrop is present; standalone fallback retained."],
+      "routes": [
+        {
+          "key": "angle_arena",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Angle Arena",
+          "route": "/game/3/1",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "angle_arena",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Angle Arena L1",
+          "route": "/game/3/8",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "angle_arena",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Angle Arena L2",
+          "route": "/game/3/9",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "angle_arena",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Angle Arena L3",
+          "route": "/game/3/10",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "angle_arena",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Angle Arena L4",
+          "route": "/game/3/11",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "angle_arena",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Angle Arena L5",
+          "route": "/game/3/12",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "key": "polygon_palace",
+      "title": "Polygon Palace",
+      "island": 3,
+      "islandName": "Geometry Glacier",
+      "status": "initial-gameplay-review-awaiting-user-feedback",
+      "approved": false,
+      "initialReview": "qa-artifacts/website-refinement-2026-10-28/polygon-palace-initial/index.html",
+      "proposedRevision": "qa-artifacts/website-refinement-2026-10-28/polygon-palace-overlap-v1/index.html",
+      "reviewNotes": ["Captured current level-one gameplay at 1440 × 900 and 1280 × 720.", "Added a separate shape display and refined answer dock for desktop landscape.", "Reduced the hero height in desktop landscape to keep it clear of the question panel. Captured level one at desktop, short desktop, phone and tablet landscape browser sizes; build and TypeScript checks passed. Awaiting review; full experience and native iOS review remain outstanding."],
+      "routes": [
+        {
+          "key": "polygon_palace",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Polygon Palace",
+          "route": "/game/3/2",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "polygon_palace",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Polygon Palace L1",
+          "route": "/game/3/13",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "polygon_palace",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Polygon Palace L2",
+          "route": "/game/3/14",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "polygon_palace",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Polygon Palace L3",
+          "route": "/game/3/15",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "polygon_palace",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Polygon Palace L4",
+          "route": "/game/3/16",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "polygon_palace",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Polygon Palace L5",
+          "route": "/game/3/17",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "key": "area_architect",
+      "title": "Area Architect",
+      "island": 3,
+      "islandName": "Geometry Glacier",
+      "status": "initial-gameplay-review-awaiting-user-feedback",
+      "approved": false,
+      "initialReview": "qa-artifacts/website-refinement-2026-10-28/area-architect-initial/index.html",
+      "proposedRevision": "qa-artifacts/website-refinement-2026-10-28/area-architect-readable-v1/index.html",
+      "reviewNotes": ["Captured level-one gameplay at 1440 × 900 and 1280 × 720 for initial review.", "Made room dimensions and unit-square caption larger with a contrasting backing; checked level-one screenshots at desktop, short desktop and phone landscape. Build and TypeScript checks passed. Awaiting review; full experience and native iOS review remain outstanding."],
+      "routes": [
+        {
+          "key": "area_architect",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Area Architect",
+          "route": "/game/3/3",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "area_architect",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Area Architect L1",
+          "route": "/game/3/18",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "area_architect",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Area Architect L2",
+          "route": "/game/3/19",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "area_architect",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Area Architect L3",
+          "route": "/game/3/20",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "area_architect",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Area Architect L4",
+          "route": "/game/3/21",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "area_architect",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Area Architect L5",
+          "route": "/game/3/22",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "key": "rotation_relay",
+      "title": "Transformation Station",
+      "island": 3,
+      "islandName": "Geometry Glacier",
+      "status": "initial-gameplay-review-awaiting-user-feedback",
+      "approved": false,
+      "initialReview": "qa-artifacts/website-refinement-2026-10-28/transformation-station-initial/index.html",
+      "proposedRevision": "qa-artifacts/website-refinement-2026-10-28/transformation-station-responsive-v1/index.html",
+      "reviewNotes": ["Captured level-one gameplay at 1440 × 900 and 1280 × 720 for initial review.", "Adapted tablet landscape controls to avoid wrapping and clipping, and enlarged phone landscape grid labels. Checked browser screenshots at desktop, short desktop, phone and tablet sizes, and touch placement of a correct level-one answer at phone and tablet sizes. Build and TypeScript checks passed. Awaiting review; native iOS and full experience testing remain outstanding."],
+      "routes": [
+        {
+          "key": "rotation_relay",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Transformation Station",
+          "route": "/game/3/4",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "rotation_relay",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Transformation Station L1",
+          "route": "/game/3/23",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "rotation_relay",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Transformation Station L2",
+          "route": "/game/3/24",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "rotation_relay",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Transformation Station L3",
+          "route": "/game/3/25",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "rotation_relay",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Transformation Station L4",
+          "route": "/game/3/26",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "rotation_relay",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Transformation Station L5",
+          "route": "/game/3/27",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "key": "coordinates_quest",
+      "title": "Coordinates Quest",
+      "island": 3,
+      "islandName": "Geometry Glacier",
+      "status": "initial-gameplay-review-awaiting-user-feedback",
+      "approved": false,
+      "initialReview": "qa-artifacts/website-refinement-2026-10-28/coordinates-quest-initial/index.html",
+      "proposedRevision": "qa-artifacts/website-refinement-2026-10-28/coordinates-quest-routes-v1/index.html",
+      "reviewNotes": ["Captured level-one gameplay at 1440 × 900 and 1280 × 720 for initial review.", "Coordinates Quest now uses bounded multi-step journeys in practice and all five tiers, increasing from two to five moves; direct-coordinate and reflection rounds are replaced in this game. Checked 5,000 routes, a correct answer in practice and every tier, and incorrect feedback in level one. Desktop, shorter desktop and phone browser screenshots captured; build and TypeScript checks passed. Awaiting review; full experience and native iOS testing remain outstanding."],
+      "routes": [
+        {
+          "key": "coordinates_quest",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Coordinates Quest",
+          "route": "/game/3/5",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "coordinates_quest",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Coordinates Quest L1",
+          "route": "/game/3/28",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "coordinates_quest",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Coordinates Quest L2",
+          "route": "/game/3/29",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "coordinates_quest",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Coordinates Quest L3",
+          "route": "/game/3/30",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "coordinates_quest",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Coordinates Quest L4",
+          "route": "/game/3/31",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "coordinates_quest",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Coordinates Quest L5",
+          "route": "/game/3/32",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "key": "conversion_canyon",
+      "title": "Conversion Canyon",
+      "island": 3,
+      "islandName": "Geometry Glacier",
+      "status": "initial-gameplay-review-awaiting-user-feedback",
+      "approved": false,
+      "initialReview": "qa-artifacts/website-refinement-2026-10-28/conversion-canyon-initial/index.html",
+      "proposedRevision": "qa-artifacts/website-refinement-2026-10-28/conversion-canyon-readable-gems-v1/index.html",
+      "reviewNotes": ["Captured level-one gameplay at 1440 × 900 and 1280 × 720 for initial review.", "Rearranged the scale and independently positioned weight rack into adjacent working areas on desktop and tablet landscape. Checked empty, incorrect and correct submissions at desktop, short desktop, tablet and phone browser sizes.", "Filled each rack with eight weights and removed the equivalent weight from the rack.", "Changed the rack to two rows of four rectangular gems with separate live labels; replaced the analog dial and lower readout with one digital mass display on the scale. Desktop, short desktop, tablet and phone screenshots checked; correct and incorrect submissions checked at each size, and spring movement and display checked on desktop level 1 and phone level 5.", "Made the digital display circular to fit the scale face. Level-five phone scale check and full-load value fit passed.", "Increased weight label sizes, with a compact adjustment for longer values; verified label containment on levels 1, 3 and 5 at desktop, short desktop, phone and small-phone landscape sizes. Build and TypeScript checks passed. Awaiting review; extended drag/pause, native iOS and full experience testing remain outstanding."],
+      "routes": [
+        {
+          "key": "conversion_canyon",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Conversion Canyon",
+          "route": "/game/3/6",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "conversion_canyon",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Conversion Canyon L1",
+          "route": "/game/3/33",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "conversion_canyon",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Conversion Canyon L2",
+          "route": "/game/3/34",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "conversion_canyon",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Conversion Canyon L3",
+          "route": "/game/3/35",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "conversion_canyon",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Conversion Canyon L4",
+          "route": "/game/3/36",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "conversion_canyon",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Conversion Canyon L5",
+          "route": "/game/3/37",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "key": "perimeter_path",
+      "title": "Perimeter Path",
+      "island": 3,
+      "islandName": "Geometry Glacier",
+      "status": "initial-gameplay-review-awaiting-user-feedback",
+      "approved": false,
+      "initialReview": "qa-artifacts/website-refinement-2026-10-28/perimeter-path-initial/index.html",
+      "reviewNotes": ["Captured level-one gameplay at 1440 × 900 and 1280 × 720 for initial review. User approved this screen; full experience review remains outstanding."],
+      "routes": [
+        {
+          "key": "perimeter_path",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Perimeter Path",
+          "route": "/game/3/7",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "perimeter_path",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Perimeter Path L1",
+          "route": "/game/3/38",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "perimeter_path",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Perimeter Path L2",
+          "route": "/game/3/39",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "perimeter_path",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Perimeter Path L3",
+          "route": "/game/3/40",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "perimeter_path",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Perimeter Path L4",
+          "route": "/game/3/41",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "perimeter_path",
+          "island": 3,
+          "islandName": "Geometry Glacier",
+          "title": "Perimeter Path L5",
+          "route": "/game/3/42",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "key": "mean_machine",
+      "title": "Mean Machine",
+      "island": 4,
+      "islandName": "Data Desert",
+      "status": "initial-gameplay-review-awaiting-user-feedback",
+      "approved": false,
+      "initialReview": "qa-artifacts/website-refinement-2026-10-28/mean-machine-initial/index.html",
+      "proposedRevision": "qa-artifacts/website-refinement-2026-10-28/mean-machine-scan-aligned-v1/index.html",
+      "reviewNotes": ["Captured level-one initial and scanned gameplay at 1440 × 900 and 1280 × 720.", "Removed scene darkening and glow overlays, retained separately positioned workshop, machine and hero, and added a local ground shadow and console styling.", "Aligned the live Scan label with the machine artwork while retaining its larger touch target. Checked scanning and incorrect and correct answers at desktop, short desktop, tablet and phone browser sizes; build and TypeScript checks passed. Awaiting review; full experience and native iOS testing remain outstanding."],
+      "routes": [
+        {
+          "key": "mean_machine",
+          "island": 4,
+          "islandName": "Data Desert",
+          "title": "Mean Machine",
+          "route": "/game/4/1",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "mean_machine",
+          "island": 4,
+          "islandName": "Data Desert",
+          "title": "Mean Machine L1",
+          "route": "/game/4/2",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "mean_machine",
+          "island": 4,
+          "islandName": "Data Desert",
+          "title": "Mean Machine L2",
+          "route": "/game/4/4",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "mean_machine",
+          "island": 4,
+          "islandName": "Data Desert",
+          "title": "Mean Machine L3",
+          "route": "/game/4/6",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "mean_machine",
+          "island": 4,
+          "islandName": "Data Desert",
+          "title": "Mean Machine L4",
+          "route": "/game/4/8",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "mean_machine",
+          "island": 4,
+          "islandName": "Data Desert",
+          "title": "Mean Machine L5",
+          "route": "/game/4/10",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "key": "graph_grabber",
+      "title": "Graph Grabber",
+      "island": 4,
+      "islandName": "Data Desert",
+      "status": "initial-gameplay-review-awaiting-user-feedback",
+      "approved": false,
+      "initialReview": "qa-artifacts/website-refinement-2026-10-28/graph-grabber-initial/index.html",
+      "proposedRevision": "qa-artifacts/website-refinement-2026-10-28/graph-grabber-labels-v1/index.html",
+      "reviewNotes": ["Captured level-one gameplay at 1440 × 900 and 1280 × 720 for initial review.", "Made the desktop answer rail smaller with four compact buttons and added a correct-answer board glow and hero cheer. Preserved the shipment tracing controls.", "Inset the graph axis and upper tick labels from the frame on desktop and compact screens. Captured desktop, short desktop, phone and tablet browser sizes and checked correct answers and progression at each. Build and TypeScript checks passed. Awaiting review; other question types, full experience and native iOS testing remain outstanding."],
+      "routes": [
+        {
+          "key": "graph_grabber",
+          "island": 4,
+          "islandName": "Data Desert",
+          "title": "Graph Grabber",
+          "route": "/game/4/11",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "graph_grabber",
+          "island": 4,
+          "islandName": "Data Desert",
+          "title": "Graph Grabber L1",
+          "route": "/game/4/14",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "graph_grabber",
+          "island": 4,
+          "islandName": "Data Desert",
+          "title": "Graph Grabber L2",
+          "route": "/game/4/15",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "graph_grabber",
+          "island": 4,
+          "islandName": "Data Desert",
+          "title": "Graph Grabber L3",
+          "route": "/game/4/16",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "graph_grabber",
+          "island": 4,
+          "islandName": "Data Desert",
+          "title": "Graph Grabber L4",
+          "route": "/game/4/17",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "graph_grabber",
+          "island": 4,
+          "islandName": "Data Desert",
+          "title": "Graph Grabber L5",
+          "route": "/game/4/18",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "key": "line_graph_lab",
+      "title": "Line Graph Lab",
+      "island": 4,
+      "islandName": "Data Desert",
+      "status": "not-reviewed",
+      "approved": false,
+      "routes": [
+        {
+          "key": "line_graph_lab",
+          "island": 4,
+          "islandName": "Data Desert",
+          "title": "Line Graph Lab",
+          "route": "/game/4/12",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "line_graph_lab",
+          "island": 4,
+          "islandName": "Data Desert",
+          "title": "Line Graph Lab L1",
+          "route": "/game/4/19",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "line_graph_lab",
+          "island": 4,
+          "islandName": "Data Desert",
+          "title": "Line Graph Lab L2",
+          "route": "/game/4/20",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "line_graph_lab",
+          "island": 4,
+          "islandName": "Data Desert",
+          "title": "Line Graph Lab L3",
+          "route": "/game/4/21",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "line_graph_lab",
+          "island": 4,
+          "islandName": "Data Desert",
+          "title": "Line Graph Lab L4",
+          "route": "/game/4/22",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "line_graph_lab",
+          "island": 4,
+          "islandName": "Data Desert",
+          "title": "Line Graph Lab L5",
+          "route": "/game/4/23",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "key": "data_detective",
+      "title": "Data Detective",
+      "island": 4,
+      "islandName": "Data Desert",
+      "status": "not-reviewed",
+      "approved": false,
+      "routes": [
+        {
+          "key": "data_detective",
+          "island": 4,
+          "islandName": "Data Desert",
+          "title": "Data Detective",
+          "route": "/game/4/13",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "data_detective",
+          "island": 4,
+          "islandName": "Data Desert",
+          "title": "Data Detective L1",
+          "route": "/game/4/24",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "data_detective",
+          "island": 4,
+          "islandName": "Data Desert",
+          "title": "Data Detective L2",
+          "route": "/game/4/25",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "data_detective",
+          "island": 4,
+          "islandName": "Data Desert",
+          "title": "Data Detective L3",
+          "route": "/game/4/26",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "data_detective",
+          "island": 4,
+          "islandName": "Data Desert",
+          "title": "Data Detective L4",
+          "route": "/game/4/27",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "data_detective",
+          "island": 4,
+          "islandName": "Data Desert",
+          "title": "Data Detective L5",
+          "route": "/game/4/28",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "key": "factor_frenzy",
+      "title": "Factor Frenzy",
+      "island": 5,
+      "islandName": "Operations Outpost",
+      "status": "not-reviewed",
+      "approved": false,
+      "routes": [
+        {
+          "key": "factor_frenzy",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Factor Frenzy",
+          "route": "/game/5/1",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "factor_frenzy",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Factor Frenzy L1",
+          "route": "/game/5/2",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "factor_frenzy",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Factor Frenzy L2",
+          "route": "/game/5/4",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "factor_frenzy",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Factor Frenzy L3",
+          "route": "/game/5/6",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "factor_frenzy",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Factor Frenzy L4",
+          "route": "/game/5/8",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "factor_frenzy",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Factor Frenzy L5",
+          "route": "/game/5/10",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "key": "multiplication_mine",
+      "title": "Multiplication Mine",
+      "island": 5,
+      "islandName": "Operations Outpost",
+      "status": "not-reviewed",
+      "approved": false,
+      "routes": [
+        {
+          "key": "multiplication_mine",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Multiplication Mine",
+          "route": "/game/5/11",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "multiplication_mine",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Multiplication Mine L1",
+          "route": "/game/5/15",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "multiplication_mine",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Multiplication Mine L2",
+          "route": "/game/5/16",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "multiplication_mine",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Multiplication Mine L3",
+          "route": "/game/5/17",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "multiplication_mine",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Multiplication Mine L4",
+          "route": "/game/5/18",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "multiplication_mine",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Multiplication Mine L5",
+          "route": "/game/5/19",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "key": "order_ops_arena",
+      "title": "Order Ops Arena",
+      "island": 5,
+      "islandName": "Operations Outpost",
+      "status": "not-reviewed",
+      "approved": false,
+      "routes": [
+        {
+          "key": "order_ops_arena",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Order Ops Arena",
+          "route": "/game/5/12",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "order_ops_arena",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Order Ops Arena L1",
+          "route": "/game/5/20",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "order_ops_arena",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Order Ops Arena L2",
+          "route": "/game/5/21",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "order_ops_arena",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Order Ops Arena L3",
+          "route": "/game/5/22",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "order_ops_arena",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Order Ops Arena L4",
+          "route": "/game/5/23",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "order_ops_arena",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Order Ops Arena L5",
+          "route": "/game/5/24",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "key": "formula_forge",
+      "title": "Formula Forge",
+      "island": 5,
+      "islandName": "Operations Outpost",
+      "status": "not-reviewed",
+      "approved": false,
+      "routes": [
+        {
+          "key": "formula_forge",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Formula Forge",
+          "route": "/game/5/13",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "formula_forge",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Formula Forge L1",
+          "route": "/game/5/25",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "formula_forge",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Formula Forge L2",
+          "route": "/game/5/26",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "formula_forge",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Formula Forge L3",
+          "route": "/game/5/27",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "formula_forge",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Formula Forge L4",
+          "route": "/game/5/28",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "formula_forge",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Formula Forge L5",
+          "route": "/game/5/29",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "key": "remainder_run",
+      "title": "Remainder Run",
+      "island": 5,
+      "islandName": "Operations Outpost",
+      "status": "not-reviewed",
+      "approved": false,
+      "routes": [
+        {
+          "key": "remainder_run",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Remainder Run",
+          "route": "/game/5/14",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "remainder_run",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Remainder Run L1",
+          "route": "/game/5/30",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "remainder_run",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Remainder Run L2",
+          "route": "/game/5/31",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "remainder_run",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Remainder Run L3",
+          "route": "/game/5/32",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "remainder_run",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Remainder Run L4",
+          "route": "/game/5/33",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "remainder_run",
+          "island": 5,
+          "islandName": "Operations Outpost",
+          "title": "Remainder Run L5",
+          "route": "/game/5/34",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "key": "time_keeper_cove",
+      "title": "Chrono Dash: Time Trial",
+      "island": 6,
+      "islandName": "Measurement Mountain",
+      "status": "not-reviewed",
+      "approved": false,
+      "routes": [
+        {
+          "key": "time_keeper_cove",
+          "island": 6,
+          "islandName": "Measurement Mountain",
+          "title": "Chrono Dash: Time Trial L1",
+          "route": "/game/6/1",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "time_keeper_cove",
+          "island": 6,
+          "islandName": "Measurement Mountain",
+          "title": "Chrono Dash: Time Trial",
+          "route": "/game/6/5",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "time_keeper_cove",
+          "island": 6,
+          "islandName": "Measurement Mountain",
+          "title": "Chrono Dash: Time Trial L2",
+          "route": "/game/6/6",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "time_keeper_cove",
+          "island": 6,
+          "islandName": "Measurement Mountain",
+          "title": "Chrono Dash: Time Trial L3",
+          "route": "/game/6/7",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "time_keeper_cove",
+          "island": 6,
+          "islandName": "Measurement Mountain",
+          "title": "Chrono Dash: Time Trial L4",
+          "route": "/game/6/8",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "time_keeper_cove",
+          "island": 6,
+          "islandName": "Measurement Mountain",
+          "title": "Chrono Dash: Time Trial L5",
+          "route": "/game/6/9",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "key": "problem_pyramid",
+      "title": "Problem Pyramid",
+      "island": 6,
+      "islandName": "Measurement Mountain",
+      "status": "not-reviewed",
+      "approved": false,
+      "routes": [
+        {
+          "key": "problem_pyramid",
+          "island": 6,
+          "islandName": "Measurement Mountain",
+          "title": "Problem Pyramid L1",
+          "route": "/game/6/2",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "problem_pyramid",
+          "island": 6,
+          "islandName": "Measurement Mountain",
+          "title": "Problem Pyramid",
+          "route": "/game/6/10",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "problem_pyramid",
+          "island": 6,
+          "islandName": "Measurement Mountain",
+          "title": "Problem Pyramid L2",
+          "route": "/game/6/11",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "problem_pyramid",
+          "island": 6,
+          "islandName": "Measurement Mountain",
+          "title": "Problem Pyramid L3",
+          "route": "/game/6/12",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "problem_pyramid",
+          "island": 6,
+          "islandName": "Measurement Mountain",
+          "title": "Problem Pyramid L4",
+          "route": "/game/6/13",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "problem_pyramid",
+          "island": 6,
+          "islandName": "Measurement Mountain",
+          "title": "Problem Pyramid L5",
+          "route": "/game/6/14",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "key": "unit_mixer",
+      "title": "Lava Path",
+      "island": 6,
+      "islandName": "Measurement Mountain",
+      "status": "not-reviewed",
+      "approved": false,
+      "routes": [
+        {
+          "key": "unit_mixer",
+          "island": 6,
+          "islandName": "Measurement Mountain",
+          "title": "Lava Path L1",
+          "route": "/game/6/3",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "unit_mixer",
+          "island": 6,
+          "islandName": "Measurement Mountain",
+          "title": "Lava Path",
+          "route": "/game/6/15",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "unit_mixer",
+          "island": 6,
+          "islandName": "Measurement Mountain",
+          "title": "Lava Path L2",
+          "route": "/game/6/16",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "unit_mixer",
+          "island": 6,
+          "islandName": "Measurement Mountain",
+          "title": "Lava Path L3",
+          "route": "/game/6/17",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "unit_mixer",
+          "island": 6,
+          "islandName": "Measurement Mountain",
+          "title": "Lava Path L4",
+          "route": "/game/6/18",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "unit_mixer",
+          "island": 6,
+          "islandName": "Measurement Mountain",
+          "title": "Lava Path L5",
+          "route": "/game/6/19",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "key": "change_counter",
+      "title": "Change Counter",
+      "island": 6,
+      "islandName": "Measurement Mountain",
+      "status": "not-reviewed",
+      "approved": false,
+      "routes": [
+        {
+          "key": "change_counter",
+          "island": 6,
+          "islandName": "Measurement Mountain",
+          "title": "Change Counter L1",
+          "route": "/game/6/4",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "change_counter",
+          "island": 6,
+          "islandName": "Measurement Mountain",
+          "title": "Change Counter",
+          "route": "/game/6/20",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "change_counter",
+          "island": 6,
+          "islandName": "Measurement Mountain",
+          "title": "Change Counter L2",
+          "route": "/game/6/21",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "change_counter",
+          "island": 6,
+          "islandName": "Measurement Mountain",
+          "title": "Change Counter L3",
+          "route": "/game/6/22",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "change_counter",
+          "island": 6,
+          "islandName": "Measurement Mountain",
+          "title": "Change Counter L4",
+          "route": "/game/6/23",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "change_counter",
+          "island": 6,
+          "islandName": "Measurement Mountain",
+          "title": "Change Counter L5",
+          "route": "/game/6/24",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "key": "crystal_core",
+      "title": "SATs Paper 1: Arithmetic",
+      "island": 8,
+      "islandName": "Core of Calculation",
+      "status": "not-reviewed",
+      "approved": false,
+      "routes": [
+        {
+          "key": "crystal_core",
+          "island": 8,
+          "islandName": "Core of Calculation",
+          "title": "SATs Paper 1: Arithmetic",
+          "route": "/game/8/1",
+          "practice": false,
+          "tier": 1
+        }
+      ]
+    },
+    {
+      "key": "mirror_gate",
+      "title": "SATs Paper 2: Reasoning",
+      "island": 8,
+      "islandName": "Core of Calculation",
+      "status": "not-reviewed",
+      "approved": false,
+      "routes": [
+        {
+          "key": "mirror_gate",
+          "island": 8,
+          "islandName": "Core of Calculation",
+          "title": "SATs Paper 2: Reasoning",
+          "route": "/game/8/2",
+          "practice": false,
+          "tier": 1
+        }
+      ]
+    },
+    {
+      "key": "matrix_match",
+      "title": "SATs Paper 3: Reasoning",
+      "island": 8,
+      "islandName": "Core of Calculation",
+      "status": "not-reviewed",
+      "approved": false,
+      "routes": [
+        {
+          "key": "matrix_match",
+          "island": 8,
+          "islandName": "Core of Calculation",
+          "title": "SATs Paper 3: Reasoning",
+          "route": "/game/8/3",
+          "practice": false,
+          "tier": 1
+        }
+      ]
+    },
+    {
+      "key": "potion_panic",
+      "title": "Potion Panic",
+      "island": 7,
+      "islandName": "Ratio Rapids",
+      "status": "not-reviewed",
+      "approved": false,
+      "routes": [
+        {
+          "key": "potion_panic",
+          "island": 7,
+          "islandName": "Ratio Rapids",
+          "title": "Potion Panic",
+          "route": "/game/7/1",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "potion_panic",
+          "island": 7,
+          "islandName": "Ratio Rapids",
+          "title": "Potion Panic L1",
+          "route": "/game/7/2",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "potion_panic",
+          "island": 7,
+          "islandName": "Ratio Rapids",
+          "title": "Potion Panic L2",
+          "route": "/game/7/6",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "potion_panic",
+          "island": 7,
+          "islandName": "Ratio Rapids",
+          "title": "Potion Panic L3",
+          "route": "/game/7/7",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "potion_panic",
+          "island": 7,
+          "islandName": "Ratio Rapids",
+          "title": "Potion Panic L4",
+          "route": "/game/7/8",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "potion_panic",
+          "island": 7,
+          "islandName": "Ratio Rapids",
+          "title": "Potion Panic L5",
+          "route": "/game/7/9",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "key": "share_splitter",
+      "title": "Share Splitter",
+      "island": 7,
+      "islandName": "Ratio Rapids",
+      "status": "not-reviewed",
+      "approved": false,
+      "routes": [
+        {
+          "key": "share_splitter",
+          "island": 7,
+          "islandName": "Ratio Rapids",
+          "title": "Share Splitter",
+          "route": "/game/7/3",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "share_splitter",
+          "island": 7,
+          "islandName": "Ratio Rapids",
+          "title": "Share Splitter L1",
+          "route": "/game/7/10",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "share_splitter",
+          "island": 7,
+          "islandName": "Ratio Rapids",
+          "title": "Share Splitter L2",
+          "route": "/game/7/11",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "share_splitter",
+          "island": 7,
+          "islandName": "Ratio Rapids",
+          "title": "Share Splitter L3",
+          "route": "/game/7/12",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "share_splitter",
+          "island": 7,
+          "islandName": "Ratio Rapids",
+          "title": "Share Splitter L4",
+          "route": "/game/7/13",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "share_splitter",
+          "island": 7,
+          "islandName": "Ratio Rapids",
+          "title": "Share Splitter L5",
+          "route": "/game/7/14",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "key": "ratio_fractions",
+      "title": "Ratio Racer",
+      "island": 7,
+      "islandName": "Ratio Rapids",
+      "status": "not-reviewed",
+      "approved": false,
+      "routes": [
+        {
+          "key": "ratio_fractions",
+          "island": 7,
+          "islandName": "Ratio Rapids",
+          "title": "Ratio Racer",
+          "route": "/game/7/4",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "ratio_fractions",
+          "island": 7,
+          "islandName": "Ratio Rapids",
+          "title": "Ratio Racer L1",
+          "route": "/game/7/15",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "ratio_fractions",
+          "island": 7,
+          "islandName": "Ratio Rapids",
+          "title": "Ratio Racer L2",
+          "route": "/game/7/16",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "ratio_fractions",
+          "island": 7,
+          "islandName": "Ratio Rapids",
+          "title": "Ratio Racer L3",
+          "route": "/game/7/17",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "ratio_fractions",
+          "island": 7,
+          "islandName": "Ratio Rapids",
+          "title": "Ratio Racer L4",
+          "route": "/game/7/18",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "ratio_fractions",
+          "island": 7,
+          "islandName": "Ratio Rapids",
+          "title": "Ratio Racer L5",
+          "route": "/game/7/19",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    },
+    {
+      "key": "scale_builder",
+      "title": "Scale Builder",
+      "island": 7,
+      "islandName": "Ratio Rapids",
+      "status": "not-reviewed",
+      "approved": false,
+      "routes": [
+        {
+          "key": "scale_builder",
+          "island": 7,
+          "islandName": "Ratio Rapids",
+          "title": "Scale Builder",
+          "route": "/game/7/5",
+          "practice": true,
+          "tier": 0
+        },
+        {
+          "key": "scale_builder",
+          "island": 7,
+          "islandName": "Ratio Rapids",
+          "title": "Scale Builder L1",
+          "route": "/game/7/20",
+          "practice": false,
+          "tier": 1
+        },
+        {
+          "key": "scale_builder",
+          "island": 7,
+          "islandName": "Ratio Rapids",
+          "title": "Scale Builder L2",
+          "route": "/game/7/21",
+          "practice": false,
+          "tier": 2
+        },
+        {
+          "key": "scale_builder",
+          "island": 7,
+          "islandName": "Ratio Rapids",
+          "title": "Scale Builder L3",
+          "route": "/game/7/22",
+          "practice": false,
+          "tier": 3
+        },
+        {
+          "key": "scale_builder",
+          "island": 7,
+          "islandName": "Ratio Rapids",
+          "title": "Scale Builder L4",
+          "route": "/game/7/23",
+          "practice": false,
+          "tier": 4
+        },
+        {
+          "key": "scale_builder",
+          "island": 7,
+          "islandName": "Ratio Rapids",
+          "title": "Scale Builder L5",
+          "route": "/game/7/24",
+          "practice": false,
+          "tier": 5
+        }
+      ]
+    }
+  ],
+  "surroundingJourney": {
+    "status": "deferred until games and papers reviewed"
+  },
+  "mobileWebsite": {
+    "status": "deferred until desktop review"
+  },
+  "freeze": {
+    "status": "not-approved"
+  },
+  "notes": "No game changes or approvals implied by successful captures. Existing native source preserved.",
+  "sharedCompactHudReview": {
+    "review": "qa-artifacts/website-refinement-2026-10-28/shared-compact-hud-v1/index.html",
+    "checks": "Compact shared HUD status indicators aligned horizontally; containment checked in Area Architect, Polygon Palace, Fraction Forge and Area Architect practice at four landscape viewport sizes. Build and TypeScript checks passed. Native device testing remains outstanding.",
+    "regressionScript": "scripts/qa/check-compact-game-hud.mjs"
+  }
+}

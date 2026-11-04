@@ -15,3 +15,8 @@ verify_jwt = false
 [functions.admin-support]
 # The function validates the parent's JWT and staff membership itself.
 verify_jwt = false
+
+[functions.native-account-delete]
+# The handler validates the caller, recent reauthentication and Apple revocation
+# before performing server-only deletion of that same identity.
+verify_jwt = false

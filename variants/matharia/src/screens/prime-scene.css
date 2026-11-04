@@ -1,0 +1,60 @@
+/* Prime Pop: the danger rail remains at the source game's 12% field coordinate. */
+html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='prime_pop'] {
+ --concept-plane:min(100vw,calc((100dvh - var(--concept-safe-top) - var(--concept-safe-bottom)) * .4626));
+ .concept-question-zone {position:absolute;z-index:50;left:4%;top:12.7%;width:92%;height:15%;margin:0;}
+ .concept-question-panel {padding:0;}
+ .concept-question-copy {display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1.3cqw;margin-left:30%;width:64%;height:100%;padding:2% 4% 2% 0;}
+ .prime-question-main {font-size:clamp(14px,4.1cqw,42px);font-weight:650;line-height:1.13;text-wrap:balance;}
+ .prime-question-main b {color:#ffe178;font-weight:750;}
+ .prime-question-instruction {font-size:clamp(12px,2.9cqw,28px);font-weight:600;line-height:1.2;margin:0;}
+ .prime-question-guide {position:absolute;left:1%;top:-2%;width:32%;height:98%;pointer-events:none;}
+ .prime-pop-stage {position:absolute;inset:0;width:100%;height:100%;min-height:0;overflow:visible;background:none;}
+ [data-prime-scene-content] {position:absolute;inset:0;display:block;width:100%;height:100%;padding:0;}
+ .prime-pop-question-slot {display:none;}
+ [data-prime-playfield] {position:absolute;left:0;top:25.2%;width:100%;height:40%;min-height:0;padding:0;overflow:visible;}
+ [data-prime-pop-field] {position:absolute;inset:0;width:100%;height:100%;overflow:hidden;}
+ [data-prime-pop-field] button {min-width:0;min-height:0;background:none;border:0;padding:2px;box-shadow:none;touch-action:manipulation;}
+ [data-prime-pop-field] button:disabled {pointer-events:none;}
+ [data-prime-pop-danger] {position:absolute;left:1%;right:1%;width:98%;height:auto;translate:0 -50%;z-index:20;pointer-events:none;}
+ .prime-danger-rail {position:relative;width:100%;height:auto;}
+ .prime-danger-rail img {display:block;width:100%;height:auto;}
+ .prime-danger-rail strong {position:absolute;left:35%;top:21%;width:30%;height:58%;display:grid;place-items:center;color:#fff2c2;font-size:clamp(16px,4.6cqw,42px);font-weight:750;line-height:1;text-transform:uppercase;text-shadow:0 2px 2px #77111b;}
+ .prime-orb {position:relative;display:block;pointer-events:none;}
+ .prime-orb img {position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;}
+ .prime-orb>span {position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:6%;line-height:1;font-weight:750;color:white;text-shadow:0 2px 3px #002443,0 -1px 1px #002443;}
+ .prime-caster {position:absolute;z-index:1;left:2.5%;top:56%;width:68.5%;height:33%;pointer-events:none;}
+ .prime-caster .vision-character {display:block;width:100%;height:100%;}
+ .prime-spell-glint {position:absolute;left:77.8%;top:7.35%;translate:-50% -50%;width:22%;height:auto;overflow:visible;pointer-events:none;animation:prime-spell-bloom 4s ease-in-out infinite;}
+ .prime-spell-ring {transform-origin:50px 50px;animation:prime-spell-turn 12s linear infinite;}
+ .vision-character[data-vision-paused='true'] :is(.prime-spell-glint,.prime-spell-ring) {animation-play-state:paused;}
+ [data-stage-cue='reward'] .prime-spell-glint {filter:brightness(1.3);}
+ .prime-pop-feedback {left:auto;right:2%;top:104%;bottom:auto;translate:none;max-width:47%;padding:8px 12px;border:2px solid #edc266;border-radius:12px;background:#063650;color:#fff6dc;font-size:clamp(13px,3.1cqw,26px);font-weight:650;line-height:1.2;letter-spacing:0;text-transform:none;pointer-events:none;}
+ .vision-world-backdrop {object-position:50% 87.4%;}
+ .concept-playfield {z-index:0;}
+ .concept-game {z-index:3;}
+ [data-unified-minigame-hud]>div:first-of-type:has(.legend-hud-bar) {top:3.5%;height:9%;}
+ .legend-hud-avatar {width:22.8%;}
+ .legend-hud-bar {padding-right:5.5%;}
+ .legend-hud-lives .concept-life {width:5.4cqw;height:5.4cqw;max-width:46px;max-height:46px;}
+ .legend-hud-lives {gap:1.2cqw;}
+ .legend-hud-bar>div:last-child {gap:2.2cqw;}
+ .legend-hud-streak {font-size:clamp(16px,5cqw,46px);}
+ .concept-clock-icon {width:5.3cqw;height:5.3cqw;max-width:46px;max-height:46px;}
+ [data-testid='shared-bottom-hud'] {bottom:2.5%;height:7.8%;min-height:56px;padding:0 4%;}
+ .legend-dock-button {background-image:none;}
+}
+@media(max-height:720px) and (orientation:portrait){
+ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='prime_pop'] {
+  --concept-plane:100vw;
+  [data-unified-minigame-hud]>div:first-of-type:has(.legend-hud-bar) {top:2.5%;height:10%;}
+  .concept-question-zone {top:12.5%;height:19%;min-height:122px;}
+  [data-prime-playfield] {top:30.3%;height:35%;}
+  .prime-caster {top:58%;height:31%;}
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='prime_pop'] :is(.vision-character-breath,.original-hero-fallback) {animation:none;}
+ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='prime_pop'] :is(.prime-spell-glint,.prime-spell-ring) {animation:none;}
+}
+@keyframes prime-spell-bloom {0%,100%{opacity:.85;scale:1}50%{opacity:1;scale:1.05}}
+@keyframes prime-spell-turn {to{rotate:360deg}}

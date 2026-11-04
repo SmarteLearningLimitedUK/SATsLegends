@@ -1,0 +1,72 @@
+/* A moving, full-width crossing beneath the shared, stationary gameplay HUD. */
+html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='unit_mixer'][data-measured-scene] {
+ --concept-plane:calc(100vw - var(--concept-safe-left) - var(--concept-safe-right));
+ --lava-answer-height:clamp(44px,12%,76px);
+ --lava-answer-top:calc(100% - var(--dock-footer-bottom) - var(--dock-footer-height) - var(--lava-answer-height) - 10px);
+ .lava-scene,.lava-independent-crossing,.lava-crossing-camera,.lava-atmosphere {position:absolute;inset:0;}
+ .lava-scene {isolation:isolate;}
+ .lava-independent-crossing {overflow:hidden;pointer-events:none;z-index:1;}
+ .lava-crossing-camera {will-change:transform;}
+ .concept-question-zone {left:3%;width:94%;top:max(16%,calc(var(--dock-header-top) + var(--dock-header-height) + 8px));height:max(13%,48px);}
+ .scalable-question-copy {padding:6px 5%;}
+ [data-question-copy] {font-size:clamp(15px,2.4cqw,26px);line-height:1.15;font-weight:650;}
+ .question-jewel--top,.question-jewel--bottom {display:none;}
+ .lava-safe-counter {position:absolute;isolation:isolate;z-index:4;left:3%;top:32%;width:26%;min-height:48px;padding:10px 16px;display:grid;gap:6px;place-items:center;color:#fff5ce;text-align:center;font-size:clamp(12px,1.7cqw,20px);font-weight:650;line-height:1.15;}
+ .lava-crossing-progress {display:flex;gap:3px;justify-content:center;width:100%;max-width:150px;}
+ .lava-crossing-progress>i {flex:1;height:5px;background:#082737;border:1px solid #c8a453;border-radius:4px;}
+ .lava-crossing-progress>i[data-complete='true'] {background:#bdf3b2;border-color:#e5ffd6;}
+ .lava-independent-stone {position:absolute;width:25%;translate:-50% -30%;pointer-events:none;}
+ .lava-independent-stone>img {display:block;width:100%;height:auto;}
+ .lava-independent-stone[data-stone-current='true']>img {filter:drop-shadow(0 3px 6px #ffd47288);}
+ .lava-independent-stone[data-stone-safe='true']:not([data-stone-current='true'])>img {filter:brightness(.78);}
+ .lava-safe-mark,.lava-target-mark {position:absolute;width:clamp(16px,2.6cqw,28px);height:auto;left:50%;translate:-50% 0;}
+ .lava-safe-mark {top:8%;opacity:.8;}
+ .lava-safe-mark path,.lava-target-mark path {fill:none;stroke:#fff9cb;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+ .lava-target-mark {bottom:100%;animation:matharia-lava-beacon 1500ms ease-in-out infinite;}
+ .lava-independent-stone[data-stone-wobble='true'] {animation:matharia-lava-wobble 400ms ease-in-out;}
+ .lava-flight-wrapper {position:absolute;width:24%;height:36%;translate:-50% -95%;pointer-events:none;z-index:2;}
+ .lava-standing-hero,.lava-standing-hero>.vision-character {display:block;width:100%;height:100%;}
+ .lava-standing-hero>.vision-character {scale:1;transform-origin:50% 95%;}
+ .lava-standing-hero[data-reaction='correct'] {animation:matharia-lava-takeoff 420ms ease-in-out;}
+ .lava-standing-hero[data-reaction='incorrect'] {animation:matharia-lava-recoil 420ms ease-in-out;}
+ .lava-live-answers {position:absolute;z-index:4;left:3%;top:var(--lava-answer-top);width:94%;height:var(--lava-answer-height);display:grid;grid-template-columns:repeat(4,minmax(44px,1fr));gap:10px;}
+ .lava-answer-pedestal {position:relative;min-width:0;min-height:44px;}
+ .lava-answer-pedestal>button {position:relative;isolation:isolate;display:grid;place-items:center;min-width:44px;min-height:44px;width:100%;height:100%;padding:8px 10%;border:0;background:none;box-shadow:none;color:#fff8e5;text-align:center;font-size:clamp(18px,2.7cqw,32px);font-weight:650;line-height:1.1;touch-action:manipulation;white-space:nowrap;transition:scale 90ms ease,filter 90ms ease;}
+ .lava-answer-pedestal>button:not(:disabled):active {scale:.96;filter:brightness(1.15);}
+ .lava-answer-pedestal>button:disabled {opacity:1;}
+ .lava-answer-pedestal>button[data-answer-feedback='correct'] {filter:brightness(1.25);color:#d3ffbd;}
+ .lava-answer-pedestal>button[data-answer-feedback='incorrect'] {color:#ffcfb9;}
+ .lava-answer-pedestal>button:focus-visible {outline:3px solid #fff2a9;outline-offset:2px;}
+ .lava-live-helper {position:absolute;isolation:isolate;z-index:4;left:65%;top:32%;width:32%;min-height:52px;padding:12px 18px;display:grid;place-items:center;color:#fff6e1;text-align:center;font-size:clamp(13px,1.8cqw,22px);line-height:1.2;font-weight:650;}
+ .lava-live-helper[data-tone='incorrect'] {color:#ffdbc6;}
+ .lava-atmosphere {pointer-events:none;overflow:hidden;z-index:0;}
+ .lava-currents {position:absolute;inset:0;width:100%;height:100%;opacity:.48;}
+ .lava-currents path {fill:none;stroke:#fff1a1;stroke-width:1.6;stroke-dasharray:18 90 40 120;animation:matharia-lava-current 7s linear infinite;}
+ .lava-currents path:nth-child(2) {animation-direction:reverse;animation-duration:9s;}
+ .lava-currents path:nth-child(3) {animation-duration:11s;}
+ .lava-ember {position:absolute;width:3px;height:3px;border-radius:50%;background:#ffe9a6;box-shadow:0 0 5px #ff9d2e;animation:matharia-lava-ember linear infinite;opacity:0;}
+ .lava-landing {position:absolute;width:0;height:0;z-index:3;pointer-events:none;}
+ .lava-landing-ring {position:absolute;left:-36px;top:-5px;width:72px;height:12px;border:2px solid #ffe7a2;border-radius:50%;opacity:0;animation:matharia-lava-landing 140ms 420ms ease-out both;}
+ .lava-landing>i {position:absolute;width:3px;height:3px;border-radius:50%;background:#fff3bd;opacity:0;animation:matharia-lava-spark 140ms 420ms ease-out both;}
+ .lava-scene[data-lava-paused='true'] :is(.lava-standing-hero,.lava-independent-stone,.lava-target-mark,.lava-ember,.lava-currents path,.lava-landing-ring,.lava-landing>i) {animation-play-state:paused;}
+}
+@media(max-width:760px) {
+ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='unit_mixer'][data-measured-scene] {
+  .lava-live-answers {gap:6px;}
+  .lava-answer-pedestal>button {font-size:17px;padding:7px 9%;}
+  .lava-safe-counter {padding:9px 12px;}
+  .lava-live-helper {padding:10px 14px;}
+ }
+}
+@keyframes matharia-lava-takeoff {0%,100%{transform:scaleY(1) rotate(0);}15%{transform:scaleY(.95);}50%{transform:rotate(-4deg);}90%{transform:scaleY(.96);}}
+@keyframes matharia-lava-recoil {0%,100%{transform:rotate(0);}33%{transform:rotate(-7deg);}67%{transform:rotate(7deg);}}
+@keyframes matharia-lava-wobble {0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}50%{transform:translateX(6px);}75%{transform:translateX(-3px);}}
+@keyframes matharia-lava-beacon {0%,100%{transform:translateY(-2px);opacity:.65;}50%{transform:translateY(3px);opacity:1;}}
+@keyframes matharia-lava-current {to{stroke-dashoffset:-536;}}
+@keyframes matharia-lava-ember {0%{opacity:0;transform:translate(0,0) scale(.5);}15%{opacity:.8;}80%{opacity:.55;}100%{opacity:0;transform:translate(var(--ember-drift),-85px) scale(.2);}}
+@keyframes matharia-lava-landing {0%{opacity:.9;transform:scale(.5);}100%{opacity:0;transform:scale(1.5);}}
+@keyframes matharia-lava-spark {0%{opacity:1;transform:translate(0,0);}100%{opacity:0;transform:translate(var(--spark-x),var(--spark-y));}}
+@media(prefers-reduced-motion:reduce) {
+ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='unit_mixer'][data-measured-scene] .lava-scene :is(.lava-standing-hero,.lava-independent-stone,.lava-target-mark,.lava-ember,.lava-currents path,.lava-landing-ring,.lava-landing>i) {animation:none;}
+ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='unit_mixer'][data-measured-scene] .lava-answer-pedestal>button {transition:none;}
+}

@@ -1,0 +1,42 @@
+{
+  "source": "Approved footer contact inspection: qa-artifacts/concept-recreation/approved-footer-styles.jpg",
+  "joinedDock": [
+    "number_line_ninja",
+    "maths_vs_zombies",
+    "fraction_forge",
+    "simplify_sprint",
+    "angle_arena",
+    "area_architect",
+    "rotation_relay",
+    "coordinates_quest",
+    "perimeter_path",
+    "graph_grabber",
+    "line_graph_lab",
+    "data_detective"
+  ],
+  "leafHeader": [
+    "data_detective",
+    "line_graph_lab",
+    "graph_grabber",
+    "factor_frenzy",
+    "multiplication_mine",
+    "order_ops_arena",
+    "formula_forge"
+  ],
+  "separateTiles": [
+    "place_value_panic",
+    "prime_pop",
+    "rounding_rocket",
+    "take_out_rush",
+    "match3_equivalence",
+    "percent_power",
+    "polygon_palace",
+    "conversion_canyon",
+    "mean_machine",
+    "factor_frenzy",
+    "multiplication_mine",
+    "order_ops_arena",
+    "formula_forge"
+  ],
+  "note": "Distinct approved HUD appearances retained. New measured games must be classified from their actual approved screenshot before extending these lists."
+}

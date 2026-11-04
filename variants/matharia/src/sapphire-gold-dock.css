@@ -1,0 +1,13 @@
+/* User-approved five-tile HUD. Each frame, icon, label and control is independent.
+   Scenes own the footer's position/footprint; this component owns its contents. */
+html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene] [data-testid='shared-bottom-hud'] {
+ container-type:size;
+ --dock-gap:clamp(4px,1cqw,8px);
+ >div {display:flex;align-items:flex-end;justify-content:center;height:100%;min-height:44px;overflow:visible;}
+ .legend-dock-art,.legend-dock-jewel {display:none;}
+ .legend-dock-surface {position:relative;isolation:isolate;container-type:size;display:grid;grid-template-columns:repeat(5,minmax(44px,1fr));grid-template-rows:minmax(44px,1fr);align-items:stretch;gap:var(--dock-gap);width:min(100%,calc(500cqh + 4 * var(--dock-gap)));max-width:none;min-width:calc(220px + 4 * var(--dock-gap));height:min(100%,calc((100cqw - 4 * var(--dock-gap)) / 5));min-height:44px;margin:0 auto;padding:0;border:0;border-image:none;border-radius:0;background:none;box-shadow:none;overflow:visible;}
+ .legend-dock-button {position:relative;isolation:isolate;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(2px,4cqh,5px);width:100%;height:100%;min-width:44px;min-height:44px;margin:0;padding:4px;border:0;border-image:none;border-radius:0;background:none;box-shadow:none;color:#fff9e6;font-family:'Matharia Rounded',sans-serif;font-size:clamp(11px,16cqh,20px);font-weight:650;line-height:1;text-align:center;touch-action:manipulation;}
+ .legend-dock-button>svg {display:block;flex:none;width:clamp(20px,32cqh,42px);height:clamp(20px,32cqh,42px);margin:0;pointer-events:none;}
+ .legend-dock-button>span:not(.legend-dock-tile-art) {margin:0;padding:0;font:inherit;line-height:1;letter-spacing:0;pointer-events:none;}
+ .legend-dock-tile-art {position:absolute;inset:0;z-index:-1;display:block;pointer-events:none;}
+}

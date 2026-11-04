@@ -1,0 +1,2955 @@
+{
+  "version": 1,
+  "title": "Matharia Reskin Asset Library",
+  "assetCount": 150,
+  "assets": [
+    {
+      "id": "hud_top_frame",
+      "group": "frames",
+      "kind": "vector",
+      "logicalSize": [
+        768,
+        88
+      ],
+      "source": "vector/frames/hud_top_frame.svg",
+      "capInsets": [
+        24,
+        30,
+        24,
+        30
+      ],
+      "note": "Empty reusable frame. Render all contents separately; cap insets are candidate values requiring visual review at final size.",
+      "files": {
+        "1": "png/frames/hud_top_frame.png",
+        "2": "png/frames/hud_top_frame@2x.png",
+        "3": "png/frames/hud_top_frame@3x.png"
+      }
+    },
+    {
+      "id": "hud_bottom_frame",
+      "group": "frames",
+      "kind": "vector",
+      "logicalSize": [
+        768,
+        92
+      ],
+      "source": "vector/frames/hud_bottom_frame.svg",
+      "capInsets": [
+        24,
+        30,
+        24,
+        30
+      ],
+      "note": "Empty reusable frame. Render all contents separately; cap insets are candidate values requiring visual review at final size.",
+      "files": {
+        "1": "png/frames/hud_bottom_frame.png",
+        "2": "png/frames/hud_bottom_frame@2x.png",
+        "3": "png/frames/hud_bottom_frame@3x.png"
+      }
+    },
+    {
+      "id": "question_frame",
+      "group": "frames",
+      "kind": "vector",
+      "logicalSize": [
+        640,
+        104
+      ],
+      "source": "vector/frames/question_frame.svg",
+      "capInsets": [
+        28,
+        32,
+        28,
+        32
+      ],
+      "note": "Empty reusable frame. Render all contents separately; cap insets are candidate values requiring visual review at final size.",
+      "files": {
+        "1": "png/frames/question_frame.png",
+        "2": "png/frames/question_frame@2x.png",
+        "3": "png/frames/question_frame@3x.png"
+      }
+    },
+    {
+      "id": "panel_large",
+      "group": "frames",
+      "kind": "vector",
+      "logicalSize": [
+        512,
+        384
+      ],
+      "source": "vector/frames/panel_large.svg",
+      "capInsets": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "note": "Empty reusable frame. Render all contents separately; cap insets are candidate values requiring visual review at final size.",
+      "files": {
+        "1": "png/frames/panel_large.png",
+        "2": "png/frames/panel_large@2x.png",
+        "3": "png/frames/panel_large@3x.png"
+      }
+    },
+    {
+      "id": "panel_small",
+      "group": "frames",
+      "kind": "vector",
+      "logicalSize": [
+        320,
+        184
+      ],
+      "source": "vector/frames/panel_small.svg",
+      "capInsets": [
+        28,
+        28,
+        28,
+        28
+      ],
+      "note": "Empty reusable frame. Render all contents separately; cap insets are candidate values requiring visual review at final size.",
+      "files": {
+        "1": "png/frames/panel_small.png",
+        "2": "png/frames/panel_small@2x.png",
+        "3": "png/frames/panel_small@3x.png"
+      }
+    },
+    {
+      "id": "island_nameplate",
+      "group": "frames",
+      "kind": "vector",
+      "logicalSize": [
+        248,
+        52
+      ],
+      "source": "vector/frames/island_nameplate.svg",
+      "capInsets": [
+        20,
+        24,
+        20,
+        24
+      ],
+      "note": "Empty reusable frame. Render all contents separately; cap insets are candidate values requiring visual review at final size.",
+      "files": {
+        "1": "png/frames/island_nameplate.png",
+        "2": "png/frames/island_nameplate@2x.png",
+        "3": "png/frames/island_nameplate@3x.png"
+      }
+    },
+    {
+      "id": "mission_card_frame",
+      "group": "frames",
+      "kind": "vector",
+      "logicalSize": [
+        320,
+        208
+      ],
+      "source": "vector/frames/mission_card_frame.svg",
+      "capInsets": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "note": "Empty reusable frame. Render all contents separately; cap insets are candidate values requiring visual review at final size.",
+      "files": {
+        "1": "png/frames/mission_card_frame.png",
+        "2": "png/frames/mission_card_frame@2x.png",
+        "3": "png/frames/mission_card_frame@3x.png"
+      }
+    },
+    {
+      "id": "portrait_frame",
+      "group": "frames",
+      "kind": "vector",
+      "logicalSize": [
+        112,
+        112
+      ],
+      "source": "vector/frames/portrait_frame.svg",
+      "capInsets": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "note": "Empty reusable frame. Render all contents separately; cap insets are candidate values requiring visual review at final size.",
+      "files": {
+        "1": "png/frames/portrait_frame.png",
+        "2": "png/frames/portrait_frame@2x.png",
+        "3": "png/frames/portrait_frame@3x.png"
+      }
+    },
+    {
+      "id": "tooltip_frame",
+      "group": "frames",
+      "kind": "vector",
+      "logicalSize": [
+        256,
+        80
+      ],
+      "source": "vector/frames/tooltip_frame.svg",
+      "capInsets": [
+        22,
+        24,
+        22,
+        24
+      ],
+      "note": "Empty reusable frame. Render all contents separately; cap insets are candidate values requiring visual review at final size.",
+      "files": {
+        "1": "png/frames/tooltip_frame.png",
+        "2": "png/frames/tooltip_frame@2x.png",
+        "3": "png/frames/tooltip_frame@3x.png"
+      }
+    },
+    {
+      "id": "mission_parchment_panel",
+      "group": "frames",
+      "kind": "vector",
+      "logicalSize": [
+        512,
+        384
+      ],
+      "source": "vector/frames/mission_parchment_panel.svg",
+      "capInsets": [
+        32,
+        32,
+        32,
+        32
+      ],
+      "note": "",
+      "files": {
+        "1": "png/frames/mission_parchment_panel.png",
+        "2": "png/frames/mission_parchment_panel@2x.png",
+        "3": "png/frames/mission_parchment_panel@3x.png"
+      }
+    },
+    {
+      "id": "button_navy_normal",
+      "group": "buttons",
+      "kind": "vector",
+      "logicalSize": [
+        216,
+        64
+      ],
+      "source": "vector/buttons/button_navy_normal.svg",
+      "capInsets": [
+        20,
+        24,
+        20,
+        24
+      ],
+      "note": "",
+      "files": {
+        "1": "png/buttons/button_navy_normal.png",
+        "2": "png/buttons/button_navy_normal@2x.png",
+        "3": "png/buttons/button_navy_normal@3x.png"
+      }
+    },
+    {
+      "id": "button_navy_pressed",
+      "group": "buttons",
+      "kind": "vector",
+      "logicalSize": [
+        216,
+        64
+      ],
+      "source": "vector/buttons/button_navy_pressed.svg",
+      "capInsets": [
+        20,
+        24,
+        20,
+        24
+      ],
+      "note": "",
+      "files": {
+        "1": "png/buttons/button_navy_pressed.png",
+        "2": "png/buttons/button_navy_pressed@2x.png",
+        "3": "png/buttons/button_navy_pressed@3x.png"
+      }
+    },
+    {
+      "id": "button_navy_disabled",
+      "group": "buttons",
+      "kind": "vector",
+      "logicalSize": [
+        216,
+        64
+      ],
+      "source": "vector/buttons/button_navy_disabled.svg",
+      "capInsets": [
+        20,
+        24,
+        20,
+        24
+      ],
+      "note": "",
+      "files": {
+        "1": "png/buttons/button_navy_disabled.png",
+        "2": "png/buttons/button_navy_disabled@2x.png",
+        "3": "png/buttons/button_navy_disabled@3x.png"
+      }
+    },
+    {
+      "id": "button_navy_selected",
+      "group": "buttons",
+      "kind": "vector",
+      "logicalSize": [
+        216,
+        64
+      ],
+      "source": "vector/buttons/button_navy_selected.svg",
+      "capInsets": [
+        20,
+        24,
+        20,
+        24
+      ],
+      "note": "",
+      "files": {
+        "1": "png/buttons/button_navy_selected.png",
+        "2": "png/buttons/button_navy_selected@2x.png",
+        "3": "png/buttons/button_navy_selected@3x.png"
+      }
+    },
+    {
+      "id": "button_gold_normal",
+      "group": "buttons",
+      "kind": "vector",
+      "logicalSize": [
+        216,
+        64
+      ],
+      "source": "vector/buttons/button_gold_normal.svg",
+      "capInsets": [
+        20,
+        24,
+        20,
+        24
+      ],
+      "note": "",
+      "files": {
+        "1": "png/buttons/button_gold_normal.png",
+        "2": "png/buttons/button_gold_normal@2x.png",
+        "3": "png/buttons/button_gold_normal@3x.png"
+      }
+    },
+    {
+      "id": "button_gold_pressed",
+      "group": "buttons",
+      "kind": "vector",
+      "logicalSize": [
+        216,
+        64
+      ],
+      "source": "vector/buttons/button_gold_pressed.svg",
+      "capInsets": [
+        20,
+        24,
+        20,
+        24
+      ],
+      "note": "",
+      "files": {
+        "1": "png/buttons/button_gold_pressed.png",
+        "2": "png/buttons/button_gold_pressed@2x.png",
+        "3": "png/buttons/button_gold_pressed@3x.png"
+      }
+    },
+    {
+      "id": "button_gold_disabled",
+      "group": "buttons",
+      "kind": "vector",
+      "logicalSize": [
+        216,
+        64
+      ],
+      "source": "vector/buttons/button_gold_disabled.svg",
+      "capInsets": [
+        20,
+        24,
+        20,
+        24
+      ],
+      "note": "",
+      "files": {
+        "1": "png/buttons/button_gold_disabled.png",
+        "2": "png/buttons/button_gold_disabled@2x.png",
+        "3": "png/buttons/button_gold_disabled@3x.png"
+      }
+    },
+    {
+      "id": "button_gold_selected",
+      "group": "buttons",
+      "kind": "vector",
+      "logicalSize": [
+        216,
+        64
+      ],
+      "source": "vector/buttons/button_gold_selected.svg",
+      "capInsets": [
+        20,
+        24,
+        20,
+        24
+      ],
+      "note": "",
+      "files": {
+        "1": "png/buttons/button_gold_selected.png",
+        "2": "png/buttons/button_gold_selected@2x.png",
+        "3": "png/buttons/button_gold_selected@3x.png"
+      }
+    },
+    {
+      "id": "button_green_normal",
+      "group": "buttons",
+      "kind": "vector",
+      "logicalSize": [
+        216,
+        64
+      ],
+      "source": "vector/buttons/button_green_normal.svg",
+      "capInsets": [
+        20,
+        24,
+        20,
+        24
+      ],
+      "note": "",
+      "files": {
+        "1": "png/buttons/button_green_normal.png",
+        "2": "png/buttons/button_green_normal@2x.png",
+        "3": "png/buttons/button_green_normal@3x.png"
+      }
+    },
+    {
+      "id": "button_green_pressed",
+      "group": "buttons",
+      "kind": "vector",
+      "logicalSize": [
+        216,
+        64
+      ],
+      "source": "vector/buttons/button_green_pressed.svg",
+      "capInsets": [
+        20,
+        24,
+        20,
+        24
+      ],
+      "note": "",
+      "files": {
+        "1": "png/buttons/button_green_pressed.png",
+        "2": "png/buttons/button_green_pressed@2x.png",
+        "3": "png/buttons/button_green_pressed@3x.png"
+      }
+    },
+    {
+      "id": "button_green_disabled",
+      "group": "buttons",
+      "kind": "vector",
+      "logicalSize": [
+        216,
+        64
+      ],
+      "source": "vector/buttons/button_green_disabled.svg",
+      "capInsets": [
+        20,
+        24,
+        20,
+        24
+      ],
+      "note": "",
+      "files": {
+        "1": "png/buttons/button_green_disabled.png",
+        "2": "png/buttons/button_green_disabled@2x.png",
+        "3": "png/buttons/button_green_disabled@3x.png"
+      }
+    },
+    {
+      "id": "button_green_selected",
+      "group": "buttons",
+      "kind": "vector",
+      "logicalSize": [
+        216,
+        64
+      ],
+      "source": "vector/buttons/button_green_selected.svg",
+      "capInsets": [
+        20,
+        24,
+        20,
+        24
+      ],
+      "note": "",
+      "files": {
+        "1": "png/buttons/button_green_selected.png",
+        "2": "png/buttons/button_green_selected@2x.png",
+        "3": "png/buttons/button_green_selected@3x.png"
+      }
+    },
+    {
+      "id": "rune_socket_normal",
+      "group": "runes",
+      "kind": "vector",
+      "logicalSize": [
+        96,
+        96
+      ],
+      "source": "vector/runes/rune_socket_normal.svg",
+      "capInsets": [
+        26,
+        26,
+        26,
+        26
+      ],
+      "note": "",
+      "files": {
+        "1": "png/runes/rune_socket_normal.png",
+        "2": "png/runes/rune_socket_normal@2x.png",
+        "3": "png/runes/rune_socket_normal@3x.png"
+      }
+    },
+    {
+      "id": "rune_socket_selected",
+      "group": "runes",
+      "kind": "vector",
+      "logicalSize": [
+        96,
+        96
+      ],
+      "source": "vector/runes/rune_socket_selected.svg",
+      "capInsets": [
+        26,
+        26,
+        26,
+        26
+      ],
+      "note": "",
+      "files": {
+        "1": "png/runes/rune_socket_selected.png",
+        "2": "png/runes/rune_socket_selected@2x.png",
+        "3": "png/runes/rune_socket_selected@3x.png"
+      }
+    },
+    {
+      "id": "rune_socket_correct",
+      "group": "runes",
+      "kind": "vector",
+      "logicalSize": [
+        96,
+        96
+      ],
+      "source": "vector/runes/rune_socket_correct.svg",
+      "capInsets": [
+        26,
+        26,
+        26,
+        26
+      ],
+      "note": "",
+      "files": {
+        "1": "png/runes/rune_socket_correct.png",
+        "2": "png/runes/rune_socket_correct@2x.png",
+        "3": "png/runes/rune_socket_correct@3x.png"
+      }
+    },
+    {
+      "id": "rune_socket_incorrect",
+      "group": "runes",
+      "kind": "vector",
+      "logicalSize": [
+        96,
+        96
+      ],
+      "source": "vector/runes/rune_socket_incorrect.svg",
+      "capInsets": [
+        26,
+        26,
+        26,
+        26
+      ],
+      "note": "",
+      "files": {
+        "1": "png/runes/rune_socket_incorrect.png",
+        "2": "png/runes/rune_socket_incorrect@2x.png",
+        "3": "png/runes/rune_socket_incorrect@3x.png"
+      }
+    },
+    {
+      "id": "rune_socket_disabled",
+      "group": "runes",
+      "kind": "vector",
+      "logicalSize": [
+        96,
+        96
+      ],
+      "source": "vector/runes/rune_socket_disabled.svg",
+      "capInsets": [
+        26,
+        26,
+        26,
+        26
+      ],
+      "note": "",
+      "files": {
+        "1": "png/runes/rune_socket_disabled.png",
+        "2": "png/runes/rune_socket_disabled@2x.png",
+        "3": "png/runes/rune_socket_disabled@3x.png"
+      }
+    },
+    {
+      "id": "button_round_normal",
+      "group": "buttons",
+      "kind": "vector",
+      "logicalSize": [
+        80,
+        80
+      ],
+      "source": "vector/buttons/button_round_normal.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/buttons/button_round_normal.png",
+        "2": "png/buttons/button_round_normal@2x.png",
+        "3": "png/buttons/button_round_normal@3x.png"
+      }
+    },
+    {
+      "id": "button_round_pressed",
+      "group": "buttons",
+      "kind": "vector",
+      "logicalSize": [
+        80,
+        80
+      ],
+      "source": "vector/buttons/button_round_pressed.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/buttons/button_round_pressed.png",
+        "2": "png/buttons/button_round_pressed@2x.png",
+        "3": "png/buttons/button_round_pressed@3x.png"
+      }
+    },
+    {
+      "id": "button_round_disabled",
+      "group": "buttons",
+      "kind": "vector",
+      "logicalSize": [
+        80,
+        80
+      ],
+      "source": "vector/buttons/button_round_disabled.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/buttons/button_round_disabled.png",
+        "2": "png/buttons/button_round_disabled@2x.png",
+        "3": "png/buttons/button_round_disabled@3x.png"
+      }
+    },
+    {
+      "id": "icon_back",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_back.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_back.png",
+        "2": "png/icons/icon_back@2x.png",
+        "3": "png/icons/icon_back@3x.png"
+      }
+    },
+    {
+      "id": "icon_next",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_next.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_next.png",
+        "2": "png/icons/icon_next@2x.png",
+        "3": "png/icons/icon_next@3x.png"
+      }
+    },
+    {
+      "id": "icon_help",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_help.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_help.png",
+        "2": "png/icons/icon_help@2x.png",
+        "3": "png/icons/icon_help@3x.png"
+      }
+    },
+    {
+      "id": "icon_board",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_board.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_board.png",
+        "2": "png/icons/icon_board@2x.png",
+        "3": "png/icons/icon_board@3x.png"
+      }
+    },
+    {
+      "id": "icon_sound",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_sound.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_sound.png",
+        "2": "png/icons/icon_sound@2x.png",
+        "3": "png/icons/icon_sound@3x.png"
+      }
+    },
+    {
+      "id": "icon_music",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_music.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_music.png",
+        "2": "png/icons/icon_music@2x.png",
+        "3": "png/icons/icon_music@3x.png"
+      }
+    },
+    {
+      "id": "icon_pause",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_pause.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_pause.png",
+        "2": "png/icons/icon_pause@2x.png",
+        "3": "png/icons/icon_pause@3x.png"
+      }
+    },
+    {
+      "id": "icon_play",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_play.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_play.png",
+        "2": "png/icons/icon_play@2x.png",
+        "3": "png/icons/icon_play@3x.png"
+      }
+    },
+    {
+      "id": "icon_check",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_check.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_check.png",
+        "2": "png/icons/icon_check@2x.png",
+        "3": "png/icons/icon_check@3x.png"
+      }
+    },
+    {
+      "id": "icon_reset",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_reset.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_reset.png",
+        "2": "png/icons/icon_reset@2x.png",
+        "3": "png/icons/icon_reset@3x.png"
+      }
+    },
+    {
+      "id": "icon_close",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_close.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_close.png",
+        "2": "png/icons/icon_close@2x.png",
+        "3": "png/icons/icon_close@3x.png"
+      }
+    },
+    {
+      "id": "icon_plus",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_plus.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_plus.png",
+        "2": "png/icons/icon_plus@2x.png",
+        "3": "png/icons/icon_plus@3x.png"
+      }
+    },
+    {
+      "id": "icon_minus",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_minus.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_minus.png",
+        "2": "png/icons/icon_minus@2x.png",
+        "3": "png/icons/icon_minus@3x.png"
+      }
+    },
+    {
+      "id": "icon_profile",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_profile.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_profile.png",
+        "2": "png/icons/icon_profile@2x.png",
+        "3": "png/icons/icon_profile@3x.png"
+      }
+    },
+    {
+      "id": "icon_rewards",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_rewards.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_rewards.png",
+        "2": "png/icons/icon_rewards@2x.png",
+        "3": "png/icons/icon_rewards@3x.png"
+      }
+    },
+    {
+      "id": "icon_parent",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_parent.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_parent.png",
+        "2": "png/icons/icon_parent@2x.png",
+        "3": "png/icons/icon_parent@3x.png"
+      }
+    },
+    {
+      "id": "icon_calm",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_calm.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_calm.png",
+        "2": "png/icons/icon_calm@2x.png",
+        "3": "png/icons/icon_calm@3x.png"
+      }
+    },
+    {
+      "id": "icon_settings",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_settings.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_settings.png",
+        "2": "png/icons/icon_settings@2x.png",
+        "3": "png/icons/icon_settings@3x.png"
+      }
+    },
+    {
+      "id": "icon_timer",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_timer.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_timer.png",
+        "2": "png/icons/icon_timer@2x.png",
+        "3": "png/icons/icon_timer@3x.png"
+      }
+    },
+    {
+      "id": "icon_heart",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_heart.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_heart.png",
+        "2": "png/icons/icon_heart@2x.png",
+        "3": "png/icons/icon_heart@3x.png"
+      }
+    },
+    {
+      "id": "icon_star",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_star.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_star.png",
+        "2": "png/icons/icon_star@2x.png",
+        "3": "png/icons/icon_star@3x.png"
+      }
+    },
+    {
+      "id": "icon_gem",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_gem.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_gem.png",
+        "2": "png/icons/icon_gem@2x.png",
+        "3": "png/icons/icon_gem@3x.png"
+      }
+    },
+    {
+      "id": "icon_lock",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_lock.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_lock.png",
+        "2": "png/icons/icon_lock@2x.png",
+        "3": "png/icons/icon_lock@3x.png"
+      }
+    },
+    {
+      "id": "icon_number",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_number.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_number.png",
+        "2": "png/icons/icon_number@2x.png",
+        "3": "png/icons/icon_number@3x.png"
+      }
+    },
+    {
+      "id": "icon_fractions",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_fractions.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_fractions.png",
+        "2": "png/icons/icon_fractions@2x.png",
+        "3": "png/icons/icon_fractions@3x.png"
+      }
+    },
+    {
+      "id": "icon_ratio",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_ratio.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_ratio.png",
+        "2": "png/icons/icon_ratio@2x.png",
+        "3": "png/icons/icon_ratio@3x.png"
+      }
+    },
+    {
+      "id": "icon_algebra",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_algebra.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_algebra.png",
+        "2": "png/icons/icon_algebra@2x.png",
+        "3": "png/icons/icon_algebra@3x.png"
+      }
+    },
+    {
+      "id": "icon_geometry",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_geometry.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_geometry.png",
+        "2": "png/icons/icon_geometry@2x.png",
+        "3": "png/icons/icon_geometry@3x.png"
+      }
+    },
+    {
+      "id": "icon_measure",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_measure.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_measure.png",
+        "2": "png/icons/icon_measure@2x.png",
+        "3": "png/icons/icon_measure@3x.png"
+      }
+    },
+    {
+      "id": "icon_statistics",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_statistics.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_statistics.png",
+        "2": "png/icons/icon_statistics@2x.png",
+        "3": "png/icons/icon_statistics@3x.png"
+      }
+    },
+    {
+      "id": "icon_reasoning",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_reasoning.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_reasoning.png",
+        "2": "png/icons/icon_reasoning@2x.png",
+        "3": "png/icons/icon_reasoning@3x.png"
+      }
+    },
+    {
+      "id": "icon_sats_practice",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_sats_practice.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_sats_practice.png",
+        "2": "png/icons/icon_sats_practice@2x.png",
+        "3": "png/icons/icon_sats_practice@3x.png"
+      }
+    },
+    {
+      "id": "icon_leaf",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_leaf.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_leaf.png",
+        "2": "png/icons/icon_leaf@2x.png",
+        "3": "png/icons/icon_leaf@3x.png"
+      }
+    },
+    {
+      "id": "icon_wave",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_wave.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_wave.png",
+        "2": "png/icons/icon_wave@2x.png",
+        "3": "png/icons/icon_wave@3x.png"
+      }
+    },
+    {
+      "id": "icon_flag",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_flag.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_flag.png",
+        "2": "png/icons/icon_flag@2x.png",
+        "3": "png/icons/icon_flag@3x.png"
+      }
+    },
+    {
+      "id": "icon_compass",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_compass.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_compass.png",
+        "2": "png/icons/icon_compass@2x.png",
+        "3": "png/icons/icon_compass@3x.png"
+      }
+    },
+    {
+      "id": "icon_sound_off",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_sound_off.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_sound_off.png",
+        "2": "png/icons/icon_sound_off@2x.png",
+        "3": "png/icons/icon_sound_off@3x.png"
+      }
+    },
+    {
+      "id": "icon_music_off",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/icon_music_off.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/icon_music_off.png",
+        "2": "png/icons/icon_music_off@2x.png",
+        "3": "png/icons/icon_music_off@3x.png"
+      }
+    },
+    {
+      "id": "heart_empty",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/heart_empty.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/heart_empty.png",
+        "2": "png/icons/heart_empty@2x.png",
+        "3": "png/icons/heart_empty@3x.png"
+      }
+    },
+    {
+      "id": "star_empty",
+      "group": "icons",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        96
+      ],
+      "source": "vector/icons/star_empty.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/icons/star_empty.png",
+        "2": "png/icons/star_empty@2x.png",
+        "3": "png/icons/star_empty@3x.png"
+      }
+    },
+    {
+      "id": "progress_track",
+      "group": "progress",
+      "kind": "vector",
+      "logicalSize": [
+        320,
+        22
+      ],
+      "source": "vector/progress/progress_track.svg",
+      "capInsets": [
+        8,
+        10,
+        8,
+        10
+      ],
+      "note": "",
+      "files": {
+        "1": "png/progress/progress_track.png",
+        "2": "png/progress/progress_track@2x.png",
+        "3": "png/progress/progress_track@3x.png"
+      }
+    },
+    {
+      "id": "progress_fill",
+      "group": "progress",
+      "kind": "vector",
+      "logicalSize": [
+        300,
+        14
+      ],
+      "source": "vector/progress/progress_fill.svg",
+      "capInsets": [
+        5,
+        7,
+        5,
+        7
+      ],
+      "note": "Clip width to live progress; never stretch a baked percentage.",
+      "files": {
+        "1": "png/progress/progress_fill.png",
+        "2": "png/progress/progress_fill@2x.png",
+        "3": "png/progress/progress_fill@3x.png"
+      }
+    },
+    {
+      "id": "divider_vertical",
+      "group": "ornaments",
+      "kind": "vector",
+      "logicalSize": [
+        16,
+        80
+      ],
+      "source": "vector/ornaments/divider_vertical.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/ornaments/divider_vertical.png",
+        "2": "png/ornaments/divider_vertical@2x.png",
+        "3": "png/ornaments/divider_vertical@3x.png"
+      }
+    },
+    {
+      "id": "divider_horizontal",
+      "group": "ornaments",
+      "kind": "vector",
+      "logicalSize": [
+        256,
+        16
+      ],
+      "source": "vector/ornaments/divider_horizontal.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/ornaments/divider_horizontal.png",
+        "2": "png/ornaments/divider_horizontal@2x.png",
+        "3": "png/ornaments/divider_horizontal@3x.png"
+      }
+    },
+    {
+      "id": "gem_corner",
+      "group": "ornaments",
+      "kind": "vector",
+      "logicalSize": [
+        48,
+        48
+      ],
+      "source": "vector/ornaments/gem_corner.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/ornaments/gem_corner.png",
+        "2": "png/ornaments/gem_corner@2x.png",
+        "3": "png/ornaments/gem_corner@3x.png"
+      }
+    },
+    {
+      "id": "danger_line",
+      "group": "effects",
+      "kind": "vector",
+      "logicalSize": [
+        512,
+        32
+      ],
+      "source": "vector/effects/danger_line.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/effects/danger_line.png",
+        "2": "png/effects/danger_line@2x.png",
+        "3": "png/effects/danger_line@3x.png"
+      }
+    },
+    {
+      "id": "number_orb_blue",
+      "group": "gameplay",
+      "kind": "vector",
+      "logicalSize": [
+        144,
+        144
+      ],
+      "source": "vector/gameplay/number_orb_blue.svg",
+      "capInsets": null,
+      "note": "Empty orb. Render the live number as text.",
+      "files": {
+        "1": "png/gameplay/number_orb_blue.png",
+        "2": "png/gameplay/number_orb_blue@2x.png",
+        "3": "png/gameplay/number_orb_blue@3x.png"
+      }
+    },
+    {
+      "id": "number_orb_green",
+      "group": "gameplay",
+      "kind": "vector",
+      "logicalSize": [
+        144,
+        144
+      ],
+      "source": "vector/gameplay/number_orb_green.svg",
+      "capInsets": null,
+      "note": "Empty orb. Render the live number as text.",
+      "files": {
+        "1": "png/gameplay/number_orb_green.png",
+        "2": "png/gameplay/number_orb_green@2x.png",
+        "3": "png/gameplay/number_orb_green@3x.png"
+      }
+    },
+    {
+      "id": "number_orb_red",
+      "group": "gameplay",
+      "kind": "vector",
+      "logicalSize": [
+        144,
+        144
+      ],
+      "source": "vector/gameplay/number_orb_red.svg",
+      "capInsets": null,
+      "note": "Empty orb. Render the live number as text.",
+      "files": {
+        "1": "png/gameplay/number_orb_red.png",
+        "2": "png/gameplay/number_orb_red@2x.png",
+        "3": "png/gameplay/number_orb_red@3x.png"
+      }
+    },
+    {
+      "id": "digit_0",
+      "group": "digits",
+      "kind": "vector",
+      "logicalSize": [
+        64,
+        80
+      ],
+      "source": "vector/digits/digit_0.svg",
+      "capInsets": null,
+      "note": "Optional separate glyph. Prefer live accessible system text in app.",
+      "files": {
+        "1": "png/digits/digit_0.png",
+        "2": "png/digits/digit_0@2x.png",
+        "3": "png/digits/digit_0@3x.png"
+      }
+    },
+    {
+      "id": "digit_1",
+      "group": "digits",
+      "kind": "vector",
+      "logicalSize": [
+        64,
+        80
+      ],
+      "source": "vector/digits/digit_1.svg",
+      "capInsets": null,
+      "note": "Optional separate glyph. Prefer live accessible system text in app.",
+      "files": {
+        "1": "png/digits/digit_1.png",
+        "2": "png/digits/digit_1@2x.png",
+        "3": "png/digits/digit_1@3x.png"
+      }
+    },
+    {
+      "id": "digit_2",
+      "group": "digits",
+      "kind": "vector",
+      "logicalSize": [
+        64,
+        80
+      ],
+      "source": "vector/digits/digit_2.svg",
+      "capInsets": null,
+      "note": "Optional separate glyph. Prefer live accessible system text in app.",
+      "files": {
+        "1": "png/digits/digit_2.png",
+        "2": "png/digits/digit_2@2x.png",
+        "3": "png/digits/digit_2@3x.png"
+      }
+    },
+    {
+      "id": "digit_3",
+      "group": "digits",
+      "kind": "vector",
+      "logicalSize": [
+        64,
+        80
+      ],
+      "source": "vector/digits/digit_3.svg",
+      "capInsets": null,
+      "note": "Optional separate glyph. Prefer live accessible system text in app.",
+      "files": {
+        "1": "png/digits/digit_3.png",
+        "2": "png/digits/digit_3@2x.png",
+        "3": "png/digits/digit_3@3x.png"
+      }
+    },
+    {
+      "id": "digit_4",
+      "group": "digits",
+      "kind": "vector",
+      "logicalSize": [
+        64,
+        80
+      ],
+      "source": "vector/digits/digit_4.svg",
+      "capInsets": null,
+      "note": "Optional separate glyph. Prefer live accessible system text in app.",
+      "files": {
+        "1": "png/digits/digit_4.png",
+        "2": "png/digits/digit_4@2x.png",
+        "3": "png/digits/digit_4@3x.png"
+      }
+    },
+    {
+      "id": "digit_5",
+      "group": "digits",
+      "kind": "vector",
+      "logicalSize": [
+        64,
+        80
+      ],
+      "source": "vector/digits/digit_5.svg",
+      "capInsets": null,
+      "note": "Optional separate glyph. Prefer live accessible system text in app.",
+      "files": {
+        "1": "png/digits/digit_5.png",
+        "2": "png/digits/digit_5@2x.png",
+        "3": "png/digits/digit_5@3x.png"
+      }
+    },
+    {
+      "id": "digit_6",
+      "group": "digits",
+      "kind": "vector",
+      "logicalSize": [
+        64,
+        80
+      ],
+      "source": "vector/digits/digit_6.svg",
+      "capInsets": null,
+      "note": "Optional separate glyph. Prefer live accessible system text in app.",
+      "files": {
+        "1": "png/digits/digit_6.png",
+        "2": "png/digits/digit_6@2x.png",
+        "3": "png/digits/digit_6@3x.png"
+      }
+    },
+    {
+      "id": "digit_7",
+      "group": "digits",
+      "kind": "vector",
+      "logicalSize": [
+        64,
+        80
+      ],
+      "source": "vector/digits/digit_7.svg",
+      "capInsets": null,
+      "note": "Optional separate glyph. Prefer live accessible system text in app.",
+      "files": {
+        "1": "png/digits/digit_7.png",
+        "2": "png/digits/digit_7@2x.png",
+        "3": "png/digits/digit_7@3x.png"
+      }
+    },
+    {
+      "id": "digit_8",
+      "group": "digits",
+      "kind": "vector",
+      "logicalSize": [
+        64,
+        80
+      ],
+      "source": "vector/digits/digit_8.svg",
+      "capInsets": null,
+      "note": "Optional separate glyph. Prefer live accessible system text in app.",
+      "files": {
+        "1": "png/digits/digit_8.png",
+        "2": "png/digits/digit_8@2x.png",
+        "3": "png/digits/digit_8@3x.png"
+      }
+    },
+    {
+      "id": "digit_9",
+      "group": "digits",
+      "kind": "vector",
+      "logicalSize": [
+        64,
+        80
+      ],
+      "source": "vector/digits/digit_9.svg",
+      "capInsets": null,
+      "note": "Optional separate glyph. Prefer live accessible system text in app.",
+      "files": {
+        "1": "png/digits/digit_9.png",
+        "2": "png/digits/digit_9@2x.png",
+        "3": "png/digits/digit_9@3x.png"
+      }
+    },
+    {
+      "id": "graph_surface",
+      "group": "gameplay",
+      "kind": "vector",
+      "logicalSize": [
+        512,
+        320
+      ],
+      "source": "vector/gameplay/graph_surface.svg",
+      "capInsets": [
+        26,
+        26,
+        26,
+        26
+      ],
+      "note": "Blank surface only. App renders accurate axes, grids, labels and data.",
+      "files": {
+        "1": "png/gameplay/graph_surface.png",
+        "2": "png/gameplay/graph_surface@2x.png",
+        "3": "png/gameplay/graph_surface@3x.png"
+      }
+    },
+    {
+      "id": "number_line_track",
+      "group": "gameplay",
+      "kind": "vector",
+      "logicalSize": [
+        512,
+        32
+      ],
+      "source": "vector/gameplay/number_line_track.svg",
+      "capInsets": null,
+      "note": "Add ticks and values from educational data.",
+      "files": {
+        "1": "png/gameplay/number_line_track.png",
+        "2": "png/gameplay/number_line_track@2x.png",
+        "3": "png/gameplay/number_line_track@3x.png"
+      }
+    },
+    {
+      "id": "number_line_marker",
+      "group": "gameplay",
+      "kind": "vector",
+      "logicalSize": [
+        48,
+        64
+      ],
+      "source": "vector/gameplay/number_line_marker.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/gameplay/number_line_marker.png",
+        "2": "png/gameplay/number_line_marker@2x.png",
+        "3": "png/gameplay/number_line_marker@3x.png"
+      }
+    },
+    {
+      "id": "breathing_ring",
+      "group": "effects",
+      "kind": "vector",
+      "logicalSize": [
+        256,
+        256
+      ],
+      "source": "vector/effects/breathing_ring.svg",
+      "capInsets": null,
+      "note": "Scale gently with user-selected breathing rhythm; respect reduce motion.",
+      "files": {
+        "1": "png/effects/breathing_ring.png",
+        "2": "png/effects/breathing_ring@2x.png",
+        "3": "png/effects/breathing_ring@3x.png"
+      }
+    },
+    {
+      "id": "focus_ring",
+      "group": "effects",
+      "kind": "vector",
+      "logicalSize": [
+        128,
+        128
+      ],
+      "source": "vector/effects/focus_ring.svg",
+      "capInsets": null,
+      "note": "",
+      "files": {
+        "1": "png/effects/focus_ring.png",
+        "2": "png/effects/focus_ring@2x.png",
+        "3": "png/effects/focus_ring@3x.png"
+      }
+    },
+    {
+      "id": "bg_acropolis_landscape",
+      "group": "backgrounds",
+      "kind": "raster-generated",
+      "logicalSize": [
+        558,
+        314
+      ],
+      "nativeMasterSize": [
+        1672,
+        941
+      ],
+      "source": "masters/bg_acropolis_landscape.png",
+      "transparent": true,
+      "files": {
+        "1": "png/backgrounds/bg_acropolis_landscape.png",
+        "2": "png/backgrounds/bg_acropolis_landscape@2x.png",
+        "3": "png/backgrounds/bg_acropolis_landscape@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "bg_acropolis_portrait",
+      "group": "backgrounds",
+      "kind": "raster-generated",
+      "logicalSize": [
+        284,
+        616
+      ],
+      "nativeMasterSize": [
+        852,
+        1846
+      ],
+      "source": "masters/bg_acropolis_portrait.png",
+      "transparent": true,
+      "files": {
+        "1": "png/backgrounds/bg_acropolis_portrait.png",
+        "2": "png/backgrounds/bg_acropolis_portrait@2x.png",
+        "3": "png/backgrounds/bg_acropolis_portrait@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "bg_bloom_portrait",
+      "group": "backgrounds",
+      "kind": "raster-generated",
+      "logicalSize": [
+        284,
+        616
+      ],
+      "nativeMasterSize": [
+        852,
+        1846
+      ],
+      "source": "masters/bg_bloom_portrait.png",
+      "transparent": true,
+      "files": {
+        "1": "png/backgrounds/bg_bloom_portrait.png",
+        "2": "png/backgrounds/bg_bloom_portrait@2x.png",
+        "3": "png/backgrounds/bg_bloom_portrait@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "bg_launch_portrait",
+      "group": "backgrounds",
+      "kind": "raster-generated",
+      "logicalSize": [
+        284,
+        616
+      ],
+      "nativeMasterSize": [
+        852,
+        1846
+      ],
+      "source": "masters/bg_launch_portrait.png",
+      "transparent": true,
+      "files": {
+        "1": "png/backgrounds/bg_launch_portrait.png",
+        "2": "png/backgrounds/bg_launch_portrait@2x.png",
+        "3": "png/backgrounds/bg_launch_portrait@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "bg_ocean_map_portrait",
+      "group": "backgrounds",
+      "kind": "raster-generated",
+      "logicalSize": [
+        284,
+        616
+      ],
+      "nativeMasterSize": [
+        852,
+        1846
+      ],
+      "source": "masters/bg_ocean_map_portrait.png",
+      "transparent": true,
+      "files": {
+        "1": "png/backgrounds/bg_ocean_map_portrait.png",
+        "2": "png/backgrounds/bg_ocean_map_portrait@2x.png",
+        "3": "png/backgrounds/bg_ocean_map_portrait@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "bg_pond_landscape",
+      "group": "backgrounds",
+      "kind": "raster-generated",
+      "logicalSize": [
+        558,
+        314
+      ],
+      "nativeMasterSize": [
+        1672,
+        941
+      ],
+      "source": "masters/bg_pond_landscape.png",
+      "transparent": true,
+      "files": {
+        "1": "png/backgrounds/bg_pond_landscape.png",
+        "2": "png/backgrounds/bg_pond_landscape@2x.png",
+        "3": "png/backgrounds/bg_pond_landscape@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "bg_potion_forest",
+      "group": "backgrounds",
+      "kind": "raster-generated",
+      "logicalSize": [
+        558,
+        314
+      ],
+      "nativeMasterSize": [
+        1672,
+        941
+      ],
+      "source": "masters/bg_potion_forest.png",
+      "transparent": true,
+      "files": {
+        "1": "png/backgrounds/bg_potion_forest.png",
+        "2": "png/backgrounds/bg_potion_forest@2x.png",
+        "3": "png/backgrounds/bg_potion_forest@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "bg_race_landscape",
+      "group": "backgrounds",
+      "kind": "raster-generated",
+      "logicalSize": [
+        558,
+        314
+      ],
+      "nativeMasterSize": [
+        1672,
+        940
+      ],
+      "source": "masters/bg_race_landscape.png",
+      "transparent": true,
+      "files": {
+        "1": "png/backgrounds/bg_race_landscape.png",
+        "2": "png/backgrounds/bg_race_landscape@2x.png",
+        "3": "png/backgrounds/bg_race_landscape@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "bg_takeout_tavern",
+      "group": "backgrounds",
+      "kind": "raster-generated",
+      "logicalSize": [
+        558,
+        314
+      ],
+      "nativeMasterSize": [
+        1672,
+        941
+      ],
+      "source": "masters/bg_takeout_tavern.png",
+      "transparent": true,
+      "files": {
+        "1": "png/backgrounds/bg_takeout_tavern.png",
+        "2": "png/backgrounds/bg_takeout_tavern@2x.png",
+        "3": "png/backgrounds/bg_takeout_tavern@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "enemy_zombie",
+      "group": "characters",
+      "kind": "raster-generated",
+      "logicalSize": [
+        365,
+        452
+      ],
+      "nativeMasterSize": [
+        1160,
+        1355
+      ],
+      "source": "masters/enemy_zombie.png",
+      "transparent": true,
+      "files": {
+        "1": "png/characters/enemy_zombie.png",
+        "2": "png/characters/enemy_zombie@2x.png",
+        "3": "png/characters/enemy_zombie@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "food_chicken",
+      "group": "food",
+      "kind": "raster-generated",
+      "logicalSize": [
+        499,
+        286
+      ],
+      "nativeMasterSize": [
+        1536,
+        1024
+      ],
+      "source": "masters/food_chicken.png",
+      "transparent": true,
+      "files": {
+        "1": "png/food/food_chicken.png",
+        "2": "png/food/food_chicken@2x.png",
+        "3": "png/food/food_chicken@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "food_cookie",
+      "group": "food",
+      "kind": "raster-generated",
+      "logicalSize": [
+        421,
+        398
+      ],
+      "nativeMasterSize": [
+        1284,
+        1225
+      ],
+      "source": "masters/food_cookie.png",
+      "transparent": true,
+      "files": {
+        "1": "png/food/food_cookie.png",
+        "2": "png/food/food_cookie@2x.png",
+        "3": "png/food/food_cookie@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "food_cupcake",
+      "group": "food",
+      "kind": "raster-generated",
+      "logicalSize": [
+        346,
+        395
+      ],
+      "nativeMasterSize": [
+        1312,
+        1199
+      ],
+      "source": "masters/food_cupcake.png",
+      "transparent": true,
+      "files": {
+        "1": "png/food/food_cupcake.png",
+        "2": "png/food/food_cupcake@2x.png",
+        "3": "png/food/food_cupcake@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "food_juice",
+      "group": "food",
+      "kind": "raster-generated",
+      "logicalSize": [
+        288,
+        359
+      ],
+      "nativeMasterSize": [
+        1266,
+        1242
+      ],
+      "source": "masters/food_juice.png",
+      "transparent": true,
+      "files": {
+        "1": "png/food/food_juice.png",
+        "2": "png/food/food_juice@2x.png",
+        "3": "png/food/food_juice@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "guest_crystal",
+      "group": "characters",
+      "kind": "raster-generated",
+      "logicalSize": [
+        409,
+        431
+      ],
+      "nativeMasterSize": [
+        1222,
+        1287
+      ],
+      "source": "masters/guest_crystal.png",
+      "transparent": true,
+      "files": {
+        "1": "png/characters/guest_crystal.png",
+        "2": "png/characters/guest_crystal@2x.png",
+        "3": "png/characters/guest_crystal@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "guest_leaf",
+      "group": "characters",
+      "kind": "raster-generated",
+      "logicalSize": [
+        405,
+        417
+      ],
+      "nativeMasterSize": [
+        1224,
+        1285
+      ],
+      "source": "masters/guest_leaf.png",
+      "transparent": true,
+      "files": {
+        "1": "png/characters/guest_leaf.png",
+        "2": "png/characters/guest_leaf@2x.png",
+        "3": "png/characters/guest_leaf@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "guest_purple",
+      "group": "characters",
+      "kind": "raster-generated",
+      "logicalSize": [
+        410,
+        414
+      ],
+      "nativeMasterSize": [
+        1246,
+        1262
+      ],
+      "source": "masters/guest_purple.png",
+      "transparent": true,
+      "files": {
+        "1": "png/characters/guest_purple.png",
+        "2": "png/characters/guest_purple@2x.png",
+        "3": "png/characters/guest_purple@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "hero_bran_idle",
+      "group": "heroes",
+      "kind": "raster-generated",
+      "logicalSize": [
+        323,
+        504
+      ],
+      "nativeMasterSize": [
+        1024,
+        1536
+      ],
+      "source": "masters/hero_bran_idle.png",
+      "transparent": true,
+      "files": {
+        "1": "png/heroes/hero_bran_idle.png",
+        "2": "png/heroes/hero_bran_idle@2x.png",
+        "3": "png/heroes/hero_bran_idle@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "hero_bran_portrait",
+      "group": "portraits",
+      "kind": "raster-derived",
+      "logicalSize": [
+        219,
+        244
+      ],
+      "nativeMasterSize": [
+        956,
+        720
+      ],
+      "source": "masters/hero_bran_idle.png",
+      "transparent": true,
+      "files": {
+        "1": "png/portraits/hero_bran_portrait.png",
+        "2": "png/portraits/hero_bran_portrait@2x.png",
+        "3": "png/portraits/hero_bran_portrait@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "hero_dragon_chef",
+      "group": "heroes",
+      "kind": "raster-generated",
+      "logicalSize": [
+        333,
+        469
+      ],
+      "nativeMasterSize": [
+        1024,
+        1536
+      ],
+      "source": "masters/hero_dragon_chef.png",
+      "transparent": true,
+      "files": {
+        "1": "png/heroes/hero_dragon_chef.png",
+        "2": "png/heroes/hero_dragon_chef@2x.png",
+        "3": "png/heroes/hero_dragon_chef@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "hero_dragon_chef_portrait",
+      "group": "portraits",
+      "kind": "raster-derived",
+      "logicalSize": [
+        308,
+        227
+      ],
+      "nativeMasterSize": [
+        986,
+        668
+      ],
+      "source": "masters/hero_dragon_chef.png",
+      "transparent": true,
+      "files": {
+        "1": "png/portraits/hero_dragon_chef_portrait.png",
+        "2": "png/portraits/hero_dragon_chef_portrait@2x.png",
+        "3": "png/portraits/hero_dragon_chef_portrait@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "hero_mage_idle",
+      "group": "heroes",
+      "kind": "raster-generated",
+      "logicalSize": [
+        327,
+        491
+      ],
+      "nativeMasterSize": [
+        1024,
+        1536
+      ],
+      "source": "masters/hero_mage_idle.png",
+      "transparent": true,
+      "files": {
+        "1": "png/heroes/hero_mage_idle.png",
+        "2": "png/heroes/hero_mage_idle@2x.png",
+        "3": "png/heroes/hero_mage_idle@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "hero_mage_portrait",
+      "group": "portraits",
+      "kind": "raster-derived",
+      "logicalSize": [
+        324,
+        238
+      ],
+      "nativeMasterSize": [
+        967,
+        701
+      ],
+      "source": "masters/hero_mage_idle.png",
+      "transparent": true,
+      "files": {
+        "1": "png/portraits/hero_mage_portrait.png",
+        "2": "png/portraits/hero_mage_portrait@2x.png",
+        "3": "png/portraits/hero_mage_portrait@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "hero_rhino_idle",
+      "group": "heroes",
+      "kind": "raster-generated",
+      "logicalSize": [
+        406,
+        409
+      ],
+      "nativeMasterSize": [
+        1254,
+        1254
+      ],
+      "source": "masters/hero_rhino_idle.png",
+      "transparent": true,
+      "files": {
+        "1": "png/heroes/hero_rhino_idle.png",
+        "2": "png/heroes/hero_rhino_idle@2x.png",
+        "3": "png/heroes/hero_rhino_idle@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "hero_rhino_portrait",
+      "group": "portraits",
+      "kind": "raster-derived",
+      "logicalSize": [
+        260,
+        198
+      ],
+      "nativeMasterSize": [
+        1206,
+        582
+      ],
+      "source": "masters/hero_rhino_idle.png",
+      "transparent": true,
+      "files": {
+        "1": "png/portraits/hero_rhino_portrait.png",
+        "2": "png/portraits/hero_rhino_portrait@2x.png",
+        "3": "png/portraits/hero_rhino_portrait@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "island_arithmetic_acropolis",
+      "group": "map",
+      "kind": "raster-generated",
+      "logicalSize": [
+        403,
+        434
+      ],
+      "nativeMasterSize": [
+        1214,
+        1296
+      ],
+      "source": "masters/island_arithmetic_acropolis.png",
+      "transparent": true,
+      "files": {
+        "1": "png/map/island_arithmetic_acropolis.png",
+        "2": "png/map/island_arithmetic_acropolis@2x.png",
+        "3": "png/map/island_arithmetic_acropolis@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "island_data_desert",
+      "group": "map",
+      "kind": "raster-generated",
+      "logicalSize": [
+        457,
+        376
+      ],
+      "nativeMasterSize": [
+        1381,
+        1139
+      ],
+      "source": "masters/island_data_desert.png",
+      "transparent": true,
+      "files": {
+        "1": "png/map/island_data_desert.png",
+        "2": "png/map/island_data_desert@2x.png",
+        "3": "png/map/island_data_desert@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "island_fraction_forest",
+      "group": "map",
+      "kind": "raster-generated",
+      "logicalSize": [
+        401,
+        419
+      ],
+      "nativeMasterSize": [
+        1234,
+        1275
+      ],
+      "source": "masters/island_fraction_forest.png",
+      "transparent": true,
+      "files": {
+        "1": "png/map/island_fraction_forest.png",
+        "2": "png/map/island_fraction_forest@2x.png",
+        "3": "png/map/island_fraction_forest@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "island_geometry_glacier",
+      "group": "map",
+      "kind": "raster-generated",
+      "logicalSize": [
+        434,
+        398
+      ],
+      "nativeMasterSize": [
+        1312,
+        1199
+      ],
+      "source": "masters/island_geometry_glacier.png",
+      "transparent": true,
+      "files": {
+        "1": "png/map/island_geometry_glacier.png",
+        "2": "png/map/island_geometry_glacier@2x.png",
+        "3": "png/map/island_geometry_glacier@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "island_ratio_rapids",
+      "group": "map",
+      "kind": "raster-generated",
+      "logicalSize": [
+        418,
+        422
+      ],
+      "nativeMasterSize": [
+        1241,
+        1268
+      ],
+      "source": "masters/island_ratio_rapids.png",
+      "transparent": true,
+      "files": {
+        "1": "png/map/island_ratio_rapids.png",
+        "2": "png/map/island_ratio_rapids@2x.png",
+        "3": "png/map/island_ratio_rapids@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "logo_matharia",
+      "group": "branding",
+      "kind": "raster-generated",
+      "logicalSize": [
+        596,
+        300
+      ],
+      "nativeMasterSize": [
+        1774,
+        887
+      ],
+      "source": "masters/logo_matharia.png",
+      "transparent": true,
+      "files": {
+        "1": "png/branding/logo_matharia.png",
+        "2": "png/branding/logo_matharia@2x.png",
+        "3": "png/branding/logo_matharia@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "prop_bottle_clarity",
+      "group": "props",
+      "kind": "raster-generated",
+      "logicalSize": [
+        314,
+        428
+      ],
+      "nativeMasterSize": [
+        1159,
+        1358
+      ],
+      "source": "masters/prop_bottle_clarity.png",
+      "transparent": true,
+      "files": {
+        "1": "png/props/prop_bottle_clarity.png",
+        "2": "png/props/prop_bottle_clarity@2x.png",
+        "3": "png/props/prop_bottle_clarity@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "prop_bottle_oak",
+      "group": "props",
+      "kind": "raster-generated",
+      "logicalSize": [
+        307,
+        399
+      ],
+      "nativeMasterSize": [
+        1234,
+        1274
+      ],
+      "source": "masters/prop_bottle_oak.png",
+      "transparent": true,
+      "files": {
+        "1": "png/props/prop_bottle_oak.png",
+        "2": "png/props/prop_bottle_oak@2x.png",
+        "3": "png/props/prop_bottle_oak@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "prop_breath_bloom",
+      "group": "props",
+      "kind": "raster-generated",
+      "logicalSize": [
+        478,
+        365
+      ],
+      "nativeMasterSize": [
+        1429,
+        1101
+      ],
+      "source": "masters/prop_breath_bloom.png",
+      "transparent": true,
+      "files": {
+        "1": "png/props/prop_breath_bloom.png",
+        "2": "png/props/prop_breath_bloom@2x.png",
+        "3": "png/props/prop_breath_bloom@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "prop_cauldron",
+      "group": "props",
+      "kind": "raster-generated",
+      "logicalSize": [
+        444,
+        357
+      ],
+      "nativeMasterSize": [
+        1374,
+        1145
+      ],
+      "source": "masters/prop_cauldron.png",
+      "transparent": true,
+      "files": {
+        "1": "png/props/prop_cauldron.png",
+        "2": "png/props/prop_cauldron@2x.png",
+        "3": "png/props/prop_cauldron@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "prop_crate",
+      "group": "props",
+      "kind": "raster-generated",
+      "logicalSize": [
+        381,
+        378
+      ],
+      "nativeMasterSize": [
+        1254,
+        1254
+      ],
+      "source": "masters/prop_crate.png",
+      "transparent": true,
+      "files": {
+        "1": "png/props/prop_crate.png",
+        "2": "png/props/prop_crate@2x.png",
+        "3": "png/props/prop_crate@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "prop_launch_rocket",
+      "group": "props",
+      "kind": "raster-generated",
+      "logicalSize": [
+        331,
+        500
+      ],
+      "nativeMasterSize": [
+        1024,
+        1536
+      ],
+      "source": "masters/prop_launch_rocket.png",
+      "transparent": true,
+      "files": {
+        "1": "png/props/prop_launch_rocket.png",
+        "2": "png/props/prop_launch_rocket@2x.png",
+        "3": "png/props/prop_launch_rocket@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "prop_lily_pad",
+      "group": "props",
+      "kind": "raster-generated",
+      "logicalSize": [
+        415,
+        388
+      ],
+      "nativeMasterSize": [
+        1278,
+        1230
+      ],
+      "source": "masters/prop_lily_pad.png",
+      "transparent": true,
+      "files": {
+        "1": "png/props/prop_lily_pad.png",
+        "2": "png/props/prop_lily_pad@2x.png",
+        "3": "png/props/prop_lily_pad@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "prop_mean_machine",
+      "group": "props",
+      "kind": "raster-generated",
+      "logicalSize": [
+        490,
+        321
+      ],
+      "nativeMasterSize": [
+        1536,
+        1024
+      ],
+      "source": "masters/prop_mean_machine.png",
+      "transparent": true,
+      "files": {
+        "1": "png/props/prop_mean_machine.png",
+        "2": "png/props/prop_mean_machine@2x.png",
+        "3": "png/props/prop_mean_machine@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "prop_mix_tank",
+      "group": "props",
+      "kind": "raster-generated",
+      "logicalSize": [
+        316,
+        491
+      ],
+      "nativeMasterSize": [
+        1024,
+        1536
+      ],
+      "source": "masters/prop_mix_tank.png",
+      "transparent": true,
+      "files": {
+        "1": "png/props/prop_mix_tank.png",
+        "2": "png/props/prop_mix_tank@2x.png",
+        "3": "png/props/prop_mix_tank@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "prop_plate",
+      "group": "props",
+      "kind": "raster-generated",
+      "logicalSize": [
+        497,
+        310
+      ],
+      "nativeMasterSize": [
+        1536,
+        1024
+      ],
+      "source": "masters/prop_plate.png",
+      "transparent": true,
+      "files": {
+        "1": "png/props/prop_plate.png",
+        "2": "png/props/prop_plate@2x.png",
+        "3": "png/props/prop_plate@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "prop_race_kart",
+      "group": "props",
+      "kind": "raster-generated",
+      "logicalSize": [
+        496,
+        269
+      ],
+      "nativeMasterSize": [
+        1536,
+        1024
+      ],
+      "source": "masters/prop_race_kart.png",
+      "transparent": true,
+      "files": {
+        "1": "png/props/prop_race_kart.png",
+        "2": "png/props/prop_race_kart@2x.png",
+        "3": "png/props/prop_race_kart@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "prop_stone_bridge",
+      "group": "props",
+      "kind": "raster-generated",
+      "logicalSize": [
+        723,
+        233
+      ],
+      "nativeMasterSize": [
+        2172,
+        724
+      ],
+      "source": "masters/prop_stone_bridge.png",
+      "transparent": true,
+      "files": {
+        "1": "png/props/prop_stone_bridge.png",
+        "2": "png/props/prop_stone_bridge@2x.png",
+        "3": "png/props/prop_stone_bridge@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "prop_takeout_tray",
+      "group": "props",
+      "kind": "raster-generated",
+      "logicalSize": [
+        627,
+        195
+      ],
+      "nativeMasterSize": [
+        1928,
+        815
+      ],
+      "source": "masters/prop_takeout_tray.png",
+      "transparent": true,
+      "files": {
+        "1": "png/props/prop_takeout_tray.png",
+        "2": "png/props/prop_takeout_tray@2x.png",
+        "3": "png/props/prop_takeout_tray@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "skin_gold_button",
+      "group": "illustrated_ui",
+      "kind": "raster-generated",
+      "logicalSize": [
+        692,
+        154
+      ],
+      "nativeMasterSize": [
+        2098,
+        749
+      ],
+      "source": "masters/skin_gold_button.png",
+      "transparent": true,
+      "files": {
+        "1": "png/illustrated_ui/skin_gold_button.png",
+        "2": "png/illustrated_ui/skin_gold_button@2x.png",
+        "3": "png/illustrated_ui/skin_gold_button@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio. Candidate cap insets are in logical pixels; verify at final size.",
+      "capInsets": [
+        34,
+        83,
+        34,
+        83
+      ]
+    },
+    {
+      "id": "skin_hud_shell",
+      "group": "illustrated_ui",
+      "kind": "raster-generated",
+      "logicalSize": [
+        732,
+        114
+      ],
+      "nativeMasterSize": [
+        2185,
+        720
+      ],
+      "source": "masters/skin_hud_shell.png",
+      "transparent": true,
+      "files": {
+        "1": "png/illustrated_ui/skin_hud_shell.png",
+        "2": "png/illustrated_ui/skin_hud_shell@2x.png",
+        "3": "png/illustrated_ui/skin_hud_shell@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio. Candidate cap insets are in logical pixels; verify at final size.",
+      "capInsets": [
+        25,
+        88,
+        25,
+        88
+      ]
+    },
+    {
+      "id": "skin_panel",
+      "group": "illustrated_ui",
+      "kind": "raster-generated",
+      "logicalSize": [
+        508,
+        214
+      ],
+      "nativeMasterSize": [
+        1536,
+        1024
+      ],
+      "source": "masters/skin_panel.png",
+      "transparent": true,
+      "files": {
+        "1": "png/illustrated_ui/skin_panel.png",
+        "2": "png/illustrated_ui/skin_panel@2x.png",
+        "3": "png/illustrated_ui/skin_panel@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio. Candidate cap insets are in logical pixels; verify at final size.",
+      "capInsets": [
+        47,
+        61,
+        47,
+        61
+      ]
+    },
+    {
+      "id": "skin_rune_socket",
+      "group": "illustrated_ui",
+      "kind": "raster-generated",
+      "logicalSize": [
+        380,
+        358
+      ],
+      "nativeMasterSize": [
+        1254,
+        1254
+      ],
+      "source": "masters/skin_rune_socket.png",
+      "transparent": true,
+      "files": {
+        "1": "png/illustrated_ui/skin_rune_socket.png",
+        "2": "png/illustrated_ui/skin_rune_socket@2x.png",
+        "3": "png/illustrated_ui/skin_rune_socket@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio. Candidate cap insets are in logical pixels; verify at final size.",
+      "capInsets": [
+        79,
+        46,
+        79,
+        46
+      ]
+    },
+    {
+      "id": "rocket_reveal_segment_01",
+      "group": "rocket_segments",
+      "kind": "raster-derived",
+      "logicalSize": [
+        342,
+        73
+      ],
+      "nativeMasterSize": [
+        1024,
+        219
+      ],
+      "source": "masters/prop_launch_rocket.png",
+      "transparent": true,
+      "files": {
+        "1": "png/rocket_segments/rocket_reveal_segment_01.png",
+        "2": "png/rocket_segments/rocket_reveal_segment_01@2x.png",
+        "3": "png/rocket_segments/rocket_reveal_segment_01@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "rocket_reveal_segment_02",
+      "group": "rocket_segments",
+      "kind": "raster-derived",
+      "logicalSize": [
+        342,
+        73
+      ],
+      "nativeMasterSize": [
+        1024,
+        219
+      ],
+      "source": "masters/prop_launch_rocket.png",
+      "transparent": true,
+      "files": {
+        "1": "png/rocket_segments/rocket_reveal_segment_02.png",
+        "2": "png/rocket_segments/rocket_reveal_segment_02@2x.png",
+        "3": "png/rocket_segments/rocket_reveal_segment_02@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "rocket_reveal_segment_03",
+      "group": "rocket_segments",
+      "kind": "raster-derived",
+      "logicalSize": [
+        342,
+        74
+      ],
+      "nativeMasterSize": [
+        1024,
+        220
+      ],
+      "source": "masters/prop_launch_rocket.png",
+      "transparent": true,
+      "files": {
+        "1": "png/rocket_segments/rocket_reveal_segment_03.png",
+        "2": "png/rocket_segments/rocket_reveal_segment_03@2x.png",
+        "3": "png/rocket_segments/rocket_reveal_segment_03@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "rocket_reveal_segment_04",
+      "group": "rocket_segments",
+      "kind": "raster-derived",
+      "logicalSize": [
+        342,
+        73
+      ],
+      "nativeMasterSize": [
+        1024,
+        219
+      ],
+      "source": "masters/prop_launch_rocket.png",
+      "transparent": true,
+      "files": {
+        "1": "png/rocket_segments/rocket_reveal_segment_04.png",
+        "2": "png/rocket_segments/rocket_reveal_segment_04@2x.png",
+        "3": "png/rocket_segments/rocket_reveal_segment_04@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "rocket_reveal_segment_05",
+      "group": "rocket_segments",
+      "kind": "raster-derived",
+      "logicalSize": [
+        342,
+        74
+      ],
+      "nativeMasterSize": [
+        1024,
+        220
+      ],
+      "source": "masters/prop_launch_rocket.png",
+      "transparent": true,
+      "files": {
+        "1": "png/rocket_segments/rocket_reveal_segment_05.png",
+        "2": "png/rocket_segments/rocket_reveal_segment_05@2x.png",
+        "3": "png/rocket_segments/rocket_reveal_segment_05@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "rocket_reveal_segment_06",
+      "group": "rocket_segments",
+      "kind": "raster-derived",
+      "logicalSize": [
+        342,
+        73
+      ],
+      "nativeMasterSize": [
+        1024,
+        219
+      ],
+      "source": "masters/prop_launch_rocket.png",
+      "transparent": true,
+      "files": {
+        "1": "png/rocket_segments/rocket_reveal_segment_06.png",
+        "2": "png/rocket_segments/rocket_reveal_segment_06@2x.png",
+        "3": "png/rocket_segments/rocket_reveal_segment_06@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "rocket_reveal_segment_07",
+      "group": "rocket_segments",
+      "kind": "raster-derived",
+      "logicalSize": [
+        342,
+        74
+      ],
+      "nativeMasterSize": [
+        1024,
+        220
+      ],
+      "source": "masters/prop_launch_rocket.png",
+      "transparent": true,
+      "files": {
+        "1": "png/rocket_segments/rocket_reveal_segment_07.png",
+        "2": "png/rocket_segments/rocket_reveal_segment_07@2x.png",
+        "3": "png/rocket_segments/rocket_reveal_segment_07@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    },
+    {
+      "id": "prop_hero_plinth",
+      "group": "props",
+      "kind": "raster-generated",
+      "logicalSize": [
+        659,
+        106
+      ],
+      "nativeMasterSize": [
+        1983,
+        793
+      ],
+      "source": "masters/prop_hero_plinth.png",
+      "transparent": true,
+      "files": {
+        "1": "png/props/prop_hero_plinth.png",
+        "2": "png/props/prop_hero_plinth@2x.png",
+        "3": "png/props/prop_hero_plinth@3x.png"
+      },
+      "note": "Raster densities are downsampled from the master; content is not upscaled. Preserve aspect ratio."
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+/* A single scene coordinate system: live marks sit on an independent ruler bridge. */
+html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='number_line_ninja'] {
+ --concept-plane:calc(100vw - var(--concept-safe-left) - var(--concept-safe-right));
+ /* 1844x853 centre-cover scenery: terrace contact is at source y=78%.
+    SceneActor's mesh and fallback both put the feet at 95% of their square. */
+ --ninja-ground-y:calc(50dvh + max(100dvh,calc(100vw * 853 / 1844)) * .28 - var(--concept-safe-top));
+ --ninja-bridge-aspect:4.6;
+ --ninja-bridge-height:calc(var(--concept-plane) * .728 / var(--ninja-bridge-aspect));
+ --ninja-rail-height:calc(var(--concept-plane) * .728 * 170 / 1800);
+ --ninja-answer-size-base:clamp(48px,calc(var(--concept-plane) * .075),72px);
+ --ninja-answer-size:var(--ninja-answer-size-base);
+ &:has(.ninja-answer[data-long]) {--ninja-answer-size:max(64px,var(--ninja-answer-size-base));}
+ .ninja-scene {position:absolute;inset:0;width:100%;height:100%;}
+ .concept-question-zone {left:16%;top:14.5%;width:71.5%;height:17.7%;}
+ .scalable-question-copy {padding:8px 3.5%;display:flex;flex-direction:column;justify-content:center;gap:3px;}
+ [data-question-copy] {font-size:clamp(14px,3.65cqw,42px);line-height:1.15;font-weight:650;}
+ .ninja-question-primary {display:block;}
+ .ninja-question-secondary {display:block;font-size:clamp(14px,2.45cqw,29px);}
+ .question-jewel {width:clamp(30px,5vw,70px);}
+ .ninja-guide {position:absolute;left:-4%;top:var(--ninja-ground-y);translate:0 -95%;width:30%;aspect-ratio:1;pointer-events:none;}
+ .ninja-guide>.vision-character {width:100%;height:100%;}
+ .ninja-ruler {position:absolute;left:20.5%;top:var(--ninja-ground-y);translate:0 -100%;width:72.8%;height:var(--ninja-bridge-height);pointer-events:none;}
+ .ninja-rail-face {position:absolute;left:0;top:0;width:100%;aspect-ratio:1800/170;z-index:1;}
+ .ninja-bridge-rail {position:absolute;inset:0;width:100%;height:100%;object-fit:contain;}
+ .ninja-bridge-pillar {position:absolute;top:calc(var(--ninja-rail-height) * .7);height:calc(100% - var(--ninja-rail-height) * .7);width:auto;object-fit:contain;}
+ .ninja-bridge-pillar--left {left:1.4%;}
+ .ninja-bridge-pillar--right {right:1.4%;}
+ /* Pegs dock to the pale measuring strip; labels centre on the carved apron. */
+ .ninja-marks {position:absolute;left:9%;right:9%;top:31%;height:0;z-index:2;}
+ .ninja-marks::before {content:'';position:absolute;left:0;right:0;top:0;translate:0 -50%;height:clamp(4px,calc(var(--ninja-rail-height) * .11),8px);border:1px solid #ffe9a3;border-radius:8px;background:#075d76;box-shadow:0 1px 3px #001e2e;}
+ .ninja-mark {position:absolute;top:0;width:0;height:0;}
+ .ninja-tick {display:block;position:absolute;left:0;bottom:0;translate:-50% 0;width:1.65cqw;min-width:8px;height:clamp(25px,calc(var(--ninja-rail-height) * .75),48px);overflow:visible;filter:drop-shadow(0 1px 2px #003243);}
+ .ninja-value {position:absolute;isolation:isolate;container-type:inline-size;left:0;top:calc(var(--ninja-rail-height) * .34);translate:-50% -50%;width:max(7cqw,64px);height:clamp(23px,calc(var(--ninja-rail-height) * .48),34px);display:grid;place-items:center;color:#fffbe8;font-size:clamp(14px,1.95cqw,32px);font-weight:650;line-height:1;}
+ .ninja-value>span:not(.artwork-frame) {padding:3px 5px;white-space:nowrap;}
+ .ninja-missing {position:absolute;left:0;top:calc(var(--ninja-rail-height) * .34);translate:-50% -50%;width:clamp(42px,calc(var(--ninja-rail-height) * .82),60px);aspect-ratio:1;display:grid;place-items:center;border-radius:50%;background:#00444b url('../../assets/png/frames/concept_round_rim_v2@2x.webp') center/contain no-repeat;color:#fff0a0;font-size:clamp(26px,calc(var(--ninja-rail-height) * .58),38px);font-weight:750;line-height:1;box-shadow:0 0 12px #ffdf76aa;}
+ .ninja-missing>span {padding:2px;}
+ .ninja-answer-row {position:absolute;left:50%;top:calc(var(--ninja-ground-y) - var(--ninja-bridge-height) + var(--ninja-rail-height) + max(8px,1cqw));translate:-50% 0;width:max-content;height:var(--ninja-answer-size);display:flex;align-items:center;gap:clamp(10px,2.2cqw,22px);}
+ .ninja-answer {position:relative;flex:0 0 var(--ninja-answer-size);display:grid;place-items:center;width:var(--ninja-answer-size);height:var(--ninja-answer-size);min-width:44px;min-height:44px;aspect-ratio:1;padding:0;border:0;background:none;box-shadow:none;color:white;touch-action:manipulation;font-size:clamp(14px,1.95cqw,35px);font-weight:650;line-height:1.1;}
+ .ninja-answer>img {position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;}
+ .ninja-answer>span {position:relative;padding:12%;text-align:center;line-height:1.1;text-shadow:0 2px 2px #002651;}
+ .ninja-answer[data-long] {font-size:clamp(14px,1.7cqw,30px);}
+ .ninja-answer[data-answer-state='correct'] {filter:drop-shadow(0 0 7px #a1ffba);}
+ .ninja-answer[data-answer-state='incorrect'] {filter:drop-shadow(0 0 7px #ffad78);}
+ .ninja-answer:not(:disabled):active {scale:.96;filter:brightness(1.15);}
+ .ninja-answer:focus-visible {outline:3px solid #fff0b3;outline-offset:3px;border-radius:50%;}
+ .ninja-feedback {position:absolute;left:20%;top:33%;width:78%;padding:4px 8px;border:2px solid #ecc16a;border-radius:12px;background:#164e3c;color:#e2ffe6;font-size:clamp(14px,1.8cqw,26px);font-weight:650;line-height:1.15;text-align:center;pointer-events:none;display:flex;flex-direction:column;gap:2px;}
+ .ninja-feedback>span {font-size:clamp(14px,1.5cqw,20px);font-weight:450;}
+ .ninja-feedback[data-feedback='incorrect'] {background:#623323;color:#fff0df;}
+ .ninja-flying-answer {position:absolute;left:0;top:0;z-index:30;width:60px;height:60px;display:grid;place-items:center;pointer-events:none;}
+ /* Keep the original 60px flight coordinate box and 580ms timing. */
+ .ninja-flying-answer>img {position:absolute;left:50%;top:50%;translate:-50% -50%;width:var(--ninja-answer-size);height:var(--ninja-answer-size);object-fit:contain;}
+ .ninja-flying-answer>span {position:relative;display:grid;place-items:center;width:var(--ninja-answer-size);height:var(--ninja-answer-size);padding:12%;color:#fff8e2;font-size:clamp(14px,1.95cqw,35px);font-weight:650;text-shadow:0 2px 2px #002651;}
+ [data-unified-minigame-hud]>div:first-of-type:has(.legend-hud-bar) {left:50%;top:1.4%;width:calc(var(--concept-plane)*.49);height:11.5%;padding:0;}
+ .legend-hud-avatar {width:13%;}
+ .legend-hud-title {font-size:clamp(14px,4.7cqw,39px);}
+ .legend-hud-timer {display:none;}
+ .legend-hud-lives .concept-life {width:5.4cqw;height:5.4cqw;}
+ .legend-hud-streak {font-size:clamp(14px,4.6cqw,38px);}
+ .concept-clock-icon {width:5cqw;height:5cqw;}
+ [data-testid='shared-bottom-hud'] {bottom:1%;width:max(244px,calc(var(--concept-plane)*.37));height:12.3%;padding:0;}
+ .legend-dock-button {min-height:44px;font-size:clamp(11px,3.8cqw,24px);gap:2px;}
+ .legend-dock-button>svg {width:clamp(18px,5.7cqw,32px);height:clamp(18px,5.7cqw,32px);}
+ .concept-pause {right:max(1%,var(--concept-safe-right));top:1.5%;width:clamp(44px,6vw,110px);}
+}
+/* Reserve space for a complete 64px long-label row above the short-screen HUD. */
+@media(orientation:landscape) and (max-height:380px){html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='number_line_ninja']{--ninja-bridge-aspect:3.8;}}
+@media(orientation:landscape) and (max-aspect-ratio:1.65){html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='number_line_ninja'] .ninja-guide{width:35%;left:-5%;}}
+@media(prefers-reduced-motion:reduce){html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='number_line_ninja'] .ninja-answer {transition:none;}}

@@ -1,0 +1,5 @@
+{
+  "asset": "frames/concept_nav_portrait_v4",
+  "prompt": "Create ONE blank independent game navigation button asset, matching the five bottom buttons in the supplied approved Prime Pop screen. This is an asset, not a screen mockup. Near-square shape, outer width 160 relative to height 145 (ratio 1.103), with a broad uncluttered deep sapphire/teal enamel face; warm thin polished gold rim, softly clipped rounded/chamfered corners, a small blue sapphire in the top centre and tiny tasteful ivy at the outside corners. Keep the gold border thin so live white icon and label can fit inside the central 70% of the face. Match the material, lighting, craftsmanship and painted premium cartoon game style in the reference exactly. Orthographic front view, symmetrical, optically centred, crisp edges, true transparent background outside the button, tightly framed with only tiny transparent padding. Do not include any icon, text, label, number, glyph, shadow plate, landscape, other buttons or controls.",
+  "source": "exec-e2f244e5-f117-4c05-b6f0-97cd4fc0afa8.png"
+}

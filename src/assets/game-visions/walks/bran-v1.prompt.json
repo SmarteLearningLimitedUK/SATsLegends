@@ -1,0 +1,12 @@
+{
+  "kind": "walks",
+  "key": "bran",
+  "file": "walks/bran-v1.webp",
+  "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-2946fb74-0b15-4d3c-a6ab-09fdbfc7bc03.png",
+  "prompt": "Production animation sprite atlas. Character identity: Friendly red-orange baby dragon hero, golden horns, tiny wings, leather adventurer armour, orange eyes, fire-tipped tail, preserve this selected player identity. Reference1 identifies the character; reference2 is the mandatory premium sculpted3D rendering style. Render as true stylized3D with cinematic soft shading, tangible skin/fur, NO ink outlines, NO flat illustration. Create EIGHT animation frames on a strictly regular FOUR-COLUMN TWO-ROW sheet, overall2:1aspectratio, equal square cells. Genuinely transparent alpha background. A complete seamless walk/run gait cycle moving toward RIGHT but character stays centred in everycell. Fullbodyfixedscale, consistentcamera3quarter sideview, no camera shifts. Frames in reading order: leftcontact, down, passing, up, rightcontact, down, passing, up. Correct alternating legs and arms, heels and toes roll through contact, grounded foot baseline at95percentheight EVERY cell; modest natural bob confinedwithinupperbody. Same costume and face everyframe. No scenery, floor, label, border, UI, grids, shadows outsidecells, extra figures or overlappingframes. World-class3D familyfantasy game animation asset.",
+  "dimensions": [
+    1774,
+    887
+  ],
+  "bytes": 560930
+}

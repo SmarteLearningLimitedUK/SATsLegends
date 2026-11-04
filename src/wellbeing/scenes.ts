@@ -1,5 +1,5 @@
-import breathingBloom from '../assets/wellbeing/scenes/breathing-bloom.webp';
-import peacefulPond from '../assets/wellbeing/scenes/peaceful-pond.webp';
+import breathingBloom from '../assets/wellbeing/matharia/bg_bloom_portrait@2x.png';
+import peacefulPond from '../assets/wellbeing/matharia/bg_pond_landscape@2x.png';
 import lanternCamp from '../assets/wellbeing/scenes/lantern-camp.webp';
 import starPath from '../assets/wellbeing/scenes/star-path.webp';
 import leafDrift from '../assets/wellbeing/scenes/leaf-drift.webp';

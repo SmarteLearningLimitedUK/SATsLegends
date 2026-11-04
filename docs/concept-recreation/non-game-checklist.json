@@ -1,0 +1,314 @@
+{
+  "scope": "Non-game surfaces and associated states",
+  "referencePolicy": "No distinct approved non-game screen image exists in approved-screens.json or the explicitly supplied concept gallery. Preserve existing repository layouts and production artwork while applying the shared sapphire/gold presentation.",
+  "nativeVerification": "Unavailable on this Windows host; browser checks are not native iOS tests.",
+  "screens": [
+    {
+      "id": "world_map",
+      "source": "variants/matharia/src/WorldMap.tsx",
+      "scope": "eight vertical island pages and original app-level four-button dock",
+      "approvedReference": null,
+      "status": "implemented; actual browser capture and relevant original interaction checks recorded",
+      "assets": "existing independent production art and shared frame registry; see wellbeing-assets.json for new koi",
+      "evidence": [
+        "qa-artifacts/concept-recreation/navigation/baseline.json",
+        "qa-artifacts/concept-recreation/shared-states/captures.json",
+        "qa-artifacts/concept-recreation/navigation/checks.json"
+      ],
+      "remaining": [
+        "Matharia now requires iOS 16.4; native verification on that minimum remains unavailable."
+      ]
+    },
+    {
+      "id": "island_levels",
+      "source": "src/screens/IslandLevels.tsx",
+      "scope": "native level availability, completion and routes",
+      "approvedReference": null,
+      "status": "implemented; actual browser capture and relevant original interaction checks recorded",
+      "assets": "existing independent production art and shared frame registry; see wellbeing-assets.json for new koi",
+      "evidence": [
+        "qa-artifacts/concept-recreation/navigation/baseline.json",
+        "qa-artifacts/concept-recreation/shared-states/captures.json"
+      ],
+      "remaining": [
+        "Matharia now requires iOS 16.4; native verification on that minimum remains unavailable."
+      ],
+      "sharedScreenUpdate": {
+        "date": "2026-11-01",
+        "status": "Rebuilt and browser verified; supersedes the earlier shared-screen presentation captures.",
+        "checklist": "docs/concept-recreation/shared-adventure-checklist.json",
+        "evidence": "qa-artifacts/shared-adventure/index.html"
+      }
+    },
+    {
+      "id": "calm_grove",
+      "source": "src/wellbeing/WellbeingHub.tsx",
+      "scope": "six original activities",
+      "approvedReference": null,
+      "status": "implemented; actual browser capture and relevant original interaction checks recorded",
+      "assets": "existing independent production art and shared frame registry; see wellbeing-assets.json for new koi",
+      "evidence": [
+        "qa-artifacts/concept-recreation/navigation/baseline.json",
+        "qa-artifacts/concept-recreation/shared-states/captures.json"
+      ],
+      "remaining": [
+        "Matharia now requires iOS 16.4; native verification on that minimum remains unavailable."
+      ]
+    },
+    {
+      "id": "breathing_bloom",
+      "source": "src/wellbeing/activities/BreathingBloom.tsx",
+      "scope": "original activity controller and completion",
+      "approvedReference": null,
+      "status": "implemented; actual browser capture and relevant original interaction checks recorded",
+      "assets": "existing independent production art and shared frame registry; see wellbeing-assets.json for new koi",
+      "evidence": [
+        "qa-artifacts/concept-recreation/wellbeing/activity-checks.json",
+        "qa-artifacts/concept-recreation/navigation/baseline.json",
+        "qa-artifacts/concept-recreation/shared-states/captures.json"
+      ],
+      "remaining": [
+        "Matharia now requires iOS 16.4; native verification on that minimum remains unavailable."
+      ]
+    },
+    {
+      "id": "peaceful_pond",
+      "source": "src/wellbeing/activities/PeacefulPond.tsx",
+      "scope": "original activity controller and completion",
+      "approvedReference": null,
+      "status": "implemented; actual browser capture and relevant original interaction checks recorded",
+      "assets": "existing independent production art and shared frame registry; see wellbeing-assets.json for new koi",
+      "evidence": [
+        "qa-artifacts/concept-recreation/wellbeing/pond/checks.json",
+        "qa-artifacts/concept-recreation/navigation/baseline.json",
+        "qa-artifacts/concept-recreation/shared-states/captures.json"
+      ],
+      "remaining": [
+        "Matharia now requires iOS 16.4; native verification on that minimum remains unavailable."
+      ]
+    },
+    {
+      "id": "candle_calm",
+      "source": "src/wellbeing/activities/CandleCalm.tsx",
+      "scope": "original activity controller and completion",
+      "approvedReference": null,
+      "status": "implemented; actual browser capture and relevant original interaction checks recorded",
+      "assets": "existing independent production art and shared frame registry; see wellbeing-assets.json for new koi",
+      "evidence": [
+        "qa-artifacts/concept-recreation/wellbeing/activity-checks.json",
+        "qa-artifacts/concept-recreation/navigation/baseline.json",
+        "qa-artifacts/concept-recreation/shared-states/captures.json"
+      ],
+      "remaining": [
+        "Matharia now requires iOS 16.4; native verification on that minimum remains unavailable."
+      ]
+    },
+    {
+      "id": "constellation_connect",
+      "source": "src/wellbeing/activities/ConstellationConnect.tsx",
+      "scope": "original activity controller and completion",
+      "approvedReference": null,
+      "status": "implemented; actual browser capture and relevant original interaction checks recorded",
+      "assets": "existing independent production art and shared frame registry; see wellbeing-assets.json for new koi",
+      "evidence": [
+        "qa-artifacts/concept-recreation/wellbeing/activity-checks.json",
+        "qa-artifacts/concept-recreation/navigation/baseline.json",
+        "qa-artifacts/concept-recreation/shared-states/captures.json"
+      ],
+      "remaining": [
+        "Matharia now requires iOS 16.4; native verification on that minimum remains unavailable."
+      ]
+    },
+    {
+      "id": "leaf_drift",
+      "source": "src/wellbeing/activities/LeafDrift.tsx",
+      "scope": "original activity controller and completion",
+      "approvedReference": null,
+      "status": "implemented; actual browser capture and relevant original interaction checks recorded",
+      "assets": "existing independent production art and shared frame registry; see wellbeing-assets.json for new koi",
+      "evidence": [
+        "qa-artifacts/concept-recreation/wellbeing/activity-checks.json",
+        "qa-artifacts/concept-recreation/navigation/baseline.json",
+        "qa-artifacts/concept-recreation/shared-states/captures.json"
+      ],
+      "remaining": [
+        "Matharia now requires iOS 16.4; native verification on that minimum remains unavailable."
+      ]
+    },
+    {
+      "id": "thought_sort",
+      "source": "src/wellbeing/activities/ThoughtSort.tsx",
+      "scope": "original activity controller and completion",
+      "approvedReference": null,
+      "status": "implemented; actual browser capture and relevant original interaction checks recorded",
+      "assets": "existing independent production art and shared frame registry; see wellbeing-assets.json for new koi",
+      "evidence": [
+        "qa-artifacts/concept-recreation/wellbeing/activity-checks.json",
+        "qa-artifacts/concept-recreation/navigation/baseline.json",
+        "qa-artifacts/concept-recreation/shared-states/captures.json"
+      ],
+      "remaining": [
+        "Matharia now requires iOS 16.4; native verification on that minimum remains unavailable."
+      ]
+    },
+    {
+      "id": "profile",
+      "source": "src/screens/PlayerProfile.tsx",
+      "scope": "saved identity and progress",
+      "approvedReference": null,
+      "status": "implemented; actual browser capture and relevant original interaction checks recorded",
+      "assets": "existing independent production art and shared frame registry; see wellbeing-assets.json for new koi",
+      "evidence": [
+        "qa-artifacts/concept-recreation/navigation/baseline.json",
+        "qa-artifacts/concept-recreation/shared-states/captures.json"
+      ],
+      "remaining": [
+        "Matharia now requires iOS 16.4; native verification on that minimum remains unavailable."
+      ]
+    },
+    {
+      "id": "settings",
+      "source": "src/screens/AdventureSettings.tsx",
+      "scope": "existing settings and accessibility",
+      "approvedReference": null,
+      "status": "implemented; actual browser capture and relevant original interaction checks recorded",
+      "assets": "existing independent production art and shared frame registry; see wellbeing-assets.json for new koi",
+      "evidence": [
+        "qa-artifacts/concept-recreation/navigation/baseline.json",
+        "qa-artifacts/concept-recreation/shared-states/captures.json",
+        "qa-artifacts/concept-recreation/navigation/menu-checks.json"
+      ],
+      "remaining": [
+        "Matharia now requires iOS 16.4; native verification on that minimum remains unavailable."
+      ]
+    },
+    {
+      "id": "shop",
+      "source": "src/screens/CharacterShop.tsx",
+      "scope": "original coins, ownership and equipment",
+      "approvedReference": null,
+      "status": "implemented; actual browser capture and relevant original interaction checks recorded",
+      "assets": "existing independent production art and shared frame registry; see wellbeing-assets.json for new koi",
+      "evidence": [
+        "qa-artifacts/concept-recreation/navigation/baseline.json",
+        "qa-artifacts/concept-recreation/shared-states/captures.json",
+        "qa-artifacts/concept-recreation/navigation/menu-checks.json"
+      ],
+      "remaining": [
+        "Matharia now requires iOS 16.4; native verification on that minimum remains unavailable."
+      ]
+    },
+    {
+      "id": "achievements",
+      "source": "src/components/modals/AchievementsModal.tsx",
+      "scope": "existing achievement state",
+      "approvedReference": null,
+      "status": "implemented; actual browser capture and relevant original interaction checks recorded",
+      "assets": "existing independent production art and shared frame registry; see wellbeing-assets.json for new koi",
+      "evidence": [
+        "qa-artifacts/concept-recreation/navigation/baseline.json",
+        "qa-artifacts/concept-recreation/shared-states/captures.json"
+      ],
+      "remaining": [
+        "Matharia now requires iOS 16.4; native verification on that minimum remains unavailable."
+      ]
+    },
+    {
+      "id": "avatar",
+      "source": "src/screens/AvatarSelect.tsx",
+      "scope": "all four original identities and confirmation",
+      "approvedReference": null,
+      "status": "implemented; actual browser capture and relevant original interaction checks recorded",
+      "assets": "existing independent production art and shared frame registry; see wellbeing-assets.json for new koi",
+      "evidence": [
+        "qa-artifacts/concept-recreation/navigation/baseline.json",
+        "qa-artifacts/concept-recreation/shared-states/captures.json",
+        "qa-artifacts/concept-recreation/navigation/menu-checks.json"
+      ],
+      "remaining": [
+        "Matharia now requires iOS 16.4; native verification on that minimum remains unavailable."
+      ]
+    },
+    {
+      "id": "splash",
+      "source": "src/App.tsx",
+      "scope": "start and account navigation",
+      "approvedReference": null,
+      "status": "implemented; actual browser capture and relevant original interaction checks recorded",
+      "assets": "existing independent production art and shared frame registry; see wellbeing-assets.json for new koi",
+      "evidence": [
+        "qa-artifacts/concept-recreation/navigation/baseline.json",
+        "qa-artifacts/concept-recreation/shared-states/captures.json"
+      ],
+      "remaining": [
+        "Matharia now requires iOS 16.4; native verification on that minimum remains unavailable."
+      ]
+    },
+    {
+      "id": "parent_account_purchase",
+      "source": "src/App.tsx",
+      "scope": "original parent account, subscription and purchase integrations",
+      "approvedReference": null,
+      "status": "original account/subscription UI captured using isolated fixtures; provider/native behavior unverified",
+      "assets": "existing independent production art and shared frame registry; see wellbeing-assets.json for new koi",
+      "evidence": [
+        "qa-artifacts/concept-recreation/account/captures.json"
+      ],
+      "remaining": [
+        "Matharia now requires iOS 16.4; native verification on that minimum remains unavailable.",
+        "Live authentication/recovery/entitlement/payment-provider and native purchase verification."
+      ]
+    },
+    {
+      "id": "results_and_dialogs",
+      "source": "src/components/results/LevelResultsModal.tsx",
+      "scope": "pause/help/work/victory/failure/retry and original rewards",
+      "approvedReference": null,
+      "status": "implemented; actual browser capture and relevant original interaction checks recorded",
+      "assets": "existing independent production art and shared frame registry; see wellbeing-assets.json for new koi",
+      "evidence": [
+        "qa-artifacts/concept-recreation/navigation/baseline.json",
+        "qa-artifacts/concept-recreation/shared-states/captures.json"
+      ],
+      "remaining": [
+        "Matharia now requires iOS 16.4; native verification on that minimum remains unavailable."
+      ],
+      "sharedScreenUpdate": {
+        "date": "2026-11-01",
+        "status": "Rebuilt and browser verified; supersedes the earlier shared-screen presentation captures.",
+        "checklist": "docs/concept-recreation/shared-adventure-checklist.json",
+        "evidence": "qa-artifacts/shared-adventure/index.html"
+      }
+    },
+    {
+      "id": "daily_quests",
+      "source": "src/components/modals/DailyQuestsModal.tsx",
+      "scope": "existing quest progress, rewards and claim state",
+      "approvedReference": null,
+      "status": "implemented; actual browser capture and relevant original interaction checks recorded",
+      "evidence": [
+        "qa-artifacts/concept-recreation/navigation/baseline.json",
+        "qa-artifacts/concept-recreation/shared-states/captures.json",
+        "qa-artifacts/concept-recreation/account/captures.json"
+      ],
+      "remaining": [
+        "Matharia now requires iOS 16.4; native verification on that minimum remains unavailable."
+      ]
+    },
+    {
+      "id": "native_launch",
+      "source": "variants/matharia/native/ios/App/App/Base.lproj/LaunchScreen.storyboard",
+      "scope": "native Matharia launch wordmark and opaque sapphire/gold app icon",
+      "approvedReference": null,
+      "status": "native source, logo/icon and constraints inspected; actual native launch unverified",
+      "evidence": [
+        "variants/matharia/native/ios/App/App/Base.lproj/LaunchScreen.storyboard",
+        "variants/matharia/native/ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png"
+      ],
+      "remaining": [
+        "Matharia now requires iOS 16.4; native verification on that minimum remains unavailable."
+      ]
+    }
+  ],
+  "platformCompatibility": "Matharia now explicitly requires iOS 16.4 in all Xcode configurations and its Swift package; sync/update hooks retain that exact floor. The original SATs Legends project remains at iOS 15. Native execution on iOS 16.4 is still unverified; modern Playwright WebKit is not an iOS 16.4 device test."
+}

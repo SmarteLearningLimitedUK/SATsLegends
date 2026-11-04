@@ -1,0 +1,800 @@
+{
+  "source": "https://assets.publishing.service.gov.uk/media/5a822bbded915d74e62362a2/2016_KS2_Mathematics_framework_PDFA_V5.pdf",
+  "reviewed": "2026-10-20",
+  "scope": "KS2 Table 3 objective rows, years 3–6; a representative task is not exhaustive objective coverage.",
+  "ks1FoundationGroups": [
+    "G1",
+    "M3",
+    "P1"
+  ],
+  "objectives": [
+    {
+      "code": "3N1b",
+      "page": 11
+    },
+    {
+      "code": "4N1",
+      "page": 11
+    },
+    {
+      "code": "5N1",
+      "page": 11
+    },
+    {
+      "code": "3N2a",
+      "page": 11
+    },
+    {
+      "code": "4N2a",
+      "page": 11
+    },
+    {
+      "code": "5N2",
+      "page": 11
+    },
+    {
+      "code": "6N2",
+      "page": 11
+    },
+    {
+      "code": "3N2b",
+      "page": 11,
+      "title": "Find 10 or 100 more or less"
+    },
+    {
+      "code": "4N2b",
+      "page": 11,
+      "title": "Find 1,000 more or less"
+    },
+    {
+      "code": "3N3",
+      "page": 11
+    },
+    {
+      "code": "4N3a",
+      "page": 11
+    },
+    {
+      "code": "5N3a",
+      "page": 11
+    },
+    {
+      "code": "6N3",
+      "page": 11
+    },
+    {
+      "code": "4N3b",
+      "page": 11,
+      "title": "Read Roman numerals to 100"
+    },
+    {
+      "code": "5N3b",
+      "page": 11
+    },
+    {
+      "code": "3N4",
+      "page": 11
+    },
+    {
+      "code": "4N4a",
+      "page": 11
+    },
+    {
+      "code": "4N4b",
+      "page": 12
+    },
+    {
+      "code": "5N4",
+      "page": 12
+    },
+    {
+      "code": "6N4",
+      "page": 12
+    },
+    {
+      "code": "4N5",
+      "page": 12
+    },
+    {
+      "code": "5N5",
+      "page": 12
+    },
+    {
+      "code": "6N5",
+      "page": 12
+    },
+    {
+      "code": "3N6",
+      "page": 12
+    },
+    {
+      "code": "4N6",
+      "page": 12
+    },
+    {
+      "code": "5N6",
+      "page": 12
+    },
+    {
+      "code": "6N6",
+      "page": 12
+    },
+    {
+      "code": "3C1",
+      "page": 12
+    },
+    {
+      "code": "5C1",
+      "page": 12,
+      "title": "Large-number mental addition/subtraction"
+    },
+    {
+      "code": "3C2",
+      "page": 12
+    },
+    {
+      "code": "4C2",
+      "page": 12
+    },
+    {
+      "code": "5C2",
+      "page": 12,
+      "title": "Formal addition/subtraction beyond four digits"
+    },
+    {
+      "code": "3C3",
+      "page": 13
+    },
+    {
+      "code": "4C3",
+      "page": 13
+    },
+    {
+      "code": "5C3",
+      "page": 13
+    },
+    {
+      "code": "6C3",
+      "page": 13
+    },
+    {
+      "code": "3C4",
+      "page": 13
+    },
+    {
+      "code": "4C4",
+      "page": 13
+    },
+    {
+      "code": "5C4",
+      "page": 13
+    },
+    {
+      "code": "6C4",
+      "page": 13
+    },
+    {
+      "code": "5C5a",
+      "page": 13
+    },
+    {
+      "code": "6C5",
+      "page": 13
+    },
+    {
+      "code": "5C5b",
+      "page": 13
+    },
+    {
+      "code": "5C5c",
+      "page": 13
+    },
+    {
+      "code": "5C5d",
+      "page": 13
+    },
+    {
+      "code": "3C6",
+      "page": 14
+    },
+    {
+      "code": "4C6a",
+      "page": 14
+    },
+    {
+      "code": "5C6a",
+      "page": 14
+    },
+    {
+      "code": "6C6",
+      "page": 14
+    },
+    {
+      "code": "4C6b",
+      "page": 14
+    },
+    {
+      "code": "5C6b",
+      "page": 14
+    },
+    {
+      "code": "4C6c",
+      "page": 14
+    },
+    {
+      "code": "3C7",
+      "page": 14
+    },
+    {
+      "code": "4C7",
+      "page": 14
+    },
+    {
+      "code": "5C7a",
+      "page": 14
+    },
+    {
+      "code": "6C7a",
+      "page": 14
+    },
+    {
+      "code": "5C7b",
+      "page": 15
+    },
+    {
+      "code": "6C7b",
+      "page": 15
+    },
+    {
+      "code": "6C7c",
+      "page": 15
+    },
+    {
+      "code": "3C8",
+      "page": 15
+    },
+    {
+      "code": "4C8",
+      "page": 15
+    },
+    {
+      "code": "5C8a",
+      "page": 15
+    },
+    {
+      "code": "6C8",
+      "page": 15
+    },
+    {
+      "code": "5C8b",
+      "page": 16
+    },
+    {
+      "code": "5C8c",
+      "page": 16
+    },
+    {
+      "code": "6C9",
+      "page": 16
+    },
+    {
+      "code": "3F1a",
+      "page": 16
+    },
+    {
+      "code": "4F1",
+      "page": 16
+    },
+    {
+      "code": "3F1b",
+      "page": 16
+    },
+    {
+      "code": "3F1c",
+      "page": 17
+    },
+    {
+      "code": "3F2",
+      "page": 17
+    },
+    {
+      "code": "4F2",
+      "page": 17
+    },
+    {
+      "code": "5F2a",
+      "page": 17
+    },
+    {
+      "code": "6F2",
+      "page": 17
+    },
+    {
+      "code": "5F2b",
+      "page": 17
+    },
+    {
+      "code": "3F3",
+      "page": 17
+    },
+    {
+      "code": "5F3",
+      "page": 17
+    },
+    {
+      "code": "6F3",
+      "page": 17
+    },
+    {
+      "code": "3F4",
+      "page": 17
+    },
+    {
+      "code": "4F4",
+      "page": 17
+    },
+    {
+      "code": "5F4",
+      "page": 17
+    },
+    {
+      "code": "6F4",
+      "page": 17
+    },
+    {
+      "code": "5F5",
+      "page": 18
+    },
+    {
+      "code": "6F5a",
+      "page": 18
+    },
+    {
+      "code": "6F5b",
+      "page": 18
+    },
+    {
+      "code": "4F6a",
+      "page": 18
+    },
+    {
+      "code": "5F6a",
+      "page": 18
+    },
+    {
+      "code": "6F6",
+      "page": 18
+    },
+    {
+      "code": "4F6b",
+      "page": 18
+    },
+    {
+      "code": "5F6b",
+      "page": 18
+    },
+    {
+      "code": "4F7",
+      "page": 18
+    },
+    {
+      "code": "5F7",
+      "page": 18
+    },
+    {
+      "code": "4F8",
+      "page": 18
+    },
+    {
+      "code": "5F8",
+      "page": 18
+    },
+    {
+      "code": "4F9",
+      "page": 19
+    },
+    {
+      "code": "6F9a",
+      "page": 19
+    },
+    {
+      "code": "6F9b",
+      "page": 19
+    },
+    {
+      "code": "6F9c",
+      "page": 19
+    },
+    {
+      "code": "3F10",
+      "page": 19
+    },
+    {
+      "code": "4F10a",
+      "page": 19
+    },
+    {
+      "code": "5F10",
+      "page": 19
+    },
+    {
+      "code": "6F10",
+      "page": 19
+    },
+    {
+      "code": "4F10b",
+      "page": 19
+    },
+    {
+      "code": "5F11",
+      "page": 20
+    },
+    {
+      "code": "6F11",
+      "page": 20
+    },
+    {
+      "code": "5F12",
+      "page": 20
+    },
+    {
+      "code": "6R1",
+      "page": 20
+    },
+    {
+      "code": "6R2",
+      "page": 20
+    },
+    {
+      "code": "6R3",
+      "page": 20
+    },
+    {
+      "code": "6R4",
+      "page": 21
+    },
+    {
+      "code": "6A2",
+      "page": 21
+    },
+    {
+      "code": "6A3",
+      "page": 21
+    },
+    {
+      "code": "6A4",
+      "page": 21
+    },
+    {
+      "code": "6A5",
+      "page": 21
+    },
+    {
+      "code": "4M1",
+      "page": 21
+    },
+    {
+      "code": "3M1b",
+      "page": 21
+    },
+    {
+      "code": "3M1c",
+      "page": 21
+    },
+    {
+      "code": "3M2a",
+      "page": 21
+    },
+    {
+      "code": "4M2",
+      "page": 21
+    },
+    {
+      "code": "3M2b",
+      "page": 21
+    },
+    {
+      "code": "3M2c",
+      "page": 22
+    },
+    {
+      "code": "3M4a",
+      "page": 22
+    },
+    {
+      "code": "4M4a",
+      "page": 22
+    },
+    {
+      "code": "3M4b",
+      "page": 22,
+      "title": "Analogue clocks and 24-hour notation"
+    },
+    {
+      "code": "4M4b",
+      "page": 22
+    },
+    {
+      "code": "3M4c",
+      "page": 22
+    },
+    {
+      "code": "4M4c",
+      "page": 22
+    },
+    {
+      "code": "5M4",
+      "page": 22
+    },
+    {
+      "code": "3M4d",
+      "page": 22
+    },
+    {
+      "code": "3M4e",
+      "page": 22
+    },
+    {
+      "code": "3M4f",
+      "page": 23
+    },
+    {
+      "code": "4M5",
+      "page": 23
+    },
+    {
+      "code": "5M5",
+      "page": 23
+    },
+    {
+      "code": "6M5",
+      "page": 23
+    },
+    {
+      "code": "5M6",
+      "page": 23
+    },
+    {
+      "code": "6M6",
+      "page": 23
+    },
+    {
+      "code": "3M7",
+      "page": 23
+    },
+    {
+      "code": "4M7a",
+      "page": 23
+    },
+    {
+      "code": "5M7a",
+      "page": 23
+    },
+    {
+      "code": "6M7a",
+      "page": 23
+    },
+    {
+      "code": "4M7b",
+      "page": 24
+    },
+    {
+      "code": "5M7b",
+      "page": 24
+    },
+    {
+      "code": "6M7b",
+      "page": 24
+    },
+    {
+      "code": "6M7c",
+      "page": 24
+    },
+    {
+      "code": "5M8",
+      "page": 24
+    },
+    {
+      "code": "6M8a",
+      "page": 24
+    },
+    {
+      "code": "6M8b",
+      "page": 24
+    },
+    {
+      "code": "3M9a",
+      "page": 24
+    },
+    {
+      "code": "4M9",
+      "page": 24
+    },
+    {
+      "code": "5M9a",
+      "page": 24
+    },
+    {
+      "code": "6M9",
+      "page": 24
+    },
+    {
+      "code": "3M9b",
+      "page": 25
+    },
+    {
+      "code": "5M9b",
+      "page": 25
+    },
+    {
+      "code": "3M9c",
+      "page": 25
+    },
+    {
+      "code": "5M9c",
+      "page": 25
+    },
+    {
+      "code": "3M9d",
+      "page": 25,
+      "title": "Add and subtract capacity"
+    },
+    {
+      "code": "5M9d",
+      "page": 25
+    },
+    {
+      "code": "3G2",
+      "page": 25
+    },
+    {
+      "code": "4G2a",
+      "page": 25
+    },
+    {
+      "code": "5G2a",
+      "page": 25
+    },
+    {
+      "code": "6G2a",
+      "page": 25
+    },
+    {
+      "code": "4G2b",
+      "page": 25
+    },
+    {
+      "code": "5G2b",
+      "page": 25
+    },
+    {
+      "code": "6G2b",
+      "page": 25
+    },
+    {
+      "code": "4G2c",
+      "page": 25,
+      "title": "Complete symmetric figures"
+    },
+    {
+      "code": "3G3a",
+      "page": 26
+    },
+    {
+      "code": "3G3b",
+      "page": 26
+    },
+    {
+      "code": "5G3b",
+      "page": 26
+    },
+    {
+      "code": "6G3b",
+      "page": 26
+    },
+    {
+      "code": "3G4a",
+      "page": 26
+    },
+    {
+      "code": "4G4",
+      "page": 26
+    },
+    {
+      "code": "5G4a",
+      "page": 26
+    },
+    {
+      "code": "6G4a",
+      "page": 26
+    },
+    {
+      "code": "3G4b",
+      "page": 26
+    },
+    {
+      "code": "5G4b",
+      "page": 26
+    },
+    {
+      "code": "6G4b",
+      "page": 26
+    },
+    {
+      "code": "5G4c",
+      "page": 26
+    },
+    {
+      "code": "6G5",
+      "page": 26
+    },
+    {
+      "code": "4P2",
+      "page": 27
+    },
+    {
+      "code": "5P2",
+      "page": 27
+    },
+    {
+      "code": "6P2",
+      "page": 27
+    },
+    {
+      "code": "4P3a",
+      "page": 27
+    },
+    {
+      "code": "6P3",
+      "page": 27
+    },
+    {
+      "code": "4P3b",
+      "page": 27
+    },
+    {
+      "code": "4S1",
+      "page": 27
+    },
+    {
+      "code": "5S1",
+      "page": 27
+    },
+    {
+      "code": "6S1",
+      "page": 27
+    },
+    {
+      "code": "3S2",
+      "page": 27
+    },
+    {
+      "code": "4S2",
+      "page": 27
+    },
+    {
+      "code": "5S2",
+      "page": 27
+    },
+    {
+      "code": "6S3",
+      "page": 27
+    },
+    {
+      "code": "6A1",
+      "page": 21
+    },
+    {
+      "code": "3M1a",
+      "page": 21
+    },
+    {
+      "code": "6G3a",
+      "page": 26
+    },
+    {
+      "code": "3S1",
+      "page": 27
+    }
+  ]
+}

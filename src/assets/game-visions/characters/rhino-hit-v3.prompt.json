@@ -1,0 +1,12 @@
+{
+  "kind": "characters",
+  "key": "rhino-hit",
+  "file": "characters/rhino-hit-v3.webp",
+  "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-aca652db-9efd-44ac-a980-8f02b889d3f2.png",
+  "prompt": "Use case: identity-preserve. Production game animation atlas. Reference image is the EXACT character to preserve: friendly white rhino with ivory horns, amber eyes, polished BLUE armour with ORANGE and GOLD trim, rounded chunky proportions. Preserve its 3/4 view facing right and exact detailed sculpted game rendering. Exactly TWENTY consecutive frames in FIVE columns FOUR rows read left-to-right top-to-bottom. These are small consecutive animation in-betweens, NOT separate unrelated poses. Each cell contains entire rhino including ears, horns, fists and feet with generous transparent gutters so silhouettes never touch. Actual transparent alpha background. No text, labels, effects, ground or shadows outside silhouette. Identical camera lighting armour and character scale throughout. Feet planted on same baseline, no camera motion or zoom. One continuous 900ms gentle recoil and recovery. Start original neutral stance frame1, flinch slightly backward raising shoulders frames2-6, brief closed eyes at frames7-9, slowly recover balance frames10-14, return smoothly to original neutral stance frames15-20. Feet stay planted. Small changes between adjacent frames. No injury or effects, no falling. CRITICAL grid correction: exactly FIVE columns and FOUR rows = 20 rhinos, not six columns or three rows. Fill all four rows. Match the neutral reference and sequence described. Every frame separated by wide transparent gutters.",
+  "dimensions": [
+    1536,
+    1024
+  ],
+  "bytes": 579412
+}

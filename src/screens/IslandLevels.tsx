@@ -5,6 +5,10 @@ import { getLevelGameTitle, getLevelGroupKey } from '../utils/gameNames';
 import { UNLOCK_ALL_LEVELS } from '../app/testingFlags';
 import { ChevronDown, Lock } from 'lucide-react';
 import { GAME_SCENE_META } from '../gameSceneMeta';
+import { getVisionEnvironment } from '../games/visionScene';
+import missionOcean from '../assets/maps/screenshot-map/bg_ocean_map_portrait@2x.png';
+import missionBran from '../assets/island-mission-reference/hero_bran_idle.png';
+import missionMage from '../assets/island-mission-reference/hero_mage_idle.png';
 import { GAME_DIFFICULTY_LABELS, getGameDifficulty, getLevelProgressIds } from '../systems/content/gameDifficulty';
 import '../design/desktop-island-levels.css';
 
@@ -194,12 +198,13 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
   const totalBrainpowerTokens = eligibleLevelRows.length * TOKENS_PER_LEVEL;
   const featuredLevel = nextPlayableRow?.level ?? gameGroups[0]?.levels[0]?.level;
   const featuredScene = featuredLevel?.gameType
-    ? GAME_SCENE_META[featuredLevel.gameType]?.background
+    ? getVisionEnvironment(getLevelGroupKey(featuredLevel)) ?? GAME_SCENE_META[featuredLevel.gameType]?.background
     : undefined;
 
   return (
     <div
       className="legend-island-root premium-page-root relative h-full min-h-0 w-full overflow-hidden bg-[#07111f]"
+      data-matharia-reference={island.id === 1 || island.id === 7 ? 'true' : undefined}
       style={{
         height: '100%',
         minHeight: 0,
@@ -207,7 +212,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
         overscrollBehaviorY: 'contain',
       }}
     >
-      <div className="legend-island-backdrop" style={{ backgroundImage: `url(${island.mapImage})` }} aria-hidden="true" />
+      <div className="legend-island-backdrop" style={{ backgroundImage: `url(${island.id === 1 || island.id === 7 ? missionOcean : island.mapImage})` }} aria-hidden="true" />
       <div
         className="legend-island-content premium-page-content relative z-10 mx-auto flex h-full min-h-0 w-full max-w-4xl flex-col px-3 pb-4 pt-[calc(env(safe-area-inset-top)+0.35rem)] md:px-5 md:pb-6 md:pt-[calc(env(safe-area-inset-top)+0.5rem)]"
         style={{
@@ -243,6 +248,11 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
             </div>
           </div>
         </div>
+
+        {(island.id === 1 || island.id === 7) && <div className="legend-mission-cast" aria-hidden="true">
+          <img src={missionMage} alt="" draggable={false} />
+          <img src={missionBran} alt="" draggable={false} />
+        </div>}
 
         {nextPlayableRow ? (
           <div className="legend-next-mission mb-3 rounded-2xl p-3 md:mb-4 md:p-3.5">
@@ -300,7 +310,7 @@ const IslandLevels: React.FC<IslandLevelsProps> = ({
                     data-button-skin="none"
                   >
                     {group.levels[0]?.level.gameType && GAME_SCENE_META[group.levels[0].level.gameType]?.background ? (
-                      <img src={GAME_SCENE_META[group.levels[0].level.gameType!]?.background} className="legend-group-icon" alt="" draggable={false} loading="lazy" />
+                      <img src={getVisionEnvironment(group.id) ?? GAME_SCENE_META[group.levels[0].level.gameType!]?.background} className="legend-group-icon" alt="" draggable={false} loading="lazy" />
                     ) : <div className={`relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 md:h-12 md:w-12 ${
                       group.completedCount === group.levels.length
                         ? 'border-emerald-300 bg-emerald-500/28'

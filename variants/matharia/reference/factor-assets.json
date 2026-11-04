@@ -1,0 +1,52 @@
+{
+  "reference": "variants/matharia/reference/approved/factor_frenzy.png",
+  "processing": "Independent clean warm clockwork city, polished3D crystal sentinel and shallow stone/brass dais, all inspected before export. Alpha-margin trim and aspect-preserving WebP only; no painting, masks or character/frame distortion. All numbers, locks, clocks, choices and controls are live.",
+  "assets": [
+    {
+      "name": "backgrounds/bg_factor_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-bd253a5f-c395-4671-932b-389f62b2a672.png",
+      "alphaBoundsCrop": null,
+      "dimensions": [
+        853,
+        1844
+      ],
+      "production": "variants/matharia/assets/png/backgrounds/bg_factor_v3@2x.webp",
+      "bytes": 701802,
+      "sha256": "0b8295125d7231d7a678e5f70bdd06a7b6d4ea39ea080a0ed53319b91e37ad33"
+    },
+    {
+      "name": "characters/factor_sentinel_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-27cd9970-1c3b-459a-b11f-d899d8d97a6d.png",
+      "alphaBoundsCrop": [
+        34,
+        8,
+        1174,
+        1287
+      ],
+      "dimensions": [
+        1140,
+        1279
+      ],
+      "production": "variants/matharia/assets/png/characters/factor_sentinel_v3@2x.webp",
+      "bytes": 503474,
+      "sha256": "9f1a3b4763b63e729c40a0a616d71bc5a3c9aeb98204cb3ec84680d14e71dae8"
+    },
+    {
+      "name": "props/factor_pedestal_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-a2de4849-2198-4e5e-a0c7-e611371785eb.png",
+      "alphaBoundsCrop": [
+        44,
+        220,
+        2118,
+        589
+      ],
+      "dimensions": [
+        2048,
+        364
+      ],
+      "production": "variants/matharia/assets/png/props/factor_pedestal_v3@2x.webp",
+      "bytes": 340920,
+      "sha256": "c2f92190e903be1d6c0530d540a815f8e2add867a918ed4923b8afe5d6c6e80d"
+    }
+  ]
+}

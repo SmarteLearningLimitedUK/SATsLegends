@@ -68,7 +68,7 @@
   text-align: left;
 }
 
-.pp-question .game-question-card-inner { align-items: flex-start; }
+.pp-question .game-question-card-inner { align-items: center; }
 .pp-question .game-question-card-title-strip {
   width: 100%;
   min-height: 0;
@@ -76,7 +76,7 @@
   margin: 0 0 2px;
 }
 
-.pp-question .question-title { text-align: left; }
+.pp-question .question-title { text-align: center; }
 
 #root .pp-game .pp-question .question-title {
   color: #a2e8dd;
@@ -92,9 +92,16 @@
   font-size: calc(clamp(16px, 1.45vw, 23px) * var(--game-text-scale, 1.2)) !important;
   font-weight: 790;
   line-height: 1.2;
-  text-align: left;
+  text-align: center;
   text-wrap: pretty;
   text-shadow: 0 1px 4px #041318;
+}
+
+/* The question can be rendered in the shared viewport header outside .pp-game. */
+#root [data-vision-game='percent_power'] .pp-question .game-question-copy,
+#root [data-vision-game='percent_power'] .pp-question .game-question-context {
+  width: 100%;
+  text-align: center !important;
 }
 
 .pp-main {

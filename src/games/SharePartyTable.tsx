@@ -1,9 +1,12 @@
-import React, { useId, type CSSProperties } from 'react';
-import guests from '../assets/share-splitter/party-guests-v2.webp';
+import React, { type CSSProperties } from 'react';
+import mage from '../assets/share-splitter/matharia/hero_mage_idle.png';
+import crystal from '../assets/share-splitter/matharia/guest_crystal.png';
+import leaf from '../assets/share-splitter/matharia/guest_leaf.png';
+import purple from '../assets/share-splitter/matharia/guest_purple.png';
+import rhino from '../assets/share-splitter/matharia/hero_rhino_idle.png';
 import table from '../assets/share-splitter/banquet-table-v1.webp';
 import { useTrimmedImageSource } from '../utils/trimTransparentImage';
-
-const GUEST_CELLS = [[0, 212], [212, 400], [400, 594], [594, 775], [775, 1000]];
+import { getVisionObject } from './visionScene';
 
 interface Props {
   rect: { left: number; top: number; width: number; height: number };
@@ -13,16 +16,18 @@ interface Props {
   guestHeight: number;
 }
 
+// Each guest is a separately positioned asset, so the cast can move independently.
+const GUEST_ART = [mage, crystal, leaf, purple, rhino] as const;
+const PARTY_ENEMIES = ['goblin', 'crystal-jelly', 'horned-slime', 'purple-monster', 'rhino'] as const;
+
 /** Artwork layers share the interactive plates' coordinates at every viewport. */
 export default function SharePartyTable({ rect, positions, counts, celebrating, guestHeight }: Props) {
-  const clipPrefix = useId().replace(/:/g, '');
-  const tableSource = useTrimmedImageSource(table);
+  const tableSource = useTrimmedImageSource(getVisionObject('banquet-table')??table);
   return <div className="share-party-scene" aria-hidden="true">
     {positions.map((point, index) => {
-      const [cropLeft, cropRight] = GUEST_CELLS[index];
       const x = rect.width < 600 ? .1 + index * .2 : point.x;
-      return <div key={index} className="share-party-guest" data-served={counts[index] > 0}
-        style={{ left: rect.left + x * rect.width, top: rect.top - guestHeight * .9 + rect.height * .035, width: guestHeight * .85, height: guestHeight, '--guest-delay': `${index * -.65}s` } as CSSProperties}>
+      return <div key={index} className="share-party-guest" data-party-enemy={PARTY_ENEMIES[index]} data-party-posture="seated" data-served={counts[index] > 0}
+        style={{ left: rect.left + x * rect.width, top: rect.top - guestHeight * .68 + rect.height * .035, width: guestHeight * .66, height: guestHeight, '--guest-delay': `${index * -.65}s` } as CSSProperties}>
         <svg className="share-party-chair" viewBox="0 0 100 150">
           <path d="M16 8Q50 -4 84 8V93H16Z" fill="#63412b" stroke="#d3a05d" strokeWidth="4" />
           <path d="M25 17V85M50 14V85M75 17V85" stroke="#a57340" strokeWidth="5" />
@@ -30,10 +35,7 @@ export default function SharePartyTable({ rect, positions, counts, celebrating, 
         </svg>
         <div className="share-party-guest-idle">
           <div key={`${counts[index]}-${celebrating}`} className="share-party-guest-reaction" data-celebrating={celebrating} data-has-cake={counts[index] > 0}>
-            <svg className="share-party-portrait" viewBox={`${cropLeft} 45 ${cropRight - cropLeft} 265`}>
-              <defs><clipPath id={`${clipPrefix}-${index}`}><rect x={cropLeft} y="45" width={cropRight - cropLeft} height="265" /></clipPath></defs>
-              <image href={guests} width="1000" height="333.333" clipPath={`url(#${clipPrefix}-${index})`} />
-            </svg>
+            <img className="share-party-portrait" src={GUEST_ART[index]} alt="" draggable={false} />
           </div>
         </div>
       </div>;

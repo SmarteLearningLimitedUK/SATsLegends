@@ -1,0 +1,25 @@
+@import './thought-release.css';
+@import './breath-bloom.css';
+@import './pond-scene.css';
+@import './lantern-camp.css';
+/* The remaining calm activities use the same named HUD and padded material panels. */
+html[data-presentation='matharia'] #root .screen-wellbeing-activity:has([data-wellbeing-activity='leaf_drift'],[data-wellbeing-activity='constellation_connect']) {
+ .wellbeing-header {position:relative;isolation:isolate;padding:14px 24px;border:0;background:none;border-radius:0;}
+ .wellbeing-header h1,.wellbeing-header .wellbeing-eyebrow {position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;}
+ .wellbeing-header .wellbeing-exit {display:none;}
+ .wellbeing-header .wellbeing-how-to {margin:0;font-size:clamp(14px,3.7vw,19px);font-weight:600;line-height:1.35;}
+ .wellbeing-shell:not(.wellbeing-shell--hub)>.wellbeing-footer {isolation:isolate;padding:14px 64px 14px 20px;min-height:64px;border:0;background:none;border-radius:0;}
+ .wellbeing-footer .matharia-pond-guidance>summary {top:10px;right:10px;}
+}
+/* Full scenery and a landscape Pond with explicit non-overlapping regions. */
+html[data-presentation='matharia'] #root .matharia-wellbeing-scenery{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;}.matharia-wellbeing-scenery>img{display:block;width:100%;height:100%;object-fit:cover;object-position:center;}
+html[data-presentation='matharia'] #root :is(.screen-wellbeing-activity,.screen-wellbeing-hub){
+ &::before,&::after{display:none;}.app-screen-content{position:absolute;inset:80px max(12px,env(safe-area-inset-right)) calc(86px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));width:auto;height:auto;min-height:0;max-height:none;margin:0;padding:0;}.wellbeing-shell{width:100%;height:100%;min-height:0;padding:0;background:none;overflow:hidden;}.wellbeing-header{padding:8px 10px;margin-bottom:6px;border:1px solid #bbd9c45e;border-radius:14px;background:#063541e8;}.wellbeing-footer{flex-shrink:0;}.wellbeing-content{min-height:0;}.wellbeing-shell--hub{overflow:hidden;}.wellbeing-hub-scroll{padding-bottom:16px;}
+ .wellbeing-shell:not(.wellbeing-shell--hub)>.wellbeing-footer{position:relative;flex:none;min-height:52px;display:block;padding:6px 56px 6px 10px;border:1px solid #bbd9c45e;border-radius:12px;background:#063541e8;text-align:left;}.wellbeing-shell:not(.wellbeing-shell--hub)>.wellbeing-footer [data-wellbeing-status]{font-size:13px;line-height:1.3;}.wellbeing-shell:not(.wellbeing-shell--hub)>.wellbeing-footer .wellbeing-progress{width:100%;margin:3px 0 0;}.wellbeing-shell:not(.wellbeing-shell--hub)>.wellbeing-footer>.matharia-pond-guidance>summary{top:3px;right:4px;}
+ .matharia-pond-guidance{position:static;}.matharia-pond-guidance>summary{position:absolute;isolation:isolate;right:0;top:-1px;width:44px;height:44px;min-height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:3px;list-style:none;cursor:pointer;color:#fff6d8;font-size:11px;line-height:1.1;}.matharia-pond-guidance>summary::-webkit-details-marker{display:none;}.matharia-pond-guidance>summary>svg{width:21px;height:21px;}.matharia-pond-guidance>summary:focus-visible{outline:2px solid #ffe3a0;outline-offset:1px;}.matharia-pond-note-panel{position:absolute;z-index:30;left:0;bottom:calc(100% + 6px);width:min(480px,calc(100vw - 40px));max-height:min(220px,calc(100dvh - 228px));overflow-y:auto;padding:14px;border:1px solid #d8c18a;border-radius:14px;background:#063541;color:#fff8e6;box-shadow:0 5px 18px #04273666;}.matharia-pond-note-panel .wellbeing-note-row{gap:10px;}.matharia-pond-note-panel .wellbeing-note-slot{min-width:0;}.matharia-pond-note-panel .wellbeing-note-toggle{min-width:44px;min-height:44px;}
+}
+@media(orientation:landscape) and (max-height:500px){html[data-presentation='matharia'] #root :is(.screen-wellbeing-activity,.screen-wellbeing-hub){.app-screen-content{inset:calc(56px + env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) calc(70px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));}}}
+@media(prefers-reduced-motion:reduce){html[data-presentation='matharia'] #root .wellbeing-shell *,html[data-presentation='matharia'] #root .wellbeing-shell *::before,html[data-presentation='matharia'] #root .wellbeing-shell *::after{animation:none;transition:none;}}
+
+html[data-presentation='matharia'] #root .matharia-pond-fish-art{display:block;width:100%;height:100%;object-fit:contain;pointer-events:none;}
+

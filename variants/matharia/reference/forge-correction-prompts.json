@@ -1,0 +1,24 @@
+[
+  [
+    "forge_rack_v3",
+    "Edit the FIRST image (the empty wooden rack asset). The SECOND image is the approved screen reference. Keep the same gold corner fittings, walnut material, sapphire and blue pennant, but make the actual wood rails considerably narrower and the blank teal face broader: top and bottom wood rail about 5% of the rectangle's height each, side rails about 5% of its width. Most of the face must be usable, as in the approved rack. Extend the plain face vertically so the complete asset including the outside pennant has width/height 1.32. Do not stretch any corner, gemstone or cloth; redraw/extend only the plain face and straight rails. Preserve fine polished game craftsmanship. All the inside face stays empty: no controls, cards, labels or marks. True transparency outside the asset.",
+    [
+      "D:/BrainZilla/GitHub/SATsLegends/variants/matharia/assets/png/frames/forge_rack_v2@2x.webp",
+      "D:/BrainZilla/GitHub/SATsLegends/variants/matharia/reference/approved/fraction_forge-v2.png"
+    ]
+  ],
+  [
+    "forge_anvil_v3",
+    "Create ONE standalone transparent anvil and low wooden stump matching the foreground anvil in this approved Fraction Forge screen. Exact overall width/height about 2.7:1, very broad and shallow, not a tall pedestal. Dark charcoal forged-metal anvil with a long curved horn pointing left, polished golden molten edges and small engraved gold botanical royal crest on the front. A low wide cut timber stump is immediately under it, only about 25% of the complete asset's height. The anvil itself takes about 75% of total height. Reproduce the warm furnace lighting and premium painted cartoon style of the approved screen, not photorealistic rough industrial hardware. Front three-quarter view like the reference. No fire, floating sparks, numbers, cards, labels, interface, character, floor or scenery. True transparency outside the anvil/stump silhouette; tight clean bounds.",
+    [
+      "D:/BrainZilla/GitHub/SATsLegends/variants/matharia/reference/approved/fraction_forge-v2.png"
+    ]
+  ],
+  [
+    "forge_hammer_v3",
+    "Create ONE isolated transparent blacksmith hammer matching the hammer carried by the deer in this approved Fraction Forge screen. A broad simple rectangular cool slate-blue steel head with clean bevelled edges and lightly worn metal texture, a straight warm wooden handle with a brown leather grip and a small brass collar. No gemstone, no markings or letters, no decorative emblem. Straight upright neutral pose: head horizontal at the top and handle vertically downward; it will be rotated and animated in code. Overall width/height about 0.62. Preserve the approved premium painted cartoon game style and warm left-hand furnace highlights. True transparency outside the tool, tight bounds; no hands, body, scene, anvil, particles, floor or interface.",
+    [
+      "D:/BrainZilla/GitHub/SATsLegends/variants/matharia/reference/approved/fraction_forge-v2.png"
+    ]
+  ]
+]

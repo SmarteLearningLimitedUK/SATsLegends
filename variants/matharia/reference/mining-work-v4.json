@@ -1,0 +1,125 @@
+{
+  "processing": "Common aspect-preserving scale per identity, alpha-margin trim and foot-baseline registration. No painted background covers or distorted artwork.",
+  "assets": [
+    {
+      "identity": "barratt",
+      "phase": "ready",
+      "name": "hero_barratt_mining_ready_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-fc8fefe9-78fe-4add-aeb6-f0444d2aa253.png",
+      "production": "variants\\matharia\\assets\\png\\heroes\\hero_barratt_mining_ready_v4@2x.webp",
+      "dimensions": [
+        1280,
+        1600
+      ],
+      "feetBaseline": 1540,
+      "footCentreX": 560,
+      "bytes": 364576,
+      "sha256": "f18ac36139df6081abaa7c42d7084cfb232def9a577f95317291bef4fc2ff030"
+    },
+    {
+      "identity": "barratt",
+      "phase": "contact",
+      "name": "hero_barratt_mining_contact_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-5d4ff88b-6d32-45a5-a141-bdb63d2d1948.png",
+      "production": "variants\\matharia\\assets\\png\\heroes\\hero_barratt_mining_contact_v4@2x.webp",
+      "dimensions": [
+        1280,
+        1600
+      ],
+      "feetBaseline": 1540,
+      "footCentreX": 560,
+      "bytes": 350994,
+      "sha256": "f51f9c677b6fe3de89896bf2577a639fc7aa11993e4c311ad2cecc72dbc51b1c"
+    },
+    {
+      "identity": "bran",
+      "phase": "ready",
+      "name": "hero_bran_mining_ready_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-37d2bde2-d83a-4120-bb8b-c76e51d2a39f.png",
+      "production": "variants\\matharia\\assets\\png\\heroes\\hero_bran_mining_ready_v4@2x.webp",
+      "dimensions": [
+        1280,
+        1600
+      ],
+      "feetBaseline": 1540,
+      "footCentreX": 560,
+      "bytes": 425940,
+      "sha256": "5917d77db23456ae507d57ec3db7ae433d1d6b9675a0a5b09a1cca1a920e2e09"
+    },
+    {
+      "identity": "bran",
+      "phase": "contact",
+      "name": "hero_bran_mining_contact_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-d19388c5-0842-42d8-a883-9b84ca4367c8.png",
+      "production": "variants\\matharia\\assets\\png\\heroes\\hero_bran_mining_contact_v4@2x.webp",
+      "dimensions": [
+        1280,
+        1600
+      ],
+      "feetBaseline": 1540,
+      "footCentreX": 560,
+      "bytes": 363356,
+      "sha256": "52f03656b9c01429818ec5ab9116b4a2a45c5f7eaf55648e7d33c001b243fa89"
+    },
+    {
+      "identity": "mochi",
+      "phase": "ready",
+      "name": "hero_mochi_mining_ready_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-40d25988-69f4-4b68-a6cf-596c1b234830.png",
+      "production": "variants\\matharia\\assets\\png\\heroes\\hero_mochi_mining_ready_v4@2x.webp",
+      "dimensions": [
+        1280,
+        1600
+      ],
+      "feetBaseline": 1540,
+      "footCentreX": 560,
+      "bytes": 328474,
+      "sha256": "7a094a3a9a5003f76a7bb42e289cd873378d1b316e07e839e304d0089a03ad00"
+    },
+    {
+      "identity": "mochi",
+      "phase": "contact",
+      "name": "hero_mochi_mining_contact_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-b9e19fe3-3a05-47e3-8b33-bcea87ad9fd4.png",
+      "production": "variants\\matharia\\assets\\png\\heroes\\hero_mochi_mining_contact_v4@2x.webp",
+      "dimensions": [
+        1280,
+        1600
+      ],
+      "feetBaseline": 1540,
+      "footCentreX": 560,
+      "bytes": 324776,
+      "sha256": "f547e50596620ae47127ad6657fb4c4b9b373fc66a272f5c83069302c26e503b"
+    },
+    {
+      "identity": "vex",
+      "phase": "ready",
+      "name": "hero_vex_mining_ready_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-070caef7-38d4-4654-b1fa-c30e8369e224.png",
+      "production": "variants\\matharia\\assets\\png\\heroes\\hero_vex_mining_ready_v4@2x.webp",
+      "dimensions": [
+        1280,
+        1600
+      ],
+      "feetBaseline": 1540,
+      "footCentreX": 560,
+      "bytes": 347536,
+      "sha256": "ea54df75312f7c4de76b548c1f7f3795905fa7f3fc477247a7506706e7b69c08"
+    },
+    {
+      "identity": "vex",
+      "phase": "contact",
+      "name": "hero_vex_mining_contact_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-399e0fe6-50f2-4cf7-9f8b-d3e2e9afeb12.png",
+      "production": "variants\\matharia\\assets\\png\\heroes\\hero_vex_mining_contact_v4@2x.webp",
+      "dimensions": [
+        1280,
+        1600
+      ],
+      "feetBaseline": 1540,
+      "footCentreX": 560,
+      "bytes": 297178,
+      "sha256": "d097c1ae0d3793555836039252612709b1ee8a48434325e1f8278f8bcb71f3e3"
+    }
+  ]
+}

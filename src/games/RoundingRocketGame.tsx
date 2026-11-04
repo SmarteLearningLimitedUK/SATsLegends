@@ -215,15 +215,16 @@ const RoundingRocketGame: React.FC<RoundingRocketGameShellProps> = ({
   const launching = rocketState === 'launching';
   const inputLocked = rocketState !== 'idle';
   return <div className="rr-game" data-rounding-rocket="true">
-    <RoundingRocketScene installed={correctAnswers} total={goalCorrect} launch={launching} paused={paused} failed={rocketState === 'failed'} onLaunchComplete={completeRun}/>
+    <RoundingRocketScene installed={correctAnswers} total={goalCorrect} launch={launching} paused={paused} failed={rocketState === 'failed'} reacting={rocketState === 'arming' || launching} onLaunchComplete={completeRun}/>
     <PracticeIntroPopup open={showPracticeIntro} title="Rounding Rocket"
-      body="Choose the rounded answer to install a rocket part. Build the whole rocket, then watch it launch into space. Check the digit just after the requested place: 5 or more rounds up."
+      body="The Monster Minds have hidden the parts of the rocket! Choose the rounded answer to recover each part. Build the whole rocket, then watch it launch into space. Check the digit just after the requested place: 5 or more rounds up."
       briefing={practiceBriefing} onAction={() => setShowPracticeIntro(false)}/>
     {!launching && <>
       <div className="rr-question">
         <GameQuestionCard title={`Nearest ${round.target}`} className="mx-auto max-w-[31rem]" bodyClassName="flex flex-col items-center gap-1">
+          <span className="rr-story">The Monster Minds have hidden the parts of the rocket.</span>
           <span data-rocket-question-value="true" className="text-[clamp(2rem,5vw,3rem)] font-bold leading-none tabular-nums">{round.value}</span>
-          <span className="rr-question-hint text-base leading-snug">Round the number to add a rocket part.</span>
+          <span className="rr-rounding-target">Round to the nearest {round.target}.</span>
         </GameQuestionCard>
       </div>
       {feedbackText && <div role="status" className={`rr-feedback ${rocketState === 'failed' ? 'rr-feedback--error' : ''}`}>{feedbackText}</div>}

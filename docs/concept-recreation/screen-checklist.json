@@ -1,0 +1,1150 @@
+{
+  "nativeVerification": "Unavailable on this Windows host. Chromium/WebKit captures and simulated safe-area/rem checks are browser-only.",
+  "screens": [
+    {
+      "key": "place_value_panic",
+      "reference": "variants/matharia/reference/approved/place_value_panic.png",
+      "route": "/game/1/37",
+      "rendering": "variants/matharia/src/screens/PlaceValueScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/place-value-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/place_value_panic/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/place_value_panic/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/place_value_panic/difference.png",
+        "qa-artifacts/concept-recreation/place_value_panic/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/place_value_panic/checks.json",
+        "qa-artifacts/concept-recreation/place_value_panic/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Question and digit values follow real source state. Fine frame ornaments differ.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "number_line_ninja",
+      "reference": "variants/matharia/reference/approved/number_line_ninja.png",
+      "route": "/game/1/38",
+      "rendering": "variants/matharia/src/screens/NinjaScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 1 November token/ruler/grounding correction verified in 6 browser layout/state cases, 2 full game flows and 1 real-clock flight check; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/number_line_ninja/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/number_line_ninja/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/number_line_ninja/difference.png",
+        "qa-artifacts/concept-recreation/number_line_ninja/index.html",
+        "qa-artifacts/ninja-composition/before-after.png",
+        "qa-artifacts/ninja-composition/reference-versus-running.png",
+        "qa-artifacts/ninja-composition/flight/current-fraction.png"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/number_line_ninja/checks.json",
+        "qa-artifacts/concept-recreation/number_line_ninja/motion-and-safe-areas.json",
+        "qa-artifacts/ninja-composition/after/checks.json",
+        "qa-artifacts/ninja-composition/gameplay/checks.json",
+        "qa-artifacts/ninja-composition/iphone15-gameplay/checks.json",
+        "qa-artifacts/ninja-composition/flight/checks.json",
+        "qa-artifacts/ninja-composition/after-long/checks.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS",
+        "1 November compiled bundle: WebKit reduced-motion layouts at 852x393 (iPhone 15, 3x, simulated 59px sides/21px bottom), 667x375 compact and 1024x768 iPad. Real-clock Chromium mesh and answer flight checked at iPhone 15 dimensions. Browser checks, not native iOS."
+      ],
+      "remainingDefects": [
+        "The separate regenerated rail and gold frame details differ slightly from the concept. Live values follow original source questions.",
+        "Tokens are deliberately smaller than the original concept, following the latest user correction.",
+        "Windows WebKit screenshots omit the animated canvas in both prior and corrected positioning; its WebGL buffer contains rendered pixels. Normal-motion visual evidence uses Chromium; WebKit reduced-motion artwork is visible.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified. Corrected bundle is synced locally; TestFlight upload remains pending."
+      ],
+      "visualInspection": "1 November: approved reference, supplied iPhone image, same-seed before/after phone capture, compact/iPad captures, and real-clock Chromium mixed-fraction capture inspected. See docs/concept-recreation/NUMBER-LINE-LAYOUT-2026-11-01.md."
+    },
+    {
+      "key": "prime_pop",
+      "reference": "variants/matharia/reference/approved/prime_pop.png",
+      "route": "/game/1/39",
+      "rendering": "variants/matharia/src/screens/PrimeScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/prime-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/prime_pop/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/prime_pop/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/prime_pop/difference.png",
+        "qa-artifacts/concept-recreation/prime_pop/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/prime_pop/checks.json",
+        "qa-artifacts/concept-recreation/prime_pop/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Original wording, physical orb sizes, spawning, trajectories, values and scoring are retained; illustrative values/counts differ.",
+        "Regenerated guide stance, caster and fine decorative details vary slightly.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "rounding_rocket",
+      "reference": "variants/matharia/reference/approved/rounding_rocket.png",
+      "route": "/game/1/40",
+      "rendering": "variants/matharia/src/screens/RocketScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/rocket-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/rounding_rocket/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/rounding_rocket/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/rounding_rocket/difference.png",
+        "qa-artifacts/concept-recreation/rounding_rocket/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/rounding_rocket/checks.json",
+        "qa-artifacts/concept-recreation/rounding_rocket/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Actual rounding questions and recovered-part animation differ from illustrative values.",
+        "Full normal-motion ascent, mid-flight pause, orbit and victory passed in both browser engines; native performance remains unverified.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "maths_vs_zombies",
+      "reference": "variants/matharia/reference/approved/maths_vs_zombies.png",
+      "route": "/game/1/46",
+      "rendering": "variants/matharia/src/screens/ZombiesScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/zombie-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/maths_vs_zombies/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/maths_vs_zombies/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/maths_vs_zombies/difference.png",
+        "qa-artifacts/concept-recreation/maths_vs_zombies/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/maths_vs_zombies/checks.json",
+        "qa-artifacts/concept-recreation/maths_vs_zombies/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Original selected hero/casting pose differs from the reference bow pose.",
+        "Fine HUD/panel ornaments differ. Browser normal/reduced motion, active-time projectile pause, simulated insets and rotation checks passed.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "take_out_rush",
+      "reference": "variants/matharia/reference/approved/take_out_rush.png",
+      "route": "/game/2/10",
+      "rendering": "variants/matharia/src/screens/TakeoutScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/takeout-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/take_out_rush/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/take_out_rush/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/take_out_rush/difference.png",
+        "qa-artifacts/concept-recreation/take_out_rush/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/take_out_rush/checks.json",
+        "qa-artifacts/concept-recreation/take_out_rush/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Question minimum height and ticket spacing passed normal/reduced motion, inset and rotation checks.",
+        "Food kinds, internal IDs, fractions, constraints and marking are retained; the reference menu is illustrative.",
+        "Normal/reduced motion and simulated portrait safe-area/rotation checks passed. All four cooking poses were captured and manually inspected.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "fraction_forge",
+      "reference": "variants/matharia/reference/approved/fraction_forge-v2.png",
+      "route": "/game/2/15",
+      "rendering": "variants/matharia/src/screens/ForgeScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/forge-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/fraction_forge/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/fraction_forge/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/fraction_forge/difference.png",
+        "qa-artifacts/concept-recreation/fraction_forge/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/fraction_forge/checks.json",
+        "qa-artifacts/concept-recreation/fraction_forge/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Actual commission, XP and heat remain visible; recipe and values vary with the source state.",
+        "All four saved worker identities and tool alignments were captured and manually inspected.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "match3_equivalence",
+      "reference": "variants/matharia/reference/approved/match3_equivalence-v2.png",
+      "route": "/game/2/20",
+      "rendering": "variants/matharia/src/screens/MatchScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/match-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/match3_equivalence/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/match3_equivalence/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/match3_equivalence/difference.png",
+        "qa-artifacts/concept-recreation/match3_equivalence/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/match3_equivalence/checks.json",
+        "qa-artifacts/concept-recreation/match3_equivalence/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "The original tier 5 is explicitly colourless; the illustrative concept is coloured. The source rule is retained.",
+        "Original selected hero pose and regenerated frame details differ.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "percent_power",
+      "reference": "variants/matharia/reference/approved/percent_power.png",
+      "route": "/game/2/25",
+      "rendering": "variants/matharia/src/screens/PercentScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/forest-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/percent_power/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/percent_power/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/percent_power/difference.png",
+        "qa-artifacts/concept-recreation/percent_power/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/percent_power/checks.json",
+        "qa-artifacts/concept-recreation/percent_power/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Source questions, outputs, charge and goal are retained; illustrative values vary.",
+        "Regenerated reactor, frames and hero pose differ in fine detail; hero scale was corrected and the refreshed comparison inspected.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "simplify_sprint",
+      "reference": "variants/matharia/reference/approved/simplify_sprint.png",
+      "route": "/game/2/30",
+      "rendering": "variants/matharia/src/screens/SprintScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/forest-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/simplify_sprint/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/simplify_sprint/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/simplify_sprint/difference.png",
+        "qa-artifacts/concept-recreation/simplify_sprint/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/simplify_sprint/checks.json",
+        "qa-artifacts/concept-recreation/simplify_sprint/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Original checkpoints, fraction pairs, factors, shortcuts and travel timing are retained.",
+        "Regenerated gate and hero pose vary slightly. All four running identities were captured and manually inspected.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "angle_arena",
+      "reference": "variants/matharia/reference/approved/angle_arena-physics-aim-v2.png",
+      "route": "/game/3/12",
+      "rendering": "variants/matharia/src/screens/AngleScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/glacier-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/angle_arena/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/angle_arena/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/angle_arena/difference.png",
+        "qa-artifacts/concept-recreation/angle_arena/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/angle_arena/checks.json",
+        "qa-artifacts/concept-recreation/angle_arena/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "The approved manual power/Fire/destruction revision conflicts with preserving original mechanics; the original automatic launch, collision, timings and scoring are retained. The tower is visual scenery.",
+        "Regenerated cannon platform, rhino operator and fine decorative details vary.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "polygon_palace",
+      "reference": "variants/matharia/reference/approved/polygon_palace.png",
+      "route": "/game/3/17",
+      "rendering": "variants/matharia/src/screens/PolygonScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/glacier-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/polygon_palace/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/polygon_palace/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/polygon_palace/difference.png",
+        "qa-artifacts/concept-recreation/polygon_palace/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/polygon_palace/checks.json",
+        "qa-artifacts/concept-recreation/polygon_palace/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Original SVG geometry, rotations, hidden solid edges and every question mode are retained; illustrative shapes/properties vary.",
+        "Regenerated pedestal, guide pose and fine frame details differ.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "area_architect",
+      "reference": "variants/matharia/reference/approved/area_architect.png",
+      "route": "/game/3/22",
+      "rendering": "variants/matharia/src/screens/AreaScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/geometry-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/area_architect/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/area_architect/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/area_architect/difference.png",
+        "qa-artifacts/concept-recreation/area_architect/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/area_architect/checks.json",
+        "qa-artifacts/concept-recreation/area_architect/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Source unit-square plans, holes, dimensions, choices and five-room goal are retained; illustrative values vary.",
+        "Regenerated table, character pose and fine frame details differ.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "rotation_relay",
+      "reference": "variants/matharia/reference/approved/rotation_relay.png",
+      "route": "/game/3/27",
+      "rendering": "variants/matharia/src/screens/TransformationScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/geometry-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/rotation_relay/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/rotation_relay/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/rotation_relay/difference.png",
+        "qa-artifacts/concept-recreation/rotation_relay/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/rotation_relay/checks.json",
+        "qa-artifacts/concept-recreation/rotation_relay/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Original translation/reflection/description questions, grid, placement, drag, keyboard, hint and marking are retained. Illustrative example values vary.",
+        "The scalable hollow sapphire frame has compact corners; fine ornament details differ. Cursor controls remain accessible through the auxiliary Cursor popover.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "coordinates_quest",
+      "reference": "variants/matharia/reference/approved/coordinates_quest-v2.png",
+      "route": "/game/3/32",
+      "rendering": "variants/matharia/src/screens/CoordinatesScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/survey-assets.json",
+        "variants/matharia/reference/next-assets.json",
+        "variants/matharia/reference/geometry-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/coordinates_quest/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/coordinates_quest/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/coordinates_quest/difference.png",
+        "qa-artifacts/concept-recreation/coordinates_quest/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/coordinates_quest/checks.json",
+        "qa-artifacts/concept-recreation/coordinates_quest/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "The original route has five moves at tier5; the illustrated example has three. All source moves, equal-unit intersections and correct answers are retained.",
+        "The regenerated console, guide pose and fine ornaments vary; integer labels were checked against the live SVG CTM.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "conversion_canyon",
+      "reference": "variants/matharia/reference/approved/conversion_canyon.png",
+      "route": "/game/3/37",
+      "rendering": "variants/matharia/src/screens/ConversionScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/survey-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/conversion_canyon/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/conversion_canyon/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/conversion_canyon/difference.png",
+        "qa-artifacts/concept-recreation/conversion_canyon/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/conversion_canyon/checks.json",
+        "qa-artifacts/concept-recreation/conversion_canyon/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "All eight original weights are retained rather than the six illustrated tiles. The bank therefore has three rows.",
+        "Original five shipments, target values, load spring, overload/repair and scoring are retained. Loaded groups open in a44px list to avoid covering questions on compact devices. Regenerated housing/tray and hero pose vary.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "perimeter_path",
+      "reference": "variants/matharia/reference/approved/perimeter_path.png",
+      "route": "/game/3/42",
+      "rendering": "variants/matharia/src/screens/PerimeterScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/survey-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/perimeter_path/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/perimeter_path/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/perimeter_path/difference.png",
+        "qa-artifacts/concept-recreation/perimeter_path/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/perimeter_path/checks.json",
+        "qa-artifacts/concept-recreation/perimeter_path/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Original mixed-unit values, correct perimeter, eight-edge adjacency, source aspect ratio and twelve-question goal are retained; illustrative values vary.",
+        "The regenerated stone survey table and hero pose differ in fine detail. Readable precision labels have an alternative44px edge list.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "mean_machine",
+      "reference": "variants/matharia/reference/approved/mean_machine.png",
+      "route": "/game/4/10",
+      "rendering": "variants/matharia/src/screens/MeanScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/statistics-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/mean_machine/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/mean_machine/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/mean_machine/difference.png",
+        "qa-artifacts/concept-recreation/mean_machine/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/mean_machine/checks.json",
+        "qa-artifacts/concept-recreation/mean_machine/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Original Scan, unknown readings, mean/missing-reading questions, wrong explanations, scoring/three-repair bonus and ten repairs are retained. Illustrative values vary.",
+        "The regenerated engine, independent amber tablets and guide pose differ in fine detail. All readout glyphs and long-question states are contained.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "graph_grabber",
+      "reference": "variants/matharia/reference/approved/graph_grabber.png",
+      "route": "/game/4/18",
+      "rendering": "variants/matharia/src/screens/GraphScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/statistics-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/graph_grabber/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/graph_grabber/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/graph_grabber/difference.png",
+        "qa-artifacts/concept-recreation/graph_grabber/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/graph_grabber/checks.json",
+        "qa-artifacts/concept-recreation/graph_grabber/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Original shipment questions, exact bar values, crate-per-tick representation, local clock, scoring and seven-round goal are retained; illustrative values vary.",
+        "Responsive ticks remain on the source unit scale. A44px Trace panel supplements fine chart labels. Regenerated frame, guide and fine ornaments vary.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "line_graph_lab",
+      "reference": "variants/matharia/reference/approved/line_graph_lab.png",
+      "route": "/game/4/23",
+      "rendering": "variants/matharia/src/screens/LineScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/wizard-activities.json",
+        "variants/matharia/reference/next-assets.json",
+        "variants/matharia/reference/statistics-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/line_graph_lab/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/line_graph_lab/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/line_graph_lab/difference.png",
+        "qa-artifacts/concept-recreation/line_graph_lab/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/line_graph_lab/checks.json",
+        "qa-artifacts/concept-recreation/line_graph_lab/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Original temperature data, all question modes, true missing-point preview, separate Plot submission, XP/penalties and ten-reading goal remain unchanged. The illustrative graph is offset by1°C from the original first-round graph.",
+        "Independent four-identity wizard atlas, hollow chart frame, amber controls and measured responsive long-question regions; fine costume/frame details differ.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "data_detective",
+      "reference": "variants/matharia/reference/approved/data_detective.png",
+      "route": "/game/4/28",
+      "rendering": "variants/matharia/src/screens/DataScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/detective-activities.json",
+        "variants/matharia/reference/next-assets.json",
+        "variants/matharia/reference/statistics-assets.json",
+        "variants/matharia/reference/detective-suspects.json",
+        "variants/matharia/reference/detective-evidence.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/data_detective/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/data_detective/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/data_detective/difference.png",
+        "qa-artifacts/concept-recreation/data_detective/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/data_detective/checks.json",
+        "qa-artifacts/concept-recreation/data_detective/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Original random cases, evidence amounts/colours, both chart types, all four named suspect reports, accusation/exclusion, scoring/lives and ten-case goal remain unchanged. Illustrative evidence amounts vary.",
+        "Approved inspect/accuse UI instruction is used; the original narrative, method and random case brief remain in Help. Independent detective/suspect/evidence assets and padded live cells replace unsuitable scenery and flat legacy sprites.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "factor_frenzy",
+      "reference": "variants/matharia/reference/approved/factor_frenzy.png",
+      "route": "/game/5/10",
+      "rendering": "variants/matharia/src/screens/FactorScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/factor-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/factor_frenzy/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/factor_frenzy/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/factor_frenzy/difference.png",
+        "qa-artifacts/concept-recreation/factor_frenzy/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/factor_frenzy/checks.json",
+        "qa-artifacts/concept-recreation/factor_frenzy/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Source pulse clocks, factor/prime sets, time bonuses and ten locks are retained. Regenerated sentinel, low dais and fine frame details differ.",
+        "Ten functional, four motion/inset and six shared-HUD profiles passed. Refreshed composition inspected; source question/options may differ from the illustrative example.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "multiplication_mine",
+      "reference": "variants/matharia/reference/approved/multiplication_mine.png",
+      "route": "/game/5/19",
+      "rendering": "variants/matharia/src/screens/MineScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/miner-activities.json",
+        "variants/matharia/reference/next-assets.json",
+        "variants/matharia/reference/mine-assets.json",
+        "variants/matharia/reference/ops-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/multiplication_mine/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/multiplication_mine/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/multiplication_mine/difference.png",
+        "qa-artifacts/concept-recreation/multiplication_mine/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/multiplication_mine/checks.json",
+        "qa-artifacts/concept-recreation/multiplication_mine/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Presentation implemented with original written cells, carries, zero placeholders, four products and original timings. New transparent four-identity parchment guides and charcoal/gold buttons are integrated.",
+        "Verification in progress: arithmetic reaches victory; results transition under investigation. Fresh layout comparison pending.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "order_ops_arena",
+      "reference": "variants/matharia/reference/approved/order_ops_arena.png",
+      "route": "/game/5/24",
+      "rendering": "variants/matharia/src/screens/OpsScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/ops-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/order_ops_arena/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/order_ops_arena/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/order_ops_arena/difference.png",
+        "qa-artifacts/concept-recreation/order_ops_arena/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/order_ops_arena/checks.json",
+        "qa-artifacts/concept-recreation/order_ops_arena/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Original operation choices, precedence, reduction, nine-hit goal and combo scoring are retained. Separate original-library goblin, temple scenery, foreground platform and controls are integrated.",
+        "Verification in progress: expression line boxes, character scale and platform perspective are being corrected. Fresh comparison and complete functional matrix pending.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "formula_forge",
+      "reference": "variants/matharia/reference/approved/formula_forge.png",
+      "route": "/game/5/29",
+      "rendering": "variants/matharia/src/screens/FormulaScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/formula-assets.json",
+        "variants/matharia/reference/next-assets.json",
+        "variants/matharia/reference/miner-activities.json",
+        "variants/matharia/reference/statistics-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/formula_forge/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/formula_forge/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/formula_forge/difference.png",
+        "qa-artifacts/concept-recreation/formula_forge/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/formula_forge/checks.json",
+        "qa-artifacts/concept-recreation/formula_forge/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Original rectangle/perimeter/triangle/parallelogram/cuboid diagrams, compute/missing measurements, eight questions,200XP at tier5, local/shared lives and520ms active feedback/advance are retained.",
+        "Ten functional, four motion/inset and six shared-HUD profiles passed. Exact b15/h13 representative captures inspected. Regenerated timber frame/guide and fine details differ.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "remainder_run",
+      "reference": "variants/matharia/reference/approved/remainder_run.png",
+      "route": "/game/5/34",
+      "rendering": "variants/matharia/src/screens/RemainderScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/remainder-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/remainder_run/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/remainder_run/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/remainder_run/difference.png",
+        "qa-artifacts/concept-recreation/remainder_run/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/remainder_run/checks.json",
+        "qa-artifacts/concept-recreation/remainder_run/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Original batch sizes, quotient/remainder working, decimal and remainder modes, score/time penalties and timed victory are retained. Six independent crates illustrate dock inventory; live numeric counters represent exact quantities.",
+        "Ten functional browser profiles, four normal/reduced-motion/inset/rotation profiles and six shared-HUD profiles passed. Clean existing harbour scenery, regenerated conveyor/crate/rope/button and original selected guide differ in fine detail from the concept.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "time_keeper_cove",
+      "reference": "variants/matharia/reference/approved/time_keeper_cove.png",
+      "route": "/game/6/9",
+      "rendering": "variants/matharia/src/screens/ChronoScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/chrono-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/time_keeper_cove/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/time_keeper_cove/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/time_keeper_cove/difference.png",
+        "qa-artifacts/concept-recreation/time_keeper_cove/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/time_keeper_cove/checks.json",
+        "qa-artifacts/concept-recreation/time_keeper_cove/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Original target-time generator, four digit/Roman variants,60ticks/12labels, independent hour/minute wrap and one-/five-minute steps, scoring,90s round and Reset are retained. Presentation adjusts hand shapes/label spacing without changing their angles.",
+        "Ten functional profiles, four portrait motion/inset/rotation profiles, four real-clock hand-animation profiles and six shared-HUD profiles passed. Regenerated clock/terrace and selected guide stance differ in fine detail. Native execution on the supported iOS 16.4 minimum remains unverified.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "problem_pyramid",
+      "reference": "variants/matharia/reference/approved/problem_pyramid.png",
+      "route": "/game/6/14",
+      "rendering": "variants/matharia/src/screens/PyramidScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/pyramid-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/problem_pyramid/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/problem_pyramid/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/problem_pyramid/difference.png",
+        "qa-artifacts/concept-recreation/problem_pyramid/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/problem_pyramid/checks.json",
+        "qa-artifacts/concept-recreation/problem_pyramid/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Original base/middle/top sums, options, six-round goal, attempt accuracy, source raw reward formula and canonical account reward policy are retained.",
+        "Ten functional profiles, four motion/inset/rotation profiles and six shared-HUD profiles passed. Separate regenerated flat-top stone tablets/courtyard and selected guide stance differ in fine detail; source options differ from the illustrative concept.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "unit_mixer",
+      "reference": "variants/matharia/reference/approved/unit_mixer.png",
+      "route": "/game/6/19",
+      "rendering": "variants/matharia/src/screens/LavaScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/lava-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/unit_mixer/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/unit_mixer/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/unit_mixer/difference.png",
+        "qa-artifacts/concept-recreation/unit_mixer/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/unit_mixer/checks.json",
+        "qa-artifacts/concept-recreation/unit_mixer/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Original eleven crossing indices and x positions, unit-conversion/combined questions, answer order, ten-correct goal,200XP/step at tier5, lives and star rules are preserved.",
+        "Ten functional profiles, four real motion/inset/rotation profiles and six shared-HUD profiles passed. Independent smaller distant stones avoid overlapping crossing objects; source y positions are projected into the frontal view. Motion checks await the browser pause operation committing before measuring held time. All four final profiles passed.",
+        "Both live reference captures reproduce approved1.75kg+700g and ordered24,500g/2,450g/245,000g/245g via unchanged source factory. Fine platform and frame details differ. Native iOS remains unverified.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "change_counter",
+      "reference": "variants/matharia/reference/approved/change_counter.png",
+      "route": "/game/6/24",
+      "rendering": "variants/matharia/src/screens/ChangeScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/change-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/change_counter/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/change_counter/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/change_counter/difference.png",
+        "qa-artifacts/concept-recreation/change_counter/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/change_counter/checks.json",
+        "qa-artifacts/concept-recreation/change_counter/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Original receipt names/quantities/prices, six trades, all eight denominations, selected-coin removal, Undo/Clear,220XP/tier5, stars/lives,520ms progression and retry are retained.",
+        "Ten functional, four real motion/inset/rotation and six shared-HUD profiles passed. Question feedback remains padded above controls; compact layouts keep the helper in the question to preserve44px controls. Exact approved receipt reproduced through unchanged source factory. Regenerated counter, guide pose, coins and fine frame ornament differ.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "crystal_core",
+      "reference": "variants/matharia/reference/approved/crystal_core.png",
+      "route": "/game/8/1",
+      "rendering": "variants/matharia/src/screens/PaperScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/paper-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/crystal_core/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/crystal_core/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/crystal_core/difference.png",
+        "qa-artifacts/concept-recreation/crystal_core/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/crystal_core/checks.json",
+        "qa-artifacts/concept-recreation/crystal_core/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Original36 questions/40marks/1800s, native answer pad, inputs, Later/revisit, per-mission working, checkpoint seed/drafts, marking/explanations/history and final callbacks are retained. Shared pause now holds the original deadline; format and duration unchanged.",
+        "Ten full-paper functional, four motion/inset/rotation and six shared-HUD profiles passed. Regenerated navy HUD, standing slate, original guide pose, frame details and timer icon differ.44px controls require a taller response region at phone sizes. Approved325+140 reproduced through unchanged source checkpoint seed4.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "mirror_gate",
+      "reference": "variants/matharia/reference/approved/mirror_gate.png",
+      "route": "/game/8/2",
+      "rendering": "variants/matharia/src/screens/PaperScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/paper-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/mirror_gate/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/mirror_gate/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/mirror_gate/difference.png",
+        "qa-artifacts/concept-recreation/mirror_gate/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/mirror_gate/checks.json",
+        "qa-artifacts/concept-recreation/mirror_gate/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Original25 missions/35marks/2400s, exact native fields/choices/constructions, per-mission working/checkpoints, marking/explanations/history and navigation retained. Explicit shared pause holds the original deadline.",
+        "Ten complete-paper functional, four motion/safe-area/rotation and six HUD profiles passed. Long questions get a taller portalled region; complex models can open unchanged in a larger view.44px inputs require a taller response panel. Native iOS remains unverified.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "matrix_match",
+      "reference": "variants/matharia/reference/approved/matrix_match.png",
+      "route": "/game/8/3",
+      "rendering": "variants/matharia/src/screens/PaperScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/paper-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/matrix_match/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/matrix_match/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/matrix_match/difference.png",
+        "qa-artifacts/concept-recreation/matrix_match/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/matrix_match/checks.json",
+        "qa-artifacts/concept-recreation/matrix_match/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Original25 missions/35marks/2400s, exact native fields/choices/constructions, per-mission working/checkpoints, marking/explanations/history and navigation retained. Explicit shared pause holds the original deadline.",
+        "Ten complete-paper functional, four motion/safe-area/rotation and six HUD profiles passed. Long questions get a taller portalled region; complex models can open unchanged in a larger view.44px inputs require a taller response panel. Native iOS remains unverified.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "potion_panic",
+      "reference": "variants/matharia/reference/approved/potion_panic.png",
+      "route": "/game/7/9",
+      "rendering": "variants/matharia/src/screens/PotionScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/potion-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/potion_panic/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/potion_panic/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/potion_panic/difference.png",
+        "qa-artifacts/concept-recreation/potion_panic/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/potion_panic/checks.json",
+        "qa-artifacts/concept-recreation/potion_panic/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Original challenge generator, all five ingredients, locked starting amounts, three-brew goal at tier5,100XP/brew, accuracy rule, lives, Reset and760ms active feedback remain unchanged. Exact approved20drop/1:1:1:1/Azure5 recipe reproduced via unchanged source seed22.",
+        "Ten functional, four motion/inset/rotation and six shared-HUD profiles passed. Original plus/Reset interaction retained; approved minus controls are not added because the source has no remove-per-ingredient rule. Live liquid follows the original mixture colour, so Azure5 produces blue rather than illustrative pink. Regenerated guide, hearth and fine frame details vary.",
+        "Retry transient from the exhausted prior session is ignored until a fresh positive session is observed; real later failure remains active. Native iOS unverified.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "share_splitter",
+      "reference": "variants/matharia/reference/approved/share_splitter.png",
+      "route": "/game/7/14",
+      "rendering": "variants/matharia/src/screens/ShareScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/share-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/share_splitter/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/share_splitter/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/share_splitter/difference.png",
+        "qa-artifacts/concept-recreation/share_splitter/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/share_splitter/checks.json",
+        "qa-artifacts/concept-recreation/share_splitter/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Original five ratios/rounds,36 source cakes at tier5, native tray/plate pointer capture, keyboard focus/Enter, Reset, allocation arithmetic,220XP/round, accuracy stars, lives and760ms active feedback remain connected to the unchanged controller.",
+        "Ten functional, four motion/inset/rotation and six shared-HUD browser profiles passed. Restored the shell question marker; explicit active timer/resume checks passed on reference and compact profiles in both engines. Independent five guests, four saved hosts, table, plate and cake sprites are integrated. Fine prop/frame details differ. Native iOS unverified.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "ratio_fractions",
+      "reference": "variants/matharia/reference/approved/ratio_fractions.png",
+      "route": "/game/7/19",
+      "rendering": "variants/matharia/src/screens/RaceScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/race-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/ratio_fractions/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/ratio_fractions/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/ratio_fractions/difference.png",
+        "qa-artifacts/concept-recreation/ratio_fractions/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/ratio_fractions/checks.json",
+        "qa-artifacts/concept-recreation/ratio_fractions/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Original themed question decks, difficulty/88unit hard-mode distance,1100unit finish,13correct answers,650ms boost/700ms wrong feedback, lives, score/star formulas and player/rival saved identities remain connected to the original controller.",
+        "Ten functional, four actual camera/wheel motion/inset/rotation and six shared-HUD browser profiles passed. iPad three-part labels received reserved two-line space. Paused feedback lock corrected using the shared active-time scheduler with original delays.",
+        "Clean frontal road replaced the unsuitable side panorama after actual capture. Four wheel-less chassis plus genuine independent wheels and four colour vessels are integrated. Slow reflected background tiles need no seam masks.44px phone controls sit slightly higher than illustrated; regenerated fine props/frame/kart details differ. Native iOS unverified.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    },
+    {
+      "key": "scale_builder",
+      "reference": "variants/matharia/reference/approved/scale_builder.png",
+      "route": "/game/7/24",
+      "rendering": "variants/matharia/src/screens/ScaleScene.tsx; actual original gameplay module adapted at Vite build time",
+      "requiredAssets": [
+        "variants/matharia/reference/scale-assets.json",
+        "variants/matharia/reference/next-assets.json"
+      ],
+      "implementation": "implemented; 10/10 recorded browser functional profiles passed; native verification pending",
+      "comparisons": [
+        "qa-artifacts/concept-recreation/scale_builder/reference-versus-running.jpg",
+        "qa-artifacts/concept-recreation/scale_builder/aligned-overlay.png",
+        "qa-artifacts/concept-recreation/scale_builder/difference.png",
+        "qa-artifacts/concept-recreation/scale_builder/index.html"
+      ],
+      "functionalChecks": [
+        "qa-artifacts/concept-recreation/scale_builder/checks.json",
+        "qa-artifacts/concept-recreation/scale_builder/motion-and-safe-areas.json"
+      ],
+      "deviceChecks": [
+        "Chromium and WebKit browser viewports: approved reference, compact phone, phone, large phone, iPad; not native iOS"
+      ],
+      "remainingDefects": [
+        "Original five projects, shape paths, factor/base values, controlled decimal fields, numeric pad/delete/Clear, SVG pointer mapping/half-unit keyboard step, duplicate guard, feedback, lives, raw score/star formula and manual completion remain live.",
+        "Ten full functional, four normal/reduced motion/inset/rotation and six shared-HUD browser profiles passed. Feedback advances after1100active ms. When gold handles overlap, the existing selected dimension field chooses the visible handle; both axes remain draggable.",
+        "Independent clean autumn terrace, canonical blueprint hero, physical bench and rounded navy/gold keys are integrated. Compact regions derive from actual available scene width/height and reserve text space. Exact original64×48/1.25 appears. A six-column/two-row pad preserves44px touch targets at reference/phone sizes; the iPad uses four columns/three rows. The illustrated reference uses four columns. Original SVG proportions, annotation placement, guide pose and fine frames differ from the reference. Native iOS unverified.",
+        "Native iOS, Dynamic Type and physical-device performance remain unverified."
+      ],
+      "visualInspection": "Actual approved/reference and device captures reviewed; see comparison artifacts and screen-specific differences. Native iOS remains unverified."
+    }
+  ],
+  "additionalScope": "Map, hubs, six wellbeing activities, account/quest/settings/shop/hero screens and shared states are tracked separately in non-game-checklist.json. Peaceful Pond is landscape; native and live-provider checks remain limited.",
+  "implementedGameplayCount": 37,
+  "remainingGameplayCount": 0,
+  "verifiedFunctionalGameplayCount": 37,
+  "sharedTransition": "42/42 real browser Back navigation profiles passed across21 games; retained exiting frame geometry/metadata, paused outgoing stages and blocked input. Native iOS unverified.",
+  "sharedHud": {
+    "appearances": "variants/matharia/reference/hud-appearances.json",
+    "functionalEvidence": "qa-artifacts/concept-recreation/shared-hud/checks.json",
+    "browserProfiles": "126/126 passed; actual Help, working-board edit/retention, settings, pause and optical icon centres, plus insets/root-font constraints",
+    "remaining": "Fresh comparisons after the shared HUD change; post-fix scheduled dialog-focus verification; native iOS unverified"
+  },
+  "browserReviewStatus": "37 gameplay presentations implemented and visually reviewed; specific source-state/art/layout differences remain documented; native verification pending.",
+  "platformCompatibility": "Matharia minimum raised to iOS 16.4 at the user’s request on 1 November 2026; all Xcode and Swift package settings agree and sync/update hooks preserve the exact version. Native iOS 16.4 execution remains unverified. The original SATs Legends target is unchanged."
+}

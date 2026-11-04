@@ -365,12 +365,13 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
   },
   mean_machine: {
     label: 'Mean Machine',
-    focus: 'Mean and averages',
+    focus: 'Mean, median and mode',
     rules: {
       title: 'Mean Machine',
-      summary: 'Balance the machine by finding the correct mean or missing value.',
+      summary: 'Scan the readings and find the mean, median or mode.',
       bullets: [
-        'Add the full data set before dividing carefully.',
+        'For the mean, add the readings and divide by how many there are.',
+        'For the median, order the readings and find the middle. The mode appears most often.',
         'Some questions ask for the missing number needed to make a target mean.',
         'Steady accuracy powers the machine faster.',
       ],

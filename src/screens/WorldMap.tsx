@@ -3,7 +3,12 @@ import { X } from 'lucide-react';
 import { IslandData, PlayerData } from '../types';
 import { ISLANDS } from '../constants';
 import islandAtlas from '../assets/maps/island-atlas-rich.webp';
-import mathariaLogo from '../assets/maps/matharia-logo.png';
+import mathariaLogo from '../assets/maps/screenshot-map/logo_matharia@2x.png';
+import acropolis from '../assets/maps/screenshot-map/island_arithmetic_acropolis@2x.png';
+import forest from '../assets/maps/screenshot-map/island_fraction_forest@2x.png';
+import glacier from '../assets/maps/screenshot-map/island_geometry_glacier@2x.png';
+import desert from '../assets/maps/screenshot-map/island_data_desert@2x.png';
+import rapids from '../assets/maps/screenshot-map/island_ratio_rapids@2x.png';
 import AssetIcon from '../components/AssetIcon';
 import ParentGateOverlay from '../components/ParentGateOverlay';
 import MapAtmosphere, { TERRAIN_ACCENTS } from '../components/world-map/MapAtmosphere';
@@ -36,6 +41,8 @@ const ISLAND_ATLAS_BOUNDS: Record<number, string> = {
   2:'0 894 444 428', 4:'444 896 444 428',
   7:'0 1322 444 454', 1:'444 1324 444 452',
 };
+
+const REFERENCE_ISLANDS: Record<number, string> = { 1: acropolis, 2: forest, 3: glacier, 4: desert, 7: rapids };
 
 const WorldMap: React.FC<WorldMapProps> = ({
   player,
@@ -202,11 +209,12 @@ const WorldMap: React.FC<WorldMapProps> = ({
                   style={{ opacity: 1 }}
                 >
                   <span className="legend-map-island-sprite" aria-hidden="true" data-island-sprite={island.id}>
-                    <svg className="legend-map-island-cell" viewBox={ISLAND_ATLAS_BOUNDS[island.id]} preserveAspectRatio="xMidYMid meet" focusable="false">
+                    {REFERENCE_ISLANDS[island.id] ? <img className="legend-map-reference-island" src={REFERENCE_ISLANDS[island.id]} alt="" draggable={false} /> : <svg className="legend-map-island-cell" viewBox={ISLAND_ATLAS_BOUNDS[island.id]} preserveAspectRatio="xMidYMid meet" focusable="false">
                       <defs><clipPath id={`map-island-crop-${island.id}`}><rect x={cropX} y={cropY} width={cropWidth} height={cropHeight} /></clipPath></defs>
                       <image href={islandAtlas} width="888" height="1776" clipPath={`url(#map-island-crop-${island.id})`} />
-                    </svg>
+                    </svg>}
                   </span>
+                  <span className="legend-map-island-label">{island.name}{!isUnlocked ? ' · Locked' : ''}</span>
                 </button>
               </div>
             );

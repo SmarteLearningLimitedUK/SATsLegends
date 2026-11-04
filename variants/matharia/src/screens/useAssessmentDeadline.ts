@@ -1,0 +1,3 @@
+import {useLayoutEffect,useRef,type RefObject} from 'react';
+/** Preserve paper durations/checkpoints; explicit shell pause holds its wall-clock deadline. */
+export function useAssessmentDeadline(deadline:RefObject<number>,phase:string,paused:boolean){const pausedRef=useRef(paused),heldAt=useRef<number|null>(null);pausedRef.current=paused;useLayoutEffect(()=>{if(phase!=='play'){heldAt.current=null;return;}if(paused){heldAt.current??=Date.now();return;}if(heldAt.current!==null){deadline.current+=Math.max(0,Date.now()-heldAt.current);heldAt.current=null;}},[deadline,phase,paused]);return pausedRef;}

@@ -127,3 +127,71 @@
  #root [data-game-set='boss_encounter'] .sats-mock-content:has(.sats-fields > fieldset:nth-child(2), .sats-tap-workpad[open]) {overflow-y:auto;touch-action:pan-y;}
  #root [data-game-set='boss_encounter'] .sats-mock-content:has(.sats-fields > fieldset:nth-child(2), .sats-tap-workpad[open]) .sats-playfield {flex:none;min-height:232px;}
 }
+
+/* Constructed responses retain the same reserved question/model/response zones. */
+.sats-entered-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;}
+.sats-answer-entry{display:flex;gap:6px;align-items:center;min-width:0;}
+.sats-answer-entry input{width:100%;min-width:0;min-height:44px;background:#061f33;border:2px solid #9edee9;border-radius:8px;padding:5px 10px;color:#fff9de;font-family:inherit;font-size:20px;font-weight:700;}
+.sats-answer-entry button{flex:none;min-height:44px;padding:4px 8px;border:1px solid #b6e8ee;border-radius:8px;color:#f9f4de;background:#16475d;font-size:14px;}
+.sats-answer-pad-scrim{position:fixed;inset:0;z-index:2500;display:flex;align-items:center;justify-content:center;padding:10px;background:#031220cc;}
+.sats-answer-pad{width:min(560px,100%);max-height:calc(100dvh - 20px);overflow:auto;padding:12px;background:#0b2a40;border:2px solid #e4c785;border-radius:14px;color:#f6f5e9;}
+.sats-pad-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.sats-pad-heading button,.sats-pad-keys button{min-height:44px;background:#17485c;border:1px solid #9edee9;color:#fff7db;border-radius:6px;padding:4px 8px;font:inherit;font-weight:700;}
+.sats-answer-pad output{display:block;min-height:44px;padding:8px;margin:8px 0;background:#041d30;border:1px solid #8cd6e0;border-radius:5px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:20px;}
+.sats-pad-keys{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;}
+.sats-symmetry{display:grid;grid-template-columns:repeat(6,44px);gap:0;}
+.sats-symmetry-cell{height:44px;border:1px solid #90d6e1;background:#0c2941;min-width:0;padding:0;border-radius:0;}
+.sats-symmetry-cell:nth-child(6n+3){border-right:3px dashed #ffdb8d;}
+.sats-symmetry-cell.is-filled{background:#74dce2;}
+@media(orientation:landscape) and (max-height:550px){
+ .sats-entered-fields{grid-template-columns:1fr;gap:4px;}
+ .sats-answer-entry input{font-size:18px;}.sats-answer-entry button{font-size:12px;padding:3px;}
+ .sats-pad-keys{grid-template-columns:repeat(8,minmax(0,1fr));}
+ .sats-answer-pad{width:min(650px,100%);padding:8px;}
+ .sats-symmetry{grid-template-columns:repeat(6,minmax(28px,40px));}.sats-symmetry-cell{height:40px;}
+}
+
+.sats-workpad-display{display:block;width:100%;min-height:66px;font-family:inherit;resize:vertical;}
+#root .sats-answer-entry button{font-size:14px!important;max-width:88px;}
+
+/* Depth models share the Core material and reserve space for the actual task. */
+.sats-depth-host{width:100%;min-height:0;}
+.sats-depth-construction{width:100%;display:grid;gap:8px;align-content:start;}
+.sats-depth-construction>.sats-diagram{max-height:240px;width:100%;}
+.sats-depth-construction label{display:grid;gap:3px;font-size:15px;font-weight:700;}
+.sats-depth-construction input[type=range]{width:100%;min-height:44px;accent-color:#ffd37a;}
+.sats-depth-construction p{margin:0;}
+.sats-depth-construction button{min-height:44px;padding:6px 10px;border:1px solid #9edee9;border-radius:6px;background:#164355;color:#fff4cf;font:inherit;font-weight:700;}
+.sats-depth-tabs{display:flex;gap:5px;flex-wrap:wrap;}
+.sats-depth-tabs button{flex:1;min-width:55px;}
+.sats-depth-tabs button[aria-pressed=true]{background:#f0ce7b;color:#102c3b;}
+.sats-depth-tabs button small,.sats-depth-tabs button strong{display:block;font-size:inherit;line-height:1.15;}
+#root .sats-mock .sats-depth-tabs button{font-size:14px!important;min-height:44px;padding:4px;}
+.sats-depth-data{display:flex;flex-wrap:wrap;gap:5px 12px;font-size:15px;}
+.sats-depth-data span{display:grid;min-width:50px;text-align:center;}
+.sats-depth-secondary{fill:#88c1ce!important;font-size:15px!important;}
+.revision-question-picker{display:grid;gap:6px;min-width:0;}
+.revision-question-picker select{width:100%;min-width:0;min-height:44px;background:#123545;color:#f0fbff;border:1px solid #89bdca;border-radius:6px;padding:8px;font:inherit;}
+.sats-depth-pictogram{display:grid;gap:12px;width:100%;font-size:18px;}
+.sats-depth-pictogram>div{display:flex;gap:14px;align-items:center;}
+.sats-depth-pictogram strong{min-width:70px;}
+.sats-depth-pictogram span{display:flex;gap:8px;}
+.sats-depth-pictogram i{display:block;width:24px;height:24px;border-radius:50%;background:#f6d477;}
+.sats-depth-nets{display:flex;gap:12px;width:100%;}
+.sats-depth-nets figure{flex:1;min-width:0;margin:0;text-align:center;}
+.sats-depth-nets svg{width:100%;height:150px;}
+@media(orientation:landscape) and (max-height:550px){
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-game-set='boss_encounter'] .sats-model:has(.sats-depth-host,.sats-depth-pictogram,.sats-depth-nets){padding:12px 14px 8px!important;}
+ .sats-model:has(.sats-depth-host,.sats-depth-pictogram,.sats-depth-nets) .core-paper-inscription{display:none;}
+ #root .sats-mock .sats-depth-tabs button small{font-size:12px!important;}
+ .sats-depth-construction{gap:3px;}
+ .sats-depth-construction>.sats-diagram{max-height:120px;}
+ .sats-depth-construction input[type=range]{min-height:44px;}
+ .sats-depth-data{font-size:13px;gap:2px 8px;}
+ .sats-depth-data span{display:block;min-width:0;}
+ .sats-depth-tabs button{font-size:13px;padding:3px;}
+ .sats-depth-nets svg{height:100px;}
+ .sats-depth-pictogram{font-size:15px;gap:7px;}
+ .sats-model .sats-depth-pictogram{padding-left:24px;}
+ .sats-depth-pictogram i{width:19px;height:19px;}
+}

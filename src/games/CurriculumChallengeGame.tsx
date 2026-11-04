@@ -547,7 +547,7 @@ const generateAreaArchitectQuestion = (): ChallengeQuestion => {
     const total = (a * b) - (cut * cut);
     const { options, answerIndex } = makeOptions(`${total} cm²`, shuffle([`${total + 4} cm²`, `${total - 4} cm²`, `${a * b} cm²`]));
     return {
-      prompt: `An L-shape is made from a ${a} × ${b} rectangle with a ${cut} × ${cut} square cut out. What is the area?`,
+      prompt: `A rectangle measures ${a} cm by ${b} cm. A square of side ${cut} cm is cut from one corner. What is the remaining area in cm²?`,
       sublabel: 'Find the big area, then subtract the cut-out.',
       options,
       answerIndex,
@@ -562,7 +562,7 @@ const generateAreaArchitectQuestion = (): ChallengeQuestion => {
     const total = a * b + c * d;
     const { options, answerIndex } = makeOptions(`${total} cm²`, shuffle([`${total - 4} cm²`, `${total + 6} cm²`, `${a * b} cm²`]));
     return {
-      prompt: `Two rectangles ${a} × ${b} and ${c} × ${d} form one shape. What is the total area?`,
+      prompt: `Two rectangles measure ${a} cm by ${b} cm and ${c} cm by ${d} cm. They are joined without overlapping. What is their total area in cm²?`,
       sublabel: 'Add the areas of both rectangles.',
       options,
       answerIndex,

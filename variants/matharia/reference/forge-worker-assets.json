@@ -1,0 +1,71 @@
+{
+  "processing": "Rectangular atlas extraction through a verified empty alpha gutter and alpha-margin trim; no painting or masking.",
+  "assets": [
+    {
+      "name": "heroes/forge_bran_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-7fc743a3-ddf6-417b-8383-511ca9132dd4.png",
+      "atlasRegion": [
+        627,
+        0,
+        1254,
+        627
+      ],
+      "alphaBoundsCrop": [
+        63,
+        23,
+        568,
+        619
+      ],
+      "production": "variants/matharia/assets/png/heroes/forge_bran_v4@2x.webp",
+      "dimensions": [
+        505,
+        596
+      ],
+      "sha256": "ad2f2a58092c3845ebdb7861bdb565aa5cca968a08e8f89933ac18c78065db3e"
+    },
+    {
+      "name": "heroes/forge_mochi_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-7fc743a3-ddf6-417b-8383-511ca9132dd4.png",
+      "atlasRegion": [
+        0,
+        627,
+        627,
+        1254
+      ],
+      "alphaBoundsCrop": [
+        48,
+        13,
+        615,
+        604
+      ],
+      "production": "variants/matharia/assets/png/heroes/forge_mochi_v4@2x.webp",
+      "dimensions": [
+        567,
+        591
+      ],
+      "sha256": "669d7d73a43fde0befb680a545b9260bf9af7eea00200e87fd19cf62426cfcc4"
+    },
+    {
+      "name": "heroes/forge_vex_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-7fc743a3-ddf6-417b-8383-511ca9132dd4.png",
+      "atlasRegion": [
+        627,
+        627,
+        1254,
+        1254
+      ],
+      "alphaBoundsCrop": [
+        41,
+        19,
+        586,
+        609
+      ],
+      "production": "variants/matharia/assets/png/heroes/forge_vex_v4@2x.webp",
+      "dimensions": [
+        545,
+        590
+      ],
+      "sha256": "ebdbddb78b5a0e674af7b489e7f573a245afc982ad08b7f9630fd8a298f005c9"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "kind": "objects",
+  "key": "forest-reactor",
+  "file": "objects/forest-reactor-v1.webp",
+  "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-7cfc9266-88c0-4385-a26e-09666aeb1cd8.png",
+  "prompt": "Production game asset, reference is the approved art direction only. Generate Only a vertical forest energy reactor cabinet, brass and carved botanical supports, one large circular gauge opening in center. Front-facing portrait4:5, central circular window occupies x20to80percent and y23to77percent, filled uniform dark teal with no numbers or fill. No text, percentage, labels, attached floor, surrounding scenery or character. Detailed believable mechanical materials. Genuinely transparent alpha background everywhere outside the isolated object, no coloured matte, no backdrop. This must be a separate compositing asset for live gameplay. Same high-end sculpted3D family fantasy rendering, real material detail, correct perspective and lighting. No labels, captions, image border, interface, watermark or extra objects.",
+  "dimensions": [
+    1122,
+    1402
+  ],
+  "bytes": 531094
+}

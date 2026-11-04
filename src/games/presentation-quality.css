@@ -1,0 +1,61 @@
+/* Presentation corrections from the complete concept-scene review. */
+@media(orientation:landscape){
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='fraction_forge'] .ff-tray{display:flex;flex-direction:column;justify-content:flex-start;align-self:center;margin-top:0;max-height:100%;padding:clamp(16px,4vh,38px) clamp(18px,2.4vw,44px);gap:10px;background:linear-gradient(145deg,#24453ff7,#082d2bf7)!important;border:3px solid #c89b57!important;border-radius:18px;box-shadow:inset 0 0 0 4px #13332e,0 7px 0 #503b25,0 12px 18px #06172266!important;overflow:hidden}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='fraction_forge'] .ff-tray-title{flex:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='fraction_forge'] .ff-bank{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;flex:0 1 auto;min-height:0;overflow:auto;padding:3px 2px 6px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='fraction_forge'] .ff-controls{flex:none;margin:0;padding:0;background:none;gap:8px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='fraction_forge'] .ff-feedback{position:static;inset:auto;width:auto;padding:0;flex:none;margin:0;min-height:0;font-size:clamp(12px,1.1vw,17px);line-height:1.3;text-wrap:balance}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='fraction_forge'] .ff-ingredient{min-height:44px!important;width:100%;height:clamp(44px,8vh,78px);padding:2px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='order_ops_arena'] .order-actor-stage .monster-mind-actor{max-width:none;width:min(45vw,48vh)!important;height:min(45vw,48vh)!important;transform:none;align-self:end}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='order_ops_arena'] .order-actor-stage{align-items:flex-end}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='order_ops_arena'] .order-actor-stage>div{align-items:flex-end;max-width:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='maths_vs_zombies'] .maths-vs-zombies{--zombie-size:clamp(115px,25vh,270px)}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='maths_vs_zombies'] .zombies-player-avatar{height:clamp(120px,27vh,292px);width:auto;max-width:none}
+}
+@media(min-height:600px) and (orientation:landscape){
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set]:is([data-vision-game='graph_grabber'],[data-vision-game='line_graph_lab']) .vision-companion--stage{width:22%;max-width:22%;height:56%;left:0;bottom:15%}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='multiplication_mine'] .multiplication-mine.mine-academy .mine-lesson{height:auto;align-self:center;padding:clamp(16px,2vw,32px);gap:20px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='multiplication_mine'] .multiplication-mine.mine-academy .mine-written-row{min-height:40px;font-size:clamp(25px,2.1vw,38px);line-height:1.2}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='multiplication_mine'] .multiplication-mine.mine-academy .mine-place-headings{font-size:13px;min-height:22px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='unit_mixer'] .lava-crossing-hero{width:clamp(145px,14vw,225px);height:clamp(160px,26vh,265px)}
+}
+@media(orientation:landscape) and (max-height:550px){
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='fraction_forge'] .ff-tray{padding:10px 12px;gap:4px;border-width:2px!important;border-radius:12px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='fraction_forge'] .ff-tray-title{display:none}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='fraction_forge'] .ff-bank{gap:4px;padding:2px 1px 5px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='fraction_forge'] .ff-feedback{font-size:10px;line-height:12px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='fraction_forge'] .ff-controls button{height:44px;min-height:44px;padding:3px}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='order_ops_arena'] .order-actor-stage .monster-mind-actor{width:35vh!important;height:35vh!important}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='maths_vs_zombies'] .maths-vs-zombies{--zombie-size:clamp(80px,25vh,105px)}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='maths_vs_zombies'] .zombies-player-avatar{height:clamp(86px,27vh,116px)}
+}
+/* Stable scene geometry: atmosphere moves independently of floors and podiums. */
+.scene-depth-light,.scene-ground-haze,.scene-water-glints{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.scene-depth-light i{position:absolute;top:-20%;left:-5%;width:24%;height:100%;background:linear-gradient(110deg,transparent,#fff5c217,transparent);transform:rotate(-17deg);transform-origin:50% 0;animation:scene-daylight 14s ease-in-out infinite alternate}
+.scene-depth-light i+i{left:auto;right:-8%;animation-delay:-7s}
+.scene-ground-haze i{position:absolute;left:-30%;bottom:9%;width:65%;height:13%;background:radial-gradient(ellipse,#bde9ee24,transparent 69%);animation:scene-haze 19s ease-in-out infinite alternate}
+.scene-ground-haze i+i{left:60%;bottom:18%;animation-delay:-11s;opacity:.55}
+.scene-water-glints{display:none}
+[data-game-island='3'] .scene-water-glints,[data-game-island='7'] .scene-water-glints{display:block}
+.scene-water-glints i{position:absolute;bottom:6%;left:4%;width:17%;height:2px;background:linear-gradient(90deg,transparent,#c7faff99,transparent);animation:scene-water 5s ease-in-out infinite}
+.scene-water-glints i:nth-child(2){left:77%;bottom:13%;animation-delay:-1.7s}
+.scene-water-glints i:nth-child(3){left:3%;bottom:26%;animation-delay:-3.4s}
+[data-game-island='5'] .scene-ground-haze i{background:radial-gradient(ellipse,#ed9b262a,transparent 69%)}
+[data-game-island='8'] .scene-depth-light i{background:linear-gradient(110deg,transparent,#a6b7ff24,transparent)}
+@keyframes scene-daylight{from{opacity:.3;transform:rotate(-17deg) translateX(-5%)}to{opacity:.8;transform:rotate(-11deg) translateX(8%)}}
+@keyframes scene-haze{from{transform:translate3d(-8%,0,0);opacity:.25}to{transform:translate3d(35%,-6%,0);opacity:.65}}
+@keyframes scene-water{0%,100%{opacity:.1;transform:scaleX(.6)}50%{opacity:.7;transform:scaleX(1.25)}}
+@media(max-height:550px){.scene-depth-light i+i,.scene-ground-haze i+i{display:none}.scene-ground-haze i{height:9%;opacity:.3}}
+@media(prefers-reduced-motion:reduce){.scene-depth-light,.scene-ground-haze,.scene-water-glints{display:none}}
+
+/* Foreground floor alignment in the short landscape composition. */
+@media(orientation:landscape) and (max-height:550px){
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set]:is([data-vision-game='conversion_canyon'],[data-vision-game='mean_machine']) .vision-companion--stage{bottom:0}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='match3_equivalence'] .vision-companion--stage{bottom:16%}
+}
+
+/* The rack's content box includes its inner frame and the ingots' shadows. */
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='fraction_forge'] .ff-bank {
+ width:100%;min-width:0;box-sizing:border-box;margin:0;padding:4px 4px 7px;flex:0 0 auto;
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='fraction_forge'] .ff-ingredient {box-sizing:border-box;min-width:0;max-width:100%;}

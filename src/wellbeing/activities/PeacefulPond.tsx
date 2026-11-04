@@ -134,7 +134,7 @@ const PeacefulPond: React.FC<WellbeingActivityComponentProps> = ({ onComplete, o
           </button>
         </div> : null}
         <div ref={pondRef} className="pond-playfield" data-pond-playfield data-pond-count={PAD_COUNT} onPointerDown={ripple} onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={cancelDrag}>
-          {pads.map((pad) => <div key={'target-' + pad.id} className={'pond-target' + (pad.placed ? ' is-placed' : '')} style={{ left: pad.targetX + '%', top: pad.targetY + '%' }} data-pond-target={pad.id + 1} aria-hidden="true">{pad.id + 1}</div>)}
+          {pads.map((pad) => <div key={'target-' + pad.id} className={'pond-target' + (pad.placed ? ' is-placed' : '')} style={{ left: pad.targetX + '%', top: pad.targetY + '%' }} data-pond-target={pad.id + 1} aria-hidden="true">{pad.placed ? null : pad.id + 1}</div>)}
           {fish.map((item) => (
             <div key={item.id} className="pond-fish" data-wellbeing-fish style={{ left: item.x + '%', top: item.y + '%', transform: item.vx < 0 ? 'scaleX(-1)' : 'none' }} aria-hidden="true">
               <svg viewBox="0 0 48 24"><path d="M10 12 2 3 2 21Z" fill={item.color} stroke="#315d66" strokeWidth="1.5" /><ellipse cx="28" cy="12" rx="17" ry="10" fill={item.color} stroke="#315d66" strokeWidth="1.5" /><path d="M18 6Q27 1 34 6" stroke="#ffffff60" strokeWidth="2" fill="none" /><circle cx="38" cy="10" r="2.5" fill="#f7f2dc" /><circle cx="39" cy="10" r="1.3" fill="#294251" /></svg>

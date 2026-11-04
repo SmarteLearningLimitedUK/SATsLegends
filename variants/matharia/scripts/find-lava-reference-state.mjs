@@ -1,0 +1,7 @@
+// QA only: unchanged source generator with deterministic test RNG.
+import {readFile,writeFile} from 'node:fs/promises';import ts from 'typescript';
+const source=await readFile('src/games/LavaPathGame.tsx','utf8'),js=ts.transpileModule(source.slice(source.indexOf('const randInt ='),source.indexOf('const starsForRun =')),{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText,{resolveQuestion}=new Function(js+';return {resolveQuestion};')();
+function sample(seed,calls){Math.random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296};for(let n=0;n<calls;n++)Math.random();return resolveQuestion(5)}
+const calibration='Combine 5.75 m and 55 cm. What is the total in cm?',calls=Array.from({length:40},(_,i)=>i).find(n=>sample(72419,n).prompt===calibration);if(calls===undefined)throw Error('QA initialization calibration changed');
+const prompt='Combine 1.75 kg and 700 g. What is the total in g?',options=['24,500 g','2,450 g','245,000 g','245 g'];let best;
+for(let seed=1;seed<150000;seed++){const q=sample(seed,calls);if(q.prompt!==prompt)continue;const ordered=JSON.stringify(q.options)===JSON.stringify(options);if(!best||ordered)best={seed,calls,q,ordered};if(ordered)break}if(!best)throw Error('No reachable source state');await writeFile('qa-artifacts/concept-recreation/lava-reference-candidate.json',JSON.stringify(best,null,2));console.log(JSON.stringify(best));

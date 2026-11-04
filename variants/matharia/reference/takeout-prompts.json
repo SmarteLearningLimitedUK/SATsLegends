@@ -1,0 +1,22 @@
+{
+  "tool": "Built-in imagegen",
+  "reference": "variants/matharia/reference/approved/take_out_rush.png",
+  "prompts": [
+    {
+      "name": "backgrounds/bg_takeout_v3",
+      "prompt": "Create ONE clean production background scenery plate for the approved Takeout Rush game. Use this screenshot as exact environment, composition, camera and style reference. Output portrait 853 x 1844, same proportions. Warm luxurious small fantasy tavern kitchen: sunlit arched window on left opening to sapphire sky and golden palace, dark carved wood beams, ivy and white flowers around edges, glowing suspended copper lamps at the same positions, warm copper and brass utensils and distant shelves. Rich polished detailed 3D animated family-adventure game painting, warm amber light. Retain the screenshot's setting and perspective exactly. Remove ALL UI: every HUD, frame, button, panel, portrait, number, text, labels and food cards. Remove ALL characters, monsters, deer, cooking appliances, foreground pots and foreground serving counter. Those will be separate sprites. Replace their regions with coherent naturally continuous empty kitchen scenery, with a clear middle space for the live chef and customers. Keep lower foreground as the original warm wooden tabletop with small edge foliage and vegetables at extreme corners, no food icons or interactive props. No text or pseudo-text, no ghost panels or controls, no painted patches, no blur covers or opaque masks. One clean environment only."
+    },
+    {
+      "name": "frames/takeout_board_v3",
+      "prompt": "Create ONE independent empty framed wooden interface board asset for this approved Takeout Rush game. Transparent background. Match exactly the large warm dark walnut serving-tray board at y=54%-78% of the reference screenshot: a single wide rectangular wooden board with ornate slim layered polished gold rim, bevelled angled corners, small filigree gold embellishments at the corners, subtle rich dark warm walnut horizontal woodgrain across an otherwise flat empty face. Native aspect ratio 1.74:1, 1600 x 920 pixels, tightly bounded with minimal transparent margin. Preserve the screenshot's high-quality detailed polished 3D fantasy game material and lighting. All four corners and edges symmetrical, front-facing straight-on perspective without tilt. IMPORTANT: the board must be completely empty and continuous inside the rim: no text, numbers, slots, food, cards, buttons, dividers, holes, controls, characters, scenery or built-in UI regions. The live application adds the tray, food choices and buttons separately. One board only; no mockup or multiple variants."
+    },
+    {
+      "name": "props/takeout_stove_v3",
+      "prompt": "Create ONE independent transparent foreground cooking station asset for the Takeout Rush fantasy game, matching the copper pot and dark metal/gold stove at the right side of this approved screenshot. Front-facing straight-on perspective. Small luxurious blackened steel and burnished brass range, a broad warm copper pot on its top right burner, side handles, small brass knobs and visible warm light beneath pot, same soft detailed illustrated 3D animated family-adventure material as the reference. Empty left burner and a small steel mixing bowl on the left edge. Entire object visible, tightly bounded, isolated on genuinely transparent background; no brown gradient, no floor, wall, kitchen or scenery. Native size about 1200 x 800. No text, labels, numbers, people, deer, monsters, hands, food cards, UI or panels. No hovering lid high above the pot. This is a single separate stove-and-pot foreground prop that will sit in front of the live chef."
+    },
+    {
+      "name": "backgrounds/bg_takeout_v4",
+      "prompt": "Edit this clean kitchen environment only: remove every paper menu, paper tag, wall label, notice sheet, sign or area of tiny pseudo-text from the background, replacing each with naturally continuous wooden wall or ordinary cookware as appropriate. Preserve ALL OTHER scenery, camera, dimensions, warm amber lighting, copper pendant lamps, ivy, flowers, left arched window, tabletop and empty middle space exactly. Keep the image portrait 853 x 1844. This is clean background scenery for a game. No characters, interface, panels, frames, food cards, text, numbers or pseudo-writing anywhere. No masking patches, blur or covers."
+    }
+  ]
+}

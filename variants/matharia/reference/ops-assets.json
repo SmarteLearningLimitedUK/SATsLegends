@@ -1,0 +1,90 @@
+{
+  "references": [
+    "variants/matharia/reference/approved/order_ops_arena.png",
+    "variants/matharia/reference/approved/multiplication_mine.png"
+  ],
+  "inspection": "All original outputs visually inspected before export. Clean natural arena paving, no baked UI/opponent/platform. Separate complete shallow brass/sapphire dais. Independent charcoal-plum enamel/gold answer button without labels. Existing hero_mage_idle library asset inspected and reused for the original goblin opponent. No masks, patches, painting, semantic cuts or distortion.",
+  "processing": "Alpha-margin crop and aspect-preserving WebP only.",
+  "assets": [
+    {
+      "name": "backgrounds/bg_ops_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-3c087dc3-343c-46d9-9d00-9c138d80391d.png",
+      "alphaBoundsCrop": null,
+      "dimensions": [
+        866,
+        1816
+      ],
+      "production": "variants/matharia/assets/png/backgrounds/bg_ops_v3@2x.webp",
+      "bytes": 723206,
+      "sha256": "3c34b9787c3a018cf0624e90f42e34ca4cee0b52173eac0b8259083047c42db5"
+    },
+    {
+      "name": "props/ops_pedestal_v5",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-efcaeb21-ad07-4235-b790-9fb734c61af3.png",
+      "alphaBoundsCrop": [
+        61,
+        221,
+        2109,
+        534
+      ],
+      "dimensions": [
+        2048,
+        313
+      ],
+      "production": "variants/matharia/assets/png/props/ops_pedestal_v5@2x.webp",
+      "bytes": 265392,
+      "sha256": "c438299a080e3bb33c99dc9042c508c56ca1b7b822d12e8c795bc7dddbafb294"
+    },
+    {
+      "name": "props/ops_pedestal_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-68267a97-0cff-434e-b7fe-0b6fa33faf07.png",
+      "alphaBoundsCrop": [
+        72,
+        194,
+        2100,
+        562
+      ],
+      "dimensions": [
+        2028,
+        368
+      ],
+      "production": "variants/matharia/assets/png/props/ops_pedestal_v3@2x.webp",
+      "bytes": 326618,
+      "sha256": "e2302efbbccfdd12bcd567fe7d3e236c78c4e41fd39a43ae6ae2250b00148d58"
+    },
+    {
+      "name": "buttons/ops_answer_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-dadcd998-8388-4f57-b0e6-f50d782b6173.png",
+      "alphaBoundsCrop": [
+        77,
+        94,
+        1981,
+        661
+      ],
+      "dimensions": [
+        1904,
+        567
+      ],
+      "production": "variants/matharia/assets/png/buttons/ops_answer_v3@2x.webp",
+      "bytes": 129474,
+      "sha256": "17de79fb46dbd6e8e7c66faaf2943a80a94dcc2914ffc0b504117f555d5ea6c9"
+    },
+    {
+      "name": "buttons/mine_answer_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-ae623ed5-05b9-4fa5-a39a-6d205aef97c6.png",
+      "alphaBoundsCrop": [
+        43,
+        100,
+        1896,
+        700
+      ],
+      "dimensions": [
+        1853,
+        600
+      ],
+      "production": "variants/matharia/assets/png/buttons/mine_answer_v3@2x.webp",
+      "bytes": 119456,
+      "sha256": "719af089b3e57638ea6bfa367eb130ffb434750509683222d8edbca4210df98f"
+    }
+  ]
+}

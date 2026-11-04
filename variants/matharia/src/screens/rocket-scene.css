@@ -1,0 +1,69 @@
+/* Portrait construction scene; original round and launch controllers remain in charge. */
+html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='rounding_rocket'] {
+ --concept-plane:min(100vw,max(375px,calc((100dvh - var(--concept-safe-top) - var(--concept-safe-bottom)) * .4626)));
+ /* Regions are derived from the shared header and bottom dock, rather than
+    separate offsets that let text and ornamental edges collide. */
+ --rocket-scene-height:calc(100dvh - var(--concept-safe-top) - var(--concept-safe-bottom));
+ --rocket-question-top:max(calc(var(--rocket-scene-height) * .123),calc(var(--portrait-hud-top) + var(--portrait-hud-height) + 18px));
+ --rocket-question-height:clamp(74px,calc(var(--rocket-scene-height) * .114),112px);
+ --rocket-dock-height:max(48px,calc(var(--rocket-scene-height) * .076));
+ --rocket-dock-bottom:max(8px,calc(var(--rocket-scene-height) * .018));
+ --rocket-answer-bottom:calc(var(--rocket-dock-bottom) + var(--rocket-dock-height) + 12px);
+ --rocket-answer-height:max(114px,calc(var(--rocket-scene-height) * .165));
+ --rocket-answer-scale:min(calc(var(--concept-plane) * .923 / 1600),calc(var(--rocket-answer-height) / 533));
+ --rocket-status-height:max(76px,calc(var(--rocket-scene-height) * .078));
+ --rocket-status-bottom:calc(var(--rocket-answer-bottom) + var(--rocket-answer-height) + 10px);
+ --rocket-pad-height:calc(var(--rocket-scene-height) * .052);
+ --rocket-pad-top:min(calc(var(--rocket-scene-height) * .579),calc(var(--rocket-scene-height) - var(--rocket-status-bottom) - var(--rocket-status-height) - 8px - var(--rocket-pad-height)));
+ --rocket-vehicle-top:max(calc(var(--rocket-scene-height) * .245),calc(var(--rocket-question-top) + var(--rocket-question-height) + 6px));
+ /* The clean scenery's roundel centre is at y=1145/1844. Pan the whole
+    aspect-preserving image to the launchpad's ground line. The two coverage
+    terms ensure that neither edge can expose an empty background band. */
+ --rocket-floor-y:calc(var(--concept-safe-top) + var(--rocket-pad-top) + var(--rocket-pad-height) + 3px);
+ --rocket-backdrop-height:max(100dvh,calc(100vw * 1844 / 853),calc(var(--rocket-floor-y) / .621),calc((100dvh - var(--rocket-floor-y)) / .379));
+ &[data-measured-scene] > .vision-world-backdrop {left:50%;right:auto;top:calc(var(--rocket-floor-y) - var(--rocket-backdrop-height) * .621);bottom:auto;translate:-50% 0;width:calc(var(--rocket-backdrop-height) * 853 / 1844);height:var(--rocket-backdrop-height);max-width:none;object-fit:contain;object-position:center;}
+ .rocket-game-scene,.rocket-world {position:absolute;inset:0;width:100%;height:100%;}
+ .concept-question-zone {left:12.8%;top:var(--rocket-question-top);width:74.6%;height:var(--rocket-question-height);}
+ .scalable-question-copy {padding:calc(var(--rocket-question-height) * .17) 9% calc(var(--rocket-question-height) * .19);display:flex;flex-direction:column;justify-content:center;gap:3px;}
+ .question-jewel--bottom {display:none;}
+ [data-question-copy] {font-size:clamp(14px,5.4cqw,39px);font-weight:650;line-height:1.15;}
+ .rocket-question-instruction {display:block;}
+ mark {color:#ffe26b;background:none;}
+ .rocket-question-value {display:block;font-size:clamp(27px,9cqw,70px);line-height:1;color:#ffe278;}
+ .rocket-guide {position:absolute;left:-2%;top:calc(var(--rocket-pad-top) + var(--rocket-pad-height) + 3px - var(--rocket-scene-height) * .205);width:43%;height:20.5%;pointer-events:none;z-index:3;}
+ .rocket-guide>.vision-character {width:100%;height:100%;}
+ .rocket-launch-pad {position:absolute;left:22%;top:var(--rocket-pad-top);width:58.5%;height:var(--rocket-pad-height);object-fit:contain;z-index:4;pointer-events:none;}
+ .rocket-vehicle {position:absolute;left:31.5%;top:var(--rocket-vehicle-top);width:37%;height:calc(var(--rocket-pad-top) + var(--rocket-pad-height) * .23 - var(--rocket-vehicle-top));z-index:5;pointer-events:none;}
+ .rocket-vehicle-art {display:block;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 3px 3px #05384955);}
+ .rocket-build-status {position:absolute;z-index:6;isolation:isolate;container-type:inline-size;left:18%;bottom:var(--rocket-status-bottom);width:64%;height:var(--rocket-status-height);padding:6px 12px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;color:#fff9e7;font-size:clamp(14px,4.1cqw,34px);font-weight:650;line-height:1.1;text-align:center;}
+ .rocket-build-status>span:not(.artwork-frame) {color:#abf6ff;font-size:clamp(14px,7cqw,34px);}
+ .rocket-next-part {display:flex;align-items:center;justify-content:center;gap:5px;}
+ .rocket-next-part>svg {width:18px;height:18px;flex:none;}
+ .rocket-build-status>small {font-size:clamp(14px,5.8cqw,28px);line-height:1.15;}
+ .rocket-build-status[data-feedback='failed']>small {color:#ffd0af;}
+ /* Insets follow the 1600x533 frame's aperture plus a clear six-pixel gutter.
+    The heading and answer row occupy separate, padded regions of that aperture. */
+ .rocket-answers {position:absolute;isolation:isolate;container-type:inline-size;left:3.9%;bottom:var(--rocket-answer-bottom);width:92.3%;height:var(--rocket-answer-height);padding:calc(var(--rocket-answer-scale) * 90 + 6px) calc(var(--rocket-answer-scale) * 110 + 6px) calc(var(--rocket-answer-scale) * 102 + 6px);display:grid;grid-template-rows:auto minmax(44px,1fr);gap:6px;}
+ .rocket-answers>p {position:relative;z-index:1;margin:0;color:#fff8dd;text-align:center;font-size:clamp(15px,5cqw,38px);font-weight:650;line-height:1.1;}
+ .rocket-answer-row {display:flex;gap:8px;min-height:44px;}
+ .rocket-answer-row>button {position:relative;display:grid;place-items:center;flex:1;min-width:44px;min-height:44px;border:0;background:none;padding:0;box-shadow:none;touch-action:manipulation;color:white;font-size:clamp(18px,5.8cqw,38px);font-weight:750;line-height:1;font-variant-numeric:tabular-nums;}
+ .rocket-answer-row img {position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;}
+ .rocket-answer-row>button>span {position:relative;z-index:1;padding:12% 18%;text-shadow:0 2px 2px #004b32;}
+ .rocket-answer-row>button[data-answer-state='arming'] {filter:drop-shadow(0 0 5px #c7ff9e);}
+ .rocket-answer-row>button[data-answer-state='failed'] {filter:drop-shadow(0 0 5px #ff8369);}
+ .rocket-answer-row>button:not(:disabled):active {scale:.96;filter:brightness(1.15);}
+ .rocket-answer-row>button:focus-visible {outline:3px solid #fff0b3;outline-offset:2px;}
+ .rocket-world[data-rocket-phase='launching'] .rocket-vehicle {animation:rocket-lift var(--rocket-flight-ms) cubic-bezier(.45,0,.75,.65) both;}
+ .rocket-world[data-rocket-phase='orbit'] .rocket-vehicle {visibility:hidden;}
+ .rocket-exhaust {position:absolute;left:40%;top:94%;width:20%;height:50%;border-radius:40% 40% 70% 70%;background:radial-gradient(ellipse at top,#fffbd5,#ffe286 30%,#ee873d 60%,transparent 74%);transform-origin:50% 0;animation:rocket-flame 180ms ease-in-out infinite alternate;}
+ .rocket-flight-status {position:absolute;isolation:isolate;container-type:inline-size;z-index:7;left:9%;bottom:calc(var(--rocket-dock-bottom) + var(--rocket-dock-height) + 16px);width:82%;min-height:110px;box-sizing:border-box;padding:22px 12%;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;color:#fff4da;text-align:center;}
+ .rocket-flight-status>strong {font-size:clamp(24px,8cqw,50px);line-height:1.05;}
+ .rocket-flight-status>span:not(.artwork-frame) {font-size:clamp(14px,5.2cqw,24px);line-height:1.25;}
+ .rocket-world[data-rocket-paused='true'] :is(.rocket-vehicle,.rocket-exhaust) {animation-play-state:paused;}
+ [data-testid='shared-bottom-hud'] {bottom:var(--rocket-dock-bottom);height:var(--rocket-dock-height);padding:0 4%;}
+ .legend-dock-button {background-image:none;}
+}
+@keyframes rocket-lift {0%{translate:0 0}15%{translate:0 -2vh}100%{translate:0 -130vh}}
+@keyframes rocket-space-entry {from{opacity:0}to{opacity:1}}
+@keyframes rocket-flame {from{scale:.9 .85}to{scale:1.05 1.15}}
+@media(prefers-reduced-motion:reduce){html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='rounding_rocket'] {.rocket-world[data-rocket-phase='launching'] .rocket-vehicle {animation:rocket-space-entry var(--rocket-flight-ms) ease reverse both;}.rocket-exhaust {animation:none;}}}

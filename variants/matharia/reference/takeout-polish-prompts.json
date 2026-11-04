@@ -1,0 +1,32 @@
+{
+  "tool": "Built-in imagegen",
+  "prompts": [
+    {
+      "name": "heroes/takeout_chef_atlas_v3",
+      "refs": [
+        "D:/BrainZilla/GitHub/SATsLegends/variants/matharia/reference/approved/take_out_rush.png",
+        "D:/BrainZilla/GitHub/SATsLegends/qa-artifacts/matharia-concepts/original-hero-identity-reference.jpg"
+      ],
+      "prompt": "Create ONE transparent production sprite sheet, 2048 x 2048, a strict regular 2x2 grid with FOUR separate full-body chef character cutouts. Match the first image's approved Takeout Rush deer chef pose, character scale, warm copper lighting and premium detailed 3D animated family-adventure style. The second image supplies the exact FOUR ORIGINAL HERO IDENTITIES, not backgrounds. TOP LEFT: Barratt, the orange deer with antlers, white muzzle, green eyes and green cloak. TOP RIGHT: Bran, the red dragon with gold horns, little wings and brown/gold armour. BOTTOM LEFT: Mochi, the black-and-white panda with red headband and red trousers, blue/gold scarf. BOTTOM RIGHT: Vex, the green-and-cream fox in the purple and turquoise hooded robe. Preserve all species, signature colours and original facial designs. Each is a kitchen chef in the approved pose, standing front-facing at three-quarter angle to the right, friendly expressive face, one hand holding a wooden stirring spoon angled down-right toward an external pot, other hand near waist. Retain their signature original fantasy clothes; no modern chef hats. NO pots, ovens, cooking stations, weapons, bows, scenery, shadows over other cells, text, labels, badges or UI. Only the four cutout characters, one centred wholly inside each 1024x1024 cell, all full bodies and feet visible with at least 80px transparent gutters to every cell edge. No overlap across cells. Genuine alpha transparency across the complete sheet. No boxes or cell separators."
+    },
+    {
+      "name": "food/takeout_portions_atlas_v3",
+      "refs": [
+        "D:/BrainZilla/GitHub/SATsLegends/variants/matharia/reference/approved/take_out_rush.png",
+        "D:/BrainZilla/GitHub/SATsLegends/qa-artifacts/matharia-concepts/source-food-icons.jpg"
+      ],
+      "prompt": "Create ONE transparent production food sprite sheet, 1536x1536, strict regular 3x3 grid with NINE independent appetising food cutouts, all in the rich detailed polished 3D family-adventure game style of the first approved Takeout Rush image. The second image documents the existing game ingredients; preserve these existing kinds and do not introduce a new food theme. Exact cell ordering: TOP ROW left=roasted chicken drumstick, middle=small pink bowl of fluffy rice, right=triangular lettuce-and-cheese sandwich with golden bread. MIDDLE ROW left=the existing triangular cheese-and-tomato slice from source icon4, middle=tall clear glass of orange juice, right=round chocolate chip cookie. BOTTOM ROW left=glossy red apple with green leaf, middle=roasted chicken leg, right=golden ring doughnut with pink icing and coloured sprinkles. Match the approved screen's juicy apple, cookie material, realistic glass and polished warm light. Every object must be complete and centred inside its own 512x512 cell, with generous transparent empty margins of at least 60px on every cell edge. Equal apparent object scale, no overlap between cells. No plates except the rice bowl, no hands, faces, text, numbers, labels, fraction values, UI, panels, frames, floors or background. True alpha transparency throughout all gutters; not a contact-sheet mockup with a painted background."
+    },
+    {
+      "name": "frames/takeout_food_card_v3",
+      "refs": [
+        "D:/BrainZilla/GitHub/SATsLegends/variants/matharia/reference/approved/take_out_rush.png"
+      ],
+      "prompt": "Create ONE independent empty portrait food-card panel asset matching the five teal food selection buttons in the supplied approved Takeout Rush screenshot. Genuine transparent background, tightly bounded about800x1000 pixels, portrait aspect0.8:1. Deep rich dark-teal empty face, thick rounded-rectangular bevelled polished GOLD rim with slim ivory highlights and subtle turquoise inner bevel, softly clipped angled corners, same premium sculpted illustrated 3D fantasy-game style as the reference. Match their broad uncluttered rounded gold border and teal centre exactly. Front-facing, symmetrical, no perspective tilt. NO content inside: no food, text, fraction, number, icon, sapphire crest, leaves, scenery, drop shadow far outside or multiple panels. One plain blank button panel only, live content is added separately."
+    },
+    {
+      "name": "heroes/takeout_chef_atlas_v4",
+      "prompt": "Edit this FOUR-HERO transparent sprite sheet ONLY to fix its spacing for extraction. Preserve the exact four character identities, faces, colours, clothing, spoon poses, detailed art and lighting. Enforce a strict 2x2 regular grid on a square canvas. Shrink each complete character to 75% of its current size and centre it entirely inside its own quadrant, leaving generous transparent margins of at least 12% of the cell size on every edge. Top-left deer, top-right red dragon, bottom-left panda, bottom-right green fox. The current dragon's feet and fox's ears overlap the horizontal cell boundary: eliminate that by placing every single pixel of each character within its own cell, with a broad empty horizontal gutter and vertical gutter. Whole feet, ears, antlers, horns, cape, spoon and tails must remain intact. No extra character, text, scenery, boxes, backgrounds, shadows or frame. Genuine alpha transparent background. Output at 2048 x 2048 if supported. This is a production sprite atlas; the empty gutters are essential."
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-272df2e4-2561-4246-b2f7-fa503ec85fa6.png",
+  "production": "variants\\matharia\\assets\\png\\props\\pyramid_stone_v4@2x.webp",
+  "dimensions": [
+    1448,
+    1086
+  ],
+  "alphaBounds": [
+    14,
+    0,
+    1434,
+    1086
+  ],
+  "labelWindow": [
+    0.16,
+    0.21,
+    0.68,
+    0.58
+  ],
+  "bytes": 307860,
+  "sha256": "8f684a70065699fefcd9a6e1739e195eac62e3bf918bb54f119c14c88458b1e4",
+  "tool": "built-in image_gen",
+  "processing": "Aspect-preserving format conversion only; genuine alpha preserved. No cropping, masks, patches or text baked into art.",
+  "promptRecord": "qa-artifacts/pyramid-docked-hud/stone-prompt.txt"
+}

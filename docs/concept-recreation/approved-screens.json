@@ -1,0 +1,2341 @@
+{
+  "sourceStatus": "Recovered from the gallery and final-selections explicitly named in the current request. The previously named approved-screens.json was absent in both checkouts.",
+  "gallery": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\index.html",
+  "screens": [
+    {
+      "key": "place_value_panic",
+      "title": "Place Value Panic",
+      "orientation": "portrait",
+      "dimensions": [
+        972,
+        1619
+      ],
+      "composition": "Large legible question, seven labelled jewel slots, nine-digit bank, rhino guide and gold action.",
+      "reference": "variants/matharia/reference/approved/place_value_panic.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\place_value_panic.png",
+      "sha256": "9539a320aab13e0a086476efbc8e214586bec535c68807a329cd3a3f1b5131c7",
+      "revision": "gallery selection",
+      "route": "/game/1/37",
+      "regions": {
+        "coordinateSystem": "normalized x,y,width,height; measured against 972x1619",
+        "hud": [
+          0.052,
+          0.045,
+          0.884,
+          0.094
+        ],
+        "question": [
+          0.143,
+          0.153,
+          0.719,
+          0.149
+        ],
+        "questionOrdinal": [
+          0.344,
+          0.135,
+          0.312,
+          0.045
+        ],
+        "rhinoSilhouette": [
+          0.016,
+          0.287,
+          0.272,
+          0.192
+        ],
+        "targetRow": [
+          0.087,
+          0.483,
+          0.83,
+          0.118
+        ],
+        "bankHint": [
+          0.211,
+          0.606,
+          0.585,
+          0.0476
+        ],
+        "digitBank": [
+          0.14,
+          0.658,
+          0.72,
+          0.167
+        ],
+        "submit": [
+          0.21,
+          0.829,
+          0.58,
+          0.069
+        ],
+        "navigation": [
+          0.062,
+          0.914,
+          0.876,
+          0.078
+        ]
+      }
+    },
+    {
+      "key": "number_line_ninja",
+      "title": "Number Line Ninja",
+      "orientation": "landscape",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "composition": "Panoramic sunlit Acropolis terrace. Keep the recognizable orange fox wizard with blue star-pattern robe and glowing staff prominent at the left foreground. Center/right a magnificent gold and carved stone ruler bridge, equal tick gaps, floating gold question marker. The ruler is the clear main interaction; four large round sapphire medallion answers below it. Question has a wide calm teal gold frame across the top. Subtle distant waterfalls and castles, excellent numerical contrast. Preserve a real number line, do not convert into arbitrary stepping stones.",
+      "reference": "variants/matharia/reference/approved/number_line_ninja.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\number_line_ninja.png",
+      "sha256": "74afd8061c4600fe3bd1c01bdd42d1c899dcdffec5b6c78a363d0486623b2527",
+      "revision": "gallery selection",
+      "route": "/game/1/38",
+      "regions": {
+        "coordinateSystem": "normalized x,y,width,height; measured against 1844x853",
+        "hud": [
+          0.272,
+          0.014,
+          0.49,
+          0.116
+        ],
+        "question": [
+          0.16,
+          0.145,
+          0.715,
+          0.177
+        ],
+        "heroSilhouette": [
+          0,
+          0.188,
+          0.225,
+          0.599
+        ],
+        "ruler": [
+          0.205,
+          0.5,
+          0.728,
+          0.3
+        ],
+        "marks": [
+          0.243,
+          0.452,
+          0.637,
+          0.096
+        ],
+        "answers": [
+          0.292,
+          0.62,
+          0.462,
+          0.23
+        ],
+        "navigation": [
+          0.316,
+          0.855,
+          0.367,
+          0.127
+        ]
+      }
+    },
+    {
+      "key": "prime_pop",
+      "title": "Prime Pop",
+      "orientation": "portrait",
+      "dimensions": [
+        853,
+        1844
+      ],
+      "composition": "Tall portrait sunlit fantasy citadel and cascading waterfalls. Deer archer hero in green cape occupies bottom third, viewed in a dynamic three-quarter back pose casting upward. Clear vertical play lane above the hero, six big glossy colored numbered orbs at staggered heights, no overlap. Physical striped gold/red danger rail above the orbs with DANGER plaque. Compact gold question frame includes a small hero bust at its edge without stealing text room. Orbs have exquisite glass highlights and depth, not flat circles. Scene alive and layered, controls clear.",
+      "reference": "variants/matharia/reference/approved/prime_pop.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\prime_pop.png",
+      "sha256": "099a93f40d7b8bb3875be060f8da72d9fd74a93b1287fb8aa85948daa9c4b652",
+      "revision": "gallery selection",
+      "route": "/game/1/39",
+      "regions": {
+        "coordinateSystem": "normalized x,y,width,height; measured against 853x1844; source danger threshold remains 12% of field",
+        "hud": [
+          0.035,
+          0.035,
+          0.93,
+          0.09
+        ],
+        "question": [
+          0.04,
+          0.127,
+          0.92,
+          0.15
+        ],
+        "field": [
+          0,
+          0.252,
+          1,
+          0.4
+        ],
+        "dangerCentreY": 0.3,
+        "caster": [
+          0.05,
+          0.56,
+          0.685,
+          0.33
+        ],
+        "navigation": [
+          0.05,
+          0.908,
+          0.9,
+          0.074
+        ]
+      }
+    },
+    {
+      "key": "rounding_rocket",
+      "title": "Rounding Rocket",
+      "orientation": "portrait",
+      "dimensions": [
+        853,
+        1844
+      ],
+      "composition": "Tall portrait heroic white-and-blue/gold rocket prominently centered, with refined believable toy-like 3D metal materials on a circular golden launchpad. Broad sunlit waterfall vista, blue pennants, fantasy citadel. Charming deer pilot in green outfit standing near the pad, small but prominent and expressive. Premium ornate compact question frame at top, no duplicate full hero portraits. Mechanical blue/gold build-status plaque directly below the pad. Three large green enamel gold-beveled answers across a compact integrated lower console, one visually coherent main interaction. All UI generous and crisp.",
+      "reference": "variants/matharia/reference/approved/rounding_rocket.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\rounding_rocket.png",
+      "sha256": "922b8cf39ad0565ea08a22c733e4b2405e4d1e3a861649c3f5214ee281347008",
+      "revision": "gallery selection",
+      "route": "/game/1/40",
+      "regions": {
+        "coordinateSystem": "normalized x,y,width,height; measured against 853x1844",
+        "hud": [
+          0.035,
+          0.031,
+          0.904,
+          0.081
+        ],
+        "question": [
+          0.128,
+          0.123,
+          0.746,
+          0.114
+        ],
+        "rocket": [
+          0.315,
+          0.245,
+          0.37,
+          0.346
+        ],
+        "hero": [
+          0.075,
+          0.433,
+          0.183,
+          0.19
+        ],
+        "launchPad": [
+          0.22,
+          0.579,
+          0.585,
+          0.052
+        ],
+        "buildStatus": [
+          0.254,
+          0.649,
+          0.492,
+          0.078
+        ],
+        "answerPanel": [
+          0.039,
+          0.735,
+          0.923,
+          0.132
+        ],
+        "answerGems": [
+          0.07,
+          0.78,
+          0.86,
+          0.069
+        ],
+        "navigation": [
+          0.04,
+          0.889,
+          0.92,
+          0.076
+        ]
+      }
+    },
+    {
+      "key": "maths_vs_zombies",
+      "title": "Maths vs Zombies",
+      "orientation": "landscape",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "composition": "A wide layered Acropolis combat terrace. Hero deer archer at left, cute existing zombie at far right; keep an unobstructed horizontal encounter lane between them. Compact readable gold question strip, four large jade-enamel answer buttons along lower edge, clear 0/8 stopped status. Rich storybook 3D gold/leaf stonework, blue water and restrained distant atmospheric depth. No scary realism. Preserve division 27 divided by 3 and options 17,9,3,2; do not mark a correct answer.",
+      "reference": "variants/matharia/reference/approved/maths_vs_zombies.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\maths_vs_zombies.png",
+      "sha256": "85059fd4193d5e638d8dd5b395eedcd2ee3931beb63c51fb76d9a56c47809ec9",
+      "revision": "gallery selection",
+      "route": "/game/1/46",
+      "regions": {
+        "coordinateSystem": "normalized x,y,width,height; measured against1844x853",
+        "hud": [
+          0.26,
+          0.014,
+          0.5,
+          0.125
+        ],
+        "question": [
+          0.127,
+          0.166,
+          0.746,
+          0.147
+        ],
+        "hero": [
+          0.1,
+          0.38,
+          0.13,
+          0.29
+        ],
+        "enemy": [
+          0.8,
+          0.4,
+          0.1,
+          0.27
+        ],
+        "answerStatus": [
+          0.26,
+          0.696,
+          0.64,
+          0.054
+        ],
+        "answers": [
+          0.077,
+          0.752,
+          0.846,
+          0.114
+        ],
+        "navigation": [
+          0.316,
+          0.855,
+          0.367,
+          0.127
+        ]
+      }
+    },
+    {
+      "key": "take_out_rush",
+      "title": "Takeout Rush",
+      "orientation": "portrait",
+      "dimensions": [
+        853,
+        1844
+      ],
+      "composition": "Purpose-built tall cozy copper-and-wood fantasy kitchen. Recognizable deer chef central at a steaming stove; blue-robed green wizard customer and blue slime to one side, expressive and clearly separated. Compact top ticket/question. Lower third is one beautifully crafted wood/gold serving counter: tray status at top, FIVE equally readable portion choices in one organized row (or 3+2 if needed), actions separately below, no overlapping labels. Premium enamel food buttons and warm copper lighting. Preserve 11/12 order and all 5 foods/portions exactly.",
+      "reference": "variants/matharia/reference/approved/take_out_rush.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\take_out_rush.png",
+      "sha256": "fc1230be7b5538f591b8774b84740eb9ee7673b58a1c9be99ef36bdf71f63c5e",
+      "revision": "gallery selection",
+      "route": "/game/2/10",
+      "regions": {
+        "coordinateSystem": "normalized x,y,width,height; measured against853x1844",
+        "hud": [
+          0.035,
+          0.016,
+          0.85,
+          0.061
+        ],
+        "question": [
+          0.034,
+          0.088,
+          0.93,
+          0.07
+        ],
+        "ticket": [
+          0.036,
+          0.17,
+          0.34,
+          0.034
+        ],
+        "chef": [
+          0.4,
+          0.26,
+          0.39,
+          0.25
+        ],
+        "queue": [
+          0.01,
+          0.29,
+          0.4,
+          0.21
+        ],
+        "queueStatus": [
+          0.036,
+          0.498,
+          0.487,
+          0.031
+        ],
+        "tray": [
+          0.024,
+          0.534,
+          0.952,
+          0.252
+        ],
+        "feedback": [
+          0.08,
+          0.786,
+          0.84,
+          0.038
+        ],
+        "navigation": [
+          0.02,
+          0.897,
+          0.96,
+          0.076
+        ]
+      }
+    },
+    {
+      "key": "fraction_forge",
+      "title": "Fraction Forge",
+      "orientation": "landscape",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "composition": "Completely rebuild the broken portrait reference as a panoramic enchanted smithy. Bright orange forge at left; deer smith foreground clearly visible; big beautiful black/gold anvil at center-left with two empty moulds labelled 1 and 2 and a multiplication sign between them. Target 2/5 on a metal plaque above anvil. Right half a cohesive hammer-workbench control panel with SEVEN distinct silver-blue fraction ingots in 4+3 arrangement: 1/6,1/5,2/3,3/5 then 3/8,1/4,1/3. Large separate Clear and Strike buttons below. Keep exact question MULTIPLY to 2/5, never replace with addition. Full warm workshop environment, craftsmanship and molten edge light, generous text containment.",
+      "reference": "variants/matharia/reference/approved/fraction_forge-v2.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\fraction_forge-v2.png",
+      "sha256": "411600e7d42532b91a8a2f35794f3e95546100ef62efd06f9e3a2078b304389c",
+      "revision": "final selection",
+      "route": "/game/2/15",
+      "regions": {
+        "coordinateSystem": "normalized x,y,width,height measured against approved 1844x853 v2",
+        "hud": [
+          0.277,
+          0.014,
+          0.448,
+          0.15
+        ],
+        "question": [
+          0.311,
+          0.151,
+          0.381,
+          0.177
+        ],
+        "hero": [
+          0.073,
+          0.229,
+          0.202,
+          0.633
+        ],
+        "target": [
+          0.425,
+          0.326,
+          0.147,
+          0.121
+        ],
+        "recipe": [
+          0.405,
+          0.457,
+          0.187,
+          0.176
+        ],
+        "anvil": [
+          0.317,
+          0.631,
+          0.284,
+          0.227
+        ],
+        "rack": [
+          0.631,
+          0.298,
+          0.303,
+          0.56
+        ],
+        "clear": [
+          0.65,
+          0.686,
+          0.122,
+          0.127
+        ],
+        "strike": [
+          0.775,
+          0.686,
+          0.128,
+          0.127
+        ],
+        "navigation": [
+          0.266,
+          0.847,
+          0.472,
+          0.123
+        ]
+      }
+    },
+    {
+      "key": "match3_equivalence",
+      "title": "Match Mastery",
+      "orientation": "portrait",
+      "dimensions": [
+        853,
+        1844
+      ],
+      "composition": "Show an EARLIER-LEVEL coloured board concept, before the colourless final challenge. Glorious magical forest courtyard, deer guide at side above the board, 6 columns by 5 rows of large glossy bevelled jewel tiles as the dominant interaction. Each equivalent value group shares a colour: blue 1/4 group, red 1/2 group, green 3/4 group, gold 1/5 group, purple 2/5 group. Preserve all 30 existing fraction/decimal/percentage labels in same positions. Board occupies middle/lower screen, ornate but slim leaf/gold rail, good inter-cell gaps, dark readable labels with white high contrast as appropriate. Show 0/5 matches and XP0; only final level5 should lose the colour cues (do not depict final here). No landscape-sized empty scene dominating the screen.",
+      "reference": "variants/matharia/reference/approved/match3_equivalence-v2.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\match3_equivalence-v2.png",
+      "sha256": "aa84b351ed821d7fbf9f91613e0d469c77e72b5f5148be81e2597e6ae3e6f9cb",
+      "revision": "final selection",
+      "route": "/game/2/20",
+      "regions": {
+        "coordinateSystem": "normalized x,y,width,height; measured against 853x1844 v2",
+        "pause": [
+          0.875,
+          0.004,
+          0.115,
+          0.058
+        ],
+        "hud": [
+          0.035,
+          0.065,
+          0.925,
+          0.071
+        ],
+        "question": [
+          0.112,
+          0.151,
+          0.795,
+          0.065
+        ],
+        "status": [
+          0.049,
+          0.227,
+          0.36,
+          0.039
+        ],
+        "hero": [
+          0.012,
+          0.267,
+          0.45,
+          0.231
+        ],
+        "board": [
+          0.023,
+          0.477,
+          0.954,
+          0.396
+        ],
+        "navigation": [
+          0.05,
+          0.922,
+          0.91,
+          0.06
+        ],
+        "boardOpening": [
+          0.067,
+          0.515,
+          0.862,
+          0.33
+        ]
+      }
+    },
+    {
+      "key": "percent_power",
+      "title": "Percent Power",
+      "orientation": "portrait",
+      "dimensions": [
+        853,
+        1844
+      ],
+      "composition": "Towering luminous emerald mechanical power core in a sunlit forest temple, big tactile bronze cylinders, vines and crystal, deer guardian beside it clear silhouette. Question in gold/leaf enamel frame at top. Reactor center readout GRID CHARGE 0% STANDBY. Lower console: FOCUS +20%, REFERENCE Start160, four large answer controls in 2x2:192,128,176,180. Exactly preserve 160 gains20% newtotal task; keep hint visible, no correct-answer preselection. Separate clear footer.",
+      "reference": "variants/matharia/reference/approved/percent_power.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\percent_power.png",
+      "sha256": "33455948e6c2ff665c0dcd9e7b726a9c46fd434e8a3d4255fab33320c97547e9",
+      "revision": "gallery selection",
+      "route": "/game/2/25",
+      "regions": {
+        "coordinateSystem": "normalized x,y,width,height; measured against853x1844",
+        "hud": [
+          0.035,
+          0.016,
+          0.85,
+          0.066
+        ],
+        "question": [
+          0.034,
+          0.12,
+          0.93,
+          0.095
+        ],
+        "reactor": [
+          0.29,
+          0.22,
+          0.58,
+          0.355
+        ],
+        "hero": [
+          0,
+          0.34,
+          0.3,
+          0.23
+        ],
+        "readout": [
+          0.435,
+          0.375,
+          0.36,
+          0.096
+        ],
+        "console": [
+          0.07,
+          0.605,
+          0.86,
+          0.265
+        ],
+        "navigation": [
+          0.035,
+          0.914,
+          0.93,
+          0.07
+        ]
+      }
+    },
+    {
+      "key": "simplify_sprint",
+      "title": "Simplify Sprint",
+      "orientation": "landscape",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "composition": "A sweeping ancient forest causeway with waterfalls, expressive deer runner foreground left, three handsome rune-and-vine portal gates across the middle/right, evenly spaced, readable \u00f77,\u00f79,\u00f73. Central fraction plaque REDUCE 63/90 above gates, separate checkpoint1/7 status rail. Not a match-three board. Each portal has tactile gold arch and green enamel factor surface; no excessive glow. Question top fully contained. Keep sprint gate-choice mechanic and exact labels.",
+      "reference": "variants/matharia/reference/approved/simplify_sprint.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\simplify_sprint.png",
+      "sha256": "003892a9cd3600ffe00a7d72c0c8192f2528d277184541c208b0915147372bd1",
+      "revision": "gallery selection",
+      "route": "/game/2/30",
+      "regions": {
+        "coordinateSystem": "normalized x,y,width,height; measured against1844x853",
+        "hud": [
+          0.27,
+          0.014,
+          0.46,
+          0.105
+        ],
+        "question": [
+          0.025,
+          0.13,
+          0.95,
+          0.085
+        ],
+        "fraction": [
+          0.503,
+          0.246,
+          0.26,
+          0.156
+        ],
+        "hero": [
+          0.115,
+          0.415,
+          0.19,
+          0.365
+        ],
+        "gates": [
+          0.35,
+          0.42,
+          0.6,
+          0.34
+        ],
+        "feedback": [
+          0.025,
+          0.78,
+          0.68,
+          0.08
+        ],
+        "navigation": [
+          0.322,
+          0.855,
+          0.355,
+          0.127
+        ]
+      }
+    },
+    {
+      "key": "angle_arena",
+      "title": "Angle Arena",
+      "orientation": "landscape",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "composition": "Cannon and hero on the left, a wide physical encounter space, destructible timber/ice/stone structure and goblin opponent on the right; compact angle choices and pullback power control below. The angle problem drives aim. A short dotted preview and camera tracking support the shot. This is a proposed functional revision, not an implemented gameplay change.",
+      "reference": "variants/matharia/reference/approved/angle_arena-physics-aim-v2.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\angle_arena-physics-aim-v2.png",
+      "sha256": "45b7a822a1d79946930279d0c853d3f5ac7cc6c031770752ca0368036161a111",
+      "revision": "final selection",
+      "route": "/game/3/12",
+      "regions": {
+        "coordinateSystem": "fractions of approved 1844x853 viewport, measured by visual inspection",
+        "topHud": [
+          0.3,
+          0.01,
+          0.405,
+          0.113
+        ],
+        "question": [
+          0.25,
+          0.134,
+          0.5,
+          0.09
+        ],
+        "heroAndCannon": [
+          0.025,
+          0.46,
+          0.17,
+          0.26
+        ],
+        "leftPlatform": [
+          0,
+          0.72,
+          0.275,
+          0.09
+        ],
+        "targetStructure": [
+          0.555,
+          0.34,
+          0.405,
+          0.45
+        ],
+        "opponent": [
+          0.75,
+          0.185,
+          0.08,
+          0.16
+        ],
+        "answerGroup": [
+          0.025,
+          0.833,
+          0.34,
+          0.13
+        ],
+        "proposedManualPowerAndFire": [
+          0.38,
+          0.77,
+          0.37,
+          0.21
+        ],
+        "bottomHud": [
+          0.755,
+          0.84,
+          0.23,
+          0.13
+        ],
+        "gameplayConstraint": "Reference manifest explicitly describes proposed functional revision. Preserve original automatic launch, projected encounter, collision and target mechanics; no new manual-power, Fire or destructive physics system."
+      }
+    },
+    {
+      "key": "polygon_palace",
+      "title": "Polygon Palace",
+      "orientation": "portrait",
+      "dimensions": [
+        853,
+        1844
+      ],
+      "composition": "Portrait crystalline blue palace gallery. Deer guide presents ONE square cyan glass shape on a gold plinth, not a perspective 3D solid; retain a visibly square2D silhouette so mathematical properties remain meaningful. Gold question plaque top. Lower half six large selectable enamel property tablets in two columns, full exact property text with room to wrap. Separate gold SUBMIT PROPERTIES action. Six properties and square must be unchanged, no preselection, clear empty selection indicators. Rich gilded/icy material, readable opaque panel centers.",
+      "reference": "variants/matharia/reference/approved/polygon_palace.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\polygon_palace.png",
+      "sha256": "38a5f8d1a8af63a7e88357285edf5b3ed39c93534618810ffcc15da633d49359",
+      "revision": "gallery selection",
+      "route": "/game/3/17",
+      "regions": {
+        "coordinateSystem": "fractions of approved 853x1844 viewport, measured by visual inspection",
+        "topHud": [
+          0.05,
+          0.055,
+          0.89,
+          0.065
+        ],
+        "hero": [
+          0.02,
+          0.15,
+          0.42,
+          0.25
+        ],
+        "shape": [
+          0.43,
+          0.224,
+          0.286,
+          0.127
+        ],
+        "pedestal": [
+          0.3,
+          0.36,
+          0.5,
+          0.057
+        ],
+        "question": [
+          0.04,
+          0.441,
+          0.92,
+          0.11
+        ],
+        "answers": [
+          0.045,
+          0.557,
+          0.91,
+          0.215
+        ],
+        "submit": [
+          0.145,
+          0.785,
+          0.71,
+          0.065
+        ],
+        "bottomHud": [
+          0.045,
+          0.92,
+          0.91,
+          0.072
+        ]
+      }
+    },
+    {
+      "key": "area_architect",
+      "title": "Area Architect",
+      "orientation": "landscape",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "composition": "Wide sunlit snowy castle-building site, deer architect holding parchment at right, central construction table supports a big, perfectly planar readable cyan room grid. Preserve original room geometry, holes and grid square count, each square1m\u00b2. Four large sapphire/gold answer slabs along bottom18m\u00b2,20m\u00b2,24m\u00b2,19m\u00b2, room1of5. Question strip atop. Make grid large, not a tiny floating ornament; tiled structure clear from front view, no misleading perspective.",
+      "reference": "variants/matharia/reference/approved/area_architect.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\area_architect.png",
+      "sha256": "176cf6fc103421ba3ba2d2c3f35760d19d65daf384811b37faec0b76001e30b1",
+      "revision": "gallery selection",
+      "route": "/game/3/22",
+      "regions": {
+        "coordinateSystem": "fractions of approved1844x853 viewport, visual measurements",
+        "topHud": [
+          0.29,
+          0.01,
+          0.44,
+          0.1
+        ],
+        "question": [
+          0.065,
+          0.115,
+          0.8,
+          0.16
+        ],
+        "roomStatus": [
+          0.06,
+          0.284,
+          0.13,
+          0.081
+        ],
+        "grid": [
+          0.388,
+          0.325,
+          0.185,
+          0.31
+        ],
+        "table": [
+          0.17,
+          0.52,
+          0.59,
+          0.2
+        ],
+        "hero": [
+          0.79,
+          0.3,
+          0.21,
+          0.53
+        ],
+        "answers": [
+          0.108,
+          0.714,
+          0.733,
+          0.145
+        ],
+        "bottomHud": [
+          0.33,
+          0.87,
+          0.34,
+          0.12
+        ]
+      }
+    },
+    {
+      "key": "rotation_relay",
+      "title": "Transformation Station",
+      "orientation": "landscape",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "composition": "Use the existing on-screen title Transformation Station. A broad ice-citadel survey workshop: huge accurate coordinate plane at center-left with crisp integer ticks -5..5, same original blue triangle vertices and orientation; deer cartographer beside but not covering grid. Right a tactile three-vertex console, CornerA/B/C controls and Clear/Check image. Place the full translation instruction in top gold/ice frame. Preserve originaltriangle and shift4right2down task; never introduce rotation or reflection into this example. Large accurate mathematical chart, no decorative marks mistaken for axes.",
+      "reference": "variants/matharia/reference/approved/rotation_relay.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\rotation_relay.png",
+      "sha256": "3932dab8be3e865689325906c4252ce5e2f2f60edde108b007c20e8a1068b9ae",
+      "revision": "gallery selection",
+      "route": "/game/3/27",
+      "regions": {
+        "coordinateSystem": "fractions of approved1844x853 viewport, visual measurements",
+        "topHud": [
+          0.28,
+          0.01,
+          0.48,
+          0.11
+        ],
+        "question": [
+          0.14,
+          0.126,
+          0.72,
+          0.09
+        ],
+        "cornerStatus": [
+          0.343,
+          0.216,
+          0.2,
+          0.055
+        ],
+        "gridFrame": [
+          0.277,
+          0.273,
+          0.331,
+          0.56
+        ],
+        "hero": [
+          0.02,
+          0.36,
+          0.21,
+          0.52
+        ],
+        "controls": [
+          0.625,
+          0.364,
+          0.34,
+          0.367
+        ],
+        "bottomHud": [
+          0.323,
+          0.85,
+          0.36,
+          0.13
+        ]
+      }
+    },
+    {
+      "key": "coordinates_quest",
+      "title": "Coordinates Quest",
+      "orientation": "landscape",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "composition": "Broad snowy sky-port with deer explorer on right, clean large XY coordinate plane centered with integer labels-3..3 and original marker at(2,-1). Left a carved brass navigator console showing Point(2,-1), four distinct arrow controls xleft,xright,ydown,yup, and Choose point. Full exact step sequence across top: start2,-1, down1, down1,left2. No duplicate marker implying a solution, no new answer. Frosted sapphire enamel controls, gilded surveying instrument frame.",
+      "reference": "variants/matharia/reference/approved/coordinates_quest-v2.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\coordinates_quest-v2.png",
+      "sha256": "3b65aa46f4bc4ef4c72869738bef903a74066eb0db912e97843bb7e46412d63b",
+      "revision": "final selection",
+      "route": "/game/3/32",
+      "regions": {
+        "coordinateSystem": "Fractions of actual approved raster; major visible bounds measured before implementation.",
+        "topHud": [
+          0.285,
+          0.02,
+          0.44,
+          0.095
+        ],
+        "question": [
+          0.1,
+          0.155,
+          0.8,
+          0.14
+        ],
+        "console": [
+          0.04,
+          0.43,
+          0.36,
+          0.36
+        ],
+        "grid": [
+          0.429,
+          0.3,
+          0.276,
+          0.54
+        ],
+        "hero": [
+          0.76,
+          0.38,
+          0.225,
+          0.46
+        ],
+        "bottomHud": [
+          0.325,
+          0.85,
+          0.35,
+          0.13
+        ]
+      }
+    },
+    {
+      "key": "conversion_canyon",
+      "title": "Conversion Canyon",
+      "orientation": "portrait",
+      "dimensions": [
+        853,
+        1844
+      ],
+      "composition": "Portrait alpine shipping workshop with magnificent antique mechanical blue-and-gold scale centered, fully visible wide tray above and round dial below. Deer porter at side with a small crate, not obscuring the scale. Top question exact6.25kg. Under scale show 0g readout. Lower weight bank is SIX gold-beveled blue enamel weight tiles in3x2, each large:1.5kg,750g,500g /2kg,2.5kg,1kg. Distinct Reset weights and Submit shipment action row below, no overlap. Preserve original dial/weights identities, deep mountain scene, no stretched background.",
+      "reference": "variants/matharia/reference/approved/conversion_canyon.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\conversion_canyon.png",
+      "sha256": "228464552443a498d07604f34d5bac8e387a706815912c837e9d8818302b7e91",
+      "revision": "gallery selection",
+      "route": "/game/3/37",
+      "regions": {
+        "coordinateSystem": "Fractions of actual approved raster; major visible bounds measured before implementation.",
+        "topHud": [
+          0.07,
+          0.02,
+          0.82,
+          0.075
+        ],
+        "question": [
+          0.04,
+          0.11,
+          0.92,
+          0.07
+        ],
+        "trayCaption": [
+          0.3,
+          0.3,
+          0.4,
+          0.035
+        ],
+        "visibleScale": [
+          0.21,
+          0.34,
+          0.58,
+          0.25
+        ],
+        "hero": [
+          0,
+          0.39,
+          0.27,
+          0.2
+        ],
+        "weights": [
+          0.13,
+          0.615,
+          0.74,
+          0.16
+        ],
+        "actions": [
+          0.1,
+          0.79,
+          0.8,
+          0.06
+        ],
+        "bottomHud": [
+          0.04,
+          0.9,
+          0.92,
+          0.065
+        ]
+      }
+    },
+    {
+      "key": "perimeter_path",
+      "title": "Perimeter Path",
+      "orientation": "landscape",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "composition": "Wide snowy castle survey site. Large original irregular outlined floorplan on a professional in-world engraved gold survey board center-left. Keep EVERY original edge and label in same adjacency:24m,300cm,200cm,450cm,24m,950cm,5m,5m. Deer architect points from left edge without covering dimensions. Right a clear check-next-edge panel0/8 plus four answer tablets7700cm,8932cm,6468cm,5775cm. Full question about mixed units and perimeter in cm. Plot remains planar and geometrically faithful; no new hints or edge values.",
+      "reference": "variants/matharia/reference/approved/perimeter_path.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\perimeter_path.png",
+      "sha256": "3678d456e1523f262a6563dd024c3fc11559f54aeea64f2246f2b4d0edbfc159",
+      "revision": "gallery selection",
+      "route": "/game/3/42",
+      "regions": {
+        "coordinateSystem": "Fractions of actual approved raster; major visible bounds measured before implementation.",
+        "topHud": [
+          0.285,
+          0.02,
+          0.47,
+          0.1
+        ],
+        "question": [
+          0.125,
+          0.14,
+          0.745,
+          0.084
+        ],
+        "edgeHint": [
+          0.26,
+          0.237,
+          0.55,
+          0.045
+        ],
+        "board": [
+          0.203,
+          0.29,
+          0.405,
+          0.53
+        ],
+        "hero": [
+          0.01,
+          0.245,
+          0.225,
+          0.57
+        ],
+        "edgeCheck": [
+          0.64,
+          0.36,
+          0.335,
+          0.158
+        ],
+        "answers": [
+          0.637,
+          0.53,
+          0.34,
+          0.29
+        ],
+        "bottomHud": [
+          0.337,
+          0.85,
+          0.326,
+          0.13
+        ]
+      }
+    },
+    {
+      "key": "mean_machine",
+      "title": "Mean Machine",
+      "orientation": "portrait",
+      "dimensions": [
+        866,
+        1817
+      ],
+      "composition": "Tall sunlit scholar workshop, a magnificent large gold/brass and blue crystal mean engine as the dominant object, deer scholar alongside. Compact framed question asks mean of6readings with full add/divide instruction. Six clear currently unknown reading windows(?) embedded in engine, two empty lower socket windows only if shown by reference; prominent Scan control integrated into engine base. Below,2x2 pick-the-mean choices12,7,5,10 in tactile gold/amber enamel. Do not fabricate revealed readings or compute a solution; this is before Scan. Premium toy-scale mechanical detail and strong character silhouette, beautiful ancient city vista.",
+      "reference": "variants/matharia/reference/approved/mean_machine.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\mean_machine.png",
+      "sha256": "4984aa0e9ca6831d9302e72e6fd37a1f00be5f532c48eca8fbc50bdb255d68ff",
+      "revision": "gallery selection",
+      "route": "/game/4/10",
+      "regions": {
+        "coordinateSystem": "Fractions of actual approved raster; major visible bounds measured before implementation.",
+        "topHud": [
+          0.11,
+          0.04,
+          0.77,
+          0.05
+        ],
+        "question": [
+          0.06,
+          0.135,
+          0.89,
+          0.08
+        ],
+        "hero": [
+          0,
+          0.33,
+          0.38,
+          0.29
+        ],
+        "engine": [
+          0.28,
+          0.25,
+          0.67,
+          0.4
+        ],
+        "answers": [
+          0.1,
+          0.69,
+          0.79,
+          0.17
+        ],
+        "bottomHud": [
+          0.06,
+          0.92,
+          0.9,
+          0.06
+        ]
+      }
+    },
+    {
+      "key": "graph_grabber",
+      "title": "Graph Grabber",
+      "orientation": "landscape",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "composition": "A beautiful warm harbor with deer dockmaster at left. Dominant broad planar wooden/gold shipment chart across center; opaque navy chart interior, large crisp labels. Preserve exact bar data:Windward80,Eden180,Jerry100,Ivy20,Aurora60; yaxis0,60,120,180. Draw stacked crates, not misleading unequal-width bars. Top question asks600crates and how many more needed; four separate bronze/gold answers180,120,160,220. All categories and axis labels visible. Chart70%width, character does not cover any data. No guessing new values.",
+      "reference": "variants/matharia/reference/approved/graph_grabber.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\graph_grabber.png",
+      "sha256": "674f68f6af607ff3bf663aee166d36092b8f7eab57ba4e4139238eb1ec408708",
+      "revision": "gallery selection",
+      "route": "/game/4/18",
+      "regions": {
+        "coordinateSystem": "Fractions of actual approved raster; major visible bounds measured before implementation.",
+        "topHud": [
+          0.23,
+          0.02,
+          0.54,
+          0.11
+        ],
+        "question": [
+          0.115,
+          0.13,
+          0.77,
+          0.12
+        ],
+        "hero": [
+          0.035,
+          0.34,
+          0.22,
+          0.48
+        ],
+        "chart": [
+          0.23,
+          0.27,
+          0.56,
+          0.42
+        ],
+        "answers": [
+          0.21,
+          0.695,
+          0.58,
+          0.16
+        ],
+        "bottomHud": [
+          0.32,
+          0.87,
+          0.36,
+          0.1
+        ]
+      }
+    },
+    {
+      "key": "line_graph_lab",
+      "title": "Line Graph Lab",
+      "orientation": "landscape",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "composition": "Harbor-side alchemy lab with the recognizable orange fox wizard in blue/gold hat at left. Main carved wood/gold line graph center, four bronze/gold choices in2x2 at right. Preserve graph data EXACTLY:(1,15),(2,23),(3,35),(4,27),(5,43), yaxis0..50, ticks10; teal line and5clearly marked nodes. Do not round graph data to other values. Keep water temperature \u00b0C and time minutes axislabels, full biggest-increase question and exact answers1to2,3to4,4to5,2to3. Calm opaque plot, high chart readability, beautiful harbor beyond.",
+      "reference": "variants/matharia/reference/approved/line_graph_lab.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\line_graph_lab.png",
+      "sha256": "c78bb5374f99b079ff2051218713eeb821cde215e0a84271fd95e84bc26f33af",
+      "revision": "gallery selection",
+      "route": "/game/4/23",
+      "regions": {
+        "coordinateSystem": "Fractions of actual approved raster; major visible bounds measured before implementation.",
+        "topHud": [
+          0.25,
+          0.02,
+          0.52,
+          0.12
+        ],
+        "question": [
+          0.115,
+          0.17,
+          0.77,
+          0.13
+        ],
+        "hero": [
+          0.04,
+          0.31,
+          0.2,
+          0.52
+        ],
+        "chart": [
+          0.26,
+          0.35,
+          0.47,
+          0.46
+        ],
+        "answers": [
+          0.74,
+          0.41,
+          0.24,
+          0.35
+        ],
+        "roundCounters": [
+          0.22,
+          0.3,
+          0.61,
+          0.05
+        ],
+        "bottomHud": [
+          0.34,
+          0.84,
+          0.33,
+          0.12
+        ]
+      }
+    },
+    {
+      "key": "data_detective",
+      "title": "Data Detective",
+      "orientation": "landscape",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "composition": "Premium harbor detective desk composition. Deer detective at left with magnifier and parchment, big wood/gold evidence board center-left, four expressive suspect portrait medallion cards at right2x2:GrumpyGreen green wizard,VaultRhino white armored rhino,CrystalJelly blue crystal creature,SlimeSneak blue horned slime. Use original donut chart, exact evidence quantities ShinyGems15,MagicCookies5,StinkySocks6,GoldCoins16. Legend in FOUR separated cells with full names and quantities contained; no label overlap. No suspect preselected, exact inspect/accuse instruction preserved.",
+      "reference": "variants/matharia/reference/approved/data_detective.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\data_detective.png",
+      "sha256": "8d6ba42342eab222db48d90a596af9f1b4bd51be5354ec1efc17fd65d157518b",
+      "revision": "gallery selection",
+      "route": "/game/4/28",
+      "regions": {
+        "coordinateSystem": "Fractions of actual approved raster; major visible bounds measured before implementation.",
+        "topHud": [
+          0.24,
+          0.04,
+          0.51,
+          0.12
+        ],
+        "question": [
+          0.2,
+          0.18,
+          0.6,
+          0.1
+        ],
+        "hero": [
+          0.01,
+          0.25,
+          0.25,
+          0.57
+        ],
+        "evidence": [
+          0.27,
+          0.3,
+          0.41,
+          0.5
+        ],
+        "suspects": [
+          0.69,
+          0.3,
+          0.28,
+          0.52
+        ],
+        "bottomHud": [
+          0.3,
+          0.85,
+          0.39,
+          0.12
+        ]
+      }
+    },
+    {
+      "key": "factor_frenzy",
+      "title": "Factor Frenzy",
+      "orientation": "portrait",
+      "dimensions": [
+        853,
+        1844
+      ],
+      "composition": "Portrait crystal-powered clockwork outpost, adorable existing short sentinel automaton made of sapphire core and gold armor centered prominently above rune bank. Nine large faceted number runes in3x3, same values4,12,7,1,6,2,3,13,15 preserved, gold sculpted surround and deep blue enamel. Clearly labelled sentinel locks0/10, empty progress locks. Top asks common factors24and36; helper text preserved; no correct runes preselected. High-quality mechanical gold/bronze, crystalline blue energy, clean contrast.",
+      "reference": "variants/matharia/reference/approved/factor_frenzy.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\factor_frenzy.png",
+      "sha256": "95ee0bb71124c9336c0bd8852f53f27ee3918ad19255b006e1e4ff3a7bef1706",
+      "revision": "gallery selection",
+      "route": "/game/5/10",
+      "regions": {
+        "coordinateSystem": "Fractions of the actual approved853x1844 raster; major bounds measured before implementing.",
+        "topHud": [
+          0.05,
+          0.05,
+          0.9,
+          0.07
+        ],
+        "question": [
+          0.05,
+          0.155,
+          0.9,
+          0.052
+        ],
+        "locks": [
+          0.07,
+          0.208,
+          0.86,
+          0.045
+        ],
+        "sentinel": [
+          0.35,
+          0.285,
+          0.3,
+          0.145
+        ],
+        "pedestal": [
+          0.22,
+          0.422,
+          0.58,
+          0.035
+        ],
+        "runes": [
+          0.05,
+          0.45,
+          0.9,
+          0.3
+        ],
+        "pulse": [
+          0.12,
+          0.77,
+          0.76,
+          0.055
+        ],
+        "bottomHud": [
+          0.06,
+          0.895,
+          0.88,
+          0.07
+        ]
+      }
+    },
+    {
+      "key": "multiplication_mine",
+      "title": "Multiplication Mine",
+      "orientation": "portrait",
+      "dimensions": [
+        853,
+        1844
+      ],
+      "composition": "Portrait jewel mine with lanterns and sapphire deposits, deer miner guide at side of large in-world gilded slate. Very clear written multiplication1676\u00d791 with HTh,TTh,Th,H,T,O columns exactly aligned, carry row, \u00d7ones,\u00d7tens and total rows. Keep all unfilled placeholders; do not fill a result. Active prompt Ones row6\u00d71=? and choices3,4,6,7 in2x2 below the slate. Crisp readable digits on opaque slate, no ornamental lines mistaken for mathematical marks. Crystals0/4. Gold frame edges, realistic tactile highlights.",
+      "reference": "variants/matharia/reference/approved/multiplication_mine.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\multiplication_mine.png",
+      "sha256": "2d62d809e85168b4d1b7b2996f4b66589be47b5fcbda858c4576bbc6ab382579",
+      "revision": "gallery selection",
+      "route": "/game/5/19",
+      "regions": {
+        "coordinateSystem": "Fractions measured from the approved 853\u00d71844 raster before presentation implementation.",
+        "topHud": [
+          0.05,
+          0.078,
+          0.9,
+          0.06
+        ],
+        "question": [
+          0.06,
+          0.184,
+          0.88,
+          0.084
+        ],
+        "writtenMethod": [
+          0.05,
+          0.27,
+          0.9,
+          0.242
+        ],
+        "hero": [
+          0.0,
+          0.505,
+          0.37,
+          0.24
+        ],
+        "answerConsole": [
+          0.39,
+          0.53,
+          0.58,
+          0.17
+        ],
+        "feedback": [
+          0.39,
+          0.699,
+          0.58,
+          0.039
+        ],
+        "bottomHud": [
+          0.03,
+          0.907,
+          0.94,
+          0.075
+        ]
+      }
+    },
+    {
+      "key": "order_ops_arena",
+      "title": "Order Ops Arena",
+      "orientation": "portrait",
+      "dimensions": [
+        866,
+        1817
+      ],
+      "composition": "Portrait enchanted temple duel arena. Blue-robed green goblin opponent is an expressive 3D character center above a low arena plinth. Large clean equation plaque(3+10)\u00d78 near top, full existing instruction; four handsome gold buttons in2x2 below:3+10=23,3+10=11,3+10=13,3+10=16. Do not silently correct the intentionally wrong choices, preserve all four exactly. Strong visual hierarchy, sculpted gold/copper console, green enamel question center, existing warm temple colours rather than generic dark battle UI.",
+      "reference": "variants/matharia/reference/approved/order_ops_arena.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\order_ops_arena.png",
+      "sha256": "a88bf993de017feacfc22eaba555cfbf58e77dca3e035d383145978bbdee494f",
+      "revision": "gallery selection",
+      "route": "/game/5/24",
+      "regions": {
+        "coordinateSystem": "Fractions measured from approved866\u00d71817 raster before implementation.",
+        "topHud": [
+          0.05,
+          0.04,
+          0.9,
+          0.058
+        ],
+        "question": [
+          0.06,
+          0.15,
+          0.88,
+          0.15
+        ],
+        "opponent": [
+          0.32,
+          0.355,
+          0.36,
+          0.205
+        ],
+        "platform": [
+          0.09,
+          0.527,
+          0.82,
+          0.054
+        ],
+        "notice": [
+          0.1,
+          0.6,
+          0.8,
+          0.047
+        ],
+        "choices": [
+          0.06,
+          0.663,
+          0.88,
+          0.17
+        ],
+        "bottomHud": [
+          0.04,
+          0.908,
+          0.92,
+          0.068
+        ]
+      }
+    },
+    {
+      "key": "formula_forge",
+      "title": "Formula Forge",
+      "orientation": "portrait",
+      "dimensions": [
+        866,
+        1817
+      ],
+      "composition": "Portrait molten citadel workshop, deer scholar-smith presents a large sapphire/gold planar parallelogram teaching slate. Keep base b15cm, perpendicular height h13cm, exact formula A=b\u00d7h and a90degree marker for the perpendicular, no slanted side mistaken for height. Full two-sentence area question top, rune hint preserved in a dedicated small strip. Four big choice buttons187,192,195,198 in2x2 and question1of8. Luminous forge behind but calm opaque drawing surface, gold/obsidian carved frame and crisp correct2D geometry.",
+      "reference": "variants/matharia/reference/approved/formula_forge.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\formula_forge.png",
+      "sha256": "3486cf0f29329e2d5dc8656751a0d5752f3b03e75983958b3c84a8a4d3188e01",
+      "revision": "gallery selection",
+      "route": "/game/5/29",
+      "regions": {
+        "coordinateSystem": "Fractions measured from the approved866\u00d71817 raster before implementing.",
+        "topHud": [
+          0.05,
+          0.064,
+          0.9,
+          0.047
+        ],
+        "question": [
+          0.05,
+          0.15,
+          0.9,
+          0.125
+        ],
+        "hero": [
+          0.0,
+          0.325,
+          0.42,
+          0.275
+        ],
+        "diagram": [
+          0.37,
+          0.333,
+          0.6,
+          0.212
+        ],
+        "hint": [
+          0.2,
+          0.543,
+          0.77,
+          0.054
+        ],
+        "choose": [
+          0.26,
+          0.622,
+          0.48,
+          0.043
+        ],
+        "answers": [
+          0.105,
+          0.645,
+          0.79,
+          0.176
+        ],
+        "bottomHud": [
+          0.04,
+          0.916,
+          0.92,
+          0.065
+        ]
+      }
+    },
+    {
+      "key": "remainder_run",
+      "title": "Remainder Run",
+      "orientation": "landscape",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "composition": "Wide polished fantasy shipping dock. Deer foreman at left by a beautiful cargo barge/loading conveyor, original On the dock1306 and Boxesloaded0 counters. Right a crafted wood/gold manifest console with SEVEN batch buttons100boxes1300crates,50boxes650crates,20boxes260crates,10boxes130crates,5boxes65crates,2boxes26crates,1box13crates, plus separate Shipit and Unload. Full1306crates/13perbox question top fully wrapped in a wide frame. Do not convert this loading game into a runner, preserve batch-selection mechanic.",
+      "reference": "variants/matharia/reference/approved/remainder_run.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\remainder_run.png",
+      "sha256": "d7fc9be961b814649e59fc786688ae912c55b8a3c74f6cb30f54b4efec21801f",
+      "revision": "gallery selection",
+      "route": "/game/5/34",
+      "regions": {
+        "coordinateSystem": "Fractions measured from approved1844x853 raster before implementation. Landscape scene, all numeric counters and batch controls remain live.",
+        "topHud": [
+          0.31,
+          0.018,
+          0.4,
+          0.093
+        ],
+        "question": [
+          0.055,
+          0.13,
+          0.89,
+          0.16
+        ],
+        "hero": [
+          0.035,
+          0.35,
+          0.19,
+          0.52
+        ],
+        "counters": [
+          0.26,
+          0.313,
+          0.305,
+          0.117
+        ],
+        "capacity": [
+          0.35,
+          0.44,
+          0.135,
+          0.048
+        ],
+        "cargoConveyor": [
+          0.18,
+          0.525,
+          0.33,
+          0.155
+        ],
+        "loadProgress": [
+          0.27,
+          0.675,
+          0.28,
+          0.1
+        ],
+        "manifest": [
+          0.265,
+          0.785,
+          0.17,
+          0.055
+        ],
+        "console": [
+          0.595,
+          0.313,
+          0.39,
+          0.469
+        ],
+        "bottomHud": [
+          0.34,
+          0.865,
+          0.32,
+          0.12
+        ]
+      }
+    },
+    {
+      "key": "time_keeper_cove",
+      "title": "Chrono Dash: Time Trial",
+      "orientation": "portrait",
+      "dimensions": [
+        853,
+        1844
+      ],
+      "composition": "Use exact existing display title Chrono Dash: Time Trial. Portrait gilded clocktower terrace, deer timekeeper beside a grand circular teal/gold analog clock occupying central third. All12numerals visible, hands in initial12:00 position, requested target11:06 only in topinstruction. Controls BELOW clock:Hourhand minus/plus and Minutehand\u00b71min minus/plus in two clear horizontal bays. RestoreTime gold and ResetTimekeeper secondary distinct below. Clock face front-on and mathematically correct, elaborate ring/cogs without covering ticks.",
+      "reference": "variants/matharia/reference/approved/time_keeper_cove.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\time_keeper_cove.png",
+      "sha256": "5e43b421be7a61b5c5b6a0a874d36a48050132f8c9c57e7e3c6205ffb0424bc6",
+      "revision": "gallery selection",
+      "route": "/game/6/9",
+      "regions": {
+        "coordinateSystem": "Fractions measured from approved853x1844 portrait raster before implementation. Native generated question variants, clock labels, ticks and both hand angles remain live.",
+        "topHud": [
+          0.055,
+          0.064,
+          0.92,
+          0.048
+        ],
+        "question": [
+          0.115,
+          0.142,
+          0.77,
+          0.087
+        ],
+        "hero": [
+          0.0,
+          0.331,
+          0.34,
+          0.235
+        ],
+        "clock": [
+          0.3,
+          0.27,
+          0.65,
+          0.296
+        ],
+        "handControls": [
+          0.115,
+          0.649,
+          0.775,
+          0.114
+        ],
+        "restoreAndReset": [
+          0.135,
+          0.783,
+          0.73,
+          0.057
+        ],
+        "bottomHud": [
+          0.04,
+          0.914,
+          0.92,
+          0.063
+        ]
+      }
+    },
+    {
+      "key": "problem_pyramid",
+      "title": "Problem Pyramid",
+      "orientation": "portrait",
+      "dimensions": [
+        862,
+        1825
+      ],
+      "composition": "Portrait ancient sunlit sandstone temple, deer explorer to one side, very large magnificent gold/sandstone number pyramid centered: top?, middle1161and1213, bottom240,921,292. Preserve exactly which block connects to which, no extra blocks. Four jewel/blue-gold answers2376,2373,1213,2374 in2x2 below. Exact missing-top question. Material depth at block edges only; front number faces clear teal. Warm carved monumental scene, excellent readable arithmetic surfaces.",
+      "reference": "variants/matharia/reference/approved/problem_pyramid.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\problem_pyramid.png",
+      "sha256": "f5581bfc44d0ab6200218e56e58e6c6d34860289228005e21e0b255e5f21ec08",
+      "revision": "gallery selection",
+      "route": "/game/6/14",
+      "regions": {
+        "coordinateSystem": "Fractions measured from the approved862x1825 portrait raster before implementation. All six values and answer grading remain from original source.",
+        "topHud": [
+          0.055,
+          0.065,
+          0.93,
+          0.05
+        ],
+        "question": [
+          0.14,
+          0.143,
+          0.72,
+          0.06
+        ],
+        "hero": [
+          0.0,
+          0.278,
+          0.36,
+          0.258
+        ],
+        "pyramid": [
+          0.097,
+          0.365,
+          0.82,
+          0.237
+        ],
+        "choices": [
+          0.12,
+          0.665,
+          0.76,
+          0.172
+        ],
+        "bottomHud": [
+          0.025,
+          0.905,
+          0.95,
+          0.075
+        ]
+      }
+    },
+    {
+      "key": "unit_mixer",
+      "title": "Lava Path",
+      "orientation": "landscape",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "composition": "Use actual on-screen title Lava Path. Wide volcanic castle with bright orange lava and purple crystal pillars. Existing deer adventurer stands on central safe stepping stone, dramatic but friendly. Horizontal crossing platforms visible with clear character silhouette. Question exact Combine1.75kgand700g totaling. Four answer stones along lower working area24,500g,2,450g,245,000g,245g. Keep0/10safe crossings and Convert to g first then add helper. No cauldron or bottle mechanic, no vertical runner. Gold/obsidian frame matching the common fantasy UI.",
+      "reference": "variants/matharia/reference/approved/unit_mixer.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\unit_mixer.png",
+      "sha256": "5cf323aced25985712584d428fadd3ef850c49fa935ef5b02ee95caeb4da1aaf",
+      "revision": "gallery selection",
+      "route": "/game/6/19",
+      "regions": {
+        "coordinateSystem": "Fractions measured from approved1844x853 landscape raster before implementation. Original ten-step index and x path retained; y projected into the approved frontal playfield with depth scaling.",
+        "topHud": [
+          0.276,
+          0.02,
+          0.455,
+          0.11
+        ],
+        "question": [
+          0.162,
+          0.143,
+          0.683,
+          0.104
+        ],
+        "counter": [
+          0.012,
+          0.236,
+          0.15,
+          0.064
+        ],
+        "initialHero": [
+          0.458,
+          0.296,
+          0.082,
+          0.287
+        ],
+        "initialPlatform": [
+          0.405,
+          0.578,
+          0.19,
+          0.065
+        ],
+        "answers": [
+          0.105,
+          0.624,
+          0.79,
+          0.104
+        ],
+        "helper": [
+          0.27,
+          0.754,
+          0.47,
+          0.079
+        ],
+        "bottomHud": [
+          0.33,
+          0.85,
+          0.34,
+          0.126
+        ]
+      }
+    },
+    {
+      "key": "change_counter",
+      "title": "Change Counter",
+      "orientation": "landscape",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "composition": "Rich cozy monster-market counter: expressive deer merchant left behind the counter; gold-edged parchment receipt center-left, a beautiful brass/gold coin till center-right. Keep all four receiptrows quantities, unitprices and line totals exactly; total\u00a324.22paid\u00a325.00. Coin tray0p and all8coin denominations \u00a32,\u00a31,50p,20p,10p,5p,2p,1p in2x4 with genuinely embossed metal coins, no new denominations. Undo,Clear,Givechange separate actions. Do not display calculated change answer, keep receipt readable rather than decorative tiny text.",
+      "reference": "variants/matharia/reference/approved/change_counter.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\change_counter.png",
+      "sha256": "80eddd50be37fd5b66ac57ba6bc2e37f917827efdf408e128f319f38931bd699",
+      "revision": "gallery selection",
+      "route": "/game/6/24",
+      "regions": {
+        "coordinateSystem": "Fractions measured before implementation from approved1844x853 raster. Compact widths retain complete receipt and eight independently framed live coin slots with44px controls.",
+        "topHud": [
+          0.285,
+          0.04,
+          0.455,
+          0.115
+        ],
+        "question": [
+          0.162,
+          0.164,
+          0.68,
+          0.094
+        ],
+        "clerk": [
+          0,
+          0.19,
+          0.18,
+          0.4
+        ],
+        "receipt": [
+          0.178,
+          0.27,
+          0.338,
+          0.57
+        ],
+        "till": [
+          0.523,
+          0.293,
+          0.437,
+          0.502
+        ],
+        "feedback": [
+          0.55,
+          0.803,
+          0.382,
+          0.049
+        ],
+        "bottomHud": [
+          0.336,
+          0.87,
+          0.328,
+          0.11
+        ]
+      }
+    },
+    {
+      "key": "crystal_core",
+      "title": "SATs Paper 1: Arithmetic",
+      "orientation": "portrait",
+      "dimensions": [
+        866,
+        1817
+      ],
+      "composition": "SATs Paper1:Arithmetic as a regal blue/gold crystal study chamber, still recognizably a fantasy adventure assessment. Compact native-style gameHUD title/timer30:00, NO hearts or fabricated reward counters. Deer scholar in slim margin beside question, reserved large calm opaque blue enamel written-work panel showing EXACT equation from provided text325+140=\u25a1; no generated solution. Large empty Answer field, Answerpad and Openon-screenworkingboard controls. Later and gold Save&continue below; mission progress0/36, Missionlist, Finishrun. Elegant gold linework and blue crystals, reading space dominant, no new keypad digits or hidden educational text.",
+      "reference": "variants/matharia/reference/approved/crystal_core.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\crystal_core.png",
+      "sha256": "1f8bd3fdc30f752240f79baf5b72ecbcfe3cc6f55bc8c92cb9f34b29eae70fd7",
+      "revision": "gallery selection",
+      "route": "/game/8/1",
+      "regions": {
+        "coordinateSystem": "Measured before implementation from approved866x1816 portrait raster. At compact sizes44px response controls require slightly taller form and anchored mission tools.",
+        "topHud": [
+          0.065,
+          0.042,
+          0.766,
+          0.052
+        ],
+        "question": [
+          0.3,
+          0.206,
+          0.68,
+          0.054
+        ],
+        "guide": [
+          0,
+          0.274,
+          0.38,
+          0.247
+        ],
+        "slate": [
+          0.3,
+          0.26,
+          0.68,
+          0.264
+        ],
+        "response": [
+          0.06,
+          0.528,
+          0.88,
+          0.189
+        ],
+        "missionTools": [
+          0.09,
+          0.731,
+          0.83,
+          0.048
+        ],
+        "bottomHud": [
+          0.16,
+          0.922,
+          0.68,
+          0.067
+        ]
+      }
+    },
+    {
+      "key": "mirror_gate",
+      "title": "SATs Paper 2: Reasoning",
+      "orientation": "landscape",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "composition": "SATs Paper2:Reasoning in an exquisite amethyst/gold mirror hall, deer scholar left. Wide opaque purple enamel diagram panel center-left must show EXACTLY12equal spaces,5filledcyanand7emptygold/outlined, clearly countable in2rows6, never13or11. Full exact tray question above. Right an empty Fractionfilled response field with Answerpad and working-board control, Later and Save&continue. Progress0/25, timer40:00, Missionlist and Finishrun; NO hearts. Keep full educational wording unchanged and all data correct. Purple/gold material belongs to same universe.",
+      "reference": "variants/matharia/reference/approved/mirror_gate.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\mirror_gate.png",
+      "sha256": "bf97a405ec92cf4c76113aa2a354ea7cdd1f77e27f6586e78386dd9152c152f5",
+      "revision": "gallery selection",
+      "route": "/game/8/2",
+      "regions": {
+        "coordinateSystem": "Measured before implementation from1844x853 approval; original input/choice/construction widgets and source mission model remain live.",
+        "topHud": [
+          0.276,
+          0.022,
+          0.454,
+          0.105
+        ],
+        "question": [
+          0.135,
+          0.137,
+          0.73,
+          0.115
+        ],
+        "guide": [
+          0.035,
+          0.25,
+          0.175,
+          0.52
+        ],
+        "slate": [
+          0.205,
+          0.275,
+          0.361,
+          0.445
+        ],
+        "response": [
+          0.573,
+          0.405,
+          0.404,
+          0.412
+        ],
+        "missionTools": [
+          0.207,
+          0.733,
+          0.359,
+          0.089
+        ],
+        "bottomHud": [
+          0.326,
+          0.846,
+          0.349,
+          0.129
+        ]
+      }
+    },
+    {
+      "key": "matrix_match",
+      "title": "SATs Paper 3: Reasoning",
+      "orientation": "landscape",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "composition": "SATs Paper3:Reasoning in a regal green-enamel/gold mathematical observatory amid purple crystals and brass astronomical rings, deer scholar presenting a clear front-on place-value slate. Exact question Write the number that is1,000morethan2509. Display2509only, do not reveal3509 or another answer. Large empty Number response field at right, Answerpad, workingboard, Later, Save&continue, Missionlist,Finishrun,0/25,timer40:00,NOhearts. Wide shared reasoning composition with plenty of room for longer future questions, not giant decorative character blocking writing.",
+      "reference": "variants/matharia/reference/approved/matrix_match.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\matrix_match.png",
+      "sha256": "1ce13fe8684a1cf4612dba7b0cefa5223095efb091e9e54e670364f37b6caeca",
+      "revision": "gallery selection",
+      "route": "/game/8/3",
+      "regions": {
+        "coordinateSystem": "Measured before implementation from1844x853 approval; separate green writing material and hollow gold frame, native live model and fields.",
+        "topHud": [
+          0.275,
+          0.025,
+          0.443,
+          0.104
+        ],
+        "question": [
+          0.162,
+          0.151,
+          0.676,
+          0.117
+        ],
+        "guide": [
+          0.03,
+          0.265,
+          0.21,
+          0.49
+        ],
+        "slate": [
+          0.215,
+          0.281,
+          0.338,
+          0.438
+        ],
+        "response": [
+          0.553,
+          0.442,
+          0.409,
+          0.378
+        ],
+        "missionTools": [
+          0.217,
+          0.722,
+          0.335,
+          0.095
+        ],
+        "bottomHud": [
+          0.355,
+          0.846,
+          0.29,
+          0.125
+        ]
+      }
+    },
+    {
+      "key": "potion_panic",
+      "title": "Potion Panic",
+      "orientation": "landscape",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "composition": "Magnificent wide fantasy alchemy workshop, warm copper lanterns and rich green vines, distant bright citadel waterfalls. Deer alchemist on left reading an old grimoire, large dark bronze/gold cauldron center-left with readable contact/shadows and luminous potion. Right a beautifully crafted ingredient case2x2 with distinct real glass bottles Rubyred/Azureblue/Oakgreen/Clarityyellow, all exact currentdropcounts:Ruby0,Azure5,Oak0,Clarity0. Each has large minus/plus stepper fully visible. Exact CrimsonCourage/Brew1of3/Ratio1:1:1:1/Brew20drops text in compact topplaque. BrewPotion gold and Reset red separate loweractions. No new ingredient counts, no fabricated success state.",
+      "reference": "variants/matharia/reference/approved/potion_panic.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\potion_panic.png",
+      "sha256": "51e24fe16e1dac4e7af78e77bb41a249662acab6d0fd74a4b2a6dce514b1ad8b",
+      "revision": "gallery selection",
+      "route": "/game/7/9",
+      "regions": {
+        "coordinateSystem": "proportional bounds [left,top,width,height] at1844x853 reference",
+        "topHud": [
+          0.2245,
+          0.0305,
+          0.5662,
+          0.1032
+        ],
+        "recipe": [
+          0.333,
+          0.148,
+          0.3335,
+          0.197
+        ],
+        "hero": [
+          0.0564,
+          0.204,
+          0.2245,
+          0.586
+        ],
+        "cauldron": [
+          0.335,
+          0.456,
+          0.22,
+          0.274
+        ],
+        "ingredientPanel": [
+          0.6594,
+          0.217,
+          0.3281,
+          0.524
+        ],
+        "primaryActions": [
+          0.248,
+          0.738,
+          0.694,
+          0.1
+        ],
+        "bottomHud": [
+          0.285,
+          0.85,
+          0.445,
+          0.12
+        ]
+      }
+    },
+    {
+      "key": "share_splitter",
+      "title": "Share Splitter",
+      "orientation": "landscape",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "composition": "A lavish sunlit fantasy garden banquet overlooking waterfall citadel. All FIVE recognizable original guests equally prominent:green goblin,blue crystal jelly,teal fluffy creature,purple fluffy creature,white rhino; deer host left edge. One long carved wood/gold banquet table, five big empty whiteplates with distinct0counters directly aligned to guests; keep everyone visible. Top exact36cakes5guests ratio2:1:2:3:4. Sourcecake supply36 clearly below/atfront oftable in integrated gold-enamel stand, Reset andCheck separated below. No extra guest, no preallocated cakes, no newcounts.",
+      "reference": "variants/matharia/reference/approved/share_splitter.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\share_splitter.png",
+      "sha256": "a0515149f6df918396fe0952feb4026e860ec4d169103e51b151ba72b6a23c06",
+      "revision": "gallery selection",
+      "route": "/game/7/14",
+      "regions": {
+        "coordinateSystem": "Proportional bounds measured from1844x853 approved frontal banquet before implementation. Live plate refs determine actual drag targets.",
+        "topHud": [
+          0.225,
+          0.014,
+          0.555,
+          0.109
+        ],
+        "question": [
+          0.232,
+          0.143,
+          0.532,
+          0.132
+        ],
+        "host": [
+          0.023,
+          0.25,
+          0.14,
+          0.49
+        ],
+        "guests": [
+          0.14,
+          0.28,
+          0.78,
+          0.32
+        ],
+        "table": [
+          0.11,
+          0.54,
+          0.87,
+          0.27
+        ],
+        "plates": [
+          0.12,
+          0.515,
+          0.8,
+          0.1
+        ],
+        "tray": [
+          0.331,
+          0.631,
+          0.341,
+          0.114
+        ],
+        "actions": [
+          0.31,
+          0.754,
+          0.385,
+          0.09
+        ],
+        "bottomHud": [
+          0.28,
+          0.861,
+          0.44,
+          0.12
+        ]
+      }
+    },
+    {
+      "key": "ratio_fractions",
+      "title": "Ratio Racer",
+      "orientation": "landscape",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "composition": "Wide dynamic fantasy kart circuit next to waterfalls, deer driver in original green/gold kart left foreground, original orange/red opponent in same greenkart right, no new character species. Clear long track center, race-tofinish0% state, no finish-result. Compact upper fuel question console with original redFuel3 and blueOxygen1 cylinders, exact fractionofmixisfuel question. Four massive bevelled enamel fraction boost choices3/5,1/4,1/2,3/4 along bottom abovefooter. Startcountdown acceptable ifsameasreference, but no new powerups or changing rules.",
+      "reference": "variants/matharia/reference/approved/ratio_fractions.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\ratio_fractions.png",
+      "sha256": "c521b3cbea187bae8ae3935b146302241cf6f344cb4e33dc5b80b93d57c89478",
+      "revision": "gallery selection",
+      "route": "/game/7/19",
+      "regions": {
+        "coordinateSystem": "Measured1844x853 reference. Source race percentages project through a single affine scene mapping; scoring/camera clocks unchanged.",
+        "topHud": [
+          0.232,
+          0.025,
+          0.555,
+          0.12
+        ],
+        "fuelPanel": [
+          0.114,
+          0.16,
+          0.766,
+          0.207
+        ],
+        "playerKart": [
+          0.071,
+          0.367,
+          0.251,
+          0.337
+        ],
+        "rivalKart": [
+          0.751,
+          0.45,
+          0.222,
+          0.255
+        ],
+        "countdown": [
+          0.443,
+          0.45,
+          0.114,
+          0.219
+        ],
+        "progress": [
+          0.704,
+          0.389,
+          0.269,
+          0.068
+        ],
+        "answers": [
+          0.079,
+          0.709,
+          0.837,
+          0.13
+        ],
+        "feedback": [
+          0.307,
+          0.842,
+          0.38,
+          0.039
+        ],
+        "bottomHud": [
+          0.307,
+          0.88,
+          0.38,
+          0.105
+        ]
+      }
+    },
+    {
+      "key": "scale_builder",
+      "title": "Scale Builder",
+      "orientation": "landscape",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "composition": "Wide sunlit autumnal fantasy architect terrace. Deer builder at far left holding a parchment, dominant planar blue/gold blueprint at center-left, same L-shapeddiagram and64\u00d748unitdimensions and scale\u00d71.25. Right a beautiful bronze drafting console with Newlength and Newwidth empty(?) windows, numericpad1..9,0,decimalpoint,backspace in orderly3x4or4x3, all12keysvisible, Clear andChecklengths in own row. Full exact question and Hideoriginal control preserved. No overlap, no answer reveal80or60, no misleading decorative numbers.",
+      "reference": "variants/matharia/reference/approved/scale_builder.png",
+      "source": "C:\\Users\\samva\\.codex\\visualizations\\2026\\10\\26\\sats-legends-aaa-concepts\\screens\\scale_builder.png",
+      "sha256": "f572f8e6c6d274fdf5a82c55983868cc254fbdcfb76ab71cd5680190374448a5",
+      "revision": "gallery selection",
+      "route": "/game/7/24",
+      "regions": {
+        "topHud": [
+          0.23,
+          0.015,
+          0.54,
+          0.11
+        ],
+        "question": [
+          0.16,
+          0.14,
+          0.675,
+          0.13
+        ],
+        "hero": [
+          0.025,
+          0.36,
+          0.23,
+          0.48
+        ],
+        "blueprint": [
+          0.275,
+          0.29,
+          0.285,
+          0.44
+        ],
+        "entry": [
+          0.59,
+          0.33,
+          0.36,
+          0.47
+        ],
+        "bench": [
+          0.21,
+          0.71,
+          0.37,
+          0.13
+        ],
+        "footer": [
+          0.29,
+          0.84,
+          0.42,
+          0.13
+        ]
+      }
+    }
+  ]
+}

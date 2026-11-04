@@ -1,0 +1,137 @@
+{
+  "tool": "built-in image_gen",
+  "reference": "reference/approved/prime_pop.png",
+  "processing": "Trim transparent margins and export production WebP. No painting, masks, colour patches, or geometric distortion.",
+  "assets": [
+    {
+      "source": "exec-096ef11b-1ace-455f-ab37-aaac962fb0b6.png",
+      "production": "variants/matharia/assets/png/backgrounds/bg_prime_pop_v2@2x.webp",
+      "dimensions": [
+        853,
+        1844
+      ],
+      "alphaBoundsCrop": null,
+      "bytes": 692624
+    },
+    {
+      "source": "exec-37e4bf5b-b5ff-4eef-992e-4f48ac5f8922.png",
+      "production": "variants/matharia/assets/png/heroes/hero_prime_caster_v2@2x.webp",
+      "dimensions": [
+        921,
+        1411
+      ],
+      "alphaBoundsCrop": [
+        45,
+        57,
+        966,
+        1468
+      ],
+      "bytes": 448660
+    },
+    {
+      "source": "exec-af598576-7401-4d15-a0bc-8444adb6b3f6.png",
+      "production": "variants/matharia/assets/png/frames/prime_question_v2@2x.webp",
+      "dimensions": [
+        1600,
+        571
+      ],
+      "alphaBoundsCrop": [
+        0,
+        0,
+        2098,
+        749
+      ],
+      "bytes": 225066
+    },
+    {
+      "source": "exec-4808002d-0128-4fb2-8138-996a00975fb8.png",
+      "production": "variants/matharia/assets/png/gameplay/prime_orb_glass_v2@2x.webp",
+      "dimensions": [
+        512,
+        504
+      ],
+      "alphaBoundsCrop": [
+        80,
+        60,
+        1198,
+        1161
+      ],
+      "bytes": 69230
+    },
+    {
+      "source": "exec-5af1da77-0aee-4282-b53f-b3d6373dccd2.png",
+      "production": "variants/matharia/assets/png/gameplay/prime_danger_rail_v2@2x.webp",
+      "dimensions": [
+        1344,
+        144
+      ],
+      "alphaBoundsCrop": [
+        0,
+        505,
+        1344,
+        649
+      ],
+      "bytes": 61630
+    },
+    {
+      "source": "exec-a93c47d1-08e4-4444-8930-30e249328078.png",
+      "production": "variants/matharia/assets/png/frames/concept_nav_v3@2x.webp",
+      "dimensions": [
+        1200,
+        716
+      ],
+      "alphaBoundsCrop": [
+        84,
+        104,
+        1426,
+        905
+      ],
+      "bytes": 140452
+    },
+    {
+      "source": "exec-e2f244e5-f117-4c05-b6f0-97cd4fc0afa8.png",
+      "production": "variants/matharia/assets/png/frames/concept_nav_portrait_v4@2x.webp",
+      "dimensions": [
+        1000,
+        809
+      ],
+      "alphaBoundsCrop": [
+        51,
+        81,
+        1267,
+        1064
+      ],
+      "bytes": 150538
+    },
+    {
+      "source": "exec-234013f4-7ede-4de7-ab07-f886a0255ac4.png",
+      "production": "variants/matharia/assets/png/frames/concept_nav_portrait_v5@2x.webp",
+      "dimensions": [
+        1000,
+        941
+      ],
+      "alphaBoundsCrop": [
+        49,
+        16,
+        1267,
+        1162
+      ],
+      "bytes": 155140
+    },
+    {
+      "source": "exec-a0900d07-7ae4-4b0f-ab44-595229ab014f.png",
+      "production": "variants/matharia/assets/png/frames/prime_question_v3@2x.webp",
+      "dimensions": [
+        1600,
+        677
+      ],
+      "alphaBoundsCrop": [
+        1,
+        0,
+        1910,
+        806
+      ],
+      "bytes": 221560
+    }
+  ]
+}

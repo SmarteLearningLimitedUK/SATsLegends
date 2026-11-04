@@ -1,0 +1,34 @@
+/* One responsive coordinate system anchors the live values to the carved tablets. */
+#root [data-vision-game='problem_pyramid'] .pyramid-playfield {
+ display:grid;place-items:center;container-type:size;min-width:0;min-height:0;overflow:visible;
+}
+#root [data-vision-game='problem_pyramid'] .pyramid-puzzle {
+ display:block;width:min(100cqw,150cqh);height:auto;max-width:100%;max-height:100%;aspect-ratio:3/2;overflow:visible;
+ filter:drop-shadow(0 8px 5px #30271555);
+}
+.pyramid-tablet-value {
+ font-family:var(--font-fredoka),sans-serif;font-size:72px;font-weight:750;fill:#fff5d7;
+ paint-order:stroke fill;stroke:#092e34;stroke-width:4px;stroke-linejoin:round;
+}
+.pyramid-tablet-value.is-restored {fill:#d2ffe3;}
+@media(orientation:landscape) and (max-height:550px) {
+ #root [data-vision-game='problem_pyramid'] img[data-vision-environment] {object-position:50% 100%!important;}
+ .pyramid-tablet-value {font-size:96px;}
+}
+
+/* Keep the entire base on the open terrace, before the right foreground wall.
+   The inset also leaves room for the 1.02 restoration pulse and its shadow. */
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='problem_pyramid'] .pyramid-composition {
+ width:62%;margin-left:25%;margin-right:13%;
+}
+
+@media(orientation:landscape) and (max-height:550px) {
+ #root .app-viewport[data-active-game='problem_pyramid']>.vision-world-backdrop {object-position:50% 100%;}
+ #root [data-vision-game='problem_pyramid'] .pyramid-playfield {align-items:end;}
+}
+
+@media(orientation:landscape) and (max-height:550px) {
+ /* The source has a soft shadow below the stone base (y=900 of 1024).
+    Seat the stones, rather than the transparent image bounds, on the terrace. */
+ #root [data-vision-game='problem_pyramid'] .pyramid-puzzle {translate:0 10cqh;}
+}

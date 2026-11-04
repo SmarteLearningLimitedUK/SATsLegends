@@ -1,0 +1,82 @@
+/* Shared portrait scene and HUD regions; each activity owns its playfield. */
+
+html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene] {
+ --concept-safe-top:env(safe-area-inset-top,0px);
+ --concept-safe-bottom:env(safe-area-inset-bottom,0px);
+ --concept-safe-left:env(safe-area-inset-left,0px);
+ --concept-safe-right:env(safe-area-inset-right,0px);
+ --concept-plane:min(100vw,max(375px,calc((100dvh - var(--concept-safe-top) - var(--concept-safe-bottom)) * .4626)));
+ background:#073452;
+}
+html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene]::before,
+html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene]::after,
+html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene] .app-screen-content::before {display:none;}
+html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene] {
+ .app-screen-content {position:absolute;inset:0;width:100%;height:100%;background:none;}
+ .vision-world-backdrop {position:absolute;inset:0;width:100%;height:100%;opacity:1;filter:none;object-fit:cover;object-position:center;}
+ .vision-world-backdrop img {width:100%;height:100%;object-fit:cover;object-position:center;}
+ .structured-game-layout {padding:0;box-sizing:border-box;min-height:0;height:100%;width:100%;}
+ :is(.game-shell-host,.game-shell-contract,.matharia-content-viewport,[data-gameplay-content-stage]) {width:100%;height:100%;min-height:0;max-width:none;transform:none;display:flex;flex:1;flex-direction:column;background:none;box-shadow:none;}
+ .concept-stage {display:block;position:relative;top:var(--concept-safe-top);isolation:isolate;width:var(--concept-plane);height:calc(100% - var(--concept-safe-top) - var(--concept-safe-bottom));margin:0 auto;container-type:inline-size;font-family:'Matharia Rounded',sans-serif;}
+ /* The native game viewport already supplies horizontal safe-area insets. */
+ .concept-stage[data-concept-orientation='landscape'] {margin:0 auto;}
+ .concept-playfield,.concept-game {position:absolute;inset:0;width:100%;height:100%;}
+ .concept-question-zone {position:absolute;z-index:5;left:11.2%;top:15.1%;width:79.5%;height:max(6.5%,56px);margin:0;}
+ .concept-question-panel {position:relative;width:100%;height:100%;min-height:0;margin:0;padding:0 8%;display:grid;place-items:center;isolation:isolate;}
+ .concept-question-frame {position:absolute;z-index:-1;left:0;top:50%;translate:0 -50%;width:100%;height:auto;max-width:none;pointer-events:none;}
+ .concept-question-copy {position:relative;width:100%;margin:0;padding:0;}
+ .scalable-question-panel {container-type:inline-size;padding:0;}
+ .scalable-question-copy {display:grid;place-items:center;width:100%;height:100%;padding:8px 7%;}
+ .question-jewel {position:absolute;z-index:1;left:50%;translate:-50% 0;width:clamp(76px,24cqw,128px);height:auto;pointer-events:none;}
+ .question-jewel--top {top:2px;translate:-50% -80%;}
+ .question-jewel--bottom {bottom:2px;translate:-50% 80%;rotate:180deg;}
+ .artwork-frame {display:block;position:absolute;inset:0;width:100%;height:100%;border-style:solid;border-color:transparent;border-image-repeat:stretch;pointer-events:none;z-index:-1;}
+ .artwork-surface {position:absolute;inset:3%;z-index:-2;pointer-events:none;clip-path:polygon(7% 0,93% 0,100% 18%,100% 82%,93% 100%,7% 100%,0 82%,0 18%);}
+ :is(.game-question-card-shell,.game-question-card-title-strip,.game-question-context) {display:none;}
+ .game-question-card-inner {position:relative;z-index:1;width:100%;padding:0;}
+ [data-question-copy] {color:#fff9e7;font-size:clamp(14px,3.4cqw,32px);font-weight:700;line-height:1.16;text-align:center;letter-spacing:-.02em;white-space:normal;text-wrap:balance;text-shadow:0 2px 2px #001d32;}
+ [data-unified-minigame-hud]>div:first-of-type:has(.legend-hud-bar) {left:50%;right:auto;translate:-50% 0;top:5.4%;width:var(--concept-plane);height:9%;padding:0 3.5%;container-type:inline-size;}
+ .legend-hud-bar {display:flex;align-items:center;gap:2%;position:relative;isolation:isolate;width:100%;max-width:none;height:100%;min-height:0;padding:0 7% 0 5.5%;border:0;background:none;border-radius:0;box-shadow:none;color:#fff9e6;}
+ .legend-hud-bar::before {content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;border:solid transparent;border-width:min(4cqw,30px);border-image:url('../assets/png/frames/concept_hud_wide_v4@2x.webp') 164 fill / min(4cqw,30px) / 0 stretch;}
+ .legend-hud-avatar {position:relative;flex:none;width:19.5%;height:auto;aspect-ratio:1;margin-left:-6%;overflow:hidden;border:3px solid #e5b348;border-radius:50%;background:#063852;}
+ .legend-hud-avatar :is(img,svg) {display:block;width:100%;height:100%;object-fit:contain;transform:none;}
+ .legend-hud-avatar {border:0;}
+ .legend-hud-avatar::after {content:'';position:absolute;inset:0;background:url('../assets/png/frames/concept_round_rim_v2@2x.webp') center / contain no-repeat;pointer-events:none;}
+ .legend-hud-mission {display:flex;flex-direction:column;align-self:center;justify-content:center;gap:clamp(3px,.6cqw,6px);height:auto;flex:1;min-width:0;padding:0;margin:0;}
+ .legend-hud-label {display:none;}
+ .legend-hud-title {font-family:'Matharia Rounded',Fredoka,sans-serif;font-size:clamp(14px,4.8cqw,42px);font-weight:650;line-height:1.1;white-space:nowrap;letter-spacing:-.025em;overflow:visible;text-overflow:clip;}
+ .legend-hud-timer {height:clamp(5px,.8cqw,12px);width:100%;margin:0;border:1px solid #9cbf87;border-radius:12px;background:#002b34;overflow:hidden;}
+ .legend-hud-timer>div {height:100%;background:linear-gradient(#d8ff9d,#43d877);}
+ .legend-hud-bar>div:last-child {display:flex;flex-direction:row;align-items:center;gap:6px;}
+ .legend-hud-lives {display:flex;gap:2px;}
+ .legend-hud-lives svg {width:clamp(15px,3.3cqw,36px);height:clamp(15px,3.3cqw,36px);color:#ff5688;filter:drop-shadow(0 1px 1px #7e102a);}
+ .legend-hud-lives .concept-life {width:clamp(15px,4.5cqw,40px);height:clamp(15px,4.5cqw,40px);object-fit:contain;}
+ .legend-hud-lives .is-empty {opacity:.25;}
+ .legend-hud-streak {display:flex;align-items:center;gap:3px;font-size:clamp(14px,3.5cqw,35px);line-height:1;font-weight:900;white-space:nowrap;color:#fff8e0;}
+ .concept-clock-value {font-variant-numeric:tabular-nums;text-align:right;}
+ .legend-hud-timer.is-low>div {background:linear-gradient(#ffe7a1,#ef8050);}
+ .concept-clock-stack {display:flex;flex-direction:column;align-items:center;gap:3px;}
+ .concept-clock-icon {width:clamp(15px,4cqw,36px);height:clamp(15px,4cqw,36px);color:#f2cb59;}
+ .concept-answer-streak {display:flex;align-items:center;gap:2px;white-space:nowrap;font-size:clamp(10px,2.3cqw,20px);line-height:1;}
+ .legend-dock-base {display:none;}
+ [data-unified-minigame-hud] {top:var(--concept-safe-top);bottom:var(--concept-safe-bottom);height:auto;}
+ [data-testid='shared-bottom-hud'] {left:50%;right:auto;translate:-50% 0;bottom:max(1.8%,env(safe-area-inset-bottom));width:var(--concept-plane);height:6%;min-height:48px;padding:0 5%;container-type:inline-size;}
+ [data-testid='shared-bottom-hud']>div {width:100%;max-width:none;height:100%;overflow:visible;}
+ .legend-dock-surface {display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1%;width:100%;height:100%;max-width:none;padding:0;border:0;background:none;border-radius:0;box-shadow:none;}
+ .legend-dock-button {display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:44px;min-height:44px;width:100%;height:100%;padding:4px;border:0;background:none;border-radius:0;box-shadow:none;pointer-events:auto;transition:scale 90ms ease,filter 90ms ease;color:#fff9e6;font-size:clamp(11px,2.8cqw,26px);font-weight:650;line-height:1;}
+ .legend-dock-button :is(img,svg) {display:block;width:clamp(20px,4cqw,42px);height:clamp(20px,4cqw,42px);object-fit:contain;margin:0;pointer-events:none;}
+ .legend-dock-button span {font:inherit;line-height:1;letter-spacing:0;margin:0;padding:0;}
+ .legend-dock-button:active {scale:.96;filter:brightness(1.15);}
+ .legend-dock-button[data-audio-disabled='true']>:is(svg,span:not(.legend-dock-tile-art)) {opacity:.65;}
+ .concept-pause {right:max(1.2%,var(--concept-safe-right));top:.4%;width:clamp(44px,11.5vw,98px);height:auto;aspect-ratio:1;border:0;background:#063650 url('../assets/png/frames/concept_round_rim_v2@2x.webp') center / contain no-repeat;box-shadow:none;}
+}
+html[data-presentation='matharia'] .concept-pause {pointer-events:auto;position:absolute;right:max(8px,env(safe-area-inset-right));top:max(4px,env(safe-area-inset-top));z-index:130;display:grid;place-items:center;width:44px;height:44px;min-width:44px;min-height:44px;border:3px solid #edbe55;border-radius:50%;color:#fff9e4;background:#063650;box-shadow:inset 0 0 0 2px #895d22,0 3px 5px #00182677;cursor:pointer;}
+html[data-presentation='matharia'] .concept-pause svg {width:54%;height:54%;fill:currentColor;}
+html[data-presentation='matharia'] .concept-pause:active {scale:.95;}
+html[data-presentation='matharia'] #root .concept-pause {border:3px solid #edbe55;border-radius:50%;background:#063650;box-shadow:inset 0 0 0 2px #895d22,0 3px 5px #00182677;color:#fff9e4;}
+html[data-presentation='matharia'] .concept-pause-backdrop {position:fixed;inset:0;z-index:20000;display:flex;align-items:center;justify-content:center;padding:24px;background:#001525b8;}
+html[data-presentation='matharia'] .concept-pause-dialog {width:min(90vw,440px);padding:28px;border:3px solid #e8bd5c;border-radius:22px;background:#063650;box-shadow:0 15px 50px #00101aaa;color:#fff6dc;text-align:center;}
+html[data-presentation='matharia'] .concept-pause-dialog h2 {font-size:28px;font-weight:900;margin:0 0 12px;}
+html[data-presentation='matharia'] .concept-pause-dialog p {font-size:17px;line-height:1.5;margin:0 0 24px;}
+html[data-presentation='matharia'] .concept-pause-dialog button {display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:52px;padding:12px;border:2px solid #ffe8a1;border-radius:12px;background:#e9b755;color:#042a40;font-size:18px;font-weight:900;}
+html[data-presentation='matharia'] .concept-live-hint {margin:16px 0;padding:12px 16px;border:1px solid #dcb75e;border-radius:10px;background:#063b4d;color:#fff7df;font-size:16px;line-height:1.45;}

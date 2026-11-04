@@ -1,0 +1,72 @@
+{
+  "nativeCanvas": [
+    1024,
+    1536
+  ],
+  "segments": [
+    {
+      "asset": "rocket_reveal_segment_01",
+      "nativeRect": [
+        0,
+        0,
+        1024,
+        219
+      ]
+    },
+    {
+      "asset": "rocket_reveal_segment_02",
+      "nativeRect": [
+        0,
+        219,
+        1024,
+        219
+      ]
+    },
+    {
+      "asset": "rocket_reveal_segment_03",
+      "nativeRect": [
+        0,
+        438,
+        1024,
+        220
+      ]
+    },
+    {
+      "asset": "rocket_reveal_segment_04",
+      "nativeRect": [
+        0,
+        658,
+        1024,
+        219
+      ]
+    },
+    {
+      "asset": "rocket_reveal_segment_05",
+      "nativeRect": [
+        0,
+        877,
+        1024,
+        220
+      ]
+    },
+    {
+      "asset": "rocket_reveal_segment_06",
+      "nativeRect": [
+        0,
+        1097,
+        1024,
+        219
+      ]
+    },
+    {
+      "asset": "rocket_reveal_segment_07",
+      "nativeRect": [
+        0,
+        1316,
+        1024,
+        220
+      ]
+    }
+  ],
+  "note": "Reveal segments. Composite at nativeRect without extra padding; crop the density alignment padding first. Not separate engineered rocket modules."
+}

@@ -1,0 +1,131 @@
+{
+  "reference": "variants/matharia/reference/approved/multiplication_mine.png",
+  "inspection": "All four original identities inspected in upright parchment poses. Apparent coloured RGB in the native generation preview is hidden by alpha: both6px cross gutters have maximum alpha1 and sampled exterior pixels alpha0. Full antlers/horns/wings/tails/boots stay inside verified quadrant boundaries. Separate sprites keep original saved identities.",
+  "processing": "Regular atlas quadrant slicing, alpha-margin trim and aspect-preserving WebP export only.",
+  "assets": [
+    {
+      "identity": "barratt",
+      "role": "mine guide",
+      "name": "hero_barratt_miner_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-4d7e9523-fc43-4733-aafa-8feb56b31f23.png",
+      "atlasCell": [
+        0,
+        0,
+        512,
+        768
+      ],
+      "alphaBoundsCrop": [
+        71,
+        10,
+        484,
+        746
+      ],
+      "dimensions": [
+        413,
+        736
+      ],
+      "avatarBounds": [
+        0,
+        0,
+        413,
+        413
+      ],
+      "production": "variants/matharia/assets/png/heroes/hero_barratt_miner_v3@2x.webp",
+      "bytes": 136224,
+      "sha256": "c5fa2cd75b5df5e8701e57d5803a510992df4d2849c7ec61407595066435b681"
+    },
+    {
+      "identity": "bran",
+      "role": "mine guide",
+      "name": "hero_bran_miner_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-4d7e9523-fc43-4733-aafa-8feb56b31f23.png",
+      "atlasCell": [
+        512,
+        0,
+        1024,
+        768
+      ],
+      "alphaBoundsCrop": [
+        25,
+        57,
+        453,
+        746
+      ],
+      "dimensions": [
+        428,
+        689
+      ],
+      "avatarBounds": [
+        0,
+        0,
+        428,
+        428
+      ],
+      "production": "variants/matharia/assets/png/heroes/hero_bran_miner_v3@2x.webp",
+      "bytes": 134714,
+      "sha256": "20591a2e9aeaa1b41e2793fc4b9a32963e96501f4d4b7d60aceabdec2dd1fe47"
+    },
+    {
+      "identity": "mochi",
+      "role": "mine guide",
+      "name": "hero_mochi_miner_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-4d7e9523-fc43-4733-aafa-8feb56b31f23.png",
+      "atlasCell": [
+        0,
+        768,
+        512,
+        1536
+      ],
+      "alphaBoundsCrop": [
+        54,
+        35,
+        485,
+        736
+      ],
+      "dimensions": [
+        431,
+        701
+      ],
+      "avatarBounds": [
+        0,
+        0,
+        431,
+        431
+      ],
+      "production": "variants/matharia/assets/png/heroes/hero_mochi_miner_v3@2x.webp",
+      "bytes": 133246,
+      "sha256": "6d513f125eab7dfcc2754d16bd0fd6f6939a455a3bfa5340bea25124150fd4bb"
+    },
+    {
+      "identity": "vex",
+      "role": "mine guide",
+      "name": "hero_vex_miner_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-4d7e9523-fc43-4733-aafa-8feb56b31f23.png",
+      "atlasCell": [
+        512,
+        768,
+        1024,
+        1536
+      ],
+      "alphaBoundsCrop": [
+        11,
+        17,
+        473,
+        741
+      ],
+      "dimensions": [
+        462,
+        724
+      ],
+      "avatarBounds": [
+        0,
+        0,
+        462,
+        462
+      ],
+      "production": "variants/matharia/assets/png/heroes/hero_vex_miner_v3@2x.webp",
+      "bytes": 137404,
+      "sha256": "c71cac284daac40f8570da264a1be5461514b955d1a4d1ff6238d55d66227811"
+    }
+  ]
+}

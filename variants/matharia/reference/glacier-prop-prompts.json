@@ -1,0 +1,12 @@
+{
+  "prompts": [
+    {
+      "key": "anglePlatforms",
+      "prompt": "Create a production transparent sprite atlas with TWO independent complete props, in TWO equal side-by-side cells, 2048x1024 landscape. Match the supplied approved sapphire/gold snowy castle game art exactly: polished stylised 3D animated film quality, frosted white stone, royal-blue hanging banners with gold ornament, gilded trim, sapphire crystal and rough light wood. LEFT CELL: a broad low snowy palace balcony platform seen from front slightly above, thick white stone base, gold-edged snow-covered flat top, blue-gold hanging banner on the front, no rail or object on top; suitable for placing a cannon and hero on it. Aspect wide 3:1 within its cell. RIGHT CELL: the whole right opponent's tall stepped timber/ice/stone TARGET TOWER from reference, as one static independent architectural prop: the block-built support from a broad low left ramp to the tall right lookout, wooden beams, square white stone blocks, several translucent bright cyan ice wedges and blocks, blue/gold banner, snow on ledges; broad complete low base, one small topmost timber platform for a separately placed goblin, aspect about 1.6:1. No goblin, cannon, characters, weapons, text, digits, UI, HUD or controls anywhere. Entire objects visible and not touching cells, generous TRANSPARENT gutter at centre, empty alpha margins. No scenery, ground plane or full-canvas glow."
+    },
+    {
+      "key": "sapphireCrest",
+      "prompt": "ONE isolated transparent UI ornamental crest for the supplied premium sapphire-and-gold game. A tall beautifully faceted luminous royal-blue SAPPHIRE diamond at the centre, inset in a thick bevelled bright gold diamond bezel. Rich 3D animated-film crafted gold, crisp reflective edges, white highlight on upper left and deep blue facets on right. Low elegant gold filigree scrollwork sweeps a short distance symmetrically left and right like an ornate royal panel top crest. Overall horizontal aspect about 2.5:1, main central upright diamond occupies about 35% total width and almost all height. No green leaves, no plants, no snow, no large rectangular frame, no panel or background, no writing/letters/numbers/icons or UI. Clean polished complete ornament only on fully transparent background, small even alpha margin, no shadow rectangle. 1400px wide. Match central blue/gold jewel above Polygon Palace question plaque and Fraction Forge question plaque from reference."
+    }
+  ]
+}

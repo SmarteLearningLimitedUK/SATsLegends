@@ -1,0 +1,34 @@
+{
+  "processing": "Alpha-margin crop and aspect-preserving WebP export; no masks, painting or concealment.",
+  "assets": [
+    {
+      "name": "backgrounds/bg_zombies_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-f140c387-e50d-446e-994a-d445fa6dcc80.png",
+      "production": "variants/matharia/assets/png/backgrounds/bg_zombies_v3@2x.webp",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "alphaBoundsCrop": null,
+      "bytes": 663024,
+      "sha256": "4c2171de193524ef85b302e5798a1721672600bdda659a5715853b589e6a8926"
+    },
+    {
+      "name": "buttons/emerald_answer_wide_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-1e2c03d4-2340-4838-a34b-607771a7d238.png",
+      "production": "variants/matharia/assets/png/buttons/emerald_answer_wide_v3@2x.webp",
+      "dimensions": [
+        1600,
+        319
+      ],
+      "alphaBoundsCrop": [
+        6,
+        156,
+        2067,
+        567
+      ],
+      "bytes": 92342,
+      "sha256": "4b8331cc9a9ac784d09e23581c4e7cc50fb92d8017984748d108a4f1eede76ce"
+    }
+  ]
+}

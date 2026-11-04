@@ -1,0 +1,11 @@
+{
+  "approval": "User-supplied image in the current request: This is the hud I want to use",
+  "reference": "variants/matharia/reference/approved/gameplay-bottom-hud.jpg",
+  "dimensions": [1280, 254],
+  "sha256": "cb326c773e3a27cf90b4447c1bf9ec0cf5c9b1000753fa80a23bb267fac439ac",
+  "scope": "Shared bottom gameplay HUD, including mock papers; existing per-scene footer placement is retained.",
+  "controls": ["Back", "Tips", "Board", "Sound", "Music"],
+  "composition": "Five separate near-square sapphire tiles with rounded gold rims, centred ivory line icons and rounded live labels beneath each icon.",
+  "productionFrame": "variants/matharia/assets/png/buttons/scale_key_v4@2x.webp",
+  "implementation": "Independent aspect-preserving nine-slice frames, SVG icons and live buttons. The approved photograph is a reference only and is not rendered as the HUD."
+}

@@ -1,0 +1,94 @@
+{
+  "inspection": "Original clean lake and independent lily-pad asset retained. Four generated pastel koi cells inspected on neutral background, clear central gutters alpha0..2, complete fins. Native fish IDs/positions/colours/directions and110ms movement interval retained.",
+  "processing": "Verified cell crop, alpha-margin trim and aspect-preserving WebP only.",
+  "assets": [
+    {
+      "name": "characters/pond_fish_gold_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-f85c9c6f-a904-4c26-84c2-7e0a2d99d33a.png",
+      "cell": [
+        0,
+        0,
+        836,
+        470
+      ],
+      "alphaMarginTrim": [
+        37,
+        77,
+        780,
+        431
+      ],
+      "dimensions": [
+        743,
+        354
+      ],
+      "production": "variants/matharia/assets/png/characters/pond_fish_gold_v3@2x.webp",
+      "sha256": "50bbb0b1012b9913c8b1ddae1ecdc057b97609d0ac59b55000aa7f9248df1950"
+    },
+    {
+      "name": "characters/pond_fish_blue_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-f85c9c6f-a904-4c26-84c2-7e0a2d99d33a.png",
+      "cell": [
+        836,
+        0,
+        1672,
+        470
+      ],
+      "alphaMarginTrim": [
+        34,
+        88,
+        801,
+        440
+      ],
+      "dimensions": [
+        767,
+        352
+      ],
+      "production": "variants/matharia/assets/png/characters/pond_fish_blue_v3@2x.webp",
+      "sha256": "e178cad4f82804a059b7c03d08a7f455801295e4ee4c9fa101c1a33241a4f06d"
+    },
+    {
+      "name": "characters/pond_fish_coral_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-f85c9c6f-a904-4c26-84c2-7e0a2d99d33a.png",
+      "cell": [
+        0,
+        470,
+        836,
+        940
+      ],
+      "alphaMarginTrim": [
+        36,
+        48,
+        801,
+        406
+      ],
+      "dimensions": [
+        765,
+        358
+      ],
+      "production": "variants/matharia/assets/png/characters/pond_fish_coral_v3@2x.webp",
+      "sha256": "d9f405618fd13d97f8a5e7ee34b1d60e2b51de8cb8c5d35b52b99ea67eef9163"
+    },
+    {
+      "name": "characters/pond_fish_sage_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-f85c9c6f-a904-4c26-84c2-7e0a2d99d33a.png",
+      "cell": [
+        836,
+        470,
+        1672,
+        940
+      ],
+      "alphaMarginTrim": [
+        44,
+        65,
+        800,
+        407
+      ],
+      "dimensions": [
+        756,
+        342
+      ],
+      "production": "variants/matharia/assets/png/characters/pond_fish_sage_v3@2x.webp",
+      "sha256": "19cc09b68e6b6c9fb8c39e5756dd6d88b36c2e8dcc859a8e286f5ea4c0e5150f"
+    }
+  ]
+}

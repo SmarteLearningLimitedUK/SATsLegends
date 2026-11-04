@@ -1,0 +1,10 @@
+import {chromium,webkit} from '@playwright/test';
+import {writeFile} from 'node:fs/promises';
+import {installReleaseAccountFixture} from '../../../scripts/qa/release-account-fixture.mjs';
+process.env.LEGEND_QA_FETCH_FIXTURE='1';const rows=[];
+for(const engine of ['chromium','webkit']){
+ const b=engine==='webkit'?await webkit.launch({executablePath:'qa-artifacts/browser-runtime/webkit-2272/Playwright.exe'}):await chromium.launch();const c=await b.newContext({viewport:{width:844,height:390},isMobile:true,hasTouch:true,reducedMotion:'reduce'});await installReleaseAccountFixture(c);const p=await c.newPage();
+ try{await p.goto('http://127.0.0.1:3017/game/3/27',{waitUntil:'domcontentloaded'});await p.locator('[data-transformation-game]').waitFor();for(let i=0;i<6;i++){await p.waitForTimeout(80);const e=p.locator('[data-dialog-primary]:visible').last();if(!await e.count())break;await e.tap()}await p.waitForTimeout(900);await p.evaluate(()=>document.fonts.ready);
+ const report=await p.evaluate(()=>({fonts:[...document.fonts].map(f=>({family:f.family,status:f.status,weight:f.weight})),title:{font:getComputedStyle(document.querySelector('.legend-hud-title')).font,variation:getComputedStyle(document.querySelector('.legend-hud-title')).fontVariationSettings},question:{font:getComputedStyle(document.querySelector('[data-question-copy]')).font,variation:getComputedStyle(document.querySelector('[data-question-copy]')).fontVariationSettings},status:document.fonts.status}));rows.push({engine,...report});console.log(engine,JSON.stringify(report));await p.screenshot({path:`qa-artifacts/concept-recreation/${engine}-font-inspection.png`});await p.addStyleTag({content:'.legend-hud-title,[data-question-copy] {font-variation-settings: \"wght\" 650 !important}'});await p.screenshot({path:`qa-artifacts/concept-recreation/${engine}-font-explicit-axis.png`});
+ }finally{await c.close();await b.close()}
+}await writeFile('qa-artifacts/concept-recreation/browser-fonts.json',JSON.stringify(rows,null,2));

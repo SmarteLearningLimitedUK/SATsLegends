@@ -10,6 +10,7 @@ for(let seed=1;seed<=200;seed++)for(const key of ['crystal_core','mirror_gate','
  for(const q of p.missions){
   assert.equal(markMission(q,q.fields.map(f=>f.answer)),q.marks);assert.equal(markMission(q,[]),0);
   for(let index=0;index<q.fields.length;index++){
+   if (!q.fields[index].options || q.fields[index].response) continue;
    const choices=getMissionFieldChoices(q,index);
    assert(choices.length>=2,`${q.id} needs at least two on-screen choices`);
    assert.equal(choices.filter(choice=>answersMatch(choice,q.fields[index].answer)).length,1,`${q.id} must have one correct tile`);
@@ -50,6 +51,8 @@ for(let seed=0;seed<5;seed++)for(const q of arithmeticMissions(seed)){
 }
 console.log('PASS: 600 complete paper variants; totals, timings, all strands, weights, guide coverage, partial marks, safe equivalent answers and independently calculated arithmetic.');
 
-const covered = new Set([...arithmeticMissions(), ...reasoningMissions()].map(q => q.reference.slice(1)));
-for (const [strand,count] of Object.entries({N:6,C:9,F:12,R:4,A:5,M:9,G:5,P:3,S:3})) for(let i=1;i<=count;i++) assert(covered.has(strand+i), `Missing revision substrand ${strand}${i}`);
-console.log('PASS: original revision missions cover all 56 framework substrands, including on-screen geometry and graph construction.');
+// Topic labels are not proof that every assessable objective is present.
+// G1, M3 and P1 in framework Table 2 are KS1 foundations, not KS2 objectives.
+const covered=new Set([...arithmeticMissions(),...reasoningMissions()].map(q=>q.reference.replace(/^\d/,'').replace(/[a-z]$/,'')));
+for(const code of ['N1','N2','N3','N4','N5','N6','C1','C2','C3','C4','C5','C6','C7','C8','C9','F1','F2','F3','F4','F5','F6','F7','F8','F9','F10','F11','F12','R1','R2','R3','R4','A1','A2','A3','A4','A5','M1','M2','M4','M5','M6','M7','M8','M9','G2','G3','G4','G5','P2','P3','S1','S2','S3'])assert(covered.has(code),`Missing topic family ${code}`);
+console.log('PASS: all 53 KS2 topic families have representative evidence; see the objective audit for gaps and depth limits.');

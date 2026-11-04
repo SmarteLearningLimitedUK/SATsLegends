@@ -1,0 +1,41 @@
+/* Front-facing source unit squares; scenery, table, architect and controls are independent. */
+html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='area_architect'][data-measured-scene] {
+ --concept-plane:calc(100vw - var(--concept-safe-left) - var(--concept-safe-right));
+ .concept-stage[data-concept-orientation='landscape'] {margin-inline:0;}
+ .area-scene {position:absolute;inset:0;width:100%;height:100%;}
+ .concept-question-zone {left:6.5%;top:12%;width:80%;height:15%;}
+ .scalable-question-copy {display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;padding:8px 5%;}
+ .area-question-title {font-size:clamp(15px,2.25vw,42px);line-height:1.1;font-weight:650;}
+ .area-question-subtitle {font-size:clamp(13px,1.85vw,34px);line-height:1.1;font-weight:600;}
+ .question-jewel--bottom {display:none;}
+ .area-room-progress {position:absolute;isolation:isolate;left:6%;top:28.7%;width:13%;min-width:108px;min-height:28px;height:7.2%;display:grid;place-items:center;padding:3px 9px;color:#fff8e4;font-size:clamp(14px,1.6vw,30px);font-weight:650;white-space:nowrap;}
+ .area-table {position:absolute;left:18%;top:52%;width:57%;height:24%;object-fit:contain;pointer-events:none;}
+ .area-architect {position:absolute;left:73%;top:26%;width:28%;height:60%;pointer-events:none;}
+ .area-architect>.vision-character {width:100%;height:100%;}
+ .area-plan {position:absolute;left:28%;top:29%;width:39%;height:36%;margin:0;}
+ .area-plot-window {position:absolute;inset:0;display:grid;place-items:center;container-type:size;}
+ .area-plan-plot {position:relative;width:min(100cqw,calc(100cqh * var(--area-room-ratio)));height:min(100cqh,calc(100cqw / var(--area-room-ratio)));}
+ .area-plan-plot>svg {display:block;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 3px 3px #003d6d55);}
+ .area-answers {position:absolute;left:10.8%;top:auto;bottom:calc(var(--dock-footer-height) + var(--dock-footer-bottom) + 8px);width:73.2%;height:14.5%;display:grid;grid-template-columns:repeat(4,1fr);gap:1%;}
+ .area-answers>button {position:relative;isolation:isolate;display:grid;place-items:center;min-width:44px;min-height:44px;padding:4px 8%;border:0;background:none;box-shadow:none;color:#fff8e5;font-size:clamp(21px,3.15vw,58px);font-weight:650;line-height:1.05;touch-action:manipulation;text-shadow:0 2px 2px #002b62;}
+ .area-answers>button[data-area-wrong='true']>span:not(.artwork-frame) {opacity:.45;}
+ .area-answers>button[data-area-correct='true'] {filter:drop-shadow(0 0 5px #b7ffb9);}
+ .area-answers>button:not(:disabled):active {scale:.97;filter:brightness(1.15);}
+ .area-answers>button:focus-visible {outline:3px solid #fff0ad;outline-offset:2px;}
+ .area-feedback {position:absolute;isolation:isolate;left:3%;top:38%;width:27%;max-height:31%;padding:10px clamp(8px,1.4vw,24px);display:flex;flex-direction:column;gap:7px;color:#fff9e8;text-align:center;line-height:1.15;}
+ .area-feedback>p {margin:0;font-size:clamp(13px,1.45vw,26px);font-weight:600;}
+ .area-feedback[data-tone='error'] {color:#ffe0c7;}
+ [data-unified-minigame-hud]>div:first-of-type:has(.legend-hud-bar) {top:1.8%;width:44%;height:9.5%;padding:0;}
+ .legend-hud-title {font-size:clamp(14px,2.15vw,40px);}.legend-hud-avatar {width:16%;}.legend-hud-timer {display:none;}
+ .legend-hud-bar::before {border-image-source:url('../../assets/png/frames/glacier_panel_v3@2x.webp');border-image-slice:180 fill;}
+ .legend-hud-streak {font-size:clamp(16px,2.1vw,39px);}
+ [data-testid='shared-bottom-hud'] {bottom:1%;width:35%;height:12%;min-width:235px;min-height:44px;padding:0;}
+ .legend-dock-button {}
+ .concept-pause {right:max(1%,var(--concept-safe-right));top:1%;width:clamp(44px,6vw,100px);height:clamp(44px,6vw,100px);}
+}
+@media(max-width:760px){html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='area_architect'][data-measured-scene] {
+ [data-unified-minigame-hud]>div:first-of-type:has(.legend-hud-bar) {width:56%;height:10%;}.legend-hud-title {font-size:15px;}
+ .concept-question-zone {left:5%;width:85%;height:16%;top:13%;}.area-question-title {font-size:15px;}.area-question-subtitle {font-size:13px;}
+ .area-room-progress {left:3%;top:30%;}.area-answers {left:4%;width:88%;height:14%;}.area-feedback {left:2%;top:39%;width:29%;padding:8px;}.area-feedback>p {font-size:12px;}
+ .legend-dock-button {font-size:10px;gap:1px;}.legend-dock-button>svg {width:21px;height:21px;}
+}}

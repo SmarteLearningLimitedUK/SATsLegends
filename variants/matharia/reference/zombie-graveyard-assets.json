@@ -1,0 +1,43 @@
+{
+  "generation": "Built-in image_gen; local approved background and existing bat used as style references",
+  "processing": "WebP conversion; bat transparent-margin trim and proportional downscale only; no scenery masks, patches or baked controls",
+  "assets": [
+    {
+      "name": "backgrounds/bg_zombies_graveyard_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-a7df4a2f-eab5-40ad-8e01-67bee5316ecb.png",
+      "sourceDimensions": [
+        1844,
+        853
+      ],
+      "production": "variants/matharia/assets/png/backgrounds/bg_zombies_graveyard_v4@2x.webp",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "alphaBoundsCrop": null,
+      "bytes": 677376,
+      "sha256": "068713f7ca946aa11e125fccae81c458d72287272f08db702e4a44463eee8fc1"
+    },
+    {
+      "name": "props/graveyard_bat_v2",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-bfd04d3e-d17b-464b-9927-ab95a33f5f41.png",
+      "sourceDimensions": [
+        1881,
+        836
+      ],
+      "production": "variants/matharia/assets/png/props/graveyard_bat_v2@2x.webp",
+      "dimensions": [
+        768,
+        324
+      ],
+      "alphaBoundsCrop": [
+        0,
+        19,
+        1881,
+        813
+      ],
+      "bytes": 52830,
+      "sha256": "29185cf79497df8d2b7e28839134a8230c20b94ed618955250ace21341baa539"
+    }
+  ]
+}

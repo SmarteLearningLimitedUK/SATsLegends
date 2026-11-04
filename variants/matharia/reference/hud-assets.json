@@ -1,0 +1,15 @@
+{
+  "processing": "Existing inspected independent frame; plain central surface/rails, all leaf ornaments kept in asymmetric corner slices. No text, controls, avatar or clock is baked into the frame.",
+  "assets": [
+    {
+      "name": "frames/concept_hud_wide_v4",
+      "production": "variants/matharia/assets/png/frames/concept_hud_wide_v4@2x.webp",
+      "dimensions": [
+        1800,
+        330
+      ],
+      "bytes": 127340,
+      "sha256": "b31396ed4b14276226fd7d2327fcaefad1f9a29193cabafc1ce52edd05a607eb"
+    }
+  ]
+}

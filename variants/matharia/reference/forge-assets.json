@@ -1,0 +1,224 @@
+{
+  "processing": "Alpha-margin trim, aspect-preserving downsample, WebP export; no paint, masks or patches.",
+  "assets": [
+    {
+      "name": "frames/concept_round_rim_v2",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-81227b4c-08e2-4597-b042-be5a5933f9ee.png",
+      "production": "variants/matharia/assets/png/frames/concept_round_rim_v2@2x.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "alphaBoundsCrop": [
+        21,
+        57,
+        1198,
+        1215
+      ],
+      "bytes": 59458
+    },
+    {
+      "name": "backgrounds/bg_fraction_forge_v2",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-79918f17-d73f-48b6-b0c5-b3e4f69df9bb.png",
+      "production": "variants/matharia/assets/png/backgrounds/bg_fraction_forge_v2@2x.webp",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "alphaBoundsCrop": null,
+      "bytes": 703650
+    },
+    {
+      "name": "heroes/hero_forge_barratt_v2",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-2d36c2d1-60e8-4283-9fda-897a6d17a85e.png",
+      "production": "variants/matharia/assets/png/heroes/hero_forge_barratt_v2@2x.webp",
+      "dimensions": [
+        946,
+        1476
+      ],
+      "alphaBoundsCrop": [
+        34,
+        5,
+        980,
+        1481
+      ],
+      "bytes": 444672
+    },
+    {
+      "name": "frames/forge_rack_v2",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-37e7f122-a666-4429-a68a-3ab7900663a2.png",
+      "production": "variants/matharia/assets/png/frames/forge_rack_v2@2x.webp",
+      "dimensions": [
+        1400,
+        1004
+      ],
+      "alphaBoundsCrop": [
+        19,
+        25,
+        1440,
+        1044
+      ],
+      "bytes": 278818
+    },
+    {
+      "name": "gameplay/forge_ingot_v2",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-72353ffa-d3cf-4a8d-b1ab-23b92f4e1ad5.png",
+      "production": "variants/matharia/assets/png/gameplay/forge_ingot_v2@2x.webp",
+      "dimensions": [
+        493,
+        512
+      ],
+      "alphaBoundsCrop": [
+        174,
+        106,
+        1131,
+        1099
+      ],
+      "bytes": 30006
+    },
+    {
+      "name": "gameplay/forge_mould_v2",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-5538f795-d61b-4fbc-acef-ed9cdc545099.png",
+      "production": "variants/matharia/assets/png/gameplay/forge_mould_v2@2x.webp",
+      "dimensions": [
+        418,
+        512
+      ],
+      "alphaBoundsCrop": [
+        408,
+        61,
+        1128,
+        943
+      ],
+      "bytes": 31278
+    },
+    {
+      "name": "buttons/forge_clear_v2",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-cd34b6c2-8006-447a-abc3-16887e964179.png",
+      "production": "variants/matharia/assets/png/buttons/forge_clear_v2@2x.webp",
+      "dimensions": [
+        900,
+        338
+      ],
+      "alphaBoundsCrop": [
+        101,
+        114,
+        1743,
+        731
+      ],
+      "bytes": 48266
+    },
+    {
+      "name": "buttons/forge_strike_v2",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-67fbfe47-5807-4ec9-95ce-e1eba64ecf32.png",
+      "production": "variants/matharia/assets/png/buttons/forge_strike_v2@2x.webp",
+      "dimensions": [
+        900,
+        363
+      ],
+      "alphaBoundsCrop": [
+        77,
+        80,
+        1760,
+        759
+      ],
+      "bytes": 52186
+    },
+    {
+      "name": "props/forge_anvil_v2",
+      "source": "D:\\BrainZilla\\GitHub\\SATsLegends\\src\\assets\\game-visions\\objects\\forge-anvil-v1.webp",
+      "production": "variants/matharia/assets/png/props/forge_anvil_v2@2x.webp",
+      "dimensions": [
+        1200,
+        671
+      ],
+      "alphaBoundsCrop": [
+        13,
+        141,
+        1515,
+        981
+      ],
+      "bytes": 521062
+    },
+    {
+      "name": "props/forge_hammer_v2",
+      "source": "D:\\BrainZilla\\GitHub\\SATsLegends\\src\\assets\\game-visions\\objects\\forge-hammer-v1.webp",
+      "production": "variants/matharia/assets/png/props/forge_hammer_v2@2x.webp",
+      "dimensions": [
+        372,
+        600
+      ],
+      "alphaBoundsCrop": [
+        41,
+        6,
+        986,
+        1529
+      ],
+      "bytes": 80694
+    },
+    {
+      "name": "frames/forge_rack_v3",
+      "source": "exec-04461b07-7104-44a9-8745-6ccb017c341a.png",
+      "production": "variants/matharia/assets/png/frames/forge_rack_v3@2x.webp",
+      "dimensions": [
+        1400,
+        1018
+      ],
+      "alphaBoundsCrop": [
+        31,
+        24,
+        1432,
+        1043
+      ],
+      "bytes": 198502
+    },
+    {
+      "name": "props/forge_anvil_v3",
+      "source": "exec-33749f0b-64af-4a36-afb2-05520a25ed81.png",
+      "production": "variants/matharia/assets/png/props/forge_anvil_v3@2x.webp",
+      "dimensions": [
+        1200,
+        455
+      ],
+      "alphaBoundsCrop": [
+        89,
+        25,
+        1971,
+        739
+      ],
+      "bytes": 222390
+    },
+    {
+      "name": "props/forge_hammer_v3",
+      "source": "exec-aaa0af72-4ef9-42a3-a4cd-a5e06dc2e04c.png",
+      "production": "variants/matharia/assets/png/props/forge_hammer_v3@2x.webp",
+      "dimensions": [
+        354,
+        600
+      ],
+      "alphaBoundsCrop": [
+        74,
+        82,
+        917,
+        1511
+      ],
+      "bytes": 62656
+    },
+    {
+      "name": "frames/question_scalable_v2",
+      "source": "exec-33e16eb5-d7f0-4261-bd8f-737c76d7e6db.png",
+      "production": "variants/matharia/assets/png/frames/question_scalable_v2@2x.webp",
+      "dimensions": [
+        1600,
+        258
+      ],
+      "alphaBoundsCrop": [
+        26,
+        192,
+        2056,
+        519
+      ],
+      "bytes": 68078
+    }
+  ]
+}

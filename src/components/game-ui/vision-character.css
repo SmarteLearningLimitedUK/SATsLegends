@@ -1,0 +1,38 @@
+.vision-character { display:block; position:relative; width:100%; height:100%; isolation:isolate; pointer-events:none; container-type:size; }
+.vision-character-contact { position:absolute; left:50%; translate:-50% 50%; width:min(50cqw,50cqh); bottom:min(5cqw,5cqh); height:min(4cqw,4cqh); border-radius:50%; background:radial-gradient(ellipse,#07121d88, #07121d22 58%,transparent 74%); }
+.vision-character-breath { display:block; position:absolute; left:50%; bottom:0; translate:-50% 0; width:min(100cqw,100cqh); height:min(100cqw,100cqh); transform-origin:50% 95%; animation:vision-character-breathe var(--vision-period,4s) ease-in-out infinite; }
+.vision-character-frame { display:block; width:100%; height:100%; background-size:300% 200%; background-repeat:no-repeat; translate:0 var(--vision-ground-offset,0%); filter:drop-shadow(0 3px 3px #07132333); }
+.vision-character--walking .vision-character-frame { background-size:400% 200%; animation:vision-character-walk 880ms steps(1,end) infinite; }
+.vision-character--walking .vision-character-breath { animation:none; }
+@keyframes vision-character-walk {
+  0%,100%{background-position:0 0;translate:0 var(--vision-walk-y-0,0%);clip-path:var(--vision-walk-clip-0,inset(0))}
+  12.5%{background-position:33.3333% 0;translate:0 var(--vision-walk-y-1,0%);clip-path:var(--vision-walk-clip-1,inset(0))}
+  25%{background-position:66.6667% 0;translate:0 var(--vision-walk-y-2,0%);clip-path:var(--vision-walk-clip-2,inset(0))}
+  37.5%{background-position:100% 0;translate:0 var(--vision-walk-y-3,0%);clip-path:var(--vision-walk-clip-3,inset(0))}
+  50%{background-position:0 100%;translate:0 var(--vision-walk-y-4,0%);clip-path:var(--vision-walk-clip-4,inset(0))}
+  62.5%{background-position:33.3333% 100%;translate:0 var(--vision-walk-y-5,0%);clip-path:var(--vision-walk-clip-5,inset(0))}
+  75%{background-position:66.6667% 100%;translate:0 var(--vision-walk-y-6,0%);clip-path:var(--vision-walk-clip-6,inset(0))}
+  87.5%{background-position:100% 100%;translate:0 var(--vision-walk-y-7,0%);clip-path:var(--vision-walk-clip-7,inset(0))}
+}
+.vision-character[data-vision-ready='false'] { opacity:0; }
+.vision-character[data-vision-pose='4'] .vision-character-breath { animation:vision-character-thanks 650ms ease-out both; }
+.vision-character[data-vision-pose='5'] .vision-character-breath { animation:vision-character-consider 650ms ease-out both; }
+.vision-character[data-vision-paused='true'] * { animation-play-state:paused!important; }
+@keyframes vision-character-breathe { 0%,100%{transform:scale(1,1)}50%{transform:scale(1.008,1.015)} }
+@keyframes vision-character-thanks { 0%,100%{transform:rotate(0)}40%{transform:rotate(-1.5deg)} }
+@keyframes vision-character-consider { 0%,100%{transform:rotate(0)}45%{transform:rotate(1.5deg)} }
+@media(prefers-reduced-motion:reduce){.vision-character *{animation:none!important;transition:none!important;transform:none!important}}
+.vision-character--hero20 .vision-character-frame { animation:none!important; }
+.vision-character--hero20 .hero-frame-outgoing { animation:hero-frame-outgoing 90ms linear both!important; }
+@keyframes hero-frame-outgoing { to { opacity:0; } }
+@media(prefers-reduced-motion:reduce){.vision-character--hero20 .hero-frame-outgoing{display:none}}
+.ss-running-sprite:has(.vision-character--hero20) { animation:none!important; }
+.vision-character--continuous .vision-character-breath,
+.vision-character--continuous .vision-character-frame { animation:none!important; }
+
+
+.goblin-mesh-canvas{position:absolute;left:-20%;display:block;width:140%;height:100%}
+.goblin-mesh-fallback{background-repeat:no-repeat;transform-origin:50% 99%;animation:vision-character-breathe 4s ease-in-out infinite}
+.original-hero-canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
+.original-hero-fallback{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transform-origin:50% 94%;animation:vision-character-breathe 4s ease-in-out infinite}
+.ss-running-sprite:has(.vision-character--original-hero){animation:none!important}

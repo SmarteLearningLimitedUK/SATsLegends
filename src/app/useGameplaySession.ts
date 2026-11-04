@@ -9,7 +9,7 @@ export const GLOBAL_MINIGAME_HUD_DURATION_SECONDS = 90;
 export const GLOBAL_MINIGAME_LIVES = 3;
 export const getSessionDurationSeconds = (level: LevelData | null) => {
   if (isBossEncounterGameType(level?.gameType)) return level?.gameType === 'crystal_core' ? 1800 : 2400;
-  if (level?.gameType === 'prime_pop' && !level.isPractice) return 60;
+  if (level?.gameType === 'prime_pop') return 30;
   if (level?.blueprintKey === 'maths_vs_zombies') return 60;
   // Multi-step rounds need enough time for each in-game decision.
   const tier = level?.difficultyTier ?? level?.miniGameLevel ?? 1;
@@ -74,7 +74,7 @@ export const useGameplaySession = ({
   const isUntimedGameplay =
     screen === 'gameplay'
     && (
-      Boolean(selectedLevel?.isPractice)
+      (Boolean(selectedLevel?.isPractice) && selectedLevel?.gameType !== 'prime_pop')
       || isBossEncounterGameType(selectedLevel?.gameType)
       || selectedLevel?.gameType === 'mean_machine'
       || selectedLevel?.gameType === 'potion_pour'
@@ -124,7 +124,9 @@ export const useGameplaySession = ({
   }, [globalMiniGameLives, screen]);
 
   useEffect(() => {
-    if (screen !== 'gameplay' || isUntimedGameplay || cinematicPlaying || cinematicRef.current || LEVEL_TIMERS_DISABLED || selectedLevel?.blueprintKey === 'maths_vs_zombies' || globalMiniGameHudTimeLeft > 0 || timeLock.current) return;
+    // Takeout's own 90-second shift awards its order-based result. Let it finish
+    // rather than racing the shared HUD's independent countdown to a failure.
+    if (screen !== 'gameplay' || isUntimedGameplay || cinematicPlaying || cinematicRef.current || LEVEL_TIMERS_DISABLED || selectedLevel?.gameType === 'prime_pop' || selectedLevel?.blueprintKey === 'maths_vs_zombies' || selectedLevel?.blueprintKey === 'take_out_rush' || globalMiniGameHudTimeLeft > 0 || timeLock.current) return;
     timeLock.current = true;
     const timeout = window.setTimeout(() => {
       timeDepleted.current();
@@ -156,8 +158,9 @@ export const useGameplaySession = ({
   useEffect(() => {
     localStorage.setItem(GAME_MUSIC_STORAGE_KEY, String(isMusicEnabled));
     window.dispatchEvent(new CustomEvent(GAME_HUD_MUSIC_SYNC_EVENT, { detail: { enabled: isMusicEnabled } }));
-    const active = !isMuted && isMusicEnabled && (screen === 'world_map' || screen === 'island_levels' || (screen === 'gameplay' && !paused));
-    const scene = screen === 'gameplay' ? 'gameplay' : 'map';
+    const calm = screen === 'wellbeing_hub' || screen === 'wellbeing_activity';
+    const active = !isMuted && isMusicEnabled && (calm || screen === 'world_map' || screen === 'island_levels' || (screen === 'gameplay' && !paused));
+    const scene = calm ? 'calm' : screen === 'gameplay' ? 'gameplay' : 'map';
     const update = () => configureGameMusic(active && !document.hidden, scene, selectedLevel?.blueprintKey ?? selectedLevel?.gameType);
     update();
     document.addEventListener('visibilitychange', update);

@@ -1,0 +1,28 @@
+{
+  "tool": "Built-in image_gen",
+  "identities": [
+    "barratt",
+    "bran",
+    "mochi",
+    "vex"
+  ],
+  "reference": "variants/matharia/reference/approved/line_graph_lab.png",
+  "originalReferences": [
+    "src/assets/characters/premium/barratt-v2.png",
+    "src/assets/characters/premium/bran-v2.png",
+    "src/assets/characters/premium/mochi-v2.png",
+    "src/assets/characters/premium/vex-v2.png"
+  ],
+  "attempts": [
+    {
+      "source": "exec-3eb88336-7e08-4b75-ab2b-fcf8622e7fd7.png",
+      "prompt": "Use case: stylized-concept. Create a SQUARE2x2 sprite atlas with FOUR separate complete standing Matharia heroes on transparent background. Each hero occupies its own quadrant with generous clear gutters and no overlap. They are wardrobe/activity variants of the four supplied original hero references, retaining each exact face, species, fur colours, eye colours and personality. TOP LEFT Barratt: orange-and-cream young antlered deer, emerald eyes. TOP RIGHT Bran: red/orange young dragon with cream muzzle, small gold horns, foxlike ears, orange eyes, small wings and flame-tipped tail. BOTTOM LEFT Mochi: black-and-white young panda, brown eyes. BOTTOM RIGHT Vex: green-and-cream young fox, bright teal eyes and fluffy cream-tipped tail. Match the original polished adorable3D game rendering. All four now wear the sapphire-blue and antique-gold scholar/wizard outfit from the approved Line Graph Lab concept: sculpted leather boots, blue/gold embroidered coat and short cape, broad pointed blue wizard hat with gold constellation details, keep distinctive antlers/horns/ears visible naturally. Each holds ONE ornate gold staff capped with a luminous sapphire orb in the hand on the viewer's right and gently gestures toward a graph on the right with the other hand. Faces front three-quarter toward viewer/right, proud calm friendly posture, strong readable silhouettes. Full bodies including hats, antlers, staff tops, tails and both feet visible, feet level near the bottom of each quadrant. Consistent hero scale and lighting. No scene, floor, background, panel, chart, UI, text, labels, numbers or watermark. No extra characters. Clean crisp alpha0 background and gutters, four independent figures.",
+      "status": "not used: tight horizontal gutter crossed the cell boundary"
+    },
+    {
+      "source": "exec-a6b2ddad-06c3-49be-9922-8a1c867618ef.png",
+      "prompt": "Edit ONLY the layout of this four-hero sprite atlas. Keep these same four characters, exact faces, species, outfits, staffs and poses, in the same2x2 order. The original is too tightly packed at the horizontal middle. Create a SQUARE transparent atlas with each COMPLETE figure occupying at most80% of its quadrant's width and height, centred in that quadrant. Leave a very clear straight transparent cross gutter at least100pixels wide between rows and between columns; also generous clear padding at all four outer edges. Every hat, antler, horn, wing, tail, staff orb and boot must be fully visible, inside its own quadrant, never touching or crossing a quadrant boundary. No overlap, no shared shadows, no particles, halos or glow outside the silhouettes. The result must slice into four independent rectangular quadrant sprites without cutting any character or including any part of a neighbour. Preserve premium crisp polished3D rendering and existing lighting; no new props or background. Fully transparent alpha0 gutters and exterior. No labels or text. Use high resolution, ideally2048x2048.",
+      "status": "selected: inspected full figures and6px cross-gutter alpha extrema0..3"
+    }
+  ]
+}

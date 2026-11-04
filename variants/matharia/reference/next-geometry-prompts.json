@@ -1,0 +1,29 @@
+{
+  "tool": "Built-in image_gen",
+  "prompts": [
+    {
+      "key": "transform_hollow_v7",
+      "path": "D:/BrainZilla/GitHub/SATsLegends/variants/matharia/assets/png/frames/transform_board_v3@2x.webp",
+      "transparent": true,
+      "prompt": "Use case: background-extraction and precise-object-edit. Convert this SINGLE independent gold, sapphire and ice chart frame into a HOLLOW FRAME. Remove its ENTIRE navy face completely: the large central rectangular window must be 100% transparent, with alpha zero everywhere inside. Exterior outside the frame also transparent. Only the gold/ice/sapphire perimeter frame rails, four ornate corner caps and small outer corner crystals remain. Preserve the supplied Matharia material style, polished bevels, bright sapphire gems and detail. Make the rectangular frame a little wider, outer width 1.28 times height, straight front view with no perspective. Thin rails leave a large clear transparent opening. No navy or coloured fill anywhere within the central opening, no opaque panel, no translucent mottled region, no text, no letters, no grid, no axes, no icons, no scenery. A real interface chart with its own navy background will later sit behind this hollow frame. Transparent image containing ONLY the perimeter frame."
+    },
+    {
+      "key": "coordinates_background_v3",
+      "path": "D:/BrainZilla/GitHub/SATsLegends/variants/matharia/reference/approved/coordinates_quest-v2.png",
+      "transparent": false,
+      "prompt": "Use case: stylized-concept. Use this approved Matharia game concept as the exact scenery and lighting reference. Produce ONLY its clean background scenery, wide landscape aspect 2.16:1. Bright snowy sapphire sky-port and gilded castle survey dock: snow-dusted wooden viewing platform in foreground, blue-and-gold banners and timber rail at far left and right, a grand arched stone bridge and ice towers in the distance, blue sky, pale mountains, snowy fir trees and icy waterfalls. Match the camera, saturated premium storybook 3D game rendering, clear midday sunlight, warm gold highlights and cool sapphire shadows of the reference. Keep the centre and lower middle clear of objects so independent gameplay components can be added. Remove ALL interface panels, coordinate board, axes, numbers, text, HUDs, buttons, consoles, characters, heroes and interactive props. Do not replace them with silhouettes or blank UI surfaces. Scenery only, full bleed, crisp high-resolution detail."
+    },
+    {
+      "key": "chart_frame_hollow_v8",
+      "path": "C:/Users/samva/.codex/generated_images/01a18eee-903b-74c2-89bb-fb8e6f1cf5ef/exec-62959bbc-b6da-4ec8-be67-7e603ee702ce.png",
+      "transparent": true,
+      "prompt": "Use case: background-extraction and precise-object-edit. Keep ONLY this thin sapphire-and-gold rectangular perimeter frame, with all four compact corner gemstones. Make its ENTIRE navy central face fully transparent, alpha zero everywhere within the opening. Exterior also transparent. Remove the small diamond ornaments at the four midpoints of the rails; the four rails must be plain straight sapphire crystal and gold bevels between the ornate corner caps, so the frame can be scaled with fixed corners. Keep outer width about 1.28 times height, no perspective, no added tall spikes. Frame rails stay slender, less than 5 percent of width/height. The huge middle is completely empty, transparent and unobstructed, with NO navy, no colour, no gradients, no tint, no ghosted regions, no text, no grid or axes, no scenery. Only the isolated rectangular perimeter and its four corner gems remain. This is a HOLLOW frame asset, not a solid panel."
+    },
+    {
+      "key": "perimeter_background_v3",
+      "path": "D:/BrainZilla/GitHub/SATsLegends/variants/matharia/reference/approved/perimeter_path.png",
+      "transparent": false,
+      "prompt": "Use case: stylized-concept. Recreate ONLY the clean background scenery from this approved Matharia Perimeter Path concept, landscape 2.16:1. Preserve its snowy gold-and-sapphire castle survey courtyard, pale fir trees at left, blue-and-gold banner hanging at upper left, huge arched bridge and ornate palace on the right behind, warm brass lantern at far right, gold-trimmed snow-dusted timber platform and stone deck foreground. Same bright clear icy midday light, premium polished storybook 3D game rendering, crisp saturated sapphire and warm gold accents. Remove ALL foreground gameplay: no character, no survey board or easel, no floor plan, no outlines, no dimensions, no labels, no panels or HUDs, no numbers, no buttons or controls. Keep centre and middle-right clear so independent board and controls can be added. Scenery only, full bleed."
+    }
+  ]
+}

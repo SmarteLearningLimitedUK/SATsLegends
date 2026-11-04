@@ -13,6 +13,46 @@
   overflow-wrap: anywhere;
 }
 
+/* The Number and Ratio mission references use separate scenery and cast art. */
+.legend-mission-cast { display:none; }
+@media (orientation:portrait) and (min-height:600px) {
+  #root .screen-island-levels .legend-island-root[data-matharia-reference='true'] .legend-island-backdrop {
+    opacity:1;
+    background-size:cover;
+    background-position:center;
+  }
+  #root .screen-island-levels .legend-island-root[data-matharia-reference='true']::after { content:none; }
+  #root .screen-island-levels .legend-island-root[data-matharia-reference='true'] .legend-island-header {
+    display:grid;
+    grid-template-columns:44px minmax(0,1fr) minmax(90px,auto);
+    align-items:start;
+    gap:6px;
+  }
+  #root .screen-island-levels .legend-island-root[data-matharia-reference='true'] .legend-island-title-block {
+    min-width:0;
+    padding:6px;
+    border:2px solid #d4a952;
+    border-radius:10px;
+    background:#082445;
+  }
+  #root .screen-island-levels .legend-island-root[data-matharia-reference='true'] .legend-island-header h1 {
+    font-size:clamp(16px,4vw,24px);
+    line-height:1.15 !important;
+    overflow-wrap:anywhere;
+  }
+  #root .screen-island-levels .legend-island-root[data-matharia-reference='true'] .legend-island-token-count { min-width:0; max-width:120px; padding:6px; }
+  #root .screen-island-levels .legend-island-root[data-matharia-reference='true'] .legend-mission-cast {
+    display:flex;
+    flex:none;
+    height:clamp(85px,17vh,170px);
+    justify-content:center;
+    gap:clamp(16px,7vw,48px);
+  }
+  #root .screen-island-levels .legend-island-root[data-matharia-reference='true'] .legend-mission-cast img { height:100%; width:auto; max-width:38%; object-fit:contain; }
+  #root .screen-island-levels .legend-island-root[data-matharia-reference='true'] .legend-next-mission,
+  #root .screen-island-levels .legend-island-root[data-matharia-reference='true'] .legend-group { background:#0a2c50; border:2px solid #d5ad5b; }
+}
+
 @media (min-width: 700px) and (min-height: 600px) {
   #root .screen-island-levels .legend-island-content {
     box-sizing: border-box;

@@ -80,6 +80,28 @@ export default function FamilyAccount({ children: content }: { children: ReactNo
     if (parentId) { setSelectedId(sessionStorage.getItem(`legends-child:${parentId}`) || ''); void refresh(); }
     return () => { generation.current++; };
   }, [parentId, refresh]);
+  useEffect(() => {
+    if (!parentId) return;
+    let timer: number | undefined;
+    // Purchases and account changes can happen on a different device. Refresh
+    // when returning to this client; never infer access from a checkout redirect.
+    const refreshOnReturn = () => {
+      if (document.visibilityState === 'hidden') return;
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => void refresh(), 200);
+    };
+    window.addEventListener('focus', refreshOnReturn);
+    window.addEventListener('online', refreshOnReturn);
+    window.addEventListener('legends:account-refresh', refreshOnReturn);
+    document.addEventListener('visibilitychange', refreshOnReturn);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener('focus', refreshOnReturn);
+      window.removeEventListener('online', refreshOnReturn);
+      window.removeEventListener('legends:account-refresh', refreshOnReturn);
+      document.removeEventListener('visibilitychange', refreshOnReturn);
+    };
+  }, [parentId, refresh]);
   const selectChild = useCallback((id: string) => {
     if (!parentId || !children.some(child => child.id === id)) return;
     setSelectedId(id); sessionStorage.setItem(`legends-child:${parentId}`, id);

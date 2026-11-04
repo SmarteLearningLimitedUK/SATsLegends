@@ -1,0 +1,93 @@
+/* Island selection, arranged as the illustrated reference: scene, carousel and mission panel. */
+html[data-presentation='matharia'] #root .mission-library {
+ grid-template-rows:minmax(150px, .75fr) minmax(145px,.7fr) minmax(290px,1.5fr);
+ gap:4px; padding:calc(env(safe-area-inset-top,0px) + 8px) calc(env(safe-area-inset-right,0px) + 10px) 8px calc(env(safe-area-inset-left,0px) + 10px);
+ background:#092e36;
+}
+html[data-presentation='matharia'] #root .mission-library .mission-world-background {position:absolute;z-index:-1;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;pointer-events:none}
+html[data-presentation='matharia'] #root .mission-library .mission-island-scene {padding:0 2px 10px;gap:0;border-radius:0;overflow:visible}
+html[data-presentation='matharia'] #root .mission-library .mission-scene-art {position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center bottom;z-index:-1;pointer-events:none}
+html[data-presentation='matharia'] #root .mission-library .mission-island-toolbar {gap:8px}
+html[data-presentation='matharia'] #root .mission-library .mission-island-tokens {border:2px solid #dcb867;border-radius:24px;background:#063d43;min-height:40px;padding:4px 12px}
+html[data-presentation='matharia'] #root .mission-library .mission-island-tokens b {font-size:inherit;color:#fff2c8}
+html[data-presentation='matharia'] #root .mission-library .mission-island-identity {margin:0 29% 0 0;padding:9px 14px;background:#064044eF;border-color:#c8a94f;border-radius:14px 28px 14px 14px}
+html[data-presentation='matharia'] #root .mission-library .mission-island-identity h1 {font-size:clamp(21px,6vw,35px)}
+html[data-presentation='matharia'] #root .mission-library .mission-island-guide {right:1%;height:calc(100% - 44px);max-height:none;width:40%;aspect-ratio:auto}
+html[data-presentation='matharia'] #root .mission-library .mission-guide-plinth {position:absolute;left:0;bottom:0;width:100%;height:auto;pointer-events:none}
+html[data-presentation='matharia'] #root .mission-library .mission-island-guide>.vision-character {inset:0 0 8%;height:92%;z-index:1}
+html[data-presentation='matharia'] #root .mission-library[data-adventure-board='2'] .mission-island-guide>.vision-character {inset:0;height:100%}
+html[data-presentation='matharia'] #root .mission-library .mission-game-picker {display:flex;flex-direction:column;min-height:0}
+html[data-presentation='matharia'] #root .mission-library .mission-picker-heading {align-self:center;justify-content:center;gap:10px;padding:4px 14px;border:1px solid #c6a75b;border-radius:18px;background:#06333bf5;color:#fff6dd;font:700 clamp(18px,4.6vw,28px)/1.15 Georgia,serif}
+html[data-presentation='matharia'] #root .mission-library .mission-picker-heading svg {width:20px;color:#a1c76b}
+html[data-presentation='matharia'] #root .mission-library .mission-picker-heading-copy {display:flex;flex-direction:column;align-items:center;gap:1px}
+html[data-presentation='matharia'] #root .mission-library .mission-swipe-hint {color:#d8eee6;font:600 11px/1.2 system-ui,sans-serif;letter-spacing:.02em}
+html[data-presentation='matharia'] #root .mission-library .mission-swipe-hint>span {color:#ffdb83;font-size:15px;vertical-align:-1px}
+html[data-presentation='matharia'] #root .mission-library .mission-carousel {display:flex;align-items:center;flex:1;min-height:0}
+html[data-presentation='matharia'] #root .mission-library .mission-carousel-arrow {display:grid;place-items:center;flex:none;width:34px;height:44px;padding:0;border:0;background:none;color:#ffdc81}
+html[data-presentation='matharia'] #root .mission-library .mission-carousel-arrow svg {width:30px;height:30px;stroke-width:3}
+html[data-presentation='matharia'] #root .mission-library .mission-carousel-arrow:disabled {opacity:.3}
+html[data-presentation='matharia'] #root .mission-library .mission-game-tabs {flex:1;align-items:center;min-width:0;min-height:0;height:100%;gap:8px;padding:2px 33%;scroll-snap-type:x mandatory}
+html[data-presentation='matharia'] #root .mission-library .mission-game-tab {display:flex;flex-direction:column;justify-content:center;gap:3px;flex:0 0 clamp(86px,24vw,125px);height:100%;min-height:80px;padding:4px;border:0;color:#fff3d3;text-shadow:0 2px 3px #002b2d}
+html[data-presentation='matharia'] #root .mission-library .mission-game-tab[aria-selected=true] {background:#084746dd;border:1px solid #f5d078;box-shadow:0 0 0 2px #b98b38,0 0 12px #ffd76599}
+html[data-presentation='matharia'] #root .mission-library .mission-game-tab strong {display:flex;align-items:center;justify-content:center;width:100%;min-height:30px;padding:3px 4px;border-radius:7px;background:#052f39f7;color:#fff8e7;font-size:clamp(12px,3.2vw,16px);line-height:1.15;text-align:center;text-shadow:none;overflow-wrap:anywhere}
+html[data-presentation='matharia'] #root .mission-library .mission-tab-art {width:min(100%,90px);height:min(67%,78px);aspect-ratio:1.15;flex:none;border:2px solid #d7b469;border-radius:12px;overflow:hidden}
+html[data-presentation='matharia'] #root .mission-library .mission-game-tab[aria-selected=true] .mission-tab-art {width:100%;height:min(67%,88px);max-width:135px}
+html[data-presentation='matharia'] #root .mission-library .mission-selection-panel {gap:8px;padding:18px 20px 16px;border:2px solid #d8b76a;border-radius:17px;background:#023c44f5;box-shadow:inset 0 0 0 2px #f8dc8a66,0 4px 12px #001c25a8}
+html[data-presentation='matharia'] #root .mission-library .mission-selected-header {min-height:58px;gap:12px;flex:none}
+html[data-presentation='matharia'] #root .mission-library .mission-selected-header>img {width:54px;height:54px;border-radius:10px}
+html[data-presentation='matharia'] #root .mission-library .mission-selected-header h2 {margin:0 0 5px;font-size:clamp(19px,5vw,30px)}
+html[data-presentation='matharia'] #root .mission-library .mission-game-progress-copy {font-size:13px;color:#e0f2ef}
+html[data-presentation='matharia'] #root .mission-library .mission-game-progress {height:5px;margin-top:5px}
+html[data-presentation='matharia'] #root .mission-library .mission-options-scroll {padding:0;scrollbar-width:thin}
+html[data-presentation='matharia'] #root .mission-library .mission-options-inner {justify-content:space-evenly;min-height:100%;gap:6px;margin:0;animation:none}
+html[data-presentation='matharia'] #root .mission-library .mission-level-choice {padding-top:6px;border-top:1px solid #e0c17677}
+html[data-presentation='matharia'] #root .mission-library .mission-level-heading {font-size:14px;color:#fff0cb}
+html[data-presentation='matharia'] #root .mission-library .mission-level-heading small {font-size:12px;color:#e0f2ef}
+html[data-presentation='matharia'] #root .mission-library .mission-level-steps {grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+html[data-presentation='matharia'] #root .mission-library .mission-step {width:min(100%,90px);justify-self:center;min-height:68px;aspect-ratio:1;padding:12px 3px 8px;gap:0}
+html[data-presentation='matharia'] #root .mission-library .mission-step-kind {position:relative;z-index:1;color:#f4ffff;font-size:11px;font-weight:700;line-height:1.1;text-shadow:0 1px 2px #002c39}
+html[data-presentation='matharia'] #root .mission-library .mission-step[aria-pressed=true] {box-shadow:0 0 0 2px #ffe5a3,0 0 12px #e7b957aa}
+html[data-presentation='matharia'] #root .mission-library .mission-step[data-current=true]:not([aria-pressed=true]) {box-shadow:none}
+html[data-presentation='matharia'] #root .mission-library .mission-selection-summary {display:flex;flex-direction:column;align-items:center;gap:1px;color:#fff0c7;line-height:1.15}
+html[data-presentation='matharia'] #root .mission-library .mission-selection-summary strong {font-size:18px}
+html[data-presentation='matharia'] #root .mission-library .mission-selection-summary span {font-size:13px;color:#e0f2ef}
+html[data-presentation='matharia'] #root .mission-library .mission-play-level {position:relative;isolation:isolate;display:flex;align-items:center;justify-content:center;gap:8px;width:min(100%,280px);min-height:50px;margin:0 auto;padding:8px 18px;border:0;background:none;color:#063940;font-size:17px;font-weight:750}
+html[data-presentation='matharia'] #root .mission-library .mission-play-level>svg,html[data-presentation='matharia'] #root .mission-library .mission-play-level>span:not(.artwork-frame) {position:relative;z-index:1}
+html[data-presentation='matharia'] #root .mission-library .mission-secondary-actions {display:flex;align-items:start;justify-content:center;gap:8px}
+html[data-presentation='matharia'] #root .mission-library .mission-practice {flex:1;min-width:0;border:0}
+html[data-presentation='matharia'] #root .mission-library .mission-practice-button,html[data-presentation='matharia'] #root .mission-library .mission-calm>summary {display:flex;align-items:center;justify-content:center;gap:6px;width:100%;min-height:44px;padding:6px 9px;border:1px solid #d5b967;border-radius:20px;background:#063f45;color:#fff0c7;font-size:12px;font-weight:650;line-height:1.1}
+html[data-presentation='matharia'] #root .mission-library .mission-calm {flex:1;min-width:0}
+html[data-presentation='matharia'] #root .mission-library .mission-calm>div {position:relative;z-index:5}
+html[data-presentation='matharia'] #root .screen-island-levels [data-testid='shared-bottom-hud'] .legend-dock-button[aria-label='Back'],
+html[data-presentation='matharia'] #root .screen-island-levels [data-testid='shared-bottom-hud'] .legend-dock-art {display:none}
+html[data-presentation='matharia'] #root .screen-island-levels [data-testid='shared-bottom-hud'] .legend-dock-surface {display:flex;justify-content:center;gap:8px;width:auto;padding:0;background:none;border:0}
+html[data-presentation='matharia'] #root .screen-island-levels [data-testid='shared-bottom-hud'] .legend-dock-button {display:grid;grid-template-rows:1fr;place-items:center;align-content:center;gap:0;flex:none;width:48px;min-width:48px;height:48px;min-height:48px;padding:8px}
+html[data-presentation='matharia'] #root .screen-island-levels [data-testid='shared-bottom-hud'] .legend-dock-button>svg {width:24px;height:24px}
+html[data-presentation='matharia'] #root .screen-island-levels [data-testid='shared-bottom-hud'] .legend-dock-button>span:last-child:not(.legend-dock-tile-art) {display:none}
+@media(orientation:portrait) and (max-height:700px) {
+ html[data-presentation='matharia'] #root .mission-library {grid-template-rows:minmax(105px,.55fr) minmax(100px,.55fr) minmax(0,1.9fr)}
+ html[data-presentation='matharia'] #root .mission-library .mission-island-guide {display:block}
+ html[data-presentation='matharia'] #root .mission-library .mission-selected-header>img {display:block;width:46px;height:46px}
+ html[data-presentation='matharia'] #root .mission-library .mission-selected-header {min-height:46px}
+}
+@media(orientation:landscape) and (max-height:550px) {
+ html[data-presentation='matharia'] #root .mission-library {grid-template-areas:'scene panel' 'games panel';grid-template-columns:minmax(190px,.8fr) minmax(0,1.2fr);grid-template-rows:minmax(0,1fr) minmax(95px,.6fr);gap:6px}
+ html[data-presentation='matharia'] #root .mission-library .mission-island-guide {display:block;height:60%;width:45%}
+ html[data-presentation='matharia'] #root .mission-library .mission-island-identity {margin-right:25%}
+ html[data-presentation='matharia'] #root .mission-library .mission-game-tab {grid-template-columns:none;grid-template-rows:none}
+ html[data-presentation='matharia'] #root .mission-library .mission-selection-panel {padding:15px 20px}
+}
+
+/* Three fixed slots keep the focused game centred at both ends of the list. */
+html[data-presentation='matharia'] #root .mission-library .mission-game-tabs {display:flex;justify-content:center;overflow:hidden;gap:0;padding:8px 0;scroll-snap-type:none}
+html[data-presentation='matharia'] #root .mission-library .mission-game-tab {box-sizing:border-box;flex:0 0 31%;min-width:0;max-width:31%;height:100%;min-height:0;padding:5px;transform:scale(.94);transition:transform .2s ease,box-shadow .2s ease;border-radius:14px}
+html[data-presentation='matharia'] #root .mission-library .mission-game-tab[aria-selected=true] {flex-basis:38%;max-width:38%;transform:scale(1);z-index:1;border:2px solid #ffdc81;box-shadow:inset 0 0 0 2px #b98b38,0 0 12px #ffd76599}
+html[data-presentation='matharia'] #root .mission-library .mission-tab-art,
+html[data-presentation='matharia'] #root .mission-library .mission-game-tab[aria-selected=true] .mission-tab-art {width:100%;max-width:none;height:min(67%,88px)}
+html[data-presentation='matharia'] #root .mission-library .mission-game-tab strong {background:none;padding:2px 0}
+html[data-presentation='matharia'] #root .mission-library .mission-picker-heading {border:0;background:none;padding:3px 10px;gap:12px}
+html[data-presentation='matharia'] #root .mission-library .mission-swipe-hint {font-size:11px;color:#e1f4e9}
+html[data-presentation='matharia'] #root .mission-library .mission-game-picker {background:radial-gradient(ellipse at center,#07535bdf,#01343ddf 75%);border-radius:24px 24px 0 0}
+html[data-presentation='matharia'] #root .mission-library .mission-selection-panel {border-radius:24px;background:linear-gradient(135deg,#07505aef,#01313cf5);box-shadow:inset 0 0 0 2px #f8dc8a66,0 4px 12px #001c25a8}
+html[data-presentation='matharia'] #root .mission-library .mission-play-level {width:min(100%,320px);min-height:56px;font-size:clamp(17px,4.6vw,23px)}
+@media(prefers-reduced-motion:reduce) {html[data-presentation='matharia'] #root .mission-library .mission-game-tab {transition:none}}

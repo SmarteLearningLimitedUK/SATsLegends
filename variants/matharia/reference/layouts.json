@@ -1,0 +1,8454 @@
+[
+  {
+    "id": "place_value_panic",
+    "title": "Place Value Panic",
+    "orientation": "portrait",
+    "referenceCanvas": [
+      900,
+      1950
+    ],
+    "background": "bg_acropolis_portrait",
+    "layers": [
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.024444444444444446,
+          0.011794871794871795,
+          0.95,
+          0.06153846153846154
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "portrait_frame",
+        "rect": [
+          0.042222222222222223,
+          0.016923076923076923,
+          0.08444444444444445,
+          0.05076923076923077
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "hero_rhino_portrait",
+        "rect": [
+          0.043333333333333335,
+          0.014871794871794871,
+          0.08,
+          0.05179487179487179
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "progress_track",
+        "rect": [
+          0.16,
+          0.05179487179487179,
+          0.34,
+          0.010256410256410256
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "progress_fill",
+        "rect": [
+          0.16444444444444445,
+          0.05333333333333334,
+          0.13111111111111112,
+          0.0071794871794871795
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.55,
+          0.02666666666666667,
+          0.05,
+          0.03076923076923077
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.61,
+          0.02666666666666667,
+          0.05,
+          0.03076923076923077
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.6711111111111111,
+          0.02666666666666667,
+          0.05,
+          0.03076923076923077
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_timer",
+        "rect": [
+          0.7444444444444445,
+          0.027692307692307693,
+          0.042222222222222223,
+          0.029743589743589743
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "button_round_normal",
+        "rect": [
+          0.8922222222222222,
+          0.02666666666666667,
+          0.052222222222222225,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_pause",
+        "rect": [
+          0.9,
+          0.03076923076923077,
+          0.04,
+          0.02717948717948718
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.024444444444444446,
+          0.9205128205128205,
+          0.95,
+          0.06666666666666667
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_back",
+        "rect": [
+          0.09444444444444444,
+          0.9256410256410257,
+          0.08,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.22444444444444445,
+          0.9328205128205128,
+          0.008888888888888889,
+          0.048205128205128206
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_help",
+        "rect": [
+          0.27444444444444444,
+          0.9256410256410257,
+          0.08,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.40444444444444444,
+          0.9328205128205128,
+          0.008888888888888889,
+          0.048205128205128206
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_board",
+        "rect": [
+          0.45444444444444443,
+          0.9256410256410257,
+          0.08,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.5844444444444444,
+          0.9328205128205128,
+          0.008888888888888889,
+          0.048205128205128206
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_sound",
+        "rect": [
+          0.6344444444444445,
+          0.9256410256410257,
+          0.08,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.7644444444444445,
+          0.9328205128205128,
+          0.008888888888888889,
+          0.048205128205128206
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_music",
+        "rect": [
+          0.8144444444444444,
+          0.9256410256410257,
+          0.08,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.04,
+          0.08666666666666667,
+          0.92,
+          0.08974358974358974
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "prop_hero_plinth",
+        "rect": [
+          0.014444444444444444,
+          0.4897435897435897,
+          0.49,
+          0.06
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "hero_rhino_idle",
+        "rect": [
+          0.014444444444444444,
+          0.2,
+          0.49,
+          0.36
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_rune_socket",
+        "rect": [
+          0.49,
+          0.34,
+          0.15,
+          0.08
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "island_nameplate",
+        "rect": [
+          0.48444444444444446,
+          0.30153846153846153,
+          0.16,
+          0.03487179487179487
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "skin_rune_socket",
+        "rect": [
+          0.6544444444444445,
+          0.34,
+          0.15,
+          0.08
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "island_nameplate",
+        "rect": [
+          0.65,
+          0.30153846153846153,
+          0.16,
+          0.03487179487179487
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "skin_rune_socket",
+        "rect": [
+          0.82,
+          0.34,
+          0.15,
+          0.08
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "island_nameplate",
+        "rect": [
+          0.8144444444444444,
+          0.30153846153846153,
+          0.16,
+          0.03487179487179487
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.04,
+          0.5897435897435898,
+          0.92,
+          0.03487179487179487
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "skin_rune_socket",
+        "rect": [
+          0.044444444444444446,
+          0.64,
+          0.17,
+          0.08974358974358974
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_rune_socket",
+        "rect": [
+          0.2288888888888889,
+          0.64,
+          0.17,
+          0.08974358974358974
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_rune_socket",
+        "rect": [
+          0.41444444444444445,
+          0.64,
+          0.17,
+          0.08974358974358974
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_rune_socket",
+        "rect": [
+          0.6,
+          0.64,
+          0.17,
+          0.08974358974358974
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_rune_socket",
+        "rect": [
+          0.7844444444444445,
+          0.64,
+          0.17,
+          0.08974358974358974
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_gold_button",
+        "rect": [
+          0.24,
+          0.78,
+          0.52,
+          0.06
+        ],
+        "mode": "stretch"
+      }
+    ],
+    "textLayers": [
+      {
+        "text": "Place Value Panic",
+        "rect": [
+          0.14,
+          0.02358974358974359,
+          0.39,
+          0.027692307692307693
+        ],
+        "previewFontPixels": 32,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "85s",
+        "rect": [
+          0.7944444444444444,
+          0.02666666666666667,
+          0.08444444444444445,
+          0.03435897435897436
+        ],
+        "previewFontPixels": 33,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Back",
+        "rect": [
+          0.05444444444444444,
+          0.9548717948717949,
+          0.16,
+          0.023076923076923078
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Help",
+        "rect": [
+          0.23444444444444446,
+          0.9548717948717949,
+          0.16,
+          0.023076923076923078
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Board",
+        "rect": [
+          0.41444444444444445,
+          0.9548717948717949,
+          0.16,
+          0.023076923076923078
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Sound",
+        "rect": [
+          0.5944444444444444,
+          0.9548717948717949,
+          0.16,
+          0.023076923076923078
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Music",
+        "rect": [
+          0.7744444444444445,
+          0.9548717948717949,
+          0.16,
+          0.023076923076923078
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Write eight hundred and fifty-seven\nin digits.",
+        "rect": [
+          0.07444444444444444,
+          0.0917948717948718,
+          0.85,
+          0.07282051282051281
+        ],
+        "previewFontPixels": 37,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Hundreds",
+        "rect": [
+          0.48444444444444446,
+          0.3046153846153846,
+          0.16,
+          0.02666666666666667
+        ],
+        "previewFontPixels": 22,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Tens",
+        "rect": [
+          0.65,
+          0.3046153846153846,
+          0.16,
+          0.02666666666666667
+        ],
+        "previewFontPixels": 22,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Units",
+        "rect": [
+          0.8144444444444444,
+          0.3046153846153846,
+          0.16,
+          0.02666666666666667
+        ],
+        "previewFontPixels": 22,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Tap or drag the digits",
+        "rect": [
+          0.08,
+          0.5917948717948718,
+          0.84,
+          0.027692307692307693
+        ],
+        "previewFontPixels": 24,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "4",
+        "rect": [
+          0.044444444444444446,
+          0.6466666666666666,
+          0.17,
+          0.06769230769230769
+        ],
+        "previewFontPixels": 64,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "7",
+        "rect": [
+          0.2288888888888889,
+          0.6466666666666666,
+          0.17,
+          0.06769230769230769
+        ],
+        "previewFontPixels": 64,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "8",
+        "rect": [
+          0.41444444444444445,
+          0.6466666666666666,
+          0.17,
+          0.06769230769230769
+        ],
+        "previewFontPixels": 64,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "5",
+        "rect": [
+          0.6,
+          0.6466666666666666,
+          0.17,
+          0.06769230769230769
+        ],
+        "previewFontPixels": 64,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "0",
+        "rect": [
+          0.7844444444444445,
+          0.6466666666666666,
+          0.17,
+          0.06769230769230769
+        ],
+        "previewFontPixels": 64,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "SUBMIT",
+        "rect": [
+          0.25,
+          0.78,
+          0.5,
+          0.06
+        ],
+        "previewFontPixels": 27,
+        "colour": "#172840",
+        "semantic": "runtime-text"
+      }
+    ],
+    "note": "Normalized example placements; use safe areas and actual educational data. Static assembly preview, not implemented gameplay."
+  },
+  {
+    "id": "maths_vs_zombies",
+    "title": "Maths vs Zombies",
+    "orientation": "landscape",
+    "referenceCanvas": [
+      1600,
+      900
+    ],
+    "background": "bg_acropolis_landscape",
+    "layers": [
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.025,
+          0.011111111111111112,
+          0.95,
+          0.11444444444444445
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "portrait_frame",
+        "rect": [
+          0.0425,
+          0.016666666666666666,
+          0.0475,
+          0.09333333333333334
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "hero_bran_portrait",
+        "rect": [
+          0.04375,
+          0.014444444444444444,
+          0.045,
+          0.09555555555555556
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "progress_track",
+        "rect": [
+          0.12,
+          0.08666666666666667,
+          0.37,
+          0.01888888888888889
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "progress_fill",
+        "rect": [
+          0.125,
+          0.08888888888888889,
+          0.14375,
+          0.013333333333333334
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.59,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.635,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.68,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_timer",
+        "rect": [
+          0.75,
+          0.027777777777777776,
+          0.045,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "button_round_normal",
+        "rect": [
+          0.9,
+          0.02666666666666667,
+          0.041875,
+          0.06333333333333334
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_pause",
+        "rect": [
+          0.905,
+          0.03,
+          0.031875,
+          0.05
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.025,
+          0.8822222222222222,
+          0.95,
+          0.10444444444444445
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_back",
+        "rect": [
+          0.095,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.225,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_help",
+        "rect": [
+          0.274375,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.405,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_board",
+        "rect": [
+          0.454375,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.585,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_sound",
+        "rect": [
+          0.635,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.765,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_music",
+        "rect": [
+          0.815,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.04,
+          0.14,
+          0.92,
+          0.12
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "prop_hero_plinth",
+        "rect": [
+          0.04,
+          0.69,
+          0.25,
+          0.05
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "hero_bran_idle",
+        "rect": [
+          0.04,
+          0.3,
+          0.25,
+          0.4
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "prop_hero_plinth",
+        "rect": [
+          0.74,
+          0.7,
+          0.22,
+          0.05
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "enemy_zombie",
+        "rect": [
+          0.74,
+          0.32,
+          0.22,
+          0.39
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.055,
+          0.74,
+          0.21,
+          0.1
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.28,
+          0.74,
+          0.21,
+          0.1
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.505,
+          0.74,
+          0.21,
+          0.1
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.73,
+          0.74,
+          0.21,
+          0.1
+        ],
+        "mode": "stretch"
+      }
+    ],
+    "textLayers": [
+      {
+        "text": "Maths vs Zombies",
+        "rect": [
+          0.1,
+          0.023333333333333334,
+          0.42,
+          0.051111111111111114
+        ],
+        "previewFontPixels": 32,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "85s",
+        "rect": [
+          0.8,
+          0.02666666666666667,
+          0.09,
+          0.06333333333333334
+        ],
+        "previewFontPixels": 35,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Back",
+        "rect": [
+          0.055,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Help",
+        "rect": [
+          0.235,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Board",
+        "rect": [
+          0.415,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Sound",
+        "rect": [
+          0.595,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Music",
+        "rect": [
+          0.775,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "8 \u2212 7 = ?",
+        "rect": [
+          0.075,
+          0.15,
+          0.85,
+          0.09
+        ],
+        "previewFontPixels": 35,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "7",
+        "rect": [
+          0.065,
+          0.74,
+          0.19,
+          0.1
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "1",
+        "rect": [
+          0.29,
+          0.74,
+          0.19,
+          0.1
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "3",
+        "rect": [
+          0.515,
+          0.74,
+          0.19,
+          0.1
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "6",
+        "rect": [
+          0.74,
+          0.74,
+          0.19,
+          0.1
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      }
+    ],
+    "note": "Normalized example placements; use safe areas and actual educational data. Static assembly preview, not implemented gameplay."
+  },
+  {
+    "id": "prime_pop",
+    "title": "Prime Pop",
+    "orientation": "portrait",
+    "referenceCanvas": [
+      900,
+      1950
+    ],
+    "background": "bg_acropolis_portrait",
+    "layers": [
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.024444444444444446,
+          0.011794871794871795,
+          0.95,
+          0.06153846153846154
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "portrait_frame",
+        "rect": [
+          0.042222222222222223,
+          0.016923076923076923,
+          0.08444444444444445,
+          0.05076923076923077
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "hero_bran_portrait",
+        "rect": [
+          0.043333333333333335,
+          0.014871794871794871,
+          0.08,
+          0.05179487179487179
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "progress_track",
+        "rect": [
+          0.16,
+          0.05179487179487179,
+          0.34,
+          0.010256410256410256
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "progress_fill",
+        "rect": [
+          0.16444444444444445,
+          0.05333333333333334,
+          0.13111111111111112,
+          0.0071794871794871795
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.55,
+          0.02666666666666667,
+          0.05,
+          0.03076923076923077
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.61,
+          0.02666666666666667,
+          0.05,
+          0.03076923076923077
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.6711111111111111,
+          0.02666666666666667,
+          0.05,
+          0.03076923076923077
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_timer",
+        "rect": [
+          0.7444444444444445,
+          0.027692307692307693,
+          0.042222222222222223,
+          0.029743589743589743
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "button_round_normal",
+        "rect": [
+          0.8922222222222222,
+          0.02666666666666667,
+          0.052222222222222225,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_pause",
+        "rect": [
+          0.9,
+          0.03076923076923077,
+          0.04,
+          0.02717948717948718
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.024444444444444446,
+          0.9205128205128205,
+          0.95,
+          0.06666666666666667
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_back",
+        "rect": [
+          0.09444444444444444,
+          0.9256410256410257,
+          0.08,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.22444444444444445,
+          0.9328205128205128,
+          0.008888888888888889,
+          0.048205128205128206
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_help",
+        "rect": [
+          0.27444444444444444,
+          0.9256410256410257,
+          0.08,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.40444444444444444,
+          0.9328205128205128,
+          0.008888888888888889,
+          0.048205128205128206
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_board",
+        "rect": [
+          0.45444444444444443,
+          0.9256410256410257,
+          0.08,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.5844444444444444,
+          0.9328205128205128,
+          0.008888888888888889,
+          0.048205128205128206
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_sound",
+        "rect": [
+          0.6344444444444445,
+          0.9256410256410257,
+          0.08,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.7644444444444445,
+          0.9328205128205128,
+          0.008888888888888889,
+          0.048205128205128206
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_music",
+        "rect": [
+          0.8144444444444444,
+          0.9256410256410257,
+          0.08,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.04,
+          0.08666666666666667,
+          0.92,
+          0.08974358974358974
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "danger_line",
+        "rect": [
+          0.03,
+          0.24974358974358973,
+          0.94,
+          0.014871794871794871
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "number_orb_blue",
+        "rect": [
+          0.1,
+          0.38974358974358975,
+          0.21,
+          0.1
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "number_orb_green",
+        "rect": [
+          0.58,
+          0.32,
+          0.21,
+          0.1
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "number_orb_red",
+        "rect": [
+          0.38,
+          0.5097435897435898,
+          0.21,
+          0.1
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "number_orb_green",
+        "rect": [
+          0.11,
+          0.6097435897435898,
+          0.21,
+          0.1
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "number_orb_green",
+        "rect": [
+          0.65,
+          0.64,
+          0.21,
+          0.1
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "hero_bran_idle",
+        "rect": [
+          0.35,
+          0.74,
+          0.3,
+          0.16
+        ],
+        "mode": "contain"
+      }
+    ],
+    "textLayers": [
+      {
+        "text": "Prime Pop",
+        "rect": [
+          0.14,
+          0.02358974358974359,
+          0.39,
+          0.027692307692307693
+        ],
+        "previewFontPixels": 32,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "85s",
+        "rect": [
+          0.7944444444444444,
+          0.02666666666666667,
+          0.08444444444444445,
+          0.03435897435897436
+        ],
+        "previewFontPixels": 33,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Back",
+        "rect": [
+          0.05444444444444444,
+          0.9548717948717949,
+          0.16,
+          0.023076923076923078
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Help",
+        "rect": [
+          0.23444444444444446,
+          0.9548717948717949,
+          0.16,
+          0.023076923076923078
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Board",
+        "rect": [
+          0.41444444444444445,
+          0.9548717948717949,
+          0.16,
+          0.023076923076923078
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Sound",
+        "rect": [
+          0.5944444444444444,
+          0.9548717948717949,
+          0.16,
+          0.023076923076923078
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Music",
+        "rect": [
+          0.7744444444444445,
+          0.9548717948717949,
+          0.16,
+          0.023076923076923078
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Pop the PRIME numbers.\nLet other numbers pass.",
+        "rect": [
+          0.07444444444444444,
+          0.0917948717948718,
+          0.85,
+          0.07282051282051281
+        ],
+        "previewFontPixels": 40,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "17",
+        "rect": [
+          0.1,
+          0.4046153846153846,
+          0.21,
+          0.06
+        ],
+        "previewFontPixels": 46,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "3",
+        "rect": [
+          0.58,
+          0.33487179487179486,
+          0.21,
+          0.06
+        ],
+        "previewFontPixels": 46,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "29",
+        "rect": [
+          0.38,
+          0.5246153846153846,
+          0.21,
+          0.06
+        ],
+        "previewFontPixels": 46,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "11",
+        "rect": [
+          0.11,
+          0.6246153846153846,
+          0.21,
+          0.06
+        ],
+        "previewFontPixels": 46,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "28",
+        "rect": [
+          0.65,
+          0.6548717948717949,
+          0.21,
+          0.06
+        ],
+        "previewFontPixels": 46,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      }
+    ],
+    "note": "Normalized example placements; use safe areas and actual educational data. Static assembly preview, not implemented gameplay."
+  },
+  {
+    "id": "rounding_rocket",
+    "title": "Rounding Rocket",
+    "orientation": "portrait",
+    "referenceCanvas": [
+      900,
+      1950
+    ],
+    "background": "bg_launch_portrait",
+    "layers": [
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.024444444444444446,
+          0.011794871794871795,
+          0.95,
+          0.06153846153846154
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "portrait_frame",
+        "rect": [
+          0.042222222222222223,
+          0.016923076923076923,
+          0.08444444444444445,
+          0.05076923076923077
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "hero_mage_portrait",
+        "rect": [
+          0.043333333333333335,
+          0.014871794871794871,
+          0.08,
+          0.05179487179487179
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "progress_track",
+        "rect": [
+          0.16,
+          0.05179487179487179,
+          0.34,
+          0.010256410256410256
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "progress_fill",
+        "rect": [
+          0.16444444444444445,
+          0.05333333333333334,
+          0.13111111111111112,
+          0.0071794871794871795
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.55,
+          0.02666666666666667,
+          0.05,
+          0.03076923076923077
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.61,
+          0.02666666666666667,
+          0.05,
+          0.03076923076923077
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.6711111111111111,
+          0.02666666666666667,
+          0.05,
+          0.03076923076923077
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_timer",
+        "rect": [
+          0.7444444444444445,
+          0.027692307692307693,
+          0.042222222222222223,
+          0.029743589743589743
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "button_round_normal",
+        "rect": [
+          0.8922222222222222,
+          0.02666666666666667,
+          0.052222222222222225,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_pause",
+        "rect": [
+          0.9,
+          0.03076923076923077,
+          0.04,
+          0.02717948717948718
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.024444444444444446,
+          0.9205128205128205,
+          0.95,
+          0.06666666666666667
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_back",
+        "rect": [
+          0.09444444444444444,
+          0.9256410256410257,
+          0.08,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.22444444444444445,
+          0.9328205128205128,
+          0.008888888888888889,
+          0.048205128205128206
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_help",
+        "rect": [
+          0.27444444444444444,
+          0.9256410256410257,
+          0.08,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.40444444444444444,
+          0.9328205128205128,
+          0.008888888888888889,
+          0.048205128205128206
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_board",
+        "rect": [
+          0.45444444444444443,
+          0.9256410256410257,
+          0.08,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.5844444444444444,
+          0.9328205128205128,
+          0.008888888888888889,
+          0.048205128205128206
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_sound",
+        "rect": [
+          0.6344444444444445,
+          0.9256410256410257,
+          0.08,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.7644444444444445,
+          0.9328205128205128,
+          0.008888888888888889,
+          0.048205128205128206
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_music",
+        "rect": [
+          0.8144444444444444,
+          0.9256410256410257,
+          0.08,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.04,
+          0.08666666666666667,
+          0.92,
+          0.08974358974358974
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "prop_launch_rocket",
+        "rect": [
+          0.29,
+          0.22974358974358974,
+          0.44,
+          0.4
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "hero_mage_idle",
+        "rect": [
+          0.03,
+          0.46,
+          0.3,
+          0.24
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.04,
+          0.7,
+          0.92,
+          0.054871794871794874
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.05444444444444444,
+          0.7897435897435897,
+          0.28444444444444444,
+          0.06461538461538462
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.35444444444444445,
+          0.7897435897435897,
+          0.28444444444444444,
+          0.06461538461538462
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.6544444444444445,
+          0.7897435897435897,
+          0.28444444444444444,
+          0.06461538461538462
+        ],
+        "mode": "stretch"
+      }
+    ],
+    "textLayers": [
+      {
+        "text": "Rounding Rocket",
+        "rect": [
+          0.14,
+          0.02358974358974359,
+          0.39,
+          0.027692307692307693
+        ],
+        "previewFontPixels": 32,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "85s",
+        "rect": [
+          0.7944444444444444,
+          0.02666666666666667,
+          0.08444444444444445,
+          0.03435897435897436
+        ],
+        "previewFontPixels": 33,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Back",
+        "rect": [
+          0.05444444444444444,
+          0.9548717948717949,
+          0.16,
+          0.023076923076923078
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Help",
+        "rect": [
+          0.23444444444444446,
+          0.9548717948717949,
+          0.16,
+          0.023076923076923078
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Board",
+        "rect": [
+          0.41444444444444445,
+          0.9548717948717949,
+          0.16,
+          0.023076923076923078
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Sound",
+        "rect": [
+          0.5944444444444444,
+          0.9548717948717949,
+          0.16,
+          0.023076923076923078
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Music",
+        "rect": [
+          0.7744444444444445,
+          0.9548717948717949,
+          0.16,
+          0.023076923076923078
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Round to the nearest 10.",
+        "rect": [
+          0.07444444444444444,
+          0.0917948717948718,
+          0.85,
+          0.07282051282051281
+        ],
+        "previewFontPixels": 40,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Target: bind the current question",
+        "rect": [
+          0.08,
+          0.7035897435897436,
+          0.84,
+          0.04358974358974359
+        ],
+        "previewFontPixels": 26,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "440",
+        "rect": [
+          0.06444444444444444,
+          0.7897435897435897,
+          0.2644444444444444,
+          0.06461538461538462
+        ],
+        "previewFontPixels": 27,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "420",
+        "rect": [
+          0.36444444444444446,
+          0.7897435897435897,
+          0.2644444444444444,
+          0.06461538461538462
+        ],
+        "previewFontPixels": 27,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "400",
+        "rect": [
+          0.6644444444444444,
+          0.7897435897435897,
+          0.2644444444444444,
+          0.06461538461538462
+        ],
+        "previewFontPixels": 27,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      }
+    ],
+    "note": "Normalized example placements; use safe areas and actual educational data. Static assembly preview, not implemented gameplay."
+  },
+  {
+    "id": "mean_machine",
+    "title": "Mean Machine",
+    "orientation": "portrait",
+    "referenceCanvas": [
+      900,
+      1950
+    ],
+    "background": "bg_acropolis_portrait",
+    "layers": [
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.024444444444444446,
+          0.011794871794871795,
+          0.95,
+          0.06153846153846154
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "portrait_frame",
+        "rect": [
+          0.042222222222222223,
+          0.016923076923076923,
+          0.08444444444444445,
+          0.05076923076923077
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "hero_bran_portrait",
+        "rect": [
+          0.043333333333333335,
+          0.014871794871794871,
+          0.08,
+          0.05179487179487179
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "progress_track",
+        "rect": [
+          0.16,
+          0.05179487179487179,
+          0.34,
+          0.010256410256410256
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "progress_fill",
+        "rect": [
+          0.16444444444444445,
+          0.05333333333333334,
+          0.13111111111111112,
+          0.0071794871794871795
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.55,
+          0.02666666666666667,
+          0.05,
+          0.03076923076923077
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.61,
+          0.02666666666666667,
+          0.05,
+          0.03076923076923077
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.6711111111111111,
+          0.02666666666666667,
+          0.05,
+          0.03076923076923077
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_timer",
+        "rect": [
+          0.7444444444444445,
+          0.027692307692307693,
+          0.042222222222222223,
+          0.029743589743589743
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "button_round_normal",
+        "rect": [
+          0.8922222222222222,
+          0.02666666666666667,
+          0.052222222222222225,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_pause",
+        "rect": [
+          0.9,
+          0.03076923076923077,
+          0.04,
+          0.02717948717948718
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.024444444444444446,
+          0.9205128205128205,
+          0.95,
+          0.06666666666666667
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_back",
+        "rect": [
+          0.09444444444444444,
+          0.9256410256410257,
+          0.08,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.22444444444444445,
+          0.9328205128205128,
+          0.008888888888888889,
+          0.048205128205128206
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_help",
+        "rect": [
+          0.27444444444444444,
+          0.9256410256410257,
+          0.08,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.40444444444444444,
+          0.9328205128205128,
+          0.008888888888888889,
+          0.048205128205128206
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_board",
+        "rect": [
+          0.45444444444444443,
+          0.9256410256410257,
+          0.08,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.5844444444444444,
+          0.9328205128205128,
+          0.008888888888888889,
+          0.048205128205128206
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_sound",
+        "rect": [
+          0.6344444444444445,
+          0.9256410256410257,
+          0.08,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.7644444444444445,
+          0.9328205128205128,
+          0.008888888888888889,
+          0.048205128205128206
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_music",
+        "rect": [
+          0.8144444444444444,
+          0.9256410256410257,
+          0.08,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.04,
+          0.08666666666666667,
+          0.92,
+          0.08974358974358974
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "hero_bran_idle",
+        "rect": [
+          0.01,
+          0.26,
+          0.36,
+          0.28
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "prop_mean_machine",
+        "rect": [
+          0.29,
+          0.22,
+          0.65,
+          0.36
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.04,
+          0.62,
+          0.92,
+          0.08
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.05444444444444444,
+          0.7297435897435898,
+          0.43,
+          0.06
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.5144444444444445,
+          0.7297435897435898,
+          0.43,
+          0.06
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.05444444444444444,
+          0.8,
+          0.43,
+          0.06
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.5144444444444445,
+          0.8,
+          0.43,
+          0.06
+        ],
+        "mode": "stretch"
+      }
+    ],
+    "textLayers": [
+      {
+        "text": "Mean Machine",
+        "rect": [
+          0.14,
+          0.02358974358974359,
+          0.39,
+          0.027692307692307693
+        ],
+        "previewFontPixels": 32,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "85s",
+        "rect": [
+          0.7944444444444444,
+          0.02666666666666667,
+          0.08444444444444445,
+          0.03435897435897436
+        ],
+        "previewFontPixels": 33,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Back",
+        "rect": [
+          0.05444444444444444,
+          0.9548717948717949,
+          0.16,
+          0.023076923076923078
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Help",
+        "rect": [
+          0.23444444444444446,
+          0.9548717948717949,
+          0.16,
+          0.023076923076923078
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Board",
+        "rect": [
+          0.41444444444444445,
+          0.9548717948717949,
+          0.16,
+          0.023076923076923078
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Sound",
+        "rect": [
+          0.5944444444444444,
+          0.9548717948717949,
+          0.16,
+          0.023076923076923078
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Music",
+        "rect": [
+          0.7744444444444445,
+          0.9548717948717949,
+          0.16,
+          0.023076923076923078
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "What is the mean of the 2 readings?",
+        "rect": [
+          0.07444444444444444,
+          0.0917948717948718,
+          0.85,
+          0.07282051282051281
+        ],
+        "previewFontPixels": 36,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "SCAN",
+        "rect": [
+          0.45,
+          0.5,
+          0.3,
+          0.04
+        ],
+        "previewFontPixels": 26,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Add them, then divide by 2.",
+        "rect": [
+          0.07,
+          0.6297435897435898,
+          0.86,
+          0.054871794871794874
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "7",
+        "rect": [
+          0.06444444444444444,
+          0.7297435897435898,
+          0.41,
+          0.06
+        ],
+        "previewFontPixels": 27,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "6",
+        "rect": [
+          0.5244444444444445,
+          0.7297435897435898,
+          0.41,
+          0.06
+        ],
+        "previewFontPixels": 27,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "9",
+        "rect": [
+          0.06444444444444444,
+          0.8,
+          0.41,
+          0.06
+        ],
+        "previewFontPixels": 27,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "10",
+        "rect": [
+          0.5244444444444445,
+          0.8,
+          0.41,
+          0.06
+        ],
+        "previewFontPixels": 27,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      }
+    ],
+    "note": "Normalized example placements; use safe areas and actual educational data. Static assembly preview, not implemented gameplay."
+  },
+  {
+    "id": "number_line_ninja",
+    "title": "Number Line Ninja",
+    "orientation": "landscape",
+    "referenceCanvas": [
+      1600,
+      900
+    ],
+    "background": "bg_acropolis_landscape",
+    "layers": [
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.025,
+          0.011111111111111112,
+          0.95,
+          0.11444444444444445
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "portrait_frame",
+        "rect": [
+          0.0425,
+          0.016666666666666666,
+          0.0475,
+          0.09333333333333334
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "hero_mage_portrait",
+        "rect": [
+          0.04375,
+          0.014444444444444444,
+          0.045,
+          0.09555555555555556
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "progress_track",
+        "rect": [
+          0.12,
+          0.08666666666666667,
+          0.37,
+          0.01888888888888889
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "progress_fill",
+        "rect": [
+          0.125,
+          0.08888888888888889,
+          0.14375,
+          0.013333333333333334
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.59,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.635,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.68,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_timer",
+        "rect": [
+          0.75,
+          0.027777777777777776,
+          0.045,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "button_round_normal",
+        "rect": [
+          0.9,
+          0.02666666666666667,
+          0.041875,
+          0.06333333333333334
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_pause",
+        "rect": [
+          0.905,
+          0.03,
+          0.031875,
+          0.05
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.025,
+          0.8822222222222222,
+          0.95,
+          0.10444444444444445
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_back",
+        "rect": [
+          0.095,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.225,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_help",
+        "rect": [
+          0.274375,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.405,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_board",
+        "rect": [
+          0.454375,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.585,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_sound",
+        "rect": [
+          0.635,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.765,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_music",
+        "rect": [
+          0.815,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.04,
+          0.14,
+          0.92,
+          0.12
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "prop_hero_plinth",
+        "rect": [
+          0.03,
+          0.69,
+          0.22,
+          0.05
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "hero_mage_idle",
+        "rect": [
+          0.03,
+          0.3,
+          0.22,
+          0.4
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "prop_stone_bridge",
+        "rect": [
+          0.265,
+          0.46,
+          0.69,
+          0.25
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "number_line_track",
+        "rect": [
+          0.27,
+          0.47,
+          0.66,
+          0.034444444444444444
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "number_line_marker",
+        "rect": [
+          0.25,
+          0.4,
+          0.045,
+          0.13
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "island_nameplate",
+        "rect": [
+          0.231875,
+          0.54,
+          0.08,
+          0.06444444444444444
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "number_line_marker",
+        "rect": [
+          0.395,
+          0.4,
+          0.045,
+          0.13
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "island_nameplate",
+        "rect": [
+          0.376875,
+          0.54,
+          0.08,
+          0.06444444444444444
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "number_line_marker",
+        "rect": [
+          0.54,
+          0.4,
+          0.045,
+          0.13
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "island_nameplate",
+        "rect": [
+          0.521875,
+          0.54,
+          0.08,
+          0.06444444444444444
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "number_line_marker",
+        "rect": [
+          0.685,
+          0.4,
+          0.045,
+          0.13
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "island_nameplate",
+        "rect": [
+          0.666875,
+          0.54,
+          0.08,
+          0.06444444444444444
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "number_line_marker",
+        "rect": [
+          0.83,
+          0.4,
+          0.045,
+          0.13
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "island_nameplate",
+        "rect": [
+          0.811875,
+          0.54,
+          0.08,
+          0.06444444444444444
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.055,
+          0.74,
+          0.21,
+          0.1
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.28,
+          0.74,
+          0.21,
+          0.1
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.505,
+          0.74,
+          0.21,
+          0.1
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.73,
+          0.74,
+          0.21,
+          0.1
+        ],
+        "mode": "stretch"
+      }
+    ],
+    "textLayers": [
+      {
+        "text": "Number Line Ninja",
+        "rect": [
+          0.1,
+          0.023333333333333334,
+          0.42,
+          0.051111111111111114
+        ],
+        "previewFontPixels": 32,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "85s",
+        "rect": [
+          0.8,
+          0.02666666666666667,
+          0.09,
+          0.06333333333333334
+        ],
+        "previewFontPixels": 35,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Back",
+        "rect": [
+          0.055,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Help",
+        "rect": [
+          0.235,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Board",
+        "rect": [
+          0.415,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Sound",
+        "rect": [
+          0.595,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Music",
+        "rect": [
+          0.775,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Which number belongs at the glowing marker?",
+        "rect": [
+          0.075,
+          0.15,
+          0.85,
+          0.09
+        ],
+        "previewFontPixels": 35,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "64",
+        "rect": [
+          0.231875,
+          0.54,
+          0.08,
+          0.06444444444444444
+        ],
+        "previewFontPixels": 32,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "74",
+        "rect": [
+          0.376875,
+          0.54,
+          0.08,
+          0.06444444444444444
+        ],
+        "previewFontPixels": 32,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "?",
+        "rect": [
+          0.521875,
+          0.54,
+          0.08,
+          0.06444444444444444
+        ],
+        "previewFontPixels": 32,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "94",
+        "rect": [
+          0.666875,
+          0.54,
+          0.08,
+          0.06444444444444444
+        ],
+        "previewFontPixels": 32,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "104",
+        "rect": [
+          0.811875,
+          0.54,
+          0.08,
+          0.06444444444444444
+        ],
+        "previewFontPixels": 32,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "74",
+        "rect": [
+          0.065,
+          0.74,
+          0.19,
+          0.1
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "84",
+        "rect": [
+          0.29,
+          0.74,
+          0.19,
+          0.1
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "85",
+        "rect": [
+          0.515,
+          0.74,
+          0.19,
+          0.1
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "94",
+        "rect": [
+          0.74,
+          0.74,
+          0.19,
+          0.1
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      }
+    ],
+    "note": "Normalized example placements; use safe areas and actual educational data. Static assembly preview, not implemented gameplay."
+  },
+  {
+    "id": "line_graph_lab",
+    "title": "Line Graph Lab",
+    "orientation": "landscape",
+    "referenceCanvas": [
+      1600,
+      900
+    ],
+    "background": "bg_acropolis_landscape",
+    "layers": [
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.025,
+          0.011111111111111112,
+          0.95,
+          0.11444444444444445
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "portrait_frame",
+        "rect": [
+          0.0425,
+          0.016666666666666666,
+          0.0475,
+          0.09333333333333334
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "hero_bran_portrait",
+        "rect": [
+          0.04375,
+          0.014444444444444444,
+          0.045,
+          0.09555555555555556
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "progress_track",
+        "rect": [
+          0.12,
+          0.08666666666666667,
+          0.37,
+          0.01888888888888889
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "progress_fill",
+        "rect": [
+          0.125,
+          0.08888888888888889,
+          0.14375,
+          0.013333333333333334
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.59,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.635,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.68,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_timer",
+        "rect": [
+          0.75,
+          0.027777777777777776,
+          0.045,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "button_round_normal",
+        "rect": [
+          0.9,
+          0.02666666666666667,
+          0.041875,
+          0.06333333333333334
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_pause",
+        "rect": [
+          0.905,
+          0.03,
+          0.031875,
+          0.05
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.025,
+          0.8822222222222222,
+          0.95,
+          0.10444444444444445
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_back",
+        "rect": [
+          0.095,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.225,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_help",
+        "rect": [
+          0.274375,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.405,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_board",
+        "rect": [
+          0.454375,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.585,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_sound",
+        "rect": [
+          0.635,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.765,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_music",
+        "rect": [
+          0.815,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.04,
+          0.14,
+          0.92,
+          0.12
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "hero_bran_idle",
+        "rect": [
+          0.025,
+          0.33,
+          0.23,
+          0.38
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.265,
+          0.29,
+          0.49,
+          0.42
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.79,
+          0.31,
+          0.16,
+          0.08
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.79,
+          0.41,
+          0.16,
+          0.08
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.79,
+          0.51,
+          0.16,
+          0.08
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.79,
+          0.61,
+          0.16,
+          0.08
+        ],
+        "mode": "stretch"
+      }
+    ],
+    "textLayers": [
+      {
+        "text": "Line Graph Lab",
+        "rect": [
+          0.1,
+          0.023333333333333334,
+          0.42,
+          0.051111111111111114
+        ],
+        "previewFontPixels": 32,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "85s",
+        "rect": [
+          0.8,
+          0.02666666666666667,
+          0.09,
+          0.06333333333333334
+        ],
+        "previewFontPixels": 35,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Back",
+        "rect": [
+          0.055,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Help",
+        "rect": [
+          0.235,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Board",
+        "rect": [
+          0.415,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Sound",
+        "rect": [
+          0.595,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Music",
+        "rect": [
+          0.775,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "What is the water temperature after 1 minute?",
+        "rect": [
+          0.075,
+          0.15,
+          0.85,
+          0.09
+        ],
+        "previewFontPixels": 35,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Time (minutes)",
+        "rect": [
+          0.39,
+          0.68,
+          0.25,
+          0.034444444444444444
+        ],
+        "previewFontPixels": 20,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "1",
+        "rect": [
+          0.8,
+          0.31,
+          0.14,
+          0.08
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "0",
+        "rect": [
+          0.8,
+          0.41,
+          0.14,
+          0.08
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "3",
+        "rect": [
+          0.8,
+          0.51,
+          0.14,
+          0.08
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "2",
+        "rect": [
+          0.8,
+          0.61,
+          0.14,
+          0.08
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      }
+    ],
+    "note": "Normalized example placements; use safe areas and actual educational data. Static assembly preview, not implemented gameplay."
+  },
+  {
+    "id": "graph_grabber",
+    "title": "Graph Grabber",
+    "orientation": "landscape",
+    "referenceCanvas": [
+      1600,
+      900
+    ],
+    "background": "bg_acropolis_landscape",
+    "layers": [
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.025,
+          0.011111111111111112,
+          0.95,
+          0.11444444444444445
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "portrait_frame",
+        "rect": [
+          0.0425,
+          0.016666666666666666,
+          0.0475,
+          0.09333333333333334
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "hero_bran_portrait",
+        "rect": [
+          0.04375,
+          0.014444444444444444,
+          0.045,
+          0.09555555555555556
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "progress_track",
+        "rect": [
+          0.12,
+          0.08666666666666667,
+          0.37,
+          0.01888888888888889
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "progress_fill",
+        "rect": [
+          0.125,
+          0.08888888888888889,
+          0.14375,
+          0.013333333333333334
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.59,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.635,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.68,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_timer",
+        "rect": [
+          0.75,
+          0.027777777777777776,
+          0.045,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "button_round_normal",
+        "rect": [
+          0.9,
+          0.02666666666666667,
+          0.041875,
+          0.06333333333333334
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_pause",
+        "rect": [
+          0.905,
+          0.03,
+          0.031875,
+          0.05
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.025,
+          0.8822222222222222,
+          0.95,
+          0.10444444444444445
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_back",
+        "rect": [
+          0.095,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.225,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_help",
+        "rect": [
+          0.274375,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.405,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_board",
+        "rect": [
+          0.454375,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.585,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_sound",
+        "rect": [
+          0.635,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.765,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_music",
+        "rect": [
+          0.815,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.04,
+          0.14,
+          0.92,
+          0.12
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "hero_bran_idle",
+        "rect": [
+          0.025,
+          0.33,
+          0.23,
+          0.38
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.27,
+          0.29,
+          0.68,
+          0.4
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.055,
+          0.74,
+          0.21,
+          0.1
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.28,
+          0.74,
+          0.21,
+          0.1
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.505,
+          0.74,
+          0.21,
+          0.1
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.73,
+          0.74,
+          0.21,
+          0.1
+        ],
+        "mode": "stretch"
+      }
+    ],
+    "textLayers": [
+      {
+        "text": "Graph Grabber",
+        "rect": [
+          0.1,
+          0.023333333333333334,
+          0.42,
+          0.051111111111111114
+        ],
+        "previewFontPixels": 32,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "85s",
+        "rect": [
+          0.8,
+          0.02666666666666667,
+          0.09,
+          0.06333333333333334
+        ],
+        "previewFontPixels": 35,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Back",
+        "rect": [
+          0.055,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Help",
+        "rect": [
+          0.235,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Board",
+        "rect": [
+          0.415,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Sound",
+        "rect": [
+          0.595,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Music",
+        "rect": [
+          0.775,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "How many crates did Eden deliver?",
+        "rect": [
+          0.075,
+          0.15,
+          0.85,
+          0.09
+        ],
+        "previewFontPixels": 35,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "6",
+        "rect": [
+          0.065,
+          0.74,
+          0.19,
+          0.1
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "2",
+        "rect": [
+          0.29,
+          0.74,
+          0.19,
+          0.1
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "8",
+        "rect": [
+          0.515,
+          0.74,
+          0.19,
+          0.1
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "4",
+        "rect": [
+          0.74,
+          0.74,
+          0.19,
+          0.1
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      }
+    ],
+    "note": "Normalized example placements; use safe areas and actual educational data. Static assembly preview, not implemented gameplay."
+  },
+  {
+    "id": "scale_builder",
+    "title": "Scale Builder",
+    "orientation": "landscape",
+    "referenceCanvas": [
+      1600,
+      900
+    ],
+    "background": "bg_acropolis_landscape",
+    "layers": [
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.025,
+          0.011111111111111112,
+          0.95,
+          0.11444444444444445
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "portrait_frame",
+        "rect": [
+          0.0425,
+          0.016666666666666666,
+          0.0475,
+          0.09333333333333334
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "hero_bran_portrait",
+        "rect": [
+          0.04375,
+          0.014444444444444444,
+          0.045,
+          0.09555555555555556
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "progress_track",
+        "rect": [
+          0.12,
+          0.08666666666666667,
+          0.37,
+          0.01888888888888889
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "progress_fill",
+        "rect": [
+          0.125,
+          0.08888888888888889,
+          0.14375,
+          0.013333333333333334
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.59,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.635,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.68,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_timer",
+        "rect": [
+          0.75,
+          0.027777777777777776,
+          0.045,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "button_round_normal",
+        "rect": [
+          0.9,
+          0.02666666666666667,
+          0.041875,
+          0.06333333333333334
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_pause",
+        "rect": [
+          0.905,
+          0.03,
+          0.031875,
+          0.05
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.025,
+          0.8822222222222222,
+          0.95,
+          0.10444444444444445
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_back",
+        "rect": [
+          0.095,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.225,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_help",
+        "rect": [
+          0.274375,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.405,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_board",
+        "rect": [
+          0.454375,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.585,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_sound",
+        "rect": [
+          0.635,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.765,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_music",
+        "rect": [
+          0.815,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.04,
+          0.14,
+          0.92,
+          0.12
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "hero_bran_idle",
+        "rect": [
+          0.02,
+          0.34,
+          0.23,
+          0.36
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.26,
+          0.29,
+          0.44,
+          0.4
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.73,
+          0.29,
+          0.23,
+          0.55
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "island_nameplate",
+        "rect": [
+          0.75,
+          0.3,
+          0.08,
+          0.04
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.75,
+          0.35,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "island_nameplate",
+        "rect": [
+          0.86,
+          0.3,
+          0.08,
+          0.04
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.86,
+          0.35,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.7425,
+          0.43,
+          0.0675,
+          0.08555555555555555
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.815625,
+          0.43,
+          0.0675,
+          0.08555555555555555
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.88875,
+          0.43,
+          0.0675,
+          0.08555555555555555
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.7425,
+          0.5277777777777778,
+          0.0675,
+          0.08555555555555555
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.815625,
+          0.5277777777777778,
+          0.0675,
+          0.08555555555555555
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.88875,
+          0.5277777777777778,
+          0.0675,
+          0.08555555555555555
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.7425,
+          0.6255555555555555,
+          0.0675,
+          0.08555555555555555
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.815625,
+          0.6255555555555555,
+          0.0675,
+          0.08555555555555555
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.88875,
+          0.6255555555555555,
+          0.0675,
+          0.08555555555555555
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.7425,
+          0.7233333333333334,
+          0.0675,
+          0.08555555555555555
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.815625,
+          0.7233333333333334,
+          0.0675,
+          0.08555555555555555
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.88875,
+          0.7233333333333334,
+          0.0675,
+          0.08555555555555555
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "skin_gold_button",
+        "rect": [
+          0.44,
+          0.75,
+          0.26,
+          0.09
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.27,
+          0.75,
+          0.15,
+          0.09
+        ],
+        "mode": "stretch"
+      }
+    ],
+    "textLayers": [
+      {
+        "text": "Scale Builder",
+        "rect": [
+          0.1,
+          0.023333333333333334,
+          0.42,
+          0.051111111111111114
+        ],
+        "previewFontPixels": 32,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "85s",
+        "rect": [
+          0.8,
+          0.02666666666666667,
+          0.09,
+          0.06333333333333334
+        ],
+        "previewFontPixels": 35,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Back",
+        "rect": [
+          0.055,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Help",
+        "rect": [
+          0.235,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Board",
+        "rect": [
+          0.415,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Sound",
+        "rect": [
+          0.595,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Music",
+        "rect": [
+          0.775,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Scale factor \u00d72. Enlarge the blueprint.",
+        "rect": [
+          0.075,
+          0.15,
+          0.85,
+          0.09
+        ],
+        "previewFontPixels": 35,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "20 units",
+        "rect": [
+          0.43,
+          0.6344444444444445,
+          0.16,
+          0.04
+        ],
+        "previewFontPixels": 26,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "12 units",
+        "rect": [
+          0.295,
+          0.46,
+          0.085,
+          0.05
+        ],
+        "previewFontPixels": 22,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Length",
+        "rect": [
+          0.75,
+          0.30444444444444446,
+          0.08,
+          0.02666666666666667
+        ],
+        "previewFontPixels": 18,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Width",
+        "rect": [
+          0.86,
+          0.30444444444444446,
+          0.08,
+          0.02666666666666667
+        ],
+        "previewFontPixels": 18,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "1",
+        "rect": [
+          0.7525,
+          0.43,
+          0.0475,
+          0.08555555555555555
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "2",
+        "rect": [
+          0.825625,
+          0.43,
+          0.0475,
+          0.08555555555555555
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "3",
+        "rect": [
+          0.89875,
+          0.43,
+          0.0475,
+          0.08555555555555555
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "4",
+        "rect": [
+          0.7525,
+          0.5277777777777778,
+          0.0475,
+          0.08555555555555555
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "5",
+        "rect": [
+          0.825625,
+          0.5277777777777778,
+          0.0475,
+          0.08555555555555555
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "6",
+        "rect": [
+          0.89875,
+          0.5277777777777778,
+          0.0475,
+          0.08555555555555555
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "7",
+        "rect": [
+          0.7525,
+          0.6255555555555555,
+          0.0475,
+          0.08555555555555555
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "8",
+        "rect": [
+          0.825625,
+          0.6255555555555555,
+          0.0475,
+          0.08555555555555555
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "9",
+        "rect": [
+          0.89875,
+          0.6255555555555555,
+          0.0475,
+          0.08555555555555555
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "0",
+        "rect": [
+          0.7525,
+          0.7233333333333334,
+          0.0475,
+          0.08555555555555555
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": ".",
+        "rect": [
+          0.825625,
+          0.7233333333333334,
+          0.0475,
+          0.08555555555555555
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Del",
+        "rect": [
+          0.89875,
+          0.7233333333333334,
+          0.0475,
+          0.08555555555555555
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Check lengths",
+        "rect": [
+          0.45,
+          0.75,
+          0.24,
+          0.09
+        ],
+        "previewFontPixels": 30,
+        "colour": "#172840",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Clear",
+        "rect": [
+          0.28,
+          0.75,
+          0.13,
+          0.09
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      }
+    ],
+    "note": "Normalized example placements; use safe areas and actual educational data. Static assembly preview, not implemented gameplay."
+  },
+  {
+    "id": "potion_panic",
+    "title": "Potion Panic",
+    "orientation": "landscape",
+    "referenceCanvas": [
+      1600,
+      900
+    ],
+    "background": "bg_potion_forest",
+    "layers": [
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.025,
+          0.011111111111111112,
+          0.95,
+          0.11444444444444445
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "portrait_frame",
+        "rect": [
+          0.0425,
+          0.016666666666666666,
+          0.0475,
+          0.09333333333333334
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "hero_bran_portrait",
+        "rect": [
+          0.04375,
+          0.014444444444444444,
+          0.045,
+          0.09555555555555556
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "progress_track",
+        "rect": [
+          0.12,
+          0.08666666666666667,
+          0.37,
+          0.01888888888888889
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "progress_fill",
+        "rect": [
+          0.125,
+          0.08888888888888889,
+          0.14375,
+          0.013333333333333334
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.59,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.635,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.68,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_timer",
+        "rect": [
+          0.75,
+          0.027777777777777776,
+          0.045,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "button_round_normal",
+        "rect": [
+          0.9,
+          0.02666666666666667,
+          0.041875,
+          0.06333333333333334
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_pause",
+        "rect": [
+          0.905,
+          0.03,
+          0.031875,
+          0.05
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.025,
+          0.8822222222222222,
+          0.95,
+          0.10444444444444445
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_back",
+        "rect": [
+          0.095,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.225,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_help",
+        "rect": [
+          0.274375,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.405,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_board",
+        "rect": [
+          0.454375,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.585,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_sound",
+        "rect": [
+          0.635,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.765,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_music",
+        "rect": [
+          0.815,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.04,
+          0.14,
+          0.92,
+          0.12
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "hero_bran_idle",
+        "rect": [
+          0.025,
+          0.29,
+          0.23,
+          0.4
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "prop_cauldron",
+        "rect": [
+          0.36,
+          0.33,
+          0.3,
+          0.36
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "prop_bottle_oak",
+        "rect": [
+          0.25,
+          0.44,
+          0.11,
+          0.23
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.235,
+          0.66,
+          0.15,
+          0.07
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_round_normal",
+        "rect": [
+          0.185,
+          0.6644444444444444,
+          0.0425,
+          0.06444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_minus",
+        "rect": [
+          0.186875,
+          0.6777777777777778,
+          0.03875,
+          0.04
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "button_round_normal",
+        "rect": [
+          0.39,
+          0.6644444444444444,
+          0.0425,
+          0.06444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_plus",
+        "rect": [
+          0.391875,
+          0.6777777777777778,
+          0.03875,
+          0.04
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "prop_bottle_clarity",
+        "rect": [
+          0.68,
+          0.44,
+          0.11,
+          0.23
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.665,
+          0.66,
+          0.15,
+          0.07
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_round_normal",
+        "rect": [
+          0.615,
+          0.6644444444444444,
+          0.0425,
+          0.06444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_minus",
+        "rect": [
+          0.616875,
+          0.6777777777777778,
+          0.03875,
+          0.04
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "button_round_normal",
+        "rect": [
+          0.82,
+          0.6644444444444444,
+          0.0425,
+          0.06444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_plus",
+        "rect": [
+          0.821875,
+          0.6777777777777778,
+          0.03875,
+          0.04
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_gold_button",
+        "rect": [
+          0.3,
+          0.77,
+          0.3,
+          0.08
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.63,
+          0.77,
+          0.19,
+          0.08
+        ],
+        "mode": "stretch"
+      }
+    ],
+    "textLayers": [
+      {
+        "text": "Potion Panic",
+        "rect": [
+          0.1,
+          0.023333333333333334,
+          0.42,
+          0.051111111111111114
+        ],
+        "previewFontPixels": 32,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "85s",
+        "rect": [
+          0.8,
+          0.02666666666666667,
+          0.09,
+          0.06333333333333334
+        ],
+        "previewFontPixels": 35,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Back",
+        "rect": [
+          0.055,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Help",
+        "rect": [
+          0.235,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Board",
+        "rect": [
+          0.415,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Sound",
+        "rect": [
+          0.595,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Music",
+        "rect": [
+          0.775,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Brew 14 drops in the ratio 5 : 2.",
+        "rect": [
+          0.075,
+          0.15,
+          0.85,
+          0.09
+        ],
+        "previewFontPixels": 35,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Oak  0",
+        "rect": [
+          0.245,
+          0.6666666666666666,
+          0.13,
+          0.051111111111111114
+        ],
+        "previewFontPixels": 25,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Clarity  0",
+        "rect": [
+          0.675,
+          0.6666666666666666,
+          0.13,
+          0.051111111111111114
+        ],
+        "previewFontPixels": 25,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Brew Potion",
+        "rect": [
+          0.31,
+          0.77,
+          0.279375,
+          0.08
+        ],
+        "previewFontPixels": 30,
+        "colour": "#172840",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Reset",
+        "rect": [
+          0.64,
+          0.77,
+          0.17,
+          0.08
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      }
+    ],
+    "note": "Normalized example placements; use safe areas and actual educational data. Static assembly preview, not implemented gameplay."
+  },
+  {
+    "id": "takeout_rush",
+    "title": "Takeout Rush",
+    "orientation": "landscape",
+    "referenceCanvas": [
+      1600,
+      900
+    ],
+    "background": "bg_takeout_tavern",
+    "layers": [
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.025,
+          0.011111111111111112,
+          0.95,
+          0.11444444444444445
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "portrait_frame",
+        "rect": [
+          0.0425,
+          0.016666666666666666,
+          0.0475,
+          0.09333333333333334
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "hero_dragon_chef_portrait",
+        "rect": [
+          0.04375,
+          0.014444444444444444,
+          0.045,
+          0.09555555555555556
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "progress_track",
+        "rect": [
+          0.12,
+          0.08666666666666667,
+          0.37,
+          0.01888888888888889
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "progress_fill",
+        "rect": [
+          0.125,
+          0.08888888888888889,
+          0.14375,
+          0.013333333333333334
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.59,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.635,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.68,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_timer",
+        "rect": [
+          0.75,
+          0.027777777777777776,
+          0.045,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "button_round_normal",
+        "rect": [
+          0.9,
+          0.02666666666666667,
+          0.041875,
+          0.06333333333333334
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_pause",
+        "rect": [
+          0.905,
+          0.03,
+          0.031875,
+          0.05
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.025,
+          0.8822222222222222,
+          0.95,
+          0.10444444444444445
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_back",
+        "rect": [
+          0.095,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.225,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_help",
+        "rect": [
+          0.274375,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.405,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_board",
+        "rect": [
+          0.454375,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.585,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_sound",
+        "rect": [
+          0.635,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.765,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_music",
+        "rect": [
+          0.815,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.04,
+          0.14,
+          0.92,
+          0.12
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "hero_dragon_chef",
+        "rect": [
+          0.035,
+          0.37,
+          0.26,
+          0.38
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "prop_takeout_tray",
+        "rect": [
+          0.54,
+          0.39,
+          0.4,
+          0.22
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "food_chicken",
+        "rect": [
+          0.25,
+          0.54,
+          0.13,
+          0.17
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.25,
+          0.73,
+          0.13,
+          0.09
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "food_cookie",
+        "rect": [
+          0.42,
+          0.54,
+          0.13,
+          0.17
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.42,
+          0.73,
+          0.13,
+          0.09
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "food_juice",
+        "rect": [
+          0.59,
+          0.54,
+          0.13,
+          0.17
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.59,
+          0.73,
+          0.13,
+          0.09
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "skin_gold_button",
+        "rect": [
+          0.79,
+          0.74,
+          0.17,
+          0.1
+        ],
+        "mode": "stretch"
+      }
+    ],
+    "textLayers": [
+      {
+        "text": "Takeout Rush",
+        "rect": [
+          0.1,
+          0.023333333333333334,
+          0.42,
+          0.051111111111111114
+        ],
+        "previewFontPixels": 32,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "85s",
+        "rect": [
+          0.8,
+          0.02666666666666667,
+          0.09,
+          0.06333333333333334
+        ],
+        "previewFontPixels": 35,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Back",
+        "rect": [
+          0.055,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Help",
+        "rect": [
+          0.235,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Board",
+        "rect": [
+          0.415,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Sound",
+        "rect": [
+          0.595,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Music",
+        "rect": [
+          0.775,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Choose portions that add to 1/4 of a meal.",
+        "rect": [
+          0.075,
+          0.15,
+          0.85,
+          0.09
+        ],
+        "previewFontPixels": 35,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "1/4",
+        "rect": [
+          0.26,
+          0.73,
+          0.11,
+          0.09
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "1/4",
+        "rect": [
+          0.43,
+          0.73,
+          0.11,
+          0.09
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "1/2",
+        "rect": [
+          0.6,
+          0.73,
+          0.11,
+          0.09
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Serve order",
+        "rect": [
+          0.8,
+          0.74,
+          0.15,
+          0.1
+        ],
+        "previewFontPixels": 30,
+        "colour": "#172840",
+        "semantic": "runtime-text"
+      }
+    ],
+    "note": "Normalized example placements; use safe areas and actual educational data. Static assembly preview, not implemented gameplay."
+  },
+  {
+    "id": "share_splitter",
+    "title": "Share Splitter",
+    "orientation": "landscape",
+    "referenceCanvas": [
+      1600,
+      900
+    ],
+    "background": "bg_takeout_tavern",
+    "layers": [
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.025,
+          0.011111111111111112,
+          0.95,
+          0.11444444444444445
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "portrait_frame",
+        "rect": [
+          0.0425,
+          0.016666666666666666,
+          0.0475,
+          0.09333333333333334
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "hero_mage_portrait",
+        "rect": [
+          0.04375,
+          0.014444444444444444,
+          0.045,
+          0.09555555555555556
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "progress_track",
+        "rect": [
+          0.12,
+          0.08666666666666667,
+          0.37,
+          0.01888888888888889
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "progress_fill",
+        "rect": [
+          0.125,
+          0.08888888888888889,
+          0.14375,
+          0.013333333333333334
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.59,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.635,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.68,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_timer",
+        "rect": [
+          0.75,
+          0.027777777777777776,
+          0.045,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "button_round_normal",
+        "rect": [
+          0.9,
+          0.02666666666666667,
+          0.041875,
+          0.06333333333333334
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_pause",
+        "rect": [
+          0.905,
+          0.03,
+          0.031875,
+          0.05
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.025,
+          0.8822222222222222,
+          0.95,
+          0.10444444444444445
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_back",
+        "rect": [
+          0.095,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.225,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_help",
+        "rect": [
+          0.274375,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.405,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_board",
+        "rect": [
+          0.454375,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.585,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_sound",
+        "rect": [
+          0.635,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.765,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_music",
+        "rect": [
+          0.815,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.04,
+          0.14,
+          0.92,
+          0.12
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "hero_mage_idle",
+        "rect": [
+          0.04,
+          0.29,
+          0.17,
+          0.32
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "prop_plate",
+        "rect": [
+          0.04,
+          0.57,
+          0.17,
+          0.08
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "food_cupcake",
+        "rect": [
+          0.07,
+          0.71,
+          0.1,
+          0.1
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "guest_crystal",
+        "rect": [
+          0.225,
+          0.29,
+          0.17,
+          0.32
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "prop_plate",
+        "rect": [
+          0.225,
+          0.57,
+          0.17,
+          0.08
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "food_cupcake",
+        "rect": [
+          0.255,
+          0.71,
+          0.1,
+          0.1
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "guest_leaf",
+        "rect": [
+          0.41,
+          0.29,
+          0.17,
+          0.32
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "prop_plate",
+        "rect": [
+          0.41,
+          0.57,
+          0.17,
+          0.08
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "food_cupcake",
+        "rect": [
+          0.439375,
+          0.71,
+          0.1,
+          0.1
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "guest_purple",
+        "rect": [
+          0.595,
+          0.29,
+          0.17,
+          0.32
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "prop_plate",
+        "rect": [
+          0.595,
+          0.57,
+          0.17,
+          0.08
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "food_cupcake",
+        "rect": [
+          0.625,
+          0.71,
+          0.1,
+          0.1
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "hero_rhino_idle",
+        "rect": [
+          0.78,
+          0.29,
+          0.17,
+          0.32
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "prop_plate",
+        "rect": [
+          0.78,
+          0.57,
+          0.17,
+          0.08
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "food_cupcake",
+        "rect": [
+          0.81,
+          0.71,
+          0.1,
+          0.1
+        ],
+        "mode": "contain"
+      }
+    ],
+    "textLayers": [
+      {
+        "text": "Share Splitter",
+        "rect": [
+          0.1,
+          0.023333333333333334,
+          0.42,
+          0.051111111111111114
+        ],
+        "previewFontPixels": 32,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "85s",
+        "rect": [
+          0.8,
+          0.02666666666666667,
+          0.09,
+          0.06333333333333334
+        ],
+        "previewFontPixels": 35,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Back",
+        "rect": [
+          0.055,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Help",
+        "rect": [
+          0.235,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Board",
+        "rect": [
+          0.415,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Sound",
+        "rect": [
+          0.595,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Music",
+        "rect": [
+          0.775,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Share 5 cakes equally between 5 guests.",
+        "rect": [
+          0.075,
+          0.15,
+          0.85,
+          0.09
+        ],
+        "previewFontPixels": 35,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "0",
+        "rect": [
+          0.04,
+          0.65,
+          0.17,
+          0.04
+        ],
+        "previewFontPixels": 27,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "0",
+        "rect": [
+          0.225,
+          0.65,
+          0.17,
+          0.04
+        ],
+        "previewFontPixels": 27,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "0",
+        "rect": [
+          0.41,
+          0.65,
+          0.17,
+          0.04
+        ],
+        "previewFontPixels": 27,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "0",
+        "rect": [
+          0.595,
+          0.65,
+          0.17,
+          0.04
+        ],
+        "previewFontPixels": 27,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "0",
+        "rect": [
+          0.78,
+          0.65,
+          0.17,
+          0.04
+        ],
+        "previewFontPixels": 27,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      }
+    ],
+    "note": "Normalized example placements; use safe areas and actual educational data. Static assembly preview, not implemented gameplay."
+  },
+  {
+    "id": "ratio_racer",
+    "title": "Ratio Racer",
+    "orientation": "landscape",
+    "referenceCanvas": [
+      1600,
+      900
+    ],
+    "background": "bg_race_landscape",
+    "layers": [
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.025,
+          0.011111111111111112,
+          0.95,
+          0.11444444444444445
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "portrait_frame",
+        "rect": [
+          0.0425,
+          0.016666666666666666,
+          0.0475,
+          0.09333333333333334
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "hero_bran_portrait",
+        "rect": [
+          0.04375,
+          0.014444444444444444,
+          0.045,
+          0.09555555555555556
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "progress_track",
+        "rect": [
+          0.12,
+          0.08666666666666667,
+          0.37,
+          0.01888888888888889
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "progress_fill",
+        "rect": [
+          0.125,
+          0.08888888888888889,
+          0.14375,
+          0.013333333333333334
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.59,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.635,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.68,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_timer",
+        "rect": [
+          0.75,
+          0.027777777777777776,
+          0.045,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "button_round_normal",
+        "rect": [
+          0.9,
+          0.02666666666666667,
+          0.041875,
+          0.06333333333333334
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_pause",
+        "rect": [
+          0.905,
+          0.03,
+          0.031875,
+          0.05
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.025,
+          0.8822222222222222,
+          0.95,
+          0.10444444444444445
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_back",
+        "rect": [
+          0.095,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.225,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_help",
+        "rect": [
+          0.274375,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.405,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_board",
+        "rect": [
+          0.454375,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.585,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_sound",
+        "rect": [
+          0.635,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.765,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_music",
+        "rect": [
+          0.815,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.04,
+          0.14,
+          0.92,
+          0.12
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "prop_mix_tank",
+        "rect": [
+          0.04,
+          0.3,
+          0.1,
+          0.33
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "prop_mix_tank",
+        "rect": [
+          0.15,
+          0.3,
+          0.1,
+          0.33
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "hero_bran_idle",
+        "rect": [
+          0.41,
+          0.29,
+          0.13,
+          0.22
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "prop_race_kart",
+        "rect": [
+          0.3,
+          0.37,
+          0.4,
+          0.29
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.055,
+          0.74,
+          0.21,
+          0.1
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.28,
+          0.74,
+          0.21,
+          0.1
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.505,
+          0.74,
+          0.21,
+          0.1
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "button_navy_normal",
+        "rect": [
+          0.73,
+          0.74,
+          0.21,
+          0.1
+        ],
+        "mode": "stretch"
+      }
+    ],
+    "textLayers": [
+      {
+        "text": "Ratio Racer",
+        "rect": [
+          0.1,
+          0.023333333333333334,
+          0.42,
+          0.051111111111111114
+        ],
+        "previewFontPixels": 32,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "85s",
+        "rect": [
+          0.8,
+          0.02666666666666667,
+          0.09,
+          0.06333333333333334
+        ],
+        "previewFontPixels": 35,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Back",
+        "rect": [
+          0.055,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Help",
+        "rect": [
+          0.235,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Board",
+        "rect": [
+          0.415,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Sound",
+        "rect": [
+          0.595,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Music",
+        "rect": [
+          0.775,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Fuel 1 : Oxygen 3. What fraction is oxygen?",
+        "rect": [
+          0.075,
+          0.15,
+          0.85,
+          0.09
+        ],
+        "previewFontPixels": 35,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Fuel: 1",
+        "rect": [
+          0.04,
+          0.64,
+          0.1,
+          0.04
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Oxygen: 3",
+        "rect": [
+          0.15,
+          0.64,
+          0.1,
+          0.04
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "3/5",
+        "rect": [
+          0.065,
+          0.74,
+          0.19,
+          0.1
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "1/4",
+        "rect": [
+          0.29,
+          0.74,
+          0.19,
+          0.1
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "3/4",
+        "rect": [
+          0.515,
+          0.74,
+          0.19,
+          0.1
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "1/2",
+        "rect": [
+          0.74,
+          0.74,
+          0.19,
+          0.1
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      }
+    ],
+    "note": "Normalized example placements; use safe areas and actual educational data. Static assembly preview, not implemented gameplay."
+  },
+  {
+    "id": "peaceful_pond",
+    "title": "Peaceful Pond",
+    "orientation": "landscape",
+    "referenceCanvas": [
+      1600,
+      900
+    ],
+    "background": "bg_pond_landscape",
+    "layers": [
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.025,
+          0.011111111111111112,
+          0.95,
+          0.11444444444444445
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "portrait_frame",
+        "rect": [
+          0.0425,
+          0.016666666666666666,
+          0.0475,
+          0.09333333333333334
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "hero_mage_portrait",
+        "rect": [
+          0.04375,
+          0.014444444444444444,
+          0.045,
+          0.09555555555555556
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "progress_track",
+        "rect": [
+          0.12,
+          0.08666666666666667,
+          0.37,
+          0.01888888888888889
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "progress_fill",
+        "rect": [
+          0.125,
+          0.08888888888888889,
+          0.14375,
+          0.013333333333333334
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.59,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.635,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.68,
+          0.02666666666666667,
+          0.046875,
+          0.056666666666666664
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_timer",
+        "rect": [
+          0.75,
+          0.027777777777777776,
+          0.045,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "button_round_normal",
+        "rect": [
+          0.9,
+          0.02666666666666667,
+          0.041875,
+          0.06333333333333334
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_pause",
+        "rect": [
+          0.905,
+          0.03,
+          0.031875,
+          0.05
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.025,
+          0.8822222222222222,
+          0.95,
+          0.10444444444444445
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_back",
+        "rect": [
+          0.095,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.225,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_help",
+        "rect": [
+          0.274375,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.405,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_board",
+        "rect": [
+          0.454375,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.585,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_sound",
+        "rect": [
+          0.635,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.765,
+          0.8944444444444445,
+          0.00875,
+          0.07555555555555556
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_music",
+        "rect": [
+          0.815,
+          0.8877777777777778,
+          0.08,
+          0.05444444444444444
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.04,
+          0.14,
+          0.92,
+          0.12
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "hero_mage_idle",
+        "rect": [
+          0.02,
+          0.34,
+          0.21,
+          0.34
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "prop_lily_pad",
+        "rect": [
+          0.24,
+          0.56,
+          0.13,
+          0.12
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "prop_lily_pad",
+        "rect": [
+          0.38,
+          0.56,
+          0.13,
+          0.12
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "prop_lily_pad",
+        "rect": [
+          0.52,
+          0.56,
+          0.13,
+          0.12
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "prop_lily_pad",
+        "rect": [
+          0.66,
+          0.56,
+          0.13,
+          0.12
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "prop_lily_pad",
+        "rect": [
+          0.8,
+          0.56,
+          0.13,
+          0.12
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_gold_button",
+        "rect": [
+          0.35,
+          0.75,
+          0.39,
+          0.09
+        ],
+        "mode": "stretch"
+      }
+    ],
+    "textLayers": [
+      {
+        "text": "Peaceful Pond",
+        "rect": [
+          0.1,
+          0.023333333333333334,
+          0.42,
+          0.051111111111111114
+        ],
+        "previewFontPixels": 32,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "85s",
+        "rect": [
+          0.8,
+          0.02666666666666667,
+          0.09,
+          0.06333333333333334
+        ],
+        "previewFontPixels": 35,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Back",
+        "rect": [
+          0.055,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Help",
+        "rect": [
+          0.235,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Board",
+        "rect": [
+          0.415,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Sound",
+        "rect": [
+          0.595,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Music",
+        "rect": [
+          0.775,
+          0.9355555555555556,
+          0.16,
+          0.03666666666666667
+        ],
+        "previewFontPixels": 23,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Find one colour or shape you can see.",
+        "rect": [
+          0.075,
+          0.15,
+          0.85,
+          0.09
+        ],
+        "previewFontPixels": 35,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "I noticed something",
+        "rect": [
+          0.36,
+          0.75,
+          0.37,
+          0.09
+        ],
+        "previewFontPixels": 30,
+        "colour": "#172840",
+        "semantic": "runtime-text"
+      }
+    ],
+    "note": "Normalized example placements; use safe areas and actual educational data. Static assembly preview, not implemented gameplay."
+  },
+  {
+    "id": "breath_bloom",
+    "title": "Breath Bloom",
+    "orientation": "portrait",
+    "referenceCanvas": [
+      900,
+      1950
+    ],
+    "background": "bg_bloom_portrait",
+    "layers": [
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.024444444444444446,
+          0.011794871794871795,
+          0.95,
+          0.06153846153846154
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "portrait_frame",
+        "rect": [
+          0.042222222222222223,
+          0.016923076923076923,
+          0.08444444444444445,
+          0.05076923076923077
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "hero_mage_portrait",
+        "rect": [
+          0.043333333333333335,
+          0.014871794871794871,
+          0.08,
+          0.05179487179487179
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "progress_track",
+        "rect": [
+          0.16,
+          0.05179487179487179,
+          0.34,
+          0.010256410256410256
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "progress_fill",
+        "rect": [
+          0.16444444444444445,
+          0.05333333333333334,
+          0.13111111111111112,
+          0.0071794871794871795
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.55,
+          0.02666666666666667,
+          0.05,
+          0.03076923076923077
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.61,
+          0.02666666666666667,
+          0.05,
+          0.03076923076923077
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_heart",
+        "rect": [
+          0.6711111111111111,
+          0.02666666666666667,
+          0.05,
+          0.03076923076923077
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_timer",
+        "rect": [
+          0.7444444444444445,
+          0.027692307692307693,
+          0.042222222222222223,
+          0.029743589743589743
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "button_round_normal",
+        "rect": [
+          0.8922222222222222,
+          0.02666666666666667,
+          0.052222222222222225,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_pause",
+        "rect": [
+          0.9,
+          0.03076923076923077,
+          0.04,
+          0.02717948717948718
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.024444444444444446,
+          0.9205128205128205,
+          0.95,
+          0.06666666666666667
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_back",
+        "rect": [
+          0.09444444444444444,
+          0.9256410256410257,
+          0.08,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.22444444444444445,
+          0.9328205128205128,
+          0.008888888888888889,
+          0.048205128205128206
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_help",
+        "rect": [
+          0.27444444444444444,
+          0.9256410256410257,
+          0.08,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.40444444444444444,
+          0.9328205128205128,
+          0.008888888888888889,
+          0.048205128205128206
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_board",
+        "rect": [
+          0.45444444444444443,
+          0.9256410256410257,
+          0.08,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.5844444444444444,
+          0.9328205128205128,
+          0.008888888888888889,
+          0.048205128205128206
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_sound",
+        "rect": [
+          0.6344444444444445,
+          0.9256410256410257,
+          0.08,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "divider_vertical",
+        "rect": [
+          0.7644444444444445,
+          0.9328205128205128,
+          0.008888888888888889,
+          0.048205128205128206
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_music",
+        "rect": [
+          0.8144444444444444,
+          0.9256410256410257,
+          0.08,
+          0.03435897435897436
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.04,
+          0.08666666666666667,
+          0.92,
+          0.08974358974358974
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "hero_mage_idle",
+        "rect": [
+          0.02,
+          0.26974358974358975,
+          0.4,
+          0.3
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "prop_breath_bloom",
+        "rect": [
+          0.35,
+          0.34,
+          0.59,
+          0.26974358974358975
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.04,
+          0.6897435897435897,
+          0.29,
+          0.08974358974358974
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.35444444444444445,
+          0.6897435897435897,
+          0.29,
+          0.08974358974358974
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.67,
+          0.6897435897435897,
+          0.29,
+          0.08974358974358974
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "skin_gold_button",
+        "rect": [
+          0.17,
+          0.82,
+          0.66,
+          0.06
+        ],
+        "mode": "stretch"
+      }
+    ],
+    "textLayers": [
+      {
+        "text": "Breath Bloom",
+        "rect": [
+          0.14,
+          0.02358974358974359,
+          0.39,
+          0.027692307692307693
+        ],
+        "previewFontPixels": 32,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "85s",
+        "rect": [
+          0.7944444444444444,
+          0.02666666666666667,
+          0.08444444444444445,
+          0.03435897435897436
+        ],
+        "previewFontPixels": 33,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Back",
+        "rect": [
+          0.05444444444444444,
+          0.9548717948717949,
+          0.16,
+          0.023076923076923078
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Help",
+        "rect": [
+          0.23444444444444446,
+          0.9548717948717949,
+          0.16,
+          0.023076923076923078
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Board",
+        "rect": [
+          0.41444444444444445,
+          0.9548717948717949,
+          0.16,
+          0.023076923076923078
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Sound",
+        "rect": [
+          0.5944444444444444,
+          0.9548717948717949,
+          0.16,
+          0.023076923076923078
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Music",
+        "rect": [
+          0.7744444444444445,
+          0.9548717948717949,
+          0.16,
+          0.023076923076923078
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Comfort comes first.",
+        "rect": [
+          0.07444444444444444,
+          0.0917948717948718,
+          0.85,
+          0.07282051282051281
+        ],
+        "previewFontPixels": 40,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Easy\n3s in \u00b7 4s out",
+        "rect": [
+          0.05,
+          0.7,
+          0.27,
+          0.06461538461538462
+        ],
+        "previewFontPixels": 20,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Steady\n4s in \u00b7 5s out",
+        "rect": [
+          0.36444444444444446,
+          0.7,
+          0.27,
+          0.06461538461538462
+        ],
+        "previewFontPixels": 20,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Unhurried\n5s in \u00b7 6s out",
+        "rect": [
+          0.68,
+          0.7,
+          0.27,
+          0.06461538461538462
+        ],
+        "previewFontPixels": 20,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Begin first cycle",
+        "rect": [
+          0.18,
+          0.82,
+          0.64,
+          0.06
+        ],
+        "previewFontPixels": 27,
+        "colour": "#172840",
+        "semantic": "runtime-text"
+      }
+    ],
+    "note": "Normalized example placements; use safe areas and actual educational data. Static assembly preview, not implemented gameplay."
+  },
+  {
+    "id": "world_map",
+    "title": "Matharia",
+    "orientation": "portrait",
+    "referenceCanvas": [
+      900,
+      1950
+    ],
+    "background": "bg_ocean_map_portrait",
+    "layers": [
+      {
+        "asset": "logo_matharia",
+        "rect": [
+          0.12,
+          0.024615384615384615,
+          0.76,
+          0.12974358974358974
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "island_geometry_glacier",
+        "rect": [
+          0.02,
+          0.16,
+          0.46,
+          0.20974358974358975
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "island_nameplate",
+        "rect": [
+          0.024444444444444446,
+          0.3394871794871795,
+          0.45,
+          0.03487179487179487
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "island_fraction_forest",
+        "rect": [
+          0.51,
+          0.28,
+          0.46,
+          0.20974358974358975
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "island_nameplate",
+        "rect": [
+          0.5144444444444445,
+          0.46,
+          0.45,
+          0.03487179487179487
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "island_data_desert",
+        "rect": [
+          0.014444444444444444,
+          0.4,
+          0.46,
+          0.20974358974358975
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "island_nameplate",
+        "rect": [
+          0.02,
+          0.58,
+          0.45,
+          0.03487179487179487
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "island_arithmetic_acropolis",
+        "rect": [
+          0.014444444444444444,
+          0.5897435897435898,
+          0.46,
+          0.20974358974358975
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "island_nameplate",
+        "rect": [
+          0.02,
+          0.7697435897435897,
+          0.45,
+          0.03487179487179487
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "island_ratio_rapids",
+        "rect": [
+          0.51,
+          0.5297435897435897,
+          0.46,
+          0.20974358974358975
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "island_nameplate",
+        "rect": [
+          0.5144444444444445,
+          0.7097435897435898,
+          0.45,
+          0.03487179487179487
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.03,
+          0.8246153846153846,
+          0.94,
+          0.08974358974358974
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "skin_gold_button",
+        "rect": [
+          0.49,
+          0.8548717948717949,
+          0.42,
+          0.04461538461538461
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "skin_hud_shell",
+        "rect": [
+          0.02,
+          0.9297435897435897,
+          0.96,
+          0.05692307692307692
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "icon_profile",
+        "rect": [
+          0.1,
+          0.9338461538461539,
+          0.1,
+          0.028717948717948718
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_rewards",
+        "rect": [
+          0.34,
+          0.9338461538461539,
+          0.1,
+          0.028717948717948718
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_parent",
+        "rect": [
+          0.58,
+          0.9338461538461539,
+          0.1,
+          0.028717948717948718
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "icon_calm",
+        "rect": [
+          0.82,
+          0.9338461538461539,
+          0.1,
+          0.028717948717948718
+        ],
+        "mode": "contain"
+      }
+    ],
+    "textLayers": [
+      {
+        "text": "Geometry Glacier",
+        "rect": [
+          0.044444444444444446,
+          0.3425641025641026,
+          0.41,
+          0.02666666666666667
+        ],
+        "previewFontPixels": 24,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Fraction Forest",
+        "rect": [
+          0.5344444444444445,
+          0.4625641025641026,
+          0.41,
+          0.02666666666666667
+        ],
+        "previewFontPixels": 24,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Data Desert",
+        "rect": [
+          0.04,
+          0.5825641025641025,
+          0.41,
+          0.02666666666666667
+        ],
+        "previewFontPixels": 24,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Arithmetic Acropolis",
+        "rect": [
+          0.04,
+          0.7728205128205128,
+          0.41,
+          0.02666666666666667
+        ],
+        "previewFontPixels": 24,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Ratio Rapids",
+        "rect": [
+          0.5344444444444445,
+          0.7128205128205128,
+          0.41,
+          0.02666666666666667
+        ],
+        "previewFontPixels": 24,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Ratio Rapids",
+        "rect": [
+          0.06,
+          0.8415384615384616,
+          0.42,
+          0.029743589743589743
+        ],
+        "previewFontPixels": 30,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "8% complete",
+        "rect": [
+          0.06,
+          0.88,
+          0.35,
+          0.02
+        ],
+        "previewFontPixels": 22,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "EXPLORE ISLAND",
+        "rect": [
+          0.5,
+          0.8548717948717949,
+          0.3988888888888889,
+          0.04461538461538461
+        ],
+        "previewFontPixels": 27,
+        "colour": "#172840",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Profile",
+        "rect": [
+          0.04,
+          0.9666666666666667,
+          0.22,
+          0.017948717948717947
+        ],
+        "previewFontPixels": 20,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Rewards",
+        "rect": [
+          0.2788888888888889,
+          0.9666666666666667,
+          0.22,
+          0.017948717948717947
+        ],
+        "previewFontPixels": 20,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Parent",
+        "rect": [
+          0.52,
+          0.9666666666666667,
+          0.22,
+          0.017948717948717947
+        ],
+        "previewFontPixels": 20,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Calm",
+        "rect": [
+          0.76,
+          0.9666666666666667,
+          0.22,
+          0.017948717948717947
+        ],
+        "previewFontPixels": 20,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      }
+    ],
+    "note": "Normalized example placements; use safe areas and actual educational data. Static assembly preview, not implemented gameplay."
+  },
+  {
+    "id": "number_missions",
+    "title": "Arithmetic Acropolis",
+    "orientation": "portrait",
+    "referenceCanvas": [
+      900,
+      1950
+    ],
+    "background": "bg_acropolis_portrait",
+    "layers": [
+      {
+        "asset": "logo_matharia",
+        "rect": [
+          0.17,
+          0.02,
+          0.66,
+          0.12
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "hero_bran_idle",
+        "rect": [
+          0.51,
+          0.18974358974358974,
+          0.38,
+          0.24
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "hero_mage_idle",
+        "rect": [
+          0.08,
+          0.2,
+          0.39,
+          0.22974358974358974
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.04,
+          0.12974358974358974,
+          0.92,
+          0.06461538461538462
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "mission_card_frame",
+        "rect": [
+          0.044444444444444446,
+          0.46,
+          0.4444444444444444,
+          0.16
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "progress_track",
+        "rect": [
+          0.07444444444444444,
+          0.5548717948717948,
+          0.38,
+          0.014871794871794871
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "mission_card_frame",
+        "rect": [
+          0.51,
+          0.46,
+          0.4444444444444444,
+          0.16
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "progress_track",
+        "rect": [
+          0.54,
+          0.5548717948717948,
+          0.38,
+          0.014871794871794871
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "mission_card_frame",
+        "rect": [
+          0.044444444444444446,
+          0.64,
+          0.4444444444444444,
+          0.16
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "progress_track",
+        "rect": [
+          0.07444444444444444,
+          0.7348717948717949,
+          0.38,
+          0.014871794871794871
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "mission_card_frame",
+        "rect": [
+          0.51,
+          0.64,
+          0.4444444444444444,
+          0.16
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "progress_track",
+        "rect": [
+          0.54,
+          0.7348717948717949,
+          0.38,
+          0.014871794871794871
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "skin_gold_button",
+        "rect": [
+          0.2,
+          0.84,
+          0.6,
+          0.06
+        ],
+        "mode": "stretch"
+      }
+    ],
+    "textLayers": [
+      {
+        "text": "Arithmetic Acropolis",
+        "rect": [
+          0.08,
+          0.14,
+          0.84,
+          0.04256410256410256
+        ],
+        "previewFontPixels": 38,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Place Value Panic",
+        "rect": [
+          0.07,
+          0.4748717948717949,
+          0.39444444444444443,
+          0.06
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Select mission",
+        "rect": [
+          0.07444444444444444,
+          0.58,
+          0.38,
+          0.02564102564102564
+        ],
+        "previewFontPixels": 20,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Number Line Ninja",
+        "rect": [
+          0.5344444444444445,
+          0.4748717948717949,
+          0.39444444444444443,
+          0.06
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Select mission",
+        "rect": [
+          0.54,
+          0.58,
+          0.38,
+          0.02564102564102564
+        ],
+        "previewFontPixels": 20,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Prime Pop",
+        "rect": [
+          0.07,
+          0.6548717948717949,
+          0.39444444444444443,
+          0.06
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Select mission",
+        "rect": [
+          0.07444444444444444,
+          0.76,
+          0.38,
+          0.02564102564102564
+        ],
+        "previewFontPixels": 20,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Rounding Rocket",
+        "rect": [
+          0.5344444444444445,
+          0.6548717948717949,
+          0.39444444444444443,
+          0.06
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Select mission",
+        "rect": [
+          0.54,
+          0.76,
+          0.38,
+          0.02564102564102564
+        ],
+        "previewFontPixels": 20,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "CONTINUE",
+        "rect": [
+          0.21,
+          0.84,
+          0.58,
+          0.06
+        ],
+        "previewFontPixels": 27,
+        "colour": "#172840",
+        "semantic": "runtime-text"
+      }
+    ],
+    "note": "Normalized example placements; use safe areas and actual educational data. Static assembly preview, not implemented gameplay."
+  },
+  {
+    "id": "ratio_missions",
+    "title": "Ratio Rapids",
+    "orientation": "portrait",
+    "referenceCanvas": [
+      900,
+      1950
+    ],
+    "background": "bg_acropolis_portrait",
+    "layers": [
+      {
+        "asset": "logo_matharia",
+        "rect": [
+          0.17,
+          0.02,
+          0.66,
+          0.12
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "hero_bran_idle",
+        "rect": [
+          0.51,
+          0.18974358974358974,
+          0.38,
+          0.24
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "hero_mage_idle",
+        "rect": [
+          0.08,
+          0.2,
+          0.39,
+          0.22974358974358974
+        ],
+        "mode": "contain"
+      },
+      {
+        "asset": "skin_panel",
+        "rect": [
+          0.04,
+          0.12974358974358974,
+          0.92,
+          0.06461538461538462
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "mission_card_frame",
+        "rect": [
+          0.044444444444444446,
+          0.46,
+          0.4444444444444444,
+          0.16
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "progress_track",
+        "rect": [
+          0.07444444444444444,
+          0.5548717948717948,
+          0.38,
+          0.014871794871794871
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "mission_card_frame",
+        "rect": [
+          0.51,
+          0.46,
+          0.4444444444444444,
+          0.16
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "progress_track",
+        "rect": [
+          0.54,
+          0.5548717948717948,
+          0.38,
+          0.014871794871794871
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "mission_card_frame",
+        "rect": [
+          0.044444444444444446,
+          0.64,
+          0.4444444444444444,
+          0.16
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "progress_track",
+        "rect": [
+          0.07444444444444444,
+          0.7348717948717949,
+          0.38,
+          0.014871794871794871
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "mission_card_frame",
+        "rect": [
+          0.51,
+          0.64,
+          0.4444444444444444,
+          0.16
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "progress_track",
+        "rect": [
+          0.54,
+          0.7348717948717949,
+          0.38,
+          0.014871794871794871
+        ],
+        "mode": "stretch"
+      },
+      {
+        "asset": "skin_gold_button",
+        "rect": [
+          0.2,
+          0.84,
+          0.6,
+          0.06
+        ],
+        "mode": "stretch"
+      }
+    ],
+    "textLayers": [
+      {
+        "text": "Ratio Rapids",
+        "rect": [
+          0.08,
+          0.14,
+          0.84,
+          0.04256410256410256
+        ],
+        "previewFontPixels": 38,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Potion Panic",
+        "rect": [
+          0.07,
+          0.4748717948717949,
+          0.39444444444444443,
+          0.06
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Select mission",
+        "rect": [
+          0.07444444444444444,
+          0.58,
+          0.38,
+          0.02564102564102564
+        ],
+        "previewFontPixels": 20,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Share Splitter",
+        "rect": [
+          0.5344444444444445,
+          0.4748717948717949,
+          0.39444444444444443,
+          0.06
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Select mission",
+        "rect": [
+          0.54,
+          0.58,
+          0.38,
+          0.02564102564102564
+        ],
+        "previewFontPixels": 20,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Ratio Racer",
+        "rect": [
+          0.07,
+          0.6548717948717949,
+          0.39444444444444443,
+          0.06
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Select mission",
+        "rect": [
+          0.07444444444444444,
+          0.76,
+          0.38,
+          0.02564102564102564
+        ],
+        "previewFontPixels": 20,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Scale Builder",
+        "rect": [
+          0.5344444444444445,
+          0.6548717948717949,
+          0.39444444444444443,
+          0.06
+        ],
+        "previewFontPixels": 28,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "Select mission",
+        "rect": [
+          0.54,
+          0.76,
+          0.38,
+          0.02564102564102564
+        ],
+        "previewFontPixels": 20,
+        "colour": "#fff3cd",
+        "semantic": "runtime-text"
+      },
+      {
+        "text": "CONTINUE",
+        "rect": [
+          0.21,
+          0.84,
+          0.58,
+          0.06
+        ],
+        "previewFontPixels": 27,
+        "colour": "#172840",
+        "semantic": "runtime-text"
+      }
+    ],
+    "note": "Normalized example placements; use safe areas and actual educational data. Static assembly preview, not implemented gameplay."
+  }
+]

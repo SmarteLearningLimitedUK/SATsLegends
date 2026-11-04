@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import VisionCharacter from '../components/game-ui/VisionCharacter';
+import { getVisionCharacter } from './visionScene';
 
 type Frame = { body: string; head: string; ratio: number };
 const cache = new Map<string, Promise<Frame>>();
@@ -60,7 +62,7 @@ function prepare(source: string, avatarId: string) {
   return pending;
 }
 
-export default function ZombieHeroActor({ source, avatarId }: { source: string; avatarId: string }) {
+function LegacyZombieHeroActor({ source, avatarId }: { source: string; avatarId: string }) {
   const [prepared, setPrepared] = useState<{ source: string; frame: Frame } | null>(null);
   useEffect(() => {
     let active = true;
@@ -72,4 +74,10 @@ export default function ZombieHeroActor({ source, avatarId }: { source: string; 
     <img src={frame?.body ?? source} alt="Your hero" draggable={false}/>
     {frame ? <span className="zombies-hero-head" aria-hidden="true" style={{ backgroundImage: `url(${frame.head})` }}/> : null}
   </div>;
+}
+export default function ZombieHeroActor(props: { source: string; avatarId: string; casting?: boolean }) {
+  const identity = props.avatarId === 'barratt' ? 'deer' : props.avatarId;
+  return getVisionCharacter(identity)
+    ? <div className="zombies-player-avatar zombies-hero-rig" style={{aspectRatio:'1'}}><VisionCharacter identity={identity} reaction={props.casting?'taunt':'idle'} alt="Your hero" /></div>
+    : <LegacyZombieHeroActor {...props} />;
 }

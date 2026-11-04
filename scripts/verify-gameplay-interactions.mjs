@@ -13,6 +13,7 @@ const profiles = [
   { name: 'pc', engine: chromium, options: { viewport: { width: 1440, height: 900 } } },
   { name: 'ipad-a2hs', engine: webkit, options: { ...devices['iPad (gen 7)'], viewport: { width: 768, height: 1024 } } },
   { name: 'phone-a2hs', engine: webkit, options: { ...devices['iPhone 13'], viewport: { width: 390, height: 844 } } },
+  { name: 'phone-landscape', engine: chromium, options: { viewport: { width: 667, height: 375 }, hasTouch: true, isMobile: true } },
 ].filter((profile) => !profileFilter || profile.name === profileFilter);
 const motions = ['normal', 'reduced'].filter((motion) => !motionFilter || motion === motionFilter);
 const games = ['unit_mixer', 'perimeter_path', 'conversion_canyon', 'percent_power', 'time_keeper_cove'].filter((game) => !selected.size || selected.has(game));
@@ -93,7 +94,9 @@ async function hierarchy(page, boardSelector, answerSelector) {
     for(const name of ['top','mission','board','answers','dock'])expect(result[name],name+' present').toBeTruthy();
     expect(result.mission.y,'HUD precedes mission').toBeGreaterThanOrEqual(result.top.bottom-1);
     expect(result.board.y,'Mission precedes playfield').toBeGreaterThanOrEqual(result.mission.bottom-1);
-    expect(result.board.bottom,'Playfield precedes answers').toBeLessThanOrEqual(result.answers.y+1);
+    const overlapX=Math.min(result.board.right,result.answers.right)-Math.max(result.board.x,result.answers.x);
+    const overlapY=Math.min(result.board.bottom,result.answers.bottom)-Math.max(result.board.y,result.answers.y);
+    expect(overlapX<=1||overlapY<=1,'Playfield and controls have separate space').toBe(true);
     expect(result.answers.bottom,'Answers precede dock').toBeLessThanOrEqual(result.dock.y+1);
   }catch(error){error.qaMetrics=result;throw error;}
   return result;
@@ -145,7 +148,7 @@ async function beginProbe(page, kind) {
       const sample={time:performance.now(),visible:document.visibilityState,focused:document.hasFocus(),timeline:document.timeline.currentTime,missionText:document.querySelector('[data-question-copy]')?.textContent?.trim()};
       if(kind==='lava'){
         const root=document.querySelector('[data-lava-game]');
-        sample.reaction=root?.dataset.lavaReaction;sample.step=Number(root?.dataset.lavaStep);sample.hero=rect(document.querySelector('[data-lava-hero]'));sample.heroPose=matrix(document.querySelector('[data-lava-hero] img'));
+        sample.reaction=root?.dataset.lavaReaction;sample.step=Number(root?.dataset.lavaStep);sample.hero=rect(document.querySelector('[data-lava-hero]'));sample.heroPose=matrix(document.querySelector('[data-lava-hero] .lava-hero-motion, [data-lava-hero] img'));
         sample.safe=[...document.querySelectorAll('[data-lava-stone][data-stone-safe="true"]')].length;
         sample.stones=[...document.querySelectorAll('[data-lava-stone]')].map(matrix);
         sample.ambient=[...document.querySelectorAll('.lava-crossing-art > g:not([data-lava-stone])')].map(matrix);

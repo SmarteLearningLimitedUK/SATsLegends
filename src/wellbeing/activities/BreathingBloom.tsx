@@ -4,6 +4,7 @@ import { Pause, Play } from 'lucide-react';
 import WellbeingShell from '../WellbeingShell';
 import { WellbeingActivityComponentProps } from '../types';
 import { useWellbeingCompletion } from '../useWellbeingCompletion';
+import bloomArtwork from '../../assets/wellbeing/matharia/prop_breath_bloom@2x.png';
 
 const paces = [
   { id: 'easy', label: 'Easy', inMs: 3000, outMs: 4000 },
@@ -102,8 +103,7 @@ const BreathingBloom: React.FC<WellbeingActivityComponentProps> = ({ onComplete,
             data-bloom-flower={flowerIndex + 1} style={{ left: `${flower.x}%`, top: `${flower.y}%`, '--flower-size': flower.size, '--flower-hue': flower.hue } as React.CSSProperties}>
             <span className="wellbeing-flower-stem"/>
             <div className="wellbeing-bloom" style={{ transform: `scale(${bloomScale})` }}>
-              {Array.from({ length: 8 }, (_, index) => <span key={index} className="wellbeing-bloom-petal" style={{ '--petal-angle': index * 45 + 'deg' } as React.CSSProperties}/>)}
-              <span className="wellbeing-bloom-core"/>
+              <img className="wellbeing-bloom-artwork" src={bloomArtwork} alt="" draggable={false} />
             </div>
           </div>)}
         </div>

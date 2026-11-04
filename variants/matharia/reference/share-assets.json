@@ -1,0 +1,296 @@
+{
+  "reference": "variants/matharia/reference/approved/share_splitter.png",
+  "inspection": "Clean garden, frontal furniture, white/gold plate, original cupcake, five independent approved-style guests and four canonical greeting hosts inspected. First five-character atlas had no clear left-column horizontal gutters; only its separated right-column crystal/purple are exported. Left three regenerated with verified empty2x2gutters. RGB preview matte is beneath alpha0..3; neutral composite confirms clear background.",
+  "processing": "Gutter/alpha-margin crop and aspect-preserving WebP only, no semantic editing or masks.",
+  "assets": [
+    {
+      "name": "backgrounds/bg_share_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-3e1371e5-6b73-48c5-b332-0d7107d0289d.png",
+      "cell": null,
+      "alphaMarginTrim": null,
+      "dimensions": [
+        1844,
+        853
+      ],
+      "production": "variants/matharia/assets/png/backgrounds/bg_share_v3@2x.webp",
+      "sha256": "c08f430cf28d1680a1dee1dac645041a1956e4cb50dc241249e97ae8d192e82a"
+    },
+    {
+      "name": "props/share_table_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-c6f5980d-410c-4a9f-89e9-289920b055fd.png",
+      "cell": null,
+      "alphaMarginTrim": [
+        13,
+        225,
+        2160,
+        609
+      ],
+      "dimensions": [
+        2048,
+        366
+      ],
+      "production": "variants/matharia/assets/png/props/share_table_v3@2x.webp",
+      "sha256": "458f26ef13e3959b3457835d91172c4732ca3fa4a130ba03ee8803d8d77bd147"
+    },
+    {
+      "name": "props/share_plate_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-11151571-d7c8-48e1-8cbe-18a73e89f3b8.png",
+      "cell": null,
+      "alphaMarginTrim": [
+        54,
+        88,
+        2116,
+        655
+      ],
+      "dimensions": [
+        1536,
+        422
+      ],
+      "production": "variants/matharia/assets/png/props/share_plate_v3@2x.webp",
+      "sha256": "cfd81b65089f21e1946313e3ff8a6ab765e540d9d81f1378fa0b03f1130d13ca"
+    },
+    {
+      "name": "food/share_cake_v3",
+      "source": "D:\\BrainZilla\\GitHub\\SATsLegends\\src\\assets\\share-splitter\\strawberry-cake-v1.webp",
+      "cell": null,
+      "alphaMarginTrim": [
+        39,
+        11,
+        222,
+        229
+      ],
+      "dimensions": [
+        183,
+        218
+      ],
+      "production": "variants/matharia/assets/png/food/share_cake_v3@2x.webp",
+      "sha256": "a5b2e84304cca10467ac7f4d8ceb7da355f8b09f22d0d86a214efea6ef1a980f"
+    },
+    {
+      "name": "heroes/hero_barratt_host_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-bbd01087-105d-4928-8087-b7a38e1453fe.png",
+      "cell": [
+        0,
+        0,
+        627,
+        627
+      ],
+      "alphaMarginTrim": [
+        91,
+        19,
+        537,
+        616
+      ],
+      "dimensions": [
+        446,
+        597
+      ],
+      "production": "variants/matharia/assets/png/heroes/hero_barratt_host_v3@2x.webp",
+      "sha256": "824b7b9d7947d1ca80d4057bf60243d4cf88098a7098f789986cd1bd2fc7893d",
+      "identity": "barratt",
+      "avatarBounds": [
+        0,
+        0,
+        446,
+        269
+      ]
+    },
+    {
+      "name": "heroes/hero_bran_host_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-bbd01087-105d-4928-8087-b7a38e1453fe.png",
+      "cell": [
+        627,
+        0,
+        1254,
+        627
+      ],
+      "alphaMarginTrim": [
+        88,
+        35,
+        590,
+        616
+      ],
+      "dimensions": [
+        502,
+        581
+      ],
+      "production": "variants/matharia/assets/png/heroes/hero_bran_host_v3@2x.webp",
+      "sha256": "f4188f26809334d667bceb4b9b5b9ecd9d586a31a779300020c398bae4729d49",
+      "identity": "bran",
+      "avatarBounds": [
+        0,
+        0,
+        502,
+        261
+      ]
+    },
+    {
+      "name": "heroes/hero_mochi_host_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-bbd01087-105d-4928-8087-b7a38e1453fe.png",
+      "cell": [
+        0,
+        627,
+        627,
+        1254
+      ],
+      "alphaMarginTrim": [
+        77,
+        28,
+        564,
+        601
+      ],
+      "dimensions": [
+        487,
+        573
+      ],
+      "production": "variants/matharia/assets/png/heroes/hero_mochi_host_v3@2x.webp",
+      "sha256": "2acf282cd1cb4252333673800c341108785d258ae5c3d127b74801658dfaed0d",
+      "identity": "mochi",
+      "avatarBounds": [
+        0,
+        0,
+        487,
+        258
+      ]
+    },
+    {
+      "name": "heroes/hero_vex_host_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-bbd01087-105d-4928-8087-b7a38e1453fe.png",
+      "cell": [
+        627,
+        627,
+        1254,
+        1254
+      ],
+      "alphaMarginTrim": [
+        87,
+        8,
+        588,
+        602
+      ],
+      "dimensions": [
+        501,
+        594
+      ],
+      "production": "variants/matharia/assets/png/heroes/hero_vex_host_v3@2x.webp",
+      "sha256": "712cab24fc0dc545613201f1587ecbdedd3dc193e4281eac66a304f25e5b45dd",
+      "identity": "vex",
+      "avatarBounds": [
+        0,
+        0,
+        501,
+        267
+      ]
+    },
+    {
+      "name": "characters/share_guest_goblin_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-dbeede3e-df38-4273-9476-b8ef8f228a82.png",
+      "cell": [
+        0,
+        0,
+        627,
+        627
+      ],
+      "alphaMarginTrim": [
+        119,
+        16,
+        552,
+        613
+      ],
+      "dimensions": [
+        433,
+        597
+      ],
+      "production": "variants/matharia/assets/png/characters/share_guest_goblin_v3@2x.webp",
+      "sha256": "9284f963cd5f517a119fd95640436d64709f0ddb79110305868caf82117062d4"
+    },
+    {
+      "name": "characters/share_guest_green_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-dbeede3e-df38-4273-9476-b8ef8f228a82.png",
+      "cell": [
+        627,
+        0,
+        1254,
+        627
+      ],
+      "alphaMarginTrim": [
+        57,
+        55,
+        588,
+        614
+      ],
+      "dimensions": [
+        531,
+        559
+      ],
+      "production": "variants/matharia/assets/png/characters/share_guest_green_v3@2x.webp",
+      "sha256": "82cd7eb20ee50fc59dccf08d1fbbf4a17676b282b22f2e9794f6bf393f9cc977"
+    },
+    {
+      "name": "characters/share_guest_rhino_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-dbeede3e-df38-4273-9476-b8ef8f228a82.png",
+      "cell": [
+        0,
+        627,
+        627,
+        1254
+      ],
+      "alphaMarginTrim": [
+        76,
+        20,
+        591,
+        603
+      ],
+      "dimensions": [
+        515,
+        583
+      ],
+      "production": "variants/matharia/assets/png/characters/share_guest_rhino_v3@2x.webp",
+      "sha256": "a9b5ec39e6ed376d98feb3aebb54427248877c13be0b9b39c2a4573f67db9f03"
+    },
+    {
+      "name": "characters/share_guest_crystal_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-6360c072-a784-4d64-8fa2-d9dbc711e18b.png",
+      "cell": [
+        512,
+        0,
+        1024,
+        538
+      ],
+      "alphaMarginTrim": [
+        76,
+        20,
+        463,
+        531
+      ],
+      "dimensions": [
+        387,
+        511
+      ],
+      "production": "variants/matharia/assets/png/characters/share_guest_crystal_v3@2x.webp",
+      "sha256": "aef4c5a5eb7934239a9a70a4b141b6913040cb33ebf9f40ab10765c39363a953"
+    },
+    {
+      "name": "characters/share_guest_purple_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-6360c072-a784-4d64-8fa2-d9dbc711e18b.png",
+      "cell": [
+        512,
+        538,
+        1024,
+        1120
+      ],
+      "alphaMarginTrim": [
+        75,
+        8,
+        492,
+        496
+      ],
+      "dimensions": [
+        417,
+        488
+      ],
+      "production": "variants/matharia/assets/png/characters/share_guest_purple_v3@2x.webp",
+      "sha256": "bfd57f7805da8f68f7af46d7be0c958b597804858678fdd8e16264af4e4c0c54"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import {
@@ -10,8 +10,12 @@ import {
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import problemPyramidBackground from '../assets/maps/premium/problem-pyramid.webp';
+import pyramidTablets from '../assets/game-visions/instruments/pyramid-tablets-v1.png';
+import './problem-pyramid.css';
+import {pyramidSteps,pyramidCellValue} from './pyramidPuzzle';
 
 interface ProblemPyramidGameProps extends MiniGameShellContractProps {
+  multiStep?: boolean;
   levelId: number;
   avatarId: string;
   useSharedTopHud?: boolean;
@@ -81,15 +85,19 @@ const starsForAccuracy = (correct: number, attempts: number) => {
 
 const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
   levelId,
+  multiStep = false,
   isPractice,
   practiceBriefing,
   onVictory,
   onGameOver: _onGameOver,
   sessionEvents,
 }) => {
+  const reducedMotion = useReducedMotion();
   const [roundIndex, setRoundIndex] = useState(0);
   const [attempts, setAttempts] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
+  const [stepIndex,setStepIndex]=useState(0);
+  const [correctSteps,setCorrectSteps]=useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [locked, setLocked] = useState(false);
   const [glow, setGlow] = useState(false);
@@ -103,47 +111,54 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
   }, [isPractice]);
 
   const round = useMemo(() => buildRound(levelId, roundIndex + 1, Boolean(isPractice)), [levelId, roundIndex, isPractice]);
+  const steps=useMemo(()=>pyramidSteps(round,multiStep),[round,multiStep]);
+  const activeStep=steps[stepIndex];
+  const completedSteps=stepIndex+(feedbackTone==='good'?1:0);
 
   const handleAnswer = (option: number) => {
     if (locked || answerPendingRef.current) return;
     answerPendingRef.current = true;
     setSelected(option);
     setAttempts((prev) => prev + 1);
-    emitMiniGameSessionEvent(sessionEvents, option === round.top ? 'correct_answer' : 'incorrect_answer', {
-      metadata: { questionId: round.id, selected: option, target: round.top, roundIndex },
+    emitMiniGameSessionEvent(sessionEvents, option === activeStep.target ? 'correct_answer' : 'incorrect_answer', {
+      metadata: { questionId: round.id, selected: option, target: activeStep.target, roundIndex, step:stepIndex, cell:activeStep.cell },
     });
 
-    if (option === round.top) {
-      setCorrectCount((prev) => prev + 1);
-      setFeedback('Brilliant! Pyramid locked in.');
+    if (option === activeStep.target) {
+      const completesRound=stepIndex===steps.length-1;
+      setCorrectSteps(previous=>previous+1);
+      if(completesRound)setCorrectCount((prev) => prev + 1);
+      setFeedback(completesRound?'Brilliant! Pyramid locked in.':`${activeStep.operands[0]} + ${activeStep.operands[1]} = ${activeStep.target}. Stone restored.`);
       setFeedbackTone('good');
       setLocked(true);
-      setGlow(true);
-      confetti({
+      setGlow(completesRound);
+      if(completesRound)confetti({
         particleCount: 40,
         spread: 55,
         origin: { y: 0.62 },
         colors: ['#facc15', '#60a5fa', '#34d399'],
       });
       window.setTimeout(() => {
+        if(!completesRound){setStepIndex(previous=>previous+1);setSelected(null);setLocked(false);setFeedback('');setFeedbackTone('neutral');answerPendingRef.current=false;return;}
         const nextRound = roundIndex + 1;
         if (nextRound >= ROUNDS_TO_WIN) {
           const xp = BASE_XP * ROUNDS_TO_WIN + levelId * 40;
-          onVictory(starsForAccuracy(correctCount + 1, attempts + 1), xp);
+          onVictory(starsForAccuracy(correctCount + 1, correctCount + 1 + attempts - correctSteps), xp);
           return;
         }
         setRoundIndex(nextRound);
+        setStepIndex(0);
         setSelected(null);
         setLocked(false);
         setGlow(false);
         setFeedback('');
         setFeedbackTone('neutral');
         answerPendingRef.current = false;
-      }, 750);
+      }, completesRound?750:350);
       return;
     }
 
-    setFeedback(`The top is ${round.middle[0]} + ${round.middle[1]}. Add those two middle stones and try again.`);
+    setFeedback(multiStep?`Add ${activeStep.operands[0]} + ${activeStep.operands[1]}. Use those two stones and try again.`:`The top is ${round.middle[0]} + ${round.middle[1]}. Add those two middle stones and try again.`);
     setFeedbackTone('bad');
     setLocked(true);
     window.setTimeout(() => {
@@ -155,69 +170,46 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
     }, 1600);
   };
 
-  const blockClass = (isTop?: boolean) => (
-    `flex h-[3.6rem] w-[4.8rem] items-center justify-center rounded-[0.95rem] border text-[1.2rem] font-black shadow-[0_10px_18px_rgba(2,6,23,0.25)] md:h-[4.2rem] md:w-[5.4rem] md:text-[1.5rem] ${
-      glow
-        ? 'border-emerald-200/80 bg-emerald-300/35 text-emerald-950 shadow-[0_0_18px_rgba(16,185,129,0.55)]'
-        : isTop
-          ? 'border-cyan-100/28 bg-[linear-gradient(180deg,rgba(15,23,42,0.95),rgba(30,41,59,0.88))] text-white shadow-[0_12px_24px_rgba(2,6,23,0.35)]'
-          : 'border-white/18 bg-[linear-gradient(180deg,rgba(9,17,32,0.94),rgba(20,28,45,0.88))] text-white shadow-[0_12px_24px_rgba(2,6,23,0.35)]'
-    }`
-  );
-
   return (
     <GameUiShell className="bg-transparent" overlayDisabled>
       <GameplaySceneBackdrop gameType="rule_runner" backgroundOverride={problemPyramidBackground} />
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Problem Pyramid"
-        body="The Monster Minds have scrambled the pyramid stones.\nChoose the value that restores the missing top block.\nWork up layer by layer from the bottom."
+        body={multiStep?'Restore the two middle stones, then the top stone.\nEach stone is the sum of the two directly below it.\nChoose one of four answers at each step.':'The Monster Minds have scrambled the pyramid stones.\nChoose the value that restores the missing top block.\nWork up layer by layer from the bottom.'}
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
-      <div className="relative z-10 flex h-full min-h-0 flex-col gap-1.5 px-3 pb-[calc(env(safe-area-inset-bottom)+2.8rem)] pt-2 text-white">
+      <div className="pyramid-composition relative z-10 flex h-full min-h-0 flex-col gap-1.5 px-3 pb-[calc(env(safe-area-inset-bottom)+2.8rem)] pt-2 text-white">
         <section className="shrink-0">
           <div className="pointer-events-none fixed left-0 right-0 z-[60]" style={{ top: '4px' }}>
             <GameQuestionCard title="Problem Pyramid">
-              Find the missing top number to restore the pyramid.
+              {multiStep?`Restore the ${activeStep.label}. Step ${stepIndex+1} of ${steps.length}.`:'Find the missing top number to restore the pyramid.'}
             </GameQuestionCard>
           </div>
         </section>
 
-        <section className="mt-[clamp(5.25rem,13vh,7rem)] min-h-0 flex-1">
-          <div className="relative flex h-full min-h-0 items-center justify-center">
-            <div className="relative h-full w-full max-w-[760px]">
-              <motion.div
-                animate={glow ? { scale: [1, 1.03, 1] } : { scale: 1 }}
-                transition={{ duration: 0.6, ease: 'easeInOut' }}
-                className="absolute inset-0"
-              >
-                <div className={`absolute left-1/2 top-[17.5%] -translate-x-1/2 ${blockClass(true)}`}>
-                  ?
-                </div>
-                <div className={`absolute left-[38.5%] top-[44%] -translate-x-1/2 ${blockClass()}`}>
-                  {round.middle[0]}
-                </div>
-                <div className={`absolute left-[61.5%] top-[44%] -translate-x-1/2 ${blockClass()}`}>
-                  {round.middle[1]}
-                </div>
-                <div className={`absolute left-[27%] top-[70%] -translate-x-1/2 ${blockClass()}`}>
-                  {round.base[0]}
-                </div>
-                <div className={`absolute left-1/2 top-[70%] -translate-x-1/2 ${blockClass()}`}>
-                  {round.base[1]}
-                </div>
-                <div className={`absolute left-[73%] top-[70%] -translate-x-1/2 ${blockClass()}`}>
-                  {round.base[2]}
-                </div>
-              </motion.div>
-            </div>
-          </div>
+        <section className="pyramid-playfield min-h-0 flex-1">
+          <motion.svg viewBox="0 0 1536 1024" className="pyramid-puzzle" data-pyramid-puzzle data-pyramid-round={roundIndex}
+            role="img" aria-label={`Number pyramid. Bottom: ${round.base.join(', ')}. Middle: ${round.middle.join(', ')}. Find the missing top number.`}
+            animate={!reducedMotion && glow ? { scale: [1, 1.02, 1] } : { scale: 1 }}
+            transition={{ duration: reducedMotion ? 0 : .6, ease: 'easeInOut' }}>
+            <image href={pyramidTablets} width="1536" height="1024" aria-hidden="true" />
+            {[
+              { x: 768, y: 264, value: pyramidCellValue(round,steps,completedSteps,'top'), row: 'top' },
+              { x: 548, y: 514, value: pyramidCellValue(round,steps,completedSteps,'left'), row: 'middle' },
+              { x: 986, y: 514, value: pyramidCellValue(round,steps,completedSteps,'right'), row: 'middle' },
+              { x: 334, y: 770, value: round.base[0], row: 'base' },
+              { x: 768, y: 770, value: round.base[1], row: 'base' },
+              { x: 1200, y: 770, value: round.base[2], row: 'base' },
+            ].map(({x,y,value,row},index) => <text key={index} x={x} y={y} textAnchor="middle" dominantBaseline="central"
+              data-pyramid-value={row} className={`pyramid-tablet-value${glow ? ' is-restored' : ''}`}>{value}</text>)}
+          </motion.svg>
         </section>
 
         <section className="shrink-0">
           <div className="answer-choice-surface grid grid-cols-4 gap-2">
-            {round.options.map((option) => (
+            {activeStep.options.map((option) => (
               <motion.button
                 key={option}
                 whileTap={{ scale: 0.96 }}
@@ -225,7 +217,7 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
                 disabled={locked}
                 className={`flex min-h-[2.6rem] items-center justify-center rounded-[0.95rem] text-[0.98rem] font-black ${
                   selected === option
-                    ? option === round.top
+                    ? option === activeStep.target
                       ? 'ui-button-success'
                       : 'ui-button-primary'
                     : 'ui-button-secondary'

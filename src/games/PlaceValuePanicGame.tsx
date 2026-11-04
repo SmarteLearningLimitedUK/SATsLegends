@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import rhinoEnemy from '../assets/enemies/cohesive/rhino.webp';
-import forestBackground from '../assets/maps/premium/place-value-panic.webp';
-import SceneEnvironment from '../components/SceneEnvironment';
+import rhinoEnemy from '../assets/place_value/scene/hero_rhino_idle.png';
+import forestBackground from '../assets/place_value/scene/bg_acropolis_landscape.png';
+import stoneLedge from '../assets/place_value/scene/stone-ledge-v1.png';
 import hudAvatarName from '../assets/ui_frames/hudfortextplace_slices/hud_avatar_name.png';
 import hourglassIcon from '../assets/casual_ui/icons/hourglass.png';
 import { triggerHaptic } from '../haptics';
@@ -244,7 +244,7 @@ const makeQuestion = (level: number): QuestionState => {
   const placeHints = FULL_PLACE_VALUE_HINTS.slice(FULL_PLACE_VALUE_HINTS.length - slotCount);
   return {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    prompt: `The Monster Minds have scrambled the number stones.\nRebuild ${numberToWords(promptNumber)}.`,
+    prompt: `Write ${numberToWords(promptNumber)} in digits.`,
     expectedDigits,
     tokenValues,
     placeHints,
@@ -791,8 +791,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         onAction={() => setShowPracticeIntro(false)}
       />
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-        <SceneEnvironment src={forestBackground} />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,14,24,0.18)_0%,rgba(7,14,24,0.24)_44%,rgba(7,14,24,0.56)_100%)]" />
+        <img src={forestBackground} alt="" aria-hidden="true" draggable={false} className="h-full w-full object-cover" />
       </div>
       {!useSharedTopHud ? (
         <div
@@ -874,6 +873,8 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
       <motion.div
         ref={playfieldRef}
+        data-pvp-reviewed-scene
+        style={{ '--pvp-source-count': sourceSlots.length } as React.CSSProperties}
         className="pvp-playfield-layout absolute inset-0 z-20"
         onPointerMove={moveDrag}
         onPointerUp={finishDrag}
@@ -881,6 +882,9 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
         animate={boardShake && !reducedMotion ? { x: [0, -6, 6, -3, 3, 0] } : { x: 0 }}
         transition={{ duration: 0.34, ease: 'easeInOut' }}
       >
+      <svg className="pvp-ground-ledge" data-pvp-ground-ledge viewBox="0 440 1774 270" preserveAspectRatio="none" aria-hidden="true">
+        <image href={stoneLedge} width="1774" height="887" />
+      </svg>
       <div className="legend-pvp-question pointer-events-none absolute z-[60]" style={{ inset: '0 0 auto' }}>
         <GameQuestionCard
           title="Place Value Panic"
@@ -889,8 +893,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
           bodyClassName="mt-1 text-[clamp(0.82rem,1.65vw,0.98rem)] leading-snug md:text-[clamp(0.9rem,1.7vw,1.04rem)]"
           style={{ position: 'relative', top: '5px', width: '94%', transform: 'none' }}
         >
-          <span className="pvp-prompt-full">{questionPrompt}</span>
-          <span className="pvp-prompt-compact">{question.prompt.split('\n').find((line) => line.startsWith('Rebuild ')) || question.prompt}</span>
+          <span className="pvp-prompt-current">{questionPrompt}</span>
         </GameQuestionCard>
       </div>
 
@@ -976,7 +979,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               tabIndex={token ? 0 : -1}
               initial={reducedMotion ? false : { opacity: 0, y: 8, scale: 0.96 }}
               animate={{ opacity: token ? 1 : 0, y: 0, scale: token ? 1 : 0.94 }}
-              transition={{ duration: 0.26, ease: 'easeOut', delay: idx * 0.04 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
               style={{
                 maxWidth: '64px',
                 minWidth: 0,

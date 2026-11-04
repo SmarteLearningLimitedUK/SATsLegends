@@ -1,0 +1,318 @@
+/* Reference-led compositions. Shared learning engines render into bounded regions. */
+html[data-presentation='matharia'] {--concept-gold:#ffd45e;--concept-ivory:#fff3cd;--concept-surface:#072c51;}
+
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] {--concept-hud-top:clamp(54px,12.5vh,110px);--concept-hud-bottom:clamp(58px,12.5vh,110px);--legend-surface:#072c51;--legend-paper:#fff3cd;--legend-gold:#ffd45e;--legend-edge:#e0ab40;}
+
+
+@media(orientation:portrait){html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] {--concept-hud-top:clamp(58px,8vh,95px);--concept-hud-bottom:clamp(62px,8vh,95px);}}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .structured-game-layout {padding:calc(var(--concept-hud-top) + env(safe-area-inset-top)) 0 calc(var(--concept-hud-bottom) + env(safe-area-inset-bottom))!important;box-sizing:border-box;height:100%!important;max-height:100%!important;width:100%!important;min-height:0!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] :is(.game-shell-host,.game-shell-contract,.matharia-content-viewport,[data-gameplay-content-stage]) {width:100%!important;height:100%!important;min-height:0!important;max-width:none!important;transform:none!important;overflow:visible!important;display:flex;flex-direction:column;flex:1;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .concept-stage {display:grid!important;grid-template-rows:auto minmax(0,1fr);gap:clamp(4px,1vh,12px);position:relative;width:100%;height:100%;min-height:0;padding:0!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .concept-question-zone {position:relative!important;min-height:0;z-index:60;width:94%;margin:0 auto;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .concept-question-zone:empty {display:none;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .concept-playfield {position:relative;isolation:isolate;min-height:0;width:100%;height:100%;overflow:hidden;container-type:size;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .concept-game {position:absolute;inset:0;min-height:0;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .concept-game>:first-child {height:100%!important;min-height:0!important;background-color:transparent!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] :is(.game-background-layer,[data-game-background-layer],[data-game-wide-ambient]) {display:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .vision-world-backdrop {position:absolute!important;inset:0!important;width:100%!important;height:100%!important;z-index:0;pointer-events:none;display:block!important;object-fit:cover!important;object-position:center!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .game-question-card {position:relative!important;inset:auto!important;translate:none!important;transform:none!important;width:100%!important;max-width:none!important;min-height:0!important;margin:0!important;border:solid transparent!important;border-width:12px 22px!important;border-image:url("../assets/png/illustrated_ui/skin_panel@2x.png") 80 90 fill / 12px 22px / 0 stretch!important;border-radius:0!important;background:none!important;box-shadow:none!important;padding:3px 8px!important;max-height:25vh;overflow:auto;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .game-question-card-inner {display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:2px!important;min-height:0!important;padding:0!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] :is(.game-question-card-shell,.game-question-card-title-strip,.game-question-context,.vision-companion--question) {display:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .game-question-card .game-question-copy {color:#fff3cd!important;font-size:clamp(17px,2.2vw,24px)!important;line-height:1.22!important;text-align:center!important;font-weight:650!important;letter-spacing:0!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .game-question-card .game-question-copy :is(span,b,strong) {font-size:inherit!important;line-height:inherit!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .game-question-card .question-subtitle {font-size:clamp(12px,1.5vw,17px)!important;line-height:1.2!important;color:#e0efff!important;margin:1px 0 0!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] :is(.legend-hud-bar,.legend-dock-surface) {width:100%!important;max-width:none!important;height:100%!important;min-height:0!important;background:none!important;border:solid transparent!important;border-width:8px 22px!important;border-image:url("../assets/png/illustrated_ui/skin_hud_shell@2x.png") 38 105 fill / 8px 22px / 0 stretch!important;border-radius:0!important;box-shadow:none!important;padding:0 4px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .concept-hud-top {height:var(--concept-hud-top)!important;padding:4px 2%!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-testid="shared-bottom-hud"] {height:var(--concept-hud-bottom)!important;padding:0 2% max(4px,env(safe-area-inset-bottom))!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-testid="shared-bottom-hud"]>div {width:100%!important;max-width:none!important;overflow:visible!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .legend-hud-bar {display:flex;align-items:center;gap:10px;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .legend-hud-avatar {width:clamp(34px,5vh,64px)!important;height:clamp(34px,5vh,64px)!important;flex:none;background:#072c51;border:1px solid #ffd45e;border-radius:8px;overflow:hidden;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .legend-hud-avatar :is(img,svg) {height:100%;width:100%;object-fit:contain;transform:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .legend-hud-mission {flex:1;min-width:0;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .legend-hud-title {font:700 clamp(17px,2.3vw,30px)/1.1 Georgia,serif!important;color:#fff3cd!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .legend-hud-label {display:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .legend-hud-lives {display:flex;gap:5px;color:#f54866;align-items:center;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .legend-hud-lives :is(svg,.concept-life) {height:clamp(14px,2.7vh,28px)!important;width:clamp(14px,2.7vh,28px)!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .legend-hud-streak {color:#fff3cd;white-space:nowrap;font-size:clamp(13px,1.7vw,23px)!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .legend-hud-bar>div:last-child {display:flex!important;flex-direction:row!important;align-items:center!important;gap:10px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .legend-hud-timer {height:5px;border:1px solid #ffd45e;background:#03172e;border-radius:10px;overflow:hidden;margin-top:4px;width:80%;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .legend-hud-timer>div {height:100%;background:linear-gradient(#b8fff1,#13bdb7);}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .legend-dock-surface {display:grid!important;grid-auto-columns:minmax(0,1fr);grid-auto-flow:column;gap:0!important;align-items:center;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .legend-dock-button {display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:1px!important;width:100%!important;height:100%!important;min-height:44px!important;background:none!important;border:0!important;border-right:1px solid #c3943866!important;border-radius:0!important;box-shadow:none!important;padding:0 3px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .legend-dock-button :is(img,svg) {width:clamp(21px,3.3vh,36px)!important;height:clamp(21px,3.3vh,36px)!important;object-fit:contain;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .legend-dock-button span {font-size:clamp(12px,1.4vw,20px)!important;line-height:1!important;color:#fff3cd;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .legend-dock-base {display:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] :is(.ui-button-primary,.ui-button-success,.ui-button-secondary,.answer-choice-surface button:not([data-match-tile-appearance]),.licensed-answer-button) {border:solid transparent!important;border-width:6px 12px!important;border-image:url("../assets/png/buttons/button_navy_normal@2x.png") 18 30 fill / 6px 12px / 0 stretch!important;border-radius:0!important;background:none!important;box-shadow:none!important;color:#fff3cd!important;min-height:44px;padding:4px 8px!important;font-size:clamp(16px,2vw,23px)!important;line-height:1.15!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] :is(.ui-button-primary,.ui-button-success) {border-image-source:url("../assets/png/buttons/button_gold_normal@2x.png")!important;color:#142840!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .concept-hero {display:block!important;position:absolute!important;left:3%!important;bottom:18%!important;width:22%!important;height:70%!important;max-height:none!important;z-index:30;pointer-events:none;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .concept-hero .vision-character {height:100%;width:100%;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .concept-game :is(.game-submit-dock-fixed,.game-submit-dock) {position:absolute!important;inset:auto 5% 2%!important;width:90%!important;margin:0!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="bubbles"] .prime-pop-stage {background:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="bubbles"] .prime-pop-question-slot {display:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="bubbles"] [data-prime-pop-field] {inset:0 0 22%!important;left:0!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="bubbles"] .concept-hero {left:35%!important;bottom:0!important;width:30%!important;height:25%!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="bubbles"] [data-prime-pop-danger] {top:8%!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="bubbles"] .prime-pop-ward-label {display:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="bubbles"] .prime-pop-feedback {bottom:23%!important;left:50%!important;max-width:90%!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="match"] [data-match-main] {padding:0!important;height:100%!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="match"] [data-match-board-space] {position:absolute!important;inset:4% 2% 22%!important;height:auto!important;width:auto!important;padding:0!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="match"] .match-mastery-board {max-width:100%!important;background:#072c51!important;border:solid transparent!important;border-width:16px!important;border-image:url("../assets/png/illustrated_ui/skin_panel@2x.png") 80 90 fill / 16px / 0 stretch!important;box-shadow:none!important;padding:8px!important;border-radius:0!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="match"] .match-hero-guidance {position:absolute!important;bottom:19%;left:4%;right:4%;font-size:14px;line-height:1.2;text-align:center;background:#072c51;border:1px solid #ffd45e;padding:6px;z-index:40;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="match"] .concept-hero {left:37%!important;bottom:0!important;width:26%!important;height:20%!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="digits"] .pvp-playfield-layout {position:absolute!important;inset:0!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="digits"] .legend-pvp-enemy {left:22%!important;top:8%!important;bottom:auto!important;width:44%!important;height:43%!important;transform:translateX(-50%)!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="digits"] .legend-pvp-targets {position:absolute!important;left:49%!important;top:24%!important;width:48%!important;height:20%!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="digits"] .legend-pvp-sources {position:absolute!important;left:3%!important;top:62%!important;right:3%!important;width:94%!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="digits"] .game-submit-dock-fixed {bottom:5%!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="machine"] .mean-machine-content {padding:0!important;height:100%!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="machine"] .mean-machine-main {position:absolute!important;inset:0!important;display:block!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="machine"] .mean-machine-playfield {position:absolute!important;inset:8% 2% 33% 28%!important;border:0!important;padding:0!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="machine"] .mean-machine-figure {width:100%!important;height:100%!important;max-width:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="machine"] .mean-machine-answer-rail {position:absolute!important;left:4%!important;right:4%!important;bottom:6%!important;border:0!important;background:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="machine"] .concept-hero {left:0%!important;bottom:37%!important;width:37%!important;height:48%!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="rocket"] .rr-game {height:100%!important;background:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="rocket"] .rr-question {display:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="rocket"] .rr-answers {position:absolute!important;left:4%!important;right:4%!important;bottom:2%!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="plot"] :is(.line-graph-main,.line-graph-board) {position:absolute!important;inset:0!important;width:100%!important;height:100%!important;margin:0!important;padding:0!important;display:block!important;background:none!important;border:0!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="plot"] .line-graph-question {display:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="plot"] .line-graph-plot {position:absolute!important;left:27%!important;top:4%!important;width:49%!important;height:70%!important;min-height:0!important;border:solid transparent!important;border-width:14px 18px!important;border-image:url("../assets/png/illustrated_ui/skin_panel@2x.png") 80 90 fill / 14px 18px / 0 stretch!important;border-radius:0!important;padding:2px 5px!important;background:none!important;display:flex!important;flex-direction:column!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="plot"] .line-graph-chart {min-height:0!important;height:auto!important;flex:1!important;padding:0!important;background:#072c51!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="plot"] .line-graph-chart-title {font-size:11px!important;line-height:1.1!important;padding:0!important;background:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="plot"] .line-graph-side {position:absolute!important;left:78%!important;top:4%!important;width:19%!important;height:72%!important;padding:0!important;border:0!important;background:none!important;display:flex!important;flex-direction:column!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="plot"] .line-graph-side .answer-choice-surface {display:flex!important;flex-direction:column!important;gap:5px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="plot"] .line-graph-side button {min-height:35px!important;flex:1;font-size:16px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="plot"] :is(.line-graph-answer-instruction,.line-graph-mission) {display:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="plot"] .line-graph-next {position:absolute;bottom:0;left:0;right:0;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="chart"] .graph-grabber-game {padding:0!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="chart"] .graph-grabber-board {position:absolute!important;left:27%!important;top:5%!important;width:69%!important;height:63%!important;padding:12px!important;border:solid transparent!important;border-width:14px 18px!important;border-image:url("../assets/png/illustrated_ui/skin_panel@2x.png") 80 90 fill / 14px 18px / 0 stretch!important;background:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="chart"] .graph-grabber-answers {position:absolute!important;left:4%!important;right:4%!important;bottom:1%!important;width:92%!important;background:none!important;border:0!important;padding:0!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="blueprint"] .scale-numeric-layout {position:absolute!important;inset:0!important;display:block!important;padding:0!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="blueprint"] .scale-numeric-board-area {position:absolute!important;left:26%!important;top:4%!important;width:44%!important;height:69%!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="blueprint"] .scale-numeric-controls {position:absolute!important;left:73%!important;top:4%!important;width:24%!important;height:94%!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="blueprint"] .scale-numeric-actions {position:absolute!important;left:27%!important;bottom:0%!important;width:43%!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="blueprint"] .scale-numeric-game {padding:0!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="potion"] .potion-vessel {position:absolute!important;left:36%!important;top:6%!important;width:30%!important;height:62%!important;translate:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="potion"] .potion-vessel-art {content:url("../assets/png/props/prop_cauldron@2x.png");object-fit:contain!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="potion"] .potion-recipe-panel {display:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="potion"] .potion-play-area {height:100%!important;position:relative!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="potion"] .concept-hero {bottom:23%!important;height:70%!important;width:25%!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-vision-game="percent_power"] .reactor-layout {width:74%!important;max-width:none!important;height:96%!important;min-height:0!important;margin:0 1% 0 25%!important;position:relative!important;inset:auto!important;padding:6px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-vision-game="simplify_sprint"] .ss-layout {width:74%!important;max-width:none!important;height:96%!important;min-height:0!important;margin:0 1% 0 25%!important;position:relative!important;inset:auto!important;padding:6px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-vision-game="angle_arena"] .angle-arena-layout {width:74%!important;max-width:none!important;height:96%!important;min-height:0!important;margin:0 1% 0 25%!important;position:relative!important;inset:auto!important;padding:6px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-vision-game="polygon_palace"] .polygon-composition {width:74%!important;max-width:none!important;height:96%!important;min-height:0!important;margin:0 1% 0 25%!important;position:relative!important;inset:auto!important;padding:6px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-vision-game="area_architect"] .area-room-game {width:74%!important;max-width:none!important;height:96%!important;min-height:0!important;margin:0 1% 0 25%!important;position:relative!important;inset:auto!important;padding:6px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-vision-game="rotation_relay"] .rs-workspace {width:74%!important;max-width:none!important;height:96%!important;min-height:0!important;margin:0 1% 0 25%!important;position:relative!important;inset:auto!important;padding:6px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-vision-game="coordinates_quest"] .coordinates-quest-layout {width:74%!important;max-width:none!important;height:96%!important;min-height:0!important;margin:0 1% 0 25%!important;position:relative!important;inset:auto!important;padding:6px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-vision-game="conversion_canyon"] .conversion-workspace {width:74%!important;max-width:none!important;height:96%!important;min-height:0!important;margin:0 1% 0 25%!important;position:relative!important;inset:auto!important;padding:6px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-vision-game="perimeter_path"] .perimeter-layout {width:74%!important;max-width:none!important;height:96%!important;min-height:0!important;margin:0 1% 0 25%!important;position:relative!important;inset:auto!important;padding:6px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-vision-game="data_detective"] .data-detective-layout {width:74%!important;max-width:none!important;height:96%!important;min-height:0!important;margin:0 1% 0 25%!important;position:relative!important;inset:auto!important;padding:6px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-vision-game="factor_frenzy"] .frenzy-workspace {width:74%!important;max-width:none!important;height:96%!important;min-height:0!important;margin:0 1% 0 25%!important;position:relative!important;inset:auto!important;padding:6px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-vision-game="multiplication_mine"] .mine-layout {width:74%!important;max-width:none!important;height:96%!important;min-height:0!important;margin:0 1% 0 25%!important;position:relative!important;inset:auto!important;padding:6px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-vision-game="order_ops_arena"] .order-composition {width:74%!important;max-width:none!important;height:96%!important;min-height:0!important;margin:0 1% 0 25%!important;position:relative!important;inset:auto!important;padding:6px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-vision-game="formula_forge"] [data-formula-playfield] {width:74%!important;max-width:none!important;height:96%!important;min-height:0!important;margin:0 1% 0 25%!important;position:relative!important;inset:auto!important;padding:6px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-vision-game="remainder_run"] .remainder-harbour {width:74%!important;max-width:none!important;height:96%!important;min-height:0!important;margin:0 1% 0 25%!important;position:relative!important;inset:auto!important;padding:6px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-vision-game="time_keeper_cove"] .chrono-layout {width:74%!important;max-width:none!important;height:96%!important;min-height:0!important;margin:0 1% 0 25%!important;position:relative!important;inset:auto!important;padding:6px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-vision-game="problem_pyramid"] .pyramid-composition {width:74%!important;max-width:none!important;height:96%!important;min-height:0!important;margin:0 1% 0 25%!important;position:relative!important;inset:auto!important;padding:6px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-vision-game="unit_mixer"] .lava-crossing-layout {width:74%!important;max-width:none!important;height:96%!important;min-height:0!important;margin:0 1% 0 25%!important;position:relative!important;inset:auto!important;padding:6px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-vision-game="change_counter"] .market-game {width:74%!important;max-width:none!important;height:96%!important;min-height:0!important;margin:0 1% 0 25%!important;position:relative!important;inset:auto!important;padding:6px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-vision-game="fraction_forge"] .ff-workspace {width:74%!important;max-width:none!important;height:96%!important;min-height:0!important;margin:0 1% 0 25%!important;position:relative!important;inset:auto!important;padding:6px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="paper"] .sats-mock {height:100%!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="paper"] .sats-mock-content {width:78%!important;margin-left:21%!important;padding:0 8px!important;}
+
+html[data-presentation='matharia'] body:has(.legend-dialog) #root [data-unified-minigame-hud]{visibility:hidden;}
+
+@media(prefers-reduced-motion:reduce){.concept-stage *{animation-duration:.01ms!important;animation-iteration-count:1!important;}}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .app-screen-content {position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="digits"] .concept-game>div>div>div.pointer-events-none.absolute.inset-0.z-0 {display:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="digits"] :is(.pvp-ground-ledge,.pvp-enemy-health-frame) {display:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="digits"] .legend-pvp-enemy {left:0%!important;top:2%!important;bottom:auto!important;height:50%!important;width:48%!important;translate:none!important;transform:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="digits"] .legend-pvp-enemy>.relative {height:100%!important;width:100%!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="digits"] .legend-pvp-enemy .vision-character {height:100%!important;width:100%!important;aspect-ratio:auto!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="digits"] .legend-pvp-targets {left:50%!important;top:17%!important;width:47%!important;height:auto!important;translate:none!important;transform:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="digits"] .pvp-stone-row {display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:5px!important;min-height:0!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="digits"] .pvp-number-stone {width:100%!important;min-width:0!important;height:auto!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="digits"] .pvp-stone-face {height:44px!important;min-height:44px!important;aspect-ratio:1;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="digits"] :is(.pvp-stone-panel,.pvp-digit-panel) {padding:6px!important;background:none!important;border:0!important;box-shadow:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="digits"] .pvp-stone-heading {display:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="digits"] .pvp-place-label {font-size:12px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="digits"] .legend-pvp-sources {top:58%!important;translate:none!important;transform:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="digits"] .game-submit-dock-fixed button {width:60%!important;height:48px!important;min-height:48px!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="match"] [data-match-status] {display:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="match"] .concept-hero {height:27%!important;bottom:0!important;width:36%!important;left:32%!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="potion"] :is(.potion-panic-scene,.potion-panic-stage,.game-screen-main) {background:transparent!important;backdrop-filter:none!important;border:0!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="potion"] .potion-panic-scene .game-screen-layout {height:100%!important;padding:0!important;display:block!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="potion"] .potion-panic-scene .game-screen-main {position:absolute!important;inset:0 0 22%!important;min-height:0!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="potion"] .potion-panic-main {display:block!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="potion"] .potion-panic-stage {position:absolute!important;inset:0!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="potion"] .potion-vessel {position:absolute!important;left:36%!important;top:5%!important;width:30%!important;height:70%!important;translate:none!important;transform:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="potion"] .potion-ingredients {position:absolute!important;left:28%!important;right:3%!important;bottom:0!important;background:none!important;border:0!important;padding:0!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="potion"] .potion-ingredients-heading {display:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="potion"] .potion-panic-scene .game-screen-bottom {position:absolute!important;left:27%!important;right:4%!important;bottom:0!important;height:20%!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="potion"] .potion-feedback-slot {display:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .concept-game [data-game-scene-image] {display:none!important;}
+
+@media(orientation:portrait){html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .legend-hud-lives :is(svg,.concept-life) {width:14px!important;height:14px!important;}html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .legend-hud-bar>div:last-child{gap:5px!important;}html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .legend-hud-title{font-size:18px!important;}}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .concept-game .structured-game-layout {padding:0!important;height:100%!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .concept-game :is([class*="pt-[calc("],[class*="pt-28"],[class*="pb-[calc(env(safe-area-inset-bottom)"]) {padding-top:0!important;padding-bottom:0!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .concept-game .game-screen-top {display:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .concept-game .game-screen-main {min-height:0!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island]::before,html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island]::after {display:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] .app-screen-content::before {display:none!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="digits"] .legend-pvp-enemy {position:absolute!important;max-width:none!important;align-items:stretch!important;min-height:0!important;grid-area:auto!important;display:block!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="digits"] .legend-pvp-enemy .vision-character {max-width:none!important;display:block!important;min-height:0!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="digits"] .legend-pvp-enemy>.relative {display:block!important;position:relative!important;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="digits"] .game-submit-dock-fixed {height:52px!important;display:flex!important;align-items:center;justify-content:center;}
+
+html[data-presentation='matharia'] #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game]:not([data-measured-scene])[data-game-island] [data-composition="digits"] .game-submit-dock-fixed button>span {position:static!important;translate:none!important;transform:none!important;}

@@ -4,7 +4,7 @@ import { mkdir } from 'node:fs/promises';
 const base=process.env.LEGEND_QA_URL || 'http://127.0.0.1:4180';
 await mkdir('qa-artifacts/rounding-rocket',{recursive:true});
 const browser=await chromium.launch();
-const phoneBrowser=await webkit.launch();
+const phoneBrowser=process.env.ROCKET_QA_CASE==='desktop'?browser:await webkit.launch();
 const seed={playerName:'Tester',avatarId:'bran',lastLoginDate:new Date().toISOString().slice(0,10),claimedDailyRewardToday:true,unlockedIslands:[1,2,3,4,5,6,7,8]};
 async function pageFor(width,height,reducedMotion='no-preference'){
  const page=await (width < 700 ? phoneBrowser : browser).newPage({viewport:{width,height},reducedMotion});
@@ -25,7 +25,7 @@ const routes=await lookup.evaluate(async()=>{const {ISLANDS}=await import('/src/
 const errors=[];
 async function start(page,route){page.on('pageerror',e=>errors.push(e.message));await page.goto(base+route,{waitUntil:'domcontentloaded'});await page.locator('[data-rocket-question-value]').waitFor();for(let i=0;i<3;i++){const a=page.locator('[data-dialog-primary]:visible').first();if(!await a.count())break;try{await a.click({timeout:4000});}catch(e){if(await a.count())throw e;}await page.waitForTimeout(150);}await page.waitForTimeout(300);}
 async function layout(page){const result=await page.evaluate(()=>{const w=innerWidth,h=innerHeight;const fits=e=>{const r=e.getBoundingClientRect();return r.left>=-1&&r.right<=w+1&&r.top>=-1&&r.bottom<=h+1&&r.width>0&&r.height>0;};const q=document.querySelector('.rr-question');const v=document.querySelector('.rr-vehicle-position');const a=document.querySelector('.rr-answers');const qr=q.getBoundingClientRect(),vr=v.getBoundingClientRect(),ar=a.getBoundingClientRect();return {fits:[...document.querySelectorAll('.rr-answer-buttons button')].every(fits)&&fits(q)&&fits(v),questionClear:(qr.bottom<=vr.top+2 || qr.right<=vr.left)&&qr.bottom<=ar.top+2,answerClear:ar.top>=vr.bottom-2,overflow:document.documentElement.scrollWidth>w+1};});assert.ok(result.fits&&!result.overflow&&result.questionClear&&result.answerClear,JSON.stringify(result));}
-async function roundClock(page){const text=await page.locator('.legend-hud-streak').innerText();const clock=text.match(/(\d+):(\d+)/);if(clock)return Number(clock[1])*60+Number(clock[2]);const seconds=text.match(/(\d+)s/);assert.ok(seconds,'Round countdown is displayed');return Number(seconds[1]);}
+async function roundClock(page){const progress=page.getByRole('progressbar',{name:'Time remaining',exact:true});if(await progress.count())return Number(await progress.getAttribute('aria-valuenow'));const text=await page.locator('.legend-hud-streak').innerText();const clock=text.match(/(\d+):(\d+)/);if(clock)return Number(clock[1])*60+Number(clock[2]);const seconds=text.match(/(\d+)s/);assert.ok(seconds,'Round countdown is displayed');return Number(seconds[1]);}
 async function answer(page,wrong=false){const value=Number(await page.locator('[data-rocket-question-value]').innerText());const heading=await page.locator('.rr-question').innerText();const target=Number(heading.match(/nearest (\d+)/i)[1]);const correct=Math.round(value/target)*target;const pads=page.locator('.rr-answer-buttons button');if(wrong){const texts=await pads.allTextContents();await pads.nth(texts.findIndex(t=>Number(t)!==correct)).click();}else await page.getByRole('button',{name:`Landing pad ${correct}`,exact:true}).click();}
 for(const [name,width,height,motion,chosen,pauseFlight] of [
  ['desktop',1920,1080,'no-preference',routes.find(r=>!r.practice&&r.tier===1),true],

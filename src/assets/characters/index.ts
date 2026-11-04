@@ -1,21 +1,10 @@
 import { AvatarData } from '../../types';
 
-import barrattNeutral from './mobile/Barratt/barrat_neutral.png';
-import barrattHappy from './mobile/Barratt/barratt_happy.png';
-import barrattThink from './mobile/Barratt/barratt_think.png';
-
-import branNeutral from './mobile/Bran/bran_neutral.png';
-import branHappy from './mobile/Bran/bran_happy.png';
-import branThink from './mobile/Bran/bran_think.png';
-import branAttack from './mobile/Bran/bran_attack.png';
-
-import mochiNeutral from './mobile/Mochi/mochi_neutral.png';
-import mochiHappy from './mobile/Mochi/mochi_happy.png';
-import mochiSmile from './mobile/Mochi/mochi_smile.png';
-
-import vexNeutral from './mobile/Vex/vex_neutral.png';
-import vexSmile from './mobile/Vex/vex_smile.png';
-import vexThink from './mobile/Vex/vex_think.png';
+import { ORIGINAL_HEROES } from './originalHeroes';
+const barrattNeutral = ORIGINAL_HEROES.barratt, barrattHappy = barrattNeutral, barrattThink = barrattNeutral;
+const branNeutral = ORIGINAL_HEROES.bran, branHappy = branNeutral, branThink = branNeutral, branAttack = branNeutral;
+const mochiNeutral = ORIGINAL_HEROES.mochi, mochiHappy = mochiNeutral, mochiSmile = mochiNeutral;
+const vexNeutral = ORIGINAL_HEROES.vex, vexSmile = vexNeutral, vexThink = vexNeutral;
 
 export const DEFAULT_AVATAR_ID = 'barratt';
 

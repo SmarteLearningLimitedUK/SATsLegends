@@ -1,0 +1,12 @@
+{
+  "kind": "characters",
+  "key": "bran",
+  "file": "characters/bran-v3.webp",
+  "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-b39fcb38-b04e-43ab-92e6-444bc5479a16.png",
+  "prompt": "Edit target: Image 1 is the existing 20-frame performance sheet. Image 2 is the authoritative original Bran character identity.\nCRITICAL SPACING REPAIR. Keep the exact same sculpted-3D hero design, materials, colours, outfit, 20 poses and their reading order from Image 1. Re-layout this sheet as exactly FIVE columns FOUR rows, 5:4 canvas, genuinely transparent background.\nMake EVERY complete figure, INCLUDING wings, horns, tail, flames, hands and clothing, MUCH SMALLER inside its cell: the entire silhouette must occupy at most 65% of cell WIDTH and 70% of cell HEIGHT, with at least 15% clear transparent margin on every side. Centre each complete figure consistently. No neighbouring silhouettes may touch. Do not draw any floating particles, surrounding light haze or detached flames. Bran's flame stays small and attached to his hand/tail; Vex's complete tail stays in his own cell.\nDo not crop off any part of a hero. Do not expand a hand, wing or tail into the gutters. Gaps between all twenty silhouettes must be completely transparent alpha zero. No floor, no shadows, no scenery, no checkerboard, no labels. Keep four rows of FIVE separate full-body heroes each.\nPreserve this exact sequence: row 1 neutral/open, half-blink, closed-blink, half-blink, neutral/open; row 2 neutral, action wind-up, signature action, recovery, neutral; row 3 neutral, smile, success gesture, settling, neutral; row 4 neutral, head tilt, thoughtful hand-to-chin, settling, neutral.\nThis edit changes only figure size, spacing and unwanted outer effects. Keep the character's identity and premium rendered style faithful to both references.",
+  "dimensions": [
+    1402,
+    1122
+  ],
+  "bytes": 612042
+}

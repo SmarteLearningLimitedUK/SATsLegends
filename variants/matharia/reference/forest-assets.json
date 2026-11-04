@@ -1,0 +1,176 @@
+{
+  "processing": "Rectangular sprite-atlas extraction through a verified empty alpha gutter, alpha-margin crop and aspect-preserving WebP export. No painting, masks or concealment.",
+  "assets": [
+    {
+      "name": "backgrounds/bg_percent_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-ad674423-0bfc-4a4b-b356-d628b9c14ea0.png",
+      "atlasRegion": null,
+      "alphaBoundsCrop": null,
+      "production": "variants/matharia/assets/png/backgrounds/bg_percent_v3@2x.webp",
+      "dimensions": [
+        853,
+        1844
+      ],
+      "bytes": 726028,
+      "sha256": "a22492bd512145c0d23cb8844a9ae9fcb1ef94b061192d69e8542f27e4e8f128"
+    },
+    {
+      "name": "props/percent_reactor_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-90ca1cbf-1096-4267-a613-4daa72dc7ef5.png",
+      "atlasRegion": null,
+      "alphaBoundsCrop": [
+        3,
+        4,
+        1058,
+        1466
+      ],
+      "production": "variants/matharia/assets/png/props/percent_reactor_v3@2x.webp",
+      "dimensions": [
+        1055,
+        1462
+      ],
+      "bytes": 617924,
+      "sha256": "3c349d3e4bb7079d9580d8e3159b5c4eef062b132a0349882039b965ccbe093a"
+    },
+    {
+      "name": "backgrounds/bg_sprint_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-386a131c-abc8-4b74-95f0-3705a779b0fe.png",
+      "atlasRegion": null,
+      "alphaBoundsCrop": null,
+      "production": "variants/matharia/assets/png/backgrounds/bg_sprint_v3@2x.webp",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "bytes": 740428,
+      "sha256": "5526fc39c23e707e6a8f208c3e0a70803ad9b9ed497d193bfa4727fdf4930a5c"
+    },
+    {
+      "name": "props/sprint_gate_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-f1bae1a8-f972-43bf-b389-42da5bdba7dc.png",
+      "atlasRegion": null,
+      "alphaBoundsCrop": [
+        19,
+        45,
+        1152,
+        1309
+      ],
+      "production": "variants/matharia/assets/png/props/sprint_gate_v3@2x.webp",
+      "dimensions": [
+        1133,
+        1264
+      ],
+      "bytes": 642434,
+      "sha256": "e8e93c5020aa6dc4c3a674067a9cbe96bf650b871081a5885b145aa77302ae6e"
+    },
+    {
+      "name": "heroes/runner_barratt_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-bf050f82-f864-44f5-8c85-587acaed0a62.png",
+      "atlasRegion": [
+        0,
+        0,
+        627,
+        642
+      ],
+      "alphaBoundsCrop": [
+        48,
+        65,
+        609,
+        635
+      ],
+      "production": "variants/matharia/assets/png/heroes/runner_barratt_v3@2x.webp",
+      "dimensions": [
+        561,
+        570
+      ],
+      "bytes": 124286,
+      "sha256": "78736257b05ad12454befc0f25cd8322eaa219430d159a4113a21e8dbd5198b6"
+    },
+    {
+      "name": "heroes/runner_bran_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-bf050f82-f864-44f5-8c85-587acaed0a62.png",
+      "atlasRegion": [
+        627,
+        0,
+        1254,
+        642
+      ],
+      "alphaBoundsCrop": [
+        47,
+        90,
+        573,
+        635
+      ],
+      "production": "variants/matharia/assets/png/heroes/runner_bran_v3@2x.webp",
+      "dimensions": [
+        526,
+        545
+      ],
+      "bytes": 128052,
+      "sha256": "a99ad38fbf3cc09b75deef1490279144aa28e208885853a5d2b4d8c72e690b9b"
+    },
+    {
+      "name": "heroes/runner_mochi_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-bf050f82-f864-44f5-8c85-587acaed0a62.png",
+      "atlasRegion": [
+        0,
+        642,
+        627,
+        1254
+      ],
+      "alphaBoundsCrop": [
+        68,
+        24,
+        611,
+        565
+      ],
+      "production": "variants/matharia/assets/png/heroes/runner_mochi_v3@2x.webp",
+      "dimensions": [
+        543,
+        541
+      ],
+      "bytes": 130874,
+      "sha256": "2b41e850571f836984e3081c1e174391f2f5cee24e8f90ead77d53a59757811e"
+    },
+    {
+      "name": "heroes/runner_vex_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-bf050f82-f864-44f5-8c85-587acaed0a62.png",
+      "atlasRegion": [
+        627,
+        642,
+        1254,
+        1254
+      ],
+      "alphaBoundsCrop": [
+        42,
+        2,
+        577,
+        571
+      ],
+      "production": "variants/matharia/assets/png/heroes/runner_vex_v3@2x.webp",
+      "dimensions": [
+        535,
+        569
+      ],
+      "bytes": 125758,
+      "sha256": "216ddbcceac44eab26bff7c62fdd5bc5deff2b1abbded1bc15cf389cc38168cf"
+    },
+    {
+      "name": "props/sprint_gate_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-1fa5e6f8-fd9e-4ac5-8e4b-2956ff058976.png",
+      "production": "variants/matharia/assets/png/props/sprint_gate_v4@2x.webp",
+      "dimensions": [
+        1293,
+        967
+      ],
+      "alphaBoundsCrop": [
+        17,
+        169,
+        1310,
+        1136
+      ],
+      "bytes": 535424,
+      "sha256": "b8d2cb584fbdf9e92cd8cfe2eda1e58e255bec700ba4a17e3d757298cc83ef68"
+    }
+  ]
+}

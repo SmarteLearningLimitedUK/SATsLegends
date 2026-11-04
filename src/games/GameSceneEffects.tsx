@@ -26,6 +26,9 @@ const GameSceneEffects = memo(function GameSceneEffects({ id, cue, sequence }: P
   return (
     <div className="scene-effects island-scene-effects" data-scene-effects={id} data-scene-cue={cue} aria-hidden="true">
       <div className="island-scene-light" />
+      <div className="scene-depth-light"><i /><i /></div>
+      <div className="scene-ground-haze"><i /><i /></div>
+      <div className="scene-water-glints"><i /><i /><i /></div>
       <div className="island-scene-current"><i /><i /><i /></div>
       <div className="island-motes">
         {MOTES.map((style, index) => <i key={index} style={style} />)}

@@ -48,24 +48,35 @@ export function getLevelMusicUrl(blueprintKey?: string | null): string {
 
 /** Stream long tracks rather than decoding every level into Web Audio memory. */
 export function createLevelMusicPlayer(ctx: AudioContext, destination: AudioNode) {
-  const media = new Audio();
-  media.preload = 'none';
-  media.loop = true;
-  const source = ctx.createMediaElementSource(media);
-  source.connect(destination);
-  let trackUrl = '';
-  const pause = () => media.pause();
+  const voices = [0,1].map(() => {
+    const media = new Audio(); media.preload = 'none'; media.loop = true;
+    const source = ctx.createMediaElementSource(media), gain = ctx.createGain();
+    gain.gain.value = 0; source.connect(gain); gain.connect(destination);
+    return {media,source,gain,url:''};
+  });
+  let active=0, generation=0,pending:string|null=null;
+  const timers=new Set<ReturnType<typeof setTimeout>>();
+  const pause=()=>{generation++;pending=null;for(const timer of timers)clearTimeout(timer);timers.clear();for(const v of voices){v.media.pause();v.gain.gain.cancelScheduledValues(ctx.currentTime);v.gain.gain.value=0}};
   return {
     play(url: string) {
-      if (trackUrl !== url) {
-        media.pause();
-        media.src = url;
-        trackUrl = url;
-      }
-      if (!media.paused) return;
-      void media.play().catch(() => { /* A later player gesture can retry. */ });
+      const current=voices[active];
+      if(pending===url)return;
+      if(current.url===url&&!current.media.paused)return;
+      const nextIndex=current.url===url?active:1-active,next=voices[nextIndex],epoch=++generation;
+      pending=url;
+      if(next.url!==url){next.media.pause();next.media.src=url;next.url=url;next.gain.gain.value=0}
+      void next.media.play().then(()=>{
+        if(epoch!==generation)return;
+        pending=null;
+        const at=ctx.currentTime;active=nextIndex;
+        next.gain.gain.cancelScheduledValues(at);next.gain.gain.setTargetAtTime(1,at,.08);
+        if(current!==next){
+          current.gain.gain.cancelScheduledValues(at);current.gain.gain.setTargetAtTime(0,at,.08);
+          const timer=setTimeout(()=>{timers.delete(timer);if(active!==voices.indexOf(current))current.media.pause()},320);timers.add(timer);
+        }
+      }).catch(()=>{if(epoch===generation)pending=null; /* A player gesture can retry. */ });
     },
     pause,
-    dispose() { pause(); media.removeAttribute('src'); media.load(); source.disconnect(); },
+    dispose() { pause();for(const v of voices){v.media.removeAttribute('src');v.media.load();v.source.disconnect();v.gain.disconnect()} },
   };
 }

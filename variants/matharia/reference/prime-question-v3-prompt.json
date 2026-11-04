@@ -1,0 +1,5 @@
+{
+  "asset": "frames/prime_question_v3",
+  "prompt": "Edit this standalone blank question frame to make its enamel rectangle taller while preserving every gold corner, leaf, sapphire crest and border ornament at exactly its current shape and size. Add about 100 pixels of height to the plain middle of the teal face and the straight vertical side rails at the current 1600-pixel artwork width. The complete outer artwork should end with width/height about 2.38 (rather than its current 2.80); the gold rectangle itself should be about 3.0 times as wide as tall. Do not stretch the ornamental corners or top sapphire; extend only the blank middle face and straight side rails. Preserve the premium painted sapphire-and-gold game material, symmetry and crisp cutout. Absolutely no text, character, icon, number, control or scenery. True transparent background outside the frame, tightly trimmed.",
+  "source": "exec-a0900d07-7ae4-4b0f-ab44-595229ab014f.png"
+}

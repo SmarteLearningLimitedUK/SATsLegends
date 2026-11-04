@@ -1,0 +1,40 @@
+/* Three live factor gates and the real runner use one proportional landscape scene. */
+html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='simplify_sprint'] {
+ --concept-plane:calc(100vw - var(--concept-safe-left) - var(--concept-safe-right));
+ .sprint-scene {position:absolute;inset:0;width:100%;height:100%;}
+ .concept-question-zone {left:2.5%;top:13%;width:95%;height:8.5%;}
+ .scalable-question-copy {padding:4px 2%;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+ [data-question-copy] {font-size:clamp(14px,2cqw,36px);font-weight:650;line-height:1.1;text-align:left;}
+ .sprint-instruction {flex:1;min-width:0;}
+ .sprint-stats {display:flex;gap:12px;align-items:center;font-size:clamp(10px,1.2cqw,23px);line-height:1;font-weight:650;white-space:nowrap;}
+ .sprint-stats>span {display:flex;align-items:center;gap:5px;}
+ .sprint-stats strong {font-size:clamp(16px,2cqw,35px);font-variant-numeric:tabular-nums;}
+ .sprint-stats svg {width:1.3em;height:1.3em;color:#f4d879;}
+ .sprint-fraction-panel {position:absolute;isolation:isolate;left:50.3%;top:24.6%;width:26%;height:15.6%;padding:6px 3%;display:flex;align-items:center;justify-content:center;gap:8%;color:#fff9df;}
+ .sprint-reduce-label {color:#ffe383;font-size:clamp(14px,1.85cqw,34px);font-weight:650;line-height:1;}
+ .sprint-fraction {display:flex;flex-direction:column;align-items:center;font-size:clamp(23px,2.8cqw,56px);font-weight:650;line-height:.98;}
+ .sprint-fraction>span {padding:1px 5px;}.sprint-fraction>span+span {border-top:2px solid #fff4c9;}
+ .sprint-gates {position:absolute;left:35%;top:42%;width:60%;height:34%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3%;}
+ .ss-gate {position:relative;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:7%;padding:28% 16% 18%;border:0;background:none;box-shadow:none;color:#fff9d8;touch-action:manipulation;}
+ .ss-gate>img {position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;}
+ .ss-gate>span:not(.sr-only) {position:relative;z-index:1;font-size:clamp(12px,1.4cqw,28px);font-weight:650;line-height:1;color:#ffea9b;}
+ .ss-gate>strong {position:relative;z-index:1;font-size:clamp(26px,4.7cqw,86px);font-weight:650;line-height:1;text-shadow:0 2px 2px #003b24;}
+ .ss-gate[data-answer-state='crash'] {filter:drop-shadow(0 0 6px #ff9377);}.ss-gate:is([data-answer-state='burst'],[data-answer-state='checkpoint']) {filter:drop-shadow(0 0 6px #b4ff8d);}
+ .ss-gate:not(:disabled):active {scale:.97;filter:brightness(1.13);}.ss-gate:focus-visible {outline:3px solid #fff0ad;outline-offset:3px;border-radius:30% 30% 5% 5%;}
+ .sprint-runner {position:absolute;z-index:2;left:9.5%;bottom:20.5%;width:22%;height:42%;pointer-events:none;}
+ .sprint-runner>.vision-character {width:100%;height:100%;}
+ .sprint-feedback {position:absolute;isolation:isolate;left:2.5%;top:23%;width:44%;height:17%;min-height:52px;padding:6px 2%;display:flex;align-items:center;color:#fff9df;font-size:clamp(14px,1.55cqw,27px);font-weight:650;line-height:1.12;pointer-events:none;}
+ .sprint-feedback[data-tone='error'] {color:#ffd1b4;}.sprint-feedback[data-tone='success'] {color:#d9ffb2;}
+ [data-unified-minigame-hud]>div:first-of-type:has(.legend-hud-bar) {left:50%;top:1.4%;width:calc(var(--concept-plane)*.46);height:10.5%;padding:0;}
+ .legend-hud-avatar {width:14%;}.legend-hud-title {font-size:clamp(14px,4.6cqw,39px);}.legend-hud-timer {display:none;}
+ .legend-hud-lives .concept-life {width:5.4cqw;height:5.4cqw;}.legend-hud-streak {font-size:clamp(14px,4.6cqw,38px);}.concept-clock-icon {width:5cqw;height:5cqw;}
+ [data-testid='shared-bottom-hud'] {bottom:1.8%;width:max(244px,calc(var(--concept-plane)*.355));height:12.3%;padding:0;}
+ .legend-dock-button {min-height:44px;font-size:clamp(11px,3.8cqw,24px);gap:2px;}.legend-dock-button>svg {width:clamp(18px,5.7cqw,32px);height:clamp(18px,5.7cqw,32px);}
+ .concept-pause {right:max(1%,var(--concept-safe-right));top:1.5%;width:clamp(44px,6vw,110px);}
+}
+/* The landscape content parent already applies the horizontal safe areas. */
+html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='simplify_sprint'][data-measured-scene] .concept-stage[data-concept-orientation='landscape'] {margin-inline:0;}
+@media(max-width:740px) and (orientation:landscape){html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='simplify_sprint']{
+ .concept-question-zone {height:12%;}.sprint-fraction-panel {top:26%;height:14%;}.sprint-stats {gap:7px;}.sprint-stats>span {gap:3px;}
+}}
+@media(orientation:landscape) and (max-aspect-ratio:1.65){html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='simplify_sprint'] .sprint-runner{width:28%;left:7%;}}

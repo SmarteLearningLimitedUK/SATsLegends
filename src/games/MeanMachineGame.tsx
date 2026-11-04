@@ -11,13 +11,13 @@ import {
 } from 'lucide-react';
 import { GAME_HUD_RESTART_EVENT } from '../gameHudEvents';
 import MeanPowerEngine from './MeanPowerEngine';
-import meanMachineBackground from '../assets/maps/premium/mean-machine-workshop-wide.webp';
+import meanPortrait from '../assets/mean-machine-reference/bg_acropolis_portrait@2x.png';
+import meanLandscape from '../assets/mean-machine-reference/bg_acropolis_landscape@2x.png';
 import './game-refinements.css';
 import './mean-machine.css';
 import { GameplaySessionEventHandlers, GameplaySessionState, MiniGamePracticeBriefing } from '../app/gameplaySessionContract';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
-import SceneEnvironment from '../components/SceneEnvironment';
 
 type RoundMode = 'mean' | 'median' | 'mode' | 'missing';
 type GameState = 'idle' | 'spinning' | 'answering' | 'resolved';
@@ -49,14 +49,14 @@ interface MeanMachineGameProps {
 const TOTAL_LEVELS = 10;
 const REEL_COUNT = 8;
 const REEL_LAYOUT = [
-  { left: 23.5, top: 39.6, width: 10.7, height: 13.2 },
-  { left: 36.4, top: 39.6, width: 10.7, height: 13.2 },
-  { left: 49.4, top: 39.6, width: 10.7, height: 13.2 },
-  { left: 62.3, top: 39.6, width: 10.7, height: 13.2 },
-  { left: 23.5, top: 54.1, width: 10.7, height: 12.6 },
-  { left: 36.4, top: 54.1, width: 10.7, height: 12.6 },
-  { left: 49.4, top: 54.1, width: 10.7, height: 12.6 },
-  { left: 62.3, top: 54.1, width: 10.7, height: 12.6 },
+  { left: 28, top: 40, width: 9.5, height: 10.2 },
+  { left: 39.5, top: 40, width: 9.5, height: 10.2 },
+  { left: 51, top: 40, width: 9.5, height: 10.2 },
+  { left: 62.5, top: 40, width: 9.5, height: 10.2 },
+  { left: 28, top: 52, width: 9.5, height: 10.2 },
+  { left: 39.5, top: 52, width: 9.5, height: 10.2 },
+  { left: 51, top: 52, width: 9.5, height: 10.2 },
+  { left: 62.5, top: 52, width: 9.5, height: 10.2 },
 ] as const;
 
 const shuffle = <T,>(values: T[]): T[] => {
@@ -92,13 +92,13 @@ const clampOddCount = (count: number) => {
   return count % 2 === 0 ? count - 1 : count;
 };
 
-// Keep the campaign centred on the mean; other statistics appear only as late bonus rounds.
+// Every level practises the three averages; later tiers also include missing values.
 const ROUND_MODES_BY_TIER: Record<number, RoundMode[]> = {
-  1: ['mean'],
-  2: ['mean'],
-  3: ['mean', 'missing'],
-  4: ['mean', 'missing'],
-  5: ['mean', 'missing', 'mean', 'missing', 'median', 'mean', 'missing', 'mean', 'missing', 'mode'],
+  1: ['mean', 'median', 'mode'],
+  2: ['mean', 'median', 'mode'],
+  3: ['mean', 'median', 'mode', 'missing'],
+  4: ['mean', 'median', 'mode', 'missing'],
+  5: ['mean', 'median', 'mode', 'missing'],
 };
 
 const buildMeanRound = (level: number): RoundData => {
@@ -109,10 +109,11 @@ const buildMeanRound = (level: number): RoundData => {
   const activeReelIndexes = getActiveReelIndexes(activeCount);
   const targetMean = useDoubleDigits ? randomInt(10, 18 + level) : randomInt(3, 10);
 
+  const includeZero = level >= 4 && Math.random() < .3;
   let coreValues: number[] = [];
   let total = 0;
   for (let index = 0; index < activeCount - 1; index += 1) {
-    const value = randomInt(minValue, maxValue);
+    const value = includeZero && index === 0 ? 0 : randomInt(minValue, maxValue);
     coreValues.push(value);
     total += value;
   }
@@ -122,14 +123,17 @@ const buildMeanRound = (level: number): RoundData => {
     coreValues = [];
     total = 0;
     for (let index = 0; index < activeCount - 1; index += 1) {
-      const value = randomInt(minValue, maxValue);
+      const value = includeZero && index === 0 ? 0 : randomInt(minValue, maxValue);
       coreValues.push(value);
       total += value;
     }
     finalValue = targetMean * activeCount - total;
   }
 
-  const activeValues = shuffle([...coreValues, finalValue]);
+  // Later tiers include decimal means; even counts permit exact halves.
+  const fractional = level >= 3 && activeCount !== 3 && Math.random() < .5;
+  const activeValues = shuffle([...coreValues, finalValue + (fractional ? activeCount % 2 === 0 ? activeCount / 2 : 1 : 0)]);
+  const answerMean = activeValues.reduce((sum, value) => sum + value, 0) / activeCount;
   const actualValues = Array.from({ length: REEL_COUNT }, (_, index) => {
     const activeIndex = activeReelIndexes.indexOf(index);
     return activeIndex >= 0 ? activeValues[activeIndex] : 0;
@@ -139,9 +143,9 @@ const buildMeanRound = (level: number): RoundData => {
     return activeIndex >= 0 ? activeValues[activeIndex] : null;
   });
   const optionCount = 4;
-  const options = new Set<number>([targetMean]);
+  const options = new Set<number>([answerMean]);
   while (options.size < optionCount) {
-    const candidate = targetMean + randomInt(useDoubleDigits ? -6 : -3, useDoubleDigits ? 6 : 3);
+    const candidate = answerMean + randomInt(useDoubleDigits ? -6 : -3, useDoubleDigits ? 6 : 3);
     if (candidate > 0) options.add(candidate);
   }
 
@@ -150,8 +154,8 @@ const buildMeanRound = (level: number): RoundData => {
     kind: 'fluency',
     visibleValues,
     actualValues,
-    targetMean,
-    correctAnswer: targetMean,
+    targetMean: answerMean,
+    correctAnswer: answerMean,
     options: shuffle(Array.from(options)),
     activeReelIndexes,
   };
@@ -585,7 +589,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
     if (!round) return { title: 'Scan the power cells', prompt: 'Recalibrate the machine to begin.' };
     if (round.mode === 'mean') {
       return {
-        title: `Scan ${round.activeReelIndexes.length} cells. Restore their MEAN.`,
+        title: `What is the mean of the ${round.activeReelIndexes.length} readings?`,
         prompt: `Add them, then divide by ${round.activeReelIndexes.length} to get the MEAN.`,
       };
     }
@@ -602,7 +606,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
       };
     }
     return {
-      title: 'Fix the missing reel.',
+      title: `The mean of ${round.activeReelIndexes.length} readings is ${round.targetMean}. Find the missing reading.`,
       prompt: `Choose the number that repairs the MEAN of ${round.activeReelIndexes.length} reels.`,
     };
   }, [round]);
@@ -616,9 +620,10 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
-      <SceneEnvironment src={meanMachineBackground} />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(56,189,248,0.18),transparent_34%),radial-gradient(circle_at_12%_82%,rgba(59,130,246,0.14),transparent_28%),radial-gradient(circle_at_88%_78%,rgba(251,191,36,0.12),transparent_30%),linear-gradient(180deg,rgba(3,7,18,0.2),rgba(3,7,18,0.5))]" />
-      <div className="pointer-events-none absolute inset-x-[16%] top-[10%] h-24 rounded-full bg-cyan-300/12 blur-3xl" />
+      <picture className="pointer-events-none absolute inset-0 block" aria-hidden="true">
+        <source media="(orientation: landscape)" srcSet={meanLandscape} />
+        <img src={meanPortrait} alt="" draggable={false} data-game-scene-image className="h-full w-full object-cover" />
+      </picture>
 
       <div className="mean-machine-content relative z-10 flex h-full min-h-0 flex-col px-3 pb-[calc(env(safe-area-inset-bottom)+4.45rem)] pt-2 md:px-4">
         <div className="flex h-full min-h-0 flex-col gap-2.5">
@@ -678,14 +683,12 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                         className="mean-engine-scan-button absolute z-30 flex items-center justify-center rounded-[1.2rem] bg-transparent text-[0.98rem] font-black uppercase tracking-[0.18em] text-cyan-50 disabled:cursor-not-allowed disabled:opacity-65 md:text-[1.05rem]"
                         aria-label="Scan the power cells"
                         style={{
-                          left: '31.7%',
-                          top: '79.6%',
-                          width: '31.2%',
+                          left: '33%',
+                          top: '78.8%',
+                          width: '34%',
                           height: 'max(6.9%, calc(44px / var(--game-stage-scale, 1)))',
                         }}
                       >
-                        <span className="absolute inset-[6%] rounded-[1rem] bg-cyan-300/10 blur-md" />
-                        <span className="absolute inset-0 rounded-[1.2rem] border border-cyan-200/22 bg-[linear-gradient(180deg,rgba(37,99,235,0.12),rgba(29,78,216,0.04))]" />
                         <span className="relative z-10">
                           {gameState === 'spinning' ? 'Scanning' : 'Scan'}
                         </span>

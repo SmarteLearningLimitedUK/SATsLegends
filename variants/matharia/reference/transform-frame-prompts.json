@@ -1,0 +1,19 @@
+{
+  "tool": "Built-in image_gen",
+  "selected": {
+    "production": "frames/transform_board_v3",
+    "reason": "Existing inspected opaque face and ornate frame retained; live chart fitted into its inner face."
+  },
+  "discarded": [
+    {
+      "source": "exec-d060a783-0540-4637-b619-7362cecb56a3.png",
+      "reason": "Chart face remained obstructed by overly large top and bottom ornamentation.",
+      "prompt": "Use case: precise-object-edit. Produce a revised independent game coordinate-board frame asset based on this supplied frame. Preserve its Matharia sapphire crystal, polished gold, ice and deep navy material styling, fine 3D highlights and transparent exterior. Change the proportions to an outer width:height ratio 1.28:1, viewed perfectly front-on, no perspective. Reduce all four frame rails to slender elegant rails so the uninterrupted blank deep-navy rectangular chart face occupies x=6%..94% and y=7%..93% of the asset. Corner sapphire-and-gold ornaments remain compact and high quality, with small ice accents, contained within the outer bounds. No big spikes protruding into the chart face, no mid-edge jewels extending into the chart. The complete empty chart face must be flat and unobstructed, ready for a real SVG coordinate grid. No grid, numbers, letters, text, axes, triangles, icons, buttons, controls, background scenery or extra objects. Transparent background outside the single frame. Keep every corner sharp, uniformly detailed, symmetrical, unstretched."
+    },
+    {
+      "source": "exec-62959bbc-b6da-4ec8-be67-7e603ee702ce.png",
+      "prompt": "Use case: stylized-concept. Single independent empty game coordinate chart frame, Matharia premium sapphire-and-gold ice palace style. Outer silhouette is an exact modest landscape rectangle width 1.28 times height. THE FRAME RAILS ARE VERY THIN: only 4 percent of total image height on every side. Small compact gold-corner caps holding sapphire gemstones fit entirely INSIDE that thin perimeter. No spikes, no protruding crests, no tall corner towers, no piled ice. The huge rectangular navy chart face spans 90 percent of total width AND 90 percent of total height. Straight flat front view, symmetrical golden bevels with bright blue crystal inlaid rails, detailed gold highlights, restrained delicate snowy edges. Uniform narrow border, large clean deep navy empty face. No grid, no letters, no numbers, no symbols, no interface, no content, no scene. Transparent exterior. Asset suitable for placing a large real mathematical SVG chart onto the blank face. Do not add any ornamental protrusions. Make the navy face absolutely dominant.",
+      "reason": "Unwanted translucent rectangular marks in chart face; rejected after inspection in running app."
+    }
+  ]
+}

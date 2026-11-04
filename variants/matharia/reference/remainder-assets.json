@@ -1,0 +1,123 @@
+{
+  "references": [
+    "variants/matharia/reference/approved/remainder_run.png",
+    "qa-artifacts/concept-recreation/remainder-cart-reference.png"
+  ],
+  "inspection": "Inspected all four generated originals. Complete empty conveyor, separate three-dimensional maritime crate, separate rope coil and blank teal/gold button. Verified real alpha including rope exterior despite hidden RGB glow. Background is existing clean repository harbour scenery with no UI or foreground loading console. Six independent stock crates illustrate the approved dock inventory; exact remaining/loaded quantities and all working are live.",
+  "processing": "Alpha-margin crop and aspect-preserving WebP only; original background copied without recompression. No painted covers, masks, flattened controls or semantic image processing.",
+  "assets": [
+    {
+      "name": "props/remainder_conveyor_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-8c4ac051-939e-4d0c-a7d8-2ab2a508877a.png",
+      "alphaBoundsCrop": [
+        10,
+        155,
+        2168,
+        593
+      ],
+      "dimensions": [
+        1536,
+        312
+      ],
+      "production": "variants/matharia/assets/png/props/remainder_conveyor_v3@2x.webp",
+      "bytes": 198214,
+      "sha256": "51b3ff0ee1b9214f54c50565e5850c5b76485f9907c31ce14eb2e7d54bbb0362"
+    },
+    {
+      "name": "props/remainder_crate_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-9d1bdc2b-fabe-44f6-b330-d31b3b064ae2.png",
+      "alphaBoundsCrop": [
+        54,
+        75,
+        1272,
+        1142
+      ],
+      "dimensions": [
+        640,
+        561
+      ],
+      "production": "variants/matharia/assets/png/props/remainder_crate_v3@2x.webp",
+      "bytes": 200854,
+      "sha256": "b547179e945c978c358dce12cd1b92e1dcdb35bfe5cc0c002c00510f252b45a3"
+    },
+    {
+      "name": "props/remainder_rope_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-bb4eb758-12e9-4e81-95d9-60c260dc636d.png",
+      "alphaBoundsCrop": [
+        49,
+        127,
+        1500,
+        949
+      ],
+      "dimensions": [
+        1024,
+        580
+      ],
+      "production": "variants/matharia/assets/png/props/remainder_rope_v3@2x.webp",
+      "bytes": 337796,
+      "sha256": "ae048e1c1d524efabc12083d72eb04fceccd78d1f247d4a670a5237e986939a3"
+    },
+    {
+      "name": "buttons/remainder_batch_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-639d49e3-191b-471d-abd9-a540821b173d.png",
+      "alphaBoundsCrop": [
+        59,
+        201,
+        1572,
+        738
+      ],
+      "dimensions": [
+        1513,
+        537
+      ],
+      "production": "variants/matharia/assets/png/buttons/remainder_batch_v3@2x.webp",
+      "bytes": 118372,
+      "sha256": "330b1bd91cbc20fb852567d4406ea75f8df3af6f1e20b7a685fa4a71644e7c4a"
+    },
+    {
+      "name": "buttons/remainder_ship_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-bdeef301-0512-4ba2-93af-b6e12efe6d91.png",
+      "alphaBoundsCrop": [
+        45,
+        218,
+        1588,
+        723
+      ],
+      "dimensions": [
+        1536,
+        503
+      ],
+      "production": "variants/matharia/assets/png/buttons/remainder_ship_v3@2x.webp",
+      "bytes": 112746,
+      "sha256": "c90d59631e7878461ad561998c42bd3019dde876b124f66d0f848c9f2ea7664a"
+    },
+    {
+      "name": "buttons/remainder_unload_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-caaffdc1-6191-45fc-bf7d-3c7bf0abd180.png",
+      "alphaBoundsCrop": [
+        80,
+        192,
+        1602,
+        716
+      ],
+      "dimensions": [
+        1522,
+        524
+      ],
+      "production": "variants/matharia/assets/png/buttons/remainder_unload_v3@2x.webp",
+      "bytes": 164604,
+      "sha256": "ee9feb91b50d2e9706d8e70cb1f686c5d45b38c82a68550075affe93171fa620"
+    },
+    {
+      "name": "backgrounds/bg_remainder_v3",
+      "source": "src/assets/game-visions/environments/remainder_run-v1.webp",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "production": "variants/matharia/assets/png/backgrounds/bg_remainder_v3@2x.webp",
+      "bytes": 495156,
+      "sha256": "a1313e85da4dc136592faa0e4eb8b0d36f11ceb32b299d9ea3cf6f89e39f5c9c"
+    }
+  ]
+}

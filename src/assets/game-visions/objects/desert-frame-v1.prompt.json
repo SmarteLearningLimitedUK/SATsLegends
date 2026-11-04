@@ -1,0 +1,12 @@
+{
+  "kind": "objects",
+  "key": "desert-frame",
+  "file": "objects/desert-frame-v1.webp",
+  "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-8a267367-0d31-4e8a-9d04-b82dfe929aec.png",
+  "prompt": "Use case: background-extraction. Extract the large framed graph chalkboard from this screenshot, 2:1 landscape ratio. Exact sandstone and worn brass gold trim with rivets/corner brackets, dark charcoal blackboard center. Remove ALL grid lines, labels, crates, text, numbers, characters. One empty blank board, front elevation with no perspective, transparent outside 3% margins, no other objects/scenery. Match screenshot rendering/materials exactly.",
+  "dimensions": [
+    1774,
+    887
+  ],
+  "bytes": 407264
+}

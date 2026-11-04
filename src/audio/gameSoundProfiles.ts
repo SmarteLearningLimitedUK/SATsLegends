@@ -43,7 +43,7 @@ const profiles: Record<string, GameSoundProfile> = {
   prime_pop:          { id: 'prime_pop',          material: 'organic', pitch: 1.16, accent: .62 },
   problem_pyramid:    { id: 'problem_pyramid',    material: 'stone',   pitch: .87, accent: .54 },
   ratio_fractions:    { id: 'ratio_fractions',    material: 'engine',  pitch: 1.01, accent: .70 },
-  remainder_run:      { id: 'remainder_run',      material: 'engine',  pitch: 1.23, accent: .64 },
+  remainder_run:      { id: 'remainder_run',      material: 'wood',    pitch: .88, accent: .54 },
   rotation_relay:     { id: 'rotation_relay',     material: 'digital', pitch: 1.20, accent: .58 },
   rounding_rocket:    { id: 'rounding_rocket',    material: 'engine',  pitch: .90, accent: .76 },
   scale_builder:      { id: 'scale_builder',      material: 'metal',   pitch: .95, accent: .60 },

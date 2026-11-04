@@ -1,0 +1,16 @@
+/* Confirmed audit fixes; preserve scene art and reserve clear interaction regions. */
+@media(orientation:landscape) and (max-height:550px){
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='remainder_run'] .cargo-batch{min-height:48px;padding:3px 2px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='remainder_run'] .cargo-batch strong{font-size:17px!important;line-height:18px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='remainder_run'] .cargo-batch>span:first-child{font-size:16px!important;line-height:18px;white-space:nowrap;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='remainder_run'] .cargo-batch>span:last-child{font-size:14px!important;line-height:16px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='remainder_run'] .cargo-batch small{font-size:12px!important;line-height:16px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='remainder_run'] .cargo-reset{min-height:44px;min-width:52px;font-size:13px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='remainder_run'] .cargo-console-heading{margin-bottom:2px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='remainder_run'] .cargo-console{padding:3px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='remainder_run'] [data-division-playfield]{grid-template-columns:minmax(0,.72fr) minmax(0,1.28fr);}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='data_detective'] .data-detective-game .detective-suspect-name{font-size:14px!important;line-height:17px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='data_detective'] .detective-evidence-pins button{min-height:44px;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='potion_panic'] .potion-ingredient-button span{font-size:14px!important;line-height:18px!important;}
+ #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='potion_panic'] .vision-companion--stage[data-vision-companion]{bottom:24%;height:54%;width:22%;left:0;}
+}

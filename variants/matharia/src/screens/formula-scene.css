@@ -1,0 +1,74 @@
+/* Read the problem, inspect the live shape, then choose from a compact dock. */
+html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene][data-active-game='formula_forge'] {
+ --concept-plane:min(100vw,max(375px,calc((100dvh - var(--concept-safe-top) - var(--concept-safe-bottom))*.68)));
+ --formula-question-height:140px;
+ --formula-question-top:calc(var(--portrait-hud-top) + var(--portrait-hud-height) + 8px);
+ .formula-scene {position:absolute;inset:0;}
+ .concept-question-zone {left:5%;top:var(--formula-question-top);width:90%;height:var(--formula-question-height);}
+ .scalable-question-copy {display:grid;place-items:center;padding:clamp(18px,4.8cqw,30px);}
+ [data-question-copy] {font-size:clamp(19px,4.8cqw,28px);font-weight:650;line-height:1.25;}
+ .formula-question-content {display:grid;gap:8px;width:100%;height:auto;text-align:center;}
+ .formula-stem {display:block;white-space:pre-line;}
+ .formula-question-count {display:block;color:#ffe198;font-size:clamp(13px,3.2cqw,19px);line-height:1.3;font-weight:650;}
+ .question-jewel--bottom {display:none;}
+ .formula-workspace {position:absolute;left:5%;right:5%;top:calc(var(--formula-question-top) + var(--formula-question-height) + 8px);bottom:max(12%,86px);display:grid;grid-template-rows:minmax(0,1fr) auto;gap:8px;min-height:0;}
+ .formula-study {display:grid;grid-template-columns:26% minmax(0,1fr);gap:8px;min-height:0;}
+ .formula-scholar {position:relative;min-width:0;container-type:inline-size;pointer-events:none;}
+ .formula-guide-plinth {position:absolute;left:0;bottom:0;width:100%;height:auto;}
+ /* A square actor keeps every identity's proportions; its 5% sole baseline meets the plinth. */
+ .formula-guide-actor {position:absolute;left:50%;translate:-50% 0;bottom:.85cqw;width:135%;aspect-ratio:1;}
+ .formula-guide-actor>.vision-character {width:100%;height:100%;}
+ .formula-diagram-panel {position:relative;isolation:isolate;min-width:0;min-height:0;padding:clamp(14px,3.6cqw,24px);color:#fff8e8;}
+ .formula-diagram-host {height:100%;min-height:0;}
+ .formula-diagram-host>[data-formula-playfield] {height:100%;min-height:0;display:grid;grid-template-columns:max-content minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;gap:4px;border:0;border-radius:0;background:none;box-shadow:none;padding:0;}
+ .formula-diagram-host [data-formula-playfield]>div:first-of-type {display:contents;}
+ .formula-diagram-host [data-formula-playfield]>div:first-of-type>span:first-child {display:none;}
+ .formula-diagram-host [data-formula-equation] {grid-row:2;grid-column:1;align-self:center;font-size:clamp(13px,3.3cqw,20px);line-height:1.3;font-weight:650;color:#e3fff9;white-space:nowrap;}
+ .formula-diagram-host [data-formula-playfield]>div:nth-of-type(2) {position:relative;grid-row:1;grid-column:1/-1;min-height:0;margin:0;border:0;border-radius:0;background:none;overflow:hidden;}
+ .formula-diagram-host [data-formula-playfield]>div:nth-of-type(2)>svg {position:absolute;inset:0;width:100%;height:100%;}
+ .formula-diagram-host svg text {font-family:'Matharia Rounded',sans-serif;}
+ .formula-dimension-values {grid-row:2;grid-column:2;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px;margin:0;}
+ .formula-dimension-values>span {display:flex;justify-content:center;align-items:center;gap:3px;min-height:26px;padding:3px 5px;border:1px solid #dbb45e;border-radius:6px;background:#043b4a;color:#fff9e9;font-size:clamp(13px,3.3cqw,20px);line-height:1.3;font-weight:600;white-space:nowrap;}
+ .formula-dimension-values strong {font-weight:650;}
+ .formula-answer-panel {position:relative;isolation:isolate;min-height:0;padding:clamp(16px,4cqw,26px);display:grid;grid-template-columns:minmax(0,1fr);gap:6px;}
+ .formula-live-hint {display:flex;align-items:center;gap:7px;min-height:44px;padding:0 3px;color:#fff9ed;font-size:clamp(13px,3.3cqw,19px);line-height:1.3;font-weight:600;}
+ .formula-hint-copy {display:grid;flex:1;min-width:0;}
+ .formula-hint-copy>span {grid-area:1/1;align-self:center;}
+ .formula-live-hint[data-feedback='true'] .formula-default-hint {visibility:hidden;}
+ .formula-live-hint[data-tone='error'] {color:#ffdbc0;}
+ .formula-live-hint strong {font-weight:650;}
+ .formula-hint-rune {position:relative;flex:none;width:24px;height:28px;}
+ .formula-hint-rune img,.formula-hint-rune svg {position:absolute;inset:0;width:100%;height:100%;object-fit:contain;}
+ .formula-choose-heading {margin:0;padding:0 4px;color:#ffe198;text-align:center;font-size:clamp(15px,3.8cqw,22px);line-height:1.3;font-weight:650;}
+ .formula-live-choices {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:clamp(44px,5vh,54px);gap:6px;min-height:0;}
+ .formula-live-choices[data-columns='2'] {grid-template-columns:repeat(2,minmax(0,1fr));}
+ .formula-live-choices>button {position:relative;isolation:isolate;min-width:44px;min-height:44px;display:grid;place-items:center;padding:5px 6px;border:0;border-radius:0;background:none;box-shadow:none;color:#fff9ea;font-size:clamp(20px,5.3cqw,29px);font-weight:650;line-height:1.2;touch-action:manipulation;}
+ .formula-live-choices>button[data-selected='true'] {outline:2px solid #bdf5c2;outline-offset:-4px;}
+ .formula-live-choices>button[data-tone='error'] {outline-color:#ffc3ac;}
+ .formula-live-choices>button:not(:disabled):active {scale:.97;}
+ .formula-live-choices>button:focus-visible {outline:3px solid #fff0a3;outline-offset:1px;}
+ [data-testid='shared-bottom-hud'] {bottom:3.5%;width:calc(var(--concept-plane)*.92);height:7%;min-height:50px;padding:0;}
+ .legend-dock-button {background-image:none;font-size:clamp(11px,2.8cqw,18px);gap:2px;}
+ .legend-dock-button>svg {width:clamp(21px,5.7cqw,34px);height:clamp(21px,5.7cqw,34px);}
+}
+@media(max-height:740px) and (orientation:portrait) {html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene][data-active-game='formula_forge'] {
+ .formula-study {grid-template-columns:minmax(0,1fr);}
+ .formula-scholar {display:none;}
+ .formula-diagram-host svg text {font-size:20px;}
+ /* Full hints remain available via the shared Tips action. Explanations stay visible. */
+ .formula-live-hint[data-feedback='false'] {display:none;}
+ .formula-live-hint {grid-area:1/1;}
+ .formula-default-hint {display:none;}
+ .formula-choose-heading {grid-area:1/1;display:grid;place-items:center;min-height:44px;}
+ .formula-answer-panel:has(.formula-live-hint[data-feedback='true']) .formula-choose-heading {visibility:hidden;}
+ .formula-live-choices {grid-row:2;}
+ .concept-answer-streak {display:none;}
+}}
+@media(prefers-reduced-motion:reduce) {html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene][data-active-game='formula_forge'] .formula-live-choices>button {transition:none;}}
+@media(max-height:720px) and (orientation:portrait) {html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene][data-active-game='formula_forge']:has(.concept-stage[data-concept-orientation='portrait']) {
+ /* Keep both shared status rows inside the compact header's gold rails. */
+ .legend-hud-lives .concept-life {width:14px;height:14px;}
+ .legend-hud-streak {font-size:13px;}
+ .concept-clock-icon {width:13px;height:13px;}
+ .concept-clock-stack {gap:0;}
+}}

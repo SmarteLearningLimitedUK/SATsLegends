@@ -1,0 +1,50 @@
+/* A survey console and a true equal-unit coordinate plane, sharing source input. */
+html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='coordinates_quest'][data-measured-scene] {
+ --concept-plane:calc(100vw - var(--concept-safe-left) - var(--concept-safe-right));
+ .coordinates-scene {position:absolute;inset:0;}
+ .concept-question-zone {left:60%;top:13%;width:38%;height:29%;min-height:100px;}
+ .scalable-question-copy {display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px 7%;}
+ .coordinates-question-title {font-size:clamp(16px,1.9vw,29px);line-height:1.1;font-weight:650;}
+ .coordinates-question-instruction {font-size:clamp(14px,1.55vw,23px);line-height:1.18;font-weight:650;text-wrap:balance;}
+ .question-jewel--bottom {display:none;}
+ .coordinates-console-region {position:absolute;left:60%;top:43%;width:38%;height:min(40%,calc(57% - var(--dock-footer-height) - var(--dock-footer-bottom) - 8px));}
+ .coordinates-console {position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;}
+ .coordinates-current-point {position:absolute;isolation:isolate;left:26%;top:9%;width:68%;height:23%;min-height:34px;display:grid;place-items:center;padding:5px 8px;color:#fff9e7;text-align:center;font-size:clamp(17px,2.2vw,41px);line-height:1.1;font-weight:650;white-space:nowrap;}
+ .coordinates-arrows {position:absolute;left:8%;top:35%;width:84%;height:31%;display:grid;grid-template-columns:repeat(4,1fr);gap:3%;}
+ .coordinates-arrows>button {position:relative;isolation:isolate;display:grid;place-items:center;min-width:44px;min-height:44px;border:0;background:none;padding:7px;color:#fff9e7;touch-action:manipulation;}
+ .coordinates-arrows>button>span:not(.artwork-frame) {display:flex;align-items:center;justify-content:center;gap:3px;font-size:clamp(21px,2.7vw,49px);font-weight:650;line-height:1;}
+ .coordinates-arrows svg {width:clamp(21px,2.7vw,49px);height:clamp(21px,2.7vw,49px);stroke-width:3;}
+ .coordinates-choose {position:absolute;isolation:isolate;left:9%;top:72%;width:82%;height:25%;min-height:44px;display:grid;place-items:center;padding:6px 12px;border:0;background:none;color:#07364e;font-size:clamp(17px,2.2vw,40px);font-weight:650;line-height:1.1;touch-action:manipulation;}
+ :is(.coordinates-arrows>button,.coordinates-choose):not(:disabled):active {scale:.97;filter:brightness(1.12);}
+ :is(.coordinates-arrows>button,.coordinates-choose):focus-visible {outline:3px solid #fff4b6;outline-offset:2px;}
+ .coordinates-chart {position:absolute;isolation:isolate;left:21%;top:13%;width:38%;height:71%;}
+ .coordinates-chart .artwork-surface {clip-path:none;border-radius:4px;}
+ .coordinates-live-grid {position:absolute;left:50%;top:50%;width:min(90cqw,90cqh);height:min(90cqw,90cqh);translate:-50% -50%;}
+ .coordinate-plane {position:relative;width:100%;height:100%;min-height:0;max-width:none;max-height:none;aspect-ratio:auto;border:0;border-radius:0;background:none;box-shadow:none;overflow:visible;}
+ .coordinate-grid-lines {position:absolute;inset:0;width:100%;height:100%;overflow:visible;}
+ :is(.coordinate-point,.coordinate-tick,.coordinate-axis-title) {transform:none;}
+ .coordinate-grid-lines g line {stroke:#82bdd8;stroke-width:.3;opacity:.65;}.coordinate-grid-lines .coordinate-axis {stroke:#f8d365;stroke-width:.65;}
+ .coordinate-tick {position:absolute;z-index:2;display:block;padding:0;background:none;color:#fff5de;font-size:clamp(12px,1.5vw,27px);line-height:1;font-weight:650;pointer-events:none;}
+ .coordinate-tick-x {translate:-50% 9px;}.coordinate-tick-y {translate:calc(-100% - 8px) -50%;}.coordinate-origin {translate:-50% 9px;}
+ .coordinate-axis-title {position:absolute;z-index:2;color:#ffdc72;font-size:clamp(14px,1.8vw,33px);line-height:1;font-weight:650;pointer-events:none;}.coordinate-axis-x {right:0;translate:0 -100%;}.coordinate-axis-y {top:0;translate:5px 0;}
+ .coordinate-point {position:absolute;z-index:3;translate:-50% -50%;display:grid;place-items:center;min-width:0;min-height:0;border:0;background:none;padding:0;box-shadow:none;touch-action:manipulation;}
+ .coordinate-point-dot {display:block;width:5px;height:5px;border:1px solid #d9f9ff;border-radius:50%;background:#8fddf2;box-shadow:none;}
+ .coordinate-point[data-coordinate-start='true'] .coordinate-point-dot {width:12px;height:12px;border:2px solid #ffdb63;background:#ffd355;box-shadow:0 0 0 2px #74521b;}
+ .coordinate-start-label {display:none;}.coordinate-point:focus-visible {outline:2px solid #fff3a3;outline-offset:0;border-radius:50%;}
+ .coordinate-point[data-coordinate-selected='correct'] .coordinate-point-dot {width:12px;height:12px;background:#a5ffbb;border-color:#ecfff0;}.coordinate-point[data-coordinate-selected='incorrect'] .coordinate-point-dot {width:12px;height:12px;background:#ff819b;border-color:#ffe2e5;}
+ .coordinate-legend {position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0;}
+ .coordinates-console-cursor {position:absolute;z-index:4;width:17px;height:17px;translate:-50% -50%;border:2px dashed #fff3a3;border-radius:50%;pointer-events:none;}
+ .coordinates-explorer {position:absolute;left:-4%;bottom:14%;width:26%;height:min(50%,calc(var(--concept-plane)*.26));pointer-events:none;}.coordinates-explorer>.vision-character{width:100%;height:100%;}
+ .coordinates-feedback {position:absolute;isolation:isolate;left:2%;top:14%;width:17%;min-width:105px;padding:7px 12px;text-align:center;color:#fff4ce;font-size:clamp(14px,1.7vw,24px);font-weight:650;line-height:1.1;}
+ [data-unified-minigame-hud]>div:first-of-type:has(.legend-hud-bar) {top:1.8%;width:46%;height:10%;padding:0;}.legend-hud-title{font-size:clamp(15px,2.15vw,40px);}.legend-hud-avatar{width:15%;}.legend-hud-timer{display:none;}.legend-hud-streak{font-size:clamp(16px,2.1vw,39px);}
+ .legend-hud-bar::before {border-image-source:url('../../assets/png/frames/glacier_panel_v3@2x.webp');border-image-slice:180 fill;}
+ [data-testid='shared-bottom-hud'] {bottom:1%;width:36%;height:12%;min-width:235px;min-height:44px;padding:0;}.legend-dock-button{}
+ .concept-pause {top:1%;right:max(1%,var(--concept-safe-right));width:clamp(44px,6vw,100px);height:clamp(44px,6vw,100px);}
+}
+@media(max-width:760px){html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='coordinates_quest'][data-measured-scene] {
+ [data-unified-minigame-hud]>div:first-of-type:has(.legend-hud-bar){width:60%;height:11%;}.legend-hud-title{font-size:15px;}
+ .concept-question-zone{left:60%;width:38%;top:14%;height:32%;}.coordinates-question-title{font-size:16px;}.coordinates-question-instruction{font-size:14px;}
+ .coordinates-chart{left:21%;top:14%;width:38%;height:70%;}.coordinates-console-region{left:60%;top:44%;width:38%;}.coordinates-current-point{font-size:17px;}.coordinates-arrows{gap:2px;}.coordinates-arrows>button{padding:3px;}.coordinates-arrows svg{width:22px;height:22px;}.coordinates-arrows>button>span:not(.artwork-frame){font-size:22px;}
+ .coordinate-tick{font-size:12px;}.coordinate-tick-x{translate:-50% 7px;}.coordinate-tick-y{translate:calc(-100% - 6px) -50%;}.coordinate-origin{translate:calc(-100% - 6px) 7px;}.coordinate-legend{font-size:12px;bottom:-2%;}
+ .legend-dock-button{font-size:10px;gap:1px;}.legend-dock-button>svg{width:21px;height:21px;}
+}}

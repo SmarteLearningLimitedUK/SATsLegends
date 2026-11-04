@@ -1,0 +1,5 @@
+{
+  "asset": "frames/concept_nav_portrait_v5",
+  "prompt": "Edit the attached blank button asset into a taller version. Preserve its exact sapphire/teal face, gold material, sapphire crest, corners, leaves, lighting and edge quality. Extend only the plain central face and straight vertical rim sections downward so the complete outer artwork has width:height = 1.10:1 (a very nearly square, taller button). The previous artwork is too wide/shallow. Keep every corner, leaf and central sapphire in its original proportions, do not stretch them. No icon, text or label. One optically centred isolated button with tight bounds. The outside remains truly transparent.",
+  "source": "exec-234013f4-7ede-4de7-ab07-f886a0255ac4.png"
+}

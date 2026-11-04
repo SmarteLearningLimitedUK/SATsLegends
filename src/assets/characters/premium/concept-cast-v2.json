@@ -1,0 +1,99 @@
+{
+  "mode": "built-in image_gen",
+  "intent": "Identity-preserving cinematic fantasy re-render; original high-resolution concept scenes retained.",
+  "heroPrompt": "Use case: identity-preserve / style-transfer. Asset: production game character cutout. Reimagine the character in IMAGE 1 in the lavish high-resolution cinematic fantasy aesthetic of IMAGE 2. Image 1 is the identity and costume source of truth; Image 2 is ONLY a rendering/material/lighting benchmark. Preserve animal/species, face, colours, outfit, equipment and full-body silhouette. Upgrade to fine individually groomed fur or detailed scales, tactile woven cloth, stitched leather, engraved believable metal, dimensional eyes, sophisticated warm key light and cool bounce. Less plastic toy-like, more richly rendered animated fantasy film. Keep youthful friendly appeal. Full body including feet, antlers/ears, tail and accessories entirely inside portrait frame, same three-quarter stance as image 1. Single character only, isolated on TRUE TRANSPARENT alpha background. No scenery, floor, cast shadow, vignette, halo, text, UI or extra character. Maintain clearly separated limbs and comparable proportions for continuous mesh animation.",
+  "enemyPrompt": "Use case: identity-preserve style-transfer. Production game enemy full-body cutout. IMAGE 1 defines the exact existing character identity. IMAGE 2 is ONLY the target cinematic fantasy rendering style, not a replacement character. Re-render this SAME enemy to the exceptionally rich level of the scene: tactile detailed surfaces, sophisticated physically shaded materials, believable metal or skin or translucent jelly as appropriate, warm key/cool bounce, dimensional eyes. Preserve species, number of eyes, costume, colours, equipment and recognizable silhouette/pose exactly. Family-friendly mischievous expression. Full body entirely inside portrait frame, feet/accessories uncropped, single character, comparable proportions for mesh animation. TRUE TRANSPARENT alpha background; no scenery, floor, vignette, halo, text, UI or extra characters.",
+  "styleReference": "qa-artifacts/aaa-game-visions/polygon_palace-vision-v1.png",
+  "assets": [
+    {
+      "id": "barratt",
+      "input": "src/assets/characters/premium/barratt-v1.png",
+      "output": "src/assets/characters/premium/barratt-v2.png",
+      "generatedSource": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-1f46562b-16d6-47da-adef-2624dabb1d46.png",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true
+    },
+    {
+      "id": "bran",
+      "input": "src/assets/characters/premium/bran-v1.png",
+      "output": "src/assets/characters/premium/bran-v2.png",
+      "generatedSource": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-03fc67ea-bb8a-4b8e-81fe-b7d862794ace.png",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true
+    },
+    {
+      "id": "mochi",
+      "input": "src/assets/characters/premium/mochi-v1.png",
+      "output": "src/assets/characters/premium/mochi-v2.png",
+      "generatedSource": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-33052cf2-bd5d-4489-a9e9-c4f7181635f0.png",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true
+    },
+    {
+      "id": "vex",
+      "input": "src/assets/characters/premium/vex-v1.png",
+      "output": "src/assets/characters/premium/vex-v2.png",
+      "generatedSource": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-edd1dcbe-2683-4384-8327-d08369ef3730.png",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true
+    },
+    {
+      "id": "goblin",
+      "input": "src/assets/enemies/premium/goblin-v1.png",
+      "output": "src/assets/enemies/premium/goblin-v2.png",
+      "generatedSource": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-fc68b8c8-adbe-44ff-96d2-75c00accfa4d.png",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true
+    },
+    {
+      "id": "rhino",
+      "input": "src/assets/enemies/premium/rhino-v1.png",
+      "output": "src/assets/enemies/premium/rhino-v2.png",
+      "generatedSource": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-82d74664-4280-4264-9e23-248b81854989.png",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true
+    },
+    {
+      "id": "zombie",
+      "input": "src/assets/enemies/premium/zombie-v1.png",
+      "output": "src/assets/enemies/premium/zombie-v2.png",
+      "generatedSource": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-beb59c5d-2a49-4abb-af72-54536c4ad670.png",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true
+    },
+    {
+      "id": "jelly",
+      "input": "src/assets/enemies/premium/jelly-v1.png",
+      "output": "src/assets/enemies/premium/jelly-v2.png",
+      "generatedSource": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-fdffbdbf-cebb-4640-b6f0-35479255d47e.png",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true
+    },
+    {
+      "id": "slime",
+      "input": "src/assets/enemies/premium/slime-v1.png",
+      "output": "src/assets/enemies/premium/slime-v2.png",
+      "generatedSource": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-760f6af4-88da-4f71-b188-9c92207b329e.png",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true
+    },
+    {
+      "id": "sentinel",
+      "input": "src/assets/enemies/premium/sentinel-v1.png",
+      "output": "src/assets/enemies/premium/sentinel-v2.png",
+      "generatedSource": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-88ec5320-4f00-409d-99b8-14a52b276539.png",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true
+    }
+  ]
+}

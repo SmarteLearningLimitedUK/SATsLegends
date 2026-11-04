@@ -1,0 +1,14 @@
+{
+  "tool": "Built-in imagegen",
+  "reference": "variants/matharia/reference/approved/maths_vs_zombies.png",
+  "prompts": [
+    {
+      "name": "backgrounds/bg_zombies_v3",
+      "prompt": "Create ONE clean production background scenery plate for the SATs Legends game Maths vs Zombies, using this approved screenshot as the exact composition and art-style reference. Output 1844 x 853, wide landscape 2.162:1. Keep the same camera, bright sapphire sea, golden late-afternoon sunlight, cream-and-gold fantasy acropolis architecture, distant waterfalls and sailboats, blue-and-gold hanging banners, ivy, flowers, stone balustrade and braziers. Preserve the foreground terrace and its circular blue-and-gold floor mosaic at y=68%. Scene footing at y=66%, open level terrace stretching left to right. Keep distant palace and cliff focal points in their approved positions. REMOVE ALL UI, every top and bottom HUD, panels, buttons, text, numbers, hearts, icons, portrait medallions, labels, characters, zombie, hero, bow and arrows. Replace those removed regions with naturally continuous scenery. No patchwork, no blurred covers, no ghost frames or ghost controls, no typography or pseudo-text anywhere. The image must be a single coherent clean environment, with plenty of empty foreground at x=10%-25% and x=80%-92% for independent live hero/enemy sprites. Match the rich detailed polished 3D animated family-adventure game painting, saturation, warm lighting and architecture of the reference, without inventing a different setting. Do not add any characters or UI."
+    },
+    {
+      "name": "buttons/emerald_answer_wide_v3",
+      "prompt": "Create ONE independent production game button sprite, genuinely transparent background, no text, no symbols inside, no mockup. Match exactly the green answer buttons at the bottom of the supplied approved Maths vs Zombies screenshot. Extremely wide horizontal octagonal emerald glass answer button, gold bevel border with sharply cut 45-degree corners and a dark deep emerald inset centre for live white numerals. Small sapphire blue diamond jewel at each outer end, slim pale-gold highlights, layered luminous emerald bevel along upper and lower interior edges, warm polished golden material. Premium detailed illustrated 3D family-adventure game style identical to this approved reference. Sprite native aspect ratio about 4:1, tightly bounded 1400 x 350 pixels, centred with equal small transparent outer margin. The gold edge thickness about 7% of sprite height; centre should be broad, plain, dark green and unadorned. Straight top and bottom edges. Preserve the exact wide proportions of the reference's individual answer buttons. No rectangular background or scenery, no lettering or numbers, no icons, no floating specks or additional buttons, no shadows extending far beyond the button. This is one blank answer button asset, not the complete screen."
+    }
+  ]
+}

@@ -1,6 +1,9 @@
 .legend-desktop-welcome {
   display: none;
 }
+.legend-welcome-mobile-logo {position:absolute;z-index:1;top:5%;left:8%;width:84%;filter:drop-shadow(0 5px 10px #081529);}
+.legend-welcome-mobile-logo svg {width:100%;height:auto;}
+.legend-welcome-mobile .legend-welcome-action {padding:12px;border-radius:14px;background:#071b35d9;width:min(88%,340px);text-align:center;}
 
 @media (min-width: 900px) and (min-height: 600px),
   (min-width: 700px) and (min-height: 600px) and (orientation: landscape),

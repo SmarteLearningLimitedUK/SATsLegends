@@ -1,5 +1,13 @@
 # Scene art direction and annotated amendments
 
+## Current approved reference — 19 October 2026
+
+The user selected `qa-artifacts/concept-cast/index.html` and its attached gameplay screenshot as the visual target: rich, high-resolution fantasy scenery and detailed dimensional characters. This selection supersedes the proposed rollback to `qa-artifacts/island-reskin/gallery.html` and the earlier illustrated-environment direction below.
+
+Keep the environment selection in `src/games/visionScene.ts`, the four premium v2 heroes in `src/assets/characters/originalHeroes.ts`, and the six premium v2 enemies in `src/assets/characters/cohesiveCast.ts`. Keep current gameplay fixes and responsive containment; the reference establishes the art style, not permission to restore older gameplay bugs or panel overlaps.
+
+Target platforms remain desktop gameplay within the website and iPhone landscape. Fresh review captures are stored in `qa-artifacts/approved-concept-look/`. No external legacy assumptions were used.
+
 The visual benchmark is the existing Take Out Rush cafe, Rounding Rocket launch complex and Ratio Racer circuit. The remaining desktop settings now use complete wide illustrations, with foreground, activity-related equipment and distant depth. The three benchmark games retain their artwork.
 
 Assumptions: preserve question answers, scoring, difficulty and timed-round rules; use this repository's characters and existing fonts; retain portrait scenery on narrow screens while using the new landscape environments on desktop. No external legacy assumptions were used.

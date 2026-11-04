@@ -1,0 +1,82 @@
+/* Moonlit cemetery: independently rendered UI, actors and animated bat sprites. */
+html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='maths_vs_zombies'] {
+ --concept-plane:calc(100vw - var(--concept-safe-left) - var(--concept-safe-right));
+ --zombies-scene-height:calc(100dvh - var(--concept-safe-top) - var(--concept-safe-bottom));
+ --zombies-hud-top:calc(var(--zombies-scene-height) * .014);
+ --zombies-hud-height:clamp(44px,calc(var(--zombies-scene-height) * .125),84px);
+ --zombies-question-top:max(calc(var(--zombies-scene-height) * .166),calc(var(--zombies-hud-top) + var(--zombies-hud-height) + 8px));
+ --zombies-question-height:max(80px,calc(var(--zombies-scene-height) * .147));
+ --zombies-dock-height:var(--dock-footer-height);
+ --zombies-dock-bottom:var(--dock-footer-bottom);
+ --zombies-answer-height:clamp(52px,calc(var(--zombies-scene-height) * .13),96px);
+ --zombies-answer-bottom:calc(var(--zombies-dock-bottom) + var(--zombies-dock-height) + 10px);
+ --zombies-field-bottom:calc(var(--zombies-answer-bottom) + var(--zombies-answer-height) + 8px);
+ --zombies-field-top:max(calc(var(--zombies-scene-height) * .335),calc(var(--zombies-question-top) + var(--zombies-question-height) + 6px));
+ --zombies-field-height:calc(var(--zombies-scene-height) - var(--zombies-field-top) - var(--zombies-field-bottom));
+ .zombies-scene {position:absolute;inset:0;width:100%;height:100%;}
+ /* The native content viewport already applies horizontal safe-area padding. */
+ .concept-stage[data-concept-orientation='landscape'] {margin-left:0;margin-right:0;}
+ .concept-question-zone {left:8%;top:var(--zombies-question-top);width:84%;height:var(--zombies-question-height);}
+ .question-jewel {display:none;}
+ .scalable-question-copy {padding:12px 7%;display:flex;flex-direction:column;justify-content:center;gap:4px;}
+ [data-question-copy] {font-size:clamp(18px,2.8cqw,36px);font-weight:650;line-height:1.1;}
+ [data-question-copy]>strong {font:inherit;}
+ [data-question-copy]>small {display:flex;align-items:center;justify-content:center;flex-wrap:wrap;column-gap:10px;row-gap:2px;font-size:clamp(13px,1.9cqw,24px);font-weight:600;line-height:1.15;}
+ .zombies-progress {flex:none;white-space:nowrap;color:#bff4df;font-variant-numeric:tabular-nums;}
+ .zombies-progress::before {content:'·';margin-right:10px;color:#e8ca70;}
+ .zombies-playfield {position:absolute;z-index:3;left:4.5%;top:var(--zombies-field-top);width:91%;height:var(--zombies-field-height);--zombie-size:clamp(90px,12.5cqw,240px);--zombies-hero-height:min(calc(var(--zombies-field-height)*1.2),calc(var(--zombie-size)*1.55));overflow:visible;}
+ /* Both renderers' artwork and contact shadows end at 95% of their own box.
+    Keep that point on the same lane regardless of actor height. */
+ .zombies-player {filter:brightness(1.12) drop-shadow(0 0 2px #b7dcff) drop-shadow(0 3px 4px #071424);position:absolute;left:0;bottom:max(-7px,calc(var(--zombies-hero-height) * -.05));width:25%;height:var(--zombies-hero-height);pointer-events:none;}
+ .zombies-player>.vision-character {display:block;width:100%;height:100%;}
+ [data-spell-origin] {position:absolute;left:calc(50% + var(--zombies-hero-height) * .22);top:56%;width:1px;height:1px;pointer-events:none;}
+ .zombies-target {position:absolute;bottom:calc(var(--zombie-size) * -.05);min-height:44px;min-width:44px;height:var(--zombie-size);padding:0;border:0;background:none;box-shadow:none;touch-action:manipulation;}
+ .zombies-target>.vision-character {display:block;width:100%;height:100%;}
+ .zombies-target[aria-pressed='true'] {filter:drop-shadow(0 0 5px #ffdb60);}
+ .zombies-target:focus-visible {outline:3px solid #ffe49c;outline-offset:2px;border-radius:20%;}
+ .zombies-answer-options {position:absolute;z-index:4;left:7.7%;bottom:var(--zombies-answer-bottom);width:84.6%;height:var(--zombies-answer-height);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;container-type:inline-size;}
+ .zombies-answer-options>button {position:relative;isolation:isolate;min-width:44px;min-height:44px;display:grid;place-items:center;padding:8px 14%;border:0;background:none;box-shadow:none;color:white;font-size:clamp(20px,3.4cqw,44px);font-weight:700;line-height:1;touch-action:manipulation;font-variant-numeric:tabular-nums;}
+ .zombies-answer-options>button>span:not(.artwork-frame) {position:relative;padding:3px 5px;text-shadow:0 2px 2px #00433f;}
+ .zombies-answer-options>button[data-answer-state='correct'] {filter:drop-shadow(0 0 6px #b9ffa4);}
+ .zombies-answer-options>button[data-answer-state='incorrect'] {filter:drop-shadow(0 0 6px #ff9a76);}
+ .zombies-answer-options>button:not(:disabled):active {scale:.97;filter:brightness(1.15);}
+ .zombies-answer-options>button:focus-visible {outline:3px solid #fff0b3;outline-offset:2px;}
+ .zombies-spell-layer {position:absolute;inset:0;z-index:4;pointer-events:none;}
+ .zombies-spell-projectile {position:absolute;left:var(--spell-start-x);top:var(--spell-start-y);width:18px;height:8px;border-radius:50%;background:#faffda;box-shadow:-8px 0 8px #59d9ff,0 0 8px #c1ffff;rotate:var(--spell-angle);animation:zombies-cast var(--spell-flight-duration) linear both;}
+ .zombies-spell-impact {position:absolute;left:var(--spell-end-x);top:var(--spell-end-y);width:30px;aspect-ratio:1;translate:-50% -50%;border:3px solid #bcffff;border-radius:50%;box-shadow:0 0 14px #36d7ff;animation:zombies-impact 290ms ease-out both;}
+ [data-unified-minigame-hud]>div:first-of-type:has(.legend-hud-bar) {top:var(--zombies-hud-top);width:clamp(340px,calc(var(--concept-plane) * .56),560px);height:var(--zombies-hud-height);padding:0;}
+ .legend-hud-avatar {width:14%;}
+ .legend-hud-title {font-size:clamp(14px,4.1cqw,30px);}
+ .legend-hud-timer {display:none;}
+ .legend-hud-lives .concept-life {width:5.4cqw;height:5.4cqw;}
+ .legend-hud-streak {font-size:clamp(14px,4.6cqw,32px);}
+ .concept-clock-icon {width:5cqw;height:5cqw;}
+ [data-testid='shared-bottom-hud'] {bottom:var(--zombies-dock-bottom);width:max(280px,calc(var(--concept-plane) * .40));height:var(--zombies-dock-height);padding:0;}
+ .concept-pause {right:max(1%,var(--concept-safe-right));top:1.5%;width:clamp(44px,6vw,84px);}
+ .zombies-atmosphere {position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none;}
+ .graveyard-bat-flight {position:absolute;left:8%;top:calc(var(--zombies-field-top) + 8px);width:clamp(44px,5.5cqw,76px);--bat-range:76cqw;animation:matharia-bat-flight 18s ease-in-out -3s infinite;will-change:transform;}
+ .graveyard-bat-flight:nth-child(2) {left:87%;top:calc(var(--zombies-field-top) + var(--zombies-field-height)*.36);width:clamp(36px,4.5cqw,60px);--bat-range:-72cqw;animation-duration:23s;animation-delay:-11s;}
+ .graveyard-bat-flight:nth-child(3) {left:20%;top:calc(var(--zombies-field-top) + var(--zombies-field-height)*.16);width:clamp(30px,3.5cqw,48px);--bat-range:55cqw;animation-duration:20s;animation-delay:-16s;}
+ .graveyard-bat-art {position:relative;display:block;}
+ .graveyard-bat-art img {display:block;width:100%;height:auto;pointer-events:none;}
+ .graveyard-bat-art .graveyard-bat-wing {position:absolute;inset:0;width:100%;height:100%;object-fit:contain;animation:matharia-bat-wing-left 650ms ease-in-out infinite alternate;}
+ .graveyard-bat-wing--left {clip-path:polygon(0 0,45% 0,45% 100%,0 100%);transform-origin:44% 50%;}
+ .graveyard-bat-art .graveyard-bat-wing--right {clip-path:polygon(55% 0,100% 0,100% 100%,55% 100%);transform-origin:56% 50%;animation-name:matharia-bat-wing-right;}
+ .graveyard-bat-body {clip-path:inset(0 41% 0 41%);}
+ .graveyard-bat-flight:nth-child(2) .graveyard-bat-wing {animation-duration:590ms;animation-delay:-210ms;}
+ .graveyard-bat-flight:nth-child(3) .graveyard-bat-wing {animation-duration:720ms;animation-delay:-390ms;}
+ [data-paused='true'] :is(.zombies-spell-projectile,.zombies-spell-impact,.graveyard-bat-flight,.graveyard-bat-wing) {animation-play-state:paused;}
+}
+@keyframes zombies-cast {to{translate:var(--spell-dx) var(--spell-dy)}}
+@keyframes zombies-impact {from{scale:.3;opacity:1}to{scale:1.6;opacity:0}}
+@keyframes matharia-bat-flight {0%{opacity:0;transform:translate(0,8px) rotate(-5deg)}8%{opacity:.85}30%{transform:translate(calc(var(--bat-range)*.3),-10px) rotate(4deg)}60%{opacity:.85;transform:translate(calc(var(--bat-range)*.68),6px) rotate(-4deg)}82%,100%{opacity:0;transform:translate(var(--bat-range),-14px) rotate(3deg)}}
+@keyframes matharia-bat-wing-left {from{transform:perspective(240px) rotateY(-5deg) rotateZ(-3deg)}to{transform:perspective(240px) rotateY(48deg) rotateZ(5deg)}}
+@keyframes matharia-bat-wing-right {from{transform:perspective(240px) rotateY(5deg) rotateZ(3deg)}to{transform:perspective(240px) rotateY(-48deg) rotateZ(-5deg)}}
+@media(prefers-reduced-motion:reduce){html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='maths_vs_zombies'] {
+ .zombies-spell-projectile,.zombies-spell-impact,.graveyard-bat-flight,.graveyard-bat-art .graveyard-bat-wing {animation:none;}
+ .graveyard-bat-flight {opacity:.75;transform:none;}
+ .graveyard-bat-flight:nth-child(1) {left:28%;}
+ .graveyard-bat-flight:nth-child(2) {left:71%;}
+ .graveyard-bat-flight:nth-child(3) {left:51%;}
+ .zombies-answer-options>button {transition:none;}
+}}

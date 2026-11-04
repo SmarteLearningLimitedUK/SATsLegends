@@ -27,7 +27,7 @@ const generatePuzzle = (levelId: number): Puzzle => {
   }
 
   type PuzzleType = Puzzle['type'];
-  const types: PuzzleType[] = ['mean', 'median', 'mode', 'range', 'barchart'];
+  const types: PuzzleType[] = ['mean', 'range', 'barchart']; // KS2: mean, differences and chart reading.
   // Higher levels unlock more complex types
   const availableTypes = types.slice(0, Math.min(types.length, 2 + levelId));
   const type = availableTypes[Math.floor(Math.random() * availableTypes.length)];
@@ -107,7 +107,7 @@ const generatePuzzle = (levelId: number): Puzzle => {
           data[0] += (dataSize - remainder);
         }
         answer = data.reduce((a, b) => a + b, 0) / dataSize;
-        question = `What is the MEAN (average) of these numbers?`;
+        question = `What is the mean of these numbers?`;
         break;
       case 'median':
         const sorted = [...data].sort((a, b) => a - b);
@@ -139,7 +139,7 @@ const generatePuzzle = (levelId: number): Puzzle => {
         const max = Math.max(...data);
         const min = Math.min(...data);
         answer = max - min;
-        question = `What is the RANGE (difference between highest and lowest) of these numbers?`;
+        question = `What is the difference between the greatest and least numbers shown?`;
         break;
     }
   }

@@ -5,8 +5,8 @@ import confetti from 'canvas-confetti';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import './prime-pop.css';
 import { AVATARS } from '../constants';
-import primePopBackground from '../assets/maps/premium/prime-pop-wide-v2.png';
-import primePopDesktopBackground from '../assets/maps/premium/prime-pop-wide-v2.png';
+import primePopBackground from '../assets/prime-pop/matharia/bg_acropolis_portrait.png';
+import primePopDesktopBackground from '../assets/prime-pop/matharia/bg_acropolis_landscape.png';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
 
@@ -22,6 +22,7 @@ type BubbleTint = 'blue' | 'green' | 'purple' | 'gold' | 'red';
 
 interface Bubble {
   id: number;
+  age: number;
   x: number;
   y: number;
   drift: number;
@@ -33,7 +34,6 @@ interface Bubble {
 }
 
 interface PrimePopConfig {
-  roundSeconds: number;
   targetScore: number;
   maxNumber: number;
   minBubbles: number;
@@ -50,8 +50,12 @@ interface PrimePopConfig {
 }
 
 const INITIAL_LIVES = 10;
-const CHALLENGE_ROUND_SECONDS = 60;
+const ROUND_SECONDS = 30;
+const COMPOSITE_CLEARANCE_AGE_SECONDS = 3;
+const COMPOSITE_CLEARANCE_SPEED = 2.5;
 const BUBBLE_PIXEL_SCALE = 7.2;
+// Leave more room between targets while retaining usable space on phones.
+const bubbleSeparationPadding = (isPhone: boolean) => isPhone ? 12 : 24;
 const DANGER_LINE_Y = 12;
 const PRIME_SPEED_MULTIPLIER = 1.22;
 
@@ -83,7 +87,6 @@ const getConfig = (levelId: number): PrimePopConfig => {
   const level = [1, 3, 5, 7, 10][tier - 1];
   if (level <= 3) {
     return {
-      roundSeconds: 45,
       targetScore: 900 + ((level - 1) * 80),
       maxNumber: [20, 40, 60, 80, 99][tier - 1],
       minBubbles: 4,
@@ -102,7 +105,6 @@ const getConfig = (levelId: number): PrimePopConfig => {
 
   if (level <= 7) {
     return {
-      roundSeconds: 45,
       targetScore: 1150 + ((level - 4) * 95),
       maxNumber: [20, 40, 60, 80, 99][tier - 1],
       minBubbles: 5,
@@ -120,7 +122,6 @@ const getConfig = (levelId: number): PrimePopConfig => {
   }
 
   return {
-    roundSeconds: 45,
     targetScore: 1520 + ((level - 8) * 110),
     maxNumber: 99,
     minBubbles: 6,
@@ -151,9 +152,9 @@ const bubbleDiameterPx = (radius: number, isPhone: boolean) => {
 const maximumBubbleY = (radius: number, fieldHeight: number, isPhone: boolean) =>
   Math.min(94, 100 - ((bubbleDiameterPx(radius, isPhone) / 2 + 4) / Math.max(fieldHeight, 1)) * 100);
 
-const clampBubbleInsideBounds = (bubble: Bubble, fieldHeight: number, isPhone: boolean): Bubble => {
-  const minX = bubble.radius + 2;
-  const maxX = 100 - bubble.radius - 2;
+const clampBubbleInsideBounds = (bubble: Bubble, fieldWidth: number, fieldHeight: number, isPhone: boolean): Bubble => {
+  const minX = (bubbleDiameterPx(bubble.radius, isPhone) / 2 + 4) / Math.max(fieldWidth, 1) * 100;
+  const maxX = 100 - minX;
   return {
     ...bubble,
     x: Math.max(minX, Math.min(maxX, bubble.x)),
@@ -161,35 +162,37 @@ const clampBubbleInsideBounds = (bubble: Bubble, fieldHeight: number, isPhone: b
   };
 };
 
-const resolveBubbleCollisions = (items: Bubble[], fieldHeight: number, isPhone: boolean) => {
-  const next = items.map((item) => clampBubbleInsideBounds(item, fieldHeight, isPhone));
+const resolveBubbleCollisions = (items: Bubble[], fieldWidth: number, fieldHeight: number, isPhone: boolean) => {
+  const next = items.map((item) => clampBubbleInsideBounds(item, fieldWidth, fieldHeight, isPhone));
   if (next.length <= 1) return next;
-  const minSeparationPadding = 2.4;
+  // Compare rendered pixel radii: percentage x/y distances are not comparable
+  // on a wide, shallow phone playfield.
+  const minSeparationPadding = bubbleSeparationPadding(isPhone);
 
-  for (let pass = 0; pass < 2; pass += 1) {
+  for (let pass = 0; pass < 8; pass += 1) {
     for (let i = 0; i < next.length; i += 1) {
       for (let j = i + 1; j < next.length; j += 1) {
         const a = next[i];
         const b = next[j];
-        const dx = b.x - a.x;
-        const dy = b.y - a.y;
+        const dx = (b.x - a.x) * fieldWidth / 100;
+        const dy = (b.y - a.y) * fieldHeight / 100;
         const dist = Math.hypot(dx, dy);
-        const minDist = a.radius + b.radius + minSeparationPadding;
+        const minDist = (bubbleDiameterPx(a.radius, isPhone) + bubbleDiameterPx(b.radius, isPhone)) / 2 + minSeparationPadding;
 
         if (dist >= minDist) continue;
 
         const angle = dist === 0 ? Math.random() * Math.PI * 2 : Math.atan2(dy, dx);
         const overlap = (minDist - (dist || 0.001)) * 0.5;
-        const offsetX = Math.cos(angle) * overlap;
-        const offsetY = Math.sin(angle) * overlap;
+        const offsetX = Math.cos(angle) * overlap / fieldWidth * 100;
+        const offsetY = Math.sin(angle) * overlap / fieldHeight * 100;
 
         a.x -= offsetX;
         a.y -= offsetY;
         b.x += offsetX;
         b.y += offsetY;
 
-        next[i] = clampBubbleInsideBounds(a, fieldHeight, isPhone);
-        next[j] = clampBubbleInsideBounds(b, fieldHeight, isPhone);
+        next[i] = clampBubbleInsideBounds(a, fieldWidth, fieldHeight, isPhone);
+        next[j] = clampBubbleInsideBounds(b, fieldWidth, fieldHeight, isPhone);
       }
     }
   }
@@ -237,13 +240,25 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
   sessionEvents,
 }) => {
   const config = useMemo(() => getConfig(levelId), [levelId]);
-  const roundSeconds = isPractice ? config.roundSeconds : CHALLENGE_ROUND_SECONDS;
+  const roundSeconds = ROUND_SECONDS;
   const avatar = AVATARS.find((item) => item.id === avatarId) || AVATARS[0];
   const [isPhone, setIsPhone] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 768 : true));
   const [usesSharedHud, setUsesSharedHud] = useState(false);
   const fieldRef = useRef<HTMLDivElement | null>(null);
+  const dangerRef = useRef<HTMLDivElement | null>(null);
   const onVictoryRef = useRef(onVictory);
   const onGameOverRef = useRef(onGameOver);
+  const pendingTimeouts = useRef<Set<number>>(new Set());
+  const later = useCallback((action: () => void, delay: number) => {
+    const id = window.setTimeout(() => { pendingTimeouts.current.delete(id); action(); }, delay);
+    pendingTimeouts.current.add(id);
+    return id;
+  }, []);
+  useEffect(() => () => {
+    pendingTimeouts.current.forEach(id => window.clearTimeout(id));
+    pendingTimeouts.current.clear();
+  }, []);
+
   const sessionEventsRef = useRef(sessionEvents);
   sessionEventsRef.current = sessionEvents;
 
@@ -263,6 +278,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
   const bubbleIdRef = useRef(1);
   const overRef = useRef(false);
   const reportedResultRef = useRef(false);
+  const sharedSessionStartedRef = useRef(false);
   const scoreRef = useRef(0);
   const livesRef = useRef(INITIAL_LIVES);
   const comboRef = useRef(0);
@@ -329,7 +345,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     setUsesSharedHud(Boolean(document.querySelector('[data-unified-minigame-hud="true"]')));
   }, []);
 
-  const finalize = useCallback((finalScore: number) => {
+  const finalize = useCallback((finalScore: number, forceFailure = false) => {
     if (overRef.current || reportedResultRef.current) return;
     overRef.current = true;
     reportedResultRef.current = true;
@@ -337,7 +353,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
 
     const totalPops = Math.max(1, totalPopsRef.current);
     const primeAccuracy = primePopsRef.current / totalPops;
-    if (finalScore >= targetScore) {
+    if (!forceFailure && finalScore >= targetScore) {
       const stars = scoreToStars(finalScore, targetScore, primeAccuracy);
       confetti({
         particleCount: 120,
@@ -353,6 +369,8 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
 
   const makeBubble = useCallback((existing: Bubble[]) => {
     const radius = randomBetween(bubbleRuntime.minRadius, bubbleRuntime.maxRadius);
+    const fieldWidth = fieldRef.current?.clientWidth || 600;
+    const fieldHeight = fieldRef.current?.clientHeight || 400;
     const margin = radius + 2.8;
     const maxY = maximumBubbleY(radius, fieldRef.current?.clientHeight || 400, isPhone);
     const minY = Math.min(72, maxY);
@@ -361,9 +379,9 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
 
     for (let i = 0; i < 48; i += 1) {
       const hasOverlap = existing.some((bubble) => {
-        const dx = bubble.x - x;
-        const dy = bubble.y - y;
-        return Math.hypot(dx, dy) < (bubble.radius + radius + 2.6);
+        const dx = (bubble.x - x) * fieldWidth / 100;
+        const dy = (bubble.y - y) * fieldHeight / 100;
+        return Math.hypot(dx, dy) < (bubbleDiameterPx(bubble.radius, isPhone) + bubbleDiameterPx(radius, isPhone)) / 2 + bubbleSeparationPadding(isPhone);
       });
       if (!hasOverlap) break;
       x = randomBetween(margin, 100 - margin);
@@ -394,6 +412,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
 
     return {
       id: bubbleIdRef.current++,
+      age: 0,
       x,
       y,
       drift: (Math.random() < 0.5 ? -1 : 1) * randomBetween(1.1, 2.7),
@@ -408,6 +427,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
   useEffect(() => {
     overRef.current = false;
     reportedResultRef.current = false;
+    sharedSessionStartedRef.current = false;
     clearLoops();
     bubbleIdRef.current = 1;
     scoreRef.current = 0;
@@ -430,7 +450,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     setBubbles(initial);
     lastFrameRef.current = null;
 
-    if (!hasSharedSession && !isPractice) {
+    if (!hasSharedSession) {
       timerRef.current = window.setInterval(() => {
         if (pausedRef.current || document.hidden || overRef.current) return;
         localTimeRemainingRef.current = Math.max(0, localTimeRemainingRef.current - 1);
@@ -440,8 +460,9 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
 
     spawnRef.current = window.setInterval(() => {
       if (overRef.current || pausedRef.current || document.hidden) return;
-      if (bubblesRef.current.length >= bubbleRuntime.maxBubbles) return;
-      const next = [...bubblesRef.current, makeBubble(bubblesRef.current)];
+      const available = bubblesRef.current;
+      if (available.length >= bubbleRuntime.maxBubbles) return;
+      const next = [...available, makeBubble(available)];
       bubblesRef.current = next;
       setBubbles(next);
     }, config.spawnEveryMs);
@@ -450,9 +471,14 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
   }, [bubbleRuntime.maxBubbles, bubbleRuntime.minBubbles, clearLoops, config.spawnEveryMs, finalize, hasSharedSession, isPractice, makeBubble, roundSeconds]);
 
   useEffect(() => {
-    if (isPractice || sessionState?.timeLeft !== 0) return;
-    finalize(scoreRef.current);
-  }, [finalize, isPractice, sessionState?.timeLeft]);
+    if (!sessionState) return;
+    if (sessionState.timeLeft > 0 && sessionState.lives > 0) {
+      sharedSessionStartedRef.current = true;
+      return;
+    }
+    if (!sharedSessionStartedRef.current) return;
+    finalize(scoreRef.current, sessionState.lives <= 0);
+  }, [finalize, isPractice, sessionState?.lives, sessionState?.timeLeft]);
 
   const popBubble = useCallback((bubbleId: number) => {
     if (overRef.current || pausedRef.current) return;
@@ -490,8 +516,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
         score: scoreRef.current,
         metadata: { bubbleId, value: target.value },
       });
-      window.setTimeout(() => setFeedback(null), 520);
-      if (isPractice && scoreRef.current >= targetScore) finalize(scoreRef.current);
+      later(() => setFeedback(null), 520);
     } else {
       comboNext = 0;
       if (useLocalLives) livesNext -= 1;
@@ -503,7 +528,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
       setScreenShake(true);
       setFeedback(isPractice ? `${target.value} is not prime. Look for factors besides 1 and itself.` : '-1 life');
 
-      window.setTimeout(() => {
+      later(() => {
         const nextBubbles = bubblesRef.current.filter((bubble) => bubble.id !== bubbleId);
         bubblesRef.current = nextBubbles;
         scoreRef.current = Math.max(0, scoreNext);
@@ -513,7 +538,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
         setScreenShake(false);
         setBubbles(nextBubbles);
         setScore(scoreRef.current);
-        window.setTimeout(() => setFeedback(null), 520);
+        later(() => setFeedback(null), 520);
 
         if (useLocalLives && livesRef.current <= 0) {
           finalize(scoreRef.current);
@@ -525,7 +550,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     if (useLocalLives && livesRef.current <= 0) {
       finalize(scoreRef.current);
     }
-  }, [config.comboStep, config.primePoints, finalize, isPractice, targetScore, useLocalLives]);
+  }, [config.comboStep, config.primePoints, finalize, isPractice, later, targetScore, useLocalLives]);
 
   const cancelHeldPop = useCallback(() => {
     setPressedBubbleId(null);
@@ -533,11 +558,11 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
 
   const tapBubble = useCallback((bubbleId: number) => {
     setPressedBubbleId(bubbleId);
-    window.setTimeout(() => {
+    later(() => {
       setPressedBubbleId((current) => (current === bubbleId ? null : current));
     }, 90);
     popBubble(bubbleId);
-  }, [popBubble]);
+  }, [later, popBubble]);
 
   const loop = useCallback((ts: number) => {
     if (overRef.current) return;
@@ -552,7 +577,11 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
 
     const movedBubbles = bubblesRef.current.map((bubble) => {
       let x = bubble.x + (bubble.drift * dt);
-      const y = bubble.y - (bubble.vy * dt);
+      // Once the field is full, older non-primes clear the line sooner. They
+      // remain visible and pass the actual rail before freeing a spawn slot.
+      const clearance = !bubble.isPrime && bubble.age >= COMPOSITE_CLEARANCE_AGE_SECONDS && bubblesRef.current.length >= bubbleRuntime.maxBubbles
+        ? COMPOSITE_CLEARANCE_SPEED : 1;
+      const y = bubble.y - (bubble.vy * clearance * dt);
       let drift = bubble.drift;
       const minX = bubble.radius + 2;
       const maxX = 100 - bubble.radius - 2;
@@ -562,16 +591,29 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
         x = Math.max(minX, Math.min(maxX, x));
       }
 
-      return { ...bubble, x, y, drift };
+      return { ...bubble, x, y, drift, age: bubble.age + dt };
     });
-    const movedWithoutOverlap = resolveBubbleCollisions(movedBubbles, fieldRef.current?.clientHeight || 400, isPhone);
-
-    const dangerPrimeBubbles = movedWithoutOverlap.filter((bubble) => bubble.isPrime && (bubble.y - bubble.radius) <= DANGER_LINE_Y);
+    const field = fieldRef.current;
+    const fieldWidth = field?.clientWidth || 600;
+    const fieldHeight = field?.clientHeight || 400;
+    const fieldTop = field?.getBoundingClientRect().top || 0;
+    const dangerRect = dangerRef.current?.getBoundingClientRect();
+    // Use the visible rail's centre in field coordinates, including presentation overrides.
+    const dangerY = dangerRect
+      ? dangerRect.top + dangerRect.height / 2 - fieldTop
+      : fieldHeight * DANGER_LINE_Y / 100;
+    // A bubble crosses when its centre reaches the centre of the visible rail,
+    // not when its top edge merely touches it.
+    const hasReachedDanger = (bubble: Bubble) => bubble.y * fieldHeight / 100 <= dangerY;
+    // Check natural movement before collision separation can push a bubble into the rail.
+    const escaped = movedBubbles.filter(hasReachedDanger);
+    const dangerPrimeBubbles = escaped.filter(bubble => bubble.isPrime);
     const dangerPrimeHits = dangerPrimeBubbles.length;
-    const nextBubbles = movedWithoutOverlap.filter((bubble) => {
-      if ((bubble.y - bubble.radius) <= DANGER_LINE_Y && bubble.isPrime) return false;
-      return bubble.y >= -(bubble.radius + 3);
-    });
+    // Composites pass safely too: retaining them above the rail fills the spawn cap.
+    const nextBubbles = resolveBubbleCollisions(
+      movedBubbles.filter(bubble => !hasReachedDanger(bubble)),
+      fieldWidth, fieldHeight, isPhone,
+    );
     let scoreNext = scoreRef.current;
     let comboNext = comboRef.current;
     let livesNext = livesRef.current;
@@ -580,7 +622,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
       if (useLocalLives) livesNext -= dangerPrimeHits;
       comboNext = 0;
       setFeedback(isPractice ? 'A prime crossed the line. Try the next one.' : `-${dangerPrimeHits} life${dangerPrimeHits > 1 ? 's' : ''}`);
-      window.setTimeout(() => setFeedback(null), 520);
+      later(() => setFeedback(null), 520);
       dangerPrimeBubbles.forEach((bubble) => emitMiniGameSessionEvent(sessionEventsRef.current, 'incorrect_answer', {
         score: scoreRef.current,
         metadata: { bubbleId: bubble.id, reason: 'escaped' },
@@ -601,7 +643,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     }
 
     rafRef.current = requestAnimationFrame(loop);
-  }, [finalize, isPhone, isPractice, useLocalLives]);
+  }, [bubbleRuntime.maxBubbles, finalize, isPhone, isPractice, later, useLocalLives]);
 
   useEffect(() => {
     if (overRef.current) return;
@@ -629,7 +671,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
           <>
             In an attempt to hide the prime numbers, the Monster Minds have hidden them among regular numbers.
             {'\n'}
-            {isPractice ? <>Find and pop the <b>PRIME</b> numbers. Take your time; missed bubbles and wrong taps do not end practice.</> : <>Find and pop the <b>PRIME</b> numbers before they cross the line and you lose a life.</>}
+            {isPractice ? <>Find and pop the <b>PRIME</b> numbers in 30 seconds. Missed bubbles and wrong taps do not cost lives in practice.</> : <>Find and pop the <b>PRIME</b> numbers before they cross the line and you lose a life.</>}
           </>
         )}
         briefing={practiceBriefing}
@@ -648,6 +690,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
           className="relative min-h-0 flex-1 overflow-hidden bg-transparent pt-1"
         >
           <div
+            ref={dangerRef}
             data-prime-pop-danger="true"
             className={`prime-pop-ward pointer-events-none absolute left-0 right-0 z-20 flex items-center justify-center ${screenShake ? 'prime-pop-ward--hit' : ''}`}
             style={{
@@ -655,8 +698,8 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
             }}
           >
             <div className="prime-pop-ward-rail">
-              <i className="prime-pop-ward-crystal prime-pop-ward-crystal--left" aria-hidden="true" />
               <span className="prime-pop-ward-label">Danger</span>
+              <i className="prime-pop-ward-crystal prime-pop-ward-crystal--left" aria-hidden="true" />
               <i className="prime-pop-ward-crystal prime-pop-ward-crystal--right" aria-hidden="true" />
             </div>
           </div>
@@ -673,6 +716,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
                   key={bubble.id}
                   type="button"
                   data-button-skin="none"
+                  data-prime-bubble-id={bubble.id}
                   aria-label={`Pop number ${bubble.value}`}
                   onClick={(event) => { if (event.detail === 0) tapBubble(bubble.id); }}
                   className="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-full border-0 bg-transparent p-0 focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-amber-300"
@@ -707,7 +751,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
-                className="absolute bottom-[calc(env(safe-area-inset-bottom)+4.85rem)] left-1/2 z-30 -translate-x-1/2 rounded-full border border-cyan-100/60 bg-slate-900/70 px-4 py-1.5 text-xs font-black uppercase tracking-[0.12em] text-cyan-100 shadow-[0_10px_24px_rgba(2,6,23,0.48)]"
+                className="prime-pop-feedback absolute bottom-[calc(env(safe-area-inset-bottom)+4.85rem)] left-1/2 z-30 -translate-x-1/2 rounded-full border border-cyan-100/60 bg-slate-900/70 px-4 py-1.5 text-xs font-black uppercase tracking-[0.12em] text-cyan-100 shadow-[0_10px_24px_rgba(2,6,23,0.48)]"
               >
                 {feedback}
               </motion.div>

@@ -1,0 +1,19 @@
+{
+  "tool": "built-in image_gen.imagegen",
+  "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-67807bf8-b152-49e3-975e-a3ec67986da4.png",
+  "production": "variants/matharia/assets/png/props/mine_floor_v4@2x.webp",
+  "alpha_crop": [
+    10,
+    223,
+    2162,
+    561
+  ],
+  "dimensions": [
+    2152,
+    338
+  ],
+  "sha256": "fd23b2c1743049b2e8dff3d2c3d5b09ed464a50c9921fdf1edc60f7bab8ae16d",
+  "inspection": "Independent transparent timber ledge, full top and front edge. No text, controls, scenery or characters. No repainting or masks. Alpha-margin crop and lossless WebP only.",
+  "prompt": "Use case: stylized-concept. Asset type: independent transparent foreground prop for the existing Matharia sapphire-and-gold 3D fantasy mining game. Generate ONE isolated wide, shallow timber mining platform/ledge, frontal view with slight visible top surface, polished hand-painted 3D game illustration. Broad flat weathered dark honey oak planks across the whole top, sturdy thick front beam with iron/brass corner brackets, small sapphire-blue rivets, natural carved wood grain, soft warm amber lantern light from the upper left and cool cyan mine light from the right. Width-to-height about 5:1, long straight horizontal grounding surface, almost rectangular front edge, subtle irregular timber edges, no long supports or pillars. Entire prop fully visible and centered, as wide as possible within the canvas with small transparent margins. Real alpha transparent background including all space around the prop. No backdrop, scenery, characters, boulders, tools, glowing effects, text, numbers, controls, interface panels or decorative frames. It must be a physical wooden floor on which a separately rendered boulder and character can stand. No ground shadow extending outside the object.",
+  "alpha_crop_note": "Crop bounds ignore isolated alpha=1/255 generation noise. Retained pixels and their alpha values are unchanged."
+}

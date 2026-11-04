@@ -28,8 +28,11 @@ const postNativeBridge = (intent: HapticIntent) => {
   const payload = { type: 'haptic', intent };
 
   try {
-    window.webkit?.messageHandlers?.haptics?.postMessage(payload);
-    return Boolean(window.webkit?.messageHandlers?.haptics);
+    const handler = window.webkit?.messageHandlers?.haptics;
+    if (handler) {
+      handler.postMessage(payload);
+      return true;
+    }
   } catch {
     // Ignore bridge failures and fall through.
   }
@@ -48,6 +51,7 @@ const postNativeBridge = (intent: HapticIntent) => {
 
 export const triggerHaptic = (intent: HapticIntent = 'tap') => {
   if (typeof window === 'undefined') return false;
+  try { if (window.localStorage.getItem('sats_mastery_haptics_enabled') === 'false') return false; } catch { /* Storage may be unavailable; keep the action functional. */ }
 
   window.dispatchEvent(new CustomEvent('sats-mastery:haptic', { detail: { intent } }));
 

@@ -1,0 +1,13 @@
+{
+  "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-940386a4-da06-433a-85bb-5a9d1b4d12c8.png",
+  "production": "variants\\matharia\\assets\\png\\backgrounds\\bg_chrono_v4@2x.webp",
+  "dimensions": [
+    853,
+    1844
+  ],
+  "bytes": 176416,
+  "sha256": "874cdeca978aef729fcf93602621c8ba8306b277aedee8df4f05b1b224e80050",
+  "tool": "built-in image_gen",
+  "prompt_record": "qa-artifacts/chrono-space-focus/background-prompt.txt",
+  "inspection": "Independent quiet sapphire stone observatory alcove, two edge columns and low terrace. No clocks, characters, text, controls, ghost panels or masks. Original clock asset is unchanged. Aspect-preserving format conversion only."
+}

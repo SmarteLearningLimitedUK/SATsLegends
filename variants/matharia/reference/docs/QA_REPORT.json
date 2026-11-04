@@ -1,0 +1,47 @@
+{
+  "status": "passed",
+  "assetCount": 150,
+  "pngExportCount": 450,
+  "vectorSourceCount": 94,
+  "generatedMasterCount": 45,
+  "groups": {
+    "frames": 10,
+    "buttons": 15,
+    "runes": 5,
+    "icons": 40,
+    "progress": 2,
+    "ornaments": 3,
+    "effects": 3,
+    "gameplay": 6,
+    "digits": 10,
+    "backgrounds": 9,
+    "characters": 4,
+    "food": 4,
+    "heroes": 4,
+    "portraits": 4,
+    "map": 5,
+    "branding": 1,
+    "props": 14,
+    "illustrated_ui": 4,
+    "rocket_segments": 7
+  },
+  "checks": [
+    "All density PNGs fully decoded",
+    "Exact 1x/2x/3x logical dimensions",
+    "Unique asset IDs",
+    "All source paths exist",
+    "Xcode catalogue image references and SHA-256 matches",
+    "All 18 screen previews decoded at their reference dimensions",
+    "All screen layer references resolve",
+    "All 45 generation prompts retained"
+  ],
+  "errors": [],
+  "manualReview": "Hero, scenery, illustrated skin and assembled screen contact sheets reviewed; final device QA still required.",
+  "limitations": [
+    "Static artwork, not skeletal animation",
+    "Demo scene text and layouts are not changes to the educational bank",
+    "Illustrated cap insets require verification in the app",
+    "Raster master resolution limits are documented in each manifest entry"
+  ],
+  "screenPreviewCount": 18
+}

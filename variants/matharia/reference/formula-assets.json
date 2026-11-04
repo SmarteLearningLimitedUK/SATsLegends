@@ -1,0 +1,17 @@
+{
+  "reference": "variants/matharia/reference/approved/formula_forge.png",
+  "inspection": "Original generated output inspected: clean portrait forge/fortress scenery, blank foreground parchment and measuring tools, no baked interface, character, diagram or answer. Existing transparent four-identity parchment guides and live original FormulaShapePanel are reused.",
+  "assets": [
+    {
+      "name": "backgrounds/bg_formula_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-7123e09c-65e3-4675-b475-b9914ab32a53.png",
+      "dimensions": [
+        866,
+        1816
+      ],
+      "production": "variants/matharia/assets/png/backgrounds/bg_formula_v3@2x.webp",
+      "bytes": 608250,
+      "sha256": "30f553212bebe35be6809d5e8e7fa7f15a1ddeefdb57729297a9761b1786f1b9"
+    }
+  ]
+}

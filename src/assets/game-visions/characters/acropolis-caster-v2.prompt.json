@@ -1,0 +1,12 @@
+{
+  "kind": "characters",
+  "key": "acropolis-caster",
+  "file": "characters/acropolis-caster-v2.webp",
+  "source": "C:/Users/samva/.codex/generated_images/01a149fc-7e91-7bd3-86fc-f9095e88fd36/exec-1de43239-a8ca-455e-be11-cb5a341c5b0b.png",
+  "prompt": "Production game CHARACTER ANIMATION atlas on genuinely transparent alpha. Use the attached approved gameplay concept as the EXACT IDENTITY reference, not merely stylistic inspiration. Subject: the small spotted golden-orange LEOPARD kitten on the LEFT of the reference: round feline face and muzzle, green eyes, spotted golden fur and spotted tail, green and gold tunic and draped green cloak, gold medallion, brown leather bracers and soft paws. No goggles, no pilot clothing, no backpack. Match the exact reference's heroic reaching posture, face and costume. Output a strictly regular THREE-COLUMN TWO-ROW sprite atlas, 1536 by 1024 pixels, six square 512px cells with large TRANSPARENT GUTTERS. Every figure must fit inside x=64..448 and y=40..488 of its OWN cell, with no overlap into neighbours. Whole body and ears and hands and held tool and tail all visible; reduce the whole figure if necessary to leave 64px side margins. All figures exactly the same camera, size, lighting, same planted foot baseline y=480. NO text, UI, scenery, floor, shadows or labels. Premium detailed stylized 3D rendering matching concept lighting and material quality. Six poses in reading order: 1 idle ready pose; 2 exact same body with eyes closed for blink; 3 small preparatory gesture; 4 character-specific action: reach to pop a glowing orb at the right, with both feet still planted; 5 small pleased approving smile; 6 thoughtful retry. All poses must maintain the same face, costume, fixed camera and planted foot location. The top and bottom row MUST use identical framing, scale and baseline. Do not drift identity or add equipment. Transparent background everywhere outside the six characters.\n",
+  "dimensions": [
+    1536,
+    1024
+  ],
+  "bytes": 434912
+}

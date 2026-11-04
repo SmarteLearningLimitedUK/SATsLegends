@@ -1,6 +1,6 @@
 import { playGameSound } from '../audio/gameAudio';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ChevronLeft, Heart, Timer, Zap } from 'lucide-react';
+import { ChevronLeft, Heart, Timer } from 'lucide-react';
 import GameplaySceneBackdrop from '../components/GameplaySceneBackdrop';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
@@ -10,6 +10,9 @@ import { useTrimmedImageSource } from '../utils/trimTransparentImage';
 import { triggerHaptic } from '../haptics';
 import simplifySprintBackground from '../assets/maps/premium/simplify-sprint-ruins.png';
 import './simplify-sprint.css';
+import forestFactorGate from '../assets/game-visions/objects/forest-factor-gate-v1.webp';
+import { getVisionCharacter, getVisionEnvironment, visionPlayerIdentity } from './visionScene';
+import VisionCharacter from '../components/game-ui/VisionCharacter';
 
 interface SimplifySprintGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -46,9 +49,9 @@ const BASES: readonly (readonly FractionPair[])[] = [
 const MULTIPLIERS: readonly (readonly number[])[] = [
   [2, 3, 4],
   [2, 3, 4, 5],
-  [3, 4, 5, 6],
-  [4, 5, 6, 8, 9],
-  [5, 6, 8, 9, 10, 12],
+  [6, 8, 9, 10, 12],
+  [8, 10, 12, 14, 15],
+  [12, 15, 18, 20, 24, 30],
 ];
 const ROUNDS_PER_TIER = [5, 5, 6, 6, 7];
 
@@ -90,15 +93,17 @@ const getFactorChoices = (pair: FractionPair, tier: number, seed: number): numbe
     .filter((factor) => pair.numerator % factor === 0 && pair.denominator % factor === 0);
   const smaller = valid.filter((factor) => factor < greatest);
   const safe = [greatest];
-  if (tier >= 2 && smaller.length > 0 && (tier >= 4 || seed % 3 === 0)) {
+  if (tier >= 2 && smaller.length > 0 && (tier >= 3 || seed % 3 === 0)) {
     safe.push(smaller[Math.abs(seed) % smaller.length]);
   }
   const decoys = Array.from({ length: Math.max(18, greatest + 7) - 1 }, (_, index) => index + 2)
     .filter((factor) => pair.numerator % factor !== 0 || pair.denominator % factor !== 0)
     .sort((a, b) => Math.abs(a - greatest) - Math.abs(b - greatest) || a - b);
   const selected = [...safe];
+  // Later gates use nearby, plausible factors rather than distant easy traps.
+  const decoyPool = tier >= 3 ? decoys.slice(0, 5) : decoys;
   for (let index = 0; selected.length < 3; index++) {
-    const decoy = decoys[(Math.abs(seed) + index) % decoys.length];
+    const decoy = decoyPool[(Math.abs(seed) + index) % decoyPool.length];
     if (!selected.includes(decoy)) selected.push(decoy);
   }
   const rotation = Math.abs(seed) % 3;
@@ -125,6 +130,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
   const [localTimeLeft, setLocalTimeLeft] = useState(90);
   const [phase, setPhase] = useState<SprintPhase>('idle');
   const [selectedLane, setSelectedLane] = useState(2);
+  const [runnerTarget, setRunnerTarget] = useState({ left: '20%', bottom: '2%' });
   const [locked, setLocked] = useState(false);
   const [feedback, setFeedback] = useState<{ tone: FeedbackTone; text: string }>({
     tone: 'info', text: 'Find a common factor. Biggest one = shortcut!',
@@ -133,6 +139,8 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
   const endedRef = useRef(false);
   const pendingRef = useRef<number[]>([]);
   const scoreRef = useRef(score);
+  const arenaRef = useRef<HTMLDivElement>(null);
+  const runnerRef = useRef<HTMLDivElement>(null);
   scoreRef.current = score;
   const timeLeft = sessionState?.timeLeft ?? localTimeLeft;
   const lives = sessionState?.lives ?? localLives;
@@ -193,6 +201,15 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
     if (locked || endedRef.current || showPracticeIntro || sessionState?.paused) return;
     const factor = gates[lane - 1];
     if (!factor) return;
+    const arena = arenaRef.current?.getBoundingClientRect();
+    const runner = runnerRef.current?.getBoundingClientRect();
+    const gate = arenaRef.current?.querySelectorAll<HTMLButtonElement>('.ss-gate')[lane - 1]?.getBoundingClientRect();
+    if (arena && runner && gate && arena.width && arena.height) {
+      setRunnerTarget({
+        left: `${((gate.left + gate.width / 2 - arena.left - runner.width / 2) / arena.width) * 100}%`,
+        bottom: `${((arena.bottom - gate.bottom + gate.height * .12) / arena.height) * 100}%`,
+      });
+    }
     setSelectedLane(lane);
     setLocked(true);
     setPhase('dash');
@@ -223,7 +240,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
             return;
           }
         }
-        delay(() => { setPhase('idle'); setLocked(false); }, 690);
+        delay(() => { setPhase('idle'); setLocked(false); }, 850);
         return;
       }
 
@@ -283,7 +300,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
         setLocked(false);
         setFeedback({ tone: 'info', text: 'New checkpoint. Pick a common factor.' });
       }, 870);
-    }, 380);
+    }, 750);
   }, [
     locked, showPracticeIntro, sessionState, gates, delay, currentPair, score, combo,
     question, cleared, totalRounds, timeLeft, mistakes, localLives, isPractice,
@@ -308,7 +325,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
       data-phase={phase}
       data-sprint-paused={sessionState?.paused || false}
       data-tier={tier}
-      style={{ '--ss-background': 'url(' + simplifySprintBackground + ')' } as React.CSSProperties}
+      style={{ '--ss-gate-art': 'url(' + forestFactorGate + ')', '--ss-background': 'url(' + (getVisionEnvironment('simplify_sprint')??simplifySprintBackground) + ')' } as React.CSSProperties}
     >
       <GameplaySceneBackdrop gameType="fraction_match" backgroundOverride={simplifySprintBackground} />
       <div className="ss-scrim" aria-hidden="true" />
@@ -322,29 +339,26 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
       <div className="ss-layout">
         <div className="ss-top">
           <GameQuestionCard
-            title={gameTitle || 'Simplify Sprint'}
+            title={gameTitle || 'Simplify Sprint'} context=""
             className="ss-question"
             style={{ position: 'relative', top: 'auto', left: 'auto', right: 'auto', width: '100%', transform: 'none' }}
           >
-            Reduce <strong>{fractionLabel(currentPair)}</strong>. Pick a gate that divides the top and bottom.
-            <span className="ss-failure-rules">{isPractice ? 'Practice: try again after a wrong gate.' : 'Wrong gate: lose a heart. No hearts or no time: run ends.'}</span>
+            Choose a factor that divides both numbers.
           </GameQuestionCard>
           <div className="ss-stats" aria-label={'Checkpoint ' + roundIndex + ' of ' + totalRounds + ', combo ' + combo + ', ' + score + ' XP'}>
             {!useSharedTopHud && <button type="button" className="ss-back" data-button-skin="none" onClick={onBack} aria-label="Back"><ChevronLeft /></button>}
             <div className="ss-stat"><span>CHECKPOINT</span><strong className="ss-stat-value">{roundIndex} / {totalRounds}</strong></div>
-            <div className="ss-stat"><span><Zap aria-hidden="true" /> COMBO</span><strong className="ss-stat-value">×{combo}</strong></div>
-            <div className="ss-stat"><span>XP</span><strong className="ss-stat-value">{score}</strong></div>
             <div className="ss-stat ss-stat-clock"><span>{isPractice ? <Heart aria-hidden="true" /> : <Timer aria-hidden="true" />}{isPractice ? 'PRACTICE' : 'TIME'}</span><strong className="ss-stat-value">{isPractice ? '∞' : timeLeft + 's'}</strong></div>
             {!useSharedTopHud && <div className="ss-stat"><span>LIVES</span><strong className="ss-stat-value">{lives}</strong></div>}
           </div>
         </div>
-        <div className="ss-arena" data-sprint-arena data-sprint-scene>
+        <div ref={arenaRef} className="ss-arena" data-sprint-arena data-sprint-scene>
           <div className="ss-scene" aria-hidden="true" />
           <div className="ss-speedlines" aria-hidden="true" />
           <div className="ss-arch" aria-hidden="true" />
           <div className="ss-track" aria-hidden="true" />
           <div className="ss-fraction-display" aria-label={'Current fraction ' + fractionLabel(currentPair)}>
-            <span className="ss-fraction-label">CARRYING</span>
+            <span className="ss-fraction-label">REDUCE</span>
             <span className="ss-fraction" data-sprint-fraction data-numerator={currentPair.numerator} data-denominator={currentPair.denominator}>
               <span>{currentPair.numerator}</span><span className="ss-bar" /><span>{currentPair.denominator}</span>
             </span>
@@ -357,6 +371,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
                 type="button"
                 className="ss-gate"
                 data-sprint-gate={factor}
+                data-selected={selectedLane === index + 1 && phase !== 'idle'}
                 data-button-skin="none"
                 disabled={locked || showPracticeIntro || gcd(currentPair.numerator, currentPair.denominator) === 1}
                 onClick={() => chooseGate(index + 1)}
@@ -364,16 +379,18 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
               >
                 <span className="ss-gate-index">GATE {index + 1}</span>
                 <strong className="ss-gate-factor">÷{factor}</strong>
-                <span className="ss-gate-label">RUN</span>
+                <span className="ss-gate-label">Choose gate</span>
               </button>
             ))}
           </div>
-          <div className="ss-runner" data-lane={selectedLane} aria-hidden="true">
+          <div ref={runnerRef} className="ss-runner" data-lane={selectedLane} aria-hidden="true" style={{ '--ss-target-left': runnerTarget.left, '--ss-target-bottom': runnerTarget.bottom } as React.CSSProperties}>
             <div className="ss-runner-shadow" />
             <div className="ss-running-sprite">
+              {getVisionCharacter(visionPlayerIdentity(avatarId)) ? <VisionCharacter identity={visionPlayerIdentity(avatarId)} walking={phase === 'dash'} reaction={phase === 'crash' ? 'hit' : 'idle'} decorative /> : <>
               <img className="ss-runner-image ss-runner-body" src={heroImage} alt="" draggable={false} />
               <img className="ss-runner-leg ss-runner-leg-left" src={heroImage} alt="" draggable={false} />
               <img className="ss-runner-leg ss-runner-leg-right" src={heroImage} alt="" draggable={false} />
+              </>}
             </div>
             <span className="ss-dust ss-dust-one" /><span className="ss-dust ss-dust-two" />
           </div>

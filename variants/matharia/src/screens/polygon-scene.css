@@ -1,0 +1,74 @@
+/* Shape-first portrait layout. Controls are anchored above the safe HUD;
+   the live geometry occupies the remaining space. */
+html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='polygon_palace'][data-measured-scene] {
+ --polygon-height:calc(100dvh - var(--concept-safe-top) - var(--concept-safe-bottom));
+ --concept-plane:min(100vw,max(375px,calc(var(--polygon-height)*.58)));
+ --polygon-dock-height:clamp(48px,calc(var(--polygon-height)*.085),88px);
+ --polygon-dock-bottom:calc(var(--polygon-height)*.012);
+ --polygon-controls-bottom:calc(var(--polygon-dock-height) + var(--polygon-dock-bottom) + 12px);
+ --polygon-answer-height:max(148px,calc(var(--polygon-height)*.23));
+ --polygon-submit-height:0px;
+ --polygon-answer-top:calc(var(--polygon-height) - var(--polygon-controls-bottom) - var(--polygon-submit-height) - var(--polygon-answer-height));
+ --polygon-question-height:max(88px,calc(var(--polygon-height)*.11));
+ --polygon-question-top:calc(var(--polygon-answer-top) - 10px - var(--polygon-question-height));
+ --polygon-pedestal-height:calc(var(--polygon-height)*.06);
+ --polygon-pedestal-top:calc(var(--polygon-question-top) - 12px - var(--polygon-pedestal-height));
+ --polygon-shape-top:calc(var(--polygon-height)*.145);
+ --polygon-shape-height:calc(var(--polygon-pedestal-top) - var(--polygon-shape-top) - 6px);
+ &:has([data-polygon-mode='properties']) {
+  --polygon-answer-height:max(192px,calc(var(--polygon-height)*.255));
+  --polygon-submit-height:calc(max(44px,var(--polygon-height)*.065) + 10px);
+  --polygon-question-height:max(96px,calc(var(--polygon-height)*.12));
+ }
+ &:has(.polygon-choices[data-multi='true'][data-count='4']) {--polygon-answer-height:max(124px,calc(var(--polygon-height)*.21));}
+ .concept-stage {container-type:size;container-name:polygon-playfield;}
+ .polygon-scene {position:absolute;inset:0;width:100%;height:100%;}
+ .polygon-guide {position:absolute;left:-11%;top:calc(var(--polygon-pedestal-top) - var(--polygon-height)*.245);width:55%;height:calc(var(--polygon-height)*.30);pointer-events:none;}
+ .polygon-guide>.vision-character {width:100%;height:100%;}
+ .polygon-pedestal {position:absolute;left:37%;top:var(--polygon-pedestal-top);width:60%;height:var(--polygon-pedestal-height);object-fit:contain;pointer-events:none;}
+ .polygon-diagram {position:absolute;left:39%;top:var(--polygon-shape-top);width:56%;height:var(--polygon-shape-height);display:grid;place-items:center;filter:drop-shadow(0 0 6px #63ddff);pointer-events:none;}
+ .polygon-diagram>svg {width:100%;height:100%;max-width:none;max-height:none;}
+ .concept-question-zone {left:4%;top:var(--polygon-question-top);width:92%;height:var(--polygon-question-height);}
+ .scalable-question-copy {display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px 7%;}
+ .polygon-prompt {font-size:clamp(16px,4.6cqw,32px);line-height:1.12;font-weight:650;}
+ .polygon-subprompt {font-size:clamp(13px,3.4cqw,24px);line-height:1.18;font-weight:600;}
+ .polygon-inline-warning {color:#ffe0ae;}
+ .question-jewel--top {width:26cqw;}.question-jewel--bottom {display:none;}
+ .polygon-choices {position:absolute;left:4%;top:var(--polygon-answer-top);width:92%;height:var(--polygon-answer-height);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:minmax(0,1fr);gap:8px;}
+ .polygon-choices>button {position:relative;isolation:isolate;display:flex;align-items:center;justify-content:center;gap:6px;min-width:44px;min-height:44px;padding:8px 10px;border:0;background:none;box-shadow:none;color:#fff8e8;font-size:clamp(14px,3.8cqw,26px);font-weight:650;line-height:1.16;text-align:center;touch-action:manipulation;}
+ .polygon-choices[data-multi='true']>button {text-align:left;justify-content:flex-start;padding:5px 10px;}
+ .polygon-checkbox {position:relative;display:grid;place-items:center;flex:none;width:clamp(20px,5.6cqw,28px);aspect-ratio:1;}
+ .polygon-checkbox>svg {width:100%;height:100%;}
+ .polygon-checkbox>.lucide {position:absolute;width:72%;height:72%;color:#fff6a4;stroke-width:3;}
+ .polygon-choices>button[aria-pressed='true'] {filter:drop-shadow(0 0 4px #93f3ff);}
+ .polygon-submit {position:absolute;isolation:isolate;left:14%;bottom:var(--polygon-controls-bottom);width:72%;height:max(44px,calc(var(--polygon-height)*.065));min-height:44px;border:0;background:none;box-shadow:none;display:grid;place-items:center;padding:6px 9%;color:#04344a;font-size:clamp(14px,4.5cqw,30px);line-height:1;font-weight:700;touch-action:manipulation;}
+ .polygon-choices>button:not(:disabled):active {scale:.97;filter:brightness(1.12);}
+ /* A minimum-size Submit keeps its full touch area while pressed. */
+ .polygon-submit:not(:disabled):active {filter:brightness(1.12);}
+ .polygon-choices>button:focus-visible,.polygon-submit:focus-visible {outline:3px solid #fff1a3;outline-offset:2px;}
+ .polygon-choices>button:disabled,.polygon-submit:disabled {cursor:default;}
+ /* Result feedback occupies locked choices; no blank row is reserved for it. */
+ .polygon-feedback {position:absolute;z-index:20;isolation:isolate;left:7%;top:calc(var(--polygon-answer-top) + var(--polygon-answer-height)/2);translate:0 -50%;width:86%;min-height:64px;padding:14px 7%;display:flex;flex-direction:column;justify-content:center;gap:4px;text-align:center;color:#fff6dc;font-size:clamp(14px,3.5cqw,25px);line-height:1.2;pointer-events:none;}
+ .polygon-feedback[data-polygon-feedback='error'] {color:#ffd6bd;}
+ .polygon-feedback>strong {font-weight:700;}
+ [data-unified-minigame-hud]>div:first-of-type:has(.legend-hud-bar) {top:5.8%;height:5.8%;padding:0 5%;}
+ .legend-hud-title {font-size:clamp(14px,4.7cqw,40px);}.legend-hud-avatar {width:19%;}.legend-hud-timer {display:none;}
+ .legend-hud-bar::before {border-image-source:url('../../assets/png/frames/glacier_panel_v3@2x.webp');border-image-slice:180 fill;}
+ [data-testid='shared-bottom-hud'] {bottom:var(--polygon-dock-bottom);height:var(--polygon-dock-height);padding:0 4%;}
+ .legend-dock-button {background-image:none;}
+ .concept-pause {width:clamp(44px,calc(var(--concept-plane)*.12),100px);height:clamp(44px,calc(var(--concept-plane)*.12),100px);right:max(8px,calc((100vw - var(--concept-plane))/2 + 6px));top:0;}
+}
+
+/* The shortest properties screen shares its upper bay between instructions and
+   the figure, keeping all six choices and Submit above the safe HUD. */
+@container polygon-playfield (max-height:750px){
+ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='polygon_palace'][data-measured-scene]:has([data-polygon-mode='properties']) {
+  .polygon-scene {--polygon-shape-top:88px;--polygon-pedestal-height:24px;--polygon-pedestal-top:calc(var(--polygon-answer-top) - 34px);}
+  .polygon-guide {display:none;}
+  .polygon-diagram {left:4%;width:38%;height:calc(var(--polygon-pedestal-top) - var(--polygon-shape-top) - 6px);}
+  .polygon-pedestal {left:1%;width:44%;}
+  .concept-question-zone {left:48%;top:76px;width:48%;height:calc(var(--polygon-answer-top) - 86px);}
+  .scalable-question-copy {padding:10px 9%;gap:6px;}
+  .polygon-prompt {font-size:14px;}.polygon-subprompt {font-size:12px;}
+ }
+}

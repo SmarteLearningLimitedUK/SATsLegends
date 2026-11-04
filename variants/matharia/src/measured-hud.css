@@ -1,0 +1,49 @@
+html[data-presentation='matharia'] #root :is(.legend-hud-art,.legend-dock-art){display:none;position:absolute;inset:0;z-index:-1;pointer-events:none;}
+/* Shared bottom control styling lives in sapphire-gold-dock.css. */
+@media(prefers-reduced-motion:reduce){html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene] .legend-dock-button{transition:none;}}
+
+html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene]:is([data-active-game='data_detective'],[data-active-game='line_graph_lab'],[data-active-game='graph_grabber'],[data-active-game='factor_frenzy'],[data-active-game='multiplication_mine'],[data-active-game='order_ops_arena'],[data-active-game='formula_forge'],[data-active-game='remainder_run'],[data-active-game='time_keeper_cove'],[data-active-game='problem_pyramid'],[data-active-game='unit_mixer'],[data-active-game='change_counter']){.legend-hud-art{display:block;}.legend-hud-bar::before{display:none;}.legend-hud-jewel{position:absolute;left:50%;top:-6px;translate:-50% 0;width:clamp(76px,20cqw,128px);height:auto;pointer-events:none;}}
+
+/* Compact portrait title alignment; bottom tiles use their shared component rules. */
+@media (max-height:720px) and (orientation:portrait){
+ html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene]:is([data-active-game='prime_pop'],[data-active-game='rounding_rocket'],[data-active-game='polygon_palace']){
+  .legend-hud-title{font-size:clamp(14px,3.6cqw,16px);}
+  &[data-active-game='polygon_palace'] .legend-hud-title{white-space:normal;line-height:1.05;}
+  &[data-active-game='polygon_palace'] .legend-hud-bar{height:44px;min-height:44px;}
+ }
+}
+html[data-presentation='matharia'] #root .legend-dock-button{position:relative;isolation:isolate;}
+html[data-presentation='matharia'] #root .legend-dock-tile-art{display:block;position:absolute;inset:0;z-index:-1;pointer-events:none;}
+
+/* One safe-area coordinate system for every portrait gameplay header. Playfield
+   widths remain activity-specific; they no longer move or resize the shared HUD. */
+html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene]:has(.concept-stage[data-concept-orientation='portrait']) {
+ --portrait-scene-height:calc(100dvh - var(--concept-safe-top) - var(--concept-safe-bottom));
+ --portrait-hud-top:calc(var(--portrait-scene-height) * .031);
+ --portrait-hud-height:clamp(44px,calc(var(--portrait-scene-height) * .081),92px);
+ --portrait-hud-width:min(calc(100vw - 24px),calc(max(375px,calc(var(--portrait-scene-height) * .4626)) * .93));
+ --portrait-pause-size:clamp(44px,10vw,60px);
+ [data-unified-minigame-hud] > .concept-hud-top:has(.legend-hud-bar) {left:50%;right:auto;translate:-50% 0;top:var(--portrait-hud-top);width:var(--portrait-hud-width);height:var(--portrait-hud-height);padding:0;}
+ .legend-hud-bar {height:100%;min-height:0;}
+ .legend-hud-bar::before {inset:12% 0;}
+ .legend-hud-art {inset:12% 0;}
+ .legend-hud-avatar {width:20.5%;}
+ .legend-hud-title {font-size:clamp(14px,4.6cqw,37px);white-space:normal;text-wrap:balance;line-height:1.05;}
+ .legend-hud-lives .concept-life {width:clamp(15px,5.4cqw,40px);height:clamp(15px,5.4cqw,40px);}
+ .legend-hud-streak {font-size:clamp(14px,4.5cqw,37px);}
+ .concept-clock-icon {width:clamp(15px,5cqw,36px);height:clamp(15px,5cqw,36px);}
+ .concept-pause {top:0;right:max(8px,calc((100vw - var(--portrait-hud-width)) / 2 - var(--portrait-pause-size) / 4));width:var(--portrait-pause-size);height:var(--portrait-pause-size);}
+}
+
+/* A separate pause column keeps the compact phone's timer unobstructed. The
+   header/pause group stays centred; hearts and time use two short rows. */
+@media(max-height:720px) and (orientation:portrait) {
+ html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene]:has(.concept-stage[data-concept-orientation='portrait']) {
+  --portrait-hud-width:min(calc(100vw - 80px),calc(max(375px,calc(var(--portrait-scene-height) * .4626)) * .93));
+  --portrait-hud-height:max(56px,calc(var(--portrait-scene-height) * .081));
+  [data-unified-minigame-hud] > .concept-hud-top:has(.legend-hud-bar) {left:calc(50% - 26px);}
+  .legend-hud-bar>div:last-child {flex-direction:column;gap:2px;}
+  .legend-hud-lives {gap:2px;}
+  .concept-pause {top:calc(var(--portrait-hud-top) + (var(--portrait-hud-height) - var(--portrait-pause-size)) / 2);right:max(8px,calc((100vw - var(--portrait-hud-width)) / 2 - 26px));}
+ }
+}

@@ -2,6 +2,9 @@ import { createLevelMusicPlayer, getLevelMusicUrl } from './gameMusicLibrary';
 import { GAME_AUDIO_STORAGE_KEY, GAME_HUD_MUTE_SYNC_EVENT } from '../gameHudEvents';
 import { getGameSoundProfile, type SoundMaterial } from './gameSoundProfiles';
 import { decodeGameSample, preloadGameSamples, sampleForEffect } from './gameSampleLibrary';
+import { scheduleForgeStrike } from './forgeStrike';
+import { scheduleAngleArenaSound } from './angleArenaSound';
+import {scheduleMaterialContact} from './materialContact';
 
 export type MonsterSoundEffect = 'monster_growl' | 'monster_laugh' | 'monster_hurt';
 export type GameSoundEffect = 'tap' | 'place' | 'cast' | 'impact' | 'correct' | 'incorrect' | 'complete' | 'fail' | MonsterSoundEffect;
@@ -12,6 +15,7 @@ let dry: AudioNode | null = null;
 let echo: AudioNode | null = null;
 let texture: AudioBuffer | null = null;
 let musicBus: GainNode | null = null;
+let musicDucker: GainNode | null = null;
 let musicTimer: number | null = null;
 let musicNextTime = 0;
 let musicStep = 0;
@@ -24,9 +28,11 @@ let soundProfile = getGameSoundProfile(null);
 let sampleEpoch = 0;
 let lastMonsterAt = -Infinity;
 const activeSamples = new Set<AudioBufferSourceNode>();
+const activeSynthSources = new Set<AudioScheduledSourceNode>();
 const activeEngines = new Set<() => void>();
+const musicVoices=new Set<OscillatorNode>();
 
-/** Cancel pending and playing recorded cues when leaving, pausing or muting. */
+/** Cancel pending and playing cues when leaving, pausing or muting. */
 export function stopGameSoundEffects() {
   sampleEpoch += 1;
   for (const stop of [...activeEngines]) stop();
@@ -34,9 +40,13 @@ export function stopGameSoundEffects() {
     try { source.stop(); } catch { /* Already ended. */ }
   }
   activeSamples.clear();
+  for (const source of activeSynthSources) {
+    try { source.stop(); } catch { /* Already ended. */ }
+  }
+  activeSynthSources.clear();
 }
 
-export type GameMusicScene = 'map' | 'gameplay';
+export type GameMusicScene = 'map' | 'gameplay' | 'calm';
 
 /** Selects the sound palette for the current minigame without starting audio. */
 export function configureGameSoundProfile(blueprintKey: string | null | undefined) {
@@ -79,7 +89,10 @@ function getContext() {
   echo = delay;
   musicBus = context.createGain();
   musicBus.gain.value = 0;
-  musicBus.connect(master);
+  musicDucker = context.createGain();
+  musicDucker.gain.value = 1;
+  musicBus.connect(musicDucker);
+  musicDucker.connect(master);
   texture = null;
   return context;
 }
@@ -155,8 +168,9 @@ function playVoice(ctx: AudioContext, voice: Voice, base: number, pitchScale = 1
   oscillator.connect(gain);
   route(ctx, gain, voice.pan, voice.length > .18);
   oscillator.start(start);
+  activeSynthSources.add(oscillator);
   oscillator.stop(end + .01);
-  oscillator.onended = () => { oscillator.disconnect(); gain.disconnect(); };
+  oscillator.onended = () => { activeSynthSources.delete(oscillator); oscillator.disconnect(); gain.disconnect(); };
 }
 
 const materialTexture: Record<SoundMaterial, { cutoff: number; q: number; level: number; length: number; type: BiquadFilterType }> = {
@@ -197,8 +211,9 @@ function playTexture(ctx: AudioContext, effect: GameSoundEffect, base: number, m
   filter.connect(gain);
   route(ctx, gain, effect === 'complete' || effect === 'cast' ? .35 : -.25, effect === 'complete' || effect === 'cast');
   source.start(base);
+  activeSynthSources.add(source);
   source.stop(base + length + .01);
-  source.onended = () => { source.disconnect(); filter.disconnect(); gain.disconnect(); };
+  source.onended = () => { activeSynthSources.delete(source); source.disconnect(); filter.disconnect(); gain.disconnect(); };
 }
 
 function playMaterialAccent(ctx: AudioContext, effect: GameSoundEffect, base: number, material: SoundMaterial, pitch: number, accent: number) {
@@ -256,11 +271,21 @@ function playMaterialAccent(ctx: AudioContext, effect: GameSoundEffect, base: nu
 }
 
 export function playGameSound(effect: GameSoundEffect, mutedOverride?: boolean) {
-  if (typeof window === 'undefined' || (mutedOverride ?? localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true')) return false;
+  if (typeof window === 'undefined' || document.hidden || (mutedOverride ?? localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true')) return false;
   const ctx = getContext();
   if (!ctx) return false;
   if (ctx.state === 'suspended') void ctx.resume().catch(() => {});
   const profile = soundProfile;
+  if (profile.id === 'fraction_forge' && effect === 'impact') {
+    const cancel = scheduleForgeStrike(ctx, dry!, ctx.currentTime + .005, () => activeEngines.delete(cancel));
+    activeEngines.add(cancel);
+    return true;
+  }
+  if (profile.id === 'angle_arena' && (effect === 'cast' || effect === 'impact')) {
+    const cancel = scheduleAngleArenaSound(ctx, dry!, effect === 'cast' ? 'fire' : 'impact', ctx.currentTime + .005, () => activeEngines.delete(cancel));
+    activeEngines.add(cancel);
+    return true;
+  }
   const epoch = sampleEpoch;
   if (sampleForEffect(profile, effect)) {
     void decodeGameSample(ctx, profile, effect).then(buffer => {
@@ -274,7 +299,12 @@ export function playGameSound(effect: GameSoundEffect, mutedOverride?: boolean) 
       const source = ctx.createBufferSource();
       const gain = ctx.createGain();
       source.buffer = buffer;
-      gain.gain.value = effect.startsWith('monster_') ? .65 : effect === 'tap' ? .55 : .8;
+      const levels = {tap:.24, place:.4, cast:.4, impact:.6, correct:.4, incorrect:.38, complete:.7, fail:.5};
+      gain.gain.value = effect.startsWith('monster_') ? .45 : levels[effect as keyof typeof levels];
+      if (effect === 'place' || effect === 'impact') {
+        source.playbackRate.value = Math.max(.92, Math.min(1.07, profile.pitch));
+        playContactOnContext(ctx, profile.material, effect === 'place' ? .4 : .8);
+      }
       source.connect(gain);
       gain.connect(dry!);
       activeSamples.add(source);
@@ -289,6 +319,22 @@ export function playGameSound(effect: GameSoundEffect, mutedOverride?: boolean) 
 }
 
 const sampleGroups = new WeakMap<AudioBufferSourceNode, string>();
+function playContactOnContext(ctx: AudioContext, material: SoundMaterial, level: number) {
+  const stop = scheduleMaterialContact(ctx, dry!, material, ctx.currentTime + .005, level,()=>activeEngines.delete(stop));
+  activeEngines.add(stop);
+  if (musicDucker && musicWanted) {
+    musicDucker.gain.cancelScheduledValues(ctx.currentTime);
+    musicDucker.gain.setTargetAtTime(.65, ctx.currentTime, .008);
+    musicDucker.gain.setTargetAtTime(1, ctx.currentTime + .1, .12);
+  }
+}
+/** For a visual contact scheduled by a scene's existing paused presentation clock. */
+export function playMaterialContact(material: SoundMaterial, level = 1) {
+  if (typeof window === 'undefined' || document.hidden || localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true') return false;
+  const ctx = getContext(); if (!ctx || ctx.state !== 'running') return false;
+  playContactOnContext(ctx, material, level); return true;
+}
+export function playRewardGem() { return playMaterialContact('arcane', .45); }
 /** Creature ambience waits for the player's first audio gesture, never autoplaying. */
 export function playMonsterSound(effect: MonsterSoundEffect) {
   if (!context || context.state !== 'running') return false;
@@ -297,44 +343,7 @@ export function playMonsterSound(effect: MonsterSoundEffect) {
   if (played) lastMonsterAt = context.currentTime;
   return played;
 }
-/** A dry muzzle crack and short low thump, rather than a rising boost cue. */
-function playCannonShot(ctx: AudioContext) {
-  const start = ctx.currentTime + .005;
-  const buffer = ctx.createBuffer(1, Math.ceil(ctx.sampleRate * .24), ctx.sampleRate);
-  const data = buffer.getChannelData(0);
-  for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
-  const noise = ctx.createBufferSource();
-  noise.buffer = buffer;
-  const filter = ctx.createBiquadFilter();
-  filter.type = 'lowpass';
-  filter.frequency.setValueAtTime(6200, start);
-  filter.frequency.exponentialRampToValueAtTime(420, start + .2);
-  const crack = ctx.createGain();
-  crack.gain.setValueAtTime(.0001, start);
-  crack.gain.linearRampToValueAtTime(.32, start + .002);
-  crack.gain.exponentialRampToValueAtTime(.0001, start + .18);
-  noise.connect(filter); filter.connect(crack); crack.connect(dry!);
-  const body = ctx.createOscillator();
-  body.type = 'sine';
-  body.frequency.setValueAtTime(155, start);
-  body.frequency.exponentialRampToValueAtTime(42, start + .2);
-  const thump = ctx.createGain();
-  thump.gain.setValueAtTime(.0001, start);
-  thump.gain.linearRampToValueAtTime(.25, start + .004);
-  thump.gain.exponentialRampToValueAtTime(.0001, start + .22);
-  body.connect(thump); thump.connect(dry!);
-  const stop = () => { try { noise.stop(); } catch { /* Already ended. */ } try { body.stop(); } catch { /* Already ended. */ } };
-  activeEngines.add(stop);
-  noise.onended = () => {
-    activeEngines.delete(stop);
-    noise.disconnect(); filter.disconnect(); crack.disconnect(); body.disconnect(); thump.disconnect();
-  };
-  noise.start(start); noise.stop(start + .24);
-  body.start(start); body.stop(start + .23);
-}
-
 function playSynthSound(ctx: AudioContext, effect: GameSoundEffect, profile: typeof soundProfile) {
-  if (profile.id === 'angle_arena' && effect === 'cast') { playCannonShot(ctx); return; }
   const base = ctx.currentTime + .015;
   const pitch = Math.min(1.4, Math.max(.7, profile.pitch));
   const accent = Math.min(1, Math.max(0, profile.accent));
@@ -346,7 +355,7 @@ function playSynthSound(ctx: AudioContext, effect: GameSoundEffect, profile: typ
 
 /** Original launch-control beep, sharing the game's master volume and mute setting. */
 export function playRocketCountdownSound() {
-  if (typeof window === 'undefined' || localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true') return;
+  if (typeof window === 'undefined' || document.hidden || localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true') return;
   const ctx = getContext();
   if (!ctx) return;
   if (ctx.state === 'suspended') void ctx.resume().catch(() => {});
@@ -364,7 +373,7 @@ export function playRaceEngineSound(durationSeconds: number, stalled = false): (
 }
 
 function playEngineRoar(durationSeconds: number, kind: 'rocket' | 'race' | 'stall'): () => void {
-  if (typeof window === 'undefined' || localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true') return () => {};
+  if (typeof window === 'undefined' || document.hidden || localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true') return () => {};
   const ctx = getContext();
   if (!ctx) return () => {};
   if (ctx.state === 'suspended') void ctx.resume().catch(() => {});
@@ -429,6 +438,12 @@ function playEngineRoar(durationSeconds: number, kind: 'rocket' | 'race' | 'stal
 
 // Quiet generated score for the map. Gameplay uses the supplied recordings.
 const musicScores = {
+  calm: {
+    bpm: 44,
+    chords: [[50, 57, 64], [53, 60, 67], [55, 62, 69], [50, 57, 65]],
+    bass: [38, 41, 43, 38],
+    melody: Array(32).fill(null) as null[],
+  },
   map: {
     bpm: 82,
     chords: [[57, 60, 64], [53, 57, 60], [55, 59, 62], [52, 55, 59]],
@@ -452,13 +467,14 @@ function musicNote(ctx: AudioContext, midi: number, start: number, length: numbe
   oscillator.type = wave;
   oscillator.frequency.setValueAtTime(440 * 2 ** ((midi - 69) / 12), start);
   gain.gain.setValueAtTime(.0001, start);
-  gain.gain.linearRampToValueAtTime(level, start + Math.min(.035, length * .2));
+  gain.gain.linearRampToValueAtTime(level, start + Math.min(musicScene === 'calm' ? .9 : .035, length * .2));
   gain.gain.exponentialRampToValueAtTime(.0001, start + length);
   oscillator.connect(gain);
   gain.connect(musicBus);
   oscillator.start(start);
+  musicVoices.add(oscillator);
   oscillator.stop(start + length + .01);
-  oscillator.onended = () => { oscillator.disconnect(); gain.disconnect(); };
+  oscillator.onended = () => { musicVoices.delete(oscillator);oscillator.disconnect(); gain.disconnect(); };
 }
 
 function scheduleMusic() {
@@ -474,7 +490,7 @@ function scheduleMusic() {
       score.chords[bar].forEach((note, index) => {
         musicNote(ctx, note, musicNextTime + index * .012, eighth * 7.5, .017, 'sine');
       });
-      musicNote(ctx, score.bass[bar], musicNextTime, eighth * 3.2, .052, 'triangle');
+      musicNote(ctx, score.bass[bar], musicNextTime, eighth * 3.2, musicScene === 'calm' ? .024 : .052, 'sine');
     } else if (musicScene === 'gameplay' && step % 8 === 4) {
       musicNote(ctx, score.bass[bar] + 7, musicNextTime, eighth * 1.7, .026, 'triangle');
     }
@@ -487,6 +503,7 @@ function scheduleMusic() {
 
 function stopMusic() {
   levelMusicPlayer?.pause();
+  for(const voice of musicVoices){try{voice.stop()}catch{}}musicVoices.clear();
   if (musicTimer !== null) window.clearInterval(musicTimer);
   musicTimer = null;
   if (context && musicBus) musicBus.gain.setTargetAtTime(0, context.currentTime, .045);
@@ -505,7 +522,7 @@ function startMusic() {
   }
   musicNextTime = ctx.currentTime + .07;
   musicStep = 0;
-  musicBus.gain.setTargetAtTime(.42, ctx.currentTime, .15);
+  musicBus.gain.setTargetAtTime(musicScene === 'calm' ? .23 : .42, ctx.currentTime, .35);
   musicTimer = window.setInterval(scheduleMusic, 80);
   scheduleMusic();
 }
@@ -524,6 +541,7 @@ export function unlockGameAudioFromGesture() {
 export function configureGameMusic(enabled: boolean, scene: GameMusicScene, blueprintKey?: string | null) {
   const nextKey = blueprintKey ?? null;
   const changedScene = scene !== musicScene || nextKey !== levelMusicKey;
+  const crossfade=enabled&&musicWanted&&musicScene==='gameplay'&&scene==='gameplay';
   levelMusicKey = nextKey;
   musicWanted = enabled;
   musicScene = scene;
@@ -531,7 +549,7 @@ export function configureGameMusic(enabled: boolean, scene: GameMusicScene, blue
     stopMusic();
     return;
   }
-  if (changedScene) stopMusic();
+  if (changedScene&&!crossfade) stopMusic();
   startMusic();
 }
 

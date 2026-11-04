@@ -1,0 +1,71 @@
+/* The live source SVG and pointer-to-coordinate transform remain together inside this frame. */
+html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='rotation_relay'][data-measured-scene] {
+ --concept-plane:calc(100vw - var(--concept-safe-left) - var(--concept-safe-right));
+ .concept-stage[data-concept-orientation='landscape'] {margin-inline:0;}
+ .transformation-scene {position:absolute;inset:0;width:100%;height:100%;}
+ .concept-question-zone {left:61%;top:13%;width:37%;height:25%;min-height:80px;}
+ .scalable-question-copy {display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:8px 7%;}
+ [data-question-copy] {font-size:clamp(14px,1.8vw,25px);line-height:1.15;font-weight:650;}
+ .transformation-prompt {display:block;text-align:center;text-wrap:balance;}
+ .rs-question-hint {display:block;font-size:clamp(12px,1.3vw,23px);margin-top:4px;color:#ffe9a5;}
+ .question-jewel--bottom {display:none;}
+ .transformation-guide {position:absolute;left:-4.5%;top:32%;width:27%;height:56%;pointer-events:none;}
+ .transformation-guide>.vision-character {width:100%;height:100%;}
+ .transformation-board {position:absolute;isolation:isolate;left:21.5%;top:13%;width:38%;height:71%;}
+ .transformation-board>.artwork-surface {clip-path:none;border-radius:4px;}
+ .rs-grid {position:absolute;left:4%;top:4%;width:92%;height:92%;display:block;touch-action:none;outline:none;overflow:visible;}
+ .rs-grid:focus-visible {outline:2px solid #ffe6a4;outline-offset:1px;border-radius:5px;}
+ .rs-grid text {fill:#f4fbff;font:650 29px 'Matharia Rounded',sans-serif;paint-order:stroke;stroke:#043452;stroke-width:1px;}
+ .rs-grid .rs-vertex-label {font-size:29px;stroke-width:1.4px;}
+ .transformation-corner-status {display:block;color:#ffdc76;text-align:center;font-size:clamp(12px,1.3vw,19px);line-height:1.15;font-weight:650;}
+ .transformation-controls {position:absolute;isolation:isolate;left:61%;top:40%;width:37%;height:auto;min-height:37%;padding:10px 14px;display:flex;flex-direction:column;gap:7px;color:#fff8e7;}
+ .rs-status {display:flex;justify-content:space-between;align-items:center;min-height:19px;color:#ffda78;font-size:clamp(13px,1.5vw,28px);font-weight:650;line-height:1;}
+ .rs-helper {display:none;}
+ .rs-vertices {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;}
+ .rs-vertices>button,.rs-actions>button,.rs-choices>button {display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:44px;min-height:44px;padding:5px 7px;border:2px solid #33739a;border-radius:12px;background:linear-gradient(150deg,#185880,#062e4b 70%);box-shadow:inset 0 2px 2px #78b3d65c,0 2px 2px #00203c;color:#fff8e7;text-align:center;font-size:clamp(12px,1.55vw,28px);line-height:1.1;font-weight:650;touch-action:manipulation;}
+ .rs-vertices>button {height:max(8.5vh,52px);}.rs-vertices small {font-size:clamp(12px,1.3vw,23px);line-height:1.1;}
+ .rs-vertices>button[aria-pressed='true'] {border-color:#ffe59b;box-shadow:0 0 0 1px #e9b13f,0 0 6px #a0efff;}
+ .rs-actions {display:grid;grid-template-columns:.8fr 1fr 1.25fr;gap:6px;}
+ .rs-actions>button {height:max(8vh,48px);}
+ .rs-actions>button:last-child {border-color:#e5b14a;background:linear-gradient(#ffdb73,#c89132);box-shadow:inset 0 2px 2px #fff0a0;color:#07374c;}
+ .rs-actions>button:last-child:disabled {opacity:.6;}
+ .rs-choices {display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+ .rs-choices>button {min-height:44px;font-size:clamp(12px,1.25vw,23px);}
+ .rs-choices>button:first-child {min-height:44px;}
+ .transformation-scene[data-transform-mode='describe'] .rs-choices>button:first-child {position:absolute;left:calc(var(--concept-plane) * -.59);top:calc((100dvh - var(--concept-safe-top) - var(--concept-safe-bottom)) * -.26);width:clamp(52px,7vw,70px);height:44px;padding:4px;}
+ :is(.rs-vertices,.rs-actions,.rs-choices)>button:not(:disabled):active {scale:.97;filter:brightness(1.13);}
+ :is(.rs-vertices,.rs-actions,.rs-choices)>button:focus-visible {outline:3px solid #fff2ae;outline-offset:1px;}
+ [data-transform-feedback='none'] .rs-feedback {display:none;}
+ .rs-feedback {min-height:0;display:flex;flex-direction:column;gap:6px;align-items:stretch;font-size:clamp(13px,1.4vw,25px);line-height:1.15;text-align:center;}
+ .rs-feedback>strong {font-size:clamp(14px,1.5vw,28px);font-weight:650;}.rs-feedback>p {margin:0;}
+ .rs-feedback>button {min-height:44px;border:2px solid #e5b14a;border-radius:9px;padding:6px;background:linear-gradient(#ffe48d,#d89b31);color:#07374c;font-size:clamp(14px,1.4vw,25px);font-weight:650;}
+ :is([data-transform-feedback='correct'],[data-transform-feedback='incorrect']) :is(.rs-vertices,.rs-choices) {display:none;}
+ .transformation-hint {position:absolute;isolation:isolate;z-index:9;left:61%;top:40%;width:37%;padding:8px 50px 8px 12px;color:#fff2b4;font-size:clamp(12px,1.3vw,23px);line-height:1.15;}
+ .transformation-hint .rs-question-hint {margin:0;font-size:inherit;line-height:inherit;}
+ .transformation-hint>button {position:absolute;top:0;right:0;display:grid;place-items:center;width:44px;height:44px;padding:4px;border:0;background:none;color:#fff6d7;}
+ .transformation-cursor-toggle {position:absolute;left:2%;top:14%;width:7%;min-width:52px;height:44px;padding:3px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border:1px solid #e4bb60;border-radius:8px;background:#05334b;color:#fff8df;font-size:12px;line-height:1;font-weight:600;touch-action:manipulation;}
+ .transformation-cursor-toggle>svg {width:22px;height:18px;}
+ .transformation-cursor-panel {position:absolute;isolation:isolate;z-index:8;left:2%;top:27%;width:35.5%;min-width:250px;max-width:calc(100% - 8px);padding:42px 12px 14px;color:#fff8e7;}
+ .transformation-cursor-close {position:absolute;right:3%;top:2%;width:44px;height:44px;display:grid;place-items:center;border:0;background:none;color:#fff9e4;}
+ .rs-cursor {display:flex;flex-direction:column;align-items:center;gap:8px;font-size:14px;line-height:1.1;}
+ .rs-cursor>div {display:flex;gap:4px;}.rs-cursor button {min-width:44px;min-height:44px;border:1px solid #cfb36b;border-radius:7px;padding:6px;background:#0b4966;color:#fff5d9;font-size:17px;font-weight:650;}
+ [data-unified-minigame-hud]>div:first-of-type:has(.legend-hud-bar) {top:1.8%;width:50%;height:10%;padding:0;}
+ .legend-hud-title {font-size:clamp(14px,2.2vw,41px);}.legend-hud-avatar {width:13%;}.legend-hud-timer {display:none;}
+ .legend-hud-bar::before {border-image-source:url('../../assets/png/frames/glacier_panel_v3@2x.webp');border-image-slice:180 fill;}
+ .legend-hud-streak {font-size:clamp(16px,2.05vw,38px);}
+ [data-testid='shared-bottom-hud'] {bottom:1%;width:36%;height:12%;min-width:235px;min-height:44px;padding:0;}
+ .legend-dock-button {}
+ .concept-pause {top:1%;right:max(1%,var(--concept-safe-right));width:clamp(44px,6vw,100px);height:clamp(44px,6vw,100px);}
+}
+@media(max-width:760px){html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='rotation_relay'][data-measured-scene] {
+ [data-unified-minigame-hud]>div:first-of-type:has(.legend-hud-bar) {width:64%;height:11%;}.legend-hud-title {font-size:14px;}
+ .concept-question-zone {left:60%;top:14%;width:38%;height:25%;}[data-question-copy]{font-size:14px;}
+ .transformation-corner-status {font-size:12px;}
+ .rs-grid text,.rs-grid .rs-vertex-label {font-size:28px;}
+ .transformation-board {left:21%;top:14%;width:38%;height:70%;}.transformation-guide {left:-5%;top:35%;width:27%;height:52%;}
+ .transformation-controls {left:60%;top:41%;width:38%;min-height:39%;padding:7px;gap:5px;}.rs-status{font-size:12px;}.rs-vertices>button {font-size:12px;padding:3px;gap:2px;}.rs-vertices small {font-size:12px;}.rs-actions>button{font-size:12px;padding:4px;}
+ .transformation-hint {left:60%;top:41%;width:38%;font-size:12px;}
+ .transformation-cursor-toggle {top:15%;left:2%;width:8%;}.transformation-cursor-panel {left:2%;right:auto;top:28%;width:39%;}
+ .rs-feedback {font-size:12px;gap:5px;}.rs-feedback>strong {font-size:13px;}.rs-feedback>button{font-size:13px;}
+ .legend-dock-button {font-size:10px;gap:1px;}.legend-dock-button>svg {width:21px;height:21px;}
+}}

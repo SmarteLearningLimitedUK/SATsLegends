@@ -1,0 +1,103 @@
+@import './bloom-garden.css';
+/* Breath Bloom owns one viewport budget: HUD, introduction, activity, dock.
+   Scenery and the original breathing controller remain independent. */
+html[data-presentation='matharia'] #root .app-viewport.screen-wellbeing-activity:has(.wellbeing-shell[data-wellbeing-activity='breathing_bloom']) {
+ .app-screen-content {
+  inset:calc(env(safe-area-inset-top,0px) + 94px) max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 86px) max(16px,env(safe-area-inset-left,0px));
+  width:auto;max-width:720px;height:auto;margin:0 auto;padding:0;
+ }
+ /* Reserve the same HUD/content gap when the two text lines grow. */
+ .concept-hud-top,.legend-hud-bar {height:72px;}
+ .wellbeing-shell {
+  display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:8px;
+  width:100%;height:100%;min-height:0;padding:0;overflow:visible;
+  font-family:'Matharia Rounded',sans-serif;color:#fff8e4;
+ }
+ .wellbeing-header {position:relative;isolation:isolate;display:block;margin:0;padding:14px 32px;border:0;border-radius:0;background:none;}
+ .wellbeing-heading {max-width:none;}
+ .legend-hud-jewel {display:none;}
+ .legend-hud-label {font-size:12px;color:#e5f3ed;}
+ .wellbeing-how-to {margin:0;font-size:15px;line-height:1.35;font-weight:500;color:#f1f7f3;text-shadow:none;}
+ /* The group remains named for assistive technology; these repeat the HUD
+    and introduction visually. Back uses the existing shared dock action. */
+ .wellbeing-heading h1,.wellbeing-eyebrow,.wellbeing-pace-picker>span {position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;}
+ .wellbeing-exit {display:none;}
+ .wellbeing-content {display:flex;flex:1 1 auto;width:100%;height:100%;min-height:0;}
+ .wellbeing-scene[data-breathing-phase] {
+  display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:8px;
+  width:100%;height:100%;min-height:0;flex:1 1 auto;align-items:stretch;justify-items:stretch;
+  margin:0;padding:0;overflow:visible;
+ }
+ .wellbeing-pace-picker {width:100%;padding:0;text-align:center;}
+ .wellbeing-pace-options {gap:8px;}
+ .wellbeing-pace-option {
+  position:relative;isolation:isolate;min-width:0;min-height:60px;gap:4px;padding:10px 8px;border:0;
+  border-radius:0;background:none;color:#fff5d7;backdrop-filter:none;box-shadow:none;
+  transition:filter 140ms ease,scale 140ms ease;
+ }
+ .wellbeing-pace-option strong {font-size:15px;line-height:1.1;font-weight:650;}
+ .wellbeing-pace-option>span:not(.artwork-frame) {font-size:12px;line-height:1.2;font-weight:500;color:inherit;}
+ .wellbeing-pace-option[aria-pressed='true'] {color:#07313f;}
+ .wellbeing-pace-option:disabled {opacity:1;}
+ .wellbeing-pace-option:focus-visible,.wellbeing-breath-actions button:focus-visible {outline:3px solid #fff0b5;outline-offset:3px;}
+ .wellbeing-pace-option:not(:disabled):active {scale:.98;filter:brightness(1.1);}
+ .wellbeing-bloom-garden {
+  width:100%;height:100%;min-height:0;container-type:size;
+ }
+ .bloom-control-panel {position:relative;isolation:isolate;display:grid;justify-items:center;gap:10px;width:100%;padding:16px 28px;}
+ .wellbeing-breath-cue {position:relative;inset:auto;width:100%;padding:0;border:0;border-radius:0;background:none;text-align:center;}
+ .wellbeing-breath-cue strong {font:650 20px/1.1 'Matharia Rounded',sans-serif;color:#fff2c6;text-shadow:none;}
+ .wellbeing-breath-cue>span {min-height:2.6em;margin-top:4px;font-size:14px;line-height:1.3;font-weight:500;color:#edf6ee;}
+ .wellbeing-controlbar.wellbeing-breath-actions {position:relative;inset:auto;width:100%;max-width:260px;min-height:60px;}
+ .wellbeing-breath-actions button,.bloom-complete-mark {position:relative;isolation:isolate;display:grid;place-items:center;width:100%;min-height:60px;min-width:0;padding:14px 22px;border:0;border-radius:0;background:none;font:650 18px/1.15 'Matharia Rounded',sans-serif;box-shadow:none;transition:scale 120ms ease,filter 120ms ease;}
+ .bloom-action-content {position:relative;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;}
+ .bloom-action-content>svg {display:block;flex:none;width:auto;height:22px;}
+ .wellbeing-breath-actions .wellbeing-action {color:#07313f;}
+ .wellbeing-breath-actions .wellbeing-quiet-action,.bloom-complete-mark {color:#fff2c6;}
+ .wellbeing-breath-actions button:active {scale:.98;filter:brightness(1.1);}
+ .bloom-complete-mark>svg {width:26px;height:26px;}
+ .wellbeing-shell>.wellbeing-footer {
+  position:relative;inset:auto;isolation:isolate;display:block;min-height:76px;margin:0;padding:14px 96px 14px 32px;
+  border:0;border-radius:0;background:none;text-align:left;
+ }
+ .wellbeing-footer [data-wellbeing-status] {margin:0;font-size:14px;line-height:1.3;font-weight:500;color:#f1f7f3;}
+ .wellbeing-footer-progress {width:100%;min-width:0;max-width:none;}
+ .wellbeing-footer .wellbeing-progress {width:100%;height:5px;margin:6px 0 0;background:#40636a;}
+ .wellbeing-footer .wellbeing-progress>span {background:#aee7cb;}
+ .wellbeing-footer>.matharia-pond-guidance>summary {top:calc(50% - 26px);right:32px;width:52px;height:52px;padding:6px;gap:2px;font:500 12px/1.1 'Matharia Rounded',sans-serif;}
+ .matharia-pond-note-panel {width:min(100%,480px);max-height:min(280px,calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 190px));padding:16px;background:#07313f;color:#f1f7f3;}
+ .bloom-help-instructions {margin:0 0 12px;padding-bottom:12px;border-bottom:1px solid #89b1ac;font-size:15px;line-height:1.35;}
+}
+@media(max-height:700px){html[data-presentation='matharia'] #root .app-viewport.screen-wellbeing-activity:has(.wellbeing-shell[data-wellbeing-activity='breathing_bloom']) {
+ .wellbeing-shell,.wellbeing-scene[data-breathing-phase] {gap:6px;}
+ .wellbeing-header {padding:12px 28px;}
+ .wellbeing-how-to {font-size:14px;line-height:1.3;}
+ .wellbeing-pace-option {min-height:54px;padding:8px 6px;gap:3px;}
+ .wellbeing-pace-option strong {font-size:14px;}
+ .bloom-control-panel {grid-template-columns:minmax(0,1fr) 84px;align-items:center;gap:10px;padding:14px 26px;}
+ .wellbeing-breath-cue {text-align:left;}
+ .wellbeing-breath-cue strong {font-size:19px;}
+ .wellbeing-breath-cue>span {font-size:14px;margin-top:4px;}
+ .wellbeing-controlbar.wellbeing-breath-actions,.wellbeing-breath-actions button,.bloom-complete-mark {min-height:100px;}
+ .wellbeing-breath-actions button {padding:12px;font-size:14px;}
+ .bloom-action-content {flex-direction:column;gap:6px;}
+ .bloom-action-content>svg {width:auto;height:20px;}
+ .wellbeing-shell>.wellbeing-footer {min-height:72px;padding-top:12px;padding-bottom:12px;}
+}}
+@media(max-height:620px){html[data-presentation='matharia'] #root .app-viewport.screen-wellbeing-activity:has(.wellbeing-shell[data-wellbeing-activity='breathing_bloom']) {
+ .wellbeing-shell {grid-template-rows:minmax(0,1fr) auto;}
+ /* Compact introduction stays in the document outline and in the live Tips
+    disclosure; the on-screen cue still explains rhythm and comfort. */
+ .wellbeing-header {position:absolute;width:1px;height:1px;min-height:0;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);border:0;}
+ .bloom-control-panel {padding:16px 26px;}
+ .wellbeing-breath-cue {text-align:left;}
+ .wellbeing-breath-cue strong {font-size:18px;line-height:1.15;}
+ .wellbeing-breath-cue>span {min-height:0;}
+}}
+@media(min-width:700px){html[data-presentation='matharia'] #root .app-viewport.screen-wellbeing-activity:has(.wellbeing-shell[data-wellbeing-activity='breathing_bloom']) {
+ .bloom-control-panel {grid-template-columns:minmax(0,1fr) 260px;align-items:center;gap:24px;padding:24px 56px;}
+ .wellbeing-breath-cue {text-align:left;}
+ .wellbeing-breath-cue strong {font-size:23px;}
+ .wellbeing-breath-cue>span {font-size:15px;}
+}}
+@media(prefers-reduced-motion:reduce){html[data-presentation='matharia'] #root .app-viewport.screen-wellbeing-activity:has(.wellbeing-shell[data-wellbeing-activity='breathing_bloom']) :is(.wellbeing-pace-option,.wellbeing-breath-actions button) {transition:none;}}

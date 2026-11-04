@@ -1,0 +1,12 @@
+{
+  "prompts": [
+    {
+      "key": "angleTowerWide",
+      "prompt": "ONE independent complete transparent target-tower architectural prop for this approved Angle Arena concept. Faithfully reproduce the RIGHT tower structure's BROAD LOW silhouette: full long platform/base and stepped timber/ice/white stone block tower, with tall lookout near right of centre and a long low ramp/steps extending to its LEFT. Precise overall silhouette aspect ratio 2.2:1 width to height, very wide; 2000px wide about900px tall. Topmost small timber lookout at about68% of total width, empty for separately layered opponent. Royal blue banners with gold ornament (no letters), heavy light wooden beams and triangular cyan ice blocks, frosted white stone cubes, snowy gold-trimmed base, small hanging lantern. Rich sapphire/gold snowy winter palace polished 3D animated film game art, sunlight upper left. Do not make a square or narrow tall tower. Do NOT omit its long stepped left side. No opponent, goblin, characters, cannon, UI, lettering, text, numbers, arrows, panels, ground plane or scenery. Transparent outside physical tower and base, transparent through empty arches. Full wide object inside image with even alpha margins, no cut edges."
+    },
+    {
+      "key": "angleOperator",
+      "prompt": "One independent full-body transparent character cutout matching the LEFT pale grey friendly rhinoceros knight in this exact approved Angle Arena game screenshot. A small cute expressive RHINO, one gold-tipped nose horn, big kind amber-brown eyes, large ears, polished royal sapphire-blue and rich gold plate armour, royal-blue cape with gold edging, white-grey skin. Full body in low braced cannon-operator stance, facing RIGHT in three-quarter side view, feet on same baseline, body leaning slightly forwards, both hands extending to the RIGHT at about chest/waist height, hand curled round an imaginary lever (empty hands, tool added separately). Look up/right with determined cheerful focus. Keep silhouette crisp and clean, pose like reference operator beside cannon. No mace, shield, sword, cannon, platform, ground plane, scenery, background, writing, symbols or UI. Polished high quality dimensional animated-film game art, soft winter light upper left, subtle blue rim light. Entire body and cape visible on FULLY TRANSPARENT background with regular margin, not cropped, no full-canvas glow. 1600 tall."
+    }
+  ]
+}

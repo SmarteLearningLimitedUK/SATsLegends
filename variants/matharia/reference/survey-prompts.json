@@ -1,0 +1,35 @@
+{
+  "tool": "Built-in image_gen",
+  "prompts": [
+    {
+      "key": "conversion_background_v3",
+      "path": "D:/BrainZilla/GitHub/SATsLegends/variants/matharia/reference/approved/conversion_canyon.png",
+      "transparent": false,
+      "prompt": "Use case: stylized-concept. Recreate ONLY the clean scenery from this approved portrait Matharia Conversion Canyon concept, aspect about 0.463:1. Match the camera, snowy sapphire-and-gold fantasy dock, huge stone arch bridge at middle height, icy waterfalls and steep snowy mountains, ornate castle turrets beyond, warm lanterns hanging on dark timber structures at far left and right, long blue banners with gold trim, and snow-dusted timber/stone platform in foreground. Premium polished storybook 3D game rendering, crisp bright daytime lighting, cool sapphire blues and warm gold highlights. Keep the central space clear. Remove the scale, tray, character, crates, gems, interface panels, labels, numbers, title, HUDs, buttons and controls completely. No blank UI surfaces. Background scenery only, full bleed, portrait."
+    },
+    {
+      "key": "coordinates_console_v3",
+      "transparent": true,
+      "prompt": "Use case: stylized-concept. One independent Matharia navigator workstation, isolated on transparent background. Wide low console in snowy sapphire-and-gold fantasy survey dock styling, aspect width 2.1 times height. Straight front view, premium polished storybook 3D game prop. Rich carved dark timber platform, warm gold/brass edge trims, small brass surveying knobs at its upper rear edge, small patches of snow at outer corners, sturdy short gilded wooden feet. Large clear flat dark wooden front surface unobstructed, ready for separate live point readout and buttons. A modest ornate gold-blue brass compass mounted on the upper left side as a single decorative instrument, face with compass rose but NO letters or text. Keep the main flat wooden surface empty. No interface frames, no panel outlines, no buttons, no button slots, no holes or sockets, no blue UI rectangles, no text, no numbers, no characters, no scenery. Entire console visible, crisp clean alpha edges."
+    },
+    {
+      "key": "perimeter_board_v3",
+      "transparent": true,
+      "prompt": "Use case: stylized-concept. One independent Matharia castle survey board and stand, isolated on transparent background. Front-facing broad rectangular surveying slate, width 1.65 times full height including its short stand. Premium polished storybook 3D game prop matching snowy sapphire-and-gold palace architecture. Ornate warm gold/brass rectangular frame with small sapphire corner rivets, a single compact sapphire-and-gold crest below centre, delicate snow on top rail and outer corners. Short dark carved wooden supports visible below. Its dominant inset plotting face is completely EMPTY smooth warm light stone/parchment, evenly lit and unmarked, occupying about 83 percent of board width and 76 percent of full prop height. No perspective tilt or distortion; face is perfectly front-on and rectangular so a real planar mathematical diagram can be drawn over it. No map, no floor plan, no lines, no dimensions, no grid, no text, no numbers, no symbols, no interface, no buttons, no scenery, no character. Crisp clean alpha edges, full object visible."
+    },
+    {
+      "key": "scale_housing_v3",
+      "transparent": true,
+      "prompt": "Use case: stylized-concept. One independent mechanical weighing-scale HOUSING only, isolated on transparent background. Square overall object, straight front view, symmetrical, premium Matharia storybook 3D game prop. Deep sapphire blue enamel metal body, rich polished gold/brass bevels and scrollwork, broad sturdy gold foot/base, a short gold central stem at the top ready for a separate weighing tray. A large COMPLETELY BLANK OPAQUE pale ivory circular dial face, centred at x50 percent/y48 percent of full housing, diameter54 percent of housing width. Dial is an empty ivory disc surrounded by a fine gold bezel; no marks whatsoever. No tray or bowl, no weights, no needle, no tick marks, no labels, no digital readout, no text or numerals, no buttons, no scenery. Entire housing and feet visible, crisp clean alpha, fine detailed blue/gold material highlights, no stretched shapes. A real live SVG dial and readout will be added later."
+    },
+    {
+      "key": "scale_tray_v3",
+      "discarded": "Too deep for the approved shallow weighing pan.",
+      "prompt": "Use case: stylized-concept. One independent weighing tray/bowl for a Matharia brass-and-sapphire mechanical scale. Transparent background, whole object visible. Very wide shallow polished metal pan, width 5.8 times height, straight front-on with just enough top view to see its broad elliptical rim and clean empty interior. Bright silver-brass interior, warm golden outer lip, gently curved front wall tapering underneath to a SMALL centred brass mounting socket. High-quality storybook 3D game render, sharp controlled material reflections and consistent warm upper-left lighting, matches an ornate sapphire-blue and gold weighing-scale housing. No scale body or stand, no weights, no contents, no text, no marks, no numbers, no buttons, no scenery, no shadow slab or opaque background. Crisp true alpha outside the single shallow pan."
+    },
+    {
+      "key": "scale_tray_v4",
+      "prompt": "Use case: precise-object-edit. Redesign this isolated golden weighing tray to be MUCH shallower: the complete pan including its tiny central mounting socket must be SIX TIMES as wide as it is tall. Keep its width and beautiful warm gold/silver polished material, but make the elliptical opening almost edge-on and its curved front wall very shallow. Not a deep bowl. A thin broad mechanical scale pan like a shallow saucer. On a wide canvas it should occupy only the middle 40 percent of the canvas height, with ample transparent space above and below; trimming the transparent margins should leave a 6:1 pan. No glow or shadow outside the object. Same straight front view, empty interior, no contents, text, marks, body, scenery or controls. True transparent background outside this single pan."
+    }
+  ]
+}

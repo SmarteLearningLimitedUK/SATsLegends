@@ -13,6 +13,17 @@
   box-shadow: inset 0 1px 0 #b7e3e626, 0 5px 0 #082034, 0 9px 16px #04172440;
 }
 
+/* The socket is a standalone square illustration: contain keeps its stonework
+   proportional while the numbers continue to be rendered as live text. */
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-reviewed-scene] .pvp-stone-face,
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-reviewed-scene] [data-pvp-location='source'] {
+  background: url('../assets/place_value/scene/skin_rune_socket.png') center / contain no-repeat !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+#root .app-viewport [data-vision-game='place_value_panic'] [data-pvp-reviewed-scene] .pvp-number-stone.is-error .pvp-stone-face { filter: drop-shadow(0 0 5px #ff536c); }
+#root .app-viewport [data-vision-game='place_value_panic'] [data-pvp-reviewed-scene] .pvp-number-stone.is-solved .pvp-stone-face { filter: drop-shadow(0 0 5px #88ffad); }
+
 .pvp-stone-heading {
   margin-bottom: 8px;
   color: #e4f5f7;
@@ -59,6 +70,61 @@
 .pvp-floating-stone { border: 2px solid #96d9e5; border-radius: 12px; background: #28627f; box-shadow: inset 0 2px #c4f1f455, 0 5px 12px #03192755; }
 .pvp-enemy-ground { position: absolute; left: 24%; right: 22%; bottom: 13%; height: 5%; border-radius: 50%; background: #061e2a55; }
 .pvp-prompt-compact { display: none; }
+.pvp-prompt-current { display: none; }
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] .pvp-prompt-current { display: inline !important; }
+
+/* Leave a dedicated bottom row for the live digits and submit action. */
+@media (orientation: landscape) and (max-height: 550px) {
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-reviewed-scene] .legend-pvp-sources {
+    left: 1% !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: 4px !important;
+    width: 73% !important;
+    transform: none !important;
+    translate: none !important;
+  }
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-reviewed-scene] .pvp-digit-panel > .relative {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    gap: 0 !important;
+  }
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-reviewed-scene] .pvp-digit-status {
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto 2px !important;
+    padding: 1px 8px;
+    color: #fff8df;
+    background: #092b3d;
+    border: 1px solid #b99353;
+    border-radius: 6px;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-reviewed-scene] [data-pvp-location='source'] {
+    flex: 0 1 64px !important;
+    min-width: 44px !important;
+    height: 44px !important;
+  }
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-reviewed-scene] .game-submit-dock-fixed {
+    position: absolute !important;
+    left: auto !important;
+    right: 2% !important;
+    top: auto !important;
+    bottom: 4px !important;
+    width: 22% !important;
+    height: 44px !important;
+    transform: none !important;
+    translate: none !important;
+  }
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-reviewed-scene] .game-submit-dock-fixed > button {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 44px !important;
+  }
+}
 
 /* One bounded desktop workspace keeps the puzzle and opponent together. */
 @media (min-width: 700px) and (min-height: 550px) {
@@ -346,4 +412,44 @@
  #root .game-type-place-value-peaks .legend-pvp-enemy {display:flex;flex-direction:column;align-items:center;align-self:start;height:auto !important;min-height:180px;gap:4px;}
  #root .game-type-place-value-peaks .pvp-enemy-health-frame {position:relative;inset:auto;transform:none;translate:none;width:100%;}
  #root .game-type-place-value-peaks .legend-pvp-enemy [data-monster-actor] {flex:none;translate:none;transform:none;}
+}
+
+/* Independent foreground ledge and actor share a local ground plane.
+   The scenery is decorative; it never owns controls or the foot anchor. */
+.pvp-ground-ledge, .pvp-prompt-current {display:none;}
+@media (min-width:1000px) and (min-height:550px) and (orientation:landscape) {
+ html:not([data-app-target='ios']) #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-reviewed-scene] {
+  --pvp-enemy-size:min(34vw,46vh,420px);
+  --pvp-ground-y:66%;
+  --pvp-ledge-height:calc(96vw * 270 / 1774);
+ }
+ html:not([data-app-target='ios']) #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-reviewed-scene] .legend-pvp-enemy {
+  left:2%!important;top:calc(var(--pvp-ground-y,69%) - var(--pvp-enemy-size) * .95)!important;bottom:auto!important;
+  width:var(--pvp-enemy-size)!important;height:var(--pvp-enemy-size)!important;
+ }
+ html:not([data-app-target='ios']) #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-reviewed-scene] .legend-pvp-enemy>.relative {height:100%;}
+ html:not([data-app-target='ios']) #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-reviewed-scene] .legend-pvp-enemy [data-monster-actor] {height:100%!important;width:100%!important;translate:none!important;transform:none!important;}
+ html:not([data-app-target='ios']) #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-reviewed-scene] .pvp-enemy-ground {display:none;}
+ html:not([data-app-target='ios']) #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-reviewed-scene] .pvp-enemy-health-frame {bottom:-8px;}
+ html:not([data-app-target='ios']) #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-reviewed-scene] .legend-pvp-question {left:8%!important;top:1%!important;width:84%!important;}
+ html:not([data-app-target='ios']) #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-reviewed-scene] .game-question-card {
+  border:14px solid transparent!important;border-image:var(--vision-number-stone) 25% stretch!important;
+  border-radius:0!important;background:#082b3e!important;box-shadow:0 5px 12px #04152088!important;padding:5px 18px!important;
+ }
+ html:not([data-app-target='ios']) #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-reviewed-scene] :is(.game-question-context,.pvp-prompt-full,.pvp-prompt-compact,.game-question-card-shell) {display:none!important;}
+ html:not([data-app-target='ios']) #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-reviewed-scene] .pvp-prompt-current {display:block!important;font-size:clamp(20px,2vw,27px);line-height:1.25;font-weight:600;}
+ html:not([data-app-target='ios']) #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-reviewed-scene] .legend-pvp-targets {left:36%!important;top:25%!important;width:62%!important;}
+ html:not([data-app-target='ios']) #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-reviewed-scene] .pvp-stone-row {gap:10px;}
+ html:not([data-app-target='ios']) #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-reviewed-scene] .pvp-place-label {
+  border:7px solid transparent!important;border-image:var(--vision-number-stone) 25% stretch!important;
+  border-radius:0;padding:2px 5px;background:#082b3e;font-size:clamp(15px,1.5vw,21px);font-weight:600;
+ }
+ html:not([data-app-target='ios']) #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-reviewed-scene] .legend-pvp-sources {left:36%!important;top:72%!important;width:62%!important;}
+ html:not([data-app-target='ios']) #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-reviewed-scene] .legend-pvp-sources .grid {grid-template-columns:repeat(var(--pvp-source-count),minmax(0,1fr))!important;gap:6px!important;}
+ html:not([data-app-target='ios']) #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='place_value_panic'] [data-pvp-reviewed-scene] [data-pvp-location='source'] {height:clamp(64px,11vh,100px)!important;max-width:110px!important;}
+}
+
+@media (min-width:1000px) and (min-height:550px) and (orientation:landscape) {
+ html:not([data-app-target='ios']) #root [data-pvp-reviewed-scene] .pvp-ground-ledge {display:block;position:absolute;left:2%;top:calc(var(--pvp-ground-y) - var(--pvp-ledge-height) * .11);width:96%;height:var(--pvp-ledge-height);z-index:1;pointer-events:none;}
+ html:not([data-app-target='ios']) #root [data-vision-game='place_value_panic'] .pvp-scene-shade {opacity:.35;}
 }

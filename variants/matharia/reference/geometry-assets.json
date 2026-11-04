@@ -1,0 +1,138 @@
+{
+  "processing": "Alpha-margin trim and aspect-preserving WebP export only; no painting or masking.",
+  "assets": [
+    {
+      "name": "backgrounds/bg_area_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-22916cf0-5b89-4245-999b-3eafa60303a3.png",
+      "alphaBoundsCrop": null,
+      "production": "variants/matharia/assets/png/backgrounds/bg_area_v3@2x.webp",
+      "dimensions": [
+        1942,
+        810
+      ],
+      "bytes": 706670,
+      "sha256": "c53c9eec5bc2602a1f6966b2f4149ddf78dfbd9a678e23c6ceaeb98f96933adf"
+    },
+    {
+      "name": "backgrounds/bg_transform_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-77cb5e82-a32d-4042-8197-c7ba622e13cc.png",
+      "alphaBoundsCrop": null,
+      "production": "variants/matharia/assets/png/backgrounds/bg_transform_v3@2x.webp",
+      "dimensions": [
+        1942,
+        809
+      ],
+      "bytes": 721214,
+      "sha256": "31429468e0b6acade4896daa1f3898b4e3af6c249fee1bc2c40f56317ce43293"
+    },
+    {
+      "name": "buttons/sapphire_answer_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-fecb337f-5717-45ee-a120-8c56af93b1ec.png",
+      "alphaBoundsCrop": [
+        53,
+        101,
+        1968,
+        656
+      ],
+      "production": "variants/matharia/assets/png/buttons/sapphire_answer_v3@2x.webp",
+      "dimensions": [
+        1915,
+        555
+      ],
+      "bytes": 177864,
+      "sha256": "cdbeca8d598c4891dff2bd9ec6fd7675f97b310bc0dd58d3d5a0f63101287deb"
+    },
+    {
+      "name": "props/area_table_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-d1387985-606a-4301-8a20-7936b60c5476.png",
+      "alphaBoundsCrop": [
+        37,
+        128,
+        2108,
+        638
+      ],
+      "production": "variants/matharia/assets/png/props/area_table_v3@2x.webp",
+      "dimensions": [
+        2048,
+        504
+      ],
+      "bytes": 524422,
+      "sha256": "1f523797dbb165d06c61b9b9f6043abc7ee75390da7e3107e1ee008a311b4b4b"
+    },
+    {
+      "name": "frames/transform_board_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-3d71b540-183a-4538-9748-91edf7785f9e.png",
+      "alphaBoundsCrop": [
+        7,
+        18,
+        1289,
+        1165
+      ],
+      "production": "variants/matharia/assets/png/frames/transform_board_v3@2x.webp",
+      "dimensions": [
+        1282,
+        1147
+      ],
+      "bytes": 360308,
+      "sha256": "e1dee3b6f6405674ac8cce6b2969520819ae4db8d5362affb1f434eb3baa99cf"
+    },
+    {
+      "name": "buttons/angle_answer_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-098e1284-b635-430d-b3bf-9f2d33e5ba39.png",
+      "alphaBoundsCrop": [
+        53,
+        98,
+        1966,
+        656
+      ],
+      "production": "variants/matharia/assets/png/buttons/angle_answer_v4@2x.webp",
+      "dimensions": [
+        1913,
+        558
+      ],
+      "bytes": 168652,
+      "sha256": "b02c7336c3328bf1e4571dc11e837ab9f0dfee003010e23dd4e765795341ada7"
+    },
+    {
+      "name": "frames/chart_hollow_v8",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-0e3cb7aa-5c55-44f7-829b-39162165f1c1.png",
+      "alphaBoundsCrop": [
+        14,
+        55,
+        1388,
+        1064
+      ],
+      "production": "variants/matharia/assets/png/frames/chart_hollow_v8@2x.webp",
+      "dimensions": [
+        1374,
+        1009
+      ],
+      "bytes": 184672,
+      "sha256": "31d1490d0a889a7341543c7266c28d817ec3c9b6f884a4b400de9145619f0683"
+    },
+    {
+      "name": "backgrounds/bg_coordinates_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-b027f1c0-febf-4097-92bc-595c3989bc06.png",
+      "alphaBoundsCrop": null,
+      "production": "variants/matharia/assets/png/backgrounds/bg_coordinates_v3@2x.webp",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "bytes": 686658,
+      "sha256": "b9a490c87ca585bd3ba02d20da2be2d568d93844cc2f6f8bae138ff6b756bac3"
+    },
+    {
+      "name": "backgrounds/bg_perimeter_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-7f1038a3-a5d2-4a49-8870-74a0c5c1bb51.png",
+      "alphaBoundsCrop": null,
+      "production": "variants/matharia/assets/png/backgrounds/bg_perimeter_v3@2x.webp",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "bytes": 770186,
+      "sha256": "4dc0a7ec02d802e7a81f6b9f101d48a6f94c2b74b05b5ddc999d08b2e850e9e4"
+    }
+  ]
+}

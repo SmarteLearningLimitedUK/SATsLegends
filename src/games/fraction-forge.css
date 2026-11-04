@@ -10,6 +10,22 @@
   color: var(--ff-cream);
   container-type: inline-size;
 }
+#root [data-game-set='fraction_forge'] .vision-companion--question { display:none !important; }
+
+/* Portrait browser windows need their own visible scene layer. The shared
+   landscape backdrop otherwise leaves an opaque panel over the artwork. */
+@media (orientation: portrait) {
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-fraction-forge] .game-background-layer img[data-vision-environment] {
+    opacity:1 !important;
+    object-fit:contain !important;
+    object-position:center center !important;
+  }
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay [data-fraction-forge] .game-background-layer { background:transparent !important; }
+  .ff-hearth-effects { inset:auto !important; left:0 !important; top:50% !important; width:100%; height:auto; aspect-ratio:1672 / 941; transform:translateY(-50%); }
+  /* The shared full-screen environment already supplies the forge scene. */
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(> .vision-world-backdrop) [data-fraction-forge] .game-background-layer img[data-vision-environment] { opacity:0 !important; }
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island]:has(> .vision-world-backdrop) [data-fraction-forge] .ff-hearth-effects { display:none; }
+}
 
 .ff-scrim {
   position: absolute;
@@ -867,6 +883,20 @@
 @media(prefers-reduced-motion:reduce) { .ff-blacksmith-route, .ff-blacksmith-route * { animation:none; } .ff-work-sparks { display:none; } }
 .ff-slot:disabled { opacity:1 !important; filter:none !important; }
 
+/* Separate artwork and live controls can be resized independently. */
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set][data-vision-game='fraction_forge'] [data-fraction-forge] .ff-tray {
+ background:url('../assets/game-visions/instruments/forge-rack-v1.png') center / 100% 100% no-repeat !important;
+ border:0 !important; outline:2px solid #ffe2a2; box-shadow:0 0 0 4px #38251a, 0 9px 24px #000c, 0 0 18px #ffc46780 !important;
+}
+#root [data-game-set='fraction_forge'] [data-fraction-forge] .ff-feedback { background:#152026ed; border-radius:5px; padding:2px 6px; }
+.ff-hearth-effects { position:absolute; inset:0; pointer-events:none; z-index:1; overflow:hidden; }
+.ff-hearth-flame { position:absolute; left:1%; top:34%; width:16%; height:25%; object-fit:contain; opacity:.55; transform-origin:50% 90%; animation:ff-hearth-flicker 1.15s ease-in-out infinite alternate; }
+.ff-hearth-ember { position:absolute; left:calc(4% + var(--ember-index) * 1.8%); top:53%; width:3px; height:5px; border-radius:50%; background:#ffd789; box-shadow:0 0 6px #ff9632; opacity:0; animation:ff-hearth-rise 3.2s ease-out infinite; animation-delay:calc(var(--ember-index) * -.43s); }
+@keyframes ff-hearth-flicker { 0% {opacity:.42;transform:scale(.96,.91) rotate(-2deg)} 100% {opacity:.65;transform:scale(1.04,1.04) rotate(2deg)} }
+@keyframes ff-hearth-rise { 0% {opacity:0;transform:translate(0,0)} 20% {opacity:.9} 100% {opacity:0;transform:translate(15px,-85px)} }
+[data-forge-paused='true'] .ff-hearth-effects * { animation-play-state:paused; }
+@media (prefers-reduced-motion:reduce) { .ff-hearth-effects * { animation:none !important; } .ff-hearth-ember {display:none;} }
+
 @media(max-height:700px) {
  @container(max-width:899px) {
   .ff-ui {overflow-y:auto;overflow-x:hidden;touch-action:pan-y;}
@@ -875,3 +905,80 @@
   .ff-anvil {height:60%;max-height:180px;}
  }
 }
+
+/* The smith and the working anvil occupy separate physical bays. */
+#root [data-game-set='fraction_forge'] .ff-anvil-zone { --ff-floor-line:6%; }
+#root [data-game-set='fraction_forge'] .ff-blacksmith-route {
+ /* The hero artwork's feet sit 5% above its square renderer's bottom. */
+ position:absolute;left:20%;top:auto;bottom:calc(var(--ff-floor-line) - min(2.15cqw, 3.9cqh));width:43%;height:78%;max-width:none;z-index:3;animation:none;
+}
+#root [data-game-set='fraction_forge'] .ff-blacksmith-worker {width:100%;height:100%;aspect-ratio:auto;animation:none;}
+#root [data-game-set='fraction_forge'] .ff-hero-hammer {position:absolute;z-index:4;left:67%;top:30%;width:28%;height:43%;transform:rotate(-24deg);transform-origin:48% 88%;pointer-events:none;}
+.ff-hero-hammer img {width:100%;height:100%;object-fit:contain;}
+.ff-hero-hammer[data-forge-hammer='success'], .ff-hero-hammer[data-forge-hammer='error'] {animation:ff-hero-hammer-strike .6s ease-in-out both;}
+@keyframes ff-hero-hammer-strike {0% {transform:rotate(-24deg)} 30% {transform:rotate(-65deg)} 65% {transform:rotate(48deg)} 100% {transform:rotate(-24deg)} }
+#root [data-game-set='fraction_forge'] .ff-anvil {left:auto;right:0;bottom:var(--ff-floor-line);width:55%;height:56%;min-height:0;max-height:none;transform:none;z-index:2;}
+#root [data-game-set='fraction_forge'] .ff-recipe {left:0;right:0;top:0;width:100%;transform:none;gap:3px;justify-content:center;}
+#root [data-game-set='fraction_forge'] .ff-slot {flex:0 1 86px;min-width:44px;width:auto;}
+#root [data-game-set='fraction_forge'] .ff-operator {flex:0 0 auto;min-width:10px;}
+@media(orientation:landscape) and (max-height:550px) {
+ #root [data-game-set='fraction_forge'] .ff-anvil-zone {--ff-floor-line:5%;}
+ /* On compact landscape screens the visible paving is below the stump's base. */
+ #root [data-game-set='fraction_forge'] .ff-blacksmith-route {height:82%;bottom:calc(var(--ff-floor-line) - 4cqh - min(2.15cqw, 4.1cqh));}
+ #root [data-game-set='fraction_forge'] .ff-anvil {height:60%;bottom:var(--ff-floor-line);}
+ #root [data-game-set='fraction_forge'] .ff-progress {left:auto;right:4px;justify-content:flex-end;}
+ #root [data-game-set='fraction_forge'] .ff-operator {font-size:16px;line-height:1;}
+}
+
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-target {align-self:flex-end;max-width:55%;}
+
+/* Use the artwork's 3:2 coordinate system; its flat work surface is centred
+   at x=56%, y=15%, rather than at the centre of the horn and stump. */
+#root [data-game-set='fraction_forge'] .ff-anvil-zone {container-type:size;}
+#root [data-game-set='fraction_forge'] .ff-anvil {
+ width:min(55cqw,84cqh);height:auto;aspect-ratio:3/2;
+}
+@media (orientation:portrait) {
+ #root [data-game-set='fraction_forge'] .ff-anvil {right:8%;}
+}
+#root [data-game-set='fraction_forge'] .ff-recipe {
+ left:56%;right:auto;top:15%;width:78%;transform:translate(-50%,-100%);
+}
+#root [data-game-set='fraction_forge'] .ff-slot {height:clamp(44px,10cqw,100px);}
+
+/* Fraction glyphs scale to each ingot's usable height, including compact screens. */
+#root [data-game-set='fraction_forge'] .ff-slot {container-type:size;}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='fraction_forge'] .ff-slot .ff-fraction {
+ font-size:clamp(15px,34cqh,38px);
+}
+
+/* Metal colours follow rack position only; they do not indicate the answer. */
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set='fraction_forge'][data-vision-game='fraction_forge'] .ff-bank > .ff-ingredient {
+ --ingot-light:#fff1a8; --ingot-mid:#e7aa37; --ingot-dark:#7c430d; --ingot-edge:#f8cf69;
+ position:relative;
+ overflow:hidden;
+ border:2px solid var(--ingot-edge)!important;
+ border-radius:7px!important;
+ background:linear-gradient(165deg, #ffffffad 0%, transparent 18%),
+   linear-gradient(180deg, var(--ingot-light) 0%, var(--ingot-mid) 28%, var(--ingot-dark) 48%, var(--ingot-mid) 66%, var(--ingot-light) 80%, var(--ingot-dark) 100%)!important;
+ box-shadow:inset 0 2px 2px #ffffffad, inset 0 -4px 3px #2d160b80, 0 4px 0 #29160f, 0 6px 7px #0008!important;
+ color:#132329!important;
+ text-shadow:0 1px 1px #fff8d5;
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set='fraction_forge'][data-vision-game='fraction_forge'] .ff-bank > .ff-ingredient:nth-child(3n+2) {
+ --ingot-light:#f6ffff; --ingot-mid:#a9bdc5; --ingot-dark:#536773; --ingot-edge:#dce9e9;
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] .game-staging-host[data-game-set='fraction_forge'][data-vision-game='fraction_forge'] .ff-bank > .ff-ingredient:nth-child(3n) {
+ --ingot-light:#ffd3a3; --ingot-mid:#c87e43; --ingot-dark:#67331e; --ingot-edge:#edb27d;
+}
+#root [data-game-set='fraction_forge'] .ff-bank > .ff-ingredient::before {
+ content:'';
+ position:absolute;
+ inset:4px;
+ border:1px solid #ffffff55;
+ border-radius:4px;
+ background:linear-gradient(145deg,#ffffff44 0%,transparent 30%,transparent 72%,#ffffff30 100%);
+ pointer-events:none;
+}
+#root [data-game-set='fraction_forge'] .ff-bank > .ff-ingredient .ff-fraction { position:relative; z-index:1; }
+#root [data-game-set='fraction_forge'] .ff-bank > .ff-ingredient:focus-visible { outline:3px solid #fff5ca; outline-offset:3px; }

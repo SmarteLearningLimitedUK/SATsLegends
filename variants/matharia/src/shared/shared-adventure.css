@@ -1,0 +1,187 @@
+/* Shared Matharia screens. Scenery, actors, frames and controls are independent layers. */
+:is(.matharia-briefing-layer,.adventure-board,.matharia-result-overlay){
+ --adventure-ink:#fff4d5;--adventure-muted:#b6d6db;--adventure-gold:#f2cc76;--adventure-deep:#06283b;--adventure-line:#cda65c55;
+ color:var(--adventure-ink);font-family:'Matharia Rounded',sans-serif;font-weight:500;line-height:1.45;
+}
+:is(.matharia-briefing-layer,.adventure-board,.matharia-result-overlay) .artwork-frame{display:block;position:absolute;inset:0;width:100%;height:100%;box-sizing:border-box;border-style:solid;border-color:transparent;border-image-repeat:stretch;pointer-events:none;z-index:-1}
+:is(.matharia-briefing-layer,.adventure-board,.matharia-result-overlay) .artwork-surface{position:absolute;inset:3%;z-index:-2;pointer-events:none;background:#043c4b}
+.adventure-backdrop{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;user-select:none}
+.adventure-eyebrow{display:flex;align-items:center;gap:8px;color:var(--adventure-gold);font-size:11px;font-weight:650;line-height:1.4;letter-spacing:.13em;text-transform:uppercase}
+:is(.matharia-briefing-layer,.adventure-board,.matharia-result-overlay) button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+:is(.matharia-briefing-layer,.adventure-board,.matharia-result-overlay) button:focus-visible{outline:3px solid #fff4b3;outline-offset:3px}
+:is(.matharia-briefing-layer,.adventure-board,.matharia-result-overlay) button:disabled{cursor:default}
+.adventure-button,.adventure-close{position:relative;isolation:isolate;display:flex;align-items:center;justify-content:center;gap:9px;min-width:44px;min-height:48px;padding:11px 19px;border:0;border-radius:0;background:none;box-shadow:none;color:var(--adventure-ink);font-size:16px;font-weight:650;line-height:1.25;text-align:center;transition:filter .14s,translate .14s}
+.adventure-button--primary{color:#073649}
+html[data-presentation='matharia'] #root .adventure-button--primary{color:#073649}
+.adventure-button:active:not(:disabled),.adventure-close:active{translate:0 2px;filter:brightness(1.13)}
+.adventure-button:disabled{filter:grayscale(.8);opacity:.6}
+.adventure-button>svg,.adventure-close>svg{flex:none;pointer-events:none}
+.adventure-close{width:46px;height:46px;padding:10px;flex:none}
+.adventure-briefing-hero>.vision-character,.adventure-result-hero>.vision-character{position:absolute;inset:0;width:100%;height:100%;transform:none;pointer-events:none;filter:drop-shadow(0 10px 12px #001c30a0)}
+
+/* Briefing: one illustrated guide and one readable mission panel. */
+.matharia-briefing-layer{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:calc(env(safe-area-inset-top,0px) + 18px) calc(env(safe-area-inset-right,0px) + 24px) calc(env(safe-area-inset-bottom,0px) + 18px) calc(env(safe-area-inset-left,0px) + 24px);background:#061d2c;isolation:isolate}
+.matharia-briefing-layer>.adventure-backdrop{z-index:-2;filter:brightness(.58) saturate(.85);object-position:center}
+.adventure-briefing-stage{position:relative;display:grid;grid-template-columns:minmax(200px,.8fr) minmax(360px,1.2fr);gap:0;width:min(1120px,100%);height:min(740px,100%);max-height:100%;min-height:0;outline:none}
+.adventure-briefing-hero{position:relative;min-width:0;min-height:0;align-self:end;height:88%;z-index:1;pointer-events:none}
+.adventure-briefing-card{position:relative;isolation:isolate;display:flex;flex-direction:column;min-width:0;min-height:0;padding:40px 35px 30px;filter:drop-shadow(0 14px 26px #00132180)}
+.adventure-briefing-card>.adventure-close{position:absolute;right:14px;top:13px;z-index:3}
+.adventure-briefing-reading{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#d9b46c #003146;padding:6px 9px 9px 0;text-align:left}
+.adventure-briefing-reading>.adventure-eyebrow{padding-right:40px;margin-bottom:10px}
+.adventure-briefing-reading h2{margin:0 0 15px;color:var(--adventure-gold);font-size:36px;font-weight:650;line-height:1.12;letter-spacing:0;text-wrap:balance}
+.adventure-briefing-reading .legend-briefing-copy{margin:0;color:var(--adventure-ink);font-size:18px;line-height:1.5;text-align:left;font-weight:500}
+.adventure-briefing-reading .legend-briefing-steps{display:flex;flex-direction:column;gap:17px;margin:24px 0;padding:0;list-style:none;text-align:left}
+.adventure-briefing-reading .legend-briefing-steps li{display:grid;grid-template-columns:30px minmax(0,1fr);align-items:start;gap:13px;padding:0;background:none;border:0;font-size:16px;line-height:1.55}
+.adventure-briefing-reading .legend-step-number{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border:1px solid #edc46f88;border-radius:50%;background:#0a5465;color:#ffe4a0;font-size:15px;line-height:1;font-weight:650}
+.adventure-briefing-reading .legend-worked-example{margin:20px 0 0;padding:17px 19px;border:1px solid #cda65c66;border-radius:12px;background:#031e3080;text-align:left}
+.adventure-briefing-reading .legend-worked-example strong{display:block;margin-bottom:6px;color:var(--adventure-gold);font-size:14px;line-height:1.4}
+.adventure-briefing-reading .legend-worked-example p{margin:0;color:var(--adventure-ink);font-size:16px;line-height:1.5}
+.adventure-briefing-reading .concept-live-hint{padding:15px;border:1px solid var(--adventure-line);border-radius:10px;color:var(--adventure-ink);font-size:16px;line-height:1.5}
+.adventure-briefing-actions{flex:none;padding-top:18px}
+.adventure-briefing-actions .adventure-button{width:100%;min-height:56px;font-size:18px}
+.adventure-briefing-actions p{margin:11px 4px 0;text-align:center;color:var(--adventure-muted);font-size:13px;line-height:1.4}
+
+/* Results: the original live result content sits beside an independent actor. */
+html[data-presentation='matharia'] #root .matharia-result-overlay{isolation:isolate;display:grid;grid-template-columns:minmax(210px,.8fr) minmax(360px,1.2fr);align-items:center;justify-content:normal;gap:0;padding:calc(env(safe-area-inset-top,0px) + 22px) max(24px,(100vw - 1160px)/2) calc(env(safe-area-inset-bottom,0px) + 22px) max(24px,(100vw - 1160px)/2);background:#061d2c;backdrop-filter:none}
+.matharia-result-overlay>.adventure-backdrop{z-index:-3;filter:brightness(.57) saturate(.88)}
+.adventure-result-hero{position:relative;grid-column:1;grid-row:1;align-self:stretch;min-height:0;pointer-events:none}
+.adventure-result-hero>.vision-character{inset:0 -5% 105px;width:110%;height:calc(100% - 105px);z-index:1}
+.adventure-result-crest{position:absolute;width:66%;height:50%;object-fit:contain;left:17%;top:8%;opacity:.5;filter:drop-shadow(0 0 30px #74d8ed88)}
+.adventure-hero-caption{position:absolute;isolation:isolate;bottom:1%;left:4%;right:4%;padding:20px 22px;text-align:center;color:#fff0ce;font-size:17px;font-weight:650;line-height:1.3}
+html[data-presentation='matharia'] #root .matharia-result-overlay .level-result-card{grid-column:2;grid-row:1;position:relative;isolation:isolate;display:flex;flex-direction:column;min-width:0;min-height:0;width:100%;max-width:none;height:auto;max-height:100%;padding:27px 28px 25px;border:0;border-radius:0;background:none;box-shadow:none;color:var(--adventure-ink);overflow:visible}
+.matharia-result-overlay .level-result-sheen{display:none}
+.round-result-summary{display:grid;gap:4px;}
+.round-result-points{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px;color:#d7fff0;}
+.round-result-points small{font:inherit;color:#c9e0df;}
+.matharia-result-overlay .level-result-toolbar{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 44px;grid-template-rows:auto auto;align-items:center;column-gap:16px;row-gap:5px;flex:none;min-height:52px;margin:0 0 8px;padding:4px 6px;box-sizing:border-box}
+.matharia-result-overlay .level-result-location{grid-column:1;grid-row:1;margin:0;padding-left:2px;font-size:10px;font-weight:650;line-height:1.4;letter-spacing:.13em;color:var(--adventure-muted)}
+html[data-presentation='matharia'] #root .matharia-result-overlay .ui-close-button{grid-column:2;grid-row:1 / 3;position:relative;isolation:isolate;inset:auto;display:flex;align-items:center;justify-content:center;flex:none;width:44px;height:44px;min-width:44px;padding:0;border:0;border-radius:0;background:none;box-shadow:none;color:#fff0cf;font-size:24px;line-height:1}
+.matharia-result-overlay .level-result-layout{display:flex;flex-direction:column;min-height:0;height:auto;max-height:none;gap:18px}
+.matharia-result-overlay .level-result-scroll{display:flex;flex-direction:column;gap:19px;min-height:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#eac16b88 transparent;padding:0 6px 2px 0}
+.matharia-result-overlay .level-result-heading{order:0;padding:0 10px;text-align:center}
+.matharia-result-overlay .level-result-status{grid-column:1;grid-row:2;display:block;min-width:0;align-self:start;background:none;border:0;border-radius:0;color:#9ce6d7;font-size:10px;font-weight:650;letter-spacing:.18em;line-height:1.3;padding:0}
+.matharia-result-overlay[data-result-outcome='gameover'] .level-result-status{border:0;background:none;color:#f2d39d}
+.matharia-result-overlay .level-result-heading h2{margin:8px 0 7px;font-size:32px;font-weight:650;line-height:1.12;color:var(--adventure-gold);text-wrap:balance}
+.matharia-result-overlay .level-result-heading>p{margin:0;color:var(--adventure-muted);font-size:14px;font-weight:500;line-height:1.5}
+.matharia-result-overlay .match-result-summary{display:flex;flex-direction:column;gap:4px}
+.matharia-result-overlay .match-result-summary strong{font-size:17px;color:var(--adventure-ink);font-weight:650}
+.matharia-result-overlay .match-result-summary>span{font-size:12px;line-height:1.45}
+.matharia-result-overlay .level-result-medals{display:flex;order:1;gap:9px;margin:0;align-items:center}
+.matharia-result-overlay .level-result-medals>span{border:0;background:none;padding:2px;color:#f4d898;font-size:10px}
+.matharia-result-overlay .level-result-medals>div>div{width:56px;height:56px;display:grid;place-items:center;border-radius:50%;background:#0d5260;border:1px solid #deba72;box-shadow:0 4px 12px #00172755;padding:9px}
+.matharia-result-overlay .level-result-medals img{width:38px;height:38px;object-fit:contain}
+.matharia-result-overlay .level-result-progression{display:block;order:2;margin:0;padding:16px 18px;border:1px solid #e8bf6e66;border-radius:12px;background:#052b3e}
+.matharia-result-overlay .level-result-progression>div:first-child>span:last-child{font-size:25px;line-height:1.1;color:#9de9da}
+.matharia-result-overlay .level-result-progression>div:first-child>span:first-child{font-size:10px;color:var(--adventure-muted)}
+.matharia-result-overlay .level-result-stats{display:grid;order:3;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;padding:10px 0;border-block:1px solid var(--adventure-line)}
+.matharia-result-overlay .legend-result-stat{border:0;border-radius:0;background:none;padding:5px 6px;color:var(--adventure-ink);border-right:1px solid var(--adventure-line)}
+.matharia-result-overlay .legend-result-stat:last-child{border-right:0}
+.matharia-result-overlay .legend-result-stat>div:first-child{font-size:9px;line-height:1.4;letter-spacing:.08em;color:var(--adventure-muted)}
+.matharia-result-overlay .legend-result-stat>div:last-child{font-size:18px;line-height:1.2;margin-top:5px;color:#fff0c5}
+.matharia-result-overlay .level-result-bonuses{display:block;order:4}
+.matharia-result-overlay .level-result-bonuses>div>div{border:0;border-radius:0;background:none;padding:4px 5px;gap:12px;font-size:11px;line-height:1.4}
+.matharia-result-overlay .level-result-bonuses>div>div>span:last-child{white-space:nowrap;flex:none;color:#f2cc76}
+.matharia-result-overlay[data-result-outcome='gameover'] .level-result-stats{order:1}
+.matharia-result-overlay[data-result-outcome='gameover'] .level-result-medals{display:none}
+.matharia-result-overlay .level-result-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;flex:none;margin:0;padding-top:0}
+html[data-presentation='matharia'] #root .matharia-result-overlay .level-result-actions button{position:relative;isolation:isolate;display:flex;align-items:center;justify-content:center;min-height:52px;margin:0;padding:12px 17px;border:0;border-radius:0;background:none;box-shadow:none;color:#fff2d5;font-family:inherit;font-size:16px;font-weight:650;line-height:1.25;letter-spacing:0;text-transform:none;transition:translate .14s,filter .14s}
+html[data-presentation='matharia'] #root .matharia-result-overlay .level-result-actions .ui-button-primary{background:none;border:0;color:#073649}
+html[data-presentation='matharia'] #root .matharia-result-overlay .level-result-actions button:active{translate:0 2px;filter:brightness(1.12)}
+.adventure-reward-sparks{position:absolute;inset:0;pointer-events:none;z-index:2}
+.adventure-reward-sparks i{position:absolute;left:calc(14% + var(--spark)*11%);top:calc(18% + var(--spark-row)*14%);width:5px;height:5px;border-radius:50%;background:#ffe7a1;box-shadow:0 0 9px 2px #f8ce6b88;animation:adventure-spark 1.2s calc(var(--spark)*.08s) both}
+@keyframes adventure-spark{0%{opacity:0;translate:0 24px;scale:.2}35%{opacity:1;scale:1}100%{opacity:0;translate:0 -40px;scale:.4}}
+
+@media (orientation:portrait) and (max-width:760px){
+ .matharia-briefing-layer{padding:calc(env(safe-area-inset-top,0px) + 10px) calc(env(safe-area-inset-right,0px) + 12px) calc(env(safe-area-inset-bottom,0px) + 10px) calc(env(safe-area-inset-left,0px) + 12px)}
+ .adventure-briefing-stage{grid-template-columns:minmax(0,1fr);grid-template-rows:145px minmax(0,1fr);height:100%;max-width:540px}
+ .adventure-briefing-hero{grid-row:1;height:100%;width:190px;justify-self:center;z-index:1}
+ .adventure-briefing-card{grid-row:2;padding:30px 25px 22px}
+ .adventure-briefing-reading h2{font-size:30px;margin-bottom:12px}
+ .adventure-briefing-reading .legend-briefing-copy{font-size:16px}
+ .adventure-briefing-reading .legend-briefing-steps{gap:14px;margin:20px 0}
+ .adventure-briefing-reading .legend-briefing-steps li{font-size:15px;gap:10px}
+ .adventure-briefing-reading .legend-worked-example{padding:14px}
+ .adventure-briefing-actions{padding-top:12px}
+ .adventure-briefing-actions .adventure-button{min-height:52px;font-size:17px}
+ .adventure-briefing-actions p{font-size:12px;margin-top:8px}
+ html[data-presentation='matharia'] #root .matharia-result-overlay{grid-template-columns:minmax(0,1fr);grid-template-rows:150px minmax(0,1fr);padding:calc(env(safe-area-inset-top,0px) + 10px) 12px calc(env(safe-area-inset-bottom,0px) + 10px)}
+ .adventure-result-hero{grid-column:1;grid-row:1;width:230px;justify-self:center}
+ .adventure-result-hero>.vision-character{inset:-12px 0 0;width:100%;height:100%}
+ .adventure-result-crest{top:0;height:100%;width:100%;left:0;opacity:.45}
+ .adventure-hero-caption{display:none}
+ html[data-presentation='matharia'] #root .matharia-result-overlay .level-result-card{grid-column:1;grid-row:2;height:100%;padding:28px 28px 25px}
+ .matharia-result-overlay .level-result-toolbar{margin-bottom:5px}
+ .matharia-result-overlay .level-result-layout{flex:1;gap:13px;min-height:0}
+ .matharia-result-overlay .level-result-scroll{gap:16px}
+ .matharia-result-overlay .level-result-heading{padding:0 3px}
+ .matharia-result-overlay .level-result-heading h2{font-size:28px}
+ .matharia-result-overlay .level-result-heading>p{font-size:13px}
+ .matharia-result-overlay .level-result-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .matharia-result-overlay .level-result-medals>div>div{width:50px;height:50px;padding:7px}
+ .matharia-result-overlay .level-result-progression{padding:13px 14px}
+ html[data-presentation='matharia'] #root .matharia-result-overlay .level-result-actions button{min-height:50px;padding:11px 10px;font-size:14px}
+}
+@media (orientation:portrait) and (max-height:720px){
+ .adventure-briefing-stage{grid-template-rows:105px minmax(0,1fr)}
+ .adventure-briefing-hero{width:150px}
+ html[data-presentation='matharia'] #root .matharia-result-overlay{grid-template-rows:100px minmax(0,1fr)}
+ .adventure-result-hero{width:170px}
+}
+@media (orientation:landscape) and (max-height:550px){
+ .matharia-briefing-layer{padding:calc(env(safe-area-inset-top,0px) + 10px) calc(env(safe-area-inset-right,0px) + 16px) calc(env(safe-area-inset-bottom,0px) + 10px) calc(env(safe-area-inset-left,0px) + 16px)}
+ .adventure-briefing-stage{grid-template-columns:minmax(150px,.65fr) minmax(330px,1.35fr);height:100%}
+ .adventure-briefing-hero{height:100%}
+ .adventure-briefing-card{padding:24px 27px 20px}
+ .adventure-briefing-reading h2{font-size:28px;margin-bottom:11px}
+ .adventure-briefing-reading .legend-briefing-copy{font-size:16px}
+ .adventure-briefing-reading .legend-briefing-steps{gap:12px;margin:17px 0}
+ .adventure-briefing-reading .legend-briefing-steps li{font-size:15px}
+ .adventure-briefing-actions{padding-top:10px}
+ .adventure-briefing-actions .adventure-button{min-height:48px;font-size:16px}
+ .adventure-briefing-actions p{font-size:12px;margin-top:6px}
+ html[data-presentation='matharia'] #root .matharia-result-overlay{grid-template-columns:minmax(120px,.6fr) minmax(320px,1.4fr);padding:calc(env(safe-area-inset-top,0px) + 10px) 16px calc(env(safe-area-inset-bottom,0px) + 10px) 16px}
+ html[data-presentation='matharia'] #root .matharia-result-overlay .level-result-card{height:100%;max-height:100%;padding:17px 25px 20px}
+ .matharia-result-overlay .level-result-layout{flex:1;min-height:0;gap:12px}
+ .matharia-result-overlay .level-result-toolbar{margin-bottom:4px;min-height:44px}
+ .matharia-result-overlay .level-result-heading h2{font-size:27px;margin:5px 0}
+ .matharia-result-overlay .level-result-heading>p{font-size:13px}
+ .matharia-result-overlay .level-result-scroll{gap:14px}
+ .matharia-result-overlay .level-result-progression{display:block}
+ .matharia-result-overlay .level-result-bonuses{display:block}
+ .adventure-hero-caption{font-size:14px;bottom:0}
+ html[data-presentation='matharia'] #root .matharia-result-overlay .level-result-actions button{min-height:46px;padding:10px 14px;font-size:14px}
+}
+/* Reward animation starts from the true previous progress, without a pre-reveal flash. */
+.adventure-hero-caption>strong{display:block;color:#ffe196;font-size:28px;line-height:1.1;margin:0 0 5px}
+.adventure-hero-caption>strong+span{display:block;font-size:13px;line-height:1.3}
+.adventure-earned-gems{display:flex;align-items:center;justify-content:center;gap:12px}
+.adventure-earned-gems>span{display:grid;place-items:center;width:58px;height:58px;padding:9px;border:1px solid #d7b26a;border-radius:50%;background:#0b5260}
+.adventure-earned-gems .adventure-gem-art{display:block;width:40px;height:40px;object-fit:contain;opacity:.2;filter:grayscale(1)}
+.adventure-earned-gems .is-earned[data-revealed='true'] .adventure-gem-art{opacity:1;filter:none;animation:adventure-gem-reveal .4s var(--gem-delay) both}
+@keyframes adventure-gem-reveal{from{opacity:.2;transform:translateY(8px) scale(.82)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(orientation:landscape) and (max-height:550px){
+ .matharia-result-overlay .level-result-scroll{gap:9px}
+ .matharia-result-overlay .level-result-heading{display:contents}
+ .matharia-result-overlay .level-result-heading h2{order:0;flex:none;margin:0;text-align:center}
+ .matharia-result-overlay .level-result-stats{order:1;flex:none;padding:6px 0}
+ .matharia-result-overlay .level-result-heading>p{order:2;flex:none;text-align:center}
+ .matharia-result-overlay .level-result-medals{order:3;flex:none}
+ .matharia-result-overlay .level-result-progression{order:4;flex:none}
+ .matharia-result-overlay .level-result-bonuses{order:5;flex:none}
+ .matharia-result-overlay[data-result-outcome='gameover'] .level-result-stats{order:1}
+ .adventure-hero-caption>strong{font-size:23px}
+}
+@media(prefers-reduced-motion:reduce){.adventure-earned-gems .is-earned[data-revealed] .adventure-gem-art{opacity:1;filter:none;animation:none;transform:none}}
+.result-settled-xp{display:flex;flex-direction:column;gap:8px;width:100%}
+.result-settled-xp>div:first-child{display:flex;justify-content:space-between;font-size:11px;font-weight:650;letter-spacing:.1em;text-transform:uppercase;color:#d9e6df}
+.result-settled-xp>[role='progressbar']{height:16px;overflow:hidden;border-radius:20px;border:1px solid #ffffff20;background:#ffffff12}
+.result-settled-xp>[role='progressbar']>span{display:block;height:100%;background:linear-gradient(90deg,#4ade80,#22d3ee,#60a5fa)}
+/* The native stage owns horizontal safe insets; portal briefings own theirs. */
+@media(orientation:landscape) and (max-height:550px) and (max-width:700px){
+}
+@media(prefers-reduced-motion:reduce){
+ :is(.matharia-briefing-layer,.adventure-board,.matharia-result-overlay) *{animation:none;transition:none;scroll-behavior:auto}
+ .adventure-reward-sparks{display:none}
+}
+
+.adventure-gem-art{display:block;pointer-events:none;flex:none}

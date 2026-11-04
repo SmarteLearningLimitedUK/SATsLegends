@@ -1,0 +1,8 @@
+{
+ "tool":"built-in image_gen",
+ "source":"exec-413f6c13-b2ff-4fe5-8a0d-d0132d855ccf.png",
+ "assets":[
+  {"key":"ninja-rail-v5","prompt":"Extract ONLY the complete horizontal rail/beam from this transparent bridge asset. Keep the beam's original full width, exact rail thickness, white stone top lip, polished gold carved scrollwork and small central sapphire diamond. Completely remove BOTH vertical supporting columns, including their capitals, shafts and bases. Finish the lower rail edge as a continuous clean gold bevel. The result is just one very long thin horizontal beam, approximately 2000 wide and 150 high, not a bridge arch. Strict front-facing orthographic view, same detailed materials. No posts, ticks, numbers, plaques or background. True transparency, tight alpha framing around the single shallow rail, no empty supporting stubs."},
+  {"key":"ninja-pillar-v5","prompt":"Extract and regenerate ONLY the left supporting pillar from this transparent bridge asset as one independent complete carved gold-and-ivory support. Keep the same sculpted gold capital, short ivory shaft with golden collars, and square ivory-and-gold base. The rail/beam is entirely absent. A single squat pillar, front-facing in the original perspective, width-to-height about 0.60 (600 wide, 1000 high). Preserve the rich gold carving and exact visual family. It must have a complete finished capital at the top and complete flat foot at the bottom, with no cropped rail fragment or sapphire centre diamond attached. No numbers, letters, UI, scenery or ground. One pillar only, tightly framed on a genuinely transparent background, crisp alpha edges."}
+ ]
+}

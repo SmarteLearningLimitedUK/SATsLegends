@@ -1,0 +1,12 @@
+{
+  "kind": "objects",
+  "key": "mean-engine",
+  "file": "objects/mean-engine-v1.webp",
+  "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-97581c4f-a0be-4224-9136-dff2dfa50d8a.png",
+  "prompt": "Production game asset, reference is the approved art direction only. Generate Only the brass desert calculating machine, front view, portrait4:5 aspect ratio. MUST match these overlay positions: central dark rectangular display occupies x22to75percent,y38to69percent; mode title blank panel x27to73percent,y28to35percent; round glowing cyan core x50percent,y21percent; side tubes x11and89percent; blank SCAN BUTTON body x32to64percent,y80to87percent. Machine base at96percentheight. No text, symbols or number cells; all labels/buttons rendered later. High-end worn sandstone-and-brass craftsmanship. Genuinely transparent alpha background everywhere outside the isolated object, no coloured matte, no backdrop. This must be a separate compositing asset for live gameplay. Same high-end sculpted3D family fantasy rendering, real material detail, correct perspective and lighting. No labels, captions, image border, interface, watermark or extra objects.",
+  "dimensions": [
+    1122,
+    1402
+  ],
+  "bytes": 460166
+}

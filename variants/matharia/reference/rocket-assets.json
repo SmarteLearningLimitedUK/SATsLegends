@@ -1,0 +1,122 @@
+{
+  "processing": "Alpha-margin crop and aspect-preserving WebP export. Existing independent rocket retains source assembly regions; no background is clipped or concealed.",
+  "assets": [
+    {
+      "name": "backgrounds/bg_rocket_v2",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-def2eab6-0fa3-4260-83c4-fb1a372666f3.png",
+      "sourceDimensions": [
+        853,
+        1844
+      ],
+      "production": "variants/matharia/assets/png/backgrounds/bg_rocket_v2@2x.webp",
+      "dimensions": [
+        853,
+        1844
+      ],
+      "alphaBoundsCrop": null,
+      "bytes": 623252,
+      "sha256": "6f1c742a08b7529f61e109404c741f6814c7bdbbb6353a5da797143cb398300e"
+    },
+    {
+      "name": "props/rocket_pad_v2",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-4c593e5f-337c-4598-8a38-13dccc2d71fa.png",
+      "sourceDimensions": [
+        2060,
+        763
+      ],
+      "production": "variants/matharia/assets/png/props/rocket_pad_v2@2x.webp",
+      "dimensions": [
+        1400,
+        289
+      ],
+      "alphaBoundsCrop": [
+        43,
+        218,
+        2017,
+        626
+      ],
+      "bytes": 194932,
+      "sha256": "e4a961ecadf8a0f1749465d7bb93d3964c5ee9f3f65b526db423cc8be0dddeea"
+    },
+    {
+      "name": "gameplay/rocket_answer_v2",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-73778150-f451-4cda-8c9c-f0bb5404fdd6.png",
+      "sourceDimensions": [
+        1690,
+        931
+      ],
+      "production": "variants/matharia/assets/png/gameplay/rocket_answer_v2@2x.webp",
+      "dimensions": [
+        1000,
+        409
+      ],
+      "alphaBoundsCrop": [
+        43,
+        132,
+        1646,
+        788
+      ],
+      "bytes": 86686,
+      "sha256": "a120b5a71504ce0da4ce5bee0197fc1c7324cb802513851cd7500041c277069f"
+    },
+    {
+      "name": "props/ninja_bridge_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-413f6c13-b2ff-4fe5-8a0d-d0132d855ccf.png",
+      "sourceDimensions": [
+        1988,
+        791
+      ],
+      "production": "variants/matharia/assets/png/props/ninja_bridge_v4@2x.webp",
+      "dimensions": [
+        1800,
+        394
+      ],
+      "alphaBoundsCrop": [
+        13,
+        220,
+        1975,
+        650
+      ],
+      "bytes": 213988,
+      "sha256": "a70aff624e9cf3d5eb7bd9b382d317b149902c2e4077b99ca13b14479c7ad140"
+    },
+    {
+      "name": "props/rocket_vehicle_v2",
+      "source": "D:\\BrainZilla\\GitHub\\SATsLegends\\src\\assets\\game-visions\\objects\\rocket-v1.webp",
+      "sourceDimensions": [
+        1024,
+        1536
+      ],
+      "production": "variants/matharia/assets/png/props/rocket_vehicle_v2@2x.webp",
+      "dimensions": [
+        682,
+        1455
+      ],
+      "alphaBoundsCrop": [
+        171,
+        8,
+        853,
+        1463
+      ],
+      "bytes": 225252,
+      "sha256": "72edcde165f4f48cc4b02f528399886d885f3135245c8a7c589c0c2c2929e84b"
+    },
+    {
+      "name": "gameplay/rocket_answer_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-3a5f9ce5-693c-4447-9c60-dcd31394ecf7.png",
+      "production": "variants/matharia/assets/png/gameplay/rocket_answer_v3@2x.webp",
+      "dimensions": [
+        1000,
+        491
+      ],
+      "alphaBoundsCrop": [
+        37,
+        70,
+        1622,
+        849
+      ],
+      "bytes": 95024,
+      "sha256": "35335ca31cdff216d8c583ecdfe0d0fbade0a794fca716ecb957c74cf13447af"
+    }
+  ]
+}

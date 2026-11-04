@@ -142,7 +142,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 1,
       value: {
-        prompt: 'Which number is biggest?',
+        prompt: 'Which number is the greatest?',
         sublabel: 'Compare the highest-value digits first, then scan across.',
         options: ['4,305,019', '4,350,190', '4,305,901', '4,305,109'],
         answerIndex: 1,
@@ -152,8 +152,8 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 1,
       value: {
-        prompt: 'What is the value of 6 in 3,674,215?',
-        sublabel: 'This SATs-style question is about place value, not the digit itself.',
+        prompt: 'What is the value of the digit 6 in 3,674,215?',
+        sublabel: 'Look at the place occupied by the digit 6.',
         options: ['6', '60,000', '600,000', '6,000'],
         answerIndex: 2,
         visual: { type: 'tokens', items: ['3', '6', '7', '4', '2', '1', '5'], accent: 'emerald' },
@@ -162,7 +162,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'Which number rounds to 340,000?',
+        prompt: 'Which number rounds to 340,000 to the nearest 10,000?',
         sublabel: 'Check the thousands digit before you round.',
         options: ['345,120', '334,888', '344,921', '349,999'],
         answerIndex: 2,
@@ -182,7 +182,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: 'What is the value of 4 in 6,405,218?',
+        prompt: 'What is the value of the digit 4 in 6,405,218?',
         sublabel: 'Read the digit in the millions number carefully.',
         options: ['4', '40,000', '400,000', '4,000,000'],
         answerIndex: 2,
@@ -203,7 +203,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
       minLevel: 3,
       value: {
         prompt: 'Which number is 7,000,000 + 80,000 + 4,000 + 60 + 9?',
-        sublabel: 'Build the number from each place value chunk.',
+        sublabel: 'Add the place values to make the number.',
         options: ['7,084,069', '7,840,069', '7,804,609', '7,084,609'],
         answerIndex: 0,
         visual: { type: 'equation', lines: ['7,000,000 + 80,000 + 4,000 + 60 + 9', '= ?'], badge: 'Compose' },
@@ -217,7 +217,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
         prompt: 'Work out 84 + 67',
         sublabel: 'Add the two numbers.',
         options: ['141', '151', '161', '171'],
-        answerIndex: 0,
+        answerIndex: 1,
         visual: { type: 'equation', lines: ['84 + 67', '= ?'], badge: 'Add', variant: 'clash' },
       },
     },
@@ -237,7 +237,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
         prompt: 'Calculate 47 × 6',
         sublabel: 'Multiply the two numbers.',
         options: ['252', '262', '282', '292'],
-        answerIndex: 1,
+        answerIndex: 2,
         visual: { type: 'equation', lines: ['47 × 6', '= ?'], badge: 'Multiply', variant: 'clash' },
       },
     },
@@ -284,11 +284,11 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: 'Work out 3^2 + 4 x 5',
+        prompt: 'Work out 3² + 4 × 5',
         sublabel: 'Powers come before multiplication and addition.',
         options: ['22', '29', '31', '25'],
         answerIndex: 1,
-        visual: { type: 'equation', lines: ['3^2 + 4 x 5', '= ?'], badge: 'Power', variant: 'clash' },
+        visual: { type: 'equation', lines: ['3² + 4 × 5', '= ?'], badge: 'Power', variant: 'clash' },
       },
     },
   ],
@@ -402,7 +402,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
           image: { label: "A'", x: 1, y: 3, tone: 'bg-sky-300' },
           min: -4,
           max: 4,
-          caption: 'SATs-style translation from an original point to its image.',
+          caption: 'A is the original point. A′ is its image.',
         },
       },
     },
@@ -427,7 +427,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
       minLevel: 3,
       value: {
         prompt: 'A shape moves 8 right. Which rule matches?',
-        sublabel: 'This mirrors the one-step translation prompts in the papers.',
+        sublabel: 'Every point moves the same distance in the same direction.',
         options: ['translation 8 units right', 'reflection in a vertical line', 'translation 8 units left', 'rotation 90° clockwise'],
         answerIndex: 0,
         visual: {
@@ -476,7 +476,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 1,
       value: {
-        prompt: '150 g makes 3 portions. How much for 9?',
+        prompt: 'A recipe uses 150 g of flour to make 3 equal portions. How many grams of flour are needed to make 9 portions?',
         sublabel: 'Scale every ingredient by the same factor.',
         options: ['300 g', '450 g', '600 g', '750 g'],
         answerIndex: 1,
@@ -521,7 +521,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: 'Half of a 22 cm tower is how tall?',
+        prompt: 'A tower is 22 cm tall. A model is half as tall. How tall is the model?',
         sublabel: 'Use the multiplicative relationship, not subtraction.',
         options: ['10 cm', '11 cm', '12 cm', '44 cm'],
         answerIndex: 1,
@@ -538,7 +538,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'A map scale says 1 cm = 5 km. How far is 7 cm?',
+        prompt: 'On a map, 1 cm represents 5 km. What distance does 7 cm on the map represent?',
         sublabel: 'Multiply by the scale factor.',
         options: ['12 km', '25 km', '35 km', '45 km'],
         answerIndex: 2,
@@ -591,13 +591,13 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 1,
       value: {
-        prompt: 'The records show the number of crates carried by each supply caravan. How many crates did Windward deliver?',
+        prompt: 'The chart shows the number of crates delivered by each boat. How many crates did Windward deliver?',
         sublabel: 'Read the Windward stack carefully.',
         options: ['4', '6', '7', '9'],
         answerIndex: 1,
         visual: {
           type: 'bars',
-          caption: 'Supply caravans',
+          caption: 'Supply boats',
           bars: [
             { label: 'Windward', value: 6, color: 'from-sky-400 to-cyan-300' },
             { label: 'Eden', value: 9, color: 'from-indigo-400 to-blue-300' },
@@ -610,13 +610,13 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'The records show the number of crates carried by each supply caravan. Which caravan delivered the most crates?',
-        sublabel: 'Compare every caravan before you answer.',
+        prompt: 'The chart shows the number of crates delivered by each boat. Which boat delivered the most crates?',
+        sublabel: 'Compare every boat before you answer.',
         options: ['Windward', 'Eden', 'Jerry', 'Ivy'],
         answerIndex: 1,
         visual: {
           type: 'bars',
-          caption: 'Supply caravans',
+          caption: 'Supply boats',
           bars: [
             { label: 'Windward', value: 6, color: 'from-sky-400 to-cyan-300' },
             { label: 'Eden', value: 9, color: 'from-indigo-400 to-blue-300' },
@@ -629,13 +629,13 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'The records show the number of crates carried by each supply caravan. How many more crates did Eden deliver than Jerry?',
+        prompt: 'The chart shows the number of crates delivered by each boat. How many more crates did Eden deliver than Jerry?',
         sublabel: 'Subtract the Jerry stack from the Eden stack.',
         options: ['2', '3', '4', '5'],
         answerIndex: 1,
         visual: {
           type: 'bars',
-          caption: 'Supply caravans',
+          caption: 'Supply boats',
           bars: [
             { label: 'Windward', value: 5, color: 'from-sky-400 to-cyan-300' },
             { label: 'Eden', value: 12, color: 'from-indigo-400 to-blue-300' },
@@ -648,13 +648,13 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: 'The records show the number of crates carried by each supply caravan. What is the total number of crates delivered by all four caravans?',
-        sublabel: 'Add all four caravan stacks together.',
+        prompt: 'The chart shows the number of crates delivered by each boat. What is the total number of crates delivered by all four boats?',
+        sublabel: 'Add all four boat stacks together.',
         options: ['22', '24', '26', '28'],
         answerIndex: 2,
         visual: {
           type: 'bars',
-          caption: 'Supply caravans',
+          caption: 'Supply boats',
           bars: [
             { label: 'Windward', value: 7, color: 'from-sky-400 to-cyan-300' },
             { label: 'Eden', value: 8, color: 'from-indigo-400 to-blue-300' },
@@ -667,13 +667,13 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'The records show the number of crates carried by each supply caravan. How many crates did Windward and Jerry deliver altogether?',
-        sublabel: 'Add the two matching caravans only.',
+        prompt: 'The chart shows the number of crates delivered by each boat. How many crates did Windward and Jerry deliver altogether?',
+        sublabel: 'Add the two matching boats only.',
         options: ['11', '12', '13', '14'],
         answerIndex: 2,
         visual: {
           type: 'bars',
-          caption: 'Supply caravans',
+          caption: 'Supply boats',
           bars: [
             { label: 'Windward', value: 6, color: 'from-sky-400 to-cyan-300' },
             { label: 'Eden', value: 9, color: 'from-indigo-400 to-blue-300' },
@@ -686,13 +686,13 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: 'The records show the number of crates carried by each supply caravan. Which two caravans deliver 15 crates altogether?',
+        prompt: 'The chart shows the number of crates delivered by each boat. Which two boats deliver 15 crates altogether?',
         sublabel: 'Test each pair and look for the exact total.',
         options: ['Windward and Eden', 'Windward and Jerry', 'Eden and Ivy', 'Jerry and Ivy'],
         answerIndex: 0,
         visual: {
           type: 'bars',
-          caption: 'Supply caravans',
+          caption: 'Supply boats',
           bars: [
             { label: 'Windward', value: 6, color: 'from-sky-400 to-cyan-300' },
             { label: 'Eden', value: 9, color: 'from-indigo-400 to-blue-300' },
@@ -748,11 +748,11 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: 'Which set would make the mean less useful because of an outlier?',
-        sublabel: 'Look for the value that sits far away from the others.',
-        options: ['7, 7, 8, 8', '12, 13, 12, 13', '5, 5, 5, 30', '9, 10, 9, 10'],
+        prompt: 'The mean of four scores is 12. What is their total?',
+        sublabel: 'Multiply the mean by the number of scores.',
+        options: ['3', '16', '48', '36'],
         answerIndex: 2,
-        visual: { type: 'sequence', values: ['Check the cluster', 'Find the odd one out'], caption: 'Think about outliers.' },
+        visual: { type: 'tokens', items: ['4 scores', 'Mean = 12'], accent: 'blue' },
       },
     },
   ],
@@ -760,7 +760,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 1,
       value: {
-        prompt: 'Solve x + 17 = 53',
+        prompt: 'A number has 17 added to it. The result is 53. What is the number?',
         sublabel: 'Find the number that balances the equation.',
         options: ['34', '36', '70', '17'],
         answerIndex: 1,
@@ -770,7 +770,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'Solve 4n = 36',
+        prompt: 'A number multiplied by 4 is 36. What is the number?',
         sublabel: 'Undo the multiplication to find n.',
         options: ['8', '9', '12', '32'],
         answerIndex: 1,
@@ -780,8 +780,8 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'Rule: black = (white × 3) + 4. White = 9. Find black beads.',
-        sublabel: 'Substitute the value and then calculate.',
+        prompt: 'The number of black beads is 4 more than 3 times the number of white beads. There are 9 white beads. How many black beads are there?',
+        sublabel: 'Multiply the number of white beads by 3, then add 4.',
         options: ['27', '31', '36', '13'],
         answerIndex: 1,
         visual: { type: 'equation', lines: ['black = (white × 3) + 4', 'white = 9'], badge: 'Rule' },
@@ -790,7 +790,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: 'Rule: black = (white × 3) + 4. Black = 25. What is white?',
+        prompt: 'The number of black beads is 4 more than 3 times the number of white beads. There are 25 black beads. How many white beads are there?',
         sublabel: 'Work backwards through the rule.',
         options: ['5', '6', '7', '8'],
         answerIndex: 2,
@@ -800,7 +800,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: 'Solve 3(x + 4) = 27',
+        prompt: 'Add 4 to a number, then multiply the result by 3. The answer is 27. What was the starting number?',
         sublabel: 'Undo the multiplication before undoing the addition.',
         options: ['4', '5', '6', '7'],
         answerIndex: 1,
@@ -810,7 +810,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: 'Solve (x + 6) ÷ 3 = 5',
+        prompt: 'Add 6 to a number, then divide the result by 3. The answer is 5. What was the starting number?',
         sublabel: 'Multiply first, then subtract.',
         options: ['7', '8', '9', '10'],
         answerIndex: 2,
@@ -924,7 +924,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 1,
       value: {
-        prompt: 'Find perimeter when l = 6 cm and w = 4 cm.',
+        prompt: 'A rectangle is 6 cm long and 4 cm wide. What is its perimeter?',
         sublabel: 'Add first, then double.',
         options: ['20 cm', '10 cm', '24 cm', '18 cm'],
         answerIndex: 0,
@@ -944,8 +944,8 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'A rule says y = 4x − 3. What is y when x = 6?',
-        sublabel: 'Substitute, then calculate.',
+        prompt: 'A number machine multiplies by 4, then subtracts 3. The input is 6. What is the output?',
+        sublabel: 'Follow the two operations in order.',
         options: ['21', '27', '15', '9'],
         answerIndex: 0,
         visual: { type: 'equation', lines: ['y = 4x − 3', 'x = 6'], badge: 'Substitute' },
@@ -954,7 +954,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: 'Rule: y = 2x + 5. If y = 19, what is x?',
+        prompt: 'A number machine multiplies by 2, then adds 5. The output is 19. What was the input?',
         sublabel: 'Work backwards through the rule.',
         options: ['7', '9', '12', '14'],
         answerIndex: 0,
@@ -964,7 +964,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: 'Use V = l × w × h. Find volume for 4, 3, 5.',
+        prompt: 'A cuboid is 4 cm long, 3 cm wide and 5 cm high. What is its volume in cm³?',
         sublabel: 'Multiply all three values.',
         options: ['60 cm³', '12 cm³', '20 cm³', '75 cm³'],
         answerIndex: 0,
@@ -1017,7 +1017,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
       minLevel: 2,
       value: {
         prompt: 'A multiple of 7 has a digit 8. Which could it be?',
-        sublabel: 'Test the clue against each option like a SATs reasoning item.',
+        sublabel: 'Check that your number is a multiple of 7 and contains the digit 8.',
         options: ['28', '38', '68', '86'],
         answerIndex: 0,
         visual: { type: 'sequence', values: ['Two digits', 'Multiple of 7', 'One digit is 8'], caption: 'Use all of the clues.' },
@@ -1036,7 +1036,7 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 2,
       value: {
-        prompt: 'Function machine: x2, then +5. What is the output for 9?',
+        prompt: 'A number machine multiplies by 2, then adds 5. The input is 9. What is the output?',
         sublabel: 'Multiply first, then add.',
         options: ['21', '22', '23', '24'],
         answerIndex: 2,
@@ -1046,11 +1046,11 @@ const CHALLENGE_BANKS: Record<SupportedChallengeGameType, BankEntry<ChallengeQue
     {
       minLevel: 3,
       value: {
-        prompt: 'What comes next in 3, 7, 15, 31, ...?',
-        sublabel: 'Spot the rule before the next jump.',
-        options: ['47', '55', '61', '63'],
+        prompt: 'Write the next number in this sequence: 3, 7, 11, 15, ...',
+        sublabel: 'Find the amount added each time.',
+        options: ['17', '18', '21', '19'],
         answerIndex: 3,
-        visual: { type: 'sequence', values: ['3', '7', '15', '31', '?'], caption: 'Rule: x2 + 1' },
+        visual: { type: 'sequence', values: ['3', '7', '11', '15', '?'], caption: 'Add the same amount each time.' },
       },
     },
   ],
@@ -1071,22 +1071,22 @@ const DATA_DUNGEON_BANK: BankEntry<DataDungeonPuzzle>[] = [
   {
     minLevel: 1,
     value: {
-      id: 'sat-median-1',
-      type: 'median',
-      question: 'Find the median.',
-      options: [9, 11, 13, 20],
-      answer: 11,
-      data: [20, 11, 4, 15, 9],
+      id: 'sat-mean-4',
+      type: 'mean',
+      question: 'What is the mean of these numbers?',
+      options: [9, 10, 13, 20],
+      answer: 10,
+      data: [4, 8, 10, 12, 16],
     },
   },
   {
     minLevel: 1,
     value: {
-      id: 'sat-mode-1',
-      type: 'mode',
-      question: 'Find the mode.',
-      options: [5, 7, 9, 12],
-      answer: 7,
+      id: 'sat-mean-5',
+      type: 'mean',
+      question: 'What is the mean of these numbers?',
+      options: [6, 7, 8, 9],
+      answer: 8,
       data: [7, 5, 7, 9, 12],
     },
   },
@@ -1095,7 +1095,7 @@ const DATA_DUNGEON_BANK: BankEntry<DataDungeonPuzzle>[] = [
     value: {
       id: 'sat-range-1',
       type: 'range',
-      question: 'Find the range.',
+      question: 'What is the difference between the greatest and least numbers shown?',
       options: [11, 12, 13, 31],
       answer: 13,
       data: [13, 9, 22, 17, 11],
@@ -1106,7 +1106,7 @@ const DATA_DUNGEON_BANK: BankEntry<DataDungeonPuzzle>[] = [
     value: {
       id: 'sat-barchart-1',
       type: 'barchart',
-      question: 'How many blue gems?',
+      question: 'How many blue gems are shown in the chart?',
       options: [5, 6, 7, 8],
       answer: 7,
       data: [],
@@ -1123,7 +1123,7 @@ const DATA_DUNGEON_BANK: BankEntry<DataDungeonPuzzle>[] = [
     value: {
       id: 'sat-barchart-2',
       type: 'barchart',
-      question: 'How many more green than red?',
+      question: 'How many more green gems than red gems are shown?',
       options: [1, 2, 3, 4],
       answer: 2,
       data: [],
@@ -1151,7 +1151,7 @@ const DATA_DUNGEON_BANK: BankEntry<DataDungeonPuzzle>[] = [
     value: {
       id: 'sat-range-2',
       type: 'range',
-      question: 'Find the range.',
+      question: 'What is the difference between the greatest and least numbers shown?',
       options: [18, 19, 20, 21],
       answer: 19,
       data: [6, 10, 17, 25],
@@ -1171,9 +1171,9 @@ const DATA_DUNGEON_BANK: BankEntry<DataDungeonPuzzle>[] = [
   {
     minLevel: 2,
     value: {
-      id: 'sat-median-2',
-      type: 'median',
-      question: 'Find the median.',
+      id: 'sat-mean-6',
+      type: 'mean',
+      question: 'What is the mean of these numbers?',
       options: [9, 10, 11, 12],
       answer: 11,
       data: [4, 10, 12, 18],
@@ -1184,7 +1184,7 @@ const DATA_DUNGEON_BANK: BankEntry<DataDungeonPuzzle>[] = [
     value: {
       id: 'sat-range-3',
       type: 'range',
-      question: 'Find the range.',
+      question: 'What is the difference between the greatest and least numbers shown?',
       options: [14, 15, 16, 17],
       answer: 15,
       data: [3, 18, 14, 11, 6],
@@ -1195,7 +1195,7 @@ const DATA_DUNGEON_BANK: BankEntry<DataDungeonPuzzle>[] = [
     value: {
       id: 'sat-barchart-3',
       type: 'barchart',
-      question: 'How many more blue than gold?',
+      question: 'How many more blue gems than gold gems are shown?',
       options: [0, 1, 2, 3],
       answer: 1,
       data: [],
@@ -1297,7 +1297,7 @@ const TIMEKEEPER_BANK: BankEntry<TimeProblem>[] = [
   {
     minLevel: 1,
     value: {
-      question: '7:20 PM in 24-hour time?',
+      question: 'Write 7:20 pm using the 24-hour clock.',
       options: ['07:20', '17:20', '19:20', '21:20'],
       answer: '19:20',
     },
@@ -1305,7 +1305,7 @@ const TIMEKEEPER_BANK: BankEntry<TimeProblem>[] = [
   {
     minLevel: 1,
     value: {
-      question: '12:35 AM in 24-hour time?',
+      question: 'Write 12:35 am using the 24-hour clock.',
       options: ['00:35', '12:35', '01:35', '23:35'],
       answer: '00:35',
     },
@@ -1313,7 +1313,7 @@ const TIMEKEEPER_BANK: BankEntry<TimeProblem>[] = [
   {
     minLevel: 2,
     value: {
-      question: '1 hour 25 minutes after 4:15 PM?',
+      question: 'What time is 1 hour 25 minutes after 4:15 pm?',
       options: ['5:30 PM', '5:40 PM', '6:40 PM', '5:50 PM'],
       answer: '5:40 PM',
     },
@@ -1321,7 +1321,7 @@ const TIMEKEEPER_BANK: BankEntry<TimeProblem>[] = [
   {
     minLevel: 2,
     value: {
-      question: '2 hours 10 minutes before 9:05 AM?',
+      question: 'What time is 2 hours 10 minutes before 9:05 am?',
       options: ['6:55 AM', '7:15 AM', '7:55 AM', '6:45 AM'],
       answer: '6:55 AM',
     },
@@ -1329,7 +1329,7 @@ const TIMEKEEPER_BANK: BankEntry<TimeProblem>[] = [
   {
     minLevel: 3,
     value: {
-      question: 'How long from 08:35 to 11:20?',
+      question: 'How much time is there between 08:35 and 11:20?',
       options: ['2h 35m', '2h 45m', '3h 45m', '2h 55m'],
       answer: '2h 45m',
     },
@@ -1337,7 +1337,7 @@ const TIMEKEEPER_BANK: BankEntry<TimeProblem>[] = [
   {
     minLevel: 3,
     value: {
-      question: '150 minutes after 10:40 AM?',
+      question: 'What time is 150 minutes after 10:40 am?',
       options: ['12:50 PM', '1:10 PM', '1:20 PM', '12:10 PM'],
       answer: '1:10 PM',
     },
@@ -1345,7 +1345,7 @@ const TIMEKEEPER_BANK: BankEntry<TimeProblem>[] = [
   {
     minLevel: 2,
     value: {
-      question: '11:45 PM in 24-hour time?',
+      question: 'Write 11:45 pm using the 24-hour clock.',
       options: ['11:45', '23:45', '00:45', '12:45'],
       answer: '23:45',
     },
@@ -1353,7 +1353,7 @@ const TIMEKEEPER_BANK: BankEntry<TimeProblem>[] = [
   {
     minLevel: 3,
     value: {
-      question: '45 minutes before 1:20 PM?',
+      question: 'What time is 45 minutes before 1:20 pm?',
       options: ['12:35 PM', '12:45 PM', '1:05 PM', '12:25 PM'],
       answer: '12:35 PM',
     },
@@ -1361,7 +1361,7 @@ const TIMEKEEPER_BANK: BankEntry<TimeProblem>[] = [
   {
     minLevel: 3,
     value: {
-      question: 'How long from 09:50 to 12:15?',
+      question: 'How much time is there between 09:50 and 12:15?',
       options: ['2h 15m', '2h 25m', '2h 35m', '2h 45m'],
       answer: '2h 25m',
     },

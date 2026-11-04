@@ -1,0 +1,368 @@
+{
+  "processing": "Rectangular extraction from approved independent transparent sprite atlases, alpha-margin crop and WebP export. No pixel repainting, scene masks or concealment.",
+  "assets": [
+    {
+      "name": "backgrounds/bg_takeout_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-e83457d2-2375-4cb2-8ac6-322009369c1c.png",
+      "production": "variants/matharia/assets/png/backgrounds/bg_takeout_v4@2x.webp",
+      "dimensions": [
+        853,
+        1844
+      ],
+      "alphaBoundsCrop": null,
+      "bytes": 569820,
+      "sha256": "9aa72cffec4f3063e9918de369bbda7835d6a8c8669861a048c84af0615630b6"
+    },
+    {
+      "name": "frames/takeout_board_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-612091cc-b3c7-442b-90e2-78ba76d4e088.png",
+      "production": "variants/matharia/assets/png/frames/takeout_board_v3@2x.webp",
+      "dimensions": [
+        1600,
+        764
+      ],
+      "alphaBoundsCrop": [
+        22,
+        88,
+        1633,
+        857
+      ],
+      "bytes": 304144,
+      "sha256": "af5d1e03662a764e886e4c0c0aebb7c14d1e2a9e940829a4521c2b65b15294cc"
+    },
+    {
+      "name": "props/takeout_stove_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-cc0f51ae-6134-463a-abc2-edae00bc3047.png",
+      "production": "variants/matharia/assets/png/props/takeout_stove_v3@2x.webp",
+      "dimensions": [
+        1400,
+        785
+      ],
+      "alphaBoundsCrop": [
+        46,
+        145,
+        1490,
+        955
+      ],
+      "bytes": 344878,
+      "sha256": "eba8a5547d4b85a1406a380836c1339a92c92063ec336aae44bbec42eecfda32"
+    },
+    {
+      "name": "heroes/chef_barratt_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-4616122f-e139-422a-bbfa-dab2beface07.png",
+      "atlasRegion": [
+        0,
+        0,
+        627,
+        627
+      ],
+      "alphaBoundsCrop": [
+        102,
+        57,
+        547,
+        594
+      ],
+      "production": "variants/matharia/assets/png/heroes/chef_barratt_v4@2x.webp",
+      "dimensions": [
+        445,
+        537
+      ],
+      "bytes": 102012,
+      "sha256": "d9889b10955ab7ea6fc6efdbd9a61d2163b599c0dd5c2e506261b7d7432032b3"
+    },
+    {
+      "name": "heroes/chef_bran_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-4616122f-e139-422a-bbfa-dab2beface07.png",
+      "atlasRegion": [
+        627,
+        0,
+        1254,
+        627
+      ],
+      "alphaBoundsCrop": [
+        105,
+        66,
+        568,
+        598
+      ],
+      "production": "variants/matharia/assets/png/heroes/chef_bran_v4@2x.webp",
+      "dimensions": [
+        463,
+        532
+      ],
+      "bytes": 113748,
+      "sha256": "51a1aa1f42be250d997a48a648bb651fb2fe912034d0e818f6aee479700af01e"
+    },
+    {
+      "name": "heroes/chef_mochi_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-4616122f-e139-422a-bbfa-dab2beface07.png",
+      "atlasRegion": [
+        0,
+        627,
+        627,
+        1254
+      ],
+      "alphaBoundsCrop": [
+        99,
+        74,
+        598,
+        569
+      ],
+      "production": "variants/matharia/assets/png/heroes/chef_mochi_v4@2x.webp",
+      "dimensions": [
+        499,
+        495
+      ],
+      "bytes": 101198,
+      "sha256": "bf394c4dcf5a1ca5ae6337e0ab5b37961def9bbc97a5007452c631249024ddeb"
+    },
+    {
+      "name": "heroes/chef_vex_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-4616122f-e139-422a-bbfa-dab2beface07.png",
+      "atlasRegion": [
+        627,
+        627,
+        1254,
+        1254
+      ],
+      "alphaBoundsCrop": [
+        107,
+        57,
+        580,
+        574
+      ],
+      "production": "variants/matharia/assets/png/heroes/chef_vex_v4@2x.webp",
+      "dimensions": [
+        473,
+        517
+      ],
+      "bytes": 107234,
+      "sha256": "b6489cb54c1232735795fca7eab4612cd9601d4992e03c1ae721c89d3f581a72"
+    },
+    {
+      "name": "food/portion_1_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-00e42c1a-e5ae-47e3-ac80-89d9d670c608.png",
+      "atlasRegion": [
+        0,
+        0,
+        418,
+        418
+      ],
+      "alphaBoundsCrop": [
+        58,
+        43,
+        412,
+        397
+      ],
+      "production": "variants/matharia/assets/png/food/portion_1_v3@2x.webp",
+      "dimensions": [
+        354,
+        354
+      ],
+      "bytes": 60282,
+      "sha256": "20b170e8fdf167cc1ac953371556906f2002382c8176c688a793efc24c1ec92b"
+    },
+    {
+      "name": "food/portion_2_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-00e42c1a-e5ae-47e3-ac80-89d9d670c608.png",
+      "atlasRegion": [
+        418,
+        0,
+        836,
+        418
+      ],
+      "alphaBoundsCrop": [
+        53,
+        102,
+        370,
+        367
+      ],
+      "production": "variants/matharia/assets/png/food/portion_2_v3@2x.webp",
+      "dimensions": [
+        317,
+        265
+      ],
+      "bytes": 39420,
+      "sha256": "685b836826f4a64ba60c26e3bfef4fa3b75277e4c2b3c3c313a34e13d1c7fbda"
+    },
+    {
+      "name": "food/portion_3_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-00e42c1a-e5ae-47e3-ac80-89d9d670c608.png",
+      "atlasRegion": [
+        836,
+        0,
+        1254,
+        418
+      ],
+      "alphaBoundsCrop": [
+        47,
+        82,
+        375,
+        412
+      ],
+      "production": "variants/matharia/assets/png/food/portion_3_v3@2x.webp",
+      "dimensions": [
+        328,
+        330
+      ],
+      "bytes": 70118,
+      "sha256": "e32ea9323a16d69c3f8f724fea2752ec560d3b7d219434805af33cf3f1880c64"
+    },
+    {
+      "name": "food/portion_4_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-00e42c1a-e5ae-47e3-ac80-89d9d670c608.png",
+      "atlasRegion": [
+        0,
+        418,
+        418,
+        836
+      ],
+      "alphaBoundsCrop": [
+        58,
+        65,
+        411,
+        418
+      ],
+      "production": "variants/matharia/assets/png/food/portion_4_v3@2x.webp",
+      "dimensions": [
+        353,
+        353
+      ],
+      "bytes": 67034,
+      "sha256": "6b52133ad2b79c6ae478dcc8d266f67acfd18617ec47d57791e1f9d2403e3658"
+    },
+    {
+      "name": "food/portion_5_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-00e42c1a-e5ae-47e3-ac80-89d9d670c608.png",
+      "atlasRegion": [
+        418,
+        418,
+        836,
+        836
+      ],
+      "alphaBoundsCrop": [
+        102,
+        39,
+        365,
+        418
+      ],
+      "production": "variants/matharia/assets/png/food/portion_5_v3@2x.webp",
+      "dimensions": [
+        263,
+        379
+      ],
+      "bytes": 36546,
+      "sha256": "752b37e5868876915a454077031c700cd70a26d012e17c93aa98881319f9157f"
+    },
+    {
+      "name": "food/portion_6_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-00e42c1a-e5ae-47e3-ac80-89d9d670c608.png",
+      "atlasRegion": [
+        836,
+        418,
+        1254,
+        836
+      ],
+      "alphaBoundsCrop": [
+        41,
+        72,
+        362,
+        380
+      ],
+      "production": "variants/matharia/assets/png/food/portion_6_v3@2x.webp",
+      "dimensions": [
+        321,
+        308
+      ],
+      "bytes": 68324,
+      "sha256": "700e2016a07095f636525116bb74cb62f6ec43343014486334314235be7b3f51"
+    },
+    {
+      "name": "food/portion_7_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-00e42c1a-e5ae-47e3-ac80-89d9d670c608.png",
+      "atlasRegion": [
+        0,
+        836,
+        418,
+        1254
+      ],
+      "alphaBoundsCrop": [
+        63,
+        0,
+        379,
+        350
+      ],
+      "production": "variants/matharia/assets/png/food/portion_7_v3@2x.webp",
+      "dimensions": [
+        316,
+        350
+      ],
+      "bytes": 58336,
+      "sha256": "6430a9c05fbb2c7324f9a95882727d2e7b50e18021d512a18f682d4f64d0cf55"
+    },
+    {
+      "name": "food/portion_8_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-00e42c1a-e5ae-47e3-ac80-89d9d670c608.png",
+      "atlasRegion": [
+        418,
+        836,
+        836,
+        1254
+      ],
+      "alphaBoundsCrop": [
+        36,
+        0,
+        413,
+        351
+      ],
+      "production": "variants/matharia/assets/png/food/portion_8_v3@2x.webp",
+      "dimensions": [
+        377,
+        351
+      ],
+      "bytes": 65802,
+      "sha256": "8ec84f769c809f78d8a1fd0397c7c377acc84fa0e506ccf155c39f7b59877d2a"
+    },
+    {
+      "name": "food/portion_9_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-00e42c1a-e5ae-47e3-ac80-89d9d670c608.png",
+      "atlasRegion": [
+        836,
+        836,
+        1254,
+        1254
+      ],
+      "alphaBoundsCrop": [
+        41,
+        40,
+        378,
+        347
+      ],
+      "production": "variants/matharia/assets/png/food/portion_9_v3@2x.webp",
+      "dimensions": [
+        337,
+        307
+      ],
+      "bytes": 55136,
+      "sha256": "710ab352bad6f448db6adb08882db0c56d6e083f268f1410ec5ad0a2673b8ab0"
+    },
+    {
+      "name": "frames/takeout_food_card_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-1fae2be6-6c81-4861-ac41-a5f61fbe93a8.png",
+      "atlasRegion": null,
+      "alphaBoundsCrop": [
+        79,
+        135,
+        1040,
+        1275
+      ],
+      "production": "variants/matharia/assets/png/frames/takeout_food_card_v3@2x.webp",
+      "dimensions": [
+        961,
+        1140
+      ],
+      "bytes": 120122,
+      "sha256": "e1dd34a4dda5d0d88ff534ee35d64880c9b2efe7d839bcbc647a0dc8d3cef106"
+    }
+  ]
+}

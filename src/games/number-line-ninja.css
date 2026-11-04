@@ -37,7 +37,7 @@
     height: min(100%, 210px);
     min-height: 0;
     margin-top: 0;
-    align-self: center;
+    align-self: stretch;
   }
 
   #root .ninja-opponent-lane::before {
@@ -108,3 +108,21 @@
   #root .ninja-playfield { flex:none; min-height:440px; }
   #root .ninja-opponent-lane { flex:none; min-height:220px; }
 }
+
+/* Faceted answer stones: artwork is independent of the live button text. */
+.ninja-answer-gem {position:absolute;inset:1px;display:block;pointer-events:none;filter:drop-shadow(0 5px 3px #031322aa) drop-shadow(0 0 7px #2fbffc88);background:linear-gradient(135deg,#f9e8ad,#ae7426 38%,#f9df92 62%,#694719);clip-path:polygon(50% 0,88% 12%,100% 38%,88% 86%,50% 100%,12% 86%,0 38%,12% 12%);}
+.ninja-answer-gem > span {position:absolute;inset:4px;clip-path:inherit;background:linear-gradient(145deg,#a7f7ff 0%,#32c6fa 19%,#0772d9 48%,#083781 76%,#62dfff 100%);}
+.ninja-answer-gem > span::before {content:'';position:absolute;inset:0;background:linear-gradient(152deg,#fff9 0 22%,transparent 22% 100%),linear-gradient(35deg,transparent 0 48%,#002b6b70 49% 61%,transparent 62%),linear-gradient(145deg,transparent 0 46%,#ddfcff55 47% 56%,transparent 57%);clip-path:polygon(50% 3%,90% 16%,97% 38%,86% 84%,50% 97%,14% 84%,3% 38%,10% 16%);}
+.ninja-answer-gem.is-correct > span {background:linear-gradient(145deg,#dcffce,#56d995 30%,#087b68 70%,#a3ffcf);}
+.ninja-answer-gem.is-wrong > span {background:linear-gradient(145deg,#fff0ad,#ffb237 35%,#ad4c18 75%,#ffe29b);}
+[data-number-line-answer]:focus-visible {outline:3px solid #fff3b1;outline-offset:5px;border-radius:12px;}
+.ninja-enemy-hit {position:absolute;inset:0;transform-origin:50% 95%;}
+.ninja-enemy-hit[data-ninja-topple='odd'] {animation:ninja-topple-odd .9s cubic-bezier(.22,.7,.24,1) both;}
+.ninja-enemy-hit[data-ninja-topple='even'] {animation:ninja-topple-even .9s cubic-bezier(.22,.7,.24,1) both;}
+@keyframes ninja-topple-odd {0%,100%{transform:rotate(0)} 20%{transform:rotate(-12deg)} 55%{transform:rotate(62deg)} 78%{transform:rotate(40deg)}}
+@keyframes ninja-topple-even {0%,100%{transform:rotate(0)} 20%{transform:rotate(-12deg)} 55%{transform:rotate(62deg)} 78%{transform:rotate(40deg)}}
+.ninja-hit-feedback {position:absolute;z-index:45;right:20%;top:20%;padding:3px 10px;border:2px solid #ffd378;border-radius:12px;background:#5d1716;color:#fff3c8;font-weight:700;font-size:clamp(18px,2vw,28px);box-shadow:0 3px 10px #07132399;pointer-events:none;}
+[data-stage-paused='true'] .ninja-enemy-hit {animation-play-state:paused;}
+@media (prefers-reduced-motion:reduce) {.ninja-enemy-hit[data-ninja-topple] {animation:none!important;transform:none!important;}}
+/* The supplied landscape environment remains independent from the live number line. */
+.ninja-matharia-scene { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; pointer-events:none; }

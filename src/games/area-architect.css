@@ -15,3 +15,19 @@
 
 .area-room-dimensions {display:block;font-size:calc(16px * var(--game-text-scale, 1.2));margin-bottom:4px;color:#fff4c9;}
 @media(max-width:600px){.area-room-plan svg{min-height:100px;}.area-room-plan{min-height:160px;}}
+
+/* Keep the room-plan key legible over the illustrated construction site. */
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-plan figcaption {
+  display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:4px 14px;
+  max-width:100%;padding:6px 14px;color:#fff;font-size:16px!important;line-height:1.3;
+  font-weight:600;background:#0b2944f2;border:1px solid #a4d9e8;border-radius:10px;
+  text-shadow:none;box-shadow:0 3px 10px #07192c55;
+}
+#root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-dimensions {
+  display:inline;margin:0;color:#fff4c9;font-size:inherit;font-weight:600;
+}
+@media (orientation:landscape) and (max-height:550px) {
+  #root .app-viewport.sat-theme-bluegold.screen-gameplay[data-active-game][data-game-island] [data-vision-game='area_architect'] .area-room-plan figcaption {
+    padding:3px 8px;font-size:13px!important;line-height:1.25;
+  }
+}

@@ -1,0 +1,238 @@
+{
+  "processing": "Alpha-margin crop, aspect-preserving downsample and WebP export; no recolouring, repainting or concealment.",
+  "assets": [
+    {
+      "name": "frames/pvp_question_v2",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-76f6454d-5e52-484f-a997-ef147b07aa5d.png",
+      "production": "variants/matharia/assets/png/frames/pvp_question_v2@2x.webp",
+      "dimensions": [
+        1600,
+        533
+      ],
+      "alphaBoundsCrop": [
+        1,
+        12,
+        2137,
+        723
+      ],
+      "bytes": 180510,
+      "sha256": "9376efa5c6daf802ef4bff257cb49f19f6b1e536fc4ab7347d5e1374da972aa8"
+    },
+    {
+      "name": "buttons/pvp_submit_v2",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-03cefeb5-fc25-46f0-829c-8ce6e9328359.png",
+      "production": "variants/matharia/assets/png/buttons/pvp_submit_v2@2x.webp",
+      "dimensions": [
+        1400,
+        273
+      ],
+      "alphaBoundsCrop": [
+        19,
+        182,
+        1995,
+        568
+      ],
+      "bytes": 75622,
+      "sha256": "2d72986fb958442c6fcdb7d1014e84971a47e347853197b14c91425992f5aca1"
+    },
+    {
+      "name": "gameplay/pvp_socket_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-6c4bc6a6-3dee-4608-8c22-137d20f1045a.png",
+      "production": "variants/matharia/assets/png/gameplay/pvp_socket_v3@2x.webp",
+      "dimensions": [
+        372,
+        600
+      ],
+      "alphaBoundsCrop": [
+        140,
+        63,
+        948,
+        1365
+      ],
+      "bytes": 49574,
+      "sha256": "773a5088d041c641475d68d585cbe32441bc59c8d85559d44d36af757bad0e0c"
+    },
+    {
+      "name": "frames/concept_nav_medium_v2",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-c2222e5c-a0e2-44a6-bb8b-3dde9e4b028a.png",
+      "production": "variants/matharia/assets/png/frames/concept_nav_medium_v2@2x.webp",
+      "dimensions": [
+        1100,
+        624
+      ],
+      "alphaBoundsCrop": [
+        48,
+        113,
+        1464,
+        916
+      ],
+      "bytes": 137194,
+      "sha256": "ddad0defb22f40a23ec75bd1455dec8b75631992786f3506dff02b976e5ed8d9"
+    },
+    {
+      "name": "frames/concept_hud_wide_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-8babda2e-ab12-4c32-8c13-58f79dacc3c0.png",
+      "production": "variants/matharia/assets/png/frames/concept_hud_wide_v4@2x.webp",
+      "dimensions": [
+        1800,
+        330
+      ],
+      "alphaBoundsCrop": [
+        5,
+        175,
+        2059,
+        551
+      ],
+      "bytes": 127340,
+      "sha256": "b31396ed4b14276226fd7d2327fcaefad1f9a29193cabafc1ce52edd05a607eb"
+    },
+    {
+      "name": "backgrounds/bg_ninja_v2",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-9dc1bc73-61b9-4e20-ba57-216fabf407cd.png",
+      "production": "variants/matharia/assets/png/backgrounds/bg_ninja_v2@2x.webp",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "alphaBoundsCrop": null,
+      "bytes": 680274,
+      "sha256": "1ae1a37bf1ed8c365b0b8c6b30a29634bb00d1535595fe9f8603f9b5b691589e"
+    },
+    {
+      "name": "heroes/hero_ninja_fox_v2",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-ab5e000e-a9af-4866-94f9-98164081712b.png",
+      "production": "variants/matharia/assets/png/heroes/hero_ninja_fox_v2@2x.webp",
+      "dimensions": [
+        1131,
+        1328
+      ],
+      "alphaBoundsCrop": [
+        14,
+        11,
+        1145,
+        1339
+      ],
+      "bytes": 496960,
+      "sha256": "19d31e6830482ba5195bea3694232ba46b937b278bc7ddaf664da784a3b8bf85"
+    },
+    {
+      "name": "props/ninja_bridge_v2",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-047b0ce0-5c82-457b-bbd4-ecf61b52a780.png",
+      "production": "variants/matharia/assets/png/props/ninja_bridge_v2@2x.webp",
+      "dimensions": [
+        1800,
+        539
+      ],
+      "alphaBoundsCrop": [
+        0,
+        151,
+        1983,
+        745
+      ],
+      "bytes": 244174,
+      "sha256": "3f4767bcdadb75f13e175563d737800016442c75f7ccff7d560e86e7ecc1895b"
+    },
+    {
+      "name": "gameplay/ninja_medallion_v2",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-e4d891df-2b6b-4086-8fe9-d878adfbfd08.png",
+      "production": "variants/matharia/assets/png/gameplay/ninja_medallion_v2@2x.webp",
+      "dimensions": [
+        623,
+        640
+      ],
+      "alphaBoundsCrop": [
+        53,
+        10,
+        1196,
+        1185
+      ],
+      "bytes": 108508,
+      "sha256": "71b902e2cfd7b78d94b79278614b7f0b79bad1c00cf79a332c936dce78d746b7"
+    },
+    {
+      "name": "frames/concept_nav_medium_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-48a27e34-64b0-4864-982a-938f0e9d5d65.png",
+      "production": "variants/matharia/assets/png/frames/concept_nav_medium_v3@2x.webp",
+      "dimensions": [
+        1100,
+        811
+      ],
+      "alphaBoundsCrop": [
+        33,
+        0,
+        1424,
+        1025
+      ],
+      "bytes": 148202,
+      "sha256": "8b36c5a4a9145f3e6e01ceef0d475146beeb0e8ec36945a74634ee80f3e5c837"
+    },
+    {
+      "name": "gameplay/pvp_socket_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-eeefed4e-8dd9-49c9-8b84-240ed29c9730.png",
+      "production": "variants/matharia/assets/png/gameplay/pvp_socket_v4@2x.webp",
+      "dimensions": [
+        498,
+        600
+      ],
+      "alphaBoundsCrop": [
+        37,
+        31,
+        1113,
+        1327
+      ],
+      "bytes": 73700,
+      "sha256": "1d2f98231e883ae799375151ac067d7f6088487d88eac2dd07c390997ae329cb"
+    },
+    {
+      "name": "props/ninja_rail_v5",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-93b430fb-9dd7-42d9-8813-4180cf3467c6.png",
+      "production": "variants/matharia/assets/png/props/ninja_rail_v5@2x.webp",
+      "dimensions": [
+        1800,
+        170
+      ],
+      "alphaBoundsCrop": [
+        15,
+        274,
+        2033,
+        465
+      ],
+      "bytes": 159070,
+      "sha256": "bd8c5233d8d452b855d3b99814647d4bd6e8d4826a9dad72ac8df86b47b6cac2"
+    },
+    {
+      "name": "props/ninja_pillar_v5",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-bc6d49ac-02a4-4a59-b592-61847025af17.png",
+      "production": "variants/matharia/assets/png/props/ninja_pillar_v5@2x.webp",
+      "dimensions": [
+        612,
+        800
+      ],
+      "alphaBoundsCrop": [
+        13,
+        286,
+        960,
+        1523
+      ],
+      "bytes": 194000,
+      "sha256": "e811f2534f3528309654318f2a66598f1b7be43075c0561b30895e04a0bc243f"
+    },
+    {
+      "name": "frames/pvp_question_v3_hollow",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-60939f3c-9328-497e-8d39-793a29bb1df3.png",
+      "production": "variants/matharia/assets/png/frames/pvp_question_v3_hollow@2x.webp",
+      "dimensions": [
+        1600,
+        533
+      ],
+      "alphaBoundsCrop": [
+        0,
+        9,
+        2136,
+        721
+      ],
+      "bytes": 193996,
+      "sha256": "c665f40d73cbf77b686b2377290f66fe4705ccb19372d3fdac3fea62fc3f9ea7"
+    }
+  ]
+}

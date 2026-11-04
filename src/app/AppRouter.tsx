@@ -22,7 +22,7 @@ import { isBossEncounterGameType } from '../games/bossEncounterTypes';
 import { GameScreen, IslandData, LevelData, PlayerData } from '../types';
 import { getLevelGameTitle } from '../utils/gameNames';
 import { getGameDifficulty } from '../systems/content/gameDifficulty';
-import splashPoster from '../assets/casual_ui/splashrep1.webp';
+import splashPoster from '../assets/website/hero-action-wide.webp';
 import SplashLogo from '../website/SplashLogo';
 import '../design/desktop-welcome.css';
 import { LEVEL_TIMERS_DISABLED } from './testingFlags';
@@ -422,10 +422,11 @@ export const AppRouter: React.FC<AppRouterProps> = ({
               src={splashPoster}
               alt="SATs Legends splash screen"
               className="absolute inset-0 h-full w-full object-cover"
-              style={{ objectPosition: '50% 0%' }}
+              style={{ objectPosition: '80% 50%' }}
               draggable={false}
             />
 
+            <div className="legend-welcome-mobile-logo"><SplashLogo /></div>
             <div className="legend-welcome-action absolute bottom-[7.5%] left-1/2 w-56 -translate-x-1/2 sm:w-64">
               <p>{player.playerName.trim() ? `Welcome back, ${player.playerName}.` : 'Big adventures. Brilliant minds.'}</p>
               <button

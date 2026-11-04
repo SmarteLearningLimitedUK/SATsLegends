@@ -1,0 +1,21 @@
+{
+  "authorised_reference_chat": "Reimagined Screen Concepts",
+  "project": "satsreskinios",
+  "archives": [
+    {
+      "name": "Matharia_PNG_and_Vector_Assets.zip",
+      "sha256": "d2cc2694c2064d1da5d060da187631caf647f8fb67e6bf81ee4902c944400ac3"
+    },
+    {
+      "name": "Matharia_Screens_and_Guides.zip",
+      "sha256": "ad2ae2cda0e301fec803632242c1413f3f10b31c13f0bd3984a2945a34069d88"
+    }
+  ],
+  "generated_assets": [
+    "island_operations_outpost@2x.png",
+    "island_measurement_mountain@2x.png",
+    "island_calculation_core@2x.png",
+    "matharia-app-icon.png"
+  ],
+  "shared_functionality": "Current repository source; no question, scoring, progression or game-rule modules copied or edited."
+}

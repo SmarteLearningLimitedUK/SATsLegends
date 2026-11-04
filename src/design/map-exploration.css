@@ -17,6 +17,7 @@
   animation:legend-map-current 11s ease-in-out infinite alternate;
 }
 .legend-map-brand-header { position:absolute; z-index:30; left:5%; top:0; width:90%; aspect-ratio:1995 / 788; pointer-events:none; }
+.legend-map-island-label {position:absolute;z-index:2;bottom:-4px;left:50%;transform:translateX(-50%);width:max-content;max-width:180px;padding:3px 7px;border:1px solid #f4d58b88;border-radius:7px;background:#082b45ed;color:#fff6d9;font-size:clamp(11px,1.2vw,16px);font-weight:700;line-height:1.2;text-align:center;pointer-events:none;}
 .legend-map-brand { display:block; width:100%; height:100%; object-fit:contain; pointer-events:none; }
 .legend-map-island-sprite {
   position:absolute; inset:0; display:block; overflow:hidden; pointer-events:none;
@@ -155,3 +156,8 @@
 @keyframes sea-spout { 0%,65%,100% { opacity:0; transform:scaleY(.1); } 75%,85% { opacity:1; transform:scaleY(1); } }
 @keyframes sea-bubble { 0% { opacity:0; transform:translateY(5px); } 25% { opacity:.8; } 100% { opacity:0; transform:translateY(-42px); } }
 @media(prefers-reduced-motion:reduce) { .legend-world-map .legend-map-atmosphere *, .legend-map-ocean::before, .legend-map-desktop-route path { animation:none!important; } }
+
+/* Screenshot-led map artwork. Each island remains a separate selectable layer. */
+.legend-map-ocean { background-image:url('../assets/maps/screenshot-map/bg_ocean_map_portrait@2x.png'); background-size:cover; }
+.legend-map-island-sprite img.legend-map-reference-island { position:absolute;inset:0;width:100%;height:100%;max-width:100%;object-fit:contain; }
+.legend-map-island-label { width:max-content;max-width:min(190px, 42vw);min-height:32px;box-sizing:border-box;padding:5px 12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(#0c3a65,#071b38);border:2px solid #e2b85e;border-radius:9px;box-shadow:inset 0 0 0 1px #705018,0 2px 4px #001a30aa;overflow-wrap:normal;white-space:normal;font-family:Georgia,serif;font-size:clamp(11px,1.4vw,14px);line-height:1.15; }

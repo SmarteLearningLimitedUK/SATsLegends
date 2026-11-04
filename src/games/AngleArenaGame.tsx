@@ -1,5 +1,6 @@
 ﻿import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { useIsPresent } from 'motion/react';
+import { useIsPresent, useReducedMotion } from 'motion/react';
+import { Lightbulb, X } from 'lucide-react';
 import {
   emitMiniGameSessionEvent,
   MiniGameShellContractProps,
@@ -16,14 +17,17 @@ import {
 } from '../components/game-ui/GameUiKit';
 import GameScreenLayout from '../components/game-ui/GameScreenLayout';
 import cannonFacingLeftSrc from '../assets/angle_arena/cannonanglearena/1.png';
+import { getVisionEnvironment, getVisionObject } from './visionScene';
 import cannonFacingRightSrc from '../assets/angle_arena/cannonanglearena/2.png';
 import cannonFacingUpSrc from '../assets/angle_arena/cannonanglearena/3.png';
 import { GAME_SCENE_META } from '../gameSceneMeta';
 import goblinMonster from '../assets/enemies/cohesive/goblin.webp';
 import MonsterMindActor, { type MonsterMindReaction } from '../components/game-ui/MonsterMindActor';
 import './angle-arena.css';
+import {drawArenaAtmosphere,drawArenaBurst} from './angleArena/presentation';
 import { buildAngleQuestions, AngleQuestion } from './angleArena/questions';
 import { angleToVector, clamp, degreesToRadians, distance, lerp, worldToScreen } from './angleArena/math';
+import { angleArenaLayout } from './angleArena/layout';
 
 interface AngleArenaGameProps {
   levelId: number;
@@ -73,8 +77,6 @@ const CAMERA_LERP = 0.08;
 const RETURN_LERP = 0.12;
 const PROJECTILE_SPEED = 520;
 const MAX_FLIGHT_DISTANCE = 980;
-const CANNON_ANCHOR_X_RATIO = 0.12;
-const CANNON_ANCHOR_Y_RATIO = 0.68;
 const CAMERA_LEAD_DISTANCE = 340;
 const CAMERA_ACTIVE_LERP = 0.22;
 const ENEMY_FOREGROUND_LEAD = 110;
@@ -453,6 +455,14 @@ const drawCannonSprite = (
   }
 
   const normalizedAngle = toPositiveAngle(angleDeg);
+  if (image instanceof HTMLImageElement && image.src.includes('ice-cannon')) {
+    const height = sizePx * image.naturalHeight / image.naturalWidth;
+    ctx.save();
+    ctx.rotate(degreesToRadians(-normalizedAngle));
+    ctx.drawImage(image, -sizePx * .36, -height * .56, sizePx, height);
+    ctx.restore();
+    return;
+  }
   const baselineAngle = CANNON_BASELINE_DEG[spriteKey];
 
   ctx.save();
@@ -644,6 +654,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const nextCallbackRef = useRef<(() => void) | null>(null);
   const callbacksRef = useRef({ onVictory, onGameOver, onRoundComplete, sessionEvents });
   callbacksRef.current = { onVictory, onGameOver, onRoundComplete, sessionEvents };
+  const reducedMotion=useReducedMotion();
+  const ambientClockRef=useRef(0);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationRef = useRef<number | null>(null);
   const lastFrameRef = useRef<number | null>(null);
@@ -662,11 +674,13 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const cannonSpritesRef = useRef<CannonSprites>({});
   const enemyActorFrameRef = useRef<HTMLDivElement | null>(null);
   const arenaBackdropRef = useRef<HTMLImageElement | null>(null);
+  const arenaPlinthRef = useRef<HTMLImageElement | null>(null);
 
   const [gameState, setGameState] = useState<GameState>('intro');
   const [questionIndex, setQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [feedback, setFeedback] = useState('');
+  const [hintOpen, setHintOpen] = useState(false);
   const [enemyReaction, setEnemyReaction] = useState<MonsterMindReaction>('idle');
   const [enemyReactionKey, setEnemyReactionKey] = useState(0);
   const [score, setScore] = useState(0);
@@ -766,12 +780,12 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       const img = new Image();
       img.src = src;
       img.onload = () => {
-        const processed = alphaKeyNearWhite(img);
+        const processed = src.includes('ice-cannon') ? img : alphaKeyNearWhite(img);
         cannonSpritesRef.current = { ...cannonSpritesRef.current, [key]: processed };
       };
     };
     load('left', cannonFacingLeftSrc);
-    load('right', cannonFacingRightSrc);
+    load('right', getVisionObject('ice-cannon')??cannonFacingRightSrc);
     load('up', cannonFacingUpSrc);
   }, []);
 
@@ -779,7 +793,10 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     const image = new Image();
     image.decoding = 'async';
     image.onload = () => { arenaBackdropRef.current = image; };
-    image.src = GAME_SCENE_META.angle_arena.background ?? '';
+    image.src = getVisionEnvironment('angle_arena')??GAME_SCENE_META.angle_arena.background ?? '';
+    const plinth = new Image();
+    plinth.onload = () => { arenaPlinthRef.current = plinth; };
+    plinth.src = getVisionObject('ice-plinth') || '';
     return () => { image.onload = null; };
 
   }, []);
@@ -871,6 +888,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
   const handleAnswer = (answer: number) => {
     if (!presentRef.current || terminalRef.current || gameState !== 'awaitingAnswer' || selectedAnswerRef.current !== null || !activeQuestion) return;
+    setHintOpen(false);
     advancedQuestionRef.current = null;
     selectedAnswerRef.current = answer;
     setSelectedAnswer(answer);
@@ -916,6 +934,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+    const sharedBackdrop = canvas.closest('.app-viewport')?.querySelector<HTMLElement>(':scope > .vision-world-backdrop');
 
     const draw = (timestamp: number) => {
       if (!presentRef.current || terminalRef.current) return;
@@ -923,6 +942,10 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       const delta = timestamp - lastFrameRef.current;
       lastFrameRef.current = timestamp;
 
+      if(!reducedMotion&&!document.hidden&&!canvas.closest('[data-stage-paused="true"]'))ambientClockRef.current+=Math.min(50,Math.max(0,delta));
+      const ambientTime=reducedMotion?0:ambientClockRef.current;
+      canvas.dataset.arenaAmbientTime=String(ambientTime);
+      canvas.dataset.arenaState=gameState;
       const viewWidth = canvas.width / window.devicePixelRatio;
       const viewHeight = canvas.height / window.devicePixelRatio;
 
@@ -983,41 +1006,38 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
       ctx.save();
       ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-      ctx.translate(shakeX, shakeY);
       ctx.clearRect(0, 0, viewWidth, viewHeight);
+      ctx.translate(shakeX, shakeY);
       const bg = arenaBackdropRef.current;
       let paintedSceneWidth = viewWidth;
       if (bg?.naturalWidth) {
-        // Fill the canvas with the existing arena art. Keep the original contained
-        // projection width for actors so the cannon, target and flight path
-        // remain in the safe playfield when the scenery is cropped.
-        ctx.fillStyle = '#0c2135';
-        ctx.fillRect(0, 0, viewWidth, viewHeight);
+        // Keep actor projection independent of the shared full-screen scenery.
         const containedScale = Math.min(viewWidth / bg.naturalWidth, viewHeight / bg.naturalHeight);
         const scale = Math.max(viewWidth / bg.naturalWidth, viewHeight / bg.naturalHeight);
         const width = bg.naturalWidth * scale;
         const height = bg.naturalHeight * scale;
         paintedSceneWidth = bg.naturalWidth * containedScale;
-        ctx.drawImage(bg, (viewWidth - width) / 2, (viewHeight - height) * 0.25, width, height);
-        // Record the source only once it has actually been painted. Canvas
-        // scenery has no image element for the shared visual checks to inspect.
-        if (canvas.dataset.renderedBackgroundSrc !== bg.currentSrc) canvas.dataset.renderedBackgroundSrc = bg.currentSrc;
-        canvas.dataset.backgroundFit = 'cover';
-        canvas.dataset.backgroundPaintWidth = String(width);
-        canvas.dataset.backgroundPaintHeight = String(height);
-        const shade = ctx.createLinearGradient(0, 0, 0, viewHeight);
-        shade.addColorStop(0, 'rgba(8, 26, 53, .14)');
-        shade.addColorStop(0.55, 'rgba(8, 26, 53, .02)');
-        shade.addColorStop(1, 'rgba(8, 26, 53, .22)');
-        ctx.fillStyle = shade;
-        ctx.fillRect(0, 0, viewWidth, viewHeight);
-      } else {
+        if (!sharedBackdrop) {
+          // Standalone game hosts still need their own scenery.
+          ctx.drawImage(bg, (viewWidth - width) / 2, (viewHeight - height) * 0.75, width, height);
+          canvas.dataset.renderedBackgroundSrc = bg.currentSrc;
+          canvas.dataset.backgroundFit = 'cover';
+          canvas.dataset.backgroundPaintWidth = String(width);
+          canvas.dataset.backgroundPaintHeight = String(height);
+        } else {
+          delete canvas.dataset.renderedBackgroundSrc;
+        }
+      } else if (!sharedBackdrop) {
         drawSkyBackground(ctx, viewWidth, viewHeight, timestamp, camera.x, camera.y, Boolean(projectile?.active));
       }
 
-      const cannonAnchor = { x: viewWidth * CANNON_ANCHOR_X_RATIO, y: viewHeight * CANNON_ANCHOR_Y_RATIO };
+      drawArenaAtmosphere(ctx,viewWidth,viewHeight,ambientTime);
+
+      // Keep the cannon and the raised enemy podium independently projected.
+      const layout = angleArenaLayout(viewWidth, viewHeight);
+      const cannonAnchor = { x: layout.cannonX, y: layout.cannonY };
       const wideCanvasScene = viewWidth >= 700 && Boolean(bg?.naturalWidth);
-      const enemySize = Math.min(viewWidth, viewHeight) * (wideCanvasScene ? 0.19 : 0.20);
+      const enemySize = layout.enemySize;
       const horizontalProjectionScale = Math.min(1, Math.max(0.12,
         (paintedSceneWidth / 2 - enemySize * 0.41 - 16) / (ENEMY_DISTANCE + 80),
       ));
@@ -1035,8 +1055,8 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         const progress = distance / enemyRadius;
         const crossTrack = x * enemyVector.y - y * enemyVector.x;
         return {
-          x: cannonAnchor.x + progress * viewWidth * .72,
-          y: cannonAnchor.y - Math.sin(Math.min(1, progress) * Math.PI) * viewHeight * .23 + crossTrack / enemyRadius * viewHeight * .25,
+          x: cannonAnchor.x + progress * layout.targetDistance,
+          y: cannonAnchor.y - Math.min(1, progress) * layout.targetRise - Math.sin(Math.min(1, progress) * Math.PI) * layout.arcHeight + crossTrack / enemyRadius * layout.missSpread,
         };
       };
 
@@ -1047,60 +1067,26 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       const groundOffsetX = camera.x * GROUND_DRIFT_FACTOR;
       const groundOffsetY = camera.y * GROUND_DRIFT_FACTOR * 0.2;
 
-      // Only fluency prompts explicitly supply an angle. Reasoning questions
-      // retain their original information instead of exposing a derived value.
-      const knownAngle = activeQuestion?.prompt.match(/^One angle on a straight line is (\d+)°/);
-      if (knownAngle && gameState === 'awaitingAnswer') {
-        const angle = degreesToRadians(Number(knownAngle[1]));
-        const radius = Math.min(viewWidth * .105, viewHeight * .15);
-        const cx = Math.max(originScreen.x + radius * .35, radius + 12);
-        const cy = originScreen.y - Math.min(viewWidth, viewHeight) * .13;
-        ctx.save();
-        ctx.translate(cx, cy);
-        ctx.lineWidth = 2.5;
-        ctx.lineCap = 'round';
-        ctx.strokeStyle = '#edfaff';
-        ctx.shadowColor = '#08203b';
-        ctx.shadowBlur = 5;
-        ctx.beginPath();
-        ctx.moveTo(-radius, 0);
-        ctx.lineTo(radius * 1.35, 0);
-        ctx.moveTo(0, 0);
-        ctx.lineTo(Math.cos(angle) * radius * 1.35, -Math.sin(angle) * radius * 1.35);
-        ctx.stroke();
-        ctx.strokeStyle = '#68e7ff';
-        ctx.beginPath(); ctx.arc(0, 0, radius * .65, -angle, 0); ctx.stroke();
-        ctx.strokeStyle = '#f3d58a';
-        ctx.beginPath(); ctx.arc(0, 0, radius * .82, -Math.PI, -angle); ctx.stroke();
-        ctx.font = `800 ${Math.max(14, Math.min(24, radius * .32))}px sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        const labelRadius = radius * 1.03;
-        ctx.fillStyle = '#68e7ff';
-        ctx.fillText(`${knownAngle[1]}°`, Math.cos(angle / 2) * labelRadius, -Math.sin(angle / 2) * labelRadius);
-        ctx.fillStyle = '#ffe29b';
-        ctx.fillText('?', Math.cos((Math.PI + angle) / 2) * labelRadius, -Math.sin((Math.PI + angle) / 2) * labelRadius);
-        ctx.restore();
-      }
-
       // A quiet targeting ring separates the existing enemy from the scenery.
       ctx.save();
       ctx.strokeStyle = 'rgba(255, 220, 132, .8)';
       ctx.lineWidth = 2;
+      ctx.setLineDash([12,8]);ctx.lineDashOffset=-ambientTime*.012;
       ctx.beginPath();
       ctx.arc(enemyScreen.x, enemyScreen.y - enemySize * .43, enemySize * .58, 0, Math.PI * 2);
       ctx.stroke();
       ctx.restore();
 
-      const cannonTowerWidth = Math.min(viewWidth * 0.12, viewHeight * .18);
-      const cannonTowerHeight = viewHeight * 0.12;
+      const cannonTowerWidth = layout.cannonPodiumWidth;
+      const cannonTowerHeight = layout.cannonPodiumHeight;
       const cannonTowerPos = {
         x: originScreen.x,
         y: originScreen.y + (cannonTowerHeight * 0.96),
       };
       ctx.save();
       ctx.translate(cannonTowerPos.x, cannonTowerPos.y);
-      drawWoodenTower(ctx, cannonTowerWidth, cannonTowerHeight, 1);
+      if (arenaPlinthRef.current) ctx.drawImage(arenaPlinthRef.current,-cannonTowerWidth*.65,-cannonTowerHeight,cannonTowerWidth*1.3,cannonTowerHeight*1.18);
+      else drawWoodenTower(ctx, cannonTowerWidth, cannonTowerHeight, 1);
       ctx.restore();
 
       if ((gameState === 'aiming' || gameState === 'awaitingAnswer') && selectedAnswerRef.current !== null) {
@@ -1122,7 +1108,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
 
       ctx.save();
       ctx.translate(originScreen.x, originScreen.y - (cannonTowerHeight * 0.08));
-      drawCannonSprite(ctx, 35, cannonSpritesRef.current, Math.min(viewWidth, viewHeight) * (viewWidth >= 700 ? .19 : .17));
+      drawCannonSprite(ctx, 35, cannonSpritesRef.current, layout.cannonSize);
       ctx.restore();
 
       ctx.save();
@@ -1130,12 +1116,13 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         ctx.translate(Math.sin(timestamp * 0.02) * 2, Math.cos(timestamp * 0.018) * 1.5);
       }
       const enemyTowerWidth = enemySize * 0.7;
-      const enemyTowerHeight = enemySize * 0.8;
+      const enemyTowerHeight = layout.enemyPodiumHeight;
       ctx.save();
       ctx.translate(enemyScreen.x, enemyScreen.y + (enemyTowerHeight * 0.96));
-      drawWoodenTower(ctx, enemyTowerWidth, enemyTowerHeight, 0.95);
+      if (arenaPlinthRef.current) ctx.drawImage(arenaPlinthRef.current,-enemyTowerWidth*.75,-enemyTowerHeight,enemyTowerWidth*1.5,enemyTowerHeight*1.12);
+      else drawWoodenTower(ctx, enemyTowerWidth, enemyTowerHeight, 0.95);
       ctx.restore();
-      if (questionIndex % 2 === 1) {
+      if (!arenaPlinthRef.current && questionIndex % 2 === 1) {
         ctx.save();
         ctx.translate(enemyScreen.x, enemyScreen.y + enemySize * 0.08);
         drawEnemyPlatform(ctx, 'cloud', enemySize);
@@ -1146,9 +1133,11 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       const enemyFrame = enemyActorFrameRef.current;
       if (enemyFrame) {
         enemyFrame.style.left = `${enemyScreen.x / viewWidth * 100}%`;
-        // The platform's top is y + .96h - h + .04h: exactly enemyScreen.y.
-        // Actor artwork includes a transparent bottom margin; compensate once.
-        enemyFrame.style.top = `${(enemyScreen.y + enemySize * .12) / viewHeight * 100}%`;
+        // The painted top has perspective depth: its centre is 18% down
+        // the image, then the mesh has a 5% foot inset in its square surface.
+        const podiumSurface = arenaPlinthRef.current ? enemyTowerHeight * (-.04 + 1.12 * .18) : 0;
+        enemyFrame.style.top = `${(enemyScreen.y + podiumSurface + enemySize * .041) / viewHeight * 100}%`;
+        enemyFrame.dataset.groundY = String((enemyScreen.y + podiumSurface) / viewHeight * 100);
         enemyFrame.style.width = `${enemySize * .82 / viewWidth * 100}%`;
         enemyFrame.style.height = `${enemySize * 1.16 / viewHeight * 100}%`;
         enemyFrame.style.visibility = 'visible';
@@ -1181,11 +1170,12 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         ctx.restore();
       }
 
+      if(projectile?.active&&Math.hypot(projectile.x,projectile.y)<100){
+        drawArenaBurst(ctx,originScreen.x,originScreen.y-viewHeight*.03,viewHeight*.09,.5);
+      }
       if (impactResultRef.current === 'hit') {
-        ctx.fillStyle = 'rgba(250,204,21,0.45)';
-        ctx.beginPath();
-        ctx.arc(enemyScreen.x, enemyScreen.y, 34, 0, Math.PI * 2);
-        ctx.fill();
+        const progress=reducedMotion?.45:clamp(1-((hitShakeRef.current??timestamp)-timestamp)/HIT_SHAKE_DURATION,0,1);
+        drawArenaBurst(ctx,enemyScreen.x,enemyScreen.y-enemySize*.30,enemySize*.42,progress);
       }
 
       ctx.restore();
@@ -1198,7 +1188,7 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
       animationRef.current = null;
     };
-  }, [activeQuestion, gameState, selectedAnswer]);
+  }, [activeQuestion, gameState, selectedAnswer, reducedMotion]);
 
   const handleNext = () => {
     if (!presentRef.current || terminalRef.current || advancedQuestionRef.current === questionIndex) return;
@@ -1237,21 +1227,26 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   }, [gameState, questionIndex]);
 
   const showPromptAndAnswers = gameState === 'awaitingAnswer';
+  const knownAngle = activeQuestion?.prompt.match(/^One angle on a straight line is (\d+)°/);
+  const knownRadians = knownAngle ? degreesToRadians(Number(knownAngle[1])) : null;
+  const hintText = knownAngle ? 'Angles on a straight line add up to 180°. Subtract the known angle.'
+    : activeQuestion?.prompt.includes('ratio') ? 'Add the ratio parts, then share 180° between them.'
+    : 'The two angles add up to 180°. Use their difference to find each angle.';
 
   return (
     <GameUiShell className="bg-transparent !bg-none ![background-image:none] ![background-color:transparent]" overlayDisabled>
       <div data-angle-game="true" data-angle-present={isPresent} className="angle-arena relative h-full w-full overflow-hidden text-white">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(180deg,#bfeaff_0%,#7dd3fc_36%,#60a5fa_66%,#1e3a8a_100%)]"
+          className="angle-fallback-scenery pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(180deg,#bfeaff_0%,#7dd3fc_36%,#60a5fa_66%,#1e3a8a_100%)]"
         />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_14%_16%,rgba(255,255,255,0.75),transparent_22%),radial-gradient(circle_at_36%_10%,rgba(255,255,255,0.55),transparent_18%),radial-gradient(circle_at_72%_18%,rgba(255,255,255,0.62),transparent_24%),radial-gradient(circle_at_86%_14%,rgba(255,255,255,0.45),transparent_18%)] opacity-70"
+          className="angle-fallback-scenery pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_14%_16%,rgba(255,255,255,0.75),transparent_22%),radial-gradient(circle_at_36%_10%,rgba(255,255,255,0.55),transparent_18%),radial-gradient(circle_at_72%_18%,rgba(255,255,255,0.62),transparent_24%),radial-gradient(circle_at_86%_14%,rgba(255,255,255,0.45),transparent_18%)] opacity-70"
         />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute left-1/2 top-[58%] z-0 -translate-x-1/2 -translate-y-1/2"
+          className="angle-fallback-scenery pointer-events-none absolute left-1/2 top-[58%] z-0 -translate-x-1/2 -translate-y-1/2"
         >
           <div className="relative h-[8.25rem] w-[19rem] rounded-[999px] bg-[radial-gradient(ellipse_at_center,rgba(34,197,94,0.9),rgba(21,128,61,0.95)_55%,rgba(15,23,42,0.0)_72%)]">
             <div className="absolute inset-0 rounded-[999px] bg-[radial-gradient(circle_at_30%_35%,rgba(253,230,138,0.22),transparent_30%),radial-gradient(circle_at_70%_45%,rgba(167,243,208,0.18),transparent_36%)]" />
@@ -1265,6 +1260,16 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
         <div ref={enemyActorFrameRef} data-angle-enemy-frame="true" className="pointer-events-none absolute z-[15]" style={{ width: 0, height: 0, translate: '-50% -100%', visibility: 'hidden' }}>
           <MonsterMindActor soundMode="off" src={goblinMonster} alt="Goblin guarding the angle target" reaction={gameState === 'levelComplete' ? 'defeated' : enemyReaction} reactionKey={enemyReactionKey} className="h-full w-full drop-shadow-[0_5px_5px_rgba(2,6,23,0.35)]" />
         </div>
+        {hintOpen && showPromptAndAnswers && <section className="angle-hint-panel" id="angle-hint-panel" aria-label="Angle hint">
+          <div className="angle-hint-heading"><span>Angle hint</span><button type="button" onClick={() => setHintOpen(false)} aria-label="Close angle hint"><X size={20} /></button></div>
+          {knownRadians !== null && <svg viewBox="0 0 300 140" role="img" aria-label={`A straight line split into ${knownAngle?.[1]} degrees and the missing angle`}>
+            <path d={`M 25 115 H 275 M 150 115 L ${150 + 95 * Math.cos(knownRadians)} ${115 - 95 * Math.sin(knownRadians)}`} fill="none" stroke="#effbff" strokeWidth="3" strokeLinecap="round" />
+            <path d={`M 185 115 A 35 35 0 ${knownRadians > Math.PI ? 1 : 0} 0 ${150 + 35 * Math.cos(knownRadians)} ${115 - 35 * Math.sin(knownRadians)}`} fill="none" stroke="#8cecff" strokeWidth="3" />
+            <text x={150 + 58 * Math.cos(knownRadians / 2)} y={115 - 58 * Math.sin(knownRadians / 2)} textAnchor="middle" fill="#8cecff" fontSize="18" fontWeight="700">{knownAngle?.[1]}°</text>
+            <text x={150 + 65 * Math.cos((Math.PI + knownRadians) / 2)} y={115 - 65 * Math.sin((Math.PI + knownRadians) / 2)} textAnchor="middle" fill="#ffe29b" fontSize="22" fontWeight="700">?</text>
+          </svg>}
+          <p>{hintText}</p>
+        </section>}
         <GameScreenLayout
           className="angle-arena-layout relative z-20 px-3 pb-[calc(env(safe-area-inset-bottom)+0.6rem)] pt-2"
           topClassName="!min-h-0 flex flex-col items-center gap-0 px-2 pt-0 sm:px-3 md:px-4"
@@ -1291,7 +1296,9 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
           main={<div className="min-h-0 flex-1" />}
           bottom={(
             <div className="angle-arena-controls flex flex-col gap-2">
-              <div className="angle-arena-control-label">{showPromptAndAnswers ? 'Choose your angle' : 'Launch angle locked'}</div>
+              <div className="angle-arena-choice-heading"><div className="angle-arena-control-label">{showPromptAndAnswers ? 'Choose your angle' : 'Launch angle locked'}</div>
+                <button type="button" className="angle-hint-button" onClick={() => setHintOpen(open => !open)} disabled={!showPromptAndAnswers} aria-expanded={hintOpen && showPromptAndAnswers} aria-controls="angle-hint-panel" aria-label={hintOpen ? 'Hide angle hint' : 'Show angle hint'}><Lightbulb size={20} aria-hidden="true" /><span>Hint</span></button>
+              </div>
               <div className="angle-arena-answer-region">
                 <div className="angle-arena-answers answer-choice-surface mx-auto grid w-full max-w-[44rem] grid-cols-4 gap-1.5">
                   {(activeQuestion?.options ?? []).map((option) => (

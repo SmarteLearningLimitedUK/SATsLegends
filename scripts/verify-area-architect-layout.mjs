@@ -12,7 +12,9 @@ try{for(const viewport of [{width:320,height:568},{width:390,height:844},{width:
    assert.equal(options.length,4);assert.equal(new Set(options).size,4);assert.equal(options.filter(n=>n===target).length,1);
    if(room===1){await page.locator(`[data-area-answer="${options.find(n=>n!==target)}"]`).click();assert(await page.locator('.area-room-feedback').getAttribute('data-tone')==='error');}
    await page.locator(`[data-area-answer="${target}"]`).click();assert(await page.locator('.area-room-feedback').getAttribute('data-tone')==='success');
-   const next=page.getByRole('button',{name:room===5?'Finish rooms':'Next room',exact:true});await next.scrollIntoViewIfNeeded();await next.click();
+   assert.equal(await page.getByRole('button',{name:/Next room|Finish rooms/}).count(),0);
+   if(room<5)await page.getByText(`Room ${room+1} of 5`,{exact:true}).waitFor({timeout:5000});
+   else await page.locator('[data-result-outcome="victory"]').waitFor({timeout:5000});
   }
   console.log(`PASS ${viewport.width}x${viewport.height} ${route}: five rooms, area options, feedback and completion`);
  }

@@ -48,6 +48,11 @@
 .ratio-racer-course { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
 /* Three panoramas cover each wrap; the right 5% blends into the next tile. */
 .ratio-racer-course-strip { position: absolute; top: 0; left: 0; display: flex; width: 600%; height: 100%; will-change: transform; }
+.ratio-racer-crowd { position:absolute; z-index:5; left:0; right:0; top:34%; height:15%; pointer-events:none; background-image:url('../../assets/ratio-racer/premium/cheering-crowd-v1.png'); background-repeat:repeat-x; background-position:left bottom; background-size:auto 100%; transform-origin:center bottom; }
+@media (prefers-reduced-motion: no-preference) {
+  .ratio-racer-crowd[data-animate='true'] { animation:ratio-crowd-cheer 1.4s ease-in-out infinite alternate; }
+  @keyframes ratio-crowd-cheer { from { transform:translateY(0); } to { transform:translateY(-2px); } }
+}
 .ratio-racer-track { position: relative; display: block; flex: 0 0 calc(100% / 3); width: calc(100% / 3); max-width: none; height: 100%; object-fit: cover; object-position: 50% 60%; -webkit-mask-image: linear-gradient(90deg, #000 95%, transparent 100%); mask-image: linear-gradient(90deg, #000 95%, transparent 100%); user-select: none; }
 .ratio-racer-track-shade { position: absolute; inset: 0; background: linear-gradient(180deg, #08284055, transparent 32%, transparent 76%, #09222b42); pointer-events: none; }
 .ratio-racer-route { position: absolute; z-index: 4; top: 12px; left: 12px; right: 12px; padding: 8px 10px; border: 1px solid #b5e5e77a; border-radius: 12px; background: #082b3ceb; color: #f3fcff; }

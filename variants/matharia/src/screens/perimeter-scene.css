@@ -1,0 +1,37 @@
+/* Original planar geometry, with readable live labels and an independent survey stand. */
+html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='perimeter_path'][data-measured-scene] {
+ --concept-plane:calc(100vw - var(--concept-safe-left) - var(--concept-safe-right));
+ --perimeter-question-height:max(8.4%,36px);
+ &:has([data-question-long]){--perimeter-question-height:max(12%,52px);}
+ .perimeter-scene {position:absolute;inset:0;}
+ .concept-question-zone {left:12.5%;top:13%;width:74.5%;height:var(--perimeter-question-height);min-height:0;}
+ .scalable-question-copy{padding:5px 4%;}[data-question-copy]{font-size:clamp(14px,1.8vw,33px);font-weight:650;line-height:1.12;}.question-jewel--bottom{display:none;}
+ .perimeter-count-tip{position:absolute;isolation:isolate;left:26%;top:calc(13% + var(--perimeter-question-height) + 4px);width:55%;min-height:22px;height:22px;padding:3px 10px;display:grid;place-items:center;text-align:center;color:#fff8e1;font-size:clamp(12px,1.3vw,24px);line-height:1.1;font-weight:650;}
+ .perimeter-surveyor{position:absolute;left:-3%;bottom:15%;width:29%;height:min(64%,calc(var(--concept-plane)*.30));pointer-events:none;}.perimeter-surveyor>.vision-character{width:100%;height:100%;}
+ .perimeter-survey-region{position:absolute;left:20.3%;top:max(29%,calc(13% + var(--perimeter-question-height) + 27px));bottom:17%;width:40.5%;height:auto;}.perimeter-survey-board{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;}
+ .perimeter-plan{position:absolute;left:11%;top:13%;width:78%;height:62%;}.perimeter-live-plot{position:relative;width:100%;height:100%;}
+ .perimeter-live-plot>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;}.perimeter-edge-label{position:absolute;translate:-50% -50%;transform:none;min-width:44px;min-height:20px;display:grid;place-items:center;white-space:nowrap;padding:2px 5px;border:1px solid #deb95f;border-radius:4px;background:#06344b;color:#fff8e2;font-family:'Matharia Rounded',sans-serif;font-size:12px;line-height:1.1;font-weight:650;box-shadow:0 1px 1px #583a1a80;touch-action:manipulation;}
+ .perimeter-edge-label[aria-pressed='true']{background:#f3cb63;color:#07384b;}.perimeter-edge-label:focus-visible{outline:2px solid #08577e;outline-offset:2px;}
+ .perimeter-next-edge{position:absolute;isolation:isolate;left:63.5%;top:36.3%;width:34%;height:15.8%;min-height:44px;padding:8px 13px;display:flex;align-items:center;justify-content:space-between;gap:8px;border:0;background:none;color:#fff9e4;text-align:left;font-size:clamp(14px,1.7vw,31px);font-weight:650;line-height:1.1;touch-action:manipulation;}.perimeter-next-edge>span:not(.artwork-frame){display:flex;flex-direction:column;gap:4px;}.perimeter-next-edge strong{font-weight:650;}.perimeter-next-edge small{color:#b9e9f5;font-size:clamp(12px,1.4vw,26px);}.perimeter-next-edge>b{font-weight:650;white-space:nowrap;}
+ .perimeter-answers{position:absolute;left:63.5%;top:53%;width:34%;height:28.5%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4%;}.perimeter-answers>button{position:relative;isolation:isolate;display:grid;place-items:center;min-width:44px;min-height:44px;padding:5px 8px;border:0;background:none;color:#fff9e4;text-align:center;font-size:clamp(19px,2.45vw,45px);font-weight:650;line-height:1.1;touch-action:manipulation;}.perimeter-answers>button[aria-pressed='true']{filter:brightness(1.15) drop-shadow(0 0 4px #8bfaff);}
+ :is(.perimeter-answers>button,.perimeter-next-edge):not(:disabled):active{scale:.97;}.perimeter-answers>button:focus-visible,.perimeter-next-edge:focus-visible{outline:3px solid #fff2ac;outline-offset:2px;}
+ .perimeter-edges-toggle{position:absolute;left:auto;right:2%;bottom:1%;height:44px;width:56px;min-width:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:3px 5px;border:1px solid #e5bd61;border-radius:8px;background:#06364e;color:#fff5dc;font-size:13px;line-height:1;font-weight:650;}.perimeter-edges-toggle>svg{width:20px;height:20px;}
+ .perimeter-edge-list{position:absolute;isolation:isolate;z-index:8;left:63%;top:27%;width:35%;padding:43px 10px 10px;color:#fff7df;}.perimeter-edge-close{position:absolute;right:4px;top:0;width:44px;height:44px;display:grid;place-items:center;border:0;background:none;color:#fff6df;}.perimeter-edge-list>div{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;}.perimeter-edge-list>div>button{display:flex;align-items:center;justify-content:space-between;gap:4px;min-width:44px;min-height:44px;border:1px solid #669ab4;border-radius:6px;padding:5px 7px;background:#0a4967;color:#fff7df;font-size:13px;font-weight:650;line-height:1.1;}.perimeter-edge-list>div>button[aria-pressed='true']{border-color:#ffe195;background:#d9af4f;color:#073a4d;}
+ .perimeter-feedback-copy{font-size:clamp(13px,1.5vw,28px);line-height:1.15;font-weight:650;}
+ [data-unified-minigame-hud]>div:first-of-type:has(.legend-hud-bar){top:1.8%;width:47%;height:10%;padding:0;}.legend-hud-title{font-size:clamp(15px,2.15vw,40px);}.legend-hud-avatar{width:15%;}.legend-hud-timer{display:none;}.legend-hud-streak{font-size:clamp(16px,2.1vw,39px);}.legend-hud-bar::before{border-image-source:url('../../assets/png/frames/glacier_panel_v3@2x.webp');border-image-slice:180 fill;}
+ [data-testid='shared-bottom-hud']{bottom:1%;width:33%;height:12%;min-width:235px;min-height:44px;padding:0;}.legend-dock-button{}.concept-pause{top:1%;right:max(1%,var(--concept-safe-right));width:clamp(44px,6vw,100px);height:clamp(44px,6vw,100px);}
+ /* Keep the diagram and the question/answer column in separate, readable areas. */
+ .concept-question-zone{left:60.5%;top:14%;width:37%;height:24%;min-height:88px;}
+ .scalable-question-copy{padding:8px 7%;}
+ [data-question-copy]{font-size:clamp(14px,1.6vw,24px);line-height:1.18;text-wrap:balance;}
+ .perimeter-count-tip{display:none;}
+ .perimeter-surveyor{left:-5%;bottom:15%;width:23%;height:min(55%,calc(var(--concept-plane)*.25));}
+ .perimeter-survey-region{left:15%;top:14%;bottom:15%;width:44%;}
+ .perimeter-next-edge{left:60.5%;top:40%;width:37%;height:14%;padding:8px 5%;font-size:clamp(14px,1.6vw,24px);}
+ .perimeter-answers{left:60.5%;top:56%;width:37%;height:27%;gap:5px;}
+ .perimeter-answers>button{font-size:clamp(19px,2.15vw,34px);}
+ .perimeter-edge-list{left:60.5%;top:27%;width:37%;}
+}
+@media(max-width:760px){html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='perimeter_path'][data-measured-scene]{
+ [data-unified-minigame-hud]>div:first-of-type:has(.legend-hud-bar){width:60%;height:11%;}.legend-hud-title{font-size:15px;}.concept-question-zone{left:60.5%;top:14%;width:37%;height:25%;}[data-question-copy]{font-size:14px;}.perimeter-survey-region{left:15%;width:44%;}.perimeter-next-edge{left:60.5%;width:37%;top:41%;height:14%;font-size:13px;padding:7px 12px;}.perimeter-next-edge small{font-size:12px;}.perimeter-answers{left:60.5%;width:37%;top:57%;height:26%;gap:4px;}.perimeter-answers>button{font-size:19px;}.perimeter-edge-list{left:60%;width:38%;top:27%;}.perimeter-feedback-copy{font-size:13px;}.legend-dock-button{font-size:10px;gap:1px;}.legend-dock-button>svg{width:21px;height:21px;}
+}}

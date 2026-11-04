@@ -1,0 +1,103 @@
+/* Lantern Camp owns one safe viewport: shared title, activity, progress, dock. */
+html[data-presentation='matharia'] #root .app-viewport.screen-wellbeing-activity:has([data-wellbeing-activity='candle_calm']) {
+ .concept-hud-top {height:64px;}
+ .legend-hud-bar {height:64px;}
+ .legend-hud-jewel {display:none;}
+ .legend-hud-label {font-size:10px;line-height:1.1;}
+ .legend-hud-title {font-size:clamp(25px,6.8vw,28px);}
+ .app-screen-content {inset:calc(env(safe-area-inset-top,0px) + 84px) max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 86px) max(16px,env(safe-area-inset-left,0px));height:auto;width:auto;max-width:720px;margin:0 auto;padding:0;}
+ .wellbeing-shell {display:grid;grid-template-rows:minmax(0,1fr) auto;gap:10px;width:100%;height:100%;padding:0;overflow:visible;font-family:'Matharia Rounded',sans-serif;color:#fff7e4;}
+ .wellbeing-header {position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);border:0;background:none;}
+ .wellbeing-exit {display:none;}
+ .wellbeing-content {display:block;width:100%;height:100%;min-height:0;}
+ .lantern-camp {position:relative;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:10px;width:100%;height:100%;min-height:0;}
+ .lantern-focus {position:relative;isolation:isolate;display:flex;flex-direction:column;justify-content:center;min-height:88px;padding:14px 28px;text-align:center;}
+ .lantern-focus>span {display:block;margin-bottom:4px;color:#e9cf86;font-size:12px;font-weight:600;line-height:1.2;letter-spacing:.1em;text-transform:uppercase;}
+ .lantern-focus p {margin:0;color:#fff8e8;font-size:16px;line-height:1.3;font-weight:500;text-wrap:balance;}
+ .lantern-hero-space {position:relative;min-width:0;min-height:0;width:100%;height:100%;display:grid;place-items:center;container-type:size;pointer-events:none;}
+ .lantern-object {position:relative;width:min(100cqw,calc(100cqh * .47043));aspect-ratio:700/1488;max-width:360px;}
+ .lantern-assembly {position:relative;width:100%;height:100%;animation:matharia-camp-breeze 8s ease-in-out infinite alternate;transform-origin:50% 98%;}
+ .lantern-metalwork {display:block;position:relative;z-index:2;width:100%;height:100%;object-fit:contain;filter:brightness(calc(.72 + var(--lantern-light) * .28));}
+ .lantern-ground-light {position:absolute;z-index:0;left:-45%;bottom:-1%;width:190%;height:16%;border-radius:50%;background:radial-gradient(ellipse,#ffda9666,transparent 68%);opacity:var(--lantern-light);transition:opacity 180ms linear;}
+ .lantern-window-light {position:absolute;z-index:0;left:-25%;top:33%;width:150%;height:55%;background:radial-gradient(ellipse,#ffde9255,transparent 65%);opacity:var(--lantern-light);transition:opacity 180ms linear;}
+ .lantern-flame {position:absolute;z-index:1;left:26%;top:45%;width:48%;height:29%;overflow:visible;transition:opacity 180ms linear;}
+ .lantern-flame-flicker {transform-origin:50% 92%;animation:matharia-camp-flame 1700ms ease-in-out infinite alternate;}
+ .lantern-fireflies {position:absolute;inset:0;overflow:hidden;}
+ .lantern-fireflies>i {position:absolute;width:3px;height:3px;border-radius:50%;background:#fff0ae;box-shadow:0 0 5px #ffe2a7;animation:matharia-camp-firefly 7s ease-in-out infinite alternate;opacity:.5;}
+ .lantern-camp-actions {min-width:0;}
+ .lantern-gear-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;}
+ .lantern-gear {position:relative;isolation:isolate;display:grid;place-items:center;min-width:44px;min-height:72px;width:100%;height:100%;padding:10px 8px;border:0;border-radius:0;background:none;box-shadow:none;color:#fff5d6;font:inherit;touch-action:manipulation;}
+ .lantern-gear-content {display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:100%;transition:transform 100ms ease;}
+ .lantern-gear-content>svg {width:26px;height:26px;stroke-width:1.6;}
+ .lantern-gear-content>span {font-size:13px;line-height:1.15;font-weight:500;}
+ .lantern-gear.is-packed {color:#a8e2c1;animation:matharia-camp-packed 260ms ease-out both;}
+ .lantern-gear.is-packed .artwork-frame {opacity:.7;}
+ button.lantern-gear:active .lantern-gear-content {transform:scale(.96);}
+ button.lantern-gear:focus-visible {outline:3px solid #fff0ad;outline-offset:2px;}
+ .lantern-dimmer {position:relative;isolation:isolate;padding:20px 44px;text-align:center;}
+ .lantern-dimmer label {display:flex;justify-content:space-between;gap:12px;margin:0;color:#fff4d2;font-size:16px;line-height:1.3;}
+ .lantern-dimmer label strong {font-weight:650;font-variant-numeric:tabular-nums;}
+ .lantern-dimmer input {display:block;width:100%;height:44px;margin:4px 0;padding:0;accent-color:#e5bb57;cursor:pointer;}
+ .lantern-dimmer input:focus-visible {outline:2px solid #fff0ad;outline-offset:2px;}
+ .lantern-dimmer p {margin:0;color:#e5eee7;font-size:13px;line-height:1.3;}
+ .wellbeing-shell>.wellbeing-footer {position:relative;isolation:isolate;inset:auto;min-height:70px;padding:14px 88px 14px 32px;border:0;border-radius:0;background:none;text-align:left;}
+ .wellbeing-footer-progress {min-width:0;width:100%;}
+ .wellbeing-shell>.wellbeing-footer [data-wellbeing-status] {margin:0;font-size:14px;line-height:1.25;color:#fff6df;}
+ .wellbeing-footer .wellbeing-progress {width:100%;max-width:none;height:5px;margin:6px 0 0;background:#40636a;}
+ .wellbeing-footer .wellbeing-progress>span {background:#aee6c5;}
+ .wellbeing-shell>.wellbeing-footer>.matharia-pond-guidance>summary {top:calc(50% - 24px);right:24px;width:48px;height:48px;padding:4px;}
+ .matharia-pond-note-panel {right:0;left:auto;bottom:calc(100% + 8px);width:min(480px,100%);max-height:min(300px,calc(100dvh - 220px));padding:16px;}
+ .lantern-camp[data-camp-motion-paused='true'] :is(.lantern-assembly,.lantern-flame-flicker,.lantern-fireflies>i,.lantern-gear.is-packed) {animation-play-state:paused;}
+}
+@media(max-height:720px) and (orientation:portrait) {html[data-presentation='matharia'] #root .app-viewport.screen-wellbeing-activity:has([data-wellbeing-activity='candle_calm']) {
+ .wellbeing-shell,.lantern-camp {gap:6px;}
+ .lantern-focus {min-height:72px;padding:10px 24px;}
+ .lantern-focus p {font-size:14px;line-height:1.25;}
+ .lantern-focus>span {font-size:11px;margin-bottom:3px;}
+ .lantern-gear-grid {gap:6px;}
+ .lantern-gear {min-height:60px;padding:8px 6px;}
+ .lantern-gear-content {gap:3px;}
+ .lantern-gear-content>svg {width:23px;height:23px;}
+ .lantern-gear-content>span {font-size:12px;}
+ .lantern-dimmer {padding:14px 44px;}
+ .lantern-dimmer label {font-size:14px;}
+ .wellbeing-shell>.wellbeing-footer {min-height:64px;padding:10px 82px 10px 32px;}
+ .wellbeing-shell>.wellbeing-footer [data-wellbeing-status] {font-size:13px;}
+}}
+@media(orientation:landscape) {html[data-presentation='matharia'] #root .app-viewport.screen-wellbeing-activity:has([data-wellbeing-activity='candle_calm']) {
+ .app-screen-content {max-width:1000px;}
+ .lantern-camp {grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);grid-template-rows:auto minmax(0,1fr);gap:12px;}
+ .lantern-focus {grid-column:2;grid-row:1;}
+ .lantern-hero-space {grid-column:1;grid-row:1/span 2;}
+ .lantern-camp-actions {grid-column:2;grid-row:2;align-self:center;}
+}}
+@media(orientation:landscape) and (max-height:500px) {html[data-presentation='matharia'] #root .app-viewport.screen-wellbeing-activity:has([data-wellbeing-activity='candle_calm']) {
+ .concept-hud-top,.legend-hud-bar {height:48px;}
+ .legend-hud-label {display:none;}
+ .legend-hud-title {font-size:20px;}
+ .app-screen-content {inset:calc(env(safe-area-inset-top,0px) + 56px) max(12px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 72px) max(12px,env(safe-area-inset-left,0px));}
+ .wellbeing-shell,.lantern-camp {gap:6px;}
+ .lantern-focus {min-height:60px;padding:8px 18px;}
+ .lantern-focus>span {font-size:10px;margin-bottom:2px;}
+ .lantern-focus p {font-size:13px;line-height:1.15;}
+ .lantern-gear-grid {gap:4px;}
+ .lantern-gear {min-height:48px;padding:6px;}
+ .lantern-gear-content {flex-direction:row;gap:4px;}
+ .lantern-gear-content>svg {width:20px;height:20px;}
+ .lantern-gear-content>span {font-size:11px;}
+ .lantern-dimmer {padding:12px 36px;}
+ .lantern-dimmer label {font-size:13px;}
+ .lantern-dimmer input {margin:0;}
+ .lantern-dimmer p {font-size:11px;}
+ .wellbeing-shell>.wellbeing-footer {min-height:48px;padding:8px 72px 8px 24px;}
+ .wellbeing-shell>.wellbeing-footer [data-wellbeing-status] {font-size:12px;}
+ .wellbeing-shell>.wellbeing-footer>.matharia-pond-guidance>summary {top:calc(50% - 22px);right:20px;width:44px;height:44px;}
+}}
+@keyframes matharia-camp-breeze {from{rotate:-.6deg;}to{rotate:.6deg;}}
+@keyframes matharia-camp-flame {from{transform:scale(.96,1.02) rotate(-1.5deg);}to{transform:scale(1.03,.97) rotate(1.5deg);}}
+@keyframes matharia-camp-firefly {from{translate:-3px 5px;opacity:.25;}to{translate:5px -7px;opacity:.7;}}
+@keyframes matharia-camp-packed {from{filter:brightness(1.3);}to{filter:brightness(1);}}
+@media(prefers-reduced-motion:reduce) {html[data-presentation='matharia'] #root .app-viewport.screen-wellbeing-activity:has([data-wellbeing-activity='candle_calm']) {
+ .lantern-camp * {animation:none;transition:none;}
+ .lantern-camp :is(.lantern-assembly,.lantern-flame-flicker,.lantern-fireflies>i,.lantern-gear.is-packed) {animation:none;}
+}}

@@ -1,0 +1,11 @@
+"""Independent portrait arithmetic scenery and measured blank UI artwork."""
+import json,hashlib
+from pathlib import Path
+from PIL import Image
+root=Path(__file__).resolve().parents[3];generated=Path('C:/Users/samva/.codex/generated_images/01a18eee-903b-74c2-89bb-fb8e6f1cf5ef');rows=[]
+for name,ident,limit in [('backgrounds/bg_paper1_v3','d3d44f56-d68e-4683-8e4f-58c6eb053823',2048),('frames/paper1_slate_v4','ae7f640f-04af-4617-aaf1-f1fe5a69cdaf',1536),('frames/paper1_hud_v3','2d31b984-e9f5-4f2a-baef-bf849a44ed18',2048),('buttons/paper_purple_v3','ddcf79b3-2cb8-4860-bc7a-aa473961028c',1536),('buttons/paper_gold_v3','07dfa94f-0314-4d7e-83d7-c528a97225dc',1536),('backgrounds/bg_paper2_v3','5d02de25-3bd2-463f-8bc1-1111eebd38ae',2048),('frames/paper2_panel_v3','2a35fab0-a27a-4e11-b4c2-b67deab2b914',1536),('backgrounds/bg_paper3_v3','e329e629-dd5f-43fb-bffd-329ffe058523',2048),('frames/paper3_hollow_v5','cc982e24-8fe9-487c-b9dd-8756705b0492',1536)]:
+ source=generated/f'exec-{ident}.png';im=Image.open(source);box=None
+ if im.mode=='RGBA':
+  a=im.getchannel('A');assert a.getextrema()[0]==0;box=a.point(lambda x:255 if x>16 else 0).getbbox();assert box;im=im.crop(box)
+ im.thumbnail((limit,limit),Image.Resampling.LANCZOS);dest=root/f'variants/matharia/assets/png/{name}@2x.webp';im.save(dest,quality=95,method=6,exact=True);rows.append(dict(name=name,source=str(source),alphaBoundsCrop=box,dimensions=list(im.size),production=dest.relative_to(root).as_posix(),bytes=dest.stat().st_size,sha256=hashlib.sha256(dest.read_bytes()).hexdigest()));print(name,im.size)
+(root/'variants/matharia/reference/paper-assets.json').write_text(json.dumps({'references':['variants/matharia/reference/approved/crystal_core.png','variants/matharia/reference/approved/mirror_gate.png','variants/matharia/reference/approved/matrix_match.png'],'inspection':'Generated clean portrait terrace, blank standing slate, navy HUD frame and violet control visually inspected. No baked characters, calculations, UI text or controls. Original source diagrams/text/input components remain live. Scalable rails are plain; engraved corner details remain inside corner slices.','processing':'Alpha-margin trim and aspect-preserving WebP only; nine-slice scales corners uniformly. No masks/covers or semantic pixel processing.','assets':rows},indent=2),encoding='utf8')

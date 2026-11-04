@@ -25,21 +25,6 @@ export const stripLegacyWorldPrefix = (prompt: string) => {
   return stripLegacyWorldPrefix(stripped);
 };
 
-const REPLACEMENTS: Array<[RegExp, string]> = [
-  [/\bpupil(s)?\b/gi, 'apprentice$1'],
-  [/\bstudent(s)?\b/gi, 'apprentice$1'],
-  [/\bteacher\b/gi, 'mentor'],
-  [/\bshop\b/gi, 'market stall'],
-  [/\bstore\b/gi, 'market stall'],
-  [/\bstadium\b/gi, 'arena'],
-  [/\bconcert\b/gi, 'festival'],
-  [/\btrain\b/gi, 'airship'],
-  [/\bbus\b/gi, 'caravan'],
-  [/\btickets\b/gi, 'passes'],
-  [/\btreasure\b/gi, 'relics'],
-  [/\bscout\b/gi, 'ranger'],
-];
-
 const isMathExpression = (prompt: string) => /^[\d\s+\-x*/=().,]+$/.test(prompt.trim());
 
 const isAllCapsWords = (prompt: string) => {
@@ -72,14 +57,10 @@ export const formatFantasyPrompt = (prompt: string) => {
   const fuelMix = rewriteFuelMixPrompt(trimmed);
   if (fuelMix) return fuelMix;
 
-  let next = trimmed;
-  REPLACEMENTS.forEach(([pattern, replacement]) => {
-    next = next.replace(pattern, replacement);
-  });
 
   if (isMathExpression(trimmed)) {
     return `Work out ${formatMultiplicationDisplay(trimmed)}.`;
   }
 
-  return next;
+  return trimmed;
 };

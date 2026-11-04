@@ -1,0 +1,42 @@
+{
+  "source": "node_modules/@fontsource-variable/fredoka/files/fredoka-latin-wght-normal.woff2",
+  "processing": "Static wght instances of the existing font; outlines unchanged apart from axis instantiation. Renamed internal family; original copyright and OFL retained.",
+  "assets": [
+    {
+      "weight": 300,
+      "path": "variants/matharia/assets/fonts/matharia-rounded-300.woff2",
+      "bytes": 14964,
+      "sha256": "607d3e6c3809e81600264222687d2838aa24cca2ed757ca8278099cab1701847"
+    },
+    {
+      "weight": 400,
+      "path": "variants/matharia/assets/fonts/matharia-rounded-400.woff2",
+      "bytes": 16120,
+      "sha256": "42aa02049c3874247b4a73e63be096e43dee772b20eece687621be11d3409f7b"
+    },
+    {
+      "weight": 500,
+      "path": "variants/matharia/assets/fonts/matharia-rounded-500.woff2",
+      "bytes": 16228,
+      "sha256": "03a42ad8ae6bf8d683da5a8ee5febfbe82ecec408ce64266c1ba04edcdc2d94a"
+    },
+    {
+      "weight": 600,
+      "path": "variants/matharia/assets/fonts/matharia-rounded-600.woff2",
+      "bytes": 16496,
+      "sha256": "8e0c774f6e2eb592b3e5a0e1f4ae557ee8c97b862b43e60438123654aa9490a6"
+    },
+    {
+      "weight": 650,
+      "path": "variants/matharia/assets/fonts/matharia-rounded-650.woff2",
+      "bytes": 16444,
+      "sha256": "4728d236a54dd50efdb7170b33ba7ebc003dc645942948e36c5bed679f69fa66"
+    },
+    {
+      "weight": 700,
+      "path": "variants/matharia/assets/fonts/matharia-rounded-700.woff2",
+      "bytes": 15960,
+      "sha256": "4d9f1c2eec9f609087e73e3180cc47083751b2972e2c355753d2655989049f86"
+    }
+  ]
+}

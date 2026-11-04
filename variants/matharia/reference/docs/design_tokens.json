@@ -1,0 +1,51 @@
+{
+  "colours": {
+    "navy": "#03172e",
+    "sapphire": "#072c51",
+    "gold": "#ffd45e",
+    "cyan": "#2be8dc",
+    "ivory": "#fff3cd",
+    "heart": "#f54866"
+  },
+  "fontRoles": {
+    "logo": "Illustrated wordmark asset",
+    "display": "Georgia Bold or app-approved serif",
+    "question": "System rounded or legible sans serif, semibold",
+    "numeric": "System font with tabular digits"
+  },
+  "textMinimumPoints": {
+    "question": 17,
+    "answer": 22,
+    "utilityLabel": 12,
+    "secondary": 12
+  },
+  "minimumTouchTargetPoints": [
+    44,
+    44
+  ],
+  "layout": {
+    "portraitReference": [
+      900,
+      1950
+    ],
+    "landscapeReference": [
+      1600,
+      900
+    ],
+    "safeArea": "Runtime insets; do not bake into artwork",
+    "gameplayScrolling": false,
+    "menuScrolling": true
+  },
+  "rendering": {
+    "text": "Live text with accessibility labels",
+    "charts": "Exact data-driven graphics on blank panel",
+    "progress": "Track and fill separate; clip fill by value",
+    "frames": "Vector or verified cap-inset resizing",
+    "heroes": "Aspect fit; preserve silhouette"
+  },
+  "motion": {
+    "respectReduceMotion": true,
+    "breathing": "User-selected rhythm; no forced duration"
+  },
+  "scope": "Visual design tokens, not implementation guarantees"
+}

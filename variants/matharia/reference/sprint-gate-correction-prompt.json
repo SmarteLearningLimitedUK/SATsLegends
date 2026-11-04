@@ -1,0 +1,5 @@
+{
+  "tool": "Built-in imagegen",
+  "name": "props/sprint_gate_v4",
+  "prompt": "Edit this blank emerald gate sprite to match the much broader, shorter gate proportions in the second approved Simplify Sprint screenshot. Preserve its same materials, carved cream/gold stone, blue sapphire crest and side jewels, ivy, tiny white flowers, emerald portal and warm high-quality3D game style. REGENERATE the geometry without stretching the artwork: make the opening broader and lower, with a rounded arch rather than a tall doorway, short stout columns and squat plinths. The entire tightly bounded gate silhouette must be approximately1.1 times as WIDE as it is TALL, about1100x1000 pixels, exactly like a single approved factor gate. The current sprite is too tall/narrow. Keep the central opening dark emerald and empty for live labels. All parts visible with small even transparent margins. Genuine alpha transparency outside and between the plinths; the opening stays dark emerald filled. No text, letters, numbers, labels, symbols, scenery, floor, character, HUD or extra gate. One independent blank gate sprite, not a screen or mockup."
+}

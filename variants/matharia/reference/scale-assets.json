@@ -1,0 +1,50 @@
+{
+  "reference": "variants/matharia/reference/approved/scale_builder.png",
+  "inspection": "Clean autumn frontal terrace and separate physical engineering bench inspected. No text/UI/characters baked in background. Existing canonical blueprint hero poses retained. Original live SVG and numeric controls preserved.",
+  "processing": "Aspect-preserving WebP; alpha-margin trim only, no semantic image processing.",
+  "assets": [
+    {
+      "name": "backgrounds/bg_scale_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-80828159-7383-466b-acc5-bd37e1f30a7e.png",
+      "alphaMarginTrim": null,
+      "dimensions": [
+        1844,
+        853
+      ],
+      "production": "variants/matharia/assets/png/backgrounds/bg_scale_v3@2x.webp",
+      "sha256": "3fca9571c60d184e75f5a292f71b0e8e4ba9958889761abb611a574068dc3196"
+    },
+    {
+      "name": "props/scale_bench_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-f5a62781-eb17-49a7-903f-4f4a97b39b00.png",
+      "alphaMarginTrim": [
+        17,
+        178,
+        2155,
+        642
+      ],
+      "dimensions": [
+        2048,
+        444
+      ],
+      "production": "variants/matharia/assets/png/props/scale_bench_v3@2x.webp",
+      "sha256": "7f762e865de44d3fb7532c44ffd1a402b92cc3fcd4d478f73cc8603966860875"
+    },
+    {
+      "name": "buttons/scale_key_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-2f3758a5-750f-4387-aa53-9a2b19aec975.png",
+      "alphaMarginTrim": [
+        72,
+        265,
+        1463,
+        741
+      ],
+      "dimensions": [
+        1391,
+        476
+      ],
+      "production": "variants/matharia/assets/png/buttons/scale_key_v4@2x.webp",
+      "sha256": "611e4a677b288abe73d550de3772c70b4c33add36932a238e0de042339e6ab69"
+    }
+  ]
+}

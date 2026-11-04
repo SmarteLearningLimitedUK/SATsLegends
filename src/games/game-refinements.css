@@ -144,7 +144,7 @@
   .chrono-layout > [data-game-question] { grid-column: 1 / -1; }
   .chrono-playfield { grid-column: 1; grid-row: 2; min-height: 0; }
   .chrono-clock { width: min(100%, 190px); }
-  .chrono-clock svg text { font-size: calc(18px * var(--game-text-scale, 1.2)); }
+  .chrono-clock svg text { font-size: 14px; }
   .chrono-controls { grid-column: 2; grid-row: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
   .chrono-control-buttons { gap: 4px; }
   .chrono-layout > .refinement-feedback, .chrono-actions { grid-column: 1 / -1; }

@@ -872,6 +872,7 @@
 .wellbeing-garden-flower { position: absolute; width: calc(var(--flower-size) * var(--garden-flower-base)); aspect-ratio: 1; translate: -50% -50%; animation: wellbeing-flower-emerge 2.8s ease-out both; isolation: isolate; }
 .wellbeing-scene[data-breathing-phase] .wellbeing-garden-flower .wellbeing-bloom { position: relative; inset: auto; width: 100%; min-width: 0; height: 100%; translate: none; filter: drop-shadow(0 8px 18px #041c2444); transition: transform 50ms linear; }
 .wellbeing-garden-flower .wellbeing-bloom::before, .wellbeing-garden-flower .wellbeing-bloom::after { display: none; }
+.wellbeing-garden-flower .wellbeing-bloom-artwork { display:block; width:100%; height:100%; object-fit:contain; }
 .wellbeing-garden-flower .wellbeing-bloom-petal { background: linear-gradient(180deg, hsl(var(--flower-hue) 42% 83% / .88), hsl(var(--flower-hue) 32% 55% / .85) 65%, hsl(var(--flower-hue) 28% 35% / .92)); box-shadow: inset 0 1px 7px #f5ffec55; border-color: #def5e399; }
 .wellbeing-garden-flower .wellbeing-bloom-core { box-shadow: 0 0 18px #f7e8ae66, inset 0 0 8px #fff8d1; }
 .wellbeing-flower-stem { position: absolute; left: 49%; top: 50%; height: 62%; width: 4px; z-index: -1; border-radius: 50%; background: linear-gradient(#b1dcc2, #497e73); }
@@ -895,3 +896,41 @@
  .pond-playfield[data-pond-count='10'] .pond-target {width:44px;height:44px;font-size:19px;}
 }
 @media(max-width:430px){.pond-playfield[data-pond-count='10'] {top:calc(22% + 24px);}}
+/* The noticing prompt and draggable pads occupy separate rows. Reserve a
+   usable pond even when the activity scrolls on a short landscape screen. */
+#root .wellbeing-shell[data-wellbeing-activity='peaceful_pond'] .wellbeing-content,
+#root .wellbeing-shell[data-wellbeing-activity='peaceful_pond'] .wellbeing-scene {
+  min-height:440px;
+  flex-basis:440px;
+}
+#root .wellbeing-shell[data-wellbeing-activity='peaceful_pond'] .wellbeing-scene {
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  height:auto;
+}
+#root .wellbeing-shell[data-wellbeing-activity='peaceful_pond'] .pond-attention {
+  position:relative;
+  inset:auto;
+  translate:none;
+  margin-inline:auto;
+  flex:0 0 auto;
+}
+#root .wellbeing-shell[data-wellbeing-activity='peaceful_pond'] .pond-playfield {
+  position:relative;
+  inset:auto;
+  width:94%;
+  margin-inline:auto;
+  flex:1 0 280px;
+  min-height:280px;
+}
+
+/* Individually rendered pads keep their live numbers and touch targets. */
+#root .wellbeing-shell[data-wellbeing-activity='peaceful_pond'] .pond-pad {
+  background: transparent url('../assets/wellbeing/matharia/prop_lily_pad@2x.png') center / contain no-repeat;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+#root .wellbeing-shell[data-wellbeing-activity='peaceful_pond'] .pond-pad::after { display: none; }
+#root .wellbeing-shell[data-wellbeing-activity='peaceful_pond'] .wellbeing-scene-shade { display: none; }

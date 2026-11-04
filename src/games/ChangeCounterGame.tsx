@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useSta
 import confetti from 'canvas-confetti';
 import { motion, useIsPresent, useReducedMotion } from 'motion/react';
 import changeCounterBackground from '../assets/maps/teen/monster-market-shop.webp';
-import SceneEnvironment from '../components/SceneEnvironment';
+import ShopCheckoutScene from './ShopCheckoutScene';
 import { GameScreenShell, PuzzleStage } from '../layout/ScreenPrimitives';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import PracticeIntroPopup from '../components/game-ui/PracticeIntroPopup';
@@ -28,6 +28,7 @@ import item8 from '../assets/change counter/itemsforsale/8.png';
 import item9 from '../assets/change counter/itemsforsale/9.png';
 import item10 from '../assets/change counter/itemsforsale/10.png';
 import './monster-market.css';
+import './change-counter-shop.css';
 
 interface ChangeCounterGameProps extends MiniGameShellContractProps {
   levelId: number;
@@ -167,7 +168,7 @@ const starsForRun = (correct: number, rounds: number, lives: number) => {
 
 const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
   levelId,
-  avatarId: _avatarId,
+  avatarId,
   useSharedTopHud = true,
   isPractice,
   practiceBriefing,
@@ -410,6 +411,7 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
 
   return (
     <GameScreenShell className="market-game overflow-hidden" backgroundImage={changeCounterBackground} backgroundOpacity={.5}>
+      <ShopCheckoutScene avatarId={avatarId} />
       <PracticeIntroPopup open={showPracticeIntro} title="Monster Market"
         body="The till has been slimed. Check every item and quantity.
 Tap coins to make the change. Use Undo or Clear if you need to, then hand it over."
@@ -424,9 +426,7 @@ Tap coins to make the change. Use Undo or Clear if you need to, then hand it ove
           </GameQuestionCard>
 
           <section className={`market-scene${lives <= 1 ? ' is-last-chance' : ''}`} data-market-playfield>
-            <SceneEnvironment src={changeCounterBackground} className="market-shop-art" />
             <div className="market-customer-quip" role="status">{merchantLine}</div>
-            <div className="market-slime" data-market-slime aria-hidden="true"><span /><i data-market-bubble /><i data-market-bubble /></div>
             <motion.div className="market-receipt" data-market-receipt key={`${question.id}-${roundIndex}`}
               style={{ '--receipt-count': question.lines.length, '--receipt-short-rows': Math.ceil(question.lines.length / 2) } as React.CSSProperties}
               initial={reducedMotion ? false : { y: 8, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
@@ -448,7 +448,7 @@ Tap coins to make the change. Use Undo or Clear if you need to, then hand it ove
               </div>
             </motion.div>
             <div className="market-till" data-market-till>
-              <div className="market-till-header"><span>Tray</span><strong data-market-till-total aria-live="polite" aria-atomic="true">{formatMoney(selectedTotal)}</strong></div>
+              <div className="market-till-header"><span>Change tray</span><strong data-market-till-total aria-live="polite" aria-atomic="true">{formatMoney(selectedTotal)}</strong></div>
               <div className="market-coin-tray" aria-label="Coins in change tray">
                 {selectedCoins.length === 0 ? <span className="market-empty-tray">Tap coins below</span> : <>
                   {selectedCoins.length > 5 && <span className="market-more-coins">+{selectedCoins.length - 5} coins</span>}
@@ -471,7 +471,7 @@ Tap coins to make the change. Use Undo or Clear if you need to, then hand it ove
               <div className="market-till-actions">
                 <button type="button" data-button-skin="none" data-market-undo aria-label="Undo last coin" onClick={undoCoin} disabled={!canEditTill || selectedCoins.length === 0}>Undo</button>
                 <button type="button" data-button-skin="none" data-market-clear onClick={resetCoins} disabled={!canEditTill || selectedCoins.length === 0}>Clear</button>
-                <button type="button" data-button-skin="none" data-market-submit aria-label="Hand over exact change" onClick={handOverChange} disabled={!canEditTill || selectedCoins.length === 0}>Give</button>
+                <button type="button" data-button-skin="none" data-market-submit aria-label="Hand over exact change" onClick={handOverChange} disabled={!canEditTill || selectedCoins.length === 0}>Give change</button>
               </div>
             </div>
           </section>

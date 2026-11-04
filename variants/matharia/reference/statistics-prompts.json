@@ -1,0 +1,61 @@
+{
+  "tool": "Built-in image_gen",
+  "prompts": [
+    {
+      "key": "bg_mean_v3",
+      "transparent": false,
+      "ref": "mean_machine",
+      "prompt": "Use case: stylized-concept. Recreate ONLY the full-bleed portrait scenery from this approved Matharia Mean Machine image. Match its camera, very tall sunlit sapphire-and-gold scholar workshop overlooking a magnificent golden fantasy canal city and white waterfalls in the distance. Warm sandstone and carved gold columns at far sides, sapphire banners with gold sun emblems, upper right a large partly visible brass astronomical wheel, stone arches and terraces, tiny ivy accents, bright blue sky. The lower foreground is a broad engraved blue-and-gold workshop stone platform with a book and parchment low at left and a few candles and books at far right. Keep the middle clear for an independent live machine. Remove the deer, machine, crystal engine, readout slots, all panels, HUDs, buttons, text, letters, numbers, icons and interface. No empty panel shapes. Preserve the scenery composition, warm polished storybook 3D rendering, crisp detail, bright deliberate lighting. Portrait aspect about0.477:1.",
+      "output": "exec-5064feec-6b91-4aca-b42d-8b5589125951.png"
+    },
+    {
+      "key": "mean_engine_v3",
+      "transparent": true,
+      "ref": "mean_machine",
+      "prompt": "Use case: stylized-concept. Produce ONE independent Matharia mean-engine housing isolated on transparent background, based closely on the machine in this approved reference. Straight front-facing premium polished storybook 3D toy-like brass/gold scholarly machine, aspect width about0.9 of height. Gold industrial body, sapphire inset metal, a large radiant faceted blue crystal at top centre in a circular gold collar, twin short brass chimneys behind, two tall glowing blue crystal coil chambers down either side, looping sapphire pipes down to a wide sturdy gold base. A single LARGE EMPTY flat very dark navy inset rectangular area in the centre, about50% of full width and32% of full height, for six separate live readout slots. Above it a small blank horizontal gold-bordered navy nameplate, with NO text. Below the central area small blue status jewels in a row; at bottom centre a plain open flat dark navy mounting space for a separate circular Scan button. No baked buttons, no circular button, no control icons, no readout tiles or sockets, no numbers, no question marks, no letters or text, no character or scenery. Do not reproduce UI, labels or controls from the reference. Entire prop visible, crisp clean transparent alpha edge. Match its heavy warm gold materials and blue crystal lighting.",
+      "output": "exec-481652f5-df80-4d1c-81a4-bba89764ad78.png"
+    },
+    {
+      "key": "bg_graph_v3",
+      "transparent": false,
+      "ref": "graph_grabber",
+      "prompt": "Use case: stylized-concept. Recreate ONLY the full-bleed landscape scenery in this approved Matharia Graph Grabber reference. Match the camera, premium polished storybook 3D sunny golden harbor, tall carved timber dock architecture and blue-gold compass banner at left, warm hanging brass lantern, stacked cargo crates at left and rear edges, warm timber dock planks across foreground, low blue/gold dock bollards, rope coils low at right, vivid turquoise canal water and magnificent golden canal city with small waterfalls and terraces beyond. Large elegant blue-and-gold sailing boat on the right edge, blue sky and soft clouds. Keep the central space open. Remove the deer, chart, chart frame, cargo bars, every interface panel, HUD, button, icon, title, letters and numbers. No empty UI surfaces. Scenery only, no characters. Keep the reference's focal points and background crop. Landscape aspect about2.16:1.",
+      "output": "exec-ee6ce49b-d7b9-4c1b-9527-a349c24964ab.png"
+    },
+    {
+      "key": "bg_line_v3",
+      "transparent": false,
+      "ref": "line_graph_lab",
+      "prompt": "Use case: stylized-concept. Recreate ONLY the full-bleed landscape scenery in this approved Matharia Line Graph Lab reference. Match the camera and bright polished storybook 3D sapphire-and-gold fantasy harbor laboratory on a wooden waterside dock. Tall carved timber colonnade, hanging brass lantern and blue-gold compass banner at left, trailing ivy at upper left, sunny warm golden city terraces and waterfalls in distant centre/right, turquoise canal, right side carved timber pillar and lantern. Low foreground small glass potion bottles with blue and violet liquids at far left, parchment and brass surveying compass along bottom, wooden dock planks and rope-bound bollards at far right. Keep the middle open for an independent live graph. Remove the fox wizard, staff, chart and frame, panels, HUDs, buttons, icons, counters, title, text, letters and numbers completely. No UI-shaped empty panels. Scenery only, no characters. Landscape aspect about2.16:1.",
+      "output": "exec-3093fa3a-3b78-447c-a040-6402336fe95f.png"
+    },
+    {
+      "key": "bg_data_v3",
+      "transparent": false,
+      "ref": "data_detective",
+      "prompt": "Use case: stylized-concept. Recreate ONLY the full-bleed landscape scenery from this approved Matharia Data Detective image. Straight camera facing a rich sunlit wooden harbor detective desk. Premium polished storybook 3D golden waterside fantasy city, sapphire canal and distant terraces with waterfalls beyond, blue sky. Tall carved wooden dock pillars, brass hanging lanterns and blue/gold compass banner at left, trailing ivy at upper left. Broad warm timber desk across the foreground, low small stacks of gold coins at left and right, folded parchment on tabletop, ornate brass telescope lying diagonally along lower middle/right, wooden dock bollards at far right. Keep the central working area clear. Remove the deer, magnifying glass held by deer, evidence board, donut chart, item legend and icons, suspect cards and portraits, all interface frames, HUDs, panels, buttons, text, numbers and letters. No empty UI-shaped surfaces. Scenery only, no characters. Preserve the reference background crop and lighting. Landscape about2.16:1.",
+      "output": "exec-432c2e51-df8c-4286-b725-4158e2128c75.png"
+    },
+    {
+      "key": "amber_answer_v4",
+      "transparent": true,
+      "ref": "mean_machine",
+      "prompt": "Use case: stylized-concept. One independent Matharia answer-button frame, isolated on transparent background. Match the tactile gold-and-amber answer tablets in the approved reference. Wide rectangle aspect2.7:1, slightly clipped rounded bevel corners, rich warm AMBER/BROWN enamel empty central face, thick polished sculpted GOLD outer bevel with narrow gold inner trim and subtle reflected sapphire light. Small sapphire diamonds ONLY at the four corners if needed, keep all ornaments compact. The centre is plain uninterrupted warm amber-brown material ready for live white answer text. No middle medallions or edge-centre ornaments: the frame must scale by nine-slicing without distorting decorations. Entire button visible, crisp clean edges. No text, no numerals, no symbols, no UI glyphs, no shadows floating outside, no scenery or other objects. Premium polished storybook3D sapphire-and-gold Matharia game style.",
+      "output": "exec-a0866089-587b-4657-94a7-2956e5e8958c.png"
+    },
+    {
+      "key": "chart_wood_hollow_v4",
+      "transparent": true,
+      "ref": "graph_grabber",
+      "prompt": "Use case: stylized-concept. One independent rectangular wooden chart FRAME, isolated on transparent background, based closely on the warm timber-and-gold chart border in this approved Matharia reference. Wide landscape aspect2.5:1, straight-on view. Rich carved warm dark brown wood rails, small sculpted polished gold corner caps holding sapphire diamond rivets, narrow gold inner edge and a few subtle tiny ivy leaves ONLY beside the outer corners. Plain continuous straight horizontal and vertical rails; NO middle ornaments or centre crests because this will be nine-sliced to fit real live charts. CRITICAL: the entire large rectangular central opening is fully transparent alpha0, no navy panel, no parchment, no glass, no chart, no glow, no ghost rectangle. Transparent outside too. Only the four thin wooden frame rails and their compact corner ornaments are visible. No stand, no shadows across the opening, no title plaque, no text, no numbers, no icons, no graph, no grid or scenery. Crisp premium polished storybook3D Matharia asset, complete frame visible.",
+      "output": "exec-217436a7-4717-4216-b07b-eecb1a8448c4.png"
+    },
+    {
+      "key": "mean_engine_v4",
+      "transparent": true,
+      "ref": "mean_machine",
+      "prompt": "Use case: stylized-concept. Edit the independent gold/sapphire engine housing to match the approved concept's LARGE CENTRAL READOUT APERTURE more faithfully. Keep the exact beautiful materials, front-on camera, glowing blue coils, twin brass chimneys, pipes, base, clean transparent exterior and roughly0.9:1 whole-prop aspect. Correct the vertical layout deliberately: upper sapphire orb occupies about7–21% of full height; a BLANK narrow horizontal navy nameplate at24–29%; a LARGE completely EMPTY flat dark navy rectangular readout aperture from31% to65% of full height and from24% to76% of full width. This aperture must really be34% of the whole prop height: much taller than in the current housing, with ample room for six independently rendered reading tiles in3columns and2rows. Move the small row of blue status gems below it to68–73%. Keep a blank circular navy mounting aperture in the lower base centered at50% across,84% down, about27% of full width in diameter; no button label. Adjust the machinery and gold structural frame so this layout is natural, do not stretch existing pieces. The approved reference is for style and proportions only: do NOT copy its questions or numbers. No tiles, no sockets within the large central aperture, no question marks, no text or letters, no numbers, no icons, no scenery, no character. Entire independent engine visible and crisply cut out on transparent alpha0 exterior. Polished storybook3D sapphire-and-gold Matharia game prop.",
+      "output": "exec-491a46ed-804d-4d44-82e4-b0d51c842713.png"
+    }
+  ]
+}

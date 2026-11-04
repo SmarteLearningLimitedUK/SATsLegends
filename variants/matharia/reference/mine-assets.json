@@ -1,0 +1,34 @@
+{
+  "inspection": "Both outputs inspected. Clean portrait timber/sapphire scenery without UI or characters; independent unlabelled gold angular teal nav tile. No patches, masks, repainting or distortion. Alpha trim and aspect-preserving export only.",
+  "assets": [
+    {
+      "name": "backgrounds/bg_mine_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-7fcd1fd7-85cd-4f28-a946-3bccf6ede5ca.png",
+      "alphaBoundsCrop": null,
+      "dimensions": [
+        853,
+        1844
+      ],
+      "production": "variants/matharia/assets/png/backgrounds/bg_mine_v3@2x.webp",
+      "bytes": 534950,
+      "sha256": "9a0d6fe3992cd39762ed91a3a0c97b02af1f321e276281b0ea1e888c76abab70"
+    },
+    {
+      "name": "frames/factor_nav_tile_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-1be32c63-7114-4a5c-bb60-6ecdbafbe315.png",
+      "alphaBoundsCrop": [
+        47,
+        72,
+        1245,
+        1141
+      ],
+      "dimensions": [
+        1198,
+        1069
+      ],
+      "production": "variants/matharia/assets/png/frames/factor_nav_tile_v3@2x.webp",
+      "bytes": 178584,
+      "sha256": "f4a833f27ea51be6ce2ae4242f0b93e4bbb69ad6a2ebf887052ad95bd9ee3200"
+    }
+  ]
+}

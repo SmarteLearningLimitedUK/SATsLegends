@@ -1,0 +1,12 @@
+{
+  "kind": "objects",
+  "key": "cauldron",
+  "file": "objects/cauldron-v1.webp",
+  "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-918937be-84c6-4856-b547-37428cc67780.png",
+  "prompt": "Production game asset, reference is the approved art direction only. Generate Only the beautiful dark bronze and black iron potion cauldron, polished rim, round sculpted bowl, two small handles and three squat legs. Frontal3quarter view. Open empty elliptical mouth at top, rim edges, solid body below; no liquid, no bubbles, no smoke, no fire, no table, no scenery, no character. Portraitsquare composition entirepropvisible. Genuinely transparent alpha background everywhere outside the isolated object, no coloured matte, no backdrop. This must be a separate compositing asset for live gameplay. Same high-end sculpted3D family fantasy rendering, real material detail, correct perspective and lighting. No labels, captions, image border, interface, watermark or extra objects.",
+  "dimensions": [
+    1254,
+    1254
+  ],
+  "bytes": 365626
+}

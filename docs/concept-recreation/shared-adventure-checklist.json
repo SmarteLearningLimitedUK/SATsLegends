@@ -1,0 +1,124 @@
+{
+  "scope": "Shared Matharia intros, island level selection, victory and retry; approved current-chat direction",
+  "updated": "2026-11-02",
+  "assumptions": [
+    "Existing sapphire-and-gold presentation and four canonical heroes are authoritative.",
+    "Existing game, educational content, navigation, progress and reward contracts remain unchanged."
+  ],
+  "rendering": "React in the separate Vite/Capacitor variant; original source controllers preserved through build-time presentation adapters.",
+  "screens": [
+    {
+      "screen": "practice intro",
+      "status": "implemented; browser verified in Chromium and WebKit; native iOS unverified"
+    },
+    {
+      "screen": "help / revision briefing",
+      "status": "implemented; browser verified in Chromium and WebKit; native iOS unverified"
+    },
+    {
+      "screen": "mock briefing where present",
+      "status": "implemented; browser verified in Chromium and WebKit; native iOS unverified"
+    },
+    {
+      "screen": "level selection / current / locked / completed",
+      "status": "Redesigned as focused game library; 37 game/paper selections and seven browser device profiles verified; native iOS unverified",
+      "paddingCorrection": {
+        "date": "2026-11-01",
+        "status": "six actual-route browser cases and one explicitly identified long-title layout stress passed; native verification pending",
+        "source": "variants/matharia/src/shared/shared-adventure.css",
+        "evidence": "qa-artifacts/mission-padding/RESULT.json",
+        "handover": "docs/concept-recreation/MISSION-CARD-PADDING-2026-11-01.md"
+      },
+      "returnNavigationCorrection": {
+        "date": "2026-11-01",
+        "status": "four real board/game return cases, browser Back, free access/purchase guard and full Ninja result return passed; native verification pending",
+        "evidence": "qa-artifacts/mission-return/RESULT.json",
+        "handover": "docs/concept-recreation/GAME-RETURN-NAVIGATION-2026-11-01.md"
+      },
+      "missionLibraryRedesign": {
+        "date": "2026-11-02",
+        "component": "variants/matharia/src/shared/MissionLibrary.tsx",
+        "styles": "variants/matharia/src/shared/mission-library.css",
+        "evidence": "qa-artifacts/mission-library/RESULT.json",
+        "checklist": "qa-artifacts/mission-library/screen-checklist.json",
+        "comparison": "qa-artifacts/mission-library/before-after.png",
+        "handover": "docs/concept-recreation/MISSION-LIBRARY-2026-11-02.md"
+      }
+    },
+    {
+      "screen": "victory / earned gems / XP / bonuses",
+      "status": "implemented; browser verified in Chromium and WebKit; native iOS unverified"
+    },
+    {
+      "screen": "retry / practice skill / calm break",
+      "status": "implemented; browser verified in Chromium and WebKit; native iOS unverified"
+    }
+  ],
+  "evidence": "qa-artifacts/shared-adventure",
+  "limitations": [
+    "Native iOS execution unavailable on Windows; browser evidence only.",
+    "Matharia minimum is now iOS 16.4 by user instruction; native execution on that minimum remains unverified."
+  ],
+  "noExternalLegacyAssumptions": true,
+  "verification": {
+    "date": "2026-11-01",
+    "passed": true,
+    "briefingAndStartCases": 222,
+    "games": 37,
+    "engines": [
+      "Chromium",
+      "browser WebKit"
+    ],
+    "profiles": {
+      "compact": "320\u00d7568 / 568\u00d7320",
+      "phone": "390\u00d7844 / 844\u00d7390",
+      "largePhone": "430\u00d7932",
+      "tablet": "768\u00d71024 / 1024\u00d7768"
+    },
+    "uniqueChecksByKind": {
+      "catalogue": 16,
+      "intro": 222,
+      "start": 222,
+      "level-navigation": 18,
+      "board": 24,
+      "victory": 6,
+      "retry": 6,
+      "suite": 2,
+      "hero-victory": 5,
+      "progress-retention": 1,
+      "practice-result": 2,
+      "help-pause-resume": 2,
+      "compact-board": 16,
+      "keyboard-focus-start": 2,
+      "text-insets": 4,
+      "board-insets": 4
+    },
+    "nativeExecution": "unverified; Windows host",
+    "nativeCopy": "verified byte for byte",
+    "textScaling": "150% browser text override; not native Dynamic Type",
+    "insets": "browser simulation: portrait top44/bottom34; landscape left47/right47/bottom21",
+    "priorRetries": "Initial compact board check detected inherited stage scaling; corrected. Partly clipped list rows are intentionally scrollable. The artificial direct tier5 win retains its original prerequisite lock after reload.",
+    "sourcePreservation": "source-preservation.json",
+    "build": "build-and-platform.json"
+  },
+  "perGameChecklist": "../../qa-artifacts/shared-adventure/screen-checklist.json",
+  "comparisonGallery": "../../qa-artifacts/shared-adventure/index.html",
+  "remainingDefects": [
+    "No blocking browser layout or interaction defects identified in the covered cases.",
+    "Matharia minimum is configured at iOS 16.4. Native execution, actual safe areas, VoiceOver and Dynamic Type still require a Mac/device pass."
+  ],
+  "rocketAndPortraitHudCorrection": {
+    "date": "2026-11-02",
+    "status": "Implemented and browser verified; native device pass and TestFlight pending",
+    "scope": "Consistent portrait HUD; Rounding Rocket question/answer/status padding and ground alignment; Takeout Rush spacing compatible with shared HUD",
+    "screenChecklist": "../../qa-artifacts/rocket-layout/screen-checklist.json",
+    "receipt": "../../qa-artifacts/rocket-layout/RESULT.json",
+    "handover": "ROCKET-LAYOUT-2026-11-02.md",
+    "changedSource": [
+      "variants/matharia/src/measured-hud.css",
+      "variants/matharia/src/screens/rocket-scene.css",
+      "variants/matharia/src/screens/takeout-scene.css"
+    ],
+    "noExternalLegacyAssumptions": true
+  }
+}

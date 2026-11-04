@@ -1,0 +1,106 @@
+{
+  "references": [
+    "variants/matharia/reference/approved/data_detective.png",
+    "qa-artifacts/concept-recreation/detective-source-assets.png"
+  ],
+  "intent": "Four original named suspects, premium3D bust atlas matching approved sapphire/gold, clean alpha, no baked medallions/UI/text.",
+  "processing": "Inspected intact hats/horns/crystals and busts;6px cross-gutter maximum alpha1. Regular quarter slicing and alpha-margin trim only. Portraits use a legitimate circular viewport and independent gold rim. No scenery removal, painting or masks.",
+  "assets": [
+    {
+      "id": 0,
+      "name": "Grumpy Green",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-1ea65ba5-b618-42e5-bdb9-94d5d1111e6a.png",
+      "atlasCell": [
+        0,
+        0,
+        627,
+        627
+      ],
+      "alphaBoundsCrop": [
+        43,
+        46,
+        594,
+        609
+      ],
+      "dimensions": [
+        551,
+        563
+      ],
+      "production": "variants/matharia/assets/png/portraits/data_suspect_0_v3@2x.webp",
+      "bytes": 135198,
+      "sha256": "3ec774265c3a9a6c13f9f70c97d90564493e72436a74e64f0210b6cc515cd6b6"
+    },
+    {
+      "id": 1,
+      "name": "Vault Rhino",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-1ea65ba5-b618-42e5-bdb9-94d5d1111e6a.png",
+      "atlasCell": [
+        627,
+        0,
+        1254,
+        627
+      ],
+      "alphaBoundsCrop": [
+        12,
+        55,
+        618,
+        608
+      ],
+      "dimensions": [
+        606,
+        553
+      ],
+      "production": "variants/matharia/assets/png/portraits/data_suspect_1_v3@2x.webp",
+      "bytes": 134722,
+      "sha256": "fb81c80445e14bcf0a54bff20b7ae2ebf49894631223750d5c71a283e8172847"
+    },
+    {
+      "id": 2,
+      "name": "Crystal Jelly",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-1ea65ba5-b618-42e5-bdb9-94d5d1111e6a.png",
+      "atlasCell": [
+        0,
+        627,
+        627,
+        1254
+      ],
+      "alphaBoundsCrop": [
+        61,
+        29,
+        598,
+        596
+      ],
+      "dimensions": [
+        537,
+        567
+      ],
+      "production": "variants/matharia/assets/png/portraits/data_suspect_2_v3@2x.webp",
+      "bytes": 133488,
+      "sha256": "897155c8b2e499ae07266fd639f650531fadf2069b1690aa40415ce84b714c60"
+    },
+    {
+      "id": 3,
+      "name": "Slime Sneak",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-1ea65ba5-b618-42e5-bdb9-94d5d1111e6a.png",
+      "atlasCell": [
+        627,
+        627,
+        1254,
+        1254
+      ],
+      "alphaBoundsCrop": [
+        37,
+        66,
+        598,
+        596
+      ],
+      "dimensions": [
+        561,
+        530
+      ],
+      "production": "variants/matharia/assets/png/portraits/data_suspect_3_v3@2x.webp",
+      "bytes": 119004,
+      "sha256": "4137d987766cabfeb0e6a631adf29b1196ebd7ad50d9305d9b12f0cd99430090"
+    }
+  ]
+}

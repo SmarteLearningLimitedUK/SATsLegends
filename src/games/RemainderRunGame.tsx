@@ -234,54 +234,32 @@ const starsFromPerformance = (XP: number, correct: number, attempts: number, sta
   return 1;
 };
 
-const digitColors = ['text-violet-500', 'text-emerald-500', 'text-blue-500', 'text-pink-500', 'text-amber-500', 'text-cyan-500'];
 const DIVISION_GROUPS = [100, 50, 20, 10, 5, 2, 1] as const;
-
 interface DivisionWorking {
   remaining: number;
   quotient: number;
   steps: { groups: number; amount: number }[];
 }
 
-const LongDivisionVisual: React.FC<{ problem: RemainderProblem }> = ({ problem }) => {
-  const digits = problem.displayDividend.split('');
-
-  return (
-    <div className="relative overflow-hidden rounded-[1.3rem] border border-violet-200/24 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),rgba(255,255,255,0)_44%),linear-gradient(180deg,rgba(26,54,124,0.96),rgba(10,17,40,0.98))] px-3 py-3 shadow-[0_18px_34px_rgba(2,6,23,0.22)] md:rounded-[1.7rem] md:px-4 md:py-4">
-      <div className="relative mt-2.5 flex items-center justify-center">
-        <div className="relative mr-2.5 text-[clamp(2rem,9vw,3.9rem)] font-black leading-none text-sky-100 md:mr-3">
-          {problem.divisor}
-        </div>
-
-        <div className="relative flex items-start">
-          <div className="absolute left-[0.18rem] top-[-0.25rem] h-[2.35rem] w-[0.3rem] rounded-full bg-violet-200/90 md:h-[3.1rem]" />
-          <div className="absolute left-[0.4rem] top-[-0.25rem] h-[0.3rem] w-[clamp(6.8rem,35vw,12.3rem)] rounded-full bg-violet-200/90 md:w-[clamp(8rem,36vw,13.8rem)]" />
-          <div className="pl-[clamp(0.95rem,4vw,1.35rem)] pt-[clamp(0rem,0.5vw,0.16rem)]">
-            <div className="flex items-end gap-[0.05em] text-[clamp(2.05rem,9.3vw,4.1rem)] font-black leading-none md:gap-[0.06em]">
-              {digits.map((digit, index) => {
-                if (digit === '.') {
-                  return (
-                    <span key={`${problem.id}-${index}`} className="relative mx-[0.06em] inline-flex items-center">
-                      <span className="mt-[0.36em] inline-block h-[0.22em] w-[0.22em] rounded-full bg-violet-200 shadow-[0_1px_0_rgba(255,255,255,0.42)]" />
-                    </span>
-                  );
-                }
-
-                return (
-                  <span
-                    key={`${problem.id}-${index}`}
-                    className={`${digitColors[index % digitColors.length]} drop-shadow-[0_1px_0_rgba(255,255,255,0.36)]`}
-                  >
-                    {digit}
-                  </span>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+const CargoDeck: React.FC<{ problem: RemainderProblem; working: DivisionWorking; reduced: boolean; departing: boolean }> = ({ problem, working, reduced, departing }) => {
+ const guided = problem.answerMode === 'group_board';
+ const steps = working.steps;
+ return <div className="cargo-deck" data-cargo-deck data-cargo-remaining={working.remaining} data-cargo-loaded={working.quotient}>
+  <div className="cargo-scoreboard" aria-live="polite">
+   <div><span>{problem.answerMode === 'decimal' ? 'Rope to share' : 'On the dock'}</span><strong>{guided ? working.remaining : problem.displayDividend}{problem.answerMode === 'decimal' ? ' m' : ''}</strong></div>
+   <div><span>{guided ? 'Boxes loaded' : problem.answerMode === 'decimal' ? 'Boats' : 'In each box'}</span><strong>{guided ? working.quotient : problem.divisor}</strong></div>
+  </div>
+  <div className="cargo-loading-bay" aria-hidden="true">
+   <div className="cargo-capacity">{problem.answerMode === 'decimal' ? 'Equal shares for every boat' : `${problem.divisor} crates fill one box`}</div>
+   <motion.div className="cargo-pallet" animate={departing && !reduced ? {x:100,opacity:0} : {x:0,opacity:1}} transition={{duration:.65,ease:'easeIn'}}>
+    {problem.answerMode === 'decimal' ? <div className="cargo-rope" /> : Array.from({length:guided ? Math.min(6,steps.length) : 3},(_,i)=><motion.div key={`${problem.id}-${i}`} className="cargo-box" initial={reduced ? false : {y:-55,opacity:0,rotate:-5}} animate={{y:0,opacity:1,rotate:0}} transition={{type:'spring',stiffness:170,damping:20}}><span>✦</span></motion.div>)}
+    <div className="cargo-pallet-base" />
+   </motion.div>
+   {guided && steps.length===0 ? <div className="cargo-empty">Load your first batch</div> : null}
+   <AnimatePresence>{guided && steps.length>0 && !reduced ? <motion.div key={`${problem.id}-${steps.length}`} className="cargo-lift" initial={{x:-65,y:-55,opacity:0}} animate={{x:0,y:5,opacity:[0,1,1,0]}} exit={{opacity:0}} transition={{duration:.65,ease:'easeInOut'}}>+{steps.at(-1)?.groups} boxes</motion.div> : null}</AnimatePresence>
+  </div>
+  <div className="cargo-manifest" aria-live="polite">{guided ? steps.length ? steps.slice(-4).map((step,i)=><span key={`${steps.length-i}-${step.groups}`}>{step.groups} boxes · {step.amount} crates</span>) : <span>Choose a batch to load →</span> : <span>{problem.displayDividend} ÷ {problem.divisor} · Ready to send?</span>}</div>
+ </div>;
 };
 
 const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
@@ -432,7 +410,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
       setCombo((prev) => prev + 1);
       setFeedback({
         tone: isPraise ? 'praise' : 'success',
-        title: isPraise ? buildPraiseMessage() : 'Correct',
+        title: isPraise ? buildPraiseMessage() : 'Shipment away!',
         subtitle: isPraise ? 'Fast first try bonus!' : `+${points} points`,
       });
 
@@ -443,7 +421,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
         colors: ['#4ade80', '#facc15', '#ffffff'],
       });
 
-      moveToNextProblem(nextSolved, 320);
+      moveToNextProblem(nextSolved, 1000);
       return;
     }
 
@@ -468,8 +446,8 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
     const remaining = working.remaining - amount;
     const quotient = working.quotient + groups;
     setWorking({ remaining, quotient, steps: [...working.steps, { groups, amount }] });
-    if (remaining < problem.divisor) evaluateAnswer(makeAnswerLabel(quotient, remaining));
-  }, [evaluateAnswer, isLocked, problem, roundOver, sessionState?.paused, showPracticeIntro, working]);
+    triggerHaptic('light');
+  }, [isLocked, problem, roundOver, sessionState?.paused, showPracticeIntro, working]);
 
   const showTopHud = !useSharedTopHud;
   const timeLabel = `${Math.floor(timeLeft / 60)}:${String(timeLeft % 60).padStart(2, '0')}`;
@@ -477,9 +455,9 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
   const title = 'Remainder Run';
 
   return (
-    <div className="relative z-20 h-full w-full overflow-hidden select-none bg-slate-950" data-remainder-game data-remainder-tier={baseLevel} data-remainder-stage={difficultyStage} data-remainder-correct={correctCount}>
+    <div className="remainder-harbour relative z-20 h-full w-full overflow-hidden select-none bg-slate-950" data-remainder-game data-remainder-tier={baseLevel} data-remainder-stage={difficultyStage} data-remainder-correct={correctCount}>
       <GameplaySceneBackdrop gameType="remainder_run" />
-      <PracticeIntroPopup open={showPracticeIntro} title="Remainder Run" body="Divide by tapping answers. On harder rounds, use the on-screen group buttons to take away multiples of the divisor. Keep going until the amount left is smaller than the divisor." briefing={practiceBriefing} onAction={() => setShowPracticeIntro(false)} />
+      <PracticeIntroPopup open={showPracticeIntro} title="Remainder Run" body="Get the harbour supplies moving! Choose the right shipment. On harder orders, load batches of full boxes, leave fewer crates than one box holds, then send the shipment." briefing={practiceBriefing} onAction={() => setShowPracticeIntro(false)} />
 
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),rgba(15,23,42,0.06)_32%,rgba(2,6,23,0.36)_100%)]" />
 
@@ -514,62 +492,39 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
             title={title}
             subtitle={problem.answerMode === 'decimal'
               ? 'Give your answer as a decimal.'
-              : problem.answerMode === 'group_board' ? 'Use the group board to work out full boxes and leftovers.' : 'Quotient = full boxes. Remainder = crates left over.'}
+              : problem.answerMode === 'group_board' ? 'Load full boxes, then send your shipment.' : 'Choose the shipment with the right boxes and leftovers.'}
             className={`mx-auto w-full shrink-0 ${problem.answerMode === 'group_board' ? '' : 'max-w-[27rem]'}`}
             style={{ position: 'relative', top: 0, transform: 'none' }}
           >
             {problem.answerMode === 'decimal'
               ? `Share ${problem.displayDividend} metres of rope equally between ${problem.divisor} boats. How many metres does each boat get?`
-              : `Pack ${problem.displayDividend} crates, ${problem.divisor} per box. How many full boxes and leftover crates?`}
+              : `There are ${problem.displayDividend} crates. Each box holds ${problem.divisor} crates. How many full boxes can be filled, and how many crates are left over?`}
           </GameQuestionCard>
 
           <section data-division-playfield="true" className={`relative flex min-h-0 ${problem.answerMode === 'group_board' ? 'flex-col gap-2' : 'flex-1 items-center justify-center'}`}>
-            <div data-division-problem="true" data-problem-id={problem.id} className="w-full">
-              {problem.answerMode !== 'group_board' ? <LongDivisionVisual problem={problem} /> : null}
+            <div data-division-problem="true" data-problem-id={problem.id} className="cargo-stage">
+              <CargoDeck problem={problem} working={working} reduced={Boolean(reducedMotion || sessionState?.paused)} departing={Boolean(feedback && feedback.tone !== 'error')} />
             </div>
             {problem.answerMode === 'group_board' ? (
-              <div data-division-working className="remainder-working w-full rounded-[1.1rem] border border-sky-200/35 bg-slate-950/90 p-2.5 text-white shadow-[0_10px_22px_rgba(2,6,23,0.25)]">
-                <div className="flex items-center justify-between gap-2">
-                  <h2 className="text-sm font-black text-sky-100">Division board</h2>
-                  <div className="remainder-board-actions">
-                    {useSharedTopHud && !isPractice ? <span className="remainder-time" data-remainder-time data-urgent={timeLeft <= 15} aria-label={`${timeLeft} seconds left`}>{timeLabel}</span> : null}
-                    <button type="button" onClick={() => setWorking({ remaining: problem.dividend, quotient: 0, steps: [] })} disabled={isLocked || roundOver || sessionState?.paused} className="min-h-11 rounded-lg border border-sky-100/55 px-3 text-xs font-bold text-sky-100 disabled:opacity-50">Start again</button>
-                  </div>
+              <div data-division-working className="remainder-working cargo-console">
+                <div className="cargo-console-heading"><strong>Load the shipment</strong><div className="remainder-board-actions">
+                  {useSharedTopHud && !isPractice ? <span className="remainder-time" data-remainder-time data-urgent={timeLeft <= 15}>{timeLabel}</span> : null}
+                  <button type="button" className="cargo-reset" onClick={() => setWorking({remaining:problem.dividend,quotient:0,steps:[]})} disabled={isLocked || roundOver || sessionState?.paused}>Unload</button>
+                </div></div>
+                <div className="cargo-batch-grid" aria-label="Choose groups to subtract">
+                  {DIVISION_GROUPS.map(groups => <motion.button key={groups} type="button" data-cargo-batch={groups} aria-label={`Load ${groups} boxes, ${groups * problem.divisor} crates`} disabled={groups * problem.divisor > working.remaining || isLocked || roundOver || sessionState?.paused || showPracticeIntro} onClick={() => takeGroups(groups)} whileTap={reducedMotion ? undefined : {scale:.95}} className="cargo-batch">
+                    <span>{groups} <small>{groups===1 ? 'box' : 'boxes'}</small></span><span>{groups * problem.divisor} <small>crates</small></span>
+                  </motion.button>)}
+                <button type="button" data-cargo-send className="ui-button-primary cargo-send" disabled={working.remaining>=problem.divisor || isLocked || roundOver || sessionState?.paused || showPracticeIntro} onClick={()=>evaluateAnswer(makeAnswerLabel(working.quotient,working.remaining))}>Ship it!</button>
                 </div>
-                <p className="mt-1 text-sm leading-snug text-slate-100">Tap a group to subtract it. The board adds your groups for you.</p>
-                <div aria-live="polite" className="mt-2 grid grid-cols-2 gap-2 rounded-xl border border-white/20 bg-slate-900/90 p-2 text-center">
-                  <div><span className="block text-xs font-bold text-sky-200">Amount left</span><strong className="text-xl text-white">{working.remaining}</strong></div>
-                  <div><span className="block text-xs font-bold text-sky-200">Groups taken</span><strong className="text-xl text-white">{working.quotient}</strong></div>
-                </div>
-                <div className="remainder-track" role="progressbar" aria-label="Amount divided" aria-valuemin={0} aria-valuemax={problem.dividend} aria-valuenow={problem.dividend - working.remaining}>
-                  <motion.span initial={false} animate={{ width: `${100 * (problem.dividend - working.remaining) / problem.dividend}%` }} transition={{ duration: reducedMotion ? 0 : .38, ease: 'easeOut' }} />
-                </div>
-                <div className="mt-2 grid grid-cols-4 gap-1.5" aria-label="Choose groups to subtract">
-                  {DIVISION_GROUPS.map((groups) => {
-                    const amount = groups * problem.divisor;
-                    return <button
-                      key={groups}
-                      type="button"
-                      aria-label={`Take ${groups} groups of ${problem.divisor}, subtract ${amount}`}
-                      disabled={amount > working.remaining || isLocked || roundOver || sessionState?.paused || showPracticeIntro}
-                      onClick={() => takeGroups(groups)}
-                      className="ui-button-secondary min-h-12 rounded-xl px-1 py-1.5 text-center disabled:opacity-40"
-                    >
-                      <span className="block font-black text-white" style={{ fontSize: 'calc(16px / var(--game-stage-scale, 1))', lineHeight: 1.1 }}>+{groups}</span>
-                      <span className="block font-bold text-sky-100" style={{ fontSize: 'calc(16px / var(--game-stage-scale, 1))', lineHeight: 1.1 }}>−{amount}</span>
-                    </button>;
-                  })}
-                </div>
-                <p aria-live="polite" className="mt-2 min-h-5 text-center text-xs font-bold text-sky-100">
-                  {working.steps.length > 0
-                    ? `${working.steps.at(-1)?.groups} groups took away ${working.steps.at(-1)?.amount}. ${working.remaining} left.`
-                    : `Each group is ${problem.divisor}. Stop when less than ${problem.divisor} is left.`}
-                </p>
+                <div className="remainder-track" role="progressbar" aria-label="Amount divided" aria-valuemin={0} aria-valuemax={problem.dividend} aria-valuenow={problem.dividend-working.remaining}><motion.span initial={false} animate={{width:`${100*(problem.dividend-working.remaining)/problem.dividend}%`}} transition={{duration:reducedMotion ? 0 : .4}} /></div>
+                <p className="cargo-instruction" aria-live="polite">{working.remaining < problem.divisor ? `${working.quotient} full boxes · ${working.remaining} crates left over` : `Fill boxes of ${problem.divisor}. Leave fewer than ${problem.divisor} crates.`}</p>
+
               </div>
             ) : null}
           </section>
 
-          {problem.answerMode !== 'group_board' ? <section className="shrink-0 rounded-[1.1rem] border border-white/16 bg-[linear-gradient(180deg,rgba(16,25,49,0.8),rgba(8,12,25,0.9))] p-1.5 shadow-[0_10px_18px_rgba(2,6,23,0.16)] backdrop-blur-sm">
+          {problem.answerMode !== 'group_board' ? <section className="cargo-answer-panel shrink-0 rounded-[1.1rem] border border-white/16 bg-[linear-gradient(180deg,rgba(16,25,49,0.8),rgba(8,12,25,0.9))] p-1.5 shadow-[0_10px_18px_rgba(2,6,23,0.16)] backdrop-blur-sm">
             <div className="remainder-answer-header text-xs font-black uppercase tracking-[0.12em] text-amber-100">
               <span>{problem.answerMode === 'decimal' ? 'Choose the decimal answer' : 'Choose full boxes and leftovers'}</span>
               {useSharedTopHud && !isPractice ? <span className="remainder-time" data-remainder-time data-urgent={timeLeft <= 15} aria-label={`${timeLeft} seconds left`}>{timeLabel}</span> : null}
@@ -589,7 +544,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
                       : 'ui-button-secondary'
                   }`}
                 >
-                  <span className="font-black text-white" style={{ fontSize: 'max(18px, calc(15px / var(--game-stage-scale, 1)))' }}>{problem.answerMode === 'decimal' ? option : option.replace(' r', ' remainder ')}</span>
+                  <span className="font-black text-white" style={{ fontSize: 'max(18px, calc(15px / var(--game-stage-scale, 1)))' }}>{problem.answerMode === 'decimal' ? `${option} m each` : option.replace(' r', ' boxes · ') + ' left'}</span>
                 </button>
               ))}
             </div>

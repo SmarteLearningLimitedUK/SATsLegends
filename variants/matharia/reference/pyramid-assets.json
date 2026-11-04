@@ -1,0 +1,52 @@
+{
+  "references": [
+    "variants/matharia/reference/approved/problem_pyramid.png",
+    "qa-artifacts/concept-recreation/pyramid-stone-reference.png"
+  ],
+  "inspection": "Background and atlas visually inspected. Clean sun-banner temple terrace with no puzzle/hero/UI. Four regular equal atlas cells contain complete blank flat-top tablets; selected cell0 has low-alpha outside gutters, verified numerically. Six instances of that independent tablet carry original live values. Earlier whole-group and overly wide single-tablet candidates were inspected and rejected for proportions; no stretching or covers.",
+  "processing": "Regular627x627 atlas slice, alpha-margin crop and aspect-preserving WebP only.",
+  "slateWindow": [
+    0.22,
+    0.32,
+    0.56,
+    0.5
+  ],
+  "assets": [
+    {
+      "name": "backgrounds/bg_pyramid_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-0db9c21b-045f-46e0-a6b8-f17aa8179011.png",
+      "atlasCell": null,
+      "alphaBoundsCrop": null,
+      "dimensions": [
+        866,
+        1816
+      ],
+      "production": "variants/matharia/assets/png/backgrounds/bg_pyramid_v3@2x.webp",
+      "bytes": 665336,
+      "sha256": "266a0a3c3670056d1bfd4eae37c85bff9ef6ba0544cc0e06dc8b4911cf65b44a"
+    },
+    {
+      "name": "props/pyramid_stone_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-6a37600d-62e8-42ad-8e54-e9f2a2429a84.png",
+      "atlasCell": [
+        0,
+        0,
+        627,
+        627
+      ],
+      "alphaBoundsCrop": [
+        2,
+        210,
+        625,
+        533
+      ],
+      "dimensions": [
+        623,
+        323
+      ],
+      "production": "variants/matharia/assets/png/props/pyramid_stone_v3@2x.webp",
+      "bytes": 75058,
+      "sha256": "2577d7e92110e06a9754b5cd1a920ed328313f0f89dcd806bd428076e26d0115"
+    }
+  ]
+}

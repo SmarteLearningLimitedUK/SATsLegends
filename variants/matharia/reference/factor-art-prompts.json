@@ -1,0 +1,20 @@
+{
+  "reference": "variants/matharia/reference/approved/factor_frenzy.png",
+  "assets": [
+    {
+      "name": "bg_factor_v3",
+      "source": "exec-bd253a5f-c395-4671-932b-389f62b2a672.png",
+      "intent": "Portrait clean warm golden clockwork harbour city and uninterrupted stone plaza. Same approved composition/lighting; no UI, text, actors or pedestal."
+    },
+    {
+      "name": "factor_sentinel_v3",
+      "source": "exec-27cd9970-1c3b-459a-b11f-d899d8d97a6d.png",
+      "intent": "Independent complete friendly frontal gold/sapphire cylindrical crystal sentinel matching the approved body, arms, cap, glowing crystal face and boots. No scenery/UI/labels."
+    },
+    {
+      "name": "factor_pedestal_v3",
+      "source": "exec-a2de4849-2198-4e5e-a0c7-e611371785eb.png",
+      "intent": "Independent shallow low-frontal grey stone/brass circular plaza dais, no robot/scenery/UI. Aspect preserved even where generated perspective differs slightly from the reference."
+    }
+  ]
+}

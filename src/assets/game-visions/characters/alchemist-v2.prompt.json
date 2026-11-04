@@ -1,0 +1,12 @@
+{
+  "kind": "characters",
+  "key": "alchemist",
+  "file": "characters/alchemist-v2.webp",
+  "source": "C:/Users/samva/.codex/generated_images/01a149fc-7e91-7bd3-86fc-f9095e88fd36/exec-f1188549-252e-4216-ab85-599f935f6223.png",
+  "prompt": "Production game CHARACTER ANIMATION atlas on genuinely transparent alpha. Use the attached approved gameplay concept as the EXACT IDENTITY reference, not merely stylistic inspiration. Subject: the spotted orange lynx/cat alchemist in the center LEFT of the reference: tall black-tufted ears, short rounded feline muzzle, green eyes, golden orange spotted fur and spotted tail, brass and emerald goggles on forehead, green scarf and green leather/brown belted alchemist tunic, brown leather gloves and bracers. Hold a clear glass flask of blue liquid in the right-side hand, angled toward a cauldron to the RIGHT. Match the exact face, costume and pose in the reference. No generic fox, no unspotted replacement, no extra goggles over eyes. Output a strictly regular THREE-COLUMN TWO-ROW sprite atlas, 1536 by 1024 pixels, six square 512px cells with large TRANSPARENT GUTTERS. Every figure must fit inside x=64..448 and y=40..488 of its OWN cell, with no overlap into neighbours. Whole body and ears and hands and held tool and tail all visible; reduce the whole figure if necessary to leave 64px side margins. All figures exactly the same camera, size, lighting, same planted foot baseline y=480. NO text, UI, scenery, floor, shadows or labels. Premium detailed stylized 3D rendering matching concept lighting and material quality. Six poses in reading order: 1 idle ready pose; 2 exact same body with eyes closed for blink; 3 small preparatory gesture; 4 character-specific action: tilt the flask to pour blue liquid toward a cauldron on the right (do not paint the cauldron or a long stream outside the figure); 5 small pleased approving smile; 6 thoughtful retry. All poses must maintain the same face, costume, fixed camera and planted foot location. The top and bottom row MUST use identical framing, scale and baseline. Do not drift identity or add equipment. Transparent background everywhere outside the six characters.\n",
+  "dimensions": [
+    1536,
+    1024
+  ],
+  "bytes": 469000
+}

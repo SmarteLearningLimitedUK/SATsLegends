@@ -1,0 +1,32 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {adaptPresentation} from '../presentation-transform.ts';
+import {rememberActiveMission,readMissionBoardPosition,nextMissionInGroup} from '../src/shared/missionBoardNavigation.ts';
+
+const level=(id,key,practice=false)=>({id,blueprintKey:key,gameType:'coordinate_quest',isPractice:practice});
+const row=(id,unlocked,complete=false,practice=false)=>({level:level(id,'number_line_ninja',practice),isUnlocked:unlocked,isCompleted:complete});
+rememberActiveMission(101,level(38,'number_line_ninja'),175);
+assert.deepEqual(readMissionBoardPosition(101),{gameId:'number_line_ninja',levelId:38,scrollTop:175});
+rememberActiveMission(101,level(7038,'number_line_ninja'));
+assert.equal(readMissionBoardPosition(101).scrollTop,175,'Next/retry in the same game retain board position');
+rememberActiveMission(102,level(37,'conversion_canyon'),60);
+assert.equal(readMissionBoardPosition(101).gameId,'number_line_ninja','Island contexts stay independent');
+rememberActiveMission(101,level(39,'prime_pop'));
+assert.equal(readMissionBoardPosition(101).scrollTop,0,'Switching game discards the other group scroll offset');
+const snapshot=readMissionBoardPosition(101);snapshot.gameId='place_value_panic';
+assert.equal(readMissionBoardPosition(101).gameId,'prime_pop','Callers cannot mutate stored navigation context');
+assert.equal(readMissionBoardPosition(999),undefined);
+
+const practice=row(1038,true,false,true),finished=row(38,true,true),locked=row(7038,false),open=row(8038,true);
+assert.equal(nextMissionInGroup({levels:[practice,finished,locked,open]},38,undefined),open,'Continue chooses an existing unlocked, unfinished mission in this game');
+assert.equal(nextMissionInGroup({levels:[practice,finished,locked]},38,undefined),finished,'Completed game can return to the last replayable mission');
+assert.equal(nextMissionInGroup({levels:[locked,practice]},7038,undefined),practice,'Locked missions are never promoted by navigation context');
+assert.equal(nextMissionInGroup({levels:[locked]},7038,undefined),undefined);
+assert.equal(nextMissionInGroup(undefined,null,open),open,'Fresh board retains its original recommendation');
+const root=process.cwd().replaceAll('\\','/'),app=await readFile('src/App.tsx','utf8');
+const transformed=adaptPresentation(app,`${root}/src/App.tsx`,root,`${root}/variants/matharia`);
+assert.equal(transformed.split('useRememberActiveMission(screen,selectedIsland?.id,selectedLevel);').length-1,1);
+assert(transformed.includes('<PracticeIntroPopup avatarId={player.avatarId}'),'Existing briefing avatar adapter must still run');
+assert(transformed.includes('<LevelResultsModal avatarId={player.avatarId}'),'Existing result avatar adapter must still run');
+assert(transformed.includes('!canAccessLevel(nativeAccess.fullAccess, selectedIsland.id, level)'),'Existing native access guard must remain');
+console.log('PASS: return context, per-island isolation, Next/retry, replay and original unlock constraints');

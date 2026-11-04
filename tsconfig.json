@@ -1,5 +1,14 @@
 {
-  "exclude": ["supabase/functions", "node_modules", "dist"],
+  "exclude": [
+    "qa-artifacts",
+    "supabase/functions",
+    "node_modules",
+    "dist",
+    "dist-ios",
+    "native/ios/App/App/public",
+    "dist-matharia",
+    "variants/matharia/native"
+  ],
   "compilerOptions": {
     "target": "ES2022",
     "experimentalDecorators": true,

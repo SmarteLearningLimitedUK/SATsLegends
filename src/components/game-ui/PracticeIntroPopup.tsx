@@ -43,7 +43,7 @@ const PracticeIntroPopup: React.FC<PracticeIntroPopupProps> = ({ open, title, bo
           <motion.div ref={dialogRef} role="dialog" aria-modal="true" aria-label={`${title} ${kind === 'help' ? 'how to play' : kind === 'mock' ? 'mock briefing' : 'practice briefing'}`} tabIndex={-1}
             initial={{ opacity: 0, y: 16, scale: .97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: .22 }}
             className="legend-dialog relative z-10 flex max-h-[calc(100dvh-2rem)] w-full max-w-[28rem] flex-col p-5 text-center sm:p-7">
-            <button type="button" aria-label={kind === 'help' ? 'Close help' : 'Close practice briefing'} onClick={commitAction} data-ui-sound="handled" className="ui-close-button absolute right-3 top-3 flex h-11 w-11 items-center justify-center"><X size={18} /></button>
+            <button type="button" aria-label={kind === 'help' ? 'Close help' : 'Close practice briefing'} onClick={commitAction} data-ui-sound="handled" className="ui-close-button relative flex h-11 w-11 shrink-0 self-end items-center justify-center"><X size={18} /></button>
             <div className="min-h-0 overflow-y-auto pr-1" style={{ touchAction: 'pan-y' }}>
               <div className="legend-dialog-emblem"><Compass aria-hidden="true" /></div>
               <div className="legend-dialog-eyebrow">{kind === 'help' ? 'How to play' : kind === 'mock' ? 'Final adventure' : 'Your warm-up mission'}</div>

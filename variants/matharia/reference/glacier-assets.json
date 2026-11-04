@@ -1,0 +1,185 @@
+{
+  "processing": "Alpha-margin trim and aspect-preserving WebP export. No painting, scene masking or defect concealment.",
+  "assets": [
+    {
+      "name": "backgrounds/bg_angle_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-0cfd12fa-bb2f-45d3-a1a4-77432104e289.png",
+      "atlasRegion": null,
+      "alphaBoundsCrop": null,
+      "production": "variants/matharia/assets/png/backgrounds/bg_angle_v3@2x.webp",
+      "dimensions": [
+        1942,
+        809
+      ],
+      "bytes": 695602,
+      "sha256": "f93c6ddfe47bcdd605b1a6ea312fe7757bd5fffa957ed4eed4b475f4879a2ac9"
+    },
+    {
+      "name": "backgrounds/bg_polygon_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-216b083b-a1b2-466c-a370-01a1fb89c880.png",
+      "atlasRegion": null,
+      "alphaBoundsCrop": null,
+      "production": "variants/matharia/assets/png/backgrounds/bg_polygon_v3@2x.webp",
+      "dimensions": [
+        835,
+        1884
+      ],
+      "bytes": 744906,
+      "sha256": "d4060337e0ffc18d4875f6f5667cdd089480ff0ffbfab6915c1ae0a42e877593"
+    },
+    {
+      "name": "frames/glacier_panel_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-ddd0522e-e8ac-4c0c-8c6c-e9414363b0d5.png",
+      "atlasRegion": null,
+      "alphaBoundsCrop": [
+        42,
+        92,
+        2164,
+        619
+      ],
+      "production": "variants/matharia/assets/png/frames/glacier_panel_v3@2x.webp",
+      "dimensions": [
+        2048,
+        509
+      ],
+      "bytes": 149662,
+      "sha256": "0cb5d055fc06721b4a8b7a50e3f519dade42bee426eee7cf421970b052a1477f"
+    },
+    {
+      "name": "props/polygon_pedestal_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-eedab981-1471-4024-84a1-3ffd160976aa.png",
+      "atlasRegion": null,
+      "alphaBoundsCrop": [
+        59,
+        103,
+        2113,
+        662
+      ],
+      "production": "variants/matharia/assets/png/props/polygon_pedestal_v3@2x.webp",
+      "dimensions": [
+        2048,
+        557
+      ],
+      "bytes": 413508,
+      "sha256": "aeadad4f332a6e4b6763e29b27a13f5951488996115210ed22537c397781fb71"
+    },
+    {
+      "name": "props/angle_platform_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-ef6d5cc4-4833-4111-9f2a-8e8bea6bef11.png",
+      "atlasRegion": [
+        0,
+        0,
+        871,
+        887
+      ],
+      "alphaBoundsCrop": [
+        7,
+        547,
+        852,
+        793
+      ],
+      "production": "variants/matharia/assets/png/props/angle_platform_v3@2x.webp",
+      "dimensions": [
+        845,
+        246
+      ],
+      "bytes": 123344,
+      "sha256": "bb74ffe4dccb33abd90a4ab060714570e61e3c250af2c65791de8b5bd18555c3"
+    },
+    {
+      "name": "props/angle_tower_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-ef6d5cc4-4833-4111-9f2a-8e8bea6bef11.png",
+      "atlasRegion": [
+        871,
+        0,
+        1774,
+        887
+      ],
+      "alphaBoundsCrop": [
+        1,
+        161,
+        899,
+        790
+      ],
+      "production": "variants/matharia/assets/png/props/angle_tower_v3@2x.webp",
+      "dimensions": [
+        898,
+        629
+      ],
+      "bytes": 264328,
+      "sha256": "b5c399054f880c91e960ac329f7c8dc54af5e3813e79426635b314f87f1f317c"
+    },
+    {
+      "name": "frames/sapphire_crest_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-0321915c-bde3-42e0-a3be-1624cdb8e24d.png",
+      "atlasRegion": null,
+      "alphaBoundsCrop": [
+        28,
+        97,
+        1955,
+        685
+      ],
+      "production": "variants/matharia/assets/png/frames/sapphire_crest_v3@2x.webp",
+      "dimensions": [
+        1927,
+        588
+      ],
+      "bytes": 221690,
+      "sha256": "68fa88c053b4a813ddd1b197f56534430710a666da74ca49831989a13a28e656"
+    },
+    {
+      "name": "props/angle_tower_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-3b7ac68d-1507-4f2a-a03d-9bb6bdb0ee0f.png",
+      "atlasRegion": null,
+      "alphaBoundsCrop": [
+        10,
+        55,
+        1846,
+        803
+      ],
+      "production": "variants/matharia/assets/png/props/angle_tower_v4@2x.webp",
+      "dimensions": [
+        1836,
+        748
+      ],
+      "bytes": 469200,
+      "sha256": "bd420744cf14d53c7757a24d1e2110b2335411dcd41af4c2e13fc840362445f2"
+    },
+    {
+      "name": "heroes/angle_rhino_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-b762bce3-ad16-4dab-81f3-4de1fe4d44bb.png",
+      "atlasRegion": null,
+      "alphaBoundsCrop": [
+        18,
+        7,
+        1220,
+        1257
+      ],
+      "production": "variants/matharia/assets/png/heroes/angle_rhino_v3@2x.webp",
+      "dimensions": [
+        1202,
+        1250
+      ],
+      "bytes": 440374,
+      "sha256": "801b255324bd496bd515dc15191a90c8a578108d48b5ffb644a32fe8a84fca60"
+    },
+    {
+      "name": "props/angle_platform_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-d0dc638f-f16e-4aad-8f88-45aad6326f38.png",
+      "atlasRegion": null,
+      "alphaBoundsCrop": [
+        7,
+        405,
+        1745,
+        736
+      ],
+      "production": "variants/matharia/assets/png/props/angle_platform_v4@2x.webp",
+      "dimensions": [
+        1738,
+        331
+      ],
+      "bytes": 290362,
+      "sha256": "d8e68e95cc9623aee84d17edae9e674ccfaa938cfdca54cc116e37f4381c3719"
+    }
+  ]
+}

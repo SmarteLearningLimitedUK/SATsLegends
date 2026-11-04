@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80"><defs>
+<linearGradient id="navy" x2="0" y2="1"><stop stop-color="#164d79"/><stop offset=".45" stop-color="#072c51"/><stop offset="1" stop-color="#03172e"/></linearGradient>
+<linearGradient id="gold" x2=".2" y2="1"><stop stop-color="#fff2ac"/><stop offset=".18" stop-color="#ffd45e"/><stop offset=".43" stop-color="#b06b16"/><stop offset=".65" stop-color="#ffdf78"/><stop offset="1" stop-color="#9c5513"/></linearGradient>
+<linearGradient id="gem" x2=".2" y2="1"><stop stop-color="#38d9ff"/><stop offset=".25" stop-color="#146de0"/><stop offset="1" stop-color="#041a5d"/></linearGradient>
+<linearGradient id="cyan" x2="0" y2="1"><stop stop-color="#a4fff0"/><stop offset=".3" stop-color="#2be8dc"/><stop offset="1" stop-color="#087aaa"/></linearGradient>
+<linearGradient id="green" x2="0" y2="1"><stop stop-color="#43b77e"/><stop offset="1" stop-color="#075332"/></linearGradient>
+<linearGradient id="red" x2="0" y2="1"><stop stop-color="#ff8b99"/><stop offset=".35" stop-color="#f54866"/><stop offset="1" stop-color="#a81238"/></linearGradient>
+<linearGradient id="parchment" x2="0" y2="1"><stop stop-color="#fff4d0"/><stop offset="1" stop-color="#e5c283"/></linearGradient>
+</defs><circle cx="40" cy="40" r="37" fill="url(#navy)" stroke="url(#gold)" stroke-width="5"/><circle cx="40" cy="40" r="31" fill="none" stroke="#58bcda" stroke-width="1"/><circle cx="40" cy="40" r="32" fill="#09182a" opacity="0.3"/></svg>

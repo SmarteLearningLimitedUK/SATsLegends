@@ -1,0 +1,81 @@
+/* App-only opening, account and upgrade surfaces. Artwork stays independent. */
+.matharia-native-root{width:100%;height:100dvh;overflow:hidden;color:#fff3d7;background:#03172e;font-family:'Matharia Rounded',sans-serif;line-height:1.45}
+.matharia-native-root button,.native-dialog button{font:inherit;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.matharia-native-root button:focus-visible,.native-dialog :is(button,a,input):focus-visible{outline:3px solid #ffe39b;outline-offset:3px}
+.matharia-native-root button:disabled,.native-dialog button:disabled{opacity:.5;cursor:default}
+/* Scene controls own their positioning; changing translate during a touch can
+   move an anchored target away from the finger before its click is dispatched. */
+.native-welcome button:active:not(:disabled),.native-route-locked button:active:not(:disabled),.native-dialog button:active:not(:disabled){translate:0 1px}
+.native-welcome{position:relative;isolation:isolate;width:100%;height:100%;overflow:hidden;display:grid;grid-template-rows:1fr 1.15fr auto;justify-items:center;padding:calc(env(safe-area-inset-top,0px) + 56px) max(24px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 24px) max(24px,env(safe-area-inset-left,0px));box-sizing:border-box}
+.native-welcome-scenery{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;object-position:50% 50%;pointer-events:none}
+.native-welcome-account{position:absolute;right:calc(env(safe-area-inset-right,0px) + 18px);top:calc(env(safe-area-inset-top,0px) + 12px);display:flex;gap:8px;align-items:center;justify-content:center;min-height:44px;padding:9px 14px;border:1px solid #deba74;border-radius:12px;color:#fff3d7;background:#062a48ed;font-size:13px!important;box-shadow:0 3px 12px #03263e40}
+.native-welcome-brand{align-self:center;text-align:center;max-width:650px;width:min(100%,560px)}
+.native-welcome-brand p{margin:0 0 8px;color:#fff7df;text-transform:uppercase;letter-spacing:.18em;font-size:11px;font-weight:700;text-shadow:0 2px 5px #003a66,0 0 12px #003a66}
+.native-welcome-brand img{display:block;width:100%;height:auto;filter:drop-shadow(0 7px 12px #00264070)}
+.native-welcome-hero{align-self:end;max-width:100%;height:100%;max-height:40dvh;object-fit:contain;filter:drop-shadow(0 12px 8px #04325960);pointer-events:none;min-height:0}
+.native-welcome-actions{position:relative;isolation:isolate;display:flex;flex-direction:column;align-items:center;gap:12px;width:min(100%,390px);padding:20px 22px 16px;box-sizing:border-box;background:#062941f5;border:1px solid #dfb76a;border-radius:20px;box-shadow:0 12px 30px #05213960}
+.native-welcome-actions p{font-family:Georgia,serif;font-size:19px;color:#fff0c7;text-align:center;margin:0}
+.native-welcome-actions small{font-size:12px;color:#d0e5ee;text-align:center}
+.native-welcome-actions .native-start{width:100%;min-height:58px;font-size:19px;isolation:isolate}
+.native-welcome-actions .artwork-frame{position:absolute;inset:0;border:solid transparent;pointer-events:none;z-index:-1}
+.native-welcome-actions .artwork-surface{position:absolute;inset:3%;z-index:-2;pointer-events:none}
+.native-dialog{position:fixed;inset:0;box-sizing:border-box;width:min(980px,calc(100% - 48px));max-width:980px;max-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 40px);padding:0;margin:auto;border:1px solid #d4ac64;border-radius:24px;color:#fff3d7;background:#062a40;box-shadow:0 24px 100px #0009;font-family:'Matharia Rounded',sans-serif;line-height:1.5;overflow:auto;overscroll-behavior:contain}
+.native-dialog::backdrop{background:#011329bd;backdrop-filter:blur(5px)}
+.native-dialog-layout{position:relative;display:grid;grid-template-columns:.8fr 1.2fr;min-height:min(680px,80dvh)}
+.native-dialog-world{position:relative;min-height:100%;overflow:hidden;border-radius:23px 0 0 23px;isolation:isolate}
+.native-dialog-scenery{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:42% 50%;z-index:-1;pointer-events:none}
+.native-dialog-logo{position:absolute;top:10%;left:6%;width:88%;height:auto;filter:drop-shadow(0 4px 12px #00304d80);pointer-events:none}
+.native-dialog-hero{position:absolute;inset:auto 5% 0;width:90%;height:64%;object-fit:contain;object-position:bottom;filter:drop-shadow(0 12px 8px #04325960);pointer-events:none}
+.native-dialog-content{padding:58px 36px 28px;min-width:0;overflow-wrap:anywhere}
+.native-dialog-close{position:absolute;top:12px;right:12px;display:grid;place-items:center;width:44px;height:44px;background:#0b3c54;border:1px solid #bfa1639e;border-radius:50%;color:#fff0c8;z-index:1}
+.native-kicker{display:flex;align-items:center;gap:8px;color:#f3d18d;text-transform:uppercase;letter-spacing:.12em;font-size:11px;font-weight:700;margin:0 0 16px}
+.native-dialog h1{font-family:Georgia,serif;font-weight:700;font-size:clamp(28px,3.3vw,38px);letter-spacing:-.025em;line-height:1.12;margin:0 0 14px;color:#fff5de}
+.native-dialog h1 span{color:#f5d18a}
+.native-dialog-intro{font-size:15px;color:#c9dfe6;margin:0 0 24px}
+.native-benefits{list-style:none;padding:0;margin:0 0 24px;display:grid;gap:11px;font-size:15px}
+.native-benefits li{display:flex;align-items:center;gap:12px}.native-benefits svg{width:19px;height:19px;color:#f1c772;flex:none}
+.native-plans{display:grid;gap:10px;margin:0 0 14px}
+.native-plans button{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px;text-align:left;padding:12px 16px;border:1px solid #809fb1;border-radius:12px;background:#072136;color:#e8f4f4;font-size:14px}
+.native-plans button[aria-pressed=true]{border:2px solid #edc475;padding:11px 15px;background:#104256}
+.native-plans strong{white-space:nowrap;color:#fff0cc;font-size:18px}.native-plans strong small{font-size:11px;font-weight:500;color:#c9dfe6}
+.native-primary,.native-secondary,.native-apple{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:52px;box-sizing:border-box;padding:13px 18px;border-radius:12px;font-weight:700;font-size:16px!important;text-align:center}
+.native-primary{border:1px solid #ffe7a5;background:linear-gradient(#ffe8a0,#edc16c);color:#062b40;box-shadow:inset 0 1px #fff7ce,0 4px 0 #805f2e}
+.native-secondary{border:1px solid #bdab7b;background:#0c3a53;color:#fff0cd;margin:16px 0}
+.native-apple{background:#fff;color:#111;border:1px solid #fff;font-family:system-ui,sans-serif!important;font-weight:500;margin:16px 0 8px}
+.native-small{font-size:11px;color:#b5cdd7;line-height:1.6;margin:16px 0 0}
+.native-dialog--account .native-account-description{margin-bottom:18px}
+.native-notice,.native-error{font-size:13px;line-height:1.5;padding:14px 16px;border:1px solid #81b7c06b;border-radius:12px;background:#103c50;color:#e1f0ed;margin:16px 0}
+.native-notice p{margin:0}.native-error{border-color:#e6a3a7;color:#ffe3e3;background:#4b2835}
+.native-notice button,.native-error button{display:block;background:none;border:0;color:#ffe3a1;text-decoration:underline;min-height:44px;padding:6px 0}
+.native-account-link{display:block;width:100%;min-height:44px;padding:10px 4px;margin:12px 0 0;background:none;border:0;color:#f0d395;font-size:14px!important;text-align:center;text-decoration:underline;text-underline-offset:4px}
+.native-upgrade-footer{display:flex;flex-wrap:wrap;gap:4px 14px;justify-content:space-between;margin-top:12px}
+.native-upgrade-footer button{display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:8px 0;border:0;background:none;color:#c6dce5;font-size:12px!important}
+.native-legal{display:flex;justify-content:center;gap:10px;margin-top:8px}.native-legal a{color:inherit;padding:12px 4px}
+.native-consent{display:flex;align-items:flex-start;gap:12px;font-size:13px;color:#d4e3e6;padding:12px 0;cursor:pointer}
+.native-consent input{flex:none;width:24px;height:24px;accent-color:#ecc67a;margin:0;cursor:pointer}
+.native-form{display:grid;gap:16px;margin:16px 0}
+.native-form label{display:grid;gap:7px;font-size:13px;color:#d8e9ed}
+.native-form input{box-sizing:border-box;width:100%;min-height:48px;padding:11px 14px;border:1px solid #779cac;border-radius:10px;background:#041b30;color:#fff3d7;font:inherit;font-size:16px}
+.native-form .native-consent{display:flex;align-items:center;min-height:44px}
+.native-form .native-consent input{width:24px;height:24px;min-height:24px;padding:0;flex:none}
+.native-delete-account p{margin:0;color:#d8e9ed;font-size:14px;line-height:1.6}
+.native-danger{background:#8b3544;border-color:#ffc1b7;color:#fff6e9;box-shadow:0 3px 0 #401523}
+.native-danger-link{color:#ffc5ba}
+.native-access-state{display:flex;align-items:center;gap:8px;color:#f3d18d}
+.native-profiles{display:grid;gap:8px;margin:16px 0}.native-profiles button{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding:12px 16px;border:1px solid #7196a6;border-radius:10px;background:#07304b;color:#eef6f5}.native-profiles button[aria-pressed=true]{border-color:#edc475}
+.native-loading,.native-locked{box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;width:100%;height:100%;padding:calc(env(safe-area-inset-top,0px) + 28px) 28px calc(env(safe-area-inset-bottom,0px) + 28px);text-align:center}
+.native-loading span{width:40px;height:40px;border:3px solid #f5d38b44;border-top-color:#f5d38b;border-radius:50%;animation:native-loading 1s linear infinite}
+.native-locked h1{font:700 28px/1.2 Georgia,serif;max-width:480px;margin:0}.native-locked p{color:#c7dee6;margin:0}.native-locked button{max-width:360px;margin:0}
+.native-board-access{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0 14px;color:#c9e0e7;font-size:12px;border-bottom:1px solid #d7b87550;margin-bottom:8px}
+.native-board-access>span{display:flex;align-items:center;gap:7px}.native-board-access button{min-height:44px;min-width:44px;display:flex;align-items:center;justify-content:center;gap:7px;padding:8px 12px;color:#ffe09f;background:#10394a;border:1px solid #ba9b66;border-radius:10px;font-size:12px}
+.native-board-access>div{display:flex;gap:7px}.adventure-game[data-access-locked=true] .adventure-game-name strong{display:flex;align-items:center;gap:8px}
+.native-map-account{position:absolute;z-index:4;top:calc(env(safe-area-inset-top,0px) + 12px);right:calc(env(safe-area-inset-right,0px) + 12px);width:44px;height:44px;display:grid;place-items:center;border:1px solid #d5b679;background:#07304b;color:#ffe1a1;border-radius:50%}
+.native-free-practices{margin:4px 0 20px;padding-bottom:10px;border-bottom:1px solid #d7b87550}.native-free-practices h3{font-size:13px;color:#f3d18d;margin:0 0 10px}.native-free-practices>button{display:flex;align-items:center;gap:12px;width:100%;min-height:66px;margin:8px 0;padding:12px;border:1px solid #91bcb276;border-radius:12px;text-align:left;background:#0b4051;color:#fff1ce}.native-free-practices>button>span:nth-child(2){flex:1;min-width:0;display:grid;gap:2px}.native-free-practices strong{font-size:14px}.native-free-practices small{color:#bddcda;font-size:11px}.native-free-practices p{font-size:11px;color:#b7cfd7;margin:18px 0 0}.native-free-number{display:grid;place-items:center;width:28px;height:28px;flex:none;border:1px solid #ddbf7d;border-radius:50%;color:#edcc88;font-size:13px}
+.matharia-native-root .legends-website{height:100%;display:grid;place-items:center;padding:32px;box-sizing:border-box}.matharia-native-root .family-main{max-width:650px}.matharia-native-root .family-main h1{font:700 30px Georgia,serif}.matharia-native-root .family-main :is(a,button){color:#ffdda0;display:inline-flex;align-items:center;min-height:44px;padding:10px 14px}
+@keyframes native-loading{to{transform:rotate(360deg)}}
+@media(min-width:700px) and (orientation:portrait){.native-welcome{grid-template-rows:1fr 1.3fr auto;padding-top:calc(env(safe-area-inset-top,0px) + 76px)}.native-welcome-brand{width:min(80%,650px)}.native-welcome-hero{max-height:43dvh}.native-welcome-actions{max-width:460px;width:460px;padding:26px 32px}.native-welcome-actions p{font-size:23px}}
+@media(min-width:700px) and (orientation:landscape){.native-welcome{grid-template-rows:1fr auto;grid-template-columns:1.1fr 1fr;padding:calc(env(safe-area-inset-top,0px) + 64px) max(36px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 32px) max(36px,env(safe-area-inset-left,0px));gap:0 24px}.native-welcome-brand{grid-column:1;grid-row:1;width:min(100%,580px)}.native-welcome-actions{grid-column:1;grid-row:2;align-self:start}.native-welcome-hero{grid-column:2;grid-row:1/3;height:100%;max-height:75dvh}}
+@media(max-width:699px){.native-dialog{width:calc(100% - 24px);max-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 24px);border-radius:20px}.native-dialog-layout{display:block;min-height:0}.native-dialog-world{height:148px;min-height:0;border-radius:19px 19px 0 0}.native-dialog-logo{top:18px;left:6%;width:47%;height:112px;object-fit:contain}.native-dialog-hero{left:auto;right:9%;bottom:-8px;height:150px;width:32%}.native-dialog-content{padding:24px 24px 20px}.native-dialog h1{font-size:28px}.native-kicker{font-size:10px;margin-bottom:12px}.native-dialog-intro{font-size:14px;margin-bottom:18px}.native-benefits{font-size:13px;gap:8px;margin-bottom:18px}.native-dialog-close{background:#052b44ed;right:8px;top:8px}.native-board-access{flex-wrap:wrap}.native-board-access>span{font-size:11px}.native-board-access>div{margin-left:auto}}
+@media(max-width:370px){.native-welcome{padding:calc(env(safe-area-inset-top,0px) + 56px) 18px calc(env(safe-area-inset-bottom,0px) + 16px);grid-template-rows:1fr 1fr auto}.native-welcome-brand p{font-size:9px}.native-welcome-hero{max-height:29dvh}.native-welcome-actions{padding:14px 16px;gap:8px}.native-welcome-actions p{font-size:16px}.native-welcome-actions .native-start{font-size:16px}.native-dialog-content{padding:22px 18px 18px}.native-dialog-world{height:120px}.native-dialog-logo{height:90px}.native-dialog-hero{height:125px}.native-dialog h1{font-size:25px}}
+@media(max-height:500px) and (orientation:landscape){.native-dialog{max-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 16px)}.native-dialog-layout{min-height:0;grid-template-columns:.7fr 1.3fr}.native-dialog-content{padding:46px 24px 22px}.native-dialog h1{font-size:27px}.native-dialog-world{height:auto;min-height:100%;border-radius:20px 0 0 20px}.native-dialog-logo{left:6%;width:88%;height:auto;top:10%}.native-dialog-hero{width:86%;right:7%;height:62%;bottom:0}}
+@media(prefers-reduced-motion:reduce){.native-loading span{animation:none}}

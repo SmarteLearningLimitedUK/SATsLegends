@@ -1,0 +1,11 @@
+/* Account routes share the existing website controls inside the native shell.
+   The scenery remains edge to edge; header controls clear native obstructions. */
+html[data-presentation='matharia'][data-app-target='ios'] .website-header {
+  padding-top: var(--matharia-account-safe-top, env(safe-area-inset-top, 0px));
+  padding-left: var(--matharia-account-safe-left, env(safe-area-inset-left, 0px));
+  padding-right: var(--matharia-account-safe-right, env(safe-area-inset-right, 0px));
+}
+
+html[data-presentation='matharia'][data-app-target='ios'] .website-footer {
+  padding-bottom: calc(18px + var(--matharia-account-safe-bottom, env(safe-area-inset-bottom, 0px)));
+}

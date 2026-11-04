@@ -5,12 +5,12 @@ const base = process.env.LEGEND_QA_URL || 'http://127.0.0.1:3000';
 const browser = await chromium.launch({ headless: true });
 
 const correctAnswer = async (page) => {
-  const prompt = (await page.locator('[data-question-copy="true"]').innerText()).trim();
-  const match = prompt.match(/(-?\d+)\s*([+\-×÷])\s*(-?\d+)/);
+  const prompt = (await page.locator('[data-zombies-game]').getAttribute('data-zombies-equation')).trim();
+  const match = prompt.match(/(-?\d+)\s*([+\-×x÷])\s*(-?\d+)/);
   assert.ok(match, `Unexpected zombie question: ${prompt}`);
   const a = Number(match[1]);
   const b = Number(match[3]);
-  return { '+': a + b, '-': a - b, '×': a * b, '÷': a / b }[match[2]];
+  return { '+': a + b, '-': a - b, '×': a * b, 'x': a * b, '÷': a / b }[match[2]];
 };
 
 try {

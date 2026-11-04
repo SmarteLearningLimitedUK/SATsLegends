@@ -1,0 +1,73 @@
+{
+  "scope": "QA browser context only. No production question, answer, random generator or route changes. Source factories remain unchanged.",
+  "states": {
+    "data_detective": {
+      "seed": 1492460,
+      "note": "Validated live pie15/5/6/16."
+    },
+    "multiplication_mine": {
+      "seed": 191370,
+      "elapsedMs": 1000,
+      "note": "Source LCG preparation predicts1676\u00d791. Validated in both Chromium and WebKit running-screen captures; see respective visual-captures.json representativeState."
+    },
+    "order_ops_arena": {
+      "seed": 6915083,
+      "note": "Unchanged source engine, calibrated five initial random calls, initial round/choices then reset round: (3+10)\u00d78 and exact ordered choices23,11,13,16. Validated in both Chromium and WebKit running-screen captures; see respective visual-captures.json representativeState."
+    },
+    "formula_forge": {
+      "seed": 728607,
+      "elapsedMs": 1000,
+      "note": "Unchanged source factory, calibrated QA initialization: parallelogram b15/h13, A195, exact ordered choices187/192/195/198. Validated in both Chromium and WebKit running-screen captures; see respective visual-captures.json representativeState."
+    },
+    "remainder_run": {
+      "seed": 35919,
+      "elapsedMs": 1000,
+      "note": "Validated1306/13, quotient100 remainder6 in both running Chromium and WebKit captures; original source factory unchanged."
+    },
+    "time_keeper_cove": {
+      "seed": 3799,
+      "elapsedMs": 1000,
+      "note": "Validated approved11:06 digit question/face with both hands initially12:00 in both running Chromium and WebKit captures; original source generator unchanged."
+    },
+    "problem_pyramid": {
+      "seed": 933403674,
+      "elapsedMs": 1000,
+      "note": "Validated approved base240/921/292, middle1161/1213 and hidden top2374 in both live browser captures. Original source options2376/2374/2373/2384 are retained; original generator unchanged."
+    },
+    "unit_mixer": {
+      "seed": 6375,
+      "elapsedMs": 1000,
+      "note": "QA-only unchanged source generator resolves the approved1.75kg+700g question and all four ordered original choices24,500g/2,450g/245,000g/245g. Live capture validation pending."
+    },
+    "change_counter": {
+      "seed": 109275,
+      "elapsedMs": 1000,
+      "note": "Validated in both running browser reference captures: four approved lines/quantities,2422p total,2500p paid and78p change from unchanged source factory."
+    },
+    "crystal_core": {
+      "seed": 72419,
+      "checkpointSeed": 4,
+      "checkpointIndex": 0,
+      "elapsedMs": 0,
+      "note": "QA-only valid original checkpoint seed4, first mission, empty draft/answers/workpad. Unchanged factory yields approved325+140. Clock duration remains1800s."
+    },
+    "mirror_gate": {
+      "seed": 72419,
+      "checkpointSeed": 145,
+      "checkpointIndex": 2,
+      "elapsedMs": 0,
+      "note": "QA-only valid checkpoint through unchanged source. Original fraction-name mission has12spaces,5filled,7empty and answer5/12."
+    },
+    "matrix_match": {
+      "seed": 72419,
+      "checkpointSeed": 3,
+      "checkpointIndex": 4,
+      "elapsedMs": 0,
+      "note": "QA-only valid checkpoint through unchanged source. Original ext-thousand mission asks1,000morethan2509; answer3509."
+    },
+    "potion_panic": {
+      "seed": 22,
+      "reason": "Unchanged original generator after5 source initialization calls gives Crimson Courage,20drops,1:1:1:1,Azure5andRuby/Oak/Clarity0."
+    }
+  }
+}

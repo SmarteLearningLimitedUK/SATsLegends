@@ -1,0 +1,313 @@
+{
+  "reference": "variants/matharia/reference/approved/potion_panic.png",
+  "inspection": "Clean terrace, open cauldron, five glossy bottles, blank vine panel, red control and four canonical recipe-readers visually inspected. Cauldron inner-opening central alpha >16 fraction is0; live liquid sits behind the rim/body. First four-reader strip rejected because no clear gutters; retained raw, never exported.",
+  "processing": "Verified transparent gutters, alpha-margin trim and aspect-preserving WebP only. No semantic pixel processing.",
+  "assets": [
+    {
+      "name": "backgrounds/bg_potion_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-e7af2ccf-2e97-4399-b300-828525c906a8.png",
+      "cell": null,
+      "alphaMarginTrim": null,
+      "dimensions": [
+        1844,
+        853
+      ],
+      "production": "variants/matharia/assets/png/backgrounds/bg_potion_v3@2x.webp",
+      "sha256": "f35e33c7d9ee4306da661b719c478aa31e23e94079ecc4a3c8ffef59c2bfe06d"
+    },
+    {
+      "name": "props/potion_hearth_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-a59efd9c-b8b0-45ed-b392-71aff007bff7.png",
+      "cell": null,
+      "alphaMarginTrim": [
+        64,
+        181,
+        2108,
+        584
+      ],
+      "dimensions": [
+        1536,
+        303
+      ],
+      "production": "variants/matharia/assets/png/props/potion_hearth_v3@2x.webp",
+      "sha256": "92cdf34bca28cb1a2f1da50dd7e72c8059c7687d98e0ef3cbb3b258eb30ef43d"
+    },
+    {
+      "name": "props/potion_cauldron_open_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-b0d7be90-263b-4061-9b35-e8a3de68c9e0.png",
+      "cell": null,
+      "alphaMarginTrim": [
+        173,
+        84,
+        1586,
+        798
+      ],
+      "dimensions": [
+        1413,
+        714
+      ],
+      "production": "variants/matharia/assets/png/props/potion_cauldron_open_v3@2x.webp",
+      "sha256": "d7db54a08ca2aef611f8d2833c2c12d41aaa02e9847b7d93871c698a3809bca7"
+    },
+    {
+      "name": "frames/potion_panel_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-321d8e89-5997-45a9-a373-cf53e6c5b2e9.png",
+      "cell": null,
+      "alphaMarginTrim": [
+        26,
+        81,
+        2146,
+        633
+      ],
+      "dimensions": [
+        1536,
+        400
+      ],
+      "production": "variants/matharia/assets/png/frames/potion_panel_v3@2x.webp",
+      "sha256": "34e1ccbfe57957f6c39d2e7e91f3d9caa4d03036705ea18e2d2f1b16ea57295b"
+    },
+    {
+      "name": "buttons/potion_reset_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-34542531-5bef-4625-bbfe-027b7a2fedfd.png",
+      "cell": null,
+      "alphaMarginTrim": [
+        37,
+        140,
+        2131,
+        560
+      ],
+      "dimensions": [
+        1536,
+        308
+      ],
+      "production": "variants/matharia/assets/png/buttons/potion_reset_v3@2x.webp",
+      "sha256": "efeeb7678e6bcbfe8b0aa771d4561be7719a15a9e2f376239fb383c0a9404977"
+    },
+    {
+      "name": "props/potion_bottle_red_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-4a0976aa-eb8b-4940-ab7d-c6cf74037a2f.png",
+      "cell": [
+        0,
+        0,
+        429,
+        724
+      ],
+      "alphaMarginTrim": [
+        20,
+        103,
+        402,
+        619
+      ],
+      "dimensions": [
+        382,
+        516
+      ],
+      "production": "variants/matharia/assets/png/props/potion_bottle_red_v3@2x.webp",
+      "sha256": "44a74ababcbb2ae7ba5f609c6d09399ae7322211f5af9fb6f7de483c56775454"
+    },
+    {
+      "name": "props/potion_bottle_blue_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-4a0976aa-eb8b-4940-ab7d-c6cf74037a2f.png",
+      "cell": [
+        429,
+        0,
+        867,
+        724
+      ],
+      "alphaMarginTrim": [
+        28,
+        103,
+        412,
+        619
+      ],
+      "dimensions": [
+        384,
+        516
+      ],
+      "production": "variants/matharia/assets/png/props/potion_bottle_blue_v3@2x.webp",
+      "sha256": "25842652de7fa0706d153f659cda53ae8080dfa27de54c4cf36bb4f23dff07e1"
+    },
+    {
+      "name": "props/potion_bottle_green_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-4a0976aa-eb8b-4940-ab7d-c6cf74037a2f.png",
+      "cell": [
+        867,
+        0,
+        1303,
+        724
+      ],
+      "alphaMarginTrim": [
+        26,
+        103,
+        410,
+        619
+      ],
+      "dimensions": [
+        384,
+        516
+      ],
+      "production": "variants/matharia/assets/png/props/potion_bottle_green_v3@2x.webp",
+      "sha256": "c5e8480d019e54b34a0b72e36b4a246ab389f76bc4630db23a29226aea4de995"
+    },
+    {
+      "name": "props/potion_bottle_gold_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-4a0976aa-eb8b-4940-ab7d-c6cf74037a2f.png",
+      "cell": [
+        1303,
+        0,
+        1740,
+        724
+      ],
+      "alphaMarginTrim": [
+        26,
+        103,
+        411,
+        619
+      ],
+      "dimensions": [
+        385,
+        516
+      ],
+      "production": "variants/matharia/assets/png/props/potion_bottle_gold_v3@2x.webp",
+      "sha256": "d1b56e67bb7d4334ab4e8e6f128aa7ef9b71aecd89b5b603cb52ba0aae92da22"
+    },
+    {
+      "name": "props/potion_bottle_violet_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-4a0976aa-eb8b-4940-ab7d-c6cf74037a2f.png",
+      "cell": [
+        1740,
+        0,
+        2172,
+        724
+      ],
+      "alphaMarginTrim": [
+        27,
+        100,
+        412,
+        619
+      ],
+      "dimensions": [
+        385,
+        519
+      ],
+      "production": "variants/matharia/assets/png/props/potion_bottle_violet_v3@2x.webp",
+      "sha256": "59528654dbb300c339df57461c939227508cdb40cfac1d2e397e3facf7ff1efe"
+    },
+    {
+      "name": "heroes/hero_barratt_reader_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-fb2527bd-ba77-48ff-b88d-60848ebbc288.png",
+      "cell": [
+        0,
+        0,
+        627,
+        627
+      ],
+      "alphaMarginTrim": [
+        88,
+        24,
+        532,
+        610
+      ],
+      "dimensions": [
+        444,
+        586
+      ],
+      "production": "variants/matharia/assets/png/heroes/hero_barratt_reader_v3@2x.webp",
+      "sha256": "dd2d779d92a87c576bc588637c09a947b70c9a5a3d4c4cf629fdd8c64fae805b",
+      "identity": "barratt",
+      "avatarBounds": [
+        0,
+        0,
+        444,
+        264
+      ]
+    },
+    {
+      "name": "heroes/hero_bran_reader_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-fb2527bd-ba77-48ff-b88d-60848ebbc288.png",
+      "cell": [
+        627,
+        0,
+        1254,
+        627
+      ],
+      "alphaMarginTrim": [
+        90,
+        42,
+        566,
+        612
+      ],
+      "dimensions": [
+        476,
+        570
+      ],
+      "production": "variants/matharia/assets/png/heroes/hero_bran_reader_v3@2x.webp",
+      "sha256": "2d311a946306682f9e59a9d4ae7634aaa0ecae717b68a01a4a71a30c69ecd517",
+      "identity": "bran",
+      "avatarBounds": [
+        0,
+        0,
+        476,
+        256
+      ]
+    },
+    {
+      "name": "heroes/hero_mochi_reader_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-fb2527bd-ba77-48ff-b88d-60848ebbc288.png",
+      "cell": [
+        0,
+        627,
+        627,
+        1254
+      ],
+      "alphaMarginTrim": [
+        87,
+        61,
+        558,
+        607
+      ],
+      "dimensions": [
+        471,
+        546
+      ],
+      "production": "variants/matharia/assets/png/heroes/hero_mochi_reader_v3@2x.webp",
+      "sha256": "9dc7fea7e0545d4a1a1ccf57fcc16d729d1d46a75a9531135657c620bd734aba",
+      "identity": "mochi",
+      "avatarBounds": [
+        0,
+        0,
+        471,
+        246
+      ]
+    },
+    {
+      "name": "heroes/hero_vex_reader_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-fb2527bd-ba77-48ff-b88d-60848ebbc288.png",
+      "cell": [
+        627,
+        627,
+        1254,
+        1254
+      ],
+      "alphaMarginTrim": [
+        80,
+        27,
+        564,
+        609
+      ],
+      "dimensions": [
+        484,
+        582
+      ],
+      "production": "variants/matharia/assets/png/heroes/hero_vex_reader_v3@2x.webp",
+      "sha256": "31afef7faa6274f4fdd08d2a2dfc8e01caacc8c49769c67e7b5920925c990755",
+      "identity": "vex",
+      "avatarBounds": [
+        0,
+        0,
+        484,
+        262
+      ]
+    }
+  ]
+}

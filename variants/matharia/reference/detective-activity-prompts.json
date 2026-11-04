@@ -1,0 +1,19 @@
+{
+  "identities": [
+    "barratt",
+    "bran",
+    "mochi",
+    "vex"
+  ],
+  "references": [
+    "qa-artifacts/concept-recreation/original-four-identities.png",
+    "variants/matharia/reference/approved/data_detective.png"
+  ],
+  "intent": "Independent4-identity detective atlas matching approved green/gold cape, magnifier/parchment, original species/face/fur/wardrobe details, clean alpha cross gutter. No scenery or UI.",
+  "attempts": [
+    {
+      "source": "exec-a62b2434-e5bc-4af9-8216-8ea348785c3d.png",
+      "status": "inspected full bodies; checking alpha gutters before regular slicing"
+    }
+  ]
+}

@@ -1,0 +1,149 @@
+{
+  "references": [
+    "variants/matharia/reference/approved/crystal_core.png",
+    "variants/matharia/reference/approved/mirror_gate.png",
+    "variants/matharia/reference/approved/matrix_match.png"
+  ],
+  "inspection": "Generated clean portrait terrace, blank standing slate, navy HUD frame and violet control visually inspected. No baked characters, calculations, UI text or controls. Original source diagrams/text/input components remain live. Scalable rails are plain; engraved corner details remain inside corner slices.",
+  "processing": "Alpha-margin trim and aspect-preserving WebP only; nine-slice scales corners uniformly. No masks/covers or semantic pixel processing.",
+  "assets": [
+    {
+      "name": "backgrounds/bg_paper1_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-d3d44f56-d68e-4683-8e4f-58c6eb053823.png",
+      "alphaBoundsCrop": null,
+      "dimensions": [
+        866,
+        1816
+      ],
+      "production": "variants/matharia/assets/png/backgrounds/bg_paper1_v3@2x.webp",
+      "bytes": 731664,
+      "sha256": "7eddd1245c40056076b3f2d43b1224a9820ace28ecb3b0f6344a6eb019f9f951"
+    },
+    {
+      "name": "frames/paper1_slate_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-ae7f640f-04af-4617-aaf1-f1fe5a69cdaf.png",
+      "alphaBoundsCrop": [
+        16,
+        19,
+        1416,
+        1054
+      ],
+      "dimensions": [
+        1400,
+        1035
+      ],
+      "production": "variants/matharia/assets/png/frames/paper1_slate_v4@2x.webp",
+      "bytes": 181476,
+      "sha256": "99cfd0307795c19db8d51333cb27dbbe545c85c6dc0923e71406c28eade4b8b8"
+    },
+    {
+      "name": "frames/paper1_hud_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-2d31b984-e9f5-4f2a-baef-bf849a44ed18.png",
+      "alphaBoundsCrop": [
+        15,
+        191,
+        2157,
+        533
+      ],
+      "dimensions": [
+        2048,
+        327
+      ],
+      "production": "variants/matharia/assets/png/frames/paper1_hud_v3@2x.webp",
+      "bytes": 121498,
+      "sha256": "df09b717b618a14968f8e71dd43906b7ab9e1441b778f7bb7d2c21931962156f"
+    },
+    {
+      "name": "buttons/paper_purple_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-ddcf79b3-2cb8-4860-bc7a-aa473961028c.png",
+      "alphaBoundsCrop": [
+        36,
+        143,
+        1867,
+        665
+      ],
+      "dimensions": [
+        1536,
+        438
+      ],
+      "production": "variants/matharia/assets/png/buttons/paper_purple_v3@2x.webp",
+      "bytes": 80860,
+      "sha256": "ce85fa8d15daba7badf598ede46dd54e774b183e63858891a7ce45fb842864d4"
+    },
+    {
+      "name": "buttons/paper_gold_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-07dfa94f-0314-4d7e-83d7-c528a97225dc.png",
+      "alphaBoundsCrop": [
+        72,
+        108,
+        2104,
+        596
+      ],
+      "dimensions": [
+        1536,
+        369
+      ],
+      "production": "variants/matharia/assets/png/buttons/paper_gold_v3@2x.webp",
+      "bytes": 57036,
+      "sha256": "a4c675da4e32d2479171a105bf9bb1b8c4902dc186b8755c72f366f4f608bc63"
+    },
+    {
+      "name": "backgrounds/bg_paper2_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-5d02de25-3bd2-463f-8bc1-1111eebd38ae.png",
+      "alphaBoundsCrop": null,
+      "dimensions": [
+        1844,
+        853
+      ],
+      "production": "variants/matharia/assets/png/backgrounds/bg_paper2_v3@2x.webp",
+      "bytes": 669514,
+      "sha256": "2899463453adef468bd89342489f1f79ba484f37419bb7a019bce4cf4cbf2123"
+    },
+    {
+      "name": "frames/paper2_panel_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-2a35fab0-a27a-4e11-b4c2-b67deab2b914.png",
+      "alphaBoundsCrop": [
+        91,
+        152,
+        1569,
+        780
+      ],
+      "dimensions": [
+        1478,
+        628
+      ],
+      "production": "variants/matharia/assets/png/frames/paper2_panel_v3@2x.webp",
+      "bytes": 121762,
+      "sha256": "e71bc6e0b8910cf89a604e1e8130e7f382f4f7ef3ce9bb27d0314fc988c269d8"
+    },
+    {
+      "name": "backgrounds/bg_paper3_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-e329e629-dd5f-43fb-bffd-329ffe058523.png",
+      "alphaBoundsCrop": null,
+      "dimensions": [
+        1844,
+        853
+      ],
+      "production": "variants/matharia/assets/png/backgrounds/bg_paper3_v3@2x.webp",
+      "bytes": 682476,
+      "sha256": "28c5b2a840a77b129156ae8fa302735f4c67a265235e37855ba31fc10837711c"
+    },
+    {
+      "name": "frames/paper3_hollow_v5",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-cc982e24-8fe9-487c-b9dd-8756705b0492.png",
+      "alphaBoundsCrop": [
+        15,
+        33,
+        1597,
+        931
+      ],
+      "dimensions": [
+        1536,
+        872
+      ],
+      "production": "variants/matharia/assets/png/frames/paper3_hollow_v5@2x.webp",
+      "bytes": 186614,
+      "sha256": "47babe835b2701eb9d460506304973ba34eb7e92a1226ec76af99f0e218c04ea"
+    }
+  ]
+}

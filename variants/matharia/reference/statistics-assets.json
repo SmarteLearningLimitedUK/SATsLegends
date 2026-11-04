@@ -1,0 +1,121 @@
+{
+  "processing": "Alpha-margin trim and aspect-preserving WebP export only; no painting, masks or stretching. Engine nameplate, reading aperture and lower circular bezel are blank; all text, readings and Scan input are live DOM elements. Exterior engine sample pixels were checked: brown hidden RGB outside the silhouette has alpha0.",
+  "assets": [
+    {
+      "name": "backgrounds/bg_mean_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-5064feec-6b91-4aca-b42d-8b5589125951.png",
+      "alphaBoundsCrop": null,
+      "production": "variants/matharia/assets/png/backgrounds/bg_mean_v3@2x.webp",
+      "dimensions": [
+        866,
+        1816
+      ],
+      "bytes": 642658,
+      "sha256": "5b2daeb858e35019953b5c4f00ed91ce0efbf3bdfb7438b73daa34ba4ea5ec6c"
+    },
+    {
+      "name": "props/mean_engine_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-481652f5-df80-4d1c-81a4-bba89764ad78.png",
+      "alphaBoundsCrop": [
+        4,
+        2,
+        1178,
+        1290
+      ],
+      "production": "variants/matharia/assets/png/props/mean_engine_v3@2x.webp",
+      "dimensions": [
+        1174,
+        1288
+      ],
+      "bytes": 544846,
+      "sha256": "d9856a6857995056cc03a188755097413b835322a86c90e56ef48f2c8e8a6498"
+    },
+    {
+      "name": "backgrounds/bg_graph_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-ee6ce49b-d7b9-4c1b-9527-a349c24964ab.png",
+      "alphaBoundsCrop": null,
+      "production": "variants/matharia/assets/png/backgrounds/bg_graph_v3@2x.webp",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "bytes": 615688,
+      "sha256": "8342edabceee3d4b5e4c6cffe1cf9f15eba84e1aecdafe4d02803e33dffbb369"
+    },
+    {
+      "name": "backgrounds/bg_line_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-3093fa3a-3b78-447c-a040-6402336fe95f.png",
+      "alphaBoundsCrop": null,
+      "production": "variants/matharia/assets/png/backgrounds/bg_line_v3@2x.webp",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "bytes": 654020,
+      "sha256": "7c0485a04f09830267c43628c896ce0148a75fce2d1b813a9434c3e14c26122c"
+    },
+    {
+      "name": "backgrounds/bg_data_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-432c2e51-df8c-4286-b725-4158e2128c75.png",
+      "alphaBoundsCrop": null,
+      "production": "variants/matharia/assets/png/backgrounds/bg_data_v3@2x.webp",
+      "dimensions": [
+        1844,
+        853
+      ],
+      "bytes": 672956,
+      "sha256": "654cee9800fc01fc7bd3f886a21fe20983efd7e6c169b564dccafd4d9bbbdcfb"
+    },
+    {
+      "name": "buttons/amber_answer_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-a0866089-587b-4657-94a7-2956e5e8958c.png",
+      "alphaBoundsCrop": [
+        54,
+        76,
+        2004,
+        660
+      ],
+      "production": "variants/matharia/assets/png/buttons/amber_answer_v4@2x.webp",
+      "dimensions": [
+        1950,
+        584
+      ],
+      "bytes": 208790,
+      "sha256": "6abec1ea3071336ea2ce27eed05cb78e9b38b6dfb3ad7c5ef2091aa6ce660be6"
+    },
+    {
+      "name": "frames/chart_wood_hollow_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-217436a7-4717-4216-b07b-eecb1a8448c4.png",
+      "alphaBoundsCrop": [
+        16,
+        17,
+        1969,
+        775
+      ],
+      "production": "variants/matharia/assets/png/frames/chart_wood_hollow_v4@2x.webp",
+      "dimensions": [
+        1953,
+        758
+      ],
+      "bytes": 288900,
+      "sha256": "a57a03c06d2394e50b4a95f35c1316cd64c1652ca285ee477642aa9de7a39f5c"
+    },
+    {
+      "name": "props/mean_engine_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-491a46ed-804d-4d44-82e4-b0d51c842713.png",
+      "alphaBoundsCrop": [
+        3,
+        1,
+        1179,
+        1294
+      ],
+      "production": "variants/matharia/assets/png/props/mean_engine_v4@2x.webp",
+      "dimensions": [
+        1176,
+        1293
+      ],
+      "bytes": 473620,
+      "sha256": "0c0bd87c15a00af6330540c4d6dd294d1617702316abe4e592527bbdceee08c6"
+    }
+  ]
+}

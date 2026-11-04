@@ -1,0 +1,96 @@
+{
+  "processing": "Alpha-margin trim and aspect-preserving WebP export only. Independent props are not extracted from flattened screen art.",
+  "assets": [
+    {
+      "name": "backgrounds/bg_conversion_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-9c56b067-ae34-4163-b822-16654c5453c6.png",
+      "alphaBoundsCrop": null,
+      "production": "variants/matharia/assets/png/backgrounds/bg_conversion_v3@2x.webp",
+      "dimensions": [
+        853,
+        1844
+      ],
+      "bytes": 720086,
+      "sha256": "e7234c3dc4faa5e1fac2ed01467ea25f71bcba7df880700f606aae3eb64b7011"
+    },
+    {
+      "name": "props/coordinates_console_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-b11f3956-953c-4c49-8b93-3d422fddc802.png",
+      "alphaBoundsCrop": [
+        5,
+        6,
+        1813,
+        847
+      ],
+      "production": "variants/matharia/assets/png/props/coordinates_console_v3@2x.webp",
+      "dimensions": [
+        1808,
+        841
+      ],
+      "bytes": 442282,
+      "sha256": "5b50eaa37874a3cc085c52f21dffec970b5a9d2a9e957f74715aecbbcc5ff065"
+    },
+    {
+      "name": "props/perimeter_board_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-a658a90f-7642-4539-892b-96f767e544c8.png",
+      "alphaBoundsCrop": [
+        27,
+        16,
+        1585,
+        955
+      ],
+      "production": "variants/matharia/assets/png/props/perimeter_board_v4@2x.webp",
+      "dimensions": [
+        1558,
+        939
+      ],
+      "bytes": 742684,
+      "sha256": "af2df9a7d892f4a59ddc405ab89d33d9dcf5be9ea42da5aa5cf10c7a80e90508"
+    },
+    {
+      "name": "props/scale_housing_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-b215f2f9-424b-4932-9b50-f78cc5879536.png",
+      "alphaBoundsCrop": [
+        57,
+        56,
+        1197,
+        1200
+      ],
+      "production": "variants/matharia/assets/png/props/scale_housing_v3@2x.webp",
+      "dimensions": [
+        1140,
+        1144
+      ],
+      "bytes": 281426,
+      "sha256": "9e4631e9d49a50c149c17fc3f8edc413d6194d7e31f4e9ae7a9bf1f36c1c34aa",
+      "dial": {
+        "centre": [
+          0.5,
+          0.53
+        ],
+        "radius": [
+          0.275,
+          0.265
+        ],
+        "measurement": "Proportional bounds of the actual blank ivory dial, inspected before integration."
+      }
+    },
+    {
+      "name": "props/scale_tray_v4",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-9a4f9dcd-476b-4121-bc3e-b141f03f4215.png",
+      "alphaBoundsCrop": [
+        25,
+        273,
+        2023,
+        568
+      ],
+      "production": "variants/matharia/assets/png/props/scale_tray_v4@2x.webp",
+      "dimensions": [
+        1998,
+        295
+      ],
+      "bytes": 110984,
+      "sha256": "8ca9610e6037d533706c5f461186c3875aee078e83bdb40182aaf98b9a365617"
+    }
+  ]
+}

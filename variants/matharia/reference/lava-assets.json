@@ -1,0 +1,40 @@
+{
+  "references": [
+    "variants/matharia/reference/approved/unit_mixer.png",
+    "src/assets/game-visions/environments/unit_mixer-v1.webp"
+  ],
+  "inspection": "Both originals visually inspected. Clean frontal volcanic castle/lava river contains no crossing platforms, character or UI. Separate complete shallow3D basalt platform has natural cracks and true transparent exterior. Existing outlined2D platform was inspected and rejected for style. All source crossing stones and answer pedestals use independent aspect-preserving instances.",
+  "processing": "Alpha-margin crop and aspect-preserving WebP only. No masks, painted covers, baked controls or semantic image processing.",
+  "projection": "The original eleven source crossing indices are retained. A presentation camera follows the active stone: hero baseline x38%,y67%; platform stride x27%,y-3.5%; hero height36% at every step. Nearby basalt stones are25% scene width and retain their image aspect ratio. Camera and flight take420ms, next-stone wobble400ms; source560/720ms controller delays are unchanged. Ambient currents, embers and landing sparks pause with gameplay and stop for reduced motion.",
+  "assets": [
+    {
+      "name": "backgrounds/bg_lava_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-ccbf2f43-f01e-4125-af8b-fdde46bb0fb5.png",
+      "alphaBoundsCrop": null,
+      "dimensions": [
+        1844,
+        853
+      ],
+      "production": "variants/matharia/assets/png/backgrounds/bg_lava_v3@2x.webp",
+      "bytes": 627460,
+      "sha256": "8ac79ee39f1d72541cd41cde06b47e5271f693669f10c85ebe73a10b97cde5a9"
+    },
+    {
+      "name": "props/lava_platform_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-87c46580-e740-4525-8b24-b197770a285a.png",
+      "alphaBoundsCrop": [
+        59,
+        174,
+        2079,
+        577
+      ],
+      "dimensions": [
+        1536,
+        306
+      ],
+      "production": "variants/matharia/assets/png/props/lava_platform_v3@2x.webp",
+      "bytes": 311822,
+      "sha256": "bcefd664fc5330716f35e06c7ef54d61d9f1bd51716bdda8001793119482b367"
+    }
+  ]
+}

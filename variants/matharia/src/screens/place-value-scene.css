@@ -1,0 +1,54 @@
+/* Measured portrait terraces. The original module owns digits, drag lifecycle and marking. */
+html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='place_value_panic'] {
+ --concept-plane:min(100vw,calc((100dvh - var(--concept-safe-top) - var(--concept-safe-bottom)) * .6004));
+ --pvp-question-min-height:clamp(132px,30cqw,252px);
+ .pvp-scene {position:absolute;inset:0;width:100%;height:100%;touch-action:manipulation;}
+ .concept-question-zone {left:14.3%;top:15.3%;width:71.9%;height:14.9%;min-height:var(--pvp-question-min-height);}
+ /* Separate counter/body rows, inset beyond the 1600x533 frame's inner gold edges. */
+ .concept-question-panel {grid-template-rows:auto minmax(0,1fr);row-gap:6px;padding:calc(5.5% + 4px) 0 calc(7.2% + 4px);}
+ .scalable-question-copy {height:100%;min-height:0;align-self:stretch;padding:0 8%;}
+ [data-question-copy] {font-size:clamp(14px,5.6cqw,36px);line-height:1.15;font-weight:650;}
+ .concept-question-zone:has([data-question-long]) {height:17.4%;}
+ [data-question-long] [data-question-copy] {font-size:clamp(14px,5cqw,32px);}
+ &:has([data-question-long]) {--pvp-question-min-height:clamp(152px,34cqw,300px);}
+ .pvp-question-copy {display:block;}
+ .pvp-question-ordinal {position:relative;left:auto;top:auto;translate:none;width:max-content;max-width:84%;padding:2px 12px;border:2px solid #b2791e;border-radius:8px;background:#ffedbd;box-shadow:inset 0 0 0 2px #f4c366;color:#05384b;text-shadow:none;font-size:clamp(12px,3cqw,29px);line-height:1.1;font-weight:650;}
+ 
+ .pvp-guardian {position:absolute;left:-3.5%;top:max(27%,calc(15.3% + max(14.9%,var(--pvp-question-min-height)) - 2.5%));bottom:50.5%;width:37%;height:auto;pointer-events:none;}
+ .pvp-guardian>.vision-character {width:100%;height:100%;}
+ .pvp-guardian-speech {position:absolute;left:65%;top:25%;width:max-content;max-width:130px;border:2px solid #ecc978;border-radius:12px;padding:7px 10px;background:#fff1c9;color:#064255;font-size:14px;line-height:1.2;text-align:center;}
+ .pvp-targets {position:absolute;left:50%;translate:-50% 0;top:48.3%;width:max(83%,320px);height:11.8%;display:flex;justify-content:center;gap:2px;}
+ .pvp-target,.pvp-source {position:relative;display:flex;align-items:center;flex-direction:column;justify-content:flex-end;min-width:44px;min-height:44px;border:0;padding:0;background:none;box-shadow:none;touch-action:none;color:#fff9e7;user-select:none;-webkit-user-select:none;}
+ .pvp-target {flex:1;max-width:20cqw;height:100%;gap:2px;}
+ .pvp-place {position:relative;display:grid;place-items:center;width:100%;height:25%;padding:2px;border:1px solid #dbaa44;border-radius:6px;background:#004750;color:#fff6dc;font-size:clamp(11px,3.3cqw,28px);font-weight:650;line-height:1.05;white-space:nowrap;}
+ .pvp-gem {display:block;position:relative;width:100%;height:100%;min-height:0;pointer-events:none;}
+ .pvp-target>.pvp-gem {flex:1;}
+ .pvp-gem>img {position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;}
+ .pvp-gem>span {position:absolute;inset:0;display:grid;place-items:center;padding:12%;font-size:clamp(23px,6.7cqw,56px);font-weight:750;line-height:1;text-shadow:0 2px 2px #002b63;}
+ .pvp-target[data-wrong] .pvp-gem {filter:drop-shadow(0 0 4px #ff836a);}
+ .pvp-target[data-solved] .pvp-gem {filter:drop-shadow(0 0 4px #a8ffbe);}
+ .pvp-bank-hint {position:absolute;left:18%;top:60.4%;width:64%;height:5.5%;padding:5px 7%;display:grid;place-items:center;border:2px solid #e7bb56;border-radius:12px;background:#034650;color:#fff9e7;font-size:clamp(14px,3.9cqw,33px);font-weight:650;line-height:1.15;text-align:center;white-space:pre-line;}
+ .pvp-bank-hint[data-tone] {font-size:clamp(12px,3.1cqw,27px);padding:3px 4%;}
+ .pvp-bank-hint[data-tone='error'] {background:#623323;color:#fff0df;}
+ .pvp-bank-hint[data-tone='success'] {background:#164e3c;color:#e2ffe6;}
+ .pvp-bank {position:absolute;left:12%;top:66.1%;width:76%;height:16.2%;display:flex;flex-wrap:wrap;justify-content:center;align-content:center;gap:4px;}
+ .pvp-source {flex:0 0 calc((100% - 4px * (var(--pvp-bank-columns) - 1)) / var(--pvp-bank-columns));height:calc((100% - 4px * (var(--pvp-bank-rows) - 1)) / var(--pvp-bank-rows));max-height:20cqw;}
+ .pvp-source[data-empty]>.pvp-gem {visibility:hidden;}
+ .pvp-submit {position:absolute;left:50%;translate:-50% 0;top:82.9%;width:59%;height:8%;min-height:44px;padding:0;border:0;background:none;box-shadow:none;color:#063b50;display:grid;place-items:center;isolation:isolate;}
+ .pvp-submit>img {position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:-1;pointer-events:none;}
+ .pvp-submit>span {padding:6px 10%;font-size:clamp(16px,4.4cqw,40px);font-weight:750;line-height:1.05;text-align:center;}
+ .pvp-submit:disabled>span {opacity:.7;}
+ :is(.pvp-target,.pvp-source,.pvp-submit):not(:disabled):active {filter:brightness(1.15);}
+ :is(.pvp-target,.pvp-source,.pvp-submit):focus-visible {outline:3px solid #fff0b3;outline-offset:2px;}
+ .pvp-drag-ghost {position:absolute;z-index:80;pointer-events:none;filter:drop-shadow(0 3px 4px #001e3c88);}
+ [data-unified-minigame-hud]>div:first-of-type:has(.legend-hud-bar) {top:4.5%;width:calc(var(--concept-plane)*.9);height:9.4%;padding:0;}
+ .legend-hud-avatar {width:20.5%;}
+ .legend-hud-bar::before {inset:12% 0;}
+ .legend-hud-title {font-size:clamp(14px,4.6cqw,37px);}
+ .legend-hud-lives .concept-life {width:5.4cqw;height:5.4cqw;}
+ .legend-hud-streak {font-size:clamp(14px,4.5cqw,37px);}
+ .concept-clock-icon {width:5cqw;height:5cqw;}
+ [data-testid='shared-bottom-hud'] {bottom:.8%;width:var(--concept-plane);height:7.8%;padding:0 6.2%;}
+ .legend-dock-button {background-image:none;}
+ .concept-pause {top:.6%;width:clamp(44px,8.4vw,76px);}
+}

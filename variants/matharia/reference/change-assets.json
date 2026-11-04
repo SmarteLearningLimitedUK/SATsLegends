@@ -1,0 +1,448 @@
+{
+  "references": [
+    "variants/matharia/reference/approved/change_counter.png"
+  ],
+  "inspection": "All generated outputs visually inspected. Clean shop contains no counter/characters/UI. Independent foreground counter physically occludes clerk lower body; edge-to-edge furniture intentionally reaches viewport edges. Blank ornate parchment and empty wooden compartment have straight scalable rails. Eight complete coin faces have no baked denominations; live source values are drawn separately. Eight receipt icons correspond exactly to existing source item names; original flat images depicted unrelated weapons and were inspected before replacement.",
+  "processing": "Alpha-margin trim, transparent-gutter atlas slicing and aspect-preserving WebP. Atlas rows and per-row column gutters verified to contain no alpha>16; no object-cutting grid assumptions, no semantic image processing. Coin/item ordering checked visually.",
+  "coinLabelAnchor": [
+    0.5,
+    0.73
+  ],
+  "assets": [
+    {
+      "name": "backgrounds/bg_change_shop_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-b122f8b4-7aae-4a41-a278-537b12726d80.png",
+      "atlasCell": null,
+      "alphaBoundsCrop": null,
+      "dimensions": [
+        1844,
+        853
+      ],
+      "production": "variants/matharia/assets/png/backgrounds/bg_change_shop_v3@2x.webp",
+      "bytes": 589314,
+      "sha256": "8e6b3b1fcc5b0c5529eaa61c7e2f10f4706b2cd5fa665fd7dbadfa247228e473"
+    },
+    {
+      "name": "props/change_counter_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-c7264827-5ffc-4fbe-8da9-05c3aae01014.png",
+      "atlasCell": null,
+      "alphaBoundsCrop": [
+        0,
+        236,
+        2164,
+        715
+      ],
+      "dimensions": [
+        2048,
+        453
+      ],
+      "production": "variants/matharia/assets/png/props/change_counter_v3@2x.webp",
+      "bytes": 347078,
+      "sha256": "89f9f367eb3d077e1e7854db2b05610862ab769d0db7b95f06a1b2f5b996f531"
+    },
+    {
+      "name": "frames/change_receipt_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-e6bbc0a2-e8fe-4296-8571-815cefee334f.png",
+      "atlasCell": null,
+      "alphaBoundsCrop": [
+        29,
+        69,
+        1390,
+        1040
+      ],
+      "dimensions": [
+        1361,
+        971
+      ],
+      "production": "variants/matharia/assets/png/frames/change_receipt_v3@2x.webp",
+      "bytes": 266286,
+      "sha256": "36141f4c39f0702b7a17cbad0620e5a19ea922b140b11175dc24e8e4afcee60e"
+    },
+    {
+      "name": "frames/change_coin_slot_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-b76778d7-dc08-4d7d-b60e-ceac242f148f.png",
+      "atlasCell": null,
+      "alphaBoundsCrop": [
+        70,
+        151,
+        1541,
+        820
+      ],
+      "dimensions": [
+        1471,
+        669
+      ],
+      "production": "variants/matharia/assets/png/frames/change_coin_slot_v3@2x.webp",
+      "bytes": 336548,
+      "sha256": "2bbdd1da6e24fe1ba3121d6b84259a3f78b7da7a166c8b53f794eecd03cf93ab"
+    },
+    {
+      "name": "props/change_coin_200_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-c2f50d03-afa0-4f18-82a5-05499804a74e.png",
+      "atlasCell": [
+        0,
+        0,
+        443,
+        442
+      ],
+      "alphaBoundsCrop": [
+        19,
+        20,
+        443,
+        442
+      ],
+      "dimensions": [
+        424,
+        422
+      ],
+      "production": "variants/matharia/assets/png/props/change_coin_200_v3@2x.webp",
+      "bytes": 94228,
+      "sha256": "b9c0ff7b19a1ef487002eb5a6361f7c0c25e2e87ac86199b8d0325813ba3fbbc"
+    },
+    {
+      "name": "props/change_coin_100_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-c2f50d03-afa0-4f18-82a5-05499804a74e.png",
+      "atlasCell": [
+        443,
+        0,
+        867,
+        442
+      ],
+      "alphaBoundsCrop": [
+        32,
+        42,
+        424,
+        434
+      ],
+      "dimensions": [
+        392,
+        392
+      ],
+      "production": "variants/matharia/assets/png/props/change_coin_100_v3@2x.webp",
+      "bytes": 77808,
+      "sha256": "a399b5bc2ddc6229079cbbd0290842272c4a7c36b2a201599a1560a04813083d"
+    },
+    {
+      "name": "props/change_coin_50_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-c2f50d03-afa0-4f18-82a5-05499804a74e.png",
+      "atlasCell": [
+        867,
+        0,
+        1329,
+        442
+      ],
+      "alphaBoundsCrop": [
+        32,
+        26,
+        462,
+        438
+      ],
+      "dimensions": [
+        430,
+        412
+      ],
+      "production": "variants/matharia/assets/png/props/change_coin_50_v3@2x.webp",
+      "bytes": 82354,
+      "sha256": "ce4f88d0051ced0faa01871666d30792b04fe358b1669dd80aedaf6fbbba3b84"
+    },
+    {
+      "name": "props/change_coin_20_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-c2f50d03-afa0-4f18-82a5-05499804a74e.png",
+      "atlasCell": [
+        1329,
+        0,
+        1774,
+        442
+      ],
+      "alphaBoundsCrop": [
+        42,
+        63,
+        416,
+        427
+      ],
+      "dimensions": [
+        374,
+        364
+      ],
+      "production": "variants/matharia/assets/png/props/change_coin_20_v3@2x.webp",
+      "bytes": 62026,
+      "sha256": "c99ef65f7e788e8f665be834be4f4eab3567c26839b03cd5a2a594d07f0d0e42"
+    },
+    {
+      "name": "props/change_coin_10_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-c2f50d03-afa0-4f18-82a5-05499804a74e.png",
+      "atlasCell": [
+        0,
+        442,
+        432,
+        887
+      ],
+      "alphaBoundsCrop": [
+        27,
+        15,
+        432,
+        414
+      ],
+      "dimensions": [
+        405,
+        399
+      ],
+      "production": "variants/matharia/assets/png/props/change_coin_10_v3@2x.webp",
+      "bytes": 80494,
+      "sha256": "966f4ca2f63b12cf6fa9c4e0cd040aa3461f992e43088514bfb7e7aebe56dd68"
+    },
+    {
+      "name": "props/change_coin_5_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-c2f50d03-afa0-4f18-82a5-05499804a74e.png",
+      "atlasCell": [
+        432,
+        442,
+        846,
+        887
+      ],
+      "alphaBoundsCrop": [
+        68,
+        55,
+        414,
+        403
+      ],
+      "dimensions": [
+        346,
+        348
+      ],
+      "production": "variants/matharia/assets/png/props/change_coin_5_v3@2x.webp",
+      "bytes": 60550,
+      "sha256": "6851bf4c1b3a88b0a2dfea6f1f00769a80b1294834dfa7aeb9a5bac27dbf4731"
+    },
+    {
+      "name": "props/change_coin_2_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-c2f50d03-afa0-4f18-82a5-05499804a74e.png",
+      "atlasCell": [
+        846,
+        442,
+        1312,
+        887
+      ],
+      "alphaBoundsCrop": [
+        74,
+        20,
+        466,
+        412
+      ],
+      "dimensions": [
+        392,
+        392
+      ],
+      "production": "variants/matharia/assets/png/props/change_coin_2_v3@2x.webp",
+      "bytes": 78828,
+      "sha256": "fbaf3349d6822b62dcc4946eb1305694647e80f51590358efd5b6ab6b1d9e3dc"
+    },
+    {
+      "name": "props/change_coin_1_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-c2f50d03-afa0-4f18-82a5-05499804a74e.png",
+      "atlasCell": [
+        1312,
+        442,
+        1774,
+        887
+      ],
+      "alphaBoundsCrop": [
+        78,
+        46,
+        421,
+        392
+      ],
+      "dimensions": [
+        343,
+        346
+      ],
+      "production": "variants/matharia/assets/png/props/change_coin_1_v3@2x.webp",
+      "bytes": 63440,
+      "sha256": "ed558d3c1512a6450470121f886b264391e4cf9e629a0e06b4fda9e5a877505d"
+    },
+    {
+      "name": "props/change_item_c1_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-b9fed968-bead-458c-8ffd-505fd821215c.png",
+      "atlasCell": [
+        0,
+        0,
+        467,
+        441
+      ],
+      "alphaBoundsCrop": [
+        39,
+        39,
+        467,
+        435
+      ],
+      "dimensions": [
+        428,
+        396
+      ],
+      "production": "variants/matharia/assets/png/props/change_item_c1_v3@2x.webp",
+      "bytes": 101088,
+      "sha256": "4ef8027ebc6f129a6d2aa3a6bf86ad559165f5851c1ee66376379fdb0af86579"
+    },
+    {
+      "name": "props/change_item_c2_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-b9fed968-bead-458c-8ffd-505fd821215c.png",
+      "atlasCell": [
+        467,
+        0,
+        807,
+        441
+      ],
+      "alphaBoundsCrop": [
+        86,
+        23,
+        333,
+        429
+      ],
+      "dimensions": [
+        247,
+        406
+      ],
+      "production": "variants/matharia/assets/png/props/change_item_c2_v3@2x.webp",
+      "bytes": 56432,
+      "sha256": "66b39d1a30c07e8d0275ff0b1df73c0673541d597b0611036e4854a36688454c"
+    },
+    {
+      "name": "props/change_item_c3_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-b9fed968-bead-458c-8ffd-505fd821215c.png",
+      "atlasCell": [
+        807,
+        0,
+        1251,
+        441
+      ],
+      "alphaBoundsCrop": [
+        184,
+        23,
+        419,
+        441
+      ],
+      "dimensions": [
+        235,
+        418
+      ],
+      "production": "variants/matharia/assets/png/props/change_item_c3_v3@2x.webp",
+      "bytes": 50284,
+      "sha256": "73d3e064c821b0f9e565541ad9f1a1b17f265d47436edd30749f1a4903992556"
+    },
+    {
+      "name": "props/change_item_c4_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-b9fed968-bead-458c-8ffd-505fd821215c.png",
+      "atlasCell": [
+        1251,
+        0,
+        1774,
+        441
+      ],
+      "alphaBoundsCrop": [
+        111,
+        123,
+        497,
+        403
+      ],
+      "dimensions": [
+        386,
+        280
+      ],
+      "production": "variants/matharia/assets/png/props/change_item_c4_v3@2x.webp",
+      "bytes": 71184,
+      "sha256": "32a7c3abd94121819ded70bef6ad9be9471b9207f576e124c02fca94764c7740"
+    },
+    {
+      "name": "props/change_item_c5_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-b9fed968-bead-458c-8ffd-505fd821215c.png",
+      "atlasCell": [
+        0,
+        441,
+        364,
+        887
+      ],
+      "alphaBoundsCrop": [
+        119,
+        33,
+        333,
+        410
+      ],
+      "dimensions": [
+        214,
+        377
+      ],
+      "production": "variants/matharia/assets/png/props/change_item_c5_v3@2x.webp",
+      "bytes": 37560,
+      "sha256": "891e81b5d522dbdd10dc123729025bdf234174e31fd72bf467ba706e1abfafca"
+    },
+    {
+      "name": "props/change_item_c6_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-b9fed968-bead-458c-8ffd-505fd821215c.png",
+      "atlasCell": [
+        364,
+        441,
+        879,
+        887
+      ],
+      "alphaBoundsCrop": [
+        75,
+        49,
+        515,
+        409
+      ],
+      "dimensions": [
+        440,
+        360
+      ],
+      "production": "variants/matharia/assets/png/props/change_item_c6_v3@2x.webp",
+      "bytes": 77436,
+      "sha256": "f9cba4bbfca92296ecde850a2451515b00e635de2f861e53e841ec504cede1e7"
+    },
+    {
+      "name": "props/change_item_c7_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-b9fed968-bead-458c-8ffd-505fd821215c.png",
+      "atlasCell": [
+        879,
+        441,
+        1325,
+        887
+      ],
+      "alphaBoundsCrop": [
+        57,
+        61,
+        446,
+        410
+      ],
+      "dimensions": [
+        389,
+        349
+      ],
+      "production": "variants/matharia/assets/png/props/change_item_c7_v3@2x.webp",
+      "bytes": 63640,
+      "sha256": "1f1d0711ab8d43279f7dbbeaca41e91ae872ec990c157d29cde4901b248ed925"
+    },
+    {
+      "name": "props/change_item_c8_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-b9fed968-bead-458c-8ffd-505fd821215c.png",
+      "atlasCell": [
+        1325,
+        441,
+        1774,
+        887
+      ],
+      "alphaBoundsCrop": [
+        99,
+        41,
+        365,
+        394
+      ],
+      "dimensions": [
+        266,
+        353
+      ],
+      "production": "variants/matharia/assets/png/props/change_item_c8_v3@2x.webp",
+      "bytes": 47326,
+      "sha256": "bb9fd78227855f8595f2972d8e09355f0e53c7d13350cc94fa10854127b843f1"
+    }
+  ]
+}

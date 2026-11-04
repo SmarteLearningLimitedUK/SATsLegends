@@ -1,0 +1,36 @@
+{
+  "tool": "Built-in image generation",
+  "processing": "Aspect-preserving alpha-margin crop and WebP encoding only. No semantic image processing, patches or baked UI.",
+  "inspection": "New clean campsite scenery has no lantern, loose gear or UI. First lantern rejected for opaque white glass; image-generation edit produced empty glass with alpha0 at sampled central points. Final lantern is independent, with separate runtime flame and light.",
+  "assets": [
+    {
+      "name": "backgrounds/bg_lantern_camp_v1",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-46d1fd62-78dc-4e63-85b8-59fb3e34add3.png",
+      "alpha_margin_crop": null,
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "production": "variants/matharia/assets/png/backgrounds/bg_lantern_camp_v1@2x.webp",
+      "bytes": 496814,
+      "sha256": "9a561f688baeacb4e23edc682e6a0070db1c5126562f93db43ca786c9c36d681"
+    },
+    {
+      "name": "props/camp_lantern_v1",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-05f0749c-a1a7-417e-bffd-1aaa24b3820b.png",
+      "alpha_margin_crop": [
+        153,
+        6,
+        853,
+        1494
+      ],
+      "dimensions": [
+        700,
+        1488
+      ],
+      "production": "variants/matharia/assets/png/props/camp_lantern_v1@2x.webp",
+      "bytes": 303074,
+      "sha256": "f06111350a3dd2cc3cfd4373154def1b53c600283208afaa9349dc20721cac6c"
+    }
+  ]
+}

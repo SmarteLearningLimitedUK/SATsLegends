@@ -1,0 +1,42 @@
+/* Separate floating lotuses, with a measured envelope for the full breath and breeze. */
+html[data-presentation='matharia'] #root .app-viewport.screen-wellbeing-activity .wellbeing-shell[data-wellbeing-activity='breathing_bloom'] .wellbeing-bloom-garden {
+ position:relative;isolation:isolate;width:100%;height:100%;min-height:0;margin:0;overflow:hidden;pointer-events:none;
+ .wellbeing-garden-flower {position:absolute;z-index:2;min-width:0;min-height:0;aspect-ratio:auto;translate:-50% -100%;animation:none;transition:left 500ms ease,top 500ms ease,width 500ms ease,height 500ms ease;}
+ .wellbeing-garden-flower[data-bloom-depth='rear'] {z-index:1;}
+ .bloom-flower-appearance {position:relative;width:100%;height:100%;animation:bloom-plant-appear 900ms ease-out var(--plant-delay) both;}
+ .bloom-breeze-sway {position:relative;width:100%;height:100%;transform-origin:50% 100%;animation:bloom-lotus-sway var(--sway-duration) ease-in-out var(--sway-delay) infinite alternate;}
+ .wellbeing-garden-flower .wellbeing-bloom {position:relative;inset:auto;width:100%;height:100%;min-width:0;aspect-ratio:auto;translate:none;transform-origin:50% 100%;filter:drop-shadow(0 4px 5px #082c4250);transition:transform 50ms linear;}
+ .wellbeing-bloom-artwork {display:block;width:100%;height:100%;object-fit:contain;}
+ .bloom-water-ripple {position:absolute;z-index:-1;left:-7%;bottom:-6px;width:114%;height:14px;stroke:#b7eee2;stroke-width:1;opacity:.55;animation:bloom-water-shimmer 6s ease-in-out var(--sway-delay) infinite alternate;}
+ .bloom-water-ripple ellipse {vector-effect:non-scaling-stroke;}
+ .wellbeing-garden-flower[data-bloom-depth='rear'] .bloom-water-ripple {bottom:-4px;height:10px;}
+ .bloom-water-ripple ellipse:last-child {stroke:#f7d88e;stroke-width:.7;}
+ .bloom-arrival-glint {position:absolute;inset:-12%;width:124%;height:124%;stroke:#ffe6a1;stroke-width:1.5;opacity:0;animation:bloom-plant-glint 1500ms ease-out var(--plant-delay) both;}
+ .bloom-breeze {position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+ .bloom-wind-trails {position:absolute;inset:0;width:100%;height:100%;opacity:.5;}
+ .bloom-wind-path {vector-effect:non-scaling-stroke;stroke-dasharray:.16 .84;animation:bloom-wind-flow 14s linear infinite;}
+ .bloom-wind-path:nth-child(2) {animation-duration:18s;animation-delay:-7s;opacity:.65;}
+ .bloom-wind-path:nth-child(3) {animation-duration:21s;animation-delay:-12s;opacity:.55;}
+ .bloom-air-leaf {position:absolute;left:-7%;width:clamp(8px,1.5cqw,12px);height:auto;color:#e4ce8e;filter:drop-shadow(0 0 3px #fae5a850);animation:bloom-leaf-drift var(--drift-duration) linear var(--drift-delay) infinite;}
+ .bloom-air-leaf>svg {display:block;width:100%;height:auto;}
+ .bloom-pollen {position:absolute;width:clamp(4px,.85cqw,7px);aspect-ratio:1;color:#ffe6a6;filter:drop-shadow(0 0 3px #f9e4a780);animation:bloom-pollen-drift var(--pollen-duration) ease-in-out var(--pollen-delay) infinite;}
+ .bloom-pollen:nth-of-type(2n) {color:#b5f4ee;}
+ .bloom-pollen>svg {display:block;width:100%;height:100%;}
+ &[data-garden-paused='true'] * {animation-play-state:paused;}
+}
+@keyframes bloom-lotus-sway {from{transform:translateX(-.7px) rotate(-1.2deg)}to{transform:translateX(.7px) rotate(1.2deg)}}
+@keyframes bloom-plant-appear {0%,15%{opacity:0;transform:translateY(5px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes bloom-plant-glint {0%,15%{opacity:0;scale:.6}30%{opacity:.65}100%{opacity:0;scale:1.2}}
+@keyframes bloom-water-shimmer {from{opacity:.3;scale:.94 1}to{opacity:.6;scale:1.04 1}}
+@keyframes bloom-wind-flow {from{stroke-dashoffset:1}to{stroke-dashoffset:-1}}
+@keyframes bloom-leaf-drift {0%{opacity:0;transform:translate(0,0) rotate(-15deg)}12%{opacity:.6}40%{transform:translate(45cqw,-8px) rotate(12deg)}75%{opacity:.6}100%{opacity:0;transform:translate(115cqw,6px) rotate(-12deg)}}
+@keyframes bloom-pollen-drift {0%,100%{opacity:.12;transform:translate(-3px,5px) scale(.55)}45%{opacity:.75;transform:translate(5px,-8px) scale(1)}75%{opacity:.4;transform:translate(9px,-3px) scale(.7)}}
+@media(prefers-reduced-motion:reduce){html[data-presentation='matharia'] #root .app-viewport.screen-wellbeing-activity .wellbeing-shell[data-wellbeing-activity='breathing_bloom'] .wellbeing-bloom-garden {
+ :is(.wellbeing-garden-flower,.bloom-flower-appearance,.bloom-breeze-sway,.wellbeing-garden-flower .wellbeing-bloom,.bloom-water-ripple,.bloom-arrival-glint,.bloom-wind-path,.bloom-air-leaf,.bloom-pollen) {animation:none;transition:none;}
+ .bloom-flower-appearance {opacity:1;transform:none;}
+ .bloom-breeze-sway {transform:none;}
+ .bloom-arrival-glint {opacity:0;}
+ .bloom-wind-trails .bloom-wind-path {opacity:0;}
+ .bloom-air-leaf {display:none;}
+ .bloom-pollen {opacity:.4;transform:none;}
+}}

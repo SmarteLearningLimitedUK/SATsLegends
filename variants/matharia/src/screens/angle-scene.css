@@ -1,0 +1,98 @@
+/* Approved winter encounter: live playfield, readable maths and two clear footer rows. */
+html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='angle_arena'][data-measured-scene] {
+ --concept-plane:calc(100vw - var(--concept-safe-left) - var(--concept-safe-right));
+ --angle-nav-width:max(244px,calc(var(--concept-plane)*.38));
+ --angle-question-top:max(13%,52px);
+ --angle-question-height:max(14%,64px);
+ --angle-footer-top:85%;
+ --angle-footer-height:12%;
+ --angle-answer-height:max(44px,12%);
+ --angle-answer-top:calc(var(--angle-footer-top) - var(--angle-answer-height) - 18px);
+ --angle-diagram-top:calc(var(--angle-question-top) + var(--angle-question-height) + 8px);
+ --angle-diagram-height:max(72px,min(34%,calc(var(--angle-answer-top) - var(--angle-diagram-top) - 8px)));
+ &:has(.concept-question-zone [data-question-long]) {--angle-question-height:max(16%,80px);}
+
+ /* The landscape content parent already owns the horizontal safe-area insets. */
+ .concept-stage[data-concept-orientation='landscape'] {margin-inline:0;}
+ .angle-scene {position:absolute;inset:0;width:100%;height:100%;}
+ .angle-live-canvas {position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+ .angle-operator {position:absolute;left:-1%;top:34%;width:24%;height:39%;pointer-events:none;}
+ .angle-operator>.vision-character {width:100%;height:100%;}
+ .angle-opponent {position:absolute;z-index:2;width:0;height:0;translate:-50% -100%;visibility:hidden;pointer-events:none;}
+ .angle-opponent>.vision-character {width:100%;height:100%;}
+
+ .angle-diagram-panel {position:absolute;z-index:3;isolation:isolate;left:35%;top:var(--angle-diagram-top);width:30%;height:var(--angle-diagram-height);padding:10px 12px;box-sizing:border-box;pointer-events:none;}
+ .angle-known-diagram {display:block;width:100%;height:100%;overflow:visible;}
+ .angle-scene:is([data-angle-state='firing'],[data-angle-state='projectileFlight']) :is(.angle-diagram-panel,.angle-round-message) {visibility:hidden;}
+ .angle-known-diagram text {font-family:'Matharia Rounded',sans-serif;paint-order:stroke;stroke:#073847;stroke-width:2px;stroke-linejoin:round;}
+ .concept-question-zone {left:21%;top:var(--angle-question-top);width:56%;height:var(--angle-question-height);min-height:0;}
+ .scalable-question-copy {display:grid;place-items:center;box-sizing:border-box;padding:8px 6%;}
+ [data-question-copy] {font-size:clamp(16px,2vw,30px);line-height:1.18;font-weight:650;}
+ [data-question-long] [data-question-copy] {font-size:clamp(14px,1.7vw,25px);}
+ .question-jewel--bottom {display:none;}
+
+ .angle-answer-group {position:absolute;z-index:6;left:8%;top:var(--angle-answer-top);width:72%;height:var(--angle-answer-height);min-height:44px;container-type:inline-size;display:grid;grid-template-columns:repeat(4,minmax(44px,1fr));gap:6px;}
+ .angle-answer-group>button {position:relative;isolation:isolate;display:grid;place-items:center;min-width:44px;min-height:44px;border:0;background:none;box-shadow:none;padding:6px 6%;color:#fff9e7;font-size:clamp(18px,min(5cqw,calc(var(--angle-answer-height)*.56)),40px);line-height:1;font-weight:650;touch-action:manipulation;}
+ .angle-answer-group>button[aria-pressed='true'] {filter:drop-shadow(0 0 5px #67eaff) brightness(1.2);}
+ .angle-answer-group>button:not(:disabled):active {scale:.96;}
+ .angle-answer-group>button:focus-visible {outline:3px solid #fff1a6;outline-offset:2px;}
+ .angle-round-controls {position:absolute;z-index:6;left:82%;right:2%;top:var(--angle-answer-top);height:var(--angle-answer-height);display:flex;justify-content:center;gap:8px;align-items:stretch;}
+ .angle-round-message {position:absolute;z-index:8;isolation:isolate;left:25%;width:50%;top:calc(var(--angle-answer-top) - 52px);min-height:44px;display:grid;place-items:center;padding:8px 7%;color:#fff9e5;font-size:clamp(14px,1.45vw,22px);font-weight:650;line-height:1.18;text-align:center;pointer-events:none;}
+ .angle-round-message[data-visible='false'] {visibility:hidden;}
+ .angle-hint-toggle,.angle-advance>button {display:flex;align-items:center;justify-content:center;gap:6px;min-width:44px;min-height:44px;padding:7px 12px;border:1px solid #e3bd5d;border-radius:8px;background:#063b50;color:#fff8de;font-size:clamp(14px,1.25vw,22px);font-weight:650;line-height:1.1;touch-action:manipulation;}
+ .angle-hint-toggle>svg,.angle-advance svg {flex:none;width:20px;height:20px;}
+ .angle-advance {display:flex;flex:none;gap:6px;min-width:0;}
+ .angle-advance>button {flex:1;}
+ .angle-hint-toggle:focus-visible,.angle-advance>button:focus-visible {outline:3px solid #fff1a6;outline-offset:3px;}
+ .angle-hint-toggle:active,.angle-advance>button:active {filter:brightness(1.15);}
+ .angle-hint-toggle:disabled,.angle-advance>button:disabled {opacity:.65;}
+ .angle-hint-panel {position:absolute;z-index:20;isolation:isolate;left:28%;top:32%;width:44%;padding:22px 5%;color:#fff9e5;text-align:center;line-height:1.2;}
+ .angle-hint-panel>strong {display:block;padding:0 30px;font-size:clamp(16px,1.8vw,30px);}
+ .angle-hint-panel>p {margin:12px 0 0;font-size:clamp(14px,1.5vw,24px);}
+ .angle-hint-panel>button {position:absolute;right:6px;top:6px;width:44px;height:44px;display:grid;place-items:center;background:none;border:0;color:#fff5d9;}
+
+ [data-unified-minigame-hud]>div:first-of-type:has(.legend-hud-bar) {top:2%;width:41%;height:10%;min-height:44px;padding:0;}
+ .legend-hud-title {font-size:clamp(14px,2.25vw,42px);}
+ .legend-hud-avatar {width:16%;}
+ .legend-hud-timer {display:none;}
+ .legend-hud-bar::before {border-image-source:url('../../assets/png/frames/glacier_panel_v3@2x.webp');border-image-slice:180 fill;}
+ .legend-hud-lives .concept-life {width:clamp(18px,2.4vw,44px);height:clamp(18px,2.4vw,44px);}
+ .legend-hud-streak {font-size:clamp(16px,2.05vw,38px);}
+ [data-testid='shared-bottom-hud'] {left:50%;right:auto;translate:-50% 0;top:var(--angle-footer-top);bottom:auto;width:var(--angle-nav-width);height:var(--angle-footer-height);min-height:44px;padding:0;}
+ .legend-dock-button {font-size:clamp(11px,1.15vw,18px);gap:2px;}
+ .legend-dock-button>svg {width:clamp(20px,1.9vw,32px);height:clamp(20px,1.9vw,32px);}
+ .concept-pause {top:2%;right:max(8px,var(--concept-safe-right));width:clamp(44px,6vw,100px);height:clamp(44px,6vw,100px);}
+}
+
+@media(max-width:760px){
+ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='angle_arena'][data-measured-scene] {
+  [data-unified-minigame-hud]>div:first-of-type:has(.legend-hud-bar) {width:55%;height:11%;}
+  .legend-hud-title {font-size:15px;}
+  .concept-question-zone {left:19%;width:60%;}
+  .angle-answer-group {left:3%;width:74%;}
+  .angle-round-controls {left:79%;gap:6px;}
+  .angle-round-message {font-size:14px;padding:6px 12px;}
+  .angle-hint-toggle {flex-direction:column;gap:2px;padding:4px 7px;}
+  .angle-advance {gap:4px;}
+  .angle-advance>button {flex:none;min-width:54px;padding:5px 6px;font-size:14px;}
+  .angle-advance>button:last-child {width:44px;min-width:44px;padding:5px;}
+  .angle-advance>button:last-child>span {position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;}
+  .angle-advance svg {display:none;}
+  .angle-advance>button:last-child>svg {display:block;}
+  .angle-hint-panel {left:20%;width:60%;padding:20px 6%;}
+ }
+}
+
+@media(max-height:350px) and (orientation:landscape){
+ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='angle_arena'][data-measured-scene] {
+  --angle-footer-top:85%;
+  --angle-footer-height:12%;
+ }
+}
+
+/* The physics parent still owns position. A rigid defeat pose reads inside the existing result window. */
+html[data-presentation='matharia'] #root .angle-opponent-reaction {width:100%;height:100%;transform-origin:50% 90%;}
+html[data-presentation='matharia'] #root .angle-opponent-reaction[data-cleared='true'] {animation:angle-opponent-knockdown 450ms ease-in forwards;}
+html[data-presentation='matharia'] #root .angle-scene[data-angle-paused='true'] .angle-opponent-reaction {animation-play-state:paused;}
+@keyframes angle-opponent-knockdown {from{transform:rotate(0)}40%{transform:rotate(12deg)}to{transform:rotate(65deg)}}
+@media(prefers-reduced-motion:reduce){html[data-presentation='matharia'] #root .angle-opponent-reaction[data-cleared='true'] {animation:none;transform:rotate(65deg);}}

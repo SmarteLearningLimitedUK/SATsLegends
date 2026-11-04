@@ -1,0 +1,9 @@
+native/ios/App/App/public/
+native/ios/App/App/capacitor.config.json
+native/ios/**/xcuserdata/
+native/ios/**/.build/
+*.log
+*probe*.png
+core-before.png
+core-after.png
+probe*.mjs

@@ -1,0 +1,127 @@
+
+
+## 2026-11-02 — Line Graph Lab and Data Detective screen focus
+
+Implemented the requested landscape space/guide corrections in seven Matharia production files. Removed the duplicate safe inset, enlarged both data viewports, reduced and animated the guides using opt-in mesh joints, fitted question text from intrinsic height, contained the suspect portraits in an aspect-preserving viewBox and moved the case counter clear of ornament. Existing educational controllers and gameplay remain unchanged.
+
+Verification: 60 captured states in eight Chromium/WebKit browser profiles, 17 marked line-graph answers, bar/pie investigation flows, pause and reduced motion; build/typecheck pass. Twenty-three protected source/reference files match their pre-edit hashes. Final local Capacitor copy: 848 files match dist-matharia, minimum iOS 16.4 verified. Native execution and a new TestFlight upload remain outstanding; nothing was pushed or published.
+
+Checklist, changed files, assumption (Jeep = hero/guide), comparisons, motion clips and limitations: docs/concept-recreation/LAB-DETECTIVE-FOCUS-2026-11-02.md; machine-readable evidence: qa-artifacts/lab-detective-focus/RESULT.json. No external legacy assumptions were used.
+
+
+## 2026-11-02 — Peaceful Pond five-pad focus
+
+Implemented five pads/rings in the Matharia adapter, 20% progress and five-step completion text. Rebuilt the layout around a compact noticing rail and an independent pond column; removed duplicate safe insets, centred the shared HUD, improved numeric contrast/padding and kept placed pads fully visible. Fish sit behind the rings, with a runtime reduced-motion subscription. Original activity, grounding prompts, completion/reward hooks and source artwork remain unchanged.
+
+Four production files: variants/matharia/presentation-transform.ts, variants/matharia/src/wellbeing-scene.css, variants/matharia/src/PondLayout.tsx and variants/matharia/src/pond-scene.css. Updated variants/matharia/scripts/verify-pond.mjs for five steps and a configurable preview URL.
+
+Verification: 45 layout captures in four profiles, eight passing repository-verifier profiles, 60 placements/twelve completions, normal/reduced fish motion, pending-completion exit cancellation and Breath Bloom shared-shell smoke checks. Build/typecheck pass; 18 protected source/reference/art hashes preserved. Final local Capacitor copy: 848 files match dist-matharia, minimum iOS 16.4 verified. Native execution and TestFlight upload remain outstanding; nothing was pushed or published.
+
+Checklist and assumptions: docs/concept-recreation/POND-FIVE-PAD-FOCUS-2026-11-02.md. Evidence: qa-artifacts/pond-five-pad-focus/RESULT.json and before-after.jpg. No external legacy assumptions were used.
+
+
+## 2026-11-02 — Factor Frenzy enemy and answer proportions
+
+Rebuilt the Matharia Factor Frenzy presentation around a flexible illustrated stage and intrinsic compact controls. At the identical 393×852 question state, the sentinel display grows from 165×129.02 to a proportionate 326.23px square (2.53× taller); the first answer target shrinks from 140×70.34 to 77.92×44, approximately 65% less area. Its independent dais scales with the actor and meets the existing foot baseline. Four choices use one row, seven/eight use two rows, five/six/nine use three columns. The fire control is grouped inside the console; original guidance and feedback share one padded area. The compact header suppresses the extra streak label to keep its essential statistics contained. The final tablet inspection also adds a proportional 12–24px console inset to clear its gold bezel.
+
+Production changes: variants/matharia/src/screens/FactorScene.tsx and factor-scene.css. Verification script: variants/matharia/scripts/verify-factor.mjs (configurable URL, authenticated mission-board navigation, visible-caption geometry and exact-period clock assertion). The original controller, adapter, questions/answers, timers, scoring, progression, audio, shared HUD/renderer and art remain unchanged against nineteen task-start protected hashes. Portrait orientation and current approved independent artwork are retained; no external legacy assumptions were used.
+
+Validation: passing build/typecheck; 73 measured states across four browser profiles and 36 independent submissions; ten combined Chromium/WebKit repository profiles and 100 correct highest-tier submissions, including failure/Retry, pause, active delays, duplicate guard, manual victory and Map. Three normal-motion captures/checks include hit deformation, pause/resume, live reduced-motion fallback and the 1024×1366 stage-width cap. The repository test's initial 1100ms interval-phase assumption was corrected to measure exactly 1000ms; both affected compact profiles pass their rerun. All 848 final dist files match the local Capacitor public copy; iOS minimum 16.4 verified. Browser checks are not native testing. No push, merge, signed archive or TestFlight upload.
+
+Checklist, changed files, assumptions, remaining limits and comparisons: docs/concept-recreation/FACTOR-SPACE-FOCUS-2026-11-02.md. Receipt and before/after: qa-artifacts/factor-space-focus/RESULT.json and before-after.jpg.
+
+
+## 2026-11-02 — Multiplication Mine visible mining
+
+Replaced the variant's duplicated beginner multiplication display with independent ore, pickaxe and a generated transparent timber ledge. Correct answers drive a 340ms pickaxe strike, rock recoil, stone/crystal chips and the original four-state ore progression; later tiers retain the untouched written-method JSX, carries and aligned place-value columns. A shared padded prompt/feedback caption and four-choice row reclaim space; long final values use two columns. Compact questions place their progress inline; frames reserve proportional inner padding. Reduced motion removes the swing/particles; actual pause freezes the CSS animation. Blade-tip collision was projected into the rendered ore atlas and sampled on solid alpha. Original impact-audio wiring and all controller mechanics are unchanged.
+
+Production files: variants/matharia/src/screens/MineScene.tsx and mine-scene.css. New art: variants/matharia/assets/png/props/mine_floor_v4@2x.webp, generated with built-in image generation; exact prompt/provenance in variants/matharia/reference/mine-floor-v4.json. Updated variants/matharia/scripts/verify-mine.mjs for configurable preview/output paths, authenticated mission-board entry and visible captions. Original controller, adapter, math/columns, session/progression/audio, shared renderer/HUD, original art/reference and earlier Factor Frenzy work match seventeen task-start protected hashes.
+
+Verification: six passing focused browser profiles covering all five tiers, 47 measured states and 100 independently solved correct submissions; two passing highest-tier Chromium/WebKit regressions add failure/Retry, original active delays, pause, score/crystal progression, victory and Map. Saved Bran/Mochi/Vex smoke checks and Barratt main coverage pass; a 3x iPhone viewport and live reduced-motion change are checked. Before/after, written-method comparison and actual mining animation captures are inspected. Build/typecheck pass. All 851 final build files match the prepared local Capacitor public copy, minimum iOS 16.4 verified. Native execution/audio/performance/accessibility, actual purchases and TestFlight upload remain unverified or outstanding; nothing was pushed, merged or published.
+
+Checklist, changed files, assumptions, asset prompt and limits: docs/concept-recreation/MINE-STRIKE-FOCUS-2026-11-02.md. Aggregate receipt: qa-artifacts/mine-strike-focus/RESULT.json; comparisons: before-after.jpg, written-before-after.jpg and before-after.gif. Beginner comparison uses the same viewport/tier with different generated questions; written comparison uses the identical question. No external legacy assumptions were used.
+
+## 2026-11-02 — Formula Forge question and diagram priority
+
+Reworked the Matharia presenter around a measured padded question, a larger original live SVG and four compact answer keys. At 393×852 the question font grows from 14px to 19px, its panel from 100px to at least 140px, and each key shrinks from 132.8×56.5px to 75.9×44px (55.4% less area). Diagram ink area increases 2.76× at tier 1 and 4.27× at tier 5. The question follows the shared HUD footprint; compact status rows fit its gold rails. A stable hint/feedback slot prevents diagram resizing on answers. Compact typography keeps the smallest tested projected SVG label at 17.8px. The guide stands on an existing independent plinth; compact phones retain the HUD guide portrait and use the body width for maths. No new production artwork or dependency.
+
+Source: variants/matharia/src/screens/FormulaScene.tsx and formula-scene.css. Updated variants/matharia/scripts/verify-formula.mjs for configurable preview/output, authenticated mission entry and visible captions. Original controller/geometry/content, adapter, renderer/art mapping, shared HUD/layout, session/progression/audio, approved scenery/reference and earlier Mine/Factor presenters match sixteen task-start protected hashes.
+
+Verification: six passing final profiles covering all five tiers, 108 measured states and 44 independently solved correct submissions; two highest-tier Chromium/WebKit regressions cover failure/Retry and another sixteen solved submissions. Checks include original score/lives/520ms active delays, wrong explanations, pause, duplicate blocking, victory/Map, safe bounds, text containment, no scrolling and 125% compact question/hint typography. Saved Vex/Bran/Mochi smokes, a 3× iPhone viewport and live reduced-motion change pass. Build/typecheck pass; all 851 build files match the prepared local Capacitor public copy, minimum iOS 16.4 verified. Browser checks are not native iOS tests; native accessibility/audio/haptics/performance/orientation and TestFlight upload remain outstanding. Nothing was pushed, merged or published.
+
+Checklist/assumptions/limits: docs/concept-recreation/FORMULA-SPACE-FOCUS-2026-11-02.md. Receipt: qa-artifacts/formula-space-focus/RESULT.json. Comparisons: before-after.jpg, mixed-before-after.jpg, reference-comparison.jpg and device-coverage.jpg. Tier 1 uses the same viewport/tier with different generated questions; tier 5 uses the identical question. No external legacy assumptions were used.
+
+## 2026-11-02 — Remainder Run landscape space and consistency
+
+Replaced independent offsets with one safe-area plane, measured padded question/feedback and bounded working/answer grids. Removed the duplicated landscape margin that clipped the right console. Basic/decimal rounds have four compact choices; guided rounds retain all seven batch controls, Unload, a double-width Ship action and the most recent four working steps. Counters grow with wrapped labels and numeric glyphs. Shared circular HUD portrait, footer tiles, safe alignment and consistent 20% foreman column replace the former mode-dependent proportions. Pressed artwork moves inside stable 44px targets. Existing 650ms loading/departure and pause behaviour remain; reduced motion no longer leaves a duplicate flying crate visible. No new production art or dependency.
+
+Source: variants/matharia/src/screens/RemainderScene.tsx and remainder-scene.css. Updated verify-remainder.mjs and verify-remainder-motion.mjs for configurable preview/output, authenticated mission-board route discovery and complete simulated-safe-area CSS. Original controller/content/rules/timing/score, renderer/shared HUD/layout/session/progression/audio, reference/assets and earlier Formula Forge work match eighteen task-start protected hashes.
+
+Final verification: six passing phone/iPad browser profiles across all five tiers and all three answer modes; 124 measured states, 50 independently solved correct submissions, six wrong-answer checks and 32 batch checks. Two highest-tier Chromium/WebKit regressions include failure/Retry and original score/time/life penalties. Four real-time motion regressions cover pause, normal/reduced motion, font settings, simulated safe areas and rotation retention. Vex/Bran/Mochi checks pass; the 3× iPhone practice check completes five actual answers, victory and visible Map navigation with normal motion and real time. Accelerated functional sweeps use reduced motion and finish finite exit animations to settle the synthetic clock.
+
+Build/typecheck pass; all 851 built files match the prepared Capacitor public copy, minimum iOS 16.4 verified. Browser checks are not native iOS testing; native accessibility/audio/haptics/performance/orientation and TestFlight upload remain outstanding. No push, merge, signing or publication.
+
+Checklist/assumptions/files/limits: docs/concept-recreation/REMAINDER-SPACE-FOCUS-2026-11-02.md. Receipt and comparisons: qa-artifacts/remainder-space-focus/RESULT.json, before-after.jpg, loading-before-after.jpg, reference-comparison.jpg and device-coverage.jpg. Generated-problem equality is labelled in the receipt and images. No external legacy assumptions were used.
+
+## 2026-11-02 — Thought Release balloon-first flow
+
+Simplified the Matharia Thought Release presenter into feelings, balanced thought and release stages with one padded decision area and a large independent live SVG balloon. Its opening body grows from 58×59px to 225.21×253.58px at the same 393×852 viewport (16.69 times the bounding area). Inflation and air follow the existing preparation state; selected words remain live and centred. Tablet artwork grows to a 640px viewport. Existing scenery is unchanged. Shared activity title, optional Tips and footer controls fit their safe regions. No background masks, flattened controls, new bitmap or dependency.
+
+Source: variants/matharia/src/ThoughtRelease.tsx, ThoughtBalloon.tsx and thought-release.css; scoped bindings in presentation-transform.ts and stylesheet import in wellbeing-scene.css. Updated verify-wellbeing.mjs for staged choices and configurable preview/output. Original eight words, three thoughts, two-word cap, release gate, 1200ms completion/cancellation, rewards and navigation remain. Sixteen protected file hashes and reversal of only this task's transform additions verify unrelated work is preserved. Portrait and current scenery are explicit assumptions; no separate approved Thought Release concept exists in the manifest.
+
+Six passing final browser profiles cover 36 measured states across compact/large phones and iPads, Chromium/WebKit, normal/reduced motion and 125% choice/summary text. Tests cover containment, safe bounds, touch targets/hit testing, no scrolling, selection/editing, action gates, heading/Tips focus and six single completions at 1205–1245ms. Exit during release retains the original world-map destination and cancels the pending modal; reentry clears selections. Six existing Thought Release browser regressions also pass. Actual running before/after, stage and device comparisons were inspected.
+
+Build/typecheck pass. All 851 build files match the prepared Capacitor public copy; iOS minimum 16.4 verified. These are browser checks, not native iOS tests. Native execution, Dynamic Type/VoiceOver, audio, sustained performance, live account reward persistence and TestFlight upload remain outstanding. No push, merge, signing or publication.
+
+Checklist/files/assumptions/limits: docs/concept-recreation/THOUGHT-BALLOON-FOCUS-2026-11-02.md. Evidence: qa-artifacts/thought-balloon-focus/RESULT.json, before-after.jpg, stages.jpg and device-coverage.jpg. No external legacy assumptions were used.
+
+## 2026-11-02 — Chrono Dash clock priority and quiet chamber
+
+Replaced the busy castle/waterfall background with an independently generated sapphire stone chamber (853×1844, 176,416 bytes, approximately 75.7% smaller than the former background). The original transparent clock and live mathematical SVG remain. At the same 393×852 viewport and identical 08:00 question, clock diameter grows from 227.69px to 350.36px, 2.368 times the area. The body guide now appears in the shared HUD portrait. Compact hand controls and primary Restore time action occupy one group below the centred clock; shared footer and header alignment remain.
+
+The final layout uses an intrinsic question grid row with existing ArtworkFrame/jewel and live text. It removes manual height measurement, resize callbacks and delayed frame fitting, keeping enlarged and Roman text contained immediately. Feedback uses a reserved persistent live region; normal/reduced hand motion, 44px targets, stable press feedback, disabled/focus states and caption padding are checked. The extra streak announcement is visually hidden to contain compact HUD hearts/time while retaining its accessible announcement.
+
+Source: variants/matharia/src/screens/ChronoScene.tsx and chrono-scene.css, one Chrono background mapping in compositions.ts, new assets/png/backgrounds/bg_chrono_v4@2x.webp and reference/chrono-background-v4.json. Both existing Chrono verifiers gain configurable preview/output and authenticated mission route discovery. Original assertions are preserved. Sixteen task-start protected hashes verify the controller/content, original assets/reference, hand interpolator, presentation transform, shared UI/layout and earlier Thought Release work. No dependency or backend change.
+
+Final verification: six phone/iPad Chromium/WebKit profiles, all five tiers and four digit/Roman combinations; 70 measured states and 24 solved correct submissions. Existing two-browser phone regressions add eight solved submissions and exact score/lives, pause, 260/2000ms feedback, Reset, failure/Retry, timed victory and Map checks. Four real-time motion checks pass for normal/reduced motion, pausable 200ms turns and rapid updates. Compact question/instruction/heading text also passes at 125%. All final focused runs have no page errors. Actual before/after, device and feedback comparisons were inspected.
+
+Known existing behaviour: local Reset resets the controller timer/score without resetting the shared level deadline/lives; the shared deadline can therefore finish first. This original callback was preserved and the discrepancy is documented, not repaired. Full Retry resets both and is exercised before final timed-victory checks.
+
+Build/typecheck pass; all 852 built files match the prepared Capacitor public copy and minimum iOS 16.4 is verified. Browser/simulated-safe-area tests are not native iOS testing. Native execution, Dynamic Type/VoiceOver, orientation, audio/haptics, sustained performance, live reward/purchase persistence and signed TestFlight upload remain outstanding. No branch switch, stage, commit, push, merge, signing or publication.
+
+Checklist/files/assumptions/limits: docs/concept-recreation/CHRONO-SPACE-FOCUS-2026-11-02.md. Evidence: qa-artifacts/chrono-space-focus/RESULT.json, before-after.jpg, device-coverage.jpg and feedback.jpg. Assumptions: approved portrait orientation, original clock/math, shared HUD and existing reset callback; latest user request supersedes the previous busy background. New scenery uses built-in image_gen; exact prompt/provenance are retained. No external legacy assumptions were used.
+
+
+## 2026-11-03 — Problem Pyramid multi-step play and shared HUD docking
+
+Implemented a larger pyramid from six independent transparent tablets. Matharia now restores two middle stones then the top, with four choices per step; the original website keeps its single-step default. Shared gameplay header/footer geometry has one component owner, preserves the live green time strip, and separates Pause from title/lives/time. Adjusted eight playfields for footer clearance without changing their controllers.
+
+Validation: 7 complete Pyramid profiles / 126 calculated answers; 7 final layout profiles; 4 Chromium/WebKit motion checks; 3 high-tier Takeout control checks; 68 phone/iPad HUD checks across 34 games; 2,000 mathematical cases / 6,000 choice steps. Both web builds and Matharia typecheck passed. Twelve protected source/reference files remain unchanged. Final Capacitor copy matches 853 files; minimum iOS 16.4 verified. No native execution, TestFlight upload, commit, push or merge.
+
+Handover: docs/concept-recreation/PYRAMID-DOCKED-HUD-2026-11-02.md. Evidence: qa-artifacts/pyramid-docked-hud/RESULT.json, before-after.png, three-steps.png and per-screen screenshots. Remaining: Mac/device check of native safe areas, rotation, accessibility and performance, then a separately authorized signed build/upload. Assumptions: portrait, six pyramids, original ranges/timer/reward formula. No external legacy assumptions were used.
+
+
+## 2026-11-03 — Lava Path crossing space and animation
+
+Replaced the compressed distant crossing with a following scene camera, larger nearby independent platforms and a constant-sized hero. Added 420 ms flight/camera movement, landing sparks, a next-stone beacon, molten currents and ember drift; retained paused/reduced-motion behaviour and the fixed shared HUD. The source controller, conversion content, scoring, lives, original delays and production image assets remain unchanged.
+
+Verified 10 Chromium/WebKit functional profiles / 100 independently calculated correct answers, four real-time motion cases, 16 safe-area/root-font combinations and two phone/iPad HUD profiles. Build and typecheck passed; 853 Capacitor files match the build and minimum iOS remains 16.4. Native execution and TestFlight remain unverified. Handover: docs/concept-recreation/LAVA-SPACE-MOTION-2026-11-03.md. Assumptions: landscape, original ten crossings and existing independent art. No external legacy assumptions were used.
+
+
+## 2026-11-03 — Change Counter contained landscape layout
+
+Placed receipt/till in one bounded grid between question and shared HUD. Kept 44 px coin/action controls, fitted full trays, reserved footer clearance and removed an overlapping duplicate instruction strip. Answer feedback uses the fixed question region; all prices, quantities, controller rules and original 520 ms timing remain.
+
+Verified 12 Chromium/WebKit profiles / 72 receipts, four motion cases / 16 safe-area/root-font combinations, and six practice-feedback profiles / 24 states. Build and typecheck passed. Seven protected files and twenty production assets are unchanged. Final Capacitor bundle matches 853 files; minimum iOS 16.4. Native execution and TestFlight upload remain pending. Handover: docs/concept-recreation/CHANGE-CONTAINED-2026-11-03.md. Assumptions: landscape and current independent shop assets. No external legacy assumptions were used.
+
+## 2026-11-03 — Lantern Camp full-screen packing and light
+
+Replaced the Matharia-only scattered gear layout with a stable six-item tray, a large independent sapphire-and-gold lantern and clear prompt/progress regions. Created clean twilight campsite scenery and a transparent lantern with a separate live flame; added restrained breeze/fireflies and correct reduced-motion/visibility handling. The title now belongs in the shared HUD, and the tray becomes the original dimmer after all six items are packed. Kept the core controller, six prompts, arbitrary packing order, duplicate guard, 0–100/step-5 range, ≤20% threshold, original 1800 ms completion delay, rewards and navigation.
+
+Verified 12 Chromium/WebKit phone/iPad profiles and 108 measured states, four motion/timing/cancellation cases, two compact 125% activity-prose cases and six targeted wider-layout progress cases. Other three Calm Grove routes/titles still render. Build/typecheck pass; eleven protected files are unchanged and production asset hashes match. All 854 final build files match the local Capacitor public copy, configured for minimum iOS 16.4. Native execution, system accessibility and TestFlight upload remain outstanding. Files, assumptions, full asset prompts, before/after comparison and exact checks: docs/concept-recreation/LANTERN-CAMP-2026-11-03.md. Assumptions: portrait primary, deliberate landscape columns, supplied photo as defect reference. No external legacy assumptions were used.
+
+## 2026-11-03 — Paper 1 arithmetic workspace
+
+Reclaimed the gaps above the prompt and below mission tools, widened the calculation/slate by about 42% at the phone viewport, and added a saved-working preview that opens the existing board. Kept guide identity in the shared HUD. Sized content to the standing slate's actual aperture and feet, centred answer captions clear of ornament, placed blank-answer feedback inside the form, and reclaimed the review question-strip gap. Only PaperScene.tsx and paper-scene.css change in production source; twenty protected sources and nine paper assets remain unchanged.
+
+Verified eight Chromium/WebKit phone/iPad profiles and 90 measured states, 72 source answers with original 40/40 marking, answer-pad keys, saved working/revisit/checkpoints, finish/review/history once, four real-time pause/resume cases, compact 125% prose, portrait rotation recovery, two review cases and other-paper working-dialog smoke checks. Build/typecheck pass; all 854 final web-build files match the local Capacitor public copy at minimum iOS 16.4. Native device/system-accessibility/live-account testing and TestFlight upload remain outstanding. Files, assumptions, before/after and exact coverage: docs/concept-recreation/PAPER1-SPACE-2026-11-03.md. Assumptions: preserve approved portrait orientation and existing art; focus the workspace on calculation and saved working. No external legacy assumptions were used.

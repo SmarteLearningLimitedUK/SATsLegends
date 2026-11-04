@@ -1,0 +1,64 @@
+/* The chart owns the landscape playfield; compact answer cards occupy its right edge. */
+html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='graph_grabber'][data-measured-scene] {
+ --concept-plane:calc(100vw - var(--concept-safe-left) - var(--concept-safe-right));
+ --graph-question-height:max(12%,52px);
+ --graph-chart-top:max(27%,calc(13% + var(--graph-question-height) + 8px));
+ --graph-chart-bottom:calc(1% + max(11.5%,44px) + 8px);
+ --graph-answer-width:clamp(120px,20vw,210px);
+ --graph-answer-row:clamp(44px,6.8vh,56px);
+ &:has([data-question-long]) {--graph-question-height:max(13%,60px);}
+ .concept-stage[data-concept-orientation='landscape'] {margin-inline:0;}
+ .graph-scene {position:absolute;inset:0;}
+ .concept-question-zone {left:18%;top:13%;width:78%;height:var(--graph-question-height);}
+ .scalable-question-copy {padding:10px 6%;}
+ [data-question-copy] {font-size:clamp(14px,1.8vw,30px);font-weight:650;line-height:1.13;}
+ .question-jewel--bottom {display:none;}
+ .graph-chart-region {position:absolute;isolation:isolate;left:20%;right:calc(8% + var(--graph-answer-width) + 16px);top:var(--graph-chart-top);bottom:var(--graph-chart-bottom);}
+ .graph-chart-region>.artwork-surface {clip-path:none;border-radius:6px;}
+ .graph-chart-title {position:absolute;isolation:isolate;left:50%;translate:-50% 0;top:8px;width:80%;max-width:300px;height:32px;display:grid;place-items:center;padding:6px 24px;color:#32200e;text-align:center;text-transform:uppercase;font-size:clamp(13px,1.6vw,19px);font-weight:650;line-height:1.1;white-space:nowrap;}
+ .shipment-chart {position:absolute;left:20px;right:20px;top:48px;bottom:20px;display:grid;grid-template-rows:minmax(0,1fr) 44px;}
+ .shipment-chart-plot {position:relative;min-width:0;min-height:0;}
+ .shipment-chart-plot>svg {display:block;width:100%;height:100%;overflow:visible;}
+ .shipment-chart-labels {display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);min-height:44px;}
+ .shipment-chart-labels>button {display:grid;place-items:center;min-width:44px;min-height:44px;padding:4px 2px;border:0;background:none;box-shadow:none;color:#fff5df;font-size:clamp(12px,1.5vw,20px);line-height:1.1;font-weight:650;touch-action:manipulation;}
+ .shipment-chart-labels>button[aria-pressed='true'] {color:#ffde87;text-decoration:underline;text-underline-offset:3px;}
+ .shipment-chart-labels>button:focus-visible {outline:2px solid #fff3a1;outline-offset:-2px;}
+ .shipment-inspection {position:absolute;right:4px;top:0;padding:4px 7px;border:1px solid #d7b66a;border-radius:5px;background:#07394e;color:#fff6dc;font-size:13px;line-height:1.1;font-weight:650;pointer-events:none;}
+ .graph-harbor-guide {position:absolute;left:-3.5%;bottom:15%;width:20%;height:45%;pointer-events:none;}
+ .graph-harbor-guide>.vision-character {width:100%;height:100%;}
+ .graph-answer-region {position:absolute;isolation:isolate;right:4%;top:calc((var(--graph-chart-top) + 100% - var(--graph-chart-bottom)) / 2);translate:0 -50%;width:var(--graph-answer-width);height:calc(var(--graph-answer-row)*4 + 12px);}
+ .graph-answers {height:100%;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:repeat(4,minmax(44px,1fr));gap:4px;}
+ .graph-answers>button {position:relative;isolation:isolate;display:grid;place-items:center;min-width:44px;min-height:44px;padding:8px 20px;border:0;background:none;box-shadow:none;color:#fff5df;font-size:clamp(16px,1.9vw,22px);line-height:1.1;font-weight:650;touch-action:manipulation;}
+ .graph-answers>button[data-long-answer='true'] {font-size:clamp(14px,1.65vw,19px);}
+ .graph-answers>button:not(:disabled):active {scale:.97;filter:brightness(1.12);}
+ .graph-answers>button:disabled {opacity:1;filter:brightness(.9);}
+ .graph-answers>button:focus-visible {outline:3px solid #fff3a1;outline-offset:1px;}
+ :is([data-graph-result='success'],[data-graph-result='error']) .graph-answers {visibility:hidden;}
+ .graph-answer-instruction {position:absolute;isolation:isolate;inset:0;display:grid;place-items:center;padding:14px 12px;color:#fff5dc;text-align:center;font-size:clamp(13px,1.45vw,20px);line-height:1.2;font-weight:650;}
+ .shipment-trace-toggle {position:absolute;right:2%;bottom:1%;width:56px;height:44px;min-width:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:3px;border:1px solid #e5bd61;border-radius:8px;background:#06364e;color:#fff5dc;font-size:13px;line-height:1;font-weight:650;}
+ .shipment-trace-toggle>svg {width:20px;height:20px;}
+ .shipment-trace-list {position:absolute;isolation:isolate;z-index:8;left:30%;top:31%;width:46%;padding:44px 12px 12px;}
+ .shipment-trace-close {position:absolute;top:0;right:3px;width:44px;height:44px;display:grid;place-items:center;border:0;background:none;color:#fff5dc;}
+ .shipment-trace-list>div {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;}
+ .shipment-trace-list>div>button {min-height:44px;min-width:44px;padding:5px;border:1px solid #82bdca;border-radius:6px;background:#0a4967;color:#fff5dc;font-size:14px;line-height:1.1;font-weight:650;}
+ .shipment-trace-list>div>button[aria-pressed='true'] {background:#d9af4f;color:#073a4d;}
+ [data-unified-minigame-hud]>div:first-of-type:has(.legend-hud-bar) {top:1.5%;width:54%;height:11%;padding:0;}
+ .legend-hud-title {font-size:clamp(16px,2.2vw,40px);}
+ .legend-hud-avatar {width:14%;}
+ .legend-hud-timer {display:block;height:5px;}
+ .legend-hud-streak {font-size:clamp(16px,2.15vw,39px);}
+ [data-testid='shared-bottom-hud'] {bottom:1%;width:36%;height:11.5%;min-width:235px;min-height:44px;padding:0;}
+ .concept-pause {top:1%;right:max(1%,var(--concept-safe-right));width:clamp(44px,6vw,100px);height:clamp(44px,6vw,100px);}
+}
+@media(max-width:760px) {html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='graph_grabber'][data-measured-scene] {
+ [data-unified-minigame-hud]>div:first-of-type:has(.legend-hud-bar) {width:60%;}
+ .legend-hud-title {font-size:16px;}
+ .concept-question-zone {left:10%;width:86%;}
+ .graph-chart-title {font-size:14px;}
+ .graph-chart-region {left:18%;right:calc(4% + var(--graph-answer-width) + 16px);}
+ .shipment-chart-labels>button {padding-inline:1px;font-size:12px;}
+ .graph-answers>button {font-size:17px;padding-inline:16px;}
+ .graph-answers>button[data-long-answer='true'] {font-size:14px;}
+ .legend-dock-button {font-size:10px;gap:1px;}
+ .legend-dock-button>svg {width:21px;height:21px;}
+}}

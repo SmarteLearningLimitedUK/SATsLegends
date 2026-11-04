@@ -1,0 +1,129 @@
+{
+  "processing": "Four separate identities, regular quadrant slices with verified transparent gutters, alpha-margin trim only. Live actors preserve source mesh, motion and saved identity.",
+  "assets": [
+    {
+      "identity": "barratt",
+      "role": "wizard",
+      "name": "hero_barratt_wizard_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-a6b2ddad-06c3-49be-9922-8a1c867618ef.png",
+      "atlasCell": [
+        0,
+        0,
+        627,
+        627
+      ],
+      "alphaBoundsCrop": [
+        67,
+        20,
+        592,
+        611
+      ],
+      "dimensions": [
+        525,
+        591
+      ],
+      "avatarBounds": [
+        42,
+        15,
+        368,
+        368
+      ],
+      "production": "variants/matharia/assets/png/heroes/hero_barratt_wizard_v3@2x.webp",
+      "bytes": 161506,
+      "sha256": "5707006ab94135265366514cea6ac3f3573e1d3870701b69c1d3510fe1cc1d5d"
+    },
+    {
+      "identity": "bran",
+      "role": "wizard",
+      "name": "hero_bran_wizard_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-a6b2ddad-06c3-49be-9922-8a1c867618ef.png",
+      "atlasCell": [
+        627,
+        0,
+        1254,
+        627
+      ],
+      "alphaBoundsCrop": [
+        77,
+        22,
+        612,
+        614
+      ],
+      "dimensions": [
+        535,
+        592
+      ],
+      "avatarBounds": [
+        43,
+        15,
+        374,
+        374
+      ],
+      "production": "variants/matharia/assets/png/heroes/hero_bran_wizard_v3@2x.webp",
+      "bytes": 184920,
+      "sha256": "a463f391a746d29297495f3153809f4680fa2dd671f147e2b7139033c5d99eb3"
+    },
+    {
+      "identity": "mochi",
+      "role": "wizard",
+      "name": "hero_mochi_wizard_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-a6b2ddad-06c3-49be-9922-8a1c867618ef.png",
+      "atlasCell": [
+        0,
+        627,
+        627,
+        1254
+      ],
+      "alphaBoundsCrop": [
+        83,
+        38,
+        593,
+        603
+      ],
+      "dimensions": [
+        510,
+        565
+      ],
+      "avatarBounds": [
+        41,
+        14,
+        357,
+        357
+      ],
+      "production": "variants/matharia/assets/png/heroes/hero_mochi_wizard_v3@2x.webp",
+      "bytes": 150734,
+      "sha256": "1193b6e8cf6b3160f9f98a563f2b4d3c5840a53a1a0414ad7eacc8834668c8f2"
+    },
+    {
+      "identity": "vex",
+      "role": "wizard",
+      "name": "hero_vex_wizard_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-a6b2ddad-06c3-49be-9922-8a1c867618ef.png",
+      "atlasCell": [
+        627,
+        627,
+        1254,
+        1254
+      ],
+      "alphaBoundsCrop": [
+        67,
+        39,
+        612,
+        603
+      ],
+      "dimensions": [
+        545,
+        564
+      ],
+      "avatarBounds": [
+        44,
+        14,
+        382,
+        382
+      ],
+      "production": "variants/matharia/assets/png/heroes/hero_vex_wizard_v3@2x.webp",
+      "bytes": 160256,
+      "sha256": "3bc7f83efddfc5c5f6ff082aea12596648112dd13d2aae34b6573cc20dfa810e"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "kind": "objects",
+  "key": "kart-vex",
+  "file": "objects/kart-vex-v1.webp",
+  "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-65e73971-37dc-4286-a542-4d70894648df.png",
+  "prompt": "Production game asset, reference is the approved art direction only. Generate Only a premium polished fantasy racing kart driven by a pale green fox mage wearing purple hooded robe with turquoise trim. Preserve green leaf-inspired kart body, leather seat, chrome wheels, detailed mechanical material, high-end sculpted3D animatedfilm appearance. Full kart and driver visible, threequarter sideview facing RIGHT, same camera and framing as approved concept. Transparent canvas3:2 landscape, no road, scenery, flames, speedtrails or text. Visible front wheel centered about70percentwidth75percentheight, rear wheel about25percentwidth70percentheight. Driver grips the steering wheel; vehicle and wheels grounded at samebaseline. Genuinely transparent alpha background everywhere outside the isolated object, no coloured matte, no backdrop. This must be a separate compositing asset for live gameplay. Same high-end sculpted3D family fantasy rendering, real material detail, correct perspective and lighting. No labels, captions, image border, interface, watermark or extra objects.",
+  "dimensions": [
+    1536,
+    1024
+  ],
+  "bytes": 353296
+}

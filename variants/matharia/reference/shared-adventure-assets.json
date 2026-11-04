@@ -1,0 +1,71 @@
+{
+  "generatedAt": "2026-11-01",
+  "tool": "image_gen",
+  "transparentBackground": true,
+  "assets": [
+    {
+      "identity": "barratt",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-7f516a9a-928a-4a61-abea-09a56f4815b3.png",
+      "reference": "src/assets/characters/premium/barratt-v2.png",
+      "output": "variants/matharia/assets/png/heroes/hero_barratt_victory_v1@2x.webp",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "preparation": "Lossless geometry; WebP encoding, original generated alpha retained. No background masking or painting.",
+      "role": "Separate front-facing victory sprite, original canonical identity and outfit retained."
+    },
+    {
+      "identity": "bran",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-c6e168d9-ca94-4e47-918d-3b834f1d2069.png",
+      "reference": "src/assets/characters/premium/bran-v2.png",
+      "output": "variants/matharia/assets/png/heroes/hero_bran_victory_v1@2x.webp",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "preparation": "Lossless geometry; WebP encoding, original generated alpha retained. No background masking or painting.",
+      "role": "Separate front-facing victory sprite, original canonical identity and outfit retained."
+    },
+    {
+      "identity": "mochi",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-0362b040-5534-4245-8e37-c28cdadee5f5.png",
+      "reference": "src/assets/characters/premium/mochi-v2.png",
+      "output": "variants/matharia/assets/png/heroes/hero_mochi_victory_v1@2x.webp",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "preparation": "Lossless geometry; WebP encoding, original generated alpha retained. No background masking or painting.",
+      "role": "Separate front-facing victory sprite, original canonical identity and outfit retained."
+    },
+    {
+      "identity": "vex",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-ef3c06d9-7669-4f41-9fd7-d8de88560d3d.png",
+      "reference": "src/assets/characters/premium/vex-v2.png",
+      "output": "variants/matharia/assets/png/heroes/hero_vex_victory_v1@2x.webp",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "alphaRange": [
+        0,
+        254
+      ],
+      "preparation": "Lossless geometry; WebP encoding, original generated alpha retained. No background masking or painting.",
+      "role": "Separate front-facing victory sprite, original canonical identity and outfit retained."
+    }
+  ]
+}

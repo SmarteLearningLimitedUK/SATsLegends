@@ -1,0 +1,53 @@
+/* One viewport boundary for all games; independent of their illustrated planes. */
+html[data-presentation='matharia'] #root .screen-gameplay {
+ --dock-safe-top:var(--concept-safe-top,env(safe-area-inset-top,0px));
+ --dock-safe-bottom:var(--concept-safe-bottom,env(safe-area-inset-bottom,0px));
+ --dock-safe-left:var(--concept-safe-left,env(safe-area-inset-left,0px));
+ --dock-safe-right:var(--concept-safe-right,env(safe-area-inset-right,0px));
+ --dock-height:calc(100dvh - var(--dock-safe-top) - var(--dock-safe-bottom));
+ --dock-width:calc(100vw - var(--dock-safe-left) - var(--dock-safe-right));
+ --dock-header-top:8px;
+ --dock-header-height:clamp(44px,calc(var(--dock-height)*.105),74px);
+ --dock-header-width:min(calc(var(--dock-width) - 120px),650px);
+ --dock-header-offset:0px;
+ --dock-avatar:calc(var(--dock-header-height)*1.08);
+ --dock-title-size:clamp(14px,4vh,24px);
+ --dock-stat-size:clamp(14px,3.7vh,22px);
+ --dock-heart-size:clamp(15px,4.2vh,22px);
+ --dock-icon-size:clamp(15px,4.2vh,22px);
+ --dock-status-direction:row;
+ --dock-pause-size:44px;
+ --dock-pause-top:var(--dock-header-top);
+ --dock-pause-right:max(8px,calc((var(--dock-width) - var(--dock-header-width))/2 - 26px));
+ --dock-footer-height:clamp(50px,calc(var(--dock-height)*.14),64px);
+ --dock-footer-width:min(calc(var(--dock-width) - 24px),520px);
+ --dock-footer-bottom:12px;
+}
+html[data-presentation='matharia'] #root .screen-gameplay:has(.concept-stage[data-concept-orientation='portrait']) {
+ --dock-header-top:var(--portrait-hud-top);
+ --dock-header-offset:0px;
+ --dock-header-height:var(--portrait-hud-height);
+ /* Pause was removed; use its former gutter for readable title/status padding. */
+ --dock-header-width:min(650px,calc(var(--dock-width) - 24px));
+ --dock-avatar:var(--dock-header-height);
+ --dock-title-size:clamp(14px,4.2vw,24px);
+ --dock-stat-size:clamp(13px,calc(var(--dock-header-height)*.26),20px);
+ --dock-heart-size:clamp(14px,calc(var(--dock-header-height)*.27),22px);
+ --dock-icon-size:clamp(14px,calc(var(--dock-header-height)*.26),20px);
+ --dock-status-gap:2px;
+ --dock-status-direction:column;
+ --dock-pause-size:var(--portrait-pause-size);
+ --dock-pause-top:calc(var(--dock-header-top) + (var(--dock-header-height) - var(--dock-pause-size))/2);
+ --dock-pause-right:max(8px,calc((var(--dock-width) - var(--dock-header-width))/2 - 26px));
+ --dock-footer-height:clamp(54px,calc(var(--dock-height)*.07),76px);
+ --dock-footer-width:min(650px,calc(var(--dock-width) - 80px));
+}
+@media(max-height:720px) and (orientation:portrait) {
+ html[data-presentation='matharia'] #root .screen-gameplay:has(.concept-stage[data-concept-orientation='portrait']) {
+  --dock-title-size:14px;
+  --dock-stat-size:14px;
+  --dock-heart-size:15px;
+  --dock-icon-size:15px;
+ }
+}
+html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene] [data-unified-minigame-hud][data-gameplay-docked] .legend-hud-bar::before {display:none;}

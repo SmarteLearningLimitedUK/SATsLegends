@@ -1,0 +1,12 @@
+{
+  "kind": "objects",
+  "key": "glacier-frame",
+  "file": "objects/glacier-frame-v1.webp",
+  "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-b0d8f976-6acf-409f-b84c-ef2d62b927fd.png",
+  "prompt": "Use case: background-extraction. Extract the square dark navy crystal-framed mathematical board from this screenshot. Recreate its exact thick blue stone and ice frame, small cyan crystals and brass corner brackets, snow on top. Remove ALL grid, axes, letters, numbers, triangles, arrows. Blank dark navy smooth center, square orthographic front view, frame fullywithin5%canvas margin,transparent outside panel, no background. Production game UI prop matching screenshot materials exactly.",
+  "dimensions": [
+    1254,
+    1254
+  ],
+  "bytes": 412954
+}

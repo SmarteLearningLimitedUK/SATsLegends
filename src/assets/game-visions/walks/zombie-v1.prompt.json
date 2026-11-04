@@ -1,0 +1,12 @@
+{
+  "kind": "walks",
+  "key": "zombie",
+  "file": "walks/zombie-v1.webp",
+  "source": "C:\\Users\\samva\\.codex\\generated_images\\01a149fc-7e91-7bd3-86fc-f9095e88fd36\\exec-99da1dd1-1887-403b-8863-65a529c859fb.png",
+  "prompt": "Production animation sprite atlas. Character identity: Only the friendly teal-green zombie opponent with tousled black hair, brown ragged vest and boots. No deer. Funny and child-friendly. Reference1 identifies the character; reference2 is the mandatory premium sculpted3D rendering style. Render as true stylized3D with cinematic soft shading, tangible skin/fur, NO ink outlines, NO flat illustration. Create EIGHT animation frames on a strictly regular FOUR-COLUMN TWO-ROW sheet, overall2:1aspectratio, equal square cells. Genuinely transparent alpha background. A complete seamless walk/run gait cycle moving toward RIGHT but character stays centred in everycell. Fullbodyfixedscale, consistentcamera3quarter sideview, no camera shifts. Frames in reading order: leftcontact, down, passing, up, rightcontact, down, passing, up. Correct alternating legs and arms, heels and toes roll through contact, grounded foot baseline at95percentheight EVERY cell; modest natural bob confinedwithinupperbody. Same costume and face everyframe. No scenery, floor, label, border, UI, grids, shadows outsidecells, extra figures or overlappingframes. World-class3D familyfantasy game animation asset.",
+  "dimensions": [
+    1774,
+    887
+  ],
+  "bytes": 505790
+}

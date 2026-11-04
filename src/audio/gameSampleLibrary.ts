@@ -19,7 +19,7 @@ const overrides: Record<string, Partial<Record<GameSoundEffect, Clip>>> = {
   angle_arena: { impact: 'explosion', monster_laugh: 'monster-laugh', monster_hurt: 'monster-hurt' },
   rounding_rocket: { place: 'metal-impact', cast: 'boost', complete: 'reward' },
   ratio_fractions: { cast: 'boost', correct: 'boost', impact: 'jump-hit' },
-  remainder_run: { correct: 'boost', impact: 'jump-hit' },
+  remainder_run: { place: 'wood-place', correct: 'wood-place', impact: 'wood-place' },
   simplify_sprint: { correct: 'boost', impact: 'jump-hit' },
   fraction_forge: { place: 'metal-impact', impact: 'metal-impact' },
   mean_machine: { cast: 'scanner', impact: 'metal-impact' },

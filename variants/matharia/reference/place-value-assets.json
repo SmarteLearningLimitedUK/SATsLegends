@@ -1,0 +1,68 @@
+{
+  "processing": "Alpha-margin trim, aspect-preserving downsample and WebP export. No painted corrections, masks or covers.",
+  "assets": [
+    {
+      "name": "backgrounds/bg_place_value_v2",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-99770032-8017-4d0a-b4f5-067009eba0eb.png",
+      "production": "variants/matharia/assets/png/backgrounds/bg_place_value_v2@2x.webp",
+      "dimensions": [
+        971,
+        1619
+      ],
+      "alphaBoundsCrop": null,
+      "bytes": 636410,
+      "sha256": "7ab31ac44f54af08b060ff9a66ed48914517964c5554cf6c1dd7e162f75c708a"
+    },
+    {
+      "name": "heroes/hero_pvp_rhino_v2",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-71f48f1c-1eba-4c57-bf90-f681923cc1a4.png",
+      "production": "variants/matharia/assets/png/heroes/hero_pvp_rhino_v2@2x.webp",
+      "dimensions": [
+        878,
+        1000
+      ],
+      "alphaBoundsCrop": [
+        56,
+        2,
+        1155,
+        1254
+      ],
+      "bytes": 278060,
+      "sha256": "a012e5fd6dfefb4143a4aa5dae37163fc369118f4b5de945d9e84c2b6d784700"
+    },
+    {
+      "name": "gameplay/pvp_socket_v2",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-3ed4aa35-aa9a-452b-bc43-75761d969af0.png",
+      "production": "variants/matharia/assets/png/gameplay/pvp_socket_v2@2x.webp",
+      "dimensions": [
+        492,
+        512
+      ],
+      "alphaBoundsCrop": [
+        28,
+        88,
+        1138,
+        1243
+      ],
+      "bytes": 76138,
+      "sha256": "9350945a3514bb0aa3bee7209812e6597ef0defe3415a0f1fe510c139946e7d3"
+    },
+    {
+      "name": "gameplay/pvp_digit_v2",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-18e4f06b-5cf6-45dc-bc24-0bb8b6d32339.png",
+      "production": "variants/matharia/assets/png/gameplay/pvp_digit_v2@2x.webp",
+      "dimensions": [
+        512,
+        492
+      ],
+      "alphaBoundsCrop": [
+        67,
+        90,
+        1189,
+        1168
+      ],
+      "bytes": 69684,
+      "sha256": "07bfdedbfa70a8380f723a5554ac9e0dccc4d3222655f8c17e808b5d476ceb24"
+    }
+  ]
+}

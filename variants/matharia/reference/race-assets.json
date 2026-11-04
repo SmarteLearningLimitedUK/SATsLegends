@@ -1,0 +1,252 @@
+{
+  "reference": "variants/matharia/reference/approved/ratio_fractions.png",
+  "inspection": "Actual first capture rejected the original side panorama: car landing zones sat over a raised planter. Regenerated clean frontal raceway follows approved road/vanishing point, no baked UI. Independent four saved chassis, real wheels and four coloured canisters keep gold/silver fittings. No masks or duplicated full-car wheel images.",
+  "processing": "Verified atlas gutters and aspect-preserving WebP. Chassis full cell retained so wheel anchors use one explicit geometry. No semantic image processing or masks.",
+  "assets": [
+    {
+      "name": "heroes/kart_barratt_chassis_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-7767f51f-3ec3-4fca-ad1d-df59ef848049.png",
+      "cell": [
+        0,
+        0,
+        768,
+        512
+      ],
+      "alphaMarginTrim": null,
+      "dimensions": [
+        768,
+        512
+      ],
+      "production": "variants/matharia/assets/png/heroes/kart_barratt_chassis_v3@2x.webp",
+      "sha256": "01c2a6e14a642b556e5c4bce6c0ef126e92bd4df5e6fd490f9feb4ede4384c8c",
+      "identity": "barratt",
+      "wheels": [
+        {
+          "cx": 0.219,
+          "cy": 0.762,
+          "radius": 0.137,
+          "projection": 0.7
+        },
+        {
+          "cx": 0.625,
+          "cy": 0.82,
+          "radius": 0.148,
+          "projection": 0.7
+        }
+      ]
+    },
+    {
+      "name": "heroes/kart_bran_chassis_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-7767f51f-3ec3-4fca-ad1d-df59ef848049.png",
+      "cell": [
+        768,
+        0,
+        1536,
+        512
+      ],
+      "alphaMarginTrim": null,
+      "dimensions": [
+        768,
+        512
+      ],
+      "production": "variants/matharia/assets/png/heroes/kart_bran_chassis_v3@2x.webp",
+      "sha256": "4904df15ca8360af5a54dafa491e479569708be4ded41069080f588b4e15868d",
+      "identity": "bran",
+      "wheels": [
+        {
+          "cx": 0.219,
+          "cy": 0.762,
+          "radius": 0.137,
+          "projection": 0.7
+        },
+        {
+          "cx": 0.625,
+          "cy": 0.82,
+          "radius": 0.148,
+          "projection": 0.7
+        }
+      ]
+    },
+    {
+      "name": "heroes/kart_mochi_chassis_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-7767f51f-3ec3-4fca-ad1d-df59ef848049.png",
+      "cell": [
+        0,
+        512,
+        768,
+        1024
+      ],
+      "alphaMarginTrim": null,
+      "dimensions": [
+        768,
+        512
+      ],
+      "production": "variants/matharia/assets/png/heroes/kart_mochi_chassis_v3@2x.webp",
+      "sha256": "dbdc13232c2c51adba3a5a1d07d3ed0c5a72a8b6d0e33dfb941fb02b291a25e8",
+      "identity": "mochi",
+      "wheels": [
+        {
+          "cx": 0.219,
+          "cy": 0.762,
+          "radius": 0.137,
+          "projection": 0.7
+        },
+        {
+          "cx": 0.625,
+          "cy": 0.82,
+          "radius": 0.148,
+          "projection": 0.7
+        }
+      ]
+    },
+    {
+      "name": "heroes/kart_vex_chassis_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-7767f51f-3ec3-4fca-ad1d-df59ef848049.png",
+      "cell": [
+        768,
+        512,
+        1536,
+        1024
+      ],
+      "alphaMarginTrim": null,
+      "dimensions": [
+        768,
+        512
+      ],
+      "production": "variants/matharia/assets/png/heroes/kart_vex_chassis_v3@2x.webp",
+      "sha256": "6c03dd16b8f3aae873dec04bd8d381567249474b7031e3d78ca1d973143e0a2b",
+      "identity": "vex",
+      "wheels": [
+        {
+          "cx": 0.219,
+          "cy": 0.762,
+          "radius": 0.137,
+          "projection": 0.7
+        },
+        {
+          "cx": 0.625,
+          "cy": 0.82,
+          "radius": 0.148,
+          "projection": 0.7
+        }
+      ]
+    },
+    {
+      "name": "props/race_wheel_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-7153249a-b4a6-449a-8d91-1c67b582b406.png",
+      "cell": null,
+      "alphaMarginTrim": [
+        95,
+        62,
+        1186,
+        1161
+      ],
+      "dimensions": [
+        1091,
+        1099
+      ],
+      "production": "variants/matharia/assets/png/props/race_wheel_v3@2x.webp",
+      "sha256": "0d97c2961e0443c2f87c06bda90475b5ccbcc6ad9f286e8433866e2cfb93d2a2"
+    },
+    {
+      "name": "backgrounds/bg_race_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-913b923b-0854-4e46-b0e3-96d734283a93.png",
+      "cell": null,
+      "alphaMarginTrim": null,
+      "dimensions": [
+        1844,
+        853
+      ],
+      "production": "variants/matharia/assets/png/backgrounds/bg_race_v3@2x.webp",
+      "sha256": "42e636a1ecce319a21ef80ec8a5ccd406fb476cb980551aed7b0dc96a73e64e1"
+    },
+    {
+      "name": "props/race_canister_red_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-c3a6df83-b546-4121-899b-07469009e16f.png",
+      "cell": [
+        0,
+        0,
+        583,
+        724
+      ],
+      "alphaMarginTrim": [
+        129,
+        12,
+        580,
+        711
+      ],
+      "dimensions": [
+        451,
+        699
+      ],
+      "production": "variants/matharia/assets/png/props/race_canister_red_v3@2x.webp",
+      "sha256": "ca2f7b91ecb10f6e84e6f4bbff82a49de8de71a48f1fbaca51d1dca8d9e534eb"
+    },
+    {
+      "name": "props/race_canister_blue_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-c3a6df83-b546-4121-899b-07469009e16f.png",
+      "cell": [
+        583,
+        0,
+        1086,
+        724
+      ],
+      "alphaMarginTrim": [
+        34,
+        12,
+        485,
+        711
+      ],
+      "dimensions": [
+        451,
+        699
+      ],
+      "production": "variants/matharia/assets/png/props/race_canister_blue_v3@2x.webp",
+      "sha256": "1d6969ec892264618d9954ae7e7aa319cb4ed6a6cbe540ca6ae3753bb1f83386"
+    },
+    {
+      "name": "props/race_canister_gold_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-c3a6df83-b546-4121-899b-07469009e16f.png",
+      "cell": [
+        1086,
+        0,
+        1589,
+        724
+      ],
+      "alphaMarginTrim": [
+        19,
+        12,
+        470,
+        711
+      ],
+      "dimensions": [
+        451,
+        699
+      ],
+      "production": "variants/matharia/assets/png/props/race_canister_gold_v3@2x.webp",
+      "sha256": "f379dc891f83892ff7ff78f86f0f2543e93377cc70520377b8bc992639297f0c"
+    },
+    {
+      "name": "props/race_canister_violet_v3",
+      "source": "C:\\Users\\samva\\.codex\\generated_images\\01a18eee-903b-74c2-89bb-fb8e6f1cf5ef\\exec-c3a6df83-b546-4121-899b-07469009e16f.png",
+      "cell": [
+        1589,
+        0,
+        2172,
+        724
+      ],
+      "alphaMarginTrim": [
+        4,
+        12,
+        455,
+        711
+      ],
+      "dimensions": [
+        451,
+        699
+      ],
+      "production": "variants/matharia/assets/png/props/race_canister_violet_v3@2x.webp",
+      "sha256": "9f8f70e93ee884bdb40dbf140dc3f5f13adc51a15c66d5d5627beac8df8ae3eb"
+    }
+  ]
+}

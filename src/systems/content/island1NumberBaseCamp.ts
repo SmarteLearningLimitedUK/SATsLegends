@@ -105,7 +105,7 @@ const basePackDefs: Array<{
     name: 'Mean Machine',
     gameType: 'mean_machine',
     skillTags: ['MEAN', 'TOTALS', 'DIVISION'],
-    objectiveForLevel: (miniGameLevel) => `Calculate means from increasingly tricky sets (L${miniGameLevel}).`,
+    objectiveForLevel: (miniGameLevel) => `Find the mean, median and mode of number sets (L${miniGameLevel}).`,
   },
 ];
 
