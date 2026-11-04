@@ -52,6 +52,8 @@ final class MathariaUITests: XCTestCase {
         launch(route, orientation: orientation == "portrait" ? .portrait : .landscapeLeft)
         XCTAssertTrue(button("Tips: how to play").waitForExistence(timeout: 35), "Game chrome absent; check entitlement, route or loading failure: \(title)")
         dismissBriefings()
+        let scan = button("Scan the power cells")
+        if scan.exists && scan.isEnabled && scan.isHittable { scan.tap() }
         capture("\(title)-game")
 
         let tips = button("Tips: how to play")
@@ -85,7 +87,7 @@ final class MathariaUITests: XCTestCase {
 
         // Existing answer-entry games: submit an incorrect value through the real UI.
         let answer = app.webViews.buttons.matching(NSPredicate(format: "label IN %@", ["Enter answer", "Answer"])).firstMatch
-        if answer.exists && answer.isHittable {
+        if answer.exists && answer.isEnabled && answer.isHittable {
             answer.tap()
             let field = app.webViews.textFields.firstMatch
             XCTAssertTrue(field.waitForExistence(timeout: 5), "Answer trigger did not open an input")
@@ -96,11 +98,70 @@ final class MathariaUITests: XCTestCase {
             XCTAssertTrue(submit.exists && submit.isHittable, "Submit is obscured by the keyboard or clipped")
             submit.tap()
         }
+        // Timed games can legitimately end during UI automation. Exercise the
+        // real retry action instead of treating their result screen as a crash.
+        let retry = button("Retry")
+        if retry.exists && retry.isHittable {
+            capture("\(title)-timed-result")
+            retry.tap()
+            dismissBriefings()
+            XCTAssertTrue(tips.waitForExistence(timeout: 10), "Retry did not restore the game")
+            capture("\(title)-retry")
+        }
         let exit = button("Back")
         XCTAssertTrue(exit.waitForExistence(timeout: 10) && exit.isHittable, "Back control missing or clipped")
         exit.tap()
         XCTAssertTrue(app.webViews.staticTexts["Choose a level"].firstMatch.waitForExistence(timeout: 12), "Back did not return to the island")
         capture("\(title)-island")
+    }
+
+    private func exerciseCalm(title: String, orientation: String) {
+        launch("/wellbeing", orientation: .portrait)
+        let activity = app.webViews.buttons.matching(NSPredicate(format: "label CONTAINS %@", title)).firstMatch
+        XCTAssertTrue(activity.waitForExistence(timeout: 25), "Calm activity missing from hub")
+        for _ in 0..<5 {
+            if activity.isHittable { break }
+            app.swipeUp()
+        }
+        XCTAssertTrue(activity.isHittable, "Calm activity cannot be reached by scrolling")
+        activity.tap()
+        XCUIDevice.shared.orientation = orientation == "landscape" ? .landscapeLeft : .portrait
+        let exit = button("Back").waitForExistence(timeout: 5) ? button("Back") : button("Back to adventure")
+        XCTAssertTrue(exit.waitForExistence(timeout: 15), "Calm activity failed to open")
+        capture("\(title)-activity")
+        XCUIDevice.shared.press(.home)
+        XCTAssertTrue(app.wait(for: .runningBackground, timeout: 10))
+        app.activate()
+        XCTAssertTrue(exit.waitForExistence(timeout: 10))
+        capture("\(title)-resumed")
+        XCTAssertTrue(exit.isHittable, "Calm exit clipped or obstructed")
+        exit.tap()
+        capture("\(title)-exit")
+    }
+
+    func testIslandGameCarousel() {
+        launch("/island/2", orientation: .portrait)
+        let next = button("Next game")
+        XCTAssertTrue(next.waitForExistence(timeout: 25) && next.isHittable)
+        capture("island-initial")
+        next.tap()
+        capture("island-next-game")
+        let previous = button("Previous game")
+        XCTAssertTrue(previous.exists && previous.isHittable)
+        previous.tap()
+        XCTAssertTrue(app.webViews.staticTexts["Choose a level"].firstMatch.exists)
+        capture("island-previous-game")
+    }
+
+    func testWelcomeOpensNativeAdventure() {
+        launch("/play", orientation: .portrait)
+        let start = button("Start adventure")
+        XCTAssertTrue(start.waitForExistence(timeout: 25) && start.isHittable)
+        capture("welcome")
+        start.tap()
+        XCTAssertTrue(button("Next game").waitForExistence(timeout: 15))
+        XCTAssertEqual(app.state, .runningForeground, "Adventure left the native app")
+        capture("welcome-to-island")
     }
 
     func testUnsubscribedPaidAccessRemainsLocked() throws {

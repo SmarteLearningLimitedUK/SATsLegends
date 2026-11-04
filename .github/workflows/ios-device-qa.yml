@@ -26,14 +26,12 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  devices:
+  probe:
     runs-on: macos-26
-    timeout-minutes: 120
-    strategy:
-      fail-fast: false
-      max-parallel: 2
-      matrix:
-        profile: [reference]
+    timeout-minutes: 35
+    env:
+      QA_DEVICE: reference
+      QA_SCOPE: smoke
     steps:
       - uses: actions/checkout@v4
         with:
@@ -53,13 +51,51 @@ jobs:
       - name: Run native gameplay, lifecycle and rotation checks
         env:
           CANDIDATE_ZIP: ${{ runner.temp }}/matharia-download/matharia-mac-testflight-candidate.zip
-          QA_DEVICE: ${{ matrix.profile }}
-          QA_SCOPE: ${{ inputs.scope || 'smoke' }}
         run: node variants/matharia/scripts/run-native-device-tests.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: matharia-device-${{ matrix.profile }}
+          name: matharia-device-${{ github.job }}-${{ env.QA_DEVICE }}
+          path: qa-artifacts/native-device-qa/
+          retention-days: 14
+          if-no-files-found: warn
+
+  devices:
+    needs: probe
+    runs-on: macos-26
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        profile: [compact, mini, reference, large, ipad-mini, ipad-large]
+    env:
+      QA_DEVICE: ${{ matrix.profile }}
+      QA_SCOPE: ${{ inputs.scope || 'games' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            variants/matharia/scripts
+            variants/matharia/release
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Download unpublished pinned app snapshot
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag=$(node -p "JSON.parse(require('fs').readFileSync('variants/matharia/release/device-qa-candidate.json','utf8')).tag")
+          gh release download "$tag" --repo "$GITHUB_REPOSITORY" --pattern matharia-mac-testflight-candidate.zip --dir "$RUNNER_TEMP/matharia-download"
+      - name: Run native gameplay, lifecycle and rotation checks
+        env:
+          CANDIDATE_ZIP: ${{ runner.temp }}/matharia-download/matharia-mac-testflight-candidate.zip
+        run: node variants/matharia/scripts/run-native-device-tests.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: matharia-device-${{ github.job }}-${{ env.QA_DEVICE }}
           path: qa-artifacts/native-device-qa/
           retention-days: 14
           if-no-files-found: warn

@@ -26,6 +26,11 @@ else:
 assert selected, 'No catalogue cases selected.'
 source = (templates / 'MathariaUITests.swift').read_text()
 methods = '\n'.join(f'    func testGame_{i:03d}_{x["key"]}() throws {{ try exercise(route: "{x["route"]}", title: {json.dumps(x["title"], ensure_ascii=False)}, orientation: "{x["orientation"]}") }}' for i, x in enumerate(selected))
+if args.scope != 'smoke':
+    calm = [('breathing_bloom', 'Breath Bloom', 'portrait'), ('peaceful_pond', 'Peaceful Pond', 'landscape'),
+            ('candle_calm', 'Lantern Camp', 'portrait'), ('constellation_connect', 'Star Path', 'portrait'),
+            ('leaf_drift', 'Leaf Drift', 'portrait'), ('thought_sort', 'Thought Release', 'portrait')]
+    methods += '\n' + '\n'.join(f'    func testCalm_{key}() {{ exerciseCalm(title: "{title}", orientation: "{orientation}") }}' for key, title, orientation in calm)
 (tests / 'MathariaUITests.swift').write_text(source.replace('// GENERATED_GAME_TESTS', methods))
 (root / 'selected-native-cases.json').write_text(json.dumps(selected, indent=2))
 
@@ -53,7 +58,7 @@ fixture = '''
         #if DEBUG && targetEnvironment(simulator)
         if ProcessInfo.processInfo.arguments.contains("--matharia-native-ui-test"),
            let route = ProcessInfo.processInfo.environment["MATHARIA_QA_ROUTE"],
-           route.range(of: "^/(play|island/[0-9]+|game/[0-9]+/[0-9]+)$", options: .regularExpression) != nil,
+           route.range(of: "^/(play|wellbeing|island/[0-9]+|game/[0-9]+/[0-9]+)$", options: .regularExpression) != nil,
            let data = try? JSONSerialization.data(withJSONObject: [route]),
            let routeJSON = String(data: data, encoding: .utf8) {
             let script = """
