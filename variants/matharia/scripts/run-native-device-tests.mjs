@@ -119,17 +119,24 @@ with zipfile.ZipFile(sys.argv[1]) as z:
     result.simulatorUDID = device;
     const derived = join(work, 'DerivedData');
     const common = ['-project', join(native, 'App.xcodeproj'), '-scheme', 'MathariaDeviceQA', '-configuration', 'Debug',
-      '-destination', `platform=iOS Simulator,id=${device}`, '-derivedDataPath', derived, 'CODE_SIGNING_ALLOWED=NO'];
+      '-destination', `platform=iOS Simulator,id=${device}`, '-derivedDataPath', derived,
+      'CODE_SIGNING_ALLOWED=YES', 'CODE_SIGNING_REQUIRED=YES', 'CODE_SIGN_IDENTITY=-',
+      'CODE_SIGN_STYLE=Manual', 'DEVELOPMENT_TEAM='];
     result.phase = 'native-compilation';
     run('xcodebuild', [...common, 'build-for-testing'], {log: 'build.log'});
     result.compiled = true;
+    const app = join(derived, 'Build/Products/Debug-iphonesimulator/App.app');
+    run('codesign', ['--verify', '--deep', '--strict', app]);
+    const signature = run('codesign', ['-d', '--verbose=4', app]);
+    if (!signature.stderr.includes('Signature=adhoc')) throw Error('Simulator app must have an ad-hoc signature; no developer credential is used.');
+    result.simulatorAdHocSignatureVerified = true;
     result.phase = 'simulator-boot';
     save();
     run('xcrun', ['simctl', 'boot', device]);
     run('xcrun', ['simctl', 'bootstatus', device, '-b']);
     const xcresult = join(out, 'DeviceTests.xcresult');
     result.phase = 'native-ui-tests';
-    if (scope === 'smoke') {
+    if (scope === 'smoke' && process.env.QA_RECORD_VIDEO === '1') {
       video = spawn('xcrun', ['simctl', 'io', device, 'recordVideo', '--codec=h264', join(out, 'native-smoke.mp4')], {stdio: 'ignore'});
       video.on('error', error => {result.videoError = error.message;});
     }

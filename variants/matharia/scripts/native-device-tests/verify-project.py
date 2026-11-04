@@ -34,6 +34,7 @@ for scope in ['smoke', 'games', 'all-tiers']:
         assert scheme.find('.//TestableReference').get('parallelizable') == 'NO'
         assert scheme.find('.//TestAction').get('shouldUseLaunchSchemeArgsEnv') == 'YES'
         assert scheme.find('.//LaunchAction/StoreKitConfigurationFileReference') is not None
+        assert 'CODE_SIGN_IDENTITY = "-"' in pbx, 'Simulator StoreKit needs a signed app identity, not an unsigned test runner'
         cases = json.loads((root / 'selected-native-cases.json').read_text())
         swift = (generated / 'MathariaUITests/MathariaUITests.swift').read_text()
         assert swift.count('func testGame_') == len(cases)
