@@ -49,9 +49,12 @@ final class MathariaUITests: XCTestCase {
     }
     private func assertLandscapeGame() {
         waitFor("Rotation prompt must disappear") { !self.prompt.exists }
-        for _ in 0..<4 {
-            let start = app.webViews.buttons.matching(NSPredicate(format: "label MATCHES[c] %@", "(Start.*|Begin.*|Let.s.*|Continue.*)")).firstMatch
-            if start.waitForExistence(timeout: 2) && start.isHittable { start.tap() } else { break }
+        let start = app.webViews.buttons["Start practice"].firstMatch
+        waitFor("Game or its practice briefing must be ready") {
+            (self.tips.exists && self.tips.isHittable) || (start.exists && start.isHittable)
+        }
+        if start.exists && start.isHittable {
+            start.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         }
         waitFor("Game controls must become usable after turning sideways") { self.tips.exists && self.tips.isHittable }
     }
@@ -81,7 +84,7 @@ final class MathariaUITests: XCTestCase {
     func testBackFromUprightPromptRestoresIslandControls() {
         launch("ROTATION_GAME_ROUTE", orientation: .portrait)
         assertPortraitPrompt()
-        app.webViews.buttons["Back to island"].firstMatch.tap()
+        app.webViews.buttons["Back to island"].firstMatch.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         let nextGame = app.webViews.buttons["Next game"].firstMatch
         waitFor("Leaving the rotation prompt must restore usable island controls") { nextGame.exists && nextGame.isHittable }
         XCTAssertFalse(tips.exists && tips.isHittable)
