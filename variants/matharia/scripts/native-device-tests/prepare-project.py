@@ -84,7 +84,7 @@ if args.scope == 'rotation':
               const trace=(event,target)=>{try{window.webkit.messageHandlers.mathariaQaTrace.postMessage(JSON.stringify({event,target,path:location.pathname,width:innerWidth,height:innerHeight,inert:document.getElementById('root')?.inert,guard:document.querySelector('[data-gameplay-orientation-gate]')?.getAttribute('data-required-orientation')}));}catch{}};
               for(const type of ['pointerdown','pointerup','click'])document.addEventListener(type,event=>{const node=event.target instanceof Element?event.target:null;const target=(node?.closest('button')?.textContent||node?.tagName||'unknown').slice(0,80);trace(type,target);if(type==='click')setTimeout(()=>trace('after click',target),300);},true);
     """
-    fixture = fixture.replace("if(location.protocol==='capacitor:'){", "if(location.protocol==='capacitor:'){" + trace_js)
+    fixture = fixture.replace("if(location.protocol==='capacitor:'){", "if(location.protocol==='capacitor:'){" + trace_js.rstrip() + "\n")
     swift += """
 #if DEBUG && targetEnvironment(simulator)
 private final class MathariaQATrace: NSObject, WKScriptMessageHandler {
