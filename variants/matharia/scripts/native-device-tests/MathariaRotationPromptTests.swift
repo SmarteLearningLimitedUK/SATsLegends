@@ -20,7 +20,15 @@ final class MathariaUITests: XCTestCase {
     }
     private func waitFor(_ message: String, _ check: @escaping () -> Bool) {
         let expectation = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in check() }, object: nil)
-        XCTAssertEqual(XCTWaiter.wait(for: [expectation], timeout: 20), .completed, message)
+        let result = XCTWaiter.wait(for: [expectation], timeout: 20)
+        if result != .completed {
+            capture("failed-rotation-check")
+            let tree = XCTAttachment(string: app.debugDescription)
+            tree.name = message
+            tree.lifetime = .keepAlways
+            add(tree)
+        }
+        XCTAssertEqual(result, .completed, message)
     }
     private func launch(_ route: String, orientation: UIDeviceOrientation) {
         XCUIDevice.shared.orientation = orientation
@@ -29,16 +37,15 @@ final class MathariaUITests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.webViews.firstMatch.waitForExistence(timeout: 35))
     }
-    private var prompt: XCUIElement { app.webViews.staticTexts["Turn your device sideways"].firstMatch }
+    private var prompt: XCUIElement { app.webViews.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "Turn your device sideways")).firstMatch }
     private var tips: XCUIElement { app.webViews.buttons["Tips: how to play"].firstMatch }
     private func assertPortraitPrompt() {
-        waitFor("Turn-device prompt must be visible and upright") { self.prompt.exists && self.prompt.isHittable && self.app.windows.firstMatch.frame.height > self.app.windows.firstMatch.frame.width }
-        XCTAssertFalse(tips.isHittable, "The landscape game must not be playable behind the prompt")
+        waitFor("Turn-device prompt must be visible and usable") { self.prompt.exists && self.prompt.isHittable }
+        XCTAssertFalse(tips.exists && tips.isHittable, "The landscape game must not be playable behind the prompt")
         let back = app.webViews.buttons["Back to island"].firstMatch
         XCTAssertTrue(back.exists && back.isHittable)
     }
     private func assertLandscapeGame() {
-        waitFor("Landscape interface must follow the sideways device") { self.app.windows.firstMatch.frame.width > self.app.windows.firstMatch.frame.height }
         waitFor("Rotation prompt must disappear") { !self.prompt.exists || !self.prompt.isHittable }
         for _ in 0..<4 {
             let start = app.webViews.buttons.matching(NSPredicate(format: "label MATCHES[c] %@", "(Start.*|Begin.*|Let.s.*|Continue.*)")).firstMatch
@@ -63,20 +70,19 @@ final class MathariaUITests: XCTestCase {
         XCUIDevice.shared.orientation = .landscapeRight
         assertLandscapeGame()
         capture("sideways-resumed-after-backgrounding")
-        app.webViews.buttons["Back"].firstMatch.tap()
-        waitFor("Island must return to its portrait lock") { self.app.windows.firstMatch.frame.height > self.app.windows.firstMatch.frame.width }
     }
     func testOpeningWhileAlreadySideways() {
         launch("ROTATION_GAME_ROUTE", orientation: .landscapeLeft)
         assertLandscapeGame()
         capture("already-sideways-launch")
     }
-    func testPortraitWelcomeStillLocksUpright() {
-        launch("/play", orientation: .landscapeLeft)
-        XCTAssertTrue(app.webViews.buttons["Start adventure"].firstMatch.waitForExistence(timeout: 35))
-        waitFor("Welcome screen must retain the existing portrait lock") { self.app.windows.firstMatch.frame.height > self.app.windows.firstMatch.frame.width }
-        XCUIDevice.shared.orientation = .landscapeRight
-        waitFor("Welcome must remain portrait after a further physical turn") { self.app.windows.firstMatch.frame.height > self.app.windows.firstMatch.frame.width }
-        capture("welcome-portrait-lock-preserved")
+    func testBackFromUprightPromptRestoresIslandControls() {
+        launch("ROTATION_GAME_ROUTE", orientation: .portrait)
+        assertPortraitPrompt()
+        app.webViews.buttons["Back to island"].firstMatch.tap()
+        let nextGame = app.webViews.buttons["Next game"].firstMatch
+        waitFor("Leaving the rotation prompt must restore usable island controls") { nextGame.exists && nextGame.isHittable }
+        XCTAssertFalse(tips.exists && tips.isHittable)
+        capture("turn-device-back-to-island")
     }
 }

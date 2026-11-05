@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   rotation:
-    runs-on: macos-15-intel
+    runs-on: macos-15
     timeout-minutes: 35
     strategy:
       fail-fast: false

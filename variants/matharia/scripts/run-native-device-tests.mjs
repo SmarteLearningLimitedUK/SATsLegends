@@ -51,7 +51,7 @@ async function main() {
     startedAt: new Date().toISOString(), status: 'running', phase: 'candidate-verification', physicalDeviceVerified: false,
     limitations: ['Simulator does not establish hardware performance, haptics, real payment or Apple sign-in correctness.',
       'Screenshots require visual review; this suite does not automatically certify all text contrast or animation frames.',
-      scope === 'rotation' ? 'Focused rotation regression only: opening upright, turning back upright during play, background/resume, already-sideways entry and portrait welcome. No game-completion or purchase certification.' : 'Game checks cover launch/help/rotation/background/navigation and available numeric entry, not every winning strategy.']};
+      scope === 'rotation' ? 'Focused rotation regression only: opening upright, turning back upright during play, background/resume, already-sideways entry and leaving the prompt to usable island controls. No general orientation-lock, game-completion or purchase certification.' : 'Game checks cover launch/help/rotation/background/navigation and available numeric entry, not every winning strategy.']};
   const save = () => writeFileSync(join(out, 'result.json'), JSON.stringify(result, null, 2) + '\n');
   const run = (command, args, {cwd = candidateRoot, log, allowed = false, timeout = scope === 'rotation' ? 900000 : 3600000} = {}) => {
     const fd = log ? openSync(join(out, log), 'w') : null;
