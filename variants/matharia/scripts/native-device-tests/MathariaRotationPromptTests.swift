@@ -40,13 +40,15 @@ final class MathariaUITests: XCTestCase {
     private var prompt: XCUIElement { app.webViews.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "Turn your device sideways")).firstMatch }
     private var tips: XCUIElement { app.webViews.buttons["Tips: how to play"].firstMatch }
     private func assertPortraitPrompt() {
-        waitFor("Turn-device prompt must be visible and usable") { self.prompt.exists && self.prompt.isHittable }
-        XCTAssertFalse(tips.exists && tips.isHittable, "The landscape game must not be playable behind the prompt")
         let back = app.webViews.buttons["Back to island"].firstMatch
+        // WebKit exposes headings as non-tappable accessibility groups.
+        // The text must exist; the actual action must be tappable.
+        waitFor("Turn-device prompt must be visible and usable") { self.prompt.exists && back.exists && back.isHittable }
+        XCTAssertFalse(tips.exists && tips.isHittable, "The landscape game must not be playable behind the prompt")
         XCTAssertTrue(back.exists && back.isHittable)
     }
     private func assertLandscapeGame() {
-        waitFor("Rotation prompt must disappear") { !self.prompt.exists || !self.prompt.isHittable }
+        waitFor("Rotation prompt must disappear") { !self.prompt.exists }
         for _ in 0..<4 {
             let start = app.webViews.buttons.matching(NSPredicate(format: "label MATCHES[c] %@", "(Start.*|Begin.*|Let.s.*|Continue.*)")).firstMatch
             if start.waitForExistence(timeout: 2) && start.isHittable { start.tap() } else { break }
