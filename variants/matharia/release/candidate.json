@@ -1,11 +1,11 @@
 {
-  "tag": "matharia-ci-20261104-testflight-review-v3",
+  "tag": "matharia-ci-20261105-rune-relations-v1",
   "asset": "matharia-mac-testflight-candidate.zip",
-  "sha256": "6a15ec9093d2316ad244c9713f8a05a9c2fba294c5aa265c8382cddbe51e5539",
+  "sha256": "6f40de4cb2a8f0c99e0108e026a1994e7fe0f4628c9a675cae1ae9f6c314566c",
   "bundleId": "com.smartelearning.satslegends",
   "minimumIOS": "16.4",
   "sourceGitHead": "e7083fb7b03ebe80d4c9becd6b14338310c9ff70",
   "internalTestingOnly": true,
   "testerLocale": "en-GB",
-  "testerNotes": "Internal review build: all games and levels are unlocked for testing. Includes the latest content, readability and App Store access-loading work.\n\nNative simulator QA still has unresolved StoreKit fixture and UI-interaction failures (1 of 6 checks passed); the full device matrix is unverified. Please test mission launch, answer input, device rotation and returning to the island on a real device."
+  "testerNotes": "Internal review build: all games and levels remain unlocked for testing.\n\nNew: Rune Relations in Operations Outpost. Five scored algebra levels, ten mixed puzzles per level, plus focused practice. Try missing values, rule machines, sequences, number pairs and combinations. Existing artwork and progress identifiers are preserved.\n\nIncludes the latest local curriculum and quiz changes. Rune Relations passed 50,000 mathematical question checks and 13 desktop-browser QA cases, including iPhone-sized touch layouts. These are not physical-device tests. Please check real-device touch input, rotation, audio, Learning Support, returning to the island and saved rewards. Native CI checks compile, install and launch; they do not certify full gameplay, StoreKit or account deletion."
 }
