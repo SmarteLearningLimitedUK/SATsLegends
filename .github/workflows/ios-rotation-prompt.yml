@@ -1,0 +1,50 @@
+name: iOS turn-device prompt regression
+
+on:
+  push:
+    branches: ['codex/native-rotation-*']
+  workflow_dispatch:
+
+# Read the unpublished, checksum-pinned candidate; never publish its release.
+permissions:
+  contents: write
+
+jobs:
+  rotation:
+    runs-on: macos-15-intel
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        profile: [reference, ipad-large]
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
+      QA_DEVICE: ${{ matrix.profile }}
+      QA_SCOPE: rotation
+      QA_IOS: '26.2'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            variants/matharia/scripts
+            variants/matharia/release
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Download pinned rotation-fix candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag=$(node -p "JSON.parse(require('fs').readFileSync('variants/matharia/release/device-qa-candidate.json','utf8')).tag")
+          gh release download "$tag" --repo "$GITHUB_REPOSITORY" --pattern matharia-mac-testflight-candidate.zip --dir "$RUNNER_TEMP/matharia-download"
+      - name: Test real native rotation and prompt interaction
+        env:
+          CANDIDATE_ZIP: ${{ runner.temp }}/matharia-download/matharia-mac-testflight-candidate.zip
+        run: node variants/matharia/scripts/run-native-device-tests.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: rotation-prompt-${{ matrix.profile }}
+          path: qa-artifacts/native-device-qa/
+          retention-days: 14

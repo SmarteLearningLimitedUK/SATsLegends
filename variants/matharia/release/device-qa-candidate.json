@@ -1,0 +1,9 @@
+{
+  "tag": "matharia-ci-20261105-rotation-prompt-v1",
+  "asset": "matharia-mac-testflight-candidate.zip",
+  "sha256": "84068c70c42588c19cda543958ae992e823398595f68b36fbe8381949445d0bc",
+  "bundleId": "com.smartelearning.satslegends",
+  "minimumIOS": "16.4",
+  "sourceGitHead": "e7083fb7b03ebe80d4c9becd6b14338310c9ff70",
+  "internalTestingOnly": true
+}
