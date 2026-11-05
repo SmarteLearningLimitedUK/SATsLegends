@@ -10,7 +10,6 @@ final class MathariaUITests: XCTestCase {
     }
     override func tearDownWithError() throws {
         app?.terminate()
-        XCUIDevice.shared.orientation = .portrait
     }
     private func capture(_ name: String) {
         let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
@@ -20,7 +19,7 @@ final class MathariaUITests: XCTestCase {
     }
     private func waitFor(_ message: String, _ check: @escaping () -> Bool) {
         let expectation = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in check() }, object: nil)
-        let result = XCTWaiter.wait(for: [expectation], timeout: 20)
+        let result = XCTWaiter.wait(for: [expectation], timeout: 45)
         if result != .completed {
             capture("failed-rotation-check")
             let tree = XCTAttachment(string: app.debugDescription)

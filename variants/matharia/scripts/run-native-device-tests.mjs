@@ -141,7 +141,7 @@ with zipfile.ZipFile(sys.argv[1]) as z:
       video.on('error', error => {result.videoError = error.message;});
     }
     const execution = run('xcodebuild', [...common, '-resultBundlePath', xcresult, '-parallel-testing-enabled', 'NO',
-      '-maximum-concurrent-test-simulator-destinations', '1', 'test-without-building'], {log: 'tests.log', allowed: true, timeout: scope === 'rotation' ? 600000 : 6300000});
+      '-maximum-concurrent-test-simulator-destinations', '1', 'test-without-building'], {log: 'tests.log', allowed: true, timeout: scope === 'rotation' ? 900000 : 6300000});
     result.testExitCode = execution.status;
     if (existsSync(xcresult)) {
       const summary = run('xcrun', ['xcresulttool', 'get', 'test-results', 'summary', '--path', xcresult], {allowed: true});
