@@ -148,7 +148,7 @@ with zipfile.ZipFile(sys.argv[1]) as z:
       if (summary.status === 0) {writeFileSync(join(out, 'test-summary.json'), summary.stdout); result.tests = JSON.parse(summary.stdout);}
       run('xcrun', ['xcresulttool', 'export', 'attachments', '--path', xcresult, '--output-path', join(out, 'screenshots')], {allowed: true});
     }
-    run('xcrun', ['simctl', 'spawn', device, 'log', 'show', '--last', '15m', '--style', 'compact', '--predicate', 'process == "App" AND (eventMessage CONTAINS "Matharia access" OR messageType == error)'], {log: 'app-system.log', allowed: true});
+    run('xcrun', ['simctl', 'spawn', device, 'log', 'show', '--last', '15m', '--style', 'compact', '--predicate', 'process == "App" AND (eventMessage CONTAINS "Matharia access" OR eventMessage CONTAINS "Matharia QA:" OR messageType == error)'], {log: 'app-system.log', allowed: true});
     result.expectedTests = scope === 'rotation' ? 3 : cases.length + 3 + (scope === 'smoke' ? 0 : 6);
     const complete = completeTestEvidence(result.tests, cases.length, scope);
     result.status = execution.status === 0 && complete ? 'passed' : 'failed';
