@@ -1,11 +1,11 @@
 {
-  "tag": "matharia-ci-20261105-rune-relations-v1",
+  "tag": "matharia-ci-20261105-rotation-prompt-v2",
   "asset": "matharia-mac-testflight-candidate.zip",
-  "sha256": "6f40de4cb2a8f0c99e0108e026a1994e7fe0f4628c9a675cae1ae9f6c314566c",
+  "sha256": "4ca9550e3fba39698e3fa40aac8b01d7e349db251f872ecea0053670974675c6",
   "bundleId": "com.smartelearning.satslegends",
   "minimumIOS": "16.4",
   "sourceGitHead": "e7083fb7b03ebe80d4c9becd6b14338310c9ff70",
   "internalTestingOnly": true,
   "testerLocale": "en-GB",
-  "testerNotes": "Internal review build: all games and levels remain unlocked for testing.\n\nNew: Rune Relations in Operations Outpost. Five scored algebra levels, ten mixed puzzles per level, plus focused practice. Try missing values, rule machines, sequences, number pairs and combinations. Existing artwork and progress identifiers are preserved.\n\nIncludes the latest local curriculum and quiz changes. Rune Relations passed 50,000 mathematical question checks and 13 desktop-browser QA cases, including iPhone-sized touch layouts. These are not physical-device tests. Please check real-device touch input, rotation, audio, Learning Support, returning to the island and saved rewards. Native CI checks compile, install and launch; they do not certify full gameplay, StoreKit or account deletion."
+  "testerNotes": "Internal review: all games and levels are unlocked.\n\nRestores the turn-device prompt when opening a landscape game upright and turning upright during play. Keeps the prompt above practice, help and answer pads; preserves the current question when turning sideways. Artwork and saved progress identifiers are retained. Please check physical rotation, opening practice upright, help/answer-pad state, and returning to the island."
 }
