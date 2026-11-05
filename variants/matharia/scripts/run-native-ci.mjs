@@ -23,7 +23,7 @@ mkdirSync(nativeRoot);
 function run(command,args,{cwd=nativeRoot,log,timeout=1800000}={}) {
   const fd = log ? openSync(join(out,log),'w') : null;
   let result;
-  try {result = spawnSync(command,args,{cwd,encoding:'utf8',timeout,maxBuffer:32*1024*1024,
+  try {result = spawnSync(command,args,{cwd,encoding:'utf8',timeout,killSignal:'SIGKILL',maxBuffer:32*1024*1024,
     stdio:log?['ignore',fd,fd]:'pipe'});}
   finally {if (fd !== null) closeSync(fd);}
   if (result.error || result.status !== 0) {
@@ -90,6 +90,8 @@ with zipfile.ZipFile(sys.argv[1]) as z:
       'CODE_SIGNING_ALLOWED=NO','build'],{log:'build.log'});
     const app = join(derived,'Build/Products/Debug-iphonesimulator/App.app');
     if (plist(join(app,'Info.plist'),'CFBundleIdentifier') !== IOS_BUNDLE_ID || plist(join(app,'Info.plist'),'MinimumOSVersion') !== '16.4') throw Error('Simulator app has wrong identity or minimum OS.');
+    result.nativeCompiled = true; save();
+    console.log('Native compilation passed; discovering simulator devices.');
     const devices = Object.entries(JSON.parse(run('xcrun',['simctl','list','devices','available','--json'])).devices)
       .filter(([runtime])=>runtime.includes('.iOS-')).flatMap(([,items])=>items);
     result.devices = [];
@@ -97,20 +99,32 @@ with zipfile.ZipFile(sys.argv[1]) as z:
       const device = devices.find(d=>d.isAvailable && d.name.startsWith(kind));
       if (!device) throw Error(`No ${kind} simulator is available.`);
       const ownBoot = device.state !== 'Booted';
+      const sim = (stage,args,timeout) => {
+        console.log(`${kind}: ${stage} (${device.name}; timeout ${timeout/1000}s).`);
+        result.simulatorStage = {kind,name:device.name,stage,startedAt:new Date().toISOString()}; save();
+        return run('xcrun',['simctl',...args],{timeout});
+      };
       try {
-        if (ownBoot) run('xcrun',['simctl','boot',device.udid]);
-        run('xcrun',['simctl','bootstatus',device.udid,'-b']);
-        run('xcrun',['simctl','install',device.udid,app]);
-        const launched = run('xcrun',['simctl','launch',`--stdout=${join(out,kind+'-stdout.log')}`,`--stderr=${join(out,kind+'-stderr.log')}`,device.udid,IOS_BUNDLE_ID]);
+        if (ownBoot) sim('boot',['boot',device.udid],120000);
+        sim('wait for boot',['bootstatus',device.udid,'-b'],300000);
+        sim('install',['install',device.udid,app],120000);
+        const launched = sim('launch',['launch',`--stdout=${join(out,kind+'-stdout.log')}`,`--stderr=${join(out,kind+'-stderr.log')}`,device.udid,IOS_BUNDLE_ID],90000);
         const pid = launched.match(/:\s*(\d+)\s*$/)?.[1];
         if (!pid) throw Error(`No ${kind} launch PID.`);
         await new Promise(done=>setTimeout(done,15000));
-        run('xcrun',['simctl','io',device.udid,'screenshot',join(out,kind.toLowerCase()+'-native-launch.png')]);
-        const processName = run('ps',['-p',pid,'-o','comm=']);
+        sim('screenshot',['io',device.udid,'screenshot',join(out,kind.toLowerCase()+'-native-launch.png')],60000);
+        const processName = run('ps',['-p',pid,'-o','comm='],{timeout:15000});
         if (!processName.includes('App.app/App')) throw Error(`${kind} app did not survive launch.`);
         result.devices.push({name:device.name,kind,processSurvived:true});
+        save(); console.log(`${kind}: app installed, rendered and survived launch.`);
       } finally {
-        if (ownBoot) run('xcrun',['simctl','shutdown',device.udid]);
+        if (ownBoot) {
+          try {sim('shutdown',['shutdown',device.udid],45000);}
+          catch(error) {
+            (result.simulatorCleanupWarnings ||= []).push({kind,name:device.name,error:error.message}); save();
+            console.warn(`${kind}: simulator cleanup failed or timed out; validation results are retained.`);
+          }
+        }
       }
     }
     result.nativeCompiled = true;
