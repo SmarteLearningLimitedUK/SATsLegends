@@ -12,6 +12,11 @@ async function api(path,options={}){
  if(!r.ok){const body=await r.json().catch(()=>({}));throw Error(`Apple ${options.method||'GET'} ${url.pathname}: HTTP ${r.status} ${body.errors?.[0]?.code||''} ${body.errors?.[0]?.title||''}`);}
  return r.status===204?null:r.json();
 }
-try{report={...report,...await manageClosedBeta({api,operation,target,testerEmail,reviewContact:JSON.parse(process.env.CLOSED_BETA_REVIEW_CONTACT||'{}')})};if(!report.success)process.exitCode=1;}
+try{
+ let reviewContact;
+ try{reviewContact=JSON.parse(process.env.CLOSED_BETA_REVIEW_CONTACT||'{}');}
+ catch{throw Error('Invalid encrypted review contact JSON.');}
+ report={...report,...await manageClosedBeta({api,operation,target,testerEmail,reviewContact})};if(!report.success)process.exitCode=1;
+}
 catch(error){report.error=String(error.message).replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi,'[email omitted]');process.exitCode=1;}
 finally{writeFileSync(out+'/result.json',JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));}

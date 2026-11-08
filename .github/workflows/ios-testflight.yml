@@ -1,21 +1,22 @@
-name: iOS internal TestFlight upload
+name: iOS TestFlight distribution
 
 on:
   workflow_dispatch:
     inputs:
       operation:
-        description: Upload a candidate or enable the already uploaded build
+        description: Upload a candidate, manage testing access or verify the app
         type: choice
         options:
           - upload
           - enable-existing-build
           - verify-app-flow
           - closed-beta-inspect
+          - closed-beta-prepare
           - closed-beta-submit
           - closed-beta-invite
         default: upload
       upload:
-        description: Upload this candidate to existing internal TestFlight after native checks
+        description: Upload the pinned candidate after native checks
         type: boolean
         default: true
   push:

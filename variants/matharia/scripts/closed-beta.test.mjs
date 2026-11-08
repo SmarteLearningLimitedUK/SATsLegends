@@ -19,13 +19,16 @@ function fixture({audience='APP_STORE_ELIGIBLE',approved=true,outsider=false,pub
   if(path==='/v1/betaGroups/group')return {data:{attributes:{publicLinkEnabled:publicLink}}};
   if(path.includes('/betaGroups/group/betaTesters'))return {data:members};
   if(path.includes('/betaGroups/group/builds'))return {data:[{id:'build'}]};
-  if(path==='/v1/builds/build/buildBetaDetail')return {data:{attributes:{externalBuildState:approved?'READY_FOR_BETA_TESTING':'WAITING_FOR_BETA_REVIEW'}}};
+  if(path==='/v1/builds/build/buildBetaDetail')return {data:{id:'beta-detail',attributes:{externalBuildState:approved?'READY_FOR_BETA_TESTING':'WAITING_FOR_BETA_REVIEW',autoNotifyEnabled:false}}};
+  if(path==='/v1/buildBetaDetails/beta-detail'&&o.method==='PATCH'){assert.equal(o.body.data.attributes.autoNotifyEnabled,true);return {};}
   if(path.startsWith('/v1/betaTesters?'))return {data:[]};
   if(path==='/v1/betaTesters'&&o.method==='POST'){assert.equal(o.body.data.attributes.email,email);const row={id:'tester',attributes:{email,state:'INVITED'}};members.push(row);return {data:row};}
   throw Error('Unexpected '+path);
  };return {api,calls};
 }
 test('inspect is read-only and reports missing metadata without exposing contacts',async()=>{const f=fixture();const r=await manageClosedBeta({...f,operation:'inspect'});assert(r.success);assert(f.calls.every(c=>!c.method));assert(!JSON.stringify(r).includes('contact@example.invalid'));});
+
+test('preparation secures the private group without submitting or inviting',async()=>{const f=fixture({missingContact:true,publicLink:true});const r=await manageClosedBeta({...f,operation:'prepare',target,testerEmail:email});assert(r.success&&r.prepared);assert.equal(r.publicLinkEnabled,false);assert.equal(r.authorisedTesterCount,0);assert.equal(r.missingReviewFields.length,4);assert(!f.calls.some(c=>c.path==='/v1/betaAppReviewSubmissions'||c.path==='/v1/betaTesters'));});
 test('internal-only builds cannot enter the closed beta',async()=>{const f=fixture({audience:'INTERNAL_ONLY'});await assert.rejects(manageClosedBeta({...f,operation:'invite',target,testerEmail:email}),/external-eligible/);assert(!f.calls.some(c=>c.method==='POST'));});
 test('pending Apple review never sends invitations',async()=>{const f=fixture({approved:false});const r=await manageClosedBeta({...f,operation:'invite',target,testerEmail:email});assert(r.waitingForApple);assert(!r.invitationSent);assert(!f.calls.some(c=>c.path==='/v1/betaTesters'));});
 test('only the authorised tester is invited, public links stay off, repeat is idempotent',async()=>{const f=fixture({publicLink:true});const a=await manageClosedBeta({...f,operation:'invite',target,testerEmail:email});assert(a.invitationSent);assert.equal(a.authorisedTesterCount,1);assert.equal(a.publicLinkEnabled,false);const b=await manageClosedBeta({...f,operation:'invite',target,testerEmail:email});assert(!b.invitationSent);assert.equal(f.calls.filter(c=>c.path==='/v1/betaTesters').length,1);});

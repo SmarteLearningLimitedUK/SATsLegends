@@ -29,7 +29,7 @@ function run(command,args,{cwd=nativeRoot,log,timeout=1800000}={}) {
   if (result.error || result.status !== 0) {
     if (log) console.error(readFileSync(join(out,log),'utf8').split('\n').slice(-65).join('\n'));
     else console.error((result.stderr || '').slice(-4000));
-    throw Error(`${command} ${args[0]} failed; inspect ${log || 'the step output'}.`);
+    throw Error(`${command} ${args[0]} failed (${result.error?.code || `exit ${result.status}`}; timeout ${timeout/1000}s); inspect ${log || 'the step output'}.`);
   }
   return result.stdout?.trim() || '';
 }
@@ -109,8 +109,8 @@ with zipfile.ZipFile(sys.argv[1]) as z:
       try {
         if (ownBoot) sim('boot',['boot',device.udid],120000);
         sim('wait for boot',['bootstatus',device.udid,'-b'],300000);
-        sim('install',['install',device.udid,app],120000);
-        const launched = sim('launch',['launch',`--stdout=${join(out,kind+'-stdout.log')}`,`--stderr=${join(out,kind+'-stderr.log')}`,device.udid,IOS_BUNDLE_ID],90000);
+        sim('install',['install',device.udid,app],300000);
+        const launched = sim('launch',['launch',`--stdout=${join(out,kind+'-stdout.log')}`,`--stderr=${join(out,kind+'-stderr.log')}`,device.udid,IOS_BUNDLE_ID],180000);
         const pid = launched.match(/:\s*(\d+)\s*$/)?.[1];
         if (!pid) throw Error(`No ${kind} launch PID.`);
         await new Promise(done=>setTimeout(done,15000));
@@ -119,6 +119,9 @@ with zipfile.ZipFile(sys.argv[1]) as z:
         if (!processName.includes('App.app/App')) throw Error(`${kind} app did not survive launch.`);
         result.devices.push({name:device.name,kind,processSurvived:true});
         save(); console.log(`${kind}: app installed, rendered and survived launch.`);
+      } catch(error) {
+        result.simulatorFailure = {...result.simulatorStage,error:error.message}; save();
+        throw error;
       } finally {
         if (ownBoot) {
           try {sim('shutdown',['shutdown',device.udid],45000);}

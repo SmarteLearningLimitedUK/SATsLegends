@@ -2,7 +2,7 @@ import {IOS_APP_ID,IOS_BUNDLE_ID} from './ios-testflight-config.mjs';
 export const CLOSED_GROUP_NAME='Matharia Closed Beta - November 2026';
 const CONTACT_FIELDS=['contactFirstName','contactLastName','contactPhone','contactEmail'];
 export async function manageClosedBeta({api,operation,target,testerEmail,reviewContact={}}){
- if(!['inspect','submit','invite'].includes(operation))throw Error('Unknown closed-beta operation.');
+ if(!['inspect','prepare','submit','invite'].includes(operation))throw Error('Unknown closed-beta operation.');
  const app=(await api(`/v1/apps/${IOS_APP_ID}`)).data;
  if(app.id!==IOS_APP_ID||app.attributes.bundleId!==IOS_BUNDLE_ID)throw Error('Wrong Apple app.');
  const all=async path=>{const rows=[];for(let n=0;path;n++){if(n>=25)throw Error('Unexpected pagination.');const r=await api(path);rows.push(...r.data);path=r.links?.next;}return rows;};
@@ -43,6 +43,7 @@ export async function manageClosedBeta({api,operation,target,testerEmail,reviewC
  const members=await all(`/v1/betaGroups/${group.id}/betaTesters?limit=200`);
  if(!testerEmail||!/^\S+@\S+\.\S+$/.test(testerEmail))throw Error('The explicitly authorised tester email is required.');
  if(members.some(m=>m.attributes.email.toLowerCase()!==testerEmail.toLowerCase()))throw Error('Closed group contains an unexpected tester; no invitations were sent.');
+ if(operation==='prepare')return {...report,success:true,prepared:true,authorisedTesterCount:members.length};
  if(operation==='submit'){
   const contact={...existingContact};for(const key of CONTACT_FIELDS)if(!String(contact[key]??'').trim()&&reviewContact[key])contact[key]=reviewContact[key];
   // Reuse contact details only from this same app's existing App Review record.
@@ -70,6 +71,7 @@ export async function manageClosedBeta({api,operation,target,testerEmail,reviewC
  report.externalBuildState=beta.attributes.externalBuildState;report.reviewState=submission?.attributes.betaReviewState;
  if(!['READY_FOR_BETA_TESTING','IN_BETA_TESTING'].includes(report.externalBuildState)||report.reviewState!=='APPROVED')return {...report,success:true,waitingForApple:true};
  report.externalBuildApproved=true;
+ if(beta.attributes.autoNotifyEnabled!==true)await api(`/v1/buildBetaDetails/${beta.id}`,{method:'PATCH',body:{data:{type:'buildBetaDetails',id:beta.id,attributes:{autoNotifyEnabled:true}}}});
  const assigned=await all(`/v1/betaGroups/${group.id}/builds?limit=200`);
  if(!assigned.some(b=>b.id===build.id))await api(`/v1/betaGroups/${group.id}/relationships/builds`,{method:'POST',body:{data:[{type:'builds',id:build.id}]}});
  let tester=members.find(t=>t.attributes.email.toLowerCase()===testerEmail.toLowerCase());
