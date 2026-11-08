@@ -10,6 +10,9 @@ on:
           - upload
           - enable-existing-build
           - verify-app-flow
+          - closed-beta-inspect
+          - closed-beta-submit
+          - closed-beta-invite
         default: upload
       upload:
         description: Upload this candidate to existing internal TestFlight after native checks
@@ -36,6 +39,41 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  closed-beta:
+    if: github.event_name == 'workflow_dispatch' && startsWith(inputs.operation, 'closed-beta-')
+    runs-on: ubuntu-latest
+    environment: ios-testflight
+    timeout-minutes: 8
+    permissions:
+      contents: read
+    env:
+      APPLE_TEAM_ID: D8L3PZ8Y72
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            variants/matharia/scripts
+            variants/matharia/release
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Manage invitation-only closed beta
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_PRIVATE_KEY_P8: ${{ secrets.ASC_PRIVATE_KEY_P8 }}
+          CLOSED_BETA_TESTER_EMAIL: ${{ secrets.CLOSED_BETA_TESTER_EMAIL }}
+          CLOSED_BETA_REVIEW_CONTACT: ${{ secrets.CLOSED_BETA_REVIEW_CONTACT }}
+          CLOSED_BETA_OPERATION: ${{ inputs.operation }}
+        run: node variants/matharia/scripts/manage-closed-beta.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: matharia-closed-beta-result
+          path: qa-artifacts/ios-matharia/closed-beta/result.json
+          if-no-files-found: warn
+          retention-days: 14
+
   native-checks:
     if: github.event_name == 'push' || inputs.operation == 'upload' || inputs.operation == 'verify-app-flow'
     runs-on: macos-15-intel

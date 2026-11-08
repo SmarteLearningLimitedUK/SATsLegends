@@ -18,7 +18,10 @@ parser.add_argument('--tag', required=True)
 parser.add_argument('--output-dir', default='qa-artifacts/testflight')
 parser.add_argument('--local-only', action='store_true', help='Prepare a local handoff without changing the CI release pointer.')
 parser.add_argument('--internal-review', action='store_true', help='Record an all-games internal review build that cannot be exported for public distribution.')
+parser.add_argument('--closed-beta', action='store_true', help='Prepare an all-games invitation-only external TestFlight beta; no App Store submission.')
 args = parser.parse_args()
+if args.internal_review and args.closed_beta:
+    raise SystemExit('Choose internal review or closed external beta, not both.')
 if not re.fullmatch(r'matharia-ci-[a-zA-Z0-9-]+', args.tag):
     raise SystemExit('Use a matharia-ci- prefixed candidate tag.')
 root = Path(__file__).resolve().parents[3]
@@ -72,8 +75,9 @@ candidate = {'schema': 1, 'app': 'Matharia', 'bundleId': bundle, 'minimumIOS': '
              'sourceScope': 'Native source, local Swift plugin, and compiled web snapshot; not a clean npm source rebuild.',
              'webFiles': web_hashes, 'nativeProjectSha256': digest(native / 'App/App.xcodeproj/project.pbxproj')}
 candidate['internalTestingOnly'] = args.internal_review
-candidate['allGamesUnlockedForReview'] = args.internal_review
-export_scope = 'Export is restricted to internal TestFlight review. All games and levels are unlocked.' if args.internal_review else 'Export is eligible for App Store review and TestFlight.'
+candidate['allGamesUnlockedForReview'] = args.internal_review or args.closed_beta
+candidate['closedBetaOnly'] = args.closed_beta
+export_scope = ('Invitation-only external TestFlight beta. All games are unlocked; public links and App Store submission are not authorised.' if args.closed_beta else 'Export is restricted to internal TestFlight review. All games and levels are unlocked.' if args.internal_review else 'Export is eligible for App Store review and TestFlight.')
 readme = f'''MATHARIA — EXISTING SATs LEGENDS TESTFLIGHT CANDIDATE
 
 Unsigned native source and the exact compiled web bundle from the working checkout.
@@ -129,7 +133,7 @@ with ZipFile(zip_path) as archive:
     assert archive.testzip() is None
 release = {'tag': args.tag, 'asset': zip_path.name, 'sha256': digest(zip_path),
            'bundleId': bundle, 'minimumIOS': '16.4', 'sourceGitHead': source_head,
-           'internalTestingOnly': args.internal_review}
+           'internalTestingOnly': args.internal_review, 'closedBetaOnly': args.closed_beta}
 release_path = out / 'candidate.json' if args.local_only else root / 'variants/matharia/release/candidate.json'
 release_path.parent.mkdir(parents=True, exist_ok=True)
 release_path.write_text(json.dumps(release, indent=2) + '\n', encoding='utf-8')

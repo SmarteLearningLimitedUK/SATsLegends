@@ -56,6 +56,8 @@ with zipfile.ZipFile(sys.argv[1]) as z:
  z.extractall(sys.argv[2])`,zipPath,nativeRoot]);
   const candidate = JSON.parse(readFileSync(join(nativeRoot,'MATHARIA-CANDIDATE.json'),'utf8'));
   if (candidate.internalTestingOnly === true && release.internalTestingOnly !== true) throw Error('An internal review candidate must retain its internal-only export restriction.');
+  if (candidate.closedBetaOnly === true && (release.closedBetaOnly !== true || release.internalTestingOnly === true)) throw Error('Closed-beta candidate must retain its explicit external closed-beta scope.');
+  if (candidate.allGamesUnlockedForReview === true && release.internalTestingOnly !== true && !(candidate.closedBetaOnly === true && release.closedBetaOnly === true)) throw Error('An unlocked review bundle must be internal-only or explicitly scoped to a closed beta.');
   if (candidate.bundleId !== IOS_BUNDLE_ID || candidate.minimumIOS !== '16.4') throw Error('Wrong native candidate identity.');
   if (candidate.sourceGitHead !== release.sourceGitHead) throw Error('Candidate source provenance mismatch.');
   const subscriptions = subscriptionConfiguration(nativeRoot);
