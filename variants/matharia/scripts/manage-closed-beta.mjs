@@ -9,7 +9,7 @@ let report={success:false,operation,createdAt:new Date().toISOString(),ciRun:pro
 async function api(path,options={}){
  const url=new URL(path,'https://api.appstoreconnect.apple.com');if(url.origin!=='https://api.appstoreconnect.apple.com')throw Error('Wrong Apple API origin.');
  const r=await fetch(url,{method:options.method||'GET',headers:{Authorization:`Bearer ${connectToken(config)}`,...(options.body?{'Content-Type':'application/json'}:{})},body:options.body?JSON.stringify(options.body):undefined,redirect:'error',signal:AbortSignal.timeout(30000)});
- if(!r.ok){const body=await r.json().catch(()=>({}));throw Error(`Apple ${options.method||'GET'} ${url.pathname}: HTTP ${r.status} ${body.errors?.[0]?.code||''} ${body.errors?.[0]?.detail||''}`);}
+ if(!r.ok){const body=await r.json().catch(()=>({}));throw Error(`Apple ${options.method||'GET'} ${url.pathname}: HTTP ${r.status} ${body.errors?.[0]?.code||''} ${body.errors?.[0]?.title||''}`);}
  return r.status===204?null:r.json();
 }
 try{report={...report,...await manageClosedBeta({api,operation,target,testerEmail,reviewContact:JSON.parse(process.env.CLOSED_BETA_REVIEW_CONTACT||'{}')})};if(!report.success)process.exitCode=1;}

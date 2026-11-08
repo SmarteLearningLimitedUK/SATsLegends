@@ -14,7 +14,18 @@ export async function manageClosedBeta({api,operation,target,testerEmail,reviewC
   missingReviewFields:CONTACT_FIELDS.filter(k=>!String(existingContact[k]??'').trim()),
   betaDescriptionConfigured:locales.some(l=>Boolean(l.attributes.description)),feedbackEmailConfigured:locales.some(l=>Boolean(l.attributes.feedbackEmail)),
   existingClosedGroups:groups.filter(g=>g.attributes.name===CLOSED_GROUP_NAME).length};
- if(operation==='inspect')return {...report,success:true};
+ if(operation==='inspect'){
+  const reusable={...existingContact};
+  if(report.missingReviewFields.length){
+   const versions=await all(`/v1/apps/${IOS_APP_ID}/appStoreVersions?limit=200`);
+   for(const item of versions){let review;try{review=(await api(`/v1/appStoreVersions/${item.id}/appStoreReviewDetail`)).data?.attributes;}catch{continue;}
+    for(const key of CONTACT_FIELDS)if(!reusable[key]&&review?.[key])reusable[key]=review[key];
+    if(CONTACT_FIELDS.every(k=>reusable[k]))break;
+   }
+  }
+  report.missingReviewFields=CONTACT_FIELDS.filter(k=>!String(reusable[k]??'').trim());
+  return {...report,success:true};
+ }
  if(!target?.buildId||target.appId!==IOS_APP_ID||target.bundleId!==IOS_BUNDLE_ID)throw Error('A verified target build is required.');
  const response=await api(`/v1/builds/${target.buildId}?include=app,preReleaseVersion,buildBetaDetail,betaAppReviewSubmission`),build=response.data;
  const version=response.included?.find(r=>r.type==='preReleaseVersions')?.attributes.version;
@@ -32,8 +43,6 @@ export async function manageClosedBeta({api,operation,target,testerEmail,reviewC
  const members=await all(`/v1/betaGroups/${group.id}/betaTesters?limit=200`);
  if(!testerEmail||!/^\S+@\S+\.\S+$/.test(testerEmail))throw Error('The explicitly authorised tester email is required.');
  if(members.some(m=>m.attributes.email.toLowerCase()!==testerEmail.toLowerCase()))throw Error('Closed group contains an unexpected tester; no invitations were sent.');
- const assigned=await all(`/v1/betaGroups/${group.id}/builds?limit=200`);
- if(!assigned.some(b=>b.id===build.id))await api(`/v1/betaGroups/${group.id}/relationships/builds`,{method:'POST',body:{data:[{type:'builds',id:build.id}]}});
  if(operation==='submit'){
   const contact={...existingContact};for(const key of CONTACT_FIELDS)if(!String(contact[key]??'').trim()&&reviewContact[key])contact[key]=reviewContact[key];
   // Reuse contact details only from this same app's existing App Review record.
@@ -61,6 +70,8 @@ export async function manageClosedBeta({api,operation,target,testerEmail,reviewC
  report.externalBuildState=beta.attributes.externalBuildState;report.reviewState=submission?.attributes.betaReviewState;
  if(!['READY_FOR_BETA_TESTING','IN_BETA_TESTING'].includes(report.externalBuildState)||report.reviewState!=='APPROVED')return {...report,success:true,waitingForApple:true};
  report.externalBuildApproved=true;
+ const assigned=await all(`/v1/betaGroups/${group.id}/builds?limit=200`);
+ if(!assigned.some(b=>b.id===build.id))await api(`/v1/betaGroups/${group.id}/relationships/builds`,{method:'POST',body:{data:[{type:'builds',id:build.id}]}});
  let tester=members.find(t=>t.attributes.email.toLowerCase()===testerEmail.toLowerCase());
  if(tester){report.existingTester=true;}else{
   const existing=await all(`/v1/betaTesters?filter[email]=${encodeURIComponent(testerEmail)}&limit=200`);
