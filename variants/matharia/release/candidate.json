@@ -1,11 +1,11 @@
 {
-  "tag": "matharia-ci-20261106-keypad-feedback-v1",
+  "tag": "matharia-ci-20261108-island-selection-v1",
   "asset": "matharia-mac-testflight-candidate.zip",
-  "sha256": "3723bb382cabc0e5e3355d9c2c9866c97e31aa1f186b4f6b36d85aca163801c8",
+  "sha256": "45ca887fee85466015955dea565a9f9ff3e14d0501fb8db60dedf5d327d1ff0b",
   "bundleId": "com.smartelearning.satslegends",
   "minimumIOS": "16.4",
   "sourceGitHead": "e7083fb7b03ebe80d4c9becd6b14338310c9ff70",
   "internalTestingOnly": true,
   "testerLocale": "en-GB",
-  "testerNotes": "Internal review: all games and levels unlocked. Try the compact three-column keypad and the Fire, Forge or Strike action. Look for distinct correct and incorrect feedback and a clear cue when the question changes. Follow the crystal trail from the mine to the harbour and lab. Check the new untimed task counts in the graph, measurement and spatial-reasoning games. Please verify vibration on an iPhone."
+  "testerNotes": "Internal review: all games and levels remain unlocked.\n\nUpdated selection screens across all eight islands with dedicated backgrounds and game illustrations. Core of Calculation now uses the shared selection layout. Removed category/island-number subtitles, improved long caption wrapping, and increased compact-phone previews so the full artwork is visible. Artwork and saved-progress identifiers are preserved.\n\nBrowser viewport and navigation checks passed. This build is for checking the native iPhone/iPad presentation, rotation and saved progress."
 }
