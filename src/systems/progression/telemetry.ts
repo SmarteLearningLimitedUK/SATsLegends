@@ -14,6 +14,9 @@ export type TelemetryContext = {
   skillTags?: string[];
   score?: number;
   durationSec?: number;
+  answerDurationSec?: number;
+  gameTitle?: string;
+  metadata?: Record<string,unknown>;
 };
 
 export const DEFAULT_TELEMETRY: PlayerTelemetry = {
@@ -36,6 +39,12 @@ const GAME_TOPIC_MAP: Partial<Record<MiniGameType, string[]>> = {
   change_counter: ['money'],
   measurement_forge: ['measurement'],
   timekeeper_temple: ['time'],
+  calendar_quest: ['time'],
+  shattered_whole:['fractions'],
+  rune_relations:['algebra'],
+  divide_conquer:['division','remainders'],
+  acropolis_clearout:['addition','subtraction','negative_numbers'],
+  shape_secrets:['geometry','perimeter','measurement'],
   area_architect: ['area'],
   polygon_palace: ['geometry'],
   transform_temple: ['transformation'],
@@ -96,6 +105,7 @@ const ensureGameStat = (telemetry: PlayerTelemetry, gameId: string): GameStat =>
 };
 
 const resolveTopicTags = (context: TelemetryContext): string[] => {
+  if(typeof context.metadata?.skillId==='string')return [context.metadata.skillId];
   if (context.skillTags?.length) return normalizeTopicTags(context.skillTags);
   if (context.blueprintKey) return normalizeTopicTags([context.blueprintKey]);
   if (context.gameType && GAME_TOPIC_MAP[context.gameType]) return normalizeTopicTags(GAME_TOPIC_MAP[context.gameType] || []);
@@ -117,9 +127,10 @@ export const applyTelemetryEvent = (
 ): PlayerData => {
   const telemetry = { ...ensureTelemetry(player) };
   const now = Date.now();
-  const gameId = context.gameType ?? 'unknown';
+  const gameId = context.blueprintKey ?? context.gameType ?? 'unknown';
   const topics = resolveTopicTags(context);
   const gameStat = ensureGameStat(telemetry, gameId);
+  if(context.gameTitle)gameStat.label=context.gameTitle;
 
   if (eventType === 'correct_answer' || eventType === 'incorrect_answer') {
     const isCorrect = eventType === 'correct_answer';
@@ -139,6 +150,11 @@ export const applyTelemetryEvent = (
       if (isCorrect) topicStat.completions += 1;
       topicStat.accuracy = updateAccuracy(topicStat);
       topicStat.lastPlayed = now;
+      if(typeof context.answerDurationSec==='number'&&Number.isFinite(context.answerDurationSec)&&context.answerDurationSec>=0){
+        topicStat.totalAnswerTimeSec=(topicStat.totalAnswerTimeSec??0)+context.answerDurationSec;
+        topicStat.answerTimeSamples=(topicStat.answerTimeSamples??0)+1;
+        topicStat.avgTimeSec=topicStat.totalAnswerTimeSec/topicStat.answerTimeSamples;
+      }
     });
   }
 

@@ -9,7 +9,7 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='take
  --takeout-response-top:calc(var(--takeout-content-top) + var(--takeout-question-height) + 6px);
  --takeout-feedback-height:clamp(30px,calc(var(--takeout-height)*.07),56px);
  --takeout-bottom:var(--dock-footer-bottom);
- --takeout-response-height:min(clamp(175px,28dvh,220px),calc(var(--takeout-height) - var(--takeout-response-top) - var(--takeout-bottom) - var(--dock-footer-height) - 8px));
+ --takeout-response-height:min(clamp(187px,28dvh,220px),calc(var(--takeout-height) - var(--takeout-response-top) - var(--takeout-bottom) - var(--dock-footer-height) - 8px));
  --takeout-dock-height:var(--dock-footer-height);
  --takeout-actors-top:calc(var(--takeout-content-top) + 28px + 6px + 28px + 8px);
  /* The wide tavern's counter begins at 63.7% of its top-aligned cover image. */
@@ -22,8 +22,9 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='take
  .question-jewel {display:none;}
  .scalable-question-copy {display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px 18px;}
  [data-question-copy] {font-size:clamp(15px,4cqw,23px);font-weight:650;line-height:1.12;letter-spacing:0;}
- [data-question-copy]>strong {font:inherit;width:100%;max-width:none;}
- [data-question-copy]>small {font-size:clamp(12px,3.2cqw,17px);color:#ffe17c;line-height:1.1;}
+ .takeout-order-copy {display:grid;gap:2px;}
+ .takeout-order-copy>strong {font:inherit;}
+ .takeout-order-copy>small {font-size:clamp(12px,3.2cqw,17px);color:#ffe17c;line-height:1.1;}
  .takeout-ticket-slot {display:contents;}
  .takeout-ticket {position:absolute;isolation:isolate;left:3%;top:var(--takeout-content-top);width:39%;height:28px;padding:4px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;color:#fff7df;font-size:clamp(13px,2.1cqw,21px);line-height:1;}
  .takeout-ticket>span:not(.artwork-frame) {color:#ffe07c;font-weight:650;}
@@ -40,7 +41,7 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='take
  .takeout-steam {position:absolute;z-index:4;left:34%;top:calc(var(--takeout-floor) - var(--concept-plane)*.18*785/1400 - 26px);width:5%;height:44px;overflow:visible;fill:none;stroke:#fff9de;stroke-width:2;stroke-linecap:round;opacity:.4;}
  .takeout-steam>path {animation:takeout-steam-rise 2.8s ease-in-out infinite;}
  .takeout-steam>path:nth-child(2) {animation-delay:-.9s;}.takeout-steam>path:nth-child(3) {animation-delay:-1.8s;}
- .takeout-responses {position:absolute;isolation:isolate;left:45.5%;top:var(--takeout-response-top);width:52.5%;height:var(--takeout-response-height);padding:clamp(8px,calc(var(--takeout-height)*.022),16px) 12px;display:grid;grid-template-columns:minmax(0,1fr) clamp(88px,12cqw,120px);grid-template-rows:minmax(clamp(44px,calc(var(--takeout-height)*.09),64px),max-content) minmax(94px,1fr);gap:6px;}
+ .takeout-responses {position:absolute;isolation:isolate;left:45.5%;top:var(--takeout-response-top);width:52.5%;height:var(--takeout-response-height);padding:clamp(8px,calc(var(--takeout-height)*.022),16px) 12px;display:grid;grid-template-columns:minmax(0,1fr) clamp(88px,12cqw,120px);grid-template-rows:minmax(clamp(44px,calc(var(--takeout-height)*.09),64px),max-content) minmax(106px,1fr);gap:6px;}
  .takeout-tray {grid-column:1/-1;display:flex;align-items:stretch;gap:6px;min-height:0;color:#fff3cc;font-size:clamp(12px,1.8cqw,18px);font-weight:650;line-height:1.15;}
  .takeout-tray-label {width:25%;flex:none;align-self:center;padding-left:8px;}
  .takeout-tray-label>strong {display:block;color:#fff4b2;}
@@ -56,11 +57,12 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='take
  .takeout-food-shelf>button:has(.takeout-stock) {display:grid;grid-template-rows:auto minmax(14px,1fr) auto;justify-items:center;gap:1px;padding:5px 4px;}
  .takeout-food-shelf>button:has(.takeout-stock)>img {height:100%;max-height:90px;}
  .takeout-stock {display:flex;align-items:center;justify-content:center;width:100%;font-size:clamp(11px,1.4cqw,15px);line-height:1.1;white-space:nowrap;color:#ffe6a2;}
- .takeout-actions {display:grid;grid-template-columns:1fr;grid-template-rows:repeat(2,minmax(44px,1fr));gap:6px;min-height:94px;height:100%;align-self:stretch;}
+ .takeout-actions {display:grid;grid-template-columns:1fr;grid-template-rows:repeat(2,minmax(44px,1fr));gap:6px;height:100%;align-self:stretch;}
+ .takeout-actions:has(>[data-takeout-submit]:enabled) {grid-template-rows:44px minmax(56px,1fr);}
  .takeout-actions>button {position:relative;isolation:isolate;min-height:44px;min-width:0;padding:6px 12px;display:grid;place-items:center;border:0;background:none;box-shadow:none;color:#fff2c9;font-size:clamp(14px,1.9cqw,21px);font-weight:650;line-height:1.1;touch-action:manipulation;}
  .takeout-actions>button:disabled {opacity:1;filter:grayscale(.9) brightness(.8);color:#c1b9ae;}
+ .takeout-actions>[data-takeout-submit]:enabled {font-size:clamp(16px,2.2cqw,23px);}
  .takeout-actions>[data-submit-state='ready'] {color:#083f46;}
- .takeout-gold-action {position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:-1;pointer-events:none;}
  .takeout-food-shelf>button:disabled {opacity:1;filter:grayscale(.6) brightness(.8);}
  :is(.takeout-actions>button,.takeout-food-shelf>button,.takeout-tray-items>button):not(:disabled):active {scale:.96;filter:brightness(1.12);}
  :is(.takeout-actions>button,.takeout-food-shelf>button,.takeout-tray-items>button):focus-visible {outline:3px solid #fff4c1;outline-offset:2px;}
@@ -85,6 +87,18 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='take
 @media(max-width:760px) and (orientation:landscape){html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='take_out_rush']{
  .concept-question-zone,.takeout-responses {left:43%;width:55%;}
 }}
+@media (orientation:landscape) and (max-height:360px) {
+ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='take_out_rush'] {
+  --takeout-question-height:64px;
+  .takeout-responses {left:39%;width:59%;padding:5px 8px;grid-template-columns:minmax(0,1fr) 80px;grid-template-rows:44px minmax(0,1fr);gap:4px;}
+  .takeout-tray {grid-column:1;}
+  .takeout-tray-label {width:32%;padding-left:4px;}
+  .takeout-food-shelf {grid-column:1;grid-row:2;gap:2px;}
+  .takeout-actions {grid-column:2;grid-row:1 / span 2;gap:4px;}
+  .takeout-actions>button {padding-inline:6px;}
+  .takeout-feedback {width:34%;}
+ }
+}
 @keyframes takeout-customer-arrive{from{opacity:0;transform:translateX(-110%)}20%{opacity:1}to{opacity:1;transform:translateX(0)}}
 @keyframes takeout-customer-leave{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-110%)}}
 @keyframes takeout-steam-rise{0%{translate:0 8px;opacity:0}40%{opacity:.4}100%{translate:0 -16px;opacity:0}}

@@ -22,6 +22,10 @@ export const useDialogFocus = (open: boolean, onClose: () => void) => {
       (preferred ?? getControls()[0] ?? dialogRef.current)?.focus();
     });
     const handleKey = (event: KeyboardEvent) => {
+      // A portalled number pad can sit above this briefing. Its own focus
+      // handler must receive Escape/Tab without closing the underlying guide.
+      const owner = document.activeElement instanceof Element ? document.activeElement.closest('[role="dialog"][aria-modal="true"]') : null;
+      if (owner && owner !== dialogRef.current && !dialogRef.current?.contains(owner)) return;
       if (event.key === 'Escape') {
         event.preventDefault();
         closeRef.current();

@@ -1,0 +1,29 @@
+/* Each island owns its selection environment; gameplay and compact layout are unchanged. */
+html[data-presentation='matharia'] #root .screen-island-levels:has([data-adventure-board='1'][data-island-concept]) {
+ background-image:url('../../assets/png/backgrounds/bg_selection_acropolis_v1@2x.png');background-size:cover;background-position:center bottom;
+}
+html[data-presentation='matharia'] #root .screen-island-levels:has([data-adventure-board='2'][data-island-concept]) {
+ background-image:url('../../assets/png/backgrounds/bg_selection_fraction_forest_v1@2x.png');background-size:cover;background-position:center bottom;
+}
+html[data-presentation='matharia'] #root .screen-island-levels:has([data-adventure-board='4'][data-island-concept]) {
+ background-image:url('../../assets/png/backgrounds/bg_selection_data_desert_v1@2x.png');background-size:cover;background-position:center bottom;
+}
+html[data-presentation='matharia'] #root .screen-island-levels:has([data-adventure-board='5'][data-island-concept]) {
+ background-image:url('../../assets/png/backgrounds/bg_selection_operations_outpost_v1@2x.png');background-size:cover;background-position:center bottom;
+}
+html[data-presentation='matharia'] #root .screen-island-levels:has([data-adventure-board='6'][data-island-concept]) {
+ background-image:url('../../assets/png/backgrounds/bg_selection_measurement_mountain_v1@2x.png');background-size:cover;background-position:center bottom;
+}
+html[data-presentation='matharia'] #root .screen-island-levels:has([data-adventure-board='7'][data-island-concept]) {
+ background-image:url('../../assets/png/backgrounds/bg_selection_ratio_rapids_v1@2x.png');background-size:cover;background-position:center bottom;
+}
+html[data-presentation='matharia'] #root .screen-island-levels:has([data-adventure-board='8'][data-island-concept]) {
+ background-image:url('../../assets/png/backgrounds/bg_selection_calculation_core_v1@2x.png');background-size:cover;background-position:center bottom;
+}
+html[data-presentation='matharia'] #root .mission-library[data-adventure-board][data-island-concept]:not([data-adventure-board='3'])::before {
+ background:linear-gradient(180deg,#012c3d0d 8%,#012e3b66 40%,#01344110 75%);
+}
+/* A quiet reading strip keeps the heading clear over detailed scenery, including compact headers. */
+html[data-presentation='matharia'] #root .mission-library[data-adventure-board][data-island-concept]:not([data-adventure-board='3']) .mission-picker-heading {
+ width:100%;background:linear-gradient(90deg,transparent,#013947ed 12%,#013947ed 88%,transparent);
+}

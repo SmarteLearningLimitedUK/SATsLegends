@@ -13,7 +13,6 @@ const balancedThoughts = [
 const ThoughtSort: React.FC<WellbeingActivityComponentProps> = ({ onComplete, onExit }) => {
   const [selected, setSelected] = useState<string[]>([]);
   const [balancedThought, setBalancedThought] = useState<string | null>(null);
-  const [message, setMessage] = useState('Choose how you feel, then pick a fairer thought.');
   const selectedRef = useRef(selected);
   const releasedRef = useRef(false);
 
@@ -23,7 +22,6 @@ const ThoughtSort: React.FC<WellbeingActivityComponentProps> = ({ onComplete, on
   const releaseBalloon = useCallback(() => {
     if (releasedRef.current || selectedRef.current.length < 1 || !balancedThought) return;
     releasedRef.current = true;
-    setMessage('You made room for a more balanced thought.');
     finish(1200);
   }, [balancedThought, finish]);
 
@@ -33,16 +31,13 @@ const ThoughtSort: React.FC<WellbeingActivityComponentProps> = ({ onComplete, on
     const next = current.includes(word) ? current.filter((item) => item !== word) : current.length < 2 ? [...current, word] : current;
     selectedRef.current = next;
     setSelected(next);
-    setMessage(next.length < 1 ? 'Choose one or two feeling words.' : balancedThought ? 'Release the balloon when you are ready.' : 'Now choose a more balanced thought.');
   };
 
   return (
     <WellbeingShell title="Thought Release" activityId="thought_sort" type="Thought Reset"
-      subtitle="Name a feeling. Then challenge the thought that one hard question means you cannot do this."
-      purpose="Choose a fairer thought. No explanation needed."
-      fact="CBT links thoughts, feelings and actions. It helps us consider other possibilities."
-      affirmation={balancedThought || 'I can feel this and choose my next step.'}
-      status={message} progress={finished ? 100 : (selected.length ? 35 : 0) + (balancedThought ? 40 : 0)} onExit={() => { cancel(); onExit(); }}>
+      subtitle="Naming a feeling can help you pause."
+      purpose="A fairer thought can give you another way to respond when a question feels hard."
+      progress={finished ? 100 : (selected.length ? 35 : 0) + (balancedThought ? 40 : 0)} onExit={() => { cancel(); onExit(); }}>
       <div className="wellbeing-scene balloon-scene" data-balloon-released={finished} data-thought-step={balancedThought ? 'ready' : 'choose'}>
         <div className="feeling-words" role="group" aria-label="Feeling words">
           {feelingWords.map((word) => <button key={word} type="button" onClick={() => selectWord(word)} disabled={finished} aria-pressed={selected.includes(word)} className="feeling-word" data-button-skin="none">{word}</button>)}
@@ -52,7 +47,7 @@ const ThoughtSort: React.FC<WellbeingActivityComponentProps> = ({ onComplete, on
           <div className="thought-reframe-options" role="group" aria-label="Balanced thoughts">
             {balancedThoughts.map((thought) => <button key={thought} type="button" className="thought-reframe-option"
               data-button-skin="none" data-thought-option aria-pressed={balancedThought === thought}
-              disabled={finished} onClick={() => { setBalancedThought(thought); setMessage(selectedRef.current.length ? 'Release the balloon when you are ready.' : 'Choose a feeling to go with your thought.'); }}>
+              disabled={finished} onClick={() => setBalancedThought(thought)}>
               {thought}
             </button>)}
           </div>

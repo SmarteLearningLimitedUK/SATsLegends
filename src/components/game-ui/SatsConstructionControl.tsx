@@ -9,7 +9,7 @@ const graphColours = ['#fa6b6b', '#67b4fa', '#70d688'];
 export const isConstructionMission = (id: string) => ['draw-rectangle', 'draw-angle', 'construct-graph', 'ext-symmetry','depth-line-build','depth-pie-build','depth-angle-draw','depth-symmetry-axes','depth-rectangle-build','revision-fraction-shade','revision-pictogram-build'].includes(id);
 
 export default function SatsConstructionControl({ mission, value, onChange, part }: {
-  mission: SatsMission; value: string; onChange: (value: string) => void;
+  key?:string; mission: SatsMission; value: string; onChange: (value: string) => void;
   part?:'all'|'model'|'controls';
 }) {
   const [activeBar, setActiveBar] = useState(0);

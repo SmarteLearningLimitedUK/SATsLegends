@@ -8,15 +8,11 @@ The intended minimum for the App Store app is **iOS 16.0** (and **iPadOS 16.0** 
 
 ### Native enforcement before App Store submission
 
-The checked-in `ios/` folder currently contains Capacitor configuration and copied web assets, but no Xcode project, `Info.plist`, Podfile or native deployment-target setting. `package.json` also has no native iOS build command. There is therefore no enforceable App Store minimum configured in this repository yet.
+The independent Matharia target now exists at `variants/matharia/native/ios/App/App.xcodeproj`, with `Info.plist`, a Swift package and a separate Vite/Capacitor pipeline. Its current enforced minimum is **iOS/iPadOS 16.4**, checked by `variants/matharia/scripts/ensure-ios-minimum.mjs`. The root website/native folders are separate targets.
 
-When preparing the native project on macOS:
+This differs from the historical 16.0 support policy above. The release owner must resolve that policy discrepancy before submission; this release pass preserves the existing 16.4 deployment target and does not exclude small-screen devices.
 
-1. Set the app's Xcode iOS Deployment Target to **16.0**; align extension and native dependency targets as needed. Use the deployment target to generate the OS minimum rather than hand-editing the generated `MinimumOSVersion` value.
-2. Archive the exact release candidate and confirm its reported minimum OS is 16.0 in the archive/App Store Connect compatibility information. Record the archive/build identifier and evidence.
-3. Keep the native app unavailable for release until the physical-device gate below passes. Do not add hardware requirements the game does not actually need to exclude particular screen sizes.
-
-The website remains accessible according to browser capability. This policy does not add an iOS user-agent block to the web game. Billing remains intentionally deferred; adopting this device policy does not clear the separate billing release gate.
+On macOS, archive the exact prepared candidate and confirm its minimum OS, supported devices and version/build in the archive and App Store Connect. Do not label browser emulation as physical-device evidence. See [the current Matharia release pass](release-readiness-2026-11-04.md) for the build snapshot, verified coverage and remaining native checks.
 
 ### Supported-screen checks
 

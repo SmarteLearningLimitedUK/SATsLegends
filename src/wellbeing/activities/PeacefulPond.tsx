@@ -21,10 +21,9 @@ const makeInitialPads = (): Pad[] => {
     targetX: 10 + id % 5 * 20, targetY: 62 + Math.floor(id / 5) * 24, placed: false}));
 };
 const noticingPrompts = [
-  { sense: 'Sight', prompt: 'Find one colour or shape you can see.' },
-  { sense: 'Sound', prompt: 'Notice a sound nearby, or a quiet moment.' },
-  { sense: 'Touch', prompt: 'Notice where your hands or feet meet a surface.' },
-  { sense: 'Space', prompt: 'Find one steady point in the space around you.' },
+  { sense: 'Sight', prompt: 'Rest your eyes on one colour nearby.' },
+  { sense: 'Sound', prompt: 'Listen for one sound, or notice the quiet.' },
+  { sense: 'Touch', prompt: 'Feel your hands or feet resting.' },
 ] as const;
 const makeFish = (id: number): Fish => ({
   id, x: 10 + (id % 5) * 16 + (id * 7) % 9, y: 30 + (id % 6) * 10 + (id * 5) % 7,
@@ -34,7 +33,6 @@ const clamp = (value: number) => Math.max(9, Math.min(91, value));
 
 const PeacefulPond: React.FC<WellbeingActivityComponentProps> = ({ onComplete, onExit }) => {
   const [pads, setPads] = useState(makeInitialPads);
-  const [attentionReady, setAttentionReady] = useState(false);
   const [fish, setFish] = useState(() => Array.from({ length: 16 }, (_, index) => makeFish(index)));
   const [pulse, setPulse] = useState<{ x: number; y: number; key: number } | null>(null);
   const pondRef = useRef<HTMLDivElement | null>(null);
@@ -44,7 +42,7 @@ const PeacefulPond: React.FC<WellbeingActivityComponentProps> = ({ onComplete, o
   const reducedMotion = useReducedMotion();
   const { finished, finish, cancel } = useWellbeingCompletion(onComplete);
   const completeCount = pads.filter((pad) => pad.placed).length;
-  const currentPrompt = completeCount < PAD_COUNT ? noticingPrompts[completeCount % noticingPrompts.length] : null;
+  const currentPrompt = noticingPrompts[Math.floor(completeCount * noticingPrompts.length / PAD_COUNT)];
 
   useEffect(() => {
     if (reducedMotion || finished) return undefined;
@@ -76,13 +74,12 @@ const PeacefulPond: React.FC<WellbeingActivityComponentProps> = ({ onComplete, o
     return rect ? { x: (clientX - rect.left) / rect.width * 100, y: (clientY - rect.top) / rect.height * 100 } : { x: 50, y: 50 };
   };
   const placePad = (id: number) => {
-    if (finished || !attentionReady || id !== completeCount || placedRef.current.has(id)) return;
+    if (finished || id !== completeCount || placedRef.current.has(id)) return;
     placedRef.current.add(id);
-    setAttentionReady(false);
     setPads((current) => current.map((pad) => pad.id === id ? { ...pad, x: pad.targetX, y: pad.targetY, placed: true } : pad));
   };
   const beginDrag = (event: React.PointerEvent<HTMLButtonElement>, pad: Pad) => {
-    if (finished || !attentionReady || pad.id !== completeCount || pad.placed || dragRef.current) return;
+    if (finished || pad.id !== completeCount || pad.placed || dragRef.current) return;
     const point = getPoint(event.clientX, event.clientY);
     event.currentTarget.setPointerCapture(event.pointerId);
     dragRef.current = { id: pad.id, pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, originX: pad.x, originY: pad.y, offsetX: point.x - pad.x, offsetY: point.y - pad.y };
@@ -118,21 +115,17 @@ const PeacefulPond: React.FC<WellbeingActivityComponentProps> = ({ onComplete, o
 
   return (
     <WellbeingShell title="Peaceful Pond" activityId="peaceful_pond" type="Grounding"
-      subtitle="Notice something around you, then guide its lily pad into place. Tap a pad or drag it to its numbered ring."
-      purpose="Let each movement connect to something you can sense right now."
-      fact="Grounding uses sights, sounds, and touch to bring attention to the present moment."
-      affirmation="No rush. One thing at a time."
-      status={finished || completeCount === PAD_COUNT ? 'All ten lily pads are home' : attentionReady ? `Place lily pad ${completeCount + 1} of 10` : `Notice ${currentPrompt?.sense.toLowerCase()} before placing lily pad ${completeCount + 1}`}
-      progress={completeCount * 10} onExit={() => { cancel(); onExit(); }}>
+      subtitle="Noticing one detail can bring you back to the present. Guide the glowing pad when ready."
+      purpose="Tap the glowing pad or slide it to its ring. Stay with any sense that feels comfortable."
+      progress={completeCount / PAD_COUNT * 100} onExit={() => { cancel(); onExit(); }}>
       <div className="wellbeing-scene">
-        {currentPrompt && !finished ? <div className="pond-attention" data-pond-sense={currentPrompt?.sense.toLowerCase()}>
-          <span className="pond-attention-label">{currentPrompt.sense} · {completeCount + 1} of 10</span>
+        {currentPrompt ? <div className="pond-attention" data-pond-sense={currentPrompt.sense.toLowerCase()} role="status">
+          <span className="pond-attention-label">{currentPrompt.sense}</span>
           <p>{currentPrompt.prompt}</p>
-          <button type="button" className="wellbeing-quiet-action pond-attention-action" data-button-skin="none"
-            onClick={() => setAttentionReady(true)} disabled={attentionReady}>
-            {attentionReady ? 'Now guide the pad' : 'I noticed something'}
-          </button>
-        </div> : null}
+        </div> : <div className="pond-attention pond-resting" role="status">
+          <span className="pond-attention-label">Rest</span>
+          <p>Take a moment with the quiet water.</p>
+        </div>}
         <div ref={pondRef} className="pond-playfield" data-pond-playfield data-pond-count={PAD_COUNT} onPointerDown={ripple} onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={cancelDrag}>
           {pads.map((pad) => <div key={'target-' + pad.id} className={'pond-target' + (pad.placed ? ' is-placed' : '')} style={{ left: pad.targetX + '%', top: pad.targetY + '%' }} data-pond-target={pad.id + 1} aria-hidden="true">{pad.placed ? null : pad.id + 1}</div>)}
           {fish.map((item) => (
@@ -143,7 +136,7 @@ const PeacefulPond: React.FC<WellbeingActivityComponentProps> = ({ onComplete, o
           {pads.map((pad) => (
             <button key={pad.id} type="button" className="pond-pad" data-button-skin="none" data-pond-pad={pad.id + 1}
               aria-label={`Guide lily pad ${pad.id + 1} to ring ${pad.id + 1}`} aria-pressed={pad.placed}
-              disabled={finished || pad.placed || pad.id !== completeCount || !attentionReady} data-pond-active={pad.id === completeCount && attentionReady}
+              disabled={finished || pad.placed || pad.id !== completeCount} data-pond-active={pad.id === completeCount}
               style={{ left: pad.x + '%', top: pad.y + '%' }} onPointerDown={(event) => beginDrag(event, pad)} onLostPointerCapture={cancelDrag}
               onClick={(event) => { if (event.detail === 0) placePad(pad.id); }}>
               <span>{pad.id + 1}</span>

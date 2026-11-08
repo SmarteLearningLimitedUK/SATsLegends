@@ -1,3 +1,4 @@
+import {adventureTask} from '../../../../src/systems/content/adventureStory';
 import {roundFeedback} from '../roundFeedback';
 import React,{useContext,useLayoutEffect,useState} from 'react';
 import {ArrowDown,ArrowLeft,ArrowRight,ArrowUp} from 'lucide-react';
@@ -13,7 +14,7 @@ type Point={x:number;y:number};
 const consoleSize=surveyAssets.assets.find(a=>a.name==='props/coordinates_console_v3')!.dimensions;
 interface Props {
  id:string;title:string;prompt:string;minimum:number;maximum:number;start:Point;diagram:React.ReactNode;
- selected:string|null;feedback:'correct'|'incorrect'|null;paused:boolean;score:number;round:number;time:number;onSelect:(x:number,y:number)=>void;
+ selected:string|null;feedback:'correct'|'incorrect'|null;paused:boolean;score:number;round:number;total:number;time:number;onSelect:(x:number,y:number)=>void;
 }
 /** The original grid still marks taps/Enter. The console offers a larger alternative. */
 export default function CoordinatesScene(p:Props){
@@ -25,7 +26,7 @@ export default function CoordinatesScene(p:Props){
  const lower=Math.min(0,p.minimum),range=p.maximum-lower;
  const cursorStyle={left:`${12+(cursor.x-lower)/range*76}%`,top:`${88-(cursor.y-lower)/range*76}%`};
  return <section className="coordinates-scene" data-coordinates-game data-coordinates-question={p.id} data-coordinates-round={p.round} data-coordinates-score={p.score} data-coordinates-time={p.time} data-coordinates-feedback={roundFeedback(p.feedback)??'none'} data-coordinates-paused={p.paused} data-coordinates-long={p.prompt.length>105}>
-  <ScalableQuestionPanel frame="frames/glacier_panel_v3" corner={.13} longText={p.prompt.length>105}><strong className="coordinates-question-title">{p.title}</strong><span className="coordinates-question-instruction">{p.prompt}</span></ScalableQuestionPanel>
+  <ScalableQuestionPanel longText={p.prompt.length>105}><span className="coordinates-question-instruction">{p.prompt}</span><small className="scalable-question-story">{adventureTask('coordinates_quest',p.round-1)} · {p.round}/{p.total}</small></ScalableQuestionPanel>
   <ArtworkPlane className="coordinates-console-region" aspect={consoleSize[0]/consoleSize[1]} align="end">
   <img className="coordinates-console" src={asset('props','coordinates_console_v3')} alt="" draggable={false}/>
   <div className="coordinates-current-point" aria-live="polite"><ArtworkFrame name="frames/glacier_panel_v3" corner={.13}/>Point ({cursor.x}, {cursor.y})</div>

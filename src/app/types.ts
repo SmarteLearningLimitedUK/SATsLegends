@@ -21,6 +21,7 @@ export interface LevelResultState {
   hintsUsed: number;
   mistakes: number;
   timeMs: number;
+  timingEligible?: boolean;
   completed: boolean;
   coinsEarned?: number;
   xpEarned: number;

@@ -1,6 +1,11 @@
 import type { IslandData, LevelData, PlayerData } from '../../types';
 import { getLevelProgressIds } from './gameDifficulty';
 import { getLevelGameTitle, getLevelGroupKey } from '../../utils/gameNames';
+import type {LearningState} from '../learning/types';
+import {skillProgress} from '../learning/mastery';
+import {buildRevisionQuest} from '../learning/revisionQuest';
+import {REVISION_GAMES} from '../learning/revisionSkills';
+import {revisionMissionsForSkill} from '../learning/revisionTargets';
 
 export interface PracticeRecommendation {
   key: string;
@@ -11,6 +16,16 @@ export interface PracticeRecommendation {
   priority: number;
 }
 
+/** A skill-specific workshop opens before the ordinary practice game. */
+export function revisionPracticeHref(skill:string,islands:IslandData[]):string|null {
+ const game=REVISION_GAMES[skill];
+ if(!game||!revisionMissionsForSkill(skill,42,game).length)return null;
+ for(const island of islands){const level=island.levels.find(l=>l.isPractice&&(l.blueprintKey===game||l.miniGameKey===game));
+  if(level)return `/game/${island.id}/${level.id}?revisionSkill=${encodeURIComponent(skill)}`;
+ }
+ return null;
+}
+
 const bestStarsFor = (player: PlayerData, islandId: number, level: LevelData) =>
   Math.max(0, ...getLevelProgressIds(level).map((id) => player.levelStars?.[`${islandId}-${id}`] ?? 0));
 
@@ -19,8 +34,16 @@ export const getRecommendedPractice = (
   player: PlayerData,
   islands: IslandData[],
   limit = 3,
+  learning?:LearningState,
 ): PracticeRecommendation[] => {
   const candidates: PracticeRecommendation[] = [];
+  if(learning?.events.length){
+    for(const segment of buildRevisionQuest(skillProgress(learning.events))){
+      const href=revisionPracticeHref(segment.skillId,islands);
+      for(const island of islands){const level=island.levels.find(level=>level.isPractice&&(level.blueprintKey===segment.gameKey||level.miniGameKey===segment.gameKey));if(level&&href)candidates.push({key:`${island.id}:${segment.skillId}`,name:getLevelGameTitle(level),islandName:island.name,href,reason:segment.reason,priority:1000-candidates.length});}
+    }
+    if(candidates.length)return candidates.slice(0,limit);
+  }
   const gameTypeUseCount = new Map<string, number>();
 
   for (const island of islands) {
@@ -43,8 +66,9 @@ export const getRecommendedPractice = (
       const completed = levels.filter((level) => !level.isPractice && !level.isBoss &&
         getLevelProgressIds(level).some((id) => player.completedLevels[island.id]?.includes(id)));
       const lowStars = completed.map((level) => bestStarsFor(player, island.id, level)).filter((stars) => stars > 0 && stars < 3);
-      const stat = player.telemetry?.gameStats?.[practice.gameType];
-      const uniqueGameType = gameTypeUseCount.get(practice.gameType) === 1;
+      const canonicalStat=practice.blueprintKey?player.telemetry?.gameStats?.[practice.blueprintKey]:undefined;
+      const stat = canonicalStat??player.telemetry?.gameStats?.[practice.gameType];
+      const uniqueGameType = Boolean(canonicalStat)||gameTypeUseCount.get(practice.gameType) === 1;
       const lowAccuracy = uniqueGameType && stat && stat.attempts >= 5 && stat.accuracy < 0.8;
       if (!lowStars.length && !lowAccuracy) continue;
 

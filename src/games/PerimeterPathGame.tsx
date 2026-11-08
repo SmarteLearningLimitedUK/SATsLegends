@@ -218,13 +218,13 @@ const generateQuestion = (level: number): PerimeterQuestion => {
       `${notch} m`,
       `${rightBottom} m`,
       `${top} m`,
-      `${left} m`,
+      '?',
     ];
     const model = makeCompoundShape({ top, rightTop, notch, innerDown, rightBottom, left }, labels);
     return {
       id,
       level,
-      prompt: 'Trace the damaged outer boundary, then calculate the perimeter of this compound shape.',
+      prompt: 'Not to scale. Find the missing side, then the perimeter.',
       hint: 'Follow the whole outside edge of the damaged path.',
       answerUnit: 'm',
       correctPerimeter: model.perimeter,
@@ -241,12 +241,12 @@ const generateQuestion = (level: number): PerimeterQuestion => {
   const left = rightTop + innerDown + rightBottom;
   const notch = randInt(2, 7) * 100;
   const edgeCm = [top, rightTop, notch, innerDown, notch, rightBottom, top, left];
-  const labels = edgeCm.map((value) => formatMixedLength(value));
+  const labels = edgeCm.map((value,index) => index===7?'?':formatMixedLength(value));
   const model = makeCompoundShape({ top, rightTop, notch, innerDown, rightBottom, left }, labels);
   return {
     id,
     level,
-    prompt: 'Mixed units challenge: restore the full boundary and find the perimeter in cm.',
+    prompt: 'Not to scale. Find the missing side and the perimeter in cm.',
     hint: 'Convert each edge to cm before restoring the full boundary total.',
     answerUnit: 'cm',
     correctPerimeter: model.perimeter,
@@ -394,7 +394,7 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({ levelId, avatarId
     const nextCorrect = correctCount + (correct ? 1 : 0);
     setScore(nextScore); setStreak(correct ? combo + 1 : 0); setCorrectCount(nextCorrect);
     setFeedback(correct ? { type: 'correct', message: 'Boundary secured. Slime stays outside!' }
-      : { type: 'incorrect', message: `Check every outside edge: ${question.correctPerimeter} ${question.answerUnit}.` });
+      : { type: 'incorrect', message: `Count only the outside boundary. Put all lengths in ${question.answerUnit}, then add. Try this shape again.` });
     if (correct) {
       sessionEvents?.onCorrectAnswer?.({ score: nextScore, metadata: { questionId: question.id } });
       sessionEvents?.onPuzzleComplete?.({ score: nextScore, metadata: { completed: nextCorrect, total: TARGET_CORRECT } });
@@ -410,7 +410,8 @@ const PerimeterPathGame: React.FC<PerimeterPathGameProps> = ({ levelId, avatarId
         const stars = scoreToStars(nextScore, nextCorrect, incorrectRef.current);
         sessionEvents?.onGameComplete?.({ score: nextScore, stars });
         victoryRef.current(stars, nextScore);
-      } else nextQuestion();
+      } else if(correct)nextQuestion();
+      else {setLocked(false);answerLockRef.current=false;setFeedback(null);}
     }, correct ? 520 : 900));
   };
   const toggleEdge = (id: string) => {

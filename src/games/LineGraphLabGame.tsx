@@ -67,27 +67,16 @@ const shuffle = <T,>(items: T[]) => {
 };
 
 const generateGraph = (level: number, roundIndex: number): DataPoint[] => {
-  const patterns = [
-    [1, 3, 6, 4, 8],
-    [3, 7, 5, 6, 2],
-    [2, 5, 4, 9, 7],
-    [4, 2, 6, 7, 3],
-    [1, 5, 7, 3, 6],
-  ];
   const scale = level <= 2 ? 1 : level === 3 ? 2 : level === 4 ? 3 : 4;
-  const offset = level === 1 ? roundIndex % 2 : level === 2 ? roundIndex % 3 : level * 2 + (roundIndex % 4);
-  return patterns[roundIndex % patterns.length].map((value, index) => ({
+  const offset = Math.floor(Math.random()*(level*2+1));
+  const pattern=shuffle(Array.from({length:10},(_,i)=>i+1)).slice(0,5);
+  return pattern.map((value, index) => ({
     label: X_AXIS_LABELS[index],
     value: offset + value * scale,
   }));
 };
 
-const numberOptions = (answer: number, step: number) => shuffle([
-  answer,
-  Math.max(0, answer - step),
-  answer + step,
-  answer + step * 2,
-].map(String));
+const numberOptions = (answer: number, step: number) => shuffle([...new Set([answer,Math.max(0,answer-step),answer+step,answer+step*2,answer+step*3])].slice(0,4).map(String));
 
 const timeLabel = (value: string) => `${value} ${Number(value) === 1 ? 'minute' : 'minutes'}`;
 
@@ -187,6 +176,7 @@ const buildComparisonQuestion = (graph: DataPoint[]): RoundData | null => {
   if (!increases.length) return null;
 
   const best = increases.reduce((currentBest, entry) => (entry.increase > currentBest.increase ? entry : currentBest), increases[0]);
+  if(increases.filter(entry=>entry.increase===best.increase).length!==1)return null;
   const correct = `${best.fromIndex + 1} to ${best.toIndex + 1}`;
   const wrongs = shuffle(
     graph.slice(0, -1).map((_, index) => `${index + 1} to ${index + 2}`)

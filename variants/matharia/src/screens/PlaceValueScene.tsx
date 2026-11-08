@@ -1,3 +1,4 @@
+import {adventureTask} from '../../../../src/systems/content/adventureStory';
 import {roundFeedback} from '../roundFeedback';
 import React,{useEffect} from 'react';
 import {motion,useReducedMotion} from 'motion/react';
@@ -29,7 +30,7 @@ export default function PlaceValueScene(p:Props){
  const relative=p.drag?p.relativePoint(p.drag.clientX,p.drag.clientY):null;
  return <motion.section ref={p.playfieldRef} className="pvp-scene" data-pvp-reviewed-scene data-pvp-question={p.question.id} data-pvp-correct={p.completed} data-pvp-paused={p.paused} onPointerMove={p.onMove} onPointerUp={p.onFinish} onPointerCancel={p.onCancel} animate={p.shake&&!reduced?{x:[0,-5,5,-3,3,0]}:{x:0}} transition={{duration:.34}}>
   <PracticeIntroPopup open={p.showIntro} title="Place Value Panic" body={'The Monster Minds have scrambled the number stones.\nPlace each digit in the correct position.\nCheck the value of each place carefully.'} briefing={p.briefing} onAction={p.onDismiss}/>
- <ScalableQuestionPanel frame="frames/pvp_question_v3_hollow" surface="#00434b" corner={.15} longText={p.prompt.length>85} heading={<span className="pvp-question-ordinal">Question {Math.min(p.total,p.completed+1)} of {p.total}</span>}>{p.prompt}</ScalableQuestionPanel>
+ <ScalableQuestionPanel longText={p.prompt.length>85} heading={<span className="pvp-question-ordinal">{adventureTask('place_value_panic',p.completed)} {Math.min(p.total,p.completed+1)}/{p.total}</span>}>{p.prompt}</ScalableQuestionPanel>
   <div className="pvp-guardian"><SceneActor source={asset('heroes','hero_pvp_rhino_v2')} identity="rhino" legacyIdentity="rhino" alt="Monster Mind" reaction={p.health<=0?'defeated':p.effect==='heal'?'taunt':p.effect} reactionKey={p.pulse} soundMode="all"/>{p.speech&&<span className="pvp-guardian-speech" role="status">{p.speech}</span>}</div>
   <div className="sr-only" role="progressbar" aria-label="Monster Mind strength" aria-valuemin={0} aria-valuemax={p.total} aria-valuenow={p.health} data-pvp-health={p.health}/>
   <div className="pvp-targets" data-pvp-number-stones style={{'--pvp-count':p.targetSlots.length} as React.CSSProperties} aria-label="Number stones">

@@ -1,3 +1,5 @@
+import {questionMetadata} from '../systems/learning/questionMetadata';
+import {isUntimedRevision,isRelaxedRevision} from '../systems/learning/sessionPolicy';
 import { playGameSound } from '../audio/gameAudio';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronLeft } from 'lucide-react';
@@ -89,6 +91,21 @@ const GEM_VALUE_POOLS: Record<GemType, GemValueOption[]> = {
   ],
 };
 
+// Guided Match Mastery introduces familiar equivalent representations, including one whole.
+const GUIDED_VALUE_POOLS: Record<GemType, GemValueOption[]> = {
+  red: GEM_VALUE_POOLS.red.filter(value => value.label !== '2/4'),
+  blue: GEM_VALUE_POOLS.blue.filter(value => value.label !== '2/8'),
+  green: GEM_VALUE_POOLS.green.filter(value => value.label !== '6/8'),
+  yellow: GEM_VALUE_POOLS.yellow.filter(value => value.label !== '2/10'),
+  purple: [{label:'4/4',format:'fraction'},{label:'1',format:'decimal'},{label:'100%',format:'percentage'}],
+};
+
+const UPPER_MATCH_VALUES:Record<number,Record<GemType,GemValueOption[]>>=Object.fromEntries([
+ [3,[[3,5],[7,10],[1,8],[3,8],[9,10]]],
+ [4,[[17,20],[3,20],[7,20],[11,20],[9,20]]],
+ [5,[[5,4],[7,5],[13,20],[17,25],[23,25]]],
+].map(([tier,pairs])=>[tier,Object.fromEntries((pairs as number[][]).map(([n,d],i)=>[GEM_TYPES[i],[{label:`${n}/${d}`,format:'fraction'},{label:`${n*2}/${d*2}`,format:'fraction'},{label:String(n/d),format:'decimal'},{label:`${Number((n/d*100).toFixed(2))}%`,format:'percentage'}]]))])) as Record<number,Record<GemType,GemValueOption[]>>;
+
 const indexFor = (row: number, col: number) => (row * GRID_COLS) + col;
 
 const findMatches = (board: BoardCell[]): number[] => {
@@ -142,8 +159,8 @@ const wouldCreateImmediateMatch = (board: BoardCell[], row: number, col: number,
 };
 
 const pickTileLabel = (type: GemType, tier: number, isMatchMastery = true, preferredFormat?: TileValueFormat) => {
-  const values = GEM_VALUE_POOLS[type];
-  const pool = isMatchMastery && tier >= 3 ? values
+  const values = isMatchMastery && tier === 1 ? GUIDED_VALUE_POOLS[type] : isMatchMastery&&tier>=3?UPPER_MATCH_VALUES[tier][type]:GEM_VALUE_POOLS[type];
+  const pool = isMatchMastery && (tier === 1 || tier >= 3) ? values
     : tier === 1 ? values.slice(0, 1)
     : tier === 2 ? values.filter((option) => option.format === 'fraction')
       : tier === 3 ? values.filter((option) => option.format !== 'decimal')
@@ -169,7 +186,7 @@ const buildRandomBoard = (tier: number, isMatchMastery: boolean): BoardCell[] =>
       const candidates = GEM_TYPES.filter((gemType) => !wouldCreateImmediateMatch(board, row, col, gemType));
       const chosenPool = candidates.length > 0 ? candidates : GEM_TYPES;
       const chosenType = chosenPool[Math.floor(Math.random() * chosenPool.length)];
-      const preferredFormat = isMatchMastery && tier >= 3
+      const preferredFormat = isMatchMastery && (tier === 1 || tier >= 3)
         ? MIXED_FORMATS[indexFor(row, col) % MIXED_FORMATS.length]
         : undefined;
       board[indexFor(row, col)] = buildCell(chosenType, tier, isMatchMastery, preferredFormat);
@@ -581,7 +598,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
   }, [isMatchMastery, onGameOver, onVictory, resolvedLevel, targetScore]);
 
   useEffect(() => {
-    if (endedRef.current || sessionState?.paused || showPracticeIntro) return;
+    if (endedRef.current || sessionState?.paused || showPracticeIntro || isUntimedRevision(sessionState)) return;
     if (timeLeft <= 0) {
       finalizeRound(XP);
       return;
@@ -592,7 +609,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
     }, 1000);
 
     return () => window.clearTimeout(timer);
-  }, [finalizeRound, XP, timeLeft, sessionState?.paused, showPracticeIntro]);
+  }, [finalizeRound, XP, timeLeft, sessionState?.paused, sessionState?.untimed, showPracticeIntro]);
 
   useEffect(() => {
     if (endedRef.current) return;
@@ -698,7 +715,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       setSwapHint('No match. Line up 3 equivalent values and try again.');
       emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
         score: XP,
-        metadata: { firstTile: selectedIdx, secondTile: idx },
+        metadata: { firstTile: selectedIdx, secondTile: idx ,...questionMetadata("match3_equivalence","fractions.equivalence-match",{board:board.map(cell=>cell?.label),firstTile:selectedIdx,secondTile:idx},"recognition",["6F11"],resolvedLevel<5)},
       });
       return;
     }
@@ -711,7 +728,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
     setSuccessfulSwaps(successfulSwapsRef.current);
     emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
       score: XP + matches.length * pointsPerMatchedTile,
-      metadata: { firstTile: selectedIdx, secondTile: idx, matchedTiles: matches.length },
+      metadata: { firstTile: selectedIdx, secondTile: idx, matchedTiles: matches.length ,...questionMetadata("match3_equivalence","fractions.equivalence-match",{board:board.map(cell=>cell?.label),firstTile:selectedIdx,secondTile:idx},"recognition",["6F11"],resolvedLevel<5)},
     });
     if (!await waitForMotion(reducedMotion ? 0 : 260)) return;
     await processBoard(swapped);
@@ -738,7 +755,7 @@ const FractionMatchGame: React.FC<FractionMatchGameProps> = ({
       questionText={swapHint ? <span role="status" aria-live="polite">{swapHint}</span> : isMatchMastery
         ? resolvedLevel === 5
           ? `Restore the board: line up 3 equal values. ${Math.min(successfulSwaps, MIN_COLOURLESS_MATCHES)}/${MIN_COLOURLESS_MATCHES} matches.`
-          : resolvedLevel >= 3
+          : resolvedLevel === 1 || resolvedLevel >= 3
             ? 'Match equal fractions, decimals and percentages.'
             : 'Match equivalent fractions.'
         : 'Match equivalent values.'}

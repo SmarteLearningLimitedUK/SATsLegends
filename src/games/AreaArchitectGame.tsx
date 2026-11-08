@@ -49,7 +49,7 @@ const buildQuestion = (id: string, gridSize: number, cells: Cell[], prompt: stri
   return { id, prompt, gridSize, cells: uniqueCells, backgroundCells, correct: uniqueCells.length };
 };
 
-const areaQuestionsForTier = (level: number): AreaQuestion[] => {
+const authoredAreaQuestions = (level: number): AreaQuestion[] => {
   const tier = Math.max(1, Math.min(5, level));
   return Array.from({ length: 8 }, (_, variant) => {
     if (tier <= 2) {
@@ -86,6 +86,20 @@ const areaQuestionsForTier = (level: number): AreaQuestion[] => {
     }
     throw new Error('Unsupported Area Architect tier');
   });
+};
+
+const areaQuestionsForTier = (level:number):AreaQuestion[] => {
+ const tier=Math.max(1,Math.min(5,level)),models=authoredAreaQuestions(tier),seen=new Set(models.map(q=>JSON.stringify(q.cells)));
+ for(let i=0;i<48;i++){
+  const width=2+Math.floor(Math.random()*(tier<=2?4:6)),height=2+Math.floor(Math.random()*(tier<=2?4:6));
+  const whole=rectCells(1,1,width,height);let cells=whole,background:Cell[]|undefined,prompt='What is the floor area?';
+  if(tier>=3){const cutW=1+Math.floor(Math.random()*(width-1)),cutH=1+Math.floor(Math.random()*(height-1)),cutX=tier>=4&&width-cutW>1?2:1,cutY=tier>=4&&height-cutH>1?2:1;
+   cells=whole.filter(c=>!(c.x>=cutX&&c.x<cutX+cutW&&c.y>=cutY&&c.y<cutY+cutH));
+   if(tier>=4){background=whole;prompt='What is the area of the blue shaded region?';}
+  }
+  const key=JSON.stringify(cells);if(seen.has(key))continue;seen.add(key);models.push(buildQuestion(`area-${tier}-${key}`,Math.max(width,height)+2,cells,prompt,background));
+ }
+ return models;
 };
 
 const buildQuestionDeck = (level: number, previousLast: AreaQuestion | null) => (

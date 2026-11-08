@@ -14,6 +14,7 @@ import WellbeingHub from '../wellbeing/WellbeingHub';
 import { WELLBEING_ACTIVITIES, WELLBEING_ACTIVITY_BY_ISLAND, WELLBEING_BY_ID } from '../wellbeing/data';
 import { WellbeingActivityId } from '../wellbeing/types';
 import GameplayContentViewport from '../components/GameplayContentViewport';
+import TargetedRevisionGate from '../components/game-ui/TargetedRevisionGate';
 import { GAME_SCENE_META } from '../gameSceneMeta';
 import GameLoadBoundary, { GameLoadFallback, GameLoadingFallback } from '../components/GameLoadBoundary';
 import { getMiniGame, MiniGameRegistryKey } from '../games';
@@ -147,7 +148,7 @@ export const AppRouter: React.FC<AppRouterProps> = ({
         <Suspense
           fallback={<GameLoadingFallback />}
         >
-          {getMiniGame(key).render(props)}
+          <TargetedRevisionGate game={selectedLevel.blueprintKey??selectedLevel.miniGameKey??selectedLevel.gameType} practice={Boolean(selectedLevel.isPractice)}>{getMiniGame(key).render(props)}</TargetedRevisionGate>
         </Suspense>
       </GameLoadBoundary>
     );
@@ -172,6 +173,18 @@ export const AppRouter: React.FC<AppRouterProps> = ({
     };
 
     switch (selectedLevel.gameType) {
+      case 'shape_secrets':
+        return renderFromRegistry('ShapeSecretsGame', sharedProps);
+      case 'acropolis_clearout':
+        return renderFromRegistry('AcropolisClearoutGame', sharedProps);
+      case 'divide_conquer':
+        return renderFromRegistry('DivideConquerGame', sharedProps);
+      case 'rune_relations':
+        return renderFromRegistry('RuneRelationsGame', sharedProps);
+      case 'calendar_quest':
+        return renderFromRegistry('CalendarQuestGame', sharedProps);
+      case 'shattered_whole':
+        return renderFromRegistry('ShatteredWholeGame', sharedProps);
       case 'cloud_collapse':
         return renderFromRegistry('FractionMatchGame', { ...sharedProps, variantGameType: 'cloud_collapse', isBoss: Boolean(selectedLevel.isBoss) });
       case 'potion_pour':

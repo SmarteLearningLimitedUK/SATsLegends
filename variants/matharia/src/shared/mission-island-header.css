@@ -1,0 +1,93 @@
+/* The island itself anchors selection. Existing game and level controls retain their styling. */
+html[data-presentation='matharia'] #root .mission-library[data-adventure-board] {
+ background:#092e36;
+ grid-template-rows:minmax(220px,.95fr) 145px minmax(290px,1.5fr);
+ .mission-island-scene {display:grid;grid-template-rows:44px minmax(0,1fr) auto;justify-items:center;align-items:center;gap:6px;margin:0;padding:0 2px 6px;background:none;border:0;overflow:visible;}
+ .mission-island-toolbar {display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;width:100%;gap:8px;}
+ .mission-island-tokens {justify-self:center;margin:0;}
+ .mission-island-illustration {position:relative;align-self:stretch;width:min(100%,400px);min-width:0;min-height:0;}
+ .mission-island-artwork {display:block;position:absolute;inset:0;min-width:0;min-height:0;width:100%;height:100%;object-fit:contain;pointer-events:none;}
+ .mission-island-identity {position:static;justify-self:center;align-self:center;min-width:0;width:100%;margin:0;padding:0 8px;background:none;border:0;border-radius:0;text-align:center;}
+ .mission-island-identity .adventure-eyebrow {display:block;font-size:10px;line-height:1.25;letter-spacing:.06em;}
+ .mission-island-identity h1 {margin:3px 0 0;font-size:clamp(24px,6.5vw,36px);line-height:1.1;text-align:center;text-wrap:balance;}
+}
+/* Geometry's quiet-centred artwork sits behind the carousel; labels retain dark backing. */
+html[data-presentation='matharia'] #root .mission-library[data-adventure-board='3'] {
+ .mission-game-picker {position:relative;isolation:isolate;overflow:hidden;background:#06333b;}
+ .mission-picker-backdrop {position:absolute;z-index:-1;inset:0;display:block;width:100%;height:100%;object-fit:cover;object-position:center;pointer-events:none;}
+ .mission-game-tab strong {background:#04343beb;border-radius:5px;padding-inline:4px;}
+ .mission-carousel-arrow {background:#06333bc2;border-radius:50%;}
+}
+/* Keep the existing actions fully visible beside the more prominent island header. */
+@media(orientation:portrait) and (min-height:701px) and (max-height:900px) {
+ html[data-presentation='matharia'] #root .mission-library[data-adventure-board] {
+  .mission-selection-panel {padding:16px 20px 12px;gap:6px;}
+  .mission-selected-header {min-height:44px;}
+  .mission-selected-header>img {width:40px;height:40px;}
+  .mission-options-inner {gap:3px;}
+  .mission-play-level {min-height:50px;font-size:18px;}
+  .mission-calm>summary {padding-block:6px;}
+ }
+}
+@media(orientation:portrait) and (max-height:700px) {
+ html[data-presentation='matharia'] #root .mission-library[data-adventure-board] {
+  grid-template-rows:190px 140px minmax(0,1fr);
+  .mission-island-scene {gap:4px;padding-bottom:4px;}
+  .mission-island-identity h1 {font-size:24px;}
+ }
+}
+@media(min-width:700px) and (orientation:portrait) {
+ html[data-presentation='matharia'] #root .mission-library[data-adventure-board] {
+  grid-template-rows:minmax(280px,1fr) minmax(160px,.65fr) minmax(320px,1.4fr);
+  .mission-island-identity h1 {font-size:36px;}
+  .mission-island-identity .adventure-eyebrow {font-size:12px;}
+ }
+}
+/* Browser previews can be resized; retain a centred identity in that layout too. */
+@media(orientation:landscape) and (max-height:550px) {
+ html[data-presentation='matharia'] #root .mission-library[data-adventure-board] {
+  grid-template-rows:minmax(170px,1fr) minmax(145px,.8fr);
+  .mission-island-identity {margin:0;padding:0 4px;}
+  .mission-island-identity h1 {font-size:22px;}
+  .mission-island-identity .adventure-eyebrow {font-size:9px;}
+ }
+}
+/* Compact phones use the island name as the header, freeing the illustration's space. */
+@media(orientation:portrait) and (max-width:375px), (orientation:portrait) and (max-height:700px) {
+ html[data-presentation='matharia'] #root .mission-library[data-adventure-board] {
+  grid-template-rows:96px 140px minmax(0,1fr);
+  .mission-island-scene {grid-template-rows:44px minmax(0,1fr);gap:4px;padding-bottom:4px;}
+  .mission-island-illustration {display:none;}
+  .mission-island-identity h1 {font-size:24px;}
+ }
+}
+
+/* Geometry Glacier: one continuous icy setting around the island and game choices. */
+html[data-presentation='matharia'] #root .mission-library[data-adventure-board='3'] {
+ background:linear-gradient(180deg,#082b3b,#06383e 55%,#052f38);
+ gap:6px;
+ .mission-island-scene {background-size:cover;background-position:center;overflow:hidden;border-radius:22px 22px 10px 10px;box-shadow:inset 0 0 0 1px #bdeaf633;}
+ .mission-island-scene::after {content:'';position:absolute;inset:35% 0 0;z-index:-1;background:linear-gradient(transparent,#052f3bd9);pointer-events:none;}
+ .mission-island-toolbar {padding:5px 6px 0;}
+ .mission-island-illustration {width:min(100%,300px);filter:drop-shadow(0 10px 12px #021f36a6);}
+ .mission-island-identity {padding:4px 10px 10px;text-shadow:0 2px 8px #002334;}
+ .mission-island-identity .adventure-eyebrow {color:#d9c381;}
+ .mission-island-identity h1 {color:#fff5d7;}
+ .mission-game-picker {border-radius:16px;box-shadow:inset 0 0 0 1px #a7d8dc33;}
+ .mission-picker-backdrop {opacity:.55;}
+ .mission-picker-heading {color:#fff4d6;text-shadow:0 2px 5px #002735;}
+ .mission-game-tab {border-radius:13px;}
+ .mission-game-tab strong {font-weight:700;}
+ .mission-game-tab[aria-selected=true] {background:#073b46f2;box-shadow:0 0 0 1px #f9e09a,0 5px 18px #001c2a99;}
+ .mission-carousel-arrow {color:#ffe09a;}
+ .mission-selection-panel {border-color:#dbbf7a;background:linear-gradient(160deg,#0b5058,#043841 70%);box-shadow:inset 0 0 0 1px #fff0c23b,0 7px 20px #001c2c70;}
+ .mission-selected-header h2 {color:#fff4d5;}
+ .mission-level-choice {border-color:#d8c18370;}
+ .mission-step[aria-pressed=true] {box-shadow:0 0 0 2px #fff0ad,0 0 15px #ffdb7180;}
+ .mission-secondary-actions {gap:10px;}
+ .mission-practice-button,.mission-calm>summary {background:#073b45;border-color:#d6bd77;}
+}
+@media(prefers-reduced-motion:no-preference) {
+ html[data-presentation='matharia'] #root .mission-library[data-adventure-board='3'] .mission-island-artwork {animation:glacier-island-arrive .5s ease-out both;}
+ @keyframes glacier-island-arrive {from {opacity:0;transform:translateY(8px)} to {opacity:1;transform:translateY(0)}}
+}

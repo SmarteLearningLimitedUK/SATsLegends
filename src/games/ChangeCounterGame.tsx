@@ -1,3 +1,4 @@
+import {isRelaxedRevision} from '../systems/learning/sessionPolicy';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { motion, useIsPresent, useReducedMotion } from 'motion/react';
@@ -107,8 +108,8 @@ const buildReceiptQuestion = (levelId: number, roundIndex: number, order: Market
       ? 1
       : randomInt(profile.minQuantity, profile.maxQuantity);
     const unitPricePence = levelId <= 1
-      ? [72, 85, 135, 149, 225, 375][roundIndex % 6]
-      : levelId === 2 ? [739, 425, 875, 649, 389, 912][roundIndex % 6]
+      ? randomInt(50,450)
+      : levelId === 2 ? randomInt(201,975)
       : Math.min(profile.maxPrice, Math.max(profile.priceStep, Math.round(seed.costPence / profile.priceStep) * profile.priceStep));
     return {
       id: `${seed.id}-${index}`,
@@ -377,19 +378,19 @@ const ChangeCounterGame: React.FC<ChangeCounterGameProps> = ({
       setCorrectCount(nextCorrect);
       setFeedbackTone('success');
       setFeedbackText(`Cha-ching! +${gained} XP. The slime stays in its jar.`);
-      triggerHaptic('success');
+      if (!sessionEvents?.onCorrectAnswer) triggerHaptic('success');
       emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { score: updatedScore, metadata: { item: question.item } });
       emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', { score: updatedScore });
       advanceRound(nextCorrect, updatedScore, lives);
       return;
     }
 
-    const nextLives = lives - 1;
+    const nextLives = isRelaxedRevision(sessionState)?lives:lives - 1;
     setLives(nextLives);
     setFeedbackTone('warning');
     const difference = Math.abs(question.changePence - selectedTotal);
     setFeedbackText(`The till rattles: ${formatMoney(difference)} ${selectedTotal > question.changePence ? 'too much' : 'short'}. Adjust the coins and try again.`);
-    triggerHaptic('error');
+    if (!sessionEvents?.onIncorrectAnswer) triggerHaptic('error');
     emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { score, metadata: { correctAnswer: question.correct } });
 
     if (nextLives <= 0) {

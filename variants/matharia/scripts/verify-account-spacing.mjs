@@ -103,9 +103,9 @@ async function fit(p, selector) {
 async function dismissBriefings(p) { for(let i=0;i<6;i++){const button=p.locator('[data-dialog-primary]:visible').last();if(!await button.count())break;await button.click();await p.waitForTimeout(100);} }
 async function finishParentGate(p) {
  const gate=p.locator('[data-native-dialog="parent-gate"]');
- await gate.waitFor();const match=(await gate.locator('label').innerText()).match(/(\d+) × (\d+)/);
+ await gate.waitFor();const match=(await gate.locator('label').innerText()).match(/([1-9]) \+ ([1-9])\?/);
  if(!match)throw Error('Parent-check question missing');
- await gate.locator('input').fill(String(+match[1]*+match[2]));
+ await gate.locator('input').fill(String(Number(match[1])+Number(match[2])));
  await gate.getByRole('button',{name:'Continue',exact:true}).click();
 }
 try {

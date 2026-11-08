@@ -599,6 +599,18 @@
   line-height: 1.4;
   text-wrap: balance;
 }
+.star-round-transition summary {
+  min-height: 44px;
+  padding: 10px 0;
+  cursor: pointer;
+  font-size: 15px;
+}
+.star-round-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
 .star-round-next {
   min-height: 48px;
   max-width: 100%;

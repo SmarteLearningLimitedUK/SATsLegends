@@ -17,10 +17,16 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='chan
  .change-workspace{left:10%;grid-template-columns:minmax(0,.37fr) minmax(0,.63fr);gap:6px;}
  .change-receipt{padding:12px;}
  .change-till-header{grid-template-columns:18% minmax(0,1fr);gap:3px;}
- .change-till-total>span{font-size:10px;}
+ .change-till-total>span{font-size:12px;}
  .change-till-total>strong{font-size:14px;}
 
 }}
+html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='change_counter'][data-measured-scene]{
+ .change-receipt-heading>strong,.change-till-total>span {min-width:0;white-space:normal;}
+ .change-receipt-heading {gap:6px;}
+ .change-till-total>span {padding-inline:2px;text-align:center;line-height:1.15;}
+ .change-till-actions>button {white-space:normal;}
+}
 @media(prefers-reduced-motion:no-preference){html[data-presentation='matharia'] #root .change-selected-coins>button{animation:change-coin-drop 200ms ease-out;}html[data-presentation='matharia'] #root .change-scene[data-market-paused='true'] .change-selected-coins>button{animation-play-state:paused;}}
 @keyframes change-coin-drop{from{transform:translateY(-15px) rotate(-16deg);opacity:0;}to{transform:none;opacity:1;}}
 
@@ -34,3 +40,18 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='chan
  .change-question-feedback{font-size:12px;margin-top:0;}
  .change-question-main{font-size:14px;}
 }}
+@media (orientation:landscape) and (max-height:360px) {
+ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='change_counter'][data-measured-scene] {
+  .change-till {grid-template-columns:minmax(0,1fr) 82px;grid-template-rows:44px repeat(2,minmax(44px,1fr));}
+  .change-till-header {grid-column:1;grid-row:1;}
+  .change-coin-buttons {grid-column:1;grid-row:2 / span 2;}
+  .change-till-actions {display:contents;}
+  .change-till-actions>button {grid-column:2;font-size:13px;}
+  .change-till-actions>button:nth-child(1) {grid-row:1;}
+  .change-till-actions>button:nth-child(2) {grid-row:2;}
+  .change-till-actions>button:nth-child(3) {grid-row:3;}
+  .change-receipt {padding:6px 9px;grid-template-rows:17px minmax(0,1fr) 28px;}
+  .change-receipt :is(.change-receipt-line,.change-receipt-line small,.change-receipt-totals) {font-size:12px;line-height:1;}
+  .change-receipt-line>div {gap:0;}
+ }
+}

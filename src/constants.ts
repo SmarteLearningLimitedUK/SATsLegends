@@ -8,6 +8,11 @@ import world05Map from './assets/maps/finalamendedworldmap.webp';
 import world06Map from './assets/maps/finalmap.webp';
 import { NUMBER_BASE_CAMP_LEVELS } from './systems/content/island1NumberBaseCamp';
 import { buildFiveTierCampaign } from './systems/content/gameDifficulty';
+import {appendRuneRelationsLevels} from './systems/content/runeRelationsLevels';
+import {appendDivideConquerLevels} from './systems/content/divideConquerLevels';
+import {appendAcropolisClearoutLevels} from './systems/content/acropolisClearoutLevels';
+import {appendShapeSecretsLevels} from './systems/content/shapeSecretsLevels';
+import {appendShatteredWholeLevels} from './systems/content/shatteredWhole/levels';
 
 const mergeIslandLevels = (...groups: LevelData[][]): LevelData[] => {
   const flattened = groups.flat().map((level, index) => ({
@@ -67,9 +72,9 @@ const RATIO_RACER_LEVELS: LevelData[] = [
 ];
 
 const CALCULATION_CORE_LEVELS: LevelData[] = [
-  { id: 1, stars: 0, isLocked: false, blueprintKey: 'crystal_core', displayName: 'SATs Paper 1: Arithmetic', gameType: 'crystal_core', isBoss: true, bossUnlockCoins: 0, isPractice: false },
-  { id: 2, stars: 0, isLocked: false, blueprintKey: 'mirror_gate', displayName: 'SATs Paper 2: Reasoning', gameType: 'mirror_gate', isBoss: true, bossUnlockCoins: 0, isPractice: false },
-  { id: 3, stars: 0, isLocked: false, blueprintKey: 'matrix_match', displayName: 'SATs Paper 3: Reasoning', gameType: 'matrix_match', isBoss: true, bossUnlockCoins: 0, isPractice: false },
+  { id: 1, stars: 0, isLocked: false, blueprintKey: 'crystal_core', displayName: 'Arithmetic Quiz', gameType: 'crystal_core', isBoss: true, bossUnlockCoins: 0, isPractice: false },
+  { id: 2, stars: 0, isLocked: false, blueprintKey: 'mirror_gate', displayName: 'Reasoning Quiz 1', gameType: 'mirror_gate', isBoss: true, bossUnlockCoins: 0, isPractice: false },
+  { id: 3, stars: 0, isLocked: false, blueprintKey: 'matrix_match', displayName: 'Reasoning Quiz 2', gameType: 'matrix_match', isBoss: true, bossUnlockCoins: 0, isPractice: false },
 ];
 
 export const ISLANDS: IslandData[] = [
@@ -84,7 +89,7 @@ export const ISLANDS: IslandData[] = [
     groundColor: 'bg-green-500',
     mapImage: world01Map,
     decorations: [],
-    levels: mergeIslandLevels(
+    levels: appendAcropolisClearoutLevels(mergeIslandLevels(
       pickLevelsByBlueprint(NUMBER_BASE_CAMP_LEVELS, [
         'place_value_panic',
         'number_line_ninja',
@@ -94,7 +99,7 @@ export const ISLANDS: IslandData[] = [
        [
         { id: 1, stars: 0, isLocked: false, blueprintKey: 'maths_vs_zombies', displayName: 'Maths vs Zombies', gameType: 'ratio_rapids', isPractice: false },
        ],
-     ),
+     )),
    },
   {
     id: 2,
@@ -107,7 +112,7 @@ export const ISLANDS: IslandData[] = [
     groundColor: 'bg-emerald-900',
     mapImage: world01Map,
     decorations: [],
-    levels: mergeIslandLevels(FRACTION_FOREST_LEVELS),
+    levels: appendShatteredWholeLevels(mergeIslandLevels(FRACTION_FOREST_LEVELS)),
   },
   {
     id: 3,
@@ -120,7 +125,7 @@ export const ISLANDS: IslandData[] = [
     groundColor: 'bg-cyan-700',
     mapImage: world02Map,
     decorations: [],
-    levels: mergeIslandLevels(
+    levels: appendShapeSecretsLevels(mergeIslandLevels(
       [
         { id: 1, stars: 0, isLocked: false, blueprintKey: 'angle_arena', displayName: 'Angle Arena', gameType: 'angle_arena' },
         { id: 2, stars: 0, isLocked: false, blueprintKey: 'polygon_palace', displayName: 'Polygon Palace', gameType: 'polygon_palace' },
@@ -132,7 +137,7 @@ export const ISLANDS: IslandData[] = [
         { id: 2, stars: 0, isLocked: false, blueprintKey: 'conversion_canyon', displayName: 'Conversion Canyon', gameType: 'measurement_forge' },
         { id: 3, stars: 0, isLocked: false, blueprintKey: 'perimeter_path', displayName: 'Perimeter Path', gameType: 'measurement_forge' },
       ],
-    ),
+    )),
   },
   {
     id: 4,
@@ -167,7 +172,7 @@ export const ISLANDS: IslandData[] = [
     groundColor: 'bg-stone-400',
     mapImage: world03Map,
     decorations: [],
-    levels: mergeIslandLevels(
+    levels: appendDivideConquerLevels(appendRuneRelationsLevels(mergeIslandLevels(
       pickLevelsByBlueprint(NUMBER_BASE_CAMP_LEVELS, [
         'calculation_clash',
         'factor_frenzy',
@@ -178,7 +183,7 @@ export const ISLANDS: IslandData[] = [
         { id: 4, stars: 0, isLocked: false, blueprintKey: 'formula_forge', displayName: 'Formula Forge', gameType: 'formula_forge' },
         { id: 5, stars: 0, isLocked: false, blueprintKey: 'remainder_run', displayName: 'Remainder Run', gameType: 'calculation_clash' },
       ],
-    ),
+    ))),
   },
   {
     id: 6,
@@ -191,17 +196,19 @@ export const ISLANDS: IslandData[] = [
     groundColor: 'bg-indigo-950',
     mapImage: world06Map,
     decorations: [],
-    levels: buildFiveTierCampaign([
+    levels: [...buildFiveTierCampaign([
       { id: 1, stars: 0, isLocked: false, isPractice: false, blueprintKey: 'time_keeper_cove', displayName: 'Chrono Dash: Time Trial', gameType: 'timekeeper_temple' },
       { id: 2, stars: 0, isLocked: false, isPractice: false, blueprintKey: 'problem_pyramid', displayName: 'Problem Pyramid', gameType: 'rule_runner' },
       { id: 3, stars: 0, isLocked: false, isPractice: false, blueprintKey: 'unit_mixer', displayName: 'Lava Path', gameType: 'unit_mixer' },
       { id: 4, stars: 0, isLocked: false, isPractice: false, blueprintKey: 'change_counter', displayName: 'Change Counter', gameType: 'change_counter' },
-    ]),
+    ]), ...buildFiveTierCampaign([
+      { id: 1001, stars: 0, isLocked: false, isPractice: false, blueprintKey: 'calendar_quest', displayName: 'Calendar Quest', gameType: 'calendar_quest' },
+    ])],
   },
   {
     id: 8,
     name: 'Core of Calculation',
-    category: 'SATs Mock Adventures',
+    category: 'SATs-style Quizzes',
     isLocked: false,
     color: 'bg-[#2C2A4A]',
     themeName: 'Core of Calculation',

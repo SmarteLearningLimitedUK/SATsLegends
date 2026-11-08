@@ -248,7 +248,19 @@ export const ratioFractionsQuestions = [...RAW_RATIO_FRACTIONS_QUESTIONS, ...gen
     return themeRatioQuestion({ ...question, correctAnswer: simplestRatioFraction(numerator, denominator), options: makeRatioOptions(numerator, denominator) });
   });
 
-export const getDifficultyPool = (level: number) => ratioFractionsQuestions.filter(question => isQuestionForDifficulty(question, level));
+export const getDifficultyPool = (level: number):RatioFractionQuestion[] => {
+ const pool=ratioFractionsQuestions.filter(q=>isQuestionForDifficulty(q,level));
+ if(level<3)return pool;
+ const extensions=pool.flatMap((q,index)=>{
+  const target=q.labels.indexOf(q.target),parts=q.ratio.reduce((a,b)=>a+b,0),unit=2+index%7;
+  const kind=level===3?'quantity':level===4?'known-part':'difference';
+  const other=q.ratio.findIndex(v=>v!==q.ratio[target]);if(kind==='difference'&&other<0)return [];
+  const prompt=kind==='quantity'?`Total ${parts*unit} units. How many units are ${q.target.toLowerCase()}?`:kind==='known-part'?`${q.labels[(target+1)%q.ratio.length]} has ${q.ratio[(target+1)%q.ratio.length]*unit} units. How many units are ${q.target.toLowerCase()}?`:`${q.labels[q.ratio[other]>q.ratio[target]?other:target]} has ${Math.abs(q.ratio[other]-q.ratio[target])*unit} more units than ${q.labels[q.ratio[other]>q.ratio[target]?target:other]}. How many units are ${q.target.toLowerCase()}?`;
+  const value=q.ratio[target]*unit;
+  return [{...q,id:q.id+':'+kind,kind,prompt,correctAnswer:`${value}/1`,options:[value,value+1,value+2,Math.max(1,value-1)].map(v=>`${v}/1`),explanation:`Find the size of one ratio part, then multiply by ${q.ratio[target]}: ${value} units.`} as RatioFractionQuestion];
+ });
+ return [...pool,...extensions];
+};
 const difficultyForStage = (level: number, stage: QuestionTier) => stage === 'early' ? 1 : stage === 'mid' ? Math.max(1, level - 1) : level;
 const FALLBACK_POOL = ratioFractionsQuestions;
 
@@ -285,7 +297,7 @@ const buildTierDeck = (pool: RatioFractionQuestion[], previousLast: RatioFractio
   return ordered.map((question) => ({
     ...question,
     options: shuffleOptionsWithCorrect(
-      makeRatioOptions(question.ratio[question.labels.indexOf(question.target)],
+      question.kind?question.options:makeRatioOptions(question.ratio[question.labels.indexOf(question.target)],
         question.ratio.reduce((sum, value) => sum + value, 0), question.options),
       question.correctAnswer,
     ).options,
@@ -489,6 +501,10 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
 
   useEffect(() => {
     if (!isPresent || raceState !== 'introCountdown') return;
+    if (sessionState?.startCountdownHandled) {
+      if (!sessionState.paused) { setCountdown(0); setRaceState('showingQuestion'); }
+      return;
+    }
     setCountdown(3);
     const interval = window.setInterval(() => {
       if (!presentRef.current || reportedResultRef.current || pausedRef.current || document.hidden) return;
@@ -508,7 +524,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
       window.clearInterval(interval);
       if (countdownTimerRef.current === interval) countdownTimerRef.current = null;
     };
-  }, [isPresent, raceState]);
+  }, [isPresent, raceState, sessionState?.startCountdownHandled, sessionState?.paused]);
 
   const advanceQuestionForTier = (tier: QuestionTier) => {
     const decks = tierDecksRef.current;
@@ -664,7 +680,7 @@ const RatioRacerGame: React.FC<RatioRacerGameProps> = ({
           >
             <div className="ratio-racer-lab-title">✦ Fuel lab ✦</div>
             <h2 className="ratio-racer-lab-heading">Fix the fuel mix</h2>
-            <RaceFuelMix labels={question.labels} parts={question.ratio} target={question.target} />
+            <RaceFuelMix labels={question.labels} parts={question.ratio} target={question.target} prompt={question.kind?question.prompt:undefined} />
           </GameQuestionCard>
 
           <div ref={raceSceneRef} className={`ratio-racer-scene${showBoost ? ' is-boost' : showStall ? ' is-stall' : ''}${lives <= 1 ? ' is-last-chance' : ''}`}

@@ -3,8 +3,8 @@ import { useState } from 'react';
 import SatsRevisionGapVisual from './SatsRevisionGapVisual';
 import './sats-revision-gaps.css';
 
-export default function SatsRevisionGapConstruction({ model, value, onChange, part = 'all' }: {
-  model: RevisionGapModel; value: string; onChange: (value: string) => void; part?: 'all' | 'model' | 'controls';
+export default function SatsRevisionGapConstruction({ model, value, onChange, part = 'all',compact=false }: {
+  model: RevisionGapModel; value: string; onChange: (value: string) => void; part?: 'all' | 'model' | 'controls'; compact?:boolean;
 }) {
   const [active, setActive] = useState(0);
   if (model.kind === 'fraction-grid') {
@@ -26,8 +26,8 @@ export default function SatsRevisionGapConstruction({ model, value, onChange, pa
   return <div className="sats-gap-build" aria-label="Complete the pictogram">
     {part !== 'controls' && <SatsRevisionGapVisual model={model} symbols={symbols} />}
     {part !== 'model' && <div className="sats-gap-pictogram-controls">
-      <div className="sats-gap-categories" aria-label="Table of items: choose a row">{model.labels.map((label, i) => <button type="button" key={label} aria-label={`Choose ${label} row`} aria-pressed={i === active} onClick={() => setActive(i)}><span>{label}</span><strong>{model.counts[i]} items</strong></button>)}</div>
-      <div className="sats-gap-symbol-step"><output aria-live="polite">{model.labels[active]}: {symbols[active] === null ? '—' : symbols[active]! / 2} {symbols[active] === 2 ? 'symbol' : 'symbols'}</output>
+      {compact?<select aria-label="Pictogram row" value={active} onChange={e=>setActive(Number(e.target.value))}>{model.labels.map((label,i)=><option key={label} value={i}>{label}: {model.hiddenCountIndex===i?'?':model.counts[i]} items</option>)}</select>:<div className="sats-gap-categories" aria-label="Table of items: choose a row">{model.labels.map((label, i) => <button type="button" key={label} aria-label={`Choose ${label} row`} aria-pressed={i === active} onClick={() => setActive(i)}><span>{label}</span><strong>{model.hiddenCountIndex===i?'?':model.counts[i]} items</strong></button>)}</div>}
+      <div className="sats-gap-symbol-step"><output className={compact?'sr-only':undefined} aria-live="polite">{compact?'Placed':model.labels[active]}: {symbols[active] === null ? '—' : symbols[active]! / 2} {symbols[active] === 2 ? 'symbol' : 'symbols'}</output>
         <button type="button" aria-label={`Remove half symbol for ${model.labels[active]}`} onClick={() => change(active, (symbols[active] ?? 0) - 1)}>− ½</button>
         <button type="button" aria-label={`Add half symbol for ${model.labels[active]}`} onClick={() => change(active, (symbols[active] ?? 0) + 1)}>+ ½</button>
       </div>

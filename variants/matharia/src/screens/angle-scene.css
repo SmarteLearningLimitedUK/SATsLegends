@@ -6,7 +6,7 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='angl
  --angle-question-height:max(14%,64px);
  --angle-footer-top:85%;
  --angle-footer-height:12%;
- --angle-answer-height:max(44px,12%);
+ --angle-answer-height:clamp(48px,14dvh,68px);
  --angle-answer-top:calc(var(--angle-footer-top) - var(--angle-answer-height) - 18px);
  --angle-diagram-top:calc(var(--angle-question-top) + var(--angle-question-height) + 8px);
  --angle-diagram-height:max(72px,min(34%,calc(var(--angle-answer-top) - var(--angle-diagram-top) - 8px)));
@@ -36,7 +36,8 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='angl
  .angle-answer-group>button[aria-pressed='true'] {filter:drop-shadow(0 0 5px #67eaff) brightness(1.2);}
  .angle-answer-group>button:not(:disabled):active {scale:.96;}
  .angle-answer-group>button:focus-visible {outline:3px solid #fff1a6;outline-offset:2px;}
- .angle-round-controls {position:absolute;z-index:6;left:82%;right:2%;top:var(--angle-answer-top);height:var(--angle-answer-height);display:flex;justify-content:center;gap:8px;align-items:stretch;}
+ .angle-round-controls {position:absolute;z-index:6;left:82%;right:2%;top:var(--angle-answer-top);height:var(--angle-answer-height);display:flex;justify-content:center;gap:8px;align-items:stretch;pointer-events:none;}
+ .angle-round-controls>:is(button,div) {pointer-events:auto;}
  .angle-round-message {position:absolute;z-index:8;isolation:isolate;left:25%;width:50%;top:calc(var(--angle-answer-top) - 52px);min-height:44px;display:grid;place-items:center;padding:8px 7%;color:#fff9e5;font-size:clamp(14px,1.45vw,22px);font-weight:650;line-height:1.18;text-align:center;pointer-events:none;}
  .angle-round-message[data-visible='false'] {visibility:hidden;}
  .angle-hint-toggle,.angle-advance>button {display:flex;align-items:center;justify-content:center;gap:6px;min-width:44px;min-height:44px;padding:7px 12px;border:1px solid #e3bd5d;border-radius:8px;background:#063b50;color:#fff8de;font-size:clamp(14px,1.25vw,22px);font-weight:650;line-height:1.1;touch-action:manipulation;}
@@ -50,6 +51,9 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='angl
  .angle-hint-panel>strong {display:block;padding:0 30px;font-size:clamp(16px,1.8vw,30px);}
  .angle-hint-panel>p {margin:12px 0 0;font-size:clamp(14px,1.5vw,24px);}
  .angle-hint-panel>button {position:absolute;right:6px;top:6px;width:44px;height:44px;display:grid;place-items:center;background:none;border:0;color:#fff5d9;}
+ .angle-hint-scrim {position:absolute;inset:0;z-index:30;background:rgb(4 22 43 / .55);}
+ .angle-hint-panel {top:50%;translate:0 -50%;max-height:calc(100% - 24px);overflow-y:auto;box-sizing:border-box;}
+ .angle-hint-panel .angle-diagram-panel {position:relative;left:auto;top:auto;width:100%;height:clamp(110px,31vh,170px);margin-top:10px;padding:6px;}
 
  [data-unified-minigame-hud]>div:first-of-type:has(.legend-hud-bar) {top:2%;width:41%;height:10%;min-height:44px;padding:0;}
  .legend-hud-title {font-size:clamp(14px,2.25vw,42px);}

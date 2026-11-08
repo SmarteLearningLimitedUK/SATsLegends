@@ -1,10 +1,11 @@
+import {useLearningPolicy} from '../../../src/systems/learning/learningSupport';
 import React,{Children,isValidElement,useSyncExternalStore,type ReactNode} from 'react';
 
 const motionQuery='(prefers-reduced-motion: reduce)';
 const subscribeMotion=(notify:()=>void)=>{const media=window.matchMedia(motionQuery);media.addEventListener('change',notify);return()=>media.removeEventListener('change',notify);};
 const readMotion=()=>window.matchMedia(motionQuery).matches;
 /** React to preference changes during an open activity as well as at launch. */
-export const usePondReducedMotion=()=>useSyncExternalStore(subscribeMotion,readMotion,()=>true);
+export const usePondReducedMotion=()=>{const support=useLearningPolicy(),os=useSyncExternalStore(subscribeMotion,readMotion,()=>true);return os||support.reducedMovement;};
 
 type SlotProps={className?:string;children?:ReactNode};
 const find=(children:ReactNode,name:string)=>Children.toArray(children).find(node=>isValidElement<SlotProps>(node)&&node.props.className?.split(/\s+/).includes(name));

@@ -1,0 +1,15 @@
+/* Core-only question illustrations. Existing frames, surroundings and controls stay in place. */
+html[data-presentation='matharia'] :is(#root .screen-gameplay[data-measured-scene] .paper-scene[data-core-quiz] .paper-live-model,.paper-viewer-model) {
+ .paper-context-model {display:grid;grid-template-columns:minmax(0,.65fr) minmax(0,1.35fr);grid-template-rows:minmax(0,1fr);align-items:center;gap:10px;width:100%;height:100%;min-width:0;min-height:0;container-type:size;}
+ .paper-context-object {display:block;width:100%;height:100%;min-width:0;min-height:0;object-fit:contain;pointer-events:none;}
+ .paper-context-data {display:flex;flex-direction:column;justify-content:center;gap:6px;min-width:0;min-height:0;max-height:100%;}
+ .paper-context-label {color:#f3d88f;font-size:clamp(12px,4.6cqw,18px);font-weight:600;line-height:1.2;}
+ .paper-context-data .sats-equation {justify-content:center;font-size:clamp(14px,min(7cqw,13cqh),28px);gap:4px;line-height:1.2;}
+ .paper-context-model[data-context-lines='1'] .sats-equation {font-size:clamp(14px,min(8cqw,18cqh),32px);}
+ .paper-context-model[data-paper-question-scene='fuel'] .sats-equation {font-size:clamp(18px,min(12cqw,24cqh),36px);}
+ .paper-context-ratio {display:flex;justify-content:center;align-items:stretch;gap:10px;width:100%;height:100%;min-height:0;container-type:size;}
+ .paper-context-part {display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:0;min-height:0;}
+ .paper-context-part>img {display:block;object-fit:contain;width:100%;height:calc(100% - 36px);min-height:0;pointer-events:none;}
+ .paper-context-part>span {flex:none;max-width:100%;color:#fff8e7;font-size:clamp(12px,5cqw,20px);font-weight:600;line-height:1.25;text-align:center;overflow-wrap:anywhere;}
+}
+html[data-presentation='matharia'] .paper-viewer-model>.paper-context-model {max-width:650px;}

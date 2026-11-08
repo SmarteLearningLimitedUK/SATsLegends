@@ -6,6 +6,22 @@ const base = process.env.MATHARIA_URL || 'http://127.0.0.1:3080';
 const out = 'qa-artifacts/conversion-layout';
 await mkdir(out, {recursive: true});
 const browser = await webkit.launch({executablePath: 'qa-artifacts/browser-runtime/webkit-2272/Playwright.exe'});
+const load = page => page.locator('[data-conversion-load]').getAttribute('data-conversion-load').then(Number);
+const target = page => page.locator('[data-conversion-target]').getAttribute('data-conversion-target').then(Number);
+async function balance(page, startingGrams) {
+  const goal = await target(page);
+  const tokens = await page.locator('[data-conversion-token]').evaluateAll(es => es.map(e => ({id:e.dataset.conversionToken, grams:+e.dataset.tokenGrams})));
+  for (let mask = 1; mask < 1 << tokens.length; mask++) {
+    const chosen = tokens.filter((_, i) => mask & 1 << i);
+    if (chosen.reduce((sum, item) => sum + item.grams, startingGrams) !== goal) continue;
+    for (const token of chosen) await page.locator(`[data-conversion-token="${token.id}"]`).tap();
+    await expect.poll(() => load(page)).toBe(goal);
+    await page.getByRole('button', {name:'Submit Shipment', exact:true}).tap();
+    await expect(page.locator('[data-conversion-game]')).toHaveAttribute('data-conversion-success', 'true');
+    return;
+  }
+  throw Error('No solution for ' + goal + ' from ' + startingGrams);
+}
 try {
   for (const [name, width, height] of [['compact', 375, 667], ['phone', 390, 844], ['large-phone', 430, 932], ['ipad', 768, 1024]]) {
     const context = await browser.newContext({viewport: {width, height}, isMobile: true, hasTouch: true, reducedMotion: 'reduce'});
@@ -19,7 +35,8 @@ try {
       await button.tap();
     }
     await page.evaluate(() => document.fonts.ready);
-    await page.waitForTimeout(700);
+    const game = page.locator('[data-conversion-game]');
+    await expect(game).toHaveAttribute('data-conversion-paused', 'false');
     const geometry = await page.evaluate(() => {
       const rect = selector => document.querySelector(selector).getBoundingClientRect();
       const scale = rect('[data-conversion-scale]'), question = rect('[data-concept-panel]'), bank = rect('.conversion-token-bank');
@@ -33,19 +50,32 @@ try {
     const {scale, bank, button, label, controls, overflow} = geometry;
     if (overflow || scale.bottom > bank.top + 1 || label.left < button.left + 12 || label.right > button.right - 12 || label.top < button.top + 4 || label.bottom > button.bottom - 4 || controls.some(c => c.width < 44 || c.height < 44 || c.x < 0 || c.y < 0 || c.right > width || c.bottom > height || !c.hit)) throw Error(name + ': ' + JSON.stringify(geometry));
     await page.screenshot({path: out + '/' + name + '.png'});
-    const tokens = await page.locator('[data-conversion-token]').evaluateAll(es => es.map(e => ({id:e.dataset.conversionToken, grams:+e.dataset.tokenGrams})));
-    const target = +(await page.locator('[data-conversion-target]').getAttribute('data-conversion-target'));
-    let solution;
-    for (let mask = 1; mask < 1 << tokens.length; mask++) {
-      const chosen = tokens.filter((_, i) => mask & 1 << i);
-      if (chosen.reduce((sum, item) => sum + item.grams, 0) === target) { solution = chosen; break; }
+    const cargo = page.locator('[data-conversion-cargo]');
+    const startingGrams = Number(await cargo.getAttribute('data-conversion-cargo'));
+    if (startingGrams <= 0 || startingGrams >= await target(page) || await load(page) !== startingGrams) {
+      throw Error('First shipment should start partially loaded');
     }
-    if (!solution) throw Error('No solution for ' + target);
-    for (const token of solution) await page.locator(`[data-conversion-token="${token.id}"]`).tap();
-    await expect(page.locator('[data-conversion-load]')).toHaveAttribute('data-conversion-load', String(target));
-    await page.getByRole('button', {name:'Submit Shipment', exact:true}).tap();
-    await expect(page.locator('[data-conversion-game]')).toHaveAttribute('data-conversion-success', 'true');
-    console.log('PASS ' + name + ': scale, padded controls and correct shipment');
+    await balance(page, startingGrams);
+    await expect(game).toHaveAttribute('data-conversion-round', '2');
+    const overweightGrams = Number(await cargo.getAttribute('data-conversion-cargo'));
+    if (overweightGrams <= await target(page) || await load(page) !== overweightGrams) {
+      throw Error('Second shipment should start overweight');
+    }
+    const negative = page.locator('[data-token-grams^="-"]').first();
+    const reduction = Number(await negative.getAttribute('data-token-grams'));
+    await expect(negative).toContainText('−');
+    await page.screenshot({path: out + '/' + name + '-overweight.png'});
+    await negative.tap();
+    await expect.poll(() => load(page)).toBe(overweightGrams + reduction);
+    await negative.tap();
+    await expect.poll(() => load(page)).toBe(overweightGrams);
+    await negative.tap();
+    await page.getByRole('button', {name:'Reset weights', exact:true}).tap();
+    await expect.poll(() => load(page)).toBe(overweightGrams);
+    await balance(page, overweightGrams);
+    await expect(game).toHaveAttribute('data-conversion-round', '3');
+    await expect.poll(() => load(page)).toBe(0);
+    console.log('PASS ' + name + ': layout, starting cargo, negative adjustment, reset and exact marking');
     await context.close();
   }
 } finally {

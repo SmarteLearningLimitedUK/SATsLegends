@@ -22,16 +22,121 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
         SceneDelegateProxy.shared.scene(scene, continue: userActivity)
     }
+
+    func sceneDidBecomeActive(_ scene: UIScene) {
+        (window?.rootViewController as? GameViewController)?.resumeScreenOrientation()
+    }
+
+    func sceneWillResignActive(_ scene: UIScene) {
+        (window?.rootViewController as? GameViewController)?.prepareOrientationForSystemHandoff()
+    }
+
+    func sceneDidEnterBackground(_ scene: UIScene) {
+        (window?.rootViewController as? GameViewController)?.stopTrackingDeviceOrientation()
+    }
 }
 
 final class GameViewController: CAPBridgeViewController {
+    private var allowsLandscape = false
+    private var handingOffToSystem = false
+    private var tracksDeviceOrientation = false
+
+    private var shouldHandOffInPortrait: Bool {
+        handingOffToSystem && !UIDevice.current.orientation.isLandscape
+    }
+
     override func capacitorDidLoad() {
         bridge?.registerPluginInstance(MathariaServicesPlugin())
         webView?.configuration.userContentController.add(GameHapticsHandler(), name: "haptics")
     }
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask { .all }
+    // Landscape adventures need a portrait interface for the turn-device guard.
+    // The web stage remains hidden and paused there; it never plays in portrait.
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        allowsLandscape && !shouldHandOffInPortrait ? .allButUpsideDown : .portrait
+    }
     override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation { .portrait }
+    override var shouldAutorotate: Bool { true }
+    override var preferredScreenEdgesDeferringSystemGestures: UIRectEdge { [] }
+    @available(iOS 26.0, *)
+    override var prefersInterfaceOrientationLocked: Bool {
+        !allowsLandscape && !handingOffToSystem
+            && viewIfLoaded?.window?.windowScene?.effectiveGeometry.interfaceOrientation == .portrait
+    }
     override var prefersStatusBarHidden: Bool { true }
+
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        let current = view.bounds.size
+        // Hide the old WebKit frame while UIKit changes between portrait and landscape.
+        // The web orientation guard takes over when the new viewport is available.
+        if (current.width > current.height) != (size.width > size.height) {
+            let cover = UIView(frame: view.bounds)
+            cover.backgroundColor = UIColor(red: 7.0 / 255, green: 22.0 / 255, blue: 37.0 / 255, alpha: 1)
+            cover.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            view.addSubview(cover)
+            if !coordinator.animate(alongsideTransition: nil, completion: { [weak self] _ in
+                cover.removeFromSuperview()
+                self?.applyScreenOrientation()
+            }) {
+                cover.removeFromSuperview()
+            }
+        }
+        super.viewWillTransition(to: size, with: coordinator)
+    }
+
+    func setScreenOrientation(_ orientation: String) {
+        allowsLandscape = orientation == "landscape"
+        applyScreenOrientation()
+    }
+
+    func resumeScreenOrientation() {
+        handingOffToSystem = false
+        if !tracksDeviceOrientation {
+            tracksDeviceOrientation = true
+            NotificationCenter.default.addObserver(
+                self, selector: #selector(deviceOrientationDidChange),
+                name: UIDevice.orientationDidChangeNotification, object: nil
+            )
+            UIDevice.current.beginGeneratingDeviceOrientationNotifications()
+        }
+        applyScreenOrientation()
+    }
+
+    func prepareOrientationForSystemHandoff() {
+        // The App Switcher can appear while this scene is still foreground-inactive.
+        handingOffToSystem = true
+        applyScreenOrientation()
+    }
+
+    func stopTrackingDeviceOrientation() {
+        guard tracksDeviceOrientation else { return }
+        tracksDeviceOrientation = false
+        NotificationCenter.default.removeObserver(self, name: UIDevice.orientationDidChangeNotification, object: nil)
+        UIDevice.current.endGeneratingDeviceOrientationNotifications()
+    }
+
+    @objc private func deviceOrientationDidChange(_ notification: Notification) {
+        if allowsLandscape || handingOffToSystem { applyScreenOrientation() }
+    }
+
+    private func applyScreenOrientation() {
+        guard let windowScene = viewIfLoaded?.window?.windowScene,
+              windowScene.activationState == .foregroundActive
+                || windowScene.activationState == .foregroundInactive else { return }
+        if #available(iOS 26.0, *) { setNeedsUpdateOfPrefersInterfaceOrientationLocked() }
+        setNeedsUpdateOfSupportedInterfaceOrientations()
+
+        // UIKit owns sideways rotation. Only request an upright correction when needed.
+        guard !allowsLandscape || shouldHandOffInPortrait || UIDevice.current.orientation == .portrait else { return }
+        let current: UIInterfaceOrientation
+        if #available(iOS 26.0, *) { current = windowScene.effectiveGeometry.interfaceOrientation }
+        else { current = windowScene.interfaceOrientation }
+        guard current != .portrait else { return }
+
+        windowScene.requestGeometryUpdate(.iOS(interfaceOrientations: .portrait)) { _ in
+            // The web rotation guard remains available for a constrained iPad window.
+            NSLog("Matharia: screen orientation request could not resize the window")
+        }
+    }
 }
 
 /// Matches the existing web haptic intents. UIKit ignores unsupported hardware.

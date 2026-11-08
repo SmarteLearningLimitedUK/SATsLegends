@@ -1,17 +1,19 @@
-/* Prime Pop: the danger rail remains at the source game's 12% field coordinate. */
+/* Extend the field down from the fixed danger rail. The rail sits at 12% of the field. */
 html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='prime_pop'] {
  --concept-plane:min(100vw,calc((100dvh - var(--concept-safe-top) - var(--concept-safe-bottom)) * .4626));
+ --prime-field-height:51%;
+ --prime-danger-stage-y:30%;
  .concept-question-zone {position:absolute;z-index:50;left:4%;top:12.7%;width:92%;height:15%;margin:0;}
  .concept-question-panel {padding:0;}
  .concept-question-copy {display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1.3cqw;margin-left:30%;width:64%;height:100%;padding:2% 4% 2% 0;}
- .prime-question-main {font-size:clamp(14px,4.1cqw,42px);font-weight:650;line-height:1.13;text-wrap:balance;}
+ .prime-question-main {font-size:clamp(14px,4.1cqw,42px);font-weight:650;line-height:1.3;text-wrap:balance;}
  .prime-question-main b {color:#ffe178;font-weight:750;}
  .prime-question-instruction {font-size:clamp(12px,2.9cqw,28px);font-weight:600;line-height:1.2;margin:0;}
  .prime-question-guide {position:absolute;left:1%;top:-2%;width:32%;height:98%;pointer-events:none;}
  .prime-pop-stage {position:absolute;inset:0;width:100%;height:100%;min-height:0;overflow:visible;background:none;}
  [data-prime-scene-content] {position:absolute;inset:0;display:block;width:100%;height:100%;padding:0;}
  .prime-pop-question-slot {display:none;}
- [data-prime-playfield] {position:absolute;left:0;top:25.2%;width:100%;height:40%;min-height:0;padding:0;overflow:visible;}
+ [data-prime-playfield] {position:absolute;left:0;top:calc(var(--prime-danger-stage-y) - var(--prime-field-height) * .12);width:100%;height:var(--prime-field-height);min-height:0;padding:0;overflow:visible;}
  [data-prime-pop-field] {position:absolute;inset:0;width:100%;height:100%;overflow:hidden;}
  [data-prime-pop-field] button {min-width:0;min-height:0;background:none;border:0;padding:2px;box-shadow:none;touch-action:manipulation;}
  [data-prime-pop-field] button:disabled {pointer-events:none;}
@@ -22,7 +24,7 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='prim
  .prime-orb {position:relative;display:block;pointer-events:none;}
  .prime-orb img {position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;}
  .prime-orb>span {position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:6%;line-height:1;font-weight:750;color:white;text-shadow:0 2px 3px #002443,0 -1px 1px #002443;}
- .prime-caster {position:absolute;z-index:1;left:2.5%;top:56%;width:68.5%;height:33%;pointer-events:none;}
+ .prime-caster {position:absolute;z-index:1;left:0;bottom:11%;width:43%;height:20%;pointer-events:none;}
  .prime-caster .vision-character {display:block;width:100%;height:100%;}
  .prime-spell-glint {position:absolute;left:77.8%;top:7.35%;translate:-50% -50%;width:22%;height:auto;overflow:visible;pointer-events:none;animation:prime-spell-bloom 4s ease-in-out infinite;}
  .prime-spell-ring {transform-origin:50px 50px;animation:prime-spell-turn 12s linear infinite;}
@@ -46,10 +48,10 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='prim
 @media(max-height:720px) and (orientation:portrait){
  html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='prime_pop'] {
   --concept-plane:100vw;
+  --prime-field-height:46%;
+  --prime-danger-stage-y:34.5%;
   [data-unified-minigame-hud]>div:first-of-type:has(.legend-hud-bar) {top:2.5%;height:10%;}
   .concept-question-zone {top:12.5%;height:19%;min-height:122px;}
-  [data-prime-playfield] {top:30.3%;height:35%;}
-  .prime-caster {top:58%;height:31%;}
  }
 }
 @media(prefers-reduced-motion:reduce){

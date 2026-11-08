@@ -4,35 +4,30 @@ import { WellbeingActivityComponentProps } from '../types';
 import { useWellbeingCompletion } from '../useWellbeingCompletion';
 
 const leaves = [
-  { id: 1, x: 23, y: 25, sense: 'SIGHT', prompt: 'Look around. What kind of detail can you see?', choices: ['A colour', 'A shape', 'Something moving'] },
-  { id: 2, x: 51, y: 42, sense: 'SOUND', prompt: 'Pause for a moment. What can you hear?', choices: ['A nearby sound', 'A distant sound', 'A quiet moment'] },
-  { id: 3, x: 76, y: 22, sense: 'TOUCH', prompt: 'Notice where your body is supported.', choices: ['Feet on the floor', 'Hands resting', 'The seat beneath me'] },
+  { id: 1, x: 23, y: 25, sense: 'SIGHT', prompt: 'Let your eyes rest on one colour nearby.' },
+  { id: 2, x: 51, y: 42, sense: 'SOUND', prompt: 'Listen for one sound, or spend a moment with the quiet.' },
+  { id: 3, x: 76, y: 22, sense: 'SCENT', prompt: 'Notice a scent if there is one, or feel where your hands rest.' },
 ];
 
 const LeafDrift: React.FC<WellbeingActivityComponentProps> = ({ onComplete, onExit }) => {
   const [guided, setGuided] = useState<number[]>([]);
   const [selectedLeaf, setSelectedLeaf] = useState<number | null>(null);
-  const [lastNotice, setLastNotice] = useState('Choose a leaf to begin.');
   const guidedRef = useRef(new Set<number>());
   const { finished, finish, cancel } = useWellbeingCompletion(onComplete);
   const activeLeaf = leaves.find((leaf) => leaf.id === selectedLeaf);
 
-  const guideLeaf = (id: number, choice: string) => {
+  const guideLeaf = (id: number) => {
     if (finished || guidedRef.current.has(id)) return;
     guidedRef.current.add(id);
     setGuided((current) => [...current, id]);
     setSelectedLeaf(null);
-    setLastNotice(`Noticed: ${choice.toLowerCase()}. Choose another leaf when ready.`);
     if (guidedRef.current.size === leaves.length) finish(1100);
   };
 
   return (
     <WellbeingShell title="Leaf Drift" activityId="leaf_drift" type="Grounding"
-      subtitle="Choose a leaf. Notice a sight, sound or touch, then guide it into the stream."
-      purpose="Give one detail in the present your attention. There is no right answer."
-      fact="Grounding uses senses such as sight, sound and touch to bring attention back to the present moment."
-      affirmation="I can come back to this moment, one detail at a time."
-      status={finished ? 'Three details noticed. Your leaves reached the stream.' : `${guided.length} of 3 leaves guided · ${lastNotice}`}
+      subtitle="One small detail can bring you back to now. Choose a leaf."
+      purpose="If a sense is hard to use, stay with one that feels comfortable. Take as much time as you like."
       progress={guided.length / leaves.length * 100} onExit={() => { cancel(); onExit(); }}>
       <div className="wellbeing-scene" data-leaves-guided={guided.length} data-leaf-selection={selectedLeaf ?? 'none'}>
         <div className="leaf-stream-goal" aria-hidden="true">Stream glow</div>
@@ -51,10 +46,9 @@ const LeafDrift: React.FC<WellbeingActivityComponentProps> = ({ onComplete, onEx
           </button>;
         })}
         {activeLeaf ? <div className="leaf-observation" data-leaf-prompt={activeLeaf.id}>
-          <span className="wellbeing-step-label">NOTICE · {activeLeaf.sense}</span>
-          <p>{activeLeaf.prompt}</p>
-          <div className="leaf-observation-options" role="group" aria-label={`${activeLeaf.sense.toLowerCase()} details`}>
-            {activeLeaf.choices.map((choice) => <button key={choice} type="button" data-button-skin="none" onClick={() => guideLeaf(activeLeaf.id, choice)}>{choice}</button>)}
+          <p role="status">{activeLeaf.prompt}</p>
+          <div className="leaf-observation-options">
+            <button type="button" data-button-skin="none" onClick={() => guideLeaf(activeLeaf.id)}>Let it drift</button>
           </div>
         </div> : null}
       </div>

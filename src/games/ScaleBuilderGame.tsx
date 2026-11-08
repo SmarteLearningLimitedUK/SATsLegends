@@ -1,3 +1,4 @@
+import {questionMetadata} from '../systems/learning/questionMetadata';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Trophy } from 'lucide-react';
 import scaleBuilderBackground from '../assets/scale-builder-reference/bg_acropolis_landscape.png';
@@ -30,6 +31,7 @@ interface Level {
   name: string;
   shape: Shape;
   targetScale: number;
+  knownLength?:number;
   instructions: string;
 }
 
@@ -81,11 +83,13 @@ const levelsForTier = (tier: number): Level[] => {
   const widths = [20, 32, 40, 56, 64];
   const heights = [12, 24, 28, 40, 48];
   return Array.from({ length: LEVELS.length }, (_, index) => {
-    const baseWidth = widths[tier - 1] + index * 2;
-    const baseHeight = heights[tier - 1] + index * 2;
+    const widthMax=widths[tier-1]+8,heightMax=heights[tier-1]+8;
+    const baseWidth = Math.floor(widthMax*.6)+Math.floor(Math.random()*(widthMax-Math.floor(widthMax*.6)+1));
+    const baseHeight = Math.floor(heightMax*.6)+Math.floor(Math.random()*(heightMax-Math.floor(heightMax*.6)+1));
     return {
       ...template,
       id: index + 1,
+      knownLength:tier>=4&&index%2===1?baseWidth*template.targetScale:undefined,
       shape: { ...template.shape, baseWidth, baseHeight },
       instructions: `Original size: ${baseWidth} units by ${baseHeight} units\n\nScale factor: x${template.targetScale}\n\nWhat is the new size?`,
     };
@@ -115,7 +119,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
   const result = checkScaledDimensions(values[0],values[1],baseLength,baseWidth,currentLevel.targetScale);
   const signature = values.map(value => parseDimension(value) ?? value).join(':');
   const playing = gameState==='playing' && !sessionState?.paused;
-  const length = parseDimension(values[0]) ?? baseLength;
+  const length = parseDimension(values[0]) ?? currentLevel.knownLength ?? baseLength;
   const width = parseDimension(values[1]) ?? baseWidth;
   const unit = 220 / (Math.max(baseLength,baseWidth) * Math.max(1,currentLevel.targetScale));
   const completedLevels = currentLevelIdx + (gameState==='complete'?1:0);
@@ -140,13 +144,13 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
     checkedRef.current=signature;setCheckedSignature(signature);
     if(result.lengthCorrect&&result.widthCorrect){
       setFeedback({type:'success',message:`Blueprint restored: ${values[0]} × ${values[1]} units.`});
-      emitMiniGameSessionEvent(sessionEvents,'correct_answer',{metadata:{project:currentLevel.id,answer:values.join(' × ')}});
+      emitMiniGameSessionEvent(sessionEvents,'correct_answer',{metadata:{project:currentLevel.id,answer:values.join(' × '),...questionMetadata("scale_builder","ratio.scaled-dimensions",currentLevel,"construction",["6R3"],false)}});
       setGameState('success');return;
     }
     const factor=formatBlueprintValue(currentLevel.targetScale);
     const message=result.lengthCorrect?`Length is correct. Recheck width: ${baseWidth} × ${factor}.`:result.widthCorrect?`Width is correct. Recheck length: ${baseLength} × ${factor}.`:`Multiply each original length by ${factor}. Both lengths need another look.`;
     setFeedback({type:'error',message});setMistakeCount(n=>n+1);
-    emitMiniGameSessionEvent(sessionEvents,'incorrect_answer',{metadata:{project:currentLevel.id,answer:values.join(' × ')}});
+    emitMiniGameSessionEvent(sessionEvents,'incorrect_answer',{metadata:{project:currentLevel.id,answer:values.join(' × '),...questionMetadata("scale_builder","ratio.scaled-dimensions",currentLevel,"construction",["6R3"],false)}});
   };
   useEffect(() => {
     if (gameState !== 'success' || sessionState?.paused) return;
@@ -174,7 +178,7 @@ const ScaleBuilderGame: React.FC<ScaleBuilderGameProps> = ({
       <GameQuestionCard context="" title={`Scale Builder · Project ${currentLevelIdx+1} of 5`} className="scale-numeric-question" style={{position:'relative',top:0,transform:'none',width:'100%'}}>
         <span>Original: <strong>{baseLength} × {baseWidth} units</strong></span>
         <span>Scale factor: <strong>×{formatBlueprintValue(currentLevel.targetScale)}</strong></span>
-        <span>Enlarge the blueprint. What are the new lengths?</span>
+        <span>{currentLevel.knownLength?'Find the scale factor from the new length, then the new width.':'What are the new lengths?'}</span>
       </GameQuestionCard>
       <div className="scale-numeric-board-area">
         <h3 className="scale-blueprint-title">Your blueprint</h3>

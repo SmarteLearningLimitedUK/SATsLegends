@@ -1,10 +1,12 @@
 import type { SatsMission, MissionField, MissionVisual } from './satsAdventure';
+import {britishNumberWords} from './numberWords';
+import {labelledCubeNet} from './cubeNets';
 
 export type RevisionGapModel =
   | { kind: 'choice-pairs'; groups: { label: string; choices: string[] }[]; pairing: string }
   | { kind: 'fraction-grid'; numerator: number; denominator: number; targetDenominator: number; construct: boolean }
   | { kind: 'similar-rectangles'; width: number; height: number; enlargedWidth: number }
-  | { kind: 'pictogram-build'; labels: string[]; counts: number[]; key: number };
+  | { kind: 'pictogram-build'; labels: string[]; counts: number[]; key: number; hiddenCountIndex?:number; total?:number; hideKey?:boolean };
 
 /** Short SATs revision tasks, reused by the existing island practice and Core papers. */
 export function revisionGapMissions(seed: number): SatsMission[] {
@@ -96,5 +98,20 @@ export function revisionGapMissions(seed: number): SatsMission[] {
   const estimate = estimates[n % estimates.length];
   add('measure-estimate','4M2','conversion_canyon',2, `Which is the best estimate for ${estimate[0]}?`,
     equation(`Estimate ${estimate[0]}`), [field('Best estimate', estimate[1], [...estimate[2]])], `${estimate[1]} is the sensible estimate for ${estimate[0]}.`);
+  const large=n%13===0?10000000:1000000+(n*7919)%9000000;
+  add('large-number-words','6N2','place_value_panic',5,'Write this number in digits.',equation(britishNumberWords(large)),[field('Number',large)],'Group the millions, thousands and ones. Keep zero placeholders where a place has no value.');
+  const place=100000,placeValue=Math.floor(large/place)%10*place;
+  add('large-digit-value','6N3','place_value_panic',4,'What is the value of the digit in the hundred-thousands place?',equation(large.toLocaleString('en-GB')),[field('Digit value',placeValue)],'The place is worth one hundred thousand times the digit in that column.');
+  const stock=2400+n%1500,borrowed=125+n%470,returned=40+n%95;
+  add('library-stock','6C4','calculation_clash',4,`A library has ${stock} books. Pupils borrow ${borrowed} books, then return ${returned}. How many books are in the library now?`,equation(`${stock} books`,`${borrowed} borrowed; ${returned} returned`),[field('Books remaining',stock-borrowed+returned)],`Subtract ${borrowed}, then add ${returned}.`);
+  const morningVisitors=120+n%180,afternoonVisitors=80+n%120,departures=35+n%65;
+  add('museum-visitors','6C4','calculation_clash',3,`${morningVisitors} people enter a museum in the morning and ${afternoonVisitors} enter in the afternoon. ${departures} people leave. How many remain?`,equation(`${morningVisitors} + ${afternoonVisitors} visitors enter`,`${departures} visitors leave`),[field('Visitors remaining',morningVisitors+afternoonVisitors-departures)],'Combine the two arrivals, then subtract the departures.');
+  const mixedDen=3+n%10,mixedWhole=1+Math.floor(n/10)%5,mixedNum=1+Math.floor(n/50)%(mixedDen-1),times=2+Math.floor(n/7)%8;
+  let mn=(mixedWhole*mixedDen+mixedNum)*times,md=mixedDen;let x=mn,y=md;while(y){[x,y]=[y,x%y];}mn/=x;md/=x;
+  add('mixed-product','5F5','fraction_forge',3,`Find ${mixedWhole} ${mixedNum}/${mixedDen} × ${times}.`,{type:'fractions',values:[`${mixedWhole} ${mixedNum}/${mixedDen}`,'×',String(times)]},[field('Product',md===1?String(mn):`${mn}/${md}`)],`Convert the mixed number to ${(mixedWhole*mixedDen+mixedNum)}/${mixedDen}, multiply by ${times}, then simplify.`);
+  const net=labelledCubeNet(n);
+  add('net-opposite','6G3b','polygon_palace',4,`This net folds into a cube. Which numbered face is opposite face ${net.marked}?`,{type:'depth',model:{kind:'labelled-net',cells:net.cells,labels:net.labels,marked:net.marked}},[field('Opposite face',net.opposite)],'Fold the four side faces around the cube. Opposite faces point in opposite directions; they do not share an edge.');
+  const ratioA=1+n%5,ratioB=2+Math.floor(n/5)%7,unit=2+Math.floor(n/35)%9;
+  add('ratio-proportion','6R1','ratio_fractions',3,`Red:blue is ${ratioA}:${ratioB}. There are ${ratioA*unit} red counters. How many blue counters are there?`,{type:'ratio',labels:['Red','Blue'],parts:[ratioA,ratioB]},[field('Blue counters',ratioB*unit)],`One part is ${ratioA*unit} ÷ ${ratioA} = ${unit}; multiply by ${ratioB}.`);
   return out;
 }

@@ -1,4 +1,5 @@
 import { createLevelMusicPlayer, getLevelMusicUrl } from './gameMusicLibrary';
+import {currentLearningPolicy} from '../systems/learning/learningSupport';
 import { GAME_AUDIO_STORAGE_KEY, GAME_HUD_MUTE_SYNC_EVENT } from '../gameHudEvents';
 import { getGameSoundProfile, type SoundMaterial } from './gameSoundProfiles';
 import { decodeGameSample, preloadGameSamples, sampleForEffect } from './gameSampleLibrary';
@@ -271,11 +272,21 @@ function playMaterialAccent(ctx: AudioContext, effect: GameSoundEffect, base: nu
 }
 
 export function playGameSound(effect: GameSoundEffect, mutedOverride?: boolean) {
+  if(currentLearningPolicy().calmAudio)return false;
   if (typeof window === 'undefined' || document.hidden || (mutedOverride ?? localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true')) return false;
   const ctx = getContext();
   if (!ctx) return false;
   if (ctx.state === 'suspended') void ctx.resume().catch(() => {});
   const profile = soundProfile;
+  if (profile.id === 'number_line_ninja' && effect === 'correct' && document.documentElement.dataset.presentation === 'matharia') {
+    // The larger stone lands after the first few bits of rubble.
+    const start = ctx.currentTime + .005;
+    for (const [delay, level] of [[0, .29], [.064, .40], [.16, .92], [.22, .24]]) {
+      const cancel = scheduleMaterialContact(ctx, dry!, 'stone', start + delay, level, () => activeEngines.delete(cancel));
+      activeEngines.add(cancel);
+    }
+    return true;
+  }
   if (profile.id === 'fraction_forge' && effect === 'impact') {
     const cancel = scheduleForgeStrike(ctx, dry!, ctx.currentTime + .005, () => activeEngines.delete(cancel));
     activeEngines.add(cancel);
@@ -289,7 +300,7 @@ export function playGameSound(effect: GameSoundEffect, mutedOverride?: boolean) 
   const epoch = sampleEpoch;
   if (sampleForEffect(profile, effect)) {
     void decodeGameSample(ctx, profile, effect).then(buffer => {
-      if (epoch !== sampleEpoch || document.hidden || localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true' || ctx.state === 'closed') return;
+      if (epoch !== sampleEpoch || document.hidden || currentLearningPolicy().calmAudio || localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true' || ctx.state === 'closed') return;
       if (!buffer) { playSynthSound(ctx, effect, profile); return; }
       // Repeated clicks and fast answers must not stack the same long recording.
       const group = effect.startsWith('monster_') ? 'monster' : effect === 'correct' || effect === 'incorrect' ? 'feedback' : effect;
@@ -318,6 +329,16 @@ export function playGameSound(effect: GameSoundEffect, mutedOverride?: boolean) 
   return true;
 }
 
+/** A short, consistent preparation tick; it respects the existing sound and calm-audio settings. */
+export function playGameCountdownTick() {
+  if (typeof window === 'undefined' || document.hidden || currentLearningPolicy().calmAudio || localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true') return false;
+  const ctx = getContext();
+  if (!ctx) return false;
+  if (ctx.state === 'suspended') void ctx.resume().catch(() => {});
+  playVoice(ctx, {note:1050,at:0,length:.055,level:.06,pan:0,wave:'triangle',endNote:700}, ctx.currentTime + .005);
+  return true;
+}
+
 const sampleGroups = new WeakMap<AudioBufferSourceNode, string>();
 function playContactOnContext(ctx: AudioContext, material: SoundMaterial, level: number) {
   const stop = scheduleMaterialContact(ctx, dry!, material, ctx.currentTime + .005, level,()=>activeEngines.delete(stop));
@@ -330,6 +351,7 @@ function playContactOnContext(ctx: AudioContext, material: SoundMaterial, level:
 }
 /** For a visual contact scheduled by a scene's existing paused presentation clock. */
 export function playMaterialContact(material: SoundMaterial, level = 1) {
+  if(currentLearningPolicy().calmAudio)return false;
   if (typeof window === 'undefined' || document.hidden || localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true') return false;
   const ctx = getContext(); if (!ctx || ctx.state !== 'running') return false;
   playContactOnContext(ctx, material, level); return true;
@@ -355,6 +377,7 @@ function playSynthSound(ctx: AudioContext, effect: GameSoundEffect, profile: typ
 
 /** Original launch-control beep, sharing the game's master volume and mute setting. */
 export function playRocketCountdownSound() {
+  if(currentLearningPolicy().calmAudio)return;
   if (typeof window === 'undefined' || document.hidden || localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true') return;
   const ctx = getContext();
   if (!ctx) return;
@@ -373,6 +396,7 @@ export function playRaceEngineSound(durationSeconds: number, stalled = false): (
 }
 
 function playEngineRoar(durationSeconds: number, kind: 'rocket' | 'race' | 'stall'): () => void {
+  if(currentLearningPolicy().calmAudio)return ()=>{};
   if (typeof window === 'undefined' || document.hidden || localStorage.getItem(GAME_AUDIO_STORAGE_KEY) === 'true') return () => {};
   const ctx = getContext();
   if (!ctx) return () => {};

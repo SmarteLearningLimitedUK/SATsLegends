@@ -1,3 +1,4 @@
+import {questionMetadata} from '../systems/learning/questionMetadata';
 import { playGameSound } from '../audio/gameAudio';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
@@ -36,6 +37,7 @@ interface ShareChallenge {
   prompt: string;
   mode: 'direct_share' | 'scaled_share' | 'bigger_share' | 'exam_share';
   plateCount: number;
+  given?:'total'|'share'|'difference';
 }
 
 type FeedbackTone = 'good' | 'bad' | 'neutral';
@@ -130,10 +132,10 @@ const buildSharePrompt = () => {
   ].join('\n');
 };
 
-const createChallenge = (levelId: number, solved: number): ShareChallenge => {
+const createChallenge = (levelId: number, solved: number, runSeed=0): ShareChallenge => {
   const tier = Math.max(1, Math.min(5, levelId));
   const mode = shareModeForLevel(levelId);
-  const plateCount = MAX_PLATE_COUNT;
+  const plateCount = Math.min(MAX_PLATE_COUNT,tier===1?2+(solved%2):tier===2?3:tier===3?3+(solved%2):tier===4?4+(solved%2):3+(solved%3));
   const tierPatterns: number[][][] = [
     [[1, 1, 1, 1, 1], [1, 1, 1, 1, 2], [1, 1, 2, 1, 1], [2, 1, 1, 1, 1], [1, 2, 1, 1, 1]],
     [[1, 1, 1, 1, 2], [1, 1, 1, 2, 2], [1, 2, 1, 2, 1], [2, 1, 2, 1, 2], [1, 2, 2, 1, 1]],
@@ -142,19 +144,29 @@ const createChallenge = (levelId: number, solved: number): ShareChallenge => {
     [[2, 1, 2, 3, 4], [1, 2, 3, 2, 4], [4, 2, 1, 3, 2], [3, 4, 2, 1, 2], [2, 3, 4, 2, 1]],
   ];
   const patternOptions = tierPatterns[tier - 1];
-  const pattern = [...patternOptions[solved % patternOptions.length]];
+  // One permutation per run keeps the five authored ratios distinct, while
+  // changing plate order between replays.
+  let seed=runSeed>>>0;
+  const next=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
+  const order=[0,1,2,3,4];
+  for(let i=order.length-1;i>0;i--){const j=Math.floor(next()*(i+1));[order[i],order[j]]=[order[j],order[i]];}
+  const basePattern=plateCount===5?patternOptions[solved%patternOptions.length]:RATIO_PATTERNS_BY_COUNT[plateCount][Math.abs(runSeed+solved)%RATIO_PATTERNS_BY_COUNT[plateCount].length];
+  const pattern=order.filter(i=>i<plateCount).map(i=>basePattern[i]);
   const totalUnits = pattern.reduce((sum, value) => sum + value, 0);
-  const unitValue = [1, 1, 2, 2, 3][tier - 1];
+  const unitValue = tier===1?1:tier===2?1+Math.floor(Math.random()*2):tier===3?2:2+Math.floor(Math.random()*2);
   const totalSlices = totalUnits * unitValue;
   const targetCounts = pattern.map((value) => value * unitValue);
   const ratioText = pattern.join(':');
+  const minIndex=pattern.indexOf(Math.min(...pattern)),maxIndex=pattern.indexOf(Math.max(...pattern));
+  const given=tier>=4&&solved%2===1&&minIndex!==maxIndex?'difference':tier>=3&&solved%3===0?'share':'total';
+  const prompt=given==='difference'?`Plate ${maxIndex+1} needs ${targetCounts[maxIndex]-targetCounts[minIndex]} more cakes than plate ${minIndex+1}. Share in the ratio shown.`:given==='share'?`Plate 1 needs ${targetCounts[0]} cakes. Share in the ratio shown.`:`Share ${totalSlices} cakes between ${plateCount} guests.`;
 
   return {
     id: nextChallengeId(),
     totalSlices,
     ratios: pattern,
     targetCounts,
-    prompt: buildSharePrompt(),
+    prompt,given,
     mode,
     plateCount,
   };
@@ -174,7 +186,8 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const [roundSolved, setRoundSolved] = useState(0);
   const [attempts, setAttempts] = useState(0);
   const [xpEarned, setXpEarned] = useState(0);
-  const [challenge, setChallenge] = useState<ShareChallenge>(() => createChallenge(levelId, 0));
+  const runSeed=useRef(Math.floor(Math.random()*2147483647));
+  const [challenge, setChallenge] = useState<ShareChallenge>(() => createChallenge(levelId, 0,runSeed.current));
   const [plates, setPlates] = useState<string[][]>(() => createEmptyPlates(challenge.plateCount));
   const [remainingSlices, setRemainingSlices] = useState(challenge.totalSlices);
   const [dragSlice, setDragSlice] = useState<DragSlice | null>(null);
@@ -214,7 +227,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     endedRef.current = false;
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     dragCleanupRef.current?.();
-    const firstChallenge = createChallenge(levelId, 0);
+    const firstChallenge = createChallenge(levelId, 0,runSeed.current);
     setRoundSolved(0);
     setAttempts(0);
     setXpEarned(0);
@@ -319,13 +332,13 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
   const cakeSourceWidth = Math.min(380, tableWidth * (narrowTable ? .66 : .32));
   const cakeSourceHeight = compactLandscape ? 44 : Math.min(100, Math.max(62, tableHeight * .24));
   const equalShares = challenge.ratios.every(value => value === challenge.ratios[0]);
-  const promptText = equalShares
+  const promptText = challenge.given&&challenge.given!=='total'?challenge.prompt:equalShares
     ? `Share ${challenge.totalSlices} cakes equally between ${challenge.plateCount} guests.`
     : `Share ${challenge.totalSlices} cakes between ${challenge.plateCount} guests.`;
 
   const loadNextChallenge = useCallback((solvedCount: number) => {
     dragCleanupRef.current?.();
-    const next = createChallenge(levelId, solvedCount);
+    const next = createChallenge(levelId, solvedCount,runSeed.current);
     setChallenge(next);
     setPlates(createEmptyPlates(next.plateCount));
     setRemainingSlices(next.totalSlices);
@@ -513,13 +526,13 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
     setValidationActive(true);
 
     if (!allSlicesUsed || !allCorrect) {
-      emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { reason: 'sharing_ratio', metadata: { challengeId: challenge.id } });
+      emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { reason: 'sharing_ratio', metadata: { challengeId: challenge.id ,...questionMetadata("share_splitter","ratio.unequal-sharing",challenge,"construction",["6R4"],false)} });
       setFeedback(!allSlicesUsed ? 'Share every cake, then check the ratio again.' : 'The parts need a different split. Reset and try again.');
       setFeedbackTone('bad');
       return;
     }
 
-    emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { metadata: { challengeId: challenge.id } });
+    emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { metadata: { challengeId: challenge.id ,...questionMetadata("share_splitter","ratio.unequal-sharing",challenge,"construction",["6R4"],false)} });
 
     const nextSolved = roundSolved + 1;
     const roundXp = BASE_XP_PER_ROUND + (levelId * 20);
@@ -654,7 +667,7 @@ const ShareSplitterGame: React.FC<ShareSplitterGameProps> = ({
             aria-pressed={sourceSelected}
           >
             <span className="share-party-tray-label">Cakes left</span>
-            <strong className="share-party-tray-count" aria-live="polite">{remainingSlices}</strong>
+            <strong className="share-party-tray-count" aria-live="polite">{challenge.given&&challenge.given!=='total'?'—':remainingSlices}</strong>
             {remainingSlices > 0 ? <img src={trimmedCakeSliceAsset} alt="" draggable={false} /> : null}
           </button>
         </div>

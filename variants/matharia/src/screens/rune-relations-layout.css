@@ -1,0 +1,9 @@
+/* Rune-only placement overrides the existing native chart regions. */
+html[data-presentation=matharia] #root .screen-gameplay[data-active-game=rune_relations][data-measured-scene]:has([data-rune-board]){
+ --revision-control-width:clamp(180px,25vw,260px);
+ .graph-chart-title{top:3px;height:30px;}
+ .graph-activity-board{top:38px;bottom:10px;left:16px;right:16px;}
+ .revision-activity-controls{padding:10px 12px;}
+ .revision-activity-control-content{gap:0;}
+ .rune-notice{position:absolute;bottom:100%;left:0;right:0;padding:8px;background:#063b4d;border:1px solid #e4c785;border-radius:8px;}
+}

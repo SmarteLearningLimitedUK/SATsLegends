@@ -1,10 +1,11 @@
+import {britishNumberWords} from '../systems/content/numberWords';
+import {questionMetadata} from '../systems/learning/questionMetadata';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import rhinoEnemy from '../assets/place_value/scene/hero_rhino_idle.png';
 import forestBackground from '../assets/place_value/scene/bg_acropolis_landscape.png';
 import stoneLedge from '../assets/place_value/scene/stone-ledge-v1.png';
 import hudAvatarName from '../assets/ui_frames/hudfortextplace_slices/hud_avatar_name.png';
-import hourglassIcon from '../assets/casual_ui/icons/hourglass.png';
 import { triggerHaptic } from '../haptics';
 import { AVATARS } from '../constants';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
@@ -62,14 +63,13 @@ interface DragState {
 type GoblinEffect = 'idle' | 'hit' | 'heal';
 
 const GOBLIN_MAX_HEALTH = 10;
-const MATCH_DURATION_SECONDS = 90;
 const PLAYER_STORAGE_KEY = 'maths_quest_player';
 const GOBLIN_DAMAGE_LINES = ['Ouch!', 'Hey!', 'Oof!', 'Wahhh!', 'Ugh!'] as const;
 const HIT_REACTION_MS = 900;
 
-const FULL_PLACE_VALUE_HINTS = ['M', 'Hth', 'Tth', 'Th', 'H', 'T', 'U'] as const;
+const FULL_PLACE_VALUE_HINTS = ['10M', 'M', 'Hth', 'Tth', 'Th', 'H', 'T', 'U'] as const;
 const PLACE_NAMES: Record<string, string> = {
-  M: 'Millions', Hth: 'Hundred thousands', Tth: 'Ten thousands',
+  '10M':'Ten millions', M: 'Millions', Hth: 'Hundred thousands', Tth: 'Ten thousands',
   Th: 'Thousands', H: 'Hundreds', T: 'Tens', U: 'Units',
 };
 const TARGET_ROW_Y_OFFSET_PX = 0;
@@ -133,7 +133,7 @@ const getDistractorDigits = (expectedDigits: number[], count: number): number[] 
 
 const slotCountForLevel = (level: number): number => {
   // Each scored tier opens a distinct place-value range; the final tier includes millions.
-  return [2, 3, 4, 5, 7][Math.max(1, Math.min(5, level)) - 1];
+  return [2, 4, 6, 6, 7][Math.max(1, Math.min(5, level)) - 1];
 };
 
 const ONES_WORDS = [
@@ -198,58 +198,22 @@ const spellUnderThousand = (value: number) => {
   return parts.join(' ');
 };
 
-const numberToWords = (value: number) => {
-  if (value === 0) return 'zero';
-  if (value === 1_000_000) return 'one million';
-
-  const thousands = Math.floor(value / 1000);
-  const remainder = value % 1000;
-
-  if (thousands > 0) {
-    const thousandWords = spellUnderThousand(thousands);
-    if (remainder === 0) return `${thousandWords} thousand`;
-    const remainderWords = spellUnderThousand(remainder);
-    return remainder < 100
-      ? `${thousandWords} thousand and ${remainderWords}`
-      : `${thousandWords} thousand ${remainderWords}`;
-  }
-
-  return spellUnderThousand(remainder);
-};
-
+const numberToWords = britishNumberWords;
 const makeQuestion = (level: number): QuestionState => {
-  const slotCount = slotCountForLevel(level);
-  let promptNumber: number;
-  if (slotCount === 2) {
-    promptNumber = randomInt(10, 99);
-  } else if (slotCount === 3) {
-    promptNumber = randomInt(100, 999);
-  } else if (slotCount === 4) {
-    promptNumber = randomInt(1000, 9999);
-  } else if (slotCount === 5) {
-    promptNumber = randomInt(10000, 99999);
-  } else if (slotCount === 6) {
-    promptNumber = randomInt(100000, 999999);
-  } else {
-    // Highest round supports full range up to 1,000,000.
-    promptNumber = randomInt(1, 1000000);
-  }
-
-  const expectedDigits = String(promptNumber)
-    .padStart(slotCount, '0')
-    .split('')
-    .map((digit) => Number(digit));
-  const distractorDigits = getDistractorDigits(expectedDigits, 2);
-  const tokenValues = shuffle([...expectedDigits, ...distractorDigits]);
-  const placeHints = FULL_PLACE_VALUE_HINTS.slice(FULL_PLACE_VALUE_HINTS.length - slotCount);
-  return {
-    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    prompt: `Write ${numberToWords(promptNumber)} in digits.`,
-    expectedDigits,
-    tokenValues,
-    placeHints,
-    kind: 'fluency',
-  };
+  const tier=Math.max(1,Math.min(5,level));
+  let slots=slotCountForLevel(tier);
+  let promptNumber=randomInt(10**(slots-1),tier===4?1_000_000:10**slots-1);
+  if(tier===5&&Math.random()<1/6){promptNumber=10_000_000;slots=8;}
+  const compare=tier>=3&&Math.random()<.4;
+  const other=compare?Math.max(1,Math.min(10_000_000,promptNumber+(Math.random()<.5?-1:1)*[1,10,100,1000][randomInt(0,3)])):0;
+  const askLarger=Math.random()<.5;
+  const target=compare?(askLarger?Math.max(promptNumber,other):Math.min(promptNumber,other)):promptNumber;
+  slots=Math.max(slots,String(target).length);
+  const expectedDigits=String(target).padStart(slots,'0').split('').map(Number);
+  return {id:`${Date.now()}-${Math.random().toString(36).slice(2,8)}`,
+    prompt:compare?`Build the ${askLarger?'larger':'smaller'} number: ${promptNumber.toLocaleString('en-GB')} or ${other.toLocaleString('en-GB')}.`:`Write ${numberToWords(target)} in digits.`,
+    expectedDigits,tokenValues:shuffle([...expectedDigits,...getDistractorDigits(expectedDigits,2)]),
+    placeHints:FULL_PLACE_VALUE_HINTS.slice(-slots),kind:compare?'reasoning':'fluency'};
 };
 
 const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
@@ -262,7 +226,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   sessionState,
   sessionEvents,
   onVictory,
-  onGameOver,
   onBack,
 }) => {
   const [viewport, setViewport] = useState(() => {
@@ -341,8 +304,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const [dragState, setDragState] = useState<DragState | null>(null);
   const [goblinHealth, setGoblinHealth] = useState<number>(GOBLIN_MAX_HEALTH);
   const [XP, setScore] = useState<number>(0);
-  const [localTimeLeft, setMatchTimeLeft] = useState<number>(MATCH_DURATION_SECONDS);
-  const matchTimeLeft = sessionState?.timeLeft ?? localTimeLeft;
   const [attempts, setAttempts] = useState<number>(0);
   const [correctAnswers, setCorrectAnswers] = useState<number>(0);
   const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; message: string } | null>(null);
@@ -356,7 +317,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const [wrongFlash, setWrongFlash] = useState(false);
 
   const victoryDispatchedRef = useRef(false);
-  const gameOverDispatchedRef = useRef(false);
   const onVictoryRef = useRef(onVictory);
   const speechTimeoutRef = useRef<number | null>(null);
   const playfieldRef = useRef<HTMLDivElement | null>(null);
@@ -479,20 +439,9 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
 
   useEffect(() => {
     victoryDispatchedRef.current = false;
-    gameOverDispatchedRef.current = false;
     clearRoundTimeouts();
-    setMatchTimeLeft(MATCH_DURATION_SECONDS);
     resetRound(makeQuestion(resolvedLevel));
   }, [clearRoundTimeouts, resetRound, resolvedLevel]);
-
-  useEffect(() => {
-    if (sessionState || isPractice || victoryDispatchedRef.current || gameOverDispatchedRef.current) return undefined;
-    const intervalId = window.setInterval(() => {
-      if (document.hidden) return;
-      setMatchTimeLeft((prev) => Math.max(0, prev - 1));
-    }, 1000);
-    return () => window.clearInterval(intervalId);
-  }, [isPractice, question.id, sessionState]);
 
   useEffect(() => {
     setShowPracticeIntro(Boolean(isPractice));
@@ -503,17 +452,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       window.clearTimeout(speechTimeoutRef.current);
     }
   }, []);
-
-  useEffect(() => {
-    if (sessionState || matchTimeLeft > 0 || victoryDispatchedRef.current || gameOverDispatchedRef.current) return;
-    gameOverDispatchedRef.current = true;
-    setIsResolving(true);
-    setFeedback(null);
-    setGoblinEffect('heal');
-    triggerHaptic('warning');
-    setDragState(null);
-    scheduleRound(() => onGameOver(Math.max(0, XP)), 220);
-  }, [matchTimeLeft, onGameOver, scheduleRound, sessionState, XP]);
 
   const getPlayfieldScale = useCallback(() => {
     const node = playfieldRef.current;
@@ -701,16 +639,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     [dragState, isResolving, targetSlots],
   );
 
-  const timerProgress = useMemo(
-    () => Math.max(0, Math.min(1, matchTimeLeft / MATCH_DURATION_SECONDS)),
-    [matchTimeLeft],
-  );
-
-  const timerFillColor = useMemo(() => {
-    const hue = Math.round(timerProgress * 120);
-    return `hsl(${hue} 88% 52%)`;
-  }, [timerProgress]);
-
   const handleSubmit = useCallback(() => {
     if (!canSubmit || submitLockedRef.current) return;
     submitLockedRef.current = true;
@@ -721,7 +649,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
     setAttempts(nextAttempts);
 
     if (isCorrect) {
-      emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { metadata: { questionId: question.id } });
+      emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { metadata: { questionId: question.id ,...questionMetadata("place_value_panic","number.write-digits",question,"construction",["5N2"],false)} });
       const nextHealth = Math.max(0, goblinHealth - 1);
       const nextCorrectAnswers = correctAnswers + 1;
       const nextScore = XP + 140 + resolvedLevel * 22;
@@ -744,7 +672,7 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
       return;
     }
 
-      emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { metadata: { questionId: question.id } });
+      emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { metadata: { questionId: question.id ,...questionMetadata("place_value_panic","number.write-digits",question,"construction",["5N2"],false)} });
       setFeedback({
         tone: 'error',
         message: 'Try again. Check each digit’s place value.',
@@ -774,7 +702,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
   const topHudLayout = useMemo(() => ({
     rowHeight: 'clamp(2.8rem, 7.4vh, 3.9rem)',
     profileWidth: 'clamp(9.6rem, 42vw, 13.4rem)',
-    timerWidth: 'clamp(10.6rem, 42vw, 15.6rem)',
   }), []);
 
   return (
@@ -836,37 +763,6 @@ const PlaceValuePanicGame: React.FC<PlaceValuePanicGameProps> = ({
               </div>
             </div>
 
-            <div
-              className="relative shrink-0"
-              style={{ height: topHudLayout.rowHeight, width: topHudLayout.timerWidth }}
-            >
-              <div className="pointer-events-none absolute inset-0 flex items-center">
-                <div className="flex h-[82%] w-full items-center rounded-full border border-cyan-200/35 bg-slate-900/62 px-[clamp(0.35rem,1.3vw,0.62rem)] shadow-[0_6px_16px_rgba(2,6,23,0.45)]">
-                  <img
-                    src={hourglassIcon}
-                    alt=""
-                    aria-hidden="true"
-                    draggable={false}
-                    className="h-[74%] w-auto shrink-0 object-contain drop-shadow-[0_2px_4px_rgba(2,6,23,0.5)]"
-                  />
-                  <div className="relative ml-[clamp(0.32rem,1.2vw,0.56rem)] h-[44%] flex-1 overflow-hidden rounded-full border border-cyan-100/25 bg-slate-950/58">
-                    <motion.div
-                      className="absolute inset-y-0 left-0 rounded-full"
-                      animate={{ width: `${timerProgress * 100}%`, backgroundColor: timerFillColor }}
-                      transition={{ duration: 0.25, ease: 'easeOut' }}
-                      style={{
-                        boxShadow: '0 0 10px rgba(34,197,94,0.45), inset 0 1px 0 rgba(255,255,255,0.3)',
-                        backgroundImage: 'linear-gradient(180deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.08) 100%)',
-                      }}
-                    />
-                    <div className="absolute inset-[1px] rounded-full bg-[linear-gradient(to_right,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:12%_100%]" />
-                  </div>
-                  <span className="ml-[clamp(0.35rem,1.2vw,0.58rem)] shrink-0 text-[clamp(0.62rem,1.9vw,0.92rem)] font-black uppercase tracking-[0.06em] text-white">
-                    {matchTimeLeft}s
-                  </span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       ) : null}

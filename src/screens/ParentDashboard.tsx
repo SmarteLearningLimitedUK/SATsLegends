@@ -6,6 +6,9 @@ import { ACHIEVEMENT_CATALOG } from '../systems/progression/achievementCatalog';
 import { buildParentReport } from '../systems/progression/reporting';
 import { ParentGameSummary, PlayerData, TopicStat } from '../types';
 import './parent-dashboard.css';
+import {useLearningState} from '../systems/learning/learningStorage';
+import {buildLearningReport} from '../systems/learning/learningReport';
+import {skillLabel} from '../systems/learning/skillCatalog';
 
 interface ParentDashboardProps {
   player: PlayerData;
@@ -49,6 +52,8 @@ const GameRow: React.FC<{ label: string; game: ParentGameSummary | null }> = ({ 
 
 const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => {
   const report = useMemo(() => buildParentReport(player), [player]);
+  const learning=useLearningState();
+  const skills=useMemo(()=>buildLearningReport(learning),[learning]);
   const telemetry = player.telemetry;
   const sessions = telemetry?.sessionsPlayed ?? player.stats?.totalGamesPlayed ?? 0;
   const totalAttempts = (telemetry?.correctAnswers ?? 0) + (telemetry?.incorrectAnswers ?? 0);
@@ -86,7 +91,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
             <TopicList title="Highest accuracy" items={report.excelling} tone="is-strength" emptyText="Topic accuracy will appear after a few missions." />
             <TopicList title="Practice rotation" items={report.needsPractice} tone="is-practice" emptyText="Keep exploring. More answers will help choose topics to revisit." />
           </div>
-          <p className="parent-starting-topics">These are relative rankings. A topic can appear in both lists while only a few topics have been played.</p>
+          <p className="parent-starting-topics">At least six recorded answers are needed for these summaries. Historical game accuracy does not establish retained knowledge.</p>
           <p className="parent-support-note">Try asking, “What helped you work that one out?” Celebrate the approach as well as the answer.</p>
           {report.nextFocus.length > 0 && <p className="parent-starting-topics"><strong>Still getting started:</strong> {report.nextFocus.join(', ')}.</p>}
         </section>
@@ -101,6 +106,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ player, onBack }) => 
         <details className="parent-details" open={totalAttempts === 0}>
           <summary><span>Answer history &amp; milestones</span><ChevronDown size={18} aria-hidden="true" /></summary>
           <div className="parent-details-content">
+            <section><h3>Independent revision evidence</h3>{skills.length?<ul className="parent-history-list">{skills.map(skill=><li key={skill.skillId}><span>{skillLabel(skill.skillId)} · {skill.correct}/{skill.attempts} independent first attempts · {skill.distinctVariants} variations · tiers {skill.tiers.join(', ')||'not independently assessed'}</span><strong>{skill.state.replace('-',' ')}{skill.reviewNeeded?' · revisit suggested':''}</strong><small>Last practised {new Date(skill.lastPractisedAt).toLocaleDateString('en-GB')} · {skill.dueAt<=Date.now()?'a revisit is due':`revisit from ${new Date(skill.dueAt).toLocaleDateString('en-GB')}`} · {skill.supportedAttempts} responses with mathematical help · {skill.accessSupportedAttempts} responses using access settings{skill.change===null?'':` · recent accuracy ${skill.change>=0?'+':''}${Math.round(skill.change*100)} percentage points`}</small>{skill.repeatedPatterns.map(pattern=><p key={pattern.code}>{pattern.label}: observed {pattern.count} times. {pattern.reminder}</p>)}</li>)}</ul>:<p>No independent skill conclusion yet. Parent-controlled personalised revision is optional; stars and older history are retained separately.</p>}<p>Accessibility support does not reduce mathematical credit. Revealed answers and worked-method support are recorded separately. These provisional states are not SATs score predictions. Error patterns suggest what to revisit; they do not establish why an error happened. Accuracy changes compare two sets of six responses and may reflect different question demands.</p>{Object.entries(learning.milestones??{}).length>0&&<p>Earlier milestones (historical, not a current assessment): {Object.entries(learning.milestones??{}).map(([id,m])=>`${skillLabel(id)} ${m.state} on ${new Date(m.at).toLocaleDateString('en-GB')}`).join('; ')}.</p>}</section>
             <dl className="parent-ledger">
               <div><dt>Correct answers</dt><dd>{telemetry?.correctAnswers ?? 0}</dd></div>
               <div><dt>Answers to revisit</dt><dd>{telemetry?.incorrectAnswers ?? 0}</dd></div>

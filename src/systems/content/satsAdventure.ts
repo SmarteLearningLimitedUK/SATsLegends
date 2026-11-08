@@ -1,12 +1,22 @@
 import { extendedReasoningMissions } from './satsExtendedMissions';
 import { depthReasoningMissions } from './satsDepthMissions';
 import { revisionGapMissions } from './satsRevisionGapMissions';
+import {buildCalendarQuestion} from './calendarQuestions';
+import {runeFamilyMission} from './runeRelationsRevision';
+import {shatteredRevisionMission} from './shatteredWhole/revision';
+import {REVISION_GAMES,missionSkill} from '../learning/revisionSkills';
 import type { DepthModel } from './satsDepthModels';
+import type {ShatteredQuestion} from './shatteredWhole/questions';
 import { varyCoreMission } from './satsReplayVariations';
-import { markExtendedMission, calculationEvidence } from './satsResponseMarking';
+import { markExtendedMission } from './satsResponseMarking';
+import {calculationSteps} from './calculationEvidence';
+import type {AssessmentMetadata} from './satsAssessmentTypes';
+import {markAssessment} from './satsAssessmentMarking';
+import {buildAssessmentPaper,type AssessmentBuildOptions} from './satsAssessmentBuilder';
 /** Original game missions. Reference: STA KS2 mathematics framework, sections 4 and 6. */
 export type SatsDomain = 'N' | 'C' | 'F' | 'R' | 'A' | 'M' | 'G' | 'P' | 'S';
 export type MissionVisual =
+  | {type:'shattered';question:ShatteredQuestion}
   | { type: 'depth'; model: DepthModel }
   | { type: 'polygon'; sides: number }
   | { type: 'symmetry'; cells: [number, number][] }
@@ -26,12 +36,16 @@ export type MissionVisual =
   | { type: 'sequence'; values: string[] };
 export interface MissionField { label: string; answer: string; options?: string[]; response?: 'working' | 'ordered' | 'sequence' | 'set'; }
 export interface SatsMission {
+  curriculumRefs?:string[];
+  assessment?:AssessmentMetadata;
+  /** Specific assessed skill; broad curriculum references remain separate. */
+  skillId?: string;
   id: string; domain: SatsDomain; reference: string; game: string; difficulty: number;
   prompt: string; visual: MissionVisual; fields: MissionField[]; explanation: string;
   marks: number;
   marking?: {kind:'pairs';total:number;min:number;ascending:boolean;coefficientA?:number;coefficientB?:number} | {kind:'method';intermediates:number[]} | {kind:'tolerance';margin:number} | {kind:'plot';prefix:'line'|'pie'|'pictogram';expected:number[]} | {kind:'rectangle';area:number;perimeter:number};
 }
-export interface SatsPaper { number: number; title: string; seconds: number; marks: number; missions: SatsMission[]; }
+export interface SatsPaper { number: number; title: string; seconds: number; marks: number; missions: SatsMission[]; profileId?:string; format?:'quiz'; }
 const field = (label: string, answer: string, options?: string[]): MissionField => ({ label, answer, options });
 const equation = (...lines: string[]): MissionVisual => ({ type: 'equation', lines });
 const mission = (id: string, reference: string, game: string, difficulty: number, prompt: string, visual: MissionVisual, fields: MissionField[], explanation: string): SatsMission => ({ id, domain: reference.match(/[NCFRAMGPS]/)![0] as SatsDomain, reference, game, difficulty, prompt, visual, fields, explanation, marks: fields.length });
@@ -115,7 +129,7 @@ export function reasoningMissions(seed = 1): SatsMission[] {
     q('inverse', '6A1', 'calculation_clash', 2, `A number n is multiplied by 8. The result is ${(k + 6) * 8}. Which equation represents this?`, equation(`A number × 8 gives ${(k + 6) * 8}`), [field('Equation', `8 × n = ${(k + 6) * 8}`, [`8 × n = ${(k + 6) * 8}`, `n + 8 = ${(k + 6) * 8}`, `n ÷ 8 = ${(k + 6) * 8}`, `8 − n = ${(k + 6) * 8}`])], 'Use n for the unknown number. Eight times n equals the given result.'),
     q('estimate', '5C3', 'calculation_clash', 2, 'Estimate the product by rounding each number to the nearest hundred.', equation('398 × 202 ≈ □'), [field('Estimate', '80000')], '398 rounds to 400 and 202 rounds to 200. 400 × 200 = 80,000.'),
     q('ratio-fraction', '6R4', 'ratio_fractions', 2, 'Red:blue racers are in a 2:3 ratio. What fraction of all racers is red?', { type: 'ratio', labels: ['Red', 'Blue'], parts: [2, 3] }, [field('Fraction red', '2/5')], 'There are 5 parts altogether; 2 are red. The fraction is 2/5.'),
-    q('fraction-whole', '6F10', 'take_out_rush', 2, `3/4 of the café batch is ${3 * (k + 5)} cakes. How many cakes are in the whole batch?`, { type: 'fractions', values: ['3/4'] }, [field('Whole batch', String(4 * (k + 5)))], `Divide ${3 * (k + 5)} by 3 to find one quarter (${k + 5}), then multiply by 4.`),
+    q('fraction-whole', '4F10a', 'take_out_rush', 2, `3/4 of the café batch is ${3 * (k + 5)} cakes. How many cakes are in the whole batch?`, { type: 'fractions', values: ['3/4'] }, [field('Whole batch', String(4 * (k + 5)))], `Divide ${3 * (k + 5)} by 3 to find one quarter (${k + 5}), then multiply by 4.`),
     q('percent-back', '6R2', 'percent_power', 3, `25% of the reactor power is ${k * 6} units. Find the full power.`, equation(`25% → ${k * 6}`), [field('Full power', String(k * 24))], '25% is one quarter, so multiply the known quarter by 4.'),
     q('order', '6C9', 'order_ops_arena', 3, 'Choose the correct value.', equation('30 − 12 ÷ 3 × 2'), [field('Value', '22', ['12', '22', '26', '36'])], 'Division and multiplication have equal priority: 12 ÷ 3 × 2 = 8. Then 30 − 8 = 22.'),
     q('fraction-compare', '6F3', 'fraction_forge', 3, 'Which fraction is larger?', { type: 'fractions', values: ['5/8', '2/3'] }, [field('Larger fraction', '2/3', ['5/8', '2/3'])], 'Use twenty-fourths: 5/8 = 15/24 and 2/3 = 16/24.'),
@@ -181,79 +195,8 @@ export function reasoningMissions(seed = 1): SatsMission[] {
   ].map(question => varyCoreMission(question, seed));
 }
 
-function seededShuffle<T>(items: T[], seed: number): T[] {
-  let state = seed >>> 0;
-  const output = [...items];
-  for (let i = output.length - 1; i > 0; i--) {
-    state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
-    const j = state % (i + 1); [output[i], output[j]] = [output[j], output[i]];
-  }
-  return output;
-}
-// The two reasoning papers must remain disjoint even when launched with different
-// seeds (for example, on different days or after a saved run is restored).
-const REASONING_PAPER_IDS: [Set<string>, Set<string>] = (() => {
-  const pool = reasoningMissions(1);
-  const assignments: [Set<string>, Set<string>] = [new Set(), new Set()];
-  const usedIds = new Set<string>();
-  const strandAnchors: [SatsDomain, number][] = [
-    ['N', 1], ['C', 1], ['F', 1], ['R', 2], ['A', 1],
-    ['M', 2], ['G', 1], ['P', 1], ['S', 1],
-  ];
-  strandAnchors.forEach(([domain, marks], index) => {
-    const pair = seededShuffle(pool.filter(q => q.domain === domain && q.marks === marks), 911 + index * 29).slice(0, 2);
-    if (pair.length !== 2) throw new Error(`Not enough ${domain} missions for two reasoning papers`);
-    pair.forEach((question, paperIndex) => {
-      assignments[paperIndex].add(question.id);
-      usedIds.add(question.id);
-    });
-  });
-  const numberDomains = new Set<SatsDomain>(['N', 'C', 'F', 'R', 'A']);
-  const groups = [
-    { numeric: true, marks: 1 }, { numeric: true, marks: 2 },
-    { numeric: false, marks: 1 }, { numeric: false, marks: 2 }, { numeric: false, marks: 3 },
-  ];
-  groups.forEach(({ numeric, marks }, index) => {
-    const remaining = seededShuffle(pool.filter(q => !usedIds.has(q.id) && numberDomains.has(q.domain) === numeric && q.marks === marks), 1741 + index * 53).sort((a,b)=>a.difficulty-b.difficulty);
-    remaining.forEach((question, questionIndex) => assignments[questionIndex % 2].add(question.id));
-  });
-  return assignments;
-})();
-
-export function buildSatsPaper(gameType: string, seed = Date.now()): SatsPaper {
-  const number = gameType === 'crystal_core' ? 1 : gameType === 'mirror_gate' ? 2 : 3;
-  if (number === 1) return { number, title: 'Arithmetic Reactor', seconds: 1800, marks: 40, missions: arithmeticMissions(seed) };
-  const pool = reasoningMissions(seed + number).filter(question => REASONING_PAPER_IDS[number - 2].has(question.id));
-  const numberDomains = new Set<SatsDomain>(['N', 'C', 'F', 'R', 'A']);
-  const selected: SatsMission[] = [];
-  const usedIds = new Set<string>();
-  // Give each paper all nine strands before filling its mark quotas.
-  const strandAnchors: [SatsDomain, number][] = [
-    ['N', 1], ['C', 1], ['F', 1], ['R', 2], ['A', 1],
-    ['M', 2], ['G', 1], ['P', 1], ['S', 1],
-  ];
-  strandAnchors.forEach(([domain, marks], index) => {
-    const question = seededShuffle(pool.filter(q => q.domain === domain && q.marks === marks), seed + 911 + index * 29)[0];
-    if (!question) throw new Error(`Missing ${domain} mission for reasoning paper ${number}`);
-    selected.push(question);
-    usedIds.add(question.id);
-  });
-  // Per paper: 12 one-mark and 6 two-mark N/C/F/R/A missions, plus
-  // 3 one-mark and 4 two-mark M/G/P/S missions = 35 marks across 25 questions.
-  const quotas = [
-    { numeric: true, marks: 1, count: 12 },
-    { numeric: true, marks: 2, count: 6 },
-    { numeric: false, marks: 1, count: 4 },
-    { numeric: false, marks: 2, count: 2 },
-    { numeric: false, marks: 3, count: 1 },
-  ];
-  quotas.forEach(({ numeric, marks, count }, index) => {
-    const needed = count - selected.filter(q => numberDomains.has(q.domain) === numeric && q.marks === marks).length;
-    const candidates = seededShuffle(pool.filter(q => !usedIds.has(q.id) && numberDomains.has(q.domain) === numeric && q.marks === marks), seed + 1741 + index * 53);
-    if (candidates.length < needed) throw new Error(`Not enough missions for reasoning paper ${number}`);
-    selected.push(...candidates.slice(0, needed));
-  });
-  return { number, title: number === 2 ? 'Mirror Gate Expedition' : 'Matrix Crystal Quest', seconds: 2400, marks: 35, missions: selected.sort((a, b) => a.difficulty - b.difficulty) };
+export function buildSatsPaper(gameType: string, seed = Date.now(), options:AssessmentBuildOptions={}): SatsPaper {
+  return buildAssessmentPaper(gameType,seed,reasoningMissions,options);
 }
 
 /** Exact rational matching avoids awarding a mark for a rounded repeating decimal. */
@@ -261,7 +204,7 @@ function rationalAnswer(value: string): string | null {
   if (value.length > 128) return null;
   const mixed = value.match(/^(-?\d+)\s+(\d+)\s*\/\s*(\d+)$/);
   const fraction = value.match(/^(-?\d+)\s*\/\s*(\d+)$/);
-  const decimal = value.match(/^(-?)(\d+)(?:\.(\d+))?$/);
+  const decimal = value.replace(/^(-?)\./, '$10.').match(/^(-?)(\d+)(?:\.(\d+))?$/);
   let numerator: bigint;
   let denominator: bigint;
   if (mixed) {
@@ -290,7 +233,11 @@ export function normaliseAnswer(value: string): string {
     const pairs = value.trim().split(';').map(part => part.match(/^\s*\(?\s*(-?\d+)\s*,\s*(-?\d+)\s*\)?\s*$/));
     return pairs.every(Boolean) ? pairs.map(pair => `${Number(pair![1])},${Number(pair![2])}`).sort().join(';') : `invalid-pairs:${value}`;
   }
-  const clean = value.trim().replace(/−/g, '-').replace(/^£\s*/, '').replace(/,/g, '').toLowerCase();
+  const raw = value.trim().replace(/−/g, '-').replace(/^£\s*/, '').toLowerCase();
+  // Commas in lists/coordinates are parsed by their declared response type.
+  // Only well-formed thousands groups may be removed from a scalar number.
+  if (raw.includes(',') && !/^-?\d{1,3}(?:,\d{3})+(?:\.\d+)?\s*[%°]?$/.test(raw)) return `invalid-number:${raw}`;
+  const clean = raw.replace(/,/g, '');
   const time = clean.match(/^(\d{1,2}):(\d{2})$/);
   if (time && +time[2] < 60) return `time:${+time[1]}:${time[2]}`;
   const symbol = clean.endsWith('%') ? 'percent:' : clean.endsWith('°') ? 'degrees:' : 'number:';
@@ -308,11 +255,23 @@ function isSimplifiedFraction(value:string):boolean {
   return a===1n;
 }
 export function markMission(q: SatsMission, values: string[], working = ''): number {
+  const assessment=markAssessment(q,values,working,answersMatch);if(assessment!==null)return assessment;
   const extended = markExtendedMission(q, q.marking?.kind === 'method' ? [values[0] || '', values[1] || working] : values, answersMatch);
   if (extended !== null) return extended;
   // A correct final arithmetic answer earns both marks even without the scaffolded method step.
   if(/^ar-long-(?:mult|div)-/.test(q.id)&&answersMatch(values[q.fields.length-1]??'',q.fields.at(-1)!.answer))return q.marks;
-  const workingCredit = /^ar-long-(?:mult|div)-/.test(q.id) && calculationEvidence(working).some(value => Math.abs(value-Number(q.fields[0].answer))<1e-8);
+  // Partial arithmetic credit requires an actual operation on this item's
+  // operands. A coincidental intermediate number is never sufficient.
+  let workingCredit=false;
+  if(/^ar-long-(?:mult|div)-/.test(q.id)&&q.visual.type==='equation'){
+    const operands=q.visual.lines[0].match(/^(\d+)\s*[×÷]\s*(\d+)/);
+    if(operands){const a=Number(operands[1]),b=Number(operands[2]);let step='';
+      if(q.id.includes('mult'))step=`${a} * ${Math.floor(b/10)*10}`;
+      else{let digits=1,prefix=Number(String(a).slice(0,digits));while(prefix<b&&digits<String(a).length)prefix=Number(String(a).slice(0,++digits));step=`${prefix} - ${b} * ${Math.floor(prefix/b)}`;}
+      const expected=calculationSteps(step).at(-1)?.expression;
+      workingCredit=Boolean(expected&&calculationSteps(working).some(actual=>actual.expression===expected));
+    }
+  }
   return Math.max(Number(workingCredit), q.fields.reduce((sum, f, i) => {
     const answer = values[i] ?? '';
     if (f.response === 'working') return sum;
@@ -332,4 +291,8 @@ export function markMission(q: SatsMission, values: string[], working = ''): num
     return sum + Number(correct);
   }, 0));
 }
-export const getRevisionMissions = (game: string, seed = Date.now()) => [...arithmeticMissions(seed), ...reasoningMissions(seed + 1)].filter(q => q.game === game);
+export const getRevisionMissions = (game: string, seed = Date.now()) => game==='calendar_quest'
+  ? [1,2,3,4,5].map((tier,index)=>buildCalendarQuestion(tier,seed,index).mission)
+  : game==='rune_relations' ? (['missing','rule','sequence','pairs','combinations'] as const).map((family,index)=>runeFamilyMission(family,seed+index*97))
+  : game==='shattered_whole' ? ['whole','equivalent','fdp','line','reasoning'].map((kind,index)=>shatteredRevisionMission(`fractions.visual-${kind}`,seed+index*97)!).filter(Boolean)
+  : [...arithmeticMissions(seed), ...reasoningMissions(seed + 1)].filter(q => q.game === game||REVISION_GAMES[missionSkill(q)]===game);

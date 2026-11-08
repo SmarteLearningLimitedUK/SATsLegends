@@ -9,9 +9,9 @@ export function adaptSharedScreen(code:string,file:string,root:string,modulePath
     code=code.replace(/\r\n/g,'\n');
     const start=code.indexOf('  const popup = ('),end=code.indexOf('  return typeof document',start);
     if(start<0||end<start)throw new Error('Matharia practice briefing renderer changed.');
-    code=code.slice(0,start)+`  const popup = <AnimatePresence>{visible&&<BriefingScene dialogRef={dialogRef} title={title} body={body} briefing={briefing} kind={kind} actionLabel={actionLabel} onAction={commitAction} avatarId={avatarId}/>}</AnimatePresence>;\n`+code.slice(end);
-    code=code.replace("  kind?: 'practice' | 'help' | 'mock';","  kind?: 'practice' | 'help' | 'mock'; avatarId?: string;");
-    code=code.replace("kind = 'practice' })","kind = 'practice', avatarId })");
+    code=code.slice(0,start)+`  const popup = <AnimatePresence>{visible&&<BriefingScene dialogRef={dialogRef} title={title} body={body} briefing={briefing} kind={kind} actionLabel={actionLabel} onAction={commitAction} avatarId={avatarId} targetSkill={targetSkill} targetMissions={targetMissions}/>}</AnimatePresence>;\n`+code.slice(end);
+    code=replaceRequired(code,'  targetSkill?: string;','  targetSkill?: string; avatarId?: string;','briefing avatar prop');
+    code=replaceRequired(code,"kind = 'practice',targetSkill })","kind = 'practice',targetSkill,avatarId })",'briefing avatar binding');
     return `import BriefingScene from '${modulePath('shared/BriefingScene')}';\n`+code;
   }
   if(file===`${root}/src/screens/IslandLevels.tsx`){

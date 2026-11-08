@@ -9,7 +9,6 @@ interface Props {
  paused:boolean;
  finished:boolean;
  canFinish:boolean;
- step:'ready'|'in'|'out'|'checkin';
  onPause:()=>void;
  onBegin:()=>void;
  onFinish:()=>void;
@@ -17,7 +16,7 @@ interface Props {
 
 /** Presentation only: all phase, pace and completion state comes from the source activity. */
 export default function BloomControlPanel(p:Props) {
- const label=p.running?(p.paused?'Resume':'Pause'):p.canFinish?'Finish reset':p.step==='ready'?'Begin first cycle':'Begin next cycle';
+ const label=p.running?(p.paused?'Resume':'Pause'):p.canFinish?'Finish':'Begin';
  const pausing=p.running&&!p.paused;
  return <div className="bloom-control-panel" data-bloom-console data-console-paused={p.paused}>
   <ArtworkFrame name="frames/glacier_panel_v3" corner={.075}/>

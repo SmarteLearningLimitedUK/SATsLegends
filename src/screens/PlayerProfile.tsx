@@ -1,4 +1,6 @@
 import React from 'react';
+import RevisionQuest from '../components/game-ui/RevisionQuest';
+import {useLearningState,usePersonalisationEnabled} from '../systems/learning/learningStorage';
 import { Link } from 'react-router-dom';
 import { AVATARS, ISLANDS } from '../constants';
 import { PlayerData } from '../types';
@@ -22,7 +24,8 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ player, onBack, onOpenSho
   const portrait = useTrimmedImageSource(avatar.portrait || avatar.image);
   const earnedIds = new Set(player.achievementState?.earned ?? player.achievements ?? []);
   const achievements = ACHIEVEMENT_CATALOG.filter((entry) => earnedIds.has(entry.id));
-  const recommendedPractice = getRecommendedPractice(player, ISLANDS);
+  const learning=useLearningState(),personalised=usePersonalisationEnabled();
+  const recommendedPractice = getRecommendedPractice(player, ISLANDS,3,personalised?learning:undefined);
   const stats = [
     { label: 'Experience', value: `${player.xp.toLocaleString()} XP` },
     { label: 'Adventure level', value: player.level },
@@ -68,6 +71,7 @@ const PlayerProfile: React.FC<PlayerProfileProps> = ({ player, onBack, onOpenSho
             </div> : <p className="profile-summary-copy rounded-xl border border-cyan-100/20 bg-slate-950/60 p-4">Once you have played a few levels, your practice picks will appear here.</p>}
           </section>
           <section aria-labelledby="profile-achievements">
+            <RevisionQuest/>
             <h2 id="profile-achievements" className="mb-3 text-2xl font-bold text-white">Your achievements</h2>
             <div className="profile-achievement-list">
               {achievements.length ? achievements.map((achievement) => <article className="profile-achievement" key={achievement.id}>

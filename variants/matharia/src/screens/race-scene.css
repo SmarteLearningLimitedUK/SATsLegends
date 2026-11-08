@@ -14,3 +14,16 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='rati
 @keyframes race-kart-boost{0%,100%{transform:translateY(0)rotate(0);}50%{transform:translateY(-6px)rotate(-3deg);}}
 @keyframes race-kart-stall{0%,100%{transform:translateX(0);}30%{transform:translateX(-4px);}60%{transform:translateX(4px);}80%{transform:translateX(-2px);}}
 @media(prefers-reduced-motion:reduce){html[data-presentation='matharia'] #root .race-live-kart{animation:none;}}
+/* Keep the tyre contact point on the road; reserve label space inside the question frame. */
+html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='ratio_fractions'][data-measured-scene] {
+ --race-ground-y:calc(var(--race-answer-top) + 18px);
+ .race-live-kart {bottom:calc(100% - var(--race-ground-y));}
+ .race-live-fuel {top:14%;height:104px;min-height:104px;padding:12px 5%;box-sizing:border-box;}
+ .race-fuel-parts {--race-label-reserve:24px;}
+ .race-fuel-parts:has(>.race-fuel-part:nth-child(3)) {--race-label-reserve:36px;}
+ .race-fuel-legend {margin-top:2px;line-height:1.25;}
+ .ratio-racer-question {min-width:0;margin:0;font-size:clamp(14px,2cqw,26px);line-height:1.25;}
+ .ratio-racer-simplify-hint {font-size:clamp(12px,1.5cqw,20px);line-height:1.3;}
+ .race-live-helper,.race-live-route {top:calc(14% + 104px + 8px);}
+ .race-live-helper {height:48px;}
+}

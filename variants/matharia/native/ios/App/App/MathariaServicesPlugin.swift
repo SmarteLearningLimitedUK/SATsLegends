@@ -16,12 +16,15 @@ public final class MathariaServicesPlugin: CAPPlugin, CAPBridgedPlugin, ASAuthor
         CAPPluginMethod(name: "purchase", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "restore", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "signInWithApple", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "manageSubscriptions", returnType: CAPPluginReturnPromise)
+        CAPPluginMethod(name: "manageSubscriptions", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "setOrientation", returnType: CAPPluginReturnPromise)
     ]
     private var productIDs: Set<String> {
         Set(Bundle.main.object(forInfoDictionaryKey: "MathariaSubscriptionProductIDs") as? [String] ?? [])
     }
     private var updateTask: Task<Void, Never>?
+    private var catalogueTask: Task<Void, Never>?
+    private var cachedPlans = [JSObject]()
     private var purchaseBusy = false
     private var authCall: CAPPluginCall?
     private var authController: ASAuthorizationController?
@@ -38,7 +41,21 @@ public final class MathariaServicesPlugin: CAPPlugin, CAPBridgedPlugin, ASAuthor
             }
         }
     }
-    deinit { updateTask?.cancel() }
+    deinit { updateTask?.cancel(); catalogueTask?.cancel() }
+
+    @objc func setOrientation(_ call: CAPPluginCall) {
+        guard let orientation = call.getString("orientation"),
+              orientation == "portrait" || orientation == "landscape" else {
+            call.reject("Unsupported screen orientation.", "INVALID_ORIENTATION"); return
+        }
+        DispatchQueue.main.async { [weak self] in
+            guard let controller = self?.bridge?.viewController as? GameViewController else {
+                call.reject("The game view is not available.", "NO_GAME_VIEW"); return
+            }
+            controller.setScreenOrientation(orientation)
+            call.resolve()
+        }
+    }
 
     private func currentAccess() async -> JSObject {
         var active = false
@@ -68,19 +85,39 @@ public final class MathariaServicesPlugin: CAPPlugin, CAPBridgedPlugin, ASAuthor
 
     @objc func status(_ call: CAPPluginCall) {
         Task { @MainActor in
+            #if DEBUG
+            NSLog("Matharia access: checking verified entitlements")
+            #endif
             var access = await currentAccess()
+            #if DEBUG
+            NSLog("Matharia access: entitlement check completed; active=%@", String(describing: access["active"] ?? false))
+            #endif
+            // Opening a mission must depend only on verified entitlements, not
+            // an App Store price-list request that may be slow or unavailable.
+            access["plans"] = cachedPlans
+            call.resolve(access)
+            refreshCatalogue()
+        }
+    }
+
+    private func refreshCatalogue() {
+        guard catalogueTask == nil else { return }
+        catalogueTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+            defer { self.catalogueTask = nil }
             do {
                 let products = try await Product.products(for: productIDs)
-                access["plans"] = products.filter { $0.type == .autoRenewable }.sorted { $0.price < $1.price }.compactMap { product -> JSObject? in
+                cachedPlans = products.filter { $0.type == .autoRenewable }.sorted { $0.price < $1.price }.compactMap { product -> JSObject? in
                     guard let period = product.subscription?.subscriptionPeriod else { return nil }
                     return ["id": product.id, "name": product.displayName, "price": product.displayPrice,
                             "period": periodName(period.unit), "periodCount": period.value]
                 }
+                var access = await currentAccess()
+                access["plans"] = cachedPlans
+                notifyListeners("entitlementsChanged", data: access, retainUntilConsumed: true)
             } catch {
-                // Verified, cached entitlements still work when the catalogue is offline.
-                access["plans"] = [JSObject]()
+                // Keep the last known prices; entitlement status already resolved.
             }
-            call.resolve(access)
         }
     }
 

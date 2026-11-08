@@ -1,5 +1,9 @@
+import {adventureTask} from '../../../../src/systems/content/adventureStory';
 import {roundFeedback} from '../roundFeedback';
-import React from 'react';
+import React,{useEffect,useRef} from 'react';
+import {questionMetadata} from '../../../../src/systems/learning/questionMetadata';
+import {prepareIndependentResponse} from '../../../../src/systems/learning/responseContext';
+import {useDialogFocus} from '../../../../src/components/game-ui/useDialogFocus';
 import {Lightbulb,X,RotateCcw,ArrowRight} from 'lucide-react';
 import ScalableQuestionPanel from '../ScalableQuestionPanel';
 import ArtworkFrame from '../ArtworkFrame';
@@ -8,7 +12,7 @@ import {asset} from '../assets';
 interface Props{
  canvasRef:React.RefObject<HTMLCanvasElement|null>;enemyRef:React.RefObject<HTMLDivElement|null>;enemy:React.ReactNode;
  state:string;present:boolean;question:number;total:number;prompt:string;options:number[];selected:number|null;feedback:string;paused:boolean;
- showAnswers:boolean;hintOpen:boolean;hintText:string;known:number|null;knownRadians:number|null;
+ topic?:'straight_line'|'vertical'|'point'|'triangle'|'quadrilateral';showAnswers:boolean;hintOpen:boolean;hintText:string;known:number|null;knownRadians:number|null;
  onHint:()=>void;onCloseHint:()=>void;onAnswer:(value:number)=>void;onNext:()=>void;onReset:()=>void;
 }
 function AngleDiagram({known,knownRadians}:{known:number|null;knownRadians:number|null}){
@@ -21,18 +25,25 @@ function AngleDiagram({known,knownRadians}:{known:number|null;knownRadians:numbe
 }
 export default function AngleScene(p:Props){
  const resolved=p.state==='resolvedCorrect'||p.state==='resolvedIncorrect';
+ const hintUsed=useRef(false);
+ const answerSubmitted=useRef(false);
+ useEffect(()=>{hintUsed.current=false;},[p.question,p.prompt]);
+ useEffect(()=>{if(p.state==='awaitingAnswer')answerSubmitted.current=false;},[p.state,p.question,p.prompt]);
+ const hintFocus=useDialogFocus(p.hintOpen&&p.showAnswers,p.onCloseHint);
+ const hint=<button className="angle-hint-toggle" type="button" data-button-skin="none" disabled={!p.showAnswers||p.paused} onClick={()=>{hintUsed.current=true;window.dispatchEvent(new Event('matharia-mathematical-help'));p.onHint();}} aria-label={p.hintOpen?'Hide angle hint':'Show angle hint'} aria-expanded={p.hintOpen} aria-controls="angle-hint-panel"><Lightbulb aria-hidden="true"/>Hint</button>;
+ const answer=(value:number)=>{if(p.state!=='awaitingAnswer'||p.paused||!p.present||answerSubmitted.current)return;answerSubmitted.current=true;prepareIndependentResponse(questionMetadata('angle_arena',!p.topic||p.topic==='straight_line'?'angle.straight-line':'angle.missing',{id:p.question,prompt:p.prompt,known:p.known,topic:p.topic},'recognition',p.topic==='triangle'||p.topic==='quadrilateral'?['6G4a']:['6G4b'],hintUsed.current));p.onAnswer(value);};
  return <section className="angle-scene" data-angle-game data-angle-present={p.present} data-angle-state={p.state} data-angle-question={p.question} data-angle-total={p.total} data-angle-paused={p.paused}>
-  <ScalableQuestionPanel frame="frames/glacier_panel_v3" corner={.13} longText={p.prompt.length>68}>{p.prompt}</ScalableQuestionPanel>
+  <ScalableQuestionPanel story={adventureTask('angle_arena',p.question)} roundKey={p.question}>{p.prompt}</ScalableQuestionPanel>
   <canvas ref={p.canvasRef} className="angle-live-canvas" aria-label="Live angle projectile and opponent playfield"/>
   <div className="angle-operator" aria-hidden="true"><SceneActor source={asset('heroes','angle_rhino_v3')} identity="rhino" activity="cast" decorative/></div>
   <div ref={p.enemyRef} data-angle-enemy-frame aria-hidden="true" className="angle-opponent"><div className="angle-opponent-reaction" data-cleared={p.state==='resolvedCorrect'}>{p.enemy}</div></div>
-  {/straight line/i.test(p.prompt)&&<AngleDiagram known={p.known} knownRadians={p.knownRadians}/>}
-  <div className="angle-answer-group" role="group" aria-label="Choose your launch angle">{p.options.map(option=><button key={`${p.question}-${option}`} type="button" data-button-skin="none" data-angle-answer={option} disabled={p.state!=='awaitingAnswer'||p.paused} aria-pressed={p.selected===option} onClick={()=>p.onAnswer(option)}><ArtworkFrame name={p.selected===option?"buttons/sapphire_answer_v3":"buttons/angle_answer_v4"} corner={.16}/><span>{option}°</span></button>)}</div>
+  {!resolved&&<div className="angle-answer-group" role="group" aria-label="Choose your launch angle">{p.options.map(option=><button key={`${p.question}-${option}`} type="button" data-button-skin="none" data-angle-choice={option} aria-label={`${option} degrees`} aria-pressed={p.selected===option} disabled={p.state!=='awaitingAnswer'||p.paused||!p.present} onClick={()=>answer(option)}><ArtworkFrame name="buttons/angle_answer_v4" corner={.15} fit="height"/><span>{option}°</span></button>)}</div>}
   <div className="angle-round-message" role="status" aria-live="polite" data-visible={Boolean(roundFeedback(p.feedback))||p.selected!==null}><ArtworkFrame name="frames/glacier_panel_v3" corner={.13}/><span>{roundFeedback(p.feedback)||(p.selected!==null?`Angle ${p.selected}° locked in.`:'Choose your angle')}</span></div>
   <div className="angle-round-controls" data-angle-feedback={p.state}>
-   {resolved?<div className="angle-advance"><button type="button" data-button-skin="none" disabled={p.paused} onClick={p.onNext}><ArrowRight aria-hidden="true"/>Next</button><button type="button" data-button-skin="none" disabled={p.paused} onClick={p.onReset} aria-label="Reset view" title="Reset view"><RotateCcw aria-hidden="true"/><span>Reset View</span></button></div>:<button className="angle-hint-toggle" type="button" data-button-skin="none" disabled={!p.showAnswers||p.paused} onClick={p.onHint} aria-label={p.hintOpen?'Hide angle hint':'Show angle hint'} aria-expanded={p.hintOpen} aria-controls="angle-hint-panel"><Lightbulb aria-hidden="true"/>Hint</button>}
+   {!resolved&&hint}
+   {resolved&&<div className="angle-advance"><button type="button" data-button-skin="none" disabled={p.paused} onClick={p.onNext}><ArrowRight aria-hidden="true"/>Next</button><button type="button" data-button-skin="none" disabled={p.paused} onClick={p.onReset} aria-label="Reset view" title="Reset view"><RotateCcw aria-hidden="true"/><span>Reset View</span></button></div>}
   </div>
-  {p.hintOpen&&p.showAnswers&&<section className="angle-hint-panel" id="angle-hint-panel" aria-label="Angle hint"><ArtworkFrame name="frames/glacier_panel_v3" corner={.13}/><strong>Angle hint</strong><button type="button" data-button-skin="none" onClick={p.onCloseHint} aria-label="Close angle hint"><X aria-hidden="true"/></button><p>{p.hintText}</p></section>}
+  {p.hintOpen&&p.showAnswers&&<div className="angle-hint-scrim" onClick={p.onCloseHint}><div ref={hintFocus} role="dialog" aria-modal="true" className="angle-hint-panel" id="angle-hint-panel" aria-label="Angle hint" onClick={event=>event.stopPropagation()}><ArtworkFrame name="frames/glacier_panel_v3" corner={.13}/><strong>Angle hint</strong><button type="button" data-button-skin="none" onClick={p.onCloseHint} aria-label="Close angle hint"><X aria-hidden="true"/></button>{(!p.topic||p.topic==='straight_line')&&/straight line/i.test(p.prompt)&&<AngleDiagram known={p.known} knownRadians={p.knownRadians}/>}<p>{p.hintText}</p></div></div>}
   <span className="sr-only">Question {p.question+1} of {p.total}. Launch follows your angle selection.</span>
  </section>;
 }

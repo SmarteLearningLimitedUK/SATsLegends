@@ -38,7 +38,11 @@ export function NativeAccessProvider({ children, openUpgrade, openAccount }: { c
     void refreshStore();
     if (!nativeServicesAvailable()) return;
     let alive = true;
-    const listener = watchStore(next => { if (alive) setStore(next); });
+    const listener = watchStore(next => {
+      if (!alive) return;
+      setStore(next);
+      if (Array.isArray(next.plans)) setPlans(next.plans);
+    });
     const refresh = () => { void refreshStore(); };
     window.addEventListener('legends:account-refresh', refresh);
     window.addEventListener('online', refresh);

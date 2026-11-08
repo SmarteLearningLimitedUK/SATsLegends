@@ -1,6 +1,7 @@
+import {adventureTask} from '../../../../src/systems/content/adventureStory';
+import IndependentAnswer,{answerAsNumber,matchingAnswerIndex,canonicalAnswer} from '../../../../src/components/game-ui/IndependentAnswer';
 import {roundFeedback} from '../roundFeedback';
 import React,{useContext,useLayoutEffect,useRef,useState} from 'react';
-import {ListChecks,X} from 'lucide-react';
 import Character from '../../../../src/components/game-ui/OriginalHeroCharacter';
 import {VisionSceneContext} from '../VisionScene';
 import ScalableQuestionPanel from '../ScalableQuestionPanel';
@@ -8,7 +9,6 @@ import ArtworkFrame from '../ArtworkFrame';
 import ArtworkPlane from '../ArtworkPlane';
 import {asset} from '../assets';
 import {usePresentationHint} from '../PresentationHint';
-import {useDismissiblePanel} from '../useDismissiblePanel';
 import survey from '../../reference/survey-assets.json';
 type Point={x:number;y:number};
 type Edge={id:string;from:Point;to:Point;label:string};
@@ -30,6 +30,17 @@ export function PerimeterPlot({shape,selectedEdgeIds,disabled,onSelectEdge,label
  const originalCentre=groups.reduce((s,g)=>s+g.x,0)/Math.max(1,groups.length);for(let i=1;i<groups.length;i++)groups[i].x=Math.max(groups[i].x,groups[i-1].x+(groups[i-1].w+groups[i].w)/2+5);
  const shift=originalCentre-groups.reduce((s,g)=>s+g.x,0)/Math.max(1,groups.length);for(const g of groups)g.x+=shift;
  const labels=positions.map((p,i)=>({x:groups.find(g=>g.g===group(p))!.x,y:Math.max(10,Math.min(size.h-10,project(p).y)),i}));
+ // Preserve the edge-to-label leaders while separating adjacent readable labels.
+ for(const column of groups){
+  const ordered=labels.filter(label=>column.ids.includes(label.i)).sort((a,b)=>a.y-b.y);
+  const gap=32,half=14;
+  for(let i=0;i<ordered.length;i++)ordered[i].y=Math.max(half+i*gap,ordered[i].y,i?ordered[i-1].y+gap:half);
+  if(ordered.length&&ordered.at(-1)!.y>size.h-half){
+   ordered.at(-1)!.y=size.h-half;
+   for(let i=ordered.length-2;i>=0;i--)ordered[i].y=Math.min(ordered[i].y,ordered[i+1].y-gap);
+  }
+ }
+
  return <div ref={root} className="perimeter-live-plot" data-perimeter-diagram style={{visibility:size.w>0?'visible':'hidden'}}>
   <svg viewBox={`${box.x} ${box.y} ${box.w} ${box.h}`} role="img" aria-label="Original room boundary with its labelled outside edges">
    <defs><linearGradient id="perimeter-live-crystal" x2="1" y2="1"><stop stopColor="#e6ffff"/><stop offset=".45" stopColor="#70deef"/><stop offset="1" stopColor="#248cb5"/></linearGradient></defs>
@@ -47,17 +58,14 @@ export function PerimeterPlot({shape,selectedEdgeIds,disabled,onSelectEdge,label
 }
 interface Props {id:string;tier:number;prompt:string;hint:string;diagram:React.ReactNode;edges:Edge[];checked:string[];options:number[];unit:string;selected:number|null;feedback:Feedback;locked:boolean;paused:boolean;score:number;completed:number;total:number;onAnswer:(v:number)=>void;onToggle:(id:string)=>void;}
 export default function PerimeterScene(p:Props){
- const scene=useContext(VisionSceneContext),[edgesOpen,setEdgesOpen]=useState(false),toggle=useRef<HTMLButtonElement>(null),popup=useRef<HTMLDivElement>(null),next=p.edges.find(e=>!p.checked.includes(e.id));
- usePresentationHint(p.hint);useLayoutEffect(()=>setEdgesOpen(false),[p.id]);useDismissiblePanel(edgesOpen,setEdgesOpen,toggle,popup);
- const close=()=>{setEdgesOpen(false);toggle.current?.focus()};
+ const scene=useContext(VisionSceneContext),next=p.edges.find(e=>!p.checked.includes(e.id));
+ usePresentationHint(p.hint);
  return <section className="perimeter-scene" data-perimeter-game data-perimeter-tier={p.tier} data-perimeter-question={p.id} data-perimeter-correct={p.completed} data-perimeter-score={p.score} data-perimeter-paused={p.paused} data-perimeter-feedback={roundFeedback(p.feedback)?.type??'none'}>
-  <ScalableQuestionPanel frame="frames/glacier_panel_v3" corner={.13} longText={p.prompt.length>95}>{p.prompt}</ScalableQuestionPanel>
-  <div className="perimeter-count-tip"><ArtworkFrame name="frames/glacier_panel_v3" corner={.13}/>Check edges as you count ({p.checked.length}/{p.edges.length}). You can answer any time.</div>
+  <ScalableQuestionPanel story={adventureTask('perimeter_path',p.completed)} longText={p.prompt.length>95}>{p.prompt}</ScalableQuestionPanel>
+  <div className="perimeter-count-tip"><ArtworkFrame name="frames/glacier_panel_v3" corner={.13}/>Path {Math.min(p.completed+1,p.total)}/{p.total} · {p.checked.length}/{p.edges.length} edges checked.</div>
   <div className="perimeter-surveyor" aria-hidden="true"><Character identity={scene.heroIdentity??'barratt'} artPose="guide" decorative/></div>
   <ArtworkPlane className="perimeter-survey-region" aspect={boardSize[0]/boardSize[1]} align="end"><img className="perimeter-survey-board" src={asset('props','perimeter_board_v4')} alt="" draggable={false}/><div className="perimeter-plan">{p.diagram}</div></ArtworkPlane>
   <button className="perimeter-next-edge" type="button" data-button-skin="none" disabled={p.paused||p.locked||!next} onClick={()=>{if(next)p.onToggle(next.id)}}><ArtworkFrame name="frames/glacier_panel_v3" corner={.13}/><span>{roundFeedback(p.feedback)?<strong className="perimeter-feedback-copy" role="status" aria-live="polite">{roundFeedback(p.feedback).message}</strong>:<><strong>{next?'Check next edge':'Every edge checked'}</strong><small>{p.checked.length}/{p.edges.length} checked</small></>}</span>{next&&!roundFeedback(p.feedback)&&<b>{p.edges.indexOf(next)+1}: {next.label}</b>}</button>
-  <div className="perimeter-answers" role="group" aria-label="Choose the perimeter">{p.options.map(v=><button key={`${p.id}-${v}`} type="button" data-button-skin="none" data-perimeter-answer={v} aria-pressed={p.selected===v} disabled={p.locked||p.paused} onClick={()=>p.onAnswer(v)}><ArtworkFrame name="buttons/sapphire_answer_v3" corner={.16}/><span>{v} {p.unit}</span></button>)}</div>
-  <button ref={toggle} className="perimeter-edges-toggle" type="button" data-button-skin="none" aria-expanded={edgesOpen} aria-controls="perimeter-edge-list" disabled={p.paused} onClick={()=>setEdgesOpen(v=>!v)}><ListChecks aria-hidden="true"/>Edges</button>
-  {edgesOpen&&<div ref={popup} className="perimeter-edge-list" id="perimeter-edge-list" role="group" aria-label="Boundary edge list" onKeyDown={e=>{if(e.key==='Escape'){e.stopPropagation();close()}}}><ArtworkFrame name="frames/glacier_panel_v3" corner={.13}/><button className="perimeter-edge-close" type="button" data-button-skin="none" aria-label="Close edge list" onClick={close}><X aria-hidden="true"/></button><div>{p.edges.map((e,i)=><button key={e.id} type="button" aria-pressed={p.checked.includes(e.id)} disabled={p.paused||p.locked} onClick={()=>p.onToggle(e.id)}>{i+1}. {e.label}<span aria-hidden="true">{p.checked.includes(e.id)?'✓':'○'}</span></button>)}</div></div>}
+  <div className="perimeter-answers" role="group" aria-label="Choose the perimeter"><IndependentAnswer expectedUnit={p.unit} label={`Perimeter (${p.unit})`} questionId={p.id} fingerprint={JSON.stringify([p.prompt,p.edges,p.unit])} gameKey="perimeter_path" skillId="perimeter.boundary" curriculumRefs={["5M7a"]} disabled={p.locked||p.paused} onSubmit={value=>p.onAnswer(answerAsNumber(value))}>{open=><button type="button" data-button-skin="none" disabled={p.locked||p.paused} onClick={open}><ArtworkFrame name="buttons/sapphire_answer_v3" corner={.16}/><span>Enter answer</span></button>}</IndependentAnswer></div>
  </section>;
 }

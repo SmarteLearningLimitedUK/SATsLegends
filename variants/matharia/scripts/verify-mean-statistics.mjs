@@ -6,8 +6,8 @@ const base=process.env.MATHARIA_URL||'http://127.0.0.1:3080';
 const out='qa-artifacts/mean-statistics';
 await mkdir(out,{recursive:true});
 const browser=await webkit.launch({executablePath:'qa-artifacts/browser-runtime/webkit-2272/Playwright.exe'});
-async function open(width,height,route) {
-  const context=await browser.newContext({viewport:{width,height},isMobile:true,hasTouch:true,reducedMotion:'reduce'});
+async function open(width,height,route,reducedMotion='reduce') {
+  const context=await browser.newContext({viewport:{width,height},isMobile:true,hasTouch:true,reducedMotion});
   await installNativeAccessFixture(context);
   const page=await context.newPage();
   await page.clock.install();
@@ -19,17 +19,29 @@ async function open(width,height,route) {
     await button.tap();
   }
   await page.evaluate(()=>document.fonts.ready);
-  await page.clock.runFor(500);
+  await page.clock.runFor(3600);
+  await expect(page.locator('[data-game-set]')).toHaveAttribute('data-stage-paused','false');
   return {page,context};
 }
-async function checkRound(page,expected) {
+const readings=page=>page.locator('[data-reel-active="true"]').evaluateAll(elements=>elements.map(element=>element.dataset.reelValue));
+
+async function checkRound(page,expected,checkScan=false) {
   await expect(page.locator('[data-mean-game]')).toHaveAttribute('data-mean-mode',expected);
   await expect(page.locator('.mean-answer-caption')).toContainText(expected==='missing'?'number':expected,{ignoreCase:true});
-  await expect(page.locator('[data-mean-answer]:enabled')).toHaveCount(0);
-  await page.getByRole('button',{name:'Scan the power cells'}).tap();
-  await page.clock.runFor(1000);
   await expect(page.locator('[data-mean-game]')).toHaveAttribute('data-mean-phase','answering');
-  const raw=await page.locator('[data-reel-active="true"]').evaluateAll(es=>es.map(e=>e.dataset.reelValue));
+  const enter=page.getByRole('button',{name:'Enter answer',exact:true});
+  await expect(enter).toBeEnabled();
+  const raw=await readings(page);
+  const blanks=raw.filter(value=>value==='?').length;
+  if(raw.length<2||raw.some(value=>!value.trim())||blanks!==Number(expected==='missing'))throw Error('Incomplete readings: '+raw);
+  if(checkScan){
+    await page.getByRole('button',{name:'Scan the power cells'}).tap();
+    await expect(page.locator('[data-mean-game]')).toHaveAttribute('data-mean-phase','spinning');
+    expect(await readings(page)).toEqual(raw);
+    await page.clock.runFor(1000);
+    await expect(enter).toBeEnabled();
+    expect(await readings(page)).toEqual(raw);
+  }
   const values=raw.filter(x=>x!=='?').map(Number);
   if(!values.every(Number.isFinite))throw Error('Non-numeric readings: '+raw);
   let answer;
@@ -42,12 +54,13 @@ async function checkRound(page,expected) {
     answer=sorted[0][0];
   } else {
     const match=(await page.locator('.mean-question-main').innerText()).match(/readings is ([0-9]+(?:\.[0-9]+)?)/);
-    if(!match||raw.filter(x=>x==='?').length!==1)throw Error('Missing-value question is unclear');
+    if(!match||blanks!==1)throw Error('Missing-value question is unclear');
     answer=+match[1]*raw.length-values.reduce((a,b)=>a+b,0);
   }
-  const choices=await page.locator('[data-mean-answer]').evaluateAll(es=>es.map(e=>+e.dataset.meanAnswer));
-  if(choices.length!==4||new Set(choices).size!==4||choices.filter(x=>Math.abs(x-answer)<1e-9).length!==1)throw Error('Invalid '+expected+' choices for '+raw+': '+choices);
-  await page.locator(`[data-mean-answer="${choices.find(x=>Math.abs(x-answer)<1e-9)}"]`).tap();
+  await enter.tap();
+  const dialog=page.getByRole('dialog',{name:'Enter your answer',exact:true});
+  for(const symbol of String(answer))await dialog.getByRole('button',{name:symbol,exact:true}).tap();
+  await dialog.getByRole('button',{name:'Submit answer',exact:true}).tap();
   await expect(page.locator('[data-mean-game]')).toHaveAttribute('data-mean-feedback','success');
   await page.clock.runFor(1400);
 }
@@ -66,9 +79,9 @@ try{
     console.log('PASS '+name+': centred scan and contained layout');
   }
   for(let tier=1;tier<=5;tier++){
-    const {page,context}=await open(390,844,tier*2);
+    const {page,context}=await open(390,844,tier*2,tier===5?'no-preference':'reduce');
     const modes=tier>=3?['mean','median','mode','missing']:['mean','median','mode'];
-    for(const mode of modes)await checkRound(page,mode);
+    for(const mode of modes)await checkRound(page,mode,tier===5&&mode==='mean');
     await context.close();
     console.log('PASS tier '+tier+': '+modes.join(', ')+' independently calculated and scored');
   }

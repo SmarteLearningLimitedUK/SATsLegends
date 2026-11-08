@@ -1,3 +1,5 @@
+import {adventureTask} from '../../../../src/systems/content/adventureStory';
+import IndependentAnswer,{matchingAnswerIndex} from '../../../../src/components/game-ui/IndependentAnswer';
 import {roundFeedback} from '../roundFeedback';
 import React,{useContext,useLayoutEffect,useRef} from 'react';
 import {useReducedMotion} from 'motion/react';
@@ -41,7 +43,7 @@ export default function PercentScene(p:Props){
  const lines=p.question.prompt.match(/^(.+?\.)\s+(What.+|It gains.+)$/);
  return <section ref={sceneNode} className="percent-scene" data-reactor-game data-reactor-tier={p.tier} data-reactor-reaction={roundFeedback(p.feedback)||'idle'} data-reactor-charge={p.correct} data-reactor-percent={p.charge} data-reactor-goal={p.total} data-reactor-question={p.question.id} data-reactor-paused={paused} data-reactor-motion={reduced?'reduce':'normal'}>
   <PracticeIntroPopup open={p.showIntro} title={p.title||'Percent Power'} body="The Monster Minds have disabled the power cells. Use percentage clues to find parts of a whole, or work backwards to rebuild the full amount." briefing={p.briefing} onAction={p.onDismiss}/>
-  <ScalableQuestionPanel frame="frames/pvp_question_v3_hollow" surface="#00434b" corner={.15}><div ref={questionNode} className="percent-question-text">{lines?<><span className="percent-question-line">{lines[1]}</span><span className="percent-question-line">{lines[2]}</span></>:p.question.prompt}</div></ScalableQuestionPanel>
+  <ScalableQuestionPanel story={adventureTask('percent_power',p.round-1)}><div ref={questionNode} className="percent-question-text">{lines?<><span className="percent-question-line">{lines[1]}</span><span className="percent-question-line">{lines[2]}</span></>:p.question.prompt}</div></ScalableQuestionPanel>
   <div className="percent-tableau" data-percent-tableau>
    <div className="percent-guide"><Character identity={scene.heroIdentity??'barratt'} artPose="guide" decorative/></div>
    <div className="percent-reactor" style={{'--reactor-energy-opacity':.18+.72*Math.max(0,Math.min(1,p.charge/100))} as React.CSSProperties} data-reactor-playfield>
@@ -60,9 +62,9 @@ export default function PercentScene(p:Props){
   </div>
   <div className="sr-only" role="progressbar" aria-label="Power cells restored" aria-valuemin={0} aria-valuemax={p.total} aria-valuenow={p.correct}/>
   <section className="percent-console" aria-label="Reactor calculation controls"><ArtworkFrame name="frames/pvp_question_v3_hollow" surface="#003f3b" corner={.15}/>
-   <span className="sr-only">Round {p.round} of {p.total}</span><div className="percent-values"><div><span>FOCUS</span><strong>{p.question.coreLabel}</strong></div><div><span>REFERENCE</span><strong>{p.question.sideLabel}</strong></div></div>
-   <div className="percent-answers">{p.question.options.map((option,i)=><button key={`${p.question.id}-${option}`} type="button" data-button-skin="none" data-reactor-option={i} data-answer-state={p.selected===i?roundFeedback(p.feedback):undefined} disabled={p.locked||p.ended||p.paused} aria-label={`Output option ${i+1}: ${option}`} onClick={()=>p.onAnswer(i)}><ArtworkFrame name="gameplay/rocket_answer_v3" corner={.15} horizontalCorner={.16} fit="height"/><strong>{option}</strong></button>)}</div>
-   <div className="percent-feedback" data-tone={roundFeedback(p.feedback)||'info'} role="status" aria-live="polite">{p.status||p.question.helper}</div>
+   <span className="sr-only">Round {p.round} of {p.total}</span>
+   <div className="percent-answers"><IndependentAnswer inline reference={`${p.question.coreLabel} · ${p.question.sideLabel}`} submitLabel="Charge" questionId={p.question.id} fingerprint={JSON.stringify([p.question.prompt,p.question.coreLabel,p.question.sideLabel])} gameKey="percent_power" skillId="percentage.quantity" curriculumRefs={["6R2"]} disabled={p.locked||paused} onSubmit={value=>p.onAnswer(matchingAnswerIndex(value,p.question.options))}/></div>
+   <div className="percent-feedback" data-tone={roundFeedback(p.feedback)||'info'} role="status" aria-live="polite">{p.status}</div>
   </section>
  </section>;
 }

@@ -35,6 +35,7 @@ interface LevelResultsModalProps {
     accuracy: number;
     accuracyMeasured?: boolean;
     timeMs: number;
+    timingEligible?: boolean;
   } | null;
   onRetry: () => void;
   onPractice?: () => void;
@@ -252,7 +253,7 @@ const LevelResultsModal: React.FC<LevelResultsModalProps> = ({
                 <ResultStatTile label="Accuracy" value={result.accuracyMeasured === false ? 'Not tracked' : formatAccuracy(result.accuracy)} tone="emerald" />
                 <ResultStatTile
                   label="Time Taken"
-                  value={isVictory || isMockAttempt || (gameKey === 'prime_pop' && !isPractice) ? formatTime(result.timeMs) : 'N/A'}
+                  value={result.timingEligible===false?'Untimed':isVictory || isMockAttempt || (gameKey === 'prime_pop' && !isPractice) ? formatTime(result.timeMs) : 'N/A'}
                   tone="amber"
                 />
                 <ResultStatTile

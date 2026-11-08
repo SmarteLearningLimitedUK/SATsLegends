@@ -1,3 +1,4 @@
+import {questionMetadata} from '../systems/learning/questionMetadata';
 import { playGameSound } from '../audio/gameAudio';
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import SceneEnvironment from '../components/SceneEnvironment';
@@ -32,10 +33,12 @@ interface WeightToken {
 
 interface RoundData {
   targetGrams: number;
+  startingGrams: number;
   tokens: WeightToken[];
 }
 
 const TOTAL_ROUNDS = 5;
+const ADVANCED_ROUND_TYPES = ['preloaded', 'overweight', 'empty', 'preloaded', 'overweight'] as const;
 const RACK_CAPACITY = 8;
 const GEM_IMAGES = [gemBlue, gemGreen, gemPurple, gemRed, gemYellow];
 
@@ -51,14 +54,9 @@ const toKgLabel = (grams: number) => `${(grams / 1000).toLocaleString(undefined,
 const toGramLabel = (grams: number) => `${grams.toLocaleString()} g`;
 
 const getMeasurementDisplay = (grams: number) => {
-  if (grams >= 1000) {
-    return {
-      primary: toKgLabel(grams),
-    };
-  }
-
+  const magnitude = Math.abs(grams);
   return {
-    primary: toGramLabel(grams),
+    primary: (grams < 0 ? '−' : '') + (magnitude >= 1000 ? toKgLabel(magnitude) : toGramLabel(magnitude)),
   };
 };
 
@@ -85,11 +83,26 @@ const buildRound = (levelId: number, roundIndex: number): RoundData => {
   const required = shuffle(distinctChoices).slice(0, requiredCount);
   const targetGrams = required.reduce((sum, grams) => sum + grams, 0);
 
-  const distractorPool = distinctChoices.filter((value) => !required.includes(value));
-  const extraCopiesCount = RACK_CAPACITY - required.length - distractorPool.length;
-  const extraCopies = Array.from({ length: extraCopiesCount }, () => randomFrom(required));
+  const kind = stage < 2 ? 'empty' : ADVANCED_ROUND_TYPES[roundIndex % TOTAL_ROUNDS];
+  let startingGrams = kind === 'preloaded' ? required[0] : 0;
+  let rack = distinctChoices;
+  if (kind === 'overweight') {
+    const reductions = shuffle(distinctChoices).slice(0, stage === 2 ? 1 : 2);
+    const excess = reductions.reduce((sum, grams) => sum + grams, 0);
+    startingGrams = targetGrams + excess;
+    // Even applying every negative weight must leave a non-negative load.
+    const decoy = distinctChoices.find(grams => !reductions.includes(grams) && grams <= targetGrams
+      && (stage === 2 || grams < excess));
+    const negativeWeights = reductions.map(grams => -grams);
+    if (decoy !== undefined) negativeWeights.push(-decoy);
+    rack = [...negativeWeights, ...distinctChoices.slice(0, RACK_CAPACITY - negativeWeights.length)];
+  } else {
+    const extraCopies = Array.from({ length: RACK_CAPACITY - distinctChoices.length }, () => randomFrom(required));
+    const distractors = distinctChoices.filter(grams => !required.includes(grams));
+    rack = [...required, ...distractors, ...extraCopies];
+  }
 
-  const all = shuffle([...required, ...distractorPool, ...extraCopies]);
+  const all = shuffle(rack);
   const shuffledGems = shuffle(GEM_IMAGES);
   const tokens: WeightToken[] = all.map((grams, index) => ({
     id: `${roundIndex}-${index}-${grams}-${Math.random().toString(36).slice(2, 7)}`,
@@ -97,7 +110,7 @@ const buildRound = (levelId: number, roundIndex: number): RoundData => {
     gem: shuffledGems[index % shuffledGems.length],
   }));
 
-  return { targetGrams, tokens };
+  return { targetGrams, startingGrams, tokens };
 };
 
 const scoreToStars = (XP: number, correct: number, incorrect: number) => {
@@ -163,7 +176,9 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
     .map((id) => tokenMap.get(id))
     .filter((token): token is WeightToken => !!token);
 
-  const currentGrams = placedTokens.reduce((sum, token) => sum + token.grams, 0);
+  const gramsOnTray = (ids: string[]) => ids.reduce((sum, id) => sum + (tokenMap.get(id)?.grams ?? 0), round.startingGrams);
+  const currentGrams = gramsOnTray(placedIds);
+  const startsOverweight = round.startingGrams > round.targetGrams;
   const placedGroups = new Map<number, { token: WeightToken; count: number }>();
   placedTokens.forEach(token => {
     const group = placedGroups.get(token.grams);
@@ -181,6 +196,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
   const placeToken = (id: string) => {
     if (!presentRef.current || resolvingRef.current || sessionState?.paused || placedIdsRef.current.includes(id) || !tokenMap.has(id)) return;
     placedIdsRef.current = [...placedIdsRef.current, id];
+    if (gramsOnTray(placedIdsRef.current) <= round.targetGrams) setBroken(false);
     setPlacedIds(placedIdsRef.current);
     playGameSound('impact');
     setFeedback(null);
@@ -189,8 +205,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
   const removePlacedToken = (id: string) => {
     if (!presentRef.current || resolvingRef.current || sessionState?.paused) return;
     placedIdsRef.current = placedIdsRef.current.filter((tokenId) => tokenId !== id);
-    const remaining = placedIdsRef.current.reduce((sum, tokenId) => sum + (tokenMap.get(tokenId)?.grams ?? 0), 0);
-    if (remaining <= round.targetGrams) setBroken(false);
+    if (gramsOnTray(placedIdsRef.current) <= round.targetGrams) setBroken(false);
     setPlacedIds(placedIdsRef.current);
     setFeedback(null);
   };
@@ -206,16 +221,19 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
 
   const handleSubmit = () => {
     if (!presentRef.current || resolvingRef.current || sessionState?.paused) return;
-    const submittedGrams = placedIdsRef.current.reduce((total, id) => total + (tokenMap.get(id)?.grams ?? 0), 0);
+    const submittedGrams = gramsOnTray(placedIdsRef.current);
     if (submittedGrams !== round.targetGrams) {
       incorrectRef.current += 1;
-      sessionEvents?.onIncorrectAnswer?.({ score: XP, metadata: { round: roundIndex + 1, submittedGrams, targetGrams: round.targetGrams, preservesLives: true } });
+      sessionEvents?.onIncorrectAnswer?.({ score: XP, metadata: { round: roundIndex + 1, submittedGrams, targetGrams: round.targetGrams, preservesLives: true ,...questionMetadata("conversion_canyon","measurement.mass-composition",round,"construction",["6M5"],false)} });
       const excess = submittedGrams - round.targetGrams;
       setBroken(excess > 0);
       playGameSound('impact');
-      setFeedback({ tone: 'error', text: excess > 0
-        ? `Scale snapped! Over by ${toGramLabel(excess)} (${toKgLabel(excess)}). Remove excess to repair.`
-        : `${toGramLabel(-excess)} (${toKgLabel(-excess)}) short. Add more weight.` });
+      const difference = getMeasurementDisplay(Math.abs(excess)).primary;
+      setFeedback({ tone: 'error', text: startsOverweight
+        ? excess > 0 ? `Over by ${difference}. Reduce the load.` : `${difference} short. Increase the load.`
+        : excess > 0
+          ? `Scale snapped! Over by ${toGramLabel(excess)} (${toKgLabel(excess)}). Remove excess to repair.`
+          : `${toGramLabel(-excess)} (${toKgLabel(-excess)}) short. Add more weight.` });
       return;
     }
 
@@ -225,7 +243,7 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
     resolvingRef.current = true;
     const nextScore = XP + 350 + (roundIndex * 70);
     setScore(nextScore);
-    sessionEvents?.onCorrectAnswer?.({ score: nextScore, metadata: { round: roundIndex + 1 } });
+    sessionEvents?.onCorrectAnswer?.({ score: nextScore, metadata: { round: roundIndex + 1 ,...questionMetadata("conversion_canyon","measurement.mass-composition",round,"construction",["6M5"],false)} });
     sessionEvents?.onPuzzleComplete?.({ score: nextScore, metadata: { round: roundIndex + 1, totalRounds: TOTAL_ROUNDS } });
 
     timerRef.current = window.setTimeout(() => {
@@ -268,11 +286,11 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
         <div className="conversion-question-stage flex min-h-0 flex-1 flex-col items-center justify-start gap-3 px-4 pt-[calc(env(safe-area-inset-top)+0.6rem)]">
           <GameQuestionCard
             title="Conversion Canyon"
-            subtitle={feedback ? undefined : reducedMotion ? "Tap weights to put them on the tray." : "Tap or drop weights onto the tray."}
+            subtitle={feedback ? undefined : startsOverweight ? 'Use negative weights to lighten the load.' : reducedMotion ? "Tap weights to put them on the tray." : "Tap or drop weights onto the tray."}
             className="shrink-0"
             style={{ position: 'relative', top: 0, width: '100%', transform: 'none' }}
           >
-            <span className="block">Choose weights with a total mass of <strong>{toKgLabel(round.targetGrams)}</strong>.</span>
+            <span className="block">{round.startingGrams ? 'Bring the load to ' : 'Choose weights with a total mass of '}<strong>{toKgLabel(round.targetGrams)}</strong>.</span>
             {feedback && <span role="status" aria-live="polite" className="mt-1 block text-sm leading-snug">{feedback.text}</span>}
           </GameQuestionCard>
 
@@ -283,7 +301,9 @@ const ConversionCanyonGame: React.FC<ConversionCanyonGameProps> = ({
             className="relative flex w-full max-w-[35rem] min-h-0 flex-1 items-center justify-center p-1 md:max-w-[40rem]"
           >
             <MechanicalScale grams={currentGrams} target={round.targetGrams} paused={Boolean(sessionState?.paused)} broken={broken} dropRef={dropRef}>
-                {placedTokens.length === 0 ? <span>Tap or drop weights here</span> : null}
+                {round.startingGrams > 0
+                  ? <span>Cargo: {getMeasurementDisplay(round.startingGrams).primary}</span>
+                  : placedTokens.length === 0 && <span>Tap or drop weights here</span>}
                 {[...placedGroups.values()].map(({ token, count }) => (
                   <button
                     key={token.grams}

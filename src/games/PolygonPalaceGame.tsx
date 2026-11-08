@@ -1,3 +1,6 @@
+import CubeNetDiagram from '../components/game-ui/CubeNetDiagram';
+import {labelledCubeNet,type LabelledNet} from '../systems/content/cubeNets';
+import {questionMetadata} from '../systems/learning/questionMetadata';
 ﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { triggerHaptic } from '../haptics';
@@ -36,7 +39,9 @@ interface ShapeDefinition {
   equalSideMode: EqualSideMode;
   regular: boolean;
   symmetryLines: number;
-  kind: 'polygon' | 'circle' | 'solid';
+  kind: 'polygon' | 'circle' | 'solid' | 'net';
+  net?:LabelledNet;
+  circlePart?:'radius'|'diameter'|'circumference';
   solidType?: 'cube' | 'cuboid' | 'triangularPrism' | 'squarePyramid';
   points?: string;
   defaultRotation: number;
@@ -67,6 +72,7 @@ interface Choice {
 }
 
 interface PolygonQuestion {
+  skillId?:string;curriculumRefs?:string[];
   id: string;
   stage: number;
   mode: QuestionMode;
@@ -602,8 +608,8 @@ const stageFromProgress = (baseLevel: number, answeredCount: number, timeLeft: n
 };
 
 const modeForStage = (stage: number): QuestionMode => {
-  if (stage === 1) return 'name';
   const roll = Math.random();
+  if (stage === 1) return roll < .6 ? 'name' : roll < .8 ? 'count' : 'properties';
   if (stage >= 8 && roll < 0.32) return 'count';
   if (stage <= 3) {
     if (roll < 0.65) return 'name';
@@ -640,9 +646,9 @@ const buildNameQuestion = (shape: ShapeDefinition, stage: number, speedRound: bo
   ]);
 
   const prompts = [
-    'The Monster Minds have scrambled the palace records. What shape is this?',
-    'Restore the palace record by naming this shape.',
-    'Which shape belongs in this palace hall?',
+    'What is the name of this shape?',
+    'Name this shape.',
+    'Choose the name of this shape.',
   ];
 
   return {
@@ -705,13 +711,15 @@ const buildPropertyQuestion = (shape: ShapeDefinition, stage: number, speedRound
 };
 
 const buildCountQuestion = (shape: ShapeDefinition, stage: number, speedRound: boolean): PolygonQuestion | null => {
-  if (shape.kind !== 'solid') return null;
-
-  const focusPool = [
+  const focusPool = (shape.kind === 'solid' ? [
     { id: 'faces', label: 'How many faces does this shape have?', answer: shape.faces },
     ...(stage >= 4 ? [{ id: 'edges', label: 'How many edges does this shape have?', answer: shape.edges }] : []),
     ...(stage >= 7 ? [{ id: 'vertices', label: 'How many vertices does this shape have?', answer: shape.vertices }] : []),
-  ].filter((item) => typeof item.answer === 'number') as Array<{ id: string; label: string; answer: number }>;
+  ] : shape.kind === 'polygon' ? [
+    {id:'sides',label:'How many sides does this shape have?',answer:shape.sides},
+    {id:'corners',label:'How many vertices does this shape have?',answer:shape.sides},
+    ...(stage >= 4 ? [{id:'symmetry',label:'How many lines of symmetry does this shape have?',answer:shape.symmetryLines}] : []),
+  ] : []).filter((item) => typeof item.answer === 'number') as Array<{ id: string; label: string; answer: number }>;
 
   if (!focusPool.length) return null;
 
@@ -722,7 +730,7 @@ const buildCountQuestion = (shape: ShapeDefinition, stage: number, speedRound: b
     focus.answer + 1,
     focus.answer + 2,
     focus.answer + 3,
-  ]).filter((value) => value > 0 && value !== focus.answer);
+  ]).filter((value) => value >= 0 && value !== focus.answer);
 
   const choices = shuffle([
     { id: `count-${focus.answer}`, label: String(focus.answer) },
@@ -771,21 +779,35 @@ const buildSortQuestion = (shape: ShapeDefinition, stage: number, speedRound: bo
   };
 };
 
-const createQuestion = (baseLevel: number, answeredCount: number, timeLeft: number): PolygonQuestion => {
-  const stage = stageFromProgress(baseLevel, answeredCount, timeLeft);
-  const speedRound = speedRoundForState(answeredCount, stage);
-  const mode = modeForStage(stage);
-  const shapePool = getShapePool(stage);
-  const solidPool = shapePool.filter((shape) => shape.kind === 'solid');
-  const shape = mode === 'count' && solidPool.length
-    ? solidPool[answeredCount % solidPool.length]
-    : shapePool[answeredCount % shapePool.length];
+const palaceExtension = (tier:number,round:number):PolygonQuestion => {
+ const netMode=tier>=3&&round%2===1;
+ const circle={...SHAPES.find(shape=>shape.kind==='circle')!,defaultRotation:0};
+ let shape:ShapeDefinition=circle,prompt:string,answer:string,mode:QuestionMode='count',skillId='geometry.circle',reference='6G5';
+ if(netMode){const net=labelledCubeNet(Math.floor(Math.random()*1000000));shape={...circle,id:'net-'+net.labels.join(''),kind:'net',family:'solid',net};prompt=`This net folds to a cube. Which numbered face is opposite ${net.marked}?`;answer=String(net.opposite);skillId='geometry.nets';reference='6G3b';}
+ else if(tier===1){const part=(['radius','diameter','circumference'] as const)[Math.floor(Math.random()*3)];shape={...circle,circlePart:part};prompt='Name the highlighted part of the circle.';answer=part;mode='name';}
+ else {const radius=(tier>=4?Math.floor(Math.random()*30)+2:Math.floor(Math.random()*15)+1)/(tier===5?2:1),reverse=tier>=4&&round%2===0;prompt=reverse?`A circle has diameter ${radius*2} cm. Find its radius in cm.`:`A circle has radius ${radius} cm. Find its diameter in cm.`;answer=String(reverse?radius:radius*2);shape={...circle,circlePart:reverse?'diameter':'radius'};}
+ const labels=mode==='name'?['radius','diameter','circumference','centre']:[answer,...[Number(answer)+1,Number(answer)+2,Math.max(.5,Number(answer)-1)].map(String)];
+ return {id:createId(),stage:tier,mode,prompt,subPrompt:netMode?'Imagine folding the square faces.':'Use the highlighted circle measure.',shape,shapeRotation:0,choices:shuffle([...new Set(labels)].map(label=>({id:'extension-'+label,label}))),correctChoiceIds:['extension-'+answer],multiSelect:false,difficultyWeight:65+tier*12,speedRound:false,kind:tier<=2?'fluency':'reasoning',skillId,curriculumRefs:[reference]};
+};
 
-  if (mode === 'name') return buildNameQuestion(shape, stage, speedRound);
-  if (mode === 'count') return buildCountQuestion(shape, stage, speedRound) || buildNameQuestion(shape, stage, speedRound);
-  if (mode === 'sort') return buildSortQuestion(shape, stage, speedRound);
-  const propertyQuestion = buildPropertyQuestion(shape, stage, speedRound);
-  return propertyQuestion || buildNameQuestion(shape, stage, speedRound);
+const polygonQuestionKey = (question: PolygonQuestion) => [question.shape.id,question.mode,question.mode === 'name' ? '' : question.prompt,question.mode === 'properties' ? [...question.correctChoiceIds].sort().join(',') : ''].join(':');
+
+const createQuestion = (baseLevel: number, answeredCount: number, timeLeft: number, recent: readonly string[] = []): PolygonQuestion => {
+  if(answeredCount%3===1){let extension:PolygonQuestion;for(let attempt=0;attempt<32;attempt++){extension=palaceExtension(baseLevel,Math.floor(answeredCount/3));if(!recent.includes(polygonQuestionKey(extension)))return extension;}return extension!;}
+  const stage = stageFromProgress(baseLevel, answeredCount, timeLeft);
+  const speedRound = false;
+  const shapePool = getShapePool(stage);
+  let candidate: PolygonQuestion;
+  for (let attempt = 0; attempt < 64; attempt++) {
+    const mode = modeForStage(stage);
+    const shape = shapePool[(Math.floor(Math.random()*shapePool.length)+attempt)%shapePool.length];
+    candidate = mode === 'name' ? buildNameQuestion(shape,stage,speedRound)
+      : mode === 'count' ? buildCountQuestion(shape,stage,speedRound) || buildNameQuestion(shape,stage,speedRound)
+      : mode === 'sort' ? buildSortQuestion(shape,stage,speedRound)
+      : buildPropertyQuestion(shape,stage,speedRound) || buildNameQuestion(shape,stage,speedRound);
+    if (!recent.includes(polygonQuestionKey(candidate))) return candidate;
+  }
+  return candidate!;
 };
 
 const starsFromPerformance = (XP: number, correctCount: number, attemptCount: number, stage: number) => {
@@ -801,6 +823,7 @@ const ShapePreview: React.FC<{
 }> = ({ question, pulseTone }) => {
   const { shape, shapeRotation } = question;
 
+  if(shape.net)return <CubeNetDiagram cells={shape.net.cells} labels={shape.net.labels} marked={shape.net.marked}/>;
   const renderSolid = () => {
     const faces = shape.solidType === 'cube'
       ? ['-42,-14 -5,-36 38,-14 0,10', '-42,-14 0,10 0,54 -42,30', '0,10 38,-14 38,30 0,54']
@@ -854,7 +877,7 @@ const ShapePreview: React.FC<{
       </defs>
 
       {shape.kind === 'solid' ? renderSolid() : shape.kind === 'circle' ? (
-        <circle cx="0" cy="0" r="38" fill="url(#shapeFill)" stroke={shape.stroke} strokeWidth="4.2" />
+        <><circle cx="0" cy="0" r="38" fill="url(#shapeFill)" stroke={shape.circlePart==='circumference'?'#ffda79':shape.stroke} strokeWidth="4.2"/>{shape.circlePart&&shape.circlePart!=='circumference'&&<><circle r="2" fill="#ffda79"/><path d={`M${shape.circlePart==='radius'?0:-38} 0H38`} stroke="#ffda79" strokeWidth="3"/></>}</>
       ) : (
         <polygon points={shape.points} fill="url(#shapeFill)" stroke={shape.stroke} strokeWidth="4.2" />
       )}
@@ -871,7 +894,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
   onVictory,
   onGameOver: _onGameOver,
   onBack,
-  sessionEvents,
+  sessionEvents,sessionState,
 }) => {
   const baseLevel = Math.max(1, Math.min(5, miniGameLevel || levelId || 1));
   const initialRoundSeconds = useMemo(() => roundSecondsForLevel(baseLevel), [baseLevel]);
@@ -887,6 +910,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
   const [selectedChoiceIds, setSelectedChoiceIds] = useState<string[]>([]);
   const [pulseTone, setPulseTone] = useState<'success' | 'error' | null>(null);
   const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; title: string; subtitle: string } | null>(null);
+  const recentQuestions = useRef<string[]>([]);
   const [question, setQuestion] = useState<PolygonQuestion>(() => createQuestion(baseLevel, 0, initialRoundSeconds));
 
   const endedRef = useRef(false);
@@ -916,26 +940,11 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
     setSelectedChoiceIds([]);
     setPulseTone(null);
     setFeedback(null);
-    setQuestion(createQuestion(baseLevel, 0, initialRoundSeconds));
+    const firstQuestion = createQuestion(baseLevel, 0, initialRoundSeconds);
+    recentQuestions.current = [polygonQuestionKey(firstQuestion)];
+    setQuestion(firstQuestion);
     questionStartRef.current = Date.now();
   }, [baseLevel, initialRoundSeconds]);
-
-  useEffect(() => {
-    if (roundOver || isPractice) return undefined;
-    const interval = window.setInterval(() => {
-      setTimeLeft((previous) => Math.max(0, previous - 1));
-    }, 1000);
-    return () => window.clearInterval(interval);
-  }, [isPractice, roundOver]);
-
-  useEffect(() => {
-    if (isPractice || timeLeft > 0 || endedRef.current) return;
-    endedRef.current = true;
-    setRoundOver(true);
-    const finalStage = stageFromProgress(baseLevel, answeredCount, 0);
-    const stars = starsFromPerformance(XP, correctCount, attemptCount, finalStage);
-    onVictory(stars, XP);
-  }, [answeredCount, attemptCount, baseLevel, correctCount, isPractice, onVictory, XP, timeLeft]);
 
   useEffect(() => {
     if (!isPractice || correctCount < 5 || endedRef.current) return;
@@ -943,6 +952,12 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
     setRoundOver(true);
     onVictory(3, XP);
   }, [correctCount, isPractice, onVictory, XP]);
+
+  useEffect(()=>{
+    if(isPractice||answeredCount<8||correctCount<5||endedRef.current)return;
+    endedRef.current=true;setRoundOver(true);
+    onVictory(starsFromPerformance(XP,correctCount,attemptCount,baseLevel),XP);
+  },[answeredCount,correctCount,attemptCount,XP,baseLevel,onVictory,sessionState?.untimed]);
 
   const timerProgress = Math.max(0, Math.min(1, timeLeft / initialRoundSeconds));
   const timerFillColor = useMemo(() => {
@@ -953,7 +968,9 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
   const loadNextQuestion = useCallback((nextAnsweredCount: number, delayMs: number) => {
     const timer = window.setTimeout(() => {
       if (endedRef.current) return;
-      setQuestion(createQuestion(baseLevel, nextAnsweredCount, timeLeft));
+      const nextQuestion=createQuestion(baseLevel,nextAnsweredCount,timeLeft,recentQuestions.current);
+      recentQuestions.current=[...recentQuestions.current,polygonQuestionKey(nextQuestion)].slice(-24);
+      setQuestion(nextQuestion);
       setSelectedChoiceIds([]);
       setFeedback(null);
       setPulseTone(null);
@@ -979,7 +996,7 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
     );
     emitMiniGameSessionEvent(sessionEvents, isCorrect ? 'correct_answer' : 'incorrect_answer', {
       score: XP,
-      metadata: { questionId: question.id, mode: question.mode, selected: normalizedSelected, expected: normalizedExpected },
+      metadata: { questionId: question.id, mode: question.mode, selected: normalizedSelected, expected: normalizedExpected ,...questionMetadata("polygon_palace",question.skillId??"geometry.classify",question,"recognition",question.curriculumRefs??["6G2a"],false)},
     });
 
     setAttemptCount(nextAttemptCount);
@@ -987,9 +1004,9 @@ const PolygonPalaceGame: React.FC<PolygonPalaceGameProps> = ({
 
     if (isCorrect) {
       const elapsedMs = Math.max(240, Date.now() - questionStartRef.current);
-      const speedBonus = Math.max(18, Math.round(170 - (elapsedMs / 16)));
+      const speedBonus = 0;
       const streakMultiplier = 1 + Math.min(0.95, Combo * 0.08);
-      const speedRoundBonus = question.speedRound ? 85 : 0;
+      const speedRoundBonus = 0;
       const points = Math.round((120 + question.difficultyWeight + speedBonus + speedRoundBonus) * streakMultiplier);
 
       triggerHaptic('success');

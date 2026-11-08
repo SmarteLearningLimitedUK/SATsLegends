@@ -75,7 +75,7 @@ export const completeLevel = (
     bestScore: Math.max(previous.bestScore, args.score),
     bestAccuracy: accuracyMeasured ? Math.max(previous.bestAccuracy, args.accuracy) : previous.bestAccuracy,
     bestAccuracyMeasured: Boolean(previous.bestAccuracyMeasured || previous.bestAccuracy > 0 || accuracyMeasured),
-    bestTimeMs: args.completed
+    bestTimeMs: args.completed && args.timingEligible !== false
       ? previous.bestTimeMs === null
         ? args.timeMs
         : Math.min(previous.bestTimeMs, args.timeMs)

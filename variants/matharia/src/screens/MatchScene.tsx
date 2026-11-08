@@ -1,3 +1,5 @@
+import {adventureTask} from '../../../../src/systems/content/adventureStory';
+import {useLearningPolicy} from '../../../../src/systems/learning/learningSupport';
 import React,{useLayoutEffect,useState} from 'react';
 import {Hourglass} from 'lucide-react';
 import ScalableQuestionPanel from '../ScalableQuestionPanel';
@@ -13,6 +15,7 @@ export interface MatchSceneProps {
 }
 /** Presentation only: every number, tile and event handler comes from FractionMatchGame. */
 export function MatchScene({children,XP,timeLeft,questionText,heroGuidance,fireActive,completionProgress,goalLabel}:MatchSceneProps){
+ const support=useLearningPolicy(),untimed=support.noTimeLimit||support.relaxedPractice;
  const breakAt=typeof questionText==='string'&&questionText.startsWith('Restore the board:')?questionText.indexOf(' values.'):-1;
  const [copyNode,setCopyNode]=useState<HTMLDivElement|null>(null);
  const questionKey=typeof questionText==='string'?questionText:'feedback';
@@ -48,11 +51,11 @@ export function MatchScene({children,XP,timeLeft,questionText,heroGuidance,fireA
   <ScalableQuestionPanel><div ref={setCopyNode} className="match-question-main">{typeof questionText==='string'&&breakAt>=0?<>
    {questionText.slice(0,breakAt)}<br/>{questionText.slice(breakAt+1)}
   </>:questionText}</div>
-   {heroGuidance&&typeof questionText==='string'&&<p className="match-concept-guidance" role="status">{heroGuidance}</p>}
+   {heroGuidance&&typeof questionText==='string'&&<p className="match-concept-guidance" role="status">{heroGuidance==='Swap neighbours to line up three equal values.'||heroGuidance==='Look for fractions worth the same amount.'?adventureTask('match3_equivalence',Math.floor(completionProgress/100*7)):heroGuidance}</p>}
   </ScalableQuestionPanel>
   <div className="match-concept-status" data-match-status aria-label="Round status">
    <ArtworkFrame name="frames/question_scalable_v2" corner={.06}/>
-   <span className="match-round-time" role="timer" aria-label={`Time remaining: ${timeLeft} seconds`}><Hourglass aria-hidden="true"/>Time {timeLeft}s</span>
+   <span className="match-round-time" role="timer" aria-label={untimed?'Untimed practice':`Time remaining: ${timeLeft} seconds`}><Hourglass aria-hidden="true"/>{untimed?'Untimed':`Time ${timeLeft}s`}</span>
    <span className="match-score">Score {XP}</span>
    <div className="match-goal"><span>{goalLabel??`${XP} points`}</span><progress value={completionProgress} max={100} aria-label="Board completion" aria-valuetext={`${XP} points; ${goalLabel??''}`}/></div>
   </div>

@@ -1,3 +1,4 @@
+import {isRelaxedRevision} from '../systems/learning/sessionPolicy';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useIsPresent, useReducedMotion } from 'motion/react';
 import confetti from 'canvas-confetti';
@@ -85,16 +86,16 @@ const FORGE_TARGET_LABELS: Record<string, string> = {
   w: 'width',
 };
 
-const formatGivenValues = (given: GivenValue[]) => given.map(({ label, value }) => `${label === 'A' ? 'an' : 'a'} ${FORGE_TARGET_LABELS[label] || label} of ${value} ${label === 'A' ? 'cm²' : label === 'V' ? 'cm³' : 'cm'}`).join(', ').replace(/, ([^,]*)$/, ' and $1');
-
 const describeTargetLabel = (label: string) => FORGE_TARGET_LABELS[label] || label;
 
 const buildQuestionStem = (round: FormulaRound) => {
-  const givenText = formatGivenValues(round.given).replace(/\bheight\b/g, round.diagram === 'triangle' || round.diagram === 'parallelogram' ? 'perpendicular height' : 'height');
+  const sloped = round.diagram === 'triangle' || round.diagram === 'parallelogram';
+  const givenText = round.given.map(({label,value}) =>
+    `${label === 'h' && sloped ? 'perpendicular height' : describeTargetLabel(label)} ${value} ${label === 'A' ? 'cm²' : label === 'V' ? 'cm³' : 'cm'}`).join(', ');
   const targetText = round.targetLabel === 'h' && round.diagram === 'parallelogram' ? 'perpendicular height' : describeTargetLabel(round.targetLabel);
-  const shape = round.diagram === 'cuboid' ? 'cuboid' : round.diagram;
+  const shape = round.diagram.charAt(0).toUpperCase() + round.diagram.slice(1);
   const unit = round.targetLabel === 'A' ? 'cm²' : round.targetLabel === 'V' ? 'cm³' : 'cm';
-  return `A ${shape} has ${givenText}.\nWhat is its ${targetText} in ${unit}?`;
+  return `${shape}: ${givenText}.\nFind the ${targetText} (${unit}).`;
 };
 
 const buildAreaRound = (mode: SolveMode, level: number): FormulaRound => {
@@ -466,21 +467,21 @@ const FormulaForgeGame: React.FC<FormulaForgeGameProps> = ({
         title: 'Runes Restored',
         subtitle: `+${gained} XP`,
       });
-      triggerHaptic('success');
+      if (!sessionEvents?.onCorrectAnswer) triggerHaptic('success');
       sessionEvents?.onCorrectAnswer?.({ score: updatedScore, metadata: { formula: round.title } });
       sessionEvents?.onPuzzleComplete?.({ score: updatedScore });
       advanceRound(updatedScore, correctCount + 1, lives);
       return;
     }
 
-    const nextLives = lives - 1;
+    const nextLives = isRelaxedRevision(_sessionState)?lives:lives - 1;
     setLives(nextLives);
     setFeedback({
       tone: 'error',
       title: 'Runes Unstable',
-      subtitle: `Correct answer: ${round.answer}`,
+      subtitle: round.hint,
     });
-    triggerHaptic('error');
+    if (!sessionEvents?.onIncorrectAnswer) triggerHaptic('error');
     sessionEvents?.onIncorrectAnswer?.({ score: XP, metadata: { correctAnswer: round.answer } });
 
     if (nextLives <= 0) {

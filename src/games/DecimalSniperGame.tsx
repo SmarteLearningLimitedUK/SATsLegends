@@ -105,7 +105,9 @@ const buildRound = (levelId: number, roundNumber: number, isBoss: boolean): Snip
       anchor = Number(randomBetween(minValue, maxValue).toFixed(2));
       attempts += 1;
     }
-
+    // Bounded fallback still has a unique, correctly keyed nearest target.
+    if(attempts===30)anchor=values[0];
+    correctValue=[...values].sort((a,b)=>Math.abs(a-anchor)-Math.abs(b-anchor))[0];
     prompt = `Hit the value closest to ${formatDecimal(anchor)}`;
     sublabel = 'Closest means smallest distance, not largest number.';
   }

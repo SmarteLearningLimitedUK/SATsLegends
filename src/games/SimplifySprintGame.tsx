@@ -1,3 +1,4 @@
+import {questionMetadata} from '../systems/learning/questionMetadata';
 import { playGameSound } from '../audio/gameAudio';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronLeft, Heart, Timer } from 'lucide-react';
@@ -71,10 +72,11 @@ const sameFraction = (a: FractionPair, b: FractionPair) => a.numerator === b.num
 // Seven is coprime to every deck length, so a run visits distinct prompts.
 const makeQuestion = (level: number, round: number, runOffset = 0): SprintQuestion => {
   const tier = Math.max(1, Math.min(5, level));
-  const bases = BASES[tier - 1];
+  const bases = tier<=2?BASES[tier-1]:Array.from({length:[0,0,11,19,23][tier-1]},(_,i)=>i+2).flatMap(denominator=>Array.from({length:tier===5?Math.floor(denominator*1.5):denominator-1},(_,i)=>({numerator:i+1,denominator})).filter(f=>gcd(f.numerator,f.denominator)===1&&f.numerator!==f.denominator));
   const multipliers = MULTIPLIERS[tier - 1];
   const deckLength = bases.length * multipliers.length;
-  const index = ((runOffset + (round - 1) * 7) % deckLength + deckLength) % deckLength;
+  const stride=[7,11,13,17,19].find(s=>gcd(s,deckLength)===1)??1;
+  const index = ((runOffset + (round - 1) * stride) % deckLength + deckLength) % deckLength;
   const base = bases[Math.floor(index / multipliers.length)];
   const multiplier = multipliers[index % multipliers.length];
   return {
@@ -117,7 +119,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
 }) => {
   const tier = Math.max(1, Math.min(5, miniGameLevel || levelId || 1));
   const totalRounds = ROUNDS_PER_TIER[tier - 1];
-  const runOffsetRef = useRef(Math.floor(Math.random() * 70));
+  const runOffsetRef = useRef(Math.floor(Math.random() * 1000000000));
   const [question, setQuestion] = useState(() => makeQuestion(tier, 1, runOffsetRef.current));
   const [currentPair, setCurrentPair] = useState<FractionPair>(() => question.prompt);
   const [roundIndex, setRoundIndex] = useState(1);
@@ -164,7 +166,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
   useEffect(() => {
     clearPending();
     endedRef.current = false;
-    runOffsetRef.current = Math.floor(Math.random() * 70);
+    runOffsetRef.current = Math.floor(Math.random() * 1000000000);
     const first = makeQuestion(tier, 1, runOffsetRef.current);
     setQuestion(first);
     setCurrentPair(first.prompt);
@@ -226,7 +228,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
         triggerHaptic('error');
         sessionEvents?.onIncorrectAnswer?.({
           type: 'incorrect_answer', score,
-          metadata: { prompt: fractionLabel(currentPair), factor },
+          metadata: { misconceptionCode:'fraction.common-factor', prompt: fractionLabel(currentPair), factor ,...questionMetadata("simplify_sprint","fractions.common-factor",{id:question.id,pair:currentPair},"construction",["6F2"],false)},
         });
         if (!sessionState && !isPractice) {
           const nextLives = localLives - 1;
@@ -266,7 +268,7 @@ const SimplifySprintGame: React.FC<SimplifySprintGameProps> = ({
       triggerHaptic('success');
       sessionEvents?.onCorrectAnswer?.({
         type: 'correct_answer', score: nextScore,
-        metadata: { factor, reduced: fractionLabel(reduced), fastest },
+        metadata: { factor, reduced: fractionLabel(reduced), fastest ,...questionMetadata("simplify_sprint","fractions.common-factor",{id:question.id,pair:currentPair},"construction",["6F2"],false)},
       });
 
       if (!checkpoint) {

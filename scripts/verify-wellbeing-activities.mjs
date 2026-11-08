@@ -18,17 +18,14 @@ async function completeActivity(page, id, profile) {
   switch (id) {
     case 'breathing_bloom': {
       await page.getByRole('button', { name: /Easy 3s in/ }).click();
-      for (let cycle = 0; cycle < 4; cycle += 1) {
-        await page.getByRole('button', { name: cycle === 0 ? 'Begin first cycle' : 'Begin next cycle' }).click();
-        await expect(page.locator('[data-breathing-phase="out"]')).toBeVisible({ timeout: 15000 });
-        await expect(page.locator('[data-breathing-phase="checkin"]')).toBeVisible({ timeout: 20000 });
-      }
-      await page.getByRole('button', { name: 'Finish reset' }).click();
+      await page.getByRole('button', { name: 'Begin', exact: true }).click();
+      await expect(page.locator('[data-breathing-phase="out"]')).toBeVisible({ timeout: 15000 });
+      await expect(page.locator('[data-breathing-phase="checkin"]')).toBeVisible({ timeout: 45000 });
+      await page.getByRole('button', { name: 'Finish', exact: true }).click();
       break;
     }
     case 'peaceful_pond':
       for (let pad = 1; pad <= 10; pad += 1) {
-        await page.getByRole('button', { name: 'I noticed something' }).click();
         await page.locator(`[data-pond-pad="${pad}"]`).press('Enter');
         await expect(page.locator(`[data-pond-pad="${pad}"]`)).toHaveAttribute('aria-pressed', 'true');
       }
@@ -37,6 +34,7 @@ async function completeActivity(page, id, profile) {
       for (let item = 0; item < 6; item += 1) await page.locator('[data-camp-item]').first().click();
       await page.getByRole('slider', { name: /Lantern brightness/ }).focus();
       await page.getByRole('slider', { name: /Lantern brightness/ }).press('Home');
+      await page.getByRole('button', { name: 'Finish', exact: true }).click();
       break;
     case 'constellation_connect': {
       const constellations = [
@@ -82,6 +80,7 @@ async function completeActivity(page, id, profile) {
         const transition = page.locator('.star-round-transition');
         await expect(transition).toBeVisible();
         const fact = transition.locator('[data-constellation-fact]');
+        await transition.locator('summary').click();
         await expect(fact).toHaveText(/\S/);
         const factText = await fact.innerText();
         expect(seenFacts.has(factText)).toBe(false);
@@ -89,19 +88,14 @@ async function completeActivity(page, id, profile) {
         const progress = Number(await page.getByRole('progressbar', { name: 'Star Path progress' }).getAttribute('aria-valuenow'));
         expect(progress).toBeGreaterThan(lastProgress);
         lastProgress = progress;
-        await page.getByRole('button', { name: round < 3 ? 'Next constellation' : 'Begin focus finish' }).click();
-      }
-      for (let move = 0; move < 6; move += 1) {
-        const light = page.getByRole('button', { name: `Focus on the ${move % 2 === 0 ? 'left' : 'right'} light` });
-        if (profile.name === 'phone') await light.tap();
-        else await light.click();
+        await page.getByRole('button', { name: round < 3 ? 'Next constellation' : 'Finish', exact: true }).click();
       }
       break;
     }
     case 'leaf_drift':
-      for (const sense of ['sight', 'sound', 'touch']) {
+      for (const sense of ['sight', 'sound', 'scent']) {
         await page.getByRole('button', { name: `Choose ${sense} leaf` }).click();
-        await page.locator('.leaf-observation-options button').first().click();
+        await page.getByRole('button', { name: 'Let it drift', exact: true }).click();
       }
       break;
     case 'thought_sort':
@@ -114,7 +108,7 @@ async function completeActivity(page, id, profile) {
     default:
       throw new Error(`Unknown calm activity: ${id}`);
   }
-  await expect(page.locator(`[data-wellbeing-activity="${id}"] [data-wellbeing-progress="100"]`)).toBeVisible();
+  await expect(page.locator(id==='breathing_bloom'?'[data-breathing-phase="complete"]':`[data-wellbeing-activity="${id}"] [data-wellbeing-progress="100"]`)).toBeVisible();
   await expect(page.locator('[data-wellbeing-complete]')).toBeVisible({ timeout: 3500 });
   await page.getByRole('button', { name: 'Choose another activity' }).click();
   await expect(page.locator('[data-wellbeing-activity="hub"]')).toBeVisible();
@@ -146,9 +140,10 @@ try {
         const shell = page.locator(`[data-wellbeing-activity="${id}"]`);
         await expect(shell).toBeVisible();
         await expect(shell.getByRole('button', { name:/microphone/i })).toHaveCount(0);
-        await expect(shell.locator('[data-wellbeing-instructions]')).toHaveText(/\S/);
-        await expect(shell.locator('[data-wellbeing-fact]')).toHaveText(/\S/);
-        await expect(shell.locator('[data-wellbeing-affirmation]')).toHaveText(/\S/);
+        if(id==='breathing_bloom'){
+          await expect(shell.locator('.wellbeing-footer')).toHaveCount(0);
+          await expect(shell.locator('.wellbeing-breath-cue')).toContainText('Let your breath flow');
+        }else await expect(shell.locator('[data-wellbeing-purpose]')).toHaveText(/\S/);
         if (process.env.WELLBEING_QA_SHOTS === '1') {
           await expect.poll(async () => page.locator('[data-qa-screen="wellbeing_activity"]').evaluate((node) => {
             const style = getComputedStyle(node);
@@ -170,7 +165,7 @@ try {
           expect(issues).toEqual({count:10,rings:10,ordered:false,promptOverlap:false,overlap:false});
         }
         await completeActivity(page, id, profile);
-        console.log(`PASS ${profile.name}: ${id} instructions, fact, affirmation and completion`);
+        console.log(`PASS ${profile.name}: ${id} guidance and completion`);
       }
       expect(await page.evaluate(() => window.__qaMediaCalls)).toBe(0);
       expect(errors).toEqual([]);

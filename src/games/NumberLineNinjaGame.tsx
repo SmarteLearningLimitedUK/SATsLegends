@@ -295,6 +295,8 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
 
     const isCorrect = option === question.answer;
     const nextAttempts = attempts + 1;
+    const guidedLevel = levelId === 1 && !isPractice;
+    const nextRound = guidedLevel ? correctCount + Number(isCorrect) : nextAttempts;
     setAttempts(nextAttempts);
     setSelectedAnswer(option);
     setLocked(true);
@@ -315,7 +317,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
             completeRun(nextScore, nextCorrect, nextAttempts);
             return;
           }
-          advanceQuestion(nextAttempts);
+          advanceQuestion(nextRound);
         },
       };
 
@@ -367,7 +369,7 @@ const NumberLineNinjaGame: React.FC<NumberLineNinjaGameShellProps> = ({
 
     queueTimeout(() => {
       setLineShake(false);
-      advanceQuestion(nextAttempts);
+      advanceQuestion(nextRound);
     }, QUESTION_FEEDBACK_MS);
   };
 

@@ -1,5 +1,6 @@
 import type {DepthModel} from '../../systems/content/satsDepthModels';
 import SatsRevisionGapVisual from './SatsRevisionGapVisual';
+import CubeNetDiagram from './CubeNetDiagram';
 const colours=['#68e4ef','#ffc94c','#ed9290'];
 export function Protractor({angle,reversed=false}:{angle:number;reversed?:boolean}){
  const point=(a:number,r:number)=>[200+(reversed?-1:1)*Math.cos(a*Math.PI/180)*r,205-Math.sin(a*Math.PI/180)*r];
@@ -12,6 +13,7 @@ export function Protractor({angle,reversed=false}:{angle:number;reversed?:boolea
  </svg>;
 }
 export default function SatsDepthVisual({model:m}:{model:DepthModel}){
+ if(m.kind==='labelled-net')return <CubeNetDiagram cells={m.cells} labels={m.labels} marked={m.marked}/>;
  if(m.kind==='fraction-grid'||m.kind==='similar-rectangles'||m.kind==='pictogram-build'||m.kind==='choice-pairs')return <SatsRevisionGapVisual model={m}/>;
  if(m.kind==='angle-picture'){
   const a=m.angle*Math.PI/180,x=175+120*Math.cos(a),y=125-120*Math.sin(a),ax=175+60*Math.cos(a),ay=125-60*Math.sin(a);

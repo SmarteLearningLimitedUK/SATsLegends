@@ -3,9 +3,10 @@ export type Composition = {
   layout:'bubbles'|'match'|'digits'|'rocket'|'machine'|'chart'|'plot'|'numberline'|'potion'|'cafe'|'sharing'|'race'|'blueprint'|'board'|'instrument'|'paper';
   background:string; ownsHero?:boolean;
 };
-const c=(layout:Composition['layout'],reference:string,hero='hero_bran_idle',orientation:Composition['orientation']='landscape',background='bg_acropolis_landscape',ownsHero=false):Composition=>({layout,reference,hero,orientation,background,ownsHero});
+const c=(layout:Composition['layout'],reference:string,hero='hero_bran_idle',orientation:Composition['orientation']='portrait',background='bg_acropolis_landscape',ownsHero=false):Composition=>({layout,reference,hero,orientation,background,ownsHero});
 /** Every activity has an explicit composition; reference identifies direct or related art direction. */
 export const COMPOSITIONS:Record<string,Composition>={
+ shattered_whole:{layout:"board",reference:"shattered_whole",hero:"hero_bran_idle",orientation:"landscape",background:"bg_shattered_sanctuary_v1",ownsHero:true},
  "place_value_panic": {
   "layout": "digits",
   "reference": "place_value_panic",
@@ -303,10 +304,23 @@ export const COMPOSITIONS:Record<string,Composition>={
   "ownsHero": true
  }
 };
+// Reuse the approved timekeeping artwork and chart composition for the new mathematical surface.
+COMPOSITIONS.shape_secrets={...COMPOSITIONS.polygon_palace,reference:'polygon_palace',orientation:'landscape',ownsHero:true};
+COMPOSITIONS.acropolis_clearout={...COMPOSITIONS.place_value_panic,reference:'place_value_panic',ownsHero:true};
+COMPOSITIONS.divide_conquer={...COMPOSITIONS.multiplication_mine,reference:'multiplication_mine',background:'bg_remainder_v3',ownsHero:true};
+COMPOSITIONS.rune_relations={...COMPOSITIONS.graph_grabber,reference:'graph_grabber',background:'bg_remainder_v3',layout:'chart',orientation:'landscape',ownsHero:true};
+COMPOSITIONS.calendar_quest={...COMPOSITIONS.time_keeper_cove,layout:'chart',orientation:'landscape',ownsHero:true};
 export function compositionFor(key:string):Composition {return COMPOSITIONS[key]??c('board','scale_builder');}
-export function rotationRequired(key:string|undefined,screen:string,width:number,height:number){
- if(screen!=='gameplay'||!width||!height)return false;
- return compositionFor(key??'').orientation==='portrait'?width>height:height>width;
+export function screenOrientationFor(screen:string,key?:string,activityId?:string|null):Composition['orientation'] {
+ if(screen==='gameplay'&&key&&COMPOSITIONS[key]?.orientation==='landscape')return 'landscape';
+ if(screen==='wellbeing_activity'&&calmOrientationFor(activityId)==='landscape')return 'landscape';
+ return 'portrait';
 }
-export function measuredLayoutFor(key:string|undefined){return Boolean(key&&['match3_equivalence','prime_pop','fraction_forge','place_value_panic','number_line_ninja','rounding_rocket','maths_vs_zombies','take_out_rush','percent_power','simplify_sprint','polygon_palace','angle_arena','area_architect','rotation_relay','coordinates_quest','perimeter_path','conversion_canyon','mean_machine','graph_grabber','line_graph_lab','data_detective','factor_frenzy','multiplication_mine','order_ops_arena','formula_forge','remainder_run','time_keeper_cove','problem_pyramid','unit_mixer','change_counter','crystal_core','mirror_gate','matrix_match','potion_panic','share_splitter','ratio_fractions','scale_builder'].includes(key));}
+export function rotationRequired(key:string|undefined,screen:string,width:number,height:number,activityId?:string|null){
+ if(!width||!height)return false;
+ return screenOrientationFor(screen,key,activityId)==='portrait'?width>height:height>width;
+}
+/** Existing Calm Grove layouts: Pond is landscape; the other activities are portrait. */
+export function calmOrientationFor(activityId:string|null|undefined):'portrait'|'landscape' {return activityId==='peaceful_pond'?'landscape':'portrait';}
+export function measuredLayoutFor(key:string|undefined){return Boolean(key&&['match3_equivalence','prime_pop','fraction_forge','place_value_panic','number_line_ninja','rounding_rocket','maths_vs_zombies','take_out_rush','percent_power','simplify_sprint','polygon_palace','angle_arena','area_architect','rotation_relay','coordinates_quest','perimeter_path','conversion_canyon','mean_machine','graph_grabber','line_graph_lab','data_detective','factor_frenzy','multiplication_mine','order_ops_arena','formula_forge','remainder_run','time_keeper_cove','problem_pyramid','unit_mixer','change_counter','crystal_core','mirror_gate','matrix_match','potion_panic','share_splitter','ratio_fractions','scale_builder','calendar_quest','shattered_whole','rune_relations','divide_conquer','acropolis_clearout','shape_secrets'].includes(key));}
 

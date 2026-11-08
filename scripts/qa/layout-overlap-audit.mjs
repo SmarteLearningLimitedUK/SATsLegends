@@ -24,7 +24,8 @@ export const auditLayout = (options = {}) => {
   };
   const name = n => (n.getAttribute('aria-label')||n.textContent||n.className?.baseVal||n.className||n.tagName).trim().replace(/\s+/g,' ').slice(0,85);
   const controls = [...stage.querySelectorAll('button,input,select,summary,[role="button"]'+(options.includeLinks?',a[href]':''))].filter(visible).map(n=>({n,label:name(n),rect:clippedBox(n)}));
-  const chrome = options.includeChrome === false ? [] : [...document.querySelectorAll('[data-testid="shared-top-hud"],[data-testid="shared-bottom-hud"]')].filter(visible).map(n=>({n,label:n.dataset.testid,rect:box(n)}));
+  // HUD wrappers may span empty transparent space beside the actual dock.
+  const chrome = options.includeChrome === false ? [] : [...document.querySelectorAll('[data-testid="shared-top-hud"],[data-testid="shared-bottom-hud"]')].filter(visible).map(n=>({n,label:n.dataset.testid,rect:box(n.querySelector('.legend-dock-surface,.legend-hud-bar')||n)}));
   const question = [...stage.querySelectorAll('[data-game-question]')].filter(visible).map(n=>({n,label:'question',rect:box(n)}));
   const issues = [];
   const add = (kind,a,b) => issues.push({kind,a:a.label,b:b.label,aRect:a.rect,bRect:b.rect});
@@ -59,7 +60,9 @@ export const auditLayout = (options = {}) => {
     }
   }
   for(const a of question)for(const b of chrome)if(meets(a.rect,b.rect))add('question-chrome',a,b);
-  const models=[...stage.querySelectorAll('.pyramid-number-block,[data-line-marker]>div>*')].filter(visible).map(n=>({n,label:name(n),rect:box(n)}));
+  // Frame siblings intentionally sit behind their label; they are decorative,
+  // not independent mathematical models that can obscure one another.
+  const models=[...stage.querySelectorAll('.pyramid-number-block,[data-line-marker]>div>*:not(.artwork-frame):not(.artwork-surface)')].filter(visible).map(n=>({n,label:name(n),rect:box(n)}));
   for(let i=0;i<models.length;i++){
     const a=models[i];
     for(const b of [...models.slice(i+1),...controls,...question,...chrome])if(!a.n.contains(b.n)&&!b.n.contains(a.n)&&meets(a.rect,b.rect))add('model-overlap',a,b);
@@ -85,7 +88,10 @@ export const auditLayout = (options = {}) => {
     for(const b of [...controls,...chrome]){
       if(a.n.contains(b.n)||b.n.contains(a.n)||a.n.closest('button,input,select,summary,[role="button"]')===b.n)continue;
       if(dynamic(a.n.closest('button')||a.n)&&dynamic(b.n))continue;
-      if(meets(a.rect,b.rect))add('label-control',a,b);
+      // Coordinate buttons deliberately extend a transparent hit area around
+      // a small grid dot. Only that visible dot can obscure an axis label.
+      const dot=b.n.matches('.coordinate-point')?b.n.querySelector('.coordinate-point-dot'):null;
+      if(meets(a.rect,dot?box(dot):b.rect))add('label-control',a,b);
     }
     const owner=a.n.closest('button,summary,[data-game-question]');
     if(owner){const r=box(owner),t=a.rawRect;if(t.left<r.left-2||t.right>r.right+2||t.top<r.top-2||t.bottom>r.bottom+2)issues.push({kind:'label-outside-owner',a:a.label,aRect:t,b:name(owner),bRect:r});}

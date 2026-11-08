@@ -1,3 +1,4 @@
+import {questionMetadata} from '../systems/learning/questionMetadata';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
@@ -7,7 +8,7 @@ import MonsterMindActor from '../components/game-ui/MonsterMindActor';
 import { triggerHaptic } from '../haptics';
 import goblinMonster from '../assets/enemies/cohesive/goblin.webp';
 import { buildPraiseMessage, shouldShowPraise } from '../utils/praiseFeedback';
-import { applyOperation, createOpsRound, formatOpsTokens, getOperationChoices, type OpsChoice, type OpsRound, type OpsToken } from './orderOpsEngine';
+import { applyOperation, createOpsRound, formatOpsTokens, getOperationChoices, nextValidOperationIndices, type OpsChoice, type OpsRound, type OpsToken } from './orderOpsEngine';
 import { emitMiniGameSessionEvent, type MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import { playGameSound } from '../audio/gameAudio';
 
@@ -26,6 +27,7 @@ type FeedbackState = null | {
 };
 
 const HEARTS_MAX = 3;
+const CHOOSE_NEXT_OPERATION = 'Tap the part to work out next.';
 const ENEMY_HEALTH_BY_LEVEL: Record<number, number> = {
   1: 5,
   2: 6,
@@ -60,7 +62,7 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
   const [questionCount, setQuestionCount] = useState(1);
   const [round, setRound] = useState<OpsRound>(() => createOpsRound(levelId));
   const [tokens, setTokens] = useState<OpsToken[]>(() => round.tokens);
-  const [stepNotice, setStepNotice] = useState('Pick the operation that should happen next.');
+  const [stepNotice, setStepNotice] = useState(CHOOSE_NEXT_OPERATION);
   const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [isFinished, setIsFinished] = useState(false);
   const orderOpsEnemy = goblinMonster;
@@ -92,7 +94,7 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
     const first = createOpsRound(levelId);
     setRound(first);
     setTokens(first.tokens);
-    setStepNotice('Pick the operation that should happen next.');
+    setStepNotice(CHOOSE_NEXT_OPERATION);
     roundStartRef.current = Date.now();
     setFeedback(null);
     setIsFinished(false);
@@ -125,24 +127,25 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
       const next = createOpsRound(levelId);
       setRound(next);
       setTokens(next.tokens);
-      setStepNotice('Pick the operation that should happen next.');
+      setStepNotice(CHOOSE_NEXT_OPERATION);
       roundStartRef.current = Date.now();
       setFeedback(null);
     }, 620);
     timersRef.current.push(timeoutId);
   };
 
-  const loseHeart = (subtitle: string) => {
+  const loseHeart = (subtitle: string, misconceptionCode: 'operations.calculation' | 'operations.priority') => {
     if (feedback || isFinished) return;
     const nextHearts = isPractice ? hearts : hearts - 1;
+    const wrongOrder = misconceptionCode === 'operations.priority';
     if (!sessionState && !isPractice) setLocalHearts(nextHearts);
     setStreak(0);
     setFeedback({
       type: 'error',
-      title: 'Order Broken',
-      subtitle: `The Monster Mind disrupted the order. ${subtitle}`,
+      title: wrongOrder ? 'Try a different operation' : 'Check your calculation',
+      subtitle,
     });
-    emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { score: scoreRef.current, metadata: { expression: formatOpsTokens(tokens) } });
+    emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { score: scoreRef.current, metadata: { expression: formatOpsTokens(tokens),misconceptionCode,...questionMetadata("order_ops_arena","calculation.operation-order",{id:questionCount,tokens},wrongOrder?"recognition":"numeric",["6C9"]) } });
     triggerHaptic('error');
 
     if (nextHearts <= 0 && !sessionState) {
@@ -163,14 +166,26 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
     if (feedback || isFinished || sessionState?.paused || (!isPractice && sessionState && (sessionState.lives <= 0 || sessionState.timeLeft <= 0))) return;
 
     if (!choice.correct) {
-      loseHeart(`${round.hint} Check the calculation before trying again.`);
+      const validOperations = nextValidOperationIndices(tokens);
+      if (validOperations.includes(choice.operationIndex)) {
+        const calculation = formatOpsTokens(tokens.slice(choice.operationIndex - 1, choice.operationIndex + 2));
+        loseHeart(`Try ${calculation} again.`, 'operations.calculation');
+      } else {
+        const nextOperator = tokens[validOperations[0]];
+        const orderHint = tokens.includes('(') ? 'Work inside brackets first.'
+          : nextOperator === '×' ? 'Multiply before adding or subtracting.'
+          : nextOperator === '÷' ? 'Divide before adding or subtracting.'
+          : 'Work through addition and subtraction from left to right.';
+        loseHeart(orderHint, 'operations.priority');
+      }
       return;
     }
 
     const nextTokens = applyOperation(tokens, choice.operationIndex);
     setTokens(nextTokens);
-    setStepNotice(`${choice.label}. ${nextTokens.length === 1 ? 'Expression solved — hit landed!' : 'Now choose the next operation.'}`);
+    setStepNotice(`${choice.label}. ${nextTokens.length === 1 ? 'Expression solved. Hit landed!' : CHOOSE_NEXT_OPERATION}`);
     if (nextTokens.length > 1) {
+      emitMiniGameSessionEvent(sessionEvents,'correct_answer',{score:XP,metadata:questionMetadata('order_ops_arena','calculation.operation-order',{id:questionCount,tokens},'numeric',['6C9'])});
       playGameSound('cast');
       triggerHaptic('success');
       return;
@@ -186,7 +201,7 @@ const OrderOpsArenaGame: React.FC<OrderOpsArenaGameProps> = ({
 
     setScore(updatedScore);
     scoreRef.current = updatedScore;
-    emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { score: updatedScore, metadata: { expression: formatOpsTokens(round.tokens) } });
+    emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { score: updatedScore, metadata: { expression: formatOpsTokens(round.tokens),...questionMetadata("order_ops_arena","calculation.operation-order",{id:questionCount,tokens:round.tokens},"numeric",["6C9"]) } });
     setStreak((previous) => previous + 1);
     setEnemyHealth(nextEnemyHealth);
     setFeedback({

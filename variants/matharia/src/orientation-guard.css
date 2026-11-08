@@ -1,0 +1,29 @@
+/* Hide each complete layer at paint time, including content mounted outside
+   the stage. Opacity prevents a child from overriding the parent's visibility. */
+html[data-presentation='matharia'] .gameplay-orientation-gate[data-required-orientation] {
+ display:none;
+ z-index:2147483647;
+}
+/* A tap on the portalled Back control must not become a WebKit scroll gesture. */
+.gameplay-orientation-gate > button {touch-action:none;-webkit-user-select:none;user-select:none;}
+@media (orientation:portrait) {
+ html[data-presentation='matharia'] .gameplay-orientation-gate[data-required-orientation='landscape'] {display:flex;}
+ html[data-presentation='matharia'] .iphone-game-viewport[data-screen-orientation='landscape'] > .iphone-game-stage,
+ html[data-presentation='matharia']:not([data-parent-overlay='true']):has(.iphone-game-viewport[data-screen-orientation='landscape']) body > :not(#root, [data-gameplay-orientation-gate]) {
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+  transition:none!important;
+ }
+}
+@media (orientation:landscape) {
+ html[data-presentation='matharia'] .gameplay-orientation-gate[data-required-orientation='portrait'] {display:flex;}
+ html[data-presentation='matharia'] .iphone-game-viewport[data-screen-orientation='portrait'] > .iphone-game-stage,
+ html[data-presentation='matharia']:not([data-parent-overlay='true']):has(.iphone-game-viewport[data-screen-orientation='portrait']) body > :not(#root, [data-gameplay-orientation-gate]) {
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+  transition:none!important;
+ }
+}
+html[data-presentation='matharia'][data-parent-overlay='true'] .gameplay-orientation-gate[data-required-orientation] {display:none;}

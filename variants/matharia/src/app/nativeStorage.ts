@@ -1,4 +1,6 @@
 import { Capacitor } from '@capacitor/core';
+import {resetLearningState,LEARNING_CONSENT_KEY} from '../../../../src/systems/learning/learningStorage';
+import {resetLearningSupport} from '../../../../src/systems/learning/learningSupport';
 
 export const NATIVE_AUTH_KEY = 'matharia-ios-auth-v1';
 export const NATIVE_PLAYER_KEY = 'matharia-ios-player-v1';
@@ -25,11 +27,31 @@ export function migrateNativeDeviceSaves() {
         localStorage.setItem(current, saved); break;
       }
     }
+    // Preserve only the native device's completed paper history.
+    if(!localStorage.getItem('matharia-ios-paper-results-v2')){
+      const previous=localStorage.getItem('sats-legends-mock-results-v1');
+      if(previous){try{JSON.parse(previous);localStorage.setItem('matharia-ios-paper-results-v2',previous);}catch{/* Ignore invalid history. */}}
+    }
+    for(const oldKey of Object.keys(sessionStorage)){
+      if(!oldKey.startsWith('sats-legends-mock-checkpoint-v4:'))continue;
+      const nextKey=oldKey.replace('sats-legends-mock-checkpoint-v4:','matharia-ios-paper-checkpoint-v2:');
+      if(!sessionStorage.getItem(nextKey))sessionStorage.setItem(nextKey,sessionStorage.getItem(oldKey)!);
+    }
+
   } catch { /* A damaged legacy save must not prevent the app from opening. */ }
 }
 export function clearNativeDeviceProgress() {
+  resetLearningState();resetLearningSupport();localStorage.removeItem(LEARNING_CONSENT_KEY);
   localStorage.removeItem(NATIVE_PLAYER_KEY);
   localStorage.removeItem(NATIVE_PROGRESSION_KEY);
+  for (const storage of [localStorage, sessionStorage]) {
+    for (const key of Object.keys(storage)) {
+      if (/^matharia-ios-(?:learning|support|paper|quest|learner)/.test(key)) storage.removeItem(key);
+      // Previous native versions used the shared paper key. Never leave pupil
+      // answers/working behind after deleting native progress.
+      if (Capacitor.isNativePlatform() && /^sats-legends-mock-(?:results|checkpoint)-/.test(key)) storage.removeItem(key);
+    }
+  }
   // Remove obsolete native copies as well so the next launch cannot migrate
   // deleted progress back in. These keys live in the native app's own origin.
   if (Capacitor.isNativePlatform()) {

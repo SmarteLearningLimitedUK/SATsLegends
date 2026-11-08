@@ -1,3 +1,5 @@
+import {questionMetadata} from '../systems/learning/questionMetadata';
+import {isUntimedRevision,isRelaxedRevision} from '../systems/learning/sessionPolicy';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { playGameSound, playMonsterSound } from '../audio/gameAudio';
 import confetti from 'canvas-confetti';
@@ -194,7 +196,8 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     }
 
     if (type === 'all_factors') {
-      const number = [6, 8, 10, 12][Math.floor(Math.random() * 4)];
+      const targets=[6,8,10,12,14,15,16,18,20,21,22,24];
+      const number = targets[Math.floor(Math.random()*targets.length)];
       const correctAnswers = getFactors(number);
       const extras = [number + 1, number - 2, 7, 9, 11, 13, 14, 15].filter((value) => value > 0 && !correctAnswers.includes(value));
       const options = buildOptions(correctAnswers, extras, Math.max(4, correctAnswers.length));
@@ -210,10 +213,8 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     }
 
     if (type === 'common_factors') {
-      const pairs: Array<[number, number]> = tier === 5
-        ? [[24, 36], [30, 45], [36, 60], [42, 70]]
-        : [[12, 18], [16, 24], [18, 30], [20, 30]];
-      const [number, number2] = pairs[Math.floor(Math.random() * pairs.length)];
+      const common=2+Math.floor(Math.random()*(tier===5?11:5)),left=2+Math.floor(Math.random()*5),right=left+1+Math.floor(Math.random()*3);
+      const [number, number2] = [common*left,common*right];
       const factorsOne = getFactors(number);
       const factorsTwo = getFactors(number2);
       const commonAnswers = factorsOne.filter((value) => factorsTwo.includes(value));
@@ -283,11 +284,11 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   useEffect(() => {
     clearTimer();
 
-    if (state.status !== 'playing' || paused) return;
+    if (state.status !== 'playing' || paused || isUntimedRevision(sessionState)) return;
 
     timerRef.current = window.setInterval(() => {
       setState((previous) => {
-        if (previous.status !== 'playing') return previous;
+        if (previous.status !== 'playing' || isUntimedRevision(sessionState)) return previous;
         if (previous.timeLeft <= 1) {
           return {
             ...previous,
@@ -304,7 +305,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     }, 1000);
 
     return () => clearTimer();
-  }, [state.status, paused]);
+  }, [state.status, paused, sessionState?.untimed]);
 
   useEffect(() => {
     const problem = state.currentProblem;
@@ -331,11 +332,11 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     ));
   };
 
-  const checkAnswer = () => {
+  const checkAnswer = (entered?:number[]) => {
     if (paused || !state.currentProblem || state.status !== 'playing' || reportedProblemRef.current === state.currentProblem.id) return;
 
     const correct = [...state.currentProblem.correctAnswers].sort((a, b) => a - b);
-    const selected = [...selectedOptions].sort((a, b) => a - b);
+    const selected = [...(entered??selectedOptions)].sort((a, b) => a - b);
     const isCorrect = correct.length === selected.length && correct.every((value, index) => value === selected[index]);
     reportedProblemRef.current = state.currentProblem.id;
     emitMiniGameSessionEvent(sessionEvents, isCorrect ? 'correct_answer' : 'incorrect_answer', {
@@ -346,13 +347,13 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
         selectedAnswers: selected,
         correctAnswers: correct,
         timeLeft: state.timeLeft,
-      },
+      ...questionMetadata("factor_frenzy","factors.classification",state.currentProblem,"recognition",["6C5"],false)},
     });
 
     if (isCorrect) {
       playGameSound('impact');
       playMonsterSound('monster_hurt');
-      const timeBonus = state.timeLeft * 10;
+      const timeBonus = isUntimedRevision(sessionState)?0:state.timeLeft * 10;
       const points = 500 + timeBonus;
       const newScore = state.XP + points;
       const remainingHealth = Math.max(0, state.enemyHealth - 1);
@@ -414,7 +415,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
     }, delay);
 
     return () => clearAdvanceTimer();
-  }, [state.status, paused]);
+  }, [state.status, paused, sessionState?.untimed]);
 
   useEffect(() => {
     if (!showHitFx) return;
@@ -431,7 +432,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
   const problem = state.currentProblem;
   const openedLocks = ENEMY_MAX_HEALTH - state.enemyHealth;
   const instruction = !problem ? '' : problem.type === 'missing_factor'
-    ? 'Choose one rune to complete the multiplication.'
+    ? 'Enter the missing factor.'
     : problem.type === 'common_factors'
       ? `Choose every number that divides both ${problem.number} and ${problem.number2}.`
       : problem.type === 'prime_factors'
@@ -490,7 +491,7 @@ const FactorFrenzyGame: React.FC<FactorFrenzyGameProps> = ({
               </motion.button>)}
             </div>
             <div className="frenzy-loaded" role="status" aria-live="polite" data-tone={state.status}>{feedback}</div>
-            <button type="button" className="frenzy-fire ui-button-primary" onClick={checkAnswer} disabled={state.status !== 'playing' || selectedOptions.length === 0 || paused}>
+            <button type="button" className="frenzy-fire ui-button-primary" onClick={()=>checkAnswer()} disabled={state.status !== 'playing' || selectedOptions.length === 0 || paused}>
               {state.status === 'correct' ? 'Pulse connected!' : state.status === 'incorrect' ? 'Recharging…' : selectedOptions.length ? 'Fire pulse' : 'Select runes above'}
             </button>
             <p className="frenzy-goal">Correct set = one pulse. Open all 10 locks.</p>

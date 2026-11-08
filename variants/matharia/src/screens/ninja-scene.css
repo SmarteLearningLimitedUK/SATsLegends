@@ -20,8 +20,18 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='numb
  .ninja-guide {position:absolute;left:-4%;top:var(--ninja-ground-y);translate:0 -95%;width:30%;aspect-ratio:1;pointer-events:none;}
  .ninja-guide>.vision-character {width:100%;height:100%;}
  .ninja-ruler {position:absolute;left:20.5%;top:var(--ninja-ground-y);translate:0 -100%;width:72.8%;height:var(--ninja-bridge-height);pointer-events:none;}
- .ninja-rail-face {position:absolute;left:0;top:0;width:100%;aspect-ratio:1800/170;z-index:1;}
+ .ninja-rail-face {
+  --ninja-gap-left:calc(var(--ninja-gap-center) - 4.5%);
+  --ninja-gap-right:calc(var(--ninja-gap-center) + 4.5%);
+  --ninja-crack-left:calc(var(--ninja-gap-left) + 1.4%) 0%, var(--ninja-gap-left) 29%, calc(var(--ninja-gap-left) + 1%) 54%, calc(var(--ninja-gap-left) - .6%) 81%, var(--ninja-gap-left) 100%;
+  --ninja-crack-right:var(--ninja-gap-right) 100%, calc(var(--ninja-gap-right) + .7%) 71%, calc(var(--ninja-gap-right) - 1.3%) 45%, var(--ninja-gap-right) 21%, calc(var(--ninja-gap-right) - .6%) 0%;
+  position:absolute;left:0;top:0;width:100%;aspect-ratio:1800/170;z-index:1;
+ }
  .ninja-bridge-rail {position:absolute;inset:0;width:100%;height:100%;object-fit:contain;}
+ .ninja-bridge-rail--left {clip-path:polygon(0 0,var(--ninja-crack-left),0 100%);}
+ .ninja-bridge-rail--right {clip-path:polygon(100% 0,100% 100%,var(--ninja-crack-right));}
+ .ninja-bridge-rail--restored {clip-path:polygon(var(--ninja-crack-left),var(--ninja-crack-right));}
+ .ninja-bridge-rail--restored[data-drop] {animation:ninja-stone-drop 280ms ease-in-out both;}
  .ninja-bridge-pillar {position:absolute;top:calc(var(--ninja-rail-height) * .7);height:calc(100% - var(--ninja-rail-height) * .7);width:auto;object-fit:contain;}
  .ninja-bridge-pillar--left {left:1.4%;}
  .ninja-bridge-pillar--right {right:1.4%;}
@@ -34,6 +44,7 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='numb
  .ninja-value>span:not(.artwork-frame) {padding:3px 5px;white-space:nowrap;}
  .ninja-missing {position:absolute;left:0;top:calc(var(--ninja-rail-height) * .34);translate:-50% -50%;width:clamp(42px,calc(var(--ninja-rail-height) * .82),60px);aspect-ratio:1;display:grid;place-items:center;border-radius:50%;background:#00444b url('../../assets/png/frames/concept_round_rim_v2@2x.webp') center/contain no-repeat;color:#fff0a0;font-size:clamp(26px,calc(var(--ninja-rail-height) * .58),38px);font-weight:750;line-height:1;box-shadow:0 0 12px #ffdf76aa;}
  .ninja-missing>span {padding:2px;}
+ .ninja-restored-marker {width:max-content;min-width:42px;padding-inline:5px;border:1px solid #eac473;border-radius:6px;background:#075042;color:#e2ffe6;box-shadow:0 0 8px #c9f59d77;}
  .ninja-answer-row {position:absolute;left:50%;top:calc(var(--ninja-ground-y) - var(--ninja-bridge-height) + var(--ninja-rail-height) + max(8px,1cqw));translate:-50% 0;width:max-content;height:var(--ninja-answer-size);display:flex;align-items:center;gap:clamp(10px,2.2cqw,22px);}
  .ninja-answer {position:relative;flex:0 0 var(--ninja-answer-size);display:grid;place-items:center;width:var(--ninja-answer-size);height:var(--ninja-answer-size);min-width:44px;min-height:44px;aspect-ratio:1;padding:0;border:0;background:none;box-shadow:none;color:white;touch-action:manipulation;font-size:clamp(14px,1.95cqw,35px);font-weight:650;line-height:1.1;}
  .ninja-answer>img {position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;}
@@ -43,13 +54,7 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='numb
  .ninja-answer[data-answer-state='incorrect'] {filter:drop-shadow(0 0 7px #ffad78);}
  .ninja-answer:not(:disabled):active {scale:.96;filter:brightness(1.15);}
  .ninja-answer:focus-visible {outline:3px solid #fff0b3;outline-offset:3px;border-radius:50%;}
- .ninja-feedback {position:absolute;left:20%;top:33%;width:78%;padding:4px 8px;border:2px solid #ecc16a;border-radius:12px;background:#164e3c;color:#e2ffe6;font-size:clamp(14px,1.8cqw,26px);font-weight:650;line-height:1.15;text-align:center;pointer-events:none;display:flex;flex-direction:column;gap:2px;}
- .ninja-feedback>span {font-size:clamp(14px,1.5cqw,20px);font-weight:450;}
- .ninja-feedback[data-feedback='incorrect'] {background:#623323;color:#fff0df;}
- .ninja-flying-answer {position:absolute;left:0;top:0;z-index:30;width:60px;height:60px;display:grid;place-items:center;pointer-events:none;}
- /* Keep the original 60px flight coordinate box and 580ms timing. */
- .ninja-flying-answer>img {position:absolute;left:50%;top:50%;translate:-50% -50%;width:var(--ninja-answer-size);height:var(--ninja-answer-size);object-fit:contain;}
- .ninja-flying-answer>span {position:relative;display:grid;place-items:center;width:var(--ninja-answer-size);height:var(--ninja-answer-size);padding:12%;color:#fff8e2;font-size:clamp(14px,1.95cqw,35px);font-weight:650;text-shadow:0 2px 2px #002651;}
+ .ninja-feedback {position:absolute;left:50%;top:33%;translate:-50% 0;max-width:78%;padding:4px 10px;border:2px solid #ecc16a;border-radius:12px;background:#623323;color:#fff0df;font-size:clamp(14px,1.8cqw,26px);font-weight:650;line-height:1.15;text-align:center;pointer-events:none;}
  [data-unified-minigame-hud]>div:first-of-type:has(.legend-hud-bar) {left:50%;top:1.4%;width:calc(var(--concept-plane)*.49);height:11.5%;padding:0;}
  .legend-hud-avatar {width:13%;}
  .legend-hud-title {font-size:clamp(14px,4.7cqw,39px);}
@@ -61,6 +66,12 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='numb
  .legend-dock-button {min-height:44px;font-size:clamp(11px,3.8cqw,24px);gap:2px;}
  .legend-dock-button>svg {width:clamp(18px,5.7cqw,32px);height:clamp(18px,5.7cqw,32px);}
  .concept-pause {right:max(1%,var(--concept-safe-right));top:1.5%;width:clamp(44px,6vw,110px);}
+}
+@keyframes ninja-stone-drop {
+ from {opacity:0;translate:0 -45%;}
+ 60% {opacity:1;translate:0 0;}
+ 78% {translate:0 -4%;}
+ to {translate:0 0;}
 }
 /* Reserve space for a complete 64px long-label row above the short-screen HUD. */
 @media(orientation:landscape) and (max-height:380px){html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='number_line_ninja']{--ninja-bridge-aspect:3.8;}}

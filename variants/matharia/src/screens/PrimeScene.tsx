@@ -3,9 +3,9 @@ import {ORIGINAL_HEROES} from '../../../../src/assets/characters/originalHeroes'
 import ConceptQuestionPanel from '../ConceptQuestionPanel';
 import {asset} from '../assets';
 export function PrimeQuestionCard({children}:{children:React.ReactNode;title?:string;className?:string}){
- return <ConceptQuestionPanel frame="prime_question_v3" decoration={
+ return <ConceptQuestionPanel decoration={
   <svg className="prime-question-guide" viewBox="70 0 954 1100" aria-hidden="true"><image href={ORIGINAL_HEROES.barratt} width="1024" height="1536"/></svg>
- }><div className="prime-question-main">{children}</div><p className="prime-question-instruction">Let other numbers pass.</p></ConceptQuestionPanel>;
+ }><div className="prime-question-main">{children}</div><p className="prime-question-instruction">Free prime bubbles; let non-primes pass.</p></ConceptQuestionPanel>;
 }
 export function PrimeDangerRail(){
  return <div className="prime-danger-rail"><img src={asset('gameplay','prime_danger_rail_v2')} alt="" draggable={false}/><strong>Danger</strong></div>;

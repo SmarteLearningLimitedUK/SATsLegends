@@ -1,3 +1,5 @@
+import {questionMetadata} from '../systems/learning/questionMetadata';
+import {generatedForgeRecipe,forgeRecipeModel} from './fractionForgeRecipes';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Hammer, RotateCcw } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
@@ -85,14 +87,16 @@ const shuffle = <T,>(items: readonly T[]): T[] => {
 const makeRound = (level: number, roundIndex: number, runOffset = 0): ForgeRound => {
   const tier = Math.max(1, Math.min(5, level));
   const recipes = RECIPES[tier - 1];
-  const recipe = recipes[(roundIndex - 1 + runOffset) % recipes.length];
+  const recipe = generatedForgeRecipe(tier,runOffset+roundIndex*7919);
   const pieces = recipe.split(/([+\-×÷])/);
   const solution = pieces.filter((_, index) => index % 2 === 0).map(parseFraction);
   const operators = pieces.filter((_, index) => index % 2 === 1) as Operation[];
   const bankSize = [4, 5, 5, 6, 7][tier - 1];
   const denominator = solution[0].denominator;
   const sameDenominator = Array.from({ length: denominator }, (_, index) => `${index + 1}/${denominator}`);
-  const pool = tier <= 2 ? [...sameDenominator, ...DISTRACTORS] : [...DISTRACTORS, ...recipes.flatMap((entry) => entry.split(/[+\-×÷]/))];
+  const mixed=solution.find(f=>f.numerator>f.denominator&&f.denominator>1);
+  const mixedDistractors=mixed?[`${mixed.numerator+mixed.denominator}/${mixed.denominator}`,`${mixed.numerator+1}/${mixed.denominator}`, '2/1','3/1','4/1','5/1','6/1','7/1','8/1','9/1'].map(value=>{const [n,d]=value.split('/').map(Number);return n%d===0?`${n/d}/1`:value;}):[];
+  const pool = tier <= 2 ? [...sameDenominator, ...DISTRACTORS] : [...mixedDistractors,...DISTRACTORS, ...recipes.flatMap((entry) => entry.split(/[+\-×÷]/))];
   const chosen = [...solution];
   const seen = new Set(chosen.map(fractionKey));
   const offset = (roundIndex + runOffset) % pool.length;
@@ -113,14 +117,15 @@ const makeRound = (level: number, roundIndex: number, runOffset = 0): ForgeRound
     operators,
     solutionIds: indexed.slice(0, solution.length).map((card) => card.id),
     prompt: operators.length === 1
-      ? operators[0] === '÷'
+      ? solution.some(f=>f.numerator>f.denominator&&f.denominator>1) ? `Multiply a mixed number by a whole number to make ${fractionLabel(target)}. Then strike the anvil.` : operators[0] === '÷'
         ? `Choose a proper fraction, then a whole number. Divide the fraction by the whole number to make ${fractionLabel(target)}.`
         : `${operators[0] === '-' ? 'Choose two fractions. Subtract the second from the first' : `Choose two fractions that ${operators[0] === '+' ? 'add' : 'multiply'}`} to make ${fractionLabel(target)}. Then strike the anvil.`
       : `Place ${solution.length} fraction ingots on the anvil. Follow ${operators.map(op => op === '+' ? 'addition' : op === '-' ? 'subtraction' : op === '×' ? 'multiplication' : 'division').join(' then ')} from left to right to make ${fractionLabel(target)}.`,
   };
 };
 
-const FractionGlyph: React.FC<{ value: Fraction }> = ({ value }) => value.denominator === 1
+const FractionGlyph: React.FC<{ value: Fraction }> = ({ value }) => value.numerator>value.denominator&&value.denominator>1
+  ? <span className="ff-fraction" aria-hidden="true"><span>{Math.floor(value.numerator/value.denominator)} {value.numerator%value.denominator}/{value.denominator}</span></span> : value.denominator === 1
   ? <span className="ff-fraction" aria-hidden="true"><span>{value.numerator}</span></span>
   : <span className="ff-fraction" aria-hidden="true"><span>{value.numerator}</span><span className="ff-fraction-bar" /><span>{value.denominator}</span></span>;
 
@@ -130,7 +135,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
   sessionState, sessionEvents, onVictory, onGameOver, onBack: _onBack,
 }) => {
   const tier = Math.max(1, Math.min(5, miniGameLevel || levelId || 1));
-  const runOffsetRef = useRef(Math.floor(Math.random() * 8));
+  const runOffsetRef = useRef(Math.floor(Math.random() * 2147483647));
   const [roundIndex, setRoundIndex] = useState(1);
   const [round, setRound] = useState(() => makeRound(tier, 1, runOffsetRef.current));
   const [slots, setSlots] = useState<Array<string | null>>(() => Array(round.solutionIds.length).fill(null));
@@ -170,7 +175,7 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
   useEffect(() => {
     clearPending();
     endedRef.current = false;
-    runOffsetRef.current = Math.floor(Math.random() * 8);
+    runOffsetRef.current = Math.floor(Math.random() * 2147483647);
     setRoundIndex(1);
     setScore(0);
     setCompleted(0);
@@ -195,7 +200,10 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
 
   const cardAllowedInNextSlot = (card: Fraction) => {
     const operation = round.operators[0];
-    if (operation === '×') return card.numerator < card.denominator;
+    if (operation === '×') {
+      const mixed=round.solutionIds.some(id=>{const f=round.cards.find(c=>c.id===id)!;return f.numerator>f.denominator&&f.denominator>1;});
+      return mixed?(slots.findIndex(id=>id===null)===0?card.numerator>card.denominator&&card.denominator>1:card.denominator===1):card.numerator<card.denominator;
+    }
     if (operation !== '÷') return true;
     return slots.findIndex(id => id === null) === 0
       ? card.numerator < card.denominator : card.denominator === 1;
@@ -241,8 +249,8 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
       setScore(nextScore);
       setCompleted(nextCompleted);
       setFeedback({ tone: 'success', message: nextStreak % 3 === 0 ? `Perfect run! +${gained} XP.` : `Clean strike! +${gained} XP.` });
-      triggerHaptic('success');
-      sessionEvents?.onCorrectAnswer?.({ type: 'correct_answer', score: nextScore, metadata: { target: fractionLabel(round.target) } });
+      if (!sessionEvents?.onCorrectAnswer) triggerHaptic('success');
+      sessionEvents?.onCorrectAnswer?.({ type: 'correct_answer', score: nextScore, metadata: { target: fractionLabel(round.target) ,...questionMetadata("fraction_forge",round.solutionIds.some(id=>{const c=round.cards.find(c=>c.id===id)!;return c.numerator>c.denominator&&c.denominator>1;})?"fractions.mixed-multiply":"fractions."+({"+":"add","-":"subtract","×":"multiply","÷":"divide"}[round.operators[0]]),forgeRecipeModel(round),"construction",[round.operators[0]==="×"&&round.solutionIds.some(id=>{const c=round.cards.find(c=>c.id===id)!;return c.numerator>c.denominator&&c.denominator>1;})?"5F5":round.operators[0]==="×"?"6F5a":round.operators[0]==="÷"?"6F5b":"6F4"],false)} });
       sessionEvents?.onPuzzleComplete?.({ type: 'puzzle_complete', score: nextScore });
       if (nextCompleted >= totalRounds) {
         endedRef.current = true;
@@ -263,8 +271,8 @@ const FractionForgeGame: React.FC<FractionForgeGameProps> = ({
     setWrongCount((previous) => previous + 1);
     setStreak(0);
     setFeedback({ tone: 'error', message: `Wrong answer! Your recipe makes ${fractionLabel(result)}, but the target is ${fractionLabel(round.target)}. Swap an ingot and try again.` });
-    triggerHaptic('error');
-    sessionEvents?.onIncorrectAnswer?.({ type: 'incorrect_answer', score, metadata: { result: fractionLabel(result), target: fractionLabel(round.target) } });
+    if (!sessionEvents?.onIncorrectAnswer) triggerHaptic('error');
+    sessionEvents?.onIncorrectAnswer?.({ type: 'incorrect_answer', score, metadata: { result: fractionLabel(result), target: fractionLabel(round.target) ,...questionMetadata("fraction_forge",round.solutionIds.some(id=>{const c=round.cards.find(c=>c.id===id)!;return c.numerator>c.denominator&&c.denominator>1;})?"fractions.mixed-multiply":"fractions."+({"+":"add","-":"subtract","×":"multiply","÷":"divide"}[round.operators[0]]),forgeRecipeModel(round),"construction",[round.operators[0]==="×"&&round.solutionIds.some(id=>{const c=round.cards.find(c=>c.id===id)!;return c.numerator>c.denominator&&c.denominator>1;})?"5F5":round.operators[0]==="×"?"6F5a":round.operators[0]==="÷"?"6F5b":"6F4"],false)} });
     if (!sessionState && !isPractice) {
       const nextLives = localLives - 1;
       setLocalLives(nextLives);

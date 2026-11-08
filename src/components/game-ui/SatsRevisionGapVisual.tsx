@@ -40,8 +40,8 @@ export default function SatsRevisionGapVisual({ model, shaded = 0, symbols = [] 
       <text x="258" y="126" textAnchor="end">? cm</text>
     </svg>;
   }
-  return <svg className="sats-diagram" viewBox="0 0 440 270" role="img" aria-label={`Pictogram. Key: one symbol represents ${model.key} items. ${model.labels.map((label, i) => `${label}: ${symbols[i] === null || symbols[i] === undefined ? 'not placed' : `${symbols[i]! / 2} symbols`}`).join('. ')}`}>
-    <text x="220" y="24" textAnchor="middle">Key: ● = {model.key} items · half = {model.key / 2}</text>
+  return <svg className="sats-diagram" viewBox="0 0 440 270" role="img" aria-label={`Pictogram. Key: one symbol represents ${model.hideKey?'an unknown number of':model.key} items. ${model.labels.map((label, i) => `${label}: ${symbols[i] === null || symbols[i] === undefined ? 'not placed' : `${symbols[i]! / 2} symbols`}`).join('. ')}`}>
+    <text x="220" y="24" textAnchor="middle">Key: ● = {model.hideKey?'?':model.key} items{!model.hideKey&&model.key>1?` · half = ${model.key/2}`:''}</text>
     {model.labels.map((label, i) => <g key={label}>
       <text x="80" y={85 + i * 65} textAnchor="end">{label}</text>
       <path d={`M95 ${100 + i * 65}H415`} stroke="#9fdae644" />

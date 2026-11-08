@@ -1,3 +1,4 @@
+import {isUntimedRevision,isRelaxedRevision} from '../systems/learning/sessionPolicy';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useIsPresent, useReducedMotion } from 'motion/react';
 import confetti from 'canvas-confetti';
@@ -26,7 +27,8 @@ interface RemainderProblem {
   divisor: number;
   quotient: number;
   remainder: number;
-  answerMode: 'remainder' | 'decimal' | 'group_board';
+  answerMode: 'remainder' | 'decimal' | 'group_board'|'context';
+  contextPrompt?:string;contextRule?:'up'|'down';
   answerLabel: string;
   options: string[];
   stage: number;
@@ -174,6 +176,10 @@ const createWrittenProblem = (stage: number): RemainderProblem => {
 };
 
 const createProblem = (stage: number, questionNumber = 0): RemainderProblem => {
+  if(stage>=5&&questionNumber%4===1){
+   const divisor=randomInt(3,12),quotient=randomInt(6,30),remainder=randomInt(1,divisor-1),dividend=divisor*quotient+remainder,up=questionNumber%8===1,answer=quotient+Number(up);
+   return {id:`context-${Date.now()}-${Math.random()}`,dividend,displayDividend:String(dividend),divisor,quotient,remainder,stage,answerMode:'context',contextRule:up?'up':'down',contextPrompt:up?`${dividend} crates must travel. A boat carries at most ${divisor}. What is the fewest boats needed?`:`${dividend} crates, ${divisor} per full box. How many complete boxes can be sent?`,answerLabel:String(answer),options:shuffle([answer,answer+1,answer+2,Math.max(0,answer-1)].map(String))};
+  }
   if (stage >= 10 && questionNumber % 3 === 0) return createWrittenProblem(stage);
   if (stage >= 7) {
     return createDecimalProblem(stage);
@@ -336,15 +342,15 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
   }, [baseLevel, difficultyStage, initialRoundTime]);
 
   useEffect(() => {
-    if (roundOver || isPractice || showPracticeIntro || sessionState?.paused || !isPresent) return undefined;
+    if (roundOver || isPractice || isUntimedRevision(sessionState) || showPracticeIntro || sessionState?.paused || !isPresent) return undefined;
     const interval = window.setInterval(() => {
       setTimeLeft((prev) => Math.max(0, prev - 1));
     }, 1000);
     return () => window.clearInterval(interval);
-  }, [isPractice, isPresent, roundOver, sessionState?.paused, showPracticeIntro]);
+  }, [isPractice, isPresent, roundOver, sessionState?.paused, sessionState?.untimed, showPracticeIntro]);
 
   useEffect(() => {
-    if (!isPresent || sessionState?.paused || finishGuardRef.current || (isPractice ? correctCount < 5 : timeLeft > 0)) return;
+    if (!isPresent || sessionState?.paused || finishGuardRef.current || ((isPractice||isUntimedRevision(sessionState)) ? correctCount < 5 : timeLeft > 0)) return;
     finishGuardRef.current = true;
     setRoundOver(true);
     setIsLocked(true);
@@ -396,7 +402,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
 
     if (isCorrect) {
       const elapsedMs = Math.max(250, Date.now() - questionStartRef.current);
-      const speedBonus = Math.max(20, Math.round(160 - (elapsedMs / 18)));
+      const speedBonus = isUntimedRevision(sessionState)?160:Math.max(20, Math.round(160 - (elapsedMs / 18)));
       const difficultyBonus = 80 + (problem.stage * 14);
       const streakMultiplier = 1 + Math.min(0.9, combo * 0.08);
       const points = Math.round((difficultyBonus + speedBonus) * streakMultiplier);
@@ -428,7 +434,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
     triggerHaptic('error');
     setCombo(0);
     setScore((prev) => Math.max(0, prev - 25));
-    if (!isPractice) setTimeLeft((prev) => Math.max(0, prev - 2));
+    if (!isPractice&&!isUntimedRevision(sessionState)) setTimeLeft((prev) => Math.max(0, prev - 2));
     emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { score: Math.max(0, XP - 25), metadata: { problemId: problem.id, tier: baseLevel } });
     setFeedback({
       tone: 'error',
@@ -490,15 +496,13 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
 
           <GameQuestionCard
             title={title}
-            subtitle={problem.answerMode === 'decimal'
-              ? 'Give your answer as a decimal.'
-              : problem.answerMode === 'group_board' ? 'Load full boxes, then send your shipment.' : 'Choose the shipment with the right boxes and leftovers.'}
+            subtitle={problem.answerMode==='context'?'Use the remainder to decide.':problem.answerMode==='decimal'?'Give your answer as a decimal.':problem.answerMode==='group_board'?'Load full boxes, then send your shipment.':'Enter full boxes and leftovers.'}
             className={`mx-auto w-full shrink-0 ${problem.answerMode === 'group_board' ? '' : 'max-w-[27rem]'}`}
             style={{ position: 'relative', top: 0, transform: 'none' }}
           >
-            {problem.answerMode === 'decimal'
+            {problem.contextPrompt??(problem.answerMode === 'decimal'
               ? `Share ${problem.displayDividend} metres of rope equally between ${problem.divisor} boats. How many metres does each boat get?`
-              : `There are ${problem.displayDividend} crates. Each box holds ${problem.divisor} crates. How many full boxes can be filled, and how many crates are left over?`}
+              : `There are ${problem.displayDividend} crates. Each box holds ${problem.divisor} crates. How many full boxes can be filled, and how many crates are left over?`)}
           </GameQuestionCard>
 
           <section data-division-playfield="true" className={`relative flex min-h-0 ${problem.answerMode === 'group_board' ? 'flex-col gap-2' : 'flex-1 items-center justify-center'}`}>
@@ -544,7 +548,7 @@ const RemainderRunGame: React.FC<RemainderRunGameProps> = ({
                       : 'ui-button-secondary'
                   }`}
                 >
-                  <span className="font-black text-white" style={{ fontSize: 'max(18px, calc(15px / var(--game-stage-scale, 1)))' }}>{problem.answerMode === 'decimal' ? `${option} m each` : option.replace(' r', ' boxes · ') + ' left'}</span>
+                  <span className="font-black text-white" style={{ fontSize: 'max(18px, calc(15px / var(--game-stage-scale, 1)))' }}>{problem.answerMode==='context'?option:problem.answerMode === 'decimal' ? `${option} m each` : option.replace(' r', ' boxes · ') + ' left'}</span>
                 </button>
               ))}
             </div>

@@ -1,6 +1,7 @@
 import type { RevisionGapModel } from './satsRevisionGapMissions';
 /** Models carry the givens; construction answers are kept separately in fields. */
 export type DepthModel =
+  | {kind:'labelled-net';cells:[number,number][];labels:number[];marked:number}
   | RevisionGapModel
   | { kind:'ruler'; start:number; end:number }
   | { kind:'capacity'; max:number; intervals:number; position:number }

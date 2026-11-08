@@ -14,15 +14,6 @@ const campItems: CampItem[] = [
   { id: 'compass', label: 'Compass', x: 18, y: 58, icon: Compass },
   { id: 'tablet', label: 'Screen', x: 82, y: 53, icon: Tablet },
 ];
-const focusPrompts = [
-  'Notice one colour as you pack an item.',
-  'Follow the outline of something in the scene.',
-  'Notice where your hand meets the screen or mouse.',
-  'Listen for a nearby sound, or a moment of quiet.',
-  'Notice your shoulders and let them rest if you like.',
-  'Look at one detail near the lantern.',
-] as const;
-
 const CandleCalm: React.FC<WellbeingActivityComponentProps> = ({ onComplete, onExit }) => {
   const [packed, setPacked] = useState<string[]>([]);
   const [brightness, setBrightness] = useState(100);
@@ -30,30 +21,27 @@ const CandleCalm: React.FC<WellbeingActivityComponentProps> = ({ onComplete, onE
   const reducedMotion = useReducedMotion();
   const { finished, finish, cancel } = useWellbeingCompletion(onComplete);
   const ready = packed.length === campItems.length;
+  const cue = finished ? 'Take a moment with the softer light.' : ready
+    ? 'Soften the glow to a level that feels comfortable.'
+    : 'As you pack, let a colour or a familiar scent bring your attention back to this moment.';
   const packItem = (id: string) => {
     if (finished || packedRef.current.has(id)) return;
     packedRef.current.add(id);
     setPacked((current) => [...current, id]);
   };
   const dimLantern = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const nextBrightness = Number(event.currentTarget.value);
-    setBrightness(nextBrightness);
-    if (ready && nextBrightness <= 20) finish(1800);
+    setBrightness(Number(event.currentTarget.value));
   };
+  const finishCamp = () => { if (ready) finish(1200); };
 
   return (
     <WellbeingShell title="Lantern Camp" activityId="candle_calm" type="Grounding"
-      subtitle="Pack the six pieces of camp gear while noticing the scene, then slide the lantern light down."
-      purpose="Give your attention to one small detail at a time."
-      fact="Paying attention to sights, sounds, and touch is one way to practise grounding in the present."
-      affirmation="Rest is part of the adventure."
-      status={finished ? 'The camp is ready for a quiet evening' : ready ? `Lantern brightness ${brightness}%. Dim it to 20% or lower.` : `Camp gear packed ${packed.length} of 6`}
+      purpose="You can notice a colour, a scent that is already nearby, or how your hands are resting. Any one is enough."
       progress={finished ? 100 : (packed.length + (ready ? (100 - brightness) / 100 : 0)) / (campItems.length + 1) * 100}
       onExit={() => { cancel(); onExit(); }}>
       <div className="wellbeing-scene" data-camp-packed={packed.length}>
         <div className="camp-focus" role="status" aria-live="polite">
-          <span>{ready ? 'Last step · light' : `Focus ${packed.length + 1} of 6`}</span>
-          <p>{ready ? 'Watch the glow soften as you slide the light down.' : focusPrompts[packed.length]}</p>
+          <p>{cue}</p>
         </div>
         <div className={'camp-lantern' + (ready ? ' is-ready' : '') + (finished ? ' is-finished' : '')}
           data-lantern-brightness={brightness} style={{ '--lantern-light': brightness / 100 } as React.CSSProperties}>
@@ -70,13 +58,12 @@ const CandleCalm: React.FC<WellbeingActivityComponentProps> = ({ onComplete, onE
             <path d="M28 136H92V145H28Z" fill="#7f7357" stroke="#2a4047" strokeWidth="4" />
             <path d="M26 42H94V50H26Z" fill="#b4a77b" stroke="#2a4047" strokeWidth="4" />
           </svg>
-          <strong>{finished ? 'Evening glow' : ready ? 'Dim the lantern' : 'Pack the camp first'}</strong>
         </div>
         {ready ? <div className="camp-dimmer">
-          <label htmlFor="camp-lantern-brightness">Lantern brightness <span>{brightness}%</span></label>
+          <label htmlFor="camp-lantern-brightness">Lantern brightness</label>
           <input id="camp-lantern-brightness" type="range" min="0" max="100" step="5" value={brightness}
             onChange={dimLantern} disabled={finished} aria-valuetext={`${brightness}% brightness`} />
-          <p>Slide to 20% or lower when you are ready.</p>
+          <button type="button" className="wellbeing-action" data-button-skin="none" disabled={finished} onClick={finishCamp}>Finish</button>
         </div> : null}
         <AnimatePresence>
           {campItems.filter((item) => !packed.includes(item.id)).map((item) => {

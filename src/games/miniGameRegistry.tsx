@@ -40,6 +40,12 @@ const ShareSplitterGame = lazy(() => import('./ShareSplitterGame'));
 const SimplifySprintGame = lazy(() => import('./SimplifySprintGame'));
 const TakeOutRushGame = lazy(() => import('./TakeOutRushGame'));
 const ChronoDashGame = lazy(() => import('./ChronoDashGame'));
+const CalendarQuestGame = lazy(() => import('./CalendarQuestGame'));
+const RuneRelationsGame = lazy(() => import('./RuneRelationsGame'));
+const DivideConquerGame = lazy(() => import('./DivideConquerGame'));
+const AcropolisClearoutGame = lazy(() => import('./AcropolisClearoutGame'));
+const ShapeSecretsGame = lazy(() => import('./ShapeSecretsGame'));
+const ShatteredWholeGame = lazy(() => import('./ShatteredWholeGame'));
 const TowerOfFactorsGame = lazy(() => import('./TowerOfFactorsGame'));
 const GraphGrabberGame = lazy(() => import('./GraphGrabberGame'));
 const TreasurePathGame = lazy(() => import('./TreasurePathGame'));
@@ -91,6 +97,12 @@ export type MiniGameRegistryKey =
   | 'SimplifySprintGame'
   | 'TakeOutRushGame'
   | 'ChronoDashGame'
+  | 'CalendarQuestGame'
+  | 'ShatteredWholeGame'
+  | 'RuneRelationsGame'
+  | 'DivideConquerGame'
+  | 'AcropolisClearoutGame'
+  | 'ShapeSecretsGame'
   | 'TowerOfFactorsGame'
   | 'GraphGrabberGame'
   | 'TreasurePathGame'
@@ -150,6 +162,12 @@ export const MINI_GAME_REGISTRY: Record<MiniGameRegistryKey, MiniGame<any>> = {
   SimplifySprintGame: asMiniGame('simplify_sprint', SimplifySprintGame),
   TakeOutRushGame: asMiniGame('take_out_rush', TakeOutRushGame),
   ChronoDashGame: asMiniGame('timekeeper_temple', ChronoDashGame),
+  CalendarQuestGame: asMiniGame('calendar_quest', CalendarQuestGame),
+  ShatteredWholeGame: asMiniGame('shattered_whole', ShatteredWholeGame),
+  RuneRelationsGame: asMiniGame('rune_relations', RuneRelationsGame),
+  DivideConquerGame: asMiniGame('divide_conquer', DivideConquerGame),
+  AcropolisClearoutGame: asMiniGame('acropolis_clearout', AcropolisClearoutGame),
+  ShapeSecretsGame: asMiniGame('shape_secrets', ShapeSecretsGame),
   TowerOfFactorsGame: asMiniGame('tower_of_factors', TowerOfFactorsGame),
   GraphGrabberGame: asMiniGame('graph_grabber', GraphGrabberGame),
   TreasurePathGame: asMiniGame('treasure_path', TreasurePathGame),

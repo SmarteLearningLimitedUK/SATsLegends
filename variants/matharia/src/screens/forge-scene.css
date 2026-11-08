@@ -7,8 +7,10 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='frac
  --forge-question-height:max(76px,calc(var(--forge-view-height)*.177));
  --forge-target-top:calc(var(--forge-question-top) + var(--forge-question-height) + 12px);
  --forge-target-height:max(48px,calc(var(--forge-view-height)*.11));
- --forge-recipe-top:calc(var(--forge-target-top) + var(--forge-target-height) + 6px);
- --forge-recipe-height:max(44px,calc(var(--forge-view-height)*.176 - 16px));
+ --forge-recipe-height:clamp(44px,calc(var(--forge-view-height)*.176 - 16px),64px);
+ --forge-anvil-left:31.7%;
+ --forge-anvil-width:28.4%;
+ --forge-work-centre:calc(var(--forge-anvil-left) + var(--forge-anvil-width)*.56);
  --forge-rack-top:max(calc(var(--forge-view-height)*.298),calc(var(--forge-question-top) + var(--forge-question-height) - 16px));
  .concept-stage[data-concept-orientation='landscape'] {margin-left:0;margin-right:0;}
  .concept-question-zone {left:31.1%;top:var(--forge-question-top);width:38.1%;height:var(--forge-question-height);z-index:20;}
@@ -28,17 +30,19 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='frac
  .forge-held-hammer {position:absolute;z-index:1;left:var(--forge-hand-x);top:var(--forge-hand-y);width:20%;height:29.2%;object-fit:contain;translate:-50% -82%;rotate:var(--forge-rest-angle,-35deg);transform-origin:50% 82%;pointer-events:none;}
  .forge-worker[data-strike='success'] .forge-held-hammer,.forge-worker[data-strike='error'] .forge-held-hammer {animation:forge-hammer-strike 850ms ease-in-out;}
  .forge-worker[data-strike='success'],.forge-worker[data-strike='error'] {animation:forge-worker-strike 850ms ease-in-out;z-index:3;}
- .forge-target {position:absolute;z-index:10;left:49.85%;translate:-50% 0;top:var(--forge-target-top);width:max(14.7%,140px);height:var(--forge-target-height);display:flex;align-items:center;justify-content:center;gap:7%;padding:4px 1cqw;isolation:isolate;box-sizing:border-box;color:#ffdc73;}
+ .forge-target {position:absolute;z-index:10;left:var(--forge-work-centre);translate:-50% 0;top:var(--forge-target-top);width:max(14.7%,140px);height:var(--forge-target-height);display:flex;align-items:center;justify-content:center;gap:7%;padding:4px 1cqw;isolation:isolate;box-sizing:border-box;color:#ffdc73;}
  .forge-target svg {position:absolute;inset:0;width:100%;height:100%;z-index:-1;}
  .forge-target>span {font-size:clamp(11px,1.5cqw,22px);font-weight:750;line-height:1.1;}
  .forge-target strong {font-size:clamp(24px,3.3cqw,44px);font-weight:750;white-space:nowrap;}
  .forge-target[data-wide] {width:max(17.8%,164px);}
  .forge-target[data-wide] strong {font-size:clamp(20px,2.7cqw,40px);}
- .forge-recipe {position:absolute;z-index:10;left:40.5%;top:var(--forge-recipe-top);width:18.7%;height:var(--forge-recipe-height);display:flex;align-items:center;justify-content:space-between;}
+ .forge-anvil-station {position:absolute;left:var(--forge-anvil-left);top:63.1%;width:var(--forge-anvil-width);height:22.7%;}
+ /* The flat working face is centred at 56% of the existing anvil artwork. */
+ .forge-recipe {position:absolute;z-index:10;left:56%;top:var(--forge-recipe-inset);translate:-50% 0;width:max-content;height:var(--forge-recipe-height);display:flex;align-items:center;justify-content:center;gap:clamp(0px,calc(5cqw - 8px),6px);visibility:hidden;}
  .forge-mould {position:relative;isolation:isolate;container-type:inline-size;display:grid;place-items:center;height:100%;width:auto;aspect-ratio:.75;min-width:44px;min-height:44px;padding:0;border:0;background:none;color:#fff5d2;}
  .forge-slot-number {position:relative;z-index:1;font-size:clamp(24px,3.5vw,48px);font-weight:700;}
- .forge-operator {font-size:clamp(24px,3.5cqw,48px);font-weight:750;line-height:1;color:#ffd268;text-shadow:0 2px 2px #4b250d;}
- .forge-anvil {position:absolute;left:31.7%;top:63.1%;width:28.4%;height:22.7%;object-fit:contain;pointer-events:none;}
+ .forge-operator {font-size:clamp(14px,8cqw,24px);font-weight:750;line-height:1;color:#ffd268;text-shadow:0 2px 2px #4b250d;}
+ .forge-anvil {position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;}
  .forge-progress {position:absolute;left:41%;top:82%;width:17%;display:flex;justify-content:center;gap:5px;}
  .forge-progress i {width:8px;height:8px;border:1px solid #ffdc76;border-radius:50%;background:#384e46;}
  .forge-progress i[data-complete='true'] {background:#79eca1;}

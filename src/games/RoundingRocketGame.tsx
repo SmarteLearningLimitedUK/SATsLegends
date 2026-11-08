@@ -21,7 +21,7 @@ interface RoundingRocketGameProps {
 
 type RoundingRocketGameShellProps = RoundingRocketGameProps & MiniGameShellContractProps;
 
-type RoundTarget = 10 | 100 | 1000;
+type RoundTarget = number;
 
 type RocketState =
   | 'idle'
@@ -59,20 +59,20 @@ const scoreToStars = (XP: number, correct: number, attempts: number) => {
 };
 
 const targetForLevel = (levelId: number): RoundTarget => {
-  return levelId <= 2 ? 10 : levelId <= 4 ? 100 : 1000;
+ const choices=[[10],[10,100],[100,1000,10000],[10000,100000,1,.1],[1000,1000000,.1,.01]][Math.max(0,Math.min(4,levelId-1))];
+ return choices[randomInt(0,choices.length-1)];
 };
-
 const createFuelNumber = (target: RoundTarget, difficultyLevel: number) => {
-  const tier = Math.max(1, Math.min(5, difficultyLevel));
-  const upper = [99, 499, 999, 4999, 9999][tier - 1];
-  const lower = target === 10 ? 12 : target + 20;
-  let value = randomInt(lower, upper);
-  while (value % target === 0) value = randomInt(lower, upper);
-  return value;
+ const tier=Math.max(1,Math.min(5,difficultyLevel));
+ if(target<10)return randomInt(101,99999)/1000;
+ const upper=[99,999,99999,999999,10000000][tier-1];
+ let value=randomInt(Math.min(upper,Math.max(12,target+1)),upper);
+ while(value%target===0)value=randomInt(Math.min(upper,Math.max(12,target+1)),upper);
+ return value;
 };
 
 const buildPadOptions = (value: number, target: RoundTarget, correctAnswer: number): [number, number, number] => {
-  const remainder = value % target;
+  const remainder = ((Math.round(value*1000)%Math.round(target*1000))/1000);
   const wrongDirection = remainder >= target / 2 ? correctAnswer - target : correctAnswer + target;
 
   const candidatePool = [
@@ -82,7 +82,7 @@ const buildPadOptions = (value: number, target: RoundTarget, correctAnswer: numb
     correctAnswer - (target * 2),
     correctAnswer + (target * 2),
     correctAnswer + (target * 3),
-  ].filter((candidate) => candidate >= 0 && candidate !== correctAnswer);
+  ].map(candidate=>Number(candidate.toFixed(2))).filter((candidate) => candidate >= 0 && candidate !== correctAnswer);
 
   const uniquePool = Array.from(new Set(candidatePool));
   const selected = shuffle(uniquePool).slice(0, 2);
@@ -99,7 +99,7 @@ const buildPadOptions = (value: number, target: RoundTarget, correctAnswer: numb
 const generateRound = (levelId: number, magnitudeLevel: number): RocketRound => {
   const target = targetForLevel(levelId);
   const value = createFuelNumber(target, magnitudeLevel);
-  const correctAnswer = Math.round(value / target) * target;
+  const correctAnswer = Number((Math.round(Math.round(value*1000)/Math.round(target*1000))*target).toFixed(2));
   const pads = buildPadOptions(value, target, correctAnswer);
 
   return {

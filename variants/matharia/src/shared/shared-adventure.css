@@ -28,7 +28,7 @@ html[data-presentation='matharia'] #root .adventure-button--primary{color:#07364
 .adventure-briefing-card>.adventure-close{position:absolute;right:14px;top:13px;z-index:3}
 .adventure-briefing-reading{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#d9b46c #003146;padding:6px 9px 9px 0;text-align:left}
 .adventure-briefing-reading>.adventure-eyebrow{padding-right:40px;margin-bottom:10px}
-.adventure-briefing-reading h2{margin:0 0 15px;color:var(--adventure-gold);font-size:36px;font-weight:650;line-height:1.12;letter-spacing:0;text-wrap:balance}
+.adventure-briefing-reading h2{margin:0 0 15px;color:var(--adventure-gold);font-size:36px;font-weight:650;line-height:1.3;letter-spacing:0;text-wrap:balance}
 .adventure-briefing-reading .legend-briefing-copy{margin:0;color:var(--adventure-ink);font-size:18px;line-height:1.5;text-align:left;font-weight:500}
 .adventure-briefing-reading .legend-briefing-steps{display:flex;flex-direction:column;gap:17px;margin:24px 0;padding:0;list-style:none;text-align:left}
 .adventure-briefing-reading .legend-briefing-steps li{display:grid;grid-template-columns:30px minmax(0,1fr);align-items:start;gap:13px;padding:0;background:none;border:0;font-size:16px;line-height:1.55}
@@ -185,3 +185,7 @@ html[data-presentation='matharia'] #root .matharia-result-overlay .level-result-
 }
 
 .adventure-gem-art{display:block;pointer-events:none;flex:none}
+
+/* The labelled checkbox is one complete touch target, including its caption. */
+.adventure-briefing-reading label:has(>input[type='checkbox']) {display:flex;align-items:center;gap:10px;min-height:44px;padding:6px 8px;line-height:1.4;cursor:pointer;}
+.adventure-briefing-reading label>input[type='checkbox'] {flex:none;width:20px;height:20px;margin:0;}

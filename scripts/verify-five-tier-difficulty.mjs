@@ -28,6 +28,7 @@ const resolveFile = (request, parent) => {
 };
 const actualHelpers = new Set([
   'src/systems/content/gameDifficulty.ts',
+  'src/systems/content/shatteredWhole/levels.ts',
   'src/systems/content/island1NumberBaseCamp.ts',
   'src/utils/questionShuffle.ts',
   'src/utils/mathDisplay.ts',
@@ -35,6 +36,7 @@ const actualHelpers = new Set([
   'src/systems/content/satsInspiredQuestionBanks.ts',
   'src/games/ratioFractionsRace/questionSelector.ts',
   'src/games/rotationStationQuestions.ts',
+  'src/games/fractionForgeRecipes.ts',
   'src/utils/gameNames.ts',
 ]);
 const load = (relative, names = []) => {
@@ -131,7 +133,7 @@ const seedCalls = [];
 const buildCampaign = difficulty.buildFiveTierCampaign;
 difficulty.buildFiveTierCampaign = (seeds) => { seedCalls.push(seeds); return buildCampaign(seeds); };
 const { ISLANDS } = load('src/constants.ts');
-record('34 ordinary games: one practice plus five scored tiers; three unchanged SATs papers', () => {
+record('36 ordinary games: one practice plus five scored tiers; three unchanged SATs papers', () => {
   let ordinary = 0; let papers = 0;
   for (const island of ISLANDS) {
     assert.equal(new Set(island.levels.map((level) => level.id)).size, island.levels.length);
@@ -146,8 +148,8 @@ record('34 ordinary games: one practice plus five scored tiers; three unchanged 
       assert.deepEqual(levels.filter((level) => !level.isPractice).map(difficulty.getGameDifficulty).sort(), [1, 2, 3, 4, 5]);
     }
   }
-  assert.equal(ordinary, 34); assert.equal(papers, 3);
-  assert.equal(ISLANDS.flatMap((island) => island.levels).length, 207);
+  assert.equal(ordinary, 36); assert.equal(papers, 3);
+  assert.equal(ISLANDS.flatMap((island) => island.levels).length, 219);
   assert.deepEqual(ISLANDS.find((island) => island.id === 8).levels.map((level) => [level.id, level.blueprintKey, level.isPractice]),
     [[1, 'crystal_core', false], [2, 'mirror_gate', false], [3, 'matrix_match', false]]);
 });
@@ -192,7 +194,7 @@ record('Actual Router sends five-tier generator props and canonical session IDs 
     }
   }
   const active = new Set(routeRenders.map(({ registryKey }) => registryKey));
-  assert.equal(active.size, 35); // 34 ordinary current games and the shared fixed-paper component.
+  assert.equal(active.size, 37); // 36 ordinary current games and the shared fixed-paper component.
   assert.equal(active.has('DecimalSniperGame'), false);
   assert.equal(active.has('CalculationCrashGame'), false);
 });
@@ -326,7 +328,7 @@ record(`Remainder arithmetic, on-screen group division and fixed tier caps (${sa
   }
 });
 const zombies = generator('MathsVsZombiesGame', ['buildQuestion', 'maxZombiesForLevel', 'starsFromAccuracy']);
-record(`Zombies exact arithmetic and introductory one-digit cap (${sampleCount * 5} questions)`, () => {
+record(`Zombies exact arithmetic and staged operation/signed-number ranges (${sampleCount * 5} questions)`, () => {
   for (let tier = 1; tier <= 5; tier++) for (let sample = 0; sample < sampleCount; sample++) {
     const q = zombies.buildQuestion(tier);
     const match = q.equation.match(/(-?\d+)\s*([+x×÷-])\s*\(?(-?\d+)\)?$/);
@@ -334,8 +336,8 @@ record(`Zombies exact arithmetic and introductory one-digit cap (${sampleCount *
     const [, aText, op, bText] = match; const a = Number(aText); const b = Number(bText);
     const answer = op === '+' ? a + b : op === '-' ? a - b : (op === 'x' || op === '×') ? a * b : a / b;
     assert.equal(q.options[q.correctIndex], answer); choices(q.options, answer);
-    if (tier === 1) { assert.equal(op, '+'); assert.ok(a >= 0 && a <= 5 && b >= 0 && b <= 5 && answer <= 10); }
-    if (tier <= 3) assert.ok(op === '+' || op === '-');
+    if(tier===1){assert.ok(['+','-'].includes(op));assert.ok(a>=0&&a<=12&&b>=0&&b<=12&&answer>=0&&answer<=20);}
+    if(tier===2)assert.ok(['+','-','x','×'].includes(op));
     if (tier === 4) assert.ok(['+', '-', 'x', '×', '÷'].includes(op));
     if (tier <= 2) assert.ok(q.options.every((value) => value >= 0));
   }
@@ -347,6 +349,7 @@ record(`Zombies exact arithmetic and introductory one-digit cap (${sampleCount *
     assert.equal(zombies.starsFromAccuracy(goal, goal * 2), 1);
   }
 });
+const previousRandom=Math.random;try{for(const value of [0,.5,.999999]){Math.random=()=>value;for(let tier=1;tier<=5;tier++){const q=zombies.buildQuestion(tier);choices(q.options,q.options[q.correctIndex]);}}}finally{Math.random=previousRandom;}
 const rocket = generator('RoundingRocketGame', ['generateRound']);
 record(`Rounding target and pad arithmetic remain in selected band (${sampleCount * 5} questions)`, () => {
   for (let tier = 1; tier <= 5; tier++) for (let sample = 0; sample < sampleCount; sample++) {
@@ -384,7 +387,7 @@ record(`Fraction Forge targets are reachable with exact arithmetic in each ingre
       return card;
     });
     if (tier <= 2) assert.equal(solution[0].denominator, solution[1].denominator, 'Early tiers use like denominators');
-    if (tier === 3 || tier === 4 || tier === 5) assert.notEqual(solution[0].denominator, solution[1].denominator, 'Later two-piece tiers use unlike denominators');
+    if (tier === 3) assert.notEqual(solution[0].denominator, solution[1].denominator, 'Later two-piece tiers use unlike denominators');
     if (tier === 1 || tier === 3) assert.deepEqual(q.operators, ['+']);
     assert.ok(q.operators.every((operator) => ['+', '-', '×', '÷'].includes(operator)));
     q.operators.forEach((operator) => seenOperators[tier - 1].add(operator));
@@ -521,7 +524,7 @@ record(`Potion ratio/total/whole-drop and selected ingredient-count bands (${sam
     assert.ok(q.stage <= (tier === 5 ? 6 : tier));
     assert.equal(q.revealTargets, false, 'Scored rounds must not reveal target drops');
     assert.ok(q.totalDrops <= 20, 'Recipes must fit the timed touch-control round');
-    if (tier === 1) assert.deepEqual(q.targetCounts, [2, 5]);
+    if(tier===1){assert.equal(q.scale,1);assert.deepEqual(q.targetCounts,q.baseRatio);assert.ok(q.totalDrops<=7);}
   }
   const practice = potion.generateChallenge(1, 100, true);
   assert.equal(practice.revealTargets, true, 'Practice teaches the target ingredient counts');
@@ -533,15 +536,15 @@ record('Match Mastery mixed formats and colourless boards with five legal swaps'
   for (let tier = 1; tier <= 5; tier++) {
     const formats = new Set();
     for (let sample = 0; sample < sampleCount; sample++) for (const [type, value] of Object.entries(values)) {
-      const label = match.pickTileLabel(type, tier); near(fractionValue(label), value, 'Equivalent gem label');
+      const label = match.pickTileLabel(type, tier); near(fractionValue(label), tier === 1 && type === 'purple' ? 1 : value, 'Equivalent gem label');
       formats.add(formatOf(label));
     }
-    assert.deepEqual([...formats].sort(), tier <= 2 ? ['fraction'] : ['decimal', 'fraction', 'percentage']);
+    assert.deepEqual([...formats].sort(), tier === 2 ? ['fraction'] : ['decimal', 'fraction', 'percentage']);
     for (let sample = 0; sample < 100; sample++) {
       const board = match.createInitialBoard(tier); assert.equal(board.length, 30); assert.deepEqual(match.findMatches(board), []);
       const boardFormats = new Set(board.map((cell) => formatOf(cell.label)));
-      assert.deepEqual([...boardFormats].sort(), tier <= 2 ? ['fraction'] : ['decimal', 'fraction', 'percentage']);
-      board.forEach((cell) => near(fractionValue(cell.label), values[cell.type], 'Board value'));
+      assert.deepEqual([...boardFormats].sort(), tier === 2 ? ['fraction'] : ['decimal', 'fraction', 'percentage']);
+      board.forEach((cell) => near(fractionValue(cell.label), tier === 1 && cell.type === 'purple' ? 1 : values[cell.type], 'Board value'));
       if (tier === 5) assert.ok(match.countLegalSwaps(board) >= 5, 'Colourless board needs five valid swaps');
     }
   }
@@ -563,6 +566,10 @@ record('Match Mastery mixed formats and colourless boards with five legal swaps'
   mixedMatch[1] = { type: 'red', label: '0.5' };
   mixedMatch[2] = { type: 'red', label: '50%' };
   assert.deepEqual(match.findMatches(mixedMatch).sort((a, b) => a - b), [0, 1, 2]);
+  mixedMatch[0] = {type:'purple',label:'4/4'};
+  mixedMatch[1] = {type:'purple',label:'1'};
+  mixedMatch[2] = {type:'purple',label:'100%'};
+  assert.deepEqual(match.findMatches(mixedMatch).sort((a,b)=>a-b),[0,1,2]);
 });
 record('Cloud Collapse keeps its existing format progression', () => {
   const values = { red: .5, blue: .25, green: .75, yellow: .2, purple: .4 };
@@ -595,7 +602,18 @@ record(`Formula substitution and reverse calculation answers (${sampleCount * 5}
   assert.equal(parallelogramByTier[1] + parallelogramByTier[2], 0, 'Early tiers keep familiar formulae');
 });
 const rotation = load('src/games/rotationStationQuestions.ts', ['createQuestion', 'stageFromProgress']).__difficultyQA;
-const polygon = generator('PolygonPalaceGame', ['createQuestion', 'stageFromProgress', 'PROPERTY_POOL', 'SORT_CRITERIA']);
+const polygon = generator('PolygonPalaceGame', ['createQuestion', 'stageFromProgress', 'PROPERTY_POOL', 'SORT_CRITERIA', 'polygonQuestionKey']);
+record('Untimed Polygon Palace varies questions and avoids recent repeats',()=>{
+ for(let tier=1;tier<=5;tier++)for(let run=0;run<20;run++){
+  const history=[],modes=new Set();
+  for(let round=0;round<24;round++){
+   const question=polygon.createQuestion(tier,round,0,history),key=polygon.polygonQuestionKey(question);
+   assert(!history.includes(key),'A recent question repeated');assert.equal(question.speedRound,false);
+   history.push(key);modes.add(question.mode);
+  }
+  if(tier===1)assert(modes.size>=2,'Guided revision needs more than naming questions');
+ }
+});
 record(`Rotation and polygon tier caps hold at high round counts and low time (${sampleCount * 10} questions)`, () => {
   for (let tier = 1; tier <= 5; tier++) for (let sample = 0; sample < sampleCount; sample++) {
     for (const [api, expectedStages] of [[rotation, [1, 4, 6, 8, 11]], [polygon, [1, 3, 5, 8, 11]]]) {
@@ -617,9 +635,9 @@ record(`Rotation and polygon tier caps hold at high round counts and low time ($
   }
 });
 const prime = generator('PrimePopGame', ['getConfig', 'isPrime']);
-record('Prime bands remain distinct and mathematically classified through 99', () => {
+record('Prime bands remain distinct and mathematically classified through 100', () => {
   assert.deepEqual([1, 2, 3, 4, 5].map((tier) => prime.getConfig(tier).maxNumber), [20, 40, 60, 80, 99]);
-  for (let value = 0; value <= 99; value++) {
+  for (let value = 0; value <= 100; value++) {
     const expected = value >= 2 && !Array.from({ length: Math.max(0, value - 2) }, (_, i) => i + 2).some((divisor) => value % divisor === 0);
     assert.equal(prime.isPrime(value), expected);
   }
@@ -640,7 +658,7 @@ record(`Coordinate, translation and reflection targets fit five bands including 
     const size = tier <= 2 ? 5 : 7;
     const minimum = tier <= 2 ? 1 : -3;
     const maximum = minimum + size - 1;
-    const q = treasure.generateRound(size, tier, translation, sample);
+    const q = treasure.generateRound(size, tier, false, translation, sample);
     for (const point of [q.start, q.target]) assert.ok(point.x >= minimum && point.x <= maximum && point.y >= minimum && point.y <= maximum);
     if (tier === 1 && !translation) assert.equal(q.promptType, 'coordinate');
     if (q.promptType === 'reflection') {
@@ -667,15 +685,18 @@ record(`Coordinate, translation and reflection targets fit five bands including 
   assert.ok(reflectionCount > 0);
 });
 const mean = generator('MeanMachineGame', ['buildRound']);
-record(`Mean and missing-value arithmetic dominates, with late statistic bonus rounds (${sampleCount * 5} questions)`, () => {
+record(`Mean, median, mode and missing-value arithmetic across all five tiers (${sampleCount * 5} questions)`, () => {
   const allModes = new Set();
   for (let tier = 1; tier <= 5; tier++) {
     let previous = null;
     for (let sample = 0; sample < sampleCount; sample++) {
       const q = mean.buildRound(tier, sample + 100, previous); previous = q.mode; allModes.add(q.mode);
-      const values = q.activeReelIndexes.map((index) => q.actualValues[index]);
+      const displayed = q.activeReelIndexes.map((index) => q.visibleValues[index]);
+      const values = displayed.filter((value) => value !== null);
       const sorted = [...values].sort((a, b) => a - b);
       assert.ok(values.every((value) => Number.isFinite(value) && value >= 0));
+      assert.equal(displayed.length - values.length, Number(q.mode === 'missing'));
+      assert.ok(Number.isInteger(q.correctAnswer * 2), 'Mean Machine answers must be enterable as exact decimals');
       choices(q.options, q.correctAnswer, 4);
       if (q.mode === 'mean') near(q.correctAnswer, values.reduce((a, b) => a + b) / values.length, 'Mean answer');
       else if (q.mode === 'median') near(q.correctAnswer, sorted[Math.floor(sorted.length / 2)], 'Median answer');
@@ -684,18 +705,16 @@ record(`Mean and missing-value arithmetic dominates, with late statistic bonus r
         const highest = Math.max(...counts.values()); const modes = [...counts].filter(([, count]) => count === highest);
         assert.equal(modes.length, 1); assert.equal(q.correctAnswer, modes[0][0]);
       } else {
-        near(q.targetMean, values.reduce((a, b) => a + b) / values.length, 'Missing-number target mean');
-        const missing = q.activeReelIndexes.filter((index) => q.visibleValues[index] === null);
-        assert.equal(missing.length, 1); assert.equal(q.correctAnswer, q.actualValues[missing[0]]);
+        near(q.correctAnswer, q.targetMean * displayed.length - values.reduce((a, b) => a + b, 0), 'Missing answer from displayed readings');
       }
-      if (tier === 1) { assert.equal(q.mode, 'mean'); assert.equal(values.length, 2); assert.ok(values.every((value) => value <= 10)); }
-      if (tier <= 2) assert.equal(q.mode, 'mean');
-      if (tier === 3 || tier === 4) assert.ok(q.mode === 'mean' || q.mode === 'missing');
+      if(tier===1){assert.equal(values.length,q.mode==='mean'?2:3);assert.ok(values.every(value=>value<=(q.mode==='mean'?10:17)));}
+      if(tier<=2)assert.ok(['mean','median','mode'].includes(q.mode));
+      if(tier>=3)assert.ok(['mean','median','mode','missing'].includes(q.mode));
     }
   }
-  assert.deepEqual([...allModes].sort(), ['mean', 'missing']);
+  assert.deepEqual([...allModes].sort(),['mean','median','missing','mode']);
   const finalModes = Array.from({ length: 10 }, (_, index) => mean.buildRound(5, index + 1).mode);
-  assert(finalModes.every(mode=>mode==='mean'||mode==='missing'));
+  assert.deepEqual([...new Set(finalModes)].sort(),['mean','median','missing','mode']);
 });
 const detectiveData = generator('DataDetectiveGame', ['ITEMS', 'MONSTER_NAMES', 'MONSTER_COLORS', 'MUGSHOT_IMAGES', 'DETECTIVE_BRIEFS', 'WHODUNNIT_BRIEFS', 'shuffle']);
 record(`Actual Data Detective callback: bounded evidence, one matching culprit, early bar-only cases (${sampleCount * 5} cases)`, () => {

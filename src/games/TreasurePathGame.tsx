@@ -1,3 +1,5 @@
+import {isUntimedRevision} from '../systems/learning/sessionPolicy';
+import {questionMetadata} from '../systems/learning/questionMetadata';
 import React, { useEffect, useState } from 'react';
 import { useLayoutEffect, useRef } from 'react';
 import { AnimatePresence, motion, useIsPresent, useReducedMotion } from 'motion/react';
@@ -47,7 +49,7 @@ const generateRound = (gridSize: number, difficulty: number, multiStepRoutes: bo
     if (!translation && (difficulty === 1 || Math.random() > (difficulty >= 4 ? 0.8 : 0.4))) {
       const target = { x: randomBetween(minimum, maximum), y: randomBetween(minimum, maximum) };
       const start = { x: randomBetween(minimum, maximum), y: randomBetween(minimum, maximum) };
-      return { promptTitle: 'Route Recovery', promptText: `Select the point (${target.x}, ${target.y}). Read x across first${minimum < 0 ? ' (left of zero is negative)' : ''}, then y up${minimum < 0 ? ' (below zero is negative)' : ''}.`, promptType: 'coordinate', start, target, traps: [] };
+      return { promptTitle: 'Route Recovery', promptText: `Select (${target.x}, ${target.y}).`, promptType: 'coordinate', start, target, traps: [] };
     }
     const start = { x: randomBetween(minimum, maximum), y: randomBetween(minimum, maximum) };
     let target = { ...start };
@@ -59,15 +61,15 @@ const generateRound = (gridSize: number, difficulty: number, multiStepRoutes: bo
       const valid = moves.filter(move => target.x + move.dx * distance >= minimum && target.x + move.dx * distance <= maximum && target.y + move.dy * distance >= minimum && target.y + move.dy * distance <= maximum);
       const move = valid[Math.floor(Math.random() * valid.length)];
       target = { x: target.x + move.dx * distance, y: target.y + move.dy * distance };
-      instructions.push(`Move ${distance} ${move.label}`);
+      instructions.push(`${distance} ${move.label}`);
     }
-    return { promptTitle: 'Marker Recovery', promptText: `Start at (${start.x}, ${start.y}). ${instructions.join('. ')}. Select your finishing point.`, promptType: 'movement', start, target, traps: [] };
+    return { promptTitle: 'Marker Recovery', promptText: `From (${start.x}, ${start.y}), move ${instructions.join(', then ')}. Where do you finish?`, promptType: 'movement', start, target, traps: [] };
   }
   const { start, target, moves } = buildCoordinateRoute(minimum, maximum, difficulty);
-  const directions = moves.map(({ distance, direction }) => `${distance} ${distance === 1 ? 'space' : 'spaces'} ${direction}`);
+  const directions = moves.map(({ distance, direction }) => `${distance} ${direction}`);
   return {
     promptTitle: 'Follow the route',
-    promptText: `Start at (${start.x}, ${start.y}). Move ${directions.join(', then ')}. Select the finishing point.`,
+    promptText: `From (${start.x}, ${start.y}), move ${directions.join(', then ')}. Where do you finish?`,
     promptType: 'movement',
     start,
     target,
@@ -128,6 +130,8 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
   const [selectedTile, setSelectedTile] = useState<string | null>(null);
 
   const targetScore = 950 + levelId * 100;
+  const routeGoal = 7;
+  const useRouteGoal = multiStepRoutes && isUntimedRevision(sessionState);
 
   useEffect(() => {
     endedRef.current = false;
@@ -147,7 +151,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
   }, [difficulty, gridSize, levelId, multiStepRoutes, translation]);
 
   useEffect(() => {
-    if (isGameOver || isVictory || feedback || isPractice || sessionState?.paused || !isPresent) return undefined;
+    if (isGameOver || isVictory || feedback || isPractice || isUntimedRevision(sessionState) || sessionState?.paused || !isPresent) return undefined;
 
     const timer = setInterval(() => {
       setTimeLeft((previous) => {
@@ -173,11 +177,11 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [feedback, isGameOver, isPresent, isPractice, isVictory, onGameOver, onVictory, sessionEvents, sessionState?.paused, XP, targetScore]);
+  }, [feedback, isGameOver, isPresent, isPractice, isVictory, onGameOver, onVictory, sessionEvents, sessionState?.paused, sessionState?.untimed, XP, targetScore]);
 
   const handleAdvance = (nextScore: number, nextRoundIndex: number) => {
     if (endedRef.current || !presentRef.current) return;
-    if (nextRoundIndex >= 7 || nextScore >= targetScore) {
+    if (nextRoundIndex >= routeGoal || (!useRouteGoal && nextScore >= targetScore)) {
       endedRef.current = true;
       const stars = performanceStars();
       setIsVictory(true);
@@ -203,12 +207,12 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
 
     if (x === round.target.x && y === round.target.y) {
       correctRef.current += 1;
-      const nextScore = XP + 150 + Math.max(0, timeLeft);
+      const nextScore = XP + 150 + (useRouteGoal ? 0 : Math.max(0, timeLeft));
       const nextRoundIndex = roundIndex + 1;
 
       setFeedback('correct');
       setScore(nextScore);
-      emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { metadata: { x, y } });
+      emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { metadata: { x, y ,...questionMetadata("coordinates_quest","coordinates.follow-route",round,"construction",["6P3"],false)} });
       emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete');
       if (!reducedMotion) confetti({
         particleCount: 55,
@@ -222,7 +226,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
     }
 
     const remainingLives = lives - 1;
-    emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { metadata: { x, y } });
+    emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { metadata: { x, y ,...questionMetadata("coordinates_quest","coordinates.follow-route",round,"construction",["6P3"],false)} });
     setFeedback('incorrect');
     if (!usesSharedLives && !isPractice) setLocalLives(remainingLives);
     setScore((previous) => Math.max(0, previous - 35));
@@ -265,7 +269,7 @@ const TreasurePathGame: React.FC<TreasurePathGameProps> = ({
         </div>
 
         <div className="coordinate-board-space relative flex min-h-0 flex-1 flex-col items-center justify-center gap-2">
-          <CoordinateGrid minimum={minimumCoordinate} maximum={maximumCoordinate} start={round.start}
+          <CoordinateGrid labelsOutside minimum={minimumCoordinate} maximum={maximumCoordinate} start={round.start}
             selected={selectedTile} feedback={feedback} onSelect={handleTileTap} />
 
         </div>

@@ -2,7 +2,7 @@ import { angleToVector } from './math';
 
 export interface AngleQuestion {
   id: string;
-  topic: 'straight_line';
+  topic: 'straight_line'|'vertical'|'point'|'triangle'|'quadrilateral';
   kind: 'fluency' | 'reasoning';
   difficulty: number;
   prompt: string;
@@ -11,6 +11,9 @@ export interface AngleQuestion {
   targetX: number;
   targetY: number;
   launchSpeed?: number;
+  hint?:string;
+  givens?:number[];
+  relation?:'sum'|'equal'|'isosceles'|'exterior'|'ratio';
 }
 
 interface BuildConfig {
@@ -22,6 +25,7 @@ interface BuildConfig {
 }
 
 type QuestionSpec = {
+  topic?:AngleQuestion['topic'];hint?:string;givens?:number[];relation?:AngleQuestion['relation'];
   prompt: string;
   correctAnswer: number;
   kind?: 'fluency' | 'reasoning';
@@ -114,10 +118,10 @@ const buildQuestion = (spec: QuestionSpec, index: number, config: BuildConfig, b
 
   return {
     id: `angle-arena-${config.level}-${band}-${index + 1}`,
-    topic: 'straight_line',
+    topic: spec.topic??'straight_line',hint:spec.hint,givens:spec.givens,relation:spec.relation,
     kind: spec.kind ?? (isReasoningPrompt(spec.prompt) ? 'reasoning' : 'fluency'),
     difficulty: spec.difficulty,
-    prompt: spec.prompt,
+    prompt: !spec.topic&&!/straight line/i.test(spec.prompt)?'On a straight line, '+spec.prompt.charAt(0).toLowerCase()+spec.prompt.slice(1):spec.prompt,
     options,
     correctAnswer: spec.correctAnswer,
     targetX: target.targetX,
@@ -236,6 +240,22 @@ export const buildAngleQuestions = (config: BuildConfig): AngleQuestion[] => {
     takeUnique(candidates.filter((spec) => !isReasoningPrompt(spec.prompt)), band === 1 ? 3 : 1);
     takeUnique(candidates.filter((spec) => isReasoningPrompt(spec.prompt)), band === 1 ? 3 : 5);
     takeUnique(candidates, 6 - selected.length);
+  }
+  if(band>0){
+    const extensions:QuestionSpec[]=[];
+    for(let i=0;i<32;i++){
+      const a=25+Math.floor(rng()*50),b=25+Math.floor(rng()*40),answer=40+Math.floor(rng()*100),knownA=90+Math.floor(rng()*30),knownB=360-answer-knownA;
+      extensions.push({topic:'vertical',prompt:`Two straight lines cross. One angle is ${a}°. Find its vertically opposite angle.`,correctAnswer:a,givens:[a],relation:'equal',difficulty:band+1,hint:'Vertically opposite angles are equal.'});
+      extensions.push({topic:'point',prompt:band>=4?`Two equal angles and an angle of ${360-2*answer}° meet at a point. Find one equal angle.`:`Three angles meet at a point. Two are ${knownA}° and ${knownB}°. Find the third.`,correctAnswer:answer,givens:band>=4?[360-2*answer]:[knownA,knownB],relation:band>=4?'isosceles':'sum',difficulty:band+1,hint:'Angles at a point total 360°. Subtract known angles; share the remainder if angles are equal.'});
+      const exterior=band>=4&&i%2===0,isosceles=band>=2&&i%3===0,vertex=40+2*Math.floor(rng()*40);
+      extensions.push({topic:'triangle',prompt:isosceles?`An isosceles triangle has vertex angle ${vertex}°. Find one of its equal base angles.`:exterior?`Two angles of a triangle are ${a}° and ${b}°. The third is extended to a straight line. Find that exterior angle.`:`Two angles in a triangle are ${a}° and ${b}°. Find the third.`,correctAnswer:isosceles?(180-vertex)/2:exterior?a+b:180-a-b,givens:isosceles?[vertex]:[a,b],relation:isosceles?'isosceles':exterior?'exterior':'sum',difficulty:band+1,hint:'Triangle angles total 180°. An exterior angle and its adjacent interior angle make 180°.'});
+      const other=90+Math.floor(rng()*55),ratio=band>=4&&i%2===1;
+      extensions.push({topic:'quadrilateral',prompt:ratio?'A quadrilateral has two right angles. Its other angles are in the ratio 2:3. Find the larger angle.':`Three angles in a quadrilateral are 90°, ${a}° and ${other}°. Find the fourth.`,correctAnswer:ratio?108:270-a-other,givens:ratio?[90,90,2,3]:[90,a,other],relation:ratio?'ratio':'sum',difficulty:band+1,hint:'Quadrilateral angles total 360°. Remove known angles before using a ratio.'});
+    }
+    const schedule:AngleQuestion['topic'][]=band===1?['straight_line','vertical','straight_line','point','straight_line','straight_line']:band===2?['straight_line','triangle','point','vertical','triangle','straight_line']:['straight_line','triangle','quadrilateral','point','triangle','quadrilateral'];
+    const mixed:QuestionSpec[]=[],answers=new Set<number>();
+    for(const topic of schedule){const pool=topic==='straight_line'?candidates:shuffle(extensions.filter(q=>q.topic===topic&&(band<4||topic!=='triangle'||q.relation===(mixed.some(m=>m.topic==='triangle')?'isosceles':'exterior'))),rng);const q=pool.find(q=>!answers.has(q.correctAnswer)&&!mixed.some(m=>m.prompt===q.prompt));if(q){mixed.push(q);answers.add(q.correctAnswer);}}
+    selected.splice(0,selected.length,...mixed);
   }
   const ordered = band === 0 ? selected : [selected[0], ...shuffle(selected.slice(1), rng)];
   return ordered.map((spec, index) => buildQuestion(spec, index, { ...config, level }, band, runSeed));

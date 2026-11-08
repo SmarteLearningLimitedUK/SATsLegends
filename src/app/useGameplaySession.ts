@@ -4,17 +4,20 @@ import { GAME_AUDIO_STORAGE_KEY, GAME_HUD_CINEMATIC_EVENT, GAME_HUD_MUSIC_EVENT,
 import { GameScreen, LevelData } from '../types';
 import { LEVEL_TIMERS_DISABLED } from './testingFlags';
 import { isBossEncounterGameType } from '../games/bossEncounterTypes';
+import {useLearningPolicy} from '../systems/learning/learningSupport';
+import {usesUntimedTaskGoal} from '../systems/learning/sessionPolicy';
 
 export const GLOBAL_MINIGAME_HUD_DURATION_SECONDS = 90;
 export const GLOBAL_MINIGAME_LIVES = 3;
 export const getSessionDurationSeconds = (level: LevelData | null) => {
   if (isBossEncounterGameType(level?.gameType)) return level?.gameType === 'crystal_core' ? 1800 : 2400;
   if (level?.gameType === 'prime_pop') return 30;
+  if (level?.gameType === 'shattered_whole') return 300;
+  if (level?.gameType === 'rune_relations') return 480;
   if (level?.blueprintKey === 'maths_vs_zombies') return 60;
   // Multi-step rounds need enough time for each in-game decision.
   const tier = level?.difficultyTier ?? level?.miniGameLevel ?? 1;
   if (!level?.isPractice && level?.blueprintKey === 'order_ops_arena') return [120, 135, 150, 165, 180][Math.max(0, Math.min(4, tier - 1))];
-  if (!level?.isPractice && level?.blueprintKey === 'multiplication_mine' && tier >= 4) return tier === 5 ? 180 : 135;
   if (!level?.isPractice && level?.blueprintKey === 'remainder_run' && tier === 5) return 180;
   return GLOBAL_MINIGAME_HUD_DURATION_SECONDS;
 };
@@ -44,6 +47,7 @@ export const useGameplaySession = ({
   onLifeDepleted,
   onTimeDepleted,
 }: GameplaySessionArgs): GameplaySessionController => {
+  const learningPolicy=useLearningPolicy();
   const [globalMiniGameHudTimeLeft, setGlobalMiniGameHudTimeLeft] = useState(GLOBAL_MINIGAME_HUD_DURATION_SECONDS);
   const [globalMiniGameLives, setGlobalMiniGameLives] = useState(GLOBAL_MINIGAME_LIVES);
   const [cinematicPlaying, setCinematicPlaying] = useState(false);
@@ -74,15 +78,20 @@ export const useGameplaySession = ({
   const isUntimedGameplay =
     screen === 'gameplay'
     && (
+      learningPolicy.noTimeLimit
+      || learningPolicy.relaxedPractice
+      ||
       (Boolean(selectedLevel?.isPractice) && selectedLevel?.gameType !== 'prime_pop')
       || isBossEncounterGameType(selectedLevel?.gameType)
-      || selectedLevel?.gameType === 'mean_machine'
+      || usesUntimedTaskGoal(selectedLevel?.blueprintKey)
       || selectedLevel?.gameType === 'potion_pour'
+      || selectedLevel?.blueprintKey === 'polygon_palace'
+      || selectedLevel?.blueprintKey === 'data_detective'
     );
   const consumeLife = useCallback((amount = 1) => {
-    if (amount <= 0 || selectedLevel?.isPractice || isBossEncounterGameType(selectedLevel?.gameType)) return;
+    if (amount <= 0 || learningPolicy.relaxedPractice || selectedLevel?.isPractice || isBossEncounterGameType(selectedLevel?.gameType)) return;
     setGlobalMiniGameLives((previous) => Math.max(0, previous - amount));
-  }, [selectedLevel?.isPractice, selectedLevel?.gameType]);
+  }, [selectedLevel?.isPractice, selectedLevel?.gameType,learningPolicy.relaxedPractice]);
 
   useEffect(() => {
     if (screen !== 'gameplay' || !selectedLevel) return undefined;
@@ -159,13 +168,13 @@ export const useGameplaySession = ({
     localStorage.setItem(GAME_MUSIC_STORAGE_KEY, String(isMusicEnabled));
     window.dispatchEvent(new CustomEvent(GAME_HUD_MUSIC_SYNC_EVENT, { detail: { enabled: isMusicEnabled } }));
     const calm = screen === 'wellbeing_hub' || screen === 'wellbeing_activity';
-    const active = !isMuted && isMusicEnabled && (calm || screen === 'world_map' || screen === 'island_levels' || (screen === 'gameplay' && !paused));
+    const active = !isMuted && !learningPolicy.calmAudio && isMusicEnabled && (calm || screen === 'world_map' || screen === 'island_levels' || (screen === 'gameplay' && !paused));
     const scene = calm ? 'calm' : screen === 'gameplay' ? 'gameplay' : 'map';
     const update = () => configureGameMusic(active && !document.hidden, scene, selectedLevel?.blueprintKey ?? selectedLevel?.gameType);
     update();
     document.addEventListener('visibilitychange', update);
     return () => document.removeEventListener('visibilitychange', update);
-  }, [isMuted, isMusicEnabled, paused, screen, selectedLevel?.blueprintKey, selectedLevel?.gameType]);
+  }, [isMuted, isMusicEnabled, paused, screen, selectedLevel?.blueprintKey, selectedLevel?.gameType,learningPolicy.calmAudio]);
 
   useEffect(() => {
     const handleMuteChange = (event: Event) => {

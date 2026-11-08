@@ -1,3 +1,4 @@
+import {adventureTask} from '../../../../src/systems/content/adventureStory';
 import {roundFeedback} from '../roundFeedback';
 import React,{useState} from 'react';
 import {Plus,Minus,RotateCcw} from 'lucide-react';
@@ -9,7 +10,7 @@ interface Props{question:string;target:Time;current:Time;clock:React.ReactNode;f
 const label=(t:Time)=>`${String(t.hours).padStart(2,'0')}:${String(t.minutes).padStart(2,'0')}`;
 export default function ChronoScene(p:Props){
  const [hand,setHand]=useState<'hours'|'minutes'|null>(null);
- const prefix='Set the clock to ',instruction=p.format==='roman'?'The time is written in Roman numerals. Set both hands.':'Match both hands to restore time.';
+ const prefix='Set the clock to ',instruction=adventureTask('time_keeper_cove',p.correct);
  usePresentationHint('Short hand: hours. Long hand: minutes.\n'+instruction);
  return <section className="chrono-scene" data-chrono-game data-selected-hand={hand??undefined} data-chrono-tier={p.tier} data-chrono-time={p.time} data-chrono-score={p.score} data-chrono-correct={p.correct} data-chrono-feedback={roundFeedback(p.feedback)??'idle'} data-chrono-state={p.state} data-clock-target={label(p.target)} data-clock-question-format={p.format} data-chrono-paused={p.paused}>
   <section className="chrono-question" data-concept-panel data-concept-question="true" data-game-question="true" aria-label="Question">

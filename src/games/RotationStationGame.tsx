@@ -1,3 +1,5 @@
+import {questionMetadata} from '../systems/learning/questionMetadata';
+import {isUntimedRevision,isRelaxedRevision} from '../systems/learning/sessionPolicy';
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { triggerHaptic } from '../haptics';
@@ -18,6 +20,7 @@ interface Props extends MiniGameShellContractProps {
     onBack: () => void;
 }
 const LETTERS = ['A', 'B', 'C'];
+const TARGET_CORRECT = 5;
 const RotationStationGame: React.FC<Props> = ({ levelId, miniGameLevel, sessionState, sessionEvents, onVictory, onGameOver }) => {
     const level = Math.max(1, Math.min(5, miniGameLevel || levelId || 1));
     const [question, setQuestion] = useState(() => createQuestion(level));
@@ -31,13 +34,13 @@ const RotationStationGame: React.FC<Props> = ({ levelId, miniGameLevel, sessionS
     const reducedMotion = useReducedMotion(), paused = Boolean(sessionState?.paused), timeLeft = sessionState?.timeLeft ?? seconds;
     useEffect(() => { setQuestion(createQuestion(level)); setPlaced([null, null, null]); setSelected(0); setFeedback(null); setShowHint(false); setResults({ attempts: 0, correct: 0, score: 0 }); setSeconds(level <= 2 ? 90 : level <= 4 ? 75 : 60); guard.current = false; ended.current = false; }, [level]);
     useEffect(() => {
-        if (sessionState || paused)
+        if (sessionState || paused || isUntimedRevision(sessionState))
             return;
         const timer = window.setInterval(() => setSeconds(t => Math.max(0, t - 1)), 1000);
         return () => window.clearInterval(timer);
     }, [sessionState, paused]);
     useEffect(() => {
-        if (timeLeft > 0 || ended.current)
+        if ((isUntimedRevision(sessionState)?results.correct<TARGET_CORRECT:timeLeft>0) || ended.current)
             return;
         ended.current = true;
         if (!results.attempts) {
@@ -74,7 +77,7 @@ const RotationStationGame: React.FC<Props> = ({ levelId, miniGameLevel, sessionS
         setFeedback(correct);
         const score = results.score + (correct ? 200 + level * 25 : 0);
         setResults(r => ({ attempts: r.attempts + 1, correct: r.correct + (correct ? 1 : 0), score }));
-        emitMiniGameSessionEvent(sessionEvents, correct ? 'correct_answer' : 'incorrect_answer', { score, metadata: { questionId: question.id, mode: question.mode } });
+        emitMiniGameSessionEvent(sessionEvents, correct ? 'correct_answer' : 'incorrect_answer', { score, metadata: { questionId: question.id, mode: question.mode ,...questionMetadata("rotation_relay","geometry.transform",question,"construction",["6P2"],false)} });
         triggerHaptic(correct ? 'success' : 'error');
     };
     const next = () => {

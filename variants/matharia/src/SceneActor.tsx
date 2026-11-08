@@ -1,3 +1,4 @@
+import {useLearningPolicy} from '../../../src/systems/learning/learningSupport';
 // Uses the repository's existing mesh renderer with an explicit independent art source.
 import '../../../src/components/game-ui/vision-character.css';
 import {type HeroArtFrame} from '../../../src/assets/characters/originalHeroActivities';
@@ -15,7 +16,8 @@ const readReducedMotion=()=>window.matchMedia(motionQuery).matches;
 /** Stable high resolution artwork, continuously animated without pose swaps. */
 type SceneActorProps=VisionCharacterProps & {source:string;frame?:HeroArtFrame;children?:React.ReactNode;idleMotion?:'study'|'investigate';paused?:boolean};
 export default memo(function SceneActor({source,frame,children,idleMotion,paused=false,identity, alt='', className='', style, reaction='idle', reactionKey, decorative=false, walking=false, legacyIdentity, soundMode='off',activity:requestedActivity,artPose}: SceneActorProps) {
-  const scene=useContext(VisionSceneContext), reduced=useSyncExternalStore(subscribeMotion,readReducedMotion,()=>true);
+  const support=useLearningPolicy();
+  const scene=useContext(VisionSceneContext), osReduced=useSyncExternalStore(subscribeMotion,readReducedMotion,()=>true),reduced=osReduced||support.reducedMovement;
   const actorPaused=paused||scene.paused;
   const hero=Boolean(originalHeroSource(identity));
   const lastSound=useRef('');

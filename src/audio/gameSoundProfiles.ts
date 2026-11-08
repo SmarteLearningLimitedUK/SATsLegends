@@ -14,6 +14,8 @@ export interface GameSoundProfile {
 // These timbres remain the fallback if a recorded cue cannot load. Recorded
 // effects are selected separately by blueprint in gameSampleLibrary.ts.
 const profiles: Record<string, GameSoundProfile> = {
+  shape_secrets: {id:'shape_secrets',material:'arcane',pitch:1.05,accent:.4},
+  acropolis_clearout: {id:'acropolis_clearout',material:'digital',pitch:1.1,accent:.45},
   angle_arena:        { id: 'angle_arena',        material: 'metal',   pitch: 1.07, accent: .55 },
   area_architect:     { id: 'area_architect',     material: 'wood',    pitch: .91, accent: .59 },
   change_counter:     { id: 'change_counter',     material: 'metal',   pitch: 1.21, accent: .38 },
@@ -33,6 +35,7 @@ const profiles: Record<string, GameSoundProfile> = {
   mean_machine:       { id: 'mean_machine',       material: 'metal',   pitch: .90, accent: .52 },
   mirror_gate:        { id: 'mirror_gate',        material: 'arcane',  pitch: 1.12, accent: .75 },
   multiplication_mine:{ id: 'multiplication_mine',material:'stone',   pitch: .75, accent: .85 },
+  divide_conquer:     { id:'divide_conquer',material:'wood',pitch:.91,accent:.55 },
   number_line_ninja:  { id: 'number_line_ninja',  material: 'metal',   pitch: 1.18, accent: .49 },
   order_ops_arena:    { id: 'order_ops_arena',    material: 'metal',   pitch: 1.18, accent: .73 },
   percent_power:      { id: 'percent_power',      material: 'digital', pitch: .82, accent: .82 },

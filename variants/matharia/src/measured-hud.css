@@ -15,12 +15,14 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene]:i
 html[data-presentation='matharia'] #root .legend-dock-button{position:relative;isolation:isolate;}
 html[data-presentation='matharia'] #root .legend-dock-tile-art{display:block;position:absolute;inset:0;z-index:-1;pointer-events:none;}
 
-/* One safe-area coordinate system for every portrait gameplay header. Playfield
-   widths remain activity-specific; they no longer move or resize the shared HUD. */
-html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene]:has(.concept-stage[data-concept-orientation='portrait']) {
- --portrait-scene-height:calc(100dvh - var(--concept-safe-top) - var(--concept-safe-bottom));
+/* Portrait gameplay and Calm Grove activities share the same HUD geometry. */
+html[data-presentation='matharia'] #root .iphone-game-viewport[data-screen-orientation='portrait'] :is(.screen-gameplay,.screen-wellbeing-activity) {
+ --portrait-scene-height:calc(100dvh - var(--concept-safe-top,env(safe-area-inset-top,0px)) - var(--concept-safe-bottom,env(safe-area-inset-bottom,0px)));
  --portrait-hud-top:calc(var(--portrait-scene-height) * .031);
  --portrait-hud-height:clamp(44px,calc(var(--portrait-scene-height) * .081),92px);
+ --portrait-dock-width:min(650px,calc(100vw - var(--concept-safe-left,env(safe-area-inset-left,0px)) - var(--concept-safe-right,env(safe-area-inset-right,0px)) - 24px));
+}
+html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene]:has(.concept-stage[data-concept-orientation='portrait']) {
  --portrait-hud-width:min(calc(100vw - 24px),calc(max(375px,calc(var(--portrait-scene-height) * .4626)) * .93));
  --portrait-pause-size:clamp(44px,10vw,60px);
  [data-unified-minigame-hud] > .concept-hud-top:has(.legend-hud-bar) {left:50%;right:auto;translate:-50% 0;top:var(--portrait-hud-top);width:var(--portrait-hud-width);height:var(--portrait-hud-height);padding:0;}
@@ -38,9 +40,11 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene]:h
 /* A separate pause column keeps the compact phone's timer unobstructed. The
    header/pause group stays centred; hearts and time use two short rows. */
 @media(max-height:720px) and (orientation:portrait) {
+ html[data-presentation='matharia'] #root .iphone-game-viewport[data-screen-orientation='portrait'] :is(.screen-gameplay,.screen-wellbeing-activity) {
+  --portrait-hud-height:max(56px,calc(var(--portrait-scene-height) * .081));
+ }
  html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene]:has(.concept-stage[data-concept-orientation='portrait']) {
   --portrait-hud-width:min(calc(100vw - 80px),calc(max(375px,calc(var(--portrait-scene-height) * .4626)) * .93));
-  --portrait-hud-height:max(56px,calc(var(--portrait-scene-height) * .081));
   [data-unified-minigame-hud] > .concept-hud-top:has(.legend-hud-bar) {left:calc(50% - 26px);}
   .legend-hud-bar>div:last-child {flex-direction:column;gap:2px;}
   .legend-hud-lives {gap:2px;}

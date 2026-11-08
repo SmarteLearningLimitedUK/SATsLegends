@@ -1,3 +1,5 @@
+import {statisticsErrorPattern} from '../systems/learning/misconceptions';
+import {currentLearningPolicy} from '../systems/learning/learningSupport';
 import ArcadeJourney from '../components/game-ui/ArcadeJourney';
 import { playGameSound } from '../audio/gameAudio';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -101,6 +103,30 @@ const ROUND_MODES_BY_TIER: Record<number, RoundMode[]> = {
   5: ['mean', 'median', 'mode', 'missing'],
 };
 
+// Each draw leaves a total the remaining readings can reach within their bounds.
+const valuesWithMean = (target: number, count: number, min: number, max: number, zero = false): number[] => {
+  const values = zero ? [0] : [];
+  let remaining = target * count;
+  while (values.length < count) {
+    const slotsAfter = count - values.length - 1;
+    const low = Math.max(min, remaining - slotsAfter * max);
+    const high = Math.min(max, remaining - slotsAfter * min);
+    const value = randomInt(low, high);
+    values.push(value);
+    remaining -= value;
+  }
+  return values;
+};
+const averageOptions = (answer: number, spread: number): number[] => {
+  const values = new Set<number>([answer]);
+  for (let attempt = 0; attempt < 32 && values.size < 4; attempt += 1) {
+    const candidate = answer + randomInt(-spread, spread);
+    if (candidate > 0) values.add(candidate);
+  }
+  for (let delta = 1; values.size < 4; delta += 1) values.add(answer + delta);
+  return shuffle([...values]);
+};
+
 const buildMeanRound = (level: number): RoundData => {
   const useDoubleDigits = level >= 3;
   const minValue = useDoubleDigits ? 8 : 1;
@@ -110,29 +136,15 @@ const buildMeanRound = (level: number): RoundData => {
   const targetMean = useDoubleDigits ? randomInt(10, 18 + level) : randomInt(3, 10);
 
   const includeZero = level >= 4 && Math.random() < .3;
-  let coreValues: number[] = [];
-  let total = 0;
-  for (let index = 0; index < activeCount - 1; index += 1) {
-    const value = includeZero && index === 0 ? 0 : randomInt(minValue, maxValue);
-    coreValues.push(value);
-    total += value;
+  const values = valuesWithMean(targetMean, activeCount, minValue, maxValue, includeZero);
+  // Half-integer means are represented exactly; each displayed reading stays in range.
+  const fractional = level >= 3 && activeCount % 2 === 0 && Math.random() < .5;
+  const delta = fractional ? activeCount / 2 : 0;
+  if (delta) {
+    const index = values.findIndex(value => value !== 0 && value + delta <= maxValue);
+    if (index >= 0) values[index] += delta;
   }
-
-  let finalValue = targetMean * activeCount - total;
-  while (finalValue < minValue || finalValue > maxValue) {
-    coreValues = [];
-    total = 0;
-    for (let index = 0; index < activeCount - 1; index += 1) {
-      const value = includeZero && index === 0 ? 0 : randomInt(minValue, maxValue);
-      coreValues.push(value);
-      total += value;
-    }
-    finalValue = targetMean * activeCount - total;
-  }
-
-  // Later tiers include decimal means; even counts permit exact halves.
-  const fractional = level >= 3 && activeCount !== 3 && Math.random() < .5;
-  const activeValues = shuffle([...coreValues, finalValue + (fractional ? activeCount % 2 === 0 ? activeCount / 2 : 1 : 0)]);
+  const activeValues = shuffle(values);
   const answerMean = activeValues.reduce((sum, value) => sum + value, 0) / activeCount;
   const actualValues = Array.from({ length: REEL_COUNT }, (_, index) => {
     const activeIndex = activeReelIndexes.indexOf(index);
@@ -142,12 +154,6 @@ const buildMeanRound = (level: number): RoundData => {
     const activeIndex = activeReelIndexes.indexOf(index);
     return activeIndex >= 0 ? activeValues[activeIndex] : null;
   });
-  const optionCount = 4;
-  const options = new Set<number>([answerMean]);
-  while (options.size < optionCount) {
-    const candidate = answerMean + randomInt(useDoubleDigits ? -6 : -3, useDoubleDigits ? 6 : 3);
-    if (candidate > 0) options.add(candidate);
-  }
 
   return {
     mode: 'mean',
@@ -156,7 +162,7 @@ const buildMeanRound = (level: number): RoundData => {
     actualValues,
     targetMean: answerMean,
     correctAnswer: answerMean,
-    options: shuffle(Array.from(options)),
+    options: averageOptions(answerMean, useDoubleDigits ? 6 : 3),
     activeReelIndexes,
   };
 };
@@ -181,11 +187,6 @@ const buildMedianRound = (level: number): RoundData => {
     return activeIndex >= 0 ? activeValues[activeIndex] : null;
   });
 
-  const options = new Set<number>([median]);
-  while (options.size < 4) {
-    const candidate = median + randomInt(useDoubleDigits ? -8 : -4, useDoubleDigits ? 8 : 4);
-    if (candidate > 0) options.add(candidate);
-  }
 
   return {
     mode: 'median',
@@ -194,7 +195,7 @@ const buildMedianRound = (level: number): RoundData => {
     actualValues,
     targetMean: median,
     correctAnswer: median,
-    options: shuffle(Array.from(options)),
+    options: averageOptions(median, useDoubleDigits ? 8 : 4),
     activeReelIndexes,
   };
 };
@@ -210,13 +211,8 @@ const buildModeRound = (level: number): RoundData => {
   const modeCopies = activeCount >= 5 ? 3 : 2;
   const distinctCount = Math.max(1, activeCount - modeCopies);
 
-  const distinctValues: number[] = [];
-  while (distinctValues.length < distinctCount) {
-    const candidate = randomInt(minValue, maxValue);
-    if (candidate !== modeValue && !distinctValues.includes(candidate)) {
-      distinctValues.push(candidate);
-    }
-  }
+  const distinctValues = shuffle(Array.from({ length: maxValue - minValue + 1 }, (_, i) => minValue + i)
+    .filter(value => value !== modeValue)).slice(0, distinctCount);
 
   const activeValues = shuffle([
     ...Array.from({ length: modeCopies }, () => modeValue),
@@ -231,11 +227,6 @@ const buildModeRound = (level: number): RoundData => {
     return activeIndex >= 0 ? activeValues[activeIndex] : null;
   });
 
-  const options = new Set<number>([modeValue]);
-  while (options.size < 4) {
-    const candidate = modeValue + randomInt(useDoubleDigits ? -7 : -4, useDoubleDigits ? 7 : 4);
-    if (candidate > 0) options.add(candidate);
-  }
 
   return {
     mode: 'mode',
@@ -244,7 +235,7 @@ const buildModeRound = (level: number): RoundData => {
     actualValues,
     targetMean: modeValue,
     correctAnswer: modeValue,
-    options: shuffle(Array.from(options)),
+    options: averageOptions(modeValue, useDoubleDigits ? 7 : 4),
     activeReelIndexes,
   };
 };
@@ -259,28 +250,8 @@ const buildMissingRound = (level: number): RoundData => {
   const missingActiveIndex = randomInt(1, Math.max(1, activeCount - 2));
   const missingIndex = activeReelIndexes[missingActiveIndex];
 
-  let visibleValues: number[] = [];
-  let total = 0;
-  for (let index = 0; index < activeCount - 1; index += 1) {
-    const value = randomInt(minValue, maxValue);
-    visibleValues.push(value);
-    total += value;
-  }
-
-  let missingValue = targetMean * activeCount - total;
-  while (missingValue < minValue || missingValue > maxValue) {
-    visibleValues = [];
-    total = 0;
-    for (let index = 0; index < activeCount - 1; index += 1) {
-      const value = randomInt(minValue, maxValue);
-      visibleValues.push(value);
-      total += value;
-    }
-    missingValue = targetMean * activeCount - total;
-  }
-
-  const activeActualValues = [...visibleValues];
-  activeActualValues.splice(missingActiveIndex, 0, missingValue);
+  const activeActualValues = valuesWithMean(targetMean, activeCount, minValue, maxValue);
+  const missingValue = activeActualValues[missingActiveIndex];
   const actualValues = Array.from({ length: REEL_COUNT }, (_, index) => {
     const activeIndex = activeReelIndexes.indexOf(index);
     return activeIndex >= 0 ? activeActualValues[activeIndex] : 0;
@@ -291,11 +262,6 @@ const buildMissingRound = (level: number): RoundData => {
     return index === missingIndex ? null : activeActualValues[activeIndex];
   });
 
-  const options = new Set<number>([missingValue]);
-  while (options.size < 4) {
-    const candidate = missingValue + randomInt(-7, 7);
-    if (candidate > 0) options.add(candidate);
-  }
 
   return {
     mode: 'missing',
@@ -304,7 +270,7 @@ const buildMissingRound = (level: number): RoundData => {
     actualValues,
     targetMean,
     correctAnswer: missingValue,
-    options: shuffle(Array.from(options)),
+    options: averageOptions(missingValue, 7),
     activeReelIndexes,
   };
 };
@@ -373,7 +339,8 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
   const [gameState, setGameState] = useState<GameState>('idle');
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
   const [round, setRound] = useState<RoundData | null>(null);
-  const [reelDisplay, setReelDisplay] = useState<Array<number | string>>(Array.from({ length: REEL_COUNT }, () => '?'));
+  const reelDisplay = round?.visibleValues.map(value => value ?? '?')
+    ?? Array.from({ length: REEL_COUNT }, () => '');
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [repairStreak, setRepairStreak] = useState(0);
@@ -419,7 +386,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
     }
     lastRoundRef.current = [...lastRoundRef.current.slice(-4), nextSignature];
     setRound(nextRound);
-    setGameState('idle');
+    setGameState('answering');
     setFeedback(null);
     setSelectedAnswer(null);
     setShowJackpot(false);
@@ -428,7 +395,6 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
     setMachineShake(false);
     setReelSettled(false);
     setWrongPulse(false);
-    setReelDisplay(Array.from({ length: REEL_COUNT }, () => '?'));
   }, [clearTimers, difficulty]);
 
   useEffect(() => {
@@ -472,39 +438,23 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
   }, [finishAdventure, initialiseRound, level, round?.mode]);
 
   const handleSpin = useCallback(() => {
-    if (!round || gameState === 'spinning' || !sessionActive) return;
+    if (!round || gameState !== 'answering' || !sessionActive) return;
     playGameSound('cast');
+    if (reducedMotion || currentLearningPolicy().workingMemorySupport) return;
 
     clearTimers();
-    answerLockedRef.current = false;
-    setFeedback(null);
-    setSelectedAnswer(null);
-    setShowJackpot(false);
-    setShowGlitch(false);
     setSpinPulse(true);
     setMachineShake(true);
     setGameState('spinning');
 
     queueTimeout(() => setSpinPulse(false), 320);
     queueTimeout(() => setMachineShake(false), 420);
-
-    for (let tick = 0; tick < 10; tick += 1) {
-      queueTimeout(() => {
-        setReelDisplay(Array.from({ length: REEL_COUNT }, (_, index) => {
-          if (!round.activeReelIndexes.includes(index)) return '';
-          if (round.mode === 'missing' && round.visibleValues[index] === null) return '?';
-          return randomInt(difficulty >= 3 ? 10 : 0, difficulty >= 4 ? 38 : 18);
-        }));
-      }, tick * 85);
-    }
-
     queueTimeout(() => {
-      setReelDisplay(round.visibleValues.map((value) => (value === null ? '?' : value)));
       setReelSettled(true);
       setGameState('answering');
     }, 900);
     queueTimeout(() => setReelSettled(false), 1280);
-  }, [clearTimers, difficulty, gameState, queueTimeout, round, sessionActive]);
+  }, [clearTimers, gameState, queueTimeout, reducedMotion, round, sessionActive]);
 
   const handleAnswer = useCallback((answer: number) => {
     if (!round || gameState !== 'answering' || !sessionActive || answerLockedRef.current) return;
@@ -563,7 +513,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
     sessionEvents?.onIncorrectAnswer?.({
       gameType: 'mean_machine',
       levelId: level,
-      metadata: { mode: round.mode, answer, correctAnswer: round.correctAnswer },
+      metadata: { mode: round.mode, answer, correctAnswer: round.correctAnswer, misconceptionCode:statisticsErrorPattern(round.mode,round.activeReelIndexes.map(i=>round.actualValues[i]),answer) },
     });
     queueTimeout(() => setMachineShake(false), 450);
     queueTimeout(() => {
@@ -586,7 +536,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
   }, [initialiseRound]);
 
   const modeCopy = useMemo(() => {
-    if (!round) return { title: 'Scan the power cells', prompt: 'Recalibrate the machine to begin.' };
+    if (!round) return { title: 'Power cells', prompt: 'Preparing the readings…' };
     if (round.mode === 'mean') {
       return {
         title: `What is the mean of the ${round.activeReelIndexes.length} readings?`,
@@ -616,7 +566,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
       <PracticeIntroPopup
         open={showPracticeIntro}
         title="Mean Machine"
-        body="The Monster Minds have sabotaged the island machine.\nScan the power cells and restore the island grid. Three clean repairs earn 75 bonus XP.\nUse the right method for each round."
+        body="The Monster Minds have sabotaged the island machine.\nRead the power cells and restore the island grid. Three clean repairs earn 75 bonus XP.\nUse the right method for each round."
         briefing={practiceBriefing}
         onAction={() => setShowPracticeIntro(false)}
       />
@@ -677,7 +627,7 @@ const MeanMachineGame: React.FC<MeanMachineGameProps> = ({
                       <motion.button
                         type="button"
                         onClick={handleSpin}
-                        disabled={!round || gameState === 'spinning' || !sessionActive}
+                        disabled={gameState !== 'answering' || !sessionActive}
                         animate={spinPulse && !reducedMotion ? { scale: [1, 0.94, 1.06, 1], y: [0, 2, -1, 0] } : { scale: 1, y: 0 }}
                         transition={{ duration: reducedMotion ? 0 : .34 }}
                         className="mean-engine-scan-button absolute z-30 flex items-center justify-center rounded-[1.2rem] bg-transparent text-[0.98rem] font-black uppercase tracking-[0.18em] text-cyan-50 disabled:cursor-not-allowed disabled:opacity-65 md:text-[1.05rem]"

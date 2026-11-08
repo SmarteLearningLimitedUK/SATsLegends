@@ -1,0 +1,7 @@
+.game-start-countdown {
+ position:fixed;inset:0;z-index:12000;display:flex;flex-direction:column;align-items:center;justify-content:center;
+ background:rgb(4 22 43 / .72);color:#fff4d0;text-align:center;pointer-events:auto;touch-action:none;
+ font-family:inherit;
+}
+.game-start-countdown-label {font-size:clamp(22px,5vmin,40px);font-weight:650;line-height:1.3;}
+.game-start-countdown>strong {font-size:clamp(120px,42vmin,300px);font-weight:750;line-height:1.1;font-variant-numeric:tabular-nums;text-shadow:0 4px 12px #04162b;}

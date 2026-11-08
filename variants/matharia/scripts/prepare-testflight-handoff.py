@@ -16,6 +16,8 @@ import subprocess
 parser = argparse.ArgumentParser()
 parser.add_argument('--tag', required=True)
 parser.add_argument('--output-dir', default='qa-artifacts/testflight')
+parser.add_argument('--local-only', action='store_true', help='Prepare a local handoff without changing the CI release pointer.')
+parser.add_argument('--internal-review', action='store_true', help='Record an all-games internal review build that cannot be exported for public distribution.')
 args = parser.parse_args()
 if not re.fullmatch(r'matharia-ci-[a-zA-Z0-9-]+', args.tag):
     raise SystemExit('Use a matharia-ci- prefixed candidate tag.')
@@ -62,11 +64,16 @@ for path in sorted(dist.rglob('*')):
     assert file_hash == digest(web / relative), relative
     web_hashes[relative] = file_hash
 assert 'index.html' in web_hashes and len(web_hashes) > 500
+web_extra = {p.relative_to(web).as_posix(): p.stat().st_size for p in web.rglob('*') if p.is_file() and p.relative_to(web).as_posix() not in web_hashes}
+assert all(name in {'cordova.js', 'cordova_plugins.js'} and size == 0 for name, size in web_extra.items()), f'Stale native web assets: {web_extra}'
 source_head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
 candidate = {'schema': 1, 'app': 'Matharia', 'bundleId': bundle, 'minimumIOS': '16.4',
              'sourceGitHead': source_head, 'workingTreeSnapshot': True,
              'sourceScope': 'Native source, local Swift plugin, and compiled web snapshot; not a clean npm source rebuild.',
              'webFiles': web_hashes, 'nativeProjectSha256': digest(native / 'App/App.xcodeproj/project.pbxproj')}
+candidate['internalTestingOnly'] = args.internal_review
+candidate['allGamesUnlockedForReview'] = args.internal_review
+export_scope = 'Export is restricted to internal TestFlight review. All games and levels are unlocked.' if args.internal_review else 'Export is eligible for App Store review and TestFlight.'
 readme = f'''MATHARIA — EXISTING SATs LEGENDS TESTFLIGHT CANDIDATE
 
 Unsigned native source and the exact compiled web bundle from the working checkout.
@@ -82,7 +89,7 @@ GitHub workflow: .github/workflows/ios-testflight.yml.
 Native simulator checks precede the existing protected ios-testflight environment.
 The upload job reads the current Apple record/builds, chooses the next build number,
 compiles/archives with Xcode 26+, then uses the existing automatic-signing method.
-Export is eligible for App Store review and TestFlight. It does not submit an
+{export_scope} It does not submit an
 App Store release or add external testers; existing internal testers are retained.
 
 For a manual Mac build, extract all folders and open
@@ -121,8 +128,9 @@ with ZipFile(zip_path, 'w', ZIP_DEFLATED, compresslevel=1, allowZip64=True) as a
 with ZipFile(zip_path) as archive:
     assert archive.testzip() is None
 release = {'tag': args.tag, 'asset': zip_path.name, 'sha256': digest(zip_path),
-           'bundleId': bundle, 'minimumIOS': '16.4', 'sourceGitHead': source_head}
-release_path = root / 'variants/matharia/release/candidate.json'
+           'bundleId': bundle, 'minimumIOS': '16.4', 'sourceGitHead': source_head,
+           'internalTestingOnly': args.internal_review}
+release_path = out / 'candidate.json' if args.local_only else root / 'variants/matharia/release/candidate.json'
 release_path.parent.mkdir(parents=True, exist_ok=True)
 release_path.write_text(json.dumps(release, indent=2) + '\n', encoding='utf-8')
 manifest = {'status': 'Prepared unsigned candidate; native build and upload pending',

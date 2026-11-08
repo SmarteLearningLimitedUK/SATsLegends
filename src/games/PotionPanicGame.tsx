@@ -1,3 +1,4 @@
+import {questionMetadata} from '../systems/learning/questionMetadata';
 import { playGameSound } from '../audio/gameAudio';
 import {getVisionObject} from './visionScene';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -423,8 +424,7 @@ const generateChallenge = (levelId: number, solved: number, isPractice: boolean,
     }
 
     if (levelId <= 1) {
-      activeIndices = [1, 3];
-      baseRatio = [2, 5];
+      baseRatio = [...randomPick(SIMPLE_PAIR_RATIOS.filter(parts=>parts.reduce((sum,n)=>sum+n,0)<=7))];
       scale = 1;
       batchLabel = 'single';
     }
@@ -441,8 +441,8 @@ const generateChallenge = (levelId: number, solved: number, isPractice: boolean,
     const activeIngredients = activeIndices.map((index) => INGREDIENTS[index]);
 
     if (levelId <= 1) {
-      startCounts[1] = targetCounts[0] || 0;
-      cardHint = `${INGREDIENTS[1].name} has ${targetCounts[0] || 0} drops.`;
+      startCounts[activeIndices[0]] = targetCounts[0] || 0;
+      cardHint = `${INGREDIENTS[activeIndices[0]].name} has ${targetCounts[0] || 0} drops.`;
     } else if (mode === 'missing_value') {
       const givenRatioIndex = 1;
       startCounts[activeIndices[givenRatioIndex]] = targetCounts[givenRatioIndex];
@@ -663,7 +663,7 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
       setAttempts((prev) => prev + 1);
       emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
         score: correctSolved * 100,
-        metadata: { challengeId: challenge.id, stage: challenge.stage },
+        metadata: { challengeId: challenge.id, stage: challenge.stage ,...questionMetadata("potion_panic","ratio.recipe-construction",challenge,"construction",["6R1"],challenge.revealTargets)},
       });
       setLocked(true);
       feedbackTimerRef.current = setTimeout(() => {
@@ -683,7 +683,7 @@ const PotionPanicGame: React.FC<PotionPanicProps> = ({
     setCorrectSolved(nextCorrect);
     emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
       score: scoreNow,
-      metadata: { round: nextCorrect, roundsGoal },
+      metadata: { round: nextCorrect, roundsGoal ,...questionMetadata("potion_panic","ratio.recipe-construction",challenge,"construction",["6R1"],challenge.revealTargets)},
     });
     emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', {
       score: scoreNow,

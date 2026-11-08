@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { AVATARS } from '../constants';
 import { triggerHaptic } from '../haptics';
@@ -15,6 +15,14 @@ const AVATAR_FOOT_ANCHOR_MAIN_Y_PX: Record<string, number> = {
 
 const AVATAR_MAIN_GLOBAL_LIFT_PX = -57;
 const AVATAR_MAIN_VISUAL_SCALE = 2.16;
+
+// Foot centres and silhouette tops in the existing 1024 × 1536 hero artwork.
+const AVATAR_PORTAL_ANCHORS: Record<string, { x: number; y: number; top: number }> = {
+  barratt: { x: 609 / 1024, y: 1456 / 1536, top: 22 / 1536 },
+  bran: { x: 608 / 1024, y: 1488 / 1536, top: 9 / 1536 },
+  mochi: { x: 618 / 1024, y: 1484 / 1536, top: 63 / 1536 },
+  vex: { x: 640.5 / 1024, y: 1487 / 1536, top: 24 / 1536 },
+};
 
 interface AvatarSelectProps {
   selectedId: string;
@@ -33,9 +41,54 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({
   onBackToSplash,
   onConfirm,
 }) => {
+  const screenRef = useRef<HTMLDivElement>(null);
   const selectedIndex = Math.max(0, AVATARS.findIndex((avatar) => avatar.id === selectedId));
   const selectedAvatar = AVATARS[selectedIndex] || AVATARS[0];
   const bannerSrc = chooseBanner;
+
+  useLayoutEffect(() => {
+    const screen = screenRef.current;
+    if (!screen) return;
+    const background = screen.querySelector<HTMLImageElement>('.avatar-select-background');
+    const namePanel = screen.querySelector<HTMLElement>('.avatar-name-panel');
+    const track = screen.querySelector<HTMLElement>('.avatar-carousel-track');
+    if (!background || !namePanel || !track) return;
+
+    const alignToPortal = () => {
+      if (getComputedStyle(screen).getPropertyValue('--avatar-portal-grounding').trim() !== '1') return;
+      const hero = screen.querySelector<HTMLImageElement>(`[data-avatar-id="${selectedId}"]`);
+      const anchor = AVATAR_PORTAL_ANCHORS[selectedId];
+      if (!hero?.naturalWidth || !background.naturalWidth || !anchor) return;
+
+      const ground = background.getBoundingClientRect();
+      const container = track.getBoundingClientRect();
+      const scaleX = container.width / track.offsetWidth;
+      const scaleY = container.height / track.offsetHeight;
+      const cover = Math.max(ground.width / background.naturalWidth, ground.height / background.naturalHeight);
+      const [positionX, positionY] = getComputedStyle(background).objectPosition.split(' ').map(value => parseFloat(value) / 100);
+      const portalX = ground.left + (ground.width - background.naturalWidth * cover) * positionX + background.naturalWidth * cover * .5;
+      const portalY = ground.top + (ground.height - background.naturalHeight * cover) * positionY + background.naturalHeight * cover * (846 / 1248);
+      const availableHeight = (portalY - namePanel.getBoundingClientRect().bottom - 12 * scaleY) / scaleY;
+      const imageHeight = Math.max(0, Math.min(availableHeight / (anchor.y - anchor.top), track.offsetWidth * .82 * hero.naturalHeight / hero.naturalWidth));
+      const imageWidth = imageHeight * hero.naturalWidth / hero.naturalHeight;
+
+      hero.style.setProperty('--avatar-portal-image-height', `${imageHeight}px`);
+      hero.style.setProperty('--avatar-portal-image-width', `${imageWidth}px`);
+      hero.style.setProperty('--avatar-portal-image-left', `${(portalX - container.left) / scaleX - anchor.x * imageWidth}px`);
+      hero.style.setProperty('--avatar-portal-image-top', `${(portalY - container.top) / scaleY - anchor.y * imageHeight}px`);
+      hero.dataset.portalAligned = 'true';
+    };
+
+    const observer = new ResizeObserver(alignToPortal);
+    observer.observe(screen);
+    observer.observe(namePanel);
+    screen.addEventListener('load', alignToPortal, true);
+    alignToPortal();
+    return () => {
+      observer.disconnect();
+      screen.removeEventListener('load', alignToPortal, true);
+    };
+  }, [selectedId]);
 
   useEffect(() => {
     if (!AVATARS.some((avatar) => avatar.id === selectedId)) {
@@ -53,13 +106,13 @@ const AvatarSelect: React.FC<AvatarSelectProps> = ({
   const previousIndex = (selectedIndex - 1 + AVATARS.length) % AVATARS.length;
   const nextIndex = (selectedIndex + 1) % AVATARS.length;
   const getMainFootOffsetStyle = (avatarId: string): React.CSSProperties => ({
-    transform: `translateY(${AVATAR_MAIN_GLOBAL_LIFT_PX + (AVATAR_FOOT_ANCHOR_MAIN_Y_PX[avatarId] ?? 0)}px) scale(${AVATAR_MAIN_VISUAL_SCALE})`,
+    transform: `var(--avatar-portal-transform, translateY(${AVATAR_MAIN_GLOBAL_LIFT_PX + (AVATAR_FOOT_ANCHOR_MAIN_Y_PX[avatarId] ?? 0)}px) scale(${AVATAR_MAIN_VISUAL_SCALE}))`,
     transformOrigin: 'bottom center',
   });
   const getAvatarImage = (avatar: { portrait?: string; image: string }) => avatar.portrait || avatar.image;
 
   return (
-    <div className="avatar-select-screen relative h-full w-full min-h-0 overflow-hidden">
+    <div ref={screenRef} className="avatar-select-screen relative h-full w-full min-h-0 overflow-hidden">
       <img
         src={avatarSelectBackground}
         alt=""

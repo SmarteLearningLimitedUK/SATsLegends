@@ -11,9 +11,9 @@ math.random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/42949
 function loadGenerators(file,before,names,injected={}){
  const text=readFileSync(file,'utf8');
  const source=ts.createSourceFile(file,text,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
- const declarations=source.statements.filter(node=>!ts.isImportDeclaration(node)&&node.pos<text.indexOf(before)).map(node=>node.getText(source)).join('\n');
+ const declarations=source.statements.filter(node=>!ts.isImportDeclaration(node)&&node.pos<(before?text.indexOf(before):text.length)).map(node=>node.getText(source)).join('\n');
  const code=ts.transpileModule(declarations+`\nglobalThis.generators={${names.join(',')}}`,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.React}}).outputText;
- const context={Math:math,Date,console,...injected};vm.runInNewContext(code,context,{timeout:10000});return context.generators;
+ const context={Math:math,Date,console,exports:{},...injected};vm.runInNewContext(code,context,{timeout:10000});return context.generators;
 }
 const dungeon=loadGenerators('src/games/DataDungeonGame.tsx','const DataDungeonGame:',['generatePuzzle'],{getSatsInspiredDataDungeonPuzzle:()=>null});
 let fallbackCount=0;
@@ -35,8 +35,8 @@ for(let tier=1;tier<=5;tier++)for(let n=0;n<200;n++){
  assert.equal(new Set(r.options).size,4);assert.equal(r.options.filter(v=>v===r.correctAnswer).length,1);
  assert(!q.includes('brainpower'));assert(g.every(p=>p.value>=0&&p.value<=100));
  let answer;
- if(q.startsWith('What are the coordinates')){const t=q.match(/at (\d+) minutes/)[1];answer=`(${t}, ${g.find(p=>p.label===t).value})`;}
- else if(q.startsWith('What is the water temperature after')){const t=q.match(/after (\d+) minutes/)[1];answer=String(g.find(p=>p.label===t).value);}
+ if(q.startsWith('What are the coordinates')){const t=q.match(/at (\d+) minutes?/)[1];answer=`(${t}, ${g.find(p=>p.label===t).value})`;}
+ else if(q.startsWith('What is the water temperature after')){const t=q.match(/after (\d+) minutes?/)[1];answer=String(g.find(p=>p.label===t).value);}
  else if(q.startsWith('After how many')){const v=Number(q.match(/temperature ([\d.]+)°C/)[1]);const points=g.filter(p=>p.value===v);assert.equal(points.length,1);answer=points[0].label;}
  else if(q.startsWith('By how many')){const [,a,b]=q.match(/between (\d+) and (\d+) minutes/);answer=String(Math.abs(g.find(p=>p.label===a).value-g.find(p=>p.label===b).value));}
  else if(q.startsWith('What is the water temperature halfway')){const [,a,b]=q.match(/between (\d+) and (\d+) minutes/);answer=String((g.find(p=>p.label===a).value+g.find(p=>p.label===b).value)/2);}
@@ -50,10 +50,12 @@ for(let tier=1;tier<=5;tier++)for(let run=0;run<50;run++){
  let previous=null;
  for(let n=1;n<=10;n++){
   const round=mean.buildRound(tier,n,previous);previous=round.mode;
-  assert(['mean','missing'].includes(round.mode));
+  assert(['mean','median','mode','missing'].includes(round.mode));
   const values=round.activeReelIndexes.map(i=>round.actualValues[i]);
-  assert.equal(values.reduce((a,b)=>a+b,0)/values.length,round.targetMean);
+  if(round.mode==='mean'||round.mode==='missing')assert.equal(values.reduce((a,b)=>a+b,0)/values.length,round.targetMean);
   if(round.mode==='mean')assert.equal(round.correctAnswer,round.targetMean);
+  else if(round.mode==='median'){const sorted=[...values].sort((a,b)=>a-b);assert.equal(round.correctAnswer,sorted[Math.floor(sorted.length/2)]);}
+  else if(round.mode==='mode'){const counts=new Map();values.forEach(v=>counts.set(v,(counts.get(v)||0)+1));const highest=Math.max(...counts.values());const modes=[...counts].filter(([,count])=>count===highest);assert.equal(modes.length,1);assert.equal(round.correctAnswer,modes[0][0]);}
   else {
    const missing=round.activeReelIndexes.filter(i=>round.visibleValues[i]===null);
    assert.equal(missing.length,1);assert.equal(round.correctAnswer,round.actualValues[missing[0]]);
@@ -61,7 +63,12 @@ for(let tier=1;tier<=5;tier++)for(let run=0;run<50;run++){
   assert.equal(new Set(round.options).size,4);assert.equal(round.options.filter(v=>v===round.correctAnswer).length,1);meanCount++;
  }
 }
-const forge=loadGenerators('src/games/FractionForgeGame.tsx','const FractionGlyph:',['makeRound']);
+// Also test exceptional deterministic random streams: no generator may hang.
+const seededRandom=math.random;
+for(const constant of [0,.5,.999999]){math.random=()=>constant;for(let tier=1;tier<=5;tier++)for(let round=1;round<=4;round++){const result=mean.buildRound(tier,round);assert(Number.isFinite(result.correctAnswer));assert.equal(result.options.length,4);}}
+math.random=seededRandom;
+const {generatedForgeRecipe}=loadGenerators('src/games/fractionForgeRecipes.ts','',['generatedForgeRecipe']);
+const forge=loadGenerators('src/games/FractionForgeGame.tsx','const FractionGlyph:',['makeRound'],{generatedForgeRecipe});
 let forgeCount=0;
 for(let tier=1;tier<=5;tier++)for(let offset=0;offset<8;offset++)for(let n=1;n<=8;n++){
  const round=forge.makeRound(tier,n,offset);
@@ -73,7 +80,7 @@ for(let tier=1;tier<=5;tier++)for(let offset=0;offset<8;offset++)for(let n=1;n<=
  else if(op==='÷'){assert(a.numerator<a.denominator);assert.equal(b.denominator,1);assert(b.numerator>0);num=a.numerator*b.denominator;den=a.denominator*b.numerator;}
  else {num=a.numerator*b.denominator+(op==='+'?1:-1)*b.numerator*a.denominator;den=a.denominator*b.denominator;}
  assert.equal(num*round.target.denominator,round.target.numerator*den);assert(num>0);
- assert.equal(new Set(round.cards.map(c=>c.numerator/c.denominator)).size,round.cards.length);
+ assert.equal(new Set(round.cards.map(c=>c.id)).size,round.cards.length);
  assert(round.prompt.includes(`${round.target.numerator}${round.target.denominator===1?'':'/'+round.target.denominator}`));forgeCount++;
 }
 const formula=loadGenerators('src/games/FormulaForgeGame.tsx','const FormulaShapePanel:',['createRound','buildQuestionStem']);
@@ -94,4 +101,4 @@ for(let tier=1;tier<=5;tier++)for(let n=0;n<300;n++){
  covered.add(round.diagram+':'+round.targetLabel);formulaCount++;
 }
 assert(covered.size>=10,'Exercise computed and missing dimensions across all shapes');
-console.log(`PASS: ${lineCount} line-graph questions, ${fallbackCount} fallback statistics puzzles, ${meanCount} mean/missing-value rounds, ${forgeCount} fraction recipes, ${formulaCount} formula rounds (${covered.size} shape/target combinations).`);
+console.log(`PASS: ${lineCount} line-graph questions, ${fallbackCount} fallback statistics puzzles, ${meanCount} mean/median/mode/missing-value rounds, ${forgeCount} fraction recipes, ${formulaCount} formula rounds (${covered.size} shape/target combinations).`);

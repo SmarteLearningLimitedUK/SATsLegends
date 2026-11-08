@@ -2,6 +2,7 @@ import { motion, useReducedMotion } from 'motion/react';
 import { ArrowRight, UserRound } from 'lucide-react';
 import { asset } from '../assets';
 import { AdventureControlFrame } from '../shared/AdventureArtwork';
+import {MATHARIA_STORY} from '../../../../src/systems/content/adventureStory';
 
 export default function NativeWelcome({ onStart, onAccount }: { onStart: () => void; onAccount: () => void }) {
   const reduced = useReducedMotion();
@@ -14,7 +15,7 @@ export default function NativeWelcome({ onStart, onAccount }: { onStart: () => v
     <motion.img className="native-welcome-hero" src={asset('heroes', 'hero_barratt_host_v3')} alt="Barratt, your adventure guide" draggable={false}
       initial={reduced ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .5, delay: .12 }}/>
     <motion.div className="native-welcome-actions" initial={reduced ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .3, delay: .24 }}>
-      <p>Your next adventure starts here.</p>
+      <p>{MATHARIA_STORY} Reclaim it!</p>
       <button className="adventure-button adventure-button--primary native-start" type="button" onClick={onStart}><AdventureControlFrame primary/><span>Start adventure</span><ArrowRight size={22}/></button>
       <small>Three practice games. Free to explore.</small>
     </motion.div>

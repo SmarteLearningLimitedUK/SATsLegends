@@ -1,4 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {useActiveRevisionClock} from './app/useActiveRevisionClock';
+import {useGameStartCountdown} from './app/useGameStartCountdown';
+import GameStartCountdown from './components/game-ui/GameStartCountdown';
+import {recordSessionEvidence} from './systems/learning/recordSessionEvidence';
+import {useLearningPolicy} from './systems/learning/learningSupport';
+import {usesUntimedTaskGoal} from './systems/learning/sessionPolicy';
+import {clearIndependentResponse} from './systems/learning/responseContext';
+import {resetQuestionAttempts} from './systems/learning/questionMetadata';
 import { motion, AnimatePresence } from 'motion/react';
 import { TreePine } from 'lucide-react';
 import { GAME_META, GameRuleSet } from './gameMeta';
@@ -127,12 +135,21 @@ const App: React.FC = () => {
     incorrect: 0,
     hintsUsed: 0,
   });
+  const learningPolicy=useLearningPolicy();
+  const learningRun=useRef(`${Date.now()}:${Math.random()}`);
+  const recordedResponses=useRef(new Set<string>());
+  const lastAnswerMs=useRef(0),mathematicalHelpUsed=useRef(false),instructionsRepeated=useRef(false);
   const [answerStreak, setAnswerStreak] = useState(0);
   const [gameplayHelpOpen, setGameplayHelpOpen] = useState(false);
+  const [parentOverlay,setParentOverlay]=useState(()=>document.documentElement.dataset.parentOverlay==='true');
+  useEffect(()=>{const update=(event:Event)=>setParentOverlay((event as CustomEvent<boolean>).detail===true);window.addEventListener('matharia-parent-overlay',update);return()=>window.removeEventListener('matharia-parent-overlay',update);},[]);
   const [gameplayWorkpadOpen, setGameplayWorkpadOpen] = useState(false);
   const [gameplayWorkpadValue, setGameplayWorkpadValue] = useState('');
 
   const resetSessionMetrics = useCallback(() => {
+    learningRun.current=`${Date.now()}:${Math.random()}`;
+    recordedResponses.current.clear();clearIndependentResponse();resetQuestionAttempts();
+    lastAnswerMs.current=0;mathematicalHelpUsed.current=false;instructionsRepeated.current=false;
     sessionMetricsRef.current = { correct: 0, incorrect: 0, hintsUsed: 0 };
     setAnswerStreak(0);
     setGameplayHelpOpen(false);
@@ -309,6 +326,13 @@ const App: React.FC = () => {
     setScreen('world_map');
   }, [selectedIsland, setLevelResult, setScreen, setSelectedLevel, storedLevelResult, wellbeingLaunchContext.origin]);
 
+  const returnToWellbeingHub = useCallback(() => {
+    setWellbeingCompletion(null);
+    setWellbeingActivityId(null);
+    setScreen('wellbeing_hub');
+  }, [setScreen]);
+  const exitWellbeing = screen === 'wellbeing_activity' ? returnToWellbeingHub : returnFromWellbeing;
+
   const handleWellbeingComplete = useCallback(() => {
     if (!wellbeingActivityId) return;
 
@@ -332,6 +356,8 @@ const App: React.FC = () => {
 
   const gameplayRotationRequired = screen === 'gameplay' && viewportSize.width > 0 && viewportSize.width < 700 && viewportSize.height > viewportSize.width;
   const nativeBackgrounded = useNativeAppBackgrounded();
+  const preparationBlocked = parentOverlay || nativeBackgrounded || gameplayRotationRequired || gameplayHelpOpen || gameplayWorkpadOpen || practiceBriefingOpen || Boolean(levelResult);
+  const gameStart = useGameStartCountdown(screen === 'gameplay' && Boolean(selectedLevel) && !isBossEncounterGameType(selectedLevel?.gameType), `${selectedLevel?.id}:${gameplayRestartKey}`, preparationBlocked);
   const {
     globalMiniGameHudTimeLeft,
     globalMiniGameLives,
@@ -339,7 +365,7 @@ const App: React.FC = () => {
   } = useGameplaySession({
     screen,
     selectedLevel,
-    paused: nativeBackgrounded || gameplayRotationRequired || gameplayHelpOpen || gameplayWorkpadOpen || practiceBriefingOpen || Boolean(levelResult),
+    paused: preparationBlocked || gameStart.held,
     restartKey: gameplayRestartKey,
     onLifeDepleted: () => handleGameOverRef.current(0),
     onTimeDepleted: () => handleGameOverRef.current(0),
@@ -379,8 +405,31 @@ const App: React.FC = () => {
     timeLeft: globalMiniGameHudTimeLeft,
     totalTime: getSessionDurationSeconds(selectedLevel),
     lives: globalMiniGameLives,
-    paused: nativeBackgrounded || gameplayRotationRequired || gameplayHelpOpen || gameplayWorkpadOpen || practiceBriefingOpen || Boolean(levelResult),
-  }), [nativeBackgrounded, gameplayRotationRequired, gameplayHelpOpen, gameplayWorkpadOpen, practiceBriefingOpen, globalMiniGameHudTimeLeft, globalMiniGameLives, levelResult, selectedLevel]);
+    untimed:learningPolicy.noTimeLimit||learningPolicy.relaxedPractice||usesUntimedTaskGoal(selectedLevel?.blueprintKey)||selectedLevel?.blueprintKey==='polygon_palace'||selectedLevel?.blueprintKey==='data_detective',
+    relaxed:learningPolicy.relaxedPractice,
+    paused: preparationBlocked || gameStart.held,
+    startCountdownHandled: true,
+  }), [preparationBlocked,gameStart.held, globalMiniGameHudTimeLeft, globalMiniGameLives, selectedLevel,learningPolicy.noTimeLimit,learningPolicy.relaxedPractice]);
+  const readAdventureActiveMs=useActiveRevisionClock(`${selectedLevel?.blueprintKey}:${selectedLevel?.id}:${gameplayRestartKey}`,screen==='gameplay'&&!levelResult,preparationBlocked||gameStart.held);
+  useEffect(()=>{
+    const mathematicalHelp=()=>{mathematicalHelpUsed.current=true;};
+    window.addEventListener('matharia-mathematical-help',mathematicalHelp);
+    return()=>window.removeEventListener('matharia-mathematical-help',mathematicalHelp);
+  },[]);
+  useEffect(()=>{
+    window.addEventListener('matharia-open-parent-report',goToParentDashboard);
+    return()=>window.removeEventListener('matharia-open-parent-report',goToParentDashboard);
+  },[goToParentDashboard]);
+  const assessmentActiveMs=useRef<number|null>(null);
+  const readActiveMs=()=>assessmentActiveMs.current??readAdventureActiveMs();
+  useEffect(()=>{
+    assessmentActiveMs.current=null;
+    if(!isBossEncounterGameType(selectedLevel?.gameType))return;
+    const receive=(event:Event)=>{const ms=(event as CustomEvent<{activeMs?:number}>).detail?.activeMs;if(typeof ms==='number'&&Number.isFinite(ms)&&ms>=0)assessmentActiveMs.current=ms;};
+    window.addEventListener('sats-mock-clock',receive);
+    return()=>window.removeEventListener('sats-mock-clock',receive);
+  },[selectedLevel?.id,selectedLevel?.gameType,gameplayRestartKey]);
+
 
   useEffect(() => {
     if (nativeBackgrounded || gameplayRotationRequired || gameplayHelpOpen || gameplayWorkpadOpen || practiceBriefingOpen) stopGameSoundEffects();
@@ -422,6 +471,7 @@ const App: React.FC = () => {
       hintsUsed: sessionMetricsRef.current.hintsUsed,
       mistakes: sessionMetricsRef.current.incorrect,
       timeMs,
+      timingEligible: !isMockAssessment && !usesUntimedTaskGoal(selectedLevel?.blueprintKey) && (!['shattered_whole','rune_relations'].includes(selectedLevel?.blueprintKey??'')||!sessionState.untimed),
       completed: type === 'victory',
       coinsEarned: 0,
       xpEarned: 0,
@@ -434,6 +484,7 @@ const App: React.FC = () => {
     resolveLevelTitle,
     selectedIsland,
     selectedLevel,
+    sessionState.untimed,
   ]);
 
   const handleGameOver = useCallback((XP: number, accuracyOverride?: number) => {
@@ -447,7 +498,7 @@ const App: React.FC = () => {
     if (selectedLevel?.isPractice) {
       if (!selectedIsland || !selectedLevel) return;
       const accuracy = reportedAccuracy(metrics.correct, metrics.incorrect);
-      const timeMs = Math.max(0, (sessionState.totalTime - sessionState.timeLeft) * 1000);
+      const timeMs = Math.max(0, Math.round(readActiveMs()));
       const practiceResult = buildPracticeLevelResult('gameover', XP, accuracy, timeMs);
       if (practiceResult) setLevelResult(practiceResult);
       return;
@@ -476,7 +527,7 @@ const App: React.FC = () => {
       : reportedAccuracy(metrics.correct, metrics.incorrect);
     const accuracyMeasured = measuredAccuracy !== null;
     const accuracy = measuredAccuracy ?? 0;
-    const timeMs = Math.max(0, (sessionState.totalTime - sessionState.timeLeft) * 1000);
+    const timeMs = Math.max(0, Math.round(readActiveMs()));
     const progressionResult = completeProgressionLevel({
       levelId: levelKey!,
       completed: false,
@@ -487,6 +538,7 @@ const App: React.FC = () => {
       livesRemaining: sessionState.lives,
       mistakes: metrics.incorrect,
       timeMs,
+      timingEligible: !isMockAssessment && !usesUntimedTaskGoal(selectedLevel?.blueprintKey) && (!['shattered_whole','rune_relations'].includes(selectedLevel?.blueprintKey??'')||!sessionState.untimed),
       awardFailureXp: !isMockAttempt,
     });
 
@@ -515,13 +567,14 @@ const App: React.FC = () => {
       hintsUsed: metrics.hintsUsed,
       mistakes: metrics.incorrect,
       timeMs,
+      timingEligible: !isMockAssessment && !usesUntimedTaskGoal(selectedLevel?.blueprintKey) && (!['shattered_whole','rune_relations'].includes(selectedLevel?.blueprintKey??'')||!sessionState.untimed),
       completed: false,
       coinsEarned: 0,
       xpEarned: progressionResult.xpGained,
       achievementsUnlocked: [],
       wellbeingSuggested: isMockAttempt ? false : wellbeingSuggested,
     });
-  }, [buildPracticeLevelResult, completeProgressionLevel, resolveLevelTitle, screen, selectedIsland, selectedLevel, sessionState.lives, sessionState.timeLeft, sessionState.totalTime, setLevelResult, wellbeingSignals]);
+  }, [buildPracticeLevelResult, completeProgressionLevel, resolveLevelTitle, screen, selectedIsland, selectedLevel, sessionState.lives, sessionState.timeLeft, sessionState.totalTime, sessionState.untimed, setLevelResult, wellbeingSignals]);
 
   useEffect(() => {
     handleGameOverRef.current = handleGameOver;
@@ -644,7 +697,7 @@ const App: React.FC = () => {
   const handleGameVictory = (stars: number, XP: number, accuracyOverride?: number) => {
     if (screen !== 'gameplay' || !selectedLevel || runSettledRef.current) return;
     const metrics = sessionMetricsRef.current;
-    if (!victoryHasEarnedProgress(stars, XP, metrics.correct)) {
+    if (!isMockAssessment && !victoryHasEarnedProgress(stars, XP, metrics.correct)) {
       handleGameOver(Math.max(0, XP));
       return;
     }
@@ -665,7 +718,7 @@ const App: React.FC = () => {
     triggerHaptic('success');
     if (selectedLevel?.isPractice) {
       const accuracy = reportedAccuracy(metrics.correct, metrics.incorrect);
-      const timeMs = Math.max(0, (sessionState.totalTime - sessionState.timeLeft) * 1000);
+      const timeMs = Math.max(0, Math.round(readActiveMs()));
       const practiceResult = buildPracticeLevelResult('victory', XP, accuracy, timeMs);
       if (practiceResult) setLevelResult(practiceResult);
       return;
@@ -681,7 +734,7 @@ const App: React.FC = () => {
 
     const accuracyMeasured = measuredAccuracy !== null;
     const accuracy = measuredAccuracy ?? 0;
-    const timeMs = Math.max(0, (sessionState.totalTime - sessionState.timeLeft) * 1000);
+    const timeMs = Math.max(0, Math.round(readActiveMs()));
     const levelKey = `${selectedIsland.id}-${selectedLevel.id}`;
     const progressionResult = completeProgressionLevel({
       levelId: levelKey,
@@ -693,8 +746,9 @@ const App: React.FC = () => {
       livesRemaining: sessionState.lives,
       mistakes: metrics.incorrect,
       timeMs,
+      timingEligible: !isMockAssessment && !usesUntimedTaskGoal(selectedLevel?.blueprintKey) && (!['shattered_whole','rune_relations'].includes(selectedLevel?.blueprintKey??'')||!sessionState.untimed),
       reportedStars: earnedStars,
-      minStarsOnComplete: isMockAssessment ? 1 : undefined,
+      minStarsOnComplete: isMockAssessment||learningPolicy.relaxedPractice ? 1 : undefined,
     });
 
     const totalStarsEarned = useProgressionStore.getState().totalStars;
@@ -709,11 +763,13 @@ const App: React.FC = () => {
         hintsUsed: metrics.hintsUsed,
         mistakes: metrics.incorrect,
         timeMs,
+        timingEligible: !isMockAssessment && !usesUntimedTaskGoal(selectedLevel?.blueprintKey) && (!['shattered_whole','rune_relations'].includes(selectedLevel?.blueprintKey??'')||!sessionState.untimed),
       },
       totalStarsEarned,
     );
 
-    if (result) setLevelResult(result);
+    if (isMockAssessment) goToIslandLevels();
+    else if (result) setLevelResult(result);
   };
 
   const handleCloseLevelResult = () => {
@@ -806,9 +862,7 @@ const App: React.FC = () => {
   };
 
   const buildTelemetryContext = useCallback((event?: GameplaySessionEventPayload) => {
-    const durationSec = sessionState.totalTime && sessionState.timeLeft >= 0
-      ? Math.max(0, Math.round(sessionState.totalTime - sessionState.timeLeft))
-      : undefined;
+    const durationSec = Math.max(0, Math.round(readActiveMs()/1000));
     return {
       gameType: event?.gameType ?? selectedLevel?.gameType,
       levelId: event?.levelId ?? selectedLevel?.id,
@@ -816,11 +870,22 @@ const App: React.FC = () => {
       skillTags: selectedLevel?.skillTags,
       score: typeof event?.score === 'number' ? event?.score : undefined,
       durationSec,
+      metadata:event?.metadata,
+      gameTitle:getLevelGameTitle(selectedLevel),
+      answerDurationSec:undefined as number|undefined,
     };
   }, [selectedLevel?.blueprintKey, selectedLevel?.gameType, selectedLevel?.id, selectedLevel?.skillTags, sessionState.timeLeft, sessionState.totalTime]);
 
   const recordTelemetryEvent = useCallback((type: 'correct_answer' | 'incorrect_answer' | 'game_complete' | 'game_failed', event?: GameplaySessionEventPayload) => {
     const context = buildTelemetryContext(event);
+    if(type==='correct_answer'||type==='incorrect_answer'){
+      const active=readActiveMs(),duration=event?.metadata?.assessment===true?0:Math.max(0,active-lastAnswerMs.current);lastAnswerMs.current=active;
+      if(event?.metadata?.assessment!==true)context.answerDurationSec=duration/1000;
+      recordSessionEvidence(type==='correct_answer',event,{runId:learningRun.current,
+      gameKey:selectedLevel?.blueprintKey??selectedLevel?.gameType??'unknown',tier:selectedLevel?.difficultyTier??selectedLevel?.miniGameLevel??1,
+      activeDurationMs:duration,support:{...learningPolicy},instructionRepeated:instructionsRepeated.current,mathematicalScaffoldUsed:mathematicalHelpUsed.current||event?.metadata?.mathematicalScaffoldUsed===true});
+      mathematicalHelpUsed.current=false;instructionsRepeated.current=false;
+    }
     setPlayer((prev) => {
       const next = applyTelemetryEvent(prev, type, context);
       const achievementState = reconcileAchievementState(next);
@@ -830,22 +895,41 @@ const App: React.FC = () => {
         achievements: achievementState.earned,
       };
     });
-  }, [buildTelemetryContext, setPlayer]);
+  }, [buildTelemetryContext, setPlayer,selectedLevel,learningPolicy]);
   recordTerminalTelemetryRef.current = recordTelemetryEvent;
+
+  const [answerFeedback, setAnswerFeedback] = useState<{tone:'correct'|'incorrect'; label:string} | null>(null);
+  const lastGradingHaptic = useRef(-Infinity);
+  useEffect(() => { setAnswerFeedback(null); }, [screen, selectedLevel?.id, gameplayRestartKey]);
+  useEffect(() => {
+    if (!answerFeedback) return;
+    const timeout = window.setTimeout(() => setAnswerFeedback(null), 1300);
+    return () => window.clearTimeout(timeout);
+  }, [answerFeedback]);
 
   const sessionEvents: GameplaySessionEventHandlers = useMemo(() => ({
     onCorrectAnswer: (event) => {
       if (screen !== 'gameplay' || runSettledRef.current) return;
-      if (event.metadata?.assessment !== true) playGameSound('correct');
-      triggerHaptic('selection');
+      if(typeof event.metadata?.eventId==='string'){if(recordedResponses.current.has(event.metadata.eventId))return;recordedResponses.current.add(event.metadata.eventId);}
+      if (event.metadata?.assessment !== true) {
+        playGameSound('correct');
+        triggerHaptic('success');
+        lastGradingHaptic.current = performance.now();
+        setAnswerFeedback({tone:'correct', label:'Correct!'});
+      }
       sessionMetricsRef.current = { ...sessionMetricsRef.current, correct: sessionMetricsRef.current.correct + 1 };
       setAnswerStreak((previous) => previous + 1);
       recordTelemetryEvent('correct_answer', event);
     },
     onIncorrectAnswer: (event) => {
       if (screen !== 'gameplay' || runSettledRef.current) return;
-      if (event.metadata?.assessment !== true) playGameSound('incorrect');
-      triggerHaptic('error');
+      if(typeof event.metadata?.eventId==='string'){if(recordedResponses.current.has(event.metadata.eventId))return;recordedResponses.current.add(event.metadata.eventId);}
+      if (event.metadata?.assessment !== true) {
+        playGameSound('incorrect');
+        triggerHaptic('error');
+        lastGradingHaptic.current = performance.now();
+        setAnswerFeedback({tone:'incorrect', label:event.reason==='time_expired'?'Time’s up':'Incorrect'});
+      }
       sessionMetricsRef.current = { ...sessionMetricsRef.current, incorrect: sessionMetricsRef.current.incorrect + 1 };
       setAnswerStreak(0);
       recordTelemetryEvent('incorrect_answer', event);
@@ -864,7 +948,7 @@ const App: React.FC = () => {
       }
     },
     onPuzzleComplete: () => {
-      triggerHaptic('selection');
+      if (performance.now() - lastGradingHaptic.current >= 150) triggerHaptic('selection');
     },
     // A mini-game may announce an end before its scored callback. Log only the
     // accepted shell result so an invalid or racing callback cannot invert it.
@@ -939,8 +1023,11 @@ const App: React.FC = () => {
   const screenExitScale = useFlatScreenScaleTransition ? 1 : 1.02;
   const hideShellTimer = LEVEL_TIMERS_DISABLED
     || !isGameplayScreen
+    || usesUntimedTaskGoal(selectedLevel?.blueprintKey)
     || (selectedLevel?.isPractice && selectedLevel?.gameType !== 'prime_pop')
-    || selectedLevel?.gameType === 'potion_pour';
+    || selectedLevel?.gameType === 'potion_pour'
+    || selectedLevel?.blueprintKey === 'polygon_palace'
+    || selectedLevel?.blueprintKey === 'data_detective';
   const goToProfile = useCallback(() => {
     setScreen('profile');
   }, [setScreen]);
@@ -1012,8 +1099,9 @@ const App: React.FC = () => {
 
   return (
     <div className={`iphone-game-viewport${useScrollableStageShell ? ' iphone-game-viewport-scrollable' : ''}${screen === 'world_map' ? ' iphone-game-viewport-map' : ''}`} style={viewportStyle}>
+      <GameStartCountdown value={gameStart.value}/>
       {gameplayRotationRequired && <GameplayOrientationGate onBack={goToIslandLevels} />}
-      <div inert={gameplayRotationRequired || undefined} className={`iphone-game-stage${useUnboundedStageShell ? ' iphone-game-stage-unbounded' : ''}${useScrollableStageShell ? ' iphone-game-stage-scrollable' : ''}`} style={stageStyle} data-stage-layout={useUnboundedStageShell ? 'responsive' : useScrollableStageShell ? 'scrollable' : 'portrait'}>
+      <div inert={gameplayRotationRequired || gameStart.value!==null || undefined} className={`iphone-game-stage${useUnboundedStageShell ? ' iphone-game-stage-unbounded' : ''}${useScrollableStageShell ? ' iphone-game-stage-scrollable' : ''}`} style={stageStyle} data-stage-layout={useUnboundedStageShell ? 'responsive' : useScrollableStageShell ? 'scrollable' : 'portrait'}>
         <div className="iphone-game-stage-inner">
           <div
             data-screen-family={screenBehavior.family}
@@ -1064,7 +1152,7 @@ const App: React.FC = () => {
                   onBackToIslandLevels={goToIslandLevels}
                   onOpenWellbeingHub={() => openWellbeingHub({ origin: screen === 'world_map' ? 'world_map' : 'manual', islandId: selectedIsland?.id ?? null })}
                   onOpenWellbeingActivity={(activityId) => openWellbeingActivity(activityId, { origin: screen === 'island_levels' ? 'island_levels' : wellbeingLaunchContext.origin, islandId: selectedIsland?.id ?? null })}
-                  onExitWellbeing={returnFromWellbeing}
+                  onExitWellbeing={exitWellbeing}
                   onCompleteWellbeingActivity={handleWellbeingComplete}
                   wellbeingActivityId={wellbeingActivityId}
                   calmTokens={player.calmTokens || 0}
@@ -1087,11 +1175,12 @@ const App: React.FC = () => {
               <UnifiedMiniGameHud
                 avatarId={player.avatarId}
                 title={isGameplayScreen ? canonicalGameTitle : 'SATs Legends'}
-                levelLabel={selectedLevel ? selectedLevel.isPractice ? 'Practice' : selectedLevel.isBoss ? 'Mock adventure' : `Level ${selectedLevel.difficultyTier ?? selectedLevel.miniGameLevel ?? 1} of 5` : 'Adventure'}
+                levelLabel={selectedLevel ? selectedLevel.isPractice ? 'Practice' : selectedLevel.isBoss ? 'Quiz' : `Level ${selectedLevel.difficultyTier ?? selectedLevel.miniGameLevel ?? 1} of 5` : 'Adventure'}
                 streak={answerStreak}
                 isPractice={Boolean(isGameplayScreen && selectedLevel?.isPractice)}
                 onHelp={isGameplayScreen ? () => {
-                  if (!gameplayHelpOpen) sessionMetricsRef.current.hintsUsed += 1;
+                  // Repeating instructions/reading support is not an answer hint.
+                  if(!gameplayHelpOpen){instructionsRepeated.current=true;if(!isMockAssessment&&hintRuleSet?.example&&!learningPolicy.repeatInstructions&&!learningPolicy.workingMemorySupport)mathematicalHelpUsed.current=true;}
                   setGameplayWorkpadOpen(false);
                   setGameplayHelpOpen(true);
                 } : undefined}
@@ -1099,10 +1188,11 @@ const App: React.FC = () => {
                 timeLeft={globalMiniGameHudTimeLeft}
                 totalTime={getSessionDurationSeconds(selectedLevel)}
                 lives={globalMiniGameLives}
-                hideTimer={isMockAssessment ? false : hideShellTimer}
+                hideTimer={isMockAssessment ? true : hideShellTimer}
                 assessment={isMockAssessment}
+                answerFeedback={isGameplayScreen && !levelResult ? answerFeedback : null}
                 hideTopBar={screen === 'world_map' || screen === 'island_levels' || screen === 'profile' || screen === 'achievements_tracker' || screen === 'parent_dashboard'}
-                onBack={isGameplayScreen ? goToIslandLevels : handleGlobalDockBack}
+                onBack={isGameplayScreen ? goToIslandLevels : isWellbeingScreen ? exitWellbeing : handleGlobalDockBack}
                 variant={isGameplayScreen ? 'gameplay' : 'hub'}
                 bottomContent={mapHudDock || undefined}
               />
@@ -1165,6 +1255,7 @@ const App: React.FC = () => {
               accuracy: levelResult.accuracy,
               accuracyMeasured: levelResult.accuracyMeasured,
               timeMs: levelResult.timeMs,
+              timingEligible: levelResult.timingEligible,
             } : null}
               onRetry={handleRetryLevel}
               onPractice={levelResult?.type === 'gameover' && !selectedLevel?.isPractice
@@ -1183,16 +1274,8 @@ const App: React.FC = () => {
               title={wellbeingCompletion ? WELLBEING_BY_ID[wellbeingCompletion.activityId]?.title || 'Calm break' : 'Calm break'}
               rewardLabel={wellbeingCompletion?.rewardLabel || ''}
               onContinue={returnFromWellbeing}
-              onPlayAnother={() => {
-                setWellbeingCompletion(null);
-                setWellbeingActivityId(null);
-                setScreen('wellbeing_hub');
-              }}
-              onBackToHub={() => {
-                setWellbeingCompletion(null);
-                setWellbeingActivityId(null);
-                setScreen('wellbeing_hub');
-              }}
+              onPlayAnother={returnToWellbeingHub}
+              onBackToHub={returnToWellbeingHub}
             />
 
             {null}

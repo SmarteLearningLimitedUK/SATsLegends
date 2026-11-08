@@ -1,5 +1,22 @@
 /* The chart owns the landscape playfield; compact answer cards occupy its right edge. */
-html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='graph_grabber'][data-measured-scene] {
+/* New activity controls reuse this same approved composition and artwork. */
+html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='calendar_quest'] .revision-calendar-grid {
+ height:100%;flex:none;
+}
+html[data-presentation='matharia'] #root .screen-gameplay .revision-activity-controls .sats-answer-entry {
+ display:grid!important;grid-template-columns:minmax(0,1fr) 48px!important;gap:6px!important;
+}
+html[data-presentation='matharia'] #root .screen-gameplay .revision-activity-controls .sats-answer-entry :is(input,button) {
+ min-width:0!important;padding:6px!important;box-sizing:border-box;
+}
+html[data-presentation='matharia'] #root .screen-gameplay .graph-chart-title .graph-activity-mode {
+ position:absolute;inset:0;display:flex;align-items:center;justify-content:center;min-height:0;font-size:16px;line-height:1;
+}
+html[data-presentation='matharia'] #root .screen-gameplay .graph-chart-title .graph-activity-mode select {
+ background:#073d48!important;color:#fff8dc!important;box-shadow:none!important;border:0!important;
+ height:32px;min-height:32px;padding:0 4px;max-width:140px;font-size:16px;line-height:1;
+}
+html[data-presentation='matharia'] #root .screen-gameplay:is([data-active-game='graph_grabber'],[data-active-game='calendar_quest'],[data-active-game='rune_relations'])[data-measured-scene] {
  --concept-plane:calc(100vw - var(--concept-safe-left) - var(--concept-safe-right));
  --graph-question-height:max(12%,52px);
  --graph-chart-top:max(27%,calc(13% + var(--graph-question-height) + 8px));
@@ -20,7 +37,7 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='grap
  .shipment-chart-plot {position:relative;min-width:0;min-height:0;}
  .shipment-chart-plot>svg {display:block;width:100%;height:100%;overflow:visible;}
  .shipment-chart-labels {display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);min-height:44px;}
- .shipment-chart-labels>button {display:grid;place-items:center;min-width:44px;min-height:44px;padding:4px 2px;border:0;background:none;box-shadow:none;color:#fff5df;font-size:clamp(12px,1.5vw,20px);line-height:1.1;font-weight:650;touch-action:manipulation;}
+ .shipment-chart-labels>span {display:grid;place-items:center;min-width:44px;min-height:44px;padding:4px 2px;border:0;background:none;box-shadow:none;color:#fff5df;font-size:clamp(12px,1.5vw,20px);line-height:1.1;font-weight:650;touch-action:manipulation;}
  .shipment-chart-labels>button[aria-pressed='true'] {color:#ffde87;text-decoration:underline;text-underline-offset:3px;}
  .shipment-chart-labels>button:focus-visible {outline:2px solid #fff3a1;outline-offset:-2px;}
  .shipment-inspection {position:absolute;right:4px;top:0;padding:4px 7px;border:1px solid #d7b66a;border-radius:5px;background:#07394e;color:#fff6dc;font-size:13px;line-height:1.1;font-weight:650;pointer-events:none;}
@@ -50,13 +67,13 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='grap
  [data-testid='shared-bottom-hud'] {bottom:1%;width:36%;height:11.5%;min-width:235px;min-height:44px;padding:0;}
  .concept-pause {top:1%;right:max(1%,var(--concept-safe-right));width:clamp(44px,6vw,100px);height:clamp(44px,6vw,100px);}
 }
-@media(max-width:760px) {html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='graph_grabber'][data-measured-scene] {
+@media(max-width:760px) {html[data-presentation='matharia'] #root .screen-gameplay:is([data-active-game='graph_grabber'],[data-active-game='calendar_quest'])[data-measured-scene] {
  [data-unified-minigame-hud]>div:first-of-type:has(.legend-hud-bar) {width:60%;}
  .legend-hud-title {font-size:16px;}
  .concept-question-zone {left:10%;width:86%;}
  .graph-chart-title {font-size:14px;}
  .graph-chart-region {left:18%;right:calc(4% + var(--graph-answer-width) + 16px);}
- .shipment-chart-labels>button {padding-inline:1px;font-size:12px;}
+ .shipment-chart-labels>span {padding-inline:1px;font-size:12px;}
  .graph-answers>button {font-size:17px;padding-inline:16px;}
  .graph-answers>button[data-long-answer='true'] {font-size:14px;}
  .legend-dock-button {font-size:10px;gap:1px;}

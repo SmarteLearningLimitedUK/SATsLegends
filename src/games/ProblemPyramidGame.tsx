@@ -26,6 +26,7 @@ interface ProblemPyramidGameProps extends MiniGameShellContractProps {
 }
 
 interface PyramidRound {
+  tier?:number;inverse?:boolean;
   id: string;
   base: [number, number, number];
   middle: [number, number];
@@ -68,6 +69,7 @@ const buildRound = (level: number, round: number, isPractice = false): PyramidRo
 
   return {
     id: `pyr-${round}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+    tier,inverse:!isPractice&&tier>=3&&round%2===1,
     base,
     middle,
     top,
@@ -128,7 +130,7 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
       const completesRound=stepIndex===steps.length-1;
       setCorrectSteps(previous=>previous+1);
       if(completesRound)setCorrectCount((prev) => prev + 1);
-      setFeedback(completesRound?'Brilliant! Pyramid locked in.':`${activeStep.operands[0]} + ${activeStep.operands[1]} = ${activeStep.target}. Stone restored.`);
+      setFeedback(completesRound?'Brilliant! Pyramid locked in.':`${activeStep.operands[0]} ${activeStep.operation??'+'} ${activeStep.operands[1]} = ${activeStep.target}. Stone restored.`);
       setFeedbackTone('good');
       setLocked(true);
       setGlow(completesRound);
@@ -158,7 +160,7 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
       return;
     }
 
-    setFeedback(multiStep?`Add ${activeStep.operands[0]} + ${activeStep.operands[1]}. Use those two stones and try again.`:`The top is ${round.middle[0]} + ${round.middle[1]}. Add those two middle stones and try again.`);
+    setFeedback(multiStep?`Use ${activeStep.operands[0]} ${activeStep.operation??'+'} ${activeStep.operands[1]}. Use those two stones and try again.`:`The top is ${round.middle[0]} + ${round.middle[1]}. Add those two middle stones and try again.`);
     setFeedbackTone('bad');
     setLocked(true);
     window.setTimeout(() => {
@@ -199,9 +201,9 @@ const ProblemPyramidGame: React.FC<ProblemPyramidGameProps> = ({
               { x: 768, y: 264, value: pyramidCellValue(round,steps,completedSteps,'top'), row: 'top' },
               { x: 548, y: 514, value: pyramidCellValue(round,steps,completedSteps,'left'), row: 'middle' },
               { x: 986, y: 514, value: pyramidCellValue(round,steps,completedSteps,'right'), row: 'middle' },
-              { x: 334, y: 770, value: round.base[0], row: 'base' },
-              { x: 768, y: 770, value: round.base[1], row: 'base' },
-              { x: 1200, y: 770, value: round.base[2], row: 'base' },
+              { x: 334, y: 770, value: pyramidCellValue(round,steps,completedSteps,'base-0'), row: 'base' },
+              { x: 768, y: 770, value: pyramidCellValue(round,steps,completedSteps,'base-1'), row: 'base' },
+              { x: 1200, y: 770, value: pyramidCellValue(round,steps,completedSteps,'base-2'), row: 'base' },
             ].map(({x,y,value,row},index) => <text key={index} x={x} y={y} textAnchor="middle" dominantBaseline="central"
               data-pyramid-value={row} className={`pyramid-tablet-value${glow ? ' is-restored' : ''}`}>{value}</text>)}
           </motion.svg>

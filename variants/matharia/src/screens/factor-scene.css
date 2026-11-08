@@ -1,13 +1,48 @@
 /* Portrait clockwork city: compact live controls give the sentinel the main stage. */
 html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene][data-active-game='factor_frenzy'] {
  --concept-plane:min(100vw,max(375px,calc((100dvh - var(--concept-safe-top) - var(--concept-safe-bottom))*.65)));
- --factor-question-height:max(6.5%,52px);
  --factor-lock-height:max(42px,5vh);
  .factor-scene {position:absolute;inset:0;}
- .concept-question-zone {left:5%;top:11%;width:90%;height:var(--factor-question-height);}
- [data-question-copy] {font-size:clamp(14px,3.85cqw,25px);line-height:1.2;font-weight:650;padding:6px 4%;}
- .question-jewel--bottom {display:none;}
- .factor-workspace {position:absolute;left:5%;right:5%;top:calc(11% + var(--factor-question-height) + 6px);bottom:max(12%,86px);display:grid;grid-template-rows:var(--factor-lock-height) minmax(0,1fr) auto;gap:8px;min-height:0;isolation:isolate;}
+ .factor-workspace {position:absolute;left:5%;right:5%;top:max(11%,calc(var(--dock-header-top) + var(--dock-header-height) + 8px));bottom:max(12%,86px);display:grid;grid-template-rows:var(--factor-lock-height) auto minmax(0,1fr) auto;gap:8px;min-height:0;isolation:isolate;}
+ .factor-question {
+  position:relative;
+  z-index:1;
+  width:100%;
+  max-width:620px;
+  justify-self:center;
+ }
+ .factor-question-bubble {
+  position:relative;
+  display:grid;
+  place-items:center;
+  min-height:calc(2lh + 16px);
+  padding:6px 12px;
+  border:2px solid #e5b967;
+  border-radius:15px;
+  background:#043c4b;
+  color:#fff6df;
+  box-shadow:0 3px 10px #061a2c88;
+  font-size:clamp(14px,3.85cqw,25px);
+  line-height:1.2;
+  font-weight:650;
+  text-align:center;
+  text-wrap:balance;
+ }
+ .factor-question-bubble::after {
+  content:'';
+  position:absolute;
+  left:50%;
+  bottom:-8px;
+  width:13px;
+  height:13px;
+  background:inherit;
+  border:solid #e5b967;
+  border-width:0 2px 2px 0;
+  transform:translateX(-50%) rotate(45deg);
+ }
+ @media (prefers-reduced-motion:no-preference) {
+  .factor-question-bubble[data-reduced-movement='false'] {animation:factor-question-appear 260ms ease-out both;}
+ }
  .factor-pulse-effect {position:absolute;inset:0;width:100%;height:100%;z-index:8;overflow:visible;pointer-events:none;}
  .factor-pulse-trail {fill:none;stroke:#87f5ff;stroke-width:1;stroke-dasharray:60;animation:factor-pulse-trail 300ms ease-out both;}
  .factor-pulse-orb {fill:#fff8c7;stroke:#75e8ff;stroke-width:1;animation:factor-pulse-flight 160ms ease-in both;}
@@ -62,6 +97,10 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene][d
  .legend-dock-button {background-image:none;font-size:clamp(11px,2.8cqw,18px);gap:2px;}
  .legend-dock-button>svg {width:clamp(21px,5.7cqw,34px);height:clamp(21px,5.7cqw,34px);}
  .concept-pause {top:1%;right:max(1%,var(--concept-safe-right));width:clamp(44px,10vw,74px);height:clamp(44px,10vw,74px);}
+}
+@keyframes factor-question-appear {
+ from {transform:translateY(6px);opacity:.55;}
+ to {transform:translateY(0);opacity:1;}
 }
 @keyframes factor-pulse-flight {from{transform:translateY(53px);opacity:1}to{transform:translateY(0);opacity:0}}
 @keyframes factor-metal-impact {0%,100%{transform:translate(0,0) rotate(0)}20%{transform:translate(3px,2px) rotate(1.5deg)}50%{transform:translate(-1px,0) rotate(-.5deg)}}

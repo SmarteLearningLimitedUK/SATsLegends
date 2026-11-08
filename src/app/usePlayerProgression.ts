@@ -109,6 +109,7 @@ export interface PlayerProgressionController {
       hintsUsed: number;
       mistakes: number;
       timeMs: number;
+      timingEligible?: boolean;
     },
     totalStarsEarned: number,
   ) => LevelResultState | null;
@@ -119,8 +120,12 @@ export const usePlayerProgression = (): PlayerProgressionController => {
   const grantProgressionXp = useProgressionStore((state) => state.grantXp);
   const [player, setPlayer] = useState<PlayerData>(() => {
     if (cloudSave) return refreshDailyQuests(cloudSave.initialPlayer);
-    const saved = localStorage.getItem(PLAYER_STORAGE_KEY);
-    const parsed = saved ? JSON.parse(saved) : null;
+    let parsed: Partial<PlayerData> | null = null;
+    try {
+      const saved = localStorage.getItem(PLAYER_STORAGE_KEY);
+      const candidate = saved ? JSON.parse(saved) : null;
+      if (candidate && typeof candidate === 'object' && !Array.isArray(candidate)) parsed = candidate;
+    } catch { /* An unavailable or damaged local save must not block revision. */ }
     return createDefaultPlayer(parsed);
   });
   const [draftName, setDraftName] = useState('');
@@ -132,7 +137,7 @@ export const usePlayerProgression = (): PlayerProgressionController => {
   );
 
   useEffect(() => {
-    localStorage.setItem(cloudSave?.storageKey ?? PLAYER_STORAGE_KEY, JSON.stringify(player));
+    try { localStorage.setItem(cloudSave?.storageKey ?? PLAYER_STORAGE_KEY, JSON.stringify(player)); } catch { /* Play remains available when device storage is full. */ }
     if (cloudSave) {
       const { player: progressionPlayer, levels, totalStars } = useProgressionStore.getState();
       cloudSave.queue({ player, progression: { player: progressionPlayer, levels, totalStars } });
@@ -229,6 +234,7 @@ export const usePlayerProgression = (): PlayerProgressionController => {
       hintsUsed: number;
       mistakes: number;
       timeMs: number;
+      timingEligible?: boolean;
     },
     totalStarsEarned: number,
   ): LevelResultState | null => {
@@ -302,6 +308,7 @@ export const usePlayerProgression = (): PlayerProgressionController => {
       hintsUsed: metrics.hintsUsed,
       mistakes: metrics.mistakes,
       timeMs: metrics.timeMs,
+      timingEligible: metrics.timingEligible,
       completed: true,
       coinsEarned: earnedCoins,
       xpEarned: progressionResult.xpGained,

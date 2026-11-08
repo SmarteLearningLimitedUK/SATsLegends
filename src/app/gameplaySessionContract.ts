@@ -1,4 +1,5 @@
 import { MiniGameType } from '../types';
+import { takeIndependentResponse } from '../systems/learning/responseContext';
 
 /**
  * Shell-owned mini-game session state (single source of truth).
@@ -8,6 +9,9 @@ export interface MiniGameSessionState {
   totalTime: number;
   lives: number;
   paused?: boolean;
+  untimed?: boolean;
+  relaxed?: boolean;
+  startCountdownHandled?: boolean;
 }
 
 export type MiniGameSessionEventType =
@@ -90,7 +94,8 @@ export const emitMiniGameSessionEvent = (
 ) => {
   if (!handlers) return;
 
-  const event: MiniGameSessionEvent = { type, ...payload };
+  const independent = type === 'correct_answer' || type === 'incorrect_answer' ? takeIndependentResponse() : undefined;
+  const event: MiniGameSessionEvent = { type, ...payload, metadata: {...payload.metadata,...independent} };
   handlers.onEvent?.(event);
   const callbackKey = callbackByEventType[type];
   const callback = handlers[callbackKey];

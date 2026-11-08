@@ -1,7 +1,18 @@
 import assert from 'node:assert/strict';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import SatsConstructionControl from '../src/components/game-ui/SatsConstructionControl';
+import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
+import ts from 'typescript';
+// Exercise the real rectangle renderer and event handlers without a Node CSS
+// loader. Only its unused graph-tab hook is inert in this source-level fixture.
+const file='src/components/game-ui/SatsConstructionControl.tsx';
+const text=readFileSync(file,'utf8'),source=ts.createSourceFile(file,text,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
+const declarations=source.statements.filter(node=>!ts.isImportDeclaration(node)).map(node=>node.getText(source)).join('\n');
+const code=ts.transpileModule(declarations,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.React}}).outputText;
+const context={exports:{} as {default:(props:any)=>React.ReactElement<any>},React,useState:(value:unknown)=>[value,()=>{}]};
+vm.runInNewContext(code,context);
+const SatsConstructionControl=context.exports.default;
 import {reasoningMissions,markMission} from '../src/systems/content/satsAdventure';
 const mission=reasoningMissions().find(q=>q.id==='draw-rectangle')!;
 let value='';

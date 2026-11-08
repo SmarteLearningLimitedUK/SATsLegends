@@ -10,11 +10,11 @@ export function buildShipmentRound(level:number,round:number,random:()=>number=M
  const values=shuffle(Array.from({length:10},(_,i)=>(i+1)*step)).slice(0,count);
  const bars=['Windward','Eden','Jerry','Ivy','Aurora'].slice(0,count).map((label,i)=>({label,value:values[i],color:colours[i]}));
  const first=Math.floor(random()*count),second=(first+1+Math.floor(random()*(count-1)))%count;
- let prompt='',answer='',choices:string[]=[],support='Read the bar chart. Then choose your answer.';
+ let prompt='',answer='',choices:string[]=[],support='Read the bar chart. Enter the number using the on-screen pad.';
  const numeric=(value:number)=>{answer=String(value);const candidates=new Set([value]);for(const delta of [step,-step,step*2,-step*2,step*3])if(value+delta>=0)candidates.add(value+delta);choices=shuffle([...candidates].filter(n=>n!==value)).slice(0,3).map(String);choices.push(answer);};
  if((tier===1&&round%2===0)||(tier===2&&round%3===1)){
-  const least=tier===2;const target=least?Math.min(...values):Math.max(...values);answer=bars.find(b=>b.value===target)!.label;
-  prompt=`Which boat delivered the ${least?'fewest':'most'} crates?`;choices=shuffle(bars.map(b=>b.label)).slice(0,4);if(!choices.includes(answer))choices[0]=answer;
+  const least=tier===2;const target=least?Math.min(...values):Math.max(...values);
+  prompt=`How many crates were in the ${least?'smallest':'largest'} delivery?`;numeric(target);
  }else if(tier===1||(tier===2&&round%3===0)){
   prompt=`How many crates did ${bars[first].label} deliver?`;numeric(values[first]);
  }else if(tier===2||tier===3&&round%2===1){

@@ -3,6 +3,8 @@ export type StageMaterial = 'native'|'bench'|'stone'|'instrument'|'gallery'|'min
 export interface GameSet {name:string;material:StageMaterial;anchor?:string;accent:string;motif:'gear'|'torch'|'lens'|'crystal'|'leaf'|'compass'|'rune'|'wave';}
 const set=(name:string,material:StageMaterial,anchor:string|undefined,accent:string,motif:GameSet['motif']):GameSet=>({name,material,anchor,accent,motif});
 export const GAME_SETS:Record<string,GameSet>={
+ rune_relations:set('Outpost rune restoration table','native',undefined,'#ffda79','rune'),
+ calendar_quest:set('Calendar planning desk','native',undefined,'#f6d592','compass'),
  angle_arena:set('Glacier sparring arena','native',undefined,'#ffd581','torch'),
  area_architect:set('Architect construction table','bench','[data-area-board], .area-board, .area-architect-board','#ffda8d','compass'),
  boss_encounter:set('Calculation colosseum','native',undefined,'#94f4dd','rune'),

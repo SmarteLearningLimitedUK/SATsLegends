@@ -16,6 +16,12 @@ export type MiniGameType =
   | 'tower_of_factors'
   | 'measurement_forge'
   | 'timekeeper_temple'
+  | 'calendar_quest'
+  | 'shattered_whole'
+  | 'rune_relations'
+  | 'divide_conquer'
+  | 'acropolis_clearout'
+  | 'shape_secrets'
   | 'ratio_rapids'
   | 'remainder_run'
   | 'place_value_peaks'
@@ -120,6 +126,8 @@ export interface PlayerShopState {
 }
 
 export interface TopicStat {
+  totalAnswerTimeSec?: number;
+  answerTimeSamples?: number;
   topicId: string;
   attempts: number;
   completions: number;
@@ -129,6 +137,7 @@ export interface TopicStat {
 }
 
 export interface GameStat {
+  label?: string;
   gameId: string;
   attempts: number;
   correct: number;

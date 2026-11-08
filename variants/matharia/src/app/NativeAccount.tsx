@@ -7,6 +7,7 @@ import NativeDialog, { AppleMark } from './NativeDialog';
 import { nativeServicesAvailable, signInWithApple, manageSubscriptions } from './nativeServices';
 import { useNativeAccess } from './NativeAccess';
 import { TESTFLIGHT_ALL_GAMES } from '../testingFlags';
+import LearningSupportSettings from './LearningSupportSettings';
 
 export default function NativeAccount({ onClose, onUpgrade }: { onClose: () => void; onUpgrade: () => void }) {
   const identity = useNativeIdentity(), access = useNativeAccess();
@@ -54,6 +55,7 @@ export default function NativeAccount({ onClose, onUpgrade }: { onClose: () => v
       {emailLogin && <form onSubmit={emailSubmit} className="native-form"><label>Parent email<input name="email" type="email" required autoComplete="email" maxLength={254} disabled={Boolean(busy) || !identity.configured}/></label><label>Password<input name="password" type="password" required autoComplete="current-password" maxLength={128} disabled={Boolean(busy) || !identity.configured}/></label><button className="native-secondary" disabled={Boolean(busy) || !identity.configured}>{busy === 'email' ? 'Signing in…' : 'Sign in'}</button></form>}
       <button className="native-account-link" type="button" onClick={onClose}>Keep practising free</button>
     </>}
+    {!deleting&&<><LearningSupportSettings/><button type="button" className="native-account-link" onClick={()=>{onClose();window.dispatchEvent(new Event('matharia-open-parent-report'));}}>View this device’s revision report</button></>}
     <p className="native-small native-legal"><a href="https://satslegends.com/privacy" target="_blank" rel="noreferrer">Privacy</a><span>·</span><a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" target="_blank" rel="noreferrer">Terms of use</a></p>
     {message && <p role="status" className="native-notice">{message}</p>}{error && <p className="native-error" role="alert">{error}</p>}
   </NativeDialog>;

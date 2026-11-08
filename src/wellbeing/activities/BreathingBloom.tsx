@@ -51,10 +51,15 @@ const BreathingBloom: React.FC<WellbeingActivityComponentProps> = ({ onComplete,
       setRemainingMs(pace.outMs);
       setStep('out');
     } else if (step === 'out') {
-      setCompletedCycles((current) => current + 1);
-      setStep('checkin');
+      const nextCycle = completedCycles + 1;
+      setCompletedCycles(nextCycle);
+      if (nextCycle === totalCycles) setStep('checkin');
+      else {
+        setRemainingMs(pace.inMs);
+        setStep('in');
+      }
     }
-  }, [finished, pace.outMs, paused, remainingMs, step]);
+  }, [completedCycles, finished, pace.inMs, pace.outMs, paused, remainingMs, step]);
 
   const startCycle = () => {
     if (finished || running || completedCycles >= totalCycles) return;
@@ -62,30 +67,20 @@ const BreathingBloom: React.FC<WellbeingActivityComponentProps> = ({ onComplete,
     setPaused(false);
     setStep('in');
   };
-  const progressWithinCycle = step === 'in'
-    ? (1 - remainingMs / pace.inMs) * .5
-    : step === 'out' ? .5 + (1 - remainingMs / pace.outMs) * .5 : 0;
-  const progress = finished ? 100 : (completedCycles + progressWithinCycle) / totalCycles * 100;
   const bloomScale = reducedMotion ? 1 : step === 'in'
     ? .9 + .22 * (1 - remainingMs / pace.inMs)
     : step === 'out' ? 1.12 - .22 * (1 - remainingMs / pace.outMs) : .9;
-  const cue = finished ? 'Your reset is complete'
-    : paused ? 'Pause for as long as you need'
-      : step === 'in' ? 'Breathe in, if comfortable'
-        : step === 'out' ? 'Breathe out, gently'
-          : step === 'checkin' ? 'Notice how you feel now'
-            : 'Choose a rhythm to begin';
-  const status = finished ? 'Four cycles complete'
-    : completedCycles >= totalCycles ? 'Four breaths complete. Finish when ready.'
-      : step === 'checkin' ? `Cycle ${completedCycles} of ${totalCycles} complete. Continue when ready.`
-      : running ? `Cycle ${completedCycles + 1} of ${totalCycles}` : 'Start whenever you are ready';
+  const cue = finished ? 'Take your time'
+    : paused ? 'Paused'
+      : step === 'in' ? 'Breathe in gently'
+        : step === 'out' ? 'Let the breath out'
+          : step === 'checkin' ? 'Notice how you feel'
+            : 'Breathe with the flower';
+  const cueDetail = step === 'ready' ? 'Gentle breathing can help you settle. Let your breath flow at a pace that feels easy.' : '';
 
   return (
     <WellbeingShell title="Breath Bloom" activityId="breathing_bloom" type="Breathing"
-      subtitle="Choose a comfortable pace. Begin each breath when you are ready."
-      purpose="Let your garden grow with each completed guided breath."
-      fact="A longer, gentle exhale can help some people feel more settled. Never force a breath or hold it."
-      affirmation="Your pace is enough." status={status} progress={progress} paused={paused}
+      paused={paused}
       onExit={() => { cancel(); onExit(); }}>
       <div className="wellbeing-scene" data-breathing-phase={finished ? 'complete' : step}>
         <div className="wellbeing-pace-picker" role="group" aria-label="Choose a comfortable visual pace">
@@ -108,7 +103,7 @@ const BreathingBloom: React.FC<WellbeingActivityComponentProps> = ({ onComplete,
           </div>)}
         </div>
         <div className="wellbeing-breath-cue" role="status" aria-live="polite">
-          <strong>{cue}</strong><span>{completedCycles >= totalCycles ? 'Take a moment to enjoy the garden you have grown.' : step === 'checkin' ? 'No right answer. Take a moment before the next cycle.' : 'The rhythm is only a guide; comfort comes first.'}</span>
+          <strong>{cue}</strong><span>{cueDetail}</span>
         </div>
         <div className="wellbeing-controlbar wellbeing-breath-actions">
           {running ? <button type="button" onClick={() => setPaused((value) => !value)} className="wellbeing-quiet-action"
@@ -117,7 +112,7 @@ const BreathingBloom: React.FC<WellbeingActivityComponentProps> = ({ onComplete,
             {paused ? 'Resume' : 'Pause'}
           </button> : !finished ? <button type="button" className="wellbeing-action" data-button-skin="none"
             onClick={completedCycles >= totalCycles ? () => finish(1200) : startCycle}>
-            {completedCycles >= totalCycles ? 'Finish reset' : step === 'ready' ? 'Begin first cycle' : 'Begin next cycle'}
+            {completedCycles >= totalCycles ? 'Finish' : 'Begin'}
           </button> : null}
         </div>
       </div>

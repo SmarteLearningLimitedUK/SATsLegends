@@ -47,6 +47,18 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
       return 'RatioRacerGame';
     case 'timekeeper_temple':
       return 'ChronoDashGame';
+    case 'shape_secrets':
+      return 'ShapeSecretsGame';
+    case 'acropolis_clearout':
+      return 'AcropolisClearoutGame';
+    case 'divide_conquer':
+      return 'DivideConquerGame';
+    case 'rune_relations':
+      return 'RuneRelationsGame';
+    case 'calendar_quest':
+      return 'CalendarQuestGame';
+    case 'shattered_whole':
+      return 'ShatteredWholeGame';
     case 'measurement_forge':
       if (level.blueprintKey === 'perimeter_path') {
         return 'PerimeterPathGame';
@@ -114,7 +126,7 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
       if (level.blueprintKey === 'scale_builder') {
         return 'ScaleBuilderGame';
       }
-      return null;
+      return 'CurriculumChallengeGame';
     case 'mean_machine':
       if (level.blueprintKey === 'mean_machine') {
         return 'MeanMachineGame';
@@ -122,7 +134,7 @@ export const resolveMiniGameRegistryKey = (level: LevelData): MiniGameRegistryKe
       if (level.blueprintKey === 'median_mountain') {
         return 'MedianMountainGame';
       }
-      return null;
+      return 'CurriculumChallengeGame';
     case 'rule_runner':
       if (level.blueprintKey === 'median_mountain') {
         return 'MedianMountainGame';

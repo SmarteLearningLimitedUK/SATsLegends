@@ -133,12 +133,31 @@
 .sats-answer-entry{display:flex;gap:6px;align-items:center;min-width:0;}
 .sats-answer-entry input{width:100%;min-width:0;min-height:44px;background:#061f33;border:2px solid #9edee9;border-radius:8px;padding:5px 10px;color:#fff9de;font-family:inherit;font-size:20px;font-weight:700;}
 .sats-answer-entry button{flex:none;min-height:44px;padding:4px 8px;border:1px solid #b6e8ee;border-radius:8px;color:#f9f4de;background:#16475d;font-size:14px;}
-.sats-answer-pad-scrim{position:fixed;inset:0;z-index:2500;display:flex;align-items:center;justify-content:center;padding:10px;background:#031220cc;}
+.revision-workshop .sats-answer-entry input{flex:1;min-width:0;}
+.revision-workshop .sats-answer-entry button{width:auto;max-width:100px;margin-top:0;}
+.sats-answer-pad-scrim{position:fixed;inset:0;z-index:10001;display:flex;align-items:center;justify-content:center;padding:10px;background:#031220cc;}
 .sats-answer-pad{width:min(560px,100%);max-height:calc(100dvh - 20px);overflow:auto;padding:12px;background:#0b2a40;border:2px solid #e4c785;border-radius:14px;color:#f6f5e9;}
 .sats-pad-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;}
 .sats-pad-heading button,.sats-pad-keys button{min-height:44px;background:#17485c;border:1px solid #9edee9;color:#fff7db;border-radius:6px;padding:4px 8px;font:inherit;font-weight:700;}
 .sats-answer-pad output{display:block;min-height:44px;padding:8px;margin:8px 0;background:#041d30;border:1px solid #8cd6e0;border-radius:5px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:20px;}
-.sats-pad-keys{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;}
+.sats-pad-keys{display:grid;gap:6px;width:min(100%,216px);margin-inline:auto;}
+.sats-pad-digits,.sats-pad-tools{display:grid;gap:4px;}
+.sats-pad-digits{grid-template-columns:repeat(3,minmax(44px,1fr));padding:4px;background:#c9d1d4;border-radius:8px;}
+.sats-pad-tools{grid-template-columns:repeat(4,minmax(0,1fr));}
+.sats-pad-digits button{min-width:0;border:1px solid #aebcc2;background:#fbfcfc;color:#162d36;font-size:21px;line-height:1;box-shadow:0 1px 1px #001c2944;}
+.sats-pad-tools button{min-width:0;padding:4px;font-size:12px;}
+.sats-pad-digits button:active,.sats-pad-tools button:active{filter:brightness(.88);}
+.sats-mini-number-pad{grid-column:1/-1;min-width:0;}
+.sats-answer-pad.sats-compact-field-pad{width:min(194px,100%);padding:8px;}
+.sats-answer-pad.sats-compact-field-pad .sats-pad-keys{width:min(144px,100%);gap:3px;}
+.sats-compact-field-pad :is(.sats-pad-digits,.sats-pad-tools){gap:2px;}
+.sats-compact-field-pad .sats-pad-digits{padding:3px;}
+.sats-compact-field-pad .sats-pad-tools{grid-template-columns:repeat(3,minmax(44px,1fr));}
+.sats-compact-field-pad .sats-pad-heading{gap:4px;font-size:14px;}
+.sats-compact-field-pad .sats-pad-heading button{min-width:44px;padding:4px;}
+.sats-compact-field-pad output{margin-block:6px;}
+.sats-answer-pad:has(.sats-pad-digits){width:min(272px,100%);}
+.sats-independent-actions{display:grid;gap:6px;}
 .sats-symmetry{display:grid;grid-template-columns:repeat(6,44px);gap:0;}
 .sats-symmetry-cell{height:44px;border:1px solid #90d6e1;background:#0c2941;min-width:0;padding:0;border-radius:0;}
 .sats-symmetry-cell:nth-child(6n+3){border-right:3px dashed #ffdb8d;}
@@ -146,8 +165,10 @@
 @media(orientation:landscape) and (max-height:550px){
  .sats-entered-fields{grid-template-columns:1fr;gap:4px;}
  .sats-answer-entry input{font-size:18px;}.sats-answer-entry button{font-size:12px;padding:3px;}
- .sats-pad-keys{grid-template-columns:repeat(8,minmax(0,1fr));}
- .sats-answer-pad{width:min(650px,100%);padding:8px;}
+ .sats-answer-pad{padding:8px;}
+ .sats-answer-pad:not(.sats-independent-pad,.sats-compact-field-pad):has(.sats-pad-digits){width:min(370px,100%);}
+ .sats-answer-pad:not(.sats-independent-pad,.sats-compact-field-pad) .sats-pad-keys{width:100%;grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
+ .sats-answer-pad:not(.sats-independent-pad,.sats-compact-field-pad) .sats-pad-tools{grid-template-columns:repeat(3,minmax(0,1fr));}
  .sats-symmetry{grid-template-columns:repeat(6,minmax(28px,40px));}.sats-symmetry-cell{height:40px;}
 }
 

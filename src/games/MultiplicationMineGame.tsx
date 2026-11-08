@@ -128,7 +128,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
     timersRef.current.clear();
   }, []);
   const canContinue = () => mountedRef.current && presentRef.current && !endedRef.current
-    && (!sessionRef.current || (sessionRef.current.lives > 0 && sessionRef.current.timeLeft > 0));
+    && (!sessionRef.current || sessionRef.current.lives > 0);
 
   const schedule = (callback: () => void, delay: number) => {
     const invoke = () => {
@@ -165,13 +165,13 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
   }, []);
 
   useEffect(() => {
-    if (!sessionState || (sessionState.lives > 0 && sessionState.timeLeft > 0)) return;
+    if (!sessionState || sessionState.lives > 0) return;
     endedRef.current = true;
     answerLockRef.current = true;
     clearTimers();
     setRunEnded(true);
     setLocked(true);
-  }, [clearTimers, sessionState?.lives, sessionState?.timeLeft]);
+  }, [clearTimers, sessionState?.lives]);
 
   useEffect(() => {
     const reset = () => {
@@ -222,7 +222,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
       mistakesRef.current += 1;
       emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { score: scoreRef.current });
       setFeedback({ tone: 'error', text: 'Check the multiplication and try again.' });
-      triggerHaptic('error');
+      if (!sessionEvents?.onIncorrectAnswer) triggerHaptic('error');
       schedule(() => {
         setFeedback(null);
         setSelectedChoice(null);
@@ -245,7 +245,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
     const praise = shouldShowPraise(questionAttemptRef.current, Date.now() - questionStartRef.current);
     setFeedback({ tone: praise ? 'praise' : 'ok', text: nextHealth === 0 ? 'Crystal recovered. Mine cleared!' : praise ? buildPraiseMessage() : 'Clean strike. The crystal seam is opening.' });
     emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { score: nextScore });
-    triggerHaptic('success');
+    if (!sessionEvents?.onCorrectAnswer) triggerHaptic('success');
 
     if (nextHealth === 0) {
       setPhase('exploding');
@@ -284,7 +284,7 @@ const MultiplicationMineGame: React.FC<MultiplicationMineGameProps> = ({
       questionAttemptRef.current += 1;
       emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { score: scoreRef.current });
       setFeedback({ tone: 'error', text: currentStep.kind === 'placeholder' ? 'The tens row starts with a zero in the ones column.' : currentStep.kind === 'sum' ? 'Add the two rows, keeping each place-value column aligned.' : `Try ${currentStep.digit} × ${currentStep.multiplier}${currentStep.carry ? ` + ${currentStep.carry} carried` : ''} again.` });
-      triggerHaptic('error');
+      if (!sessionEvents?.onIncorrectAnswer) triggerHaptic('error');
       schedule(() => { setFeedback(null); setSelectedChoice(null); answerLockRef.current = false; setLocked(false); }, 1100);
       return;
     }

@@ -35,7 +35,7 @@ const toGameLabel = (gameId: string) => {
 
 const toGameSummary = (game: GameStat): ParentGameSummary => ({
   gameId: game.gameId,
-  label: toGameLabel(game.gameId),
+  label: game.label??toGameLabel(game.gameId),
   sessions: game.sessions,
   accuracy: game.accuracy,
   avgTimeSec: game.avgTimeSec || 0,
@@ -74,9 +74,9 @@ export const buildParentReport = (player: PlayerData): ParentReportSummary => {
   const games = telemetry ? Object.values(telemetry.gameStats) : [];
   const activeGames = positiveGames(games);
 
-  const needsPractice = pickLowest(topics.filter((topic) => topic.attempts >= 6), 3).map((topic) => toLabel(topic.topicId));
-  const excelling = pickHighest(topics.filter((topic) => topic.attempts >= 6), 3).map((topic) => toLabel(topic.topicId));
-  const mostPlayed = gameMostPlayed(activeGames, 3).map((game) => toGameLabel(game.gameId));
+  const needsPractice = pickLowest(topics.filter((topic) => topic.attempts >= 6 && topic.accuracy < .8), 3).map((topic) => toLabel(topic.topicId));
+  const excelling = pickHighest(topics.filter((topic) => topic.attempts >= 6 && topic.accuracy >= .9), 3).map((topic) => toLabel(topic.topicId));
+  const mostPlayed = gameMostPlayed(activeGames, 3).map((game) => game.label??toGameLabel(game.gameId));
 
   const nextFocus = topics
     .filter((topic) => topic.attempts < 6)

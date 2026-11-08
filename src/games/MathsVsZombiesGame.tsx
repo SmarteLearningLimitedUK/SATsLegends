@@ -1,3 +1,4 @@
+import {isUntimedRevision,isRelaxedRevision} from '../systems/learning/sessionPolicy';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Timer as TimerIcon, Heart, Target, Brain } from 'lucide-react';
 import { AnimatePresence, motion, useIsPresent, useReducedMotion } from 'motion/react';
@@ -165,11 +166,12 @@ const buildQuestion = (levelId: number, forced?: QuestionOperands, wordingVarian
   }
 
   const options = new Set<number>([answer]);
-  while (options.size < 4) {
+  for(let tries=0;tries<32&&options.size<4;tries++) {
     const delta = Math.floor(Math.random() * 8) + 1;
     const candidate = Math.random() < 0.5 ? answer + delta : answer - delta;
     if (candidate !== answer && (levelId >= 3 || candidate >= 0)) options.add(candidate);
   }
+  for(let offset=1;options.size<4;offset++)options.add(answer+offset);
   const shuffled = Array.from(options).sort(() => Math.random() - 0.5);
   return {
     prompt: formatZombieQuestion(equation, wordingVariant),
@@ -464,7 +466,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
   }, [gameActive, isPractice, isPresent, paused, sessionState]);
 
   useEffect(() => {
-    if (paused || isPractice || !gameActive || timeLeft > 0) return;
+    if (paused || isPractice || isUntimedRevision(sessionState) || !gameActive || timeLeft > 0) return;
     finishGame(health > 0 && scoreRef.current >= victoryTargetScore, 'timer');
   }, [finishGame, gameActive, health, isPractice, paused, timeLeft, victoryTargetScore]);
 
@@ -521,7 +523,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
         return null;
       }
 
-      if (Math.hypot(nextX - TARGET_X, nextY - TARGET_Y) <= 2 && nextState !== 'attack' && nextState !== 'die') {
+      if (!isUntimedRevision(sessionState) && Math.hypot(nextX - TARGET_X, nextY - TARGET_Y) <= 2 && nextState !== 'attack' && nextState !== 'die') {
         nextState = 'attack';
         nextStateTime = 0;
         breaches += 1;
@@ -543,7 +545,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     }).filter(Boolean) as Zombie[];
 
     if (breaches > 0) playGameSound('impact');
-    if (breaches > 0 && !isPractice) {
+    if (breaches > 0 && !isPractice && !isRelaxedRevision(sessionState)) {
       attemptsRef.current += breaches;
       for (let index = 0; index < breaches; index += 1) emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { score: scoreRef.current, metadata: { breach: timestamp, index } });
       setHealth((value) => Math.max(0, value - breaches));
@@ -552,7 +554,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
     zombiesRef.current = zombiesNext;
     setZombies(zombiesNext);
 
-    if (!isPractice && health - breaches <= 0 && !endedRef.current) {
+    if (!isPractice && !isRelaxedRevision(sessionState) && health - breaches <= 0 && !endedRef.current) {
       finishGame(false);
       return;
     }
@@ -652,8 +654,8 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       setFeedback('Close! Try the next one.');
       playMonsterSound('monster_laugh');
       emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { score: scoreRef.current, metadata: { tier, equation: question.prompt } });
-      if (!isPractice) setHealth((value) => Math.max(0, value - 1));
-      if (!isPractice && health <= 1) {
+      if (!isPractice && !isRelaxedRevision(sessionState)) setHealth((value) => Math.max(0, value - 1));
+      if (!isPractice && !isRelaxedRevision(sessionState) && health <= 1) {
         finishGame(false);
       }
     }
@@ -661,7 +663,7 @@ const MathsVsZombiesGame: React.FC<MathsVsZombiesGameProps> = ({
       answerTimerRef.current = null;
       if (!presentRef.current || endedRef.current) return;
       if (pausedRef.current) { answerTimerRef.current = window.setTimeout(settleAnswer, 100); return; }
-      if (isPractice && scoreRef.current >= victoryTargetScore) { finishGame(true); return; }
+      if ((isPractice||isUntimedRevision(sessionState)) && scoreRef.current >= victoryTargetScore) { finishGame(true); return; }
       setQuestion(buildFreshQuestion(tier, usedQuestionsRef.current));
       setSelectedAnswer(null);
       setFeedback('');

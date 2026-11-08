@@ -1,3 +1,5 @@
+import {adventureTask} from '../../../../src/systems/content/adventureStory';
+import IndependentAnswer,{matchingAnswerIndex} from '../../../../src/components/game-ui/IndependentAnswer';
 import {roundFeedback} from '../roundFeedback';
 import React,{useContext,useId} from 'react';
 import {VisionSceneContext} from '../VisionScene';
@@ -9,7 +11,7 @@ import {Check} from 'lucide-react';
 import {usePresentationHint} from '../PresentationHint';
 
 interface Props {
- question:{id:string;mode:'name'|'count'|'sort'|'properties';prompt:string;subPrompt:string;multiSelect:boolean;speedRound:boolean;shape:{id:string;kind:string};choices:{id:string;label:string}[]};
+ question:{skillId?:string;curriculumRefs?:string[];id:string;mode:'name'|'count'|'sort'|'properties';prompt:string;subPrompt:string;multiSelect:boolean;speedRound:boolean;shape:{id:string;kind:string};choices:{id:string;label:string}[]};
  diagram:React.ReactNode;selected:string[];locked:boolean;over:boolean;paused:boolean;score:number;correct:number;time:number;
  feedback:{tone:'success'|'error';title:string;subtitle:string}|null;onChoice:(id:string)=>void;onSubmit:()=>void;
 }
@@ -31,11 +33,11 @@ export default function PolygonScene(p:Props){
   <div className="polygon-guide" aria-hidden="true"><Character identity={scene.heroIdentity??'barratt'} artPose="guide" decorative/></div>
   <img className="polygon-pedestal" src={asset('props','polygon_pedestal_v3')} alt="" draggable={false}/>
   <div className="polygon-diagram" data-polygon-diagram>{p.diagram}</div>
-  <ScalableQuestionPanel frame="frames/glacier_panel_v3" corner={.13}><span className="polygon-prompt">{p.question.prompt}</span>{roundFeedback(p.feedback)&&!p.locked?<><span className="sr-only">{p.question.subPrompt}</span><span className="polygon-subprompt polygon-inline-warning" role="status" aria-live="polite"><strong>{roundFeedback(p.feedback).title}. </strong>{roundFeedback(p.feedback).subtitle}</span></>:<span className="polygon-subprompt">{p.question.subPrompt}</span>}</ScalableQuestionPanel>
-  <div className="polygon-choices" role="group" aria-label={p.question.multiSelect?'Select all correct properties':'Choose an answer'} data-multi={p.question.multiSelect} data-count={p.question.choices.length}>{p.question.choices.map(choice=>{
+  <ScalableQuestionPanel story={adventureTask('polygon_palace',p.correct)}><span className="polygon-prompt">{p.question.prompt}</span>{roundFeedback(p.feedback)&&!p.locked?<><span className="sr-only">{p.question.subPrompt}</span><span className="polygon-subprompt polygon-inline-warning" role="status" aria-live="polite"><strong>{roundFeedback(p.feedback).title}. </strong>{roundFeedback(p.feedback).subtitle}</span></>:<span className="polygon-subprompt">{p.question.subPrompt}</span>}</ScalableQuestionPanel>
+  <div className="polygon-choices" role="group" aria-label={p.question.multiSelect?'Select all correct properties':'Choose an answer'} data-multi={p.question.multiSelect} data-count={p.question.choices.length}>{p.question.mode==='count'?<IndependentAnswer questionId={p.question.id} fingerprint={JSON.stringify([p.question.prompt,p.question.shape])} gameKey="polygon_palace" skillId={p.question.skillId??"geometry.count-properties"} curriculumRefs={p.question.curriculumRefs??["6G2a"]} disabled={disabled} onSubmit={value=>p.onChoice(p.question.choices.find(choice=>matchingAnswerIndex(value,[choice.label])===0)?.id??'entered:'+value)}>{open=><button type="button" data-button-skin="none" disabled={disabled} onClick={open}><ArtworkFrame name="frames/glacier_panel_v3" corner={.13} horizontalCorner={.14} fit="height"/><span>Enter number</span></button>}</IndependentAnswer>:<>{p.question.choices.map(choice=>{
    const selected=p.selected.includes(choice.id);
    return <button key={choice.id} type="button" data-button-skin="none" data-polygon-choice={choice.id} aria-pressed={p.question.multiSelect?selected:undefined} disabled={disabled} onClick={()=>p.onChoice(choice.id)}><ArtworkFrame name="frames/glacier_panel_v3" corner={.13} horizontalCorner={.14} fit="height"/>{p.question.multiSelect&&<SelectionBox selected={selected}/>}<span>{choice.label}</span></button>;
-  })}</div>
+  })}</>}</div>
   {p.question.mode==='properties'&&<button className="polygon-submit" type="button" data-button-skin="none" data-polygon-submit disabled={disabled} onClick={p.onSubmit}><ArtworkFrame name="buttons/pvp_submit_v2" corner={.12}/><span>SUBMIT PROPERTIES</span></button>}
   {roundFeedback(p.feedback)&&p.locked&&<div className="polygon-feedback" data-polygon-feedback={roundFeedback(p.feedback).tone} role="status" aria-live="polite"><ArtworkFrame name="frames/glacier_panel_v3" corner={.13}/><strong>{roundFeedback(p.feedback).title}</strong><span>{roundFeedback(p.feedback).subtitle}</span></div>}
   <span className="sr-only">{p.question.speedRound?'Challenge mode. ':''}{p.correct} correct answers. {p.score} points.</span>

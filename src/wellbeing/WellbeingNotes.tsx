@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Pause, Play } from 'lucide-react';
 
-interface Props { purpose?: string; fact?: string; affirmation?: string; paused: boolean }
+interface Props { purpose?: string; fact?: string; affirmation?: string; paused: boolean; staticNotes?: boolean }
 const READ_MS = 12000;
 const FADE_MS = 2400;
 const QUIET_MS = 800;
 
 /** One supplementary message at a time; instructions and controls remain visible. */
-export default function WellbeingNotes({ purpose, fact, affirmation, paused }: Props) {
+export default function WellbeingNotes({ purpose, fact, affirmation, paused, staticNotes = false }: Props) {
   const latest = useRef({ purpose, fact, affirmation });
   latest.current = { purpose, fact, affirmation };
   const [copy, setCopy] = useState(latest.current);
@@ -21,7 +21,7 @@ export default function WellbeingNotes({ purpose, fact, affirmation, paused }: P
     { key: 'purpose', label: 'A MOMENT TO NOTICE', text: copy.purpose },
   ].filter(note => Boolean(note.text));
   useEffect(() => {
-    if (paused || kept || notes.length < 2) return;
+    if (staticNotes || paused || kept || notes.length < 2) return;
     let previous = performance.now();
     const timer = window.setInterval(() => {
       const now = performance.now();
@@ -36,21 +36,21 @@ export default function WellbeingNotes({ purpose, fact, affirmation, paused }: P
       }
     }, 250);
     return () => window.clearInterval(timer);
-  }, [kept, paused, notes.length]);
+  }, [kept, paused, notes.length, staticNotes]);
   if (!notes.length) return null;
-  return <div className="wellbeing-note-row" data-wellbeing-notes>
+  return <div className="wellbeing-note-row" data-wellbeing-notes data-static-notes={staticNotes || undefined}>
     <div className="wellbeing-note-slot">
       {notes.map((note, index) => <p key={note.key}
         className={`wellbeing-${note.key} wellbeing-slow-note`}
         data-wellbeing-purpose={note.key === 'purpose' ? true : undefined}
         data-wellbeing-fact={note.key === 'fact' ? true : undefined}
         data-wellbeing-affirmation={note.key === 'affirmation' ? true : undefined}
-        data-note-active={index === active && shown}
-        aria-hidden={index !== active || !shown}>
+        data-note-active={!staticNotes && index === active && shown}
+        aria-hidden={!staticNotes && (index !== active || !shown)}>
         <span>{note.label}</span>{note.text}
       </p>)}
     </div>
-    {notes.length > 1 ? <button type="button" className="wellbeing-note-toggle" data-button-skin="none"
+    {!staticNotes && notes.length > 1 ? <button type="button" className="wellbeing-note-toggle" data-button-skin="none"
       aria-pressed={kept} aria-label={kept ? 'Resume hints and tips' : 'Keep this tip visible'}
       onClick={() => { setKept(value => !value); setShown(true); elapsed.current = 0; }}>
       {kept ? <Play size={16} aria-hidden="true"/> : <Pause size={16} aria-hidden="true"/>}

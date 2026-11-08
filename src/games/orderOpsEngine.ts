@@ -1,4 +1,4 @@
-export type OpsToken = number | '+' | '-' | '×' | '(' | ')';
+export type OpsToken = number | '+' | '-' | '×' | '÷' | '(' | ')';
 
 export interface OpsRound {
   tokens: OpsToken[];
@@ -27,8 +27,12 @@ const shuffle = <T,>(values: T[]): T[] => {
 export const createOpsRound = (levelId: number): OpsRound => {
   const tier = Math.max(1, Math.min(5, levelId));
   const factorMax = [3, 5, 7, 10, 12][tier - 1];
-  const modes = tier === 1 ? ['mixed'] : tier === 2 ? ['mixed', 'brackets'] : ['mixed', 'brackets', 'doubleMultiply'];
+  const modes = tier === 1 ? ['mixed'] : tier === 2 ? ['mixed', 'brackets', 'division'] : ['mixed', 'brackets', 'doubleMultiply', 'division'];
   const mode = modes[randomInt(0, modes.length - 1)];
+  if(mode==='division'){
+    const a=randomInt(2,12+tier*4),divisor=randomInt(2,factorMax),quotient=randomInt(2,factorMax);
+    return {tokens:[a,'+',divisor*quotient,'÷',divisor],answer:a+quotient,hint:'Multiplication and division come before addition and subtraction.'};
+  }
 
   if (mode === 'brackets') {
     const a = randomInt(2, 3 + tier * 2);
@@ -54,10 +58,10 @@ export const createOpsRound = (levelId: number): OpsRound => {
   };
 };
 
-const isOperator = (token: OpsToken): token is '+' | '-' | '×' => token === '+' || token === '-' || token === '×';
+const isOperator = (token: OpsToken): token is '+' | '-' | '×' | '÷' => token === '+' || token === '-' || token === '×' || token==='÷';
 
-const calculate = (left: number, operator: '+' | '-' | '×', right: number) =>
-  operator === '×' ? left * right : operator === '+' ? left + right : left - right;
+const calculate = (left: number, operator: '+' | '-' | '×' | '÷', right: number) =>
+  operator === '×' ? left * right : operator==='÷'?left/right:operator === '+' ? left + right : left - right;
 
 const operationIndices = (tokens: OpsToken[]) => tokens.flatMap((token, index) =>
   isOperator(token) && typeof tokens[index - 1] === 'number' && typeof tokens[index + 1] === 'number' ? [index] : []);
@@ -68,8 +72,8 @@ export const nextValidOperationIndices = (tokens: OpsToken[]): number[] => {
   const open = tokens.indexOf('(');
   const close = tokens.indexOf(')');
   const eligible = open >= 0 && close > open ? indices.filter((index) => index > open && index < close) : indices;
-  const products = eligible.filter((index) => tokens[index] === '×');
-  return products.length ? products : eligible.length ? [eligible[0]] : [];
+  const products = eligible.filter((index) => tokens[index] === '×'||tokens[index]==='÷');
+  return products.length ? products.filter(index=>!products.some(earlier=>earlier<index&&index-earlier===2)) : eligible.length ? [eligible[0]] : [];
 };
 
 export const applyOperation = (tokens: OpsToken[], operationIndex: number): OpsToken[] => {

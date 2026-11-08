@@ -2,15 +2,14 @@ import {useState, type FormEvent} from 'react';
 import {UserRound} from 'lucide-react';
 import NativeDialog from './NativeDialog';
 
-// A fresh adult-level calculation keeps account and purchase actions in the
-// parent area. No answer or personal information is stored.
+// Generate a fresh addition question each time the parent check opens.
 export default function NativeParentGate({onClose,onContinue}:{onClose:()=>void;onContinue:()=>void}) {
-  const [numbers] = useState(()=>[17+Math.floor(Math.random()*12),13+Math.floor(Math.random()*9)]);
+  const [[left,right]] = useState(()=>[1+Math.floor(Math.random()*9),1+Math.floor(Math.random()*9)]);
   const [answer,setAnswer]=useState('');
   const [error,setError]=useState(false);
   function submit(event:FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if(Number(answer)===numbers[0]*numbers[1])onContinue();
+    if(Number(answer)===left+right)onContinue();
     else {setError(true);setAnswer('');}
   }
   return <NativeDialog kind="parent-gate" titleId="native-parent-gate-title" onClose={onClose}>
@@ -18,7 +17,7 @@ export default function NativeParentGate({onClose,onContinue}:{onClose:()=>void;
     <h1 id="native-parent-gate-title">A quick parent check.</h1>
     <p className="native-dialog-intro">Please ask an adult to answer this question before continuing.</p>
     <form className="native-form" onSubmit={submit}>
-      <label>What is {numbers[0]} × {numbers[1]}?<input type="number" inputMode="numeric" required value={answer} onChange={event=>{setAnswer(event.target.value);setError(false)}} aria-describedby={error?'native-parent-gate-error':undefined}/></label>
+      <label>What is {left} + {right}?<input type="number" inputMode="numeric" required value={answer} onChange={event=>{setAnswer(event.target.value);setError(false)}} aria-describedby={error?'native-parent-gate-error':undefined}/></label>
       {error&&<p id="native-parent-gate-error" className="native-error" role="alert">That answer isn’t quite right. Please try again.</p>}
       <button type="submit" className="native-primary">Continue</button>
       <button type="button" className="native-secondary" onClick={onClose}>Back to the game</button>

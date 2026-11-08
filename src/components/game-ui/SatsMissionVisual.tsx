@@ -2,9 +2,12 @@ import React from 'react';
 import SatsExtendedVisual from './SatsExtendedVisual';
 import SatsDepthVisual from './SatsDepthVisual';
 import type { MissionVisual } from '../../systems/content/satsAdventure';
+import ShatteredDiagram from '../../games/shatteredWhole/Diagrams';
+import '../../../variants/matharia/src/screens/shattered-whole.css';
 
 /** Familiar teaching models used by both the guided workshop and Core missions. */
 export default function SatsMissionVisual({ visual }: { visual: MissionVisual }) {
+  if(visual.type==='shattered')return <div className="sw-revision-visual"><ShatteredDiagram question={visual.question} response={{}} change={()=>{}} disabled readonlyMode/></div>;
   if(visual.type==='depth')return <SatsDepthVisual model={visual.model} />;
   if (['symmetry','scale','cutout','angles','polygon'].includes(visual.type)) return <SatsExtendedVisual visual={visual} />;
   if (visual.type === 'numberline') return <svg className="sats-diagram" viewBox="0 0 420 150" role="img" aria-label={`Number line from ${visual.min} to ${visual.max}, start marker at ${visual.marker}`}>

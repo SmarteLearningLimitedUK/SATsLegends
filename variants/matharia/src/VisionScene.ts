@@ -6,16 +6,13 @@ import { HERO_ATLAS_LAYOUT } from '../../../src/games/heroAtlasLayout';
 export type VisionCue = 'idle' | 'reward' | 'error';
 export interface VisionSceneState { key: string; cue: VisionCue; sequence: number; paused: boolean; heroIdentity?: string; }
 export const VisionSceneContext = createContext<VisionSceneState>({ key: '', cue: 'idle', sequence: 0, paused: false });
-const environments = import.meta.glob('../../../src/assets/game-visions/environments/*.{webp,png}', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
 const characters = import.meta.glob('../../../src/assets/game-visions/characters/*.webp', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
 // Extracted stone, forest, glacier and desert props sit beneath live maths.
 const objects = import.meta.glob('../../../src/assets/game-visions/objects/*.webp', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
 const walks = import.meta.glob('../../../src/assets/game-visions/walks/*.webp', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
 const hasHeroSheets = (key:string) => Boolean(HERO_ATLAS_LAYOUT[`characters/${key}-v3`]&&HERO_ATLAS_LAYOUT[`walks/${key}-v2`]);
-const ENVIRONMENT_VERSIONS: Record<string, number> = { take_out_rush: 5, angle_arena: 3, problem_pyramid: 2, change_counter: 2, maths_vs_zombies: 2, data_detective: 2, factor_frenzy: 2 };
 export const getVisionEnvironment = (key: string) => {
   if (key === 'angle_arena') return asset('backgrounds','bg_angle_quiet_v4');
-  const name = `../../../src/assets/game-visions/environments/${key}-v${ENVIRONMENT_VERSIONS[key] ?? 1}`;
   return backgroundFor(key, true);
 };
 export const getVisionCharacter = (key: string) => (hasHeroSheets(key)?characters[`../../../src/assets/game-visions/characters/${key}-v3.webp`]:undefined) ?? characters[`../../../src/assets/game-visions/characters/${key}-v2.webp`] ?? characters[`../../../src/assets/game-visions/characters/${key}-v1.webp`];

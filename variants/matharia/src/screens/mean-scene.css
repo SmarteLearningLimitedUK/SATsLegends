@@ -5,47 +5,41 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='mean
  .concept-question-zone {display:none;}
  .mean-scene {position:absolute;inset:0;container:mean-scene / size;}
  .mean-layout {position:absolute;inset:0;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:8px;padding:calc(var(--portrait-hud-top) + var(--portrait-hud-height) + 10px) 3% calc(max(6.5cqh,50px) + 2cqh + 8px);}
- .mean-question {position:relative;isolation:isolate;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;padding:13px 6%;color:#fff7df;text-align:center;}
+ .mean-question {position:relative;isolation:isolate;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;padding:16px 8%;box-sizing:border-box;color:#fff7df;text-align:center;}
  .mean-question-main {font-size:clamp(16px,4.2cqw,25px);font-weight:650;line-height:1.15;}
- .mean-question-detail {display:grid;font-size:clamp(13px,3.5cqw,21px);font-weight:600;line-height:1.2;color:#e0f5ed;}
- .mean-question-detail>span {grid-area:1/1;}
- .mean-copy-reserve {visibility:hidden;pointer-events:none;}
+ .mean-question-detail {font-size:clamp(13px,3.5cqw,21px);font-weight:600;line-height:1.2;color:#e0f5ed;}
  .mean-playfield {position:relative;min-height:0;}
- .mean-engine-region {position:absolute;left:8%;top:0;bottom:0;width:84%;}
+ .mean-engine-region {position:absolute;inset:0;width:100%;}
  .mean-engine-assembly {position:absolute;inset:0;}
  .mean-engine-housing {position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;}
  .mean-mode-plate {position:absolute;left:31%;top:24.6%;width:38%;height:5.7%;display:grid;place-items:center;text-align:center;color:#fff2c9;font-size:clamp(12px,4.3cqw,21px);font-weight:650;line-height:1;text-transform:uppercase;}
  .mean-reading-bank {position:absolute;left:27%;top:33.7%;width:46%;height:26%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:clamp(2px,.8cqw,4px);}
- .mean-live-reel {position:relative;isolation:isolate;display:grid;place-items:center;min-width:0;padding:1px;border:1px solid #d7ac4c;border-radius:20%;background:#07344a;box-shadow:inset 0 0 0 1px #fff0a0,0 1px 0 #693e13;color:#fff9e3;font-size:clamp(12px,7cqw,30px);line-height:1;font-weight:650;}
+ .mean-live-reel {position:relative;isolation:isolate;display:grid;place-items:center;min-width:0;padding:3px;box-sizing:border-box;border:1px solid #d7ac4c;border-radius:20%;background:#07344a;box-shadow:inset 0 0 0 1px #fff0a0,0 1px 0 #693e13;color:#fff9e3;font-size:clamp(12px,6cqw,26px);line-height:1.15;font-weight:650;}
+ .mean-live-reel[data-long='true'] {font-size:clamp(12px,4.8cqw,20px);}
  .mean-live-reel>span {animation:mean-reading-arrive .13s ease-out both;}
  .mean-live-reel[data-reel-value='?'] {font-size:clamp(15px,min(9.5cqw,8.3cqh),40px);}
  .mean-live-reel[data-reel-active='false'] {opacity:.4;}
  .mean-live-reel[data-scanning='true'] {color:#bcfbff;}
  .mean-scan {position:absolute;z-index:2;isolation:isolate;left:50%;top:82.7%;translate:-50% -50%;width:25%;height:auto;aspect-ratio:1;min-width:44px;min-height:44px;display:grid;place-items:center;padding:5px;border:0;border-radius:50%;background:none;box-shadow:none;color:#fff6dc;text-align:center;text-transform:uppercase;font-size:clamp(14px,6.8cqw,28px);font-weight:700;line-height:1;touch-action:manipulation;text-shadow:0 2px 2px #002a43;}
  .mean-scan::before {content:'';position:absolute;z-index:-1;inset:7%;border:2px solid #d8a741;border-radius:50%;background:radial-gradient(circle at 40% 30%,#146b89,#06465e 62%,#032d43);box-shadow:inset 0 2px 5px #9cefff66,0 1px 4px #001c2a99;pointer-events:none;}
- .mean-scan::after {content:'';position:absolute;inset:0;border:2px solid #ffe9a0;border-radius:50%;box-shadow:0 0 8px #76faff,0 0 16px #48daef88;opacity:0;pointer-events:none;}
- .mean-scan[data-ready='true']::after {animation:mean-scan-ready 1.5s ease-in-out infinite;}
  .mean-scan[data-scanning='true'] {color:#e2ffff;}
  .mean-scan:not(:disabled):active {scale:.97;filter:brightness(1.2);}
  .mean-scan:focus-visible {outline:3px solid #fff4a5;outline-offset:3px;}
  .mean-engine-assembly[data-shake='true'] {animation:mean-machine-shake .34s ease-out both;}
  .mean-engine-assembly[data-repaired='true'] .mean-live-reel {color:#d4ffce;box-shadow:inset 0 0 0 2px #c7ffd7,0 0 8px #7beec466;}
  .mean-engine-assembly[data-fault='true'] .mean-live-reel {color:#ffe0cf;}
- .mean-scholar {position:absolute;left:-18%;bottom:0;width:60%;height:86%;pointer-events:none;}
- .mean-scholar>.vision-character {width:100%;height:100%;}
- .mean-answer-region {position:relative;isolation:isolate;min-height:144px;padding:36px 12px 14px;}
+ .mean-answer-region {position:relative;isolation:isolate;min-height:88px;padding:34px 20px 10px;box-sizing:border-box;}
  .mean-answer-caption {position:absolute;left:7%;top:12px;width:86%;display:grid;place-items:center;text-align:center;color:#fff5d3;font-size:clamp(15px,4cqw,24px);font-weight:650;line-height:1.1;text-transform:uppercase;}
- .mean-answers {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(44px,7cqh));gap:6px;}
- .mean-answers>button {position:relative;isolation:isolate;min-width:44px;min-height:44px;display:grid;place-items:center;padding:6px 14px;border:0;background:none;box-shadow:none;color:#fff8e4;font-size:clamp(23px,8cqw,42px);font-weight:650;line-height:1.1;touch-action:manipulation;}
+ .mean-answers {display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(44px,auto);justify-items:center;}
+ .mean-answers>button {position:relative;isolation:isolate;width:min(100%,220px);min-height:44px;display:grid;place-items:center;padding:6px 14px;border:0;background:none;box-shadow:none;color:#fff8e4;font-size:clamp(17px,5cqw,26px);font-weight:650;line-height:1.1;touch-action:manipulation;}
  .mean-answers>button:not(:disabled):active {scale:.97;filter:brightness(1.15);}
  .mean-answers>button:focus-visible {outline:3px solid #fff1a4;outline-offset:1px;}
  .mean-answers>button:disabled {opacity:1;filter:brightness(.78);color:#fff8e0;}
- .mean-answer-region[data-feedback='true'] .mean-answers {visibility:hidden;}
- .mean-feedback {position:absolute;inset:36px 7% 14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#fff6dc;text-align:center;font-size:clamp(13px,3.6cqw,22px);line-height:1.2;}
+ .mean-answer-region[data-feedback='true'] .mean-answers {display:none;}
+ .mean-feedback {position:relative;min-height:64px;padding:6px 10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#fff6dc;text-align:center;font-size:clamp(13px,3.6cqw,22px);line-height:1.3;}
  .mean-feedback>strong {font-weight:650;}
  .mean-feedback>p {margin:0;}
  [data-mean-paused='true'] :is(.mean-live-reel>span,.mean-engine-assembly) {animation-play-state:paused;}
- [data-mean-paused='true'] .mean-scan::after {animation-play-state:paused;}
  [data-unified-minigame-hud]>div:first-of-type:has(.legend-hud-bar) {top:4%;left:calc(50% - var(--concept-plane)*.01);width:calc(var(--concept-plane)*.78);height:6%;min-height:48px;padding:0;}
  .legend-hud-title {font-size:clamp(15px,4.2cqw,26px);}
  .legend-hud-avatar {width:17%;}
@@ -59,8 +53,6 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='mean
 }
 @keyframes mean-reading-arrive {from{opacity:.4;translate:0 15%;}to{opacity:1;translate:0 0;}}
 @keyframes mean-machine-shake {0%,100%{translate:0;}20%{translate:-3px;}40%{translate:3px;}60%{translate:-2px;}80%{translate:2px;}}
-@keyframes mean-scan-ready {0%,100%{opacity:.25;box-shadow:0 0 4px #76faff,0 0 8px #48daef66;}50%{opacity:1;box-shadow:0 0 12px #76faff,0 0 22px #48daefcc;}}
 @media(prefers-reduced-motion:reduce) {
  html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='mean_machine'][data-measured-scene] :is(.mean-live-reel>span,.mean-engine-assembly) {animation:none;}
- html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='mean_machine'][data-measured-scene] .mean-scan[data-ready='true']::after {animation:none;opacity:1;}
 }

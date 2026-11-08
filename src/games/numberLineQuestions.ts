@@ -44,8 +44,9 @@ export function buildNumberLineQuestion(
     start = integer(0, 18);
     step = pick([1, 2]);
   } else if (tier === 1) {
-    start = integer(0, 30);
-    step = pick(roundIndex < 3 ? [1, 2, 3] : [2, 3, 4, 6]);
+    // Introduce twos while all supporting labels are still visible, then fives.
+    step = roundIndex < 2 ? 1 : roundIndex < 5 ? 2 : 5;
+    start = integer(0, Math.floor(40 / step) - 4) * step;
   } else if (tier === 2) {
     start = integer(20, 200);
     step = pick(roundIndex < 3 ? [2, 4, 5, 10] : [3, 4, 6, 8, 12, 15, 25]);
@@ -69,8 +70,14 @@ export function buildNumberLineQuestion(
   const extrapolate = !isPractice && tier >= 2 && roundIndex >= 3 && roundIndex % 3 === 2;
   const focusIndex = extrapolate ? pick([0, 4]) : integer(1, 3);
   const visible = new Set(extrapolate ? [1, 3] : [0, 4]);
-  if (isPractice) for (let index = 0; index < 5; index += 1) visible.add(index);
-  else if (roundIndex < 3) visible.add(focusIndex === 1 ? 2 : focusIndex - 1);
+  if (isPractice || (tier === 1 && roundIndex < 4)) {
+    for (let index = 0; index < 5; index += 1) visible.add(index);
+  } else if (tier === 1) {
+    // Keep a labelled pair one gap apart and a known neighbour of the target.
+    visible.add(focusIndex === 1 ? 3 : 1);
+  } else if (roundIndex < 3) {
+    visible.add(focusIndex === 1 ? 2 : focusIndex - 1);
+  }
 
   const units = Array.from({ length: 5 }, (_, index) => start + step * index);
   const format = (value: number) => family === 'fraction' ? fraction(value, denominator) : decimal(value / denominator);

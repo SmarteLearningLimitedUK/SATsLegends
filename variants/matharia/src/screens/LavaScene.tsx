@@ -1,3 +1,5 @@
+import {adventureTask} from '../../../../src/systems/content/adventureStory';
+import IndependentAnswer,{answerAsNumber,matchingAnswerIndex,canonicalAnswer} from '../../../../src/components/game-ui/IndependentAnswer';
 import {roundFeedback} from '../roundFeedback';
 import React, {useContext, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {useReducedMotion} from 'motion/react';
@@ -87,7 +89,7 @@ export default function LavaScene(p: Props) {
   data-lava-reaction={roundFeedback(p.feedback) ?? 'idle'} data-lava-question={p.question.prompt} data-lava-paused={paused}>
   {p.intro}
   <LavaAtmosphere/>
-  <ScalableQuestionPanel frame="frames/glacier_panel_v3" corner={.13}>{p.question.prompt}</ScalableQuestionPanel>
+  <ScalableQuestionPanel story={adventureTask('unit_mixer',p.step)}>{p.question.prompt}</ScalableQuestionPanel>
   <div className="lava-safe-counter" aria-live="polite">
    <ArtworkFrame name="frames/glacier_panel_v3" corner={.13}/>
    <span>{p.step}/{p.total} safe crossings</span>
@@ -116,13 +118,7 @@ export default function LavaScene(p: Props) {
    {Array.from({length: 8}, (_, i) => <i key={i} style={{'--spark-x': `${(i - 3.5) * 10}px`, '--spark-y': `${-12 - (i % 3) * 7}px`} as React.CSSProperties}/>)}
   </div>}
   <div className="lava-live-answers" role="group" aria-label="Choose the converted total">
-   {p.question.options.map((option, index) => <div className="lava-answer-pedestal" key={`${p.question.prompt}:${option}`}>
-    <button type="button" data-button-skin="none" data-lava-answer={index} data-selected={p.selected === index}
-     data-answer-feedback={p.selected === index ? roundFeedback(p.feedback) : undefined}
-     disabled={p.locked || p.finished || paused} onClick={() => p.onAnswer(index)}>
-     <ArtworkFrame name="buttons/angle_answer_v4" corner={.13} fit="height"/><span>{option}</span>
-    </button>
-   </div>)}
+   <IndependentAnswer expectedUnit={p.question.options[0]?.match(/[a-z]+$/i)?.[0]} questionId={p.question.prompt} fingerprint={p.question.prompt} gameKey="unit_mixer" skillId="measurement.convert" curriculumRefs={["6M5"]} label={'Answer in '+(p.question.options[0]?.match(/[a-z]+$/i)?.[0]??'the requested unit')} disabled={p.locked||p.finished||paused} onSubmit={value=>{const unit=p.question.options[0]?.match(/[a-z]+$/i)?.[0]??'';p.onAnswer(matchingAnswerIndex(/[a-z]/i.test(value)?value:value+' '+unit,p.question.options))}}>{open=><div className="lava-answer-pedestal"><button type="button" data-button-skin="none" disabled={p.locked||p.finished||paused} onClick={open}><ArtworkFrame name="buttons/angle_answer_v4" corner={.13} fit="height"/><span>Enter answer</span></button></div>}</IndependentAnswer>
   </div>
   <div className="lava-live-helper" role={roundFeedback(p.feedback) ? 'status' : undefined} aria-live="polite" data-tone={roundFeedback(p.feedback)}>
    <ArtworkFrame name="frames/glacier_panel_v3" corner={.13}/><span>{feedback}</span>

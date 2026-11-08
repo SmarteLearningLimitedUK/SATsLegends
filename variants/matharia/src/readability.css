@@ -20,6 +20,7 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene][d
  .takeout-food-shelf>button:has(.takeout-stock) {padding:8px 9px;}
  .takeout-stock {white-space:normal;overflow-wrap:normal;text-align:center;}
  .takeout-tray,.takeout-tray-items {font-size:14px;line-height:1.2;}
+ .takeout-actions>button {display:flex;align-items:center;justify-content:center;line-height:1.3;padding:6px 8px;}
  .potion-live-card {padding:9px 10px;gap:5px;}
  .potion-live-card-heading {white-space:normal;flex-wrap:wrap;font-size:13px;line-height:1.2;}
  .potion-live-card-controls {min-height:44px;}
@@ -61,7 +62,7 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene][d
 }
 @media(max-width:760px) and (orientation:landscape) {
  html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='simplify_sprint'][data-measured-scene] {
-  .sprint-fraction-panel {top:24%;height:76px;padding:9px 3%;}
+  .sprint-fraction-panel {top:24%;height:76px;padding:9px 12px;}
   .sprint-gates {top:46%;height:30%;}
  }
  html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='remainder_run'][data-measured-scene] {--remainder-choice-height:60px;}
@@ -98,3 +99,266 @@ html[data-presentation='matharia'] #root .mission-library[data-adventure-board] 
 .native-dialog .native-primary {margin-top:18px;}
 .native-dialog :is(button,a) {white-space:normal;}
 .native-dialog h1 {overflow-wrap:normal;}
+/* Keep shared navigation controls at a physical 44px target on phones/tablets. */
+html[data-presentation='matharia'] #root .avatar-hero-arrow {min-width:44px;min-height:44px;}
+/* Ground the visible soles on the portal painted into the existing backdrop. */
+html[data-presentation='matharia'] #root .avatar-select-screen {
+ --avatar-portal-grounding:1;
+ --avatar-portal-transform:none;
+ .avatar-hero-stage {position:static;}
+ .avatar-carousel-track {position:absolute;inset:0;display:block;width:100%;height:100%;padding:0;transform:none;overflow:visible;}
+ .avatar-carousel-main.avatar-carousel-main-only {position:absolute;inset:0;width:100%;height:100%;display:block;}
+ .avatar-carousel-main-image {
+  position:absolute;
+  left:var(--avatar-portal-image-left);
+  top:var(--avatar-portal-image-top);
+  width:var(--avatar-portal-image-width);
+  height:var(--avatar-portal-image-height);
+  max-width:none;max-height:none;
+  transform:none;
+  visibility:hidden;
+  &[data-portal-aligned='true'] {visibility:visible;}
+ }
+}
+@media (min-width:700px) and (orientation:portrait) {
+ html[data-presentation='matharia'] #root .avatar-select-screen {
+  /* Portrait tablets keep the controls above and below the portal. */
+  .avatar-select-layout {display:flex;max-width:none;padding:0;gap:0;}
+  .avatar-carousel-header {margin-top:calc(env(safe-area-inset-top,0px) + 56px);}
+  .avatar-carousel-banner {height:clamp(96px,12vh,150px);}
+  .avatar-carousel-banner-art {width:min(95vw,700px);}
+  .avatar-name-panel {width:min(calc(100% - 32px),640px);margin:8px auto 0;}
+  .avatar-confirm-control {position:absolute;left:50%;bottom:7.5%;width:310px;height:64px;transform:translateX(-50%);}
+ }
+}
+html[data-presentation='matharia'] #root .profile-achievement>summary {display:flex;align-items:center;min-height:44px;padding-block:8px;line-height:1.3;}
+html[data-presentation='matharia'] #root [role='dialog'][aria-label='Daily Quests'] {
+ .ui-close-button {min-width:44px;min-height:44px;}
+ p[class*='text-[9px]'],span[class*='text-[9px]'],span[class*='text-[10px]'] {font-size:12px;line-height:1.3;}
+}
+html[data-presentation='matharia'] #root .fixed:has(>[role='dialog'][aria-label='Daily Quests']) {z-index:1500;}
+
+/* Text actions reuse the existing answer bays without inheriting the numerical
+   choices' large type size or four-column cells. Artwork and scene positions stay put. */
+html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene][data-active-game] {
+ :is(.angle-answer-group,.area-answers,.factor-runes,.formula-live-choices,
+ .graph-answers,.line-options,.mean-answers,.mine-live-choices,.percent-answers,
+ .perimeter-answers,.pyramid-live-choices,.remainder-answer-choices,
+ .zombies-answer-options):has(>[data-independent-answer-trigger]) {
+  grid-template-columns:minmax(0,1fr);
+  grid-template-rows:minmax(44px,1fr);
+  justify-items:center;
+  align-items:center;
+ }
+ [data-independent-answer-trigger] {
+  grid-column:1/-1;
+  justify-self:center;
+  align-self:center;
+  width:min(100%,240px);
+  min-width:0;
+  flex:0 1 240px;
+ }
+ :is(button[data-independent-answer-trigger],[data-independent-answer-trigger]>button) {
+  min-height:44px;
+  box-sizing:border-box;
+  padding:8px 24px;
+  font-size:clamp(16px,2vw,20px);
+  line-height:1.25;
+  white-space:normal;
+  overflow-wrap:normal;
+  word-break:normal;
+  text-align:center;
+ }
+ :is(button[data-independent-answer-trigger],[data-independent-answer-trigger]>button)>span:not(.artwork-frame):not(.artwork-surface) {
+  padding:0;
+  font:inherit;
+  line-height:inherit;
+ }
+ :is(button[data-independent-answer-trigger],[data-independent-answer-trigger]>button):disabled {
+  opacity:1;
+  filter:brightness(.8);
+ }
+ /* Keep the number-line token circular, with its label inside the rim. */
+ .ninja-answer[data-independent-answer-trigger] {
+  width:var(--ninja-answer-size);
+  flex-basis:var(--ninja-answer-size);
+  padding:12%;
+  font-size:14px;
+ }
+ /* Grouped division has three lines (boxes, crate total, unit). The original
+    short numerical-choice height cuts the first and last lines through the rim. */
+ &[data-active-game='remainder_run']:has([data-remainder-mode='group_board']) {
+  --remainder-choice-height:60px;
+  .remainder-console {padding:8px;}
+  .remainder-batches>button {padding:3px 4px;gap:1px;}
+ }
+ /* Feedback remains mathematical information while the controls are locked. */
+ .area-feedback {line-height:1.35;}
+ .perimeter-next-edge {padding:8px 18px;}
+ .perimeter-feedback-copy {line-height:1.3;}
+ .perimeter-next-edge:has(.perimeter-feedback-copy),.perimeter-edge-label:disabled {
+  opacity:1;
+  filter:none;
+ }
+}
+
+/* Portalled answer fields sit outside #root. Reserve room for units and
+   two-part answers, and let validation messages contribute to dialog height. */
+html[data-presentation='matharia'] .sats-answer-pad {
+ box-sizing:border-box;
+ overflow-wrap:anywhere;
+ scroll-padding-block:16px;
+}
+html[data-presentation='matharia'] .sats-answer-pad.legend-dialog {
+ display:flex;
+ flex-direction:column;
+ gap:12px;
+ padding:20px;
+}
+html[data-presentation='matharia'] .sats-answer-pad .sats-fields {
+ width:100%;
+ min-width:0;
+ gap:12px;
+}
+html[data-presentation='matharia'] .sats-answer-pad .sats-answer-entry {
+ display:grid;
+ grid-template-columns:minmax(0,1fr) minmax(76px,auto);
+ gap:8px;
+}
+html[data-presentation='matharia'] .sats-answer-pad :is(legend,p,button) {
+ white-space:normal;
+ line-height:1.3;
+}
+html[data-presentation='matharia'] .sats-answer-pad :is(.ui-button-primary,.ui-button-secondary) {
+ flex:none;
+ width:100%;
+ min-height:48px;
+ padding:10px 18px;
+ font-size:16px;
+}
+html[data-presentation='matharia'] .sats-pad-heading>strong {min-width:0;}
+html[data-presentation='matharia'] .sats-pad-heading>button {flex:none;}
+html[data-presentation='matharia'] .sats-independent-pad.legend-dialog {width:min(194px,100%);padding:8px;gap:6px;}
+html[data-presentation='matharia'] .sats-answer-pad-scrim:has(.sats-independent-pad,.sats-compact-field-pad) {align-items:flex-end;padding-bottom:max(12px,env(safe-area-inset-bottom));background:#03122052;}
+html[data-presentation='matharia'] .sats-answer-reference {margin:0;color:#e4f3f4;font-size:14px;}
+html[data-presentation='matharia'] .sats-independent-pad .sats-fields {gap:6px;}
+html[data-presentation='matharia'] .sats-independent-pad fieldset {min-width:0;margin:0;padding:0;border:0;}
+html[data-presentation='matharia'] .sats-independent-pad legend {font-size:13px;}
+html[data-presentation='matharia'] .sats-independent-pad .sats-answer-entry[data-inline-pad] {grid-template-columns:minmax(0,1fr);}
+html[data-presentation='matharia'] .sats-independent-pad :is(.ui-button-primary,.ui-button-secondary) {min-height:44px;padding:5px 6px;font-size:14px;}
+html[data-presentation='matharia'] .sats-independent-pad .sats-pad-keys {width:min(100%,144px);gap:3px;}
+html[data-presentation='matharia'] .sats-independent-pad :is(.sats-pad-digits,.sats-pad-tools) {gap:2px;}
+html[data-presentation='matharia'] .sats-independent-pad .sats-pad-digits {padding:3px;}
+html[data-presentation='matharia'] .sats-independent-pad .sats-pad-tools {grid-template-columns:repeat(3,minmax(44px,1fr));}
+html[data-presentation='matharia'] .sats-independent-pad .sats-independent-actions {grid-template-columns:minmax(0,1.4fr) minmax(44px,1fr);gap:4px;}
+html[data-presentation='matharia'] .sats-independent-pad [role='alert'] {margin:0;font-size:13px;}
+@media (orientation:landscape) {
+ html[data-presentation='matharia'] .sats-answer-pad-scrim:has(.sats-independent-pad,.sats-compact-field-pad) {justify-content:flex-end;padding-right:max(12px,env(safe-area-inset-right));}
+ html[data-presentation='matharia'] .sats-independent-pad.legend-dialog {display:grid;width:min(308px,100%);grid-template-columns:144px minmax(0,1fr);gap:4px 8px;align-items:center;}
+ html[data-presentation='matharia'] .sats-independent-pad :is(.sats-fields,.sats-mini-number-pad) {display:contents;}
+ html[data-presentation='matharia'] .sats-independent-pad :is(fieldset,.sats-independent-actions,.sats-answer-reference,p[role='alert']) {grid-column:2;min-width:0;}
+ html[data-presentation='matharia'] .sats-independent-pad .sats-pad-digits {grid-column:1;grid-row:1 / span 5;align-self:center;}
+ html[data-presentation='matharia'] .sats-independent-pad .sats-pad-tools {grid-column:2;grid-template-columns:repeat(3,minmax(0,1fr));}
+ html[data-presentation='matharia'] .sats-independent-pad .sats-pad-tools button {padding-inline:0;}
+ html[data-presentation='matharia'] .sats-independent-pad .sats-independent-actions {grid-template-columns:minmax(0,1fr) 44px;}
+ html[data-presentation='matharia'] .sats-independent-pad .sats-independent-actions button {font-size:13px;}
+ html[data-presentation='matharia'] .sats-compact-field-pad {display:grid;width:min(308px,100%);grid-template-columns:144px minmax(0,1fr);gap:4px 8px;align-items:center;}
+ html[data-presentation='matharia'] .sats-compact-field-pad .sats-pad-keys {display:contents;}
+ html[data-presentation='matharia'] .sats-compact-field-pad :is(.sats-pad-heading,output,.sats-pad-tools) {grid-column:2;min-width:0;}
+ html[data-presentation='matharia'] .sats-compact-field-pad .sats-pad-digits {grid-column:1;grid-row:1 / span 3;}
+ html[data-presentation='matharia'] .sats-compact-field-pad .sats-pad-tools {grid-template-columns:repeat(3,minmax(0,1fr));}
+ html[data-presentation='matharia'] .sats-compact-field-pad .sats-pad-tools button {padding-inline:0;}
+ /* Keep the rightmost graph values in view while the learner enters an answer. */
+ html[data-presentation='matharia']:has(.sats-independent-pad,.sats-compact-field-pad) #root
+  .screen-gameplay[data-active-game][data-measured-scene] :is(.line-chart-region,.graph-chart-region) {left:clamp(12px,8vw,100px);right:calc(328px + env(safe-area-inset-right));}
+}
+
+html[data-presentation='matharia'] .legend-answer-feedback {display:flex;align-items:center;gap:5px;font-size:clamp(13px,2.5vw,19px);line-height:1.2;font-weight:700;color:#bff9d4;}
+html[data-presentation='matharia'] .legend-answer-feedback[data-tone='incorrect'] {color:#ffd1bc;}
+html[data-presentation='matharia'] .legend-answer-feedback>svg {width:1em;height:1em;flex:none;}
+html[data-presentation='matharia'] .scalable-question-arrival {position:absolute;inset:4px;z-index:1;pointer-events:none;border:2px solid #fff0ab;border-radius:10px;opacity:0;}
+@media (prefers-reduced-motion:no-preference) {
+ html[data-presentation='matharia'] .scalable-question-arrival {animation:matharia-question-arrival 800ms ease-out both;}
+}
+@keyframes matharia-question-arrival {0%,25%{opacity:1;}100%{opacity:0;}}
+
+/* The shared landscape HUD is at least 44px high. Keep the area question
+   below it even when a percentage-only offset would start inside the HUD. */
+@media (orientation:landscape) and (max-height:500px) {
+ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='area_architect'][data-measured-scene] {
+  .concept-question-zone {top:60px;height:62px;}
+  .area-plan {top:34%;height:32%;}
+  .area-room-progress {top:34%;}
+ }
+ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='line_graph_lab'][data-measured-scene] {
+  .line-axis-titles {top:26px;left:26px;right:26px;}
+  .line-live-plot {top:52px;left:26px;right:26px;bottom:20px;}
+ }
+}
+
+html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='perimeter_path'][data-measured-scene] {
+ .perimeter-edge-label {min-height:26px;padding:5px 8px;line-height:1.3;}
+ .perimeter-edges-toggle {height:50px;padding:5px;line-height:1.2;}
+}
+html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='graph_grabber'][data-measured-scene] {
+ .shipment-trace-toggle {height:50px;padding:5px;line-height:1.2;}
+}
+html[data-presentation='matharia'] #root .app-viewport.screen-wellbeing-activity:has(.wellbeing-shell[data-wellbeing-activity]) {
+ .matharia-pond-guidance>summary {font-size:12px;line-height:1.2;}
+ .leaf-button>span {bottom:4px;font-size:12px;line-height:1.25;}
+ .legend-hud-label {font-size:12px;line-height:1.25;}
+ .star-round-kicker,.star-round-hint {font-size:12px;line-height:1.3;}
+ .matharia-pond-note-panel .wellbeing-slow-note>span {font-size:12px;line-height:1.3;}
+}
+/* The landscape dock's existing surface is 64px tall; its wrapper must reserve
+   that full height rather than letting the buttons extend below the screen. */
+html[data-presentation='matharia'] #root .app-viewport.screen-wellbeing-activity:has(.wellbeing-shell[data-wellbeing-activity='peaceful_pond']) {
+ [data-testid='shared-bottom-hud'] {height:64px;min-height:64px;}
+}
+
+/* Compact devices retain the same scene compositions. Text/control bays reserve
+   the shared HUD's actual minimum height rather than percentage-only offsets. */
+@media (orientation:landscape) and (max-height:380px) {
+ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game][data-measured-scene] {
+  &:is([data-active-game='simplify_sprint'],[data-active-game='graph_grabber'],[data-active-game='calendar_quest']) .concept-question-zone {top:calc(var(--dock-header-top) + var(--dock-header-height) + 6px);}
+  .potion-recipe {top:calc(var(--dock-header-top) + var(--dock-header-height) + 6px);}
+  .potion-live-ingredients {top:18%;height:calc(var(--potion-action-top) - 18% - 6px);}
+  .potion-live-card {padding:4px;gap:2px;}
+  .potion-live-card-heading {font-size:12px;line-height:1.2;white-space:nowrap;flex-wrap:nowrap;gap:2px;}
+  .angle-hint-toggle {min-height:54px;}
+  &[data-active-game='take_out_rush'] {
+   .takeout-food-shelf>button:has(.takeout-stock) {grid-template-rows:14px minmax(0,1fr) 18px;padding:4px 3px;gap:1px;}
+   .takeout-stock {font-size:12px;line-height:1.1;white-space:nowrap;}
+   .takeout-food-shelf>button:has(.takeout-stock)>img {min-height:0;max-height:100%;}
+   .takeout-food-shelf>button:has(.takeout-stock)>strong {font-size:14px;line-height:1;}
+  }
+  .perimeter-next-edge:has(.perimeter-feedback-copy) {top:39%;height:auto;min-height:64px;padding:8px 12px;}
+  .data-evidence-legend {height:76px;}
+  .data-evidence-chart {bottom:98px;}
+  .shipment-chart-labels>button {padding:5px 1px;line-height:1.3;overflow-wrap:anywhere;}
+  .remainder-cargo-count {font-size:12px;}
+  .remainder-yard {grid-template-columns:minmax(80px,.3fr) minmax(0,1fr);}
+  &:has([data-remainder-mode='group_board']) .remainder-workspace {grid-template-columns:12% 34% minmax(0,1fr);}
+ }
+}
+@media (orientation:portrait) and (max-height:700px) {
+ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game][data-measured-scene] {
+  .pvp-submit {top:auto;bottom:calc(var(--dock-footer-bottom) + var(--dock-footer-height) + 8px);height:44px;}
+  .polygon-prompt {line-height:1.3;}
+  .paper-live-model .sats-diagram text {font-size:22px;}
+ }
+}
+html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='number_line_ninja'][data-measured-scene] {
+ --ninja-answer-size:max(64px,var(--ninja-answer-size-base));
+ .ninja-answer {padding:0;}
+ .ninja-answer>span {padding:0;}
+}
+
+/* Portrait question cards share the same HUD clearance at phone and tablet sizes. */
+@media (orientation:portrait) {
+ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game][data-measured-scene] {
+  &:is([data-active-game='factor_frenzy'],[data-active-game='multiplication_mine'],[data-active-game='conversion_canyon']) .concept-question-zone {top:max(11%,calc(var(--dock-header-top) + var(--dock-header-height) + 8px));}
+  .pvp-target {padding-top:5px;}
+  .pvp-place {min-height:24px;flex-shrink:0;}
+ }
+}

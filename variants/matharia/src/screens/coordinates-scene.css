@@ -48,3 +48,15 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='coor
  .coordinate-tick{font-size:12px;}.coordinate-tick-x{translate:-50% 7px;}.coordinate-tick-y{translate:calc(-100% - 6px) -50%;}.coordinate-origin{translate:calc(-100% - 6px) 7px;}.coordinate-legend{font-size:12px;bottom:-2%;}
  .legend-dock-button{font-size:10px;gap:1px;}.legend-dock-button>svg{width:21px;height:21px;}
 }}
+@media (orientation:landscape) and (max-height:360px) {
+ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='coordinates_quest'][data-measured-scene] {
+  .concept-question-zone {left:19%;width:79%;top:calc(var(--dock-header-top) + var(--dock-header-height) + 6px);height:62px;min-height:0;}
+  .coordinates-chart {top:124px;bottom:calc(var(--dock-footer-bottom) + var(--dock-footer-height) + 8px);height:auto;}
+  .coordinates-live-grid {top:47%;width:min(86cqw,84cqh);height:min(86cqw,84cqh);}
+  .coordinates-console-region {top:124px;bottom:calc(var(--dock-footer-bottom) + var(--dock-footer-height) + 8px);height:auto;}
+  .coordinates-console-region>.artwork-plane {width:100%!important;height:100%!important;}
+  .coordinates-current-point {left:8%;width:84%;top:0;height:32px;min-height:32px;}
+  .coordinates-arrows {top:34px;height:44px;}
+  .coordinates-choose {top:82px;height:44px;}
+ }
+}

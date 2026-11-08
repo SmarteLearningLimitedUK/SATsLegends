@@ -31,6 +31,8 @@ export type CompleteLevelArgs = {
   livesRemaining: number;
   mistakes: number;
   timeMs: number;
+  /** Untimed supported revision must not replace a timed personal best. */
+  timingEligible?: boolean;
   /** Use the mini-game's own earned rating when it has scored the clear. */
   reportedStars?: StarCount;
   /** Some scored adventures require a minimum star after meeting their own clear target. */

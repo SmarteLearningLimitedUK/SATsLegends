@@ -1,8 +1,11 @@
 {
-  "tag": "matharia-ci-20261103-allgames-parentgate-v1",
+  "tag": "matharia-ci-20261108-island-selection-v1",
   "asset": "matharia-mac-testflight-candidate.zip",
-  "sha256": "649d5be8a0e38932c6603bcfd8c251c145de06bfa56c7c276a7cb27d913e14b6",
+  "sha256": "45ca887fee85466015955dea565a9f9ff3e14d0501fb8db60dedf5d327d1ff0b",
   "bundleId": "com.smartelearning.satslegends",
   "minimumIOS": "16.4",
-  "sourceGitHead": "fe35bdcf49b6a5c5a302e9582e486c742441e30d"
+  "sourceGitHead": "e7083fb7b03ebe80d4c9becd6b14338310c9ff70",
+  "internalTestingOnly": true,
+  "testerLocale": "en-GB",
+  "testerNotes": "Internal review: all games and levels remain unlocked.\n\nUpdated selection screens across all eight islands with dedicated backgrounds and game illustrations. Core of Calculation now uses the shared selection layout. Removed category/island-number subtitles, improved long caption wrapping, and increased compact-phone previews so the full artwork is visible. Artwork and saved-progress identifiers are preserved.\n\nBrowser viewport and navigation checks passed. This build is for checking the native iPhone/iPad presentation, rotation and saved progress."
 }

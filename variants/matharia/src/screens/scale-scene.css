@@ -22,3 +22,26 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='scal
 }
 @media(min-height:600px){html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='scale_builder'][data-measured-scene] {.scale-number-pad {grid-template-columns:repeat(4,minmax(44px,1fr));grid-template-rows:repeat(3,minmax(44px,1fr));max-height:280px;}.scale-numeric-blueprint {top:12%;height:calc(88% - 52px);}}}
 @media(prefers-reduced-motion:reduce){.scale-numeric-blueprint *{transition:none!important;animation:none!important;}}
+/* The frame rim has its own inset; labels and all keypad rows share the remaining space. */
+html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='scale_builder'][data-measured-scene] {
+ .scale-frontal-scene {grid-template-columns:minmax(0,1fr) minmax(294px,35%);gap:10px;}
+ .scale-live-question {min-height:72px;padding:14px 8%;box-sizing:border-box;}
+ .scale-live-question [data-question-copy] {line-height:1.3;}
+ .scale-live-board h2 {top:8%;}
+ .scale-live-controls {padding:8px;gap:6px;box-sizing:border-box;display:grid;grid-template-columns:minmax(140px,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;align-items:center;overflow-y:auto;}
+ .scale-number-entry {display:contents;}
+ .scale-dimension-fields {grid-column:2;grid-row:1;grid-template-columns:minmax(0,1fr);}
+ .scale-dimension-fields label>span {white-space:normal;line-height:1.3;padding-bottom:3px;}
+ .scale-dimension-fields input {box-sizing:border-box;padding:6px 10px;}
+ .scale-number-pad {grid-column:1;grid-row:1 / span 2;grid-template-columns:repeat(3,minmax(44px,1fr));grid-template-rows:repeat(4,44px);min-height:0;gap:2px;width:min(100%,192px);justify-self:center;}
+ .scale-number-pad>button {background:#fbfcfc;border:1px solid #aebcc2;border-radius:6px;color:#162d36;font-size:22px;}
+ .scale-live-actions {grid-column:2;grid-row:2;grid-template-columns:minmax(44px,1fr) minmax(0,1.5fr);gap:4px;min-height:44px;}
+ .scale-live-actions>button {min-height:44px;padding:5px;font-size:clamp(12px,1.5cqw,18px);line-height:1.15;}
+}
+@media(max-width:760px) {
+ html[data-presentation='matharia'] #root .screen-gameplay[data-active-game='scale_builder'][data-measured-scene] {
+  .scale-frontal-scene {grid-template-columns:minmax(0,1fr) 294px;gap:6px;}
+  .scale-live-controls {padding:5px;gap:5px;}
+  .scale-dimension-fields label>span {padding-bottom:0;font-size:12px;}
+ }
+}

@@ -321,7 +321,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
       setScore(nextScore);
       setCorrectAnswers(nextCorrect);
       setStatusText(`Power cell restored. +${award} XP.`);
-      triggerHaptic('success');
+      if (!sessionEvents?.onCorrectAnswer) triggerHaptic('success');
       emitMiniGameSessionEvent(sessionEvents, 'correct_answer', {
         score: nextScore,
         metadata: { round: roundNumber, questionId: question.id },
@@ -344,7 +344,7 @@ const PercentPowerGame: React.FC<PercentPowerGameProps> = ({
 
     setFeedback('incorrect');
     setStatusText('Pressure vented. Recheck the percentage clue.');
-    triggerHaptic('warning');
+    if (!sessionEvents?.onIncorrectAnswer) triggerHaptic('warning');
     emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', {
       score: XP,
       metadata: { round: roundNumber, questionId: question.id, selectedIndex: index },

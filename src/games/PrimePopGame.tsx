@@ -1,4 +1,7 @@
+import {primeErrorPattern,ERROR_PATTERNS} from '../systems/learning/misconceptions';
+import {questionMetadata} from '../systems/learning/questionMetadata';
 import { playGameSound } from '../audio/gameAudio';
+import {isUntimedRevision,isRelaxedRevision} from '../systems/learning/sessionPolicy';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
@@ -88,7 +91,7 @@ const getConfig = (levelId: number): PrimePopConfig => {
   if (level <= 3) {
     return {
       targetScore: 900 + ((level - 1) * 80),
-      maxNumber: [20, 40, 60, 80, 99][tier - 1],
+      maxNumber: [20, 40, 60, 80, 100][tier - 1],
       minBubbles: 4,
       maxBubbles: 7,
       minRadius: 4.8,
@@ -106,7 +109,7 @@ const getConfig = (levelId: number): PrimePopConfig => {
   if (level <= 7) {
     return {
       targetScore: 1150 + ((level - 4) * 95),
-      maxNumber: [20, 40, 60, 80, 99][tier - 1],
+      maxNumber: [20, 40, 60, 80, 100][tier - 1],
       minBubbles: 5,
       maxBubbles: 8,
       minRadius: 4.4,
@@ -285,11 +288,12 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
   const bubblesRef = useRef<Bubble[]>([]);
   const primePopsRef = useRef(0);
   const totalPopsRef = useRef(0);
+  const missedPrimesRef=useRef(0);
   const localTimeRemainingRef = useRef(roundSeconds);
   const pausedRef = useRef(false);
   pausedRef.current = Boolean(showPracticeIntro || sessionState?.paused);
   const hasSharedSession = Boolean(sessionState);
-  const useLocalLives = !hasSharedSession && !isPractice;
+  const useLocalLives = !hasSharedSession && !isPractice && !isRelaxedRevision(sessionState);
 
   const targetScore = config.targetScore;
   const progress = Math.min((XP / Math.max(targetScore, 1)) * 100, 100);
@@ -351,9 +355,9 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     reportedResultRef.current = true;
     clearLoops();
 
-    const totalPops = Math.max(1, totalPopsRef.current);
+    const totalPops = Math.max(1, totalPopsRef.current+missedPrimesRef.current);
     const primeAccuracy = primePopsRef.current / totalPops;
-    if (!forceFailure && finalScore >= targetScore) {
+    if (!forceFailure && (finalScore >= targetScore || isUntimedRevision(sessionState)&&primePopsRef.current>=10)) {
       const stars = scoreToStars(finalScore, targetScore, primeAccuracy);
       confetti({
         particleCount: 120,
@@ -435,6 +439,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     livesRef.current = INITIAL_LIVES;
     primePopsRef.current = 0;
     totalPopsRef.current = 0;
+    missedPrimesRef.current = 0;
     setScore(0);
     localTimeRemainingRef.current = roundSeconds;
     setFeedback(null);
@@ -452,7 +457,7 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
 
     if (!hasSharedSession) {
       timerRef.current = window.setInterval(() => {
-        if (pausedRef.current || document.hidden || overRef.current) return;
+        if (pausedRef.current || document.hidden || overRef.current || isUntimedRevision(sessionState)) return;
         localTimeRemainingRef.current = Math.max(0, localTimeRemainingRef.current - 1);
         if (localTimeRemainingRef.current === 0) finalize(scoreRef.current);
       }, 1000);
@@ -514,19 +519,20 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
       setScore(scoreRef.current);
       emitMiniGameSessionEvent(sessionEventsRef.current, 'correct_answer', {
         score: scoreRef.current,
-        metadata: { bubbleId, value: target.value },
+        metadata: { bubbleId, value: target.value ,...questionMetadata("prime_pop","number.prime-recognition",{id:bubbleId,value:target.value},"recognition",["5C5c"],false)},
       });
       later(() => setFeedback(null), 520);
+      if(isUntimedRevision(sessionState)&&primePopsRef.current>=10)finalize(scoreRef.current);
     } else {
       comboNext = 0;
       if (useLocalLives) livesNext -= 1;
       emitMiniGameSessionEvent(sessionEventsRef.current, 'incorrect_answer', {
         score: scoreRef.current,
-        metadata: { bubbleId, value: target.value },
+        metadata: { misconceptionCode:primeErrorPattern(target.value), bubbleId, value: target.value ,...questionMetadata("prime_pop","number.prime-recognition",{id:bubbleId,value:target.value},"recognition",["5C5c"],false)},
       });
       setMistakeBubbleId(bubbleId);
       setScreenShake(true);
-      setFeedback(isPractice ? `${target.value} is not prime. Look for factors besides 1 and itself.` : '-1 life');
+      setFeedback(`${target.value} is not prime. ${ERROR_PATTERNS[primeErrorPattern(target.value)].reminder}`);
 
       later(() => {
         const nextBubbles = bubblesRef.current.filter((bubble) => bubble.id !== bubbleId);
@@ -606,9 +612,11 @@ const PrimePopGame: React.FC<PrimePopGameProps> = ({
     // not when its top edge merely touches it.
     const hasReachedDanger = (bubble: Bubble) => bubble.y * fieldHeight / 100 <= dangerY;
     // Check natural movement before collision separation can push a bubble into the rail.
+    if(isUntimedRevision(sessionState))for(const bubble of movedBubbles)if(bubble.isPrime&&hasReachedDanger(bubble))bubble.y=(dangerY+2)/fieldHeight*100;
     const escaped = movedBubbles.filter(hasReachedDanger);
     const dangerPrimeBubbles = escaped.filter(bubble => bubble.isPrime);
     const dangerPrimeHits = dangerPrimeBubbles.length;
+    missedPrimesRef.current+=dangerPrimeHits;
     // Composites pass safely too: retaining them above the rail fills the spawn cap.
     const nextBubbles = resolveBubbleCollisions(
       movedBubbles.filter(bubble => !hasReachedDanger(bubble)),

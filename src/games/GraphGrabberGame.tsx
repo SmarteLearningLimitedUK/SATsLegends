@@ -1,3 +1,15 @@
+import PictogramBoard from '../components/game-ui/PictogramBoard';
+import RevisionActivityPresentation from '../components/game-ui/RevisionActivityPresentation';
+import SatsAnswerFields from '../components/game-ui/SatsAnswerFields';
+import SatsRevisionGapConstruction from '../components/game-ui/SatsRevisionGapConstruction';
+import { PrimaryActionCTA } from '../layout/ScreenPrimitives';
+import { validateAnswerEntry } from '../systems/content/answerEntry';
+import { buildPictogramQuestion, type PictogramQuestion } from '../systems/content/pictogramQuestions';
+import { markMission } from '../systems/content/satsAdventure';
+import { questionMetadata } from '../systems/learning/questionMetadata';
+import { shuffle } from '../utils/questionShuffle';
+import {isUntimedRevision} from '../systems/learning/sessionPolicy';
+import {isRelaxedRevision} from '../systems/learning/sessionPolicy';
 import React, { useEffect, useId, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import confetti from 'canvas-confetti';
@@ -62,13 +74,80 @@ const SHIPMENT_COLORS = ['#38bdf8', '#818cf8', '#34d399', '#fbbf24', '#e879f9'];
 
 const buildRound = (levelId: number, roundIndex: number): ChartRound => buildShipmentRound(levelId, roundIndex);
 
-const normalize = (values: string[]) => [...new Set(values)].sort((a, b) => a.localeCompare(b));
+type GraphRound = ChartRound | { kind: 'pictogram'; id: string; support: string; question: PictogramQuestion };
+type GraphFeedback = { type: 'success' | 'error'; title: string; subtitle: string };
 
-const matchesAnswer = (selected: string[], expected: string[]) => {
-  const left = normalize(selected);
-  const right = normalize(expected);
-  return left.length === right.length && left.every((value, index) => value === right[index]);
-};
+function buildGraphRun(levelId: number, total: number): GraphRound[] {
+  // Shuffle a balanced mix so even the shortest level practises both formats.
+  const offset = Math.random() < .5 ? 0 : 1;
+  const formats = shuffle(Array.from({ length: total }, (_, index): GraphRound['kind'] => (index + offset) % 2 === 0 ? 'bar' : 'pictogram'));
+  // Existing preview links still open on their requested format, then use the same mixed run.
+  const previewMode = typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('mode');
+  const first = previewMode === 'bars' ? 'bar' : previewMode === 'pictogram' ? 'pictogram' : null;
+  if (first) {
+    const index = formats.indexOf(first);
+    if (index > 0) [formats[0], formats[index]] = [formats[index], formats[0]];
+  }
+  const seed = Math.floor(Math.random() * 1_000_000);
+  let barIndex = 0;
+  let pictogramIndex = 0;
+  return formats.map((format, index) => {
+    if (format === 'bar') return buildRound(levelId, barIndex++);
+    return {
+      kind: 'pictogram', id: `pictogram-${levelId}-${index}`,
+      support: 'Use the counts and symbol key to interpret the pictogram.',
+      question: buildPictogramQuestion(levelId, seed, pictogramIndex++),
+    };
+  });
+}
+
+function PictogramRound({ round, position, total, score, time, hearts, paused, intro, feedback, onSubmit }: {
+  key?: string;
+  round: Extract<GraphRound, { kind: 'pictogram' }>;
+  position: number; total: number; score: number; time: number; hearts: number; paused: boolean;
+  intro: React.ReactNode; feedback: GraphFeedback | null; onSubmit: (value: string) => void;
+}) {
+  const { mission, model, build, initialValue } = round.question;
+  const [value, setValue] = useState(build ? initialValue : '');
+  const [notice, setNotice] = useState('');
+  const [padOpen, setPadOpen] = useState(false);
+  const symbols = (build ? value : initialValue).split(':').slice(1).map(part => /^\d+$/.test(part) ? Number(part) : null);
+  const change = (next: string) => {
+    setValue(next);
+    setNotice('');
+  };
+  const check = () => {
+    if (build) {
+      if (!/^pictogram:\d+:\d+:\d+$/.test(value)) {
+        setNotice('Complete all three rows before checking.');
+        return;
+      }
+      onSubmit(value);
+      return;
+    }
+    const entry = validateAnswerEntry(value, { kind: 'number' });
+    if (entry.ok === false) {
+      setNotice(entry.message);
+      return;
+    }
+    onSubmit(entry.value);
+  };
+  const controls = feedback ? (
+    <div role="status" aria-live="polite" data-activity-result={feedback.type === 'success' ? 'correct' : 'incorrect'}>
+      <p>{feedback.type === 'success' ? `Correct. ${feedback.subtitle}` : feedback.subtitle}</p>
+    </div>
+  ) : (
+    <>
+      {build ? <SatsRevisionGapConstruction model={model} value={value} onChange={change} part="controls" compact/>
+        : <SatsAnswerFields mission={mission} values={[value]} compactPad onChange={change} onPadOpenChange={setPadOpen}/>}
+      <div data-activity-check><PrimaryActionCTA disabled={paused || padOpen || !value} onClick={check}>{build ? 'Check build' : 'Check answer'}</PrimaryActionCTA></div>
+      {notice && <p role="alert">{notice}</p>}
+    </>
+  );
+  return <RevisionActivityPresentation id={round.id} title="Pictogram" prompt={mission.prompt} hint={round.support}
+    board={<PictogramBoard model={model} showTargets={build} symbols={symbols}/>} controls={controls} intro={intro}
+    paused={paused || padOpen} round={position} total={total} score={score} time={time} hearts={hearts}/>;
+}
 
 const GraphBoard: React.FC<{ round: ChartRound; difficulty: number }> = ({ round, difficulty }) => {
   const crateId = useId().replaceAll(':', '');
@@ -159,11 +238,14 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
   const [hearts, setHearts] = useState(MAX_HEARTS);
   const [roundNumber, setRoundNumber] = useState(1);
   const [Combo, setStreak] = useState(0);
-  const [round, setRound] = useState<ChartRound>(() => buildRound(levelId, 0));
-  const [feedback, setFeedback] = useState<null | { type: 'success' | 'error'; title: string; subtitle: string }>(null);
+  const [rounds, setRounds] = useState(() => buildGraphRun(levelId, totalRounds));
+  const [feedback, setFeedback] = useState<GraphFeedback | null>(null);
   const [isFinished, setIsFinished] = useState(false);
   const [showPracticeIntro, setShowPracticeIntro] = useState(Boolean(isPractice));
   const [isLocked, setIsLocked] = useState(false);
+  const answerLocked = useRef(false);
+  const pictogramRevealed = useRef(false);
+  const round = rounds[roundNumber - 1];
 
   const progress = Math.min((XP / targetScore) * 100, 100);
 
@@ -181,19 +263,21 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
     setHearts(MAX_HEARTS);
     setRoundNumber(1);
     setStreak(0);
-    setRound(buildRound(levelId, 0));
+    setRounds(buildGraphRun(levelId, totalRounds));
     setFeedback(null);
     setIsFinished(false);
     setShowPracticeIntro(Boolean(isPractice));
     setIsLocked(false);
-  }, [isPractice, levelId]);
+    answerLocked.current = false;
+    pictogramRevealed.current = false;
+  }, [isPractice, levelId, totalRounds]);
 
   useEffect(() => {
     setShowPracticeIntro(Boolean(isPractice));
   }, [isPractice]);
 
   useEffect(() => {
-    if (isPractice || isFinished) return undefined;
+    if (isPractice || isFinished || isUntimedRevision(sessionState)) return undefined;
     const timerId = window.setInterval(() => {
       setTimeLeft((previous) => {
         if (previous <= 1) {
@@ -206,7 +290,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
       });
     }, 1000);
     return () => window.clearInterval(timerId);
-  }, [XP, isFinished, isPractice, onGameOver]);
+  }, [XP, isFinished, isPractice, onGameOver, sessionState?.untimed]);
 
   const finishVictory = (finalScore: number) => {
     if (isFinished) return;
@@ -233,16 +317,17 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
     const timeoutId = window.setTimeout(() => {
       const nextRoundNumber = roundNumber + 1;
       setRoundNumber(nextRoundNumber);
-      setRound(buildRound(levelId, nextRoundNumber - 1));
       setFeedback(null);
       setIsLocked(false);
+      answerLocked.current = false;
+      pictogramRevealed.current = false;
     }, 1150);
     timeoutsRef.current.push(timeoutId);
   };
 
   const loseHeart = (subtitle: string) => {
     if (feedback || isFinished) return;
-    const nextHearts = isPractice ? hearts : hearts - 1;
+    const nextHearts = isPractice||isRelaxedRevision(sessionState) ? hearts : hearts - 1;
     if (!isPractice) setHearts(nextHearts);
     setStreak(0);
     setFeedback({ type: 'error', title: isPractice ? 'Try that again' : 'Not quite', subtitle });
@@ -258,25 +343,37 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
     const timeoutId = window.setTimeout(() => {
       setFeedback(null);
       setIsLocked(false);
+      answerLocked.current = false;
     }, 950);
     timeoutsRef.current.push(timeoutId);
   };
 
-  const submitAnswer = (selection: string[]) => {
-    if (feedback || isFinished || isLocked) return;
+  const submitAnswer = (value: string) => {
+    if (feedback || isFinished || isLocked || answerLocked.current || sessionState?.paused || showPracticeIntro) return;
+    answerLocked.current = true;
     setIsLocked(true);
 
-    const normalizedSelected = normalize(selection);
-    const normalizedExpected = normalize(round.correctAnswers);
-    const isCorrect = matchesAnswer(normalizedSelected, normalizedExpected);
+    const metadata: Record<string, unknown> = { round: roundNumber, chart: round.kind };
+    let isCorrect: boolean;
+    if (round.kind === 'bar') {
+      isCorrect = round.correctAnswers.includes(value);
+    } else {
+      const { mission, build } = round.question;
+      isCorrect = markMission(mission, [value]) === mission.marks;
+      Object.assign(metadata, questionMetadata('graph_grabber', 'statistics.pictogram', mission,
+        build ? 'construction' : 'numeric', [mission.reference]), {
+        familyId: mission.id, answerRevealed: pictogramRevealed.current,
+      });
+      if (!isCorrect) pictogramRevealed.current = true;
+    }
 
     if (!isCorrect) {
-      emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { metadata: { round: roundNumber, chart: round.kind } });
-      loseHeart(round.support);
+      emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { metadata });
+      loseHeart(round.kind === 'pictogram' ? round.question.mission.explanation : round.support);
       return;
     }
 
-    emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { metadata: { round: roundNumber, chart: round.kind } });
+    emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { metadata });
 
     const points = 155 + (Combo * 24);
     const updatedScore = XP + points;
@@ -293,9 +390,22 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
   };
 
   const handleOptionClick = (choice: RoundOption) => {
-    if (isLocked || feedback || isFinished) return;
-    submitAnswer([choice.id]);
+    submitAnswer(choice.id);
   };
+
+  const intro = <PracticeIntroPopup
+    open={showPracticeIntro}
+    title="Graph Grabber"
+    body="The Monster Minds have hijacked the supply records.\nRead each bar chart or pictogram to recover them.\nCheck the axis or symbol key before answering."
+    briefing={practiceBriefing}
+    onAction={() => setShowPracticeIntro(false)}
+  />;
+
+  if (round.kind === 'pictogram') {
+    return <PictogramRound key={round.id} round={round} position={roundNumber} total={totalRounds}
+      score={XP} time={timeLeft} hearts={hearts} paused={Boolean(sessionState?.paused) || showPracticeIntro || isFinished}
+      intro={intro} feedback={feedback} onSubmit={submitAnswer}/>;
+  }
 
   return (
     <div data-graph-round={round.id} data-graph-result={feedback?.type ?? 'idle'} className="graph-grabber-game relative flex h-full w-full flex-col overflow-hidden bg-transparent select-none text-slate-100">
@@ -304,13 +414,7 @@ const GraphGrabberGame: React.FC<GraphGrabberGameProps> = ({
         <img src={dockCrane} alt="" draggable={false} />
         <svg className="graph-dock-cargo" viewBox="0 0 80 80"><rect x="4" y="4" width="72" height="72" rx="4" fill="#b77839" stroke="#5e3b24" strokeWidth="5"/><path d="M9 9L71 71M71 9L9 71" stroke="#69401f" strokeWidth="7"/><path d="M13 10H67V70H13Z" fill="none" stroke="#e9bd77" strokeWidth="3"/></svg>
       </div>
-      <PracticeIntroPopup
-        open={showPracticeIntro}
-        title="Graph Grabber"
-        body="The Monster Minds have hijacked the supply graph.\nRead the graph and grab the correct answer.\nCheck the axes and labels carefully."
-        briefing={practiceBriefing}
-        onAction={() => setShowPracticeIntro(false)}
-      />
+      {intro}
 
       <div className="graph-grabber-content relative z-10 flex h-full min-h-0 w-full flex-1 flex-col px-2 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] pt-2 md:px-4 md:pb-[calc(env(safe-area-inset-bottom)+0.65rem)] md:pt-3">
         <div className="graph-grabber-spacer flex flex-1" />

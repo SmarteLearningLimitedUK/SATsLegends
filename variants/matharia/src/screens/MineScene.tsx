@@ -1,3 +1,5 @@
+import {adventureTask} from '../../../../src/systems/content/adventureStory';
+import IndependentAnswer,{answerAsNumber,matchingAnswerIndex,canonicalAnswer} from '../../../../src/components/game-ui/IndependentAnswer';
 import {roundFeedback} from '../roundFeedback';
 import React,{useContext,useEffect,useState} from 'react';
 import {useReducedMotion} from 'motion/react';
@@ -16,11 +18,12 @@ export default function MineScene(p:Props){
  const scene=useContext(VisionSceneContext),identity=scene.heroIdentity??'barratt',hit=Boolean(p.feedback&&p.feedback.tone!=='error'),stamp=`${p.a}:${p.b}:${p.step}:${p.correct}`,columns=p.choices.every(n=>n.toLocaleString().length<=4)?4:2;
  const reduced=useReducedMotion(),clock=usePausedTimers(p.paused||!p.present),[visibleHealth,setVisibleHealth]=useState(p.health);
  useEffect(()=>{if(p.health>=visibleHealth||reduced){setVisibleHealth(p.health);return}return clock.schedule(()=>setVisibleHealth(p.health),145)},[p.health,visibleHealth,reduced,clock]);
+ const question=p.tier===1?`What is ${p.a.toLocaleString()} × ${p.b}?`:p.prompt;
  const frame=visibleHealth===0?3:Math.min(2,4-visibleHealth);
  useSceneContact(stamp,hit,'stone',145,p.paused||!p.present);
  usePresentationHint(`${p.prompt}\n${p.defaultFeedback}\nFour accurate strikes open the ore and reveal its crystal.`);
  return <section className="mine-scene" data-mine-game data-mine-a={p.a} data-mine-b={p.b} data-mine-column={p.step} data-mine-tier={p.tier} data-mine-state={p.ended?'ended':p.phase} data-mine-correct={p.correct} data-mine-health={p.health} data-mine-score={p.score} data-mine-locked={p.locked} data-mine-paused={p.paused||!p.present} data-mine-feedback-tone={roundFeedback(p.feedback)?.tone} data-mine-guided={p.tier>=2} data-mine-strike={hit}>
-  {p.intro}<ScalableQuestionPanel frame="frames/glacier_panel_v3" corner={.13}><strong className="mine-product-question">{p.a.toLocaleString()} × {p.b} = ?</strong><span className="mine-crystal-count">Crystals {p.correct} / 4</span></ScalableQuestionPanel>
+  {p.intro}<ScalableQuestionPanel roundKey={stamp}><strong className="mine-product-question" data-mine-column-question>{question}</strong><span className="mine-crystal-count">{adventureTask('multiplication_mine',p.correct)} · {p.correct}/4 strikes</span></ScalableQuestionPanel>
   <div className="mine-workspace">
    {p.tier>=2&&<section className="mine-column-board" aria-label="Multiplication working"><ArtworkFrame name="frames/glacier_panel_v3" corner={.13}/>{p.working}</section>}
    <div className="mine-playfield">
@@ -32,7 +35,7 @@ export default function MineScene(p:Props){
      {p.phase==='treasure'&&visibleHealth===0&&<div className="mine-recovered">Crystal recovered</div>}
     </div>
    </div>
-   <section className="mine-answer-console" aria-label="Choose a multiplication answer"><ArtworkFrame name="frames/glacier_panel_v3" corner={.13}/><div className="mine-caption" data-feedback={Boolean(roundFeedback(p.feedback))}><p className="mine-column-prompt" data-mine-column-question>{p.prompt}</p><p className="mine-live-feedback" role="status" aria-live="polite" data-mine-feedback data-tone={roundFeedback(p.feedback)?.tone}>{roundFeedback(p.feedback)?.text??p.defaultFeedback}</p></div><div className="mine-live-choices" data-columns={columns}>{p.choices.map(option=><button key={`${p.a}:${p.b}:${p.step}:${option}`} type="button" data-button-skin="none" data-mine-answer={option} aria-label={`Choose ${option.toLocaleString()}`} aria-pressed={p.selected===option} data-tone={p.selected===option?roundFeedback(p.feedback)?.tone:undefined} disabled={p.locked||p.phase!=='playing'||p.ended||!p.present||p.paused} onClick={()=>p.onAnswer(option)}><ArtworkFrame name="buttons/mine_answer_v3" corner={.13} fit="height"/><span>{option.toLocaleString()}</span></button>)}</div></section>
+   <section className="mine-answer-console" aria-label="Enter a multiplication answer"><ArtworkFrame name="frames/glacier_panel_v3" corner={.13}/><div className="mine-caption" data-feedback={Boolean(roundFeedback(p.feedback))}><p className="mine-live-feedback" role="status" aria-live="polite" data-mine-feedback data-tone={roundFeedback(p.feedback)?.tone}>{roundFeedback(p.feedback)?.text}</p></div><div className="mine-live-choices" data-columns={columns}><IndependentAnswer submitLabel={p.tier===1?'Strike':'Check calculation'} questionId={`${p.a}:${p.b}:${p.step}`} fingerprint={JSON.stringify([p.a,p.b,p.step])} gameKey="multiplication_mine" skillId={p.tier===1?"calculation.multiply":"multiplication.column"} curriculumRefs={p.tier===1?["4C6a"]:p.tier<4?["4C7","5C7a"]:["6C7a"]} disabled={p.locked||p.phase!=="playing"||p.ended||!p.present||p.paused} onSubmit={value=>p.onAnswer(answerAsNumber(value))}>{open=><button type="button" data-button-skin="none" disabled={p.locked||p.phase!=="playing"||p.ended||!p.present||p.paused} onClick={open}><ArtworkFrame name="buttons/mine_answer_v3" corner={.13} fit="height"/><span>Enter answer</span></button>}</IndependentAnswer></div></section>
   </div>
  </section>;
 }

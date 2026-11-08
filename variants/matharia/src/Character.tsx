@@ -1,3 +1,4 @@
+import {useLearningPolicy} from '../../../src/systems/learning/learningSupport';
 import {compositionFor} from './compositions';
 import {asset,heroFor} from './assets';
 import '../../../src/components/game-ui/vision-character.css';
@@ -16,7 +17,8 @@ const readReducedMotion=()=>window.matchMedia(motionQuery).matches;
 
 /** Stable high resolution artwork, continuously animated without pose swaps. */
 export default memo(function OriginalHeroCharacter({identity, alt='', className='', style, reaction='idle', reactionKey, decorative=false, walking=false, legacyIdentity, soundMode='off',activity:requestedActivity,artPose}: VisionCharacterProps) {
-  const scene=useContext(VisionSceneContext), reduced=useSyncExternalStore(subscribeMotion,readReducedMotion,()=>true);
+  const support=useLearningPolicy();
+  const scene=useContext(VisionSceneContext), osReduced=useSyncExternalStore(subscribeMotion,readReducedMotion,()=>true),reduced=osReduced||support.reducedMovement;
   const artwork=originalHeroActivity(identity,artPose);
   const source=/zombie|slime|sentinel|jelly/.test(identity)?asset('characters','enemy_zombie'):asset('heroes',compositionFor(scene.key).hero);
   const hero=Boolean(originalHeroSource(identity));

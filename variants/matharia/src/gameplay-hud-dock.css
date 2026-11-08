@@ -23,31 +23,31 @@ html[data-presentation='matharia'] #root .screen-gameplay {
  --dock-footer-width:min(calc(var(--dock-width) - 24px),520px);
  --dock-footer-bottom:12px;
 }
-html[data-presentation='matharia'] #root .screen-gameplay:has(.concept-stage[data-concept-orientation='portrait']) {
+html[data-presentation='matharia'] #root .iphone-game-viewport[data-screen-orientation='portrait'] .screen-gameplay {
  --dock-header-top:var(--portrait-hud-top);
  --dock-header-offset:0px;
  --dock-header-height:var(--portrait-hud-height);
  /* Pause was removed; use its former gutter for readable title/status padding. */
- --dock-header-width:min(650px,calc(var(--dock-width) - 24px));
+ --dock-header-width:var(--portrait-dock-width);
  --dock-avatar:var(--dock-header-height);
  --dock-title-size:clamp(14px,4.2vw,24px);
- --dock-stat-size:clamp(13px,calc(var(--dock-header-height)*.26),20px);
- --dock-heart-size:clamp(14px,calc(var(--dock-header-height)*.27),22px);
- --dock-icon-size:clamp(14px,calc(var(--dock-header-height)*.26),20px);
- --dock-status-gap:2px;
+ --dock-stat-size:clamp(13px,calc(var(--dock-header-height)*.23),18px);
+ --dock-heart-size:clamp(13px,calc(var(--dock-header-height)*.24),19px);
+ --dock-icon-size:var(--dock-stat-size);
+ --dock-status-gap:1px;
  --dock-status-direction:column;
  --dock-pause-size:var(--portrait-pause-size);
  --dock-pause-top:calc(var(--dock-header-top) + (var(--dock-header-height) - var(--dock-pause-size))/2);
  --dock-pause-right:max(8px,calc((var(--dock-width) - var(--dock-header-width))/2 - 26px));
  --dock-footer-height:clamp(54px,calc(var(--dock-height)*.07),76px);
  --dock-footer-width:min(650px,calc(var(--dock-width) - 80px));
+ [data-testid='shared-top-hud'] > div:last-child {translate:0 -1px;}
+ .legend-hud-practice > svg {width:var(--dock-icon-size);height:var(--dock-icon-size);flex:none;}
 }
 @media(max-height:720px) and (orientation:portrait) {
- html[data-presentation='matharia'] #root .screen-gameplay:has(.concept-stage[data-concept-orientation='portrait']) {
+ html[data-presentation='matharia'] #root .iphone-game-viewport[data-screen-orientation='portrait'] .screen-gameplay {
+  --dock-avatar:calc(var(--dock-header-height) - 10px);
   --dock-title-size:14px;
-  --dock-stat-size:14px;
-  --dock-heart-size:15px;
-  --dock-icon-size:15px;
  }
 }
 html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene] [data-unified-minigame-hud][data-gameplay-docked] .legend-hud-bar::before {display:none;}

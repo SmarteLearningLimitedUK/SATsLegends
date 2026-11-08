@@ -16,10 +16,16 @@ export interface GameMeta {
 
 const makeBossRules = (title: string, summary: string, closingLine: string): GameRuleSet => ({
   title, summary,
-  bullets: ['Save each answer to charge a mission crystal; use Later and the mission list to revisit questions.', 'Complete the full timed run. Errors do not remove lives or end it early.', closingLine],
+  bullets: ['Answer 30 original SATs-style questions. Use Later and Question list to revisit answers.', 'There is no time limit or life loss. Working notes are optional and unmarked.', closingLine],
 });
 
 export const GAME_META: Record<MiniGameType, GameMeta> = {
+  shape_secrets:{label:'Shape Secrets',focus:'Linked shapes, regular-polygon sides and perimeter reasoning',rules:{title:'Shape Secrets',summary:'Follow the shared sides to unlock the glacier’s brainpower seals.',bullets:['Read the shape names and the given perimeter. The gold side links the shapes.','Find one side before calculating the missing perimeter. Joined outlines leave out the shared inside side.','Enter centimetres on the number pad, then Restore seal. Solve eight secrets. A wrong answer gives a short reminder and another attempt.']}},
+  acropolis_clearout:{label:'Acropolis Clearout',focus:'Addition, subtraction and signed-number reasoning',rules:{title:'Acropolis Clearout',summary:'Break the Monster Minds’ crystal seals and release the Acropolis brainpower.',bullets:['Tap the required number of tiles to make the target, then Clear tiles. Chosen tiles are used in tap order.','Addition includes negative numbers. For subtraction, work from left to right; subtracting a negative can increase the result.','Clear all 24 tiles. Bonus-star tiles give extra points. Undo and Reset change your selection without a penalty.']}},
+  divide_conquer:{label:'Divide and Conquer',focus:'Division facts, written division and remainders',rules:{title:'Divide and Conquer',summary:'Dismantle the Monster Minds’ camps and reclaim stolen brainpower.',bullets:['Choose any enemy camp on the map to open its division board.','Enter each division answer on the mini number pad, then Dismantle. Correct answers remove camp defences.','Clear all four camps. Return to the map at any time; your completed working is kept.']}},
+  rune_relations:{label:'Rune Relations',focus:'Equations, rules, sequences and bounded number pairs',rules:{title:'Rune Relations',summary:'Repair the number links hiding Matharia’s stolen brainpower.',bullets:['Complete missing values and rule machines using the on-screen number pad.','Tap sockets and number runes to reconnect sequences. Build every valid pair, or select the gates that meet all conditions.','Seal each relationship to restore brainpower. Mistakes can be corrected; Tips and Board remain available.']}},
+  shattered_whole:{label:'The Shattered Whole',focus:'Visual fraction reasoning and restoration',rules:{title:'The Shattered Whole',summary:'Restore the Heart of Wholeness by solving ten mixed fraction puzzles.',bullets:['Read the equal parts and decide what counts as the whole.','Tap mosaics, order shields or drag the line marker. Use the existing answer pad for independent values.','Check your answer to restore one fragment. The Board and Tips remain available.']}},
+  calendar_quest:{label:'Calendar Quest',focus:'Dates, duration and calendar planning',rules:{title:'Calendar Quest',summary:'Read the calendar and solve each date mission.',bullets:['Enter a quantity or select a date, then check.','A week has 7 days; check month lengths and leap years.','Later levels combine durations and weekday constraints.']}},
   quiz: {
     label: 'Quiz',
     focus: 'Mixed SATs fluency',
@@ -74,12 +80,12 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   matrix_match: {
-    label: 'SATs Paper 3',
-    focus: 'Mixed reasoning mock adventure',
+    label: 'Reasoning Quiz 2',
+    focus: 'Mixed SATs-style reasoning quiz',
     mode: 'boss',
     rules: makeBossRules(
-      'SATs Paper 3: Reasoning',
-      'Explore mixed KS2 maths missions in a 40-minute, 35-mark adventure.',
+      'Reasoning Quiz 2',
+      'Answer 30 mixed KS2 reasoning questions at your own pace.',
       'Review solutions after finishing and return to the recommended practice games.'
     ),
   },
@@ -110,13 +116,13 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   crystal_core: {
-    label: 'SATs Paper 1',
-    focus: 'Timed arithmetic mock adventure',
+    label: 'Arithmetic Quiz',
+    focus: 'Independent SATs-style arithmetic quiz',
     mode: 'boss',
     rules: makeBossRules(
-      'SATs Paper 1: Arithmetic',
-      'Charge the arithmetic reactor with a 30-minute, 40-mark calculation adventure.',
-      'Use the choices and visual tools on screen. Solutions appear after the run.'
+      'Arithmetic Quiz',
+      'Answer 30 original SATs-style questions at your own pace.',
+      'Enter calculations independently using the number pad. Solutions appear after finishing.'
     ),
   },
   prime_pop: {
@@ -302,13 +308,13 @@ export const GAME_META: Record<MiniGameType, GameMeta> = {
     },
   },
   mirror_gate: {
-    label: 'SATs Paper 2',
-    focus: 'Mixed reasoning mock adventure',
+    label: 'Reasoning Quiz 1',
+    focus: 'Mixed SATs-style reasoning quiz',
     mode: 'boss',
     rules: makeBossRules(
-      'SATs Paper 2: Reasoning',
-      'Unlock the mirror gate with a 40-minute, 35-mark mix of all nine KS2 maths strands.',
-      'Save, skip and revisit missions before the clock ends; review your methods afterwards.'
+      'Reasoning Quiz 1',
+      'Answer 30 original SATs-style questions at your own pace.',
+      'Save, skip and revisit questions, then review the answers and explanations.'
     ),
   },
   scale_safari: {

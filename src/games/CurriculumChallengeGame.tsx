@@ -395,9 +395,9 @@ const generateCoordinateQuestion = (): ChallengeQuestion => {
 
 const generateTransformQuestion = (): ChallengeQuestion => {
   const start = { x: randomInt(-3, 1), y: randomInt(-2, 3), label: 'A', tone: 'bg-amber-300' };
-  const dx = pick([-3, -2, -1, 1, 2, 3]);
-  const dy = pick([-3, -2, -1, 1, 2, 3]);
-  const image = { x: clamp(start.x + dx, -4, 4), y: clamp(start.y + dy, -4, 4), label: "A'", tone: 'bg-sky-300' };
+  const dx = pick([-3, -2, -1, 1, 2, 3].filter(n=>start.x+n>=-4&&start.x+n<=4));
+  const dy = pick([-3, -2, -1, 1, 2, 3].filter(n=>start.y+n>=-4&&start.y+n<=4));
+  const image = { x: start.x + dx, y: start.y + dy, label: "A'", tone: 'bg-sky-300' };
   const correct = `${Math.abs(dx)} ${dx > 0 ? 'right' : 'left'}, ${Math.abs(dy)} ${dy > 0 ? 'up' : 'down'}`;
   const wrongCandidates = shuffle([
     `${Math.abs(dx)} ${dx > 0 ? 'left' : 'right'}, ${Math.abs(dy)} ${dy > 0 ? 'up' : 'down'}`,

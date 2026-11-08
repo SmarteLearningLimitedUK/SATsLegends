@@ -25,8 +25,11 @@ html[data-presentation='matharia'] #root .screen-gameplay[data-measured-scene] {
  .concept-question-panel {position:relative;width:100%;height:100%;min-height:0;margin:0;padding:0 8%;display:grid;place-items:center;isolation:isolate;}
  .concept-question-frame {position:absolute;z-index:-1;left:0;top:50%;translate:0 -50%;width:100%;height:auto;max-width:none;pointer-events:none;}
  .concept-question-copy {position:relative;width:100%;margin:0;padding:0;}
- .scalable-question-panel {container-type:inline-size;padding:0;}
- .scalable-question-copy {display:grid;place-items:center;width:100%;height:100%;padding:8px 7%;}
+ .scalable-question-panel {container-type:inline-size;box-sizing:border-box;min-height:100%;height:auto;padding:0;}
+ .scalable-question-copy {display:grid;place-items:center;box-sizing:border-box;width:100%;min-width:0;height:auto;padding:8px 7%;overflow-wrap:break-word;}
+ .scalable-question-stack {display:grid;justify-items:center;gap:3px;width:100%;min-width:0;}
+ .scalable-question-stack>div {min-width:0;max-width:100%;}
+ .scalable-question-story {display:block;font-size:clamp(12px,2.75cqw,14px);line-height:1.2;font-weight:550;color:#ffdfa2;}
  .question-jewel {position:absolute;z-index:1;left:50%;translate:-50% 0;width:clamp(76px,24cqw,128px);height:auto;pointer-events:none;}
  .question-jewel--top {top:2px;translate:-50% -80%;}
  .question-jewel--bottom {bottom:2px;translate:-50% 80%;rotate:180deg;}

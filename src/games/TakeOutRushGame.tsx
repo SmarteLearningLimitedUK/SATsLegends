@@ -1,3 +1,5 @@
+import {questionMetadata} from '../systems/learning/questionMetadata';
+import {isUntimedRevision,isRelaxedRevision} from '../systems/learning/sessionPolicy';
 import { playMonsterSound } from '../audio/gameAudio';
 import VisionCharacter from '../components/game-ui/VisionCharacter';
 import React, { useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
@@ -184,7 +186,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
   const [Combo, setStreak] = useState(0);
   const [ordersServed, setOrdersServed] = useState(0);
   const shiftElapsed = ROUND_DURATION_SECONDS - timeLeft;
-  const arrivals = 3 + Math.floor(shiftElapsed / 20);
+  const arrivals = isUntimedRevision(sessionState)?Math.max(5,ordersServed+1):3 + Math.floor(shiftElapsed / 20);
   const queuedCustomers = Math.max(0, arrivals - ordersServed);
   const [wrongOrders, setWrongOrders] = useState(0);
   const [feedback, setFeedback] = useState<FeedbackState | null>(null);
@@ -248,7 +250,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
       pausedDurationRef.current += Math.max(0, now - pausedSinceRef.current);
       pausedSinceRef.current = null;
     }
-  }, [isPresent, roundFinished, sessionState?.paused]);
+  }, [isPresent, roundFinished, sessionState?.paused, sessionState?.untimed]);
 
   useEffect(() => {
     roundFinishedRef.current = !presentRef.current;
@@ -261,7 +263,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
   }, []);
 
   useEffect(() => {
-    if (!isPresent || roundFinished || sessionState?.paused) return undefined;
+    if (!isPresent || roundFinished || sessionState?.paused || isUntimedRevision(sessionState)) return undefined;
     const timerId = window.setInterval(() => {
       if (!presentRef.current || roundFinishedRef.current) return;
       setTimeLeft((prev) => {
@@ -280,7 +282,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
       window.clearInterval(timerId);
       if (shiftTimerRef.current === timerId) shiftTimerRef.current = null;
     };
-  }, [isPresent, roundFinished, sessionState?.paused]);
+  }, [isPresent, roundFinished, sessionState?.paused, sessionState?.untimed]);
 
   useEffect(() => {
     if (!presentRef.current) return;
@@ -297,7 +299,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
   }, [isPractice, isPresent, sessionEvents, sessionState?.lives]);
 
   useEffect(() => {
-    if (!presentRef.current || timeLeft > 0 || roundFinishedRef.current || sessionState?.paused) return;
+    if (!presentRef.current || (isUntimedRevision(sessionState)?ordersServed<5:timeLeft>0) || roundFinishedRef.current || sessionState?.paused) return;
 
     roundFinishedRef.current = true;
     clearTimers();
@@ -306,7 +308,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     const stars = starsForPerformance(result.XP, result.served, result.wrong);
     emitMiniGameSessionEvent(sessionEvents, 'game_complete', { score: result.XP, stars });
     onVictoryRef.current(stars, result.XP);
-  }, [isPresent, sessionEvents, sessionState?.paused, timeLeft]);
+  }, [isPresent, sessionEvents, sessionState?.paused, timeLeft,ordersServed]);
 
   const activeConstraints = useMemo(() => restrictionsFor(order.constraints), [order.constraints]);
 
@@ -341,7 +343,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     const orderSolveMs = Math.max(350, now - orderStartMs - pausedOrderMs);
     const stageBonus = order.stage * 16;
     const itemBonus = selectedIdsRef.current.length * 14;
-    const speedBonus = Math.max(30, Math.round(220 - (orderSolveMs / 70)));
+    const speedBonus = isUntimedRevision(sessionState)?220:Math.max(30, Math.round(220 - (orderSolveMs / 70)));
     const streakBonus = performanceRef.current.combo * 22;
     const serviceStamp = (performanceRef.current.combo + 1) % 3 === 0;
     const points = 120 + stageBonus + itemBonus + speedBonus + streakBonus + (serviceStamp ? 60 : 0);
@@ -359,7 +361,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     setOrdersServed(nextPerformance.served);
     setStreak(nextPerformance.combo);
     setFeedback({ tone: 'success', text: `${serviceStamp ? 'Service stamp! +60 bonus XP.' : 'Perfect order!'} +${points} XP. Streak ${nextPerformance.combo}!` });
-    emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { score: nextPerformance.XP, metadata: { order: order.id } });
+    emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { score: nextPerformance.XP, metadata: { order: order.id ,...questionMetadata("take_out_rush","fractions.constrained-composition",order,"construction",["6F4"],false)} });
     emitMiniGameSessionEvent(sessionEvents, 'puzzle_complete', { score: nextPerformance.XP, metadata: { order: order.id } });
 
     if (!reducedMotion) confetti({
@@ -381,7 +383,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
       setIsResolvingOrder(false);
       resolvingOrderRef.current = false;
     }, 1280);
-  }, [nextOrder, order.id, order.stage, orderStartMs, pausedDurationAt, timeLeft, reducedMotion, sessionEvents, sessionState?.paused]);
+  }, [nextOrder, order.id, order.stage, orderStartMs, pausedDurationAt, timeLeft, reducedMotion, sessionEvents, sessionState?.paused, sessionState?.untimed]);
 
   const resolveIncorrectOrder = useCallback((reason?:string) => {
     if (!presentRef.current || roundFinishedRef.current) return;
@@ -397,7 +399,7 @@ const TakeOutRushGame: React.FC<TakeOutRushGameProps> = ({
     setStreak(0);
     setScore(nextPerformance.XP);
     setFeedback({ tone: 'error', text: reason || `Order needs adjusting. Make exactly ${asDisplayFraction(order.target)}.` });
-    emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { score: nextPerformance.XP, metadata: { order: order.id, attempt: nextPerformance.wrong } });
+    emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { score: nextPerformance.XP, metadata: { order: order.id, attempt: nextPerformance.wrong ,...questionMetadata("take_out_rush","fractions.constrained-composition",order,"construction",["6F4"],false)} });
 
     if (feedbackTimeoutRef.current !== null) {
       window.clearTimeout(feedbackTimeoutRef.current);

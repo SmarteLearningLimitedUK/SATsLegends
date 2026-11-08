@@ -7,7 +7,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 // exercise the real release bundle; they do not authenticate or charge a user.
 const engine = process.env.MATHARIA_ENGINE ?? 'chromium';
 const base = process.env.MATHARIA_URL ?? 'http://127.0.0.1:3050';
-const out = `qa-artifacts/app-store-readiness-2026-11-03/opening-${engine}`;
+const out = process.env.QA_OUTPUT ?? `qa-artifacts/app-store-readiness-2026-11-03/opening-${engine}`;
 const env = loadEnv('production', process.cwd(), 'VITE_');
 const host = new URL(env.VITE_SUPABASE_URL).hostname;
 const parent = '10000000-0000-4000-8000-000000000001';
@@ -97,14 +97,14 @@ async function fit(p, selector) {
   });
   expect(geometry.documentOverflow).toBe(false);
   const v=p.viewportSize();expect(geometry.bounds.x).toBeGreaterThanOrEqual(-1);expect(geometry.bounds.y).toBeGreaterThanOrEqual(-1);expect(geometry.bounds.right).toBeLessThanOrEqual(v.width+1);expect(geometry.bounds.bottom).toBeLessThanOrEqual(v.height+1);
-  for(const control of geometry.controls){expect(control.w,control.label).toBeGreaterThanOrEqual(43.5);expect(control.h,control.label).toBeGreaterThanOrEqual(43.5);if(!control.hit)throw Error('Control centre intercepted: '+JSON.stringify(control));}
+  for(const control of geometry.controls){if(control.w<43.5||control.h<43.5)console.log('UNDERSIZED',JSON.stringify(control));expect(control.w,control.label).toBeGreaterThanOrEqual(43.5);expect(control.h,control.label).toBeGreaterThanOrEqual(43.5);if(!control.hit)throw Error('Control centre intercepted: '+JSON.stringify(control));}
   return geometry;
 }
 async function passParentGate(p) {
   const gate=p.locator('[data-native-dialog="parent-gate"]');await gate.waitFor();
-  const match=(await gate.locator('label').innerText()).match(/(\d+)\D+(\d+)/);
+  const match=(await gate.locator('label').innerText()).match(/([1-9]) \+ ([1-9])\?/);
   if(!match)throw Error('Missing parent challenge');
-  await gate.locator('input').fill(String(Number(match[1])*Number(match[2])));
+  await gate.locator('input').fill(String(Number(match[1])+Number(match[2])));
   await gate.getByRole('button',{name:'Continue',exact:true}).click();
 }
 async function dismissBriefings(p) { for(let i=0;i<6;i++){const button=p.locator('[data-dialog-primary]:visible').last();if(!await button.count())break;await button.click();await p.waitForTimeout(100);} }
@@ -124,6 +124,7 @@ try {
   {
     const c=await context(402,874),p=await c.newPage();
     for(const id of [1,2,3]){
+      await p.setViewportSize(id===2?{width:874,height:402}:{width:402,height:874});
       await p.goto(`${base}/game/1/${id}`);await p.locator('[data-game-set]').waitFor();await dismissBriefings(p);await expect(p.locator('[data-native-route-locked]')).toHaveCount(0);await screenshot(p,`free-game-${id}`);
     }
     for(const route of ['/game/1/4','/game/2/1','/game/1/6']){

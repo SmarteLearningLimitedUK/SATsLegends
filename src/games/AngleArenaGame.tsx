@@ -855,13 +855,13 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
       setScore(nextScore);
       setStars((prev) => Math.min(3, Math.max(prev, Math.floor(nextScore / 450))));
       setFeedback('Lookout cleared!');
-      triggerHaptic('success');
+      if (!callbacksRef.current.onRoundComplete) triggerHaptic('success');
       callbacksRef.current.onRoundComplete?.(true);
       setGameState('resolvedCorrect');
     } else {
       const correctAngle = activeQuestion?.correctAnswer;
       setFeedback(`Missed! The correct angle was ${correctAngle ?? '--'}°.`);
-      triggerHaptic('error');
+      if (!callbacksRef.current.onRoundComplete) triggerHaptic('error');
       callbacksRef.current.onRoundComplete?.(false);
       if (!sessionState) {
         setLocalLives((prev) => Math.max(0, prev - 1));
@@ -1229,9 +1229,9 @@ const AngleArenaGame: React.FC<AngleArenaGameShellProps> = ({
   const showPromptAndAnswers = gameState === 'awaitingAnswer';
   const knownAngle = activeQuestion?.prompt.match(/^One angle on a straight line is (\d+)°/);
   const knownRadians = knownAngle ? degreesToRadians(Number(knownAngle[1])) : null;
-  const hintText = knownAngle ? 'Angles on a straight line add up to 180°. Subtract the known angle.'
+  const hintText = activeQuestion?.hint ?? (knownAngle ? 'Angles on a straight line add up to 180°. Subtract the known angle.'
     : activeQuestion?.prompt.includes('ratio') ? 'Add the ratio parts, then share 180° between them.'
-    : 'The two angles add up to 180°. Use their difference to find each angle.';
+    : 'The two angles add up to 180°. Use their difference to find each angle.');
 
   return (
     <GameUiShell className="bg-transparent !bg-none ![background-image:none] ![background-color:transparent]" overlayDisabled>

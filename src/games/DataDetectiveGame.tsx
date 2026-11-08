@@ -1,3 +1,6 @@
+import {pieEvidence,proportionalReports,fractionShare} from './detectiveCaseMath';
+import {isRelaxedRevision} from '../systems/learning/sessionPolicy';
+import {questionMetadata} from '../systems/learning/questionMetadata';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { emitMiniGameSessionEvent, MiniGameShellContractProps } from '../app/gameplaySessionContract';
 import {
@@ -162,6 +165,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
   const tickStride = Math.max(1, Math.ceil((barTicks.length - 1) / Math.max(2, Math.floor((chartHeight - (compactChart ? 52 : 70)) / 22))));
   const visibleBarTicks = barTicks.filter((_, index) => index % tickStride === 0);
 
+  const caseSequence=useRef(0);
   const generateCase = useCallback(() => {
     setPinnedEvidence(null);
     const nextMode: CaseMode = Math.random() > 0.5 ? 'detective' : 'whodunnit';
@@ -169,13 +173,16 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
     setCaseBrief(nextMode === 'whodunnit'
       ? WHODUNNIT_BRIEFS[Math.floor(Math.random() * WHODUNNIT_BRIEFS.length)]
       : DETECTIVE_BRIEFS[Math.floor(Math.random() * DETECTIVE_BRIEFS.length)]);
-    setChartType(difficulty <= 2 || Math.random() > 0.5 ? 'bar' : 'pie');
+    const pie=difficulty>=3&&caseSequence.current++%2===1;
+    setChartType(pie?'pie':'bar');
+    const evidence=pieEvidence(difficulty,Math.floor(Math.random()*100000));
+    if(pie)setCaseBrief(evidence.brief);
 
     const maxAmount = [0, 5, 8, 12, 20, 30][difficulty];
 
     const caseData = ITEMS.map(item => ({
       ...item,
-      amount: Math.floor(Math.random() * maxAmount) + 1,
+      amount: pie?evidence.counts[ITEMS.indexOf(item)]:Math.floor(Math.random() * maxAmount) + 1,
     }));
     setCurrentCase(caseData);
 
@@ -186,6 +193,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
     const shuffledMugshots = mugshotPool.length >= 4
       ? mugshotPool.slice(0, 4)
       : Array.from({ length: 4 }, (_, index) => mugshotPool[index % Math.max(1, mugshotPool.length)]);
+    const reports=pie?proportionalReports(caseData.map(d=>d.amount),correctIdx,Math.floor(Math.random()*1000)):[];
     const newSuspects = Array.from({ length: 4 }, (_, i) => {
       if (i === correctIdx) {
         return {
@@ -199,7 +207,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
 
       let randomItems: number[];
       do {
-        randomItems = caseData.map(() => Math.floor(Math.random() * maxAmount) + 1);
+        randomItems = pie?reports[i]:caseData.map(() => Math.floor(Math.random() * maxAmount) + 1);
       } while (JSON.stringify(randomItems) === JSON.stringify(caseData.map(d => d.amount)));
 
       return {
@@ -246,18 +254,18 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
     if (gameState !== 'playing') return;
     setSelectedSuspectId(null);
     if (id === guiltyId) {
-      emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { metadata: { case: level } });
+      emitMiniGameSessionEvent(sessionEvents, 'correct_answer', { metadata: { case: level ,...questionMetadata("data_detective",chartType==='pie'?"statistics.pie-interpretation":"statistics.evidence-match",{id:level,data:currentCase,chartType,family:chartType==='pie'?(difficulty>=5?'missing-whole':'known-whole'):'counts'},"recognition",[chartType==='pie'?'6S1':'4S2'],false)} });
       setFeedback({ type: 'success', message: 'Case closed! Correct suspect.' });
       setGameState('success');
       setScore(prev => prev + 140);
       return;
     }
 
-    emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { metadata: { case: level } });
+    emitMiniGameSessionEvent(sessionEvents, 'incorrect_answer', { metadata: { case: level ,...questionMetadata("data_detective",chartType==='pie'?"statistics.pie-interpretation":"statistics.evidence-match",{id:level,data:currentCase,chartType,family:chartType==='pie'?(difficulty>=5?'missing-whole':'known-whole'):'counts'},"recognition",[chartType==='pie'?'6S1':'4S2'],false)} });
     setFeedback({ type: 'error', message: isPractice ? 'Check each total and try another suspect.' : 'Incorrect suspect. One life lost. Try again.' });
     setIncorrectSuspectIds((previous) => (previous.includes(id) ? previous : [...previous, id]));
     setScore(prev => Math.max(0, prev - 20));
-    if (!isPractice) {
+    if (!isPractice&&!isRelaxedRevision()) {
       setLives((previous) => {
         const nextLives = Math.max(0, previous - 1);
         if (nextLives === 0) {
@@ -347,7 +355,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
             subtitle="Inspect each suspect and compare every total."
             style={{ position: 'relative', top: 0, transform: 'none' }}
           >
-            <span role="status" aria-live="polite">{feedback?.message ?? 'A thief has hidden the stolen loot! Whose stash matches the evidence?'}</span>
+            <span role="status" aria-live="polite">{feedback?.message ?? caseBrief}</span>
           </GameQuestionCard>
         </div>
       )}
@@ -421,7 +429,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                             cy="50%"
                             innerRadius="34%"
                             outerRadius="68%"
-                            paddingAngle={3}
+                            paddingAngle={0}
                             labelLine={false}
                             dataKey="amount"
                             isAnimationActive={!reducedMotion} animationDuration={600}
@@ -430,7 +438,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                               <Cell key={`cell-${index}`} fill={entry.color} opacity={!pinnedEvidence || pinnedEvidence === entry.name ? 1 : .35} />
                             ))}
                           </Pie>
-                          <Tooltip
+                          <Tooltip formatter={(value)=>fractionShare(Number(value),currentCase.reduce((n,i)=>n+i.amount,0))}
                             contentStyle={{ backgroundColor: '#1c1917', border: '1px solid #444', borderRadius: '8px', fontSize: '14px' }}
                           />
                         </PieChart>
@@ -447,7 +455,7 @@ const DataDetectiveGame: React.FC<DataDetectiveGameProps> = ({
                           <span className="min-w-0 font-semibold">
                             {item.name}
                           </span>
-                          {chartType === 'pie' && <strong className="detective-evidence-total">{item.amount}</strong>}
+                          {chartType === 'pie' && <strong className="detective-evidence-total">{fractionShare(item.amount,currentCase.reduce((sum,i)=>sum+i.amount,0))}</strong>}
                         </button>
                       ))}
                     </div>

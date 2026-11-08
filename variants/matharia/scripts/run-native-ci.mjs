@@ -23,7 +23,7 @@ mkdirSync(nativeRoot);
 function run(command,args,{cwd=nativeRoot,log,timeout=1800000}={}) {
   const fd = log ? openSync(join(out,log),'w') : null;
   let result;
-  try {result = spawnSync(command,args,{cwd,encoding:'utf8',timeout,maxBuffer:32*1024*1024,
+  try {result = spawnSync(command,args,{cwd,encoding:'utf8',timeout,killSignal:'SIGKILL',maxBuffer:32*1024*1024,
     stdio:log?['ignore',fd,fd]:'pipe'});}
   finally {if (fd !== null) closeSync(fd);}
   if (result.error || result.status !== 0) {
@@ -55,6 +55,7 @@ with zipfile.ZipFile(sys.argv[1]) as z:
   assert not stat.S_ISLNK(i.external_attr>>16)
  z.extractall(sys.argv[2])`,zipPath,nativeRoot]);
   const candidate = JSON.parse(readFileSync(join(nativeRoot,'MATHARIA-CANDIDATE.json'),'utf8'));
+  if (candidate.internalTestingOnly === true && release.internalTestingOnly !== true) throw Error('An internal review candidate must retain its internal-only export restriction.');
   if (candidate.bundleId !== IOS_BUNDLE_ID || candidate.minimumIOS !== '16.4') throw Error('Wrong native candidate identity.');
   if (candidate.sourceGitHead !== release.sourceGitHead) throw Error('Candidate source provenance mismatch.');
   const subscriptions = subscriptionConfiguration(nativeRoot);
@@ -89,6 +90,8 @@ with zipfile.ZipFile(sys.argv[1]) as z:
       'CODE_SIGNING_ALLOWED=NO','build'],{log:'build.log'});
     const app = join(derived,'Build/Products/Debug-iphonesimulator/App.app');
     if (plist(join(app,'Info.plist'),'CFBundleIdentifier') !== IOS_BUNDLE_ID || plist(join(app,'Info.plist'),'MinimumOSVersion') !== '16.4') throw Error('Simulator app has wrong identity or minimum OS.');
+    result.nativeCompiled = true; save();
+    console.log('Native compilation passed; discovering simulator devices.');
     const devices = Object.entries(JSON.parse(run('xcrun',['simctl','list','devices','available','--json'])).devices)
       .filter(([runtime])=>runtime.includes('.iOS-')).flatMap(([,items])=>items);
     result.devices = [];
@@ -96,20 +99,32 @@ with zipfile.ZipFile(sys.argv[1]) as z:
       const device = devices.find(d=>d.isAvailable && d.name.startsWith(kind));
       if (!device) throw Error(`No ${kind} simulator is available.`);
       const ownBoot = device.state !== 'Booted';
+      const sim = (stage,args,timeout) => {
+        console.log(`${kind}: ${stage} (${device.name}; timeout ${timeout/1000}s).`);
+        result.simulatorStage = {kind,name:device.name,stage,startedAt:new Date().toISOString()}; save();
+        return run('xcrun',['simctl',...args],{timeout});
+      };
       try {
-        if (ownBoot) run('xcrun',['simctl','boot',device.udid]);
-        run('xcrun',['simctl','bootstatus',device.udid,'-b']);
-        run('xcrun',['simctl','install',device.udid,app]);
-        const launched = run('xcrun',['simctl','launch',`--stdout=${join(out,kind+'-stdout.log')}`,`--stderr=${join(out,kind+'-stderr.log')}`,device.udid,IOS_BUNDLE_ID]);
+        if (ownBoot) sim('boot',['boot',device.udid],120000);
+        sim('wait for boot',['bootstatus',device.udid,'-b'],300000);
+        sim('install',['install',device.udid,app],120000);
+        const launched = sim('launch',['launch',`--stdout=${join(out,kind+'-stdout.log')}`,`--stderr=${join(out,kind+'-stderr.log')}`,device.udid,IOS_BUNDLE_ID],90000);
         const pid = launched.match(/:\s*(\d+)\s*$/)?.[1];
         if (!pid) throw Error(`No ${kind} launch PID.`);
         await new Promise(done=>setTimeout(done,15000));
-        run('xcrun',['simctl','io',device.udid,'screenshot',join(out,kind.toLowerCase()+'-native-launch.png')]);
-        const processName = run('ps',['-p',pid,'-o','comm=']);
+        sim('screenshot',['io',device.udid,'screenshot',join(out,kind.toLowerCase()+'-native-launch.png')],60000);
+        const processName = run('ps',['-p',pid,'-o','comm='],{timeout:15000});
         if (!processName.includes('App.app/App')) throw Error(`${kind} app did not survive launch.`);
         result.devices.push({name:device.name,kind,processSurvived:true});
+        save(); console.log(`${kind}: app installed, rendered and survived launch.`);
       } finally {
-        if (ownBoot) run('xcrun',['simctl','shutdown',device.udid]);
+        if (ownBoot) {
+          try {sim('shutdown',['shutdown',device.udid],45000);}
+          catch(error) {
+            (result.simulatorCleanupWarnings ||= []).push({kind,name:device.name,error:error.message}); save();
+            console.warn(`${kind}: simulator cleanup failed or timed out; validation results are retained.`);
+          }
+        }
       }
     }
     result.nativeCompiled = true;
@@ -145,10 +160,10 @@ with zipfile.ZipFile(sys.argv[1]) as z:
       page = await apple(page.links.next); builds.push(...(page.data || []));
     }
     const build = nextBuild(builds.map(item=>item.attributes.version),process.env.GITHUB_RUN_NUMBER,process.env.GITHUB_RUN_ATTEMPT);
-    Object.assign(result,{version,build,internalTestingOnly:false,uploadCommandSucceeded:false}); save();
+    Object.assign(result,{version,build,internalTestingOnly:release.internalTestingOnly===true,uploadCommandSucceeded:false}); save();
     const keyPath = join(work,`AuthKey_${signing.keyId}.p8`),optionsPath = join(work,'ExportOptions.plist');
     writeFileSync(keyPath,signing.privateKey,{mode:0o600});
-    writeFileSync(optionsPath,exportOptions(signing),{mode:0o600});
+    writeFileSync(optionsPath,exportOptions(signing,{internalOnly:result.internalTestingOnly}),{mode:0o600});
     const archive = join(work,'Matharia.xcarchive');
     const auth = ['-allowProvisioningUpdates','-authenticationKeyPath',keyPath,'-authenticationKeyID',signing.keyId,'-authenticationKeyIssuerID',signing.issuer];
     console.log(`Archiving Matharia ${version} (${build}) for existing app ${IOS_APP_ID}.`);
@@ -176,6 +191,20 @@ with zipfile.ZipFile(sys.argv[1]) as z:
     }
     result.processingState ||= 'PENDING';
     if(result.processingState==='VALID'){
+      if (release.testerNotes) {
+        try {
+          if (typeof release.testerNotes !== 'string' || release.testerNotes.length > 4000 || !/^[a-z]{2}(?:-[A-Z]{2})?$/.test(release.testerLocale || 'en-GB')) throw Error('Invalid TestFlight review notes.');
+          const locale = release.testerLocale || 'en-GB';
+          const localizations = await apple(`/v1/builds/${result.appleBuildId}/betaBuildLocalizations?limit=200`);
+          const existing = localizations.data?.find(row => row.attributes.locale === locale);
+          const data = existing ? {type:'betaBuildLocalizations',id:existing.id,attributes:{whatsNew:release.testerNotes}} :
+            {type:'betaBuildLocalizations',attributes:{locale,whatsNew:release.testerNotes},relationships:{build:{data:{type:'builds',id:result.appleBuildId}}}};
+          await apple(existing ? `/v1/betaBuildLocalizations/${existing.id}` : '/v1/betaBuildLocalizations',
+            {method:existing?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data})});
+          result.testerNotesUpdated = true;
+        } catch (error) { result.testerNotesError = error.message; }
+        save();
+      }
       const availability=await enableInternalTesting({
         api:(path,options={})=>apple(path,{...options,
           body:options.body?JSON.stringify(options.body):undefined,

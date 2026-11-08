@@ -1,4 +1,7 @@
+import {adventureTask} from '../../../../src/systems/content/adventureStory';
 import {roundFeedback} from '../roundFeedback';
+import {questionMetadata} from '../../../../src/systems/learning/questionMetadata';
+import {prepareIndependentResponse} from '../../../../src/systems/learning/responseContext';
 import React,{useContext,useId} from 'react';
 import {Cog} from 'lucide-react';
 import {motion,useReducedMotion} from 'motion/react';
@@ -19,15 +22,16 @@ interface GameProps{
  onAnswer:(answer:number)=>void;showIntro:boolean;briefing?:MiniGamePracticeBriefing|null;onDismiss:()=>void;
 }
 export function RocketGameScene(p:GameProps){
+ const answer=(value:number)=>{if(p.disabled)return;prepareIndependentResponse(questionMetadata('rounding_rocket',p.round.target<10?'number.rounding-decimal':'number.rounding',p.round,'recognition',[p.round.target<10?'5F7':p.round.value>=1000000?'6N4':'4N4b'],false));p.onAnswer(value);};
  usePresentationHint(`The Monster Minds have hidden the parts of the rocket.\nRocket assembly: ${p.partNames.slice(0,p.total).join(', ')}.`);
  return <section className="rocket-game-scene" data-rounding-rocket data-rocket-state={p.state} data-rocket-installed={p.installed} data-rocket-total={p.total}>
   {p.scene}
   <PracticeIntroPopup open={p.showIntro} title="Rounding Rocket" body="The Monster Minds have hidden the parts of the rocket! Choose the rounded answer to recover each part. Build the whole rocket, then watch it launch into space. Check the digit just after the requested place: 5 or more rounds up." briefing={p.briefing} onAction={p.onDismiss}/>
   {!p.launching&&<>
-   <ScalableQuestionPanel frame="frames/pvp_question_v3_hollow" surface="#00434b" corner={.15}><span className="rocket-question-instruction">Round to the <mark>nearest {p.round.target}.</mark></span><strong className="rocket-question-value" data-rocket-question-value data-rocket-question-target={p.round.target}>{p.round.value}</strong></ScalableQuestionPanel>
+   <ScalableQuestionPanel><span className="rocket-question-instruction">{adventureTask('rounding_rocket',p.installed)} Round to the <mark>nearest {p.round.target}.</mark></span><strong className="rocket-question-value" data-rocket-question-value data-rocket-question-target={p.round.target}>{p.round.value}</strong></ScalableQuestionPanel>
    <div className="rocket-build-status" data-feedback={roundFeedback(p.feedback)?p.state:undefined} role="status"><ArtworkFrame name="frames/pvp_question_v3_hollow" surface="#00434b" corner={.15}/><strong>{p.installed}/{p.total} parts installed</strong>{roundFeedback(p.feedback)?<small>{roundFeedback(p.feedback)}</small>:<span className="rocket-next-part"><Cog aria-hidden="true"/>Next: {p.partNames[Math.min(p.installed,p.total-1)]}</span>}</div>
    <ol className="sr-only" aria-label="Rocket assembly">{p.partNames.slice(0,p.total).map((name,i)=><li key={name}>{name}: {p.installed>i?'installed':p.installed===i?'next':'not yet installed'}</li>)}</ol>
-   <section className="rocket-answers" aria-label="Rounding answers"><ArtworkFrame name="frames/pvp_question_v3_hollow" surface="#00434b" corner={.15}/><p>Choose the <mark>nearest {p.round.target}</mark></p><div className="rocket-answer-row">{p.round.pads.map(value=><button type="button" key={`${p.round.id}-${value}`} data-button-skin="none" data-answer-state={p.selected===value?p.state:undefined} disabled={p.disabled} aria-label={`Landing pad ${value}`} onClick={()=>p.onAnswer(value)}><img src={asset('gameplay','rocket_answer_v3')} alt="" draggable={false}/><span>{value}</span></button>)}</div></section>
+   <section className="rocket-answers" aria-label="Rounding answers"><ArtworkFrame name="frames/pvp_question_v3_hollow" surface="#00434b" corner={.15}/><p>Choose the <mark>nearest {p.round.target}</mark></p><div className="rocket-answer-row">{p.round.pads.map(value=><button key={`${p.round.id}-${value}`} type="button" data-button-skin="none" disabled={p.disabled} data-answer-state={p.selected===value?p.state:undefined} aria-label={`Landing pad ${value}`} onClick={()=>answer(value)}><img src={asset('gameplay','rocket_answer_v3')} alt="" draggable={false}/><span>{value}</span></button>)}</div></section>
   </>}
  </section>;
 }

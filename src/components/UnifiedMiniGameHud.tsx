@@ -7,6 +7,7 @@ import { LEVEL_TIMERS_DISABLED } from '../app/testingFlags';
 interface UnifiedMiniGameHudProps {
   avatarId?: string;
   assessment?: boolean;
+  answerFeedback?: {tone:'correct'|'incorrect'; label:string} | null;
   timeLeft: number;
   totalTime: number;
   hidden?: boolean;
@@ -34,16 +35,16 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
   const avatar = CHARACTER_AVATARS.find((entry) => entry.id === avatarId)
     ?? CHARACTER_AVATARS.find((entry) => entry.id === DEFAULT_AVATAR_ID)
     ?? CHARACTER_AVATARS[0];
-  const [mockClock, setMockClock] = useState<{ timeLeft: number; totalTime: number } | null>(null);
+  const [mockClock, setMockClock] = useState<{ timeLeft: number; totalTime: number; untimed?:boolean } | null>(null);
   useEffect(() => {
     setMockClock(null);
     if (!assessment) return;
-    const update = (event: Event) => setMockClock((event as CustomEvent<{ timeLeft: number; totalTime: number }>).detail);
+    const update = (event: Event) => setMockClock((event as CustomEvent<{ timeLeft: number; totalTime: number; untimed?:boolean }>).detail);
     window.addEventListener('sats-mock-clock', update);
     return () => window.removeEventListener('sats-mock-clock', update);
   }, [assessment, title]);
   if (assessment && mockClock) { timeLeft = mockClock.timeLeft; totalTime = mockClock.totalTime; }
-  const showTimer = !hideTimer && (assessment ? Boolean(mockClock) : !LEVEL_TIMERS_DISABLED);
+  const showTimer = !hideTimer && (assessment ? Boolean(mockClock)&&!mockClock?.untimed : !LEVEL_TIMERS_DISABLED);
   const progress = Math.max(0, Math.min(1, totalTime > 0 ? timeLeft / totalTime : 0));
   if (hidden) return null;
 
@@ -67,7 +68,7 @@ const UnifiedMiniGameHud: React.FC<UnifiedMiniGameHudProps> = ({
             </div>
             <div className="flex shrink-0 flex-col items-end gap-1">
               {variant === 'gameplay' ? (
-                assessment ? <span className="legend-hud-practice">Mock run</span> : isPractice ? <span className="legend-hud-practice inline-flex items-center gap-1"><BookOpen size={17} aria-hidden="true" />Practice</span> : (
+                assessment ? <span className="legend-hud-practice">Quiz</span> : isPractice ? <span className="legend-hud-practice inline-flex items-center gap-1"><BookOpen size={17} aria-hidden="true" />Practice</span> : (
                   <div className="legend-hud-lives" role="img" aria-label={`${lives} of 3 lives remaining`}>
                     {[1, 2, 3].map((heart) => <Heart key={heart} fill="currentColor" className={heart > lives ? 'is-empty' : ''} aria-hidden="true" />)}
                   </div>

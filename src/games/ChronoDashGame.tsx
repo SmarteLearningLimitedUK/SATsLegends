@@ -1,3 +1,5 @@
+import {questionMetadata} from '../systems/learning/questionMetadata';
+import {isUntimedRevision,isRelaxedRevision} from '../systems/learning/sessionPolicy';
 /** @license SPDX-License-Identifier: Apache-2.0 */
 import React, { useState, useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 import { motion, useIsPresent, useReducedMotion } from 'motion/react';
@@ -7,7 +9,7 @@ import chronometerArtwork from '../assets/game-visions/instruments/chronometer-v
 import SceneEnvironment from '../components/SceneEnvironment';
 import { GameQuestionCard } from '../components/game-ui/GameUiKit';
 import { MiniGameShellContractProps } from '../app/gameplaySessionContract';
-import { CLOCK_VARIANTS, clockLabels, clockQuestion, displayClockTime as displayTime, type ClockTime as Time } from './chronoDashQuestions';
+import { buildClockRevision,CLOCK_VARIANTS, clockLabels, clockQuestion, displayClockTime as displayTime, type ClockTime as Time } from './chronoDashQuestions';
 import './game-refinements.css';
 
 interface ChronoDashGameProps extends MiniGameShellContractProps {
@@ -26,6 +28,8 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({ levelId, avatarId: _ava
   const presentRef = useRef(isPresent); presentRef.current = isPresent;
   const pausedRef = useRef(Boolean(sessionState?.paused)); pausedRef.current = Boolean(sessionState?.paused);
   const [gameState, setGameState] = useState<'playing'|'complete'>('playing');
+  const [clockRevision,setClockRevision]=useState<ReturnType<typeof buildClockRevision>|null>(null);
+  const attemptsRef=useRef(0);
   const [targetTime, setTargetTime] = useState<Time>({ hours: 10, minutes: 0 });
   const [variantIndex, setVariantIndex] = useState(0);
   const nextVariantRef = useRef(0);
@@ -55,15 +59,16 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({ levelId, avatarId: _ava
     if (!presentRef.current || finishedRef.current) return;
     setVariantIndex(nextVariantRef.current % CLOCK_VARIANTS.length);
     nextVariantRef.current += 1;
-    setTargetTime(generateRandomTime()); setCurrentTime({hours:12,minutes:0});
+    const revision=tier>=3&&nextVariantRef.current%3!==0?buildClockRevision(tier,Math.floor(Math.random()*1000000),nextVariantRef.current):null;setClockRevision(revision);
+    setTargetTime(revision?.target??generateRandomTime()); setCurrentTime({hours:12,minutes:0});
     setRotationHours(360); setRotationMinutes(0); setFeedback(null);
     answerLockRef.current = false; setResolving(false);
-  }, [generateRandomTime]);
+  }, [generateRandomTime,tier]);
   const startGame = useCallback(() => {
     if (!presentRef.current) return;
     clearFeedbackTimer(); finishedRef.current = false; answerLockRef.current = false;
     nextVariantRef.current = Math.floor(Math.random() * CLOCK_VARIANTS.length);
-    scoreRef.current = 0; correctCountRef.current = 0; setScore(0); setTimeLeft(ROUND_DURATION_SECONDS); setGameState('playing'); loadNextQuestion();
+    scoreRef.current = 0; correctCountRef.current = 0;attemptsRef.current=0; setScore(0); setTimeLeft(ROUND_DURATION_SECONDS); setGameState('playing'); loadNextQuestion();
   }, [loadNextQuestion]);
   useEffect(() => { startGame(); }, [startGame]);
   useLayoutEffect(() => {
@@ -71,14 +76,14 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({ levelId, avatarId: _ava
     return () => clearFeedbackTimer();
   }, [isPresent]);
   useEffect(() => {
-    if (!isPresent || gameState !== 'playing' || sessionState?.paused) return undefined;
+    if (!isPresent || gameState !== 'playing' || sessionState?.paused || isUntimedRevision(sessionState)) return undefined;
     const timerId = window.setInterval(() => {
       if (presentRef.current && !finishedRef.current && !pausedRef.current) setTimeLeft((previous) => Math.max(0,previous-1));
     },1000);
     return () => window.clearInterval(timerId);
-  }, [gameState,isPresent,sessionState?.paused]);
+  }, [gameState,isPresent,sessionState?.paused, sessionState?.untimed]);
   useEffect(() => {
-    if (!isPresent || sessionState?.paused || gameState !== 'playing' || timeLeft > 0 || finishedRef.current) return;
+    if (!isPresent || sessionState?.paused || gameState !== 'playing' || (isUntimedRevision(sessionState)?correctCountRef.current<6:timeLeft>0) || finishedRef.current) return;
     finishedRef.current = true; answerLockRef.current = true; clearFeedbackTimer();
     setGameState('complete');
     if (correctCountRef.current === 0) {
@@ -93,18 +98,20 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({ levelId, avatarId: _ava
   const checkTime = () => {
     if (!presentRef.current || pausedRef.current || finishedRef.current || answerLockRef.current || gameState !== 'playing' || timeLeft <= 0) return;
     clearFeedbackTimer();
+    attemptsRef.current++;
     const correct = targetTime.hours % 12 === currentTime.hours % 12 && targetTime.minutes === currentTime.minutes;
     if (correct) {
       answerLockRef.current = true; setResolving(true);
-      const nextScore = scoreRef.current + 100 + Math.floor(timeLeft/6);
+      const nextScore = scoreRef.current + 100 + (isUntimedRevision(sessionState)?0:Math.floor(timeLeft/6));
       scoreRef.current = nextScore; setScore(nextScore); setFeedback('Time restored!');
       correctCountRef.current += 1;
-      sessionEvents?.onCorrectAnswer?.({ score: nextScore, metadata: { target: displayTime(targetTime), completed: correctCountRef.current } });
+      sessionEvents?.onCorrectAnswer?.({ score: nextScore, metadata: { target: displayTime(targetTime), completed: correctCountRef.current ,...questionMetadata("time_keeper_cove",clockRevision?"time.duration":"time.clock-setting",clockRevision??targetTime,"construction",[clockRevision?"5M4":"3M4b"],false)} });
       sessionEvents?.onPuzzleComplete?.({ score: nextScore, metadata: { completed: correctCountRef.current } });
+      if(isUntimedRevision(sessionState)&&correctCountRef.current>=6){finishedRef.current=true;setGameState("complete");victoryRef.current(correctCountRef.current/attemptsRef.current>=.9?3:correctCountRef.current/attemptsRef.current>=.7?2:1,nextScore);return;}
       feedbackTimerRef.current = window.setTimeout(loadNextQuestion,260);
     } else {
       setFeedback('Still out of sync. Match both hands.');
-      sessionEvents?.onIncorrectAnswer?.({ score: scoreRef.current, metadata: { target: displayTime(targetTime), chosen: displayTime(currentTime) } });
+      sessionEvents?.onIncorrectAnswer?.({ score: scoreRef.current, metadata: { target: displayTime(targetTime), chosen: displayTime(currentTime) ,...questionMetadata("time_keeper_cove",clockRevision?"time.duration":"time.clock-setting",clockRevision??targetTime,"construction",[clockRevision?"5M4":"3M4b"],false)} });
       feedbackTimerRef.current = window.setTimeout(() => {
         if (presentRef.current && !finishedRef.current) setFeedback(null);
       },2000);
@@ -127,7 +134,7 @@ const ChronoDashGame: React.FC<ChronoDashGameProps> = ({ levelId, avatarId: _ava
       <SceneEnvironment src={missionBackground} />
       <main className="chrono-layout">
         <GameQuestionCard title="Synchronise the clock" subtitle={variant.question === 'roman' ? 'The time is written in Roman numerals. Set both hands.' : 'Match both hands to restore time.'} style={{ position:'relative',top:0,transform:'none' }}>
-          {clockQuestion(targetTime, variant.question)}
+          {clockRevision?.prompt??clockQuestion(targetTime, variant.question)}
         </GameQuestionCard>
         <div className="chrono-playfield" data-clock-playfield>
           <div className="chrono-clock" data-clock-face data-clock-current={displayTime(currentTime)} data-clock-numerals={variant.face}>

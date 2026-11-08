@@ -5,10 +5,11 @@ import {asset} from './assets';
 
 interface Props {
  items: readonly {id: string; label: string; icon: LucideIcon}[];
- prompts: readonly string[];
+ cue: string;
  packed: string[]; brightness: number; ready: boolean; finished: boolean;
  onPack: (id: string) => void;
  onDim: React.ChangeEventHandler<HTMLInputElement>;
+ onFinish: () => void;
 }
 
 export default function LanternCampScene(p: Props) {
@@ -29,8 +30,7 @@ export default function LanternCampScene(p: Props) {
   data-camp-ready={p.ready} data-camp-finished={p.finished} data-camp-motion-paused={hidden || p.finished}>
   <div className="lantern-focus" role="status" aria-live="polite">
    <ArtworkFrame name="frames/glacier_panel_v3" corner={.13}/>
-   <span>{p.ready ? 'Last step · light' : `Focus ${p.packed.length + 1} of 6`}</span>
-   <p>{p.ready ? 'Watch the glow soften as you slide the light down.' : p.prompts[p.packed.length]}</p>
+   <p>{p.cue}</p>
   </div>
   <div className="lantern-hero-space" aria-hidden="true">
    <div className="lantern-fireflies">{Array.from({length: 7}, (_, i) => <i key={i} style={{left: `${9 + i * 13}%`, top: `${22 + i % 3 * 21}%`, animationDelay: `${-i * 1.1}s`}}/>)}</div>
@@ -60,10 +60,13 @@ export default function LanternCampScene(p: Props) {
     })}
    </div> : <div className="lantern-dimmer">
     <ArtworkFrame name="frames/glacier_panel_v3" corner={.13}/>
-    <label htmlFor="camp-lantern-brightness">Lantern brightness <strong>{p.brightness}%</strong></label>
+    <label htmlFor="camp-lantern-brightness">Lantern brightness</label>
     <input id="camp-lantern-brightness" type="range" min="0" max="100" step="5" value={p.brightness}
      onChange={p.onDim} disabled={p.finished} aria-valuetext={`${p.brightness}% brightness`}/>
-    <p>Slide to 20% or lower when you are ready.</p>
+    <button type="button" className="wellbeing-action lantern-finish" data-button-skin="none" disabled={p.finished} onClick={p.onFinish}>
+     <ArtworkFrame name="buttons/paper_gold_v3" corner={.1} fit="height"/>
+     Finish
+    </button>
    </div>}
   </div>
  </div>;

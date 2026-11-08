@@ -1,4 +1,5 @@
 export type RatioFractionQuestion = {
+  kind?:'fraction'|'quantity'|'known-part'|'difference';
   id: string;
   prompt: string;
   ratio: number[];

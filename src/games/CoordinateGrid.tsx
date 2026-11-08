@@ -8,10 +8,11 @@ interface Props {
   selected: string | null;
   feedback: 'correct' | 'incorrect' | null;
   onSelect: (x: number, y: number) => void;
+  labelsOutside?: boolean;
 }
 
 /** Coordinates denote intersections, with equal units on both axes. */
-export default function CoordinateGrid({ minimum, maximum, start, selected, feedback, onSelect }: Props) {
+export default function CoordinateGrid({ minimum, maximum, start, selected, feedback, onSelect, labelsOutside = false }: Props) {
   const root = useRef<HTMLDivElement>(null);
   const arrow = useId().replaceAll(':', '');
   const lower = Math.min(0, minimum);
@@ -31,9 +32,9 @@ export default function CoordinateGrid({ minimum, maximum, start, selected, feed
       <line className="coordinate-axis" x1="7" x2="95" y1={yPosition(0)} y2={yPosition(0)} markerEnd={`url(#${arrow})`} />
       <line className="coordinate-axis" x1={xPosition(0)} x2={xPosition(0)} y1="93" y2="5" markerEnd={`url(#${arrow})`} />
     </svg>
-    {ticks.filter(value => value !== 0).map(value => <span key={`x-${value}`} data-coordinate-x-label={value} className="coordinate-tick coordinate-tick-x" style={{ left: `${xPosition(value)}%`, top: `${yPosition(0)}%` }}>{value}</span>)}
-    {ticks.filter(value => value !== 0).map(value => <span key={`y-${value}`} data-coordinate-y-label={value} className="coordinate-tick coordinate-tick-y" style={{ left: `${xPosition(0)}%`, top: `${yPosition(value)}%` }}>{value}</span>)}
-    <span className="coordinate-tick coordinate-origin" style={{ left: `${xPosition(0)}%`, top: `${yPosition(0)}%` }}>0</span>
+    {ticks.filter(value => labelsOutside || value !== 0).map(value => <span key={`x-${value}`} data-coordinate-x-label={value} className="coordinate-tick coordinate-tick-x" style={{ left: `${xPosition(value)}%`, top: `${labelsOutside ? 88 : yPosition(0)}%` }}>{value}</span>)}
+    {ticks.filter(value => labelsOutside || value !== 0).map(value => <span key={`y-${value}`} data-coordinate-y-label={value} className="coordinate-tick coordinate-tick-y" style={{ left: `${labelsOutside ? 12 : xPosition(0)}%`, top: `${yPosition(value)}%` }}>{value}</span>)}
+    {!labelsOutside && <span className="coordinate-tick coordinate-origin" style={{ left: `${xPosition(0)}%`, top: `${yPosition(0)}%` }}>0</span>}
     <span className="coordinate-axis-title coordinate-axis-x" style={{ top: `${yPosition(0)}%` }}>x</span>
     <span className="coordinate-axis-title coordinate-axis-y" style={{ left: `${xPosition(0)}%` }}>y</span>
     {points.map(point => {

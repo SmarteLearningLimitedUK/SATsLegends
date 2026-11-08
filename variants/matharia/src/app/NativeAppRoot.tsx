@@ -12,22 +12,25 @@ import NativeWelcome from './NativeWelcome';
 import NativeUpgrade from './NativeUpgrade';
 import NativeAccount from './NativeAccount';
 import NativeParentGate from './NativeParentGate';
+import LearningSupportRuntime from './LearningSupportRuntime';
+import {ScreenOrientationProvider} from './ScreenOrientation';
 
 const Game = lazy(() => import('../../../../src/App'));
 type Overlay = 'upgrade' | 'account' | 'parent-gate' | null;
 
 export default function NativeAppRoot() {
   const [overlay, setOverlay] = useState<Overlay>(null);
+  useEffect(()=>{document.documentElement.dataset.parentOverlay=String(Boolean(overlay));window.dispatchEvent(new CustomEvent('matharia-parent-overlay',{detail:Boolean(overlay)}));return()=>{document.documentElement.dataset.parentOverlay='false';window.dispatchEvent(new CustomEvent('matharia-parent-overlay',{detail:false}));};},[overlay]);
   const [parentDestination,setParentDestination]=useState<'upgrade'|'account'>('account');
   const openUpgrade = useCallback(() => {setParentDestination('upgrade');setOverlay('parent-gate');}, []);
   const openAccount = useCallback(() => {setParentDestination('account');setOverlay('parent-gate');}, []);
-  return <NativeIdentity><NativeAccessProvider openUpgrade={openUpgrade} openAccount={openAccount}>
-    <div className="matharia-native-root"><NativeRoutes/>
+  return <ScreenOrientationProvider portraitOnly={Boolean(overlay)}><NativeIdentity><NativeAccessProvider openUpgrade={openUpgrade} openAccount={openAccount}>
+    <div className="matharia-native-root"><LearningSupportRuntime/><NativeRoutes/>
       {overlay === 'upgrade' && <NativeUpgrade onClose={() => setOverlay(null)} onAccount={openAccount}/>}
       {overlay === 'account' && <NativeAccount onClose={() => setOverlay(null)} onUpgrade={openUpgrade}/>}
       {overlay === 'parent-gate' && <NativeParentGate onClose={()=>setOverlay(null)} onContinue={()=>setOverlay(parentDestination)}/>}
     </div>
-  </NativeAccessProvider></NativeIdentity>;
+  </NativeAccessProvider></NativeIdentity></ScreenOrientationProvider>;
 }
 
 function Loading() {

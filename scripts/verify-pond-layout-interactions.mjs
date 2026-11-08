@@ -12,7 +12,6 @@ try{for(const [profile,width,height] of profiles){
  await page.evaluate(()=>{history.pushState({},'','/wellbeing');dispatchEvent(new PopStateEvent('popstate'));});
  await page.locator('[data-wellbeing-select="peaceful_pond"]').click();
  for(let pad=1;pad<=10;pad++){
-  await page.getByRole('button',{name:'I noticed something',exact:true}).click();
   const control=page.locator(`[data-pond-pad="${pad}"]`);await control.press('Enter');
   await page.waitForFunction(p=>document.querySelector(`[data-pond-pad="${p}"]`)?.getAttribute('aria-pressed')==='true',pad);
   const audit=await page.evaluate(auditLayout,{rootSelector:'.app-viewport',includeLinks:true});
