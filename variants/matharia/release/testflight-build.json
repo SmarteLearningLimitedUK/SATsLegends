@@ -1,7 +1,6 @@
 {
+  "build": "100.46.1",
+  "appId": "6825120444",
   "version": "1.0",
-  "bundleId": "com.smartelearning.satslegends",
-  "build": "100.42.1",
-  "buildId": "6d352644-7a86-4a43-a255-e9f4bfa68337",
-  "appId": "6825120444"
+  "bundleId": "com.smartelearning.satslegends"
 }
