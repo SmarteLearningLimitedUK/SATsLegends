@@ -1,12 +1,12 @@
 {
-  "tag": "matharia-ci-20261111-intro-audio",
+  "tag": "matharia-ci-20261111-full-feedback",
   "asset": "matharia-mac-testflight-candidate.zip",
-  "sha256": "6187d839a1e8d14edf48dbdf7bf82f9cf972c31e933d8af4359f2b06c64defff",
+  "sha256": "bbe4cfd218915b4a60cd3acabee876153c0e2df2662bc8a4652551cdd17ebc27",
   "bundleId": "com.smartelearning.satslegends",
   "minimumIOS": "16.4",
   "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
   "internalTestingOnly": false,
   "closedBetaOnly": true,
   "testerLocale": "en-GB",
-  "testerNotes": "Test the redesigned Ratio Racer and opening videos with sound. All games are open for testing."
+  "testerNotes": "Test the updated intro sound, Ratio Racer, Clearout, Simplify Sprint, Conversion Canyon, Coordinates Quest, Mean Machine, Data Detective, story and results. All games are open for testing."
 }
