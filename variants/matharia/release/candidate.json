@@ -1,12 +1,12 @@
 {
-  "tag": "matharia-ci-20261111-latest-v6",
+  "tag": "matharia-ci-20261111-latest-v7",
   "asset": "matharia-mac-testflight-candidate.zip",
-  "sha256": "243f19adc6d262c73a9d070c3c801db48a9e3d5d03299cd357f0655db6d56c6c",
+  "sha256": "7451f89503cfcfe01714427437946e13c1e2f9265853730624193f2839a8926c",
   "bundleId": "com.smartelearning.satslegends",
   "minimumIOS": "16.4",
   "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
   "internalTestingOnly": false,
   "closedBetaOnly": true,
   "testerLocale": "en-GB",
-  "testerNotes": "Closed beta update with the new opening videos and improvements to Data Detective, Change Counter, Share Splitter, Ratio Racer and game title bars. All games are open for testing."
+  "testerNotes": "Closed beta update with opening videos and improvements to Data Detective, Change Counter, Share Splitter, Ratio Racer and game title bars. All games are open for testing."
 }
