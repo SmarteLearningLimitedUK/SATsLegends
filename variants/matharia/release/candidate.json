@@ -1,12 +1,12 @@
 {
-  "tag": "matharia-ci-20261111-latest-v7",
+  "tag": "matharia-ci-20261111-ratio-redesign",
   "asset": "matharia-mac-testflight-candidate.zip",
-  "sha256": "7451f89503cfcfe01714427437946e13c1e2f9265853730624193f2839a8926c",
+  "sha256": "2c30c05f156665efa926fb466be9e26c14e9db6f3af18c5f9ac555afad3db50b",
   "bundleId": "com.smartelearning.satslegends",
   "minimumIOS": "16.4",
   "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
   "internalTestingOnly": false,
   "closedBetaOnly": true,
   "testerLocale": "en-GB",
-  "testerNotes": "Closed beta update with opening videos and improvements to Data Detective, Change Counter, Share Splitter, Ratio Racer and game title bars. All games are open for testing."
+  "testerNotes": "Explore the redesigned Ratio Racer, including its journey, race track and cheering crowds. All games are open for testing."
 }
