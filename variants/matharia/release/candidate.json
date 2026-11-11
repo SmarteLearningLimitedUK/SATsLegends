@@ -1,10 +1,12 @@
 {
-  "tag": "matharia-ci-20261111-shattered-padding",
+  "tag": "matharia-ci-20261111-character-onboarding",
   "asset": "matharia-mac-testflight-candidate.zip",
-  "sha256": "5da789ba0b950faebe662940bbe3509e7d68c1fd7524ac9a42a2bf50d9cb09c1",
+  "sha256": "53d93495a9a46297ffcb3267ae9c4d7c2b0f0537a1e3dfdb6151205f27241ab1",
   "bundleId": "com.smartelearning.satslegends",
   "minimumIOS": "16.4",
   "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
   "internalTestingOnly": false,
-  "closedBetaOnly": true
+  "closedBetaOnly": true,
+  "testerLocale": "en-GB",
+  "testerNotes": "This beta resets progress on this device once. Choose your hero and name to start again. Website progress is unchanged and progress syncing is paused in this beta. All games are open for testing."
 }
