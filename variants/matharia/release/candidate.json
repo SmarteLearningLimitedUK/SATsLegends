@@ -1,12 +1,12 @@
 {
-  "tag": "matharia-ci-20261108-closed-beta-v1",
+  "tag": "matharia-ci-20261111-latest-v2",
   "asset": "matharia-mac-testflight-candidate.zip",
-  "sha256": "254b7bc078fb9a6c417b92e7860876ec990a8c277410828aabb61761c5d57a7a",
+  "sha256": "175008cb3d21685d82c69a9d948d579a9dffa4f1d01663ad7b0c8d4c49966abe",
   "bundleId": "com.smartelearning.satslegends",
   "minimumIOS": "16.4",
-  "sourceGitHead": "9db74d71fde41b1aa1d2952b24f4e920c1dda626",
+  "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
   "internalTestingOnly": false,
   "closedBetaOnly": true,
   "testerLocale": "en-GB",
-  "testerNotes": "Invitation-only closed beta. All 43 games and quizzes are unlocked; no account is needed to start adventure. Please check mathematics questions, touch controls, screen layout and rotation on iPhone/iPad. Public invitation links are disabled."
+  "testerNotes": "Closed beta update with the new Brainzilla Studios and Matharia intro videos. All games are open for testing."
 }
