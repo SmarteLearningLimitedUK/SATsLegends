@@ -1,12 +1,12 @@
 {
-  "tag": "matharia-ci-20261111-latest-v2",
+  "tag": "matharia-ci-20261111-latest-v6",
   "asset": "matharia-mac-testflight-candidate.zip",
-  "sha256": "175008cb3d21685d82c69a9d948d579a9dffa4f1d01663ad7b0c8d4c49966abe",
+  "sha256": "243f19adc6d262c73a9d070c3c801db48a9e3d5d03299cd357f0655db6d56c6c",
   "bundleId": "com.smartelearning.satslegends",
   "minimumIOS": "16.4",
   "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
   "internalTestingOnly": false,
   "closedBetaOnly": true,
   "testerLocale": "en-GB",
-  "testerNotes": "Closed beta update with the new Brainzilla Studios and Matharia intro videos. All games are open for testing."
+  "testerNotes": "Closed beta update with the new opening videos and improvements to Data Detective, Change Counter, Share Splitter, Ratio Racer and game title bars. All games are open for testing."
 }
