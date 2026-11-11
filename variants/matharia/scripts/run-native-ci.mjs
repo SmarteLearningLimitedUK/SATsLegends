@@ -114,7 +114,7 @@ with zipfile.ZipFile(sys.argv[1]) as z:
         const pid = launched.match(/:\s*(\d+)\s*$/)?.[1];
         if (!pid) throw Error(`No ${kind} launch PID.`);
         await new Promise(done=>setTimeout(done,15000));
-        sim('screenshot',['io',device.udid,'screenshot',join(out,kind.toLowerCase()+'-native-launch.png')],60000);
+        sim('screenshot',['io',device.udid,'screenshot',join(out,kind.toLowerCase()+'-native-launch.png')],180000);
         const processName = run('ps',['-p',pid,'-o','comm='],{timeout:15000});
         if (!processName.includes('App.app/App')) throw Error(`${kind} app did not survive launch.`);
         result.devices.push({name:device.name,kind,processSurvived:true});
