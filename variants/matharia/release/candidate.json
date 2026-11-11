@@ -1,12 +1,10 @@
 {
-  "tag": "matharia-ci-20261111-full-feedback",
+  "tag": "matharia-ci-20261111-feedback2",
   "asset": "matharia-mac-testflight-candidate.zip",
-  "sha256": "bbe4cfd218915b4a60cd3acabee876153c0e2df2662bc8a4652551cdd17ebc27",
+  "sha256": "be7e5eefb95a1fd2ebd9dce7d4de6ef7bbf6d7435002b89a16077199132c6bbf",
   "bundleId": "com.smartelearning.satslegends",
   "minimumIOS": "16.4",
   "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
   "internalTestingOnly": false,
-  "closedBetaOnly": true,
-  "testerLocale": "en-GB",
-  "testerNotes": "Test the updated intro sound, Ratio Racer, Clearout, Simplify Sprint, Conversion Canyon, Coordinates Quest, Mean Machine, Data Detective, story and results. All games are open for testing."
+  "closedBetaOnly": true
 }
