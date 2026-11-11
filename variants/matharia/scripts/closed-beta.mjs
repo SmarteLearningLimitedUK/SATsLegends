@@ -16,8 +16,8 @@ export async function manageClosedBeta({api,operation,target,testerEmail,reviewC
   existingClosedGroups:groups.filter(g=>g.attributes.name===CLOSED_GROUP_NAME).length};
  if(operation==='inspect'){
   if(target?.build){
-   const builds=await all(`/v1/apps/${IOS_APP_ID}/builds?filter%5Bversion%5D=${encodeURIComponent(target.build)}&limit=200`);
-   report.matchingBuilds=builds.map(b=>({id:b.id,build:b.attributes.version,processingState:b.attributes.processingState,expired:b.attributes.expired}));
+   const builds=await all(`/v1/apps/${IOS_APP_ID}/builds?limit=200`);
+   report.matchingBuilds=builds.filter(b=>b.attributes.version===target.build).map(b=>({id:b.id,build:b.attributes.version,processingState:b.attributes.processingState,expired:b.attributes.expired}));
   }
   const reusable={...existingContact};
   if(report.missingReviewFields.length){
