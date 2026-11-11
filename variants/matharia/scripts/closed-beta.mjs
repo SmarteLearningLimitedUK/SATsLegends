@@ -69,11 +69,12 @@ export async function manageClosedBeta({api,operation,target,testerEmail,reviewC
  const beta=(await api(`/v1/builds/${build.id}/buildBetaDetail`)).data;
  const submission=response.included?.find(r=>r.type==='betaAppReviewSubmissions');
  report.externalBuildState=beta.attributes.externalBuildState;report.reviewState=submission?.attributes.betaReviewState;
- if(!['READY_FOR_BETA_TESTING','IN_BETA_TESTING'].includes(report.externalBuildState)||report.reviewState!=='APPROVED')return {...report,success:true,waitingForApple:true};
- report.externalBuildApproved=true;
  if(beta.attributes.autoNotifyEnabled!==true)await api(`/v1/buildBetaDetails/${beta.id}`,{method:'PATCH',body:{data:{type:'buildBetaDetails',id:beta.id,attributes:{autoNotifyEnabled:true}}}});
  const assigned=await all(`/v1/betaGroups/${group.id}/builds?limit=200`);
  if(!assigned.some(b=>b.id===build.id))await api(`/v1/betaGroups/${group.id}/relationships/builds`,{method:'POST',body:{data:[{type:'builds',id:build.id}]}});
+ report.buildAssignedToGroup=true;
+ if(!['READY_FOR_BETA_TESTING','IN_BETA_TESTING'].includes(report.externalBuildState)||report.reviewState!=='APPROVED')return {...report,success:true,waitingForApple:true};
+ report.externalBuildApproved=true;
  let tester=members.find(t=>t.attributes.email.toLowerCase()===testerEmail.toLowerCase());
  if(tester){report.existingTester=true;}else{
   const existing=await all(`/v1/betaTesters?filter[email]=${encodeURIComponent(testerEmail)}&limit=200`);
