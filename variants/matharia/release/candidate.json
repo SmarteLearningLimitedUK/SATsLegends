@@ -1,12 +1,12 @@
 {
-  "tag": "matharia-ci-20261111-ratio-redesign",
+  "tag": "matharia-ci-20261111-intro-audio",
   "asset": "matharia-mac-testflight-candidate.zip",
-  "sha256": "2c30c05f156665efa926fb466be9e26c14e9db6f3af18c5f9ac555afad3db50b",
+  "sha256": "6187d839a1e8d14edf48dbdf7bf82f9cf972c31e933d8af4359f2b06c64defff",
   "bundleId": "com.smartelearning.satslegends",
   "minimumIOS": "16.4",
   "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
   "internalTestingOnly": false,
   "closedBetaOnly": true,
   "testerLocale": "en-GB",
-  "testerNotes": "Explore the redesigned Ratio Racer, including its journey, race track and cheering crowds. All games are open for testing."
+  "testerNotes": "Test the redesigned Ratio Racer and opening videos with sound. All games are open for testing."
 }
