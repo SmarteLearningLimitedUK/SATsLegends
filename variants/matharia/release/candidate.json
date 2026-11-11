@@ -1,7 +1,7 @@
 {
-  "tag": "matharia-ci-20261111-feedback2",
+  "tag": "matharia-ci-20261111-shattered-padding",
   "asset": "matharia-mac-testflight-candidate.zip",
-  "sha256": "be7e5eefb95a1fd2ebd9dce7d4de6ef7bbf6d7435002b89a16077199132c6bbf",
+  "sha256": "5da789ba0b950faebe662940bbe3509e7d68c1fd7524ac9a42a2bf50d9cb09c1",
   "bundleId": "com.smartelearning.satslegends",
   "minimumIOS": "16.4",
   "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
