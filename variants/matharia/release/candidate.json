@@ -1,12 +1,12 @@
 {
-  "tag": "matharia-ci-20261112-rocket-spacing",
+  "tag": "matharia-ci-20261112-intro-numberline",
   "asset": "matharia-mac-testflight-candidate.zip",
-  "sha256": "20f0645f5034c93deb1ffbf1a2f6e5c61cd9ffd7c1ac9b2d44a63b934a429df1",
+  "sha256": "3fedef652c6373e227904ba07f4a08f5b760bb4c7c4875ba327af5742295362a",
   "bundleId": "com.smartelearning.satslegends",
   "minimumIOS": "16.4",
   "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
   "internalTestingOnly": false,
   "closedBetaOnly": true,
   "testerLocale": "en-GB",
-  "testerNotes": "Rounding Rocket answer choices now have improved spacing. This beta resets old device progress once; website progress remains unchanged and syncing is paused. All games are open for testing."
+  "testerNotes": "New Brainzilla intro and clearer level-one Number Line Ninja. All games are open for testing. The existing one-time device reset remains unchanged; website progress is unaffected and syncing is paused in this beta."
 }
