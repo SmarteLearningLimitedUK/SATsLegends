@@ -1,7 +1,8 @@
 {
-  "buildId": "f081ca74-7041-4223-bbe3-0132aa58016b",
-  "version": "1.0",
-  "build": "100.65.1",
+  "appId": "6825120444",
   "bundleId": "com.smartelearning.satslegends",
-  "appId": "6825120444"
+  "version": "1.0",
+  "build": "100.68.1",
+  "buildId": "76b478df-5c70-4a6e-8098-79fa27a1a9ee",
+  "allGamesUnlockedForReview": false
 }
