@@ -1,12 +1,12 @@
 {
-  "tag": "matharia-ci-20261113-preproduction-fixes",
+  "tag": "matharia-ci-20261113-all-levels",
   "asset": "matharia-mac-testflight-candidate.zip",
-  "sha256": "7aaff23ed05234a6b55684e132bfe94c832889d341bb6bc12eafdeb29c3da751",
+  "sha256": "8b3b5fe4542d6fa7d6fdd360d79c9c75a504417dcbc05ca97a016a497b5ebc57",
   "bundleId": "com.smartelearning.satslegends",
   "minimumIOS": "16.4",
   "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
   "internalTestingOnly": false,
-  "closedBetaOnly": false,
+  "closedBetaOnly": true,
   "testerLocale": "en-GB",
-  "testerNotes": "This build uses the standard access rules. Place Value Panic, Number Line Ninja and Prime Pop each offer free practice without signing in. This update also improves small-screen layouts and guided practice."
+  "testerNotes": "Every game, scored level, quiz and practice mode is open for testing without a subscription. Updating to this build keeps your current progress."
 }
