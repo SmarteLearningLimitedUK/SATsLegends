@@ -48,6 +48,18 @@ export async function manageClosedBeta({api,operation,target,testerEmail,reviewC
  if(!testerEmail||!/^\S+@\S+\.\S+$/.test(testerEmail))throw Error('The explicitly authorised tester email is required.');
  if(members.some(m=>m.attributes.email.toLowerCase()!==testerEmail.toLowerCase()))throw Error('Closed group contains an unexpected tester; no invitations were sent.');
  if(operation==='prepare')return {...report,success:true,prepared:true,authorisedTesterCount:members.length};
+ const assignBuild=async()=>{
+  const beta=(await api(`/v1/builds/${build.id}/buildBetaDetail`)).data;
+  if(beta.attributes.autoNotifyEnabled!==true)await api(`/v1/buildBetaDetails/${beta.id}`,{method:'PATCH',body:{data:{type:'buildBetaDetails',id:beta.id,attributes:{autoNotifyEnabled:true}}}});
+  const buildPath=`/v1/betaGroups/${group.id}/builds?limit=200`;
+  if(!(await all(buildPath)).some(b=>b.id===build.id)){
+   await api(`/v1/betaGroups/${group.id}/relationships/builds`,{method:'POST',body:{data:[{type:'builds',id:build.id}]}});
+   if(!(await all(buildPath)).some(b=>b.id===build.id))throw Error('This build was not found in the closed beta group after assignment.');
+  }
+  report.buildAssignedToGroup=true;
+  report.externalBuildState=(await api(`/v1/builds/${build.id}/buildBetaDetail`)).data.attributes.externalBuildState;
+  report.externalBuildApproved=['READY_FOR_BETA_TESTING','IN_BETA_TESTING'].includes(report.externalBuildState)&&report.reviewState==='APPROVED';
+ };
  if(operation==='submit'){
   const contact={...existingContact};for(const key of CONTACT_FIELDS)if(!String(contact[key]??'').trim()&&reviewContact[key])contact[key]=reviewContact[key];
   // Reuse contact details only from this same app's existing App Review record.
@@ -61,24 +73,30 @@ export async function manageClosedBeta({api,operation,target,testerEmail,reviewC
   }
   report.missingReviewFields=CONTACT_FIELDS.filter(k=>!String(contact[k]??'').trim());
   if(report.missingReviewFields.length)return {...report,success:false,blocked:true};
-  await api(`/v1/betaAppReviewDetails/${detail.id}`,{method:'PATCH',body:{data:{type:'betaAppReviewDetails',id:detail.id,attributes:{...Object.fromEntries(CONTACT_FIELDS.map(k=>[k,contact[k]])),demoAccountRequired:false,notes:'Invitation-only external TestFlight beta. All mathematics games and levels are unlocked for review. Start adventure without signing in; the parent account is optional. This is a KS2 revision game, not an official SATs examination. Please review iPhone/iPad layout, touch interaction and rotation.'}}}});
+  const standardAccess=target.allGamesUnlockedForReview===false;
+  const accessNotes=standardAccess
+   ? 'Start the adventure as a guest, open Arithmetic Acropolis, select Place Value Panic, Number Line Ninja or Prime Pop, and tap Practice. These three practices are free. Scored levels and the rest of the catalogue require full access through the parent area.'
+   : 'All mathematics games and levels are unlocked for review. Start the adventure without signing in.';
+  const notes=`Invitation-only external TestFlight beta. ${accessNotes} Matharia is a KS2 revision game. Please review iPhone and iPad layout, touch interaction and rotation.`;
+  await api(`/v1/betaAppReviewDetails/${detail.id}`,{method:'PATCH',body:{data:{type:'betaAppReviewDetails',id:detail.id,attributes:{...Object.fromEntries(CONTACT_FIELDS.map(k=>[k,contact[k]])),demoAccountRequired:false,notes}}}});
   const localized=locales.find(l=>l.attributes.locale==='en-GB')??locales[0];
-  const attributes={description:localized?.attributes.description||'SATs Legends: Matharia is a KS2 mathematics revision adventure with arithmetic, fractions, geometry, measurement, statistics and reasoning activities. This invitation-only beta provides access to all games for feedback on gameplay and iPhone/iPad presentation.',feedbackEmail:localized?.attributes.feedbackEmail||contact.contactEmail};
+  const description='SATs Legends: Matharia is a KS2 mathematics revision adventure with arithmetic, fractions, geometry, measurement, statistics and reasoning activities.';
+  const attributes={description:(standardAccess?'':localized?.attributes.description)||description,feedbackEmail:localized?.attributes.feedbackEmail||contact.contactEmail};
   await api(localized?`/v1/betaAppLocalizations/${localized.id}`:'/v1/betaAppLocalizations',{method:localized?'PATCH':'POST',body:{data:{type:'betaAppLocalizations',...(localized?{id:localized.id}:{relationships:{app:{data:{type:'apps',id:IOS_APP_ID}}}}),attributes:{...attributes,...(!localized?{locale:'en-GB'}:{})}}}});
   let submission=response.included?.find(r=>r.type==='betaAppReviewSubmissions');
   if(!submission)submission=(await api('/v1/betaAppReviewSubmissions',{method:'POST',body:{data:{type:'betaAppReviewSubmissions',relationships:{build:{data:{type:'builds',id:build.id}}}}}})).data;
   report.reviewState=submission.attributes.betaReviewState;report.reviewSubmissionId=submission.id;
+  if(standardAccess){
+   await assignBuild();
+   report.authorisedTesterCount=members.length;
+   report.testerState=members[0]?.attributes.state;
+  }
   return {...report,submitted:true,success:true};
  }
- const beta=(await api(`/v1/builds/${build.id}/buildBetaDetail`)).data;
  const submission=response.included?.find(r=>r.type==='betaAppReviewSubmissions');
- report.externalBuildState=beta.attributes.externalBuildState;report.reviewState=submission?.attributes.betaReviewState;
- if(beta.attributes.autoNotifyEnabled!==true)await api(`/v1/buildBetaDetails/${beta.id}`,{method:'PATCH',body:{data:{type:'buildBetaDetails',id:beta.id,attributes:{autoNotifyEnabled:true}}}});
- const assigned=await all(`/v1/betaGroups/${group.id}/builds?limit=200`);
- if(!assigned.some(b=>b.id===build.id))await api(`/v1/betaGroups/${group.id}/relationships/builds`,{method:'POST',body:{data:[{type:'builds',id:build.id}]}});
- report.buildAssignedToGroup=true;
- if(!['READY_FOR_BETA_TESTING','IN_BETA_TESTING'].includes(report.externalBuildState)||report.reviewState!=='APPROVED')return {...report,success:true,waitingForApple:true};
- report.externalBuildApproved=true;
+ report.reviewState=submission?.attributes.betaReviewState;
+ await assignBuild();
+ if(!report.externalBuildApproved)return {...report,success:true,waitingForApple:true};
  let tester=members.find(t=>t.attributes.email.toLowerCase()===testerEmail.toLowerCase());
  if(tester){report.existingTester=true;}else{
   const existing=await all(`/v1/betaTesters?filter[email]=${encodeURIComponent(testerEmail)}&limit=200`);
