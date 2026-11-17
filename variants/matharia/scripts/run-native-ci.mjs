@@ -97,22 +97,24 @@ with zipfile.ZipFile(sys.argv[1]) as z:
     const devices = Object.entries(JSON.parse(run('xcrun',['simctl','list','devices','available','--json'])).devices)
       .filter(([runtime])=>runtime.includes('.iOS-')).flatMap(([,items])=>items);
     result.devices = [];
-    for (const kind of ['iPhone','iPad']) {
+    for (const kind of ['iPad','iPhone']) {
       const device = devices.find(d=>d.isAvailable && d.name.startsWith(kind));
       if (!device) throw Error(`No ${kind} simulator is available.`);
       const ownBoot = device.state !== 'Booted';
+      let appLaunched = false;
       const sim = (stage,args,timeout) => {
         console.log(`${kind}: ${stage} (${device.name}; timeout ${timeout/1000}s).`);
         result.simulatorStage = {kind,name:device.name,stage,startedAt:new Date().toISOString()}; save();
         return run('xcrun',['simctl',...args],{timeout});
       };
       try {
-        if (ownBoot) sim('boot',['boot',device.udid],120000);
+        if (ownBoot) sim('boot',['boot',device.udid],240000);
         sim('wait for boot',['bootstatus',device.udid,'-b'],300000);
         sim('install',['install',device.udid,app],300000);
         const launched = sim('launch',['launch',`--stdout=${join(out,kind+'-stdout.log')}`,`--stderr=${join(out,kind+'-stderr.log')}`,device.udid,IOS_BUNDLE_ID],180000);
         const pid = launched.match(/:\s*(\d+)\s*$/)?.[1];
         if (!pid) throw Error(`No ${kind} launch PID.`);
+        appLaunched = true;
         await new Promise(done=>setTimeout(done,15000));
         sim('screenshot',['io',device.udid,'screenshot',join(out,kind.toLowerCase()+'-native-launch.png')],180000);
         const processName = run('ps',['-p',pid,'-o','comm='],{timeout:15000});
@@ -124,7 +126,14 @@ with zipfile.ZipFile(sys.argv[1]) as z:
         throw error;
       } finally {
         if (ownBoot) {
-          try {sim('shutdown',['shutdown',device.udid],45000);}
+          if (appLaunched) {
+            try {sim('terminate app',['terminate',device.udid,IOS_BUNDLE_ID],60000);}
+            catch(error) {
+              (result.simulatorCleanupWarnings ||= []).push({kind,name:device.name,error:error.message}); save();
+              console.warn(`${kind}: app termination failed; attempting simulator shutdown.`);
+            }
+          }
+          try {sim('shutdown',['shutdown',device.udid],90000);}
           catch(error) {
             (result.simulatorCleanupWarnings ||= []).push({kind,name:device.name,error:error.message}); save();
             console.warn(`${kind}: simulator cleanup failed or timed out; validation results are retained.`);
