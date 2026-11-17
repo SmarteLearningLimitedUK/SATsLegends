@@ -2,10 +2,12 @@
   "appId": "6825120444",
   "bundleId": "com.smartelearning.satslegends",
   "version": "1.0",
-  "build": "100.81.1",
-  "buildId": "8a6a07c8-1a33-404a-8ff1-f24856ff4161",
+  "build": "100.95.1",
+  "buildId": "20d5a522-2aea-45a6-a200-1884791de001",
   "allGamesUnlockedForReview": true,
-  "publicInvite": {
-    "deliveryKey": "-----BEGIN PUBLIC KEY-----\nMIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEAnB7HdfJGPQHtgQm7/mgA\nYVgOH9PX9nFyn7CeNS8pCWLHYLwvv9Idc43/ecmpJEhBKPrHvKFIuADR4mlrXhCQ\nl8un4Q+aEl8P7vtgk02oZAo1jmHzM3Zoihls7ngK1ESoiQeUGHEf0RIVLXLTTDo9\n10fxYByL7f2+W4Eors6HzjnvqQ7g7U4fcg5ZmTCy42Ff4O6aTq/SQWYcJwgkAt6N\nIKkdKBxpZU0uf6SGL183SiriUF2NB9sXSCinaFjrO6W3lrjHmNu2SAuad2LvN3r9\nOk/Wc2gi3f+zJjeXSS8k8z+uYsQOXYEn6atd5k3aY9EvirSPRAZJMChLRk34+xH6\nxhcb34czYTImiY9sTvTynV0RVbKHNs/3PypJ9q39E8xE5cyNkN+5p3FXhAhrOgy/\nSvSMeLIqeEqHnYSeYpPp5PzBQfpyOygXWrPY8IpXmrxogaUH44U5nfcBtAtOPpiJ\nfjzd3w4RwvsuOz4O52AMmdqsvHLbLva75OXIGenQDtVBAgMBAAE=\n-----END PUBLIC KEY-----\n"
-  }
+  "existingBetaGroups": [
+    "3e424431-848d-4eeb-88bb-0c9fa49f6358",
+    "35b541d8-6a1f-4f16-9713-c88a7fe69aa7",
+    "9c87b1c8-e443-40a4-b66c-dcaeb7da8934"
+  ]
 }
