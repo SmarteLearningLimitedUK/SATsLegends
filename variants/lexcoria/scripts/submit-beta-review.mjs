@@ -40,14 +40,30 @@ async function list(path) {
   return records;
 }
 
-async function enablePersonalTesting(appPath, buildPath, buildId) {
-  const groups = (await list(appPath + '/betaGroups')).filter(group => group.attributes.isInternalGroup === true);
-  const personal = groups.filter(group => group.attributes.name === 'Lexcoria Personal Testing');
-  if (personal.length !== 1) throw Error('Expected one internal group named Lexcoria Personal Testing. Found ' + personal.length + '.');
+async function enablePersonalTesting(buildPath, buildId) {
+  const query = new URLSearchParams({
+    'filter[app]': appId,
+    'filter[name]': 'Lexcoria Personal Testing',
+    'filter[isInternalGroup]': 'true',
+    'fields[betaGroups]': 'name,isInternalGroup,publicLinkEnabled,hasAccessToAllBuilds',
+  });
+  const personal = await list('/v1/betaGroups?' + query);
+  if (personal.length !== 1) {
+    const visible = await list('/v1/betaGroups?' + new URLSearchParams({
+      'filter[app]': appId, 'fields[betaGroups]': 'name,isInternalGroup',
+    }));
+    console.log(JSON.stringify({ visibleGroups: visible.map(({attributes}) => ({
+      name: attributes.name, internal: attributes.isInternalGroup,
+    })) }));
+    throw Error('Expected one internal group named Lexcoria Personal Testing. Found ' + personal.length + '.');
+  }
   const [group] = personal;
   const groupPath = '/v1/betaGroups/' + group.id;
   const { data: app } = await api(groupPath + '/app');
-  if (app.id !== appId || group.attributes.publicLinkEnabled === true) throw Error('Wrong group for personal testing.');
+  if (app.id !== appId || group.attributes.isInternalGroup !== true ||
+      group.attributes.name !== 'Lexcoria Personal Testing' || group.attributes.publicLinkEnabled === true) {
+    throw Error('Wrong group for personal testing.');
+  }
   const testers = (await list(groupPath + '/relationships/betaTesters')).length;
   const isAssigned = async () => group.attributes.hasAccessToAllBuilds === true ||
     (await list(groupPath + '/builds?fields[builds]=version')).some(build => build.id === buildId);
@@ -91,7 +107,7 @@ async function submit() {
     if (status.processing !== 'VALID' || status.expired || status.usesNonExemptEncryption !== false) {
       throw Error('Build must be processed, unexpired and cleared for encryption before it can be added.');
     }
-    await enablePersonalTesting('/v1/apps/' + appId, path, build.id);
+    await enablePersonalTesting(path, build.id);
     return;
   }
   if (status.processing !== 'VALID' || status.expired || status.audience !== 'APP_STORE_ELIGIBLE') {
