@@ -1,50 +1,14 @@
 {
-  "tag": "matharia-ci-20261117-feedback-fixes",
+  "tag": "matharia-ci-20261117-calendar-ipad",
   "asset": "matharia-mac-testflight-candidate.zip",
-  "sha256": "ffbc67f7f9978ebacad0d5528bde7513bc3fdfb29c8097a8499db57cd253d801",
+  "sha256": "f60df832667e890cebd64bbc3c00e2d3124df360363647f246a4a4129b58d765",
   "bundleId": "com.smartelearning.satslegends",
   "minimumIOS": "16.4",
   "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
   "internalTestingOnly": false,
   "closedBetaOnly": true,
   "testerLocale": "en-GB",
-  "testerNotes": "Please try the updated Change Counter receipts, Graph Grabber pictograms and Calendar Quest dates in landscape. Also try a missing-factor question in Factor Frenzy, tap both ends of a graph in Line Graph Lab, and check the order bubble in Takeout Rush. This build supports iPhone and iPad.",
-  "nativeLaunchEvidence": [
-    {
-      "candidateSha256": "ffbc67f7f9978ebacad0d5528bde7513bc3fdfb29c8097a8499db57cd253d801",
-      "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
-      "bundleId": "com.smartelearning.satslegends",
-      "minimumIOS": "16.4",
-      "scope": "simulator",
-      "verifiedWebFiles": 796,
-      "nativeCompiled": true,
-      "xcode": "Xcode 26.3\nBuild version 17C529",
-      "ciRun": "44126879384",
-      "ciCommit": "e16cf79d6ce7371bcd85d84174acc8baade4668a",
-      "device": {
-        "name": "iPad Pro 11-inch (M4)",
-        "kind": "iPad",
-        "processSurvived": true
-      }
-    },
-    {
-      "candidateSha256": "ffbc67f7f9978ebacad0d5528bde7513bc3fdfb29c8097a8499db57cd253d801",
-      "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
-      "bundleId": "com.smartelearning.satslegends",
-      "minimumIOS": "16.4",
-      "scope": "simulator",
-      "verifiedWebFiles": 796,
-      "nativeCompiled": true,
-      "xcode": "Xcode 26.3\nBuild version 17C529",
-      "ciRun": "44126879384",
-      "ciCommit": "e16cf79d6ce7371bcd85d84174acc8baade4668a",
-      "device": {
-        "name": "iPhone 16 Pro",
-        "kind": "iPhone",
-        "processSurvived": true
-      }
-    }
-  ],
+  "testerNotes": "On iPad, open Calendar Quest in landscape. Check that the seven date columns fill the panel, and try the month arrows and selecting a date. Repeat on iPhone to check the existing layout, including on compact phones.",
   "verifiedSubscriptionReceipt": {
     "appId": "6825120444",
     "bundleId": "com.smartelearning.satslegends",
