@@ -1,6 +1,6 @@
 import {spawnSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
-import {createReadStream, readFileSync, writeFileSync, mkdirSync, existsSync, mkdtempSync, rmSync, openSync, closeSync} from 'node:fs';
+import {createReadStream, readFileSync, readdirSync, writeFileSync, mkdirSync, existsSync, mkdtempSync, rmSync, openSync, closeSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {resolve, join} from 'node:path';
 import {IOS_APP_ID, IOS_BUNDLE_ID, IOS_TEAM_ID, NATIVE_PROJECT, signingConfiguration, connectToken, nextBuild, exportOptions} from './ios-testflight-config.mjs';
@@ -20,10 +20,10 @@ const work = mkdtempSync(join(process.env.RUNNER_TEMP || tmpdir(),'matharia-nati
 const nativeRoot = join(work,'candidate');
 mkdirSync(nativeRoot);
 
-function run(command,args,{cwd=nativeRoot,log,timeout=1800000}={}) {
+function run(command,args,{cwd=nativeRoot,log,timeout=1800000,env=process.env}={}) {
   const fd = log ? openSync(join(out,log),'w') : null;
   let result;
-  try {result = spawnSync(command,args,{cwd,encoding:'utf8',timeout,killSignal:'SIGKILL',maxBuffer:32*1024*1024,
+  try {result = spawnSync(command,args,{cwd,env,encoding:'utf8',timeout,killSignal:'SIGKILL',maxBuffer:32*1024*1024,
     stdio:log?['ignore',fd,fd]:'pipe'});}
   finally {if (fd !== null) closeSync(fd);}
   if (result.error || result.status !== 0) {
@@ -240,7 +240,7 @@ with zipfile.ZipFile(sys.argv[1]) as z:
     Object.assign(result,{version,build,internalTestingOnly:release.internalTestingOnly===true,uploadCommandSucceeded:false}); save();
     const keyPath = join(work,`AuthKey_${signing.keyId}.p8`),optionsPath = join(work,'ExportOptions.plist');
     writeFileSync(keyPath,signing.privateKey,{mode:0o600});
-    writeFileSync(optionsPath,exportOptions(signing,{internalOnly:result.internalTestingOnly}),{mode:0o600});
+    writeFileSync(optionsPath,exportOptions(signing,{internalOnly:result.internalTestingOnly}).replace('<string>upload</string>','<string>export</string>'),{mode:0o600});
     const archive = join(work,'Matharia.xcarchive');
     const auth = ['-allowProvisioningUpdates','-authenticationKeyPath',keyPath,'-authenticationKeyID',signing.keyId,'-authenticationKeyIssuerID',signing.issuer];
     console.log(`Archiving Matharia ${version} (${build}) for existing app ${IOS_APP_ID}.`);
@@ -253,7 +253,23 @@ with zipfile.ZipFile(sys.argv[1]) as z:
       if (plist(info,key) !== expected) throw Error(`Archive ${key} mismatch.`);
     }
     result.nativeArchiveVerified = true; save();
-    run('xcodebuild',['-exportArchive','-archivePath',archive,'-exportPath',join(work,'export'),'-exportOptionsPlist',optionsPath,...auth],{log:'upload.log'});
+    const exported = join(work,'export');
+    run('xcodebuild',['-exportArchive','-archivePath',archive,'-exportPath',exported,'-exportOptionsPlist',optionsPath,...auth],{log:'export.log'});
+    const ipas = readdirSync(exported).filter(file=>file.endsWith('.ipa'));
+    if (ipas.length!==1) throw Error('Expected one signed Matharia IPA.');
+    const ipa = join(exported,ipas[0]);
+    const checked = join(work,'verified-ipa');
+    run('ditto',['-x','-k',ipa,checked]);
+    const exportedApp = join(checked,'Payload/App.app');
+    for (const [key,expected] of [['CFBundleIdentifier',IOS_BUNDLE_ID],['CFBundleVersion',build],['CFBundleShortVersionString',version],['MinimumOSVersion','16.4']]) {
+      if (plist(join(exportedApp,'Info.plist'),key) !== expected) throw Error(`Exported IPA ${key} mismatch.`);
+    }
+    run('codesign',['--verify','--strict',exportedApp],{log:'codesign.log'});
+    result.signedIPAVerified = true; save();
+    console.log('Verified the signed IPA. Uploading through Apple altool.');
+    run('xcrun',['altool','--upload-app','-f',ipa,'-t','ios','--apiKey',signing.keyId,'--apiIssuer',signing.issuer],{
+      log:'upload.log',env:{...process.env,API_PRIVATE_KEYS_DIR:work}
+    });
     result.uploadCommandSucceeded = true; save();
     console.log('Apple upload command succeeded; waiting for the uploaded build record.');
     for (let attempt=0; attempt<30; attempt++) {
