@@ -43,7 +43,7 @@ async function list(path) {
 async function enablePersonalTesting(buildPath, buildId) {
   const query = new URLSearchParams({
     'filter[app]': appId,
-    'filter[name]': 'Lexcoria Personal Testing',
+    'filter[name]': 'internal team',
     'filter[isInternalGroup]': 'true',
     'fields[betaGroups]': 'name,isInternalGroup,publicLinkEnabled,hasAccessToAllBuilds',
   });
@@ -55,13 +55,13 @@ async function enablePersonalTesting(buildPath, buildId) {
     console.log(JSON.stringify({ visibleGroups: visible.map(({attributes}) => ({
       name: attributes.name, internal: attributes.isInternalGroup,
     })) }));
-    throw Error('Expected one internal group named Lexcoria Personal Testing. Found ' + personal.length + '.');
+    throw Error('Expected one internal group named internal team. Found ' + personal.length + '.');
   }
   const [group] = personal;
   const groupPath = '/v1/betaGroups/' + group.id;
   const { data: app } = await api(groupPath + '/app');
   if (app.id !== appId || group.attributes.isInternalGroup !== true ||
-      group.attributes.name !== 'Lexcoria Personal Testing' || group.attributes.publicLinkEnabled === true) {
+      group.attributes.name !== 'internal team' || group.attributes.publicLinkEnabled === true) {
     throw Error('Wrong group for personal testing.');
   }
   const testers = (await list(groupPath + '/relationships/betaTesters')).length;
