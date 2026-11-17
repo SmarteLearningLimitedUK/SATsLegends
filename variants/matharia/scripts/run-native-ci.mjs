@@ -85,31 +85,7 @@ with zipfile.ZipFile(sys.argv[1]) as z:
   result.xcode = xcode;
   console.log(`Verified candidate and ${webFiles.length} web files. ${xcode.replaceAll('\n','; ')}`);
 
-  if (mode === '--simulator' && release.nativeLaunchEvidence !== undefined) {
-    // The same bundle can be tested across independent Mac jobs when CoreSimulator cannot run both in one session.
-    const evidence = release.nativeLaunchEvidence;
-    if (!Array.isArray(evidence) || evidence.length !== 2) throw Error('Expected two exact-package simulator receipts.');
-    const kinds = new Set();
-    for (const row of evidence) {
-      if (row.candidateSha256 !== release.sha256 || row.sourceGitHead !== release.sourceGitHead ||
-          row.bundleId !== IOS_BUNDLE_ID || row.minimumIOS !== '16.4' || row.scope !== 'simulator' ||
-          row.verifiedWebFiles !== result.verifiedWebFiles || row.nativeCompiled !== true || row.xcode !== xcode ||
-          !/^[0-9]+$/.test(row.ciRun) || !/^[a-f0-9]{40}$/.test(row.ciCommit) ||
-          !['iPhone', 'iPad'].includes(row.device?.kind) || !row.device.name?.startsWith(row.device.kind) ||
-          row.device.processSurvived !== true || kinds.has(row.device.kind)) {
-        throw Error('Unverified or duplicate simulator receipt for the pinned package.');
-      }
-      kinds.add(row.device.kind);
-    }
-    result.devices = evidence.map(row => row.device);
-    result.simulatorSourceRuns = evidence.map(row => ({kind: row.device.kind, run: row.ciRun, commit: row.ciCommit}));
-    result.nativeCompiled = true;
-    result.nativeInstallAndLaunchVerified = true;
-    result.nativeGameplayVerified = false;
-    result.nativeIOS164RuntimeVerified = false;
-    result.scope = 'Verified exact-package iPhone and iPad install and launch from separate macOS runner reports.';
-    console.log(`Validated ${evidence.map(row => `${row.device.kind} run ${row.ciRun}`).join(' and ')}.`);
-  } else if (mode === '--simulator') {
+  if (mode === '--simulator') {
     const derived = join(work,'DerivedData');
     run('xcodebuild',['-project',NATIVE_PROJECT,'-scheme','App','-configuration','Debug',
       '-sdk','iphonesimulator','-destination','generic/platform=iOS Simulator','-derivedDataPath',derived,
@@ -140,11 +116,15 @@ with zipfile.ZipFile(sys.argv[1]) as z:
         if (!pid) throw Error(`No ${kind} launch PID.`);
         appLaunched = true;
         await new Promise(done=>setTimeout(done,15000));
-        sim('screenshot',['io',device.udid,'screenshot',join(out,kind.toLowerCase()+'-native-launch.png')],180000);
         const processName = run('ps',['-p',pid,'-o','comm='],{timeout:15000});
         if (!processName.includes('App.app/App')) throw Error(`${kind} app did not survive launch.`);
         result.devices.push({name:device.name,kind,processSurvived:true});
-        save(); console.log(`${kind}: app installed, rendered and survived launch.`);
+        save(); console.log(`${kind}: app installed and survived launch.`);
+        try {sim('screenshot',['io',device.udid,'screenshot',join(out,kind.toLowerCase()+'-native-launch.png')],45000);}
+        catch(error) {
+          (result.simulatorScreenshotWarnings ||= []).push({kind,name:device.name,error:error.message}); save();
+          console.warn(`${kind}: simulator screenshot unavailable. App process survival has already been verified.`);
+        }
       } catch(error) {
         result.simulatorFailure = {...result.simulatorStage,error:error.message}; save();
         throw error;

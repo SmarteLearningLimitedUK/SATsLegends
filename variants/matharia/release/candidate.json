@@ -1,48 +1,12 @@
 {
-  "tag": "matharia-ci-20261117-ipad-layout",
+  "tag": "matharia-ci-20261117-feedback-fixes",
   "asset": "matharia-mac-testflight-candidate.zip",
-  "sha256": "da34b8311baadec8e7c442d0d2c7a8961acafa0588c8d464d6b8d84badab6b88",
+  "sha256": "ffbc67f7f9978ebacad0d5528bde7513bc3fdfb29c8097a8499db57cd253d801",
   "bundleId": "com.smartelearning.satslegends",
   "minimumIOS": "16.4",
   "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
   "internalTestingOnly": false,
   "closedBetaOnly": true,
   "testerLocale": "en-GB",
-  "testerNotes": "Please check the layouts on an iPad. Try the island selection screens, Conversion Canyon, Coordinates Quest and Perimeter Path. Watch the new ambient scenery motion and try Reduce Motion. In Rounding Rocket, check that each correct answer adds a new piece.",
-  "nativeLaunchEvidence": [
-    {
-      "candidateSha256": "da34b8311baadec8e7c442d0d2c7a8961acafa0588c8d464d6b8d84badab6b88",
-      "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
-      "bundleId": "com.smartelearning.satslegends",
-      "minimumIOS": "16.4",
-      "scope": "simulator",
-      "verifiedWebFiles": 796,
-      "nativeCompiled": true,
-      "xcode": "Xcode 26.3\nBuild version 17C529",
-      "ciRun": "44078310514",
-      "ciCommit": "0c9c821716146ceed405b66fad33cce8ed5129c4",
-      "device": {
-        "name": "iPhone 16 Pro",
-        "kind": "iPhone",
-        "processSurvived": true
-      }
-    },
-    {
-      "candidateSha256": "da34b8311baadec8e7c442d0d2c7a8961acafa0588c8d464d6b8d84badab6b88",
-      "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
-      "bundleId": "com.smartelearning.satslegends",
-      "minimumIOS": "16.4",
-      "scope": "simulator",
-      "verifiedWebFiles": 796,
-      "nativeCompiled": true,
-      "xcode": "Xcode 26.3\nBuild version 17C529",
-      "ciRun": "44081262938",
-      "ciCommit": "3ea6d06e1e7d1313822cb9e5ea268bff3ebf83de",
-      "device": {
-        "name": "iPad Pro 11-inch (M4)",
-        "kind": "iPad",
-        "processSurvived": true
-      }
-    }
-  ]
+  "testerNotes": "Please try the updated Change Counter receipts, Graph Grabber pictograms and Calendar Quest dates in landscape. Also try a missing-factor question in Factor Frenzy, tap both ends of a graph in Line Graph Lab, and check the order bubble in Takeout Rush. This build supports iPhone and iPad."
 }
