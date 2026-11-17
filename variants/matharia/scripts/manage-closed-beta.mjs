@@ -1,6 +1,7 @@
 import {mkdirSync,readFileSync,writeFileSync} from 'node:fs';
 import {signingConfiguration,connectToken} from './ios-testflight-config.mjs';
 import {manageClosedBeta} from './closed-beta.mjs';
+import {createPublicInvite} from './create-public-invite.mjs';
 const operation=(process.env.CLOSED_BETA_OPERATION||'').replace('closed-beta-','');
 const out='qa-artifacts/ios-matharia/closed-beta';mkdirSync(out,{recursive:true});
 const config=signingConfiguration(process.env),testerEmail=process.env.CLOSED_BETA_TESTER_EMAIL?.trim();
@@ -16,7 +17,17 @@ try{
  let reviewContact;
  try{reviewContact=JSON.parse(process.env.CLOSED_BETA_REVIEW_CONTACT||'{}');}
  catch{throw Error('Invalid encrypted review contact JSON.');}
- report={...report,...await manageClosedBeta({api,operation,target,testerEmail,reviewContact})};if(!report.success)process.exitCode=1;
+ if(operation==='invite' && target.publicInvite){
+  try {
+   report={...report,...await manageClosedBeta({api,operation,target,testerEmail,reviewContact})};
+  } catch(error){
+   report.closedGroupError=String(error.message).replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi,'[email omitted]');
+  }
+  report.publicInvite=await createPublicInvite({api,target});
+ }else{
+  report={...report,...await manageClosedBeta({api,operation,target,testerEmail,reviewContact})};
+ }
+ if(!report.success)process.exitCode=1;
 }
 catch(error){report.error=String(error.message).replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi,'[email omitted]');process.exitCode=1;}
 finally{writeFileSync(out+'/result.json',JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));}
