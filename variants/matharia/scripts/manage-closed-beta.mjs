@@ -61,11 +61,39 @@ async function submitToExistingBetaGroups(){
  if(!reviewState||reviewState==='REJECTED')throw Error(`Unexpected Beta App Review status: ${reviewState||'unknown'}.`);
  return {success:true,submitted:true,buildId:target.buildId,build:target.build,version:target.version,reviewState};
 }
+async function inspectExistingBetaGroups(){
+ if(target.appId!==IOS_APP_ID||target.bundleId!==IOS_BUNDLE_ID||!target.existingBetaGroups)throw Error('A verified Matharia build is required.');
+ const current=`/v1/builds/${target.buildId}`;
+ const previous='/v1/builds/20d5a522-2aea-45a6-a200-1884791de001';
+ const groups = rows => rows.map(row=>({id:row.id,internal:row.attributes?.isInternalGroup,hasAllBuilds:row.attributes?.hasAccessToAllBuilds}));
+ const requests=[
+  ['build',`${current}?include=app,betaAppReviewSubmission,preReleaseVersion`, response=>({
+    id:response.data.id,build:response.data.attributes.version,
+    appId:response.data.relationships?.app?.data?.id,
+    reviewState:response.included?.find(row=>row.type==='betaAppReviewSubmissions')?.attributes?.betaReviewState,
+    eligibility:response.data.attributes.buildAudienceType,
+    processing:response.data.attributes.processingState
+  })],
+  ['status',`${current}/buildBetaDetail`,response=>({external:response.data.attributes.externalBuildState,internal:response.data.attributes.internalBuildState})],
+  ['previousGroups',`${previous}/betaGroups?limit=200`,response=>groups(response.data)],
+  ['currentGroups',`${current}/betaGroups?limit=200`,response=>groups(response.data)],
+  ['appGroups',`/v1/apps/${IOS_APP_ID}/betaGroups?limit=200`,response=>groups(response.data)],
+  ...target.existingBetaGroups.map((id,index)=>[`group${index+1}`,`/v1/betaGroups/${id}`,response=>groups([response.data])])
+ ];
+ const check=async ([name,path,read])=>{
+  try{return [name,read(await api(path))];}
+  catch(error){return [name,{error:error.message}];}
+ };
+ const evidence=Object.fromEntries(await Promise.all(requests.map(check)));
+ return {success:evidence.build.id===target.buildId&&evidence.build.appId===IOS_APP_ID&&evidence.build.build===target.build,...evidence};
+}
 try{
  let reviewContact;
  try{reviewContact=JSON.parse(process.env.CLOSED_BETA_REVIEW_CONTACT||'{}');}
  catch{throw Error('Invalid encrypted review contact JSON.');}
- if(operation==='submit' && target.existingBetaGroups){
+ if(operation==='inspect' && target.existingBetaGroups){
+  report={...report,...await inspectExistingBetaGroups()};
+ }else if(operation==='submit' && target.existingBetaGroups){
   report={...report,...await submitToExistingBetaGroups()};
  }else if(operation==='invite' && target.existingBetaGroups){
   report={...report,...await assignExistingGroups({api,target}),success:true};
