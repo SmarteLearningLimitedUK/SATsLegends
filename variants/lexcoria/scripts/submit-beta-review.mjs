@@ -43,20 +43,11 @@ async function list(path) {
 async function enablePersonalTesting(buildPath, buildId) {
   const query = new URLSearchParams({
     'filter[app]': appId,
-    'filter[name]': 'internal team',
-    'filter[isInternalGroup]': 'true',
     'fields[betaGroups]': 'name,isInternalGroup,publicLinkEnabled,hasAccessToAllBuilds',
   });
-  const personal = await list('/v1/betaGroups?' + query);
-  if (personal.length !== 1) {
-    const visible = await list('/v1/betaGroups?' + new URLSearchParams({
-      'filter[app]': appId, 'fields[betaGroups]': 'name,isInternalGroup',
-    }));
-    console.log(JSON.stringify({ visibleGroups: visible.map(({attributes}) => ({
-      name: attributes.name, internal: attributes.isInternalGroup,
-    })) }));
-    throw Error('Expected one internal group named internal team. Found ' + personal.length + '.');
-  }
+  const groups = await list('/v1/betaGroups?' + query);
+  const personal = groups.filter(group => group.attributes.isInternalGroup === true && group.attributes.name === 'internal team');
+  if (personal.length !== 1) throw Error('Expected one internal group named internal team. Found ' + personal.length + '.');
   const [group] = personal;
   const groupPath = '/v1/betaGroups/' + group.id;
   const { data: app } = await api(groupPath + '/app');
