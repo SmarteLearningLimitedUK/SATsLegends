@@ -69,9 +69,17 @@ jobs:
         run: |
           set -euo pipefail
           dir="$RUNNER_TEMP/lexcoria"
-          xcodebuild -project "$dir/variants/lexcoria/native/ios/App/App.xcodeproj" \
+          result="$dir/LexcoriaSimulator.xcresult"
+          if ! xcodebuild -project "$dir/variants/lexcoria/native/ios/App/App.xcodeproj" \
             -scheme App -configuration Debug -destination 'generic/platform=iOS Simulator' \
-            -derivedDataPath "$dir/DerivedData" CODE_SIGNING_ALLOWED=NO build
+            -derivedDataPath "$dir/DerivedData" -resultBundlePath "$result" -jobs 2 \
+            ARCHS=x86_64 ONLY_ACTIVE_ARCH=YES SWIFT_ENABLE_EXPLICIT_MODULES=NO \
+            CODE_SIGNING_ALLOWED=NO -quiet build; then
+            if [[ -d "$result" ]]; then
+              xcrun xcresulttool get build-results --path "$result" || true
+            fi
+            exit 1
+          fi
           app="$dir/DerivedData/Build/Products/Debug-iphonesimulator/App.app"
           [[ "$(plutil -extract CFBundleIdentifier raw -o - "$app/Info.plist")" == "$LEXCORIA_BUNDLE_ID" ]]
           test -f "$app/public/index.html"
