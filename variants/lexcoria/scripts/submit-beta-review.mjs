@@ -3,7 +3,7 @@ import { connectToken, signingConfiguration } from '../../matharia/scripts/ios-t
 const appId = '6835860442';
 const bundleId = 'com.smartelearning.lexcoria';
 const internal = process.env.LEXCORIA_INTERNAL_BUILD === 'true';
-const buildNumber = internal ? '100.87.1' : '100.82.1';
+const buildNumber = internal ? '100.93.1' : '100.82.1';
 const groupName = 'Lexcoria Closed Beta';
 const signing = signingConfiguration(process.env);
 const origin = 'https://api.appstoreconnect.apple.com';
