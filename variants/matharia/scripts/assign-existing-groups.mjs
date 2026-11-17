@@ -30,12 +30,13 @@ export async function assignExistingGroups({api,target}) {
       if (!/HTTP (400|404|500)\b/.test(error.message)) throw error;
       group = await api(path);
     }
-    if (!owner) {
-      try { owner = (await api(`${path}/relationships/app`)).data; }
-      catch { owner = (await api(`${path}/app`)).data; }
-    }
-    if (group.data.id !== id || group.data.attributes.isInternalGroup !== false || owner.id !== IOS_APP_ID) {
+    if (!owner?.id) owner = (await api(`${path}/relationships/app`).catch(()=>({}))).data;
+    if (!owner?.id) owner = (await api(`${path}/app?fields[apps]=bundleId`).catch(()=>({}))).data;
+    if (group.data?.id !== id || group.data.attributes.isInternalGroup !== false || (owner?.id && owner.id !== IOS_APP_ID)) {
       throw Error('An existing external group could not be verified for this app.');
+    }
+    if (!owner?.id && !await listed({path},'20d5a522-2aea-45a6-a200-1884791de001')) {
+      throw Error('Apple returned no app relationship or previous Matharia build for this group.');
     }
     return {id,path};
   }));
@@ -43,7 +44,7 @@ export async function assignExistingGroups({api,target}) {
   const groupErrors = groupChecks.flatMap((row,index) => row.status === 'rejected'
     ? [{id:target.existingBetaGroups[index],error:row.reason.message}] : []);
 
-  async function listed({path}) {
+  async function listed({path},buildId=target.buildId) {
     let url = `${path}/relationships/builds?limit=200`;
     for (let count = 0; url; count++) {
       if (count >= 25) throw Error('Unexpected TestFlight list pagination.');
@@ -53,7 +54,7 @@ export async function assignExistingGroups({api,target}) {
         if (count > 0 || !/HTTP (400|403|404)\b/.test(error.message)) throw error;
         page = await api(`${path}/builds?limit=200`);
       }
-      if (page.data.some(item => item.id === target.buildId)) return true;
+      if (page.data.some(item => item.id === buildId)) return true;
       url = page.links?.next;
     }
     return false;
