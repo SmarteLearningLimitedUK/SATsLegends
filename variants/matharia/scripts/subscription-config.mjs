@@ -19,14 +19,34 @@ export function validateSubscriptionConfiguration(catalog, configured) {
 }
 
 // Read only: verify ownership and duration before signing/uploading any archive.
+const transient = error => /HTTP (429|5\d\d)\b/.test(String(error.message));
+
 export async function verifyLiveSubscriptions(api, catalog) {
-  const groups = await api(`/v1/apps/${IOS_APP_ID}/subscriptionGroups?limit=200`);
-  if (!groups.data?.some(group => group.id === catalog.groupId)) throw Error('Subscription group does not belong to this Apple app.');
-  const rows = await api(`/v1/subscriptionGroups/${catalog.groupId}/subscriptions?limit=200`);
-  for (const expected of catalog.products) {
-    const actual = rows.data?.find(product => product.id === expected.appleId);
-    if (actual?.attributes.productId !== expected.id || actual.attributes.subscriptionPeriod !== expected.period) throw Error(`Apple product identity/duration mismatch: ${expected.id}`);
-    if (['REMOVED_FROM_SALE','DEVELOPER_REMOVED_FROM_SALE','REJECTED'].includes(actual.attributes.state)) throw Error(`Apple subscription is unavailable: ${expected.id}`);
+  let groups;
+  try {
+    groups = (await api(`/v1/apps/${IOS_APP_ID}/relationships/subscriptionGroups?limit=200`)).data;
+  } catch (error) {
+    if (!transient(error)) throw error;
+    const response = await api(`/v1/apps/${IOS_APP_ID}?include=subscriptionGroups&fields[subscriptionGroups]=referenceName`);
+    groups = response.data.relationships?.subscriptionGroups?.data ?? response.included;
   }
-  return catalog.products.map(product => ({id:product.id, appleId:product.appleId, period:product.period}));
+  if (!groups?.some(group => group.type === 'subscriptionGroups' && group.id === catalog.groupId)) {
+    throw Error('Subscription group does not belong to this Apple app.');
+  }
+
+  const matching = await Promise.all(catalog.products.map(async expected => {
+    const params = new URLSearchParams({ include: 'group', 'fields[subscriptions]': 'productId,subscriptionPeriod,state,group' });
+    const response = await api(`/v1/subscriptions/${expected.appleId}?${params}`);
+    const record = response.data;
+    const groupId = record.relationships?.group?.data?.id ?? response.included?.find(group => group.type === 'subscriptionGroups')?.id;
+    if (record.id !== expected.appleId || record.type !== 'subscriptions' || groupId !== catalog.groupId ||
+        record.attributes.productId !== expected.id || record.attributes.subscriptionPeriod !== expected.period) {
+      throw Error(`Apple product identity, group or duration mismatch: ${expected.id}`);
+    }
+    if (['REMOVED_FROM_SALE','DEVELOPER_REMOVED_FROM_SALE','REJECTED'].includes(record.attributes.state)) {
+      throw Error(`Apple subscription is unavailable: ${expected.id}`);
+    }
+    return { id: expected.id, appleId: expected.appleId, period: expected.period };
+  }));
+  return matching;
 }
