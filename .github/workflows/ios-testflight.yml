@@ -17,7 +17,8 @@ on:
         type: boolean
 
 permissions:
-  contents: read
+  # GitHub requires write-role access to download unpublished drafts.
+  contents: write
 
 concurrency:
   group: lexcoria-testflight
