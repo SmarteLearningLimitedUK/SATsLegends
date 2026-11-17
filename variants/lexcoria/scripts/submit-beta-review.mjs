@@ -61,6 +61,7 @@ async function enablePersonalTesting(buildPath, buildId) {
   if (!await isAssigned()) {
     await api(buildPath + '/relationships/betaGroups', 'POST', [{ type: 'betaGroups', id: group.id }]);
   }
+  console.log(JSON.stringify({ build: buildNumber, group: group.attributes.name, assigned: await isAssigned(), testers, publicLinkEnabled: false }));
   for (let attempt = 0; attempt < 12; attempt++) {
     const { data: beta } = await api(buildPath + '/buildBetaDetail');
     const assigned = await isAssigned();
@@ -84,12 +85,12 @@ async function submit() {
   const { data: release } = await api(path + '/preReleaseVersion');
   if (build.attributes.version !== buildNumber || release.attributes.version !== '1.0' ||
       release.attributes.platform !== 'IOS') throw Error('Wrong Lexcoria version or platform.');
-  const { data: beta } = await api(path + '/buildBetaDetail');
+  const beta = internal ? undefined : (await api(path + '/buildBetaDetail')).data;
   const status = {
     build: buildNumber,
     processing: build.attributes.processingState,
     audience: build.attributes.buildAudienceType,
-    external: beta.attributes.externalBuildState,
+    external: beta?.attributes.externalBuildState,
     expired: build.attributes.expired,
     usesNonExemptEncryption: build.attributes.usesNonExemptEncryption,
   };
