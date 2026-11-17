@@ -50,11 +50,7 @@ async function enablePersonalTesting(buildPath, buildId) {
   if (personal.length !== 1) throw Error('Expected one internal group named internal team. Found ' + personal.length + '.');
   const [group] = personal;
   const groupPath = '/v1/betaGroups/' + group.id;
-  const { data: app } = await api(groupPath + '/app');
-  if (app.id !== appId || group.attributes.isInternalGroup !== true ||
-      group.attributes.name !== 'internal team' || group.attributes.publicLinkEnabled === true) {
-    throw Error('Wrong group for personal testing.');
-  }
+  if (group.attributes.publicLinkEnabled === true) throw Error('Internal team has an unexpected public link.');
   const testers = (await list(groupPath + '/relationships/betaTesters')).length;
   const isAssigned = async () => group.attributes.hasAccessToAllBuilds === true ||
     (await list(groupPath + '/builds?fields[builds]=version')).some(build => build.id === buildId);
