@@ -23,6 +23,10 @@ on:
         description: Enable Lexcoria build 100.87.1 for existing personal internal testing
         default: false
         type: boolean
+      internal_only_upload:
+        description: Upload a TestFlight Internal Only build
+        default: false
+        type: boolean
 
 permissions:
   # GitHub requires write-role access to download unpublished drafts.
@@ -92,12 +96,13 @@ jobs:
           app="$dir/DerivedData/Build/Products/Debug-iphonesimulator/App.app"
           [[ "$(plutil -extract CFBundleIdentifier raw -o - "$app/Info.plist")" == "$LEXCORIA_BUNDLE_ID" ]]
           test -f "$app/public/index.html"
-      - name: Verify Apple record and upload external-eligible build
+      - name: Verify Apple record and upload build
         if: inputs.upload
         env:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           ASC_PRIVATE_KEY_P8: ${{ secrets.ASC_PRIVATE_KEY_P8 }}
+          LEXCORIA_INTERNAL_ONLY: ${{ inputs.internal_only_upload }}
         run: node variants/lexcoria/scripts/upload-testflight.mjs "$RUNNER_TEMP/lexcoria"
   beta-review:
     if: inputs.review_build || inputs.internal_build

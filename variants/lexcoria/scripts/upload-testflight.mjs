@@ -7,6 +7,7 @@ import { signingConfiguration, connectToken, nextBuild, exportOptions } from '..
 const bundleId = 'com.smartelearning.lexcoria';
 const appId = '6835860442';
 const version = '1.0';
+const internalOnly = process.env.LEXCORIA_INTERNAL_ONLY === 'true';
 const project = resolve(process.argv[2], 'variants/lexcoria/native/ios/App/App.xcodeproj');
 const signing = signingConfiguration(process.env);
 const run = (command, args, capture = false) => {
@@ -43,7 +44,7 @@ try {
   const options = join(work, 'ExportOptions.plist');
   const archive = join(work, 'Lexcoria.xcarchive');
   writeFileSync(key, signing.privateKey, { mode: 0o600 });
-  writeFileSync(options, exportOptions(signing, { internalOnly: false }), { mode: 0o600 });
+  writeFileSync(options, exportOptions(signing, { internalOnly }), { mode: 0o600 });
   const auth = ['-allowProvisioningUpdates', '-authenticationKeyPath', key, '-authenticationKeyID', signing.keyId, '-authenticationKeyIssuerID', signing.issuer];
   console.log('Archiving Lexcoria ' + version + ' (' + build + ') for Apple app ' + app.id);
   run('xcodebuild', ['-project', project, '-scheme', 'App', '-configuration', 'Release',
