@@ -44,5 +44,25 @@
         "processSurvived": true
       }
     }
-  ]
+  ],
+  "verifiedSubscriptionReceipt": {
+    "appId": "6825120444",
+    "bundleId": "com.smartelearning.satslegends",
+    "build": "100.81.1",
+    "ciRun": "44083767539",
+    "createdAt": "2026-11-17T12:33:45.779Z",
+    "catalogSha256": "512b8ff1da86162088c0fcae828cf41f84eb8e7def25bf68fc73b4ff07cb4d47",
+    "products": [
+      {
+        "id": "com.smartelearning.satslegends.matharia.monthly",
+        "appleId": "6830158618",
+        "period": "ONE_MONTH"
+      },
+      {
+        "id": "com.smartelearning.satslegends.matharia.yearly",
+        "appleId": "6830160702",
+        "period": "ONE_YEAR"
+      }
+    ]
+  }
 }

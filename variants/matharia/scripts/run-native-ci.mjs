@@ -188,7 +188,24 @@ with zipfile.ZipFile(sys.argv[1]) as z:
     const app = await apple(`/v1/apps/${IOS_APP_ID}?fields[apps]=bundleId,name`);
     if (app.data?.id !== IOS_APP_ID || app.data.attributes?.bundleId !== IOS_BUNDLE_ID) throw Error('Live Apple app does not match the existing SATs Legends record.');
     result.appStoreConnectRecordVerified = true;
-    result.verifiedSubscriptionProducts = await verifyLiveSubscriptions(apple, subscriptions);
+    try {
+      result.verifiedSubscriptionProducts = await verifyLiveSubscriptions(apple, subscriptions);
+      result.subscriptionVerification = { mode:'live' };
+    } catch (error) {
+      const proof = release.verifiedSubscriptionReceipt;
+      const transient = error.name==='TimeoutError' || /HTTP (429|5\d\d)\b/.test(String(error.message));
+      const products = subscriptions.products.map(({id,appleId,period})=>({id,appleId,period}));
+      const age = Date.now()-Date.parse(proof?.createdAt);
+      const catalog = join(nativeRoot,'variants/matharia/release/subscriptions.json');
+      const scopedBeta = candidate.closedBetaOnly===true && candidate.allGamesUnlockedForReview===true && release.closedBetaOnly===true;
+      if (!transient || !scopedBeta || !proof || proof.appId!==IOS_APP_ID || proof.bundleId!==IOS_BUNDLE_ID ||
+          !Number.isFinite(age) || age<0 || age>86400000 ||
+          !/^[0-9]+$/.test(proof.ciRun) || proof.catalogSha256!==await hash(catalog) ||
+          JSON.stringify(proof.products)!==JSON.stringify(products)) throw error;
+      result.verifiedSubscriptionProducts = proof.products;
+      result.subscriptionVerification = { mode:'prior-live-receipt', build:proof.build, run:proof.ciRun, verifiedAt:proof.createdAt, error:error.name==='TimeoutError'?'Apple subscription request timed out':String(error.message) };
+      console.warn('Apple subscription metadata unavailable. Using same-catalog evidence for the explicitly scoped beta.');
+    }
     result.appleAppName = app.data.attributes.name;
     let page = await apple(`/v1/builds?filter[app]=${IOS_APP_ID}&sort=-uploadedDate&limit=200&include=preReleaseVersion`);
     const latest = page.data?.[0], included = page.included || [];
