@@ -1,7 +1,7 @@
 import { constants, createPublicKey, publicEncrypt } from 'node:crypto';
 import { IOS_APP_ID, IOS_BUNDLE_ID } from './ios-testflight-config.mjs';
 
-const GROUP_NAME = 'Matharia One-Spot Beta';
+const GROUP_NAME = 'Matharia One-Spot Beta 2';
 
 export async function createPublicInvite({ api, target }) {
   if (target.appId !== IOS_APP_ID || target.bundleId !== IOS_BUNDLE_ID || !target.buildId) {

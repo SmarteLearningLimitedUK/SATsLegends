@@ -18,12 +18,8 @@ try{
  try{reviewContact=JSON.parse(process.env.CLOSED_BETA_REVIEW_CONTACT||'{}');}
  catch{throw Error('Invalid encrypted review contact JSON.');}
  if(operation==='invite' && target.publicInvite){
-  try {
-   report={...report,...await manageClosedBeta({api,operation,target,testerEmail,reviewContact})};
-  } catch(error){
-   report.closedGroupError=String(error.message).replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi,'[email omitted]');
-  }
-  report.publicInvite=await createPublicInvite({api,target});
+  const publicInvite=await createPublicInvite({api,target});
+  report={...report,success:true,build:target.build,buildId:target.buildId,publicInvite};
  }else{
   report={...report,...await manageClosedBeta({api,operation,target,testerEmail,reviewContact})};
  }
