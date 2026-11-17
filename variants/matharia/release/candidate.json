@@ -1,12 +1,12 @@
 {
-  "tag": "matharia-ci-20261113-all-levels",
+  "tag": "matharia-ci-20261117-ipad-layout",
   "asset": "matharia-mac-testflight-candidate.zip",
-  "sha256": "8b3b5fe4542d6fa7d6fdd360d79c9c75a504417dcbc05ca97a016a497b5ebc57",
+  "sha256": "da34b8311baadec8e7c442d0d2c7a8961acafa0588c8d464d6b8d84badab6b88",
   "bundleId": "com.smartelearning.satslegends",
   "minimumIOS": "16.4",
   "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
   "internalTestingOnly": false,
   "closedBetaOnly": true,
   "testerLocale": "en-GB",
-  "testerNotes": "Every game, scored level, quiz and practice mode is open for testing without a subscription. Updating to this build keeps your current progress."
+  "testerNotes": "Please check the layouts on an iPad. Try the island selection screens, Conversion Canyon, Coordinates Quest and Perimeter Path. Watch the new ambient scenery motion and try Reduce Motion. In Rounding Rocket, check that each correct answer adds a new piece."
 }
