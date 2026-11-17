@@ -20,8 +20,21 @@ export async function assignExistingGroups({api,target}) {
   }
   const groupChecks = await Promise.allSettled(target.existingBetaGroups.map(async id => {
     const path = `/v1/betaGroups/${encodeURIComponent(id)}`;
-    const [group,owner] = await Promise.all([api(path), api(`${path}/app`)]);
-    if (group.data.id !== id || group.data.attributes.isInternalGroup !== false || owner.data.id !== IOS_APP_ID) {
+    let group;
+    let owner;
+    try {
+      group = await api(`${path}?include=app`);
+      owner = group.included?.find(row => row.type === 'apps' && row.id === IOS_APP_ID)
+        ?? group.data.relationships?.app?.data;
+    } catch (error) {
+      if (!/HTTP (400|404|500)\b/.test(error.message)) throw error;
+      group = await api(path);
+    }
+    if (!owner) {
+      try { owner = (await api(`${path}/relationships/app`)).data; }
+      catch { owner = (await api(`${path}/app`)).data; }
+    }
+    if (group.data.id !== id || group.data.attributes.isInternalGroup !== false || owner.id !== IOS_APP_ID) {
       throw Error('An existing external group could not be verified for this app.');
     }
     return {id,path};
@@ -29,17 +42,17 @@ export async function assignExistingGroups({api,target}) {
   const groups = groupChecks.flatMap(row => row.status === 'fulfilled' ? [row.value] : []);
   const groupErrors = groupChecks.flatMap((row,index) => row.status === 'rejected'
     ? [{id:target.existingBetaGroups[index],error:row.reason.message}] : []);
-  const current = (await api(`${buildPath}/buildBetaDetail`)).data;
-  if (groups.length && !current.attributes.autoNotifyEnabled) {
-    await api(`/v1/buildBetaDetails/${current.id}`, {
-      method: 'PATCH', body: { data: { type: 'buildBetaDetails', id: current.id, attributes: { autoNotifyEnabled: true } } },
-    });
-  }
+
   async function listed({path}) {
-    let url = `${path}/builds?limit=200`;
+    let url = `${path}/relationships/builds?limit=200`;
     for (let count = 0; url; count++) {
       if (count >= 25) throw Error('Unexpected TestFlight list pagination.');
-      const page = await api(url);
+      let page;
+      try { page = await api(url); }
+      catch (error) {
+        if (count > 0 || !/HTTP (400|403|404)\b/.test(error.message)) throw error;
+        page = await api(`${path}/builds?limit=200`);
+      }
       if (page.data.some(item => item.id === target.buildId)) return true;
       url = page.links?.next;
     }
@@ -48,13 +61,13 @@ export async function assignExistingGroups({api,target}) {
   const assignedGroups = [];
   for (const group of groups) {
     try {
-      if (!await listed(group)) {
+      if (!await listed(group).catch(()=>false)) {
         try {
-          await api(`${group.path}/relationships/builds`, {
-            method: 'POST', body: { data: [{ type: 'builds', id: target.buildId }] },
+          await api(`${buildPath}/relationships/betaGroups`, {
+            method: 'POST', body: { data: [{ type: 'betaGroups', id: group.id }] },
           });
         } catch (error) {
-          if (!await listed(group)) throw error;
+          if (!await listed(group).catch(()=>false)) throw error;
         }
       }
       if (!await listed(group)) throw Error('Apple did not confirm the build in the group.');
@@ -63,17 +76,27 @@ export async function assignExistingGroups({api,target}) {
       groupErrors.push({id:group.id,error:error.message});
     }
   }
-  const report = { buildId: target.buildId, build: target.build, version: target.version, assignedGroups, groupErrors };
-  if (!assignedGroups.length) return {...report,externalAvailable:false};
-  for (let attempt = 0; attempt < 12; attempt++) {
-    const [submission, detail] = await Promise.all([
-      api(`${buildPath}?include=betaAppReviewSubmission`), api(`${buildPath}/buildBetaDetail`),
-    ]);
-    report.reviewState = submission.included?.find(item => item.type === 'betaAppReviewSubmissions')?.attributes.betaReviewState;
-    report.externalState = detail.data.attributes.externalBuildState;
-    report.externalAvailable = report.reviewState === 'APPROVED' && ['READY_FOR_BETA_TESTING', 'IN_BETA_TESTING'].includes(report.externalState);
-    if (report.externalAvailable || report.reviewState === 'REJECTED' || attempt === 11) break;
-    await delay(25_000);
+  const report = { buildId: target.buildId, build: target.build, version: target.version, assignedGroups, groupErrors, externalAvailable:false };
+  if (!assignedGroups.length) return report;
+
+  let notified = false;
+  for (let attempt = 0; attempt < 8; attempt++) {
+    try {
+      const latest = await api(`${buildPath}?include=buildBetaDetail,betaAppReviewSubmission`);
+      const detail = latest.included?.find(row => row.type === 'buildBetaDetails')
+        ?? (await api(`${buildPath}/buildBetaDetail`)).data;
+      report.reviewState = latest.included?.find(row => row.type === 'betaAppReviewSubmissions')?.attributes.betaReviewState;
+      report.externalState = detail.attributes.externalBuildState;
+      report.externalAvailable = report.reviewState === 'APPROVED' && ['READY_FOR_BETA_TESTING', 'IN_BETA_TESTING'].includes(report.externalState);
+      if (report.externalAvailable || report.reviewState === 'REJECTED') break;
+      if (!notified && detail.attributes.autoNotifyEnabled === false) {
+        notified = true;
+        await api(`/v1/buildBetaDetails/${detail.id}`, {
+          method: 'PATCH', body: { data: { type: 'buildBetaDetails', id: detail.id, attributes: { autoNotifyEnabled: true } } },
+        });
+      }
+    } catch (error) { report.statusError = error.message; }
+    if (attempt < 7) await delay(15000);
   }
   return report;
 }
