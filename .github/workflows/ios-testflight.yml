@@ -15,6 +15,10 @@ on:
         description: Sign and upload after simulator compilation
         default: false
         type: boolean
+      review_build:
+        description: Submit Lexcoria build 100.82.1 for invitation-only Beta App Review
+        default: false
+        type: boolean
 
 permissions:
   # GitHub requires write-role access to download unpublished drafts.
@@ -26,6 +30,7 @@ concurrency:
 
 jobs:
   testflight:
+    if: ${{ !inputs.review_build }}
     runs-on: macos-15-intel
     environment: ios-testflight
     timeout-minutes: 40
@@ -90,3 +95,26 @@ jobs:
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           ASC_PRIVATE_KEY_P8: ${{ secrets.ASC_PRIVATE_KEY_P8 }}
         run: node variants/lexcoria/scripts/upload-testflight.mjs "$RUNNER_TEMP/lexcoria"
+  beta-review:
+    if: inputs.review_build
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    environment: ios-testflight
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            variants/matharia/scripts
+            variants/lexcoria/scripts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify and submit Lexcoria closed beta
+        env:
+          APPLE_TEAM_ID: D8L3PZ8Y72
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_PRIVATE_KEY_P8: ${{ secrets.ASC_PRIVATE_KEY_P8 }}
+        run: node variants/lexcoria/scripts/submit-beta-review.mjs
