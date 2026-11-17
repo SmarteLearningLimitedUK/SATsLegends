@@ -18,16 +18,19 @@ export async function assignExistingGroups({api,target}) {
       build.data.attributes.buildAudienceType !== 'APP_STORE_ELIGIBLE') {
     throw Error('Unexpected Apple app, build or distribution audience.');
   }
-  const groups = await Promise.all(target.existingBetaGroups.map(async id => {
+  const groupChecks = await Promise.allSettled(target.existingBetaGroups.map(async id => {
     const path = `/v1/betaGroups/${encodeURIComponent(id)}`;
     const [group,owner] = await Promise.all([api(path), api(`${path}/app`)]);
     if (group.data.id !== id || group.data.attributes.isInternalGroup !== false || owner.data.id !== IOS_APP_ID) {
-      throw Error('One of the pinned external tester groups has moved.');
+      throw Error('An existing external group could not be verified for this app.');
     }
-    return { id, path };
+    return {id,path};
   }));
+  const groups = groupChecks.flatMap(row => row.status === 'fulfilled' ? [row.value] : []);
+  const groupErrors = groupChecks.flatMap((row,index) => row.status === 'rejected'
+    ? [{id:target.existingBetaGroups[index],error:row.reason.message}] : []);
   const current = (await api(`${buildPath}/buildBetaDetail`)).data;
-  if (!current.attributes.autoNotifyEnabled) {
+  if (groups.length && !current.attributes.autoNotifyEnabled) {
     await api(`/v1/buildBetaDetails/${current.id}`, {
       method: 'PATCH', body: { data: { type: 'buildBetaDetails', id: current.id, attributes: { autoNotifyEnabled: true } } },
     });
@@ -42,15 +45,26 @@ export async function assignExistingGroups({api,target}) {
     }
     return false;
   }
+  const assignedGroups = [];
   for (const group of groups) {
-    if (!await listed(group)) {
-      await api(`${group.path}/relationships/builds`, {
-        method: 'POST', body: { data: [{ type: 'builds', id: target.buildId }] },
-      });
+    try {
+      if (!await listed(group)) {
+        try {
+          await api(`${group.path}/relationships/builds`, {
+            method: 'POST', body: { data: [{ type: 'builds', id: target.buildId }] },
+          });
+        } catch (error) {
+          if (!await listed(group)) throw error;
+        }
+      }
+      if (!await listed(group)) throw Error('Apple did not confirm the build in the group.');
+      assignedGroups.push(group.id);
+    } catch (error) {
+      groupErrors.push({id:group.id,error:error.message});
     }
-    if (!await listed(group)) throw Error('Apple did not confirm the new build in a tester group.');
   }
-  const report = { buildId: target.buildId, build: target.build, version: target.version, assignedGroups: groups.map(group => group.id) };
+  const report = { buildId: target.buildId, build: target.build, version: target.version, assignedGroups, groupErrors };
+  if (!assignedGroups.length) return {...report,externalAvailable:false};
   for (let attempt = 0; attempt < 12; attempt++) {
     const [submission, detail] = await Promise.all([
       api(`${buildPath}?include=betaAppReviewSubmission`), api(`${buildPath}/buildBetaDetail`),
