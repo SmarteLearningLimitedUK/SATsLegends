@@ -19,6 +19,10 @@ on:
         description: Submit Lexcoria build 100.82.1 for invitation-only Beta App Review
         default: false
         type: boolean
+      feedback_public_key:
+        description: Ephemeral base64 PEM public key for a private Lexcoria feedback report
+        required: false
+        type: string
 
 permissions:
   # GitHub requires write-role access to download unpublished drafts.
@@ -118,3 +122,27 @@ jobs:
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           ASC_PRIVATE_KEY_P8: ${{ secrets.ASC_PRIVATE_KEY_P8 }}
         run: node variants/lexcoria/scripts/submit-beta-review.mjs
+  beta-feedback:
+    if: inputs.feedback_public_key != ''
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    environment: ios-testflight
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            variants/matharia/scripts
+            variants/lexcoria/scripts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Read Lexcoria feedback
+        env:
+          APPLE_TEAM_ID: D8L3PZ8Y72
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_PRIVATE_KEY_P8: ${{ secrets.ASC_PRIVATE_KEY_P8 }}
+          FEEDBACK_PUBLIC_KEY: ${{ inputs.feedback_public_key }}
+        run: node variants/lexcoria/scripts/read-beta-feedback.mjs
