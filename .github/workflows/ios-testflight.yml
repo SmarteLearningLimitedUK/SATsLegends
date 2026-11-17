@@ -19,6 +19,10 @@ on:
         description: Submit Lexcoria build 100.82.1 for invitation-only Beta App Review
         default: false
         type: boolean
+      internal_build:
+        description: Enable Lexcoria build 100.87.1 for existing personal internal testing
+        default: false
+        type: boolean
 
 permissions:
   # GitHub requires write-role access to download unpublished drafts.
@@ -30,7 +34,7 @@ concurrency:
 
 jobs:
   testflight:
-    if: ${{ !inputs.review_build }}
+    if: ${{ !inputs.review_build && !inputs.internal_build }}
     runs-on: macos-15-intel
     environment: ios-testflight
     timeout-minutes: 40
@@ -96,7 +100,7 @@ jobs:
           ASC_PRIVATE_KEY_P8: ${{ secrets.ASC_PRIVATE_KEY_P8 }}
         run: node variants/lexcoria/scripts/upload-testflight.mjs "$RUNNER_TEMP/lexcoria"
   beta-review:
-    if: inputs.review_build
+    if: inputs.review_build || inputs.internal_build
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -111,10 +115,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Verify and submit Lexcoria closed beta
+      - name: Verify and configure Lexcoria TestFlight
         env:
           APPLE_TEAM_ID: D8L3PZ8Y72
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           ASC_PRIVATE_KEY_P8: ${{ secrets.ASC_PRIVATE_KEY_P8 }}
+          LEXCORIA_INTERNAL_BUILD: ${{ inputs.internal_build }}
         run: node variants/lexcoria/scripts/submit-beta-review.mjs

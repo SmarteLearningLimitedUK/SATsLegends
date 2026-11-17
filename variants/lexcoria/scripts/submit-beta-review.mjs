@@ -2,7 +2,8 @@ import { connectToken, signingConfiguration } from '../../matharia/scripts/ios-t
 
 const appId = '6835860442';
 const bundleId = 'com.smartelearning.lexcoria';
-const buildNumber = '100.82.1';
+const internal = process.env.LEXCORIA_INTERNAL_BUILD === 'true';
+const buildNumber = internal ? '100.87.1' : '100.82.1';
 const groupName = 'Lexcoria Closed Beta';
 const signing = signingConfiguration(process.env);
 const origin = 'https://api.appstoreconnect.apple.com';
@@ -39,6 +40,40 @@ async function list(path) {
   return records;
 }
 
+async function enablePersonalTesting(appPath, buildPath, buildId) {
+  const groups = (await list(appPath + '/betaGroups')).filter(group => group.attributes.isInternalGroup === true);
+  const personal = groups.filter(group => group.attributes.name.toLowerCase() === 'lexcoria personal testing');
+  const candidates = personal.length ? personal : groups;
+  const membership = await Promise.all(candidates.map(async group => ({
+    group,
+    count: (await list('/v1/betaGroups/' + group.id + '/relationships/betaTesters')).length,
+  })));
+  const populated = membership.filter(item => item.count > 0);
+  if (populated.length !== 1 || populated[0].count !== 1) {
+    throw Error('Could not identify a unique personal internal group with exactly one existing tester.');
+  }
+  const { group } = populated[0];
+  const groupPath = '/v1/betaGroups/' + group.id;
+  const { data: app } = await api(groupPath + '/app');
+  if (app.id !== appId || group.attributes.publicLinkEnabled === true) throw Error('Wrong group for personal testing.');
+  const isAssigned = async () => group.attributes.hasAccessToAllBuilds === true ||
+    (await list(groupPath + '/builds?fields[builds]=version')).some(build => build.id === buildId);
+  if (!await isAssigned()) {
+    await api(buildPath + '/relationships/betaGroups', 'POST', [{ type: 'betaGroups', id: group.id }]);
+  }
+  for (let attempt = 0; attempt < 12; attempt++) {
+    const { data: beta } = await api(buildPath + '/buildBetaDetail');
+    const assigned = await isAssigned();
+    const state = beta.attributes.internalBuildState;
+    if (assigned && state === 'IN_BETA_TESTING') {
+      console.log(JSON.stringify({ build: buildNumber, internal: state, group: group.attributes.name, assigned, testers: 1 }));
+      return;
+    }
+    if (attempt === 11) throw Error('Internal group assignment ' + assigned + ', Apple state ' + state);
+    await new Promise(resolve => setTimeout(resolve, 5000));
+  }
+}
+
 async function submit() {
   const { data: app } = await api('/v1/apps/' + appId + '?fields[apps]=bundleId,name');
   if (app.id !== appId || app.attributes.bundleId !== bundleId) throw Error('Wrong Apple app.');
@@ -59,6 +94,13 @@ async function submit() {
     usesNonExemptEncryption: build.attributes.usesNonExemptEncryption,
   };
   console.log(JSON.stringify(status));
+  if (internal) {
+    if (status.processing !== 'VALID' || status.expired || status.usesNonExemptEncryption !== false) {
+      throw Error('Build must be processed, unexpired and cleared for encryption before it can be added.');
+    }
+    await enablePersonalTesting('/v1/apps/' + appId, path, build.id);
+    return;
+  }
   if (status.processing !== 'VALID' || status.expired || status.audience !== 'APP_STORE_ELIGIBLE') {
     throw Error('Build has to be valid and eligible for external testing.');
   }
