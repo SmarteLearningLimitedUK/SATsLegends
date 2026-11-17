@@ -7,16 +7,16 @@ export async function assignExistingGroups({api,target}) {
       new Set(target.existingBetaGroups).size !== target.existingBetaGroups.length) {
     throw Error('An exact uploaded build and three existing tester groups are required.');
   }
-  const app = (await api(`/v1/apps/${IOS_APP_ID}`)).data;
-  if (app.id !== IOS_APP_ID || app.attributes.bundleId !== IOS_BUNDLE_ID) throw Error('Unexpected Apple app.');
   const buildPath = `/v1/builds/${target.buildId}`;
   const build = await api(`${buildPath}?include=app,preReleaseVersion,betaAppReviewSubmission`);
-  const prerelease = build.included?.find(item => item.type === 'preReleaseVersions');
-  if (build.data.id !== target.buildId || build.data.relationships.app.data.id !== IOS_APP_ID ||
+  const app = build.included?.find(item => item.type === 'apps' && item.id === IOS_APP_ID);
+  const prerelease = build.included?.find(item => item.type === 'preReleaseVersions' && item.id === build.data.relationships?.preReleaseVersion?.data?.id);
+  if (app?.attributes.bundleId !== IOS_BUNDLE_ID || build.data.id !== target.buildId ||
+      build.data.relationships?.app?.data?.id !== IOS_APP_ID ||
       prerelease?.attributes.version !== target.version || build.data.attributes.version !== target.build ||
       build.data.attributes.processingState !== 'VALID' || build.data.attributes.expired ||
       build.data.attributes.buildAudienceType !== 'APP_STORE_ELIGIBLE') {
-    throw Error('Unexpected Apple build or distribution audience.');
+    throw Error('Unexpected Apple app, build or distribution audience.');
   }
   const groups = await Promise.all(target.existingBetaGroups.map(async id => {
     const path = `/v1/betaGroups/${encodeURIComponent(id)}`;
