@@ -42,20 +42,13 @@ async function list(path) {
 
 async function enablePersonalTesting(appPath, buildPath, buildId) {
   const groups = (await list(appPath + '/betaGroups')).filter(group => group.attributes.isInternalGroup === true);
-  const personal = groups.filter(group => group.attributes.name.toLowerCase() === 'lexcoria personal testing');
-  const candidates = personal.length ? personal : groups;
-  const membership = await Promise.all(candidates.map(async group => ({
-    group,
-    count: (await list('/v1/betaGroups/' + group.id + '/relationships/betaTesters')).length,
-  })));
-  const populated = membership.filter(item => item.count > 0);
-  if (populated.length !== 1 || populated[0].count !== 1) {
-    throw Error('Could not identify a unique personal internal group with exactly one existing tester.');
-  }
-  const { group } = populated[0];
+  const personal = groups.filter(group => group.attributes.name === 'Lexcoria Personal Testing');
+  if (personal.length !== 1) throw Error('Expected one internal group named Lexcoria Personal Testing. Found ' + personal.length + '.');
+  const [group] = personal;
   const groupPath = '/v1/betaGroups/' + group.id;
   const { data: app } = await api(groupPath + '/app');
   if (app.id !== appId || group.attributes.publicLinkEnabled === true) throw Error('Wrong group for personal testing.');
+  const testers = (await list(groupPath + '/relationships/betaTesters')).length;
   const isAssigned = async () => group.attributes.hasAccessToAllBuilds === true ||
     (await list(groupPath + '/builds?fields[builds]=version')).some(build => build.id === buildId);
   if (!await isAssigned()) {
@@ -66,7 +59,7 @@ async function enablePersonalTesting(appPath, buildPath, buildId) {
     const assigned = await isAssigned();
     const state = beta.attributes.internalBuildState;
     if (assigned && state === 'IN_BETA_TESTING') {
-      console.log(JSON.stringify({ build: buildNumber, internal: state, group: group.attributes.name, assigned, testers: 1 }));
+      console.log(JSON.stringify({ build: buildNumber, internal: state, group: group.attributes.name, assigned, testers, publicLinkEnabled: false }));
       return;
     }
     if (attempt === 11) throw Error('Internal group assignment ' + assigned + ', Apple state ' + state);
