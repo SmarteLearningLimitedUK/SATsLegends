@@ -177,19 +177,37 @@ with zipfile.ZipFile(sys.argv[1]) as z:
     console.log('Native iPhone and iPad launch checks passed.');
   } else {
     const signing = signingConfiguration(process.env);
-    async function apple(path,options={}) {
+    const transientAppleError = error => ['TimeoutError','TypeError'].includes(error.name) || /HTTP (429|5\d\d)\b/.test(error.message);
+    async function apple(path,options={},readAttempts=3) {
       const url = new URL(path,'https://api.appstoreconnect.apple.com');
       if (url.origin !== 'https://api.appstoreconnect.apple.com') throw Error('Unexpected Apple API origin.');
-      const response = await fetch(url,{...options,headers:{Authorization:`Bearer ${connectToken(signing)}`,...options.headers},
-        redirect:'error',signal:AbortSignal.timeout(30000)});
-      if (!response.ok) throw Error(`Apple record check failed (HTTP ${response.status}).`);
-      return response.status===204?null:response.json();
+      const attempts = (options.method || 'GET') === 'GET' ? readAttempts : 1;
+      for (let attempt=1; attempt<=attempts; attempt++) {
+        try {
+          const response = await fetch(url,{...options,headers:{Authorization:`Bearer ${connectToken(signing)}`,...options.headers},
+            redirect:'error',signal:AbortSignal.timeout(35000)});
+          if (!response.ok) throw Error(`Apple record check failed (HTTP ${response.status}).`);
+          return response.status===204?null:await response.json();
+        } catch (error) {
+          if (attempt===attempts || !transientAppleError(error)) throw error;
+          console.warn(`Temporary App Store Connect read failure on ${url.pathname}; retrying.`);
+          await new Promise(done=>setTimeout(done,2000*attempt));
+        }
+      }
     }
-    const app = await apple(`/v1/apps/${IOS_APP_ID}?fields[apps]=bundleId,name`);
-    if (app.data?.id !== IOS_APP_ID || app.data.attributes?.bundleId !== IOS_BUNDLE_ID) throw Error('Live Apple app does not match the existing SATs Legends record.');
+    let appleApp;
+    try {
+      appleApp = (await apple(`/v1/apps/${IOS_APP_ID}`,{},1)).data;
+    } catch (error) {
+      if (!transientAppleError(error)) throw error;
+      const filter = encodeURIComponent(IOS_BUNDLE_ID);
+      const apps = await apple(`/v1/apps?filter[bundleId]=${filter}&fields[apps]=bundleId,name&limit=2`);
+      appleApp = apps.data?.find(app=>app.id===IOS_APP_ID);
+    }
+    if (appleApp?.id !== IOS_APP_ID || appleApp.attributes?.bundleId !== IOS_BUNDLE_ID) throw Error('Live Apple app does not match the existing SATs Legends record.');
     result.appStoreConnectRecordVerified = true;
     try {
-      result.verifiedSubscriptionProducts = await verifyLiveSubscriptions(apple, subscriptions);
+      result.verifiedSubscriptionProducts = await verifyLiveSubscriptions((path,options)=>apple(path,options,1), subscriptions);
       result.subscriptionVerification = { mode:'live' };
     } catch (error) {
       const proof = release.verifiedSubscriptionReceipt;
@@ -206,7 +224,7 @@ with zipfile.ZipFile(sys.argv[1]) as z:
       result.subscriptionVerification = { mode:'prior-live-receipt', build:proof.build, run:proof.ciRun, verifiedAt:proof.createdAt, error:error.name==='TimeoutError'?'Apple subscription request timed out':String(error.message) };
       console.warn('Apple subscription metadata unavailable. Using same-catalog evidence for the explicitly scoped beta.');
     }
-    result.appleAppName = app.data.attributes.name;
+    result.appleAppName = appleApp.attributes.name;
     let page = await apple(`/v1/builds?filter[app]=${IOS_APP_ID}&sort=-uploadedDate&limit=200&include=preReleaseVersion`);
     const latest = page.data?.[0], included = page.included || [];
     const preRelease = included.find(item=>item.id===latest?.relationships?.preReleaseVersion?.data?.id && item.type==='preReleaseVersions');
