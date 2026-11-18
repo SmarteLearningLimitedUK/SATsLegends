@@ -106,7 +106,12 @@ jobs:
             CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= \
             SWIFT_ENABLE_EXPLICIT_MODULES=NO test > "$dir/tests.log" 2>&1 || status=$?
           tail -100 "$dir/tests.log"
-          [[ ! -d "$result" ]] || xcrun xcresulttool get test-results summary --path "$result" > "$dir/test-summary.json"
+          if [[ -d "$result" ]]; then
+            xcrun xcresulttool get test-results summary --path "$result" > "$dir/test-summary.json"
+            if [[ "$status" != 0 ]]; then
+              xcrun xcresulttool export attachments --path "$result" --output-path "$dir/test-attachments" --only-failures || true
+            fi
+          fi
           [[ "$status" == 0 ]]
           jq -e '.totalTestCount == 3 and .passedTests == 3 and .failedTests == 0 and .skippedTests == 0' "$dir/test-summary.json"
           cat "$dir/test-summary.json"
@@ -121,6 +126,8 @@ jobs:
           path: |
             ${{ runner.temp }}/lexcoria-simulator/tests.log
             ${{ runner.temp }}/lexcoria-simulator/test-summary.json
+            ${{ runner.temp }}/lexcoria-simulator/test-attachments/*.png
+            ${{ runner.temp }}/lexcoria-simulator/test-attachments/manifest.json
       - name: Verify Apple record and upload build
         if: inputs.upload
         env:

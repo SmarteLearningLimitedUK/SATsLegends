@@ -20,11 +20,19 @@ final class LexcoriaUITests: XCTestCase {
         app.webViews.buttons[label].firstMatch
     }
 
+    private func captureFailure(_ name: String) {
+        let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+        attachment.name = name
+        attachment.lifetime = .keepAlways
+        add(attachment)
+        print(String(app.debugDescription.prefix(12000)))
+    }
+
     private func require(_ element: XCUIElement, hittable: Bool = false, timeout: TimeInterval = 30) {
         let visible = NSPredicate { _, _ in element.exists && (!hittable || element.isHittable) }
         let outcome = XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: visible, object: nil)], timeout: timeout)
         if outcome != .completed {
-            print(String(app.webViews.firstMatch.debugDescription.prefix(10000)))
+            captureFailure("element-missing")
         }
         XCTAssertEqual(outcome, .completed, "Required element did not become available: \(element.debugDescription)")
     }
@@ -39,35 +47,27 @@ final class LexcoriaUITests: XCTestCase {
     }
 
     private func openWelcome() {
+        require(app.webViews.firstMatch, timeout: 90)
         let start = button("Start adventure")
         let skip = button("Skip intro")
-        let ready = NSPredicate { _, _ in skip.isHittable || start.isHittable }
-        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: ready, object: nil)], timeout: 40), .completed,
-                       "App did not reach the intro or welcome screen")
-        if skip.isHittable { skip.tap() }
+        let ready = NSPredicate { _, _ in (skip.exists && skip.isHittable) || (start.exists && start.isHittable) }
+        let outcome = XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: ready, object: nil)], timeout: 90)
+        if outcome != .completed { captureFailure("welcome-missing") }
+        XCTAssertEqual(outcome, .completed, "App did not reach the intro or welcome screen")
+        if skip.exists && skip.isHittable { skip.tap() }
         require(start, hittable: true)
     }
 
     func testColdLaunch() {
         app.launch()
-        require(app.webViews.firstMatch)
         openWelcome()
         requireLandscape(false)
     }
 
     func testLandscapeRotationAndResume() {
-        app.launchArguments = ["--lexcoria-qa-save"]
         app.launch()
         openGPSGrounds()
-        let game = button("Punctuation Panic")
-        for _ in 0..<4 {
-            if game.isHittable { break }
-            let next = button("Next game")
-            require(next, hittable: true)
-            next.tap()
-        }
-        require(game, hittable: true)
-        game.tap()
+        selectGame("Punctuation Panic")
         let practice = button("Play Punctuation Panic Practice")
         require(practice, hittable: true)
         practice.tap()
@@ -102,21 +102,17 @@ final class LexcoriaUITests: XCTestCase {
     }
 
     func testSavedProgressSurvivesRelaunch() {
-        // Import the existing save format once. The second launch has no QA input.
-        app.launchArguments = ["--lexcoria-qa-save"]
+        // The simulator's initial fixture is written once by the bundled page.
         app.launch()
         checkSavedMission()
         app.terminate()
-        app.launchArguments = []
         app.launch()
         checkSavedMission()
     }
 
     private func checkSavedMission() {
         openGPSGrounds()
-        let grammar = button("Grammar Gauntlet")
-        require(grammar, hittable: true)
-        grammar.tap()
+        selectGame("Grammar Gauntlet")
         let progress = app.webViews.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "1/5 levels complete")).firstMatch
         require(progress)
         let savedLevel = app.webViews.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@ AND label CONTAINS[c] %@",
@@ -131,5 +127,17 @@ final class LexcoriaUITests: XCTestCase {
         require(explore, hittable: true)
         explore.tap()
         require(button("Back to islands"))
+    }
+
+    private func selectGame(_ title: String) {
+        let game = button(title)
+        for _ in 0..<4 {
+            if game.exists && game.isHittable { break }
+            let next = button("Next game")
+            require(next, hittable: true)
+            next.tap()
+        }
+        require(game, hittable: true)
+        game.tap()
     }
 }

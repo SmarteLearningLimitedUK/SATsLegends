@@ -17,31 +17,24 @@ tests = project / 'LexcoriaUITests'
 tests.mkdir()
 copyfile(Path(__file__).with_name('LexcoriaUITests.swift'), tests / 'LexcoriaUITests.swift')
 
-# The Release archive uses a separate, unmodified copy of the candidate.
-scene = project / 'App/SceneDelegate.swift'
-swift = scene.read_text(encoding='utf-8')
-anchor = 'bridge?.registerPluginInstance(LexcoriaDevicePlugin())'
-assert swift.count(anchor) == 1
-fixture = '''
-        #if DEBUG && targetEnvironment(simulator)
-        if ProcessInfo.processInfo.arguments.contains("--lexcoria-qa-save") {
-            let script = """
-            if (location.protocol === 'capacitor:') {
-              localStorage.setItem('lexcoria-ios-player-v1', JSON.stringify({playerName: 'Lexcoria QA', avatarId: 'barratt',
-                level: 1, xp: 40, unlockedIslands: [1], levelStars: {'1-7': 2}, completedLevels: {'1': [7]}}));
-              localStorage.setItem('lexcoria-ios-progression-v1', JSON.stringify({version: 3, state: {
-                player: {avatarId: 'barratt', level: 1, currentXp: 40, totalXpEarned: 40}, totalStars: 2,
-                levels: {'1-7': {levelId: '1-7', unlocked: true, completed: true, bestStars: 2, bestScore: 5,
-                  bestAccuracy: 0.8, bestTimeMs: null, timesPlayed: 1, firstClearXpAwarded: true}}
-              }}));
-            }
-            """
-            let seed = WKUserScript(source: script, injectionTime: .atDocumentStart, forMainFrameOnly: true)
-            webView?.configuration.userContentController.addUserScript(seed)
-        }
-        #endif
-'''
-scene.write_text(swift.replace(anchor, anchor + fixture), encoding='utf-8')
+# Only the extracted simulator project gets a save fixture. The guard survives a
+# reload, so a failed save on the second launch cannot be hidden by reseeding.
+page = project / 'App/public/index.html'
+html = page.read_text(encoding='utf-8')
+assert html.count('<head>') == 1
+fixture = '''<script>
+if (!localStorage.getItem('lexcoria-sdk27-fixture-loaded')) {
+  localStorage.setItem('lexcoria-ios-player-v1', JSON.stringify({playerName: 'Lexcoria QA', avatarId: 'barratt',
+    level: 1, xp: 40, unlockedIslands: [1], levelStars: {'1-7': 2}, completedLevels: {'1': [7]}}));
+  localStorage.setItem('lexcoria-ios-progression-v1', JSON.stringify({version: 3, state: {
+    player: {avatarId: 'barratt', level: 1, currentXp: 40, totalXpEarned: 40}, totalStars: 2,
+    levels: {'1-7': {levelId: '1-7', unlocked: true, completed: true, bestStars: 2, bestScore: 5,
+      bestAccuracy: 0.8, bestTimeMs: null, timesPlayed: 1, firstClearXpAwarded: true}}
+  }}));
+  localStorage.setItem('lexcoria-sdk27-fixture-loaded', 'true');
+}
+</script>'''
+page.write_text(html.replace('<head>', '<head>\n' + fixture, 1), encoding='utf-8')
 
 app = '504EC3031FED79650016851F'
 project_id = '504EC2FC1FED79650016851F'
@@ -70,7 +63,7 @@ add(5, 'PBXSourcesBuildPhase', f'buildActionMask = 2147483647; files = ({uid(2)}
 add(6, 'PBXFrameworksBuildPhase', 'buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0;')
 add(7, 'PBXContainerItemProxy', f'containerPortal = {project_id}; proxyType = 1; remoteGlobalIDString = {app}; remoteInfo = App;')
 add(8, 'PBXTargetDependency', f'target = {app}; targetProxy = {uid(7)};')
-settings = ('CODE_SIGN_STYLE = Manual; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 15.0; '
+settings = ('CODE_SIGN_STYLE = Manual; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; '
             'PRODUCT_BUNDLE_IDENTIFIER = com.smartelearning.lexcoria.uitests; PRODUCT_NAME = "$(TARGET_NAME)"; '
             'SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; TEST_TARGET_NAME = App; '
             'LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@loader_path/Frameworks",);')
