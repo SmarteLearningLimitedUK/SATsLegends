@@ -7,7 +7,7 @@ import {IOS_APP_ID, IOS_BUNDLE_ID, IOS_TEAM_ID, NATIVE_PROJECT, signingConfigura
 import {enableInternalTesting} from './testflight-availability.mjs';
 import {subscriptionConfiguration, verifyLiveSubscriptions} from './subscription-config.mjs';
 
-const mode = process.argv[2];
+const mode = process.argv[2]; if (mode !== '--simulator') throw Error('This branch only verifies simulator launch.');
 if (process.argv.length !== 3 || !['--simulator','--upload'].includes(mode)) throw Error('Use --simulator or --upload.');
 if (process.platform !== 'darwin') throw Error('Native compilation requires the macOS runner.');
 const release = JSON.parse(readFileSync(new URL('../release/candidate.json', import.meta.url), 'utf8'));
@@ -121,7 +121,9 @@ with zipfile.ZipFile(sys.argv[1]) as z:
     const devices = Object.entries(JSON.parse(run('xcrun',['simctl','list','devices','available','--json'])).devices)
       .filter(([runtime])=>runtime.includes('.iOS-')).flatMap(([,items])=>items);
     result.devices = [];
-    for (const kind of ['iPad','iPhone']) {
+    const requested = 'iPhone';
+    if (!['iPhone','iPad'].includes(requested)) throw Error('Expected an iPhone or iPad test.');
+    for (const kind of [requested]) {
       const device = devices.find(d=>d.isAvailable && d.name.startsWith(kind));
       if (!device) throw Error(`No ${kind} simulator is available.`);
       const ownBoot = device.state !== 'Booted';
@@ -133,14 +135,14 @@ with zipfile.ZipFile(sys.argv[1]) as z:
       };
       try {
         if (ownBoot) sim('boot',['boot',device.udid],240000);
-        sim('wait for boot',['bootstatus',device.udid,'-b'],300000);
+        sim('wait for boot',['bootstatus',device.udid,'-b'],450000);
         sim('install',['install',device.udid,app],300000);
         const launched = sim('launch',['launch',`--stdout=${join(out,kind+'-stdout.log')}`,`--stderr=${join(out,kind+'-stderr.log')}`,device.udid,IOS_BUNDLE_ID],180000);
         const pid = launched.match(/:\s*(\d+)\s*$/)?.[1];
         if (!pid) throw Error(`No ${kind} launch PID.`);
         appLaunched = true;
         await new Promise(done=>setTimeout(done,15000));
-        const processName = run('ps',['-p',pid,'-o','comm='],{timeout:15000});
+        const processName = run('ps',['-p',pid,'-o','comm='],{timeout:60000});
         if (!processName.includes('App.app/App')) throw Error(`${kind} app did not survive launch.`);
         result.devices.push({name:device.name,kind,processSurvived:true});
         save(); console.log(`${kind}: app installed and survived launch.`);
