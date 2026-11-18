@@ -50,7 +50,7 @@ async function listApple(path) {
   return records;
 }
 
-async function checkGroups() {
+async function checkGroups(report = false) {
   const fields = 'name,isInternalGroup,publicLinkEnabled,hasAccessToAllBuilds';
   const groups = await listApple('/v1/apps/' + appId + '/betaGroups?limit=200&fields[betaGroups]=' + fields);
   const internal = groups.filter(group => group.attributes.isInternalGroup === true);
@@ -58,8 +58,15 @@ async function checkGroups() {
   if (matches.length > 1 || matches[0]?.attributes.publicLinkEnabled === true) {
     throw Error('The exact Lexcoria personal testing group is ambiguous or has a public link.');
   }
-  if (internal.some(group => group.id !== matches[0]?.id && group.attributes.hasAccessToAllBuilds !== false)) {
-    throw Error('Another Lexcoria internal group can receive builds automatically. Upload restricted to ' + personalGroupName + '.');
+  const otherGroups = internal.filter(group => group.id !== matches[0]?.id);
+  const automatic = otherGroups.filter(group => group.attributes.hasAccessToAllBuilds === true);
+  if (report) {
+    const manual = otherGroups.filter(group => group.attributes.hasAccessToAllBuilds === false).length;
+    console.log(JSON.stringify({ personalGroupFound: matches.length === 1, otherAutomaticGroups: automatic.length,
+      otherManualGroups: manual, otherGroupsWithUnreportedSettings: otherGroups.length - automatic.length - manual }));
+  }
+  if (automatic.length > 0) {
+    throw Error('Apple reports automatic distribution for another Lexcoria internal group. Upload restricted to ' + personalGroupName + '.');
   }
   return { personal: matches[0], internal };
 }
@@ -115,8 +122,7 @@ if (app?.id !== appId || app.attributes?.bundleId !== bundleId) {
   throw Error('The Apple app record does not match the Lexcoria upload target.');
 }
 if (internalOnly) {
-  const { personal, internal } = await checkGroups();
-  console.log('Lexcoria internal groups checked: ' + internal.length + '. Exact group present: ' + Boolean(personal) + '.');
+  await checkGroups(true);
 }
 const builds = (await listApple('/v1/builds?filter[app]=' + app.id + '&limit=200')).map(build => build.attributes.version);
 const build = nextBuild(builds, process.env.GITHUB_RUN_NUMBER, process.env.GITHUB_RUN_ATTEMPT);
