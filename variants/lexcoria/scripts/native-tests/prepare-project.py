@@ -25,16 +25,15 @@ assert swift.count(anchor) == 1
 fixture = '''
         #if DEBUG && targetEnvironment(simulator)
         if ProcessInfo.processInfo.arguments.contains("--lexcoria-qa-save") {
-            let route = ProcessInfo.processInfo.environment["LEXCORIA_QA_ROUTE"]
-            let navigation = route == "/game/1/3" ? "history.replaceState(null, '', '/game/1/3');" : ""
             let script = """
             if (location.protocol === 'capacitor:') {
-              const key = 'lexcoria-ios-player-v1';
-              if (!localStorage.getItem(key)) {
-                localStorage.setItem(key, JSON.stringify({playerName: 'Lexcoria QA', avatarId: 'barratt',
-                  level: 1, xp: 40, unlockedIslands: [1], levelStars: {'1-7': 2}, completedLevels: {'1': [7]}}));
-              }
-              \\(navigation)
+              localStorage.setItem('lexcoria-ios-player-v1', JSON.stringify({playerName: 'Lexcoria QA', avatarId: 'barratt',
+                level: 1, xp: 40, unlockedIslands: [1], levelStars: {'1-7': 2}, completedLevels: {'1': [7]}}));
+              localStorage.setItem('lexcoria-ios-progression-v1', JSON.stringify({version: 3, state: {
+                player: {avatarId: 'barratt', level: 1, currentXp: 40, totalXpEarned: 40}, totalStars: 2,
+                levels: {'1-7': {levelId: '1-7', unlocked: true, completed: true, bestStars: 2, bestScore: 5,
+                  bestAccuracy: 0.8, bestTimeMs: null, timesPlayed: 1, firstClearXpAwarded: true}}
+              }}));
             }
             """
             let seed = WKUserScript(source: script, injectionTime: .atDocumentStart, forMainFrameOnly: true)

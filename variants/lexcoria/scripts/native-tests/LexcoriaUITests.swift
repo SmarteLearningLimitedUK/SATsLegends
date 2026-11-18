@@ -22,8 +22,11 @@ final class LexcoriaUITests: XCTestCase {
 
     private func require(_ element: XCUIElement, hittable: Bool = false, timeout: TimeInterval = 30) {
         let visible = NSPredicate { _, _ in element.exists && (!hittable || element.isHittable) }
-        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: visible, object: nil)], timeout: timeout), .completed,
-                       "Required element did not become available: \(element.debugDescription)")
+        let outcome = XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: visible, object: nil)], timeout: timeout)
+        if outcome != .completed {
+            print(String(app.webViews.firstMatch.debugDescription.prefix(10000)))
+        }
+        XCTAssertEqual(outcome, .completed, "Required element did not become available: \(element.debugDescription)")
     }
 
     private func requireLandscape(_ landscape: Bool) {
@@ -54,9 +57,21 @@ final class LexcoriaUITests: XCTestCase {
 
     func testLandscapeRotationAndResume() {
         app.launchArguments = ["--lexcoria-qa-save"]
-        app.launchEnvironment = ["LEXCORIA_QA_ROUTE": "/game/1/3"]
         app.launch()
-        let prompt = app.webViews.staticTexts["Turn your device sideways"].firstMatch
+        openGPSGrounds()
+        let game = button("Punctuation Panic")
+        for _ in 0..<4 {
+            if game.isHittable { break }
+            let next = button("Next game")
+            require(next, hittable: true)
+            next.tap()
+        }
+        require(game, hittable: true)
+        game.tap()
+        let practice = button("Play Punctuation Panic Practice")
+        require(practice, hittable: true)
+        practice.tap()
+        let prompt = button("Back to island")
         let tips = button("Tips: how to play")
         require(prompt, hittable: true)
         requireLandscape(false)
@@ -98,13 +113,23 @@ final class LexcoriaUITests: XCTestCase {
     }
 
     private func checkSavedMission() {
+        openGPSGrounds()
+        let grammar = button("Grammar Gauntlet")
+        require(grammar, hittable: true)
+        grammar.tap()
+        let progress = app.webViews.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "1/5 levels complete")).firstMatch
+        require(progress)
+        let savedLevel = app.webViews.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@ AND label CONTAINS[c] %@",
+                                                                   "Complete Level 1", "2 of 3 brainpower")).firstMatch
+        require(savedLevel)
+    }
+
+    private func openGPSGrounds() {
         openWelcome()
         button("Start adventure").tap()
         let explore = button("Explore Island")
         require(explore, hittable: true)
         explore.tap()
-        let grammar = app.webViews.buttons["Grammar Gauntlet"].firstMatch
-        if grammar.isHittable { grammar.tap() }
-        require(app.webViews.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Complete Level 1, 2 of 3 brainpower")).firstMatch)
+        require(button("Back to islands"))
     }
 }
