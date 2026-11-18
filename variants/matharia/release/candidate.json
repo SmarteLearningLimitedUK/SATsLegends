@@ -1,20 +1,20 @@
 {
-  "tag": "matharia-ci-20261118-scorecard-readability",
+  "tag": "matharia-ci-20261118-scorecard-gems",
   "asset": "matharia-mac-testflight-candidate.zip",
-  "sha256": "362c11e6795c97c9da85738834276697752898a9d11d7b97d1b4406870744dfb",
+  "sha256": "c413eb2984ffac9371ebcdd7e2f78f23ffb6112b33a6c94409e29d295f9f9ec8",
   "bundleId": "com.smartelearning.satslegends",
   "minimumIOS": "16.4",
   "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
   "internalTestingOnly": false,
   "closedBetaOnly": true,
   "testerLocale": "en-GB",
-  "testerNotes": "Check that the island name and result status sit inside the score-card frame after a win, loss or practice round. The full score now appears first. Readability and padding are also improved across menus, Calm Grove and quiz controls.",
+  "testerNotes": "On iPhone and iPad, finish a game in portrait and landscape. Check that all earned gems, the score, XP and buttons fit without scrolling. Try a win, a loss, a practice round and a Core of Calculation quiz. Please send a TestFlight screenshot if anything is cut off.",
   "verifiedSubscriptionReceipt": {
     "appId": "6825120444",
     "bundleId": "com.smartelearning.satslegends",
-    "build": "101.28.1",
-    "ciRun": "44295440919",
-    "createdAt": "2026-11-18T11:48:48.905Z",
+    "build": "101.35.1",
+    "ciRun": "44309203318",
+    "createdAt": "2026-11-18T13:18:07.641Z",
     "catalogSha256": "512b8ff1da86162088c0fcae828cf41f84eb8e7def25bf68fc73b4ff07cb4d47",
     "products": [
       {
