@@ -37,25 +37,23 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  testflight:
+  native-tests:
     if: ${{ !inputs.review_build && !inputs.internal_build }}
     runs-on: xcode-27
-    environment: ios-testflight
     timeout-minutes: 40
-    env:
-      APPLE_TEAM_ID: D8L3PZ8Y72
+    env: &lexcoria_sdk
       DEVELOPER_DIR: /Applications/Xcode_27.2.app/Contents/Developer
       LEXCORIA_BUNDLE_ID: com.smartelearning.lexcoria
     steps:
-      - uses: actions/checkout@v4
+      - &checkout
+        uses: actions/checkout@v4
         with:
+          persist-credentials: false
           sparse-checkout: |
             variants/matharia/scripts
             variants/lexcoria/scripts
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - name: Verify the iOS build SDK
+      - &check_sdk
+        name: Verify the iOS build SDK
         shell: bash
         run: |
           set -euo pipefail
@@ -64,7 +62,8 @@ jobs:
           echo "Device SDK: $sdk"
           [[ "$sdk" =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]
           (( ${sdk%%.*} >= 27 ))
-      - name: Fetch and verify native candidate
+      - &fetch_candidate
+        name: Fetch and verify native candidate
         env:
           GH_TOKEN: ${{ github.token }}
           CANDIDATE_TAG: ${{ inputs.candidate_tag }}
@@ -98,22 +97,45 @@ jobs:
           plutil -lint "$project/App.xcodeproj/project.pbxproj"
           device="$(xcrun simctl create 'Lexcoria QA' com.apple.CoreSimulator.SimDeviceType.iPhone-18-Pro com.apple.CoreSimulator.SimRuntime.iOS-27-2)"
           trap 'xcrun simctl shutdown "$device" || true; xcrun simctl delete "$device" || true' EXIT
-          result="$dir/LexcoriaSimulator.xcresult"
-          status=0
-          xcodebuild -project "$project/App.xcodeproj" -scheme LexcoriaNativeQA -configuration Debug \
+          xcrun simctl boot "$device"
+          build_command=(xcodebuild -project "$project/App.xcodeproj" -scheme LexcoriaNativeQA -configuration Debug \
             -destination "platform=iOS Simulator,id=$device" -derivedDataPath "$dir/DerivedData" \
-            -resultBundlePath "$result" -jobs 2 -parallel-testing-enabled NO \
+            -jobs 2 -parallel-testing-enabled NO \
             CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= \
-            SWIFT_ENABLE_EXPLICIT_MODULES=NO test > "$dir/tests.log" 2>&1 || status=$?
-          tail -100 "$dir/tests.log"
-          if [[ -d "$result" ]]; then
-            xcrun xcresulttool get test-results summary --path "$result" > "$dir/test-summary.json"
-            if [[ "$status" != 0 ]]; then
-              xcrun xcresulttool export attachments --path "$result" --output-path "$dir/test-attachments" --only-failures || true
-            fi
+            SWIFT_ENABLE_EXPLICIT_MODULES=NO)
+          echo 'Building the simulator app and test runner.'
+          if ! "${build_command[@]}" build-for-testing > "$dir/build.log" 2>&1; then
+            tail -100 "$dir/build.log"
+            exit 1
           fi
-          [[ "$status" == 0 ]]
-          jq -e '.totalTestCount == 3 and .passedTests == 3 and .failedTests == 0 and .skippedTests == 0' "$dir/test-summary.json"
+          for attempt in 1 2; do
+            echo "Waiting for the simulator to finish booting before XCTest attempt $attempt."
+            xcrun simctl bootstatus "$device" -b
+            result="$dir/LexcoriaSimulator-$attempt.xcresult"
+            log="$dir/tests-$attempt.log"
+            summary="$dir/test-summary-$attempt.json"
+            status=0
+            "${build_command[@]}" -resultBundlePath "$result" test-without-building > "$log" 2>&1 || status=$?
+            tail -100 "$log"
+            if [[ -d "$result" ]]; then
+              xcrun xcresulttool get test-results summary --path "$result" > "$summary"
+              cp "$summary" "$dir/test-summary.json"
+            fi
+            if [[ "$status" == 0 ]] && jq -e '.totalTestCount == 3 and .passedTests == 3 and .failedTests == 0 and .skippedTests == 0' "$summary"; then
+              break
+            fi
+            if [[ -d "$result" ]]; then
+              xcrun xcresulttool export attachments --path "$result" --output-path "$dir/test-attachments-$attempt" --only-failures || true
+            fi
+            if [[ "$attempt" != 1 || ! -f "$summary" ]] || ! jq -e '
+              .passedTests == 0 and .failedTests == 1 and
+              any(.testFailures[]; .failureText | contains("The test runner crashed while preparing to run tests"))
+            ' "$summary"; then
+              exit 1
+            fi
+            echo 'XCTest crashed before running the checks. Restarting the simulator for one retry.'
+            xcrun simctl shutdown "$device" || true
+          done
           cat "$dir/test-summary.json"
           app="$dir/DerivedData/Build/Products/Debug-iphonesimulator/App.app"
           [[ "$(plutil -extract CFBundleIdentifier raw -o - "$app/Info.plist")" == "$LEXCORIA_BUNDLE_ID" ]]
@@ -124,13 +146,29 @@ jobs:
         with:
           name: lexcoria-sdk27-simulator-tests
           path: |
-            ${{ runner.temp }}/lexcoria-simulator/tests.log
-            ${{ runner.temp }}/lexcoria-simulator/test-summary.json
-            ${{ runner.temp }}/lexcoria-simulator/test-attachments/*.png
-            ${{ runner.temp }}/lexcoria-simulator/test-attachments/manifest.json
+            ${{ runner.temp }}/lexcoria-simulator/build.log
+            ${{ runner.temp }}/lexcoria-simulator/tests-*.log
+            ${{ runner.temp }}/lexcoria-simulator/test-summary*.json
+            ${{ runner.temp }}/lexcoria-simulator/test-attachments-*/*.png
+            ${{ runner.temp }}/lexcoria-simulator/test-attachments-*/*.ips
+            ${{ runner.temp }}/lexcoria-simulator/test-attachments-*/manifest.json
+  testflight:
+    needs: native-tests
+    if: inputs.upload
+    runs-on: xcode-27
+    environment: ios-testflight
+    timeout-minutes: 20
+    env: *lexcoria_sdk
+    steps:
+      - *checkout
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - *check_sdk
+      - *fetch_candidate
       - name: Verify Apple record and upload build
-        if: inputs.upload
         env:
+          APPLE_TEAM_ID: D8L3PZ8Y72
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           ASC_PRIVATE_KEY_P8: ${{ secrets.ASC_PRIVATE_KEY_P8 }}
