@@ -1,14 +1,14 @@
 {
-  "tag": "matharia-ci-20261117-calendar-ipad",
+  "tag": "matharia-ci-20261118-padding-icon",
   "asset": "matharia-mac-testflight-candidate.zip",
-  "sha256": "f60df832667e890cebd64bbc3c00e2d3124df360363647f246a4a4129b58d765",
+  "sha256": "902ee55b2db57c13eaba212df13712ff815b56061963afc4d4ecb8e5dd4ff7df",
   "bundleId": "com.smartelearning.satslegends",
   "minimumIOS": "16.4",
   "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
   "internalTestingOnly": false,
   "closedBetaOnly": true,
   "testerLocale": "en-GB",
-  "testerNotes": "On iPad, open Calendar Quest in landscape. Check that the seven date columns fill the panel, and try the month arrows and selecting a date. Repeat on iPhone to check the existing layout, including on compact phones.",
+  "testerNotes": "Look for the new Matharia icon on your Home Screen. On iPad, swipe through game titles in Fraction Forest. In Peaceful Pond, open Tips and check that the full message is visible. On iPhone, check the level buttons, results, and labels in Conversion Canyon and Data Detective.",
   "verifiedSubscriptionReceipt": {
     "appId": "6825120444",
     "bundleId": "com.smartelearning.satslegends",
@@ -28,41 +28,5 @@
         "period": "ONE_YEAR"
       }
     ]
-  },
-  "nativeLaunchEvidence": [
-    {
-      "candidateSha256": "f60df832667e890cebd64bbc3c00e2d3124df360363647f246a4a4129b58d765",
-      "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
-      "bundleId": "com.smartelearning.satslegends",
-      "minimumIOS": "16.4",
-      "scope": "simulator",
-      "verifiedWebFiles": 797,
-      "nativeCompiled": true,
-      "xcode": "Xcode 26.3\nBuild version 17C529",
-      "ciRun": "44146985281",
-      "ciCommit": "ca0a0a503058a8cebaaf18664dba5ca20e597e58",
-      "device": {
-        "name": "iPad Pro 11-inch (M4)",
-        "kind": "iPad",
-        "processSurvived": true
-      }
-    },
-    {
-      "candidateSha256": "f60df832667e890cebd64bbc3c00e2d3124df360363647f246a4a4129b58d765",
-      "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
-      "bundleId": "com.smartelearning.satslegends",
-      "minimumIOS": "16.4",
-      "scope": "simulator",
-      "verifiedWebFiles": 797,
-      "nativeCompiled": true,
-      "xcode": "Xcode 26.3\nBuild version 17C529",
-      "ciRun": "44146985281",
-      "ciCommit": "ca0a0a503058a8cebaaf18664dba5ca20e597e58",
-      "device": {
-        "name": "iPhone 16 Pro",
-        "kind": "iPhone",
-        "processSurvived": true
-      }
-    }
-  ]
+  }
 }
