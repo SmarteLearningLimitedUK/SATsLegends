@@ -28,5 +28,41 @@
         "period": "ONE_YEAR"
       }
     ]
-  }
+  },
+  "nativeLaunchEvidence": [
+    {
+      "candidateSha256": "902ee55b2db57c13eaba212df13712ff815b56061963afc4d4ecb8e5dd4ff7df",
+      "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
+      "bundleId": "com.smartelearning.satslegends",
+      "minimumIOS": "16.4",
+      "verifiedWebFiles": 796,
+      "nativeCompiled": true,
+      "xcode": "Xcode 26.3\nBuild version 17C529",
+      "ciRun": "44289827241",
+      "ciCommit": "8611d2eaca650db3b065e3a26b0246a216ef78f3",
+      "scope": "simulator",
+      "device": {
+        "name": "iPhone 16 Pro",
+        "kind": "iPhone",
+        "processSurvived": true
+      }
+    },
+    {
+      "candidateSha256": "902ee55b2db57c13eaba212df13712ff815b56061963afc4d4ecb8e5dd4ff7df",
+      "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
+      "bundleId": "com.smartelearning.satslegends",
+      "minimumIOS": "16.4",
+      "verifiedWebFiles": 796,
+      "nativeCompiled": true,
+      "xcode": "Xcode 26.3\nBuild version 17C529",
+      "ciRun": "44289827241",
+      "ciCommit": "8611d2eaca650db3b065e3a26b0246a216ef78f3",
+      "scope": "simulator",
+      "device": {
+        "name": "iPad Pro 11-inch (M4)",
+        "kind": "iPad",
+        "processSurvived": true
+      }
+    }
+  ]
 }
