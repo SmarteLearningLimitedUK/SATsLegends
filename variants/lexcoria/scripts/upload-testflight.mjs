@@ -2,6 +2,7 @@ import { spawnSync } from 'node:child_process';
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
+import { setTimeout as wait } from 'node:timers/promises';
 import { signingConfiguration, connectToken, nextBuild, exportOptions } from '../../matharia/scripts/ios-testflight-config.mjs';
 
 const bundleId = 'com.smartelearning.lexcoria';
@@ -52,12 +53,47 @@ try {
     'DEVELOPMENT_TEAM=' + signing.teamId, 'CODE_SIGN_STYLE=Automatic', 'CODE_SIGNING_ALLOWED=NO',
     'CURRENT_PROJECT_VERSION=' + build, 'MARKETING_VERSION=' + version, 'archive']);
   const info = join(archive, 'Products/Applications/App.app/Info.plist');
-  for (const [name, expected] of [['CFBundleIdentifier', bundleId], ['CFBundleShortVersionString', version], ['CFBundleVersion', build]]) {
+  for (const [name, expected] of [['CFBundleIdentifier', bundleId], ['CFBundleShortVersionString', version], ['CFBundleVersion', build], ['MinimumOSVersion', '15.0']]) {
     if (run('plutil', ['-extract', name, 'raw', '-o', '-', info], true) !== expected) throw Error('Archive ' + name + ' mismatch.');
   }
+  const sdk = run('plutil', ['-extract', 'DTSDKName', 'raw', '-o', '-', info], true);
+  if (Number(sdk.match(/^iphoneos(\d+)\./)?.[1] ?? 0) < 27) throw Error('Archive requires iOS SDK 27 or newer.');
+  console.log('Archive verified with ' + sdk + ' and minimum iOS 15.0.');
   run('xcodebuild', ['-exportArchive', '-archivePath', archive, '-exportPath', join(work, 'export'),
     '-exportOptionsPlist', options, ...auth]);
-  console.log('Upload accepted for ' + bundleId + ' ' + version + ' (' + build + '). Check Apple processing before distributing.');
+  console.log('Upload accepted for ' + bundleId + ' ' + version + ' (' + build + ').');
 } finally {
   rmSync(work, { recursive: true, force: true });
+}
+
+if (internalOnly) {
+  const filters = new URLSearchParams({ 'filter[app]': appId, 'filter[version]': build });
+  let processing = 'PENDING';
+  let previousState;
+  let ready = false;
+  for (let attempt = 0; attempt < 20; attempt++) {
+    await wait(15000);
+    const { data } = await readApple('/v1/builds?' + filters);
+    const [uploaded] = data;
+    if (!uploaded) continue;
+    const attributes = uploaded.attributes;
+    processing = attributes.processingState;
+    if (['FAILED', 'INVALID'].includes(processing)) throw Error('Apple processing failed for ' + build + '.');
+    if (processing !== 'VALID') continue;
+    if (attributes.buildAudienceType !== 'INTERNAL_ONLY') throw Error('Apple reported an unexpected build audience.');
+    const detail = await readApple('/v1/builds/' + uploaded.id + '/buildBetaDetail').catch(error => {
+      if (error.message.endsWith('HTTP 404')) return null;
+      throw error;
+    });
+    const internalState = detail?.data?.attributes.internalBuildState ?? 'PENDING';
+    if (internalState !== previousState) {
+      console.log(JSON.stringify({ build, audience: attributes.buildAudienceType, processing, internalState }));
+      previousState = internalState;
+    }
+    if (internalState === 'IN_BETA_TESTING') {
+      ready = true;
+      break;
+    }
+  }
+  if (!ready) console.log('Apple processing: ' + processing + '. Internal testing availability is pending.');
 }

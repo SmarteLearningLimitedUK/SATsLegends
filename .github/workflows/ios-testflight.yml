@@ -39,12 +39,12 @@ concurrency:
 jobs:
   testflight:
     if: ${{ !inputs.review_build && !inputs.internal_build }}
-    runs-on: macos-15-intel
+    runs-on: xcode-27
     environment: ios-testflight
     timeout-minutes: 40
     env:
       APPLE_TEAM_ID: D8L3PZ8Y72
-      DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_27.2.app/Contents/Developer
       LEXCORIA_BUNDLE_ID: com.smartelearning.lexcoria
     steps:
       - uses: actions/checkout@v4
@@ -55,6 +55,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Verify the iOS build SDK
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcodebuild -version
+          sdk="$(xcrun --sdk iphoneos --show-sdk-version)"
+          echo "Device SDK: $sdk"
+          [[ "$sdk" =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]
+          (( ${sdk%%.*} >= 27 ))
       - name: Fetch and verify native candidate
         env:
           GH_TOKEN: ${{ github.token }}
@@ -77,25 +86,41 @@ jobs:
             echo 'Candidate must use bundled assets.' >&2
             exit 1
           fi
-      - name: Compile Lexcoria for iOS Simulator
+      - name: Verify Lexcoria launch, rotation and saved progress on iOS Simulator
         shell: bash
         run: |
           set -euo pipefail
-          dir="$RUNNER_TEMP/lexcoria"
+          dir="$RUNNER_TEMP/lexcoria-simulator"
+          mkdir -p "$dir"
+          ditto -x -k "$RUNNER_TEMP/lexcoria/lexcoria-native-candidate.zip" "$dir"
+          project="$dir/variants/lexcoria/native/ios/App"
+          python3 variants/lexcoria/scripts/native-tests/prepare-project.py "$project"
+          plutil -lint "$project/App.xcodeproj/project.pbxproj"
+          device="$(xcrun simctl create 'Lexcoria QA' com.apple.CoreSimulator.SimDeviceType.iPhone-18-Pro com.apple.CoreSimulator.SimRuntime.iOS-27-2)"
+          trap 'xcrun simctl shutdown "$device" || true; xcrun simctl delete "$device" || true' EXIT
           result="$dir/LexcoriaSimulator.xcresult"
-          if ! xcodebuild -project "$dir/variants/lexcoria/native/ios/App/App.xcodeproj" \
-            -scheme App -configuration Debug -destination 'generic/platform=iOS Simulator' \
-            -derivedDataPath "$dir/DerivedData" -resultBundlePath "$result" -jobs 2 \
-            ARCHS=x86_64 ONLY_ACTIVE_ARCH=YES SWIFT_ENABLE_EXPLICIT_MODULES=NO \
-            CODE_SIGNING_ALLOWED=NO -quiet build; then
-            if [[ -d "$result" ]]; then
-              xcrun xcresulttool get build-results --path "$result" || true
-            fi
-            exit 1
-          fi
+          status=0
+          xcodebuild -project "$project/App.xcodeproj" -scheme LexcoriaNativeQA -configuration Debug \
+            -destination "platform=iOS Simulator,id=$device" -derivedDataPath "$dir/DerivedData" \
+            -resultBundlePath "$result" -jobs 2 -parallel-testing-enabled NO \
+            CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= \
+            SWIFT_ENABLE_EXPLICIT_MODULES=NO test > "$dir/tests.log" 2>&1 || status=$?
+          tail -100 "$dir/tests.log"
+          [[ ! -d "$result" ]] || xcrun xcresulttool get test-results summary --path "$result" > "$dir/test-summary.json"
+          [[ "$status" == 0 ]]
+          jq -e '.totalTestCount == 3 and .passedTests == 3 and .failedTests == 0 and .skippedTests == 0' "$dir/test-summary.json"
+          cat "$dir/test-summary.json"
           app="$dir/DerivedData/Build/Products/Debug-iphonesimulator/App.app"
           [[ "$(plutil -extract CFBundleIdentifier raw -o - "$app/Info.plist")" == "$LEXCORIA_BUNDLE_ID" ]]
+          [[ "$(plutil -extract MinimumOSVersion raw -o - "$app/Info.plist")" == '15.0' ]]
           test -f "$app/public/index.html"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lexcoria-sdk27-simulator-tests
+          path: |
+            ${{ runner.temp }}/lexcoria-simulator/tests.log
+            ${{ runner.temp }}/lexcoria-simulator/test-summary.json
       - name: Verify Apple record and upload build
         if: inputs.upload
         env:
