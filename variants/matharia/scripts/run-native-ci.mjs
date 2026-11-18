@@ -121,7 +121,9 @@ with zipfile.ZipFile(sys.argv[1]) as z:
     const devices = Object.entries(JSON.parse(run('xcrun',['simctl','list','devices','available','--json'])).devices)
       .filter(([runtime])=>runtime.includes('.iOS-')).flatMap(([,items])=>items);
     result.devices = [];
-    for (const kind of ['iPad','iPhone']) {
+    const requested = process.env.MATHARIA_QA_SIMULATOR;
+    if (!['iPhone','iPad'].includes(requested)) throw Error('Expected an iPhone or iPad test.');
+    for (const kind of [requested]) {
       const device = devices.find(d=>d.isAvailable && d.name.startsWith(kind));
       if (!device) throw Error(`No ${kind} simulator is available.`);
       const ownBoot = device.state !== 'Booted';
@@ -133,7 +135,7 @@ with zipfile.ZipFile(sys.argv[1]) as z:
       };
       try {
         if (ownBoot) sim('boot',['boot',device.udid],240000);
-        sim('wait for boot',['bootstatus',device.udid,'-b'],300000);
+        sim('wait for boot',['bootstatus',device.udid,'-b'],450000);
         sim('install',['install',device.udid,app],300000);
         const launched = sim('launch',['launch',`--stdout=${join(out,kind+'-stdout.log')}`,`--stderr=${join(out,kind+'-stderr.log')}`,device.udid,IOS_BUNDLE_ID],180000);
         const pid = launched.match(/:\s*(\d+)\s*$/)?.[1];

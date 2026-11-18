@@ -1,9 +1,32 @@
 {
-  "tag": "matharia-ci-20261105-rotation-prompt-v3",
+  "tag": "matharia-ci-20261118-padding-icon",
   "asset": "matharia-mac-testflight-candidate.zip",
-  "sha256": "860255025c139860b7f4180d2f9c058a3148493b2adfb03a956785f86894f62e",
+  "sha256": "902ee55b2db57c13eaba212df13712ff815b56061963afc4d4ecb8e5dd4ff7df",
   "bundleId": "com.smartelearning.satslegends",
   "minimumIOS": "16.4",
-  "sourceGitHead": "e7083fb7b03ebe80d4c9becd6b14338310c9ff70",
-  "internalTestingOnly": true
+  "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
+  "internalTestingOnly": false,
+  "closedBetaOnly": true,
+  "testerLocale": "en-GB",
+  "testerNotes": "Look for the new Matharia icon on your Home Screen. On iPad, swipe through game titles in Fraction Forest. In Peaceful Pond, open Tips and check that the full message is visible. On iPhone, check the level buttons, results, and labels in Conversion Canyon and Data Detective.",
+  "verifiedSubscriptionReceipt": {
+    "appId": "6825120444",
+    "bundleId": "com.smartelearning.satslegends",
+    "build": "100.81.1",
+    "ciRun": "44083767539",
+    "createdAt": "2026-11-17T12:33:45.779Z",
+    "catalogSha256": "512b8ff1da86162088c0fcae828cf41f84eb8e7def25bf68fc73b4ff07cb4d47",
+    "products": [
+      {
+        "id": "com.smartelearning.satslegends.matharia.monthly",
+        "appleId": "6830158618",
+        "period": "ONE_MONTH"
+      },
+      {
+        "id": "com.smartelearning.satslegends.matharia.yearly",
+        "appleId": "6830160702",
+        "period": "ONE_YEAR"
+      }
+    ]
+  }
 }
