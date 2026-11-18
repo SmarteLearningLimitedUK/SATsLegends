@@ -39,6 +39,7 @@ async function hash(path) {
   return digest.digest('hex');
 }
 const plist = (path,key) => run('plutil',['-extract',key,'raw','-o','-',path]);
+const requiredSdk = '27.2';
 const result = {app:'Matharia',appId:IOS_APP_ID,bundleId:IOS_BUNDLE_ID,minimumIOS:'16.4',
   candidateSha256:release.sha256,sourceGitHead:release.sourceGitHead,ciCommit:process.env.GITHUB_SHA,
   ciRun:process.env.GITHUB_RUN_ID,createdAt:new Date().toISOString(),scope:mode.slice(2)};
@@ -81,8 +82,10 @@ with zipfile.ZipFile(sys.argv[1]) as z:
   }
   result.verifiedWebFiles = webFiles.length;
   const xcode = run('xcodebuild',['-version']);
-  if (Number(xcode.match(/Xcode (\d+)/)?.[1] || 0) < 26) throw Error('Xcode 26+ is required.');
   result.xcode = xcode;
+  const sdk = mode === '--simulator' ? 'iphonesimulator' : 'iphoneos';
+  result.sdkVersion = run('xcrun',['--sdk',sdk,'--show-sdk-version']);
+  if (result.sdkVersion !== requiredSdk) throw Error(`iOS SDK ${requiredSdk} is required. Found ${result.sdkVersion}.`);
   console.log(`Verified candidate and ${webFiles.length} web files. ${xcode.replaceAll('\n','; ')}`);
 
   if (mode === '--simulator' && release.nativeLaunchEvidence !== undefined) {
@@ -94,6 +97,7 @@ with zipfile.ZipFile(sys.argv[1]) as z:
       if (row.candidateSha256 !== release.sha256 || row.sourceGitHead !== release.sourceGitHead ||
           row.bundleId !== IOS_BUNDLE_ID || row.minimumIOS !== '16.4' || row.scope !== 'simulator' ||
           row.verifiedWebFiles !== result.verifiedWebFiles || row.nativeCompiled !== true || row.xcode !== xcode ||
+          row.sdkVersion !== requiredSdk ||
           !/^[0-9]+$/.test(row.ciRun) || !/^[a-f0-9]{40}$/.test(row.ciCommit) ||
           !['iPhone', 'iPad'].includes(row.device?.kind) || !row.device.name?.startsWith(row.device.kind) ||
           row.device.processSurvived !== true || kinds.has(row.device.kind)) {
@@ -115,11 +119,13 @@ with zipfile.ZipFile(sys.argv[1]) as z:
       '-sdk','iphonesimulator','-destination','generic/platform=iOS Simulator','-derivedDataPath',derived,
       'CODE_SIGNING_ALLOWED=NO','build'],{log:'build.log'});
     const app = join(derived,'Build/Products/Debug-iphonesimulator/App.app');
-    if (plist(join(app,'Info.plist'),'CFBundleIdentifier') !== IOS_BUNDLE_ID || plist(join(app,'Info.plist'),'MinimumOSVersion') !== '16.4') throw Error('Simulator app has wrong identity or minimum OS.');
+    const info = join(app,'Info.plist');
+    if (plist(info,'CFBundleIdentifier') !== IOS_BUNDLE_ID || plist(info,'MinimumOSVersion') !== '16.4' ||
+        plist(info,'DTSDKName') !== `iphonesimulator${requiredSdk}`) throw Error('Simulator app has wrong identity, minimum OS or SDK.');
     result.nativeCompiled = true; save();
     console.log('Native compilation passed; discovering simulator devices.');
     const devices = Object.entries(JSON.parse(run('xcrun',['simctl','list','devices','available','--json'])).devices)
-      .filter(([runtime])=>runtime.includes('.iOS-')).flatMap(([,items])=>items);
+      .filter(([runtime])=>runtime.endsWith(`.iOS-${requiredSdk.replaceAll('.','-')}`)).flatMap(([,items])=>items);
     result.devices = [];
     for (const kind of ['iPad','iPhone']) {
       const device = devices.find(d=>d.isAvailable && d.name.startsWith(kind));
@@ -249,9 +255,10 @@ with zipfile.ZipFile(sys.argv[1]) as z:
       `DEVELOPMENT_TEAM=${IOS_TEAM_ID}`,'CODE_SIGN_STYLE=Automatic','CODE_SIGNING_ALLOWED=NO',
       `CURRENT_PROJECT_VERSION=${build}`,`PRODUCT_BUNDLE_IDENTIFIER=${IOS_BUNDLE_ID}`,`MARKETING_VERSION=${version}`,'archive'],{log:'archive.log'});
     const info = join(archive,'Products/Applications/App.app/Info.plist');
-    for (const [key,expected] of [['CFBundleIdentifier',IOS_BUNDLE_ID],['CFBundleVersion',build],['CFBundleShortVersionString',version],['MinimumOSVersion','16.4']]) {
+    for (const [key,expected] of [['CFBundleIdentifier',IOS_BUNDLE_ID],['CFBundleVersion',build],['CFBundleShortVersionString',version],['MinimumOSVersion','16.4'],['DTSDKName',`iphoneos${requiredSdk}`]]) {
       if (plist(info,key) !== expected) throw Error(`Archive ${key} mismatch.`);
     }
+    result.archiveSdk = plist(info,'DTSDKName');
     result.nativeArchiveVerified = true; save();
     const exported = join(work,'export');
     run('xcodebuild',['-exportArchive','-archivePath',archive,'-exportPath',exported,'-exportOptionsPlist',optionsPath,...auth],{log:'export.log'});
@@ -261,9 +268,11 @@ with zipfile.ZipFile(sys.argv[1]) as z:
     const checked = join(work,'verified-ipa');
     run('ditto',['-x','-k',ipa,checked]);
     const exportedApp = join(checked,'Payload/App.app');
-    for (const [key,expected] of [['CFBundleIdentifier',IOS_BUNDLE_ID],['CFBundleVersion',build],['CFBundleShortVersionString',version],['MinimumOSVersion','16.4']]) {
-      if (plist(join(exportedApp,'Info.plist'),key) !== expected) throw Error(`Exported IPA ${key} mismatch.`);
+    const ipaInfo = join(exportedApp,'Info.plist');
+    for (const [key,expected] of [['CFBundleIdentifier',IOS_BUNDLE_ID],['CFBundleVersion',build],['CFBundleShortVersionString',version],['MinimumOSVersion','16.4'],['DTSDKName',`iphoneos${requiredSdk}`]]) {
+      if (plist(ipaInfo,key) !== expected) throw Error(`Exported IPA ${key} mismatch.`);
     }
+    result.signedIPASdk = plist(ipaInfo,'DTSDKName');
     run('codesign',['--verify','--strict',exportedApp],{log:'codesign.log'});
     result.signedIPAVerified = true; save();
     console.log('Verified the signed IPA. Uploading through Apple altool.');

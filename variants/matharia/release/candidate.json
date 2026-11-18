@@ -8,13 +8,13 @@
   "internalTestingOnly": false,
   "closedBetaOnly": true,
   "testerLocale": "en-GB",
-  "testerNotes": "Look for the new Matharia icon on your Home Screen. On iPad, swipe through game titles in Fraction Forest. In Peaceful Pond, open Tips and check that the full message is visible. On iPhone, check the level buttons, results, and labels in Conversion Canyon and Data Detective.",
+  "testerNotes": "Rebuilt with the iOS 27.2 SDK. Please check that Matharia starts, games rotate correctly, and you can resume your previous progress on iPhone and iPad.",
   "verifiedSubscriptionReceipt": {
     "appId": "6825120444",
     "bundleId": "com.smartelearning.satslegends",
-    "build": "100.81.1",
-    "ciRun": "44083767539",
-    "createdAt": "2026-11-17T12:33:45.779Z",
+    "build": "101.24.1",
+    "ciRun": "44291514606",
+    "createdAt": "2026-11-18T11:12:55.528Z",
     "catalogSha256": "512b8ff1da86162088c0fcae828cf41f84eb8e7def25bf68fc73b4ff07cb4d47",
     "products": [
       {
@@ -28,41 +28,5 @@
         "period": "ONE_YEAR"
       }
     ]
-  },
-  "nativeLaunchEvidence": [
-    {
-      "candidateSha256": "902ee55b2db57c13eaba212df13712ff815b56061963afc4d4ecb8e5dd4ff7df",
-      "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
-      "bundleId": "com.smartelearning.satslegends",
-      "minimumIOS": "16.4",
-      "verifiedWebFiles": 796,
-      "nativeCompiled": true,
-      "xcode": "Xcode 26.3\nBuild version 17C529",
-      "ciRun": "44289827241",
-      "ciCommit": "8611d2eaca650db3b065e3a26b0246a216ef78f3",
-      "scope": "simulator",
-      "device": {
-        "name": "iPhone 16 Pro",
-        "kind": "iPhone",
-        "processSurvived": true
-      }
-    },
-    {
-      "candidateSha256": "902ee55b2db57c13eaba212df13712ff815b56061963afc4d4ecb8e5dd4ff7df",
-      "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
-      "bundleId": "com.smartelearning.satslegends",
-      "minimumIOS": "16.4",
-      "verifiedWebFiles": 796,
-      "nativeCompiled": true,
-      "xcode": "Xcode 26.3\nBuild version 17C529",
-      "ciRun": "44289827241",
-      "ciCommit": "8611d2eaca650db3b065e3a26b0246a216ef78f3",
-      "scope": "simulator",
-      "device": {
-        "name": "iPad Pro 11-inch (M4)",
-        "kind": "iPad",
-        "processSurvived": true
-      }
-    }
-  ]
+  }
 }
