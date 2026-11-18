@@ -67,8 +67,8 @@ final class LexcoriaUITests: XCTestCase {
     func testLandscapeRotationAndResume() {
         app.launch()
         openGPSGrounds()
-        selectGame("Punctuation Panic")
-        let practice = button("Play Punctuation Panic Practice")
+        selectGame("Cohesion Connector")
+        let practice = button("Play Cohesion Connector Practice")
         require(practice, hittable: true)
         practice.tap()
         let prompt = button("Back to island")
@@ -115,8 +115,8 @@ final class LexcoriaUITests: XCTestCase {
         selectGame("Grammar Gauntlet")
         let progress = app.webViews.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "1/5 levels complete")).firstMatch
         require(progress)
-        let savedLevel = app.webViews.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@ AND label CONTAINS[c] %@",
-                                                                   "Complete Level 1", "2 of 3 brainpower")).firstMatch
+        // WebKit exposes HTML buttons with aria-pressed as switches.
+        let savedLevel = app.webViews.switches["Complete Level 1, 2 of 3 brainpower"].firstMatch
         require(savedLevel)
     }
 
@@ -131,12 +131,6 @@ final class LexcoriaUITests: XCTestCase {
 
     private func selectGame(_ title: String) {
         let game = button(title)
-        for _ in 0..<4 {
-            if game.exists && game.isHittable { break }
-            let next = button("Next game")
-            require(next, hittable: true)
-            next.tap()
-        }
         require(game, hittable: true)
         game.tap()
     }
