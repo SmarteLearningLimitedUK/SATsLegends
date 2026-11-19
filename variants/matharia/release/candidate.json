@@ -1,14 +1,14 @@
 {
-  "tag": "matharia-ci-20261118-scorecard-gems",
+  "tag": "matharia-ci-20261119-qa-fixes",
   "asset": "matharia-mac-testflight-candidate.zip",
-  "sha256": "c413eb2984ffac9371ebcdd7e2f78f23ffb6112b33a6c94409e29d295f9f9ec8",
+  "sha256": "11776a3ddaf746585c666ea99bd77835a68af96b836d9303e8afb45d13e29bc1",
   "bundleId": "com.smartelearning.satslegends",
   "minimumIOS": "16.4",
   "sourceGitHead": "4369e4cffd58739cfeb17ecf7c3aa6f6803d0453",
   "internalTestingOnly": false,
   "closedBetaOnly": true,
   "testerLocale": "en-GB",
-  "testerNotes": "On iPhone and iPad, finish a game in portrait and landscape. Check that all earned gems, the score, XP and buttons fit without scrolling. Try a win, a loss, a practice round and a Core of Calculation quiz. Please send a TestFlight screenshot if anything is cut off.",
+  "testerNotes": "Check compact calendar date selection, iPad Scale Builder controls, all result cards, naming, child switching and offline progress. Match Mastery now removes colour cues from level 3. Area Architect level 1 is gentler and Share Splitter varies its five rounds. Progress is retained; this build does not reset saves.",
   "verifiedSubscriptionReceipt": {
     "appId": "6825120444",
     "bundleId": "com.smartelearning.satslegends",
